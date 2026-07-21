@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://c5qooubnyhkg4"]
+
+[ext_resource type="Script" uid="uid://cf6mm7gcigbh" path="res://scenes/world/combat/MagicImpact.gd" id="1_t5uwx"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_t5uwx"]
+
+[node name="MagicImpact" type="Area2D" unique_id=96706269]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_t5uwx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1888875317]
+shape = SubResource("CircleShape2D_t5uwx")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1863876176]
+closed = true
+width = 6.0
+default_color = Color(0.025592083, 0.25353336, 0.9925973, 1)

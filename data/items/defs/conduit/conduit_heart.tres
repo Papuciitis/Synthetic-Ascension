@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cd12nbm52wvvq"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://cye71fr7uxblf" path="res://assets/textures/items/conduit/conduit_heart.png" id="1_d8c4p"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1")
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1")
+max_hp = 20.0
+
+[resource]
+script = ExtResource("2")
+id = "conduit_heart"
+display_name = "Conduit Heart"
+icon = ExtResource("1_d8c4p")
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.35
+pct_max = 0.5
+equip_slot = 0
+set_id = "conduit"
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

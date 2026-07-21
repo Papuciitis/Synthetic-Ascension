@@ -1,0 +1,10 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/world/volumes/IndoorVolume.gd" id="1_indoor"]
+
+[node name="IndoorVolume" type="Area2D" groups=["indoor_volume"]]
+collision_layer = 524288
+collision_mask = 4
+script = ExtResource("1_indoor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]

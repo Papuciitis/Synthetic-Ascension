@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://e17spx22u71i"]
+
+[ext_resource type="Script" uid="uid://be372etdsn7en" path="res://effects/conduit/scenes/ConduitArcBolts.gd" id="1_fxu5r"]
+[ext_resource type="PackedScene" uid="uid://bce8mbca3fn3g" path="res://assets/vfx/world/sets/conduit/VFX_ArcLine.tscn" id="2_yfv8g"]
+
+[node name="ConduitArcBolts" type="Node" unique_id=2139476715]
+script = ExtResource("1_fxu5r")
+tooltip_short = "Arc bolts chain between nearby enemies."
+vfx_arc_line_scene = ExtResource("2_yfv8g")

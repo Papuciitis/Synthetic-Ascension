@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://cvjof75x1j5op"]
+
+[ext_resource type="PackedScene" uid="uid://bji21xv3cru1f" path="res://effects/augments/scenes/SpiritSlashEffect.tscn" id="1_7ffbt"]
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_nxmfh"]
+[ext_resource type="Texture2D" uid="uid://1g63t7a1wv4u" path="res://assets/textures/Augment_Placeholder_Spirit_Slash.png" id="2_kfpgv"]
+
+[resource]
+script = ExtResource("1_nxmfh")
+id = &"augment_spirit_slash"
+display_name = "Spirit Slash"
+description = """A spectral blade lashes out when you commit to a hit."""
+card_blurb = "Melee hits trigger a spectral slash that reaches beyond your weapon."
+details = """Triggers on melee hits
+Cooldown: 0.30s (scales with Haste)
+Range: 220px
+Damage: 0.35× Power"""
+icon = ExtResource("2_kfpgv")
+effect_scenes = Array[PackedScene]([ExtResource("1_7ffbt")])
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

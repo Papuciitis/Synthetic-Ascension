@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StyleData" format=3 uid="uid://b6rq8rdc45c7s"]
+
+[ext_resource type="Script" uid="uid://cnul7arrfuxyg" path="res://data/styles/StyleData.gd" id="1_hty8s"]
+
+[resource]
+script = ExtResource("1_hty8s")
+id = "ranged"
+display_name = "Ranged"
+speed_add = 10.0
+power_add = 0.08
+haste_add = 0.05
+luck_add = 0.05
+metadata/_custom_type_script = "uid://cnul7arrfuxyg"

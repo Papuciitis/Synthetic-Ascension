@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://detamlap16y7m"]
+
+[ext_resource type="Script" uid="uid://dns7g12kxes7x" path="res://ui/screens/GameOverUI.gd" id="1_sdbmt"]
+
+[node name="GameOverUI" type="Control" unique_id=1420110973]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_sdbmt")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=289298073]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.06, 0.06, 1)
+
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=96239011]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=44738812]
+custom_minimum_size = Vector2(360, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="CenterContainer/Panel" unique_id=11302012]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/Margin" unique_id=171601478]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Title" type="Label" parent="CenterContainer/Panel/Margin/VBox" unique_id=1385174930]
+layout_mode = 2
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="CenterContainer/Panel/Margin/VBox" unique_id=78382810]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "Choose what to do next"
+horizontal_alignment = 1
+
+[node name="Buttons" type="VBoxContainer" parent="CenterContainer/Panel/Margin/VBox" unique_id=51999942]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Restart" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=415290657]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "Restart"
+
+[node name="Menu" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=515290658]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "Quit to Menu"
+
+[node name="Quit" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=515290659]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+text = "Quit Game"

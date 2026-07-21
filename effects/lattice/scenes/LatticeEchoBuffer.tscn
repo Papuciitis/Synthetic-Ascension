@@ -1,0 +1,15 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://effects/lattice/scenes/LatticeEchoBuffer.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/sets/conduit/VFX_ArcLine.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/sets/conduit/VFX_PulseRing.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/sets/conduit/VFX_CleaveArc.tscn" id="5"]
+
+[node name="LatticeEchoBuffer" type="Node"]
+script = ExtResource("1")
+tooltip_short = "Stores excess damage and releases it as an echo burst."
+vfx_arc_line_scene = ExtResource("2")
+vfx_spokes_scene = ExtResource("3")
+vfx_pulse_ring_scene = ExtResource("4")
+vfx_cleave_arc_scene = ExtResource("5")

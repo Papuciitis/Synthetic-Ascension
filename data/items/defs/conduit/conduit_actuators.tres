@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cm100bepthuci"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://ckjrvglp58nf6" path="res://assets/textures/items/conduit/conduit_actuators.png" id="1_clmd4"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1")
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1")
+haste = 0.02
+
+[resource]
+script = ExtResource("2")
+id = "conduit_actuators"
+display_name = "Conduit Actuators"
+icon = ExtResource("1_clmd4")
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.2
+pct_max = 0.35
+equip_slot = 4
+set_id = "conduit"

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://rt8ejzex4tt64"]
+
+[ext_resource type="Script" uid="uid://ff5htmplnm1yn" path="res://effects/items/logic/RegenerationRingEffect.gd" id="1_reg"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/items/VFX_FloatingPlus.tscn" id="2_plus"]
+
+[node name="RegenerationRingEffect" type="Node2D" unique_id=101010103]
+script = ExtResource("1_reg")
+vfx_plus_scene = ExtResource("2_plus")

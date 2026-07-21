@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/gravemarch/gravemarch_bonekey.png" id="1_icon"]
+[ext_resource type="Script" path="res://data/items/ItemData.gd" id="2"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1")
+luck = 0.015
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1")
+luck = 0.01
+
+[resource]
+script = ExtResource("2")
+id = "gravemarch_bonekey"
+display_name = "Gravemarch Bonekey"
+icon = ExtResource("1_icon")
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.25
+pct_max = 0.4
+equip_slot = 5
+set_id = "gravemarch"

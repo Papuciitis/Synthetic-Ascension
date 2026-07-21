@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/lattice/lattice_focusnode.png" id="1_icon"]
+[ext_resource type="Script" path="res://data/items/ItemData.gd" id="2"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1")
+power = 0.03
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1")
+power = 0.01
+
+[resource]
+script = ExtResource("2")
+id = "lattice_focusnode"
+display_name = "Lattice Focusnode"
+icon = ExtResource("1_icon")
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.2
+pct_max = 0.35
+equip_slot = 3
+set_id = "lattice"

@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://o26s7544xf4t"]
+
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_inqsk"]
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_jjv71"]
+[ext_resource type="PackedScene" uid="uid://vs48l4wx2ns3" path="res://core/combat/projectile/EnemyProjectile.tscn" id="2_pkxua"]
+[ext_resource type="Texture2D" uid="uid://cd6ays27ri5e0" path="res://assets/textures/Enemy_Herald44x44.png" id="4_qajri"]
+
+[resource]
+script = ExtResource("1_inqsk")
+id = &"enemy_herald"
+display_name = "Herald"
+ai = 9
+max_hp = 28.0
+speed = 78.0
+follower_reward_min = 5
+follower_reward_max = 8
+elite_follower_bonus = 4
+preferred_range = 285.0
+range_tolerance = 85.0
+shoot_every = 2.2
+projectile_scene = ExtResource("2_pkxua")
+projectile_speed = 300.0
+projectile_damage = 3.0
+strafe_strength = 1.05
+item_pickup_scene = ExtResource("1_jjv71")
+drop_chance = 0.35
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_min = 2
+drop_rarity_max = 3
+elite_hp_mult = 1.7
+elite_speed_mult = 1.1
+elite_ai_override = 7
+sprite_texture = ExtResource("4_qajri")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

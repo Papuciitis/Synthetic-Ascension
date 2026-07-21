@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://28f53wideaum"]
+
+[ext_resource type="Script" uid="uid://b648gnibnyshp" path="res://effects/augments/logic/StaminaCoreEffect.gd" id="1_f33p7"]
+[ext_resource type="PackedScene" uid="uid://cisipdy8vqrda" path="res://assets/vfx/world/augments/VFX_StaminaCoreAura.tscn" id="2_54l7j"]
+
+[node name="StaminaCoreEffect" type="Node" unique_id=1249979814]
+script = ExtResource("1_f33p7")
+vfx_aura_scene = ExtResource("2_54l7j")

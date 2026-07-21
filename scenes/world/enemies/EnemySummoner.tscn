@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://c716a0ipbx175"]
+
+[ext_resource type="PackedScene" uid="uid://cnbmqstd8vjlh" path="res://core/actors/enemy/enemy.tscn" id="1_bds4h"]
+[ext_resource type="Resource" uid="uid://btvos8i43hkcq" path="res://core/actors/enemy/EnemySpec_Summoner.tres" id="2_bds4h"]
+[ext_resource type="Texture2D" uid="uid://gap2enrncs7r" path="res://assets/textures/Enemy_Spitter44x44.png" id="3_t36en"]
+
+[node name="Enemy" unique_id=947687576 instance=ExtResource("1_bds4h")]
+spec = ExtResource("2_bds4h")
+debug_drops = true
+
+[node name="Sprite2D" parent="." index="0" unique_id=1886877098]
+texture = ExtResource("3_t36en")

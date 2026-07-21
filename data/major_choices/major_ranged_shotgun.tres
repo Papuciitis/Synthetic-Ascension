@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddMutation.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_mut"]
+script = ExtResource("2")
+mutation_id = &"mut_ranged_shotgun"
+value = true
+
+[resource]
+script = ExtResource("1")
+id = &"major_ranged_shotgun"
+title = "Scatter Doctrine"
+description = "Ranged attacks fire a short fan of rounds.\n• 3-shot spread (reduced damage per pellet)"
+category = &"style"
+requires_style_id = &"ranged"
+effects = Array[Resource]([SubResource("eff_mut")])

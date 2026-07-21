@@ -1,0 +1,94 @@
+[gd_scene format=3 uid="uid://bbgx4pought3d"]
+
+[ext_resource type="Script" uid="uid://dha5tw0ylfg0" path="res://ui/widgets/ActiveAbilityHUD.gd" id="1_m88gr"]
+
+[node name="ActiveAbilityHUD" type="Control" unique_id=14545574]
+custom_minimum_size = Vector2(220, 64)
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_m88gr")
+
+[node name="Frame" type="PanelContainer" parent="." unique_id=1001]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Frame" unique_id=1002]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="RootHBox" type="HBoxContainer" parent="Frame/Margin" unique_id=1003]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="IconFrame" type="PanelContainer" parent="Frame/Margin/RootHBox" unique_id=1004]
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Frame/Margin/RootHBox/IconFrame" unique_id=1005]
+modulate = Color(1, 1, 1, 0.85)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightVBox" type="VBoxContainer" parent="Frame/Margin/RootHBox" unique_id=1006]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="TopRow" type="HBoxContainer" parent="Frame/Margin/RootHBox/RightVBox" unique_id=1007]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 8
+
+[node name="AbilityLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox/TopRow" unique_id=1008]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Set Ability"
+
+[node name="KeyPill" type="PanelContainer" parent="Frame/Margin/RootHBox/RightVBox/TopRow" unique_id=1009]
+custom_minimum_size = Vector2(28, 20)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="KeyLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox/TopRow/KeyPill" unique_id=208100194]
+layout_mode = 2
+text = "R"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BarWrap" type="Control" parent="Frame/Margin/RootHBox/RightVBox" unique_id=1010]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="CooldownBar" type="ProgressBar" parent="Frame/Margin/RootHBox/RightVBox/BarWrap" unique_id=2019503082]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+show_percentage = false
+
+[node name="TimeLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox/BarWrap" unique_id=27156235]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SpellData" format=3 uid="uid://cxbbmy1dmycp"]
+
+[ext_resource type="Script" uid="uid://v71m6mvapjch" path="res://spells/SpellData.gd" id="1_ygu15"]
+[ext_resource type="PackedScene" uid="uid://cp13h1shty044" path="res://spells/scenes/MagicMissileSpell.tscn" id="2_41rn5"]
+
+[resource]
+script = ExtResource("1_ygu15")
+id = "spell_magic_missile"
+display_name = "Magic Missile"
+cooldown = 0.4
+spell_scene = ExtResource("2_41rn5")
+metadata/_custom_type_script = "uid://v71m6mvapjch"

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://q8pis2e8ppg4"]
+
+[ext_resource type="Script" uid="uid://eritkleo8q3w" path="res://core/systems/spawner/spawner.gd" id="1_yp5lu"]
+[ext_resource type="PackedScene" uid="uid://cnbmqstd8vjlh" path="res://core/actors/enemy/enemy.tscn" id="2_4h1ev"]
+[ext_resource type="Resource" uid="uid://bwqeta1wb524n" path="res://data/enemies/spawn/SpawnTable_Default.tres" id="3_8oj6n"]
+
+[node name="Spawner" type="Node2D" unique_id=1961182374]
+script = ExtResource("1_yp5lu")
+enemy_scene = ExtResource("2_4h1ev")
+spawn_table = ExtResource("3_8oj6n")
+debug_spawns = true

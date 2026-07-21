@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bkhmpr7235wlw"]
+
+[ext_resource type="Script" uid="uid://b70si6l1c3nns" path="res://effects/augments/logic/TeslaAuraEffect.gd" id="1_g2vcl"]
+[ext_resource type="PackedScene" uid="uid://ck27vfkn0v4fi" path="res://assets/vfx/world/augments/VFX_TeslaArc2D.tscn" id="2_mlbbf"]
+[ext_resource type="PackedScene" uid="uid://dnxkbfxwcplvt" path="res://assets/vfx/world/augments/VFX_TeslaPulseRing.tscn" id="3_xyq41"]
+
+[node name="TeslaAuraEffect" type="Node" unique_id=614017653]
+script = ExtResource("1_g2vcl")
+vfx_arc_scene = ExtResource("2_mlbbf")
+vfx_pulse_scene = ExtResource("3_xyq41")

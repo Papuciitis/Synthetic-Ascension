@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddMutation.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_mut"]
+script = ExtResource("2")
+mutation_id = &"mut_magic_trisigil"
+value = true
+
+[resource]
+script = ExtResource("1")
+id = &"major_magic_trisigil"
+title = "Tri‑Sigil Weave"
+description = "Magic strikes fracture into a three‑sigil burst.\n• 3 impacts around target point"
+category = &"style"
+requires_style_id = &"magic"
+effects = Array[Resource]([SubResource("eff_mut")])

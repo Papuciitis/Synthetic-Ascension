@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://ci7y0xx2qw45"]
+
+[ext_resource type="Script" uid="uid://b21pkfj7twv0p" path="res://effects/augments/logic/MagicMissileEffect.gd" id="1_14trh"]
+[ext_resource type="PackedScene" uid="uid://bxo5msy1fcums" path="res://effects/augments/scenes/MagicMissileProjectile.tscn" id="2_14trh"]
+
+[node name="MagicMissileEffect" type="Node" unique_id=36533751]
+script = ExtResource("1_14trh")
+missile_scene = ExtResource("2_14trh")

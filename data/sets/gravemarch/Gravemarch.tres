@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="SetData" format=3]
+
+[ext_resource type="Script" path="res://data/sets/SetData.gd" id="1"]
+[ext_resource type="Script" path="res://data/sets/SetTier.gd" id="2"]
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="3"]
+[ext_resource type="PackedScene" path="res://effects/gravemarch/scenes/GravemarchSunderstep.tscn" id="4"]
+[ext_resource type="PackedScene" path="res://effects/gravemarch/scenes/GravemarchMassArrest.tscn" id="5"]
+
+[sub_resource type="Resource" id="mods2"]
+script = ExtResource("3")
+max_hp = 18.0
+armor = 2.0
+move_speed = -6.0
+
+[sub_resource type="Resource" id="tier2"]
+script = ExtResource("2")
+mods = SubResource("mods2")
+
+[sub_resource type="Resource" id="mods4"]
+script = ExtResource("3")
+power = 0.02
+
+[sub_resource type="Resource" id="tier4"]
+script = ExtResource("2")
+required_count = 4
+mods = SubResource("mods4")
+effect_scenes = Array[PackedScene]([ExtResource("4")])
+
+[sub_resource type="Resource" id="mods6"]
+script = ExtResource("3")
+armor = 1.5
+
+[sub_resource type="Resource" id="tier6"]
+script = ExtResource("2")
+required_count = 6
+mods = SubResource("mods6")
+effect_scenes = Array[PackedScene]([ExtResource("5")])
+
+[resource]
+script = ExtResource("1")
+id = &"gravemarch"
+display_name = "Gravemarch Protocol"
+tiers = Array[ExtResource("2")]([SubResource("tier2"), SubResource("tier4"), SubResource("tier6")])

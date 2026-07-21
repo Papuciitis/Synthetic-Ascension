@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://2xl0wxzhcdy89"]
+
+[ext_resource type="Script" path="res://effects/items/logic/SpeedRingEffect.gd" id="1_sr"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/items/VFX_SpeedStreak.tscn" id="2_streak"]
+
+[node name="SpeedRingEffect" type="Node2D"]
+script = ExtResource("1_sr")
+vfx_streak_scene = ExtResource("2_streak")

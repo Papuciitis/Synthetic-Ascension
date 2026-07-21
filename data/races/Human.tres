@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="RaceData" format=3 uid="uid://i7s0qt3s7dwf"]
+
+[ext_resource type="Script" uid="uid://dyupwe2op3bk0" path="res://data/RaceData.gd" id="1_0bv5f"]
+
+[resource]
+script = ExtResource("1_0bv5f")
+id = "human"
+display_name = "Human"
+hp_add = 10.0
+armor_add = 2.0
+speed_add = 5.0
+power_add = 0.05
+haste_add = 0.05
+luck_add = 0.05
+metadata/_custom_type_script = "uid://dyupwe2op3bk0"

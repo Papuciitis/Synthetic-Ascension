@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://b8yootice05os"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_3qcs2"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_o76o5"]
+
+[resource]
+script = ExtResource("1_o76o5")
+id = &"enemy_runner"
+display_name = "Runner"
+max_hp = 8.0
+speed = 135.0
+follower_reward_max = 2
+charge_windup = 0.45
+charge_speed = 620.0
+charge_duration = 0.22
+charge_cooldown = 2.6
+item_pickup_scene = ExtResource("1_3qcs2")
+drop_chance = 0.12
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_max = 1
+elite_hp_mult = 1.35
+elite_speed_mult = 1.25
+elite_ai_override = 3
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

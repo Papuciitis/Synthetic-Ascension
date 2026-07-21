@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://cb20ktmrewv00"]
+
+[ext_resource type="Script" uid="uid://38kikqvuwaan" path="res://effects/augments/logic/SpiderlingSummonEffect.gd" id="1_dqs4q"]
+[ext_resource type="PackedScene" uid="uid://chmtdhdhfuwbf" path="res://effects/augments/scenes/PoisonSpiderling.tscn" id="2_iqb5q"]
+
+[node name="SpiderlingSummonEffect" type="Node2D" unique_id=1941534796]
+script = ExtResource("1_dqs4q")
+spiderling_scene = ExtResource("2_iqb5q")

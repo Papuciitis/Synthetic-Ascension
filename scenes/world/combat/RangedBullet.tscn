@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://dtw6n3qr5uqsw"]
+
+[ext_resource type="Script" uid="uid://dv56n1bljmbs3" path="res://scenes/world/combat/RangedBullet.gd" id="1_oahoe"]
+[ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="2_h0u6p"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_oahoe"]
+radius = 6.0
+
+[node name="RangedBullet" type="Area2D" unique_id=534639961]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_oahoe")
+vfx_hit_spokes_scene = ExtResource("2_h0u6p")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=509076611]
+shape = SubResource("CircleShape2D_oahoe")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=701493662]

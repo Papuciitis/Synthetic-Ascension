@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://btvos8i43hkcq"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_cqkqk"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_xjpae"]
+[ext_resource type="Texture2D" uid="uid://b1xsvbnc1rltk" path="res://assets/textures/Enemy_Summoner44x44.png" id="2_luprw"]
+[ext_resource type="PackedScene" uid="uid://bjsfiuedu7adf" path="res://scenes/world/enemies/EnemySummonedMinion.tscn" id="3_cqkqk"]
+
+[resource]
+script = ExtResource("1_xjpae")
+id = &"enemy_summoner"
+display_name = "Summoner"
+ai = 5
+follower_reward_min = 2
+follower_reward_max = 3
+summon_count_max = 3
+summon_scene = ExtResource("3_cqkqk")
+item_pickup_scene = ExtResource("1_cqkqk")
+drop_chance = 0.3
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_max = 2
+sprite_texture = ExtResource("2_luprw")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

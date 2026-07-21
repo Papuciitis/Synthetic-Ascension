@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://wl654hlqr6gu"]
+
+[ext_resource type="Script" uid="uid://fdppq8ijmktc" path="res://core/combat/projectile/projectile.gd" id="1_a85iw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_akgne"]
+radius = 8.0
+
+[node name="Projectile" type="Area2D" unique_id=1500468606 groups=["player_projectile"]]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_a85iw")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=678426770]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1936969738]
+shape = SubResource("CircleShape2D_akgne")

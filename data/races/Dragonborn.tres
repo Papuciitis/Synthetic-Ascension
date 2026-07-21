@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RaceData" format=3 uid="uid://sab3v2h4xwbe"]
+
+[ext_resource type="Script" uid="uid://dyupwe2op3bk0" path="res://data/RaceData.gd" id="1_dcwbh"]
+
+[resource]
+script = ExtResource("1_dcwbh")
+id = "dragonborn"
+display_name = "Dragonborn"
+hp_add = 30.0
+armor_add = 8.0
+speed_add = -15.0
+power_add = 0.03
+haste_add = -0.05
+metadata/_custom_type_script = "uid://dyupwe2op3bk0"

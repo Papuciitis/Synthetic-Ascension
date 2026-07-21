@@ -1,0 +1,301 @@
+[gd_scene format=3 uid="uid://pbty138ge2ub"]
+
+[ext_resource type="Script" uid="uid://deumtancmmlmf" path="res://ui/components/RaceCard.gd" id="1_xvlug"]
+
+[sub_resource type="StyleBoxFlat" id="StyleCardNormal"]
+bg_color = Color(0, 0, 0, 0.22)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleCardPressed"]
+bg_color = Color(0, 0, 0, 0.24)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.32)
+shadow_size = 11
+shadow_offset = Vector2(0, 7)
+
+[sub_resource type="StyleBoxFlat" id="StyleCardHover"]
+bg_color = Color(0, 0, 0, 0.24)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.34)
+shadow_size = 12
+shadow_offset = Vector2(0, 7)
+
+[sub_resource type="StyleBoxFlat" id="StyleCardHoverPressed"]
+bg_color = Color(0.22, 0.13, 0.05, 0.26)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleImageFrame"]
+bg_color = Color(0, 0, 0, 0.14)
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleTextPanel"]
+bg_color = Color(0, 0, 0, 0.34)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBadge"]
+bg_color = Color(0, 0, 0, 0.4)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="RaceCard" type="Button" unique_id=1771786853]
+clip_contents = true
+custom_minimum_size = Vector2(170, 180)
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleCardNormal")
+theme_override_styles/pressed = SubResource("StyleCardPressed")
+theme_override_styles/hover = SubResource("StyleCardHover")
+theme_override_styles/hover_pressed = SubResource("StyleCardHoverPressed")
+theme_override_styles/focus = SubResource("StyleCardNormal")
+toggle_mode = true
+script = ExtResource("1_xvlug")
+
+[node name="BgBox" type="PanelContainer" parent="." unique_id=155669700]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleImageFrame")
+
+[node name="ImageLabel" type="Label" parent="BgBox" unique_id=922940177]
+modulate = Color(1, 1, 1, 0.12)
+layout_mode = 2
+text = "IMAGE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1192570083]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Fill" type="Control" parent="VBox" unique_id=509181717]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="TextPanel" type="PanelContainer" parent="VBox" unique_id=2000176381]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleTextPanel")
+
+[node name="TextVBox" type="VBoxContainer" parent="VBox/TextPanel" unique_id=1096029435]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="NameLabel" type="Label" parent="VBox/TextPanel/TextVBox" unique_id=650300709]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Human"
+horizontal_alignment = 1
+
+[node name="StatsGrid" type="GridContainer" parent="VBox/TextPanel/TextVBox" unique_id=1971487780]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 6
+columns = 3
+
+[node name="HPCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=570539689]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="HPBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/HPCell" unique_id=285974758]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="HPBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/HPCell/HPBadge" unique_id=1138989702]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "HP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HPValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/HPCell" unique_id=871608242]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0"
+
+[node name="ARMCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=1973470982]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="ARMBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/ARMCell" unique_id=1041617391]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="ARMBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/ARMCell/ARMBadge" unique_id=306683107]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "AR"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ARMValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/ARMCell" unique_id=16717323]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0"
+
+[node name="SPDCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=249567018]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="SPDBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/SPDCell" unique_id=1859084011]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="SPDBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/SPDCell/SPDBadge" unique_id=1930467132]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "SP"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SPDValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/SPDCell" unique_id=975807989]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0"
+
+[node name="POWCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=638944074]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="POWBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/POWCell" unique_id=1841561243]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="POWBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/POWCell/POWBadge" unique_id=468727034]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "PW"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="POWValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/POWCell" unique_id=577844965]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"
+
+[node name="HSTCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=1610401493]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="HSTBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/HSTCell" unique_id=1588181087]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="HSTBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/HSTCell/HSTBadge" unique_id=51162214]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "HS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSTValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/HSTCell" unique_id=1618768683]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"
+
+[node name="LCKCell" type="HBoxContainer" parent="VBox/TextPanel/TextVBox/StatsGrid" unique_id=2034066539]
+layout_mode = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="LCKBadge" type="PanelContainer" parent="VBox/TextPanel/TextVBox/StatsGrid/LCKCell" unique_id=960269968]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBadge")
+
+[node name="LCKBadgeLabel" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/LCKCell/LCKBadge" unique_id=1037346676]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "LK"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LCKValue" type="Label" parent="VBox/TextPanel/TextVBox/StatsGrid/LCKCell" unique_id=82402297]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "+0%"

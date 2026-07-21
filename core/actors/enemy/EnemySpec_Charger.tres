@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://d3mikooqmuiry"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_j5t1i"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_qchgt"]
+[ext_resource type="Texture2D" uid="uid://b3tse37dxaq2f" path="res://assets/textures/Enemy_Charger44x44.png" id="3_od3gg"]
+
+[resource]
+script = ExtResource("1_qchgt")
+id = &"enemy_charger"
+display_name = "Charger"
+ai = 3
+max_hp = 22.0
+speed = 92.0
+follower_reward_min = 3
+follower_reward_max = 4
+charge_trigger_range = 280.0
+charge_windup = 0.55
+charge_speed = 650.0
+charge_duration = 0.28
+item_pickup_scene = ExtResource("1_j5t1i")
+drop_chance = 0.2
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_min = 1
+drop_rarity_max = 2
+elite_speed_mult = 1.1
+sprite_texture = ExtResource("3_od3gg")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

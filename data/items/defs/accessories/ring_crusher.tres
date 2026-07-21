@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bc6ee2bqx303w"]
+
+[ext_resource type="Texture2D" uid="uid://c0mp667xyq2dl" path="res://assets/textures/items/rings/Ring_Placeholder_CrushersRing.png" id="1_2mp8c"]
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
+[ext_resource type="PackedScene" uid="uid://2xl0wxzhcdy89" path="res://effects/items/scenes/SpeedRingEffect.tscn" id="4_eff"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+move_speed = 35.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+move_speed = 8.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("3_itemdata")
+id = "ring_crusher"
+display_name = "Crusher's Ring"
+icon = ExtResource("1_2mp8c")
+description = "Fast. Louder.
+• Greatly increases Move Speed.
+• Leaves speed streaks while running."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = 0.0
+pct_max = 0.0
+equip_slot = 7
+effect_scenes = Array[PackedScene]([ExtResource("4_eff")])
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

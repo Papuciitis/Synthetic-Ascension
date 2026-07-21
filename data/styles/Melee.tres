@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StyleData" format=3 uid="uid://cbld5cm716pl1"]
+
+[ext_resource type="Script" uid="uid://cnul7arrfuxyg" path="res://data/styles/StyleData.gd" id="1_pec0l"]
+
+[resource]
+script = ExtResource("1_pec0l")
+id = "melee"
+display_name = "Melee"
+hp_add = 15.0
+armor_add = 4.0
+speed_add = -5.0
+power_add = 0.06
+haste_add = -0.02
+metadata/_custom_type_script = "uid://cnul7arrfuxyg"

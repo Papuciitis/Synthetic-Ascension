@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModAttemptFloat.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_hold"]
+script = ExtResource("2")
+property = &"attempt_exit_hold_mul"
+multiply = 0.80
+clamp_min = 0.25
+clamp_max = 2.0
+
+[resource]
+script = ExtResource("1")
+id = &"major_ritual"
+title = "Ritual Mastery"
+description = "The Exit Rite stabilizes faster.\n• -20% Exit Rite hold time"
+category = &"utility"
+effects = Array[Resource]([SubResource("eff_hold")])

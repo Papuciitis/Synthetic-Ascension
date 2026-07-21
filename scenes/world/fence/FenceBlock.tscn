@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/world/fence/FenceBlock.gd" id="1_fence"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_VHALF"]
+size = Vector2(14, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_HHALF"]
+size = Vector2(32, 14)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_POST"]
+size = Vector2(18, 18)
+
+[node name="FenceBlock" type="StaticBody2D"]
+collision_layer = 1
+script = ExtResource("1_fence")
+
+[node name="CollisionN" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(0, -16)
+shape = SubResource("RectangleShape2D_VHALF")
+
+[node name="CollisionE" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(16, 0)
+shape = SubResource("RectangleShape2D_HHALF")
+
+[node name="CollisionS" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_VHALF")
+
+[node name="CollisionW" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(-16, 0)
+shape = SubResource("RectangleShape2D_HHALF")
+
+[node name="CollisionPost" type="CollisionShape2D" parent="."]
+disabled = true
+shape = SubResource("RectangleShape2D_POST")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+scale = Vector2(0.0625, 0.0625)
+
+[node name="Shadow" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+modulate = Color(0, 0, 0, 0.40)
+position = Vector2(3, 4)
+z_index = -1
+scale = Vector2(0.0625, 0.0625)

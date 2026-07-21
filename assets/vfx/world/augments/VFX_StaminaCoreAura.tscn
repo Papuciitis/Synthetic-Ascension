@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cisipdy8vqrda"]
+
+[ext_resource type="Script" uid="uid://deaiuo8xdvf5j" path="res://assets/vfx/world/augments/VFX_StaminaCoreAura.gd" id="1_t2fbo"]
+
+[node name="VfxStaminaCoreAura" type="Node2D" unique_id=851853117]
+script = ExtResource("1_t2fbo")
+wave_amp = 2.2
+wave_freq = 9.0
+roll_speed = 10.5
+pulse_speed = 3.2
+glow_width = 13.0
+fill_alpha = 0.14
+color_core = Color(0.18, 0.98633355, 1, 0.9490196)
+color_glow = Color(0.28611115, 0.35501254, 1, 0.54901963)
+color_fill = Color(0.16850659, 0.085200004, 0.71, 0.34901962)

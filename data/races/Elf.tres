@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RaceData" format=3 uid="uid://bhm3t73ra2n8n"]
+
+[ext_resource type="Script" uid="uid://dyupwe2op3bk0" path="res://data/RaceData.gd" id="1_qtqba"]
+
+[resource]
+script = ExtResource("1_qtqba")
+id = "elf"
+display_name = "Elf"
+hp_add = -15.0
+speed_add = 25.0
+power_add = 0.08
+haste_add = 0.1
+luck_add = 0.15
+metadata/_custom_type_script = "uid://dyupwe2op3bk0"

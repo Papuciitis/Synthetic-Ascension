@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://205be6njkxit"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_66cc5"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_e2jin"]
+[ext_resource type="Texture2D" uid="uid://1ut4i3t78ltl" path="res://assets/textures/Enemy_Bomber44x44.png" id="3_gedlj"]
+
+[resource]
+script = ExtResource("1_e2jin")
+id = &"enemy_bomber"
+display_name = "Bomber"
+ai = 4
+max_hp = 12.0
+speed = 110.0
+follower_reward_min = 2
+follower_reward_max = 4
+explode_trigger_distance = 80.0
+explode_radius = 105.0
+explode_on_death = true
+item_pickup_scene = ExtResource("1_66cc5")
+drop_chance = 0.18
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_min = 1
+drop_rarity_max = 2
+sprite_texture = ExtResource("3_gedlj")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

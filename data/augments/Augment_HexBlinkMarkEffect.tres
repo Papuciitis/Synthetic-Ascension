@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://ccd3420fieh5u"]
+
+[ext_resource type="PackedScene" uid="uid://cvun5woj4efui" path="res://effects/augments/scenes/HexBlinkMarkEffect.tscn" id="1_fndtg"]
+[ext_resource type="Texture2D" uid="uid://b1s7itjctmnnq" path="res://assets/textures/Augment_Placeholder_Blink_Hex.png" id="2_dljwc"]
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="3_037e4"]
+
+[resource]
+script = ExtResource("3_037e4")
+id = &"augment_blink_hex"
+display_name = "Blink Hex"
+description = """Blink through the crowd, brand a target, and punish it for existing."""
+card_blurb = "Blink through enemies, mark a target, then detonate it with your next hit."
+details = """Blink Range: 320px
+Cooldown: 6.0s (scales with Haste)
+Mark Duration: 6.0s (1 marked shot)
+Bonus Damage: 2d8 + (12× Power)
+Refund Chance: 10%"""
+icon = ExtResource("2_dljwc")
+effect_scenes = Array[PackedScene]([ExtResource("1_fndtg")])
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

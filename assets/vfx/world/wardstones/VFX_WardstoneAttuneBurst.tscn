@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd" id="1_burst"]
+
+[node name="WardstoneAttuneBurst" type="Node2D"]
+script = ExtResource("1_burst")

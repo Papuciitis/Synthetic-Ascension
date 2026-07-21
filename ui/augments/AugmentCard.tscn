@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://1x440pejxc0o"]
+
+[ext_resource type="Script" uid="uid://bvgurctp7xcvt" path="res://ui/augments/AugmentCard.gd" id="1_xyqu0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleIconFrame"]
+bg_color = Color(0.08, 0.08, 0.08, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleDescPanel"]
+bg_color = Color(0, 0, 0, 0.28)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="AugmentCard" type="Button" unique_id=970161753]
+clip_contents = true
+custom_minimum_size = Vector2(220, 340)
+focus_mode = 0
+script = ExtResource("1_xyqu0")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1752320815]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=1762330059]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="IconFrame" type="PanelContainer" parent="Margin/VBox" unique_id=206000001]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleIconFrame")
+
+[node name="Icon" type="TextureRect" parent="Margin/VBox/IconFrame" unique_id=1304802977]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="Margin/VBox" unique_id=1561013375]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "AUGMENT NAME"
+horizontal_alignment = 1
+
+[node name="DescPanel" type="PanelContainer" parent="Margin/VBox" unique_id=350400270]
+custom_minimum_size = Vector2(0, 78)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleDescPanel")
+
+[node name="DescMargin" type="MarginContainer" parent="Margin/VBox/DescPanel" unique_id=659723503]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Desc" type="Label" parent="Margin/VBox/DescPanel/DescMargin" unique_id=996044770]
+modulate = Color(1, 1, 1, 0.85)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "DESCRIPTION"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3

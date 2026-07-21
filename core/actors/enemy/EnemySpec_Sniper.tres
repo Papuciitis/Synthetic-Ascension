@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://b6edgo3p23i5m"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_64ob0"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_cbqlt"]
+[ext_resource type="Texture2D" uid="uid://lup1oddk1u11" path="res://assets/textures/Enemy_Sniper44x44.png" id="3_1omm3"]
+
+[resource]
+script = ExtResource("1_cbqlt")
+id = &"enemy_sniper"
+display_name = "Sniper"
+ai = 10
+max_hp = 40.0
+speed = 120.0
+follower_reward_max = 2
+preferred_range = 520.0
+range_tolerance = 90.0
+strafe_strength = 0.15
+sniper_range = 2200.0
+sniper_cooldown = 2.7
+sniper_damage = 10.0
+sniper_beam_length = 2400.0
+sniper_beam_width = 34.0
+sniper_move_mul_during_windup = 0.25
+sniper_track_turn_speed = 0.45
+item_pickup_scene = ExtResource("1_64ob0")
+drop_chance = 0.2
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_min = 1
+drop_rarity_max = 2
+elite_ai_override = 7
+sprite_texture = ExtResource("3_1omm3")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

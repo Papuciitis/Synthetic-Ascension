@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cap06qnurll75"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" uid="uid://ctrhbcuxyrn3e" path="res://assets/textures/items/rings/Ring_Placeholder_RingOfRegeneration.png" id="2_0xcjm"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
+[ext_resource type="PackedScene" uid="uid://rt8ejzex4tt64" path="res://effects/items/scenes/RegenerationRingEffect.tscn" id="4_eff"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+max_hp = 10.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+max_hp = 5.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("3_itemdata")
+id = "ring_regeneration"
+display_name = "Ring of Regeneration"
+icon = ExtResource("2_0xcjm")
+description = "It hums with renewing life.
+• Heals you every second (scales with rarity)."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = 0.0
+pct_max = 0.0
+equip_slot = 7
+effect_scenes = Array[PackedScene]([ExtResource("4_eff")])
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

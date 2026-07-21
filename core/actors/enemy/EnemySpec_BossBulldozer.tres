@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pickup"]
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1_spec"]
+[ext_resource type="Texture2D" path="res://assets/textures/Enemy_Brute44x44.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_spec")
+id = &"boss_bulldozer"
+display_name = "Bulldozer"
+ai = 3
+max_hp = 180.0
+speed = 72.0
+follower_reward_min = 10
+follower_reward_max = 14
+charge_trigger_range = 320.0
+charge_windup = 0.55
+charge_speed = 780.0
+charge_duration = 0.36
+charge_cooldown = 2.2
+item_pickup_scene = ExtResource("1_pickup")
+drop_chance = 1.0
+drop_instance_roll = true
+drop_rarity_min = 1
+drop_rarity_max = 2
+drop_amount_min = 2
+drop_amount_max = 3
+sprite_texture = ExtResource("2_tex")
+sprite_scale = Vector2(1, 1)
+sprite_modulate = Color(0.85, 0.35, 0.15, 1)

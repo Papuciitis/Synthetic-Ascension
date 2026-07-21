@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://0f4cntwas3au"]
+
+[ext_resource type="Script" uid="uid://bs7aq05o1c1eb" path="res://core/actors/player/player.gd" id="1_onrkg"]
+[ext_resource type="Script" uid="uid://cgv8hvxiul2xl" path="res://spells/SpellCaster.gd" id="2_i3pqv"]
+[ext_resource type="Resource" uid="uid://dxi4es7fy1mku" path="res://data/player_base_stats.tres" id="2_sweqy"]
+[ext_resource type="PackedScene" uid="uid://dtam212axdn3p" path="res://scenes/world/combat/MeleeSlash.tscn" id="3_l2lux"]
+[ext_resource type="PackedScene" uid="uid://dtw6n3qr5uqsw" path="res://scenes/world/combat/RangedBullet.tscn" id="4_c0drc"]
+[ext_resource type="PackedScene" uid="uid://c5qooubnyhkg4" path="res://scenes/world/combat/MagicImpact.tscn" id="5_4swy4"]
+[ext_resource type="Script" uid="uid://bnrem3r62r0pl" path="res://core/systems/augments/AugmentRunner.gd" id="5_l45yi"]
+[ext_resource type="PackedScene" uid="uid://cyr4jdqmripro" path="res://assets/vfx/world/sets/conduit/VFX_PulseRing.tscn" id="6_1wie2"]
+[ext_resource type="Script" uid="uid://dlhradau0prcf" path="res://data/sets/SetRunner.gd" id="6_5jwen"]
+[ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="7_n0b1a"]
+[ext_resource type="Texture2D" uid="uid://ds2841qmi7nyw" path="res://assets/textures/Player_Placeholder64x64.png" id="8_1wie2"]
+[ext_resource type="Script" uid="uid://r2jw91kyiwz0j" path="res://core/systems/items/ItemEffectRunner.gd" id="9_itemeff"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1wie2"]
+radius = 25.0
+height = 58.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4flbx"]
+size = Vector2(70, 70)
+
+[node name="Player" type="CharacterBody2D" unique_id=251512627 groups=["player"]]
+collision_layer = 4
+collision_mask = 1795
+script = ExtResource("1_onrkg")
+speed = 100.0
+base_stats = ExtResource("2_sweqy")
+melee_slash_scene = ExtResource("3_l2lux")
+ranged_bullet_scene = ExtResource("4_c0drc")
+magic_impact_scene = ExtResource("5_4swy4")
+vfx_pulse_ring_scene = ExtResource("6_1wie2")
+vfx_spokes_scene = ExtResource("7_n0b1a")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=411491721]
+shape = SubResource("CapsuleShape2D_1wie2")
+
+[node name="Visual" type="Node2D" parent="." unique_id=1325796712]
+
+[node name="Sprite2D" type="Sprite2D" parent="Visual" unique_id=421405262]
+texture = ExtResource("8_1wie2")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1298421160]
+root_node = NodePath("../..")
+
+[node name="AimPivot" type="Node2D" parent="." unique_id=1290953163]
+
+[node name="Weapon" type="Node2D" parent="AimPivot" unique_id=111050951]
+
+[node name="Muzzle" type="Marker2D" parent="AimPivot/Weapon" unique_id=2030607006]
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=243720658 groups=["player_hurtbox"]]
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=2034310854]
+shape = SubResource("RectangleShape2D_4flbx")
+
+[node name="SpellCaster" type="Node" parent="." unique_id=1897191064]
+script = ExtResource("2_i3pqv")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1271815724]
+position_smoothing_enabled = true
+position_smoothing_speed = 10.0
+
+[node name="Audio" type="Node" parent="." unique_id=1393674971]
+
+[node name="SetRunner" type="Node" parent="." unique_id=374169294]
+script = ExtResource("6_5jwen")
+
+[node name="ItemEffectRunner" type="Node2D" parent="." unique_id=874169295]
+script = ExtResource("9_itemeff")
+
+[node name="AugmentRunner" type="Node" parent="." unique_id=233346370]
+script = ExtResource("5_l45yi")
+metadata/_custom_type_script = "uid://bnrem3r62r0pl"

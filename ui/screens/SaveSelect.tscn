@@ -1,0 +1,178 @@
+[gd_scene format=3 uid="uid://bdtg6g3polfut"]
+
+[ext_resource type="Script" uid="uid://dke2jhvv0v712" path="res://ui/screens/SaveSelect.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://crvemvwsw7fa6" path="res://ui/components/SaveCard.tscn" id="2"]
+[ext_resource type="Script" uid="uid://d20bqkw442jvv" path="res://ui/components/TactileButton.gd" id="3_sp2uh"]
+
+[sub_resource type="Shader" id="ShaderVignette"]
+code = "shader_type canvas_item;
+
+uniform float vignette_strength = 0.30;
+uniform float noise_strength = 0.02;
+uniform float noise_scale = 260.0;
+
+float hash(vec2 p){
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+void fragment(){
+	vec2 uv = SCREEN_UV;
+	vec2 p = uv * 2.0 - 1.0;
+
+	float d = length(p);
+	float edge = smoothstep(0.45, 1.15, d);
+
+	float n = hash(uv * noise_scale);
+	float a = edge * vignette_strength + (n - 0.5) * noise_strength;
+	a = clamp(a, 0.0, 0.45);
+
+	COLOR = vec4(0.0, 0.0, 0.0, a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="MatVignette"]
+shader = SubResource("ShaderVignette")
+shader_parameter/vignette_strength = 0.3
+shader_parameter/noise_strength = 0.02
+shader_parameter/noise_scale = 260.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
+bg_color = Color(0, 0, 0, 0.3)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 8
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
+bg_color = Color(0, 0, 0, 0.24)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.18)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
+bg_color = Color(0, 0, 0, 0.34)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 9
+shadow_offset = Vector2(0, 6)
+
+[node name="SaveSelect" type="Control" unique_id=793148061]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="BG" type="ColorRect" parent="." unique_id=1956333127]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.13, 0.13, 0.13, 1)
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=955264414]
+material = SubResource("MatVignette")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1296068672]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Main" type="VBoxContainer" parent="Margin" unique_id=1972047605]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SpacerTop" type="Control" parent="Margin/Main" unique_id=1870065444]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Margin/Main" unique_id=1569731931]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Select Save"
+horizontal_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="Margin/Main" unique_id=81306024]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="GridContainer" type="GridContainer" parent="Margin/Main/CenterContainer" unique_id=756992438]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 32
+theme_override_constants/v_separation = 24
+columns = 3
+
+[node name="Card1" parent="Margin/Main/CenterContainer/GridContainer" unique_id=299775762 instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="Card2" parent="Margin/Main/CenterContainer/GridContainer" unique_id=1230237452 instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="Card3" parent="Margin/Main/CenterContainer/GridContainer" unique_id=1734992250 instance=ExtResource("2")]
+layout_mode = 2
+
+[node name="SpacerBottom" type="Control" parent="Margin/Main" unique_id=254912068]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BottomBar" type="HBoxContainer" parent="Margin/Main" unique_id=1881186996]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BottomSpacer" type="Control" parent="Margin/Main/BottomBar" unique_id=387830726]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Back" type="Button" parent="Margin/Main/BottomBar" unique_id=281247493]
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Back"
+script = ExtResource("3_sp2uh")

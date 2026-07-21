@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://ds7oeslt0llc7"]
+
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_k153h"]
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_twiqa"]
+
+[resource]
+script = ExtResource("1_k153h")
+item_pickup_scene = ExtResource("1_twiqa")
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+elite_ai_override = 7
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

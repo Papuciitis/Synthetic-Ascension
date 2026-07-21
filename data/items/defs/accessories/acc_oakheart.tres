@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://dtba5q4ejuvft"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" uid="uid://dionl7fa8bver" path="res://assets/textures/items/offhand/OffHand_Placeholder_OakheartShield.png" id="2_177al"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
+[ext_resource type="PackedScene" uid="uid://062wcrljmuhdc" path="res://effects/items/scenes/OakheartShieldEffect.tscn" id="4_eff"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+max_hp = 20.0
+armor = 40.0
+move_speed = -10.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+max_hp = 10.0
+armor = 15.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("3_itemdata")
+id = "acc_oakheart"
+display_name = "Oakheart (Shield)"
+icon = ExtResource("2_177al")
+description = "A living bulwark of old growth.
+• Reduces damage taken before armor.
+• Heavy: reduces Move Speed."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.1
+pct_max = 0.2
+equip_slot = 6
+effect_scenes = Array[PackedScene]([ExtResource("4_eff")])
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

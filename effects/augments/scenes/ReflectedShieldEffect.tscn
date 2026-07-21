@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://h7e03s3dkvis"]
+
+[ext_resource type="Script" uid="uid://diaefxtkpvryj" path="res://effects/augments/logic/ReflectShieldEffect.gd" id="1_rmi2x"]
+[ext_resource type="PackedScene" uid="uid://sgh4v4fggli4" path="res://effects/augments/scenes/ReflectedProjectile.tscn" id="2_jy8it"]
+[ext_resource type="PackedScene" uid="uid://br7e6fd41dohh" path="res://assets/vfx/world/augments/VFX_ReflectShieldWindow.tscn" id="3_c7top"]
+[ext_resource type="PackedScene" uid="uid://bovlwmy86k5e3" path="res://assets/vfx/world/augments/reflect/VFX_ParryWindow.tscn" id="4_r7tk4"]
+[ext_resource type="PackedScene" uid="uid://cghq7x06spa6i" path="res://assets/vfx/world/augments/reflect/VFX_ReflectPop.tscn" id="5_1skuy"]
+[ext_resource type="PackedScene" uid="uid://bptmaymwdw5ip" path="res://assets/vfx/world/augments/reflect/VFX_PerfectBurst.tscn" id="6_7fa3x"]
+
+[node name="ReflectedShieldEffect" type="Node2D" unique_id=633826683]
+script = ExtResource("1_rmi2x")
+reflected_projectile_scene = ExtResource("2_jy8it")
+vfx_window_scene = ExtResource("3_c7top")
+vfx_parry_flash_scene = ExtResource("4_r7tk4")
+vfx_reflect_flash_scene = ExtResource("5_1skuy")
+vfx_perfect_flash_scene = ExtResource("6_7fa3x")

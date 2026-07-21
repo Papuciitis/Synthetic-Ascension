@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://bk7tsom7eotye"]
+
+[ext_resource type="Script" uid="uid://dm0itpsshxwwv" path="res://ui/components/InventoryBar.gd" id="1"]
+[ext_resource type="PackedScene" path="res://ui/components/InventorySlotView.tscn" id="2"]
+
+[node name="InventoryBar" type="GridContainer"]
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+script = ExtResource("1")
+slot_scene = ExtResource("2")
+grid_columns = 2
+

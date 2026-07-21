@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bce8mbca3fn3g"]
+
+[ext_resource type="Script" uid="uid://b6g2d30ohu3wl" path="res://assets/vfx/world/sets/conduit/VFX_ArcLine.gd" id="1_rph32"]
+
+[node name="VFX_ArcLine" type="Line2D" unique_id=1267703319]
+width = 4.0
+default_color = Color(1.0588765e-05, 0.6907156, 0.948299, 1)
+script = ExtResource("1_rph32")

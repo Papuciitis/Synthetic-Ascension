@@ -1,0 +1,42 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/systems/vision/VisionRig.gd" id="1_rig"]
+[ext_resource type="Script" path="res://core/systems/vision/FogOfWar.gd" id="2_fog"]
+[ext_resource type="Shader" path="res://core/systems/vision/vignette.gdshader" id="3_vig"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+shader = ExtResource("3_vig")
+shader_parameter/strength = 0.38
+shader_parameter/inner_radius = 0.70
+shader_parameter/outer_radius = 1.05
+
+[node name="VisionRig" type="Node2D" groups=["vision_rig"]]
+script = ExtResource("1_rig")
+cell_size_px = 32
+indoor_rays = 0
+alpha_seen = 0.70
+alpha_unseen = 1.0
+indoor_vignette_strength = 0.22
+lightweight_vignette_only = true
+vignette_pulse_add = 0.16
+vignette_pulse_time = 0.18
+vignette_fade_time = 0.24
+
+[node name="FogLayer" type="CanvasLayer" parent="."]
+layer = 4
+follow_viewport_enabled = true
+follow_viewport_scale = 1.0
+
+[node name="FogOfWar" type="Node2D" parent="FogLayer"]
+script = ExtResource("2_fog")
+
+[node name="VignetteLayer" type="CanvasLayer" parent="."]
+layer = 5
+
+[node name="Vignette" type="ColorRect" parent="VignetteLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+material = SubResource("ShaderMaterial_1")
+color = Color(0, 0, 0, 1)

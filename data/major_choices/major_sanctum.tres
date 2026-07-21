@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModAttemptFloat.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_radius"]
+script = ExtResource("2")
+property = &"attempt_wardstone_radius_mul"
+multiply = 1.25
+clamp_min = 0.25
+clamp_max = 5.0
+
+[sub_resource type="Resource" id="eff_slow"]
+script = ExtResource("2")
+property = &"attempt_wardstone_slow_mul"
+multiply = 0.90
+clamp_min = 0.25
+clamp_max = 2.0
+
+[resource]
+script = ExtResource("1")
+id = &"major_sanctum"
+title = "Wardstone Sanctum"
+description = "Wardstones project a larger sanctuary.\n• +25% sanctuary radius\n• Stronger slow inside the field"
+category = &"utility"
+effects = Array[Resource]([SubResource("eff_radius"), SubResource("eff_slow")])

@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dtam212axdn3p"]
+
+[ext_resource type="Script" uid="uid://xobg74pwk2j3" path="res://scenes/world/combat/MeleeSlash.gd" id="1_xlnqk"]
+[ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="2_hclia"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_y2ogm"]
+radius = 18.0
+height = 60.06
+
+[node name="MeleeSlash" type="Area2D" unique_id=1209399929]
+collision_layer = 4
+collision_mask = 2
+script = ExtResource("1_xlnqk")
+vfx_hit_spokes_scene = ExtResource("2_hclia")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=946740036]
+position = Vector2(50, 0)
+shape = SubResource("CapsuleShape2D_y2ogm")
+
+[node name="Line2D" type="Line2D" parent="." unique_id=1381229665]
+width = 8.0

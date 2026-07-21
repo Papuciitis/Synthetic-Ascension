@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://062wcrljmuhdc"]
+
+[ext_resource type="Script" uid="uid://bqd784mukxql9" path="res://effects/items/logic/OakheartShieldEffect.gd" id="1_oak"]
+
+[node name="OakheartShieldEffect" type="Node2D" unique_id=101010102]
+script = ExtResource("1_oak")

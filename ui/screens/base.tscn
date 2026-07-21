@@ -1,0 +1,249 @@
+[gd_scene format=3 uid="uid://bhcjpqu3hn1rv"]
+
+[ext_resource type="Script" uid="uid://cx21og0dwgd73" path="res://ui/screens/base.gd" id="1"]
+[ext_resource type="Shader" uid="uid://c6py8vxnd0t5t" path="res://assets/textures/base.gdshader" id="4_3cng1"]
+[ext_resource type="PackedScene" uid="uid://pbty138ge2ub" path="res://ui/components/RaceCard.tscn" id="4_l3625"]
+[ext_resource type="PackedScene" uid="uid://dc8d7t4q6kqmw" path="res://ui/components/PlaystyleCard.tscn" id="5_rfi20"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tkin3"]
+shader = ExtResource("4_3cng1")
+shader_parameter/vignette_strength = 0.3
+shader_parameter/noise_strength = 0.02
+shader_parameter/noise_scale = 290.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBigPanel"]
+bg_color = Color(0, 0, 0, 0.22)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 12
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
+bg_color = Color(0, 0, 0, 0.3)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 8
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
+bg_color = Color(0, 0, 0, 0.24)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.18)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
+bg_color = Color(0, 0, 0, 0.34)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 9
+shadow_offset = Vector2(0, 6)
+
+[node name="Base" type="Control" unique_id=2024682814]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+race_card_scene = ExtResource("4_l3625")
+style_card_scene = ExtResource("5_rfi20")
+
+[node name="BG" type="ColorRect" parent="." unique_id=799380942]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.13, 0.13, 0.13, 1)
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=666096542]
+material = SubResource("ShaderMaterial_tkin3")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1296068672]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Main" type="VBoxContainer" parent="Margin" unique_id=2135286874]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="Headers" type="HBoxContainer" parent="Margin/Main" unique_id=1503245293]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="RacesHeader" type="Label" parent="Margin/Main/Headers" unique_id=1416733805]
+modulate = Color(1, 1, 1, 0.92)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Races"
+horizontal_alignment = 1
+
+[node name="PlaystyleHeader" type="Label" parent="Margin/Main/Headers" unique_id=1910003557]
+modulate = Color(1, 1, 1, 0.92)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Playstyle"
+horizontal_alignment = 1
+
+[node name="Content" type="HBoxContainer" parent="Margin/Main" unique_id=166706245]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="RacesPanel" type="PanelContainer" parent="Margin/Main/Content" unique_id=1821407930]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.2
+theme_override_styles/panel = SubResource("StyleBigPanel")
+
+[node name="RacesScroll" type="ScrollContainer" parent="Margin/Main/Content/RacesPanel" unique_id=1537754165]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="RacesGrid" type="GridContainer" parent="Margin/Main/Content/RacesPanel/RacesScroll" unique_id=893237973]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 2
+
+[node name="Sep" type="VSeparator" parent="Margin/Main/Content" unique_id=2057729996]
+modulate = Color(1, 1, 1, 0.08)
+custom_minimum_size = Vector2(2, 0)
+layout_mode = 2
+
+[node name="StylesPanel" type="PanelContainer" parent="Margin/Main/Content" unique_id=2125588803]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.8
+theme_override_styles/panel = SubResource("StyleBigPanel")
+
+[node name="StylesMargin" type="MarginContainer" parent="Margin/Main/Content/StylesPanel" unique_id=1877592664]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="StylesGrid" type="HBoxContainer" parent="Margin/Main/Content/StylesPanel/StylesMargin" unique_id=2069050696]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="NamePanel" type="PanelContainer" parent="Margin/Main"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBigPanel")
+
+[node name="Margin" type="MarginContainer" parent="Margin/Main/NamePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Row" type="HBoxContainer" parent="Margin/Main/NamePanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="Margin/Main/NamePanel/Margin/Row"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Mortal name"
+vertical_alignment = 1
+
+[node name="MortalName" type="LineEdit" parent="Margin/Main/NamePanel/Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+placeholder_text = "Name used by the institution"
+max_length = 32
+
+[node name="BottomBar" type="HBoxContainer" parent="Margin/Main" unique_id=1881186996]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="BackToSaves" type="Button" parent="Margin/Main/BottomBar" unique_id=1000895259]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Back to Saves"
+
+[node name="Spacer" type="Control" parent="Margin/Main/BottomBar" unique_id=387830726]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StartRun" type="Button" parent="Margin/Main/BottomBar" unique_id=1805702437]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Start Run"

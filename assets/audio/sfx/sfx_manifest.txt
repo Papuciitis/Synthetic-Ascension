@@ -1,0 +1,30 @@
+# Syn'Tek SFX manifest (starter set)
+# Format: id=relative/path|vol=-10|pitch=0.04|loop=1|bus=UI
+
+# UI
+ui_hover=ui/ui_hover.wav|vol=-10|pitch=0.03|bus=UI
+ui_click=ui/ui_click.wav|vol=-8|pitch=0.02|bus=UI
+ui_back=ui/ui_back.ogg|vol=-10|pitch=0.02|bus=UI
+ui_error=ui/ui_error.wav|vol=-8|pitch=0.00|bus=UI
+
+# Player / Combat
+player_melee_swing=player/melee_swing.ogg|vol=-5|pitch=0.05|bus=SFX
+player_melee_hit=player/melee_hit.wav|vol=-4|pitch=0.04|bus=SFX
+player_ranged_shot=player/ranged_shot.wav|vol=-5|pitch=0.03|bus=SFX
+player_magic_cast=player/magic_cast.ogg|vol=-6|pitch=0.04|bus=SFX
+
+# Enemies / Boss
+enemy_hurt=enemies/enemy_hurt.wav|vol=-7|pitch=0.06|bus=SFX
+enemy_death=enemies/enemy_death.ogg|vol=-5|pitch=0.05|bus=SFX
+boss_intro=boss/boss_intro.ogg|vol=-6|pitch=0.00|bus=SFX
+
+# World objectives
+wardstone_loop=world/wardstone_loop.ogg|vol=-18|pitch=0.00|loop=1|bus=SFX
+wardstone_complete=world/wardstone_complete.ogg|vol=-8|pitch=0.00|bus=SFX
+exit_channel_loop=world/exit_channel_loop.ogg|vol=-20|pitch=0.00|loop=1|bus=SFX
+exit_unlock=world/exit_unlock.ogg|vol=-9|pitch=0.00|bus=SFX
+exit_complete=world/exit_complete.ogg|vol=-7|pitch=0.00|bus=SFX
+
+# Items
+pickup=items/pickup.wav|vol=-10|pitch=0.05|bus=SFX
+drop=items/drop.ogg|vol=-10|pitch=0.04|bus=SFX

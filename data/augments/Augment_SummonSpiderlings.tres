@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://b7ql4o2rc2jnt"]
+
+[ext_resource type="PackedScene" uid="uid://cb20ktmrewv00" path="res://effects/augments/scenes/SpiderlingSummonEffect.tscn" id="1_0xx37"]
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_g8y7y"]
+[ext_resource type="Texture2D" uid="uid://b83l6uxp1enqv" path="res://assets/textures/Augment_Placeholder_Summon_Spiderlings.png" id="2_h2oa5"]
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="3_1prgj"]
+
+[sub_resource type="Resource" id="Resource_6kvc0"]
+script = ExtResource("3_1prgj")
+power = 0.05
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("1_g8y7y")
+id = &"augment_summon_spiderlings"
+display_name = "Summon Spiderlings"
+description = "Active: summon spiderlings at your cursor. They hunt and can be detonated for an explosion."
+mods_scale_per_level = 0.25
+card_blurb = "Active summon. Spiderlings hunt enemies — detonate them for an AoE pop."
+details = """Cast Range: 320px
+Cooldown: 1.25s
+Lifetime: 12s
+Bite: + (6× Power)
+Detonate: 1d4 + (8× Power), 52px radius"""
+icon = ExtResource("2_h2oa5")
+mods = SubResource("Resource_6kvc0")
+effect_scenes = Array[PackedScene]([ExtResource("1_0xx37")])
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

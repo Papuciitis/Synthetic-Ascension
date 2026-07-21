@@ -1,0 +1,108 @@
+[gd_resource type="Resource" script_class="EnemySpawnTable" format=3 uid="uid://bwqeta1wb524n"]
+
+[ext_resource type="Script" uid="uid://c72t5o5jqij7r" path="res://core/systems/spawner/EnemySpawnEntry.gd" id="1_uq6bm"]
+[ext_resource type="PackedScene" uid="uid://buvqvjw6k4oc2" path="res://scenes/world/enemies/EnemyGrunt.tscn" id="2_80hnt"]
+[ext_resource type="Script" uid="uid://b36vdt2238b6j" path="res://core/systems/spawner/EnemySpawnTable.gd" id="2_fppje"]
+[ext_resource type="PackedScene" uid="uid://tfp57neu5o2" path="res://scenes/world/enemies/EnemyRunner.tscn" id="3_vg2pm"]
+[ext_resource type="PackedScene" uid="uid://bcci5cebextf1" path="res://scenes/world/enemies/EnemyOrbiter.tscn" id="4_h4ahp"]
+[ext_resource type="PackedScene" uid="uid://b2h0h48hdltig" path="res://scenes/world/enemies/EnemySpitter.tscn" id="4_m7f03"]
+[ext_resource type="PackedScene" uid="uid://cg4x7hv38df6i" path="res://scenes/world/enemies/EnemyCharger.tscn" id="6_4vxks"]
+[ext_resource type="PackedScene" uid="uid://bmqumxnpt61gx" path="res://scenes/world/enemies/EnemyLeech.tscn" id="6_y2a8g"]
+[ext_resource type="PackedScene" uid="uid://deue2yy3k3sp1" path="res://scenes/world/enemies/EnemyBomber.tscn" id="7_5daiq"]
+[ext_resource type="PackedScene" uid="uid://dumxds1qgmu0k" path="res://scenes/world/enemies/EnemyHerald.tscn" id="9_h4ahp"]
+[ext_resource type="PackedScene" uid="uid://c716a0ipbx175" path="res://scenes/world/enemies/EnemySummoner.tscn" id="10_y2a8g"]
+[ext_resource type="PackedScene" uid="uid://cdjvodsy43mm" path="res://scenes/world/enemies/EnemySniper.tscn" id="11_4vxks"]
+
+[sub_resource type="Resource" id="Resource_4vxks"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("2_80hnt")
+weight = 6.0
+count_max = 2
+max_alive = 80
+elite_chance = 0.005
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_5daiq"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("3_vg2pm")
+weight = 2.6
+max_alive = 40
+elite_chance = 0.006
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_yl2hb"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("4_h4ahp")
+weight = 2.0
+start_time = 30.0
+max_alive = 30
+elite_chance = 0.01
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_8h2pl"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("4_m7f03")
+weight = 1.8
+start_time = 60.0
+max_alive = 28
+elite_chance = 0.012
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_p0itl"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("6_4vxks")
+weight = 1.2
+start_time = 90.0
+max_alive = 18
+elite_chance = 0.018
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_qva4u"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("7_5daiq")
+weight = 1.1
+start_time = 120.0
+max_alive = 16
+elite_chance = 0.02
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_cfccn"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("6_y2a8g")
+weight = 0.7
+start_time = 150.0
+max_alive = 8
+elite_chance = 0.03
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_y2a8g"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("9_h4ahp")
+weight = 0.55
+start_time = 210.0
+max_alive = 6
+elite_chance = 0.035
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_fsfoh"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("10_y2a8g")
+weight = 0.6
+start_time = 180.0
+max_alive = 7
+elite_chance = 0.033
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_ef17o"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("11_4vxks")
+weight = 0.28
+start_time = 90.0
+max_alive = 2
+elite_chance = 0.2
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[resource]
+script = ExtResource("2_fppje")
+entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o")])
+metadata/_custom_type_script = "uid://b36vdt2238b6j"

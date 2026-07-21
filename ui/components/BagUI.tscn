@@ -1,0 +1,119 @@
+[gd_scene format=3 uid="uid://cv7swolwxbopj"]
+
+[ext_resource type="Script" uid="uid://b8oxhult6gabw" path="res://ui/components/BagUI.gd" id="1"]
+[ext_resource type="Script" uid="uid://bdqc6y11gjj1l" path="res://assets/vfx/ui/bag/BagMergeVfx.gd" id="2_kv5dq"]
+[ext_resource type="PackedScene" uid="uid://cnkhp58lf8k5q" path="res://ui/bag/BagSlot.tscn" id="2_taswi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBagRoot"]
+bg_color = Color(0, 0, 0, 0.35)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleHeaderPill"]
+bg_color = Color(0, 0, 0, 0.4)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleFullPanel"]
+bg_color = Color(0, 0, 0, 0.22)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="BagUI" type="PanelContainer" unique_id=1382938494]
+custom_minimum_size = Vector2(210, 78)
+theme_override_styles/panel = SubResource("StyleBagRoot")
+script = ExtResource("1")
+slot_scene = ExtResource("2_taswi")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=1055031276]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=1737485773]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HeaderPill" type="PanelContainer" parent="Margin/VBox" unique_id=1777912100]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleHeaderPill")
+
+[node name="HeaderMargin" type="MarginContainer" parent="Margin/VBox/HeaderPill" unique_id=1909200835]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="Header" type="HBoxContainer" parent="Margin/VBox/HeaderPill/HeaderMargin" unique_id=485849739]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Margin/VBox/HeaderPill/HeaderMargin/Header" unique_id=1177036108]
+modulate = Color(1, 1, 1, 0.85)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = "Bag"
+
+[node name="Count" type="Label" parent="Margin/VBox/HeaderPill/HeaderMargin/Header" unique_id=1702362569]
+modulate = Color(1, 1, 1, 0.85)
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_font_sizes/font_size = 12
+text = "(0/16)"
+horizontal_alignment = 2
+
+[node name="QuickBar" type="HBoxContainer" parent="Margin/VBox" unique_id=1712708510]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="FullPanel" type="PanelContainer" parent="Margin/VBox" unique_id=961047358]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleFullPanel")
+
+[node name="FullMargin" type="MarginContainer" parent="Margin/VBox/FullPanel" unique_id=668335807]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="Grid" type="GridContainer" parent="Margin/VBox/FullPanel/FullMargin" unique_id=1316027392]
+layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+
+[node name="MergeVfx" type="Control" parent="." unique_id=392351342]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_kv5dq")
+

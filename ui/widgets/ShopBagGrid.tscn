@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/widgets/ShopBagGrid.gd" id="1"]
+
+[node name="ShopBagGrid" type="GridContainer"]
+script = ExtResource("1")
+columns = 4

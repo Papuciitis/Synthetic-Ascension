@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://chmtdhdhfuwbf"]
+
+[ext_resource type="Script" uid="uid://cwlob2stuefb5" path="res://effects/augments/logic/PoisonSpiderling.gd" id="1_r37en"]
+[ext_resource type="Texture2D" uid="uid://c5e16vnr780yc" path="res://assets/textures/Spiderling10x6.png" id="2_2n6w5"]
+[ext_resource type="PackedScene" uid="uid://m5oox13slx7t" path="res://assets/vfx/world/augments/VFX_SpiderBite.tscn" id="2_8v8k5"]
+[ext_resource type="PackedScene" uid="uid://da6ae5ybe0edi" path="res://assets/vfx/world/augments/VFX_SpiderExplode.tscn" id="3_0omsx"]
+[ext_resource type="Script" uid="uid://d2dun60x1gx81" path="res://assets/vfx/world/augments/VFX_SpiderlingVisual.gd" id="4_0omsx"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8v8k5"]
+radius = 6.0
+
+[node name="PoisonSpiderling" type="CharacterBody2D" unique_id=243628558]
+script = ExtResource("1_r37en")
+vfx_bite_scene = ExtResource("2_8v8k5")
+vfx_explode_scene = ExtResource("3_0omsx")
+
+[node name="SpiderVisual" type="Node2D" parent="." unique_id=1069342815]
+script = ExtResource("4_0omsx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1288912419]
+shape = SubResource("CircleShape2D_8v8k5")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=991058087]
+texture = ExtResource("2_2n6w5")

@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://dtfmbyoyudgpt"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_f8lp2"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_hkuc3"]
+
+[resource]
+script = ExtResource("1_hkuc3")
+id = &"enemy_leech"
+display_name = "Leech"
+ai = 8
+max_hp = 18.0
+speed = 95.0
+follower_reward_min = 3
+follower_reward_max = 5
+item_pickup_scene = ExtResource("1_f8lp2")
+drop_chance = 0.24
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_min = 1
+drop_rarity_max = 2
+elite_speed_mult = 1.1
+elite_ai_override = 7
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

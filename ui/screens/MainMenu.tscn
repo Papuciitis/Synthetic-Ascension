@@ -1,0 +1,390 @@
+[gd_scene format=3 uid="uid://c446qid4khmif"]
+
+[ext_resource type="Script" uid="uid://cn2y6dmghc5yc" path="res://ui/screens/MainMenu.gd" id="1_b00nv"]
+[ext_resource type="Texture2D" uid="uid://1o25sxyxe5k1" path="res://assets/textures/covers/main_menu_backdrop.jpg" id="2_backdrop"]
+[ext_resource type="Script" uid="uid://d20bqkw442jvv" path="res://ui/components/TactileButton.gd" id="3_tactile"]
+
+[sub_resource type="Shader" id="ShaderVignette"]
+code = "shader_type canvas_item;
+
+uniform float vignette_strength = 0.35;
+uniform float noise_strength = 0.015;
+uniform float noise_scale = 260.0;
+
+float hash(vec2 p){
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
+
+void fragment(){
+	vec2 uv = SCREEN_UV;
+	vec2 p = uv * 2.0 - 1.0;
+
+	float d = length(p);
+	float edge = smoothstep(0.40, 1.12, d);
+
+	float n = hash(uv * noise_scale);
+	float a = edge * vignette_strength + (n - 0.5) * noise_strength;
+	a = clamp(a, 0.0, 0.50);
+
+	COLOR = vec4(0.0, 0.0, 0.0, a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="MatVignette"]
+shader = SubResource("ShaderVignette")
+shader_parameter/vignette_strength = 0.35
+shader_parameter/noise_strength = 0.015
+shader_parameter/noise_scale = 260.0
+
+[sub_resource type="StyleBoxFlat" id="StyleMenuPanel"]
+bg_color = Color(0, 0, 0, 0.42)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 14
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
+bg_color = Color(0, 0, 0, 0.3)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.2)
+shadow_size = 8
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
+bg_color = Color(0, 0, 0, 0.26)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.16)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
+bg_color = Color(0, 0, 0, 0.34)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.24)
+shadow_size = 10
+shadow_offset = Vector2(0, 7)
+
+[node name="MainMenu" type="Control" unique_id=1922618237]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_b00nv")
+
+[node name="Backdrop" type="TextureRect" parent="." unique_id=1544726732]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+texture = ExtResource("2_backdrop")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Dim" type="ColorRect" parent="." unique_id=1444048063]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.55)
+
+[node name="WarmTint" type="ColorRect" parent="." unique_id=1547170075]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+color = Color(0.23, 0.11, 0.05, 0.16)
+
+[node name="Vignette" type="ColorRect" parent="." unique_id=478561464]
+material = SubResource("MatVignette")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Center" type="CenterContainer" parent="." unique_id=682417582]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 373.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center" unique_id=276883101]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleMenuPanel")
+
+[node name="Padding" type="MarginContainer" parent="Center/Panel" unique_id=1840145881]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Padding" unique_id=722818052]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Title" type="Label" parent="Center/Panel/Padding/VBox" unique_id=1172276918]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "MAIN MENU"
+horizontal_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="Center/Panel/Padding/VBox" unique_id=1125335662]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 0.55, 0.2, 0.8)
+
+[node name="Continue" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1801875612]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Continue"
+script = ExtResource("3_tactile")
+
+[node name="Saves" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1172740519]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Saves / New Run"
+script = ExtResource("3_tactile")
+
+[node name="Settings" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1988272995]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Settings"
+script = ExtResource("3_tactile")
+
+[node name="Quit" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1795037295]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Quit"
+script = ExtResource("3_tactile")
+
+[node name="DevMode" type="CheckBox" parent="Center/Panel/Padding/VBox" unique_id=1642827774]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Developer Mode"
+
+[node name="DevPanel" type="PanelContainer" parent="Center/Panel/Padding/VBox" unique_id=1563040330]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBtnNormal")
+
+[node name="Pad" type="ScrollContainer" parent="Center/Panel/Padding/VBox/DevPanel" unique_id=322895718]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad" unique_id=990001001]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin" unique_id=7583593]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DevTitle" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1517633824]
+layout_mode = 2
+text = "DEV START"
+horizontal_alignment = 1
+
+[node name="RowSegment" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=387149319]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSegment" unique_id=1916050125]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Segment"
+
+[node name="Segment" type="SpinBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSegment" unique_id=1014279691]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 10.0
+value = 1.0
+
+[node name="RowRace" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=649276689]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRace" unique_id=2044081016]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Race"
+
+[node name="Race" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRace" unique_id=1973083386]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="RowStyle" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=396636368]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowStyle" unique_id=1021586321]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Style"
+
+[node name="Style" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowStyle" unique_id=1485761552]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="RowWeapon" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1303760455]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowWeapon" unique_id=1301681550]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Loadout"
+
+[node name="Weapon" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowWeapon" unique_id=1852371406]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="RowRarity" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1688457433]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRarity" unique_id=634518706]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Loadout Rarity"
+
+[node name="Rarity" type="SpinBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRarity" unique_id=1721071650]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+max_value = 10.0
+value = 4.0
+
+[node name="RowSeed" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=2123758091]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSeed" unique_id=1245017141]
+custom_minimum_size = Vector2(90, 0)
+layout_mode = 2
+text = "Seed"
+
+[node name="Seed" type="LineEdit" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSeed" unique_id=1276304499]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+placeholder_text = "optional (int)"
+
+[node name="ForceAug" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1487429838]
+layout_mode = 2
+text = "Force Augment Pick Pending"
+
+[node name="ForceMajor" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1134520884]
+layout_mode = 2
+text = "Force Major Choice Pending"
+
+[node name="ForceEnemyIntros" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+layout_mode = 2
+text = "Force Enemy Introductions This Run"
+
+[node name="ProjectileStress" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+layout_mode = 2
+text = "Projectile Stress Test + Counters"
+
+[node name="ResetEnemyIntros" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(300, 34)
+layout_mode = 2
+focus_mode = 0
+text = "Reset Saved Enemy Introductions"
+
+[node name="GrantAugments" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1697471345]
+custom_minimum_size = Vector2(300, 38)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 14
+text = "Grant Test Augments (4)"
+
+[node name="StartDev" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1169493901]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Start Dev Run"
+script = ExtResource("3_tactile")
+
+[node name="StartDevHub" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1863550326]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Start in Hub (Dev)"
+script = ExtResource("3_tactile")

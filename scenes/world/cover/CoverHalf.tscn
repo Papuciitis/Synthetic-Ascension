@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://c17i3l4c5xsad"]
+
+[ext_resource type="Script" path="res://scenes/world/cover/CoverHalf.gd" id="1_half"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 16.0
+
+[node name="CoverHalf" type="StaticBody2D" unique_id=410514347]
+collision_layer = 1025
+script = ExtResource("1_half")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=586061263]
+shape = SubResource("CircleShape2D_1")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=342123661]
+texture_filter = 2
+texture_repeat = 2
+scale = Vector2(0.0625, 0.0625)
+
+[node name="Shadow" type="Sprite2D" parent="."]
+texture_filter = 2
+texture_repeat = 2
+modulate = Color(0, 0, 0, 0.50)
+position = Vector2(3, 4)
+z_index = -1
+scale = Vector2(0.0625, 0.0625)

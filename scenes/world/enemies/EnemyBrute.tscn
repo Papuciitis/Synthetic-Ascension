@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://m0tu8dvcdpuc"]
+
+[ext_resource type="PackedScene" uid="uid://cnbmqstd8vjlh" path="res://core/actors/enemy/enemy.tscn" id="1_82tj6"]
+[ext_resource type="Resource" uid="uid://daiolf3726iwn" path="res://core/actors/enemy/EnemySpec_Brute.tres" id="2_tqfph"]
+[ext_resource type="Texture2D" uid="uid://c1u3f0rtqskmc" path="res://assets/textures/Enemy_Brute44x44.png" id="3_cc88e"]
+
+[node name="Enemy" unique_id=947687576 instance=ExtResource("1_82tj6")]
+spec = ExtResource("2_tqfph")
+drop_pool_prefixes = ["conduit_","acc_","ring_"]
+drop_fallback_to_all = false
+drop_amount_min = 1
+drop_amount_max = 1
+drop_instance_roll = false
+drop_rarity_min = 0
+drop_rarity_max = 0
+drop_force_polarity = 0
+pickup_delay = 0.25
+drop_spawn_radius = 18.0
+knockback_decay = 2200.0
+debug_drops = true
+
+[node name="Sprite2D" parent="." index="0" unique_id=1886877098]
+texture = ExtResource("3_cc88e")

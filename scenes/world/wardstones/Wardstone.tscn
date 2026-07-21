@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://wardstone1"]
+
+[ext_resource type="Script" path="res://core/systems/world/Wardstone.gd" id="1_wardstone_script"]
+[ext_resource type="Texture2D" path="res://assets/world/landmarks/landmark_obelisk_01.png" id="2_obelisk"]
+[ext_resource type="Texture2D" path="res://assets/world/decals/decal_sigil_01.png" id="3_sigil"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.tscn" id="4_idle"]
+
+[sub_resource type="CanvasItemMaterial" id="mat_add"]
+blend_mode = 1
+
+[sub_resource type="CircleShape2D" id="1_cap_shape"]
+radius = 56.0
+
+[sub_resource type="CircleShape2D" id="2_field_shape"]
+radius = 220.0
+
+[node name="Wardstone" type="Node2D"]
+script = ExtResource("1_wardstone_script")
+
+[node name="Sigil" type="Sprite2D" parent="."]
+texture = ExtResource("3_sigil")
+texture_filter = 2
+material = SubResource("mat_add")
+scale = Vector2(0.18, 0.18)
+modulate = Color(1, 1, 1, 0.14)
+z_index = -30
+
+[node name="IdleAura" parent="." instance=ExtResource("4_idle")]
+
+[node name="Obelisk" type="Sprite2D" parent="."]
+texture = ExtResource("2_obelisk")
+texture_filter = 2
+scale = Vector2(0.12, 0.12)
+z_index = 5
+
+[node name="Vfx" type="Node2D" parent="."]
+z_index = 200
+
+[node name="CaptureZone" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CaptureZone"]
+shape = SubResource("1_cap_shape")
+
+[node name="StabilityField" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitoring = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StabilityField"]
+shape = SubResource("2_field_shape")

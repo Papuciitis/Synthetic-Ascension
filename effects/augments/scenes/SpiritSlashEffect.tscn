@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bji21xv3cru1f"]
+
+[ext_resource type="Script" uid="uid://cviy5248jitvu" path="res://effects/augments/logic/SpiritSlashEffect.gd" id="1_vp3p7"]
+[ext_resource type="PackedScene" uid="uid://fg7wkhg2iwub" path="res://assets/vfx/world/augments/VFX_SpiritSlash.tscn" id="2_idyr2"]
+
+[node name="SpiritSlashEffect" type="Node2D" unique_id=513199195]
+script = ExtResource("1_vp3p7")
+vfx_scene = ExtResource("2_idyr2")

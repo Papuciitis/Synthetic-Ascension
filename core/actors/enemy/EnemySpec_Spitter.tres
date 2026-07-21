@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://yhfncpai6iix"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pvv27"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_xjtf2"]
+[ext_resource type="PackedScene" uid="uid://vs48l4wx2ns3" path="res://core/combat/projectile/EnemyProjectile.tscn" id="2_46b0y"]
+
+[resource]
+script = ExtResource("1_xjtf2")
+id = &"enemy_spitter"
+display_name = "Spitter"
+ai = 2
+max_hp = 16.0
+speed = 70.0
+follower_reward_min = 2
+follower_reward_max = 3
+preferred_range = 260.0
+shoot_every = 1.4
+projectile_scene = ExtResource("2_46b0y")
+item_pickup_scene = ExtResource("1_pvv27")
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_max = 1
+elite_ai_override = 7
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

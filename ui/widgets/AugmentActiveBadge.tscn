@@ -1,0 +1,54 @@
+[gd_scene format=3 uid="uid://c1uq657n55hq7"]
+
+[ext_resource type="Script" path="res://ui/widgets/AugmentActiveBadge.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleFrame"]
+bg_color = Color(0, 0, 0, 0.33)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1.0)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 6
+shadow_offset = Vector2(0, 4)
+
+[node name="AugmentActiveBadge" type="Control"]
+custom_minimum_size = Vector2(30, 30)
+mouse_filter = 2
+script = ExtResource("1")
+
+[node name="Frame" type="PanelContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleFrame")
+
+[node name="Root" type="Control" parent="Frame"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Cooldown" type="TextureProgressBar" parent="Frame/Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+min_value = 0.0
+max_value = 1.0
+value = 0.0
+fill_mode = 4
+show_percentage = false
+tint_progress = Color(0, 0, 0, 0.82)
+
+[node name="KeyLabel" type="Label" parent="Frame/Root"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 12
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1

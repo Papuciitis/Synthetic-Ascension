@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_GrantItemRoll.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_item"]
+script = ExtResource("2")
+item_id = "ring_crusher"
+rarity = 5
+polarity = 1
+roll_pct = 0.5
+prefer_equip = true
+
+[resource]
+script = ExtResource("1")
+id = &"major_relic_crusher_ring"
+title = "Prototype Relic"
+description = "A sealed relic is authorized for field use.\n• Grants a high‑rarity Crusher Ring"
+category = &"utility"
+effects = Array[Resource]([SubResource("eff_item")])

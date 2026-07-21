@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://d0bcmh3m4ks2r"]
+
+[ext_resource type="Script" uid="uid://c6nti1m1u3so0" path="res://scenes/world/cover/CoverWall.gd" id="1_wall"]
+
+[node name="CoverFull" type="StaticBody2D" unique_id=410514347]
+collision_layer = 257
+script = ExtResource("1_wall")
+
+[node name="CollisionN" type="CollisionShape2D" parent="." unique_id=586061263]
+disabled = true
+position = Vector2(0, -16)
+
+[node name="CollisionE" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(16, 0)
+
+[node name="CollisionS" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(0, 16)
+
+[node name="CollisionW" type="CollisionShape2D" parent="."]
+disabled = true
+position = Vector2(-16, 0)
+
+[node name="CollisionPost" type="CollisionShape2D" parent="."]
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=342123661]
+texture_filter = 2
+texture_repeat = 2
+scale = Vector2(0.0625, 0.0625)
+
+[node name="Shadow" type="Sprite2D" parent="." unique_id=1409981558]
+modulate = Color(0, 0, 0, 0.50)
+z_index = -1
+texture_filter = 2
+texture_repeat = 2
+position = Vector2(3, 4)
+scale = Vector2(0.0625, 0.0625)

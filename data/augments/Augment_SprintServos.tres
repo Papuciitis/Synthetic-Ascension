@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://c4wtvcxjpv5dq"]
+
+[ext_resource type="Texture2D" uid="uid://s8vrmjb3w7u7" path="res://assets/textures/Augment_Placeholder_Sprint_Servos.png" id="1_7n3fs"]
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_bagdw"]
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_dvth3"]
+
+[sub_resource type="Resource" id="Resource_7n3fs"]
+script = ExtResource("1_dvth3")
+move_speed = 100.0
+haste = 0.12
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("1_bagdw")
+id = &"augment_sprint_servos"
+display_name = "Sprint Servos"
+description = """Servo joints tuned for frantic escapes."""
+mods_scale_per_level = 0.2
+card_blurb = "Sprint speed up. Kite harder, reposition faster."
+details = """+100 Move Speed
++12% Haste"""
+icon = ExtResource("1_7n3fs")
+mods = SubResource("Resource_7n3fs")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

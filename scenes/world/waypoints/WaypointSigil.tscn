@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scenes/world/waypoints/WaypointSigil.gd" id="1_wp"]
+[ext_resource type="Texture2D" path="res://assets/world/decals/decal_sigil_01.png" id="2_sigil"]
+
+[node name="WaypointSigil" type="Node2D"]
+script = ExtResource("1_wp")
+
+[node name="Sigil" type="Sprite2D" parent="."]
+texture = ExtResource("2_sigil")
+texture_filter = 2
+modulate = Color(1, 1, 1, 0.16)
+scale = Vector2(0.16, 0.16)

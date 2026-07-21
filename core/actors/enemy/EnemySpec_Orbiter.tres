@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://bjtwbuctehpkt"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_6uy0w"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_iikny"]
+[ext_resource type="Texture2D" uid="uid://bqonrxxtelk3i" path="res://assets/textures/Enemy_Orbiter44x44.png" id="3_q8jy1"]
+
+[resource]
+script = ExtResource("1_iikny")
+id = &"enemy_orbiter"
+display_name = "Orbiter"
+ai = 1
+max_hp = 14.0
+speed = 82.0
+follower_reward_min = 2
+follower_reward_max = 3
+orbit_radius = 190.0
+orbit_turn_speed = 2.6
+item_pickup_scene = ExtResource("1_6uy0w")
+drop_chance = 0.16
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_max = 1
+elite_hp_mult = 1.5
+elite_speed_mult = 1.12
+sprite_texture = ExtResource("3_q8jy1")
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

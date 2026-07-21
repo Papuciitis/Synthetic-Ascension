@@ -1,0 +1,1460 @@
+extends Node
+
+# ============================================================
+# Paths (centralized)
+# ============================================================
+const DEBUG_GLOBAL := true
+
+# -- Data roots (must be plain constants; no function calls inside const)
+# -- Root folders
+const DATA_DIR := "res://data"
+const UI_DIR := "res://ui"
+const SCENES_DIR := "res://scenes"
+const SPELLS_DIR := "res://spells/data"
+
+# -- Data folders
+const RACES_DIR := DATA_DIR + "/races"
+const STYLES_DIR := DATA_DIR + "/styles"
+const ITEMS_DIR := DATA_DIR + "/items/defs"
+const SETS_DIR := DATA_DIR + "/sets"
+const AUGMENTS_DIR := DATA_DIR + "/augments"
+const MAJOR_CHOICES_DIR := DATA_DIR + "/major_choices"
+const WEAPONS_DIR := DATA_DIR + "/weapons"
+
+# -- Scenes
+const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
+const PATH_SAVE_SELECT := UI_DIR + "/screens/SaveSelect.tscn"
+const PATH_BASE := UI_DIR + "/screens/base.tscn"
+const PATH_GAME := SCENES_DIR + "/game.tscn"
+const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
+const SEGMENT1_LAYOUT_VERSION: int = 2
+
+const VFX_DIR := "res://assets/vfx/world/augments"
+const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
+
+# ============================================================
+# Signals
+# ============================================================
+
+signal followers_changed(value: int)
+signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
+signal permanent_augments_changed(ids: Array[StringName])
+
+
+# ============================================================
+# Run selections (chosen at start of run)
+# ============================================================
+
+# Level / segment helpers
+var exit_gate_pos: Vector2 = Vector2.INF
+
+# Level/tutorial one-shots (reset each run)
+var tip_shown_wardstone_attune: bool = false
+var tip_shown_resonance: bool = false
+var tip_shown_gate_hold: bool = false
+
+# More tutorial beats (Level 1)
+var tip_shown_intro_move: bool = false
+var tip_shown_resonance_goal: bool = false
+var tip_shown_wardstone_anchor: bool = false
+var tip_shown_gate_unsealed: bool = false
+
+
+var selected_race_id: String = "human"
+var selected_style_id: String = "ranged"
+var selected_weapon_id: String = "ranged"
+var mortal_name: String = "The Arcanist"
+
+# 3 spell slots (string IDs)
+var equipped_spell_ids: Array = ["spell_magic_missile", null, null]
+
+
+# ============================================================
+# Databases (loaded on startup)
+# ============================================================
+
+var race_db: Dictionary = {}   # String -> RaceData
+var style_db: Dictionary = {}  # String -> StyleData
+var weapon_db: Dictionary = {} # String -> WeaponData (or Resource)
+var spell_db: Dictionary = {}  # String -> SpellData (or Resource)
+var item_db: Dictionary = {}   # String -> ItemData
+var set_db: Dictionary = {}    # StringName -> SetData
+
+var augment_db: Dictionary = {}                   # StringName -> AugmentData
+var permanent_augment_ids: Array[StringName] = [] # exactly 3 slots
+var owned_augment_ids: Array[StringName] = []       # owned augment library (meta, persists forever)
+var augment_slot_locks: Array[bool] = [false, false, false]       # lock equipped slots in hub
+var meta_stash: StashInventory = null
+var discovered_enemy_ids: Array[StringName] = []
+var debug_force_enemy_introductions: bool = false
+var debug_projectile_stress_test: bool = false
+
+# Hub-only sale marks (not persisted; just for Hub UX)
+var hub_sell_marks_bag: Dictionary = {}   # int -> bool
+var hub_sell_marks_stash: Dictionary = {} # int -> bool
+
+
+
+# Major Choices (Segment 5 big node)
+var major_choice_db: MajorChoiceDB = MajorChoiceDB.new()
+
+
+# ============================================================
+# Run systems (reset each run)
+# ============================================================
+
+var run_inventory: Inventory = null      # 6-slot equipped
+var run_bag: BagInventory = null         
+
+# ============================================================
+# Campaign attempt state (Continue snapshot)
+# ============================================================
+
+var attempt_active: bool = false
+var attempt_segment: int = 1
+var attempt_deaths_this_segment: int = 0
+var attempt_checkpoint_pos: Vector2 = Vector2.INF
+var attempt_world_seed: int = 0
+var attempt_segment1_layout_version: int = SEGMENT1_LAYOUT_VERSION
+var attempt_segment1_resonance: float = 0.0
+var attempt_segment1_milestones: Array[StringName] = []
+
+
+var attempt_vendor_segment: int = 0
+var attempt_vendor_refreshes: int = 0
+var attempt_vendor_seed: int = 0
+var attempt_vendor_bag: BagInventory = null
+
+var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
+var _claimed_loot_set: Dictionary = {} # int -> true
+
+var pending_augment_pick: bool = false
+var pending_big_choice: bool = false
+var attempt_big_choice_source_segment: int = 0 # Segment index that granted the pending big choice (usually 5)
+
+
+# Attempt modifiers (reset on die-die)
+var attempt_major_choice_id: StringName = &""
+var attempt_wardstone_radius_mul: float = 1.0
+var attempt_wardstone_slow_mul: float = 1.0
+var attempt_exit_hold_mul: float = 1.0
+
+# Stored offer so you cannot reroll by reopening HubShop
+var attempt_major_choice_offer_ids: Array[StringName] = []
+var attempt_major_choice_taken_ids: Array[StringName] = []
+
+# Attempt-scoped augmentation levels (StringName -> int); defaults to 1
+var attempt_augment_levels: Dictionary = {}
+
+# Run rules/mutations (StringName -> Variant)
+var attempt_mutations: Dictionary = {}
+
+# Additive attempt stats
+var attempt_stat_delta: StatDelta = null
+
+
+# Internal autosave throttle
+var _autosave_timer: SceneTreeTimer = null
+var _suppress_autosave: bool = false
+# stacking bag
+var run_luck: float = 0.0
+
+var _followers: int = 0
+var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var vfx_stamina_aura_scene: PackedScene
+
+# ============================================================
+# Lifecycle
+# ============================================================
+
+func _ready() -> void:
+	_rng.randomize()
+
+	_load_spells()
+	_load_races()
+	if DEBUG_GLOBAL:
+		print("Race DB keys:", race_db.keys())
+
+	_load_styles()
+	if DEBUG_GLOBAL:
+		print("Style DB keys:", style_db.keys())
+
+	_load_weapons()
+
+	load_items_from_dir(ITEMS_DIR)
+	if DEBUG_GLOBAL:
+		print("Item DB keys:", item_db.keys())
+
+	load_sets_from_dir(SETS_DIR)
+	if DEBUG_GLOBAL:
+		print("Loaded set ids:", set_db.keys())
+		print("Conduit-like ids:", set_db.keys().filter(func(k): return String(k).to_lower().find("conduit") != -1))
+
+	# Pull selections if a selection screen stored them in meta
+	sync_run_selection_from_tree_meta(get_tree())
+
+	load_augments_from_dir(AUGMENTS_DIR)
+	init_permanent_augments()
+
+	# Major choices authored as resources
+	major_choice_db.load_from_dir(MAJOR_CHOICES_DIR)
+	if DEBUG_GLOBAL:
+		print("MajorChoice defs:", major_choice_db.defs_by_id.keys())
+
+	vfx_stamina_aura_scene = load(PATH_VFX_STAMINA_AURA) as PackedScene
+
+# ============================================================
+# Scene navigation API
+# ============================================================
+
+func goto_scene(path: String) -> void:
+	var err := get_tree().change_scene_to_file(path)
+	if err != OK:
+		push_error("Scene change failed: %s err=%s" % [path, err])
+
+func goto_main_menu() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_menu")
+	goto_scene(PATH_MAIN_MENU)
+
+func goto_save_select() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_menu")
+	goto_scene(PATH_SAVE_SELECT)
+
+func goto_base() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_game")
+	goto_scene(PATH_BASE)
+
+func goto_game() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_game")
+	goto_scene(PATH_GAME)
+
+func goto_hub_shop() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_game")
+	goto_scene(PATH_HUB_SHOP)
+
+func goto_resume() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_game")
+	# Resume current attempt if one exists; otherwise go to Base.
+	if SaveManager == null or SaveManager.current_save == null:
+		goto_save_select()
+		return
+	if SaveManager.current_save.attempt_active:
+		var path: String = SaveManager.current_save.attempt_resume_scene
+		if path == "":
+			path = PATH_HUB_SHOP
+		goto_scene(path)
+	else:
+		goto_base()
+
+
+# ============================================================
+# Followers
+# ============================================================
+
+var followers: int:
+	get:
+		return _followers
+	set(value):
+		_followers = maxi(0, value)
+		followers_changed.emit(_followers)
+
+func set_followers(value: int) -> void:
+	transaction_followers(value - followers, &"system_sync", {}, false, false)
+
+func add_followers(delta: int) -> void:
+	transaction_followers(delta, &"legacy", {}, true, true)
+
+func transaction_followers(amount: int, reason: StringName, context: Dictionary = {}, show_feedback: bool = true, allow_aggregate: bool = true) -> Dictionary:
+	# The assistant is the first real follower. Early kills still grant drops and
+	# Resonance, but cannot turn slain containment staff into believers.
+	if amount > 0 and reason == &"combat_influence" and attempt_segment == 1 and not has_segment1_milestone(&"assistant_commitment"):
+		return {"old": followers, "change": 0, "new": followers, "suppressed": true}
+	var old_value := followers
+	var new_value := maxi(0, old_value + amount)
+	var actual_change := new_value - old_value
+	if actual_change == 0:
+		return {"old": old_value, "change": 0, "new": new_value, "suppressed": false}
+	_followers = new_value
+	followers_changed.emit(_followers)
+	followers_transaction.emit(old_value, actual_change, new_value, reason, context, show_feedback, allow_aggregate)
+	if DEBUG_GLOBAL:
+		print("FOLLOWERS TRANSACTION:", actual_change, " reason=", reason, " total=", new_value)
+	request_autosave()
+	return {"old": old_value, "change": actual_change, "new": new_value, "suppressed": false}
+
+func is_enemy_discovered(enemy_id: StringName) -> bool:
+	return discovered_enemy_ids.has(enemy_id)
+
+func mark_enemy_discovered(enemy_id: StringName) -> void:
+	if enemy_id == &"" or discovered_enemy_ids.has(enemy_id):
+		return
+	discovered_enemy_ids.append(enemy_id)
+	request_autosave()
+
+func reset_enemy_discoveries() -> void:
+	discovered_enemy_ids.clear()
+	save_current_profile()
+
+
+# ============================================================
+# Run selection sync
+# ============================================================
+
+func sync_run_selection_from_tree_meta(tree: SceneTree) -> void:
+	if tree.has_meta("run_race_id"):
+		var race_meta: String = String(tree.get_meta("run_race_id"))
+		if race_meta != "":
+			selected_race_id = race_meta
+
+	if tree.has_meta("run_style_id"):
+		var style_meta: String = String(tree.get_meta("run_style_id"))
+		if style_meta != "":
+			selected_style_id = style_meta
+
+	# weapon follows style (only if it matches known weapon keys)
+	if weapon_db.has(selected_style_id):
+		selected_weapon_id = selected_style_id
+	else:
+		selected_weapon_id = "ranged"
+
+func set_run_selection(race_id: String, style_id: String) -> void:
+	selected_race_id = race_id
+	selected_style_id = style_id
+	selected_weapon_id = style_id
+
+
+# ============================================================
+# Run resets
+# ============================================================
+
+func reset_run_systems() -> void:
+	# tutorial one-shots
+	tip_shown_wardstone_attune = false
+	tip_shown_resonance = false
+	tip_shown_gate_hold = false
+	tip_shown_intro_move = false
+	tip_shown_resonance_goal = false
+	tip_shown_wardstone_anchor = false
+	tip_shown_gate_unsealed = false
+
+	reset_run_inventory()
+	reset_run_bag_inventory()
+	run_luck = 0.0
+
+	# exploration loot claim state (per-segment)
+	attempt_claimed_loot_ids = PackedInt32Array()
+	_claimed_loot_set.clear()
+	attempt_vendor_segment = 0
+	attempt_vendor_refreshes = 0
+	attempt_vendor_seed = 0
+	attempt_vendor_bag = null
+
+func reset_run_inventory() -> void:
+	run_inventory = Inventory.new()
+
+func reset_run_bag_inventory() -> void:
+	run_bag = BagInventory.new()
+
+func reset_run_augments() -> void:
+	# 3 slots, empty
+	permanent_augment_ids = [StringName(), StringName(), StringName()]
+
+
+# ============================================================
+# Item access
+# ============================================================
+
+func get_item_data(item_id: String) -> ItemData:
+	return item_db.get(item_id, null) as ItemData
+
+
+# ============================================================
+# Loaders (startup)
+# ============================================================
+
+func _load_spells() -> void:
+	spell_db.clear()
+
+	_scan_dir_recursive(SPELLS_DIR, func(res: Resource) -> void:
+		if res == null:
+			return
+
+		var id := _get_string_prop(res, "id")
+
+		# Normalize if resource uses id without prefix
+		if id != "" and not id.begins_with("spell_"):
+			id = "spell_" + id
+
+		# Fallback: derive from filename (MagicMissile -> spell_magic_missile)
+		if id == "":
+			var base := res.resource_path.get_file().get_basename()
+			id = "spell_" + _camel_to_snake(base)
+
+		spell_db[id] = res
+	)
+
+	if DEBUG_GLOBAL:
+		print("Spell DB keys:", spell_db.keys())
+
+func _load_weapons() -> void:
+	weapon_db.clear()
+
+	_scan_dir_recursive(WEAPONS_DIR, func(res: Resource) -> void:
+		if res == null:
+			return
+
+		var id := _get_string_prop(res, "id")
+
+		# Fallback: derive from filename (StarterMelee -> melee)
+		if id == "":
+			var base := res.resource_path.get_file().get_basename()
+			id = _camel_to_snake(base)
+
+		# Normalize common prefix
+		if id.begins_with("starter_"):
+			id = id.trim_prefix("starter_")
+
+		weapon_db[id] = res
+	)
+
+	if DEBUG_GLOBAL:
+		print("Weapon DB keys:", weapon_db.keys())
+
+func _load_races() -> void:
+	race_db.clear()
+	_scan_dir_recursive(RACES_DIR, func(res: Resource) -> void:
+		var r := res as RaceData
+		if r != null and r.id != "":
+			race_db[r.id] = r
+	)
+
+func _load_styles() -> void:
+	style_db.clear()
+	_scan_dir_recursive(STYLES_DIR, func(res: Resource) -> void:
+		var st := res as StyleData
+		if st != null and st.id != "":
+			style_db[st.id] = st
+	)
+
+func has_variable(var_name: StringName) -> bool:
+	for p in get_property_list():
+		if p.name == var_name:
+			return true
+	return false
+
+
+# ============================================================
+# Sets
+# ============================================================
+
+func load_sets_from_dir(path: String) -> void:
+	set_db.clear()
+	_scan_sets_dir_recursive(path)
+	if DEBUG_GLOBAL:
+		print("Set DB keys:", set_db.keys())
+
+func _scan_sets_dir_recursive(path: String) -> void:
+	var dir: DirAccess = DirAccess.open(path)
+	if dir == null:
+		push_warning("Set dir not found: " + path)
+		return
+
+	dir.list_dir_begin()
+	var fn: String = dir.get_next()
+	while fn != "":
+		if fn.begins_with("."):
+			fn = dir.get_next()
+			continue
+
+		var full: String = path.path_join(fn)
+
+		if dir.current_is_dir():
+			_scan_sets_dir_recursive(full)
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res: Resource = ResourceLoader.load(full)
+			var sd: SetData = res as SetData
+			if sd != null and sd.id != StringName():
+				set_db[sd.id] = sd
+				if DEBUG_GLOBAL:
+					print("Loaded set:", sd.id, "from", full)
+
+		fn = dir.get_next()
+
+	dir.list_dir_end()
+
+
+# ============================================================
+# Items
+# ============================================================
+
+func load_items_from_dir(path: String) -> void:
+	item_db.clear()
+	_scan_items_dir_recursive(path)
+
+func _scan_items_dir_recursive(path: String) -> void:
+	var dir: DirAccess = DirAccess.open(path)
+	if dir == null:
+		push_warning("Item dir not found: " + path)
+		return
+
+	dir.list_dir_begin()
+	var fn: String = dir.get_next()
+	while fn != "":
+		if fn.begins_with("."):
+			fn = dir.get_next()
+			continue
+
+		var full: String = path.path_join(fn)
+
+		if dir.current_is_dir():
+			_scan_items_dir_recursive(full)
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res: Resource = ResourceLoader.load(full)
+			if res != null:
+				var item: ItemData = res as ItemData
+				if item != null and item.id != "":
+					item_db[item.id] = item
+
+		fn = dir.get_next()
+
+	dir.list_dir_end()
+
+
+# ============================================================
+# Augments + permanent augments
+# ============================================================
+
+func init_permanent_augments() -> void:
+	if permanent_augment_ids.size() != 3:
+		permanent_augment_ids.resize(3)
+	for i in range(3):
+		if permanent_augment_ids[i] == null:
+			permanent_augment_ids[i] = StringName()
+
+func init_owned_augments() -> void:
+	# Ensure owned list exists and always contains equipped augments.
+	if owned_augment_ids == null:
+		owned_augment_ids = []
+	# Backfill from equipped
+	init_permanent_augments()
+	for id in permanent_augment_ids:
+		var sid: StringName = id
+		if sid != StringName() and not owned_augment_ids.has(sid):
+			owned_augment_ids.append(sid)
+
+func add_owned_augment(id: StringName) -> void:
+	if id == StringName():
+		return
+	if owned_augment_ids == null:
+		owned_augment_ids = []
+	if not owned_augment_ids.has(id):
+		owned_augment_ids.append(id)
+		request_autosave()
+
+
+func move_owned_augment(from_index: int, to_index: int) -> void:
+	init_owned_augments()
+	if from_index < 0 or to_index < 0:
+		return
+	if from_index >= owned_augment_ids.size() or to_index >= owned_augment_ids.size():
+		return
+	if from_index == to_index:
+		return
+	var id: StringName = owned_augment_ids[from_index]
+	owned_augment_ids.remove_at(from_index)
+	owned_augment_ids.insert(to_index, id)
+	request_autosave()
+
+func is_augment_slot_locked(slot: int) -> bool:
+	if augment_slot_locks == null or augment_slot_locks.size() < 3:
+		augment_slot_locks = [false, false, false]
+	if slot < 0 or slot >= 3:
+		return false
+	return bool(augment_slot_locks[slot])
+
+func set_augment_slot_locked(slot: int, locked: bool) -> void:
+	if augment_slot_locks == null or augment_slot_locks.size() < 3:
+		augment_slot_locks = [false, false, false]
+	if slot < 0 or slot >= 3:
+		return
+	augment_slot_locks[slot] = locked
+	request_autosave()
+func get_owned_augment_ids() -> Array:
+	init_owned_augments()
+	return owned_augment_ids.duplicate()
+
+func set_permanent_augment(slot: int, id: StringName) -> void:
+	init_permanent_augments()
+	if slot < 0 or slot >= 3:
+		return
+	permanent_augment_ids[slot] = id
+	add_owned_augment(id)
+	print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
+	permanent_augments_changed.emit(permanent_augment_ids)
+
+func apply_permanent_augments_to_stats(s: Stats) -> void:
+	init_permanent_augments()
+	for id in permanent_augment_ids:
+		if id == StringName():
+			continue
+		var a := augment_db.get(id, null) as AugmentData
+		if a == null:
+			continue
+
+		var lvl: int = 1
+		if has_method("get_augment_level"):
+			lvl = get_augment_level(id)
+
+		# Prefer level-aware stat application (keeps 'Augment Overclock' meaningful even for stat-only augments).
+		if a.has_method("apply_to_stats_at_level"):
+			a.apply_to_stats_at_level(s, lvl)
+		else:
+			a.apply_to_stats(s)
+
+func load_augments_from_dir(path: String) -> void:
+	augment_db.clear()
+	_scan_augments_dir_recursive(path)
+	if DEBUG_GLOBAL:
+		print("Augment DB keys:", augment_db.keys())
+
+func _scan_augments_dir_recursive(path: String) -> void:
+	var dir: DirAccess = DirAccess.open(path)
+	if dir == null:
+		push_warning("Augment dir not found: " + path)
+		return
+
+	dir.list_dir_begin()
+	var fn: String = dir.get_next()
+	while fn != "":
+		if fn.begins_with("."):
+			fn = dir.get_next()
+			continue
+
+		var full := path.path_join(fn)
+
+		if dir.current_is_dir():
+			_scan_augments_dir_recursive(full)
+		elif fn.ends_with(".tres") or fn.ends_with(".res"):
+			var res := ResourceLoader.load(full)
+			var ad := res as AugmentData
+			if ad != null and ad.id != StringName():
+				augment_db[ad.id] = ad
+				if DEBUG_GLOBAL:
+					print("[AUG] ", String(ad.id), " name=", ad.display_name,
+						" desc_len=", ad.description.length(),
+						" blurb_len=", ad.card_blurb.length(),
+						" details_len=", ad.details.length(),
+						" mods=", (ad.mods != null))
+
+		fn = dir.get_next()
+
+	dir.list_dir_end()
+
+
+# ============================================================
+# Shared directory scan helper
+# ============================================================
+
+func _scan_dir_recursive(dir_path: String, on_loaded: Callable) -> void:
+	var dir: DirAccess = DirAccess.open(dir_path)
+	if dir == null:
+		push_warning("Dir not found: " + dir_path)
+		return
+
+	dir.list_dir_begin()
+	var fn: String = dir.get_next()
+	while fn != "":
+		if fn.begins_with("."):
+			fn = dir.get_next()
+			continue
+
+		var full: String = dir_path.path_join(fn)
+
+		if dir.current_is_dir():
+			_scan_dir_recursive(full, on_loaded)
+		else:
+			if fn.ends_with(".tres") or fn.ends_with(".res"):
+				var res: Resource = ResourceLoader.load(full)
+				if res != null:
+					on_loaded.call(res)
+
+		fn = dir.get_next()
+
+	dir.list_dir_end()
+
+
+# ============================================================
+# Luck roll shaping
+# ============================================================
+
+func _roll_standard_unit() -> float:
+	var x: float = 0.0
+	for i in range(6):
+		x += _rng.randf()
+	x = (x - 3.0) / 3.0
+	return clampf(x, -1.0, 1.0)
+
+func roll_percent(luck: float, min_pct: float, max_pct: float) -> float:
+	var x: float = _roll_standard_unit()
+
+	var shape: float = exp(-luck * 1.25)
+	shape = clampf(shape, 0.25, 4.0)
+
+	var y: float = signf(x) * pow(absf(x), shape)
+	var t: float = (y + 1.0) * 0.5
+
+	var pct: float = lerpf(min_pct, max_pct, t)
+	return clampf(pct, -0.9999, 0.9999)
+
+# ============================================================
+# Helpers
+# ============================================================
+
+
+func _has_prop(obj: Object, prop: StringName) -> bool:
+	for p in obj.get_property_list():
+		if p.name == prop:
+			return true
+	return false
+
+func _get_string_prop(res: Resource, prop: StringName) -> String:
+	if res == null:
+		return ""
+	if not _has_prop(res, prop):
+		return ""
+	var v = res.get(prop)
+	if typeof(v) == TYPE_STRING and String(v) != "":
+		return String(v)
+	return ""
+
+func _camel_to_snake(s: String) -> String:
+	# "MagicMissile" -> "magic_missile"
+	# "StarterMelee" -> "starter_melee"
+	var out := ""
+	for i in range(s.length()):
+		var ch := s.substr(i, 1)
+
+		var is_upper := (ch >= "A" and ch <= "Z")
+		var is_lower := (ch >= "a" and ch <= "z")
+		var is_digit := (ch >= "0" and ch <= "9")
+
+		if i > 0 and is_upper:
+			var prev := s.substr(i - 1, 1)
+			var prev_is_lower := (prev >= "a" and prev <= "z")
+			var prev_is_digit := (prev >= "0" and prev <= "9")
+			if prev_is_lower or prev_is_digit:
+				out += "_"
+
+		if is_upper:
+			out += ch.to_lower()
+		elif is_lower or is_digit:
+			out += ch
+		else:
+			out += "_"
+
+	# collapse double underscores (cheap cleanup)
+	while out.find("__") != -1:
+		out = out.replace("__", "_")
+
+	out = out.strip_edges()
+	out = out.trim_prefix("_")
+	out = out.trim_suffix("_")
+	return out
+
+# ============================================================
+# Campaign attempt & meta persistence
+# ============================================================
+
+
+# ============================================================
+# Major Choices (Segment 5 big node)
+# ============================================================
+
+func has_mutation(id: StringName) -> bool:
+	return attempt_mutations.has(id) or attempt_mutations.has(String(id))
+
+func get_mutation(id: StringName, default: Variant = null) -> Variant:
+	if attempt_mutations.has(id):
+		return attempt_mutations[id]
+	var k := String(id)
+	return attempt_mutations.get(k, default)
+
+func add_mutation(id: StringName, value: Variant = true) -> void:
+	if id == StringName():
+		return
+	attempt_mutations[String(id)] = value
+	request_autosave()
+
+func get_augment_level(aug_id: StringName) -> int:
+	if aug_id == StringName():
+		return 1
+	# store as String key for SaveData compatibility
+	var k := String(aug_id)
+	if attempt_augment_levels.has(k):
+		return maxi(1, int(attempt_augment_levels[k]))
+	return 1
+
+func set_augment_level(aug_id: StringName, level: int) -> void:
+	if aug_id == StringName():
+		return
+	attempt_augment_levels[String(aug_id)] = maxi(1, level)
+	request_autosave()
+
+func apply_attempt_modifiers_to_stats(s: Stats) -> void:
+	if attempt_stat_delta != null:
+		attempt_stat_delta.apply_to(s)
+
+func get_major_choice_offer(count: int = 3) -> Array:
+	if not pending_big_choice:
+		return []
+
+	if attempt_big_choice_source_segment <= 0:
+		attempt_big_choice_source_segment = 5
+
+	# Persisted offer: reconstruct from ids
+	if attempt_major_choice_offer_ids.is_empty():
+		_generate_major_choice_offer(count)
+
+	var out: Array = []
+	for id in attempt_major_choice_offer_ids:
+		var def: MajorChoiceDef = major_choice_db.get_def(StringName(str(id)))
+		if def != null:
+			out.append(def)
+	return out
+
+func _generate_major_choice_offer(count: int) -> void:
+	# Continue-safe offer, based on attempt seed + context segment.
+	var rng := RandomNumberGenerator.new()
+	var seed_val: int = attempt_world_seed
+	if seed_val == 0:
+		seed_val = randi()
+
+	var ctx_seg: int = get_major_choice_context_segment()
+	rng.seed = int(seed_val) ^ (ctx_seg * 2654435761) ^ 0x5EED5
+
+	var offer: Array[MajorChoiceDef] = major_choice_db.build_offer(self, count, rng)
+	attempt_major_choice_offer_ids.clear()
+	for d in offer:
+		attempt_major_choice_offer_ids.append(d.id)
+
+	request_autosave()
+
+func apply_major_choice(choice_id: StringName) -> void:
+	# Resolve the pending reward and apply a run-shaping modifier.
+	if not pending_big_choice:
+		return
+
+	var def: MajorChoiceDef = major_choice_db.get_def(choice_id)
+	if def != null:
+		for e in def.effects:
+			if e == null:
+				continue
+			e.apply(self)
+	else:
+		push_warning("apply_major_choice: unknown id: " + String(choice_id))
+
+	attempt_major_choice_id = choice_id
+	if not attempt_major_choice_taken_ids.has(choice_id):
+		attempt_major_choice_taken_ids.append(choice_id)
+
+	# clear offer + flag so you can't get stuck
+	attempt_major_choice_offer_ids.clear()
+	pending_big_choice = false
+	attempt_big_choice_source_segment = 0
+	request_autosave()
+
+func request_autosave(delay: float = 0.6) -> void:
+	if _suppress_autosave:
+		return
+	if SaveManager == null or SaveManager.current_save == null:
+		return
+	if _autosave_timer != null and is_instance_valid(_autosave_timer):
+		return
+	_autosave_timer = get_tree().create_timer(delay)
+	_autosave_timer.timeout.connect(func() -> void:
+		_autosave_timer = null
+		save_current_profile()
+	)
+
+
+# ------------------------------------------------------------
+# Exploration loot claim (prevents chunk-stream farming)
+# ------------------------------------------------------------
+func _rebuild_claimed_loot_set() -> void:
+	_claimed_loot_set.clear()
+	for v in attempt_claimed_loot_ids:
+		_claimed_loot_set[int(v)] = true
+
+func has_claimed_loot(id: int) -> bool:
+	return _claimed_loot_set.has(id)
+
+func claim_loot(id: int) -> void:
+	if id == 0:
+		return
+	if _claimed_loot_set.has(id):
+		return
+	_claimed_loot_set[id] = true
+	attempt_claimed_loot_ids.append(id)
+	request_autosave()
+
+func apply_save(save: SaveData) -> void:
+	_suppress_autosave = true
+
+	# Last chosen setup (for Base screen defaults)
+	selected_race_id = save.last_race_id
+	selected_style_id = save.last_style_id
+	selected_weapon_id = save.last_style_id
+	equipped_spell_ids = save.last_spell_ids.duplicate()
+	mortal_name = save.mortal_name.strip_edges()
+	if mortal_name == "":
+		mortal_name = "The Arcanist"
+
+	# Meta augments (persist forever)
+	if save.meta_permanent_augment_ids.size() != 3:
+		save.meta_permanent_augment_ids = ["", "", ""]
+	permanent_augment_ids = [StringName(), StringName(), StringName()]
+	for i in range(3):
+		var s: String = save.meta_permanent_augment_ids[i]
+		permanent_augment_ids[i] = (StringName(s) if s != "" else StringName())
+	init_permanent_augments()
+	permanent_augments_changed.emit(permanent_augment_ids)
+
+	# Owned augments library (persist forever)
+	owned_augment_ids = []
+	for s2 in save.meta_owned_augment_ids:
+		var ss: String = String(s2)
+		if ss != "":
+			owned_augment_ids.append(StringName(ss))
+	init_owned_augments()
+
+	# Enemy dossiers are profile knowledge, not attempt state.
+	discovered_enemy_ids.clear()
+	for enemy_id in save.meta_discovered_enemy_ids:
+		var clean_enemy_id := String(enemy_id).strip_edges()
+		if clean_enemy_id != "" and not discovered_enemy_ids.has(StringName(clean_enemy_id)):
+			discovered_enemy_ids.append(StringName(clean_enemy_id))
+
+	# Slot locks (persist)
+	augment_slot_locks = [false, false, false]
+	if save != null and save.has_method("get"):
+		var arr_locks: Array = save.get("meta_augment_slot_locks") as Array
+		if arr_locks != null and arr_locks.size() >= 3:
+			augment_slot_locks[0] = bool(arr_locks[0])
+			augment_slot_locks[1] = bool(arr_locks[1])
+			augment_slot_locks[2] = bool(arr_locks[2])
+
+	# Meta stash (persist forever)
+	meta_stash = save.meta_stash
+	if meta_stash == null:
+		meta_stash = StashInventory.new()
+
+
+
+	# Attempt snapshot (Continue)
+	attempt_active = save.attempt_active
+	if attempt_active:
+		attempt_segment = max(1, save.attempt_segment)
+		attempt_deaths_this_segment = max(0, save.attempt_deaths_this_segment)
+		attempt_checkpoint_pos = save.attempt_checkpoint_pos
+		attempt_world_seed = save.attempt_world_seed
+		attempt_segment1_layout_version = int(save.attempt_segment1_layout_version)
+		attempt_segment1_resonance = clampf(float(save.attempt_segment1_resonance), 0.0, 1.0)
+		attempt_segment1_milestones.clear()
+		for milestone_id in save.attempt_segment1_milestones:
+			var clean_id := String(milestone_id).strip_edges()
+			if clean_id != "":
+				attempt_segment1_milestones.append(StringName(clean_id))
+
+		# Checkpoints from the compact recovery layout are unsafe in the rebuilt map.
+		if attempt_segment == 1 and attempt_segment1_layout_version != SEGMENT1_LAYOUT_VERSION:
+			attempt_checkpoint_pos = Vector2.INF
+			attempt_segment1_resonance = 0.0
+			attempt_segment1_milestones.clear()
+			attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
+		_rebuild_claimed_loot_set()
+		pending_augment_pick = save.attempt_pending_augment_pick
+		pending_big_choice = save.attempt_pending_big_choice
+		attempt_big_choice_source_segment = int(save.attempt_big_choice_source_segment)
+
+		# Attempt modifiers (reset on die-die)
+		attempt_major_choice_id = (StringName(save.attempt_major_choice_id) if save.attempt_major_choice_id != "" else &"")
+		attempt_wardstone_radius_mul = maxf(0.25, float(save.attempt_mod_wardstone_radius_mul))
+		attempt_wardstone_slow_mul = clampf(float(save.attempt_mod_wardstone_slow_mul), 0.25, 2.0)
+		attempt_exit_hold_mul = clampf(float(save.attempt_mod_exit_hold_mul), 0.25, 2.0)
+
+		# Major choice offer + state (Continue-safe)
+		attempt_major_choice_offer_ids.clear()
+		for s_id in save.attempt_major_choice_offer_ids:
+			var sid: String = String(s_id)
+			if sid != "":
+				attempt_major_choice_offer_ids.append(StringName(sid))
+
+		attempt_major_choice_taken_ids.clear()
+		for t_id in save.attempt_major_choice_taken_ids:
+			var tid: String = String(t_id)
+			if tid != "":
+				attempt_major_choice_taken_ids.append(StringName(tid))
+
+		attempt_augment_levels = save.attempt_augment_levels.duplicate(true)
+		attempt_mutations = save.attempt_mod_mutations.duplicate(true)
+		attempt_stat_delta = save.attempt_mod_stat_delta
+
+		# Attempt identity (so Continue keeps your run identity)
+		if save.attempt_race_id != "":
+			selected_race_id = save.attempt_race_id
+		if save.attempt_style_id != "":
+			selected_style_id = save.attempt_style_id
+		if save.attempt_weapon_id != "":
+			selected_weapon_id = save.attempt_weapon_id
+
+		# Load attempt inventories (or create)
+		run_inventory = save.attempt_inventory if save.attempt_inventory != null else Inventory.new()
+		run_bag = save.attempt_bag if save.attempt_bag != null else BagInventory.new()
+
+		# Ensure sizes
+		if run_inventory != null and run_inventory.has_method("_ensure_size"):
+			run_inventory._ensure_size()
+		if run_bag != null and run_bag.has_method("_ensure_size"):
+			run_bag._ensure_size()
+		if run_bag != null and run_bag.has_method("_rebuild_index"):
+			run_bag._rebuild_index()
+
+		# Vendor snapshot (HubShop anti-reroll)
+		attempt_vendor_segment = int(save.attempt_vendor_segment) if save.has_method("get") else int(save.attempt_vendor_segment)
+		attempt_vendor_refreshes = int(save.attempt_vendor_refreshes)
+		attempt_vendor_seed = int(save.attempt_vendor_seed)
+		attempt_vendor_bag = save.attempt_vendor_bag
+
+		if attempt_vendor_bag != null and attempt_vendor_bag.has_method("_ensure_size"):
+			attempt_vendor_bag._ensure_size()
+
+		set_followers(save.attempt_followers)
+	else:
+		attempt_segment = 1
+		attempt_deaths_this_segment = 0
+		attempt_checkpoint_pos = Vector2.INF
+		attempt_world_seed = 0
+		attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+		attempt_segment1_resonance = 0.0
+		attempt_segment1_milestones.clear()
+		attempt_claimed_loot_ids = PackedInt32Array()
+		_claimed_loot_set.clear()
+		attempt_vendor_segment = 0
+		attempt_vendor_refreshes = 0
+		attempt_vendor_seed = 0
+		attempt_vendor_bag = null
+		pending_augment_pick = false
+		pending_big_choice = false
+
+		# Attempt modifiers reset
+		attempt_major_choice_id = &""
+		attempt_wardstone_radius_mul = 1.0
+		attempt_wardstone_slow_mul = 1.0
+		attempt_exit_hold_mul = 1.0
+
+		attempt_major_choice_offer_ids.clear()
+		attempt_major_choice_taken_ids.clear()
+		attempt_augment_levels = {}
+		attempt_mutations = {}
+		attempt_stat_delta = null
+
+		run_inventory = null
+		run_bag = null
+		set_followers(1)
+
+	_suppress_autosave = false
+func write_save(save: SaveData) -> void:
+	_suppress_autosave = true
+
+	# Last chosen setup
+	save.last_race_id = selected_race_id
+	save.last_style_id = selected_style_id
+	save.last_spell_ids = equipped_spell_ids.duplicate()
+	save.mortal_name = mortal_name.strip_edges() if mortal_name.strip_edges() != "" else "The Arcanist"
+
+	# Meta augments
+	init_permanent_augments()
+	save.meta_permanent_augment_ids.resize(3)
+	for i in range(3):
+		var id: StringName = permanent_augment_ids[i]
+		save.meta_permanent_augment_ids[i] = (String(id) if id != StringName() else "")
+
+	# Owned augments library (persist forever)
+	init_owned_augments()
+	save.meta_owned_augment_ids = []
+	for sid in owned_augment_ids:
+		save.meta_owned_augment_ids.append(String(sid))
+
+	save.meta_discovered_enemy_ids = []
+	for enemy_id in discovered_enemy_ids:
+		save.meta_discovered_enemy_ids.append(String(enemy_id))
+
+	# Slot locks
+	if augment_slot_locks == null or augment_slot_locks.size() < 3:
+		augment_slot_locks = [false, false, false]
+	save.meta_augment_slot_locks = [augment_slot_locks[0], augment_slot_locks[1], augment_slot_locks[2]]
+
+	# Attempt snapshot
+	save.attempt_active = attempt_active
+	if attempt_active:
+		save.attempt_segment = attempt_segment
+		save.attempt_followers = followers
+		save.attempt_deaths_this_segment = attempt_deaths_this_segment
+		save.attempt_pending_augment_pick = pending_augment_pick
+		save.attempt_pending_big_choice = pending_big_choice
+		save.attempt_big_choice_source_segment = attempt_big_choice_source_segment
+
+		# Attempt modifiers
+		save.attempt_major_choice_id = String(attempt_major_choice_id)
+		save.attempt_mod_wardstone_radius_mul = attempt_wardstone_radius_mul
+		save.attempt_mod_wardstone_slow_mul = attempt_wardstone_slow_mul
+		save.attempt_mod_exit_hold_mul = attempt_exit_hold_mul
+
+		# Offer + taken ids
+		save.attempt_major_choice_offer_ids = []
+		for id in attempt_major_choice_offer_ids:
+			save.attempt_major_choice_offer_ids.append(String(id))
+
+		save.attempt_major_choice_taken_ids = []
+		for id in attempt_major_choice_taken_ids:
+			save.attempt_major_choice_taken_ids.append(String(id))
+
+		save.attempt_augment_levels = attempt_augment_levels.duplicate(true)
+		save.attempt_mod_mutations = attempt_mutations.duplicate(true)
+		save.attempt_mod_stat_delta = attempt_stat_delta
+
+		# Attempt identity
+		save.attempt_race_id = selected_race_id
+		save.attempt_style_id = selected_style_id
+		save.attempt_weapon_id = selected_weapon_id
+
+		save.attempt_checkpoint_pos = attempt_checkpoint_pos
+		save.attempt_world_seed = attempt_world_seed
+		save.attempt_segment1_layout_version = attempt_segment1_layout_version
+		save.attempt_segment1_resonance = attempt_segment1_resonance
+		save.attempt_segment1_milestones = []
+		for milestone_id in attempt_segment1_milestones:
+			save.attempt_segment1_milestones.append(String(milestone_id))
+		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
+		save.attempt_inventory = run_inventory
+		save.attempt_bag = run_bag
+	else:
+		# Clear heavy attempt resources from disk
+		save.attempt_segment = 1
+		save.attempt_followers = 1
+		save.attempt_deaths_this_segment = 0
+		save.attempt_resume_scene = ""
+		save.attempt_pending_augment_pick = false
+		save.attempt_pending_big_choice = false
+
+		# Attempt modifiers reset
+		save.attempt_major_choice_id = ""
+		save.attempt_mod_wardstone_radius_mul = 1.0
+		save.attempt_mod_wardstone_slow_mul = 1.0
+		save.attempt_mod_exit_hold_mul = 1.0
+
+		save.attempt_major_choice_offer_ids = []
+		save.attempt_major_choice_taken_ids = []
+		save.attempt_augment_levels = {}
+		save.attempt_mod_mutations = {}
+		save.attempt_mod_stat_delta = null
+
+		# Attempt identity reset
+		save.attempt_race_id = selected_race_id
+		save.attempt_style_id = selected_style_id
+		save.attempt_weapon_id = selected_weapon_id
+
+		save.attempt_checkpoint_pos = Vector2.INF
+		save.attempt_world_seed = 0
+		save.attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+		save.attempt_segment1_resonance = 0.0
+		save.attempt_segment1_milestones = []
+		save.attempt_claimed_loot_ids = PackedInt32Array()
+		save.attempt_inventory = null
+		save.attempt_bag = null
+		save.attempt_vendor_segment = 0
+		save.attempt_vendor_refreshes = 0
+		save.attempt_vendor_seed = 0
+		save.attempt_vendor_bag = null
+
+	_suppress_autosave = false
+func save_current_profile() -> void:
+	if SaveManager == null or SaveManager.current_save == null:
+		return
+	write_save(SaveManager.current_save)
+	SaveManager.save_current()
+
+func start_new_attempt() -> void:
+	# Attempt resets (die-die behavior)
+	attempt_active = true
+	attempt_segment = 1
+	attempt_deaths_this_segment = 0
+	attempt_checkpoint_pos = Vector2.INF
+	attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+	attempt_segment1_resonance = 0.0
+	attempt_segment1_milestones.clear()
+
+
+	attempt_world_seed = int(Time.get_unix_time_from_system() * 1000.0) ^ _rng.randi()
+	# New attempt resets run-scoped systems (items/bag/luck/tutorial flags)
+	reset_run_systems()
+
+	# Followers reset to 1
+	set_followers(1)
+
+	# Start-of-attempt augment event if you have empty slots
+	init_permanent_augments()
+	# Only show the intro augment pick on a truly fresh profile (0 augments owned).
+	var owned: int = 0
+	for id in permanent_augment_ids:
+		if id != StringName():
+			owned += 1
+	pending_augment_pick = (owned == 0)
+	pending_big_choice = false
+	attempt_major_choice_id = &""
+	attempt_wardstone_radius_mul = 1.0
+	attempt_wardstone_slow_mul = 1.0
+	attempt_exit_hold_mul = 1.0
+
+	# Default resume is the game
+	if SaveManager != null and SaveManager.current_save != null:
+		SaveManager.current_save.attempt_resume_scene = PATH_GAME
+
+	save_current_profile()
+
+func on_segment_completed(completed_segment: int) -> void:
+	attempt_segment = completed_segment + 1
+	attempt_deaths_this_segment = 0
+	attempt_checkpoint_pos = Vector2.INF
+	if completed_segment == 1:
+		attempt_segment1_resonance = 0.0
+		attempt_segment1_milestones.clear()
+
+	# New segment: reset exploration loot claim state
+	attempt_claimed_loot_ids = PackedInt32Array()
+	_claimed_loot_set.clear()
+
+	# New segment: reset vendor snapshot so you can't reroll by segment-hopping
+	attempt_vendor_segment = 0
+	attempt_vendor_refreshes = 0
+	attempt_vendor_seed = 0
+	attempt_vendor_bag = null
+
+	# Milestones
+	if completed_segment == 2 or completed_segment == 7:
+		pending_augment_pick = true
+	if completed_segment == 5:
+		pending_big_choice = true
+		attempt_big_choice_source_segment = completed_segment
+
+	if SaveManager != null and SaveManager.current_save != null:
+		SaveManager.current_save.attempt_resume_scene = PATH_HUB_SHOP
+
+	save_current_profile()
+
+
+
+# ============================================================
+# Major choice (Segment 5 reward)
+# ============================================================
+
+
+func get_major_choice_context_segment() -> int:
+	# Big choice happens *after* completing a segment, so attempt_segment may already be advanced.
+	# Use the grant segment when a big choice is pending (Segment 5 by design).
+	if pending_big_choice:
+		if attempt_big_choice_source_segment <= 0:
+			return 5
+		return attempt_big_choice_source_segment
+	return attempt_segment
+
+func on_attempt_failed_die_die() -> void:
+	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
+	attempt_active = false
+	attempt_segment = 1
+	attempt_deaths_this_segment = 0
+	attempt_checkpoint_pos = Vector2.INF
+	attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+	attempt_segment1_resonance = 0.0
+	attempt_segment1_milestones.clear()
+	pending_augment_pick = false
+	pending_big_choice = false
+	attempt_big_choice_source_segment = 0
+	attempt_major_choice_id = &""
+	attempt_wardstone_radius_mul = 1.0
+	attempt_wardstone_slow_mul = 1.0
+	attempt_exit_hold_mul = 1.0
+
+	# After permadeath, your only believer is still you.
+	set_followers(1)
+
+	save_current_profile()
+
+func set_attempt_checkpoint(pos: Vector2) -> void:
+	attempt_checkpoint_pos = pos
+	request_autosave()
+
+func has_segment1_milestone(id: StringName) -> bool:
+	return attempt_segment1_milestones.has(id)
+
+func record_segment1_milestone(id: StringName) -> bool:
+	if id == &"" or attempt_segment1_milestones.has(id):
+		return false
+	attempt_segment1_milestones.append(id)
+	request_autosave()
+	return true
+
+func set_segment1_resonance(value: float) -> void:
+	attempt_segment1_resonance = clampf(value, 0.0, 1.0)
+	request_autosave()
+
+# ==============================
+# Respawn cost: exponential + % tax (prevents “infinite hoard”)
+# ==============================
+
+func compute_respawn_cost() -> int:
+	var seg: int = maxi(1, attempt_segment)
+	var deaths: int = maxi(0, attempt_deaths_this_segment)
+
+	var base_cost: int = 10 + (seg - 1) * 2
+	var growth: float = 1.7
+	var flat_cost: int = int(ceil(float(base_cost) * pow(growth, float(deaths))))
+
+	# Hoard killer: at least 20% of current followers
+	var pct_tax: int = int(ceil(float(maxi(followers, 1)) * 0.20))
+	return maxi(flat_cost, pct_tax)
+
+func consume_respawn_cost() -> int:
+	var cost: int = compute_respawn_cost()
+	attempt_deaths_this_segment += 1
+	transaction_followers(-cost, &"reconstruction", {"cost": cost, "death_index": attempt_deaths_this_segment}, false, false)
+	request_autosave()
+	return cost
+
+# ==============================
+# Selling value (NEG sells more)
+# ==============================
+func compute_item_value(inst: ItemInstance) -> int:
+	# Base "market value" used by both buy and sell.
+	# Tuned to avoid runaway exponential costs.
+	if inst == null or inst.data == null:
+		return 0
+
+	var r: int = clampi(int(inst.rarity), 0, 12)
+	# Quadratic-ish growth: readable and tunable.
+	# r=0 => ~10, r=5 => ~145, r=8 => ~314, r=12 => ~586 (before multipliers)
+	var base: float = 10.0 + float(r) * 18.0 + float(r * r) * 2.5
+
+	var q: float = clampf(absf(float(inst.active_pct())), 0.0, 1.0)
+	var quality_mul: float = lerpf(0.90, 1.40, q)
+
+	# NEG items are "spicier" and should sell slightly better, but not explode prices.
+	var pol_mul: float = (1.12 if int(inst.polarity) == int(ItemInstance.Polarity.NEG) else 1.0)
+
+	return int(round(base * quality_mul * pol_mul))
+
+func compute_buy_value(inst: ItemInstance) -> int:
+	# What the vendor charges (followers).
+	var v: int = compute_item_value(inst)
+	return maxi(0, int(ceil(float(v) * 1.00)))
+
+func compute_sell_value(inst: ItemInstance) -> int:
+	# What the vendor pays you (followers).
+	# Keep a spread so "flip for profit" isn't a thing.
+	var v: int = compute_item_value(inst)
+	return maxi(0, int(floor(float(v) * 0.55)))
+
+# ----------------------------
+# Dev helpers
+# ----------------------------
+func dev_grant_test_augments() -> void:
+	# Grants a small owned library for UI testing (>=4), ensuring at least one active augment.
+	load_augments_from_dir("res://data/augments")
+	init_permanent_augments()
+	owned_augment_ids = []
+	var all: Array[StringName] = []
+	for k in augment_db.keys():
+		all.append(StringName(str(k)))
+	all.shuffle()
+
+	# Ensure one active augment (prefer Hex Blink if present)
+	var active_id: StringName = &""
+	# Prefer a known active augment if present.
+	if augment_db.has(&"augment_blink_hex"):
+		active_id = &"augment_blink_hex"
+	elif augment_db.has(&"augment_reflect_shield"):
+		active_id = &"augment_reflect_shield"
+	elif augment_db.has(&"augment_summon_spiderlings"):
+		active_id = &"augment_summon_spiderlings"
+	else:
+		# brute: scan for any augment whose effect scene instances have 'active_action'
+		for k2 in augment_db.keys():
+			var ad: AugmentData = augment_db.get(k2, null) as AugmentData
+			if ad == null:
+				continue
+			var is_active := false
+			for scn in ad.effect_scenes:
+				if scn == null:
+					continue
+				var inst := scn.instantiate()
+				if inst != null and inst.get("active_action") != null:
+					is_active = true
+				inst.free()
+				if is_active: break
+			if is_active:
+				active_id = ad.id
+				break
+
+	if active_id != StringName():
+		add_owned_augment(active_id)
+
+	# Fill up to 4 owned
+	for k3 in all:
+		if owned_augment_ids.size() >= 4:
+			break
+		var sid: StringName = k3
+		if sid == StringName():
+			continue
+		if owned_augment_ids.has(sid):
+			continue
+		add_owned_augment(sid)
+
+	# Equip first 3 owned
+	for i in range(3):
+		permanent_augment_ids[i] = (owned_augment_ids[i] if i < owned_augment_ids.size() else StringName())
+
+	permanent_augments_changed.emit(permanent_augment_ids)
+	request_autosave()
+
+# ---------------- Hub sell marks ----------------
+func toggle_hub_sell_mark(kind: StringName, slot: int) -> void:
+	if kind == &"bag":
+		if hub_sell_marks_bag.has(slot):
+			hub_sell_marks_bag.erase(slot)
+		else:
+			hub_sell_marks_bag[slot] = true
+	elif kind == &"stash":
+		if hub_sell_marks_stash.has(slot):
+			hub_sell_marks_stash.erase(slot)
+		else:
+			hub_sell_marks_stash[slot] = true
+
+func is_hub_sell_marked(kind: StringName, slot: int) -> bool:
+	if kind == &"bag":
+		return hub_sell_marks_bag.has(slot)
+	if kind == &"stash":
+		return hub_sell_marks_stash.has(slot)
+	return false

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://cdjvodsy43mm"]
+
+[ext_resource type="PackedScene" uid="uid://cnbmqstd8vjlh" path="res://core/actors/enemy/enemy.tscn" id="1_yg3s6"]
+[ext_resource type="Texture2D" uid="uid://lup1oddk1u11" path="res://assets/textures/Enemy_Sniper44x44.png" id="2_ar87c"]
+[ext_resource type="Resource" uid="uid://b6edgo3p23i5m" path="res://core/actors/enemy/EnemySpec_Sniper.tres" id="4_xbsnr"]
+
+[node name="Enemy" unique_id=947687576 instance=ExtResource("1_yg3s6")]
+spec = ExtResource("4_xbsnr")
+
+[node name="Sprite2D" parent="." index="0" unique_id=1886877098]
+texture = ExtResource("2_ar87c")

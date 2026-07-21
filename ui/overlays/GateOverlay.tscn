@@ -1,0 +1,238 @@
+[gd_scene format=3 uid="uid://dpodmrkp142st"]
+
+[ext_resource type="Texture2D" uid="uid://drhjupnfrk5wy" path="res://assets/ui/arrow_triangle.png" id="1_arrow_tex"]
+[ext_resource type="Shader" uid="uid://bqu8tulqs8d7p" path="res://ui/shaders/arrow_gradient.gdshader" id="2_arrow_shd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleArrow"]
+bg_color = Color(0, 0, 0, 0.26)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.28)
+shadow_size = 8
+shadow_offset = Vector2(0, 5)
+
+[sub_resource type="ShaderMaterial" id="MatArrow"]
+shader = ExtResource("2_arrow_shd")
+shader_parameter/top_color = Color(1, 0.78, 0.25, 1)
+shader_parameter/bottom_color = Color(1, 0.38, 0.05, 1)
+shader_parameter/outline_threshold = 0.12
+
+[sub_resource type="StyleBoxFlat" id="StylePopup"]
+bg_color = Color(0, 0, 0, 0.38)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.32)
+shadow_size = 12
+shadow_offset = Vector2(0, 8)
+
+[sub_resource type="StyleBoxFlat" id="StyleTip"]
+bg_color = Color(0, 0, 0, 0.4)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.3)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[node name="GateOverlay" type="Control" unique_id=700980344]
+z_index = 2000
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="GateArrow" type="PanelContainer" parent="." unique_id=532747008]
+custom_minimum_size = Vector2(68, 68)
+layout_mode = 0
+offset_right = 68.0
+offset_bottom = 68.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleArrow")
+
+[node name="Center" type="CenterContainer" parent="GateArrow" unique_id=249311695]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ArrowTex" type="TextureRect" parent="GateArrow/Center" unique_id=290675222]
+material = SubResource("MatArrow")
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+texture = ExtResource("1_arrow_tex")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GateReadyOverlay" type="Control" parent="." unique_id=1085581491]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="GateReadyOverlay" unique_id=103342311]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.22)
+
+[node name="Center" type="Control" parent="GateReadyOverlay" unique_id=2108990667]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -95.0
+offset_right = 320.0
+offset_bottom = 95.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Panel" type="PanelContainer" parent="GateReadyOverlay/Center" unique_id=2055747099]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StylePopup")
+
+[node name="Margin" type="MarginContainer" parent="GateReadyOverlay/Center/Panel" unique_id=1156084661]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="GateReadyOverlay/Center/Panel/Margin" unique_id=1169204636]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="Title" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=167210424]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.75, 1, 0.98)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 52
+text = "RITE EXPOSED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Sub" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=608462753]
+modulate = Color(1, 1, 1, 0.78)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Rewrite the outer Rite"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TutorialTip" type="PanelContainer" parent="." unique_id=214463301]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 88.0
+offset_right = 280.0
+offset_bottom = 140.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleTip")
+
+[node name="Margin" type="MarginContainer" parent="TutorialTip" unique_id=707670426]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="TutorialTip/Margin" unique_id=777753680]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.95)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="ObjectivePanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -500.0
+offset_top = 112.0
+offset_right = -18.0
+offset_bottom = 206.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleTip")
+
+[node name="Margin" type="MarginContainer" parent="ObjectivePanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="ObjectivePanel/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="ObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.64, 0.28, 0.98)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "OBJECTIVE"
+horizontal_alignment = 2
+
+[node name="Detail" type="Label" parent="ObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Objective detail"
+horizontal_alignment = 2
+autowrap_mode = 3

@@ -1,0 +1,141 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/screens/MajorChoiceCard.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleIconFrame"]
+bg_color = Color(0.08, 0.08, 0.08, 0.65)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+
+[sub_resource type="StyleBoxFlat" id="StyleTag"]
+bg_color = Color(0, 0, 0, 0.35)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.16, 0.16, 0.16, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="MajorChoiceCard" type="Button"]
+clip_contents = true
+custom_minimum_size = Vector2(360, 320)
+size_flags_horizontal = 3
+focus_mode = 0
+script = ExtResource("1")
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+theme_override_constants/separation = 12
+mouse_filter = 2
+
+[node name="Header" type="HBoxContainer" parent="Margin/VBox"]
+theme_override_constants/separation = 12
+mouse_filter = 2
+
+[node name="IconFrame" type="PanelContainer" parent="Margin/VBox/Header"]
+custom_minimum_size = Vector2(64, 64)
+theme_override_styles/panel = SubResource("StyleIconFrame")
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="Margin/VBox/Header/IconFrame"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
+
+[node name="Glyph" type="Label" parent="Margin/VBox/Header/IconFrame"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 18
+modulate = Color(1, 1, 1, 0.85)
+text = "▲"
+mouse_filter = 2
+
+[node name="TitleBox" type="VBoxContainer" parent="Margin/VBox/Header"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="Margin/VBox/Header/TitleBox"]
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 20
+text = "Choice"
+mouse_filter = 2
+
+[node name="Blurb" type="Label" parent="Margin/VBox/Header/TitleBox"]
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 12
+modulate = Color(1, 1, 1, 0.70)
+text = "Short description."
+mouse_filter = 2
+
+[node name="Tags" type="HBoxContainer" parent="Margin/VBox"]
+theme_override_constants/separation = 8
+mouse_filter = 2
+
+[node name="TagAttempt" type="PanelContainer" parent="Margin/VBox/Tags"]
+theme_override_styles/panel = SubResource("StyleTag")
+mouse_filter = 2
+
+[node name="Text" type="Label" parent="Margin/VBox/Tags/TagAttempt"]
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.78)
+text = "THIS ATTEMPT"
+mouse_filter = 2
+
+[node name="TagExtra" type="PanelContainer" parent="Margin/VBox/Tags"]
+theme_override_styles/panel = SubResource("StyleTag")
+visible = false
+mouse_filter = 2
+
+[node name="Text" type="Label" parent="Margin/VBox/Tags/TagExtra"]
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.78)
+text = "UNIQUE"
+mouse_filter = 2
+
+[node name="Sep" type="ColorRect" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 1)
+color = Color(1, 1, 1, 0.08)
+mouse_filter = 2
+
+[node name="Bullets" type="VBoxContainer" parent="Margin/VBox"]
+theme_override_constants/separation = 6
+mouse_filter = 2
+
+[node name="BottomHint" type="Label" parent="Margin/VBox"]
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 11
+modulate = Color(1, 1, 1, 0.52)
+text = "Hover for full details"
+mouse_filter = 2

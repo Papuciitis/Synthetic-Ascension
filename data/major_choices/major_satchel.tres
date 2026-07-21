@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddBackpackSlots.gd" id="2"]
+
+[sub_resource type="Resource" id="eff_bag"]
+script = ExtResource("2")
+amount = 4
+
+[resource]
+script = ExtResource("1")
+id = &"major_satchel"
+title = "Expanded Satchel"
+description = "Carry more salvage between segments.\n• +4 backpack slots (this attempt)"
+category = &"utility"
+effects = Array[Resource]([SubResource("eff_bag")])

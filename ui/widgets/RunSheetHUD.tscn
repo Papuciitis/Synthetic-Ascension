@@ -1,0 +1,179 @@
+[gd_scene format=3 uid="uid://runsheethud"]
+
+[ext_resource type="Script" uid="uid://5a1g346xexcc" path="res://ui/widgets/RunSheetHUD.gd" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleRoot"]
+bg_color = Color(0.08, 0.08, 0.08, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.35)
+shadow_size = 10
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleHeaderPill"]
+bg_color = Color(0, 0, 0, 0.4)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.12, 0.12, 0.12, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[node name="RunSheetHUD" type="PanelContainer" unique_id=1482151186]
+custom_minimum_size = Vector2(240, 210)
+theme_override_styles/panel = SubResource("StyleRoot")
+script = ExtResource("1")
+
+[node name="Margin" type="MarginContainer" parent="." unique_id=452179138]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="Margin" unique_id=1687409449]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HeaderPill" type="PanelContainer" parent="Margin/VBox" unique_id=111111111]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleHeaderPill")
+
+[node name="HeaderMargin" type="MarginContainer" parent="Margin/VBox/HeaderPill" unique_id=222222222]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/HeaderPill/HeaderMargin" unique_id=1069292675]
+modulate = Color(1, 1, 1, 0.88)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "CHARACTER"
+
+[node name="Sep1" type="ColorRect" parent="Margin/VBox" unique_id=1693290041]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+color = Color(1, 1, 1, 0.08)
+
+[node name="StatsGrid" type="GridContainer" parent="Margin/VBox" unique_id=1097254115]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 3
+columns = 3
+
+[node name="HPK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=1988854330]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "HP"
+
+[node name="HPV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=1296618757]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="HPD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300001]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="ARMK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=209013141]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "ARM"
+
+[node name="ARMV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=327837386]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="ARMD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300002]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="SPDK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=873590314]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "SPD"
+
+[node name="SPDV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=36878300]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0"
+
+[node name="SPDD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300003]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="POWK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=572432956]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "POW"
+
+[node name="POWV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=1814486710]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0%"
+
+[node name="POWD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300004]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="HSTK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=74976971]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "HST"
+
+[node name="HSTV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=196575787]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0%"
+
+[node name="HSTD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300005]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="LCKK" type="Label" parent="Margin/VBox/StatsGrid" unique_id=869377799]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 2
+text = "LCK"
+
+[node name="LCKV" type="Label" parent="Margin/VBox/StatsGrid" unique_id=1352287561]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "0%"
+
+[node name="LCKD" type="Label" parent="Margin/VBox/StatsGrid" unique_id=333300006]
+modulate = Color(1, 1, 1, 0.55)
+layout_mode = 2
+horizontal_alignment = 2
+
+[node name="Sep2" type="ColorRect" parent="Margin/VBox" unique_id=107092888]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+color = Color(1, 1, 1, 0.08)
+
+[node name="SetsTitle" type="Label" parent="Margin/VBox" unique_id=156191731]
+modulate = Color(1, 1, 1, 0.75)
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "SETS"
+
+[node name="SetsVBox" type="VBoxContainer" parent="Margin/VBox" unique_id=1600877432]
+layout_mode = 2
+theme_override_constants/separation = 2

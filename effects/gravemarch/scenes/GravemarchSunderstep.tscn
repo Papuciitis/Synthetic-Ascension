@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://effects/gravemarch/scenes/GravemarchSunderstep.gd" id="1"]
+[ext_resource type="PackedScene" path="res://assets/vfx/world/sets/conduit/VFX_Shockwave.tscn" id="2"]
+
+[node name="GravemarchSunderstep" type="Node"]
+script = ExtResource("1")
+tooltip_short = "On attacks, unleash a shockwave around you that damages and stuns."
+vfx_shockwave_scene = ExtResource("2")

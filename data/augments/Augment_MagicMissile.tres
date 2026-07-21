@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://cytrdwfuyfyht"]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_2e64r"]
+[ext_resource type="Texture2D" uid="uid://cfjcwcv23d3t5" path="res://assets/textures/Augment_Placeholder_Magic_Missile.png" id="1_a3vd7"]
+[ext_resource type="PackedScene" uid="uid://ci7y0xx2qw45" path="res://effects/augments/scenes/MagicMissileEffect.tscn" id="1_n1mum"]
+
+[resource]
+script = ExtResource("1_2e64r")
+id = &"augment_magic_missile"
+display_name = "Magic Missile"
+description = """A disciplined weave that auto-launches missiles at intruders."""
+card_blurb = "Auto-fires seeking missiles on cooldown."
+details = """Cooldown: 0.75s
+Burst: 2 missiles (0.08s spacing)
+Seek Radius: 750px
+Damage: 0.35× Power"""
+icon = ExtResource("1_a3vd7")
+effect_scenes = Array[PackedScene]([ExtResource("1_n1mum")])
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://nkkym3elr9diy"]
+
+[ext_resource type="Script" uid="uid://tnj5a3u37h1pt" path="res://effects/items/logic/FirestoneEffect.gd" id="1_fire"]
+
+[node name="FirestoneEffect" type="Node2D" unique_id=101010101]
+script = ExtResource("1_fire")

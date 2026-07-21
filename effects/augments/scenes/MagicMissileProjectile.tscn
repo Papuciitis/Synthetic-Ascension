@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bxo5msy1fcums"]
+
+[ext_resource type="Script" uid="uid://bp2o56t5iptxo" path="res://effects/augments/logic/MagicMissileProjectile.gd" id="1_d0fcg"]
+
+[node name="MagicMissileProjectile" type="Node2D" unique_id=253009888]
+script = ExtResource("1_d0fcg")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1765600852]

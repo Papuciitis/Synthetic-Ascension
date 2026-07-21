@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://3e7n0sdaifp5"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_gpamy"]
+[ext_resource type="Texture2D" uid="uid://dewyop2gtvbuc" path="res://assets/textures/item_test.png" id="1_o6jix"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="1_p873k"]
+
+[sub_resource type="Resource" id="Resource_o6jix"]
+script = ExtResource("1_gpamy")
+max_hp = 20.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("1_p873k")
+id = "item_test"
+display_name = "Test Item"
+icon = ExtResource("1_o6jix")
+mods = SubResource("Resource_o6jix")
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

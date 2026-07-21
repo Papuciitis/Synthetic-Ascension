@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RaceData" format=3 uid="uid://cvbn704xforyl"]
+
+[ext_resource type="Script" uid="uid://dyupwe2op3bk0" path="res://data/RaceData.gd" id="1_o84nv"]
+
+[resource]
+script = ExtResource("1_o84nv")
+id = "warforged"
+display_name = "Warforged"
+armor_add = 4.0
+speed_add = -5.0
+power_add = 0.02
+haste_add = 0.03
+luck_add = 0.3
+metadata/_custom_type_script = "uid://dyupwe2op3bk0"

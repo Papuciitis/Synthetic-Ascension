@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pickup"]
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1_spec"]
+[ext_resource type="Texture2D" path="res://assets/textures/Enemy_Herald44x44.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_spec")
+id = &"boss_arcanist"
+display_name = "Arcanist"
+ai = 2
+max_hp = 150.0
+speed = 84.0
+follower_reward_min = 10
+follower_reward_max = 14
+preferred_range = 340.0
+range_tolerance = 90.0
+shoot_every = 999.0
+strafe_strength = 0.95
+item_pickup_scene = ExtResource("1_pickup")
+drop_chance = 1.0
+drop_instance_roll = true
+drop_rarity_min = 1
+drop_rarity_max = 2
+drop_amount_min = 2
+drop_amount_max = 3
+sprite_texture = ExtResource("2_tex")
+sprite_scale = Vector2(1, 1)
+sprite_modulate = Color(0.55, 0.25, 1.0, 1)

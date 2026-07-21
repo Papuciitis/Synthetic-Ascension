@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://cmogelvhnd7yp"]
+
+[ext_resource type="Script" uid="uid://bbmjioj4x78p0" path="res://scenes/world/pickups/ItemPickup.gd" id="1_1pbfp"]
+[ext_resource type="Script" uid="uid://37w0pesvotlw" path="res://scenes/world/pickups/PickupVfx.gd" id="2_4jj8l"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1pbfp"]
+
+[sub_resource type="Gradient" id="Gradient_1pbfp"]
+offsets = PackedFloat32Array(0, 0.5406977, 0.93604654)
+colors = PackedColorArray(0, 0, 0, 1, 0.30232558, 0.30232558, 0.30232558, 1, 0.20938984, 0.28521782, 0.9687696, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_4jj8l"]
+gradient = SubResource("Gradient_1pbfp")
+fill_from = Vector2(0.17948718, 0.982906)
+fill_to = Vector2(0.43162394, 0.5982906)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_guel5"]
+
+[sub_resource type="MeshTexture" id="MeshTexture_jmj7p"]
+mesh = SubResource("CapsuleMesh_guel5")
+base_texture = SubResource("GradientTexture2D_4jj8l")
+
+[node name="ItemPickup" type="Area2D" unique_id=1794403496]
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("1_1pbfp")
+debug_pickup = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1742138683]
+shape = SubResource("CapsuleShape2D_1pbfp")
+
+[node name="Glow" type="Sprite2D" parent="." unique_id=1862254709]
+texture = SubResource("MeshTexture_jmj7p")
+
+[node name="Icon" type="Sprite2D" parent="." unique_id=1862254710]
+z_index = 5
+
+[node name="Vfx" type="Node2D" parent="." unique_id=1876367117]
+script = ExtResource("2_4jj8l")

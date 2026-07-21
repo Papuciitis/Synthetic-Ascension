@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3 uid="uid://daiolf3726iwn"]
+
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_c0s0h"]
+[ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_m4j6x"]
+
+[resource]
+script = ExtResource("1_m4j6x")
+id = &"enemy_brute"
+display_name = "Brute"
+max_hp = 55.0
+speed = 55.0
+follower_reward_min = 2
+follower_reward_max = 3
+item_pickup_scene = ExtResource("1_c0s0h")
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_max = 1
+metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

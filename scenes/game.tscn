@@ -1,0 +1,98 @@
+[gd_scene format=3 uid="uid://c721wrfaol3ch"]
+
+[ext_resource type="Script" uid="uid://dn6dqlufgsbal" path="res://scenes/game.gd" id="1_iywne"]
+[ext_resource type="PackedScene" uid="uid://detamlap16y7m" path="res://ui/screens/GameOverUI.tscn" id="2_0tnpc"]
+[ext_resource type="PackedScene" uid="uid://0f4cntwas3au" path="res://core/actors/player/player.tscn" id="2_p57ef"]
+[ext_resource type="PackedScene" uid="uid://d238dlih1q3vf" path="res://ui/augments/AugmentSelect.tscn" id="3_vtaks"]
+[ext_resource type="PackedScene" uid="uid://q8pis2e8ppg4" path="res://core/systems/spawner/spawner.tscn" id="4_gee14"]
+[ext_resource type="PackedScene" uid="uid://0uot5axq3xyo" path="res://ui/screens/HUD.tscn" id="4_p57ef"]
+[ext_resource type="Script" uid="uid://wlesped7lquu" path="res://core/systems/inventory/WorldDropSpawner.gd" id="6_p57ef"]
+[ext_resource type="Texture2D" uid="uid://bx4uu53n63x52" path="res://assets/textures/backgrounds/game_background.png" id="9_0tnpc"]
+[ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="9_kvpfn"]
+[ext_resource type="Script" uid="uid://dfa621jbnw3no" path="res://core/systems/backgrounds/FloorFollow.gd" id="10_vtaks"]
+[ext_resource type="Script" uid="uid://tdepd5h1lefn" path="res://core/systems/world/ChunkManager.gd" id="11_kvpfn"]
+[ext_resource type="PackedScene" uid="uid://d0bcmh3m4ks2r" path="res://scenes/world/cover/CoverFull.tscn" id="12_trtic"]
+[ext_resource type="PackedScene" uid="uid://dgv8wn6tlfbfh" path="res://scenes/world/cover/CoverWindow.tscn" id="13_ir15t"]
+[ext_resource type="PackedScene" uid="uid://c17i3l4c5xsad" path="res://scenes/world/cover/CoverHalf.tscn" id="14_ca42v"]
+[ext_resource type="PackedScene" path="res://scenes/world/fence/FenceBlock.tscn" id="14_fence"]
+[ext_resource type="PackedScene" path="res://scenes/world/cover/CoverHalfLab.tscn" id="14_labhalf"]
+[ext_resource type="PackedScene" path="res://scenes/world/waypoints/WaypointSigil.tscn" id="14_wp"]
+[ext_resource type="Script" uid="uid://bu8bmdfklm1ed" path="res://core/systems/world/FlowFieldNav.gd" id="15_ir15t"]
+[ext_resource type="Script" uid="uid://bjg87n8bpbjo1" path="res://core/actors/enemy/brains/EnemySeparationSystem.gd" id="16_ca42v"]
+[ext_resource type="Script" uid="uid://dmfqtp41i06ae" path="res://core/systems/world/Level1Builder.gd" id="17_level1"]
+[ext_resource type="PackedScene" uid="uid://wardstone1" path="res://scenes/world/wardstones/Wardstone.tscn" id="18_ward"]
+[ext_resource type="PackedScene" uid="uid://exitrite1" path="res://scenes/world/gates/ExitRite.tscn" id="19_exit"]
+[ext_resource type="Texture2D" uid="uid://bcrp5vy2jvaa3" path="res://assets/textures/backgrounds/fog_soft_01.png" id="20_fog"]
+[ext_resource type="PackedScene" path="res://scenes/world/atmosphere/AtmosFireflies.tscn" id="21_fireflies"]
+[ext_resource type="PackedScene" path="res://scenes/vision/VisionRig.tscn" id="22_vision"]
+
+[node name="Game" type="Node2D" unique_id=487510424]
+script = ExtResource("1_iywne")
+game_over_ui_scene = ExtResource("2_0tnpc")
+augment_select_scene = ExtResource("3_vtaks")
+
+[node name="Player" parent="." unique_id=251512627 instance=ExtResource("2_p57ef")]
+
+[node name="Floor" type="Sprite2D" parent="." unique_id=556721538]
+modulate = Color(0.72, 0.72, 0.72, 1)
+z_index = -1000
+texture_repeat = 2
+texture = ExtResource("9_0tnpc")
+region_enabled = true
+region_rect = Rect2(-2048, -2048, 4096, 4096)
+script = ExtResource("10_vtaks")
+
+[node name="Fog" type="Sprite2D" parent="." unique_id=586963894]
+visible = false
+modulate = Color(0.45, 0.45, 0.45, 0.03)
+z_index = 1500
+texture_filter = 2
+texture_repeat = 2
+texture = ExtResource("20_fog")
+region_enabled = true
+region_rect = Rect2(-2048, -2048, 4096, 4096)
+script = ExtResource("10_vtaks")
+
+[node name="Fireflies" parent="." unique_id=863342733 instance=ExtResource("21_fireflies")]
+
+[node name="VisionRig" parent="." unique_id=927509306 instance=ExtResource("22_vision")]
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=245006449]
+layer = 10
+
+[node name="HUD" parent="UI" unique_id=488377412 instance=ExtResource("4_p57ef")]
+
+[node name="Spawner" parent="." unique_id=1961182374 instance=ExtResource("4_gee14")]
+
+[node name="WorldDropSpawner" type="Node2D" parent="." unique_id=1928316048]
+script = ExtResource("6_p57ef")
+pickup_scene = ExtResource("9_kvpfn")
+
+[node name="ChunkManager" type="Node2D" parent="." unique_id=405586157 groups=["chunk_manager"]]
+script = ExtResource("11_kvpfn")
+generation_enabled = false
+cover_full_scene = ExtResource("12_trtic")
+cover_window_scene = ExtResource("13_ir15t")
+cover_half_scene = ExtResource("14_ca42v")
+debug_draw_chunk_outlines = false
+debug_show_blocks = false
+
+[node name="Level1" type="Node2D" parent="." unique_id=111111111]
+script = ExtResource("17_level1")
+cover_full_scene = ExtResource("12_trtic")
+cover_window_scene = ExtResource("13_ir15t")
+cover_half_lab_scene = ExtResource("14_labhalf")
+fence_block_scene = ExtResource("14_fence")
+waypoint_scene = ExtResource("14_wp")
+wardstone_scene = ExtResource("18_ward")
+exit_rite_scene = ExtResource("19_exit")
+
+[node name="FlowFieldNav" type="Node2D" parent="." unique_id=681098290]
+script = ExtResource("15_ir15t")
+radius_cells = 40
+
+[node name="EnemySeperationSystem" type="Node" parent="." unique_id=2070618188]
+script = ExtResource("16_ca42v")
+
+[editable path="Player"]
+[editable path="UI/HUD"]

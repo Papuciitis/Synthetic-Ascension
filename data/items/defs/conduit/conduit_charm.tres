@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cmcmhb57serr"]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://bnhaliiash3d1" path="res://assets/textures/items/conduit/conduit_charm.png" id="1_cgpsk"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1")
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1")
+luck = 0.01
+
+[resource]
+script = ExtResource("2")
+id = "conduit_charm"
+display_name = "Conduit Charm"
+icon = ExtResource("1_cgpsk")
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.5
+pct_max = 0.8
+equip_slot = 5
+set_id = "conduit"
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

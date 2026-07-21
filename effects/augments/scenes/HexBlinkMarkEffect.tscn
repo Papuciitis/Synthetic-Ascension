@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://cvun5woj4efui"]
+
+[ext_resource type="Script" uid="uid://boah2xr1ig6v4" path="res://effects/augments/logic/HexBlinkMarkEffect.gd" id="1_8553i"]
+[ext_resource type="PackedScene" uid="uid://2d5xao886coh" path="res://assets/vfx/world/augments/VFX_HexBlinkBurst.tscn" id="2_k2a6u"]
+[ext_resource type="PackedScene" uid="uid://cwj88wo35yv16" path="res://assets/vfx/world/augments/VFX_HexMarkAura.tscn" id="3_d14jt"]
+
+[node name="HexBlinkMarkEffect" type="Node2D" unique_id=1548512994]
+script = ExtResource("1_8553i")
+vfx_blink_scene = ExtResource("2_k2a6u")
+vfx_mark_scene = ExtResource("3_d14jt")

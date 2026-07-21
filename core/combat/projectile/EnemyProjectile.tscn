@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://vs48l4wx2ns3"]
+
+[ext_resource type="Script" uid="uid://b5gcler1qoya4" path="res://core/combat/projectile/EnemyProjectile.gd" id="1_l4wrl"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sly06"]
+radius = 5.0
+
+[node name="EnemyProjectile" type="Area2D" unique_id=210339158]
+script = ExtResource("1_l4wrl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=443636745]
+shape = SubResource("CircleShape2D_sly06")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1075018483]
+scale = Vector2(0.25, 0.25)
