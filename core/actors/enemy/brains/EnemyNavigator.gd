@@ -5,13 +5,13 @@ class_name EnemyNavigator
 # - SEEK: go straight if we have a clear ray corridor
 # - WALL: follow obstacle boundary (bug algorithm) until we can leave cleanly
 #
-# Designed to work with your current Enemy + EnemySenses without requiring
-# any extra exported vars. If you later add tuning vars on Enemy (wall_follow_*),
+# Designed to work with your current EnemyActor + EnemySenses without requiring
+# any extra exported vars. If you later add tuning vars on EnemyActor (wall_follow_*),
 # this navigator will automatically pick them up via enemy.get(...).
 
 enum Mode { SEEK, WALL }
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _senses: EnemySenses = null
 
 var _mode: int = Mode.SEEK
@@ -33,7 +33,7 @@ var _last_target: Vector2 = Vector2.INF
 var _smoothed_vel: Vector2 = Vector2.ZERO
 
 
-func setup(enemy: Enemy, senses: EnemySenses) -> void:
+func setup(enemy: EnemyActor, senses: EnemySenses) -> void:
 	_enemy = enemy
 	_senses = senses
 	_reset_all()
@@ -322,7 +322,7 @@ func _ray_hit(a: Vector2, b: Vector2, mask: int, ex: Array[RID]) -> Dictionary:
 
 
 func _f(prop: StringName, default_value: float) -> float:
-	# Safe “read if exists on Enemy” helper.
+	# Safe “read if exists on EnemyActor” helper.
 	if _enemy == null:
 		return default_value
 	var v = _enemy.get(prop)

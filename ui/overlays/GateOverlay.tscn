@@ -198,9 +198,9 @@ anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -500.0
-offset_top = 112.0
+offset_top = 124.0
 offset_right = -18.0
-offset_bottom = 206.0
+offset_bottom = 294.0
 grow_horizontal = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleTip")
@@ -234,5 +234,51 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 13
 text = "Objective detail"
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="SecondaryObjectivePanel" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -500.0
+offset_top = 304.0
+offset_right = -18.0
+offset_bottom = 410.0
+grow_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleTip")
+
+[node name="Margin" type="MarginContainer" parent="SecondaryObjectivePanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 10
+
+[node name="VBox" type="VBoxContainer" parent="SecondaryObjectivePanel/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Title" type="Label" parent="SecondaryObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.25, 0.9, 0.82, 0.98)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 16
+text = "SECONDARY OBJECTIVE"
+horizontal_alignment = 2
+
+[node name="Detail" type="Label" parent="SecondaryObjectivePanel/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.9)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 13
+text = "Optional objective detail"
 horizontal_alignment = 2
 autowrap_mode = 3

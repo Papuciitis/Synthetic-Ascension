@@ -1,13 +1,30 @@
 extends Object
+const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
-static func _stamp_floor_rect_cells(gen: ChunkGenImpl, chunk: Node2D, rect: Rect2i, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
+static func _stamp_floor_rect_cells(gen: ChunkGenImpl, chunk: Node2D, rect: Rect2i, tex_index: int, _rng: RandomNumberGenerator, alpha: float, z: int) -> void:
 	if not gen.ground_enabled:
 		return
-	if tex_index < 0 or tex_index >= WorldArt.GROUND_TEX.size():
+	var ground_count: int = _WORLD_ART.ground_texture_count()
+	if tex_index < 0 or tex_index >= ground_count:
 		return
 	if rect.size.x <= 0 or rect.size.y <= 0:
+		return
+
+	var floor_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
+	if floor_tex == null:
+		return
+	if gen.cm != null and gen.cm.tiled_world_rendering:
+		gen.cm.paint_tiled_rect(
+			chunk,
+			&"floor",
+			rect,
+			floor_tex,
+			_WORLD_ART.ground_repeat_world_px(tex_index),
+			z,
+			Color(1, 1, 1, alpha)
+		)
 		return
 
 	var spr := Sprite2D.new()
@@ -15,44 +32,37 @@ static func _stamp_floor_rect_cells(gen: ChunkGenImpl, chunk: Node2D, rect: Rect
 	spr.z_index = z
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-	spr.texture = WorldArt.GROUND_TEX[tex_index]
-
+	spr.texture = floor_tex
 	spr.region_enabled = true
-	var ox: float = float(rng.randi_range(0, WorldArt.TEX_TILE_PX - 1))
-	var oy: float = float(rng.randi_range(0, WorldArt.TEX_TILE_PX - 1))
-	spr.region_rect = Rect2(ox, oy, float(WorldArt.TEX_TILE_PX * rect.size.x), float(WorldArt.TEX_TILE_PX * rect.size.y))
 
-	var s: float = float(gen.cell_size_px) / float(WorldArt.TEX_TILE_PX)
-	spr.scale = Vector2(s, s)
+	# World-space mapping keeps adjacent road, sidewalk and plaza stamps aligned.
+	var tile_px: int = _WORLD_ART.texture_tile_px()
+	var repeat_world_px: int = _WORLD_ART.ground_repeat_world_px(tex_index)
+	var source_per_world: float = float(tile_px) / float(repeat_world_px)
+	var phase_x: float = float(posmod(gen.world_seed * 31, tile_px))
+	var phase_y: float = float(posmod(gen.world_seed * 53, tile_px))
+	var world_x: float = float(gen._gen_coord.x * gen.chunk_size_px + rect.position.x * gen.cell_size_px)
+	var world_y: float = float(gen._gen_coord.y * gen.chunk_size_px + rect.position.y * gen.cell_size_px)
+	var ox: float = fposmod(phase_x + world_x * source_per_world, float(tile_px))
+	var oy: float = fposmod(phase_y + world_y * source_per_world, float(tile_px))
+	var world_w: float = float(gen.cell_size_px * rect.size.x)
+	var world_h: float = float(gen.cell_size_px * rect.size.y)
+	spr.region_rect = Rect2(ox, oy, world_w * source_per_world, world_h * source_per_world)
+
+	var texture_scale: float = float(repeat_world_px) / float(tile_px)
+	spr.scale = Vector2(texture_scale, texture_scale)
 	spr.modulate = Color(1, 1, 1, alpha)
 
 	var cx: float = (float(rect.position.x) + float(rect.size.x) * 0.5) * float(gen.cell_size_px)
 	var cy: float = (float(rect.position.y) + float(rect.size.y) * 0.5) * float(gen.cell_size_px)
 	spr.position = Vector2(cx, cy)
-
 	chunk.add_child(spr)
 
 
 static func _stamp_floor_rect_cells_patchy(gen: ChunkGenImpl, chunk: Node2D, rect: Rect2i, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
-	# Break large uniform rectangles into a handful of smaller stamps to avoid "texture carpet" feel.
-	# Uses its own RNG (caller should pass a dedicated rng) so walls/props remain stable.
-	if rect.size.x <= 0 or rect.size.y <= 0:
-		return
-	var x_end: int = rect.position.x + rect.size.x
-	var y_end: int = rect.position.y + rect.size.y
-	var patch_min: int = 6
-	var patch_max: int = 12
-	var y: int = rect.position.y
-	while y < y_end:
-		var ph: int = clampi(rng.randi_range(patch_min, patch_max), 1, y_end - y)
-		var x: int = rect.position.x
-		while x < x_end:
-			var pw: int = clampi(rng.randi_range(patch_min, patch_max), 1, x_end - x)
-			var r := Rect2i(Vector2i(x, y), Vector2i(pw, ph))
-			var a := clampf(alpha + rng.randf_range(-0.06, 0.06), 0.0, 1.0)
-			gen._stamp_floor_rect_cells(chunk, r, tex_index, rng, a, z)
-			x += pw
-		y += ph
+	# The former patch grid produced visible alpha blocks and restarted the texture in every patch.
+	# Quiet seamless materials read better as one continuous structural surface.
+	gen._stamp_floor_rect_cells(chunk, rect, tex_index, rng, alpha, z)
 
 
 
@@ -104,7 +114,7 @@ static func _stamp_district_road_edge_noise(gen: ChunkGenImpl, chunk: Node2D, bo
 	var ch: float = clampf(gen.district_road_edge_noise_chance, 0.0, 1.0)
 	if ch <= 0.0:
 		return
-	var n: int = rng.randi_range(4, 9)
+	var n: int = rng.randi_range(2, 5)
 	for _i in range(n):
 		if rng.randf() > ch:
 			continue
@@ -128,7 +138,7 @@ static func _stamp_district_road_edge_noise(gen: ChunkGenImpl, chunk: Node2D, bo
 			continue
 
 		# Mud/wet (index 5) at low alpha.
-		gen._stamp_floor_rect_cells(chunk, rect, 5, rng, 0.22, -94)
+		gen._stamp_floor_rect_cells(chunk, rect, 5, rng, 0.12, -94)
 
 
 

@@ -24,6 +24,7 @@ var _life: float = 0.0
 var _t: float = 0.0
 var _pooled: bool = false
 var _redraw_accum: float = 0.0
+var _chunk_manager: ChunkManager = null
 
 func setup(p_dir: Vector2, p_damage: float, p_source: Node) -> void:
 	var d := p_dir
@@ -37,6 +38,7 @@ func setup(p_dir: Vector2, p_damage: float, p_source: Node) -> void:
 
 func _ready() -> void:
 	_pooled = has_meta("__pool_key")
+	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 
 	var pm := get_node_or_null("/root/PoolManager")
 	if pm != null and is_instance_valid(pm) and pm.has_method("get_additive_material"):
@@ -55,7 +57,12 @@ func _process(dt: float) -> void:
 		_despawn()
 		return
 
-	global_position += _vel * dt
+	var old_pos: Vector2 = global_position
+	var new_pos: Vector2 = old_pos + _vel * dt
+	if _hits_world(old_pos, new_pos):
+		_despawn()
+		return
+	global_position = new_pos
 	rotation = _vel.angle()
 
 	# Collision: use EnemyIndex spatial hash when available
@@ -84,6 +91,11 @@ func _process(dt: float) -> void:
 	if _redraw_accum >= (1.0 / 30.0):
 		_redraw_accum = 0.0
 		queue_redraw()
+
+func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
+	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, 4.0) >= 0.0
 
 func _draw() -> void:
 	var p: float = clampf(_life / maxf(max_life, 0.001), 0.0, 1.0)

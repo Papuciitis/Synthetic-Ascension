@@ -45,6 +45,8 @@ class_name BossArena
 @onready var trigger_shape: CollisionShape2D = $Trigger/CollisionShape2D
 
 var _spawned: bool = false
+var _spawn_in_progress: bool = false
+var _retry_not_before_ms: int = 0
 var _cleared: bool = false
 var _boss: Node = null
 var _gate: Node = null
@@ -75,7 +77,9 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	# Backup trigger: if collision layers change, proximity still spawns the boss.
-	if _cleared or _spawned:
+	if _cleared or _spawned or _spawn_in_progress:
+		return
+	if Time.get_ticks_msec() < _retry_not_before_ms:
 		return
 	var p := get_tree().get_first_node_in_group("player") as Node2D
 	if p == null:
@@ -90,7 +94,7 @@ func _draw() -> void:
 
 
 func _on_body_entered(body: Node) -> void:
-	if _cleared or _spawned:
+	if _cleared or _spawned or _spawn_in_progress:
 		return
 	if body == null or not body.is_in_group("player"):
 		return
@@ -137,8 +141,8 @@ func _pick_archetype() -> PackedScene:
 	return scenes[rng.randi_range(0, scenes.size() - 1)]
 
 
-func _apply_boss_rewards_and_rules(en: Enemy) -> void:
-	# Boss identity + leash metadata (used by Enemy.gd).
+func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
+	# Boss identity + leash metadata (used by EnemyActor.gd).
 	en.add_to_group(&"boss")
 	en.add_to_group(&"boss_like")
 	en.set_meta("boss_archetype", ("tank" if _is_tank else "mage"))
@@ -173,27 +177,52 @@ func _apply_boss_rewards_and_rules(en: Enemy) -> void:
 
 
 func _spawn() -> void:
-	if _spawned or _cleared:
+	if _spawned or _cleared or _spawn_in_progress:
 		return
-	_spawned = true
-	_disable_trigger_deferred()
+	if Time.get_ticks_msec() < _retry_not_before_ms:
+		return
+	_spawn_in_progress = true
 
-	var scene := _pick_archetype()
+	var scene: PackedScene = _pick_archetype()
 	if scene == null:
+		_spawn_in_progress = false
+		_retry_not_before_ms = Time.get_ticks_msec() + 1000
+		push_warning("BossArena has no valid boss scene; gate trigger remains available for retry.")
 		return
 
-	var e := scene.instantiate()
-	if e == null:
+	var e: Node = scene.instantiate()
+	if e == null or not (e is EnemyActor):
+		if e != null:
+			e.free()
+		_spawn_in_progress = false
+		_retry_not_before_ms = Time.get_ticks_msec() + 1000
+		push_warning("BossArena scene did not instantiate an EnemyActor; gate trigger remains available for retry.")
 		return
+	var spawn_filter := get_node_or_null("/root/DebugEnemySpawnFilter")
+	if spawn_filter != null and spawn_filter.has_method("is_enemy_enabled"):
+		var enemy_actor := e as EnemyActor
+		var enemy_id := StringName(enemy_actor.spec.id) if enemy_actor.spec != null else &""
+		if not bool(spawn_filter.call("is_enemy_enabled", enemy_id, true)):
+			e.free()
+			_spawn_in_progress = false
+			_retry_not_before_ms = Time.get_ticks_msec() + 1000
+			return
 
+	_spawned = true
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"encounter", &"boss_started", {"position": str(global_position)})
+	_spawn_in_progress = false
+	_disable_trigger_deferred()
 	_boss = e
 	add_child(e)
+	if spawn_filter != null and spawn_filter.has_method("record_spawn"):
+		spawn_filter.call("record_spawn", StringName((e as EnemyActor).spec.id))
 
 	if e is Node2D:
 		(e as Node2D).global_position = global_position + spawn_offset
 
-	if e is Enemy:
-		var en := e as Enemy
+	if e is EnemyActor:
+		var en := e as EnemyActor
 		_apply_boss_rewards_and_rules(en)
 
 		if RunEvents != null and RunEvents.has_signal("boss_spawned"):
@@ -211,6 +240,8 @@ func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
 		return
 
 	_cleared = true
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"encounter", &"boss_cleared", {"position": str(global_position)})
 
 	# Signal UI
 	if RunEvents != null and RunEvents.has_signal("boss_cleared"):

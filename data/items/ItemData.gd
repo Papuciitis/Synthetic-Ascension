@@ -13,6 +13,9 @@ class_name ItemData
 @export var rarity_base: StatDelta # base bonus per rarity step (flat)
 @export var pct_min: float = -0.9999
 @export var pct_max: float = 0.9999
+@export var runtime_enabled: bool = true
+@export_range(0.0, 1.0, 0.01) var duplicate_feed_value: float = 0.0
+@export var scripted_value_weight: float = 0.0
 
 # Which equipped slot it belongs to. If NONE, it goes to bag only.
 enum EquipSlot { NONE = -1, HP = 0, ARMOR = 1, MOVE = 2, POWER = 3, HASTE = 4, LUCK = 5, OFFHAND = 6, RING = 7 }
@@ -21,6 +24,17 @@ enum EquipSlot { NONE = -1, HP = 0, ARMOR = 1, MOVE = 2, POWER = 3, HASTE = 4, L
 
 # Optional passive/effect scenes to run while equipped (used by ItemEffectRunner).
 @export var effect_scenes: Array[PackedScene] = []
+@export var positive_effect_scenes: Array[PackedScene] = []
+@export var negative_effect_scenes: Array[PackedScene] = []
+
+
+func get_effect_scenes(inst: ItemInstance) -> Array[PackedScene]:
+	if inst != null:
+		if int(inst.polarity) == int(ItemInstance.Polarity.NEG) and not negative_effect_scenes.is_empty():
+			return negative_effect_scenes
+		if int(inst.polarity) == int(ItemInstance.Polarity.POS) and not positive_effect_scenes.is_empty():
+			return positive_effect_scenes
+	return effect_scenes
 
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
@@ -28,12 +42,13 @@ func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	# Effect scenes can implement:
 	#   func get_effects_short(inst: ItemInstance) -> PackedStringArray
 	var out: PackedStringArray = PackedStringArray()
-	if effect_scenes.is_empty():
+	var scenes: Array[PackedScene] = get_effect_scenes(inst)
+	if scenes.is_empty():
 		return out
 
 	var seen: Dictionary[String, bool] = {}
 
-	for ps: PackedScene in effect_scenes:
+	for ps: PackedScene in scenes:
 		if ps == null:
 			continue
 

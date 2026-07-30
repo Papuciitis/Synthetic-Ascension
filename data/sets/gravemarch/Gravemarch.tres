@@ -14,6 +14,10 @@ move_speed = -6.0
 
 [sub_resource type="Resource" id="tier2"]
 script = ExtResource("2")
+display_name = "Ballast Frame"
+mechanical_description = "Gain +18 maximum HP and +2 armor, but lose 6 movement speed."
+plain_description = "Become tougher and heavier."
+glossary_terms = PackedStringArray("Armor")
 mods = SubResource("mods2")
 
 [sub_resource type="Resource" id="mods4"]
@@ -23,6 +27,10 @@ power = 0.02
 [sub_resource type="Resource" id="tier4"]
 script = ExtResource("2")
 required_count = 4
+display_name = "Sunderstep"
+mechanical_description = "Gain +2% power. Weapon attacks periodically trigger a close shockwave that damages, knocks back and briefly stuns."
+plain_description = "Regular attacks periodically stomp enemies away from you."
+glossary_terms = PackedStringArray("Power", "Set strength")
 mods = SubResource("mods4")
 effect_scenes = Array[PackedScene]([ExtResource("4")])
 
@@ -33,6 +41,10 @@ armor = 1.5
 [sub_resource type="Resource" id="tier6"]
 script = ExtResource("2")
 required_count = 6
+display_name = "Mass Arrest"
+mechanical_description = "Gain +1.5 armor. Damage dealt fills a bank; a full bank automatically pulls and slams nearby enemies. Active Verdict can spend 60% of the current threshold."
+plain_description = "Bank damage to collapse a crowd; R can trigger it early after enough damage is stored."
+glossary_terms = PackedStringArray("Damage bank", "Active requirement", "Set strength")
 mods = SubResource("mods6")
 effect_scenes = Array[PackedScene]([ExtResource("5")])
 
@@ -40,4 +52,13 @@ effect_scenes = Array[PackedScene]([ExtResource("5")])
 script = ExtResource("1")
 id = &"gravemarch"
 display_name = "Gravemarch Protocol"
+identity_sentence = "A deliberate control set that converts sustained damage into a gravitational crowd collapse."
+playstyle = "Stand your ground, bank damage, and time Verdict when enemies enter the indicated arrest area."
+best_with = "Durable melee builds, high sustained damage and weapons that keep dealing damage while repositioning."
+emblem_shape = &"gravity"
+accent_color = Color(0.86, 0.64, 0.30, 1)
+shape_language = "Heavy blocks, a descending chevron and a compressed core."
+active_ability_name = "Verdict"
+active_ability_requirements = "Requires 6 Gravemarch pieces, no active arrest sequence, no cooldown, and at least 60% of the current damage-bank threshold."
+glossary = {"Active requirement": "A condition beyond cooldown that must be met before an active ability can fire.", "Armor": "Reduces incoming damage according to the player defense rules.", "Damage bank": "Damage dealt is stored until the displayed threshold is reached or spent.", "Power": "Increases outgoing damage.", "Set strength": "Scaling derived from the rarity and upgrade state of equipped set pieces."}
 tiers = Array[ExtResource("2")]([SubResource("tier2"), SubResource("tier4"), SubResource("tier6")])

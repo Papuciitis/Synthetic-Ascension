@@ -89,7 +89,7 @@ func _process(_delta: float) -> void:
 		return
 
 	_show_tooltip(inst)
-	_position_tooltip_near_mouse()
+	_position_tooltip_beside(_find_item_control_in_parents(hovered))
 
 
 func _is_bag_open() -> bool:
@@ -124,7 +124,7 @@ func _hide_tooltip() -> void:
 	_tooltip.visible = false
 
 
-func _position_tooltip_near_mouse() -> void:
+func _position_tooltip_beside(source: Control) -> void:
 	if _tooltip == null:
 		return
 
@@ -140,20 +140,13 @@ func _position_tooltip_near_mouse() -> void:
 	if min_sz.x > 0.0 and min_sz.y > 0.0:
 		_tooltip.size = Vector2(maxf(w, min_sz.x), min_sz.y)
 
-	var mouse := get_viewport().get_mouse_position()
-	var pad := Vector2(14, 14)
-
-	var pos := mouse + pad
-	var screen := get_viewport().get_visible_rect().size
-
-	if pos.x + _tooltip.size.x > screen.x - 8.0:
-		pos.x = screen.x - _tooltip.size.x - 8.0
-	if pos.y + _tooltip.size.y > screen.y - 8.0:
-		pos.y = screen.y - _tooltip.size.y - 8.0
-	if pos.x < 8.0: pos.x = 8.0
-	if pos.y < 8.0: pos.y = 8.0
-
-	_tooltip.position = pos
+	var source_rect := (
+		source.get_global_rect()
+		if source != null
+		else Rect2(get_viewport().get_mouse_position(), Vector2.ONE)
+	)
+	if _tooltip.has_method("place_beside"):
+		_tooltip.call("place_beside", source_rect, get_viewport().get_visible_rect(), 12.0)
 
 
 func _is_descendant_of(n: Node, root: Node) -> bool:
@@ -174,3 +167,12 @@ func _find_item_instance_in_parents(n: Node) -> ItemInstance:
 				return v as ItemInstance
 		cur = cur.get_parent()
 	return null
+
+
+func _find_item_control_in_parents(n: Node) -> Control:
+	var cur: Node = n
+	while cur != null:
+		if cur is Control and cur.has_meta("item_instance"):
+			return cur as Control
+		cur = cur.get_parent()
+	return n as Control

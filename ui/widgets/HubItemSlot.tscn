@@ -2,6 +2,18 @@
 
 [ext_resource type="Script" path="res://ui/widgets/HubItemSlot.gd" id="1"]
 
+[sub_resource type="StyleBoxFlat" id="LockBorderStyle"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.72, 0.22, 0.95)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="HubItemSlot" type="Button"]
 custom_minimum_size = Vector2(72, 72)
 focus_mode = 0
@@ -46,3 +58,26 @@ offset_bottom = 22.0
 theme_override_font_sizes/font_size = 10
 modulate = Color(1, 1, 1, 0.55)
 horizontal_alignment = 0
+[node name="LockBorder" type="Panel" parent="."]
+visible = false
+mouse_filter = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+z_index = 20
+theme_override_styles/panel = SubResource("LockBorderStyle")
+
+[node name="LockBadge" type="Label" parent="."]
+visible = false
+mouse_filter = 2
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -39.0
+offset_top = 47.0
+offset_right = -5.0
+offset_bottom = 65.0
+z_index = 21
+text = "LOCK"
+theme_override_colors/font_color = Color(1, 0.78, 0.30, 1)
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 2
+vertical_alignment = 1

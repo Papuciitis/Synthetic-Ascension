@@ -9,7 +9,7 @@ const SLOT_COUNT: int = 16
 
 # Fixed-size slots. Each slot holds one "stack project" (ItemInstance) or null.
 @export var slots: Array[ItemInstance] = []
-@export var debug_bag: bool = true
+@export var debug_bag: bool = false
 # Extra slots granted by attempt modifiers / upgrades (persists in SaveData attempt snapshot)
 @export var extra_slots: int = 0
 
@@ -166,7 +166,8 @@ func add_pickup(item_data: ItemData, copies: int = 1, rarity: int = 0) -> bool:
 
 		if not add_roll(item_data, rarity, pol, roll_pct):
 			return false
-		print("[BAG ROLL] ", item_data.id, " r=", rarity, " roll=", String.num(roll_pct, 3), " pol=", pol)
+		if debug_bag:
+			print("[BAG ROLL] ", item_data.id, " r=", rarity, " roll=", String.num(roll_pct, 3), " pol=", pol)
 
 	return true
 
@@ -209,7 +210,7 @@ func _rebuild_index() -> void:
 
 	for i in range(slots.size()):
 		var s: ItemInstance = slots[i]
-		if s == null or s.data == null:
+		if s == null or s.data == null or s.locked:
 			continue
 		var k := _key(s.data.id, s.rarity, s.polarity)
 		if not _index.has(k):
@@ -226,7 +227,9 @@ func _consolidate_duplicates() -> void:
 
 		for i in range(slots.size()):
 			var s: ItemInstance = slots[i]
-			if s == null or s.data == null:
+			# Locked stacks remain physically independent. Neither a locked source
+			# nor a locked destination participates in automatic consolidation.
+			if s == null or s.data == null or s.locked:
 				continue
 
 			var k := _key(s.data.id, s.rarity, s.polarity)
@@ -245,7 +248,8 @@ func _consolidate_duplicates() -> void:
 			if debug_bag:
 				print("[BAG] CONSOLIDATE key=", k, " merge slot", i, " -> ", keep_i)
 
-			print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
+			if debug_bag:
+				print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
 			stack_merged.emit(i, keep_i, s) # UI ghost feedback
 
 			_merge_into(keep, s)
@@ -286,8 +290,10 @@ func add_instance(inst: ItemInstance) -> bool:
 
 	var key: String = _key(inst.data.id, inst.rarity, inst.polarity)
 
-	# Merge into existing stack (THIS is the case that "looks like it disappears")
-	if _index.has(key):
+	# Locked incoming items are protected from duplicate feeding/cleanup and
+	# therefore always need their own slot. Unlocked items may only merge into
+	# unlocked destinations because _rebuild_index excludes locked stacks.
+	if not inst.locked and _index.has(key):
 		var idx: int = int(_index[key])
 		var dest: ItemInstance = slots[idx]
 
@@ -306,7 +312,8 @@ func add_instance(inst: ItemInstance) -> bool:
 			# This is just a hint value for UI/debug (not a real single roll)
 			var roll_hint: float = float(inst.active_pct() if inst != null else 0.0)
 
-			print("[BagInventory] stack_fed slot=", idx, " id=", dest.data.id, " upgraded=", upgraded)
+			if debug_bag:
+				print("[BagInventory] stack_fed slot=", idx, " id=", dest.data.id, " upgraded=", upgraded)
 			stack_fed.emit(idx, dest, roll_hint, upgraded, old_rarity)
 
 			_dbg_dump("after add_instance (merged into existing)")
@@ -320,7 +327,8 @@ func add_instance(inst: ItemInstance) -> bool:
 	slots[empty] = inst
 	_after_stack_changed()
 
-	print("[BagInventory] stack_added slot=", empty, " id=", inst.data.id)
+	if debug_bag:
+		print("[BagInventory] stack_added slot=", empty, " id=", inst.data.id)
 	stack_added.emit(empty, inst)
 
 	_dbg_dump("after add_instance (placed in empty)")
@@ -328,38 +336,8 @@ func add_instance(inst: ItemInstance) -> bool:
 
 
 func _merge_into(dest: ItemInstance, src: ItemInstance) -> void:
-	if dest == null or src == null:
-		return
-	if dest == src:
-		return # IMPORTANT: prevent doubling meter/progress by self-merge
-
-
-	# Carry over higher rarity (so merging two stacks never "loses" tier).
-	if int(src.rarity) > int(dest.rarity):
-		dest.rarity = int(src.rarity)
-		dest._recompute_flat_mods()
-	# Merge state (preserve the best values + meters)
-	dest.progress += src.progress
-
-	dest.upgrade_meter += src.upgrade_meter
-	while dest.upgrade_meter >= 1.0:
-		dest.upgrade_meter -= 1.0
-		dest._upgrade()
-
-	# polarity is part of the key, so dest/src should match polarity
-	if dest.polarity == ItemInstance.Polarity.POS:
-		dest.best_pct = maxf(dest.best_pct, src.best_pct)
-	else:
-		dest.best_pct = minf(dest.best_pct, src.best_pct)
-
-	# Safety: if someone stored upgrade_meter in properties, normalize it
-	var dmv2: Variant = dest.get("upgrade_meter")
-	if (dmv2 is float or dmv2 is int):
-		var m: float = float(dmv2)
-		while m >= 1.0:
-			m -= 1.0
-			dest._upgrade()
-		dest.set("upgrade_meter", m)
+	if dest != null:
+		dest.merge_from(src)
 
 
 func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) -> bool:

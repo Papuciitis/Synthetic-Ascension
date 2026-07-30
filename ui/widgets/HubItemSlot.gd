@@ -11,8 +11,11 @@ enum Kind { EQUIPPED, BAG, STASH }
 @onready var badge: Label = get_node_or_null("SellBadge") as Label
 @onready var icon_frame: Control = get_node_or_null("IconFrame") as Control
 @onready var hint_label: Label = get_node_or_null("Hint") as Label
+@onready var lock_badge: Label = get_node_or_null("LockBadge") as Label
+@onready var lock_border: Panel = get_node_or_null("LockBorder") as Panel
 
 var _host: Node = null
+var _set_emblem: SetEmblem = null
 
 # --- Drag helpers (ScrollContainer-safe) ---
 var _drag_armed: bool = false
@@ -20,6 +23,18 @@ var _drag_start: Vector2 = Vector2.ZERO
 const _DRAG_THRESHOLD_PX: float = 6.0
 
 func _ready() -> void:
+	_set_emblem = get_node_or_null("SetEmblem") as SetEmblem
+	if _set_emblem == null:
+		_set_emblem = SetEmblem.new()
+		_set_emblem.name = "SetEmblem"
+		add_child(_set_emblem)
+	_set_emblem.z_index = 8
+	_set_emblem.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT, true)
+	_set_emblem.offset_left = -20.0
+	_set_emblem.offset_top = -20.0
+	_set_emblem.offset_right = -4.0
+	_set_emblem.offset_bottom = -4.0
+	_set_emblem.configure(&"")
 	# Force UI-friendly filtering and prevent atlas-looking pixel blocks.
 	if icon_rect != null:
 		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
@@ -40,6 +55,10 @@ func _ready() -> void:
 	# Ensure hint label never eats clicks/drags
 	if hint_label != null:
 		hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if lock_badge != null:
+		lock_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if lock_border != null:
+		lock_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func setup(host: Node, k: int, idx: int, hint_text: String = "") -> void:
 	# Called by InventoryStash while building grids.
@@ -54,45 +73,61 @@ func set_item(inst: ItemInstance, marked_for_sale: bool) -> void:
 	if badge != null:
 		badge.text = "SELL" if marked_for_sale else ""
 
+	var is_locked: bool = inst != null and inst.locked
+	if lock_badge != null:
+		lock_badge.visible = is_locked
+	if lock_border != null:
+		lock_border.visible = is_locked
+
 	if inst == null or inst.data == null:
 		if icon_rect != null:
 			icon_rect.texture = null
+		if _set_emblem != null:
+			_set_emblem.configure(&"")
 		return
 
 	if icon_rect != null:
 		# ItemData.icon is a Texture2D in this project.
 		icon_rect.texture = inst.data.icon
+	if _set_emblem != null:
+		_set_emblem.configure(StringName(inst.data.set_id))
 
 func _gui_input(event: InputEvent) -> void:
-	# Right-click: mark-for-sale (hub)
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_LEFT:
 			if mb.pressed:
-				# Double-click QoL (equip/unequip)
+				if mb.ctrl_pressed:
+					_drag_armed = false
+					if _host != null and _host.has_method("toggle_item_lock"):
+						_host.call("toggle_item_lock", kind, slot_index)
+					accept_event()
+					return
+				if mb.shift_pressed:
+					_drag_armed = false
+					if _host != null and _host.has_method("toggle_sale_mark"):
+						_host.call("toggle_sale_mark", kind, slot_index)
+					accept_event()
+					return
 				if mb.double_click:
 					_drag_armed = false
 					if _host != null and _host.has_method("on_slot_doubleclick"):
 						_host.call("on_slot_doubleclick", kind, slot_index)
 					accept_event()
 					return
-				# Arm drag on single press. Also prevents ScrollContainer from "stealing" the drag to scroll.
 				_drag_armed = true
 				_drag_start = mb.position
 				accept_event()
 				return
-			else:
-				# Release cancels arming (drop is handled by Godot drag/drop)
-				_drag_armed = false
-				return
+			_drag_armed = false
+			return
 		elif mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 			_drag_armed = false
-			if _host != null and _host.has_method("toggle_sale_mark"):
-				_host.call("toggle_sale_mark", kind, slot_index)
+			if _host != null and _host.has_method("on_slot_rightclick"):
+				_host.call("on_slot_rightclick", kind, slot_index)
 			accept_event()
 			return
 
-	# Start drag manually once we cross a small threshold.
 	if event is InputEventMouseMotion and _drag_armed:
 		var mm := event as InputEventMouseMotion
 		if (mm.button_mask & MOUSE_BUTTON_MASK_LEFT) == 0:
@@ -102,16 +137,13 @@ func _gui_input(event: InputEvent) -> void:
 			return
 		_drag_armed = false
 
-		# Pull item and build payload
 		if _host == null or not _host.has_method("get_item_at"):
 			return
 		var inst: ItemInstance = _host.call("get_item_at", kind, slot_index)
-		if inst == null or inst.data == null:
+		if inst == null or inst.data == null or inst.locked:
 			return
 
 		var payload: Dictionary = {"kind": kind, "idx": slot_index}
-
-		# Preview
 		var pv: Control = null
 		if icon_rect != null and icon_rect.texture != null:
 			var tex_rect := TextureRect.new()
@@ -122,7 +154,6 @@ func _gui_input(event: InputEvent) -> void:
 			tex_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 			pv = tex_rect
 
-		# Force drag so ScrollContainers can't swallow it.
 		force_drag(payload, pv)
 		accept_event()
 
@@ -131,7 +162,7 @@ func _get_drag_data(_pos: Vector2) -> Variant:
 	if _host == null or not _host.has_method("get_item_at"):
 		return null
 	var inst: ItemInstance = _host.call("get_item_at", kind, slot_index)
-	if inst == null or inst.data == null:
+	if inst == null or inst.data == null or inst.locked:
 		return null
 
 	var payload: Dictionary = {"kind": kind, "idx": slot_index}

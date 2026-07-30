@@ -39,3 +39,13 @@ func decorate_district_parcels(
 	if _parcels == null:
 		return []
 	return _parcels.decorate_district_parcels(chunk_manager, chunk, coord, lane_rect_h, lane_rect_v, keepout_rects, cfg)
+
+func decorate_urban_fill(
+	chunk_manager: Node,
+	chunk: Node2D,
+	coord: Vector2i,
+	cfg: Dictionary
+) -> Array[Rect2i]:
+	if _parcels == null:
+		return []
+	return _parcels.decorate_urban_fill(chunk_manager, chunk, coord, cfg)

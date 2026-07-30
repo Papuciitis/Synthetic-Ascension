@@ -25,6 +25,7 @@
 [ext_resource type="PackedScene" path="res://ui/widgets/BossBarHUD.tscn" id="20_boss_bar"]
 [ext_resource type="Script" path="res://ui/controllers/HudBossController.gd" id="21_boss_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/HudObjectiveController.gd" id="22_objective_ctl"]
+[ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="23_set_breakpoints"]
 
 
 [sub_resource type="Shader" id="ShaderVignette"]
@@ -190,6 +191,9 @@ script = ExtResource("22_objective_ctl")
 panel_path = NodePath("../GateOverlay/ObjectivePanel")
 title_path = NodePath("../GateOverlay/ObjectivePanel/Margin/VBox/Title")
 detail_path = NodePath("../GateOverlay/ObjectivePanel/Margin/VBox/Detail")
+secondary_panel_path = NodePath("../GateOverlay/SecondaryObjectivePanel")
+secondary_title_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Title")
+secondary_detail_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Detail")
 bag_controller_path = NodePath("../BagController")
 
 [node name="ThreatController" type="Node" parent="." unique_id=924661234]
@@ -384,7 +388,7 @@ anchor_bottom = 1.0
 offset_left = -120.0
 offset_top = -110.0
 offset_right = 120.0
-offset_bottom = -40.0
+offset_bottom = -28.0
 grow_horizontal = 2
 grow_vertical = 0
 runner_node_names = Array[StringName]([&"SetRunner"])
@@ -400,6 +404,16 @@ offset_top = -40.0
 offset_right = 150.0
 offset_bottom = -10.0
 horizontal_alignment = 1
+
+[node name="SetBreakpointNotifier" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("23_set_breakpoints")
 
 [node name="FlyVfx" type="Control" parent="." unique_id=851712866 groups=["ui_fly_vfx"]]
 anchors_preset = 0

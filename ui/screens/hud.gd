@@ -464,7 +464,7 @@ func _on_hp_changed(current: float, max_hp: float) -> void:
 		hp_bar.value = current
 
 	if hp_value != null:
-		hp_value.text = "%d / %d" % [int(current), int(max_hp)]
+		hp_value.text = "%d / %d" % [int(round(current)), int(round(max_hp))]
 
 	if hp_percent != null:
 		var pct: int = 0

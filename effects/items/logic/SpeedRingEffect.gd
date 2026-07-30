@@ -13,11 +13,20 @@ var slot_index: int = -1
 
 var _acc: float = 0.0
 
-func get_effects_short(_inst: ItemInstance) -> PackedStringArray:
+func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
-	out.append("Increases movement speed.")
+	var multiplier := _effect_multiplier(inst)
+	out.append("Movement multiplier: %.2fx." % multiplier)
 	out.append("Leaves speed streaks while moving fast.")
 	return out
+
+
+func get_move_speed_multiplier() -> float:
+	return _effect_multiplier(item)
+
+
+func _effect_multiplier(inst: ItemInstance) -> float:
+	return maxf(0.10, 1.0 + (inst.active_pct() if inst != null else 0.0))
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p

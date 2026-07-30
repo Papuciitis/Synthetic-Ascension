@@ -1,10 +1,10 @@
 extends RefCounted
 class_name EnemyOrbit
 
-var _owner: Enemy = null
+var _owner: EnemyActor = null
 var _angle: float = 0.0
 
-func setup(owner: Enemy) -> void:
+func setup(owner: EnemyActor) -> void:
 	_owner = owner
 	_angle = Global._rng.randf() * TAU
 

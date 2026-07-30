@@ -4,6 +4,7 @@ class_name BagSlot
 signal discard_requested(slot_index: int)
 signal clicked()
 signal equip_requested(slot_index: int)
+signal interaction_requested(slot_index: int, button: int, double_click: bool, shift: bool, ctrl: bool)
 
 const POS_TINT := Color(0.25, 1.0, 1.0, 0.18)
 const NEG_TINT := Color(1.0, 0.25, 0.35, 0.28)
@@ -24,9 +25,11 @@ var rolls_label: Label = null
 
 var _pol_tint: ColorRect = null
 var _pol_badge: Label = null
+var _set_emblem: SetEmblem = null
 var _frame_sb: StyleBoxFlat = null
 var _flash: ColorRect = null
 var _flash_tween: Tween = null
+var _lock_badge: Label = null
 const FLASH_COL := Color(1.0, 0.55, 0.20, 0.0) # your orange "accent"
 
 func _ready() -> void:
@@ -34,6 +37,8 @@ func _ready() -> void:
 	_resolve_nodes()
 	_apply_mouse_passthrough()
 	_ensure_polarity_ui()
+	_ensure_set_emblem()
+	_ensure_lock_badge()
 	_apply_frame_style()
 
 	mouse_entered.connect(func(): _set_hover(true))
@@ -60,6 +65,7 @@ func _apply_mouse_passthrough() -> void:
 	if rolls_label != null: rolls_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if _pol_tint != null: _pol_tint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if _pol_badge != null: _pol_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if _set_emblem != null: _set_emblem.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 func _apply_frame_style() -> void:
 	_frame_sb = StyleBoxFlat.new()
@@ -72,8 +78,14 @@ func _apply_frame_style() -> void:
 	_frame_sb.corner_radius_bottom_right = 12
 	add_theme_stylebox_override("panel", _frame_sb)
 
+func _stack_is_locked() -> bool:
+	return _stack is ItemInstance and (_stack as ItemInstance).locked
+
 func _set_hover(on: bool) -> void:
 	if _frame_sb == null:
+		return
+	if _stack_is_locked():
+		_frame_sb.border_color = Color(1.0, 0.72, 0.22, 0.95)
 		return
 	var strong: bool = on and _stack != null
 	_frame_sb.border_color = (Color(1.0, 0.55, 0.20, 1.0) if strong else Color(0.12, 0.12, 0.12, 1.0))
@@ -82,6 +94,8 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 	# IMPORTANT: if this script is used on some other node tree, don't crash
 	_resolve_nodes()
 	_ensure_polarity_ui()
+	_ensure_set_emblem()
+	_ensure_lock_badge()
 	_apply_mouse_passthrough()
 
 	# ghost look (fade whole slot)
@@ -117,6 +131,9 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 
 		if _pol_tint != null: _pol_tint.color = Color(0, 0, 0, 0)
 		if _pol_badge != null: _pol_badge.text = ""
+		if _set_emblem != null: _set_emblem.configure(&"")
+		if _lock_badge != null: _lock_badge.visible = false
+		if _frame_sb != null: _frame_sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
 		modulate = Color(1, 1, 1, 1)
 		return
 
@@ -181,9 +198,52 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 	if overlay != null:
 		overlay.color = _rarity_to_color(rar)
 
+	var item_set_id: StringName = &""
+	if data is Object:
+		item_set_id = StringName(String((data as Object).get("set_id")))
+	elif data is Dictionary:
+		item_set_id = StringName(String((data as Dictionary).get("set_id", "")))
+	if _set_emblem != null:
+		_set_emblem.configure(item_set_id)
+	if _lock_badge != null:
+		_lock_badge.visible = bool((_stack as Object).get("locked")) if _stack is Object else false
+	_set_hover(false)
+
+
+func _ensure_lock_badge() -> void:
+	if content == null:
+		_resolve_nodes()
+	if content == null:
+		return
+	_lock_badge = content.get_node_or_null("LockBadge") as Label
+	if _lock_badge == null:
+		_lock_badge = Label.new()
+		_lock_badge.name = "LockBadge"
+		_lock_badge.text = "LOCK"
+		_lock_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_lock_badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_lock_badge.add_theme_font_size_override("font_size", 9)
+		_lock_badge.add_theme_color_override("font_color", Color(1.0, 0.78, 0.30, 1.0))
+		_lock_badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		_lock_badge.position = Vector2(-34, 3)
+		_lock_badge.size = Vector2(31, 14)
+		_lock_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_lock_badge.z_index = 20
+		content.add_child(_lock_badge)
+	_lock_badge.visible = false
+
 func _gui_input(event: InputEvent) -> void:
 	var mb := event as InputEventMouseButton
 	if mb == null or not mb.pressed:
+		return
+
+	if slot_index >= 0:
+		interaction_requested.emit(slot_index, mb.button_index, mb.double_click, mb.shift_pressed, mb.ctrl_pressed)
+
+	# Ctrl is reserved for lock toggling, and locked stacks must never fall
+	# through to legacy equip/discard callbacks used by BagUI.
+	if mb.ctrl_pressed or _stack_is_locked():
+		accept_event()
 		return
 
 	if mb.button_index == MOUSE_BUTTON_LEFT:
@@ -251,6 +311,32 @@ func _ensure_polarity_ui() -> void:
 		_pol_badge.offset_bottom = _pol_badge.offset_top + 16
 		_pol_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_pol_badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+
+func _ensure_set_emblem() -> void:
+	if content == null:
+		_resolve_nodes()
+	if content == null:
+		return
+
+	_set_emblem = content.get_node_or_null("SetEmblem") as SetEmblem
+	if _set_emblem == null:
+		_set_emblem = SetEmblem.new()
+		_set_emblem.name = "SetEmblem"
+		content.add_child(_set_emblem)
+
+	# Bag slots already use all four corners for rarity, polarity and stack data.
+	# Keep the set mark on the right edge so it remains readable without hiding them.
+	_set_emblem.z_index = 8
+	_set_emblem.anchor_left = 1.0
+	_set_emblem.anchor_top = 0.5
+	_set_emblem.anchor_right = 1.0
+	_set_emblem.anchor_bottom = 0.5
+	_set_emblem.offset_left = -19.0
+	_set_emblem.offset_top = -8.0
+	_set_emblem.offset_right = -3.0
+	_set_emblem.offset_bottom = 8.0
+	_set_emblem.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_set_emblem.configure(&"")
 
 func _ensure_flash_ui() -> void:
 	if content == null:

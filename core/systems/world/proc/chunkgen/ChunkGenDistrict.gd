@@ -1,5 +1,6 @@
 extends Object
 const LOOT_SPAWNER_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
+const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
 
 # Direction bits used by `conn_mask` (must match the producer of conn_mask).
 const _DIR_N: int = 1
@@ -12,6 +13,37 @@ const _DIR_W: int = 8
 static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberGenerator, coord: Vector2i, archetype: StringName, conn_mask: int) -> void:
 	var cells := gen._cells_per_chunk()
 	if cells < 8:
+		return
+	var role: StringName = gen.get_chunk_role(coord)
+	var urban_access_mask: int = gen.get_chunk_urban_access(coord)
+
+	# Urban-envelope chunks are full courtyard blocks rather than empty terrain. They
+	# intentionally have no road connectors, so they cannot create fake streets.
+	if role == &"district_fill" and conn_mask == 0 and gen._site_mgr != null:
+		var fill_cfg: Dictionary = {
+			"courtyard_floor_tex": 8,
+			"passage_floor_tex": 4,
+			"urban_fill_frontage_target": 0.82,
+			"urban_fill_loot_chance": 0.18,
+			"parcel_building_margin_cells": 0,
+			"parcel_door_width": 2,
+			"parcel_apron_len": 2,
+			"facility_window_chance": maxf(0.16, gen.parcels_window_chance),
+			"indoor_floor_tex": 3,
+			"residential_floor_tex": 2,
+			"workshop_floor_tex": 4,
+			"facility_floor_corr_tex": 2,
+			"door_apron_tex": 4,
+			"door_apron_alpha": 0.92,
+			"door_apron_z": -93,
+			"parcel_loot_count_min": 1,
+			"parcel_loot_count_max": 1,
+			"parcel_loot_rarity_min": 3,
+			"parcel_loot_rarity_max": 5,
+			"parcel_loot_pickup_delay": 0.15,
+			"urban_access_mask": urban_access_mask,
+		}
+		gen._site_mgr.decorate_urban_fill(gen.cm, chunk, coord, fill_cfg)
 		return
 
 	# Dedicated RNGs for floor/sidewalk visuals so wall/prop layout stays stable.
@@ -27,8 +59,24 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var bounds: Rect2i = Rect2i(Vector2i(0, 0), Vector2i(cells, cells))
 
 
-	var lane_w := clampi(gen.district_lane_width_cells, 6, cells - 6)
+	# Urban hierarchy is semantic rather than one theme-wide boulevard width.
+	# At the project's 64 px cell scale these become 384-512 px main roads,
+	# 256-320 px secondary roads, and genuinely tight 128-192 px alleys.
+	var lane_w: int = 7
+	match role:
+		&"secondary_route": lane_w = 5
+		&"service_lane", &"secondary_reward_building": lane_w = 3
+		&"dangerous_alley", &"secondary_alley_cache": lane_w = 2
+		&"checkpoint", &"exit_approach", &"gate": lane_w = 7
+		&"primary_objective": lane_w = 6
+		_: lane_w = clampi(gen.district_lane_width_cells, 6, 8)
+	lane_w = clampi(lane_w, 2, cells - 6)
+
 	var plaza_size := clampi(gen.district_plaza_size_cells, 10, cells - 4)
+	if role == &"landmark_plaza":
+		plaza_size = mini(cells - 4, plaza_size + 4)
+	elif role == &"entry_court" or role == &"wardstone_court" or role == &"checkpoint":
+		plaza_size = mini(cells - 4, plaza_size + 2)
 
 	var lane_cy := gen._lane_center_for_row(coord.y, cells)
 	var lane_cx := gen._lane_center_for_col(coord.x, cells)
@@ -45,20 +93,58 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var keepout_rects: Array[Rect2i] = []
 
 	# --- floors ---
-	# Roads: dirt path. Plazas/arenas/gates: cobble/tiles.
+	# Main streets use restrained masonry; side/service routes use dirt paths so the
+	# player can read route hierarchy without invisible walls or hard boundaries.
+	var road_tex_index: int = 7
+	var road_alpha: float = 0.88
+	if role == &"secondary_route":
+		road_tex_index = 8
+		road_alpha = 0.80
+	elif role == &"service_lane" or role == &"secondary_reward_building":
+		road_tex_index = 4
+		road_alpha = 0.78
+	elif role == &"dangerous_alley" or role == &"secondary_alley_cache":
+		road_tex_index = 8
+		road_alpha = 0.74
+	elif role == &"checkpoint" or role == &"exit_approach":
+		road_tex_index = 3
+		road_alpha = 0.92
+	elif role == &"primary_objective":
+		road_tex_index = 9
+		road_alpha = 0.94
+
+	var lane_y0 := clampi(lane_cy - int(lane_w / 2.0), 1, cells - lane_w - 1)
+	var lane_x0 := clampi(lane_cx - int(lane_w / 2.0), 1, cells - lane_w - 1)
+	var hub_x1: int = lane_x0 + lane_w
+	var hub_y1: int = lane_y0 + lane_w
+
+	# Exact connector arms. N+E is an L-turn, not an accidental four-way road.
 	if has_h:
-		var y0 := clampi(lane_cy - int(lane_w / 2.0), 1, cells - lane_w - 1)
-		lane_rect_h = Rect2i(Vector2i(0, y0), Vector2i(cells, lane_w))
+		var h_x0: int = 0 if (conn_mask & _DIR_W) != 0 else lane_x0
+		var h_x1: int = cells if (conn_mask & _DIR_E) != 0 else hub_x1
+		lane_rect_h = Rect2i(Vector2i(h_x0, lane_y0), Vector2i(maxi(1, h_x1 - h_x0), lane_w))
 		keepout_rects.append(lane_rect_h)
-		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_h, 4, rng_roads, 0.85, -95)
+		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_h, road_tex_index, rng_roads, road_alpha, -95)
 
 	if has_v:
-		var x0 := clampi(lane_cx - int(lane_w / 2.0), 1, cells - lane_w - 1)
-		lane_rect_v = Rect2i(Vector2i(x0, 0), Vector2i(lane_w, cells))
+		var v_y0: int = 0 if (conn_mask & _DIR_N) != 0 else lane_y0
+		var v_y1: int = cells if (conn_mask & _DIR_S) != 0 else hub_y1
+		lane_rect_v = Rect2i(Vector2i(lane_x0, v_y0), Vector2i(lane_w, maxi(1, v_y1 - v_y0)))
 		keepout_rects.append(lane_rect_v)
-		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_v, 4, rng_roads, 0.85, -95)
+		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_v, road_tex_index, rng_roads, road_alpha, -95)
 
-	if archetype == &"plaza" or archetype == &"arena" or archetype == &"gate":
+	# Courtyard-access corridors meet neighbouring urban blocks at the centre of
+	# the shared edge, then bend toward this chunk's road hub. They are kept clear
+	# of buildings and wall decoration just like street cores.
+	var urban_access_rects: Array[Rect2i] = _urban_access_corridors(urban_access_mask, cells, lane_cx, lane_cy)
+	for access_rect in urban_access_rects:
+		keepout_rects.append(access_rect.grow(1).intersection(bounds))
+		gen._stamp_floor_rect_cells_patchy(chunk, access_rect, 4, rng_roads, 0.82, -94)
+
+	_add_connector_spawn_sockets(chunk, conn_mask, lane_cx, lane_cy, cells, gen.cell_size_px)
+
+	var semantic_plaza: bool = role == &"entry_court" or role == &"landmark_plaza" or role == &"wardstone_court" or role == &"checkpoint" or role == &"exploration_reward" or role == &"primary_objective" or role == &"miniboss_arena" or role == &"boss_arena"
+	if archetype == &"plaza" or archetype == &"arena" or archetype == &"gate" or semantic_plaza:
 		var pcx := (lane_cx if has_v else int(cells / 2.0))
 		var pcy := (lane_cy if has_h else int(cells / 2.0))
 
@@ -68,7 +154,11 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		has_plaza = true
 		plaza_rect = Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size))
 
-		var tex_idx := (3 if archetype == &"gate" else 2)
+		var tex_idx: int = 7
+		if archetype == &"gate" or role == &"checkpoint" or role == &"miniboss_arena" or role == &"boss_arena":
+			tex_idx = 3
+		elif role == &"primary_objective":
+			tex_idx = 9
 		gen._stamp_floor_rect_cells_patchy(chunk, Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size)), tex_idx, rng_roads, 0.95, -94)
 
 	
@@ -78,15 +168,20 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 
 	# --- streetfront parcels (shops/facilities hugging the lane) ---
 	var parcels_placed: bool = false
-	if gen.parcels_enabled and gen._site_mgr != null and rng.randf() < gen.parcels_chunk_chance and not has_plaza:
-		# Only on straight street segments (clean readability).
-		if has_h != has_v and (archetype == &"street" or archetype == &"district"):
+	var forced_reward_building: bool = role == &"optional_interior" or role == &"secondary_reward_building"
+	var parcel_roll_chance: float = 1.0 if forced_reward_building else gen.parcels_chunk_chance
+	if gen.parcels_enabled and gen._site_mgr != null and rng.randf() < parcel_roll_chance and not has_plaza:
+		if (has_h or has_v) and (archetype == &"street" or archetype == &"district"):
 			var pcfg := {
-				"parcel_chance_per_side": gen.parcels_chance_per_side,
-				"parcel_max_per_side": gen.parcels_max_per_side,
+				"force_parcel": forced_reward_building,
+				"frontage_target": (0.92 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.84),
+				"frontage_passage_chance": (0.14 if role == &"dangerous_alley" or role == &"secondary_alley_cache" else 0.24),
+				"passage_buildings_enabled": true,
+				"parcel_chance_per_side": 1.0,
+				"parcel_max_per_side": 4,
 				"parcel_depth_cells": gen.parcels_depth_cells,
-				"parcel_length_min_cells": gen.parcels_length_min_cells,
-				"parcel_length_max_cells": gen.parcels_length_max_cells,
+				"parcel_length_min_cells": 7,
+				"parcel_length_max_cells": 13,
 				"parcel_street_gap_cells": gen.parcels_street_gap_cells,
 				"parcel_building_margin_cells": gen.parcels_building_margin_cells,
 				"parcel_door_width": gen.parcels_door_width,
@@ -98,15 +193,18 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"door_apron_tex": 4,
 				"door_apron_alpha": 0.92,
 				"door_apron_z": -93,
-				"facility_room_attempts": 28,
+				"facility_room_attempts": (34 if role == &"optional_interior" else 28),
 				"facility_room_min": Vector2i(5, 5),
 				"facility_room_max": Vector2i(10, 9),
 				"facility_room_padding": 1,
 				"facility_corridor_w": 1,
 				"facility_floor_room_tex": 3,
 				"facility_floor_corr_tex": 2,
+				"residential_floor_tex": 2,
+				"workshop_floor_tex": 4,
 				# --- exploration loot (small buildings) ---
-				"parcel_loot_chance": 0.55,
+				"parcel_loot_chance": (1.0 if forced_reward_building else 0.55),
+				"ambient_parcel_loot_chance": 0.24,
 				"parcel_loot_count_min": 1,
 				"parcel_loot_count_max": 1,
 				"parcel_loot_rarity_min": 4,
@@ -114,6 +212,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				"parcel_loot_rarity_bonus_per_segment": 0,
 				"parcel_loot_scatter_radius": 24.0,
 				"parcel_loot_pickup_delay": 0.15,
+				"local_encounter_enabled": role == &"secondary_reward_building",
+				"local_encounter_count": 5 + mini(3, int(float(Global.attempt_segment if Global != null else 2) / 3.0)),
+				"secondary_objective_id": (DistrictPlan.secondary_objective_id(gen.world_seed, coord, &"searchable_reward_building") if role == &"secondary_reward_building" else 0),
 			}
 			var parcel_rects: Array[Rect2i] = gen._site_mgr.decorate_district_parcels(gen.cm, chunk, coord, lane_rect_h, lane_rect_v, keepout_rects, pcfg)
 			if parcel_rects.size() > 0:
@@ -121,13 +222,14 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				for r: Rect2i in parcel_rects:
 					keepout_rects.append(r)
 
-# --- walls / building edges (kept connected to avoid unreachable spawn pockets) ---
+	# --- walls / building edges (kept connected to avoid unreachable spawn pockets) ---
 	var wall_cells: Dictionary = {}
 	var window_cells: Dictionary = {}
 
 	# Plazas/arenas/gates: break up huge slabs + add a stronger perimeter language.
 	if has_plaza:
-		gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
+		if role != &"primary_objective":
+			gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
 		var rng_ring := RandomNumberGenerator.new()
 		rng_ring.seed = gen._mix_seed_int(base_seed, 9011)
 		gen._add_plaza_ring(wall_cells, plaza_rect, cells, rng_ring, archetype)
@@ -143,30 +245,30 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var best_dungeon_cell: Vector2i = Vector2i(-999999, -999999)
 	var best_dungeon_id_seed: int = 0
 	var best_dungeon_region: Rect2i = Rect2i()
-	if gen.donjon_enabled and not parcels_placed and rng.randf() < gen.donjon_strength:
+	if gen.donjon_enabled and not parcels_placed and not (has_h and has_v) and rng.randf() < gen.donjon_strength:
 		# Derive lane extents (even if only one axis exists).
-		var lane_x0: int = (clampi(lane_cx - int(lane_w / 2.0), 1, cells - lane_w - 1) if has_v else 2)
-		var lane_y0: int = (clampi(lane_cy - int(lane_w / 2.0), 1, cells - lane_w - 1) if has_h else 2)
-		var lane_x1: int = (lane_x0 + lane_w - 1 if has_v else cells - 3)
-		var lane_y1: int = (lane_y0 + lane_w - 1 if has_h else cells - 3)
+		var donjon_lane_x0: int = (clampi(lane_cx - int(lane_w / 2.0), 1, cells - lane_w - 1) if has_v else 2)
+		var donjon_lane_y0: int = (clampi(lane_cy - int(lane_w / 2.0), 1, cells - lane_w - 1) if has_h else 2)
+		var donjon_lane_x1: int = (donjon_lane_x0 + lane_w - 1 if has_v else cells - 3)
+		var donjon_lane_y1: int = (donjon_lane_y0 + lane_w - 1 if has_h else cells - 3)
 
 		var regions: Array[Rect2i] = []
 		if has_h and has_v:
 			regions = [
-				Rect2i(Vector2i(2, 2), Vector2i(lane_x0 - 2, lane_y0 - 2)),
-				Rect2i(Vector2i(lane_x1 + 2, 2), Vector2i(cells - (lane_x1 + 2) - 2, lane_y0 - 2)),
-				Rect2i(Vector2i(2, lane_y1 + 2), Vector2i(lane_x0 - 2, cells - (lane_y1 + 2) - 2)),
-				Rect2i(Vector2i(lane_x1 + 2, lane_y1 + 2), Vector2i(cells - (lane_x1 + 2) - 2, cells - (lane_y1 + 2) - 2)),
+				Rect2i(Vector2i(2, 2), Vector2i(donjon_lane_x0 - 2, donjon_lane_y0 - 2)),
+				Rect2i(Vector2i(donjon_lane_x1 + 2, 2), Vector2i(cells - (donjon_lane_x1 + 2) - 2, donjon_lane_y0 - 2)),
+				Rect2i(Vector2i(2, donjon_lane_y1 + 2), Vector2i(donjon_lane_x0 - 2, cells - (donjon_lane_y1 + 2) - 2)),
+				Rect2i(Vector2i(donjon_lane_x1 + 2, donjon_lane_y1 + 2), Vector2i(cells - (donjon_lane_x1 + 2) - 2, cells - (donjon_lane_y1 + 2) - 2)),
 			]
 		elif has_h:
 			regions = [
-				Rect2i(Vector2i(2, 2), Vector2i(cells - 4, lane_y0 - 2)),
-				Rect2i(Vector2i(2, lane_y1 + 2), Vector2i(cells - 4, cells - (lane_y1 + 2) - 2)),
+				Rect2i(Vector2i(2, 2), Vector2i(cells - 4, donjon_lane_y0 - 2)),
+				Rect2i(Vector2i(2, donjon_lane_y1 + 2), Vector2i(cells - 4, cells - (donjon_lane_y1 + 2) - 2)),
 			]
 		elif has_v:
 			regions = [
-				Rect2i(Vector2i(2, 2), Vector2i(lane_x0 - 2, cells - 4)),
-				Rect2i(Vector2i(lane_x1 + 2, 2), Vector2i(cells - (lane_x1 + 2) - 2, cells - 4)),
+				Rect2i(Vector2i(2, 2), Vector2i(donjon_lane_x0 - 2, cells - 4)),
+				Rect2i(Vector2i(donjon_lane_x1 + 2, 2), Vector2i(cells - (donjon_lane_x1 + 2) - 2, cells - 4)),
 			]
 
 		for r in regions:
@@ -191,25 +293,25 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			var entrances: Array[Dictionary] = []
 			var gap_cells: Array[Vector2i] = []
 			# South-facing (region above a horizontal lane)
-			if has_h and (r.position.y + r.size.y) == lane_y0:
+			if has_h and (r.position.y + r.size.y) == donjon_lane_y0:
 				var y_edge: int = r.position.y + r.size.y - 1
 				var cx: int = clampi(lane_cx, r.position.x + 2, r.position.x + r.size.x - 4)
 				gap_cells = [Vector2i(cx, y_edge), Vector2i(cx + 1, y_edge)]
 				entrances.append({ "pos": Vector2i(cx, y_edge - 1), "dir": Vector2i(0, -1), "width": 2 })
 			# North-facing (region below a horizontal lane)
-			elif has_h and r.position.y == (lane_y1 + 1):
+			elif has_h and r.position.y == (donjon_lane_y1 + 1):
 				var y_edge2: int = r.position.y
 				var cx2: int = clampi(lane_cx, r.position.x + 2, r.position.x + r.size.x - 4)
 				gap_cells = [Vector2i(cx2, y_edge2), Vector2i(cx2 + 1, y_edge2)]
 				entrances.append({ "pos": Vector2i(cx2, y_edge2 + 1), "dir": Vector2i(0, 1), "width": 2 })
 			# East-facing (region left of a vertical lane)
-			elif has_v and (r.position.x + r.size.x) == lane_x0:
+			elif has_v and (r.position.x + r.size.x) == donjon_lane_x0:
 				var x_edge: int = r.position.x + r.size.x - 1
 				var cy3: int = clampi(lane_cy, r.position.y + 2, r.position.y + r.size.y - 4)
 				gap_cells = [Vector2i(x_edge, cy3), Vector2i(x_edge, cy3 + 1)]
 				entrances.append({ "pos": Vector2i(x_edge - 1, cy3), "dir": Vector2i(-1, 0), "width": 2 })
 			# West-facing (region right of a vertical lane)
-			elif has_v and r.position.x == (lane_x1 + 1):
+			elif has_v and r.position.x == (donjon_lane_x1 + 1):
 				var x_edge2: int = r.position.x
 				var cy4: int = clampi(lane_cy, r.position.y + 2, r.position.y + r.size.y - 4)
 				gap_cells = [Vector2i(x_edge2, cy4), Vector2i(x_edge2, cy4 + 1)]
@@ -261,10 +363,20 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			for wk2 in result.window_cells.keys():
 				window_cells[wk2] = true
 
-			if gap_cells.size() > 0:
-				door_gaps.append(gap_cells)
+				if gap_cells.size() > 0:
+					door_gaps.append(gap_cells)
 
-			used_donjon = true
+				# Mark connected Donjon rooms as interiors so ambient spawns stay on
+				# streets until the player actually enters the structure.
+				if INDOOR_VOLUME_SCENE != null:
+					var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
+					if indoor_volume != null:
+						var global_tl: Vector2i = coord * cells + r.position
+						var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
+						indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
+						chunk.add_child(indoor_volume)
+
+				used_donjon = true
 
 
 
@@ -275,9 +387,6 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if (not parcels_placed) and best_dungeon_score > 0 and LOOT_SPAWNER_SCENE != null:
 		var sp := LOOT_SPAWNER_SCENE.instantiate() as Node2D
 		if sp != null:
-			chunk.add_child(sp)
-			sp.global_position = chunk.global_position + (Vector2(best_dungeon_cell) + Vector2(0.5, 0.5)) * float(gen.cell_size_px)
-
 			var lid: int = gen._mix_seed_int(best_dungeon_id_seed, coord.x)
 			lid = gen._mix_seed_int(lid, coord.y)
 			lid = gen._mix_seed_int(lid, 9901)
@@ -295,73 +404,34 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			# optional: toggle to true while testing
 			# sp.set("debug_draw_marker", true)
 			sp.set("pickup_delay", 0.15)
+			sp.position = (Vector2(best_dungeon_cell) + Vector2(0.5, 0.5)) * float(gen.cell_size_px)
+			chunk.add_child(sp)
 	# If parcels were placed, we already created coherent streetfront structures.
 	if parcels_placed:
 		used_donjon = true
 	# If donjon didn't run (small regions / chance), fall back to straight street-edge lines.
 	if not used_donjon:
-		if has_h:
-			var y_top := clampi(lane_cy - int(lane_w / 2.0) - 1, 2, cells - 3)
-			var y_bot := clampi(lane_cy + int(lane_w / 2.0), 2, cells - 3)
-			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(2, y_top), Vector2i(1, 0), cells - 4, rng)
-			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(2, y_bot), Vector2i(1, 0), cells - 4, rng)
+		if has_h and lane_rect_h.size.x > 0:
+			var y_top := clampi(lane_rect_h.position.y - 1, 2, cells - 3)
+			var y_bot := clampi(lane_rect_h.position.y + lane_rect_h.size.y, 2, cells - 3)
+			var wall_x0: int = clampi(lane_rect_h.position.x + 1, 2, cells - 3)
+			var wall_len_h: int = mini(lane_rect_h.size.x - 2, cells - wall_x0 - 2)
+			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(wall_x0, y_top), Vector2i(1, 0), wall_len_h, rng)
+			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(wall_x0, y_bot), Vector2i(1, 0), wall_len_h, rng)
 
-		if has_v:
-			var x_left := clampi(lane_cx - int(lane_w / 2.0) - 1, 2, cells - 3)
-			var x_right := clampi(lane_cx + int(lane_w / 2.0), 2, cells - 3)
-			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(x_left, 2), Vector2i(0, 1), cells - 4, rng)
-			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(x_right, 2), Vector2i(0, 1), cells - 4, rng)
+		if has_v and lane_rect_v.size.y > 0:
+			var x_left := clampi(lane_rect_v.position.x - 1, 2, cells - 3)
+			var x_right := clampi(lane_rect_v.position.x + lane_rect_v.size.x, 2, cells - 3)
+			var wall_y0: int = clampi(lane_rect_v.position.y + 1, 2, cells - 3)
+			var wall_len_v: int = mini(lane_rect_v.size.y - 2, cells - wall_y0 - 2)
+			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(x_left, wall_y0), Vector2i(0, 1), wall_len_v, rng)
+			gen._add_wall_segment_line(wall_cells, window_cells, Vector2i(x_right, wall_y0), Vector2i(0, 1), wall_len_v, rng)
 
 	# Apply door gaps (2-cell openings) after all wall merges.
 	for g in door_gaps:
 		for dc in g:
 			wall_cells.erase(dc)
 			window_cells.erase(dc)
-
-	# A couple of building rectangles in corners (readable "rooms" on the sides).
-
-	var corner_buildings := (1 if archetype == &"district" else 2)
-	for _i in range(corner_buildings):
-		var bw := rng.randi_range(7, 12)
-		var bh := rng.randi_range(6, 10)
-
-		var q := rng.randi_range(0, 3) # quadrant
-		var bx0 := (2 if q == 0 or q == 2 else cells - bw - 2)
-		var by0 := (2 if q == 0 or q == 1 else cells - bh - 2)
-
-		var brect := Rect2i(Vector2i(bx0, by0), Vector2i(bw, bh))
-
-		# Avoid cutting across lane cores (we still allow overlap on the very edge for organic feel).
-		var ok := true
-		if has_h:
-			var ry0 := clampi(lane_cy - int(lane_w / 2.0), 0, cells - lane_w)
-			var rrect := Rect2i(Vector2i(0, ry0), Vector2i(cells, lane_w))
-			if brect.intersects(rrect):
-				ok = false
-		if ok and has_v:
-			var rx0 := clampi(lane_cx - int(lane_w / 2.0), 0, cells - lane_w)
-			var rrect2 := Rect2i(Vector2i(rx0, 0), Vector2i(lane_w, cells))
-			if brect.intersects(rrect2):
-				ok = false
-		if not ok:
-			continue
-
-		# Door side biased toward "inside" (toward chunk center) for readability.
-		var door_side := 0
-		if bx0 < int(cells / 2.0) and by0 < int(cells / 2.0): door_side = 2 # bottom
-		elif bx0 >= int(cells / 2.0) and by0 < int(cells / 2.0): door_side = 3 # left
-		elif bx0 < int(cells / 2.0) and by0 >= int(cells / 2.0): door_side = 1 # right
-		else: door_side = 0 # top
-
-		var door_offset := 2
-		var door_span := 2
-		gen._spawn_wall_rect_cells(chunk, bx0, by0, bw, bh, door_side, door_offset, door_span, rng)
-
-		# Light interior props.
-		if rng.randf() < 0.35:
-			var px := rng.randi_range(bx0 + 2, bx0 + bw - 3)
-			var py := rng.randi_range(by0 + 2, by0 + bh - 3)
-			gen._spawn_block(chunk, gen.cover_half_scene, px, py)
 
 	# Arena/gate: perimeter clutter, but keep center mostly open.
 	if archetype == &"arena" or archetype == &"gate":
@@ -383,6 +453,23 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				continue
 			gen._spawn_block(chunk, gen.cover_half_scene, x, y)
 
+	# Checkpoint language: paired barricade clusters just outside the road core.
+	# They shape combat without closing the route or creating a mandatory corridor.
+	if role == &"checkpoint":
+		var center_cell: int = int(cells / 2.0)
+		if has_h and lane_rect_h.size.y > 0:
+			var top_y: int = clampi(lane_rect_h.position.y - 2, 2, cells - 3)
+			var bottom_y: int = clampi(lane_rect_h.position.y + lane_rect_h.size.y + 1, 2, cells - 3)
+			for x_offset in [-6, 6]:
+				gen._spawn_block(chunk, gen.cover_half_scene, clampi(center_cell + x_offset, 2, cells - 3), top_y)
+				gen._spawn_block(chunk, gen.cover_half_scene, clampi(center_cell + x_offset, 2, cells - 3), bottom_y)
+		if has_v and lane_rect_v.size.x > 0:
+			var left_x: int = clampi(lane_rect_v.position.x - 2, 2, cells - 3)
+			var right_x: int = clampi(lane_rect_v.position.x + lane_rect_v.size.x + 1, 2, cells - 3)
+			for y_offset in [-6, 6]:
+				gen._spawn_block(chunk, gen.cover_half_scene, left_x, clampi(center_cell + y_offset, 2, cells - 3))
+				gen._spawn_block(chunk, gen.cover_half_scene, right_x, clampi(center_cell + y_offset, 2, cells - 3))
+
 	# Lane contract: ensure street cores are never blocked.
 	for r: Rect2i in keepout_rects:
 		gen._erase_cells_in_rect(wall_cells, window_cells, r)
@@ -395,6 +482,33 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			window_cells.erase(k)
 
 	gen._spawn_wall_cells(chunk, wall_cells, window_cells)
+
+	# Every true exploration dead end carries a reward. This makes side travel intentional
+	# and lets the macro validator treat these endpoints as meaningful rather than accidental.
+	if (role == &"exploration_reward" or role == &"secondary_alley_cache") and LOOT_SPAWNER_SCENE != null:
+		var reward_spawner := LOOT_SPAWNER_SCENE.instantiate() as Node2D
+		if reward_spawner != null:
+			var reward_rng := RandomNumberGenerator.new()
+			reward_rng.seed = gen._mix_seed_int(base_seed, 77881)
+			var reward_cell := Vector2i(
+				clampi(int(cells / 2.0) + reward_rng.randi_range(-3, 3), 3, cells - 4),
+				clampi(int(cells / 2.0) + reward_rng.randi_range(-3, 3), 3, cells - 4)
+			)
+			var reward_id: int = gen._mix_seed_int(base_seed, 0x51DE)
+			reward_spawner.set("loot_id", int(reward_id & 0x7fffffff) + 1)
+			if role == &"secondary_alley_cache":
+				reward_spawner.set("secondary_objective_id", DistrictPlan.secondary_objective_id(gen.world_seed, coord, &"dangerous_alley_cache"))
+			reward_spawner.set("spawn_chance", 1.0)
+			reward_spawner.set("count_min", 1)
+			reward_spawner.set("count_max", 2)
+			reward_spawner.set("rarity_min", 5)
+			reward_spawner.set("rarity_max", 8)
+			reward_spawner.set("scatter_radius", 36.0)
+			reward_spawner.set("require_walkable", true)
+			reward_spawner.set("pos_attempts", 24)
+			reward_spawner.set("pickup_delay", 0.15)
+			reward_spawner.position = (Vector2(reward_cell) + Vector2(0.5, 0.5)) * float(gen.cell_size_px)
+			chunk.add_child(reward_spawner)
 
 
 static func _add_wall_segment_line(gen: ChunkGenImpl, wall_cells: Dictionary, window_cells: Dictionary, start: Vector2i, dir: Vector2i, length: int, rng: RandomNumberGenerator) -> void:
@@ -419,7 +533,7 @@ static func _add_wall_segment_line(gen: ChunkGenImpl, wall_cells: Dictionary, wi
 		var seg_len: int = clampi(rng.randi_range(seg_min, seg_max), 1, length - idx)
 		# Place the main segment
 		for i in range(seg_len):
-			var c := start + dir * (idx + i)
+			var c: Vector2i = start + dir * (idx + i)
 			wall_cells[c] = true
 
 		# Small returns (1-2 cells) at a couple points to read like "ruin remnants", not 1-tile lines.
@@ -445,6 +559,51 @@ static func _add_wall_segment_line(gen: ChunkGenImpl, wall_cells: Dictionary, wi
 	for k in window_cells.keys():
 		if not wall_cells.has(k):
 			window_cells.erase(k)
+
+static func _urban_access_corridors(access_mask: int, cells: int, lane_cx: int, lane_cy: int) -> Array[Rect2i]:
+	var rects: Array[Rect2i] = []
+	if access_mask == 0:
+		return rects
+	var passage_w: int = 3
+	var half_w: int = int(passage_w / 2.0)
+	var edge_axis: int = int(cells / 2.0)
+
+	if (access_mask & _DIR_N) != 0:
+		rects.append(Rect2i(Vector2i(edge_axis - half_w, 0), Vector2i(passage_w, lane_cy + half_w + 1)))
+		var x0_n: int = mini(edge_axis, lane_cx) - half_w
+		rects.append(Rect2i(Vector2i(x0_n, lane_cy - half_w), Vector2i(absi(edge_axis - lane_cx) + passage_w, passage_w)))
+	if (access_mask & _DIR_S) != 0:
+		rects.append(Rect2i(Vector2i(edge_axis - half_w, lane_cy - half_w), Vector2i(passage_w, cells - lane_cy + half_w)))
+		var x0_s: int = mini(edge_axis, lane_cx) - half_w
+		rects.append(Rect2i(Vector2i(x0_s, lane_cy - half_w), Vector2i(absi(edge_axis - lane_cx) + passage_w, passage_w)))
+	if (access_mask & _DIR_W) != 0:
+		rects.append(Rect2i(Vector2i(0, edge_axis - half_w), Vector2i(lane_cx + half_w + 1, passage_w)))
+		var y0_w: int = mini(edge_axis, lane_cy) - half_w
+		rects.append(Rect2i(Vector2i(lane_cx - half_w, y0_w), Vector2i(passage_w, absi(edge_axis - lane_cy) + passage_w)))
+	if (access_mask & _DIR_E) != 0:
+		rects.append(Rect2i(Vector2i(lane_cx - half_w, edge_axis - half_w), Vector2i(cells - lane_cx + half_w, passage_w)))
+		var y0_e: int = mini(edge_axis, lane_cy) - half_w
+		rects.append(Rect2i(Vector2i(lane_cx - half_w, y0_e), Vector2i(passage_w, absi(edge_axis - lane_cy) + passage_w)))
+	return rects
+
+
+static func _add_connector_spawn_sockets(chunk: Node2D, conn_mask: int, lane_cx: int, lane_cy: int, cells: int, cell_size_px: int) -> void:
+	var socket_cells: Array[Vector2i] = []
+	if (conn_mask & _DIR_N) != 0:
+		socket_cells.append(Vector2i(lane_cx, 3))
+	if (conn_mask & _DIR_E) != 0:
+		socket_cells.append(Vector2i(cells - 4, lane_cy))
+	if (conn_mask & _DIR_S) != 0:
+		socket_cells.append(Vector2i(lane_cx, cells - 4))
+	if (conn_mask & _DIR_W) != 0:
+		socket_cells.append(Vector2i(3, lane_cy))
+	for index in range(socket_cells.size()):
+		var marker := Marker2D.new()
+		marker.name = "StreetSpawnSocket%02d" % index
+		marker.position = (Vector2(socket_cells[index]) + Vector2(0.5, 0.5)) * float(cell_size_px)
+		marker.add_to_group(&"enemy_spawn_socket")
+		marker.set_meta("spawn_socket_kind", &"street")
+		chunk.add_child(marker)
 
 
 static func _lane_center_for_row(gen: ChunkGenImpl, row: int, cells: int) -> int:

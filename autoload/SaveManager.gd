@@ -1,60 +1,53 @@
 extends Node
 
 
-const SAVE_DIR := "user://saves"
+const SAVE_DIR := "user://saves/"
 const SLOT_COUNT := 3
 
 var current_slot: int = -1
 var current_save: SaveData = null
 
 func _slot_path(slot: int) -> String:
-	return SAVE_DIR + "/slot_%d.tres" % slot
+	return SAVE_DIR + "slot_%d.tres" % slot
 
-func _slot_pending_path(slot: int) -> String:
-	return SAVE_DIR + "/slot_%d.pending.tres" % slot
+func _temporary_path(slot: int) -> String:
+	return SAVE_DIR + "slot_%d.tmp.tres" % slot
 
-func _slot_backup_path(slot: int) -> String:
-	return SAVE_DIR + "/slot_%d.backup.tres" % slot
+func _backup_path(slot: int) -> String:
+	return SAVE_DIR + "slot_%d.bak.tres" % slot
+
+func _load_save_data(path: String) -> SaveData:
+	if not FileAccess.file_exists(path):
+		return null
+	var resource := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	return resource as SaveData
 
 func ensure_dir() -> bool:
-	# Use a user://-rooted DirAccess instead of passing a virtual path to an
-	# "absolute" helper. This also lets us report directory creation failures.
-	var user_dir: DirAccess = DirAccess.open("user://")
-	if user_dir == null:
-		push_error("Cannot open the user data directory: %s" % OS.get_user_data_dir())
+	# make_dir_recursive_absolute() needs an OS path. Passing user:// directly can
+	# fail with ERR_CANT_OPEN on Windows/Godot 4.7 even though ResourceSaver later
+	# accepts the virtual path.
+	var absolute_dir: String = ProjectSettings.globalize_path(SAVE_DIR)
+	var err: int = DirAccess.make_dir_recursive_absolute(absolute_dir)
+	if err != OK and err != ERR_ALREADY_EXISTS:
+		push_error("Failed creating save directory '%s', err=%s" % [absolute_dir, str(err)])
 		return false
-	if user_dir.dir_exists("saves"):
-		return true
-	var err: Error = user_dir.make_dir_recursive("saves")
-	if err != OK:
-		push_error("Cannot create save directory '%s' (err=%s)" % [OS.get_user_data_dir(), str(err)])
-		return false
-	return true
+	return DirAccess.dir_exists_absolute(absolute_dir)
 
 func has_save(slot: int) -> bool:
 	if not ensure_dir():
 		return false
-	return FileAccess.file_exists(_slot_path(slot)) or FileAccess.file_exists(_slot_pending_path(slot)) or FileAccess.file_exists(_slot_backup_path(slot))
+	return (
+		FileAccess.file_exists(_slot_path(slot))
+		or FileAccess.file_exists(_backup_path(slot))
+	)
 
 func load_slot(slot: int) -> SaveData:
 	if not ensure_dir():
 		return null
-	# A power loss or failed rename can leave the newest valid copy as pending or
-	# backup. Load the newest valid candidate rather than losing the whole slot.
-	var candidates: Array[String] = [_slot_path(slot), _slot_pending_path(slot), _slot_backup_path(slot)]
-	var newest: SaveData = null
-	var newest_mtime: int = -1
-	for path in candidates:
-		if not FileAccess.file_exists(path):
-			continue
-		var loaded: SaveData = ResourceLoader.load(path) as SaveData
-		if loaded == null:
-			continue
-		var modified: int = int(FileAccess.get_modified_time(path))
-		if newest == null or modified > newest_mtime:
-			newest = loaded
-			newest_mtime = modified
-	return newest
+	var primary := _load_save_data(_slot_path(slot))
+	if primary != null:
+		return primary
+	return _load_save_data(_backup_path(slot))
 
 func create_slot(slot: int, profile_name: String) -> SaveData:
 	ensure_dir()
@@ -65,78 +58,80 @@ func create_slot(slot: int, profile_name: String) -> SaveData:
 	save_slot(s)
 	return s
 
-func save_slot(save: SaveData) -> Error:
-	if save == null:
-		return ERR_INVALID_PARAMETER
-	if not ensure_dir():
-		return ERR_CANT_CREATE
+func save_slot(save: SaveData) -> bool:
+	if save == null or not ensure_dir():
+		return false
 	save.updated_unix = int(Time.get_unix_time_from_system())
+	var slot := save.slot_index
+	var primary_path := _slot_path(slot)
+	var temporary_path := _temporary_path(slot)
+	var backup_path := _backup_path(slot)
+	var absolute_primary := ProjectSettings.globalize_path(primary_path)
+	var absolute_temporary := ProjectSettings.globalize_path(temporary_path)
+	var absolute_backup := ProjectSettings.globalize_path(backup_path)
 
-	var slot: int = save.slot_index
-	var target_path: String = _slot_path(slot)
-	var pending_path: String = _slot_pending_path(slot)
-	var target_name: String = target_path.get_file()
-	var pending_name: String = pending_path.get_file()
-	var backup_name: String = _slot_backup_path(slot).get_file()
-	var save_dir: DirAccess = DirAccess.open(SAVE_DIR)
-	if save_dir == null:
-		push_error("Cannot open save directory: %s" % OS.get_user_data_dir())
-		return ERR_CANT_OPEN
+	if FileAccess.file_exists(temporary_path):
+		var stale_temp_error := DirAccess.remove_absolute(absolute_temporary)
+		if stale_temp_error != OK:
+			push_error(
+				"Failed removing stale temporary save for slot %d, err=%s"
+				% [slot, str(stale_temp_error)]
+			)
+			return false
 
-	if save_dir.file_exists(pending_name):
-		var stale_err: Error = save_dir.remove(pending_name)
-		if stale_err != OK:
-			push_error("Cannot replace stale pending save for slot %d (err=%s)" % [slot, str(stale_err)])
-			return stale_err
+	var save_error := ResourceSaver.save(save, temporary_path)
+	if save_error != OK:
+		push_error("Failed writing temporary save for slot %d, err=%s" % [slot, str(save_error)])
+		return false
 
-	# Serialize completely before touching the current save.
-	var err: Error = ResourceSaver.save(save, pending_path)
-	if err != OK:
-		push_error("Failed writing pending save for slot %d in '%s' (err=%s)" % [slot, OS.get_user_data_dir(), str(err)])
-		return err
+	if _load_save_data(temporary_path) == null:
+		push_error("Temporary save validation failed for slot %d" % slot)
+		DirAccess.remove_absolute(absolute_temporary)
+		return false
 
-	if save_dir.file_exists(backup_name):
-		var old_backup_err: Error = save_dir.remove(backup_name)
-		if old_backup_err != OK:
-			push_warning("Could not remove the previous slot %d backup (err=%s)" % [slot, str(old_backup_err)])
+	var moved_primary := false
+	if FileAccess.file_exists(primary_path):
+		if FileAccess.file_exists(backup_path):
+			var remove_backup_error := DirAccess.remove_absolute(absolute_backup)
+			if remove_backup_error != OK:
+				push_error(
+					"Failed replacing backup for slot %d, err=%s"
+					% [slot, str(remove_backup_error)]
+				)
+				DirAccess.remove_absolute(absolute_temporary)
+				return false
+		var backup_error := DirAccess.rename_absolute(absolute_primary, absolute_backup)
+		if backup_error != OK:
+			push_error(
+				"Failed backing up slot %d, err=%s" % [slot, str(backup_error)]
+			)
+			DirAccess.remove_absolute(absolute_temporary)
+			return false
+		moved_primary = true
 
-	var had_target: bool = save_dir.file_exists(target_name)
-	if had_target:
-		# Recovered/copied Windows profiles can retain a read-only file attribute.
-		if OS.get_name() == "Windows" and FileAccess.get_read_only_attribute(target_path):
-			var writable_err: Error = FileAccess.set_read_only_attribute(target_path, false)
-			if writable_err != OK:
-				push_error("Slot %d is read-only and could not be made writable (err=%s)" % [slot, str(writable_err)])
-				return writable_err
-		var backup_err: Error = save_dir.rename(target_name, backup_name)
-		if backup_err != OK:
-			# Keep the fully written pending file as a recoverable candidate.
-			push_error("Could not rotate slot %d save; pending copy preserved (err=%s)" % [slot, str(backup_err)])
-			return backup_err
-
-	var promote_err: Error = save_dir.rename(pending_name, target_name)
-	if promote_err != OK:
-		if had_target and save_dir.file_exists(backup_name):
-			save_dir.rename(backup_name, target_name)
-		push_error("Could not promote slot %d pending save (err=%s)" % [slot, str(promote_err)])
-		return promote_err
-
-	if save_dir.file_exists(backup_name):
-		var cleanup_err: Error = save_dir.remove(backup_name)
-		if cleanup_err != OK:
-			push_warning("Slot %d saved, but its temporary backup could not be removed (err=%s)" % [slot, str(cleanup_err)])
-	return OK
+	var replace_error := DirAccess.rename_absolute(absolute_temporary, absolute_primary)
+	if replace_error != OK:
+		push_error("Failed replacing slot %d, err=%s" % [slot, str(replace_error)])
+		if moved_primary:
+			var restore_error := DirAccess.rename_absolute(absolute_backup, absolute_primary)
+			if restore_error != OK:
+				push_error(
+					"Failed restoring backup for slot %d, err=%s"
+					% [slot, str(restore_error)]
+				)
+		return false
+	return true
 
 func delete_slot(slot: int) -> void:
 	if not ensure_dir():
 		return
-	var save_dir: DirAccess = DirAccess.open(SAVE_DIR)
-	if save_dir == null:
-		return
-	for path in [_slot_path(slot), _slot_pending_path(slot), _slot_backup_path(slot)]:
-		var filename: String = String(path).get_file()
-		if save_dir.file_exists(filename):
-			save_dir.remove(filename)
+	for path in [_slot_path(slot), _temporary_path(slot), _backup_path(slot)]:
+		if FileAccess.file_exists(path):
+			var error := DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+			if error != OK:
+				push_error(
+					"Failed deleting save artifact '%s', err=%s" % [path, str(error)]
+				)
 
 func set_current(slot: int, save: SaveData) -> void:
 	current_slot = slot
@@ -145,7 +140,6 @@ func set_current(slot: int, save: SaveData) -> void:
 	if Global != null and current_save != null and Global.has_method("apply_save"):
 		Global.apply_save(current_save)
 
-func save_current() -> Error:
-	if current_save == null:
-		return ERR_DOES_NOT_EXIST
-	return save_slot(current_save)
+func save_current() -> void:
+	if current_save != null:
+		save_slot(current_save)

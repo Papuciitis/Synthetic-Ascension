@@ -22,6 +22,9 @@ var _meter_fill: ColorRect = null
 var _rarity_tri_bg: Polygon2D = null
 var _rarity_tri: Polygon2D = null
 var _rarity_lbl: Label = null
+var _set_emblem: SetEmblem = null
+var _lock_badge: Label = null
+var _lock_border: Panel = null
 
 var _shown_rarity: int = 0
 
@@ -42,6 +45,8 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_ensure_optional_ui()
+	_ensure_lock_badge()
+	_ensure_lock_border()
 	_apply_text_style()
 	_apply_insets()
 
@@ -198,6 +203,19 @@ func _ensure_optional_ui() -> void:
 
 	_hide_rarity_corner()
 
+	_set_emblem = content.get_node_or_null("SetEmblem") as SetEmblem
+	if _set_emblem == null:
+		_set_emblem = SetEmblem.new()
+		_set_emblem.name = "SetEmblem"
+		content.add_child(_set_emblem)
+	_set_emblem.z_index = 24
+	_set_emblem.set_anchors_preset(Control.PRESET_TOP_RIGHT, true)
+	_set_emblem.offset_left = -21.0
+	_set_emblem.offset_top = 5.0
+	_set_emblem.offset_right = -5.0
+	_set_emblem.offset_bottom = 21.0
+	_set_emblem.configure(&"")
+
 func _hide_rarity_corner() -> void:
 	_shown_rarity = 0
 	if _rarity_tri_bg != null:
@@ -264,9 +282,19 @@ func set_item(inst: ItemInstance) -> void:
 		if _meter_bg != null: _meter_bg.visible = false
 		if _meter_fill != null: _meter_fill.anchor_right = 0.0
 		_hide_rarity_corner()
+		if _set_emblem != null:
+			_set_emblem.configure(&"")
+		if _lock_badge != null: _lock_badge.visible = false
+		if _lock_border != null: _lock_border.visible = false
 		return
 
 	set_meta("item_instance", inst)
+	if _set_emblem != null:
+		_set_emblem.configure(StringName(inst.data.set_id))
+	if _lock_badge != null:
+		_lock_badge.visible = inst.locked
+	if _lock_border != null:
+		_lock_border.visible = inst.locked
 
 	if icon != null:
 		icon.texture = inst.data.icon
@@ -312,6 +340,49 @@ func _rarity_overlay_color(r: int) -> Color:
 	var c := _rarity_color(r)
 	return Color(c.r, c.g, c.b, 0.06)
 
+
+func _ensure_lock_badge() -> void:
+	if content == null:
+		content = get_node_or_null("Content") as Control
+	if content == null:
+		return
+	_lock_badge = content.get_node_or_null("LockBadge") as Label
+	if _lock_badge == null:
+		_lock_badge = Label.new()
+		_lock_badge.name = "LockBadge"
+		_lock_badge.text = "LOCK"
+		_lock_badge.add_theme_font_size_override("font_size", 9)
+		_lock_badge.add_theme_color_override("font_color", Color(1.0, 0.78, 0.30, 1.0))
+		_lock_badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+		_lock_badge.position = Vector2(-34, 3)
+		_lock_badge.size = Vector2(31, 14)
+		_lock_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_lock_badge.z_index = 20
+		content.add_child(_lock_badge)
+	_lock_badge.visible = false
+
+func _ensure_lock_border() -> void:
+	if _lock_border != null:
+		return
+	_lock_border = get_node_or_null("LockBorder") as Panel
+	if _lock_border == null:
+		_lock_border = Panel.new()
+		_lock_border.name = "LockBorder"
+		_lock_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_lock_border.set_anchors_preset(Control.PRESET_FULL_RECT, true)
+		_lock_border.z_index = 30
+		var style := StyleBoxFlat.new()
+		style.bg_color = Color(0, 0, 0, 0)
+		style.border_color = Color(1.0, 0.72, 0.22, 0.95)
+		style.set_border_width_all(2)
+		style.corner_radius_top_left = 10
+		style.corner_radius_top_right = 10
+		style.corner_radius_bottom_left = 10
+		style.corner_radius_bottom_right = 10
+		_lock_border.add_theme_stylebox_override("panel", style)
+		add_child(_lock_border)
+	_lock_border.visible = false
+
 func _gui_input(event: InputEvent) -> void:
 	var mb: InputEventMouseButton = event as InputEventMouseButton
 	if mb == null or not mb.pressed:
@@ -320,7 +391,7 @@ func _gui_input(event: InputEvent) -> void:
 
 func _get_drag_data(_at_position: Vector2) -> Variant:
 	var inst: ItemInstance = get_meta("item_instance", null) as ItemInstance
-	if inst == null or inst.data == null:
+	if inst == null or inst.data == null or inst.locked:
 		return null
 	var payload := {"kind": 0, "idx": slot_index} # HubItemSlot.Kind.EQUIPPED
 	if icon != null and icon.texture != null:

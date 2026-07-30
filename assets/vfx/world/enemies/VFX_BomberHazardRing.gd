@@ -11,12 +11,12 @@ class_name VFX_BomberHazardRing
 @export var color_core: Color = Color(1.00, 0.35, 0.20, 1.0)
 @export var color_glow: Color = Color(1.00, 0.15, 0.85, 0.60)
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _r: float = 96.0
 var _trigger_d: float = 80.0
 var _t: float = 0.0
 
-func setup(e: Enemy) -> void:
+func setup(e: EnemyActor) -> void:
 	_enemy = e
 	if _enemy != null and _enemy.spec != null:
 		_r = maxf(_enemy.spec.explode_radius, 8.0)

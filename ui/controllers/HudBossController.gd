@@ -4,7 +4,7 @@ class_name HudBossController
 @export var boss_bar_path: NodePath
 
 var _boss_bar: BossBarHUD
-var _boss: Enemy = null
+var _boss: EnemyActor = null
 var _tier: int = -1
 
 func _ready() -> void:
@@ -40,10 +40,10 @@ func _process(_delta: float) -> void:
 		_boss_bar.update_hp(_boss.hp, _boss.max_hp)
 
 func _on_boss_spawned(boss: Node, tier: int, portrait: Texture2D, title: String) -> void:
-	if boss is not Enemy:
+	if boss is not EnemyActor:
 		return
 
-	_boss = boss as Enemy
+	_boss = boss as EnemyActor
 	_tier = tier
 
 	if _boss_bar != null:

@@ -13,6 +13,10 @@ power = 0.03
 
 [sub_resource type="Resource" id="tier2"]
 script = ExtResource("2")
+display_name = "Indexed Motion"
+mechanical_description = "Gain +10 movement speed and +3% power."
+plain_description = "Move faster and hit harder."
+glossary_terms = PackedStringArray("Power")
 mods = SubResource("mods2")
 
 [sub_resource type="Resource" id="mods4"]
@@ -22,6 +26,10 @@ haste = 0.02
 [sub_resource type="Resource" id="tier4"]
 script = ExtResource("2")
 required_count = 4
+display_name = "Afterstrike"
+mechanical_description = "Gain +2% haste. Weapon attacks periodically place a delayed area strike near the aim point."
+plain_description = "Some attacks leave a delayed echo where you aimed."
+glossary_terms = PackedStringArray("Haste", "Set strength")
 mods = SubResource("mods4")
 effect_scenes = Array[PackedScene]([ExtResource("4")])
 
@@ -33,6 +41,10 @@ luck = 0.02
 [sub_resource type="Resource" id="tier6"]
 script = ExtResource("2")
 required_count = 6
+display_name = "Triangle Commit"
+mechanical_description = "Gain +4% haste and +2% luck. Attacks place marks; three living marks complete a style-specific triangle attack. Active Index Commit temporarily mirrors every placed mark."
+plain_description = "Place three marks to form an attack pattern; R briefly makes each attack place a second mirrored mark."
+glossary_terms = PackedStringArray("Mark lifetime", "Mirrored mark", "Active ability")
 mods = SubResource("mods6")
 effect_scenes = Array[PackedScene]([ExtResource("5")])
 
@@ -40,4 +52,13 @@ effect_scenes = Array[PackedScene]([ExtResource("5")])
 script = ExtResource("1")
 id = &"lattice"
 display_name = "Lattice Index"
+identity_sentence = "A spatial combo set that records attack positions and resolves them as a three-point pattern."
+playstyle = "Keep marks alive, shape a useful triangle, and use Index Commit to finish patterns quickly."
+best_with = "Accurate repeated attacks, mobile ranged play and builds that can exploit delayed area damage."
+emblem_shape = &"lattice"
+accent_color = Color(0.76, 0.36, 1, 1)
+shape_language = "Three indexed points, open triangles and mirrored diamonds."
+active_ability_name = "Index Commit"
+active_ability_requirements = "Requires 6 Lattice pieces and a completed cooldown. It does not require existing marks."
+glossary = {"Active ability": "A set action triggered with the displayed combat key.", "Haste": "Shortens attack and ability recovery times.", "Mark lifetime": "Time remaining before an uncompleted mark expires.", "Mirrored mark": "A distinct second mark created by Index Commit.", "Power": "Increases outgoing damage."}
 tiers = Array[ExtResource("2")]([SubResource("tier2"), SubResource("tier4"), SubResource("tier6")])

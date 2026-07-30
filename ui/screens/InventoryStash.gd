@@ -7,6 +7,8 @@ var _bag_slots_built: int = 0
 var _bag_check_t: float = 0.0
 
 const SLOT_SCENE: PackedScene = preload("res://ui/widgets/HubItemSlot.tscn")
+const TOOLTIP_MARGIN: float = 8.0
+const TOOLTIP_OFFSET: Vector2 = Vector2(16.0, 16.0)
 
 # Slot labels for equipped grid (matches ItemData.EquipSlot indices 0..7)
 const EQUIP_HINTS = ["HP", "ARM", "MOVE", "POW", "HST", "LCK", "OFF", "RING"]
@@ -18,6 +20,7 @@ const EQUIP_HINTS = ["HP", "ARM", "MOVE", "POW", "HST", "LCK", "OFF", "RING"]
 @onready var stash_scroll: ScrollContainer = $Center/Panel/Margin/VBox/Body/Right/StashScroll
 @onready var stash_grid: GridContainer = $Center/Panel/Margin/VBox/Body/Right/StashScroll/StashGrid
 @onready var tooltip: ItemTooltip = $Tooltip
+@onready var action_footer: Label = $Center/Panel/Margin/VBox/ActionFooter
 
 # Live hover context (refresh tooltip when item changes under cursor).
 var _hover_kind: int = -1
@@ -98,7 +101,7 @@ func _process(delta: float) -> void:
 	# Keep tooltip near mouse when visible + refresh if item changed under cursor (double-click/moves).
 	_refresh_hover_live()
 	if tooltip != null and tooltip.visible:
-		tooltip.global_position = get_viewport().get_mouse_position() + Vector2(16, 16)
+		_position_tooltip_near_mouse()
 	# Bag size can change via major choices; rebuild grid if needed
 	_bag_check_t = maxf(_bag_check_t - delta, 0.0)
 	if _bag_check_t <= 0.0:
@@ -202,14 +205,81 @@ func get_item_at(kind: int, idx: int) -> ItemInstance:
 		return Global.meta_stash.get_at(idx) if Global.meta_stash != null else null
 	return null
 
+func _set_action_status(message: String) -> void:
+	if action_footer != null:
+		action_footer.text = message
+
+func toggle_item_lock(kind: int, idx: int) -> void:
+	var inst: ItemInstance = get_item_at(kind, idx)
+	if inst == null:
+		return
+	inst.toggle_locked()
+	if inst.locked and Global != null:
+		if kind == HubItemSlot.Kind.BAG:
+			Global.hub_sell_marks_bag.erase(idx)
+		elif kind == HubItemSlot.Kind.STASH:
+			Global.hub_sell_marks_stash.erase(idx)
+	_set_action_status("LOCKED · Protected from trade, movement, replacement and duplicate cleanup." if inst.locked else "UNLOCKED · Item actions restored.")
+	_refresh()
+	Global.save_current_profile()
+
 func toggle_sale_mark(kind: int, idx: int) -> void:
 	if Global == null:
+		return
+	var inst: ItemInstance = get_item_at(kind, idx)
+	if inst == null:
+		return
+	if inst.locked:
+		_set_action_status("ITEM LOCKED · Ctrl-click to unlock before trading.")
 		return
 	if kind == HubItemSlot.Kind.BAG:
 		Global.toggle_hub_sell_mark(&"bag", idx)
 	elif kind == HubItemSlot.Kind.STASH:
 		Global.toggle_hub_sell_mark(&"stash", idx)
+	else:
+		_set_action_status("Equipped items are traded from the main exchange screen.")
+		return
+	_set_action_status("Shift-click Trade · Ctrl-click Lock · Right-click Move · Double-click Equip")
 	_refresh()
+
+func on_slot_rightclick(kind: int, idx: int) -> void:
+	match kind:
+		HubItemSlot.Kind.EQUIPPED:
+			_move_to_first_empty(kind, idx, HubItemSlot.Kind.BAG)
+		HubItemSlot.Kind.BAG:
+			_move_to_first_empty(kind, idx, HubItemSlot.Kind.STASH)
+		HubItemSlot.Kind.STASH:
+			_move_to_first_empty(kind, idx, HubItemSlot.Kind.BAG)
+
+func _move_to_first_empty(src_kind: int, src_idx: int, dst_kind: int) -> bool:
+	if Global == null or InvRouter == null:
+		return false
+	var inst: ItemInstance = get_item_at(src_kind, src_idx)
+	if inst == null:
+		return false
+	if inst.locked:
+		_set_action_status("ITEM LOCKED · Ctrl-click to unlock before moving it.")
+		return false
+	var src_inv: Object = _inv_for_kind(src_kind)
+	var dst_inv: Object = _inv_for_kind(dst_kind)
+	if src_inv == null or dst_inv == null or not dst_inv.has_method("first_empty_slot"):
+		return false
+	var dst_idx: int = int(dst_inv.call("first_empty_slot"))
+	if dst_idx < 0:
+		_set_action_status("NO EMPTY DESTINATION SLOT")
+		return false
+	var src_ctrl := _slot_ctrl(src_kind, src_idx)
+	var dst_ctrl := _slot_ctrl(dst_kind, dst_idx)
+	_ensure_fly_vfx()
+	if _fly_vfx != null and src_ctrl != null and dst_ctrl != null:
+		_fly_vfx.fly_to(dst_ctrl, inst, _ctrl_center(src_ctrl), false)
+	var moved: bool = InvRouter.move_between(src_inv, src_idx, dst_inv, dst_idx, null)
+	if moved:
+		_set_action_status("ITEM MOVED")
+		_refresh()
+		_refresh_hover_live()
+		Global.save_current_profile()
+	return moved
 
 func can_drop_item(data: Dictionary, dst_kind: int, dst_idx: int) -> bool:
 	if not data.has("kind") or not data.has("idx"):
@@ -221,7 +291,10 @@ func can_drop_item(data: Dictionary, dst_kind: int, dst_idx: int) -> bool:
 		return false
 
 	var inst: ItemInstance = get_item_at(src_kind, src_idx)
-	if inst == null or inst.data == null:
+	if inst == null or inst.data == null or inst.locked:
+		return false
+	var dst_inst: ItemInstance = get_item_at(dst_kind, dst_idx)
+	if dst_inst != null and dst_inst.locked:
 		return false
 
 	# Equipped: allow dropping FROM bag/stash onto ANY equipped slot.
@@ -307,7 +380,7 @@ func _set_item(kind: int, idx: int, inst: ItemInstance) -> void:
 		return
 	if kind == HubItemSlot.Kind.EQUIPPED:
 		if Global.run_inventory != null:
-			Global.run_inventory.set_item(idx, inst, null)
+			Global.run_inventory.set_item(idx, inst, {"player_driven": true})
 	elif kind == HubItemSlot.Kind.BAG:
 		if Global.run_bag != null:
 			Global.run_bag.set_item(idx, inst)
@@ -321,7 +394,7 @@ func _remove_at(kind: int, idx: int) -> void:
 		return
 	if kind == HubItemSlot.Kind.EQUIPPED:
 		if Global.run_inventory != null:
-			Global.run_inventory.remove_at(idx)
+			Global.run_inventory.remove_at(idx, {"player_driven": true})
 	elif kind == HubItemSlot.Kind.BAG:
 		if Global.run_bag != null:
 			Global.run_bag.remove_at(idx)
@@ -330,6 +403,33 @@ func _remove_at(kind: int, idx: int) -> void:
 			Global.meta_stash.remove_at(idx)
 
 # ---------------- Tooltip ----------------
+
+func _position_tooltip_near_mouse() -> void:
+	if tooltip == null or not tooltip.visible:
+		return
+
+	# Establish the wrapped layout before measuring it. The tooltip keeps its
+	# normal font size; only its position changes when an edge would clip it.
+	var width: float = maxf(460.0, tooltip.custom_minimum_size.x)
+	tooltip.size = Vector2(width, 0.0)
+	tooltip.reset_size()
+	var minimum: Vector2 = tooltip.get_combined_minimum_size()
+	if minimum.x > 0.0 and minimum.y > 0.0:
+		tooltip.size = Vector2(maxf(width, minimum.x), minimum.y)
+
+	var mouse: Vector2 = get_viewport().get_mouse_position()
+	var screen: Vector2 = get_viewport().get_visible_rect().size
+	var out: Vector2 = mouse + TOOLTIP_OFFSET
+
+	# Prefer the opposite side of the cursor before clamping to the screen.
+	if out.x + tooltip.size.x > screen.x - TOOLTIP_MARGIN:
+		out.x = mouse.x - tooltip.size.x - TOOLTIP_OFFSET.x
+	if out.y + tooltip.size.y > screen.y - TOOLTIP_MARGIN:
+		out.y = mouse.y - tooltip.size.y - TOOLTIP_OFFSET.y
+
+	out.x = clampf(out.x, TOOLTIP_MARGIN, maxf(TOOLTIP_MARGIN, screen.x - tooltip.size.x - TOOLTIP_MARGIN))
+	out.y = clampf(out.y, TOOLTIP_MARGIN, maxf(TOOLTIP_MARGIN, screen.y - tooltip.size.y - TOOLTIP_MARGIN))
+	tooltip.global_position = out
 
 func _show_tip(kind: int, idx: int) -> void:
 	_hover_kind = kind
@@ -344,6 +444,7 @@ func _show_tip(kind: int, idx: int) -> void:
 	_hover_inst_id = (int(inst.get_instance_id()) if (inst is Object) else 0)
 	tooltip.show_item(inst)
 	tooltip.visible = true
+	call_deferred("_position_tooltip_near_mouse")
 
 func _hide_tip() -> void:
 	_hover_kind = -1
@@ -384,6 +485,12 @@ func on_slot_doubleclick(kind: int, idx: int) -> void:
 		return
 	if InvRouter == null:
 		return
+	var clicked_inst: ItemInstance = get_item_at(kind, idx)
+	if clicked_inst == null:
+		return
+	if clicked_inst.locked:
+		_set_action_status("ITEM LOCKED · Ctrl-click to unlock before equipping or unequipping.")
+		return
 
 	_ensure_fly_vfx()
 
@@ -399,9 +506,11 @@ func on_slot_doubleclick(kind: int, idx: int) -> void:
 		var dst_ctrl := _slot_ctrl(HubItemSlot.Kind.BAG, dst_i)
 		if _fly_vfx != null and src_ctrl != null and dst_ctrl != null:
 			_fly_vfx.fly_to(dst_ctrl, inst_e, _ctrl_center(src_ctrl), false)
-		InvRouter.move_between(Global.run_inventory, idx, Global.run_bag, dst_i, null)
-		_refresh()
-		_refresh_hover_live()
+		if InvRouter.move_between(Global.run_inventory, idx, Global.run_bag, dst_i, null):
+			_set_action_status("ITEM MOVED TO BACKPACK")
+			_refresh()
+			_refresh_hover_live()
+			Global.save_current_profile()
 		return
 
 	# Stash -> Bag (first empty)
@@ -416,9 +525,11 @@ func on_slot_doubleclick(kind: int, idx: int) -> void:
 		var dst_ctrl2 := _slot_ctrl(HubItemSlot.Kind.BAG, dst_s)
 		if _fly_vfx != null and src_ctrl2 != null and dst_ctrl2 != null:
 			_fly_vfx.fly_to(dst_ctrl2, inst_s, _ctrl_center(src_ctrl2), false)
-		InvRouter.move_between(Global.meta_stash, idx, Global.run_bag, dst_s, null)
-		_refresh()
-		_refresh_hover_live()
+		if InvRouter.move_between(Global.meta_stash, idx, Global.run_bag, dst_s, null):
+			_set_action_status("ITEM MOVED TO BACKPACK")
+			_refresh()
+			_refresh_hover_live()
+			Global.save_current_profile()
 		return
 
 	# Bag -> Equipped (equip slot)
@@ -431,11 +542,17 @@ func on_slot_doubleclick(kind: int, idx: int) -> void:
 		var es: int = int(inst_b.data.equip_slot)
 		if es < 0:
 			return
+		var equipped_now: ItemInstance = Global.run_inventory.get_at(es) if Global.run_inventory != null else null
+		if equipped_now != null and equipped_now.locked:
+			_set_action_status("EQUIPPED ITEM LOCKED · Unlock it before replacement.")
+			return
 		var src_ctrl3 := _slot_ctrl(kind, idx)
 		var dst_ctrl3 := _slot_ctrl(HubItemSlot.Kind.EQUIPPED, es)
 		if _fly_vfx != null and src_ctrl3 != null and dst_ctrl3 != null:
 			_fly_vfx.fly_to(dst_ctrl3, inst_b, _ctrl_center(src_ctrl3), false)
-		InvRouter.move_between(Global.run_bag, idx, Global.run_inventory, es, null)
-		_refresh()
-		_refresh_hover_live()
+		if InvRouter.move_between(Global.run_bag, idx, Global.run_inventory, es, null):
+			_set_action_status("ITEM EQUIPPED")
+			_refresh()
+			_refresh_hover_live()
+			Global.save_current_profile()
 		return

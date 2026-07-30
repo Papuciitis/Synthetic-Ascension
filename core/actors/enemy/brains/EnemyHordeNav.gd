@@ -19,7 +19,7 @@ const SEP_STRENGTH_SWARM: float = 0.55
 var _sep_sys: Node = null
 var _smoothed_move: Vector2 = Vector2.ZERO
 
-var _e: Enemy = null
+var _e: EnemyActor = null
 
 # LOS throttle (smart AIs only)
 var _los_cache: bool = false
@@ -51,7 +51,7 @@ var _nudge_t: float = 0.0
 var _nudge_side: int = 1
 
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_e = enemy
 	_rng.randomize()
 
@@ -69,7 +69,7 @@ func setup(enemy: Enemy) -> void:
 		# desync LOS checks across enemies
 		_los_timer = _rng.randf_range(0.0, maxf(0.01, _e.los_check_interval))
 
-func pre_steer(ai: int, move: Vector2, to_player: Vector2, delta: float) -> Vector2:
+func pre_steer(ai: int, move: Vector2, to_player: Vector2, delta: float, lod_tier: int = 0) -> Vector2:
 	if _e == null or not is_instance_valid(_e):
 		return move
 
@@ -79,9 +79,10 @@ func pre_steer(ai: int, move: Vector2, to_player: Vector2, delta: float) -> Vect
 	if _e.dumb_pathing_enabled:
 		move = _apply_flow_nav(ai, move, to_player, delta)
 
-	# Local separation (ONLY for swarm-ish AIs)
-	if _e.flow_for_swarm_ai and _is_swarm_ai(ai):
-		var sep: Vector2 = _sample_sep(SEP_RADIUS_SWARM, 8)
+	# Local separation is the most expensive horde-neighbour query. Keep it for
+	# near/mid swarms, but distant ambient enemies can follow the shared flow field.
+	if lod_tier < 2 and _e.flow_for_swarm_ai and _is_swarm_ai(ai):
+		var sep: Vector2 = _sample_sep(SEP_RADIUS_SWARM, 8 if lod_tier == 0 else 5)
 		if sep != Vector2.ZERO and move.length_squared() > 0.0001:
 			var mag: float = move.length()
 			var d: Vector2 = move / mag
@@ -99,7 +100,7 @@ func pre_steer(ai: int, move: Vector2, to_player: Vector2, delta: float) -> Vect
 
 	return move
 
-func post_move(desired_move: Vector2, to_player: Vector2, delta: float) -> void:
+func post_move(desired_move: Vector2, to_player: Vector2, delta: float, _lod_tier: int = 0) -> void:
 	if _e == null or not is_instance_valid(_e):
 		return
 	_post_move_wall_slide(desired_move, to_player, delta)
@@ -118,7 +119,7 @@ func _is_swarm_ai(ai: int) -> bool:
 
 
 func _los_cached(delta: float) -> bool:
-	# Prefer shared cache on Enemy (so multiple modules don't raycast independently)
+	# Prefer shared cache on EnemyActor (so multiple modules don't raycast independently)
 	if _e != null and is_instance_valid(_e) and _e.has_method("has_los_cached"):
 		return bool(_e.call("has_los_cached"))
 

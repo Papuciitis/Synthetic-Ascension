@@ -2,6 +2,10 @@ extends Resource
 class_name SetTier
 
 @export var required_count: int = 2
+@export var display_name: String = ""
+@export_multiline var mechanical_description: String = ""
+@export_multiline var plain_description: String = ""
+@export var glossary_terms: PackedStringArray = PackedStringArray()
 @export var mods: StatDelta = null
 
 # effects that become active at this tier (separate nodes/scenes)

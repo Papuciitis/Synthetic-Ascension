@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://core/actors/enemy/enemy.tscn" id="1_enemy"]
+[ext_resource type="Resource" path="res://core/actors/enemy/EnemySpec_SplitterSlime.tres" id="2_spec"]
+
+[node name="EnemySplitter" instance=ExtResource("1_enemy")]
+spec = ExtResource("2_spec")
+debug_drops = false

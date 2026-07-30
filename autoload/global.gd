@@ -28,6 +28,7 @@ const PATH_BASE := UI_DIR + "/screens/base.tscn"
 const PATH_GAME := SCENES_DIR + "/game.tscn"
 const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
 const SEGMENT1_LAYOUT_VERSION: int = 2
+const OPENING_SEQUENCE_VERSION: int = 1
 
 const VFX_DIR := "res://assets/vfx/world/augments"
 const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
@@ -47,6 +48,7 @@ signal permanent_augments_changed(ids: Array[StringName])
 
 # Level / segment helpers
 var exit_gate_pos: Vector2 = Vector2.INF
+var objective_target_pos: Vector2 = Vector2.INF
 
 # Level/tutorial one-shots (reset each run)
 var tip_shown_wardstone_attune: bool = false
@@ -86,8 +88,14 @@ var owned_augment_ids: Array[StringName] = []       # owned augment library (met
 var augment_slot_locks: Array[bool] = [false, false, false]       # lock equipped slots in hub
 var meta_stash: StashInventory = null
 var discovered_enemy_ids: Array[StringName] = []
+var debug_dev_mode: bool = false
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
+var debug_set_collision_tools: bool = false
+var debug_performance_lab: bool = false
+var debug_opening_mode_override: String = "" # "", full, short, skip
+var debug_opening_force_phase: int = -1
+var debug_opening_response_override: String = ""
 
 # Hub-only sale marks (not persisted; just for Hub UX)
 var hub_sell_marks_bag: Dictionary = {}   # int -> bool
@@ -118,6 +126,16 @@ var attempt_world_seed: int = 0
 var attempt_segment1_layout_version: int = SEGMENT1_LAYOUT_VERSION
 var attempt_segment1_resonance: float = 0.0
 var attempt_segment1_milestones: Array[StringName] = []
+var opening_full_intro_seen: bool = false
+var opening_response_id: StringName = &""
+var opening_follower_explanation_seen: bool = false
+var opening_replay_full_next_run: bool = false
+var attempt_opening_version: int = OPENING_SEQUENCE_VERSION
+var attempt_opening_mode: StringName = &""
+var attempt_opening_phase: int = 0
+var attempt_opening_completed: bool = false
+var attempt_opening_officer_completed: bool = false
+var attempt_opening_bren_committed: bool = false
 
 
 var attempt_vendor_segment: int = 0
@@ -380,6 +398,46 @@ func get_item_data(item_id: String) -> ItemData:
 	return item_db.get(item_id, null) as ItemData
 
 
+func get_equipped_rarity_average() -> float:
+	if run_inventory == null:
+		return 0.0
+	var total: float = 0.0
+	var count: int = 0
+	for slot_index in range(Inventory.SLOT_COUNT):
+		var instance: ItemInstance = run_inventory.get_at(slot_index)
+		if instance == null:
+			continue
+		total += float(instance.rarity)
+		count += 1
+	return total / float(count) if count > 0 else 0.0
+
+
+func build_item_drop_context(
+	rarity_min: int,
+	rarity_max: int,
+	source_type: StringName,
+	source_rank: int = 0,
+	is_elite: bool = false
+) -> ItemDropContext:
+	var context := ItemDropContext.new()
+	context.segment_index = maxi(1, attempt_segment)
+	var threat := get_node_or_null("/root/ThreatDirector")
+	context.threat_level = (
+		clampf(float(threat.get("resonance")), 0.0, 1.0)
+		if threat != null
+		else 0.0
+	)
+	context.source_rank = source_rank
+	context.is_elite = is_elite
+	context.rarity_min = rarity_min
+	context.rarity_max = rarity_max
+	context.rarity_soft_cap = maxi(rarity_max + 1, context.segment_index / 3 + source_rank)
+	context.player_luck = run_luck
+	context.equipped_rarity_average = get_equipped_rarity_average()
+	context.source_type = source_type
+	return context
+
+
 # ============================================================
 # Loaders (startup)
 # ============================================================
@@ -524,7 +582,7 @@ func _scan_items_dir_recursive(path: String) -> void:
 			var res: Resource = ResourceLoader.load(full)
 			if res != null:
 				var item: ItemData = res as ItemData
-				if item != null and item.id != "":
+				if item != null and item.id != "" and item.runtime_enabled:
 					item_db[item.id] = item
 
 		fn = dir.get_next()
@@ -707,16 +765,11 @@ func _roll_standard_unit() -> float:
 	return clampf(x, -1.0, 1.0)
 
 func roll_percent(luck: float, min_pct: float, max_pct: float) -> float:
-	var x: float = _roll_standard_unit()
-
-	var shape: float = exp(-luck * 1.25)
-	shape = clampf(shape, 0.25, 4.0)
-
-	var y: float = signf(x) * pow(absf(x), shape)
-	var t: float = (y + 1.0) * 0.5
-
-	var pct: float = lerpf(min_pct, max_pct, t)
-	return clampf(pct, -0.9999, 0.9999)
+	return clampf(
+		ItemGenerator.roll_signed_range(min_pct, max_pct, luck, _rng),
+		-0.9999,
+		0.9999
+	)
 
 # ============================================================
 # Helpers
@@ -946,6 +999,13 @@ func apply_save(save: SaveData) -> void:
 		if clean_enemy_id != "" and not discovered_enemy_ids.has(StringName(clean_enemy_id)):
 			discovered_enemy_ids.append(StringName(clean_enemy_id))
 
+	# Opening Chronicle profile state. Exported defaults make this safe for old
+	# saves that predate the playable cinematic.
+	opening_full_intro_seen = bool(save.opening_full_intro_seen)
+	opening_response_id = StringName(save.opening_response_id.strip_edges())
+	opening_follower_explanation_seen = bool(save.opening_follower_explanation_seen)
+	opening_replay_full_next_run = bool(save.opening_replay_full_next_run)
+
 	# Slot locks (persist)
 	augment_slot_locks = [false, false, false]
 	if save != null and save.has_method("get"):
@@ -976,6 +1036,27 @@ func apply_save(save: SaveData) -> void:
 			var clean_id := String(milestone_id).strip_edges()
 			if clean_id != "":
 				attempt_segment1_milestones.append(StringName(clean_id))
+		attempt_opening_version = maxi(0, int(save.attempt_opening_version))
+		attempt_opening_mode = StringName(save.attempt_opening_mode.strip_edges())
+		attempt_opening_phase = maxi(0, int(save.attempt_opening_phase))
+		attempt_opening_completed = bool(save.attempt_opening_completed)
+		attempt_opening_officer_completed = bool(save.attempt_opening_officer_completed)
+		attempt_opening_bren_committed = bool(save.attempt_opening_bren_committed)
+
+		# Migration: an older save already beyond synthesis/Segment 1 must never be
+		# dragged back into the cinematic merely because the new fields were absent.
+		if attempt_opening_version <= 0:
+			var passed_synthesis := attempt_segment1_milestones.has(&"synthesis")
+			if attempt_segment > 1 or passed_synthesis:
+				attempt_opening_completed = true
+				attempt_opening_phase = 9
+				attempt_opening_mode = &"legacy"
+				attempt_opening_officer_completed = attempt_segment1_milestones.has(&"first_confrontation")
+				attempt_opening_bren_committed = attempt_segment1_milestones.has(&"assistant_commitment")
+				opening_full_intro_seen = true
+				if attempt_opening_bren_committed:
+					opening_follower_explanation_seen = true
+			attempt_opening_version = OPENING_SEQUENCE_VERSION
 
 		# Checkpoints from the compact recovery layout are unsafe in the rebuilt map.
 		if attempt_segment == 1 and attempt_segment1_layout_version != SEGMENT1_LAYOUT_VERSION:
@@ -983,6 +1064,14 @@ func apply_save(save: SaveData) -> void:
 			attempt_segment1_resonance = 0.0
 			attempt_segment1_milestones.clear()
 			attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
+			# Preserve narrative facts even though obsolete map coordinates and
+			# spatial milestones must be rebuilt for the current layout.
+			if attempt_opening_completed:
+				attempt_segment1_milestones.append(&"synthesis")
+				if attempt_opening_officer_completed:
+					attempt_segment1_milestones.append(&"first_confrontation")
+				if attempt_opening_bren_committed:
+					attempt_segment1_milestones.append(&"assistant_commitment")
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
 		_rebuild_claimed_loot_set()
 		pending_augment_pick = save.attempt_pending_augment_pick
@@ -1050,6 +1139,12 @@ func apply_save(save: SaveData) -> void:
 		attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 		attempt_segment1_resonance = 0.0
 		attempt_segment1_milestones.clear()
+		attempt_opening_version = OPENING_SEQUENCE_VERSION
+		attempt_opening_mode = &""
+		attempt_opening_phase = 0
+		attempt_opening_completed = false
+		attempt_opening_officer_completed = false
+		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
 		_claimed_loot_set.clear()
 		attempt_vendor_segment = 0
@@ -1073,11 +1168,12 @@ func apply_save(save: SaveData) -> void:
 
 		run_inventory = null
 		run_bag = null
-		set_followers(1)
+		set_followers(0)
 
 	_suppress_autosave = false
 func write_save(save: SaveData) -> void:
 	_suppress_autosave = true
+	save.best_followers = maxi(save.best_followers, followers)
 
 	# Last chosen setup
 	save.last_race_id = selected_race_id
@@ -1101,6 +1197,11 @@ func write_save(save: SaveData) -> void:
 	save.meta_discovered_enemy_ids = []
 	for enemy_id in discovered_enemy_ids:
 		save.meta_discovered_enemy_ids.append(String(enemy_id))
+	save.meta_stash = meta_stash
+	save.opening_full_intro_seen = opening_full_intro_seen
+	save.opening_response_id = String(opening_response_id)
+	save.opening_follower_explanation_seen = opening_follower_explanation_seen
+	save.opening_replay_full_next_run = opening_replay_full_next_run
 
 	# Slot locks
 	if augment_slot_locks == null or augment_slot_locks.size() < 3:
@@ -1148,13 +1249,23 @@ func write_save(save: SaveData) -> void:
 		save.attempt_segment1_milestones = []
 		for milestone_id in attempt_segment1_milestones:
 			save.attempt_segment1_milestones.append(String(milestone_id))
+		save.attempt_opening_version = attempt_opening_version
+		save.attempt_opening_mode = String(attempt_opening_mode)
+		save.attempt_opening_phase = attempt_opening_phase
+		save.attempt_opening_completed = attempt_opening_completed
+		save.attempt_opening_officer_completed = attempt_opening_officer_completed
+		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
 		save.attempt_inventory = run_inventory
 		save.attempt_bag = run_bag
+		save.attempt_vendor_segment = attempt_vendor_segment
+		save.attempt_vendor_refreshes = attempt_vendor_refreshes
+		save.attempt_vendor_seed = attempt_vendor_seed
+		save.attempt_vendor_bag = attempt_vendor_bag
 	else:
 		# Clear heavy attempt resources from disk
 		save.attempt_segment = 1
-		save.attempt_followers = 1
+		save.attempt_followers = 0
 		save.attempt_deaths_this_segment = 0
 		save.attempt_resume_scene = ""
 		save.attempt_pending_augment_pick = false
@@ -1182,6 +1293,12 @@ func write_save(save: SaveData) -> void:
 		save.attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 		save.attempt_segment1_resonance = 0.0
 		save.attempt_segment1_milestones = []
+		save.attempt_opening_version = OPENING_SEQUENCE_VERSION
+		save.attempt_opening_mode = ""
+		save.attempt_opening_phase = 0
+		save.attempt_opening_completed = false
+		save.attempt_opening_officer_completed = false
+		save.attempt_opening_bren_committed = false
 		save.attempt_claimed_loot_ids = PackedInt32Array()
 		save.attempt_inventory = null
 		save.attempt_bag = null
@@ -1197,6 +1314,10 @@ func save_current_profile() -> void:
 	write_save(SaveManager.current_save)
 	SaveManager.save_current()
 
+func record_new_attempt(save: SaveData) -> void:
+	if save != null:
+		save.total_runs = maxi(0, save.total_runs) + 1
+
 func start_new_attempt() -> void:
 	# Attempt resets (die-die behavior)
 	attempt_active = true
@@ -1206,14 +1327,27 @@ func start_new_attempt() -> void:
 	attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 	attempt_segment1_resonance = 0.0
 	attempt_segment1_milestones.clear()
+	attempt_opening_version = OPENING_SEQUENCE_VERSION
+	attempt_opening_phase = 0
+	attempt_opening_completed = false
+	attempt_opening_officer_completed = false
+	attempt_opening_bren_committed = false
 
-
+	# Every attempt needs fresh run-scoped containers before the game scene binds
+	# HUD, player stats and world pickups. These two lines were present before the
+	# opening rewrite and must remain part of the authoritative attempt reset.
 	attempt_world_seed = int(Time.get_unix_time_from_system() * 1000.0) ^ _rng.randi()
-	# New attempt resets run-scoped systems (items/bag/luck/tutorial flags)
 	reset_run_systems()
 
-	# Followers reset to 1
-	set_followers(1)
+	if debug_opening_mode_override in ["full", "short", "skip"]:
+		attempt_opening_mode = StringName(debug_opening_mode_override)
+	elif not opening_full_intro_seen or opening_replay_full_next_run:
+		attempt_opening_mode = &"full"
+	else:
+		attempt_opening_mode = &"short"
+	opening_replay_full_next_run = false
+	# Bren is the first follower. The HUD remains at zero until commitment.
+	set_followers(0)
 
 	# Start-of-attempt augment event if you have empty slots
 	init_permanent_augments()
@@ -1231,6 +1365,7 @@ func start_new_attempt() -> void:
 
 	# Default resume is the game
 	if SaveManager != null and SaveManager.current_save != null:
+		record_new_attempt(SaveManager.current_save)
 		SaveManager.current_save.attempt_resume_scene = PATH_GAME
 
 	save_current_profile()
@@ -1242,6 +1377,8 @@ func on_segment_completed(completed_segment: int) -> void:
 	if completed_segment == 1:
 		attempt_segment1_resonance = 0.0
 		attempt_segment1_milestones.clear()
+		attempt_opening_completed = true
+		attempt_opening_phase = 9
 
 	# New segment: reset exploration loot claim state
 	attempt_claimed_loot_ids = PackedInt32Array()
@@ -1290,6 +1427,12 @@ func on_attempt_failed_die_die() -> void:
 	attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 	attempt_segment1_resonance = 0.0
 	attempt_segment1_milestones.clear()
+	attempt_opening_version = OPENING_SEQUENCE_VERSION
+	attempt_opening_mode = &""
+	attempt_opening_phase = 0
+	attempt_opening_completed = false
+	attempt_opening_officer_completed = false
+	attempt_opening_bren_committed = false
 	pending_augment_pick = false
 	pending_big_choice = false
 	attempt_big_choice_source_segment = 0
@@ -1298,8 +1441,8 @@ func on_attempt_failed_die_die() -> void:
 	attempt_wardstone_slow_mul = 1.0
 	attempt_exit_hold_mul = 1.0
 
-	# After permadeath, your only believer is still you.
-	set_followers(1)
+	# A fresh historical attempt begins before Bren commits to the work.
+	set_followers(0)
 
 	save_current_profile()
 
@@ -1320,6 +1463,18 @@ func record_segment1_milestone(id: StringName) -> bool:
 func set_segment1_resonance(value: float) -> void:
 	attempt_segment1_resonance = clampf(value, 0.0, 1.0)
 	request_autosave()
+
+func set_opening_phase(value: int) -> void:
+	attempt_opening_phase = maxi(0, value)
+	attempt_opening_version = OPENING_SEQUENCE_VERSION
+	request_autosave(0.1)
+
+func mark_opening_completed() -> void:
+	attempt_opening_completed = true
+	attempt_opening_phase = 9
+	attempt_opening_version = OPENING_SEQUENCE_VERSION
+	opening_full_intro_seen = true
+	request_autosave(0.1)
 
 # ==============================
 # Respawn cost: exponential + % tax (prevents “infinite hoard”)
@@ -1345,7 +1500,7 @@ func consume_respawn_cost() -> int:
 	return cost
 
 # ==============================
-# Selling value (NEG sells more)
+# Item market values
 # ==============================
 func compute_item_value(inst: ItemInstance) -> int:
 	# Base "market value" used by both buy and sell.
@@ -1353,29 +1508,73 @@ func compute_item_value(inst: ItemInstance) -> int:
 	if inst == null or inst.data == null:
 		return 0
 
-	var r: int = clampi(int(inst.rarity), 0, 12)
-	# Quadratic-ish growth: readable and tunable.
-	# r=0 => ~10, r=5 => ~145, r=8 => ~314, r=12 => ~586 (before multipliers)
+	var r: int = maxi(0, int(inst.rarity))
+	# Uncapped quadratic growth keeps every rarity increase economically meaningful.
 	var base: float = 10.0 + float(r) * 18.0 + float(r * r) * 2.5
 
 	var q: float = clampf(absf(float(inst.active_pct())), 0.0, 1.0)
 	var quality_mul: float = lerpf(0.90, 1.40, q)
+	var stat_value: float = 0.0
+	if inst.rolled_mods != null:
+		stat_value += absf(inst.rolled_mods.max_hp) * 0.45
+		stat_value += absf(inst.rolled_mods.armor) * 2.5
+		stat_value += absf(inst.rolled_mods.move_speed) * 0.35
+		stat_value += absf(inst.rolled_mods.power) * 60.0
+		stat_value += absf(inst.rolled_mods.haste) * 50.0
+		stat_value += absf(inst.rolled_mods.luck) * 45.0
+	var scripted_value: float = maxf(0.0, inst.data.scripted_value_weight)
+	var set_mul: float = 1.15 if not inst.data.set_id.is_empty() else 1.0
+	var progress_ratio := clampf(float(inst.upgrade_meter), 0.0, 1.0)
+	var next_base: float = 10.0 + float(r + 1) * 18.0 + float((r + 1) * (r + 1)) * 2.5
+	var progress_value := maxf(0.0, next_base - base) * progress_ratio
 
-	# NEG items are "spicier" and should sell slightly better, but not explode prices.
-	var pol_mul: float = (1.12 if int(inst.polarity) == int(ItemInstance.Polarity.NEG) else 1.0)
-
-	return int(round(base * quality_mul * pol_mul))
+	return int(round(((base + progress_value) * quality_mul + stat_value + scripted_value) * set_mul))
 
 func compute_buy_value(inst: ItemInstance) -> int:
 	# What the vendor charges (followers).
 	var v: int = compute_item_value(inst)
-	return maxi(0, int(ceil(float(v) * 1.00)))
+	return maxi(0, int(ceil(float(v) * LuckResolver.buy_multiplier(run_luck))))
 
 func compute_sell_value(inst: ItemInstance) -> int:
 	# What the vendor pays you (followers).
 	# Keep a spread so "flip for profit" isn't a thing.
 	var v: int = compute_item_value(inst)
-	return maxi(0, int(floor(float(v) * 0.55)))
+	return maxi(0, int(floor(float(v) * 0.55 * LuckResolver.sell_multiplier(run_luck))))
+
+
+func deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> bool:
+	if inst == null or inst.data == null:
+		return false
+
+	if prefer_equip and run_inventory != null:
+		var slot := int(inst.data.equip_slot)
+		if slot >= 0 and slot < Inventory.SLOT_COUNT and run_inventory.is_slot_empty(slot):
+			run_inventory.set_item(
+				slot,
+				inst,
+				{"type": Inventory.UIOriginType.SCREEN, "pos": Vector2.ZERO}
+			)
+			if run_inventory.get_at(slot) == inst:
+				return true
+
+	if run_bag != null and run_bag.add_instance(inst):
+		return true
+
+	if meta_stash == null:
+		meta_stash = StashInventory.new()
+	var stash_slot := meta_stash.first_empty_slot()
+	if stash_slot >= 0:
+		meta_stash.set_item(stash_slot, inst)
+		request_autosave()
+		return true
+
+	var current_scene := get_tree().current_scene
+	if current_scene != null:
+		var spawner := current_scene.find_child("WorldDropSpawner", true, false)
+		if spawner != null and spawner.has_method("spawn_protected"):
+			return bool(spawner.call("spawn_protected", inst))
+
+	return false
 
 # ----------------------------
 # Dev helpers
@@ -1409,7 +1608,7 @@ func dev_grant_test_augments() -> void:
 			for scn in ad.effect_scenes:
 				if scn == null:
 					continue
-				var inst := scn.instantiate()
+				var inst: Node = scn.instantiate()
 				if inst != null and inst.get("active_action") != null:
 					is_active = true
 				inst.free()

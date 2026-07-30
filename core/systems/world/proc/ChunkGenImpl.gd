@@ -173,7 +173,7 @@ func _set_gen_coord(c: Vector2i) -> void:
 
 func _bump_nav_revision() -> void:
 	if cm != null:
-		cm._nav_revision += 1
+		cm.request_nav_revision(&"chunk_generated")
 
 # Forwarders so the extracted code can stay nearly identical.
 func get_chunk_archetype(coord: Vector2i) -> StringName:
@@ -185,6 +185,16 @@ func get_chunk_connectors(coord: Vector2i) -> int:
 	if cm == null:
 		return 0
 	return cm.get_chunk_connectors(coord)
+
+func get_chunk_urban_access(coord: Vector2i) -> int:
+	if cm == null:
+		return 0
+	return cm.get_chunk_urban_access(coord)
+
+func get_chunk_role(coord: Vector2i) -> StringName:
+	if cm == null:
+		return &"unplanned"
+	return cm.get_chunk_role(coord)
 
 func _seed_for_chunk(c: Vector2i) -> int:
 	if cm == null:

@@ -145,6 +145,7 @@ var dominance_kps: float = 0.0
 var dominance_mul: float = 1.0
 var gate_unsealed: bool = false
 var loot_rarity_bonus: int = 0
+var segment_phase: StringName = &"recon"
 
 var unseal_time_sec: float = 0.0
 var kills_since_unseal: int = 0
@@ -208,6 +209,16 @@ func _on_segment_changed(new_seg: int) -> void:
 	dominance_mul = 1.0
 	evac_pressure = 0.0
 	evac_remaining_sec = 0.0
+	segment_phase = &"recon"
+	_recompute(true)
+
+func set_segment_phase(next_phase: StringName) -> void:
+	var clean_phase: StringName = next_phase
+	if clean_phase != &"recon" and clean_phase != &"disturbance" and clean_phase != &"ascension" and clean_phase != &"collapse":
+		clean_phase = &"recon"
+	if segment_phase == clean_phase:
+		return
+	segment_phase = clean_phase
 	_recompute(true)
 
 func _on_resonance_changed(v: float) -> void:
@@ -306,6 +317,24 @@ func _recompute(force_emit: bool = false) -> void:
 	# Heat: resonance curve, lightly modified by dominance
 	heat = _heat_from_resonance(seg, resonance)
 	heat = clampf(heat * dominance_mul, 0.0, 1.0)
+	var phase_spawn_factor: float = 1.0
+	var phase_elite_add: float = 0.0
+	match segment_phase:
+		&"recon":
+			heat *= 0.72
+			phase_spawn_factor = 1.15
+		&"disturbance":
+			heat = maxf(heat, 0.32)
+			phase_spawn_factor = 0.78
+			phase_elite_add = 0.03
+		&"ascension":
+			heat = maxf(heat, 0.48)
+			phase_spawn_factor = 0.68
+			phase_elite_add = 0.05
+		&"collapse":
+			heat = maxf(heat, 0.85)
+			phase_spawn_factor = 0.55
+			phase_elite_add = 0.12
 
 	# Overtime scaling (after gate unsealed). UNBOUNDED.
 	var ot := overtime if gate_unsealed else 0.0
@@ -343,11 +372,11 @@ func _recompute(force_emit: bool = false) -> void:
 	# Spawn interval multiplier from heat + unbounded overtime spawn pressure.
 	# Smaller = faster spawns (Spawner multiplies its wait_time by this).
 	var base_spawn := lerpf(spawn_mul_at_heat0, spawn_mul_at_heat1, heat)
-	var new_spawn := base_spawn / (1.0 + ot_spawn_more)
+	var new_spawn := (base_spawn * phase_spawn_factor) / (1.0 + ot_spawn_more)
 	new_spawn = clampf(new_spawn, spawn_mul_min, spawn_mul_max)
 
 	# Elite bonus: from heat + overtime (stage 1)
-	var new_elite := heat * elite_bonus_from_heat + ot_elite_add
+	var new_elite := heat * elite_bonus_from_heat + ot_elite_add + phase_elite_add
 	new_elite = clampf(new_elite, 0.0, elite_bonus_cap)
 
 	# Loot rarity bonus: segment + heat + overtime (log so it stays readable)

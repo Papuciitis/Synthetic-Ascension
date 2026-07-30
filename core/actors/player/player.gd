@@ -22,11 +22,20 @@ signal hp_changed(current: float, max_hp: float)
 @export var magic_cooldown: float = 0.55
 
 
-# Melee style sustain (passive regen + tiny lifesteal)
+# Melee keeps its passive regeneration identity. Lifesteal itself is universal,
+# style-weighted and capped per second so fast multi-hit builds cannot bypass danger.
+@export_group("Melee Sustain")
 @export var melee_regen_flat_per_sec: float = 0.35
-@export var melee_regen_bonus_hp_pct_per_sec: float = 0.004   # 0.4% of BONUS HP per second
-@export var melee_regen_delay_after_damage: float = 1.25      # seconds without regen after taking damage
-@export var melee_lifesteal_pct: float = 0.02                 # 2% of damage dealt (while melee style)
+@export var melee_regen_bonus_hp_pct_per_sec: float = 0.004
+@export var melee_regen_delay_after_damage: float = 1.25
+
+@export_group("Style Lifesteal")
+@export_range(0.0, 0.20, 0.001) var melee_lifesteal_pct: float = 0.020
+@export_range(0.0, 0.20, 0.001) var ranged_lifesteal_pct: float = 0.008
+@export_range(0.0, 0.20, 0.001) var magic_lifesteal_pct: float = 0.006
+@export_range(0.0, 0.50, 0.005) var melee_lifesteal_cap_max_hp_per_sec: float = 0.060
+@export_range(0.0, 0.50, 0.005) var ranged_lifesteal_cap_max_hp_per_sec: float = 0.030
+@export_range(0.0, 0.50, 0.005) var magic_lifesteal_cap_max_hp_per_sec: float = 0.025
 
 @export var death_follower_cost: int = 10
 @export var respawn_invuln_time: float = 2.0
@@ -39,13 +48,17 @@ var spawn_pos: Vector2
 
 var _weapon_cd: float = 0.0
 
-# melee sustain runtime
+# sustain runtime
 var _melee_regen_block_left: float = 0.0
-var _melee_damage_cb: Callable = Callable()
+var _style_damage_cb: Callable = Callable()
+var _lifesteal_window_left: float = 1.0
+var _lifesteal_healed_this_window: float = 0.0
 var _touching_enemies: int = 0
 var _damage_loop_running: bool = false
 var _contact_sources: Dictionary = {} # enemy instance id -> {node, overlap_count}
 var is_dead: bool = false
+var _cinematic_move_locked: bool = false
+var _cinematic_attack_locked: bool = false
 
 var invulnerable_time: float = 0.0
 
@@ -110,7 +123,7 @@ func _ready() -> void:
 	if has_node("AugmentRunner"):
 		$AugmentRunner.call("refresh")
 
-	_connect_melee_sustain_signals()
+	_connect_style_sustain_signals()
 
 
 func _exit_tree() -> void:
@@ -120,10 +133,10 @@ func _exit_tree() -> void:
 	if _bound_inv != null and _bound_inv.changed.is_connected(_on_inventory_changed):
 		_bound_inv.changed.disconnect(_on_inventory_changed)
 
-	# Melee sustain signal cleanup
-	if _melee_damage_cb.is_valid() and RunEvents != null and RunEvents.has_signal("damage_dealt"):
-		if RunEvents.damage_dealt.is_connected(_melee_damage_cb):
-			RunEvents.damage_dealt.disconnect(_melee_damage_cb)
+	# Style lifesteal signal cleanup
+	if _style_damage_cb.is_valid() and RunEvents != null and RunEvents.has_signal("damage_dealt"):
+		if RunEvents.damage_dealt.is_connected(_style_damage_cb):
+			RunEvents.damage_dealt.disconnect(_style_damage_cb)
 
 
 func _on_permanent_augments_changed(ids: Array[StringName]) -> void:
@@ -154,17 +167,18 @@ func _process(delta: float) -> void:
 		else:
 			print("[SETS] counts = ", Global.run_inventory.get_set_counts())
 
-	if Input.is_action_just_pressed("attack"):
+	if not _cinematic_attack_locked and Input.is_action_just_pressed("attack"):
 		_fire_weapon(get_global_mouse_position())
 
-	if Input.is_action_just_pressed("alt_attack"):
+	if not _cinematic_attack_locked and Input.is_action_just_pressed("alt_attack"):
 		if spell_caster != null:
 			spell_caster.cast_all_manual()
 			
+	_update_lifesteal_budget(delta)
 	_update_melee_sustain(delta)
 
 func _unhandled_input(event) -> void:
-	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F8:
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
 		_debug_dump_sets()
 
 
@@ -172,21 +186,9 @@ func _physics_process(_delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
 		return
-	var dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 
-	var eff_speed := speed
-	if respawn_phase_left > 0.0:
-		eff_speed *= respawn_speed_mul
-
-	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
-	if sr != null:
-		eff_speed *= sr.get_move_speed_multiplier()
-
-	var ier2: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
-	if ier2 != null:
-		eff_speed *= ier2.get_move_speed_multiplier()
-
-	velocity = dir * eff_speed
+	velocity = dir * get_effective_move_speed()
 	move_and_slide()
 
 	if dir != Vector2.ZERO:
@@ -194,6 +196,36 @@ func _physics_process(_delta: float) -> void:
 
 	if aim_pivot != null:
 		aim_pivot.global_rotation = (get_global_mouse_position() - global_position).angle()
+
+
+func get_effective_move_speed() -> float:
+	# One authoritative value for movement and stat-sheet display. The stored
+	# speed already contains race, style, augment, equipment and set stat deltas;
+	# runtime effects are multiplicative and must be applied only once here.
+	var eff_speed: float = speed
+	if respawn_phase_left > 0.0:
+		eff_speed *= respawn_speed_mul
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		eff_speed *= sr.get_move_speed_multiplier()
+
+	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier != null:
+		eff_speed *= ier.get_move_speed_multiplier()
+
+	return maxf(0.0, eff_speed)
+
+
+func set_cinematic_input(move_locked: bool, attack_locked: bool) -> void:
+	_cinematic_move_locked = move_locked
+	_cinematic_attack_locked = attack_locked
+	if move_locked:
+		velocity = Vector2.ZERO
+
+
+func clear_cinematic_input() -> void:
+	set_cinematic_input(false, false)
 
 
 func _ensure_inventory_binding() -> void:
@@ -217,7 +249,7 @@ func _on_inventory_changed() -> void:
 	recompute_run_stats(race, style)
 
 
-func apply_run_stats(new_stats: Stats) -> void:
+func apply_run_stats(new_stats: Stats, emit_hp_signal: bool = true) -> void:
 	var old_max: float = max_hp
 	var was_full: bool = is_equal_approx(hp, old_max) or hp >= (old_max - 0.001)
 
@@ -230,7 +262,8 @@ func apply_run_stats(new_stats: Stats) -> void:
 	else:
 		hp = min(hp, max_hp)
 
-	hp_changed.emit(hp, max_hp)
+	if emit_hp_signal:
+		hp_changed.emit(hp, max_hp)
 
 
 
@@ -256,7 +289,7 @@ func refresh_run_state() -> void:
 		$AugmentRunner.call("refresh")
 
 
-func recompute_run_stats(race: RaceData, style: StyleData) -> void:
+func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool = true) -> void:
 	if base_stats == null:
 		push_warning("Player.base_stats is null!")
 		return
@@ -311,7 +344,7 @@ func recompute_run_stats(race: RaceData, style: StyleData) -> void:
 
 	Global.run_luck = s.luck
 
-	apply_run_stats(s)
+	apply_run_stats(s, emit_hp_signal)
 
 
 func _fire_weapon(mouse_pos: Vector2) -> void:
@@ -584,6 +617,8 @@ func _enemy_from_contact(node: Node) -> Node:
 func _register_contact_source(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
 		return
+	if enemy.has_meta(&"opening_non_hostile") and bool(enemy.get_meta(&"opening_non_hostile")):
+		return
 	var id := enemy.get_instance_id()
 	var record: Dictionary = _contact_sources.get(id, {}) as Dictionary
 	if record.is_empty():
@@ -697,13 +732,23 @@ func die() -> void:
 		game.call_deferred("end_run")
 
 func respawn() -> void:
-	# Hard reset to checkpoint
-	hp = max_hp
-	hp_changed.emit(hp, max_hp)
-	global_position = spawn_pos
+	# Rebuild the complete loadout snapshot before restoring HP. This prevents the
+	# first reconstruction from using a stale base speed/max-HP value when effects
+	# or inventory bindings finished refreshing while the death card was open.
 	is_dead = false
+	velocity = Vector2.ZERO
+
+	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
+	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
+	recompute_run_stats(race, style, false)
+
+	# Hard reset to checkpoint using the final rebuilt maximum. Emit one coherent
+	# HP snapshot after both current and maximum HP are settled.
+	hp = max_hp
+	global_position = spawn_pos
 	_contact_sources.clear()
 	_touching_enemies = 0
+	hp_changed.emit(hp, max_hp)
 
 	# Spawn protection: invulnerability + phasing through enemy bodies
 	grant_invulnerability(respawn_invuln_time)
@@ -740,51 +785,71 @@ func grant_invulnerability(duration: float) -> void:
 func _is_melee_style_active() -> bool:
 	return str(Global.selected_style_id) == "melee"
 
-func _connect_melee_sustain_signals() -> void:
-	# Tiny lifesteal uses RunEvents.damage_dealt (emitted by enemies when they take damage).
+func _connect_style_sustain_signals() -> void:
 	if RunEvents == null or not RunEvents.has_signal("damage_dealt"):
 		return
 
-	# Connect in a way that survives signal arg changes (extra args).
+	# Connect defensively so extra signal arguments in future patches are ignored.
 	var argc := 2
-	for s in RunEvents.get_signal_list():
-		if StringName(s.get("name", "")) == &"damage_dealt":
-			var args: Array = s.get("args", [])
-			argc = max(2, args.size())
+	for signal_info in RunEvents.get_signal_list():
+		if StringName(signal_info.get("name", "")) == &"damage_dealt":
+			var args: Array = signal_info.get("args", [])
+			argc = maxi(2, args.size())
 			break
 
-	var cb := Callable(self, "_on_melee_damage_dealt")
+	var callback := Callable(self, "_on_style_damage_dealt")
 	if argc > 2:
-		cb = cb.unbind(argc - 2)
+		callback = callback.unbind(argc - 2)
+	_style_damage_cb = callback
+	if not RunEvents.damage_dealt.is_connected(_style_damage_cb):
+		RunEvents.damage_dealt.connect(_style_damage_cb)
 
-	_melee_damage_cb = cb
-	if not RunEvents.damage_dealt.is_connected(_melee_damage_cb):
-		RunEvents.damage_dealt.connect(_melee_damage_cb)
+func _active_lifesteal_profile() -> Vector2:
+	var style_id: String = str(Global.selected_style_id) if Global != null else "ranged"
+	match style_id:
+		"melee":
+			return Vector2(melee_lifesteal_pct, melee_lifesteal_cap_max_hp_per_sec)
+		"magic":
+			return Vector2(magic_lifesteal_pct, magic_lifesteal_cap_max_hp_per_sec)
+		_:
+			return Vector2(ranged_lifesteal_pct, ranged_lifesteal_cap_max_hp_per_sec)
 
-func _on_melee_damage_dealt(a, b) -> void:
-	if is_dead:
+func _update_lifesteal_budget(dt: float) -> void:
+	_lifesteal_window_left -= maxf(0.0, dt)
+	if _lifesteal_window_left <= 0.0:
+		_lifesteal_window_left = 1.0
+		_lifesteal_healed_this_window = 0.0
+
+func _on_style_damage_dealt(a, b) -> void:
+	if is_dead or hp >= max_hp - 0.001:
 		return
-	if not _is_melee_style_active():
-		return
-	if melee_lifesteal_pct <= 0.0:
-		return
 
-	var src: Node = null
-	var amt: float = 0.0
-
+	var source: Node = null
+	var damage_amount: float = 0.0
 	if a is Node:
-		src = a
-		amt = float(b)
+		source = a
+		damage_amount = float(b)
 	elif b is Node:
-		src = b
-		amt = float(a)
+		source = b
+		damage_amount = float(a)
 	else:
 		return
-
-	if src != self:
+	if source != self or damage_amount <= 0.0:
 		return
 
-	heal(amt * melee_lifesteal_pct)
+	var profile: Vector2 = _active_lifesteal_profile()
+	var lifesteal_pct: float = maxf(0.0, profile.x)
+	var cap_this_second: float = maxf(0.0, max_hp * profile.y)
+	var remaining_cap: float = maxf(0.0, cap_this_second - _lifesteal_healed_this_window)
+	if lifesteal_pct <= 0.0 or remaining_cap <= 0.0:
+		return
+
+	var healing: float = minf(damage_amount * lifesteal_pct, remaining_cap)
+	healing = minf(healing, maxf(0.0, max_hp - hp))
+	if healing <= 0.0:
+		return
+	_lifesteal_healed_this_window += healing
+	heal(healing)
 
 func _update_melee_sustain(dt: float) -> void:
 	# Passive regen that scales with BONUS HP (max_hp - base_stats.max_hp), LoL-style.

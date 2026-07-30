@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="EnemySpec" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1_spec"]
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="2_pickup"]
+[ext_resource type="Texture2D" path="res://assets/textures/Enemy_SplitterSlime.png" id="3_slime"]
+
+[resource]
+script = ExtResource("1_spec")
+id = &"enemy_splitter"
+display_name = "Splitter"
+ai = 6
+max_hp = 60.0
+speed = 44.0
+knockback_decay = 1800.0
+follower_reward_min = 0
+follower_reward_max = 1
+elite_follower_bonus = 2
+split_count_min = 2
+split_count_max = 2
+split_inherit_elite = true
+split_max_generation = 2
+split_second_count_min = 4
+split_second_count_max = 4
+split_base_scale = 2.0
+split_scale_per_generation = 0.5
+split_hp_per_generation = 0.45
+split_speed_per_generation = 1.55
+split_elite_extra_generations = 1
+split_elite_scale_mult = 2.0
+item_pickup_scene = ExtResource("2_pickup")
+drop_chance = 0.1
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_min = 0
+drop_rarity_max = 1
+elite_hp_mult = 1.8
+elite_speed_mult = 1.1
+elite_tint = Color(0.85, 1, 0.35, 1)
+elite_spawn_chance_cap = 0.003
+sprite_texture = ExtResource("3_slime")
+sprite_scale = Vector2(0.42, 0.42)
+sprite_modulate = Color(0.86, 1, 0.86, 1)
+metadata/_custom_type_script = "res://core/actors/enemy/EnemySpec.gd"

@@ -19,6 +19,7 @@ static var _shared_additive: CanvasItemMaterial = null
 
 var _life_left: float = 0.0
 var _pooled: bool = false
+var _chunk_manager: ChunkManager = null
 
 func set_style(enemy_id: StringName) -> void:
 	match enemy_id:
@@ -57,6 +58,7 @@ func setup(dir: Vector2, speed: float, dmg: float, life: float, shooter_in: Node
 func _ready() -> void:
 	add_to_group("enemy_projectile")
 	_pooled = has_meta("__pool_key")
+	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 
 	if not area_entered.is_connected(_on_area_entered):
 		area_entered.connect(_on_area_entered)
@@ -91,7 +93,12 @@ func _on_pool_recycle() -> void:
 	_life_left = 0.0
 
 func _process(delta: float) -> void:
-	global_position += velocity * delta
+	var old_pos: Vector2 = global_position
+	var new_pos: Vector2 = old_pos + velocity * delta
+	if _hits_world(old_pos, new_pos, 5.0):
+		_despawn()
+		return
+	global_position = new_pos
 	_life_left -= delta
 	if _life_left <= 0.0:
 		_despawn()
@@ -100,6 +107,11 @@ func _process(delta: float) -> void:
 	# face travel direction so our tail draw is stable (no redraw needed)
 	if velocity.length_squared() > 0.001:
 		rotation = velocity.angle()
+
+func _hits_world(from_pos: Vector2, to_pos: Vector2, radius: float) -> bool:
+	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, radius) >= 0.0
 
 func _draw() -> void:
 	# local X axis is forward because we rotate above

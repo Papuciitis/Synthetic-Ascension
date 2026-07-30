@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://ui/screens/InventoryStash.gd" id="1"]
 [ext_resource type="PackedScene" path="res://ui/widgets/ItemTooltip.tscn" id="2"]
 [ext_resource type="Script" path="res://assets/vfx/ui/UiFlyVfx.gd" id="3"]
+[ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="4_set_breakpoints"]
 
 [sub_resource type="StyleBoxFlat" id="StylePanel"]
 bg_color = Color(0.06, 0.06, 0.06, 0.96)
@@ -173,5 +174,22 @@ columns = 6
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 
+[node name="ActionFooter" type="Label" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
+text = "Shift-click Trade   ·   Ctrl-click Lock   ·   Right-click Move   ·   Double-click Equip"
+modulate = Color(1, 1, 1, 0.68)
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+
 [node name="Tooltip" parent="." instance=ExtResource("2")]
 visible = false
+
+[node name="SetBreakpointNotifier" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("4_set_breakpoints")

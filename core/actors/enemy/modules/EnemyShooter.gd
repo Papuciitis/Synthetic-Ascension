@@ -18,7 +18,7 @@ const SAFE_LANE_FORWARD_CHECK: float = 14.0
 
 const INF_COST: int = 1_000_000_000
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _cd: float = 0.0
 
 # LOS throttle
@@ -38,7 +38,7 @@ var _phase_rate: float = 3.2
 var _rng := RandomNumberGenerator.new()
 
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	_cd = 0.0
 
@@ -68,7 +68,7 @@ func tick(delta: float) -> void:
 	_phase += delta * _phase_rate
 
 
-# Use this from Enemy.gd for RANGED AI. Shooter owns: move + shoot.
+# Use this from EnemyActor.gd for RANGED AI. Shooter owns: move + shoot.
 func brain(
 	to_player: Vector2,
 	dist: float,

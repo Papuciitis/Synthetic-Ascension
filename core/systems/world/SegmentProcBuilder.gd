@@ -11,14 +11,15 @@ class_name SegmentProcBuilder
 # - Gate unseals in ~3 minutes in "normal" play (not < 1 minute).
 # - Progress does not stall if the spawn table is temporarily light (ambient gain).
 # - Big kill spikes (AOE / chokepoint) don't instantly finish the segment (bonus gain is rate-limited).
-@export var resonance_per_kill: float = 0.0005
-@export var resonance_per_elite_kill: float = 0.0018
-@export var resonance_per_item_rarity: float = 0.0008
-@export var resonance_per_sec: float = 0.0040
+@export var resonance_per_kill: float = 0.0010
+@export var resonance_per_elite_kill: float = 0.0040
+@export var resonance_per_item_rarity: float = 0.0015
+@export var resonance_per_sec: float = 0.00342
 
 # Caps how fast *bonus* resonance (kills + items) can be applied.
 # This prevents "instant unseal" when a build starts deleting packs.
-@export var resonance_bonus_cap_per_sec: float = 0.0018
+@export var resonance_bonus_cap_per_sec: float = 0.0030
+@export var primary_completion_resonance: float = 0.18
 
 # Early boost so the bar visibly moves in the first ~30s (reduces "job" feeling).
 @export var resonance_early_boost_seconds: float = 30.0
@@ -26,12 +27,14 @@ class_name SegmentProcBuilder
 
 # How often we tick resonance/UI from ambient + buffered bonus.
 @export var resonance_tick_interval: float = 0.25
+@export_range(0.0, 1.0, 0.01) var gate_marker_reveal_resonance: float = 0.75
 
 # Scenes
 const WARDSTONE_SCENE: PackedScene = preload("res://scenes/world/wardstones/Wardstone.tscn")
 const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.tscn")
 const MINIBOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/MiniBossArena.tscn")
 const BOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/BossArena.tscn")
+const DISTRICT_RELAY_SCENE: PackedScene = preload("res://scenes/world/objectives/DistrictRelayObjective.tscn")
 
 var _res_tick: float = 0.0
 var _time_in_segment: float = 0.0
@@ -40,6 +43,7 @@ var _pending_bonus_res: float = 0.0
 var _cm: ChunkManager = null
 var _player: Node2D = null
 var _exit_rite: ExitRite = null
+var _primary_objective: DistrictRelayObjective = null
 var _segment: int = 1
 var _plan: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -49,6 +53,17 @@ var _boss_required: bool = false
 var _miniboss_required: bool = false
 var _miniboss_defeated: bool = false
 var _boss_defeated: bool = false
+var _primary_completed: bool = false
+var _primary_done_count: int = 0
+var _primary_total_count: int = 3
+var _pressure_phase: StringName = &"recon"
+var _secondary_objectives: Array[Dictionary] = []
+var _secondary_completed: Dictionary = {}
+var _active_secondary_id: int = -1
+var _secondary_feedback_token: int = 0
+
+@export_group("Procedural Debug")
+@export var debug_proc_state: bool = false
 
 func _ready() -> void:
 	add_to_group(&"segment_proc_builder")
@@ -81,23 +96,51 @@ func _ready() -> void:
 	_miniboss_defeated = false
 	_boss_defeated = false
 	_plan = DistrictPlan.generate(_segment, seed_base, _cm.chunk_size_px, _theme)
+	_secondary_objectives.clear()
+	_secondary_completed.clear()
+	_active_secondary_id = -1
+	var fallback_secondary_id: int = 1
+	for secondary_variant in _plan.get("secondary_objectives", []):
+		var secondary: Dictionary = (secondary_variant as Dictionary).duplicate(true)
+		if int(secondary.get("id", 0)) <= 0:
+			secondary["id"] = fallback_secondary_id
+		fallback_secondary_id += 1
+		_secondary_objectives.append(secondary)
+	var debug_main_route: Array = _plan.get("main_route", [])
+	var debug_exploration: Array = _plan.get("exploration_chunks", [])
+	var debug_rewards: Array = _plan.get("reward_chunks", [])
+	var validation: Dictionary = _plan.get("validation", {}) as Dictionary
+	print("[SegmentProcBuilder] Theme=", _theme.label if _theme != null else "Legacy", " main=", debug_main_route.size(), " explore=", debug_exploration.size(), " rewards=", debug_rewards.size(), " validation=", validation)
 
 	_rng.seed = int(_plan.get("seed", 1337)) ^ 0xA53C9E1
 
 	_apply_segment_rules()
 	_build_world_from_plan()
 	_hook_resonance()
+	_hook_secondary_objectives()
 	set_process(true)
+	_set_pressure_phase(&"recon")
+	_push_objective_ui()
 
 	# Initial gate lock state
 	_update_gate_lock()
+	_update_gate_marker()
 	_push_resonance_ui()
+	_clear_secondary_objective_ui()
 
 func _exit_tree() -> void:
 	_unhook_resonance()
+	_unhook_secondary_objectives()
+	_clear_secondary_objective_ui()
+	if Global != null:
+		Global.objective_target_pos = Vector2.INF
 
 func _process(delta: float) -> void:
+	_check_secondary_objective_discovery()
 	if resonance >= 1.0:
+		if _pressure_phase != &"collapse":
+			_set_pressure_phase(&"collapse")
+		_push_objective_ui()
 		return
 
 	_time_in_segment += delta
@@ -123,9 +166,13 @@ func _process(delta: float) -> void:
 
 	resonance += ambient + bonus
 	resonance = clampf(resonance, 0.0, 1.0)
+	if resonance >= 0.999 and _pressure_phase != &"collapse":
+		_set_pressure_phase(&"collapse")
 
 	_update_gate_lock()
+	_update_gate_marker()
 	_push_resonance_ui()
+	_push_objective_ui()
 
 func _jitter_in_chunk(world_center: Vector2, max_cells: int) -> Vector2:
 	# Jitter inside the chunk so wardstones/gate aren't always dead-center.
@@ -140,12 +187,11 @@ func _jitter_in_chunk(world_center: Vector2, max_cells: int) -> Vector2:
 # ------------------------------------------------------------
 
 func _apply_segment_rules() -> void:
-	# Theme-driven world feel.
-	# Segment 2: Explore (fixed)
-	# Segment 3: Escape (fixed)
-	# Others: random mix per attempt/segment seed (deterministic)
+	# Theme-driven world feel. Each Area 1 segment now selects a progression-aware
+	# district identity while preserving deterministic layouts for the attempt seed.
 	if _theme != null:
 		_theme.apply_to_chunk_manager(_cm)
+		_apply_urban_slice_defaults()
 		return
 
 	# Legacy fallback (should rarely happen)
@@ -183,11 +229,21 @@ func _apply_segment_rules() -> void:
 		_cm.donjon_room_attempts = int(round(lerpf(18.0, 24.0, t)))
 		_cm.donjon_fill_wall_chance = lerpf(0.52, 0.44, t)
 		_cm.donjon_ca_steps = int(round(lerpf(4.0, 5.0, t)))
+	_apply_urban_slice_defaults()
+
+func _apply_urban_slice_defaults() -> void:
+	_cm.district_sidewalk_width_cells = 1
+	_cm.district_sidewalk_corner_pad_cells = 1
+	_cm.parcels_chunk_chance = 0.95
+	_cm.parcels_chance_per_side = 0.80
+	_cm.parcels_max_per_side = 2
 
 func _build_world_from_plan() -> void:
 	_cm.generation_enabled = true
 	_cm.clear_manual_blocks()
 	_cm.clear_chunk_archetypes()
+	_cm.clear_chunk_roles()
+	_cm.clear_chunk_terrain()
 
 	# Apply connectors (donjon-style chunk coherency)
 	_cm.clear_chunk_connectors()
@@ -196,11 +252,33 @@ func _build_world_from_plan() -> void:
 		var cc2: Vector2i = k2
 		_cm.set_chunk_connectors(cc2, int(conns[k2]))
 
+	# Courtyard/pedestrian access is deliberately separate from road connectivity.
+	_cm.clear_chunk_urban_access()
+	var urban_access: Dictionary = _plan.get("urban_access_by_chunk", {})
+	for access_key in urban_access.keys():
+		var access_coord: Vector2i = access_key
+		_cm.set_chunk_urban_access(access_coord, int(urban_access[access_key]))
+
+	# Apply semantic roles before archetypes. Chunk generation uses roles to choose
+	# plaza, checkpoint, optional-interior and exploration-reward behaviour.
+	var roles: Dictionary = _plan.get("role_by_chunk", {})
+	for role_key in roles.keys():
+		var role_coord: Vector2i = role_key
+		var role_value: StringName = roles[role_key]
+		_cm.set_chunk_role(role_coord, role_value)
+
+	var terrain: Dictionary = _plan.get("terrain_by_chunk", {})
+	for terrain_key in terrain.keys():
+		var terrain_coord: Vector2i = terrain_key
+		var terrain_value: StringName = terrain[terrain_key]
+		_cm.set_chunk_terrain(terrain_coord, terrain_value)
+
 	# Apply archetypes
 	var arch: Dictionary = _plan.get("archetype_by_chunk", {})
 	for k in arch.keys():
 		var cc: Vector2i = k
-		_cm.set_chunk_archetype(cc, arch[k] as StringName)
+		var archetype_value: StringName = arch[k]
+		_cm.set_chunk_archetype(cc, archetype_value)
 
 	# Use the segment seed for chunk hashing (stable within attempt).
 	_cm.world_seed = int(_plan.get("seed", 1337))
@@ -215,10 +293,27 @@ func _build_world_from_plan() -> void:
 	# Force a rebuild so chunks created while generation_enabled was false are regenerated.
 	_cm.reset_world()
 
-	# Spawn wardstones + exit gate (after chunks exist so visuals sit on top cleanly).
+	# Spawn objective, wardstones and exit gate after chunks exist so visuals sit on top cleanly.
+	_spawn_primary_objective()
 	_spawn_wardstones()
 	_spawn_exit_gate()
 	_spawn_segment_events()
+
+func _spawn_primary_objective() -> void:
+	var objective_world: Vector2 = _plan.get("primary_world", Vector2.ZERO) as Vector2
+	_primary_objective = DISTRICT_RELAY_SCENE.instantiate() as DistrictRelayObjective
+	if _primary_objective == null:
+		push_warning("[SegmentProcBuilder] District relay scene could not instantiate; bypassing primary gate to keep the run recoverable.")
+		_primary_completed = true
+		return
+	_primary_objective.global_position = objective_world
+	_primary_objective.configure(int(_plan.get("seed", 1337)) ^ 0x51A7CE)
+	_primary_objective.activated.connect(_on_primary_activated)
+	_primary_objective.progress_changed.connect(_on_primary_progress_changed)
+	_primary_objective.completed.connect(_on_primary_completed)
+	add_child(_primary_objective)
+	if Global != null:
+		Global.objective_target_pos = objective_world
 
 func _spawn_wardstones() -> void:
 	var wards: Array = _plan.get("wardstone_world", [])
@@ -245,9 +340,15 @@ func _spawn_exit_gate() -> void:
 	_exit_rite = EXIT_RITE_SCENE.instantiate() as ExitRite
 	if _exit_rite == null:
 		return
+	_exit_rite.revealed = _primary_completed
+	# The gate can exist in the world after the relay, but its HUD location remains
+	# hidden until SegmentProcBuilder triangulates it at the resonance threshold.
+	_exit_rite.hide_location_while_locked = true
 	_exit_rite.global_position = pos
 	add_child(_exit_rite)
 	_exit_rite.cleared.connect(_on_gate_cleared)
+	if not _primary_completed:
+		_exit_rite.set_revealed(false)
 
 
 func _spawn_segment_events() -> void:
@@ -256,24 +357,9 @@ func _spawn_segment_events() -> void:
 	if _segment >= 5 and mb_world != Vector2.ZERO:
 		var a := MINIBOSS_ARENA_SCENE.instantiate()
 		if a != null:
+			# Segment 5 now has a dedicated pre-gate arena chunk. Do not stack the
+			# miniboss on top of the Exit Rite; the plan already placed it one chunk earlier.
 			var pos := _jitter_in_chunk(mb_world, 2)
-
-			# Segment 5 teaching beat: spawn the miniboss near the exit gate so the player
-			# can't miss that bosses exist (still locked until the miniboss is defeated).
-			if _segment == 5 and _exit_rite != null:
-				var edge: int = int(_plan.get("exit_edge", 0))
-				var offset := Vector2.ZERO
-				match edge:
-					0: # exit north → place south of the gate
-						offset = Vector2(0, 260)
-					1: # exit east → place west of the gate
-						offset = Vector2(-260, 0)
-					2: # exit south → place north of the gate
-						offset = Vector2(0, -260)
-					3: # exit west → place east of the gate
-						offset = Vector2(260, 0)
-				pos = _exit_rite.global_position + offset + Vector2(float(_rng.randi_range(-40, 40)), float(_rng.randi_range(-40, 40)))
-
 			(a as Node2D).global_position = pos
 			add_child(a)
 
@@ -291,7 +377,11 @@ func grant_resonance(amount: float, immediate: bool = true) -> void:
 	if immediate:
 		resonance = clampf(resonance + amount, 0.0, 1.0)
 		_update_gate_lock()
+		_update_gate_marker()
 		_push_resonance_ui()
+		_push_objective_ui()
+		if resonance >= 0.999:
+			_set_pressure_phase(&"collapse")
 		return
 	_pending_bonus_res += amount
 	_pending_bonus_res = minf(_pending_bonus_res, 1.0)
@@ -299,10 +389,12 @@ func grant_resonance(amount: float, immediate: bool = true) -> void:
 func set_boss_defeated() -> void:
 	_boss_defeated = true
 	_update_gate_lock()
+	_push_objective_ui()
 
 func set_miniboss_defeated() -> void:
 	_miniboss_defeated = true
 	_update_gate_lock()
+	_push_objective_ui()
 
 func is_boss_defeated() -> bool:
 	return _boss_defeated
@@ -318,6 +410,224 @@ func _on_gate_cleared(_r: ExitRite) -> void:
 		game.call_deferred("complete_segment", seg)
 	elif game != null and game.has_method("end_run"):
 		game.call_deferred("end_run")
+
+# ------------------------------------------------------------
+# Primary objective + pressure phases
+# ------------------------------------------------------------
+
+func _on_primary_activated() -> void:
+	if _primary_completed:
+		return
+	_set_pressure_phase(&"disturbance")
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
+	if spawner != null:
+		spawner.spawn_burst(5)
+	_push_objective_ui()
+
+func _on_primary_progress_changed(done: int, total: int) -> void:
+	_primary_done_count = maxi(0, done)
+	_primary_total_count = maxi(1, total)
+	_push_objective_ui()
+
+func _on_primary_completed() -> void:
+	if _primary_completed:
+		return
+	_primary_completed = true
+	_primary_done_count = _primary_total_count
+	grant_resonance(primary_completion_resonance, true)
+	if _exit_rite != null:
+		_exit_rite.set_revealed(true)
+	_update_gate_marker()
+	_set_pressure_phase(&"collapse" if resonance >= 0.999 else &"ascension")
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
+	if spawner != null:
+		spawner.spawn_burst(7)
+	_update_gate_lock()
+	_push_objective_ui()
+
+func _set_pressure_phase(next_phase: StringName) -> void:
+	if _pressure_phase == next_phase and next_phase != &"recon":
+		return
+	_pressure_phase = next_phase
+	var label: String = _phase_label(next_phase)
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("set_segment_phase"):
+		director.call("set_segment_phase", next_phase)
+	if RunEvents != null and RunEvents.has_signal("segment_phase_changed"):
+		RunEvents.segment_phase_changed.emit(next_phase, label)
+	if debug_proc_state:
+		print("[SegmentProcBuilder] seed=", int(_plan.get("seed", 0)), " phase=", label, " primary=", _primary_completed, " exit_revealed=", _exit_rite != null and _exit_rite.revealed, " validation=", _plan.get("validation", {}))
+
+func _phase_label(phase: StringName) -> String:
+	match phase:
+		&"disturbance": return "DISTURBANCE"
+		&"ascension": return "ASCENSION"
+		&"collapse": return "COLLAPSE"
+		_: return "RECON"
+
+func _gate_requirement_line(done: bool, label: String) -> String:
+	return "%s %s" % ["✓" if done else "○", label]
+
+func _push_objective_ui() -> void:
+	if RunEvents == null or not RunEvents.has_signal("objective_changed"):
+		return
+	if not _primary_completed:
+		RunEvents.objective_changed.emit(
+			"Silence the District Relay • %s" % _phase_label(_pressure_phase),
+			"Attune relay nodes %d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
+		)
+		return
+
+	var percent: int = int(round(clampf(resonance, 0.0, 1.0) * 100.0))
+	var marker_percent: int = int(round(clampf(gate_marker_reveal_resonance, 0.0, 1.0) * 100.0))
+	var resonance_complete: bool = resonance >= 0.999
+	var miniboss_complete: bool = (not _miniboss_required) or _miniboss_defeated
+	var boss_complete: bool = (not _boss_required) or _boss_defeated
+	var gate_ready: bool = resonance_complete and miniboss_complete and boss_complete
+	var marker_visible: bool = resonance >= gate_marker_reveal_resonance
+
+	var gate_state: String = "LOCKED"
+	if gate_ready:
+		gate_state = "READY"
+	elif marker_visible:
+		gate_state = "LOCATED"
+
+	var checklist := PackedStringArray()
+	checklist.append(_gate_requirement_line(true, "District Relay silenced"))
+	checklist.append(_gate_requirement_line(resonance_complete, "Resonance 100%% (%d%%)" % percent))
+	if _miniboss_required:
+		checklist.append(_gate_requirement_line(_miniboss_defeated, "Miniboss defeated"))
+	if _boss_required:
+		checklist.append(_gate_requirement_line(_boss_defeated, "District boss defeated"))
+
+	var guidance: String
+	if not marker_visible:
+		guidance = "Next: reach %d%% resonance to reveal the gate marker" % marker_percent
+	elif not resonance_complete:
+		guidance = "Marker revealed • build resonance to 100%"
+	elif _miniboss_required and not _miniboss_defeated:
+		guidance = "Next: defeat the miniboss guarding the route"
+	elif _boss_required and not _boss_defeated:
+		guidance = "Next: defeat the district boss"
+	else:
+		guidance = "All conditions met • follow the orange gate marker"
+	checklist.append(guidance)
+
+	RunEvents.objective_changed.emit(
+		"EXIT RITE • %s" % gate_state,
+		"\n".join(checklist)
+	)
+
+func _check_secondary_objective_discovery() -> void:
+	if _secondary_objectives.is_empty() or not is_instance_valid(_player) or not is_instance_valid(_cm):
+		if _active_secondary_id != -1:
+			_active_secondary_id = -1
+			_clear_secondary_objective_ui()
+		return
+	var chunk_size: float = float(_cm.chunk_size_px)
+	if chunk_size <= 0.0:
+		return
+	var nearby_objective: Dictionary = {}
+	var best_distance_sq: float = INF
+	var activation_radius: float = chunk_size * 0.72
+	var activation_radius_sq: float = activation_radius * activation_radius
+	for objective_variant in _secondary_objectives:
+		var objective: Dictionary = objective_variant as Dictionary
+		var objective_id: int = int(objective.get("id", 0))
+		if objective_id <= 0 or _secondary_completed.has(objective_id):
+			continue
+		var objective_chunk: Vector2i = objective.get("chunk", DistrictPlan.INVALID_CHUNK) as Vector2i
+		var fallback_world := Vector2(
+			(float(objective_chunk.x) + 0.5) * chunk_size,
+			(float(objective_chunk.y) + 0.5) * chunk_size
+		)
+		var objective_world: Vector2 = objective.get("world", fallback_world) as Vector2
+		var distance_sq: float = _player.global_position.distance_squared_to(objective_world)
+		if distance_sq <= activation_radius_sq and distance_sq < best_distance_sq:
+			best_distance_sq = distance_sq
+			nearby_objective = objective
+
+	if nearby_objective.is_empty():
+		if _active_secondary_id != -1:
+			_active_secondary_id = -1
+			_clear_secondary_objective_ui()
+		return
+
+	var nearby_id: int = int(nearby_objective.get("id", 0))
+	if nearby_id == _active_secondary_id:
+		return
+	_active_secondary_id = nearby_id
+	_show_secondary_objective(nearby_objective)
+
+func _show_secondary_objective(objective: Dictionary) -> void:
+	if RunEvents == null or not RunEvents.has_signal("secondary_objective_changed"):
+		return
+	_secondary_feedback_token += 1
+	var objective_type: StringName = objective.get("type", &"") as StringName
+	var title: String = "SECONDARY • Optional Opportunity"
+	var detail: String = "Explore this district pocket for an additional reward."
+	match objective_type:
+		&"dangerous_alley_cache":
+			title = "SECONDARY • Dangerous Alley Cache"
+			detail = "Search the alley endpoint for a guarded hidden cache."
+		&"searchable_reward_building":
+			title = "SECONDARY • Searchable Building"
+			detail = "Enter and search the building for its optional reward."
+	RunEvents.secondary_objective_changed.emit(title, detail)
+
+func _hook_secondary_objectives() -> void:
+	if RunEvents == null or not RunEvents.has_signal("secondary_objective_completed"):
+		return
+	var callback := Callable(self, "_on_secondary_objective_completed")
+	if not RunEvents.secondary_objective_completed.is_connected(callback):
+		RunEvents.secondary_objective_completed.connect(callback)
+
+func _unhook_secondary_objectives() -> void:
+	if RunEvents == null or not RunEvents.has_signal("secondary_objective_completed"):
+		return
+	var callback := Callable(self, "_on_secondary_objective_completed")
+	if RunEvents.secondary_objective_completed.is_connected(callback):
+		RunEvents.secondary_objective_completed.disconnect(callback)
+
+func _on_secondary_objective_completed(objective_id: int) -> void:
+	if objective_id <= 0:
+		return
+	_secondary_completed[objective_id] = true
+	if _active_secondary_id == objective_id:
+		_active_secondary_id = -1
+
+	var objective_type: StringName = &""
+	for objective_variant in _secondary_objectives:
+		var objective := objective_variant as Dictionary
+		if int(objective.get("id", 0)) == objective_id:
+			objective_type = objective.get("type", &"") as StringName
+			break
+
+	var completion_detail: String = "Optional reward secured."
+	match objective_type:
+		&"dangerous_alley_cache":
+			completion_detail = "Guarded alley cache secured."
+		&"searchable_reward_building":
+			completion_detail = "Building searched • optional reward recovered."
+
+	_secondary_feedback_token += 1
+	var feedback_token: int = _secondary_feedback_token
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("✓ SECONDARY COMPLETE", completion_detail)
+	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+		RunEvents.tutorial_tip.emit("Secondary complete • %s" % completion_detail, 2.4)
+	_clear_secondary_after_delay(feedback_token)
+
+func _clear_secondary_after_delay(feedback_token: int) -> void:
+	await get_tree().create_timer(2.4).timeout
+	if feedback_token != _secondary_feedback_token:
+		return
+	_clear_secondary_objective_ui()
+
+func _clear_secondary_objective_ui() -> void:
+	_secondary_feedback_token += 1
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("", "")
 
 # ------------------------------------------------------------
 # Resonance hooks
@@ -367,8 +677,15 @@ func _on_pickup_to_equip(_start_global: Vector2, _equip_slot: int, inst: ItemIns
 func _update_gate_lock() -> void:
 	if _exit_rite == null:
 		return
-	var should_lock: bool = (resonance < 0.999) or (_boss_required and not _boss_defeated) or (_miniboss_required and not _miniboss_defeated)
+	var should_lock: bool = (not _primary_completed) or (resonance < 0.999) or (_boss_required and not _boss_defeated) or (_miniboss_required and not _miniboss_defeated)
 	_exit_rite.set_locked(should_lock)
+
+func _update_gate_marker() -> void:
+	if Global == null or not _primary_completed:
+		return
+	var gate_is_valid: bool = is_instance_valid(_exit_rite)
+	var should_show: bool = gate_is_valid and resonance >= gate_marker_reveal_resonance
+	Global.objective_target_pos = _exit_rite.global_position if should_show else Vector2.INF
 
 func _push_resonance_ui() -> void:
 	if RunEvents != null and RunEvents.has_signal("resonance_changed"):

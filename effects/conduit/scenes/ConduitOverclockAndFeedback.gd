@@ -1,7 +1,7 @@
 extends SetEffectBase
-class_name ConduitOverclockAndFeedback
 
 signal active_cd_changed(time_left: float, max_cd: float)
+signal active_failed(message: String)
 
 @export var vfx_shock_ring_scene: PackedScene # legacy (leave EMPTY / null)
 @export var vfx_pulse_ring_scene: PackedScene # assign PulseRing.tscn (updated)
@@ -183,6 +183,7 @@ func _try_circuit_feedback() -> void:
 	if player == null:
 		return
 	if _active_cd > 0.0:
+		active_failed.emit("Cooldown %.1fs" % _active_cd)
 		return
 
 	var st: Stats = player.get("stats") as Stats
@@ -226,6 +227,26 @@ func _try_circuit_feedback() -> void:
 			e.call("apply_knockback", dir * active_knockback * (0.85 + 0.25 * set_strength))
 		if e.has_method("apply_stun"):
 			e.call("apply_stun", active_stun * (0.85 + 0.25 * set_strength))
+
+func get_active_state() -> Dictionary:
+	var is_ready: bool = player != null and _active_cd <= 0.05
+	var state_parts: Array[String] = []
+	state_parts.append("DISCHARGE PRIMED" if _prime_next_shot else "DISCHARGE EMPTY")
+	if _overclock_time > 0.0:
+		state_parts.append("OVERCLOCK %.1fs" % _overclock_time)
+	return {
+		"ready": is_ready,
+		"cooldown_left": _active_cd,
+		"cooldown_max": _active_cd_max if _active_cd_max > 0.0 else active_base_cd,
+		"status_text": "READY" if is_ready else String.num(_active_cd, 1),
+		"combat_text": " · ".join(state_parts),
+	}
+
+func debug_prime_discharge(enabled: bool = true) -> void:
+	_prime_next_shot = enabled
+
+func debug_set_overclock(seconds: float = 2.5) -> void:
+	_overclock_time = maxf(0.0, seconds)
 
 func _report_active_cd(force: bool = false) -> void:
 	if force or absf(_active_cd - _last_cd_report) > 0.05 or (_active_cd <= 0.0 and _last_cd_report > 0.0):

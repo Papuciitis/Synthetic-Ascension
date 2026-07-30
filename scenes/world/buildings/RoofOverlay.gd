@@ -14,7 +14,8 @@ var _inside_count: int = 0
 var _tween: Tween
 
 
-func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, indoor_volume: Area2D) -> void:
+func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, indoor_volume: Area2D, building_kind: StringName = &"row_house", visual_seed: int = 0) -> void:
+	_apply_visual_variant(building_kind, visual_seed)
 	# Build a simple roof silhouette that makes parcels read as "buildings" from the street.
 	# This is intentionally cheap: just a dark polygon + a stronger façade edge.
 	var tl := Vector2(build_rect_cells.position) * float(cell_size_px)
@@ -71,6 +72,27 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 			indoor_volume.body_entered.connect(_on_volume_body_entered)
 		if not indoor_volume.body_exited.is_connected(_on_volume_body_exited):
 			indoor_volume.body_exited.connect(_on_volume_body_exited)
+
+
+func _apply_visual_variant(building_kind: StringName, visual_seed: int) -> void:
+	var base := Color(0.13, 0.14, 0.15, 1.0)
+	match building_kind:
+		&"shop":
+			base = Color(0.12, 0.15, 0.14, 1.0)
+		&"workshop":
+			base = Color(0.18, 0.14, 0.11, 1.0)
+		&"passage":
+			base = Color(0.11, 0.12, 0.16, 1.0)
+		_:
+			base = Color(0.14, 0.14, 0.13, 1.0)
+	var rng := RandomNumberGenerator.new()
+	rng.seed = visual_seed
+	var variation: float = rng.randf_range(-0.018, 0.018)
+	base.r = clampf(base.r + variation, 0.04, 0.30)
+	base.g = clampf(base.g + variation, 0.04, 0.30)
+	base.b = clampf(base.b + variation, 0.04, 0.30)
+	_poly.color = base
+	_edge.default_color = base.darkened(0.32)
 
 
 func _on_volume_body_entered(body: Node) -> void:

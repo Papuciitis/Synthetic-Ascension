@@ -22,7 +22,7 @@ The old scenes remain as compatibility/fallback implementations.
 
 `ProjectileSimulationManager` keeps a dense active range across parallel packed arrays: current/previous position, velocity, life/range, radius, team, damage, visual family and resolved hit properties. Removal swaps the last active entry into the removed index. Capacity defaults to 4096; overflow increments a rejected counter rather than allocating beyond the configured bound.
 
-Movement is swept from previous to new position. Player bullets query nearby candidates through `EnemyIndex`, select the earliest segment-circle hit and compare it with the first blocked `ChunkManager` cell. Enemy bullets sweep against the player and the same world grid. Lifetime/range and piercing are manager-owned.
+Movement is swept from previous to new position. Player bullets query nearby candidates through `EnemyIndex`, select the earliest segment-circle hit and compare it with the first intentional blocker-shape hit reported by `ChunkManager`. Enemy bullets sweep against the player and the same world geometry. Lifetime/range and piercing are manager-owned.
 
 One `MultiMeshInstance2D` renders simple stretched quads with per-instance color/transform. It is never collision authority. Exotic projectile scenes retain their own visuals and collision.
 
@@ -63,3 +63,8 @@ Enable **Projectile Stress Test + Counters** in Main Menu developer mode. It req
 
 This is a test harness. Record actual frame time and profiler data in Godot 4.6 before adjusting capacity or claiming a performance result.
 
+## 0.22 world-collision addendum
+
+Migration ownership is unchanged: ordinary straight shots remain managed and exotic shots retain their node movement/target semantics. World collision is now consistent across both sides of that boundary. `RangedBullet`, `EnemyProjectile`, `MagicMissileProjectile` and `ReflectedProjectile` ask `ChunkManager.projectile_hit_t()` for the same swept blocker result as managed bullets.
+
+The broad phase is a grid DDA over crossed cells with a one-cell neighborhood for projectile radius. The narrow phase expands intentionally simple connected-wall/fence rectangles or the half-cover circle by the projectile radius and returns the earliest swept hit. Windows return no projectile hit. Manual/unknown blocked cells conservatively use a full 64 px cell. No projectile Area node or alpha-polygon physics query is introduced by this path.

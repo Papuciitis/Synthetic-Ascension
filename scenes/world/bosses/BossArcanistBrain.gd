@@ -36,7 +36,7 @@ extends Node
 @export var cone_vfx_scene: PackedScene = preload("res://assets/vfx/world/enemies/VFX_EnemyShootCone.tscn")
 @export var projectile_scene: PackedScene = preload("res://core/combat/projectile/EnemyProjectile.tscn")
 
-var _e: Enemy
+var _e: EnemyActor
 
 var _fan_cd: float = 1.2
 var _mines_cd: float = 2.0
@@ -49,7 +49,7 @@ var _tier_is_boss: bool = false
 var _tier_checked: bool = false
 
 func _ready() -> void:
-	_e = get_parent() as Enemy
+	_e = get_parent() as EnemyActor
 	if _e == null:
 		set_process(false)
 		return

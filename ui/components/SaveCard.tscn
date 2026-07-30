@@ -30,6 +30,18 @@ corner_radius_top_right = 14
 corner_radius_bottom_right = 14
 corner_radius_bottom_left = 14
 
+[sub_resource type="StyleBoxFlat" id="StyleDetailsPanel"]
+bg_color = Color(0.025, 0.025, 0.03, 0.88)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.55, 0.2, 0.42)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
 [sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
 bg_color = Color(0, 0, 0, 0.26)
 border_width_left = 2
@@ -76,7 +88,7 @@ shadow_size = 7
 shadow_offset = Vector2(0, 5)
 
 [node name="SaveCard" type="Control" unique_id=1018519445]
-custom_minimum_size = Vector2(230, 280)
+custom_minimum_size = Vector2(280, 360)
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 3
@@ -99,6 +111,33 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 5
 
+[node name="DetailsPanel" type="PanelContainer" parent="CardPanel"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+anchor_left = 0.06
+anchor_top = 0.05
+anchor_right = 0.94
+anchor_bottom = 0.54
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleDetailsPanel")
+
+[node name="Margin" type="MarginContainer" parent="CardPanel/DetailsPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="Details" type="Label" parent="CardPanel/DetailsPanel/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.92, 0.92, 0.94, 1)
+theme_override_font_sizes/font_size = 12
+text = "AREA 1 · SEGMENT 1\nIN SEGMENT\n\nFOLLOWERS  0\nGEAR  0 / 8\nBACKPACK  0 / 16\n\nRUNS  0   ·   BEST  0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="RootVBox" type="VBoxContainer" parent="CardPanel" unique_id=1467707013]
 layout_mode = 0
 anchor_right = 1.0
@@ -119,45 +158,45 @@ theme_override_styles/panel = SubResource("StyleBottomPanel")
 [node name="Margin" type="MarginContainer" parent="CardPanel/RootVBox/BottomPanel" unique_id=2088637154]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 9
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 9
+theme_override_constants/margin_bottom = 9
 
 [node name="InfoVBox" type="VBoxContainer" parent="CardPanel/RootVBox/BottomPanel/Margin" unique_id=1280314538]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
 [node name="Name" type="Label" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox" unique_id=257996878]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Slot — EMPTY"
+theme_override_font_sizes/font_size = 17
+text = "EMPTY SLOT"
 horizontal_alignment = 1
 clip_text = true
 text_overrun_behavior = 3
 
 [node name="Meta" type="Label" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox" unique_id=1849346421]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 text = "Race • Style"
 horizontal_alignment = 1
 
 [node name="Stats" type="Label" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox" unique_id=1773730176]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 12
 text = "Runs: 0 • Best: 0"
 horizontal_alignment = 1
 
 [node name="Buttons" type="HBoxContainer" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox" unique_id=1320493208]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 8
 alignment = 1
 
 [node name="Delete" type="Button" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox/Buttons" unique_id=934860360]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
@@ -169,7 +208,7 @@ text = "Delete"
 script = ExtResource("2_tc06p")
 
 [node name="Rename" type="Button" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox/Buttons" unique_id=334691391]
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0

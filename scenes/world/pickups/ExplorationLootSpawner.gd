@@ -2,6 +2,7 @@ extends Node2D
 class_name ExplorationLootSpawner
 
 @export var loot_id: int = 0
+@export var secondary_objective_id: int = 0
 
 @export_group("Chance (deterministic)")
 @export var spawn_chance: float = 1.0 # if caller already rolled, keep at 1.0
@@ -24,7 +25,7 @@ class_name ExplorationLootSpawner
 @export var try_interval_sec: float = 0.10   # how often to retry while waiting
 
 @export_group("Debug")
-@export var debug_draw_marker: bool = true  # set true temporarily to verify spawner placement
+@export var debug_draw_marker: bool = false # enable only while verifying procedural placement
 @export var debug_marker_radius: float = 22.0
 
 @export var pickup_scene: PackedScene = preload("res://scenes/world/pickups/ItemPickup.tscn")
@@ -110,13 +111,8 @@ func _spawn_loot(rng: RandomNumberGenerator) -> bool:
 
 		var rmin := rarity_min + bonus
 		var rmax := rarity_max + bonus
-		var rarity: int = rng.randi_range(rmin, rmax)
-
-		var roll_pct: float = Global.roll_percent(Global.run_luck, data.pct_min, data.pct_max)
-		var pol: int = (ItemInstance.Polarity.POS if roll_pct >= 0.0 else ItemInstance.Polarity.NEG)
-		roll_pct = absf(roll_pct) * (1.0 if pol == ItemInstance.Polarity.POS else -1.0)
-
-		var inst := ItemInstance.from_roll(data, rarity, pol, roll_pct)
+		var context := Global.build_item_drop_context(rmin, rmax, &"exploration", 1)
+		var inst := ItemGenerator.create_instance(data, context, rng)
 
 		var p := pickup_scene.instantiate() as ItemPickup
 		if p == null:
@@ -128,8 +124,13 @@ func _spawn_loot(rng: RandomNumberGenerator) -> bool:
 		p.amount = 1
 		p.pickup_delay = pickup_delay
 		p.is_exploration_loot = true
+		p.secondary_objective_id = secondary_objective_id
 
-		p.global_position = _pick_pos(rng)
+		var spawn_pos: Vector2 = _pick_pos(rng)
+		if spawn_pos == Vector2.INF:
+			p.free()
+			continue
+		p.global_position = spawn_pos
 
 		get_tree().current_scene.call_deferred("add_child", p)
 		made = true
@@ -154,7 +155,23 @@ func _pick_pos(rng: RandomNumberGenerator) -> Vector2:
 			if bool(_cm.call("is_cell_walkable", cell)):
 				return pos
 
-	return global_position
+	# Never fall back to the original unvalidated point. Search outward by cell
+	# rings and either return a real loaded floor cell or fail without claiming the
+	# reward, allowing a later chunk load to retry it.
+	if _cm.has_method("world_to_cell") and _cm.has_method("is_cell_walkable") and _cm.has_method("cell_to_world_center"):
+		var origin_cell: Vector2i = _cm.call("world_to_cell", global_position) as Vector2i
+		var cell_size: float = maxf(1.0, float(_cm.get("cell_size_px")))
+		var search_radius_cells: int = maxi(4, ceili(scatter_radius / cell_size) + 4)
+		for ring in range(search_radius_cells + 1):
+			for y in range(origin_cell.y - ring, origin_cell.y + ring + 1):
+				for x in range(origin_cell.x - ring, origin_cell.x + ring + 1):
+					if ring > 0 and x > origin_cell.x - ring and x < origin_cell.x + ring and y > origin_cell.y - ring and y < origin_cell.y + ring:
+						continue
+					var cell := Vector2i(x, y)
+					if bool(_cm.call("is_cell_walkable", cell)):
+						return _cm.call("cell_to_world_center", cell) as Vector2
+
+	return Vector2.INF
 
 func _mix_seed(a: int, b: int) -> int:
 	var h: int = int((a ^ (b * 0x9E3779B9)) & 0x7FFFFFFF)

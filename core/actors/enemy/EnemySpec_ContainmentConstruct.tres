@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemySpec" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"enemy_containment_construct"
+display_name = "Lattice Construct"
+ai = 0
+max_hp = 18.0
+speed = 68.0
+follower_reward_min = 0
+follower_reward_max = 0
+drop_chance = 0.0
+sprite_modulate = Color(0.258824, 0.847059, 0.909804, 1)

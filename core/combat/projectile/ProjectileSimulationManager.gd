@@ -9,7 +9,6 @@ enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const IMPACT_SCENE := preload("res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn")
 const DEFAULT_CAPACITY: int = 4096
-const WORLD_STEP_PX: float = 12.0
 const ENEMY_RADIUS: float = 24.0
 const PLAYER_RADIUS: float = 25.0
 
@@ -45,20 +44,30 @@ var _pending_ledgers: Dictionary = {}
 var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
 var _last_scene_id: int = 0
+var _query_hit_target: Node2D = null
+var _query_hit_t: float = -1.0
 
 var _hits_this_frame: int = 0
 var _batches_this_frame: int = 0
 var _dropped_total: int = 0
 var _last_physics_ms: float = 0.0
 var _stress_started: bool = false
+var _last_stress_enabled: bool = false
 var _debug_label: Label = null
 
 func _ready() -> void:
 	z_index = 200
+	add_to_group(&"projectile_simulation_manager")
 	_build_renderer()
 	set_physics_process(true)
 
 func _physics_process(delta: float) -> void:
+	var started_us := Time.get_ticks_usec()
+	var stress_enabled: bool = Global != null and Global.debug_projectile_stress_test
+	if stress_enabled != _last_stress_enabled:
+		_last_stress_enabled = stress_enabled
+		if PerformanceFlightRecorder != null:
+			PerformanceFlightRecorder.record_event(&"projectile", &"stress_toggled", {"enabled": stress_enabled})
 	_sync_scene_refs()
 	_hits_this_frame = 0
 	_batches_this_frame = 0
@@ -69,7 +78,7 @@ func _physics_process(delta: float) -> void:
 		_simulate_one(i, delta)
 	_flush_hit_ledgers()
 	_update_renderer()
-	_last_physics_ms = delta * 1000.0
+	_last_physics_ms = float(Time.get_ticks_usec() - started_us) / 1000.0
 	_update_debug_overlay()
 
 func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapter, source: Node) -> bool:
@@ -96,6 +105,8 @@ func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: floa
 func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color) -> bool:
 	if _active_count >= capacity:
 		_dropped_total += 1
+		if PerformanceFlightRecorder != null:
+			PerformanceFlightRecorder.record_counter_event(&"projectile", &"capacity_dropped", 1, {"capacity": capacity})
 		return false
 	_positions.append(origin)
 	_previous.append(origin)
@@ -130,13 +141,13 @@ func _simulate_one(index: int, delta: float) -> void:
 	_previous[index] = old_pos
 	_life_left[index] -= delta
 	_range_left[index] -= movement.length()
-	var world_t := _world_hit_t(old_pos, new_pos)
+	var world_t := _world_hit_t(old_pos, new_pos, _radii[index])
 	var target: Node2D = null
 	var target_t := -1.0
 	if _teams[index] == Team.PLAYER:
-		var result := _first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_ids[index])
-		target = result.get("target", null) as Node2D
-		target_t = float(result.get("t", -1.0))
+		if _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_ids[index]):
+			target = _query_hit_target
+			target_t = _query_hit_t
 	else:
 		target = _player
 		if target != null and is_instance_valid(target):
@@ -157,13 +168,14 @@ func _simulate_one(index: int, delta: float) -> void:
 	if _life_left[index] <= 0.0 or _range_left[index] <= 0.0:
 		_remove(index)
 
-func _first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_id: int) -> Dictionary:
+func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_id: int) -> bool:
+	_query_hit_target = null
+	_query_hit_t = -1.0
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		return {}
+		return false
 	var mid := (from + to) * 0.5
 	_enemy_index.call("gather_in_radius", mid, from.distance_to(to) * 0.5 + ENEMY_RADIUS + radius, _enemy_candidates)
 	var best_t := 2.0
-	var best: Node2D = null
 	for candidate in _enemy_candidates:
 		var enemy := candidate as Node2D
 		if enemy == null or not is_instance_valid(enemy) or enemy.get_instance_id() == excluded_id:
@@ -171,8 +183,15 @@ func _first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_id: in
 		var t := _segment_circle_t(from, to, enemy.global_position, ENEMY_RADIUS + radius)
 		if t >= 0.0 and t < best_t:
 			best_t = t
-			best = enemy
-	return {"target": best, "t": best_t} if best != null else {}
+			_query_hit_target = enemy
+	if _query_hit_target == null:
+		return false
+	_query_hit_t = best_t
+	return true
+
+
+func debug_last_enemy_hit() -> Dictionary:
+	return {"target": _query_hit_target, "t": _query_hit_t}
 
 func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:
 	var segment := to - from
@@ -182,16 +201,10 @@ func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: floa
 	var t := clampf((center - from).dot(segment) / len2, 0.0, 1.0)
 	return t if from.lerp(to, t).distance_squared_to(center) <= radius * radius else -1.0
 
-func _world_hit_t(from: Vector2, to: Vector2) -> float:
+func _world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		return -1.0
-	var distance := from.distance_to(to)
-	var steps := maxi(1, ceili(distance / WORLD_STEP_PX))
-	for step in range(1, steps + 1):
-		var t := float(step) / float(steps)
-		if not _chunk_manager.is_cell_walkable(_chunk_manager.world_to_cell(from.lerp(to, t))):
-			return t
-	return -1.0
+	return _chunk_manager.projectile_hit_t(from, to, radius)
 
 func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
 	if target == null or not is_instance_valid(target):
@@ -300,9 +313,16 @@ func _sync_scene_refs() -> void:
 		_clear_all()
 		_last_scene_id = scene_id
 		_stress_started = false
-	_enemy_index = get_node_or_null("/root/EnemyIndex")
-	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
-	_player = get_tree().get_first_node_in_group(&"player") as Node2D
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+		return
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 
 func _build_renderer() -> void:
 	var quad := QuadMesh.new()
@@ -335,6 +355,9 @@ func _update_renderer() -> void:
 
 func get_debug_counters() -> Dictionary:
 	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms}
+
+func active_count() -> int:
+	return _active_count
 
 func _run_stress_step() -> void:
 	if _player == null or not is_instance_valid(_player):

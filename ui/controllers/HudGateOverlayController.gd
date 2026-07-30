@@ -2,7 +2,7 @@ extends Node
 class_name HudGateOverlayController
 
 # Owns the Level 1 gate UI:
-# - Edge arrow that points to Global.exit_gate_pos
+# - Edge arrow that points to the active primary objective, then the revealed exit
 # - Gate ready popup when resonance reaches threshold
 # - Updates the TopLeft resonance bar + gate status label
 
@@ -127,12 +127,17 @@ func _update_gate_arrow(delta: float) -> void:
 	if _gate_arrow == null:
 		return
 
-	# Gate position is published by ExitRite (Level 1).
-	if Global == null or Global.exit_gate_pos == Vector2.INF:
+	if Global == null:
+		_gate_arrow.visible = false
+		return
+	var target_world: Vector2 = Global.objective_target_pos
+	if target_world == Vector2.INF:
+		target_world = Global.exit_gate_pos
+	if target_world == Vector2.INF:
 		_gate_arrow.visible = false
 		return
 
-	var gate_screen: Vector2 = _world_to_screen(Global.exit_gate_pos)
+	var gate_screen: Vector2 = _world_to_screen(target_world)
 	if gate_screen == Vector2.INF:
 		_gate_arrow.visible = false
 		return

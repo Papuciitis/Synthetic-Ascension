@@ -5,36 +5,41 @@
 [ext_resource type="PackedScene" path="res://ui/widgets/ShopBagGrid.tscn" id="3"]
 [ext_resource type="PackedScene" path="res://ui/widgets/ItemTooltip.tscn" id="4"]
 [ext_resource type="Script" path="res://assets/vfx/ui/UiFlyVfx.gd" id="5"]
+[ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="6_set_breakpoints"]
+[ext_resource type="PackedScene" path="res://ui/widgets/TradeConfirmPopup.tscn" id="7_trade_confirm"]
+[ext_resource type="PackedScene" path="res://ui/widgets/RotatingFlavorLabel.tscn" id="8_flavor"]
+[ext_resource type="Script" path="res://ui/screens/HubShopBackdrop.gd" id="9_backdrop"]
+[ext_resource type="PackedScene" path="res://ui/widgets/PerformanceOverlay.tscn" id="10_dev_console"]
 
 [sub_resource type="StyleBoxFlat" id="sb_panel"]
-bg_color = Color(0.06, 0.06, 0.07, 0.94)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.13, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_left = 18
-corner_radius_bottom_right = 18
-shadow_size = 12
-shadow_offset = Vector2(0, 8)
-shadow_color = Color(0, 0, 0, 0.35)
+bg_color = Color(0.045, 0.032, 0.035, 0.965)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.39, 0.22, 0.42)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+shadow_size = 10
+shadow_offset = Vector2(0, 7)
+shadow_color = Color(0, 0, 0, 0.48)
 
 [sub_resource type="StyleBoxFlat" id="sb_panel_accent"]
-bg_color = Color(0.06, 0.06, 0.07, 0.96)
+bg_color = Color(0.055, 0.035, 0.031, 0.985)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 0.55)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_left = 18
-corner_radius_bottom_right = 18
-shadow_size = 14
-shadow_offset = Vector2(0, 10)
-shadow_color = Color(0, 0, 0, 0.45)
+border_color = Color(0.96, 0.52, 0.20, 0.72)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_left = 6
+corner_radius_bottom_right = 6
+shadow_size = 13
+shadow_offset = Vector2(0, 9)
+shadow_color = Color(0, 0, 0, 0.56)
 
 [node name="HubShop" type="Control"]
 anchors_preset = 15
@@ -44,14 +49,30 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 
-[node name="BG" type="ColorRect" parent="."]
+[node name="BG" type="Control" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.035, 0.035, 0.04, 1)
+script = ExtResource("9_backdrop")
+
+[node name="ExchangeBanner" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 14.0
+offset_bottom = 62.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.96, 0.72, 0.45, 0.96)
+theme_override_colors/font_outline_color = Color(0.03, 0.015, 0.02, 0.95)
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 26
+text = "THE EXCHANGE"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 
 [node name="FlyVfx" type="Control" parent="."]
@@ -70,83 +91,74 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 72
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
 
 [node name="HBox" type="HBoxContainer" parent="Root"]
+clip_contents = true
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 8
 
 [node name="Left" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(280, 0)
+custom_minimum_size = Vector2(205, 0)
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("sb_panel")
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Left"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Left/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
-text = "Interlude"
+text = "Aftermath"
+
+[node name="Flavor" parent="Root/HBox/Left/Margin/VBox" instance=ExtResource("8_flavor")]
+layout_mode = 2
+
+[node name="ReportTitle" type="Label" parent="Root/HBox/Left/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.63, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "SEGMENT REPORT"
 
 [node name="Info" type="Label" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
 modulate = Color(1, 1, 1, 0.9)
-text = "Next Segment: 1\nFollowers: 0"
-
-[node name="Cart" type="Label" parent="Root/HBox/Left/Margin/VBox"]
-layout_mode = 2
-modulate = Color(1, 1, 1, 0.9)
-text = "Sell(0): 0\nBuy(0): 0\nNet: 0\nFollowers: 0"
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 13
+text = "PREPARING SEGMENT 1\n\nNEXT ROUTE\nArea 1 · Segment 1\n\nCURRENT SUPPORT\nFollowers: 0\nGear: 0 / 8\nBackpack: 0 / 16"
 
 [node name="Hover" type="Label" parent="Root/HBox/Left/Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 modulate = Color(1, 1, 1, 0.75)
 theme_override_font_sizes/font_size = 12
 text = ""
+autowrap_mode = 3
+max_lines_visible = 3
+clip_text = true
 
-[node name="ButtonsRow" type="HBoxContainer" parent="Root/HBox/Left/Margin/VBox"]
+[node name="Spacer" type="Control" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="MarkAllBag" type="Button" parent="Root/HBox/Left/Margin/VBox/ButtonsRow"]
-layout_mode = 2
-text = "Mark Bag"
-
-[node name="MarkNEG" type="Button" parent="Root/HBox/Left/Margin/VBox/ButtonsRow"]
-layout_mode = 2
-text = "Mark NEG"
-
-[node name="Clear" type="Button" parent="Root/HBox/Left/Margin/VBox/ButtonsRow"]
-layout_mode = 2
-text = "Clear"
-
-[node name="IncludeEquipped" type="CheckBox" parent="Root/HBox/Left/Margin/VBox"]
-layout_mode = 2
-text = "Include Equipped"
-
+size_flags_vertical = 3
 
 [node name="Augments" type="Button" parent="Root/HBox/Left/Margin/VBox"]
-text = "Augments"
+text = "Review Augments"
 focus_mode = 0
 [node name="Inventory" type="Button" parent="Root/HBox/Left/Margin/VBox"]
-text = "Inventory"
+text = "Manage Inventory"
 focus_mode = 0
-[node name="SellSelected" type="Button" parent="Root/HBox/Left/Margin/VBox"]
-layout_mode = 2
-text = "Barter"
 
 [node name="Continue" type="Button" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
@@ -158,45 +170,45 @@ text = "Main Menu"
 
 [node name="Equipped" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(130, 0)
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("sb_panel")
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Equipped"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Equipped/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="EquippedTitle" type="Label" parent="Root/HBox/Equipped/Margin/VBox"]
 layout_mode = 2
-text = "Equipped"
+text = "Gear"
 
 [node name="InventoryBar" parent="Root/HBox/Equipped/Margin/VBox" instance=ExtResource("2")]
 layout_mode = 2
 
 [node name="Backpack" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(205, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("sb_panel")
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Backpack"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Backpack/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="BackpackTitle" type="Label" parent="Root/HBox/Backpack/Margin/VBox"]
 layout_mode = 2
@@ -207,26 +219,26 @@ layout_mode = 2
 
 [node name="CartPanel" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(390, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("sb_panel_accent")
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/CartPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/CartPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="CartTitle" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
-text = "Trade"
+text = "Balance the Exchange"
 
 [node name="Grids" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
@@ -253,7 +265,7 @@ theme_override_constants/separation = 6
 [node name="DemandTitle" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Grids/DemandBox"]
 layout_mode = 2
 modulate = Color(1, 1, 1, 0.9)
-text = "Trader Offer"
+text = "Recovered Stock"
 
 [node name="DemandGrid" parent="Root/HBox/CartPanel/Margin/VBox/Grids/DemandBox" instance=ExtResource("3")]
 layout_mode = 2
@@ -261,39 +273,68 @@ layout_mode = 2
 [node name="Totals" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
 modulate = Color(1, 1, 1, 0.9)
-text = "Sell: 0    Buy: 0\nNet: 0\nFollowers after: 0"
+text = "Offer: 0    Request: 0\nNet: 0\nFollowers after: 0"
+
+[node name="TradeStatus" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+modulate = Color(1, 0.58, 0.3, 0.95)
+theme_override_font_sizes/font_size = 12
+text = "Choose goods from either side."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="TradeTools" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MarkAllBag" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Offer Bag"
+
+[node name="MarkNEG" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Offer NEG"
+
+[node name="IncludeEquipped" type="CheckBox" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
+layout_mode = 2
+tooltip_text = "Allow equipped items to be added to your offer."
+text = "Gear"
 
 [node name="Buttons" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="BtnClearCart" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Clear Cart"
+text = "Clear"
 
 [node name="BtnBarter" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Barter"
+text = "Confirm Exchange"
 
 [node name="Vendor" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(255, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("sb_panel")
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Vendor"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Vendor/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="VendorHeader" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
 layout_mode = 2
@@ -302,7 +343,7 @@ theme_override_constants/separation = 8
 [node name="VendorTitle" type="Label" parent="Root/HBox/Vendor/Margin/VBox/VendorHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Trader"
+text = "Trader Stock"
 
 [node name="RefreshVendor" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorHeader"]
 layout_mode = 2
@@ -320,7 +361,7 @@ button_pressed = true
 
 [node name="CatEquip" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
 layout_mode = 2
-text = "Equip"
+text = "Gear"
 toggle_mode = true
 
 [node name="CatBag" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
@@ -333,23 +374,41 @@ layout_mode = 2
 text = "Sets"
 toggle_mode = true
 
-[node name="Spacer" type="Control" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
+[node name="VendorTools" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
 layout_mode = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
-[node name="Search" type="LineEdit" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
+[node name="Affordable" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorTools"]
+layout_mode = 2
+toggle_mode = true
+text = "Affordable"
+tooltip_text = "Show stock affordable with current Followers plus your offer."
+
+[node name="Search" type="LineEdit" parent="Root/HBox/Vendor/Margin/VBox/VendorTools"]
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Search..."
+placeholder_text = "Search stock..."
 clear_button_enabled = true
 
 [node name="VendorGrid" parent="Root/HBox/Vendor/Margin/VBox" instance=ExtResource("3")]
 layout_mode = 2
 
-[node name="ConfirmSell" type="ConfirmationDialog" parent="."]
-title = "Confirm Trade"
+[node name="ConfirmSell" parent="." instance=ExtResource("7_trade_confirm")]
 
 [node name="Tooltip" parent="." instance=ExtResource("4")]
 visible = false
 z_index = 200
 z_as_relative = false
+
+[node name="SetBreakpointNotifier" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_set_breakpoints")
+
+[node name="DeveloperConsole" parent="." instance=ExtResource("10_dev_console")]

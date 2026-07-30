@@ -1,7 +1,7 @@
 extends RefCounted
 class_name EnemyLifecycle
 
-var _owner: Enemy = null
+var _owner: EnemyActor = null
 var _drops: EnemyDrops = null
 var _bomber: EnemyBomber = null
 var _splitter: EnemySplitter = null
@@ -9,7 +9,7 @@ var _splitter: EnemySplitter = null
 var _last_hurt_sfx_ms: int = 0
 const HURT_SFX_COOLDOWN_MS: int = 120
 
-func setup(owner: Enemy, drops: EnemyDrops, bomber: EnemyBomber, splitter: EnemySplitter) -> void:
+func setup(owner: EnemyActor, drops: EnemyDrops, bomber: EnemyBomber, splitter: EnemySplitter) -> void:
 	_owner = owner
 	_drops = drops
 	_bomber = bomber
@@ -75,19 +75,32 @@ func _die(source: Node) -> void:
 		return
 
 	_owner.dead = true
+	# Release population budgets immediately; queue_free unregisters later and
+	# EnemyIndex guards against double-decrementing the counters.
+	if _owner.has_method("_notify_enemy_index_dead"):
+		_owner.call("_notify_enemy_index_dead")
 
-	# Bomber special: explode on death
-	if _owner.spec != null and _owner.spec.ai == EnemySpec.AI.BOMBER and _owner.spec.explode_on_death:
-		if _bomber != null:
-			_bomber.explode_now()
+	var explode_on_death: bool = _owner.spec != null and _owner.spec.ai == EnemySpec.AI.BOMBER and _owner.spec.explode_on_death
+	var is_splitter: bool = _owner.spec != null and _owner.spec.ai == EnemySpec.AI.SPLITTER
+
+	# Splitter loot belongs to the family, not every spawned body. The original
+	# rolls once; when successful, exactly one immediate child inherits the item.
+	# Descendants without that entitlement never perform independent item rolls.
+	var split_generation: int = maxi(0, int(_owner.get_meta("split_generation", 0))) if is_splitter else 0
+	var inherited_split_item: bool = is_splitter and bool(_owner.get_meta("split_item_entitled", false))
+	var root_split_item: bool = is_splitter and split_generation == 0 and _drops != null and _drops.roll_item_entitlement()
+	var split_children: Array[EnemyActor] = []
+	if is_splitter and _splitter != null:
+		split_children = _splitter.spawn_splitters(_owner.is_elite)
+
+	if root_split_item:
+		if split_children.is_empty():
+			_drops.drop_entitled_item()
 		else:
-			_owner.queue_free()
-		return
-
-	# Splitter special: spawn children
-	if _owner.spec != null and _owner.spec.ai == EnemySpec.AI.SPLITTER and _owner.spec.split_scene != null:
-		if _splitter != null:
-			_splitter.spawn_splitters(_owner.is_elite)
+			var heir_index: int = Global._rng.randi_range(0, split_children.size() - 1)
+			split_children[heir_index].set_meta("split_item_entitled", true)
+	elif inherited_split_item and _drops != null:
+		_drops.drop_entitled_item()
 
 	# kill event
 	var p: Node = source
@@ -105,9 +118,16 @@ func _die(source: Node) -> void:
 
 	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
 
-	# drops
+	# Health pickups keep their existing per-body behavior. Item loot for a
+	# Splitter family was already resolved above and must not roll again here.
 	if _drops != null:
 		_drops.try_drop_health_pickup()
-		_drops.try_drop_item()
+		if not is_splitter:
+			_drops.try_drop_item()
 
-	_owner.queue_free()
+	# Bomber destruction is only the visual/damage implementation. Kill events,
+	# Followers and drops above are resolved first and exactly once.
+	if explode_on_death and _bomber != null:
+		_bomber.explode_now()
+	else:
+		_owner.queue_free()

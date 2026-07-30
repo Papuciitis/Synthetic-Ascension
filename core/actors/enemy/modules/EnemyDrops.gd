@@ -3,10 +3,10 @@ class_name EnemyDrops
 
 const HEALTH_PICKUP_SCENE: PackedScene = preload("res://scenes/world/pickups/HealthPickup.tscn")
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _pool: Array[String] = []
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 
 func build_drop_pool() -> void:
@@ -41,7 +41,7 @@ func build_drop_pool() -> void:
 			_pool.append(str(k))
 
 
-	# Debug: show pool composition after building (toggle with Enemy.debug_drops).
+	# Debug: show pool composition after building (toggle with EnemyActor.debug_drops).
 	if _enemy != null and _enemy.debug_drops:
 		print("[DROP POOL] enemy=", _enemy.name,
 			" prefixes=", _enemy.drop_pool_prefixes,
@@ -84,17 +84,45 @@ func try_drop_health_pickup() -> void:
 	tree.current_scene.call_deferred("add_child", pickup)
 
 func try_drop_item() -> void:
-	if _enemy == null:
+	if not roll_item_entitlement():
 		return
+	drop_entitled_item()
 
+
+func roll_item_entitlement() -> bool:
+	if not _can_drop_item():
+		return false
+	return _roll_item_drop()
+
+
+func drop_entitled_item() -> void:
+	if not _can_drop_item():
+		return
+	var instance_count: int = Global._rng.randi_range(
+		mini(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max)),
+		maxi(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max))
+	)
+	for _i in range(instance_count):
+		_spawn_rolled_instance_pickup()
+
+
+func finalize_rarity(rolled_base: int, elite_bonus: int, threat_bonus: int) -> int:
+	return maxi(0, rolled_base + elite_bonus + threat_bonus)
+
+
+func _can_drop_item() -> bool:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return false
 	if _enemy.item_pickup_scene == null:
 		push_warning("item_pickup_scene is null")
-		return
-
+		return false
 	if Global.item_db.is_empty():
 		push_warning("Global.item_db is EMPTY -> no items to drop")
-		return
+		return false
+	return true
 
+
+func _roll_item_drop() -> bool:
 	var roll: float = Global._rng.randf()
 	# Dynamic drop tuning:
 	# - Early segment: fewer items (prevents full-set farming before the run even starts)
@@ -118,66 +146,73 @@ func try_drop_item() -> void:
 			" all=", Global.item_db.size()
 		)
 
-	if roll > eff_chance:
-		return
+	return roll <= eff_chance
 
+
+func _spawn_rolled_instance_pickup() -> bool:
 	var pick_id: String = _pick_drop_id()
-	if _enemy.debug_drops:
-		print("[DROP PICK] enemy=", _enemy.name,
-			" prefixes=", _enemy.drop_pool_prefixes,
-			" pool_size=", _pool.size(),
-			" pick_id=", pick_id
-		)
-
 	if pick_id == "":
 		push_warning("Drop pool empty -> cannot drop")
-		return
+		return false
 
+	var data: ItemData = Global.get_item_data(pick_id)
+	if data == null:
+		push_warning("Drop pick_id not found in DB: " + pick_id)
+		return false
+
+	var pickup: ItemPickup = _new_pickup()
+	if pickup == null:
+		return false
+
+	var td: Node = _enemy.get_node_or_null("/root/ThreatDirector")
+	var loot_bonus: int = int(td.get("loot_rarity_bonus")) if td != null else 0
+	var rarity_min: int = _enemy.drop_rarity_min + loot_bonus
+	var rarity_max: int = _enemy.drop_rarity_max + loot_bonus
+	if _enemy.spec != null and _enemy.is_elite:
+		rarity_min += _enemy.spec.elite_rarity_bonus
+		rarity_max += _enemy.spec.elite_rarity_bonus
+	var context := Global.build_item_drop_context(
+		rarity_min,
+		rarity_max,
+		&"enemy",
+		1 if _enemy.is_elite else 0,
+		_enemy.is_elite
+	)
+	var generated := ItemGenerator.create_instance(data, context, Global._rng)
+	if generated == null:
+		pickup.free()
+		return false
+	if _enemy.drop_force_polarity != 0:
+		generated.polarity = (
+			ItemInstance.Polarity.NEG
+			if _enemy.drop_force_polarity < 0
+			else ItemInstance.Polarity.POS
+		)
+		generated.best_pct = absf(generated.best_pct) * float(generated.polarity)
+	pickup.item_instance = generated
+	pickup.item_id = str(data.id)
+	pickup.amount = 1
+	_defer_pickup(pickup)
+	return true
+
+
+func _new_pickup() -> ItemPickup:
 	var pickup: ItemPickup = _enemy.item_pickup_scene.instantiate() as ItemPickup
 	if pickup == null:
 		push_error("ItemPickup.tscn root is not ItemPickup (script/class_name missing?)")
-		return
-
-	var offset: Vector2 = Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * _enemy.drop_spawn_radius
-	pickup.global_position = _enemy.global_position + offset
+		return null
+	var angle: float = Global._rng.randf() * TAU
+	var distance: float = Global._rng.randf_range(6.0, maxf(6.0, _enemy.drop_spawn_radius))
+	pickup.global_position = _enemy.global_position + Vector2.RIGHT.rotated(angle) * distance
 	pickup.pickup_delay = _enemy.pickup_delay
+	return pickup
 
-	if _enemy.drop_instance_roll:
-		var data: ItemData = Global.get_item_data(pick_id)
-		if data == null:
-			push_warning("Drop pick_id not found in DB: " + pick_id)
-			return
 
-		var elite_bonus: int = 0
-		if _enemy.spec != null and _enemy.is_elite:
-			elite_bonus = _enemy.spec.elite_rarity_bonus
-
-		var td: Node = _enemy.get_node_or_null("/root/ThreatDirector")
-		var loot_bonus: int = 0
-		if td != null:
-			loot_bonus = int(td.get("loot_rarity_bonus"))
-		var rarity: int = Global._rng.randi_range(_enemy.drop_rarity_min, _enemy.drop_rarity_max) + elite_bonus + loot_bonus
-		var roll_pct: float = Global.roll_percent(Global.run_luck, data.pct_min, data.pct_max)
-
-		var pol: int = ItemInstance.Polarity.POS
-		if _enemy.drop_force_polarity < 0:
-			pol = ItemInstance.Polarity.NEG
-		elif _enemy.drop_force_polarity > 0:
-			pol = ItemInstance.Polarity.POS
-		else:
-			pol = (ItemInstance.Polarity.POS if roll_pct >= 0.0 else ItemInstance.Polarity.NEG)
-
-		roll_pct = absf(roll_pct) * (1.0 if pol == ItemInstance.Polarity.POS else -1.0)
-
-		var inst: ItemInstance = ItemInstance.from_roll(data, rarity, pol, roll_pct)
-		pickup.item_instance = inst
-		pickup.item_id = data.id
-		pickup.amount = 1
-	else:
-		pickup.item_id = pick_id
-		pickup.amount = Global._rng.randi_range(
-			maxi(1, _enemy.drop_amount_min),
-			maxi(1, _enemy.drop_amount_max)
-		)
-
-	_enemy.get_tree().current_scene.call_deferred("add_child", pickup)
+func _defer_pickup(pickup: ItemPickup) -> void:
+	if pickup == null:
+		return
+	var tree: SceneTree = _enemy.get_tree()
+	if tree == null or tree.current_scene == null:
+		pickup.free()
+		return
+	tree.current_scene.call_deferred("add_child", pickup)

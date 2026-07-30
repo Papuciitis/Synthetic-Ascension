@@ -51,7 +51,7 @@ func refresh_effects(inv: Inventory) -> void:
 		if it == null or it.data == null:
 			continue
 
-		for scn: PackedScene in it.data.effect_scenes:
+		for scn: PackedScene in it.data.get_effect_scenes(it):
 			if scn == null:
 				continue
 

@@ -1,10 +1,10 @@
 extends RefCounted
 class_name EnemyHerald
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _pulse_cd: float = 0.0
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	if _enemy != null and _enemy.spec != null:
 		var every: float = maxf(_enemy.spec.herald_pulse_every, 0.2)
@@ -68,14 +68,14 @@ func _do_pulse() -> void:
 		var gathered: Array = []
 		ei.call("gather_in_radius", _enemy.global_position, r, gathered)
 		for n in gathered:
-			var e: Enemy = n as Enemy
+			var e: EnemyActor = n as EnemyActor
 			if e == null or e == _enemy:
 				continue
 			e.apply_speed_buff(_enemy.spec.herald_ally_speed_mult, _enemy.spec.herald_ally_speed_duration)
 	else:
 		var nodes: Array = _enemy.get_tree().get_nodes_in_group("enemies")
 		for n in nodes:
-			var e: Enemy = n as Enemy
+			var e: EnemyActor = n as EnemyActor
 			if e == null or e == _enemy:
 				continue
 			if e.global_position.distance_to(_enemy.global_position) <= r:

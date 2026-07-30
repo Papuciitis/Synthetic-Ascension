@@ -21,29 +21,22 @@ var _running: bool = false
 var _last_text: String = ""
 var _last_shown_msec: int = -1000000000
 var _tw: Tween = null
-var _shutting_down: bool = false
 
 
 func _enter_tree() -> void:
-	_shutting_down = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_hook_run_events()
 
 
-func _exit_tree() -> void:
-	_shutting_down = true
-	_queue.clear()
-	_running = false
-	if _tw != null and _tw.is_valid():
-		_tw.kill()
-	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		var cb := Callable(self, "_on_tutorial_tip")
-		if RunEvents.tutorial_tip.is_connected(cb):
-			RunEvents.tutorial_tip.disconnect(cb)
-
-
 func _ready() -> void:
 	_resolve_nodes()
+
+
+func _exit_tree() -> void:
+	_queue.clear()
+	_running = false
+	if _tw != null and _tw.is_running():
+		_tw.kill()
 
 
 func _hook_run_events() -> void:
@@ -65,8 +58,6 @@ func _on_tutorial_tip(text: String, duration: float) -> void:
 
 
 func enqueue_tip(text: String, duration: float = 2.8) -> void:
-	if _shutting_down or not is_inside_tree():
-		return
 	_resolve_nodes()
 	if _panel == null or _label == null:
 		return
@@ -93,16 +84,15 @@ func enqueue_tip(text: String, duration: float = 2.8) -> void:
 
 
 func _run_queue() -> void:
-	if _shutting_down or not is_inside_tree():
-		_running = false
-		return
 	_resolve_nodes()
-	if _panel == null or _label == null:
-		_queue.clear()
-		_running = false
+	if not _queue_context_is_valid():
+		_abort_queue()
 		return
 
-	while _queue.size() > 0 and not _shutting_down and is_inside_tree():
+	while _queue.size() > 0:
+		if not _queue_context_is_valid():
+			_abort_queue()
+			return
 		var tip: Dictionary = _queue.pop_front() as Dictionary
 		var t: String = String(tip.get("text", ""))
 		var dur: float = float(tip.get("duration", 2.8))
@@ -113,18 +103,35 @@ func _run_queue() -> void:
 		_show_now(t)
 		var tree: SceneTree = get_tree()
 		if tree == null:
-			break
+			_abort_queue()
+			return
 		await tree.create_timer(dur, false, true, true).timeout
-		if _shutting_down or not is_inside_tree():
+		if not _queue_context_is_valid():
+			_abort_queue()
 			return
 		_hide_now()
 		tree = get_tree()
 		if tree == null:
+			_abort_queue()
 			return
 		await tree.create_timer(gap_sec, false, true, true).timeout
-		if _shutting_down or not is_inside_tree():
-			return
 
+	_running = false
+
+
+func _queue_context_is_valid() -> bool:
+	return (
+		is_inside_tree()
+		and get_tree() != null
+		and _panel != null
+		and is_instance_valid(_panel)
+		and _label != null
+		and is_instance_valid(_label)
+	)
+
+
+func _abort_queue() -> void:
+	_queue.clear()
 	_running = false
 
 

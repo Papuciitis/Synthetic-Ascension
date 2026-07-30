@@ -8,6 +8,7 @@ class_name ChunkManager
 @export var load_radius: int = 2
 @export var unload_radius: int = 3
 @export var player_group: StringName = &"player"
+@export_range(1, 4, 1) var max_chunk_generations_per_frame: int = 1
 
 @export_group("Generation Grid")
 @export var cell_size_px: int = 64
@@ -26,10 +27,14 @@ class_name ChunkManager
 @export_range(0, 3, 1) var landmark_chance_per_special_chunk: int = 1 # 1 => ~33%
 
 
+const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const _SITE_MGR: Script = preload("res://core/systems/world/proc/SiteManager.gd")
 const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd")
+const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRenderer.gd")
 
 @export var generation_enabled: bool = true
+@export_group("Rendering")
+@export var tiled_world_rendering: bool = true
 
 @export_group("Generation Weights")
 @export_range(0.0, 1.0, 0.01) var weight_empty: float = 0.70
@@ -46,9 +51,9 @@ const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd
 @export_range(0, 3, 1) var district_sidewalk_width_cells: int = 2
 @export_range(0, 6, 1) var district_sidewalk_corner_pad_cells: int = 3
 @export_range(0.0, 1.0, 0.01) var district_sidewalk_alpha: float = 0.88
-@export_range(0.0, 1.0, 0.01) var district_road_edge_noise_chance: float = 0.35
-@export_range(0, 8, 1) var district_plaza_islands_max: int = 4
-@export_range(0.0, 1.0, 0.01) var district_plaza_island_chance: float = 0.65
+@export_range(0.0, 1.0, 0.01) var district_road_edge_noise_chance: float = 0.16
+@export_range(0, 8, 1) var district_plaza_islands_max: int = 2
+@export_range(0.0, 1.0, 0.01) var district_plaza_island_chance: float = 0.35
 
 @export_group("Donjon Inside District")
 @export var donjon_enabled: bool = true
@@ -91,13 +96,22 @@ const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd
 # Per-chunk connector mask set by segment builders (Donjon-style coherency).
 # N=1 E=2 S=4 W=8
 var _chunk_connectors: Dictionary = {} # Vector2i -> int
+# Separate pedestrian/courtyard access. These do not become road connectors.
+var _chunk_urban_access: Dictionary = {} # Vector2i -> int, N=1 E=2 S=4 W=8
 
 # Optional per-chunk archetype overrides set by segment builders.
 # Examples: "courtyard", "street", "arena".
 var _chunk_archetype: Dictionary = {} # Vector2i -> StringName
 
+# Semantic plan data. Roles drive module behaviour; terrain selects the low-level base surface.
+var _chunk_role: Dictionary = {} # Vector2i -> StringName
+var _chunk_terrain: Dictionary = {} # Vector2i -> StringName
+var _fallback_terrain: StringName = &"grass"
+
 var _site_mgr: SiteManager = null
 var _content_gen: ChunkGenImpl = null
+var _tile_renderer: ChunkTileRenderer = null
+var _external_tile_roots: Array[Node2D] = []
 
 
 @export_group("Scenes (assign in Inspector)")
@@ -120,13 +134,23 @@ var _current_center: Vector2i = Vector2i(999999, 999999)
 var _blocked_cells: Dictionary = {}      # Vector2i -> true
 var _manual_blocked_cells: Dictionary = {} # Vector2i -> true (handcrafted, never unloaded)
 var _chunk_blocked: Dictionary = {}      # Vector2i(chunk_coord) -> Array[Vector2i(global_cell)]
+var _projectile_blockers: Dictionary = {} # Vector2i -> packed WorldBlockerGeometry descriptor
+var _projectile_blocker_owners: Dictionary = {} # Vector2i -> instance id
 var _gen_coord: Vector2i = Vector2i.ZERO
 var _nav_revision: int = 0
+var _nav_revision_pending := false
+var _nav_revision_requests := 0
+var _nav_revision_commits := 0
+var _nav_revision_reasons: Dictionary = {}
+var _nav_revision_last_reason: StringName = &""
+var _chunk_generation_queue: Array[Vector2i] = []
+var _queued_chunk_coords: Dictionary = {}
 
 var _debug_tex: Texture2D = null
 
 func _ready() -> void:
 	add_to_group(&"chunk_manager")
+	_ensure_tile_renderer()
 
 	_player = get_tree().get_first_node_in_group(String(player_group)) as Node2D
 
@@ -153,14 +177,18 @@ func _process(_delta: float) -> void:
 	if c != _current_center:
 		_current_center = c
 		_update_streaming()
+	process_chunk_generation_queue()
+
+
+func loaded_chunk_count() -> int:
+	return _chunks.size()
 
 func _update_streaming() -> void:
-	# Load needed chunks
-	for dy in range(-load_radius, load_radius + 1):
-		for dx in range(-load_radius, load_radius + 1):
-			var cc := Vector2i(_current_center.x + dx, _current_center.y + dy)
-			if not _chunks.has(cc):
-				_chunks[cc] = _create_chunk(cc)
+	# The center must exist immediately; surrounding chunks are safely beyond the
+	# viewport and are generated nearest-first across subsequent frames.
+	if _chunks.is_empty() and not _chunks.has(_current_center):
+		_chunks[_current_center] = _create_chunk(_current_center)
+	queue_missing_chunks(_current_center)
 
 	# Unload far chunks
 	var to_remove: Array[Vector2i] = []
@@ -175,14 +203,62 @@ func _update_streaming() -> void:
 
 		var n: Node2D = _chunks[key] as Node2D
 		if n != null:
+			if _tile_renderer != null:
+				_tile_renderer.clear_chunk(n)
 			n.queue_free()
 		_chunks.erase(key)
+	if not to_remove.is_empty() and PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"world", &"chunks_unloaded", to_remove.size())
+
+
+func queue_missing_chunks(center: Vector2i) -> void:
+	_chunk_generation_queue.clear()
+	_queued_chunk_coords.clear()
+	for dy in range(-load_radius, load_radius + 1):
+		for dx in range(-load_radius, load_radius + 1):
+			var coord := Vector2i(center.x + dx, center.y + dy)
+			if _chunks.has(coord) or _queued_chunk_coords.has(coord):
+				continue
+			_chunk_generation_queue.append(coord)
+			_queued_chunk_coords[coord] = true
+	_chunk_generation_queue.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := _chebyshev_dist(a, center)
+		var db := _chebyshev_dist(b, center)
+		if da != db:
+			return da < db
+		if a.y != b.y:
+			return a.y < b.y
+		return a.x < b.x
+	)
+
+
+func process_chunk_generation_queue(limit: int = -1) -> int:
+	var budget := maxi(1, max_chunk_generations_per_frame) if limit < 0 else maxi(0, limit)
+	var generated := 0
+	while generated < budget and not _chunk_generation_queue.is_empty():
+		var coord: Vector2i = _chunk_generation_queue.pop_front()
+		_queued_chunk_coords.erase(coord)
+		if _chunks.has(coord):
+			continue
+		if _chebyshev_dist(coord, _current_center) > load_radius:
+			continue
+		_chunks[coord] = _create_chunk(coord)
+		generated += 1
+	if _chunk_generation_queue.is_empty() and _nav_revision_pending:
+		call_deferred("commit_pending_nav_revision")
+	return generated
+
+
+func debug_chunk_queue() -> Array[Vector2i]:
+	return _chunk_generation_queue.duplicate()
 
 func _create_chunk(coord: Vector2i) -> Node2D:
+	var generation_started := Time.get_ticks_usec()
 	var chunk := Node2D.new()
 	chunk.name = "Chunk_%d_%d" % [coord.x, coord.y]
 	chunk.position = _chunk_to_world_origin(coord)
 	add_child(chunk)
+	_prepare_chunk_rendering(chunk, coord)
 
 	# Prepare blocked list for this chunk
 	_chunk_blocked[coord] = []
@@ -191,7 +267,7 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed_for_chunk(coord)
 	if ground_enabled:
-		_add_ground(chunk, rng)
+		_add_ground(chunk, rng, coord)
 		if decals_enabled:
 			_add_decals(chunk, rng)
 
@@ -201,6 +277,12 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 
 	if generation_enabled:
 		_generate_chunk(coord, chunk)
+		_tile_repeated_visuals(chunk)
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"world", &"chunk_created", 1, {
+			"coord": str(coord),
+			"generation_usec": Time.get_ticks_usec() - generation_started,
+		})
 	return chunk
 
 
@@ -226,9 +308,40 @@ func clear_chunk_connectors() -> void:
 func get_chunk_connectors(coord: Vector2i) -> int:
 	return int(_chunk_connectors.get(coord, 0))
 
+func set_chunk_urban_access(coord: Vector2i, mask: int) -> void:
+	_chunk_urban_access[coord] = mask
+
+func clear_chunk_urban_access() -> void:
+	_chunk_urban_access.clear()
+
+func get_chunk_urban_access(coord: Vector2i) -> int:
+	return int(_chunk_urban_access.get(coord, 0))
+
+func set_chunk_role(coord: Vector2i, role: StringName) -> void:
+	_chunk_role[coord] = role
+
+func clear_chunk_roles() -> void:
+	_chunk_role.clear()
+
+func get_chunk_role(coord: Vector2i) -> StringName:
+	return _chunk_role.get(coord, &"unplanned") as StringName
+
+func set_chunk_terrain(coord: Vector2i, terrain: StringName) -> void:
+	_chunk_terrain[coord] = terrain
+
+func clear_chunk_terrain() -> void:
+	_chunk_terrain.clear()
+
+func get_chunk_terrain(coord: Vector2i) -> StringName:
+	return _chunk_terrain.get(coord, &"") as StringName
+
+func set_fallback_terrain(terrain: StringName) -> void:
+	_fallback_terrain = terrain if terrain != &"" else &"grass"
 
 func reset_world() -> void:
 	# Clears all streamed chunks and blocked-cell caches, then reloads around the player.
+	if _tile_renderer != null:
+		_tile_renderer.clear_all()
 	var keys: Array = _chunks.keys()
 	for k in keys:
 		var cc: Vector2i = k
@@ -240,16 +353,46 @@ func reset_world() -> void:
 	_chunks.clear()
 	_chunk_blocked.clear()
 	_blocked_cells.clear()
+	_projectile_blockers.clear()
+	_projectile_blocker_owners.clear()
 	if _site_mgr != null:
 		_site_mgr.reset()
 
-	_nav_revision += 1
+	request_nav_revision(&"world_reset")
 	_current_center = _world_to_chunk(_player.global_position) if _player != null else Vector2i(999999, 999999)
 	_update_streaming()
 
 
-func _add_ground(chunk: Node2D, rng: RandomNumberGenerator) -> void:
-	if WorldArt.GROUND_TEX.is_empty():
+func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) -> void:
+	var ground_count: int = _WORLD_ART.ground_texture_count()
+	if ground_count <= 0:
+		return
+
+	var terrain: StringName = get_chunk_terrain(coord)
+	if terrain == &"":
+		terrain = _fallback_terrain
+		# Unplanned streamed chunks stay explorable and natural instead of becoming
+		# square city slabs. Add a little deterministic dirt variation.
+		if terrain == &"grass" and posmod(_seed_for_chunk(coord), 5) == 0:
+			terrain = &"dirt"
+
+	var tex_index: int = _ground_index_for_terrain(terrain)
+	tex_index = clampi(tex_index, 0, ground_count - 1)
+	var ground_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
+	if ground_tex == null:
+		return
+	if tiled_world_rendering:
+		_ensure_tile_renderer()
+		if _tile_renderer != null:
+			_tile_renderer.paint_repeating_rect(
+				chunk,
+				&"ground",
+				Rect2i(Vector2i.ZERO, Vector2i(_cells_per_chunk(), _cells_per_chunk())),
+				ground_tex,
+				_WORLD_ART.ground_repeat_world_px(tex_index),
+				-100,
+				Color.WHITE
+			)
 		return
 
 	var spr := Sprite2D.new()
@@ -257,31 +400,43 @@ func _add_ground(chunk: Node2D, rng: RandomNumberGenerator) -> void:
 	spr.z_index = -100
 	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
-
-	var cells: int = _cells_per_chunk()
-
-	# Grass base first (less busy), others become stamps/variation later.
-	var tex: Texture2D = WorldArt.GROUND_TEX[0]
-	spr.texture = tex
-
+	spr.texture = ground_tex
 	spr.region_enabled = true
-	# Random offset so seams don't line up if texture isn't perfectly tileable
-	var ox: float = float(rng.randi_range(0, WorldArt.TEX_TILE_PX - 1))
-	var oy: float = float(rng.randi_range(0, WorldArt.TEX_TILE_PX - 1))
-	spr.region_rect = Rect2(ox, oy, float(WorldArt.TEX_TILE_PX * cells), float(WorldArt.TEX_TILE_PX * cells))
 
-	var s: float = float(cell_size_px) / float(WorldArt.TEX_TILE_PX)
-	spr.scale = Vector2(s, s)
+	# Keep the texture continuous in world space across chunk boundaries.
+	var tile_px: int = _WORLD_ART.texture_tile_px()
+	var repeat_world_px: int = _WORLD_ART.ground_repeat_world_px(tex_index)
+	var source_per_world: float = float(tile_px) / float(repeat_world_px)
+	var phase_x: float = float(posmod(world_seed * 31, tile_px))
+	var phase_y: float = float(posmod(world_seed * 53, tile_px))
+	var world_x: float = float(coord.x * chunk_size_px)
+	var world_y: float = float(coord.y * chunk_size_px)
+	var ox: float = fposmod(phase_x + world_x * source_per_world, float(tile_px))
+	var oy: float = fposmod(phase_y + world_y * source_per_world, float(tile_px))
+	spr.region_rect = Rect2(ox, oy, float(chunk_size_px) * source_per_world, float(chunk_size_px) * source_per_world)
 
-	# Slight per-chunk value variance (breaks "samey" without adding noise)
-	var b: float = rng.randf_range(0.95, 1.05)
-	spr.modulate = Color(b, b, b, 1.0)
-
+	var texture_scale: float = float(repeat_world_px) / float(tile_px)
+	spr.scale = Vector2(texture_scale, texture_scale)
+	spr.modulate = Color.WHITE
 	spr.position = Vector2(float(chunk_size_px) * 0.5, float(chunk_size_px) * 0.5)
 	chunk.add_child(spr)
 
+func _ground_index_for_terrain(terrain: StringName) -> int:
+	match terrain:
+		&"grass":
+			return 0
+		&"dirt":
+			return 1
+		&"mud":
+			return 5
+		&"urban":
+			return 6
+		_:
+			return 0
+
 func _add_decals(chunk: Node2D, rng: RandomNumberGenerator) -> void:
-	if WorldArt.DECAL_TEX.is_empty():
+	var decal_count: int = _WORLD_ART.decal_texture_count()
+	if decal_count <= 0:
 		return
 
 	var n: int = rng.randi_range(decals_per_chunk_min, decals_per_chunk_max)
@@ -289,73 +444,122 @@ func _add_decals(chunk: Node2D, rng: RandomNumberGenerator) -> void:
 		return
 
 	var cells: int = _cells_per_chunk()
-	var s: float = float(cell_size_px) / float(WorldArt.TEX_TILE_PX)
+	var s: float = float(cell_size_px) / float(_WORLD_ART.texture_tile_px())
 
 	for i in range(n):
+		var texture := _WORLD_ART.decal_texture(rng.randi_range(0, decal_count - 1))
+		var alpha := rng.randf_range(0.12, 0.25)
+		var _scale_variation := rng.randf_range(0.75, 1.25)
+		var quarter_turns := rng.randi_range(0, 3)
+		var flip_h := rng.randf() < 0.5
+		var flip_v := rng.randf() < 0.5
+		var cx: int = rng.randi_range(0, cells - 1)
+		var cy: int = rng.randi_range(0, cells - 1)
+		if tiled_world_rendering:
+			_ensure_tile_renderer()
+			if _tile_renderer != null:
+				_tile_renderer.paint_transformed_texture(
+					chunk, &"decal", Vector2i(cx, cy), texture, -90,
+					quarter_turns, flip_h, flip_v, Color(1, 1, 1, alpha)
+				)
+			continue
 		var spr := Sprite2D.new()
 		spr.name = "Decal_%d" % i
 		spr.z_index = -90
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-		spr.texture = WorldArt.DECAL_TEX[rng.randi_range(0, WorldArt.DECAL_TEX.size() - 1)]
+		spr.texture = texture
 
 		# Keep decals subtle; they're just to break repetition.
-		spr.modulate = Color(1, 1, 1, rng.randf_range(0.12, 0.25))
+		spr.modulate = Color(1, 1, 1, alpha)
 
 		# Size + rotation variety
-		var ss := s * rng.randf_range(0.75, 1.25)
+		var ss := s * _scale_variation
 		spr.scale = Vector2(ss, ss)
-		spr.rotation = rng.randf_range(0.0, TAU)
-		spr.flip_h = rng.randf() < 0.5
-		spr.flip_v = rng.randf() < 0.5
-
-		var cx: int = rng.randi_range(0, cells - 1)
-		var cy: int = rng.randi_range(0, cells - 1)
+		spr.rotation = float(quarter_turns) * PI * 0.5
+		spr.flip_h = flip_h
+		spr.flip_v = flip_v
 		spr.position = Vector2(float(cx * cell_size_px) + float(cell_size_px) * 0.5, float(cy * cell_size_px) + float(cell_size_px) * 0.5)
+		spr.set_meta(&"_tile_repeat_visual", true)
 
 		chunk.add_child(spr)
 
 
 func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype: StringName, _conn_mask: int) -> void:
-	# Non-blocking flavor: vegetation + landmarks so the world doesn't feel like empty green.
+	# Non-blocking flavor: vegetation + landmarks so the world doesn't feel empty.
+	var role: StringName = get_chunk_role(_gen_coord)
 	var cells: int = _cells_per_chunk()
 	if cells <= 0:
 		return
 
 	# Vegetation scatter (more in open/plaza, less in gate).
 	var n := rng.randi_range(veg_per_chunk_min, veg_per_chunk_max)
-	if archetype == &"gate":
+	if role == &"service_lane" or role == &"exploration_reward" or role == &"unplanned":
+		n += 2
+	if archetype == &"gate" or role == &"checkpoint" or role == &"miniboss_arena":
 		n = maxi(0, n - 1)
 
-	for i in range(n):
-		var c := _pick_free_cell_local(rng, cells)
-		if c.x < 0:
-			break
-		var spr := Sprite2D.new()
-		spr.name = "Veg_%d" % i
-		spr.z_index = -85
-		spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-		spr.texture = WorldArt.VEG_TEX[rng.randi_range(0, WorldArt.VEG_TEX.size() - 1)]
-		spr.scale = Vector2(0.0625, 0.0625) * rng.randf_range(0.9, 1.15)
-		spr.rotation = rng.randf_range(0.0, TAU)
-		spr.modulate.a = rng.randf_range(0.55, 0.85)
-		spr.position = Vector2(float(c.x * cell_size_px) + float(cell_size_px) * 0.5, float(c.y * cell_size_px) + float(cell_size_px) * 0.5)
-		chunk.add_child(spr)
+	var vegetation_count: int = _WORLD_ART.vegetation_texture_count()
+	if vegetation_count > 0:
+		for i in range(n):
+			var c := _pick_free_cell_local(rng, cells)
+			if c.x < 0:
+				break
+			var texture := _WORLD_ART.vegetation_texture(rng.randi_range(0, vegetation_count - 1))
+			var _scale_variation := rng.randf_range(0.9, 1.15)
+			var quarter_turns := rng.randi_range(0, 3)
+			var alpha := rng.randf_range(0.55, 0.85)
+			if tiled_world_rendering:
+				_ensure_tile_renderer()
+				if _tile_renderer != null:
+					_tile_renderer.paint_transformed_texture(
+						chunk, &"deco", c, texture, -85,
+						quarter_turns, false, false, Color(1, 1, 1, alpha)
+					)
+				continue
+			var spr := Sprite2D.new()
+			spr.name = "Veg_%d" % i
+			spr.z_index = -85
+			spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+			spr.texture = texture
+			spr.scale = Vector2(0.0625, 0.0625) * _scale_variation
+			spr.rotation = float(quarter_turns) * PI * 0.5
+			spr.modulate.a = alpha
+			spr.position = Vector2(float(c.x * cell_size_px) + float(cell_size_px) * 0.5, float(c.y * cell_size_px) + float(cell_size_px) * 0.5)
+			spr.set_meta(&"_tile_repeat_visual", true)
+			chunk.add_child(spr)
 
-	# Landmarks: only for special chunks (plaza/arena/gate) and not every time.
-	if archetype == &"plaza" or archetype == &"arena" or archetype == &"gate":
-		if rng.randi_range(0, landmark_chance_per_special_chunk) == 0:
-			var spr2 := Sprite2D.new()
-			spr2.name = "Landmark"
-			spr2.z_index = -83
-			spr2.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-			spr2.texture = WorldArt.LANDMARK_TEX[rng.randi_range(0, WorldArt.LANDMARK_TEX.size() - 1)]
-			spr2.scale = Vector2(0.0625, 0.0625)
-			# Slight offset so it doesn't sit exactly on top of a wardstone/gate
-			var ox := float(rng.randi_range(-2, 2) * cell_size_px)
-			var oy := float(rng.randi_range(-2, 2) * cell_size_px)
-			spr2.position = Vector2(float(chunk_size_px) * 0.5 + ox, float(chunk_size_px) * 0.5 + oy)
-			spr2.modulate.a = 0.75
-			chunk.add_child(spr2)
+	# Landmark plazas always receive a memorable object; other special chunks keep a rare chance.
+	var force_landmark: bool = (role == &"landmark_plaza")
+	var special_landmark_roll: bool = (archetype == &"plaza" or archetype == &"arena" or archetype == &"gate") and rng.randi_range(0, landmark_chance_per_special_chunk) == 0
+	if force_landmark or special_landmark_roll:
+		var landmark_count: int = _WORLD_ART.landmark_texture_count()
+		if landmark_count <= 0:
+			return
+		var texture := _WORLD_ART.landmark_texture(rng.randi_range(0, landmark_count - 1))
+		var offset_cells: int = 4 if force_landmark else 2
+		var ox_cells := rng.randi_range(-offset_cells, offset_cells)
+		var oy_cells := rng.randi_range(-offset_cells, offset_cells)
+		var landmark_cell := Vector2i(cells / 2 + ox_cells, cells / 2 + oy_cells)
+		var alpha := 0.82 if force_landmark else 0.72
+		if tiled_world_rendering:
+			_ensure_tile_renderer()
+			if _tile_renderer != null:
+				_tile_renderer.paint_transformed_texture(
+					chunk, &"landmark", landmark_cell, texture, -83,
+					0, false, false, Color(1, 1, 1, alpha)
+				)
+			return
+		var spr2 := Sprite2D.new()
+		spr2.name = "Landmark"
+		spr2.z_index = -83
+		spr2.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		spr2.texture = texture
+		spr2.scale = Vector2(0.0625, 0.0625)
+		var ox := float(ox_cells * cell_size_px)
+		var oy := float(oy_cells * cell_size_px)
+		spr2.position = Vector2(float(chunk_size_px) * 0.5 + ox, float(chunk_size_px) * 0.5 + oy)
+		spr2.modulate.a = alpha
+		chunk.add_child(spr2)
 
 func _pick_free_cell_local(rng: RandomNumberGenerator, cells: int) -> Vector2i:
 	# Picks a local cell that isn't blocked by our spawned cover. Used for decorative sprites.
@@ -410,6 +614,11 @@ func _stamp_floor_rect_cells(chunk: Node2D, rect: Rect2i, tex_index: int, rng: R
 	if _content_gen != null:
 		_content_gen._stamp_floor_rect_cells(chunk, rect, tex_index, rng, alpha, z)
 
+func _stamp_floor_rect_cells_patchy(chunk: Node2D, rect: Rect2i, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
+	_ensure_content_gen()
+	if _content_gen != null:
+		_content_gen._stamp_floor_rect_cells_patchy(chunk, rect, tex_index, rng, alpha, z)
+
 func _spawn_wall_cells(chunk: Node2D, wall_cells: Dictionary, window_cells: Dictionary) -> void:
 	_ensure_content_gen()
 	if _content_gen != null:
@@ -447,6 +656,7 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -
 	b.position = Vector2(px, py)
 
 	chunk.add_child(b)
+	b.set_meta(&"_tile_repeat_visual", true)
 
 	# --- register blocked cell in global grid ---
 	_blocked_cells[global_cell] = true
@@ -466,6 +676,124 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -
 			b.add_child(s)
 
 	return b
+
+
+func _ensure_tile_renderer() -> void:
+	if _tile_renderer == null:
+		_tile_renderer = _TILE_RENDERER.new() as ChunkTileRenderer
+	if _tile_renderer != null:
+		_tile_renderer.enabled = tiled_world_rendering
+		_tile_renderer.configure_host(self, cell_size_px)
+
+
+func _prepare_chunk_rendering(chunk: Node2D, _coord: Vector2i) -> void:
+	_ensure_tile_renderer()
+	if _tile_renderer != null:
+		chunk.set_meta(&"_chunk_tile_coord", _coord)
+		chunk.set_meta(&"_chunk_cells_per_side", _cells_per_chunk())
+		_tile_renderer.begin_chunk(chunk, cell_size_px)
+		if chunk.get_parent() != self and not _external_tile_roots.has(chunk):
+			_external_tile_roots.append(chunk)
+
+
+func _tile_repeated_visuals(chunk: Node2D) -> void:
+	_ensure_tile_renderer()
+	if not tiled_world_rendering or _tile_renderer == null or chunk == null:
+		return
+	var sprites: Array[Node] = chunk.find_children("*", "Sprite2D", true, false)
+	for candidate in sprites:
+		var sprite := candidate as Sprite2D
+		if sprite == null or sprite.texture == null:
+			continue
+		var owner_marked := sprite.has_meta(&"_tile_repeat_visual")
+		var parent_marked := sprite.get_parent() != null and sprite.get_parent().has_meta(&"_tile_repeat_visual")
+		if not owner_marked and not parent_marked:
+			continue
+		if sprite.name == "Shadow":
+			sprite.queue_free()
+			continue
+		var local_position := chunk.to_local(sprite.global_position)
+		var cell := Vector2i(
+			floori(local_position.x / float(cell_size_px)),
+			floori(local_position.y / float(cell_size_px))
+		)
+		var layer_kind: StringName = &"structure" if parent_marked else &"deco"
+		if _tile_renderer.paint_sprite(chunk, layer_kind, cell, sprite, sprite.z_index):
+			sprite.queue_free()
+
+
+func get_tiled_render_stats() -> Dictionary:
+	_ensure_tile_renderer()
+	var totals := {"chunks": 0, "layers": 0, "cells": 0}
+	if _tile_renderer == null:
+		return totals
+	totals["layers"] = _tile_renderer.get_layer_count()
+	for chunk_variant in _chunks.values():
+		var chunk := chunk_variant as Node2D
+		if chunk == null:
+			continue
+		var stats := _tile_renderer.get_chunk_stats(chunk)
+		totals["chunks"] = int(totals["chunks"]) + 1
+		totals["cells"] = int(totals["cells"]) + int(stats.get("cells", 0))
+	for chunk in _external_tile_roots:
+		if chunk == null or not is_instance_valid(chunk):
+			continue
+		var stats := _tile_renderer.get_chunk_stats(chunk)
+		totals["chunks"] = int(totals["chunks"]) + 1
+		totals["cells"] = int(totals["cells"]) + int(stats.get("cells", 0))
+	return totals
+
+
+func erase_repeated_visual(chunk: Node2D, cell: Vector2i) -> bool:
+	_ensure_tile_renderer()
+	if _tile_renderer == null:
+		return false
+	return _tile_renderer.erase_cell(chunk, &"structure", cell)
+
+
+func repaint_repeated_visual(chunk: Node2D, cell: Vector2i, visual_owner: Node) -> bool:
+	_ensure_tile_renderer()
+	if _tile_renderer == null or visual_owner == null or not visual_owner.has_method("get_visual_texture"):
+		return false
+	var texture := visual_owner.call("get_visual_texture") as Texture2D
+	return _tile_renderer.paint_texture(chunk, &"structure", cell, texture, 0)
+
+
+func paint_tiled_rect(
+	chunk: Node2D,
+	layer_kind: StringName,
+	rect: Rect2i,
+	texture: Texture2D,
+	repeat_world_px: int,
+	z_index: int,
+	modulate: Color
+) -> int:
+	_ensure_tile_renderer()
+	if _tile_renderer == null:
+		return 0
+	return _tile_renderer.paint_repeating_rect(
+		chunk, layer_kind, rect, texture, repeat_world_px, z_index, modulate
+	)
+
+
+func paint_tiled_texture(
+	chunk: Node2D,
+	layer_kind: StringName,
+	cell: Vector2i,
+	texture: Texture2D,
+	z_index: int,
+	quarter_turns: int = 0,
+	flip_h: bool = false,
+	flip_v: bool = false,
+	modulate: Color = Color.WHITE
+) -> bool:
+	_ensure_tile_renderer()
+	if _tile_renderer == null:
+		return false
+	return _tile_renderer.paint_transformed_texture(
+		chunk, layer_kind, cell, texture, z_index,
+		quarter_turns, flip_h, flip_v, modulate
+	)
 
 
 func _world_to_chunk(p: Vector2) -> Vector2i:
@@ -500,7 +828,7 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 
 func register_manual_block_cell(cell: Vector2i) -> void:
 	_manual_blocked_cells[cell] = true
-	_nav_revision += 1
+	request_nav_revision(&"manual_block_added")
 
 func register_manual_block_world(pos: Vector2) -> void:
 	register_manual_block_cell(world_to_cell(pos))
@@ -509,13 +837,82 @@ func unregister_manual_block_cell(cell: Vector2i) -> void:
 	if not _manual_blocked_cells.has(cell):
 		return
 	_manual_blocked_cells.erase(cell)
-	_nav_revision += 1
+	request_nav_revision(&"manual_block_removed")
 
 func clear_manual_blocks() -> void:
 	if _manual_blocked_cells.size() == 0:
 		return
 	_manual_blocked_cells.clear()
-	_nav_revision += 1
+	request_nav_revision(&"manual_blocks_cleared")
+
+func register_projectile_blocker_world(world_position: Vector2, descriptor: int, owner_id: int) -> void:
+	var cell: Vector2i = world_to_cell(world_position)
+	_projectile_blockers[cell] = descriptor
+	_projectile_blocker_owners[cell] = owner_id
+
+func unregister_projectile_blocker_world(world_position: Vector2, owner_id: int) -> void:
+	var cell: Vector2i = world_to_cell(world_position)
+	if int(_projectile_blocker_owners.get(cell, -1)) != owner_id:
+		return
+	_projectile_blockers.erase(cell)
+	_projectile_blocker_owners.erase(cell)
+
+## Grid DDA broad phase plus swept primitive narrow phase. No physics nodes,
+## per-projectile arrays, or per-frame allocation are needed on this hot path.
+func projectile_hit_t(from_pos: Vector2, to_pos: Vector2, projectile_radius: float) -> float:
+	var start_cell: Vector2i = world_to_cell(from_pos)
+	var end_cell: Vector2i = world_to_cell(to_pos)
+	var cell: Vector2i = start_cell
+	var delta: Vector2 = to_pos - from_pos
+	var step_x: int = signi(int(signf(delta.x)))
+	var step_y: int = signi(int(signf(delta.y)))
+	var t_delta_x: float = INF if step_x == 0 else absf(float(cell_size_px) / delta.x)
+	var t_delta_y: float = INF if step_y == 0 else absf(float(cell_size_px) / delta.y)
+	var boundary_x: float = float((cell.x + (1 if step_x > 0 else 0)) * cell_size_px)
+	var boundary_y: float = float((cell.y + (1 if step_y > 0 else 0)) * cell_size_px)
+	var t_max_x: float = INF if step_x == 0 else (boundary_x - from_pos.x) / delta.x
+	var t_max_y: float = INF if step_y == 0 else (boundary_y - from_pos.y) / delta.y
+	var best: float = 2.0
+	var guard: int = 0
+	while guard < 512:
+		guard += 1
+		best = minf(best, _projectile_neighborhood_hit_t(cell, from_pos, to_pos, projectile_radius))
+		if cell == end_cell or minf(t_max_x, t_max_y) > best:
+			break
+		if t_max_x < t_max_y:
+			cell.x += step_x
+			t_max_x += t_delta_x
+		else:
+			cell.y += step_y
+			t_max_y += t_delta_y
+	return best if best <= 1.0 else -1.0
+
+func _projectile_neighborhood_hit_t(trace_cell: Vector2i, from_pos: Vector2, to_pos: Vector2, projectile_radius: float) -> float:
+	var best: float = 2.0
+	var oy: int = -1
+	while oy <= 1:
+		var ox: int = -1
+		while ox <= 1:
+			var candidate: Vector2i = trace_cell + Vector2i(ox, oy)
+			var descriptor: int = -1
+			if _projectile_blockers.has(candidate):
+				descriptor = int(_projectile_blockers[candidate])
+			elif is_cell_blocked(candidate):
+				descriptor = WorldBlockerGeometry.pack(WorldBlockerGeometry.Kind.SOLID_CELL)
+			if descriptor >= 0:
+				var hit_t: float = WorldBlockerGeometry.swept_hit_t(descriptor, cell_to_world_center(candidate), from_pos, to_pos, projectile_radius, float(cell_size_px))
+				if hit_t >= 0.0:
+					best = minf(best, hit_t)
+			ox += 1
+		oy += 1
+	# Preserve the old safety rule at the actual path cell: projectiles do not
+	# escape into an unloaded chunk, but loaded neighboring cells do not become
+	# false 64 px blockers merely because the broad phase examined them.
+	if not _chunks.has(_cell_to_chunk(trace_cell)):
+		var void_t: float = WorldBlockerGeometry.swept_hit_t(WorldBlockerGeometry.pack(WorldBlockerGeometry.Kind.SOLID_CELL), cell_to_world_center(trace_cell), from_pos, to_pos, projectile_radius, float(cell_size_px))
+		if void_t >= 0.0:
+			best = minf(best, void_t)
+	return best
 
 
 func world_to_cell(p: Vector2) -> Vector2i:
@@ -549,7 +946,47 @@ func _unregister_chunk_cells(chunk_coord: Vector2i) -> void:
 
 
 	# ✅ tell nav "the blocked grid changed"
-	_nav_revision += 1
+	request_nav_revision(&"chunk_unloaded")
 
 func get_nav_revision() -> int:
 	return _nav_revision
+
+
+func request_nav_revision(reason: StringName = &"world_changed") -> void:
+	_nav_revision_requests += 1
+	_nav_revision_reasons[reason] = int(_nav_revision_reasons.get(reason, 0)) + 1
+	_nav_revision_last_reason = reason
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"world", &"nav_revision_requested", 1, {"reason": String(reason)})
+	if _nav_revision_pending:
+		if reason == &"chunk_generated" and _chunk_generation_queue.is_empty():
+			call_deferred("commit_pending_nav_revision")
+		return
+	_nav_revision_pending = true
+	if reason == &"chunk_generated" and not _chunk_generation_queue.is_empty():
+		return
+	call_deferred("commit_pending_nav_revision")
+
+
+func commit_pending_nav_revision() -> void:
+	if not _nav_revision_pending:
+		return
+	_nav_revision_pending = false
+	_nav_revision += 1
+	_nav_revision_commits += 1
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"world", &"nav_revision_committed", {
+			"revision": _nav_revision,
+			"reason": String(_nav_revision_last_reason),
+		})
+
+
+func get_nav_debug_counters() -> Dictionary:
+	return {
+		"revision": _nav_revision,
+		"pending": _nav_revision_pending,
+		"requests": _nav_revision_requests,
+		"commits": _nav_revision_commits,
+		"last_reason": _nav_revision_last_reason,
+		"reasons": _nav_revision_reasons.duplicate(),
+	}

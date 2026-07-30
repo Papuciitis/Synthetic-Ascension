@@ -8,6 +8,7 @@ extends Control
 @onready var back_btn: Button = find_child("BackToSaves", true, false) as Button
 @onready var start_btn: Button = find_child("StartRun", true, false) as Button
 @onready var mortal_name_edit: LineEdit = find_child("MortalName", true, false) as LineEdit
+@onready var replay_opening_toggle: CheckButton = find_child("ReplayOpening", true, false) as CheckButton
 
 var race_group := ButtonGroup.new()
 var style_group := ButtonGroup.new()
@@ -43,6 +44,10 @@ func _ready() -> void:
 	if mortal_name_edit != null:
 		mortal_name_edit.text = Global.mortal_name
 		mortal_name_edit.text_changed.connect(func(_value: String) -> void: _update_start_state())
+	if replay_opening_toggle != null:
+		replay_opening_toggle.button_pressed = Global != null and Global.opening_replay_full_next_run
+		replay_opening_toggle.visible = Global != null and Global.opening_full_intro_seen
+		replay_opening_toggle.toggled.connect(_on_replay_opening_toggled)
 
 	_populate_races(race_card_scene)
 	_populate_styles(style_card_scene)
@@ -380,3 +385,10 @@ func _on_start_run_pressed() -> void:
 		Global.start_new_attempt()
 
 	Global.goto_game()
+
+
+func _on_replay_opening_toggled(enabled: bool) -> void:
+	if Global == null:
+		return
+	Global.opening_replay_full_next_run = enabled
+	Global.save_current_profile()

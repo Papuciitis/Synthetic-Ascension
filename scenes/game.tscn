@@ -25,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://bcrp5vy2jvaa3" path="res://assets/textures/backgrounds/fog_soft_01.png" id="20_fog"]
 [ext_resource type="PackedScene" path="res://scenes/world/atmosphere/AtmosFireflies.tscn" id="21_fireflies"]
 [ext_resource type="PackedScene" path="res://scenes/vision/VisionRig.tscn" id="22_vision"]
+[ext_resource type="PackedScene" path="res://ui/widgets/PerformanceOverlay.tscn" id="23_perf"]
 
 [node name="Game" type="Node2D" unique_id=487510424]
 script = ExtResource("1_iywne")
@@ -61,6 +62,8 @@ script = ExtResource("10_vtaks")
 layer = 10
 
 [node name="HUD" parent="UI" unique_id=488377412 instance=ExtResource("4_p57ef")]
+
+[node name="PerformanceOverlay" parent="UI" instance=ExtResource("23_perf")]
 
 [node name="Spawner" parent="." unique_id=1961182374 instance=ExtResource("4_gee14")]
 

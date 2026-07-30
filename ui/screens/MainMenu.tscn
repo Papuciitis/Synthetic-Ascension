@@ -350,9 +350,11 @@ text = "Force Major Choice Pending"
 layout_mode = 2
 text = "Force Enemy Introductions This Run"
 
-[node name="ProjectileStress" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+[node name="RuntimeToolsHint" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-text = "Projectile Stress Test + Counters"
+theme_override_colors/font_color = Color(0.35, 0.78, 0.9, 1)
+text = "Runtime tools: press ` / ~ to open the Developer Console."
+autowrap_mode = 2
 
 [node name="ResetEnemyIntros" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
 custom_minimum_size = Vector2(300, 34)

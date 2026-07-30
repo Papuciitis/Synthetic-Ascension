@@ -79,8 +79,8 @@ func _try_pickup(candidate: Node) -> void:
 		return
 
 	_picked = true
-	monitoring = false
-	monitorable = false
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 	player.call("heal", maximum_hp * clampf(restore_fraction, 0.01, 1.0))
 
 	var sfx: Node = get_node_or_null("/root/SfxManager")

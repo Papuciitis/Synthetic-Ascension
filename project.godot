@@ -23,11 +23,14 @@ RunEvents="*uid://ccl4jmelm4exp"
 ThreatDirector="*res://autoload/ThreatDirector.gd"
 InvRouter="*uid://cjp6ktemc5dt2"
 EnemyIndex="*uid://cdck6uckl2cph"
+DebugEnemySpawnFilter="*res://autoload/DebugEnemySpawnFilter.gd"
+PerformanceFlightRecorder="*res://autoload/PerformanceFlightRecorder.gd"
 PoolManager="*uid://b7sbjn5yaokey"
 AudioManager="*res://autoload/AudioManager.gd"
 SfxManager="*res://autoload/SfxManager.gd"
 ProjectileManager="*res://core/combat/projectile/ProjectileSimulationManager.gd"
 FollowerFeedbackUI="*res://ui/controllers/FollowerFeedbackUI.gd"
+DevSetCollisionTools="*res://autoload/DevSetCollisionTools.gd"
 
 [display]
 

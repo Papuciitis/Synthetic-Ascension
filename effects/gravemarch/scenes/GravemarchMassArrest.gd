@@ -1,7 +1,7 @@
 extends SetEffectBase
-class_name GravemarchMassArrest
 
 signal active_cd_changed(time_left: float, max_cd: float)
+signal active_failed(message: String)
 
 @export var hud_priority: int = 9
 @export var hud_key_text: String = "R"
@@ -126,10 +126,10 @@ func _start_verdict() -> void:
 	_internal_cd = base_internal_cd
 
 	_spawn_spokes(_center)
-	_spawn_pulse(_center, pull_radius * (0.75 + 0.20 * set_strength))
+	_spawn_pulse(_center, _pull_effect_radius())
 
 func _pull_tick(dt: float) -> void:
-	var r := pull_radius * (0.88 + 0.18 * set_strength)
+	var r := _pull_effect_radius()
 	var r2 := r * r
 	var force := pull_force * (0.85 + 0.25 * set_strength)
 
@@ -209,12 +209,17 @@ func _magic_splinters(dmg: float) -> void:
 func _try_active() -> void:
 	if player == null:
 		return
-	if _active_cd > 0.0 or _mode != 0:
+	if _active_cd > 0.0:
+		active_failed.emit("Cooldown %.1fs" % _active_cd)
+		return
+	if _mode != 0:
+		active_failed.emit("Arrest already active")
 		return
 
 	# need some bank to spend
 	var need := _damage_needed()
 	if _bank < need * active_bank_fraction:
+		active_failed.emit("Need %.0f more damage" % (need * active_bank_fraction - _bank))
 		return
 
 	_bank = maxf(0.0, _bank - need * active_bank_fraction)
@@ -229,6 +234,39 @@ func _try_active() -> void:
 
 	_start_verdict()
 	_report_active_cd(true)
+
+func _pull_effect_radius() -> float:
+	return pull_radius * (0.88 + 0.18 * set_strength)
+
+func get_active_state() -> Dictionary:
+	var full_threshold: float = _damage_needed()
+	var active_threshold: float = full_threshold * active_bank_fraction
+	var is_ready: bool = player != null and _active_cd <= 0.05 and _mode == 0 and _bank >= active_threshold
+	var status: String = "READY"
+	if _mode != 0:
+		status = "ARRESTING"
+	elif _active_cd > 0.05:
+		status = String.num(_active_cd, 1)
+	elif _bank < active_threshold:
+		status = "NEED %.0f DMG" % (active_threshold - _bank)
+	return {
+		"ready": is_ready,
+		"cooldown_left": _active_cd,
+		"cooldown_max": _active_cd_max if _active_cd_max > 0.0 else active_base_cd,
+		"resource_value": _bank,
+		"resource_max": active_threshold,
+		"status_text": status,
+		"combat_text": "BANK %.0f / %.0f · R REQ %.0f%s" % [_bank, full_threshold, active_threshold, " · PULLING" if _mode != 0 else ""],
+	}
+
+func debug_set_bank(value: float) -> void:
+	_bank = clampf(value, 0.0, _damage_needed())
+
+func debug_fill_active_bank() -> void:
+	_bank = _damage_needed() * active_bank_fraction
+
+func debug_clear_bank() -> void:
+	_bank = 0.0
 
 func _report_active_cd(force: bool = false) -> void:
 	if not force and absf(_active_cd - _last_cd_report) < 0.10:

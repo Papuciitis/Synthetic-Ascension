@@ -26,7 +26,7 @@ func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var r := 0
 	if inst != null:
 		r = int(inst.rarity)
-	var heal_scale := (1.0 + float(r) * rarity_scale)
+	var heal_scale := (1.0 + float(r) * rarity_scale) * _effect_multiplier(inst)
 	out.append("Heals every %.1fs: %.1f–%.1f HP (rarity scales)." % [tick_interval, heal_min * heal_scale, heal_max * heal_scale])
 	out.append("Plays green regen pulses (+).")
 	return out
@@ -69,11 +69,15 @@ func _process(dt: float) -> void:
 
 	var amt := lerpf(heal_min, heal_max, randf())
 	var r := (int(item.rarity) if item != null else 0)
-	amt *= (1.0 + float(r) * rarity_scale)
+	amt *= (1.0 + float(r) * rarity_scale) * _effect_multiplier(item)
 	amt = clampf(amt, 0.5, 12.0)
 
 	player.call("heal", amt)
 	_spawn_plus()
+
+
+func _effect_multiplier(inst: ItemInstance) -> float:
+	return maxf(0.10, 1.0 + (inst.active_pct() if inst != null else 0.0))
 
 func _spawn_plus() -> void:
 	if vfx_plus_scene == null:

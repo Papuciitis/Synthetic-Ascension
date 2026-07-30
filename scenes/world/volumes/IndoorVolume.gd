@@ -5,6 +5,7 @@ class_name IndoorVolume
 @export var cell_tl: Vector2i = Vector2i.ZERO
 @export var size_cells: Vector2i = Vector2i(1, 1)
 @export var building_id: int = 0
+@export var secondary_objective_id: int = 0
 
 @onready var _shape: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D
 
@@ -23,32 +24,85 @@ class_name IndoorVolume
 @export var small_rarity_max: int = 6
 @export var large_rarity_min: int = 5
 @export var large_rarity_max: int = 8
+@export var small_rarity_bonus_per_segment: int = 0
+@export var large_rarity_bonus_per_segment: int = 1
+@export var large_loot_chance: float = 1.0
+@export var force_large_loot: bool = false
+@export var site_area_cells: int = 0
 @export var scatter_radius_px: float = 90.0
 @export var pickup_delay: float = 0.15
 @export var require_walkable: bool = true
 @export var pos_attempts: int = 14
+@export var ready_retry_interval: float = 0.10
+@export var ready_retry_timeout: float = 3.0
+
+@export_group("Local Encounter")
+@export var local_encounter_enabled: bool = false
+@export_range(1, 12, 1) var local_encounter_count: int = 5
+@export var local_encounter_delay: float = 0.35
 
 @export var pickup_scene: PackedScene = preload("res://scenes/world/pickups/ItemPickup.tscn")
 
 var _loot_attempted: bool = false
+var _loot_retry_pending: bool = false
+var _loot_wait_elapsed: float = 0.0
+var _encounter_started: bool = false
+var _encounter_completed: bool = false
+var _encounter_remaining: int = 0
+var _encounter_enemy_ids: Array[int] = []
 
 
 func _ready() -> void:
 	# This volume is only used for detecting if the player is indoors.
 	monitoring = true
 	monitorable = true
+	add_to_group(&"indoor_volume")
 	_update_shape()
 
 	if not body_entered.is_connected(_on_body_entered):
 		body_entered.connect(_on_body_entered)
+	if not body_exited.is_connected(_on_body_exited):
+		body_exited.connect(_on_body_exited)
 
 
-func configure(tl: Vector2i, sz: Vector2i, cs: int, id: int) -> void:
+func _exit_tree() -> void:
+	_set_encounter_active(false)
+
+
+func configure(tl: Vector2i, sz: Vector2i, cs: int, id: int, loot_cfg: Dictionary = {}) -> void:
 	cell_tl = tl
 	size_cells = sz
 	cell_size_px = cs
 	building_id = id
+	_apply_loot_config(loot_cfg)
 	_update_shape()
+
+
+func _apply_loot_config(cfg: Dictionary) -> void:
+	if cfg.is_empty():
+		return
+	exploration_loot_enabled = bool(cfg.get("exploration_loot_enabled", exploration_loot_enabled))
+	small_loot_chance = float(cfg.get("small_loot_chance", small_loot_chance))
+	large_loot_chance = float(cfg.get("large_loot_chance", large_loot_chance))
+	small_count_min = int(cfg.get("small_count_min", small_count_min))
+	small_count_max = int(cfg.get("small_count_max", small_count_max))
+	large_count_min = int(cfg.get("large_count_min", large_count_min))
+	large_count_max = int(cfg.get("large_count_max", large_count_max))
+	small_rarity_min = int(cfg.get("small_rarity_min", small_rarity_min))
+	small_rarity_max = int(cfg.get("small_rarity_max", small_rarity_max))
+	large_rarity_min = int(cfg.get("large_rarity_min", large_rarity_min))
+	large_rarity_max = int(cfg.get("large_rarity_max", large_rarity_max))
+	small_rarity_bonus_per_segment = int(cfg.get("small_rarity_bonus_per_segment", small_rarity_bonus_per_segment))
+	large_rarity_bonus_per_segment = int(cfg.get("large_rarity_bonus_per_segment", large_rarity_bonus_per_segment))
+	force_large_loot = bool(cfg.get("force_large_loot", force_large_loot))
+	site_area_cells = int(cfg.get("site_area_cells", site_area_cells))
+	scatter_radius_px = float(cfg.get("scatter_radius_px", scatter_radius_px))
+	pickup_delay = float(cfg.get("pickup_delay", pickup_delay))
+	require_walkable = bool(cfg.get("require_walkable", require_walkable))
+	pos_attempts = int(cfg.get("pos_attempts", pos_attempts))
+	local_encounter_enabled = bool(cfg.get("local_encounter_enabled", local_encounter_enabled))
+	local_encounter_count = int(cfg.get("local_encounter_count", local_encounter_count))
+	secondary_objective_id = int(cfg.get("secondary_objective_id", secondary_objective_id))
 
 
 func _update_shape() -> void:
@@ -70,36 +124,141 @@ func _on_body_entered(b: Node) -> void:
 		return
 	if b == null or not b.is_in_group("player"):
 		return
+	if local_encounter_enabled and not _encounter_completed:
+		_set_encounter_active(true)
+		if not _encounter_started:
+			_activate_local_encounter()
+		return
+	_try_spawn_loot()
 
-	_loot_attempted = true
 
+func _on_body_exited(b: Node) -> void:
+	if b != null and b.is_in_group("player"):
+		_set_encounter_active(false)
+
+func contains_world_point(world_point: Vector2) -> bool:
+	var size_px := Vector2(float(maxi(1, size_cells.x) * cell_size_px), float(maxi(1, size_cells.y) * cell_size_px))
+	return Rect2(global_position - size_px * 0.5, size_px).has_point(world_point)
+
+func _activate_local_encounter() -> void:
+	_encounter_started = true
+	if local_encounter_delay > 0.0:
+		await get_tree().create_timer(local_encounter_delay, false).timeout
+	if not is_inside_tree():
+		return
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
+	if spawner == null or not spawner.has_method("spawn_local_encounter"):
+		_finish_local_encounter()
+		return
+	var size_px := Vector2(float(maxi(1, size_cells.x) * cell_size_px), float(maxi(1, size_cells.y) * cell_size_px))
+	var inset := Vector2(float(cell_size_px) * 1.5, float(cell_size_px) * 1.5)
+	var encounter_rect := Rect2(global_position - size_px * 0.5 + inset, size_px - inset * 2.0)
+	var spawned: Array = spawner.spawn_local_encounter(encounter_rect, local_encounter_count, self)
+	_encounter_remaining = spawned.size()
+	_encounter_enemy_ids.clear()
+	if _encounter_remaining <= 0:
+		_finish_local_encounter()
+		return
+	for enemy_variant in spawned:
+		var enemy := enemy_variant as Node
+		if enemy == null:
+			_encounter_remaining -= 1
+			continue
+		_encounter_enemy_ids.append(enemy.get_instance_id())
+		enemy.tree_exited.connect(_on_local_enemy_left, CONNECT_ONE_SHOT)
+	if _encounter_remaining <= 0:
+		_finish_local_encounter()
+
+func _on_local_enemy_left() -> void:
+	_encounter_remaining = maxi(0, _encounter_remaining - 1)
+	if _encounter_remaining <= 0:
+		_finish_local_encounter()
+
+func _finish_local_encounter() -> void:
+	if _encounter_completed:
+		return
+	_encounter_completed = true
+	_set_encounter_active(false)
+	_notify_secondary_completed()
+	_try_spawn_loot()
+
+
+func _set_encounter_active(active: bool) -> void:
+	for enemy_id in _encounter_enemy_ids:
+		var enemy := instance_from_id(enemy_id) as Node
+		if enemy != null and is_instance_valid(enemy):
+			enemy.set_meta("interior_active", active)
+
+
+func _notify_secondary_completed() -> void:
+	if secondary_objective_id <= 0:
+		return
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_completed"):
+		RunEvents.secondary_objective_completed.emit(secondary_objective_id)
+	secondary_objective_id = 0
+
+func _try_spawn_loot() -> void:
+	if _loot_attempted:
+		return
+	if not exploration_loot_enabled:
+		_loot_attempted = true
+		return
 	if building_id == 0:
+		_loot_attempted = true
 		return
 	if Global != null and Global.has_claimed_loot(building_id):
+		_loot_attempted = true
 		return
 	if pickup_scene == null or Global == null or Global.item_db.is_empty():
+		_schedule_loot_retry()
 		return
 
-	# Determine if this is a "big dungeon" volume.
-	var area_cells: int = maxi(0, size_cells.x) * maxi(0, size_cells.y)
-	var is_large: bool = area_cells >= large_area_threshold_cells
+	# Multi-chunk sites pass their total area so every streamed slice agrees on
+	# large-site classification while sharing the same deterministic building ID.
+	var local_area_cells: int = maxi(0, size_cells.x) * maxi(0, size_cells.y)
+	var effective_area_cells: int = maxi(local_area_cells, site_area_cells)
+	var is_large: bool = force_large_loot or effective_area_cells >= large_area_threshold_cells
 
 	# Deterministic roll per building/volume.
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _mix_seed((Global.attempt_world_seed if Global != null else 1337), building_id)
 
-	var chance: float = (1.0 if is_large else clampf(small_loot_chance, 0.0, 1.0))
+	var chance: float = clampf(large_loot_chance if is_large else small_loot_chance, 0.0, 1.0)
+	_loot_attempted = true
 	if rng.randf() > chance:
 		return
 
 	var n_min: int = (large_count_min if is_large else small_count_min)
 	var n_max: int = (large_count_max if is_large else small_count_max)
-	var r_min: int = (large_rarity_min if is_large else small_rarity_min)
-	var r_max: int = (large_rarity_max if is_large else small_rarity_max)
+	var segment: int = int(Global.attempt_segment) if Global != null else 1
+	var rarity_bonus: int = (large_rarity_bonus_per_segment if is_large else small_rarity_bonus_per_segment) * maxi(0, segment - 1)
+	var r_min: int = (large_rarity_min if is_large else small_rarity_min) + rarity_bonus
+	var r_max: int = (large_rarity_max if is_large else small_rarity_max) + rarity_bonus
 
 	if _spawn_loot(rng, n_min, n_max, r_min, r_max):
 		if Global != null:
 			Global.claim_loot(building_id)
+	else:
+		_loot_attempted = false
+		_schedule_loot_retry()
+
+
+func _schedule_loot_retry() -> void:
+	if _loot_retry_pending or _loot_attempted:
+		return
+	if _loot_wait_elapsed >= ready_retry_timeout:
+		_loot_attempted = true
+		push_warning("Indoor loot could not initialize for building %d" % building_id)
+		return
+	_loot_retry_pending = true
+	var timer := get_tree().create_timer(maxf(0.02, ready_retry_interval))
+	timer.timeout.connect(_retry_loot_spawn)
+
+
+func _retry_loot_spawn() -> void:
+	_loot_retry_pending = false
+	_loot_wait_elapsed += maxf(0.02, ready_retry_interval)
+	_try_spawn_loot()
 
 
 func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int, r_max: int) -> bool:
@@ -117,13 +276,8 @@ func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int,
 		if data == null:
 			continue
 
-		var rarity: int = rng.randi_range(r_min, r_max)
-
-		var roll_pct: float = Global.roll_percent(Global.run_luck, data.pct_min, data.pct_max)
-		var pol: int = (ItemInstance.Polarity.POS if roll_pct >= 0.0 else ItemInstance.Polarity.NEG)
-		roll_pct = absf(roll_pct) * (1.0 if pol == ItemInstance.Polarity.POS else -1.0)
-
-		var inst := ItemInstance.from_roll(data, rarity, pol, roll_pct)
+		var context := Global.build_item_drop_context(r_min, r_max, &"indoor", 1)
+		var inst := ItemGenerator.create_instance(data, context, rng)
 
 		var p := pickup_scene.instantiate() as ItemPickup
 		if p == null:
@@ -135,7 +289,11 @@ func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int,
 		p.pickup_delay = pickup_delay
 		p.is_exploration_loot = true
 
-		p.global_position = _pick_pos_in_volume(rng)
+		var spawn_pos: Vector2 = _pick_pos_in_volume(rng)
+		if spawn_pos == Vector2.INF:
+			p.free()
+			continue
+		p.global_position = spawn_pos
 
 		get_tree().current_scene.call_deferred("add_child", p)
 		made = true
@@ -165,7 +323,25 @@ func _pick_pos_in_volume(rng: RandomNumberGenerator) -> Vector2:
 			if bool(cm.call("is_cell_walkable", cell)):
 				return pos
 
-	return global_position
+	if cm != null and is_instance_valid(cm) and cm.has_method("is_cell_walkable") and cm.has_method("cell_to_world_center"):
+		var center_cell: Vector2i = cm.call("world_to_cell", global_position) as Vector2i
+		var best_cell: Vector2i = Vector2i.ZERO
+		var best_distance: float = INF
+		var found: bool = false
+		for y in range(cell_tl.y, cell_tl.y + size_cells.y):
+			for x in range(cell_tl.x, cell_tl.x + size_cells.x):
+				var cell := Vector2i(x, y)
+				if not bool(cm.call("is_cell_walkable", cell)):
+					continue
+				var distance: float = Vector2(cell - center_cell).length_squared()
+				if distance < best_distance:
+					best_distance = distance
+					best_cell = cell
+					found = true
+		if found:
+			return cm.call("cell_to_world_center", best_cell) as Vector2
+
+	return Vector2.INF
 
 
 func _mix_seed(a: int, b: int) -> int:

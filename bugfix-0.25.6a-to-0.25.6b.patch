@@ -1,0 +1,181 @@
+--- a/core/actors/player/player.gd
++++ b/core/actors/player/player.gd
+@@ -188,7 +188,21 @@
+ 		return
+ 	var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+ 
+-	var eff_speed := speed
++	velocity = dir * get_effective_move_speed()
++	move_and_slide()
++
++	if dir != Vector2.ZERO:
++		rotation = dir.angle()
++
++	if aim_pivot != null:
++		aim_pivot.global_rotation = (get_global_mouse_position() - global_position).angle()
++
++
++func get_effective_move_speed() -> float:
++	# One authoritative value for movement and stat-sheet display. The stored
++	# speed already contains race, style, augment, equipment and set stat deltas;
++	# runtime effects are multiplicative and must be applied only once here.
++	var eff_speed: float = speed
+ 	if respawn_phase_left > 0.0:
+ 		eff_speed *= respawn_speed_mul
+ 
+@@ -196,18 +210,11 @@
+ 	if sr != null:
+ 		eff_speed *= sr.get_move_speed_multiplier()
+ 
+-	var ier2: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+-	if ier2 != null:
+-		eff_speed *= ier2.get_move_speed_multiplier()
+-
+-	velocity = dir * eff_speed
+-	move_and_slide()
+-
+-	if dir != Vector2.ZERO:
+-		rotation = dir.angle()
++	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
++	if ier != null:
++		eff_speed *= ier.get_move_speed_multiplier()
+ 
+-	if aim_pivot != null:
+-		aim_pivot.global_rotation = (get_global_mouse_position() - global_position).angle()
++	return maxf(0.0, eff_speed)
+ 
+ 
+ func set_cinematic_input(move_locked: bool, attack_locked: bool) -> void:
+@@ -242,7 +249,7 @@
+ 	recompute_run_stats(race, style)
+ 
+ 
+-func apply_run_stats(new_stats: Stats) -> void:
++func apply_run_stats(new_stats: Stats, emit_hp_signal: bool = true) -> void:
+ 	var old_max: float = max_hp
+ 	var was_full: bool = is_equal_approx(hp, old_max) or hp >= (old_max - 0.001)
+ 
+@@ -255,7 +262,8 @@
+ 	else:
+ 		hp = min(hp, max_hp)
+ 
+-	hp_changed.emit(hp, max_hp)
++	if emit_hp_signal:
++		hp_changed.emit(hp, max_hp)
+ 
+ 
+ 
+@@ -281,7 +289,7 @@
+ 		$AugmentRunner.call("refresh")
+ 
+ 
+-func recompute_run_stats(race: RaceData, style: StyleData) -> void:
++func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool = true) -> void:
+ 	if base_stats == null:
+ 		push_warning("Player.base_stats is null!")
+ 		return
+@@ -336,7 +344,7 @@
+ 
+ 	Global.run_luck = s.luck
+ 
+-	apply_run_stats(s)
++	apply_run_stats(s, emit_hp_signal)
+ 
+ 
+ func _fire_weapon(mouse_pos: Vector2) -> void:
+@@ -724,13 +732,23 @@
+ 		game.call_deferred("end_run")
+ 
+ func respawn() -> void:
+-	# Hard reset to checkpoint
++	# Rebuild the complete loadout snapshot before restoring HP. This prevents the
++	# first reconstruction from using a stale base speed/max-HP value when effects
++	# or inventory bindings finished refreshing while the death card was open.
++	is_dead = false
++	velocity = Vector2.ZERO
++
++	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
++	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
++	recompute_run_stats(race, style, false)
++
++	# Hard reset to checkpoint using the final rebuilt maximum. Emit one coherent
++	# HP snapshot after both current and maximum HP are settled.
+ 	hp = max_hp
+-	hp_changed.emit(hp, max_hp)
+ 	global_position = spawn_pos
+-	is_dead = false
+ 	_contact_sources.clear()
+ 	_touching_enemies = 0
++	hp_changed.emit(hp, max_hp)
+ 
+ 	# Spawn protection: invulnerability + phasing through enemy bodies
+ 	grant_invulnerability(respawn_invuln_time)
+--- a/ui/widgets/RunSheetHUD.gd
++++ b/ui/widgets/RunSheetHUD.gd
+@@ -20,26 +20,23 @@
+ const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
+ 
+ func refresh(player: Node, inv: Inventory) -> void:
+-	# --- base stats from player (supports player.stats Resource OR direct props) ---
+-	var base_max_hp: float = _get_stats_num(player, "max_hp", _get_num(player, "max_hp", 0.0))
+-	var base_armor: float  = _get_stats_num(player, "armor",  _get_num(player, "armor", 0.0))
+-	var base_spd: float    = _get_stats_num(player, "move_speed", _get_num(player, "move_speed", _get_num(player, "speed", 0.0)))
+-	var base_pow: float    = _get_stats_num(player, "power",  _get_num(player, "power", 0.0))
+-	var base_hst: float    = _get_stats_num(player, "haste",  _get_num(player, "haste", 0.0))
+-	var base_lck: float    = _get_stats_num(player, "luck",   _get_num(player, "luck", 0.0))
++	# Player.stats is already the complete final snapshot: race, style, permanent
++	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
++	# and active percentage rolls. Inventory deltas must not be added a second time.
++	var max_hp_total: float = _get_num(player, "max_hp", _get_stats_num(player, "max_hp", 0.0))
++	var armor_total: float = _get_stats_num(player, "armor", _get_num(player, "armor", 0.0))
++	var stored_spd: float = _get_stats_num(player, "move_speed", _get_num(player, "speed", 0.0))
++	var spd_total: float = _get_effective_move_speed(player, stored_spd)
++	var pow_total: float = _get_stats_num(player, "power", _get_num(player, "power", 0.0))
++	var hst_total: float = _get_stats_num(player, "haste", _get_num(player, "haste", 0.0))
++	var lck_total: float = _get_stats_num(player, "luck", _get_num(player, "luck", 0.0))
+ 
+-	# --- equipped deltas from inventory ---
++	# Parenthesised values remain the equipped flat deltas for quick attribution;
++	# they are informational only and are not added to the final totals again.
+ 	var d := StatDelta.new()
+ 	if inv != null and inv.has_method("sum_mods"):
+ 		d = inv.sum_mods()
+ 
+-	var max_hp_total := base_max_hp + float(d.max_hp)
+-	var armor_total  := base_armor  + float(d.armor)
+-	var spd_total    := base_spd    + float(d.move_speed)
+-	var pow_total    := base_pow    + float(d.power)
+-	var hst_total    := base_hst    + float(d.haste)
+-	var lck_total    := base_lck    + float(d.luck)
+-
+ 	# --- totals ---
+ 	var cur_hp: float = _get_num(player, "hp", -1.0)
+ 	if cur_hp >= 0.0:
+@@ -132,6 +129,16 @@
+ 		return float(v)
+ 	return fallback
+ 
++func _get_effective_move_speed(player: Object, fallback: float) -> float:
++	if player == null:
++		return fallback
++	if player.has_method("get_effective_move_speed"):
++		var value: Variant = player.call("get_effective_move_speed")
++		if value is float or value is int:
++			return float(value)
++	return fallback
++
++
+ func _get_stats_num(player: Object, prop: String, fallback: float) -> float:
+ 	if player == null:
+ 		return fallback
+--- a/ui/screens/hud.gd
++++ b/ui/screens/hud.gd
+@@ -464,7 +464,7 @@
+ 		hp_bar.value = current
+ 
+ 	if hp_value != null:
+-		hp_value.text = "%d / %d" % [int(current), int(max_hp)]
++		hp_value.text = "%d / %d" % [int(round(current)), int(round(max_hp))]
+ 
+ 	if hp_percent != null:
+ 		var pct: int = 0

@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://dumxds1qgmu0k" path="res://scenes/world/enemies/EnemyHerald.tscn" id="9_h4ahp"]
 [ext_resource type="PackedScene" uid="uid://c716a0ipbx175" path="res://scenes/world/enemies/EnemySummoner.tscn" id="10_y2a8g"]
 [ext_resource type="PackedScene" uid="uid://cdjvodsy43mm" path="res://scenes/world/enemies/EnemySniper.tscn" id="11_4vxks"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemySplitter.tscn" id="12_splitter"]
 
 [sub_resource type="Resource" id="Resource_4vxks"]
 script = ExtResource("1_uq6bm")
@@ -102,7 +103,16 @@ max_alive = 2
 elite_chance = 0.2
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
+[sub_resource type="Resource" id="Resource_splitter"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("12_splitter")
+weight = 0.32
+start_time = 210.0
+max_alive = 4
+elite_chance = 0.001
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
 [resource]
 script = ExtResource("2_fppje")
-entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o")])
+entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter")])
 metadata/_custom_type_script = "uid://b36vdt2238b6j"

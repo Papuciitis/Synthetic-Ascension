@@ -1,0 +1,199 @@
+--- a/core/systems/world/objectives/DistrictRelayObjective.gd
++++ b/core/systems/world/objectives/DistrictRelayObjective.gd
+@@ -70,6 +70,12 @@
+ 	if _player == null:
+ 		return
+ 
++	# Reconstruction keeps the player node in the world until the modal closes.
++	# Do not let a relay node continue attuning underneath a dead player.
++	if bool(_player.get("is_dead")):
++		queue_redraw()
++		return
++
+ 	if not _activated and _player.global_position.distance_squared_to(global_position) <= activation_radius_px * activation_radius_px:
+ 		_activated = true
+ 		activated.emit()
+--- a/core/actors/enemy/modules/EnemySplitter.gd
++++ b/core/actors/enemy/modules/EnemySplitter.gd
+@@ -6,19 +6,20 @@
+ func setup(owner: EnemyActor) -> void:
+ 	_owner = owner
+ 
+-func spawn_splitters(is_elite: bool) -> void:
++func spawn_splitters(is_elite: bool) -> Array[EnemyActor]:
++	var spawned_children: Array[EnemyActor] = []
+ 	if _owner == null or _owner.spec == null:
+-		return
++		return spawned_children
+ 
+ 	var spec: EnemySpec = _owner.spec
+ 	var generation: int = maxi(0, int(_owner.get_meta("split_generation", 0)))
+ 	var max_generation: int = maxi(0, spec.split_max_generation + (spec.split_elite_extra_generations if is_elite else 0))
+ 	if generation >= max_generation:
+-		return
++		return spawned_children
+ 
+ 	var child_scene: PackedScene = _resolve_child_scene(spec)
+ 	if child_scene == null:
+-		return
++		return spawned_children
+ 
+ 	var count_min: int = spec.split_count_min
+ 	var count_max: int = spec.split_count_max
+@@ -39,17 +40,18 @@
+ 		if child_position == Vector2.INF:
+ 			_release_reservation(enemy_index)
+ 			continue
+-		var child: Node = child_scene.instantiate()
+-		if child == null or not (child is EnemyActor):
+-			if child != null:
+-				child.free()
++		var child_node: Node = child_scene.instantiate()
++		if child_node == null or not (child_node is EnemyActor):
++			if child_node != null:
++				child_node.free()
+ 			_release_reservation(enemy_index)
+ 			continue
+ 
++		var child := child_node as EnemyActor
+ 		child.set_meta("split_generation", generation + 1)
+ 		child.set_meta("split_root_id", int(_owner.get_meta("split_root_id", _owner.get_instance_id())))
+ 		child.add_to_group("splitter_spawned")
+-		(child as Node2D).global_position = child_position
++		child.global_position = child_position
+ 
+ 		var current_scene: Node = _owner.get_tree().current_scene
+ 		if current_scene == null:
+@@ -59,10 +61,13 @@
+ 		if enemy_index != null and enemy_index.has_method("commit_special"):
+ 			enemy_index.call("commit_special", child, &"split")
+ 		current_scene.call_deferred("add_child", child)
++		spawned_children.append(child)
+ 
+ 		if spec.split_inherit_elite and is_elite and child.has_method("make_elite"):
+ 			child.call_deferred("make_elite")
+ 
++	return spawned_children
++
+ 
+ func _resolve_child_scene(spec: EnemySpec) -> PackedScene:
+ 	if spec.split_scene != null:
+--- a/core/actors/enemy/modules/EnemyDrops.gd
++++ b/core/actors/enemy/modules/EnemyDrops.gd
+@@ -84,17 +84,44 @@
+ 	tree.current_scene.call_deferred("add_child", pickup)
+ 
+ func try_drop_item() -> void:
+-	if _enemy == null:
++	if not roll_item_entitlement():
+ 		return
++	drop_entitled_item()
+ 
+-	if _enemy.item_pickup_scene == null:
+-		push_warning("item_pickup_scene is null")
++
++func roll_item_entitlement() -> bool:
++	if not _can_drop_item():
++		return false
++	return _roll_item_drop()
++
++
++func drop_entitled_item() -> void:
++	if not _can_drop_item():
+ 		return
++	if _enemy.drop_instance_roll:
++		var instance_count: int = Global._rng.randi_range(
++			mini(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max)),
++			maxi(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max))
++		)
++		for _i in range(instance_count):
++			_spawn_rolled_instance_pickup()
++	else:
++		_spawn_stack_pickup()
++
+ 
++func _can_drop_item() -> bool:
++	if _enemy == null or not is_instance_valid(_enemy):
++		return false
++	if _enemy.item_pickup_scene == null:
++		push_warning("item_pickup_scene is null")
++		return false
+ 	if Global.item_db.is_empty():
+ 		push_warning("Global.item_db is EMPTY -> no items to drop")
+-		return
++		return false
++	return true
++
+ 
++func _roll_item_drop() -> bool:
+ 	var roll: float = Global._rng.randf()
+ 	# Dynamic drop tuning:
+ 	# - Early segment: fewer items (prevents full-set farming before the run even starts)
+@@ -118,18 +145,7 @@
+ 			" all=", Global.item_db.size()
+ 		)
+ 
+-	if roll > eff_chance:
+-		return
+-
+-	if _enemy.drop_instance_roll:
+-		var instance_count: int = Global._rng.randi_range(
+-			mini(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max)),
+-			maxi(maxi(1, _enemy.drop_amount_min), maxi(1, _enemy.drop_amount_max))
+-		)
+-		for _i in range(instance_count):
+-			_spawn_rolled_instance_pickup()
+-	else:
+-		_spawn_stack_pickup()
++	return roll <= eff_chance
+ 
+ 
+ func _spawn_rolled_instance_pickup() -> bool:
+--- a/core/actors/enemy/modules/EnemyLifecycle.gd
++++ b/core/actors/enemy/modules/EnemyLifecycle.gd
+@@ -81,11 +81,26 @@
+ 		_owner.call("_notify_enemy_index_dead")
+ 
+ 	var explode_on_death: bool = _owner.spec != null and _owner.spec.ai == EnemySpec.AI.BOMBER and _owner.spec.explode_on_death
++	var is_splitter: bool = _owner.spec != null and _owner.spec.ai == EnemySpec.AI.SPLITTER
+ 
+-	# Splitter special: spawn children
+-	if _owner.spec != null and _owner.spec.ai == EnemySpec.AI.SPLITTER:
+-		if _splitter != null:
+-			_splitter.spawn_splitters(_owner.is_elite)
++	# Splitter loot belongs to the family, not every spawned body. The original
++	# rolls once; when successful, exactly one immediate child inherits the item.
++	# Descendants without that entitlement never perform independent item rolls.
++	var split_generation: int = maxi(0, int(_owner.get_meta("split_generation", 0))) if is_splitter else 0
++	var inherited_split_item: bool = is_splitter and bool(_owner.get_meta("split_item_entitled", false))
++	var root_split_item: bool = is_splitter and split_generation == 0 and _drops != null and _drops.roll_item_entitlement()
++	var split_children: Array[EnemyActor] = []
++	if is_splitter and _splitter != null:
++		split_children = _splitter.spawn_splitters(_owner.is_elite)
++
++	if root_split_item:
++		if split_children.is_empty():
++			_drops.drop_entitled_item()
++		else:
++			var heir_index: int = Global._rng.randi_range(0, split_children.size() - 1)
++			split_children[heir_index].set_meta("split_item_entitled", true)
++	elif inherited_split_item and _drops != null:
++		_drops.drop_entitled_item()
+ 
+ 	# kill event
+ 	var p: Node = source
+@@ -103,10 +118,12 @@
+ 
+ 	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
+ 
+-	# drops
++	# Health pickups keep their existing per-body behavior. Item loot for a
++	# Splitter family was already resolved above and must not roll again here.
+ 	if _drops != null:
+ 		_drops.try_drop_health_pickup()
+-		_drops.try_drop_item()
++		if not is_splitter:
++			_drops.try_drop_item()
+ 
+ 	# Bomber destruction is only the visual/damage implementation. Kill events,
+ 	# Followers and drops above are resolved first and exactly once.

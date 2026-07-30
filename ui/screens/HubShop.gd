@@ -2,17 +2,14 @@ extends Control
 
 @onready var title: Label = $Root/HBox/Left/Margin/VBox/Title
 @onready var info: Label = $Root/HBox/Left/Margin/VBox/Info
-@onready var cart: Label = $Root/HBox/Left/Margin/VBox/Cart
 @onready var hover: Label = $Root/HBox/Left/Margin/VBox/Hover
 
-@onready var btn_mark_all_bag: Button = $Root/HBox/Left/Margin/VBox/ButtonsRow/MarkAllBag
-@onready var btn_mark_neg: Button = $Root/HBox/Left/Margin/VBox/ButtonsRow/MarkNEG
-@onready var btn_clear: Button = $Root/HBox/Left/Margin/VBox/ButtonsRow/Clear
+@onready var btn_mark_all_bag: Button = $Root/HBox/CartPanel/Margin/VBox/TradeTools/MarkAllBag
+@onready var btn_mark_neg: Button = $Root/HBox/CartPanel/Margin/VBox/TradeTools/MarkNEG
 @onready var btn_augments: Button = $Root/HBox/Left/Margin/VBox/Augments
 @onready var btn_inventory: Button = $Root/HBox/Left/Margin/VBox/Inventory
 
-@onready var chk_include_equipped: CheckBox = $Root/HBox/Left/Margin/VBox/IncludeEquipped
-@onready var btn_barter: Button = $Root/HBox/Left/Margin/VBox/SellSelected
+@onready var chk_include_equipped: CheckBox = $Root/HBox/CartPanel/Margin/VBox/TradeTools/IncludeEquipped
 @onready var btn_continue: Button = $Root/HBox/Left/Margin/VBox/Continue
 @onready var btn_menu: Button = $Root/HBox/Left/Margin/VBox/Menu
 
@@ -24,17 +21,19 @@ extends Control
 @onready var btn_cat_equip: Button = $Root/HBox/Vendor/Margin/VBox/VendorFilters/CatEquip
 @onready var btn_cat_bag: Button = $Root/HBox/Vendor/Margin/VBox/VendorFilters/CatBag
 @onready var btn_cat_sets: Button = $Root/HBox/Vendor/Margin/VBox/VendorFilters/CatSets
-@onready var vendor_search: LineEdit = $Root/HBox/Vendor/Margin/VBox/VendorFilters/Search
+@onready var btn_affordable: Button = $Root/HBox/Vendor/Margin/VBox/VendorTools/Affordable
+@onready var vendor_search: LineEdit = $Root/HBox/Vendor/Margin/VBox/VendorTools/Search
 
 
 # Cart preview (interactive; click to remove)
 @onready var offer_grid: ShopBagGrid = $Root/HBox/CartPanel/Margin/VBox/Grids/OfferBox/OfferGrid
 @onready var demand_grid: ShopBagGrid = $Root/HBox/CartPanel/Margin/VBox/Grids/DemandBox/DemandGrid
 @onready var cart_totals: Label = $Root/HBox/CartPanel/Margin/VBox/Totals
+@onready var trade_status: Label = $Root/HBox/CartPanel/Margin/VBox/TradeStatus
 @onready var btn_clear_cart: Button = $Root/HBox/CartPanel/Margin/VBox/Buttons/BtnClearCart
 @onready var btn_barter_cart: Button = $Root/HBox/CartPanel/Margin/VBox/Buttons/BtnBarter
 
-@onready var confirm_trade: ConfirmationDialog = $ConfirmSell
+@onready var confirm_trade: TradeConfirmPopup = $ConfirmSell
 @onready var tooltip: ItemTooltip = $Tooltip
 @onready var fly_vfx: UiFlyVfx = $FlyVfx
 
@@ -80,6 +79,17 @@ const REFRESH_MAX_COST: int = 999
 enum VendorCategory { ALL, EQUIP, BAG, SETS }
 var _vendor_category: int = VendorCategory.ALL
 var _vendor_search_q: String = ""
+var _vendor_affordable_only: bool = false
+
+# Session-only vendor UI memory. It survives inventory refreshes and screen overlays,
+# but is reset when the player actually leaves the HUB for the next segment/menu.
+static var _remembered_vendor_category: int = VendorCategory.ALL
+static var _remembered_vendor_search: String = ""
+static var _remembered_vendor_affordable: bool = false
+
+var _undo_trade: Dictionary = {}
+var _btn_undo_trade: Button = null
+var _quick_actions_footer: Label = null
 
 func _get_refresh_cost() -> int:
 	var n: int = 0
@@ -101,7 +111,9 @@ func _ready() -> void:
 		Global.save_current_profile()
 
 	# Bind player data
-	inv_bar.allow_double_click_eject_always = true
+	# HubShop owns double-click actions so it can invalidate Undo before any
+	# equipment mutation. Letting InventoryBar eject first bypasses that guard.
+	inv_bar.allow_double_click_eject_always = false
 	inv_bar.set_management_mode(false)
 	inv_bar.bind_inventory(Global.run_inventory)
 	bag_grid.bind_bag(Global.run_bag)
@@ -140,8 +152,7 @@ func _ready() -> void:
 	# Buttons
 	btn_mark_all_bag.pressed.connect(_mark_all_bag)
 	btn_mark_neg.pressed.connect(_mark_negatives)
-	btn_clear.pressed.connect(_clear_selection)
-	btn_barter.pressed.connect(_barter_pressed)
+	chk_include_equipped.toggled.connect(_on_include_equipped_toggled)
 	btn_continue.pressed.connect(_start_next_segment)
 	btn_menu.pressed.connect(_to_menu)
 	if btn_augments != null:
@@ -155,7 +166,16 @@ func _ready() -> void:
 	btn_refresh_vendor.pressed.connect(_refresh_vendor_pressed)
 
 	# Vendor filters
+	_vendor_category = _remembered_vendor_category
+	_vendor_search_q = _remembered_vendor_search
+	_vendor_affordable_only = _remembered_vendor_affordable
 	_setup_vendor_filters()
+	if vendor_search != null:
+		vendor_search.text = _vendor_search_q
+	if btn_affordable != null:
+		btn_affordable.button_pressed = _vendor_affordable_only
+	_create_undo_button()
+	_create_quick_actions_footer()
 	_apply_vendor_filters()
 
 	confirm_trade.confirmed.connect(_perform_trade)
@@ -187,7 +207,155 @@ func _process(_delta: float) -> void:
 		var p := get_viewport().get_mouse_position() + Vector2(16, 16)
 		tooltip.global_position = _clamp_tooltip_pos(p)
 
+func _create_undo_button() -> void:
+	if _btn_undo_trade != null or btn_clear_cart == null:
+		return
+	_btn_undo_trade = Button.new()
+	_btn_undo_trade.name = "UndoLastTrade"
+	_btn_undo_trade.text = "Undo Last Trade"
+	_btn_undo_trade.disabled = true
+	_btn_undo_trade.tooltip_text = "Restores the immediately previous exchange while this HUB remains open."
+	btn_clear_cart.get_parent().add_child(_btn_undo_trade)
+	_btn_undo_trade.pressed.connect(_undo_last_trade)
+
+func _create_quick_actions_footer() -> void:
+	if _quick_actions_footer != null or btn_clear_cart == null:
+		return
+	var buttons: Control = btn_clear_cart.get_parent() as Control
+	var host: Control = null
+	if buttons != null:
+		host = buttons.get_parent() as Control
+	if host == null:
+		return
+	_quick_actions_footer = Label.new()
+	_quick_actions_footer.name = "QuickActionsFooter"
+	_quick_actions_footer.text = "Right-click Move   ·   Shift-click Trade   ·   Ctrl-click Lock   ·   Double-click Equip"
+	_quick_actions_footer.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_quick_actions_footer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_quick_actions_footer.add_theme_font_size_override("font_size", 10)
+	_quick_actions_footer.modulate = Color(1.0, 1.0, 1.0, 0.62)
+	host.add_child(_quick_actions_footer)
+
+func _remember_vendor_state() -> void:
+	_remembered_vendor_category = _vendor_category
+	_remembered_vendor_search = _vendor_search_q
+	_remembered_vendor_affordable = _vendor_affordable_only
+
+func _reset_vendor_memory() -> void:
+	_remembered_vendor_category = VendorCategory.ALL
+	_remembered_vendor_search = ""
+	_remembered_vendor_affordable = false
+
+func _invalidate_trade_undo(message: String = "") -> void:
+	if _undo_trade.is_empty():
+		return
+	_undo_trade.clear()
+	if _btn_undo_trade != null:
+		_btn_undo_trade.disabled = true
+		_btn_undo_trade.text = "Undo Last Trade"
+		_btn_undo_trade.tooltip_text = "Undo is available after the next completed exchange."
+	if message != "" and trade_status != null:
+		trade_status.text = message
+
+func _toggle_item_lock(inst: ItemInstance) -> void:
+	if inst == null:
+		return
+	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
+	inst.toggle_locked()
+	if inst.locked:
+		# A newly locked item is immediately removed from any pending sale cart.
+		for key: Variant in _sell_inv.keys():
+			if Global.run_inventory != null and Global.run_inventory.get_at(int(key)) == inst:
+				_sell_inv.erase(key)
+		for key2: Variant in _sell_bag.keys():
+			if Global.run_bag != null and Global.run_bag.get_at(int(key2)) == inst:
+				_sell_bag.erase(key2)
+		if trade_status != null:
+			trade_status.text = "LOCKED · Protected from trade, movement, replacement and duplicate cleanup."
+	elif trade_status != null:
+		trade_status.text = "UNLOCKED · Item actions restored."
+	_refresh_cart()
+	_refresh_overlays()
+	if Global != null:
+		Global.save_current_profile()
+
+func _snapshot_items(values: Array[ItemInstance]) -> Array[ItemInstance]:
+	var result: Array[ItemInstance] = []
+	for inst: ItemInstance in values:
+		result.append(inst.snapshot_copy() if inst != null else null)
+	return result
+
+func _restore_inventory_snapshot(values: Array) -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	Global.run_inventory.items.clear()
+	for value: Variant in values:
+		Global.run_inventory.items.append(value as ItemInstance)
+	Global.run_inventory._ensure_size()
+	Global.run_inventory.emit_changed()
+
+func _restore_bag_snapshot(target: BagInventory, values: Array) -> void:
+	if target == null:
+		return
+	target.slots.clear()
+	for value: Variant in values:
+		target.slots.append(value as ItemInstance)
+	target._ensure_size()
+	target._rebuild_index()
+	target.emit_changed()
+
+func _capture_trade_undo() -> void:
+	if Global == null or Global.run_inventory == null or Global.run_bag == null or _vendor_bag == null:
+		return
+	_undo_trade = {
+		"followers": int(Global.followers),
+		"inventory": _snapshot_items(Global.run_inventory.items),
+		"bag": _snapshot_items(Global.run_bag.slots),
+		"vendor": _snapshot_items(_vendor_bag.slots),
+		"sold_count": _sell_inv.size() + _sell_bag.size(),
+		"bought_count": _buy_vendor.size(),
+	}
+	if _btn_undo_trade != null:
+		_btn_undo_trade.disabled = false
+		_btn_undo_trade.text = "Undo Last Trade"
+
+func _refresh_undo_button_details() -> void:
+	if _btn_undo_trade == null or _undo_trade.is_empty() or Global == null:
+		return
+	var sold_count: int = int(_undo_trade.get("sold_count", 0))
+	var bought_count: int = int(_undo_trade.get("bought_count", 0))
+	var before_followers: int = int(_undo_trade.get("followers", Global.followers))
+	var follower_delta: int = before_followers - int(Global.followers)
+	var follower_text: String = "Restore follower balance"
+	if follower_delta > 0:
+		follower_text = "Return %d Followers" % follower_delta
+	elif follower_delta < 0:
+		follower_text = "Remove %d Followers" % abs(follower_delta)
+	_btn_undo_trade.tooltip_text = "Restore %d sold item(s), return %d bought item(s), and %s." % [sold_count, bought_count, follower_text]
+
+func _undo_last_trade() -> void:
+	if _undo_trade.is_empty() or Global == null:
+		return
+	Global.followers = int(_undo_trade.get("followers", Global.followers))
+	_restore_inventory_snapshot(_undo_trade.get("inventory", []) as Array)
+	_restore_bag_snapshot(Global.run_bag, _undo_trade.get("bag", []) as Array)
+	_restore_bag_snapshot(_vendor_bag, _undo_trade.get("vendor", []) as Array)
+	Global.attempt_vendor_bag = _vendor_bag
+	_undo_trade.clear()
+	if _btn_undo_trade != null:
+		_btn_undo_trade.disabled = true
+		_btn_undo_trade.text = "Undo Last Trade"
+		_btn_undo_trade.tooltip_text = "Undo is available after the next completed exchange."
+	_clear_selection()
+	_refresh_info()
+	_apply_vendor_filters()
+	if trade_status != null:
+		trade_status.text = "LAST TRADE UNDONE"
+	Global.save_current_profile()
+
 func _to_menu() -> void:
+	_invalidate_trade_undo()
+	_reset_vendor_memory()
 	if Global != null:
 		Global.save_current_profile()
 	Global.goto_main_menu()
@@ -195,15 +363,30 @@ func _to_menu() -> void:
 func _refresh_info() -> void:
 	var seg: int = (Global.attempt_segment if Global != null else 1)
 	var fol: int = (Global.followers if Global != null else 0)
+	var completed_segment: int = maxi(0, seg - 1)
+	var gear_count: int = _equipped_count()
+	var bag_count: int = _backpack_count()
+	var bag_capacity: int = _backpack_capacity()
 
 	var extra: String = ""
 	if Global != null and Global.pending_augment_pick:
-		extra += "\nReward: Augment pick available"
+		extra += "\n\nREWARD READY\nAugment pick available"
 	if Global != null and Global.pending_big_choice:
-		extra += "\nReward: Major choice pending"
+		extra += "\n\nREWARD READY\nMajor choice pending"
 
-	title.text = "Interlude"
-	info.text = "Next Segment: %d\nFollowers: %d%s" % [seg, fol, extra]
+	title.text = "Aftermath"
+	var report_header: String = "SEGMENT %d CLEARED" % completed_segment if completed_segment > 0 else "PREPARING SEGMENT 1"
+	info.text = "%s\n\nNEXT ROUTE\nArea 1 · Segment %d\n\nCURRENT SUPPORT\nFollowers: %d\nGear: %d / %d\nBackpack: %d / %d%s" % [
+		report_header,
+		seg,
+		fol,
+		gear_count,
+		Inventory.SLOT_COUNT,
+		bag_count,
+		bag_capacity,
+		extra,
+	]
+	btn_continue.text = "Continue to Segment %d" % seg
 
 	# Refresh button affordance
 	if btn_refresh_vendor != null:
@@ -211,6 +394,32 @@ func _refresh_info() -> void:
 		btn_refresh_vendor.disabled = (Global == null or Global.followers < cost)
 		btn_refresh_vendor.text = "Refresh (-%d)" % cost
 		btn_refresh_vendor.tooltip_text = "%d Followers search the city's remaining exchange routes." % cost
+
+
+func _equipped_count() -> int:
+	if Global == null or Global.run_inventory == null:
+		return 0
+	var count: int = 0
+	for inst: ItemInstance in Global.run_inventory.items:
+		if inst != null:
+			count += 1
+	return count
+
+
+func _backpack_count() -> int:
+	if Global == null or Global.run_bag == null:
+		return 0
+	var count: int = 0
+	for inst: ItemInstance in Global.run_bag.slots:
+		if inst != null:
+			count += 1
+	return count
+
+
+func _backpack_capacity() -> int:
+	if Global == null or Global.run_bag == null:
+		return BagInventory.SLOT_COUNT
+	return Global.run_bag.get_slot_count()
 
 func _setup_vendor_filters() -> void:
 	# Defensive: scene might not have these nodes in older versions.
@@ -221,6 +430,8 @@ func _setup_vendor_filters() -> void:
 	btn_cat_equip.pressed.connect(func() -> void: _set_vendor_category(VendorCategory.EQUIP))
 	btn_cat_bag.pressed.connect(func() -> void: _set_vendor_category(VendorCategory.BAG))
 	btn_cat_sets.pressed.connect(func() -> void: _set_vendor_category(VendorCategory.SETS))
+	if btn_affordable != null:
+		btn_affordable.toggled.connect(_set_vendor_affordable)
 	if vendor_search != null:
 		vendor_search.text_changed.connect(func(t: String) -> void:
 			_vendor_search_q = t
@@ -237,6 +448,10 @@ func _set_vendor_category(cat: int) -> void:
 	_sync_vendor_filter_buttons()
 	_apply_vendor_filters()
 
+func _set_vendor_affordable(enabled: bool) -> void:
+	_vendor_affordable_only = enabled
+	_apply_vendor_filters()
+
 func _sync_vendor_filter_buttons() -> void:
 	# Use toggle state for clear readability.
 	if btn_cat_all == null:
@@ -245,6 +460,12 @@ func _sync_vendor_filter_buttons() -> void:
 	btn_cat_equip.button_pressed = (_vendor_category == VendorCategory.EQUIP)
 	btn_cat_bag.button_pressed = (_vendor_category == VendorCategory.BAG)
 	btn_cat_sets.button_pressed = (_vendor_category == VendorCategory.SETS)
+	if btn_affordable != null:
+		btn_affordable.button_pressed = _vendor_affordable_only
+
+func _vendor_affordable_budget() -> int:
+	var followers: int = (Global.followers if Global != null else 0)
+	return maxi(0, followers + _sell_total())
 
 func _vendor_item_matches(inst: ItemInstance) -> bool:
 	if inst == null or inst.data == null:
@@ -262,6 +483,11 @@ func _vendor_item_matches(inst: ItemInstance) -> bool:
 				return false
 		_:
 			pass
+	# Affordable is evaluated against current Followers plus anything already offered.
+	# It is deliberately per-item; the final combined cart is still validated separately.
+	if _vendor_affordable_only and _buy_value(inst) > _vendor_affordable_budget():
+		return false
+
 	# Search
 	var q := _vendor_search_q.strip_edges().to_lower()
 	if q != "":
@@ -273,6 +499,7 @@ func _vendor_item_matches(inst: ItemInstance) -> bool:
 	return true
 
 func _apply_vendor_filters() -> void:
+	_remember_vendor_state()
 	if vendor_grid == null or _vendor_bag == null:
 		return
 	# Hide empty + non-matching slots to produce a filtered “list” view.
@@ -548,12 +775,21 @@ func _clear_selection() -> void:
 	_apply_hidden_slots()
 
 
+func _on_include_equipped_toggled(enabled: bool) -> void:
+	if enabled:
+		return
+	_sell_inv.clear()
+	_refresh_cart()
+	_refresh_overlays()
+
+
 func _mark_all_bag() -> void:
 	if Global.run_bag == null:
 		return
 	_sell_bag.clear()
 	for i in range(Global.run_bag.slots.size()):
-		if Global.run_bag.slots[i] != null:
+		var inst: ItemInstance = Global.run_bag.slots[i]
+		if inst != null and not inst.locked:
 			_sell_bag[i] = true
 	_refresh_cart()
 	_refresh_overlays()
@@ -564,46 +800,139 @@ func _mark_negatives() -> void:
 	_sell_bag.clear()
 	for i in range(Global.run_bag.slots.size()):
 		var inst: ItemInstance = Global.run_bag.slots[i]
-		if inst != null and int(inst.polarity) == int(ItemInstance.Polarity.NEG):
+		if inst != null and not inst.locked and int(inst.polarity) == int(ItemInstance.Polarity.NEG):
 			_sell_bag[i] = true
 	_refresh_cart()
 	_refresh_overlays()
 
-func _on_inv_slot_clicked(slot: int, button: int, _double_click: bool, _shift: bool) -> void:
-	if button != MOUSE_BUTTON_LEFT:
+func _quick_move_equipped_to_bag(slot: int) -> void:
+	if Global == null or Global.run_inventory == null or Global.run_bag == null or InvRouter == null:
 		return
-	if Global.run_inventory == null:
-		return
-	# Only allow selling equipped if checkbox is on.
-	if chk_include_equipped != null and (not chk_include_equipped.button_pressed):
-		return
-
 	var inst: ItemInstance = Global.run_inventory.get_at(slot)
 	if inst == null:
 		return
+	if inst.locked:
+		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before moving it."
+		return
+	var dst: int = Global.run_bag.first_empty_slot()
+	if dst < 0:
+		if trade_status != null: trade_status.text = "BACKPACK FULL"
+		return
+	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
+	_sell_inv.erase(slot)
+	if InvRouter.move_between(Global.run_inventory, slot, Global.run_bag, dst, null):
+		if trade_status != null: trade_status.text = "MOVED TO BACKPACK"
+		_refresh_cart()
+		_refresh_overlays()
+		Global.save_current_profile()
 
+func _quick_equip_from_bag(slot: int) -> void:
+	if Global == null or Global.run_inventory == null or Global.run_bag == null or InvRouter == null:
+		return
+	var inst: ItemInstance = Global.run_bag.get_at(slot)
+	if inst == null or inst.data == null:
+		return
+	if inst.locked:
+		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before equipping it."
+		return
+	var equip_slot: int = int(inst.data.equip_slot)
+	if equip_slot < 0 or equip_slot >= Inventory.SLOT_COUNT:
+		if trade_status != null: trade_status.text = "THIS ITEM CANNOT BE EQUIPPED"
+		return
+	var current: ItemInstance = Global.run_inventory.get_at(equip_slot)
+	if current != null and current.locked:
+		if trade_status != null: trade_status.text = "EQUIPPED ITEM LOCKED · Unlock it before replacement."
+		return
+	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
+	_sell_bag.erase(slot)
+	if InvRouter.move_between(Global.run_bag, slot, Global.run_inventory, equip_slot, null):
+		if trade_status != null: trade_status.text = "ITEM EQUIPPED"
+		_refresh_cart()
+		_refresh_overlays()
+		Global.save_current_profile()
+
+func _quick_move_bag_to_stash(slot: int) -> void:
+	if Global == null or Global.run_bag == null or InvRouter == null:
+		return
+	var inst: ItemInstance = Global.run_bag.get_at(slot)
+	if inst == null:
+		return
+	if inst.locked:
+		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before moving it."
+		return
+	if Global.meta_stash == null:
+		Global.meta_stash = StashInventory.new()
+	var dst: int = Global.meta_stash.first_empty_slot()
+	if dst < 0:
+		if trade_status != null: trade_status.text = "STASH FULL"
+		return
+	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
+	_sell_bag.erase(slot)
+	if InvRouter.move_between(Global.run_bag, slot, Global.meta_stash, dst, null):
+		if trade_status != null: trade_status.text = "MOVED TO STASH"
+		_refresh_cart()
+		_refresh_overlays()
+		Global.save_current_profile()
+
+func _on_inv_slot_clicked(slot: int, button: int, double_click: bool, shift: bool) -> void:
+	if Global.run_inventory == null:
+		return
+	var inst: ItemInstance = Global.run_inventory.get_at(slot)
+	if inst == null:
+		return
+	if Input.is_key_pressed(KEY_CTRL):
+		_toggle_item_lock(inst)
+		return
+	if button == MOUSE_BUTTON_RIGHT or (button == MOUSE_BUTTON_LEFT and double_click):
+		_quick_move_equipped_to_bag(slot)
+		return
+	if button != MOUSE_BUTTON_LEFT:
+		return
+	if inst.locked:
+		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock."
+		return
+	if chk_include_equipped != null and not chk_include_equipped.button_pressed:
+		if shift and trade_status != null:
+			trade_status.text = "Enable Gear before adding equipped items to the offer."
+		return
 	if _sell_inv.has(slot):
 		_sell_inv.erase(slot)
 	else:
 		_sell_inv[slot] = true
-
 	_refresh_cart()
 	_refresh_overlays()
 
-func _on_bag_slot_clicked(slot: int) -> void:
+func _on_bag_slot_clicked(slot: int, button: int, double_click: bool, shift: bool, ctrl: bool) -> void:
 	if Global.run_bag == null or slot < 0 or slot >= Global.run_bag.slots.size():
 		return
 	var inst: ItemInstance = Global.run_bag.slots[slot]
 	if inst == null:
 		return
+	if ctrl:
+		_toggle_item_lock(inst)
+		return
+	if button == MOUSE_BUTTON_RIGHT:
+		_quick_move_bag_to_stash(slot)
+		return
+	if button == MOUSE_BUTTON_LEFT and double_click:
+		_quick_equip_from_bag(slot)
+		return
+	if button != MOUSE_BUTTON_LEFT:
+		return
+	if inst.locked:
+		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before adding it to the offer."
+		return
 
+	# Shift-click is the explicit trade shortcut; ordinary left-click remains
+	# compatible with the existing exchange flow.
 	var was_selected: bool = _sell_bag.has(slot)
 	if was_selected:
 		_sell_bag.erase(slot)
 	else:
 		_sell_bag[slot] = true
+	if shift and trade_status != null:
+		trade_status.text = "REMOVED FROM OFFER" if was_selected else "ADDED TO OFFER"
 
-	# VFX: bag <-> offer
 	if fly_vfx != null:
 		var src_ctrl := bag_grid.get_slot_control(slot)
 		if src_ctrl != null:
@@ -615,8 +944,15 @@ func _on_bag_slot_clicked(slot: int) -> void:
 
 	_refresh_cart()
 	_refresh_overlays()
-func _on_vendor_slot_clicked(slot: int) -> void:
+
+func _on_vendor_slot_clicked(slot: int, button: int, _double_click: bool, shift: bool, ctrl: bool) -> void:
 	if _vendor_bag == null or slot < 0 or slot >= _vendor_bag.slots.size():
+		return
+	if ctrl:
+		if trade_status != null:
+			trade_status.text = "Vendor stock cannot be locked; lock owned items in Gear, Backpack or Stash."
+		return
+	if button != MOUSE_BUTTON_LEFT:
 		return
 	var inst: ItemInstance = _vendor_bag.slots[slot]
 	if inst == null:
@@ -627,6 +963,8 @@ func _on_vendor_slot_clicked(slot: int) -> void:
 		_buy_vendor.erase(slot)
 	else:
 		_buy_vendor[slot] = true
+	if shift and trade_status != null:
+		trade_status.text = "REMOVED FROM REQUEST" if was_selected else "ADDED TO REQUEST"
 
 	# VFX: vendor <-> demand
 	if fly_vfx != null:
@@ -640,7 +978,7 @@ func _on_vendor_slot_clicked(slot: int) -> void:
 
 	_refresh_cart()
 	_refresh_overlays()
-func _on_offer_slot_clicked(slot: int) -> void:
+func _on_offer_slot_clicked(slot: int, _button: int, _double_click: bool, _shift: bool, _ctrl: bool) -> void:
 	# Click-to-remove in cart preview
 	if not _offer_map.has(slot):
 		return
@@ -670,7 +1008,7 @@ func _on_offer_slot_clicked(slot: int) -> void:
 
 	_refresh_cart()
 	_refresh_overlays()
-func _on_demand_slot_clicked(slot: int) -> void:
+func _on_demand_slot_clicked(slot: int, _button: int, _double_click: bool, _shift: bool, _ctrl: bool) -> void:
 	if not _demand_map.has(slot):
 		return
 	var vs: int = int(_demand_map[slot])
@@ -692,7 +1030,7 @@ func _sell_total() -> int:
 		for k in _sell_inv.keys():
 			var slot: int = int(k)
 			var inst: ItemInstance = Global.run_inventory.get_at(slot)
-			if inst != null:
+			if inst != null and not inst.locked:
 				total += _sell_value(inst)
 	# bag
 	if Global.run_bag != null:
@@ -700,7 +1038,7 @@ func _sell_total() -> int:
 			var slot2: int = int(k2)
 			if slot2 >= 0 and slot2 < Global.run_bag.slots.size():
 				var inst2: ItemInstance = Global.run_bag.slots[slot2]
-				if inst2 != null:
+				if inst2 != null and not inst2.locked:
 					total += _sell_value(inst2)
 	return total
 
@@ -734,14 +1072,49 @@ func _apply_hidden_slots() -> void:
 	if vendor_grid != null and vendor_grid.has_method("set_hidden_slots"):
 		vendor_grid.set_hidden_slots(_buy_vendor)
 
+func _trade_validation() -> Dictionary:
+	if _sell_inv.is_empty() and _sell_bag.is_empty() and _buy_vendor.is_empty():
+		return {"valid": false, "reason": "Choose goods from either side."}
+
+	# Defence in depth: even if a stale selection survives a UI refresh, a
+	# locked item can never contribute value or be removed by a transaction.
+	if Global.run_inventory != null:
+		for key: Variant in _sell_inv.keys():
+			var equipped: ItemInstance = Global.run_inventory.get_at(int(key))
+			if equipped != null and equipped.locked:
+				return {"valid": false, "reason": "ITEM LOCKED · Remove it from the offer or Ctrl-click to unlock."}
+	if Global.run_bag != null:
+		for key2: Variant in _sell_bag.keys():
+			var bag_item: ItemInstance = Global.run_bag.get_at(int(key2))
+			if bag_item != null and bag_item.locked:
+				return {"valid": false, "reason": "ITEM LOCKED · Remove it from the offer or Ctrl-click to unlock."}
+
+	var needed_slots: int = _estimate_needed_bag_slots_for_buys()
+	var empty_slots: int = _bag_empty_slots() + _bag_slots_freed_by_offer()
+	if needed_slots > empty_slots:
+		return {
+			"valid": false,
+			"reason": "Backpack full • need %d more free slot%s." % [needed_slots - empty_slots, "" if needed_slots - empty_slots == 1 else "s"],
+		}
+
+	var followers: int = (Global.followers if Global != null else 0)
+	var after: int = followers - (_buy_total() - _sell_total())
+	if after < 0:
+		return {
+			"valid": false,
+			"reason": "Insufficient support • %d more Followers required." % (-after),
+		}
+
+	return {"valid": true, "reason": "Exchange is viable."}
+
 func _refresh_cart() -> void:
 	_rebuild_cart_previews()
 
 	var sell_v: int = _sell_total()
 	var buy_v: int = _buy_total()
 	var net: int = buy_v - sell_v
-	var fol: int = (Global.followers if Global != null else 0)
-	var after: int = fol - net
+	var followers: int = (Global.followers if Global != null else 0)
+	var after: int = followers - net
 
 	var net_txt: String
 	if net > 0:
@@ -751,17 +1124,22 @@ func _refresh_cart() -> void:
 	else:
 		net_txt = "Net: 0"
 
-	var s_count: int = _sell_inv.size() + _sell_bag.size()
-	var b_count: int = _buy_vendor.size()
-
-	# Left sidebar summary
-	cart.text = "Sell(%d): %d\nBuy(%d): %d\n%s\nFollowers: %d" % [s_count, sell_v, b_count, buy_v, net_txt, fol]
-
-	# Center panel summary
 	if cart_totals != null:
-		var after_txt := ("%d" % after)
-		cart_totals.text = "Sell: %d    Buy: %d\n%s\nFollowers after: %s" % [sell_v, buy_v, net_txt, after_txt]
+		cart_totals.text = "Offer: %d    Request: %d\n%s\nFollowers after: %d" % [sell_v, buy_v, net_txt, after]
+
+	var validation: Dictionary = _trade_validation()
+	var can_trade: bool = bool(validation.get("valid", false))
+	var overlay_open: bool = _augment_library != null and is_instance_valid(_augment_library)
+	if trade_status != null:
+		trade_status.text = String(validation.get("reason", ""))
+		trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
+	if btn_barter_cart != null:
+		btn_barter_cart.disabled = (not can_trade) or overlay_open
+		btn_barter_cart.tooltip_text = "Confirm this exchange." if can_trade else String(validation.get("reason", ""))
+
 	_apply_hidden_slots()
+	if _vendor_affordable_only:
+		_apply_vendor_filters()
 
 
 func _rebuild_cart_previews() -> void:
@@ -786,7 +1164,7 @@ func _rebuild_cart_previews() -> void:
 			if idx >= _offer_bag.slots.size():
 				break
 			var inst: ItemInstance = Global.run_bag.slots[s] as ItemInstance
-			if inst == null:
+			if inst == null or inst.locked:
 				continue
 			_offer_bag.slots[idx] = inst
 			_offer_map[idx] = {"src": "bag", "slot": s}
@@ -801,7 +1179,7 @@ func _rebuild_cart_previews() -> void:
 			if idx >= _offer_bag.slots.size():
 				break
 			var inst2: ItemInstance = Global.run_inventory.get_at(s2) as ItemInstance
-			if inst2 == null:
+			if inst2 == null or inst2.locked:
 				continue
 			_offer_bag.slots[idx] = inst2
 			_offer_map[idx] = {"src": "inv", "slot": s2}
@@ -831,58 +1209,49 @@ func _rebuild_cart_previews() -> void:
 		_demand_bag.emit_changed()
 
 func _barter_pressed() -> void:
-	if _sell_inv.is_empty() and _sell_bag.is_empty() and _buy_vendor.is_empty():
+	var validation: Dictionary = _trade_validation()
+	if not bool(validation.get("valid", false)):
+		if trade_status != null:
+			trade_status.text = String(validation.get("reason", "Exchange unavailable."))
 		return
 
 	var sell_v: int = _sell_total()
 	var buy_v: int = _buy_total()
 	var net: int = buy_v - sell_v
-
-	var fol: int = (Global.followers if Global != null else 0)
-	var after: int = fol - net
-
-	# capacity check for buys
-	var need_slots: int = _estimate_needed_bag_slots_for_buys()
-	if need_slots > _bag_empty_slots():
-		hover.text = "Backpack full: need %d free slots." % need_slots
-		return
-
-	if after < 0:
-		hover.text = "Not enough committed support: %d more Followers are needed for supplies, contacts and safe passage." % (-after)
-		return
+	var followers: int = (Global.followers if Global != null else 0)
+	var after: int = followers - net
 
 	var commitment_line := "Followers recover supplies from this exchange."
 	if net > 0:
 		commitment_line = "%d Followers commit supplies, contacts and personal risk to secure this equipment." % net
-	confirm_trade.dialog_text = "Confirm exchange?\n\n%s\n\nSell: %d\nBuy: %d\nNet: %s\nFollowers after: %d" % [
-		commitment_line,
+	confirm_trade.open_trade(
 		sell_v,
 		buy_v,
-		("-%d" % net if net > 0 else "+%d" % (-net) if net < 0 else "0"),
-		after
-	]
-	confirm_trade.popup_centered()
+		net,
+		followers,
+		after,
+		commitment_line
+	)
 
 func _perform_trade() -> void:
+	# Revalidate after the confirmation popup so inventory/follower changes cannot
+	# turn a previously valid cart into an impossible transaction.
+	var validation: Dictionary = _trade_validation()
+	if not bool(validation.get("valid", false)):
+		_refresh_cart()
+		return
+
 	var sell_v: int = _sell_total()
 	var buy_v: int = _buy_total()
 	var net: int = buy_v - sell_v
 
-	var fol: int = (Global.followers if Global != null else 0)
-	var after: int = fol - net
-	if after < 0:
-		return
-
-	# capacity re-check
-	var need_slots: int = _estimate_needed_bag_slots_for_buys()
-	if need_slots > _bag_empty_slots():
-		return
+	_capture_trade_undo()
 
 	# --- SELL (remove items) ---
 	if Global.run_inventory != null:
 		for k in _sell_inv.keys():
 			var slot: int = int(k)
-			Global.run_inventory.remove_at(slot)
+			Global.run_inventory.remove_at(slot, {"player_driven": true})
 
 	if Global.run_bag != null:
 		for k2 in _sell_bag.keys():
@@ -922,6 +1291,7 @@ func _perform_trade() -> void:
 	if Global != null:
 		Global.transaction_followers(-net, &"trade", {"buy_value": buy_v, "sell_value": sell_v}, true, false)
 		Global.save_current_profile()
+	_refresh_undo_button_details()
 
 	_clear_selection()
 	_refresh_info()
@@ -929,6 +1299,7 @@ func _perform_trade() -> void:
 func _refresh_vendor_pressed() -> void:
 	if Global == null:
 		return
+	_invalidate_trade_undo("UNDO CLEARED · Vendor stock refreshed.")
 
 	var cost: int = _get_refresh_cost()
 	if Global.followers < cost:
@@ -1004,15 +1375,9 @@ func _generate_vendor_stock(force: bool) -> void:
 		if data == null:
 			continue
 
-		var rarity: int = rng.randi_range(r_lo, r_hi)
-		var roll_pct: float = _roll_percent_rng(rng, Global.run_luck, data.pct_min, data.pct_max)
-
-		var pol: int = ItemInstance.Polarity.POS
-		if roll_pct < 0.0:
-			pol = ItemInstance.Polarity.NEG
-		roll_pct = absf(roll_pct) * (1.0 if pol == ItemInstance.Polarity.POS else -1.0)
-
-		var inst: ItemInstance = ItemInstance.from_roll(data, rarity, pol, roll_pct)
+		var context := Global.build_item_drop_context(r_lo, r_hi, &"vendor", 1)
+		context.threat_level += LuckResolver.vendor_stock_bonus(Global.run_luck)
+		var inst: ItemInstance = ItemGenerator.create_instance(data, context, rng)
 		_vendor_bag.slots[slot_idx] = inst
 
 	_vendor_bag.emit_changed()
@@ -1125,8 +1490,13 @@ func _set_hover_from_item(inst: ItemInstance) -> void:
 
 	if tooltip != null:
 		tooltip.show_item(inst)
-		var p := get_viewport().get_mouse_position() + Vector2(16, 16)
-		tooltip.global_position = _clamp_tooltip_pos(p)
+		var hovered := get_viewport().gui_get_hovered_control() as Control
+		var source_rect := (
+			hovered.get_global_rect()
+			if hovered != null
+			else Rect2(get_viewport().get_mouse_position(), Vector2.ONE)
+		)
+		tooltip.place_beside(source_rect, get_viewport().get_visible_rect(), 12.0)
 
 func _on_hover_clear() -> void:
 	_hover_ctx_kind = ""
@@ -1154,6 +1524,16 @@ func _bag_empty_slots() -> int:
 			empty += 1
 	return empty
 
+func _bag_slots_freed_by_offer() -> int:
+	if Global == null or Global.run_bag == null:
+		return 0
+	var freed: int = 0
+	for key in _sell_bag.keys():
+		var slot: int = int(key)
+		if slot >= 0 and slot < Global.run_bag.slots.size() and Global.run_bag.slots[slot] != null:
+			freed += 1
+	return freed
+
 func _bag_stack_key(inst: ItemInstance) -> String:
 	if inst == null or inst.data == null:
 		return ""
@@ -1167,8 +1547,12 @@ func _estimate_needed_bag_slots_for_buys() -> int:
 		return 0
 
 	var keys: Dictionary = {}
-	for s in Global.run_bag.slots:
-		var inst: ItemInstance = s
+	# Model the backpack *after* offered bag items are removed. Otherwise selling
+	# the only stack of a key and buying that key plus another can undercount slots.
+	for bag_slot in range(Global.run_bag.slots.size()):
+		if _sell_bag.has(bag_slot):
+			continue
+		var inst: ItemInstance = Global.run_bag.slots[bag_slot]
 		if inst == null:
 			continue
 		var k := _bag_stack_key(inst)
@@ -1195,6 +1579,11 @@ func _estimate_needed_bag_slots_for_buys() -> int:
 
 
 func _open_inventory() -> void:
+	if not _sell_inv.is_empty() or not _sell_bag.is_empty() or not _buy_vendor.is_empty():
+		if trade_status != null:
+			trade_status.text = "Clear or confirm the exchange before reorganising reserved items."
+		return
+	_invalidate_trade_undo("UNDO CLEARED · Inventory management opened.")
 	var scn: PackedScene = preload("res://ui/screens/InventoryStash.tscn")
 	var inv := scn.instantiate() as InventoryStash
 	if inv == null:
@@ -1208,6 +1597,7 @@ func _open_inventory() -> void:
 	)
 
 func _open_augments() -> void:
+	_invalidate_trade_undo("UNDO CLEARED · Augment state changed.")
 	if augment_library_scene == null:
 		return
 	if _augment_library != null and is_instance_valid(_augment_library):
@@ -1218,16 +1608,18 @@ func _open_augments() -> void:
 	add_child(inst)
 	_augment_library = inst
 	btn_continue.disabled = true
-	btn_barter.disabled = true
+	btn_barter_cart.disabled = true
 	btn_augments.disabled = true
 	inst.closed.connect(func() -> void:
 		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
-		btn_barter.disabled = false
-		btn_augments.disabled = false
 		_augment_library = null
+		_refresh_cart()
+		btn_augments.disabled = false
 	)
 
 func _start_next_segment() -> void:
+	_invalidate_trade_undo()
+	_reset_vendor_memory()
 	if Global != null and Global.pending_big_choice:
 		btn_continue.disabled = true
 		if _major_choice != null:

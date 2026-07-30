@@ -69,9 +69,9 @@ func _build_ui() -> void:
 	_panel.anchor_top = 1.0
 	_panel.anchor_right = 1.0
 	_panel.anchor_bottom = 1.0
-	_panel.offset_left = -490.0
+	_panel.offset_left = -478.0
 	_panel.offset_top = -126.0
-	_panel.offset_right = -8.0
+	_panel.offset_right = -18.0
 	_panel.offset_bottom = -62.0
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	var style := StyleBoxFlat.new()

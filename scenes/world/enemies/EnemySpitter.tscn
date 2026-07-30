@@ -10,14 +10,13 @@ drop_pool_prefixes = ["conduit_","acc_","ring_"]
 drop_fallback_to_all = false
 drop_amount_min = 1
 drop_amount_max = 1
-drop_instance_roll = false
 drop_rarity_min = 0
 drop_rarity_max = 0
 drop_force_polarity = 0
 pickup_delay = 0.25
 drop_spawn_radius = 18.0
 knockback_decay = 2200.0
-debug_drops = true
+debug_drops = false
 
 [node name="Sprite2D" parent="." index="0" unique_id=1886877098]
 texture = ExtResource("3_pc8oy")

@@ -35,6 +35,11 @@ func _norm_origin(origin: Variant) -> Dictionary:
 
 	return {}
 
+func _player_origin(origin: Variant) -> Dictionary:
+	var result: Dictionary = _norm_origin(origin)
+	result["player_driven"] = true
+	return result
+
 func _bag_set_origin(origin: Variant) -> void:
 	if bag == null:
 		return
@@ -59,7 +64,7 @@ func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 		return false
 
 	var inst: ItemInstance = equipped.get_at(slot) as ItemInstance
-	if inst == null:
+	if inst == null or inst.locked:
 		return false
 
 	# set bag VFX origin (so bag plays "fly in" from equip slot)
@@ -67,7 +72,7 @@ func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 		bag.call("set_pending_ui_origin", origin)
 
 	# remove first, then rollback if add fails
-	equipped.remove_at(slot)
+	equipped.remove_at(slot, _player_origin(origin))
 
 	var ok: bool = _bag_add_instance(inst)
 	if not ok:
@@ -83,7 +88,7 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		return false
 
 	var inst: ItemInstance = bag_inv.get_at(bag_slot_index)
-	if inst == null or inst.data == null:
+	if inst == null or inst.data == null or inst.locked:
 		return false
 
 	# Prefer deterministic equip slot if the item defines it
@@ -93,11 +98,14 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		equip_slot = int(ev)
 
 	if equip_slot >= 0 and equip_slot < Inventory.SLOT_COUNT:
+		var protected_current: ItemInstance = inv.get_at(equip_slot)
+		if protected_current != null and protected_current.locked:
+			return false
 		# Free bag slot first
 		bag_inv.remove_at(bag_slot_index)
 
 		# IMPORTANT: pass origin into set_item so InventoryBar gets slot_set signal w/ origin
-		var prev: ItemInstance = inv.set_item(equip_slot, inst, origin)
+		var prev: ItemInstance = inv.set_item(equip_slot, inst, _player_origin(origin))
 
 		if prev != null and prev.data != null:
 			var ok_bag: bool = bag_inv.add_instance(prev)
@@ -124,7 +132,7 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 	if not dst_inv.has_method("set_item"): return false
 
 	var inst: ItemInstance = src_inv.call("get_at", src_i) as ItemInstance
-	if inst == null:
+	if inst == null or inst.locked:
 		return false
 
 	# Block swapping between equipped slots entirely (items are fixed-slot anyway).
@@ -132,6 +140,8 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 		return false
 
 	var dst: ItemInstance = dst_inv.call("get_at", dst_i) as ItemInstance
+	if dst != null and dst.locked:
+		return false
 
 	# If moving INTO equipped inventory, enforce strict slot match.
 	if dst_inv is Inventory:
@@ -157,8 +167,12 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 				return false
 
 	# Perform the move.
-	dst_inv.call("set_item", dst_i, inst, origin)
-	src_inv.call("remove_at", src_i)
+	var routed_origin: Dictionary = _player_origin(origin)
+	dst_inv.call("set_item", dst_i, inst, routed_origin)
+	if src_inv is Inventory:
+		src_inv.call("remove_at", src_i, routed_origin)
+	else:
+		src_inv.call("remove_at", src_i)
 
 	# Swap back only if safe.
 	if dst != null:
@@ -177,10 +191,13 @@ func drop_from(src_inv: Object, src_i: int, world_pos: Vector2) -> bool:
 		return false
 
 	var inst: ItemInstance = src_inv.call("get_at", src_i) as ItemInstance
-	if inst == null:
+	if inst == null or inst.locked:
 		return false
 
-	src_inv.call("remove_at", src_i)
+	if src_inv is Inventory:
+		src_inv.call("remove_at", src_i, _player_origin(null))
+	else:
+		src_inv.call("remove_at", src_i)
 	dropped_to_world.emit(inst, world_pos)
 
 	_emit_ui(&"drop", inst, {

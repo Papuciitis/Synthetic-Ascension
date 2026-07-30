@@ -26,8 +26,11 @@ var _bottom_style: StyleBoxFlat
 var _base_scale: Vector2 = Vector2.ONE
 var _tw_scale: Tween = null
 var _tw_actions: Tween = null
+var _tw_details: Tween = null
 
 @onready var card_panel: Panel = $CardPanel as Panel
+@onready var details_panel: PanelContainer = $CardPanel/DetailsPanel as PanelContainer
+@onready var details_label: Label = $CardPanel/DetailsPanel/Margin/Details as Label
 @onready var bottom_panel: PanelContainer = $CardPanel/RootVBox/BottomPanel as PanelContainer
 @onready var name_label: Label = $CardPanel/RootVBox/BottomPanel/Margin/InfoVBox/Name as Label
 @onready var meta_label: Label = $CardPanel/RootVBox/BottomPanel/Margin/InfoVBox/Meta as Label
@@ -131,9 +134,11 @@ func set_slot_data(slot: int, save: SaveData) -> void:
 	_has_save = (save != null)
 
 	if not _has_save:
-		name_label.text = "Slot %d — EMPTY" % slot
+		name_label.text = "EMPTY SLOT"
 		meta_label.text = "Click to create"
 		stats_label.text = ""
+		details_label.text = "SLOT %d\n\nA new Pattern can begin here." % slot
+		details_panel.visible = false
 		btn_delete.disabled = true
 		btn_rename.disabled = true
 
@@ -143,10 +148,15 @@ func set_slot_data(slot: int, save: SaveData) -> void:
 		return
 
 	buttons_box.visible = true
+	details_panel.visible = true
 	btn_delete.disabled = false
 	btn_rename.disabled = false
 
-	name_label.text = "Slot %d — %s" % [slot, save.profile_name]
+	var character_name: String = save.mortal_name.strip_edges()
+	if character_name == "":
+		character_name = save.profile_name.strip_edges()
+	if character_name == "":
+		character_name = "The Arcanist"
 
 	var race_name := save.last_race_id
 	var style_name := save.last_style_id
@@ -159,10 +169,66 @@ func set_slot_data(slot: int, save: SaveData) -> void:
 	if st != null and st.display_name != "":
 		style_name = st.display_name
 
-	meta_label.text = "%s • %s" % [race_name, style_name]
-	stats_label.text = "Runs: %d • Best: %d" % [save.total_runs, save.best_followers]
+	var segment: int = maxi(1, save.attempt_segment)
+	var route: String = "AREA 1 · SEGMENT %d" % segment if save.attempt_active else "NO ACTIVE ATTEMPT"
+	var status: String = _save_status(save)
+	var gear_count: int = _equipped_count(save.attempt_inventory)
+	var bag_count: int = _bag_count(save.attempt_bag)
+	var bag_capacity: int = _bag_capacity(save.attempt_bag)
+
+	name_label.text = character_name
+	meta_label.text = "SLOT %d · %s · %s" % [slot, race_name, style_name]
+	stats_label.text = "%s · %d Followers" % [route, maxi(0, save.attempt_followers)]
+	details_label.text = "%s\n%s\n\nFOLLOWERS  %d\nGEAR  %d / %d\nBACKPACK  %d / %d\n\nRUNS  %d   ·   BEST  %d" % [
+		route,
+		status,
+		maxi(0, save.attempt_followers),
+		gear_count,
+		Inventory.SLOT_COUNT,
+		bag_count,
+		bag_capacity,
+		maxi(0, save.total_runs),
+		maxi(0, save.best_followers),
+	]
 
 	_update_visuals(true)
+
+
+func _save_status(save: SaveData) -> String:
+	if not save.attempt_active:
+		return "BETWEEN ATTEMPTS"
+	var resume_path: String = save.attempt_resume_scene.to_lower()
+	if resume_path.contains("hubshop"):
+		return "RESPITE"
+	if resume_path.contains("game"):
+		return "IN SEGMENT"
+	return "ATTEMPT ACTIVE"
+
+
+func _equipped_count(inv: Inventory) -> int:
+	if inv == null:
+		return 0
+	var count: int = 0
+	for inst: ItemInstance in inv.items:
+		if inst != null:
+			count += 1
+	return count
+
+
+func _bag_count(bag: BagInventory) -> int:
+	if bag == null:
+		return 0
+	var count: int = 0
+	for inst: ItemInstance in bag.slots:
+		if inst != null:
+			count += 1
+	return count
+
+
+func _bag_capacity(bag: BagInventory) -> int:
+	if bag == null:
+		return BagInventory.SLOT_COUNT
+	return bag.get_slot_count()
 
 
 func _build_styles() -> void:
@@ -183,8 +249,9 @@ func _build_styles() -> void:
 	_bottom_style.bg_color = Color(0, 0, 0, 0.60)
 	_bottom_style.set_border_width_all(2)
 	_bottom_style.border_color = Color(0.12, 0.12, 0.12, 1)
-	_bottom_style.corner_radius_top_left = corner_radius
-	_bottom_style.corner_radius_top_right = corner_radius
+	# This is an attached footer, not a second card floating over the preview.
+	_bottom_style.corner_radius_top_left = 0
+	_bottom_style.corner_radius_top_right = 0
 	_bottom_style.corner_radius_bottom_left = corner_radius
 	_bottom_style.corner_radius_bottom_right = corner_radius
 	bottom_panel.add_theme_stylebox_override("panel", _bottom_style)
@@ -219,6 +286,7 @@ func _update_visuals(force: bool = false) -> void:
 	_card_style.bg_color = bg
 
 	_set_actions_visible((_selected or hovered) and _has_save, force)
+	_set_details_visible((_selected or hovered) and _has_save, force)
 
 
 func _set_actions_visible(v: bool, force: bool = false) -> void:
@@ -245,3 +313,25 @@ func _set_actions_visible(v: bool, force: bool = false) -> void:
 	var to := from
 	to.a = target_a
 	_tw_actions.tween_property(buttons_box, "modulate", to, 0.10)
+
+
+func _set_details_visible(value: bool, force: bool = false) -> void:
+	if not _has_save or not details_panel.visible:
+		return
+
+	var target_alpha: float = 1.0 if value else 0.0
+	if force:
+		var immediate: Color = details_panel.modulate
+		immediate.a = target_alpha
+		details_panel.modulate = immediate
+		return
+
+	if _tw_details != null and _tw_details.is_running():
+		_tw_details.kill()
+
+	var target: Color = details_panel.modulate
+	target.a = target_alpha
+	_tw_details = create_tween()
+	_tw_details.set_trans(Tween.TRANS_QUAD)
+	_tw_details.set_ease(Tween.EASE_OUT)
+	_tw_details.tween_property(details_panel, "modulate", target, 0.12)

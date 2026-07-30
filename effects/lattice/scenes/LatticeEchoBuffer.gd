@@ -1,7 +1,7 @@
 extends SetEffectBase
-class_name LatticeEchoBuffer
 
 signal active_cd_changed(time_left: float, max_cd: float)
+signal active_failed(message: String)
 
 @export var hud_priority: int = 9
 @export var hud_key_text: String = "R"
@@ -43,6 +43,7 @@ var _last_cd_report: float = -999.0
 
 var _last_style: StringName = &"ranged"
 var _rng := RandomNumberGenerator.new()
+var _preview_line: Line2D = null
 
 func _init() -> void:
 	effect_id = &"lattice_6_index_commit"
@@ -55,6 +56,9 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if RunEvents.weapon_fired.is_connected(_on_weapon_fired):
 		RunEvents.weapon_fired.disconnect(_on_weapon_fired)
+	_clear_mark_visuals()
+	if _preview_line != null and is_instance_valid(_preview_line):
+		_preview_line.queue_free()
 
 func _process(dt: float) -> void:
 	# tick active window + cooldown
@@ -65,7 +69,9 @@ func _process(dt: float) -> void:
 	for i in range(_marks.size() - 1, -1, -1):
 		_marks[i].t -= dt
 		if _marks[i].t <= 0.0:
+			_free_mark_vfx(_marks[i])
 			_marks.remove_at(i)
+	_update_preview_line()
 
 	# Active trigger
 	if player != null and Input.is_action_just_pressed("set_active"):
@@ -85,23 +91,25 @@ func _on_weapon_fired(p: Node, style_id: StringName, origin: Vector2, target: Ve
 	if p2 != null and style_id == &"melee":
 		pos = p2.global_position.lerp(target, 0.62)
 
-	_add_mark(pos, style_id, origin, target, power_mul)
+	_add_mark(pos, style_id, origin, target, power_mul, false)
 
 	# Active window: also add a mirrored mark (geometry vibe)
 	if _active_time > 0.0 and p2 != null:
 		var mirror := p2.global_position + (p2.global_position - pos) * active_mirror_mul
-		_add_mark(mirror, style_id, origin, target, power_mul)
+		_add_mark(mirror, style_id, origin, target, power_mul, true)
 
-func _add_mark(pos: Vector2, style_id: StringName, origin: Vector2, target: Vector2, power_mul: float) -> void:
+func _add_mark(pos: Vector2, style_id: StringName, origin: Vector2, target: Vector2, power_mul: float, mirrored: bool = false) -> void:
 	# push mark
-	_marks.append({ "pos": pos, "t": mark_lifetime })
+	_marks.append({ "pos": pos, "t": mark_lifetime, "mirrored": mirrored, "vfx": _spawn_mark_vfx(pos, mirrored) })
 
 	_spawn_spokes(pos)
 	_spawn_pulse(pos, 44.0 + 12.0 * set_strength)
 
 	# keep only last N marks
 	while _marks.size() > marks_needed:
+		_free_mark_vfx(_marks[0])
 		_marks.remove_at(0)
+	_update_preview_line()
 
 	if _marks.size() < marks_needed:
 		return
@@ -110,7 +118,9 @@ func _add_mark(pos: Vector2, style_id: StringName, origin: Vector2, target: Vect
 	var p0: Vector2 = _marks[0].pos
 	var p1: Vector2 = _marks[1].pos
 	var p2: Vector2 = _marks[2].pos
+	_clear_mark_visuals()
 	_marks.clear()
+	_update_preview_line()
 
 	_triangulate(style_id, origin, target, power_mul, p0, p1, p2)
 
@@ -254,7 +264,10 @@ func _spawn_bullet(scn: PackedScene, pos: Vector2, dir: Vector2, dmg: float) -> 
 	get_tree().current_scene.add_child(bullet)
 
 func _try_active() -> void:
-	if _active_cd > 0.0 or player == null:
+	if player == null:
+		return
+	if _active_cd > 0.0:
+		active_failed.emit("Cooldown %.1fs" % _active_cd)
 		return
 
 	# haste reduces cd
@@ -274,6 +287,71 @@ func _try_active() -> void:
 		_spawn_spokes(p2.global_position)
 
 	_report_active_cd(true)
+
+func get_active_state() -> Dictionary:
+	var is_ready: bool = player != null and _active_cd <= 0.05
+	var shortest: float = mark_lifetime
+	for mark: Dictionary in _marks:
+		shortest = minf(shortest, float(mark.get("t", mark_lifetime)))
+	var mark_text: String = "MARKS %d / %d" % [_marks.size(), marks_needed]
+	if not _marks.is_empty():
+		mark_text += " · %.1fs" % shortest
+	if _active_time > 0.0:
+		mark_text += " · INDEX ACTIVE %.1fs" % _active_time
+	return {
+		"ready": is_ready,
+		"cooldown_left": _active_cd,
+		"cooldown_max": _active_cd_max if _active_cd_max > 0.0 else active_base_cd,
+		"status_text": "READY" if is_ready else String.num(_active_cd, 1),
+		"combat_text": mark_text,
+	}
+
+func debug_place_mark(world_position: Vector2, mirrored: bool = false) -> void:
+	_add_mark(world_position, _last_style, world_position, world_position, 1.0, mirrored)
+
+func debug_clear_marks() -> void:
+	_clear_mark_visuals()
+	_marks.clear()
+	_update_preview_line()
+
+func _spawn_mark_vfx(world_position: Vector2, mirrored: bool) -> Node2D:
+	var scene: Node = get_tree().current_scene
+	if scene == null:
+		return null
+	var vfx := LatticeMarkVfx.new()
+	scene.add_child(vfx)
+	vfx.setup(world_position, mirrored, mark_lifetime)
+	return vfx
+
+func _free_mark_vfx(mark: Dictionary) -> void:
+	var value: Variant = mark.get("vfx", null)
+	if is_instance_valid(value):
+		var vfx: Node = value as Node
+		vfx.queue_free()
+
+func _clear_mark_visuals() -> void:
+	for mark: Dictionary in _marks:
+		_free_mark_vfx(mark)
+
+func _update_preview_line() -> void:
+	if _marks.size() < 2:
+		if _preview_line != null:
+			_preview_line.visible = false
+		return
+	if _preview_line == null or not is_instance_valid(_preview_line):
+		_preview_line = Line2D.new()
+		_preview_line.name = "LatticePreview"
+		_preview_line.width = 1.5
+		_preview_line.default_color = Color(0.76, 0.36, 1.0, 0.28)
+		_preview_line.antialiased = true
+		_preview_line.z_index = 185
+		get_tree().current_scene.add_child(_preview_line)
+	var points := PackedVector2Array()
+	for mark: Dictionary in _marks:
+		var mark_position: Vector2 = mark.get("pos", Vector2.ZERO)
+		points.append(mark_position)
+	_preview_line.points = points
+	_preview_line.visible = true
 
 func _report_active_cd(force: bool = false) -> void:
 	# Throttle updates so HUD isn't spammed

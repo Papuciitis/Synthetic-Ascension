@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemySpec" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"enemy_opening_officer"
+display_name = "Containment Officer"
+ai = 0
+max_hp = 22.0
+speed = 76.0
+follower_reward_min = 0
+follower_reward_max = 0
+drop_chance = 0.0
+sprite_modulate = Color(0.709804, 0.270588, 0.247059, 1)

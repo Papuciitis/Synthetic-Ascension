@@ -11,7 +11,7 @@ const COMMIT_HP_BUFFER: float = 0.12 # must be this much above retreat ratio to 
 # ------------------------------------------------------------
 # Runtime
 # ------------------------------------------------------------
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _rng := RandomNumberGenerator.new()
 
 var _sep: Node = null
@@ -21,7 +21,7 @@ var _cover_cd: float = 0.0
 var _cover_target: Vector2 = Vector2.ZERO
 var _has_cover_target: bool = false
 
-# cached dt (so we can use EnemyNavigator without changing Enemy.gd signature)
+# cached dt (so we can use EnemyNavigator without changing EnemyActor.gd signature)
 var _dt: float = 1.0 / 60.0
 
 # detect "took damage" without extra hooks
@@ -29,7 +29,7 @@ var _last_hp: float = -1.0
 var _reposition_t: float = 0.0
 
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	_rng.randomize()
 
@@ -133,7 +133,7 @@ func _ally_count(radius: float, max_count: int) -> int:
 	var count: int = 0
 	var r2: float = radius * radius
 	for n in _enemy.get_tree().get_nodes_in_group(&"enemies"):
-		var other := n as Enemy
+		var other := n as EnemyActor
 		if other == null or other == _enemy or other.dead:
 			continue
 		if _enemy.global_position.distance_squared_to(other.global_position) <= r2:

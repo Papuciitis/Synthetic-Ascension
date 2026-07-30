@@ -37,6 +37,7 @@ static func slot_label(index: int) -> String:
 
 signal slot_set(slot: int, inst: ItemInstance, prev: ItemInstance, origin: Dictionary)
 signal slot_fed(slot: int, inst: ItemInstance, upgraded: bool, old_rarity: int, origin: Dictionary)
+signal equipment_changed(slot: int, inst: ItemInstance, prev: ItemInstance, player_driven: bool)
 
 
 @export var items: Array[ItemInstance] = []
@@ -130,6 +131,9 @@ func set_item(slot: int, inst: ItemInstance, origin: Variant = null) -> ItemInst
 	var prev: ItemInstance = items[slot]
 	items[slot] = inst
 	emit_changed()
+	var player_driven: bool = origin is Dictionary and bool((origin as Dictionary).get("player_driven", false))
+	player_driven = player_driven or origin is Vector2
+	equipment_changed.emit(slot, inst, prev, player_driven)
 
 	var o := _normalize_origin(origin)
 	if not o.is_empty():
@@ -141,12 +145,16 @@ func set_item(slot: int, inst: ItemInstance, origin: Variant = null) -> ItemInst
 
 	return prev
 
-func remove_at(index: int) -> void:
+func remove_at(index: int, origin: Variant = null) -> void:
 	_ensure_size()
 	if index < 0 or index >= SLOT_COUNT:
 		return
+	var prev: ItemInstance = items[index]
 	items[index] = null
 	emit_changed()
+	var player_driven: bool = origin is Dictionary and bool((origin as Dictionary).get("player_driven", false))
+	player_driven = player_driven or origin is Vector2
+	equipment_changed.emit(index, null, prev, player_driven)
 
 func get_at(index: int) -> ItemInstance:
 	_ensure_size()
@@ -178,32 +186,43 @@ func sum_mods() -> StatDelta:
 
 	return s
 
+
+func get_negative_item_count() -> int:
+	var total := 0
+	for item in items:
+		if item != null and int(item.polarity) == int(ItemInstance.Polarity.NEG):
+			total += 1
+	return total
+
+
+func get_negative_rarity_total() -> int:
+	var total := 0
+	for item in items:
+		if item != null and int(item.polarity) == int(ItemInstance.Polarity.NEG):
+			total += maxi(0, int(item.rarity))
+	return total
+
+
+func get_negative_magnitude_total() -> float:
+	var total := 0.0
+	for item in items:
+		if item != null and int(item.polarity) == int(ItemInstance.Polarity.NEG):
+			total += absf(float(item.active_pct()))
+	return total
+
+
+func get_set_polarity_composition(set_id: StringName) -> Dictionary:
+	var result := {"pos": 0, "neg": 0}
+	for item in items:
+		if item == null or item.data == null or StringName(item.data.set_id) != set_id:
+			continue
+		var key := "neg" if int(item.polarity) == int(ItemInstance.Polarity.NEG) else "pos"
+		result[key] = int(result[key]) + 1
+	return result
+
 func _merge_into(dest: ItemInstance, src: ItemInstance) -> void:
-	if dest == null or src == null:
-		return
-	if dest == src:
-		return
-	# Keep polarity separation (do not merge POS/NEG)
-	if int(dest.polarity) != int(src.polarity):
-		return
-
-	# Carry higher rarity
-	if int(src.rarity) > int(dest.rarity):
-		dest.rarity = int(src.rarity)
-		dest._recompute_flat_mods()
-
-	# Merge progression toward next upgrade
-	dest.progress += src.progress
-	dest.upgrade_meter += src.upgrade_meter
-	while dest.upgrade_meter >= 1.0:
-		dest.upgrade_meter -= 1.0
-		dest._upgrade()
-
-	# Preserve best roll
-	if int(dest.polarity) == ItemInstance.Polarity.POS:
-		dest.best_pct = maxf(dest.best_pct, src.best_pct)
-	else:
-		dest.best_pct = minf(dest.best_pct, src.best_pct)
+	if dest != null:
+		dest.merge_from(src)
 
 func add_or_feed(inst: ItemInstance, origin: Variant = null) -> bool:
 	if inst == null or inst.data == null:
@@ -214,7 +233,7 @@ func add_or_feed(inst: ItemInstance, origin: Variant = null) -> bool:
 	# 1) Feed/merge if same item already equipped (same id + same polarity)
 	for i in range(SLOT_COUNT):
 		var it: ItemInstance = items[i]
-		if it == null:
+		if it == null or it.locked or inst.locked:
 			continue
 		if it.data != null and it.data.id == inst.data.id and int(it.polarity) == int(inst.polarity):
 			var old_r: int = int(it.rarity)
@@ -242,7 +261,7 @@ func feed_roll_into(slot: int, roll_pct: float, origin: Variant = null) -> bool:
 		return false
 
 	var it: ItemInstance = items[slot]
-	if it == null or it.data == null:
+	if it == null or it.data == null or it.locked:
 		return false
 
 	var old_r: int = int(it.rarity)
@@ -297,14 +316,10 @@ func get_set_rarity_average(set_id: StringName) -> float:
 		n += 1
 	return (sum_r / float(n)) if n > 0 else 0.0
 
-# Converts average rarity into a multiplicative strength scalar for set EFFECTS.
-# Tuned for "wild": rarity 0 -> 1.00, rarity 1 -> 1.35, rarity 3 -> ~2.46, rarity 5 -> ~4.48.
-# No clamping: if you high-roll or upgrade into absurd rarity, the game is allowed to go off the rails.
+# Converts average rarity into an infinite but diminishing strength scalar.
 func get_set_strength(set_id: StringName) -> float:
 	var avg_r := get_set_rarity_average(set_id)
-	# Exponential growth so higher rarity truly feels different.
-	# No clamping by design: the threat system is the safety valve.
-	return pow(1.35, avg_r)
+	return RarityMath.potency(avg_r)
 
 func swap(a: int, b: int) -> void:
 	_ensure_size()

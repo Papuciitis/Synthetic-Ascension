@@ -1,5 +1,13 @@
 # Synthetic Ascension — Recovery Audit (0.21)
 
+## 0.23.0 audit addendum — 2026-07-22
+
+The uploaded 0.22.6 ZIP still contained both the actual project scripts and a nested patch source tree. The nested tree and generated `.godot` cache were moved out of the distributable project before development. The resulting build has one `project.godot`, one `FenceBlock.gd`, and no duplicate global `class_name` declarations.
+
+The playable opening is additive and reuses the recovered Segment 1 milestones, Resonance awards and `Segment1SpawnProfile`. It does not replace the handcrafted route or recovery history. New save fields use exported defaults; active older saves beyond synthesis migrate to completed legacy opening state. Static audit and archive results are recorded during final packaging. No Godot binary is present, so typed load, migration, pacing, input, physics, audio, rendering and transitions are pending `TESTING_CHECKLIST_0.23.0.md`.
+
+Final 0.23.0 static results: 247 GDScript files accepted by the independent grammar parser; 0 missing literal resource paths; 0 duplicate global classes; 1 project file; 1 `FenceBlock` source; 0 generated cache/nested project directories; and both the 30-file patch and 989-file full archive passed ZIP integrity inspection. This remains structural evidence only, not engine certification.
+
 Audit date: 2026-07-21
 
 ## Verdict
@@ -68,3 +76,26 @@ Use a fresh extraction and allow imports to finish. Preserve exact debugger text
 8. Developer-start Segments 1, 2, 5 and 10 and complete representative boss/gate flows.
 
 The project is suitable for a friend to import and playtest, with the explicit expectation that the first engine run may reveal API/type, layout, balance or collision issues that static tools cannot prove.
+
+## 0.22 audit addendum — 2026-07-21
+
+Input baseline is the uploaded 0.21b archive, SHA-256 `66062fd0a52cc0048b344e816c66eb8c3b2fd372483d0b47881ec35b5811446e`.
+
+The 0.22 work changes projectile-to-world collision and equipment-set presentation without changing save schema. The narrow-phase source uses thin 24×32 wall half-arms, 14×32 fence half-arms, 24/18 px isolated posts, a 16 px half-cover circle, a 64 px conservative fallback cell and explicit projectile-transparent windows. Projectile radius expands each primitive, and swept intersection prevents tunnelling.
+
+Set resource inspection confirms the live mechanics presented in UI:
+
+- Conduit: 2-piece movement/haste; 4-piece chained arc; 6-piece kill Overclock + one primed style discharge, with Circuit Feedback as the independent R active.
+- Gravemarch Protocol: 2-piece durability/speed trade; 4-piece Sunderstep; 6-piece damage bank, automatic Mass Arrest and a 60%-threshold Verdict active.
+- Lattice Index: 2-piece movement/power; 4-piece periodic delayed Afterstrike; 6-piece three-live-mark triangle and temporary mirrored-mark Index Commit.
+
+0.22 static validation before packaging:
+
+- 944 project files are present, including 239 GDScript files and 131 scenes.
+- All 239 GDScript files parse with `gdtoolkit 4.5.0`; this is a syntax check, not a Godot typed-compilation or runtime check.
+- 204 `.tscn`/`.tres` files have no undefined/duplicate ExtResource or SubResource IDs.
+- 448 unique literal `res://` references resolve with exact filesystem casing.
+- Duplicate `class_name` declarations, loose `.tmp` files and manually invented underscore UIDs found: zero.
+- Eight independent swept-geometry mathematics cases cover visible wall arms, open corner/end space, high-speed travel, diagonal travel and blocking/passable half-cover paths.
+
+No engine binary was available in this workspace. Resource-path checks, archive checks, text review and independent geometry mathematics can detect structural mistakes but cannot certify Godot parser compatibility, scene import, collision feel, UI fit, navigation interaction, save behavior or performance. Run `TESTING_CHECKLIST_0.22.md` before calling this build runtime-verified.

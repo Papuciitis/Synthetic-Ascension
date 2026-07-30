@@ -3,7 +3,7 @@ class_name EnemySniper
 
 enum State { IDLE, RELOCATE, WINDUP }
 
-var _owner: Enemy = null
+var _owner: EnemyActor = null
 var _state: int = State.IDLE
 
 var _cd: float = 0.0
@@ -24,7 +24,7 @@ var _no_los_t: float = 0.0
 var _rng := RandomNumberGenerator.new()
 
 
-func setup(owner: Enemy) -> void:
+func setup(owner: EnemyActor) -> void:
 	_owner = owner
 	_rng.randomize()
 
@@ -134,6 +134,14 @@ func brain(to_player: Vector2, dist: float, spd: float) -> Vector2:
 # Let other systems (EnemyHordeNav) know when we’re doing “deliberate relocation”
 func is_relocating() -> bool:
 	return _state == State.RELOCATE
+
+
+func is_combat_committed() -> bool:
+	return (
+		_state == State.WINDUP
+		or _state == State.RELOCATE
+		or (_tele != null and is_instance_valid(_tele))
+	)
 
 
 # --------------------

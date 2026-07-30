@@ -8,6 +8,7 @@ signal cleared(rite: ExitRite)
 @export var locked: bool = true
 @export var narrative_mode: bool = false
 @export var hide_location_while_locked: bool = false
+@export var revealed: bool = true
 
 @export var backlash_push: float = 150.0
 @export var backlash_invuln: float = 0.4
@@ -49,6 +50,7 @@ func _ready() -> void:
 
 	set_process(true)
 	queue_redraw()
+	_apply_reveal_state()
 
 	# Apply attempt modifier (major choice)
 	if Global != null:
@@ -99,6 +101,25 @@ func set_locked(v: bool) -> void:
 	# Share gate location with HUD (for direction arrow, etc.)
 	_share_location_with_hud()
 
+func set_revealed(value: bool) -> void:
+	if revealed == value:
+		_apply_reveal_state()
+		return
+	revealed = value
+	_hold = 0.0
+	_player_inside = false
+	_burst_stage = 0
+	_apply_reveal_state()
+
+func _apply_reveal_state() -> void:
+	visible = revealed
+	if zone != null:
+		zone.set_deferred("monitoring", revealed)
+		zone.set_deferred("monitorable", revealed)
+	if not revealed:
+		remove_from_group(&"exit_rite_channeling")
+	_share_location_with_hud()
+
 func _sigil_refresh() -> void:
 	if sigil == null:
 		return
@@ -108,6 +129,8 @@ func _sigil_refresh() -> void:
 func _process(delta: float) -> void:
 	# Share gate location with HUD every frame (the HUD arrow reads this).
 	_share_location_with_hud()
+	if not revealed:
+		return
 
 	_sigil_t += delta
 	if sigil != null:
@@ -206,7 +229,7 @@ func _on_body_exited(b: Node) -> void:
 func _share_location_with_hud() -> void:
 	if Global == null:
 		return
-	Global.exit_gate_pos = Vector2.INF if hide_location_while_locked and locked else global_position
+	Global.exit_gate_pos = Vector2.INF if (not revealed) or (hide_location_while_locked and locked) else global_position
 
 func _draw() -> void:
 	# Readability pass: thicker ring + higher contrast progress so players

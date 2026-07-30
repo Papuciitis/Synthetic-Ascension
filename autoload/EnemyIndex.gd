@@ -5,12 +5,26 @@ extends Node
 
 @export var cell_size: float = 64.0
 
+@export_group("Special Population Budget")
+@export var special_population_cap: int = 72
+@export var summoned_population_cap: int = 36
+@export var split_population_cap: int = 48
+@export var boss_add_population_cap: int = 24
+
 # Internal storage (do not modify returned arrays from outside)
 var _enemies: Array = [] # Array[Enemy]
 var _id_to_index: Dictionary = {} # int -> int
 var _enemy_cell: Dictionary = {}  # int -> Vector2i
 var _buckets: Dictionary = {}     # Vector2i -> Array[Enemy]
 var _scene_counts: Dictionary = {} # String -> int
+var _population_counted: Dictionary = {} # int -> bool
+var _ambient_count: int = 0
+var _ambient_scene_counts: Dictionary = {} # String -> int
+var _special_alive_total: int = 0
+var _special_alive_by_kind: Dictionary = {} # StringName -> int
+var _special_reserved_total: int = 0
+var _special_reserved_by_kind: Dictionary = {}
+var _retired_counts: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -26,16 +40,27 @@ func register(enemy: Node) -> void:
 	_id_to_index[id] = _enemies.size()
 	_enemies.append(enemy)
 
-	# scene counts (for spawner per-type caps)
-	var p := ""
-	if enemy is Node:
-		p = (enemy as Node).scene_file_path
-	if p != "":
-		_scene_counts[p] = int(_scene_counts.get(p, 0)) + 1
+	# Population counts are maintained incrementally so spawn-cap checks stay O(1).
+	# Dead nodes can briefly survive until queue_free; keep them indexed for safe
+	# cleanup, but never re-add them to an alive population during a rebuild.
+	var p: String = enemy.scene_file_path
+	var should_count: bool = not _is_enemy_dead(enemy)
+	_population_counted[id] = should_count
+	if should_count:
+		if p != "":
+			_scene_counts[p] = int(_scene_counts.get(p, 0)) + 1
+		_register_population_class(enemy, p)
 
 	var cell := _cell_for_pos((enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO)
 	_enemy_cell[id] = cell
 	_bucket_add(cell, enemy)
+	if PerformanceFlightRecorder != null:
+		var enemy_id := enemy.scene_file_path.get_file().get_basename().trim_prefix("Enemy").to_snake_case()
+		PerformanceFlightRecorder.record_counter_event(&"enemy", &"spawned", 1, {
+			"enemy_id": enemy_id,
+			"elite": bool(enemy.get("is_elite")) if "is_elite" in enemy else false,
+			"kind": String(enemy.get_meta("special_spawn_kind", &"")),
+		})
 
 func unregister(enemy: Node) -> void:
 	if enemy == null:
@@ -44,14 +69,12 @@ func unregister(enemy: Node) -> void:
 	if not _id_to_index.has(id):
 		return
 
-	# scene counts
-	var p := (enemy as Node).scene_file_path
-	if p != "" and _scene_counts.has(p):
-		var v: int = int(_scene_counts[p]) - 1
-		if v <= 0:
-			_scene_counts.erase(p)
-		else:
-			_scene_counts[p] = v
+	# Population counts
+	var p: String = enemy.scene_file_path
+	if bool(_population_counted.get(id, false)):
+		_decrement_counter(_scene_counts, p)
+		_unregister_population_class(enemy, p)
+	_population_counted.erase(id)
 
 	# buckets
 	if _enemy_cell.has(id):
@@ -68,6 +91,36 @@ func unregister(enemy: Node) -> void:
 		_id_to_index[last_enemy.get_instance_id()] = idx
 	_enemies.pop_back()
 	_id_to_index.erase(id)
+
+func mark_dead(enemy: Node) -> void:
+	if enemy == null or not is_instance_valid(enemy):
+		return
+	var id: int = int(enemy.get_instance_id())
+	if not _id_to_index.has(id) or not bool(_population_counted.get(id, false)):
+		return
+	var scene_path: String = enemy.scene_file_path
+	_decrement_counter(_scene_counts, scene_path)
+	_unregister_population_class(enemy, scene_path)
+	_population_counted[id] = false
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"enemy", &"died", 1)
+
+
+func retire_enemy(enemy: Node, reason: StringName = &"unknown") -> bool:
+	if enemy == null or not is_instance_valid(enemy):
+		return false
+	var id := enemy.get_instance_id()
+	if not _id_to_index.has(id) or enemy.is_queued_for_deletion():
+		return false
+	unregister(enemy)
+	_retired_counts[reason] = int(_retired_counts.get(reason, 0)) + 1
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"enemy", &"retired", 1, {"reason": String(reason)})
+	enemy.set_meta("culled", true)
+	enemy.set_meta("cull_reason", reason)
+	enemy.queue_free()
+	return true
+
 
 func update_enemy(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
@@ -88,6 +141,136 @@ func update_enemy(enemy: Node) -> void:
 func alive_count() -> int:
 	return _enemies.size()
 
+
+func simulation_tier_counts() -> Dictionary:
+	var counts := {"near": 0, "mid": 0, "far": 0}
+	for enemy_variant in _enemies:
+		var enemy := enemy_variant as Node
+		if enemy == null or not is_instance_valid(enemy) or not enemy.has_method("simulation_tier"):
+			continue
+		var tier := int(enemy.call("simulation_tier"))
+		var key := "near" if tier <= 0 else ("mid" if tier == 1 else "far")
+		counts[key] = int(counts[key]) + 1
+	return counts
+
+
+func get_debug_counters() -> Dictionary:
+	return {
+		"indexed": _enemies.size(),
+		"ambient": _ambient_count,
+		"special": _special_alive_total,
+		"special_by_kind": _special_alive_by_kind.duplicate(),
+		"reserved": _special_reserved_total,
+		"retired": _retired_counts.duplicate(),
+		"tiers": simulation_tier_counts(),
+		"buckets": _buckets.size(),
+	}
+
+func prune_invalid() -> int:
+	# Rebuild the compact indexes when freed/queued nodes survive a missed unregister.
+	# This is intentionally a maintenance operation, not something called in hot paths.
+	var previous_count: int = _enemies.size()
+	var valid_enemies: Array = []
+	var seen_ids: Dictionary = {}
+	for enemy_variant in _enemies:
+		var enemy := enemy_variant as Node
+		if enemy == null or not is_instance_valid(enemy):
+			continue
+		if enemy.is_queued_for_deletion() or not enemy.is_inside_tree():
+			continue
+		var enemy_id: int = int(enemy.get_instance_id())
+		if seen_ids.has(enemy_id):
+			continue
+		seen_ids[enemy_id] = true
+		valid_enemies.append(enemy)
+
+	if valid_enemies.size() == previous_count:
+		return 0
+
+	_enemies.clear()
+	_id_to_index.clear()
+	_enemy_cell.clear()
+	_buckets.clear()
+	_scene_counts.clear()
+	_population_counted.clear()
+	_ambient_count = 0
+	_ambient_scene_counts.clear()
+	_special_alive_total = 0
+	_special_alive_by_kind.clear()
+	for enemy_variant in valid_enemies:
+		register(enemy_variant as Node)
+	return previous_count - valid_enemies.size()
+
+
+func ambient_alive_count() -> int:
+	return _ambient_count
+
+
+func try_reserve_special(kind: StringName, requested: int) -> int:
+	if requested <= 0:
+		return 0
+	var kind_cap: int = _special_kind_cap(kind)
+	var total_remaining: int = maxi(0, special_population_cap - _special_alive_count(&"") - _special_reserved_total)
+	var kind_reserved: int = int(_special_reserved_by_kind.get(kind, 0))
+	var kind_remaining: int = maxi(0, kind_cap - _special_alive_count(kind) - kind_reserved)
+	var granted: int = mini(requested, mini(total_remaining, kind_remaining))
+	if granted <= 0:
+		return 0
+	_special_reserved_total += granted
+	_special_reserved_by_kind[kind] = kind_reserved + granted
+	return granted
+
+
+func commit_special(enemy: Node, kind: StringName) -> void:
+	if enemy == null:
+		release_special(kind, 1)
+		return
+	var old_kind: StringName = enemy.get_meta("special_spawn_kind", &"") as StringName
+	enemy.set_meta("special_spawn_kind", kind)
+	enemy.add_to_group(StringName("special_spawn_%s" % String(kind)))
+	# Most special enemies are tagged before entering the tree. Handle the rarer
+	# already-registered case too so the O(1) counters never drift.
+	var enemy_id: int = int(enemy.get_instance_id())
+	if _id_to_index.has(enemy_id) and bool(_population_counted.get(enemy_id, false)) and old_kind != kind:
+		_reclassify_registered_enemy(enemy, old_kind, kind)
+	if enemy.is_inside_tree():
+		release_special(kind, 1)
+	else:
+		enemy.tree_entered.connect(Callable(self, "release_special").bind(kind, 1), CONNECT_ONE_SHOT)
+
+
+func release_special(kind: StringName, amount: int = 1) -> void:
+	if amount <= 0:
+		return
+	var reserved: int = int(_special_reserved_by_kind.get(kind, 0))
+	var released: int = mini(amount, reserved)
+	if released <= 0:
+		return
+	_special_reserved_total = maxi(0, _special_reserved_total - released)
+	reserved -= released
+	if reserved <= 0:
+		_special_reserved_by_kind.erase(kind)
+	else:
+		_special_reserved_by_kind[kind] = reserved
+
+
+func _special_alive_count(kind: StringName) -> int:
+	if kind == &"":
+		return _special_alive_total
+	return int(_special_alive_by_kind.get(kind, 0))
+
+
+func _special_kind_cap(kind: StringName) -> int:
+	match kind:
+		&"summon":
+			return summoned_population_cap
+		&"split":
+			return split_population_cap
+		&"boss_add":
+			return boss_add_population_cap
+		_:
+			return special_population_cap
+
 func alive_count_for_scene(scene: PackedScene) -> int:
 	if scene == null:
 		return 0
@@ -95,6 +278,67 @@ func alive_count_for_scene(scene: PackedScene) -> int:
 	if p == "":
 		return 0
 	return int(_scene_counts.get(p, 0))
+
+
+func ambient_alive_count_for_scene(scene: PackedScene) -> int:
+	if scene == null:
+		return 0
+	var path: String = scene.resource_path
+	if path == "":
+		return 0
+	return int(_ambient_scene_counts.get(path, 0))
+
+
+func _is_enemy_dead(enemy: Node) -> bool:
+	return "dead" in enemy and bool(enemy.get("dead"))
+
+
+func _register_population_class(enemy: Node, scene_path: String) -> void:
+	var kind: StringName = enemy.get_meta("special_spawn_kind", &"") as StringName
+	if kind == &"":
+		_ambient_count += 1
+		if scene_path != "":
+			_ambient_scene_counts[scene_path] = int(_ambient_scene_counts.get(scene_path, 0)) + 1
+		return
+	_special_alive_total += 1
+	_special_alive_by_kind[kind] = int(_special_alive_by_kind.get(kind, 0)) + 1
+
+
+func _unregister_population_class(enemy: Node, scene_path: String) -> void:
+	var kind: StringName = enemy.get_meta("special_spawn_kind", &"") as StringName
+	if kind == &"":
+		_ambient_count = maxi(0, _ambient_count - 1)
+		_decrement_counter(_ambient_scene_counts, scene_path)
+		return
+	_special_alive_total = maxi(0, _special_alive_total - 1)
+	_decrement_counter(_special_alive_by_kind, kind)
+
+
+func _reclassify_registered_enemy(enemy: Node, old_kind: StringName, new_kind: StringName) -> void:
+	var scene_path: String = enemy.scene_file_path
+	if old_kind == &"":
+		_ambient_count = maxi(0, _ambient_count - 1)
+		_decrement_counter(_ambient_scene_counts, scene_path)
+	else:
+		_special_alive_total = maxi(0, _special_alive_total - 1)
+		_decrement_counter(_special_alive_by_kind, old_kind)
+	if new_kind == &"":
+		_ambient_count += 1
+		if scene_path != "":
+			_ambient_scene_counts[scene_path] = int(_ambient_scene_counts.get(scene_path, 0)) + 1
+	else:
+		_special_alive_total += 1
+		_special_alive_by_kind[new_kind] = int(_special_alive_by_kind.get(new_kind, 0)) + 1
+
+
+func _decrement_counter(counter: Dictionary, key: Variant) -> void:
+	if key == null or not counter.has(key):
+		return
+	var value: int = int(counter[key]) - 1
+	if value <= 0:
+		counter.erase(key)
+	else:
+		counter[key] = value
 
 func get_all() -> Array:
 	# WARNING: do not mutate the returned array.

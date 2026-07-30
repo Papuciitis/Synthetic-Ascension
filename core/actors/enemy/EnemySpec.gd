@@ -70,6 +70,15 @@ enum AI {
 @export var split_count_min: int = 2
 @export var split_count_max: int = 3
 @export var split_inherit_elite: bool = false
+@export var split_max_generation: int = 2
+@export var split_second_count_min: int = 4
+@export var split_second_count_max: int = 4
+@export var split_base_scale: float = 2.0
+@export var split_scale_per_generation: float = 0.5
+@export var split_hp_per_generation: float = 0.45
+@export var split_speed_per_generation: float = 1.55
+@export var split_elite_extra_generations: int = 1
+@export var split_elite_scale_mult: float = 2.0
 
 @export_group("LEECH (Follower Sucker)")
 @export var leech_every: float = 0.75
@@ -110,7 +119,7 @@ enum AI {
 @export var drop_fallback_to_all: bool = false
 @export var drop_amount_min: int = 1
 @export var drop_amount_max: int = 1
-@export var drop_instance_roll: bool = false
+@export var drop_instance_roll: bool = true
 @export var drop_rarity_min: int = 0
 @export var drop_rarity_max: int = 0
 @export var elite_rarity_bonus: int = 1
@@ -122,6 +131,7 @@ enum AI {
 @export var elite_hp_mult: float = 1.6
 @export var elite_speed_mult: float = 1.15
 @export var elite_tint: Color = Color(1.0, 0.85, 0.25, 1.0)
+@export_range(0.0, 1.0, 0.001) var elite_spawn_chance_cap: float = 1.0
 @export_enum(
 	"Keep:-1",
 	"CHASE:0",

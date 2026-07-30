@@ -18,20 +18,8 @@ func apply(g: Node) -> void:
 		return
 
 	var inst := ItemInstance.from_roll(d, rarity, polarity, roll_pct)
-
-	# If it's equipable and we prefer equip, try to equip into the right slot (if empty).
-	var inv: Inventory = g.get("run_inventory") as Inventory
-	var bag: BagInventory = g.get("run_bag") as BagInventory
-
-	if prefer_equip and inv != null and int(d.equip_slot) >= 0 and int(d.equip_slot) < Inventory.SLOT_COUNT:
-		var slot: int = int(d.equip_slot)
-		if inv.is_slot_empty(slot):
-			inv.set_item(slot, inst, {"type": Inventory.UIOriginType.SCREEN, "pos": Vector2.ZERO})
-			return
-
-	# Otherwise -> bag
-	if bag != null:
-		bag.add_instance(inst)
+	if not g.has_method("deliver_guaranteed_item") or not bool(g.call("deliver_guaranteed_item", inst, prefer_equip)):
+		push_error("MCE_GrantItemRoll: no safe destination for reward " + item_id)
 
 func get_preview_lines(g: Node) -> PackedStringArray:
 	var out := PackedStringArray()

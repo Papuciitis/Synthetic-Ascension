@@ -23,7 +23,7 @@ extends Node
 @export var vfx_wave_scene: PackedScene = preload("res://assets/vfx/world/sets/conduit/VFX_Shockwave.tscn")
 @export var damage_circle_scene: PackedScene = preload("res://core/combat/hazards/DamageCircle.tscn")
 
-var _e: Enemy
+var _e: EnemyActor
 var _slam_cd: float = 1.5
 var _shock_cd: float = 2.0
 var _summon_cd: float = 5.0
@@ -35,7 +35,7 @@ var _trail_step_accum: float = 0.0
 var _last_pos: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
-	_e = get_parent() as Enemy
+	_e = get_parent() as EnemyActor
 	if _e == null:
 		set_process(false)
 		return
@@ -180,14 +180,35 @@ func _call_shock(dir: Vector2) -> void:
 func _summon_blockers() -> void:
 	if blocker_scene == null:
 		return
-	var base := _e.global_position
-	for i in range(maxi(1, summon_count)):
-		var ang := TAU * float(i) / float(maxi(1, summon_count))
+	var requested: int = maxi(1, summon_count)
+	var enemy_index: Node = _e.get_node_or_null("/root/EnemyIndex")
+	var granted: int = requested
+	if enemy_index != null and enemy_index.has_method("try_reserve_special"):
+		granted = int(enemy_index.call("try_reserve_special", &"boss_add", requested))
+	var base: Vector2 = _e.global_position
+	for i in range(granted):
+		var ang: float = TAU * float(i) / float(maxi(1, granted))
 		var pos := base + Vector2(cos(ang), sin(ang)) * 120.0
-		var b := blocker_scene.instantiate()
-		get_tree().current_scene.add_child(b)
-		if b is Node2D:
-			(b as Node2D).global_position = pos
+		var blocker: Node = blocker_scene.instantiate()
+		if blocker == null or not (blocker is EnemyActor):
+			if blocker != null:
+				blocker.free()
+			_release_boss_add_reservation(enemy_index)
+			continue
+		(blocker as Node2D).global_position = pos
+		var current_scene: Node = get_tree().current_scene
+		if current_scene == null:
+			blocker.free()
+			_release_boss_add_reservation(enemy_index)
+			continue
+		if enemy_index != null and enemy_index.has_method("commit_special"):
+			enemy_index.call("commit_special", blocker, &"boss_add")
+		current_scene.add_child(blocker)
+
+
+func _release_boss_add_reservation(enemy_index: Node) -> void:
+	if enemy_index != null and enemy_index.has_method("release_special"):
+		enemy_index.call("release_special", &"boss_add", 1)
 
 func _spawn_wave(pos: Vector2, radius: float) -> void:
 	if vfx_wave_scene == null:

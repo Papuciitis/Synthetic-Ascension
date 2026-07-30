@@ -82,6 +82,7 @@ var _wall_nodes: Dictionary = {}
 var _fence_nodes: Dictionary = {}
 var _barrier_cells: Dictionary = {}
 var _barrier_open: Dictionary = {}
+var _connections_refresh_queued: bool = false
 var _milestone_areas: Dictionary = {}
 var _building_interiors: Array[Dictionary] = []
 var _playable_regions: Array[Rect2i] = []
@@ -93,6 +94,7 @@ var _wardstone_2_cell := Vector2i(43, -28)
 var _gate_cell := Vector2i(20, -50)
 var _res_ui_tick: float = 0.0
 var _security_kills: int = 0
+var _opening_sequence_active: bool = false
 
 
 func _ready() -> void:
@@ -101,6 +103,10 @@ func _ready() -> void:
 	if Global != null and int(Global.attempt_segment) != 1:
 		set_process(false)
 		return
+	# The playable opening owns progression messaging until it hands control
+	# back. Set this before the first objective update to prevent a one-frame
+	# synthesis/escape popup during scene construction.
+	_opening_sequence_active = Global != null and not Global.attempt_opening_completed
 	add_to_group(&"segment_spawn_filter")
 	set_process(true)
 
@@ -112,11 +118,14 @@ func _ready() -> void:
 	_geo = Node2D.new()
 	_geo.name = "Level1_Geometry"
 	add_child(_geo)
+	if _cm != null and is_instance_valid(_cm) and _cm.tiled_world_rendering:
+		_cm.call("_prepare_chunk_rendering", _geo, Vector2i.ZERO)
 
 	_plan_level()
 	_build_ground_stamps()
 	_spawn_planned_geometry()
 	_apply_connections()
+	_tile_authored_geometry()
 	_register_manual_blocks()
 	_spawn_indoor_volumes()
 	_place_wardstones_and_gate()
@@ -358,6 +367,12 @@ func _build_ground_stamps() -> void:
 func _stamp_ground(cell_tl: Vector2i, size: Vector2i, tex: Texture2D, alpha: float, brightness: float) -> void:
 	if tex == null or size.x <= 0 or size.y <= 0:
 		return
+	if _cm != null and is_instance_valid(_cm) and _cm.tiled_world_rendering:
+		_cm.paint_tiled_rect(
+			_geo, &"floor", Rect2i(cell_tl, size), tex, _TEX_TILE_PX, -95,
+			Color(brightness, brightness, brightness, alpha)
+		)
+		return
 	var spr := Sprite2D.new()
 	spr.name = "Stamp_%d_%d" % [cell_tl.x, cell_tl.y]
 	spr.z_index = -95
@@ -393,6 +408,7 @@ func _spawn_planned_geometry() -> void:
 		if node == null:
 			continue
 		node.global_position = _cell_to_world(cell)
+		node.set_meta(&"_tile_repeat_visual", true)
 		_geo.add_child(node)
 		_wall_nodes[cell] = node
 
@@ -404,6 +420,7 @@ func _spawn_planned_geometry() -> void:
 		if node == null:
 			continue
 		node.global_position = _cell_to_world(cell)
+		node.set_meta(&"_tile_repeat_visual", true)
 		_geo.add_child(node)
 		_fence_nodes[cell] = node
 
@@ -414,6 +431,7 @@ func _spawn_planned_geometry() -> void:
 			if node == null:
 				continue
 			node.global_position = _cell_to_world(cell)
+			node.set_meta(&"_tile_repeat_visual", true)
 			_geo.add_child(node)
 
 
@@ -428,10 +446,8 @@ func _apply_connections() -> void:
 		if _wall_kind.has(cell + Vector2i.RIGHT): mask |= 2
 		if _wall_kind.has(cell + Vector2i.DOWN): mask |= 4
 		if _wall_kind.has(cell + Vector2i.LEFT): mask |= 8
-		if node.get("connections_mask") != null:
+		if node.get("connections_mask") != null and int(node.get("connections_mask")) != mask:
 			node.set("connections_mask", mask)
-		if node.has_method("_apply"):
-			node.call("_apply")
 
 	for key in _fence_nodes.keys():
 		var cell: Vector2i = key
@@ -443,10 +459,47 @@ func _apply_connections() -> void:
 		if _fence_cells.has(cell + Vector2i.RIGHT): mask |= 2
 		if _fence_cells.has(cell + Vector2i.DOWN): mask |= 4
 		if _fence_cells.has(cell + Vector2i.LEFT): mask |= 8
-		if node.get("connections_mask") != null:
+		if node.get("connections_mask") != null and int(node.get("connections_mask")) != mask:
 			node.set("connections_mask", mask)
-		if node.has_method("_apply"):
-			node.call("_apply")
+
+
+func _tile_authored_geometry() -> void:
+	if _cm == null or not is_instance_valid(_cm) or _geo == null:
+		return
+	if not _cm.tiled_world_rendering:
+		return
+	_cm.call("_prepare_chunk_rendering", _geo, Vector2i.ZERO)
+	_cm.call("_tile_repeated_visuals", _geo)
+
+
+func _queue_connections_refresh() -> void:
+	if _connections_refresh_queued:
+		return
+	_connections_refresh_queued = true
+	call_deferred("_flush_connections_refresh")
+
+
+func _flush_connections_refresh() -> void:
+	_connections_refresh_queued = false
+	if not is_inside_tree():
+		return
+	_apply_connections()
+	_repaint_authored_connections()
+
+
+func _repaint_authored_connections() -> void:
+	if _cm == null or not is_instance_valid(_cm) or _geo == null or not _cm.tiled_world_rendering:
+		return
+	for key in _wall_nodes.keys():
+		var cell: Vector2i = key
+		var node := _wall_nodes.get(cell) as Node
+		if node != null and is_instance_valid(node):
+			_cm.repaint_repeated_visual(_geo, cell, node)
+	for key in _fence_nodes.keys():
+		var cell: Vector2i = key
+		var node := _fence_nodes.get(cell) as Node
+		if node != null and is_instance_valid(node):
+			_cm.repaint_repeated_visual(_geo, cell, node)
 
 
 func _register_manual_blocks() -> void:
@@ -554,6 +607,10 @@ func _connect_run_events() -> void:
 
 
 func _on_milestone_reached(id: StringName) -> void:
+	# The playable prologue owns these beats while active. Its controller grants
+	# the same durable milestones after the player performs the authored action.
+	if _opening_sequence_active and id in [M_SYNTHESIS, M_ASSISTANT]:
+		return
 	match id:
 		M_SYNTHESIS:
 			if _grant_milestone(M_SYNTHESIS, resonance_synthesis):
@@ -607,6 +664,8 @@ func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
 
 
 func _on_enemy_killed(_player: Node, enemy: Node, _pos: Vector2) -> void:
+	if enemy != null and enemy.has_meta(&"opening_scripted") and bool(enemy.get_meta(&"opening_scripted")):
+		return
 	var is_elite := false
 	if enemy != null:
 		var elite_value = enemy.get("is_elite")
@@ -666,10 +725,14 @@ func _open_barrier(id: StringName) -> void:
 		var node := _wall_nodes.get(cell) as Node
 		if node != null and is_instance_valid(node):
 			node.queue_free()
+		if _cm != null and is_instance_valid(_cm) and _geo != null:
+			_cm.erase_repeated_visual(_geo, cell)
 		_wall_nodes.erase(cell)
 		if _cm != null and is_instance_valid(_cm):
 			_cm.unregister_manual_block_cell(cell)
-	_apply_connections()
+	# Milestones originate in Area2D.body_entered. Rebuilding live collision
+	# shapes during that callback runs while PhysicsServer2D is flushing queries.
+	_queue_connections_refresh()
 
 
 func _update_objective() -> void:
@@ -698,7 +761,10 @@ func _update_objective() -> void:
 
 func _emit_objective(title: String, detail: String) -> void:
 	if RunEvents != null:
-		RunEvents.objective_changed.emit(title, detail)
+		if _opening_sequence_active:
+			RunEvents.objective_changed.emit("", "")
+		else:
+			RunEvents.objective_changed.emit(title, detail)
 
 
 func _grant_milestone(id: StringName, amount: float) -> bool:
@@ -732,6 +798,78 @@ func _set_spawning_enabled(value: bool) -> void:
 		_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
 	if _spawner != null:
 		_spawner.set_spawning_enabled(value)
+
+## Playable-opening bridge. These methods deliberately reuse the established
+## Segment 1 milestone and spawn-stage machinery instead of maintaining a
+## second progression model.
+func get_opening_anchors() -> Dictionary:
+	return {
+		"start": _cell_to_world(_start_cell),
+		"apparatus": _cell_to_world(Vector2i(12, 21)),
+		"calibration": _cell_to_world(Vector2i(16, 21)),
+		"construct": _cell_to_world(Vector2i(9, 21)),
+		"officer": _cell_to_world(Vector2i(16, 18)),
+		"records": _cell_to_world(Vector2i(8, 17)),
+	}
+
+func begin_opening_sequence() -> void:
+	_opening_sequence_active = true
+	_emit_objective("", "")
+	_set_spawn_stage(Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS)
+	_set_spawning_enabled(false)
+	# A scene reload may have restored a post-synthesis stage for a fraction of a
+	# frame. Remove only ambient enemies; scripted opening actors are recreated by
+	# the controller from the saved phase.
+	for enemy in get_tree().get_nodes_in_group(&"enemies"):
+		if enemy != null and not enemy.has_meta(&"opening_scripted"):
+			enemy.queue_free()
+
+func opening_complete_synthesis() -> void:
+	_grant_milestone(M_SYNTHESIS, resonance_synthesis)
+	_mark_milestone_area_completed(M_SYNTHESIS)
+	_update_objective()
+
+func opening_complete_officer() -> void:
+	if _grant_milestone(M_FIRST_CONFRONTATION, resonance_first_confrontation):
+		Global.attempt_opening_officer_completed = true
+	elif Global != null:
+		Global.attempt_opening_officer_completed = true
+	_update_objective()
+
+func opening_complete_bren() -> void:
+	if _grant_milestone(M_ASSISTANT, resonance_assistant_commitment):
+		Global.attempt_opening_bren_committed = true
+	elif Global != null:
+		Global.attempt_opening_bren_committed = true
+	_mark_milestone_area_completed(M_ASSISTANT)
+	if Global != null:
+		Global.transaction_followers(maxi(0, 1 - int(Global.followers)), &"bren_first_follower", {}, false, false)
+	_refresh_progression_seals()
+	_update_objective()
+
+func opening_complete_short_or_skip() -> void:
+	opening_complete_synthesis()
+	opening_complete_officer()
+	opening_complete_bren()
+
+func finish_opening_sequence() -> void:
+	_opening_sequence_active = false
+	if _has_milestone(M_FIRST_CONFRONTATION):
+		if _spawner == null or not is_instance_valid(_spawner):
+			_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
+		if _spawner != null:
+			_spawner.set_segment1_stage(Segment1SpawnProfile.Stage.ARCHIVE, 4.5)
+			_spawner.suspend_spawning(4.5)
+	else:
+		_set_spawn_stage(Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS)
+	_refresh_progression_seals()
+	_update_objective()
+	_update_gate_lock()
+
+func _mark_milestone_area_completed(id: StringName) -> void:
+	var area := _milestone_areas.get(id, null) as Level1MilestoneArea
+	if area != null and is_instance_valid(area):
+		area.mark_completed()
 
 func _set_spawn_stage(stage: int) -> void:
 	if _spawner == null or not is_instance_valid(_spawner):
@@ -983,6 +1121,12 @@ func _cell_rect_center(cell_tl: Vector2i, size: Vector2i) -> Vector2:
 
 func _place_deco(tex: Texture2D, cell: Vector2i, deco_scale: float, alpha: float, z: int) -> void:
 	if tex == null:
+		return
+	if _cm != null and is_instance_valid(_cm) and _cm.tiled_world_rendering:
+		_cm.paint_tiled_texture(
+			_geo, &"deco", cell, tex, z, 0, false, false,
+			Color(1, 1, 1, alpha)
+		)
 		return
 	var sprite := Sprite2D.new()
 	sprite.texture = tex

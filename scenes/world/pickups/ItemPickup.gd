@@ -15,6 +15,9 @@ class_name ItemPickup
 @export var drop_pickup_delay: float = 1.0 # minimum delay if this pickup is a dropped instance
 @export var debug_pickup: bool = false
 @export var is_exploration_loot: bool = false # set true for exploration cache drops
+@export var secondary_objective_id: int = 0
+@export var persistent_world_drop: bool = false # player-dropped equipment should never be cleaned up behind them
+@export_range(0.0, 900.0, 1.0) var lifetime_seconds: float = 120.0
 @export var max_icon_px: float = 32.0 # max width/height in pixels (world size)
 
 # If set, pickup uses this full instance (dropped from bag/equip) instead of item_id/amount
@@ -50,6 +53,15 @@ func _ready() -> void:
 			vfx.call("set_exploration", is_exploration_loot)
 
 	_enable_pickup_later()
+	_expire_later()
+
+
+func _expire_later() -> void:
+	if lifetime_seconds <= 0.0 or is_exploration_loot or persistent_world_drop:
+		return
+	await get_tree().create_timer(lifetime_seconds, false).timeout
+	if is_inside_tree() and not _picked:
+		queue_free()
 
 
 # Public API for WorldDropSpawner (keeps spawner clean)
@@ -122,6 +134,7 @@ func _try_pickup() -> void:
 		if slot_a >= 0 and slot_a < Inventory.SLOT_COUNT and Global.run_inventory.is_slot_empty(slot_a):
 			Global.run_inventory.set_item(slot_a, inst, origin)
 			_dbg(["[PICKUP INST] EQUIPPED", "slot=", slot_a])
+			_complete_secondary_objective()
 			queue_free()
 			return
 
@@ -130,6 +143,7 @@ func _try_pickup() -> void:
 		var ok_inst: bool = Global.run_bag.add_instance(inst)
 		if ok_inst:
 			_dbg(["[PICKUP INST] BAGGED"])
+			_complete_secondary_objective()
 			queue_free()
 			return
 
@@ -177,6 +191,7 @@ func _try_pickup() -> void:
 
 			# Same id + rarity + polarity -> feed roll into equipped item
 			elif equipped2.data != null \
+			and not equipped2.locked \
 			and equipped2.data.id == item_data.id \
 			and equipped2.polarity == pol:
 				Global.run_inventory.feed_roll_into(slot, roll_pct, origin)
@@ -196,11 +211,19 @@ func _try_pickup() -> void:
 			_dbg(["[BAG ADD]", "roll=", String.num(roll_pct, 3)])
 
 	_dbg(["[PICKUP DONE]", item_data.display_name, "x", copies])
+	_complete_secondary_objective()
 	var sm := get_node_or_null("/root/SfxManager")
 	if sm != null:
 		sm.call("play_2d", &"pickup", global_position)
 	queue_free()
 
+
+func _complete_secondary_objective() -> void:
+	if secondary_objective_id <= 0:
+		return
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_completed"):
+		RunEvents.secondary_objective_completed.emit(secondary_objective_id)
+	secondary_objective_id = 0
 
 func _enable_pickup_later() -> void:
 	if pickup_delay <= 0.0:

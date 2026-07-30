@@ -5,7 +5,7 @@ class_name EnemySeparationSystem
 @export var rebuild_every_ms: int = 250 # fallback only (when EnemyIndex autoload is not enabled)
 
 # Fallback buckets (ONLY used if /root/EnemyIndex is missing)
-var _buckets: Dictionary = {} # Vector2i -> Array[Enemy]
+var _buckets: Dictionary = {} # Vector2i -> Array[EnemyActor]
 var _last_rebuild_msec: int = -999999
 
 # Cache autoload reference
@@ -35,7 +35,7 @@ func _maybe_rebuild_fallback() -> void:
 	# This is a fallback path only; avoid in hot loops if possible.
 	var enemies: Array = get_tree().get_nodes_in_group(&"enemies")
 	for n in enemies:
-		var e := n as Enemy
+		var e := n as EnemyActor
 		if e == null or e.dead:
 			continue
 		var pos: Vector2 = e.global_position
@@ -46,7 +46,7 @@ func _maybe_rebuild_fallback() -> void:
 			_buckets[cell] = arr
 		arr.append(e)
 
-func sample_sep(e: Enemy, radius: float, max_neighbors: int = 8) -> Vector2:
+func sample_sep(e: EnemyActor, radius: float, max_neighbors: int = 8) -> Vector2:
 	if e == null or not is_instance_valid(e) or e.dead:
 		return Vector2.ZERO
 	if radius <= 0.0:
@@ -76,7 +76,7 @@ func sample_sep(e: Enemy, radius: float, max_neighbors: int = 8) -> Vector2:
 			if arr == null:
 				continue
 			for n in arr:
-				var other := n as Enemy
+				var other := n as EnemyActor
 				if other == null or other == e or other.dead:
 					continue
 				var d: Vector2 = pos - other.global_position
@@ -94,7 +94,7 @@ func sample_sep(e: Enemy, radius: float, max_neighbors: int = 8) -> Vector2:
 
 	return (sum.normalized() if sum.length_squared() > 0.0001 else Vector2.ZERO)
 
-func count_allies(e: Enemy, radius: float, max_count: int = 999) -> int:
+func count_allies(e: EnemyActor, radius: float, max_count: int = 999) -> int:
 	if e == null or not is_instance_valid(e) or e.dead:
 		return 0
 	if radius <= 0.0:
@@ -122,7 +122,7 @@ func count_allies(e: Enemy, radius: float, max_count: int = 999) -> int:
 			if arr == null:
 				continue
 			for n in arr:
-				var other := n as Enemy
+				var other := n as EnemyActor
 				if other == null or other == e or other.dead:
 					continue
 				if pos.distance_squared_to(other.global_position) > r2:

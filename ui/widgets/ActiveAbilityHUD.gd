@@ -24,6 +24,7 @@ class_name ActiveAbilityHUD
 @onready var key_label: Label = $Frame/Margin/RootHBox/RightVBox/TopRow/KeyPill/KeyLabel
 @onready var bar: ProgressBar = $Frame/Margin/RootHBox/RightVBox/BarWrap/CooldownBar
 @onready var time_label: Label = $Frame/Margin/RootHBox/RightVBox/BarWrap/TimeLabel
+@onready var state_label: Label = $Frame/Margin/RootHBox/RightVBox/StateLabel
 
 var _effect: Node = null
 var _frame_style: StyleBoxFlat
@@ -31,6 +32,8 @@ var _icon_style: StyleBoxFlat
 var _pill_style: StyleBoxFlat
 var _bar_bg: StyleBoxFlat
 var _bar_fill: StyleBoxFlat
+var _failure_text: String = ""
+var _failure_until_ms: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -54,8 +57,10 @@ func _process(_dt: float) -> void:
 	if _effect != null and not is_instance_valid(_effect):
 		_unbind()
 
-	# Already bound -> stop searching
+	# A bound effect remains authoritative: cooldown alone is not enough for
+	# resource-gated set abilities such as Gravemarch Verdict.
 	if _effect != null:
+		_refresh_authoritative_state()
 		return
 
 	var p: Node = get_tree().get_first_node_in_group(player_group)
@@ -98,6 +103,10 @@ func _bind(effect: Node) -> void:
 	var cb := Callable(self, "_on_cd_changed")
 	if not _effect.is_connected(effect_signal, cb):
 		_effect.connect(effect_signal, cb)
+	if _effect.has_signal(&"active_failed"):
+		var failed_cb := Callable(self, "_on_active_failed")
+		if not _effect.is_connected(&"active_failed", failed_cb):
+			_effect.connect(&"active_failed", failed_cb)
 
 	# Pull optional UI fields from effect if present
 	var key_txt := _get_effect_key_text(_effect)
@@ -111,19 +120,58 @@ func _bind(effect: Node) -> void:
 
 	visible = true
 
-	# Show as ready until first real emit
-	_on_cd_changed(0.0, 0.0)
+	_refresh_authoritative_state()
 
 func _unbind() -> void:
 	if _effect != null and is_instance_valid(_effect):
 		var cb := Callable(self, "_on_cd_changed")
 		if _effect.is_connected(effect_signal, cb):
 			_effect.disconnect(effect_signal, cb)
+		var failed_cb := Callable(self, "_on_active_failed")
+		if _effect.has_signal(&"active_failed") and _effect.is_connected(&"active_failed", failed_cb):
+			_effect.disconnect(&"active_failed", failed_cb)
 
 	_effect = null
 	visible = false
+	_failure_text = ""
+	_failure_until_ms = 0
+
+func _refresh_authoritative_state() -> void:
+	if _effect == null or not is_instance_valid(_effect):
+		return
+	if not _effect.has_method("get_active_state"):
+		return
+	var state: Dictionary = _effect.call("get_active_state") as Dictionary
+	var is_ready: bool = bool(state.get("ready", false))
+	var cooldown_left: float = float(state.get("cooldown_left", 0.0))
+	var cooldown_max: float = float(state.get("cooldown_max", 0.0))
+	var resource_value: float = float(state.get("resource_value", 0.0))
+	var resource_max: float = float(state.get("resource_max", 0.0))
+	if cooldown_left > 0.05 and cooldown_max > 0.0:
+		bar.max_value = cooldown_max
+		bar.value = clampf(cooldown_max - cooldown_left, 0.0, cooldown_max)
+	elif resource_max > 0.0:
+		bar.max_value = resource_max
+		bar.value = clampf(resource_value, 0.0, resource_max)
+	else:
+		bar.max_value = 1.0
+		bar.value = 1.0 if is_ready else 0.0
+	if Time.get_ticks_msec() < _failure_until_ms:
+		time_label.text = _failure_text
+	else:
+		time_label.text = String(state.get("status_text", "READY" if is_ready else "LOCKED"))
+	state_label.text = String(state.get("combat_text", ""))
+	state_label.visible = state_label.text != ""
+	_set_ready_visual(is_ready)
+
+func _on_active_failed(message: String) -> void:
+	_failure_text = message.to_upper()
+	_failure_until_ms = Time.get_ticks_msec() + 1200
 
 func _on_cd_changed(time_left: float, max_cd: float) -> void:
+	if _effect != null and is_instance_valid(_effect) and _effect.has_method("get_active_state"):
+		_refresh_authoritative_state()
+		return
 	# max_cd <= 0 means "ready / idle"
 	if max_cd <= 0.0:
 		bar.max_value = 1.0

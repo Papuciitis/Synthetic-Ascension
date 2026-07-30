@@ -31,6 +31,8 @@ var _player: Node2D = null
 var _capture: float = 0.0
 var _active: bool = false
 var _spin_t: float = 0.0
+var _enemy_index: Node = null
+var _pulse_targets: Array = []
 
 var _sfx_capture_tag: StringName = &"capture"
 
@@ -52,6 +54,7 @@ func _ready() -> void:
 		stability_field.body_exited.connect(_on_field_body_exited)
 
 	_player = get_tree().get_first_node_in_group("player") as Node2D
+	_enemy_index = get_node_or_null("/root/EnemyIndex")
 
 	# Visual defaults
 	if sigil != null:
@@ -163,7 +166,14 @@ func restore_active() -> void:
 
 
 func _pulse() -> void:
-	var enemies: Array = get_tree().get_nodes_in_group("enemies")
+	var enemies: Array = []
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("gather_in_radius"):
+		_enemy_index.call("gather_in_radius", global_position, pulse_radius, _pulse_targets)
+		enemies = _pulse_targets
+	else:
+		enemies = get_tree().get_nodes_in_group("enemies")
 	for e in enemies:
 		var en := e as Node2D
 		if en == null or not is_instance_valid(en):

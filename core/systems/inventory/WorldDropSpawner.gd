@@ -29,19 +29,24 @@ func _ready() -> void:
 
 
 func _on_router_dropped_to_world(inst: ItemInstance, _world_pos: Vector2) -> void:
+	spawn_protected(inst)
+
+
+func spawn_protected(inst: ItemInstance) -> bool:
 	if inst == null or inst.data == null:
-		return
+		return false
 	if pickup_scene == null:
 		push_warning("[WorldDropSpawner] pickup_scene is null")
-		return
+		return false
 
 	var pickup := pickup_scene.instantiate() as ItemPickup
 	if pickup == null:
 		push_warning("[WorldDropSpawner] pickup_scene root is not ItemPickup")
-		return
+		return false
 
 	# Set instance before adding so ItemPickup draws correct icon immediately
 	pickup.item_instance = inst
+	pickup.persistent_world_drop = true
 
 	# Make dropped items take longer to be pickable
 	pickup.pickup_delay = dropped_pickup_delay
@@ -82,3 +87,4 @@ func _on_router_dropped_to_world(inst: ItemInstance, _world_pos: Vector2) -> voi
 
 	# Spawn at player, then throw to final_pos (VFX owns the animation)
 	pickup.play_throw(player_pos, final_pos, throw_anim_time, throw_arc_height, land_bounce_scale, land_bounce_time)
+	return true

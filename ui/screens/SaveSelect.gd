@@ -117,7 +117,7 @@ func _on_delete_pressed(slot: int) -> void:
 
 func _ensure_rename_dialog() -> void:
 	_rename_dialog = ConfirmationDialog.new()
-	_rename_dialog.title = "Rename Profile"
+	_rename_dialog.title = "Rename Character"
 	_rename_dialog.ok_button_text = "Rename"
 	_rename_dialog.cancel_button_text = "Cancel"
 	add_child(_rename_dialog)
@@ -134,7 +134,7 @@ func _ensure_rename_dialog() -> void:
 	margin.add_child(vbox)
 
 	var hint: Label = Label.new()
-	hint.text = "Enter a new profile name:"
+	hint.text = "Enter the character name shown on this save:"
 	vbox.add_child(hint)
 
 	_rename_input = LineEdit.new()
@@ -157,7 +157,7 @@ func _on_rename_pressed(slot: int) -> void:
 		return
 
 	_rename_slot = slot
-	_rename_input.text = s.profile_name
+	_rename_input.text = s.mortal_name if s.mortal_name.strip_edges() != "" else s.profile_name
 	_rename_dialog.popup_centered()
 
 	await get_tree().process_frame
@@ -177,6 +177,8 @@ func _on_rename_confirmed() -> void:
 	if s == null:
 		return
 
+	s.mortal_name = new_name
+	# Keep the legacy profile field in sync for older screens and recovered saves.
 	s.profile_name = new_name
 	_save_slot(s)
 

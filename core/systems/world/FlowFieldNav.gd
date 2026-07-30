@@ -1,6 +1,11 @@
 extends Node2D
 class_name FlowFieldNav
 
+const STEPS: Array[Vector2i] = [
+	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
+	Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1),
+]
+
 @export var cell_size_px: int = 64
 
 # With your ~1200px “relevance” distances, 40–64 is plenty.
@@ -61,6 +66,24 @@ var _walkable: PackedInt32Array = PackedInt32Array() # 0/1
 var _pen_stamp_id: int = 1
 var _pen_stamp: PackedInt32Array = PackedInt32Array()
 var _penalty: PackedInt32Array = PackedInt32Array() # 0..8 (higher = closer to walls)
+var _candidate_steps: PackedInt32Array = PackedInt32Array()
+var _candidate_penalties: PackedInt32Array = PackedInt32Array()
+
+var _debug_requested := 0
+var _debug_started := 0
+var _debug_completed := 0
+var _debug_superseded := 0
+var _debug_cells_total := 0
+var _debug_build_cpu_us := 0
+var _debug_current_cells := 0
+var _debug_current_cpu_us := 0
+var _debug_last_cells := 0
+var _debug_last_cpu_us := 0
+var _debug_last_request_reason: StringName = &""
+var _debug_last_completed_reason: StringName = &""
+var _debug_current_reason: StringName = &""
+var _debug_player_moved := false
+var _has_requested := false
 
 
 func _ready() -> void:
@@ -83,7 +106,7 @@ func _process(delta: float) -> void:
 
 	_time_accum += delta
 
-	if _pending and _time_accum >= rebuild_interval:
+	if _pending and not _building and _time_accum >= rebuild_interval:
 		_time_accum = 0.0
 		_start_rebuild(_pending_cell, _pending_rev)
 		_pending = false
@@ -123,35 +146,55 @@ func _ensure_buffers() -> void:
 
 	_pen_stamp.resize(_grid_size)
 	_penalty.resize(_grid_size)
+	_candidate_steps.resize(STEPS.size())
+	_candidate_penalties.resize(STEPS.size())
 
 	_building = false
 	_pending = true
 
 
 func _request_rebuild_if_needed(player_cell: Vector2i, nav_revision: int) -> void:
-	if nav_revision != _last_nav_revision:
-		_pending = true
-		_pending_cell = player_cell
-		_pending_rev = nav_revision
-		_last_request_cell = player_cell
-		return
-
-	if _last_request_cell.x == 999999:
-		_pending = true
-		_pending_cell = player_cell
-		_pending_rev = nav_revision
-		_last_request_cell = player_cell
+	if not _has_requested:
+		_request_rebuild(player_cell, nav_revision, &"initial", false)
 		return
 
 	var dx: int = absi(player_cell.x - _last_request_cell.x)
 	var dy: int = absi(player_cell.y - _last_request_cell.y)
 	var cheb: int = maxi(dx, dy)
 
+	if nav_revision != _last_nav_revision:
+		if _pending and _pending_rev == nav_revision:
+			if cheb >= maxi(1, rebuild_cell_step):
+				_request_rebuild(player_cell, nav_revision, &"player_moved", true)
+			return
+		if _building:
+			_building = false
+			_debug_superseded += 1
+		_request_rebuild(player_cell, nav_revision, &"nav_revision", false)
+		return
+
 	if cheb >= maxi(1, rebuild_cell_step):
-		_pending = true
-		_pending_cell = player_cell
-		_pending_rev = nav_revision
-		_last_request_cell = player_cell
+		_request_rebuild(player_cell, nav_revision, &"player_moved", true)
+
+
+func _request_rebuild(player_cell: Vector2i, nav_revision: int, reason: StringName, player_moved: bool) -> void:
+	# Player movement updates the one pending destination without throwing away
+	# the work already completed for the active field. Nav-revision invalidation
+	# is handled explicitly by _request_rebuild_if_needed().
+	_has_requested = true
+	_pending = true
+	_pending_cell = player_cell
+	_pending_rev = nav_revision
+	_last_request_cell = player_cell
+	_debug_requested += 1
+	_debug_last_request_reason = reason
+	_debug_current_reason = reason
+	_debug_player_moved = player_moved
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"navigation", &"flow_requested", 1, {
+			"reason": String(reason),
+			"revision": nav_revision,
+		})
 
 
 func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
@@ -197,6 +240,14 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 	_q_tail += 1
 
 	_building = true
+	_debug_started += 1
+	_debug_current_cells = 0
+	_debug_current_cpu_us = 0
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"navigation", &"flow_started", {
+			"revision": nav_revision,
+			"reason": String(_debug_current_reason),
+		})
 
 
 func _step_build() -> void:
@@ -227,24 +278,35 @@ func _step_build() -> void:
 
 		_expand_neighbors(cx, cy, cur_dist)
 
+	var elapsed_us := Time.get_ticks_usec() - start_us
+	_debug_current_cells += processed
+	_debug_current_cpu_us += elapsed_us
+	_debug_cells_total += processed
+	_debug_build_cpu_us += elapsed_us
 	if _q_head >= _q_tail:
 		_building = false
+		_debug_completed += 1
+		_debug_last_cells = _debug_current_cells
+		_debug_last_cpu_us = _debug_current_cpu_us
+		_debug_last_completed_reason = _debug_current_reason
+		if PerformanceFlightRecorder != null:
+			PerformanceFlightRecorder.record_event(&"navigation", &"flow_completed", {
+				"revision": _last_nav_revision,
+				"reason": String(_debug_current_reason),
+				"cells": _debug_last_cells,
+				"cpu_usec": _debug_last_cpu_us,
+			})
 
 
 func _expand_neighbors(cx: int, cy: int, parent_dist: int) -> void:
 	# 8-neighbor steps
-	var steps := [
-		Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
-		Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1)
-	]
+	var candidate_count := 0
 
 	# We’ll order them by "penalty" (more walls nearby = worse),
 	# which helps avoid hugging corners/doorframes.
 	# Small N=8 insertion sort.
-	var cand_steps: Array[Vector2i] = []
-	var cand_pen: Array[int] = []
-
-	for s in steps:
+	for step_index in range(STEPS.size()):
+		var s := STEPS[step_index]
 		var nx: int = cx + s.x
 		var ny: int = cy + s.y
 		if not _in_bounds(nx, ny):
@@ -261,18 +323,17 @@ func _expand_neighbors(cx: int, cy: int, parent_dist: int) -> void:
 		var p: int = (_cell_penalty(nx, ny) if prefer_open_cells else 0)
 
 		# insert sorted by penalty ascending
-		var inserted: bool = false
-		for i in range(cand_steps.size()):
-			if p < cand_pen[i]:
-				cand_steps.insert(i, s)
-				cand_pen.insert(i, p)
-				inserted = true
-				break
-		if not inserted:
-			cand_steps.append(s)
-			cand_pen.append(p)
+		var insert_at := candidate_count
+		while insert_at > 0 and p < _candidate_penalties[insert_at - 1]:
+			_candidate_penalties[insert_at] = _candidate_penalties[insert_at - 1]
+			_candidate_steps[insert_at] = _candidate_steps[insert_at - 1]
+			insert_at -= 1
+		_candidate_penalties[insert_at] = p
+		_candidate_steps[insert_at] = step_index
+		candidate_count += 1
 
-	for s in cand_steps:
+	for candidate_index in range(candidate_count):
+		var s := STEPS[_candidate_steps[candidate_index]]
 		var nx: int = cx + s.x
 		var ny: int = cy + s.y
 		_visit(nx, ny, parent_dist, -s.x, -s.y)
@@ -422,3 +483,23 @@ func sample_cost(world_pos: Vector2) -> int:
 		return 1_000_000_000
 
 	return int(_dist[idx])
+
+
+func get_debug_counters() -> Dictionary:
+	return {
+		"requested": _debug_requested,
+		"started": _debug_started,
+		"completed": _debug_completed,
+		"superseded": _debug_superseded,
+		"cells_total": _debug_cells_total,
+		"cpu_us_total": _debug_build_cpu_us,
+		"last_cells": _debug_last_cells,
+		"last_cpu_us": _debug_last_cpu_us,
+		"last_request_reason": _debug_last_request_reason,
+		"last_completed_reason": _debug_last_completed_reason,
+		"player_moved": _debug_player_moved,
+		"last_revision": _last_nav_revision,
+		"pending_revision": _pending_rev,
+		"pending": _pending,
+		"building": _building,
+	}

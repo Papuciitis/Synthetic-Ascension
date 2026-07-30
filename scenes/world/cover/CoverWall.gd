@@ -3,7 +3,7 @@ extends StaticBody2D
 
 var _connections_mask: int = 0
 var _is_window: bool = false
-var _use_alpha_collision: bool = true
+var _use_alpha_collision: bool = false
 
 @export var connections_mask: int:
 	set(value):
@@ -12,6 +12,7 @@ var _use_alpha_collision: bool = true
 		_connections_mask = value
 		if is_inside_tree():
 			_apply()
+			_register_projectile_geometry()
 	get:
 		return _connections_mask
 
@@ -23,6 +24,7 @@ var _use_alpha_collision: bool = true
 		if is_inside_tree():
 			_refresh_groups()
 			_apply()
+			_register_projectile_geometry()
 	get:
 		return _is_window
 
@@ -64,14 +66,13 @@ const TEX_CROSS := preload("res://assets/world/walls/wall_stone_cross.png")
 const TEX_WIN_V := preload("res://assets/world/walls/wall_stone_window_v.png")
 const TEX_WIN_H := preload("res://assets/world/walls/wall_stone_window_h.png")
 
-# Collision intent: wall art is authored as a thin "band" centered in the 64x64 tile.
-# Use 4 half-segment colliders (N/E/S/W) so corners/T pieces don't over-block.
-const COLL_WALL_THICKNESS: float = 24.0
-const _HALF_LEN: float = 32.0
-
 func _ready() -> void:
 	_refresh_groups()
 	_apply()
+	_register_projectile_geometry()
+
+func _exit_tree() -> void:
+	_unregister_projectile_geometry()
 
 func _refresh_groups() -> void:
 	# Keep group membership consistent even if is_window is set after _ready().
@@ -85,8 +86,6 @@ func _refresh_groups() -> void:
 
 func _apply() -> void:
 	var spr := get_node_or_null("Sprite2D") as Sprite2D
-	if spr == null:
-		return
 
 	# Choose texture
 	var tex: Texture2D
@@ -97,12 +96,14 @@ func _apply() -> void:
 	else:
 		tex = _pick_full_texture(connections_mask)
 
-	spr.texture = tex
-	if use_alpha_collision:
+	if use_alpha_collision and spr != null:
 		_apply_alpha_collision(spr, tex)
 	else:
 		_apply_collisions()
 
+	if spr == null:
+		return
+	spr.texture = tex
 
 	# Quick win readability: cheap drop-shadow sprite (optional)
 	var sh := get_node_or_null("Shadow") as Sprite2D
@@ -118,6 +119,14 @@ func _apply() -> void:
 		sh.z_index = spr.z_index - 1
 		sh.modulate = Color(0, 0, 0, 0.35)
 
+
+func get_visual_texture() -> Texture2D:
+	if is_window:
+		var window_texture := _pick_window_texture(connections_mask)
+		if window_texture != null:
+			return window_texture
+	return _pick_full_texture(connections_mask)
+
 func _apply_collisions() -> void:
 	var want_n: bool = (connections_mask & N) != 0
 	var want_e: bool = (connections_mask & E) != 0
@@ -125,10 +134,10 @@ func _apply_collisions() -> void:
 	var want_w: bool = (connections_mask & W) != 0
 	var want_post: bool = (connections_mask == 0)
 
-	_apply_half_rect("CollisionN", Vector2(0, -16), Vector2(COLL_WALL_THICKNESS, _HALF_LEN), want_n)
-	_apply_half_rect("CollisionS", Vector2(0, 16),  Vector2(COLL_WALL_THICKNESS, _HALF_LEN), want_s)
-	_apply_half_rect("CollisionE", Vector2(16, 0),  Vector2(_HALF_LEN, COLL_WALL_THICKNESS), want_e)
-	_apply_half_rect("CollisionW", Vector2(-16, 0), Vector2(_HALF_LEN, COLL_WALL_THICKNESS), want_w)
+	_apply_half_rect("CollisionN", Vector2(0, -16), Vector2(WorldBlockerGeometry.WALL_THICKNESS, WorldBlockerGeometry.WALL_HALF_LENGTH), want_n)
+	_apply_half_rect("CollisionS", Vector2(0, 16),  Vector2(WorldBlockerGeometry.WALL_THICKNESS, WorldBlockerGeometry.WALL_HALF_LENGTH), want_s)
+	_apply_half_rect("CollisionE", Vector2(16, 0),  Vector2(WorldBlockerGeometry.WALL_HALF_LENGTH, WorldBlockerGeometry.WALL_THICKNESS), want_e)
+	_apply_half_rect("CollisionW", Vector2(-16, 0), Vector2(WorldBlockerGeometry.WALL_HALF_LENGTH, WorldBlockerGeometry.WALL_THICKNESS), want_w)
 
 	var col_p: CollisionShape2D = get_node_or_null("CollisionPost") as CollisionShape2D
 	if col_p != null:
@@ -136,8 +145,8 @@ func _apply_collisions() -> void:
 		if rp == null:
 			rp = RectangleShape2D.new()
 			col_p.shape = rp
-		rp.size = Vector2(COLL_WALL_THICKNESS, COLL_WALL_THICKNESS)
-		col_p.disabled = not want_post
+		rp.size = Vector2(WorldBlockerGeometry.WALL_POST_SIZE, WorldBlockerGeometry.WALL_POST_SIZE)
+		col_p.set_deferred("disabled", not want_post)
 
 	# Vision-only blockers for windows (LoS leak through the center gap).
 	_apply_window_vision_blockers(connections_mask)
@@ -175,7 +184,7 @@ func _apply_alpha_collision(spr: Sprite2D, tex: Texture2D) -> void:
 	for n in ["CollisionN", "CollisionE", "CollisionS", "CollisionW", "CollisionPost"]:
 		var cs := get_node_or_null(n) as CollisionShape2D
 		if cs != null:
-			cs.disabled = true
+			cs.set_deferred("disabled", true)
 
 	# Create / update CollisionPolygon2D nodes (cap count to avoid pathological cases).
 	var w := float(tex.get_width())
@@ -203,7 +212,7 @@ func _apply_alpha_collision(spr: Sprite2D, tex: Texture2D) -> void:
 		cp.polygon = dst
 		cp.position = spr.position
 		cp.rotation = spr.rotation
-		cp.disabled = false
+		cp.set_deferred("disabled", false)
 
 	# Disable any extra AlphaCol nodes from previous textures
 	var k := max_polys
@@ -211,7 +220,7 @@ func _apply_alpha_collision(spr: Sprite2D, tex: Texture2D) -> void:
 		var extra := get_node_or_null("AlphaCol%d" % k) as CollisionPolygon2D
 		if extra == null:
 			break
-		extra.disabled = true
+		extra.set_deferred("disabled", true)
 		k += 1
 
 	# Keep window vision blockers in sync (best-effort; node may not exist).
@@ -244,7 +253,7 @@ func _apply_window_vision_blockers(mask: int) -> void:
 func _set_cs_disabled(path: String, disabled: bool) -> void:
 	var cs := get_node_or_null(path) as CollisionShape2D
 	if cs != null:
-		cs.disabled = disabled
+		cs.set_deferred("disabled", disabled)
 
 func _apply_half_rect(node_name: String, pos: Vector2, size: Vector2, enabled: bool) -> void:
 	var col: CollisionShape2D = get_node_or_null(node_name) as CollisionShape2D
@@ -258,7 +267,21 @@ func _apply_half_rect(node_name: String, pos: Vector2, size: Vector2, enabled: b
 		r = RectangleShape2D.new()
 		col.shape = r
 	r.size = size
-	col.disabled = not enabled
+	col.set_deferred("disabled", not enabled)
+
+func _register_projectile_geometry() -> void:
+	var manager: Node = get_tree().get_first_node_in_group(&"chunk_manager")
+	if manager == null or not manager.has_method("register_projectile_blocker_world"):
+		return
+	var kind: int = WorldBlockerGeometry.Kind.WINDOW if is_window else WorldBlockerGeometry.Kind.WALL
+	manager.call("register_projectile_blocker_world", global_position, WorldBlockerGeometry.pack(kind, connections_mask), get_instance_id())
+
+func _unregister_projectile_geometry() -> void:
+	if not is_inside_tree():
+		return
+	var manager: Node = get_tree().get_first_node_in_group(&"chunk_manager")
+	if manager != null and manager.has_method("unregister_projectile_blocker_world"):
+		manager.call("unregister_projectile_blocker_world", global_position, get_instance_id())
 
 
 func _pick_window_texture(mask: int) -> Texture2D:

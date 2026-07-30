@@ -1,5 +1,11 @@
 # Synthetic Ascension — Project Structure (0.21 recovery patch)
 
+## 0.23 opening ownership addendum
+
+The original ownership rules below remain valid. The playable Segment 1 prologue is a narrow layer under `core/systems/world/opening/`: `OpeningSequenceController` owns sequencing/camera/input/spawn suspension, `OpeningSequenceWorld` owns apparatus interaction drawing, and `OpeningActor` owns only the three scripted targets. `Level1Builder` remains the progression authority.
+
+Opening copy is centralized in `data/narrative/OpeningSequenceData.gd`; presentation is isolated in `ui/screens/opening/OpeningPresentation.*`. Profile/attempt persistence remains in `SaveData`/`Global`, and the existing tutorial controller remains the sole enemy-dossier queue. See `OPENING_SEQUENCE.md`.
+
 This is the ownership map for the recovered Godot 4.6 project. The main rule is that gameplay authority, presentation and authored data should have one clear owner each.
 
 ## Top-level ownership
@@ -68,3 +74,23 @@ Main Menu developer mode exposes enemy-introduction force/reset and projectile s
 - Put pure visual effects in `assets/vfx`; gameplay-bearing effects remain in `effects` or `core`.
 - Recovery/editor debris belongs in the quarantine archive, not as loose `.tmp` files in the project tree.
 
+## 0.22 ownership additions
+
+`core/systems/world/WorldBlockerGeometry.gd` defines the intentional projectile/player blocker vocabulary and swept primitive tests. `ChunkManager` owns the packed cell descriptor registry and allocation-free DDA broad phase. Block scenes register their descriptor when their mask/type becomes authoritative and unregister by owner identity. A blocked cell without a descriptor remains a full-cell conservative fallback; a registered window is explicitly projectile-transparent.
+
+The affected projectile families are:
+
+- managed ordinary player ranged shots (`ProjectileSimulationManager`);
+- managed ordinary generic enemy shots (`ProjectileSimulationManager`);
+- compatibility `RangedBullet` nodes;
+- compatibility `EnemyProjectile` nodes;
+- homing `MagicMissileProjectile` nodes;
+- `ReflectedProjectile` nodes.
+
+Target hit logic remains specific to each projectile. Only the world-blocker decision is shared.
+
+`SetData` and `SetTier` now own every set-facing identity and explanation. Item resources continue to own individual item descriptions; effect nodes continue to own mechanics. `ItemTooltip` reads central set presentation and simulates the hovered item's real fixed equipment slot. `SetEmblem` draws the central set shape language without duplicating bitmap assets.
+
+`ActiveAbilityHUD` asks the bound effect for authoritative readiness/resource state. The three 6-piece effects own their live prime, bank, cooldown, mark and active-window values. `SetBreakpointNotifier` listens to explicit inventory equipment transitions but treats unlabelled load/population changes as silent baseline updates.
+
+`DevSetCollisionTools` is a developer-only autoload whose panel is enabled from Main Menu developer mode. It supports 2/4/6-piece grants, explicit item-ID grants, combat-state setup, slow/high-speed wall/corner/window/fence/cover fixtures and the existing projectile stress toggle. It is testing instrumentation and is hidden during normal play.

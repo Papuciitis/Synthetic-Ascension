@@ -1,7 +1,7 @@
 extends GridContainer
 class_name ShopBagGrid
 
-signal slot_clicked(slot: int)
+signal slot_clicked(slot: int, button: int, double_click: bool, shift: bool, ctrl: bool)
 
 @export var slot_scene: PackedScene = preload("res://ui/bag/BagSlot.tscn")
 @export var slot_count: int = 16
@@ -58,8 +58,8 @@ func _build_slots() -> void:
 
 		# Capture index (avoid closure capturing the loop var)
 		var slot_i: int = i
-		s.equip_requested.connect(func(_idx: int) -> void:
-			slot_clicked.emit(slot_i)
+		s.interaction_requested.connect(func(_idx: int, button: int, double_click: bool, shift: bool, ctrl: bool) -> void:
+			slot_clicked.emit(slot_i, button, double_click, shift, ctrl)
 		)
 
 	_building_slots = false

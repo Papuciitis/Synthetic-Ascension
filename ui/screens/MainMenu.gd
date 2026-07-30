@@ -16,7 +16,6 @@ extends Control
 @onready var chk_force_aug: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceAug
 @onready var chk_force_major: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceMajor
 @onready var chk_force_enemy_intros: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceEnemyIntros
-@onready var chk_projectile_stress: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ProjectileStress
 @onready var btn_reset_enemy_intros: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ResetEnemyIntros
 @onready var btn_start_dev: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDev
 @onready var btn_grant_augments: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/GrantAugments
@@ -28,6 +27,11 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	Global.debug_force_enemy_introductions = false
 	Global.debug_projectile_stress_test = false
+	Global.debug_set_collision_tools = false
+	Global.debug_performance_lab = false
+	Global.debug_dev_mode = false
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.set_enabled(false)
 	var am := get_node_or_null("/root/AudioManager")
 	if am != null:
 		am.call("to_menu")
@@ -168,7 +172,11 @@ func _on_start_dev_pressed() -> void:
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
-	Global.debug_projectile_stress_test = chk_projectile_stress.button_pressed
+	Global.debug_dev_mode = true
+	Global.debug_projectile_stress_test = false
+	Global.debug_performance_lab = false
+	PerformanceFlightRecorder.set_enabled(false)
+	Global.debug_set_collision_tools = false
 
 	# Dev loadout (optional)
 	if loadout_id != "none":
@@ -212,7 +220,11 @@ func _on_start_dev_hub_pressed() -> void:
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
+	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
+	Global.debug_performance_lab = false
+	PerformanceFlightRecorder.set_enabled(false)
+	Global.debug_set_collision_tools = false
 
 	# Dev loadout (optional) so you have stuff to sell
 	if loadout_id != "none":

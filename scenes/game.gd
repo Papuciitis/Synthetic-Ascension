@@ -3,8 +3,9 @@ extends Node2D
 const SEGMENT_PROC_BUILDER_SCRIPT := preload("res://core/systems/world/SegmentProcBuilder.gd")
 const SEGMENT1_NARRATIVE_OVERLAY := preload("res://ui/screens/Segment1NarrativeOverlay.tscn")
 const TUTORIAL_MODAL_CONTROLLER := preload("res://ui/controllers/TutorialModalController.gd")
+const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/OpeningSequenceController.tscn")
 
-@export var starting_followers: int = 1 # legacy; attempt start sets this to 1 anyway
+@export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
 @export var augment_select_scene: PackedScene
 
@@ -20,6 +21,7 @@ var _game_over_ui: Control = null
 var _run_ended: bool = false
 var _segment_completion_running: bool = false
 var _tutorial_modals: TutorialModalController = null
+var _opening_sequence: OpeningSequenceController = null
 
 
 func _ready() -> void:
@@ -33,6 +35,16 @@ func _ready() -> void:
 		Global.start_new_attempt()
 		if Global.attempt_segment == 1 and not Global.has_segment1_milestone(&"assistant_commitment"):
 			Global.set_followers(0)
+
+	# Repair attempts created by 0.23.0-0.23.2, where start_new_attempt could
+	# mark the attempt active without constructing its inventory containers.
+	# Preserve any valid container; create only the missing side before HUD and
+	# pickup systems bind to it below.
+	if Global != null and Global.attempt_active:
+		if Global.run_inventory == null:
+			Global.reset_run_inventory()
+		if Global.run_bag == null:
+			Global.reset_run_bag_inventory()
 
 	# Mark resume target as Game
 	if SaveManager != null and SaveManager.current_save != null:
@@ -119,8 +131,13 @@ func _setup_segment_world() -> void:
 
 func _begin_entry_sequence() -> void:
 	var seg: int = (Global.attempt_segment if Global != null else 1)
-	if seg == 1 and Global != null and not Global.has_segment1_milestone(&"synthesis"):
-		await _present_segment1_overlay(false)
+	if seg == 1 and Global != null and not Global.attempt_opening_completed:
+		_opening_sequence = OPENING_SEQUENCE_SCENE.instantiate() as OpeningSequenceController
+		if _opening_sequence != null:
+			add_child(_opening_sequence)
+			await _opening_sequence.run_sequence(player as Node2D, level1_builder as Level1Builder)
+			_opening_sequence.queue_free()
+			_opening_sequence = null
 
 	if Global != null and Global.pending_augment_pick:
 		_spawn_augment_select()
@@ -229,15 +246,14 @@ func complete_segment(completed_segment: int) -> void:
 	Global.goto_hub_shop()
 
 func _present_segment1_overlay(completion: bool) -> void:
+	if not completion:
+		return
 	var overlay := SEGMENT1_NARRATIVE_OVERLAY.instantiate() as Segment1NarrativeOverlay
 	if overlay == null:
 		return
 	add_child(overlay)
 	get_tree().paused = true
-	if completion:
-		overlay.present_completion(Global.mortal_name if Global != null else "The Arcanist")
-	else:
-		overlay.present_opening(Global.mortal_name if Global != null else "The Arcanist")
+	overlay.present_completion(Global.mortal_name if Global != null else "The Arcanist")
 	await overlay.dismissed
 	get_tree().paused = false
 	overlay.queue_free()

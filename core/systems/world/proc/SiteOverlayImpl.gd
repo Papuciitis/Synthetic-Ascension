@@ -11,7 +11,6 @@ class_name SiteOverlayImpl
 const DONJON := preload("res://core/systems/world/proc/DonjonCarver.gd")
 const RECT_FAC := preload("res://core/systems/world/proc/RectFacilityCarver.gd")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
-const LOOT_SPAWNER_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
 
 class SitePlan:
 	var root_chunk: Vector2i
@@ -263,7 +262,6 @@ func _spawn_indoor_volumes(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 
 	# Create per-chunk volume (so streaming never drops indoor detection while inside)
 	var vol := INDOOR_VOLUME_SCENE.instantiate()
-	chunk.add_child(vol)
 
 	# global cell tl
 	var global_tl := plan.root_chunk * cpc + inter.position
@@ -271,37 +269,23 @@ func _spawn_indoor_volumes(chunk_manager: Node, chunk: Node2D, coord: Vector2i, 
 	if b_id == 0:
 		b_id = int(_mix_seed(plan.site_seed, plan.root_chunk.x, plan.root_chunk.y, 19) & 0x7fffffff) + 1
 
-	vol.configure(global_tl, inter.size, int(chunk_manager.cell_size_px), b_id)
-
-	# Exploration loot: large sites / dungeons
-	# Spawn ONCE per site (root chunk only) to avoid duplication across streamed chunks.
-	if bool(cfg.get('use_legacy_site_loot_spawner', false)) and LOOT_SPAWNER_SCENE != null and coord == plan.root_chunk:
-		var lid: int = int(plan.site_seed & 0x7fffffff)
-		if lid == 0:
-			lid = int(_mix_seed(plan.site_seed, plan.root_chunk.x, plan.root_chunk.y, 202) & 0x7fffffff) + 1
-
-		# Deterministic roll per site.
-		var rng_loot := RandomNumberGenerator.new()
-		rng_loot.seed = int(_mix_seed(int(chunk_manager.world_seed), lid, 0, 4242) & 0x7fffffff)
-		var chance: float = float(cfg.get('site_loot_chance', 0.85))
-		if rng_loot.randf() < clampf(chance, 0.0, 1.0):
-			var sp := LOOT_SPAWNER_SCENE.instantiate() as Node2D
-			if sp != null:
-				chunk.add_child(sp)
-				sp.set('loot_id', lid)
-				sp.set('spawn_chance', 1.0)
-				sp.set('count_min', int(cfg.get('site_loot_count_min', 2)))
-				sp.set('count_max', int(cfg.get('site_loot_count_max', 4)))
-				sp.set('rarity_min', int(cfg.get('site_loot_rarity_min', 5)))
-				sp.set('rarity_max', int(cfg.get('site_loot_rarity_max', 8)))
-				sp.set('rarity_bonus_per_segment', int(cfg.get('site_loot_rarity_bonus_per_segment', 1)))
-				sp.set('scatter_radius', float(cfg.get('site_loot_scatter_radius', 48.0)))
-				sp.set('pickup_delay', float(cfg.get('site_loot_pickup_delay', 0.15)))
-
-				# place roughly at the site interior center (global space)
-				var _loot_cpc: int = int(chunk_manager._cells_per_chunk())
-				var _loot_center_cell: Vector2 = Vector2(plan.root_chunk * _loot_cpc + plan.region.position) + Vector2(plan.region.size) * 0.5
-				sp.global_position = (_loot_center_cell + Vector2(0.5, 0.5)) * float(chunk_manager.cell_size_px)
+	# Every slice receives the total site area and the same building ID. The first
+	# slice entered owns the one deterministic site reward; Global claim state keeps
+	# later streamed slices from duplicating it.
+	var total_site_area: int = maxi(0, interior.size.x) * maxi(0, interior.size.y)
+	var loot_cfg: Dictionary = {
+		"site_area_cells": total_site_area,
+		"large_loot_chance": float(cfg.get("site_loot_chance", 1.0)),
+		"large_count_min": int(cfg.get("site_loot_count_min", 1)),
+		"large_count_max": int(cfg.get("site_loot_count_max", 3)),
+		"large_rarity_min": int(cfg.get("site_loot_rarity_min", 5)),
+		"large_rarity_max": int(cfg.get("site_loot_rarity_max", 8)),
+		"large_rarity_bonus_per_segment": int(cfg.get("site_loot_rarity_bonus_per_segment", 1)),
+		"scatter_radius_px": float(cfg.get("site_loot_scatter_radius", 48.0)),
+		"pickup_delay": float(cfg.get("site_loot_pickup_delay", 0.15)),
+	}
+	vol.configure(global_tl, inter.size, int(chunk_manager.cell_size_px), b_id, loot_cfg)
+	chunk.add_child(vol)
 
 
 func _stamp_door_threshold(chunk_manager: Node, chunk: Node2D, coord: Vector2i, plan: SitePlan, cfg: Dictionary) -> void:

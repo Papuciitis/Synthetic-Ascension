@@ -1,7 +1,7 @@
 extends RefCounted
 class_name EnemySenses
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 
 # cached exclude list (to avoid rebuilding arrays every ray)
 var _exclude: Array[RID] = []
@@ -20,7 +20,7 @@ var _ray_params := PhysicsRayQueryParameters2D.new()
 var _point_params := PhysicsPointQueryParameters2D.new()
 
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	_exclude.clear()
 

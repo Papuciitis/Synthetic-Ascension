@@ -19,6 +19,7 @@ var _trail_pts: PackedVector2Array = PackedVector2Array()
 var _trail_line: Line2D = null
 var _body: Polygon2D = null
 var _pooled: bool = false
+var _chunk_manager: ChunkManager = null
 
 func setup(p_target: Node2D, p_damage: float, start_dir: Vector2) -> void:
 	target = p_target
@@ -31,6 +32,7 @@ func setup(p_target: Node2D, p_damage: float, start_dir: Vector2) -> void:
 
 func _ready() -> void:
 	_pooled = has_meta("__pool_key")
+	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	set_physics_process(true)
 	_ensure_visuals()
 
@@ -99,7 +101,12 @@ func _physics_process(dt: float) -> void:
 		var desired: Vector2 = to_t * speed
 		_vel = _vel.lerp(desired, clampf(turn_rate * dt, 0.0, 1.0))
 
-	global_position += _vel * dt
+	var old_pos: Vector2 = global_position
+	var new_pos: Vector2 = old_pos + _vel * dt
+	if _hits_world(old_pos, new_pos):
+		_despawn()
+		return
+	global_position = new_pos
 	rotation = _vel.angle()
 
 	# Trail update only when moved enough
@@ -112,6 +119,11 @@ func _physics_process(dt: float) -> void:
 		if target.has_method("take_damage"):
 			target.call("take_damage", damage)
 		_despawn()
+
+func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
+	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, 5.0) >= 0.0
 
 func _add_trail_point(p: Vector2) -> void:
 	if _trail_pts.is_empty():

@@ -1,0 +1,229 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/widgets/TradeConfirmPopup.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="Panel"]
+bg_color = Color(0.045, 0.045, 0.052, 0.99)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 0.82)
+corner_radius_top_left = 18
+corner_radius_top_right = 18
+corner_radius_bottom_right = 18
+corner_radius_bottom_left = 18
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 18
+shadow_offset = Vector2(0, 10)
+
+[sub_resource type="StyleBoxFlat" id="Summary"]
+bg_color = Color(0.015, 0.015, 0.02, 0.68)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.25, 0.29, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="ButtonNormal"]
+bg_color = Color(0.09, 0.09, 0.105, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.25, 0.29, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="ButtonHover"]
+bg_color = Color(0.15, 0.095, 0.055, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[sub_resource type="StyleBoxFlat" id="ButtonPressed"]
+bg_color = Color(0.11, 0.065, 0.035, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.55, 0.2, 1)
+corner_radius_top_left = 9
+corner_radius_top_right = 9
+corner_radius_bottom_right = 9
+corner_radius_bottom_left = 9
+
+[node name="TradeConfirmPopup" type="Control"]
+z_index = 500
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_script")
+
+[node name="Blocker" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0, 0, 0, 0.76)
+
+[node name="Center" type="CenterContainer" parent="Blocker"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Blocker/Center"]
+custom_minimum_size = Vector2(610, 390)
+layout_mode = 2
+theme_override_styles/panel = SubResource("Panel")
+
+[node name="Margin" type="MarginContainer" parent="Blocker/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="VBox" type="VBoxContainer" parent="Blocker/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.67, 0.35, 1)
+theme_override_font_sizes/font_size = 20
+text = "CONFIRM EXCHANGE"
+
+[node name="Close" type="Button" parent="Blocker/Center/Panel/Margin/VBox/Header"]
+custom_minimum_size = Vector2(36, 34)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 18
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "×"
+
+[node name="Commitment" type="Label" parent="Blocker/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.88, 0.88, 0.9, 1)
+theme_override_font_sizes/font_size = 15
+text = "Followers recover supplies from this exchange."
+autowrap_mode = 2
+
+[node name="Summary" type="PanelContainer" parent="Blocker/Center/Panel/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("Summary")
+
+[node name="Margin" type="MarginContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="Rows" type="VBoxContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Sell" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Sell"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "SUPPLIES OFFERED"
+
+[node name="Value" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Sell"]
+layout_mode = 2
+text = "0"
+
+[node name="Buy" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Buy"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "EQUIPMENT SECURED"
+
+[node name="Value" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Buy"]
+layout_mode = 2
+text = "0"
+
+[node name="Net" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Net"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "NET COMMITMENT"
+
+[node name="Value" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Net"]
+layout_mode = 2
+text = "No change"
+
+[node name="Followers" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Followers"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "FOLLOWERS"
+
+[node name="Value" type="Label" parent="Blocker/Center/Panel/Margin/VBox/Summary/Margin/Rows/Followers"]
+layout_mode = 2
+text = "0  →  0"
+
+[node name="Actions" type="HBoxContainer" parent="Blocker/Center/Panel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Cancel" type="Button" parent="Blocker/Center/Panel/Margin/VBox/Actions"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "Return to Cart"
+
+[node name="Confirm" type="Button" parent="Blocker/Center/Panel/Margin/VBox/Actions"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 2
+theme_override_colors/font_color = Color(1, 0.79, 0.58, 1)
+theme_override_styles/normal = SubResource("ButtonNormal")
+theme_override_styles/hover = SubResource("ButtonHover")
+theme_override_styles/pressed = SubResource("ButtonPressed")
+text = "Commit Exchange"

@@ -29,6 +29,15 @@ signal tutorial_tip(text: String, duration: float)
 signal objective_changed(title: String, detail: String)
 
 @warning_ignore("unused_signal")
+signal secondary_objective_changed(title: String, detail: String)
+
+@warning_ignore("unused_signal")
+signal secondary_objective_completed(objective_id: int)
+
+@warning_ignore("unused_signal")
+signal segment_phase_changed(phase: StringName, label: String)
+
+@warning_ignore("unused_signal")
 signal blocking_info_requested(card_id: StringName, title: String, body: String)
 
 @warning_ignore("unused_signal")
@@ -36,3 +45,6 @@ signal enemy_archetype_encountered(enemy: Node)
 
 @warning_ignore("unused_signal")
 signal tutorial_modal_state_changed(open: bool)
+
+@warning_ignore("unused_signal")
+signal opening_sequence_state_changed(active: bool, phase: int, mode: StringName)

@@ -1,0 +1,57 @@
+{
+  "version": "0.25.5",
+  "godot_runtime_available": false,
+  "changed_files": [
+    "data/items/ItemInstance.gd",
+    "ui/bag/BagSlot.gd",
+    "ui/components/InventorySlotView.gd",
+    "ui/widgets/ShopBagGrid.gd",
+    "ui/widgets/ItemTooltip.gd",
+    "ui/screens/HubShop.gd",
+    "core/systems/inventory/InventoryRouter.gd"
+  ],
+  "checks": {
+    "data/items/ItemInstance.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 112,
+      "contains_tabs": true
+    },
+    "ui/bag/BagSlot.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 357,
+      "contains_tabs": true
+    },
+    "ui/components/InventorySlotView.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 424,
+      "contains_tabs": true
+    },
+    "ui/widgets/ShopBagGrid.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 91,
+      "contains_tabs": true
+    },
+    "ui/widgets/ItemTooltip.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 356,
+      "contains_tabs": true
+    },
+    "ui/screens/HubShop.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 1452,
+      "contains_tabs": true
+    },
+    "core/systems/inventory/InventoryRouter.gd": {
+      "exists": true,
+      "nonempty": true,
+      "lines": 231,
+      "contains_tabs": true
+    }
+  }
+}

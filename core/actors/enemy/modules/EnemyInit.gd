@@ -1,7 +1,7 @@
 extends RefCounted
 class_name EnemyInit
 
-var _owner: Enemy = null
+var _owner: EnemyActor = null
 
 var _drops: EnemyDrops = null
 var _senses: EnemySenses = null
@@ -13,7 +13,7 @@ var _shooter: EnemyShooter = null
 var _life: EnemyLifecycle = null
 
 func setup(
-	owner: Enemy,
+	owner: EnemyActor,
 	drops: EnemyDrops,
 	senses: EnemySenses,
 	leech: EnemyLeech,
@@ -40,6 +40,7 @@ func boot() -> void:
 
 	_apply_spec_if_any()
 	_apply_threat_scaling()
+	_apply_split_generation()
 
 	_owner.hp = _owner.max_hp
 	_owner.add_to_group("enemies")
@@ -117,6 +118,16 @@ func _apply_visuals() -> void:
 		spr.texture = s.sprite_texture
 	spr.scale = s.sprite_scale
 	spr.modulate = s.sprite_modulate
+
+
+func _apply_split_generation() -> void:
+	if _owner.spec == null or _owner.spec.ai != EnemySpec.AI.SPLITTER:
+		return
+	var generation: int = maxi(0, int(_owner.get_meta("split_generation", 0)))
+	var scale_factor: float = maxf(0.10, _owner.spec.split_base_scale) * pow(maxf(0.10, _owner.spec.split_scale_per_generation), generation)
+	_owner.scale *= Vector2.ONE * scale_factor
+	_owner.max_hp *= pow(maxf(0.05, _owner.spec.split_hp_per_generation), generation)
+	_owner.speed *= pow(maxf(0.10, _owner.spec.split_speed_per_generation), generation)
 
 
 func _wire_hitbox() -> void:

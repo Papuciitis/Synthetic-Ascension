@@ -32,9 +32,11 @@ var velocity: Vector2 = Vector2.ZERO
 var _start_pos: Vector2
 var _hit: bool = false
 var _pooled: bool = false
+var _chunk_manager: ChunkManager = null
 
 func _ready() -> void:
 	_start_pos = global_position
+	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	area_entered.connect(_on_area_entered)
 	set_physics_process(true)
 
@@ -73,13 +75,23 @@ func _stop_trail() -> void:
 	pass
 
 func _physics_process(delta: float) -> void:
-	global_position += velocity * delta
+	var old_pos: Vector2 = global_position
+	var new_pos: Vector2 = old_pos + velocity * delta
+	if _hits_world(old_pos, new_pos, maxf(2.0, body_width * 0.5)):
+		_despawn()
+		return
+	global_position = new_pos
 	_apply_visual_pose()
 
 	if max_range > 0.0:
 		var d2 := _start_pos.distance_squared_to(global_position)
 		if d2 >= max_range * max_range:
 			_despawn()
+
+func _hits_world(from_pos: Vector2, to_pos: Vector2, radius: float) -> bool:
+	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
+		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
+	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, radius) >= 0.0
 
 func _apply_visual_pose() -> void:
 	if velocity.length_squared() > 0.001:

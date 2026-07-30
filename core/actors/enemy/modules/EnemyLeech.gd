@@ -1,11 +1,11 @@
 extends RefCounted
 class_name EnemyLeech
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 var _touching_player_hurtbox: int = 0
 var _loop_running: bool = false
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	_touching_player_hurtbox = 0
 	_loop_running = false

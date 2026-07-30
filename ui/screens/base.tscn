@@ -219,6 +219,12 @@ theme_override_font_sizes/font_size = 16
 placeholder_text = "Name used by the institution"
 max_length = 32
 
+[node name="ReplayOpening" type="CheckButton" parent="Margin/Main/NamePanel/Margin/Row"]
+layout_mode = 2
+focus_mode = 1
+text = "Replay full opening"
+tooltip_text = "Replay the complete historical opening on the next new run."
+
 [node name="BottomBar" type="HBoxContainer" parent="Margin/Main" unique_id=1881186996]
 layout_mode = 2
 size_flags_horizontal = 3

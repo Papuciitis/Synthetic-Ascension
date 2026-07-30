@@ -53,10 +53,13 @@ custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 color = Color(1, 1, 1, 0.08)
 
-[node name="Body" type="Label" parent="Margin/VBox" unique_id=134785460]
+[node name="Body" type="RichTextLabel" parent="Margin/VBox" unique_id=134785460]
 modulate = Color(1, 1, 1, 0.92)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
 text = "Body"
 autowrap_mode = 3

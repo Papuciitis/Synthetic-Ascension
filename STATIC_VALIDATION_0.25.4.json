@@ -1,0 +1,48 @@
+{
+  "project": "syntethic-ascension-0.0.0.25.4-qol-exchange-full",
+  "baseline": "syntethic-ascension-0.0.0.25.3",
+  "engine_feature": "Godot 4.7 / GL Compatibility",
+  "checks": {
+    "gdscript_file_count": 250,
+    "modified_gdscript_count": 7,
+    "gdscript_string_and_delimiter_scan": "pass",
+    "gdscript_problem_files": {},
+    "duplicate_function_definitions": "pass",
+    "duplicate_function_files": {},
+    "global_class_count": 203,
+    "global_class_duplicates": "pass",
+    "global_class_duplicate_details": {},
+    "text_resource_file_count": 467,
+    "literal_res_reference_occurrences": 696,
+    "literal_resource_paths": "pass",
+    "missing_resource_references": {},
+    "hubshop_onready_node_paths": {
+      "status": "pass",
+      "found": 29,
+      "total": 29,
+      "missing": []
+    },
+    "modified_scene_hierarchy": {
+      "ui/screens/HubShop.tscn": {
+        "node_count": 67,
+        "hierarchy": "pass",
+        "errors": []
+      },
+      "ui/overlays/GateOverlay.tscn": {
+        "node_count": 25,
+        "hierarchy": "pass",
+        "errors": []
+      }
+    },
+    "required_hub_nodes": "pass",
+    "required_gate_nodes": "pass",
+    "old_symbol_reference_removal": "pass",
+    "old_symbol_hits": {},
+    "runtime_godot_validation": "unavailable"
+  },
+  "errors": [],
+  "warnings": [
+    "Godot 4.7.x executable unavailable in packaging runtime; in-engine import, typed compilation, and smoke testing remain required."
+  ],
+  "status": "pass_static"
+}

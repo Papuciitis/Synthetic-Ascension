@@ -1,7 +1,7 @@
 extends RefCounted
 class_name EnemyCharge
 
-var _enemy: Enemy = null
+var _enemy: EnemyActor = null
 
 var _cd: float = 0.0
 var _windup_left: float = 0.0
@@ -9,7 +9,7 @@ var _time_left: float = 0.0
 var _dir: Vector2 = Vector2.ZERO
 var _override_vel: Vector2 = Vector2.ZERO
 
-func setup(enemy: Enemy) -> void:
+func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 	_cd = 0.0
 	_windup_left = 0.0
@@ -49,7 +49,7 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 	if _enemy.spec == null:
 		return to_player * _enemy._spd()
 
-	# If we're already charging/winding up, Enemy.gd will handle override movement
+	# If we're already charging/winding up, EnemyActor.gd will handle override movement
 	if _windup_left > 0.0 or _time_left > 0.0:
 		return Vector2.ZERO
 

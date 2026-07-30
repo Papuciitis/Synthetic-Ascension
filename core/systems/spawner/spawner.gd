@@ -36,11 +36,18 @@ class_name EnemySpawner
 
 @export_group("Culling (prevent spawner dead)")
 @export var cull_enabled: bool = true
-@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 1.00  # start culling when alive >= cap*ratio
-@export var cull_interval: float = 1.25
-@export var cull_max_per_tick: int = 24
-@export var cull_chunk_buffer: int = 1   # keep enemies within (unload_radius + buffer) chunks around the player
-@export var cull_distance_px_fallback: float = 5200.0  # used if no ChunkManager
+@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 0.72
+@export var cull_interval: float = 0.75
+@export var cull_max_per_tick: int = 40
+@export_range(1, 8, 1) var cull_keep_chunks: int = 2
+@export var cull_distance_px_fallback: float = 3600.0
+
+@export_group("Stale Enemy Cleanup")
+@export var stale_cleanup_interval: float = 0.80
+@export var stale_min_distance_px: float = 1700.0
+@export var stale_stationary_seconds: float = 9.0
+@export var stale_motion_epsilon_px: float = 22.0
+@export var stale_max_per_tick: int = 10
 
 # Cache refs
 var _player: Node2D = null
@@ -49,20 +56,33 @@ var _timer: Timer = null
 var _elapsed: float = 0.0
 var _ei: Node = null
 var _spawn_filter: Node = null
+var _scene_enemy_ids: Dictionary = {}
 var _segment1_stage: int = -1
 var _spawn_pause_left: float = 0.0
 var _authored_wave_running: bool = false
+var _pending_spawn_total: int = 0
+var _pending_spawn_by_scene: Dictionary = {}
 
 # Wardstone cache (avoid scanning group every spawn attempt)
 var _wardstones: Array = []
 var _wardstone_refresh_t: float = 0.0
 var _cull_cd: float = 0.0
+var _maintenance_cd: float = 0.0
+var _stale_samples: Dictionary = {} # enemy id -> {pos: Vector2, still: float}
+var _spawn_geometry_refresh_t: float = 0.0
+var _spawn_sockets: Array = []
+var _indoor_volumes: Array = []
+var _cull_counts: Dictionary = {}
 
 func _ready() -> void:
 	add_to_group("enemy_spawner")
 	_player = get_tree().get_first_node_in_group("player") as Node2D
 	_cm = get_tree().get_first_node_in_group("chunk_manager") as ChunkManager
 	_ei = get_node_or_null("/root/EnemyIndex")
+	_spawn_filter = get_node_or_null("/root/DebugEnemySpawnFilter")
+	_register_spawn_table_ids()
+	if _spawn_filter != null and _spawn_filter.has_signal("filters_changed"):
+		_spawn_filter.connect("filters_changed", _on_spawn_filters_changed)
 
 	_timer = Timer.new()
 	_timer.one_shot = false
@@ -76,8 +96,13 @@ func _process(delta: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
+	_maintenance_cd = maxf(_maintenance_cd - delta, 0.0)
+	_spawn_geometry_refresh_t = maxf(_spawn_geometry_refresh_t - delta, 0.0)
 	if _ei == null or not is_instance_valid(_ei):
 		_ei = get_node_or_null("/root/EnemyIndex")
+	if cull_enabled and _maintenance_cd <= 0.0:
+		_maintenance_cd = maxf(0.25, stale_cleanup_interval)
+		_run_enemy_maintenance()
 
 func _on_tick() -> void:
 	if _timer == null:
@@ -124,12 +149,14 @@ func _on_tick() -> void:
 		cap_total = maxi(8, int(floor(float(cap_total) * boss_max_alive_mul)))
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio)
-	if alive >= threshold:
+	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	if cap_total > 0 and alive >= threshold:
 		_maybe_cull(cap_total, alive)
 		alive = _alive_total()
-		if alive >= cap_total:
+		if alive + _pending_spawn_total >= cap_total:
 			return
+	elif cap_total > 0 and alive + _pending_spawn_total >= cap_total:
+		return
 
 	# batch scaling
 	var batch: int = int(tutorial_cfg.get("batch", 0)) if tutorial_active else batch_base + int(floor(batch_per_min * minutes))
@@ -139,14 +166,11 @@ func _on_tick() -> void:
 	if boss_near:
 		batch = maxi(1, int(round(float(batch) * boss_batch_mul)))
 
-	# Avoid repeated alive scans inside the loop: track local spawns this tick.
-	var spawned_this_tick: int = 0
-
 	for _i in range(batch):
-		if alive + spawned_this_tick >= cap_total:
+		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
+		if remaining_total <= 0:
 			return
-		if _spawn_one(minutes):
-			spawned_this_tick += 1
+		_spawn_one(minutes, remaining_total)
 
 func _is_boss_near_player() -> bool:
 	if _player == null or not is_instance_valid(_player):
@@ -173,11 +197,13 @@ func _is_boss_near_player() -> bool:
 
 	return false
 
-func _spawn_one(minutes: float) -> bool:
+func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
+	if total_capacity <= 0:
+		return 0
 	var entry: EnemySpawnEntry = null
 	var tutorial_cfg: Dictionary = _tutorial_settings()
 	if tutorial_cfg.is_empty() and spawn_table != null:
-		entry = spawn_table.pick(_elapsed, Global._rng)
+		entry = _pick_enabled_entry(_elapsed)
 
 	var scene_to_spawn: PackedScene = null
 	var count_min: int = 1
@@ -187,7 +213,7 @@ func _spawn_one(minutes: float) -> bool:
 	if not tutorial_cfg.is_empty():
 		var roster: Array = tutorial_cfg.get("roster", []) as Array
 		if roster.is_empty():
-			return false
+			return 0
 		scene_to_spawn = roster[Global._rng.randi_range(0, roster.size() - 1)] as PackedScene
 
 	if entry != null and scene_to_spawn == null:
@@ -202,41 +228,74 @@ func _spawn_one(minutes: float) -> bool:
 
 	if scene_to_spawn == null:
 		push_warning("[Spawner] No enemy scene assigned (spawn_table empty + enemy_scene null).")
-		return false
+		return 0
 
-	# per-type cap
+	var enemy_id := _enemy_id_for_scene(scene_to_spawn)
+	if not _debug_enemy_enabled(enemy_id, false):
+		return 0
+	per_type_cap = _effective_type_cap(enemy_id, per_type_cap)
+
+	var scene_path: String = scene_to_spawn.resource_path
+	var pending_of_type: int = int(_pending_spawn_by_scene.get(scene_path, 0))
+
+	# Per-type capacity includes deferred instances already reserved by prior ticks.
 	if per_type_cap > 0:
 		var alive_of_type: int = _alive_count_for_scene(scene_to_spawn)
-		if alive_of_type >= per_type_cap:
-			return false
+		if alive_of_type + pending_of_type >= per_type_cap:
+			return 0
 
 	var amount: int = Global._rng.randi_range(count_min, count_max)
-	var spawned_any: bool = false
+	amount = mini(amount, total_capacity)
+	if per_type_cap > 0:
+		amount = mini(amount, per_type_cap - _alive_count_for_scene(scene_to_spawn) - pending_of_type)
+	if amount <= 0:
+		return 0
+	var spawned_count: int = 0
 
 	for _j in range(amount):
-		if per_type_cap > 0 and _alive_count_for_scene(scene_to_spawn) >= per_type_cap:
+		if per_type_cap > 0 and _alive_count_for_scene(scene_to_spawn) + int(_pending_spawn_by_scene.get(scene_path, 0)) >= per_type_cap:
 			break
 		if _spawn_instance(scene_to_spawn, minutes, entry_elite):
-			spawned_any = true
+			spawned_count += 1
 
-	return spawned_any
+	return spawned_count
 
-func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: float) -> bool:
+func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: float, forced_pos: Vector2 = Vector2.INF, special_kind: StringName = &"") -> bool:
+	return _spawn_instance_node(scene_to_spawn, minutes, entry_elite, forced_pos, special_kind) != null
+
+func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_elite: float, forced_pos: Vector2 = Vector2.INF, special_kind: StringName = &"") -> Node:
 	var e: Node = scene_to_spawn.instantiate()
 	if e == null:
-		return false
+		return null
+	var enemy_id := _enemy_id_from_node(e)
+	var protected := _is_protected_spawn(e)
+	if not _debug_enemy_enabled(enemy_id, protected):
+		e.free()
+		return null
 
 	# position: ring around player + jitter (avoid blocked cells + wardstone fields)
-	var pos: Vector2 = _pick_spawn_pos()
+	var pos: Vector2 = _pick_spawn_pos() if forced_pos == Vector2.INF else forced_pos
 	if pos == Vector2.INF:
 		e.queue_free()
-		return false
+		return null
 
 	var e2d: Node2D = e as Node2D
 	if e2d != null:
 		e2d.global_position = pos
 
-	get_tree().current_scene.call_deferred("add_child", e)
+	var current_scene: Node = get_tree().current_scene
+	if current_scene == null:
+		e.free()
+		return null
+	if special_kind != &"":
+		e.set_meta("special_spawn_kind", special_kind)
+
+	var scene_path: String = scene_to_spawn.resource_path
+	_reserve_pending_spawn(scene_path)
+	e.tree_entered.connect(Callable(self, "_release_pending_spawn").bind(scene_path), CONNECT_ONE_SHOT)
+	if _spawn_filter != null and _spawn_filter.has_method("validate_deferred_node"):
+		e.tree_entered.connect(Callable(_spawn_filter, "validate_deferred_node").bind(e), CONNECT_ONE_SHOT)
+	current_scene.call_deferred("add_child", e)
 
 	# elite roll: entry chance + global scaling bonus
 	var cfg: Dictionary = _tutorial_settings()
@@ -251,6 +310,10 @@ func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: f
 		global_bonus += td2.elite_bonus
 
 	var chance: float = clampf(entry_elite + global_bonus, 0.0, elite_chance_cap)
+	if e is EnemyActor:
+		var enemy_actor := e as EnemyActor
+		if enemy_actor.spec != null:
+			chance = minf(chance, clampf(enemy_actor.spec.elite_spawn_chance_cap, 0.0, 1.0))
 	var roll: float = Global._rng.randf()
 
 	if roll <= chance and e.has_method("make_elite"):
@@ -260,10 +323,31 @@ func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: f
 
 	if debug_spawns:
 		print("[SPAWN]", str(e.name), " t=", int(_elapsed))
+	if _spawn_filter != null and _spawn_filter.has_method("record_spawn"):
+		_spawn_filter.call("record_spawn", enemy_id)
 
-	return true
+	return e
+
+
+func _reserve_pending_spawn(scene_path: String) -> void:
+	_pending_spawn_total += 1
+	if scene_path != "":
+		_pending_spawn_by_scene[scene_path] = int(_pending_spawn_by_scene.get(scene_path, 0)) + 1
+
+
+func _release_pending_spawn(scene_path: String) -> void:
+	_pending_spawn_total = maxi(0, _pending_spawn_total - 1)
+	if scene_path == "" or not _pending_spawn_by_scene.has(scene_path):
+		return
+	var remaining: int = int(_pending_spawn_by_scene.get(scene_path, 0)) - 1
+	if remaining <= 0:
+		_pending_spawn_by_scene.erase(scene_path)
+	else:
+		_pending_spawn_by_scene[scene_path] = remaining
 
 func _alive_total() -> int:
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("ambient_alive_count"):
+		return int(_ei.call("ambient_alive_count"))
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("alive_count"):
 		return int(_ei.call("alive_count"))
 	return get_tree().get_nodes_in_group("enemies").size()
@@ -272,6 +356,8 @@ func _alive_count_for_scene(scene: PackedScene) -> int:
 	if scene == null:
 		return 0
 
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("ambient_alive_count_for_scene"):
+		return int(_ei.call("ambient_alive_count_for_scene", scene))
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("alive_count_for_scene"):
 		return int(_ei.call("alive_count_for_scene", scene))
 
@@ -290,6 +376,11 @@ func _alive_count_for_scene(scene: PackedScene) -> int:
 func _pick_spawn_pos() -> Vector2:
 	if _player == null:
 		return Vector2.INF
+	_refresh_spawn_geometry_cache()
+	if not _spawn_sockets.is_empty() and Global._rng.randf() < 0.78:
+		var socket_pos := _pick_socket_spawn_pos()
+		if socket_pos != Vector2.INF:
+			return socket_pos
 
 	var attempts: int = 10
 	for _k in range(attempts):
@@ -297,26 +388,102 @@ func _pick_spawn_pos() -> Vector2:
 		var r: float = spawn_radius + Global._rng.randf_range(-spawn_jitter, spawn_jitter)
 		var pos: Vector2 = _player.global_position + dir * r
 
-		# Handcrafted segments may provide authored playable bounds. This prevents
-		# ambient enemies appearing outside the institution or behind sealed geometry.
-		if _spawn_filter == null or not is_instance_valid(_spawn_filter):
-			_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
-		if _spawn_filter != null and _spawn_filter.has_method("is_spawn_position_allowed"):
-			if not bool(_spawn_filter.call("is_spawn_position_allowed", pos)):
-				continue
+		if _is_spawn_position_valid(pos):
+			return pos
 
-		# Avoid wardstone stability fields
-		if _is_in_wardstone_field(pos):
+	return Vector2.INF
+
+func _refresh_spawn_geometry_cache() -> void:
+	if _spawn_geometry_refresh_t > 0.0:
+		return
+	_spawn_geometry_refresh_t = 0.75
+	_spawn_sockets = get_tree().get_nodes_in_group(&"enemy_spawn_socket")
+	_indoor_volumes = get_tree().get_nodes_in_group(&"indoor_volume")
+
+func _pick_socket_spawn_pos() -> Vector2:
+	if not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+	if not is_instance_valid(_player) or _spawn_sockets.is_empty():
+		return Vector2.INF
+	var min_radius: float = maxf(260.0, spawn_radius - spawn_jitter * 2.0)
+	var max_radius: float = spawn_radius + spawn_jitter * 2.5
+	var min_dist2: float = min_radius * min_radius
+	var max_dist2: float = max_radius * max_radius
+	var start_index: int = Global._rng.randi_range(0, _spawn_sockets.size() - 1)
+	for offset in range(_spawn_sockets.size()):
+		var socket_variant: Variant = _spawn_sockets[(start_index + offset) % _spawn_sockets.size()]
+		if not is_instance_valid(socket_variant):
 			continue
+		var socket := socket_variant as Node2D
+		if socket == null or not socket.is_inside_tree():
+			continue
+		var distance2: float = socket.global_position.distance_squared_to(_player.global_position)
+		if distance2 < min_dist2 or distance2 > max_dist2:
+			continue
+		var candidate: Vector2 = socket.global_position + Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * Global._rng.randf_range(0.0, 28.0)
+		if _is_spawn_position_valid(candidate):
+			return candidate
+	return Vector2.INF
 
-		# Avoid blocked cells if chunk manager exists
-		if _cm != null and is_instance_valid(_cm):
-			var cell := _cm.world_to_cell(pos)
-			if not _cm.is_cell_walkable(cell):
-				continue
+func _is_spawn_position_valid(pos: Vector2) -> bool:
+	# Handcrafted segments may provide authored playable bounds.
+	if _spawn_filter == null or not is_instance_valid(_spawn_filter):
+		_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
+	if _spawn_filter != null and _spawn_filter.has_method("is_spawn_position_allowed"):
+		if not bool(_spawn_filter.call("is_spawn_position_allowed", pos)):
+			return false
+	if _is_in_wardstone_field(pos):
+		return false
+	if _cm != null and is_instance_valid(_cm):
+		var cell := _cm.world_to_cell(pos)
+		if not _cm.is_cell_walkable(cell):
+			return false
+	for volume_variant in _indoor_volumes:
+		# Group snapshots can retain an object after it has been queue-freed. Validate
+		# the Variant before casting it, because casting a freed object raises an error.
+		if not is_instance_valid(volume_variant):
+			continue
+		var volume := volume_variant as Node
+		if volume == null or not volume.is_inside_tree():
+			continue
+		if volume.has_method("contains_world_point") and bool(volume.call("contains_world_point", pos)):
+			return false
+	return true
 
-		return pos
+func spawn_local_encounter(area: Rect2, count: int, owner: Node = null) -> Array:
+	var spawned: Array = []
+	if count <= 0 or not spawning_enabled:
+		return spawned
+	var amount: int = clampi(count, 1, 12)
+	for _index in range(amount):
+		var entry: EnemySpawnEntry = null
+		if spawn_table != null:
+			entry = spawn_table.pick(_elapsed, Global._rng)
+		var scene_to_spawn: PackedScene = entry.enemy_scene if entry != null else enemy_scene
+		if scene_to_spawn == null:
+			continue
+		var pos := _pick_local_encounter_pos(area)
+		if pos == Vector2.INF:
+			continue
+		var entry_elite: float = clampf(entry.elite_chance, 0.0, 1.0) if entry != null else 0.0
+		var enemy := _spawn_instance_node(scene_to_spawn, _elapsed / 60.0, entry_elite, pos, &"interior")
+		if enemy != null:
+			enemy.set_meta("interior_owner_id", owner.get_instance_id() if owner != null else 0)
+			enemy.set_meta("interior_active", true)
+			spawned.append(enemy)
+	return spawned
 
+func _pick_local_encounter_pos(area: Rect2) -> Vector2:
+	for _attempt in range(24):
+		var pos := Vector2(
+			Global._rng.randf_range(area.position.x, area.end.x),
+			Global._rng.randf_range(area.position.y, area.end.y)
+		)
+		if _cm == null or not is_instance_valid(_cm):
+			return pos
+		var cell := _cm.world_to_cell(pos)
+		if _cm.is_cell_walkable(cell):
+			return _cm.cell_to_world_center(cell)
 	return Vector2.INF
 
 func _refresh_wardstones_cache() -> void:
@@ -329,8 +496,10 @@ func _is_in_wardstone_field(pos: Vector2) -> bool:
 	_refresh_wardstones_cache()
 
 	for s in _wardstones:
+		if not is_instance_valid(s):
+			continue
 		var n := s as Node
-		if n == null or not is_instance_valid(n):
+		if n == null:
 			continue
 		if n.has_method("get_stability_radius"):
 			var r: float = float(n.call("get_stability_radius"))
@@ -355,20 +524,19 @@ func spawn_burst(extra: int) -> void:
 	var cap_total: int = _current_alive_cap()
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio)
-	if alive >= threshold:
+	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	if cap_total > 0 and alive >= threshold:
 		_maybe_cull(cap_total, alive)
 		alive = _alive_total()
 		if alive >= cap_total:
 			return
 
 	var minutes: float = _elapsed / 60.0
-	var spawned: int = 0
 	for _i in range(extra):
-		if alive + spawned >= cap_total:
+		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
+		if remaining_total <= 0:
 			return
-		if _spawn_one(minutes):
-			spawned += 1
+		_spawn_one(minutes, remaining_total)
 
 func set_spawning_enabled(value: bool) -> void:
 	spawning_enabled = value
@@ -405,8 +573,9 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 	for _i in range(count):
 		if not spawning_enabled:
 			break
-		if _alive_total() < _current_alive_cap():
-			_spawn_one(_elapsed / 60.0)
+		var remaining_total: int = _remaining_total_capacity(_current_alive_cap(), _alive_total())
+		if remaining_total > 0:
+			_spawn_one(_elapsed / 60.0, remaining_total)
 		if spacing > 0.0:
 			await get_tree().create_timer(spacing, false).timeout
 	_authored_wave_running = false
@@ -419,95 +588,299 @@ func _tutorial_settings() -> Dictionary:
 func _current_alive_cap() -> int:
 	var cfg := _tutorial_settings()
 	if not cfg.is_empty():
-		return maxi(0, int(cfg.get("cap", 0)))
+		return _effective_total_cap(maxi(0, int(cfg.get("cap", 0))))
 	if spawn_table != null and spawn_table.has_method("get_max_alive_total"):
-		return int(spawn_table.call("get_max_alive_total"))
-	return max_alive
+		return _effective_total_cap(int(spawn_table.call("get_max_alive_total")))
+	return _effective_total_cap(max_alive)
+
+
+func _remaining_total_capacity(cap_total: int, alive: int) -> int:
+	if cap_total <= 0:
+		return 2147483647
+	return cap_total - alive - _pending_spawn_total
+
+
+func _effective_total_cap(production_cap: int) -> int:
+	if _spawn_filter == null or not is_instance_valid(_spawn_filter):
+		_spawn_filter = get_node_or_null("/root/DebugEnemySpawnFilter")
+	if _spawn_filter != null and _spawn_filter.has_method("effective_total_cap"):
+		return int(_spawn_filter.call("effective_total_cap", production_cap))
+	return production_cap
+
+
+func _effective_type_cap(enemy_id: StringName, production_cap: int) -> int:
+	if _spawn_filter != null and _spawn_filter.has_method("effective_type_cap"):
+		return int(_spawn_filter.call("effective_type_cap", enemy_id, production_cap))
+	return production_cap
+
+
+func _debug_enemy_enabled(enemy_id: StringName, protected: bool) -> bool:
+	if _spawn_filter == null or not is_instance_valid(_spawn_filter):
+		_spawn_filter = get_node_or_null("/root/DebugEnemySpawnFilter")
+	if _spawn_filter != null and _spawn_filter.has_method("is_enemy_enabled"):
+		return bool(_spawn_filter.call("is_enemy_enabled", enemy_id, protected))
+	return true
+
+
+func _enemy_id_from_node(enemy: Node) -> StringName:
+	if enemy == null:
+		return &""
+	var spec_value: Variant = enemy.get("spec")
+	if spec_value != null:
+		return StringName(spec_value.get("id"))
+	return StringName(enemy.get_meta("enemy_id", &""))
+
+
+func _enemy_id_for_scene(scene: PackedScene) -> StringName:
+	if scene == null:
+		return &""
+	var path := scene.resource_path
+	if _scene_enemy_ids.has(path):
+		return StringName(_scene_enemy_ids[path])
+	var node := scene.instantiate()
+	var enemy_id := _enemy_id_from_node(node)
+	if node != null:
+		node.free()
+	if path != "":
+		_scene_enemy_ids[path] = enemy_id
+	if _spawn_filter != null and _spawn_filter.has_method("register_enemy_id"):
+		_spawn_filter.call("register_enemy_id", enemy_id)
+	return enemy_id
+
+
+func _register_spawn_table_ids() -> void:
+	if spawn_table == null:
+		return
+	for entry_variant: Variant in spawn_table.entries:
+		var entry := entry_variant as EnemySpawnEntry
+		if entry != null and entry.enemy_scene != null:
+			_enemy_id_for_scene(entry.enemy_scene)
+
+
+func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:
+	if spawn_table == null:
+		return null
+	var candidates: Array[EnemySpawnEntry] = []
+	var total_weight := 0.0
+	for entry_variant: Variant in spawn_table.entries:
+		var entry := entry_variant as EnemySpawnEntry
+		if entry == null or not entry.is_active(time_seconds):
+			continue
+		if not _debug_enemy_enabled(_enemy_id_for_scene(entry.enemy_scene), false):
+			continue
+		candidates.append(entry)
+		total_weight += entry.weight
+	if candidates.is_empty() or total_weight <= 0.0:
+		return null
+	var roll := Global._rng.randf() * total_weight
+	var accumulated := 0.0
+	for entry in candidates:
+		accumulated += entry.weight
+		if roll <= accumulated:
+			return entry
+	return candidates[candidates.size() - 1]
+
+
+func _is_protected_spawn(enemy: Node) -> bool:
+	return (
+		enemy.is_in_group(&"boss_like")
+		or enemy.is_in_group(&"boss")
+		or enemy.is_in_group(&"miniboss")
+		or bool(enemy.get_meta("objective_required", false))
+		or bool(enemy.get_meta("tutorial_actor", false))
+	)
+
+
+func _on_spawn_filters_changed(_disabled_ids: Array[StringName]) -> void:
+	# Deferred instances may still enter after a filter change, but their one-shot
+	# release callbacks are idempotent against these cleared counters.
+	_pending_spawn_total = 0
+	_pending_spawn_by_scene.clear()
 
 # ------------------------------------------------------------
-# Culling (prevents "spawner dead" when the player outruns the horde)
+# Culling + stale cleanup
 # ------------------------------------------------------------
+func _run_enemy_maintenance() -> void:
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group("player") as Node2D
+	if _player == null:
+		return
+	if _cm == null or not is_instance_valid(_cm):
+		_cm = get_tree().get_first_node_in_group("chunk_manager") as ChunkManager
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("prune_invalid"):
+		_ei.call("prune_invalid")
+
+	# Proactive pass: distant ambient enemies no longer wait for the population cap
+	# before being retired. The cap-triggered pass below can remove a larger batch.
+	_cull_far_enemies(stale_max_per_tick)
+	_cull_stale_enemies(stale_max_per_tick)
+
 func _maybe_cull(cap_total: int, alive: int) -> void:
 	if not cull_enabled:
 		return
 	if _cull_cd > 0.0:
 		return
-	# Only bother when near/at cap (or above threshold ratio).
 	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio)
 	if alive < threshold:
 		return
 	_cull_cd = maxf(0.10, cull_interval)
 	var culled: int = _cull_far_enemies(cull_max_per_tick)
 	if debug_spawns and culled > 0:
-		print("[SPAWN] Culled ", culled, " far enemies to free cap.")
+		print("[SPAWN] Culled ", culled, " distant ambient enemies to free cap.")
+
+func _enemy_list_for_cleanup() -> Array:
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("get_all"):
+		return _ei.call("get_all") as Array
+	return get_tree().get_nodes_in_group("enemies")
+
+func is_enemy_cull_eligible(enemy: Node2D, player_position: Vector2) -> bool:
+	if enemy == null or not is_instance_valid(enemy) or not enemy.is_inside_tree():
+		return false
+	if enemy.is_queued_for_deletion():
+		return false
+	if enemy.is_in_group(&"boss_like") or enemy.is_in_group(&"boss") or enemy.is_in_group(&"miniboss"):
+		return false
+	if bool(enemy.get_meta("objective_required", false)) or bool(enemy.get_meta("tutorial_actor", false)):
+		return false
+	if bool(enemy.get_meta("never_cull", false)):
+		return false
+	if "dead" in enemy and bool(enemy.get("dead")):
+		return false
+	var player_distance := enemy.global_position.distance_to(player_position)
+	if enemy.has_method("is_retirement_protected") and bool(enemy.call("is_retirement_protected", player_distance)):
+		return false
+	var kind := enemy.get_meta("special_spawn_kind", &"") as StringName
+	if kind == &"summon":
+		return false
+	if kind == &"interior" and bool(enemy.get_meta("interior_active", true)):
+		return false
+	if kind == &"boss_add" and bool(enemy.get_meta("encounter_active", true)):
+		return false
+	if enemy.has_meta("sniper_engagement_range"):
+		if bool(enemy.get_meta("sniper_combat_committed", false)):
+			return false
+		if player_distance <= maxf(0.0, float(enemy.get_meta("sniper_engagement_range"))):
+			return false
+	return true
+
+
+func _is_cull_eligible(enemy: Node2D) -> bool:
+	var player_position := _player.global_position if _player != null and is_instance_valid(_player) else Vector2.ZERO
+	return is_enemy_cull_eligible(enemy, player_position)
+
+func _queue_cull_enemy(enemy: Node2D, reason: StringName) -> bool:
+	if not _is_cull_eligible(enemy):
+		return false
+	var enemy_id: int = int(enemy.get_instance_id())
+	_stale_samples.erase(enemy_id)
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("retire_enemy"):
+		var retired := bool(_ei.call("retire_enemy", enemy, reason))
+		if retired:
+			_cull_counts[reason] = int(_cull_counts.get(reason, 0)) + 1
+		return retired
+	if _ei != null and is_instance_valid(_ei) and _ei.has_method("unregister"):
+		_ei.call("unregister", enemy)
+	enemy.set_meta("culled", true)
+	enemy.set_meta("cull_reason", reason)
+	enemy.queue_free()
+	_cull_counts[reason] = int(_cull_counts.get(reason, 0)) + 1
+	return true
+
+
+func get_cull_counters() -> Dictionary:
+	return _cull_counts.duplicate()
 
 func _cull_far_enemies(max_to_cull: int) -> int:
-	if max_to_cull <= 0:
-		return 0
-	if _player == null or not is_instance_valid(_player):
+	if max_to_cull <= 0 or _player == null or not is_instance_valid(_player):
 		return 0
 
-	# Get enemy list (prefer EnemyIndex for speed).
-	var list: Array = []
-	if _ei != null and is_instance_valid(_ei) and _ei.has_method("get_all"):
-		list = _ei.call("get_all")
-	else:
-		list = get_tree().get_nodes_in_group("enemies")
-
-	# Determine keep radius.
+	var list: Array = _enemy_list_for_cleanup()
 	var keep_chunks: int = 0
 	var keep_px2: float = cull_distance_px_fallback * cull_distance_px_fallback
 	var chunk_sz: float = 2048.0
 	if _cm != null and is_instance_valid(_cm):
-		chunk_sz = float(_cm.chunk_size_px)
-		keep_chunks = int(_cm.unload_radius) + maxi(0, cull_chunk_buffer)
+		chunk_sz = maxf(1.0, float(_cm.chunk_size_px))
+		keep_chunks = maxi(1, cull_keep_chunks)
 
-	var ppos: Vector2 = _player.global_position
-	var pchunk: Vector2i = Vector2i(floori(ppos.x / chunk_sz), floori(ppos.y / chunk_sz))
-
-	# Build candidate list (furthest first).
-	var candidates: Array = []  # Array[Dictionary]{n:Node2D, score:int/float}
-	for n in list:
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e) or not e.is_inside_tree():
-			continue
-		# Never cull bosses/minibosses/objective enemies.
-		if e.is_in_group(&"boss_like") or e.is_in_group(&"boss") or e.is_in_group(&"miniboss"):
-			continue
-		if e.has_meta("never_cull") and bool(e.get_meta("never_cull")):
-			continue
-		if "dead" in e and bool(e.get("dead")):
+	var player_pos: Vector2 = _player.global_position
+	var player_chunk := Vector2i(floori(player_pos.x / chunk_sz), floori(player_pos.y / chunk_sz))
+	var candidates: Array[Dictionary] = []
+	for enemy_variant in list:
+		var enemy := enemy_variant as Node2D
+		if not is_enemy_cull_eligible(enemy, player_pos):
 			continue
 
 		if keep_chunks > 0:
-			var ec: Vector2i = Vector2i(floori(e.global_position.x / chunk_sz), floori(e.global_position.y / chunk_sz))
-			var d: int = maxi(abs(ec.x - pchunk.x), abs(ec.y - pchunk.y))
-			if d > keep_chunks:
-				candidates.append({"e": e, "s": d})
+			var enemy_chunk := Vector2i(floori(enemy.global_position.x / chunk_sz), floori(enemy.global_position.y / chunk_sz))
+			var chunk_distance: int = maxi(abs(enemy_chunk.x - player_chunk.x), abs(enemy_chunk.y - player_chunk.y))
+			if chunk_distance > keep_chunks:
+				candidates.append({"enemy": enemy, "score": float(chunk_distance)})
 		else:
-			var d2: float = e.global_position.distance_squared_to(ppos)
-			if d2 > keep_px2:
-				candidates.append({"e": e, "s": d2})
+			var distance_sq: float = enemy.global_position.distance_squared_to(player_pos)
+			if distance_sq > keep_px2:
+				candidates.append({"enemy": enemy, "score": distance_sq})
 
-	if candidates.is_empty():
-		return 0
-
-	# Sort furthest first.
 	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
-		return float(a["s"]) > float(b["s"])
+		return float(a.get("score", 0.0)) > float(b.get("score", 0.0))
 	)
 
 	var culled: int = 0
-	var limit: int = mini(max_to_cull, candidates.size())
-	for i in range(limit):
-		var e := candidates[i]["e"] as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		# Remove from index immediately so cap frees up this tick.
-		if _ei != null and is_instance_valid(_ei) and _ei.has_method("unregister"):
-			_ei.call("unregister", e)
-		e.set_meta("culled", true)
-		e.queue_free()
-		culled += 1
+	for candidate in candidates:
+		if culled >= max_to_cull:
+			break
+		var enemy := candidate.get("enemy") as Node2D
+		if _queue_cull_enemy(enemy, &"distance"):
+			culled += 1
+	return culled
 
+func _cull_stale_enemies(max_to_cull: int) -> int:
+	if max_to_cull <= 0 or _player == null or not is_instance_valid(_player):
+		return 0
+
+	var min_distance_sq: float = stale_min_distance_px * stale_min_distance_px
+	var movement_sq: float = stale_motion_epsilon_px * stale_motion_epsilon_px
+	var step_seconds: float = maxf(0.25, stale_cleanup_interval)
+	var player_pos: Vector2 = _player.global_position
+	var seen: Dictionary = {}
+	var candidates: Array[Dictionary] = []
+
+	for enemy_variant in _enemy_list_for_cleanup():
+		var enemy := enemy_variant as Node2D
+		if not is_enemy_cull_eligible(enemy, player_pos):
+			continue
+		var enemy_id: int = int(enemy.get_instance_id())
+		seen[enemy_id] = true
+		var current_pos: Vector2 = enemy.global_position
+		var distance_sq: float = current_pos.distance_squared_to(player_pos)
+		var sample: Dictionary = _stale_samples.get(enemy_id, {"pos": current_pos, "still": 0.0}) as Dictionary
+		var previous_pos: Vector2 = sample.get("pos", current_pos) as Vector2
+		var still_seconds: float = float(sample.get("still", 0.0))
+
+		if distance_sq < min_distance_sq or current_pos.distance_squared_to(previous_pos) > movement_sq:
+			still_seconds = 0.0
+		else:
+			still_seconds += step_seconds
+		_stale_samples[enemy_id] = {"pos": current_pos, "still": still_seconds}
+
+		# Elites can legitimately hold ranged positions; only distance culling handles them.
+		var is_elite: bool = "is_elite" in enemy and bool(enemy.get("is_elite"))
+		if not is_elite and still_seconds >= stale_stationary_seconds:
+			candidates.append({"enemy": enemy, "score": distance_sq})
+
+	for tracked_id in _stale_samples.keys():
+		if not seen.has(tracked_id):
+			_stale_samples.erase(tracked_id)
+
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return float(a.get("score", 0.0)) > float(b.get("score", 0.0))
+	)
+	var culled: int = 0
+	for candidate in candidates:
+		if culled >= max_to_cull:
+			break
+		var enemy := candidate.get("enemy") as Node2D
+		if _queue_cull_enemy(enemy, &"stale"):
+			culled += 1
+	if debug_spawns and culled > 0:
+		print("[SPAWN] Cleaned ", culled, " stale ambient enemies.")
 	return culled

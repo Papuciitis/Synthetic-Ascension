@@ -1,5 +1,11 @@
 # Segment 1 Rebuild — Handover and Runtime Checklist
 
+## 0.23 playable-opening integration
+
+The laboratory is no longer introduced by the generic opening card. Full mode uses the existing start/apparatus area for historical framing, Bren response, three-node synthesis, calibration, one construct and the manual officer confrontation. Short mode begins beside the same apparatus; skip grants the same durable synthesis, confrontation and assistant milestones. The Archive stage resumes with 4.5 seconds of grace after Bren commits.
+
+The existing archive/Wardstone/courtyard/service/outer-gate route, barriers, security count and Exit Rite are unchanged. The old synthesis, first-lethal and assistant callback messages remain only as recovery/fallback paths and are bypassed during the opening controller. `OPENING_SEQUENCE.md` documents exact ownership and save/resume behavior.
+
 ## Chapter route
 
 Segment 1 remains a deterministic institutional escape:
@@ -105,4 +111,3 @@ Authored values remain 93% total before secondary sources: synthesis 10%, confro
 - Test Hub buy/sell/refresh, bag/stash/equipment transfers, bosses, audio and save/reload.
 
 Godot 4.6 was unavailable during this patch. None of the runtime/performance outcomes above are claimed from static validation.
-

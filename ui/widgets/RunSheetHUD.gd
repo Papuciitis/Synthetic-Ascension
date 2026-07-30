@@ -20,25 +20,22 @@ class_name RunSheetHUD
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
 
 func refresh(player: Node, inv: Inventory) -> void:
-	# --- base stats from player (supports player.stats Resource OR direct props) ---
-	var base_max_hp: float = _get_stats_num(player, "max_hp", _get_num(player, "max_hp", 0.0))
-	var base_armor: float  = _get_stats_num(player, "armor",  _get_num(player, "armor", 0.0))
-	var base_spd: float    = _get_stats_num(player, "move_speed", _get_num(player, "move_speed", _get_num(player, "speed", 0.0)))
-	var base_pow: float    = _get_stats_num(player, "power",  _get_num(player, "power", 0.0))
-	var base_hst: float    = _get_stats_num(player, "haste",  _get_num(player, "haste", 0.0))
-	var base_lck: float    = _get_stats_num(player, "luck",   _get_num(player, "luck", 0.0))
+	# Player.stats is already the complete final snapshot: race, style, permanent
+	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
+	# and active percentage rolls. Inventory deltas must not be added a second time.
+	var max_hp_total: float = _get_num(player, "max_hp", _get_stats_num(player, "max_hp", 0.0))
+	var armor_total: float = _get_stats_num(player, "armor", _get_num(player, "armor", 0.0))
+	var stored_spd: float = _get_stats_num(player, "move_speed", _get_num(player, "speed", 0.0))
+	var spd_total: float = _get_effective_move_speed(player, stored_spd)
+	var pow_total: float = _get_stats_num(player, "power", _get_num(player, "power", 0.0))
+	var hst_total: float = _get_stats_num(player, "haste", _get_num(player, "haste", 0.0))
+	var lck_total: float = _get_stats_num(player, "luck", _get_num(player, "luck", 0.0))
 
-	# --- equipped deltas from inventory ---
+	# Parenthesised values remain the equipped flat deltas for quick attribution;
+	# they are informational only and are not added to the final totals again.
 	var d := StatDelta.new()
 	if inv != null and inv.has_method("sum_mods"):
 		d = inv.sum_mods()
-
-	var max_hp_total := base_max_hp + float(d.max_hp)
-	var armor_total  := base_armor  + float(d.armor)
-	var spd_total    := base_spd    + float(d.move_speed)
-	var pow_total    := base_pow    + float(d.power)
-	var hst_total    := base_hst    + float(d.haste)
-	var lck_total    := base_lck    + float(d.luck)
 
 	# --- totals ---
 	var cur_hp: float = _get_num(player, "hp", -1.0)
@@ -131,6 +128,16 @@ func _get_num(obj: Object, prop: String, fallback: float) -> float:
 	if v is float or v is int:
 		return float(v)
 	return fallback
+
+func _get_effective_move_speed(player: Object, fallback: float) -> float:
+	if player == null:
+		return fallback
+	if player.has_method("get_effective_move_speed"):
+		var value: Variant = player.call("get_effective_move_speed")
+		if value is float or value is int:
+			return float(value)
+	return fallback
+
 
 func _get_stats_num(player: Object, prop: String, fallback: float) -> float:
 	if player == null:
