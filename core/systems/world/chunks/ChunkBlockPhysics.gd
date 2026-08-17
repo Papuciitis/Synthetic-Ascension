@@ -104,7 +104,7 @@ func _add_rectangle_kind(data: ChunkBuildData, kind: int, cell_size: int, layer:
 
 func _add_half_covers(data: ChunkBuildData, cell_size: int) -> void:
 	var category := WorldBlockerGeometry.Kind.HALF_COVER
-	var body: StaticBody2D
+	var body: StaticBody2D = null
 	for index in data.occupied_indices():
 		var cell := data.cell_for_index(index)
 		if data.kind_at(cell) != category:
@@ -130,12 +130,12 @@ func _body_for_category(category: int, layer: int) -> StaticBody2D:
 	return body
 
 
-func _add_shape(body: StaticBody2D, shape: Shape2D, transform: Transform2D) -> void:
+func _add_shape(body: StaticBody2D, shape: Shape2D, shape_transform: Transform2D) -> void:
 	# The per-chunk container outlives its StaticBody2D children during teardown.
 	# A body owning itself can leave CollisionObject2D consulting an owner that is
 	# already being destroyed when a large streamed scene is released.
 	var owner_id: int = body.create_shape_owner(self)
-	body.shape_owner_set_transform(owner_id, transform)
+	body.shape_owner_set_transform(owner_id, shape_transform)
 	body.shape_owner_add_shape(owner_id, shape)
 
 

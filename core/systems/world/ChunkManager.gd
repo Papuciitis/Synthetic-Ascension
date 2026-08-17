@@ -207,14 +207,14 @@ func loaded_chunk_count() -> int:
 
 
 func configure_procedural_world(
-	seed: int,
+	world_seed_value: int,
 	connectors: Dictionary,
 	urban_access: Dictionary,
 	roles: Dictionary,
 	terrain: Dictionary,
 	archetypes: Dictionary
 ) -> void:
-	world_seed = seed
+	world_seed = world_seed_value
 	_chunk_connectors = connectors.duplicate(true)
 	_chunk_urban_access = urban_access.duplicate(true)
 	_chunk_role = roles.duplicate(true)
@@ -410,7 +410,7 @@ func get_chunk_stream_debug_stats() -> Dictionary:
 	sorted_samples.sort()
 	var median_ms := 0.0
 	if not sorted_samples.is_empty():
-		var middle := sorted_samples.size() / 2
+		var middle := floori(float(sorted_samples.size()) * 0.5)
 		median_ms = sorted_samples[middle]
 		if sorted_samples.size() % 2 == 0:
 			median_ms = (sorted_samples[middle - 1] + sorted_samples[middle]) * 0.5

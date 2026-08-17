@@ -69,7 +69,7 @@ func floor_stamp_count() -> int:
 
 
 func cell_for_index(index: int) -> Vector2i:
-	return Vector2i(index % cells_per_side, index / cells_per_side)
+	return Vector2i(index % cells_per_side, floori(float(index) / float(cells_per_side)))
 
 
 func _index(cell: Vector2i) -> int:
