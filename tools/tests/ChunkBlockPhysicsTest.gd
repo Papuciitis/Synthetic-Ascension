@@ -71,6 +71,12 @@ func _test_shape_owner_bodies() -> void:
 	_check(physics.body_count() == 3, "one body is created for each present collision category")
 	_check(physics.shape_count() == 4, "merged rectangles and two half covers create four shapes")
 	_check(physics.shape_count_for_kind(WorldBlockerGeometry.Kind.HALF_COVER) == 2, "two half covers use two circle shape owners")
+	var owners_use_container := true
+	for body_candidate in physics.find_children("*", "StaticBody2D", true, false):
+		var body := body_candidate as StaticBody2D
+		for owner_id in body.get_shape_owners():
+			owners_use_container = owners_use_container and body.shape_owner_get_owner(owner_id) == physics
+	_check(owners_use_container, "shape owners outlive their body during streamed-scene teardown")
 	_check(physics.find_children("*", "CollisionShape2D", true, false).is_empty(), "batched collision creates no CollisionShape2D nodes")
 	_check(physics.collision_layers() == PackedInt32Array([257, 513, 1025]), "wall, window, and half-cover bodies retain legacy layers")
 	physics.clear()

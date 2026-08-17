@@ -15,16 +15,7 @@ static func _stamp_floor_rect_cells(gen: ChunkGenImpl, chunk: Node2D, rect: Rect
 	var floor_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
 	if floor_tex == null:
 		return
-	if gen.cm != null and gen.cm.tiled_world_rendering:
-		gen.cm.paint_tiled_rect(
-			chunk,
-			&"floor",
-			rect,
-			floor_tex,
-			_WORLD_ART.ground_repeat_world_px(tex_index),
-			z,
-			Color(1, 1, 1, alpha)
-		)
+	if gen.cm != null and gen.cm._record_floor_stamp(rect, tex_index, alpha, z):
 		return
 
 	var spr := Sprite2D.new()

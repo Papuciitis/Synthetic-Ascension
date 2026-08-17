@@ -65,33 +65,37 @@ func _run() -> void:
 	var manager_script := load("res://core/systems/world/ChunkManager.gd") as Script
 	var manager = manager_script.new()
 	manager.tiled_world_rendering = true
+	manager.world_seed = 424242
+	manager.ground_enabled = true
+	manager.decals_enabled = false
+	manager.deco_enabled = false
+	manager.sites_enabled = false
+	manager.debug_draw_chunk_outlines = false
+	manager.debug_force_content = true
+	manager.weight_empty = 0.0
+	manager.weight_building = 1.0
+	manager.weight_ruins = 0.0
 	manager.cover_full_scene = load("res://scenes/world/cover/CoverFull.tscn") as PackedScene
+	manager.cover_window_scene = load("res://scenes/world/cover/CoverWindow.tscn") as PackedScene
+	manager.cover_half_scene = load("res://scenes/world/cover/CoverHalf.tscn") as PackedScene
 	root.add_child(manager)
-	var generated_chunk := Node2D.new()
-	manager.add_child(generated_chunk)
-	manager.call("_prepare_chunk_rendering", generated_chunk, Vector2i.ZERO)
-	var block := manager.call("_spawn_block", generated_chunk, manager.cover_full_scene, 3, 4) as Node2D
-	_check(block != null, "representative collision block spawns")
-	if block != null:
-		block.set("connections_mask", 10)
-	manager.call("_tile_repeated_visuals", generated_chunk)
-	await process_frame
-	_check(block != null and is_instance_valid(block), "tile conversion preserves collision body")
-	_check(block != null and block.get_node_or_null("CollisionE") != null, "tile conversion preserves collision shapes")
-	_check(block != null and block.get_node_or_null("Sprite2D") == null, "tile conversion removes repeated sprite node")
+	var generated_chunk := manager.call("_create_chunk", Vector2i.ZERO) as Node2D
 	manager.set("_chunks", {Vector2i.ZERO: generated_chunk})
-	var generated_stats: Dictionary = manager.call("get_tiled_render_stats")
-	_check(int(generated_stats.get("cells", 0)) >= 1, "chunk manager reports tiled structure cells")
-	_check(generated_chunk.find_children("*", "TileMapLayer", true, false).is_empty(), "generated chunk owns no tile layers")
-	_check(not manager.find_children("WorldTiles_*", "TileMapLayer", false, false).is_empty(), "chunk manager owns shared tile layers")
+	await process_frame
+	var generated_stats: Dictionary = manager.call("get_chunk_render_stats")
+	_check(int(generated_stats.get("ground_sprites", 0)) == 1, "procedural chunk keeps one region-repeated ground sprite")
+	_check(int(generated_stats.get("floor_sprites", 0)) > 0, "procedural floor stamps stay as region sprites")
+	_check(int(generated_stats.get("block_instances", 0)) > 0, "procedural blockers use MultiMesh instances")
+	_check(int(generated_stats.get("procedural_tile_cells", -1)) == 0, "procedural generation paints zero TileMap cells")
+	_check(generated_chunk.find_children("*", "TileMapLayer", true, false).is_empty(), "procedural chunk owns no tile layers")
+	_check(manager.find_children("WorldTiles_*", "TileMapLayer", false, false).is_empty(), "procedural generation creates no shared tile layers")
+	var per_block_sprites := 0
+	for sprite in generated_chunk.find_children("*", "Sprite2D", true, false):
+		if sprite.get_parent() is StaticBody2D:
+			per_block_sprites += 1
+	_check(per_block_sprites == 0, "procedural blockers create no per-block sprites")
 	manager.queue_free()
 	await process_frame
-
-	var comparison := await _compare_generated_chunk_representations(manager_script)
-	_check(int(comparison.tiled_sprites) < int(comparison.legacy_sprites), "tiled generation reduces repeated sprite nodes")
-	_check(int(comparison.tiled_colliders) == int(comparison.legacy_colliders), "tiled generation preserves collision-body count")
-	_check(int(comparison.tiled_blocked) == int(comparison.legacy_blocked), "tiled generation preserves BFS blocked-cell data")
-	print("Generated chunk comparison: ", comparison)
 
 	var level_script := load("res://core/systems/world/Level1Builder.gd") as Script
 	var level = level_script.new()
@@ -123,37 +127,6 @@ func _run() -> void:
 	authored_geo.queue_free()
 	await process_frame
 	_finish()
-
-
-func _compare_generated_chunk_representations(manager_script: Script) -> Dictionary:
-	var results := {}
-	for tiled in [false, true]:
-		var manager = manager_script.new()
-		manager.tiled_world_rendering = tiled
-		manager.world_seed = 424242
-		manager.ground_enabled = false
-		manager.decals_enabled = false
-		manager.deco_enabled = false
-		manager.sites_enabled = false
-		manager.debug_force_content = true
-		manager.weight_empty = 0.0
-		manager.weight_building = 1.0
-		manager.weight_ruins = 0.0
-		manager.cover_full_scene = load("res://scenes/world/cover/CoverFull.tscn") as PackedScene
-		manager.cover_window_scene = load("res://scenes/world/cover/CoverWindow.tscn") as PackedScene
-		manager.cover_half_scene = load("res://scenes/world/cover/CoverHalf.tscn") as PackedScene
-		root.add_child(manager)
-		var chunk := manager.call("_create_chunk", Vector2i.ZERO) as Node2D
-		await process_frame
-		var prefix := "tiled_" if tiled else "legacy_"
-		results[prefix + "sprites"] = chunk.find_children("*", "Sprite2D", true, false).size()
-		results[prefix + "colliders"] = chunk.find_children("*", "StaticBody2D", true, false).size()
-		results[prefix + "blocked"] = (manager.get("_blocked_cells") as Dictionary).size()
-		manager.queue_free()
-		await process_frame
-	return results
-
-
 func _finish() -> void:
 	print("ChunkTileRendererTest: %d passed, %d failed" % [_passes, _failures])
 	quit(1 if _failures > 0 else 0)

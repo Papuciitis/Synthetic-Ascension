@@ -37,7 +37,7 @@ const _BLOCK_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkBl
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
-@export var tiled_world_rendering: bool = true
+@export var tiled_world_rendering: bool = false
 @export var batched_chunk_blockers: bool = true
 
 @export_group("Generation Weights")
@@ -293,8 +293,10 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 		_generate_chunk(coord, chunk)
 	_active_build_data = null
 	if build_data != null:
+		_activate_floor_stamps(build_data, chunk)
 		_activate_chunk_blockers(build_data, chunk)
-	_tile_repeated_visuals(chunk)
+	if not batched_chunk_blockers:
+		_tile_repeated_visuals(chunk)
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_counter_event(&"world", &"chunk_created", 1, {
 			"coord": str(coord),
@@ -402,20 +404,6 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 	var ground_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
 	if ground_tex == null:
 		return
-	if tiled_world_rendering:
-		_ensure_tile_renderer()
-		if _tile_renderer != null:
-			_tile_renderer.paint_repeating_rect(
-				chunk,
-				&"ground",
-				Rect2i(Vector2i.ZERO, Vector2i(_cells_per_chunk(), _cells_per_chunk())),
-				ground_tex,
-				_WORLD_ART.ground_repeat_world_px(tex_index),
-				-100,
-				Color.WHITE
-			)
-		return
-
 	var spr := Sprite2D.new()
 	spr.name = "Ground"
 	spr.z_index = -100
@@ -760,6 +748,60 @@ func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
 		_block_renderer.add_chunk(data)
 
 
+func _record_floor_stamp(rect: Rect2i, texture_index: int, alpha: float, z: int) -> bool:
+	if not batched_chunk_blockers or _active_build_data == null:
+		return false
+	_active_build_data.add_floor_stamp(rect, texture_index, alpha, z)
+	return true
+
+
+func _activate_floor_stamps(data: ChunkBuildData, chunk: Node2D) -> void:
+	for stamp_index in data.floor_stamp_count():
+		var offset := stamp_index * 6
+		var packed := data.floor_rect_and_style
+		var rect := Rect2i(
+			Vector2i(packed[offset], packed[offset + 1]),
+			Vector2i(packed[offset + 2], packed[offset + 3])
+		)
+		_add_floor_stamp_sprite(
+			chunk,
+			data.coord,
+			rect,
+			packed[offset + 4],
+			data.floor_alpha[stamp_index],
+			packed[offset + 5]
+		)
+
+
+func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, texture_index: int, alpha: float, z: int) -> void:
+	var floor_tex: Texture2D = _WORLD_ART.ground_texture(texture_index)
+	if floor_tex == null:
+		return
+	var spr := Sprite2D.new()
+	spr.name = "FloorStamp"
+	spr.z_index = z
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	spr.texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
+	spr.texture = floor_tex
+	spr.region_enabled = true
+	var tile_px: int = _WORLD_ART.texture_tile_px()
+	var repeat_world_px: int = _WORLD_ART.ground_repeat_world_px(texture_index)
+	var source_per_world := float(tile_px) / float(repeat_world_px)
+	var phase_x := float(posmod(world_seed * 31, tile_px))
+	var phase_y := float(posmod(world_seed * 53, tile_px))
+	var world_x := float(coord.x * chunk_size_px + rect.position.x * cell_size_px)
+	var world_y := float(coord.y * chunk_size_px + rect.position.y * cell_size_px)
+	var ox := fposmod(phase_x + world_x * source_per_world, float(tile_px))
+	var oy := fposmod(phase_y + world_y * source_per_world, float(tile_px))
+	var world_size := Vector2(rect.size * cell_size_px)
+	spr.region_rect = Rect2(ox, oy, world_size.x * source_per_world, world_size.y * source_per_world)
+	var texture_scale := float(repeat_world_px) / float(tile_px)
+	spr.scale = Vector2(texture_scale, texture_scale)
+	spr.modulate = Color(1.0, 1.0, 1.0, alpha)
+	spr.position = (Vector2(rect.position) + Vector2(rect.size) * 0.5) * float(cell_size_px)
+	chunk.add_child(spr)
+
+
 func _capture_interactive_nodes(data: ChunkBuildData, chunk: Node2D) -> void:
 	for candidate in chunk.find_children("*", "Area2D", true, false):
 		data.interactive_nodes.append(candidate)
@@ -783,6 +825,29 @@ func get_block_batch_stats() -> Dictionary:
 		stats = _block_renderer.get_stats()
 	stats["chunks"] = _chunk_build_data.size()
 	return stats
+
+
+func get_chunk_render_stats() -> Dictionary:
+	var ground_sprites := 0
+	var floor_sprites := 0
+	for chunk_value in _chunks.values():
+		var chunk := chunk_value as Node2D
+		if not is_instance_valid(chunk):
+			continue
+		for candidate in chunk.find_children("*", "Sprite2D", true, false):
+			if candidate.name == &"Ground":
+				ground_sprites += 1
+			elif candidate.name == &"FloorStamp":
+				floor_sprites += 1
+	var block_stats := get_block_batch_stats()
+	var tile_stats := get_tiled_render_stats()
+	return {
+		"chunks": _chunks.size(),
+		"ground_sprites": ground_sprites,
+		"floor_sprites": floor_sprites,
+		"block_instances": int(block_stats.get("instances", 0)),
+		"procedural_tile_cells": int(tile_stats.get("cells", 0)),
+	}
 
 
 func _ensure_tile_renderer() -> void:

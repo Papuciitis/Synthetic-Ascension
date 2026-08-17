@@ -131,7 +131,10 @@ func _body_for_category(category: int, layer: int) -> StaticBody2D:
 
 
 func _add_shape(body: StaticBody2D, shape: Shape2D, transform: Transform2D) -> void:
-	var owner_id: int = body.create_shape_owner(body)
+	# The per-chunk container outlives its StaticBody2D children during teardown.
+	# A body owning itself can leave CollisionObject2D consulting an owner that is
+	# already being destroyed when a large streamed scene is released.
+	var owner_id: int = body.create_shape_owner(self)
 	body.shape_owner_set_transform(owner_id, transform)
 	body.shape_owner_add_shape(owner_id, shape)
 

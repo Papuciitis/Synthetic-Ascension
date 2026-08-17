@@ -113,6 +113,9 @@ func _ready() -> void:
 	_cm = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
 	if _cm != null and is_instance_valid(_cm):
+		# Segment 1 is authored and keeps the explicit tile-conversion path. Streamed
+		# procedural segments leave it disabled to avoid expanding regions into cells.
+		_cm.tiled_world_rendering = true
 		_cm.clear_manual_blocks()
 
 	_geo = Node2D.new()
