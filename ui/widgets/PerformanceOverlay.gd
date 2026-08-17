@@ -206,7 +206,9 @@ func collect_snapshot() -> Dictionary:
 	var chunk_manager := get_tree().get_first_node_in_group(&"chunk_manager")
 	var chunk_nav := _call_dict(chunk_manager, &"get_nav_debug_counters")
 	var loaded_chunks := int(chunk_manager.call("loaded_chunk_count")) if chunk_manager != null and chunk_manager.has_method("loaded_chunk_count") else 0
-	var tiled_world := _call_dict(chunk_manager, &"get_tiled_render_stats")
+	var chunk_stream := _call_dict(chunk_manager, &"get_chunk_stream_debug_stats")
+	var chunk_blocks := _call_dict(chunk_manager, &"get_block_batch_stats")
+	var authored_tiles := _call_dict(chunk_manager, &"get_authored_tiled_render_stats")
 	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
 	var culled := _call_dict(spawner, &"get_cull_counters")
 	var flow := get_tree().get_first_node_in_group(&"flow_field_nav")
@@ -232,7 +234,9 @@ func collect_snapshot() -> Dictionary:
 		"projectile_ms": float(projectile_counters.get("physics_ms", 0.0)),
 		"projectile_hits": int(projectile_counters.get("hits", 0)),
 		"loaded_chunks": loaded_chunks,
-		"tiled_world": tiled_world,
+		"chunk_stream": chunk_stream,
+		"chunk_blocks": chunk_blocks,
+		"authored_tiles": authored_tiles,
 		"flow": flow_counters,
 		"chunk_nav": chunk_nav,
 		"spawn_filter": filter_snapshot,
@@ -278,11 +282,15 @@ func format_details(snapshot: Dictionary) -> Dictionary:
 		int(snapshot.get("physics_objects", 0)),
 	]
 	var tiers := snapshot.get("tiers", {}) as Dictionary
-	var tiled_world := snapshot.get("tiled_world", {}) as Dictionary
+	var chunk_stream := snapshot.get("chunk_stream", {}) as Dictionary
+	var chunk_blocks := snapshot.get("chunk_blocks", {}) as Dictionary
+	var authored_tiles := snapshot.get("authored_tiles", {}) as Dictionary
 	var world := (
 		"WORLD\nEnemies %d (ambient %d, special %d)  tiers %d/%d/%d\n"
 		+ "Projectiles %d, %.3f ms, hits %d  chunks %d\n"
-		+ "Tile world %d cells across %d layers"
+		+ "Stream queue %d, oldest %.2f ms, last/median %.2f/%.2f ms, budget %.2f ms\n"
+		+ "Chunk blockers %d instances, bodies/shapes %d/%d, batches %d\n"
+		+ "Authored tiles %d cells across %d layers"
 	) % [
 		int(snapshot.get("indexed_enemies", 0)),
 		int(snapshot.get("ambient", 0)),
@@ -294,8 +302,17 @@ func format_details(snapshot: Dictionary) -> Dictionary:
 		float(snapshot.get("projectile_ms", 0.0)),
 		int(snapshot.get("projectile_hits", 0)),
 		int(snapshot.get("loaded_chunks", 0)),
-		int(tiled_world.get("cells", 0)),
-		int(tiled_world.get("layers", 0)),
+		int(chunk_stream.get("queue_length", 0)),
+		float(chunk_stream.get("oldest_request_ms", 0.0)),
+		float(chunk_stream.get("last_build_ms", 0.0)),
+		float(chunk_stream.get("median_build_ms", 0.0)),
+		float(chunk_stream.get("activation_budget_ms", 0.0)),
+		int(chunk_blocks.get("instances", 0)),
+		int(chunk_blocks.get("bodies", 0)),
+		int(chunk_blocks.get("shapes", 0)),
+		int(chunk_blocks.get("batches", 0)),
+		int(authored_tiles.get("cells", 0)),
+		int(authored_tiles.get("layers", 0)),
 	]
 	var flow_text := (
 		"FLOW\nreason %s  requested/started/completed %d/%d/%d  superseded %d\n"

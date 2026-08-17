@@ -185,3 +185,39 @@ rendering behavior therefore remain unchanged apart from accurate timing.
   streamed chunks.
 - Segment 1 map geometry is also sprite-free; only deliberately interactive
   waypoint sigils retain their own animated sprite scene.
+
+## 2026-08-17 - batched procedural chunk streaming
+
+- Procedural blocker generation now records compact cell descriptors and activates at most
+  three physics bodies per chunk. Shapes are attached directly through physics shape owners;
+  no procedural `CollisionShape2D`, `CoverWall`, or `CoverHalf` nodes are created.
+- Blocker visuals are pooled into shared `MultiMeshInstance2D` texture batches. Chunk unloads
+  remove owned instance ranges with swap-removal rather than freeing hundreds of scene nodes.
+- Procedural ground is one repeating region sprite per chunk. Procedural TileMap expansion is
+  disabled, while authored Segment 1 tile diagnostics and rendering remain available.
+- Streaming starts explicitly after the procedural plan is installed, uses camera visibility
+  bounds, orders work center-first, and enforces a 2 ms / four-activation hard scheduler cap.
+- Ground materials are loaded during procedural configuration, outside timed chunk activation.
+  This removed a measured 44 ms first-use dirt-texture hitch from the streaming path.
+- Flow-field candidate ordering reuses fixed buffers. Its 6,561-cell synthetic benchmark
+  improved from a 35,648 us median to 16,494 us (2.16x).
+- The performance overlay now reports queue length/age, last and median build time, activation
+  budget, blocker cells/bodies/shapes, MultiMesh batches, and authored tile totals.
+
+Godot 4.7.1 deterministic audit, seed 251337, one discarded site warm-up, then radius 2:
+
+| Metric | Before final streaming tune | Final |
+|---|---:|---:|
+| Loaded chunks | 25 | 25 |
+| Median chunk activation | 0.274 ms | 0.175 ms |
+| Maximum chunk activation | 78.010 ms | 2.663 ms |
+| Static-memory delta after warm baseline | 11,260,132 bytes | 1,257,932 bytes |
+| Procedural TileMap cells | about 39,000 (prior 25-chunk integration) | 0 |
+| Procedural cover nodes | per-cell scenes | 0 |
+| Procedural `CollisionShape2D` nodes | per-cell nodes | 0 |
+| Blocker cells / bodies / owned shapes | - | 193 / 14 / 68 |
+| MultiMesh instances / batches | - | 193 / 34 |
+
+The final `CHUNK_AUDIT` passed all 12 gates. Its six remaining `CollisionShape2D` nodes are
+intentional interactive site volumes, not procedural blocker physics. The audit reports these
+separately and does not count them as blocker-node regressions.

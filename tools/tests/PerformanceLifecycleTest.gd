@@ -1,5 +1,7 @@
 extends Node
 
+const ENEMY_ACTOR_SCRIPT := preload("res://core/actors/enemy/enemy.gd")
+
 var _passes := 0
 var _failures := 0
 
@@ -145,7 +147,7 @@ func _test_canonical_enemy_retirement() -> void:
 
 
 func _test_far_simulation_scheduler() -> void:
-	var enemy := EnemyActor.new()
+	var enemy := ENEMY_ACTOR_SCRIPT.new.call() as EnemyActor
 	_check(enemy.has_method("simulation_tier"), "enemy exposes simulation tier")
 	_check(enemy.has_method("should_run_far_step"), "enemy exposes far-step scheduler")
 	_check(enemy.has_method("consume_simulation_delta"), "enemy exposes accumulated simulation delta")

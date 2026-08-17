@@ -87,6 +87,14 @@ static func ground_texture(index: int) -> Texture2D:
 	_ground_tex_cache[index] = cached
 	return cached
 
+
+static func warm_ground_textures(indices: PackedInt32Array) -> void:
+	# Resource loading is deliberately kept outside chunk activation. A first-time
+	# PNG import/cache miss can take tens of milliseconds even though creating the
+	# region Sprite2D itself is cheap.
+	for index in indices:
+		ground_texture(index)
+
 static func decal_texture_count() -> int:
 	return _DECAL_TEX.size()
 

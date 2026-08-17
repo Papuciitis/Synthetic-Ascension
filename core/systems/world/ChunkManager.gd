@@ -157,6 +157,13 @@ var _nav_revision_last_reason: StringName = &""
 var _chunk_generation_queue: Array[Vector2i] = []
 var _queued_chunk_coords: Dictionary = {}
 var _desired_chunk_coords: Dictionary = {}
+var _chunk_build_samples_ms: Array[float] = []
+var _chunk_build_phase_samples: Array[Dictionary] = []
+var _last_chunk_build_ms := 0.0
+var _max_chunk_build_ms := 0.0
+var _last_stream_plan_ms := 0.0
+var _queue_started_usec := 0
+var _stream_activations_total := 0
 var streaming_started: bool = false
 
 var _debug_tex: Texture2D = null
@@ -165,6 +172,8 @@ func _ready() -> void:
 	add_to_group(&"chunk_manager")
 	_ensure_tile_renderer()
 	_ensure_block_renderer()
+	if generation_enabled:
+		_warm_ground_textures_for_plan()
 
 	_player = get_tree().get_first_node_in_group(String(player_group)) as Node2D
 
@@ -212,6 +221,16 @@ func configure_procedural_world(
 	_chunk_terrain = terrain.duplicate(true)
 	_chunk_archetype = archetypes.duplicate(true)
 	generation_enabled = true
+	_warm_ground_textures_for_plan()
+
+
+func _warm_ground_textures_for_plan() -> void:
+	var indices := PackedInt32Array([0, 1])
+	for terrain_value in _chunk_terrain.values():
+		var index := _ground_index_for_terrain(StringName(terrain_value))
+		if not indices.has(index):
+			indices.append(index)
+	_WORLD_ART.warm_ground_textures(indices)
 
 
 func start_streaming(player_position: Vector2) -> void:
@@ -250,6 +269,7 @@ func _update_streaming() -> void:
 
 
 func queue_missing_chunks(center: Vector2i) -> void:
+	var plan_started_usec := Time.get_ticks_usec()
 	_chunk_generation_queue.clear()
 	_queued_chunk_coords.clear()
 	_desired_chunk_coords.clear()
@@ -259,6 +279,8 @@ func queue_missing_chunks(center: Vector2i) -> void:
 	_chunk_generation_queue = _STREAM_PLANNER.ordered_missing(desired, _chunks, center)
 	for coord in _chunk_generation_queue:
 		_queued_chunk_coords[coord] = true
+	_queue_started_usec = Time.get_ticks_usec() if not _chunk_generation_queue.is_empty() else 0
+	_last_stream_plan_ms = float(Time.get_ticks_usec() - plan_started_usec) / 1000.0
 
 
 func process_chunk_generation_queue(limit: int = -1) -> int:
@@ -276,6 +298,7 @@ func process_chunk_generation_queue(limit: int = -1) -> int:
 			continue
 		_chunks[coord] = _create_chunk(coord)
 		generated += 1
+		_stream_activations_total += 1
 		if enforce_elapsed_budget and Time.get_ticks_usec() - started_usec >= budget_usec:
 			break
 	if _chunk_generation_queue.is_empty() and _nav_revision_pending:
@@ -310,6 +333,7 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 	chunk.position = _chunk_to_world_origin(coord)
 	add_child(chunk)
 	_prepare_chunk_rendering(chunk, coord)
+	var setup_finished := Time.get_ticks_usec()
 
 	# Prepare blocked list for this chunk
 	_chunk_blocked[coord] = []
@@ -327,6 +351,7 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 		_add_ground(chunk, rng, coord)
 		if decals_enabled:
 			_add_decals(chunk, rng)
+	var ground_finished := Time.get_ticks_usec()
 
 
 	if debug_draw_chunk_outlines:
@@ -334,18 +359,78 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 
 	if generation_enabled:
 		_generate_chunk(coord, chunk)
+	var content_finished := Time.get_ticks_usec()
 	_active_build_data = null
 	if build_data != null:
 		_activate_floor_stamps(build_data, chunk)
+	var floor_finished := Time.get_ticks_usec()
+	if build_data != null:
 		_activate_chunk_blockers(build_data, chunk)
 	if not batched_chunk_blockers:
 		_tile_repeated_visuals(chunk)
+	var blocker_finished := Time.get_ticks_usec()
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_counter_event(&"world", &"chunk_created", 1, {
 			"coord": str(coord),
 			"generation_usec": Time.get_ticks_usec() - generation_started,
 		})
+	_record_chunk_build_time(coord, generation_started, setup_finished, ground_finished, content_finished, floor_finished, blocker_finished)
 	return chunk
+
+
+func _record_chunk_build_time(
+	coord: Vector2i,
+	started_usec: int,
+	setup_finished_usec: int,
+	ground_finished_usec: int,
+	content_finished_usec: int,
+	floor_finished_usec: int,
+	blocker_finished_usec: int
+) -> void:
+	var elapsed_usec := blocker_finished_usec - started_usec
+	_last_chunk_build_ms = float(elapsed_usec) / 1000.0
+	_max_chunk_build_ms = maxf(_max_chunk_build_ms, _last_chunk_build_ms)
+	_chunk_build_samples_ms.append(_last_chunk_build_ms)
+	_chunk_build_phase_samples.append({
+		"coord": str(coord),
+		"total_ms": _last_chunk_build_ms,
+		"setup_ms": float(setup_finished_usec - started_usec) / 1000.0,
+		"ground_ms": float(ground_finished_usec - setup_finished_usec) / 1000.0,
+		"content_ms": float(content_finished_usec - ground_finished_usec) / 1000.0,
+		"floor_ms": float(floor_finished_usec - content_finished_usec) / 1000.0,
+		"blocker_ms": float(blocker_finished_usec - floor_finished_usec) / 1000.0,
+	})
+	if _chunk_build_samples_ms.size() > 64:
+		_chunk_build_samples_ms.pop_front()
+		_chunk_build_phase_samples.pop_front()
+
+
+func get_chunk_stream_debug_stats() -> Dictionary:
+	var sorted_samples := _chunk_build_samples_ms.duplicate()
+	sorted_samples.sort()
+	var median_ms := 0.0
+	if not sorted_samples.is_empty():
+		var middle := sorted_samples.size() / 2
+		median_ms = sorted_samples[middle]
+		if sorted_samples.size() % 2 == 0:
+			median_ms = (sorted_samples[middle - 1] + sorted_samples[middle]) * 0.5
+	var oldest_request_ms := 0.0
+	if not _chunk_generation_queue.is_empty() and _queue_started_usec > 0:
+		oldest_request_ms = float(Time.get_ticks_usec() - _queue_started_usec) / 1000.0
+	return {
+		"queue_length": _chunk_generation_queue.size(),
+		"desired_chunks": _desired_chunk_coords.size(),
+		"oldest_request_ms": oldest_request_ms,
+		"last_build_ms": _last_chunk_build_ms,
+		"median_build_ms": median_ms,
+		"max_build_ms": _max_chunk_build_ms,
+		"last_plan_ms": _last_stream_plan_ms,
+		"build_samples_ms": _chunk_build_samples_ms.duplicate(),
+		"build_phase_samples": _chunk_build_phase_samples.duplicate(true),
+		"activation_budget_ms": stream_activation_budget_ms,
+		"max_activations_per_frame": max_chunk_generations_per_frame,
+		"activations_total": _stream_activations_total,
+	}
 
 
 # ------------------------------------------------------------
@@ -867,7 +952,19 @@ func get_block_batch_stats() -> Dictionary:
 	}
 	if _block_renderer != null:
 		stats = _block_renderer.get_stats()
+	var bodies := 0
+	var shapes := 0
+	for chunk_value in _chunks.values():
+		var chunk := chunk_value as Node2D
+		if not is_instance_valid(chunk):
+			continue
+		var physics := chunk.get_node_or_null("ChunkBlockPhysics") as ChunkBlockPhysics
+		if physics != null:
+			bodies += physics.body_count()
+			shapes += physics.shape_count()
 	stats["chunks"] = _chunk_build_data.size()
+	stats["bodies"] = bodies
+	stats["shapes"] = shapes
 	return stats
 
 
@@ -956,6 +1053,21 @@ func get_tiled_render_stats() -> Dictionary:
 			continue
 		var stats := _tile_renderer.get_chunk_stats(chunk)
 		totals["chunks"] = int(totals["chunks"]) + 1
+		totals["cells"] = int(totals["cells"]) + int(stats.get("cells", 0))
+	return totals
+
+
+func get_authored_tiled_render_stats() -> Dictionary:
+	_ensure_tile_renderer()
+	var totals := {"chunks": 0, "layers": 0, "cells": 0}
+	if _tile_renderer == null:
+		return totals
+	for chunk in _external_tile_roots:
+		if chunk == null or not is_instance_valid(chunk):
+			continue
+		var stats := _tile_renderer.get_chunk_stats(chunk)
+		totals["chunks"] = int(totals["chunks"]) + 1
+		totals["layers"] = int(totals["layers"]) + int(stats.get("layers", 0))
 		totals["cells"] = int(totals["cells"]) + int(stats.get("cells", 0))
 	return totals
 
