@@ -45,27 +45,6 @@ const E := 2
 const S := 4
 const W := 8
 
-# Full walls
-const TEX_STRAIGHT_V := preload("res://assets/world/walls/wall_stone_straight_v.png")
-const TEX_STRAIGHT_H := preload("res://assets/world/walls/wall_stone_straight_h.png")
-const TEX_CORNER_NE := preload("res://assets/world/walls/wall_stone_corner_ne.png")
-const TEX_CORNER_NW := preload("res://assets/world/walls/wall_stone_corner_nw.png")
-const TEX_CORNER_SE := preload("res://assets/world/walls/wall_stone_corner_se.png")
-const TEX_CORNER_SW := preload("res://assets/world/walls/wall_stone_corner_sw.png")
-const TEX_END_N := preload("res://assets/world/walls/wall_stone_end_n.png")
-const TEX_END_E := preload("res://assets/world/walls/wall_stone_end_e.png")
-const TEX_END_S := preload("res://assets/world/walls/wall_stone_end_s.png")
-const TEX_END_W := preload("res://assets/world/walls/wall_stone_end_w.png")
-const TEX_T_N := preload("res://assets/world/walls/wall_stone_t_n.png")
-const TEX_T_E := preload("res://assets/world/walls/wall_stone_t_e.png")
-const TEX_T_S := preload("res://assets/world/walls/wall_stone_t_s.png")
-const TEX_T_W := preload("res://assets/world/walls/wall_stone_t_w.png")
-const TEX_CROSS := preload("res://assets/world/walls/wall_stone_cross.png")
-
-# Window walls (shoot-through). Use only on straight segments.
-const TEX_WIN_V := preload("res://assets/world/walls/wall_stone_window_v.png")
-const TEX_WIN_H := preload("res://assets/world/walls/wall_stone_window_h.png")
-
 func _ready() -> void:
 	_refresh_groups()
 	_apply()
@@ -285,58 +264,7 @@ func _unregister_projectile_geometry() -> void:
 
 
 func _pick_window_texture(mask: int) -> Texture2D:
-	# Only place window art on straight segments.
-	if mask == (N | S):
-		return TEX_WIN_V
-	if mask == (E | W):
-		return TEX_WIN_H
-	return null
+	return ChunkBlockVisualCatalog.window_texture(mask)
 
 func _pick_full_texture(mask: int) -> Texture2D:
-	# Defensive default (handcrafted / unknown)
-	if mask == 0:
-		return TEX_STRAIGHT_V
-
-	match mask:
-		(N | S):
-			return TEX_STRAIGHT_V
-		(E | W):
-			return TEX_STRAIGHT_H
-
-		(N | E):
-			return TEX_CORNER_NE
-		(N | W):
-			return TEX_CORNER_NW
-		(S | E):
-			return TEX_CORNER_SE
-		(S | W):
-			return TEX_CORNER_SW
-
-		N:
-			return TEX_END_N
-		E:
-			return TEX_END_E
-		S:
-			return TEX_END_S
-		W:
-			return TEX_END_W
-
-		(N | E | W):
-			return TEX_T_N   # missing S
-		(S | E | W):
-			return TEX_T_S   # missing N
-		(N | S | E):
-			return TEX_T_E   # missing W
-		(N | S | W):
-			return TEX_T_W   # missing E
-
-		(N | E | S | W):
-			return TEX_CROSS
-
-	# Fallbacks: prefer straight if it looks like one, else cross.
-	if (mask & N) != 0 and (mask & S) != 0 and (mask & (E | W)) == 0:
-		return TEX_STRAIGHT_V
-	if (mask & E) != 0 and (mask & W) != 0 and (mask & (N | S)) == 0:
-		return TEX_STRAIGHT_H
-
-	return TEX_CROSS
+	return ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, mask)

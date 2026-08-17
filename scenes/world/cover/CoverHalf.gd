@@ -5,18 +5,6 @@ class_name CoverHalf
 
 static var _alpha_cache: Dictionary = {} # texture path -> Array[PackedVector2Array]
 
-# Deterministic-ish visual variety based on world position
-const PROP_TEX: Array[Texture2D] = [
-	preload("res://assets/world/props/prop_crate_01.png"),
-	preload("res://assets/world/props/prop_crate_rot_01.png"),
-	preload("res://assets/world/props/prop_rubble_big_01.png"),
-	preload("res://assets/world/props/prop_rubble_small_01.png"),
-	preload("res://assets/world/props/prop_table_long_01.png"),
-	preload("res://assets/world/props/prop_table_small_01.png"),
-	preload("res://assets/world/props/prop_broken_pillar_01.png"),
-	preload("res://assets/world/props/prop_statue_01.png"),
-]
-
 func _ready() -> void:
 	add_to_group(&"cover_half")
 	_apply()
@@ -43,15 +31,10 @@ func _apply() -> void:
 	if spr == null:
 		return
 
-	var rng := RandomNumberGenerator.new()
-	var sx := int(floor(global_position.x))
-	var sy := int(floor(global_position.y))
-	# 2D hash -> seed
-	rng.seed = int((sx * 73856093) ^ (sy * 19349663) ^ 0x9E3779B9)
-
-	var tex := PROP_TEX[rng.randi_range(0, PROP_TEX.size() - 1)]
+	var variant := ChunkBlockVisualCatalog.half_variant(global_position)
+	var tex := ChunkBlockVisualCatalog.half_texture(variant)
 	spr.texture = tex
-	spr.rotation_degrees = float(90 * rng.randi_range(0, 3))
+	spr.rotation = ChunkBlockVisualCatalog.half_rotation(variant)
 	if use_alpha_collision:
 		_apply_alpha_collision(spr, tex)
 
