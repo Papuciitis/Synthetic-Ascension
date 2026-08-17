@@ -8,7 +8,10 @@ class_name ChunkManager
 @export var load_radius: int = 2
 @export var unload_radius: int = 3
 @export var player_group: StringName = &"player"
-@export_range(1, 4, 1) var max_chunk_generations_per_frame: int = 1
+@export_range(1, 8, 1) var max_chunk_generations_per_frame: int = 4
+@export var use_camera_stream_bounds: bool = true
+@export_range(0, 3, 1) var stream_prefetch_chunks: int = 1
+@export_range(0.001, 16.0, 0.1) var stream_activation_budget_ms: float = 2.0
 
 @export_group("Generation Grid")
 @export var cell_size_px: int = 64
@@ -34,6 +37,7 @@ const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRender
 const _CHUNK_BUILD_DATA: Script = preload("res://core/systems/world/chunks/ChunkBuildData.gd")
 const _BLOCK_PHYSICS: Script = preload("res://core/systems/world/chunks/ChunkBlockPhysics.gd")
 const _BLOCK_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkBlockRenderer.gd")
+const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkStreamPlanner.gd")
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
@@ -152,6 +156,7 @@ var _nav_revision_reasons: Dictionary = {}
 var _nav_revision_last_reason: StringName = &""
 var _chunk_generation_queue: Array[Vector2i] = []
 var _queued_chunk_coords: Dictionary = {}
+var _desired_chunk_coords: Dictionary = {}
 
 var _debug_tex: Texture2D = null
 
@@ -182,7 +187,7 @@ func _process(_delta: float) -> void:
 			return
 
 	var c: Vector2i = _world_to_chunk(_player.global_position)
-	if c != _current_center:
+	if c != _current_center or use_camera_stream_bounds:
 		_current_center = c
 		_update_streaming()
 	process_chunk_generation_queue()
@@ -222,36 +227,32 @@ func _update_streaming() -> void:
 func queue_missing_chunks(center: Vector2i) -> void:
 	_chunk_generation_queue.clear()
 	_queued_chunk_coords.clear()
-	for dy in range(-load_radius, load_radius + 1):
-		for dx in range(-load_radius, load_radius + 1):
-			var coord := Vector2i(center.x + dx, center.y + dy)
-			if _chunks.has(coord) or _queued_chunk_coords.has(coord):
-				continue
-			_chunk_generation_queue.append(coord)
-			_queued_chunk_coords[coord] = true
-	_chunk_generation_queue.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		var da := _chebyshev_dist(a, center)
-		var db := _chebyshev_dist(b, center)
-		if da != db:
-			return da < db
-		if a.y != b.y:
-			return a.y < b.y
-		return a.x < b.x
-	)
+	_desired_chunk_coords.clear()
+	var desired := _desired_coords_for(center)
+	for coord in desired:
+		_desired_chunk_coords[coord] = true
+	_chunk_generation_queue = _STREAM_PLANNER.ordered_missing(desired, _chunks, center)
+	for coord in _chunk_generation_queue:
+		_queued_chunk_coords[coord] = true
 
 
 func process_chunk_generation_queue(limit: int = -1) -> int:
-	var budget := maxi(1, max_chunk_generations_per_frame) if limit < 0 else maxi(0, limit)
+	var count_ceiling := maxi(1, max_chunk_generations_per_frame) if limit < 0 else maxi(0, limit)
+	var enforce_elapsed_budget := limit < 0
+	var started_usec := Time.get_ticks_usec()
+	var budget_usec := maxi(1, ceili(stream_activation_budget_ms * 1000.0))
 	var generated := 0
-	while generated < budget and not _chunk_generation_queue.is_empty():
+	while generated < count_ceiling and not _chunk_generation_queue.is_empty():
 		var coord: Vector2i = _chunk_generation_queue.pop_front()
 		_queued_chunk_coords.erase(coord)
 		if _chunks.has(coord):
 			continue
-		if _chebyshev_dist(coord, _current_center) > load_radius:
+		if not _desired_chunk_coords.has(coord):
 			continue
 		_chunks[coord] = _create_chunk(coord)
 		generated += 1
+		if enforce_elapsed_budget and Time.get_ticks_usec() - started_usec >= budget_usec:
+			break
 	if _chunk_generation_queue.is_empty() and _nav_revision_pending:
 		call_deferred("commit_pending_nav_revision")
 	return generated
@@ -259,6 +260,23 @@ func process_chunk_generation_queue(limit: int = -1) -> int:
 
 func debug_chunk_queue() -> Array[Vector2i]:
 	return _chunk_generation_queue.duplicate()
+
+
+func _desired_coords_for(center: Vector2i) -> Array[Vector2i]:
+	if use_camera_stream_bounds:
+		var camera := get_viewport().get_camera_2d()
+		if camera != null:
+			var viewport_size := get_viewport_rect().size
+			var zoom := Vector2(maxf(absf(camera.zoom.x), 0.001), maxf(absf(camera.zoom.y), 0.001))
+			var world_size := Vector2(viewport_size.x / zoom.x, viewport_size.y / zoom.y)
+			var visible_rect := Rect2(camera.global_position - world_size * 0.5, world_size)
+			return _STREAM_PLANNER.desired_coords(center, visible_rect, chunk_size_px, stream_prefetch_chunks)
+	var fallback_radius := maxi(1, stream_prefetch_chunks) if use_camera_stream_bounds else maxi(0, load_radius)
+	var fallback: Array[Vector2i] = []
+	for y in range(center.y - fallback_radius, center.y + fallback_radius + 1):
+		for x in range(center.x - fallback_radius, center.x + fallback_radius + 1):
+			fallback.append(Vector2i(x, y))
+	return fallback
 
 func _create_chunk(coord: Vector2i) -> Node2D:
 	var generation_started := Time.get_ticks_usec()
