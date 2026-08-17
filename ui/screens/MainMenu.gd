@@ -140,6 +140,10 @@ func _fill_option_from_db(opt: OptionButton, db: Dictionary, current_id: String)
 		opt.select(0)
 
 
+func arm_developer_flight_recorder() -> void:
+	PerformanceFlightRecorder.set_enabled(true)
+
+
 func _on_start_dev_pressed() -> void:
 	var seg := clampi(int(spin_segment.value), 1, 10)
 
@@ -175,7 +179,7 @@ func _on_start_dev_pressed() -> void:
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
 	Global.debug_performance_lab = false
-	PerformanceFlightRecorder.set_enabled(false)
+	arm_developer_flight_recorder()
 	Global.debug_set_collision_tools = false
 
 	# Dev loadout (optional)
@@ -223,7 +227,7 @@ func _on_start_dev_hub_pressed() -> void:
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
 	Global.debug_performance_lab = false
-	PerformanceFlightRecorder.set_enabled(false)
+	arm_developer_flight_recorder()
 	Global.debug_set_collision_tools = false
 
 	# Dev loadout (optional) so you have stuff to sell
