@@ -204,10 +204,10 @@ func _seed_for_chunk(c: Vector2i) -> int:
 func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype: StringName, conn_mask: int) -> void:
 	_DECO._add_environment_deco(self, chunk, rng, archetype, conn_mask)
 
-func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -> Node2D:
+func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, connections_mask: int = 0) -> Node2D:
 	if cm == null:
 		return null
-	return cm._spawn_block(chunk, scene, cell_x, cell_y)
+	return cm._spawn_block(chunk, scene, cell_x, cell_y, connections_mask)
 
 
 func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:

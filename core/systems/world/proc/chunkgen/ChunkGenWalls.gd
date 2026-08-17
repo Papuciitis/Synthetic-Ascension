@@ -111,12 +111,7 @@ static func _spawn_wall_cells(gen: ChunkGenImpl, chunk: Node2D, wall_cells: Dict
 		var use_window: bool = window_cells.has(cell)
 		var scene: PackedScene = (gen.cover_window_scene if use_window else gen.cover_full_scene)
 
-		var b := gen._spawn_block(chunk, scene, cell.x, cell.y)
-		if b != null:
-			# CoverWall.gd expects this; harmless for other cover scenes.
-			b.set("connections_mask", mask)
-			if b.has_method("_apply"):
-				b.call("_apply")
+		gen._spawn_block(chunk, scene, cell.x, cell.y, mask)
 
 
 static func _spawn_wall_line(gen: ChunkGenImpl, 
@@ -139,7 +134,4 @@ static func _spawn_wall_line(gen: ChunkGenImpl,
 		var use_window: bool = (rng.randf() < 0.12)
 		var scene: PackedScene = (gen.cover_window_scene if use_window else gen.cover_full_scene)
 
-		var b := gen._spawn_block(chunk, scene, cx, cy)
-		if b != null:
-			# Straight line connections only
-			b.set("connections_mask", (10 if is_horizontal else 5))
+		gen._spawn_block(chunk, scene, cx, cy, (10 if is_horizontal else 5))

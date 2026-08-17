@@ -31,10 +31,14 @@ const _WORLD_ART = preload("res://core/systems/world/WorldArt.gd")
 const _SITE_MGR: Script = preload("res://core/systems/world/proc/SiteManager.gd")
 const _GEN_IMPL: Script = preload("res://core/systems/world/proc/ChunkGenImpl.gd")
 const _TILE_RENDERER: Script = preload("res://core/systems/world/ChunkTileRenderer.gd")
+const _CHUNK_BUILD_DATA: Script = preload("res://core/systems/world/chunks/ChunkBuildData.gd")
+const _BLOCK_PHYSICS: Script = preload("res://core/systems/world/chunks/ChunkBlockPhysics.gd")
+const _BLOCK_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkBlockRenderer.gd")
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
 @export var tiled_world_rendering: bool = true
+@export var batched_chunk_blockers: bool = true
 
 @export_group("Generation Weights")
 @export_range(0.0, 1.0, 0.01) var weight_empty: float = 0.70
@@ -111,6 +115,7 @@ var _fallback_terrain: StringName = &"grass"
 var _site_mgr: SiteManager = null
 var _content_gen: ChunkGenImpl = null
 var _tile_renderer: ChunkTileRenderer = null
+var _block_renderer: ChunkBlockRenderer = null
 var _external_tile_roots: Array[Node2D] = []
 
 
@@ -136,6 +141,8 @@ var _manual_blocked_cells: Dictionary = {} # Vector2i -> true (handcrafted, neve
 var _chunk_blocked: Dictionary = {}      # Vector2i(chunk_coord) -> Array[Vector2i(global_cell)]
 var _projectile_blockers: Dictionary = {} # Vector2i -> packed WorldBlockerGeometry descriptor
 var _projectile_blocker_owners: Dictionary = {} # Vector2i -> instance id
+var _chunk_build_data: Dictionary = {} # Vector2i -> ChunkBuildData
+var _active_build_data: ChunkBuildData = null
 var _gen_coord: Vector2i = Vector2i.ZERO
 var _nav_revision: int = 0
 var _nav_revision_pending := false
@@ -151,6 +158,7 @@ var _debug_tex: Texture2D = null
 func _ready() -> void:
 	add_to_group(&"chunk_manager")
 	_ensure_tile_renderer()
+	_ensure_block_renderer()
 
 	_player = get_tree().get_first_node_in_group(String(player_group)) as Node2D
 
@@ -262,6 +270,12 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 
 	# Prepare blocked list for this chunk
 	_chunk_blocked[coord] = []
+	var build_data: ChunkBuildData = null
+	if batched_chunk_blockers:
+		build_data = _CHUNK_BUILD_DATA.new(coord, _cells_per_chunk()) as ChunkBuildData
+		_active_build_data = build_data
+		_chunk_build_data[coord] = build_data
+		chunk.set_meta(&"_chunk_build_data", build_data)
 
 	# Ground visuals (one sprite per chunk, region-repeated)
 	var rng := RandomNumberGenerator.new()
@@ -277,7 +291,10 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 
 	if generation_enabled:
 		_generate_chunk(coord, chunk)
-		_tile_repeated_visuals(chunk)
+	_active_build_data = null
+	if build_data != null:
+		_activate_chunk_blockers(build_data, chunk)
+	_tile_repeated_visuals(chunk)
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_counter_event(&"world", &"chunk_created", 1, {
 			"coord": str(coord),
@@ -355,6 +372,10 @@ func reset_world() -> void:
 	_blocked_cells.clear()
 	_projectile_blockers.clear()
 	_projectile_blocker_owners.clear()
+	_chunk_build_data.clear()
+	_active_build_data = null
+	if _block_renderer != null:
+		_block_renderer.clear()
 	if _site_mgr != null:
 		_site_mgr.reset()
 
@@ -634,7 +655,10 @@ func _ensure_debug_tex() -> void:
 	img.fill(Color(1, 1, 1, 1))
 	_debug_tex = ImageTexture.create_from_image(img)
 
-func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -> Node2D:
+func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, connections_mask: int = 0) -> Node2D:
+	if batched_chunk_blockers and _record_blocker(chunk, scene, cell_x, cell_y, connections_mask):
+		return null
+
 	# Compute global cell first so we can avoid double-spawns (corners, ruin overlaps, etc.)
 	var cells_per_chunk: int = _cells_per_chunk()
 	var global_cell: Vector2i = Vector2i(
@@ -654,6 +678,9 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -
 	var px: float = float(cell_x * cell_size_px) + float(cell_size_px) * 0.5
 	var py: float = float(cell_y * cell_size_px) + float(cell_size_px) * 0.5
 	b.position = Vector2(px, py)
+	var blocker_kind := _blocker_kind_for_scene(scene)
+	if blocker_kind == WorldBlockerGeometry.Kind.WALL or blocker_kind == WorldBlockerGeometry.Kind.WINDOW:
+		b.set("connections_mask", connections_mask)
 
 	chunk.add_child(b)
 	b.set_meta(&"_tile_repeat_visual", true)
@@ -676,6 +703,86 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int) -
 			b.add_child(s)
 
 	return b
+
+
+func _record_blocker(_chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, connections_mask: int = 0) -> bool:
+	var kind := _blocker_kind_for_scene(scene)
+	if kind < 0 or _active_build_data == null:
+		return false
+	var cells_per_chunk := _cells_per_chunk()
+	var local_cell := Vector2i(cell_x, cell_y)
+	var global_cell := _gen_coord * cells_per_chunk + local_cell
+	if _blocked_cells.has(global_cell) or _manual_blocked_cells.has(global_cell):
+		return true
+	var variant := 0
+	if kind == WorldBlockerGeometry.Kind.HALF_COVER:
+		variant = ChunkBlockVisualCatalog.half_variant(cell_to_world_center(global_cell))
+	if not _active_build_data.add_blocker(local_cell, kind, connections_mask, variant):
+		return false
+	_blocked_cells[global_cell] = true
+	if _chunk_blocked.has(_gen_coord):
+		(_chunk_blocked[_gen_coord] as Array).append(global_cell)
+	_projectile_blockers[global_cell] = WorldBlockerGeometry.pack(kind, connections_mask)
+	_projectile_blocker_owners[global_cell] = get_instance_id()
+	return true
+
+
+func _blocker_kind_for_scene(scene: PackedScene) -> int:
+	if scene == null:
+		return -1
+	if scene == cover_full_scene:
+		return WorldBlockerGeometry.Kind.WALL
+	if scene == cover_window_scene:
+		return WorldBlockerGeometry.Kind.WINDOW
+	if scene == cover_half_scene:
+		return WorldBlockerGeometry.Kind.HALF_COVER
+	return -1
+
+
+func _ensure_block_renderer() -> void:
+	if _block_renderer == null:
+		_block_renderer = _BLOCK_RENDERER.new() as ChunkBlockRenderer
+	if _block_renderer != null:
+		_block_renderer.configure(self, chunk_size_px, cell_size_px)
+
+
+func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
+	_capture_interactive_nodes(data, chunk)
+	var physics := _BLOCK_PHYSICS.new() as ChunkBlockPhysics
+	physics.name = "ChunkBlockPhysics"
+	physics.build(data, cell_size_px)
+	if physics.body_count() > 0:
+		chunk.add_child(physics)
+	else:
+		physics.free()
+	_ensure_block_renderer()
+	if _block_renderer != null:
+		_block_renderer.add_chunk(data)
+
+
+func _capture_interactive_nodes(data: ChunkBuildData, chunk: Node2D) -> void:
+	for candidate in chunk.find_children("*", "Area2D", true, false):
+		data.interactive_nodes.append(candidate)
+	for candidate in chunk.find_children("*", "Marker2D", true, false):
+		data.interactive_nodes.append(candidate)
+
+
+func get_chunk_build_data(coord: Vector2i) -> ChunkBuildData:
+	return _chunk_build_data.get(coord) as ChunkBuildData
+
+
+func get_block_batch_stats() -> Dictionary:
+	_ensure_block_renderer()
+	var stats := {
+		"batches": 0,
+		"instances": 0,
+		"shadow_instances": 0,
+		"runtime_images_created": 0,
+	}
+	if _block_renderer != null:
+		stats = _block_renderer.get_stats()
+	stats["chunks"] = _chunk_build_data.size()
+	return stats
 
 
 func _ensure_tile_renderer() -> void:
@@ -934,6 +1041,9 @@ func _cell_to_chunk(cell: Vector2i) -> Vector2i:
 
 
 func _unregister_chunk_cells(chunk_coord: Vector2i) -> void:
+	if _block_renderer != null:
+		_block_renderer.remove_chunk(chunk_coord)
+	_chunk_build_data.erase(chunk_coord)
 	if not _chunk_blocked.has(chunk_coord):
 		return
 
@@ -941,6 +1051,8 @@ func _unregister_chunk_cells(chunk_coord: Vector2i) -> void:
 	for c in arr:
 		var cell: Vector2i = c
 		_blocked_cells.erase(cell)
+		_projectile_blockers.erase(cell)
+		_projectile_blocker_owners.erase(cell)
 
 	_chunk_blocked.erase(chunk_coord)
 
