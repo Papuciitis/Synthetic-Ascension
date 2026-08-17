@@ -1,10 +1,10 @@
-extends SceneTree
+extends Node
 
 var _passes := 0
 var _failures := 0
 
 
-func _init() -> void:
+func _ready() -> void:
 	call_deferred("_run")
 
 
@@ -18,9 +18,10 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _run() -> void:
+	_test_literal_obstacle_directions()
 	var flow := FlowFieldNav.new()
 	flow.radius_cells = 4
-	root.add_child(flow)
+	add_child(flow)
 
 	_check(flow.has_method("get_debug_counters"), "flow field exposes rebuild diagnostics")
 	if not flow.has_method("get_debug_counters"):
@@ -50,7 +51,7 @@ func _run() -> void:
 	flow.queue_free()
 
 	var chunk_manager := ChunkManager.new()
-	root.add_child(chunk_manager)
+	add_child(chunk_manager)
 	_check(chunk_manager.has_method("request_nav_revision"), "chunk manager exposes batched revision requests")
 	_check(chunk_manager.has_method("commit_pending_nav_revision"), "chunk manager exposes deterministic revision commit")
 	if chunk_manager.has_method("request_nav_revision") and chunk_manager.has_method("commit_pending_nav_revision"):
@@ -67,6 +68,48 @@ func _run() -> void:
 	_finish()
 
 
+func _test_literal_obstacle_directions() -> void:
+	var manager := ChunkManager.new()
+	manager.generation_enabled = false
+	manager.ground_enabled = false
+	manager.debug_draw_chunk_outlines = false
+	add_child(manager)
+	var loaded_chunk := Node2D.new()
+	manager.add_child(loaded_chunk)
+	manager.set("_chunks", {Vector2i.ZERO: loaded_chunk})
+	manager.set("_manual_blocked_cells", {Vector2i(5, 4): true})
+	var flow := FlowFieldNav.new()
+	flow.radius_cells = 4
+	flow.max_expansions_per_frame = 1000
+	flow.max_ms_per_frame = 0.0
+	add_child(flow)
+	flow.set("_cm", manager)
+	flow.call("_ensure_buffers")
+	flow.call("_start_rebuild", Vector2i(4, 4), 0)
+	flow.call("_step_build")
+	_check(flow.call("_dir_at_cell", Vector2i(3, 4)) == Vector2.RIGHT, "open cell points directly toward the origin")
+	_check(flow.call("_dir_at_cell", Vector2i(5, 5)) == Vector2.LEFT, "blocked cardinal prevents diagonal corner cutting")
+
+	var doorway_blocks: Dictionary = {}
+	for y in range(0, 9):
+		if y != 4:
+			doorway_blocks[Vector2i(6, y)] = true
+	manager.set("_manual_blocked_cells", doorway_blocks)
+	flow.call("_start_rebuild", Vector2i(4, 4), 1)
+	flow.call("_step_build")
+	var doorway_direction := flow.call("_dir_at_cell", Vector2i(8, 3)) as Vector2
+	_check(doorway_direction.is_equal_approx(Vector2(-1, 1).normalized()), "doorway approach retains its hand-derived diagonal")
+	flow.call("_start_rebuild", Vector2i(4, 4), 2)
+	flow.call("_step_build")
+	_check((flow.call("_dir_at_cell", Vector2i(8, 3)) as Vector2).is_equal_approx(doorway_direction), "repeated rebuild preserves literal directions")
+	_check(flow.has_method("get_hot_loop_buffer_stats"), "flow field exposes reusable hot-loop buffer diagnostics")
+	if flow.has_method("get_hot_loop_buffer_stats"):
+		var stats := flow.call("get_hot_loop_buffer_stats") as Dictionary
+		_check(stats.get("step_storage") == &"packed" and int(stats.get("candidate_capacity", 0)) == 8, "neighbor storage remains fixed after rebuilds")
+	flow.queue_free()
+	manager.queue_free()
+
+
 func _finish() -> void:
 	print("FlowFieldUnitTest: %d passed, %d failed" % [_passes, _failures])
-	quit(1 if _failures > 0 else 0)
+	get_tree().quit(1 if _failures > 0 else 0)

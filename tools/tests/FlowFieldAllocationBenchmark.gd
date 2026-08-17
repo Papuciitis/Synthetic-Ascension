@@ -1,7 +1,7 @@
 extends SceneTree
 
 const CELLS := 6561
-const RUNS := 15
+const RUNS := 100
 const STEPS: Array[Vector2i] = [
 	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
 	Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1),
@@ -11,13 +11,20 @@ const STEPS: Array[Vector2i] = [
 func _init() -> void:
 	var allocating: Array[int] = []
 	var fixed: Array[int] = []
+	var candidate_steps := PackedInt32Array()
+	var candidate_penalties := PackedInt32Array()
+	candidate_steps.resize(8)
+	candidate_penalties.resize(8)
+	_fixed_candidate_build(candidate_steps, candidate_penalties)
+	var fixed_memory_before := Performance.get_monitor(Performance.MEMORY_STATIC)
 	for _run in range(RUNS):
 		var start := Time.get_ticks_usec()
 		_legacy_candidate_build()
 		allocating.append(Time.get_ticks_usec() - start)
 		start = Time.get_ticks_usec()
-		_fixed_candidate_build()
+		_fixed_candidate_build(candidate_steps, candidate_penalties)
 		fixed.append(Time.get_ticks_usec() - start)
+	var fixed_memory_delta := Performance.get_monitor(Performance.MEMORY_STATIC) - fixed_memory_before
 	allocating.sort()
 	fixed.sort()
 	var legacy_us := allocating[allocating.size() / 2]
@@ -26,7 +33,12 @@ func _init() -> void:
 		"FlowFieldAllocationBenchmark cells=%d legacy_median_us=%d fixed_median_us=%d speedup=%.2fx"
 		% [CELLS, legacy_us, fixed_us, float(legacy_us) / maxf(1.0, float(fixed_us))]
 	)
-	quit()
+	if fixed_memory_delta > 65536.0:
+		push_error("Reusable flow buffers grew static memory by %d bytes" % int(fixed_memory_delta))
+		quit(1)
+		return
+	print("FlowFieldAllocationBenchmark fixed_memory_delta=", int(fixed_memory_delta))
+	quit(0)
 
 
 func _legacy_candidate_build() -> void:
@@ -48,11 +60,7 @@ func _legacy_candidate_build() -> void:
 				candidate_penalties.append(penalty)
 
 
-func _fixed_candidate_build() -> void:
-	var candidate_steps := PackedInt32Array()
-	var candidate_penalties := PackedInt32Array()
-	candidate_steps.resize(8)
-	candidate_penalties.resize(8)
+func _fixed_candidate_build(candidate_steps: PackedInt32Array, candidate_penalties: PackedInt32Array) -> void:
 	for cell in range(CELLS):
 		var candidate_count := 0
 		for step_index in range(STEPS.size()):

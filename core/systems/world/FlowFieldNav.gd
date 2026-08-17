@@ -1,9 +1,9 @@
 extends Node2D
 class_name FlowFieldNav
 
-const STEPS: Array[Vector2i] = [
-	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
-	Vector2i(1, 1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(-1, -1),
+const STEPS: PackedVector2Array = [
+	Vector2(1, 0), Vector2(-1, 0), Vector2(0, 1), Vector2(0, -1),
+	Vector2(1, 1), Vector2(1, -1), Vector2(-1, 1), Vector2(-1, -1),
 ]
 
 @export var cell_size_px: int = 64
@@ -305,19 +305,25 @@ func _expand_neighbors(cx: int, cy: int, parent_dist: int) -> void:
 	# We’ll order them by "penalty" (more walls nearby = worse),
 	# which helps avoid hugging corners/doorframes.
 	# Small N=8 insertion sort.
-	for step_index in range(STEPS.size()):
+	var step_index := 0
+	while step_index < STEPS.size():
 		var s := STEPS[step_index]
-		var nx: int = cx + s.x
-		var ny: int = cy + s.y
+		var sx := int(s.x)
+		var sy := int(s.y)
+		var nx: int = cx + sx
+		var ny: int = cy + sy
 		if not _in_bounds(nx, ny):
+			step_index += 1
 			continue
 
 		# prevent diagonal corner-cutting
-		if s.x != 0 and s.y != 0:
-			if not _is_walkable(cx + s.x, cy) or not _is_walkable(cx, cy + s.y):
+		if sx != 0 and sy != 0:
+			if not _is_walkable(cx + sx, cy) or not _is_walkable(cx, cy + sy):
+				step_index += 1
 				continue
 
 		if not _is_walkable(nx, ny):
+			step_index += 1
 			continue
 
 		var p: int = (_cell_penalty(nx, ny) if prefer_open_cells else 0)
@@ -331,12 +337,17 @@ func _expand_neighbors(cx: int, cy: int, parent_dist: int) -> void:
 		_candidate_penalties[insert_at] = p
 		_candidate_steps[insert_at] = step_index
 		candidate_count += 1
+		step_index += 1
 
-	for candidate_index in range(candidate_count):
+	var candidate_index := 0
+	while candidate_index < candidate_count:
 		var s := STEPS[_candidate_steps[candidate_index]]
-		var nx: int = cx + s.x
-		var ny: int = cy + s.y
-		_visit(nx, ny, parent_dist, -s.x, -s.y)
+		var sx := int(s.x)
+		var sy := int(s.y)
+		var nx: int = cx + sx
+		var ny: int = cy + sy
+		_visit(nx, ny, parent_dist, -sx, -sy)
+		candidate_index += 1
 
 
 func _visit(nx: int, ny: int, parent_dist: int, dir_to_origin_x: int, dir_to_origin_y: int) -> void:
@@ -392,12 +403,17 @@ func _cell_penalty(lx: int, ly: int) -> int:
 		return 99
 
 	var count: int = 0
-	for oy in [-1, 0, 1]:
-		for ox in [-1, 0, 1]:
+	var oy := -1
+	while oy <= 1:
+		var ox := -1
+		while ox <= 1:
 			if ox == 0 and oy == 0:
+				ox += 1
 				continue
 			if not _is_walkable(lx + ox, ly + oy):
 				count += 1
+			ox += 1
+		oy += 1
 
 	_penalty[idx] = count
 	return count
@@ -435,14 +451,19 @@ func sample_dir_smooth(world_pos: Vector2) -> Vector2:
 	var sum: Vector2 = Vector2.ZERO
 	var wsum: float = 0.0
 
-	for oy in [-1, 0, 1]:
-		for ox in [-1, 0, 1]:
+	var oy := -1
+	while oy <= 1:
+		var ox := -1
+		while ox <= 1:
 			var d: Vector2 = _dir_at_cell(c + Vector2i(ox, oy))
 			if d == Vector2.ZERO:
+				ox += 1
 				continue
 			var w: float = 2.0 if (ox == 0 and oy == 0) else 1.0
 			sum += d * w
 			wsum += w
+			ox += 1
+		oy += 1
 
 	if wsum > 0.0 and sum.length_squared() > 0.0001:
 		return sum.normalized()
@@ -502,4 +523,12 @@ func get_debug_counters() -> Dictionary:
 		"pending_revision": _pending_rev,
 		"pending": _pending,
 		"building": _building,
+	}
+
+
+func get_hot_loop_buffer_stats() -> Dictionary:
+	return {
+		"step_storage": &"packed",
+		"step_count": STEPS.size(),
+		"candidate_capacity": mini(_candidate_steps.size(), _candidate_penalties.size()),
 	}
