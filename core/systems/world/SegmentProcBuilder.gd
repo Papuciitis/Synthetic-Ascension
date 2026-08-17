@@ -239,49 +239,20 @@ func _apply_urban_slice_defaults() -> void:
 	_cm.parcels_max_per_side = 2
 
 func _build_world_from_plan() -> void:
-	_cm.generation_enabled = true
 	_cm.clear_manual_blocks()
-	_cm.clear_chunk_archetypes()
-	_cm.clear_chunk_roles()
-	_cm.clear_chunk_terrain()
-
-	# Apply connectors (donjon-style chunk coherency)
-	_cm.clear_chunk_connectors()
 	var conns: Dictionary = _plan.get("connectors_by_chunk", {})
-	for k2 in conns.keys():
-		var cc2: Vector2i = k2
-		_cm.set_chunk_connectors(cc2, int(conns[k2]))
-
-	# Courtyard/pedestrian access is deliberately separate from road connectivity.
-	_cm.clear_chunk_urban_access()
 	var urban_access: Dictionary = _plan.get("urban_access_by_chunk", {})
-	for access_key in urban_access.keys():
-		var access_coord: Vector2i = access_key
-		_cm.set_chunk_urban_access(access_coord, int(urban_access[access_key]))
-
-	# Apply semantic roles before archetypes. Chunk generation uses roles to choose
-	# plaza, checkpoint, optional-interior and exploration-reward behaviour.
 	var roles: Dictionary = _plan.get("role_by_chunk", {})
-	for role_key in roles.keys():
-		var role_coord: Vector2i = role_key
-		var role_value: StringName = roles[role_key]
-		_cm.set_chunk_role(role_coord, role_value)
-
 	var terrain: Dictionary = _plan.get("terrain_by_chunk", {})
-	for terrain_key in terrain.keys():
-		var terrain_coord: Vector2i = terrain_key
-		var terrain_value: StringName = terrain[terrain_key]
-		_cm.set_chunk_terrain(terrain_coord, terrain_value)
-
-	# Apply archetypes
 	var arch: Dictionary = _plan.get("archetype_by_chunk", {})
-	for k in arch.keys():
-		var cc: Vector2i = k
-		var archetype_value: StringName = arch[k]
-		_cm.set_chunk_archetype(cc, archetype_value)
-
-	# Use the segment seed for chunk hashing (stable within attempt).
-	_cm.world_seed = int(_plan.get("seed", 1337))
+	_cm.configure_procedural_world(
+		int(_plan.get("seed", 1337)),
+		conns,
+		urban_access,
+		roles,
+		terrain,
+		arch
+	)
 
 	# Move the player to the segment start and set their default checkpoint.
 	var start_world: Vector2 = _plan.get("start_world", Vector2.ZERO)
@@ -290,8 +261,9 @@ func _build_world_from_plan() -> void:
 	else:
 		_player.global_position = start_world
 
-	# Force a rebuild so chunks created while generation_enabled was false are regenerated.
-	_cm.reset_world()
+	# The manager remains dormant until the full semantic plan and checkpoint are
+	# installed, so startup creates the center exactly once.
+	_cm.start_streaming(start_world)
 
 	# Spawn objective, wardstones and exit gate after chunks exist so visuals sit on top cleanly.
 	_spawn_primary_objective()

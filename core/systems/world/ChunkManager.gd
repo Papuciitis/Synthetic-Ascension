@@ -157,6 +157,7 @@ var _nav_revision_last_reason: StringName = &""
 var _chunk_generation_queue: Array[Vector2i] = []
 var _queued_chunk_coords: Dictionary = {}
 var _desired_chunk_coords: Dictionary = {}
+var streaming_started: bool = false
 
 var _debug_tex: Texture2D = null
 
@@ -177,10 +178,9 @@ func _ready() -> void:
 	if _site_mgr == null:
 		_site_mgr = _SITE_MGR.new() as SiteManager
 
-	_current_center = _world_to_chunk(_player.global_position)
-	_update_streaming()
-
 func _process(_delta: float) -> void:
+	if not streaming_started:
+		return
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group(String(player_group)) as Node2D
 		if _player == null:
@@ -195,6 +195,31 @@ func _process(_delta: float) -> void:
 
 func loaded_chunk_count() -> int:
 	return _chunks.size()
+
+
+func configure_procedural_world(
+	seed: int,
+	connectors: Dictionary,
+	urban_access: Dictionary,
+	roles: Dictionary,
+	terrain: Dictionary,
+	archetypes: Dictionary
+) -> void:
+	world_seed = seed
+	_chunk_connectors = connectors.duplicate(true)
+	_chunk_urban_access = urban_access.duplicate(true)
+	_chunk_role = roles.duplicate(true)
+	_chunk_terrain = terrain.duplicate(true)
+	_chunk_archetype = archetypes.duplicate(true)
+	generation_enabled = true
+
+
+func start_streaming(player_position: Vector2) -> void:
+	if streaming_started:
+		return
+	streaming_started = true
+	_current_center = _world_to_chunk(player_position)
+	_update_streaming()
 
 func _update_streaming() -> void:
 	# The center must exist immediately; surrounding chunks are safely beyond the
@@ -401,7 +426,8 @@ func reset_world() -> void:
 
 	request_nav_revision(&"world_reset")
 	_current_center = _world_to_chunk(_player.global_position) if _player != null else Vector2i(999999, 999999)
-	_update_streaming()
+	if streaming_started:
+		_update_streaming()
 
 
 func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) -> void:
