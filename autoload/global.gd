@@ -94,6 +94,7 @@ var debug_projectile_stress_test: bool = false
 var debug_set_collision_tools: bool = false
 var debug_performance_lab: bool = false
 var debug_opening_mode_override: String = "" # "", full, short, skip
+var debug_combat_transactions: bool = false
 var debug_opening_force_phase: int = -1
 var debug_opening_response_override: String = ""
 
@@ -307,7 +308,7 @@ func transaction_followers(amount: int, reason: StringName, context: Dictionary 
 	_followers = new_value
 	followers_changed.emit(_followers)
 	followers_transaction.emit(old_value, actual_change, new_value, reason, context, show_feedback, allow_aggregate)
-	if DEBUG_GLOBAL:
+	if DEBUG_GLOBAL and debug_combat_transactions:
 		print("FOLLOWERS TRANSACTION:", actual_change, " reason=", reason, " total=", new_value)
 	request_autosave()
 	return {"old": old_value, "change": actual_change, "new": new_value, "suppressed": false}

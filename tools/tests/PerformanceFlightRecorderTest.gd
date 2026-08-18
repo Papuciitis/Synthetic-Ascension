@@ -36,6 +36,19 @@ func _run() -> void:
 		"write_reports": false,
 	})
 	recorder.set_enabled(true)
+	var slow_snapshot := recorder.call("_collect_slow_snapshot") as Dictionary
+	var scheduler_data := slow_snapshot.get("enemy_scheduler", {}) as Dictionary
+	var pool_data := slow_snapshot.get("enemy_pool", {}) as Dictionary
+	for key in [&"full", &"mid", &"far", &"protected", &"physics_enabled", &"mid_steps", &"far_steps", &"assignment_usec"]:
+		_check(scheduler_data.has(key), "slow snapshot includes scheduler %s" % key)
+	for key in [&"reuse_hits", &"releases", &"inactive"]:
+		_check(pool_data.has(key), "slow snapshot includes pool %s" % key)
+	_check("debug_combat_transactions" in Global, "combat transaction logging has an explicit debug gate")
+	if "debug_combat_transactions" in Global:
+		Global.debug_combat_transactions = false
+		var follower_result := Global.transaction_followers(2, &"recorder_test", {}, false, false)
+		_check(int(follower_result.get("change", 0)) == 2, "disabled transaction logging preserves follower results")
+		Global.transaction_followers(-2, &"recorder_test_cleanup", {}, false, false)
 	for i in range(120):
 		recorder.ingest_sample(_sample(i * 16_667, 16.0))
 	_check(recorder.debug_history_size() <= recorder.debug_history_capacity(), "history remains bounded")

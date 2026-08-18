@@ -7,6 +7,7 @@ class_name ConduitArcBolts
 @export var chain_radius: float = 180.0
 @export var dmg1_mult: float = 0.55
 @export var dmg2_mult: float = 0.35
+@export var debug_proc_logging: bool = false
 
 @export var vfx_arc_line_scene: PackedScene
 
@@ -32,7 +33,8 @@ func _on_weapon_fired(p: Node, _style_id: StringName, origin: Vector2, _target: 
 		return
 
 	_cd = maxf(min_cd, base_cd / maxf(haste_mul, 0.05))
-	print("[Conduit] ArcBolts proc")
+	if debug_proc_logging:
+		print("[Conduit] ArcBolts proc")
 
 	var r := radius * (0.90 + 0.15 * set_strength)
 	var cr := chain_radius * (0.90 + 0.15 * set_strength)
