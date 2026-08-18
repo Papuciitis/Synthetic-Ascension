@@ -162,7 +162,44 @@ func set_health(handle: int, value: float) -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
 		return false
+	if _representations[slot] == Types.Representation.DYING and value > 0.0:
+		return false
 	_health[slot] = clampf(value, 0.0, float(_max_health[slot]))
+	return true
+
+
+func set_max_health(handle: int, value: float, fill_to_max: bool = false) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or _representations[slot] == Types.Representation.DYING:
+		return false
+	var safe_max := maxf(value, 0.0)
+	_max_health[slot] = safe_max
+	_health[slot] = safe_max if fill_to_max else minf(float(_health[slot]), safe_max)
+	return true
+
+
+func heal(handle: int, amount: float) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or amount <= 0.0 or _representations[slot] == Types.Representation.DYING:
+		return false
+	_health[slot] = minf(float(_health[slot]) + amount, float(_max_health[slot]))
+	return true
+
+
+func is_dying(handle: int) -> bool:
+	var slot := _slot_if_valid(handle)
+	return slot >= 0 and _representations[slot] == Types.Representation.DYING
+
+
+func try_begin_death(handle: int) -> bool:
+	var slot := _slot_if_valid(handle)
+	if (
+		slot < 0
+		or _representations[slot] == Types.Representation.DYING
+		or _health[slot] > 0.0
+	):
+		return false
+	_representations[slot] = Types.Representation.DYING
 	return true
 
 
@@ -212,6 +249,11 @@ func get_representation(handle: int) -> int:
 func set_representation(handle: int, value: int) -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
+		return false
+	if (
+		_representations[slot] == Types.Representation.DYING
+		and value != Types.Representation.DYING
+	):
 		return false
 	_representations[slot] = value
 	return true
@@ -361,7 +403,7 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 	else:
 		flags &= ~Types.Flags.ELITE
 	set_flags(handle, flags)
-	if "dead" in actor and bool(actor.get("dead")):
+	if is_dying(handle) or ("dead" in actor and bool(actor.get("dead"))):
 		set_representation(handle, Types.Representation.DYING)
 	else:
 		set_representation(handle, Types.Representation.MATERIALIZED)
