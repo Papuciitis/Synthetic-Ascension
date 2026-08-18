@@ -50,6 +50,7 @@ func _run() -> void:
 	await _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler)
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
+	_test_freed_actor_stale_group_is_ignored(scheduler_script)
 	scheduler.queue_free()
 	if live_scheduler != null:
 		live_scheduler.set_physics_process(true)
@@ -242,6 +243,25 @@ func _test_pooled_actor_stale_group_is_ignored(scheduler_script: Script) -> void
 	_check(probe.scheduled_deltas.size() == calls_before_pooling, "stale reduced group never simulates an inactive pooled actor")
 	index.call("unregister", probe)
 	probe.queue_free()
+	scheduler.queue_free()
+
+
+func _test_freed_actor_stale_group_is_ignored(scheduler_script: Script) -> void:
+	var index := get_node("/root/EnemyIndex")
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 0)
+	scheduler.set("mid_budget", 1)
+	scheduler.set("mid_group_count", 1)
+	add_child(scheduler)
+	var probe := ScheduledProbe.new()
+	add_child(probe)
+	index.call("register", probe)
+	scheduler.call("_physics_process", 1.0 / 60.0)
+	index.call("unregister", probe)
+	probe.free()
+	scheduler.call("_physics_process", 1.0 / 60.0)
+	var counters := scheduler.call("get_debug_counters") as Dictionary
+	_check(int(counters.get("stale_entries", 0)) == 1, "freed actor is discarded from a stale reduced group without casting it")
 	scheduler.queue_free()
 
 

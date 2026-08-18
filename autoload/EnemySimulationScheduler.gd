@@ -29,6 +29,7 @@ var _debug_counters := {
 	"mid_steps": 0,
 	"far_steps": 0,
 	"assignment_usec": 0,
+	"stale_entries": 0,
 }
 
 
@@ -155,7 +156,10 @@ func _add_to_group_bucket(groups: Array, enemy: Node) -> void:
 		return
 	var bucket_index := int(enemy.get_instance_id() % groups.size())
 	var bucket := groups[bucket_index] as Array
-	bucket.append(enemy)
+	# Store IDs rather than object Variants. A pooled or killed enemy may be freed
+	# between assignment refreshes; retaining its Variant makes even `as Node`
+	# throw before validity can be checked.
+	bucket.append(enemy.get_instance_id())
 
 
 func _run_next_group(
@@ -169,8 +173,12 @@ func _run_next_group(
 		return 0
 	var group_index := posmod(cursor, groups.size())
 	var bucket := groups[group_index] as Array
-	for enemy_variant in bucket:
-		var enemy := enemy_variant as Node
+	for enemy_id_variant in bucket:
+		var object := instance_from_id(int(enemy_id_variant))
+		if object == null or not is_instance_valid(object) or not (object is Node):
+			_debug_counters["stale_entries"] = int(_debug_counters.get("stale_entries", 0)) + 1
+			continue
+		var enemy := object as Node
 		if not _is_valid_candidate(enemy):
 			continue
 		if enemy.has_method("simulation_tier") and int(enemy.call("simulation_tier")) != expected_tier:
