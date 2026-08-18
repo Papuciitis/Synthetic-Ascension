@@ -77,6 +77,32 @@ func _run() -> void:
 	await get_tree().process_frame
 	_check(int(pool.call("pool_size_for_scene", scene)) == 2, "enemy pool retains no more than its configured limit")
 
+	# A retained node can still be freed by a late cleanup callback after recycle.
+	# The pool must discard that stale Object Variant instead of casting it.
+	var stale := pool.call("obtain", scene, self) as EnemyActor
+	_check(stale != null, "stale-entry fixture obtains an enemy")
+	if stale != null:
+		stale.call("despawn", &"stale_fixture")
+		stale.queue_free()
+	await get_tree().process_frame
+	var after_stale := pool.call("obtain", scene, self) as EnemyActor
+	_check(after_stale != null and is_instance_valid(after_stale), "obtain skips an externally freed retained enemy")
+	if after_stale != null:
+		after_stale.call("despawn", &"stale_fixture_cleanup")
+
+	# A Node already queued for deletion must never enter the retained pool.
+	var queued := pool.call("obtain", scene, self) as EnemyActor
+	_check(queued != null, "queued-deletion fixture obtains an enemy")
+	if queued != null:
+		var pool_size_before_queued_recycle := int(pool.call("pool_size_for_scene", scene))
+		queued.queue_free()
+		pool.call("recycle", queued)
+		_check(
+			int(pool.call("pool_size_for_scene", scene)) == pool_size_before_queued_recycle,
+			"pool rejects an enemy already queued for deletion"
+		)
+	await get_tree().process_frame
+
 	# Elites must recycle: at high threat most spawns are promoted, and excluding
 	# them from the pool collapses reuse exactly when spawn pressure peaks.
 	var elite := pool.call("obtain", scene, self) as EnemyActor

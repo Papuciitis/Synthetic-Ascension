@@ -372,21 +372,22 @@ func _update_renderer() -> void:
 			sin_a = direction.y / length
 		var scale_x := _body_length[i] / 18.0
 		var scale_y := _body_width[i] / 4.0
-		var position := _positions[i]
+		var projectile_position := _positions[i]
 		var color := _colors[i]
 		_render_buffer[base + 0] = cos_a * scale_x
 		_render_buffer[base + 1] = -sin_a * scale_y
 		_render_buffer[base + 2] = 0.0
-		_render_buffer[base + 3] = position.x
+		_render_buffer[base + 3] = projectile_position.x
 		_render_buffer[base + 4] = sin_a * scale_x
 		_render_buffer[base + 5] = cos_a * scale_y
 		_render_buffer[base + 6] = 0.0
-		_render_buffer[base + 7] = position.y
+		_render_buffer[base + 7] = projectile_position.y
 		_render_buffer[base + 8] = color.r
 		_render_buffer[base + 9] = color.g
 		_render_buffer[base + 10] = color.b
 		_render_buffer[base + 11] = color.a
 	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
+	_multimesh.emit_changed()
 	_multimesh.visible_instance_count = _active_count
 
 func get_debug_counters() -> Dictionary:

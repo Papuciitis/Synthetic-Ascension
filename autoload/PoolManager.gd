@@ -46,10 +46,20 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 
 	var pool: Array = _get_pool(key)
 	var node: Node = null
-	if pool != null and pool.size() > 0:
-		node = pool.pop_back() as Node
-		_reuse_hits += 1
-	else:
+	while not pool.is_empty():
+		# A late queue_free() can run after recycle and leave a freed Object Variant
+		# in this array. Validate the raw value before any typed cast.
+		var candidate: Variant = pool.pop_back()
+		if not is_instance_valid(candidate):
+			_discarded += 1
+			continue
+		node = candidate as Node
+		if node != null and not node.is_queued_for_deletion():
+			_reuse_hits += 1
+			break
+		_discarded += 1
+		node = null
+	if node == null:
 		node = scene.instantiate()
 
 	if node == null:
@@ -95,6 +105,8 @@ func recycle(node: Node) -> void:
 	if node == null:
 		return
 	if not is_instance_valid(node):
+		return
+	if node.is_queued_for_deletion():
 		return
 
 	var key: String = ""

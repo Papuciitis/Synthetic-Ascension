@@ -266,13 +266,13 @@ func _build_controls() -> void:
 
 func _build_accessibility() -> void:
 	_add_heading("ACCESSIBILITY")
-	var scale := HSlider.new()
-	scale.min_value = 80
-	scale.max_value = 150
-	scale.step = 5
-	scale.value = float(_value(&"accessibility", &"ui_scale", 1.0)) * 100.0
-	scale.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"accessibility", &"ui_scale", value / 100.0))
-	_add_control_row("UI Scale", scale)
+	var scale_slider := HSlider.new()
+	scale_slider.min_value = 80
+	scale_slider.max_value = 150
+	scale_slider.step = 5
+	scale_slider.value = float(_value(&"accessibility", &"ui_scale", 1.0)) * 100.0
+	scale_slider.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"accessibility", &"ui_scale", value / 100.0))
+	_add_control_row("UI Scale", scale_slider)
 	_add_option_setting("Typewriter Speed", &"accessibility", &"typewriter_speed", [["Instant", &"instant"], ["Slow", &"slow"], ["Normal", &"normal"], ["Fast", &"fast"]])
 	var reduced := CheckBox.new()
 	reduced.text = "Reduce nonessential camera and interface motion"
