@@ -35,9 +35,8 @@ func _ready() -> void:
 	_a.name = "MusicA"
 	_b.name = "MusicB"
 
-	# Keep on Master for now (no custom bus needed).
-	_a.bus = "Master"
-	_b.bus = "Master"
+	_a.bus = "Music"
+	_b.bus = "Music"
 
 	_a.volume_db = -80.0
 	_b.volume_db = -80.0

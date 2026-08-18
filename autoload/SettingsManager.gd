@@ -2,13 +2,17 @@ extends Node
 
 signal settings_changed(section: StringName, key: StringName, value: Variant)
 signal bindings_changed(action: StringName)
+signal display_preview_started(seconds: float)
+signal display_preview_finished(kept: bool)
 
 const Schema := preload("res://core/settings/SettingsSchema.gd")
 const Store := preload("res://core/settings/SettingsStore.gd")
 const BindingService := preload("res://core/settings/InputBindingService.gd")
 const ActionCatalog := preload("res://core/settings/InputActionCatalog.gd")
+const RuntimeApplier := preload("res://core/settings/SettingsRuntimeApplier.gd")
 
 var storage_path := "user://settings.cfg"
+var runtime_applier: RefCounted
 var _values: Dictionary = {}
 var _store: RefCounted
 var _binding_service: RefCounted
@@ -25,6 +29,10 @@ func _ready() -> void:
 	if not saved_bindings.is_empty():
 		_binding_service.apply_saved_bindings(saved_bindings)
 	_binding_service.set_controller_deadzone(float(get_value(&"controls", &"controller_deadzone", 0.2)))
+	if runtime_applier == null:
+		runtime_applier = RuntimeApplier.new()
+	runtime_applier.apply_all(_values)
+	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
 
 func get_value(section: StringName, key: StringName, fallback: Variant = null) -> Variant:
@@ -45,6 +53,8 @@ func set_value(section: StringName, key: StringName, value: Variant, persist: bo
 	_values = normalized
 	if section == &"controls" and key == &"controller_deadzone" and _binding_service != null:
 		_binding_service.set_controller_deadzone(float(normalized_value))
+	if runtime_applier != null:
+		runtime_applier.apply_all(_values)
 	settings_changed.emit(section, key, normalized_value)
 	return not persist or _store.save_settings(_values)
 
@@ -66,6 +76,38 @@ func reset_section(section: StringName) -> void:
 
 func snapshot() -> Dictionary:
 	return _values.duplicate(true)
+
+
+func begin_display_preview(changes: Dictionary) -> bool:
+	if runtime_applier == null or not bool(runtime_applier.begin_display_preview(changes)):
+		return false
+	display_preview_started.emit(12.0)
+	return true
+
+
+func confirm_display_preview() -> void:
+	if runtime_applier == null:
+		return
+	var actual: Dictionary = runtime_applier.confirm_display_preview()
+	if actual.is_empty():
+		return
+	for key in [&"window_mode", &"resolution", &"vsync"]:
+		if actual.has(key):
+			_values[&"video"][key] = actual[key]
+	_values = Schema.normalize(_values)
+	_store.save_settings(_values)
+	display_preview_finished.emit(true)
+
+
+func revert_display_preview() -> void:
+	if runtime_applier == null or not bool(runtime_applier.is_display_preview_active()):
+		return
+	runtime_applier.revert_display_preview()
+	display_preview_finished.emit(false)
+
+
+func available_resolutions() -> Array[Vector2i]:
+	return runtime_applier.available_resolutions() if runtime_applier != null else []
 
 
 func input_entries() -> Array[Dictionary]:
