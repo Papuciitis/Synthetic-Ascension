@@ -12,6 +12,13 @@ const TIER_FAR := 2
 @export_range(1.0, 33.0, 0.25) var physics_pressure_ms: float = 8.0
 
 var _previous_tiers: Dictionary = {}
+var _enemy_index: Node = null
+var _player: Node2D = null
+var _assignment_left: float = 0.0
+var _mid_groups: Array = []
+var _far_groups: Array = []
+var _mid_cursor: int = 0
+var _far_cursor: int = 0
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -26,7 +33,27 @@ var _debug_counters := {
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	set_physics_process(false)
+	set_physics_process(true)
+
+
+func _physics_process(delta: float) -> void:
+	_assignment_left -= maxf(0.0, delta)
+	if _assignment_left <= 0.0:
+		refresh_assignments()
+	_mid_cursor = _run_next_group(
+		_mid_groups,
+		_mid_cursor,
+		maxf(0.0, delta) * maxi(1, mid_group_count),
+		TIER_MID,
+		&"mid_steps"
+	)
+	_far_cursor = _run_next_group(
+		_far_groups,
+		_far_cursor,
+		maxf(0.0, delta) * maxi(1, far_group_count),
+		TIER_FAR,
+		&"far_steps"
+	)
 
 
 func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
@@ -88,10 +115,69 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 
 
 func refresh_assignments() -> void:
-	# Runtime tier application and reduced tick groups are introduced in the next
-	# tested step. Keeping this entry point now makes the assignment contract
-	# usable without coupling the pure planner to the SceneTree.
-	pass
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index == null or not _enemy_index.has_method("get_all"):
+		_assignment_left = maxf(0.05, assignment_interval)
+		return
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+	var player_position := _player.global_position if _player != null else Vector2.ZERO
+	var enemies := _enemy_index.call("get_all") as Array
+	var assignment := compute_assignment(enemies, player_position)
+	_mid_groups = _empty_groups(mid_group_count)
+	_far_groups = _empty_groups(far_group_count)
+	for enemy_variant in enemies:
+		var enemy := enemy_variant as Node
+		if not _is_valid_candidate(enemy):
+			continue
+		var tier := int(assignment.get(enemy.get_instance_id(), TIER_FAR))
+		if enemy.has_method("set_scheduler_tier"):
+			enemy.call("set_scheduler_tier", tier)
+		if tier == TIER_MID:
+			_add_to_group_bucket(_mid_groups, enemy)
+		elif tier == TIER_FAR:
+			_add_to_group_bucket(_far_groups, enemy)
+	_assignment_left = maxf(0.05, assignment_interval)
+
+
+func _empty_groups(group_count: int) -> Array:
+	var groups: Array = []
+	groups.resize(maxi(1, group_count))
+	for index in range(groups.size()):
+		groups[index] = []
+	return groups
+
+
+func _add_to_group_bucket(groups: Array, enemy: Node) -> void:
+	if groups.is_empty():
+		return
+	var bucket_index := int(enemy.get_instance_id() % groups.size())
+	var bucket := groups[bucket_index] as Array
+	bucket.append(enemy)
+
+
+func _run_next_group(
+	groups: Array,
+	cursor: int,
+	step_delta: float,
+	expected_tier: int,
+	counter_key: StringName
+) -> int:
+	if groups.is_empty():
+		return 0
+	var group_index := posmod(cursor, groups.size())
+	var bucket := groups[group_index] as Array
+	for enemy_variant in bucket:
+		var enemy := enemy_variant as Node
+		if not _is_valid_candidate(enemy):
+			continue
+		if enemy.has_method("simulation_tier") and int(enemy.call("simulation_tier")) != expected_tier:
+			continue
+		if enemy.has_method("run_scheduled_simulation"):
+			enemy.call("run_scheduled_simulation", step_delta)
+			_debug_counters[counter_key] = int(_debug_counters.get(counter_key, 0)) + 1
+	return (group_index + 1) % groups.size()
 
 
 func get_debug_counters() -> Dictionary:

@@ -122,6 +122,7 @@ var _stability_mul: float = 1.0
 var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
 var _hitbox: Area2D = null
+var _body_shape: CollisionShape2D = null
 var _lod_tier: int = 0 # 0 near/full, 1 mid, 2 far
 var _lod_steer_left: float = 0.0
 var _lod_steer_accum: float = 0.0
@@ -132,6 +133,7 @@ var _far_step_left: float = 0.0
 var _far_delta_accum: float = 0.0
 var _far_last_delta: float = 0.0
 var _simulation_motion_scale: float = 1.0
+var _scheduled_step_delta: float = 0.0
 var _ambient_population: int = 0
 var _population_refresh_left: float = 0.0
 
@@ -181,6 +183,7 @@ func _ready() -> void:
 	# or scene-owned hitbox is unexpectedly replaced.
 	_enemy_index = get_node_or_null("/root/EnemyIndex")
 	_hitbox = get_node_or_null("Hitbox") as Area2D
+	_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("register"):
 		_enemy_index.call("register", self)
 
@@ -191,6 +194,7 @@ func _ready() -> void:
 	_lod_steer_left = Global._rng.randf_range(0.0, maxf(0.01, lod_far_steer_interval))
 	_far_step_left = Global._rng.randf_range(0.0, maxf(0.067, lod_far_physics_interval))
 	_population_refresh_left = Global._rng.randf_range(0.0, 0.5)
+	_apply_simulation_collision_roles()
 
 	if RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
 		RunEvents.enemy_archetype_encountered.emit(self)
@@ -208,7 +212,20 @@ func _exit_tree() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	_simulation_motion_scale = 1.0
+	if dead or _lod_tier != 0:
+		return
+	_run_simulation_step(delta)
+
+
+func run_scheduled_simulation(delta: float) -> void:
+	if dead or _lod_tier == 0:
+		return
+	_run_simulation_step(maxf(delta, 0.000001))
+
+
+func _run_simulation_step(delta: float) -> void:
+	_scheduled_step_delta = delta
+	_simulation_motion_scale = delta / maxf(get_physics_process_delta_time(), 0.000001)
 	_population_refresh_left -= delta
 	if _population_refresh_left <= 0.0:
 		_population_refresh_left += 0.5
@@ -219,21 +236,6 @@ func _physics_process(delta: float) -> void:
 		player = get_tree().get_first_node_in_group("player") as Node2D
 
 	var ai: int = _get_active_ai()
-	if player != null and is_instance_valid(player):
-		var preliminary_distance := global_position.distance_to(player.global_position)
-		_update_lod_tier(ai, preliminary_distance)
-		if (
-			_should_reduce_physics(ai)
-			and _is_lod_eligible(ai)
-			and stun_time <= 0.0
-			and knockback_vel == Vector2.ZERO
-		):
-			if not should_run_reduced_step(delta):
-				return
-			delta = consume_simulation_delta()
-			_simulation_motion_scale = delta / maxf(get_physics_process_delta_time(), 0.000001)
-		else:
-			should_run_far_step(delta)
 	_update_los_cache(delta, ai)
 	_tick_active_modules(delta, ai)
 
@@ -350,7 +352,7 @@ func _physics_process(delta: float) -> void:
 	_move_and_slide_scaled()
 
 	# Collision reaction remains immediate even when far steering is staggered.
-	var collided: bool = get_slide_collision_count() > 0
+	var collided: bool = _lod_tier < 2 and get_slide_collision_count() > 0
 	if refresh_steering or collided:
 		_horde_nav.post_move(chase, to_nav_target, delta, _lod_tier)
 	if collided and _lod_tier > 0:
@@ -380,12 +382,7 @@ func _tick_active_modules(delta: float, ai: int) -> void:
 
 func _update_lod_tier(ai: int, distance_to_player: float) -> void:
 	var next_tier := compute_population_lod_tier(ai, distance_to_player, _ambient_population)
-	if next_tier == _lod_tier:
-		return
-	_lod_tier = next_tier
-	_lod_force_refresh = true
-	_lod_steer_left = 0.0
-	_set_hitbox_active(not (lod_disable_far_hitbox and _lod_tier == 2))
+	set_scheduler_tier(next_tier)
 
 
 func compute_population_lod_tier(ai: int, distance_to_player: float, ambient_population: int) -> int:
@@ -425,6 +422,51 @@ func _is_lod_eligible(ai: int) -> bool:
 
 func simulation_tier() -> int:
 	return _lod_tier
+
+
+func set_scheduler_tier(tier: int) -> void:
+	var next_tier := clampi(tier, 0, 2)
+	var was_far := _lod_tier == 2
+	_lod_tier = next_tier
+	set_physics_process(_lod_tier == 0)
+	_lod_force_refresh = true
+	_lod_steer_left = 0.0
+	_apply_simulation_collision_roles()
+	if was_far and _lod_tier < 2:
+		reset_physics_interpolation()
+
+
+func run_full_simulation_next_frame() -> void:
+	set_scheduler_tier(0)
+
+
+func is_body_physics_enabled() -> bool:
+	if _body_shape == null or not is_instance_valid(_body_shape):
+		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
+	return _body_shape == null or not _body_shape.disabled
+
+
+func hitbox_roles() -> Dictionary:
+	if _hitbox == null or not is_instance_valid(_hitbox):
+		_hitbox = get_node_or_null("Hitbox") as Area2D
+	if _hitbox == null:
+		return {"monitoring": false, "monitorable": false}
+	return {"monitoring": _hitbox.monitoring, "monitorable": _hitbox.monitorable}
+
+
+func is_simulation_protected(player_distance: float) -> bool:
+	if is_retirement_protected(player_distance):
+		return true
+	# Smart archetypes keep their authored timing and attacks. The bulk scheduler
+	# currently reduces only the simple chase/split/leech population.
+	return not _is_lod_eligible(_get_active_ai())
+
+
+func simulation_priority(player_position: Vector2) -> float:
+	var priority := -global_position.distance_squared_to(player_position)
+	if stun_time > 0.0 or knockback_vel != Vector2.ZERO:
+		priority += 1000000000.0
+	return priority
 
 
 func should_run_far_step(delta: float) -> bool:
@@ -467,6 +509,9 @@ func consume_simulation_delta() -> float:
 
 
 func _move_and_slide_scaled() -> void:
+	if _lod_tier == 2:
+		global_position += velocity * maxf(_scheduled_step_delta, 0.0)
+		return
 	var motion_scale := maxf(_simulation_motion_scale, 1.0)
 	velocity *= motion_scale
 	move_and_slide()
@@ -510,14 +555,30 @@ func _lod_interval_for_tier() -> float:
 
 
 func _set_hitbox_active(value: bool) -> void:
+	_set_hitbox_roles(value and _get_active_ai() == EnemySpec.AI.LEECH, value)
+
+
+func _apply_simulation_collision_roles() -> void:
+	if _body_shape == null or not is_instance_valid(_body_shape):
+		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if _body_shape != null and _body_shape.disabled != (_lod_tier == 2):
+		_body_shape.set_deferred("disabled", _lod_tier == 2)
+	var participates_in_queries := _lod_tier < 2
+	_set_hitbox_roles(
+		participates_in_queries and _get_active_ai() == EnemySpec.AI.LEECH,
+		participates_in_queries
+	)
+
+
+func _set_hitbox_roles(active_monitoring: bool, can_be_monitored: bool) -> void:
 	if _hitbox == null or not is_instance_valid(_hitbox):
 		_hitbox = get_node_or_null("Hitbox") as Area2D
 	if _hitbox == null:
 		return
-	if _hitbox.monitoring != value:
-		_hitbox.set_deferred("monitoring", value)
-	if _hitbox.monitorable != value:
-		_hitbox.set_deferred("monitorable", value)
+	if _hitbox.monitoring != active_monitoring:
+		_hitbox.set_deferred("monitoring", active_monitoring)
+	if _hitbox.monitorable != can_be_monitored:
+		_hitbox.set_deferred("monitorable", can_be_monitored)
 
 
 func _update_enemy_index(force: bool) -> void:
@@ -585,9 +646,7 @@ func make_elite() -> void:
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_promoted", 1, {
 			"enemy_id": scene_file_path.get_file().get_basename(),
 		})
-	_lod_tier = 0
-	_lod_force_refresh = true
-	_set_hitbox_active(true)
+	set_scheduler_tier(0)
 	max_slides = 8
 	max_hp *= spec.elite_hp_mult
 	hp = max_hp

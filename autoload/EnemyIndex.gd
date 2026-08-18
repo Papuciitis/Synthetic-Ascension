@@ -146,7 +146,13 @@ func simulation_tier_counts() -> Dictionary:
 	var counts := {"near": 0, "mid": 0, "far": 0}
 	for enemy_variant in _enemies:
 		var enemy := enemy_variant as Node
-		if enemy == null or not is_instance_valid(enemy) or not enemy.has_method("simulation_tier"):
+		if (
+			enemy == null
+			or not is_instance_valid(enemy)
+			or enemy.is_queued_for_deletion()
+			or ("dead" in enemy and bool(enemy.get("dead")))
+			or not enemy.has_method("simulation_tier")
+		):
 			continue
 		var tier := int(enemy.call("simulation_tier"))
 		var key := "near" if tier <= 0 else ("mid" if tier == 1 else "far")
