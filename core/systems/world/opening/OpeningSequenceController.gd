@@ -1,6 +1,8 @@
 extends Node
 class_name OpeningSequenceController
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 signal sequence_finished
 
 enum Phase {
@@ -316,7 +318,7 @@ func _frame_position(world_position: Vector2, framed: bool) -> void:
 	_camera_tween.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	_camera_tween.set_trans(Tween.TRANS_QUAD)
 	_camera_tween.set_ease(Tween.EASE_OUT)
-	_camera_tween.tween_property(_camera, "position", target, 0.35)
+	_camera_tween.tween_property(_camera, "position", target, Accessibility.current_motion_duration(0.35))
 
 func _stop_camera_tween() -> void:
 	if _camera_tween != null and _camera_tween.is_valid():

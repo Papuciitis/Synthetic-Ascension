@@ -6,6 +6,8 @@ signal choice_selected(index: int)
 
 enum Style { HISTORICAL, DIALOGUE, INSTITUTIONAL, SYNTHETIC, FOLLOWER }
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 var _shade: ColorRect
 var _panel: PanelContainer
 var _eyebrow: Label
@@ -15,6 +17,9 @@ var _choices: VBoxContainer
 var _continue_button: Button
 var _prompt: Label
 var _waiting: bool = false
+var _revealing := false
+var _reveal_progress := 0.0
+var _has_choices := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -22,11 +27,27 @@ func _ready() -> void:
 	_build_ui()
 	hide_card()
 
+
+func _process(delta: float) -> void:
+	if not _revealing:
+		return
+	var characters_per_second := Accessibility.current_typewriter_characters_per_second()
+	if is_inf(characters_per_second):
+		_complete_reveal()
+		return
+	_reveal_progress += delta * characters_per_second
+	var total := _body.get_total_character_count()
+	_body.visible_characters = mini(total, int(_reveal_progress))
+	if _body.visible_characters >= total:
+		_complete_reveal()
+
+
 func _unhandled_input(event: InputEvent) -> void:
-	if not _waiting or not _panel.visible or not _choices.get_children().is_empty():
+	if not _waiting or not _panel.visible:
 		return
 	if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"ui_cancel"):
-		advance()
+		if _revealing or not _has_choices:
+			advance()
 
 func present_historical(mortal_name: String) -> void:
 	await present_card(
@@ -66,14 +87,17 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 	_eyebrow.text = eyebrow_value
 	_title.text = title_value
 	_body.text = body_value
+	_body.visible_characters = 0
+	_reveal_progress = 0.0
+	_revealing = _body.get_total_character_count() > 0
+	_has_choices = not choices.is_empty()
 	_panel.visible = true
 	_shade.visible = true
 	_waiting = true
 	_continue_button.text = button_text
-	_continue_button.visible = choices.is_empty()
-	if choices.is_empty():
-		_continue_button.grab_focus()
-	else:
+	_choices.visible = false
+	_continue_button.visible = _revealing or not _has_choices
+	if _has_choices:
 		for index in range(choices.size()):
 			var entry: Dictionary = choices[index] as Dictionary
 			var button := Button.new()
@@ -82,8 +106,12 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 			button.custom_minimum_size = Vector2(0.0, 42.0)
 			button.pressed.connect(_select_choice.bind(index))
 			_choices.add_child(button)
-		if not _choices.get_children().is_empty():
-			(_choices.get_child(0) as Button).grab_focus()
+	if _revealing and is_inf(Accessibility.current_typewriter_characters_per_second()):
+		_complete_reveal()
+	elif _revealing or not _has_choices:
+		_continue_button.grab_focus()
+	else:
+		_complete_reveal()
 	var result := -1
 	if choices.is_empty():
 		await advanced
@@ -94,9 +122,26 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 	return result
 
 func advance() -> void:
-	if not _waiting or not _choices.get_children().is_empty():
+	if not _waiting:
+		return
+	if _revealing:
+		_complete_reveal()
+		return
+	if _has_choices:
 		return
 	advanced.emit()
+
+
+func _complete_reveal() -> void:
+	_revealing = false
+	_body.visible_characters = -1
+	_reveal_progress = float(_body.get_total_character_count())
+	_choices.visible = _has_choices
+	_continue_button.visible = not _has_choices
+	if _has_choices and not _choices.get_children().is_empty():
+		(_choices.get_child(0) as Button).call_deferred("grab_focus")
+	elif not _has_choices:
+		_continue_button.call_deferred("grab_focus")
 
 func show_prompt(text_value: String) -> void:
 	_prompt.text = text_value
@@ -106,6 +151,7 @@ func hide_prompt() -> void:
 	_prompt.visible = false
 
 func hide_card() -> void:
+	_revealing = false
 	if _panel != null:
 		_panel.visible = false
 	if _shade != null:

@@ -1,6 +1,8 @@
 extends RefCounted
 class_name EnemyShooter
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 # "smart but not sniper" tuning
 const PEEK_TIME: float = 0.28
 const PEEK_PROBE_DIST: float = 54.0
@@ -399,10 +401,12 @@ func _spawn_projectile(to_player: Vector2) -> void:
 
 func _spawn_muzzle_flash(to_n: Vector2) -> void:
 	# Muzzle flash remains visual-only and does not create a collision object.
-	if _enemy.spec != null:
+	var flash_alpha := Accessibility.current_flash_alpha(1.0)
+	if _enemy.spec != null and flash_alpha > 0.0:
 		var mf: VFX_EnemyMuzzleFlash = VFX_EnemyMuzzleFlash.new()
 		_enemy.get_tree().current_scene.add_child(mf)
 		mf.setup(_enemy.global_position, to_n, _enemy.spec.id)
+		mf.modulate.a = flash_alpha
 
 func shoot_if_ready(to_player: Vector2) -> void:
 	if _enemy == null or not is_instance_valid(_enemy):

@@ -47,8 +47,9 @@ func _on_enemy_encountered(enemy: Node) -> void:
 	if Global != null and Global.is_enemy_discovered(enemy_id) and not Global.debug_force_enemy_introductions:
 		return
 	_session_enemy_ids[enemy_id] = true
-	var body := "“%s”\n\nRole: %s\nBehaviour: %s\nExpect: %s\nCounter: %s\n\n%s" % [
-		String(entry.get("quote", "")), String(entry.get("role", "")), String(entry.get("behaviour", "")),
+	var lore := "“%s”" % String(entry.get("quote", ""))
+	var body := "%s\n\nRole: %s\nBehaviour: %s\nExpect: %s\nCounter: %s\n\n%s" % [
+		lore, String(entry.get("role", "")), String(entry.get("behaviour", "")),
 		String(entry.get("expect", "")), String(entry.get("counter", "")), EnemyDossierCatalog.ratings(spec)
 	]
 	var texture := spec.sprite_texture
@@ -57,7 +58,7 @@ func _on_enemy_encountered(enemy: Node) -> void:
 		if sprite != null:
 			texture = sprite.texture
 	var dossier_name := String(entry.get("name", spec.display_name))
-	_enqueue({"token": 0, "title": dossier_name.to_upper(), "body": body, "eyebrow": "FIRST ENCOUNTER", "texture": texture, "enemy_id": enemy_id})
+	_enqueue({"token": 0, "title": dossier_name.to_upper(), "body": body, "eyebrow": "FIRST ENCOUNTER", "texture": texture, "enemy_id": enemy_id, "typewriter_character_limit": lore.length()})
 
 func _enqueue(card: Dictionary) -> void:
 	_queue.append(card)
@@ -76,7 +77,7 @@ func _drain_queue() -> void:
 			RunEvents.tutorial_modal_state_changed.emit(true)
 		var overlay := OVERLAY_SCENE.instantiate() as TutorialCardOverlay
 		get_tree().current_scene.add_child(overlay)
-		overlay.present(String(card.get("title", "")), String(card.get("body", "")), String(card.get("eyebrow", "")), card.get("texture", null) as Texture2D)
+		overlay.present(String(card.get("title", "")), String(card.get("body", "")), String(card.get("eyebrow", "")), card.get("texture", null) as Texture2D, int(card.get("typewriter_character_limit", -1)))
 		await overlay.dismissed
 		var enemy_id: StringName = card.get("enemy_id", &"") as StringName
 		if enemy_id != &"" and Global != null:

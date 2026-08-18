@@ -3,27 +3,67 @@ class_name TutorialCardOverlay
 
 signal dismissed
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 var _root: Control
 var _eyebrow: Label
 var _title: Label
 var _image: TextureRect
 var _body: Label
 var _button: Button
+var _revealing := false
+var _reveal_progress := 0.0
+var _typewriter_character_limit := 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 230
 	_build_ui()
 
-func present(title_text: String, body_text: String, eyebrow_text: String = "FIELD DOSSIER", texture: Texture2D = null) -> void:
+
+func _process(delta: float) -> void:
+	if not _revealing:
+		return
+	var characters_per_second := Accessibility.current_typewriter_characters_per_second()
+	if is_inf(characters_per_second):
+		_complete_reveal()
+		return
+	_reveal_progress += delta * characters_per_second
+	_body.visible_characters = mini(_typewriter_character_limit, int(_reveal_progress))
+	if _body.visible_characters >= _typewriter_character_limit:
+		_complete_reveal()
+
+
+func present(title_text: String, body_text: String, eyebrow_text: String = "FIELD DOSSIER", texture: Texture2D = null, typewriter_character_limit: int = -1) -> void:
 	_eyebrow.text = eyebrow_text
 	_title.text = title_text
 	_body.text = body_text
+	_body.visible_characters = 0
+	_reveal_progress = 0.0
+	var total := _body.get_total_character_count()
+	_typewriter_character_limit = total if typewriter_character_limit < 0 else mini(typewriter_character_limit, total)
+	_revealing = _typewriter_character_limit > 0
+	if not _revealing or is_inf(Accessibility.current_typewriter_characters_per_second()):
+		_complete_reveal()
 	_image.texture = texture
 	_image.visible = texture != null
 	_root.visible = true
 	await get_tree().process_frame
 	_button.grab_focus()
+
+
+func _on_continue_pressed() -> void:
+	if _revealing:
+		_complete_reveal()
+		return
+	_dismiss()
+
+
+func _complete_reveal() -> void:
+	_revealing = false
+	_body.visible_characters = -1
+	_reveal_progress = float(_body.get_total_character_count())
+
 
 func _dismiss() -> void:
 	if not _root.visible:
@@ -89,7 +129,6 @@ func _build_ui() -> void:
 	_button = Button.new()
 	_button.custom_minimum_size = Vector2(0, 48)
 	_button.text = "Continue"
-	_button.pressed.connect(_dismiss)
+	_button.pressed.connect(_on_continue_pressed)
 	box.add_child(_button)
 	_root.visible = false
-

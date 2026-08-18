@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name OpeningActor
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 signal engaged(actor: OpeningActor)
 signal defeated(actor: OpeningActor, source: Node)
 
@@ -105,7 +107,7 @@ func _apply_damage(amount: float, source: Node) -> void:
 		set_meta(&"opening_non_hostile", not hostile)
 		engaged.emit(self)
 	hp -= amount
-	_flash = 0.10
+	_flash = 0.10 if Accessibility.current_flash_alpha(1.0) > 0.0 else 0.0
 	queue_redraw()
 	if RunEvents != null and source != null:
 		RunEvents.damage_dealt.emit(source, amount)
@@ -135,7 +137,7 @@ func _die(source: Node) -> void:
 		SfxManager.play_2d(&"wardstone_complete" if role == &"calibration" else &"enemy_death", global_position)
 	defeated.emit(self, source)
 	var tween := create_tween()
-	tween.tween_property(self, "modulate", Color(0.2, 0.9, 1.0, 0.0), 0.75)
+	tween.tween_property(self, "modulate", Color(0.2, 0.9, 1.0, 0.0), Accessibility.current_motion_duration(0.75))
 	tween.tween_callback(queue_free)
 	queue_redraw()
 
@@ -154,7 +156,7 @@ func _draw() -> void:
 		main = Color("d7a34d")
 		edge = Color("fff0bd")
 	if _flash > 0.0:
-		main = Color.WHITE
+		main = main.lerp(Color.WHITE, Accessibility.current_flash_alpha(1.0))
 	if dead:
 		main.a = 0.45
 		edge.a = 0.35

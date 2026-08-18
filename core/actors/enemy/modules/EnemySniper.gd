@@ -1,6 +1,8 @@
 extends RefCounted
 class_name EnemySniper
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 enum State { IDLE, RELOCATE, WINDUP }
 
 var _owner: EnemyActor = null
@@ -614,12 +616,15 @@ func _read_spec_float(spec: Object, prop: StringName, fallback: float) -> float:
 
 
 func _spawn_beam_flash(from: Vector2, to: Vector2, width: float) -> void:
+	var alpha := Accessibility.current_flash_alpha(0.95)
+	if alpha <= 0.0:
+		return
 	var flash := Line2D.new()
 	flash.top_level = true
 	flash.antialiased = true
 	flash.z_index = 260
 	flash.width = width * 1.05
-	flash.default_color = Color(1, 1, 1, 0.95)
+	flash.default_color = Color(1, 1, 1, alpha)
 	flash.joint_mode = Line2D.LINE_JOINT_ROUND
 	flash.begin_cap_mode = Line2D.LINE_CAP_ROUND
 	flash.end_cap_mode = Line2D.LINE_CAP_ROUND
@@ -639,12 +644,15 @@ func _spawn_beam_flash(from: Vector2, to: Vector2, width: float) -> void:
 
 
 func _spawn_end_pop(pos: Vector2, dir: Vector2, width: float) -> void:
+	var alpha := Accessibility.current_flash_alpha(0.9)
+	if alpha <= 0.0:
+		return
 	var pop := Line2D.new()
 	pop.top_level = true
 	pop.antialiased = true
 	pop.z_index = 261
 	pop.width = maxf(2.0, width * 0.10)
-	pop.default_color = Color(1.0, 0.85, 0.45, 0.9)
+	pop.default_color = Color(1.0, 0.85, 0.45, alpha)
 	pop.joint_mode = Line2D.LINE_JOINT_ROUND
 	pop.begin_cap_mode = Line2D.LINE_CAP_ROUND
 	pop.end_cap_mode = Line2D.LINE_CAP_ROUND

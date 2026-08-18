@@ -1,6 +1,8 @@
 extends CanvasLayer
 class_name MajorChoice
 
+const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+
 signal choice_committed(choice_id: StringName)
 
 @export var card_scene: PackedScene
@@ -160,8 +162,8 @@ func _play_open_anim() -> void:
 	_open_tw = create_tween()
 	_open_tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
 	_open_tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	_open_tw.tween_property(overlay, "modulate", Color(1, 1, 1, 1), 0.12)
+	_open_tw.tween_property(overlay, "modulate", Color(1, 1, 1, 1), Accessibility.current_motion_duration(0.12))
 
 	if window != null:
-		_open_tw.parallel().tween_property(window, "modulate", Color(1, 1, 1, 1), 0.12)
-		_open_tw.parallel().tween_property(window, "scale", Vector2(1, 1), 0.16).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		_open_tw.parallel().tween_property(window, "modulate", Color(1, 1, 1, 1), Accessibility.current_motion_duration(0.12))
+		_open_tw.parallel().tween_property(window, "scale", Vector2(1, 1), Accessibility.current_motion_duration(0.16)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
