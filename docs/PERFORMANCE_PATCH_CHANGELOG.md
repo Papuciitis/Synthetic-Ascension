@@ -242,7 +242,7 @@ separately and does not count them as blocker-node regressions.
   counters. Recurring follower-transaction and Conduit ArcBolts logs are disabled unless their
   explicit debug flags are enabled.
 
-Fresh Godot 4.7.1 verification passed 211 focused assertions, a 480-enemy lifecycle stress test
+Fresh Godot 4.7.1 verification passed 200 focused assertions/audit gates, a 480-enemy lifecycle stress test
 with zero failures, and the existing chunk audit. The 180-enemy synthetic simulation benchmark
 improved from 379.15 ms to 89.17 ms across 120 frames (4.25x speedup, 0.743 ms per adaptive frame).
 These are deterministic test results; the next gameplay capture is required to establish the live
