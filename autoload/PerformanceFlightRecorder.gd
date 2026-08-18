@@ -218,9 +218,16 @@ func _collect_slow_snapshot() -> Dictionary:
 		"enemy_tiers": {},
 		"enemy_scheduler": {},
 		"enemy_pool": {},
+		"enemy_world_logical": 0,
+		"enemy_world_materialized": 0,
+		"enemy_world_data_only": 0,
+		"enemy_world_dying": 0,
+		"enemy_world_spatial_cells": 0,
+		"enemy_world_max_cell_occupancy": 0,
 		"projectiles": 0,
 		"chunks": 0,
 		"flow_building": false,
+		"flow_revision": 0,
 		"segment": Global.attempt_segment if Global != null else 0,
 		"threat": 0.0,
 		"resonance": 0.0,
@@ -236,6 +243,15 @@ func _collect_slow_snapshot() -> Dictionary:
 		output["ambient_enemies"] = int(counters.get("ambient", 0))
 		output["special_enemies"] = int(counters.get("special", 0))
 		output["enemy_tiers"] = counters.get("tiers", {})
+	var enemy_world := get_node_or_null("/root/EnemyWorld")
+	if enemy_world != null and enemy_world.has_method("get_debug_counters"):
+		var world_data := enemy_world.call("get_debug_counters") as Dictionary
+		output["enemy_world_logical"] = int(world_data.get("logical", 0))
+		output["enemy_world_materialized"] = int(world_data.get("materialized", 0))
+		output["enemy_world_data_only"] = int(world_data.get("data_only", 0))
+		output["enemy_world_dying"] = int(world_data.get("dying", 0))
+		output["enemy_world_spatial_cells"] = int(world_data.get("spatial_cells", 0))
+		output["enemy_world_max_cell_occupancy"] = int(world_data.get("max_cell_occupancy", 0))
 	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
 	if scheduler != null and scheduler.has_method("get_debug_counters"):
 		output["enemy_scheduler"] = (scheduler.call("get_debug_counters") as Dictionary).duplicate(true)
@@ -255,7 +271,7 @@ func _collect_slow_snapshot() -> Dictionary:
 	if flow != null and flow.has_method("get_debug_counters"):
 		var flow_data := flow.call("get_debug_counters") as Dictionary
 		output["flow_building"] = bool(flow_data.get("building", false))
-		output["flow_revision"] = int(flow_data.get("revision", 0))
+		output["flow_revision"] = int(flow_data.get("last_revision", 0))
 	return output
 
 

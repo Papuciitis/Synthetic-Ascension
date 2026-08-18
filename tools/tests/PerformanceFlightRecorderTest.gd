@@ -1,5 +1,30 @@
 extends Node
 
+const SpawnState = preload("res://core/systems/enemy_world/EnemySpawnState.gd")
+const WorldTypes = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
+
+class FlowCounterFixture:
+	extends Node
+
+	func get_debug_counters() -> Dictionary:
+		return {
+			"requested": 2,
+			"started": 2,
+			"completed": 1,
+			"superseded": 0,
+			"cells_total": 100,
+			"cpu_us_total": 1000,
+			"last_cells": 100,
+			"last_cpu_us": 1000,
+			"last_request_reason": &"test",
+			"last_completed_reason": &"test",
+			"player_moved": 0,
+			"last_revision": 37,
+			"pending_revision": 38,
+			"pending": false,
+			"building": false,
+		}
+
 var _passes := 0
 var _failures := 0
 
@@ -36,9 +61,46 @@ func _run() -> void:
 		"write_reports": false,
 	})
 	recorder.set_enabled(true)
+	var world := get_node_or_null("/root/EnemyWorld")
+	_check(world != null, "enemy world exists for recorder sampling")
+	var logical_handles: Array[int] = []
+	if world != null:
+		world.call("clear_world")
+		for i in range(500):
+			var row := floori(float(i) / 25.0)
+			var handle := int(world.call(
+				"create_enemy",
+				SpawnState.new(
+					&"recorder_fixture",
+					"res://recorder_fixture.tscn",
+					Vector2(float(i % 25) * 64.0, float(row) * 64.0),
+					10.0,
+					10.0,
+					5.0,
+					0,
+				),
+			))
+			logical_handles.append(handle)
+			if i < 64:
+				world.call("set_representation", handle, WorldTypes.Representation.MATERIALIZED)
+	var flow_fixture := FlowCounterFixture.new()
+	add_child(flow_fixture)
+	flow_fixture.add_to_group(&"flow_field_nav")
 	var slow_snapshot := recorder.call("_collect_slow_snapshot") as Dictionary
 	var scheduler_data := slow_snapshot.get("enemy_scheduler", {}) as Dictionary
 	var pool_data := slow_snapshot.get("enemy_pool", {}) as Dictionary
+	_check(int(slow_snapshot.get("enemy_world_logical", -1)) == 500, "recorder samples logical enemies")
+	_check(int(slow_snapshot.get("enemy_world_materialized", -1)) == 64, "recorder samples materialized enemies")
+	_check(int(slow_snapshot.get("enemy_world_data_only", -1)) == 436, "recorder samples data-only enemies")
+	_check(int(slow_snapshot.get("enemy_world_dying", -1)) == 0, "recorder samples dying enemies")
+	_check(int(slow_snapshot.get("enemy_world_spatial_cells", -1)) > 0, "recorder samples spatial cells")
+	_check(int(slow_snapshot.get("enemy_world_max_cell_occupancy", -1)) >= 1, "recorder samples cell occupancy")
+	_check(int(slow_snapshot.get("flow_revision", -1)) == 37, "recorder reads the actual flow revision key")
+	if world != null:
+		for handle in logical_handles:
+			world.call("remove_enemy", handle, &"recorder_test_cleanup")
+	flow_fixture.remove_from_group(&"flow_field_nav")
+	flow_fixture.free()
 	for key in [&"full", &"mid", &"far", &"protected", &"physics_enabled", &"mid_steps", &"far_steps", &"assignment_usec"]:
 		_check(scheduler_data.has(key), "slow snapshot includes scheduler %s" % key)
 	for key in [&"reuse_hits", &"releases", &"inactive"]:
