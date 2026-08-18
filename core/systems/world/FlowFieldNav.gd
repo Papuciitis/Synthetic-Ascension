@@ -20,6 +20,8 @@ const STEPS: PackedVector2Array = [
 # Incremental build budget
 @export var max_expansions_per_frame: int = 2500
 @export var max_ms_per_frame: float = 1.5
+@export var pressured_ms_per_frame: float = 0.5
+@export var nav_revision_debounce: float = 0.20
 
 # Makes flow prefer corridor centers instead of wall-hugging.
 @export var prefer_open_cells: bool = true
@@ -32,6 +34,9 @@ var _player: Node2D = null
 
 var _origin_cell: Vector2i = Vector2i.ZERO
 var _last_nav_revision: int = -1
+var _active_generation: int = 0
+var _build_origin_cell: Vector2i = Vector2i.ZERO
+var _build_nav_revision: int = -1
 
 # local grid buffers (square around origin)
 var _w: int = 0
@@ -44,6 +49,11 @@ var _stamp: PackedInt32Array = PackedInt32Array()
 var _dist: PackedInt32Array = PackedInt32Array()
 var _dirx: PackedInt32Array = PackedInt32Array()
 var _diry: PackedInt32Array = PackedInt32Array()
+var _build_stamp_id: int = 1
+var _build_stamp: PackedInt32Array = PackedInt32Array()
+var _build_dist: PackedInt32Array = PackedInt32Array()
+var _build_dirx: PackedInt32Array = PackedInt32Array()
+var _build_diry: PackedInt32Array = PackedInt32Array()
 
 # BFS queue (preallocated)
 var _queue: PackedInt32Array = PackedInt32Array()
@@ -57,6 +67,8 @@ var _pending: bool = true
 var _pending_cell: Vector2i = Vector2i.ZERO
 var _pending_rev: int = -1
 var _last_request_cell: Vector2i = Vector2i(999999, 999999)
+var _last_requested_revision: int = -1
+var _revision_debounce_left: float = 0.0
 
 # lazy walkability + penalty caches (per rebuild stamp)
 var _walk_stamp_id: int = 1
@@ -105,6 +117,15 @@ func _process(delta: float) -> void:
 	_request_rebuild_if_needed(pc, rev)
 
 	_time_accum += delta
+	_revision_debounce_left = maxf(0.0, _revision_debounce_left - maxf(0.0, delta))
+	if (
+		_pending
+		and _building
+		and _pending_rev != _build_nav_revision
+		and _revision_debounce_left <= 0.0
+	):
+		_building = false
+		_debug_superseded += 1
 
 	if _pending and not _building and _time_accum >= rebuild_interval:
 		_time_accum = 0.0
@@ -139,6 +160,10 @@ func _ensure_buffers() -> void:
 	_dist.resize(_grid_size)
 	_dirx.resize(_grid_size)
 	_diry.resize(_grid_size)
+	_build_stamp.resize(_grid_size)
+	_build_dist.resize(_grid_size)
+	_build_dirx.resize(_grid_size)
+	_build_diry.resize(_grid_size)
 	_queue.resize(_grid_size)
 
 	_walk_stamp.resize(_grid_size)
@@ -151,6 +176,7 @@ func _ensure_buffers() -> void:
 
 	_building = false
 	_pending = true
+	_active_generation = 0
 
 
 func _request_rebuild_if_needed(player_cell: Vector2i, nav_revision: int) -> void:
@@ -162,15 +188,14 @@ func _request_rebuild_if_needed(player_cell: Vector2i, nav_revision: int) -> voi
 	var dy: int = absi(player_cell.y - _last_request_cell.y)
 	var cheb: int = maxi(dx, dy)
 
-	if nav_revision != _last_nav_revision:
+	if nav_revision != _last_requested_revision:
 		if _pending and _pending_rev == nav_revision:
 			if cheb >= maxi(1, rebuild_cell_step):
 				_request_rebuild(player_cell, nav_revision, &"player_moved", true)
 			return
-		if _building:
-			_building = false
-			_debug_superseded += 1
 		_request_rebuild(player_cell, nav_revision, &"nav_revision", false)
+		if _building:
+			_revision_debounce_left = maxf(0.0, nav_revision_debounce)
 		return
 
 	if cheb >= maxi(1, rebuild_cell_step):
@@ -185,6 +210,7 @@ func _request_rebuild(player_cell: Vector2i, nav_revision: int, reason: StringNa
 	_pending = true
 	_pending_cell = player_cell
 	_pending_rev = nav_revision
+	_last_requested_revision = nav_revision
 	_last_request_cell = player_cell
 	_debug_requested += 1
 	_debug_last_request_reason = reason
@@ -201,14 +227,14 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 	if _cm == null:
 		return
 
-	_origin_cell = player_cell
-	_last_nav_revision = nav_revision
+	_build_origin_cell = player_cell
+	_build_nav_revision = nav_revision
 
-	_stamp_id += 1
-	if _stamp_id >= 2000000000:
+	_build_stamp_id += 1
+	if _build_stamp_id >= 2000000000:
 		for i in range(_grid_size):
-			_stamp[i] = 0
-		_stamp_id = 1
+			_build_stamp[i] = 0
+		_build_stamp_id = 1
 
 	# new cache stamps for this rebuild
 	_walk_stamp_id += 1
@@ -231,10 +257,10 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 	var oy: int = _r
 	var oidx: int = ox + oy * _w
 
-	_stamp[oidx] = _stamp_id
-	_dist[oidx] = 0
-	_dirx[oidx] = 0
-	_diry[oidx] = 0
+	_build_stamp[oidx] = _build_stamp_id
+	_build_dist[oidx] = 0
+	_build_dirx[oidx] = 0
+	_build_diry[oidx] = 0
 
 	_queue[_q_tail] = oidx
 	_q_tail += 1
@@ -257,7 +283,7 @@ func _step_build() -> void:
 
 	var start_us: int = Time.get_ticks_usec()
 	var processed: int = 0
-	var max_us: int = int(max_ms_per_frame * 1000.0)
+	var max_us: int = int(current_build_budget_ms() * 1000.0)
 
 	while _q_head < _q_tail:
 		if processed >= max_expansions_per_frame:
@@ -269,7 +295,7 @@ func _step_build() -> void:
 		_q_head += 1
 		processed += 1
 
-		var cur_dist: int = _dist[cur_idx]
+		var cur_dist: int = _build_dist[cur_idx]
 		if cur_dist >= _r:
 			continue
 
@@ -285,6 +311,7 @@ func _step_build() -> void:
 	_debug_build_cpu_us += elapsed_us
 	if _q_head >= _q_tail:
 		_building = false
+		_publish_completed_build()
 		_debug_completed += 1
 		_debug_last_cells = _debug_current_cells
 		_debug_last_cpu_us = _debug_current_cpu_us
@@ -352,13 +379,13 @@ func _expand_neighbors(cx: int, cy: int, parent_dist: int) -> void:
 
 func _visit(nx: int, ny: int, parent_dist: int, dir_to_origin_x: int, dir_to_origin_y: int) -> void:
 	var nidx: int = nx + ny * _w
-	if _stamp[nidx] == _stamp_id:
+	if _build_stamp[nidx] == _build_stamp_id:
 		return
 
-	_stamp[nidx] = _stamp_id
-	_dist[nidx] = parent_dist + 1
-	_dirx[nidx] = dir_to_origin_x
-	_diry[nidx] = dir_to_origin_y
+	_build_stamp[nidx] = _build_stamp_id
+	_build_dist[nidx] = parent_dist + 1
+	_build_dirx[nidx] = dir_to_origin_x
+	_build_diry[nidx] = dir_to_origin_y
 
 	_queue[_q_tail] = nidx
 	_q_tail += 1
@@ -378,8 +405,8 @@ func _is_walkable(lx: int, ly: int) -> bool:
 
 	_walk_stamp[idx] = _walk_stamp_id
 
-	var gx: int = _origin_cell.x + (lx - _r)
-	var gy: int = _origin_cell.y + (ly - _r)
+	var gx: int = _build_origin_cell.x + (lx - _r)
+	var gy: int = _build_origin_cell.y + (ly - _r)
 	var ok: bool = _cm.is_cell_walkable(Vector2i(gx, gy))
 
 	_walkable[idx] = 1 if ok else 0
@@ -504,6 +531,37 @@ func sample_cost(world_pos: Vector2) -> int:
 		return 1_000_000_000
 
 	return int(_dist[idx])
+
+
+func _publish_completed_build() -> void:
+	var old_stamp := _stamp
+	var old_dist := _dist
+	var old_dirx := _dirx
+	var old_diry := _diry
+	_stamp = _build_stamp
+	_dist = _build_dist
+	_dirx = _build_dirx
+	_diry = _build_diry
+	_build_stamp = old_stamp
+	_build_dist = old_dist
+	_build_dirx = old_dirx
+	_build_diry = old_diry
+	_stamp_id = _build_stamp_id
+	_origin_cell = _build_origin_cell
+	_last_nav_revision = _build_nav_revision
+	_active_generation += 1
+
+
+func current_build_budget_ms() -> float:
+	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+	if scheduler != null and scheduler.has_method("is_under_physics_pressure"):
+		if bool(scheduler.call("is_under_physics_pressure")):
+			return maxf(0.0, pressured_ms_per_frame)
+	return maxf(0.0, max_ms_per_frame)
+
+
+func debug_active_generation() -> int:
+	return _active_generation
 
 
 func get_debug_counters() -> Dictionary:

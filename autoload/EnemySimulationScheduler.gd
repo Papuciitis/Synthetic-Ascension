@@ -19,6 +19,7 @@ var _mid_groups: Array = []
 var _far_groups: Array = []
 var _mid_cursor: int = 0
 var _far_cursor: int = 0
+var _physics_pressure_override: Variant = null
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -185,7 +186,13 @@ func get_debug_counters() -> Dictionary:
 
 
 func is_under_physics_pressure() -> bool:
+	if _physics_pressure_override != null:
+		return bool(_physics_pressure_override)
 	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0 > physics_pressure_ms
+
+
+func set_physics_pressure_override(value: Variant) -> void:
+	_physics_pressure_override = value
 
 
 func _is_valid_candidate(enemy: Node) -> bool:
