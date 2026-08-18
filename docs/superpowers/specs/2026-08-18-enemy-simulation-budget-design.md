@@ -5,7 +5,9 @@
 Keep large ambient hordes responsive without allowing the number of nearby
 `CharacterBody2D` actors to determine frame time. Preserve combat, navigation,
 boss, objective, leech, projectile, and retirement behavior while making full
-physics simulation a bounded resource.
+physics simulation a bounded resource. The architecture must support raising
+the living-enemy population beyond 500 without raising the full-physics budget
+by the same amount.
 
 ## Evidence and success criteria
 
@@ -25,6 +27,8 @@ The implementation succeeds when a repeated run:
 - preserves projectile hits and leech contact behavior in every eligible tier;
 - exposes enough recorder data to compare assigned tiers, scheduled work,
   physics membership, flow work, and pool activity;
+- assigns deterministic bounded tiers for a synthetic population of at least
+  500 ordinary enemies without dropping or duplicating actors;
 - passes all existing lifecycle, projectile, navigation, chunk, recorder, and
   integration tests without new parser warnings.
 
@@ -49,12 +53,18 @@ Default ordinary-ambient budgets are:
 
 - full: 32 actors;
 - mid: 48 additional actors;
-- far: all remaining actors up to the existing population cap.
+- far: every remaining actor, independent of the configured population cap.
 
 These defaults are deliberately conservative and exported for recorder-driven
 tuning. Protected actors do not consume the ordinary budgets. Protected means
 bosses, minibosses, elites, objectives, tutorial actors, active authored
 encounters, never-cull actors, and combat-committed snipers.
+
+The current 180-220 population limits remain safety controls during the first
+runtime validation, not scheduler assumptions. After the full/mid budgets are
+proven on the current game, population can be raised independently toward 500+
+while far actors remain cheap proxies. Spawn pacing and encounter balance are
+separate tuning concerns and are not changed by this implementation.
 
 Full actors retain their normal `_physics_process` callback. Mid and far actors
 disable their individual physics callback. The scheduler processes mid actors
@@ -180,6 +190,7 @@ Tests are written before each production change and must fail for the missing
 behavior. Focused tests cover:
 
 - deterministic hard budgets and protected-actor exemptions;
+- deterministic assignment of a 500-actor synthetic horde;
 - hysteresis and stable ranking;
 - mid/far rotating tick groups and accumulated delta;
 - physics-shape and hitbox-role transitions;
