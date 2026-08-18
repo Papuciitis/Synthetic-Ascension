@@ -27,6 +27,7 @@ var _special_reserved_by_kind: Dictionary = {}
 var _retired_counts: Dictionary = {}
 var _elite_ids: Dictionary = {} # int -> true, for live (counted) elites
 var _suppress_register_events: bool = false
+var _world_mirror_failures: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -58,6 +59,8 @@ func register(enemy: Node) -> void:
 	var cell := _cell_for_pos((enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO)
 	_enemy_cell[id] = cell
 	_bucket_add(cell, enemy)
+	if enemy is Node2D and EnemyWorld.adopt_legacy_actor(enemy as Node2D) == 0:
+		_world_mirror_failures += 1
 	# The event payload builds four Strings; only pay for it when the recorder is
 	# actually armed, and never for prune_invalid's silent re-registration.
 	if (
@@ -73,11 +76,13 @@ func register(enemy: Node) -> void:
 		})
 
 func unregister(enemy: Node) -> void:
-	if enemy == null:
+	if enemy == null or not is_instance_valid(enemy):
 		return
 	var id := enemy.get_instance_id()
 	if not _id_to_index.has(id):
 		return
+	if enemy is Node2D:
+		EnemyWorld.release_legacy_actor(enemy as Node2D, &"legacy_unregistered")
 
 	# Population counts
 	var p: String = enemy.scene_file_path
@@ -109,6 +114,8 @@ func mark_dead(enemy: Node) -> void:
 	var id: int = int(enemy.get_instance_id())
 	if not _id_to_index.has(id) or not bool(_population_counted.get(id, false)):
 		return
+	if enemy is Node2D:
+		EnemyWorld.sync_legacy_actor(enemy as Node2D)
 	var scene_path: String = enemy.scene_file_path
 	_decrement_counter(_scene_counts, scene_path)
 	_unregister_population_class(enemy, scene_path)
@@ -145,6 +152,7 @@ func update_enemy(enemy: Node) -> void:
 		return
 	if not (enemy is Node2D):
 		return
+	EnemyWorld.sync_legacy_actor(enemy as Node2D)
 	var new_cell := _cell_for_pos((enemy as Node2D).global_position)
 	var old_cell: Vector2i = _enemy_cell.get(id, new_cell)
 	if new_cell == old_cell:
@@ -185,6 +193,7 @@ func get_debug_counters() -> Dictionary:
 		"retired": _retired_counts.duplicate(),
 		"tiers": simulation_tier_counts(),
 		"buckets": _buckets.size(),
+		"world_mirror_failures": _world_mirror_failures,
 	}
 
 func prune_invalid() -> int:
@@ -194,9 +203,11 @@ func prune_invalid() -> int:
 	var valid_enemies: Array = []
 	var seen_ids: Dictionary = {}
 	for enemy_variant in _enemies:
-		var enemy := enemy_variant as Node
-		if enemy == null or not is_instance_valid(enemy):
+		if enemy_variant == null or not is_instance_valid(enemy_variant):
 			continue
+		if not (enemy_variant is Node):
+			continue
+		var enemy: Node = enemy_variant
 		if enemy.is_queued_for_deletion() or not enemy.is_inside_tree():
 			continue
 		var enemy_id: int = int(enemy.get_instance_id())
@@ -207,6 +218,8 @@ func prune_invalid() -> int:
 
 	if valid_enemies.size() == previous_count:
 		return 0
+
+	EnemyWorld.rebuild_legacy_shadow(valid_enemies)
 
 	_enemies.clear()
 	_id_to_index.clear()
@@ -243,6 +256,8 @@ func note_elite(enemy: Node) -> void:
 	var id := enemy.get_instance_id()
 	if _id_to_index.has(id) and bool(_population_counted.get(id, false)):
 		_elite_ids[id] = true
+		if enemy is Node2D:
+			EnemyWorld.sync_legacy_actor(enemy as Node2D)
 
 
 func try_reserve_special(kind: StringName, requested: int) -> int:

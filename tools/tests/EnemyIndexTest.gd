@@ -3,6 +3,9 @@ extends Node
 # Covers the EnemyIndex spatial-query radius clamp, swap-remove bucket
 # maintenance, and live elite population tracking.
 
+const SpawnState = preload("res://core/systems/enemy_world/EnemySpawnState.gd")
+const WorldTypes = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
+
 class DummyEnemy:
 	extends Node2D
 	var dead := false
@@ -36,14 +39,23 @@ func _spawn_dummy(index: Node, pos: Vector2, elite: bool = false) -> DummyEnemy:
 
 func _run() -> void:
 	var index := get_node_or_null("/root/EnemyIndex")
+	var world := get_node_or_null("/root/EnemyWorld")
 	_check(index != null, "enemy index autoload exists")
-	if index == null:
+	_check(world != null, "enemy world autoload exists")
+	if index == null or world == null:
 		_finish()
 		return
+	var world_baseline := int(world.call("active_count"))
 
 	var near := _spawn_dummy(index, Vector2(40.0, 0.0))
 	var mid := _spawn_dummy(index, Vector2(400.0, 0.0))
 	var far := _spawn_dummy(index, Vector2(3000.0, 0.0))
+	_check(int(world.call("active_count")) == world_baseline + 3, "index registration mirrors logical records")
+	var near_handle := int(world.call("handle_for_actor", near))
+	_check(near_handle != 0, "registered enemy receives a stable handle")
+	near.global_position = Vector2(96.0, 12.0)
+	index.call("update_enemy", near)
+	_check(world.call("get_position", near_handle) == near.global_position, "index movement synchronizes logical position")
 
 	# --- Radius clamp: huge radii must degrade to an occupied-bucket scan ---
 	var started := Time.get_ticks_usec()
@@ -102,6 +114,10 @@ func _run() -> void:
 		near.is_elite = true
 		index.call("note_elite", near)
 		_check(int(index.call("elite_alive_count")) == baseline + 2, "promoting a registered enemy increments the live elite count")
+		_check(
+			WorldTypes.has_flag(int(world.call("get_flags", near_handle)), WorldTypes.Flags.ELITE),
+			"elite promotion synchronizes the logical record",
+		)
 		index.call("note_elite", near)
 		_check(int(index.call("elite_alive_count")) == baseline + 2, "double promotion does not double count")
 		index.call("mark_dead", elite)
@@ -114,11 +130,30 @@ func _run() -> void:
 		index.call("unregister", elite)
 		elite.queue_free()
 
+	# Maintenance rebuilds only legacy shadow records. Native logical records
+	# already owned by EnemyWorld must survive an EnemyIndex repair pass.
+	var native_handle := int(world.call(
+		"create_enemy",
+		SpawnState.new(&"native", "res://native.tscn", Vector2(9000.0, 0.0), 10.0, 10.0, 5.0, 0),
+	))
+	var stale := _spawn_dummy(index, Vector2(1200.0, 0.0))
+	stale.queue_free()
+	var externally_freed := _spawn_dummy(index, Vector2(1300.0, 0.0))
+	externally_freed.free()
+	_check(int(index.call("prune_invalid")) == 2, "index maintenance prunes queued and externally freed actors")
+	_check(bool(world.call("is_valid_handle", native_handle)), "index rebuild preserves native logical records")
+	_check(
+		int(world.call("active_count")) == int(index.call("alive_count")) + 1,
+		"world mirrors valid index actors without duplicating them",
+	)
+
 	index.call("unregister", mid)
 	index.call("unregister", far)
+	world.call("remove_enemy", native_handle, &"test_cleanup")
 	near.queue_free()
 	mid.queue_free()
 	far.queue_free()
+	_check(int(world.call("active_count")) == world_baseline, "index cleanup returns world count to baseline")
 	_finish()
 
 
