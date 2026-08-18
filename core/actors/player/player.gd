@@ -1,5 +1,8 @@
 extends CharacterBody2D
 
+const AimState := preload("res://core/actors/player/PlayerAimState.gd")
+const AimReticle := preload("res://core/actors/player/PlayerAimReticle.gd")
+
 signal hp_changed(current: float, max_hp: float)
 
 @export var speed: float = 300.0
@@ -59,6 +62,8 @@ var _contact_sources: Dictionary = {} # enemy instance id -> {node, overlap_coun
 var is_dead: bool = false
 var _cinematic_move_locked: bool = false
 var _cinematic_attack_locked: bool = false
+var _aim_state: RefCounted = AimState.new()
+var _aim_reticle: Node2D
 
 var invulnerable_time: float = 0.0
 
@@ -124,6 +129,8 @@ func _ready() -> void:
 		$AugmentRunner.call("refresh")
 
 	_connect_style_sustain_signals()
+	_aim_reticle = AimReticle.new()
+	add_child(_aim_reticle)
 
 
 func _exit_tree() -> void:
@@ -168,7 +175,7 @@ func _process(delta: float) -> void:
 			print("[SETS] counts = ", Global.run_inventory.get_set_counts())
 
 	if not _cinematic_attack_locked and Input.is_action_just_pressed("attack"):
-		_fire_weapon(get_global_mouse_position())
+		_fire_weapon(_current_aim_target())
 
 	if not _cinematic_attack_locked and Input.is_action_just_pressed("alt_attack"):
 		if spell_caster != null:
@@ -180,13 +187,15 @@ func _process(delta: float) -> void:
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
 		_debug_dump_sets()
+	if event is InputEventMouseMotion:
+		_aim_state.note_mouse_motion()
 
 
 func _physics_process(_delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
 		return
-	var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
 	velocity = dir * get_effective_move_speed()
 	move_and_slide()
@@ -194,8 +203,20 @@ func _physics_process(_delta: float) -> void:
 	if dir != Vector2.ZERO:
 		rotation = dir.angle()
 
+	var deadzone := 0.2 if SettingsManager == null else float(SettingsManager.get_value(&"controls", &"controller_deadzone", 0.2))
+	var stick_aim := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
+	_aim_state.update_stick(stick_aim, deadzone)
+	var aim_direction: Vector2 = _aim_state.direction() if _aim_state.using_controller() else (get_global_mouse_position() - global_position).normalized()
+	if aim_direction == Vector2.ZERO:
+		aim_direction = Vector2.RIGHT
 	if aim_pivot != null:
-		aim_pivot.global_rotation = (get_global_mouse_position() - global_position).angle()
+		aim_pivot.global_rotation = aim_direction.angle()
+	if _aim_reticle != null:
+		_aim_reticle.set_aim(global_position, aim_direction, _aim_state.using_controller())
+
+
+func _current_aim_target() -> Vector2:
+	return _aim_state.resolve_target(_attack_origin(), get_global_mouse_position(), 900.0)
 
 
 func get_effective_move_speed() -> float:
