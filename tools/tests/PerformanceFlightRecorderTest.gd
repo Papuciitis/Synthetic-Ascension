@@ -77,6 +77,33 @@ func _run() -> void:
 	var report_file := FileAccess.open(String(report_result.get("json_path", "")), FileAccess.READ)
 	var parsed: Variant = JSON.parse_string(report_file.get_as_text()) if report_file != null else null
 	_check(parsed is Dictionary and int((parsed as Dictionary).get("schema_version", 0)) == 1, "JSON report has versioned schema")
+
+	recorder.clear_session()
+	recorder.configure({
+		"automatic_capture": false,
+		"write_reports": true,
+		"aftermath_seconds": 0.05,
+		"cooldown_seconds": 0.0,
+	})
+	recorder.set("report_directory", "user://performance_capture_async_tests")
+	var completed_report_paths: Array[String] = []
+	recorder.incident_finalized.connect(func(_summary: Dictionary, path: String) -> void:
+		completed_report_paths.append(path)
+	)
+	recorder.mark_incident(&"async_write_test")
+	var async_start := Time.get_ticks_usec()
+	for i in range(6):
+		recorder.ingest_sample(_sample(async_start + i * 16_667, 18.0))
+	_check(int(recorder.get_status_snapshot().get("pending_reports", 0)) == 1, "finalized report is queued off the game thread")
+	recorder.set_process(true)
+	var async_deadline := Time.get_ticks_msec() + 3000
+	while completed_report_paths.is_empty() and Time.get_ticks_msec() < async_deadline:
+		await get_tree().process_frame
+	recorder.set_process(false)
+	_check(completed_report_paths.size() == 1, "background report completion returns to the recorder")
+	if completed_report_paths.size() == 1:
+		_check(FileAccess.file_exists(completed_report_paths[0]), "background recorder writes the JSON report")
+	_check(int(recorder.get_status_snapshot().get("pending_reports", -1)) == 0, "completed background report leaves no pending work")
 	recorder.queue_free()
 	_finish()
 

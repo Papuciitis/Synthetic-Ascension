@@ -10,6 +10,7 @@ const SCHEMA_VERSION := 1
 const MAX_SAMPLE_RATE := 120
 const MAX_EVENTS := 2048
 const EVENT_BUCKET_USEC := 250_000
+const PerformanceIncidentWriteQueueScript := preload("res://autoload/performance/PerformanceIncidentWriteQueue.gd")
 
 var enabled := false
 var automatic_capture := true
@@ -44,6 +45,7 @@ var _max_sampling_overhead_usec := 0
 var _dropped_samples := 0
 var _automatic_armed := true
 var _recovery_frames := 0
+var _report_write_queue: RefCounted = PerformanceIncidentWriteQueueScript.new()
 
 
 func _ready() -> void:
@@ -57,6 +59,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	_poll_completed_reports()
 	if not enabled:
 		return
 	var started := Time.get_ticks_usec()
@@ -69,6 +72,11 @@ func _process(delta: float) -> void:
 	ingest_sample(sample)
 	_sampling_overhead_usec = Time.get_ticks_usec() - started
 	_max_sampling_overhead_usec = maxi(_max_sampling_overhead_usec, _sampling_overhead_usec)
+
+
+func _exit_tree() -> void:
+	for completion in _report_write_queue.shutdown():
+		_accept_report_completion(completion)
 
 
 func set_enabled(value: bool) -> void:
@@ -276,7 +284,7 @@ func _finalize_incident(now_usec: int) -> void:
 	_state = STATE_COOLDOWN if cooldown_seconds > 0.0 else STATE_WATCHING
 	_cooldown_end_usec = now_usec + int(cooldown_seconds * 1_000_000.0)
 	if write_reports:
-		call_deferred("_write_latest_incident")
+		_report_write_queue.enqueue(_latest_incident, report_directory)
 	else:
 		incident_finalized.emit(summary, "")
 
@@ -335,14 +343,20 @@ func _event_group_summary(events: Array) -> Array:
 	return output.slice(0, mini(12, output.size()))
 
 
-func _write_latest_incident() -> void:
-	var result := PerformanceIncidentWriter.write_incident(_latest_incident, report_directory)
+func _poll_completed_reports() -> void:
+	for completion in _report_write_queue.poll_completed():
+		_accept_report_completion(completion)
+
+
+func _accept_report_completion(completion: Dictionary) -> void:
+	var incident := completion.get("incident", {}) as Dictionary
+	var result := completion.get("result", {}) as Dictionary
 	if bool(result.get("ok", false)):
 		_latest_report_path = String(result.get("json_path", ""))
 		_latest_error = ""
 	else:
 		_latest_error = String(result.get("error", "Unknown report write failure"))
-	incident_finalized.emit(_latest_incident.get("summary", {}), _latest_report_path)
+	incident_finalized.emit(incident.get("summary", {}), _latest_report_path)
 
 
 func _trim_history(now_usec: int) -> void:
@@ -373,6 +387,7 @@ func get_status_snapshot() -> Dictionary:
 		"sampling_overhead_usec": _sampling_overhead_usec,
 		"max_sampling_overhead_usec": _max_sampling_overhead_usec,
 		"dropped_samples": _dropped_samples,
+		"pending_reports": _report_write_queue.pending_count(),
 	}
 
 
