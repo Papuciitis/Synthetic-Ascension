@@ -37,7 +37,7 @@ The initial defaults preserve the current presentation: Master 100%, Music 32% (
 
 The manager will reject malformed types and clamp numeric values to their documented ranges. Unknown keys are ignored. Unsupported display modes, unavailable resolutions, unrecognized actions, and unsupported input-event descriptions fall back to defaults without preventing the rest of the file from loading.
 
-Saving uses a temporary file followed by replacement of the primary settings file. A failed write reports an error and leaves the last readable primary file intact. Tests use an injected test path under `user://tests/` and never read or overwrite the player's real settings file.
+Saving uses primary, temporary, and backup files. The manager validates the temporary file, moves the existing primary to backup, promotes the temporary file, and restores the backup if promotion fails. Loading falls back to a valid backup when the primary is corrupt. A failed write reports an error and leaves a readable previous generation available. Tests use an injected test path under `user://tests/` and never read or overwrite the player's real settings file.
 
 ## Audio Settings
 
@@ -68,7 +68,7 @@ Player-facing actions are shown by category and friendly name. The initial catal
 - Interaction: Interact, Inventory, and Activate Set.
 - Augments: General Augment Action, Augment Slot 1, Slot 2, Slot 3, and Detonate.
 
-Gameplay movement changes from `ui_left/right/up/down` to dedicated `move_left/right/up/down` actions. Existing keyboard and controller defaults are copied into those actions. The opening interaction changes from `ui_accept` to the player-facing `interact` action. `ui_accept`, `ui_cancel`, and menu-direction actions keep engine-compatible keyboard and controller bindings and are not exposed for destructive rebinding.
+Gameplay movement changes from `ui_left/right/up/down` to dedicated `move_left/right/up/down` actions. WASD, arrow keys, and the left stick populate those actions; the D-pad remains available for protected menu navigation and augment-slot defaults. The opening interaction changes from `ui_accept` to the player-facing `interact` action. `ui_accept`, `ui_cancel`, and menu-direction actions keep engine-compatible keyboard and controller bindings and are not exposed for destructive rebinding.
 
 Controller aim is fully manual. The default right-stick axes populate `aim_left/right/up/down`; the right and left triggers populate Primary Attack and Secondary Attack. The player tracks the most recently active pointing device. Mouse movement returns aim to the cursor, while right-stick motion above the configured deadzone aims directly along the stick vector and remembers the last valid direction when the stick returns to center. Controller firing uses that direction. There is no target query, snapping, magnetism, automatic rotation toward an enemy, or automatic firing. A small non-targeting reticle shows the current controller aim direction and hides when mouse aiming becomes active.
 
