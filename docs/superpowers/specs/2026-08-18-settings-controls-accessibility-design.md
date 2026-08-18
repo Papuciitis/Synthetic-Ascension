@@ -14,6 +14,7 @@ This feature includes:
 - Immediate application and persistence for ordinary settings.
 - Confirm-or-revert handling for display-mode and resolution changes.
 - Keyboard, mouse, controller-button, and controller-axis rebinding.
+- Manual twin-stick controller aiming without snapping or target assistance.
 - Conflict detection, replace/swap/cancel choices, and default restoration.
 - Dedicated gameplay movement and interaction actions so menu navigation retains safe fallback inputs.
 - Automated coverage for persistence, validation, runtime application, rebinding, and the main-menu route.
@@ -62,11 +63,14 @@ Windowed resolution controls are disabled when a mode makes them irrelevant. Pla
 Player-facing actions are shown by category and friendly name. The initial catalog includes:
 
 - Movement: Move Left, Move Right, Move Up, Move Down.
+- Aim: Aim Left, Aim Right, Aim Up, and Aim Down.
 - Combat: Primary Attack and Secondary Attack.
 - Interaction: Interact, Inventory, and Activate Set.
 - Augments: General Augment Action, Augment Slot 1, Slot 2, Slot 3, and Detonate.
 
 Gameplay movement changes from `ui_left/right/up/down` to dedicated `move_left/right/up/down` actions. Existing keyboard and controller defaults are copied into those actions. The opening interaction changes from `ui_accept` to the player-facing `interact` action. `ui_accept`, `ui_cancel`, and menu-direction actions keep engine-compatible keyboard and controller bindings and are not exposed for destructive rebinding.
+
+Controller aim is fully manual. The default right-stick axes populate `aim_left/right/up/down`; the right and left triggers populate Primary Attack and Secondary Attack. The player tracks the most recently active pointing device. Mouse movement returns aim to the cursor, while right-stick motion above the configured deadzone aims directly along the stick vector and remembers the last valid direction when the stick returns to center. Controller firing uses that direction. There is no target query, snapping, magnetism, automatic rotation toward an enemy, or automatic firing. A small non-targeting reticle shows the current controller aim direction and hides when mouse aiming becomes active.
 
 Each gameplay action can hold up to two keyboard/mouse bindings and two controller bindings. A capture overlay accepts keyboard keys, mouse buttons, controller buttons, and controller axes after an activation threshold. Escape or the controller Back button cancels capture and cannot be consumed as the only way out.
 
@@ -125,10 +129,11 @@ Focused tests will prove:
 3. Input events serialize and restore without losing device family, physical key, mouse button, controller button, axis, or direction.
 4. Replace, swap, cancellation, duplicate collapse, per-tab reset, and fallback protection behave as specified.
 5. Dedicated movement actions drive the player input path while menu navigation actions remain intact.
-6. Typewriter presets affect both presentation classes while preserving enemy-lore-only reveal behavior.
-7. Reduced-motion and flash-intensity values produce their documented presentation result without changing gameplay timing.
-8. The Settings scene opens from the existing main-menu button, supports focus navigation, and closes back to the menu.
-9. Display confirmation keeps an accepted mode and restores a rejected or timed-out mode through an injectable display adapter, avoiding disruptive real monitor changes in headless tests.
+6. Mouse activity selects cursor aim; controller aim uses the right-stick direction, retains the last nonzero direction, and never queries or snaps to enemies.
+7. Typewriter presets affect both presentation classes while preserving enemy-lore-only reveal behavior.
+8. Reduced-motion and flash-intensity values produce their documented presentation result without changing gameplay timing.
+9. The Settings scene opens from the existing main-menu button, supports focus navigation, and closes back to the menu.
+10. Display confirmation keeps an accepted mode and restores a rejected or timed-out mode through an injectable display adapter, avoiding disruptive real monitor changes in headless tests.
 
 After focused coverage passes, the existing main-menu, developer-segment, and segment integration smoke tests run to catch scene or autoload regressions. Godot's existing shutdown-only resource leak diagnostics are recorded separately from assertion failures.
 
@@ -137,6 +142,7 @@ After focused coverage passes, the existing main-menu, developer-segment, and se
 - Settings persist globally across restarts without modifying any save slot.
 - Audio, video, accessibility, and input changes have visible or audible runtime effects.
 - Keyboard/mouse and controller players can rebind all exposed gameplay actions and recover defaults.
+- Controller players can aim and fire manually through twin-stick input without aim assistance.
 - No binding operation can strand the player without menu navigation or cancellation.
 - Risky display changes automatically recover unless explicitly accepted.
 - The main menu opens and closes the reusable Settings screen with correct focus behavior.
