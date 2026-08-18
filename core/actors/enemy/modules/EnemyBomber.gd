@@ -6,6 +6,7 @@ var _exploded: bool = false
 
 func setup(owner: EnemyActor) -> void:
 	_owner = owner
+	_exploded = false
 
 	# Add a persistent hazard ring so player reads explosion radius
 	if _owner == null or _owner.spec == null:

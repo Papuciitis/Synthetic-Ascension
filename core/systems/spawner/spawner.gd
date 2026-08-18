@@ -26,6 +26,7 @@ class_name EnemySpawner
 
 @export var debug_spawns: bool = false
 @export var spawning_enabled: bool = true
+@export_range(0, 128, 1) var ambient_pool_limit_per_scene: int = 32
 
 
 @export_group("Boss Suppression (nearby boss/miniboss)")
@@ -81,6 +82,7 @@ func _ready() -> void:
 	_ei = get_node_or_null("/root/EnemyIndex")
 	_spawn_filter = get_node_or_null("/root/DebugEnemySpawnFilter")
 	_register_spawn_table_ids()
+	_configure_enemy_pool_limits()
 	if _spawn_filter != null and _spawn_filter.has_signal("filters_changed"):
 		_spawn_filter.connect("filters_changed", _on_spawn_filters_changed)
 
@@ -264,38 +266,53 @@ func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: f
 	return _spawn_instance_node(scene_to_spawn, minutes, entry_elite, forced_pos, special_kind) != null
 
 func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_elite: float, forced_pos: Vector2 = Vector2.INF, special_kind: StringName = &"") -> Node:
-	var e: Node = scene_to_spawn.instantiate()
+	var current_scene: Node = get_tree().current_scene
+	if current_scene == null:
+		return null
+	var use_pool := special_kind == &"" and PoolManager != null
+	var e: Node = (
+		PoolManager.obtain(scene_to_spawn, current_scene)
+		if use_pool
+		else scene_to_spawn.instantiate()
+	)
 	if e == null:
 		return null
 	var enemy_id := _enemy_id_from_node(e)
 	var protected := _is_protected_spawn(e)
 	if not _debug_enemy_enabled(enemy_id, protected):
-		e.free()
+		if use_pool and e.has_method("despawn"):
+			e.call("despawn", &"spawn_filter")
+		else:
+			e.free()
 		return null
 
 	# position: ring around player + jitter (avoid blocked cells + wardstone fields)
 	var pos: Vector2 = _pick_spawn_pos() if forced_pos == Vector2.INF else forced_pos
 	if pos == Vector2.INF:
-		e.queue_free()
+		if use_pool and e.has_method("despawn"):
+			e.call("despawn", &"invalid_spawn_position")
+		else:
+			e.queue_free()
 		return null
 
 	var e2d: Node2D = e as Node2D
 	if e2d != null:
 		e2d.global_position = pos
-
-	var current_scene: Node = get_tree().current_scene
-	if current_scene == null:
-		e.free()
-		return null
+	if use_pool and _ei != null and _ei.has_method("update_enemy"):
+		_ei.call("update_enemy", e)
 	if special_kind != &"":
 		e.set_meta("special_spawn_kind", special_kind)
 
 	var scene_path: String = scene_to_spawn.resource_path
-	_reserve_pending_spawn(scene_path)
-	e.tree_entered.connect(Callable(self, "_release_pending_spawn").bind(scene_path), CONNECT_ONE_SHOT)
-	if _spawn_filter != null and _spawn_filter.has_method("validate_deferred_node"):
-		e.tree_entered.connect(Callable(_spawn_filter, "validate_deferred_node").bind(e), CONNECT_ONE_SHOT)
-	current_scene.call_deferred("add_child", e)
+	if use_pool:
+		if _spawn_filter != null and _spawn_filter.has_method("validate_deferred_node"):
+			_spawn_filter.call_deferred("validate_deferred_node", e)
+	else:
+		_reserve_pending_spawn(scene_path)
+		e.tree_entered.connect(Callable(self, "_release_pending_spawn").bind(scene_path), CONNECT_ONE_SHOT)
+		if _spawn_filter != null and _spawn_filter.has_method("validate_deferred_node"):
+			e.tree_entered.connect(Callable(_spawn_filter, "validate_deferred_node").bind(e), CONNECT_ONE_SHOT)
+		current_scene.call_deferred("add_child", e)
 
 	# elite roll: entry chance + global scaling bonus
 	var cfg: Dictionary = _tutorial_settings()
@@ -655,6 +672,19 @@ func _register_spawn_table_ids() -> void:
 		var entry := entry_variant as EnemySpawnEntry
 		if entry != null and entry.enemy_scene != null:
 			_enemy_id_for_scene(entry.enemy_scene)
+
+
+func _configure_enemy_pool_limits() -> void:
+	if PoolManager == null or not PoolManager.has_method("set_limit_for_scene"):
+		return
+	if enemy_scene != null:
+		PoolManager.set_limit_for_scene(enemy_scene, ambient_pool_limit_per_scene)
+	if spawn_table == null:
+		return
+	for entry_variant: Variant in spawn_table.entries:
+		var entry := entry_variant as EnemySpawnEntry
+		if entry != null and entry.enemy_scene != null:
+			PoolManager.set_limit_for_scene(entry.enemy_scene, ambient_pool_limit_per_scene)
 
 
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:

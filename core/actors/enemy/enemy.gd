@@ -136,6 +136,11 @@ var _simulation_motion_scale: float = 1.0
 var _scheduled_step_delta: float = 0.0
 var _ambient_population: int = 0
 var _population_refresh_left: float = 0.0
+var _pool_fresh_obtain_pending: bool = false
+var _scene_base_scale: Vector2 = Vector2.ONE
+var _scene_base_speed: float = 0.0
+var _scene_base_max_hp: float = 0.0
+var _scene_base_knockback_decay: float = 0.0
 
 # Modules
 var _drops: EnemyDrops = EnemyDrops.new()
@@ -160,6 +165,10 @@ var _horde_nav: EnemyHordeNav = EnemyHordeNav.new()
 
 
 func _ready() -> void:
+	_scene_base_scale = scale
+	_scene_base_speed = speed
+	_scene_base_max_hp = max_hp
+	_scene_base_knockback_decay = knockback_decay
 	_init.setup(self, _drops, _senses, _leech, _herald, _tactical, _charge, _shooter, _life)
 	_init.boot()
 
@@ -195,6 +204,7 @@ func _ready() -> void:
 	_far_step_left = Global._rng.randf_range(0.0, maxf(0.067, lod_far_physics_interval))
 	_population_refresh_left = Global._rng.randf_range(0.0, 0.5)
 	_apply_simulation_collision_roles()
+	_pool_fresh_obtain_pending = has_meta("__pool_key")
 
 	if RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
 		RunEvents.enemy_archetype_encountered.emit(self)
@@ -595,6 +605,106 @@ func _notify_enemy_index_dead() -> void:
 		_enemy_index = get_node_or_null("/root/EnemyIndex")
 	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("mark_dead"):
 		_enemy_index.call("mark_dead", self)
+
+
+func can_pool_as_ambient() -> bool:
+	if scene_file_path == "" or is_elite:
+		return false
+	if get_meta("special_spawn_kind", &"") as StringName != &"":
+		return false
+	if (
+		is_in_group(&"boss_like")
+		or is_in_group(&"boss")
+		or is_in_group(&"miniboss")
+		or bool(get_meta("objective_required", false))
+		or bool(get_meta("tutorial_actor", false))
+		or bool(get_meta("never_cull", false))
+	):
+		return false
+	return _is_lod_eligible(_get_active_ai())
+
+
+func despawn(_reason: StringName = &"death") -> void:
+	if can_pool_as_ambient() and PoolManager != null:
+		PoolManager.recycle(self)
+		return
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index != null and _enemy_index.has_method("unregister"):
+		_enemy_index.call("unregister", self)
+	queue_free()
+
+
+func _on_pool_recycle() -> void:
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index != null and _enemy_index.has_method("unregister"):
+		_enemy_index.call("unregister", self)
+	_sniper.cleanup()
+	player = null
+	set_process(false)
+	set_physics_process(false)
+	visible = false
+	if _body_shape != null:
+		_body_shape.set_deferred("disabled", true)
+	_set_hitbox_roles(false, false)
+
+
+func _on_pool_obtain() -> void:
+	if _pool_fresh_obtain_pending:
+		_pool_fresh_obtain_pending = false
+		return
+	_reset_for_pool_obtain()
+
+
+func _reset_for_pool_obtain() -> void:
+	for child in get_children():
+		if child is BurnDot or child is BleedDot:
+			child.free()
+	for key in [
+		&"culled",
+		&"cull_reason",
+		&"_threat_scaled",
+		&"split_generation",
+		&"split_item_entitled",
+		&"sniper_combat_committed",
+	]:
+		if has_meta(key):
+			remove_meta(key)
+	scale = _scene_base_scale
+	speed = _scene_base_speed
+	max_hp = _scene_base_max_hp
+	knockback_decay = _scene_base_knockback_decay
+	dead = false
+	is_elite = false
+	velocity = Vector2.ZERO
+	knockback_vel = Vector2.ZERO
+	stun_time = 0.0
+	_speed_mul = 1.0
+	_speed_mul_time = 0.0
+	_stability_mul = 1.0
+	_los_cache = false
+	_los_timer = Global._rng.randf_range(0.0, maxf(0.01, los_check_interval))
+	_cached_chase = Vector2.ZERO
+	_cached_nav_target = Vector2.ZERO
+	_lod_steer_accum = 0.0
+	_lod_steer_left = 0.0
+	_lod_force_refresh = true
+	_population_refresh_left = 0.0
+	_init.boot()
+	_summoner.setup(self)
+	_bomber.setup(self)
+	_splitter.setup(self)
+	_sniper.setup(self)
+	_life.setup(self, _drops, _bomber, _splitter)
+	_nav.setup(self, _senses)
+	_horde_nav.setup(self)
+	visible = true
+	set_process(true)
+	set_scheduler_tier(0)
+	_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index != null and _enemy_index.has_method("register"):
+		_enemy_index.call("register", self)
 
 
 func _get_active_ai() -> int:

@@ -4,7 +4,17 @@ extends Node
 # Keeps visuals/feel identical while cutting instantiate()/queue_free() spikes.
 
 var _pools: Dictionary = {} # String (scene path) -> Array[Node]
+var _limits: Dictionary = {} # String -> maximum retained nodes; absent means unbounded
+var _reuse_hits: int = 0
+var _releases: int = 0
+var _discarded: int = 0
 var _additive_material: CanvasItemMaterial = null
+
+
+func _scene_key(scene: PackedScene) -> String:
+	if scene == null:
+		return ""
+	return scene.resource_path if scene.resource_path != "" else str(scene.get_instance_id())
 
 func _get_pool(key: String) -> Array:
 	# Dictionary.get() returns Nil when missing; avoid assigning Nil to a typed Array.
@@ -32,15 +42,13 @@ func get_additive_material() -> CanvasItemMaterial:
 func obtain(scene: PackedScene, parent: Node = null) -> Node:
 	if scene == null:
 		return null
-	var key: String = scene.resource_path
-	if key == "":
-		# fallback key (still works, just no sharing across reloads)
-		key = str(scene.get_instance_id())
+	var key := _scene_key(scene)
 
 	var pool: Array = _get_pool(key)
 	var node: Node = null
 	if pool != null and pool.size() > 0:
 		node = pool.pop_back() as Node
+		_reuse_hits += 1
 	else:
 		node = scene.instantiate()
 
@@ -48,6 +56,7 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 		return null
 
 	node.set_meta("__pool_key", key)
+	node.set_meta("__in_pool", false)
 
 	# Attach first (some scripts expect to be in-tree during reset)
 	var target_parent: Node = null
@@ -95,10 +104,22 @@ func recycle(node: Node) -> void:
 	if key == "":
 		node.queue_free()
 		return
+	if bool(node.get_meta("__in_pool", false)):
+		return
 
 	# custom hook first (so scripts can reset internal state while still in tree)
 	if node.has_method("_on_pool_recycle"):
 		node.call("_on_pool_recycle")
+
+	var pool: Array = _get_pool(key)
+	var limit := int(_limits.get(key, -1))
+	if limit >= 0 and pool.size() >= limit:
+		node.process_mode = Node.PROCESS_MODE_DISABLED
+		if node is CanvasItem:
+			(node as CanvasItem).visible = false
+		_discarded += 1
+		node.queue_free()
+		return
 
 	# detach
 	if node.get_parent() != null:
@@ -119,18 +140,18 @@ func recycle(node: Node) -> void:
 
 	# keep pooled nodes under PoolManager (so they stay alive & valid)
 	add_child(node)
-
-	var pool: Array = _get_pool(key)
+	node.set_meta("__in_pool", true)
 	pool.append(node)
+	_releases += 1
 
 func warm(scene: PackedScene, count: int) -> void:
 	if scene == null or count <= 0:
 		return
-	var key: String = scene.resource_path
-	if key == "":
-		key = str(scene.get_instance_id())
+	var key := _scene_key(scene)
 	var pool: Array = _get_pool(key)
-	while pool.size() < count:
+	var limit := int(_limits.get(key, -1))
+	var target := mini(count, limit) if limit >= 0 else count
+	while pool.size() < target:
 		var n: Node = scene.instantiate()
 		if n == null:
 			break
@@ -139,4 +160,38 @@ func warm(scene: PackedScene, count: int) -> void:
 		if n is CanvasItem:
 			(n as CanvasItem).visible = false
 		add_child(n)
+		n.set_meta("__in_pool", true)
 		pool.append(n)
+
+
+func set_limit_for_scene(scene: PackedScene, limit: int) -> void:
+	var key := _scene_key(scene)
+	if key == "":
+		return
+	_limits[key] = maxi(0, limit)
+	var pool := _get_pool(key)
+	while pool.size() > int(_limits[key]):
+		var node := pool.pop_back() as Node
+		if node != null and is_instance_valid(node):
+			_discarded += 1
+			node.queue_free()
+
+
+func pool_size_for_scene(scene: PackedScene) -> int:
+	var key := _scene_key(scene)
+	if key == "":
+		return 0
+	return _get_pool(key).size()
+
+
+func get_debug_counters() -> Dictionary:
+	var inactive := 0
+	for pool_variant in _pools.values():
+		if pool_variant is Array:
+			inactive += (pool_variant as Array).size()
+	return {
+		"reuse_hits": _reuse_hits,
+		"releases": _releases,
+		"inactive": inactive,
+		"discarded": _discarded,
+	}

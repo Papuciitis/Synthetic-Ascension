@@ -130,4 +130,4 @@ func _die(source: Node) -> void:
 	if explode_on_death and _bomber != null:
 		_bomber.explode_now()
 	else:
-		_owner.queue_free()
+		_owner.despawn(&"death")

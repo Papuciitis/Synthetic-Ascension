@@ -118,7 +118,10 @@ func retire_enemy(enemy: Node, reason: StringName = &"unknown") -> bool:
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"retired", 1, {"reason": String(reason)})
 	enemy.set_meta("culled", true)
 	enemy.set_meta("cull_reason", reason)
-	enemy.queue_free()
+	if enemy.has_method("despawn"):
+		enemy.call("despawn", reason)
+	else:
+		enemy.queue_free()
 	return true
 
 
