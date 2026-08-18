@@ -26,6 +26,10 @@ var _scene_paths := PackedStringArray()
 var _cold_states: Array[Dictionary] = []
 var _grid: EnemySpatialGrid
 var _removed_by_reason: Dictionary = {}
+var _actor_refs: Dictionary = {} # handle -> WeakRef
+var _actor_handles: Dictionary = {} # actor instance id -> handle
+var _bound_instance_ids: Dictionary = {} # handle -> actor instance id
+var _legacy_handles: Dictionary = {} # handle -> true
 
 
 func _init() -> void:
@@ -72,6 +76,8 @@ func remove_enemy(handle: int, reason: StringName = &"removed") -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
 		return false
+	unbind_actor(handle)
+	_legacy_handles.erase(handle)
 	_grid.remove(slot)
 	_remove_active_slot(slot)
 	_active[slot] = 0
@@ -224,6 +230,155 @@ func replace_cold_state(handle: int, value: Dictionary) -> bool:
 	return true
 
 
+func bind_actor(handle: int, actor: Node2D) -> bool:
+	if not is_valid_handle(handle):
+		return false
+	if actor == null or not is_instance_valid(actor) or actor.is_queued_for_deletion():
+		return false
+	var current_actor := actor_for_handle(handle)
+	if current_actor != null:
+		return current_actor == actor
+	var actor_id := int(actor.get_instance_id())
+	var current_handle := int(_actor_handles.get(actor_id, Types.INVALID_HANDLE))
+	if current_handle != Types.INVALID_HANDLE:
+		if is_valid_handle(current_handle) and actor_for_handle(current_handle) == actor:
+			return current_handle == handle
+		_actor_handles.erase(actor_id)
+	_actor_refs[handle] = weakref(actor)
+	_actor_handles[actor_id] = handle
+	_bound_instance_ids[handle] = actor_id
+	set_representation(handle, Types.Representation.MATERIALIZED)
+	return true
+
+
+func unbind_actor(handle: int, actor: Node2D = null) -> bool:
+	if not _actor_refs.has(handle):
+		return false
+	var bound_id := int(_bound_instance_ids.get(handle, 0))
+	if actor != null:
+		if not is_instance_valid(actor) or int(actor.get_instance_id()) != bound_id:
+			return false
+	_clear_binding_maps(handle)
+	if (
+		is_valid_handle(handle)
+		and get_representation(handle) == Types.Representation.MATERIALIZED
+	):
+		set_representation(handle, Types.Representation.DATA_ONLY)
+	return true
+
+
+func actor_for_handle(handle: int) -> Node2D:
+	if not is_valid_handle(handle):
+		_clear_binding_maps(handle)
+		return null
+	var ref_variant: Variant = _actor_refs.get(handle)
+	if ref_variant == null or not (ref_variant is WeakRef):
+		_clear_binding_maps(handle)
+		return null
+	var actor_variant: Variant = (ref_variant as WeakRef).get_ref()
+	if (
+		actor_variant == null
+		or not is_instance_valid(actor_variant)
+		or not (actor_variant is Node2D)
+	):
+		_clear_binding_maps(handle)
+		if get_representation(handle) == Types.Representation.MATERIALIZED:
+			set_representation(handle, Types.Representation.DATA_ONLY)
+		return null
+	return actor_variant as Node2D
+
+
+func handle_for_actor(actor: Node) -> int:
+	if actor == null or not is_instance_valid(actor):
+		return Types.INVALID_HANDLE
+	var actor_id := int(actor.get_instance_id())
+	var handle := int(_actor_handles.get(actor_id, Types.INVALID_HANDLE))
+	if handle == Types.INVALID_HANDLE:
+		return Types.INVALID_HANDLE
+	if not is_valid_handle(handle) or actor_for_handle(handle) != actor:
+		_actor_handles.erase(actor_id)
+		return Types.INVALID_HANDLE
+	return handle
+
+
+func prune_invalid_bindings() -> int:
+	var removed := 0
+	var handles: Array = _actor_refs.keys().duplicate()
+	for handle_variant in handles:
+		var handle := int(handle_variant)
+		if actor_for_handle(handle) == null:
+			removed += 1
+	return removed
+
+
+func adopt_legacy_actor(actor: Node2D) -> int:
+	if actor == null or not is_instance_valid(actor) or actor.is_queued_for_deletion():
+		return Types.INVALID_HANDLE
+	var existing := handle_for_actor(actor)
+	if existing != Types.INVALID_HANDLE:
+		return existing
+	var flags := Types.Flags.NONE
+	if "is_elite" in actor and bool(actor.get("is_elite")):
+		flags |= Types.Flags.ELITE
+	var state := EnemySpawnState.new(
+		_spec_id_from_actor(actor),
+		actor.scene_file_path,
+		actor.global_position,
+		float(actor.get("max_hp")) if "max_hp" in actor else 1.0,
+		float(actor.get("speed")) if "speed" in actor else 0.0,
+		_collision_radius_from_actor(actor),
+		_ai_kind_from_actor(actor),
+		flags,
+	)
+	if "velocity" in actor:
+		state.velocity = actor.get("velocity") as Vector2
+	var handle := create_enemy(state)
+	if handle == Types.INVALID_HANDLE:
+		return handle
+	if "hp" in actor:
+		set_health(handle, float(actor.get("hp")))
+	if not bind_actor(handle, actor):
+		remove_enemy(handle, &"legacy_adopt_failed")
+		return Types.INVALID_HANDLE
+	_legacy_handles[handle] = true
+	return handle
+
+
+func sync_legacy_actor(actor: Node2D) -> bool:
+	if actor == null or not is_instance_valid(actor):
+		return false
+	var handle := handle_for_actor(actor)
+	if handle == Types.INVALID_HANDLE or not _legacy_handles.has(handle):
+		return false
+	set_position(handle, actor.global_position)
+	if "velocity" in actor:
+		set_velocity(handle, actor.get("velocity") as Vector2)
+	if "hp" in actor:
+		set_health(handle, float(actor.get("hp")))
+	var flags := get_flags(handle)
+	if "is_elite" in actor and bool(actor.get("is_elite")):
+		flags |= Types.Flags.ELITE
+	else:
+		flags &= ~Types.Flags.ELITE
+	set_flags(handle, flags)
+	if "dead" in actor and bool(actor.get("dead")):
+		set_representation(handle, Types.Representation.DYING)
+	else:
+		set_representation(handle, Types.Representation.MATERIALIZED)
+	return true
+
+
+func release_legacy_actor(actor: Node2D, reason: StringName = &"legacy_unregistered") -> bool:
+	if actor == null or not is_instance_valid(actor):
+		return false
+	var handle := handle_for_actor(actor)
+	if handle == Types.INVALID_HANDLE or not _legacy_handles.has(handle):
+		return false
+	_legacy_handles.erase(handle)
+	unbind_actor(handle, actor)
+	return remove_enemy(handle, reason)
+
+
 func gather_in_radius(
 	origin: Vector2,
 	radius: float,
@@ -344,3 +499,35 @@ func _count_representation(value: int) -> int:
 		if int(_representations[slot]) == value:
 			count += 1
 	return count
+
+
+func _clear_binding_maps(handle: int) -> void:
+	var actor_id := int(_bound_instance_ids.get(handle, 0))
+	_actor_refs.erase(handle)
+	_bound_instance_ids.erase(handle)
+	if actor_id != 0 and int(_actor_handles.get(actor_id, Types.INVALID_HANDLE)) == handle:
+		_actor_handles.erase(actor_id)
+
+
+func _spec_id_from_actor(actor: Node2D) -> StringName:
+	var base_name := actor.scene_file_path.get_file().get_basename()
+	if base_name.is_empty():
+		base_name = actor.name
+	return StringName(base_name.trim_prefix("Enemy").to_snake_case())
+
+
+func _collision_radius_from_actor(actor: Node2D) -> float:
+	var collision := actor.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision != null and collision.shape is CircleShape2D:
+		return maxf((collision.shape as CircleShape2D).radius, 0.0)
+	return 24.0
+
+
+func _ai_kind_from_actor(actor: Node2D) -> int:
+	if actor.has_method("_get_active_ai"):
+		return int(actor.call("_get_active_ai"))
+	if "spec" in actor:
+		var spec_variant: Variant = actor.get("spec")
+		if spec_variant != null and "ai" in spec_variant:
+			return int(spec_variant.get("ai"))
+	return 0
