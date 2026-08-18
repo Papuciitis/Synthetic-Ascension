@@ -178,7 +178,7 @@ color = Color(1, 0.55, 0.2, 0.8)
 [node name="Continue" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1801875612]
 custom_minimum_size = Vector2(300, 44)
 layout_mode = 2
-focus_mode = 0
+focus_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
@@ -189,7 +189,7 @@ script = ExtResource("3_tactile")
 [node name="Saves" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1172740519]
 custom_minimum_size = Vector2(300, 44)
 layout_mode = 2
-focus_mode = 0
+focus_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
@@ -200,7 +200,7 @@ script = ExtResource("3_tactile")
 [node name="Settings" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1988272995]
 custom_minimum_size = Vector2(300, 44)
 layout_mode = 2
-focus_mode = 0
+focus_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
@@ -211,7 +211,7 @@ script = ExtResource("3_tactile")
 [node name="Quit" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1795037295]
 custom_minimum_size = Vector2(300, 44)
 layout_mode = 2
-focus_mode = 0
+focus_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")

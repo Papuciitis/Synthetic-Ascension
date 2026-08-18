@@ -1,8 +1,13 @@
 extends Control
 
+const SETTINGS_SCENE := preload("res://ui/screens/settings/SettingsScreen.tscn")
+
 @onready var btn_continue: Button = $Center/Panel/Padding/VBox/Continue
 @onready var btn_saves: Button = $Center/Panel/Padding/VBox/Saves
+@onready var btn_settings: Button = $Center/Panel/Padding/VBox/Settings
 @onready var btn_quit: Button = $Center/Panel/Padding/VBox/Quit
+
+var _settings_screen: Control
 
 # Developer mode UI
 @onready var chk_dev: CheckBox = $Center/Panel/Padding/VBox/DevMode
@@ -40,7 +45,9 @@ func _ready() -> void:
 
 	btn_continue.pressed.connect(_on_continue_pressed)
 	btn_saves.pressed.connect(_on_saves_pressed)
+	btn_settings.pressed.connect(_on_settings_pressed)
 	btn_quit.pressed.connect(_on_quit_pressed)
+	btn_continue.call_deferred("grab_focus")
 
 	# Dev mode
 	dev_panel.visible = false
@@ -82,6 +89,19 @@ func _on_continue_pressed() -> void:
 
 func _on_saves_pressed() -> void:
 	call_deferred("_go_to_saves")
+
+
+func _on_settings_pressed() -> void:
+	if _settings_screen == null or not is_instance_valid(_settings_screen):
+		_settings_screen = SETTINGS_SCENE.instantiate() as Control
+		_settings_screen.call("configure", SettingsManager)
+		_settings_screen.connect("closed", _on_settings_closed)
+		add_child(_settings_screen)
+	_settings_screen.call("open")
+
+
+func _on_settings_closed() -> void:
+	btn_settings.call_deferred("grab_focus")
 
 
 func _on_quit_pressed() -> void:

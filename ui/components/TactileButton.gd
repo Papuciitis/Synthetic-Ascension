@@ -13,7 +13,6 @@ var _tw: Tween = null
 
 func _ready() -> void:
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-	focus_mode = Control.FOCUS_NONE
 
 	_base_scale = scale
 	_base_modulate = modulate
