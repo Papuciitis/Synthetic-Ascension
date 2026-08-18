@@ -200,6 +200,8 @@ func _is_valid_candidate(enemy: Node) -> bool:
 		return false
 	if enemy.is_queued_for_deletion() or not enemy.is_inside_tree():
 		return false
+	if enemy.process_mode == Node.PROCESS_MODE_DISABLED or bool(enemy.get_meta("__in_pool", false)):
+		return false
 	return not ("dead" in enemy and bool(enemy.get("dead")))
 
 

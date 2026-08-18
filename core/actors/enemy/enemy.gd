@@ -465,11 +465,10 @@ func hitbox_roles() -> Dictionary:
 
 
 func is_simulation_protected(player_distance: float) -> bool:
-	if is_retirement_protected(player_distance):
-		return true
-	# Smart archetypes keep their authored timing and attacks. The bulk scheduler
-	# currently reduces only the simple chase/split/leech population.
-	return not _is_lod_eligible(_get_active_ai())
+	# Only actors whose encounter/lifecycle contract requires exact simulation may
+	# bypass the hard budget. Ambient elites and smart archetypes are prioritized by
+	# proximity, but never allowed to make the full-rate population unbounded.
+	return is_retirement_protected(player_distance)
 
 
 func simulation_priority(player_position: Vector2) -> float:

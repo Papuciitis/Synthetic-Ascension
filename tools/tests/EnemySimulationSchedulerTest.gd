@@ -47,7 +47,9 @@ func _run() -> void:
 	_test_protected_actors_do_not_consume_ambient_budget(scheduler)
 	_test_previous_full_actor_wins_equal_priority_tie(scheduler)
 	await _test_enemy_tier_transitions()
+	await _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler)
 	_test_rotating_reduced_tick_groups(scheduler_script)
+	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
 	scheduler.queue_free()
 	if live_scheduler != null:
 		live_scheduler.set_physics_process(true)
@@ -190,6 +192,56 @@ func _test_rotating_reduced_tick_groups(scheduler_script: Script) -> void:
 	index.call("unregister", far_probe)
 	mid_probe.queue_free()
 	far_probe.queue_free()
+	scheduler.queue_free()
+
+
+func _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler: Node) -> void:
+	scheduler.set("full_budget", 3)
+	scheduler.set("mid_budget", 4)
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var enemies: Array = []
+	for index in range(6):
+		var elite := enemy_scene.instantiate() as EnemyActor
+		elite.position = Vector2(float(index + 1) * 10.0, 0.0)
+		add_child(elite)
+		elite.is_elite = true
+		enemies.append(elite)
+	for index in range(6):
+		var ranged := enemy_scene.instantiate() as EnemyActor
+		var ranged_spec := EnemySpec.new()
+		ranged_spec.ai = EnemySpec.AI.RANGED
+		ranged.spec = ranged_spec
+		ranged.position = Vector2(float(index + 7) * 10.0, 0.0)
+		add_child(ranged)
+		enemies.append(ranged)
+	await get_tree().process_frame
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	var counters := scheduler.call("get_debug_counters") as Dictionary
+	_check(int(counters.get("protected", -1)) == 0, "ambient elites and smart archetypes do not bypass the hard budget")
+	_check(_tier_count(assignment, 0) == 3, "mixed ambient horde still obeys full budget")
+	_check(_tier_count(assignment, 1) == 4, "mixed ambient horde still obeys mid budget")
+	_check(_tier_count(assignment, 2) == 5, "mixed ambient overflow becomes far simulation")
+	_free_nodes(enemies)
+
+
+func _test_pooled_actor_stale_group_is_ignored(scheduler_script: Script) -> void:
+	var index := get_node("/root/EnemyIndex")
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 0)
+	scheduler.set("mid_budget", 1)
+	scheduler.set("mid_group_count", 1)
+	add_child(scheduler)
+	var probe := ScheduledProbe.new()
+	add_child(probe)
+	index.call("register", probe)
+	scheduler.call("_physics_process", 1.0 / 60.0)
+	var calls_before_pooling := probe.scheduled_deltas.size()
+	probe.set_meta("__in_pool", true)
+	probe.process_mode = Node.PROCESS_MODE_DISABLED
+	scheduler.call("_physics_process", 1.0 / 60.0)
+	_check(probe.scheduled_deltas.size() == calls_before_pooling, "stale reduced group never simulates an inactive pooled actor")
+	index.call("unregister", probe)
+	probe.queue_free()
 	scheduler.queue_free()
 
 
