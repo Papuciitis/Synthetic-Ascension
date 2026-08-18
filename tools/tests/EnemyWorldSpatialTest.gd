@@ -1,6 +1,8 @@
 extends Node
 
 const SpatialGrid = preload("res://core/systems/enemy_world/EnemySpatialGrid.gd")
+const SpawnState = preload("res://core/systems/enemy_world/EnemySpawnState.gd")
+const WorldScript = preload("res://core/systems/enemy_world/EnemyWorld.gd")
 
 var _passes := 0
 var _failures := 0
@@ -28,6 +30,13 @@ func _occurrences(values: Array[int], target: int) -> int:
 
 
 func _run() -> void:
+	_test_raw_grid()
+	_test_world_queries()
+	print("EnemyWorldSpatialTest passes=", _passes, " failures=", _failures)
+	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _test_raw_grid() -> void:
 	var grid := SpatialGrid.new(64.0)
 	grid.insert(3, Vector2(10.0, 10.0))
 	grid.insert(8, Vector2(70.0, 10.0))
@@ -65,5 +74,36 @@ func _run() -> void:
 	_check(grid.active_cell_count() == 0, "clear removes every occupied cell")
 	_check(not grid.has_slot(8) and not grid.has_slot(13), "clear removes slot membership")
 
-	print("EnemyWorldSpatialTest passes=", _passes, " failures=", _failures)
-	get_tree().quit(1 if _failures > 0 else 0)
+
+func _test_world_queries() -> void:
+	var world := WorldScript.new()
+	add_child(world)
+	var first: int = world.create_enemy(
+		SpawnState.new(&"first", "res://first.tscn", Vector2(10.0, 0.0), 10.0, 10.0, 8.0, 0),
+	)
+	var second: int = world.create_enemy(
+		SpawnState.new(&"second", "res://second.tscn", Vector2(70.0, 0.0), 10.0, 10.0, 8.0, 0),
+	)
+	var distant: int = world.create_enemy(
+		SpawnState.new(&"distant", "res://distant.tscn", Vector2(1000.0, 0.0), 10.0, 10.0, 8.0, 0),
+	)
+
+	var found: Array[int] = []
+	world.gather_in_radius(Vector2.ZERO, 50.0, found)
+	_check(found.size() == 1 and found[0] == first, "world radius query filters grid candidates exactly")
+	_check(world.nearest_enemy(Vector2.ZERO, 100.0) == first, "world nearest query returns the closest handle")
+	_check(world.nearest_enemy(Vector2.ZERO, 100.0, first) == second, "world nearest query honors exclusion")
+
+	world.set_position(second, Vector2(20.0, 0.0))
+	_check(world.nearest_enemy(Vector2.ZERO, 100.0, first) == second, "world query follows moved records")
+	world.set_position(first, Vector2(2000.0, 0.0))
+	world.gather_in_radius(Vector2.ZERO, 100.0, found)
+	_check(found.size() == 1 and found[0] == second, "old cells do not retain moved world records")
+
+	world.remove_enemy(second, &"query_test")
+	_check(world.nearest_enemy(Vector2.ZERO, 100.0) == 0, "removed record disappears from spatial queries")
+	world.gather_in_radius(Vector2.ZERO, 50000.0, found)
+	_check(found.has(first) and found.has(distant), "huge world query returns all in-range live handles")
+	_check(not found.has(second), "huge world query excludes stale handles")
+	world.clear_world()
+	world.queue_free()
