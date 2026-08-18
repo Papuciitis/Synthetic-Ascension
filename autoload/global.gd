@@ -89,12 +89,13 @@ var augment_slot_locks: Array[bool] = [false, false, false]       # lock equippe
 var meta_stash: StashInventory = null
 var discovered_enemy_ids: Array[StringName] = []
 var debug_dev_mode: bool = false
+var debug_dev_segment: bool = false
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_set_collision_tools: bool = false
 var debug_performance_lab: bool = false
-var debug_opening_mode_override: String = "" # "", full, short, skip
 var debug_combat_transactions: bool = false
+var debug_opening_mode_override: String = "" # "", full, short, skip
 var debug_opening_force_phase: int = -1
 var debug_opening_response_override: String = ""
 
@@ -432,7 +433,7 @@ func build_item_drop_context(
 	context.is_elite = is_elite
 	context.rarity_min = rarity_min
 	context.rarity_max = rarity_max
-	context.rarity_soft_cap = maxi(rarity_max + 1, context.segment_index / 3 + source_rank)
+	context.rarity_soft_cap = maxi(rarity_max + 1, floori(float(context.segment_index) / 3.0) + source_rank)
 	context.player_luck = run_luck
 	context.equipped_rarity_average = get_equipped_rarity_average()
 	context.source_type = source_type

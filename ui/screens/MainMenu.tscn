@@ -380,6 +380,17 @@ theme_override_styles/hover = SubResource("StyleBtnHover")
 text = "Start Dev Run"
 script = ExtResource("3_tactile")
 
+[node name="StartDevSegment" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(300, 44)
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBtnNormal")
+theme_override_styles/pressed = SubResource("StyleBtnPressed")
+theme_override_styles/hover = SubResource("StyleBtnHover")
+text = "Start Dev Segment (Prefab Baseline)"
+script = ExtResource("3_tactile")
+
 [node name="StartDevHub" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1863550326]
 custom_minimum_size = Vector2(300, 44)
 layout_mode = 2

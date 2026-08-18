@@ -467,7 +467,7 @@ func _is_spawn_position_valid(pos: Vector2) -> bool:
 			return false
 	return true
 
-func spawn_local_encounter(area: Rect2, count: int, owner: Node = null) -> Array:
+func spawn_local_encounter(area: Rect2, count: int, encounter_owner: Node = null) -> Array:
 	var spawned: Array = []
 	if count <= 0 or not spawning_enabled:
 		return spawned
@@ -485,7 +485,7 @@ func spawn_local_encounter(area: Rect2, count: int, owner: Node = null) -> Array
 		var entry_elite: float = clampf(entry.elite_chance, 0.0, 1.0) if entry != null else 0.0
 		var enemy := _spawn_instance_node(scene_to_spawn, _elapsed / 60.0, entry_elite, pos, &"interior")
 		if enemy != null:
-			enemy.set_meta("interior_owner_id", owner.get_instance_id() if owner != null else 0)
+			enemy.set_meta("interior_owner_id", encounter_owner.get_instance_id() if encounter_owner != null else 0)
 			enemy.set_meta("interior_active", true)
 			spawned.append(enemy)
 	return spawned

@@ -58,4 +58,9 @@ func _run() -> void:
 		_check(manager_layers.is_empty(), "procedural streaming creates no persistent tile-layer set")
 	_check(get_first_node_in_group(&"flow_field_nav") != null, "runtime flow-field navigation remains active")
 	print("WorldTileIntegrationTest: %d passed, %d failed" % [_passes, _failures])
+	var live_scene := current_scene
+	if live_scene != null:
+		live_scene.queue_free()
+		await process_frame
+		await process_frame
 	quit(1 if _failures > 0 else 0)

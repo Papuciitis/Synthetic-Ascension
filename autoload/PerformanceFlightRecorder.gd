@@ -146,32 +146,32 @@ func mark_incident(reason: StringName = &"manual") -> void:
 	_begin_incident(reason, Time.get_ticks_usec())
 
 
-func record_event(category: StringName, name: StringName, details: Dictionary = {}) -> void:
+func record_event(category: StringName, event_name: StringName, details: Dictionary = {}) -> void:
 	if not enabled:
 		return
 	_events.append({
 		"t_usec": Time.get_ticks_usec(),
 		"category": String(category),
-		"name": String(name),
+		"name": String(event_name),
 		"details": details.duplicate(),
 	})
 	if _events.size() > MAX_EVENTS:
 		_events.pop_front()
 
 
-func record_counter_event(category: StringName, name: StringName, amount: int = 1, details: Dictionary = {}) -> void:
+func record_counter_event(category: StringName, event_name: StringName, amount: int = 1, details: Dictionary = {}) -> void:
 	if not enabled or amount == 0:
 		return
 	var now_usec := Time.get_ticks_usec()
-	var bucket := now_usec / EVENT_BUCKET_USEC
-	var key := "%s|%s|%d|%s" % [category, name, bucket, JSON.stringify(details)]
+	var bucket := floori(float(now_usec) / float(EVENT_BUCKET_USEC))
+	var key := "%s|%s|%d|%s" % [category, event_name, bucket, JSON.stringify(details)]
 	if _counter_buckets.has(key):
 		_counter_buckets[key]["amount"] = int(_counter_buckets[key]["amount"]) + amount
 	else:
 		var event := {
 			"t_usec": now_usec,
 			"category": String(category),
-			"name": String(name),
+			"name": String(event_name),
 			"amount": amount,
 			"details": details.duplicate(),
 		}
@@ -426,11 +426,11 @@ func debug_history_capacity() -> int:
 	return ceili(history_seconds * MAX_SAMPLE_RATE) + 2
 
 
-func debug_event_total(category: StringName, name: StringName) -> int:
+func debug_event_total(category: StringName, event_name: StringName) -> int:
 	var total := 0
 	for event_variant in _events:
 		var event := event_variant as Dictionary
-		if String(event.get("category", "")) == String(category) and String(event.get("name", "")) == String(name):
+		if String(event.get("category", "")) == String(category) and String(event.get("name", "")) == String(event_name):
 			total += int(event.get("amount", 1))
 	return total
 

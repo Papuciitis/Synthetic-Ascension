@@ -20,6 +20,7 @@ extends Control
 @onready var btn_start_dev: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDev
 @onready var btn_grant_augments: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/GrantAugments
 @onready var btn_start_dev_hub: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDevHub
+@onready var btn_start_dev_segment: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDevSegment
 
 
 func _ready() -> void:
@@ -30,6 +31,7 @@ func _ready() -> void:
 	Global.debug_set_collision_tools = false
 	Global.debug_performance_lab = false
 	Global.debug_dev_mode = false
+	Global.debug_dev_segment = false
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.set_enabled(false)
 	var am := get_node_or_null("/root/AudioManager")
@@ -55,6 +57,7 @@ func _ready() -> void:
 		btn_grant_augments.pressed.connect(_dev_grant_test_augments)
 
 	btn_start_dev_hub.pressed.connect(_on_start_dev_hub_pressed)
+	btn_start_dev_segment.pressed.connect(_on_start_dev_segment_pressed)
 
 func _set_dev_label(on: bool) -> void:
 	# Keeps the dev panel compact + readable as it grows.
@@ -144,7 +147,7 @@ func arm_developer_flight_recorder() -> void:
 	PerformanceFlightRecorder.set_enabled(true)
 
 
-func _on_start_dev_pressed() -> void:
+func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 	var seg := clampi(int(spin_segment.value), 1, 10)
 
 	var race_id := _get_opt_id(opt_race, Global.selected_race_id)
@@ -178,7 +181,7 @@ func _on_start_dev_pressed() -> void:
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
-	Global.debug_performance_lab = false
+	Global.debug_performance_lab = performance_capture
 	arm_developer_flight_recorder()
 	Global.debug_set_collision_tools = false
 
@@ -189,6 +192,11 @@ func _on_start_dev_pressed() -> void:
 	# Go straight into the run
 	get_tree().paused = false
 	Global.goto_game()
+
+
+func _on_start_dev_segment_pressed() -> void:
+	Global.debug_dev_segment = true
+	_on_start_dev_pressed(true)
 
 
 func _on_start_dev_hub_pressed() -> void:

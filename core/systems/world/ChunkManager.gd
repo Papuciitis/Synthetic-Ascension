@@ -677,7 +677,8 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 		var offset_cells: int = 4 if force_landmark else 2
 		var ox_cells := rng.randi_range(-offset_cells, offset_cells)
 		var oy_cells := rng.randi_range(-offset_cells, offset_cells)
-		var landmark_cell := Vector2i(cells / 2 + ox_cells, cells / 2 + oy_cells)
+		var half_cells := floori(float(cells) * 0.5)
+		var landmark_cell := Vector2i(half_cells + ox_cells, half_cells + oy_cells)
 		var alpha := 0.82 if force_landmark else 0.72
 		if tiled_world_rendering:
 			_ensure_tile_renderer()
@@ -1093,14 +1094,14 @@ func paint_tiled_rect(
 	rect: Rect2i,
 	texture: Texture2D,
 	repeat_world_px: int,
-	z_index: int,
-	modulate: Color
+	layer_z_index: int,
+	tile_modulate: Color
 ) -> int:
 	_ensure_tile_renderer()
 	if _tile_renderer == null:
 		return 0
 	return _tile_renderer.paint_repeating_rect(
-		chunk, layer_kind, rect, texture, repeat_world_px, z_index, modulate
+		chunk, layer_kind, rect, texture, repeat_world_px, layer_z_index, tile_modulate
 	)
 
 
@@ -1109,18 +1110,18 @@ func paint_tiled_texture(
 	layer_kind: StringName,
 	cell: Vector2i,
 	texture: Texture2D,
-	z_index: int,
+	layer_z_index: int,
 	quarter_turns: int = 0,
 	flip_h: bool = false,
 	flip_v: bool = false,
-	modulate: Color = Color.WHITE
+	tile_modulate: Color = Color.WHITE
 ) -> bool:
 	_ensure_tile_renderer()
 	if _tile_renderer == null:
 		return false
 	return _tile_renderer.paint_transformed_texture(
-		chunk, layer_kind, cell, texture, z_index,
-		quarter_turns, flip_h, flip_v, modulate
+		chunk, layer_kind, cell, texture, layer_z_index,
+		quarter_turns, flip_h, flip_v, tile_modulate
 	)
 
 

@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[node name="EmptyOutdoor" type="Node2D"]
+z_index = -500
+metadata/piece_role = "empty_outdoor"
+
+[node name="Ground" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-2048, -2048, 2048, -2048, 2048, 2048, -2048, 2048)
+color = Color(0.105, 0.16, 0.12, 1)

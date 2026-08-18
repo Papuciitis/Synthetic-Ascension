@@ -1,0 +1,23 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/dev_segment/pieces/EmptyOutdoor.tscn" id="1_outdoor"]
+[ext_resource type="PackedScene" path="res://scenes/world/dev_segment/pieces/RoomCorner.tscn" id="2_corner"]
+
+[node name="DevSegment" type="Node2D"]
+
+[node name="EmptyOutdoor" parent="." instance=ExtResource("1_outdoor")]
+
+[node name="RoomCornerNW" parent="." instance=ExtResource("2_corner")]
+position = Vector2(-512, -512)
+
+[node name="RoomCornerNE" parent="." instance=ExtResource("2_corner")]
+position = Vector2(512, -512)
+rotation = 1.57079632679
+
+[node name="RoomCornerSE" parent="." instance=ExtResource("2_corner")]
+position = Vector2(512, 512)
+rotation = 3.14159265359
+
+[node name="RoomCornerSW" parent="." instance=ExtResource("2_corner")]
+position = Vector2(-512, 512)
+rotation = -1.57079632679

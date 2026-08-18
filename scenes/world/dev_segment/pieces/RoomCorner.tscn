@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="RectangleShape2D" id="RectangleHorizontal"]
+size = Vector2(448, 64)
+
+[sub_resource type="RectangleShape2D" id="RectangleVertical"]
+size = Vector2(64, 448)
+
+[node name="RoomCorner" type="Node2D"]
+metadata/piece_role = "room_corner"
+
+[node name="HorizontalWall" type="StaticBody2D" parent="."]
+position = Vector2(224, 32)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HorizontalWall"]
+shape = SubResource("RectangleHorizontal")
+
+[node name="Visual" type="Polygon2D" parent="HorizontalWall"]
+position = Vector2(-224, -32)
+polygon = PackedVector2Array(0, 0, 448, 0, 448, 64, 0, 64)
+color = Color(0.32, 0.35, 0.38, 1)
+
+[node name="VerticalWall" type="StaticBody2D" parent="."]
+position = Vector2(32, 224)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="VerticalWall"]
+shape = SubResource("RectangleVertical")
+
+[node name="Visual" type="Polygon2D" parent="VerticalWall"]
+position = Vector2(-32, -224)
+polygon = PackedVector2Array(0, 0, 64, 0, 64, 448, 0, 448)
+color = Color(0.32, 0.35, 0.38, 1)

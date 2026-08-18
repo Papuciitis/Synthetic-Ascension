@@ -4,6 +4,7 @@ const SEGMENT_PROC_BUILDER_SCRIPT := preload("res://core/systems/world/SegmentPr
 const SEGMENT1_NARRATIVE_OVERLAY := preload("res://ui/screens/Segment1NarrativeOverlay.tscn")
 const TUTORIAL_MODAL_CONTROLLER := preload("res://ui/controllers/TutorialModalController.gd")
 const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/OpeningSequenceController.tscn")
+const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.tscn")
 
 @export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
@@ -11,8 +12,8 @@ const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/Openin
 
 @onready var player: Node = $Player
 @onready var hud: Control = $UI/HUD
-@onready var chunk_manager: ChunkManager = $ChunkManager
-@onready var level1_builder: Node2D = $Level1
+@onready var chunk_manager: ChunkManager = get_node_or_null("ChunkManager") as ChunkManager
+@onready var level1_builder: Node2D = get_node_or_null("Level1") as Node2D
 
 # IMPORTANT: only ONE augment_select var (no duplicate @onready + var)
 var augment_select: CanvasLayer = null
@@ -22,6 +23,19 @@ var _run_ended: bool = false
 var _segment_completion_running: bool = false
 var _tutorial_modals: TutorialModalController = null
 var _opening_sequence: OpeningSequenceController = null
+
+
+func _enter_tree() -> void:
+	if Global == null or not Global.debug_dev_segment:
+		return
+	# Strip normal-world children before their _ready callbacks can allocate
+	# chunks, navigation buffers, spawn services, or handcrafted geometry.
+	for child_name in [&"ChunkManager", &"FlowFieldNav", &"Spawner", &"WorldDropSpawner", &"Level1"]:
+		var child := get_node_or_null(NodePath(child_name))
+		if child == null:
+			continue
+		remove_child(child)
+		child.queue_free()
 
 
 func _ready() -> void:
@@ -107,6 +121,10 @@ func _ready() -> void:
 
 
 func _setup_segment_world() -> void:
+	if Global != null and Global.debug_dev_segment:
+		_setup_dev_segment()
+		return
+
 	var seg: int = (Global.attempt_segment if Global != null else 1)
 
 	# Segment 1 is handcrafted (Level1Builder). Segments 2+ use procedural chunks + a procedural builder.
@@ -129,7 +147,34 @@ func _setup_segment_world() -> void:
 	else:
 		push_warning("Failed to instantiate SegmentProcBuilder")
 
+
+func _setup_dev_segment() -> void:
+	Global.debug_performance_lab = true
+	PerformanceFlightRecorder.set_enabled(true)
+	if chunk_manager != null:
+		chunk_manager.generation_enabled = false
+		chunk_manager.queue_free()
+	var flow_field := get_node_or_null("FlowFieldNav")
+	if flow_field != null:
+		flow_field.queue_free()
+	if level1_builder != null and is_instance_valid(level1_builder):
+		level1_builder.queue_free()
+	var spawner := get_node_or_null("Spawner")
+	if spawner != null:
+		spawner.queue_free()
+	var world_drop_spawner := get_node_or_null("WorldDropSpawner")
+	if world_drop_spawner != null:
+		world_drop_spawner.queue_free()
+	var prototype := DEV_SEGMENT_SCENE.instantiate()
+	if prototype != null:
+		add_child(prototype)
+	else:
+		push_warning("Failed to instantiate DevSegment")
+
+
 func _begin_entry_sequence() -> void:
+	if Global != null and Global.debug_dev_segment:
+		return
 	var seg: int = (Global.attempt_segment if Global != null else 1)
 	if seg == 1 and Global != null and not Global.attempt_opening_completed:
 		_opening_sequence = OPENING_SEQUENCE_SCENE.instantiate() as OpeningSequenceController

@@ -132,7 +132,7 @@ func paint_repeating_rect(
 	begin_chunk(chunk, _cell_size)
 	var repeat_px := maxi(_cell_size, repeat_world_px)
 	repeat_px = maxi(_cell_size, int(round(float(repeat_px) / float(_cell_size))) * _cell_size)
-	var period_cells := maxi(1, repeat_px / _cell_size)
+	var period_cells := maxi(1, floori(float(repeat_px) / float(_cell_size)))
 	var source_id := _source_for_repeating_texture(texture, repeat_px, modulate)
 	if source_id < 0:
 		return 0
@@ -271,7 +271,7 @@ func _source_for_repeating_texture(texture: Texture2D, repeat_px: int, modulate:
 	var source := TileSetAtlasSource.new()
 	source.texture = tile_texture
 	source.texture_region_size = Vector2i(_cell_size, _cell_size)
-	var period_cells := maxi(1, repeat_px / _cell_size)
+	var period_cells := maxi(1, floori(float(repeat_px) / float(_cell_size)))
 	for y in range(period_cells):
 		for x in range(period_cells):
 			var atlas := Vector2i(x, y)
@@ -282,8 +282,8 @@ func _source_for_repeating_texture(texture: Texture2D, repeat_px: int, modulate:
 	return source_id
 
 
-func _texture_key(texture: Texture2D) -> Variant:
-	return texture.resource_path if not texture.resource_path.is_empty() else texture.get_instance_id()
+func _texture_key(texture: Texture2D) -> String:
+	return texture.resource_path if not texture.resource_path.is_empty() else "instance:%d" % texture.get_instance_id()
 
 
 func _layer_for(
