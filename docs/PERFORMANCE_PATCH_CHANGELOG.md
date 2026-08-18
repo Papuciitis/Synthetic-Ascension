@@ -221,3 +221,29 @@ Godot 4.7.1 deterministic audit, seed 251337, one discarded site warm-up, then r
 The final `CHUNK_AUDIT` passed all 12 gates. Its six remaining `CollisionShape2D` nodes are
 intentional interactive site volumes, not procedural blocker physics. The audit reports these
 separately and does not count them as blocker-node regressions.
+
+## 2026-08-18 - scalable horde simulation foundation
+
+- Added a deterministic enemy simulation scheduler. Protected bosses, objectives, authored
+  encounters, and smart archetypes remain full-rate; ordinary ambient enemies use a hard budget
+  of 32 full-rate actors, 48 reduced actors, and an uncapped far-proxy population.
+- Mid actors retain world collision and remain hittable while running in two rotating tick groups.
+  Far actors leave individual physics processing and the physics broadphase, then receive one
+  manager-driven movement update every six physics frames.
+- Enemy hitboxes now separate active monitoring from monitorability. Ordinary enemies remain
+  hittable without every Area2D actively searching; Leech contact detection remains active.
+- Flow fields build into an inactive buffer and publish atomically, so enemies keep following the
+  last completed field during a replacement build. Under physics pressure, the build budget drops
+  from 1.50 ms to 0.50 ms per frame without cancelling the build.
+- Ordinary ambient enemy instances are recycled through a fail-closed pool capped at 32 instances
+  per scene. HP, motion, control state, navigation caches, DOT children, collision roles, and index
+  membership are reset. Elites and special/authored actors are always freed instead.
+- The flight recorder's cached slow snapshot now includes scheduler tier/step costs and pool reuse
+  counters. Recurring follower-transaction and Conduit ArcBolts logs are disabled unless their
+  explicit debug flags are enabled.
+
+Fresh Godot 4.7.1 verification passed 211 focused assertions, a 480-enemy lifecycle stress test
+with zero failures, and the existing chunk audit. The 180-enemy synthetic simulation benchmark
+improved from 379.15 ms to 89.17 ms across 120 frames (4.25x speedup, 0.743 ms per adaptive frame).
+These are deterministic test results; the next gameplay capture is required to establish the live
+before/after frame-time curve and tune the full/mid budgets for the target 500+ on-screen horde.
