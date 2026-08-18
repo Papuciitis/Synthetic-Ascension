@@ -19,7 +19,7 @@ func _check(condition: bool, message: String) -> void:
 
 func _run() -> void:
 	_test_flow_coalescing()
-	_test_population_lod_contract()
+	_test_scheduler_tier_contract()
 	_test_projectile_query_contract()
 	_test_chunk_queue_contract()
 	print("PerformanceRootCauseFixTest: %d passed, %d failed" % [_passes, _failures])
@@ -38,24 +38,25 @@ func _test_flow_coalescing() -> void:
 	flow.queue_free()
 
 
-func _test_population_lod_contract() -> void:
+func _test_scheduler_tier_contract() -> void:
+	# The old population-LOD layer had no production callers; production tiers are
+	# owned by EnemySimulationScheduler and bounded by max_scheduler_tier. These
+	# assertions target the live path so they fail if production regresses.
 	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
 	var enemy := enemy_scene.instantiate() as EnemyActor
-	_check(enemy.has_method("compute_population_lod_tier"), "enemy exposes deterministic population LOD calculation")
-	_check(enemy.has_method("should_run_reduced_step"), "enemy exposes reduced-step scheduler")
-	if enemy.has_method("compute_population_lod_tier"):
-		_check(int(enemy.call("compute_population_lod_tier", EnemySpec.AI.CHASE, 800.0, 20)) == 0, "light population keeps existing near behavior")
-		_check(int(enemy.call("compute_population_lod_tier", EnemySpec.AI.CHASE, 800.0, 180)) >= 1, "heavy population throttles distant ordinary ambient actor")
-		_check(int(enemy.call("compute_population_lod_tier", EnemySpec.AI.SNIPER, 1800.0, 180)) == 0, "sniper remains full-rate")
-		enemy.set("_lod_tier", 1)
-		enemy.set("_ambient_population", 180)
-		var reduced_runs := 0
-		for _i in range(12):
-			if bool(enemy.call("should_run_reduced_step", 1.0 / 60.0)):
-				reduced_runs += 1
-		_check(reduced_runs >= 5 and reduced_runs <= 7, "pressured mid-tier actor runs near 30 Hz")
+	_check(not enemy.has_method("compute_population_lod_tier"), "dead population LOD layer is removed")
+	_check(not enemy.has_method("should_run_reduced_step"), "dead reduced-step scheduler is removed")
+	_check(enemy.has_method("max_scheduler_tier"), "enemy exposes maximum demotion tier")
+	_check(enemy.has_method("run_scheduled_simulation"), "enemy exposes manager-driven simulation")
+	if enemy.has_method("max_scheduler_tier"):
+		_check(int(enemy.call("max_scheduler_tier")) == 2, "plain ambient enemy may become a far proxy")
 		enemy.is_elite = true
-		_check(int(enemy.call("compute_population_lod_tier", EnemySpec.AI.CHASE, 1800.0, 180)) == 0, "elite remains full-rate")
+		_check(int(enemy.call("max_scheduler_tier")) == 1, "elite never loses world collision")
+		enemy.is_elite = false
+		var sniper_spec := EnemySpec.new()
+		sniper_spec.ai = EnemySpec.AI.SNIPER
+		enemy.spec = sniper_spec
+		_check(int(enemy.call("max_scheduler_tier")) == 1, "sniper never loses world collision")
 	enemy.free()
 
 

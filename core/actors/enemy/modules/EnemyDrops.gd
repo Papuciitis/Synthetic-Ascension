@@ -6,11 +6,16 @@ const HEALTH_PICKUP_SCENE: PackedScene = preload("res://scenes/world/pickups/Hea
 var _enemy: EnemyActor = null
 var _pool: Array[String] = []
 
+# Cache built pools by prefix signature: the result is identical for every
+# enemy of the same type, and this used to re-walk the item db on every spawn
+# and every pool reuse. Cached arrays are shared read-only — never mutate _pool.
+static var _pool_cache: Dictionary = {}
+
 func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
 
 func build_drop_pool() -> void:
-	_pool.clear()
+	_pool = []
 
 	if _enemy == null:
 		return
@@ -20,27 +25,39 @@ func build_drop_pool() -> void:
 		return
 
 	var prefixes: PackedStringArray = _enemy.drop_pool_prefixes
-
-	# If no prefixes, allow everything.
-	if prefixes.is_empty():
-		for k in keys:
-			_pool.append(str(k))
+	var signature := "%s|%d|%d" % [",".join(prefixes), int(_enemy.drop_fallback_to_all), keys.size()]
+	var cached: Variant = _pool_cache.get(signature)
+	if cached is Array:
+		_pool = cached
+		_debug_print_pool()
 		return
 
-	# Filter by prefixes.
-	for k in keys:
-		var ks: String = str(k)
-		for pref in prefixes:
-			if ks.begins_with(pref):
-				_pool.append(ks)
-				break
+	var built: Array[String] = []
 
-	# Fallback: allow everything if pool ended empty and fallback enabled.
-	if _pool.is_empty() and _enemy.drop_fallback_to_all:
+	if prefixes.is_empty():
+		# If no prefixes, allow everything.
 		for k in keys:
-			_pool.append(str(k))
+			built.append(str(k))
+	else:
+		# Filter by prefixes.
+		for k in keys:
+			var ks: String = str(k)
+			for pref in prefixes:
+				if ks.begins_with(pref):
+					built.append(ks)
+					break
+
+		# Fallback: allow everything if pool ended empty and fallback enabled.
+		if built.is_empty() and _enemy.drop_fallback_to_all:
+			for k in keys:
+				built.append(str(k))
+
+	_pool_cache[signature] = built
+	_pool = built
+	_debug_print_pool()
 
 
+func _debug_print_pool() -> void:
 	# Debug: show pool composition after building (toggle with EnemyActor.debug_drops).
 	if _enemy != null and _enemy.debug_drops:
 		print("[DROP POOL] enemy=", _enemy.name,

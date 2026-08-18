@@ -43,17 +43,10 @@ class_name EnemyActor
 
 @export_group("Simulation LOD (ambient swarm only)")
 @export var simulation_lod_enabled: bool = true
-@export var lod_near_distance: float = 1100.0
+# Beyond this distance a hit-reaction no longer buys a full-simulation slot.
 @export var lod_mid_distance: float = 2400.0
 @export var lod_mid_steer_interval: float = 0.08
 @export var lod_far_steer_interval: float = 0.20
-@export var lod_population_start: int = 32
-@export var lod_population_full_pressure: int = 96
-@export var lod_pressured_near_distance: float = 380.0
-@export var lod_pressured_mid_distance: float = 1200.0
-@export var lod_mid_reduced_population: int = 48
-@export_range(0.025, 0.05, 0.001) var lod_mid_physics_interval: float = 0.033
-@export_range(0.067, 0.10, 0.001) var lod_far_physics_interval: float = 0.083
 @export var lod_disable_far_hitbox: bool = true
 @export_range(2, 8, 1) var physics_max_slides: int = 4
 @export var sniper_retirement_safety_margin: float = 450.0
@@ -129,13 +122,9 @@ var _lod_steer_accum: float = 0.0
 var _lod_force_refresh: bool = true
 var _cached_chase: Vector2 = Vector2.ZERO
 var _cached_nav_target: Vector2 = Vector2.ZERO
-var _far_step_left: float = 0.0
-var _far_delta_accum: float = 0.0
-var _far_last_delta: float = 0.0
 var _simulation_motion_scale: float = 1.0
 var _scheduled_step_delta: float = 0.0
-var _ambient_population: int = 0
-var _population_refresh_left: float = 0.0
+var _active_dots: Array = []
 var _pool_fresh_obtain_pending: bool = false
 var _scene_base_scale: Vector2 = Vector2.ONE
 var _scene_base_speed: float = 0.0
@@ -201,8 +190,6 @@ func _ready() -> void:
 	safe_margin = 0.04
 	max_slides = clampi(physics_max_slides, 2, 8) if _is_lod_eligible(_get_active_ai()) else 8
 	_lod_steer_left = Global._rng.randf_range(0.0, maxf(0.01, lod_far_steer_interval))
-	_far_step_left = Global._rng.randf_range(0.0, maxf(0.067, lod_far_physics_interval))
-	_population_refresh_left = Global._rng.randf_range(0.0, 0.5)
 	_apply_simulation_collision_roles()
 	_pool_fresh_obtain_pending = has_meta("__pool_key")
 
@@ -236,11 +223,10 @@ func run_scheduled_simulation(delta: float) -> void:
 func _run_simulation_step(delta: float) -> void:
 	_scheduled_step_delta = delta
 	_simulation_motion_scale = delta / maxf(get_physics_process_delta_time(), 0.000001)
-	_population_refresh_left -= delta
-	if _population_refresh_left <= 0.0:
-		_population_refresh_left += 0.5
-		if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("ambient_alive_count"):
-			_ambient_population = int(_enemy_index.call("ambient_alive_count"))
+	# Damage-over-time nodes are ticked here (not via their own _process) so DoT
+	# cost follows the scheduler tier. Runs before any early return below.
+	if not _active_dots.is_empty():
+		_tick_dots(delta)
 	# Acquire player if needed
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as Node2D
@@ -390,33 +376,6 @@ func _tick_active_modules(delta: float, ai: int) -> void:
 		_tactical.tick(delta)
 
 
-func _update_lod_tier(ai: int, distance_to_player: float) -> void:
-	var next_tier := compute_population_lod_tier(ai, distance_to_player, _ambient_population)
-	set_scheduler_tier(next_tier)
-
-
-func compute_population_lod_tier(ai: int, distance_to_player: float, ambient_population: int) -> int:
-	if not _is_lod_eligible(ai):
-		return 0
-	var pressure := sqrt(clampf(
-		float(ambient_population - lod_population_start)
-		/ float(maxi(1, lod_population_full_pressure - lod_population_start)),
-		0.0,
-		1.0
-	))
-	var near_limit := lerpf(lod_near_distance, minf(lod_near_distance, lod_pressured_near_distance), pressure)
-	var mid_limit := lerpf(
-		maxf(lod_mid_distance, lod_near_distance),
-		maxf(near_limit, lod_pressured_mid_distance),
-		pressure
-	)
-	if distance_to_player > mid_limit:
-		return 2
-	if distance_to_player > near_limit:
-		return 1
-	return 0
-
-
 func _is_lod_eligible(ai: int) -> bool:
 	if not simulation_lod_enabled or is_elite:
 		return false
@@ -434,8 +393,21 @@ func simulation_tier() -> int:
 	return _lod_tier
 
 
+func max_scheduler_tier() -> int:
+	# Far tier disables body collision and broadphase presence; only the ambient
+	# swarm archetypes may pay that price. Elites, smart archetypes, and special
+	# actors clamp to mid so they always stay hittable.
+	return 2 if _is_lod_eligible(_get_active_ai()) else 1
+
+
 func set_scheduler_tier(tier: int) -> void:
 	var next_tier := clampi(tier, 0, 2)
+	if next_tier == _lod_tier:
+		# Unchanged tier: keep the per-enemy steering stagger intact. Callbacks and
+		# collision roles are re-asserted cheaply because pool obtain relies on it.
+		set_physics_process(_lod_tier == 0)
+		_apply_simulation_collision_roles()
+		return
 	var was_far := _lod_tier == 2
 	_lod_tier = next_tier
 	set_physics_process(_lod_tier == 0)
@@ -472,49 +444,17 @@ func is_simulation_protected(player_distance: float) -> bool:
 
 
 func simulation_priority(player_position: Vector2) -> float:
-	var priority := -global_position.distance_squared_to(player_position)
-	if stun_time > 0.0 or knockback_vel != Vector2.ZERO:
+	var distance_squared := global_position.distance_squared_to(player_position)
+	var priority := -distance_squared
+	# Hit reactions deserve full fidelity, but only near the player; in a bullet
+	# heaven most of the horde carries residual knockback, and an unbounded boost
+	# lets distant hit enemies churn the full-simulation slots every refresh.
+	if (
+		(stun_time > 0.0 or knockback_vel != Vector2.ZERO)
+		and distance_squared <= lod_mid_distance * lod_mid_distance
+	):
 		priority += 1000000000.0
 	return priority
-
-
-func should_run_far_step(delta: float) -> bool:
-	return should_run_reduced_step(delta)
-
-
-func should_run_reduced_step(delta: float) -> bool:
-	if not _should_reduce_physics(_get_active_ai()):
-		_far_step_left = 0.0
-		_far_delta_accum = 0.0
-		_far_last_delta = maxf(0.0, delta)
-		return true
-	_far_delta_accum += maxf(0.0, delta)
-	_far_step_left -= maxf(0.0, delta)
-	if _far_step_left > 0.0:
-		return false
-	var interval := (
-		clampf(lod_far_physics_interval, 0.067, 0.10)
-		if _lod_tier == 2
-		else clampf(lod_mid_physics_interval, 0.025, 0.05)
-	)
-	_far_step_left += interval
-	if _far_step_left <= 0.0:
-		_far_step_left = interval
-	_far_last_delta = _far_delta_accum
-	_far_delta_accum = 0.0
-	return true
-
-
-func _should_reduce_physics(ai: int) -> bool:
-	if not _is_lod_eligible(ai):
-		return false
-	if _lod_tier == 2:
-		return true
-	return _lod_tier == 1 and _ambient_population >= lod_mid_reduced_population
-
-
-func consume_simulation_delta() -> float:
-	return maxf(_far_last_delta, 0.000001)
 
 
 func _move_and_slide_scaled() -> void:
@@ -607,7 +547,7 @@ func _notify_enemy_index_dead() -> void:
 
 
 func can_pool_as_ambient() -> bool:
-	if scene_file_path == "" or is_elite:
+	if scene_file_path == "":
 		return false
 	if get_meta("special_spawn_kind", &"") as StringName != &"":
 		return false
@@ -620,7 +560,18 @@ func can_pool_as_ambient() -> bool:
 		or bool(get_meta("never_cull", false))
 	):
 		return false
-	return _is_lod_eligible(_get_active_ai())
+	if not simulation_lod_enabled:
+		return false
+	# Eligibility is judged on the base archetype, deliberately ignoring elite
+	# status: at high threat most deaths are elites, and excluding them collapses
+	# pool reuse exactly when spawn pressure peaks. The obtain reset clears every
+	# elite mutation (status, stats, tint, solver slides).
+	var base_ai: int = spec.ai if spec != null else EnemySpec.AI.CHASE
+	return (
+		base_ai == EnemySpec.AI.CHASE
+		or base_ai == EnemySpec.AI.SPLITTER
+		or base_ai == EnemySpec.AI.LEECH
+	)
 
 
 func despawn(_reason: StringName = &"death") -> void:
@@ -660,6 +611,7 @@ func _reset_for_pool_obtain() -> void:
 	for child in get_children():
 		if child is BurnDot or child is BleedDot:
 			child.free()
+	_active_dots.clear()
 	for key in [
 		&"culled",
 		&"cull_reason",
@@ -676,6 +628,8 @@ func _reset_for_pool_obtain() -> void:
 	knockback_decay = _scene_base_knockback_decay
 	dead = false
 	is_elite = false
+	# make_elite doubles the solver slides; restore the ordinary budget.
+	max_slides = clampi(physics_max_slides, 2, 8) if _is_lod_eligible(_get_active_ai()) else 8
 	velocity = Vector2.ZERO
 	knockback_vel = Vector2.ZERO
 	stun_time = 0.0
@@ -689,7 +643,6 @@ func _reset_for_pool_obtain() -> void:
 	_lod_steer_accum = 0.0
 	_lod_steer_left = 0.0
 	_lod_force_refresh = true
-	_population_refresh_left = 0.0
 	_init.boot()
 	_summoner.setup(self)
 	_bomber.setup(self)
@@ -751,10 +704,12 @@ func make_elite() -> void:
 		return
 
 	is_elite = true
-	if PerformanceFlightRecorder != null:
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_promoted", 1, {
 			"enemy_id": scene_file_path.get_file().get_basename(),
 		})
+	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("note_elite"):
+		_enemy_index.call("note_elite", self)
 	set_scheduler_tier(0)
 	max_slides = 8
 	max_hp *= spec.elite_hp_mult
@@ -816,6 +771,29 @@ func take_damage(amount: float, source: Node = null) -> void:
 
 func apply_hit_ledger(ledger: HitLedger) -> void:
 	_life.apply_hit_ledger(ledger)
+
+
+func register_dot(dot: Node) -> void:
+	# Store instance IDs, not object Variants: an expired dot frees itself and a
+	# retained Variant would raise "previously freed" even on a validity check.
+	if dot == null:
+		return
+	var dot_id := dot.get_instance_id()
+	if not _active_dots.has(dot_id):
+		_active_dots.append(dot_id)
+
+
+func _tick_dots(delta: float) -> void:
+	for index in range(_active_dots.size() - 1, -1, -1):
+		var dot_object := instance_from_id(int(_active_dots[index]))
+		if dot_object == null or not is_instance_valid(dot_object):
+			_active_dots.remove_at(index)
+			continue
+		var dot := dot_object as Node
+		if dot == null or dot.is_queued_for_deletion():
+			_active_dots.remove_at(index)
+			continue
+		dot.call("tick", delta)
 
 
 # -----------------------

@@ -117,6 +117,24 @@ func _run() -> void:
 	if completed_report_paths.size() == 1:
 		_check(FileAccess.file_exists(completed_report_paths[0]), "background recorder writes the JSON report")
 	_check(int(recorder.get_status_snapshot().get("pending_reports", -1)) == 0, "completed background report leaves no pending work")
+	# Incident capture must not deep-copy the whole history ring on the spike
+	# frame itself: samples are immutable after ingest, so capture shares them.
+	recorder.clear_session()
+	recorder.configure({"automatic_capture": false, "write_reports": false})
+	recorder.ingest_sample(_sample(Time.get_ticks_usec(), 12.0))
+	recorder.mark_incident(&"shared_capture_test")
+	var history_head: Dictionary = (recorder.get("_history") as Array)[0]
+	var capture_head: Dictionary = (recorder.get("_capture_samples") as Array)[0]
+	_check(is_same(history_head, capture_head), "incident capture shares immutable samples instead of deep-copying the ring")
+
+	# Counter cleanup must not deep-compare every bucket per expired event.
+	recorder.clear_session()
+	recorder.record_counter_event(&"trim", &"bucket_test", 3, {"detail": 1})
+	var counter_event: Dictionary = (recorder.get("_events") as Array)[0]
+	_check(counter_event.has("__bucket_key"), "counter events carry their bucket key for O(1) trim cleanup")
+	recorder.ingest_sample(_sample(Time.get_ticks_usec() + 30_000_000, 10.0))
+	_check((recorder.get("_counter_buckets") as Dictionary).is_empty(), "expired counter event releases its bucket")
+
 	recorder.queue_free()
 	_finish()
 

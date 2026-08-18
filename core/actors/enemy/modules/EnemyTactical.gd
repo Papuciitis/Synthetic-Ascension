@@ -28,10 +28,13 @@ var _dt: float = 1.0 / 60.0
 var _last_hp: float = -1.0
 var _reposition_t: float = 0.0
 
+# Reused query params (allocating one per cover sample was a hot-path cost).
+var _point_params := PhysicsPointQueryParameters2D.new()
+
 
 func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
-	_rng.randomize()
+	_rng.seed = Global._rng.randi()
 
 	_cover_cd = 0.0
 	_cover_target = Vector2.ZERO
@@ -82,15 +85,15 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 		_cover_cd = maxf(_enemy.spec.cover_refresh, 0.1)
 		_has_cover_target = _pick_cover_point(want_retreat)
 		_reposition_t = 0.0
-	_sep = null
-	_ei = null
 
 	# “commit if allies nearby” (but never when low HP)
 	var allies: int = _ally_count(COMMIT_RADIUS, 12)
 	var can_commit: bool = (not want_retreat) and (hp_ratio >= _enemy.spec.retreat_hp_ratio + COMMIT_HP_BUFFER)
 	var want_commit: bool = can_commit and (allies >= COMMIT_ALLIES_MIN)
 
-	var has_los: bool = _enemy.has_los_to_player()
+	# Shared throttled cache on EnemyActor (los_check_interval); a fresh raycast
+	# per brain call bypassed the throttle this cache exists for.
+	var has_los: bool = _enemy.has_los_cached()
 
 	# --- behavior selection ---
 	if want_retreat:
@@ -162,7 +165,7 @@ func _fallback_strafe_and_shoot(to_player: Vector2, dist: float, spd: float) -> 
 	var strafe: Vector2 = Vector2(-to_player.y, to_player.x)
 	desired += strafe * (spd * (_enemy.spec.strafe_strength + 0.35))
 
-	if _enemy.has_los_to_player():
+	if _enemy.has_los_cached():
 		_enemy._shooter.shoot_if_ready(to_player)
 
 	return desired
@@ -186,7 +189,7 @@ func _cover_peek_and_pressure(to_player: Vector2, dist: float, spd: float) -> Ve
 	desired += strafe * (spd * (_enemy.spec.strafe_strength * wobble))
 
 	# shoot if LOS opens (e.g. during peek drift)
-	if _enemy.has_los_to_player():
+	if _enemy.has_los_cached():
 		_enemy._shooter.shoot_if_ready(to_player)
 
 	return desired
@@ -210,7 +213,7 @@ func _commit_pressure(to_player: Vector2, dist: float, spd: float) -> Vector2:
 	desired += strafe * (spd * (_enemy.spec.strafe_strength * 0.75))
 
 	# commit means it tries to capitalize on LOS
-	if _enemy.has_los_to_player():
+	if _enemy.has_los_cached():
 		_enemy._shooter.shoot_if_ready(to_player)
 
 	return desired
@@ -235,7 +238,7 @@ func _pick_cover_point(want_far: bool) -> bool:
 		return false
 
 	# already in cover
-	if not _enemy.has_los_to_player():
+	if not _enemy.has_los_cached():
 		_cover_target = _enemy.global_position
 		return true
 
@@ -297,15 +300,14 @@ func _movement_blocked(p: Vector2) -> bool:
 		return false
 
 	var space: PhysicsDirectSpaceState2D = w.direct_space_state
-	var params := PhysicsPointQueryParameters2D.new()
-	params.position = p
-	params.collision_mask = mask
-	params.collide_with_areas = true
-	params.collide_with_bodies = true
+	_point_params.position = p
+	_point_params.collision_mask = mask
+	_point_params.collide_with_areas = true
+	_point_params.collide_with_bodies = true
 
 	# exclude self + hitbox + player + hurtbox (reuse senses exclude list)
 	if _enemy._senses != null:
-		params.exclude = _enemy._senses.get_exclude_rids()
+		_point_params.exclude = _enemy._senses.get_exclude_rids()
 
-	var hits: Array = space.intersect_point(params, 1)
+	var hits: Array = space.intersect_point(_point_params, 1)
 	return not hits.is_empty()

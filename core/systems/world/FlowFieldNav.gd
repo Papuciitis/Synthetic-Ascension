@@ -17,7 +17,13 @@ const STEPS: PackedVector2Array = [
 # Only request rebuild if player moved at least this many cells (Chebyshev distance).
 @export var rebuild_cell_step: int = 2
 
-# Incremental build budget
+# Run the BFS on a WorkerThreadPool task against a walkability snapshot.
+# A full 97x97 rebuild finishes in one task instead of being time-sliced on
+# the main thread across seconds of wall clock. The sliced path below remains
+# as a fallback when disabled or when the chunk manager lacks snapshots.
+@export var threaded_build: bool = true
+
+# Incremental build budget (sliced fallback only)
 @export var max_expansions_per_frame: int = 2500
 @export var max_ms_per_frame: float = 1.5
 @export var pressured_ms_per_frame: float = 0.5
@@ -60,6 +66,20 @@ var _queue: PackedInt32Array = PackedInt32Array()
 var _q_head: int = 0
 var _q_tail: int = 0
 var _building: bool = false
+
+# Worker-thread build state. While _build_thread_running is true, the worker
+# has exclusive access to the _build_* / walk / penalty buffers; the main
+# thread only polls the task id and reads results after joining.
+var _build_thread_running: bool = false
+var _build_task_id: int = -1
+var _cancel_requested: bool = false
+var _use_snapshot: bool = false
+var _snapshot_chunks: Dictionary = {}
+var _snapshot_blocked: Dictionary = {}
+var _snapshot_manual: Dictionary = {}
+var _snapshot_cells_per_chunk: int = 32
+var _thread_build_cells: int = 0
+var _thread_build_us: int = 0
 
 # rebuild requests
 var _time_accum: float = 0.0
@@ -124,8 +144,13 @@ func _process(delta: float) -> void:
 		and _pending_rev != _build_nav_revision
 		and _revision_debounce_left <= 0.0
 	):
-		_building = false
-		_debug_superseded += 1
+		if _build_thread_running:
+			# The worker owns the build buffers until it joins; ask it to bail
+			# and discard the result at completion.
+			_cancel_requested = true
+		else:
+			_building = false
+			_debug_superseded += 1
 
 	if _pending and not _building and _time_accum >= rebuild_interval:
 		_time_accum = 0.0
@@ -133,7 +158,17 @@ func _process(delta: float) -> void:
 		_pending = false
 
 	if _building:
-		_step_build()
+		if _build_thread_running:
+			_poll_threaded_build()
+		else:
+			_step_build()
+
+
+func _exit_tree() -> void:
+	if _build_thread_running:
+		_cancel_requested = true
+		WorkerThreadPool.wait_for_task_completion(_build_task_id)
+		_build_thread_running = false
 
 
 func _acquire_refs() -> void:
@@ -150,6 +185,9 @@ func _ensure_buffers() -> void:
 	var new_size: int = new_w * new_w
 
 	if new_size == _grid_size:
+		return
+	if _build_thread_running:
+		# Never resize buffers under a running worker; retry once it joins.
 		return
 
 	_r = new_r
@@ -275,8 +313,73 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 			"reason": String(_debug_current_reason),
 		})
 
+	if threaded_build and _cm.has_method("build_nav_walkability_snapshot"):
+		var snapshot := _cm.build_nav_walkability_snapshot() as Dictionary
+		_snapshot_chunks = snapshot.get("chunks", {})
+		_snapshot_blocked = snapshot.get("blocked", {})
+		_snapshot_manual = snapshot.get("manual", {})
+		_snapshot_cells_per_chunk = maxi(1, int(snapshot.get("cells_per_chunk", 32)))
+		_use_snapshot = true
+		_cancel_requested = false
+		_thread_build_cells = 0
+		_thread_build_us = 0
+		_build_task_id = WorkerThreadPool.add_task(_run_threaded_build, false, "FlowFieldNav build")
+		_build_thread_running = true
+
+
+func _run_threaded_build() -> void:
+	# Worker thread: exclusive owner of the _build_* / walk / penalty buffers
+	# and the snapshot dictionaries. Touches no nodes and no recorder.
+	var start_us := Time.get_ticks_usec()
+	var processed := 0
+	while _q_head < _q_tail:
+		if _cancel_requested:
+			break
+		var cur_idx: int = _queue[_q_head]
+		_q_head += 1
+		processed += 1
+		var cur_dist: int = _build_dist[cur_idx]
+		if cur_dist >= _r:
+			continue
+		_expand_neighbors(cur_idx % _w, int(cur_idx / float(_w)), cur_dist)
+	_thread_build_cells = processed
+	_thread_build_us = Time.get_ticks_usec() - start_us
+
+
+func _poll_threaded_build() -> void:
+	if not WorkerThreadPool.is_task_completed(_build_task_id):
+		return
+	WorkerThreadPool.wait_for_task_completion(_build_task_id)
+	_build_thread_running = false
+	_build_task_id = -1
+	_use_snapshot = false
+	_building = false
+	_debug_current_cells += _thread_build_cells
+	_debug_current_cpu_us += _thread_build_us
+	_debug_cells_total += _thread_build_cells
+	_debug_build_cpu_us += _thread_build_us
+	if _cancel_requested:
+		_cancel_requested = false
+		_debug_superseded += 1
+		return
+	_publish_completed_build()
+	_debug_completed += 1
+	_debug_last_cells = _debug_current_cells
+	_debug_last_cpu_us = _debug_current_cpu_us
+	_debug_last_completed_reason = _debug_current_reason
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"navigation", &"flow_completed", {
+			"revision": _last_nav_revision,
+			"reason": String(_debug_current_reason),
+			"cells": _debug_last_cells,
+			"cpu_usec": _debug_last_cpu_us,
+		})
+
 
 func _step_build() -> void:
+	if _build_thread_running:
+		# The worker owns the build buffers; slicing here would race it.
+		return
 	if _cm == null:
 		_building = false
 		return
@@ -407,10 +510,24 @@ func _is_walkable(lx: int, ly: int) -> bool:
 
 	var gx: int = _build_origin_cell.x + (lx - _r)
 	var gy: int = _build_origin_cell.y + (ly - _r)
-	var ok: bool = _cm.is_cell_walkable(Vector2i(gx, gy))
+	var ok: bool
+	if _use_snapshot:
+		ok = _snapshot_walkable(gx, gy)
+	else:
+		ok = _cm.is_cell_walkable(Vector2i(gx, gy))
 
 	_walkable[idx] = 1 if ok else 0
 	return ok
+
+
+func _snapshot_walkable(gx: int, gy: int) -> bool:
+	# Mirror of ChunkManager.is_cell_walkable over the immutable snapshot.
+	var cpc := _snapshot_cells_per_chunk
+	var chunk := Vector2i(floori(float(gx) / float(cpc)), floori(float(gy) / float(cpc)))
+	if not _snapshot_chunks.has(chunk):
+		return false
+	var cell := Vector2i(gx, gy)
+	return (not _snapshot_blocked.has(cell)) and (not _snapshot_manual.has(cell))
 
 
 func _cell_penalty(lx: int, ly: int) -> int:

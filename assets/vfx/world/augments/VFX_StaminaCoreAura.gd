@@ -27,9 +27,12 @@ var hurtbox: Area2D = null
 var _t: float = 0.0
 var _r: float = 32.0
 var _seed: float = 0.0
+var _base_radius: float = -1.0
+var _pts: PackedVector2Array = PackedVector2Array()
 
 func setup(hb: Area2D, dur: float = -1.0) -> void:
 	hurtbox = hb
+	_base_radius = -1.0
 	if dur > 0.0:
 		duration = dur
 
@@ -57,7 +60,10 @@ func _process(dt: float) -> void:
 		# we are parented to hurtbox; stay centered
 		position = Vector2.ZERO
 		global_rotation = 0.0
-		_r = _get_hurtbox_radius(hurtbox) + padding
+		# The hurtbox shape never changes; scanning its children every frame did.
+		if _base_radius < 0.0:
+			_base_radius = _get_hurtbox_radius(hurtbox)
+		_r = _base_radius + padding
 
 	queue_redraw()
 
@@ -106,19 +112,20 @@ func _draw() -> void:
 		draw_circle(Vector2.ZERO, r * 0.98,
 			Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha * fade))
 
-	# wavy ring points
+	# wavy ring points (buffer reused across frames)
 	var seg: int = max(24, segments)
-	var pts := PackedVector2Array()
+	if _pts.size() != seg + 1:
+		_pts.resize(seg + 1)
 	for i in range(seg + 1):
 		var a := TAU * float(i) / float(seg)
 		var w := sin(a * wave_freq + _t * roll_speed + _seed) * wave_amp
 		var w2 := sin(a * (wave_freq * 0.5) - _t * (roll_speed * 1.35) + _seed * 0.7) * (wave_amp * 0.45)
 		var rr := r + (w + w2) * pulse
-		pts.append(Vector2(cos(a), sin(a)) * rr)
+		_pts[i] = Vector2(cos(a), sin(a)) * rr
 
 	# glow + core
-	draw_polyline(pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
-	draw_polyline(pts, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
+	draw_polyline(_pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
+	draw_polyline(_pts, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
 
 	# rolling packets
 	for k in range(2):

@@ -48,6 +48,9 @@ func _run() -> void:
 	_test_previous_full_actor_wins_equal_priority_tie(scheduler)
 	await _test_enemy_tier_transitions()
 	await _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler)
+	await _test_eligible_ambient_still_reaches_far(scheduler)
+	await _test_max_scheduler_tier_contract()
+	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
 	_test_freed_actor_stale_group_is_ignored(scheduler_script)
@@ -220,9 +223,63 @@ func _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler: Node) -> 
 	var counters := scheduler.call("get_debug_counters") as Dictionary
 	_check(int(counters.get("protected", -1)) == 0, "ambient elites and smart archetypes do not bypass the hard budget")
 	_check(_tier_count(assignment, 0) == 3, "mixed ambient horde still obeys full budget")
-	_check(_tier_count(assignment, 1) == 4, "mixed ambient horde still obeys mid budget")
-	_check(_tier_count(assignment, 2) == 5, "mixed ambient overflow becomes far simulation")
+	# Far tier disables body collision and broadphase presence. Elites and smart
+	# archetypes must never become unshootable, so their overflow clamps to mid.
+	_check(_tier_count(assignment, 2) == 0, "ineligible archetypes are never demoted to collisionless far tier")
+	_check(_tier_count(assignment, 1) == 9, "ineligible overflow clamps to mid simulation")
 	_free_nodes(enemies)
+
+
+func _test_eligible_ambient_still_reaches_far(scheduler: Node) -> void:
+	scheduler.set("full_budget", 1)
+	scheduler.set("mid_budget", 1)
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var enemies: Array = []
+	for index in range(5):
+		var plain := enemy_scene.instantiate() as EnemyActor
+		plain.position = Vector2(float(index + 1) * 10.0, 0.0)
+		add_child(plain)
+		enemies.append(plain)
+	await get_tree().process_frame
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 2) == 3, "eligible ambient overflow still reaches far tier")
+	_free_nodes(enemies)
+
+
+func _test_max_scheduler_tier_contract() -> void:
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var plain := enemy_scene.instantiate() as EnemyActor
+	add_child(plain)
+	await get_tree().process_frame
+	_check(plain.has_method("max_scheduler_tier"), "enemy exposes maximum demotion tier")
+	if not plain.has_method("max_scheduler_tier"):
+		plain.queue_free()
+		return
+	_check(int(plain.call("max_scheduler_tier")) == 2, "eligible ambient enemy may be demoted to far tier")
+	plain.is_elite = true
+	_check(int(plain.call("max_scheduler_tier")) == 1, "elite keeps world collision at any distance")
+	plain.is_elite = false
+	var sniper_spec := EnemySpec.new()
+	sniper_spec.ai = EnemySpec.AI.SNIPER
+	plain.spec = sniper_spec
+	_check(int(plain.call("max_scheduler_tier")) == 1, "sniper keeps world collision at any distance")
+	plain.queue_free()
+
+
+func _test_unchanged_tier_preserves_stagger() -> void:
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var enemy := enemy_scene.instantiate() as EnemyActor
+	add_child(enemy)
+	await get_tree().process_frame
+	enemy.call("set_scheduler_tier", 1)
+	enemy.set("_lod_force_refresh", false)
+	enemy.set("_lod_steer_left", 5.0)
+	enemy.call("set_scheduler_tier", 1)
+	_check(not bool(enemy.get("_lod_force_refresh")), "reassigning an unchanged tier keeps the steering cache")
+	_check(float(enemy.get("_lod_steer_left")) == 5.0, "reassigning an unchanged tier keeps the steering stagger")
+	enemy.call("set_scheduler_tier", 2)
+	_check(bool(enemy.get("_lod_force_refresh")), "an actual tier change still forces a steering refresh")
+	enemy.queue_free()
 
 
 func _test_pooled_actor_stale_group_is_ignored(scheduler_script: Script) -> void:

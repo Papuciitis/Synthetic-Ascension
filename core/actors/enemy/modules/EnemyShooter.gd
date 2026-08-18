@@ -21,6 +21,9 @@ const SAFE_LANE_FORWARD_CHECK: float = 14.0
 const INF_COST: int = 1_000_000_000
 
 var _enemy: EnemyActor = null
+
+# Reused query params (allocating one per clearance probe was a hot-path cost).
+var _point_params := PhysicsPointQueryParameters2D.new()
 var _cd: float = 0.0
 
 # LOS throttle
@@ -202,18 +205,20 @@ func _pick_peek_dir(to_player: Vector2, probe_dist: float) -> void:
 # SAFE LANE (clearance bias + flow hint)
 # ------------------------------------------------------------
 
+const _CANDIDATE_DIRS: Array[Vector2] = [
+	Vector2(1, 0),
+	Vector2(-1, 0),
+	Vector2(0, 1),
+	Vector2(0, -1),
+	Vector2(0.7071067811865476, 0.7071067811865476),
+	Vector2(0.7071067811865476, -0.7071067811865476),
+	Vector2(-0.7071067811865476, 0.7071067811865476),
+	Vector2(-0.7071067811865476, -0.7071067811865476),
+]
+
+
 func _candidate_dirs() -> Array:
-	# Avoid const normalized() issues by building at runtime (only 8 dirs, cheap).
-	return [
-		Vector2(1, 0),
-		Vector2(-1, 0),
-		Vector2(0, 1),
-		Vector2(0, -1),
-		Vector2(1, 1).normalized(),
-		Vector2(1, -1).normalized(),
-		Vector2(-1, 1).normalized(),
-		Vector2(-1, -1).normalized()
-	]
+	return _CANDIDATE_DIRS
 
 
 func _pick_safe_lane_dir(to_player: Vector2, preferred_range: float, range_tol: float) -> Vector2:
@@ -317,17 +322,16 @@ func _movement_blocked(p: Vector2) -> bool:
 		return false
 
 	var space: PhysicsDirectSpaceState2D = w.direct_space_state
-	var params := PhysicsPointQueryParameters2D.new()
-	params.position = p
-	params.collision_mask = mask
-	params.collide_with_areas = true
-	params.collide_with_bodies = true
+	_point_params.position = p
+	_point_params.collision_mask = mask
+	_point_params.collide_with_areas = true
+	_point_params.collide_with_bodies = true
 
 	# exclude self + hitbox + player (+ hurtbox) via senses list if available
 	if _enemy._senses != null and _enemy._senses.has_method("get_exclude_rids"):
-		params.exclude = _enemy._senses.get_exclude_rids()
+		_point_params.exclude = _enemy._senses.get_exclude_rids()
 
-	var hits: Array = space.intersect_point(params, 1)
+	var hits: Array = space.intersect_point(_point_params, 1)
 	return not hits.is_empty()
 
 

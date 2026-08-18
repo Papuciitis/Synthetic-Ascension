@@ -176,6 +176,8 @@ var attempt_stat_delta: StatDelta = null
 # Internal autosave throttle
 var _autosave_timer: SceneTreeTimer = null
 var _suppress_autosave: bool = false
+var _autosave_dirty: bool = false
+var autosave_fallback_seconds: float = 30.0
 # stacking bag
 var run_luck: float = 0.0
 
@@ -228,6 +230,8 @@ func _ready() -> void:
 # ============================================================
 
 func goto_scene(path: String) -> void:
+	# Scene changes are the natural safe point for any deferred combat autosave.
+	flush_pending_save()
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
 		push_error("Scene change failed: %s err=%s" % [path, err])
@@ -931,17 +935,36 @@ func apply_major_choice(choice_id: StringName) -> void:
 	request_autosave()
 
 func request_autosave(delay: float = 0.6) -> void:
+	# Combat calls this once per kill; writing and re-validating the profile on
+	# a sub-second debounce meant synchronous disk work mid-fight. Mark the
+	# profile dirty and defer the write to a safe point (scene change, quit) or
+	# the long fallback timer below.
 	if _suppress_autosave:
 		return
 	if SaveManager == null or SaveManager.current_save == null:
 		return
+	_autosave_dirty = true
 	if _autosave_timer != null and is_instance_valid(_autosave_timer):
 		return
-	_autosave_timer = get_tree().create_timer(delay)
+	_autosave_timer = get_tree().create_timer(maxf(delay, autosave_fallback_seconds))
 	_autosave_timer.timeout.connect(func() -> void:
 		_autosave_timer = null
-		save_current_profile()
+		flush_pending_save()
 	)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		flush_pending_save()
+
+
+func flush_pending_save() -> void:
+	if not _autosave_dirty:
+		return
+	if SaveManager == null or SaveManager.current_save == null:
+		_autosave_dirty = false
+		return
+	save_current_profile(false)
 
 
 # ------------------------------------------------------------
@@ -1310,11 +1333,12 @@ func write_save(save: SaveData) -> void:
 		save.attempt_vendor_bag = null
 
 	_suppress_autosave = false
-func save_current_profile() -> void:
+func save_current_profile(validated: bool = true) -> void:
 	if SaveManager == null or SaveManager.current_save == null:
 		return
+	_autosave_dirty = false
 	write_save(SaveManager.current_save)
-	SaveManager.save_current()
+	SaveManager.save_current(validated)
 
 func record_new_attempt(save: SaveData) -> void:
 	if save != null:

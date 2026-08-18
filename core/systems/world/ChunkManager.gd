@@ -164,6 +164,8 @@ var _max_chunk_build_ms := 0.0
 var _last_stream_plan_ms := 0.0
 var _queue_started_usec := 0
 var _stream_activations_total := 0
+var _stream_plans_total := 0
+var _last_plan_camera_pos: Vector2 = Vector2.INF
 var streaming_started: bool = false
 
 var _debug_tex: Texture2D = null
@@ -196,7 +198,19 @@ func _process(_delta: float) -> void:
 			return
 
 	var c: Vector2i = _world_to_chunk(_player.global_position)
-	if c != _current_center or use_camera_stream_bounds:
+	var replan: bool = c != _current_center
+	if use_camera_stream_bounds and not replan:
+		# Re-planning clears and rebuilds the whole desired-chunk queue; doing
+		# it every frame was a constant per-frame tax. Replan only after real
+		# camera movement (a quarter chunk) instead.
+		var camera := get_viewport().get_camera_2d()
+		var camera_pos: Vector2 = camera.global_position if camera != null else _player.global_position
+		var threshold: float = float(chunk_size_px) * 0.25
+		replan = (
+			_last_plan_camera_pos == Vector2.INF
+			or camera_pos.distance_squared_to(_last_plan_camera_pos) >= threshold * threshold
+		)
+	if replan:
 		_current_center = c
 		_update_streaming()
 	process_chunk_generation_queue()
@@ -270,6 +284,13 @@ func _update_streaming() -> void:
 
 func queue_missing_chunks(center: Vector2i) -> void:
 	var plan_started_usec := Time.get_ticks_usec()
+	_stream_plans_total += 1
+	var plan_camera := get_viewport().get_camera_2d() if is_inside_tree() else null
+	_last_plan_camera_pos = (
+		plan_camera.global_position
+		if plan_camera != null
+		else (_player.global_position if _player != null and is_instance_valid(_player) else Vector2.INF)
+	)
 	_chunk_generation_queue.clear()
 	_queued_chunk_coords.clear()
 	_desired_chunk_coords.clear()
@@ -1153,6 +1174,21 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 	if not _chunks.has(cc):
 		return false
 	return (not _blocked_cells.has(cell)) and (not _manual_blocked_cells.has(cell))
+
+
+func build_nav_walkability_snapshot() -> Dictionary:
+	# Immutable copies of the walkability inputs so a worker-thread flow build
+	# can query them without racing chunk streaming on the main thread. Chunk
+	# presence is captured as bare coordinates, never node references.
+	var chunk_presence: Dictionary = {}
+	for chunk_coord in _chunks:
+		chunk_presence[chunk_coord] = true
+	return {
+		"chunks": chunk_presence,
+		"blocked": _blocked_cells.duplicate(),
+		"manual": _manual_blocked_cells.duplicate(),
+		"cells_per_chunk": _cells_per_chunk(),
+	}
 
 
 func register_manual_block_cell(cell: Vector2i) -> void:

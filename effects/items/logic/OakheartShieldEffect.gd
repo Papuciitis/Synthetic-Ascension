@@ -69,10 +69,8 @@ func _resolve_hurtbox() -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
-
-	if _hurtbox != null and is_instance_valid(_hurtbox):
-		_r = _get_hurtbox_radius(_hurtbox) + radius_padding
-
+	# The hurtbox radius is resolved once; re-scanning its children every frame
+	# allocated a child Array per frame for a constant result.
 	queue_redraw()
 
 func get_damage_taken_multiplier() -> float:

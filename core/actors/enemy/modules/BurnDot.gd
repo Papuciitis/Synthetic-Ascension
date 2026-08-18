@@ -18,9 +18,18 @@ func setup(target: Node, source: Node, stacks: int, duration: float, tick: float
 	_tick = maxf(tick, 0.05)
 	_dmg_per_tick_per_stack = maxf(dmg_per_tick_per_stack, 0.01)
 	_tick_left = minf(_tick_left, _tick) # make it feel responsive
-	set_process(true)
+	# When attached to an enemy that drives its own dots, the enemy's simulation
+	# step ticks us at its scheduler cadence — no 60 Hz idle callback per dot.
+	if get_parent() == target and target.has_method("register_dot"):
+		target.call("register_dot", self)
+		set_process(false)
+	else:
+		set_process(true)
 
 func _process(dt: float) -> void:
+	tick(dt)
+
+func tick(dt: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		queue_free()
 		return

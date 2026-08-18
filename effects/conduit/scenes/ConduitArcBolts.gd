@@ -71,6 +71,10 @@ func _get_player_base_damage() -> float:
 	return 12.0
 
 func _nearest_enemy(from: Vector2, r: float, exclude: Node2D) -> Node2D:
+	# Spatial index instead of a full "enemies" group scan per bolt hop.
+	var ei := get_node_or_null("/root/EnemyIndex")
+	if ei != null and ei.has_method("nearest_enemy"):
+		return ei.call("nearest_enemy", from, r, exclude) as Node2D
 	var best: Node2D = null
 	var best_d2 := r * r
 	for n in get_tree().get_nodes_in_group("enemies"):

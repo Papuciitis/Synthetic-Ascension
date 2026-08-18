@@ -58,7 +58,15 @@ func _detonate(pos: Vector2, power_mul: float) -> void:
 	var r := radius * (0.90 + 0.15 * set_strength)
 	var r2 := r * r
 
-	for n in get_tree().get_nodes_in_group("enemies"):
+	# Spatial index instead of a full "enemies" group scan per detonation.
+	var targets: Array = []
+	var ei := get_node_or_null("/root/EnemyIndex")
+	if ei != null and ei.has_method("gather_in_radius"):
+		ei.call("gather_in_radius", pos, r, targets)
+	else:
+		targets = get_tree().get_nodes_in_group("enemies")
+
+	for n in targets:
 		var e := n as Node2D
 		if e == null or not is_instance_valid(e):
 			continue

@@ -147,24 +147,15 @@ func _test_canonical_enemy_retirement() -> void:
 
 
 func _test_far_simulation_scheduler() -> void:
+	# The self-driven far-step layer was dead code that tests kept alive while the
+	# EnemySimulationScheduler group cadence did the real throttling. Assert it is
+	# gone and the manager-driven contract is what remains.
 	var enemy := ENEMY_ACTOR_SCRIPT.new.call() as EnemyActor
 	_check(enemy.has_method("simulation_tier"), "enemy exposes simulation tier")
-	_check(enemy.has_method("should_run_far_step"), "enemy exposes far-step scheduler")
-	_check(enemy.has_method("consume_simulation_delta"), "enemy exposes accumulated simulation delta")
-	if not enemy.has_method("should_run_far_step"):
-		enemy.free()
-		return
-	enemy.set("_lod_tier", 2)
-	var ran := false
-	for _frame in range(12):
-		if bool(enemy.call("should_run_far_step", 1.0 / 60.0)):
-			ran = true
-			break
-	_check(ran, "far enemy eventually receives a scheduled step")
-	if ran and enemy.has_method("consume_simulation_delta"):
-		_check(float(enemy.call("consume_simulation_delta")) >= 1.0 / 60.0, "far step preserves accumulated delta")
-	enemy.set("_lod_tier", 0)
-	_check(bool(enemy.call("should_run_far_step", 1.0 / 60.0)), "near enemy runs immediately")
+	_check(not enemy.has_method("should_run_far_step"), "legacy self-driven far-step scheduler is removed")
+	_check(not enemy.has_method("consume_simulation_delta"), "legacy accumulated-delta API is removed")
+	_check(enemy.has_method("run_scheduled_simulation"), "enemy exposes manager-driven simulation")
+	_check(enemy.has_method("max_scheduler_tier"), "enemy exposes maximum demotion tier")
 	enemy.free()
 
 

@@ -77,12 +77,31 @@ func _run() -> void:
 	await get_tree().process_frame
 	_check(int(pool.call("pool_size_for_scene", scene)) == 2, "enemy pool retains no more than its configured limit")
 
+	# Elites must recycle: at high threat most spawns are promoted, and excluding
+	# them from the pool collapses reuse exactly when spawn pressure peaks.
 	var elite := pool.call("obtain", scene, self) as EnemyActor
-	elite.is_elite = true
+	var elite_spec := EnemySpec.new()
+	elite_spec.ai = EnemySpec.AI.CHASE
+	elite.spec = elite_spec
+	var elite_base_slides := elite.max_slides
+	elite.call("make_elite")
+	_check(elite.is_elite and elite.max_slides == 8, "make_elite promotes the live actor")
 	var elite_id := elite.get_instance_id()
+	elite.dead = true
 	elite.call("despawn", &"elite")
 	await get_tree().process_frame
-	_check(not is_instance_id_valid(elite_id), "elite fails closed to freeing instead of pooling")
+	_check(is_instance_id_valid(elite_id), "dead elite recycles into the ambient pool instead of freeing")
+	var former_elite := pool.call("obtain", scene, self) as EnemyActor
+	_check(former_elite != null and former_elite.get_instance_id() == elite_id, "recycled elite instance is reused")
+	if former_elite != null:
+		_check(not former_elite.is_elite, "reused elite clears elite status")
+		_check(former_elite.max_slides == elite_base_slides, "reused elite restores ordinary solver slides")
+		var former_sprite := former_elite.get_node_or_null("Sprite2D") as CanvasItem
+		if former_sprite != null and former_elite.spec != null:
+			_check(former_sprite.modulate == former_elite.spec.sprite_modulate, "reused elite restores base sprite tint")
+		_check(not former_elite.dead and former_elite.hp == former_elite.max_hp, "reused elite is alive at full health")
+		former_elite.call("despawn", &"cleanup")
+		await get_tree().process_frame
 
 	var special := pool.call("obtain", scene, self) as EnemyActor
 	special.set_meta("special_spawn_kind", &"summon")

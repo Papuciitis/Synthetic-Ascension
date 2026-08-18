@@ -25,10 +25,16 @@ var _no_los_t: float = 0.0
 
 var _rng := RandomNumberGenerator.new()
 
+# Reused query params (allocating per raycast/point probe was a hot-path cost).
+var _los_ray_params := PhysicsRayQueryParameters2D.new()
+var _point_params := PhysicsPointQueryParameters2D.new()
+
 
 func setup(owner: EnemyActor) -> void:
 	_owner = owner
-	_rng.randomize()
+	# Seed from the shared RNG: randomize() pulls OS entropy and runs on every
+	# spawn and pool reuse, which is measurable during spawn storms.
+	_rng.seed = Global._rng.randi()
 
 	_cd = _rng.randf_range(0.3, 0.9)
 	_state = State.IDLE
@@ -279,16 +285,15 @@ func _movement_blocked(p: Vector2) -> bool:
 		return false
 
 	var space: PhysicsDirectSpaceState2D = w.direct_space_state
-	var params := PhysicsPointQueryParameters2D.new()
-	params.position = p
-	params.collision_mask = mask
-	params.collide_with_areas = true
-	params.collide_with_bodies = true
+	_point_params.position = p
+	_point_params.collision_mask = mask
+	_point_params.collide_with_areas = true
+	_point_params.collide_with_bodies = true
 
 	if _owner._senses != null:
-		params.exclude = _owner._senses.get_exclude_rids()
+		_point_params.exclude = _owner._senses.get_exclude_rids()
 
-	var hits: Array = space.intersect_point(params, 1)
+	var hits: Array = space.intersect_point(_point_params, 1)
 	return not hits.is_empty()
 
 
@@ -393,12 +398,16 @@ func _ray_first_non_enemy(from: Vector2, to: Vector2) -> Dictionary:
 		return {}
 
 	var space := w.direct_space_state
-	var params := PhysicsRayQueryParameters2D.new()
+	var params := _los_ray_params
 	params.from = from
 	params.to = to
 	params.collide_with_areas = true
 	params.collide_with_bodies = true
-	params.collision_mask = 0xFFFFFFFF
+	# Enemies (bodies and hitboxes) live on physics layer 2; masking them out
+	# means the first hit is already the first non-enemy collider, so the skip
+	# loop below almost never has to iterate. It used to run up to 8 all-layer
+	# raycasts per call through a packed horde.
+	params.collision_mask = 0xFFFFFFFF & ~2
 
 	var ex: Array[RID] = []
 	ex.append(_owner.get_rid())

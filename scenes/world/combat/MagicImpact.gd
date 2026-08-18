@@ -67,6 +67,19 @@ func _burst_once() -> void:
 	_did_burst = true
 
 	var r2: float = radius * radius
+
+	# Spatial index instead of a full "enemy_hitbox" group scan per impact
+	# (a magic triangle spawns up to 15 impacts at once).
+	var ei := get_node_or_null("/root/EnemyIndex")
+	if ei != null and ei.has_method("gather_in_radius"):
+		var targets: Array = []
+		ei.call("gather_in_radius", global_position, radius, targets)
+		for n in targets:
+			var enemy := n as Node
+			if enemy != null and is_instance_valid(enemy) and enemy.has_method("take_damage"):
+				enemy.call("take_damage", damage, source)
+		return
+
 	var hitboxes: Array = get_tree().get_nodes_in_group("enemy_hitbox")
 
 	for h in hitboxes:

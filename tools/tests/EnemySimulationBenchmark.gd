@@ -45,8 +45,8 @@ func _run() -> void:
 	for enemy in _enemies:
 		if not is_instance_valid(enemy):
 			continue
-		enemy.lod_population_start = 9999
-		enemy.set("_ambient_population", 0)
+		# The population LOD layer is gone; pinning tier 0 is all the "legacy"
+		# full-simulation comparison needs now.
 		enemy.set("_lod_tier", 0)
 	_reset_enemy_state()
 	var legacy_usec := _measure_manual(SAMPLE_FRAMES)

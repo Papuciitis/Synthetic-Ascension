@@ -47,7 +47,30 @@ func _run() -> void:
 		_check(int(first_result.get("sequence", 0)) == 1, "reports complete in enqueue order")
 		_check(int(second_result.get("sequence", 0)) == 2, "the next report starts after the first")
 	write_queue.call("shutdown")
+
+	# The recorder guarantees a finalized incident is immutable, so enqueue must
+	# hand it to the worker without a main-thread deep copy.
+	var passthrough_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
+	var owned_incident := {"metadata": {"sequence": 7}}
+	passthrough_queue.call("enqueue", owned_incident, "user://ignored-by-test")
+	var handed_over: Array = passthrough_queue.call("shutdown") as Array
+	_check(
+		handed_over.size() == 1
+		and is_same((handed_over[0] as Dictionary).get("incident"), owned_incident),
+		"enqueue hands the incident to the writer without a main-thread deep copy"
+	)
 	_finish()
+
+
+func _instant_writer(incident: Dictionary, _directory: String) -> Dictionary:
+	var metadata := incident.get("metadata", {}) as Dictionary
+	return {
+		"ok": true,
+		"json_path": "memory://instant-%03d.json" % int(metadata.get("sequence", 0)),
+		"csv_path": "memory://instant-%03d.csv" % int(metadata.get("sequence", 0)),
+		"error": "",
+		"sequence": int(metadata.get("sequence", 0)),
+	}
 
 
 func _slow_writer(incident: Dictionary, _directory: String) -> Dictionary:

@@ -65,10 +65,14 @@ func cast() -> bool:
 		get_tree().current_scene.add_child(p)
 	return true
 
+@export var target_search_radius: float = 1600.0
+
 func _nearest_enemy() -> Node2D:
 	var ei := get_node_or_null("/root/EnemyIndex")
 	if ei != null and is_instance_valid(ei) and ei.has_method("nearest_enemy"):
-		return ei.call("nearest_enemy", caster.global_position, 999999.0, null) as Node2D
+		# A bounded radius: anything beyond ~a screen cannot meaningfully be a
+		# missile target, and unbounded radii force worst-case index scans.
+		return ei.call("nearest_enemy", caster.global_position, target_search_radius, null) as Node2D
 
 	# fallback (slow)
 	var enemies := get_tree().get_nodes_in_group("enemies")

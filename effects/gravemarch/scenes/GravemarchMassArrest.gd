@@ -48,6 +48,7 @@ var _internal_cd: float = 0.0
 
 var _pull_left: float = 0.0
 var _center: Vector2 = Vector2.ZERO
+var _pull_candidates: Array = []
 var _mode: int = 0 # 0 idle, 1 pulling
 var _style: StringName = &"melee"
 
@@ -130,17 +131,27 @@ func _start_verdict() -> void:
 
 func _pull_tick(dt: float) -> void:
 	var r := _pull_effect_radius()
-	var r2 := r * r
 	var force := pull_force * (0.85 + 0.25 * set_strength)
 
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
+	# This runs every frame while the pull is active; use the spatial index
+	# with a reused buffer instead of a full "enemies" group scan per frame.
+	var ei := get_node_or_null("/root/EnemyIndex")
+	if ei != null and ei.has_method("gather_in_radius"):
+		ei.call("gather_in_radius", _center, r, _pull_candidates)
+	else:
+		_pull_candidates.clear()
+		var r2 := r * r
+		for n in get_tree().get_nodes_in_group("enemies"):
+			var e2 := n as Node2D
+			if e2 == null or not is_instance_valid(e2):
+				continue
+			if _center.distance_squared_to(e2.global_position) <= r2:
+				_pull_candidates.append(e2)
+
+	for candidate in _pull_candidates:
+		var e := candidate as Node2D
 		if e == null or not is_instance_valid(e):
 			continue
-		var d2 := _center.distance_squared_to(e.global_position)
-		if d2 > r2:
-			continue
-
 		if e.has_method("apply_knockback"):
 			var dir := (_center - e.global_position)
 			if dir.length_squared() > 0.001:

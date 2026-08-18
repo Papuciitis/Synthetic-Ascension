@@ -43,7 +43,7 @@ func boot() -> void:
 	_apply_split_generation()
 
 	_owner.hp = _owner.max_hp
-	_owner.add_to_group("enemies")
+	# Group membership is added once in EnemyActor._ready and survives pooling.
 
 	_owner.player = _owner.get_tree().get_first_node_in_group("player") as Node2D
 

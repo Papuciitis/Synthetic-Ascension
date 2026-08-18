@@ -82,6 +82,9 @@ func _test_literal_obstacle_directions() -> void:
 	flow.radius_cells = 4
 	flow.max_expansions_per_frame = 1000
 	flow.max_ms_per_frame = 0.0
+	# This test drives the deterministic sliced core directly; the threaded
+	# path is covered by FlowFieldThreadedBuildTest.
+	flow.set("threaded_build", false)
 	add_child(flow)
 	flow.set("_cm", manager)
 	flow.call("_ensure_buffers")

@@ -27,6 +27,15 @@ class_name EnemySpawner
 @export var debug_spawns: bool = false
 @export var spawning_enabled: bool = true
 @export_range(0, 128, 1) var ambient_pool_limit_per_scene: int = 32
+# Pre-fill pools at segment start so the first spawn waves reuse instead of
+# paying scene.instantiate() during gameplay.
+@export_range(0, 32, 1) var pool_warm_per_scene: int = 6
+# Hard bound on live elites: promotion chance saturates at high threat and an
+# uncapped elite population defeats pooling and the full-simulation budget.
+@export_range(0, 128, 1) var max_concurrent_elites: int = 24
+# Cap on _spawn_one calls per tick; the overflow carries to later ticks so a
+# saturated director cannot construct a whole batch in a single frame.
+@export_range(1, 16, 1) var max_spawn_batch_per_tick: int = 4
 
 
 @export_group("Boss Suppression (nearby boss/miniboss)")
@@ -62,6 +71,7 @@ var _segment1_stage: int = -1
 var _spawn_pause_left: float = 0.0
 var _authored_wave_running: bool = false
 var _pending_spawn_total: int = 0
+var _spawn_debt: int = 0
 var _pending_spawn_by_scene: Dictionary = {}
 
 # Wardstone cache (avoid scanning group every spawn attempt)
@@ -168,7 +178,10 @@ func _on_tick() -> void:
 	if boss_near:
 		batch = maxi(1, int(round(float(batch) * boss_batch_mul)))
 
-	for _i in range(batch):
+	# Enemy construction runs inline in this tick; budget it so a saturated
+	# director cannot build a whole batch in one frame. Overflow carries.
+	var budgeted: int = _take_spawn_budget(batch)
+	for _i in range(budgeted):
 		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
 		if remaining_total <= 0:
 			return
@@ -333,7 +346,7 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 			chance = minf(chance, clampf(enemy_actor.spec.elite_spawn_chance_cap, 0.0, 1.0))
 	var roll: float = Global._rng.randf()
 
-	if roll <= chance and e.has_method("make_elite"):
+	if roll <= chance and e.has_method("make_elite") and not _elite_cap_reached():
 		e.call_deferred("make_elite")
 		if debug_spawns:
 			print("[SPAWN] ELITE! chance=", snapped(chance, 0.001))
@@ -674,17 +687,41 @@ func _register_spawn_table_ids() -> void:
 			_enemy_id_for_scene(entry.enemy_scene)
 
 
+func _take_spawn_budget(requested: int) -> int:
+	var total: int = maxi(0, requested) + _spawn_debt
+	var allowed: int = mini(total, maxi(1, max_spawn_batch_per_tick))
+	_spawn_debt = clampi(total - allowed, 0, maxi(1, batch_cap) * 2)
+	return allowed
+
+
+func _elite_cap_reached() -> bool:
+	# Deferred promotions from the current tick may overshoot the cap by the
+	# in-flight batch; that slack is bounded by max_spawn_batch_per_tick.
+	if max_concurrent_elites <= 0:
+		return false
+	if _ei == null or not is_instance_valid(_ei):
+		_ei = get_node_or_null("/root/EnemyIndex")
+	if _ei == null or not _ei.has_method("elite_alive_count"):
+		return false
+	return int(_ei.call("elite_alive_count")) >= max_concurrent_elites
+
+
 func _configure_enemy_pool_limits() -> void:
 	if PoolManager == null or not PoolManager.has_method("set_limit_for_scene"):
 		return
+	var can_warm := PoolManager.has_method("warm") and pool_warm_per_scene > 0
 	if enemy_scene != null:
 		PoolManager.set_limit_for_scene(enemy_scene, ambient_pool_limit_per_scene)
+		if can_warm:
+			PoolManager.warm(enemy_scene, pool_warm_per_scene)
 	if spawn_table == null:
 		return
 	for entry_variant: Variant in spawn_table.entries:
 		var entry := entry_variant as EnemySpawnEntry
 		if entry != null and entry.enemy_scene != null:
 			PoolManager.set_limit_for_scene(entry.enemy_scene, ambient_pool_limit_per_scene)
+			if can_warm:
+				PoolManager.warm(entry.enemy_scene, pool_warm_per_scene)
 
 
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:

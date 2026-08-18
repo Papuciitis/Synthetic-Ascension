@@ -21,11 +21,14 @@ var duration: float = 6.0
 
 var _t: float = 0.0
 var _r: float = 32.0
+var _base_radius: float = -1.0
+var _pts: PackedVector2Array = PackedVector2Array()
 
 func setup(hb: Area2D, owner_in: Node, dur: float = 6.0) -> void:
 	hurtbox = hb
 	mark_owner = owner_in
 	duration = dur
+	_base_radius = -1.0
 
 func _ready() -> void:
 	z_as_relative = false
@@ -43,7 +46,10 @@ func _process(dt: float) -> void:
 
 	if hurtbox != null and is_instance_valid(hurtbox):
 		global_position = hurtbox.global_position
-		_r = _get_hurtbox_radius(hurtbox) + padding
+		# The hurtbox shape never changes; scanning its children every frame did.
+		if _base_radius < 0.0:
+			_base_radius = _get_hurtbox_radius(hurtbox)
+		_r = _base_radius + padding
 
 	# if mark meta is gone, kill instantly (stays in sync with gameplay)
 	if mark_owner != null and is_instance_valid(mark_owner):
@@ -84,9 +90,11 @@ func _draw() -> void:
 	var pulse: float = 0.90 + 0.10 * sin(_t * TAU * pulse_speed)
 	var r: float = _r * (0.98 + 0.02 * pulse)
 
-	# Build a slightly “hex-ish” wavy ring by biasing points toward 6 corners
-	var pts: PackedVector2Array = PackedVector2Array()
+	# Build a slightly “hex-ish” wavy ring by biasing points toward 6 corners.
+	# The point buffer is reused across frames instead of reallocated.
 	var seg: int = max(24, segments)
+	if _pts.size() != seg + 1:
+		_pts.resize(seg + 1)
 
 	for i in range(seg + 1):
 		var a: float = TAU * float(i) / float(seg)
@@ -98,10 +106,10 @@ func _draw() -> void:
 		var w2: float = sin(a * (wave_freq * 0.5) - _t * (roll_speed * 1.25)) * (wave_amp * 0.55)
 
 		var rr: float = (r / hex_bias) + (w1 + w2) * pulse
-		pts.append(Vector2(cos(a), sin(a)) * rr)
+		_pts[i] = Vector2(cos(a), sin(a)) * rr
 
-	draw_polyline(pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
-	draw_polyline(pts, Color(color_core.r, color_core.g, color_core.b, 1.0), core_width, true)
+	draw_polyline(_pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
+	draw_polyline(_pts, Color(color_core.r, color_core.g, color_core.b, 1.0), core_width, true)
 
 	# pips = shots left
 	var shots_left: int = 0

@@ -25,6 +25,8 @@ var _special_alive_by_kind: Dictionary = {} # StringName -> int
 var _special_reserved_total: int = 0
 var _special_reserved_by_kind: Dictionary = {}
 var _retired_counts: Dictionary = {}
+var _elite_ids: Dictionary = {} # int -> true, for live (counted) elites
+var _suppress_register_events: bool = false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -50,15 +52,23 @@ func register(enemy: Node) -> void:
 		if p != "":
 			_scene_counts[p] = int(_scene_counts.get(p, 0)) + 1
 		_register_population_class(enemy, p)
+		if _is_enemy_elite(enemy):
+			_elite_ids[id] = true
 
 	var cell := _cell_for_pos((enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO)
 	_enemy_cell[id] = cell
 	_bucket_add(cell, enemy)
-	if PerformanceFlightRecorder != null:
+	# The event payload builds four Strings; only pay for it when the recorder is
+	# actually armed, and never for prune_invalid's silent re-registration.
+	if (
+		PerformanceFlightRecorder != null
+		and not _suppress_register_events
+		and bool(PerformanceFlightRecorder.get("enabled"))
+	):
 		var enemy_id := enemy.scene_file_path.get_file().get_basename().trim_prefix("Enemy").to_snake_case()
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"spawned", 1, {
 			"enemy_id": enemy_id,
-			"elite": bool(enemy.get("is_elite")) if "is_elite" in enemy else false,
+			"elite": _is_enemy_elite(enemy),
 			"kind": String(enemy.get_meta("special_spawn_kind", &"")),
 		})
 
@@ -75,6 +85,7 @@ func unregister(enemy: Node) -> void:
 		_decrement_counter(_scene_counts, p)
 		_unregister_population_class(enemy, p)
 	_population_counted.erase(id)
+	_elite_ids.erase(id)
 
 	# buckets
 	if _enemy_cell.has(id):
@@ -102,6 +113,7 @@ func mark_dead(enemy: Node) -> void:
 	_decrement_counter(_scene_counts, scene_path)
 	_unregister_population_class(enemy, scene_path)
 	_population_counted[id] = false
+	_elite_ids.erase(id)
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"died", 1)
 
@@ -206,13 +218,31 @@ func prune_invalid() -> int:
 	_ambient_scene_counts.clear()
 	_special_alive_total = 0
 	_special_alive_by_kind.clear()
+	_elite_ids.clear()
+	# Rebuilding is maintenance, not gameplay: re-registration must not emit
+	# phantom "spawned" telemetry for enemies that already existed.
+	_suppress_register_events = true
 	for enemy_variant in valid_enemies:
 		register(enemy_variant as Node)
+	_suppress_register_events = false
 	return previous_count - valid_enemies.size()
 
 
 func ambient_alive_count() -> int:
 	return _ambient_count
+
+
+func elite_alive_count() -> int:
+	return _elite_ids.size()
+
+
+func note_elite(enemy: Node) -> void:
+	# Called by EnemyActor.make_elite so promotions keep the live count exact.
+	if enemy == null or not is_instance_valid(enemy):
+		return
+	var id := enemy.get_instance_id()
+	if _id_to_index.has(id) and bool(_population_counted.get(id, false)):
+		_elite_ids[id] = true
 
 
 func try_reserve_special(kind: StringName, requested: int) -> int:
@@ -302,6 +332,10 @@ func _is_enemy_dead(enemy: Node) -> bool:
 	return "dead" in enemy and bool(enemy.get("dead"))
 
 
+func _is_enemy_elite(enemy: Node) -> bool:
+	return "is_elite" in enemy and bool(enemy.get("is_elite"))
+
+
 func _register_population_class(enemy: Node, scene_path: String) -> void:
 	var kind: StringName = enemy.get_meta("special_spawn_kind", &"") as StringName
 	if kind == &"":
@@ -361,6 +395,25 @@ func nearest_enemy(origin: Vector2, max_dist: float = 999999.0, exclude: Node = 
 	var c0 := Vector2i(floori(origin.x / cs), floori(origin.y / cs))
 	var cr: int = maxi(1, ceili(max_dist / cs))
 
+	# Huge radii would probe (2cr+1)^2 mostly-empty cells; once the window
+	# exceeds the occupied bucket count, walking the buckets directly is
+	# strictly cheaper and gives identical results.
+	if (2 * cr + 1) * (2 * cr + 1) > _buckets.size():
+		for arr_variant in _buckets.values():
+			for n in arr_variant:
+				var e := n as Node2D
+				if e == null or not is_instance_valid(e):
+					continue
+				if exclude != null and e == exclude:
+					continue
+				if "dead" in e and bool(e.get("dead")):
+					continue
+				var d2 := origin.distance_squared_to(e.global_position)
+				if d2 < best_d2:
+					best_d2 = d2
+					best = e
+		return best
+
 	for oy in range(-cr, cr + 1):
 		for ox in range(-cr, cr + 1):
 			var cell := Vector2i(c0.x + ox, c0.y + oy)
@@ -387,6 +440,20 @@ func first_in_radius(origin: Vector2, radius: float, exclude: Node = null) -> No
 	var cs := maxf(cell_size, 1.0)
 	var c0 := Vector2i(floori(origin.x / cs), floori(origin.y / cs))
 	var cr: int = maxi(1, ceili(radius / cs))
+
+	if (2 * cr + 1) * (2 * cr + 1) > _buckets.size():
+		for arr_variant in _buckets.values():
+			for n in arr_variant:
+				var e := n as Node2D
+				if e == null or not is_instance_valid(e):
+					continue
+				if exclude != null and e == exclude:
+					continue
+				if "dead" in e and bool(e.get("dead")):
+					continue
+				if origin.distance_squared_to(e.global_position) <= r2:
+					return e
+		return null
 
 	for oy in range(-cr, cr + 1):
 		for ox in range(-cr, cr + 1):
@@ -415,6 +482,18 @@ func gather_in_radius(origin: Vector2, radius: float, out: Array) -> void:
 	var cs := maxf(cell_size, 1.0)
 	var c0 := Vector2i(floori(origin.x / cs), floori(origin.y / cs))
 	var cr: int = maxi(1, ceili(radius / cs))
+
+	if (2 * cr + 1) * (2 * cr + 1) > _buckets.size():
+		for arr_variant in _buckets.values():
+			for n in arr_variant:
+				var e := n as Node2D
+				if e == null or not is_instance_valid(e):
+					continue
+				if "dead" in e and bool(e.get("dead")):
+					continue
+				if origin.distance_squared_to(e.global_position) <= r2:
+					out.append(e)
+		return
 
 	for oy in range(-cr, cr + 1):
 		for ox in range(-cr, cr + 1):
@@ -445,6 +524,26 @@ func sample_sep(e: Node2D, radius: float, max_neighbors: int = 8) -> Vector2:
 
 	var sum: Vector2 = Vector2.ZERO
 	var count: int = 0
+
+	if (2 * cr + 1) * (2 * cr + 1) > _buckets.size():
+		for arr_variant in _buckets.values():
+			for n in arr_variant:
+				var other := n as Node2D
+				if other == null or other == e or not is_instance_valid(other):
+					continue
+				if "dead" in other and bool(other.get("dead")):
+					continue
+				var d: Vector2 = pos - other.global_position
+				var d2: float = d.length_squared()
+				if d2 <= 0.0001 or d2 > r2:
+					continue
+				sum += d / d2
+				count += 1
+				if count >= max_neighbors:
+					break
+			if count >= max_neighbors:
+				break
+		return (sum.normalized() if sum.length_squared() > 0.0001 else Vector2.ZERO)
 
 	for oy in range(-cr, cr + 1):
 		for ox in range(-cr, cr + 1):
@@ -487,6 +586,21 @@ func count_allies(e: Node2D, radius: float, max_count: int = 999) -> int:
 
 	var count: int = 0
 
+	if (2 * cr + 1) * (2 * cr + 1) > _buckets.size():
+		for arr_variant in _buckets.values():
+			for n in arr_variant:
+				var other := n as Node2D
+				if other == null or other == e or not is_instance_valid(other):
+					continue
+				if "dead" in other and bool(other.get("dead")):
+					continue
+				if pos.distance_squared_to(other.global_position) > r2:
+					continue
+				count += 1
+				if count >= max_count:
+					return count
+		return count
+
 	for oy in range(-cr, cr + 1):
 		for ox in range(-cr, cr + 1):
 			var cell := Vector2i(c0.x + ox, c0.y + oy)
@@ -521,6 +635,14 @@ func _bucket_remove(cell: Vector2i, enemy: Node) -> void:
 	var arr = _buckets.get(cell)
 	if arr == null:
 		return
-	arr.erase(enemy)
+	# Swap-remove: order inside a bucket is irrelevant, and erase() would shift
+	# every trailing element on each cell crossing.
+	var idx: int = arr.find(enemy)
+	if idx < 0:
+		return
+	var last: int = arr.size() - 1
+	if idx != last:
+		arr[idx] = arr[last]
+	arr.pop_back()
 	if arr.is_empty():
 		_buckets.erase(cell)

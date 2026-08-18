@@ -53,7 +53,9 @@ var _nudge_side: int = 1
 
 func setup(enemy: EnemyActor) -> void:
 	_e = enemy
-	_rng.randomize()
+	# Seed from the shared RNG: randomize() pulls OS entropy and runs on every
+	# spawn and pool reuse, which is measurable during spawn storms.
+	_rng.seed = Global._rng.randi()
 
 	_smoothed_move = Vector2.ZERO
 	_sep_sys = null

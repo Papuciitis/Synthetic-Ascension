@@ -104,11 +104,13 @@ func _ready() -> void:
 	get_tree().paused = false
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
-	# Mark resume target as Hub/Shop
+	# Mark resume target as Hub/Shop. Unvalidated: the segment-complete save one
+	# frame earlier already ran the full read-back check, and stacking three
+	# validated writes on the transition frame was part of its 144 ms hitch.
 	if SaveManager != null and SaveManager.current_save != null:
 		SaveManager.current_save.attempt_resume_scene = Global.PATH_HUB_SHOP
 	if Global != null:
-		Global.save_current_profile()
+		Global.save_current_profile(false)
 
 	# Bind player data
 	# HubShop owns double-click actions so it can invalidate Undo before any

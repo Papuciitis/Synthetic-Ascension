@@ -15,6 +15,13 @@ var _enemy: EnemyActor = null
 var _r: float = 96.0
 var _trigger_d: float = 80.0
 var _t: float = 0.0
+var _redraw_accum: float = 0.0
+
+# Beyond this distance the telegraph cannot matter to the player; skip drawing
+# entirely instead of tessellating dashed arcs every frame for the bomber's
+# whole lifetime.
+const DRAW_MAX_PLAYER_DIST := 1200.0
+const REDRAW_INTERVAL := 1.0 / 30.0
 
 func setup(e: EnemyActor) -> void:
 	_enemy = e
@@ -38,7 +45,20 @@ func _process(dt: float) -> void:
 	if _enemy == null or not is_instance_valid(_enemy) or _enemy.dead:
 		queue_free()
 		return
-	queue_redraw()
+	var player := _enemy.player
+	if player == null or not is_instance_valid(player):
+		return
+	var dist_sq := _enemy.global_position.distance_squared_to(player.global_position)
+	if dist_sq > DRAW_MAX_PLAYER_DIST * DRAW_MAX_PLAYER_DIST:
+		if visible:
+			visible = false
+		return
+	if not visible:
+		visible = true
+	_redraw_accum += dt
+	if _redraw_accum >= REDRAW_INTERVAL:
+		_redraw_accum = 0.0
+		queue_redraw()
 
 func _draw() -> void:
 	if _enemy == null or _enemy.player == null or not is_instance_valid(_enemy.player):
@@ -54,8 +74,9 @@ func _draw() -> void:
 	var pulse: float = 0.85 + 0.15 * sin(_t * lerpf(2.0, 7.0, hot) * TAU)
 	var r: float = _r * pulse
 
-	# dashed ring
-	var segs: int = 22
+	# dashed ring; each dash spans ~20 degrees, so a handful of segments per
+	# dash is visually identical at a fraction of the tessellation cost.
+	var segs: int = 8
 	var dash_len: float = TAU / float(max(dash_count, 1))
 	var phase: float = _t * lerpf(0.35, 1.35, hot)
 

@@ -43,6 +43,7 @@ var _enemy_candidates: Array = []
 var _pending_ledgers: Dictionary = {}
 var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
+var _render_buffer := PackedFloat32Array()
 var _last_scene_id: int = 0
 var _query_hit_target: Node2D = null
 var _query_hit_t: float = -1.0
@@ -108,27 +109,53 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		if PerformanceFlightRecorder != null:
 			PerformanceFlightRecorder.record_counter_event(&"projectile", &"capacity_dropped", 1, {"capacity": capacity})
 		return false
-	_positions.append(origin)
-	_previous.append(origin)
-	_velocities.append(velocity)
-	_life_left.append(maxf(0.01, lifetime))
-	_range_left.append(maxf(0.0, max_range))
-	_radii.append(maxf(1.0, radius))
-	_damage.append(maxf(0.0, damage))
-	_knockback.append(maxf(0.0, knockback))
-	_burn_duration.append(maxf(0.0, burn_duration))
-	_burn_tick.append(maxf(0.05, burn_tick))
-	_burn_mult.append(maxf(0.0, burn_mult))
-	_body_length.append(maxf(2.0, body_len))
-	_body_width.append(maxf(1.0, body_width))
-	_teams.append(team)
-	_visuals.append(visual)
-	_pierce.append(maxi(0, pierce))
-	_burn_stacks.append(maxi(0, burn_stacks))
-	_crit.append(1 if critical else 0)
-	_last_hit_ids.append(0)
-	_colors.append(color)
-	_sources.append(source)
+	var index := _active_count
+	if _positions.size() > index:
+		# Reuse a retained slot: arrays keep their high-water capacity so churn
+		# never reallocates them.
+		_positions[index] = origin
+		_previous[index] = origin
+		_velocities[index] = velocity
+		_life_left[index] = maxf(0.01, lifetime)
+		_range_left[index] = maxf(0.0, max_range)
+		_radii[index] = maxf(1.0, radius)
+		_damage[index] = maxf(0.0, damage)
+		_knockback[index] = maxf(0.0, knockback)
+		_burn_duration[index] = maxf(0.0, burn_duration)
+		_burn_tick[index] = maxf(0.05, burn_tick)
+		_burn_mult[index] = maxf(0.0, burn_mult)
+		_body_length[index] = maxf(2.0, body_len)
+		_body_width[index] = maxf(1.0, body_width)
+		_teams[index] = team
+		_visuals[index] = visual
+		_pierce[index] = maxi(0, pierce)
+		_burn_stacks[index] = maxi(0, burn_stacks)
+		_crit[index] = 1 if critical else 0
+		_last_hit_ids[index] = 0
+		_colors[index] = color
+		_sources[index] = source
+	else:
+		_positions.append(origin)
+		_previous.append(origin)
+		_velocities.append(velocity)
+		_life_left.append(maxf(0.01, lifetime))
+		_range_left.append(maxf(0.0, max_range))
+		_radii.append(maxf(1.0, radius))
+		_damage.append(maxf(0.0, damage))
+		_knockback.append(maxf(0.0, knockback))
+		_burn_duration.append(maxf(0.0, burn_duration))
+		_burn_tick.append(maxf(0.05, burn_tick))
+		_burn_mult.append(maxf(0.0, burn_mult))
+		_body_length.append(maxf(2.0, body_len))
+		_body_width.append(maxf(1.0, body_width))
+		_teams.append(team)
+		_visuals.append(visual)
+		_pierce.append(maxi(0, pierce))
+		_burn_stacks.append(maxi(0, burn_stacks))
+		_crit.append(1 if critical else 0)
+		_last_hit_ids.append(0)
+		_colors.append(color)
+		_sources.append(source)
 	_active_count += 1
 	return true
 
@@ -273,28 +300,11 @@ func _remove(index: int) -> void:
 		_last_hit_ids[index] = _last_hit_ids[last]
 		_colors[index] = _colors[last]
 		_sources[index] = _sources[last]
+	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
+	# a realloc + copy storm at bullet-heaven churn rates. Only the released
+	# source reference is cleared so it cannot pin a freed node's Variant.
+	_sources[last] = null
 	_active_count -= 1
-	_positions.resize(_active_count)
-	_previous.resize(_active_count)
-	_velocities.resize(_active_count)
-	_life_left.resize(_active_count)
-	_range_left.resize(_active_count)
-	_radii.resize(_active_count)
-	_damage.resize(_active_count)
-	_knockback.resize(_active_count)
-	_burn_duration.resize(_active_count)
-	_burn_tick.resize(_active_count)
-	_burn_mult.resize(_active_count)
-	_body_length.resize(_active_count)
-	_body_width.resize(_active_count)
-	_teams.resize(_active_count)
-	_visuals.resize(_active_count)
-	_pierce.resize(_active_count)
-	_burn_stacks.resize(_active_count)
-	_crit.resize(_active_count)
-	_last_hit_ids.resize(_active_count)
-	_colors.resize(_active_count)
-	_sources.resize(_active_count)
 
 func _clear_all() -> void:
 	while _active_count > 0:
@@ -345,12 +355,38 @@ func _build_renderer() -> void:
 func _update_renderer() -> void:
 	if _multimesh == null:
 		return
+	# One buffer upload instead of two RenderingServer calls per projectile per
+	# frame (~600 calls at typical bullet counts). Layout per instance:
+	# 8 floats of 2D transform rows, then 4 floats of color.
+	var expected_size := capacity * 12
+	if _render_buffer.size() != expected_size:
+		_render_buffer.resize(expected_size)
 	for i in range(_active_count):
-		var angle := _velocities[i].angle()
-		var instance_transform := Transform2D(angle, _positions[i])
-		instance_transform = instance_transform.scaled_local(Vector2(_body_length[i] / 18.0, _body_width[i] / 4.0))
-		_multimesh.set_instance_transform_2d(i, instance_transform)
-		_multimesh.set_instance_color(i, _colors[i])
+		var base := i * 12
+		var direction := _velocities[i]
+		var length := direction.length()
+		var cos_a := 1.0
+		var sin_a := 0.0
+		if length > 0.000001:
+			cos_a = direction.x / length
+			sin_a = direction.y / length
+		var scale_x := _body_length[i] / 18.0
+		var scale_y := _body_width[i] / 4.0
+		var position := _positions[i]
+		var color := _colors[i]
+		_render_buffer[base + 0] = cos_a * scale_x
+		_render_buffer[base + 1] = -sin_a * scale_y
+		_render_buffer[base + 2] = 0.0
+		_render_buffer[base + 3] = position.x
+		_render_buffer[base + 4] = sin_a * scale_x
+		_render_buffer[base + 5] = cos_a * scale_y
+		_render_buffer[base + 6] = 0.0
+		_render_buffer[base + 7] = position.y
+		_render_buffer[base + 8] = color.r
+		_render_buffer[base + 9] = color.g
+		_render_buffer[base + 10] = color.b
+		_render_buffer[base + 11] = color.a
+	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
 	_multimesh.visible_instance_count = _active_count
 
 func get_debug_counters() -> Dictionary:

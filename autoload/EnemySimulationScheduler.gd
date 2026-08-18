@@ -78,6 +78,7 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 			"distance_squared": distance_squared,
 			"priority": _priority_for(enemy, player_position, distance_squared),
 			"previous_tier": int(_previous_tiers.get(enemy_id, TIER_FAR)),
+			"max_tier": _max_tier_for(enemy),
 		}
 		if _is_protected(enemy, sqrt(distance_squared)):
 			protected_candidates.append(candidate)
@@ -95,12 +96,24 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 		maxi(0, mid_budget),
 		maxi(0, ordinary_candidates.size() - full_count)
 	)
+	var mid_assigned := 0
+	var far_assigned := 0
 	for index in range(ordinary_candidates.size()):
 		var tier := TIER_FAR
 		if index < full_count:
 			tier = TIER_FULL
 		elif index < full_count + mid_count:
 			tier = TIER_MID
+		# Enemies whose archetype must keep world collision clamp to mid rather
+		# than becoming unshootable far proxies. This can exceed mid_budget by
+		# design: collision correctness beats the soft budget.
+		var max_tier := int(ordinary_candidates[index].get("max_tier", TIER_FAR))
+		if tier > max_tier:
+			tier = max_tier
+		if tier == TIER_MID:
+			mid_assigned += 1
+		elif tier == TIER_FAR:
+			far_assigned += 1
 		assignment[int(ordinary_candidates[index]["id"])] = tier
 
 	_previous_tiers.clear()
@@ -108,10 +121,10 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 		_previous_tiers[enemy_id] = int(assignment[enemy_id])
 
 	_debug_counters["full"] = full_count + protected_candidates.size()
-	_debug_counters["mid"] = mid_count
-	_debug_counters["far"] = maxi(0, ordinary_candidates.size() - full_count - mid_count)
+	_debug_counters["mid"] = mid_assigned
+	_debug_counters["far"] = far_assigned
 	_debug_counters["protected"] = protected_candidates.size()
-	_debug_counters["physics_enabled"] = int(_debug_counters["full"]) + mid_count
+	_debug_counters["physics_enabled"] = int(_debug_counters["full"]) + mid_assigned
 	_debug_counters["assignment_usec"] = Time.get_ticks_usec() - started_usec
 	return assignment
 
@@ -217,6 +230,12 @@ func _priority_for(enemy: Node, player_position: Vector2, distance_squared: floa
 	if enemy.has_method("simulation_priority"):
 		return float(enemy.call("simulation_priority", player_position))
 	return -distance_squared
+
+
+func _max_tier_for(enemy: Node) -> int:
+	if enemy.has_method("max_scheduler_tier"):
+		return clampi(int(enemy.call("max_scheduler_tier")), TIER_FULL, TIER_FAR)
+	return TIER_FAR
 
 
 func _is_protected(enemy: Node, player_distance: float) -> bool:

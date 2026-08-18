@@ -13,8 +13,11 @@ func _init(writer: Callable = Callable()) -> void:
 
 
 func enqueue(incident: Dictionary, directory: String) -> void:
+	# The caller guarantees a finalized incident is immutable, so it is handed
+	# to the worker as-is; a deep copy here used to be the third full copy of
+	# the incident made on the main thread before the write even started.
 	_jobs.append({
-		"incident": incident.duplicate(true),
+		"incident": incident,
 		"directory": directory,
 	})
 	_start_next()

@@ -7,6 +7,11 @@ const SLOT_COUNT := 3
 var current_slot: int = -1
 var current_save: SaveData = null
 
+# Diagnostics: how often the profile hits the disk, and whether the last write
+# ran the synchronous read-back validation (autosaves skip it).
+var debug_save_writes: int = 0
+var debug_last_save_validated: bool = true
+
 func _slot_path(slot: int) -> String:
 	return SAVE_DIR + "slot_%d.tres" % slot
 
@@ -58,9 +63,11 @@ func create_slot(slot: int, profile_name: String) -> SaveData:
 	save_slot(s)
 	return s
 
-func save_slot(save: SaveData) -> bool:
+func save_slot(save: SaveData, validated: bool = true) -> bool:
 	if save == null or not ensure_dir():
 		return false
+	debug_save_writes += 1
+	debug_last_save_validated = validated
 	save.updated_unix = int(Time.get_unix_time_from_system())
 	var slot := save.slot_index
 	var primary_path := _slot_path(slot)
@@ -84,7 +91,10 @@ func save_slot(save: SaveData) -> bool:
 		push_error("Failed writing temporary save for slot %d, err=%s" % [slot, str(save_error)])
 		return false
 
-	if _load_save_data(temporary_path) == null:
+	# Autosaves skip the synchronous read-back: parsing the file we just wrote
+	# doubles the disk cost on the main thread. Manual and transition saves keep
+	# the full round-trip check.
+	if validated and _load_save_data(temporary_path) == null:
 		push_error("Temporary save validation failed for slot %d" % slot)
 		DirAccess.remove_absolute(absolute_temporary)
 		return false
@@ -140,6 +150,6 @@ func set_current(slot: int, save: SaveData) -> void:
 	if Global != null and current_save != null and Global.has_method("apply_save"):
 		Global.apply_save(current_save)
 
-func save_current() -> void:
+func save_current(validated: bool = true) -> void:
 	if current_save != null:
-		save_slot(current_save)
+		save_slot(current_save, validated)

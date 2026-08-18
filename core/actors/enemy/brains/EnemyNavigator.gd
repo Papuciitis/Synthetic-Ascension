@@ -32,6 +32,9 @@ var _last_target: Vector2 = Vector2.INF
 # smoothing
 var _smoothed_vel: Vector2 = Vector2.ZERO
 
+# Reused query params (allocating one per raycast was a hot-path cost).
+var _ray_params := PhysicsRayQueryParameters2D.new()
+
 
 func setup(enemy: EnemyActor, senses: EnemySenses) -> void:
 	_enemy = enemy
@@ -121,24 +124,14 @@ func _get_nav_mask(mask: int) -> int:
 
 
 func _build_excludes() -> Array[RID]:
+	# EnemySenses' cached exclude list already contains this enemy's body RID
+	# plus its hitbox and the player; reuse it directly instead of rebuilding a
+	# fresh Array[RID] on every apply().
+	if _senses != null:
+		return _senses.get_exclude_rids()
 	var ex: Array[RID] = []
-
-	# Exclude self if it's a CollisionObject2D
 	if _enemy is CollisionObject2D:
 		ex.append((_enemy as CollisionObject2D).get_rid())
-
-	if _senses != null:
-		var s_ex = _senses.get_exclude_rids()
-		if s_ex != null:
-			ex.append_array(s_ex)
-
-		# If your EnemySenses can expose the current target RID, exclude it
-		# so "ray to target_pos" doesn't treat the target as an obstacle.
-		if _senses.has_method("get_target_rid"):
-			var target_rid = _senses.call("get_target_rid")
-			if typeof(target_rid) == TYPE_RID:
-				ex.append(target_rid)
-
 	return ex
 	
 # -------------------------------------------------------------------
@@ -286,21 +279,7 @@ func _smooth(v: Vector2, delta: float) -> Vector2:
 
 
 func _ray_clear(a: Vector2, b: Vector2, mask: int, ex: Array[RID]) -> bool:
-	var w: World2D = _enemy.get_world_2d()
-	if w == null:
-		return true
-
-	var space: PhysicsDirectSpaceState2D = w.direct_space_state
-	var params := PhysicsRayQueryParameters2D.new()
-	params.from = a
-	params.to = b
-	params.collision_mask = mask
-	params.exclude = ex
-	params.collide_with_bodies = true
-	params.collide_with_areas = true
-	params.hit_from_inside = true
-
-	return space.intersect_ray(params).is_empty()
+	return _ray_hit(a, b, mask, ex).is_empty()
 
 
 func _ray_hit(a: Vector2, b: Vector2, mask: int, ex: Array[RID]) -> Dictionary:
@@ -309,16 +288,15 @@ func _ray_hit(a: Vector2, b: Vector2, mask: int, ex: Array[RID]) -> Dictionary:
 		return {}
 
 	var space: PhysicsDirectSpaceState2D = w.direct_space_state
-	var params := PhysicsRayQueryParameters2D.new()
-	params.from = a
-	params.to = b
-	params.collision_mask = mask
-	params.exclude = ex
-	params.collide_with_bodies = true
-	params.collide_with_areas = true
-	params.hit_from_inside = true
+	_ray_params.from = a
+	_ray_params.to = b
+	_ray_params.collision_mask = mask
+	_ray_params.exclude = ex
+	_ray_params.collide_with_bodies = true
+	_ray_params.collide_with_areas = true
+	_ray_params.hit_from_inside = true
 
-	return space.intersect_ray(params)
+	return space.intersect_ray(_ray_params)
 
 
 func _f(prop: StringName, default_value: float) -> float:

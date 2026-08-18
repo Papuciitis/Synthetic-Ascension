@@ -68,6 +68,9 @@ func _process(delta: float) -> void:
 		_slow_snapshot_left = 0.5
 		_cached_slow_snapshot = _collect_slow_snapshot()
 	var sample := collect_runtime_sample()
+	# frame_ms is the real spacing of this frame (delta); process_ms stays the
+	# engine monitor, which reports the PREVIOUS frame's process step. The two
+	# describe different frames by design — see collect_runtime_sample().
 	sample["frame_ms"] = delta * 1000.0
 	ingest_sample(sample)
 	_sampling_overhead_usec = Time.get_ticks_usec() - started
@@ -174,6 +177,10 @@ func record_counter_event(category: StringName, event_name: StringName, amount: 
 			"name": String(event_name),
 			"amount": amount,
 			"details": details.duplicate(),
+			# Lets _trim_history release the bucket in O(1) instead of
+			# deep-comparing every bucket per expired event. Stripped from
+			# finalized incident copies.
+			"__bucket_key": key,
 		}
 		_counter_buckets[key] = event
 		_events.append(event)
@@ -186,8 +193,11 @@ func collect_runtime_sample() -> Dictionary:
 	var sample := {
 		"t_usec": now_usec,
 		"elapsed_sec": float(now_usec - _session_started_usec) / 1_000_000.0,
+		# Fallback for external callers; _process overwrites frame_ms with the
+		# true delta of the current frame.
 		"frame_ms": Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 		"fps": Performance.get_monitor(Performance.TIME_FPS),
+		# TIME_PROCESS is the previous frame's process step, not this frame's.
 		"process_ms": Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
 		"physics_ms": Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
 		"draw_calls": int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)),
@@ -257,7 +267,10 @@ func _begin_incident(reason: StringName, now_usec: int) -> void:
 		_recovery_frames = 0
 	_trigger_usec = now_usec
 	_aftermath_end_usec = now_usec + int(aftermath_seconds * 1_000_000.0)
-	_capture_samples = _history.duplicate(true)
+	# Shallow copy on purpose: samples are never mutated after ingest, and a
+	# deep copy of ~1200 ring entries used to land 10-33 ms of work on the very
+	# frame that tripped the threshold.
+	_capture_samples = _history.duplicate()
 
 
 func _finalize_incident(now_usec: int) -> void:
@@ -268,7 +281,11 @@ func _finalize_incident(now_usec: int) -> void:
 		var event := event_variant as Dictionary
 		var event_time := int(event.get("t_usec", 0))
 		if event_time >= event_start and event_time <= now_usec:
-			incident_events.append(event.duplicate(true))
+			# Counter events keep aggregating in place, so incident copies must
+			# own their data. The bucket key is internal bookkeeping.
+			var event_copy := event.duplicate(true)
+			event_copy.erase("__bucket_key")
+			incident_events.append(event_copy)
 	var summary := _build_summary(_capture_samples, incident_events)
 	var segment := int((_capture_samples[-1] as Dictionary).get("segment", 0)) if not _capture_samples.is_empty() else 0
 	_latest_incident = {
@@ -286,7 +303,8 @@ func _finalize_incident(now_usec: int) -> void:
 			"dropped_samples": _dropped_samples,
 		},
 		"summary": summary,
-		"samples": _capture_samples.duplicate(true),
+		# Shallow: entries are immutable after ingest (see _begin_incident).
+		"samples": _capture_samples.duplicate(),
 		"events": incident_events,
 	}
 	_state = STATE_COOLDOWN if cooldown_seconds > 0.0 else STATE_WATCHING
@@ -373,10 +391,9 @@ func _trim_history(now_usec: int) -> void:
 		_history.pop_front()
 	while not _events.is_empty() and int((_events[0] as Dictionary).get("t_usec", 0)) < cutoff - 1_000_000:
 		var removed := _events.pop_front() as Dictionary
-		for key in _counter_buckets.keys():
-			if _counter_buckets[key] == removed:
-				_counter_buckets.erase(key)
-				break
+		var bucket_key := String(removed.get("__bucket_key", ""))
+		if bucket_key != "" and is_same(_counter_buckets.get(bucket_key), removed):
+			_counter_buckets.erase(bucket_key)
 
 
 func get_status_snapshot() -> Dictionary:

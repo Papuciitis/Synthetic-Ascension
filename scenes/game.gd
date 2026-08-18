@@ -60,10 +60,11 @@ func _ready() -> void:
 		if Global.run_bag == null:
 			Global.reset_run_bag_inventory()
 
-	# Mark resume target as Game
+	# Mark resume target as Game. Unvalidated: this is a resume-marker write on
+	# the scene-entry frame; the preceding transition save was fully validated.
 	if SaveManager != null and SaveManager.current_save != null:
 		SaveManager.current_save.attempt_resume_scene = Global.PATH_GAME
-		Global.save_current_profile()
+		Global.save_current_profile(false)
 
 	# HUD bindings
 	if hud != null:
