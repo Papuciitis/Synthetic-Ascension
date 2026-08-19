@@ -34,6 +34,8 @@ class_name MeleeSlash
 
 var _t: float = 0.0
 var _hit_ids: Dictionary = {}
+var _hit_handles: Dictionary = {}
+var _world_targets: Array[int] = []
 var _seed: float = 0.0
 var source: Node = null
 
@@ -89,8 +91,47 @@ func _scan_initial_overlaps() -> void:
 	# If we spawn already overlapping an enemy hitbox, area_entered may not fire reliably.
 	# Scanning once after the first physics tick makes melee feel consistent.
 	await get_tree().physics_frame
+	_scan_world_targets()
 	for a in get_overlapping_areas():
 		_on_area_entered(a)
+
+
+func _scan_world_targets() -> void:
+	var combat := get_node_or_null("/root/EnemyCombat") as EnemyCombatService
+	if combat == null:
+		return
+	var outer_radius := maxf(2.0, arc_radius * 0.95)
+	var inner_radius := maxf(0.0, outer_radius - thickness)
+	if inner_radius < 2.0:
+		inner_radius = 0.0
+	combat.gather_in_sector(
+		global_position,
+		global_transform.x,
+		outer_radius,
+		inner_radius,
+		deg_to_rad(clampf(arc_degrees, 5.0, 340.0)) * 0.5,
+		_world_targets,
+	)
+	for handle in _world_targets:
+		var actor := combat.actor_for_handle(handle)
+		# Critical legacy actors keep their Node-owned lifecycle until the
+		# compatibility bridge is installed. Data-only and EnemyActor records
+		# are safe to damage through the authoritative service now.
+		if actor != null and not actor.has_method("_apply_enemy_world_health"):
+			continue
+		_hit_handle(handle, combat)
+
+
+func _hit_handle(handle: int, combat: EnemyCombatService) -> void:
+	if handle == EnemyWorldTypes.INVALID_HANDLE or _hit_handles.has(handle):
+		return
+	_hit_handles[handle] = true
+	var hit_position := combat.position_for_handle(handle)
+	var applied_damage := combat.apply_damage(handle, damage, 1, source)
+	if applied_damage <= 0.0:
+		return
+	_apply_burn_handle(handle)
+	_spawn_hit_vfx(hit_position)
 
 func _fit_hitbox_to_visual() -> void:
 	# Clear previously generated slices.
@@ -179,6 +220,12 @@ func _on_area_entered(area: Area2D) -> void:
 	var enemy_node: Node = area.get_parent()
 	if enemy_node == null or not enemy_node.is_in_group("enemies") or not enemy_node.has_method("take_damage"):
 		return
+	var combat := get_node_or_null("/root/EnemyCombat") as EnemyCombatService
+	if combat != null:
+		var handle := combat.handle_for_actor(enemy_node)
+		if handle != EnemyWorldTypes.INVALID_HANDLE and enemy_node.has_method("_apply_enemy_world_health"):
+			_hit_handle(handle, combat)
+			return
 
 	var id: int = enemy_node.get_instance_id()
 	if _hit_ids.has(id):
@@ -187,12 +234,23 @@ func _on_area_entered(area: Area2D) -> void:
 
 	enemy_node.call("take_damage", damage, source)
 	_apply_burn_dot(enemy_node)
+	if enemy_node is Node2D:
+		_spawn_hit_vfx((enemy_node as Node2D).global_position)
 
-	if vfx_hit_spokes_scene != null and enemy_node is Node2D:
-		var v: Node = vfx_hit_spokes_scene.instantiate()
-		get_tree().current_scene.add_child(v)
-		if v.has_method("setup"):
-			v.call("setup", (enemy_node as Node2D).global_position)
+
+func _spawn_hit_vfx(hit_position: Vector2) -> void:
+	if vfx_hit_spokes_scene == null:
+		return
+	var v: Node = vfx_hit_spokes_scene.instantiate()
+	var scene := get_tree().current_scene
+	if scene == null:
+		scene = get_parent()
+	if scene == null:
+		v.queue_free()
+		return
+	scene.add_child(v)
+	if v.has_method("setup"):
+		v.call("setup", hit_position)
 
 func _ease_out(x: float) -> float:
 	return 1.0 - pow(1.0 - x, 3.0)
@@ -295,3 +353,25 @@ func _apply_burn_dot(enemy: Node) -> void:
 		dot.name = "BurnDot"
 		enemy.add_child(dot)
 	dot.setup(enemy, source, stacks, duration, tick, dmg_per_tick_per_stack)
+
+
+func _apply_burn_handle(handle: int) -> void:
+	if not has_meta("burn_duration"):
+		return
+	var duration := float(get_meta("burn_duration", 0.0))
+	var tick_interval := float(get_meta("burn_tick", 0.0))
+	var stacks := int(get_meta("burn_stacks", 0))
+	var multiplier := float(get_meta("burn_tick_mult", 0.0))
+	if duration <= 0.0 or tick_interval <= 0.0 or stacks <= 0:
+		return
+	var status := get_node_or_null("/root/EnemyStatus")
+	if status != null and status.has_method("apply_burn"):
+		status.call(
+			"apply_burn",
+			handle,
+			stacks,
+			duration,
+			tick_interval,
+			maxf(0.05, damage * multiplier),
+			source,
+		)

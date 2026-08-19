@@ -48,7 +48,7 @@ var _internal_cd: float = 0.0
 
 var _pull_left: float = 0.0
 var _center: Vector2 = Vector2.ZERO
-var _pull_candidates: Array = []
+var _pull_candidates: Array[int] = []
 var _mode: int = 0 # 0 idle, 1 pulling
 var _style: StringName = &"melee"
 
@@ -133,30 +133,12 @@ func _pull_tick(dt: float) -> void:
 	var r := _pull_effect_radius()
 	var force := pull_force * (0.85 + 0.25 * set_strength)
 
-	# This runs every frame while the pull is active; use the spatial index
-	# with a reused buffer instead of a full "enemies" group scan per frame.
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and ei.has_method("gather_in_radius"):
-		ei.call("gather_in_radius", _center, r, _pull_candidates)
-	else:
-		_pull_candidates.clear()
-		var r2 := r * r
-		for n in get_tree().get_nodes_in_group("enemies"):
-			var e2 := n as Node2D
-			if e2 == null or not is_instance_valid(e2):
-				continue
-			if _center.distance_squared_to(e2.global_position) <= r2:
-				_pull_candidates.append(e2)
-
-	for candidate in _pull_candidates:
-		var e := candidate as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if e.has_method("apply_knockback"):
-			var dir := (_center - e.global_position)
-			if dir.length_squared() > 0.001:
-				# multiply by dt to make it stable across FPS
-				e.call("apply_knockback", dir.normalized() * force * dt)
+	EnemyCombat.gather_in_radius(_center, r, _pull_candidates)
+	for handle in _pull_candidates:
+		var direction := _center - EnemyCombat.position_for_handle(handle)
+		if direction.length_squared() > 0.001:
+			# Multiply by dt to make it stable across FPS.
+			EnemyCombat.apply_knockback(handle, direction.normalized() * force * dt)
 
 func _slam() -> void:
 	_spawn_wave(_center, slam_radius * (0.92 + 0.18 * set_strength))
@@ -299,21 +281,16 @@ func _get_power_mul() -> float:
 	return 1.0
 
 func _damage_radius(center: Vector2, r: float, dmg: float, kb: float, st: float) -> void:
-	var r2 := r * r
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if center.distance_squared_to(e.global_position) > r2:
-			continue
-		if e.has_method("take_damage"):
-			e.call("take_damage", dmg, player)
-		if kb > 0.0 and e.has_method("apply_knockback"):
-			var dir := (e.global_position - center)
-			if dir.length_squared() > 0.001:
-				e.call("apply_knockback", dir.normalized() * kb)
-		if st > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", st)
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(center, r, handles)
+	for handle in handles:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		var direction := hit_position - center
+		if kb > 0.0 and direction.length_squared() > 0.001:
+			EnemyCombat.apply_knockback(handle, direction.normalized() * kb)
+		if st > 0.0:
+			EnemyCombat.apply_stun(handle, st)
 
 func _spawn_bullet(scn: PackedScene, pos: Vector2, dir: Vector2, dmg: float) -> void:
 	var bullet := scn.instantiate()

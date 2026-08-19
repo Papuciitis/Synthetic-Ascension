@@ -33,6 +33,12 @@ func apply_damage(
 	if current_health <= 0.0:
 		return 0.0
 	var actor := _world.actor_for_handle(handle)
+	if (
+		actor != null
+		and not actor.has_method("_apply_enemy_world_health")
+		and actor.has_method("take_damage")
+	):
+		return _apply_legacy_damage(handle, actor, raw_damage, source)
 	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count)
 	var applied_damage := minf(adjusted_damage, current_health)
 	if applied_damage <= 0.0:
@@ -259,6 +265,20 @@ func apply_knockback(handle: int, force: Vector2) -> bool:
 	return true
 
 
+func apply_stun(handle: int, seconds: float) -> bool:
+	if seconds <= 0.0 or not _is_live_handle(handle):
+		return false
+	if not _world.extend_stun_time(handle, seconds):
+		return false
+	var actor := _world.actor_for_handle(handle)
+	if actor != null:
+		if actor.has_method("_apply_enemy_world_stun"):
+			actor.call("_apply_enemy_world_stun", _world.get_stun_time(handle))
+		elif actor.has_method("apply_stun"):
+			actor.call("apply_stun", seconds)
+	return true
+
+
 func _is_live_handle(handle: int) -> bool:
 	return (
 		_world != null
@@ -266,6 +286,22 @@ func _is_live_handle(handle: int) -> bool:
 		and _world.is_valid_handle(handle)
 		and not _world.is_dying(handle)
 	)
+
+
+func _apply_legacy_damage(handle: int, actor: Node2D, raw_damage: float, source: Node) -> float:
+	var before_health := _world.get_health(handle)
+	if "hp" in actor:
+		before_health = maxf(0.0, float(actor.get("hp")))
+	actor.call("take_damage", raw_damage, source)
+	if not is_instance_valid(actor):
+		return minf(raw_damage, before_health)
+	var remaining_health := maxf(0.0, before_health - raw_damage)
+	if "hp" in actor:
+		remaining_health = maxf(0.0, float(actor.get("hp")))
+	_world.set_health(handle, remaining_health)
+	if remaining_health <= 0.0 or ("dead" in actor and bool(actor.get("dead"))):
+		_world.try_begin_death(handle)
+	return clampf(before_health - remaining_health, 0.0, before_health)
 
 
 func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:

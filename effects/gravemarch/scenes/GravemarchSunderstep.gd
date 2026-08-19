@@ -44,23 +44,18 @@ func _on_weapon_fired(p: Node, _style: StringName, _origin: Vector2, _target: Ve
 
 	var base := _get_player_base_damage()
 	var dmg := base * dmg_mult * power_mul * set_strength
-	var r2 := r * r
-
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if center.distance_squared_to(e.global_position) > r2:
-			continue
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", dmg, player)
-		if e.has_method("apply_knockback"):
-			var dir := e.global_position - center
-			if dir.length_squared() > 0.001:
-				e.call("apply_knockback", dir.normalized() * knockback * (0.85 + 0.25 * set_strength))
-		if e.has_method("apply_stun"):
-			e.call("apply_stun", stun_time * (0.85 + 0.20 * set_strength))
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(center, r, handles)
+	for handle in handles:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		var direction := hit_position - center
+		if direction.length_squared() > 0.001:
+			EnemyCombat.apply_knockback(
+				handle,
+				direction.normalized() * knockback * (0.85 + 0.25 * set_strength),
+			)
+		EnemyCombat.apply_stun(handle, stun_time * (0.85 + 0.20 * set_strength))
 
 func _get_player_base_damage() -> float:
 	if player != null:

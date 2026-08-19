@@ -32,7 +32,7 @@ var _capture: float = 0.0
 var _active: bool = false
 var _spin_t: float = 0.0
 var _enemy_index: Node = null
-var _pulse_targets: Array = []
+var _pulse_targets: Array[int] = []
 
 var _sfx_capture_tag: StringName = &"capture"
 
@@ -166,27 +166,16 @@ func restore_active() -> void:
 
 
 func _pulse() -> void:
-	var enemies: Array = []
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
-	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("gather_in_radius"):
-		_enemy_index.call("gather_in_radius", global_position, pulse_radius, _pulse_targets)
-		enemies = _pulse_targets
-	else:
-		enemies = get_tree().get_nodes_in_group("enemies")
-	for e in enemies:
-		var en := e as Node2D
-		if en == null or not is_instance_valid(en):
-			continue
-		var d: Vector2 = en.global_position - global_position
+	EnemyCombat.gather_in_radius(global_position, pulse_radius, _pulse_targets)
+	for handle in _pulse_targets:
+		var d: Vector2 = EnemyCombat.position_for_handle(handle) - global_position
 		var dist: float = d.length()
 		if dist <= 0.001 or dist > pulse_radius:
 			continue
 		var dir: Vector2 = d / dist
-		if e.has_method("apply_knockback"):
-			e.call("apply_knockback", dir * pulse_force)
-		if pulse_stun > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", pulse_stun)
+		EnemyCombat.apply_knockback(handle, dir * pulse_force)
+		if pulse_stun > 0.0:
+			EnemyCombat.apply_stun(handle, pulse_stun)
 
 
 func get_stability_radius() -> float:

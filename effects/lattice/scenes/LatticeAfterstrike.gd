@@ -56,30 +56,17 @@ func _detonate(pos: Vector2, power_mul: float) -> void:
 	var base := _get_player_base_damage()
 	var dmg := base * dmg_mult * power_mul * set_strength
 	var r := radius * (0.90 + 0.15 * set_strength)
-	var r2 := r * r
-
-	# Spatial index instead of a full "enemies" group scan per detonation.
-	var targets: Array = []
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and ei.has_method("gather_in_radius"):
-		ei.call("gather_in_radius", pos, r, targets)
-	else:
-		targets = get_tree().get_nodes_in_group("enemies")
-
-	for n in targets:
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if pos.distance_squared_to(e.global_position) > r2:
-			continue
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", dmg, player)
-
-		if e.has_method("apply_knockback"):
-			var dir := (e.global_position - pos)
-			if dir.length_squared() > 0.001:
-				e.call("apply_knockback", dir.normalized() * knockback * (0.85 + 0.25 * set_strength))
+	var targets: Array[int] = []
+	EnemyCombat.gather_in_radius(pos, r, targets)
+	for handle in targets:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		var direction := hit_position - pos
+		if direction.length_squared() > 0.001:
+			EnemyCombat.apply_knockback(
+				handle,
+				direction.normalized() * knockback * (0.85 + 0.25 * set_strength),
+			)
 
 func _get_player_base_damage() -> float:
 	if player != null:

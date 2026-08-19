@@ -209,24 +209,14 @@ func _try_circuit_feedback() -> void:
 	if st != null:
 		power_mul = 1.0 + st.power
 
-	var r2: float = r * r
-
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-
-		if origin.distance_squared_to(e.global_position) > r2:
-			continue
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", base_dmg * active_damage_mult * power_mul * set_strength)
-
-		var dir: Vector2 = (e.global_position - origin).normalized()
-		if e.has_method("apply_knockback"):
-			e.call("apply_knockback", dir * active_knockback * (0.85 + 0.25 * set_strength))
-		if e.has_method("apply_stun"):
-			e.call("apply_stun", active_stun * (0.85 + 0.25 * set_strength))
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(origin, r, handles)
+	for handle in handles:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, base_dmg * active_damage_mult * power_mul * set_strength)
+		var direction := (hit_position - origin).normalized()
+		EnemyCombat.apply_knockback(handle, direction * active_knockback * (0.85 + 0.25 * set_strength))
+		EnemyCombat.apply_stun(handle, active_stun * (0.85 + 0.25 * set_strength))
 
 func get_active_state() -> Dictionary:
 	var is_ready: bool = player != null and _active_cd <= 0.05
@@ -282,19 +272,11 @@ func _start_ranged_burst(origin: Vector2, aim: Vector2, dmg: float) -> void:
 	_burst_timer = 0.0
 	_burst_spread_rad = deg_to_rad(burst_spread_deg)
 
-func _get_nearest_enemies(center: Vector2, radius: float, max_targets: int) -> Array[Node2D]:
-	var out: Array[Node2D] = []
-	var r2: float = radius * radius
-
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e: Node2D = n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if center.distance_squared_to(e.global_position) <= r2:
-			out.append(e)
-
-	out.sort_custom(func(a: Node2D, b: Node2D) -> bool:
-		return center.distance_squared_to(a.global_position) < center.distance_squared_to(b.global_position)
+func _get_nearest_enemies(center: Vector2, radius: float, max_targets: int) -> Array[int]:
+	var out: Array[int] = []
+	EnemyCombat.gather_in_radius(center, radius, out)
+	out.sort_custom(func(a: int, b: int) -> bool:
+		return center.distance_squared_to(EnemyCombat.position_for_handle(a)) < center.distance_squared_to(EnemyCombat.position_for_handle(b))
 	)
 
 	if out.size() > max_targets:
@@ -332,26 +314,19 @@ func _melee_lashes(origin: Vector2, target: Vector2, dmg: float) -> void:
 	_spawn_cleave_arc(origin, dir, melee_lash_radius * 0.55)
 	_spawn_pulse(origin, melee_lash_radius * 0.40)
 
-	var targets: Array[Node2D] = _get_nearest_enemies(origin, melee_lash_radius, melee_lash_targets)
+	var targets: Array[int] = _get_nearest_enemies(origin, melee_lash_radius, melee_lash_targets)
 	if targets.is_empty():
 		return
 
-	for e: Node2D in targets:
-		if e == null or not is_instance_valid(e):
-			continue
-
+	for handle in targets:
+		var hit_position := EnemyCombat.position_for_handle(handle)
 		var hit_dmg: float = dmg * melee_lash_damage_mult
 
 		# Impact burst on enemy (your SpokesBurst now looks good)
-		_spawn_spokes(e.global_position)
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", hit_dmg)
-
-		if e.has_method("apply_knockback"):
-			e.call("apply_knockback", (e.global_position - origin).normalized() * melee_lash_knockback)
-		if e.has_method("apply_stun"):
-			e.call("apply_stun", melee_lash_stun)
+		_spawn_spokes(hit_position)
+		EnemyCombat.apply_damage(handle, hit_dmg)
+		EnemyCombat.apply_knockback(handle, (hit_position - origin).normalized() * melee_lash_knockback)
+		EnemyCombat.apply_stun(handle, melee_lash_stun)
 
 func _magic_barrage(origin: Vector2, target: Vector2, dmg: float) -> void:
 	if player == null:

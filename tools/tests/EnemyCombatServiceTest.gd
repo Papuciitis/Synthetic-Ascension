@@ -13,6 +13,8 @@ class DummyEnemy:
 	var mirrored_health := -1.0
 	var last_damage := -1.0
 	var last_context: RefCounted = null
+	var stun_updates := 0
+	var stun_time := 0.0
 
 	func _apply_enemy_world_health(current_health: float, _maximum_health: float) -> void:
 		health_updates += 1
@@ -25,6 +27,22 @@ class DummyEnemy:
 	func _apply_enemy_world_death(context: RefCounted) -> void:
 		death_calls += 1
 		last_context = context
+
+	func _apply_enemy_world_stun(seconds: float) -> void:
+		stun_updates += 1
+		stun_time = maxf(stun_time, seconds)
+
+
+class LegacyEnemy:
+	extends Node2D
+	var hp := 25.0
+	var hit_calls := 0
+	var last_source: Node = null
+
+	func take_damage(amount: float, source: Node = null) -> void:
+		hit_calls += 1
+		last_source = source
+		hp = maxf(0.0, hp - amount)
 
 var _passes := 0
 var _failures := 0
@@ -107,6 +125,35 @@ func _run() -> void:
 	_check(combat.apply_damage(replacement, 0.0) == 0.0, "zero damage is ignored")
 	_check(combat.apply_damage(replacement, -10.0) == 0.0, "negative damage is ignored")
 
+	var controlled := _spawn(world, &"controlled")
+	_check(combat.apply_stun(controlled, 0.4), "stun applies to a data-only enemy")
+	_check(is_equal_approx(world.get_stun_time(controlled), 0.4), "data-only stun persists in world storage")
+	var controlled_actor := DummyEnemy.new()
+	add_child(controlled_actor)
+	_check(world.bind_actor(controlled, controlled_actor), "controlled target materializes")
+	_check(combat.apply_stun(controlled, 0.7), "materialized stun extends through combat service")
+	_check(
+		is_equal_approx(world.get_stun_time(controlled), 0.7)
+		and controlled_actor.stun_updates == 1
+		and is_equal_approx(controlled_actor.stun_time, 0.7),
+		"materialized stun keeps record and actor mirror equal",
+	)
+	_check(not combat.apply_stun(controlled, 0.0), "zero-duration stun is ignored")
+
+	var legacy := _spawn(world, &"legacy", 25.0)
+	var legacy_actor := LegacyEnemy.new()
+	add_child(legacy_actor)
+	_check(world.bind_actor(legacy, legacy_actor), "legacy target binds for compatibility")
+	var legacy_source := Node.new()
+	add_child(legacy_source)
+	_check(is_equal_approx(combat.apply_damage(legacy, 7.0, 1, legacy_source), 7.0), "legacy target damage stays on its Node-owned lifecycle")
+	_check(
+		legacy_actor.hit_calls == 1
+		and legacy_actor.last_source == legacy_source
+		and is_equal_approx(legacy_actor.hp, 18.0)
+		and is_equal_approx(world.get_health(legacy), 18.0),
+		"legacy compatibility damage mirrors the Node result back into world storage",
+	)
+
 	print("EnemyCombatServiceTest passes=", _passes, " failures=", _failures)
 	get_tree().quit(1 if _failures > 0 else 0)
-

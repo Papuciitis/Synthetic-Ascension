@@ -732,6 +732,12 @@ func _apply_enemy_world_knockback(force: Vector2) -> void:
 	knockback_vel += force
 
 func apply_stun(seconds: float) -> void:
+	if seconds <= 0.0 or dead:
+		return
+	EnemyCombat.apply_stun(_resolve_enemy_world_handle(), seconds)
+
+
+func _apply_enemy_world_stun(seconds: float) -> void:
 	stun_time = maxf(stun_time, seconds)
 
 func apply_speed_buff(mult: float, duration: float) -> void:

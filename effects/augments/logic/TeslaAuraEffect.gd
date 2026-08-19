@@ -38,47 +38,32 @@ func _process(dt: float) -> void:
 	_t = 0.0
 
 	var dmg: float = _compute_damage()
-	var r2: float = radius * radius
 	var origin: Vector2 = _origin_pos()
 
 	# optional pulse ring at tick moment
 	_spawn_pulse(origin)
 
 	# gather + sort by distance so it feels intentional
-	var candidates: Array[Node2D] = []
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if origin.distance_squared_to(e.global_position) > r2:
-			continue
-		candidates.append(e)
+	var candidates: Array[int] = []
+	EnemyCombat.gather_in_radius(origin, radius, candidates)
 
 	_sort_origin = origin
 	candidates.sort_custom(Callable(self, "_sort_by_dist"))
 
 	var hit: int = 0
-	for e in candidates:
-		if e == null or not is_instance_valid(e):
-			continue
-
-		# damage (IMPORTANT: pass player as source so your systems can attribute it)
-		if e.has_method("take_damage"):
-			e.call("take_damage", dmg, player)
-
-		# arcs
-		_spawn_arc(origin, e.global_position)
+	for handle in candidates:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		_spawn_arc(origin, hit_position)
 
 		hit += 1
 		if hit >= max_targets:
 			break
 
 func _sort_by_dist(a: Variant, b: Variant) -> bool:
-	var aa := a as Node2D
-	var bb := b as Node2D
-	if aa == null or bb == null:
-		return false
-	return aa.global_position.distance_squared_to(_sort_origin) < bb.global_position.distance_squared_to(_sort_origin)
+	var a_position := EnemyCombat.position_for_handle(int(a))
+	var b_position := EnemyCombat.position_for_handle(int(b))
+	return a_position.distance_squared_to(_sort_origin) < b_position.distance_squared_to(_sort_origin)
 
 func _origin_pos() -> Vector2:
 	# prefer Hurtbox center if present (usually matches player visuals better)
