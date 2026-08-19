@@ -22,6 +22,7 @@ func _run() -> void:
 	_test_scheduler_tier_contract()
 	_test_projectile_query_contract()
 	_test_chunk_queue_contract()
+	_test_enemy_health_authority_contract()
 	print("PerformanceRootCauseFixTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -104,3 +105,14 @@ func _test_chunk_queue_contract() -> void:
 	var generated := int(manager.call("process_chunk_generation_queue", 1))
 	_check(generated == 1 and (manager.call("debug_chunk_queue") as Array).size() == before - 1, "chunk queue obeys one-chunk budget")
 	manager.queue_free()
+
+
+func _test_enemy_health_authority_contract() -> void:
+	var lifecycle_source := FileAccess.get_file_as_string("res://core/actors/enemy/modules/EnemyLifecycle.gd")
+	var actor_source := FileAccess.get_file_as_string("res://core/actors/enemy/enemy.gd")
+	var boss_arena_source := FileAccess.get_file_as_string("res://scenes/world/events/BossArena.gd")
+	var miniboss_arena_source := FileAccess.get_file_as_string("res://scenes/world/events/MiniBossArena.gd")
+	_check(lifecycle_source.find("_owner.hp -=") < 0, "enemy lifecycle cannot subtract from actor health directly")
+	_check(actor_source.find("EnemyCombat.apply_damage(") >= 0, "enemy damage facade routes through authoritative combat service")
+	_check(boss_arena_source.find("en.hp =") < 0, "boss scaling cannot write actor health behind the world")
+	_check(miniboss_arena_source.find("en.hp =") < 0, "miniboss scaling cannot write actor health behind the world")
