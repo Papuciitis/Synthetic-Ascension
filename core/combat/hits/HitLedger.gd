@@ -6,6 +6,7 @@ class_name HitLedger
 ## their resolved outcomes rather than rerolling them.
 
 var target: Node = null
+var target_handle: int = 0
 var source: Node = null
 var total_raw_damage: float = 0.0
 var hit_count: int = 0
@@ -35,4 +36,3 @@ func add_resolved_hit(damage: float, source_node: Node, knockback_force: Vector2
 
 func clamped_knockback(max_force: float = 900.0) -> Vector2:
 	return knockback.limit_length(maxf(0.0, max_force))
-

@@ -9,7 +9,6 @@ enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const IMPACT_SCENE := preload("res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn")
 const DEFAULT_CAPACITY: int = 4096
-const ENEMY_RADIUS: float = 24.0
 const PLAYER_RADIUS: float = 25.0
 
 var capacity: int = DEFAULT_CAPACITY
@@ -31,21 +30,19 @@ var _visuals := PackedInt32Array()
 var _pierce := PackedInt32Array()
 var _burn_stacks := PackedInt32Array()
 var _crit := PackedByteArray()
-var _last_hit_ids := PackedInt64Array()
+var _last_hit_handles := PackedInt64Array()
 var _colors := PackedColorArray()
 var _sources: Array = []
 var _active_count: int = 0
 
-var _enemy_index: Node = null
 var _chunk_manager: ChunkManager = null
 var _player: Node2D = null
-var _enemy_candidates: Array = []
 var _pending_ledgers: Dictionary = {}
 var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
 var _render_buffer := PackedFloat32Array()
 var _last_scene_id: int = 0
-var _query_hit_target: Node2D = null
+var _query_hit_handle: int = 0
 var _query_hit_t: float = -1.0
 
 var _hits_this_frame: int = 0
@@ -131,7 +128,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_pierce[index] = maxi(0, pierce)
 		_burn_stacks[index] = maxi(0, burn_stacks)
 		_crit[index] = 1 if critical else 0
-		_last_hit_ids[index] = 0
+		_last_hit_handles[index] = 0
 		_colors[index] = color
 		_sources[index] = source
 	else:
@@ -153,7 +150,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_pierce.append(maxi(0, pierce))
 		_burn_stacks.append(maxi(0, burn_stacks))
 		_crit.append(1 if critical else 0)
-		_last_hit_ids.append(0)
+		_last_hit_handles.append(0)
 		_colors.append(color)
 		_sources.append(source)
 	_active_count += 1
@@ -170,10 +167,11 @@ func _simulate_one(index: int, delta: float) -> void:
 	_range_left[index] -= movement.length()
 	var world_t := _world_hit_t(old_pos, new_pos, _radii[index])
 	var target: Node2D = null
+	var target_handle: int = 0
 	var target_t := -1.0
 	if _teams[index] == Team.PLAYER:
-		if _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_ids[index]):
-			target = _query_hit_target
+		if _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_handles[index]):
+			target_handle = _query_hit_handle
 			target_t = _query_hit_t
 	else:
 		target = _player
@@ -183,42 +181,43 @@ func _simulate_one(index: int, delta: float) -> void:
 	if world_t >= 0.0 and (target_t < 0.0 or world_t <= target_t):
 		_remove(index)
 		return
-	if target != null and target_t >= 0.0:
+	if target_handle != 0 and target_t >= 0.0:
 		var hit_pos := old_pos.lerp(new_pos, target_t)
-		_queue_hit(index, target, hit_pos)
+		_queue_handle_hit(index, target_handle, hit_pos)
 		if _pierce[index] <= 0:
 			_remove(index)
 			return
 		_pierce[index] -= 1
-		_last_hit_ids[index] = target.get_instance_id()
+		_last_hit_handles[index] = target_handle
+	elif target != null and target_t >= 0.0:
+		var hit_pos := old_pos.lerp(new_pos, target_t)
+		_queue_node_hit(index, target, hit_pos)
+		if _pierce[index] <= 0:
+			_remove(index)
+			return
+		_pierce[index] -= 1
 	_positions[index] = new_pos
 	if _life_left[index] <= 0.0 or _range_left[index] <= 0.0:
 		_remove(index)
 
-func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_id: int) -> bool:
-	_query_hit_target = null
+func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_handle: int) -> bool:
+	_query_hit_handle = 0
 	_query_hit_t = -1.0
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
+	if EnemyCombat == null:
 		return false
-	var mid := (from + to) * 0.5
-	_enemy_index.call("gather_in_radius", mid, from.distance_to(to) * 0.5 + ENEMY_RADIUS + radius, _enemy_candidates)
-	var best_t := 2.0
-	for candidate in _enemy_candidates:
-		var enemy := candidate as Node2D
-		if enemy == null or not is_instance_valid(enemy) or enemy.get_instance_id() == excluded_id:
-			continue
-		var t := _segment_circle_t(from, to, enemy.global_position, ENEMY_RADIUS + radius)
-		if t >= 0.0 and t < best_t:
-			best_t = t
-			_query_hit_target = enemy
-	if _query_hit_target == null:
+	_query_hit_handle = EnemyCombat.first_enemy_on_segment(from, to, radius, excluded_handle)
+	if _query_hit_handle == 0:
 		return false
-	_query_hit_t = best_t
+	_query_hit_t = EnemyCombat.last_segment_hit_t()
 	return true
 
 
 func debug_last_enemy_hit() -> Dictionary:
-	return {"target": _query_hit_target, "t": _query_hit_t}
+	return {
+		"handle": _query_hit_handle,
+		"target": EnemyCombat.actor_for_handle(_query_hit_handle) if _query_hit_handle != 0 else null,
+		"t": _query_hit_t,
+	}
 
 func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:
 	var segment := to - from
@@ -233,7 +232,21 @@ func _world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
 		return -1.0
 	return _chunk_manager.projectile_hit_t(from, to, radius)
 
-func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
+func _queue_handle_hit(index: int, target_handle: int, hit_position: Vector2) -> void:
+	if target_handle == 0 or not EnemyWorld.is_valid_handle(target_handle):
+		return
+	_hits_this_frame += 1
+	var ledger: HitLedger = _pending_ledgers.get(target_handle, null) as HitLedger
+	if ledger == null:
+		ledger = HitLedger.new()
+		ledger.target_handle = target_handle
+		_pending_ledgers[target_handle] = ledger
+	_add_projectile_to_ledger(index, ledger)
+	if _teams[index] == Team.PLAYER:
+		_spawn_impact(hit_position)
+
+
+func _queue_node_hit(index: int, target: Node, hit_position: Vector2) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	_hits_this_frame += 1
@@ -243,6 +256,12 @@ func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
 		ledger = HitLedger.new()
 		ledger.target = target
 		_pending_ledgers[target_id] = ledger
+	_add_projectile_to_ledger(index, ledger)
+	if _teams[index] == Team.PLAYER:
+		_spawn_impact(hit_position)
+
+
+func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 	# A queued projectile may outlive its firing node. Check the raw Variant before
 	# casting it; casting a stale Object reference raises "Trying to cast a freed object".
 	var source: Node = null
@@ -251,18 +270,24 @@ func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
 		source = source_value as Node
 	var direction := _velocities[index].normalized()
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
-	if _teams[index] == Team.PLAYER:
-		_spawn_impact(hit_position)
 
 func _flush_hit_ledgers() -> void:
 	_batches_this_frame = _pending_ledgers.size()
 	for value in _pending_ledgers.values():
 		var ledger := value as HitLedger
-		if ledger == null or ledger.target == null or not is_instance_valid(ledger.target):
+		if ledger == null:
 			continue
-		if ledger.target.has_method("apply_hit_ledger"):
+		if ledger.target_handle != 0:
+			EnemyCombat.apply_damage(
+				ledger.target_handle,
+				ledger.total_raw_damage,
+				maxi(1, ledger.hit_count),
+				ledger.source,
+				ledger,
+			)
+		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("apply_hit_ledger"):
 			ledger.target.call("apply_hit_ledger", ledger)
-		elif ledger.target.has_method("take_damage"):
+		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("take_damage"):
 			ledger.target.call("take_damage", ledger.total_raw_damage, ledger.source)
 
 func _spawn_impact(world_position: Vector2) -> void:
@@ -297,7 +322,7 @@ func _remove(index: int) -> void:
 		_pierce[index] = _pierce[last]
 		_burn_stacks[index] = _burn_stacks[last]
 		_crit[index] = _crit[last]
-		_last_hit_ids[index] = _last_hit_ids[last]
+		_last_hit_handles[index] = _last_hit_handles[last]
 		_colors[index] = _colors[last]
 		_sources[index] = _sources[last]
 	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
@@ -323,12 +348,9 @@ func _sync_scene_refs() -> void:
 		_clear_all()
 		_last_scene_id = scene_id
 		_stress_started = false
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 		return
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	if _player == null or not is_instance_valid(_player):
