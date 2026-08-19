@@ -5,7 +5,8 @@ var _handle: int
 var _spec_id: StringName
 var _position: Vector2
 var _flags: int
-var _source: Node
+var _source_ref: WeakRef = null
+var _metadata: Dictionary
 
 var handle: int:
 	get:
@@ -25,7 +26,14 @@ var flags: int:
 
 var source: Node:
 	get:
-		return _source if _source == null or is_instance_valid(_source) else null
+		if _source_ref == null:
+			return null
+		var candidate: Variant = _source_ref.get_ref()
+		return candidate as Node if candidate is Node else null
+
+var metadata: Dictionary:
+	get:
+		return _metadata.duplicate(true)
 
 var is_elite: bool:
 	get:
@@ -38,10 +46,11 @@ func _init(
 	p_position: Vector2,
 	p_flags: int,
 	p_source: Node = null,
+	p_metadata: Dictionary = {},
 ) -> void:
 	_handle = p_handle
 	_spec_id = p_spec_id
 	_position = p_position
 	_flags = p_flags
-	_source = p_source
-
+	_source_ref = weakref(p_source) if p_source != null and is_instance_valid(p_source) else null
+	_metadata = p_metadata.duplicate(true)

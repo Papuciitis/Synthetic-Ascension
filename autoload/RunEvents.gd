@@ -7,6 +7,9 @@ signal weapon_fired(player: Node, style_id: StringName, origin: Vector2, target:
 signal enemy_killed(player: Node, enemy: Node, pos: Vector2)
 
 @warning_ignore("unused_signal")
+signal enemy_defeated(context: RefCounted)
+
+@warning_ignore("unused_signal")
 signal boss_spawned(boss: Node, tier: int, portrait: Texture2D, title: String)
 
 @warning_ignore("unused_signal")

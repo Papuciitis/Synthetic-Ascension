@@ -1,6 +1,9 @@
 extends Node2D
 class_name BossPylon
 
+const DeathContextScript = preload("res://core/systems/enemy_world/EnemyDeathContext.gd")
+const WorldTypes = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
+
 @export var max_hp: float = 40.0
 @export var shoot_every: float = 1.25
 @export var projectile_scene: PackedScene = preload("res://core/combat/projectile/EnemyProjectile.tscn")
@@ -37,6 +40,14 @@ func _die(source: Node) -> void:
 	var p: Node = source
 	if p == null:
 		p = get_tree().get_first_node_in_group("player")
+	RunEvents.enemy_defeated.emit(DeathContextScript.new(
+		WorldTypes.INVALID_HANDLE,
+		&"boss_pylon",
+		global_position,
+		WorldTypes.Flags.CRITICAL,
+		p,
+		{"legacy_node": true},
+	))
 	RunEvents.enemy_killed.emit(p, self, global_position)
 	queue_free()
 

@@ -191,9 +191,9 @@ func _hook_signals() -> void:
 		if RunEvents.has_signal("resonance_changed") and not RunEvents.resonance_changed.is_connected(cb_r):
 			RunEvents.resonance_changed.connect(cb_r)
 
-		var cb_k := Callable(self, "_on_enemy_killed")
-		if RunEvents.has_signal("enemy_killed") and not RunEvents.enemy_killed.is_connected(cb_k):
-			RunEvents.enemy_killed.connect(cb_k)
+		var cb_k := Callable(self, "_on_enemy_defeated")
+		if RunEvents.has_signal("enemy_defeated") and not RunEvents.enemy_defeated.is_connected(cb_k):
+			RunEvents.enemy_defeated.connect(cb_k)
 
 func _on_segment_changed(new_seg: int) -> void:
 	_last_segment = new_seg
@@ -233,7 +233,7 @@ func _on_resonance_changed(v: float) -> void:
 
 	_recompute()
 
-func _on_enemy_killed(_player: Node, _enemy: Node, _pos: Vector2) -> void:
+func _on_enemy_defeated(_context: RefCounted) -> void:
 	var now := Time.get_ticks_msec() * 0.001
 	_kills_ts.append(now)
 

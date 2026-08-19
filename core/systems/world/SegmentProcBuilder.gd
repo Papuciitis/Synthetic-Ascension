@@ -608,9 +608,9 @@ func _clear_secondary_objective_ui() -> void:
 func _hook_resonance() -> void:
 	if RunEvents == null:
 		return
-	var cb1 := Callable(self, "_on_enemy_killed")
-	if not RunEvents.enemy_killed.is_connected(cb1):
-		RunEvents.enemy_killed.connect(cb1)
+	var cb1 := Callable(self, "_on_enemy_defeated")
+	if not RunEvents.enemy_defeated.is_connected(cb1):
+		RunEvents.enemy_defeated.connect(cb1)
 
 	var cb2 := Callable(self, "_on_pickup_to_equip")
 	if not RunEvents.pickup_fly_to_equip.is_connected(cb2):
@@ -619,23 +619,21 @@ func _hook_resonance() -> void:
 func _unhook_resonance() -> void:
 	if RunEvents == null:
 		return
-	var cb1 := Callable(self, "_on_enemy_killed")
-	if RunEvents.enemy_killed.is_connected(cb1):
-		RunEvents.enemy_killed.disconnect(cb1)
+	var cb1 := Callable(self, "_on_enemy_defeated")
+	if RunEvents.enemy_defeated.is_connected(cb1):
+		RunEvents.enemy_defeated.disconnect(cb1)
 
 	var cb2 := Callable(self, "_on_pickup_to_equip")
 	if RunEvents.pickup_fly_to_equip.is_connected(cb2):
 		RunEvents.pickup_fly_to_equip.disconnect(cb2)
 
-func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
+func _on_enemy_defeated(context: RefCounted) -> void:
 	if resonance >= 1.0:
 		return
 
 	var gain := resonance_per_kill
-	if enemy != null and enemy.has_method("get"):
-		var elite: bool = bool(enemy.get("is_elite"))
-		if elite:
-			gain = resonance_per_elite_kill
+	if context != null and bool(context.get("is_elite")):
+		gain = resonance_per_elite_kill
 
 	_pending_bonus_res += gain
 	_pending_bonus_res = minf(_pending_bonus_res, 1.0) # avoid runaway buffer if something goes wild

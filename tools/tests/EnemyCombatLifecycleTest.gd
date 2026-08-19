@@ -3,6 +3,7 @@ extends Node
 var _passes := 0
 var _failures := 0
 var _kill_events := 0
+var _defeat_events := 0
 
 
 func _ready() -> void:
@@ -22,6 +23,10 @@ func _on_enemy_killed(_source: Node, _enemy: Node, _position: Vector2) -> void:
 	_kill_events += 1
 
 
+func _on_enemy_defeated(_context: RefCounted) -> void:
+	_defeat_events += 1
+
+
 func _run() -> void:
 	var scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
 	var pool := get_node_or_null("/root/PoolManager")
@@ -32,8 +37,11 @@ func _run() -> void:
 		return
 	pool.call("set_limit_for_scene", scene, 2)
 	var callback := Callable(self, "_on_enemy_killed")
+	var defeat_callback := Callable(self, "_on_enemy_defeated")
 	if not RunEvents.enemy_killed.is_connected(callback):
 		RunEvents.enemy_killed.connect(callback)
+	if RunEvents.has_signal("enemy_defeated") and not RunEvents.is_connected("enemy_defeated", defeat_callback):
+		RunEvents.connect("enemy_defeated", defeat_callback)
 
 	var enemy := pool.call("obtain", scene, self) as EnemyActor
 	_check(enemy != null, "real pooled EnemyActor spawns")
@@ -64,9 +72,10 @@ func _run() -> void:
 
 	enemy.take_damage(999.0, null)
 	_check(_kill_events == 1, "lethal damage emits one compatibility kill event")
+	_check(_defeat_events == 1, "lethal damage emits one generic defeat event")
 	_check(not world.call("is_valid_handle", first_handle), "despawn invalidates the dead actor handle")
 	enemy.take_damage(999.0, null)
-	_check(_kill_events == 1, "late damage on pooled actor cannot repeat death")
+	_check(_kill_events == 1 and _defeat_events == 1, "late damage on pooled actor cannot repeat either death event")
 
 	var reused := pool.call("obtain", scene, self) as EnemyActor
 	_check(reused == enemy, "dead materialized actor is reused from pool")
@@ -79,6 +88,8 @@ func _run() -> void:
 	await get_tree().process_frame
 	if RunEvents.enemy_killed.is_connected(callback):
 		RunEvents.enemy_killed.disconnect(callback)
+	if RunEvents.has_signal("enemy_defeated") and RunEvents.is_connected("enemy_defeated", defeat_callback):
+		RunEvents.disconnect("enemy_defeated", defeat_callback)
 	_finish()
 
 

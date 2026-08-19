@@ -56,8 +56,8 @@ func _hook_run_events() -> void:
 		return
 	if re.has_signal("weapon_fired"):
 		re.weapon_fired.connect(_on_weapon_fired)
-	if re.has_signal("enemy_killed"):
-		re.enemy_killed.connect(_on_enemy_killed)
+	if re.has_signal("enemy_defeated"):
+		re.enemy_defeated.connect(_on_enemy_defeated)
 	if re.has_signal("boss_spawned"):
 		re.boss_spawned.connect(_on_boss_spawned)
 
@@ -160,8 +160,9 @@ func _on_weapon_fired(_player: Node, style_id: StringName, origin: Vector2, _tar
 	else:
 		play_2d(&"player_ranged_shot", origin)
 
-func _on_enemy_killed(_player: Node, _enemy: Node, pos: Vector2) -> void:
-	play_2d(&"enemy_death", pos)
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if context != null:
+		play_2d(&"enemy_death", context.get("position") as Vector2)
 
 func _on_boss_spawned(boss: Node, _tier: int, _portrait: Texture2D, _title: String) -> void:
 	if boss is Node2D:

@@ -145,9 +145,9 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if RunEvents == null:
 		return
-	var killed_cb := Callable(self, "_on_enemy_killed")
-	if RunEvents.enemy_killed.is_connected(killed_cb):
-		RunEvents.enemy_killed.disconnect(killed_cb)
+	var killed_cb := Callable(self, "_on_enemy_defeated")
+	if RunEvents.enemy_defeated.is_connected(killed_cb):
+		RunEvents.enemy_defeated.disconnect(killed_cb)
 	var pickup_cb := Callable(self, "_on_pickup_to_equip")
 	if RunEvents.pickup_fly_to_equip.is_connected(pickup_cb):
 		RunEvents.pickup_fly_to_equip.disconnect(pickup_cb)
@@ -601,9 +601,9 @@ func _restore_segment_state() -> void:
 func _connect_run_events() -> void:
 	if RunEvents == null:
 		return
-	var killed_cb := Callable(self, "_on_enemy_killed")
-	if not RunEvents.enemy_killed.is_connected(killed_cb):
-		RunEvents.enemy_killed.connect(killed_cb)
+	var killed_cb := Callable(self, "_on_enemy_defeated")
+	if not RunEvents.enemy_defeated.is_connected(killed_cb):
+		RunEvents.enemy_defeated.connect(killed_cb)
 	var pickup_cb := Callable(self, "_on_pickup_to_equip")
 	if not RunEvents.pickup_fly_to_equip.is_connected(pickup_cb):
 		RunEvents.pickup_fly_to_equip.connect(pickup_cb)
@@ -666,14 +666,13 @@ func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
 	_update_gate_lock()
 
 
-func _on_enemy_killed(_player: Node, enemy: Node, _pos: Vector2) -> void:
-	if enemy != null and enemy.has_meta(&"opening_scripted") and bool(enemy.get_meta(&"opening_scripted")):
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if context == null:
 		return
-	var is_elite := false
-	if enemy != null:
-		var elite_value = enemy.get("is_elite")
-		if elite_value != null:
-			is_elite = bool(elite_value)
+	var metadata := context.get("metadata") as Dictionary
+	if bool(metadata.get("opening_scripted", false)):
+		return
+	var is_elite := bool(context.get("is_elite"))
 	_add_resonance(resonance_per_elite_kill if is_elite else resonance_per_kill, false)
 
 	if _has_milestone(M_SYNTHESIS) and not _has_milestone(M_FIRST_CONFRONTATION):

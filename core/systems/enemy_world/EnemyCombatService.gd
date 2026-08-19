@@ -55,7 +55,10 @@ func apply_damage(
 		_world.get_position(handle),
 		_world.get_flags(handle),
 		source,
+		_death_metadata(handle, actor),
 	)
+	if RunEvents != null and RunEvents.has_signal("enemy_defeated"):
+		RunEvents.enemy_defeated.emit(context)
 	if actor != null and actor.has_method("_apply_enemy_world_death"):
 		actor.call("_apply_enemy_world_death", context)
 	return applied_damage
@@ -133,3 +136,16 @@ func _apply_survivor_feedback(
 ) -> void:
 	if actor != null and actor.has_method("_apply_enemy_world_damage_feedback"):
 		actor.call("_apply_enemy_world_damage_feedback", applied_damage, source, payload)
+
+
+func _death_metadata(handle: int, actor: Node2D) -> Dictionary:
+	var cold_state := _world.get_cold_state(handle)
+	var snapshot := {
+		"opening_scripted": bool(cold_state.get("opening_scripted", false)),
+		"special_spawn_kind": cold_state.get("special_spawn_kind", &""),
+	}
+	if actor != null:
+		for key in [&"opening_scripted", &"special_spawn_kind"]:
+			if actor.has_meta(key):
+				snapshot[String(key)] = actor.get_meta(key)
+	return snapshot
