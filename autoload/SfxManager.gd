@@ -26,11 +26,18 @@ var _ui: AudioStreamPlayer
 var _ui_current_id: StringName = &""
 
 var _pool: Array[AudioStreamPlayer2D] = []
+var _headless := false
 var _loops: Dictionary = {} # String -> AudioStreamPlayer2D (key = "<owner_id>:<tag>")
 
 var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
+	# Nothing is audible in headless runs (the real audio driver still mixes
+	# silently), so skipping voice starts is lossless and saves mixer work in
+	# CI. Note: this does NOT fix the intermittent engine exit crash — that
+	# reproduces even with all playback suppressed and with --audio-driver
+	# Dummy, and is a pre-existing Godot 4.7.1 teardown race.
+	_headless = DisplayServer.get_name() == "headless"
 	_rng.randomize()
 	_load_manifest()
 
@@ -66,6 +73,8 @@ func _hook_run_events() -> void:
 # ----------------------------
 
 func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
+	if _headless:
+		return
 	var def := _defs.get(id) as SoundDef
 	if def == null or def.stream == null:
 		return
@@ -87,6 +96,8 @@ func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
 	_inc(id)
 
 func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0) -> void:
+	if _headless:
+		return
 	var def := _defs.get(id) as SoundDef
 	if def == null or def.stream == null:
 		return
@@ -286,6 +297,19 @@ func _on_ui_finished() -> void:
 	if _ui_current_id != &"":
 		_dec(_ui_current_id)
 		_ui_current_id = &""
+
+func _exit_tree() -> void:
+	# Shutdown hygiene: leave no active or stream-holding voices for
+	# AudioServer finalization. This narrows the teardown surface but does not
+	# eliminate the pre-existing engine exit race (see _ready note).
+	if _ui != null and is_instance_valid(_ui):
+		_ui.stop()
+		_ui.stream = null
+	for p in _pool:
+		if p != null and is_instance_valid(p):
+			p.stop()
+			p.stream = null
+
 
 func _on_pooled_finished(p: AudioStreamPlayer2D) -> void:
 	# release per-id concurrency bookkeeping
