@@ -139,6 +139,36 @@ func _run() -> void:
 	var counters := pool.call("get_debug_counters") as Dictionary
 	_check(int(counters.get("reuse_hits", 0)) > 0, "pool records reuse hits")
 	_check(int(counters.get("releases", 0)) >= 3, "pool records retained releases")
+
+	# Warm-up must never create live gameplay population: warmed nodes sit
+	# disabled in the pool, so registering them would fill the spawn cap with
+	# invisible frozen ghosts that survive scene changes.
+	var index := get_node("/root/EnemyIndex")
+	var world := get_node_or_null("/root/EnemyWorld")
+	var alive_before := int(index.call("alive_count"))
+	var world_before := int(world.call("active_count")) if world != null else 0
+	pool.call("set_limit_for_scene", scene, 8)
+	pool.call("warm", scene, 3)
+	await get_tree().process_frame
+	_check(int(index.call("alive_count")) == alive_before, "warmed pool nodes do not register as live enemies")
+	if world != null:
+		_check(int(world.call("active_count")) == world_before, "warmed pool nodes do not create logical world records")
+	var warm_ghosts := 0
+	for group_member in get_tree().get_nodes_in_group("enemies"):
+		var member := group_member as Node
+		if member != null and bool(member.get_meta("__in_pool", false)):
+			warm_ghosts += 1
+	_check(warm_ghosts == 0, "warmed pool nodes stay out of the enemies group")
+
+	var warmed := pool.call("obtain", scene, self) as EnemyActor
+	await get_tree().process_frame
+	_check(warmed != null and int(index.call("alive_count")) == alive_before + 1, "obtaining a warmed node registers it exactly once")
+	if warmed != null:
+		_check(warmed.is_in_group("enemies"), "obtained warmed node joins the enemies group")
+		_check(warmed.is_physics_processing(), "obtained warmed node simulates")
+		warmed.call("despawn", &"cleanup")
+		await get_tree().process_frame
+	_check(int(index.call("alive_count")) == alive_before, "warm test leaves population balanced")
 	_finish()
 
 

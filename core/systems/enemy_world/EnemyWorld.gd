@@ -48,6 +48,22 @@ func _ready() -> void:
 		_grid = SpatialGrid.new(cell_size)
 
 
+func _exit_tree() -> void:
+	# Application shutdown: drop every object graph (WeakRefs, cold-state
+	# dictionaries, spec names) before script teardown so engine cleanup never
+	# walks records owned by a half-destructed autoload. This is a shutdown-order
+	# hazard mitigation, not gameplay logic.
+	_actor_refs.clear()
+	_actor_handles.clear()
+	_bound_instance_ids.clear()
+	_legacy_handles.clear()
+	_cold_states.clear()
+	_spec_ids.clear()
+	_removed_by_reason.clear()
+	if _grid != null:
+		_grid.clear()
+
+
 func create_enemy(state: EnemySpawnState) -> int:
 	if state == null:
 		return Types.INVALID_HANDLE

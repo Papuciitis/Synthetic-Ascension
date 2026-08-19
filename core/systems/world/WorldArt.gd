@@ -88,6 +88,13 @@ static func ground_texture(index: int) -> Texture2D:
 	return cached
 
 
+static func release_static_caches() -> void:
+	# Called at application shutdown: script statics destruct during script
+	# server teardown, after rendering cleanup has begun, so RID-backed
+	# resources held here must be released while the servers are still whole.
+	_ground_tex_cache.clear()
+
+
 static func warm_ground_textures(indices: PackedInt32Array) -> void:
 	# Resource loading is deliberately kept outside chunk activation. A first-time
 	# PNG import/cache miss can take tens of milliseconds even though creating the

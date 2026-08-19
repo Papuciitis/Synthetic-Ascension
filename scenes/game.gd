@@ -5,6 +5,7 @@ const SEGMENT1_NARRATIVE_OVERLAY := preload("res://ui/screens/Segment1NarrativeO
 const TUTORIAL_MODAL_CONTROLLER := preload("res://ui/controllers/TutorialModalController.gd")
 const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/OpeningSequenceController.tscn")
 const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.tscn")
+const ENEMY_PROXY_ROOT_SCRIPT := preload("res://core/systems/enemy_world/EnemyProxyRoot.gd")
 
 @export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
@@ -115,9 +116,18 @@ func _ready() -> void:
 	print("Game ready - segment:", (Global.attempt_segment if Global != null else -1), " race:", Global.selected_race_id, " style:", Global.selected_style_id)
 
 	_setup_segment_world()
+	_setup_enemy_proxy_root()
 
 	# Narrative opening precedes run-level reward UI on a fresh Segment 1.
 	call_deferred("_begin_entry_sequence")
+
+
+func _setup_enemy_proxy_root() -> void:
+	if Global == null or not Global.enemy_proxy_rollout:
+		return
+	var proxy_root := ENEMY_PROXY_ROOT_SCRIPT.new() as Node2D
+	proxy_root.name = "EnemyProxyRoot"
+	add_child(proxy_root)
 
 
 

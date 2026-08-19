@@ -90,6 +90,12 @@ var meta_stash: StashInventory = null
 var discovered_enemy_ids: Array[StringName] = []
 var debug_dev_mode: bool = false
 var debug_dev_segment: bool = false
+# Rollout flag for the authoritative Enemy World proxy slice: distant ordinary
+# enemies become data-only records with batched rendering.
+var enemy_proxy_rollout: bool = true
+
+# WorldArt is deliberately not a global class; consumers preload it.
+const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_set_collision_tools: bool = false
@@ -956,6 +962,16 @@ func request_autosave(delay: float = 0.6) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		flush_pending_save()
+
+
+func _exit_tree() -> void:
+	# Application shutdown: release script-static caches that hold RID-backed
+	# resources (textures/materials). Script statics destruct during script
+	# server teardown — after rendering cleanup has begun — which is the window
+	# the intermittent exit segfault lives in.
+	_WORLD_ART_SCRIPT.release_static_caches()
+	EnemyProjectile.release_static_caches()
+	AugmentActiveBadge.release_static_caches()
 
 
 func flush_pending_save() -> void:

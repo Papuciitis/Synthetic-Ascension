@@ -27,6 +27,15 @@ var _active: Array[StatusRecord] = []
 var _by_handle: Dictionary = {} # handle -> Dictionary[StringName, StatusRecord]
 
 
+func _exit_tree() -> void:
+	# Shutdown-order hazard mitigation: drop status records (they hold WeakRefs
+	# to damage sources) before script teardown.
+	_active.clear()
+	_by_handle.clear()
+	_world = null
+	_combat = null
+
+
 func setup(world: EnemyWorldService, combat: EnemyCombatService) -> void:
 	_world = world
 	_combat = combat
@@ -70,6 +79,9 @@ func advance(delta: float) -> void:
 	if delta <= 0.0 or _world == null or _combat == null:
 		return
 	for index in range(_active.size() - 1, -1, -1):
+		if index >= _active.size():
+			# A lethal tick below re-entered clear_handle and shrank the list.
+			continue
 		var record := _active[index]
 		if not _world.is_valid_handle(record.handle) or _world.is_dying(record.handle):
 			_remove_at(index)
@@ -84,7 +96,14 @@ func advance(delta: float) -> void:
 		record.tick_left = record.tick_interval
 		var damage := float(record.stacks) * record.damage_per_tick_per_stack
 		_combat.apply_damage(record.handle, damage, 1, record.source())
-		if not _world.is_valid_handle(record.handle) or _world.is_dying(record.handle):
+		# The damage call can finalize a proxy death, which re-enters
+		# clear_handle; only remove by index if this exact record still
+		# occupies it.
+		if (
+			index < _active.size()
+			and _active[index] == record
+			and (not _world.is_valid_handle(record.handle) or _world.is_dying(record.handle))
+		):
 			_remove_at(index)
 
 

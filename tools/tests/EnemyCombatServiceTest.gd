@@ -114,7 +114,10 @@ func _run() -> void:
 	_check(is_equal_approx(combat.apply_damage(data_only, 500.0, 2), 40.0), "data-only record resolves cold-state modifiers without actor")
 	_check(is_equal_approx(world.get_health(data_only), 60.0), "data-only damage persists in world storage")
 	_check(is_equal_approx(combat.apply_damage(data_only, 500.0, 4), 60.0), "data-only lethal damage clamps to remaining health")
-	_check(world.is_dying(data_only), "data-only enemy can die without materialization")
+	# Completed contract: an actor-less death finalizes immediately — the record
+	# is released instead of parking as a permanent DYING zombie.
+	_check(not world.is_valid_handle(data_only), "data-only enemy dies and is released without materialization")
+	_check(combat.apply_damage(data_only, 10.0) == 0.0, "damage after a released data-only death is ignored")
 
 	var stale := _spawn(world, &"stale")
 	_check(world.remove_enemy(stale, &"test"), "stale combat fixture is removed")

@@ -17,6 +17,12 @@ var lifetime: float = 3.0
 
 static var _shared_additive: CanvasItemMaterial = null
 
+
+static func release_static_caches() -> void:
+	# Shutdown-order mitigation: drop the RID-backed material before script
+	# server teardown outlives rendering cleanup.
+	_shared_additive = null
+
 var _life_left: float = 0.0
 var _pooled: bool = false
 var _chunk_manager: ChunkManager = null

@@ -6,6 +6,9 @@ const DeathContextScript = preload("res://core/systems/enemy_world/EnemyDeathCon
 var _world: EnemyWorldService = null
 var _query_candidates: Array[int] = []
 var _last_segment_t: float = -1.0
+# Standalone tests run their own status service instance; production resolves
+# the /root/EnemyStatus autoload when this is null.
+var status_service_override: Node = null
 
 
 func setup(world: EnemyWorldService) -> void:
@@ -69,7 +72,41 @@ func apply_damage(
 		RunEvents.enemy_defeated.emit(context)
 	if actor != null and actor.has_method("_apply_enemy_world_death"):
 		actor.call("_apply_enemy_world_death", context)
+	else:
+		_finalize_proxy_death(handle)
 	return applied_damage
+
+
+func _finalize_proxy_death(handle: int) -> void:
+	# A data-only record has no actor to run the Node death pipeline; grant its
+	# follower reward from the committed cold state and release the record
+	# exactly once. Item/health drops for far proxies are intentionally skipped
+	# in this slice — the defeat snapshot above already fed telemetry and
+	# progression.
+	var cold := _world.get_cold_state(handle)
+	var reward_min := int(cold.get("follower_reward_min", 1))
+	var reward_max := maxi(reward_min, int(cold.get("follower_reward_max", reward_min)))
+	var reward := Global._rng.randi_range(reward_min, reward_max)
+	if (_world.get_flags(handle) & EnemyWorldTypes.Flags.ELITE) != 0:
+		reward += int(cold.get("elite_follower_bonus", 0))
+	if reward > 0 and Global != null:
+		Global.transaction_followers(
+			reward,
+			&"combat_influence",
+			{"enemy_id": String(_world.get_spec_id(handle))},
+			true,
+			true,
+		)
+	var status := status_service_override
+	if status == null or not is_instance_valid(status):
+		status = get_node_or_null("/root/EnemyStatus")
+	if status != null and status.has_method("clear_handle"):
+		status.call("clear_handle", handle)
+	var index := get_node_or_null("/root/EnemyIndex")
+	if index != null and index.has_method("is_detached") and bool(index.call("is_detached", handle)):
+		index.call("release_detached", handle, &"proxy_death")
+	else:
+		_world.remove_enemy(handle, &"proxy_death")
 
 
 func apply_damage_to_actor(

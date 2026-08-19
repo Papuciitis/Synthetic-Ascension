@@ -176,11 +176,13 @@ func warm(scene: PackedScene, count: int) -> void:
 		if n == null:
 			break
 		n.set_meta("__pool_key", key)
+		# Set BEFORE add_child so _ready can tell it is being warmed and skip
+		# live registration (groups, EnemyIndex, EnemyWorld).
+		n.set_meta("__in_pool", true)
 		n.process_mode = Node.PROCESS_MODE_DISABLED
 		if n is CanvasItem:
 			(n as CanvasItem).visible = false
 		add_child(n)
-		n.set_meta("__in_pool", true)
 		pool.append(n)
 
 

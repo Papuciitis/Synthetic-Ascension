@@ -37,6 +37,19 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_physics_process(true)
 
+
+func _exit_tree() -> void:
+	# Shutdown-order hazard mitigation: drop node references and accounting
+	# graphs before script teardown walks them.
+	_enemies.clear()
+	_id_to_index.clear()
+	_enemy_cell.clear()
+	_buckets.clear()
+	_world_handles.clear()
+	_accounting_by_id.clear()
+	_detached_records.clear()
+	_detached_elite_handles.clear()
+
 func register(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
 		return
@@ -210,6 +223,10 @@ func release_detached(handle: int, reason: StringName = &"detached_released") ->
 func is_detached(handle: int) -> bool:
 	return _detached_records.has(handle)
 
+
+func detached_handles() -> Array:
+	return _detached_records.keys()
+
 func mark_dead(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
 		return
@@ -332,15 +349,18 @@ func prune_invalid() -> int:
 		var id := int(id_variant)
 		if seen_ids.has(id):
 			continue
+		# A healthy lease detaches through detach_representation before its actor
+		# is ever recycled, so an invalid actor still indexed here died
+		# irregularly. Its logical record must die with it: keeping it detached
+		# would leak an immortal ghost the representation manager could even
+		# re-materialize.
 		var handle := int(old_handles.get(id, 0))
 		var snapshot_variant: Variant = old_accounting.get(id)
 		var snapshot := snapshot_variant as Dictionary if snapshot_variant is Dictionary else {}
 		if handle != 0 and EnemyWorld.is_valid_handle(handle):
 			EnemyWorld.unbind_actor(handle)
-			_detached_records[handle] = snapshot.duplicate(true)
-			if bool(snapshot.get("counted", false)) and bool(snapshot.get("elite", false)):
-				_detached_elite_handles[handle] = true
-		elif bool(snapshot.get("counted", false)):
+			EnemyWorld.remove_enemy(handle, &"prune_invalid_actor")
+		if bool(snapshot.get("counted", false)):
 			_decrement_snapshot(snapshot)
 	_enemies.clear()
 	_id_to_index.clear()

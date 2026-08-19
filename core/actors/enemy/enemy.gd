@@ -170,7 +170,12 @@ func _ready() -> void:
 	_life.setup(self, _drops, _bomber, _splitter)
 	_nav.setup(self, _senses)
 
-	add_to_group(&"enemies")
+	# A node entering the tree already inside the pool is being WARMED, not
+	# spawned: it must not join gameplay groups or register as live population.
+	# Its first obtain runs the full reset, which performs the registration.
+	var pool_warming := bool(get_meta("__in_pool", false))
+	if not pool_warming:
+		add_to_group(&"enemies")
 
 	# Nav helper module
 	_horde_nav.setup(self)
@@ -185,7 +190,9 @@ func _ready() -> void:
 	_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
 	var obtain_context: Dictionary = get_meta("__pool_obtain_context", {}) as Dictionary
 	var lease_handle := int(obtain_context.get("enemy_world_handle", 0))
-	if bool(obtain_context.get("enemy_representation_lease", false)) and lease_handle != 0:
+	if pool_warming:
+		pass # warmed inventory: no registration until first obtain
+	elif bool(obtain_context.get("enemy_representation_lease", false)) and lease_handle != 0:
 		if not hydrate_representation_lease(lease_handle):
 			push_error("EnemyActor could not hydrate representation lease")
 	elif _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("register"):
@@ -197,9 +204,10 @@ func _ready() -> void:
 	max_slides = clampi(physics_max_slides, 2, 8) if _is_lod_eligible(_get_active_ai()) else 8
 	_lod_steer_left = Global._rng.randf_range(0.0, maxf(0.01, lod_far_steer_interval))
 	_apply_simulation_collision_roles()
-	_pool_fresh_obtain_pending = has_meta("__pool_key")
+	# Warmed nodes need the full reset (and its registration) on first obtain.
+	_pool_fresh_obtain_pending = has_meta("__pool_key") and not pool_warming
 
-	if RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
+	if not pool_warming and RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
 		RunEvents.enemy_archetype_encountered.emit(self)
 
 
@@ -672,6 +680,9 @@ func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
 	_life.setup(self, _drops, _bomber, _splitter)
 	_nav.setup(self, _senses)
 	_horde_nav.setup(self)
+	# Idempotent; warmed nodes skipped the group in _ready and join here on
+	# their first obtain.
+	add_to_group(&"enemies")
 	visible = true
 	set_process(true)
 	set_scheduler_tier(0)
@@ -896,6 +907,11 @@ func _build_enemy_world_cold_state() -> Dictionary:
 		"orbit_angle": _orbit_angle,
 		"knockback_decay": knockback_decay,
 	}
+	if spec != null:
+		# Lets a data-only death grant the same follower reward the actor would.
+		state["follower_reward_min"] = spec.follower_reward_min
+		state["follower_reward_max"] = spec.follower_reward_max
+		state["elite_follower_bonus"] = spec.elite_follower_bonus
 	for key in [
 		&"split_generation",
 		&"split_item_entitled",

@@ -75,7 +75,29 @@ func _run() -> void:
 	var lethal := _spawn(world, &"lethal", 3.0)
 	status.apply_bleed(lethal, 1, 5.0, 0.5, 5.0)
 	status.advance(0.1)
-	_check(world.is_dying(lethal), "lethal central status tick uses exact-once world death")
+	_check(not world.is_valid_handle(lethal), "lethal central status tick finalizes exact-once world death")
+
+	# Reentrancy: a lethal tick re-enters clear_handle while advance iterates
+	# the record list. Neighbouring schedules must survive uncorrupted.
+	_check("status_service_override" in combat, "combat exposes a status service seam for reentrancy coverage")
+	if "status_service_override" in combat:
+		combat.set("status_service_override", status)
+		var survivor_a := _spawn(world, &"survivor_a", 40.0)
+		var survivor_b := _spawn(world, &"survivor_b", 40.0)
+		var doomed := _spawn(world, &"doomed", 2.0)
+		var before_count := int(status.active_status_count())
+		status.apply_burn(survivor_a, 1, 5.0, 0.5, 1.0)
+		status.apply_bleed(doomed, 1, 5.0, 0.5, 5.0)
+		status.apply_burn(survivor_b, 1, 5.0, 0.5, 1.0)
+		status.advance(0.1)
+		_check(not world.is_valid_handle(doomed), "reentrant lethal tick releases only the doomed record")
+		_check(
+			world.is_valid_handle(survivor_a) and world.is_valid_handle(survivor_b),
+			"reentrant removal never releases neighbouring records"
+		)
+		_check(world.get_health(survivor_a) == 39.0 and world.get_health(survivor_b) == 39.0, "neighbouring schedules still tick exactly once")
+		_check(int(status.active_status_count()) == before_count + 2, "reentrant cleanup removes exactly the doomed schedules")
+		combat.set("status_service_override", null)
 	_check(not status.has_status(lethal, &"bleed"), "lethal tick removes remaining status schedule")
 
 	var stale := _spawn(world, &"stale")

@@ -46,6 +46,12 @@ var _max_cd: float = 0.0
 
 static var _circle_tex: Texture2D = null
 
+
+static func release_static_caches() -> void:
+	# Shutdown-order mitigation: drop the RID-backed texture before script
+	# server teardown outlives rendering cleanup.
+	_circle_tex = null
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	mouse_filter = Control.MOUSE_FILTER_IGNORE

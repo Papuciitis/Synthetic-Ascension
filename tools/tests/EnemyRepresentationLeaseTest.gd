@@ -89,7 +89,8 @@ func _run() -> void:
 	world.set_stun_time(handle, 0.6)
 	world.set_knockback_velocity(handle, Vector2(-9.0, 2.0))
 	var rematerialized := manager.materialize(handle) as EnemyActor
-	await get_tree().process_frame
+	# Hydration state must be asserted before awaiting: the next physics frame
+	# runs a real simulation step that legitimately decays knockback and stun.
 	_check(rematerialized == actor, "promotion reuses the same pooled representation when available")
 	_check(world.actor_for_handle(handle) == rematerialized, "promotion binds the existing logical handle")
 	_check(world.active_count() == before_logical + 1, "promotion does not create a second logical record")
@@ -98,6 +99,7 @@ func _run() -> void:
 	_check(is_equal_approx(rematerialized.hp, 4.0), "hydration restores authoritative health")
 	_check(is_equal_approx(rematerialized.stun_time, 0.6), "hydration restores authoritative stun")
 	_check(rematerialized.knockback_vel.is_equal_approx(Vector2(-9.0, 2.0)), "hydration restores authoritative knockback")
+	await get_tree().process_frame
 	_check(rematerialized.scale.is_equal_approx(Vector2(1.25, 0.8)), "hydration restores cold actor scale state")
 	_check((world.get_cold_state(handle).get("lease_test_payload", {}) as Dictionary).get("wave", 0) == 7, "lease round trip preserves unrelated cold state")
 	_check(_indexed_matches(index, rematerialized) == 1, "rematerialized actor is indexed exactly once")
