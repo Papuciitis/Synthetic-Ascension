@@ -57,10 +57,18 @@ func _run() -> void:
 	add_child(source)
 
 	var data_only := _spawn_record(&"data_only", Vector2(50.0, 0.0))
-	_check(manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(), source), "managed projectile spawns for data-only target")
+	var status_profile := _profile()
+	status_profile.knockback = 4.0
+	status_profile.set_meta("burn_stacks", 2)
+	status_profile.set_meta("burn_duration", 2.0)
+	status_profile.set_meta("burn_tick", 0.5)
+	status_profile.set_meta("burn_tick_mult", 0.1)
+	_check(manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, status_profile, source), "managed projectile spawns for data-only target")
 	manager.call("_simulate_one", 0, 0.60)
 	manager.call("_flush_hit_ledgers")
 	_check(EnemyWorld.get_health(data_only) == 10.0, "managed projectile damages data-only record")
+	_check(EnemyWorld.get_knockback_velocity(data_only) == Vector2(4.0, 0.0), "managed projectile applies knockback to data-only record")
+	_check(EnemyStatus.has_status(data_only, &"burn"), "managed projectile schedules burn on data-only record")
 	_check(int(manager.call("active_count")) == 0, "non-piercing projectile retires after data-only hit")
 
 	EnemyWorld.remove_enemy(data_only, &"test_reset")
@@ -98,4 +106,3 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("ProjectileHandleCombatTest passes=", _passes, " failures=", _failures)
 	get_tree().quit(1 if _failures > 0 else 0)
-

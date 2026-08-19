@@ -77,6 +77,40 @@ func apply_damage_to_actor(
 	return apply_damage(handle, raw_damage, hit_count, source, payload)
 
 
+func apply_hit_ledger(handle: int, ledger: HitLedger) -> float:
+	if ledger == null:
+		return 0.0
+	var applied_damage := apply_damage(
+		handle,
+		ledger.total_raw_damage,
+		maxi(1, ledger.hit_count),
+		ledger.source,
+		ledger,
+	)
+	if applied_damage <= 0.0 or not _is_live_handle(handle):
+		return applied_damage
+	var combined_knockback := ledger.clamped_knockback()
+	if combined_knockback != Vector2.ZERO:
+		apply_knockback(handle, combined_knockback)
+	if (
+		ledger.burn_stacks > 0
+		and ledger.burn_duration > 0.0
+		and ledger.burn_damage_per_tick_per_stack > 0.0
+	):
+		var status := get_node_or_null("/root/EnemyStatus")
+		if status != null:
+			status.call(
+				"apply_burn",
+				handle,
+				ledger.burn_stacks,
+				ledger.burn_duration,
+				ledger.burn_tick,
+				ledger.burn_damage_per_tick_per_stack,
+				ledger.source,
+			)
+	return applied_damage
+
+
 func heal(handle: int, amount: float) -> bool:
 	if _world == null or not is_instance_valid(_world) or not _world.heal(handle, amount):
 		return false

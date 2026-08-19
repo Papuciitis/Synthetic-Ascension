@@ -124,7 +124,6 @@ var _cached_chase: Vector2 = Vector2.ZERO
 var _cached_nav_target: Vector2 = Vector2.ZERO
 var _simulation_motion_scale: float = 1.0
 var _scheduled_step_delta: float = 0.0
-var _active_dots: Array = []
 var _pool_fresh_obtain_pending: bool = false
 var _scene_base_scale: Vector2 = Vector2.ONE
 var _scene_base_speed: float = 0.0
@@ -224,10 +223,6 @@ func run_scheduled_simulation(delta: float) -> void:
 func _run_simulation_step(delta: float) -> void:
 	_scheduled_step_delta = delta
 	_simulation_motion_scale = delta / maxf(get_physics_process_delta_time(), 0.000001)
-	# Damage-over-time nodes are ticked here (not via their own _process) so DoT
-	# cost follows the scheduler tier. Runs before any early return below.
-	if not _active_dots.is_empty():
-		_tick_dots(delta)
 	# Acquire player if needed
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as Node2D
@@ -612,7 +607,6 @@ func _reset_for_pool_obtain() -> void:
 	for child in get_children():
 		if child is BurnDot or child is BleedDot:
 			child.free()
-	_active_dots.clear()
 	for key in [
 		&"culled",
 		&"cull_reason",
@@ -774,13 +768,7 @@ func take_damage(amount: float, source: Node = null) -> void:
 func apply_hit_ledger(ledger: HitLedger) -> void:
 	if dead or ledger == null:
 		return
-	EnemyCombat.apply_damage(
-		_resolve_enemy_world_handle(),
-		ledger.total_raw_damage,
-		maxi(1, ledger.hit_count),
-		ledger.source,
-		ledger,
-	)
+	EnemyCombat.apply_hit_ledger(_resolve_enemy_world_handle(), ledger)
 
 
 func heal(amount: float) -> bool:
@@ -822,29 +810,6 @@ func _apply_enemy_world_damage_feedback(applied_damage: float, source: Node, pay
 
 func _apply_enemy_world_death(context: RefCounted) -> void:
 	_life.resolve_death(context)
-
-
-func register_dot(dot: Node) -> void:
-	# Store instance IDs, not object Variants: an expired dot frees itself and a
-	# retained Variant would raise "previously freed" even on a validity check.
-	if dot == null:
-		return
-	var dot_id := dot.get_instance_id()
-	if not _active_dots.has(dot_id):
-		_active_dots.append(dot_id)
-
-
-func _tick_dots(delta: float) -> void:
-	for index in range(_active_dots.size() - 1, -1, -1):
-		var dot_object := instance_from_id(int(_active_dots[index]))
-		if dot_object == null or not is_instance_valid(dot_object):
-			_active_dots.remove_at(index)
-			continue
-		var dot := dot_object as Node
-		if dot == null or dot.is_queued_for_deletion():
-			_active_dots.remove_at(index)
-			continue
-		dot.call("tick", delta)
 
 
 # -----------------------

@@ -114,6 +114,17 @@ func _apply_bleed(t: Node, stacks: int, hit_dmg: float) -> void:
 		return
 
 	var dmg_per_tick_per_stack: float = maxf(0.1, hit_dmg * bleed_tick_mult_of_hit)
+	var handle := EnemyCombat.handle_for_actor(t)
+	if handle != 0:
+		EnemyStatus.apply_bleed(
+			handle,
+			stacks,
+			bleed_duration,
+			bleed_tick,
+			dmg_per_tick_per_stack,
+			player,
+		)
+		return
 
 	var dot: BleedDot = null
 	var existing: Node = t.get_node_or_null("BleedDot")

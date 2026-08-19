@@ -278,13 +278,7 @@ func _flush_hit_ledgers() -> void:
 		if ledger == null:
 			continue
 		if ledger.target_handle != 0:
-			EnemyCombat.apply_damage(
-				ledger.target_handle,
-				ledger.total_raw_damage,
-				maxi(1, ledger.hit_count),
-				ledger.source,
-				ledger,
-			)
+			EnemyCombat.apply_hit_ledger(ledger.target_handle, ledger)
 		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("apply_hit_ledger"):
 			ledger.target.call("apply_hit_ledger", ledger)
 		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("take_damage"):

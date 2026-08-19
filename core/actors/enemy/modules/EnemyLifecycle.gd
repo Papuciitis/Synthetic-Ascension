@@ -23,21 +23,9 @@ func apply_hit_ledger(ledger: HitLedger) -> void:
 	if _owner != null and is_instance_valid(_owner):
 		_owner.apply_hit_ledger(ledger)
 
-func apply_damage_feedback(applied_damage: float, source: Node, payload: Variant) -> void:
+func apply_damage_feedback(applied_damage: float, _source: Node, _payload: Variant) -> void:
 	if _owner == null or not is_instance_valid(_owner) or _owner.dead:
 		return
-	if payload is HitLedger:
-		var ledger := payload as HitLedger
-		var combined_knockback := ledger.clamped_knockback()
-		if combined_knockback != Vector2.ZERO:
-			_owner.apply_knockback(combined_knockback)
-		if ledger.burn_stacks > 0 and ledger.burn_duration > 0.0 and ledger.burn_damage_per_tick_per_stack > 0.0:
-			var dot := _owner.get_node_or_null("BurnDot") as BurnDot
-			if dot == null:
-				dot = BurnDot.new()
-				dot.name = "BurnDot"
-				_owner.add_child(dot)
-			dot.setup(_owner, source, ledger.burn_stacks, ledger.burn_duration, ledger.burn_tick, ledger.burn_damage_per_tick_per_stack)
 
 	# Hurt SFX (rate-limited so a single enemy doesn't spam).
 	var now := Time.get_ticks_msec()
