@@ -11,8 +11,11 @@ var _generations := PackedInt64Array()
 var _positions := PackedVector2Array()
 var _previous_positions := PackedVector2Array()
 var _velocities := PackedVector2Array()
+var _facings := PackedVector2Array()
 var _knockback_velocities := PackedVector2Array()
+var _knockback_decays := PackedFloat32Array()
 var _stun_times := PackedFloat32Array()
+var _proxy_update_times := PackedFloat32Array()
 var _health := PackedFloat32Array()
 var _max_health := PackedFloat32Array()
 var _speeds := PackedFloat32Array()
@@ -60,8 +63,11 @@ func create_enemy(state: EnemySpawnState) -> int:
 	_positions[slot] = state.position
 	_previous_positions[slot] = state.position
 	_velocities[slot] = state.velocity
+	_facings[slot] = state.velocity.normalized() if state.velocity != Vector2.ZERO else Vector2.RIGHT
 	_knockback_velocities[slot] = Vector2.ZERO
+	_knockback_decays[slot] = maxf(float(state.cold_state.get("knockback_decay", 2200.0)), 0.0)
 	_stun_times[slot] = 0.0
+	_proxy_update_times[slot] = 0.0
 	_health[slot] = clampf(state.health, 0.0, state.max_health)
 	_max_health[slot] = maxf(state.max_health, 0.0)
 	_speeds[slot] = maxf(state.speed, 0.0)
@@ -93,8 +99,11 @@ func remove_enemy(handle: int, reason: StringName = &"removed") -> bool:
 	_positions[slot] = Vector2.ZERO
 	_previous_positions[slot] = Vector2.ZERO
 	_velocities[slot] = Vector2.ZERO
+	_facings[slot] = Vector2.ZERO
 	_knockback_velocities[slot] = Vector2.ZERO
+	_knockback_decays[slot] = 0.0
 	_stun_times[slot] = 0.0
+	_proxy_update_times[slot] = 0.0
 	_health[slot] = 0.0
 	_max_health[slot] = 0.0
 	_speeds[slot] = 0.0
@@ -146,6 +155,14 @@ func set_position(handle: int, value: Vector2) -> bool:
 	return true
 
 
+func reset_interpolation(handle: int) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return false
+	_previous_positions[slot] = _positions[slot]
+	return true
+
+
 func get_velocity(handle: int) -> Vector2:
 	var slot := _slot_if_valid(handle)
 	return _velocities[slot] if slot >= 0 else Vector2.ZERO
@@ -156,6 +173,19 @@ func set_velocity(handle: int, value: Vector2) -> bool:
 	if slot < 0:
 		return false
 	_velocities[slot] = value
+	return true
+
+
+func get_facing(handle: int) -> Vector2:
+	var slot := _slot_if_valid(handle)
+	return _facings[slot] if slot >= 0 else Vector2.ZERO
+
+
+func set_facing(handle: int, value: Vector2) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or _representations[slot] == Types.Representation.DYING or value == Vector2.ZERO:
+		return false
+	_facings[slot] = value.normalized()
 	return true
 
 
@@ -180,6 +210,19 @@ func add_knockback_velocity(handle: int, value: Vector2) -> bool:
 	return true
 
 
+func get_knockback_decay(handle: int) -> float:
+	var slot := _slot_if_valid(handle)
+	return float(_knockback_decays[slot]) if slot >= 0 else 0.0
+
+
+func set_knockback_decay(handle: int, value: float) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return false
+	_knockback_decays[slot] = maxf(value, 0.0)
+	return true
+
+
 func get_stun_time(handle: int) -> float:
 	var slot := _slot_if_valid(handle)
 	return float(_stun_times[slot]) if slot >= 0 else 0.0
@@ -198,6 +241,19 @@ func extend_stun_time(handle: int, seconds: float) -> bool:
 	if slot < 0 or _representations[slot] == Types.Representation.DYING or seconds <= 0.0:
 		return false
 	_stun_times[slot] = maxf(float(_stun_times[slot]), seconds)
+	return true
+
+
+func get_proxy_update_time(handle: int) -> float:
+	var slot := _slot_if_valid(handle)
+	return float(_proxy_update_times[slot]) if slot >= 0 else 0.0
+
+
+func set_proxy_update_time(handle: int, value: float) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return false
+	_proxy_update_times[slot] = maxf(value, 0.0)
 	return true
 
 
@@ -443,6 +499,8 @@ func adopt_legacy_actor(actor: Node2D) -> int:
 		set_health(handle, float(actor.get("hp")))
 	if "knockback_vel" in actor:
 		set_knockback_velocity(handle, actor.get("knockback_vel") as Vector2)
+	if "knockback_decay" in actor:
+		set_knockback_decay(handle, float(actor.get("knockback_decay")))
 	if "stun_time" in actor:
 		set_stun_time(handle, float(actor.get("stun_time")))
 	if not bind_actor(handle, actor):
@@ -463,6 +521,8 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 		set_velocity(handle, actor.get("velocity") as Vector2)
 	if "knockback_vel" in actor:
 		set_knockback_velocity(handle, actor.get("knockback_vel") as Vector2)
+	if "knockback_decay" in actor:
+		set_knockback_decay(handle, float(actor.get("knockback_decay")))
 	if "stun_time" in actor:
 		set_stun_time(handle, float(actor.get("stun_time")))
 	var flags := get_flags(handle)
@@ -583,8 +643,11 @@ func _append_slot_storage() -> int:
 	_positions.resize(next_size)
 	_previous_positions.resize(next_size)
 	_velocities.resize(next_size)
+	_facings.resize(next_size)
 	_knockback_velocities.resize(next_size)
+	_knockback_decays.resize(next_size)
 	_stun_times.resize(next_size)
+	_proxy_update_times.resize(next_size)
 	_health.resize(next_size)
 	_max_health.resize(next_size)
 	_speeds.resize(next_size)
