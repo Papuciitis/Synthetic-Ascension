@@ -317,6 +317,14 @@ func get_speed(handle: int) -> float:
 	return float(_speeds[slot]) if slot >= 0 else 0.0
 
 
+func set_speed(handle: int, value: float) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or _representations[slot] == Types.Representation.DYING:
+		return false
+	_speeds[slot] = maxf(value, 0.0)
+	return true
+
+
 func get_collision_radius(handle: int) -> float:
 	var slot := _slot_if_valid(handle)
 	return float(_collision_radii[slot]) if slot >= 0 else 0.0
@@ -489,6 +497,7 @@ func adopt_legacy_actor(actor: Node2D) -> int:
 		_collision_radius_from_actor(actor),
 		_ai_kind_from_actor(actor),
 		flags,
+		_cold_state_from_actor(actor),
 	)
 	if "velocity" in actor:
 		state.velocity = actor.get("velocity") as Vector2
@@ -761,3 +770,11 @@ func _flags_from_actor(actor: Node) -> int:
 	if actor.has_meta(&"special_spawn_kind"):
 		flags |= Types.Flags.SPECIAL
 	return flags
+
+
+func _cold_state_from_actor(actor: Node2D) -> Dictionary:
+	if actor.has_method("_build_enemy_world_cold_state"):
+		var value: Variant = actor.call("_build_enemy_world_cold_state")
+		if value is Dictionary:
+			return (value as Dictionary).duplicate(true)
+	return {}

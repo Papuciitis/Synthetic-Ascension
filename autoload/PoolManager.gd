@@ -39,7 +39,7 @@ func get_additive_material() -> CanvasItemMaterial:
 	_ensure_material()
 	return _additive_material
 
-func obtain(scene: PackedScene, parent: Node = null) -> Node:
+func obtain(scene: PackedScene, parent: Node = null, context: Dictionary = {}) -> Node:
 	if scene == null:
 		return null
 	var key := _scene_key(scene)
@@ -67,6 +67,7 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 
 	node.set_meta("__pool_key", key)
 	node.set_meta("__in_pool", false)
+	node.set_meta("__pool_obtain_context", context.duplicate(true))
 
 	# Attach first (some scripts expect to be in-tree during reset)
 	var target_parent: Node = null
@@ -96,12 +97,16 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 	if "monitorable" in node:
 		node.set("monitorable", true)
 
-	if node.has_method("_on_pool_obtain"):
+	if not context.is_empty() and node.has_method("_on_pool_obtain_context"):
+		node.call("_on_pool_obtain_context", context)
+	elif node.has_method("_on_pool_obtain"):
 		node.call("_on_pool_obtain")
+	if node.has_meta("__pool_obtain_context"):
+		node.remove_meta("__pool_obtain_context")
 
 	return node
 
-func recycle(node: Node) -> void:
+func recycle(node: Node, context: Dictionary = {}) -> void:
 	if node == null:
 		return
 	if not is_instance_valid(node):
@@ -119,8 +124,11 @@ func recycle(node: Node) -> void:
 	if bool(node.get_meta("__in_pool", false)):
 		return
 
-	# custom hook first (so scripts can reset internal state while still in tree)
-	if node.has_method("_on_pool_recycle"):
+	# Custom hook first so scripts can commit/quiesce while still in-tree. Lease
+	# context is opt-in and never changes legacy pool hooks for other node types.
+	if not context.is_empty() and node.has_method("_on_pool_recycle_context"):
+		node.call("_on_pool_recycle_context", context)
+	elif node.has_method("_on_pool_recycle"):
 		node.call("_on_pool_recycle")
 
 	var pool: Array = _get_pool(key)

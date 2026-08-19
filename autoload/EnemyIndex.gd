@@ -26,6 +26,10 @@ var _special_reserved_total: int = 0
 var _special_reserved_by_kind: Dictionary = {}
 var _retired_counts: Dictionary = {}
 var _elite_ids: Dictionary = {} # int -> true, for live (counted) elites
+var _detached_records: Dictionary = {} # enemy handle -> logical accounting snapshot
+var _detached_elite_handles: Dictionary = {} # enemy handle -> true
+var _world_handles: Dictionary = {} # materialized instance id -> enemy handle
+var _accounting_by_id: Dictionary = {} # materialized instance id -> snapshot
 var _suppress_register_events: bool = false
 var _world_mirror_failures: int = 0
 
@@ -49,6 +53,7 @@ func register(enemy: Node) -> void:
 	var p: String = enemy.scene_file_path
 	var should_count: bool = not _is_enemy_dead(enemy)
 	_population_counted[id] = should_count
+	_accounting_by_id[id] = _snapshot_from_enemy(enemy, p, should_count)
 	if should_count:
 		if p != "":
 			_scene_counts[p] = int(_scene_counts.get(p, 0)) + 1
@@ -63,8 +68,10 @@ func register(enemy: Node) -> void:
 		var world_handle := EnemyWorld.adopt_legacy_actor(enemy as Node2D)
 		if world_handle == 0:
 			_world_mirror_failures += 1
-		elif enemy.has_method("_bind_enemy_world_handle"):
-			enemy.call("_bind_enemy_world_handle", world_handle)
+		else:
+			_world_handles[id] = world_handle
+			if enemy.has_method("_bind_enemy_world_handle"):
+				enemy.call("_bind_enemy_world_handle", world_handle)
 	# The event payload builds four Strings; only pay for it when the recorder is
 	# actually armed, and never for prune_invalid's silent re-registration.
 	if (
@@ -86,7 +93,11 @@ func unregister(enemy: Node) -> void:
 	if not _id_to_index.has(id):
 		return
 	if enemy is Node2D:
-		EnemyWorld.release_legacy_actor(enemy as Node2D, &"legacy_unregistered")
+		var handle := int(_world_handles.get(id, EnemyWorld.handle_for_actor(enemy as Node2D)))
+		if handle != 0:
+			if not EnemyWorld.release_legacy_actor(enemy as Node2D, &"legacy_unregistered"):
+				EnemyWorld.unbind_actor(handle, enemy as Node2D)
+				EnemyWorld.remove_enemy(handle, &"materialized_unregistered")
 		if enemy.has_method("_bind_enemy_world_handle"):
 			enemy.call("_bind_enemy_world_handle", 0)
 
@@ -97,6 +108,8 @@ func unregister(enemy: Node) -> void:
 		_unregister_population_class(enemy, p)
 	_population_counted.erase(id)
 	_elite_ids.erase(id)
+	_world_handles.erase(id)
+	_accounting_by_id.erase(id)
 
 	# buckets
 	if _enemy_cell.has(id):
@@ -114,6 +127,89 @@ func unregister(enemy: Node) -> void:
 	_enemies.pop_back()
 	_id_to_index.erase(id)
 
+
+func detach_representation(enemy: Node2D, handle: int = 0) -> bool:
+	if enemy == null or not is_instance_valid(enemy):
+		return false
+	var id := int(enemy.get_instance_id())
+	if not _id_to_index.has(id):
+		return false
+	var resolved_handle := handle
+	if resolved_handle == 0:
+		resolved_handle = int(_world_handles.get(id, EnemyWorld.handle_for_actor(enemy)))
+	if not EnemyWorld.is_valid_handle(resolved_handle):
+		return false
+	if EnemyWorld.actor_for_handle(resolved_handle) != enemy:
+		return false
+	EnemyWorld.sync_legacy_actor(enemy)
+	var snapshot_variant: Variant = _accounting_by_id.get(id)
+	var snapshot := (
+		(snapshot_variant as Dictionary).duplicate(true)
+		if snapshot_variant is Dictionary
+		else _snapshot_from_enemy(enemy, enemy.scene_file_path, bool(_population_counted.get(id, false)))
+	)
+	_remove_materialized_storage(enemy, id)
+	_world_handles.erase(id)
+	_accounting_by_id.erase(id)
+	_population_counted.erase(id)
+	_elite_ids.erase(id)
+	if bool(snapshot.get("counted", false)) and bool(snapshot.get("elite", false)):
+		_detached_elite_handles[resolved_handle] = true
+	_detached_records[resolved_handle] = snapshot
+	EnemyWorld.unbind_actor(resolved_handle, enemy)
+	if enemy.has_method("_bind_enemy_world_handle"):
+		enemy.call("_bind_enemy_world_handle", 0)
+	return true
+
+
+func attach_representation(enemy: Node2D, handle: int) -> bool:
+	if (
+		enemy == null
+		or not is_instance_valid(enemy)
+		or enemy.is_queued_for_deletion()
+		or not EnemyWorld.is_valid_handle(handle)
+		or not _detached_records.has(handle)
+	):
+		return false
+	var id := int(enemy.get_instance_id())
+	if _id_to_index.has(id) or not EnemyWorld.bind_actor(handle, enemy):
+		return false
+	var snapshot := (_detached_records[handle] as Dictionary).duplicate(true)
+	_id_to_index[id] = _enemies.size()
+	_enemies.append(enemy)
+	var cell := _cell_for_pos(enemy.global_position)
+	_enemy_cell[id] = cell
+	_bucket_add(cell, enemy)
+	var counted := bool(snapshot.get("counted", false))
+	_population_counted[id] = counted
+	_accounting_by_id[id] = snapshot
+	_world_handles[id] = handle
+	if counted and bool(snapshot.get("elite", false)):
+		_elite_ids[id] = true
+	_detached_records.erase(handle)
+	_detached_elite_handles.erase(handle)
+	if enemy.has_method("_bind_enemy_world_handle"):
+		enemy.call("_bind_enemy_world_handle", handle)
+	return true
+
+
+func release_detached(handle: int, reason: StringName = &"detached_released") -> bool:
+	var snapshot_variant: Variant = _detached_records.get(handle)
+	if not (snapshot_variant is Dictionary):
+		return false
+	var snapshot := snapshot_variant as Dictionary
+	_detached_records.erase(handle)
+	_detached_elite_handles.erase(handle)
+	if bool(snapshot.get("counted", false)):
+		_decrement_snapshot(snapshot)
+	var removed := EnemyWorld.remove_enemy(handle, reason)
+	_retired_counts[reason] = int(_retired_counts.get(reason, 0)) + 1
+	return removed
+
+
+func is_detached(handle: int) -> bool:
+	return _detached_records.has(handle)
+
 func mark_dead(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
 		return
@@ -127,6 +223,9 @@ func mark_dead(enemy: Node) -> void:
 	_unregister_population_class(enemy, scene_path)
 	_population_counted[id] = false
 	_elite_ids.erase(id)
+	var snapshot_variant: Variant = _accounting_by_id.get(id)
+	if snapshot_variant is Dictionary:
+		(snapshot_variant as Dictionary)["counted"] = false
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"died", 1)
 
@@ -168,7 +267,7 @@ func update_enemy(enemy: Node) -> void:
 	_bucket_add(new_cell, enemy)
 
 func alive_count() -> int:
-	return _enemies.size()
+	return _ambient_count + _special_alive_total
 
 
 func simulation_tier_counts() -> Dictionary:
@@ -192,6 +291,8 @@ func simulation_tier_counts() -> Dictionary:
 func get_debug_counters() -> Dictionary:
 	return {
 		"indexed": _enemies.size(),
+		"detached": _detached_records.size(),
+		"logical": _ambient_count + _special_alive_total,
 		"ambient": _ambient_count,
 		"special": _special_alive_total,
 		"special_by_kind": _special_alive_by_kind.duplicate(),
@@ -203,8 +304,8 @@ func get_debug_counters() -> Dictionary:
 	}
 
 func prune_invalid() -> int:
-	# Rebuild the compact indexes when freed/queued nodes survive a missed unregister.
-	# This is intentionally a maintenance operation, not something called in hot paths.
+	# Rebuild only materialized indexes. Logical counters and world records survive
+	# a representation node disappearing unexpectedly.
 	var previous_count: int = _enemies.size()
 	var valid_enemies: Array = []
 	var seen_ids: Dictionary = {}
@@ -224,26 +325,54 @@ func prune_invalid() -> int:
 
 	if valid_enemies.size() == previous_count:
 		return 0
-
-	EnemyWorld.rebuild_legacy_shadow(valid_enemies)
-
+	var old_handles := _world_handles.duplicate()
+	var old_accounting := _accounting_by_id.duplicate(true)
+	var old_counted := _population_counted.duplicate()
+	for id_variant in _id_to_index.keys():
+		var id := int(id_variant)
+		if seen_ids.has(id):
+			continue
+		var handle := int(old_handles.get(id, 0))
+		var snapshot_variant: Variant = old_accounting.get(id)
+		var snapshot := snapshot_variant as Dictionary if snapshot_variant is Dictionary else {}
+		if handle != 0 and EnemyWorld.is_valid_handle(handle):
+			EnemyWorld.unbind_actor(handle)
+			_detached_records[handle] = snapshot.duplicate(true)
+			if bool(snapshot.get("counted", false)) and bool(snapshot.get("elite", false)):
+				_detached_elite_handles[handle] = true
+		elif bool(snapshot.get("counted", false)):
+			_decrement_snapshot(snapshot)
 	_enemies.clear()
 	_id_to_index.clear()
 	_enemy_cell.clear()
 	_buckets.clear()
-	_scene_counts.clear()
 	_population_counted.clear()
-	_ambient_count = 0
-	_ambient_scene_counts.clear()
-	_special_alive_total = 0
-	_special_alive_by_kind.clear()
 	_elite_ids.clear()
-	# Rebuilding is maintenance, not gameplay: re-registration must not emit
-	# phantom "spawned" telemetry for enemies that already existed.
-	_suppress_register_events = true
+	_world_handles.clear()
+	_accounting_by_id.clear()
 	for enemy_variant in valid_enemies:
-		register(enemy_variant as Node)
-	_suppress_register_events = false
+		var enemy := enemy_variant as Node
+		var id := int(enemy.get_instance_id())
+		_id_to_index[id] = _enemies.size()
+		_enemies.append(enemy)
+		var cell := _cell_for_pos((enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO)
+		_enemy_cell[id] = cell
+		_bucket_add(cell, enemy)
+		var counted := bool(old_counted.get(id, false))
+		_population_counted[id] = counted
+		var snapshot_variant: Variant = old_accounting.get(id)
+		var snapshot := (
+			(snapshot_variant as Dictionary).duplicate(true)
+			if snapshot_variant is Dictionary
+			else _snapshot_from_enemy(enemy, enemy.scene_file_path, counted)
+		)
+		_accounting_by_id[id] = snapshot
+		if counted and bool(snapshot.get("elite", false)):
+			_elite_ids[id] = true
+		var handle := int(old_handles.get(id, 0))
+		if handle != 0 and EnemyWorld.is_valid_handle(handle):
+			_world_handles[id] = handle
+	EnemyWorld.prune_invalid_bindings()
 	return previous_count - valid_enemies.size()
 
 
@@ -252,7 +381,7 @@ func ambient_alive_count() -> int:
 
 
 func elite_alive_count() -> int:
-	return _elite_ids.size()
+	return _elite_ids.size() + _detached_elite_handles.size()
 
 
 func note_elite(enemy: Node) -> void:
@@ -262,6 +391,9 @@ func note_elite(enemy: Node) -> void:
 	var id := enemy.get_instance_id()
 	if _id_to_index.has(id) and bool(_population_counted.get(id, false)):
 		_elite_ids[id] = true
+		var snapshot_variant: Variant = _accounting_by_id.get(id)
+		if snapshot_variant is Dictionary:
+			(snapshot_variant as Dictionary)["elite"] = true
 		if enemy is Node2D:
 			EnemyWorld.sync_legacy_actor(enemy as Node2D)
 
@@ -393,6 +525,10 @@ func _reclassify_registered_enemy(enemy: Node, old_kind: StringName, new_kind: S
 	else:
 		_special_alive_total += 1
 		_special_alive_by_kind[new_kind] = int(_special_alive_by_kind.get(new_kind, 0)) + 1
+	var id := int(enemy.get_instance_id())
+	var snapshot_variant: Variant = _accounting_by_id.get(id)
+	if snapshot_variant is Dictionary:
+		(snapshot_variant as Dictionary)["kind"] = new_kind
 
 
 func _decrement_counter(counter: Dictionary, key: Variant) -> void:
@@ -403,6 +539,44 @@ func _decrement_counter(counter: Dictionary, key: Variant) -> void:
 		counter.erase(key)
 	else:
 		counter[key] = value
+
+
+func _snapshot_from_enemy(enemy: Node, scene_path: String, counted: bool) -> Dictionary:
+	return {
+		"scene_path": scene_path,
+		"kind": enemy.get_meta("special_spawn_kind", &"") as StringName,
+		"elite": _is_enemy_elite(enemy),
+		"counted": counted,
+	}
+
+
+func _decrement_snapshot(snapshot: Dictionary) -> void:
+	var scene_path := String(snapshot.get("scene_path", ""))
+	_decrement_counter(_scene_counts, scene_path)
+	var kind := snapshot.get("kind", &"") as StringName
+	if kind == &"":
+		_ambient_count = maxi(0, _ambient_count - 1)
+		_decrement_counter(_ambient_scene_counts, scene_path)
+	else:
+		_special_alive_total = maxi(0, _special_alive_total - 1)
+		_decrement_counter(_special_alive_by_kind, kind)
+
+
+func _remove_materialized_storage(enemy: Node, id: int) -> void:
+	if _enemy_cell.has(id):
+		var cell: Vector2i = _enemy_cell[id]
+		_bucket_remove(cell, enemy)
+		_enemy_cell.erase(id)
+	var index := int(_id_to_index.get(id, -1))
+	if index >= 0:
+		var last_index := _enemies.size() - 1
+		if index != last_index:
+			var last_enemy := _enemies[last_index] as Node
+			_enemies[index] = last_enemy
+			if last_enemy != null and is_instance_valid(last_enemy):
+				_id_to_index[last_enemy.get_instance_id()] = index
+		_enemies.pop_back()
+	_id_to_index.erase(id)
 
 func get_all() -> Array:
 	# WARNING: do not mutate the returned array.

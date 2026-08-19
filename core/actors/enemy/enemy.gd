@@ -130,6 +130,7 @@ var _scene_base_speed: float = 0.0
 var _scene_base_max_hp: float = 0.0
 var _scene_base_knockback_decay: float = 0.0
 var _enemy_world_handle: int = 0
+var _representation_lease_active: bool = false
 
 # Modules
 var _drops: EnemyDrops = EnemyDrops.new()
@@ -182,7 +183,12 @@ func _ready() -> void:
 	_enemy_index = get_node_or_null("/root/EnemyIndex")
 	_hitbox = get_node_or_null("Hitbox") as Area2D
 	_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
-	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("register"):
+	var obtain_context: Dictionary = get_meta("__pool_obtain_context", {}) as Dictionary
+	var lease_handle := int(obtain_context.get("enemy_world_handle", 0))
+	if bool(obtain_context.get("enemy_representation_lease", false)) and lease_handle != 0:
+		if not hydrate_representation_lease(lease_handle):
+			push_error("EnemyActor could not hydrate representation lease")
+	elif _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("register"):
 		_enemy_index.call("register", self)
 
 	# The horde helper already handles corners; four solver slides are enough for
@@ -596,6 +602,13 @@ func _on_pool_recycle() -> void:
 	_set_hitbox_roles(false, false)
 
 
+func _on_pool_recycle_context(context: Dictionary) -> void:
+	if bool(context.get("enemy_representation_lease", false)):
+		_quiesce_representation_lease()
+		return
+	_on_pool_recycle()
+
+
 func _on_pool_obtain() -> void:
 	if _pool_fresh_obtain_pending:
 		_pool_fresh_obtain_pending = false
@@ -603,7 +616,20 @@ func _on_pool_obtain() -> void:
 	_reset_for_pool_obtain()
 
 
-func _reset_for_pool_obtain() -> void:
+func _on_pool_obtain_context(context: Dictionary) -> void:
+	if _pool_fresh_obtain_pending:
+		_pool_fresh_obtain_pending = false
+		return
+	if not bool(context.get("enemy_representation_lease", false)):
+		_reset_for_pool_obtain()
+		return
+	var handle := int(context.get("enemy_world_handle", 0))
+	_reset_for_pool_obtain(false)
+	if not hydrate_representation_lease(handle):
+		push_error("EnemyActor could not attach reused representation lease")
+
+
+func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
 	for child in get_children():
 		if child is BurnDot or child is BleedDot:
 			child.free()
@@ -650,7 +676,8 @@ func _reset_for_pool_obtain() -> void:
 	set_process(true)
 	set_scheduler_tier(0)
 	_enemy_index = get_node_or_null("/root/EnemyIndex")
-	if _enemy_index != null and _enemy_index.has_method("register"):
+	_representation_lease_active = false
+	if register_new_logical_enemy and _enemy_index != null and _enemy_index.has_method("register"):
 		_enemy_index.call("register", self)
 
 
@@ -796,6 +823,123 @@ func configure_health(new_max_health: float, fill_to_max: bool = false) -> bool:
 
 func _bind_enemy_world_handle(handle: int) -> void:
 	_enemy_world_handle = handle
+
+
+func commit_representation_lease(handle: int) -> bool:
+	if handle == 0 or not EnemyWorld.is_valid_handle(handle):
+		return false
+	if EnemyWorld.actor_for_handle(handle) != self:
+		return false
+	EnemyWorld.set_position(handle, global_position)
+	EnemyWorld.reset_interpolation(handle)
+	EnemyWorld.set_velocity(handle, velocity)
+	EnemyWorld.set_knockback_velocity(handle, knockback_vel)
+	EnemyWorld.set_knockback_decay(handle, knockback_decay)
+	EnemyWorld.set_stun_time(handle, stun_time)
+	EnemyWorld.set_speed(handle, _spd())
+	var flags := EnemyWorld.get_flags(handle)
+	if is_elite:
+		flags |= EnemyWorldTypes.Flags.ELITE
+	else:
+		flags &= ~EnemyWorldTypes.Flags.ELITE
+	EnemyWorld.set_flags(handle, flags)
+	var cold_state := EnemyWorld.get_cold_state(handle)
+	cold_state.merge(_build_enemy_world_cold_state(), true)
+	EnemyWorld.replace_cold_state(handle, cold_state)
+	return true
+
+
+func hydrate_representation_lease(handle: int) -> bool:
+	if handle == 0 or not EnemyWorld.is_valid_handle(handle):
+		return false
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index == null or not _enemy_index.has_method("attach_representation"):
+		return false
+	if not bool(_enemy_index.call("attach_representation", self, handle)):
+		return false
+	var cold_state := EnemyWorld.get_cold_state(handle)
+	global_position = EnemyWorld.get_position(handle)
+	velocity = EnemyWorld.get_velocity(handle)
+	knockback_vel = EnemyWorld.get_knockback_velocity(handle)
+	knockback_decay = EnemyWorld.get_knockback_decay(handle)
+	stun_time = EnemyWorld.get_stun_time(handle)
+	max_hp = EnemyWorld.get_max_health(handle)
+	hp = EnemyWorld.get_health(handle)
+	dead = false
+	is_elite = (EnemyWorld.get_flags(handle) & EnemyWorldTypes.Flags.ELITE) != 0
+	scale = cold_state.get("actor_scale", _scene_base_scale) as Vector2
+	speed = float(cold_state.get("actor_speed", speed))
+	_base_speed = float(cold_state.get("base_speed", speed))
+	_speed_mul = float(cold_state.get("speed_mul", 1.0))
+	_speed_mul_time = maxf(float(cold_state.get("speed_mul_time", 0.0)), 0.0)
+	_stability_mul = clampf(float(cold_state.get("stability_mul", 1.0)), 0.1, 1.0)
+	_orbit_angle = float(cold_state.get("orbit_angle", _orbit_angle))
+	_enemy_world_handle = handle
+	_representation_lease_active = true
+	visible = true
+	set_process(true)
+	set_scheduler_tier(0)
+	_update_enemy_index(true)
+	reset_physics_interpolation()
+	return true
+
+
+func _build_enemy_world_cold_state() -> Dictionary:
+	var state := {
+		"actor_scale": scale,
+		"actor_speed": speed,
+		"base_speed": _base_speed,
+		"speed_mul": _speed_mul,
+		"speed_mul_time": _speed_mul_time,
+		"stability_mul": _stability_mul,
+		"orbit_angle": _orbit_angle,
+		"knockback_decay": knockback_decay,
+	}
+	for key in [
+		&"split_generation",
+		&"split_item_entitled",
+		&"split_root_id",
+		&"special_spawn_kind",
+	]:
+		if has_meta(key):
+			state[String(key)] = get_meta(key)
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite != null:
+		state["proxy_visual_key"] = StringName(scene_file_path if not scene_file_path.is_empty() else name)
+		state["proxy_color"] = sprite.modulate
+		state["proxy_z_index"] = z_index + sprite.z_index
+		if sprite.texture != null:
+			if not sprite.texture.resource_path.is_empty():
+				state["proxy_texture_path"] = sprite.texture.resource_path
+			var texture_size := sprite.texture.get_size()
+			state["proxy_size"] = Vector2(
+				maxf(absf(texture_size.x * sprite.scale.x * scale.x), 4.0),
+				maxf(absf(texture_size.y * sprite.scale.y * scale.y), 4.0),
+			)
+	return state
+
+
+func _quiesce_representation_lease() -> void:
+	_representation_lease_active = false
+	for child in get_children():
+		if child is BurnDot or child is BleedDot:
+			child.free()
+	_sniper.cleanup()
+	# Invalidates any SceneTreeTimer-based leech loop from the old lease.
+	_leech.setup(self)
+	player = null
+	velocity = Vector2.ZERO
+	knockback_vel = Vector2.ZERO
+	stun_time = 0.0
+	set_process(false)
+	set_physics_process(false)
+	visible = false
+	if _body_shape == null or not is_instance_valid(_body_shape):
+		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if _body_shape != null:
+		_body_shape.set_deferred("disabled", true)
+	_set_hitbox_roles(false, false)
 
 
 func _resolve_enemy_world_handle() -> int:
