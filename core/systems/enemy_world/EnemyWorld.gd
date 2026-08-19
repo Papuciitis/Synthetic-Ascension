@@ -423,9 +423,7 @@ func adopt_legacy_actor(actor: Node2D) -> int:
 	var existing := handle_for_actor(actor)
 	if existing != Types.INVALID_HANDLE:
 		return existing
-	var flags := Types.Flags.NONE
-	if "is_elite" in actor and bool(actor.get("is_elite")):
-		flags |= Types.Flags.ELITE
+	var flags := _flags_from_actor(actor)
 	var state := EnemySpawnState.new(
 		_spec_id_from_actor(actor),
 		actor.scene_file_path,
@@ -672,3 +670,31 @@ func _ai_kind_from_actor(actor: Node2D) -> int:
 		if spec_variant != null and "ai" in spec_variant:
 			return int(spec_variant.get("ai"))
 	return 0
+
+
+func _flags_from_actor(actor: Node) -> int:
+	var flags := Types.Flags.NONE
+	if "is_elite" in actor and bool(actor.get("is_elite")):
+		flags |= Types.Flags.ELITE
+	var boss_like := (
+		actor.is_in_group(&"boss_like")
+		or actor.is_in_group(&"boss")
+		or actor.is_in_group(&"miniboss")
+	)
+	var objective_required := bool(actor.get_meta(&"objective_required", false))
+	var tutorial_actor := (
+		bool(actor.get_meta(&"tutorial_actor", false))
+		or bool(actor.get_meta(&"opening_scripted", false))
+		or actor.is_in_group(&"opening_scripted_actor")
+	)
+	if boss_like:
+		flags |= Types.Flags.CRITICAL | Types.Flags.NEVER_RETIRE
+	if objective_required:
+		flags |= Types.Flags.CRITICAL | Types.Flags.OBJECTIVE | Types.Flags.NEVER_RETIRE
+	if tutorial_actor:
+		flags |= Types.Flags.CRITICAL | Types.Flags.TUTORIAL | Types.Flags.NEVER_RETIRE
+	if bool(actor.get_meta(&"never_cull", false)):
+		flags |= Types.Flags.NEVER_RETIRE
+	if actor.has_meta(&"special_spawn_kind"):
+		flags |= Types.Flags.SPECIAL
+	return flags

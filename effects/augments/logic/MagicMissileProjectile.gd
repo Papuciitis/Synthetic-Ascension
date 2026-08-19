@@ -9,7 +9,6 @@ class_name MagicMissileProjectile
 @export var trail_max_points: int = 12
 @export var trail_point_spacing: float = 10.0
 
-var target: Node2D = null
 var target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 var damage: float = 10.0
 var source: Node = null
@@ -24,14 +23,12 @@ var _pooled: bool = false
 var _chunk_manager: ChunkManager = null
 
 func setup(p_target: Node2D, p_damage: float, start_dir: Vector2) -> void:
-	target = p_target
 	target_handle = EnemyCombat.handle_for_actor(p_target)
 	damage = p_damage
 	_setup_motion(start_dir)
 
 
 func setup_handle(handle: int, p_damage: float, start_dir: Vector2, p_source: Node = null) -> void:
-	target = null
 	target_handle = handle
 	damage = p_damage
 	source = p_source
@@ -59,7 +56,6 @@ func _on_pool_obtain() -> void:
 	_trail_pts = PackedVector2Array()
 
 func _on_pool_recycle() -> void:
-	target = null
 	target_handle = EnemyWorldTypes.INVALID_HANDLE
 	damage = 0.0
 	source = null
@@ -109,17 +105,10 @@ func _physics_process(dt: float) -> void:
 		_despawn()
 		return
 
-	var target_position: Vector2
-	if target_handle != EnemyWorldTypes.INVALID_HANDLE:
-		if not EnemyWorld.is_valid_handle(target_handle) or EnemyWorld.is_dying(target_handle):
-			_despawn()
-			return
-		target_position = EnemyCombat.position_for_handle(target_handle)
-	elif target != null and is_instance_valid(target):
-		target_position = target.global_position
-	else:
+	if not EnemyWorld.is_valid_handle(target_handle) or EnemyWorld.is_dying(target_handle):
 		_despawn()
 		return
+	var target_position := EnemyCombat.position_for_handle(target_handle)
 
 	var to_t: Vector2 = (target_position - global_position).normalized()
 	if to_t != Vector2.ZERO:
@@ -150,11 +139,6 @@ func _physics_process(dt: float) -> void:
 
 	if _trail_line != null:
 		_trail_line.points = _trail_pts
-
-	if target_handle == EnemyWorldTypes.INVALID_HANDLE and global_position.distance_squared_to(target_position) <= hit_radius * hit_radius:
-		if target.has_method("take_damage"):
-			target.call("take_damage", damage, source)
-		_despawn()
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
 	return _world_hit_t(from_pos, to_pos) >= 0.0

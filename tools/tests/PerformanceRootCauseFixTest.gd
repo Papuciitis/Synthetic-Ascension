@@ -23,6 +23,7 @@ func _run() -> void:
 	_test_projectile_query_contract()
 	_test_chunk_queue_contract()
 	_test_enemy_health_authority_contract()
+	_test_handle_combat_contract()
 	print("PerformanceRootCauseFixTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -119,3 +120,36 @@ func _test_enemy_health_authority_contract() -> void:
 	_check(actor_source.find("EnemyCombat.apply_damage(") >= 0, "enemy damage facade routes through authoritative combat service")
 	_check(boss_arena_source.find("en.hp =") < 0, "boss scaling cannot write actor health behind the world")
 	_check(miniboss_arena_source.find("en.hp =") < 0, "miniboss scaling cannot write actor health behind the world")
+
+
+func _test_handle_combat_contract() -> void:
+	var attack_paths: Array[String] = [
+		"res://core/combat/projectile/projectile.gd",
+		"res://scenes/world/combat/RangedBullet.gd",
+		"res://scenes/world/combat/MeleeSlash.gd",
+		"res://scenes/world/combat/MagicImpact.gd",
+		"res://effects/augments/logic/MagicMissileEffect.gd",
+		"res://effects/augments/logic/MagicMissileProjectile.gd",
+		"res://spells/logic/MagicMissileSpell.gd",
+		"res://effects/augments/logic/PoisonSpiderling.gd",
+		"res://effects/augments/logic/ReflectedProjectile.gd",
+		"res://effects/augments/logic/ReflectShieldEffect.gd",
+		"res://effects/augments/logic/SpiritSlashEffect.gd",
+		"res://effects/augments/logic/TeslaAuraEffect.gd",
+		"res://effects/conduit/scenes/ConduitArcBolts.gd",
+		"res://effects/conduit/scenes/ConduitOverclockAndFeedback.gd",
+		"res://effects/gravemarch/scenes/GravemarchMassArrest.gd",
+		"res://effects/gravemarch/scenes/GravemarchSunderstep.gd",
+		"res://effects/lattice/scenes/LatticeAfterstrike.gd",
+		"res://effects/lattice/scenes/LatticeEchoBuffer.gd",
+	]
+	var node_scan_free := true
+	var legacy_index_free := true
+	for path in attack_paths:
+		var source := FileAccess.get_file_as_string(path)
+		node_scan_free = node_scan_free and source.find("get_nodes_in_group(\"enemies\")") < 0
+		legacy_index_free = legacy_index_free and source.find("/root/EnemyIndex") < 0
+	_check(node_scan_free, "production player attacks cannot scan the enemies Node group")
+	_check(legacy_index_free, "production player attacks cannot target through EnemyIndex")
+	var missile_source := FileAccess.get_file_as_string("res://effects/augments/logic/MagicMissileProjectile.gd")
+	_check(missile_source.find("var target: Node2D") < 0, "homing projectile identity is a stable handle, never an enemy Node")
