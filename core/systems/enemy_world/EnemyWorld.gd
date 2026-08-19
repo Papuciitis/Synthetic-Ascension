@@ -11,6 +11,7 @@ var _generations := PackedInt64Array()
 var _positions := PackedVector2Array()
 var _previous_positions := PackedVector2Array()
 var _velocities := PackedVector2Array()
+var _knockback_velocities := PackedVector2Array()
 var _health := PackedFloat32Array()
 var _max_health := PackedFloat32Array()
 var _speeds := PackedFloat32Array()
@@ -30,6 +31,8 @@ var _actor_refs: Dictionary = {} # handle -> WeakRef
 var _actor_handles: Dictionary = {} # actor instance id -> handle
 var _bound_instance_ids: Dictionary = {} # handle -> actor instance id
 var _legacy_handles: Dictionary = {} # handle -> true
+var _largest_collision_radius: float = 0.0
+var _largest_collision_radius_dirty: bool = false
 
 
 func _init() -> void:
@@ -56,10 +59,12 @@ func create_enemy(state: EnemySpawnState) -> int:
 	_positions[slot] = state.position
 	_previous_positions[slot] = state.position
 	_velocities[slot] = state.velocity
+	_knockback_velocities[slot] = Vector2.ZERO
 	_health[slot] = clampf(state.health, 0.0, state.max_health)
 	_max_health[slot] = maxf(state.max_health, 0.0)
 	_speeds[slot] = maxf(state.speed, 0.0)
 	_collision_radii[slot] = maxf(state.collision_radius, 0.0)
+	_largest_collision_radius = maxf(_largest_collision_radius, float(_collision_radii[slot]))
 	_ai_kinds[slot] = state.ai_kind
 	_flags[slot] = state.flags
 	_representations[slot] = Types.Representation.DATA_ONLY
@@ -80,10 +85,13 @@ func remove_enemy(handle: int, reason: StringName = &"removed") -> bool:
 	_legacy_handles.erase(handle)
 	_grid.remove(slot)
 	_remove_active_slot(slot)
+	if is_equal_approx(float(_collision_radii[slot]), _largest_collision_radius):
+		_largest_collision_radius_dirty = true
 	_active[slot] = 0
 	_positions[slot] = Vector2.ZERO
 	_previous_positions[slot] = Vector2.ZERO
 	_velocities[slot] = Vector2.ZERO
+	_knockback_velocities[slot] = Vector2.ZERO
 	_health[slot] = 0.0
 	_max_health[slot] = 0.0
 	_speeds[slot] = 0.0
@@ -145,6 +153,27 @@ func set_velocity(handle: int, value: Vector2) -> bool:
 	if slot < 0:
 		return false
 	_velocities[slot] = value
+	return true
+
+
+func get_knockback_velocity(handle: int) -> Vector2:
+	var slot := _slot_if_valid(handle)
+	return _knockback_velocities[slot] if slot >= 0 else Vector2.ZERO
+
+
+func set_knockback_velocity(handle: int, value: Vector2) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or _representations[slot] == Types.Representation.DYING:
+		return false
+	_knockback_velocities[slot] = value
+	return true
+
+
+func add_knockback_velocity(handle: int, value: Vector2) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0 or _representations[slot] == Types.Representation.DYING:
+		return false
+	_knockback_velocities[slot] += value
 	return true
 
 
@@ -211,6 +240,17 @@ func get_speed(handle: int) -> float:
 func get_collision_radius(handle: int) -> float:
 	var slot := _slot_if_valid(handle)
 	return float(_collision_radii[slot]) if slot >= 0 else 0.0
+
+
+func largest_collision_radius() -> float:
+	if not _largest_collision_radius_dirty:
+		return _largest_collision_radius
+	_largest_collision_radius = 0.0
+	for slot_variant in _active_slots:
+		var slot := int(slot_variant)
+		_largest_collision_radius = maxf(_largest_collision_radius, float(_collision_radii[slot]))
+	_largest_collision_radius_dirty = false
+	return _largest_collision_radius
 
 
 func get_spec_id(handle: int) -> StringName:
@@ -379,6 +419,8 @@ func adopt_legacy_actor(actor: Node2D) -> int:
 		return handle
 	if "hp" in actor:
 		set_health(handle, float(actor.get("hp")))
+	if "knockback_vel" in actor:
+		set_knockback_velocity(handle, actor.get("knockback_vel") as Vector2)
 	if not bind_actor(handle, actor):
 		remove_enemy(handle, &"legacy_adopt_failed")
 		return Types.INVALID_HANDLE
@@ -395,6 +437,8 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 	set_position(handle, actor.global_position)
 	if "velocity" in actor:
 		set_velocity(handle, actor.get("velocity") as Vector2)
+	if "knockback_vel" in actor:
+		set_knockback_velocity(handle, actor.get("knockback_vel") as Vector2)
 	var flags := get_flags(handle)
 	if "is_elite" in actor and bool(actor.get("is_elite")):
 		flags |= Types.Flags.ELITE
@@ -513,6 +557,7 @@ func _append_slot_storage() -> int:
 	_positions.resize(next_size)
 	_previous_positions.resize(next_size)
 	_velocities.resize(next_size)
+	_knockback_velocities.resize(next_size)
 	_health.resize(next_size)
 	_max_health.resize(next_size)
 	_speeds.resize(next_size)

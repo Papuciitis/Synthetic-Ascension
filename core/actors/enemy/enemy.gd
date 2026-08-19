@@ -729,12 +729,12 @@ func make_elite() -> void:
 # Effects / CC
 # -----------------------
 func apply_knockback(force: Vector2) -> void:
-	# Boss-like enemies resist knockback to avoid being juggled.
-	if is_in_group(&"boss_like"):
-		var mul := 0.25
-		if has_meta("boss_kb_mul"):
-			mul = float(get_meta("boss_kb_mul"))
-		force *= mul
+	if force == Vector2.ZERO or dead:
+		return
+	EnemyCombat.apply_knockback(_resolve_enemy_world_handle(), force)
+
+
+func _apply_enemy_world_knockback(force: Vector2) -> void:
 	knockback_vel += force
 
 func apply_stun(seconds: float) -> void:

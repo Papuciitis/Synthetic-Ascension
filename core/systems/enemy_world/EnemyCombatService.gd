@@ -4,6 +4,8 @@ extends Node
 const DeathContextScript = preload("res://core/systems/enemy_world/EnemyDeathContext.gd")
 
 var _world: EnemyWorldService = null
+var _query_candidates: Array[int] = []
+var _last_segment_t: float = -1.0
 
 
 func setup(world: EnemyWorldService) -> void:
@@ -105,6 +107,152 @@ func handle_for_actor(actor: Node) -> int:
 	if _world == null or not is_instance_valid(_world) or actor == null or not is_instance_valid(actor):
 		return EnemyWorldTypes.INVALID_HANDLE
 	return _world.handle_for_actor(actor)
+
+
+func position_for_handle(handle: int) -> Vector2:
+	return _world.get_position(handle) if _is_live_handle(handle) else Vector2.ZERO
+
+
+func actor_for_handle(handle: int) -> Node2D:
+	return _world.actor_for_handle(handle) if _is_live_handle(handle) else null
+
+
+func gather_in_radius(
+	origin: Vector2,
+	radius: float,
+	out: Array[int],
+	excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE,
+) -> void:
+	out.clear()
+	if _world == null or not is_instance_valid(_world):
+		return
+	_world.gather_in_radius(origin, radius, out, excluded_handle)
+	for index in range(out.size() - 1, -1, -1):
+		if _world.is_dying(out[index]):
+			out.remove_at(index)
+
+
+func nearest_enemy(
+	origin: Vector2,
+	max_distance: float,
+	excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE,
+) -> int:
+	gather_in_radius(origin, max_distance, _query_candidates, excluded_handle)
+	var best_handle := EnemyWorldTypes.INVALID_HANDLE
+	var best_distance_squared := maxf(max_distance, 0.0) * maxf(max_distance, 0.0)
+	for handle in _query_candidates:
+		var distance_squared := origin.distance_squared_to(_world.get_position(handle))
+		if distance_squared < best_distance_squared:
+			best_distance_squared = distance_squared
+			best_handle = handle
+	return best_handle
+
+
+func first_enemy_on_segment(
+	from: Vector2,
+	to: Vector2,
+	projectile_radius: float = 0.0,
+	excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE,
+) -> int:
+	_last_segment_t = -1.0
+	if _world == null or not is_instance_valid(_world):
+		return EnemyWorldTypes.INVALID_HANDLE
+	var midpoint := (from + to) * 0.5
+	var broad_radius := from.distance_to(to) * 0.5 + maxf(projectile_radius, 0.0) + _world.largest_collision_radius()
+	gather_in_radius(midpoint, broad_radius, _query_candidates, excluded_handle)
+	var best_handle := EnemyWorldTypes.INVALID_HANDLE
+	var best_t := 2.0
+	for handle in _query_candidates:
+		var hit_t := _segment_circle_t(
+			from,
+			to,
+			_world.get_position(handle),
+			maxf(projectile_radius, 0.0) + _world.get_collision_radius(handle),
+		)
+		if hit_t >= 0.0 and hit_t < best_t:
+			best_t = hit_t
+			best_handle = handle
+	if best_handle != EnemyWorldTypes.INVALID_HANDLE:
+		_last_segment_t = best_t
+	return best_handle
+
+
+func last_segment_hit_t() -> float:
+	return _last_segment_t
+
+
+func gather_in_sector(
+	origin: Vector2,
+	forward: Vector2,
+	outer_radius: float,
+	inner_radius: float,
+	half_angle_radians: float,
+	out: Array[int],
+) -> void:
+	gather_in_radius(origin, outer_radius, _query_candidates)
+	out.clear()
+	var direction := forward.normalized()
+	if direction == Vector2.ZERO:
+		return
+	var safe_inner_squared := maxf(inner_radius, 0.0) * maxf(inner_radius, 0.0)
+	var cosine_limit := cos(clampf(half_angle_radians, 0.0, PI))
+	for handle in _query_candidates:
+		var offset := _world.get_position(handle) - origin
+		var distance_squared := offset.length_squared()
+		if distance_squared < safe_inner_squared or distance_squared <= 0.000001:
+			continue
+		if direction.dot(offset.normalized()) >= cosine_limit:
+			out.append(handle)
+
+
+func apply_knockback(handle: int, force: Vector2) -> bool:
+	if force == Vector2.ZERO or not _is_live_handle(handle):
+		return false
+	var actor := _world.actor_for_handle(handle)
+	var adjusted_force := force
+	var cold_state := _world.get_cold_state(handle)
+	if cold_state.has("knockback_multiplier"):
+		adjusted_force *= maxf(0.0, float(cold_state["knockback_multiplier"]))
+	if actor != null and actor.is_in_group(&"boss_like"):
+		adjusted_force *= maxf(0.0, float(actor.get_meta("boss_kb_mul", 0.25)))
+	if adjusted_force == Vector2.ZERO or not _world.add_knockback_velocity(handle, adjusted_force):
+		return false
+	if actor != null:
+		if actor.has_method("_apply_enemy_world_knockback"):
+			actor.call("_apply_enemy_world_knockback", adjusted_force)
+		elif actor.has_method("apply_knockback"):
+			actor.call("apply_knockback", adjusted_force)
+	return true
+
+
+func _is_live_handle(handle: int) -> bool:
+	return (
+		_world != null
+		and is_instance_valid(_world)
+		and _world.is_valid_handle(handle)
+		and not _world.is_dying(handle)
+	)
+
+
+func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:
+	var segment := to - from
+	var length_squared := segment.length_squared()
+	if length_squared <= 0.000001:
+		return 0.0 if from.distance_squared_to(center) <= radius * radius else -1.0
+	var offset := from - center
+	if offset.length_squared() <= radius * radius:
+		return 0.0
+	var b := 2.0 * offset.dot(segment)
+	var c := offset.length_squared() - radius * radius
+	var discriminant := b * b - 4.0 * length_squared * c
+	if discriminant < 0.0:
+		return -1.0
+	var root := sqrt(discriminant)
+	var first := (-b - root) / (2.0 * length_squared)
+	if first >= 0.0 and first <= 1.0:
+		return first
+	var second := (-b + root) / (2.0 * length_squared)
+	return second if second >= 0.0 and second <= 1.0 else -1.0
 
 
 func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int) -> float:
