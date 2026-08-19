@@ -239,25 +239,17 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 	_spawn_flash(vfx_perfect_flash_scene, pos)
 
 	var zap_dmg: float = maxf(1.0, reflected_dmg * perfect_zap_damage_mult)
-	var r2: float = perfect_zap_radius * perfect_zap_radius
-
-	var hit: int = 0
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e: Node2D = n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if e.global_position.distance_squared_to(pos) > r2:
-			continue
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", zap_dmg, player)
-
-		if perfect_zap_stun > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", perfect_zap_stun)
-
-		hit += 1
-		if hit >= perfect_zap_max_targets:
-			break
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(pos, perfect_zap_radius, handles)
+	handles.sort_custom(func(a: int, b: int) -> bool:
+		return pos.distance_squared_to(EnemyCombat.position_for_handle(a)) < pos.distance_squared_to(EnemyCombat.position_for_handle(b))
+	)
+	if handles.size() > perfect_zap_max_targets:
+		handles.resize(perfect_zap_max_targets)
+	for handle in handles:
+		EnemyCombat.apply_damage(handle, zap_dmg, 1, player)
+		if perfect_zap_stun > 0.0:
+			EnemyCombat.apply_stun(handle, perfect_zap_stun)
 
 	if debug_prints:
 		print("[ReflectShield] PERFECT! cd->", _cd, " zap_dmg=", zap_dmg)

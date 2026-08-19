@@ -18,7 +18,7 @@ var _tick: int = 0
 # Burst state (no create_timer spam)
 var _burst_left: int = 0
 var _burst_t: float = 0.0
-var _target_wr: WeakRef = null
+var _target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 
 func setup(p: Node) -> void:
 	_player = p as Node2D
@@ -46,9 +46,8 @@ func _process(dt: float) -> void:
 	if _burst_left > 0:
 		_burst_t -= dt
 		if _burst_t <= 0.0:
-			var tt := (_target_wr.get_ref() as Node2D) if _target_wr != null else null
-			if tt != null and is_instance_valid(tt):
-				_spawn_one(tt)
+			if EnemyWorld.is_valid_handle(_target_handle) and not EnemyWorld.is_dying(_target_handle):
+				_spawn_one(_target_handle)
 			_burst_left -= 1
 			_burst_t = burst_interval
 		return
@@ -57,8 +56,8 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		return
 
-	var t: Node2D = _find_nearest_enemy(_player.global_position, seek_radius)
-	if t == null:
+	var handle := _find_nearest_enemy(_player.global_position, seek_radius)
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
 		if debug_prints and _tick % 60 == 0:
 			print("[MM] no enemies in radius=", seek_radius, " (group must be 'enemies')")
 		return
@@ -72,16 +71,17 @@ func _process(dt: float) -> void:
 	_cd = maxf(cd, 0.001)
 
 	if debug_prints:
-		print("[MM] FIRE burst at:", t.name)
+		print("[MM] FIRE burst at handle:", handle)
 
 	# Start burst: first shot is immediate, remaining use interval timer.
-	_target_wr = weakref(t)
+	_target_handle = handle
 	_burst_left = maxi(1, burst_count)
 	_burst_t = 0.0
 
-func _spawn_one(t: Node2D) -> void:
-	if t == null or not is_instance_valid(t) or missile_scene == null:
+func _spawn_one(handle: int) -> void:
+	if not EnemyWorld.is_valid_handle(handle) or EnemyWorld.is_dying(handle) or missile_scene == null:
 		return
+	var target_position := EnemyCombat.position_for_handle(handle)
 
 	var dmg: float = _compute_damage()
 
@@ -104,13 +104,17 @@ func _spawn_one(t: Node2D) -> void:
 
 	m2.global_position = _player.global_position
 
-	var start_dir: Vector2 = (t.global_position - _player.global_position).normalized()
+	var start_dir: Vector2 = (target_position - _player.global_position).normalized()
 	if start_dir == Vector2.ZERO:
 		start_dir = Vector2.RIGHT
 	start_dir = start_dir.rotated(randf_range(-0.35, 0.35))
 
-	if m2.has_method("setup"):
-		m2.call("setup", t, dmg, start_dir)
+	if m2.has_method("setup_handle"):
+		m2.call("setup_handle", handle, dmg, start_dir, _player)
+	elif m2.has_method("setup"):
+		var actor := EnemyCombat.actor_for_handle(handle)
+		if actor != null:
+			m2.call("setup", actor, dmg, start_dir)
 
 func _compute_damage() -> float:
 	var base_dmg: float = 12.0
@@ -125,24 +129,8 @@ func _compute_damage() -> float:
 
 	return base_dmg * mul
 
-func _find_nearest_enemy(center: Vector2, radius: float) -> Node2D:
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("nearest_enemy"):
-		# nearest_enemy uses max_dist; pass radius to limit queries
-		return ei.call("nearest_enemy", center, radius, null) as Node2D
-
-	# fallback (slow)
-	var best: Node2D = null
-	var best_d2: float = radius * radius
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		var d2 := center.distance_squared_to(e.global_position)
-		if d2 < best_d2:
-			best_d2 = d2
-			best = e
-	return best
+func _find_nearest_enemy(center: Vector2, radius: float) -> int:
+	return EnemyCombat.nearest_enemy(center, radius)
 
 
 const _AUG_MAX_LEVEL: int = 5

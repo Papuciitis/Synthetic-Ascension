@@ -39,7 +39,14 @@ func _physics_process(delta: float) -> void:
 	if _life_left < 0.0:
 		_life_left = lifetime
 
-	global_position += velocity * delta
+	var old_position := global_position
+	var new_position := old_position + velocity * delta
+	var handle := EnemyCombat.first_enemy_on_segment(old_position, new_position, 8.0)
+	if handle != EnemyWorldTypes.INVALID_HANDLE:
+		EnemyCombat.apply_damage(handle, damage, 1, source)
+		_despawn()
+		return
+	global_position = new_position
 
 	_life_left -= delta
 	if _life_left <= 0.0:
@@ -49,7 +56,10 @@ func _on_area_entered(area: Area2D) -> void:
 	# If enemy has a Hitbox, we can go to its parent (Enemy)
 	if area != null and area.is_in_group("enemy_hitbox"):
 		var enemy := area.get_parent()
-		if enemy != null and enemy.is_in_group("enemies") and enemy.has_method("take_damage"):
+		var handle := EnemyCombat.handle_for_actor(enemy)
+		if handle != EnemyWorldTypes.INVALID_HANDLE:
+			EnemyCombat.apply_damage(handle, damage, 1, source)
+		elif enemy != null and enemy.is_in_group("enemies") and enemy.has_method("take_damage"):
 			enemy.call("take_damage", damage, source)
 		_despawn()
 

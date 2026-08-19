@@ -10,7 +10,9 @@ class_name MagicMissileProjectile
 @export var trail_point_spacing: float = 10.0
 
 var target: Node2D = null
+var target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 var damage: float = 10.0
+var source: Node = null
 
 var _vel: Vector2 = Vector2.RIGHT
 var _life: float = 0.0
@@ -23,7 +25,20 @@ var _chunk_manager: ChunkManager = null
 
 func setup(p_target: Node2D, p_damage: float, start_dir: Vector2) -> void:
 	target = p_target
+	target_handle = EnemyCombat.handle_for_actor(p_target)
 	damage = p_damage
+	_setup_motion(start_dir)
+
+
+func setup_handle(handle: int, p_damage: float, start_dir: Vector2, p_source: Node = null) -> void:
+	target = null
+	target_handle = handle
+	damage = p_damage
+	source = p_source
+	_setup_motion(start_dir)
+
+
+func _setup_motion(start_dir: Vector2) -> void:
 	var d := start_dir if start_dir != Vector2.ZERO else Vector2.RIGHT
 	_vel = d.normalized() * speed
 	_life = 0.0
@@ -45,7 +60,9 @@ func _on_pool_obtain() -> void:
 
 func _on_pool_recycle() -> void:
 	target = null
+	target_handle = EnemyWorldTypes.INVALID_HANDLE
 	damage = 0.0
+	source = null
 	_vel = Vector2.ZERO
 	_life = 0.0
 	_trail_pts = PackedVector2Array()
@@ -92,18 +109,37 @@ func _physics_process(dt: float) -> void:
 		_despawn()
 		return
 
-	if target == null or not is_instance_valid(target):
+	var target_position: Vector2
+	if target_handle != EnemyWorldTypes.INVALID_HANDLE:
+		if not EnemyWorld.is_valid_handle(target_handle) or EnemyWorld.is_dying(target_handle):
+			_despawn()
+			return
+		target_position = EnemyCombat.position_for_handle(target_handle)
+	elif target != null and is_instance_valid(target):
+		target_position = target.global_position
+	else:
 		_despawn()
 		return
 
-	var to_t: Vector2 = (target.global_position - global_position).normalized()
+	var to_t: Vector2 = (target_position - global_position).normalized()
 	if to_t != Vector2.ZERO:
 		var desired: Vector2 = to_t * speed
 		_vel = _vel.lerp(desired, clampf(turn_rate * dt, 0.0, 1.0))
 
 	var old_pos: Vector2 = global_position
 	var new_pos: Vector2 = old_pos + _vel * dt
-	if _hits_world(old_pos, new_pos):
+	var world_hit_t := _world_hit_t(old_pos, new_pos)
+	var hit_handle := EnemyCombat.first_enemy_on_segment(old_pos, new_pos, hit_radius)
+	var enemy_hit_t := EnemyCombat.last_segment_hit_t()
+	if (
+		hit_handle != EnemyWorldTypes.INVALID_HANDLE
+		and enemy_hit_t >= 0.0
+		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
+	):
+		EnemyCombat.apply_damage(hit_handle, damage, 1, source)
+		_despawn()
+		return
+	if world_hit_t >= 0.0:
 		_despawn()
 		return
 	global_position = new_pos
@@ -115,15 +151,19 @@ func _physics_process(dt: float) -> void:
 	if _trail_line != null:
 		_trail_line.points = _trail_pts
 
-	if global_position.distance_squared_to(target.global_position) <= hit_radius * hit_radius:
+	if target_handle == EnemyWorldTypes.INVALID_HANDLE and global_position.distance_squared_to(target_position) <= hit_radius * hit_radius:
 		if target.has_method("take_damage"):
-			target.call("take_damage", damage)
+			target.call("take_damage", damage, source)
 		_despawn()
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
+	return _world_hit_t(from_pos, to_pos) >= 0.0
+
+
+func _world_hit_t(from_pos: Vector2, to_pos: Vector2) -> float:
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
-	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, 5.0) >= 0.0
+	return _chunk_manager.projectile_hit_t(from_pos, to_pos, 5.0) if _chunk_manager != null else -1.0
 
 func _add_trail_point(p: Vector2) -> void:
 	if _trail_pts.is_empty():

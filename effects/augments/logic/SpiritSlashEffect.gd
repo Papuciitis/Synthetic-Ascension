@@ -65,9 +65,10 @@ func _try_cast() -> void:
 	if _cd > 0.0:
 		return
 
-	var t: Node2D = _find_nearest_enemy(player.global_position, range_px)
-	if t == null:
+	var handle := _find_nearest_enemy(player.global_position, range_px)
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
 		return
+	var target_position := EnemyCombat.position_for_handle(handle)
 
 	_cd_max = base_cd
 	_cd = _cd_max
@@ -75,22 +76,19 @@ func _try_cast() -> void:
 	var hit_dmg: float = _roll_hit_damage()
 	var is_crit: bool = (randf() < crit_chance)
 
-	if t.has_method("take_damage"):
-		t.call("take_damage", hit_dmg, player)
+	EnemyCombat.apply_damage(handle, hit_dmg, 1, player)
 
 	var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
-	_apply_bleed(t, stacks, hit_dmg)
+	_apply_bleed(handle, stacks, hit_dmg)
 
 	if is_crit:
-		if t.has_method("apply_stun"):
-			t.call("apply_stun", crit_stun)
-		if t.has_method("apply_knockback"):
-			var dir: Vector2 = (t.global_position - player.global_position).normalized()
-			if dir == Vector2.ZERO:
-				dir = Vector2.RIGHT
-			t.call("apply_knockback", dir * crit_knock)
+		EnemyCombat.apply_stun(handle, crit_stun)
+		var direction: Vector2 = (target_position - player.global_position).normalized()
+		if direction == Vector2.ZERO:
+			direction = Vector2.RIGHT
+		EnemyCombat.apply_knockback(handle, direction * crit_knock)
 
-	_spawn_vfx(t.global_position, is_crit)
+	_spawn_vfx(target_position, is_crit)
 
 	if refund_on_3plus:
 		var r: int = randi_range(1, 4)
@@ -109,49 +107,22 @@ func _roll_hit_damage() -> float:
 
 	return float(total) + flat_bonus + (power * power_scale)
 
-func _apply_bleed(t: Node, stacks: int, hit_dmg: float) -> void:
+func _apply_bleed(handle: int, stacks: int, hit_dmg: float) -> void:
 	if stacks <= 0:
 		return
 
 	var dmg_per_tick_per_stack: float = maxf(0.1, hit_dmg * bleed_tick_mult_of_hit)
-	var handle := EnemyCombat.handle_for_actor(t)
-	if handle != 0:
-		EnemyStatus.apply_bleed(
-			handle,
-			stacks,
-			bleed_duration,
-			bleed_tick,
-			dmg_per_tick_per_stack,
-			player,
-		)
-		return
+	EnemyStatus.apply_bleed(
+		handle,
+		stacks,
+		bleed_duration,
+		bleed_tick,
+		dmg_per_tick_per_stack,
+		player,
+	)
 
-	var dot: BleedDot = null
-	var existing: Node = t.get_node_or_null("BleedDot")
-	if existing != null:
-		dot = existing as BleedDot
-
-	if dot == null:
-		dot = BleedDot.new()
-		dot.name = "BleedDot"
-		t.add_child(dot)
-
-	dot.setup(t, player, stacks, bleed_duration, bleed_tick, dmg_per_tick_per_stack)
-
-func _find_nearest_enemy(center: Vector2, radius: float) -> Node2D:
-	var best: Node2D = null
-	var best_d2: float = radius * radius
-
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e: Node2D = n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		var d2: float = center.distance_squared_to(e.global_position)
-		if d2 < best_d2:
-			best_d2 = d2
-			best = e
-
-	return best
+func _find_nearest_enemy(center: Vector2, radius: float) -> int:
+	return EnemyCombat.nearest_enemy(center, radius)
 
 func _spawn_vfx(pos: Vector2, is_crit: bool) -> void:
 	if vfx_scene == null:

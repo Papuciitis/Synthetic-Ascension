@@ -37,7 +37,7 @@ var _owner_power: float = 0.0
 
 var _last_vel: Vector2 = Vector2.ZERO
 
-var _target: Node2D = null
+var _target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 var _target_refresh: float = 0.0
 var _redraw_t: float = 0.0
 var _pooled: bool = false
@@ -77,13 +77,12 @@ func _process(dt: float) -> void:
 	_target_refresh = maxf(_target_refresh - dt, 0.0)
 	if _target_refresh <= 0.0:
 		_target_refresh = 0.10
-		_target = _find_nearest_enemy()
+		_target_handle = _find_nearest_enemy()
 
-	var t: Node2D = _target
-	if t != null and is_instance_valid(t):
-		_chase_and_bite(t)
+	if EnemyWorld.is_valid_handle(_target_handle) and not EnemyWorld.is_dying(_target_handle):
+		_chase_and_bite(_target_handle)
 	else:
-		_target = null
+		_target_handle = EnemyWorldTypes.INVALID_HANDLE
 		_orbit_player()
 
 	# keep a stable facing for trail drawing
@@ -97,15 +96,16 @@ func _process(dt: float) -> void:
 		_redraw_t = 0.066
 		queue_redraw()
 
-func _chase_and_bite(t: Node2D) -> void:
-	var to_t: Vector2 = t.global_position - global_position
+func _chase_and_bite(handle: int) -> void:
+	var target_position := EnemyCombat.position_for_handle(handle)
+	var to_t: Vector2 = target_position - global_position
 	var d2: float = to_t.length_squared()
 
 	if d2 <= bite_range * bite_range:
 		velocity = Vector2.ZERO
 		if _bite_timer <= 0.0:
 			_bite_timer = bite_cd
-			_deal_bite(t)
+			_deal_bite(handle, target_position)
 		return
 
 	var dir: Vector2 = to_t.normalized()
@@ -125,7 +125,7 @@ func _orbit_player() -> void:
 	else:
 		velocity = Vector2.ZERO
 
-func _deal_bite(t: Node2D) -> void:
+func _deal_bite(handle: int, target_position: Vector2) -> void:
 	var roll: int = randi_range(1, max(1, bite_dice_sides))
 	var dmg: float = float(roll) + bite_base_bonus + (_owner_power * _bite_power_scale)
 
@@ -135,39 +135,21 @@ func _deal_bite(t: Node2D) -> void:
 		var v2: Node2D = v as Node2D
 		if v2 != null:
 			get_tree().current_scene.add_child(v2)
-			var dir: Vector2 = (t.global_position - global_position).normalized()
-			v2.global_position = t.global_position
+			var dir: Vector2 = (target_position - global_position).normalized()
+			v2.global_position = target_position
 			if v2.has_method("setup"):
-				v2.call("setup", t.global_position, dir)
+				v2.call("setup", target_position, dir)
 
-	# damage (unblockable preference)
-	if t.has_method(String(unblockable_method)):
-		t.call(String(unblockable_method), dmg, self)
-	elif t.has_method("take_damage"):
-		t.call("take_damage", dmg)
+	EnemyCombat.apply_damage(handle, dmg)
 
 
 func explode(dmg: float, radius: float, source: Node = null) -> void:
 	_spawn_explode_vfx(radius)
 
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("gather_in_radius"):
-		var gathered: Array = []
-		ei.call("gather_in_radius", global_position, radius, gathered)
-		for n in gathered:
-			var e := n as Node2D
-			if e == null or not is_instance_valid(e):
-				continue
-			_apply_damage(e, dmg, source)
-	else:
-		var r2: float = radius * radius
-		for n in get_tree().get_nodes_in_group("enemies"):
-			var e: Node2D = n as Node2D
-			if e == null or not is_instance_valid(e):
-				continue
-			if global_position.distance_squared_to(e.global_position) > r2:
-				continue
-			_apply_damage(e, dmg, source)
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(global_position, radius, handles)
+	for handle in handles:
+		EnemyCombat.apply_damage(handle, dmg, 1, source)
 
 	_despawn()
 
@@ -184,22 +166,8 @@ func _apply_damage(target: Node, dmg: float, source: Node) -> void:
 	elif target.has_method("take_damage"):
 		target.call("take_damage", dmg, source)
 
-func _find_nearest_enemy() -> Node2D:
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("nearest_enemy"):
-		return ei.call("nearest_enemy", global_position, seek_radius, null) as Node2D
-
-	var best: Node2D = null
-	var best_d2: float = seek_radius * seek_radius
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e: Node2D = n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		var d2: float = global_position.distance_squared_to(e.global_position)
-		if d2 < best_d2:
-			best_d2 = d2
-			best = e
-	return best
+func _find_nearest_enemy() -> int:
+	return EnemyCombat.nearest_enemy(global_position, seek_radius)
 
 # -----------------------
 # Optional VFX scenes

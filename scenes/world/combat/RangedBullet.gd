@@ -75,9 +75,22 @@ func _stop_trail() -> void:
 	pass
 
 func _physics_process(delta: float) -> void:
+	if _hit:
+		return
 	var old_pos: Vector2 = global_position
 	var new_pos: Vector2 = old_pos + velocity * delta
-	if _hits_world(old_pos, new_pos, maxf(2.0, body_width * 0.5)):
+	var projectile_radius := maxf(2.0, body_width * 0.5)
+	var world_hit_t := _world_hit_t(old_pos, new_pos, projectile_radius)
+	var enemy_handle := EnemyCombat.first_enemy_on_segment(old_pos, new_pos, projectile_radius)
+	var enemy_hit_t := EnemyCombat.last_segment_hit_t()
+	if (
+		enemy_handle != EnemyWorldTypes.INVALID_HANDLE
+		and enemy_hit_t >= 0.0
+		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
+	):
+		_hit_handle(enemy_handle, old_pos.lerp(new_pos, enemy_hit_t))
+		return
+	if world_hit_t >= 0.0:
 		_despawn()
 		return
 	global_position = new_pos
@@ -89,9 +102,13 @@ func _physics_process(delta: float) -> void:
 			_despawn()
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2, radius: float) -> bool:
+	return _world_hit_t(from_pos, to_pos, radius) >= 0.0
+
+
+func _world_hit_t(from_pos: Vector2, to_pos: Vector2, radius: float) -> float:
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
-	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, radius) >= 0.0
+	return _chunk_manager.projectile_hit_t(from_pos, to_pos, radius) if _chunk_manager != null else -1.0
 
 func _apply_visual_pose() -> void:
 	if velocity.length_squared() > 0.001:
@@ -134,19 +151,34 @@ func _on_area_entered(area: Area2D) -> void:
 		return
 
 	if area.is_in_group("enemy_hitbox"):
-		_hit = true
-
 		var enemy := area.get_parent()
+		var handle := EnemyCombat.handle_for_actor(enemy)
+		if handle != EnemyWorldTypes.INVALID_HANDLE:
+			_hit_handle(handle, area.global_position)
+			return
+		_hit = true
 		if enemy != null and enemy.is_in_group("enemies") and enemy.has_method("take_damage"):
 			enemy.call("take_damage", damage, source)
-
-		if vfx_hit_spokes_scene != null:
-			var v: Node = vfx_hit_spokes_scene.instantiate()
-			get_tree().current_scene.add_child(v)
-			if v.has_method("setup"):
-				v.call("setup", area.global_position)
-
+		_spawn_hit_vfx(area.global_position)
 		_despawn()
+
+
+func _hit_handle(handle: int, hit_position: Vector2) -> void:
+	if _hit:
+		return
+	_hit = true
+	EnemyCombat.apply_damage(handle, damage, 1, source)
+	_spawn_hit_vfx(hit_position)
+	_despawn()
+
+
+func _spawn_hit_vfx(hit_position: Vector2) -> void:
+	if vfx_hit_spokes_scene == null:
+		return
+	var v: Node = vfx_hit_spokes_scene.instantiate()
+	get_tree().current_scene.add_child(v)
+	if v.has_method("setup"):
+		v.call("setup", hit_position)
 
 
 func _apply_burn_dot(enemy: Node) -> void:
