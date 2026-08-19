@@ -1,0 +1,383 @@
+class_name EnemyProxyRenderer
+extends Node2D
+
+const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
+
+const FLOATS_PER_INSTANCE := 12
+const DIAGNOSTIC_KEY := &"__diagnostic__"
+const DIAGNOSTIC_COLOR := Color(1.0, 0.0, 0.8, 1.0)
+const ELITE_DIAGNOSTIC_COLOR := Color(1.0, 0.35, 0.05, 1.0)
+const MIN_PROXY_SIZE := 4.0
+
+var _world: EnemyWorldService = null
+var _handles: Array[int] = []
+var _batches: Dictionary = {}
+var _handle_locations: Dictionary = {}
+var _visual_profiles: Dictionary = {}
+var _diagnostic_texture: ImageTexture = null
+var _visible_count := 0
+var _last_upload_usec := 0
+var _profile_sweep_counter := 0
+
+
+func setup(world: EnemyWorldService) -> void:
+	_world = world
+	_visible_count = 0
+	_last_upload_usec = 0
+
+
+func publish(interpolation_alpha: float = 1.0) -> int:
+	var started := Time.get_ticks_usec()
+	_visible_count = 0
+	_handle_locations.clear()
+	if _world == null or not is_instance_valid(_world):
+		_hide_all_batches()
+		_last_upload_usec = Time.get_ticks_usec() - started
+		return 0
+
+	var groups: Dictionary = {}
+	var group_metadata: Dictionary = {}
+	_world.active_handles(_handles)
+	for handle in _handles:
+		if (
+			not _world.is_valid_handle(handle)
+			or _world.is_dying(handle)
+			or _world.get_representation(handle) != Types.Representation.DATA_ONLY
+		):
+			continue
+		var profile := _profile_for(handle)
+		var visual_key := profile.get("key", DIAGNOSTIC_KEY) as StringName
+		if not groups.has(visual_key):
+			groups[visual_key] = [] as Array[int]
+			group_metadata[visual_key] = profile
+		var group := groups[visual_key] as Array[int]
+		group.append(handle)
+
+	var seen: Dictionary = {}
+	for visual_key_variant in groups:
+		var visual_key := visual_key_variant as StringName
+		seen[visual_key] = true
+		var batch := _batch_for(visual_key, group_metadata[visual_key] as Dictionary)
+		_publish_batch(
+			visual_key,
+			batch,
+			groups[visual_key] as Array[int],
+			clampf(interpolation_alpha, 0.0, 1.0),
+		)
+	for visual_key_variant in _batches:
+		if not seen.has(visual_key_variant):
+			_hide_batch(_batches[visual_key_variant] as Dictionary)
+	_profile_sweep_counter += 1
+	if _profile_sweep_counter >= 60:
+		_sweep_stale_profiles()
+		_profile_sweep_counter = 0
+
+	_last_upload_usec = Time.get_ticks_usec() - started
+	return _visible_count
+
+
+func visible_count() -> int:
+	return _visible_count
+
+
+func batch_count() -> int:
+	return _batches.size()
+
+
+func has_visible_handle(handle: int) -> bool:
+	return _handle_locations.has(handle)
+
+
+func last_upload_usec() -> int:
+	return _last_upload_usec
+
+
+func invalidate_visual_profile(handle: int) -> void:
+	_visual_profiles.erase(handle)
+
+
+func debug_instance_transform(handle: int) -> Transform2D:
+	var location_variant: Variant = _handle_locations.get(handle)
+	if not (location_variant is Dictionary):
+		return Transform2D()
+	var location := location_variant as Dictionary
+	var batch_variant: Variant = _batches.get(location.get("key", DIAGNOSTIC_KEY))
+	if not (batch_variant is Dictionary):
+		return Transform2D()
+	var transforms := (batch_variant as Dictionary).get("transforms", []) as Array[Transform2D]
+	var index := int(location.get("index", -1))
+	if index < 0 or index >= transforms.size():
+		return Transform2D()
+	return transforms[index]
+
+
+func debug_instance_color(handle: int) -> Color:
+	var location_variant: Variant = _handle_locations.get(handle)
+	if not (location_variant is Dictionary):
+		return Color(0.0, 0.0, 0.0, 0.0)
+	var location := location_variant as Dictionary
+	var batch_variant: Variant = _batches.get(location.get("key", DIAGNOSTIC_KEY))
+	if not (batch_variant is Dictionary):
+		return Color(0.0, 0.0, 0.0, 0.0)
+	var colors := (batch_variant as Dictionary).get("colors", []) as Array[Color]
+	var index := int(location.get("index", -1))
+	if index < 0 or index >= colors.size():
+		return Color(0.0, 0.0, 0.0, 0.0)
+	return colors[index]
+
+
+func debug_all_batches_hidden() -> bool:
+	for batch_variant in _batches.values():
+		var batch := batch_variant as Dictionary
+		var multimesh := batch.get("multimesh") as MultiMesh
+		if multimesh != null and multimesh.visible_instance_count != 0:
+			return false
+	return true
+
+
+func debug_rendered_instance_transform(handle: int) -> Transform2D:
+	var location_variant: Variant = _handle_locations.get(handle)
+	if not (location_variant is Dictionary):
+		return Transform2D()
+	var location := location_variant as Dictionary
+	var batch_variant: Variant = _batches.get(location.get("key", DIAGNOSTIC_KEY))
+	if not (batch_variant is Dictionary):
+		return Transform2D()
+	var multimesh := (batch_variant as Dictionary).get("multimesh") as MultiMesh
+	var index := int(location.get("index", -1))
+	if multimesh == null or index < 0 or index >= multimesh.visible_instance_count:
+		return Transform2D()
+	return multimesh.get_instance_transform_2d(index)
+
+
+func debug_rendered_instance_color(handle: int) -> Color:
+	var location_variant: Variant = _handle_locations.get(handle)
+	if not (location_variant is Dictionary):
+		return Color(0.0, 0.0, 0.0, 0.0)
+	var location := location_variant as Dictionary
+	var batch_variant: Variant = _batches.get(location.get("key", DIAGNOSTIC_KEY))
+	if not (batch_variant is Dictionary):
+		return Color(0.0, 0.0, 0.0, 0.0)
+	var multimesh := (batch_variant as Dictionary).get("multimesh") as MultiMesh
+	var index := int(location.get("index", -1))
+	if multimesh == null or index < 0 or index >= multimesh.visible_instance_count:
+		return Color(0.0, 0.0, 0.0, 0.0)
+	return multimesh.get_instance_color(index)
+
+
+func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
+	var existing: Variant = _batches.get(visual_key)
+	if existing is Dictionary:
+		return existing as Dictionary
+	var multimesh := MultiMesh.new()
+	multimesh.transform_format = MultiMesh.TRANSFORM_2D
+	multimesh.use_colors = true
+	var quad := QuadMesh.new()
+	quad.size = Vector2.ONE
+	multimesh.mesh = quad
+	multimesh.instance_count = 0
+	multimesh.visible_instance_count = 0
+	var instance := MultiMeshInstance2D.new()
+	instance.name = "ProxyBatch_%s" % String(visual_key).validate_node_name()
+	instance.multimesh = multimesh
+	instance.texture = _texture_for(profile)
+	instance.z_index = int(profile.get("z_index", 0))
+	instance.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(instance)
+	var batch := {
+		"instance": instance,
+		"multimesh": multimesh,
+		"capacity": 0,
+		"handles": [] as Array[int],
+		"transforms": [] as Array[Transform2D],
+		"colors": [] as Array[Color],
+		"texture_size": _safe_texture_size(instance.texture),
+	}
+	_batches[visual_key] = batch
+	return batch
+
+
+func _publish_batch(
+	visual_key: StringName,
+	batch: Dictionary,
+	handles: Array[int],
+	alpha: float,
+) -> void:
+	var count := handles.size()
+	var capacity := _ensure_capacity(batch, count)
+	var buffer := PackedFloat32Array()
+	buffer.resize(capacity * FLOATS_PER_INSTANCE)
+	var transforms: Array[Transform2D] = []
+	var colors: Array[Color] = []
+	transforms.resize(count)
+	colors.resize(count)
+	var texture_size := batch.get("texture_size", Vector2.ONE) as Vector2
+	for index in range(count):
+		var handle := handles[index]
+		var profile := _profile_for(handle)
+		var position := _world.get_previous_position(handle).lerp(_world.get_position(handle), alpha)
+		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
+		var scale := Vector2(size.x / texture_size.x, size.y / texture_size.y)
+		var color := _profile_color(handle, profile)
+		_write_instance(buffer, index * FLOATS_PER_INSTANCE, scale, position, color)
+		transforms[index] = Transform2D(
+			Vector2(scale.x, 0.0),
+			Vector2(0.0, scale.y),
+			position,
+		)
+		colors[index] = color
+		_handle_locations[handle] = {"key": visual_key, "index": index}
+	for index in range(count, capacity):
+		_write_instance(
+			buffer,
+			index * FLOATS_PER_INSTANCE,
+			Vector2.ONE,
+			Vector2.ZERO,
+			Color(0.0, 0.0, 0.0, 0.0),
+		)
+	var multimesh := batch.get("multimesh") as MultiMesh
+	if multimesh != null and capacity > 0:
+		multimesh.buffer = buffer
+		multimesh.visible_instance_count = count
+	batch["handles"] = handles.duplicate()
+	batch["transforms"] = transforms
+	batch["colors"] = colors
+	_visible_count += count
+
+
+func _ensure_capacity(batch: Dictionary, required: int) -> int:
+	var capacity := int(batch.get("capacity", 0))
+	if required <= capacity:
+		return capacity
+	capacity = 1
+	while capacity < required:
+		capacity *= 2
+	var multimesh := batch.get("multimesh") as MultiMesh
+	if multimesh != null:
+		multimesh.instance_count = capacity
+		multimesh.visible_instance_count = 0
+	batch["capacity"] = capacity
+	return capacity
+
+
+func _hide_batch(batch: Dictionary) -> void:
+	var multimesh := batch.get("multimesh") as MultiMesh
+	if multimesh != null:
+		multimesh.visible_instance_count = 0
+	batch["handles"] = [] as Array[int]
+	batch["transforms"] = [] as Array[Transform2D]
+	batch["colors"] = [] as Array[Color]
+
+
+func _hide_all_batches() -> void:
+	_handle_locations.clear()
+	_visible_count = 0
+	for batch_variant in _batches.values():
+		_hide_batch(batch_variant as Dictionary)
+
+
+func _visual_key(cold_state: Dictionary) -> StringName:
+	var value: Variant = cold_state.get("proxy_visual_key", DIAGNOSTIC_KEY)
+	var text := String(value).strip_edges()
+	return StringName(text) if not text.is_empty() else DIAGNOSTIC_KEY
+
+
+func _profile_for(handle: int) -> Dictionary:
+	var existing: Variant = _visual_profiles.get(handle)
+	if existing is Dictionary:
+		return existing as Dictionary
+	var cold_state := _world.get_cold_state(handle)
+	var fallback := maxf(_world.get_collision_radius(handle) * 2.0, MIN_PROXY_SIZE)
+	var value: Variant = cold_state.get("proxy_size", Vector2(fallback, fallback))
+	var size := Vector2(fallback, fallback)
+	if value is Vector2:
+		var vector := value as Vector2
+		size = Vector2(maxf(absf(vector.x), MIN_PROXY_SIZE), maxf(absf(vector.y), MIN_PROXY_SIZE))
+	elif value is float or value is int:
+		var scalar := maxf(absf(float(value)), MIN_PROXY_SIZE)
+		size = Vector2(scalar, scalar)
+	var fallback_color := ELITE_DIAGNOSTIC_COLOR if (_world.get_flags(handle) & Types.Flags.ELITE) != 0 else DIAGNOSTIC_COLOR
+	var has_explicit_color := cold_state.has("proxy_color")
+	var color_value: Variant = cold_state.get("proxy_color", fallback_color)
+	var explicit_color := _color_from_variant(color_value, fallback_color)
+	if not (color_value is Color or color_value is String or color_value is StringName):
+		has_explicit_color = false
+	var profile := {
+		"key": _visual_key(cold_state),
+		"size": size,
+		"has_explicit_color": has_explicit_color,
+		"color": explicit_color,
+		"texture_path": String(cold_state.get("proxy_texture_path", "")),
+		"z_index": int(cold_state.get("proxy_z_index", 0)),
+	}
+	_visual_profiles[handle] = profile
+	return profile
+
+
+func _profile_color(handle: int, profile: Dictionary) -> Color:
+	var fallback := ELITE_DIAGNOSTIC_COLOR if (_world.get_flags(handle) & Types.Flags.ELITE) != 0 else DIAGNOSTIC_COLOR
+	if bool(profile.get("has_explicit_color", false)):
+		return profile.get("color", fallback) as Color
+	return fallback
+
+
+func _color_from_variant(value: Variant, fallback: Color) -> Color:
+	if value is Color:
+		return value as Color
+	if value is String or value is StringName:
+		return Color.from_string(String(value), fallback)
+	return fallback
+
+
+func _texture_for(profile: Dictionary) -> Texture2D:
+	var path := String(profile.get("texture_path", ""))
+	if not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
+		var loaded := load(path) as Texture2D
+		if loaded != null:
+			return loaded
+	if _diagnostic_texture == null:
+		var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
+		image.fill(Color.WHITE)
+		_diagnostic_texture = ImageTexture.create_from_image(image)
+	return _diagnostic_texture
+
+
+func _sweep_stale_profiles() -> void:
+	if _world == null or not is_instance_valid(_world):
+		_visual_profiles.clear()
+		return
+	var cached_handles := _visual_profiles.keys()
+	for handle_variant in cached_handles:
+		var handle := int(handle_variant)
+		if not _world.is_valid_handle(handle):
+			_visual_profiles.erase(handle)
+
+
+func _safe_texture_size(texture: Texture2D) -> Vector2:
+	if texture == null:
+		return Vector2.ONE
+	var size := texture.get_size()
+	return Vector2(maxf(size.x, 1.0), maxf(size.y, 1.0))
+
+
+func _write_instance(
+	buffer: PackedFloat32Array,
+	base: int,
+	scale: Vector2,
+	position: Vector2,
+	color: Color,
+) -> void:
+	# RenderingServer stores Transform2D as two padded rows. The origin is
+	# therefore at offsets 3 and 7, followed by four RGBA floats.
+	buffer[base] = scale.x
+	buffer[base + 1] = 0.0
+	buffer[base + 2] = 0.0
+	buffer[base + 3] = position.x
+	buffer[base + 4] = 0.0
+	buffer[base + 5] = scale.y
+	buffer[base + 6] = 0.0
+	buffer[base + 7] = position.y
+	buffer[base + 8] = color.r
+	buffer[base + 9] = color.g
+	buffer[base + 10] = color.b
+	buffer[base + 11] = color.a
