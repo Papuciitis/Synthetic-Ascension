@@ -395,17 +395,22 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 	set_position(handle, actor.global_position)
 	if "velocity" in actor:
 		set_velocity(handle, actor.get("velocity") as Vector2)
-	if "hp" in actor:
-		set_health(handle, float(actor.get("hp")))
 	var flags := get_flags(handle)
 	if "is_elite" in actor and bool(actor.get("is_elite")):
 		flags |= Types.Flags.ELITE
 	else:
 		flags &= ~Types.Flags.ELITE
 	set_flags(handle, flags)
-	if is_dying(handle) or ("dead" in actor and bool(actor.get("dead"))):
-		set_representation(handle, Types.Representation.DYING)
+	# EnemyActor implements this callback and treats the record as authoritative.
+	# Generic legacy nodes keep the old one-way import until they are migrated.
+	if actor.has_method("_apply_enemy_world_health"):
+		actor.call("_apply_enemy_world_health", get_health(handle), get_max_health(handle))
 	else:
+		if "hp" in actor:
+			set_health(handle, float(actor.get("hp")))
+		if "dead" in actor and bool(actor.get("dead")):
+			set_representation(handle, Types.Representation.DYING)
+	if not is_dying(handle):
 		set_representation(handle, Types.Representation.MATERIALIZED)
 	return true
 

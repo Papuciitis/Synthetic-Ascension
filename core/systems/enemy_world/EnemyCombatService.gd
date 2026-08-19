@@ -40,6 +40,8 @@ func apply_damage(
 	if not _world.set_health(handle, remaining_health):
 		return 0.0
 	_mirror_health(actor, remaining_health, _world.get_max_health(handle))
+	if source != null and is_instance_valid(source) and RunEvents != null:
+		RunEvents.damage_dealt.emit(source, applied_damage)
 
 	if remaining_health > 0.0:
 		_apply_survivor_feedback(actor, applied_damage, source, payload)
@@ -57,6 +59,49 @@ func apply_damage(
 	if actor != null and actor.has_method("_apply_enemy_world_death"):
 		actor.call("_apply_enemy_world_death", context)
 	return applied_damage
+
+
+func apply_damage_to_actor(
+	actor: Node2D,
+	raw_damage: float,
+	hit_count: int = 1,
+	source: Node = null,
+	payload: Variant = null,
+) -> float:
+	var handle := handle_for_actor(actor)
+	return apply_damage(handle, raw_damage, hit_count, source, payload)
+
+
+func heal(handle: int, amount: float) -> bool:
+	if _world == null or not is_instance_valid(_world) or not _world.heal(handle, amount):
+		return false
+	_mirror_health(
+		_world.actor_for_handle(handle),
+		_world.get_health(handle),
+		_world.get_max_health(handle),
+	)
+	return true
+
+
+func configure_health(handle: int, maximum_health: float, fill_to_max: bool = false) -> bool:
+	if (
+		_world == null
+		or not is_instance_valid(_world)
+		or not _world.set_max_health(handle, maximum_health, fill_to_max)
+	):
+		return false
+	_mirror_health(
+		_world.actor_for_handle(handle),
+		_world.get_health(handle),
+		_world.get_max_health(handle),
+	)
+	return true
+
+
+func handle_for_actor(actor: Node) -> int:
+	if _world == null or not is_instance_valid(_world) or actor == null or not is_instance_valid(actor):
+		return EnemyWorldTypes.INVALID_HANDLE
+	return _world.handle_for_actor(actor)
 
 
 func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int) -> float:

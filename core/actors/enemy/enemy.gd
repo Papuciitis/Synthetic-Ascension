@@ -130,6 +130,7 @@ var _scene_base_scale: Vector2 = Vector2.ONE
 var _scene_base_speed: float = 0.0
 var _scene_base_max_hp: float = 0.0
 var _scene_base_knockback_decay: float = 0.0
+var _enemy_world_handle: int = 0
 
 # Modules
 var _drops: EnemyDrops = EnemyDrops.new()
@@ -298,7 +299,7 @@ func _run_simulation_step(delta: float) -> void:
 			if boss_returning:
 				var heal_pct: float = float(get_meta("boss_heal_pct_per_sec")) if has_meta("boss_heal_pct_per_sec") else 0.0
 				if heal_pct > 0.0 and max_hp > 0.0 and not dead:
-					hp = minf(max_hp, hp + max_hp * heal_pct * steer_delta)
+					heal(max_hp * heal_pct * steer_delta)
 				var home_vec: Vector2 = home - global_position
 				var home_dist: float = home_vec.length()
 				to_nav_target = (home_vec / home_dist) if home_dist > 0.001 else Vector2.ZERO
@@ -712,8 +713,7 @@ func make_elite() -> void:
 		_enemy_index.call("note_elite", self)
 	set_scheduler_tier(0)
 	max_slides = 8
-	max_hp *= spec.elite_hp_mult
-	hp = max_hp
+	configure_health(max_hp * spec.elite_hp_mult, true)
 
 	speed *= spec.elite_speed_mult
 	_base_speed = speed
@@ -767,10 +767,61 @@ func _on_hitbox_area_exited(a: Area2D) -> void:
 # Damage -> Lifecycle
 # -----------------------
 func take_damage(amount: float, source: Node = null) -> void:
-	_life.take_damage(amount, source)
+	if dead or amount <= 0.0:
+		return
+	EnemyCombat.apply_damage(_resolve_enemy_world_handle(), amount, 1, source)
 
 func apply_hit_ledger(ledger: HitLedger) -> void:
-	_life.apply_hit_ledger(ledger)
+	if dead or ledger == null:
+		return
+	EnemyCombat.apply_damage(
+		_resolve_enemy_world_handle(),
+		ledger.total_raw_damage,
+		maxi(1, ledger.hit_count),
+		ledger.source,
+		ledger,
+	)
+
+
+func heal(amount: float) -> bool:
+	if dead or amount <= 0.0:
+		return false
+	return EnemyCombat.heal(_resolve_enemy_world_handle(), amount)
+
+
+func configure_health(new_max_health: float, fill_to_max: bool = false) -> bool:
+	if dead:
+		return false
+	var handle := _resolve_enemy_world_handle()
+	if handle == 0:
+		max_hp = maxf(new_max_health, 0.0)
+		hp = max_hp if fill_to_max else minf(hp, max_hp)
+		return true
+	return EnemyCombat.configure_health(handle, new_max_health, fill_to_max)
+
+
+func _bind_enemy_world_handle(handle: int) -> void:
+	_enemy_world_handle = handle
+
+
+func _resolve_enemy_world_handle() -> int:
+	if _enemy_world_handle != 0 and EnemyWorld.is_valid_handle(_enemy_world_handle):
+		return _enemy_world_handle
+	_enemy_world_handle = EnemyWorld.handle_for_actor(self)
+	return _enemy_world_handle
+
+
+func _apply_enemy_world_health(current_health: float, maximum_health: float) -> void:
+	max_hp = maximum_health
+	hp = current_health
+
+
+func _apply_enemy_world_damage_feedback(applied_damage: float, source: Node, payload: Variant) -> void:
+	_life.apply_damage_feedback(applied_damage, source, payload)
+
+
+func _apply_enemy_world_death(context: RefCounted) -> void:
+	_life.resolve_death(context)
 
 
 func register_dot(dot: Node) -> void:

@@ -159,8 +159,7 @@ func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
 	en.set_meta("boss_kb_mul", kb_mul)
 	en.knockback_decay *= kb_decay_mult
 
-	en.max_hp *= eff_hp_mult
-	en.hp = en.max_hp
+	en.configure_health(en.max_hp * eff_hp_mult, true)
 	en.speed *= speed_mult
 	en.scale *= Vector2(scale_mult, scale_mult)
 

@@ -59,8 +59,12 @@ func register(enemy: Node) -> void:
 	var cell := _cell_for_pos((enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO)
 	_enemy_cell[id] = cell
 	_bucket_add(cell, enemy)
-	if enemy is Node2D and EnemyWorld.adopt_legacy_actor(enemy as Node2D) == 0:
-		_world_mirror_failures += 1
+	if enemy is Node2D:
+		var world_handle := EnemyWorld.adopt_legacy_actor(enemy as Node2D)
+		if world_handle == 0:
+			_world_mirror_failures += 1
+		elif enemy.has_method("_bind_enemy_world_handle"):
+			enemy.call("_bind_enemy_world_handle", world_handle)
 	# The event payload builds four Strings; only pay for it when the recorder is
 	# actually armed, and never for prune_invalid's silent re-registration.
 	if (
@@ -83,6 +87,8 @@ func unregister(enemy: Node) -> void:
 		return
 	if enemy is Node2D:
 		EnemyWorld.release_legacy_actor(enemy as Node2D, &"legacy_unregistered")
+		if enemy.has_method("_bind_enemy_world_handle"):
+			enemy.call("_bind_enemy_world_handle", 0)
 
 	# Population counts
 	var p: String = enemy.scene_file_path
