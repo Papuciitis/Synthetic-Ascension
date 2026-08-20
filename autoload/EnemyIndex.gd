@@ -33,6 +33,41 @@ var _accounting_by_id: Dictionary = {} # materialized instance id -> snapshot
 var _suppress_register_events: bool = false
 var _world_mirror_failures: int = 0
 
+const LIFECYCLE_REVERSAL_WINDOW_USEC := 2_000_000
+
+var _lifecycle_counters := {
+	"attached": 0,
+	"detached": 0,
+	"retired": 0,
+	"representation_reversals": 0,
+	"tier_reversals": 0,
+	"reversals": 0,
+	
+	"tier_changes": 0,
+
+	"full_to_mid": 0,
+	"mid_to_full": 0,
+	"mid_to_far": 0,
+	"far_to_mid": 0,
+	"full_to_far": 0,
+	"far_to_full": 0,
+
+	"attach_total_usec": 0,
+	"attach_max_usec": 0,
+
+	"detach_total_usec": 0,
+	"detach_max_usec": 0,
+
+	"retire_total_usec": 0,
+	"retire_max_usec": 0,
+}
+
+# handle -> {
+#     "kind": StringName,
+#     "t_usec": int,
+# }
+var _lifecycle_last_rep_transition: Dictionary = {}
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_physics_process(true)
@@ -49,6 +84,7 @@ func _exit_tree() -> void:
 	_accounting_by_id.clear()
 	_detached_records.clear()
 	_detached_elite_handles.clear()
+	_lifecycle_last_rep_transition.clear()
 
 func register(enemy: Node) -> void:
 	if enemy == null or not is_instance_valid(enemy):
@@ -140,6 +176,94 @@ func unregister(enemy: Node) -> void:
 	_enemies.pop_back()
 	_id_to_index.erase(id)
 
+func _lifecycle_audit_enabled() -> bool:
+	return (
+		PerformanceFlightRecorder != null
+		and bool(PerformanceFlightRecorder.get("enabled"))
+	)
+
+
+func _record_lifecycle_operation(
+	operation: StringName,
+	elapsed_usec: int,
+	handle: int = 0
+) -> void:
+	if not _lifecycle_audit_enabled():
+		return
+
+	match operation:
+		&"attach":
+			_lifecycle_counters["attached"] = (
+				int(_lifecycle_counters.get("attached", 0)) + 1
+			)
+			_lifecycle_counters["attach_total_usec"] = (
+				int(_lifecycle_counters.get("attach_total_usec", 0))
+				+ elapsed_usec
+			)
+			_lifecycle_counters["attach_max_usec"] = maxi(
+				int(_lifecycle_counters.get("attach_max_usec", 0)),
+				elapsed_usec
+			)
+
+		&"detach":
+			_lifecycle_counters["detached"] = (
+				int(_lifecycle_counters.get("detached", 0)) + 1
+			)
+			_lifecycle_counters["detach_total_usec"] = (
+				int(_lifecycle_counters.get("detach_total_usec", 0))
+				+ elapsed_usec
+			)
+			_lifecycle_counters["detach_max_usec"] = maxi(
+				int(_lifecycle_counters.get("detach_max_usec", 0)),
+				elapsed_usec
+			)
+
+		&"retire":
+			_lifecycle_counters["retired"] = (
+				int(_lifecycle_counters.get("retired", 0)) + 1
+			)
+			_lifecycle_counters["retire_total_usec"] = (
+				int(_lifecycle_counters.get("retire_total_usec", 0))
+				+ elapsed_usec
+			)
+			_lifecycle_counters["retire_max_usec"] = maxi(
+				int(_lifecycle_counters.get("retire_max_usec", 0)),
+				elapsed_usec
+			)
+
+	# Only attach/detach can form representation reversals.
+	if handle == 0 or (
+		operation != &"attach"
+		and operation != &"detach"
+	):
+		return
+
+	var now_usec := Time.get_ticks_usec()
+	var previous_variant: Variant = _lifecycle_last_rep_transition.get(handle, {})
+
+	if previous_variant is Dictionary:
+		var previous := previous_variant as Dictionary
+
+		if not previous.is_empty():
+			var previous_kind := StringName(previous.get("kind", &""))
+			var previous_usec := int(previous.get("t_usec", 0))
+
+			if (
+				previous_kind != operation
+				and previous_usec > 0
+				and now_usec - previous_usec <= LIFECYCLE_REVERSAL_WINDOW_USEC
+			):
+				_lifecycle_counters["representation_reversals"] = (
+					int(_lifecycle_counters.get(
+						"representation_reversals",
+						0
+					)) + 1
+				)
+
+	_lifecycle_last_rep_transition[handle] = {
+		"kind": operation,
+		"t_usec": now_usec,
+	}
 
 func detach_representation(enemy: Node2D, handle: int = 0) -> bool:
 	if enemy == null or not is_instance_valid(enemy):
@@ -154,6 +278,11 @@ func detach_representation(enemy: Node2D, handle: int = 0) -> bool:
 		return false
 	if EnemyWorld.actor_for_handle(resolved_handle) != enemy:
 		return false
+	var audit_started_usec := (
+		Time.get_ticks_usec()
+		if _lifecycle_audit_enabled()
+		else 0
+	)
 	EnemyWorld.sync_legacy_actor(enemy)
 	var snapshot_variant: Variant = _accounting_by_id.get(id)
 	var snapshot := (
@@ -172,6 +301,12 @@ func detach_representation(enemy: Node2D, handle: int = 0) -> bool:
 	EnemyWorld.unbind_actor(resolved_handle, enemy)
 	if enemy.has_method("_bind_enemy_world_handle"):
 		enemy.call("_bind_enemy_world_handle", 0)
+	if audit_started_usec > 0:
+		_record_lifecycle_operation(
+			&"detach",
+			Time.get_ticks_usec() - audit_started_usec,
+			resolved_handle
+		)
 	return true
 
 
@@ -187,6 +322,11 @@ func attach_representation(enemy: Node2D, handle: int) -> bool:
 	var id := int(enemy.get_instance_id())
 	if _id_to_index.has(id) or not EnemyWorld.bind_actor(handle, enemy):
 		return false
+	var audit_started_usec := (
+		Time.get_ticks_usec()
+		if _lifecycle_audit_enabled()
+		else 0
+	)
 	var snapshot := (_detached_records[handle] as Dictionary).duplicate(true)
 	_id_to_index[id] = _enemies.size()
 	_enemies.append(enemy)
@@ -203,6 +343,12 @@ func attach_representation(enemy: Node2D, handle: int) -> bool:
 	_detached_elite_handles.erase(handle)
 	if enemy.has_method("_bind_enemy_world_handle"):
 		enemy.call("_bind_enemy_world_handle", handle)
+	if audit_started_usec > 0:
+		_record_lifecycle_operation(
+			&"attach",
+			Time.get_ticks_usec() - audit_started_usec,
+			handle
+		)
 	return true
 
 
@@ -210,15 +356,37 @@ func release_detached(handle: int, reason: StringName = &"detached_released") ->
 	var snapshot_variant: Variant = _detached_records.get(handle)
 	if not (snapshot_variant is Dictionary):
 		return false
+
+	var audit_started_usec := (
+		Time.get_ticks_usec()
+		if _lifecycle_audit_enabled()
+		else 0
+	)
+
 	var snapshot := snapshot_variant as Dictionary
+
 	_detached_records.erase(handle)
 	_detached_elite_handles.erase(handle)
+
 	if bool(snapshot.get("counted", false)):
 		_decrement_snapshot(snapshot)
-	var removed := EnemyWorld.remove_enemy(handle, reason)
-	_retired_counts[reason] = int(_retired_counts.get(reason, 0)) + 1
-	return removed
 
+	var removed := EnemyWorld.remove_enemy(handle, reason)
+
+	_retired_counts[reason] = (
+		int(_retired_counts.get(reason, 0)) + 1
+	)
+
+	if removed and audit_started_usec > 0:
+		_record_lifecycle_operation(
+			&"retire",
+			Time.get_ticks_usec() - audit_started_usec
+		)
+
+	# This logical enemy no longer exists, so its transition history is useless.
+	_lifecycle_last_rep_transition.erase(handle)
+
+	return removed
 
 func is_detached(handle: int) -> bool:
 	return _detached_records.has(handle)
@@ -253,6 +421,21 @@ func retire_enemy(enemy: Node, reason: StringName = &"unknown") -> bool:
 	var id := enemy.get_instance_id()
 	if not _id_to_index.has(id) or enemy.is_queued_for_deletion():
 		return false
+	var audit_started_usec := (
+		Time.get_ticks_usec()
+		if _lifecycle_audit_enabled()
+		else 0
+	)
+
+	var audit_handle := 0
+
+	if audit_started_usec > 0 and enemy is Node2D:
+		audit_handle = int(
+			_world_handles.get(
+				id,
+				EnemyWorld.handle_for_actor(enemy as Node2D)
+			)
+		)
 	unregister(enemy)
 	_retired_counts[reason] = int(_retired_counts.get(reason, 0)) + 1
 	if PerformanceFlightRecorder != null:
@@ -263,6 +446,14 @@ func retire_enemy(enemy: Node, reason: StringName = &"unknown") -> bool:
 		enemy.call("despawn", reason)
 	else:
 		enemy.queue_free()
+	if audit_started_usec > 0:
+		_record_lifecycle_operation(
+			&"retire",
+			Time.get_ticks_usec() - audit_started_usec
+		)
+
+	if audit_handle != 0:
+		_lifecycle_last_rep_transition.erase(audit_handle)
 	return true
 
 
@@ -318,6 +509,7 @@ func get_debug_counters() -> Dictionary:
 		"tiers": simulation_tier_counts(),
 		"buckets": _buckets.size(),
 		"world_mirror_failures": _world_mirror_failures,
+		"lifecycle": _lifecycle_counters.duplicate(true),
 	}
 
 func prune_invalid() -> int:

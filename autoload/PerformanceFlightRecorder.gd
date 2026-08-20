@@ -218,6 +218,27 @@ func _collect_slow_snapshot() -> Dictionary:
 		"enemy_tiers": {},
 		"enemy_scheduler": {},
 		"enemy_pool": {},
+		"enemy_lifecycle": {
+			"attached": 0,
+			"detached": 0,
+			"retired": 0,
+			"reversals": 0,
+
+			"tier_changes": 0,
+			"full_to_mid": 0,
+			"mid_to_full": 0,
+			"mid_to_far": 0,
+			"far_to_mid": 0,
+			"full_to_far": 0,
+			"far_to_full": 0,
+
+			"attach_total_usec": 0,
+			"attach_max_usec": 0,
+			"detach_total_usec": 0,
+			"detach_max_usec": 0,
+			"retire_total_usec": 0,
+			"retire_max_usec": 0,
+		},
 		"enemy_world_logical": 0,
 		"enemy_world_materialized": 0,
 		"enemy_world_data_only": 0,
@@ -243,6 +264,13 @@ func _collect_slow_snapshot() -> Dictionary:
 		output["ambient_enemies"] = int(counters.get("ambient", 0))
 		output["special_enemies"] = int(counters.get("special", 0))
 		output["enemy_tiers"] = counters.get("tiers", {})
+		if counters.has("lifecycle"):
+			var lifecycle := output["enemy_lifecycle"] as Dictionary
+
+			lifecycle.merge(
+				(counters["lifecycle"] as Dictionary),
+				true
+			)
 	var enemy_world := get_node_or_null("/root/EnemyWorld")
 	if enemy_world != null and enemy_world.has_method("get_debug_counters"):
 		var world_data := enemy_world.call("get_debug_counters") as Dictionary
@@ -253,8 +281,26 @@ func _collect_slow_snapshot() -> Dictionary:
 		output["enemy_world_spatial_cells"] = int(world_data.get("spatial_cells", 0))
 		output["enemy_world_max_cell_occupancy"] = int(world_data.get("max_cell_occupancy", 0))
 	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+
 	if scheduler != null and scheduler.has_method("get_debug_counters"):
-		output["enemy_scheduler"] = (scheduler.call("get_debug_counters") as Dictionary).duplicate(true)
+		var scheduler_data := (
+			scheduler.call("get_debug_counters") as Dictionary
+		).duplicate(true)
+
+		output["enemy_scheduler"] = scheduler_data
+
+		if scheduler_data.has("lifecycle"):
+			var lifecycle := output["enemy_lifecycle"] as Dictionary
+
+			lifecycle.merge(
+				(scheduler_data["lifecycle"] as Dictionary),
+				true
+			)
+
+			lifecycle["reversals"] = (
+				int(lifecycle.get("representation_reversals", 0))
+				+ int(lifecycle.get("tier_reversals", 0))
+			)
 	var pool := get_node_or_null("/root/PoolManager")
 	if pool != null and pool.has_method("get_debug_counters"):
 		output["enemy_pool"] = (pool.call("get_debug_counters") as Dictionary).duplicate(true)

@@ -3,6 +3,7 @@ extends Node
 const TIER_FULL := 0
 const TIER_MID := 1
 const TIER_FAR := 2
+const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 
 @export_range(0, 512, 1) var full_budget: int = 32
 @export_range(0, 1024, 1) var mid_budget: int = 48
@@ -31,7 +32,22 @@ var _debug_counters := {
 	"assignment_usec": 0,
 	"stale_entries": 0,
 }
+var _tier_lifecycle_counters := {
+	"tier_changes": 0,
+	"tier_reversals": 0,
 
+	"full_to_mid": 0,
+	"mid_to_full": 0,
+
+	"mid_to_far": 0,
+	"far_to_mid": 0,
+
+	"full_to_far": 0,
+	"far_to_full": 0,
+}
+
+# enemy instance id -> last actual tier transition
+var _last_tier_transition: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -77,7 +93,12 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 			"id": enemy_id,
 			"distance_squared": distance_squared,
 			"priority": _priority_for(enemy, player_position, distance_squared),
-			"previous_tier": int(_previous_tiers.get(enemy_id, TIER_FAR)),
+
+			"had_previous_tier": _previous_tiers.has(enemy_id),
+			"previous_tier": int(
+				_previous_tiers.get(enemy_id, TIER_FAR)
+			),
+
 			"max_tier": _max_tier_for(enemy),
 		}
 		if _is_protected(enemy, sqrt(distance_squared)):
@@ -89,7 +110,16 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 
 	var assignment: Dictionary = {}
 	for candidate in protected_candidates:
-		assignment[int(candidate["id"])] = TIER_FULL
+		var enemy_id := int(candidate["id"])
+
+		if bool(candidate.get("had_previous_tier", false)):
+			_record_tier_transition(
+				enemy_id,
+				int(candidate["previous_tier"]),
+				TIER_FULL
+			)
+
+		assignment[enemy_id] = TIER_FULL
 
 	var full_count := mini(maxi(0, full_budget), ordinary_candidates.size())
 	var mid_count := mini(
@@ -114,7 +144,23 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 			mid_assigned += 1
 		elif tier == TIER_FAR:
 			far_assigned += 1
-		assignment[int(ordinary_candidates[index]["id"])] = tier
+		var candidate := ordinary_candidates[index] as Dictionary
+		var enemy_id := int(candidate["id"])
+
+		if bool(candidate.get("had_previous_tier", false)):
+			_record_tier_transition(
+				enemy_id,
+				int(candidate["previous_tier"]),
+				tier
+			)
+
+		assignment[enemy_id] = tier
+
+	for tracked_id_variant in _last_tier_transition.keys():
+		var tracked_id := int(tracked_id_variant)
+
+		if not live_ids.has(tracked_id):
+			_last_tier_transition.erase(tracked_id)
 
 	_previous_tiers.clear()
 	for enemy_id in assignment:
@@ -203,8 +249,11 @@ func _run_next_group(
 
 
 func get_debug_counters() -> Dictionary:
-	return _debug_counters.duplicate(true)
+	var output := _debug_counters.duplicate(true)
 
+	output["lifecycle"] = _tier_lifecycle_counters.duplicate(true)
+
+	return output
 
 func is_under_physics_pressure() -> bool:
 	if _physics_pressure_override != null:
@@ -271,3 +320,80 @@ func _candidate_before(a: Dictionary, b: Dictionary) -> bool:
 	if previous_a != previous_b:
 		return previous_a < previous_b
 	return int(a["id"]) < int(b["id"])
+func _record_tier_transition(
+	enemy_id: int,
+	from_tier: int,
+	to_tier: int
+) -> void:
+	if from_tier == to_tier:
+		return
+
+	if (
+		PerformanceFlightRecorder == null
+		or not bool(PerformanceFlightRecorder.get("enabled"))
+	):
+		return
+
+	_tier_lifecycle_counters["tier_changes"] = (
+		int(_tier_lifecycle_counters.get("tier_changes", 0)) + 1
+	)
+
+	var transition_key := ""
+
+	match [from_tier, to_tier]:
+		[TIER_FULL, TIER_MID]:
+			transition_key = "full_to_mid"
+
+		[TIER_MID, TIER_FULL]:
+			transition_key = "mid_to_full"
+
+		[TIER_MID, TIER_FAR]:
+			transition_key = "mid_to_far"
+
+		[TIER_FAR, TIER_MID]:
+			transition_key = "far_to_mid"
+
+		[TIER_FULL, TIER_FAR]:
+			transition_key = "full_to_far"
+
+		[TIER_FAR, TIER_FULL]:
+			transition_key = "far_to_full"
+
+	if transition_key != "":
+		_tier_lifecycle_counters[transition_key] = (
+			int(_tier_lifecycle_counters.get(transition_key, 0)) + 1
+		)
+
+	var now_usec := Time.get_ticks_usec()
+	var previous_variant: Variant = _last_tier_transition.get(enemy_id, {})
+
+	if previous_variant is Dictionary:
+		var previous := previous_variant as Dictionary
+
+		if not previous.is_empty():
+			var previous_from := int(previous.get("from", -1))
+			var previous_to := int(previous.get("to", -1))
+			var previous_usec := int(previous.get("t_usec", 0))
+
+			var exact_reverse := (
+				previous_from == to_tier
+				and previous_to == from_tier
+			)
+
+			if (
+				exact_reverse
+				and previous_usec > 0
+				and now_usec - previous_usec <= TIER_REVERSAL_WINDOW_USEC
+			):
+				_tier_lifecycle_counters["tier_reversals"] = (
+					int(_tier_lifecycle_counters.get(
+						"tier_reversals",
+						0
+					)) + 1
+				)
+
+	_last_tier_transition[enemy_id] = {
+		"from": from_tier,
+		"to": to_tier,
+		"t_usec": now_usec,
+	}
