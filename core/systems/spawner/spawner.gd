@@ -46,9 +46,19 @@ class_name EnemySpawner
 
 @export_group("Culling (prevent spawner dead)")
 @export var cull_enabled: bool = true
-@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 0.72
+
+# Don't start deleting ambient enemies merely because we're moderately full.
+# 0.90 means a 220-enemy cap starts pressure culling at ~198 enemies.
+@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 0.90
+
 @export var cull_interval: float = 0.75
-@export var cull_max_per_tick: int = 40
+
+# Never retire giant batches in one frame.
+@export_range(1, 32, 1) var cull_max_per_tick: int = 8
+
+# After a cull, don't immediately refill the slots we just freed.
+@export_range(0.0, 3.0, 0.05) var cull_refill_grace: float = 0.90
+
 @export_range(1, 8, 1) var cull_keep_chunks: int = 2
 @export var cull_distance_px_fallback: float = 3600.0
 
@@ -78,6 +88,7 @@ var _pending_spawn_by_scene: Dictionary = {}
 var _wardstones: Array = []
 var _wardstone_refresh_t: float = 0.0
 var _cull_cd: float = 0.0
+var _cull_refill_left: float = 0.0
 var _maintenance_cd: float = 0.0
 var _stale_samples: Dictionary = {} # enemy id -> {pos: Vector2, still: float}
 var _spawn_geometry_refresh_t: float = 0.0
@@ -108,6 +119,7 @@ func _process(delta: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
+	_cull_refill_left = maxf(_cull_refill_left - delta, 0.0)
 	_maintenance_cd = maxf(_maintenance_cd - delta, 0.0)
 	_spawn_geometry_refresh_t = maxf(_spawn_geometry_refresh_t - delta, 0.0)
 	if _ei == null or not is_instance_valid(_ei):
@@ -161,13 +173,29 @@ func _on_tick() -> void:
 		cap_total = maxi(8, int(floor(float(cap_total) * boss_max_alive_mul)))
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	var threshold := (
+		ceili(float(cap_total) * cull_threshold_ratio)
+		if cap_total > 0
+		else 2147483647
+	)
 	if cap_total > 0 and alive >= threshold:
-		_maybe_cull(cap_total, alive)
-		alive = _alive_total()
-		if alive + _pending_spawn_total >= cap_total:
+		var culled := _maybe_cull(
+			cap_total,
+			alive
+		)
+		# Critical:
+		# Don't delete enemies and create replacements during the same tick.
+		if culled > 0:
 			return
-	elif cap_total > 0 and alive + _pending_spawn_total >= cap_total:
+		alive = _alive_total()
+	# A recent distance/stale cleanup opened capacity deliberately.
+	# Give the world some time before the director consumes it again.
+	if _cull_refill_left > 0.0:
+		return
+	if (
+		cap_total > 0
+		and alive + _pending_spawn_total >= cap_total
+	):
 		return
 
 	# batch scaling
@@ -554,12 +582,23 @@ func spawn_burst(extra: int) -> void:
 	var cap_total: int = _current_alive_cap()
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	var threshold := (
+		ceili(float(cap_total) * cull_threshold_ratio)
+		if cap_total > 0
+		else 2147483647
+	)
 	if cap_total > 0 and alive >= threshold:
-		_maybe_cull(cap_total, alive)
-		alive = _alive_total()
-		if alive >= cap_total:
+		var culled := _maybe_cull(
+			cap_total,
+			alive
+		)
+		if culled > 0:
 			return
+		alive = _alive_total()
+	if _cull_refill_left > 0.0:
+		return
+	if cap_total > 0 and alive >= cap_total:
+		return
 
 	var minutes: float = _elapsed / 60.0
 	for _i in range(extra):
@@ -777,23 +816,47 @@ func _run_enemy_maintenance() -> void:
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("prune_invalid"):
 		_ei.call("prune_invalid")
 
-	# Proactive pass: distant ambient enemies no longer wait for the population cap
-	# before being retired. The cap-triggered pass below can remove a larger batch.
-	_cull_far_enemies(stale_max_per_tick)
-	_cull_stale_enemies(stale_max_per_tick)
+	# Distance retirement is handled exclusively by _maybe_cull().
+	# Having another distance-cull pass here allowed maintenance + cap culling
+	# to stack in the same frame.
+	var stale_culled := _cull_stale_enemies(stale_max_per_tick)
 
-func _maybe_cull(cap_total: int, alive: int) -> void:
+	if stale_culled > 0:
+		_cull_refill_left = maxf(
+			_cull_refill_left,
+			cull_refill_grace
+		)
+
+func _maybe_cull(cap_total: int, alive: int) -> int:
 	if not cull_enabled:
-		return
+		return 0
+	if cap_total <= 0:
+		return 0
 	if _cull_cd > 0.0:
-		return
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio)
+		return 0
+	var threshold := ceili(
+		float(cap_total) * cull_threshold_ratio
+	)
 	if alive < threshold:
-		return
+		return 0
 	_cull_cd = maxf(0.10, cull_interval)
-	var culled: int = _cull_far_enemies(cull_max_per_tick)
-	if debug_spawns and culled > 0:
-		print("[SPAWN] Culled ", culled, " distant ambient enemies to free cap.")
+	var culled := _cull_far_enemies(
+		maxi(1, cull_max_per_tick)
+	)
+	if culled > 0:
+		_cull_refill_left = maxf(
+			_cull_refill_left,
+			cull_refill_grace
+		)
+		if debug_spawns:
+			print(
+				"[SPAWN] Culled ",
+				culled,
+				" distant ambient enemies; refill paused for ",
+				cull_refill_grace,
+				"s."
+			)
+	return culled
 
 func _enemy_list_for_cleanup() -> Array:
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("get_all"):
