@@ -25,6 +25,7 @@ class Driver:
 	var _spawner: Node = null
 	var _filter: Node = null
 	var _topup_left := 0.0
+	var _report_lines: PackedStringArray = []
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
@@ -117,10 +118,23 @@ class Driver:
 				_begin_stage(_stage_index + 1)
 			else:
 				print("HordeBenchmark: completed")
+				_write_report()
 				Global.debug_player_god_mode = false
 				_filter.set("cap_mode", 0)
 				Global.goto_main_menu()
 				get_tree().quit(0)
+
+	func _write_report() -> void:
+		# The flight recorder under-samples sustained slowness (it re-arms only
+		# after recovery), so the benchmark persists its own stage lines.
+		var stamp := Time.get_datetime_string_from_system(false, true).replace(":", "-").replace(" ", "_")
+		var directory := "res://performance_results/benchmarks"
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
+		var file := FileAccess.open(directory.path_join("horde_%s.txt" % stamp), FileAccess.WRITE)
+		if file != null:
+			for line in _report_lines:
+				file.store_line(line)
+			file.close()
 
 	func _report_stage() -> void:
 		var alive := int(_spawner.call("_alive_total"))
@@ -136,7 +150,7 @@ class Driver:
 			if world != null and world.has_method("get_debug_counters")
 			else {}
 		)
-		print(
+		var line := (
 			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s"
 			% [
 				STAGES[_stage_index],
@@ -156,6 +170,8 @@ class Driver:
 				world_counters.get("data_only", "?"),
 			]
 		)
+		print(line)
+		_report_lines.append(line)
 
 
 func _ready() -> void:

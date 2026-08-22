@@ -145,6 +145,10 @@ func _run() -> void:
 		renderer.debug_actor_instance_color(actor).is_equal_approx(Color(0.2, 0.9, 0.3, 1.0)),
 		"actor instance carries the sprite modulate"
 	)
+	_check(
+		absf(actor_transform.x.length() - 8.0) < 0.01,
+		"actor instance scales to the texture pixel size (got %.2f)" % actor_transform.x.length()
+	)
 	actor.position = Vector2(400.0, 100.0)
 	renderer.publish(1.0, false)
 	actor_transform = renderer.debug_actor_instance_transform(actor)

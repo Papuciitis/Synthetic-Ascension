@@ -291,13 +291,14 @@ func _publish_batch(
 	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
 	transforms.resize(count)
 	colors.resize(count)
-	var texture_size := batch.get("texture_size", Vector2.ONE) as Vector2
 	for index in range(count):
 		var handle := handles[index]
 		var profile := _profile_for(handle)
 		var proxy_position := _world.get_previous_position(handle).lerp(_world.get_position(handle), alpha)
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
-		var proxy_scale := Vector2(size.x / texture_size.x, size.y / texture_size.y)
+		# The unit quad renders 1px; instance scale is the target pixel size
+		# directly (dividing by texture size shrank proxies to sub-pixel dots).
+		var proxy_scale := size
 		var color := _profile_color(handle, profile)
 		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color)
 		transforms[index] = Transform2D(
@@ -355,7 +356,9 @@ func _publish_actor_batch(
 			if actor.has_method("get_global_transform_interpolated")
 			else actor.global_transform
 		)
-		var instance_transform := actor_transform * sprite.transform
+		# The unit quad renders 1px; bake the texture size in so instances
+		# render at the sprite's native pixel size under node/sprite scales.
+		var instance_transform := (actor_transform * sprite.transform).scaled_local(sprite.texture.get_size())
 		var color := sprite.modulate * actor.modulate
 		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color)
 		transforms[index] = instance_transform
