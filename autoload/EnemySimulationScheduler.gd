@@ -42,6 +42,11 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 @export_range(0, 1024, 1) var pressure_mid_budget: int = 24
 @export_range(0.05, 5.0, 0.05) var pressure_engage_sec: float = 0.5
 @export_range(0.05, 10.0, 0.05) var pressure_release_sec: float = 2.0
+# Under sustained pressure the smart-archetype physics release distance
+# shrinks by this factor: mid-clamped smart actors otherwise scale physics
+# bodies linearly with the horde (measured 134 physics-enabled bodies at
+# 250 enemies on 2026-08-22 because nothing inside 2600px ever releases).
+@export_range(0.4, 1.0, 0.05) var pressure_release_distance_scale: float = 0.75
 
 var _previous_tiers: Dictionary = {}
 var _enemy_index: Node = null
@@ -338,6 +343,10 @@ func set_physics_pressure_override(value: Variant) -> void:
 
 func is_physics_pressure_active() -> bool:
 	return _pressure_active
+
+
+func physics_release_distance_scale() -> float:
+	return pressure_release_distance_scale if _pressure_active else 1.0
 
 
 func _update_pressure_state(delta: float) -> void:

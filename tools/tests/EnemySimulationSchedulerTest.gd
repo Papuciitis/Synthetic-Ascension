@@ -347,6 +347,16 @@ func _test_smart_enemy_releases_far_physics() -> void:
 	_check(int(ranged.call("max_scheduler_tier", 2200.0)) == 1, "released smart archetype re-acquires collision when close again")
 	ranged.call("set_scheduler_tier", 1)
 	_check(int(ranged.call("max_scheduler_tier", 2400.0)) == 1, "mid smart archetype does not release before the release bound")
+	var live_scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+	_check(live_scheduler != null, "live scheduler autoload exists for pressure-scale checks")
+	if live_scheduler != null:
+		live_scheduler.call("set_physics_pressure_override", true)
+		live_scheduler.call("_update_pressure_state", 0.6)
+		_check(int(ranged.call("max_scheduler_tier", 2000.0)) == 2, "sustained pressure pulls the release boundary inward")
+		live_scheduler.call("set_physics_pressure_override", false)
+		live_scheduler.call("_update_pressure_state", 2.1)
+		_check(int(ranged.call("max_scheduler_tier", 2000.0)) == 1, "release boundary restores once pressure clears")
+		live_scheduler.call("set_physics_pressure_override", null)
 	ranged.is_elite = true
 	_check(int(ranged.call("max_scheduler_tier", 3000.0)) == 1, "distant elite keeps world collision")
 	ranged.queue_free()

@@ -294,3 +294,21 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   permanently engaged.
 - tools/perf/analyze_captures.py summarizes capture folders per day or per
   session: frame percentiles, enemy buckets, and the simulation LOD columns.
+
+## Horde session findings (2026-08-22 evening)
+
+- At 130-250 enemies the physics lever held (physics p95 ~29ms) but
+  physics-enabled bodies scaled linearly (measured avg 134): smart archetypes
+  clamp to mid inside their release distance and a converging horde never
+  crosses it. Under sustained pressure the release boundary now shrinks by
+  pressure_release_distance_scale (default 0.75, i.e. ~1950px).
+- Force-spawn presses entered up to 100 bodies into the broadphase in one
+  physics step (measured 240-300ms physics spikes). Forced spawns now run 12
+  per frame through a drained queue; a fully capped queue clears instead of
+  retrying forever.
+- Draw calls spiked to ~2.3-2.7k during hordes (vs ~660 calm) - the next
+  rendering lever is batching materialized enemy sprites.
+- Note: the run-start augment selection pauses the tree, but autoloads and
+  the ALWAYS-mode scheduler keep simulating mid/far enemies through the
+  pause while full-tier enemies freeze - pre-existing, needs a deliberate
+  pause-semantics decision.

@@ -101,6 +101,10 @@ var _indoor_volumes: Array = []
 var _cull_counts: Dictionary = {}
 
 var _pool_warm_queue: Array[PackedScene] = []
+# Forced spawns drain in per-frame batches: entering ~100 bodies into the
+# broadphase in one physics step measured as a 240-300ms physics spike.
+const FORCE_SPAWN_PER_FRAME := 12
+var _force_spawn_queue: int = 0
 
 
 func _ready() -> void:
@@ -124,6 +128,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_elapsed += delta
 	_drain_pool_warm_queue()
+	_drain_force_spawn_queue()
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
@@ -255,6 +260,21 @@ func debug_force_spawn(count: int) -> Dictionary:
 	# populations stay comparable to director-driven ones. The director keeps
 	# the population pinned near the cap during a run, so the result carries
 	# alive/cap for the overlay to explain a zero instead of just showing it.
+	var immediate := _force_spawn_batch(mini(count, FORCE_SPAWN_PER_FRAME))
+	var queued := 0
+	if immediate > 0 and count > FORCE_SPAWN_PER_FRAME:
+		queued = count - FORCE_SPAWN_PER_FRAME
+		_force_spawn_queue += queued
+	return {
+		"spawned": immediate,
+		"queued": queued,
+		"alive": _alive_total(),
+		"pending": _pending_spawn_total,
+		"cap": _current_alive_cap(),
+	}
+
+
+func _force_spawn_batch(count: int) -> int:
 	var minutes: float = _elapsed / 60.0
 	var spawned_total := 0
 	# Weighted rolls can land on an entry whose type cap is full and return 0;
@@ -270,12 +290,18 @@ func debug_force_spawn(count: int) -> Dictionary:
 			minutes,
 			mini(remaining, count - spawned_total)
 		)
-	return {
-		"spawned": spawned_total,
-		"alive": _alive_total(),
-		"pending": _pending_spawn_total,
-		"cap": _current_alive_cap(),
-	}
+	return spawned_total
+
+
+func _drain_force_spawn_queue() -> void:
+	if _force_spawn_queue <= 0:
+		return
+	var batch := mini(_force_spawn_queue, FORCE_SPAWN_PER_FRAME)
+	if _force_spawn_batch(batch) <= 0:
+		# Cap or filters block everything; retrying forever is pointless.
+		_force_spawn_queue = 0
+		return
+	_force_spawn_queue -= batch
 
 
 func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:

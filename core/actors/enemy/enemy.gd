@@ -120,6 +120,7 @@ var _stability_mul: float = 1.0
 # Shared references / LOD state
 var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
+var _sim_scheduler: Node = null
 var _hitbox: Area2D = null
 var _body_shape: CollisionShape2D = null
 var _lod_tier: int = 0 # 0 near/full, 1 mid, 2 far
@@ -437,6 +438,15 @@ func _can_release_far_physics(ai: int, player_distance: float) -> bool:
 		lod_smart_reacquire_distance if _lod_tier == 2
 		else lod_smart_release_distance
 	)
+	# Sustained physics pressure pulls the release boundary inward so a horde
+	# sheds physics bodies instead of stacking mid-clamped ones.
+	if _sim_scheduler == null or not is_instance_valid(_sim_scheduler):
+		_sim_scheduler = get_node_or_null("/root/EnemySimulationScheduler")
+	if (
+		_sim_scheduler != null
+		and _sim_scheduler.has_method("physics_release_distance_scale")
+	):
+		release *= float(_sim_scheduler.call("physics_release_distance_scale"))
 	return player_distance >= maxf(release, 0.0)
 
 
