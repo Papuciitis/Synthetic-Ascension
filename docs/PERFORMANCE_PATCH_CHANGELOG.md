@@ -313,3 +313,15 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   augment pick and tutorial modals while full-tier enemies stood frozen.
   The scheduler is pausable, and the dev overlay footer gained a general
   "Pause game" toggle for freezing the run to inspect it.
+
+## Proxy renderer scaling (2026-08-22, 669-enemy session)
+
+- Session 5 reached 669 logical enemies (~400 data-only proxies). Physics
+  held (p95 ~22ms at 229 avg materialized; far tier 92-119 actors thanks to
+  the pressure-scaled release), leaving script process time (~29ms avg) as
+  the dominant cost at 200+.
+- The proxy renderer no longer reallocates its instance buffer, transform
+  and color mirrors, and handle arrays for every batch every frame, and only
+  zero-fills the tail occupied by the previous publish.
+- Above 150 drawn proxies, visual uploads run every other frame; distant
+  swarm sprites at 30Hz are visually indistinguishable.

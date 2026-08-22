@@ -54,9 +54,22 @@ func _physics_process(delta: float) -> void:
 	simulation.advance(delta, target)
 
 
+# Above this many drawn proxies, visual uploads run every other frame:
+# distant swarm sprites at 30Hz are visually indistinguishable, and the
+# per-frame buffer build was the measured process-time cost at 400+.
+const HALF_RATE_PROXY_THRESHOLD := 150
+var _publish_skip := false
+
+
 func _process(_delta: float) -> void:
 	if renderer == null or simulation == null:
 		return
+	if renderer.visible_count() > HALF_RATE_PROXY_THRESHOLD:
+		_publish_skip = not _publish_skip
+		if _publish_skip:
+			return
+	else:
+		_publish_skip = false
 	renderer.publish(simulation.interpolation_phase())
 
 

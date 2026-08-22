@@ -205,10 +205,14 @@ func _publish_batch(
 ) -> void:
 	var count := handles.size()
 	var capacity := _ensure_capacity(batch, count)
-	var buffer := PackedFloat32Array()
-	buffer.resize(capacity * FLOATS_PER_INSTANCE)
-	var transforms: Array[Transform2D] = []
-	var colors: Array[Color] = []
+	# The buffer and mirror arrays persist on the batch: at hundreds of
+	# proxies, reallocating them every frame for every batch was measurable
+	# process-time churn (session 5: ~29ms avg process at 200+ enemies).
+	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	if buffer.size() != capacity * FLOATS_PER_INSTANCE:
+		buffer.resize(capacity * FLOATS_PER_INSTANCE)
+	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
+	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
 	transforms.resize(count)
 	colors.resize(count)
 	var texture_size := batch.get("texture_size", Vector2.ONE) as Vector2
@@ -227,7 +231,10 @@ func _publish_batch(
 		)
 		colors[index] = color
 		_handle_locations[handle] = {"key": visual_key, "index": index}
-	for index in range(count, capacity):
+	# Only the tail that was occupied last publish needs clearing; slots past
+	# it were zeroed on allocation or by an earlier publish.
+	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
+	for index in range(count, stale_tail):
 		_write_instance(
 			buffer,
 			index * FLOATS_PER_INSTANCE,
@@ -239,9 +246,13 @@ func _publish_batch(
 	if multimesh != null and capacity > 0:
 		multimesh.buffer = buffer
 		multimesh.visible_instance_count = count
-	batch["handles"] = handles.duplicate()
+	# The group arrays are rebuilt from scratch each publish, so storing them
+	# without duplicating is safe.
+	batch["handles"] = handles
+	batch["buffer"] = buffer
 	batch["transforms"] = transforms
 	batch["colors"] = colors
+	batch["last_count"] = count
 	_visible_count += count
 
 
@@ -267,6 +278,8 @@ func _hide_batch(batch: Dictionary) -> void:
 	batch["handles"] = [] as Array[int]
 	batch["transforms"] = [] as Array[Transform2D]
 	batch["colors"] = [] as Array[Color]
+	# Hidden batches restart clean: clear the whole occupied tail next time.
+	batch["last_count"] = int(batch.get("capacity", 0))
 
 
 func _hide_all_batches() -> void:
