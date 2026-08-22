@@ -99,6 +99,9 @@ const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_player_god_mode: bool = false
+# Materialized enemies render through shared MultiMesh batches instead of
+# per-node sprites. Applies to enemies spawned after the flag changes.
+var debug_enemy_visual_batching: bool = true
 var debug_set_collision_tools: bool = false
 var debug_performance_lab: bool = false
 var debug_combat_transactions: bool = false

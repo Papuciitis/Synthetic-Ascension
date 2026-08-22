@@ -22,6 +22,7 @@ const MIN_CONSOLE_SIZE := Vector2(720.0, 480.0)
 @onready var _recorder_status: Label = $Margin/Root/Tabs/Performance/Content/RecorderStatus
 @onready var _projectile_stress: CheckBox = $Margin/Root/Tabs/Performance/Content/ProjectileStress
 @onready var _god_mode: CheckBox = $Margin/Root/Tabs/Performance/Content/GodMode
+@onready var _batched_sprites: CheckBox = $Margin/Root/Tabs/Performance/Content/BatchedSprites
 @onready var _master_spawns: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Master
 @onready var _protected_filter: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Protected
 @onready var _force_spawn_result: Label = $Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Result
@@ -72,6 +73,7 @@ func _ready() -> void:
 	$Margin/Root/Tabs/Performance/Content/RecorderActions/Clear.pressed.connect(_clear_recorder)
 	_projectile_stress.toggled.connect(_set_projectile_stress)
 	_god_mode.toggled.connect(_set_god_mode)
+	_batched_sprites.toggled.connect(_set_batched_sprites)
 	_pause_game.toggled.connect(_set_game_paused)
 	_header.gui_input.connect(_on_header_input)
 	_connect_test_tools()
@@ -357,6 +359,7 @@ func _render_snapshot(snapshot: Dictionary) -> void:
 		_updating_controls = true
 		_projectile_stress.button_pressed = Global != null and Global.debug_projectile_stress_test
 		_god_mode.button_pressed = Global != null and Global.debug_player_god_mode
+		_batched_sprites.button_pressed = Global != null and Global.debug_enemy_visual_batching
 		_pause_game.button_pressed = get_tree().paused
 		_updating_controls = false
 
@@ -583,6 +586,11 @@ func _set_projectile_stress(value: bool) -> void:
 func _set_god_mode(value: bool) -> void:
 	if not _updating_controls and Global != null:
 		Global.debug_player_god_mode = value
+
+
+func _set_batched_sprites(value: bool) -> void:
+	if not _updating_controls and Global != null:
+		Global.debug_enemy_visual_batching = value
 
 
 func _set_game_paused(value: bool) -> void:

@@ -64,13 +64,15 @@ var _publish_skip := false
 func _process(_delta: float) -> void:
 	if renderer == null or simulation == null:
 		return
+	# Batched actor sprites refresh every frame (near-player fidelity); only
+	# the offscreen proxy buffers drop to half rate under load.
+	var include_proxies := true
 	if renderer.visible_count() > HALF_RATE_PROXY_THRESHOLD:
 		_publish_skip = not _publish_skip
-		if _publish_skip:
-			return
+		include_proxies = not _publish_skip
 	else:
 		_publish_skip = false
-	renderer.publish(simulation.interpolation_phase())
+	renderer.publish(simulation.interpolation_phase(), include_proxies)
 
 
 func _exit_tree() -> void:

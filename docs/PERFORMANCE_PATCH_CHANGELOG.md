@@ -325,3 +325,18 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   zero-fills the tail occupied by the previous publish.
 - Above 150 drawn proxies, visual uploads run every other frame; distant
   swarm sprites at 30Hz are visually indistinguishable.
+
+## Full Horde project (phase 1: batched enemy visuals)
+
+- New staged horde benchmark (tools/tests/EnemyHordeBenchmark.tscn) forces
+  120/250/400/550 populations and prints percentiles + sim counters per
+  stage. Headless baseline: 619 alive at 8.2ms avg CPU frame.
+- Materialized enemies now render through the same per-texture MultiMesh
+  batches as proxies: the enemy sprite hides and the shared renderer draws
+  transform (interpolated, rotation-aware) + modulate per instance. Elite
+  tints carry through; batched actor uploads stay per-frame while proxy
+  buffers half-rate under load. Toggle: "Batched enemy sprites" in the dev
+  overlay (applies to newly spawned enemies).
+- Known next target: projectile rendering. At ~550 projectiles the frame
+  cost is ~90ms beyond process+physics (likely additive-material overdraw),
+  i.e. a minigun-tier weapon would tank frames today.

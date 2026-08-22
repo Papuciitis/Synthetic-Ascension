@@ -121,6 +121,7 @@ var _stability_mul: float = 1.0
 var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
 var _sim_scheduler: Node = null
+var _visual_batched := false
 var _hitbox: Area2D = null
 var _body_shape: CollisionShape2D = null
 var _lod_tier: int = 0 # 0 near/full, 1 mid, 2 far
@@ -213,6 +214,7 @@ func _ready() -> void:
 	_apply_simulation_collision_roles()
 	# Warmed nodes need the full reset (and its registration) on first obtain.
 	_pool_fresh_obtain_pending = has_meta("__pool_key") and not pool_warming
+	_register_batched_visual()
 
 	if not pool_warming and RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
 		RunEvents.enemy_archetype_encountered.emit(self)
@@ -555,6 +557,27 @@ func _lod_interval_for_tier() -> float:
 
 func _set_hitbox_active(value: bool) -> void:
 	_set_hitbox_roles(value and _get_active_ai() == EnemySpec.AI.LEECH, value)
+
+
+func _register_batched_visual() -> void:
+	# Batched enemy visuals: the sprite hides and the shared proxy renderer
+	# draws every enemy through per-texture MultiMesh batches, collapsing
+	# hundreds of per-node sprite draws. Falls back to normal sprites when
+	# the proxy root is absent or the debug flag is off. Registration is per
+	# node instance; the renderer skips pooled/hidden/dead actors and prunes
+	# freed ones.
+	if _visual_batched or Global == null or not Global.debug_enemy_visual_batching:
+		return
+	var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+	var renderer: Node = proxy_root.get("renderer") if proxy_root != null else null
+	if renderer == null or not renderer.has_method("register_actor"):
+		return
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite == null:
+		return
+	renderer.call("register_actor", self, sprite)
+	sprite.visible = false
+	_visual_batched = true
 
 
 func _apply_simulation_collision_roles() -> void:

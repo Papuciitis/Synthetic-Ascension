@@ -18,6 +18,11 @@ var _diagnostic_texture: ImageTexture = null
 var _visible_count := 0
 var _last_upload_usec := 0
 var _profile_sweep_counter := 0
+# Materialized enemies rendered through the same batches: instance id ->
+# {actor, sprite, texture, key}. Registration is per node instance; freed
+# or pooled actors are pruned/skipped during publish.
+var _actors: Dictionary = {}
+var _actor_locations: Dictionary = {}
 
 
 func setup(world: EnemyWorldService) -> void:
@@ -26,7 +31,27 @@ func setup(world: EnemyWorldService) -> void:
 	_last_upload_usec = 0
 
 
-func publish(interpolation_alpha: float = 1.0) -> int:
+func register_actor(actor: Node2D, sprite: Sprite2D) -> void:
+	if actor == null or sprite == null:
+		return
+	_actors[actor.get_instance_id()] = {
+		"actor": actor,
+		"sprite": sprite,
+		"texture": null,
+		"key": &"",
+	}
+
+
+func unregister_actor(actor: Node2D) -> void:
+	if actor != null:
+		_actors.erase(actor.get_instance_id())
+
+
+func registered_actor_count() -> int:
+	return _actors.size()
+
+
+func publish(interpolation_alpha: float = 1.0, include_proxies: bool = true) -> int:
 	var started := Time.get_ticks_usec()
 	_visible_count = 0
 	_handle_locations.clear()
@@ -37,8 +62,16 @@ func publish(interpolation_alpha: float = 1.0) -> int:
 
 	var groups: Dictionary = {}
 	var group_metadata: Dictionary = {}
+	if not include_proxies:
+		# Proxy batches keep last frame's buffers this frame (half-rate under
+		# load); count their instances so visible_count stays truthful.
+		for batch_key_variant in _batches:
+			if not String(batch_key_variant).begins_with("actor:"):
+				_visible_count += int((_batches[batch_key_variant] as Dictionary).get("last_count", 0))
 	_world.active_handles(_handles)
 	for handle in _handles:
+		if not include_proxies:
+			break
 		if (
 			not _world.is_valid_handle(handle)
 			or _world.is_dying(handle)
@@ -53,7 +86,44 @@ func publish(interpolation_alpha: float = 1.0) -> int:
 		var group := groups[visual_key] as Array[int]
 		group.append(handle)
 
+	var actor_groups: Dictionary = {}
+	var actor_metadata: Dictionary = {}
+	var dead_actor_ids: Array = []
+	for actor_id_variant in _actors:
+		var entry := _actors[actor_id_variant] as Dictionary
+		var actor_variant: Variant = entry.get("actor")
+		var sprite_variant: Variant = entry.get("sprite")
+		# Validity must be checked on the raw Variant: casting a freed object
+		# is itself a script error.
+		if not is_instance_valid(actor_variant) or not is_instance_valid(sprite_variant):
+			dead_actor_ids.append(actor_id_variant)
+			continue
+		var actor := actor_variant as Node2D
+		var sprite := sprite_variant as Sprite2D
+		if (
+			not actor.is_inside_tree()
+			or not actor.visible
+			or bool(actor.get_meta("__in_pool", false))
+			or ("dead" in actor and bool(actor.get("dead")))
+			or sprite.texture == null
+		):
+			continue
+		if entry.get("texture") != sprite.texture:
+			entry["texture"] = sprite.texture
+			entry["key"] = StringName("actor:" + sprite.texture.resource_path)
+		var actor_key := entry.get("key") as StringName
+		if not actor_groups.has(actor_key):
+			actor_groups[actor_key] = [] as Array[Dictionary]
+			actor_metadata[actor_key] = {"key": actor_key, "texture": sprite.texture, "z_index": 0}
+		(actor_groups[actor_key] as Array[Dictionary]).append(entry)
+	for dead_id in dead_actor_ids:
+		_actors.erase(dead_id)
+
 	var seen: Dictionary = {}
+	if not include_proxies:
+		for batch_key_variant in _batches:
+			if not String(batch_key_variant).begins_with("actor:"):
+				seen[batch_key_variant] = true
 	for visual_key_variant in groups:
 		var visual_key := visual_key_variant as StringName
 		seen[visual_key] = true
@@ -64,6 +134,12 @@ func publish(interpolation_alpha: float = 1.0) -> int:
 			groups[visual_key] as Array[int],
 			clampf(interpolation_alpha, 0.0, 1.0),
 		)
+	_actor_locations.clear()
+	for actor_key_variant in actor_groups:
+		var actor_key := actor_key_variant as StringName
+		seen[actor_key] = true
+		var actor_batch := _batch_for(actor_key, actor_metadata[actor_key] as Dictionary)
+		_publish_actor_batch(actor_key, actor_batch, actor_groups[actor_key] as Array[Dictionary])
 	for visual_key_variant in _batches:
 		if not seen.has(visual_key_variant):
 			_hide_batch(_batches[visual_key_variant] as Dictionary)
@@ -256,6 +332,99 @@ func _publish_batch(
 	_visible_count += count
 
 
+func _publish_actor_batch(
+	visual_key: StringName,
+	batch: Dictionary,
+	entries: Array[Dictionary],
+) -> void:
+	var count := entries.size()
+	var capacity := _ensure_capacity(batch, count)
+	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	if buffer.size() != capacity * FLOATS_PER_INSTANCE:
+		buffer.resize(capacity * FLOATS_PER_INSTANCE)
+	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
+	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
+	transforms.resize(count)
+	colors.resize(count)
+	for index in range(count):
+		var entry := entries[index]
+		var actor := entry.get("actor") as Node2D
+		var sprite := entry.get("sprite") as Sprite2D
+		var actor_transform: Transform2D = (
+			actor.get_global_transform_interpolated()
+			if actor.has_method("get_global_transform_interpolated")
+			else actor.global_transform
+		)
+		var instance_transform := actor_transform * sprite.transform
+		var color := sprite.modulate * actor.modulate
+		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color)
+		transforms[index] = instance_transform
+		colors[index] = color
+		_actor_locations[actor.get_instance_id()] = {"key": visual_key, "index": index}
+	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
+	for index in range(count, stale_tail):
+		_write_instance(
+			buffer,
+			index * FLOATS_PER_INSTANCE,
+			Vector2.ONE,
+			Vector2.ZERO,
+			Color(0.0, 0.0, 0.0, 0.0),
+		)
+	var multimesh := batch.get("multimesh") as MultiMesh
+	if multimesh != null and capacity > 0:
+		multimesh.buffer = buffer
+		multimesh.visible_instance_count = count
+	batch["buffer"] = buffer
+	batch["transforms"] = transforms
+	batch["colors"] = colors
+	batch["last_count"] = count
+	_visible_count += count
+
+
+func debug_actor_instance_transform(actor: Node2D) -> Transform2D:
+	var location := _actor_locations.get(actor.get_instance_id(), {}) as Dictionary
+	if location.is_empty():
+		return Transform2D()
+	var batch := _batches.get(location.get("key"), {}) as Dictionary
+	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
+	var index := int(location.get("index", -1))
+	if index < 0 or index >= transforms.size():
+		return Transform2D()
+	return transforms[index]
+
+
+func debug_actor_instance_color(actor: Node2D) -> Color:
+	var location := _actor_locations.get(actor.get_instance_id(), {}) as Dictionary
+	if location.is_empty():
+		return Color(0.0, 0.0, 0.0, 0.0)
+	var batch := _batches.get(location.get("key"), {}) as Dictionary
+	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
+	var index := int(location.get("index", -1))
+	if index < 0 or index >= colors.size():
+		return Color(0.0, 0.0, 0.0, 0.0)
+	return colors[index]
+
+
+func _write_instance_transform(
+	buffer: PackedFloat32Array,
+	base: int,
+	instance_transform: Transform2D,
+	color: Color,
+) -> void:
+	buffer[base] = instance_transform.x.x
+	buffer[base + 1] = instance_transform.y.x
+	buffer[base + 2] = 0.0
+	buffer[base + 3] = instance_transform.origin.x
+	buffer[base + 4] = instance_transform.x.y
+	buffer[base + 5] = instance_transform.y.y
+	buffer[base + 6] = 0.0
+	buffer[base + 7] = instance_transform.origin.y
+	buffer[base + 8] = color.r
+	buffer[base + 9] = color.g
+	buffer[base + 10] = color.b
+	buffer[base + 11] = color.a
+
+
 func _ensure_capacity(batch: Dictionary, required: int) -> int:
 	var capacity := int(batch.get("capacity", 0))
 	if required <= capacity:
@@ -284,6 +453,7 @@ func _hide_batch(batch: Dictionary) -> void:
 
 func _hide_all_batches() -> void:
 	_handle_locations.clear()
+	_actor_locations.clear()
 	_visible_count = 0
 	for batch_variant in _batches.values():
 		_hide_batch(batch_variant as Dictionary)
@@ -343,6 +513,9 @@ func _color_from_variant(value: Variant, fallback: Color) -> Color:
 
 
 func _texture_for(profile: Dictionary) -> Texture2D:
+	var direct := profile.get("texture") as Texture2D
+	if direct != null:
+		return direct
 	var path := String(profile.get("texture_path", ""))
 	if not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
 		var loaded := load(path) as Texture2D

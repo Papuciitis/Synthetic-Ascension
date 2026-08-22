@@ -123,6 +123,38 @@ func _run() -> void:
 	_check(renderer.last_upload_usec() < 50000, "one cached 600-proxy upload avoids a long main-thread stall")
 	print("EnemyProxyRendererBenchmark records=600 frames=120 elapsed_ms=", snapped(elapsed_ms, 0.001), " last_upload_usec=", renderer.last_upload_usec())
 
+	# --- batched materialized-actor instances ---
+	var actor := Node2D.new()
+	var actor_sprite := Sprite2D.new()
+	var actor_image := Image.create(8, 8, false, Image.FORMAT_RGBA8)
+	actor_image.fill(Color.WHITE)
+	actor_sprite.texture = ImageTexture.create_from_image(actor_image)
+	actor_sprite.modulate = Color(0.2, 0.9, 0.3, 1.0)
+	actor.position = Vector2(320.0, 240.0)
+	actor.add_child(actor_sprite)
+	add_child(actor)
+	renderer.register_actor(actor, actor_sprite)
+	renderer.publish(1.0)
+	_check(renderer.registered_actor_count() == 1, "actor registers with the batch renderer")
+	var actor_transform: Transform2D = renderer.debug_actor_instance_transform(actor)
+	_check(
+		actor_transform.origin.distance_to(Vector2(320.0, 240.0)) < 0.5,
+		"actor instance renders at the node position (got %s)" % actor_transform.origin
+	)
+	_check(
+		renderer.debug_actor_instance_color(actor).is_equal_approx(Color(0.2, 0.9, 0.3, 1.0)),
+		"actor instance carries the sprite modulate"
+	)
+	actor.position = Vector2(400.0, 100.0)
+	renderer.publish(1.0, false)
+	actor_transform = renderer.debug_actor_instance_transform(actor)
+	_check(
+		actor_transform.origin.distance_to(Vector2(400.0, 100.0)) < 0.5,
+		"actor instances stay fresh even when proxy publishing is skipped"
+	)
+	actor.free()
+	renderer.publish(1.0)
+	_check(renderer.registered_actor_count() == 0, "freed actor is pruned from the batch registry")
 	renderer.queue_free()
 	world.queue_free()
 	await get_tree().process_frame
