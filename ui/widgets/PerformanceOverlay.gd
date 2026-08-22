@@ -225,6 +225,8 @@ func collect_snapshot() -> Dictionary:
 	var flow_counters := _call_dict(flow, &"get_debug_counters")
 	var spawn_filter := get_node_or_null("/root/DebugEnemySpawnFilter")
 	var filter_snapshot := _call_dict(spawn_filter, &"get_debug_snapshot")
+	var enemy_world := get_node_or_null("/root/EnemyWorld")
+	var world_counters := _call_dict(enemy_world, &"get_debug_counters")
 	return {
 		"fps": Performance.get_monitor(Performance.TIME_FPS),
 		"process_ms": Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0,
@@ -235,6 +237,9 @@ func collect_snapshot() -> Dictionary:
 		"physics_objects": Performance.get_monitor(Performance.PHYSICS_2D_ACTIVE_OBJECTS),
 		"scene_enemies": get_tree().get_node_count_in_group(&"enemies"),
 		"indexed_enemies": int(enemy_counters.get("indexed", 0)),
+		"world_logical": int(world_counters.get("logical", 0)),
+		"world_materialized": int(world_counters.get("materialized", 0)),
+		"world_data_only": int(world_counters.get("data_only", 0)),
 		"ambient": int(enemy_counters.get("ambient", 0)),
 		"special": int(enemy_counters.get("special", 0)),
 		"special_by_kind": enemy_counters.get("special_by_kind", {}),
@@ -258,13 +263,15 @@ func format_compact(snapshot: Dictionary) -> String:
 	var flow := snapshot.get("flow", {}) as Dictionary
 	return (
 		"FPS %3.0f   FRAME %5.2f ms   PHYS %5.2f ms\n"
-		+ "ENEMIES %d  near/mid/far %d/%d/%d   BULLETS %d (%4.2f ms)\n"
+		+ "ENEMIES %d (%d real + %d proxy)  near/mid/far %d/%d/%d   BULLETS %d (%4.2f ms)\n"
 		+ "FLOW %s  rebuilds %d  last %4.2f ms"
 	) % [
 		float(snapshot.get("fps", 0.0)),
 		float(snapshot.get("process_ms", 0.0)),
 		float(snapshot.get("physics_ms", 0.0)),
+		maxi(int(snapshot.get("world_logical", 0)), int(snapshot.get("indexed_enemies", 0))),
 		int(snapshot.get("indexed_enemies", 0)),
+		int(snapshot.get("world_data_only", 0)),
 		int(tiers.get("near", 0)),
 		int(tiers.get("mid", 0)),
 		int(tiers.get("far", 0)),
