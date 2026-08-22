@@ -1,0 +1,4 @@
+HordeBenchmark: target=120 alive=120 frames=1199 | frame avg 16.68 p95 16.67 p99 18.06 | process p95 18.20 | physics p95 21.90 | draws p95 179 | full=32 mid=32 far=0 phys_on=64 | materialized=64 data_only=56
+HordeBenchmark: target=250 alive=250 frames=1045 | frame avg 19.14 p95 22.22 p99 25.20 | process p95 12.93 | physics p95 20.10 | draws p95 169 | full=24 mid=26 far=14 phys_on=50 | materialized=64 data_only=186
+HordeBenchmark: target=400 alive=400 frames=969 | frame avg 20.65 p95 25.00 p99 28.45 | process p95 19.37 | physics p95 24.78 | draws p95 176 | full=16 mid=37 far=11 phys_on=53 | materialized=64 data_only=336
+HordeBenchmark: target=550 alive=550 frames=766 | frame avg 26.11 p95 31.74 p99 36.97 | process p95 17.01 | physics p95 31.21 | draws p95 196 | full=16 mid=59 far=0 phys_on=75 | materialized=75 data_only=475
