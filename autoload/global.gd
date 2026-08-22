@@ -98,6 +98,7 @@ var enemy_proxy_rollout: bool = true
 const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
+var debug_player_god_mode: bool = false
 var debug_set_collision_tools: bool = false
 var debug_performance_lab: bool = false
 var debug_combat_transactions: bool = false

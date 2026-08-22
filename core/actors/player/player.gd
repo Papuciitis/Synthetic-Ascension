@@ -702,6 +702,8 @@ func take_damage(amount: float, _source: Node = null) -> void:
 
 
 func _take_damage(amount: float) -> void:
+	if Global.debug_player_god_mode:
+		return
 	if invulnerable_time > 0.0:
 		return
 	if is_dead:

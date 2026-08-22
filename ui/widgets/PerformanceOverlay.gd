@@ -21,8 +21,10 @@ const MIN_CONSOLE_SIZE := Vector2(720.0, 480.0)
 @onready var _recorder_relative: SpinBox = $Margin/Root/Tabs/Performance/Content/RecorderControls/Relative
 @onready var _recorder_status: Label = $Margin/Root/Tabs/Performance/Content/RecorderStatus
 @onready var _projectile_stress: CheckBox = $Margin/Root/Tabs/Performance/Content/ProjectileStress
+@onready var _god_mode: CheckBox = $Margin/Root/Tabs/Performance/Content/GodMode
 @onready var _master_spawns: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Master
 @onready var _protected_filter: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Protected
+@onready var _force_spawn_result: Label = $Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Result
 @onready var _cap_mode: OptionButton = $Margin/Root/Tabs/Enemies/Content/CapRow/Mode
 @onready var _total_cap: SpinBox = $Margin/Root/Tabs/Enemies/Content/CapRow/TotalCap
 @onready var _enemy_list: VBoxContainer = $Margin/Root/Tabs/Enemies/Content/EnemyScroll/EnemyList
@@ -54,6 +56,9 @@ func _ready() -> void:
 	$Margin/Root/Footer/ExitGame.pressed.connect(request_exit_game)
 	$Margin/Root/Tabs/Enemies/Content/SpawnToolbar/EnableAll.pressed.connect(_enable_all)
 	$Margin/Root/Tabs/Enemies/Content/SpawnToolbar/DisableAll.pressed.connect(_disable_all)
+	$Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Spawn1.pressed.connect(_force_spawn.bind(1))
+	$Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Spawn10.pressed.connect(_force_spawn.bind(10))
+	$Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Spawn100.pressed.connect(_force_spawn.bind(100))
 	_master_spawns.toggled.connect(_set_master_spawning)
 	_protected_filter.toggled.connect(_set_protected_filtering)
 	_cap_mode.item_selected.connect(_set_cap_mode)
@@ -65,6 +70,7 @@ func _ready() -> void:
 	$Margin/Root/Tabs/Performance/Content/RecorderActions/Mark.pressed.connect(_mark_incident)
 	$Margin/Root/Tabs/Performance/Content/RecorderActions/Clear.pressed.connect(_clear_recorder)
 	_projectile_stress.toggled.connect(_set_projectile_stress)
+	_god_mode.toggled.connect(_set_god_mode)
 	_header.gui_input.connect(_on_header_input)
 	_connect_test_tools()
 	call_deferred("_place_default")
@@ -348,6 +354,7 @@ func _render_snapshot(snapshot: Dictionary) -> void:
 	if not _updating_controls:
 		_updating_controls = true
 		_projectile_stress.button_pressed = Global != null and Global.debug_projectile_stress_test
+		_god_mode.button_pressed = Global != null and Global.debug_player_god_mode
 		_updating_controls = false
 
 
@@ -489,6 +496,18 @@ func _clamp_to_viewport() -> void:
 	position.y = clampf(position.y, 8.0, maxf(8.0, viewport_size.y - size.y - 8.0))
 
 
+func _force_spawn(count: int) -> void:
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
+	if spawner == null or not spawner.has_method("debug_force_spawn"):
+		_force_spawn_result.text = "no spawner in scene"
+		return
+	var spawned := int(spawner.call("debug_force_spawn", count))
+	if spawned >= count:
+		_force_spawn_result.text = "spawned +%d" % spawned
+	else:
+		_force_spawn_result.text = "spawned +%d (cap or filters)" % spawned
+
+
 func _enable_all() -> void:
 	DebugEnemySpawnFilter.enable_all()
 
@@ -541,6 +560,11 @@ func _format_counts(counts: Dictionary) -> String:
 func _set_projectile_stress(value: bool) -> void:
 	if not _updating_controls and Global != null:
 		Global.debug_projectile_stress_test = value
+
+
+func _set_god_mode(value: bool) -> void:
+	if not _updating_controls and Global != null:
+		Global.debug_player_god_mode = value
 
 
 func request_main_menu() -> void:

@@ -240,6 +240,29 @@ func _is_boss_near_player() -> bool:
 
 	return false
 
+func debug_force_spawn(count: int) -> int:
+	# Dev overlay: fill the population immediately, bypassing spawn pacing
+	# (timer interval, batch budget, cull-refill grace) while still honoring
+	# the effective alive cap, spawn filters, and per-type caps so forced
+	# populations stay comparable to director-driven ones.
+	var minutes: float = _elapsed / 60.0
+	var spawned_total := 0
+	# Weighted rolls can land on an entry whose type cap is full and return 0;
+	# retry a bounded number of times instead of treating that as exhaustion.
+	var attempts := maxi(count * 4, count + 8)
+	while spawned_total < count and attempts > 0:
+		attempts -= 1
+		var cap_total: int = _current_alive_cap()
+		var remaining: int = _remaining_total_capacity(cap_total, _alive_total())
+		if remaining <= 0:
+			break
+		spawned_total += _spawn_one(
+			minutes,
+			mini(remaining, count - spawned_total)
+		)
+	return spawned_total
+
+
 func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
 	if total_capacity <= 0:
 		return 0
