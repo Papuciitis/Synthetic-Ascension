@@ -172,18 +172,44 @@ func warm(scene: PackedScene, count: int) -> void:
 	var limit := int(_limits.get(key, -1))
 	var target := mini(count, limit) if limit >= 0 else count
 	while pool.size() < target:
-		var n: Node = scene.instantiate()
-		if n == null:
+		if not _warm_one(key, pool, scene):
 			break
-		n.set_meta("__pool_key", key)
-		# Set BEFORE add_child so _ready can tell it is being warmed and skip
-		# live registration (groups, EnemyIndex, EnemyWorld).
-		n.set_meta("__in_pool", true)
-		n.process_mode = Node.PROCESS_MODE_DISABLED
-		if n is CanvasItem:
-			(n as CanvasItem).visible = false
-		add_child(n)
-		pool.append(n)
+
+
+func warm_step(scene: PackedScene, count: int, budget_usec: int) -> bool:
+	# Budgeted warm-up: instantiates until the pool reaches the target or the
+	# frame budget is spent. Returns true while work remains so callers can
+	# spread pool construction across frames instead of paying for a whole
+	# fleet inside the scene-change frame.
+	if scene == null or count <= 0:
+		return false
+	var key := _scene_key(scene)
+	var pool: Array = _get_pool(key)
+	var limit := int(_limits.get(key, -1))
+	var target := mini(count, limit) if limit >= 0 else count
+	var started := Time.get_ticks_usec()
+	while pool.size() < target:
+		if Time.get_ticks_usec() - started > maxi(0, budget_usec):
+			return true
+		if not _warm_one(key, pool, scene):
+			return false
+	return false
+
+
+func _warm_one(key: String, pool: Array, scene: PackedScene) -> bool:
+	var n: Node = scene.instantiate()
+	if n == null:
+		return false
+	n.set_meta("__pool_key", key)
+	# Set BEFORE add_child so _ready can tell it is being warmed and skip
+	# live registration (groups, EnemyIndex, EnemyWorld).
+	n.set_meta("__in_pool", true)
+	n.process_mode = Node.PROCESS_MODE_DISABLED
+	if n is CanvasItem:
+		(n as CanvasItem).visible = false
+	add_child(n)
+	pool.append(n)
+	return true
 
 
 func set_limit_for_scene(scene: PackedScene, limit: int) -> void:

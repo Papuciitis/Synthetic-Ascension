@@ -30,6 +30,10 @@ class_name EnemySpawner
 # Pre-fill pools at segment start so the first spawn waves reuse instead of
 # paying scene.instantiate() during gameplay.
 @export_range(0, 32, 1) var pool_warm_per_scene: int = 6
+# Warm-up instantiation budget per frame: pool construction spreads across
+# the first second of a segment instead of stalling the scene-change frame
+# (measured 436ms process spike warming 12 scenes x 6 instances inline).
+const POOL_WARM_FRAME_BUDGET_USEC := 2500
 # Hard bound on live elites: promotion chance saturates at high threat and an
 # uncapped elite population defeats pooling and the full-simulation budget.
 @export_range(0, 128, 1) var max_concurrent_elites: int = 24
@@ -96,6 +100,9 @@ var _spawn_sockets: Array = []
 var _indoor_volumes: Array = []
 var _cull_counts: Dictionary = {}
 
+var _pool_warm_queue: Array[PackedScene] = []
+
+
 func _ready() -> void:
 	add_to_group("enemy_spawner")
 	_player = get_tree().get_first_node_in_group("player") as Node2D
@@ -116,6 +123,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_elapsed += delta
+	_drain_pool_warm_queue()
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
@@ -771,11 +779,11 @@ func _elite_cap_reached() -> bool:
 func _configure_enemy_pool_limits() -> void:
 	if PoolManager == null or not PoolManager.has_method("set_limit_for_scene"):
 		return
-	var can_warm := PoolManager.has_method("warm") and pool_warm_per_scene > 0
+	var can_warm := PoolManager.has_method("warm_step") and pool_warm_per_scene > 0
 	if enemy_scene != null:
 		PoolManager.set_limit_for_scene(enemy_scene, ambient_pool_limit_per_scene)
 		if can_warm:
-			PoolManager.warm(enemy_scene, pool_warm_per_scene)
+			_pool_warm_queue.append(enemy_scene)
 	if spawn_table == null:
 		return
 	for entry_variant: Variant in spawn_table.entries:
@@ -783,7 +791,18 @@ func _configure_enemy_pool_limits() -> void:
 		if entry != null and entry.enemy_scene != null:
 			PoolManager.set_limit_for_scene(entry.enemy_scene, ambient_pool_limit_per_scene)
 			if can_warm:
-				PoolManager.warm(entry.enemy_scene, pool_warm_per_scene)
+				_pool_warm_queue.append(entry.enemy_scene)
+
+
+func _drain_pool_warm_queue() -> void:
+	if _pool_warm_queue.is_empty():
+		return
+	var scene := _pool_warm_queue[0]
+	if scene == null:
+		_pool_warm_queue.pop_front()
+		return
+	if not PoolManager.warm_step(scene, pool_warm_per_scene, POOL_WARM_FRAME_BUDGET_USEC):
+		_pool_warm_queue.pop_front()
 
 
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:
