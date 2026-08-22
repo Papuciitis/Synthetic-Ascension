@@ -44,6 +44,17 @@ func _run() -> void:
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderControls/Enabled"), "console includes recorder enable control")
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderActions/Mark"), "console includes manual incident control")
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderStatus"), "console includes recorder status")
+	var spawn_filter := root.get_node_or_null("/root/DebugEnemySpawnFilter")
+	_check(spawn_filter != null, "spawn filter autoload is available")
+	if spawn_filter != null:
+		spawn_filter.set("cap_mode", 0)
+		overlay.call("_set_total_cap", 360.0)
+		_check(
+			int(spawn_filter.get("cap_mode")) == 1 and int(spawn_filter.get("custom_total_cap")) == 360,
+			"typing a total cap applies it by switching to custom mode"
+		)
+		spawn_filter.set("cap_mode", 0)
+		spawn_filter.set("custom_total_cap", 180)
 	overlay.queue_free()
 	_finish()
 

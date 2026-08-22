@@ -65,7 +65,17 @@ class Driver:
 			]
 		)
 
+		var alive_now := int(horde.get("alive", 0))
 		filter.set("cap_mode", 1) # CUSTOM
+		filter.set("custom_total_cap", alive_now + 40)
+		var raised := spawner.call("debug_force_spawn", 100) as Dictionary
+		var raised_spawned := int(raised.get("spawned", -1))
+		_check(
+			raised_spawned > 0 and raised_spawned <= 40,
+			"a raised custom cap opens exactly its headroom (got %s with cap %s)" % [
+				raised.get("spawned"), raised.get("cap"),
+			]
+		)
 		filter.set("custom_total_cap", 1)
 		var capped := spawner.call("debug_force_spawn", 10) as Dictionary
 		_check(int(capped.get("spawned", -1)) == 0, "a saturated cap force-spawns nothing")

@@ -549,6 +549,10 @@ func _set_cap_mode(index: int) -> void:
 func _set_total_cap(value: float) -> void:
 	if not _updating_controls:
 		DebugEnemySpawnFilter.custom_total_cap = int(value)
+		# Typing a cap means the user wants it applied: entering a value while
+		# Production mode was selected used to be silently ignored.
+		if DebugEnemySpawnFilter.cap_mode != DebugEnemySpawnFilter.CapMode.CUSTOM:
+			DebugEnemySpawnFilter.cap_mode = DebugEnemySpawnFilter.CapMode.CUSTOM
 
 
 func _call_dict(target: Node, method: StringName) -> Dictionary:
