@@ -7,7 +7,7 @@ class_name ProjectileSimulationManager
 enum Team { PLAYER, ENEMY }
 enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
-const IMPACT_SCENE := preload("res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn")
+const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
 const DEFAULT_CAPACITY: int = 4096
 const PLAYER_RADIUS: float = 25.0
 
@@ -40,6 +40,8 @@ var _player: Node2D = null
 var _pending_ledgers: Dictionary = {}
 var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
+var _impact_renderer: Node2D = null
+var debug_disable_impacts := false
 var _render_buffer := PackedFloat32Array()
 var _last_scene_id: int = 0
 var _query_hit_handle: int = 0
@@ -285,13 +287,15 @@ func _flush_hit_ledgers() -> void:
 			ledger.target.call("take_damage", ledger.total_raw_damage, ledger.source)
 
 func _spawn_impact(world_position: Vector2) -> void:
-	var scene := get_tree().current_scene
-	if scene == null:
+	if debug_disable_impacts:
 		return
-	var impact := IMPACT_SCENE.instantiate()
-	scene.add_child(impact)
-	if impact.has_method("setup"):
-		impact.call("setup", world_position)
+	# One shared canvas item for every burst; a node per impact melted frames
+	# under minigun fire (~70 live unbatchable Node2Ds at 8 hits/frame).
+	if _impact_renderer == null or not is_instance_valid(_impact_renderer):
+		_impact_renderer = ImpactBurstRendererScript.new()
+		_impact_renderer.name = "BatchedImpactRenderer"
+		add_child(_impact_renderer)
+	_impact_renderer.call("add_burst", world_position)
 
 func _remove(index: int) -> void:
 	var last := _active_count - 1
@@ -340,6 +344,8 @@ func _sync_scene_refs() -> void:
 	var scene_id := scene.get_instance_id() if scene != null else 0
 	if scene_id != _last_scene_id:
 		_clear_all()
+		if _impact_renderer != null and is_instance_valid(_impact_renderer):
+			_impact_renderer.call("clear")
 		_last_scene_id = scene_id
 		_stress_started = false
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
