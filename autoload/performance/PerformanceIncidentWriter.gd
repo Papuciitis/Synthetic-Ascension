@@ -3,16 +3,19 @@ class_name PerformanceIncidentWriter
 
 
 static func write_incident(incident: Dictionary, directory: String) -> Dictionary:
-	var error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
-	if error != OK and error != ERR_ALREADY_EXISTS:
-		return {"ok": false, "json_path": "", "csv_path": "", "error": error_string(error)}
 	var metadata := incident.get("metadata", {}) as Dictionary
 	var sequence := int(metadata.get("sequence", 0))
 	var segment := int(metadata.get("segment", 0))
 	var stamp := Time.get_datetime_string_from_system(false, true).replace(":", "-").replace(" ", "_")
+	# Captures batch into one folder per day, so old days can be dropped
+	# from version control (or archived) without touching current work.
+	var day_directory := directory.path_join(stamp.substr(0, 10))
+	var error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(day_directory))
+	if error != OK and error != ERR_ALREADY_EXISTS:
+		return {"ok": false, "json_path": "", "csv_path": "", "error": error_string(error)}
 	var base := "%s_segment-%02d_incident-%03d" % [stamp, segment, sequence]
-	var json_path := directory.path_join(base + ".json")
-	var csv_path := directory.path_join(base + ".csv")
+	var json_path := day_directory.path_join(base + ".json")
+	var csv_path := day_directory.path_join(base + ".csv")
 	var json_file := FileAccess.open(json_path, FileAccess.WRITE)
 	if json_file == null:
 		return {"ok": false, "json_path": "", "csv_path": "", "error": "Cannot open JSON report: %s" % FileAccess.get_open_error()}

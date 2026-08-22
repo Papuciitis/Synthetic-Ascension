@@ -53,7 +53,9 @@ def group_key(path, mode):
 
 
 def load_groups(directory, mode, days, segment):
-    paths = sorted(glob.glob(os.path.join(directory, "*_segment-%02d_*.csv" % segment)))
+    paths = sorted(
+        glob.glob(os.path.join(directory, "**", "*_segment-%02d_*.csv" % segment), recursive=True)
+    )
     groups = {}
     previous_minute = None
     session_index = 0
