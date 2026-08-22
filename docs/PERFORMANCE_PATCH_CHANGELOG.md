@@ -274,3 +274,23 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
 - When running from the project (editor or --path), the flight recorder now
   writes captures directly into the tracked performance_results folder;
   exported builds keep using user://performance_captures.
+
+## Transition and stability pass (2026-08-22)
+
+- Pool warm-up no longer stalls the scene-change frame: the spawner used to
+  instantiate 12 enemy scenes x 6 instances synchronously in _ready (the
+  setup half of a measured 436ms segment-transition process spike). Warm-up
+  now drains through a 2.5ms/frame budgeted queue in the first second of a
+  segment.
+- The run-transition soak test now asserts that a full run cycle does not
+  accumulate live objects (measured growth: 31 objects/cycle, slack 128).
+- AudioManager skips music decode/playback in headless runs, matching the
+  SfxManager convention, and releases its streams on exit.
+- The scheduler ranks tier incumbents with a 10% distance bias so budget
+  boundary ranks cannot flap on tiny distance oscillations (84% of the
+  2026-08-22 session-2 tier churn was full<->mid rank flapping), and the
+  budget pressure fallback got its own 14ms threshold, separate from the
+  8ms flow-shedding threshold that the game's ~13ms physics baseline kept
+  permanently engaged.
+- tools/perf/analyze_captures.py summarizes capture folders per day or per
+  session: frame percentiles, enemy buckets, and the simulation LOD columns.
