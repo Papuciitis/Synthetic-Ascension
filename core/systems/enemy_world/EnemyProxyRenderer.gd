@@ -342,6 +342,11 @@ func _publish_batch(
 	if multimesh != null and capacity > 0:
 		multimesh.buffer = buffer
 		multimesh.visible_instance_count = count
+		# Without the change signal the canvas item keeps a stale culling
+		# rect from when the multimesh was empty, so batches render only
+		# near the world origin. ProjectileSlotReuseTest guards the same
+		# lesson on the bullet renderer.
+		multimesh.emit_changed()
 	# The group arrays are rebuilt from scratch each publish, so storing them
 	# without duplicating is safe.
 	batch["handles"] = handles
@@ -405,6 +410,8 @@ func _publish_actor_batch(
 	if multimesh != null and capacity > 0:
 		multimesh.buffer = buffer
 		multimesh.visible_instance_count = count
+		# Same stale-culling-rect guard as the proxy batches above.
+		multimesh.emit_changed()
 	batch["buffer"] = buffer
 	batch["transforms"] = transforms
 	batch["colors"] = colors
@@ -419,30 +426,31 @@ func _interpolated_actor_transform(
 ) -> Transform2D:
 	# Snapshot interpolation: the visual lerps between the actor's last two
 	# real transform updates, so 60Hz full-tier and 20Hz mid-tier movement
-	# both render smoothly (the node sprites this replaces always stepped
-	# raw; 2D has no engine transform interpolation in this build). Costs
-	# one update interval of visual latency, at most 200ms before snapping.
+	# both render smoothly (2D has no engine transform interpolation in this
+	# build). The interval is stamped and clamped at snapshot time, so one
+	# late first update can never stretch the blend window past 200ms.
 	var curr_variant: Variant = entry.get("curr_xf")
 	if curr_variant == null:
 		entry["prev_xf"] = current
 		entry["curr_xf"] = current
-		entry["prev_usec"] = now_usec
-		entry["curr_usec"] = now_usec
+		entry["snap_usec"] = now_usec
+		entry["interval_usec"] = 0
 		return current
 	var curr := curr_variant as Transform2D
 	if not curr.is_equal_approx(current):
 		entry["prev_xf"] = curr
-		entry["prev_usec"] = entry.get("curr_usec", now_usec)
+		entry["interval_usec"] = clampi(now_usec - int(entry.get("snap_usec", now_usec)), 0, 200_000)
 		entry["curr_xf"] = current
-		entry["curr_usec"] = now_usec
-	var prev := entry.get("prev_xf") as Transform2D
-	var prev_usec := int(entry.get("prev_usec", now_usec))
-	var curr_usec := int(entry.get("curr_usec", now_usec))
-	var interval := curr_usec - prev_usec
-	if interval <= 0 or interval > 200_000:
+		entry["snap_usec"] = now_usec
+	var interval := int(entry.get("interval_usec", 0))
+	if interval <= 0:
 		return current
-	var interp_alpha := clampf(float(now_usec - curr_usec) / float(interval), 0.0, 1.0)
-	return prev.interpolate_with(current, interp_alpha)
+	var interp_alpha := clampf(
+		float(now_usec - int(entry.get("snap_usec", now_usec))) / float(interval),
+		0.0,
+		1.0
+	)
+	return (entry.get("prev_xf") as Transform2D).interpolate_with(current, interp_alpha)
 
 
 func debug_actor_instance_transform(actor: Node2D) -> Transform2D:

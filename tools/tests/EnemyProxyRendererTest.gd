@@ -151,8 +151,9 @@ func _run() -> void:
 	)
 	actor.position = Vector2(400.0, 100.0)
 	renderer.publish(1.0, false)
-	# Snapshot interpolation renders one update interval behind; settle it.
-	await get_tree().create_timer(0.06).timeout
+	# Snapshot interpolation renders one update interval behind; settle past
+	# the 200ms interval clamp so the blend must have finished.
+	await get_tree().create_timer(0.25).timeout
 	renderer.publish(1.0, false)
 	actor_transform = renderer.debug_actor_instance_transform(actor)
 	_check(
