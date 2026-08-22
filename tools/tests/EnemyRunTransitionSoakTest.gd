@@ -19,6 +19,16 @@ class SoakDriver:
 	var _seeded_first_run := false
 	var _seeded_second_run := false
 	var _objects_after_first_teardown := 0
+	var _pause_wall := 0.0
+
+	func _dismiss_blocking_ui() -> void:
+		var scene := get_tree().current_scene
+		var ui := scene.get_node_or_null("UI") if scene != null else null
+		if ui != null:
+			for child in ui.get_children():
+				if child.has_method("open_choose_3"):
+					child.queue_free()
+		get_tree().paused = false
 
 	func _seed_spawns_if_quiet(population: Dictionary, already_seeded: bool) -> bool:
 		# Pre-unseal pacing can legitimately produce zero organic spawns in the
@@ -65,6 +75,15 @@ class SoakDriver:
 
 	func _process(delta: float) -> void:
 		if _phase < 1:
+			return
+		# The run-start augment selection pauses the tree, and gameplay now
+		# genuinely freezes while paused; dismiss it like a player would so
+		# the soak exercises a running game.
+		if get_tree().paused:
+			_pause_wall += delta
+			if _pause_wall >= 2.0:
+				_pause_wall = 0.0
+				_dismiss_blocking_ui()
 			return
 		_elapsed += delta
 		var population := _population()

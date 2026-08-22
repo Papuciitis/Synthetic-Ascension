@@ -91,7 +91,10 @@ var _tier_lifecycle_counters := {
 var _last_tier_transition: Dictionary = {}
 
 func _ready() -> void:
-	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Pausable on purpose: this node drives mid/far enemy simulation, and
+	# ALWAYS made the offscreen horde keep closing in during the augment
+	# pick and tutorial modals while full-tier enemies stood frozen.
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_physics_process(true)
 
 

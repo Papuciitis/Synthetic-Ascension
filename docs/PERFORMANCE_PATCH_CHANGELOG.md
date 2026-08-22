@@ -308,7 +308,8 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   retrying forever.
 - Draw calls spiked to ~2.3-2.7k during hordes (vs ~660 calm) - the next
   rendering lever is batching materialized enemy sprites.
-- Note: the run-start augment selection pauses the tree, but autoloads and
-  the ALWAYS-mode scheduler keep simulating mid/far enemies through the
-  pause while full-tier enemies freeze - pre-existing, needs a deliberate
-  pause-semantics decision.
+- Pause semantics are now consistent: the enemy simulation scheduler was
+  PROCESS_MODE_ALWAYS, so the offscreen horde kept closing in during the
+  augment pick and tutorial modals while full-tier enemies stood frozen.
+  The scheduler is pausable, and the dev overlay footer gained a general
+  "Pause game" toggle for freezing the run to inspect it.
