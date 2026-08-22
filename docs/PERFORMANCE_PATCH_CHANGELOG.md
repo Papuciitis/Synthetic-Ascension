@@ -247,3 +247,30 @@ with zero failures, and the existing chunk audit. The 180-enemy synthetic simula
 improved from 379.15 ms to 89.17 ms across 120 frames (4.25x speedup, 0.743 ms per adaptive frame).
 These are deterministic test results; the next gameplay capture is required to establish the live
 before/after frame-time curve and tune the full/mid budgets for the target 500+ on-screen horde.
+
+## Spatial simulation LOD and adaptive budgets
+
+- The enemy simulation scheduler now combines its budget LOD with spatial
+  bands: actors beyond the mid band demote to far even when budget slots are
+  free, and free budget never keeps offscreen actors in full simulation. Each
+  band boundary has separate enter/exit distances (1200/1400 full, 1800/2100
+  mid) so an actor hovering on an edge cannot flap tiers between refreshes.
+- Ordinary smart archetypes (ranged, charge, tactical, orbit, bomber,
+  summoner, herald) may now release body and hitbox physics beyond 2600 px,
+  re-acquiring at 2300 px. Player projectiles resolve through EnemyCombat's
+  data-side segment tests, so distant smart actors stay shootable without a
+  broadphase body. Elites, snipers, bosses, and special actors keep world
+  collision at any distance, exactly as before.
+- Sustained physics pressure (default: physics above 14 ms for 0.5 s,
+  separate from the 8 ms flow-shedding threshold) now
+  temporarily shrinks the full/mid budgets to 24/24, restoring the normal
+  32/32 only after 2 s of calm. Brief spikes never trigger the fallback.
+- Mid tier now steps at 20 Hz (3 groups) and far at ~8.6 Hz (7 groups); the
+  default mid budget dropped from 48 to 32.
+- Incident CSVs now record the simulation LOD state per sample: full/mid/far
+  tier counts, protected actors, physics-enabled bodies, pressure fallback
+  state, spatial demotions, cumulative tier changes/reversals, and the enemy
+  world materialized/data-only counts.
+- When running from the project (editor or --path), the flight recorder now
+  writes captures directly into the tracked performance_results folder;
+  exported builds keep using user://performance_captures.

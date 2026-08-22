@@ -6,11 +6,42 @@ const TIER_FAR := 2
 const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 
 @export_range(0, 512, 1) var full_budget: int = 32
-@export_range(0, 1024, 1) var mid_budget: int = 48
+@export_range(0, 1024, 1) var mid_budget: int = 32
 @export_range(0.05, 2.0, 0.01) var assignment_interval: float = 0.20
-@export_range(1, 8, 1) var mid_group_count: int = 2
-@export_range(1, 16, 1) var far_group_count: int = 6
+@export_range(1, 8, 1) var mid_group_count: int = 3
+@export_range(1, 16, 1) var far_group_count: int = 7
 @export_range(1.0, 33.0, 0.25) var physics_pressure_ms: float = 8.0
+
+# Spatial bands cap fidelity by player distance so a horde that fits the budget
+# numerically still cannot keep offscreen actors in full simulation. Each
+# boundary has separate enter/exit thresholds: hysteresis against tier flapping
+# when an actor hovers on a band edge between assignment refreshes.
+@export var use_spatial_bands: bool = true
+@export_range(0.0, 8000.0, 10.0) var full_distance_enter: float = 1200.0
+@export_range(0.0, 8000.0, 10.0) var full_distance_exit: float = 1400.0
+@export_range(0.0, 8000.0, 10.0) var mid_distance_enter: float = 1800.0
+@export_range(0.0, 8000.0, 10.0) var mid_distance_exit: float = 2100.0
+
+# Rank hysteresis: a tier incumbent is ranked as if rank_incumbent_bias times
+# closer than it is, so a budget-boundary rank cannot flip tiers on tiny
+# distance oscillations between refreshes. Applied squared for full-tier
+# incumbents, linearly for mid. Measured 2026-08-22: 84% of tier churn was
+# full<->mid rank flapping. 1.0 disables.
+@export_range(0.70, 1.0, 0.01) var rank_incumbent_bias: float = 0.90
+
+# Sustained physics pressure temporarily shrinks the budgets instead of tuning
+# the whole game around the worst late-game frame. Engage/release timers keep
+# the fallback from oscillating on a single spiky physics step.
+@export var adaptive_budgets: bool = true
+# Budget fallback threshold. Deliberately separate from physics_pressure_ms
+# (8 ms), which flow-field load shedding consumes: this game's physics
+# baseline sits near 12-14 ms, so 8 ms would keep the reduced budgets
+# engaged almost permanently (measured 90.9% duty on 2026-08-22).
+@export_range(1.0, 33.0, 0.25) var budget_pressure_ms: float = 14.0
+@export_range(0, 512, 1) var pressure_full_budget: int = 24
+@export_range(0, 1024, 1) var pressure_mid_budget: int = 24
+@export_range(0.05, 5.0, 0.05) var pressure_engage_sec: float = 0.5
+@export_range(0.05, 10.0, 0.05) var pressure_release_sec: float = 2.0
 
 var _previous_tiers: Dictionary = {}
 var _enemy_index: Node = null
@@ -21,6 +52,9 @@ var _far_groups: Array = []
 var _mid_cursor: int = 0
 var _far_cursor: int = 0
 var _physics_pressure_override: Variant = null
+var _pressure_active := false
+var _pressure_above_sec := 0.0
+var _pressure_below_sec := 0.0
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -31,6 +65,8 @@ var _debug_counters := {
 	"far_steps": 0,
 	"assignment_usec": 0,
 	"stale_entries": 0,
+	"spatial_demotions": 0,
+	"pressure_active": 0,
 }
 var _tier_lifecycle_counters := {
 	"tier_changes": 0,
@@ -55,6 +91,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_update_pressure_state(maxf(0.0, delta))
 	_assignment_left -= maxf(0.0, delta)
 	if _assignment_left <= 0.0:
 		refresh_assignments()
@@ -88,20 +125,31 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 		live_ids[enemy_id] = true
 		var position := (enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO
 		var distance_squared := position.distance_squared_to(player_position)
+		var distance := sqrt(distance_squared)
+		var had_previous_tier := _previous_tiers.has(enemy_id)
+		var previous_tier := int(_previous_tiers.get(enemy_id, TIER_FAR))
+		var priority := _priority_for(enemy, player_position, distance_squared)
+		# Distance priorities are negative squared distances, so multiplying by
+		# bias^2 ranks a full incumbent as if bias times closer. Positive
+		# (boosted/protected) priorities are left untouched.
+		if had_previous_tier and priority < 0.0 and rank_incumbent_bias < 1.0:
+			if previous_tier == TIER_FULL:
+				priority *= rank_incumbent_bias * rank_incumbent_bias
+			elif previous_tier == TIER_MID:
+				priority *= rank_incumbent_bias
 		var candidate := {
 			"node": enemy,
 			"id": enemy_id,
 			"distance_squared": distance_squared,
-			"priority": _priority_for(enemy, player_position, distance_squared),
+			"distance": distance,
+			"priority": priority,
 
-			"had_previous_tier": _previous_tiers.has(enemy_id),
-			"previous_tier": int(
-				_previous_tiers.get(enemy_id, TIER_FAR)
-			),
+			"had_previous_tier": had_previous_tier,
+			"previous_tier": previous_tier,
 
-			"max_tier": _max_tier_for(enemy),
+			"max_tier": _max_tier_for(enemy, distance),
 		}
-		if _is_protected(enemy, sqrt(distance_squared)):
+		if _is_protected(enemy, distance):
 			protected_candidates.append(candidate)
 		else:
 			ordinary_candidates.append(candidate)
@@ -121,30 +169,45 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 
 		assignment[enemy_id] = TIER_FULL
 
-	var full_count := mini(maxi(0, full_budget), ordinary_candidates.size())
+	var full_count := mini(maxi(0, _effective_full_budget()), ordinary_candidates.size())
 	var mid_count := mini(
-		maxi(0, mid_budget),
+		maxi(0, _effective_mid_budget()),
 		maxi(0, ordinary_candidates.size() - full_count)
 	)
+	var full_assigned := 0
 	var mid_assigned := 0
 	var far_assigned := 0
+	var spatial_demotions := 0
 	for index in range(ordinary_candidates.size()):
+		var candidate := ordinary_candidates[index] as Dictionary
 		var tier := TIER_FAR
 		if index < full_count:
 			tier = TIER_FULL
 		elif index < full_count + mid_count:
 			tier = TIER_MID
+		# Distance bands only lower fidelity: a budget slot never keeps an actor
+		# beyond its band, and free budget never promotes a distant one.
+		if use_spatial_bands:
+			var spatial_tier := _spatial_tier_for(
+				float(candidate.get("distance", 0.0)),
+				int(candidate["previous_tier"]),
+				bool(candidate.get("had_previous_tier", false))
+			)
+			if spatial_tier > tier:
+				tier = spatial_tier
+				spatial_demotions += 1
 		# Enemies whose archetype must keep world collision clamp to mid rather
 		# than becoming unshootable far proxies. This can exceed mid_budget by
 		# design: collision correctness beats the soft budget.
-		var max_tier := int(ordinary_candidates[index].get("max_tier", TIER_FAR))
+		var max_tier := int(candidate.get("max_tier", TIER_FAR))
 		if tier > max_tier:
 			tier = max_tier
-		if tier == TIER_MID:
+		if tier == TIER_FULL:
+			full_assigned += 1
+		elif tier == TIER_MID:
 			mid_assigned += 1
 		elif tier == TIER_FAR:
 			far_assigned += 1
-		var candidate := ordinary_candidates[index] as Dictionary
 		var enemy_id := int(candidate["id"])
 
 		if bool(candidate.get("had_previous_tier", false)):
@@ -166,11 +229,13 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 	for enemy_id in assignment:
 		_previous_tiers[enemy_id] = int(assignment[enemy_id])
 
-	_debug_counters["full"] = full_count + protected_candidates.size()
+	_debug_counters["full"] = full_assigned + protected_candidates.size()
 	_debug_counters["mid"] = mid_assigned
 	_debug_counters["far"] = far_assigned
 	_debug_counters["protected"] = protected_candidates.size()
 	_debug_counters["physics_enabled"] = int(_debug_counters["full"]) + mid_assigned
+	_debug_counters["spatial_demotions"] = spatial_demotions
+	_debug_counters["pressure_active"] = 1 if _pressure_active else 0
 	_debug_counters["assignment_usec"] = Time.get_ticks_usec() - started_usec
 	return assignment
 
@@ -261,8 +326,58 @@ func is_under_physics_pressure() -> bool:
 	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0 > physics_pressure_ms
 
 
+func _is_over_budget_pressure() -> bool:
+	if _physics_pressure_override != null:
+		return bool(_physics_pressure_override)
+	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0 > budget_pressure_ms
+
+
 func set_physics_pressure_override(value: Variant) -> void:
 	_physics_pressure_override = value
+
+
+func is_physics_pressure_active() -> bool:
+	return _pressure_active
+
+
+func _update_pressure_state(delta: float) -> void:
+	if not adaptive_budgets:
+		_pressure_active = false
+		_pressure_above_sec = 0.0
+		_pressure_below_sec = 0.0
+		return
+	if _is_over_budget_pressure():
+		_pressure_above_sec += delta
+		_pressure_below_sec = 0.0
+		if not _pressure_active and _pressure_above_sec >= pressure_engage_sec:
+			_pressure_active = true
+	else:
+		_pressure_below_sec += delta
+		_pressure_above_sec = 0.0
+		if _pressure_active and _pressure_below_sec >= pressure_release_sec:
+			_pressure_active = false
+
+
+func _effective_full_budget() -> int:
+	return mini(full_budget, pressure_full_budget) if _pressure_active else full_budget
+
+
+func _effective_mid_budget() -> int:
+	return mini(mid_budget, pressure_mid_budget) if _pressure_active else mid_budget
+
+
+func _spatial_tier_for(distance: float, previous_tier: int, had_previous: bool) -> int:
+	var full_limit := full_distance_enter
+	if had_previous and previous_tier == TIER_FULL:
+		full_limit = maxf(full_distance_enter, full_distance_exit)
+	var mid_limit := mid_distance_enter
+	if had_previous and previous_tier <= TIER_MID:
+		mid_limit = maxf(mid_distance_enter, mid_distance_exit)
+	if distance <= full_limit:
+		return TIER_FULL
+	if distance <= maxf(mid_limit, full_limit):
+		return TIER_MID
+	return TIER_FAR
 
 
 func _is_valid_candidate(enemy: Node) -> bool:
@@ -281,9 +396,13 @@ func _priority_for(enemy: Node, player_position: Vector2, distance_squared: floa
 	return -distance_squared
 
 
-func _max_tier_for(enemy: Node) -> int:
+func _max_tier_for(enemy: Node, player_distance: float) -> int:
 	if enemy.has_method("max_scheduler_tier"):
-		return clampi(int(enemy.call("max_scheduler_tier")), TIER_FULL, TIER_FAR)
+		return clampi(
+			int(enemy.call("max_scheduler_tier", player_distance)),
+			TIER_FULL,
+			TIER_FAR
+		)
 	return TIER_FAR
 
 

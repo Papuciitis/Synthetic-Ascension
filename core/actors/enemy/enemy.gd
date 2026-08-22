@@ -41,10 +41,16 @@ class_name EnemyActor
 @export_group("LOS Throttle (smart AIs only)")
 @export var los_check_interval: float = 0.15
 
-@export_group("Simulation LOD (ambient swarm only)")
+@export_group("Simulation LOD")
 @export var simulation_lod_enabled: bool = true
 # Beyond this distance a hit-reaction no longer buys a full-simulation slot.
 @export var lod_mid_distance: float = 2400.0
+# Ordinary smart archetypes may release body/hitbox physics beyond this
+# distance: player projectiles resolve through EnemyCombat's data-side
+# segment tests, so broadphase presence only matters near the player. The
+# lower re-acquire bound is hysteresis against materialize churn on the edge.
+@export var lod_smart_release_distance: float = 2600.0
+@export var lod_smart_reacquire_distance: float = 2300.0
 @export var lod_mid_steer_interval: float = 0.08
 @export var lod_far_steer_interval: float = 0.20
 @export var lod_disable_far_hitbox: bool = true
@@ -386,7 +392,7 @@ func _tick_active_modules(delta: float, ai: int) -> void:
 		_tactical.tick(delta)
 
 
-func _is_lod_eligible(ai: int) -> bool:
+func _lod_base_eligible() -> bool:
 	if not simulation_lod_enabled or is_elite:
 		return false
 	if is_in_group(&"boss_like") or is_in_group(&"boss") or is_in_group(&"miniboss"):
@@ -394,7 +400,11 @@ func _is_lod_eligible(ai: int) -> bool:
 	if has_meta("never_cull") and bool(get_meta("never_cull")):
 		return false
 	var special_kind := get_meta("special_spawn_kind", &"") as StringName
-	if special_kind != &"" and special_kind != &"split":
+	return special_kind == &"" or special_kind == &"split"
+
+
+func _is_lod_eligible(ai: int) -> bool:
+	if not _lod_base_eligible():
 		return false
 	return ai == EnemySpec.AI.CHASE or ai == EnemySpec.AI.SPLITTER or ai == EnemySpec.AI.LEECH
 
@@ -403,11 +413,31 @@ func simulation_tier() -> int:
 	return _lod_tier
 
 
-func max_scheduler_tier() -> int:
-	# Far tier disables body collision and broadphase presence; only the ambient
-	# swarm archetypes may pay that price. Elites, smart archetypes, and special
-	# actors clamp to mid so they always stay hittable.
-	return 2 if _is_lod_eligible(_get_active_ai()) else 1
+func max_scheduler_tier(player_distance: float = -1.0) -> int:
+	# Far tier disables body collision and broadphase presence. Ambient swarm
+	# archetypes may always pay that price. Ordinary smart archetypes stay
+	# shootable without a body (projectiles hit through EnemyCombat's data-side
+	# segment tests), so they may release physics once far enough that contact
+	# damage and body collision cannot matter. Elites, snipers, and special
+	# actors clamp to mid at any distance.
+	var ai: int = _get_active_ai()
+	if _is_lod_eligible(ai):
+		return 2
+	if player_distance >= 0.0 and _can_release_far_physics(ai, player_distance):
+		return 2
+	return 1
+
+
+func _can_release_far_physics(ai: int, player_distance: float) -> bool:
+	if ai == EnemySpec.AI.SNIPER or not _lod_base_eligible():
+		return false
+	# Once released, hold far physics until meaningfully closer so the boundary
+	# cannot flap materialization every assignment refresh.
+	var release := (
+		lod_smart_reacquire_distance if _lod_tier == 2
+		else lod_smart_release_distance
+	)
+	return player_distance >= maxf(release, 0.0)
 
 
 func set_scheduler_tier(tier: int) -> void:
@@ -922,7 +952,9 @@ func _build_enemy_world_cold_state() -> Dictionary:
 			state[String(key)] = get_meta(key)
 	var sprite := get_node_or_null("Sprite2D") as Sprite2D
 	if sprite != null:
-		state["proxy_visual_key"] = StringName(scene_file_path if not scene_file_path.is_empty() else name)
+		state["proxy_visual_key"] = StringName(
+			scene_file_path if not scene_file_path.is_empty() else String(name)
+		)
 		state["proxy_color"] = sprite.modulate
 		state["proxy_z_index"] = z_index + sprite.z_index
 		if sprite.texture != null:

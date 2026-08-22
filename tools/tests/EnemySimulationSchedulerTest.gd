@@ -43,6 +43,9 @@ func _run() -> void:
 		return
 	var scheduler := scheduler_script.new() as Node
 	add_child(scheduler)
+	# Deterministic budgets: never let real headless physics timing engage the
+	# adaptive pressure fallback mid-test.
+	scheduler.call("set_physics_pressure_override", false)
 	_test_500_actor_budget(scheduler)
 	_test_protected_actors_do_not_consume_ambient_budget(scheduler)
 	_test_previous_full_actor_wins_equal_priority_tie(scheduler)
@@ -50,6 +53,11 @@ func _run() -> void:
 	await _test_ambient_elites_and_smart_enemies_remain_budgeted(scheduler)
 	await _test_eligible_ambient_still_reaches_far(scheduler)
 	await _test_max_scheduler_tier_contract()
+	await _test_smart_enemy_releases_far_physics()
+	_test_spatial_bands_cap_distant_fidelity(scheduler)
+	_test_spatial_hysteresis_prevents_flapping(scheduler)
+	_test_pressure_budget_fallback(scheduler_script)
+	_test_full_incumbent_rank_hysteresis(scheduler_script)
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
@@ -263,6 +271,7 @@ func _test_max_scheduler_tier_contract() -> void:
 	sniper_spec.ai = EnemySpec.AI.SNIPER
 	plain.spec = sniper_spec
 	_check(int(plain.call("max_scheduler_tier")) == 1, "sniper keeps world collision at any distance")
+	_check(int(plain.call("max_scheduler_tier", 5000.0)) == 1, "distant sniper still keeps world collision")
 	plain.queue_free()
 
 
@@ -320,6 +329,135 @@ func _test_freed_actor_stale_group_is_ignored(scheduler_script: Script) -> void:
 	var counters := scheduler.call("get_debug_counters") as Dictionary
 	_check(int(counters.get("stale_entries", 0)) == 1, "freed actor is discarded from a stale reduced group without casting it")
 	scheduler.queue_free()
+
+
+func _test_smart_enemy_releases_far_physics() -> void:
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var ranged := enemy_scene.instantiate() as EnemyActor
+	var ranged_spec := EnemySpec.new()
+	ranged_spec.ai = EnemySpec.AI.RANGED
+	ranged.spec = ranged_spec
+	add_child(ranged)
+	await get_tree().process_frame
+	_check(int(ranged.call("max_scheduler_tier")) == 1, "smart archetype keeps collision when distance is unknown")
+	_check(int(ranged.call("max_scheduler_tier", 1000.0)) == 1, "near smart archetype keeps world collision")
+	_check(int(ranged.call("max_scheduler_tier", 3000.0)) == 2, "distant smart archetype may release physics")
+	ranged.call("set_scheduler_tier", 2)
+	_check(int(ranged.call("max_scheduler_tier", 2400.0)) == 2, "released smart archetype holds far physics until the re-acquire bound")
+	_check(int(ranged.call("max_scheduler_tier", 2200.0)) == 1, "released smart archetype re-acquires collision when close again")
+	ranged.call("set_scheduler_tier", 1)
+	_check(int(ranged.call("max_scheduler_tier", 2400.0)) == 1, "mid smart archetype does not release before the release bound")
+	ranged.is_elite = true
+	_check(int(ranged.call("max_scheduler_tier", 3000.0)) == 1, "distant elite keeps world collision")
+	ranged.queue_free()
+
+
+func _test_spatial_bands_cap_distant_fidelity(scheduler: Node) -> void:
+	scheduler.set("full_budget", 32)
+	scheduler.set("mid_budget", 32)
+	scheduler.set("use_spatial_bands", true)
+	var enemies: Array = []
+	for index in range(5):
+		enemies.append(_add_probe(Vector2(100.0 + float(index), 0.0)))
+	for index in range(5):
+		enemies.append(_add_probe(Vector2(1600.0 + float(index), 0.0)))
+	for index in range(5):
+		enemies.append(_add_probe(Vector2(2500.0 + float(index), 0.0)))
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 5, "free full budget does not keep mid-band actors in full simulation")
+	_check(_tier_count(assignment, 1) == 5, "mid band actors settle at mid fidelity")
+	_check(_tier_count(assignment, 2) == 5, "actors beyond the mid band demote to far despite free budget")
+	var counters := scheduler.call("get_debug_counters") as Dictionary
+	_check(int(counters.get("spatial_demotions", -1)) == 10, "spatial demotions are counted for telemetry")
+	_free_nodes(enemies)
+
+
+func _test_spatial_hysteresis_prevents_flapping(scheduler: Node) -> void:
+	scheduler.set("full_budget", 32)
+	scheduler.set("mid_budget", 32)
+	scheduler.set("use_spatial_bands", true)
+	var probe := _add_probe(Vector2(1300.0, 0.0))
+	var enemies: Array = [probe]
+	_check(_assigned_tier(scheduler, enemies, probe) == 1, "fresh actor between full enter and exit starts at mid")
+	probe.position = Vector2(1150.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 0, "actor promotes to full inside the enter bound")
+	probe.position = Vector2(1350.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 0, "full actor keeps its tier until the exit bound")
+	probe.position = Vector2(1450.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 1, "full actor demotes past the exit bound")
+	probe.position = Vector2(2050.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 1, "mid actor keeps its tier until the mid exit bound")
+	probe.position = Vector2(2150.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 2, "mid actor demotes to far past the mid exit bound")
+	probe.position = Vector2(1900.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 2, "far actor stays far until the mid enter bound")
+	probe.position = Vector2(1750.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, probe) == 1, "far actor promotes to mid inside the enter bound")
+	_free_nodes(enemies)
+
+
+func _test_pressure_budget_fallback(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 32)
+	scheduler.set("mid_budget", 32)
+	scheduler.set("use_spatial_bands", false)
+	scheduler.set("pressure_full_budget", 24)
+	scheduler.set("pressure_mid_budget", 24)
+	scheduler.set("pressure_engage_sec", 0.5)
+	scheduler.set("pressure_release_sec", 2.0)
+	var enemies: Array = []
+	for index in range(100):
+		enemies.append(_add_probe(Vector2(float(index + 1), 0.0)))
+	scheduler.call("set_physics_pressure_override", true)
+	scheduler.call("_update_pressure_state", 0.3)
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 32, "brief physics spikes do not shrink the budgets")
+	scheduler.call("_update_pressure_state", 0.3)
+	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 24, "sustained physics pressure shrinks the full budget")
+	_check(_tier_count(assignment, 1) == 24, "sustained physics pressure shrinks the mid budget")
+	var counters := scheduler.call("get_debug_counters") as Dictionary
+	_check(int(counters.get("pressure_active", 0)) == 1, "pressure fallback is visible in the debug counters")
+	scheduler.call("set_physics_pressure_override", false)
+	scheduler.call("_update_pressure_state", 0.5)
+	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 24, "budgets recover only after sustained relief")
+	scheduler.call("_update_pressure_state", 2.1)
+	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 32, "budgets restore once physics stays calm")
+	_free_nodes(enemies)
+	scheduler.free()
+
+
+func _test_full_incumbent_rank_hysteresis(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 1)
+	scheduler.set("mid_budget", 8)
+	scheduler.set("use_spatial_bands", false)
+	scheduler.set("rank_incumbent_bias", 0.90)
+	scheduler.call("set_physics_pressure_override", false)
+	var incumbent := _add_probe(Vector2(1000.0, 0.0))
+	var challenger := _add_probe(Vector2(1200.0, 0.0))
+	var enemies: Array = [incumbent, challenger]
+	_check(_assigned_tier(scheduler, enemies, incumbent) == 0, "closest actor takes the full slot initially")
+	challenger.position = Vector2(960.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, incumbent) == 0, "marginally closer challenger does not steal the full slot")
+	challenger.position = Vector2(850.0, 0.0)
+	_check(_assigned_tier(scheduler, enemies, challenger) == 0, "clearly closer challenger still takes the full slot")
+	_free_nodes(enemies)
+	scheduler.free()
+
+
+func _add_probe(at: Vector2) -> Node2D:
+	var probe := Node2D.new()
+	probe.position = at
+	add_child(probe)
+	return probe
+
+
+func _assigned_tier(scheduler: Node, enemies: Array, probe: Node) -> int:
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	return int(assignment.get(probe.get_instance_id(), -1))
 
 
 func _tier_count(assignment: Dictionary, tier: int) -> int:
