@@ -349,14 +349,15 @@ func _publish_actor_batch(
 	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
 	transforms.resize(count)
 	colors.resize(count)
+	var now_usec := Time.get_ticks_usec()
 	for index in range(count):
 		var entry := entries[index]
 		var actor := entry.get("actor") as Node2D
 		var sprite := entry.get("sprite") as Sprite2D
-		var actor_transform: Transform2D = (
-			actor.get_global_transform_interpolated()
-			if actor.has_method("get_global_transform_interpolated")
-			else actor.global_transform
+		var actor_transform := _interpolated_actor_transform(
+			entry,
+			actor.global_transform,
+			now_usec
 		)
 		# The unit quad renders 1px; bake the texture size in so instances
 		# render at the sprite's native pixel size under node/sprite scales.
@@ -389,6 +390,39 @@ func _publish_actor_batch(
 	batch["colors"] = colors
 	batch["last_count"] = count
 	_visible_count += count
+
+
+func _interpolated_actor_transform(
+	entry: Dictionary,
+	current: Transform2D,
+	now_usec: int,
+) -> Transform2D:
+	# Snapshot interpolation: the visual lerps between the actor's last two
+	# real transform updates, so 60Hz full-tier and 20Hz mid-tier movement
+	# both render smoothly (the node sprites this replaces always stepped
+	# raw; 2D has no engine transform interpolation in this build). Costs
+	# one update interval of visual latency, at most 200ms before snapping.
+	var curr_variant: Variant = entry.get("curr_xf")
+	if curr_variant == null:
+		entry["prev_xf"] = current
+		entry["curr_xf"] = current
+		entry["prev_usec"] = now_usec
+		entry["curr_usec"] = now_usec
+		return current
+	var curr := curr_variant as Transform2D
+	if not curr.is_equal_approx(current):
+		entry["prev_xf"] = curr
+		entry["prev_usec"] = entry.get("curr_usec", now_usec)
+		entry["curr_xf"] = current
+		entry["curr_usec"] = now_usec
+	var prev := entry.get("prev_xf") as Transform2D
+	var prev_usec := int(entry.get("prev_usec", now_usec))
+	var curr_usec := int(entry.get("curr_usec", now_usec))
+	var interval := curr_usec - prev_usec
+	if interval <= 0 or interval > 200_000:
+		return current
+	var interp_alpha := clampf(float(now_usec - curr_usec) / float(interval), 0.0, 1.0)
+	return prev.interpolate_with(current, interp_alpha)
 
 
 func debug_actor_instance_transform(actor: Node2D) -> Transform2D:

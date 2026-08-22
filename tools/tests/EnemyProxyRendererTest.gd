@@ -151,10 +151,13 @@ func _run() -> void:
 	)
 	actor.position = Vector2(400.0, 100.0)
 	renderer.publish(1.0, false)
+	# Snapshot interpolation renders one update interval behind; settle it.
+	await get_tree().create_timer(0.06).timeout
+	renderer.publish(1.0, false)
 	actor_transform = renderer.debug_actor_instance_transform(actor)
 	_check(
 		actor_transform.origin.distance_to(Vector2(400.0, 100.0)) < 0.5,
-		"actor instances stay fresh even when proxy publishing is skipped"
+		"actor instances stay fresh even when proxy publishing is skipped (got %s)" % actor_transform.origin
 	)
 	actor.free()
 	renderer.publish(1.0)
