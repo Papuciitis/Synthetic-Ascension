@@ -44,6 +44,11 @@ func _run() -> void:
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderControls/Enabled"), "console includes recorder enable control")
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderActions/Mark"), "console includes manual incident control")
 	_check(overlay.has_node("Margin/Root/Tabs/Performance/Content/RecorderStatus"), "console includes recorder status")
+	_check(overlay.has_node("Margin/Root/Footer/PauseGame"), "console includes a general pause toggle")
+	overlay.call("_set_game_paused", true)
+	_check(paused, "pause toggle pauses the tree")
+	overlay.call("_set_game_paused", false)
+	_check(not paused, "pause toggle resumes the tree")
 	var spawn_filter := root.get_node_or_null("/root/DebugEnemySpawnFilter")
 	_check(spawn_filter != null, "spawn filter autoload is available")
 	if spawn_filter != null:

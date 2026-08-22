@@ -25,6 +25,7 @@ const MIN_CONSOLE_SIZE := Vector2(720.0, 480.0)
 @onready var _master_spawns: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Master
 @onready var _protected_filter: CheckBox = $Margin/Root/Tabs/Enemies/Content/SpawnToolbar/Protected
 @onready var _force_spawn_result: Label = $Margin/Root/Tabs/Enemies/Content/ForceSpawnRow/Result
+@onready var _pause_game: CheckBox = $Margin/Root/Footer/PauseGame
 @onready var _cap_mode: OptionButton = $Margin/Root/Tabs/Enemies/Content/CapRow/Mode
 @onready var _total_cap: SpinBox = $Margin/Root/Tabs/Enemies/Content/CapRow/TotalCap
 @onready var _enemy_list: VBoxContainer = $Margin/Root/Tabs/Enemies/Content/EnemyScroll/EnemyList
@@ -71,6 +72,7 @@ func _ready() -> void:
 	$Margin/Root/Tabs/Performance/Content/RecorderActions/Clear.pressed.connect(_clear_recorder)
 	_projectile_stress.toggled.connect(_set_projectile_stress)
 	_god_mode.toggled.connect(_set_god_mode)
+	_pause_game.toggled.connect(_set_game_paused)
 	_header.gui_input.connect(_on_header_input)
 	_connect_test_tools()
 	call_deferred("_place_default")
@@ -355,6 +357,7 @@ func _render_snapshot(snapshot: Dictionary) -> void:
 		_updating_controls = true
 		_projectile_stress.button_pressed = Global != null and Global.debug_projectile_stress_test
 		_god_mode.button_pressed = Global != null and Global.debug_player_god_mode
+		_pause_game.button_pressed = get_tree().paused
 		_updating_controls = false
 
 
@@ -580,6 +583,14 @@ func _set_projectile_stress(value: bool) -> void:
 func _set_god_mode(value: bool) -> void:
 	if not _updating_controls and Global != null:
 		Global.debug_player_god_mode = value
+
+
+func _set_game_paused(value: bool) -> void:
+	# Dev freeze: everything halts (the scheduler is pausable now), the
+	# overlay itself keeps processing, so state can be inspected from the
+	# editor remote tree and resumed from here.
+	if not _updating_controls:
+		get_tree().paused = value
 
 
 func request_main_menu() -> void:
