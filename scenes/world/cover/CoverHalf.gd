@@ -1,3 +1,4 @@
+@static_unload
 extends StaticBody2D
 class_name CoverHalf
 

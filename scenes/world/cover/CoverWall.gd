@@ -1,3 +1,4 @@
+@static_unload
 extends StaticBody2D
 # Connection bitmask: N=1, E=2, S=4, W=8
 

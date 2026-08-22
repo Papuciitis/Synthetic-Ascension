@@ -18,6 +18,7 @@ class SoakDriver:
 	var _first_run_best_distance := INF
 	var _seeded_first_run := false
 	var _seeded_second_run := false
+	var _objects_after_first_teardown := 0
 
 	func _seed_spawns_if_quiet(population: Dictionary, already_seeded: bool) -> bool:
 		# Pre-unseal pacing can legitimately produce zero organic spawns in the
@@ -96,6 +97,7 @@ class SoakDriver:
 		elif _phase == 2 and _elapsed >= 25.0:
 			_check(int(population["alive"]) == 0, "leaving the run clears every indexed enemy")
 			_check(int(population["logical"]) == 0, "leaving the run clears every logical world record")
+			_objects_after_first_teardown = int(Performance.get_monitor(Performance.OBJECT_COUNT))
 			_phase = 3
 			Global.start_new_attempt()
 			Global.attempt_segment = 2
@@ -107,6 +109,18 @@ class SoakDriver:
 		elif _phase == 4 and _elapsed >= 49.0:
 			var final_population := _population()
 			_check(int(final_population["alive"]) == 0 and int(final_population["logical"]) == 0, "final teardown leaves no enemy population")
+			var objects_after_second_teardown := int(Performance.get_monitor(Performance.OBJECT_COUNT))
+			var object_growth := objects_after_second_teardown - _objects_after_first_teardown
+			# A full run cycle must not accumulate live objects. Slack covers
+			# timers/tweens/deferred frees that settle on their own schedule.
+			_check(
+				object_growth <= 128,
+				"a second run cycle does not accumulate objects (growth %d: %d -> %d)" % [
+					object_growth,
+					_objects_after_first_teardown,
+					objects_after_second_teardown,
+				]
+			)
 			_phase = 5
 			print("EnemyRunTransitionSoakTest: %d passed, %d failed" % [_passes, _failures])
 			get_tree().quit(1 if _failures > 0 else 0)

@@ -1,3 +1,4 @@
+@static_unload
 extends Area2D
 class_name EnemyProjectile
 

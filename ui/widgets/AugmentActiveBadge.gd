@@ -1,3 +1,4 @@
+@static_unload
 extends Control
 class_name AugmentActiveBadge
 

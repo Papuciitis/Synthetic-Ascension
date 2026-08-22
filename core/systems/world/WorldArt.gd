@@ -1,3 +1,4 @@
+@static_unload
 extends RefCounted
 # Centralised texture access for ChunkManager and procedural generators.
 # Deliberately not a global class: consumers explicitly preload this script, avoiding stale global-class member caches.
