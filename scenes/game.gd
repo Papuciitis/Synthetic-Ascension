@@ -128,6 +128,10 @@ func _setup_enemy_proxy_root() -> void:
 	var proxy_root := ENEMY_PROXY_ROOT_SCRIPT.new() as Node2D
 	proxy_root.name = "EnemyProxyRoot"
 	add_child(proxy_root)
+	# The batched enemy visuals must draw above the world builder and the
+	# chunk canvas items that stream in later; enemy nodes historically
+	# rendered above them purely by spawning later in the tree.
+	call_deferred("move_child", proxy_root, get_child_count() - 1)
 
 
 

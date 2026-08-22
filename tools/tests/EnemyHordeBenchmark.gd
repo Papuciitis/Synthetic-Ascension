@@ -70,6 +70,9 @@ class Driver:
 		_process_ms.clear()
 		_physics_ms.clear()
 		_draws.clear()
+		var filter := get_node_or_null("/root/DebugEnemySpawnFilter")
+		if filter != null:
+			filter.set("custom_total_cap", STAGES[index])
 		print("HordeBenchmark: stage %d -> target %d" % [index, STAGES[index]])
 
 	func _process(delta: float) -> void:
@@ -89,7 +92,7 @@ class Driver:
 				push_error("HordeBenchmark: missing spawner or filter")
 				get_tree().quit(1)
 				return
-			_filter.set("cap_mode", 2) # UNLIMITED
+			_filter.set("cap_mode", 1) # CUSTOM: capped at each stage target
 			_begin_stage(0)
 			return
 		if _phase != 2:
@@ -100,7 +103,8 @@ class Driver:
 		if _topup_left <= 0.0:
 			_topup_left = 0.5
 			var alive := int(_spawner.call("_alive_total"))
-			var deficit: int = STAGES[_stage_index] - alive
+			var queued := int(_spawner.get("_force_spawn_queue"))
+			var deficit: int = STAGES[_stage_index] - alive - queued
 			if deficit > 0:
 				_spawner.call("debug_force_spawn", deficit)
 

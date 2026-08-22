@@ -298,7 +298,9 @@ func _publish_batch(
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
 		# The unit quad renders 1px; instance scale is the target pixel size
 		# directly (dividing by texture size shrank proxies to sub-pixel dots).
-		var proxy_scale := size
+		# Y is negated: the quad mesh UVs assume Y-up while the canvas is
+		# Y-down, so an unflipped basis renders the texture upside down.
+		var proxy_scale := Vector2(size.x, -size.y)
 		var color := _profile_color(handle, profile)
 		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color)
 		transforms[index] = Transform2D(
@@ -358,7 +360,12 @@ func _publish_actor_batch(
 		)
 		# The unit quad renders 1px; bake the texture size in so instances
 		# render at the sprite's native pixel size under node/sprite scales.
-		var instance_transform := (actor_transform * sprite.transform).scaled_local(sprite.texture.get_size())
+		# Texture Y is negated: the quad mesh UVs assume Y-up while the
+		# canvas is Y-down, so an unflipped basis renders upside down.
+		var texture_size := sprite.texture.get_size()
+		var instance_transform := (actor_transform * sprite.transform).scaled_local(
+			Vector2(texture_size.x, -texture_size.y)
+		)
 		var color := sprite.modulate * actor.modulate
 		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color)
 		transforms[index] = instance_transform
