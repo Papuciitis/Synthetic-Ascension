@@ -130,9 +130,17 @@ func _setup_enemy_proxy_root() -> void:
 	add_child(proxy_root)
 	# The batched enemy visuals must draw above the world builder and the
 	# chunk canvas items that stream in later; enemy nodes historically
-	# rendered above them purely by spawning later in the tree.
-	call_deferred("move_child", proxy_root, get_child_count() - 1)
+	# rendered above them purely by spawning later in the tree. Deferred
+	# METHOD, not deferred move_child: call_deferred captures argument
+	# values at schedule time, which froze the target index mid-setup.
+	call_deferred("_move_enemy_proxy_root_to_front")
 
+
+
+func _move_enemy_proxy_root_to_front() -> void:
+	var proxy_root := get_node_or_null("EnemyProxyRoot")
+	if proxy_root != null:
+		move_child(proxy_root, get_child_count() - 1)
 
 
 func _setup_segment_world() -> void:

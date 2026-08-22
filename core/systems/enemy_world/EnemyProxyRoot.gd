@@ -16,6 +16,11 @@ var _flow: FlowFieldNav = null
 
 
 func _ready() -> void:
+	# Layer backstop: enemy batches must beat z<=0 world content (ground,
+	# decals, vegetation) regardless of tree order, and stay under bullets
+	# (z 200) and fog (z 1500). Tree-order-only layering broke every time
+	# something appended canvas items after this node.
+	z_index = 10
 	add_to_group(&"enemy_proxy_root")
 	_world = get_node_or_null("/root/EnemyWorld") as EnemyWorldService
 	var pool := get_node_or_null("/root/PoolManager")
