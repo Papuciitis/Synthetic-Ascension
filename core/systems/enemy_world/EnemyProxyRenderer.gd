@@ -221,9 +221,9 @@ func _publish_batch(
 		var color := _profile_color(handle, profile)
 		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color)
 		transforms[index] = Transform2D(
-			Vector2(scale.x, 0.0),
-			Vector2(0.0, scale.y),
-			position,
+			Vector2(proxy_scale.x, 0.0),
+			Vector2(0.0, proxy_scale.y),
+			proxy_position,
 		)
 		colors[index] = color
 		_handle_locations[handle] = {"key": visual_key, "index": index}
