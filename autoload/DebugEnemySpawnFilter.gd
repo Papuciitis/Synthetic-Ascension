@@ -212,6 +212,26 @@ func _retire_disabled_live_enemies(disabled_ids: Array[StringName]) -> void:
 		if _is_protected(enemy) and not filter_protected_actors:
 			continue
 		enemy_index.call("retire_enemy", enemy, &"debug_spawn_filter")
+	# Data-only proxies have no Node in the index snapshot: release their
+	# logical records too, or a culled horde keeps counting against the
+	# alive cap (blocking forced spawns) and rematerializes at the player.
+	# Detached records are never protected (proxy eligibility excludes every
+	# protected flag).
+	var world := get_node_or_null("/root/EnemyWorld")
+	if (
+		world == null
+		or not world.has_method("get_cold_state")
+		or not enemy_index.has_method("detached_handles")
+		or not enemy_index.has_method("release_detached")
+	):
+		return
+	var disable_everything := disabled_lookup.size() >= _known_ids.size()
+	for handle_variant: Variant in (enemy_index.call("detached_handles") as Array).duplicate():
+		var handle := int(handle_variant)
+		var cold := world.call("get_cold_state", handle) as Dictionary
+		var detached_id := StringName(cold.get("enemy_id", &""))
+		if disabled_lookup.has(detached_id) or (detached_id == &"" and disable_everything):
+			enemy_index.call("release_detached", handle, &"debug_spawn_filter")
 
 
 func _enemy_id(enemy: Node) -> StringName:

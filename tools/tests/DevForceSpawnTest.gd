@@ -108,7 +108,21 @@ class Driver:
 				alive >= _alive_after_horde + 20,
 				"the raised custom cap actually grew the population (%d -> %d)" % [_alive_after_horde, alive]
 			)
+			_filter.call("disable_all")
+		elif _phase == 4 and _elapsed >= 12.5:
+			_phase = 5
+			var culled_alive := int(_spawner.call("_alive_total"))
+			_check(culled_alive <= 5, "disable + cull all clears nodes AND detached records (alive %d)" % culled_alive)
+			var index := get_node_or_null("/root/EnemyIndex")
+			if index != null and index.has_method("detached_handles"):
+				_check((index.call("detached_handles") as Array).is_empty(), "no detached records survive a full cull")
+			_filter.call("enable_all")
 			_filter.set("cap_mode", 0)
+			var revived := _spawner.call("debug_force_spawn", 10) as Dictionary
+			_check(
+				int(revived.get("spawned", -1)) == 10,
+				"force spawn works again right after a full cull (got %s)" % revived.get("spawned")
+			)
 			_filter.set("custom_total_cap", 180)
 			Global.debug_player_god_mode = false
 			Global.goto_main_menu()

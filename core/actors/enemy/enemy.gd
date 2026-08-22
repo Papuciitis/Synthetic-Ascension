@@ -948,6 +948,9 @@ func _build_enemy_world_cold_state() -> Dictionary:
 		"knockback_decay": knockback_decay,
 	}
 	if spec != null:
+		# Lets systems that only see logical records (debug cull, death rewards,
+		# telemetry) resolve the archetype without a materialized node.
+		state["enemy_id"] = spec.id
 		# Lets a data-only death grant the same follower reward the actor would.
 		state["follower_reward_min"] = spec.follower_reward_min
 		state["follower_reward_max"] = spec.follower_reward_max
