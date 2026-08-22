@@ -21,7 +21,14 @@ var cooldown_seconds := 2.0
 var absolute_threshold_ms := 28.0
 var relative_multiplier := 1.8
 var baseline_alpha := 0.025
-var report_directory := "user://performance_captures"
+# Running from the project (editor / --path) captures straight into the repo's
+# tracked performance_results folder so runs are comparable across machines.
+# Exported builds fall back to user:// because res:// is read-only there.
+var report_directory := (
+	"res://performance_results"
+	if OS.has_feature("editor")
+	else "user://performance_captures"
+)
 
 var _state := STATE_DISABLED
 var _history: Array[Dictionary] = []
@@ -217,6 +224,15 @@ func _collect_slow_snapshot() -> Dictionary:
 		"special_enemies": 0,
 		"enemy_tiers": {},
 		"enemy_scheduler": {},
+		"sim_full": 0,
+		"sim_mid": 0,
+		"sim_far": 0,
+		"sim_protected": 0,
+		"sim_physics_enabled": 0,
+		"sim_pressure": 0,
+		"sim_spatial_demotions": 0,
+		"tier_changes_total": 0,
+		"tier_reversals_total": 0,
 		"enemy_pool": {},
 		"enemy_lifecycle": {
 			"attached": 0,
@@ -289,6 +305,15 @@ func _collect_slow_snapshot() -> Dictionary:
 
 		output["enemy_scheduler"] = scheduler_data
 
+		# Flat copies so incident CSV rows can carry the simulation LOD state.
+		output["sim_full"] = int(scheduler_data.get("full", 0))
+		output["sim_mid"] = int(scheduler_data.get("mid", 0))
+		output["sim_far"] = int(scheduler_data.get("far", 0))
+		output["sim_protected"] = int(scheduler_data.get("protected", 0))
+		output["sim_physics_enabled"] = int(scheduler_data.get("physics_enabled", 0))
+		output["sim_pressure"] = int(scheduler_data.get("pressure_active", 0))
+		output["sim_spatial_demotions"] = int(scheduler_data.get("spatial_demotions", 0))
+
 		if scheduler_data.has("lifecycle"):
 			var lifecycle := output["enemy_lifecycle"] as Dictionary
 
@@ -301,6 +326,9 @@ func _collect_slow_snapshot() -> Dictionary:
 				int(lifecycle.get("representation_reversals", 0))
 				+ int(lifecycle.get("tier_reversals", 0))
 			)
+
+			output["tier_changes_total"] = int(lifecycle.get("tier_changes", 0))
+			output["tier_reversals_total"] = int(lifecycle.get("tier_reversals", 0))
 	var pool := get_node_or_null("/root/PoolManager")
 	if pool != null and pool.has_method("get_debug_counters"):
 		output["enemy_pool"] = (pool.call("get_debug_counters") as Dictionary).duplicate(true)
