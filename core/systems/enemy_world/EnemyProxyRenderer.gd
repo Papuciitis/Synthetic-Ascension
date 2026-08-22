@@ -22,7 +22,6 @@ var _profile_sweep_counter := 0
 # {actor, sprite, texture, key}. Registration is per node instance; freed
 # or pooled actors are pruned/skipped during publish.
 var _actors: Dictionary = {}
-var _actor_locations: Dictionary = {}
 
 
 func setup(world: EnemyWorldService) -> void:
@@ -51,7 +50,12 @@ func registered_actor_count() -> int:
 	return _actors.size()
 
 
-func publish(interpolation_alpha: float = 1.0, include_proxies: bool = true) -> int:
+func publish(
+	interpolation_alpha: float = 1.0,
+	include_proxies: bool = true,
+	proxy_clock: float = -1.0,
+	proxy_interval: float = 0.0,
+) -> int:
 	var started := Time.get_ticks_usec()
 	_visible_count = 0
 	_handle_locations.clear()
@@ -133,8 +137,9 @@ func publish(interpolation_alpha: float = 1.0, include_proxies: bool = true) -> 
 			batch,
 			groups[visual_key] as Array[int],
 			clampf(interpolation_alpha, 0.0, 1.0),
+			proxy_clock,
+			proxy_interval,
 		)
-	_actor_locations.clear()
 	for actor_key_variant in actor_groups:
 		var actor_key := actor_key_variant as StringName
 		seen[actor_key] = true
@@ -278,6 +283,8 @@ func _publish_batch(
 	batch: Dictionary,
 	handles: Array[int],
 	alpha: float,
+	proxy_clock: float = -1.0,
+	proxy_interval: float = 0.0,
 ) -> void:
 	var count := handles.size()
 	var capacity := _ensure_capacity(batch, count)
@@ -294,7 +301,17 @@ func _publish_batch(
 	for index in range(count):
 		var handle := handles[index]
 		var profile := _profile_for(handle)
-		var proxy_position := _world.get_previous_position(handle).lerp(_world.get_position(handle), alpha)
+		# Slices update at different times inside the fixed step; a per-handle
+		# blend from the handle's own update time removes the swarm
+		# micro-jitter a single global phase produces.
+		var blend := alpha
+		if proxy_clock >= 0.0 and proxy_interval > 0.0:
+			blend = clampf(
+				(proxy_clock - _world.get_proxy_update_time(handle)) / proxy_interval,
+				0.0,
+				1.0
+			)
+		var proxy_position := _world.get_previous_position(handle).lerp(_world.get_position(handle), blend)
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
 		# The unit quad renders 1px; instance scale is the target pixel size
 		# directly (dividing by texture size shrank proxies to sub-pixel dots).
@@ -371,7 +388,10 @@ func _publish_actor_batch(
 		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color)
 		transforms[index] = instance_transform
 		colors[index] = color
-		_actor_locations[actor.get_instance_id()] = {"key": visual_key, "index": index}
+		# Slot bookkeeping lives on the persistent entry dict: a fresh location
+		# dictionary per actor per frame was pure allocation churn at 1000+.
+		entry["batch_key"] = visual_key
+		entry["batch_index"] = index
 	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
 	for index in range(count, stale_tail):
 		_write_instance(
@@ -426,24 +446,24 @@ func _interpolated_actor_transform(
 
 
 func debug_actor_instance_transform(actor: Node2D) -> Transform2D:
-	var location := _actor_locations.get(actor.get_instance_id(), {}) as Dictionary
-	if location.is_empty():
+	var entry := _actors.get(actor.get_instance_id(), {}) as Dictionary
+	if entry.is_empty():
 		return Transform2D()
-	var batch := _batches.get(location.get("key"), {}) as Dictionary
+	var batch := _batches.get(entry.get("batch_key"), {}) as Dictionary
 	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
-	var index := int(location.get("index", -1))
+	var index := int(entry.get("batch_index", -1))
 	if index < 0 or index >= transforms.size():
 		return Transform2D()
 	return transforms[index]
 
 
 func debug_actor_instance_color(actor: Node2D) -> Color:
-	var location := _actor_locations.get(actor.get_instance_id(), {}) as Dictionary
-	if location.is_empty():
+	var entry := _actors.get(actor.get_instance_id(), {}) as Dictionary
+	if entry.is_empty():
 		return Color(0.0, 0.0, 0.0, 0.0)
-	var batch := _batches.get(location.get("key"), {}) as Dictionary
+	var batch := _batches.get(entry.get("batch_key"), {}) as Dictionary
 	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
-	var index := int(location.get("index", -1))
+	var index := int(entry.get("batch_index", -1))
 	if index < 0 or index >= colors.size():
 		return Color(0.0, 0.0, 0.0, 0.0)
 	return colors[index]
@@ -497,7 +517,6 @@ func _hide_batch(batch: Dictionary) -> void:
 
 func _hide_all_batches() -> void:
 	_handle_locations.clear()
-	_actor_locations.clear()
 	_visible_count = 0
 	for batch_variant in _batches.values():
 		_hide_batch(batch_variant as Dictionary)

@@ -93,6 +93,14 @@ func interpolated_position(handle: int, alpha: float = -1.0) -> Vector2:
 	return _world.get_previous_position(handle).lerp(_world.get_position(handle), blend)
 
 
+func clock() -> float:
+	return _clock
+
+
+func update_interval() -> float:
+	return 1.0 / maxf(update_hz, 0.001)
+
+
 func interpolation_phase() -> float:
 	# Global fraction of the current fixed step, for renderer interpolation.
 	# Per-handle phases differ by at most one slice (~a frame), which is not

@@ -47,6 +47,12 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 # bodies linearly with the horde (measured 134 physics-enabled bodies at
 # 250 enemies on 2026-08-22 because nothing inside 2600px ever releases).
 @export_range(0.4, 1.0, 0.05) var pressure_release_distance_scale: float = 0.75
+# Emergency tier: sustained physics beyond this bounds the cost by design
+# at any population (measured 30ms physics p95 at 1129 alive).
+@export_range(1.0, 33.0, 0.25) var emergency_pressure_ms: float = 20.0
+@export_range(0, 512, 1) var emergency_full_budget: int = 16
+@export_range(0, 1024, 1) var emergency_mid_budget: int = 16
+@export_range(0.4, 1.0, 0.05) var emergency_release_distance_scale: float = 0.6
 
 var _previous_tiers: Dictionary = {}
 var _enemy_index: Node = null
@@ -58,6 +64,7 @@ var _mid_cursor: int = 0
 var _far_cursor: int = 0
 var _physics_pressure_override: Variant = null
 var _pressure_active := false
+var _pressure_level := 0
 var _pressure_above_sec := 0.0
 var _pressure_below_sec := 0.0
 var _debug_counters := {
@@ -72,6 +79,7 @@ var _debug_counters := {
 	"stale_entries": 0,
 	"spatial_demotions": 0,
 	"pressure_active": 0,
+	"pressure_level": 0,
 }
 var _tier_lifecycle_counters := {
 	"tier_changes": 0,
@@ -244,6 +252,7 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 	_debug_counters["physics_enabled"] = int(_debug_counters["full"]) + mid_assigned
 	_debug_counters["spatial_demotions"] = spatial_demotions
 	_debug_counters["pressure_active"] = 1 if _pressure_active else 0
+	_debug_counters["pressure_level"] = _pressure_level
 	_debug_counters["assignment_usec"] = Time.get_ticks_usec() - started_usec
 	return assignment
 
@@ -349,32 +358,60 @@ func is_physics_pressure_active() -> bool:
 
 
 func physics_release_distance_scale() -> float:
+	if _pressure_level >= 2:
+		return emergency_release_distance_scale
 	return pressure_release_distance_scale if _pressure_active else 1.0
 
 
 func _update_pressure_state(delta: float) -> void:
 	if not adaptive_budgets:
 		_pressure_active = false
+		_pressure_level = 0
 		_pressure_above_sec = 0.0
 		_pressure_below_sec = 0.0
 		return
-	if _is_over_budget_pressure():
+	var measured := _measured_pressure_level()
+	if measured > _pressure_level:
 		_pressure_above_sec += delta
 		_pressure_below_sec = 0.0
-		if not _pressure_active and _pressure_above_sec >= pressure_engage_sec:
-			_pressure_active = true
-	else:
+		if _pressure_above_sec >= pressure_engage_sec:
+			_pressure_level += 1
+			_pressure_above_sec = 0.0
+	elif measured < _pressure_level:
 		_pressure_below_sec += delta
 		_pressure_above_sec = 0.0
-		if _pressure_active and _pressure_below_sec >= pressure_release_sec:
-			_pressure_active = false
+		if _pressure_below_sec >= pressure_release_sec:
+			_pressure_level -= 1
+			_pressure_below_sec = 0.0
+	else:
+		_pressure_above_sec = 0.0
+		_pressure_below_sec = 0.0
+	_pressure_level = clampi(_pressure_level, 0, 2)
+	_pressure_active = _pressure_level >= 1
+
+
+func _measured_pressure_level() -> int:
+	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	if _physics_pressure_override != null:
+		if _physics_pressure_override is bool:
+			return 1 if bool(_physics_pressure_override) else 0
+		physics_ms = float(_physics_pressure_override)
+	if physics_ms > emergency_pressure_ms:
+		return 2
+	if physics_ms > budget_pressure_ms:
+		return 1
+	return 0
 
 
 func _effective_full_budget() -> int:
+	if _pressure_level >= 2:
+		return mini(full_budget, emergency_full_budget)
 	return mini(full_budget, pressure_full_budget) if _pressure_active else full_budget
 
 
 func _effective_mid_budget() -> int:
+	if _pressure_level >= 2:
+		return mini(mid_budget, emergency_mid_budget)
 	return mini(mid_budget, pressure_mid_budget) if _pressure_active else mid_budget
 
 

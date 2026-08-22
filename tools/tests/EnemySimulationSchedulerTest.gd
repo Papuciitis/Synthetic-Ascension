@@ -58,6 +58,7 @@ func _run() -> void:
 	_test_spatial_hysteresis_prevents_flapping(scheduler)
 	_test_pressure_budget_fallback(scheduler_script)
 	_test_full_incumbent_rank_hysteresis(scheduler_script)
+	_test_emergency_pressure_tier(scheduler_script)
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
@@ -454,6 +455,36 @@ func _test_full_incumbent_rank_hysteresis(scheduler_script: Script) -> void:
 	_check(_assigned_tier(scheduler, enemies, incumbent) == 0, "marginally closer challenger does not steal the full slot")
 	challenger.position = Vector2(850.0, 0.0)
 	_check(_assigned_tier(scheduler, enemies, challenger) == 0, "clearly closer challenger still takes the full slot")
+	_free_nodes(enemies)
+	scheduler.free()
+
+
+func _test_emergency_pressure_tier(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 32)
+	scheduler.set("mid_budget", 32)
+	scheduler.set("use_spatial_bands", false)
+	var enemies: Array = []
+	for index in range(80):
+		enemies.append(_add_probe(Vector2(float(index + 1), 0.0)))
+	# Numeric override = measured physics ms; 25 exceeds the emergency bound.
+	scheduler.call("set_physics_pressure_override", 25.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 24, "first sustained step engages the ordinary pressure budgets")
+	scheduler.call("_update_pressure_state", 0.6)
+	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 16, "sustained emergency pressure shrinks the full budget to 16")
+	_check(_tier_count(assignment, 1) == 16, "sustained emergency pressure shrinks the mid budget to 16")
+	_check(
+		absf(float(scheduler.call("physics_release_distance_scale")) - 0.6) < 0.001,
+		"emergency pressure pulls the release boundary hardest"
+	)
+	scheduler.call("set_physics_pressure_override", 5.0)
+	scheduler.call("_update_pressure_state", 2.1)
+	scheduler.call("_update_pressure_state", 2.1)
+	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
+	_check(_tier_count(assignment, 0) == 32, "budgets restore fully after sustained calm")
 	_free_nodes(enemies)
 	scheduler.free()
 
