@@ -501,11 +501,22 @@ func _force_spawn(count: int) -> void:
 	if spawner == null or not spawner.has_method("debug_force_spawn"):
 		_force_spawn_result.text = "no spawner in scene"
 		return
-	var spawned := int(spawner.call("debug_force_spawn", count))
+	var result := spawner.call("debug_force_spawn", count) as Dictionary
+	var spawned := int(result.get("spawned", 0))
+	var alive := int(result.get("alive", 0))
+	var pending := int(result.get("pending", 0))
+	var cap := int(result.get("cap", 0))
 	if spawned >= count:
-		_force_spawn_result.text = "spawned +%d" % spawned
+		_force_spawn_result.text = "spawned +%d (alive %d)" % [spawned, alive]
+	elif cap > 0 and alive + pending >= cap:
+		_force_spawn_result.text = (
+			"at cap %d/%d — set Population caps to Custom or Unlimited"
+			% [alive, cap]
+		)
+	elif spawned == 0:
+		_force_spawn_result.text = "+0 — blocked by spawn filters or no valid spawn position"
 	else:
-		_force_spawn_result.text = "spawned +%d (cap or filters)" % spawned
+		_force_spawn_result.text = "spawned +%d, then hit cap %d/%d" % [spawned, alive, cap]
 
 
 func _enable_all() -> void:

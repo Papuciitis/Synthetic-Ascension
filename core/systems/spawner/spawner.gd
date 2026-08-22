@@ -248,11 +248,13 @@ func _is_boss_near_player() -> bool:
 
 	return false
 
-func debug_force_spawn(count: int) -> int:
+func debug_force_spawn(count: int) -> Dictionary:
 	# Dev overlay: fill the population immediately, bypassing spawn pacing
 	# (timer interval, batch budget, cull-refill grace) while still honoring
 	# the effective alive cap, spawn filters, and per-type caps so forced
-	# populations stay comparable to director-driven ones.
+	# populations stay comparable to director-driven ones. The director keeps
+	# the population pinned near the cap during a run, so the result carries
+	# alive/cap for the overlay to explain a zero instead of just showing it.
 	var minutes: float = _elapsed / 60.0
 	var spawned_total := 0
 	# Weighted rolls can land on an entry whose type cap is full and return 0;
@@ -268,7 +270,12 @@ func debug_force_spawn(count: int) -> int:
 			minutes,
 			mini(remaining, count - spawned_total)
 		)
-	return spawned_total
+	return {
+		"spawned": spawned_total,
+		"alive": _alive_total(),
+		"pending": _pending_spawn_total,
+		"cap": _current_alive_cap(),
+	}
 
 
 func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
