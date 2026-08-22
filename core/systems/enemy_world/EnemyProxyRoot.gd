@@ -71,14 +71,14 @@ func _exit_tree() -> void:
 		index.call("release_detached", int(handle), &"run_teardown")
 
 
-func _proxy_direction(_handle: int, position: Vector2, target_position: Vector2) -> Vector2:
+func _proxy_direction(_handle: int, from_position: Vector2, target_position: Vector2) -> Vector2:
 	# Prefer the shared flow field; fall back to direct pursuit exactly like the
 	# materialized horde does when the field has no answer.
 	if _flow == null or not is_instance_valid(_flow):
 		_flow = get_tree().get_first_node_in_group(&"flow_field_nav") as FlowFieldNav
 	if _flow != null:
-		var flow_direction := _flow.sample_dir_smooth(position)
+		var flow_direction := _flow.sample_dir_smooth(from_position)
 		if flow_direction != Vector2.ZERO:
 			return flow_direction
-	var offset := target_position - position
+	var offset := target_position - from_position
 	return offset.normalized() if offset != Vector2.ZERO else Vector2.ZERO

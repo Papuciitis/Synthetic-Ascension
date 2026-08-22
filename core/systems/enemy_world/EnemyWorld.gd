@@ -761,7 +761,7 @@ func _ai_kind_from_actor(actor: Node2D) -> int:
 
 
 func _flags_from_actor(actor: Node) -> int:
-	var flags := Types.Flags.NONE
+	var flags: int = Types.Flags.NONE
 	if "is_elite" in actor and bool(actor.get("is_elite")):
 		flags |= Types.Flags.ELITE
 	var boss_like := (

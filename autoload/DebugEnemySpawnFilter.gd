@@ -25,7 +25,8 @@ var spawning_enabled := true:
 		if not value:
 			_apply_disabled_ids(known_enemy_ids())
 		else:
-			filters_changed.emit([])
+			var no_disabled: Array[StringName] = []
+			filters_changed.emit(no_disabled)
 			settings_changed.emit()
 
 var _enabled: Dictionary = {}
@@ -101,7 +102,8 @@ func set_enemy_enabled(enemy_id: StringName, value: bool) -> void:
 func enable_all() -> void:
 	for enemy_id: Variant in _known_ids.keys():
 		_enabled[enemy_id] = true
-	filters_changed.emit([])
+	var no_disabled: Array[StringName] = []
+	filters_changed.emit(no_disabled)
 	settings_changed.emit()
 
 

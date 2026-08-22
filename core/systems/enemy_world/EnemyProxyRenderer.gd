@@ -215,11 +215,11 @@ func _publish_batch(
 	for index in range(count):
 		var handle := handles[index]
 		var profile := _profile_for(handle)
-		var position := _world.get_previous_position(handle).lerp(_world.get_position(handle), alpha)
+		var proxy_position := _world.get_previous_position(handle).lerp(_world.get_position(handle), alpha)
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
-		var scale := Vector2(size.x / texture_size.x, size.y / texture_size.y)
+		var proxy_scale := Vector2(size.x / texture_size.x, size.y / texture_size.y)
 		var color := _profile_color(handle, profile)
-		_write_instance(buffer, index * FLOATS_PER_INSTANCE, scale, position, color)
+		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color)
 		transforms[index] = Transform2D(
 			Vector2(scale.x, 0.0),
 			Vector2(0.0, scale.y),
@@ -363,20 +363,20 @@ func _safe_texture_size(texture: Texture2D) -> Vector2:
 func _write_instance(
 	buffer: PackedFloat32Array,
 	base: int,
-	scale: Vector2,
-	position: Vector2,
+	instance_scale: Vector2,
+	instance_position: Vector2,
 	color: Color,
 ) -> void:
 	# RenderingServer stores Transform2D as two padded rows. The origin is
 	# therefore at offsets 3 and 7, followed by four RGBA floats.
-	buffer[base] = scale.x
+	buffer[base] = instance_scale.x
 	buffer[base + 1] = 0.0
 	buffer[base + 2] = 0.0
-	buffer[base + 3] = position.x
+	buffer[base + 3] = instance_position.x
 	buffer[base + 4] = 0.0
-	buffer[base + 5] = scale.y
+	buffer[base + 5] = instance_scale.y
 	buffer[base + 6] = 0.0
-	buffer[base + 7] = position.y
+	buffer[base + 7] = instance_position.y
 	buffer[base + 8] = color.r
 	buffer[base + 9] = color.g
 	buffer[base + 10] = color.b
