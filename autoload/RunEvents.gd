@@ -40,6 +40,13 @@ signal secondary_objective_completed(objective_id: int)
 @warning_ignore("unused_signal")
 signal segment_phase_changed(phase: StringName, label: String)
 
+# Structured Exit Rite state for the HUD checklist. state is &"locked",
+# &"located" or &"ready"; items are {id: StringName, label: String,
+# done: bool}. Never derive READY from resonance_changed - that channel is
+# deliberately clamped to 0.998 while the gate is blocked.
+@warning_ignore("unused_signal")
+signal gate_checklist_changed(state: StringName, items: Array, next_hint: String)
+
 @warning_ignore("unused_signal")
 signal blocking_info_requested(card_id: StringName, title: String, body: String)
 

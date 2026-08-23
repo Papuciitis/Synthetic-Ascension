@@ -25,6 +25,7 @@
 [ext_resource type="PackedScene" path="res://ui/widgets/BossBarHUD.tscn" id="20_boss_bar"]
 [ext_resource type="Script" path="res://ui/controllers/HudBossController.gd" id="21_boss_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/HudObjectiveController.gd" id="22_objective_ctl"]
+[ext_resource type="Script" path="res://ui/controllers/HudGateChecklistController.gd" id="24_checklist_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="23_set_breakpoints"]
 
 
@@ -194,6 +195,14 @@ detail_path = NodePath("../GateOverlay/ObjectivePanel/Margin/VBox/Detail")
 secondary_panel_path = NodePath("../GateOverlay/SecondaryObjectivePanel")
 secondary_title_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Title")
 secondary_detail_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Detail")
+bag_controller_path = NodePath("../BagController")
+
+[node name="GateChecklistController" type="Node" parent="."]
+script = ExtResource("24_checklist_ctl")
+panel_path = NodePath("../GateOverlay/GateChecklistPanel")
+header_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Header")
+rows_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Rows")
+hint_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Hint")
 bag_controller_path = NodePath("../BagController")
 
 [node name="ThreatController" type="Node" parent="." unique_id=924661234]

@@ -103,6 +103,7 @@ var _secondary_completed: Dictionary = {}
 var _active_secondary_id: int = -1
 var _secondary_feedback_token: int = 0
 var _secondary_tick: float = 0.0
+var _last_checklist_key: String = ""
 
 
 func _ready() -> void:
@@ -1137,6 +1138,54 @@ func _update_gate_lock() -> void:
 		if Global != null:
 			Global.tip_shown_gate_unsealed = true
 	_push_resonance_ui()
+	_push_gate_checklist(should_lock)
+
+
+func _push_gate_checklist(gate_locked: bool) -> void:
+	if RunEvents == null or not RunEvents.has_signal("gate_checklist_changed"):
+		return
+	if _opening_sequence_active:
+		if _last_checklist_key != "opening":
+			_last_checklist_key = "opening"
+			RunEvents.gate_checklist_changed.emit(&"locked", [], "")
+		return
+	var percent := int(round(clampf(resonance, 0.0, 1.0) * 100.0))
+	var resonance_complete := resonance >= 0.999
+	var state: StringName = &"locked"
+	if not gate_locked:
+		state = &"ready"
+	elif _has_milestone(M_FINAL_CHECKPOINT):
+		# LOCATED: the HUD arrow points at the Rite from the final checkpoint on.
+		state = &"located"
+
+	var items: Array = [
+		{"id": &"wardstone_1", "label": "Archive Wardstone rewritten", "done": _has_milestone(M_WARDSTONE_1)},
+		{"id": &"wardstone_2", "label": "Service Wardstone rewritten", "done": _has_milestone(M_WARDSTONE_2)},
+		{"id": &"checkpoint", "label": "Outer checkpoint disabled", "done": _has_milestone(M_FINAL_CHECKPOINT)},
+		{"id": &"resonance", "label": "Resonance 100%% (%d%%)" % percent, "done": resonance_complete},
+		{"id": &"plaza", "label": "Reach the outer Rite", "done": _has_milestone(M_FINAL_PLAZA)},
+	]
+
+	var hint := ""
+	if not _has_milestone(M_WARDSTONE_1):
+		hint = "Next: rewrite the archive Wardstone"
+	elif not _has_milestone(M_WARDSTONE_2):
+		hint = "Next: rewrite the service-district Wardstone"
+	elif not _has_milestone(M_FINAL_CHECKPOINT):
+		hint = "Next: both Wardstones can interrupt the outer checkpoint"
+	elif not _has_milestone(M_FINAL_PLAZA):
+		hint = "Follow the marker to the outer Rite"
+	elif not resonance_complete:
+		hint = "Build resonance • kills and loot feed the Pattern"
+	else:
+		hint = "Stand in the sigil • hold the channel"
+
+	# Emit only on real change; this runs on the 0.15s resonance UI tick.
+	var key := "%s|%d|%s" % [state, percent, str(items.map(func(item: Dictionary) -> bool: return bool(item["done"])))]
+	if key == _last_checklist_key:
+		return
+	_last_checklist_key = key
+	RunEvents.gate_checklist_changed.emit(state, items, hint)
 
 
 func _push_resonance_ui() -> void:

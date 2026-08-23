@@ -467,9 +467,6 @@ func _phase_label(phase: StringName) -> String:
 		&"collapse": return "COLLAPSE"
 		_: return "RECON"
 
-func _gate_requirement_line(done: bool, label: String) -> String:
-	return "%s %s" % ["✓" if done else "○", label]
-
 func _push_objective_ui() -> void:
 	if RunEvents == null or not RunEvents.has_signal("objective_changed"):
 		return
@@ -478,6 +475,7 @@ func _push_objective_ui() -> void:
 			"Silence the District Relay • %s" % _phase_label(_pressure_phase),
 			"Attune relay nodes %d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
 		)
+		_emit_gate_checklist(&"locked", [], "")
 		return
 
 	var percent: int = int(round(clampf(resonance, 0.0, 1.0) * 100.0))
@@ -488,19 +486,19 @@ func _push_objective_ui() -> void:
 	var gate_ready: bool = resonance_complete and miniboss_complete and boss_complete
 	var marker_visible: bool = resonance >= gate_marker_reveal_resonance
 
-	var gate_state: String = "LOCKED"
+	var gate_state: StringName = &"locked"
 	if gate_ready:
-		gate_state = "READY"
+		gate_state = &"ready"
 	elif marker_visible:
-		gate_state = "LOCATED"
+		gate_state = &"located"
 
-	var checklist := PackedStringArray()
-	checklist.append(_gate_requirement_line(true, "District Relay silenced"))
-	checklist.append(_gate_requirement_line(resonance_complete, "Resonance 100%% (%d%%)" % percent))
+	var items: Array = []
+	items.append({"id": &"relay", "label": "District Relay silenced", "done": true})
+	items.append({"id": &"resonance", "label": "Resonance 100%% (%d%%)" % percent, "done": resonance_complete})
 	if _miniboss_required:
-		checklist.append(_gate_requirement_line(_miniboss_defeated, "Miniboss defeated"))
+		items.append({"id": &"miniboss", "label": "Miniboss defeated", "done": _miniboss_defeated})
 	if _boss_required:
-		checklist.append(_gate_requirement_line(_boss_defeated, "District boss defeated"))
+		items.append({"id": &"boss", "label": "District boss defeated", "done": _boss_defeated})
 
 	var guidance: String
 	if not marker_visible:
@@ -513,12 +511,18 @@ func _push_objective_ui() -> void:
 		guidance = "Next: defeat the district boss"
 	else:
 		guidance = "All conditions met • follow the orange gate marker"
-	checklist.append(guidance)
 
 	RunEvents.objective_changed.emit(
-		"EXIT RITE • %s" % gate_state,
-		"\n".join(checklist)
+		"EXIT RITE • %s" % String(gate_state).to_upper(),
+		guidance
 	)
+	_emit_gate_checklist(gate_state, items, guidance)
+
+
+func _emit_gate_checklist(state: StringName, items: Array, next_hint: String) -> void:
+	if RunEvents == null or not RunEvents.has_signal("gate_checklist_changed"):
+		return
+	RunEvents.gate_checklist_changed.emit(state, items, next_hint)
 
 func _check_secondary_objective_discovery() -> void:
 	if _secondary_objectives.is_empty() or not is_instance_valid(_player) or not is_instance_valid(_cm):
