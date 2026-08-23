@@ -32,6 +32,27 @@ extends ManifestationPairEffect
 ## one can already reach.
 const LUCK_WHILE_DYING: float = 18.0
 
+## THE DEBT IS A WINDOW, NOT A STANCE.
+##
+## Without this the pair pinned every Luck curve in the game to its ceiling for
+## as long as the player chose to sit under the line - and with Martyr Circuit
+## (faster while wounded), Scar Tissue (healing is a trap) and Red Line (immune
+## while wounded) all pointing the same way, four separate effects rewarded
+## being nearly dead and NOTHING rewarded being healthy. The optimal play was to
+## park at 19% HP and farm, which is the exact failure mode the design doc names
+## twice.
+##
+## So the flood is paid at the moment you fall in, holds through a comeback, and
+## then drains. A creditor collects; they do not fund you indefinitely. The
+## clutch-comeback fantasy is untouched - those are decided in seconds - while
+## camping quietly stops paying, the same shape Overtime uses on belief.
+##
+## Resets only by climbing back OUT of the wound, so topping up is the way to
+## reopen it. That gives the ward nouns a reason to want health again.
+const DEBT_GRACE: float = 7.0
+const DEBT_WINDOW: float = 26.0
+const DEBT_FLOOR: float = 0.12
+
 ## wound_tier() returns 3 at or below ManifestationState.WOUND_DYING. Named as a
 ## tier rather than compared against the fraction directly, so this pair and
 ## every ward rule agree on where the word "dying" is.
@@ -51,6 +72,9 @@ const COLLECT_REASON: StringName = &"manifestation_pair_debt"
 const REFRESH_DEBOUNCE: float = 0.35
 
 var _collecting: bool = false
+var _held: float = 0.0
+var _drain_cd: float = 0.0
+var _called: bool = false
 var _refresh_pending: bool = false
 var _refresh_cd: float = 0.0
 var _pulse: float = 0.0
@@ -89,9 +113,19 @@ func _exit_tree() -> void:
 # The Luck flood
 # ---------------------------------------------------------------------------
 
+## How much of the flood is still owed to you, 1.0 down to DEBT_FLOOR.
+func debt_fraction() -> float:
+	if not _collecting:
+		return 0.0
+	if _held <= DEBT_GRACE:
+		return 1.0
+	var t: float = clampf((_held - DEBT_GRACE) / DEBT_WINDOW, 0.0, 1.0)
+	return lerpf(1.0, DEBT_FLOOR, t)
+
+
 ## One accessor, so the ledger entry and the stat line can never disagree.
 func luck_contribution() -> float:
-	return LUCK_WHILE_DYING * potency() if _collecting else 0.0
+	return LUCK_WHILE_DYING * potency() * debt_fraction()
 
 
 func _publish_luck() -> void:
@@ -130,8 +164,23 @@ func _process(delta: float) -> void:
 		_refresh_cd = maxf(0.0, _refresh_cd - delta)
 
 	var collecting := _is_collecting()
+	if collecting:
+		_held += delta
+		# The flood is only worth restating while it is actually moving; once it
+		# has bottomed out the ledger entry is already correct.
+		_drain_cd -= delta
+		if _drain_cd <= 0.0 and _held > DEBT_GRACE and debt_fraction() > DEBT_FLOOR:
+			_drain_cd = 0.5
+			_publish_luck()
+			_refresh_pending = true
+		if not _called and debt_fraction() <= DEBT_FLOOR + 0.001:
+			_called = true
+			popup("DEBT CALLED", noun_colour(&"fortune"), 1.35)
 	if collecting != _collecting:
 		_collecting = collecting
+		if collecting:
+			_held = 0.0
+			_called = false
 		_publish_luck()
 		_refresh_pending = true
 		popup(
@@ -194,8 +243,15 @@ func describe() -> String:
 	var reached: float = LuckResolver.lucky_crit_chance(luck) * 100.0
 	var ceiling: float = LuckResolver.lucky_crit_chance(1.0e6) * 100.0
 	return (
-		"At or below %d%% health you carry +%.0f Luck - enough to sit every Luck roll in the game on its ceiling, and Lucky Crits at %.1f%% against a hard cap of %.1f%%. Overwhelming, not certain. Every Lucky Crit then takes 1 Follower: no refusal, and no respect for your reconstruction cost."
-		% [int(round(DYING_FRACTION * 100.0)), luck, reached, ceiling]
+		"Fall to %d%% health and the debt opens: +%.0f Luck - enough to sit every Luck roll in the game on its ceiling, and Lucky Crits at %.1f%% against a hard cap of %.1f%%. Overwhelming, not certain. It holds for %ds and then drains over %ds to almost nothing, and only climbing back out reopens it - a creditor collects, it does not fund you. Every Lucky Crit takes 1 Follower: no refusal, and no respect for your reconstruction cost."
+		% [
+			int(round(DYING_FRACTION * 100.0)),
+			luck,
+			reached,
+			ceiling,
+			int(DEBT_GRACE),
+			int(DEBT_WINDOW),
+		]
 	)
 
 
