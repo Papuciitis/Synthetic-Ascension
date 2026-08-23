@@ -12,6 +12,12 @@ enum Polarity { POS = 1, NEG = -1 }
 @export var upgrade_meter: float = 0.0
 @export var best_pct: float = 0.0
 
+# The one curated behavioural rule this particular instance developed, or &""
+# for an ordinary item. Manifestation is IDENTITY, not a stat: it is rolled
+# once at creation, never rerolled, and survives every merge this item wins.
+# See ManifestationCatalog.
+@export var manifestation_id: StringName = &""
+
 # Player protection flag. Locked items are never eligible for trade, discard,
 # automatic replacement or duplicate-cleanup actions.
 @export var locked: bool = false
@@ -36,18 +42,53 @@ func snapshot_copy() -> ItemInstance:
 	copy.upgrade_meter = upgrade_meter
 	copy.best_pct = best_pct
 	copy.locked = locked
+	copy.manifestation_id = manifestation_id
 	return copy
 
 
-static func from_roll(d: ItemData, r: int, pol: int, roll_pct: float) -> ItemInstance:
+static func from_roll(
+	d: ItemData,
+	r: int,
+	pol: int,
+	roll_pct: float,
+	roll_manifestation: bool = true
+) -> ItemInstance:
 	var inst := ItemInstance.new()
 	inst.data = d
 	inst.rarity = r
 	inst.polarity = (Polarity.POS if pol >= 0 else Polarity.NEG)
 	inst.best_pct = absf(roll_pct) * (1.0 if inst.polarity == Polarity.POS else -1.0)
 	inst.progress = 1
+	if roll_manifestation:
+		inst._roll_manifestation()
 	inst._recompute_flat_mods()
 	return inst
+
+
+func _roll_manifestation() -> void:
+	# Fabricated merge material must never roll one (callers pass false):
+	# a Manifestation the destination cannot inherit would simply be
+	# destroyed, and rolling one there would also burn RNG for nothing.
+	if data == null or Global == null or Global._rng == null:
+		return
+	manifestation_id = ManifestationCatalog.roll_for(
+		data,
+		polarity,
+		Global.run_luck,
+		Global._rng,
+		# Prerequisite weighting: what the player already wears bends WHICH rule
+		# appears, never whether one does. This is the single choke point every
+		# drop path funnels through, so nothing has to be told about it.
+		Global.equipped_manifestation_tags()
+	)
+
+
+func has_manifestation() -> bool:
+	return manifestation_id != &""
+
+
+func manifestation_def() -> ManifestationDef:
+	return ManifestationCatalog.get_def(manifestation_id)
 
 
 func active_pct() -> float:
@@ -69,7 +110,7 @@ func feed_roll(roll_pct: float, incoming_rarity: int = 0) -> void:
 	# let any pickup feed an R7 item as a full peer.)
 	if data == null:
 		return
-	var incoming := ItemInstance.from_roll(data, incoming_rarity, polarity, roll_pct)
+	var incoming := ItemInstance.from_roll(data, incoming_rarity, polarity, roll_pct, false)
 	merge_from(incoming)
 
 
@@ -86,9 +127,30 @@ func can_merge(incoming: ItemInstance) -> bool:
 	)
 
 
+func can_absorb_manifestation_of(incoming: ItemInstance) -> bool:
+	# NOT a merge gate - merging is never blocked, or two independently found
+	# rings would usually refuse to combine and ring progression would die.
+	# This is the policy question for AUTOMATIC routing only: "would feeding
+	# this destroy a rule the player has not seen yet?".
+	#
+	# A deliberate merge keeps the destination's rule and dissolves the
+	# incoming one, exactly like every other duplicate. But a ground pickup
+	# auto-feeding the worn item, or a bag tidy-up pass, must not make that
+	# choice unattended - the R2 with the amazing rule has to reach the
+	# player's hands so they can decide whether to rebuild around it.
+	if incoming == null:
+		return true
+	if incoming.manifestation_id == &"":
+		return true
+	return incoming.manifestation_id == manifestation_id
+
+
 func merge_from(incoming: ItemInstance) -> bool:
 	if not can_merge(incoming):
 		return false
+	# NOTE: manifestation_id is deliberately absent from the swap below.
+	# THIS object is the destination and keeps its own rule, even when the
+	# incoming copy is the higher-rank side of the maths.
 	# Auto-swap: the higher-rarity side is always the mathematical
 	# destination — for H != 1 the wrong direction destroys ranks. Only
 	# the progression payload swaps; THIS object survives, so equip
@@ -171,6 +233,7 @@ static func from_data(d: ItemData, copies: int = 1, rarity_in: int = 0, polarity
 	inst.data = d
 	inst.rarity = rarity_in
 	inst.polarity = (Polarity.POS if polarity_in >= 0 else Polarity.NEG)
+	inst._roll_manifestation()
 	inst._recompute_flat_mods()
 
 	var n := maxi(1, copies)

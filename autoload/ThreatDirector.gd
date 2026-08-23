@@ -297,6 +297,18 @@ func _compute_overtime() -> float:
 	var k_part := float(k_excess) * overtime_kill_rate * dominance_mul
 	return t_part + k_part
 
+func add_overtime_pressure(extra_seconds: float) -> void:
+	# Public lever for greed mechanics (Overtime Gospel): a rule that pays the
+	# player for refusing to leave must also make the refusing cost more.
+	# Expressed in seconds of unseal time because that is the only accumulator
+	# _compute_overtime() reads that is not the kill counter.
+	if extra_seconds <= 0.0 or not gate_unsealed:
+		return
+	_unseal_time += extra_seconds
+	overtime = _compute_overtime()
+	_recompute()
+
+
 func _update_evac() -> void:
 	unseal_time_sec = _unseal_time
 	kills_since_unseal = _kills_since_unseal

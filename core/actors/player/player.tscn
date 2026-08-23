@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="7_n0b1a"]
 [ext_resource type="Texture2D" uid="uid://ds2841qmi7nyw" path="res://assets/textures/Player_Placeholder64x64.png" id="8_1wie2"]
 [ext_resource type="Script" uid="uid://r2jw91kyiwz0j" path="res://core/systems/items/ItemEffectRunner.gd" id="9_itemeff"]
+[ext_resource type="Script" uid="uid://d8m3drxk3efv" path="res://core/systems/manifestations/ManifestationRunner.gd" id="10_manif"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1wie2"]
 radius = 25.0
@@ -69,6 +70,9 @@ script = ExtResource("6_5jwen")
 
 [node name="ItemEffectRunner" type="Node2D" parent="." unique_id=874169295]
 script = ExtResource("9_itemeff")
+
+[node name="ManifestationRunner" type="Node2D" parent="." unique_id=874169296]
+script = ExtResource("10_manif")
 
 [node name="AugmentRunner" type="Node" parent="." unique_id=233346370]
 script = ExtResource("5_l45yi")

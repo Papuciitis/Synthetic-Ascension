@@ -114,7 +114,10 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 			if bag_inv.has_method("set_pending_ui_origin"):
 				bag_inv.set_pending_ui_origin(null)
 			bag_inv.remove_at(bag_slot_index)
-			return inv.add_or_feed(inst, origin)
+			# Player-driven: they chose this copy, so a Manifestation loss is
+			# their decision (and the bag slot is already gone - declining
+			# here would destroy the item).
+			return inv.add_or_feed(inst, origin, true)
 		# Free bag slot first
 		bag_inv.remove_at(bag_slot_index)
 
@@ -132,7 +135,7 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		return true
 
 	# Fallback: add to first empty OR feed (pass origin so it can animate)
-	var ok_inv: bool = inv.add_or_feed(inst, origin)
+	var ok_inv: bool = inv.add_or_feed(inst, origin, true)
 	if ok_inv:
 		bag_inv.remove_at(bag_slot_index)
 	return ok_inv
@@ -177,7 +180,9 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 				src_inv.call("remove_at", src_i, _player_origin(origin))
 			else:
 				src_inv.call("remove_at", src_i)
-			return bool(dst_inv.call("add_or_feed", inst, origin))
+			# Player-driven, and the source slot is already emptied above, so
+			# this merge must not be declinable.
+			return bool(dst_inv.call("add_or_feed", inst, origin, true))
 
 	# CRITICAL: If moving FROM equipped inventory into an occupied non-equipped slot,
 	# never swap back unless the destination item is valid for the equipped slot.

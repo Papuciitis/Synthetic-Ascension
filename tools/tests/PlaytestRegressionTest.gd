@@ -175,10 +175,14 @@ func _test_equipped_duplicate_feed() -> void:
 	data.equip_slot = 1 as ItemData.EquipSlot
 
 	var inv := Inventory.new()
-	var equipped := ItemInstance.from_roll(data, 1, ItemInstance.Polarity.POS, 0.5)
+	# Ordinary material on both sides. A duplicate carrying a Manifestation the
+	# equipped copy lacks is deliberately NOT auto-fed - that case is pinned in
+	# ManifestationSystemTest - and letting these roll one would make this
+	# fixture pass or fail on a 22% armour-slot dice roll.
+	var equipped := ItemInstance.from_roll(data, 1, ItemInstance.Polarity.POS, 0.5, false)
 	inv.set_item(int(data.equip_slot), equipped, null)
 
-	var duplicate := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.3)
+	var duplicate := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.3, false)
 	var fed := inv.add_or_feed(duplicate, null)
 	_check(fed, "add_or_feed accepts a duplicate of the equipped item")
 	_check(

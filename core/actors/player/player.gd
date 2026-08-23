@@ -1,9 +1,15 @@
 extends CharacterBody2D
 
 const AimState := preload("res://core/actors/player/PlayerAimState.gd")
+const DashState := preload("res://core/actors/player/PlayerDashState.gd")
 const AimReticle := preload("res://core/actors/player/PlayerAimReticle.gd")
 
 signal hp_changed(current: float, max_hp: float)
+
+## Deliberately NOT named active_cd_changed: ActiveAbilityHUD binds the highest
+## hud_priority child of a runner that carries that signal, and a dash sharing
+## the name would silently steal the ability HUD from an equipped set ability.
+signal dash_cd_changed(time_left: float, max_cd: float)
 
 @export var speed: float = 300.0
 @export var max_hp: float = 100.0
@@ -64,6 +70,8 @@ var _cinematic_move_locked: bool = false
 var _cinematic_attack_locked: bool = false
 var _aim_state: RefCounted = AimState.new()
 var _aim_reticle: Node2D
+var _dash: PlayerDashState = DashState.new()
+var _dash_trail: Node2D = null
 
 var invulnerable_time: float = 0.0
 
@@ -142,6 +150,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	_release_dash_trail()
 	if Global.permanent_augments_changed.is_connected(_on_permanent_augments_changed):
 		Global.permanent_augments_changed.disconnect(_on_permanent_augments_changed)
 
@@ -180,8 +189,9 @@ func _process(delta: float) -> void:
 	if respawn_phase_left > 0.0:
 		respawn_phase_left = max(respawn_phase_left - delta, 0.0)
 		if respawn_phase_left <= 0.0:
-			# restore collisions after phasing
-			collision_mask = _base_collision_mask
+			_apply_body_phasing()
+
+	_tick_dash(delta)
 
 	_ensure_inventory_binding()
 
@@ -213,13 +223,23 @@ func _physics_process(_delta: float) -> void:
 	if is_dead:
 		velocity = Vector2.ZERO
 		return
-	var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
-	velocity = dir * get_effective_move_speed()
-	move_and_slide()
+	# The dash OWNS the frame. velocity is fully overwritten every physics tick
+	# with no acceleration or friction, so a dash cannot apply an impulse - it
+	# has to preempt the input read below. That is also why it lives on the
+	# player rather than in a child node: _physics_process dispatches
+	# parent-before-child, so a child could only ever act one frame too late.
+	if _dash.is_dashing():
+		velocity = _dash.direction * _dash.speed()
+		move_and_slide()
+	else:
+		var dir := Vector2.ZERO if _cinematic_move_locked else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
-	if dir != Vector2.ZERO:
-		rotation = dir.angle()
+		velocity = dir * get_effective_move_speed()
+		move_and_slide()
+
+		if dir != Vector2.ZERO:
+			rotation = dir.angle()
 
 	var deadzone := 0.2 if SettingsManager == null else float(SettingsManager.get_value(&"controls", &"controller_deadzone", 0.2))
 	var stick_aim := Input.get_vector("aim_left", "aim_right", "aim_up", "aim_down")
@@ -231,6 +251,100 @@ func _physics_process(_delta: float) -> void:
 		aim_pivot.global_rotation = aim_direction.angle()
 	if _aim_reticle != null:
 		_aim_reticle.set_aim(global_position, aim_direction, _aim_state.using_controller())
+
+
+# ---------------------------------------------------------------------------
+# Dash
+# ---------------------------------------------------------------------------
+
+func _tick_dash(delta: float) -> void:
+	var was_dashing := _dash.is_dashing()
+	if _dash.tick(delta):
+		dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+	if was_dashing and not _dash.is_dashing():
+		_end_dash()
+
+	if not _cinematic_move_locked and not Global.active_augment_input_blocked():
+		if Input.is_action_just_pressed(&"dash"):
+			_dash.request()
+
+	if _dash.can_start() and _dash.consume_request():
+		_start_dash()
+
+
+func _start_dash() -> void:
+	# Movement vector first, then the body's facing (which already tracks the
+	# last direction travelled). Never the aim vector: a standing dash toward
+	# the cursor is a mini-blink and steps on Hex Blink's identity.
+	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	if dir.length_squared() < 0.0001:
+		dir = Vector2.RIGHT.rotated(rotation)
+	_dash.start(dir)
+
+	# Locked once at the start, not re-derived per frame - releasing the stick
+	# mid-dash would otherwise snap the sprite.
+	rotation = _dash.direction.angle()
+
+	grant_invulnerability(_dash.iframe_time())
+	_apply_body_phasing()
+	_spawn_dash_trail()
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+
+	if RunEvents != null and RunEvents.player_dashed.has_connections():
+		RunEvents.player_dashed.emit(self, global_position, _dash.direction)
+
+
+func _end_dash() -> void:
+	_apply_body_phasing()
+	_release_dash_trail()
+
+
+func cancel_dash() -> void:
+	if not _dash.is_dashing():
+		_dash.cancel()
+		return
+	_dash.cancel()
+	_end_dash()
+
+
+## The ONE writer of collision_mask. Two independent phase timers with two naive
+## write sites means a dash ending during a respawn phase restores enemy-body
+## collision two seconds early.
+##
+## Note this deliberately does NOT reuse start_respawn_phase(): that timer also
+## feeds respawn_speed_mul in get_effective_move_speed(), so a dash borrowing it
+## would leave the player 35% faster for two seconds afterwards.
+func _apply_body_phasing() -> void:
+	var phasing := respawn_phase_left > 0.0 or _dash.is_dashing()
+	collision_mask = (_base_collision_mask & ~ENEMY_BODY_LAYER_BIT) if phasing else _base_collision_mask
+
+
+func _spawn_dash_trail() -> void:
+	_release_dash_trail()
+	var script: GDScript = load("res://assets/vfx/world/common/VFX_TrailFollow2D.gd") as GDScript
+	if script == null:
+		return
+	var trail := script.new() as Node2D
+	if trail == null:
+		return
+	var host: Node = get_tree().current_scene if get_tree() != null else null
+	if host == null:
+		trail.queue_free()
+		return
+	host.add_child(trail)
+	trail.global_position = global_position
+	if "follow" in trail:
+		trail.set("follow", self)
+	_dash_trail = trail
+
+
+func _release_dash_trail() -> void:
+	if _dash_trail != null and is_instance_valid(_dash_trail):
+		if _dash_trail.has_method("stop_and_fade"):
+			_dash_trail.call("stop_and_fade")
+		else:
+			_dash_trail.queue_free()
+	_dash_trail = null
 
 
 func _current_aim_target() -> Vector2:
@@ -253,6 +367,10 @@ func get_effective_move_speed() -> float:
 	if ier != null:
 		eff_speed *= ier.get_move_speed_multiplier()
 
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		eff_speed *= mr.get_move_speed_multiplier()
+
 	return maxf(0.0, eff_speed)
 
 
@@ -260,6 +378,8 @@ func set_cinematic_input(move_locked: bool, attack_locked: bool) -> void:
 	_cinematic_move_locked = move_locked
 	_cinematic_attack_locked = attack_locked
 	if move_locked:
+		# This zeroes velocity, but the dash branch rewrites it next frame.
+		cancel_dash()
 		velocity = Vector2.ZERO
 
 
@@ -368,6 +488,12 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		ier.refresh_effects(Global.run_inventory)
 		ier.apply_effects_to_stats(s)
 
+	# Manifestations run on every equipped slot, not just offhand/ring.
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		mr.refresh_effects(Global.run_inventory)
+		mr.apply_effects_to_stats(s)
+
 	if Global.run_inventory != null:
 		var items: Array[ItemInstance] = Global.run_inventory.items
 		for i in range(min(items.size(), Inventory.STAT_SLOT_COUNT)):
@@ -437,6 +563,11 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 		haste_mul *= ier3.get_haste_multiplier()
 		power_mul *= ier3.get_power_multiplier()
 
+	var mr3: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr3 != null:
+		haste_mul *= mr3.get_haste_multiplier()
+		power_mul *= mr3.get_power_multiplier()
+
 	var cd: float = 0.0
 	if style_id == "melee":
 		cd = melee_cooldown
@@ -451,6 +582,11 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	if cd > 0.0:
 		_weapon_cd = cd / max(haste_mul, 0.05)
 
+	# Charge/rhythm/tithe Manifestations empower exactly one attack. Consumed
+	# AFTER the cooldown gate above, so a blocked click never eats the payload.
+	if mr3 != null:
+		power_mul *= mr3.consume_attack_bonus()
+
 	# Lucky bonus crit: separate from any future Crit Chance stat — Luck
 	# occasionally blesses a whole attack (all pellets/impacts of it).
 	var lucky_crit: bool = Global._rng.randf() < LuckResolver.lucky_crit_chance(Global.run_luck)
@@ -458,6 +594,10 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	_lucky_crit_pending = lucky_crit
 	if lucky_crit and BattleText != null:
 		BattleText.popup(global_position, "LUCKY", Color(1.0, 0.84, 0.25, 1.0), 1.2)
+	# Reported on success AND failure: a missed Luck roll is buildable
+	# material (Misfortune), not a non-event.
+	if RunEvents != null and RunEvents.player_lucky_crit.has_connections():
+		RunEvents.player_lucky_crit.emit(self, global_position, lucky_crit)
 
 	if style_id == "melee":
 		_spawn_melee(mouse_pos, base_weapon_damage * 1.25 * power_mul * lucky_mul)
@@ -600,6 +740,9 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 		var managed_effects := get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 		if managed_effects != null:
 			managed_effects.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
+		var managed_rules := get_node_or_null("ManifestationRunner") as ManifestationRunner
+		if managed_rules != null:
+			managed_rules.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
 		projectile_manager.spawn_player(origin, dir, _managed_hit_profile, self)
 		return
 
@@ -624,6 +767,9 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 	var ier_r: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier_r != null:
 		ier_r.apply_to_ranged_bullet(bullet, &"ranged")
+	var mr_r: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_r != null:
+		mr_r.apply_to_ranged_bullet(bullet, &"ranged")
 
 	get_tree().current_scene.add_child(bullet)
 
@@ -673,6 +819,9 @@ func _spawn_magic_impact(pos: Vector2, dmg: float) -> void:
 	var ier_g: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier_g != null:
 		ier_g.apply_to_magic_impact(impact)
+	var mr_g: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_g != null:
+		mr_g.apply_to_magic_impact(impact)
 
 	get_tree().current_scene.add_child(impact)
 
@@ -779,15 +928,24 @@ func _take_damage(amount: float) -> void:
 	if is_dead:
 		return
 
+	var mr4: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+
 	# Luck as a systemic stat: the universe occasionally lets a hit miss.
-	if Global._rng.randf() < LuckResolver.lucky_evasion_chance(Global.run_luck):
+	var evade_chance: float = LuckResolver.lucky_evasion_chance(Global.run_luck)
+	if mr4 != null:
+		evade_chance = clampf(evade_chance + mr4.get_bonus_evasion_chance(), 0.0, 0.60)
+	if Global._rng.randf() < evade_chance:
 		if BattleText != null:
 			BattleText.popup(global_position, "EVADED", Color(0.5, 0.9, 1.0, 1.0), 1.1)
+		if RunEvents != null:
+			RunEvents.player_evaded.emit(self, global_position)
 		return
 
 	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier4 != null:
 		amount *= ier4.get_damage_taken_multiplier()
+	if mr4 != null:
+		amount *= mr4.get_damage_taken_multiplier()
 
 	var armor_val: float = 0.0
 	if stats != null:
@@ -804,6 +962,9 @@ func _take_damage(amount: float) -> void:
 
 	hp_changed.emit(hp, max_hp)
 
+	if RunEvents != null:
+		RunEvents.player_damage_taken.emit(self, reduced, global_position)
+
 	if hp <= 0.0:
 		die()
 
@@ -812,6 +973,7 @@ func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	cancel_dash()
 
 	var cost: int = death_follower_cost
 	if Global != null and Global.has_method("consume_respawn_cost"):
@@ -838,6 +1000,8 @@ func respawn() -> void:
 	# or inventory bindings finished refreshing while the death card was open.
 	is_dead = false
 	velocity = Vector2.ZERO
+	# An in-flight dash would otherwise continue from the checkpoint position.
+	cancel_dash()
 
 	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
 	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
@@ -858,8 +1022,7 @@ func respawn() -> void:
 
 func start_respawn_phase(duration: float) -> void:
 	respawn_phase_left = max(respawn_phase_left, duration)
-	# remove enemy-body collisions during the phase, keep world/cover collisions
-	collision_mask = _base_collision_mask & ~ENEMY_BODY_LAYER_BIT
+	_apply_body_phasing()
 
 func set_checkpoint(pos: Vector2, move_player: bool = false) -> void:
 	spawn_pos = pos
@@ -873,6 +1036,8 @@ func wardstone_full_restore() -> void:
 	hp = max_hp
 	hp_changed.emit(hp, max_hp)
 	_weapon_cd = 0.0
+	_dash.reset()
+	dash_cd_changed.emit(0.0, PlayerDashState.COOLDOWN)
 	if spell_caster != null and spell_caster.has_method("reset_all_cooldowns"):
 		spell_caster.call("reset_all_cooldowns")
 	if has_node("AugmentRunner") and $AugmentRunner.has_method("reset_all_cooldowns"):
@@ -990,6 +1155,9 @@ func heal(amount: float) -> void:
 		return
 	hp = min(hp + amount, max_hp)
 	hp_changed.emit(hp, max_hp)
+	# Guarded: passive regen calls this every frame.
+	if RunEvents != null and RunEvents.player_healed.has_connections():
+		RunEvents.player_healed.emit(self, amount)
 
 
 func _debug_dump_sets() -> void:

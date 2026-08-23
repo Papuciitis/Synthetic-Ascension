@@ -122,6 +122,18 @@ func _update_shape() -> void:
 
 
 func _on_body_entered(b: Node) -> void:
+	if b != null and b.is_in_group("player") and RunEvents != null:
+		# Exploration hook. first_visit is keyed on the stable seeded
+		# building_id, not on this node: chunks are streamed, so a volume the
+		# player walks away from is freed and rebuilt fresh. A node-local flag
+		# would let an exploration rule be farmed by pacing a chunk boundary.
+		# An unauthored volume (building_id 0) never counts as a first visit.
+		var first_visit: bool = (
+			Global != null
+			and Global.has_method("note_building_visit")
+			and bool(Global.call("note_building_visit", building_id))
+		)
+		RunEvents.player_entered_building.emit(self, first_visit)
 	if _loot_attempted:
 		return
 	if not exploration_loot_enabled:

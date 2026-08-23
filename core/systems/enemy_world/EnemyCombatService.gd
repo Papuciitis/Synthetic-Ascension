@@ -51,12 +51,23 @@ func apply_damage(
 	if not _world.set_health(handle, remaining_health):
 		return 0.0
 	_mirror_health(actor, remaining_health, _world.get_max_health(handle))
+	var ledger_payload := payload as HitLedger
+	var was_critical: bool = ledger_payload != null and ledger_payload.critical_hits > 0
 	if BattleText != null:
-		var ledger_payload := payload as HitLedger
-		var was_critical: bool = ledger_payload != null and ledger_payload.critical_hits > 0
 		BattleText.damage(_world.get_position(handle), applied_damage, was_critical, handle)
 	if source != null and is_instance_valid(source) and RunEvents != null:
 		RunEvents.damage_dealt.emit(source, applied_damage)
+		# Manifestation hook. Guarded: at horde scale this runs per pellet per
+		# frame, so it must cost nothing when no rule is listening.
+		if RunEvents.player_hit_landed.has_connections():
+			RunEvents.player_hit_landed.emit(
+				source,
+				handle,
+				_world.get_position(handle),
+				applied_damage,
+				was_critical,
+				EnemyWorldTypes.has_flag(_world.get_flags(handle), EnemyWorldTypes.Flags.ELITE),
+			)
 
 	if remaining_health > 0.0:
 		_apply_survivor_feedback(actor, applied_damage, source, payload)

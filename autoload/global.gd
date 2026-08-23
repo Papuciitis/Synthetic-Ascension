@@ -91,6 +91,10 @@ var owned_augment_ids: Array[StringName] = []       # owned augment library (met
 var augment_slot_locks: Array[bool] = [false, false, false]       # lock equipped slots in hub
 var meta_stash: StashInventory = null
 var discovered_enemy_ids: Array[StringName] = []
+## Manifestation explainer cards already shown, as prefixed ids ("intro",
+## "noun:momentum", "pair:..."). Profile knowledge, exactly like the enemy
+## dossiers above.
+var seen_manifestation_cards: Array[StringName] = []
 var debug_dev_mode: bool = false
 var debug_dev_segment: bool = false
 # Rollout flag for the authoritative Enemy World proxy slice: distant ordinary
@@ -160,6 +164,11 @@ var attempt_vendor_bag: BagInventory = null
 
 var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
 var _claimed_loot_set: Dictionary = {} # int -> true
+
+# Buildings the player has walked into this attempt, keyed by the same stable
+# seeded building_id the loot claim uses. Chunks are streamed, so the volume
+# NODE is not an identity - walking three chunks away and back rebuilds it.
+var _visited_building_set: Dictionary = {} # int -> true
 
 var pending_augment_pick: bool = false
 var pending_big_choice: bool = false
@@ -344,6 +353,15 @@ func reset_enemy_discoveries() -> void:
 	discovered_enemy_ids.clear()
 	save_current_profile()
 
+func is_manifestation_card_seen(card_id: StringName) -> bool:
+	return seen_manifestation_cards.has(card_id)
+
+func mark_manifestation_card_seen(card_id: StringName) -> void:
+	if card_id == &"" or seen_manifestation_cards.has(card_id):
+		return
+	seen_manifestation_cards.append(card_id)
+	request_autosave()
+
 
 # ============================================================
 # Run selection sync
@@ -393,6 +411,7 @@ func reset_run_systems() -> void:
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
 	_claimed_loot_set.clear()
+	_visited_building_set.clear()
 	attempt_vendor_segment = 0
 	attempt_vendor_refreshes = 0
 	attempt_vendor_seed = 0
@@ -436,6 +455,25 @@ func get_equipped_rarity_average() -> float:
 		total += float(instance.rarity)
 		count += 1
 	return total / float(count) if count > 0 else 0.0
+
+
+## Which Manifestation nouns the player currently wears, and how many rules of
+## each. Feeds the drop roll's prerequisite weighting - a rule that talks about
+## a noun you already carry is likelier to be the one that appears.
+func equipped_manifestation_tags() -> Dictionary:
+	var held: Dictionary = {}
+	if run_inventory == null:
+		return held
+	for slot_index in range(Inventory.SLOT_COUNT):
+		var instance: ItemInstance = run_inventory.get_at(slot_index)
+		if instance == null or instance.manifestation_id == &"":
+			continue
+		var def := ManifestationCatalog.get_def(instance.manifestation_id)
+		if def == null:
+			continue
+		for tag in def.tags:
+			held[tag] = int(held.get(tag, 0)) + 1
+	return held
 
 
 func build_item_drop_context(
@@ -1035,6 +1073,22 @@ func _rebuild_claimed_loot_set() -> void:
 func has_claimed_loot(id: int) -> bool:
 	return _claimed_loot_set.has(id)
 
+## True the first time this attempt sees `id`, false ever after. Identity is
+## the seeded building id, never the streamed node, so exploration rewards
+## cannot be farmed by walking out of and back into load radius.
+func note_building_visit(id: int) -> bool:
+	if id == 0:
+		return false
+	if _visited_building_set.has(id):
+		return false
+	_visited_building_set[id] = true
+	return true
+
+
+func has_visited_building(id: int) -> bool:
+	return _visited_building_set.has(id)
+
+
 func claim_loot(id: int) -> void:
 	if id == 0:
 		return
@@ -1088,6 +1142,11 @@ func apply_save(save: SaveData) -> void:
 		var clean_enemy_id := String(enemy_id).strip_edges()
 		if clean_enemy_id != "" and not discovered_enemy_ids.has(StringName(clean_enemy_id)):
 			discovered_enemy_ids.append(StringName(clean_enemy_id))
+	seen_manifestation_cards.clear()
+	for card_id in save.meta_seen_manifestation_cards:
+		var clean_card_id := String(card_id).strip_edges()
+		if clean_card_id != "" and not seen_manifestation_cards.has(StringName(clean_card_id)):
+			seen_manifestation_cards.append(StringName(clean_card_id))
 
 	# Opening Chronicle profile state. Exported defaults make this safe for old
 	# saves that predate the playable cinematic.
@@ -1295,6 +1354,9 @@ func write_save(save: SaveData) -> void:
 	save.meta_discovered_enemy_ids = []
 	for enemy_id in discovered_enemy_ids:
 		save.meta_discovered_enemy_ids.append(String(enemy_id))
+	save.meta_seen_manifestation_cards = []
+	for card_id in seen_manifestation_cards:
+		save.meta_seen_manifestation_cards.append(String(card_id))
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen
 	save.opening_response_id = String(opening_response_id)

@@ -9,6 +9,7 @@ const BULLET_SCENE: PackedScene = preload("res://scenes/world/combat/RangedBulle
 var _panel: PanelContainer = null
 var _fixture: Node2D = null
 var _item_id_edit: LineEdit = null
+var _manifest_picker: OptionButton = null
 
 func _ready() -> void:
 	layer = 120
@@ -221,12 +222,96 @@ func simulate_legacy_opening_save() -> void:
 	Global.apply_save(SaveManager.current_save)
 	Global.call_deferred("goto_game")
 
+# ============================================================
+# Manifestations
+#
+# The layer is deliberately low-roll-rate, so playtesting it by farming drops
+# is hopeless. These force a specific rule onto real equipped gear.
+# ============================================================
+
+func grant_manifestation(id: StringName) -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	var def := ManifestationCatalog.get_def(id)
+	if def == null:
+		push_warning("[manifestations] unknown rule: %s" % String(id))
+		return
+
+	# Prefer stamping it onto gear that is already worn - that keeps the rest of
+	# the loadout (and any set bonus being tested) intact.
+	for slot in def.slots:
+		var worn: ItemInstance = Global.run_inventory.get_at(int(slot))
+		if worn != null and worn.data != null:
+			worn.manifestation_id = id
+			Global.run_inventory.emit_changed()
+			_refresh_player_loadout()
+			return
+
+	for slot in def.slots:
+		var data := _first_item_data_for_slot(int(slot))
+		if data == null:
+			continue
+		var granted := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.45, false)
+		granted.manifestation_id = id
+		Global.run_inventory.set_item(int(slot), granted, null)
+		_refresh_player_loadout()
+		return
+
+	push_warning("[manifestations] no item definition exists for any slot %s allows" % String(id))
+
+
+func roll_all_manifestations() -> void:
+	# Every worn item gets a legal rule for its slot. This is the "what does
+	# eight of them at once actually feel like?" button.
+	if Global == null or Global.run_inventory == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	for slot in range(Inventory.SLOT_COUNT):
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn == null or worn.data == null:
+			continue
+		var pool := ManifestationCatalog.pool_for_slot(slot)
+		if pool.is_empty():
+			continue
+		worn.manifestation_id = pool[rng.randi_range(0, pool.size() - 1)].id
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+
+
+func clear_manifestations() -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	for slot in range(Inventory.SLOT_COUNT):
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn != null:
+			worn.manifestation_id = &""
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+
+
+func _first_item_data_for_slot(slot: int) -> ItemData:
+	if Global == null or Global.item_db == null:
+		return null
+	for value: Variant in Global.item_db.values():
+		var data: ItemData = value as ItemData
+		if data != null and int(data.equip_slot) == slot:
+			return data
+	return null
+
+
+func _refresh_player_loadout() -> void:
+	var player := get_tree().get_first_node_in_group(&"player")
+	if player != null and player.has_method("refresh_run_state"):
+		player.call("refresh_run_state")
+
+
 func _build_panel() -> void:
 	_panel = PanelContainer.new()
 	_panel.visible = false
 	_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT, true)
 	_panel.offset_left = -390.0
-	_panel.offset_top = -650.0
+	_panel.offset_top = -760.0
 	_panel.offset_right = -16.0
 	_panel.offset_bottom = -16.0
 	add_child(_panel)
@@ -302,6 +387,28 @@ func _build_panel() -> void:
 	segments.add_child(_button("Segment 2", func() -> void: jump_to_segment(2)))
 	segments.add_child(_button("Segment 5", func() -> void: jump_to_segment(5)))
 	segments.add_child(_button("Segment 10", func() -> void: jump_to_segment(10)))
+
+	var manifest_title := Label.new()
+	manifest_title.text = "MANIFESTATIONS"
+	manifest_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	root.add_child(manifest_title)
+	var manifest_row := HBoxContainer.new()
+	root.add_child(manifest_row)
+	_manifest_picker = OptionButton.new()
+	_manifest_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for id_value in ManifestationCatalog.all_ids():
+		_manifest_picker.add_item(ManifestationCatalog.display_name(id_value))
+		_manifest_picker.set_item_metadata(_manifest_picker.item_count - 1, id_value)
+	manifest_row.add_child(_manifest_picker)
+	manifest_row.add_child(_button("Grant", func() -> void:
+		if _manifest_picker == null or _manifest_picker.selected < 0:
+			return
+		grant_manifestation(StringName(str(_manifest_picker.get_item_metadata(_manifest_picker.selected))))
+	))
+	var manifest_bulk := HBoxContainer.new()
+	root.add_child(manifest_bulk)
+	manifest_bulk.add_child(_button("Roll every slot", roll_all_manifestations))
+	manifest_bulk.add_child(_button("Clear rules", clear_manifestations))
 
 func _add_set_row(parent: VBoxContainer, label_text: String, set_id: StringName) -> void:
 	var row := HBoxContainer.new()

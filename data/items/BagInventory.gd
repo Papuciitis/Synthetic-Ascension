@@ -239,11 +239,28 @@ func _consolidate_duplicates() -> void:
 
 			var k := _key(s.data.id, s.rarity, s.polarity)
 
+			# One key can legitimately own SEVERAL stacks, because two stacks of
+			# the same item can carry different Manifestations and consolidation
+			# must never destroy one of the rules. Track every candidate: with a
+			# single remembered slot, a rival-ruled stack sitting first would
+			# stop same-ruled stacks from ever finding each other, and that ring
+			# could never rank up from its own duplicates.
 			if not seen.has(k):
-				seen[k] = i
+				seen[k] = ([] as Array[int])
+			var candidates: Array[int] = seen[k]
+
+			var keep_i: int = -1
+			for candidate in candidates:
+				var candidate_stack: ItemInstance = slots[candidate]
+				if candidate_stack == null or candidate_stack == s:
+					continue
+				if candidate_stack.can_absorb_manifestation_of(s):
+					keep_i = candidate
+					break
+			if keep_i < 0:
+				candidates.append(i)
 				continue
 
-			var keep_i: int = int(seen[k])
 			var keep: ItemInstance = slots[keep_i]
 
 			# Safety
@@ -257,7 +274,8 @@ func _consolidate_duplicates() -> void:
 				print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
 			stack_merged.emit(i, keep_i, s) # UI ghost feedback
 
-			_merge_into(keep, s)
+			if not _merge_into(keep, s):
+				continue
 			slots[i] = null
 
 			did_merge = true
@@ -299,8 +317,11 @@ func add_instance(inst: ItemInstance) -> bool:
 	# therefore always need their own slot. Unlocked items may only merge into
 	# unlocked destinations because _rebuild_index excludes locked stacks.
 	if not inst.locked and auto_consolidate and _index.has(key):
-		var idx: int = int(_index[key])
-		var dest: ItemInstance = slots[idx]
+		# _index remembers one representative per key; scan for a destination
+		# that can actually take this item's rule, or a rival-ruled stack in the
+		# first slot sends every same-ruled duplicate to a fresh slot instead.
+		var idx: int = _find_absorbing_slot(key, inst)
+		var dest: ItemInstance = slots[idx] if idx >= 0 else null
 
 		if dest == inst:
 			_dbg_dump("after add_instance (dest==inst)")
@@ -309,7 +330,8 @@ func add_instance(inst: ItemInstance) -> bool:
 		if dest != null:
 			var old_rarity: int = int(dest.rarity)
 
-			_merge_into(dest, inst) # consumes inst into dest
+			if not _merge_into(dest, inst): # consumes inst into dest
+				return _place_in_empty_slot(inst)
 			_after_stack_changed()
 
 			var upgraded: bool = (int(dest.rarity) != old_rarity)
@@ -325,6 +347,10 @@ func add_instance(inst: ItemInstance) -> bool:
 			return true
 
 	# Need new slot
+	return _place_in_empty_slot(inst)
+
+
+func _place_in_empty_slot(inst: ItemInstance) -> bool:
 	var empty: int = first_empty_slot()
 	if empty == -1:
 		return false
@@ -340,9 +366,24 @@ func add_instance(inst: ItemInstance) -> bool:
 	return true
 
 
-func _merge_into(dest: ItemInstance, src: ItemInstance) -> void:
-	if dest != null:
-		dest.merge_from(src)
+func _find_absorbing_slot(key: String, incoming: ItemInstance) -> int:
+	for i in range(slots.size()):
+		var candidate: ItemInstance = slots[i]
+		if candidate == null or candidate.data == null or candidate.locked:
+			continue
+		if candidate == incoming:
+			return i
+		if _key(candidate.data.id, candidate.rarity, candidate.polarity) != key:
+			continue
+		if candidate.can_absorb_manifestation_of(incoming):
+			return i
+	return -1
+
+
+func _merge_into(dest: ItemInstance, src: ItemInstance) -> bool:
+	if dest == null:
+		return false
+	return dest.merge_from(src)
 
 
 func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) -> bool:
@@ -367,7 +408,9 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 			if debug_bag:
 				print("[BagInventory] FEED roll into slot=", idx, " id=", item_data.id, " r=", rarity, " pol=", polarity, " roll=", roll_pct)
 
-			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct)
+			# Fabricated merge material: never rolls a Manifestation of its
+			# own, so it always feeds whatever rule the stack already has.
+			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct, false)
 			stack.merge_from(incoming)
 			var upgraded: bool = int(stack.rarity) > old_r
 
