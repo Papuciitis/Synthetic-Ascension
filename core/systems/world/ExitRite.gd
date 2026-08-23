@@ -3,8 +3,38 @@ class_name ExitRite
 
 signal cleared(rite: ExitRite)
 
-@export var radius: float = 92.0
-@export var hold_time: float = 3.0
+## Room to fight in. At 92 px the circle was barely wider than the player, so
+## "hold this ground" meant "stand on this spot" - there was nowhere to dodge
+## that was not also outside. A siege needs a courtyard.
+@export var radius: float = 168.0
+## THE RITE IS A SIEGE, NOT A BUTTON.
+##
+## This was three seconds. After a whole segment of Threat climbing, objectives
+## and the decision of when to leave, the climax was standing still for three
+## seconds - and _maybe_spawn_bursts fired its "mild -> medium -> panic" stages
+## at 1.65s, 2.4s and 2.85s, so all three waves spawned inside the final second
+## and the rite completed before any of them could reach the player. The whole
+## escalation existed and could not be experienced.
+##
+## Long enough now that the bursts land, the Threat you built is spent on you,
+## and leaving is something you have to survive rather than something you walk
+## into. This is the moment the segment has been building toward; it should cost
+## something.
+@export var hold_time: float = 20.0
+
+## Stepping out DRAINS the channel instead of voiding it.
+##
+## Zeroing on exit makes the only correct play "stand in the circle and pray",
+## which is not a fight - it is a dare with no counterplay, and one unlucky
+## charger costs the whole rite. Draining at a fraction of the fill rate means
+## dodging out to reposition is a real option that costs real progress, so the
+## rite becomes what it should be: hold this ground, give it up when you must,
+## take it back.
+@export var lapse_drain_rate: float = 0.45
+
+## The rite's own resonance: the channel keeps drawing while you are away, and
+## a player who abandons it entirely still loses everything - just not instantly.
+@export var lapse_grace: float = 1.5
 @export var locked: bool = true
 @export var narrative_mode: bool = false
 @export var hide_location_while_locked: bool = false
@@ -23,6 +53,8 @@ const UNLOCK_BURST_SCENE := preload("res://assets/vfx/world/gates/VFX_GateUnlock
 var _player_inside: bool = false
 var _last_backlash_ms: int = -100000
 var _hold: float = 0.0
+var _lapse: float = 0.0
+var _announced_channel: bool = false
 var _sigil_t: float = 0.0
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
@@ -146,16 +178,23 @@ func _process(delta: float) -> void:
 		return
 
 	if not _player_inside:
-		_hold = 0.0
-		_burst_stage = 0
-		queue_redraw()
+		# Drain rather than void. See lapse_drain_rate.
+		if _hold > 0.0:
+			_lapse += delta
+			if _lapse > lapse_grace:
+				_hold = maxf(0.0, _hold - delta * lapse_drain_rate * _fill_rate())
+			queue_redraw()
 		return
+	_lapse = 0.0
 
 	# A dead body inside the circle must not keep channeling the rite
 	# (same guard DistrictRelayObjective got for the same bug).
 	var channeling_player := get_tree().get_first_node_in_group("player")
 	if channeling_player != null and bool(channeling_player.get("is_dead")):
+		# Dying gives the whole rite back. A drain is for stepping away by
+		# choice; death is the failure the pressure was building toward.
 		_hold = 0.0
+		_lapse = 0.0
 		_burst_stage = 0
 		queue_redraw()
 		return
@@ -177,23 +216,36 @@ func _process(delta: float) -> void:
 		cleared.emit(self)
 		set_process(false)
 
+## How fast the channel fills. One place, so the drain can be expressed as a
+## fraction of it and the two can never drift.
+func _fill_rate() -> float:
+	return 1.0
+
+
+## Waves across the WHOLE channel, escalating. Spread out rather than stacked at
+## the end: the player needs time to feel each wave arrive, fight it, and watch
+## the next one come - which is the difference between a siege and a jump scare.
+const BURST_STAGES: Array[Vector2] = [
+	Vector2(0.10, 2.0),
+	Vector2(0.26, 3.0),
+	Vector2(0.42, 4.0),
+	Vector2(0.58, 5.0),
+	Vector2(0.72, 6.0),
+	Vector2(0.85, 8.0),
+	Vector2(0.94, 10.0),
+]
+
+
 func _maybe_spawn_bursts(t: float) -> void:
-	# Near the end of the hold, spike pressure so the last second feels scary.
 	if _spawner == null or not is_instance_valid(_spawner):
 		return
-
-	# 3 stages: mild -> medium -> panic
-	if _burst_stage < 1 and t >= 0.55:
-		_spawner.spawn_burst(2)
-		_burst_stage = 1
+	while _burst_stage < BURST_STAGES.size():
+		var stage: Vector2 = BURST_STAGES[_burst_stage]
+		if t < stage.x:
+			return
+		_burst_stage += 1
+		_spawner.spawn_burst(int(stage.y))
 		return
-	if _burst_stage < 2 and t >= 0.80:
-		_spawner.spawn_burst(4)
-		_burst_stage = 2
-		return
-	if _burst_stage < 3 and t >= 0.95:
-		_spawner.spawn_burst(6)
-		_burst_stage = 3
 
 func _on_body_entered(b: Node) -> void:
 	if b == null:
@@ -227,6 +279,15 @@ func _on_body_entered(b: Node) -> void:
 
 	_player_inside = true
 	add_to_group(&"exit_rite_channeling")
+	# Say what the player has just committed to, once. Twenty seconds of
+	# escalating waves with no warning reads as the game breaking, not as a
+	# siege - and the decision to start it is only a decision if they know.
+	if not _announced_channel and RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+		_announced_channel = true
+		RunEvents.tutorial_tip.emit(
+			"The Rite draws for %ds. Hold the circle - step out and it bleeds back." % int(round(hold_time)),
+			4.0
+		)
 	var sm := get_node_or_null("/root/SfxManager")
 	if sm != null:
 		sm.call("ensure_loop_2d", self, _sfx_channel_tag, &"exit_channel_loop")
@@ -263,7 +324,10 @@ func _draw() -> void:
 
 	if not locked and hold_time > 0.0:
 		var t := clampf(_hold / hold_time, 0.0, 1.0)
-		var prog := Color(0.98, 0.92, 0.55, 0.98)
+		# Losing the channel has to be as loud as gaining it, or a player who
+		# stepped out to dodge cannot tell what it cost them.
+		var draining: bool = not _player_inside and _hold > 0.0 and _lapse > lapse_grace
+		var prog := Color(0.99, 0.44, 0.30, 0.98) if draining else Color(0.98, 0.92, 0.55, 0.98)
 		# main stroke
 		draw_arc(Vector2.ZERO, radius + 11.0, -PI/2, -PI/2 + TAU * t, 96, prog, 10.0, true)
 		# soft glow fill
