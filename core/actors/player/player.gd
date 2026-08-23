@@ -74,6 +74,8 @@ const ENEMY_BODY_LAYER_BIT: int = 1 << 1  # physics layer 2
 var _bound_inv: Inventory = null
 var _managed_hit_profile: HitProfileAdapter = HitProfileAdapter.new()
 var _lucky_crit_pending: bool = false
+var _belief_refresh_pending: bool = false
+var _belief_refresh_cooldown: float = 0.0
 
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var aim_pivot: Node2D = $AimPivot
@@ -90,6 +92,11 @@ func _ready() -> void:
 
 	_base_collision_mask = collision_mask
 	_base_collision_layer = collision_layer
+
+	if Global != null and Global.has_signal("followers_changed"):
+		var belief_cb := Callable(self, "_on_followers_changed_belief")
+		if not Global.followers_changed.is_connected(belief_cb):
+			Global.followers_changed.connect(belief_cb)
 
 	# HP init
 	hp = max_hp
@@ -156,6 +163,14 @@ func _on_permanent_augments_changed(ids: Array[StringName]) -> void:
 func _process(delta: float) -> void:
 	if is_dead:
 		return
+	# Belief power tracks the live congregation, debounced so kill sprees
+	# don't trigger a full stat recompute per kill.
+	if _belief_refresh_cooldown > 0.0:
+		_belief_refresh_cooldown -= delta
+	if _belief_refresh_pending and _belief_refresh_cooldown <= 0.0:
+		_belief_refresh_pending = false
+		_belief_refresh_cooldown = 2.0
+		refresh_run_state()
 	if _weapon_cd > 0.0:
 		_weapon_cd = max(_weapon_cd - delta, 0.0)
 
@@ -304,6 +319,10 @@ func sync_spells_from_global() -> void:
 		spell_caster.set_slot(i, sd)
 
 
+func _on_followers_changed_belief(_value: int) -> void:
+	_belief_refresh_pending = true
+
+
 func refresh_run_state() -> void:
 	var race: RaceData = Global.race_db.get(Global.selected_race_id, null) as RaceData
 	var style: StyleData = Global.style_db.get(Global.selected_style_id, null) as StyleData
@@ -330,6 +349,10 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 
 	if Global.has_method("apply_attempt_modifiers_to_stats"):
 		Global.call("apply_attempt_modifiers_to_stats", s)
+
+	# Followers are not just currency: belief feeds the ascension.
+	if Global.has_method("follower_belief_power"):
+		s.power += Global.follower_belief_power()
 
 	if Global.run_inventory != null:
 		var inv_mods: StatDelta = Global.run_inventory.sum_mods()

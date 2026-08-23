@@ -686,6 +686,12 @@ func set_permanent_augment(slot: int, id: StringName) -> void:
 		print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
 	permanent_augments_changed.emit(permanent_augment_ids)
 
+func follower_belief_power() -> float:
+	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
+	# the current congregation. sqrt keeps early followers meaningful and
+	# hoarding from snowballing: 25 -> +5%, 100 -> +10%, cap +15%.
+	return minf(0.15, 0.01 * sqrt(float(maxi(0, followers))))
+
 func level_up_permanent_augment(id: StringName) -> void:
 	if id == StringName():
 		return

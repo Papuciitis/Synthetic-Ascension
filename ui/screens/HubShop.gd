@@ -338,7 +338,10 @@ func _refresh_undo_button_details() -> void:
 func _undo_last_trade() -> void:
 	if _undo_trade.is_empty() or Global == null:
 		return
-	Global.followers = int(_undo_trade.get("followers", Global.followers))
+	# Route the restore through the ledger so every follower mutation is
+	# auditable under one reason stream.
+	var restored_followers: int = int(_undo_trade.get("followers", Global.followers))
+	Global.transaction_followers(restored_followers - int(Global.followers), &"trade_undo", {}, false, false)
 	_restore_inventory_snapshot(_undo_trade.get("inventory", []) as Array)
 	_restore_bag_snapshot(Global.run_bag, _undo_trade.get("bag", []) as Array)
 	_restore_bag_snapshot(_vendor_bag, _undo_trade.get("vendor", []) as Array)
@@ -1105,6 +1108,15 @@ func _trade_validation() -> Dictionary:
 		return {
 			"valid": false,
 			"reason": "Insufficient support • %d more Followers required." % (-after),
+		}
+
+	# Followers are also lives: warn before the player barters away their
+	# next reconstruction.
+	var respawn_cost: int = Global.compute_respawn_cost() if Global != null and Global.has_method("compute_respawn_cost") else 1
+	if after < respawn_cost:
+		return {
+			"valid": true,
+			"reason": "⚠ %d Followers left — below the next reconstruction cost (%d). Death would end the Ascension." % [after, respawn_cost],
 		}
 
 	return {"valid": true, "reason": "Exchange is viable."}

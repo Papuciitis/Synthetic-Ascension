@@ -255,7 +255,12 @@ func _build_world_from_plan() -> void:
 	)
 
 	# Move the player to the segment start and set their default checkpoint.
+	# A saved wardstone checkpoint from this attempt takes priority (mirrors
+	# Level1Builder): resuming mid-segment used to silently overwrite it and
+	# dump the player back at the district entrance.
 	var start_world: Vector2 = _plan.get("start_world", Vector2.ZERO)
+	if Global != null and Global.attempt_checkpoint_pos != Vector2.INF:
+		start_world = Global.attempt_checkpoint_pos
 	if _player != null and _player.has_method("set_checkpoint"):
 		_player.call("set_checkpoint", start_world, true)
 	else:

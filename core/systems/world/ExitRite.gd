@@ -150,6 +150,15 @@ func _process(delta: float) -> void:
 		queue_redraw()
 		return
 
+	# A dead body inside the circle must not keep channeling the rite
+	# (same guard DistrictRelayObjective got for the same bug).
+	var channeling_player := get_tree().get_first_node_in_group("player")
+	if channeling_player != null and bool(channeling_player.get("is_dead")):
+		_hold = 0.0
+		_burst_stage = 0
+		queue_redraw()
+		return
+
 	_hold = minf(_hold + delta, hold_time)
 	queue_redraw()
 
