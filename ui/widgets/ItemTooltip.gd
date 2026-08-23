@@ -210,11 +210,28 @@ func show_item(inst: ItemInstance) -> void:
 
 	# Secondary economy/progression information.
 	lines.append("")
-	var um: float = clampf(float(inst.upgrade_meter), 0.0, 1.0) * 100.0
+	# K6 legibility: the meter is real power now (continuous rarity), so
+	# frame it as progress toward the next rank, not an abstract percent.
+	var meter_frac: float = clampf(float(inst.upgrade_meter), 0.0, 1.0)
+	var filled: int = int(round(meter_frac * 8.0))
+	var meter_bar := ""
+	for bar_i in range(8):
+		meter_bar += ("▰" if bar_i < filled else "▱")
 	var sell_v: int = 0
 	if Global != null and Global.has_method("compute_sell_value"):
 		sell_v = int(Global.compute_sell_value(inst))
-	lines.append("UPGRADE %d%%  ·  SELL %d" % [int(round(um)), sell_v])
+	lines.append("R%d → R%d  %s %d%%  ·  SELL %d" % [
+		int(inst.rarity), int(inst.rarity) + 1, meter_bar, int(round(meter_frac * 100.0)), sell_v,
+	])
+	if inst.polarity == ItemInstance.Polarity.NEG:
+		var deepening: bool = (
+			Global != null
+			and Global.permanent_augment_ids.has(&"augment_corruption_engine")
+		)
+		lines.append(
+			"Feeding DEEPENS the curse (Corruption Engine)" if deepening
+			else "Feeding stabilizes the curse (mildest roll survives)"
+		)
 
 	body_label.text = "\n".join(lines)
 	reset_size()

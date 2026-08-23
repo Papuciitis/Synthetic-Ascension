@@ -82,6 +82,24 @@ func player_damage(world_pos: Vector2, amount: float) -> void:
 	_spawn(_format_amount(amount), world_pos + Vector2(0.0, -30.0), Color(1.0, 0.35, 0.3, 1.0), 1.15, LIFETIME, amount, 0)
 
 
+func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = Color(0.82, 0.88, 1.0, 1.0)) -> void:
+	# Compact combat feed toast: successive feeds of the same item REPLACE
+	# one floating line instead of stacking (K6 combat/inspection split —
+	# full math lives in the tooltip, this just says what happened).
+	if not enabled():
+		return
+	if merge_key != 0:
+		for i in range(_count):
+			if _keys[i] == merge_key:
+				_texts[i] = text
+				_positions[i] = world_pos + Vector2(0.0, -34.0)
+				_ages[i] = 0.0
+				_lifetimes[i] = 1.3
+				queue_redraw()
+				return
+	_spawn(text, world_pos + Vector2(0.0, -34.0), color, 1.0, 1.3, 0.0, merge_key)
+
+
 func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0) -> void:
 	if not enabled():
 		return
