@@ -26,6 +26,7 @@ func _check(condition: bool, message: String) -> void:
 
 func _run() -> void:
 	_test_deep_curses_exist()
+	_test_curses_have_shapes_not_just_magnitudes()
 	_test_snapshot_reads_polarity_and_severity()
 	_test_inversion_suppresses_exactly_one()
 	_test_archetypes_disagree()
@@ -82,18 +83,49 @@ func _test_deep_curses_exist() -> void:
 
 	# Severity is tuned per stat family: -95% Armour is survivable, -95% Max HP
 	# or Move Speed is not a build, it is a death sentence.
+	# Deepest curse per slot - several curses can share a slot now that shape
+	# matters as much as magnitude.
 	var by_slot: Dictionary = {}
 	for id in Global.item_db.keys():
 		var data: ItemData = Global.item_db[id] as ItemData
 		if data == null or not String(data.id).begins_with("curse_"):
 			continue
-		by_slot[int(data.equip_slot)] = data.pct_min
+		var slot := int(data.equip_slot)
+		by_slot[slot] = minf(float(by_slot.get(slot, 0.0)), data.pct_min)
 	var move_floor: float = float(by_slot.get(2, -1.0))
 	var hp_floor: float = float(by_slot.get(0, -1.0))
 	var armour_floor: float = float(by_slot.get(1, 0.0))
 	_check(move_floor > -0.6, "the movement curse is capped for playability (%.2f)" % move_floor)
 	_check(hp_floor > -0.7, "the Max HP curse is capped for playability (%.2f)" % hp_floor)
 	_check(armour_floor < move_floor, "a mitigation stat takes a far deeper cut than movement")
+
+
+## The correction that matters most. A pool where every curse is "-X% stat"
+## cannot support archetypes that disagree, because there is only one axis to
+## disagree along. A curse whose SHAPE is a rate cap, a currency tax or a biased
+## loot table is bad in a way no stat penalty can express - and is the only way
+## one player's poison becomes another player's supply line.
+func _test_curses_have_shapes_not_just_magnitudes() -> void:
+	var shaped: PackedStringArray = PackedStringArray()
+	var flat := 0
+	for id in Global.item_db.keys():
+		var data: ItemData = Global.item_db[id] as ItemData
+		if data == null or not String(data.id).begins_with("curse_"):
+			continue
+		if not data.negative_effect_scenes.is_empty():
+			shaped.append(String(data.id))
+		else:
+			flat += 1
+	_check(shaped.size() >= 3, "several curses carry a BEHAVIOUR, not just a penalty (%s)" % ", ".join(shaped))
+	_check(flat >= 3, "and several are still plain severity, so the two kinds coexist (%d)" % flat)
+
+	# Those behaviours only exist if scripted effects can run outside the two
+	# accessory slots - they could not until the runner was widened.
+	var runner_slots: Array = ItemEffectRunner.new().watched_slots
+	_check(
+		runner_slots.size() >= Inventory.SLOT_COUNT,
+		"scripted item effects run in every equipped slot (%d)" % runner_slots.size()
+	)
 
 
 func _test_snapshot_reads_polarity_and_severity() -> void:

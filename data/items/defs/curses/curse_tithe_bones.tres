@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
+[ext_resource type="PackedScene" path="res://effects/items/scenes/TitheBonesCurse.tscn" id="3_eff"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+armor = 26.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+armor = 6.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("2_itemdata")
+id = "curse_tithe_bones"
+display_name = "Tithe Bones"
+description = "Every wound is itemised. Someone is keeping the ledger.
+• Taking damage costs Followers.
+• It never touches your combat stats — it bills your congregation."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.30
+pct_max = 0.0
+duplicate_feed_value = 0.0
+scripted_value_weight = 18.0
+drop_weight = 0.3
+equip_slot = 1
+negative_effect_scenes = Array[PackedScene]([ExtResource("3_eff")])
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

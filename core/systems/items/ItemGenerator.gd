@@ -57,7 +57,13 @@ static func roll_signed_range(
 		return 0.0
 	var choose_positive := has_positive
 	if has_positive and has_negative:
-		choose_positive = rng.randf() <= LuckResolver.positive_probability(luck)
+		# A worn loot-table curse pushes the polarity coin toward NEG. Applied
+		# here rather than folded into Luck, because Luck bends dozens of
+		# systems and this must only bend one.
+		var positive_chance := LuckResolver.positive_probability(luck)
+		if Global != null:
+			positive_chance = clampf(positive_chance - Global.curse_drop_bias, 0.05, 0.95)
+		choose_positive = rng.randf() <= positive_chance
 	# Bell first, shift after: averaging AFTER adding the shift halved the
 	# advertised Luck effect. Quality 1.0 is always the BEST outcome for the
 	# player: the strongest POS roll, or the mildest NEG roll — the old
