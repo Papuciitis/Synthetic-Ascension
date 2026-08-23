@@ -62,30 +62,57 @@ func _test_renderer_snapshot_reset() -> void:
 
 	var death_pos := Vector2(500.0, 500.0)
 	var spawn_pos := Vector2(-800.0, 120.0)
+	var t0 := 1_000_000
+	var actors: Dictionary = renderer.get("_actors")
+
+	# --- Bug reproduction: no reset (what the guard used to do). ---
+	# Seed two snapshots at the death position so the entry carries a real
+	# blend interval, exactly like an enemy that moved before dying.
 	actor.global_position = death_pos
 	renderer.register_actor(actor, sprite)
-	var entry: Dictionary = (renderer.get("_actors") as Dictionary)[actor.get_instance_id()]
+	var stale_entry: Dictionary = actors[actor.get_instance_id()]
+	renderer.call("_interpolated_actor_transform", stale_entry, actor.global_transform, t0)
+	actor.global_position = death_pos + Vector2(1.0, 0.0)
+	renderer.call("_interpolated_actor_transform", stale_entry, actor.global_transform, t0 + 16_000)
 
-	# Seed the snapshot at the death position (what publish does while alive).
-	var t0 := 1_000_000
-	renderer.call("_interpolated_actor_transform", entry, actor.global_transform, t0)
-
-	# Pool reuse: node teleports to the new spawn. Without a reset, the
-	# interpolation starts at the OLD position (the reported blink).
+	# Pool reuse: the node teleports to its new spawn and publishes one frame
+	# early in the blend window - it renders at the OLD position.
 	actor.global_position = spawn_pos
-	var stale: Transform2D = renderer.call("_interpolated_actor_transform", entry, actor.global_transform, t0 + 16_000)
+	var stale: Transform2D = renderer.call(
+		"_interpolated_actor_transform", stale_entry, actor.global_transform, t0 + 17_000
+	)
 	_check(
-		stale.origin.distance_to(death_pos) < 1.0,
-		"without reset the first frame renders at the death position (bug reproduced)"
+		stale.origin.distance_to(spawn_pos) > 100.0,
+		"without reset the first frame renders away from the spawn (bug reproduced)"
 	)
 
-	# The fix: reset re-seeds from the current transform, no blink.
-	renderer.register_actor(actor, sprite)
-	renderer.reset_actor_snapshot(actor)
-	var fresh: Transform2D = renderer.call("_interpolated_actor_transform", entry, actor.global_transform, t0 + 32_000)
+	# --- The fix: same setup, but reset_actor_snapshot on reuse. ---
+	var actor2 := Node2D.new()
+	var sprite2 := Sprite2D.new()
+	sprite2.name = "Sprite2D"
+	actor2.add_child(sprite2)
+	add_child(actor2)
+	actor2.global_position = death_pos
+	renderer.register_actor(actor2, sprite2)
+	var fixed_entry: Dictionary = actors[actor2.get_instance_id()]
+	renderer.call("_interpolated_actor_transform", fixed_entry, actor2.global_transform, t0)
+	actor2.global_position = death_pos + Vector2(1.0, 0.0)
+	renderer.call("_interpolated_actor_transform", fixed_entry, actor2.global_transform, t0 + 16_000)
+
+	actor2.global_position = spawn_pos
+	renderer.reset_actor_snapshot(actor2)
+	# Re-fetch: the assertion must read the STORED entry, not a local alias.
+	var reset_entry: Dictionary = actors[actor2.get_instance_id()]
+	_check(
+		not reset_entry.has("curr_xf") and not reset_entry.has("prev_xf"),
+		"reset_actor_snapshot clears the stored snapshot keys"
+	)
+	var fresh: Transform2D = renderer.call(
+		"_interpolated_actor_transform", reset_entry, actor2.global_transform, t0 + 17_000
+	)
 	_check(
 		fresh.origin.distance_to(spawn_pos) < 1.0,
-		"after reset_actor_snapshot the first frame renders at the spawn position"
+		"after reset_actor_snapshot the same frame renders at the spawn position"
 	)
 
 

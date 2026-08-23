@@ -107,6 +107,12 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		if protected_current != null and protected_current.data != null \
 		and protected_current.data.id == inst.data.id \
 		and int(protected_current.polarity) == int(inst.polarity):
+			# The UI staged a bag origin for the swap-back flight that is not
+			# going to happen; leaving it armed would make the NEXT origin-less
+			# bag add (a vendor buy, a granted reward) fly in from this slot,
+			# and the origin lives on the bag Resource across scenes.
+			if bag_inv.has_method("set_pending_ui_origin"):
+				bag_inv.set_pending_ui_origin(null)
 			bag_inv.remove_at(bag_slot_index)
 			return inv.add_or_feed(inst, origin)
 		# Free bag slot first
@@ -163,6 +169,10 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 		if dst != null and dst.data != null \
 		and dst.data.id == inst.data.id \
 		and int(dst.polarity) == int(inst.polarity):
+			# No swap-back flight happens on a merge; disarm the staged origin
+			# (see equip_from_bag) before the source stack disappears.
+			if not (src_inv is Inventory) and src_inv.has_method("set_pending_ui_origin"):
+				src_inv.call("set_pending_ui_origin", null)
 			if src_inv is Inventory:
 				src_inv.call("remove_at", src_i, _player_origin(origin))
 			else:
