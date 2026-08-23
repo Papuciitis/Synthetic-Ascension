@@ -2,20 +2,32 @@ extends ManifestationEffect
 
 ## Anchor Rite - the deliberate counterweight to the Momentum family.
 ##
-## Standing still builds Stability; at full Stability every attack lands far
-## harder. Firing does NOT spend it: standing still IS the cost, so a planted
-## player keeps the payoff for as long as they refuse to move. State already
-## drains Stability while moving, which is what makes wearing this alongside
-## Pilgrim's Momentum a real decision instead of a stacking bonus.
+## Standing still builds Stability; at full Stability your shot stops being a
+## bullet and becomes a rail. Firing does NOT spend it: standing still IS the
+## cost, so a planted player keeps the payoff for as long as they refuse to
+## move. State already drains Stability while moving, which is what makes
+## wearing this alongside Pilgrim's Momentum a real decision instead of a
+## stacking bonus.
+##
+## WHY THE DAMAGE NUMBER IS SMALL AND THE SHAPE IS LARGE.
+## The payoff used to be +85% Power, which is a stance paying out in a stat: it
+## changed nothing about what a planted shot WAS, only what it totalled, and it
+## compounded catastrophically with a second copy of the rule. Planting now
+## turns the gun into a line weapon that reaches most of the way across a room
+## and goes through everything in it. Against a horde - which is the only thing
+## worth planting in front of - that is far more damage than the old multiplier
+## ever was, and it is damage you have to aim, from ground you have to choose.
 
 const FILL_SECONDS: float = 1.4
-const FULL_BONUS: float = 0.85
 
-## The other half of the rite: a planted shot carries through bodies and
-## reaches further. Only ranged shots have a pierce concept, so melee and
-## magic keep the damage payoff alone.
-const FULL_PIERCE: int = 2
-const FULL_RANGE_BONUS: float = 0.35
+## Deliberately modest. The rite's reward is the line, not the number.
+const FULL_BONUS: float = 0.30
+
+## The rite proper: a planted shot carries through a crowd and reaches across
+## the room. Only ranged shots have a pierce concept, so melee and magic keep
+## the damage payoff alone.
+const FULL_PIERCE: int = 12
+const FULL_RANGE_BONUS: float = 0.85
 
 const RING_RADIUS: float = 34.0
 const SPIN_SPEED: float = 1.35
@@ -128,7 +140,7 @@ func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:
 
 
 func describe() -> String:
-	return "Stand still for %.2fs to reach full Stability, then your attacks deal %d%% damage and ranged shots carry through %d more enemies at %d%% range. Firing never spends it; moving drains it." % [
+	return "Stand still for %.2fs to plant, and your shot becomes a rail: %d%% damage, carrying through %d more enemies at %d%% range. Firing never spends it; moving does." % [
 		FILL_SECONDS * threshold_scale(),
 		int(round((1.0 + FULL_BONUS * potency()) * 100.0)),
 		pierce_at_full(),
