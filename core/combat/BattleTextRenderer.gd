@@ -169,8 +169,8 @@ func _draw() -> void:
 	if _font == null:
 		return
 	for i in range(_count):
-		var progress := clampf(_ages[i] / maxf(_lifetimes[i], 0.01), 0.0, 1.0)
-		var alpha := 1.0 if progress < 0.55 else 1.0 - (progress - 0.55) / 0.45
+		var life_t := clampf(_ages[i] / maxf(_lifetimes[i], 0.01), 0.0, 1.0)
+		var alpha := 1.0 if life_t < 0.55 else 1.0 - (life_t - 0.55) / 0.45
 		# Crit pop: brief overshoot at birth.
 		var pop := 1.0 + maxf(0.0, 0.25 - _ages[i] * 2.0) * (_scales[i] - 1.0) * 4.0
 		var font_size := int(round(15.0 * _scales[i] * pop))
