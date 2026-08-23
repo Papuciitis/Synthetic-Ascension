@@ -226,14 +226,28 @@ func _try_pickup() -> void:
 			and not equipped2.locked \
 			and equipped2.data.id == item_data.id \
 			and equipped2.polarity == pol:
+				var fed_rank_before: int = int(equipped2.rarity)
 				Global.run_inventory.feed_roll_into(slot, roll_pct, origin)
 				_dbg(["[EQUIP FEED]", "slot=", slot, "inst_id=", equipped2.get_instance_id()])
+				_show_feed_toast(equipped2, fed_rank_before)
 				consumed = true
 
 		# If not consumed by equip/feed, put THIS SAME ROLL into the bag
 		if not consumed:
 			_set_bag_origin_from_pickup_world()
+			# One-shot capture: if the roll FEEDS an existing stack, show the
+			# compact progress toast (lambda captures copy scalars, so the
+			# array container carries the result out).
+			var fed_info: Array = []
+			var fed_cb := func(_idx: int, stack: ItemInstance, _roll: float, _upgraded: bool, old_r: int) -> void:
+				fed_info.append([stack, old_r])
+			Global.run_bag.stack_fed.connect(fed_cb, CONNECT_ONE_SHOT)
 			var ok: bool = Global.run_bag.add_roll(item_data, r, pol, roll_pct)
+			if Global.run_bag.stack_fed.is_connected(fed_cb):
+				Global.run_bag.stack_fed.disconnect(fed_cb)
+			if not fed_info.is_empty():
+				var fed_entry: Array = fed_info[0]
+				_show_feed_toast(fed_entry[0] as ItemInstance, int(fed_entry[1]))
 			if not ok:
 				_clear_bag_origin()
 				_dbg(["[BAG FULL] leave pickup on ground", "remaining=", (copies - i)])
@@ -248,6 +262,20 @@ func _try_pickup() -> void:
 	if sm != null:
 		sm.call("play_2d", &"pickup", global_position)
 	queue_free()
+
+
+func _show_feed_toast(fed: ItemInstance, rank_before: int) -> void:
+	# K6 combat split: auto-feeds show one compact, short-lived line per
+	# item (successive feeds replace it); the full math lives in tooltips.
+	if fed == null or fed.data == null or BattleText == null:
+		return
+	var meter_pct: int = int(round(clampf(float(fed.upgrade_meter), 0.0, 1.0) * 100.0))
+	var text: String
+	if int(fed.rarity) > rank_before:
+		text = "%s → R%d!" % [fed.data.display_name, int(fed.rarity)]
+	else:
+		text = "%s R%d %d%%" % [fed.data.display_name, int(fed.rarity), meter_pct]
+	BattleText.progress(global_position, text, int(fed.get_instance_id()))
 
 
 func _complete_secondary_objective() -> void:
