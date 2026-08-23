@@ -253,6 +253,43 @@ func show_item(inst: ItemInstance) -> void:
 	lines.append("R%d → R%d  %s %d%%  ·  SELL %d" % [
 		int(inst.rarity), int(inst.rarity) + 1, meter_bar, int(round(meter_frac * 100.0)), sell_v,
 	])
+	# A cursed item is worth different amounts to different builds, so the
+	# tooltip has to say what THIS wardrobe is currently doing with it - not
+	# just that it is NEG.
+	if inst.polarity == ItemInstance.Polarity.NEG and Global != null:
+		var burden_snapshot: BurdenSnapshot = BurdenResolver.resolve(
+			Global.run_inventory, Global.permanent_augment_ids
+		)
+		var slot_index: int = int(inst.data.equip_slot)
+		var severity: float = absf(inst.active_pct())
+		lines.append("")
+		if burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
+		and Global.run_inventory.get_at(slot_index) == inst:
+			lines.append(
+				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG for parity and sets.[/color]"
+				% [
+					CMP_POS_HEX,
+					int(round(severity * 100.0)),
+					int(round(BurdenResolver.inverted_return(severity) * 100.0)),
+				]
+			)
+		else:
+			var weight: String = "catastrophic" if severity >= 0.70 else (
+				"severe" if severity >= 0.40 else (
+					"real" if severity >= BurdenSnapshot.QUALIFYING_BURDEN else "trivial"
+				)
+			)
+			lines.append(
+				"[color=%s]ACTIVE BURDEN %d%% — %s.%s[/color]"
+				% [
+					NEG.to_html(false),
+					int(round(severity * 100.0)),
+					weight,
+					"" if severity >= BurdenSnapshot.QUALIFYING_BURDEN
+					else " Too mild to count as a burden.",
+				]
+			)
+
 	if inst.polarity == ItemInstance.Polarity.NEG:
 		var deepening: bool = (
 			Global != null

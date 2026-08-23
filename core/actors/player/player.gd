@@ -82,6 +82,9 @@ const ENEMY_BODY_LAYER_BIT: int = 1 << 1  # physics layer 2
 var _bound_inv: Inventory = null
 var _managed_hit_profile: HitProfileAdapter = HitProfileAdapter.new()
 var _lucky_crit_pending: bool = false
+## Last resolved curse reading, so the Run Sheet can show the same arithmetic
+## the stats used rather than recomputing it and drifting.
+var last_burden: BurdenSnapshot = null
 var _belief_refresh_pending: bool = false
 var _belief_refresh_cooldown: float = 0.0
 
@@ -494,6 +497,15 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		mr.refresh_effects(Global.run_inventory)
 		mr.apply_effects_to_stats(s)
 
+	# One authoritative reading of what the run's curses currently mean. Every
+	# NEG archetype below reads this rather than re-deriving severity, so they
+	# cannot disagree about the same item - and the Run Sheet can show the
+	# player the same arithmetic the stats used.
+	var burden: BurdenSnapshot = BurdenResolver.resolve(
+		Global.run_inventory, Global.permanent_augment_ids
+	)
+	last_burden = burden
+
 	if Global.run_inventory != null:
 		var items: Array[ItemInstance] = Global.run_inventory.items
 		for i in range(min(items.size(), Inventory.STAT_SLOT_COUNT)):
@@ -502,6 +514,11 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 				continue
 
 			var pct := it.active_pct()
+			# A suppressed curse does not apply its penalty. Part of its
+			# severity comes back as the stat it was ruining instead - the item
+			# is still NEG, it just is not weighing on you any more.
+			if burden.is_suppressed(i):
+				pct = BurdenResolver.inverted_return(burden.suppressed_severity)
 			if i == 5:
 				pct = clampf(pct, -0.9999, 0.9999)
 			else:
@@ -515,30 +532,44 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 				4: s.haste += pct
 				5: s.luck += pct
 
-	# Corruption Engine: only the TWO most severe equipped curses feed the
-	# engine — it runs on concentrated corruption, not wardrobe totals.
-	# (Design ruling: total-severity would make this and count-based NEG
-	# builds converge on the same "wear many curses" shopping list.)
-	if Global.permanent_augment_ids.has(&"augment_corruption_engine") and Global.run_inventory != null:
-		var severities: Array[float] = []
-		for corrupted in Global.run_inventory.items:
-			var corrupted_item := corrupted as ItemInstance
-			if corrupted_item == null or corrupted_item.data == null:
-				continue
-			if corrupted_item.polarity == ItemInstance.Polarity.NEG:
-				severities.append(absf(corrupted_item.active_pct()))
-		if not severities.is_empty():
-			severities.sort()
-			severities.reverse()
-			var corruption_total: float = severities[0]
-			if severities.size() > 1:
-				corruption_total += severities[1]
-			# Asymptotic level scaling (shared rule for capped NEG augments):
-			# rate approaches 24%/100% severity, never reaches it, L1 = 12%.
-			# No dead levels, and the output cap stays at +30% Power.
-			var engine_level: int = Global.get_augment_level(&"augment_corruption_engine")
-			var engine_rate: float = 0.24 * float(engine_level) / (float(engine_level) + 1.0)
+	# --- the NEG archetypes, all reading one snapshot ----------------------
+	#
+	# They deliberately disagree about the same wardrobe. Corruption Engine
+	# wants two catastrophes; the Doctrine wants six mild curses; the Lens wants
+	# one horror it can switch off. A cursed item that is a prize to one is
+	# nearly worthless to another, which is the entire point of the ecosystem.
+
+	# Corruption Engine: only the TWO most severe ACTIVE curses feed it. It runs
+	# on concentrated corruption, not wardrobe totals - total-severity would make
+	# it and the count-based Doctrine converge on one shopping list. Note it
+	# reads ACTIVE burden, so a Lens suppressing your worst curse also starves
+	# the Engine: those two augments genuinely fight each other.
+	if Global.permanent_augment_ids.has(&"augment_corruption_engine"):
+		var corruption_total: float = burden.heaviest(2)
+		if corruption_total > 0.0:
+			var engine_rate: float = BurdenResolver.asymptotic_rate(
+				0.24, Global.get_augment_level(&"augment_corruption_engine")
+			)
 			s.power += minf(0.30, corruption_total * engine_rate)
+
+	# Doctrine of Burden: pays for COUNT, not severity, so it wants many mild
+	# curses and is actively hurt by consolidating them. Ordinary NEG merging
+	# stabilises a curse toward mild, which is exactly what this build wants -
+	# and exactly what Corruption Engine inverts.
+	if Global.permanent_augment_ids.has(&"augment_doctrine_of_burden") and burden.qualifying_count > 0:
+		var doctrine_level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
+		var per_curse_armour: float = BurdenResolver.asymptotic_rate(16.0, doctrine_level)
+		var per_curse_hp: float = BurdenResolver.asymptotic_rate(0.09, doctrine_level)
+		s.armor += per_curse_armour * float(burden.qualifying_count)
+		s.max_hp *= 1.0 + per_curse_hp * float(burden.qualifying_count)
+
+	# Inversion Lens: the suppression itself happened in the slot loop above.
+	# What is left is the reading you can put on a card - and a small Luck
+	# kicker, because reinterpreting a catastrophe is the same fantasy Luck
+	# sells: the universe quietly rearranging itself around you.
+	if Global.permanent_augment_ids.has(&"augment_inversion_lens") and burden.suppressed_slot >= 0:
+		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
+		s.luck += BurdenResolver.asymptotic_rate(0.30, lens_level) * burden.suppressed_severity
 
 	Global.run_luck = s.luck
 

@@ -103,7 +103,7 @@ func _spawn_loot(rng: RandomNumberGenerator) -> bool:
 	var made := false
 
 	for _i in range(n):
-		var item_key = keys[rng.randi_range(0, keys.size() - 1)]
+		var item_key = Global.pick_weighted_item_id(rng, keys)
 		var item_id_str: String = str(item_key)
 		var data: ItemData = Global.get_item_data(item_id_str)
 		if data == null:

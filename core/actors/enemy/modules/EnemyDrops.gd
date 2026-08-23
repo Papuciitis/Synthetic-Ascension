@@ -74,7 +74,7 @@ func _pick_drop_id() -> String:
 		build_drop_pool()
 	if _pool.is_empty():
 		return ""
-	return _pool[Global._rng.randi_range(0, _pool.size() - 1)]
+	return Global.pick_weighted_item_id(Global._rng, _pool)
 
 
 func try_drop_health_pickup() -> void:

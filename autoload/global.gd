@@ -443,6 +443,30 @@ func get_item_data(item_id: String) -> ItemData:
 	return item_db.get(item_id, null) as ItemData
 
 
+## Pick a random item id, honouring each item's drop_weight.
+##
+## Every random-item path funnels through here so authored rarity means the same
+## thing whether the item came from an enemy, a building, exploration or a
+## vendor shelf. Passing no keys means "anything in the database".
+func pick_weighted_item_id(rng: RandomNumberGenerator, keys: Array = []) -> String:
+	var pool: Array = keys if not keys.is_empty() else item_db.keys()
+	if pool.is_empty():
+		return ""
+	var total := 0.0
+	for key in pool:
+		var data: ItemData = item_db.get(str(key), null) as ItemData
+		total += maxf(0.0, data.drop_weight) if data != null else 1.0
+	if total <= 0.0:
+		return str(pool[rng.randi_range(0, pool.size() - 1)])
+	var target := rng.randf() * total
+	for key in pool:
+		var data: ItemData = item_db.get(str(key), null) as ItemData
+		target -= maxf(0.0, data.drop_weight) if data != null else 1.0
+		if target <= 0.0:
+			return str(key)
+	return str(pool[pool.size() - 1])
+
+
 func get_equipped_rarity_average() -> float:
 	if run_inventory == null:
 		return 0.0

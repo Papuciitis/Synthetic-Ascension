@@ -1419,7 +1419,7 @@ func _generate_vendor_stock(force: bool) -> void:
 		if slot_idx == -1:
 			break
 
-		var item_id: String = str(keys[rng.randi_range(0, keys.size() - 1)])
+		var item_id: String = Global.pick_weighted_item_id(rng, keys)
 		var data: ItemData = Global.get_item_data(item_id)
 		if data == null:
 			continue

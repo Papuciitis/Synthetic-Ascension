@@ -104,7 +104,81 @@ func refresh(player: Node, inv: Inventory) -> void:
 		line.modulate = (ACCENT if n >= set_max else Color(1, 1, 1, 0.85))
 		sets_vbox.add_child(line)
 
+	_append_burden(player)
 	_append_manifestations(player)
+
+
+const BURDEN := Color(0.85, 0.42, 0.95, 1.0)
+
+
+## The curse ledger, showing the ARITHMETIC rather than the augment's name.
+##
+## Three archetypes read the same wardrobe and disagree about it, so "Corruption
+## Engine: active" tells the player nothing they can act on. What they need is
+## which curses are live, which one is switched off, and what the augment turned
+## that into.
+func _append_burden(player: Node) -> void:
+	if player == null:
+		return
+	var snap: BurdenSnapshot = player.get("last_burden") as BurdenSnapshot
+	if snap == null or (snap.neg_count <= 0 and snap.pos_count <= 0):
+		return
+	if snap.neg_count <= 0:
+		return
+
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	_add_line("BURDEN", BURDEN, 12)
+	_add_line(
+		"%d NEG / %d POS   ·   %d active   ·   %d%% total severity" % [
+			snap.neg_count, snap.pos_count, snap.active_count,
+			int(round(snap.total_active * 100.0)),
+		],
+		Color(1, 1, 1, 0.80), 11
+	)
+
+	var ids: Array = Global.permanent_augment_ids if Global != null else []
+
+	if ids.has(&"augment_corruption_engine"):
+		var top_two := snap.heaviest(2)
+		var rate := BurdenResolver.asymptotic_rate(
+			0.24, Global.get_augment_level(&"augment_corruption_engine")
+		)
+		_add_line("CORRUPTION ENGINE", BURDEN, 11)
+		_add_line(
+			"   top two active: %d%%  ×  %d%%/100%%  →  Power +%.1f%%%s" % [
+				int(round(top_two * 100.0)), int(round(rate * 100.0)),
+				minf(0.30, top_two * rate) * 100.0,
+				"  (CAPPED)" if top_two * rate > 0.30 else "",
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
+
+	if ids.has(&"augment_doctrine_of_burden"):
+		var level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
+		var armour := BurdenResolver.asymptotic_rate(16.0, level) * float(snap.qualifying_count)
+		var hp := BurdenResolver.asymptotic_rate(0.09, level) * float(snap.qualifying_count)
+		_add_line("DOCTRINE OF BURDEN", BURDEN, 11)
+		_add_line(
+			"   %d qualifying curses (≥%d%%)  →  Armour +%d, Max HP +%d%%" % [
+				snap.qualifying_count, int(BurdenSnapshot.QUALIFYING_BURDEN * 100.0),
+				int(round(armour)), int(round(hp * 100.0)),
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
+
+	if ids.has(&"augment_inversion_lens"):
+		_add_line("INVERSION LENS", BURDEN, 11)
+		if snap.suppressed_slot >= 0:
+			_add_line(
+				"   %s suppressed: %d%% curse  →  +%d%% returned, 0%% burden" % [
+					Inventory.slot_label(snap.suppressed_slot).to_upper(),
+					int(round(snap.suppressed_severity * 100.0)),
+					int(round(BurdenResolver.inverted_return(snap.suppressed_severity) * 100.0)),
+				],
+				Color(1, 1, 1, 0.72), 10
+			)
+		else:
+			_add_line("   nothing cursed to suppress", Color(1, 1, 1, 0.55), 10)
 
 
 func _append_manifestations(player: Node) -> void:

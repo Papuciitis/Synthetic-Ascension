@@ -17,6 +17,12 @@ class_name ItemData
 @export_range(0.0, 1.0, 0.01) var duplicate_feed_value: float = 0.0
 @export var scripted_value_weight: float = 0.0
 
+## Relative likelihood of being chosen when something rolls a random item.
+## 1.0 is ordinary. Authored set-pieces - the deep curses especially - sit well
+## below it, because a catastrophe the player meets every other fight stops
+## being a catastrophe and becomes wallpaper.
+@export var drop_weight: float = 1.0
+
 # Which equipped slot it belongs to. If NONE, it goes to bag only.
 enum EquipSlot { NONE = -1, HP = 0, ARMOR = 1, MOVE = 2, POWER = 3, HASTE = 4, LUCK = 5, OFFHAND = 6, RING = 7 }
 @export var equip_slot: EquipSlot = EquipSlot.NONE

@@ -306,12 +306,56 @@ func _refresh_player_loadout() -> void:
 		player.call("refresh_run_state")
 
 
+# ============================================================
+# Curses / burden
+#
+# The NEG slice is deliberately low-roll-rate, so hand-testing the three
+# archetypes by farming drops is hopeless.
+# ============================================================
+
+func grant_deep_curses() -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	for id in Global.item_db.keys():
+		var data: ItemData = Global.item_db[id] as ItemData
+		if data == null or not String(data.id).begins_with("curse_"):
+			continue
+		var slot: int = int(data.equip_slot)
+		if slot < 0 or slot >= Inventory.SLOT_COUNT:
+			continue
+		# Rolled at its own floor, so every archetype sees the real thing.
+		var cursed := ItemInstance.from_roll(data, 4, ItemInstance.Polarity.NEG, data.pct_min, false)
+		Global.run_inventory.set_item(slot, cursed, null)
+	_refresh_player_loadout()
+
+
+func grant_mild_curses() -> void:
+	# The Doctrine's wardrobe: many small real curses rather than two horrors.
+	if Global == null or Global.run_inventory == null:
+		return
+	for slot in range(Inventory.SLOT_COUNT):
+		var data := _first_item_data_for_slot(slot)
+		if data == null:
+			continue
+		Global.run_inventory.set_item(
+			slot, ItemInstance.from_roll(data, 3, ItemInstance.Polarity.NEG, -0.18, false), null
+		)
+	_refresh_player_loadout()
+
+
+func grant_neg_augment(id: StringName) -> void:
+	if Global == null:
+		return
+	Global.set_permanent_augment(0, id)
+	_refresh_player_loadout()
+
+
 func _build_panel() -> void:
 	_panel = PanelContainer.new()
 	_panel.visible = false
 	_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT, true)
 	_panel.offset_left = -390.0
-	_panel.offset_top = -760.0
+	_panel.offset_top = -860.0
 	_panel.offset_right = -16.0
 	_panel.offset_bottom = -16.0
 	add_child(_panel)
@@ -409,6 +453,20 @@ func _build_panel() -> void:
 	root.add_child(manifest_bulk)
 	manifest_bulk.add_child(_button("Roll every slot", roll_all_manifestations))
 	manifest_bulk.add_child(_button("Clear rules", clear_manifestations))
+
+	var burden_title := Label.new()
+	burden_title.text = "CURSES / BURDEN"
+	burden_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	root.add_child(burden_title)
+	var burden_row := HBoxContainer.new()
+	root.add_child(burden_row)
+	burden_row.add_child(_button("Deep curses", grant_deep_curses))
+	burden_row.add_child(_button("Many mild", grant_mild_curses))
+	var burden_aug := HBoxContainer.new()
+	root.add_child(burden_aug)
+	burden_aug.add_child(_button("Engine", func() -> void: grant_neg_augment(&"augment_corruption_engine")))
+	burden_aug.add_child(_button("Doctrine", func() -> void: grant_neg_augment(&"augment_doctrine_of_burden")))
+	burden_aug.add_child(_button("Lens", func() -> void: grant_neg_augment(&"augment_inversion_lens")))
 
 func _add_set_row(parent: VBoxContainer, label_text: String, set_id: StringName) -> void:
 	var row := HBoxContainer.new()
