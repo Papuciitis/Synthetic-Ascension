@@ -411,6 +411,7 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 
 
 func _spawn_melee(mouse_pos: Vector2, dmg: float) -> void:
+	dmg = _consume_hex_mark_bonus(dmg)
 	var origin := _attack_origin()
 	var dir := (mouse_pos - origin).normalized()
 	if dir == Vector2.ZERO:
@@ -451,59 +452,66 @@ func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:
 	get_tree().current_scene.add_child(slash)
 
 
+func _consume_hex_mark_bonus(dmg: float) -> float:
+	# Hex Blink's mark charges apply to the next attacks of ANY style —
+	# consuming them only in the ranged path made half the augment a no-op
+	# for melee and magic builds. Applies once per attack (then distributed
+	# if multi-shot).
+	var shots_left: int = 0
+	if has_meta("hex_mark_shots_left"):
+		var sv: Variant = get_meta("hex_mark_shots_left")
+		if typeof(sv) == TYPE_INT:
+			shots_left = int(sv)
+	if shots_left <= 0:
+		return dmg
+
+	var d8_count: int = 2
+	var power_scale: float = 0.0
+	var flat: float = 0.0
+
+	if has_meta("hex_mark_d8_count"):
+		var dv: Variant = get_meta("hex_mark_d8_count")
+		if typeof(dv) == TYPE_INT:
+			d8_count = int(dv)
+
+	if has_meta("hex_mark_power_scale"):
+		var pv: Variant = get_meta("hex_mark_power_scale")
+		if typeof(pv) == TYPE_FLOAT or typeof(pv) == TYPE_INT:
+			power_scale = float(pv)
+
+	if has_meta("hex_mark_flat"):
+		var fv: Variant = get_meta("hex_mark_flat")
+		if typeof(fv) == TYPE_FLOAT or typeof(fv) == TYPE_INT:
+			flat = float(fv)
+
+	var extra: int = 0
+	for i in range(max(1, d8_count)):
+		extra += randi_range(1, 8)
+
+	var pwr: float = 0.0
+	if stats != null:
+		pwr = stats.power
+
+	dmg += float(extra) + flat + (pwr * power_scale)
+
+	shots_left -= 1
+	if shots_left <= 0:
+		remove_meta("hex_mark_shots_left")
+		if has_meta("hex_mark_d8_count"): remove_meta("hex_mark_d8_count")
+		if has_meta("hex_mark_power_scale"): remove_meta("hex_mark_power_scale")
+		if has_meta("hex_mark_flat"): remove_meta("hex_mark_flat")
+	else:
+		set_meta("hex_mark_shots_left", shots_left)
+	return dmg
+
+
 func _spawn_ranged(mouse_pos: Vector2, dmg: float) -> void:
 	var origin := _attack_origin()
 	var dir := (mouse_pos - origin).normalized()
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT
 
-	# --- HEX MARK BONUS (consumed here) ---
-	var shots_left: int = 0
-	if has_meta("hex_mark_shots_left"):
-		var sv: Variant = get_meta("hex_mark_shots_left")
-		if typeof(sv) == TYPE_INT:
-			shots_left = int(sv)
-
-	if shots_left > 0:
-		var d8_count: int = 2
-		var power_scale: float = 0.0
-		var flat: float = 0.0
-
-		if has_meta("hex_mark_d8_count"):
-			var dv: Variant = get_meta("hex_mark_d8_count")
-			if typeof(dv) == TYPE_INT:
-				d8_count = int(dv)
-
-		if has_meta("hex_mark_power_scale"):
-			var pv: Variant = get_meta("hex_mark_power_scale")
-			if typeof(pv) == TYPE_FLOAT or typeof(pv) == TYPE_INT:
-				power_scale = float(pv)
-
-		if has_meta("hex_mark_flat"):
-			var fv: Variant = get_meta("hex_mark_flat")
-			if typeof(fv) == TYPE_FLOAT or typeof(fv) == TYPE_INT:
-				flat = float(fv)
-
-		var extra: int = 0
-		for i in range(max(1, d8_count)):
-			extra += randi_range(1, 8)
-
-		var pwr: float = 0.0
-		if stats != null:
-			pwr = stats.power
-
-		# NOTE: applies once per attack (then distributed if multi-shot)
-		dmg += float(extra) + flat + (pwr * power_scale)
-
-		shots_left -= 1
-		if shots_left <= 0:
-			remove_meta("hex_mark_shots_left")
-			if has_meta("hex_mark_d8_count"): remove_meta("hex_mark_d8_count")
-			if has_meta("hex_mark_power_scale"): remove_meta("hex_mark_power_scale")
-			if has_meta("hex_mark_flat"): remove_meta("hex_mark_flat")
-		else:
-			set_meta("hex_mark_shots_left", shots_left)
-	# --- end HEX MARK BONUS ---
+	dmg = _consume_hex_mark_bonus(dmg)
 
 	# Major-choice style mutation: shotgun spread
 	var shotgun: bool = (Global != null and Global.has_method("has_mutation") and Global.has_mutation(&"mut_ranged_shotgun"))
@@ -560,6 +568,7 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 
 
 func _spawn_magic(mouse_pos: Vector2, dmg: float) -> void:
+	dmg = _consume_hex_mark_bonus(dmg)
 	var origin := _attack_origin()
 
 	# Major-choice style mutation: tri-sigil burst

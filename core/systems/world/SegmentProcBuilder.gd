@@ -564,6 +564,10 @@ func _unhook_secondary_objectives() -> void:
 func _on_secondary_objective_completed(objective_id: int) -> void:
 	if objective_id <= 0:
 		return
+	# An alley cache spawning two pickups fires this once per pickup;
+	# announce (and later, reward) each secondary exactly once.
+	if _secondary_completed.has(objective_id):
+		return
 	_secondary_completed[objective_id] = true
 	if _active_secondary_id == objective_id:
 		_active_secondary_id = -1

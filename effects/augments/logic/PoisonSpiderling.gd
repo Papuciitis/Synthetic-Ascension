@@ -140,7 +140,9 @@ func _deal_bite(handle: int, target_position: Vector2) -> void:
 			if v2.has_method("setup"):
 				v2.call("setup", target_position, dir)
 
-	EnemyCombat.apply_damage(handle, dmg)
+	# Credit the summoner: without a source, bites emit no damage_dealt
+	# (no lifesteal) and kills have no attribution, unlike detonations.
+	EnemyCombat.apply_damage(handle, dmg, 1, player)
 
 
 func explode(dmg: float, radius: float, source: Node = null) -> void:

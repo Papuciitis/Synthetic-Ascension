@@ -92,7 +92,29 @@ func _do_open_choose_3() -> void:
 		return
 
 	options.shuffle()
-	_spawn_cards(options.slice(0, 3))
+	_spawn_cards(_build_offers(options))
+
+func _build_offers(options: Array[AugmentData]) -> Array[AugmentData]:
+	# While a slot is free, prefer augments the player does not own; pad with
+	# owned ones (they level up on pick). With all three slots full, every
+	# offer is an owned augment upgrade — never a silent slot-0 overwrite.
+	Global.init_permanent_augments()
+	var fresh: Array[AugmentData] = []
+	var owned: Array[AugmentData] = []
+	for a in options:
+		if Global.permanent_augment_ids.has(a.id):
+			owned.append(a)
+		else:
+			fresh.append(a)
+	var has_empty_slot: bool = Global.permanent_augment_ids.find(StringName()) != -1
+	var primary: Array[AugmentData] = fresh if has_empty_slot else owned
+	var filler: Array[AugmentData] = owned if has_empty_slot else fresh
+	var offers: Array[AugmentData] = primary.duplicate()
+	for a in filler:
+		if offers.size() >= 3:
+			break
+		offers.append(a)
+	return offers.slice(0, 3)
 
 func _spawn_cards(list: Array[AugmentData]) -> void:
 	if cards_box == null:
@@ -147,7 +169,9 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 
 	print("AUGMENT PICKED:", a.id)
 
-	var slot: int = _choose_slot_for_pick()
+	# Picking an augment you already own levels it up in place.
+	var owned_slot: int = Global.permanent_augment_ids.find(a.id)
+	var slot: int = owned_slot if owned_slot != -1 else _choose_slot_for_pick()
 
 	var vfx_node := get_tree().get_first_node_in_group("augment_fly_vfx")
 	var vfx := vfx_node as AugmentFlyVfx
@@ -157,7 +181,10 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 		if is_instance_valid(card_node):
 			card_node.modulate = Color(1, 1, 1, 0)
 
-	Global.set_permanent_augment(slot, a.id)
+	if owned_slot != -1:
+		Global.level_up_permanent_augment(a.id)
+	else:
+		Global.set_permanent_augment(slot, a.id)
 	augment_chosen.emit(a)
 	_close()
 

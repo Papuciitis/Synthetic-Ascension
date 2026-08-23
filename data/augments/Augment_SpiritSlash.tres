@@ -8,12 +8,15 @@
 script = ExtResource("1_nxmfh")
 id = &"augment_spirit_slash"
 display_name = "Spirit Slash"
-description = "A spectral blade lashes out when you commit to a hit."
-card_blurb = "Melee hits trigger a spectral slash that reaches beyond your weapon."
-details = "Triggers on melee hits
-Cooldown: 0.30s (scales with Haste)
-Range: 220px
-Damage: 0.35× Power"
+description = "A spectral blade you unleash at the nearest enemy, carving wounds that keep bleeding."
+card_blurb = "Active: spectral slash the nearest enemy. Bleeds, can crit-stun, sometimes refunds its cooldown."
+details = "Active (augment key)
+Cooldown: 2.5s
+Range: 180px
+Damage: 3d6 + 10× Power
+Applies 1–3 Bleed stacks (3s)
+12% crit: stun + heavy knockback
+Roll 3+ on a d4: cooldown refunded"
 icon = ExtResource("2_kfpgv")
 effect_scenes = Array[PackedScene]([ExtResource("1_7ffbt")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

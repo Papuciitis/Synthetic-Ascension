@@ -395,6 +395,13 @@ func reset_run_systems() -> void:
 	attempt_vendor_seed = 0
 	attempt_vendor_bag = null
 
+	# A fresh attempt in the same segment never trips ThreatDirector's
+	# segment-change poll, so tell it explicitly or overtime/elite pressure
+	# from the previous run bleeds into the new one.
+	var threat_director := get_node_or_null("/root/ThreatDirector")
+	if threat_director != null and threat_director.has_method("reset_run_state"):
+		threat_director.call("reset_run_state")
+
 func reset_run_inventory() -> void:
 	run_inventory = Inventory.new()
 
@@ -676,6 +683,13 @@ func set_permanent_augment(slot: int, id: StringName) -> void:
 	permanent_augment_ids[slot] = id
 	add_owned_augment(id)
 	print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
+	permanent_augments_changed.emit(permanent_augment_ids)
+
+func level_up_permanent_augment(id: StringName) -> void:
+	if id == StringName():
+		return
+	set_augment_level(id, get_augment_level(id) + 1)
+	print("[AUG] level_up_permanent_augment id=", id, " -> L", get_augment_level(id))
 	permanent_augments_changed.emit(permanent_augment_ids)
 
 func apply_permanent_augments_to_stats(s: Stats) -> void:

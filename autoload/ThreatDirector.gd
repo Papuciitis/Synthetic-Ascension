@@ -195,6 +195,12 @@ func _hook_signals() -> void:
 		if RunEvents.has_signal("enemy_defeated") and not RunEvents.enemy_defeated.is_connected(cb_k):
 			RunEvents.enemy_defeated.connect(cb_k)
 
+func reset_run_state() -> void:
+	# Fresh attempt in the SAME segment (death/restart): the segment poll in
+	# _process never fires because attempt_segment did not change, which used
+	# to carry overtime/elites/evac into the new run.
+	_on_segment_changed(maxi(1, Global.attempt_segment))
+
 func _on_segment_changed(new_seg: int) -> void:
 	_last_segment = new_seg
 	# Fresh segment -> drop the hands.
