@@ -806,6 +806,27 @@ func _test_dash_hook() -> void:
 
 	var state := ManifestationState.new()
 	add_child(state)
+	# Duplicates must not compound. Two of one rule is a supported loadout - the
+	# runner's #slot key exists for it - but it must not be a different game.
+	var falloff: float = ManifestationRunner.DUPLICATE_FALLOFF
+	_check(falloff < 1.0, "the Nth copy of a rule pays less than the first")
+	var runner_probe := ManifestationRunner.new()
+	var solo: float = runner_probe._shared_multiplier(1.85, 1.0)
+	var second: float = runner_probe._shared_multiplier(1.85, falloff)
+	_check(is_equal_approx(solo, 1.85), "the first copy pays in full (%.2f)" % solo)
+	_check(second < solo, "the second copy pays less (%.2f)" % second)
+	_check(
+		solo * second < 1.85 * 1.85,
+		"two copies no longer compound to %.2fx" % (1.85 * 1.85)
+	)
+	# A penalty must be softened by exactly as much as a bonus is, or duplicating
+	# a downside rule would be a way to farm the downside away.
+	_check(
+		is_equal_approx(runner_probe._shared_multiplier(0.8, 0.5), 0.9),
+		"a duplicate penalty is diminished symmetrically"
+	)
+	runner_probe.free()
+
 	# Composure: the ward noun's clock has to actually do something, and it has
 	# to be the counterweight to four rules that all reward being nearly dead.
 	state.claim(&"ward")

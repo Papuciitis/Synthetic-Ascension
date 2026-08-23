@@ -585,11 +585,44 @@ func apply_effects_to_stats(s: Stats) -> void:
 			node.call("apply_to_stats", s)
 
 
+## How much of its bonus the Nth copy of the SAME rule still contributes.
+##
+## Multiplicative polls compounded across duplicates while every ledger channel
+## merely added, so two of one rule was quietly the strongest thing in the
+## layer: two Anchor Rites were 1.85 x 1.85 = 3.42x damage, permanently, for
+## standing still. Anchor Rite rolls on three slots and the bond weighting makes
+## the second copy NOTABLY likelier once you hold the first, so this was a
+## reachable and self-reinforcing loadout rather than a corner case.
+##
+## Duplicates still help - the layer explicitly supports two items carrying one
+## rule, and the runner's #slot key exists for exactly that - they just stop
+## compounding into a different game.
+const DUPLICATE_FALLOFF: float = 0.5
+
+
+func _duplicate_share(seen: Dictionary, node: Node) -> float:
+	var id: StringName = &""
+	if node.has_method("manifestation_id"):
+		id = node.call("manifestation_id")
+	if id == StringName():
+		return 1.0
+	var n: int = int(seen.get(id, 0))
+	seen[id] = n + 1
+	return pow(DUPLICATE_FALLOFF, float(n))
+
+
+## Applies a diminished share to a multiplier, keeping 1.0 fixed - a penalty
+## (below 1.0) is softened by exactly as much as a bonus is.
+func _shared_multiplier(value: float, share: float) -> float:
+	return 1.0 + (value - 1.0) * share
+
+
 func _multiplier(method: StringName) -> float:
 	var total := 1.0
+	var seen: Dictionary = {}
 	for node in _all_effects():
 		if is_instance_valid(node) and node.has_method(method):
-			total *= float(node.call(method))
+			total *= _shared_multiplier(float(node.call(method)), _duplicate_share(seen, node))
 	return total
 
 
@@ -660,6 +693,7 @@ func apply_to_magic_impact(impact: Node) -> void:
 ## ask one question before it fires.
 func consume_attack_bonus() -> float:
 	var total := 1.0
+	var seen: Dictionary = {}
 	var absorbers: Array[Node] = []
 	for node in _all_effects():
 		if not is_instance_valid(node):
@@ -671,7 +705,13 @@ func consume_attack_bonus() -> float:
 			absorbers.append(node)
 			continue
 		if node.has_method("consume_attack_bonus"):
-			total *= maxf(0.0, float(node.call("consume_attack_bonus")))
+			# Same duplicate rule as _multiplier(): the second copy pays half.
+			# consume_attack_bonus is where Anchor Rite's 1.85x lives, so this
+			# is the poll that mattered most.
+			total *= maxf(0.0, _shared_multiplier(
+				float(node.call("consume_attack_bonus")),
+				_duplicate_share(seen, node)
+			))
 	# Hand the absorber what the other rules already paid for. Without this a
 	# rule that zeroes the shot silently voided every payout taken before it -
 	# Tithe Furnace burns a Follower to arm the beat, pops "FURNACE x3.5", and

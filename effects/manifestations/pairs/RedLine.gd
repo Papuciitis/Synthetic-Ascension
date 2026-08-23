@@ -49,6 +49,14 @@ const RING_RADIUS: float = 30.0
 var _surge_left: float = 0.0
 var _surge_time: float = 0.0
 var _surge_peak: float = 0.0
+## Momentum spends re-armed the guard on any spend >= 25%, and with a Momentum
+## producer a wounded running player cleared that every ~0.6s - so the cost
+## (-22% Power for a couple of seconds) bought outright immunity rather than one
+## ignored hit. It is one ignored hit per this, now, which is what the tooltip
+## always claimed it was.
+const REARM_COOLDOWN: float = 5.0
+
+var _rearm_cd: float = 0.0
 var _guard_left: float = 0.0
 var _guard_flash: float = 0.0
 var _connected: bool = false
@@ -103,14 +111,20 @@ func _on_resource_spent(noun: StringName, amount: float) -> void:
 	_surge_time = lerpf(SURGE_MIN, SURGE_MAX, spent)
 	_surge_left = _surge_time
 	_surge_peak = speed_bonus() * spent
-	_guard_left = GUARD_TIME
-	popup("RED LINE", noun_colour(&"ward"), 1.30)
+	if _rearm_cd <= 0.0:
+		_guard_left = GUARD_TIME
+		_rearm_cd = REARM_COOLDOWN
+		popup("RED LINE", noun_colour(&"ward"), 1.30)
+	else:
+		popup("RED LINE", noun_colour(&"momentum"), 1.10)
 
 
 func _process(delta: float) -> void:
 	_t += delta
 	if _surge_left > 0.0:
 		_surge_left = maxf(0.0, _surge_left - delta)
+	if _rearm_cd > 0.0:
+		_rearm_cd = maxf(0.0, _rearm_cd - delta)
 	if _guard_left > 0.0:
 		_guard_left = maxf(0.0, _guard_left - delta)
 	_guard_flash = maxf(0.0, _guard_flash - delta)
