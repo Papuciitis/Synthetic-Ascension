@@ -1659,6 +1659,17 @@ func deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> b
 			)
 			if run_inventory.get_at(slot) == inst:
 				return true
+		# Same item already equipped: feed the reward into the equipped copy
+		# instead of stranding a frozen duplicate stack in the bag.
+		if slot >= 0 and slot < Inventory.SLOT_COUNT:
+			var equipped := run_inventory.get_at(slot) as ItemInstance
+			if equipped != null and equipped.data != null \
+			and not equipped.locked and not inst.locked \
+			and equipped.data.id == inst.data.id \
+			and int(equipped.polarity) == int(inst.polarity):
+				if run_inventory.add_or_feed(inst, {"type": Inventory.UIOriginType.SCREEN, "pos": Vector2.ZERO}):
+					return true
+
 	if run_bag != null and run_bag.add_instance(inst):
 		return true
 

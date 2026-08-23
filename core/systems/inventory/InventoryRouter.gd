@@ -101,6 +101,14 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		var protected_current: ItemInstance = inv.get_at(equip_slot)
 		if protected_current != null and protected_current.locked:
 			return false
+		# Equipping a duplicate of the equipped item MERGES instead of
+		# swapping: the swap just traded which copy was frozen and made a
+		# diverged r0-bag/r1-equipped pair impossible to consolidate.
+		if protected_current != null and protected_current.data != null \
+		and protected_current.data.id == inst.data.id \
+		and int(protected_current.polarity) == int(inst.polarity):
+			bag_inv.remove_at(bag_slot_index)
+			return inv.add_or_feed(inst, origin)
 		# Free bag slot first
 		bag_inv.remove_at(bag_slot_index)
 
@@ -149,6 +157,17 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 			return false
 		if int(inst.data.equip_slot) != int(dst_i):
 			return false
+		# Duplicate dragged onto its own equipped copy: merge, don't swap
+		# (same rule as equip_from_bag - swapping trades which copy stays
+		# frozen and can never consolidate a diverged pair).
+		if dst != null and dst.data != null \
+		and dst.data.id == inst.data.id \
+		and int(dst.polarity) == int(inst.polarity):
+			if src_inv is Inventory:
+				src_inv.call("remove_at", src_i, _player_origin(origin))
+			else:
+				src_inv.call("remove_at", src_i)
+			return bool(dst_inv.call("add_or_feed", inst, origin))
 
 	# CRITICAL: If moving FROM equipped inventory into an occupied non-equipped slot,
 	# never swap back unless the destination item is valid for the equipped slot.

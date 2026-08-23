@@ -169,6 +169,23 @@ func _try_pickup() -> void:
 			queue_free()
 			return
 
+		# Same id + polarity already equipped -> feed the instance into the
+		# equipped copy (K6: merging is not container-local; bagging the
+		# duplicate here is how r0-in-bag / r1-equipped splits were born).
+		if slot_a >= 0 and slot_a < Inventory.SLOT_COUNT:
+			var equipped_a: ItemInstance = Global.run_inventory.get_at(slot_a) as ItemInstance
+			if equipped_a != null and equipped_a.data != null \
+			and not equipped_a.locked and not inst.locked \
+			and equipped_a.data.id == inst.data.id \
+			and int(equipped_a.polarity) == int(inst.polarity):
+				var rank_before_a: int = int(equipped_a.rarity)
+				if Global.run_inventory.add_or_feed(inst, origin):
+					_dbg(["[PICKUP INST] FED EQUIPPED", "slot=", slot_a])
+					_show_feed_toast(equipped_a, rank_before_a)
+					_complete_secondary_objective()
+					queue_free()
+					return
+
 		# Otherwise, add the instance back into the bag (keeps its state)
 		_set_bag_origin_from_pickup_world()
 		var ok_inst: bool = Global.run_bag.add_instance(inst)
