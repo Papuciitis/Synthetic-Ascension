@@ -1,15 +1,20 @@
 extends CanvasLayer
 
+## Developer ACTION SERVICE. It owns no UI of its own.
+##
+## It used to also build an 860 px panel of about forty-five buttons - which was
+## never shown, because nothing ever called _build_panel(). Every real dev
+## control lives in the developer console (PerformanceOverlay), which calls into
+## this script; the panel was a second, invisible copy of the same buttons that
+## still had to be kept in sync by hand.
+
 const WALL_SCENE: PackedScene = preload("res://scenes/world/cover/CoverFull.tscn")
 const WINDOW_SCENE: PackedScene = preload("res://scenes/world/cover/CoverWindow.tscn")
 const FENCE_SCENE: PackedScene = preload("res://scenes/world/fence/FenceBlock.tscn")
 const HALF_COVER_SCENE: PackedScene = preload("res://scenes/world/cover/CoverHalf.tscn")
 const BULLET_SCENE: PackedScene = preload("res://scenes/world/combat/RangedBullet.tscn")
 
-var _panel: PanelContainer = null
 var _fixture: Node2D = null
-var _item_id_edit: LineEdit = null
-var _manifest_picker: OptionButton = null
 
 func _ready() -> void:
 	layer = 120
@@ -350,137 +355,107 @@ func grant_neg_augment(id: StringName) -> void:
 	_refresh_player_loadout()
 
 
-func _build_panel() -> void:
-	_panel = PanelContainer.new()
-	_panel.visible = false
-	_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT, true)
-	_panel.offset_left = -390.0
-	_panel.offset_top = -860.0
-	_panel.offset_right = -16.0
-	_panel.offset_bottom = -16.0
-	add_child(_panel)
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_bottom", 8)
-	_panel.add_child(margin)
-	var root := VBoxContainer.new()
-	margin.add_child(root)
-	var title := Label.new()
-	title.text = "0.23 OPENING / SET / COLLISION TESTS"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(title)
-	_add_set_row(root, "Conduit", &"conduit")
-	_add_set_row(root, "Gravemarch", &"gravemarch")
-	_add_set_row(root, "Lattice", &"lattice")
-	var clear_button := _button("Clear gear", clear_sets)
-	root.add_child(clear_button)
-	var combat := HBoxContainer.new()
-	root.add_child(combat)
-	combat.add_child(_button("Prime", prime_conduit))
-	combat.add_child(_button("Fill bank", fill_gravemarch_bank))
-	combat.add_child(_button("2 marks", place_lattice_marks))
-	combat.add_child(_button("Clear state", clear_combat_state))
-	var item_row := HBoxContainer.new()
-	root.add_child(item_row)
-	_item_id_edit = LineEdit.new()
-	_item_id_edit.placeholder_text = "specific set item ID"
-	_item_id_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	item_row.add_child(_item_id_edit)
-	item_row.add_child(_button("Grant ID", func() -> void: grant_specific_set_item(StringName(_item_id_edit.text.strip_edges()))))
-	var tests := HBoxContainer.new()
-	root.add_child(tests)
-	tests.add_child(_button("Force notice", force_breakpoint_notification))
-	tests.add_child(_button("Collision fixture", spawn_collision_fixture))
-	tests.add_child(_button("Toggle stress", func() -> void: Global.debug_projectile_stress_test = not Global.debug_projectile_stress_test))
-	tests.add_child(_button("Performance", func() -> void:
-		var overlay := get_tree().get_first_node_in_group(&"performance_overlay")
-		if overlay != null and overlay.has_method("toggle_overlay"):
-			overlay.call("toggle_overlay")
-	))
-	var opening_title := Label.new()
-	opening_title.text = "OPENING SEQUENCE"
-	opening_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(opening_title)
-	var modes := HBoxContainer.new()
-	root.add_child(modes)
-	modes.add_child(_button("Full", func() -> void: restart_opening("full")))
-	modes.add_child(_button("Short", func() -> void: restart_opening("short")))
-	modes.add_child(_button("Skip", func() -> void: restart_opening("skip")))
-	modes.add_child(_button("Replay next", set_next_run_full_replay))
-	modes.add_child(_button("Reset history", reset_opening_history))
-	modes.add_child(_button("Legacy save", simulate_legacy_opening_save))
-	var phases := HBoxContainer.new()
-	root.add_child(phases)
-	phases.add_child(_button("Admission", func() -> void: restart_opening("full", 2)))
-	phases.add_child(_button("Synthesis", func() -> void: restart_opening("full", 4)))
-	phases.add_child(_button("Target", func() -> void: restart_opening("full", 5)))
-	phases.add_child(_button("Construct", func() -> void: restart_opening("full", 6)))
-	phases.add_child(_button("Officer", func() -> void: restart_opening("full", 7)))
-	phases.add_child(_button("Death", func() -> void: restart_opening("full", 8)))
-	phases.add_child(_button("Bren", func() -> void: restart_opening("full", 9)))
-	var responses := HBoxContainer.new()
-	root.add_child(responses)
-	responses.add_child(_button("Analytical", func() -> void: restart_opening("full", 3, "analytical")))
-	responses.add_child(_button("Decisive", func() -> void: restart_opening("full", 3, "decisive")))
-	responses.add_child(_button("Protective", func() -> void: restart_opening("full", 3, "protective")))
-	responses.add_child(_button("Withdrawn", func() -> void: restart_opening("full", 3, "withdrawn")))
-	var segments := HBoxContainer.new()
-	root.add_child(segments)
-	segments.add_child(_button("Segment 2", func() -> void: jump_to_segment(2)))
-	segments.add_child(_button("Segment 5", func() -> void: jump_to_segment(5)))
-	segments.add_child(_button("Segment 10", func() -> void: jump_to_segment(10)))
+## Light a pair on demand: grant two distinct rules of each of its two nouns.
+##
+## A pair needs two DISTINCT rules of noun A and two of noun B, which through
+## the ordinary roll is a specific and uncommon loadout - so the ten authored
+## payoffs were, in practice, untestable without fishing for them. Returns how
+## many rules it managed to place; 0 means there were not enough free slots.
+func grant_pair(pair_id: StringName) -> int:
+	var def := ManifestationPairCatalog.get_def(pair_id)
+	if def == null or def.nouns.size() < 2:
+		return 0
+	if Global == null or Global.run_inventory == null:
+		return 0
 
-	var manifest_title := Label.new()
-	manifest_title.text = "MANIFESTATIONS"
-	manifest_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(manifest_title)
-	var manifest_row := HBoxContainer.new()
-	root.add_child(manifest_row)
-	_manifest_picker = OptionButton.new()
-	_manifest_picker.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	for id_value in ManifestationCatalog.all_ids():
-		_manifest_picker.add_item(ManifestationCatalog.display_name(id_value))
-		_manifest_picker.set_item_metadata(_manifest_picker.item_count - 1, id_value)
-	manifest_row.add_child(_manifest_picker)
-	manifest_row.add_child(_button("Grant", func() -> void:
-		if _manifest_picker == null or _manifest_picker.selected < 0:
-			return
-		grant_manifestation(StringName(str(_manifest_picker.get_item_metadata(_manifest_picker.selected))))
-	))
-	var manifest_bulk := HBoxContainer.new()
-	root.add_child(manifest_bulk)
-	manifest_bulk.add_child(_button("Roll every slot", roll_all_manifestations))
-	manifest_bulk.add_child(_button("Clear rules", clear_manifestations))
+	# Two DISTINCT rules per noun is the activation contract. Rules carrying
+	# BOTH of the pair's nouns are taken first: one of those satisfies two
+	# requirements at once, which matters because a slot a rule may legally live
+	# on is the scarce resource here, not the rules themselves.
+	var need: Dictionary = {}
+	for noun in def.nouns:
+		need[noun] = 2
+	var chosen: Array[StringName] = []
+	for pass_index in range(2):
+		for id_value in ManifestationCatalog.all_ids():
+			if chosen.has(id_value):
+				continue
+			var tags := ManifestationCatalog.tags_of(id_value)
+			var serves: Array[StringName] = []
+			for noun in def.nouns:
+				if int(need.get(noun, 0)) > 0 and tags.has(noun):
+					serves.append(noun)
+			# First pass: only rules that cover both nouns at once.
+			if serves.is_empty() or (pass_index == 0 and serves.size() < 2):
+				continue
+			chosen.append(id_value)
+			for noun in serves:
+				need[noun] = int(need[noun]) - 1
 
-	var burden_title := Label.new()
-	burden_title.text = "CURSES / BURDEN"
-	burden_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(burden_title)
-	var burden_row := HBoxContainer.new()
-	root.add_child(burden_row)
-	burden_row.add_child(_button("Deep curses", grant_deep_curses))
-	burden_row.add_child(_button("Many mild", grant_mild_curses))
-	var burden_aug := HBoxContainer.new()
-	root.add_child(burden_aug)
-	burden_aug.add_child(_button("Engine", func() -> void: grant_neg_augment(&"augment_corruption_engine")))
-	burden_aug.add_child(_button("Doctrine", func() -> void: grant_neg_augment(&"augment_doctrine_of_burden")))
-	burden_aug.add_child(_button("Lens", func() -> void: grant_neg_augment(&"augment_inversion_lens")))
+	# Each rule may only live on certain slots, so first-come-first-served loses
+	# pairs it could have satisfied: a rule legal on three slots takes the one
+	# that a later, pickier rule needed. Assign properly instead.
+	var assignment := _assign_rules_to_slots(chosen)
+	if assignment.is_empty():
+		return 0
 
-func _add_set_row(parent: VBoxContainer, label_text: String, set_id: StringName) -> void:
-	var row := HBoxContainer.new()
-	parent.add_child(row)
-	var label := Label.new()
-	label.custom_minimum_size.x = 100.0
-	label.text = label_text
-	row.add_child(label)
-	for count in [2, 4, 6]:
-		row.add_child(_button("%dP" % count, func() -> void: grant_set(set_id, count)))
+	var placed: int = 0
+	for slot_key in assignment:
+		var slot := int(slot_key)
+		var rule_id: StringName = assignment[slot_key]
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn == null or worn.data == null:
+			var data := _first_item_data_for_slot(slot)
+			if data == null:
+				continue
+			worn = ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.45, false)
+			Global.run_inventory.set_item(slot, worn, null)
+		worn.manifestation_id = rule_id
+		placed += 1
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+	return placed
 
-func _button(label_text: String, action: Callable) -> Button:
-	var button := Button.new()
-	button.text = label_text
-	button.focus_mode = Control.FOCUS_NONE
-	button.pressed.connect(action)
-	return button
+
+## slot -> rule id, or {} if every rule could not be placed at once.
+##
+## Pickiest rule first, then backtrack. Four rules over eight slots with
+## per-rule slot restrictions is small enough that exhaustive search is instant
+## and greedy is simply wrong.
+func _assign_rules_to_slots(rules: Array[StringName]) -> Dictionary:
+	var options: Array = []
+	for rule_id in rules:
+		var rule_def := ManifestationCatalog.get_def(rule_id)
+		if rule_def == null:
+			return {}
+		var slots: Array[int] = []
+		for slot_value in rule_def.slots:
+			var slot := int(slot_value)
+			# A slot with no item definition can never carry a rule.
+			if _first_item_data_for_slot(slot) != null or Global.run_inventory.get_at(slot) != null:
+				slots.append(slot)
+		if slots.is_empty():
+			return {}
+		options.append({"id": rule_id, "slots": slots})
+	options.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return (a["slots"] as Array).size() < (b["slots"] as Array).size())
+
+	var result: Dictionary = {}
+	if _place_from(options, 0, result):
+		return result
+	return {}
+
+
+func _place_from(options: Array, index: int, result: Dictionary) -> bool:
+	if index >= options.size():
+		return true
+	var entry: Dictionary = options[index]
+	for slot_value in (entry["slots"] as Array):
+		var slot := int(slot_value)
+		if result.has(slot):
+			continue
+		result[slot] = entry["id"]
+		if _place_from(options, index + 1, result):
+			return true
+		result.erase(slot)
+	return false
