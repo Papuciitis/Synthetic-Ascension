@@ -95,6 +95,35 @@ class Driver:
 		)
 
 
+	## Haste has to be worth something on every weapon style.
+	##
+	## Melee fires on the press with no cooldown, so the click rate IS the attack
+	## rate and Haste bought nothing - every Haste item, every set granting it,
+	## and the rules built on it were dead text on a third of the game's builds.
+	func _probe_haste_reaches_melee() -> void:
+		if _player == null or not is_instance_valid(_player):
+			return
+		_check(
+			int(_player.call("_melee_followups", 1.0)) == 0,
+			"no Haste, no follow-through"
+		)
+		_check(
+			int(_player.call("_melee_followups", 2.0)) == 1,
+			"+100% Haste is one guaranteed follow-through"
+		)
+		var partial: int = 0
+		for _i in range(400):
+			partial += int(_player.call("_melee_followups", 1.5))
+		_check(
+			partial > 120 and partial < 280,
+			"a fractional Haste is a chance at one (%d over 400 swings)" % partial
+		)
+		_check(
+			int(_player.call("_melee_followups", 99.0)) <= 3,
+			"and it is capped, so Haste cannot become a screen of slashes"
+		)
+
+
 	func _check(condition: bool, message: String) -> void:
 		if condition:
 			_passes += 1
@@ -139,6 +168,7 @@ class Driver:
 		_runner = _player.get_node_or_null("ManifestationRunner")
 		_check(_runner != null, "the player carries a ManifestationRunner")
 		_probe_overheal_is_never_damage()
+		_probe_haste_reaches_melee()
 		if _runner == null:
 			_finish()
 			return
