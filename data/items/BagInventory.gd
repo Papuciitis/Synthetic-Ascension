@@ -349,21 +349,21 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 
 	var key := _key(item_data.id, rarity, polarity)
 
-	# Existing stack? -> FEED
+	# Existing stack? -> FEED through the one real merge path. A
+	# higher-rarity incoming becomes the mathematical destination via
+	# merge_from's auto-swap (the old code overwrote stack.rarity for
+	# free — a zero-mass rank promotion).
 	if _index.has(key):
 		var idx: int = int(_index[key])
 		var stack: ItemInstance = slots[idx]
 		if stack != null:
 			var old_r: int = int(stack.rarity)
 
-			# If future systems pass a higher rarity roll, carry it into the existing stack.
-			if int(rarity) > int(stack.rarity):
-				stack.rarity = int(rarity)
-				stack._recompute_flat_mods()
 			if debug_bag:
 				print("[BagInventory] FEED roll into slot=", idx, " id=", item_data.id, " r=", rarity, " pol=", polarity, " roll=", roll_pct)
 
-			stack.feed_roll(roll_pct)
+			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct)
+			stack.merge_from(incoming)
 			var upgraded: bool = int(stack.rarity) > old_r
 
 			_after_stack_changed()

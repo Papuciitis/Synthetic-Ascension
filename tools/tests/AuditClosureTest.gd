@@ -13,6 +13,7 @@ func _ready() -> void:
 func _run() -> void:
 	_test_development_item_is_not_runtime_eligible()
 	_test_rarity_and_luck_math()
+	_test_vendor_merge_arbitrage_is_lossy()
 	_test_canonical_rarity_merging()
 	_test_enemy_drops_use_instances_and_all_rarity_bonuses()
 	_test_accessories_use_normal_progression()
@@ -146,6 +147,60 @@ func _test_canonical_rarity_merging() -> void:
 	if engine_slot != -1 and not had_engine:
 		Global.permanent_augment_ids[engine_slot] = StringName()
 
+	# --- Merge-math v2 invariants (docs/design/RARITY_MERGE_SPEC.md §1) ---
+
+	# Path-independence: pre-merging into a carrier must never create mass.
+	var pi_direct := ItemInstance.from_roll(data, 5, ItemInstance.Polarity.POS, 0.25)
+	pi_direct.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	pi_direct.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	var pi_carrier := ItemInstance.from_roll(data, 5, ItemInstance.Polarity.POS, 0.25)
+	var carrier := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0)
+	carrier.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	pi_carrier.merge_from(carrier)
+	_check(
+		absf(pi_direct.upgrade_meter - pi_carrier.upgrade_meter) < 0.000001,
+		"merge mass is path-independent (direct %.6f vs carrier %.6f)" % [pi_direct.upgrade_meter, pi_carrier.upgrade_meter]
+	)
+
+	# Auto-swap: the higher-rarity incoming becomes the mathematical
+	# destination while THIS object keeps its identity.
+	var low_stack := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.25)
+	var low_stack_id := low_stack.get_instance_id()
+	low_stack.merge_from(ItemInstance.from_roll(data, 4, ItemInstance.Polarity.POS, 0.25))
+	_check(low_stack.rarity == 4, "auto-swap adopts the higher rarity (got R%d)" % low_stack.rarity)
+	_check(low_stack.get_instance_id() == low_stack_id, "auto-swap preserves object identity")
+	_check(
+		low_stack.upgrade_meter > 0.0 and low_stack.upgrade_meter < 0.2,
+		"auto-swap charges the low side as gap-priced material (meter %.3f)" % low_stack.upgrade_meter
+	)
+
+	# Overflow converts at the gap law's per-rank ratio 2^(-1/H).
+	var of_dest := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.25)
+	of_dest.upgrade_meter = 0.9
+	of_dest.merge_from(ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.25))
+	var expected_overflow := 0.9 * pow(2.0, -1.0 / RarityMath.GAP_HALF_LIFE)
+	_check(
+		of_dest.rarity == 4 and absf(of_dest.upgrade_meter - expected_overflow) < 0.000001,
+		"overflow uses the gap law's rank ratio (meter %.4f, expected %.4f)" % [of_dest.upgrade_meter, expected_overflow]
+	)
+
+	# Continuous rarity power: banked meter grants real stats.
+	var cp_data := ItemData.new()
+	cp_data.id = "continuous_fixture"
+	cp_data.pct_min = -0.5
+	cp_data.pct_max = 0.5
+	cp_data.mods = StatDelta.new()
+	cp_data.rarity_base = StatDelta.new()
+	cp_data.rarity_base.max_hp = 20.0
+	var cp := ItemInstance.from_roll(cp_data, 0, ItemInstance.Polarity.POS, 0.25)
+	var hp_at_zero: float = cp.rolled_mods.max_hp
+	cp.upgrade_meter = 0.5
+	cp._recompute_flat_mods()
+	_check(
+		cp.rolled_mods.max_hp > hp_at_zero + 3.0,
+		"banked meter grants real stats (continuous power: +%.1f HP at 50%%)" % (cp.rolled_mods.max_hp - hp_at_zero)
+	)
+
 
 func _test_enemy_drops_use_instances_and_all_rarity_bonuses() -> void:
 	var spec := EnemySpec.new()
@@ -199,6 +254,41 @@ func _item_with(data: ItemData, rarity: int) -> ItemInstance:
 	instance.polarity = ItemInstance.Polarity.POS
 	instance._recompute_flat_mods()
 	return instance
+
+
+func _test_vendor_merge_arbitrage_is_lossy() -> void:
+	# Invariant (design ruling): no vendor buy -> merge -> sell sequence may
+	# produce more Followers than it consumes, at any rarity, meter state,
+	# roll quality or Luck. Followers are money AND lives AND power - a
+	# repeatable positive loop here would be 'stand at merchant and
+	# manufacture religion'.
+	var data := ItemData.new()
+	data.id = "arbitrage_fixture"
+	data.pct_min = -0.5
+	data.pct_max = 0.5
+	data.mods = StatDelta.new()
+	data.rarity_base = StatDelta.new()
+	data.rarity_base.max_hp = 20.0
+	var old_luck: float = _global.run_luck
+	var worst: float = -INF
+	for luck_value in [0.0, 100.0]:
+		_global.run_luck = luck_value
+		for dest_rarity in [0, 1, 2, 3, 5, 8]:
+			for dest_meter in [0.0, 0.5]:
+				for dest_roll in [0.0, 0.5]:
+					for material_roll in [0.0, 0.5]:
+						for material_rarity in [maxi(0, dest_rarity - 1), dest_rarity]:
+							var dest := ItemInstance.from_roll(data, dest_rarity, ItemInstance.Polarity.POS, dest_roll)
+							dest.upgrade_meter = dest_meter
+							dest._recompute_flat_mods()
+							var material := ItemInstance.from_roll(data, material_rarity, ItemInstance.Polarity.POS, material_roll)
+							var buy_cost: int = int(_global.compute_buy_value(material))
+							var sell_before: int = int(_global.compute_sell_value(dest))
+							dest.merge_from(material)
+							var sell_after: int = int(_global.compute_sell_value(dest))
+							worst = maxf(worst, float(sell_after - sell_before - buy_cost))
+	_global.run_luck = old_luck
+	_check(worst < 0.0, "no vendor buy->merge->sell sequence nets Followers (worst case %+.1f)" % worst)
 
 
 func _test_item_value_keeps_growing_after_r12() -> void:

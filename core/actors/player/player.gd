@@ -407,8 +407,11 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 			var corruption_total: float = severities[0]
 			if severities.size() > 1:
 				corruption_total += severities[1]
+			# Asymptotic level scaling (shared rule for capped NEG augments):
+			# rate approaches 24%/100% severity, never reaches it, L1 = 12%.
+			# No dead levels, and the output cap stays at +30% Power.
 			var engine_level: int = Global.get_augment_level(&"augment_corruption_engine")
-			var engine_rate: float = 0.12 + 0.03 * float(engine_level - 1)
+			var engine_rate: float = 0.24 * float(engine_level) / (float(engine_level) + 1.0)
 			s.power += minf(0.30, corruption_total * engine_rate)
 
 	Global.run_luck = s.luck

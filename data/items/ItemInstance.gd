@@ -54,10 +54,14 @@ func active_pct() -> float:
 	return best_pct
 
 
-func feed_roll(roll_pct: float) -> void:
+func feed_roll(roll_pct: float, incoming_rarity: int = 0) -> void:
+	# A fed roll is material at its OWN rarity — freshly rolled ground
+	# pickups are rank-0 material and pay the gap penalty like everything
+	# else. (They used to be fabricated at the destination's rarity, which
+	# let any pickup feed an R7 item as a full peer.)
 	if data == null:
 		return
-	var incoming := ItemInstance.from_roll(data, rarity, polarity, roll_pct)
+	var incoming := ItemInstance.from_roll(data, incoming_rarity, polarity, roll_pct)
 	merge_from(incoming)
 
 
@@ -77,11 +81,31 @@ func can_merge(incoming: ItemInstance) -> bool:
 func merge_from(incoming: ItemInstance) -> bool:
 	if not can_merge(incoming):
 		return false
+	# Auto-swap: the higher-rarity side is always the mathematical
+	# destination — for H != 1 the wrong direction destroys ranks. Only
+	# the progression payload swaps; THIS object survives, so equip
+	# slots, locks and UI references keep their identity.
+	if incoming.rarity > rarity:
+		var swap_rarity := rarity
+		rarity = incoming.rarity
+		incoming.rarity = swap_rarity
+		var swap_meter := upgrade_meter
+		upgrade_meter = incoming.upgrade_meter
+		incoming.upgrade_meter = swap_meter
+		var swap_pct := best_pct
+		best_pct = incoming.best_pct
+		incoming.best_pct = swap_pct
+		var swap_progress := progress
+		progress = incoming.progress
+		incoming.progress = swap_progress
 	var quality := RarityMath.merge_quality(incoming.data, incoming.best_pct)
 	var mass := RarityMath.merge_mass(incoming.rarity, rarity, quality)
 	if incoming.upgrade_meter > 0.0:
+		# Stored meter transfers at the material's OWN rank scale: merging
+		# a half-fed item yields exactly what feeding both copies directly
+		# would have (path-independence — a hard invariant, tested).
 		mass += RarityMath.merge_mass(
-			incoming.rarity + 1,
+			incoming.rarity,
 			rarity,
 			incoming.upgrade_meter
 		)
@@ -102,33 +126,37 @@ func merge_from(incoming: ItemInstance) -> bool:
 			best_pct = minf(best_pct, incoming.best_pct)
 		else:
 			best_pct = maxf(best_pct, incoming.best_pct)
+	var overflow := RarityMath.overflow_factor()
 	while upgrade_meter >= 1.0 - 0.000001:
-		# Each rarity step doubles the required absolute merge mass.
-		upgrade_meter = maxf(0.0, upgrade_meter - 1.0) * 0.5
-		_upgrade()
+		# Leftover converts at the gap law's per-rank ratio (2^(-1/H)):
+		# each rarity step raises the required absolute merge mass by the
+		# same factor the gap penalty charges.
+		upgrade_meter = maxf(0.0, upgrade_meter - 1.0) * overflow
+		rarity += 1
+	# Recompute ONCE from the normalized post-merge state — never from a
+	# transient meter >= 1.0 mid-loop (continuous-power requirement).
+	_recompute_flat_mods()
 	return true
 
 
-func _upgrade() -> void:
-	if data == null:
-		return
-
-	rarity += 1
-	_recompute_flat_mods()
-
 func _recompute_flat_mods() -> void:
-	# Flat mods are: base mods (data.mods) + rarity scaling (data.rarity_base * rarity)
-	# This keeps conduit items (which have empty mods) behaving the same,
-	# while allowing accessories and future items to have a meaningful baseline at rarity 0.
+	# Flat mods are: base mods (data.mods) + rarity scaling (data.rarity_base).
+	# CONTINUOUS RARITY POWER: potency reads rarity + banked meter, so every
+	# merge physically moves the item's stats — "R0 at 60%" really is a
+	# stronger R0, per the original design promise.
 	rolled_mods = (data.mods.copy() if data != null and data.mods != null else StatDelta.new())
 
 	if data != null and data.rarity_base != null:
-		var k := RarityMath.potency(float(rarity)) - 1.0
+		var effective_rarity := float(rarity) + clampf(upgrade_meter, 0.0, 0.999999)
+		var k := RarityMath.potency(effective_rarity) - 1.0
+		# Rate-family guardrail (spec §1.6): speed/haste contributions
+		# plateau (~R13) instead of scaling through the raw curve forever.
+		var k_rate := minf(k, RarityMath.RATE_STAT_POTENCY_CAP)
 		rolled_mods.max_hp += data.rarity_base.max_hp * k
 		rolled_mods.armor += data.rarity_base.armor * k
-		rolled_mods.move_speed += data.rarity_base.move_speed * k
+		rolled_mods.move_speed += data.rarity_base.move_speed * k_rate
 		rolled_mods.power += data.rarity_base.power * k
-		rolled_mods.haste += data.rarity_base.haste * k
+		rolled_mods.haste += data.rarity_base.haste * k_rate
 		rolled_mods.luck += data.rarity_base.luck * k
 static func from_data(d: ItemData, copies: int = 1, rarity_in: int = 0, polarity_in: int = Polarity.POS) -> ItemInstance:
 	var inst := ItemInstance.new()
@@ -147,6 +175,8 @@ static func from_data(d: ItemData, copies: int = 1, rarity_in: int = 0, polarity
 		if copy_index == 0:
 			inst.best_pct = roll
 		elif d != null:
-			inst.feed_roll(roll)
+			# Additional copies of a multi-copy construction are peers of
+			# the requested rarity, not rank-0 material.
+			inst.feed_roll(roll, rarity_in)
 
 	return inst
