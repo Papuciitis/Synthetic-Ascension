@@ -63,6 +63,7 @@ class Driver:
 			push_error("FAIL: no player node")
 			_finish(1)
 			return
+		_check_exploration_caches()
 		for stop_variant in STOPS:
 			var stop_name: String = stop_variant[0]
 			var cell: Vector2i = stop_variant[1]
@@ -79,6 +80,41 @@ class Driver:
 			var err := img.save_png(path)
 			print("STORY shot %s at %s -> %s (err=%d)" % [stop_name, target, path, err])
 		_finish(0)
+
+	## Segment 1 must pay for leaving the route.
+	##
+	## The procedural districts put a cache at every dead end; the authored
+	## segment - every player's first run - placed none, which made the one
+	## stretch of the game everybody sees the thing the design doc forbids:
+	## "random corridors with no reason to explore them".
+	func _check_exploration_caches() -> void:
+		var found: int = 0
+		var pending: Array[Node] = [get_tree().root]
+		while not pending.is_empty():
+			var node: Node = pending.pop_back()
+			if node.get_class() == "Node2D" and node.get_script() != null:
+				var path := String(node.get_script().resource_path)
+				if path.ends_with("ExplorationLootSpawner.gd"):
+					found += 1
+			for child in node.get_children():
+				pending.append(child)
+		# Spawners free themselves once they have dropped, so anything still
+		# alive plus anything already dropped both count as success; the check
+		# that matters is that the level authored some at all.
+		# ItemPickup is not in a group; count by class instead.
+		var pickups: int = 0
+		pending = [get_tree().root]
+		while not pending.is_empty():
+			var node: Node = pending.pop_back()
+			if node is ItemPickup:
+				pickups += 1
+			for child in node.get_children():
+				pending.append(child)
+		if found + pickups <= 0:
+			push_error("FAIL: Segment 1 authored no exploration caches")
+		else:
+			print("STORY caches: %d spawners live, %d pickups on the ground" % [found, pickups])
+
 
 	func _dismiss_tutorial_cards() -> void:
 		for node in get_tree().root.find_children("*", "", true, false):

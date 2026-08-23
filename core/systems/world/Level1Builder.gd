@@ -228,6 +228,7 @@ func _plan_level() -> void:
 	_plan_outer_approach()
 	_plan_cover_and_landmarks()
 	_plan_interior_dressing()
+	_plan_exploration_caches()
 
 
 func _plan_facility() -> void:
@@ -455,6 +456,84 @@ func _plan_cover_and_landmarks() -> void:
 	_place_deco(_TEX_VEG_TREE, Vector2i(21, -31), 0.10, 0.68, -60)
 	_place_deco(_TEX_VEG_OVER, Vector2i(52, -39), 0.12, 0.66, -60)
 	_place_deco(_TEX_VEG_TREE, Vector2i(16, -58), 0.10, 0.62, -60)
+
+
+# -----------------------------------------------------------------------------
+# Exploration caches
+# -----------------------------------------------------------------------------
+
+## Segment 1 had no reason to leave the critical path.
+##
+## The procedural districts put an ExplorationLootSpawner at every true dead end
+## - the comment there says it exactly right, "this makes side travel
+## intentional" - but the authored segment, which is the game's current
+## authoring priority and every player's FIRST run, placed none at all. So the
+## one stretch of the game everybody sees was the thing the design doc forbids:
+## "random corridors with no reason to explore them".
+##
+## Caches go in the far corners of each region, deliberately away from the
+## centres and doorways the route runs through. The corner of a room IS the
+## alley - it is the place you only reach by choosing to.
+const CACHE_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
+
+## Cells in from the region edge. Far enough to be off the wall-hugging route,
+## not so far that the cache drifts back into the middle of the room.
+const CACHE_INSET: int = 4
+
+## Deterministic, and distinct from the dressing seed so moving one does not
+## move the other.
+const CACHE_SEED: int = 0xCA5E1
+
+
+func _plan_exploration_caches() -> void:
+	if CACHE_SCENE == null or _geo == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = CACHE_SEED
+	var region_index: int = 0
+	for rect in _playable_regions:
+		region_index += 1
+		# Two per region: enough that exploring pays, few enough that the route
+		# is still the fastest way through.
+		var corners: Array[Vector2i] = [
+			rect.position + Vector2i(CACHE_INSET, CACHE_INSET),
+			rect.position + Vector2i(rect.size.x - CACHE_INSET - 1, CACHE_INSET),
+			rect.position + Vector2i(CACHE_INSET, rect.size.y - CACHE_INSET - 1),
+			rect.position + Vector2i(rect.size.x - CACHE_INSET - 1, rect.size.y - CACHE_INSET - 1),
+		]
+		var placed: int = 0
+		var offset: int = rng.randi_range(0, 3)
+		for i in range(corners.size()):
+			if placed >= 2:
+				break
+			var cell: Vector2i = corners[(i + offset) % corners.size()]
+			if not _is_dressable_cell(cell, rect):
+				continue
+			placed += 1
+			_spawn_cache(cell, region_index * 100 + placed)
+
+
+func _spawn_cache(cell: Vector2i, loot_id: int) -> void:
+	var spawner := CACHE_SCENE.instantiate() as Node2D
+	if spawner == null:
+		return
+	# Non-zero and stable: the spawner frees itself at 0, and seeds its own
+	# deterministic roll from this, so the same corner holds the same cache
+	# every time the level is built.
+	spawner.set("loot_id", loot_id)
+	spawner.set("spawn_chance", 1.0)
+	spawner.set("count_min", 1)
+	spawner.set("count_max", 2)
+	# The spawner's own walkability test asks the ChunkManager, which does not
+	# know this authored geometry the way the builder does - so it rejected
+	# every corner and the caches produced nothing at all. _is_dressable_cell()
+	# has already checked this cell against the walls, cover, fences, barriers
+	# and spawn exclusions that were actually authored here, which is the
+	# stronger check; drop straight onto it.
+	spawner.set("require_walkable", false)
+	spawner.set("scatter_radius", 0.0)
+	spawner.global_position = _cell_to_world(cell)
+	_geo.add_child(spawner)
 
 
 # -----------------------------------------------------------------------------
