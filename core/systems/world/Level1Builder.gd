@@ -49,6 +49,13 @@ const _TEX_DIRT_PATH := preload("res://assets/world/ground/ground_dirt_path_01.p
 const _TEX_VEG_BUSH := preload("res://assets/world/vegetation/veg_bush_cluster_01.png")
 const _TEX_VEG_OVER := preload("res://assets/world/vegetation/veg_overgrowth_island_01.png")
 const _TEX_VEG_TREE := preload("res://assets/world/vegetation/veg_dead_tree_01.png")
+const _TEX_CRACKS := preload("res://assets/world/decals/floor/floor_cracks_01.png")
+const _TEX_GRIME := preload("res://assets/world/decals/floor/floor_grime_01.png")
+const _TEX_SCORCH := preload("res://assets/world/decals/floor/floor_scorch_01.png")
+const _TEX_SPILL := preload("res://assets/world/decals/floor/floor_spill_01.png")
+const _TEX_MARKING := preload("res://assets/world/decals/floor/floor_marking_01.png")
+const _TEX_SCUFF := preload("res://assets/world/decals/floor/floor_scuff_01.png")
+const _TEX_RUBBLE := preload("res://assets/world/decals/floor/floor_rubble_01.png")
 const _MILESTONE_AREA := preload("res://core/systems/world/Level1MilestoneArea.gd")
 
 # The public wing beats before the incident (story pass beats 1-2). All
@@ -220,6 +227,7 @@ func _plan_level() -> void:
 	_plan_service_district()
 	_plan_outer_approach()
 	_plan_cover_and_landmarks()
+	_plan_interior_dressing()
 
 
 func _plan_facility() -> void:
@@ -447,6 +455,166 @@ func _plan_cover_and_landmarks() -> void:
 	_place_deco(_TEX_VEG_TREE, Vector2i(21, -31), 0.10, 0.68, -60)
 	_place_deco(_TEX_VEG_OVER, Vector2i(52, -39), 0.12, 0.66, -60)
 	_place_deco(_TEX_VEG_TREE, Vector2i(16, -58), 0.10, 0.62, -60)
+
+
+# -----------------------------------------------------------------------------
+# Interior dressing
+# -----------------------------------------------------------------------------
+
+## The facility is 42x35 cells and the authored plan put about thirty pieces of
+## cover in it, in tidy rows. That reads as exactly what the design doc forbids -
+## "large empty filler", "random corridors with no reason to explore them" - and
+## it is also why the fighting is flat: a horde crossing an unbroken floor has no
+## geometry to break on, so there is nothing to kite around and no corner worth
+## holding.
+##
+## The dressing below is deliberately NOT random-looking. Cover arrives in small
+## clusters with a guaranteed gap between them, which is what makes a floor read
+## as a room that was used rather than a plane that was sprinkled.
+const DRESSING_SEED: int = 0x5A17E1
+
+## Cells between clusters. Three is the crowd lane the authored rows already
+## assume, so this cannot pinch a route the level was built around.
+const DRESSING_CLUSTER_GAP: int = 3
+
+## Off the region border, so doorways and wall-hugging routes stay clear.
+const DRESSING_EDGE_MARGIN: int = 2
+
+
+func _plan_interior_dressing() -> void:
+	var rng := RandomNumberGenerator.new()
+	# Fixed: an authored level has to be the same place every time it loads.
+	rng.seed = DRESSING_SEED
+
+	var anchors: Array[Vector2i] = []
+	for rect in _playable_regions:
+		var area: int = maxi(1, rect.size.x * rect.size.y)
+		# One cluster per ~90 cells. Dense enough to break sightlines, sparse
+		# enough that the floor is still mostly floor.
+		var clusters: int = clampi(area / 48, 3, 40)
+		for _i in range(clusters):
+			var cell := _pick_dressing_cell(rng, rect, anchors)
+			if cell.x == -9999:
+				continue
+			anchors.append(cell)
+			_stamp_cover_cluster(rng, rect, cell)
+
+	_scatter_floor_detail(rng)
+
+
+## An L, a stub wall or a lone crate - three silhouettes rather than one, so the
+## eye reads furniture instead of a pattern.
+func _stamp_cover_cluster(rng: RandomNumberGenerator, rect: Rect2i, origin: Vector2i) -> void:
+	var shape: int = rng.randi_range(0, 2)
+	var horizontal: bool = rng.randf() < 0.5
+	var length: int = rng.randi_range(2, 4)
+	var cells: Array[Vector2i] = [origin]
+
+	match shape:
+		0:
+			# A run of shelving or benching.
+			for i in range(1, length):
+				cells.append(origin + (Vector2i(i, 0) if horizontal else Vector2i(0, i)))
+		1:
+			# An L - a corner you can actually take cover behind.
+			for i in range(1, length):
+				cells.append(origin + Vector2i(i, 0))
+			for i in range(1, maxi(2, length - 1)):
+				cells.append(origin + Vector2i(0, i))
+		_:
+			# A pair of crates left where someone dropped them.
+			cells.append(origin + Vector2i(rng.randi_range(1, 2), rng.randi_range(0, 1)))
+
+	for cell in cells:
+		if not _is_dressable_cell(cell, rect):
+			continue
+		_add_half_cell(cell)
+
+
+func _pick_dressing_cell(
+	rng: RandomNumberGenerator,
+	rect: Rect2i,
+	anchors: Array[Vector2i]
+) -> Vector2i:
+	for _attempt in range(40):
+		var cell := Vector2i(
+			rng.randi_range(
+				rect.position.x + DRESSING_EDGE_MARGIN,
+				rect.position.x + rect.size.x - DRESSING_EDGE_MARGIN - 1
+			),
+			rng.randi_range(
+				rect.position.y + DRESSING_EDGE_MARGIN,
+				rect.position.y + rect.size.y - DRESSING_EDGE_MARGIN - 1
+			)
+		)
+		if not _is_dressable_cell(cell, rect):
+			continue
+		var too_close := false
+		for other in anchors:
+			# Chebyshev: a diagonal gap is a gap you can walk through.
+			if maxi(absi(other.x - cell.x), absi(other.y - cell.y)) < DRESSING_CLUSTER_GAP:
+				too_close = true
+				break
+		if too_close:
+			continue
+		return cell
+	return Vector2i(-9999, -9999)
+
+
+func _is_dressable_cell(cell: Vector2i, rect: Rect2i) -> bool:
+	if cell.x < rect.position.x + DRESSING_EDGE_MARGIN:
+		return false
+	if cell.y < rect.position.y + DRESSING_EDGE_MARGIN:
+		return false
+	if cell.x > rect.position.x + rect.size.x - DRESSING_EDGE_MARGIN - 1:
+		return false
+	if cell.y > rect.position.y + rect.size.y - DRESSING_EDGE_MARGIN - 1:
+		return false
+	# Never over anything the level already placed - authored geometry wins.
+	if _wall_kind.has(cell) or _half_cells.has(cell):
+		return false
+	if _fence_cells.has(cell) or _barrier_cells.has(cell):
+		return false
+	for excluded in _spawn_exclusions:
+		if excluded.has_point(cell):
+			return false
+	return true
+
+
+## Cracks, stains and the odd sigil across the floors. Non-blocking and drawn
+## under everything, so this is pure texture - but an unbroken grey plane is the
+## single loudest thing saying "filler" in the whole level, and three decals
+## repeated at varied scale and rotation break it completely.
+func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
+	# Weighted: wear and grime are what a floor is mostly covered in. Scorches
+	# and spills are events, so they stay rare enough to still read as one.
+	var textures: Array[Texture2D] = [
+		_TEX_CRACKS, _TEX_CRACKS,
+		_TEX_GRIME, _TEX_GRIME, _TEX_GRIME,
+		_TEX_SCUFF, _TEX_SCUFF, _TEX_SCUFF,
+		_TEX_RUBBLE, _TEX_RUBBLE,
+		_TEX_SCORCH,
+		_TEX_SPILL,
+		_TEX_MARKING,
+	]
+	for rect in _playable_regions:
+		var area: int = maxi(1, rect.size.x * rect.size.y)
+		var marks: int = clampi(area / 7, 12, 260)
+		for _i in range(marks):
+			var cell := Vector2i(
+				rng.randi_range(rect.position.x, rect.position.x + rect.size.x - 1),
+				rng.randi_range(rect.position.y, rect.position.y + rect.size.y - 1)
+			)
+			var texture: Texture2D = textures[rng.randi_range(0, textures.size() - 1)]
+			# Markings are painted lines - they read wrong at a jaunty angle and
+			# wrong at half size, so they get their own band.
+			if texture == _TEX_MARKING:
+				_place_deco(texture, cell, rng.randf_range(0.22, 0.30), rng.randf_range(0.30, 0.55), -88)
+				continue
+			# Wear is measured in metres, not pixels. The first pass at this drew
+			# marks about one cell across, which read as litter dropped on a clean
+			# floor rather than as a floor that has been used.
+			_place_deco(texture, cell, rng.randf_range(0.22, 0.68), rng.randf_range(0.30, 0.70), -88)
 
 
 # -----------------------------------------------------------------------------

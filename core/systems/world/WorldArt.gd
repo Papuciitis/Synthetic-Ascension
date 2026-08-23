@@ -28,10 +28,19 @@ const _GROUND_TEX_PATHS := [
 # does not depend on generated .godot import metadata.
 static var _ground_tex_cache: Array[Texture2D] = []
 
+# Floor marks with real alpha. The three decal_*.png that used to be here are
+# rendered images with a baked black-to-white vignette instead of transparency,
+# so every one of them painted a glowing white asterisk onto the ground - which
+# is what the world's "subtle repetition-breaking decals" have actually been.
+# They are still on disk; nothing should scatter them.
 const _DECAL_TEX := [
-	preload("res://assets/world/decals/decal_cracks_01.png"),
-	preload("res://assets/world/decals/decal_stain_01.png"),
-	preload("res://assets/world/decals/decal_sigil_01.png"),
+	preload("res://assets/world/decals/floor/floor_cracks_01.png"),
+	preload("res://assets/world/decals/floor/floor_grime_01.png"),
+	preload("res://assets/world/decals/floor/floor_scorch_01.png"),
+	preload("res://assets/world/decals/floor/floor_spill_01.png"),
+	preload("res://assets/world/decals/floor/floor_marking_01.png"),
+	preload("res://assets/world/decals/floor/floor_scuff_01.png"),
+	preload("res://assets/world/decals/floor/floor_rubble_01.png"),
 ]
 
 const _VEG_TEX := [
