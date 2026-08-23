@@ -40,7 +40,12 @@ const ECHO_DAMAGE: float = 1.0
 ## Flat, deliberately not scaled by rank. A window that grew would make the
 ## tithe free at high rarity, and "ammunition you have to earn back" stops being
 ## a decision the moment it always refunds.
-const RETURN_WINDOW: float = 0.50
+## Was 0.50, which in a horde is "always": something dies within half a second
+## of every shot you fire, so the tithe refunded unconditionally and a tithe
+## that always refunds is not a tithe. Tight enough now that the believer comes
+## back when the doubled beat actually did the work, and stays spent when it
+## did not.
+const RETURN_WINDOW: float = 0.28
 
 const REFUSAL_POPUP_COOLDOWN: float = 2.5
 
@@ -57,6 +62,7 @@ const VFX_EMBERS: GDScript = preload("res://assets/vfx/world/manifestations/VFX_
 ## A believer is owed back only while their shot is still resolving. One flag,
 ## not a counter: exactly one Follower was spent, so at most one comes back.
 var _owed: bool = false
+var _last_tithe_index: int = -1
 var _return_left: float = 0.0
 var _refusal_cd: float = 0.0
 
@@ -86,6 +92,15 @@ func on_attack(
 		return
 	if state.beat_in_cycle(BEATS) != 0:
 		return
+	# Its own echo advances the shared counter, so a three-beat cycle was
+	# arriving every TWO real attacks - the rule was firing half again as often
+	# as it is authored to, which is a permanent doubling of attack rate rather
+	# than a rhythm. Gate on beats that have actually elapsed since the last
+	# tithe, so the echo carries every OTHER rule's rhythm forward (which is the
+	# point of a shared counter) without shortening its own.
+	if _last_tithe_index >= 0 and state.attack_index - _last_tithe_index < BEATS:
+		return
+	_last_tithe_index = state.attack_index
 	_try_tithe(style_id, target)
 
 

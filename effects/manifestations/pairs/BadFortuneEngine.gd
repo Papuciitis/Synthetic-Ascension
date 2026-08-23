@@ -48,6 +48,32 @@ const LAUNCH_SPREAD_DEG: float = 9.0
 ## missed roll reads as having been caught rather than as having happened.
 const FORGE_DISTANCE: float = 42.0
 
+## Seconds between forges.
+##
+## Lucky Crit chance caps at 8%, so about 92% of attacks miss - which at a 0.22s
+## weapon cooldown is roughly 4.5 forges a SECOND, forever. Two things went
+## wrong with that. Anything draining the orbit (Reliquary Guard spends at most
+## one per 0.25s) could never out-drink the tap, so "a health bar made of
+## shards" simply never emptied. And the forge spark became wallpaper - a node
+## every fifth of a second for a whole run, which is the opposite of a missed
+## roll being CAUGHT.
+##
+## Rate-limited below any consumer's drain, so the orbit is something you can
+## still run dry. The point stays banked whenever a forge is refused, exactly as
+## it does at a full orbit, so nothing is thrown away by waiting.
+const FORGE_COOLDOWN: float = 0.45
+
+var _forge_cd: float = 0.0
+
+
+func _on_manifestation_ready() -> void:
+	set_process(true)
+
+
+func _process(delta: float) -> void:
+	if _forge_cd > 0.0:
+		_forge_cd = maxf(0.0, _forge_cd - delta)
+
 
 func strike_multiplier() -> float:
 	var orbit: float = state.shard_damage_mult() if (state != null and is_instance_valid(state)) else BASE_SHARD_DAMAGE
@@ -61,10 +87,13 @@ func strike_multiplier() -> float:
 func on_lucky_crit_failed() -> void:
 	if state == null or not is_instance_valid(state):
 		return
+	if _forge_cd > 0.0:
+		return
 	# add_shard() enforces the shared cap itself; a refusal means the orbit is
 	# full, and a full orbit is exactly when the point should stay banked.
 	if state.add_shard(1) <= 0:
 		return
+	_forge_cd = FORGE_COOLDOWN
 	_withdraw_one_misfortune()
 	_spawn_forge_spark()
 
@@ -132,8 +161,9 @@ func _fire(from: Vector2, count: int) -> void:
 
 func describe() -> String:
 	return (
-		"Every attack that misses its Lucky Crit forges a shard into orbit and withdraws 1 banked Misfortune to pay for it - with the orbit already full, the point stays banked instead. Every Lucky Crit spends %d shards, firing them along your aim for %d%% of your attack damage each (more as your shards sharpen), piercing %d."
+		"Every attack that misses its Lucky Crit forges a shard into orbit and withdraws 1 banked Misfortune to pay for it, at most one forge every %.2fs - with the orbit full or the forge still hot, the point stays banked instead. Every Lucky Crit spends %d shards, firing them along your aim for %d%% of your attack damage each (more as your shards sharpen), piercing %d."
 		% [
+			FORGE_COOLDOWN,
 			SPEND_PER_CRIT,
 			int(round(BASE_SHARD_DAMAGE * STRIKE_SCALE * potency() * 100.0)),
 			LAUNCH_PIERCE,

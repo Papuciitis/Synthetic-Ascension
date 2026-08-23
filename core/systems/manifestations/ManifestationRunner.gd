@@ -202,6 +202,11 @@ func _clear_all() -> void:
 			pair.queue_free()
 	if _active.is_empty():
 		_all_cache.clear()
+		# Still rebuild: pairs may have been freed just above, and returning
+		# here left _hook_lists pointing at freed nodes with their world signals
+		# still connected. Reachable whenever refresh_effects(null) runs while
+		# only pairs were live.
+		_rebuild_hook_lists()
 		return
 	for key in _active.keys():
 		var node: Node = _active[key]

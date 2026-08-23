@@ -53,7 +53,7 @@ reward; an R20 proc must never become the entire build by itself.
 
 **Merging is never blocked.** The destination keeps its own Manifestation and
 the incoming one dissolves, exactly like every other duplicate property. A rule
-mismatch must not refuse the merge: at a 70% ring roll chance across a 16-rule
+mismatch must not refuse the merge: at a 70% ring roll chance across an 18-rule
 pool, most ring duplicates would differ, and ring progression would stop
 working. An item with no rule does not gain one by eating a manifested
 duplicate either — rules are rolled, never farmed.
@@ -93,11 +93,11 @@ ManifestationDef                   id / name / rule / tags / slots / weight / lo
 ManifestationRunner (on Player)    watches all 8 slots, owns ALL signal wiring
 ManifestationState (shared)        Momentum, Stability, Shards, Mark, Misfortune
 ManifestationEffect                base class for one rule
-effects/manifestations/logic/*.gd  the sixteen handcrafted rules
+effects/manifestations/logic/*.gd  the eighteen handcrafted rules
 ```
 
 `ManifestationRunner` connects to each shared gameplay hook exactly once and
-dispatches to whichever effects implement the matching method, so sixteen rules
+dispatches to whichever effects implement the matching method, so eighteen rules
 do not each carry connect/disconnect boilerplate.
 
 ### Shared gameplay hooks
@@ -185,7 +185,7 @@ requires anything. Two of a noun is an accident; three is a build.
 | `ward` | HP fraction, the evasion budget, retaliation | 4 |
 | `fortune` | Misfortune, Luck contribution, the Follower ledger | 5 |
 
-25 tags over 16 rules; nothing untagged. `ManifestationState.NOUNS` maps each
+25 tags over 18 rules; nothing untagged. `ManifestationState.NOUNS` maps each
 noun to its channels — Stability is a *channel* of `momentum`, not a noun,
 because Momentum builds while you run and Stability while you stand: one
 decision with a sign. Splitting them made "these two items hate each other"
@@ -244,3 +244,60 @@ number at display precision has actually moved.
 It is a `Control`, so `accessibility/ability_callouts` cannot switch it off.
 That is why it is the load-bearing channel and why it shows *fired* as well as
 *full*, pulsing per noun off `ManifestationState.resource_spent`.
+
+## Invariants the layer learned the hard way
+
+Each of these was a shipped bug before it was a rule. They are written down
+because every one of them is the kind of thing a later change reintroduces by
+accident.
+
+**A noun owns its resource; rules own the verbs that spend it.** Momentum once
+had a single producer and three consumers, so rolling a consumer without the
+producer — about five times in six — handed the player a rule that could
+physically never fire, beside a meter pinned at 0%. Travel now fills Momentum
+for anything that claims the noun. If a new noun gains a spender, the noun must
+be able to fill itself.
+
+**Never render a meter for a noun nothing in the loadout can produce.** A bar
+that never moves teaches the player that the counter is decoration, which
+poisons every meter beside it. `get_meters()` hides untouched nouns.
+
+**A beat is not an attack.** `note_attack()` advances the shared counter *and*
+zeroes the rhythm clock; `advance_beat()` does only the first. Anything
+supplying a beat the player did not fire — a walked stride, a world-produced
+echo — must use `advance_beat()`, or it silently breaks every rule that charges
+off the gap. A rule must also not let its own echo shorten the cycle it is
+gated on: gate on beats *elapsed since the last fire*, not on the raw counter.
+
+**Read the gap that preceded the attack, never `time_since_attack`, inside
+`on_attack`.** The runner advances the beat before it dispatches, so that field
+is always exactly `0.0` there and any rule judging "did the chain hold?" against
+it is answering itself. `state.last_attack_gap` is the honest value.
+
+**Publish to the ledger at the point of change, not inside `apply_to_stats`.**
+The runner folds `state.bonus_luck()` into the stat pass *before* it iterates
+`apply_to_stats`, so a rule publishing from that hook is always one recompute
+behind.
+
+**Duplicates must not compound.** Multiplicative polls are diminished per
+repeated rule id (`ManifestationRunner.DUPLICATE_FALLOFF`), symmetrically for
+penalties, so duplicating a downside rule cannot farm the downside away. Two of
+one rule is a supported loadout; it must not be a different game.
+
+**Count nouns one way.** The drop roller and the pair system must both count
+*distinct rules*. Counting instances in one and rules in the other aims the
+player at an engine they cannot reach.
+
+**A rule that suppresses the shot must absorb what the others paid.** See
+`ManifestationRunner.consume_attack_bonus()` and `absorb_attack_bonus()`. A
+Follower burned to arm the empowered beat must not vanish into a shot that
+another rule zeroed.
+
+**A faucet needs a rate limit, not just a cap.** A producer gated only on "is
+the orbit full" is unbounded next to any consumer, and its VFX becomes
+wallpaper. Rate-limit below the fastest drain.
+
+**Reward wanting to be healthy, too.** Four ward rules pointed at being nearly
+dead before Composure existed, so the optimal play converged on parking at low
+HP and farming — a failure mode `docs/gamegoal.md` §3 names twice. Any new ward
+rule should be checked against that pull.

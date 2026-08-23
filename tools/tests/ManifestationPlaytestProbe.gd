@@ -273,10 +273,14 @@ class Driver:
 		# Fill the orbit. The halo no longer fires itself - it WAITS for a dash,
 		# which is the whole point of the rewiring: two triggers on one resource
 		# meant the player controlled neither.
+		# Paced, not spammed. Bad Fortune Engine rate-limits its forge so a
+		# consumer can out-drink it, so a tight loop of failed rolls no longer
+		# fills the orbit - and should not. Drive it over real time instead,
+		# which is also what a player firing a weapon actually does.
 		var peak := 0
 		for _i in range((cap + 2) * 3):
 			RunEvents.player_lucky_crit.emit(_player, _player.global_position, false)
-			await _settle(0.04)
+			await _settle(0.24)
 			peak = maxi(peak, int(_state.call("shard_count")))
 		_check(peak >= cap - 2, "the orbit fills toward the widened cap (peak %d / %d)" % [peak, cap])
 
