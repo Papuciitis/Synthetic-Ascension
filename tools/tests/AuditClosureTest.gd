@@ -66,6 +66,36 @@ func _test_rarity_and_luck_math() -> void:
 		"NEG items remain possible at extreme Luck"
 	)
 
+	# Luck must make NEG rolls MILDER, never more severe (regression guard:
+	# the old negative branch lerped high quality toward min_pct).
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1337
+	var neg_mean_unlucky := 0.0
+	var neg_mean_lucky := 0.0
+	var samples := 3000
+	for _i in range(samples):
+		neg_mean_unlucky += ItemGenerator.roll_signed_range(-1.0, 0.0, 0.0, rng)
+	for _i in range(samples):
+		neg_mean_lucky += ItemGenerator.roll_signed_range(-1.0, 0.0, 3.0, rng)
+	neg_mean_unlucky /= float(samples)
+	neg_mean_lucky /= float(samples)
+	_check(
+		neg_mean_lucky > neg_mean_unlucky + 0.02,
+		"high Luck pulls NEG roll severity toward zero (%.3f vs %.3f)" % [neg_mean_lucky, neg_mean_unlucky]
+	)
+	var pos_mean_unlucky := 0.0
+	var pos_mean_lucky := 0.0
+	for _i in range(samples):
+		pos_mean_unlucky += ItemGenerator.roll_signed_range(0.0, 1.0, 0.0, rng)
+	for _i in range(samples):
+		pos_mean_lucky += ItemGenerator.roll_signed_range(0.0, 1.0, 3.0, rng)
+	pos_mean_unlucky /= float(samples)
+	pos_mean_lucky /= float(samples)
+	_check(
+		pos_mean_lucky > pos_mean_unlucky + 0.02,
+		"high Luck strengthens POS rolls (%.3f vs %.3f)" % [pos_mean_lucky, pos_mean_unlucky]
+	)
+
 
 func _test_canonical_rarity_merging() -> void:
 	var data := ItemData.new()

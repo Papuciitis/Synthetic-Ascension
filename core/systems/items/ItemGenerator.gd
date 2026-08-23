@@ -58,16 +58,19 @@ static func roll_signed_range(
 	var choose_positive := has_positive
 	if has_positive and has_negative:
 		choose_positive = rng.randf() <= LuckResolver.positive_probability(luck)
+	# Bell first, shift after: averaging AFTER adding the shift halved the
+	# advertised Luck effect. Quality 1.0 is always the BEST outcome for the
+	# player: the strongest POS roll, or the mildest NEG roll — the old
+	# negative branch lerped toward min_pct, so high Luck made NEG rolls
+	# MORE severe.
 	var quality := clampf(
-		rng.randf() + LuckResolver.roll_quality_shift(luck),
+		(rng.randf() + rng.randf()) * 0.5 + LuckResolver.roll_quality_shift(luck),
 		0.0,
 		1.0
 	)
-	# Retain a bell-like center while Luck shifts quality beneficially.
-	quality = (quality + rng.randf()) * 0.5
 	if choose_positive:
 		return lerpf(maxf(0.0, min_pct), max_pct, quality)
-	return lerpf(minf(0.0, max_pct), min_pct, quality)
+	return lerpf(min_pct, minf(0.0, max_pct), quality)
 
 
 static func create_instance(
