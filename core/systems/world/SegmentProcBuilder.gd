@@ -127,6 +127,22 @@ func _ready() -> void:
 	_update_gate_marker()
 	_push_resonance_ui()
 	_clear_secondary_objective_ui()
+	_announce_secondaries()
+
+func _announce_secondaries() -> void:
+	# "A secondary appeared" was a designed feedback moment with no signal
+	# behind it: tell the player up front the district holds optional work.
+	if _secondary_objectives.is_empty():
+		return
+	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		return
+	var n := _secondary_objectives.size()
+	var text := (
+		"1 optional signal detected in this district."
+		if n == 1
+		else "%d optional signals detected in this district." % n
+	)
+	RunEvents.tutorial_tip.emit(text, 4.0)
 
 func _exit_tree() -> void:
 	_unhook_resonance()
@@ -151,11 +167,14 @@ func _process(delta: float) -> void:
 	var dt := _res_tick
 	_res_tick = 0.0
 
-	# Ambient resonance backbone (keeps pacing consistent even if spawns are light).
-	var ambient := resonance_per_sec * dt
+	# Ambient resonance backbone — but only once the primary objective is
+	# done (the pacing test has always described it that way: "finishes near
+	# four minutes AFTER primary completion"). Before that, Resonance comes
+	# from actions: the relay, wardstones, secondaries, kills and loot.
+	var ambient := (resonance_per_sec * dt) if _primary_completed else 0.0
 
 	# Small early boost to reduce "slow start" feel.
-	if resonance_early_boost_seconds > 0.0 and _time_in_segment < resonance_early_boost_seconds:
+	if ambient > 0.0 and resonance_early_boost_seconds > 0.0 and _time_in_segment < resonance_early_boost_seconds:
 		var t := clampf(_time_in_segment / resonance_early_boost_seconds, 0.0, 1.0)
 		ambient *= lerpf(resonance_early_boost_mul, 1.0, t)
 
@@ -306,6 +325,10 @@ func _spawn_wardstones() -> void:
 
 		s.global_position = pos
 		add_child(s)
+		# Attuning a wardstone is a meaningful act: it feeds the bar.
+		s.activated.connect(func(_stone: Wardstone) -> void:
+			grant_resonance(0.06, true)
+		)
 
 func _spawn_exit_gate() -> void:
 	var p: Vector2 = _plan.get("exit_world", Vector2.ZERO)
@@ -367,11 +390,13 @@ func set_boss_defeated() -> void:
 	_boss_defeated = true
 	_update_gate_lock()
 	_push_objective_ui()
+	_push_resonance_ui()
 
 func set_miniboss_defeated() -> void:
 	_miniboss_defeated = true
 	_update_gate_lock()
 	_push_objective_ui()
+	_push_resonance_ui()
 
 func is_boss_defeated() -> bool:
 	return _boss_defeated
@@ -574,6 +599,9 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 	if _secondary_completed.has(objective_id):
 		return
 	_secondary_completed[objective_id] = true
+	# Optional objectives are exactly the "meaningful actions" Resonance is
+	# supposed to reward: detours pay progress, not just loot.
+	grant_resonance(0.05, true)
 	if _active_secondary_id == objective_id:
 		_active_secondary_id = -1
 
@@ -666,6 +694,21 @@ func _update_gate_marker() -> void:
 	var should_show: bool = gate_is_valid and resonance >= gate_marker_reveal_resonance
 	Global.objective_target_pos = _exit_rite.global_position if should_show else Vector2.INF
 
+func _gate_conditions_met() -> bool:
+	return (
+		_primary_completed
+		and (not _boss_required or _boss_defeated)
+		and (not _miniboss_required or _miniboss_defeated)
+	)
+
 func _push_resonance_ui() -> void:
 	if RunEvents != null and RunEvents.has_signal("resonance_changed"):
-		RunEvents.resonance_changed.emit(resonance)
+		# Hold the public bar just under the unseal threshold while the gate
+		# is still blocked by primary/miniboss/boss: ThreatDirector's
+		# overtime, EVAC NOW and the HUD's GATE READY all key off this
+		# signal reaching 0.999, and none of them should fire while the
+		# Exit Rite cannot actually open (same pattern as Level1Builder).
+		var shown := resonance
+		if not _gate_conditions_met():
+			shown = minf(shown, 0.998)
+		RunEvents.resonance_changed.emit(shown)

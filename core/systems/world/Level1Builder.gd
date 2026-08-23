@@ -643,6 +643,9 @@ func _on_milestone_reached(id: StringName) -> void:
 					_spawner.queue_authored_wave(3, 0.8, 2.25)
 		M_FINAL_PLAZA:
 			if _record_milestone(M_FINAL_PLAZA):
+				# Arrived: the arrow's job is done.
+				if Global != null:
+					Global.objective_target_pos = Vector2.INF
 				# Milestones provide 93%; ordinary play normally supplies the rest.
 				# This arrival top-up is the anti-wait safety net, not a passive timer.
 				if resonance < 1.0:
@@ -712,6 +715,10 @@ func _refresh_progression_seals() -> void:
 		if not _has_milestone(M_FINAL_CHECKPOINT):
 			if _grant_milestone(M_FINAL_CHECKPOINT, resonance_final_checkpoint):
 				_tip(Segment1Text.CHECKPOINT_DISABLED, 4.0)
+				# Late-segment guidance: from here the player should know
+				# WHERE they're escaping to, not wander the campus.
+				if Global != null:
+					Global.objective_target_pos = _cell_to_world(_gate_cell)
 		_open_barrier(B_OUTER_APPROACH)
 		_set_spawn_stage(Segment1SpawnProfile.Stage.OUTER_APPROACH)
 

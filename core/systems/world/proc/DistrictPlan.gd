@@ -338,9 +338,14 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var secondary_target_count: int = 2 if segment == 2 else rng.randi_range(0, 3)
 	var secondary_objectives: Array[Dictionary] = []
 	var secondary_used: Dictionary = {}
+	# The miniboss arena claims its chunk later with higher priority; a
+	# secondary planned on the same endpoint would be advertised but never
+	# spawned (the arena role overwrites it).
+	if miniboss_chunk != INVALID_CHUNK:
+		secondary_used[miniboss_chunk] = true
 	if secondary_target_count >= 1 and not exploration_paths.is_empty():
 		var alley_path: Array = exploration_paths[rng.randi_range(0, exploration_paths.size() - 1)] as Array
-		if not alley_path.is_empty():
+		if not alley_path.is_empty() and not secondary_used.has(alley_path[alley_path.size() - 1] as Vector2i):
 			var alley_endpoint: Vector2i = alley_path[alley_path.size() - 1]
 			for alley_index in range(maxi(0, alley_path.size() - 2), alley_path.size() - 1):
 				var alley_chunk: Vector2i = alley_path[alley_index]
