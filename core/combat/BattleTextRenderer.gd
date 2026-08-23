@@ -51,6 +51,16 @@ func enabled() -> bool:
 	return bool(SettingsManager.get_value(&"accessibility", &"damage_numbers", true))
 
 
+## Named callouts - LUCKY, EVADED, a Manifestation firing - are a different
+## channel from the damage stream and get their own setting. Gating them on
+## `damage_numbers` meant a player who turned the number spam off also turned
+## off every word the Manifestation layer says.
+func callouts_enabled() -> bool:
+	if SettingsManager == null:
+		return true
+	return bool(SettingsManager.get_value(&"accessibility", &"ability_callouts", true))
+
+
 func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: int = 0) -> void:
 	if amount < 0.5 or not enabled():
 		return
@@ -86,7 +96,7 @@ func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = C
 	# Compact combat feed toast: successive feeds of the same item REPLACE
 	# one floating line instead of stacking (K6 combat/inspection split —
 	# full math lives in the tooltip, this just says what happened).
-	if not enabled():
+	if not callouts_enabled():
 		return
 	if merge_key != 0:
 		for i in range(_count):
@@ -100,10 +110,27 @@ func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = C
 	_spawn(text, world_pos + Vector2(0.0, -34.0), color, 1.0, 1.3, 0.0, merge_key)
 
 
-func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0) -> void:
-	if not enabled():
+func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0, merge_key: int = 0) -> void:
+	# `entry_scale` is authored emphasis that scales with the payout - Broken
+	# Providence with the bank, Stored Violence with the charge - so a popup is
+	# NOT a progress() with a different colour and must not be routed through
+	# one. `merge_key` is opt-in: a rule that can fire the same line several
+	# times in a second replaces its own line instead of stacking, but two
+	# different lines from one rule still both get read.
+	if not callouts_enabled():
 		return
-	_spawn(text, world_pos + Vector2(0.0, -34.0), color, entry_scale, 0.9, 0.0, 0)
+	if merge_key != 0:
+		for i in range(_count):
+			if _keys[i] == merge_key:
+				_texts[i] = text
+				_positions[i] = world_pos + Vector2(0.0, -34.0)
+				_ages[i] = 0.0
+				_lifetimes[i] = 0.9
+				_colors[i] = color
+				_scales[i] = entry_scale
+				queue_redraw()
+				return
+	_spawn(text, world_pos + Vector2(0.0, -34.0), color, entry_scale, 0.9, 0.0, merge_key)
 
 
 func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, lifetime: float, amount: float, merge_key: int) -> void:

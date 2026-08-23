@@ -27,6 +27,8 @@
 [ext_resource type="Script" path="res://ui/controllers/HudObjectiveController.gd" id="22_objective_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/HudGateChecklistController.gd" id="24_checklist_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="23_set_breakpoints"]
+[ext_resource type="Script" path="res://ui/controllers/HudManifestationController.gd" id="25_manifest_ctl"]
+[ext_resource type="Script" path="res://ui/controllers/ManifestationPairNotifier.gd" id="26_manifest_pair"]
 
 
 [sub_resource type="Shader" id="ShaderVignette"]
@@ -212,12 +214,17 @@ bar_path = NodePath("../TopLeft/Margin/VBox/ThreatRow/ThreatBar")
 tooltip_target_path = NodePath("../TopLeft/Margin/VBox/ThreatRow")
 tooltip_scene = ExtResource("17_threat_tip")
 
+[node name="ManifestationController" type="Node" parent="."]
+script = ExtResource("25_manifest_ctl")
+row_path = NodePath("../TopLeft/Margin/VBox/ManifestationRow")
+bag_controller_path = NodePath("../BagController")
+
 [node name="TopLeft" type="PanelContainer" parent="." unique_id=750648705]
 layout_mode = 0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 330.0
-offset_bottom = 270.0
+offset_bottom = 306.0
 theme_override_styles/panel = SubResource("StyleTopLeft")
 
 [node name="Margin" type="MarginContainer" parent="TopLeft" unique_id=893068950]
@@ -373,6 +380,12 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "T1  0.0"
 
+[node name="ManifestationRow" type="HFlowContainer" parent="TopLeft/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 2
+visible = false
+
 [node name="BodyRow" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=1707728123]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -423,6 +436,16 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("23_set_breakpoints")
+
+[node name="ManifestationPairNotifier" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("26_manifest_pair")
 
 [node name="FlyVfx" type="Control" parent="." unique_id=851712866 groups=["ui_fly_vfx"]]
 anchors_preset = 0

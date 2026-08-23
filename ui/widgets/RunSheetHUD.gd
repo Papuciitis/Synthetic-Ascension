@@ -18,8 +18,16 @@ class_name RunSheetHUD
 @onready var sets_vbox: VBoxContainer = $Margin/VBox/SetsVBox
 
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
+## The layer's own colour. Anything naming a specific noun or rule uses that
+## noun's colour from ManifestationNouns instead.
+const MANIFEST := ManifestationNouns.LAYER
 
 func refresh(player: Node, inv: Inventory) -> void:
+	# The HUD ticks this at 10 Hz whether or not the panel is on screen, and a
+	# refresh rebuilds every child label and asks each equipped Manifestation to
+	# format its rule text. None of that is worth paying for while hidden.
+	if not visible:
+		return
 	# Player.stats is already the complete final snapshot: race, style, permanent
 	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
 	# and active percentage rolls. Inventory deltas must not be added a second time.
@@ -95,6 +103,100 @@ func refresh(player: Node, inv: Inventory) -> void:
 		line.text = "%s %d/%d" % [set_label, n, set_max]
 		line.modulate = (ACCENT if n >= set_max else Color(1, 1, 1, 0.85))
 		sets_vbox.add_child(line)
+
+	_append_manifestations(player)
+
+
+func _append_manifestations(player: Node) -> void:
+	# The chain readout. Sets say what the build IS; this says what this
+	# particular run mutated into, in the order the slots are worn.
+	if player == null:
+		return
+	var runner: Node = player.get_node_or_null("ManifestationRunner")
+	if runner == null or not runner.has_method("get_active_summaries"):
+		return
+	var summaries: Array = runner.call("get_active_summaries")
+	if summaries.is_empty():
+		return
+
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	_add_line("MANIFESTATIONS", MANIFEST, 12)
+
+	# Noun counts first. Two of a noun is what makes two unrelated items combine,
+	# so "MOMENTUM 2" is the single most useful line on the panel - it is the
+	# readout that tells you one more movement item would turn something on.
+	if runner.has_method("get_noun_counts"):
+		var counts: Dictionary = runner.call("get_noun_counts")
+		var parts: Array[Dictionary] = []
+		# Authored order, so the line does not reshuffle itself every time an
+		# unrelated item is equipped.
+		for noun in ManifestationNouns.ORDER:
+			var n: int = int(counts.get(noun, 0))
+			if n <= 0:
+				continue
+			parts.append({
+				"noun": noun,
+				"text": "%s %d%s" % [ManifestationNouns.label(noun), n, "*" if n >= 2 else ""],
+			})
+		_add_noun_row(parts, 11)
+
+	# Live resources first: with eight rules equipped the list below is long,
+	# and the numbers the player acts on mid-fight must not be the part that
+	# falls off the bottom of the panel.
+	if runner.has_method("get_meters"):
+		var meters: Array = runner.call("get_meters")
+		var readout: Array[Dictionary] = []
+		for meter_value in meters:
+			var meter: Dictionary = meter_value
+			readout.append({
+				"noun": StringName(meter.get("noun", &"")),
+				"text": "%s %s" % [String(meter.get("label", "")), String(meter.get("text", ""))],
+			})
+		_add_noun_row(readout, 11)
+
+	for entry_value in summaries:
+		var entry: Dictionary = entry_value
+		var slot_hint: String = Inventory.slot_hint(int(entry.get("slot", -1)))
+		var entry_tags: Array = entry.get("tags", []) as Array
+		var entry_colour: Color = ManifestationNouns.colour(entry_tags[0]) if not entry_tags.is_empty() else MANIFEST
+		_add_line("%s  %s" % [slot_hint, String(entry.get("name", ""))], entry_colour, 12)
+		var rule := Label.new()
+		rule.text = "   " + String(entry.get("rule", ""))
+		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		# The full rule lives in the item tooltip; eight untrimmed paragraphs
+		# push the panel past the bottom of a 1080p screen.
+		rule.max_lines_visible = 2
+		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		rule.custom_minimum_size = Vector2(260, 0)
+		rule.add_theme_font_size_override("font_size", 10)
+		rule.modulate = Color(1, 1, 1, 0.72)
+		sets_vbox.add_child(rule)
+
+
+## One line made of several per-noun labels, so each noun can carry its own
+## colour. A Label cannot colour a span, and the noun colours are the whole
+## point of the line - "MOMENTUM 2" in the same orange the item badge and the
+## HUD counter use is what makes the vocabulary learnable.
+func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
+	if parts.is_empty():
+		return
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	sets_vbox.add_child(row)
+	for part in parts:
+		var label := Label.new()
+		label.text = String(part.get("text", ""))
+		label.add_theme_font_size_override("font_size", font_size)
+		label.modulate = ManifestationNouns.colour(StringName(part.get("noun", &"")))
+		row.add_child(label)
+
+
+func _add_line(text: String, colour: Color, font_size: int) -> void:
+	var line := Label.new()
+	line.text = text
+	line.add_theme_font_size_override("font_size", font_size)
+	line.modulate = colour
+	sets_vbox.add_child(line)
 
 # ---------------------------d
 # ---------------------------

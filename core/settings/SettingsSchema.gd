@@ -38,6 +38,10 @@ static func defaults() -> Dictionary:
 			&"reduced_motion": false,
 			&"combat_flash": &"full",
 			&"damage_numbers": true,
+			# Named callouts (LUCKY, EVADED, a Manifestation firing) are a
+			# separate channel from the damage stream: one is spam a player may
+			# want gone, the other is the only text the ability layer speaks.
+			&"ability_callouts": true,
 		},
 	}
 
@@ -79,6 +83,7 @@ static func normalize(raw: Dictionary) -> Dictionary:
 	result[&"accessibility"][&"typewriter_speed"] = typewriter if typewriter in TYPEWRITER_SPEEDS else &"normal"
 	result[&"accessibility"][&"reduced_motion"] = bool(result[&"accessibility"][&"reduced_motion"])
 	result[&"accessibility"][&"damage_numbers"] = bool(result[&"accessibility"][&"damage_numbers"])
+	result[&"accessibility"][&"ability_callouts"] = bool(result[&"accessibility"][&"ability_callouts"])
 	var flash := StringName(result[&"accessibility"][&"combat_flash"])
 	result[&"accessibility"][&"combat_flash"] = flash if flash in FLASH_LEVELS else &"full"
 	return result

@@ -35,10 +35,27 @@ func _exit_tree() -> void:
 	if RunEvents.enemy_archetype_encountered.is_connected(_on_enemy_encountered):
 		RunEvents.enemy_archetype_encountered.disconnect(_on_enemy_encountered)
 
-func present_card_and_wait(title: String, body: String, eyebrow: String = "PATTERN RECORD") -> void:
+## `defer_until_safe` opts a scripted card into the same boss / exit-rite hold
+## the enemy dossiers get. Non-enemy cards pause unconditionally and skip the
+## spacing cooldown, which is right for a card the player asked for and very
+## wrong for one fired by an incidental event mid-boss.
+func present_card_and_wait(
+	title: String,
+	body: String,
+	eyebrow: String = "PATTERN RECORD",
+	defer_until_safe: bool = false
+) -> void:
 	var token := _next_token
 	_next_token += 1
-	_enqueue({"token": token, "title": title, "body": body, "eyebrow": eyebrow, "texture": null, "enemy_id": &""})
+	_enqueue({
+		"token": token,
+		"title": title,
+		"body": body,
+		"eyebrow": eyebrow,
+		"texture": null,
+		"enemy_id": &"",
+		"defer_until_safe": defer_until_safe,
+	})
 	while not _completed_tokens.has(token):
 		await get_tree().process_frame
 	_completed_tokens.erase(token)
@@ -113,14 +130,21 @@ func _drain_queue() -> void:
 
 func _first_presentable_index() -> int:
 	for i in range(_queue.size()):
-		if not _unsafe_for_enemy_card(_queue[i]):
+		if not _unsafe_now(_queue[i]):
 			return i
 	return -1
 
-func _unsafe_for_enemy_card(card: Dictionary) -> bool:
-	if StringName(card.get("enemy_id", &"")) == &"":
+## Whether this card must wait. Enemy dossiers always wait; any other card waits
+## only if it asked to. A card that did not ask is presented immediately, which
+## is what keeps a scripted card awaited by gameplay code from stalling behind a
+## dossier serving out its spacing cooldown.
+func _unsafe_now(card: Dictionary) -> bool:
+	var is_enemy_card: bool = StringName(card.get("enemy_id", &"")) != &""
+	if not is_enemy_card and not bool(card.get("defer_until_safe", false)):
 		return false
-	if _unpaused_since_enemy_card < ENEMY_CARD_SPACING_SEC:
+	# The spacing cooldown is about back-to-back dossiers, so it applies only to
+	# dossiers; a deferred scripted card waits for quiet, not for a queue.
+	if is_enemy_card and _unpaused_since_enemy_card < ENEMY_CARD_SPACING_SEC:
 		return true
 	return not get_tree().get_nodes_in_group(&"boss_like").is_empty() or not get_tree().get_nodes_in_group(&"exit_rite_channeling").is_empty()
 

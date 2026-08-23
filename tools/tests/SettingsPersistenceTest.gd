@@ -52,6 +52,16 @@ func _run() -> void:
 		_check(normalized[&"video"][&"frame_limit"] == 0, "unsupported frame limit falls back to unlimited")
 		_check(normalized[&"accessibility"][&"ui_scale"] == 1.5, "UI scale clamps to 150 percent")
 		_check(normalized[&"accessibility"][&"typewriter_speed"] == &"normal", "unknown text speed uses default")
+		# Damage numbers and ability callouts are two settings, not one. A save
+		# written before the split has neither key here, and both must come back
+		# ON - silently defaulting callouts off would mute the whole
+		# Manifestation layer for every existing profile.
+		_check(bool(defaults[&"accessibility"][&"damage_numbers"]), "damage numbers default on")
+		_check(bool(defaults[&"accessibility"][&"ability_callouts"]), "ability callouts default on")
+		_check(
+			bool(normalized[&"accessibility"][&"ability_callouts"]),
+			"a settings file predating the split still gets callouts on"
+		)
 	_cleanup()
 	print("SettingsPersistenceTest: %d passed, %d failed" % [_passes, _failures])
 	quit(1 if _failures > 0 else 0)

@@ -19,6 +19,10 @@ const CMP_POS_HEX: String = "#78E08F"
 const CMP_NEG_HEX: String = "#D77A86"
 const CMP_NEUTRAL_HEX: String = "#A8A8A8"
 const LOCK_HEX: String = "#F2C35B"
+## The layer's own colour, for chrome that is about Manifestations in general.
+## Anything that names a specific rule uses that rule's NOUN hex instead - see
+## ManifestationNouns.
+const MANIFEST_HEX: String = ManifestationNouns.LAYER_HEX
 
 const KEY_MAP: Dictionary = {
 	"max_hp": "HP",
@@ -157,6 +161,32 @@ func show_item(inst: ItemInstance) -> void:
 		lines.append("EFFECTS:")
 		for e in eff:
 			lines.append("• %s" % String(e))
+
+	# Manifestation is identity, not a stat, so it sits above the numbers.
+	if inst.has_manifestation():
+		var manifest_def: ManifestationDef = inst.manifestation_def()
+		if manifest_def != null:
+			lines.append("")
+			# Coloured by the rule's own noun, not by the layer. The palette is
+			# the vocabulary: the same orange on the tooltip, on the item badge
+			# and on the HUD counter is what teaches "these two combine"
+			# without the player reading a word.
+			var primary_hex: String = MANIFEST_HEX
+			if manifest_def.primary_tag() != &"":
+				primary_hex = ManifestationNouns.hex(manifest_def.primary_tag())
+			var noun_names: PackedStringArray = PackedStringArray()
+			for tag in manifest_def.tags:
+				noun_names.append("[color=%s]%s[/color]" % [
+					ManifestationNouns.hex(tag), ManifestationNouns.label(tag),
+				])
+			lines.append("[color=%s]MANIFESTATION — %s[/color]" % [primary_hex, manifest_def.display_name.to_upper()])
+			if not noun_names.is_empty():
+				# Naming the nouns is how the player learns which items combine:
+				# two of a noun is what turns an accident into a build.
+				var noun_separator: String = "[color=%s] · [/color]" % CMP_NEUTRAL_HEX
+				lines.append(noun_separator.join(noun_names))
+			lines.append("[color=%s]%s[/color]" % [primary_hex, ManifestationCatalog.describe(inst.manifestation_id, inst)])
+			lines.append("[color=%s]Survives every merge. Duplicates rank this item up; they never reroll its rule.[/color]" % CMP_NEUTRAL_HEX)
 
 	var rolled_lines: Array[String] = _format_delta(inst.rolled_mods)
 	if rolled_lines.size() > 0:
@@ -297,6 +327,24 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 			rows.append("[color=%s]Before: %s[/color]" % [CMP_NEG_HEX, "; ".join(current_effects)])
 		if not candidate_effects.is_empty():
 			rows.append("[color=%s]After: %s[/color]" % [CMP_POS_HEX, "; ".join(candidate_effects)])
+
+	# The whole point of the layer: an R2 with the right rule can beat an R9
+	# with a dull one, and a merge will never hand you the rule for free.
+	if current.manifestation_id != candidate.manifestation_id:
+		rows.append("[color=%s]MANIFESTATION CHANGES[/color]" % CMP_NEUTRAL_HEX)
+		rows.append("[color=%s]Before: %s[/color]" % [
+			CMP_NEG_HEX,
+			ManifestationCatalog.display_name(current.manifestation_id) if current.has_manifestation() else "none",
+		])
+		var after_hex: String = MANIFEST_HEX
+		if candidate.has_manifestation():
+			var after_noun := ManifestationNouns.primary_of(candidate.manifestation_id)
+			if after_noun != &"":
+				after_hex = ManifestationNouns.hex(after_noun)
+		rows.append("[color=%s]After: %s[/color]" % [
+			after_hex,
+			ManifestationCatalog.display_name(candidate.manifestation_id) if candidate.has_manifestation() else "none",
+		])
 
 	var set_id := StringName(candidate.data.set_id)
 	if inventory != null and set_id != StringName() and int(candidate.data.equip_slot) < Inventory.STAT_SLOT_COUNT:

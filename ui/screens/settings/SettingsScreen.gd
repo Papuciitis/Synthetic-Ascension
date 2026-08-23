@@ -280,6 +280,19 @@ func _build_accessibility() -> void:
 	reduced.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"reduced_motion", on))
 	_add_control_row("Reduced Motion", reduced)
 	_add_option_setting("Combat Flashes", &"accessibility", &"combat_flash", [["Off", &"off"], ["Reduced", &"reduced"], ["Full", &"full"]])
+	# Two rows, not one. Damage numbers are the per-hit stream; callouts are the
+	# named lines an ability speaks, and for a Manifestation build they are the
+	# only text there is - so switching the stream off must not silence them.
+	var numbers := CheckBox.new()
+	numbers.text = "Show floating damage numbers"
+	numbers.button_pressed = bool(_value(&"accessibility", &"damage_numbers", true))
+	numbers.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"damage_numbers", on))
+	_add_control_row("Damage Numbers", numbers)
+	var callouts := CheckBox.new()
+	callouts.text = "Show ability and Manifestation callouts"
+	callouts.button_pressed = bool(_value(&"accessibility", &"ability_callouts", true))
+	callouts.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"ability_callouts", on))
+	_add_control_row("Ability Callouts", callouts)
 
 
 func _add_heading(text: String) -> void:

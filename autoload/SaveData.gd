@@ -32,6 +32,11 @@ class_name SaveData
 @export var meta_augment_levels: Dictionary = {}
 @export var meta_stash: StashInventory = null
 @export var meta_discovered_enemy_ids: Array[String] = []
+# Manifestation explainer cards already shown, as PREFIXED ids - "intro",
+# "noun:momentum", "pair:slipstream_foundry". One field rather than one per
+# card kind, so the next card to earn an explainer is a new string and not a
+# new save migration.
+@export var meta_seen_manifestation_cards: Array[String] = []
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.

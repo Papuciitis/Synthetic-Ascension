@@ -30,6 +30,7 @@ var _frame_sb: StyleBoxFlat = null
 var _flash: ColorRect = null
 var _flash_tween: Tween = null
 var _lock_badge: Label = null
+var _manifest_badge: ManifestBadge = null
 const FLASH_COL := Color(1.0, 0.55, 0.20, 0.0) # your orange "accent"
 
 func _ready() -> void:
@@ -39,6 +40,7 @@ func _ready() -> void:
 	_ensure_polarity_ui()
 	_ensure_set_emblem()
 	_ensure_lock_badge()
+	_ensure_manifest_badge()
 	_apply_frame_style()
 
 	mouse_entered.connect(func(): _set_hover(true))
@@ -96,6 +98,7 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 	_ensure_polarity_ui()
 	_ensure_set_emblem()
 	_ensure_lock_badge()
+	_ensure_manifest_badge()
 	_apply_mouse_passthrough()
 
 	# ghost look (fade whole slot)
@@ -133,6 +136,7 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		if _pol_badge != null: _pol_badge.text = ""
 		if _set_emblem != null: _set_emblem.configure(&"")
 		if _lock_badge != null: _lock_badge.visible = false
+		if _manifest_badge != null: _manifest_badge.visible = false
 		if _frame_sb != null: _frame_sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
 		modulate = Color(1, 1, 1, 1)
 		return
@@ -207,7 +211,20 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		_set_emblem.configure(item_set_id)
 	if _lock_badge != null:
 		_lock_badge.visible = bool((_stack as Object).get("locked")) if _stack is Object else false
+	if _manifest_badge != null:
+		# A manifested stack never consolidates with a differently-manifested
+		# one, so the bag has to say which stacks are the special ones - and in
+		# which noun's colour, so two ◆ stacks read as different rules.
+		_manifest_badge.show_for_item(_stack as ItemInstance)
 	_set_hover(false)
+
+
+func _ensure_manifest_badge() -> void:
+	if content == null:
+		_resolve_nodes()
+	if content == null:
+		return
+	_manifest_badge = ManifestBadge.attach(content, Control.PRESET_TOP_RIGHT, Rect2(-20, 22, 16, 14))
 
 
 func _ensure_lock_badge() -> void:

@@ -23,6 +23,7 @@ func _run() -> void:
 	_test_delete_removes_all_slot_files()
 	_test_meta_stash_round_trip()
 	_test_active_vendor_round_trip()
+	_test_manifestation_cards_round_trip()
 	await get_tree().process_frame
 	print("SaveIntegrityTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -218,6 +219,33 @@ func _test_meta_stash_round_trip() -> void:
 		"occupied profile stash survives a disk round trip"
 	)
 	_global.meta_stash = previous_stash
+	_cleanup_slot()
+
+
+## Explainer cards are profile knowledge, like the enemy dossiers. A card that
+## did not survive the round trip would be shown again on the next launch,
+## forever, which is the failure mode a "seen" flag exists to prevent.
+func _test_manifestation_cards_round_trip() -> void:
+	_cleanup_slot()
+	var previous: Array[StringName] = _global.seen_manifestation_cards.duplicate()
+	_global.seen_manifestation_cards = [&"intro", &"noun:momentum"] as Array[StringName]
+	var save := SaveData.new()
+	save.slot_index = TEST_SLOT
+	_global.write_save(save)
+
+	var saved: bool = _save_manager.save_slot(save)
+	var loaded: SaveData = _save_manager.load_slot(TEST_SLOT)
+
+	_check(saved, "manifestation card round-trip save succeeds")
+	_check(
+		loaded != null and loaded.meta_seen_manifestation_cards.has("intro"),
+		"a seen Manifestation card survives a disk round trip"
+	)
+	_check(
+		loaded != null and loaded.meta_seen_manifestation_cards.has("noun:momentum"),
+		"and prefixed per-noun ids survive alongside it"
+	)
+	_global.seen_manifestation_cards = previous
 	_cleanup_slot()
 
 

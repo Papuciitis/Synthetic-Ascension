@@ -25,6 +25,7 @@ var _rarity_lbl: Label = null
 var _set_emblem: SetEmblem = null
 var _lock_badge: Label = null
 var _lock_border: Panel = null
+var _manifest_badge: ManifestBadge = null
 
 var _shown_rarity: int = 0
 
@@ -46,6 +47,7 @@ func _ready() -> void:
 
 	_ensure_optional_ui()
 	_ensure_lock_badge()
+	_ensure_manifest_badge()
 	_ensure_lock_border()
 	_apply_text_style()
 	_apply_insets()
@@ -286,9 +288,15 @@ func set_item(inst: ItemInstance) -> void:
 			_set_emblem.configure(&"")
 		if _lock_badge != null: _lock_badge.visible = false
 		if _lock_border != null: _lock_border.visible = false
+		if _manifest_badge != null: _manifest_badge.visible = false
 		return
 
 	set_meta("item_instance", inst)
+	# Manifestation is identity, so it needs to read at a glance from the bar -
+	# the tooltip explains the rule, this only says "this one is not ordinary",
+	# and its colour says which noun it speaks about.
+	if _manifest_badge != null:
+		_manifest_badge.show_for_item(inst)
 	if _set_emblem != null:
 		_set_emblem.configure(StringName(inst.data.set_id))
 	if _lock_badge != null:
@@ -360,6 +368,15 @@ func _ensure_lock_badge() -> void:
 		_lock_badge.z_index = 20
 		content.add_child(_lock_badge)
 	_lock_badge.visible = false
+
+func _ensure_manifest_badge() -> void:
+	if content == null:
+		content = get_node_or_null("Content") as Control
+	if content == null:
+		return
+	# Directly under the set emblem, so the two never overlap.
+	_manifest_badge = ManifestBadge.attach(content, Control.PRESET_TOP_RIGHT, Rect2(-20, 22, 16, 14))
+
 
 func _ensure_lock_border() -> void:
 	if _lock_border != null:
