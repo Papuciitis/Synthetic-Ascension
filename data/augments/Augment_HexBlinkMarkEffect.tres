@@ -8,13 +8,13 @@
 script = ExtResource("3_037e4")
 id = &"augment_blink_hex"
 display_name = "Blink Hex"
-description = """Blink through the crowd, brand a target, and punish it for existing."""
+description = "Blink through the crowd, brand a target, and punish it for existing."
 card_blurb = "Blink through enemies, mark a target, then detonate it with your next hit."
-details = """Blink Range: 320px
+details = "Blink Range: 320px
 Cooldown: 6.0s (scales with Haste)
 Mark Duration: 6.0s (1 marked shot)
 Bonus Damage: 2d8 + (12× Power)
-Refund Chance: 10%"""
+Refund Chance: 10%"
 icon = ExtResource("2_dljwc")
 effect_scenes = Array[PackedScene]([ExtResource("1_fndtg")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

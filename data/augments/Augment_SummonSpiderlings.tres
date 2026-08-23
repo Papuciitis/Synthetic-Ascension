@@ -17,11 +17,11 @@ display_name = "Summon Spiderlings"
 description = "Active: summon spiderlings at your cursor. They hunt and can be detonated for an explosion."
 mods_scale_per_level = 0.25
 card_blurb = "Active summon. Spiderlings hunt enemies — detonate them for an AoE pop."
-details = """Cast Range: 320px
+details = "Cast Range: 320px
 Cooldown: 1.25s
 Lifetime: 12s
 Bite: + (6× Power)
-Detonate: 1d4 + (8× Power), 52px radius"""
+Detonate: 1d4 + (8× Power), 52px radius"
 icon = ExtResource("2_h2oa5")
 mods = SubResource("Resource_6kvc0")
 effect_scenes = Array[PackedScene]([ExtResource("1_0xx37")])

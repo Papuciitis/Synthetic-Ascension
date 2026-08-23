@@ -8,12 +8,12 @@
 script = ExtResource("1_nxmfh")
 id = &"augment_spirit_slash"
 display_name = "Spirit Slash"
-description = """A spectral blade lashes out when you commit to a hit."""
+description = "A spectral blade lashes out when you commit to a hit."
 card_blurb = "Melee hits trigger a spectral slash that reaches beyond your weapon."
-details = """Triggers on melee hits
+details = "Triggers on melee hits
 Cooldown: 0.30s (scales with Haste)
 Range: 220px
-Damage: 0.35× Power"""
+Damage: 0.35× Power"
 icon = ExtResource("2_kfpgv")
 effect_scenes = Array[PackedScene]([ExtResource("1_7ffbt")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"
