@@ -319,7 +319,22 @@ func _compute_overtime() -> float:
 func overtime_reward_multiplier() -> float:
 	if not gate_unsealed:
 		return 1.0
-	return maxf(REWARD_DECAY_FLOOR, 1.0 / pow(1.0 + maxf(0.0, overtime), REWARD_DECAY_POWER))
+	var decayed := maxf(REWARD_DECAY_FLOOR, 1.0 / pow(1.0 + maxf(0.0, overtime), REWARD_DECAY_POWER))
+	# Something in the loadout may argue that staying IS the correct play. See
+	# belief_defiance.
+	return lerpf(decayed, 1.0, clampf(belief_defiance, 0.0, 1.0))
+
+
+## How much of Overtime's belief decay is currently being refused, 0..1.
+##
+## Written by whatever preaches that refusing evacuation is holy - Overtime
+## Gospel today. This exists so that rule can be paid in STRUCTURE rather than
+## in a number: its reward used to be +150% Power, easily the largest figure in
+## the Manifestation layer and a plain stat wearing a risk decision. Refusing
+## the decay instead makes it the one loadout that can genuinely farm Overtime,
+## which is an archetype rather than a multiplier - and it is self-limiting,
+## because the same rule is pouring Threat onto the curve to get it.
+var belief_defiance: float = 0.0
 
 
 func add_overtime_pressure(extra_seconds: float) -> void:

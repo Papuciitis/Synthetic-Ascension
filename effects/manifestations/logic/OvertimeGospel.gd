@@ -17,7 +17,21 @@ extends ManifestationEffect
 const TICK_SECONDS: float = 25.0
 const POWER_PER_TICK: float = 0.07
 const POWER_ESCALATION: float = 0.15
-const POWER_CAP: float = 1.50
+## Was 1.50 - the biggest single number in the layer by a wide distance, and a
+## plain damage stat standing in for what should be a risk decision. Most of the
+## payoff moved to DEFIANCE below, which is a structure rather than a number.
+const POWER_CAP: float = 0.80
+
+## Fraction of Overtime's belief decay this refuses, per tick, and its ceiling.
+##
+## Overtime devalues every kill the longer you refuse to leave, so greed pays
+## progressively less. This rule's whole argument is that staying is correct -
+## so what it grants is that the argument becomes TRUE for you: your kills keep
+## paying while everyone else's stop. That makes the Gospel the one loadout that
+## can actually farm Overtime, which is an archetype the game did not have, and
+## it stays honest because the same ticks are shovelling Threat onto the curve.
+const DEFIANCE_PER_TICK: float = 0.18
+const DEFIANCE_CAP: float = 0.90
 
 ## Seconds of unseal time pushed onto the Threat curve per tick. Deliberately
 ## NOT scaled by potency: rarity grows the reward, never the discount.
@@ -82,19 +96,23 @@ func _publish_luck() -> void:
 
 
 func _exit_tree() -> void:
+	# Unequipping must not leave the world permanently refusing its own economy.
+	if ThreatDirector != null:
+		ThreatDirector.belief_defiance = 0.0
 	if state != null and is_instance_valid(state):
 		state.clear_contributions(contribution_key())
 
 
 func describe() -> String:
 	return (
-		"Once the Exit Rite is ready, every %.0fs you stay grants an escalating Power stack (+%.0f%% for the first, more for every one after, up to +%.0f%%) and +%.0f%% Luck (up to +%.0f%%) - and shoves the hunt %.0fs further into Overtime each time."
+		"Once the Exit Rite is ready, every %.0fs you stay grants an escalating Power stack (+%.0f%% for the first, more for every one after, up to +%.0f%%) and +%.0f%% Luck (up to +%.0f%%) - and refuses Overtime's toll on your belief, up to %.0f%% of it, so your kills keep paying when everyone else's have stopped. Each sermon shoves the hunt %.0fs further into Overtime."
 		% [
 			tick_seconds(),
 			POWER_PER_TICK * potency() * 100.0,
 			POWER_CAP * 100.0,
 			LUCK_PER_TICK * potency() * 100.0,
 			LUCK_CAP * 100.0,
+			DEFIANCE_CAP * 100.0,
 			PRESSURE_SECONDS,
 		]
 	)
@@ -148,6 +166,16 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 
+## One writer, so unequipping the rule cannot leave the world permanently
+## refusing its own economy.
+func _publish_defiance() -> void:
+	if ThreatDirector == null:
+		return
+	ThreatDirector.belief_defiance = minf(
+		DEFIANCE_CAP, DEFIANCE_PER_TICK * float(_ticks) * potency()
+	) if _ticks > 0 else 0.0
+
+
 func _preach() -> void:
 	_ticks += 1
 	var escalation: float = 1.0 + POWER_ESCALATION * float(_ticks - 1)
@@ -161,6 +189,7 @@ func _preach() -> void:
 	# The warning is the point: the player must be able to feel the trade going
 	# bad while the damage number is still going up.
 	_luck_bonus = minf(LUCK_CAP, _luck_bonus + LUCK_PER_TICK * potency())
+	_publish_defiance()
 	_publish_luck()
 	if player != null and is_instance_valid(player) and player.has_method("refresh_run_state"):
 		player.call("refresh_run_state")

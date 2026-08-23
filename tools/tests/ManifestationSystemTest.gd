@@ -806,6 +806,41 @@ func _test_dash_hook() -> void:
 
 	var state := ManifestationState.new()
 	add_child(state)
+	# Overtime's belief decay, and the one rule allowed to argue with it.
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null:
+		var was_unsealed: bool = bool(director.get("gate_unsealed"))
+		var was_overtime: float = float(director.get("overtime"))
+		var was_defiance: float = float(director.get("belief_defiance"))
+		director.set("gate_unsealed", false)
+		director.set("overtime", 4.0)
+		director.set("belief_defiance", 0.0)
+		_check(
+			is_equal_approx(float(director.call("overtime_reward_multiplier")), 1.0),
+			"belief is untouched before the gate opens - exploring is not greed"
+		)
+		director.set("gate_unsealed", true)
+		var decayed: float = float(director.call("overtime_reward_multiplier"))
+		_check(decayed < 1.0, "belief decays once you could have left (%.2f)" % decayed)
+		_check(
+			decayed >= ThreatDirector.REWARD_DECAY_FLOOR - 0.001,
+			"and never below the floor - a kill paying nothing reads as a bug"
+		)
+		director.set("overtime", 40.0)
+		_check(
+			float(director.call("overtime_reward_multiplier")) <= decayed,
+			"more Overtime never pays better"
+		)
+		director.set("overtime", 4.0)
+		director.set("belief_defiance", 1.0)
+		_check(
+			is_equal_approx(float(director.call("overtime_reward_multiplier")), 1.0),
+			"full defiance refuses the toll entirely"
+		)
+		director.set("gate_unsealed", was_unsealed)
+		director.set("overtime", was_overtime)
+		director.set("belief_defiance", was_defiance)
+
 	# Duplicates must not compound. Two of one rule is a supported loadout - the
 	# runner's #slot key exists for it - but it must not be a different game.
 	var falloff: float = ManifestationRunner.DUPLICATE_FALLOFF

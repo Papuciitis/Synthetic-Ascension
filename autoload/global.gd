@@ -490,14 +490,25 @@ func get_equipped_rarity_average() -> float:
 ## Which Manifestation nouns the player currently wears, and how many rules of
 ## each. Feeds the drop roll's prerequisite weighting - a rule that talks about
 ## a noun you already carry is likelier to be the one that appears.
+## Nouns the player holds, counted the way the PAIR system counts them.
+##
+## This used to count instances while ManifestationRunner counts DISTINCT rules,
+## so two copies of one two-noun rule told the roller "momentum x2, cadence x2"
+## - and the prerequisite weighting then steered every later drop toward those
+## nouns - while the pair system read "x1, x1" and lit nothing. The player was
+## being aimed at an engine they could not reach. One counting convention.
 func equipped_manifestation_tags() -> Dictionary:
 	var held: Dictionary = {}
 	if run_inventory == null:
 		return held
+	var seen: Dictionary = {}
 	for slot_index in range(Inventory.SLOT_COUNT):
 		var instance: ItemInstance = run_inventory.get_at(slot_index)
 		if instance == null or instance.manifestation_id == &"":
 			continue
+		if seen.has(instance.manifestation_id):
+			continue
+		seen[instance.manifestation_id] = true
 		var def := ManifestationCatalog.get_def(instance.manifestation_id)
 		if def == null:
 			continue
