@@ -1265,15 +1265,22 @@ func _perform_trade() -> void:
 
 	_capture_trade_undo()
 
-	# --- SELL (remove items) ---
+	# --- SELL (remove items; keep them for the buyback shelf) ---
+	var sold_instances: Array[ItemInstance] = []
 	if Global.run_inventory != null:
 		for k in _sell_inv.keys():
 			var slot: int = int(k)
+			var sold_equipped: ItemInstance = Global.run_inventory.get_at(slot)
+			if sold_equipped != null:
+				sold_instances.append(sold_equipped)
 			Global.run_inventory.remove_at(slot, {"player_driven": true})
 
 	if Global.run_bag != null:
 		for k2 in _sell_bag.keys():
 			var slot2: int = int(k2)
+			var sold_bagged: ItemInstance = Global.run_bag.get_at(slot2)
+			if sold_bagged != null:
+				sold_instances.append(sold_bagged)
 			Global.run_bag.remove_at(slot2)
 
 	# --- BUY (add items) ---
@@ -1303,6 +1310,20 @@ func _perform_trade() -> void:
 
 			# Add to player bag
 			Global.run_bag.add_instance(inst)
+
+	# --- BUYBACK: what you sold sits on the vendor's shelf, rebuyable
+	# exactly as it was (until the stock refreshes or the shelf is full).
+	if _vendor_bag != null:
+		for sold_variant in sold_instances:
+			var sold := sold_variant as ItemInstance
+			if sold == null:
+				continue
+			var buyback_slot: int = _vendor_bag.first_empty_slot()
+			if buyback_slot == -1:
+				break
+			_vendor_bag.set_at(buyback_slot, sold)
+		if not sold_instances.is_empty():
+			_apply_vendor_filters()
 
 	# Apply through the central transaction ledger. Positive net is a cost;
 	# negative net is influence/resources returned to the movement.
