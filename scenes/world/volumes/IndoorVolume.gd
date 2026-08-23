@@ -33,6 +33,10 @@ class_name IndoorVolume
 @export var pickup_delay: float = 0.15
 @export var require_walkable: bool = true
 @export var pos_attempts: int = 14
+# Reward interiors keep ambient spawns out (their encounters own the room).
+# Playfield interiors - the Segment 1 facility - set this false so ambient
+# pressure can spawn inside the building instead of in the void outside it.
+@export var ambient_spawn_excluded: bool = true
 @export var ready_retry_interval: float = 0.10
 @export var ready_retry_timeout: float = 3.0
 

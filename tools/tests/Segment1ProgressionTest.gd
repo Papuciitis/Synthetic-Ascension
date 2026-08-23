@@ -4,7 +4,9 @@ extends SceneTree
 # ThreatDirector phases (the recon damp used to pin the whole segment).
 # Run: <godot> --headless --path . --script res://tools/tests/Segment1ProgressionTest.gd
 
-const SpawnProfile := preload("res://core/systems/spawner/Segment1SpawnProfile.gd")
+# Loaded in _run(), not preloaded: parse-time preloads in --script mode drag
+# gameplay scripts in before the autoloads register and spam compile errors.
+var SpawnProfile: GDScript = null
 
 var _passes := 0
 var _failures := 0
@@ -24,6 +26,7 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _run() -> void:
+	SpawnProfile = load("res://core/systems/spawner/Segment1SpawnProfile.gd")
 	var global := root.get_node("Global")
 	global.set("attempt_active", true)
 	global.set("attempt_segment", 1)
@@ -35,6 +38,16 @@ func _run() -> void:
 	_check(change_scene_to_file("res://scenes/game.tscn") == OK, "segment 1 game scene starts")
 	for _frame in range(12):
 		await process_frame
+	# Chunk streaming is budgeted per frame; wait until the start cell is
+	# actually walkable so spawn-position probes below are deterministic.
+	var chunk_manager := get_first_node_in_group(&"chunk_manager")
+	var streamed := false
+	for _frame in range(600):
+		if chunk_manager != null and bool(chunk_manager.call("is_cell_walkable", Vector2i(15, 25))):
+			streamed = true
+			break
+		await process_frame
+	_check(streamed, "chunk streaming made the start cell walkable")
 	var level1 := current_scene.get_node_or_null("Level1")
 	_check(level1 != null, "Level1 builder exists")
 	var director := root.get_node_or_null("ThreatDirector")
@@ -64,6 +77,10 @@ func _run() -> void:
 	# position inside the facility is accepted.
 	var spawner := get_first_node_in_group(&"enemy_spawner")
 	if spawner != null:
+		# Populate the indoor-volume snapshot now so the probes below do not
+		# depend on whether a spawn tick has already refreshed it.
+		spawner.set("_spawn_geometry_refresh_t", 0.0)
+		spawner.call("_refresh_spawn_geometry_cache")
 		_check(
 			not bool(spawner.call("_is_spawn_position_valid", Vector2(-10000.0, -10000.0))),
 			"spawner rejects void positions outside the authored footprint"
@@ -111,6 +128,43 @@ func _run() -> void:
 		StringName(director.get("segment_phase")) == &"disturbance",
 		"restore with courtyard milestones re-enters disturbance"
 	)
+
+	# Gate checklist: LOCKED -> LOCATED -> READY with five structured items.
+	var captured: Array = []
+	root.get_node("RunEvents").gate_checklist_changed.connect(
+		func(state: StringName, items: Array, next_hint: String) -> void:
+			captured.append({"state": state, "items": items, "hint": next_hint})
+	)
+	level1.set("_last_checklist_key", "")
+	level1.call("_update_gate_lock")
+	_check(not captured.is_empty(), "checklist emitted on gate tick")
+	if not captured.is_empty():
+		var first: Dictionary = captured[-1]
+		_check(StringName(first["state"]) == &"locked", "checklist starts LOCKED")
+		_check((first["items"] as Array).size() == 5, "checklist carries five items")
+
+	for milestone in [&"security_started", &"security_cleared", &"wardstone_2"]:
+		global.call("record_segment1_milestone", milestone)
+	level1.call("_refresh_progression_seals")
+	level1.call("_update_gate_lock")
+	_check(
+		not captured.is_empty() and StringName((captured[-1] as Dictionary)["state"]) == &"located",
+		"final checkpoint moves the checklist to LOCATED"
+	)
+
+	global.call("record_segment1_milestone", &"final_plaza")
+	level1.set("resonance", 1.0)
+	level1.call("_update_gate_lock")
+	var last: Dictionary = captured[-1] if not captured.is_empty() else {}
+	_check(
+		not last.is_empty() and StringName(last["state"]) == &"ready",
+		"plaza + full resonance moves the checklist to READY"
+	)
+	if not last.is_empty():
+		var all_done: bool = (last["items"] as Array).all(
+			func(item: Dictionary) -> bool: return bool(item["done"])
+		)
+		_check(all_done, "READY checklist shows every item done")
 	_finish()
 
 

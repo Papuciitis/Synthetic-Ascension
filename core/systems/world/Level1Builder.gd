@@ -149,6 +149,16 @@ func _ready() -> void:
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
+	# The chunk-streaming rearchitecture made streaming start explicit, but
+	# only SegmentProcBuilder was updated. Without streamed chunk records,
+	# is_cell_walkable() is false everywhere in Segment 1, which silently
+	# killed ambient ring spawns AND flow-field walkability. Generation stays
+	# disabled (game.gd), so streamed chunks are empty records + fallback
+	# ground outside the authored footprint.
+	if _cm != null and is_instance_valid(_cm) and _cm.has_method("start_streaming"):
+		var player := get_tree().get_first_node_in_group(&"player") as Node2D
+		var stream_center := player.global_position if player != null else _cell_to_world(_start_cell)
+		_cm.start_streaming(stream_center)
 
 
 func _exit_tree() -> void:
@@ -559,6 +569,10 @@ func _spawn_indoor_volumes() -> void:
 			continue
 		_geo.add_child(volume)
 		volume.exploration_loot_enabled = bool(entry["loot"])
+		# The facility interior is the playfield, not a reward room: ambient
+		# containment pressure must spawn inside it. Reward rooms (loot=true)
+		# keep the default exclusion so their encounters own the interior.
+		volume.ambient_spawn_excluded = bool(entry["loot"])
 		var cfg: Dictionary = (entry.get("cfg", {}) as Dictionary).duplicate()
 		var is_secondary := bool(cfg.get("secondary", false))
 		cfg.erase("secondary")

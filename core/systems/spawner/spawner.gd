@@ -573,6 +573,8 @@ func _is_spawn_position_valid(pos: Vector2) -> bool:
 		var volume := volume_variant as Node
 		if volume == null or not volume.is_inside_tree():
 			continue
+		if not bool(volume.get("ambient_spawn_excluded")):
+			continue
 		if volume.has_method("contains_world_point") and bool(volume.call("contains_world_point", pos)):
 			return false
 	return true
