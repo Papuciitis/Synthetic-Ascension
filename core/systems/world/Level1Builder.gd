@@ -62,6 +62,7 @@ const M_SYNTHESIS: StringName = &"synthesis"
 const M_FIRST_CONFRONTATION: StringName = &"first_confrontation"
 const M_WARDSTONE_1: StringName = &"wardstone_1"
 const M_ASSISTANT: StringName = &"assistant_commitment"
+const M_EVIDENCE: StringName = &"evidence_store"
 const M_SECURITY_STARTED: StringName = &"security_started"
 const M_SECURITY_CLEARED: StringName = &"security_cleared"
 const M_WARDSTONE_2: StringName = &"wardstone_2"
@@ -693,6 +694,10 @@ func _place_story_areas() -> void:
 	# Full-height threshold strips make the two story beats unavoidable while
 	# preserving freedom inside each combat space.
 	_make_milestone_area(M_ASSISTANT, Vector2i(4, -14), Vector2i(5, 17), false)
+	# The first build choice fires on the mandatory route into the service
+	# district, before the security fight; the kiosk beside it is the
+	# fiction anchor (evidence store 3-B) and stays a loot secondary.
+	_make_milestone_area(M_EVIDENCE, Vector2i(25, -20), Vector2i(3, 27), false)
 	_make_milestone_area(M_SECURITY_STARTED, Vector2i(34, -20), Vector2i(5, 27), false)
 	_make_milestone_area(M_FINAL_PLAZA, Vector2i(26, -50), Vector2i(7, 11), false)
 
@@ -719,6 +724,10 @@ func _restore_segment_state() -> void:
 		_wardstone_1.restore_active()
 	if _has_milestone(M_WARDSTONE_2) and _wardstone_2 != null:
 		_wardstone_2.restore_active()
+	# Quit during the evidence offer: the area will not refire, but the
+	# choice is still owed. Re-present it once the scene settles.
+	if _has_milestone(M_EVIDENCE) and Global != null and Global.pending_augment_pick:
+		call_deferred("_begin_evidence_choice")
 	_apply_restored_spawn_stage()
 
 
@@ -745,6 +754,9 @@ func _on_milestone_reached(id: StringName) -> void:
 	match id:
 		M_ADMITTED, M_WARD_FLICKER, M_LAB_DOOR:
 			_record_milestone(id)
+		M_EVIDENCE:
+			if _record_milestone(M_EVIDENCE):
+				_begin_evidence_choice()
 		M_SYNTHESIS:
 			if _grant_milestone(M_SYNTHESIS, resonance_synthesis):
 				_blocking_card(
@@ -835,6 +847,24 @@ func _on_pickup_to_equip(_start: Vector2, _slot: int, inst: ItemInstance, _upgra
 		return
 	_add_resonance(float(inst.rarity) * resonance_per_item_rarity, false)
 	_update_gate_lock()
+
+
+# Beat 7: the first build choice, staged as looting the institution's own
+# evidence store. Card first, then the augment offer; veterans who already
+# own augments get flavor only (their pick never pends).
+func _begin_evidence_choice() -> void:
+	if Global == null or not Global.pending_augment_pick:
+		_tip(Segment1Text.EVIDENCE_EMPTY_TIP, 4.5)
+		return
+	var modal := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
+	if modal != null and modal.has_method("present_card_and_wait"):
+		await modal.call(
+			"present_card_and_wait",
+			Segment1Text.EVIDENCE_TITLE, Segment1Text.EVIDENCE_BODY, "EVIDENCE STORE 3-B"
+		)
+	var game := get_tree().current_scene
+	if game != null and game.has_method("present_augment_pick_and_wait"):
+		await game.call("present_augment_pick_and_wait")
 
 
 func _on_secondary_completed(objective_id: int) -> void:

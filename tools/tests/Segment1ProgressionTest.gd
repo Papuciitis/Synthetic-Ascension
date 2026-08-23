@@ -179,6 +179,12 @@ func _run() -> void:
 	_check(bool(global.call("has_segment1_milestone", &"admitted")), "admissions milestone records")
 	_check(reached_ids.has(&"admitted"), "milestone_reached signal fires")
 
+	# Evidence beat: the route strip records; the veteran path stays silent.
+	global.set("pending_augment_pick", false)
+	level1.call("_on_milestone_reached", &"evidence_store")
+	_check(bool(global.call("has_segment1_milestone", &"evidence_store")), "evidence milestone records")
+	_check(current_scene.has_method("present_augment_pick_and_wait"), "game exposes awaitable augment pick")
+
 	global.set("attempt_opening_completed", false)
 	global.set("attempt_opening_mode", &"full")
 	global.set("attempt_opening_phase", 0)

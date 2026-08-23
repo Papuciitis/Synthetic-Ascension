@@ -18,6 +18,7 @@ const ENEMY_PROXY_ROOT_SCRIPT := preload("res://core/systems/enemy_world/EnemyPr
 
 # IMPORTANT: only ONE augment_select var (no duplicate @onready + var)
 var augment_select: CanvasLayer = null
+var _augment_prior_paused: bool = false
 
 var _game_over_ui: Control = null
 var _run_ended: bool = false
@@ -207,7 +208,10 @@ func _begin_entry_sequence() -> void:
 			_opening_sequence.queue_free()
 			_opening_sequence = null
 
-	if Global != null and Global.pending_augment_pick:
+	# Segment 1 stages the first build choice inside the level (the evidence
+	# store beat); the run-start picker remains for direct later-segment
+	# entries where no store exists.
+	if Global != null and Global.pending_augment_pick and seg != 1:
 		_spawn_augment_select()
 	else:
 		call_deferred("_tutorial_intro_sequence")
@@ -220,6 +224,21 @@ func _on_inventory_changed() -> void:
 func _on_bag_changed() -> void:
 	if Global != null:
 		Global.request_autosave()
+
+
+# Mid-level build choice (Segment 1 evidence store). Same picker as run
+# start, but sequenced: awaits the choice, restores the prior pause state,
+# and resets spawn clocks so reading the offer cannot bank a wave.
+func present_augment_pick_and_wait() -> void:
+	if Global == null or not Global.pending_augment_pick:
+		return
+	if augment_select != null and is_instance_valid(augment_select):
+		return
+	_spawn_augment_select()
+	if augment_select == null:
+		return
+	if augment_select.has_signal("augment_chosen"):
+		await augment_select.augment_chosen
 
 
 func _spawn_augment_select() -> void:
@@ -238,7 +257,8 @@ func _spawn_augment_select() -> void:
 	augment_select.process_mode = Node.PROCESS_MODE_ALWAYS
 	augment_select.layer = 100
 
-	# Pause the game while choosing.
+	# Pause the game while choosing; remember what to restore.
+	_augment_prior_paused = get_tree().paused
 	get_tree().paused = true
 
 	# connect signal
@@ -271,7 +291,13 @@ func _on_augment_chosen(a: AugmentData) -> void:
 
 
 func _unpause_after_augment() -> void:
-	get_tree().paused = false
+	get_tree().paused = _augment_prior_paused
+	_augment_prior_paused = false
+
+	# A pause the player spent reading must not release as a banked wave.
+	for spawner_node in get_tree().get_nodes_in_group(&"enemy_spawner"):
+		if spawner_node.has_method("reset_spawn_clock"):
+			spawner_node.call("reset_spawn_clock")
 
 	# Remove overlay so it can't visually cover tutorial tips.
 	if augment_select != null and is_instance_valid(augment_select):

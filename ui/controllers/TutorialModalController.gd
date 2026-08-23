@@ -18,6 +18,7 @@ var _unpaused_since_enemy_card: float = 1.0e9
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group(&"tutorial_modal_controller")
 	if RunEvents != null:
 		RunEvents.blocking_info_requested.connect(_on_blocking_info_requested)
 		RunEvents.enemy_archetype_encountered.connect(_on_enemy_encountered)

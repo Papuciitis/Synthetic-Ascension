@@ -25,6 +25,10 @@ const OBJECTIVE_GATE_DETAIL := "Follow the outer wall around the warehouse. The 
 const OBJECTIVE_RITE_TITLE := "REWRITE THE RITE"
 const OBJECTIVE_RITE_DETAIL := "Remain within the sigil while the Pattern alters it."
 
+const EVIDENCE_TITLE := "CONFISCATED THAUMIC INSTRUMENTS"
+const EVIDENCE_BODY := "Evidence store 3-B. Instruments seized from unlicensed practitioners.\n\nCatalogued. Sealed. Waiting.\n\nThe seals recognise every registered discipline. Yours is not one of them."
+const EVIDENCE_EMPTY_TIP := "Evidence store 3-B. The useful instruments are already part of your Pattern."
+
 const SYNTHESIS_STABLE := "SYNTHESIS STABLE"
 const SYNTHESIS_RESULT := "No patron answered. No bloodline awakened. The spell worked anyway."
 const CONTAINMENT_NOTICE := "Unclassified thaumaturgical event detected.\nLaboratory containment initiated."
