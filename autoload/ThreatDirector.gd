@@ -65,6 +65,12 @@ signal multipliers_changed(
 # Overtime grows from time + kills after unseal.
 # - time part is intentionally small (procedural gate distance)
 # - kill part is intentionally large (punishes farming)
+## Belief earned after the gate opens decays on this curve. The floor matters:
+## a kill that pays nothing reads as a bug, and the point is a declining
+## return, not a wall.
+@export var REWARD_DECAY_POWER: float = 0.6
+@export var REWARD_DECAY_FLOOR: float = 0.35
+
 @export var overtime_time_rate: float = 0.008    # per second
 @export var overtime_kill_rate: float = 0.035    # per kill AFTER buffer
 @export var overtime_kill_buffer: int = 55       # prevents instant spike right at unseal
@@ -296,6 +302,25 @@ func _compute_overtime() -> float:
 	var k_excess := maxi(0, _kills_since_unseal - overtime_kill_buffer)
 	var k_part := float(k_excess) * overtime_kill_rate * dominance_mul
 	return t_part + k_part
+
+## How much a kill is worth right now, as a fraction of its base reward.
+##
+## This is the other half of Overtime, and without it greed was strictly
+## correct: staying after the gate opened made the world more dangerous but paid
+## exactly as well as it had a minute earlier, so the only reason to leave was
+## fear. Risk of Rain 2 solves the same problem by letting costs scale faster
+## than income - the purchasing power of a minute declines monotonically and
+## farming is never forbidden, it just quietly stops paying. This is that idea
+## in the shape this game already has.
+##
+## Deliberately 1.0 until the gate unseals. Punishing a player for exploring or
+## reading before they could even leave would be punishing them for playing the
+## game the design doc asks for.
+func overtime_reward_multiplier() -> float:
+	if not gate_unsealed:
+		return 1.0
+	return maxf(REWARD_DECAY_FLOOR, 1.0 / pow(1.0 + maxf(0.0, overtime), REWARD_DECAY_POWER))
+
 
 func add_overtime_pressure(extra_seconds: float) -> void:
 	# Public lever for greed mechanics (Overtime Gospel): a rule that pays the

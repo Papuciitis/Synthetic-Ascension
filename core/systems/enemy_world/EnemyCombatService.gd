@@ -113,6 +113,11 @@ func _finalize_proxy_death(handle: int) -> void:
 		var cult_chance: float = 0.10 + 0.05 * float(cult_level - 1) + LuckResolver.extra_follower_chance(Global.run_luck)
 		if Global._rng.randf() < cult_chance:
 			reward += 1
+	# Overtime devalues belief, exactly as it does on the node-side kill path.
+	if reward > 0:
+		var threat_director := get_node_or_null("/root/ThreatDirector")
+		if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
+			reward = maxi(1, int(round(float(reward) * float(threat_director.call("overtime_reward_multiplier")))))
 	if reward > 0 and Global != null:
 		Global.transaction_followers(
 			reward,

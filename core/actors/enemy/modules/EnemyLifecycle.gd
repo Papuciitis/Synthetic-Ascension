@@ -95,6 +95,13 @@ func resolve_death(context: RefCounted) -> void:
 		if Global._rng.randf() < cult_chance:
 			gain += 1
 
+	# Belief earned during Overtime is worth less the longer you refuse to
+	# leave. See ThreatDirector.overtime_reward_multiplier().
+	var threat_director: Node = null
+	if _owner != null and is_instance_valid(_owner) and _owner.is_inside_tree():
+		threat_director = _owner.get_node_or_null("/root/ThreatDirector")
+	if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
+		gain = maxi(1, int(round(float(gain) * float(threat_director.call("overtime_reward_multiplier")))))
 	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
 
 	# Health pickups keep their existing per-body behavior. Item loot for a
