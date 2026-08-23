@@ -1,7 +1,7 @@
 extends Node
 class_name AugmentRunner
 
-@export var debug_augments: bool = true
+@export var debug_augments: bool = false
 
 var _active: Dictionary = {} # key(scene_path#slot) -> Node
 

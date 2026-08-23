@@ -148,7 +148,8 @@ func _exit_tree() -> void:
 
 
 func _on_permanent_augments_changed(ids: Array[StringName]) -> void:
-	print("[AUG] Player received permanent_augments_changed:", ids)
+	if OS.is_debug_build():
+		print("[AUG] Player received permanent_augments_changed:", ids)
 	refresh_run_state()
 
 
@@ -169,7 +170,7 @@ func _process(delta: float) -> void:
 
 	_ensure_inventory_binding()
 
-	if Input.is_action_just_pressed("debug_print_sets"):
+	if OS.is_debug_build() and Input.is_action_just_pressed("debug_print_sets"):
 		if Global.run_inventory == null:
 			print("[SETS] run_inventory is null")
 		else:
@@ -187,7 +188,8 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
-		_debug_dump_sets()
+		if OS.is_debug_build():
+			_debug_dump_sets()
 	if event is InputEventMouseMotion:
 		_aim_state.note_mouse_motion()
 

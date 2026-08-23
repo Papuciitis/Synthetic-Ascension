@@ -49,7 +49,9 @@ func _ready() -> void:
 	btn_quit.pressed.connect(_on_quit_pressed)
 	btn_continue.call_deferred("grab_focus")
 
-	# Dev mode
+	# Dev mode: the whole entry point (segment jump, free loadouts, follower
+	# grants) disappears in release exports.
+	chk_dev.visible = OS.is_debug_build()
 	dev_panel.visible = false
 	_set_dev_label(false)
 	chk_dev.toggled.connect(func(on: bool) -> void:

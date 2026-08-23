@@ -85,7 +85,8 @@ func _do_open_choose_3() -> void:
 				if v is AugmentData:
 					options.append(v)
 
-	print("Augments loaded:", options.size())
+	if OS.is_debug_build():
+		print("Augments loaded:", options.size())
 
 	if options.size() < 3:
 		push_warning("Not enough augments in Global.augment_db")
@@ -167,7 +168,8 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 
 	_set_cards_locked(true)
 
-	print("AUGMENT PICKED:", a.id)
+	if OS.is_debug_build():
+		print("AUGMENT PICKED:", a.id)
 
 	# Picking an augment you already own levels it up in place.
 	var owned_slot: int = Global.permanent_augment_ids.find(a.id)

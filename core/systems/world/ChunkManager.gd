@@ -129,9 +129,9 @@ var _external_tile_roots: Array[Node2D] = []
 @export var cover_half_scene: PackedScene
 
 @export_group("Debug")
-@export var debug_draw_chunk_outlines: bool = true
+@export var debug_draw_chunk_outlines: bool = false
 @export var debug_chunk_line_width: float = 4.0
-@export var debug_show_blocks: bool = true
+@export var debug_show_blocks: bool = false
 @export var debug_block_color: Color = Color(0.2, 0.9, 0.4, 0.35)
 @export var debug_force_content: bool = false   # <- turn ON to force buildings/ruins in every chunk
 @export var debug_print_generation: bool = false

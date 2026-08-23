@@ -91,6 +91,9 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
+	# Dev console (god mode, force spawn, spawn kill-switch): debug builds only.
+	if not OS.is_debug_build():
+		return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_QUOTELEFT:
 		toggle_overlay()
 		get_viewport().set_input_as_handled()
