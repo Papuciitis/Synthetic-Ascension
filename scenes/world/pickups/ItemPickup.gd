@@ -23,8 +23,13 @@ class_name ItemPickup
 # If set, pickup uses this full instance (dropped from bag/equip) instead of item_id/amount
 var item_instance: ItemInstance = null
 
+const MAGNET_RADIUS: float = 110.0
+const MAGNET_SPEED_MAX: float = 420.0
+
 var _pickup_ready: bool = false
 var _picked: bool = false
+var _magnet_cooldown: float = 0.0
+var _player_ref: Node2D = null
 
 
 func _ready() -> void:
@@ -54,6 +59,32 @@ func _ready() -> void:
 
 	_enable_pickup_later()
 	_expire_later()
+
+
+func _process(delta: float) -> void:
+	# Loot magnet: enemy/world drops drift to the player at close range.
+	# Deliberate player drops (persistent_world_drop) stay where they were
+	# put. The close-range retry un-latches bag-full pickups once space
+	# frees up, instead of requiring the player to walk out and back in.
+	if _picked or not _pickup_ready or persistent_world_drop:
+		return
+	if _magnet_cooldown > 0.0:
+		_magnet_cooldown -= delta
+		return
+	if _player_ref == null or not is_instance_valid(_player_ref):
+		_player_ref = get_tree().get_first_node_in_group("player") as Node2D
+		if _player_ref == null:
+			return
+	var distance: float = global_position.distance_to(_player_ref.global_position)
+	if distance > MAGNET_RADIUS:
+		return
+	var pull: float = 1.0 - distance / MAGNET_RADIUS
+	var speed: float = lerpf(60.0, MAGNET_SPEED_MAX, pull * pull)
+	global_position = global_position.move_toward(_player_ref.global_position, speed * delta)
+	if distance < 16.0:
+		_try_pickup()
+		if not _picked:
+			_magnet_cooldown = 1.5
 
 
 func _expire_later() -> void:

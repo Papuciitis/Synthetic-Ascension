@@ -949,6 +949,10 @@ func is_enemy_cull_eligible(enemy: Node2D, player_position: Vector2) -> bool:
 		return false
 	if bool(enemy.get_meta("never_cull", false)):
 		return false
+	# A splitter family's qualified drop lives on exactly one heir; culling
+	# that heir would silently destroy loot the player already earned.
+	if bool(enemy.get_meta("split_item_entitled", false)):
+		return false
 	if "dead" in enemy and bool(enemy.get("dead")):
 		return false
 	var player_distance := enemy.global_position.distance_to(player_position)

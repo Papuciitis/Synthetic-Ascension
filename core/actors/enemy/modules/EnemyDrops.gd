@@ -82,6 +82,7 @@ func try_drop_health_pickup() -> void:
 		return
 
 	var chance: float = clampf(_enemy.health_drop_chance, 0.0, 1.0)
+	chance = clampf(chance * LuckResolver.drop_multiplier(Global.run_luck), 0.0, 1.0)
 	if chance <= 0.0 or Global._rng.randf() > chance:
 		return
 
@@ -157,6 +158,14 @@ func _roll_item_drop() -> bool:
 		eff_chance = _enemy.drop_chance * pre_mul * ot_mul
 		eff_chance = clampf(eff_chance, 0.0, _enemy.drop_chance * 2.0)
 
+	# Luck bends drop PROBABILITY (quality was already luck-aware via the
+	# drop context); multiplier is 0.75..1.35 around neutral.
+	eff_chance = clampf(
+		eff_chance * LuckResolver.drop_multiplier(Global.run_luck),
+		0.0,
+		maxf(_enemy.drop_chance, eff_chance) * 2.0
+	)
+
 	if _enemy.debug_drops:
 		print("DROP ROLL:", snapped(roll, 0.01),
 			" base=", _enemy.drop_chance, " eff=", eff_chance,
@@ -186,15 +195,16 @@ func _spawn_rolled_instance_pickup() -> bool:
 	var loot_bonus: int = int(td.get("loot_rarity_bonus")) if td != null else 0
 	var rarity_min: int = _enemy.drop_rarity_min + loot_bonus
 	var rarity_max: int = _enemy.drop_rarity_max + loot_bonus
-	if _enemy.spec != null and _enemy.is_elite:
+	var counts_as_elite: bool = _enemy.is_elite or bool(_enemy.get_meta("split_item_entitled_elite", false))
+	if _enemy.spec != null and counts_as_elite:
 		rarity_min += _enemy.spec.elite_rarity_bonus
 		rarity_max += _enemy.spec.elite_rarity_bonus
 	var context := Global.build_item_drop_context(
 		rarity_min,
 		rarity_max,
 		&"enemy",
-		1 if _enemy.is_elite else 0,
-		_enemy.is_elite
+		1 if counts_as_elite else 0,
+		counts_as_elite
 	)
 	var generated := ItemGenerator.create_instance(data, context, Global._rng)
 	if generated == null:

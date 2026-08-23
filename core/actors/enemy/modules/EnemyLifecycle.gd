@@ -65,6 +65,9 @@ func resolve_death(context: RefCounted) -> void:
 		else:
 			var heir_index: int = Global._rng.randi_range(0, split_children.size() - 1)
 			split_children[heir_index].set_meta("split_item_entitled", true)
+			# Rarity context must reflect the parent that QUALIFIED for the
+			# drop, not whichever small heir eventually dies holding it.
+			split_children[heir_index].set_meta("split_item_entitled_elite", _owner.is_elite)
 	elif inherited_split_item and _drops != null:
 		_drops.drop_entitled_item()
 
