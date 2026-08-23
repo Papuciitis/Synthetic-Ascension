@@ -806,6 +806,24 @@ func _test_dash_hook() -> void:
 
 	var state := ManifestationState.new()
 	add_child(state)
+	# Composure: the ward noun's clock has to actually do something, and it has
+	# to be the counterweight to four rules that all reward being nearly dead.
+	state.claim(&"ward")
+	state.time_since_hit = 0.0
+	_check(not state.composure_ready(), "a fresh wound banks no guard")
+	_check(is_equal_approx(state.consume_composure(), 1.0), "and blunts nothing")
+	state.time_since_hit = ManifestationState.COMPOSURE_SECONDS + 0.1
+	_check(state.composure_ready(), "going unhurt banks a guard")
+	var blunted: float = state.consume_composure()
+	_check(
+		is_equal_approx(blunted, 1.0 - ManifestationState.COMPOSURE_REDUCTION),
+		"the banked guard blunts the next hit (%.2f)" % blunted
+	)
+	_check(not state.composure_ready(), "and spending it resets the clock")
+	state.release(&"ward")
+	state.time_since_hit = 999.0
+	_check(not state.composure_ready(), "an unclaimed ward banks nothing")
+
 	state.claim(&"shard")
 
 	var halo := halo_def.logic.new() as ManifestationEffect

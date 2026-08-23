@@ -226,7 +226,7 @@ func _launch(count: int, origin: Vector2, facing: Vector2) -> void:
 func describe() -> String:
 	var interval := store_interval()
 	return (
-		"One attack in %d curls back into orbit instead of firing, and your orbit holds %d more shards. Dashing launches the whole orbit along your dash for %d%% of your attack damage each, piercing %d enemies."
+		"Every %d attacks sheds a shard into orbit, and your orbit holds %d more. Dashing launches the whole orbit along your dash for %d%% of your attack damage each, piercing %d enemies."
 		% [
 			interval,
 			cap_bonus(),

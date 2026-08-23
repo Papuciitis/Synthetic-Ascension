@@ -606,7 +606,14 @@ func get_move_speed_multiplier() -> float:
 
 
 func get_damage_taken_multiplier() -> float:
-	return _multiplier(&"get_damage_taken_multiplier")
+	var total := _multiplier(&"get_damage_taken_multiplier")
+	# Composure belongs to the ward noun rather than to any one rule, so it is
+	# folded in here. player.gd polls this exactly once per LANDED hit, after
+	# the evade roll, which is the only place a one-shot guard can be spent
+	# honestly.
+	if state != null and is_instance_valid(state):
+		total *= state.consume_composure()
+	return total
 
 
 ## The ward noun owns the evasion budget and its clamp, so the number is one
@@ -653,9 +660,26 @@ func apply_to_magic_impact(impact: Node) -> void:
 ## ask one question before it fires.
 func consume_attack_bonus() -> float:
 	var total := 1.0
+	var absorbers: Array[Node] = []
 	for node in _all_effects():
-		if is_instance_valid(node) and node.has_method("consume_attack_bonus"):
+		if not is_instance_valid(node):
+			continue
+		# An absorber SUPPRESSES the shot rather than scaling it, so it has to
+		# run after everything that scales. Two passes rather than trusting
+		# dispatch order, because the ordering between two pairs is not defined.
+		if node.has_method("absorb_attack_bonus"):
+			absorbers.append(node)
+			continue
+		if node.has_method("consume_attack_bonus"):
 			total *= maxf(0.0, float(node.call("consume_attack_bonus")))
+	# Hand the absorber what the other rules already paid for. Without this a
+	# rule that zeroes the shot silently voided every payout taken before it -
+	# Tithe Furnace burns a Follower to arm the beat, pops "FURNACE x3.5", and
+	# the shot it armed did nothing. A life spent for nothing, with the HUD
+	# saying otherwise. The absorber now spends that multiplier on whatever it
+	# fires instead.
+	for node in absorbers:
+		total *= maxf(0.0, float(node.call("absorb_attack_bonus", total)))
 	return total
 
 

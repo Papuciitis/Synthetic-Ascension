@@ -92,7 +92,12 @@ func _process(delta: float) -> void:
 	_armed_drawn = armed
 
 
-func consume_attack_bonus() -> float:
+## Absorbs rather than scales: see ManifestationRunner.consume_attack_bonus().
+## `carried` is the multiplier every other rule already paid for on this beat -
+## the Follower Tithe Furnace burned, the litany Third Litany resolved - and the
+## volley carries it, so the empowered beat closing the door still spends what
+## was spent to arm it.
+func absorb_attack_bonus(carried: float) -> float:
 	if state == null or not is_instance_valid(state):
 		return 1.0
 	if state.beat_in_cycle(BEATS) != BEATS - 1:
@@ -106,17 +111,17 @@ func consume_attack_bonus() -> float:
 		# than as a closed door - and a door is only worth closing while there is
 		# something behind it.
 		return 1.0
-	_launch(count)
+	_launch(count, maxf(1.0, carried))
 	return SUPPRESSED
 
 
-func _launch(count: int) -> void:
+func _launch(count: int, carried: float = 1.0) -> void:
 	var origin := player_position()
 	var facing := aim_direction()
 	if facing.length_squared() < 0.0001:
 		facing = Vector2.RIGHT
 	var spread := deg_to_rad(minf(SPREAD_PER_SHARD_DEG * float(count - 1), MAX_SPREAD_DEG))
-	var damage := attack_damage(launch_damage_mult())
+	var damage := attack_damage(launch_damage_mult() * carried)
 	var tint := noun_colour(&"shard")
 
 	for i in range(count):
@@ -141,7 +146,7 @@ func _launch(count: int) -> void:
 
 func describe() -> String:
 	return (
-		"Every %d attacks, that beat deals no weapon damage of its own and fires your whole orbit along your aim - %d%% of your attack damage per shard, piercing %d. With an empty orbit the beat fires as normal."
+		"Every %d attacks, that beat deals no weapon damage of its own and fires your whole orbit along your aim - %d%% of your attack damage per shard, piercing %d. Anything else that empowered the beat is spent on the volley rather than lost. With an empty orbit the beat fires as normal."
 		% [BEATS, int(round(launch_damage_mult() * 100.0)), LAUNCH_PIERCE]
 	)
 

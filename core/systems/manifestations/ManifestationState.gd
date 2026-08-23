@@ -153,8 +153,9 @@ const CHANNELS: Dictionary = {
 		"decay_when": DECAY_NEVER,
 	},
 	&"time_since_hit": {
-		"label": "UNHURT",
+		"label": "COMPOSURE",
 		"kind": KIND_SECONDS,
+		"full_at": COMPOSURE_SECONDS,
 		"field": &"time_since_hit",
 		"decay_per_sec": 0.0,
 		"decay_when": DECAY_NEVER,
@@ -215,6 +216,22 @@ var _mark_vfx: Node2D = null
 # --- cadence ----------------------------------------------------------------
 var attack_index: int = 0
 var time_since_attack: float = 999.0
+
+## COMPOSURE - what makes the ward noun's clock mean something.
+##
+## time_since_hit was written every hit and read by absolutely nothing, so the
+## HUD rendered "WARD 12.4s" - a number that changed and did not matter. It also
+## left the ward nouns lopsided: Martyr Circuit is faster wounded, Scar Tissue
+## makes healing a trap, Red Line is immune wounded and Debt Collector floods
+## Luck wounded. Four effects rewarded being nearly dead and NOTHING rewarded
+## being healthy, so the whole noun pointed at parking on the dying line.
+##
+## Go this long unhurt and the next hit that lands is blunted, once. Available to
+## anything that claims ward, because it is the noun's property and not one
+## rule's. The bar now fills toward something, and staying untouched is finally
+## worth what taking hits is worth.
+const COMPOSURE_SECONDS: float = 6.0
+const COMPOSURE_REDUCTION: float = 0.45
 
 # --- ward -------------------------------------------------------------------
 var time_since_hit: float = 999.0
@@ -511,6 +528,23 @@ func note_hit_taken() -> void:
 	if not has_source(&"ward"):
 		return
 	time_since_hit = 0.0
+
+
+## Is a blunted hit banked right now? Read-only; the HUD and describe() use it.
+func composure_ready() -> bool:
+	return has_source(&"ward") and time_since_hit >= COMPOSURE_SECONDS
+
+
+## Multiplier for the hit that is landing, spending the guard if one is banked.
+## Called from ManifestationRunner.get_damage_taken_multiplier(), which player.gd
+## polls exactly once per landed hit - after the evade roll, so an evaded hit
+## never burns it.
+func consume_composure() -> float:
+	if not composure_ready():
+		return 1.0
+	time_since_hit = 0.0
+	resource_spent.emit(&"ward", 1.0)
+	return 1.0 - COMPOSURE_REDUCTION
 
 
 ## Shared gate for "something connected with you, answer it once".

@@ -203,6 +203,11 @@ var autosave_fallback_seconds: float = 30.0
 # stacking bag
 var run_luck: float = 0.0
 
+## Pushes newly rolled items toward NEG polarity. Raised by curses that tax the
+## LOOT TABLE rather than the player - a shape that is a poison to an ordinary
+## run and a supply line to a curse build. Reset per attempt with everything else.
+var curse_drop_bias: float = 0.0
+
 var _followers: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var vfx_stamina_aura_scene: PackedScene
@@ -407,6 +412,7 @@ func reset_run_systems() -> void:
 	reset_run_inventory()
 	reset_run_bag_inventory()
 	run_luck = 0.0
+	curse_drop_bias = 0.0
 
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()

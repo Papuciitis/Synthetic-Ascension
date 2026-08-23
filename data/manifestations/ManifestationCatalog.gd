@@ -201,7 +201,7 @@ static func _ensure_built() -> void:
 		ManifestationDef.new(
 			&"vector_halo",
 			"Vector Halo",
-			"One attack in ten curls back into orbit instead of firing, and your orbit holds more shards. Dashing launches the whole halo along your dash.",
+			"Every tenth attack sheds a shard into orbit, and your orbit holds more. Dashing launches the whole halo along your dash.",
 			[&"shard", &"cadence"] as Array[StringName],
 			[SLOT_OFFHAND, SLOT_RING] as Array[int],
 			preload("res://effects/manifestations/logic/VectorHalo.gd"),
