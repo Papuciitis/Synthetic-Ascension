@@ -59,6 +59,20 @@ func _run() -> void:
 			"stage %d mirrors phase %s" % [stage, expected[stage]]
 		)
 
+	# The authored spawn filter must actually be consulted (it was dead code):
+	# a position in the void far outside the 75x91 footprint is rejected, a
+	# position inside the facility is accepted.
+	var spawner := get_first_node_in_group(&"enemy_spawner")
+	if spawner != null:
+		_check(
+			not bool(spawner.call("_is_spawn_position_valid", Vector2(-10000.0, -10000.0))),
+			"spawner rejects void positions outside the authored footprint"
+		)
+		_check(
+			bool(spawner.call("_is_spawn_position_valid", Vector2(0.0, 1280.0))),
+			"spawner accepts a walkable facility position"
+		)
+
 	# Restore path: milestones present after a reload must re-derive the phase.
 	for milestone in [&"synthesis", &"first_confrontation", &"wardstone_1", &"assistant_commitment"]:
 		global.call("record_segment1_milestone", milestone)

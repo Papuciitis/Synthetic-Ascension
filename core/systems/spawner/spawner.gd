@@ -80,6 +80,11 @@ var _timer: Timer = null
 var _elapsed: float = 0.0
 var _ei: Node = null
 var _spawn_filter: Node = null
+# Authored per-segment bounds (the segment_spawn_filter group, e.g.
+# Level1Builder). Kept separate from _spawn_filter: that one is the debug
+# autoload and is never null, so sharing the variable meant the authored
+# filter was never consulted and enemies could spawn outside the map.
+var _authored_spawn_filter: Node = null
 var _scene_enemy_ids: Dictionary = {}
 var _segment1_stage: int = -1
 var _spawn_pause_left: float = 0.0
@@ -549,10 +554,10 @@ func _pick_socket_spawn_pos() -> Vector2:
 
 func _is_spawn_position_valid(pos: Vector2) -> bool:
 	# Handcrafted segments may provide authored playable bounds.
-	if _spawn_filter == null or not is_instance_valid(_spawn_filter):
-		_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
-	if _spawn_filter != null and _spawn_filter.has_method("is_spawn_position_allowed"):
-		if not bool(_spawn_filter.call("is_spawn_position_allowed", pos)):
+	if _authored_spawn_filter == null or not is_instance_valid(_authored_spawn_filter):
+		_authored_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
+	if _authored_spawn_filter != null and _authored_spawn_filter.has_method("is_spawn_position_allowed"):
+		if not bool(_authored_spawn_filter.call("is_spawn_position_allowed", pos)):
 			return false
 	if _is_in_wardstone_field(pos):
 		return false
