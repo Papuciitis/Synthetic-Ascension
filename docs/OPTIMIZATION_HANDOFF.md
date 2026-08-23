@@ -305,6 +305,32 @@ Landed:
 Needs human eyes (in priority order): opening walk pacing + copy tone,
 reveal camera feel, evidence-offer placement under SERVICE pressure,
 phase-mirror difficulty lift, checklist panel layout at 1080p.
+
+## Playtest bug-fix session (2026-08-23, after the user's segment 1+2 run)
+
+User verdict on the story pass: likes it ("feels more like tutorial
+level"). Perf held: p95 30.6ms / p99 37ms, 0.08% >50ms in their run.
+Four reported bugs root-caused (parallel investigation) and fixed, each
+its own commit, pinned by tools/tests/PlaytestRegressionTest.tscn:
+- Spawn blink at last kill's position: LIFO pool reuse + the f2dfcf5
+  idempotency guard left the batch renderer's interpolation snapshot at
+  the death transform. reset_actor_snapshot on reuse + record-side
+  reset_interpolation after spawn positioning.
+- Dossier cards late/mismatched: enemy_archetype_encountered only fired
+  in _ready, which warmed nodes run silently - cards appeared when a
+  pool ran DRY. Now re-emitted (deferred) on every pool obtain.
+- Hub duplicate augments: quick-equip had no already-equipped check
+  (drag path swapped). No-op now; set_permanent_augment enforces
+  one-slot-per-id; save load heals corrupted arrays.
+- Vendor rarity bump on sell: vendor stock is a BagInventory, so the
+  buyback set_at ran K6 consolidation and FED the vendor's copy. New
+  BagInventory.auto_consolidate flag, false on all vendor paths.
+- r0-bag/r1-equipped splits: K6 merging was container-local. Instance
+  pickups + deliver_guaranteed_item now feed the equipped copy;
+  equipping a duplicate MERGES instead of swapping (both routes), so
+  diverged saves can be consolidated by hand. DECISION for designer:
+  shop BUYS still go to the bag (merging inside the shop would break
+  the trade-undo snapshot contract - ItemInstance.gd:27-29).
 Deliberately NOT done: lighting/music/fade systems (do not exist),
 wall-clock threat blending (ruled: test inside new Segment 1 first),
 segment-1 bosses, heat-valley ownership (#10).
