@@ -151,6 +151,16 @@ pending force-push happened (branch is in sync with origin).
 - TIME_PHYSICS_PROCESS reports ONE step; under catch-up the frame runs
   up to 4. A frame-vs-measured-work gap with normal render times means
   multiple physics steps, not hidden render cost.
+- SceneTree `--script` tests: do NOT preload gameplay scripts at parse
+  time (they compile before autoloads register and spam compile errors;
+  load() inside _run instead). Walkability/spawn probes must first wait
+  for chunk streaming (poll is_cell_walkable on the start cell), and
+  headless frames run uncapped - N process_frames is NOT N/60 seconds;
+  use create_timer for timer-driven systems like spawning.
+- is_cell_walkable() requires a streamed chunk record. Anything that
+  builds a world must call ChunkManager.start_streaming() or spawning,
+  nav snapshots and checkpoint validation all silently die (this is
+  exactly how Segment 1 broke after the 08-17 rearchitecture).
 
 ## Design audit session (2026-08-23, autonomous)
 
