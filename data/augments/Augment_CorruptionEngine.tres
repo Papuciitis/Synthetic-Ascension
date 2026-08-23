@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_crpsc"]
+[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_crpic"]
+
+[resource]
+script = ExtResource("1_crpsc")
+id = &"augment_corruption_engine"
+display_name = "Corruption Engine"
+description = "A conversion chamber that burns curses as fuel. The worse the affliction, the hotter it runs."
+card_blurb = "Equipped NEG items feed you Power — the more severe the curse, the bigger the payoff."
+details = "Passive: +12% Power per 100% of total
+equipped NEG severity (cap +30%)
++3% per 100% per augment level
+Curses stop being trash. Start hoarding."
+icon = ExtResource("2_crpic")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

@@ -96,6 +96,12 @@ func _finalize_proxy_death(handle: int) -> void:
 	# Luck: mirrors the node-side kill path in EnemyLifecycle.
 	if reward > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
 		reward += 1
+	# Cult of Personality: mirrors the node-side kill path.
+	if reward > 0 and Global.permanent_augment_ids.has(&"augment_cult_of_personality"):
+		var cult_level: int = Global.get_augment_level(&"augment_cult_of_personality")
+		var cult_chance: float = 0.10 + 0.05 * float(cult_level - 1) + LuckResolver.extra_follower_chance(Global.run_luck)
+		if Global._rng.randf() < cult_chance:
+			reward += 1
 	if reward > 0 and Global != null:
 		Global.transaction_followers(
 			reward,

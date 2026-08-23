@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_lcksc"]
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_lckst"]
+[ext_resource type="Texture2D" uid="uid://b1s7itjctmnnq" path="res://assets/textures/Augment_Placeholder_Blink_Hex.png" id="2_lckic"]
+
+[sub_resource type="Resource" id="Resource_lckmd"]
+script = ExtResource("1_lckst")
+luck = 0.5
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("1_lcksc")
+id = &"augment_lucky_charm"
+display_name = "Lucky Charm"
+description = "A trinket of impossible coincidences. The universe starts quietly taking your side."
+mods_scale_per_level = 0.2
+card_blurb = "+Luck. Better rolls, more drops, lucky crits, lucky dodges — everywhere at once."
+details = "Passive: +0.5 Luck
+Luck bends the whole run:
+• POS/NEG roll quality and odds
+• enemy drop rate
+• lucky bonus crits and evasion
+• extra followers, vendor prices"
+icon = ExtResource("2_lckic")
+mods = SubResource("Resource_lckmd")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"
