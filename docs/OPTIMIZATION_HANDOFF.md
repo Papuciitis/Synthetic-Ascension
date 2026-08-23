@@ -73,16 +73,19 @@ full desktop benchmark completed (550 p95 31.7, goal met); minigun
 stress harness built + impact VFX batched (impact cost now ~0); the
 pending force-push happened (branch is in sync with origin).
 
-1. Minigun remainder: massacre stage is still ~45–49ms avg with impacts
-   at zero cost. Measured shares (immortal isolation): death+respawn
-   churn ~12ms; per-hit pipeline + torrent churn ~19ms over plain-horde
-   baseline; projectile physics sim alone is ~20ms at 550 live bullets
-   with ZERO enemies (stage 0) — per-tick GDScript cost of
-   _simulate_one (chunk raycast + segment queries), the prime
-   GDExtension/optimization candidate. Also ~+60–90 draws in stress
-   stages remain unattributed (not impacts, not node counts —
-   candidates: SFX-triggered canvas? knockback flashes? dig via census
-   + draw stepping).
+1. Minigun remainder (SOLVED down to 34ms — two root causes found
+   2026-08-23): (a) the projectile sim ran in _physics_process while
+   being physics-server-free; whenever the physics step exceeded
+   16.7ms, catch-up ran it 2–4× per rendered frame. Moved to _process:
+   torrent-only 38.6→23.6ms avg, massacre p95 68.7→38.9ms. (b) The
+   "unattributed draws" were leftover loot drops from kills
+   accumulating across benchmark stages — swept between stages now;
+   draws sit at ~200 in every stage. Remaining cost is honest work:
+   ~24ms process (GDScript _simulate_one at 550 bullets ≈ the
+   GDExtension candidate) + ~15ms physics (bodies) in the massacre.
+   Frame time now equals measured work; render thread measured
+   directly (viewport_get_measured_render_time_*): cpu ~1.5ms,
+   gpu ~5ms — rendering is NOT a bottleneck.
 2. Smoothness (snapshot interpolation) and emergency pressure tier
    still deserve a human-eyes pass during real play.
 3. Rapier 2D physics A/B (godot.rapier.rs) — biggest remaining physics
@@ -128,5 +131,20 @@ pending force-push happened (branch is in sync with origin).
   the editor rebuilds the global class cache — reference new scripts by
   preload() path instead (bit us with ImpactBurstRenderer).
 - Force-spawned hordes trigger first-encounter cards + massive drops;
-  census in MinigunStressBenchmark tallies scene-root children by
-  script to attribute node churn.
+  census in MinigunStressBenchmark tallies the FULL tree by script to
+  attribute node churn. Enemy dossier cards are now spaced: min 6s of
+  unpaused play between them (TutorialModalController), first card
+  immediate, scripted non-enemy cards never delayed.
+- ~74 enemy.gd nodes exist with ZERO alive — that's the PoolManager
+  warm pool, NOT lingering corpses. Don't misread census counts.
+- The ~243 ObjectDB instances "leaked at exit" are load-time resource
+  cycles (GDScript/PackedScene/CompressedTexture2D preload cycles);
+  the count is IDENTICAL for a minimal probe and a 100s spawn-heavy
+  run — static, harmless, not worth chasing. Real leak hunts should
+  watch OBJECT_NODE_COUNT during play instead (it stays flat).
+- Teleporting enemies: write EnemyWorld records (set_position +
+  reset_interpolation) AND the actor node; node-only moves leave stale
+  records the representation policy acts on.
+- TIME_PHYSICS_PROCESS reports ONE step; under catch-up the frame runs
+  up to 4. A frame-vs-measured-work gap with normal render times means
+  multiple physics steps, not hidden render cost.
