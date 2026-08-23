@@ -90,7 +90,18 @@ func merge_from(incoming: ItemInstance) -> bool:
 	if polarity == Polarity.POS:
 		best_pct = maxf(best_pct, incoming.best_pct)
 	else:
-		best_pct = minf(best_pct, incoming.best_pct)
+		# Default: merging STABILIZES a curse — the mildest roll survives,
+		# so duplicate progression never ruins a deliberately mild NEG item
+		# (Ballast-style builds). Corruption Engine inverts the meaning of
+		# NEG progression: while it is equipped, merging DEEPENS the curse.
+		var deepen_curses: bool = (
+			Global != null
+			and Global.permanent_augment_ids.has(&"augment_corruption_engine")
+		)
+		if deepen_curses:
+			best_pct = minf(best_pct, incoming.best_pct)
+		else:
+			best_pct = maxf(best_pct, incoming.best_pct)
 	while upgrade_meter >= 1.0 - 0.000001:
 		# Each rarity step doubles the required absolute merge mass.
 		upgrade_meter = maxf(0.0, upgrade_meter - 1.0) * 0.5

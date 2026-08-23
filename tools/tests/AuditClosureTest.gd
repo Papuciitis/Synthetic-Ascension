@@ -121,6 +121,31 @@ func _test_canonical_rarity_merging() -> void:
 	var negative := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.5)
 	_check(not strong_dest.merge_from(negative), "POS and NEG projects never merge")
 
+	# NEG merge direction: default STABILIZES (mildest roll survives);
+	# Corruption Engine flips progression to DEEPEN the curse.
+	var mild_neg := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.1)
+	var severe_neg := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.45)
+	var had_engine: bool = Global.permanent_augment_ids.has(&"augment_corruption_engine")
+	Global.permanent_augment_ids.erase(&"augment_corruption_engine")
+	mild_neg.merge_from(severe_neg)
+	_check(
+		is_equal_approx(mild_neg.best_pct, -0.1),
+		"NEG merge stabilizes toward the mildest curse by default"
+	)
+	Global.init_permanent_augments()
+	var engine_slot: int = Global.permanent_augment_ids.find(StringName())
+	if engine_slot != -1:
+		Global.permanent_augment_ids[engine_slot] = &"augment_corruption_engine"
+	var mild_neg2 := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.1)
+	var severe_neg2 := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.45)
+	mild_neg2.merge_from(severe_neg2)
+	_check(
+		is_equal_approx(mild_neg2.best_pct, -0.45),
+		"Corruption Engine makes NEG merges deepen the curse"
+	)
+	if engine_slot != -1 and not had_engine:
+		Global.permanent_augment_ids[engine_slot] = StringName()
+
 
 func _test_enemy_drops_use_instances_and_all_rarity_bonuses() -> void:
 	var spec := EnemySpec.new()

@@ -389,18 +389,24 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 				4: s.haste += pct
 				5: s.luck += pct
 
-	# Corruption Engine: equipped NEG items stop being dead weight — their
-	# combined severity converts into Power (the first real "builds exploit
-	# NEG" mechanic).
+	# Corruption Engine: only the TWO most severe equipped curses feed the
+	# engine — it runs on concentrated corruption, not wardrobe totals.
+	# (Design ruling: total-severity would make this and count-based NEG
+	# builds converge on the same "wear many curses" shopping list.)
 	if Global.permanent_augment_ids.has(&"augment_corruption_engine") and Global.run_inventory != null:
-		var corruption_total := 0.0
+		var severities: Array[float] = []
 		for corrupted in Global.run_inventory.items:
 			var corrupted_item := corrupted as ItemInstance
 			if corrupted_item == null or corrupted_item.data == null:
 				continue
 			if corrupted_item.polarity == ItemInstance.Polarity.NEG:
-				corruption_total += absf(corrupted_item.active_pct())
-		if corruption_total > 0.0:
+				severities.append(absf(corrupted_item.active_pct()))
+		if not severities.is_empty():
+			severities.sort()
+			severities.reverse()
+			var corruption_total: float = severities[0]
+			if severities.size() > 1:
+				corruption_total += severities[1]
 			var engine_level: int = Global.get_augment_level(&"augment_corruption_engine")
 			var engine_rate: float = 0.12 + 0.03 * float(engine_level - 1)
 			s.power += minf(0.30, corruption_total * engine_rate)

@@ -7,11 +7,13 @@
 script = ExtResource("1_crpsc")
 id = &"augment_corruption_engine"
 display_name = "Corruption Engine"
-description = "A conversion chamber that burns curses as fuel. The worse the affliction, the hotter it runs."
-card_blurb = "Equipped NEG items feed you Power — the more severe the curse, the bigger the payoff."
-details = "Passive: +12% Power per 100% of total
-equipped NEG severity (cap +30%)
-+3% per 100% per augment level
-Curses stop being trash. Start hoarding."
+description = "A conversion chamber that burns concentrated corruption as fuel. It only has two intake valves."
+card_blurb = "Your TWO most severe curses feed you Power — and merging NEG items now deepens their curse."
+details = "Passive: your 2 most severe equipped
+NEG items grant +12% Power per 100%
+severity (cap +30%, +3%/level)
+While equipped: NEG merges keep the
+MORE severe roll (normally merging
+stabilizes a curse toward mild)."
 icon = ExtResource("2_crpic")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"
