@@ -185,6 +185,10 @@ func _run() -> void:
 	_check(bool(global.call("has_segment1_milestone", &"evidence_store")), "evidence milestone records")
 	_check(current_scene.has_method("present_augment_pick_and_wait"), "game exposes awaitable augment pick")
 
+	# City reveal: records once and survives a headless (cameraless) run.
+	level1.call("_on_milestone_reached", &"city_reveal")
+	_check(bool(global.call("has_segment1_milestone", &"city_reveal")), "city reveal milestone records")
+
 	global.set("attempt_opening_completed", false)
 	global.set("attempt_opening_mode", &"full")
 	global.set("attempt_opening_phase", 0)

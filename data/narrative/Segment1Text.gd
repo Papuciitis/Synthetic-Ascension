@@ -40,6 +40,9 @@ const SECURITY_START := "Security checkpoint sealed. Containment squad inbound."
 const SECURITY_CLEAR := "Containment squad broken. The service seal is losing coherence."
 const WARDSTONE_2 := "WARDSTONE REWRITTEN\nThe Pattern accepts the alteration more easily this time."
 const CHECKPOINT_DISABLED := "FINAL SECURITY CHECKPOINT DISABLED\nThe outer approach is open."
+const CITY_REVEAL_TITLE := "AREA I — THE CITY"
+const CITY_REVEAL_BODY := "The institution ends at its wall.\nThe city does not.\n\nEverything it knows about you is already moving through those streets.\n\nThe outer Rite is the way out."
+
 const RITE_LOGIC := "The Rite prohibits every recognised school of magic.\nSynthetic magic was never included."
 const GATE_UNSEALED := "OUTER RITE DESTABILISED\nRewrite the Rite."
 

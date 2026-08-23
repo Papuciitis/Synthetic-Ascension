@@ -67,7 +67,10 @@ const M_SECURITY_STARTED: StringName = &"security_started"
 const M_SECURITY_CLEARED: StringName = &"security_cleared"
 const M_WARDSTONE_2: StringName = &"wardstone_2"
 const M_FINAL_CHECKPOINT: StringName = &"final_checkpoint"
+const M_CITY_REVEAL: StringName = &"city_reveal"
 const M_FINAL_PLAZA: StringName = &"final_plaza"
+
+const _ACCESSIBILITY := preload("res://core/settings/AccessibilityPresentation.gd")
 
 const B_ARCHIVE_EXIT: StringName = &"archive_exit"
 const B_COURTYARD_SERVICE: StringName = &"courtyard_service"
@@ -464,6 +467,15 @@ func _build_ground_stamps() -> void:
 	_stamp_ground(Vector2i(27, -59), Vector2i(27, 6), _TEX_DIRT_PATH, 0.76, 0.68)
 	_stamp_ground(Vector2i(13, -57), Vector2i(15, 14), _TEX_STONE, 0.96, 0.58)
 	_stamp_ground(Vector2i(15, -55), Vector2i(11, 10), _TEX_COBBLE, 0.58, 0.63)
+	# City backdrop beyond the north wall: reveal-camera scenery only (the
+	# approach perimeter blocks travel). Coarse block-and-street rhythm,
+	# dimmed for distance.
+	_stamp_ground(Vector2i(8, -76), Vector2i(52, 15), _TEX_DIRT_PATH, 0.85, 0.42)
+	for block in range(4):
+		var block_x := 10 + block * 13
+		_stamp_ground(Vector2i(block_x, -74), Vector2i(9, 5), _TEX_STONE, 0.95, 0.40)
+		_stamp_ground(Vector2i(block_x + 2, -68), Vector2i(9, 6), _TEX_STONE, 0.95, 0.36)
+	_stamp_ground(Vector2i(8, -63), Vector2i(52, 2), _TEX_COBBLE, 0.90, 0.45)
 
 
 func _stamp_ground(cell_tl: Vector2i, size: Vector2i, tex: Texture2D, alpha: float, brightness: float) -> void:
@@ -699,6 +711,10 @@ func _place_story_areas() -> void:
 	# fiction anchor (evidence store 3-B) and stays a loot secondary.
 	_make_milestone_area(M_EVIDENCE, Vector2i(25, -20), Vector2i(3, 27), false)
 	_make_milestone_area(M_SECURITY_STARTED, Vector2i(34, -20), Vector2i(5, 27), false)
+	# Beat 9: rounding the sealed warehouse after the breach, the city shows
+	# itself for the first time. Full-width strip so the moment cannot be
+	# missed on the way to the plaza.
+	_make_milestone_area(M_CITY_REVEAL, Vector2i(49, -45), Vector2i(8, 5), false)
 	_make_milestone_area(M_FINAL_PLAZA, Vector2i(26, -50), Vector2i(7, 11), false)
 
 
@@ -757,6 +773,9 @@ func _on_milestone_reached(id: StringName) -> void:
 		M_EVIDENCE:
 			if _record_milestone(M_EVIDENCE):
 				_begin_evidence_choice()
+		M_CITY_REVEAL:
+			if _record_milestone(M_CITY_REVEAL):
+				_begin_city_reveal()
 		M_SYNTHESIS:
 			if _grant_milestone(M_SYNTHESIS, resonance_synthesis):
 				_blocking_card(
@@ -847,6 +866,50 @@ func _on_pickup_to_equip(_start: Vector2, _slot: int, inst: ItemInstance, _upgra
 		return
 	_add_resonance(float(inst.rarity) * resonance_per_item_rarity, false)
 	_update_gate_lock()
+
+
+# Beat 9: the city reveal. Slow zoom-out and pan over the backdrop while
+# the player is locked and protected, a tree-pausing card carries the copy,
+# then everything restores exactly. Reduced-motion setting shortens the
+# camera work via AccessibilityPresentation.
+func _begin_city_reveal() -> void:
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player == null:
+		return
+	if _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("suspend_spawning"):
+		_spawner.suspend_spawning(6.0)
+	if player.has_method("grant_invulnerability"):
+		player.call("grant_invulnerability", 6.0)
+	if player.has_method("set_cinematic_input"):
+		player.call("set_cinematic_input", true, true)
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+	var zoom_origin := camera.zoom if camera != null else Vector2.ONE
+	var cam_origin := camera.position if camera != null else Vector2.ZERO
+	if camera != null:
+		var out_tween := create_tween().set_parallel(true)
+		out_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		var out_seconds: float = _ACCESSIBILITY.current_motion_duration(1.4)
+		out_tween.tween_property(camera, "zoom", zoom_origin * 0.72, out_seconds)
+		out_tween.tween_property(camera, "position", cam_origin + Vector2(48.0, -400.0), out_seconds)
+		await out_tween.finished
+		await get_tree().create_timer(0.5).timeout
+	var modal := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
+	if modal != null and modal.has_method("present_card_and_wait"):
+		await modal.call(
+			"present_card_and_wait",
+			Segment1Text.CITY_REVEAL_TITLE, Segment1Text.CITY_REVEAL_BODY, "BEYOND THE WALL"
+		)
+	if camera != null:
+		var back_tween := create_tween().set_parallel(true)
+		back_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		var back_seconds: float = _ACCESSIBILITY.current_motion_duration(0.8)
+		back_tween.tween_property(camera, "zoom", zoom_origin, back_seconds)
+		back_tween.tween_property(camera, "position", cam_origin, back_seconds)
+		await back_tween.finished
+		camera.zoom = zoom_origin
+		camera.position = cam_origin
+	if player.has_method("set_cinematic_input"):
+		player.call("set_cinematic_input", false, false)
 
 
 # Beat 7: the first build choice, staged as looting the institution's own
