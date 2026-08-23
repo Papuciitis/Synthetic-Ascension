@@ -531,6 +531,7 @@ func _make_preview_bag() -> BagInventory:
 func _init_or_reuse_vendor() -> void:
 	if Global == null:
 		_vendor_bag = BagInventory.new()
+		_vendor_bag.auto_consolidate = false
 		_vendor_bag._ensure_size()
 		return
 
@@ -539,6 +540,8 @@ func _init_or_reuse_vendor() -> void:
 	# Reuse if the vendor snapshot matches this segment.
 	if Global.attempt_vendor_segment == seg and Global.attempt_vendor_bag != null:
 		_vendor_bag = Global.attempt_vendor_bag
+		# Older saves persisted the vendor bag before the flag existed.
+		_vendor_bag.auto_consolidate = false
 		_vendor_seed = int(Global.attempt_vendor_seed)
 		# Ensure correct size
 		if _vendor_bag.has_method("_ensure_size"):
@@ -558,6 +561,7 @@ func _init_or_reuse_vendor() -> void:
 
 	# New segment vendor
 	_vendor_bag = BagInventory.new()
+	_vendor_bag.auto_consolidate = false
 	_vendor_bag.slots = []
 	for _i in range(BagInventory.SLOT_COUNT):
 		_vendor_bag.slots.append(null)

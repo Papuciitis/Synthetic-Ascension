@@ -10,6 +10,10 @@ const SLOT_COUNT: int = 16
 # Fixed-size slots. Each slot holds one "stack project" (ItemInstance) or null.
 @export var slots: Array[ItemInstance] = []
 @export var debug_bag: bool = false
+# K6 duplicate consolidation/feeding is a PLAYER-bag behavior. Merchant-style
+# containers (the Hub vendor stock) must hold items inertly: selling an item
+# the vendor also stocks used to FEED the vendor's copy and rank it up.
+@export var auto_consolidate: bool = true
 # Extra slots granted by attempt modifiers / upgrades (persists in SaveData attempt snapshot)
 @export var extra_slots: int = 0
 
@@ -198,7 +202,8 @@ func get_best(n: int) -> Array[ItemInstance]:
 
 func _after_stack_changed() -> void:
 	# Merge any same-key stacks (eg r0 upgrading into existing r1)
-	_consolidate_duplicates()
+	if auto_consolidate:
+		_consolidate_duplicates()
 	_rebuild_index()
 	emit_changed()
 	_dbg_dump("after _after_stack_changed")
@@ -293,7 +298,7 @@ func add_instance(inst: ItemInstance) -> bool:
 	# Locked incoming items are protected from duplicate feeding/cleanup and
 	# therefore always need their own slot. Unlocked items may only merge into
 	# unlocked destinations because _rebuild_index excludes locked stacks.
-	if not inst.locked and _index.has(key):
+	if not inst.locked and auto_consolidate and _index.has(key):
 		var idx: int = int(_index[key])
 		var dest: ItemInstance = slots[idx]
 
@@ -353,7 +358,7 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 	# higher-rarity incoming becomes the mathematical destination via
 	# merge_from's auto-swap (the old code overwrote stack.rarity for
 	# free — a zero-mass rank promotion).
-	if _index.has(key):
+	if auto_consolidate and _index.has(key):
 		var idx: int = int(_index[key])
 		var stack: ItemInstance = slots[idx]
 		if stack != null:
