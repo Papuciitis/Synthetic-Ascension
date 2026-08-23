@@ -1,5 +1,8 @@
 # Optimization handoff — enemy horde project (2026-08-22)
 
+> 2026-08-23 note: a full-project design/bug audit and fix session
+> happened on top of this (see "Design audit session" at the bottom).
+
 Read this first. It is the working context for the enemy-count optimization
 effort on branch `enemy-world-work` (a sandbox branch; going wild is fine,
 `main` is untouched).
@@ -148,3 +151,63 @@ pending force-push happened (branch is in sync with origin).
 - TIME_PHYSICS_PROCESS reports ONE step; under catch-up the frame runs
   up to 4. A frame-vs-measured-work gap with normal render times means
   multiple physics steps, not hidden render cost.
+
+## Design audit session (2026-08-23, autonomous)
+
+Eight parallel auditors mapped every subsystem against the design brief
+(horde roguelite: ascension, exploration, buildcraft, systemic Luck,
+pressure). ~15 commits landed, each independently revertable. Full
+suite green before and after (plus new ScriptParseAuditTest covering
+all 253 gameplay scripts).
+
+Landed (highlights):
+- Damage numbers (BattleText autoload, batched single canvas item,
+  merge-by-handle, crit gold, player-damage red, accessibility toggle).
+- Luck is systemic now: drop chance, lucky crits (1.5x, all styles),
+  lucky evasion, extra follower gain, exploration loot chance — plus
+  the roll_signed_range fix (high Luck used to make NEG rolls MORE
+  severe, and the quality shift was halved).
+- Followers: belief feeds Power (+1%/sqrt follower, cap 15%); leech
+  drain no longer ticks through pause; vendor warns before trading
+  below reconstruction cost; undo goes through the ledger.
+- Resonance (proc): ambient only after primary; wardstones +6%,
+  secondaries +5%; public bar clamps at 99.8% while the gate is
+  actually blocked (kills false GATE READY / overtime / EVAC).
+- Three new augments: Lucky Charm (+Luck), Cult of Personality
+  (kills recruit), Corruption Engine (equipped NEG severity -> Power,
+  first real NEG-exploit payoff).
+- Fixes: ThreatDirector reset on same-segment death; augment picker
+  duplicate/overwrite; Hex Blink for all styles; Reflect Shield vs
+  simulated bullets (new manager consume API); splitter heir cull
+  protection; loot magnet + pickup latch fixes; indoor encounter
+  culled-abort; miniboss/secondary chunk collision; checkpoint restore
+  in proc segments; Exit Rite dead-channel guard; triple-quote .tres
+  parse bug (7 of 8 augment descriptions were empty in-game); debug
+  hygiene (title typo, dev panels gated to debug builds, log spam).
+- UI: vendor status no longer clobbered same-frame (+ EXCHANGE
+  COMPLETE), threat tooltip in player language, gate arrow distance
+  ("142m"), set rows use display names/max pieces, Ctrl-lock in the
+  run bag, descriptions for all 18 set-piece items.
+
+Audited but NOT implemented (backlog, roughly by value):
+1. Vendor stock quality: LuckResolver.vendor_stock_bonus is wired
+   through threat_level and near-no-op; make it bump the rarity band.
+2. Segment 1 never advances ThreatDirector segment_phase (recon damp
+   flattens the authored endgame) — mirror milestone->phase at
+   COURTYARD/OUTER_APPROACH/EXIT_RITE. Tuning-sensitive.
+3. spawn_burst bypasses the per-tick spawn construction budget
+   (spawner.gd:668) — route through _force_spawn_queue.
+4. Proxy deaths pay followers but never drop items/health (asymmetric
+   with node kills) — decide, then implement or document.
+5. Continue mid-proc-segment can leave a ghost alley-cache secondary
+   (claim_loot fires at spawn, not pickup) and resets resonance.
+6. Augment cards don't label upgrades (picking an owned augment now
+   levels it up, but the card looks identical).
+7. AugmentData.grant_spell_id and EnemySpec.drop_instance_roll are
+   dead exported fields; positive_probability clamps unreachable;
+   augment_quality_bonus has no consumer (no quality axis on offers).
+8. "Interact" is rebindable in Settings but nothing reads it.
+9. Level1 loot rooms have full secondary plumbing but never surface
+   as secondaries. Vendor hover "(R5 POS)" shorthand.
+10. Heat valley: ascension phase floor 0.48 erases the authored
+    70-90% dip (0.35) — pick one owner.
