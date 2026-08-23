@@ -211,3 +211,46 @@ Audited but NOT implemented (backlog, roughly by value):
    as secondaries. Vendor hover "(R5 POS)" shorthand.
 10. Heat valley: ascension phase floor 0.48 erases the authored
     70-90% dip (0.35) — pick one owner.
+
+## Direction rulings (2026-08-23, designer)
+
+Project state: **no longer missing systems — missing authored game.**
+Priority order for the next pushes (designer's ordering):
+
+1. **Segment 1 spatial + story pass** — treat as a FULL level redesign,
+   not "bigger tutorial map": normal institution → something wrong →
+   incident → first confrontation → lethal escalation → hostile
+   building → first build choice → transition out → city reveal →
+   outer objective/Exit Rite. Build the final **Exit Rite
+   LOCKED/LOCATED/READY checklist UI during this pass** (not before —
+   the layout may change what the gate requires; not backlog either).
+2. **Run Sheet expansion** — during/after the Segment-1 pass, informed
+   by its playtests. One screen, three questions: "What am I?",
+   "What is my build doing?" (show REASONS: "Corruption Engine — 184%
+   from top 2 → +22.1% Power", "Equilibrium — 3 POS / 3 NEG — ACTIVE"),
+   "What has this run done?". No tax return, no ten tabs.
+3. **NEG vertical slice** — Doctrine of Burden + Inversion Lens +
+   3 deep-curse items (with shipped Corruption Engine that tests three
+   opposed valuations of the same loot: make it worse / make it safer /
+   find the worst thing imaginable). Only after that plays well:
+   Equilibrium, Litany, Gambler, Gravemarch.
+   **Deep curses are NAMED, recognizable items** — never a global
+   widened NEG band; players must learn "oh FUCK, that's the one".
+4. **#27 persistent three-slot system: SUPERSEDED BY AUGMENTS** —
+   intentionally retired (augment slots + levels + archetypes inherited
+   its job). Revisit only if playtests show runs lack player-controlled
+   direction.
+5. More city/content variety, then the smaller system backlog.
+   The milestone after Segment 1: "can I play three runs and get three
+   noticeably different stories/build trajectories?"
+
+Also ruled: threat/roster escalation should eventually blend progress
+state with wall-clock (baseline pressure from time, roster phases from
+objectives/story milestones) — but TEST it inside the new Segment 1,
+not against temporary geography. Performance headroom (665 @ p95
+29.6ms) is a design unlock for variety/spectacle, not a mandate to
+chase 1000.
+
+Fixed on report: ring/offhand effects ignored rarity (only Regen Ring
+scaled) — all four accessory effects now scale via the shared
+continuous potency curve with rate-stat guardrails.
