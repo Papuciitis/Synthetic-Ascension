@@ -1353,7 +1353,11 @@ func _push_gate_checklist(gate_locked: bool) -> void:
 	]
 
 	var hint := ""
-	if not _has_milestone(M_WARDSTONE_1):
+	if state == &"ready":
+		# The journey rows can lag in dev/teleport contexts; a READY gate
+		# always hints the channel, never an earlier step.
+		hint = "Stand in the sigil • hold the channel"
+	elif not _has_milestone(M_WARDSTONE_1):
 		hint = "Next: rewrite the archive Wardstone"
 	elif not _has_milestone(M_WARDSTONE_2):
 		hint = "Next: rewrite the service-district Wardstone"
