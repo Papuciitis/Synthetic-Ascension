@@ -84,15 +84,15 @@ func refresh(player: Node, inv: Inventory) -> void:
 		line.add_theme_font_size_override("font_size", 12)
 		# Display name and real piece count from the set DB, not internal
 		# ids with a hardcoded /6.
-		var set_name := String(sid).to_upper()
+		var set_label := String(sid).to_upper()
 		var set_max := 6
 		var sd: SetData = Global.set_db.get(StringName(sid), null) as SetData
 		if sd != null:
 			if sd.display_name != "":
-				set_name = sd.display_name
+				set_label = sd.display_name
 			if sd.has_method("max_pieces"):
 				set_max = maxi(1, int(sd.call("max_pieces")))
-		line.text = "%s %d/%d" % [set_name, n, set_max]
+		line.text = "%s %d/%d" % [set_label, n, set_max]
 		line.modulate = (ACCENT if n >= set_max else Color(1, 1, 1, 0.85))
 		sets_vbox.add_child(line)
 

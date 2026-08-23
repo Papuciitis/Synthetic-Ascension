@@ -104,8 +104,8 @@ func _process(delta: float) -> void:
 		var progress := clampf(_ages[j] / DURATION, 0.0, 1.0)
 		var fade := (1.0 - progress) * (1.0 - progress)
 		var radius := lerpf(INNER * 2.0, OUTER, 1.0 - pow(1.0 - progress, 3.0))
-		var scale := radius / (float(TEXTURE_SIZE) * 0.5)
-		var xform := Transform2D(_rotations[j], _positions[j]).scaled_local(Vector2(scale, scale))
+		var burst_scale := radius / (float(TEXTURE_SIZE) * 0.5)
+		var xform := Transform2D(_rotations[j], _positions[j]).scaled_local(Vector2(burst_scale, burst_scale))
 		_multimesh.set_instance_transform_2d(j, xform)
 		_multimesh.set_instance_color(j, Color(1.0, 1.0, 1.0, ALPHA * fade))
 	_multimesh.visible_instance_count = _count
