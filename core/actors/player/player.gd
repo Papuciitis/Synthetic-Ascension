@@ -1184,11 +1184,18 @@ func _attack_origin() -> Vector2:
 func heal(amount: float) -> void:
 	if amount <= 0.0:
 		return
-	hp = min(hp + amount, max_hp)
+	# Report what LANDED, never what was asked for. Anything that reacts to a
+	# heal by taking a cut was billing the player for the overflow: at 95/100 a
+	# 30-point pickup applied 5 and announced 30, so a rule refusing 55% of it
+	# subtracted 16.5 and the pickup left you LOWER than before you touched it.
+	var applied: float = min(hp + amount, max_hp) - hp
+	hp += applied
 	hp_changed.emit(hp, max_hp)
+	if applied <= 0.0:
+		return
 	# Guarded: passive regen calls this every frame.
 	if RunEvents != null and RunEvents.player_healed.has_connections():
-		RunEvents.player_healed.emit(self, amount)
+		RunEvents.player_healed.emit(self, applied)
 
 
 func _debug_dump_sets() -> void:

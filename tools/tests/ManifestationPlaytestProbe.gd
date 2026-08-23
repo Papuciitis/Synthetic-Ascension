@@ -57,6 +57,44 @@ class Driver:
 		_phase = 1
 		Global.goto_game()
 
+	## A heal must never be able to REMOVE health.
+	##
+	## heal() used to announce the requested amount rather than the applied one,
+	## so at 95/100 a 30-point pickup landed 5 and reported 30 - and any rule
+	## that takes a cut of a heal billed the player for the overflow. Walking
+	## over a health pickup at full HP cost you a chunk of your life bar. This is
+	## a whole CLASS of bug (anything reacting to player_healed), so it is pinned
+	## on the real player, not on a stub.
+	func _probe_overheal_is_never_damage() -> void:
+		if _player == null or not is_instance_valid(_player):
+			return
+		var max_hp: float = float(_player.get("max_hp"))
+		_player.set("hp", max_hp)
+		var reported: Array[float] = []
+		var sink := func(_who: Variant, amount: float) -> void: reported.append(amount)
+		RunEvents.player_healed.connect(sink)
+		_player.call("heal", max_hp * 0.5)
+		RunEvents.player_healed.disconnect(sink)
+		_check(
+			float(_player.get("hp")) >= max_hp - 0.01,
+			"healing at full HP never lowers it (%.1f / %.1f)" % [float(_player.get("hp")), max_hp]
+		)
+		_check(
+			reported.is_empty(),
+			"a heal that lands nothing announces nothing (announced %s)" % str(reported)
+		)
+		_player.set("hp", max_hp * 0.5)
+		reported.clear()
+		RunEvents.player_healed.connect(sink)
+		_player.call("heal", max_hp)
+		RunEvents.player_healed.disconnect(sink)
+		var announced: float = reported[0] if not reported.is_empty() else -1.0
+		_check(
+			absf(announced - max_hp * 0.5) < 0.01,
+			"an overheal announces what LANDED, not what was asked (%.1f)" % announced
+		)
+
+
 	func _check(condition: bool, message: String) -> void:
 		if condition:
 			_passes += 1
@@ -100,6 +138,7 @@ class Driver:
 		_equip_loadout()
 		_runner = _player.get_node_or_null("ManifestationRunner")
 		_check(_runner != null, "the player carries a ManifestationRunner")
+		_probe_overheal_is_never_damage()
 		if _runner == null:
 			_finish()
 			return
