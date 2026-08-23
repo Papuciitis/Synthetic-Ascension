@@ -276,7 +276,7 @@ func _toggle_item_lock(inst: ItemInstance) -> void:
 			trade_status.text = "LOCKED · Protected from trade, movement, replacement and duplicate cleanup."
 	elif trade_status != null:
 		trade_status.text = "UNLOCKED · Item actions restored."
-	_refresh_cart()
+	_refresh_cart(trade_status.text if trade_status != null else "")
 	_refresh_overlays()
 	if Global != null:
 		Global.save_current_profile()
@@ -826,8 +826,7 @@ func _quick_move_equipped_to_bag(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_inv.erase(slot)
 	if InvRouter.move_between(Global.run_inventory, slot, Global.run_bag, dst, null):
-		if trade_status != null: trade_status.text = "MOVED TO BACKPACK"
-		_refresh_cart()
+		_refresh_cart("MOVED TO BACKPACK")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -851,8 +850,7 @@ func _quick_equip_from_bag(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_bag.erase(slot)
 	if InvRouter.move_between(Global.run_bag, slot, Global.run_inventory, equip_slot, null):
-		if trade_status != null: trade_status.text = "ITEM EQUIPPED"
-		_refresh_cart()
+		_refresh_cart("ITEM EQUIPPED")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -874,8 +872,7 @@ func _quick_move_bag_to_stash(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
 	_sell_bag.erase(slot)
 	if InvRouter.move_between(Global.run_bag, slot, Global.meta_stash, dst, null):
-		if trade_status != null: trade_status.text = "MOVED TO STASH"
-		_refresh_cart()
+		_refresh_cart("MOVED TO STASH")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -1121,7 +1118,7 @@ func _trade_validation() -> Dictionary:
 
 	return {"valid": true, "reason": "Exchange is viable."}
 
-func _refresh_cart() -> void:
+func _refresh_cart(status_override: String = "") -> void:
 	_rebuild_cart_previews()
 
 	var sell_v: int = _sell_total()
@@ -1145,8 +1142,15 @@ func _refresh_cart() -> void:
 	var can_trade: bool = bool(validation.get("valid", false))
 	var overlay_open: bool = _augment_library != null and is_instance_valid(_augment_library)
 	if trade_status != null:
-		trade_status.text = String(validation.get("reason", ""))
-		trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
+		# A caller's action feedback ("MOVED TO BACKPACK", "LOCKED ...") must
+		# survive this refresh instead of being clobbered by validation text
+		# in the same frame.
+		if status_override != "":
+			trade_status.text = status_override
+			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95)
+		else:
+			trade_status.text = String(validation.get("reason", ""))
+			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
 	if btn_barter_cart != null:
 		btn_barter_cart.disabled = (not can_trade) or overlay_open
 		btn_barter_cart.tooltip_text = "Confirm this exchange." if can_trade else String(validation.get("reason", ""))
@@ -1309,6 +1313,12 @@ func _perform_trade() -> void:
 
 	_clear_selection()
 	_refresh_info()
+	var completion_text := "EXCHANGE COMPLETE"
+	if net > 0:
+		completion_text += " · %d Followers committed" % net
+	elif net < 0:
+		completion_text += " · %d Followers gained" % (-net)
+	_refresh_cart(completion_text)
 
 func _refresh_vendor_pressed() -> void:
 	if Global == null:

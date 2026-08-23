@@ -211,11 +211,23 @@ func _on_multipliers_changed(hp_mul: float, dmg_mul: float, spd_mul: float, spaw
 		if typeof(v) == TYPE_BOOL:
 			unsealed = bool(v)
 
-	_tip_text = "HP x%.2f | DMG x%.2f | SPD x%.2f | SPAWN x%.2f | HEAT %d%%" % [hp_mul, dmg_mul, spd_mul, spawn_rate, heat_pct]
+	# Player language, not raw tuning floats.
+	var lines: PackedStringArray = []
+	lines.append("Enemies: %+d%% health · %+d%% damage · %+d%% speed" % [
+		int(round((hp_mul - 1.0) * 100.0)),
+		int(round((dmg_mul - 1.0) * 100.0)),
+		int(round((spd_mul - 1.0) * 100.0)),
+	])
+	if spawn_rate < 0.999:
+		lines.append("Spawns %d%% faster" % int(round((1.0 - spawn_rate) * 100.0)))
+	elif spawn_rate > 1.001:
+		lines.append("Spawns %d%% slower" % int(round((spawn_rate - 1.0) * 100.0)))
+	lines.append("District heat: %d%%" % heat_pct)
 	if unsealed:
-		_tip_text += " | OT %.1f" % [ot]
+		lines.append("OVERTIME ×%.1f — the city is done tolerating you. Leave." % ot)
 	if loot > 0:
-		_tip_text += " | LOOT +%dR" % [loot]
+		lines.append("Loot rarity +%d from the danger" % loot)
+	_tip_text = "\n".join(lines)
 
 	# Keep inline detail empty (prevents HUD stretching if label exists)
 	if _detail != null:

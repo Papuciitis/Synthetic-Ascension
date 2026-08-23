@@ -19,6 +19,7 @@ class_name HudGateOverlayController
 var _gate_overlay: Control = null
 var _gate_arrow: Control = null
 var _gate_arrow_tex: Control = null
+var _gate_distance_label: Label = null
 var _gate_ready_overlay: Control = null
 
 var _res_bar: ProgressBar = null
@@ -175,6 +176,24 @@ func _update_gate_arrow(delta: float) -> void:
 	var pos: Vector2 = center + nd * t
 
 	_gate_arrow.position = pos - (_gate_arrow.size * 0.5)
+
+	# Distance language: direction alone leaves the player guessing how far.
+	var arrow_player := get_tree().get_first_node_in_group("player") as Node2D
+	if arrow_player != null:
+		if _gate_distance_label == null or not is_instance_valid(_gate_distance_label):
+			_gate_distance_label = Label.new()
+			_gate_distance_label.add_theme_font_size_override("font_size", 12)
+			_gate_distance_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
+			_gate_distance_label.add_theme_constant_override("outline_size", 3)
+			_gate_distance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_gate_arrow.add_child(_gate_distance_label)
+		# 64px ≈ one world meter (cell size).
+		var meters := int(arrow_player.global_position.distance_to(target_world) / 64.0)
+		_gate_distance_label.text = "%dm" % meters
+		_gate_distance_label.position = Vector2(
+			(_gate_arrow.size.x - _gate_distance_label.size.x) * 0.5,
+			_gate_arrow.size.y + 2.0
+		)
 
 	var target_rot: float = nd.angle() + (PI * 0.5) # ▲ points up by default
 

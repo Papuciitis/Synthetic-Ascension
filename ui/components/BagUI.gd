@@ -207,6 +207,9 @@ func _build_slots(grid_slot_count: int = BagInventory.SLOT_COUNT) -> void:
 			g.discard_requested.connect(cb_discard)
 		if not g.equip_requested.is_connected(cb_equip):
 			g.equip_requested.connect(cb_equip)
+		var cb_interact := Callable(self, "_on_slot_interaction")
+		if not g.interaction_requested.is_connected(cb_interact):
+			g.interaction_requested.connect(cb_interact)
 
 	# clicking empty space in quick bar toggles too
 	if not quick_bar.gui_input.is_connected(_on_quickbar_gui_input):
@@ -280,6 +283,28 @@ func _on_discard_requested(slot_index: int) -> void:
 	# Use mouse position for now; world listener decides final spawn position
 	var mouse: Vector2 = get_viewport().get_mouse_position()
 	_router.drop_from(_bag, slot_index, mouse)
+
+
+func _on_slot_interaction(slot_index: int, button: int, _double_click: bool, _shift: bool, ctrl: bool) -> void:
+	# Lock toggling in the RUN bag, not just the hub screens: BagSlot
+	# reserves Ctrl and refuses locked stacks, but nothing listened, so
+	# locked items were silently inert in-run.
+	if _bag == null or slot_index < 0 or slot_index >= _bag.get_slot_count():
+		return
+	var inst: ItemInstance = _bag.get_at(slot_index)
+	if inst == null:
+		return
+	if ctrl and button == MOUSE_BUTTON_LEFT:
+		inst.toggle_locked()
+		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit(
+				"Item locked · protected from equip, discard and sale." if inst.locked else "Item unlocked.",
+				2.0
+			)
+		_refresh()
+	elif inst.locked and button == MOUSE_BUTTON_LEFT:
+		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit("Item locked · Ctrl-click to unlock.", 2.0)
 
 
 func _on_equip_requested(bag_slot_index: int) -> void:
