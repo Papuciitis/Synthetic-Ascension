@@ -671,13 +671,14 @@ func _connect_test_tools() -> void:
 	get_node(base + "OpeningModes/Replay").pressed.connect(func() -> void: tools.call("set_next_run_full_replay"))
 	get_node(base + "OpeningModes/Reset").pressed.connect(func() -> void: tools.call("reset_opening_history"))
 	get_node(base + "OpeningModes/Legacy").pressed.connect(func() -> void: tools.call("simulate_legacy_opening_save"))
-	for pair in [["Synthesis", 3], ["Target", 4], ["Construct", 5], ["Officer", 6], ["Death", 7], ["Bren", 8]]:
+	# Phase ints follow OpeningSequenceController.Phase (ADMISSION inserted at 2).
+	for pair in [["Synthesis", 4], ["Target", 5], ["Construct", 6], ["Officer", 7], ["Death", 8], ["Bren", 9]]:
 		get_node(base + "OpeningPhases/" + pair[0]).pressed.connect(
 			func() -> void: tools.call("restart_opening", "full", pair[1])
 		)
 	for response in ["Analytical", "Decisive", "Protective", "Withdrawn"]:
 		get_node(base + "Responses/" + response).pressed.connect(
-			func() -> void: tools.call("restart_opening", "full", 2, response.to_lower())
+			func() -> void: tools.call("restart_opening", "full", 3, response.to_lower())
 		)
 	for pair in [["Two", 2], ["Five", 5], ["Ten", 10]]:
 		get_node(base + "Segments/" + pair[0]).pressed.connect(

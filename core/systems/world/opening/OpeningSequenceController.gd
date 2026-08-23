@@ -8,6 +8,7 @@ signal sequence_finished
 enum Phase {
 	NONE,
 	HISTORICAL,
+	ADMISSION,
 	BREN,
 	SYNTHESIS,
 	CALIBRATION,
@@ -105,6 +106,10 @@ func _run_full() -> void:
 		_set_phase(Phase.HISTORICAL)
 		await _presentation.present_historical(Global.mortal_name)
 		await get_tree().create_timer(0.35, true, false, true).timeout
+
+	if resume_phase <= Phase.ADMISSION:
+		_set_phase(Phase.ADMISSION)
+		await _run_admission_walk()
 
 	if resume_phase <= Phase.BREN:
 		_set_phase(Phase.BREN)
@@ -206,6 +211,46 @@ func _run_full() -> void:
 		_level.opening_complete_bren()
 		await _presentation.present_follower(OpeningSequenceData.FOLLOWER_BODY)
 		Global.opening_follower_explanation_seen = true
+
+func _run_admission_walk() -> void:
+	# Beats 1-2: the institution while it is still normal, then the first
+	# wrongness. The player walks freely (attack locked); Level1 milestone
+	# areas drive the beats, this loop presents them.
+	var warden := _spawn_actor(
+		&"desk_warden",
+		_level.get_opening_anchors().get("desk", _player.global_position) as Vector2,
+		null, false, 8.0
+	)
+	if warden != null:
+		warden.requires_manual_fire = true
+	_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+	_set_player_lock(false, true)
+	while Global != null and not Global.has_segment1_milestone(&"lab_door"):
+		var reached_id: StringName = await _level.milestone_reached
+		match reached_id:
+			&"admitted":
+				_set_player_lock(true, true)
+				await _presentation.present_announcement(
+					OpeningSequenceData.ADMISSION_DESK_TITLE,
+					OpeningSequenceData.admission_desk_body(Global.mortal_name)
+				)
+				_set_player_lock(false, true)
+				_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+			&"ward_flicker":
+				_set_player_lock(true, true)
+				if SfxManager != null and SfxManager.has_method("play_ui"):
+					SfxManager.play_ui(&"ui_error")
+				await _presentation.present_announcement(
+					OpeningSequenceData.FLICKER_TITLE,
+					OpeningSequenceData.FLICKER_BODY
+				)
+				_set_player_lock(false, true)
+				_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+			&"lab_door":
+				break
+	_presentation.hide_prompt()
+	_set_player_lock(true, true)
+
 
 func _run_short() -> void:
 	_set_phase(Phase.SYNTHESIS)

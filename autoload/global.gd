@@ -27,8 +27,11 @@ const PATH_SAVE_SELECT := UI_DIR + "/screens/SaveSelect.tscn"
 const PATH_BASE := UI_DIR + "/screens/base.tscn"
 const PATH_GAME := SCENES_DIR + "/game.tscn"
 const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
-const SEGMENT1_LAYOUT_VERSION: int = 2
-const OPENING_SEQUENCE_VERSION: int = 1
+# v3: story-pass layout - admissions wing added, full-opening start moved to
+# the street entrance. Stale checkpoints and spatial milestones reset.
+const SEGMENT1_LAYOUT_VERSION: int = 3
+# v2: ADMISSION phase inserted after HISTORICAL; saved phase ints >= 2 shift.
+const OPENING_SEQUENCE_VERSION: int = 2
 
 const VFX_DIR := "res://assets/vfx/world/augments"
 const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
@@ -1121,13 +1124,21 @@ func apply_save(save: SaveData) -> void:
 			var passed_synthesis := attempt_segment1_milestones.has(&"synthesis")
 			if attempt_segment > 1 or passed_synthesis:
 				attempt_opening_completed = true
-				attempt_opening_phase = 9
+				attempt_opening_phase = 10
 				attempt_opening_mode = &"legacy"
 				attempt_opening_officer_completed = attempt_segment1_milestones.has(&"first_confrontation")
 				attempt_opening_bren_committed = attempt_segment1_milestones.has(&"assistant_commitment")
 				opening_full_intro_seen = true
 				if attempt_opening_bren_committed:
 					opening_follower_explanation_seen = true
+			attempt_opening_version = OPENING_SEQUENCE_VERSION
+
+		# v1 -> v2: the ADMISSION phase was inserted after HISTORICAL, so every
+		# saved phase from the old BREN (2) up shifts one slot later. Completed
+		# openings only care about the flag; mid-opening saves resume correctly.
+		if attempt_opening_version == 1:
+			if attempt_opening_phase >= 2:
+				attempt_opening_phase += 1
 			attempt_opening_version = OPENING_SEQUENCE_VERSION
 
 		# Checkpoints from the compact recovery layout are unsafe in the rebuilt map.
@@ -1451,7 +1462,7 @@ func on_segment_completed(completed_segment: int) -> void:
 		attempt_segment1_resonance = 0.0
 		attempt_segment1_milestones.clear()
 		attempt_opening_completed = true
-		attempt_opening_phase = 9
+		attempt_opening_phase = 10
 
 	# New segment: reset exploration loot claim state
 	attempt_claimed_loot_ids = PackedInt32Array()
@@ -1544,7 +1555,7 @@ func set_opening_phase(value: int) -> void:
 
 func mark_opening_completed() -> void:
 	attempt_opening_completed = true
-	attempt_opening_phase = 9
+	attempt_opening_phase = 10
 	attempt_opening_version = OPENING_SEQUENCE_VERSION
 	opening_full_intro_seen = true
 	request_autosave(0.1)

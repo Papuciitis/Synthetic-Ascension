@@ -165,6 +165,30 @@ func _run() -> void:
 			func(item: Dictionary) -> bool: return bool(item["done"])
 		)
 		_check(all_done, "READY checklist shows every item done")
+	# Admissions wing: geometry, milestone arms, and full-opening start rules.
+	var wall_kind: Dictionary = level1.get("_wall_kind")
+	_check(wall_kind.has(Vector2i(-2, 31)), "wing west wall exists")
+	_check(wall_kind.has(Vector2i(21, 44)), "wing east wall exists")
+	_check(not wall_kind.has(Vector2i(9, 45)), "street entrance gap is open")
+	_check(not wall_kind.has(Vector2i(15, 30)), "lab door gap is open")
+	_check(wall_kind.has(Vector2i(13, 30)) and wall_kind.has(Vector2i(17, 30)), "lab door is framed")
+
+	var reached_ids: Array = []
+	level1.connect("milestone_reached", func(id: StringName) -> void: reached_ids.append(id))
+	level1.call("_on_milestone_reached", &"admitted")
+	_check(bool(global.call("has_segment1_milestone", &"admitted")), "admissions milestone records")
+	_check(reached_ids.has(&"admitted"), "milestone_reached signal fires")
+
+	global.set("attempt_opening_completed", false)
+	global.set("attempt_opening_mode", &"full")
+	global.set("attempt_opening_phase", 0)
+	_check(bool(level1.call("_opening_wants_entrance_start")), "full opening starts at the entrance")
+	global.set("attempt_opening_phase", 4)
+	_check(not bool(level1.call("_opening_wants_entrance_start")), "post-admission resume starts in the lab corridor")
+	global.set("attempt_opening_mode", &"short")
+	global.set("attempt_opening_phase", 0)
+	_check(not bool(level1.call("_opening_wants_entrance_start")), "short mode keeps the corridor start")
+	global.set("attempt_opening_completed", true)
 	_finish()
 
 

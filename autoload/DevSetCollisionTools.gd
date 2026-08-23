@@ -160,10 +160,10 @@ func restart_opening(mode: String, phase: int = 0, response: String = "") -> voi
 	Global.attempt_segment1_milestones.clear()
 	Global.attempt_opening_version = Global.OPENING_SEQUENCE_VERSION
 	Global.attempt_opening_mode = StringName(mode)
-	Global.attempt_opening_phase = clampi(phase, 0, 8)
+	Global.attempt_opening_phase = clampi(phase, 0, 9)
 	Global.attempt_opening_completed = false
-	Global.attempt_opening_officer_completed = phase >= 7
-	Global.attempt_opening_bren_committed = phase >= 8
+	Global.attempt_opening_officer_completed = phase >= 8
+	Global.attempt_opening_bren_committed = phase >= 9
 	Global.debug_opening_mode_override = mode
 	Global.debug_opening_force_phase = phase
 	Global.debug_opening_response_override = response
@@ -199,7 +199,7 @@ func jump_to_segment(segment: int) -> void:
 	Global.attempt_segment = maxi(1, segment)
 	if segment > 1:
 		Global.attempt_opening_completed = true
-		Global.attempt_opening_phase = 9
+		Global.attempt_opening_phase = 10
 	Global.save_current_profile()
 	Global.call_deferred("goto_game")
 
@@ -284,18 +284,19 @@ func _build_panel() -> void:
 	modes.add_child(_button("Legacy save", simulate_legacy_opening_save))
 	var phases := HBoxContainer.new()
 	root.add_child(phases)
-	phases.add_child(_button("Synthesis", func() -> void: restart_opening("full", 3)))
-	phases.add_child(_button("Target", func() -> void: restart_opening("full", 4)))
-	phases.add_child(_button("Construct", func() -> void: restart_opening("full", 5)))
-	phases.add_child(_button("Officer", func() -> void: restart_opening("full", 6)))
-	phases.add_child(_button("Death", func() -> void: restart_opening("full", 7)))
-	phases.add_child(_button("Bren", func() -> void: restart_opening("full", 8)))
+	phases.add_child(_button("Admission", func() -> void: restart_opening("full", 2)))
+	phases.add_child(_button("Synthesis", func() -> void: restart_opening("full", 4)))
+	phases.add_child(_button("Target", func() -> void: restart_opening("full", 5)))
+	phases.add_child(_button("Construct", func() -> void: restart_opening("full", 6)))
+	phases.add_child(_button("Officer", func() -> void: restart_opening("full", 7)))
+	phases.add_child(_button("Death", func() -> void: restart_opening("full", 8)))
+	phases.add_child(_button("Bren", func() -> void: restart_opening("full", 9)))
 	var responses := HBoxContainer.new()
 	root.add_child(responses)
-	responses.add_child(_button("Analytical", func() -> void: restart_opening("full", 2, "analytical")))
-	responses.add_child(_button("Decisive", func() -> void: restart_opening("full", 2, "decisive")))
-	responses.add_child(_button("Protective", func() -> void: restart_opening("full", 2, "protective")))
-	responses.add_child(_button("Withdrawn", func() -> void: restart_opening("full", 2, "withdrawn")))
+	responses.add_child(_button("Analytical", func() -> void: restart_opening("full", 3, "analytical")))
+	responses.add_child(_button("Decisive", func() -> void: restart_opening("full", 3, "decisive")))
+	responses.add_child(_button("Protective", func() -> void: restart_opening("full", 3, "protective")))
+	responses.add_child(_button("Withdrawn", func() -> void: restart_opening("full", 3, "withdrawn")))
 	var segments := HBoxContainer.new()
 	root.add_child(segments)
 	segments.add_child(_button("Segment 2", func() -> void: jump_to_segment(2)))

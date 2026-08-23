@@ -1,6 +1,10 @@
 extends Node2D
 class_name Level1Builder
 
+# Emitted after a milestone is processed; the opening controller awaits this
+# to sequence the admissions-wing beats.
+signal milestone_reached(id: StringName)
+
 ## Deterministic, authored Segment 1 layout.
 ##
 ## The route deliberately bends through five readable spaces:
@@ -47,6 +51,13 @@ const _TEX_VEG_OVER := preload("res://assets/world/vegetation/veg_overgrowth_isl
 const _TEX_VEG_TREE := preload("res://assets/world/vegetation/veg_dead_tree_01.png")
 const _MILESTONE_AREA := preload("res://core/systems/world/Level1MilestoneArea.gd")
 
+# The public wing beats before the incident (story pass beats 1-2). All
+# three are record-only: no resonance, no cards from the builder - the
+# opening controller presents them during the full prologue.
+const M_ADMITTED: StringName = &"admitted"
+const M_WARD_FLICKER: StringName = &"ward_flicker"
+const M_LAB_DOOR: StringName = &"lab_door"
+
 const M_SYNTHESIS: StringName = &"synthesis"
 const M_FIRST_CONFRONTATION: StringName = &"first_confrontation"
 const M_WARDSTONE_1: StringName = &"wardstone_1"
@@ -63,6 +74,9 @@ const B_OUTER_APPROACH: StringName = &"outer_approach"
 
 const FACILITY_TL := Vector2i(-20, -4)
 const FACILITY_SIZE := Vector2i(42, 35)
+# Public admissions wing south of the facility: reception, registry gallery,
+# the "normal institution" the run opens inside before anything goes wrong.
+const ADMISSIONS_RECT := Rect2i(Vector2i(-2, 31), Vector2i(24, 15))
 const COURTYARD_RECT := Rect2i(Vector2i(-18, -23), Vector2i(37, 19))
 const SERVICE_RECT := Rect2i(Vector2i(19, -35), Vector2i(35, 30))
 const APPROACH_RECT := Rect2i(Vector2i(12, -60), Vector2i(43, 25))
@@ -89,6 +103,9 @@ var _playable_regions: Array[Rect2i] = []
 var _spawn_exclusions: Array[Rect2i] = []
 
 var _start_cell := Vector2i(15, 25)
+# Full-prologue runs open at the street entrance of the admissions wing;
+# short/skip veterans keep starting beside the apparatus corridor.
+var _entrance_cell := Vector2i(9, 43)
 var _wardstone_1_cell := Vector2i(-11, 0)
 var _wardstone_2_cell := Vector2i(43, -28)
 var _gate_cell := Vector2i(20, -50)
@@ -187,12 +204,14 @@ func _plan_level() -> void:
 	_spawn_exclusions.clear()
 
 	_playable_regions.append(Rect2i(FACILITY_TL + Vector2i(1, 1), FACILITY_SIZE - Vector2i(2, 2)))
+	_playable_regions.append(ADMISSIONS_RECT)
 	_playable_regions.append(COURTYARD_RECT)
 	_playable_regions.append(SERVICE_RECT)
 	_playable_regions.append(APPROACH_RECT)
 	_spawn_exclusions.append(CLOSED_WAREHOUSE_RECT)
 
 	_plan_facility()
+	_plan_admissions_wing()
 	_plan_containment_courtyard()
 	_plan_service_district()
 	_plan_outer_approach()
@@ -209,7 +228,9 @@ func _plan_facility() -> void:
 	for x in range(x0, x1 + 1):
 		if x < -8 or x > -5:
 			_add_wall_cell(Vector2i(x, y0), _facility_window(Vector2i(x, y0)))
-		_add_wall_cell(Vector2i(x, y1), false)
+		# The lab door: the only connection to the public admissions wing.
+		if x < 14 or x > 16:
+			_add_wall_cell(Vector2i(x, y1), false)
 	for y in range(y0, y1 + 1):
 		_add_wall_cell(Vector2i(x0, y), _facility_window(Vector2i(x0, y)))
 		_add_wall_cell(Vector2i(x1, y), _facility_window(Vector2i(x1, y)))
@@ -243,6 +264,39 @@ func _plan_facility() -> void:
 	_define_barrier(B_ARCHIVE_EXIT, [
 		Vector2i(-8, -4), Vector2i(-7, -4), Vector2i(-6, -4), Vector2i(-5, -4),
 	])
+
+
+func _plan_admissions_wing() -> void:
+	var x0 := ADMISSIONS_RECT.position.x
+	var y0 := ADMISSIONS_RECT.position.y
+	var x1 := ADMISSIONS_RECT.end.x - 1
+	var y1 := ADMISSIONS_RECT.end.y - 1
+
+	# Perimeter. North side is the facility's own south wall (lab door cut
+	# there); the street entrance is a three-cell gap in the south wall.
+	for x in range(x0, x1 + 1):
+		if x < 8 or x > 10:
+			_add_wall_cell(Vector2i(x, y1), false)
+	for y in range(y0, y1):
+		_add_wall_cell(Vector2i(x0, y), _facility_window(Vector2i(x0, y)))
+		_add_wall_cell(Vector2i(x1, y), _facility_window(Vector2i(x1, y)))
+
+	# Reception (south half) and registry gallery (north half), split by a
+	# divider that funnels traffic toward the lab door.
+	for x in range(x0 + 1, x1):
+		if x < 13 or x > 16:
+			_add_wall_cell(Vector2i(x, 37), false)
+
+	# The night desk, notice boards and waiting benches: institutional
+	# normalcy as furniture.
+	for x in range(5, 10):
+		_add_half_cell(Vector2i(x, 40))
+	for c in [
+		Vector2i(x0 + 1, 33), Vector2i(x0 + 1, 35),
+		Vector2i(x1 - 1, 33), Vector2i(x1 - 1, 35),
+		Vector2i(2, 43), Vector2i(15, 43), Vector2i(18, 34),
+	]:
+		_add_half_cell(c)
 
 
 func _plan_containment_courtyard() -> void:
@@ -400,6 +454,8 @@ func _build_ground_stamps() -> void:
 	# few regional stamps establish stage identity without thousands of tiles.
 	_stamp_ground(FACILITY_TL, FACILITY_SIZE, _TEX_STONE, 0.96, 0.56)
 	_stamp_ground(FACILITY_TL + Vector2i(1, 1), FACILITY_SIZE - Vector2i(2, 2), _TEX_STONE, 0.98, 0.48)
+	# Admissions wing: brighter public stone than the research floor.
+	_stamp_ground(ADMISSIONS_RECT.position, ADMISSIONS_RECT.size, _TEX_STONE, 0.97, 0.66)
 	_stamp_ground(COURTYARD_RECT.position, COURTYARD_RECT.size, _TEX_COBBLE, 0.90, 0.64)
 	_stamp_ground(Vector2i(19, -23), Vector2i(35, 18), _TEX_DIRT_PATH, 0.72, 0.68)
 	_stamp_ground(Vector2i(20, -35), Vector2i(34, 12), _TEX_COBBLE, 0.78, 0.61)
@@ -629,6 +685,10 @@ func _place_wardstones_and_gate() -> void:
 
 
 func _place_story_areas() -> void:
+	# Admissions-wing beats (normalcy, wrongness, handoff to the prologue).
+	_make_milestone_area(M_ADMITTED, Vector2i(9, 41), Vector2i(7, 3), false)
+	_make_milestone_area(M_WARD_FLICKER, Vector2i(15, 34), Vector2i(7, 4), false)
+	_make_milestone_area(M_LAB_DOOR, Vector2i(15, 30), Vector2i(5, 3), false)
 	_make_milestone_area(M_SYNTHESIS, Vector2i(12, 21), Vector2i(5, 5), true)
 	# Full-height threshold strips make the two story beats unavoidable while
 	# preserving freedom inside each combat space.
@@ -683,6 +743,8 @@ func _on_milestone_reached(id: StringName) -> void:
 	if _opening_sequence_active and id in [M_SYNTHESIS, M_ASSISTANT]:
 		return
 	match id:
+		M_ADMITTED, M_WARD_FLICKER, M_LAB_DOOR:
+			_record_milestone(id)
 		M_SYNTHESIS:
 			if _grant_milestone(M_SYNTHESIS, resonance_synthesis):
 				_blocking_card(
@@ -724,6 +786,7 @@ func _on_milestone_reached(id: StringName) -> void:
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
+	milestone_reached.emit(id)
 
 
 func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
@@ -957,6 +1020,8 @@ func get_opening_anchors() -> Dictionary:
 		"construct": _cell_to_world(Vector2i(9, 21)),
 		"officer": _cell_to_world(Vector2i(16, 18)),
 		"records": _cell_to_world(Vector2i(8, 17)),
+		"entrance": _cell_to_world(_entrance_cell),
+		"desk": _cell_to_world(Vector2i(7, 39)),
 	}
 
 func begin_opening_sequence() -> void:
@@ -1073,6 +1138,8 @@ func _move_player_to_start() -> void:
 	if player == null:
 		return
 	var spawn_here := _cell_to_world(_start_cell)
+	if _opening_wants_entrance_start():
+		spawn_here = _cell_to_world(_entrance_cell)
 	if Global != null and Global.attempt_checkpoint_pos != Vector2.INF:
 		if _is_valid_checkpoint(Global.attempt_checkpoint_pos):
 			spawn_here = Global.attempt_checkpoint_pos
@@ -1084,6 +1151,18 @@ func _move_player_to_start() -> void:
 		player.call("set_checkpoint", spawn_here, true)
 	else:
 		player.global_position = spawn_here
+
+
+# OpeningSequenceController.Phase.ADMISSION; kept as a plain int so the
+# builder does not preload the controller script.
+const OPENING_PHASE_ADMISSION := 2
+
+func _opening_wants_entrance_start() -> bool:
+	if Global == null or Global.attempt_opening_completed:
+		return false
+	if String(Global.attempt_opening_mode) != "full":
+		return false
+	return int(Global.attempt_opening_phase) <= OPENING_PHASE_ADMISSION
 
 
 func _is_valid_checkpoint(world_pos: Vector2) -> bool:
