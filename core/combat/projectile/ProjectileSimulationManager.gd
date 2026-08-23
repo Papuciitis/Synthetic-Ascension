@@ -59,9 +59,14 @@ func _ready() -> void:
 	z_index = 200
 	add_to_group(&"projectile_simulation_manager")
 	_build_renderer()
-	set_physics_process(true)
+	# The sim is fully physics-server-free (grid DDA for walls, data-side
+	# spatial-grid queries for enemies), so it runs in _process: exactly one
+	# swept-segment step per RENDERED frame. In _physics_process it ran 2-4x
+	# per frame whenever the physics step exceeded 16.7ms (catch-up), which
+	# is precisely when a 550-bullet torrent needs the time back.
+	set_process(true)
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
 	var started_us := Time.get_ticks_usec()
 	var stress_enabled: bool = Global != null and Global.debug_projectile_stress_test
 	if stress_enabled != _last_stress_enabled:

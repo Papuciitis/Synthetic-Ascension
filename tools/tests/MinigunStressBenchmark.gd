@@ -11,13 +11,18 @@ extends Node
 class Driver:
 	extends Node
 
-	# Stage 2 repeats the horde with unkillable enemies: hits still land but
-	# nothing dies, separating the hit pipeline from death + respawn churn.
-	# Stage 3 repeats the immortal horde with impact VFX suppressed entirely,
-	# attributing the impact system's exact share of the frame.
-	const STAGES: Array[int] = [0, 250, 250, 250]
-	const IMMORTAL: Array[bool] = [false, false, true, true]
-	const NO_IMPACTS: Array[bool] = [false, false, false, true]
+	# Stage plan (every enemy stage holds 250):
+	#   0 torrent only          — pure projectile sim + render cost
+	#   1 horde only (no stress)— in-run baseline for diffing the later stages
+	#   2 massacre              — torrent + mortal horde (death/respawn churn)
+	#   3 immortal              — hits land, nothing dies (hit pipeline share)
+	#   4 immortal, no impacts  — impact system share
+	# Drops and stray per-hit nodes are swept between stages so each stage
+	# measures its own condition, not the previous stage's leftovers.
+	const STAGES: Array[int] = [0, 250, 250, 250, 250]
+	const STRESS: Array[bool] = [true, false, true, true, true]
+	const IMMORTAL: Array[bool] = [false, false, false, true, true]
+	const NO_IMPACTS: Array[bool] = [false, false, false, false, true]
 	const STAGE_HOLD_SEC := 20.0
 	const STAGE_SPINUP_SEC := 4.0
 
@@ -35,6 +40,8 @@ class Driver:
 	var _impacts: Array[float] = []
 	var _hits: Array[float] = []
 	var _nodes: Array[float] = []
+	var _render_cpu: Array[float] = []
+	var _render_gpu: Array[float] = []
 	var _spawner: Node = null
 	var _filter: Node = null
 	var _topup_left := 0.0
@@ -70,7 +77,9 @@ class Driver:
 				get_tree().quit(1)
 				return
 			_filter.set("cap_mode", 1)
-			Global.debug_projectile_stress_test = true
+			RenderingServer.viewport_set_measure_render_time(
+				get_viewport().get_viewport_rid(), true
+			)
 			_begin_stage(0)
 			return
 		if _phase != 2:
@@ -102,6 +111,9 @@ class Driver:
 			_hits.append(float(manager.get("_hits_this_frame")) if manager != null else 0.0)
 			_impacts.append(float(_count_impact_nodes()))
 			_nodes.append(float(Performance.get_monitor(Performance.OBJECT_NODE_COUNT)))
+			var vp_rid := get_viewport().get_viewport_rid()
+			_render_cpu.append(RenderingServer.viewport_get_measured_render_time_cpu(vp_rid))
+			_render_gpu.append(RenderingServer.viewport_get_measured_render_time_gpu(vp_rid))
 		elif _sampling:
 			_screenshot_stage()
 			_census()
@@ -129,6 +141,8 @@ class Driver:
 		_impacts.clear()
 		_hits.clear()
 		_nodes.clear()
+		_render_cpu.clear()
+		_render_gpu.clear()
 		_filter.set("custom_total_cap", STAGES[index])
 		if STAGES[index] == 0:
 			_filter.call("disable_all")
@@ -139,11 +153,35 @@ class Driver:
 		var manager := get_node_or_null("/root/ProjectileManager")
 		if manager != null:
 			manager.set("debug_disable_impacts", NO_IMPACTS[index])
-		print("MinigunStressBenchmark: stage %d -> %d enemies%s%s + stress torrent" % [
+			# Re-arm the opening 100-bullet ring whenever stress toggles on.
+			if not STRESS[index]:
+				manager.set("_stress_started", false)
+		Global.debug_projectile_stress_test = STRESS[index]
+		_sweep_stage_leftovers()
+		print("MinigunStressBenchmark: stage %d -> %d enemies%s%s%s" % [
 			index, STAGES[index],
 			" (immortal)" if IMMORTAL[index] else "",
 			" (no impacts)" if NO_IMPACTS[index] else "",
+			" + stress torrent" if STRESS[index] else " (no stress: baseline)",
 		])
+
+	func _sweep_stage_leftovers() -> void:
+		# Drops from a massacre stage otherwise linger into the next stage and
+		# contaminate its draw/node counts.
+		var scene := get_tree().current_scene
+		if scene == null:
+			return
+		var swept := 0
+		for child in scene.get_children():
+			var script: Script = child.get_script() as Script
+			if script == null:
+				continue
+			var file := script.resource_path.get_file()
+			if file == "ItemPickup.gd" or file == "HealthPickup.gd":
+				child.queue_free()
+				swept += 1
+		if swept > 0:
+			print("MinigunStress: swept %d leftover pickups" % swept)
 
 	func _make_population_immortal() -> void:
 		var world := get_node_or_null("/root/EnemyWorld")
@@ -166,16 +204,23 @@ class Driver:
 		img.save_png(dir.path_join("stage_%d.png" % _stage_index))
 
 	func _census() -> void:
-		# One-shot tally of scene-root children so draw-call spikes can be
-		# attributed: per-hit VFX, floating text, pickups all land here.
-		var scene := get_tree().current_scene
-		if scene == null:
-			return
+		# One-shot FULL-TREE tally (script file, else class) so draw-call
+		# spikes can be attributed even when the culprits live under
+		# CanvasLayers or nested inside enemies. Also counts visible
+		# CanvasItems, the population the render thread actually walks.
 		var tally: Dictionary = {}
-		for child in scene.get_children():
-			var script: Script = child.get_script() as Script
+		var canvas_items := 0
+		var stack: Array[Node] = [get_tree().root]
+		while not stack.is_empty():
+			var node: Node = stack.pop_back()
+			for child in node.get_children():
+				stack.push_back(child)
+			var item := node as CanvasItem
+			if item != null and item.visible:
+				canvas_items += 1
+			var script: Script = node.get_script() as Script
 			var key := (
-				script.resource_path.get_file() if script != null else child.get_class()
+				script.resource_path.get_file() if script != null else node.get_class()
 			)
 			tally[key] = int(tally.get(key, 0)) + 1
 		var pairs: Array = []
@@ -183,9 +228,13 @@ class Driver:
 			pairs.append([key, tally[key]])
 		pairs.sort_custom(func(a, b): return int(a[1]) > int(b[1]))
 		var parts: PackedStringArray = []
-		for i in range(mini(10, pairs.size())):
+		for i in range(mini(15, pairs.size())):
 			parts.append("%s=%d" % [pairs[i][0], pairs[i][1]])
-		print("MinigunStress census stage=%d: %s" % [_stage_index, " ".join(parts)])
+		var line := "MinigunStress census stage=%d visible_canvas_items=%d: %s" % [
+			_stage_index, canvas_items, " ".join(parts),
+		]
+		print(line)
+		_report_lines.append(line)
 
 	func _count_impact_nodes() -> int:
 		# Batched impacts live in one renderer under the projectile manager;
@@ -206,17 +255,23 @@ class Driver:
 
 	func _report_stage() -> void:
 		var line := (
-			"MinigunStress: enemies=%d%s frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | projectiles avg %.0f max %.0f | hits/frame avg %.1f | impact_nodes avg %.1f max %.0f | nodes first %.0f last %.0f"
+			"MinigunStress: enemies=%d%s frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process avg %.2f p95 %.2f | physics avg %.2f p95 %.2f | render cpu avg %.2f gpu avg %.2f gpu p95 %.2f | draws p95 %.0f | projectiles avg %.0f max %.0f | hits/frame avg %.1f | impact_nodes avg %.1f max %.0f | nodes first %.0f last %.0f"
 			% [
 				STAGES[_stage_index],
 				(" (immortal)" if IMMORTAL[_stage_index] else "")
-					+ (" (no impacts)" if NO_IMPACTS[_stage_index] else ""),
+					+ (" (no impacts)" if NO_IMPACTS[_stage_index] else "")
+					+ ("" if STRESS[_stage_index] else " (baseline, no stress)"),
 				_frames.size(),
 				_mean(_frames),
 				_pct(_frames, 95.0),
 				_pct(_frames, 99.0),
+				_mean(_process_ms),
 				_pct(_process_ms, 95.0),
+				_mean(_physics_ms),
 				_pct(_physics_ms, 95.0),
+				_mean(_render_cpu),
+				_mean(_render_gpu),
+				_pct(_render_gpu, 95.0),
 				_pct(_draws, 95.0),
 				_mean(_projectiles),
 				_pct(_projectiles, 100.0),
