@@ -53,8 +53,9 @@ func on_attack(
 ) -> void:
 	if state == null or not is_instance_valid(state):
 		return
-	# The shared counter has already advanced for this attack, so the clock read
-	# here is the gap BEFORE it - which is exactly the gap being judged.
+	# The counter has already advanced for this attack, so time_since_attack is
+	# 0.0 here and testing it answered "true" unconditionally. state.last_attack_gap
+	# is the gap that preceded this attack, which is the gap actually being judged.
 	_stacks = mini(_stacks + 1, MAX_STACKS) if _chain_held() else 1
 	_last_seen_attack = state.attack_index
 
@@ -62,7 +63,7 @@ func on_attack(
 func _chain_held() -> bool:
 	if _last_seen_attack < 0:
 		return false
-	return state.time_since_attack <= chain_window()
+	return state.last_attack_gap <= chain_window()
 
 
 func _process(delta: float) -> void:
@@ -70,8 +71,15 @@ func _process(delta: float) -> void:
 		return
 	global_position = player_position()
 
-	# The chain breaks on its own once the window lapses; nothing has to fire.
+	# Letting the chain lapse DISCHARGES it. Without this the rule was a pure
+	# stat wearing a condition: "keep attacking" is what every build already
+	# does, so the Haste was unconditional, the advertised cost did not exist,
+	# and on melee (cooldown 0.0, so haste_mul never applies) it did nothing at
+	# all. Now the fever is a decision - ride it for the attack rate, or break
+	# rhythm on purpose to spend it - and the discharge is damage, which melee
+	# feels exactly as much as anything else does.
 	if _stacks > 0 and state.time_since_attack > chain_window():
+		_discharge(_stacks)
 		_stacks = 0
 
 	if _stacks != _drawn_stacks:
@@ -86,10 +94,41 @@ func _process(delta: float) -> void:
 var _pulse: float = 0.0
 
 
+## Radius and damage both scale with the stacks you were holding, so breaking
+## rhythm at six is a real payout and breaking it at one is barely a flinch.
+const BREAK_RADIUS: float = 92.0
+const BREAK_RADIUS_PER_STACK: float = 22.0
+const BREAK_DAMAGE_PER_STACK: float = 0.55
+const BREAK_KNOCKBACK: float = 190.0
+
+
+func break_radius(stacks: int) -> float:
+	return BREAK_RADIUS + BREAK_RADIUS_PER_STACK * float(stacks)
+
+
+func _discharge(stacks: int) -> void:
+	if stacks <= 0:
+		return
+	var centre := player_position()
+	var radius := break_radius(stacks)
+	var multiplier: float = BREAK_DAMAGE_PER_STACK * float(stacks) * potency()
+	damage_radius(centre, radius, attack_damage(multiplier), BREAK_KNOCKBACK)
+	var vfx := VFX_RetaliationNova.new()
+	vfx.setup(centre, radius)
+	spawn_world_node(vfx, centre)
+	popup("FEVER BREAK x%d" % stacks, noun_colour(&"cadence"), 1.10 + 0.06 * float(stacks))
+
+
 func describe() -> String:
 	return (
-		"Attacks fired within %.2fs of the last stack Fever: +%d%% Haste each, up to +%d%%. Let the chain lapse and it all goes at once."
-		% [chain_window(), int(round(HASTE_PER_STACK * potency() * 100.0)), int(round(max_haste() * 100.0))]
+		"Attacks fired within %.2fs of the last stack Fever: +%d%% Haste each, up to +%d%%. Let the chain lapse and the whole fever breaks at once - %d%% of your attack damage per stack in a %d px burst."
+		% [
+			chain_window(),
+			int(round(HASTE_PER_STACK * potency() * 100.0)),
+			int(round(max_haste() * 100.0)),
+			int(round(BREAK_DAMAGE_PER_STACK * potency() * 100.0)),
+			int(round(break_radius(MAX_STACKS))),
+		]
 	)
 
 

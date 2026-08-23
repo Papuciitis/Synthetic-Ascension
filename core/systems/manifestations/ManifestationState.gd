@@ -246,6 +246,7 @@ var _sources: Dictionary = {}
 ## channel -> { owner_key -> amount }. See CHANNEL_* above.
 var _contributions: Dictionary = {}
 
+var last_attack_gap: float = 999.0
 var _momentum_odometer: float = 0.0
 var _last_position: Vector2 = Vector2.ZERO
 var _has_last_position: bool = false
@@ -460,6 +461,10 @@ func break_stability() -> void:
 func note_attack() -> void:
 	if not has_source(&"cadence"):
 		return
+	# The gap that PRECEDED this attack. Read inside on_attack, time_since_attack
+	# is always exactly 0.0 - the runner advances the beat before it dispatches -
+	# so any rule judging "did the chain hold?" against it was answering itself.
+	last_attack_gap = time_since_attack
 	attack_index += 1
 	time_since_attack = 0.0
 	note_channel_touched(&"attack_index")

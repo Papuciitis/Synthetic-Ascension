@@ -81,9 +81,9 @@ func _exit_tree() -> void:
 
 
 func apply_to_stats(s: Stats) -> void:
-	# Luck is published to the ledger and applied by the runner; only Power is
-	# this rule's own contribution to the stat pass.
-	_publish_luck()
+	# Luck reaches the game through the ledger and the runner reads that BEFORE
+	# this hook runs, so it is published at the point of change in _restat().
+	# Only Power is this rule's own contribution to the stat pass.
 	if s == null or _stacks.is_empty():
 		return
 
@@ -135,6 +135,14 @@ func _add_stack(refresh_all: bool, shout: String) -> void:
 
 
 func _restat() -> void:
+	# Publish BEFORE asking for the recompute. The runner folds
+	# state.bonus_luck() into the stat pass before it iterates apply_to_stats(),
+	# so publishing from inside that hook meant the ledger was always one
+	# recompute behind: the player saw "UNCHARTED x1" and a tooltip promising
+	# +6% Luck while Global.run_luck had not moved, and kept the full five-stack
+	# Luck after the last chart expired. Power was correct, so the two halves of
+	# one rule disagreed.
+	_publish_luck()
 	if player == null or not is_instance_valid(player):
 		return
 	if not player.has_method("refresh_run_state"):
