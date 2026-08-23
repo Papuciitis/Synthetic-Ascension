@@ -1,8 +1,8 @@
-# Rarity & Merge Mass — spec v2 (2026-08-23, post-veto)
+# Rarity & Merge Mass — spec v3 (2026-08-23, GREENLIT)
 
-Status: v1 was reviewed line-by-line by the designer; this version bakes
-in every ruling. Remaining open items are marked OPEN. Code changes
-already landed are marked LANDED.
+Status: baseline design, second designer pass complete. The core math
+package is IMPLEMENTED with invariant tests (commit `merge-math v2`).
+Remaining work is UI (K6), content and tuning — not foundational design.
 
 The design promise (July, verbatim intent):
 
@@ -27,8 +27,12 @@ mass  = quality(material) × 2^((R_material − R_destination) / H)
 meter += mass
 ```
 
-**H = 1.5 — DECIDED** (first playtest value; revisit against real drop
-frequency). Destination is always the higher-rarity instance.
+**H = 1.5 — LANDED** (first playtest value; revisit against real drop
+frequency). Destination is always the higher-rarity instance —
+auto-swap LANDED as a *payload* swap: the surviving object keeps its
+equip slot, lock and UI identity while adopting the higher progression
+(designer ruling: mathematical destination, never a literal object
+swap). Identity is pinned by test.
 
 ### 1.2 Quality of material
 
@@ -42,7 +46,7 @@ survivor (§1.5), so widening would triple-reward the same lucky drop —
 and would make severe curses premium merge mass on top of everything
 else. Optional later test: 0.70–1.30, nothing wider.
 
-### 1.3 Thresholds and overflow — CORRECTED for H ≠ 1
+### 1.3 Thresholds and overflow — LANDED
 
 One rank costs `meter = 1.0` in units relative to the current rank; on
 crossing, leftover is re-measured against the next rank:
@@ -51,20 +55,16 @@ crossing, leftover is re-measured against the next rank:
 meter = (meter − 1.0) × 2^(−1/H)        (= ×0.63 at H = 1.5)
 ```
 
-The code's current `× 0.5` is only coherent at H = 1 (review finding):
-the conversion factor and the gap rate must be the same number or the
-"one mechanism" property breaks. When H becomes 1.5 in code, the
-overflow constant changes with it. Large merges can cross multiple
-ranks (E13).
+In code (`RarityMath.overflow_factor()`), with a test asserting the
+ratio. Large merges can cross multiple ranks (E13).
 
-### 1.4 Consuming a partially-fed duplicate — CORRECTED
+### 1.4 Consuming a partially-fed duplicate — LANDED
 
 Material's stored meter transfers as mass at the material's **own**
-rank scale (its meter was accumulated in units of its own next-rank
-threshold). The code currently transfers at `R_material + 1` scale,
-over-crediting by 2^(1/H) — 2× today (review finding; divergence
-§6.4). Correct model: path-independence — merging a half-fed item
-yields exactly what feeding both copies directly would have.
+rank scale. **Path-independence is a hard invariant with a 1e-6
+test**: merging a half-fed carrier yields exactly what feeding both
+copies directly would have (the old `R+1` scale made carrier-first
+pre-merging create 29–100% free mass).
 
 ### 1.5 Roll identity — **CHANGED per ruling D1, LANDED**
 
@@ -153,12 +153,29 @@ serious material · same rarity = jackpot.**
   garbage; no, it isn't worthless").
 - NEG feeds must state the direction in force: "stabilizing (mildest
   survives)" vs "Corruption Engine: deepening (most severe survives)".
+- **UX split (designer ruling):** the FULL transaction line lives in
+  bag/tooltip/manual compare only. Combat auto-feeds show a compact,
+  short-lived element — `Conduit Heart R5 ▰▰▰▰▰▰▰▰ 80% (+18%)` — and
+  successive feeds of the same item aggregate into one element. The
+  math is transparent when you want it, never screaming over a
+  500-enemy screen.
 
-## 5. OPEN — discrete vs continuous rarity power
+## 5. Continuous rarity power — DECIDED YES, LANDED
 
-Requested investigation, with real data. Today stats only change on
-rank-up (`_recompute_flat_mods` runs in `_upgrade()`), so "R0 at 60%"
-is progression, not power. Continuous power would be:
+Designer ruling: YES — it makes the original "R0 + R0 = stronger R0"
+promise literally true, and distant-rarity feeding stops feeling
+meaningless because the stat moves immediately. Landed with the three
+required conditions:
+
+1. **Rate-stat guardrails in the same patch** — speed/haste rarity
+   contributions plateau (~R13, `RATE_STAT_POTENCY_CAP`). LANDED.
+2. **Current HP unchanged when Max HP grows** — verified: the player
+   only clamps HP downward (`hp = min(hp, max_hp)`); growth never
+   heals. Pinned as intended behavior.
+3. **Power computed only from the normalized post-merge state** —
+   recompute runs once, after the rank-crossing loop. LANDED.
+
+The model:
 
 ```
 effective_rarity = rarity + upgrade_meter
@@ -184,11 +201,10 @@ Observations:
 - Risk: fractional potency also drips speed/haste items constantly —
   the §1.6 guardrails matter more under this model.
 
-RECOMMENDATION: adopt continuous power at the same time as K6 UI, in
-one commit, so the meter is visible AND real simultaneously. Decide:
-**yes / no / prototype first.**
+The K6 UI (below) should now show the stat delta per feed — the meter
+is real, so show what it did.
 
-## 6. Divergences to fix (expanded after adversarial review)
+## 6. Divergences — ALL RESOLVED
 
 1. **ALL roll-based feeds bypass the gap math**, not just equip-feed:
    `feed_roll()` fabricates the incoming at the destination's own

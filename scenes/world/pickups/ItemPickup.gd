@@ -220,7 +220,8 @@ func _try_pickup() -> void:
 				_dbg(["[EQUIP NEW]", "slot=", slot, "inst_id=", equipped_inst.get_instance_id()])
 				consumed = true
 
-			# Same id + rarity + polarity -> feed roll into equipped item
+			# Same id + polarity -> feed roll into equipped item (any rarity:
+			# the merge math prices the gap; ground rolls are rank-0 material)
 			elif equipped2.data != null \
 			and not equipped2.locked \
 			and equipped2.data.id == item_data.id \

@@ -1,7 +1,7 @@
-# NEG buildcraft — archetypes v2 (2026-08-23, post-veto)
+# NEG buildcraft — archetypes v3 (2026-08-23, GREENLIT)
 
-Status: v1 reviewed line-by-line by the designer. All verdicts baked
-in. LANDED = already in code. The target state:
+Status: baseline design after two designer passes. A1 fully landed
+(top-2, merge-deepening, asymptotic levels). The target state:
 
 > Seven players look at the exact same NEG drop and value it for seven
 > different reasons.
@@ -41,8 +41,10 @@ Two separate properties, used consistently by everything below:
 
 ### A1 — Corruption Engine (concentrated severity) — LANDED (v2 form)
 "A conversion chamber with two intake valves."
-Only your **two most severe** active curses feed it: +12% Power per
-100% of their combined severity (cap +30%, +3%/level). **While
+Only your **two most severe** active curses feed it: Power per 100%
+combined severity at an asymptotic level rate — 24% x L/(L+1), so
+L1 = 12%, later levels approach but never reach 24%, no dead levels —
+output capped at +30%. **While
 equipped, NEG merges DEEPEN: the more severe roll survives** — the
 augment changes what item progression means (see rarity spec §1.5).
 Wants: two horrifying curses; the rest of the wardrobe is free.
@@ -111,14 +113,19 @@ timer is melee-only, but the v2 ramp needs no timer at all — deliver
 the bonus through the ItemEffectRunner get_haste_multiplier
 aggregation, reading hp/max_hp and the severity sum directly.
 
-### A6 — Gravemarch polarity rule (set mutation) — KEEP + EXPANDED
-If 3+ equipped Gravemarch pieces are NEG: the set's armor bonus
-becomes a life-drain aura. **The combined active severity of those
-specific pieces drives a secondary characteristic of the aura**
-(radius or pulse rate — NOT raw damage), so deepening THOSE curses is
-set progression: "I want these three pieces cursed, and I might
-deliberately deepen them because my set mutates as a result."
-Pairs intentionally with A1's merge-deepening rule.
+### A6 — Gravemarch polarity rule (set mutation) — CHANGED per ruling
+If 3+ equipped Gravemarch pieces are NEG: the tier-2 "Ballast Frame"
+armor grant becomes a life-drain aura, and **the combined active
+severity of those specific pieces drives a secondary characteristic**
+(radius or pulse rate — NOT raw damage).
+**Local merge mutation (designer ruling — strongest veto of the v2
+round):** while the cursed mutation is active, **NEG Gravemarch
+pieces deepen when fed another NEG Gravemarch copy** — only those
+pieces. Without this, the default stabilize rule made A6 progress
+BACKWARDS (feeding duplicates weakened the aura) unless Corruption
+Engine was equipped: cross-archetype synergy is good, cross-archetype
+dependency is not. A6 alone can now pursue cursed-set progression;
+A1 + A6 still synergizes (Power from the now-horrific pieces).
 Wants: specific set pieces cursed — a wardrobe-slot reason no augment
 provides.
 Implementation note (review finding): the polarity census already
@@ -131,9 +138,11 @@ specifically the tier-2 "Ballast Frame" armor grant.
 - Follower proc: every legitimately NEW NEG instance acquired grants
   a Luck-scaled chance (15% + up to +20% from Luck) of +1 Follower.
 - Resonance: **only the FIRST acquisition of each distinct NEG base
-  item per segment** grants +0.5% Resonance (ruling: per-instance
-  resonance would let enemy farming turn Resonance back into a
-  kill-farm meter — the exact thing the resonance rework killed).
+  item per segment** grants +0.5%, **capped at +4% total per segment**
+  (designer ruling: without a cap, future content growth silently
+  rebalances the Exit Rite — 80 items would mean 40% Resonance from
+  collecting alone; Resonance is pacing and stays bounded; Followers
+  keep proccing indefinitely — that is the economic identity).
   "Explore and collect different forbidden things", not "murder rats
   until twelve cursed boots fall out."
 Implementation notes (review findings): the reward fires at the
@@ -167,18 +176,29 @@ in one build triple-dips a single all-NEG wardrobe. Rules:
   efficiency instead of multiplying one another without limit.
 - Triple-dipping is ALLOWED under those caps: three capped payoffs
   for three slots is a legitimate all-in identity, not an exploit.
-- Level scaling adjusts rates toward the cap, never past it.
+- **Shared asymptotic level formula (designer ruling — standardized
+  BEFORE the remaining augments are authored):** a capped augment's
+  level-scaled quantity is scaled(L) = max_rate x L / (L + S), with
+  S = 1 by default — approaches the ceiling, never reaches it, every
+  level worth something, no linear-ramp-into-a-wall dead levels.
+  Corruption Engine already uses it in code (24% x L/(L+1)).
 
 ## Prerequisite content: severity variance must exist
 
 Review finding: across all 22 shipped item defs, authored NEG floors
 sit between −0.10 and −0.50, with 17 of 22 at −0.20/−0.25. The
 "few brutal vs many mild" axis (A1 vs A2) barely exists in data.
-This proposal therefore includes authoring **3–5 deep-curse NEG-prone
-items** (authored ranges reaching −0.60 … −0.95) alongside A1/A4, so
-the archetypes have something real to disagree about. Corruption
-Engine's merge-deepening partially substitutes (curses can be FED
-deeper), but discovery of a natural −0.80 horror should be possible.
+This proposal includes 3–5 deep-curse items — **authored INDIVIDUALLY,
+per stat family** (designer ruling: never a blanket −60…−95% band;
+−95% movement speed is furniture, −95% max HP is sneeze-death, −95%
+of a stat a build lacks is nothing). Severity is normalized to the
+stat family, and some should be genuinely build-warping combos —
+massive Power with a catastrophic Max-HP curse, superb Haste under an
+atrocious movement burden. The acceptance test: an unbuilt character
+looks at one and thinks "absolutely not", while an Inversion player
+goes "GIVE ME THAT". Corruption Engine's merge-deepening partially
+substitutes (curses can be FED deeper), but discovering a natural
+−0.80 horror should be possible.
 
 ## Rollout order (cheap → expensive)
 
@@ -195,5 +215,11 @@ deeper), but discovery of a natural −0.80 horror should be possible.
 - D1: NEG merges stabilize by default; Corruption Engine deepens.
   LANDED with tests.
 - D2: polarity vs active severity split, table above.
-- D3: global normalized-severity floor for Ballast, starting at 10%
-  of the item's authored NEG range.
+- D3: global normalized-severity floor for Doctrine of Burden,
+  starting at 10% of the item's authored NEG range; the HP/Armor
+  values and total cap come from playtesting, never from this doc.
+- Level scaling: shared asymptotic formula (stacking section). LANDED
+  for Corruption Engine.
+- A7 Resonance: per-segment cap +4% (ruling above).
+- A6: local Gravemarch deepen rule replaces the A1 dependency
+  (ruling above).
