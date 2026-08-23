@@ -122,6 +122,7 @@ var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
 var _sim_scheduler: Node = null
 var _visual_batched := false
+var _batched_renderer_id: int = 0
 var _hitbox: Area2D = null
 var _body_shape: CollisionShape2D = null
 var _lod_tier: int = 0 # 0 near/full, 1 mid, 2 far
@@ -566,11 +567,20 @@ func _register_batched_visual() -> void:
 	# the proxy root is absent or the debug flag is off. Registration is per
 	# node instance; the renderer skips pooled/hidden/dead actors and prunes
 	# freed ones.
-	if _visual_batched or Global == null or not Global.debug_enemy_visual_batching:
+	if Global == null or not Global.debug_enemy_visual_batching:
 		return
 	var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
 	var renderer: Node = proxy_root.get("renderer") if proxy_root != null else null
 	if renderer == null or not renderer.has_method("register_actor"):
+		return
+	# Registration must be per RENDERER instance, not per node lifetime:
+	# pooled nodes outlive the per-scene renderer, so a node recycled
+	# across a segment transition carried _visual_batched=true, a hidden
+	# sprite, and no entry in the NEW renderer — permanently invisible
+	# (and materialization pulls from the same stale pool, so the
+	# invisible ones appeared preferentially near the player).
+	var renderer_id := renderer.get_instance_id()
+	if _visual_batched and _batched_renderer_id == renderer_id:
 		return
 	var sprite := get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null:
@@ -578,6 +588,7 @@ func _register_batched_visual() -> void:
 	renderer.call("register_actor", self, sprite)
 	sprite.visible = false
 	_visual_batched = true
+	_batched_renderer_id = renderer_id
 
 
 func _apply_simulation_collision_roles() -> void:
@@ -753,6 +764,10 @@ func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
 	_representation_lease_active = false
 	if register_new_logical_enemy and _enemy_index != null and _enemy_index.has_method("register"):
 		_enemy_index.call("register", self)
+	# Re-register with the CURRENT scene's batch renderer (idempotent per
+	# renderer). Also rebuilds the interpolation snapshot, so a reused node
+	# doesn't smear from its old death site for 200ms.
+	_register_batched_visual()
 
 
 func _get_active_ai() -> int:
@@ -818,6 +833,14 @@ func make_elite() -> void:
 	var spr: CanvasItem = get_node_or_null("Sprite2D") as CanvasItem
 	if spr != null:
 		spr.modulate = spec.elite_tint
+	# The proxy renderer caches a per-handle visual profile from the FIRST
+	# demotion; without invalidation an enemy promoted to elite kept its
+	# old tint/scale whenever it rendered as a data-only proxy.
+	if _enemy_world_handle != 0:
+		var elite_proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+		var elite_renderer: Node = elite_proxy_root.get("renderer") if elite_proxy_root != null else null
+		if elite_renderer != null and elite_renderer.has_method("invalidate_visual_profile"):
+			elite_renderer.call("invalidate_visual_profile", _enemy_world_handle)
 
 
 # -----------------------
@@ -956,6 +979,10 @@ func hydrate_representation_lease(handle: int) -> bool:
 	set_scheduler_tier(0)
 	_update_enemy_index(true)
 	reset_physics_interpolation()
+	# Promotion obtains from the same pool as spawning: without this, a
+	# proxy visible at distance went INVISIBLE the moment it materialized
+	# near the player on a cross-scene recycled node.
+	_register_batched_visual()
 	return true
 
 

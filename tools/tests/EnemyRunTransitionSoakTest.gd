@@ -21,6 +21,30 @@ class SoakDriver:
 	var _objects_after_first_teardown := 0
 	var _pause_wall := 0.0
 
+	func _check_recycled_visuals_registered() -> void:
+		# Regression: pooled nodes recycled across a scene transition used to
+		# keep _visual_batched=true with a hidden sprite and NO entry in the
+		# NEW scene's batch renderer — permanently invisible enemies in run 2.
+		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+		var renderer: Node = proxy_root.get("renderer") if proxy_root != null else null
+		if renderer == null:
+			_check(false, "second run has a batch renderer")
+			return
+		var current_renderer_id := renderer.get_instance_id()
+		var orphaned := 0
+		var batched := 0
+		for enemy in get_tree().get_nodes_in_group(&"enemies"):
+			if not bool(enemy.get("_visual_batched")):
+				continue
+			batched += 1
+			if int(enemy.get("_batched_renderer_id")) != current_renderer_id:
+				orphaned += 1
+		_check(batched > 0, "second-run enemies use batched visuals (%d batched)" % batched)
+		_check(
+			orphaned == 0,
+			"no recycled enemy is orphaned from the current renderer (%d/%d orphaned)" % [orphaned, batched]
+		)
+
 	func _dismiss_blocking_ui() -> void:
 		var scene := get_tree().current_scene
 		var ui := scene.get_node_or_null("UI") if scene != null else null
@@ -123,6 +147,7 @@ class SoakDriver:
 			Global.goto_game()
 		elif _phase == 3 and _elapsed >= 45.0:
 			_check(_second_run_peak_alive > 0, "a second run spawns fresh enemies after teardown")
+			_check_recycled_visuals_registered()
 			_phase = 4
 			Global.goto_main_menu()
 		elif _phase == 4 and _elapsed >= 49.0:
