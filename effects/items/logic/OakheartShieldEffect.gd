@@ -35,8 +35,9 @@ func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	if inst != null:
 		pct = clampf(inst.active_pct(), -0.25, 0.5)
 	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
-	var dr := clampf(base_damage_reduction + extra, 0.0, 0.35)
-	out.append("Reduces incoming damage by ~%.0f%% (before armor)." % (dr * 100.0))
+	var short_mult: float = (inst.rarity_effect_multiplier() if inst != null else 1.0)
+	var dr := clampf((base_damage_reduction + extra) * short_mult, 0.0, 0.50)
+	out.append("Reduces incoming damage by ~%.0f%% (before armor; rarity scales, cap 50%%)." % (dr * 100.0))
 	out.append("Shows a protective shield aura.")
 	return out
 
@@ -79,8 +80,11 @@ func get_damage_taken_multiplier() -> float:
 		pct = clampf(item.active_pct(), -0.25, 0.5)
 
 	# Only positive rolls increase DR (negative just keeps base DR).
+	# Rarity grows the reduction along the shared potency curve, with a
+	# hard ceiling so damage reduction can never approach immunity.
 	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
-	var dr := clampf(base_damage_reduction + extra, 0.0, 0.35)
+	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
+	var dr := clampf((base_damage_reduction + extra) * rarity_mult, 0.0, 0.50)
 	return 1.0 - dr
 
 func _get_hurtbox_radius(hb: Area2D) -> float:

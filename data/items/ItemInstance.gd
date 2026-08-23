@@ -54,6 +54,14 @@ func active_pct() -> float:
 	return best_pct
 
 
+func rarity_effect_multiplier() -> float:
+	# Scripted effects (accessories: burn, shield, regen, speed) scale with
+	# the SAME continuous potency curve as rarity_base stats — otherwise
+	# ranking up a ring changed a tiny flat stat and nothing you could
+	# feel. Includes the banked meter, so every feed grows the effect too.
+	return RarityMath.potency(float(rarity) + clampf(upgrade_meter, 0.0, 0.999999))
+
+
 func feed_roll(roll_pct: float, incoming_rarity: int = 0) -> void:
 	# A fed roll is material at its OWN rarity — freshly rolled ground
 	# pickups are rank-0 material and pay the gap penalty like everything
