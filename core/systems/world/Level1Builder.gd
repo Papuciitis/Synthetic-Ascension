@@ -96,6 +96,14 @@ var _res_ui_tick: float = 0.0
 var _security_kills: int = 0
 var _opening_sequence_active: bool = false
 
+# Tracked secondaries (the three service-district rooms).
+@export var resonance_secondary: float = 0.02
+var _secondaries: Array[Dictionary] = []
+var _secondary_completed: Dictionary = {}
+var _active_secondary_id: int = -1
+var _secondary_feedback_token: int = 0
+var _secondary_tick: float = 0.0
+
 
 func _ready() -> void:
 	# Child _ready() runs before game.gd can remove this node for later segments.
@@ -265,17 +273,40 @@ func _plan_service_district() -> void:
 			_add_fence_cell(Vector2i(x0, y))
 		_add_fence_cell(Vector2i(x1, y))
 
+	# The three service rooms are tracked secondaries (SEGMENT1_REBUILD's
+	# "detours"): guaranteed single-item payout so a searched room never
+	# reads as empty, announced on approach, completed on claim.
+
 	# Loading office: optional records/loot room, entered from the yard.
 	_rect_perimeter_with_bottom_door(Vector2i(23, -32), Vector2i(10, 10), 27, 28)
-	_register_building_rect(Vector2i(23, -32), Vector2i(10, 10), true)
+	_register_building_rect(Vector2i(23, -32), Vector2i(10, 10), true, {
+		"small_loot_chance": 1.0,
+		"secondary": true,
+		"sec_title": "SECONDARY • LOADING OFFICE",
+		"sec_detail": "Manifest records and unshipped stock. Containment has not swept it.",
+	})
 
 	# Service warehouse: optional detour with a wide western loading door.
+	# The "controlled security encounter": entering starts a small interior
+	# fight; the reward releases when it is cleared.
 	_rect_perimeter_with_left_door(Vector2i(38, -24), Vector2i(12, 13), -20, -17)
-	_register_building_rect(Vector2i(38, -24), Vector2i(12, 13), true)
+	_register_building_rect(Vector2i(38, -24), Vector2i(12, 13), true, {
+		"small_loot_chance": 1.0,
+		"local_encounter_enabled": true,
+		"local_encounter_count": 4,
+		"secondary": true,
+		"sec_title": "SECONDARY • SERVICE WAREHOUSE",
+		"sec_detail": "Sealed stock behind a security detail. Clear the interior to claim it.",
+	})
 
 	# Maintenance kiosk and checkpoint cover give the combat arena landmarks.
 	_rect_perimeter_with_bottom_door(Vector2i(25, -12), Vector2i(8, 5), 28, 29)
-	_register_building_rect(Vector2i(25, -12), Vector2i(8, 5), true)
+	_register_building_rect(Vector2i(25, -12), Vector2i(8, 5), true, {
+		"small_loot_chance": 1.0,
+		"secondary": true,
+		"sec_title": "SECONDARY • MAINTENANCE KIOSK",
+		"sec_detail": "Tool lockers and ward spares. A quick detour.",
+	})
 	_fill_rect_walls(Vector2i(21, -22), Vector2i(4, 5))
 	_fill_rect_walls(Vector2i(32, -29), Vector2i(4, 4))
 
@@ -527,7 +558,25 @@ func _spawn_indoor_volumes() -> void:
 			continue
 		_geo.add_child(volume)
 		volume.exploration_loot_enabled = bool(entry["loot"])
-		volume.configure(rect.position, rect.size, cell_size_px, building_id)
+		var cfg: Dictionary = (entry.get("cfg", {}) as Dictionary).duplicate()
+		var is_secondary := bool(cfg.get("secondary", false))
+		cfg.erase("secondary")
+		var sec_title := String(cfg.get("sec_title", ""))
+		var sec_detail := String(cfg.get("sec_detail", ""))
+		cfg.erase("sec_title")
+		cfg.erase("sec_detail")
+		if is_secondary:
+			cfg["secondary_objective_id"] = building_id
+			_secondaries.append({
+				"id": building_id,
+				"world": Rect2(
+					Vector2(rect.position) * float(cell_size_px),
+					Vector2(rect.size) * float(cell_size_px)
+				).get_center(),
+				"title": sec_title,
+				"detail": sec_detail,
+			})
+		volume.configure(rect.position, rect.size, cell_size_px, building_id, cfg)
 		building_id += 1
 
 
@@ -607,6 +656,10 @@ func _connect_run_events() -> void:
 	var pickup_cb := Callable(self, "_on_pickup_to_equip")
 	if not RunEvents.pickup_fly_to_equip.is_connected(pickup_cb):
 		RunEvents.pickup_fly_to_equip.connect(pickup_cb)
+	if RunEvents.has_signal("secondary_objective_completed"):
+		var secondary_cb := Callable(self, "_on_secondary_completed")
+		if not RunEvents.secondary_objective_completed.is_connected(secondary_cb):
+			RunEvents.secondary_objective_completed.connect(secondary_cb)
 
 
 func _on_milestone_reached(id: StringName) -> void:
@@ -704,6 +757,76 @@ func _on_pickup_to_equip(_start: Vector2, _slot: int, inst: ItemInstance, _upgra
 		return
 	_add_resonance(float(inst.rarity) * resonance_per_item_rarity, false)
 	_update_gate_lock()
+
+
+func _on_secondary_completed(objective_id: int) -> void:
+	if objective_id <= 0 or _secondary_completed.has(objective_id):
+		return
+	var entry := _find_secondary(objective_id)
+	if entry.is_empty():
+		return
+	_secondary_completed[objective_id] = true
+	_add_resonance(resonance_secondary, true)
+	if _active_secondary_id == objective_id:
+		_active_secondary_id = -1
+	_secondary_feedback_token += 1
+	var feedback_token := _secondary_feedback_token
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("✓ SECONDARY COMPLETE", String(entry.get("detail", "")))
+	_clear_secondary_after_delay(feedback_token)
+
+
+func _clear_secondary_after_delay(feedback_token: int) -> void:
+	await get_tree().create_timer(2.4).timeout
+	if feedback_token != _secondary_feedback_token:
+		return
+	_clear_secondary_ui()
+
+
+func _clear_secondary_ui() -> void:
+	_secondary_feedback_token += 1
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("", "")
+
+
+func _find_secondary(objective_id: int) -> Dictionary:
+	for entry in _secondaries:
+		if int(entry.get("id", 0)) == objective_id:
+			return entry
+	return {}
+
+
+func _update_secondary_announcement() -> void:
+	if _opening_sequence_active or _secondaries.is_empty():
+		return
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player == null:
+		return
+	var nearby_id := -1
+	var nearby_entry: Dictionary = {}
+	var best_distance_sq := 600.0 * 600.0
+	for entry in _secondaries:
+		var objective_id := int(entry.get("id", 0))
+		if _secondary_completed.has(objective_id):
+			continue
+		# A room whose loot was claimed in an earlier session has nothing
+		# left to offer; do not advertise it after Continue.
+		if Global != null and Global.has_claimed_loot(objective_id):
+			continue
+		var distance_sq := player.global_position.distance_squared_to(entry.get("world", Vector2.INF) as Vector2)
+		if distance_sq < best_distance_sq:
+			best_distance_sq = distance_sq
+			nearby_id = objective_id
+			nearby_entry = entry
+	if nearby_id == _active_secondary_id:
+		return
+	_active_secondary_id = nearby_id
+	_secondary_feedback_token += 1
+	if nearby_id == -1:
+		_clear_secondary_ui()
+		return
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit(String(nearby_entry.get("title", "")), String(nearby_entry.get("detail", "")))
 
 
 func _refresh_progression_seals() -> void:
@@ -998,6 +1121,10 @@ func _process(delta: float) -> void:
 	if _res_ui_tick >= resonance_ui_push_every:
 		_res_ui_tick = 0.0
 		_update_gate_lock()
+	_secondary_tick += delta
+	if _secondary_tick >= 0.35:
+		_secondary_tick = 0.0
+		_update_secondary_announcement()
 
 
 func _update_gate_lock() -> void:
@@ -1098,12 +1225,13 @@ func _rect_perimeter_with_doors(top_left: Vector2i, size: Vector2i, bottom_door_
 			_add_wall_cell(Vector2i(x1, y), false)
 
 
-func _register_building_rect(top_left: Vector2i, size: Vector2i, loot: bool) -> void:
+func _register_building_rect(top_left: Vector2i, size: Vector2i, loot: bool, cfg: Dictionary = {}) -> void:
 	if size.x <= 2 or size.y <= 2:
 		return
 	_building_interiors.append({
 		"rect": Rect2i(top_left + Vector2i.ONE, size - Vector2i(2, 2)),
 		"loot": loot,
+		"cfg": cfg,
 	})
 
 

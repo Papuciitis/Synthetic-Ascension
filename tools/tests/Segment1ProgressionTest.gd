@@ -73,6 +73,36 @@ func _run() -> void:
 			"spawner accepts a walkable facility position"
 		)
 
+	# Service-district rooms are tracked secondaries with guaranteed loot.
+	var secondaries: Array = level1.get("_secondaries")
+	_check(secondaries.size() == 3, "three secondaries registered (got %d)" % secondaries.size())
+	var volumes_with_ids := 0
+	var warehouse_has_encounter := false
+	for volume in get_nodes_in_group(&"indoor_volume"):
+		var sec_id := int(volume.get("secondary_objective_id"))
+		if sec_id > 0:
+			volumes_with_ids += 1
+			if bool(volume.get("local_encounter_enabled")):
+				warehouse_has_encounter = true
+			_check(
+				float(volume.get("small_loot_chance")) >= 0.999,
+				"secondary room %d has guaranteed loot" % sec_id
+			)
+	_check(volumes_with_ids == 3, "three indoor volumes carry secondary ids (got %d)" % volumes_with_ids)
+	_check(warehouse_has_encounter, "the warehouse secondary runs a local encounter")
+
+	# Completion pays resonance exactly once per objective.
+	var resonance_before := float(level1.get("resonance"))
+	var first_id := int((secondaries[0] as Dictionary).get("id", 0))
+	root.get_node("RunEvents").emit_signal("secondary_objective_completed", first_id)
+	root.get_node("RunEvents").emit_signal("secondary_objective_completed", first_id)
+	var resonance_after := float(level1.get("resonance"))
+	var expected_gain := float(level1.get("resonance_secondary"))
+	_check(
+		absf((resonance_after - resonance_before) - expected_gain) < 0.0001,
+		"secondary completion granted resonance exactly once"
+	)
+
 	# Restore path: milestones present after a reload must re-derive the phase.
 	for milestone in [&"synthesis", &"first_confrontation", &"wardstone_1", &"assistant_commitment"]:
 		global.call("record_segment1_milestone", milestone)

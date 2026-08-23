@@ -267,6 +267,10 @@ func _try_spawn_loot() -> void:
 	if _spawn_loot(rng, n_min, n_max, r_min, r_max):
 		if Global != null:
 			Global.claim_loot(building_id)
+		# Plain loot rooms (no local encounter) complete their secondary the
+		# moment the room pays out; encounter rooms already notified when the
+		# fight cleared, and the id resets to 0 after the first emission.
+		_notify_secondary_completed()
 	else:
 		_loot_attempted = false
 		_schedule_loot_retry()
