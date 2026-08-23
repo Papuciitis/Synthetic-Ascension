@@ -90,13 +90,24 @@ class Driver:
 		_finish(0)
 
 	func _drag_enemies_to(center: Vector2) -> void:
+		# Teleport through EnemyWorld records, not just nodes: node moves
+		# alone leave stale record positions behind, and the representation
+		# policy/proxy sim act on the records. Materialized actors get their
+		# node moved too (the node is authoritative until demotion).
+		var world := get_node_or_null("/root/EnemyWorld")
+		if world == null:
+			return
+		var handles: Array[int] = []
+		world.call("active_handles", handles)
 		var moved := 0
-		for enemy in get_tree().get_nodes_in_group(&"enemies"):
-			var body := enemy as Node2D
-			if body == null or not is_instance_valid(body):
-				continue
+		for handle in handles:
 			var angle := TAU * float(moved) / 40.0
-			body.global_position = center + Vector2.RIGHT.rotated(angle) * (180.0 + 12.0 * (moved % 5))
+			var target: Vector2 = center + Vector2.RIGHT.rotated(angle) * (180.0 + 12.0 * (moved % 5))
+			world.call("set_position", handle, target)
+			world.call("reset_interpolation", handle)
+			var actor := world.call("actor_for_handle", handle) as Node2D
+			if actor != null and is_instance_valid(actor):
+				actor.global_position = target
 			moved += 1
 			if moved >= 40:
 				break

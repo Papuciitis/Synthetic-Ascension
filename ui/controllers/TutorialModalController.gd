@@ -3,17 +3,28 @@ class_name TutorialModalController
 
 const OVERLAY_SCENE := preload("res://ui/screens/TutorialCardOverlay.tscn")
 
+# Minimum unpaused play between enemy dossier cards. A horde that
+# introduces several new archetypes at once otherwise fires N pause
+# interruptions back to back; the first card is immediate, the rest
+# wait for a breather. Non-enemy cards are never delayed.
+const ENEMY_CARD_SPACING_SEC := 6.0
+
 var _queue: Array[Dictionary] = []
 var _active: bool = false
 var _session_enemy_ids: Dictionary = {}
 var _completed_tokens: Dictionary = {}
 var _next_token: int = 1
+var _unpaused_since_enemy_card: float = 1.0e9
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if RunEvents != null:
 		RunEvents.blocking_info_requested.connect(_on_blocking_info_requested)
 		RunEvents.enemy_archetype_encountered.connect(_on_enemy_encountered)
+
+func _process(delta: float) -> void:
+	if not get_tree().paused:
+		_unpaused_since_enemy_card += delta
 
 func _exit_tree() -> void:
 	if RunEvents == null:
@@ -68,9 +79,14 @@ func _enqueue(card: Dictionary) -> void:
 func _drain_queue() -> void:
 	_active = true
 	while not _queue.is_empty():
-		while _unsafe_for_enemy_card(_queue[0]):
+		# Present the first card that is safe to show. Non-enemy cards are
+		# always safe, so a scripted card awaited by gameplay code is never
+		# stalled behind an enemy dossier waiting out its spacing cooldown.
+		var index := _first_presentable_index()
+		if index == -1:
 			await get_tree().process_frame
-		var card: Dictionary = _queue.pop_front() as Dictionary
+			continue
+		var card: Dictionary = _queue.pop_at(index) as Dictionary
 		var was_paused := get_tree().paused
 		get_tree().paused = true
 		if RunEvents != null:
@@ -80,8 +96,10 @@ func _drain_queue() -> void:
 		overlay.present(String(card.get("title", "")), String(card.get("body", "")), String(card.get("eyebrow", "")), card.get("texture", null) as Texture2D, int(card.get("typewriter_character_limit", -1)))
 		await overlay.dismissed
 		var enemy_id: StringName = card.get("enemy_id", &"") as StringName
-		if enemy_id != &"" and Global != null:
-			Global.mark_enemy_discovered(enemy_id)
+		if enemy_id != &"":
+			_unpaused_since_enemy_card = 0.0
+			if Global != null:
+				Global.mark_enemy_discovered(enemy_id)
 		overlay.queue_free()
 		if RunEvents != null:
 			RunEvents.tutorial_modal_state_changed.emit(false)
@@ -92,9 +110,17 @@ func _drain_queue() -> void:
 			_completed_tokens[token] = true
 	_active = false
 
+func _first_presentable_index() -> int:
+	for i in range(_queue.size()):
+		if not _unsafe_for_enemy_card(_queue[i]):
+			return i
+	return -1
+
 func _unsafe_for_enemy_card(card: Dictionary) -> bool:
 	if StringName(card.get("enemy_id", &"")) == &"":
 		return false
+	if _unpaused_since_enemy_card < ENEMY_CARD_SPACING_SEC:
+		return true
 	return not get_tree().get_nodes_in_group(&"boss_like").is_empty() or not get_tree().get_nodes_in_group(&"exit_rite_channeling").is_empty()
 
 func _reset_spawners_after_pause() -> void:
