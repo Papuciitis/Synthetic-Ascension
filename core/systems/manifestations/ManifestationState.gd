@@ -482,10 +482,24 @@ func note_attack() -> void:
 	# is always exactly 0.0 - the runner advances the beat before it dispatches -
 	# so any rule judging "did the chain hold?" against it was answering itself.
 	last_attack_gap = time_since_attack
-	attack_index += 1
 	time_since_attack = 0.0
-	note_channel_touched(&"attack_index")
 	note_channel_touched(&"time_since_attack")
+	advance_beat()
+
+
+## Advance the shared beat WITHOUT touching the rhythm clock.
+##
+## For anything that supplies a beat the player did not fire - walking a stride,
+## an echo the world produced. note_attack() zeroes time_since_attack, which is
+## a different resource entirely: Stored Violence charges off that gap, so a
+## walked beat every second kept its charge under 30% forever, and Fever Litany
+## reads it to decide whether the chain held, so walking pinned the fever at max
+## for free. A beat and a gap are not the same event and must not be one call.
+func advance_beat() -> void:
+	if not has_source(&"cadence"):
+		return
+	attack_index += 1
+	note_channel_touched(&"attack_index")
 	resource_spent.emit(&"cadence", 1.0)
 
 

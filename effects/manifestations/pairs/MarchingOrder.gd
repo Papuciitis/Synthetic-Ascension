@@ -103,7 +103,14 @@ func _advance() -> void:
 		# The shared beat, not a private tally. This is the whole rule: every
 		# cadence rule in the loadout reads the same counter, so a walked beat
 		# advances all of them at once.
-		state.note_attack()
+		#
+		# advance_beat(), never note_attack(): a stride supplies a BEAT, not an
+		# attack. note_attack() also zeroes the rhythm clock, and this rule fires
+		# roughly once a second while walking - which held Stored Violence's
+		# charge under 30% forever and pinned Fever Litany at max for free. Both
+		# are cadence rules, so they are among the rules that can light this pair
+		# and were being broken by the thing they lit.
+		state.advance_beat()
 	if beats > 0:
 		_beat_flash = BEAT_FLASH
 		# Whatever the bound refused is dropped rather than banked, so a hitch

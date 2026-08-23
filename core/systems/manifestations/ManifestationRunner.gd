@@ -329,8 +329,15 @@ func _rebuild_hook_lists() -> void:
 		# Momentum's producer sits on Movement (2) and its consumers on Armour
 		# (1) / Offhand (6): the armour blast gets first refusal, which is the
 		# reading a player would expect from "taking a hit spends it".
+		# Ties broken by rule id. Every pair carries the same slot_index
+		# (SLOT_COUNT, so pairs dispatch last), and sort_custom is not stable in
+		# Godot - so which of two pairs saw the beat first could change on any
+		# rebuild. Tithe Rhythm advances the counter inside on_attack and Death
+		# Rattle reads it there, so that ordering is load-bearing.
 		listeners.sort_custom(func(a: ManifestationEffect, b: ManifestationEffect) -> bool:
-			return a.slot_index < b.slot_index)
+			if a.slot_index != b.slot_index:
+				return a.slot_index < b.slot_index
+			return String(a.manifestation_id()) < String(b.manifestation_id()))
 		_hook_lists[hook] = listeners
 	_sync_world_hooks()
 
