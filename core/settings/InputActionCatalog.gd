@@ -8,6 +8,7 @@ static func entries() -> Array[Dictionary]:
 		_entry(&"move_right", "Movement", "Move Right"),
 		_entry(&"move_up", "Movement", "Move Up"),
 		_entry(&"move_down", "Movement", "Move Down"),
+		_entry(&"dash", "Movement", "Dash"),
 		_entry(&"aim_left", "Aim", "Aim Left"),
 		_entry(&"aim_right", "Aim", "Aim Right"),
 		_entry(&"aim_up", "Aim", "Aim Up"),
@@ -38,6 +39,10 @@ static func default_bindings() -> Dictionary:
 		&"move_right": [_key(KEY_D), _key(KEY_RIGHT), _axis(JOY_AXIS_LEFT_X, 1)],
 		&"move_up": [_key(KEY_W), _key(KEY_UP), _axis(JOY_AXIS_LEFT_Y, -1)],
 		&"move_down": [_key(KEY_S), _key(KEY_DOWN), _axis(JOY_AXIS_LEFT_Y, 1)],
+		# NOT Space and NOT JOY_BUTTON_B: those are Godot's ui_accept and
+		# ui_cancel defaults, and every ability here polls Input rather than
+		# consuming events, so a focused Button would fire both at once.
+		&"dash": [_key(KEY_SHIFT), _button(JOY_BUTTON_LEFT_SHOULDER)],
 		&"aim_left": [_axis(JOY_AXIS_RIGHT_X, -1)],
 		&"aim_right": [_axis(JOY_AXIS_RIGHT_X, 1)],
 		&"aim_up": [_axis(JOY_AXIS_RIGHT_Y, -1)],
