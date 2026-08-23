@@ -728,6 +728,8 @@ func _take_damage(amount: float) -> void:
 
 	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
 	hp = max(hp - reduced, 0.0)
+	if BattleText != null:
+		BattleText.player_damage(global_position, reduced)
 
 	# Melee passive regen pauses briefly after taking damage (LoL-style).
 	if _is_melee_style_active():

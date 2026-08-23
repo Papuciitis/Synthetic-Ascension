@@ -37,6 +37,7 @@ static func defaults() -> Dictionary:
 			&"typewriter_speed": &"normal",
 			&"reduced_motion": false,
 			&"combat_flash": &"full",
+			&"damage_numbers": true,
 		},
 	}
 
@@ -77,6 +78,7 @@ static func normalize(raw: Dictionary) -> Dictionary:
 	var typewriter := StringName(result[&"accessibility"][&"typewriter_speed"])
 	result[&"accessibility"][&"typewriter_speed"] = typewriter if typewriter in TYPEWRITER_SPEEDS else &"normal"
 	result[&"accessibility"][&"reduced_motion"] = bool(result[&"accessibility"][&"reduced_motion"])
+	result[&"accessibility"][&"damage_numbers"] = bool(result[&"accessibility"][&"damage_numbers"])
 	var flash := StringName(result[&"accessibility"][&"combat_flash"])
 	result[&"accessibility"][&"combat_flash"] = flash if flash in FLASH_LEVELS else &"full"
 	return result

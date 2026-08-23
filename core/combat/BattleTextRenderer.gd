@@ -1,0 +1,171 @@
+extends Node2D
+
+# Batched floating combat text (damage numbers, EVADED, LUCKY, ...).
+# The genre shows hundreds of hits per second, so this follows the same
+# architecture as the batched bullets/impacts: every entry is drawn from
+# ONE canvas item in a ring buffer — no Label nodes, no per-hit churn.
+# Autoloaded as BattleText; world-positioned like the other autoload
+# renderers (ProjectileManager).
+#
+# Per-frame damage to one target should be merged by the CALLER where a
+# natural key exists (EnemyCombat's hit ledgers already do this); the
+# `merge_key` here additionally coalesces rapid repeat damage (DoT ticks)
+# into one climbing number instead of a stack of overlapping ones.
+
+const MAX_ENTRIES := 96
+const RISE_SPEED := 46.0
+const LIFETIME := 0.7
+const CRIT_LIFETIME := 0.95
+const MERGE_WINDOW := 0.35
+
+var _texts: PackedStringArray = PackedStringArray()
+var _positions := PackedVector2Array()
+var _ages := PackedFloat32Array()
+var _lifetimes := PackedFloat32Array()
+var _colors: PackedColorArray = PackedColorArray()
+var _scales := PackedFloat32Array()
+var _amounts := PackedFloat32Array()
+var _keys: Array[int] = []
+var _count := 0
+var _overwrite_slot := 0
+var _font: Font = null
+
+
+func _ready() -> void:
+	z_index = 1000
+	_font = ThemeDB.fallback_font
+	_texts.resize(MAX_ENTRIES)
+	_positions.resize(MAX_ENTRIES)
+	_ages.resize(MAX_ENTRIES)
+	_lifetimes.resize(MAX_ENTRIES)
+	_colors.resize(MAX_ENTRIES)
+	_scales.resize(MAX_ENTRIES)
+	_amounts.resize(MAX_ENTRIES)
+	_keys.resize(MAX_ENTRIES)
+	set_process(false)
+
+
+func enabled() -> bool:
+	if SettingsManager == null:
+		return true
+	return bool(SettingsManager.get_value(&"accessibility", &"damage_numbers", true))
+
+
+func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: int = 0) -> void:
+	if amount < 0.5 or not enabled():
+		return
+	if merge_key != 0:
+		for i in range(_count):
+			if _keys[i] == merge_key and _ages[i] < MERGE_WINDOW:
+				_amounts[i] += amount
+				_texts[i] = _format_amount(_amounts[i])
+				_positions[i] = world_pos + Vector2(0.0, -20.0)
+				_ages[i] = 0.0
+				queue_redraw()
+				return
+	var color := Color(1.0, 0.84, 0.25, 1.0) if crit else Color(0.98, 0.96, 0.92, 1.0)
+	var entry_scale := 1.35 if crit else 1.0
+	_spawn(
+		_format_amount(amount),
+		world_pos + Vector2(0.0, -20.0),
+		color,
+		entry_scale,
+		CRIT_LIFETIME if crit else LIFETIME,
+		amount,
+		merge_key
+	)
+
+
+func player_damage(world_pos: Vector2, amount: float) -> void:
+	if amount < 0.5 or not enabled():
+		return
+	_spawn(_format_amount(amount), world_pos + Vector2(0.0, -30.0), Color(1.0, 0.35, 0.3, 1.0), 1.15, LIFETIME, amount, 0)
+
+
+func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0) -> void:
+	if not enabled():
+		return
+	_spawn(text, world_pos + Vector2(0.0, -34.0), color, entry_scale, 0.9, 0.0, 0)
+
+
+func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, lifetime: float, amount: float, merge_key: int) -> void:
+	var slot: int
+	if _count < MAX_ENTRIES:
+		slot = _count
+		_count += 1
+	else:
+		slot = _overwrite_slot
+		_overwrite_slot = (_overwrite_slot + 1) % MAX_ENTRIES
+	# Small deterministic-ish x jitter so stacked hits fan out.
+	var jitter := float((Time.get_ticks_usec() % 17) - 8)
+	_texts[slot] = text
+	_positions[slot] = world_pos + Vector2(jitter, 0.0)
+	_ages[slot] = 0.0
+	_lifetimes[slot] = lifetime
+	_colors[slot] = color
+	_scales[slot] = entry_scale
+	_amounts[slot] = amount
+	_keys[slot] = merge_key
+	set_process(true)
+	queue_redraw()
+
+
+func _format_amount(amount: float) -> String:
+	var value := int(round(amount))
+	if value >= 10000:
+		return "%.0fk" % (float(value) / 1000.0)
+	if value >= 1000:
+		return "%.1fk" % (float(value) / 1000.0)
+	return str(value)
+
+
+func _process(delta: float) -> void:
+	var i := 0
+	while i < _count:
+		_ages[i] += delta
+		if _ages[i] >= _lifetimes[i]:
+			var last := _count - 1
+			_texts[i] = _texts[last]
+			_positions[i] = _positions[last]
+			_ages[i] = _ages[last]
+			_lifetimes[i] = _lifetimes[last]
+			_colors[i] = _colors[last]
+			_scales[i] = _scales[last]
+			_amounts[i] = _amounts[last]
+			_keys[i] = _keys[last]
+			_count = last
+			continue
+		i += 1
+	if _count == 0:
+		set_process(false)
+	queue_redraw()
+
+
+func clear() -> void:
+	_count = 0
+	set_process(false)
+	queue_redraw()
+
+
+func _draw() -> void:
+	if _font == null:
+		return
+	for i in range(_count):
+		var progress := clampf(_ages[i] / maxf(_lifetimes[i], 0.01), 0.0, 1.0)
+		var alpha := 1.0 if progress < 0.55 else 1.0 - (progress - 0.55) / 0.45
+		# Crit pop: brief overshoot at birth.
+		var pop := 1.0 + maxf(0.0, 0.25 - _ages[i] * 2.0) * (_scales[i] - 1.0) * 4.0
+		var font_size := int(round(15.0 * _scales[i] * pop))
+		var pos := _positions[i] + Vector2(0.0, -RISE_SPEED * _ages[i])
+		var draw_pos := pos + Vector2(-100.0, 0.0)
+		var color := _colors[i]
+		color.a = alpha
+		var outline := Color(0.05, 0.05, 0.08, alpha * 0.9)
+		draw_string_outline(
+			_font, draw_pos, _texts[i], HORIZONTAL_ALIGNMENT_CENTER, 200.0,
+			font_size, 4, outline
+		)
+		draw_string(
+			_font, draw_pos, _texts[i], HORIZONTAL_ALIGNMENT_CENTER, 200.0,
+			font_size, color
+		)
