@@ -410,6 +410,16 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 		e2d.global_position = pos
 	if use_pool and _ei != null and _ei.has_method("update_enemy"):
 		_ei.call("update_enemy", e)
+		# A reused record was re-adopted at its old death position before the
+		# spawn position was assigned above; without a snapshot reset the
+		# straddling previous-position renders one stale frame if the handle
+		# demotes to data-only before its next position write.
+		var world := get_node_or_null("/root/EnemyWorld")
+		if world != null and world.has_method("handle_for_actor"):
+			var handle := int(world.call("handle_for_actor", e))
+			# INVALID_HANDLE is 0 in this build.
+			if handle != 0 and world.has_method("reset_interpolation"):
+				world.call("reset_interpolation", handle)
 	if special_kind != &"":
 		e.set_meta("special_spawn_kind", special_kind)
 

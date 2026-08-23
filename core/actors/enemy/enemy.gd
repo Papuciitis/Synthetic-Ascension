@@ -217,7 +217,16 @@ func _ready() -> void:
 	_pool_fresh_obtain_pending = has_meta("__pool_key") and not pool_warming
 	_register_batched_visual()
 
-	if not pool_warming and RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
+	if not pool_warming:
+		_emit_archetype_encountered()
+
+
+func _emit_archetype_encountered() -> void:
+	# Deferred callers can land after a same-frame recycle; never announce a
+	# node that is back in the pool or already gone.
+	if not is_inside_tree() or bool(get_meta("__in_pool", false)):
+		return
+	if RunEvents != null and RunEvents.has_signal("enemy_archetype_encountered"):
 		RunEvents.enemy_archetype_encountered.emit(self)
 
 
@@ -581,6 +590,12 @@ func _register_batched_visual() -> void:
 	# invisible ones appeared preferentially near the player).
 	var renderer_id := renderer.get_instance_id()
 	if _visual_batched and _batched_renderer_id == renderer_id:
+		# Already registered with THIS renderer (same-scene pool reuse). The
+		# entry survives recycle, so its interpolation snapshot still holds
+		# the previous occupant's death transform - without this reset the
+		# next publish draws one frame at the last kill's position.
+		if renderer.has_method("reset_actor_snapshot"):
+			renderer.call("reset_actor_snapshot", self)
 		return
 	var sprite := get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null:
@@ -768,6 +783,11 @@ func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
 	# renderer). Also rebuilds the interpolation snapshot, so a reused node
 	# doesn't smear from its old death site for 200ms.
 	_register_batched_visual()
+	# Pooled nodes never re-run _ready, so the first-encounter dossier used
+	# to fire only when a pool ran dry - minutes late, usually while the
+	# player watched a DIFFERENT new archetype. Deferred so the spawner has
+	# finished positioning and elite-rolling before the card reads the node.
+	call_deferred("_emit_archetype_encountered")
 
 
 func _get_active_ai() -> int:

@@ -46,6 +46,22 @@ func unregister_actor(actor: Node2D) -> void:
 		_actors.erase(actor.get_instance_id())
 
 
+func reset_actor_snapshot(actor: Node2D) -> void:
+	# A pooled node reused for a new spawn must not interpolate from its
+	# previous occupant's last (death) transform. Erasing the snapshot keys
+	# makes the next publish reseed from the node's current transform.
+	if actor == null:
+		return
+	var entry_variant: Variant = _actors.get(actor.get_instance_id())
+	if entry_variant == null:
+		return
+	var entry := entry_variant as Dictionary
+	entry.erase("curr_xf")
+	entry.erase("prev_xf")
+	entry.erase("snap_usec")
+	entry.erase("interval_usec")
+
+
 func registered_actor_count() -> int:
 	return _actors.size()
 
