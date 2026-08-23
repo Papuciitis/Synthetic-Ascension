@@ -28,6 +28,21 @@ const SHARD_HIT_COOLDOWN: float = 0.32
 const SHARD_SWEEP_INTERVAL: float = 0.08
 
 const MOMENTUM_DECAY_PER_SEC: float = 0.85
+
+## Pixels of unbroken travel that fill Momentum on their own, for ANY rule that
+## claims the noun.
+##
+## The noun owns its resource; rules own the verbs that spend it. Previously
+## exactly one rule produced Momentum and three spent it, so rolling a spender
+## without the producer - about five times in six - gave the player a rule that
+## could physically never fire, sitting next to a meter pinned at 0%. Worse, the
+## prerequisite weighting then made a SECOND spender likelier. A dead item with
+## an explanatory-looking bar is the worst thing this layer can hand someone in
+## their first ten minutes.
+##
+## Deliberately slower than Pilgrim's Momentum's own fill, so the specialist is
+## still visibly the specialist.
+const MOMENTUM_BASE_FILL_DISTANCE: float = 704.0
 const STABILITY_DECAY_PER_SEC: float = 1.60
 
 # --- the noun registry ------------------------------------------------------
@@ -231,6 +246,7 @@ var _sources: Dictionary = {}
 ## channel -> { owner_key -> amount }. See CHANNEL_* above.
 var _contributions: Dictionary = {}
 
+var _momentum_odometer: float = 0.0
 var _last_position: Vector2 = Vector2.ZERO
 var _has_last_position: bool = false
 var _drew_shards: bool = false
@@ -404,6 +420,8 @@ func add_momentum(amount: float) -> void:
 		return
 	var before := momentum
 	momentum = clampf(momentum + amount, 0.0, noun_cap(&"momentum"))
+	if momentum > 0.0:
+		note_channel_touched(&"momentum")
 	if before < 0.999 and momentum >= 0.999:
 		resource_filled.emit(&"momentum")
 
@@ -422,6 +440,8 @@ func add_stability(amount: float) -> void:
 		return
 	var before := stability
 	stability = clampf(stability + amount, 0.0, noun_cap(&"stability"))
+	if stability > 0.0:
+		note_channel_touched(&"stability")
 	if before < 0.999 and stability >= 0.999:
 		resource_filled.emit(&"momentum")
 
@@ -442,6 +462,8 @@ func note_attack() -> void:
 		return
 	attack_index += 1
 	time_since_attack = 0.0
+	note_channel_touched(&"attack_index")
+	note_channel_touched(&"time_since_attack")
 	resource_spent.emit(&"cadence", 1.0)
 
 
@@ -527,6 +549,8 @@ func add_misfortune(amount: int = 1) -> void:
 	# consume_misfortune() then zeroed without ever paying for them.
 	var before := misfortune
 	misfortune = clampi(misfortune + amount, 0, int(noun_cap(&"misfortune")))
+	if misfortune > 0:
+		note_channel_touched(&"misfortune")
 	if before < misfortune and misfortune >= int(noun_cap(&"misfortune")):
 		resource_filled.emit(&"fortune")
 
@@ -550,6 +574,7 @@ func set_mark(handle: int, duration: float) -> void:
 	var retarget := handle != marked_handle
 	marked_handle = handle
 	mark_time_left = maxf(mark_time_left, duration)
+	note_channel_touched(&"mark")
 	if retarget:
 		_release_mark_vfx()
 	if _mark_vfx == null or not is_instance_valid(_mark_vfx):
@@ -632,6 +657,8 @@ func add_shard(count: int = 1) -> int:
 			"age": 0.0,
 		})
 		added += 1
+	if added > 0:
+		note_channel_touched(&"shard")
 	if added > 0 and shards_full():
 		resource_filled.emit(&"shard")
 	return added
@@ -763,6 +790,13 @@ func get_meters() -> Array[Dictionary]:
 				continue
 			if not bool((CHANNELS[channel] as Dictionary).get("meter", true)):
 				continue
+			# A noun nothing in this loadout can produce has no business
+			# rendering a bar. "SHARDS 0/4" that never moves teaches the player
+			# that the counter is decoration, which poisons every meter beside
+			# it. Whole-noun granularity on purpose: Momentum and Stability are
+			# two poles of one decision and must light together.
+			if not bool(_touched.get(noun, false)) and noun_value(channel) <= 0.0:
+				continue
 			out.append({
 				"noun": noun,
 				"channel": channel,
@@ -774,6 +808,18 @@ func get_meters() -> Array[Dictionary]:
 
 
 ## Live value of a noun as a plain number, allocation-free.
+## Channels that have actually moved this run. Used to hide meters for
+## resources no equipped rule can produce.
+var _touched: Dictionary = {}
+
+
+func note_channel_touched(channel: StringName) -> void:
+	for noun: StringName in NOUNS:
+		if (NOUNS[noun] as Array).has(channel):
+			_touched[noun] = true
+			return
+
+
 func noun_value(channel: StringName) -> float:
 	match channel:
 		&"shard":
@@ -846,6 +892,7 @@ func _process(delta: float) -> void:
 	_tick_mark(delta)
 	_tick_shards(delta)
 
+	_tick_momentum()
 	_tick_decay(delta)
 
 	# Cadence and ward clocks. Both count UP and are reset by an event, so they
@@ -863,6 +910,19 @@ func _process(delta: float) -> void:
 	if has_source(&"shard") and (not shards.is_empty() or _drew_shards):
 		_drew_shards = not shards.is_empty()
 		queue_redraw()
+
+
+func _tick_momentum() -> void:
+	# Travel fills Momentum for anything that claims the noun, so a spender is
+	# never inert on its own.
+	if not has_source(&"momentum") or not is_moving:
+		_momentum_odometer = distance_since_stop
+		return
+	var travelled := distance_since_stop - _momentum_odometer
+	_momentum_odometer = distance_since_stop
+	if travelled <= 0.0:
+		return
+	add_momentum(travelled / MOMENTUM_BASE_FILL_DISTANCE)
 
 
 func _tick_decay(delta: float) -> void:
