@@ -223,7 +223,16 @@ func _try_spawn_loot() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _mix_seed((Global.attempt_world_seed if Global != null else 1337), building_id)
 
-	var chance: float = clampf(large_loot_chance if is_large else small_loot_chance, 0.0, 1.0)
+	# Luck sweetens exploration: the roll itself stays seeded per building,
+	# but the threshold shifts with the player's CURRENT Luck — outcomes can
+	# differ depending on when the building streams in, which is acceptable
+	# for "the universe treats you better".
+	var chance: float = clampf(
+		(large_loot_chance if is_large else small_loot_chance)
+			+ LuckResolver.secondary_event_bonus(Global.run_luck if Global != null else 0.0),
+		0.0,
+		1.0
+	)
 	_loot_attempted = true
 	if rng.randf() > chance:
 		return

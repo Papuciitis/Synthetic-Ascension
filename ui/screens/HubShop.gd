@@ -1394,22 +1394,6 @@ func _ctrl_center(c: Control) -> Vector2:
 	var r: Rect2 = c.get_global_rect()
 	return r.position + r.size * 0.5
 
-func _roll_standard_unit_rng(rng: RandomNumberGenerator) -> float:
-	var x: float = 0.0
-	for _i in range(6):
-		x += rng.randf()
-	x = (x - 3.0) / 3.0
-	return clampf(x, -1.0, 1.0)
-
-func _roll_percent_rng(rng: RandomNumberGenerator, luck: float, min_pct: float, max_pct: float) -> float:
-	var x: float = _roll_standard_unit_rng(rng)
-	var shape: float = exp(-luck * 1.25)
-	shape = clampf(shape, 0.25, 4.0)
-	var y: float = signf(x) * pow(absf(x), shape)
-	var t: float = (y + 1.0) * 0.5
-	var pct: float = lerpf(min_pct, max_pct, t)
-	return clampf(pct, -0.9999, 0.9999)
-
 func _mix_seed(a: int, b: int, c: int) -> int:
 	var h: int = int((a ^ (b * 0x9E3779B9) ^ (c * 0x7F4A7C15)) & 0x7FFFFFFF)
 	h = int((h * 1103515245 + 12345) & 0x7FFFFFFF)

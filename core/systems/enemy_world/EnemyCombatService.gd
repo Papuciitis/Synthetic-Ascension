@@ -93,6 +93,9 @@ func _finalize_proxy_death(handle: int) -> void:
 	var reward := Global._rng.randi_range(reward_min, reward_max)
 	if (_world.get_flags(handle) & EnemyWorldTypes.Flags.ELITE) != 0:
 		reward += int(cold.get("elite_follower_bonus", 0))
+	# Luck: mirrors the node-side kill path in EnemyLifecycle.
+	if reward > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
+		reward += 1
 	if reward > 0 and Global != null:
 		Global.transaction_followers(
 			reward,

@@ -73,6 +73,7 @@ var _base_collision_layer: int = 0
 const ENEMY_BODY_LAYER_BIT: int = 1 << 1  # physics layer 2
 var _bound_inv: Inventory = null
 var _managed_hit_profile: HitProfileAdapter = HitProfileAdapter.new()
+var _lucky_crit_pending: bool = false
 
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var aim_pivot: Node2D = $AimPivot
@@ -400,12 +401,21 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	if cd > 0.0:
 		_weapon_cd = cd / max(haste_mul, 0.05)
 
+	# Lucky bonus crit: separate from any future Crit Chance stat — Luck
+	# occasionally blesses a whole attack (all pellets/impacts of it).
+	var lucky_crit: bool = Global._rng.randf() < LuckResolver.lucky_crit_chance(Global.run_luck)
+	var lucky_mul: float = 1.5 if lucky_crit else 1.0
+	_lucky_crit_pending = lucky_crit
+	if lucky_crit and BattleText != null:
+		BattleText.popup(global_position, "LUCKY", Color(1.0, 0.84, 0.25, 1.0), 1.2)
+
 	if style_id == "melee":
-		_spawn_melee(mouse_pos, base_weapon_damage * 1.25 * power_mul)
+		_spawn_melee(mouse_pos, base_weapon_damage * 1.25 * power_mul * lucky_mul)
 	elif style_id == "magic":
-		_spawn_magic(mouse_pos, base_weapon_damage * 1.15 * power_mul)
+		_spawn_magic(mouse_pos, base_weapon_damage * 1.15 * power_mul * lucky_mul)
 	else:
-		_spawn_ranged(mouse_pos, base_weapon_damage * power_mul)
+		_spawn_ranged(mouse_pos, base_weapon_damage * power_mul * lucky_mul)
+	_lucky_crit_pending = false
 
 	RunEvents.weapon_fired.emit(self, StringName(style_id), global_position, mouse_pos, power_mul, haste_mul)
 
@@ -536,6 +546,7 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 	var projectile_manager := get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
 	if projectile_manager != null:
 		_managed_hit_profile.reset(dmg)
+		_managed_hit_profile.critical = _lucky_crit_pending
 		var managed_effects := get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 		if managed_effects != null:
 			managed_effects.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
@@ -716,6 +727,12 @@ func _take_damage(amount: float) -> void:
 	if invulnerable_time > 0.0:
 		return
 	if is_dead:
+		return
+
+	# Luck as a systemic stat: the universe occasionally lets a hit miss.
+	if Global._rng.randf() < LuckResolver.lucky_evasion_chance(Global.run_luck):
+		if BattleText != null:
+			BattleText.popup(global_position, "EVADED", Color(0.5, 0.9, 1.0, 1.0), 1.1)
 		return
 
 	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner

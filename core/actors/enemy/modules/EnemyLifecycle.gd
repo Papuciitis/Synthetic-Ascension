@@ -84,6 +84,10 @@ func resolve_death(context: RefCounted) -> void:
 		gain = Global._rng.randi_range(_owner.spec.follower_reward_min, _owner.spec.follower_reward_max)
 		if _owner.is_elite:
 			gain += _owner.spec.elite_follower_bonus
+	# Luck: witnesses of a lucky kill are extra impressed (mirrors the
+	# proxy-death path in EnemyCombatService).
+	if gain > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
+		gain += 1
 
 	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
 

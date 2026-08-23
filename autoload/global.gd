@@ -787,13 +787,6 @@ func _scan_dir_recursive(dir_path: String, on_loaded: Callable) -> void:
 # Luck roll shaping
 # ============================================================
 
-func _roll_standard_unit() -> float:
-	var x: float = 0.0
-	for i in range(6):
-		x += _rng.randf()
-	x = (x - 3.0) / 3.0
-	return clampf(x, -1.0, 1.0)
-
 func roll_percent(luck: float, min_pct: float, max_pct: float) -> float:
 	return clampf(
 		ItemGenerator.roll_signed_range(min_pct, max_pct, luck, _rng),
