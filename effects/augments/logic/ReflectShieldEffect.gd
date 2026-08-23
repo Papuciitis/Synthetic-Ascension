@@ -195,6 +195,45 @@ func _scan_and_reflect() -> void:
 		var do_perfect: bool = is_perfect_now and (not _perfect_used_this_cast)
 		_reflect_one(p2, do_perfect)
 
+	# Simulated enemy bullets (ProjectileManager) are data records, not
+	# nodes — the group scan above can never see them, which made the
+	# shield a no-op against ordinary ranged enemies.
+	var budget: int = max_reflect_per_frame - to_reflect.size()
+	if budget > 0:
+		var manager := get_node_or_null("/root/ProjectileManager")
+		if manager != null and manager.has_method("consume_enemy_projectiles_in_radius"):
+			var consumed: Array = []
+			manager.call("consume_enemy_projectiles_in_radius", player.global_position, r, consumed)
+			for entry_variant in consumed:
+				if budget <= 0:
+					break
+				budget -= 1
+				var entry := entry_variant as Dictionary
+				var do_perfect_sim: bool = is_perfect_now and (not _perfect_used_this_cast)
+				_reflect_simulated(entry, do_perfect_sim)
+
+func _reflect_simulated(entry: Dictionary, is_perfect: bool) -> void:
+	var ppos: Vector2 = entry.get("position", Vector2.ZERO)
+	var velocity: Vector2 = entry.get("velocity", Vector2.ZERO)
+	var dmg: float = float(entry.get("damage", 10.0)) * reflect_damage_mult
+	var spd: float = maxf(200.0, velocity.length()) * reflect_speed_mult
+	var dir: Vector2 = -velocity.normalized() if velocity != Vector2.ZERO else Vector2.RIGHT
+
+	var rp: Node2D = reflected_projectile_scene.instantiate() as Node2D
+	if rp != null:
+		get_tree().current_scene.add_child(rp)
+		rp.global_position = ppos
+		if rp.get("speed") != null:
+			rp.set("speed", spd)
+		if rp.has_method("setup"):
+			rp.call("setup", dir, dmg, player)
+
+	_spawn_flash(vfx_reflect_flash_scene, ppos)
+
+	if is_perfect and (not _perfect_used_this_cast):
+		_perfect_used_this_cast = true
+		_on_perfect_reflect(ppos, dmg)
+
 func _reflect_one(p: Node2D, is_perfect: bool) -> void:
 	if p == null or not is_instance_valid(p):
 		return

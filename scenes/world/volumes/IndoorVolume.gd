@@ -165,14 +165,34 @@ func _activate_local_encounter() -> void:
 			_encounter_remaining -= 1
 			continue
 		_encounter_enemy_ids.append(enemy.get_instance_id())
-		enemy.tree_exited.connect(_on_local_enemy_left, CONNECT_ONE_SHOT)
+		enemy.tree_exited.connect(_on_local_enemy_left.bind(enemy), CONNECT_ONE_SHOT)
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
 
-func _on_local_enemy_left() -> void:
+func _on_local_enemy_left(enemy: Node) -> void:
+	# tree_exited fires for deaths AND for enemies culled/streamed out
+	# alive; only deaths may advance the encounter, otherwise the secondary
+	# auto-completes while the player is somewhere else entirely.
+	if enemy == null or not _encounter_enemy_ids.has(enemy.get_instance_id()):
+		return # stale connection from an aborted earlier encounter
+	var died: bool = (
+		is_instance_valid(enemy)
+		and "dead" in enemy and bool(enemy.get("dead"))
+	)
+	if not died:
+		_abort_local_encounter()
+		return
 	_encounter_remaining = maxi(0, _encounter_remaining - 1)
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
+
+func _abort_local_encounter() -> void:
+	# Re-entering the building re-arms a fresh encounter.
+	if _encounter_completed:
+		return
+	_encounter_started = false
+	_encounter_remaining = 0
+	_encounter_enemy_ids.clear()
 
 func _finish_local_encounter() -> void:
 	if _encounter_completed:

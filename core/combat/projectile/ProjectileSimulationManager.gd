@@ -417,6 +417,24 @@ func _update_renderer() -> void:
 	_multimesh.emit_changed()
 	_multimesh.visible_instance_count = _active_count
 
+func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_consumed: Array) -> int:
+	# Parry/reflect support: simulated enemy bullets are invisible to
+	# group-scanning effects (they are data, not nodes). Removes every
+	# ENEMY-team projectile within radius and appends
+	# {position, velocity, damage} per bullet to out_consumed.
+	var radius_squared := radius * radius
+	var i := _active_count - 1
+	while i >= 0:
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out_consumed.append({
+				"position": _positions[i],
+				"velocity": _velocities[i],
+				"damage": _damage[i],
+			})
+			_remove(i)
+		i -= 1
+	return out_consumed.size()
+
 func get_debug_counters() -> Dictionary:
 	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms}
 
