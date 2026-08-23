@@ -16,6 +16,9 @@ move_speed = 2.0
 script = ExtResource("2")
 id = "lattice_strideframe"
 display_name = "Lattice Strideframe"
+description = "An exoskeletal gait, tuned past what tendons allow.
+• Rolls into Move Speed.
+• Lattice set piece."
 icon = ExtResource("1_icon")
 mods = SubResource("mods")
 rarity_base = SubResource("rarity_base")
