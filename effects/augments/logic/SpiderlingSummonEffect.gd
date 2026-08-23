@@ -59,7 +59,7 @@ func _process(dt: float) -> void:
 
 	_update_hint(dt)
 
-	if Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
 		_try_spawn()
 
 	if Input.is_action_just_pressed(detonate_action):

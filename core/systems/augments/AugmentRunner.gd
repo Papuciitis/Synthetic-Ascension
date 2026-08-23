@@ -85,22 +85,24 @@ func _sync(wanted: Dictionary) -> void:
 		var slot_idx: int = int(entry["slot"])
 
 		var inst: Node = scn.instantiate()
+
+		# Metas must exist BEFORE add_child: effects resolve their input
+		# action from hud_slot_index inside _ready(), which fires during
+		# add_child — the old order made every effect see slot -1 first.
+		var aug_id: StringName = entry.get("aug_id", StringName())
+		var level: int = int(entry.get("level", 1))
+		inst.set_meta("augment_id", aug_id)
+		inst.set_meta("augment_level", level)
+		inst.set_meta("hud_slot_index", slot_idx)
+
 		add_child(inst)
 
 		# pass player ref
 		if inst.has_method("setup"):
 			inst.call("setup", get_parent())
 
-		# pass augment id/level (opt-in)
-		var aug_id: StringName = entry.get("aug_id", StringName())
-		var level: int = int(entry.get("level", 1))
-		inst.set_meta("augment_id", aug_id)
-		inst.set_meta("augment_level", level)
 		if inst.has_method("set_level"):
 			inst.call("set_level", level)
-
-		# bind slot index so the badge can find it
-		inst.set_meta("hud_slot_index", slot_idx)
 
 		# OPTIONAL: auto-map keys/actions if you add these InputMap actions
 		var action := "augment_active_%d" % (slot_idx + 1)

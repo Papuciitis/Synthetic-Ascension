@@ -99,7 +99,7 @@ func _process(dt: float) -> void:
 		_cleanup_window_vfx()
 	_was_active = now_active
 
-	if Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
 		_try_activate()
 
 	_report_cd(false)

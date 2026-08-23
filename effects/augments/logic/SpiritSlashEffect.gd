@@ -56,7 +56,7 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = maxf(_cd - dt, 0.0)
 
-	if Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
 		_try_cast()
 
 	_report_cd(false)

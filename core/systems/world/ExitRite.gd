@@ -21,6 +21,7 @@ signal cleared(rite: ExitRite)
 const UNLOCK_BURST_SCENE := preload("res://assets/vfx/world/gates/VFX_GateUnlockBurst.tscn")
 
 var _player_inside: bool = false
+var _last_backlash_ms: int = -100000
 var _hold: float = 0.0
 var _sigil_t: float = 0.0
 
@@ -201,15 +202,27 @@ func _on_body_entered(b: Node) -> void:
 		return
 
 	if locked:
-		# Not ready yet -> shove the player out a bit (keeps you in the same segment)
+		# Not ready yet -> the rite rejects the intruder. The old instant
+		# global_position += 150px read as a random teleport (and could
+		# two-stage pop through streamed colliders). Now: debounced, a
+		# short slide instead of a snap, and it SAYS what happened.
+		var now_ms := Time.get_ticks_msec()
+		if now_ms - _last_backlash_ms < 1500:
+			return
+		_last_backlash_ms = now_ms
 		var p := b as Node2D
 		if p != null:
 			var d := (p.global_position - global_position)
 			if d.length() < 0.001:
 				d = Vector2.RIGHT
-			p.global_position += d.normalized() * backlash_push
+			var target := p.global_position + d.normalized() * backlash_push
+			var tween := create_tween()
+			tween.tween_property(p, "global_position", target, 0.15)\
+				.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		if b.has_method("grant_invulnerability"):
 			b.call("grant_invulnerability", backlash_invuln)
+		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit("The rite rejects you — it is not ready.", 2.0)
 		return
 
 	_player_inside = true

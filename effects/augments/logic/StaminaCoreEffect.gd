@@ -53,7 +53,7 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = max(_cd - dt, 0.0)
 
-	if player != null and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked() and player != null and Input.is_action_just_pressed(active_action):
 		print("[StaminaCore] pressed. cd=", _cd, " active_time=", _active_time)
 		_try_activate()
 

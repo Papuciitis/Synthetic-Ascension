@@ -236,6 +236,7 @@ func set_open(v: bool) -> void:
 	if full_panel.visible == v:
 		return
 	full_panel.visible = v
+	_notify_augment_input_lock(v)
 	_apply_size()
 	open_changed.emit(full_panel.visible)
 	_refresh()
@@ -243,9 +244,26 @@ func set_open(v: bool) -> void:
 
 func _toggle_full() -> void:
 	full_panel.visible = not full_panel.visible
+	_notify_augment_input_lock(full_panel.visible)
 	_apply_size()
 	open_changed.emit(full_panel.visible)
 	_refresh()
+
+
+var _augment_lock_held: bool = false
+
+func _notify_augment_input_lock(open: bool) -> void:
+	# While the bag is open, number keys belong to the bag — not to active
+	# augment hotkeys (pressing "2" mid-sort used to Hex-Blink the player).
+	if open == _augment_lock_held:
+		return
+	_augment_lock_held = open
+	if Global != null and Global.has_method("set_active_augment_input_locked"):
+		Global.set_active_augment_input_locked(open)
+
+
+func _exit_tree() -> void:
+	_notify_augment_input_lock(false)
 
 
 func _apply_size() -> void:

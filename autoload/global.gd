@@ -686,6 +686,18 @@ func set_permanent_augment(slot: int, id: StringName) -> void:
 		print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
 	permanent_augments_changed.emit(permanent_augment_ids)
 
+# In-game UI surfaces (bag, overlays) that swallow number keys must also
+# suppress active-augment hotkeys: the effects poll raw Input state, which
+# is blind to GUI focus — pressing "2" while sorting the bag used to blink
+# the player across the screen.
+var _active_augment_input_locks: int = 0
+
+func set_active_augment_input_locked(locked: bool) -> void:
+	_active_augment_input_locks = maxi(0, _active_augment_input_locks + (1 if locked else -1))
+
+func active_augment_input_blocked() -> bool:
+	return _active_augment_input_locks > 0
+
 func follower_belief_power() -> float:
 	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
 	# the current congregation. sqrt keeps early followers meaningful and
