@@ -683,6 +683,13 @@ func set_permanent_augment(slot: int, id: StringName) -> void:
 	init_permanent_augments()
 	if slot < 0 or slot >= 3:
 		return
+	# Invariant: an augment id occupies at most one slot. Callers that mean
+	# "move" (the library drag path) resolve the old slot themselves before
+	# reaching here; anything else clearing the stale copy is the bug fix.
+	if id != StringName():
+		for other in range(3):
+			if other != slot and permanent_augment_ids[other] == id:
+				permanent_augment_ids[other] = StringName()
 	permanent_augment_ids[slot] = id
 	add_owned_augment(id)
 	if DEBUG_GLOBAL:
@@ -1056,6 +1063,14 @@ func apply_save(save: SaveData) -> void:
 	for i in range(3):
 		var s: String = save.meta_permanent_augment_ids[i]
 		permanent_augment_ids[i] = (StringName(s) if s != "" else StringName())
+	# Heal saves corrupted by the old duplicate-slotting bug: an id may occupy
+	# only one slot; keep the first occurrence (preserves slot order/locks).
+	for i in range(3):
+		if permanent_augment_ids[i] == StringName():
+			continue
+		for j in range(i + 1, 3):
+			if permanent_augment_ids[j] == permanent_augment_ids[i]:
+				permanent_augment_ids[j] = StringName()
 	init_permanent_augments()
 	permanent_augments_changed.emit(permanent_augment_ids)
 
@@ -1644,7 +1659,6 @@ func deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> b
 			)
 			if run_inventory.get_at(slot) == inst:
 				return true
-
 	if run_bag != null and run_bag.add_instance(inst):
 		return true
 
