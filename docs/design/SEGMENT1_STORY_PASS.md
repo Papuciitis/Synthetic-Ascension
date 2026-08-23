@@ -1,5 +1,19 @@
 # Segment 1 spatial + story pass — design (2026-08-23)
 
+> STATUS (end of 2026-08-23 session): everything below is LANDED except the
+> deliberate out-of-scope list, and verified with the headless suite plus a
+> windowed rendered-pixels probe (tools/tests/Segment1StoryProbe.tscn).
+> Two discoveries changed the plan mid-flight, both fixed as their own
+> commits: Segment 1 never started chunk streaming (ambient spawning and
+> flow-field walkability were completely dead — the proc builder got the
+> explicit start_streaming call in the 08-17 rearchitecture, Level1Builder
+> did not), and the building-spanning facility IndoorVolume would have
+> rejected all indoor spawns once walkability returned (new
+> ambient_spawn_excluded flag, false for the playfield). What still needs
+> HUMAN EYES in real play: opening walk pacing, the reveal camera feel,
+> evidence-offer timing under pressure, and the phase-mirror difficulty lift
+> (tuning-sensitive per the ruling).
+
 Implements the designer's priority-1 ruling (docs/OPTIMIZATION_HANDOFF.md,
 "Direction rulings"): treat Segment 1 as a full level redesign following the
 ten-beat arc, and build the final Exit Rite LOCKED/LOCATED/READY checklist UI

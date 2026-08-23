@@ -254,3 +254,47 @@ chase 1000.
 Fixed on report: ring/offhand effects ignored rarity (only Regen Ring
 scaled) — all four accessory effects now scale via the shared
 continuous potency curve with rate-stat guardrails.
+
+## Segment 1 story pass session (2026-08-23, autonomous, later same day)
+
+Priority 1 of the rulings executed. Design in
+docs/design/SEGMENT1_STORY_PASS.md (with landed-status header); ~12
+commits, each independently revertable, suite green throughout, plus a
+windowed rendered-pixels probe (tools/tests/Segment1StoryProbe.tscn,
+pattern of RoamVisibilityProbe).
+
+Landed:
+- Ten-beat arc: NEW admissions wing (normalcy + ward-flicker beats, new
+  ADMISSION opening phase, entrance start for full-prologue runs), the
+  existing incident/confrontation/escalation beats untouched, escape
+  re-armed (below), first build choice moved INTO the level (evidence
+  store 3-B beat before the security fight, with the tutorial-modal
+  pause contract), city-reveal camera beat past the breach (zoom-out
+  over a new backdrop strip), Exit Rite finale with the checklist.
+- Exit Rite checklist UI (per ruling, built during the pass):
+  structured RunEvents.gate_checklist_changed + HudGateChecklistController
+  panel; both builders emit it; proc objective text un-flattened.
+- Backlog #2 fixed: spawn stages mirror into ThreatDirector phases
+  (single choke point, restore-safe). Segment 1 finally escapes the
+  recon damp; plaza now runs collapse. TUNING-SENSITIVE - playtest.
+- Backlog #9 fixed: the three service rooms are tracked secondaries
+  (guaranteed payout, announce/complete, warehouse local encounter).
+- MAJOR pre-existing regression found and fixed: Segment 1 never called
+  start_streaming after the 08-17 rearchitecture - zero chunk records,
+  so is_cell_walkable() was false everywhere: NO ambient spawns and no
+  flow-field walkability in the whole segment. Also fixed the two bugs
+  that surfaced behind it: the authored spawn filter was dead code
+  (shared variable with the debug autoload), and the facility-wide
+  IndoorVolume would have rejected all indoor spawns (new
+  ambient_spawn_excluded flag).
+- SEGMENT1_LAYOUT_VERSION 3, OPENING_SEQUENCE_VERSION 2 (+ phase-int
+  migration; dev phase-jump buttons renumbered).
+- New tests: Segment1ProgressionTest (40 checks: phases, filter,
+  secondaries, checklist states, wing geometry, start rules).
+
+Needs human eyes (in priority order): opening walk pacing + copy tone,
+reveal camera feel, evidence-offer placement under SERVICE pressure,
+phase-mirror difficulty lift, checklist panel layout at 1080p.
+Deliberately NOT done: lighting/music/fade systems (do not exist),
+wall-clock threat blending (ruled: test inside new Segment 1 first),
+segment-1 bosses, heat-valley ownership (#10).
