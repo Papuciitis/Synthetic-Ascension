@@ -880,11 +880,25 @@ func _mark_milestone_area_completed(id: StringName) -> void:
 	if area != null and is_instance_valid(area):
 		area.mark_completed()
 
+# Spawn stages are the segment's authored pressure tiers; the ThreatDirector
+# phase must track them or the whole segment sits in the recon damp
+# (heat x0.72, spawns x1.15) and the authored 100% heat peak is unreachable.
+const STAGE_PHASE := {
+	Segment1SpawnProfile.Stage.COURTYARD: &"disturbance",
+	Segment1SpawnProfile.Stage.SERVICE: &"disturbance",
+	Segment1SpawnProfile.Stage.OUTER_APPROACH: &"ascension",
+	Segment1SpawnProfile.Stage.EXIT_RITE: &"collapse",
+}
+
 func _set_spawn_stage(stage: int) -> void:
 	if _spawner == null or not is_instance_valid(_spawner):
 		_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
 	if _spawner != null:
 		_spawner.set_segment1_stage(stage)
+	var phase: StringName = STAGE_PHASE.get(stage, &"recon")
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("set_segment_phase"):
+		director.call("set_segment_phase", phase)
 
 func _apply_restored_spawn_stage() -> void:
 	var stage := Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS
