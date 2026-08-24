@@ -28,6 +28,16 @@ func refresh(player: Node, inv: Inventory) -> void:
 	# format its rule text. None of that is worth paying for while hidden.
 	if not visible:
 		return
+	# Do not rebuild the panel out from under a pointer that is reading it.
+	#
+	# refresh() destroys and recreates every child, ten times a second. That is
+	# fine for a readout nobody touches, and fatal for a hover card: the node
+	# under the cursor is freed before Godot's tooltip delay elapses, so the
+	# card never appears - or appears and instantly dies. Management mode pauses
+	# the game anyway, so nothing on this panel is moving while it is being
+	# read.
+	if _pointer_is_reading():
+		return
 	# Player.stats is already the complete final snapshot: race, style, permanent
 	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
 	# and active percentage rolls. Inventory deltas must not be added a second time.
@@ -233,18 +243,46 @@ func _append_manifestations(player: Node) -> void:
 		var slot_hint: String = Inventory.slot_hint(int(entry.get("slot", -1)))
 		var entry_tags: Array = entry.get("tags", []) as Array
 		var entry_colour: Color = ManifestationNouns.colour(entry_tags[0]) if not entry_tags.is_empty() else MANIFEST
-		_add_line("%s  %s" % [slot_hint, String(entry.get("name", ""))], entry_colour, 12)
+		var entry_name: String = String(entry.get("name", ""))
+		var entry_rule: String = String(entry.get("rule", ""))
+
+		# One hoverable box per entry, so the pointer does not have to find the
+		# two-line rule label specifically - the name is what a player aims at.
+		var box := ManifestationInfoBox.new()
+		box.add_theme_constant_override("separation", 0)
+		box.setup(entry_name, _noun_names(entry_tags), entry_rule, entry_colour)
+		sets_vbox.add_child(box)
+
+		var heading := Label.new()
+		heading.text = "%s  %s" % [slot_hint, entry_name]
+		heading.add_theme_font_size_override("font_size", 12)
+		heading.modulate = entry_colour
+		heading.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(heading)
+
 		var rule := Label.new()
-		rule.text = "   " + String(entry.get("rule", ""))
+		rule.text = "   " + entry_rule
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		# The full rule lives in the item tooltip; eight untrimmed paragraphs
-		# push the panel past the bottom of a 1080p screen.
+		# Trimmed here, complete on hover. Eight untrimmed paragraphs push the
+		# panel past the bottom of a 1080p screen, but a rule the player cannot
+		# read anywhere in the run is worse than a long panel.
 		rule.max_lines_visible = 2
 		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		rule.custom_minimum_size = Vector2(260, 0)
 		rule.add_theme_font_size_override("font_size", 10)
 		rule.modulate = Color(1, 1, 1, 0.72)
-		sets_vbox.add_child(rule)
+		rule.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(rule)
+
+
+## "momentum, cadence" - the nouns a rule declares, for the hover card.
+func _noun_names(tags: Array) -> String:
+	if tags.is_empty():
+		return ""
+	var names: PackedStringArray = PackedStringArray()
+	for tag in tags:
+		names.append(ManifestationNouns.label(tag))
+	return " · ".join(names)
 
 
 ## One line made of several per-noun labels, so each noun can carry its own
@@ -263,6 +301,15 @@ func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 		label.add_theme_font_size_override("font_size", font_size)
 		label.modulate = ManifestationNouns.colour(StringName(part.get("noun", &"")))
 		row.add_child(label)
+
+
+## Is the mouse inside the panel, with something already drawn to look at?
+func _pointer_is_reading() -> bool:
+	if sets_vbox == null or sets_vbox.get_child_count() == 0:
+		return false
+	if not is_inside_tree():
+		return false
+	return get_global_rect().has_point(get_global_mouse_position())
 
 
 func _add_line(text: String, colour: Color, font_size: int) -> void:
