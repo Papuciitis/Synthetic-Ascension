@@ -34,7 +34,6 @@ const WARDSTONE_SCENE: PackedScene = preload("res://scenes/world/wardstones/Ward
 const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.tscn")
 const MINIBOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/MiniBossArena.tscn")
 const BOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/BossArena.tscn")
-const DISTRICT_RELAY_SCENE: PackedScene = preload("res://scenes/world/objectives/DistrictRelayObjective.tscn")
 
 var _res_tick: float = 0.0
 var _time_in_segment: float = 0.0
@@ -43,7 +42,7 @@ var _pending_bonus_res: float = 0.0
 var _cm: ChunkManager = null
 var _player: Node2D = null
 var _exit_rite: ExitRite = null
-var _primary_objective: DistrictRelayObjective = null
+var _primary_objective: PrimaryObjective = null
 var _segment: int = 1
 var _plan: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -297,13 +296,18 @@ func _build_world_from_plan() -> void:
 
 func _spawn_primary_objective() -> void:
 	var objective_world: Vector2 = _plan.get("primary_world", Vector2.ZERO) as Vector2
-	_primary_objective = DISTRICT_RELAY_SCENE.instantiate() as DistrictRelayObjective
+	# The type is chosen from the seed rather than hardcoded here. That choice
+	# used to live in this function AND its wording lived in _push_objective_ui,
+	# which is why there was only ever one objective: a second one meant editing
+	# the builder in two places instead of adding a file.
+	_primary_objective = PrimaryObjectiveCatalog.create_for(
+		_segment, int(_plan.get("seed", 1337)) ^ 0x51A7CE
+	)
 	if _primary_objective == null:
-		push_warning("[SegmentProcBuilder] District relay scene could not instantiate; bypassing primary gate to keep the run recoverable.")
+		push_warning("[SegmentProcBuilder] No primary objective could be built; bypassing the primary gate to keep the run recoverable.")
 		_primary_completed = true
 		return
 	_primary_objective.global_position = objective_world
-	_primary_objective.configure(int(_plan.get("seed", 1337)) ^ 0x51A7CE)
 	_primary_objective.activated.connect(_on_primary_activated)
 	_primary_objective.progress_changed.connect(_on_primary_progress_changed)
 	_primary_objective.completed.connect(_on_primary_completed)
@@ -467,13 +471,41 @@ func _phase_label(phase: StringName) -> String:
 		&"collapse": return "COLLAPSE"
 		_: return "RECON"
 
+## The objective owns its own wording; these are the fallbacks for the window
+## between "the objective failed to build" and "the run bypassed the gate".
+func _primary_title() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.objective_title()
+	return "Primary Objective"
+
+
+func _primary_detail() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.objective_detail()
+	return "%d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
+
+
+func _primary_checklist_label() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.checklist_label()
+	return "Primary objective complete"
+
+
+func _primary_checklist_id() -> StringName:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.checklist_id()
+	return &"primary"
+
+
 func _push_objective_ui() -> void:
 	if RunEvents == null or not RunEvents.has_signal("objective_changed"):
 		return
 	if not _primary_completed:
+		# Ask the objective what it is called and what it wants. Anything else
+		# means every new objective type has to be taught to this function.
 		RunEvents.objective_changed.emit(
-			"Silence the District Relay • %s" % _phase_label(_pressure_phase),
-			"Attune relay nodes %d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
+			"%s • %s" % [_primary_title(), _phase_label(_pressure_phase)],
+			_primary_detail()
 		)
 		_emit_gate_checklist(&"locked", [], "")
 		return
@@ -493,7 +525,7 @@ func _push_objective_ui() -> void:
 		gate_state = &"located"
 
 	var items: Array = []
-	items.append({"id": &"relay", "label": "District Relay silenced", "done": true})
+	items.append({"id": _primary_checklist_id(), "label": _primary_checklist_label(), "done": true})
 	items.append({"id": &"resonance", "label": "Resonance 100%% (%d%%)" % percent, "done": resonance_complete})
 	if _miniboss_required:
 		items.append({"id": &"miniboss", "label": "Miniboss defeated", "done": _miniboss_defeated})
