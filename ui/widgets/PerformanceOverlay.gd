@@ -678,7 +678,6 @@ var _dev_state: Label = null
 var _dev_log_entries: PackedStringArray = PackedStringArray()
 var _dev_manifest_picker: OptionButton = null
 var _dev_item_id: LineEdit = null
-var _dev_state_cooldown: float = 0.0
 
 
 func _build_tests_tab() -> void:
@@ -881,16 +880,17 @@ func _build_gear_tab(page: VBoxContainer, tools: Node) -> void:
 	if tools == null:
 		return
 	_dev_heading(page, "SETS")
-	for set_name in ["Conduit", "Gravemarch", "Lattice"]:
+	# `set_name` shadows Node.set_name().
+	for set_title in ["Conduit", "Gravemarch", "Lattice"]:
 		var row := _dev_row(page)
 		var label := Label.new()
-		label.text = set_name
+		label.text = set_title
 		label.custom_minimum_size.x = 110.0
 		row.add_child(label)
-		var id := StringName(set_name.to_lower())
+		var id := StringName(set_title.to_lower())
 		for pieces in [2, 4, 6]:
 			var count: int = pieces
-			_dev_button(row, "%dP" % count, "%s set at %d pieces" % [set_name, count], func() -> void:
+			_dev_button(row, "%dP" % count, "%s set at %d pieces" % [set_title, count], func() -> void:
 				tools.call("grant_set", id, count)
 			)
 	var gear_actions := _dev_row(page)

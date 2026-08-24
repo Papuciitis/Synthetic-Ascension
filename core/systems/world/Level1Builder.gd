@@ -570,6 +570,8 @@ func _plan_interior_dressing() -> void:
 		var area: int = maxi(1, rect.size.x * rect.size.y)
 		# One cluster per ~90 cells. Dense enough to break sightlines, sparse
 		# enough that the floor is still mostly floor.
+		# Integer division is the intent: one cluster per whole 48 cells.
+		@warning_ignore("integer_division")
 		var clusters: int = clampi(area / 48, 3, 40)
 		for _i in range(clusters):
 			var cell := _pick_dressing_cell(rng, rect, anchors)
@@ -678,6 +680,7 @@ func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
 	]
 	for rect in _playable_regions:
 		var area: int = maxi(1, rect.size.x * rect.size.y)
+		@warning_ignore("integer_division")
 		var marks: int = clampi(area / 7, 12, 260)
 		for _i in range(marks):
 			var cell := Vector2i(

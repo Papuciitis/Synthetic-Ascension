@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://tools/tests/ExitRiteTest.gd" id="1_rite"]
+
+[node name="ExitRiteTest" type="Node"]
+script = ExtResource("1_rite")

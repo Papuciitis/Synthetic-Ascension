@@ -556,10 +556,11 @@ func _on_secondary_completed(objective_id: int) -> void:
 
 
 func _on_gate_checklist_changed(gate_state: StringName, _items: Array, _hint: String) -> void:
-	var ready: bool = gate_state == &"ready"
-	if ready == _gate_ready_announced:
+	# Not `ready` - that shadows Node's own signal.
+	var gate_is_ready: bool = gate_state == &"ready"
+	if gate_is_ready == _gate_ready_announced:
 		return
-	_gate_ready_announced = ready
+	_gate_ready_announced = gate_is_ready
 	if not ready:
 		return
 	for effect in _listeners(&"on_gate_ready"):

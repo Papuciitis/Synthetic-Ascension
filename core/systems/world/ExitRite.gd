@@ -35,6 +35,29 @@ signal cleared(rite: ExitRite)
 ## The rite's own resonance: the channel keeps drawing while you are away, and
 ## a player who abandons it entirely still loses everything - just not instantly.
 @export var lapse_grace: float = 1.5
+
+## What a death costs the channel.
+##
+## Dying used to give the whole rite back, which sounds fair and plays terribly:
+## twenty seconds of escalating waves is exactly when a death is likeliest, and
+## losing all of it means the second attempt is the same twenty seconds against
+## a higher Threat with fewer Followers. That is a run ending in a place the
+## player already earned their way to. Keeping most of it makes a death a
+## setback in a fight you are still winning, which is what a death should be.
+@export_range(0.0, 1.0, 0.05) var death_progress_kept: float = 0.6
+
+## Standing in the sigil closes your wounds.
+##
+## The Rite is the densest fight in the segment and it is the one you cannot
+## walk away from, so the circle has to be worth standing in for reasons other
+## than the objective. It also gives the drain a counterweight: ducking out to
+## survive costs progress AND the mending, so holding the ground is the play
+## and leaving is the concession.
+@export var channel_regen_per_sec: float = 2.6
+
+## Fraction of max HP per second, added to the flat rate above, so the mending
+## still means something at a large health pool.
+@export_range(0.0, 0.10, 0.001) var channel_regen_max_hp_pct: float = 0.012
 @export var locked: bool = true
 @export var narrative_mode: bool = false
 @export var hide_location_while_locked: bool = false
@@ -54,6 +77,7 @@ var _player_inside: bool = false
 var _last_backlash_ms: int = -100000
 var _hold: float = 0.0
 var _lapse: float = 0.0
+var _death_taken: bool = false
 var _announced_channel: bool = false
 var _sigil_t: float = 0.0
 
@@ -191,15 +215,20 @@ func _process(delta: float) -> void:
 	# (same guard DistrictRelayObjective got for the same bug).
 	var channeling_player := get_tree().get_first_node_in_group("player")
 	if channeling_player != null and bool(channeling_player.get("is_dead")):
-		# Dying gives the whole rite back. A drain is for stepping away by
-		# choice; death is the failure the pressure was building toward.
-		_hold = 0.0
+		# A death is a setback, not a reset. See death_progress_kept.
+		if not _death_taken:
+			_death_taken = true
+			_hold *= clampf(death_progress_kept, 0.0, 1.0)
+			# The waves re-arm from wherever the channel now stands, so the
+			# second attempt is not the whole escalation over again.
+			_resync_burst_stage()
 		_lapse = 0.0
-		_burst_stage = 0
 		queue_redraw()
 		return
+	_death_taken = false
 
 	_hold = minf(_hold + delta, hold_time)
+	_mend(channeling_player, delta)
 	queue_redraw()
 
 	var t: float = 0.0
@@ -234,6 +263,30 @@ const BURST_STAGES: Array[Vector2] = [
 	Vector2(0.85, 8.0),
 	Vector2(0.94, 10.0),
 ]
+
+
+## Hold the ground, close your wounds. Deliberately generous - this is the one
+## fight in the segment the player is not allowed to walk away from.
+func _mend(who: Node, delta: float) -> void:
+	if who == null or not is_instance_valid(who) or not who.has_method("heal"):
+		return
+	var max_hp: float = float(who.get("max_hp"))
+	var amount: float = (channel_regen_per_sec + max_hp * channel_regen_max_hp_pct) * delta
+	if amount > 0.0:
+		who.call("heal", amount)
+
+
+## After a death the channel jumps backwards, so the wave schedule has to jump
+## with it - otherwise every stage is already spent and the rest of the rite is
+## silent.
+func _resync_burst_stage() -> void:
+	var t: float = 0.0
+	if hold_time > 0.0:
+		t = clampf(_hold / hold_time, 0.0, 1.0)
+	_burst_stage = 0
+	for stage in BURST_STAGES:
+		if t >= stage.x:
+			_burst_stage += 1
 
 
 func _maybe_spawn_bursts(t: float) -> void:

@@ -31,6 +31,20 @@ extends Control
 @onready var inv_bar: InventoryBar = get_node_or_null("TopLeft/Margin/VBox/BodyRow/InventoryBar") as InventoryBar
 
 @export var manage_toggle_action: StringName = &"bag_toggle"
+
+## Opening the inventory stops the world.
+##
+## Reading what an item does, comparing two rings and deciding what to feed to
+## what are all things the build systems ask the player to do carefully - and
+## they were being asked to do them while a horde ate them. That is not
+## difficulty, it is a tax on engaging with the systems the game is built
+## around, and it gets worse exactly as the run gets more interesting.
+@export var pause_while_managing: bool = true
+
+## True only while THIS panel is what paused the game. A tutorial card, an
+## augment choice or the developer console can all own the pause, and closing
+## the bag must never resume a fight that one of those is holding.
+var _owns_pause: bool = false
 @onready var run_sheet: Control = get_node_or_null("RunSheetHUD") as Control
 
 @export var augment_badge_scene: PackedScene
@@ -259,6 +273,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		if bag_ctl != null:
 			bag_ctl.toggle_bag_open()
 		get_viewport().set_input_as_handled()
+		return
+	# Escape closes it too. It is the key everyone reaches for to back out of a
+	# screen, and while the bag is open there is nothing else for it to do.
+	if bag_ctl != null and bag_ctl.is_management_mode() and event.is_action_pressed(&"ui_cancel"):
+		bag_ctl.toggle_bag_open()
+		get_viewport().set_input_as_handled()
 
 
 # ----------------------------
@@ -266,6 +286,7 @@ func _unhandled_input(event: InputEvent) -> void:
 # ----------------------------
 
 func _on_management_mode_changed(is_open: bool) -> void:
+	_apply_management_pause(is_open)
 	if run_sheet != null:
 		run_sheet.visible = is_open
 		if is_open:
@@ -478,3 +499,40 @@ func set_followers(value: int) -> void:
 		followers_label.text = str(value)
 	if followers_pill != null and Global != null:
 		followers_pill.tooltip_text = "People committed to preserving the Pattern.\nNext reconstruction cost: %d Followers" % Global.compute_respawn_cost()
+
+
+## PROCESS_MODE_ALWAYS on the HUD, not on the whole UI layer: BagUI and the Run
+## Sheet are children of this node, so they keep running and keep receiving
+## input while everything else in the world is stopped.
+func _apply_management_pause(is_open: bool) -> void:
+	if not pause_while_managing:
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	if is_open:
+		if _owns_pause:
+			return
+		# Something else is already holding the pause. Let the bag open on top
+		# of it, but do not take ownership - releasing it later would resume a
+		# fight that a modal is deliberately holding.
+		if tree.paused:
+			return
+		_owns_pause = true
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		tree.paused = true
+		return
+	if not _owns_pause:
+		return
+	_owns_pause = false
+	tree.paused = false
+	process_mode = Node.PROCESS_MODE_INHERIT
+
+
+## A scene change while the bag is open must not leave the tree paused.
+func _exit_tree() -> void:
+	if _owns_pause:
+		_owns_pause = false
+		var tree := get_tree()
+		if tree != null:
+			tree.paused = false

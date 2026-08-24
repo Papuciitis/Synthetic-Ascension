@@ -687,6 +687,9 @@ func _spawn_melee(mouse_pos: Vector2, dmg: float, haste_mul: float = 1.0) -> voi
 	var followups: int = _melee_followups(haste_mul)
 	for i in range(followups):
 		var side: float = 1.0 if i % 2 == 0 else -1.0
+		# Deliberate integer division: swings fan out in PAIRS, so 0,1 -> 1 and
+		# 2,3 -> 2. Each step is one arc further from the aim line.
+		@warning_ignore("integer_division")
 		var step: float = float(i / 2 + 1)
 		var swing := dir.rotated(deg_to_rad(MELEE_HASTE_FOLLOWUP_ARC_DEG * step * side))
 		_spawn_melee_slash(origin, swing, dmg * MELEE_HASTE_FOLLOWUP_DAMAGE)
