@@ -957,7 +957,6 @@ func _ensure_block_renderer() -> void:
 
 
 func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
-	_capture_interactive_nodes(data, chunk)
 	var physics := _BLOCK_PHYSICS.new() as ChunkBlockPhysics
 	physics.name = "ChunkBlockPhysics"
 	physics.build(data, cell_size_px)
@@ -1022,13 +1021,6 @@ func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, textu
 	spr.modulate = Color(1.0, 1.0, 1.0, alpha)
 	spr.position = (Vector2(rect.position) + Vector2(rect.size) * 0.5) * float(cell_size_px)
 	chunk.add_child(spr)
-
-
-func _capture_interactive_nodes(data: ChunkBuildData, chunk: Node2D) -> void:
-	for candidate in chunk.find_children("*", "Area2D", true, false):
-		data.interactive_nodes.append(candidate)
-	for candidate in chunk.find_children("*", "Marker2D", true, false):
-		data.interactive_nodes.append(candidate)
 
 
 func get_chunk_build_data(coord: Vector2i) -> ChunkBuildData:

@@ -363,20 +363,28 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			for wk2 in result.window_cells.keys():
 				window_cells[wk2] = true
 
-				if gap_cells.size() > 0:
-					door_gaps.append(gap_cells)
+			# Everything below is PER CARVED REGION, not per window cell. It used to
+			# be indented into the loop above, which meant a region with twenty
+			# windows built twenty identical overlapping IndoorVolume areas - twenty
+			# physics bodies and twenty loot/encounter state machines on one room -
+			# and appended the same door-gap array twenty times. Worse, a region with
+			# NO windows never reached `used_donjon = true`, so the fallback
+			# street-edge wall lines further down ran as well and stacked a second
+			# set of walls on top of the carved geometry.
+			if gap_cells.size() > 0:
+				door_gaps.append(gap_cells)
 
-				# Mark connected Donjon rooms as interiors so ambient spawns stay on
-				# streets until the player actually enters the structure.
-				if INDOOR_VOLUME_SCENE != null:
-					var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
-					if indoor_volume != null:
-						var global_tl: Vector2i = coord * cells + r.position
-						var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
-						indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
-						chunk.add_child(indoor_volume)
+			# Mark connected Donjon rooms as interiors so ambient spawns stay on
+			# streets until the player actually enters the structure.
+			if INDOOR_VOLUME_SCENE != null:
+				var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
+				if indoor_volume != null:
+					var global_tl: Vector2i = coord * cells + r.position
+					var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
+					indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
+					chunk.add_child(indoor_volume)
 
-				used_donjon = true
+			used_donjon = true
 
 
 
