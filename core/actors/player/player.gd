@@ -702,6 +702,12 @@ func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:
 		slash.collision_layer = hurtbox.collision_layer
 
 	slash.add_to_group("player_projectile")
+	# Lucky Crits were applied to melee and magic damage but never REPORTED as
+	# crits: the flag is consumed only on the ranged path, so BattleText showed
+	# a normal number and player_hit_landed said is_crit = false. No rule reads
+	# that yet, which is exactly why it would have stayed broken until one did.
+	if _lucky_crit_pending:
+		slash.set_meta("lucky_crit", true)
 
 	# Melee got NO scripted item or manifestation behaviour at all: the
 	# apply_to_melee_slash dispatcher existed, Firestone implemented it, and
@@ -878,6 +884,8 @@ func _spawn_magic_impact(pos: Vector2, dmg: float) -> void:
 	impact.global_position = pos
 	impact.damage = dmg
 	impact.set("source", self)
+	if _lucky_crit_pending:
+		impact.set_meta("lucky_crit", true)
 
 	if hurtbox != null:
 		impact.collision_mask = hurtbox.collision_mask

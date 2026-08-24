@@ -73,6 +73,23 @@ func _test_attack_riders_reach_every_style() -> void:
 		"a melee slash reads the burn it was handed"
 	)
 
+	# A Lucky Crit must REPORT as a crit, not merely deal crit damage.
+	# EnemyCombatService derives was_critical from a HitLedger payload, so a
+	# damage call without one is a normal hit whatever the number was.
+	_check(
+		player_source.contains('set_meta("lucky_crit"'),
+		"the player tells melee and magic when an attack is a Lucky Crit"
+	)
+	for source_path in [
+		"res://scenes/world/combat/MeleeSlash.gd",
+		"res://scenes/world/combat/MagicImpact.gd",
+	]:
+		var body := FileAccess.get_file_as_string(source_path)
+		_check(
+			body.contains("_crit_payload()"),
+			"%s reports crits through a HitLedger" % source_path.get_file()
+		)
+
 
 ## The one rule that ever branched on style must pay all three.
 func _test_anchor_rite_pays_every_style() -> void:

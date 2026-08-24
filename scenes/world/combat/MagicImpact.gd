@@ -79,7 +79,7 @@ func _burst_once() -> void:
 			var actor := combat.actor_for_handle(handle)
 			if actor != null and not actor.has_method("_apply_enemy_world_health"):
 				continue
-			combat.apply_damage(handle, damage, 1, source)
+			combat.apply_damage(handle, damage, 1, source, _crit_payload())
 			_apply_burn_handle(handle)
 
 	var hitboxes: Array = get_tree().get_nodes_in_group("enemy_hitbox")
@@ -217,3 +217,15 @@ func _apply_burn_dot(enemy: Node) -> void:
 		dot.name = "BurnDot"
 		enemy.add_child(dot)
 	dot.setup(enemy, source, stacks, duration, tick, dmg_per_tick_per_stack)
+
+## A Lucky Crit has to be reported as one, not just applied as extra damage.
+## EnemyCombatService derives was_critical from a HitLedger payload, so a call
+## with no payload is a normal hit no matter what the damage was.
+func _crit_payload() -> HitLedger:
+	if not get_meta("lucky_crit", false):
+		return null
+	var ledger := HitLedger.new()
+	ledger.critical_hits = 1
+	ledger.hit_count = 1
+	ledger.source = source
+	return ledger
