@@ -25,6 +25,10 @@ class_name ChunkManager
 ## every room read as a grey box with a few specks in it and there was never an
 ## answer to "what is down this alley?". Decals are alpha 0.12-0.25 and purely
 ## repetition-breaking, so they are cheap to be generous with.
+## A wash over the whole district's ground and floors. Set by the segment theme;
+## white is "no theme opinion".
+@export var district_tint: Color = Color(1, 1, 1, 1)
+
 @export_range(0, 40, 1) var decals_per_chunk_min: int = 5
 @export_range(0, 40, 1) var decals_per_chunk_max: int = 13
 
@@ -555,12 +559,9 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 		return
 
 	var terrain: StringName = get_chunk_terrain(coord)
-	if terrain == &"":
+	var wilderness: bool = terrain == &""
+	if wilderness:
 		terrain = _fallback_terrain
-		# Unplanned streamed chunks stay explorable and natural instead of becoming
-		# square city slabs. Add a little deterministic dirt variation.
-		if terrain == &"grass" and posmod(_seed_for_chunk(coord), 5) == 0:
-			terrain = &"dirt"
 
 	var tex_index: int = _ground_index_for_terrain(terrain)
 	tex_index = clampi(tex_index, 0, ground_count - 1)
@@ -589,7 +590,20 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 
 	var texture_scale: float = float(repeat_world_px) / float(tile_px)
 	spr.scale = Vector2(texture_scale, texture_scale)
-	spr.modulate = Color.WHITE
+	# Wilderness used to swap one chunk in five to a different TEXTURE, which
+	# drew a hard 2048 px rectangle across the ground wherever it landed. The
+	# variation is worth keeping; the rectangle is not. A small deterministic
+	# shade of the same material breaks the flatness without announcing the
+	# chunk grid.
+	var shade: float = 1.0
+	if wilderness:
+		shade = 1.0 + (float(posmod(_seed_for_chunk(coord), 9)) / 8.0 - 0.5) * 0.09
+	spr.modulate = Color(
+		district_tint.r * shade,
+		district_tint.g * shade,
+		district_tint.b * shade,
+		1.0
+	)
 	spr.position = Vector2(float(chunk_size_px) * 0.5, float(chunk_size_px) * 0.5)
 	chunk.add_child(spr)
 

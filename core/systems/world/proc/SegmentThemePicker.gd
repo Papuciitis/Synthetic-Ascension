@@ -46,6 +46,9 @@ static func _base(id_value: StringName, label_value: String, family: StringName)
 
 static func _theme_service_courtyards() -> SegmentThemeData:
 	var t := _base(&"service_courtyards", "Service Courtyards", &"service_courtyards")
+	t.district_tint = Color(1.00, 0.99, 0.96)
+	t.urban_envelope_cardinal_chance = 0.88
+	t.urban_envelope_diagonal_chance = 0.42
 	t.base_terrain = "grass"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 2
@@ -81,6 +84,9 @@ static func _theme_service_courtyards() -> SegmentThemeData:
 
 static func _theme_checkpoint_lanes() -> SegmentThemeData:
 	var t := _base(&"checkpoint_lanes", "Checkpoint Lanes", &"checkpoint_lanes")
+	t.district_tint = Color(0.94, 0.96, 1.00)
+	t.urban_envelope_cardinal_chance = 0.82
+	t.urban_envelope_diagonal_chance = 0.38
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 2
@@ -116,6 +122,9 @@ static func _theme_checkpoint_lanes() -> SegmentThemeData:
 
 static func _theme_collapsed_ward() -> SegmentThemeData:
 	var t := _base(&"collapsed_ward", "Collapsed Ward", &"collapsed_ward")
+	t.district_tint = Color(1.00, 0.93, 0.88)
+	t.urban_envelope_cardinal_chance = 0.70
+	t.urban_envelope_diagonal_chance = 0.30
 	t.base_terrain = "grass"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 3
@@ -149,6 +158,9 @@ static func _theme_collapsed_ward() -> SegmentThemeData:
 
 static func _theme_civilian_cutthrough() -> SegmentThemeData:
 	var t := _base(&"civilian_cutthrough", "Civilian Cut-through", &"civilian_cutthrough")
+	t.district_tint = Color(1.00, 0.98, 0.92)
+	t.urban_envelope_cardinal_chance = 0.92
+	t.urban_envelope_diagonal_chance = 0.50
 	t.base_terrain = "grass"
 	t.exploration_terrain = "dirt"
 	t.landmark_count = 2
@@ -182,6 +194,9 @@ static func _theme_civilian_cutthrough() -> SegmentThemeData:
 
 static func _theme_inner_district_gate() -> SegmentThemeData:
 	var t := _base(&"inner_district_gate", "Inner District Gate", &"inner_district_gate")
+	t.district_tint = Color(0.97, 0.95, 1.00)
+	t.urban_envelope_cardinal_chance = 0.95
+	t.urban_envelope_diagonal_chance = 0.55
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 2
@@ -217,6 +232,9 @@ static func _theme_inner_district_gate() -> SegmentThemeData:
 
 static func _theme_industrial_cutthrough() -> SegmentThemeData:
 	var t := _base(&"industrial_cutthrough", "Industrial Cut-through", &"industrial_cutthrough")
+	t.district_tint = Color(0.96, 0.94, 0.90)
+	t.urban_envelope_cardinal_chance = 0.86
+	t.urban_envelope_diagonal_chance = 0.44
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "dirt"
 	t.landmark_count = 3
@@ -250,6 +268,9 @@ static func _theme_industrial_cutthrough() -> SegmentThemeData:
 
 static func _theme_ruined_services() -> SegmentThemeData:
 	var t := _theme_industrial_cutthrough()
+	t.district_tint = Color(0.98, 0.92, 0.86)
+	t.urban_envelope_cardinal_chance = 0.62
+	t.urban_envelope_diagonal_chance = 0.26
 	t.id = &"ruined_services"
 	t.label = "Ruined Service District"
 	t.district_family = &"ruined_services"
@@ -265,6 +286,9 @@ static func _theme_ruined_services() -> SegmentThemeData:
 
 static func _theme_underpass_veins() -> SegmentThemeData:
 	var t := _base(&"underpass_veins", "Underpass Veins", &"underpass_veins")
+	t.district_tint = Color(0.90, 0.92, 0.97)
+	t.urban_envelope_cardinal_chance = 0.90
+	t.urban_envelope_diagonal_chance = 0.48
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "mud"
 	t.landmark_count = 2
@@ -298,6 +322,9 @@ static func _theme_underpass_veins() -> SegmentThemeData:
 
 static func _theme_canal_services() -> SegmentThemeData:
 	var t := _theme_underpass_veins()
+	t.district_tint = Color(0.90, 0.97, 1.00)
+	t.urban_envelope_cardinal_chance = 0.76
+	t.urban_envelope_diagonal_chance = 0.34
 	t.id = &"canal_services"
 	t.label = "Canal Service Routes"
 	t.district_family = &"canal_services"
@@ -313,6 +340,9 @@ static func _theme_canal_services() -> SegmentThemeData:
 
 static func _theme_rail_yard() -> SegmentThemeData:
 	var t := _base(&"rail_yard", "Rail Yard Expanse", &"rail_yard")
+	t.district_tint = Color(0.97, 0.93, 0.89)
+	t.urban_envelope_cardinal_chance = 0.58
+	t.urban_envelope_diagonal_chance = 0.22
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 3
@@ -346,6 +376,9 @@ static func _theme_rail_yard() -> SegmentThemeData:
 
 static func _theme_military_staging() -> SegmentThemeData:
 	var t := _theme_rail_yard()
+	t.district_tint = Color(0.93, 0.96, 0.92)
+	t.urban_envelope_cardinal_chance = 0.72
+	t.urban_envelope_diagonal_chance = 0.32
 	t.id = &"military_staging"
 	t.label = "Military Staging Ground"
 	t.district_family = &"military_staging"
@@ -360,6 +393,9 @@ static func _theme_military_staging() -> SegmentThemeData:
 
 static func _theme_outer_wall() -> SegmentThemeData:
 	var t := _base(&"outer_wall", "Outer Wall Approaches", &"outer_wall")
+	t.district_tint = Color(0.95, 0.95, 0.93)
+	t.urban_envelope_cardinal_chance = 0.48
+	t.urban_envelope_diagonal_chance = 0.18
 	t.base_terrain = "grass"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 3
@@ -393,6 +429,9 @@ static func _theme_outer_wall() -> SegmentThemeData:
 
 static func _theme_siege_services() -> SegmentThemeData:
 	var t := _theme_outer_wall()
+	t.district_tint = Color(1.00, 0.91, 0.85)
+	t.urban_envelope_cardinal_chance = 0.66
+	t.urban_envelope_diagonal_chance = 0.28
 	t.id = &"siege_services"
 	t.label = "Siege Service District"
 	t.district_family = &"siege_services"
@@ -407,6 +446,9 @@ static func _theme_siege_services() -> SegmentThemeData:
 
 static func _theme_gate_district() -> SegmentThemeData:
 	var t := _base(&"gate_district", "Gate District", &"gate_district")
+	t.district_tint = Color(0.98, 0.96, 1.00)
+	t.urban_envelope_cardinal_chance = 0.94
+	t.urban_envelope_diagonal_chance = 0.52
 	t.base_terrain = "dirt"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 3

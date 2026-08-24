@@ -21,6 +21,18 @@ class_name SegmentThemeData
 ## Now it is a theme knob, which also gives themes their first real silhouette
 ## lever: a dense inner district at 0.9 and a sparse outskirt at 0.35 are
 ## visibly different places built from the same generator.
+## The district's colour.
+##
+## SegmentThemeData had thirty-five knobs and not one of them was a colour, so
+## the ONLY channel a theme had to change how a place looks was picking one of
+## three ground textures - which is why two themes with the same base terrain
+## were indistinguishable at a glance. This tints the ground and the floor
+## stamps together, so a canal district and a military staging yard read as
+## different places before you have identified a single object in them.
+##
+## Kept gentle on purpose: this is a wash over authored art, not a filter.
+@export var district_tint: Color = Color(1, 1, 1, 1)
+
 @export_range(0.0, 1.0, 0.01) var urban_envelope_cardinal_chance: float = 0.88
 
 ## Diagonals only fill in where a cardinal block already bridges back to a
@@ -81,6 +93,7 @@ static func blend(a: SegmentThemeData, b: SegmentThemeData, t: float) -> Segment
 	out.base_terrain = a.base_terrain if t < 0.5 else b.base_terrain
 	out.exploration_terrain = a.exploration_terrain if t < 0.5 else b.exploration_terrain
 	out.landmark_count = int(round(lerpf(float(a.landmark_count), float(b.landmark_count), t)))
+	out.district_tint = a.district_tint.lerp(b.district_tint, t)
 	out.urban_envelope_cardinal_chance = lerpf(a.urban_envelope_cardinal_chance, b.urban_envelope_cardinal_chance, t)
 	out.urban_envelope_diagonal_chance = lerpf(a.urban_envelope_diagonal_chance, b.urban_envelope_diagonal_chance, t)
 
@@ -141,3 +154,4 @@ func apply_to_chunk_manager(cm: ChunkManager) -> void:
 	cm.donjon_fill_wall_chance = donjon_fill_wall_chance
 	cm.donjon_ca_steps = donjon_ca_steps
 	cm.set_fallback_terrain(StringName(exploration_terrain))
+	cm.district_tint = district_tint
