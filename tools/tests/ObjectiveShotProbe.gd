@@ -118,5 +118,21 @@ func _run() -> void:
 		objective.queue_free()
 		await get_tree().process_frame
 
+	# The wager shrine only appears in districts that roll three secondaries, so
+	# it is placed by hand here rather than hoping for the seed.
+	var shrine := WagerShrineObjective.new()
+	shrine.configure(4242)
+	shrine.global_position = anchor
+	parent.add_child(shrine)
+	player.global_position = anchor + Vector2(0, 40)
+	for _f in range(200):
+		await get_tree().process_frame
+		if get_tree().paused:
+			_dismiss_blocking_ui()
+	await RenderingServer.frame_post_draw
+	var shrine_image := get_viewport().get_texture().get_image()
+	var shrine_path := "%s/obj_wager_shrine.png" % _dir
+	print("OBJ shot wager_shrine -> %s (err=%d)" % [shrine_path, shrine_image.save_png(shrine_path)])
+
 	print("ObjectiveShotProbe: done")
 	get_tree().quit(0)
