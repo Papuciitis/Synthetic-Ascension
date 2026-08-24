@@ -36,12 +36,16 @@ var _lapse: float = 0.0
 var _wave: int = 0
 var _reported_tenth: int = -1
 var _inside: bool = false
+var _sigil_phase: float = 0.0
 
 
 func build_layout(rng_source: RandomNumberGenerator) -> void:
-	# Nothing to place - the objective IS this spot. The seed still shifts the
+	# Nothing to place - the objective IS this spot. The seed only shifts the
 	# sigil so two vigils do not look identical.
-	rotation = rng_source.randf_range(-PI, PI)
+	#
+	# Deliberately NOT node rotation: _draw() renders the label too, so rotating
+	# the node prints "HOLD THE WARD VIGIL" upside down.
+	_sigil_phase = rng_source.randf_range(-PI, PI)
 
 
 func on_activated() -> void:
@@ -156,7 +160,7 @@ func _draw() -> void:
 
 	# Spokes: a plain circle on a busy floor reads as one more decal.
 	for i in range(6):
-		var angle := rotation + pulse_time * 0.25 + TAU * float(i) / 6.0
+		var angle := _sigil_phase + pulse_time * 0.25 + TAU * float(i) / 6.0
 		var direction := Vector2.RIGHT.rotated(angle)
 		draw_line(
 			direction * (vigil_radius_px * 0.42),
