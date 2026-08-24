@@ -101,9 +101,15 @@ func _scan_world_targets() -> void:
 	if combat == null:
 		return
 	var outer_radius := maxf(2.0, arc_radius * 0.95)
-	var inner_radius := maxf(0.0, outer_radius - thickness)
-	if inner_radius < 2.0:
-		inner_radius = 0.0
+	# NO inner cutoff.
+	#
+	# The visual is a crescent, and the hit query used to be one too: inner
+	# radius = 58.9 - 18 = 40.9 px. EnemyCombatService.gather_in_sector hard
+	# skips anything closer than that, so an enemy pressed against a melee
+	# player was not hit AT ALL - while the contact-damage loop was happily
+	# ticking into the player for standing there. Being in contact is the melee
+	# player's entire job and it was the one range the swing did not cover.
+	var inner_radius := 0.0
 	combat.gather_in_sector(
 		global_position,
 		global_transform.x,
@@ -144,7 +150,9 @@ func _fit_hitbox_to_visual() -> void:
 	var seg: int = max(4, hitbox_segments)
 
 	var r_out := maxf(2.0, arc_radius * 0.95)
-	var r_in := maxf(0.0, r_out - thickness)
+	# Matches _scan_world_targets: a full wedge, so the legacy Area2D path and
+	# the authoritative handle query agree about what a swing covers.
+	var r_in := 0.0
 
 	# If thickness is too large, fall back to a wedge (better than a broken shape)
 	if r_in < 2.0:

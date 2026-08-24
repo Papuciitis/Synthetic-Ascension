@@ -26,9 +26,32 @@ signal dash_cd_changed(time_left: float, max_cd: float)
 @export var vfx_spokes_scene: PackedScene       # assign SpokesBurst.tscn
 
 @export var base_weapon_damage: float = 12.0
-@export var melee_cooldown: float = 0.0
+
+## Melee used to have NO cooldown.
+##
+## It fires on the press, so the attack rate was literally the player's click
+## rate - measured, melee did 75 DPS at 4 clicks/second and 250 at 12, against
+## ranged's flat 37 at any rate. That is not a balance number, it is a reward
+## for how fast someone's hand is, and it makes the style unreadable to tune
+## and worse for anyone who cannot spam. It also meant Haste did nothing, which
+## needed a special-case follow-through mechanic to paper over.
+##
+## A real cooldown makes melee a style instead of a mash: ~3.3 swings/second
+## against ranged's 4.5, paid for by a 145-degree arc that hits everything in
+## front of it and by melee's 1.25x damage.
+@export var melee_cooldown: float = 0.30
 @export var ranged_cooldown: float = 0.22
-@export var magic_cooldown: float = 0.55
+
+## Magic was 0.55, which put its ceiling at 25 DPS against ranged's 54 - less
+## than half - for a 48 px blast that is SMALLER than melee's crescent. It also
+## sat outside every cadence window in the Manifestation layer: at a 0.50 s gap
+## Fever Litany could never chain past one stack and Death Rattle could never
+## fire at all, so two rules were quietly dead on this style.
+##
+## 0.40 brings it inside Fever's 0.42 s chain window and pairs with the damage
+## bump below. Magic stays the slowest and heaviest of the three; it stops
+## being the worst.
+@export var magic_cooldown: float = 0.40
 
 
 # Melee keeps its passive regeneration identity. Lifesteal itself is universal,
@@ -631,9 +654,9 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 		RunEvents.player_lucky_crit.emit(self, global_position, lucky_crit)
 
 	if style_id == "melee":
-		_spawn_melee(mouse_pos, base_weapon_damage * 1.25 * power_mul * lucky_mul, haste_mul)
+		_spawn_melee(mouse_pos, base_weapon_damage * CombatStyleTuning.MELEE_DAMAGE_MULT * power_mul * lucky_mul)
 	elif style_id == "magic":
-		_spawn_magic(mouse_pos, base_weapon_damage * 1.15 * power_mul * lucky_mul)
+		_spawn_magic(mouse_pos, base_weapon_damage * CombatStyleTuning.MAGIC_DAMAGE_MULT * power_mul * lucky_mul)
 	else:
 		_spawn_ranged(mouse_pos, base_weapon_damage * power_mul * lucky_mul)
 	_lucky_crit_pending = false
@@ -641,32 +664,7 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	RunEvents.weapon_fired.emit(self, StringName(style_id), global_position, mouse_pos, power_mul, haste_mul)
 
 
-## Extra swings a melee attack gets from Haste.
-##
-## Melee has no cooldown - it fires on the press, so the player's click rate IS
-## the attack rate - which meant Haste, an entire equipment slot, did literally
-## nothing for a melee build. Every Haste item, every set that grants it, and
-## the Manifestation rules built on it (Fever Litany, Martyr Circuit) were dead
-## text on a third of the game's builds.
-##
-## Haste therefore buys follow-through instead of frequency: the whole number is
-## guaranteed extra swings, the remainder is a chance at one more. Same
-## arithmetic a cooldown would have produced, expressed as the one thing melee
-## can actually spend it on.
-const MELEE_HASTE_FOLLOWUP_DAMAGE: float = 0.62
-const MELEE_HASTE_FOLLOWUP_ARC_DEG: float = 22.0
-const MELEE_MAX_FOLLOWUPS: int = 3
-
-
-func _melee_followups(haste_mul: float) -> int:
-	var extra: float = maxf(0.0, haste_mul - 1.0)
-	var whole: int = int(floor(extra))
-	if Global != null and Global._rng != null and Global._rng.randf() < extra - float(whole):
-		whole += 1
-	return mini(whole, MELEE_MAX_FOLLOWUPS)
-
-
-func _spawn_melee(mouse_pos: Vector2, dmg: float, haste_mul: float = 1.0) -> void:
+func _spawn_melee(mouse_pos: Vector2, dmg: float) -> void:
 	dmg = _consume_hex_mark_bonus(dmg)
 	var origin := _attack_origin()
 	var dir := (mouse_pos - origin).normalized()
@@ -681,18 +679,6 @@ func _spawn_melee(mouse_pos: Vector2, dmg: float, haste_mul: float = 1.0) -> voi
 		_spawn_melee_slash(origin, dir.rotated( ang), dmg * 0.75)
 	else:
 		_spawn_melee_slash(origin, dir, dmg)
-
-	# Follow-through: Haste's melee payout. Fanned rather than stacked, so the
-	# swing reads as a flurry covering ground instead of one slash drawn twice.
-	var followups: int = _melee_followups(haste_mul)
-	for i in range(followups):
-		var side: float = 1.0 if i % 2 == 0 else -1.0
-		# Deliberate integer division: swings fan out in PAIRS, so 0,1 -> 1 and
-		# 2,3 -> 2. Each step is one arc further from the aim line.
-		@warning_ignore("integer_division")
-		var step: float = float(i / 2 + 1)
-		var swing := dir.rotated(deg_to_rad(MELEE_HASTE_FOLLOWUP_ARC_DEG * step * side))
-		_spawn_melee_slash(origin, swing, dmg * MELEE_HASTE_FOLLOWUP_DAMAGE)
 
 
 func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:

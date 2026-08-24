@@ -183,10 +183,10 @@ func repeat_player_attack(style_id: StringName, target: Vector2, damage_multipli
 	match style_id:
 		&"melee":
 			if player.has_method("_spawn_melee"):
-				player.call("_spawn_melee", target, damage * 1.25)
+				player.call("_spawn_melee", target, damage * CombatStyleTuning.MELEE_DAMAGE_MULT)
 		&"magic":
 			if player.has_method("_spawn_magic"):
-				player.call("_spawn_magic", target, damage * 1.15)
+				player.call("_spawn_magic", target, damage * CombatStyleTuning.MAGIC_DAMAGE_MULT)
 		_:
 			if player.has_method("_spawn_ranged"):
 				player.call("_spawn_ranged", target, damage)

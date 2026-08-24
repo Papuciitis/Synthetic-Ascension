@@ -95,32 +95,38 @@ class Driver:
 		)
 
 
-	## Haste has to be worth something on every weapon style.
+	## Every weapon style has to be a real style.
 	##
-	## Melee fires on the press with no cooldown, so the click rate IS the attack
-	## rate and Haste bought nothing - every Haste item, every set granting it,
-	## and the rules built on it were dead text on a third of the game's builds.
-	func _probe_haste_reaches_melee() -> void:
+	## Melee had NO cooldown, so its damage was the player's click rate and
+	## Haste bought nothing; magic's 0.55s cast put its ceiling at half of
+	## ranged's and sat outside every cadence window in the Manifestation layer.
+	## Both were measured for the first time by StyleDpsBenchmark.
+	func _probe_styles_are_all_real() -> void:
 		if _player == null or not is_instance_valid(_player):
 			return
+		var melee_cd: float = float(_player.get("melee_cooldown"))
+		var ranged_cd: float = float(_player.get("ranged_cooldown"))
+		var magic_cd: float = float(_player.get("magic_cooldown"))
 		_check(
-			int(_player.call("_melee_followups", 1.0)) == 0,
-			"no Haste, no follow-through"
+			melee_cd > 0.0,
+			"melee is gated by a cooldown, not by how fast a hand can click (%.2f)" % melee_cd
+		)
+		_check(magic_cd > ranged_cd, "magic is still the slow one (%.2f > %.2f)" % [magic_cd, ranged_cd])
+		# Fever Litany chains only while the gap stays inside its window, so a
+		# cast slower than that makes the rule a different rule for magic.
+		_check(
+			magic_cd <= ManifestationState.CADENCE_CHAIN_WINDOW,
+			"magic can hold a cadence chain (%.2f <= %.2f)" % [magic_cd, ManifestationState.CADENCE_CHAIN_WINDOW]
+		)
+		# Damage per attack has to move the opposite way to attack rate, or the
+		# slow style is simply the worse style.
+		_check(
+			CombatStyleTuning.MAGIC_DAMAGE_MULT > CombatStyleTuning.MELEE_DAMAGE_MULT,
+			"the slowest style hits hardest per cast"
 		)
 		_check(
-			int(_player.call("_melee_followups", 2.0)) == 1,
-			"+100% Haste is one guaranteed follow-through"
-		)
-		var partial: int = 0
-		for _i in range(400):
-			partial += int(_player.call("_melee_followups", 1.5))
-		_check(
-			partial > 120 and partial < 280,
-			"a fractional Haste is a chance at one (%d over 400 swings)" % partial
-		)
-		_check(
-			int(_player.call("_melee_followups", 99.0)) <= 3,
-			"and it is capped, so Haste cannot become a screen of slashes"
+			CombatStyleTuning.MELEE_DAMAGE_MULT > CombatStyleTuning.RANGED_DAMAGE_MULT,
+			"melee pays more per swing than ranged does per shot"
 		)
 
 
@@ -168,7 +174,7 @@ class Driver:
 		_runner = _player.get_node_or_null("ManifestationRunner")
 		_check(_runner != null, "the player carries a ManifestationRunner")
 		_probe_overheal_is_never_damage()
-		_probe_haste_reaches_melee()
+		_probe_styles_are_all_real()
 		if _runner == null:
 			_finish()
 			return
