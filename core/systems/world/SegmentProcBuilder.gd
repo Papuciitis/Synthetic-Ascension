@@ -293,6 +293,7 @@ func _build_world_from_plan() -> void:
 	_spawn_wardstones()
 	_spawn_exit_gate()
 	_spawn_segment_events()
+	_spawn_secondary_nodes()
 
 func _spawn_primary_objective() -> void:
 	var objective_world: Vector2 = _plan.get("primary_world", Vector2.ZERO) as Vector2
@@ -353,6 +354,21 @@ func _spawn_exit_gate() -> void:
 	_exit_rite.cleared.connect(_on_gate_cleared)
 	if not _primary_completed:
 		_exit_rite.set_revealed(false)
+
+
+## Most secondaries are consequences of a chunk ROLE - a loot spawner at a dead
+## end, a forced building with an encounter in it. The wager shrine is a
+## gameplay node with its own state, so it is spawned imperatively from the plan
+## the way the relay, the wardstones and the Exit Rite are.
+func _spawn_secondary_nodes() -> void:
+	for secondary in _secondary_objectives:
+		if StringName(secondary.get("type", &"")) != &"wager_shrine":
+			continue
+		var shrine := WagerShrineObjective.new()
+		shrine.name = "WagerShrine%d" % int(secondary.get("id", 0))
+		shrine.configure(int(secondary.get("id", 0)))
+		shrine.global_position = _jitter_in_chunk(secondary.get("world", Vector2.ZERO) as Vector2, 3)
+		add_child(shrine)
 
 
 func _spawn_segment_events() -> void:
@@ -611,6 +627,9 @@ func _show_secondary_objective(objective: Dictionary) -> void:
 		&"searchable_reward_building":
 			title = "SECONDARY • Searchable Building"
 			detail = "Enter and search the building for its optional reward."
+		&"wager_shrine":
+			title = "SECONDARY • Wager Shrine"
+			detail = "Stand in the shrine to raise the stake. Step out to settle it."
 	RunEvents.secondary_objective_changed.emit(title, detail)
 
 func _hook_secondary_objectives() -> void:
@@ -654,6 +673,8 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 			completion_detail = "Guarded alley cache secured."
 		&"searchable_reward_building":
 			completion_detail = "Building searched • optional reward recovered."
+		&"wager_shrine":
+			completion_detail = "The wager is settled."
 
 	_secondary_feedback_token += 1
 	var feedback_token: int = _secondary_feedback_token

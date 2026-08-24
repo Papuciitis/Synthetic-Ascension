@@ -382,17 +382,21 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 			})
 			break
 
+	# The third slot used to be a second alley cache, so a district with three
+	# secondaries offered two identical ones. A shrine is a different KIND of
+	# detour - a decision rather than a trip - and it wants an open floor to
+	# stand on, so it takes a plaza role rather than a dead end.
 	if secondary_target_count >= 3:
 		for extra_endpoint: Vector2i in exploration_end_chunks:
 			if secondary_used.has(extra_endpoint):
 				continue
-			role_by_chunk[extra_endpoint] = &"secondary_alley_cache"
+			role_by_chunk[extra_endpoint] = &"secondary_wager_shrine"
 			secondary_used[extra_endpoint] = true
 			if not reward_chunks.has(extra_endpoint):
 				reward_chunks.append(extra_endpoint)
 			secondary_objectives.append({
-				"id": secondary_objective_id(int(rng.seed), extra_endpoint, &"dangerous_alley_cache"),
-				"type": &"dangerous_alley_cache",
+				"id": secondary_objective_id(int(rng.seed), extra_endpoint, &"wager_shrine"),
+				"type": &"wager_shrine",
 				"chunk": extra_endpoint,
 				"world": _chunk_center_world(extra_endpoint, chunk_size_px),
 			})
@@ -784,7 +788,7 @@ static func _build_connectors(chunk_set: Dictionary) -> Dictionary:
 
 static func _archetype_for_role(role: StringName) -> StringName:
 	match role:
-		&"entry_court", &"landmark_plaza", &"exploration_reward", &"primary_objective":
+		&"entry_court", &"landmark_plaza", &"exploration_reward", &"primary_objective", &"secondary_wager_shrine":
 			return &"plaza"
 		&"wardstone_court", &"checkpoint", &"miniboss_arena", &"boss_arena":
 			return &"arena"
