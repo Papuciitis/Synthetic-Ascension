@@ -80,6 +80,7 @@ func _burst_once() -> void:
 			if actor != null and not actor.has_method("_apply_enemy_world_health"):
 				continue
 			combat.apply_damage(handle, damage, 1, source)
+			_apply_burn_handle(handle)
 
 	var hitboxes: Array = get_tree().get_nodes_in_group("enemy_hitbox")
 	var legacy_hit_ids: Dictionary = {}
@@ -104,6 +105,7 @@ func _burst_once() -> void:
 			continue
 		legacy_hit_ids[instance_id] = true
 		enemy_node.call("take_damage", damage, source)
+		_apply_burn_dot(enemy_node)
 
 
 func _ease_out(x: float) -> float:
@@ -156,6 +158,35 @@ func _draw() -> void:
 
 	# center pop
 	draw_circle(Vector2.ZERO, maxf(2.0, w * 0.35), Color(color_core.r, color_core.g, color_core.b, 0.35 * fade))
+
+
+## Burn on the authoritative handle path.
+##
+## This whole file could receive burn metadata - player.gd wires
+## apply_to_magic_impact correctly - and then never read it: _burst_once() dealt
+## damage and called neither burn function, so _apply_burn_dot below was dead
+## code. Firestone's Burn therefore worked on exactly one style, ranged, while
+## its tooltip is the one item in the game that says it is FOR magic.
+func _apply_burn_handle(handle: int) -> void:
+	if not has_meta("burn_duration"):
+		return
+	var duration := float(get_meta("burn_duration", 0.0))
+	var tick_interval := float(get_meta("burn_tick", 0.0))
+	var stacks := int(get_meta("burn_stacks", 0))
+	var multiplier := float(get_meta("burn_tick_mult", 0.0))
+	if duration <= 0.0 or tick_interval <= 0.0 or stacks <= 0:
+		return
+	var status := get_node_or_null("/root/EnemyStatus")
+	if status != null and status.has_method("apply_burn"):
+		status.call(
+			"apply_burn",
+			handle,
+			stacks,
+			duration,
+			tick_interval,
+			maxf(0.05, damage * multiplier),
+			source,
+		)
 
 
 func _apply_burn_dot(enemy: Node) -> void:

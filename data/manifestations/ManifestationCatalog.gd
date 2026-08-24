@@ -65,7 +65,7 @@ static func _ensure_built() -> void:
 		ManifestationDef.new(
 			&"anchor_rite",
 			"Anchor Rite",
-			"Standing still builds Stability. At full Stability your shot becomes a rail - it crosses the room and goes through everything in it. Moving drains it.",
+			"Standing still builds Stability. At full Stability your attack covers ground it otherwise could not - a rail, a wider sweep, a bigger blast. Moving drains it.",
 			[&"momentum", &"cadence"] as Array[StringName],
 			[SLOT_MOVE, SLOT_ARMOR, SLOT_RING] as Array[int],
 			preload("res://effects/manifestations/logic/AnchorRite.gd"),

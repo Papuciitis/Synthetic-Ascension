@@ -702,6 +702,20 @@ func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:
 		slash.collision_layer = hurtbox.collision_layer
 
 	slash.add_to_group("player_projectile")
+
+	# Melee got NO scripted item or manifestation behaviour at all: the
+	# apply_to_melee_slash dispatcher existed, Firestone implemented it, and
+	# nothing ever called it. Every burn, every on-hit rider, every future
+	# effect that wants to ride an attack simply skipped a third of the game's
+	# builds. Applied before add_child so the slash carries its riders on the
+	# frame it first scans for targets.
+	var ier_m: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier_m != null:
+		ier_m.apply_to_melee_slash(slash)
+	var mr_m: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr_m != null:
+		mr_m.apply_to_melee_slash(slash)
+
 	get_tree().current_scene.add_child(slash)
 
 

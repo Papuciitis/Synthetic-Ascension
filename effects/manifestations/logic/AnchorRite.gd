@@ -29,6 +29,9 @@ const FULL_BONUS: float = 0.30
 const FULL_PIERCE: int = 12
 const FULL_RANGE_BONUS: float = 0.85
 
+## Degrees added to a planted melee swing's arc, on top of the reach bonus.
+const MELEE_PLANTED_ARC_BONUS_DEG: float = 55.0
+
 const RING_RADIUS: float = 34.0
 const SPIN_SPEED: float = 1.35
 const RE_ANNOUNCE_BELOW: float = 0.60
@@ -120,6 +123,14 @@ func pierce_at_full() -> int:
 	return FULL_PIERCE + int(floor((potency() - 1.0) / 0.30))
 
 
+## THE RITE IS THE SAME PROMISE ON EVERY STYLE: planted, your attack covers
+## ground it otherwise could not.
+##
+## Only ranged had a payoff for a long time, because the pierce/range hooks are
+## the ranged pipeline - and describe() advertised "it crosses the room and goes
+## through everything in it" to melee and magic players who were getting +30%
+## damage and nothing else. Now each style gets the shape its own attack can
+## express: a rail, a wider sweep, a bigger blast.
 func apply_to_hit_profile(profile: HitProfileAdapter, style_id: StringName) -> void:
 	if profile == null or style_id != &"ranged" or not _is_planted():
 		return
@@ -139,13 +150,50 @@ func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:
 		bullet.set("max_range", float(reach) * (1.0 + FULL_RANGE_BONUS))
 
 
+## Planted, the swing sweeps wider and further. Applied before the slash enters
+## the tree, so its hitbox is built from these numbers rather than resized after.
+func apply_to_melee_slash(slash: Node) -> void:
+	if slash == null or not _is_planted():
+		return
+	var reach: Variant = slash.get("arc_radius")
+	if reach is float or reach is int:
+		slash.set("arc_radius", float(reach) * (1.0 + FULL_RANGE_BONUS))
+	var arc: Variant = slash.get("arc_degrees")
+	if arc is float or arc is int:
+		# Capped below MeleeSlash's own 340-degree clamp: a planted swing is a
+		# wider cut, not a pirouette.
+		slash.set("arc_degrees", minf(float(arc) + MELEE_PLANTED_ARC_BONUS_DEG, 300.0))
+
+
+## Planted, the blast is bigger.
+func apply_to_magic_impact(impact: Node) -> void:
+	if impact == null or not _is_planted():
+		return
+	var blast: Variant = impact.get("radius")
+	if blast is float or blast is int:
+		impact.set("radius", float(blast) * (1.0 + FULL_RANGE_BONUS))
+
+
 func describe() -> String:
-	return "Stand still for %.2fs to plant, and your shot becomes a rail: %d%% damage, carrying through %d more enemies at %d%% range. Firing never spends it; moving does." % [
-		FILL_SECONDS * threshold_scale(),
-		int(round((1.0 + FULL_BONUS * potency()) * 100.0)),
-		pierce_at_full(),
-		int(round((1.0 + FULL_RANGE_BONUS) * 100.0)),
-	]
+	var plant_seconds: float = FILL_SECONDS * threshold_scale()
+	var damage_percent: int = int(round((1.0 + FULL_BONUS * potency()) * 100.0))
+	var reach_percent: int = int(round((1.0 + FULL_RANGE_BONUS) * 100.0))
+	# describe() runs on a detached node, so this reads the run's style rather
+	# than anything on the player.
+	var style: String = str(Global.selected_style_id) if Global != null else "ranged"
+	match style:
+		"melee":
+			return "Stand still for %.2fs to plant, and your swing opens up: %d%% damage, reaching %d%% further and cutting %d degrees wider. Firing never spends it; moving does." % [
+				plant_seconds, damage_percent, reach_percent, int(MELEE_PLANTED_ARC_BONUS_DEG)
+			]
+		"magic":
+			return "Stand still for %.2fs to plant, and your blast widens: %d%% damage over %d%% the radius. Firing never spends it; moving does." % [
+				plant_seconds, damage_percent, reach_percent
+			]
+		_:
+			return "Stand still for %.2fs to plant, and your shot becomes a rail: %d%% damage, carrying through %d more enemies at %d%% range. Firing never spends it; moving does." % [
+				plant_seconds, damage_percent, pierce_at_full(), reach_percent
+			]
 
 
 func _draw() -> void:

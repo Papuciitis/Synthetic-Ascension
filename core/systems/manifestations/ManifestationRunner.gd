@@ -693,6 +693,18 @@ func apply_to_ranged_bullet(bullet: Node, style_id: StringName) -> void:
 			node.call("apply_to_ranged_bullet", bullet, style_id)
 
 
+## The melee half of the attack-rider contract.
+##
+## ItemEffectRunner had this and the Manifestation layer did not - and nothing
+## called either, so melee was the one style no scripted effect could ride.
+func apply_to_melee_slash(slash: Node) -> void:
+	if slash == null:
+		return
+	for node in _all_effects():
+		if is_instance_valid(node) and node.has_method("apply_to_melee_slash"):
+			node.call("apply_to_melee_slash", slash)
+
+
 func apply_to_magic_impact(impact: Node) -> void:
 	if impact == null:
 		return
