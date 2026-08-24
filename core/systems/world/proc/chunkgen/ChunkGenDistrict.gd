@@ -69,7 +69,12 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		&"dangerous_alley", &"secondary_alley_cache": lane_w = 2
 		&"checkpoint", &"exit_approach", &"gate": lane_w = 7
 		&"primary_objective": lane_w = 6
-		_: lane_w = clampi(gen.district_lane_width_cells, 6, 8)
+		# The authored range is 10-14 cells and this used to clamp it to 6-8, so
+		# every theme's main street collapsed to exactly 8 - a boulevard district
+		# and a tight-lane district were the same width. Widened to the band the
+		# themes actually write in; 14 cells still leaves 9 cells of frontage per
+		# side, which is more than the minimum parcel depth.
+		_: lane_w = clampi(gen.district_lane_width_cells, 6, 14)
 	lane_w = clampi(lane_w, 2, cells - 6)
 
 	var plaza_size := clampi(gen.district_plaza_size_cells, 10, cells - 4)

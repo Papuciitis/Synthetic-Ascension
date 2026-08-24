@@ -92,6 +92,8 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var base_terrain: StringName = &"grass"
 	var exploration_terrain: StringName = &"grass"
 	var theme_id: StringName = &"service_courtyards"
+	var envelope_cardinal_chance: float = 0.88
+	var envelope_diagonal_chance: float = 0.42
 	var want_miniboss_arena: bool = (segment == 5)
 	var want_boss_arena: bool = (segment == 10)
 
@@ -114,6 +116,8 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 		exploration_reconnect_chance = clampf(theme.exploration_reconnect_chance, 0.0, 1.0)
 		exploration_band_bonus = maxi(1, theme.exploration_band_bonus)
 		landmark_count = clampi(theme.landmark_count, 1, 4)
+		envelope_cardinal_chance = clampf(theme.urban_envelope_cardinal_chance, 0.0, 1.0)
+		envelope_diagonal_chance = clampf(theme.urban_envelope_diagonal_chance, 0.0, 1.0)
 		base_terrain = StringName(theme.base_terrain)
 		exploration_terrain = StringName(theme.exploration_terrain)
 		theme_id = theme.id
@@ -242,7 +246,10 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var road_chunk_set: Dictionary = chunk_set.duplicate()
 	var urban_envelope_set: Dictionary = {}
 	var urban_envelope_chunks: Array[Vector2i] = []
-	if theme_id == &"service_courtyards":
+	# Every theme gets an envelope now, at its own density. This used to read
+	# `if theme_id == &"service_courtyards"`, which is why segments 3-10 were
+	# routes drawn across an empty field.
+	if envelope_cardinal_chance > 0.0:
 		var cardinal_dirs: Array[Vector2i] = [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 		var diagonal_dirs: Array[Vector2i] = [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
 		var road_keys: Array = road_chunk_set.keys()
@@ -253,7 +260,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 				var cardinal_candidate: Vector2i = road_chunk + cardinal_dir
 				if road_chunk_set.has(cardinal_candidate) or urban_envelope_set.has(cardinal_candidate):
 					continue
-				if rng.randf() > 0.88:
+				if rng.randf() > envelope_cardinal_chance:
 					continue
 				chunk_set[cardinal_candidate] = true
 				urban_envelope_set[cardinal_candidate] = true
@@ -265,7 +272,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 				var diagonal_candidate: Vector2i = road_chunk2 + diagonal_dir
 				if road_chunk_set.has(diagonal_candidate) or urban_envelope_set.has(diagonal_candidate):
 					continue
-				if rng.randf() > 0.42:
+				if rng.randf() > envelope_diagonal_chance:
 					continue
 				var has_cardinal_bridge: bool = false
 				for cardinal_dir in cardinal_dirs:

@@ -319,7 +319,7 @@ static func _theme_rail_yard() -> SegmentThemeData:
 	t.weight_empty = 0.54
 	t.weight_building = 0.30
 	t.weight_ruins = 0.16
-	t.district_lane_width_cells = 16
+	t.district_lane_width_cells = 14
 	t.district_plaza_size_cells = 21
 	t.district_gap_chance = 0.10
 	t.district_window_chance = 0.06

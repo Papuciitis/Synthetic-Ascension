@@ -5,8 +5,18 @@ extends RefCounted
 
 const _TEX_TILE_PX: int = 1024
 # Cethiel source tiles are 512 px, processed to 1024 px. One active tile covers 1024 world pixels.
-const _GROUND_REPEAT_WORLD_PX: int = 1024
-const _GROUND_GRASS_REPEAT_WORLD_PX: int = 768
+## World pixels one ground tile covers.
+##
+## This was 1024, and the masonry textures carry about four blocks across a
+## tile - so a single paving stone rendered roughly 256 px, five times the
+## player sprite. The whole world read as a giant's floor rather than a street,
+## and the enormous repeat also made every chunk seam a hard visible step
+## because two adjacent chunks each showed a different quarter of the pattern.
+##
+## 384 puts a paving stone at about 96 px - a stride and a half - which is the
+## scale the wall and prop art is already drawn at.
+const _GROUND_REPEAT_WORLD_PX: int = 384
+const _GROUND_GRASS_REPEAT_WORLD_PX: int = 320
 const _GROUND_BASE_TEX_INDEX: int = 0
 
 const _GROUND_TEX_PATHS := [
