@@ -107,8 +107,13 @@ func _process(delta: float) -> void:
 
 	# Reconstruction keeps the player node in the world until the modal closes,
 	# so without this an objective keeps making progress underneath a corpse.
+	#
+	# Gated on _activated: this used to run before the activation check, so an
+	# objective the player had never reached still ticked - and a Breach Seal
+	# four thousand pixels away kept firing waves at their corpse.
 	if bool(player.get("is_dead")):
-		on_player_dead(delta)
+		if _activated:
+			on_player_dead(delta)
 		queue_redraw()
 		return
 

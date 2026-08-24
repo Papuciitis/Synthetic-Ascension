@@ -484,6 +484,16 @@ const CACHE_INSET: int = 4
 ## move the other.
 const CACHE_SEED: int = 0xCA5E1
 
+## Alphas are quantised to this many steps.
+##
+## Segment 1 paints through the tiled renderer, which caches an atlas source per
+## (texture, transform, MODULATE) key - so a continuously random alpha minted a
+## fresh 512x512 Lanczos downscale, ImageTexture and TileSetAtlasSource for
+## nearly every one of the ~640 marks, synchronously during _ready. Six steps
+## are visually indistinguishable from a continuum at these alphas and turn
+## ~500 cache misses into at most 42.
+const DECAL_ALPHA_STEPS: int = 6
+
 
 func _plan_exploration_caches() -> void:
 	if CACHE_SCENE == null or _geo == null:
@@ -564,6 +574,7 @@ func _plan_interior_dressing() -> void:
 	var rng := RandomNumberGenerator.new()
 	# Fixed: an authored level has to be the same place every time it loads.
 	rng.seed = DRESSING_SEED
+	_dressing_cells.clear()
 
 	var anchors: Array[Vector2i] = []
 	for rect in _playable_regions:
@@ -572,7 +583,12 @@ func _plan_interior_dressing() -> void:
 		# enough that the floor is still mostly floor.
 		# Integer division is the intent: one cluster per whole 48 cells.
 		@warning_ignore("integer_division")
-		var clusters: int = clampi(area / 48, 3, 40)
+		# One cluster per ~110 cells. Every placed cell becomes a fully
+		# non-walkable nav cell, so this was ~270 new blockers in an authored
+		# level - a ninefold increase over the authored cover, in a level whose
+		# routes were hand-tuned around the original count.
+		@warning_ignore("integer_division")
+		var clusters: int = clampi(area / 110, 2, 16)
 		for _i in range(clusters):
 			var cell := _pick_dressing_cell(rng, rect, anchors)
 			if cell.x == -9999:
@@ -586,6 +602,7 @@ func _plan_interior_dressing() -> void:
 ## An L, a stub wall or a lone crate - three silhouettes rather than one, so the
 ## eye reads furniture instead of a pattern.
 func _stamp_cover_cluster(rng: RandomNumberGenerator, rect: Rect2i, origin: Vector2i) -> void:
+	_current_cluster.clear()
 	var shape: int = rng.randi_range(0, 2)
 	var horizontal: bool = rng.randf() < 0.5
 	var length: int = rng.randi_range(2, 4)
@@ -609,7 +626,36 @@ func _stamp_cover_cluster(rng: RandomNumberGenerator, rect: Rect2i, origin: Vect
 	for cell in cells:
 		if not _is_dressable_cell(cell, rect):
 			continue
+		# The anchor gap alone does not bound the RESULT: two anchors exactly
+		# DRESSING_CLUSTER_GAP apart, each with a four-cell run, chain into one
+		# unbroken wall. Checking every placed cell against every other cluster's
+		# cells is what actually keeps a lane open.
+		if _too_close_to_other_cluster(cell):
+			continue
+		_dressing_cells[cell] = true
+		_current_cluster[cell] = true
 		_add_half_cell(cell)
+
+
+## Cells this pass has placed, so the spacing rule can be enforced on the
+## geometry rather than only on the seeds it grew from.
+var _dressing_cells: Dictionary = {}
+
+
+func _too_close_to_other_cluster(cell: Vector2i) -> bool:
+	for key in _dressing_cells:
+		var other: Vector2i = key
+		if other == cell:
+			continue
+		if maxi(absi(other.x - cell.x), absi(other.y - cell.y)) < DRESSING_CLUSTER_GAP:
+			# Same cluster's own run is allowed to be contiguous; only cells
+			# from a DIFFERENT cluster have to keep their distance.
+			if not _current_cluster.has(other):
+				return true
+	return false
+
+
+var _current_cluster: Dictionary = {}
 
 
 func _pick_dressing_cell(
@@ -666,6 +712,11 @@ func _is_dressable_cell(cell: Vector2i, rect: Rect2i) -> bool:
 ## under everything, so this is pure texture - but an unbroken grey plane is the
 ## single loudest thing saying "filler" in the whole level, and three decals
 ## repeated at varied scale and rotation break it completely.
+func _quantised_alpha(rng: RandomNumberGenerator, low: float, high: float) -> float:
+	var step: int = rng.randi_range(0, DECAL_ALPHA_STEPS - 1)
+	return lerpf(low, high, float(step) / float(maxi(1, DECAL_ALPHA_STEPS - 1)))
+
+
 func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
 	# Weighted: wear and grime are what a floor is mostly covered in. Scorches
 	# and spills are events, so they stay rare enough to still read as one.
@@ -691,12 +742,12 @@ func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
 			# Markings are painted lines - they read wrong at a jaunty angle and
 			# wrong at half size, so they get their own band.
 			if texture == _TEX_MARKING:
-				_place_deco(texture, cell, rng.randf_range(0.22, 0.30), rng.randf_range(0.30, 0.55), -88)
+				_place_deco(texture, cell, rng.randf_range(0.22, 0.30), _quantised_alpha(rng, 0.30, 0.55), -88)
 				continue
 			# Wear is measured in metres, not pixels. The first pass at this drew
 			# marks about one cell across, which read as litter dropped on a clean
 			# floor rather than as a floor that has been used.
-			_place_deco(texture, cell, rng.randf_range(0.22, 0.68), rng.randf_range(0.30, 0.70), -88)
+			_place_deco(texture, cell, rng.randf_range(0.22, 0.68), _quantised_alpha(rng, 0.30, 0.70), -88)
 
 
 # -----------------------------------------------------------------------------

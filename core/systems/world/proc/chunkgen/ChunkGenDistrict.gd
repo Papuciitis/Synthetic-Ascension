@@ -69,12 +69,22 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		&"dangerous_alley", &"secondary_alley_cache": lane_w = 2
 		&"checkpoint", &"exit_approach", &"gate": lane_w = 7
 		&"primary_objective": lane_w = 6
-		# The authored range is 10-14 cells and this used to clamp it to 6-8, so
-		# every theme's main street collapsed to exactly 8 - a boulevard district
-		# and a tight-lane district were the same width. Widened to the band the
-		# themes actually write in; 14 cells still leaves 9 cells of frontage per
-		# side, which is more than the minimum parcel depth.
-		_: lane_w = clampi(gen.district_lane_width_cells, 6, 14)
+		# REMAPPED, not clamped.
+		#
+		# Themes author 10-16 and this originally clamped to 6-8, so every main
+		# street collapsed to exactly 8 and boulevard districts were the same
+		# width as tight-lane ones. Widening the clamp to 14 fixed that and
+		# broke something worse: the donjon side regions are the road lane's
+		# leftovers, they are dropped below 10x10, and at lane_w 13-14 roughly
+		# HALF of all rows produce no carvable region at all - so half the
+		# chunks lost their buildings and became two wall lines flanking a road.
+		# That is the exact "routes drawn across a field" symptom the envelope
+		# change was fixing.
+		#
+		# Remapping preserves the ordering the themes are expressing while
+		# keeping every width inside the band that still leaves a carvable
+		# region on both sides.
+		_: lane_w = _remapped_lane_width(gen.district_lane_width_cells)
 	lane_w = clampi(lane_w, 2, cells - 6)
 
 	var plaza_size := clampi(gen.district_plaza_size_cells, 10, cells - 4)
@@ -617,6 +627,14 @@ static func _add_connector_spawn_sockets(chunk: Node2D, conn_mask: int, lane_cx:
 		marker.add_to_group(&"enemy_spawn_socket")
 		marker.set_meta("spawn_socket_kind", &"street")
 		chunk.add_child(marker)
+
+
+## Authored 10-16 -> 6-9 cells. The top of the band is chosen so the leftover
+## side regions clear the carver's 10x10 minimum for every lane centre the
+## deterministic row/column hash can produce.
+static func _remapped_lane_width(authored_cells: int) -> int:
+	var t: float = clampf((float(authored_cells) - 10.0) / 6.0, 0.0, 1.0)
+	return clampi(int(round(lerpf(6.0, 9.0, t))), 6, 9)
 
 
 static func _lane_center_for_row(gen: ChunkGenImpl, row: int, cells: int) -> int:

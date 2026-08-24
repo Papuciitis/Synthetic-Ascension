@@ -111,8 +111,10 @@ func steps_done() -> int:
 	return int(round(progress_fraction() * float(steps_total())))
 
 
+## Tenths, matching how often report_progress() actually fires. This used to
+## claim a 26-step scale while only ever emitting every second or third value.
 func steps_total() -> int:
-	return int(round(vigil_seconds))
+	return 10
 
 
 func objective_title() -> String:

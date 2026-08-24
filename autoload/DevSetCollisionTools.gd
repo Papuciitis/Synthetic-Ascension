@@ -348,9 +348,24 @@ func grant_mild_curses() -> void:
 	_refresh_player_loadout()
 
 
+## First free slot, not always slot 0.
+##
+## All three NEG augment buttons wrote slot 0, so each evicted the last - and
+## the interaction they exist to test (Corruption Engine and Doctrine of Burden
+## genuinely fight each other) needs two of them equipped at once.
 func grant_neg_augment(id: StringName) -> void:
 	if Global == null:
 		return
+	var slots: Array = Global.permanent_augment_ids
+	for index in range(slots.size()):
+		if StringName(slots[index]) == id:
+			_refresh_player_loadout()
+			return
+	for index in range(slots.size()):
+		if StringName(slots[index]) == &"":
+			Global.set_permanent_augment(index, id)
+			_refresh_player_loadout()
+			return
 	Global.set_permanent_augment(0, id)
 	_refresh_player_loadout()
 
@@ -391,6 +406,13 @@ func grant_pair(pair_id: StringName) -> int:
 			chosen.append(id_value)
 			for noun in serves:
 				need[noun] = int(need[noun]) - 1
+
+	# Every noun must be fully satisfied before anything is placed. A short
+	# selection still assigns cleanly, so without this the console reported
+	# "Lit 'X' with 3 rules" for a pair that can never activate.
+	for noun in def.nouns:
+		if int(need.get(noun, 0)) > 0:
+			return 0
 
 	# Each rule may only live on certain slots, so first-come-first-served loses
 	# pairs it could have satisfied: a rule legal on three slots takes the one

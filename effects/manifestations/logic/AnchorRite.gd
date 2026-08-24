@@ -30,7 +30,14 @@ const FULL_PIERCE: int = 12
 const FULL_RANGE_BONUS: float = 0.85
 
 ## Degrees added to a planted melee swing's arc, on top of the reach bonus.
-const MELEE_PLANTED_ARC_BONUS_DEG: float = 55.0
+##
+## Capped so the TOTAL never exceeds MeleeSlash's convex-wedge limit: the
+## collision shape is an apex plus an arc, which stops being convex past 180
+## degrees, and _fit_hitbox_to_visual clamps at 170. Push past that and the
+## authoritative handle query covers ground the legacy Area2D path does not,
+## and the drawn polygon goes concave.
+const MELEE_PLANTED_ARC_BONUS_DEG: float = 22.0
+const MELEE_ARC_CEILING_DEG: float = 170.0
 
 const RING_RADIUS: float = 34.0
 const SPIN_SPEED: float = 1.35
@@ -135,9 +142,16 @@ func apply_to_hit_profile(profile: HitProfileAdapter, style_id: StringName) -> v
 	if profile == null or style_id != &"ranged" or not _is_planted():
 		return
 	# maxi, not assignment: another effect may already have granted pierce and
-	# the rite should never take it away.
+	# the rite should never take it away. Pierce cannot compound for the same
+	# reason; the range multiply can, so it is bounded here the way the melee
+	# and magic hooks are bounded by their mark.
 	profile.pierce = maxi(profile.pierce, pierce_at_full())
-	profile.max_range *= 1.0 + FULL_RANGE_BONUS
+	profile.max_range = maxf(profile.max_range, _base_range(profile) * (1.0 + FULL_RANGE_BONUS))
+
+
+## The adapter is reset per shot, so its pre-rite range is the profile default.
+func _base_range(profile: HitProfileAdapter) -> float:
+	return maxf(profile.max_range, 1.0)
 
 
 func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:
@@ -152,23 +166,38 @@ func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:
 
 ## Planted, the swing sweeps wider and further. Applied before the slash enters
 ## the tree, so its hitbox is built from these numbers rather than resized after.
+## ONCE PER ATTACK, however many copies you hold.
+##
+## These hooks are dispatched without the duplicate falloff that _multiplier()
+## and consume_attack_bonus() apply, so a second copy would compound them: two
+## planted Anchor Rites multiplied the arc radius by 1.85 twice, a 3.42x swing,
+## which is precisely the runaway that falloff was written to kill. The mark
+## makes the payoff a property of the ATTACK rather than a stack of the rule.
+const APPLIED_MARK: StringName = &"anchor_rite_planted"
+
+
 func apply_to_melee_slash(slash: Node) -> void:
-	if slash == null or not _is_planted():
+	if slash == null or not _is_planted() or slash.has_meta(APPLIED_MARK):
 		return
+	slash.set_meta(APPLIED_MARK, true)
 	var reach: Variant = slash.get("arc_radius")
 	if reach is float or reach is int:
 		slash.set("arc_radius", float(reach) * (1.0 + FULL_RANGE_BONUS))
 	var arc: Variant = slash.get("arc_degrees")
 	if arc is float or arc is int:
-		# Capped below MeleeSlash's own 340-degree clamp: a planted swing is a
-		# wider cut, not a pirouette.
-		slash.set("arc_degrees", minf(float(arc) + MELEE_PLANTED_ARC_BONUS_DEG, 300.0))
+		slash.set("arc_degrees", minf(
+			float(arc) + MELEE_PLANTED_ARC_BONUS_DEG,
+			MELEE_ARC_CEILING_DEG
+		))
 
 
 ## Planted, the blast is bigger.
 func apply_to_magic_impact(impact: Node) -> void:
 	if impact == null or not _is_planted():
 		return
+	if impact.has_meta(APPLIED_MARK):
+		return
+	impact.set_meta(APPLIED_MARK, true)
 	var blast: Variant = impact.get("radius")
 	if blast is float or blast is int:
 		impact.set("radius", float(blast) * (1.0 + FULL_RANGE_BONUS))

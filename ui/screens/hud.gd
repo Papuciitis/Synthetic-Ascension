@@ -153,6 +153,27 @@ func _process(delta: float) -> void:
 		_rs_tick = 0.0
 		_refresh_run_sheet()
 	# Gate arrow/popup are handled by HudGateOverlayController.
+	_claim_pause_if_free()
+
+
+## Claim the pause the moment whoever had it lets go.
+##
+## The first time a player opens the bag with a Manifestation equipped, the
+## intro card fires from the same signal and takes the pause FIRST - so the HUD
+## declined ownership, and when the card was dismissed the world started running
+## with the inventory still open. That is once per profile, at exactly the open
+## where the game is explaining the build system, and it would read as "the
+## pause sometimes does not work".
+func _claim_pause_if_free() -> void:
+	if not pause_while_managing or _owns_pause:
+		return
+	if bag_ctl == null or not bag_ctl.is_management_mode():
+		return
+	var tree := get_tree()
+	if tree == null or tree.paused:
+		return
+	_owns_pause = true
+	tree.paused = true
 
 
 func _refresh_run_sheet() -> void:
@@ -511,22 +532,29 @@ func _apply_management_pause(is_open: bool) -> void:
 	if tree == null:
 		return
 	if is_open:
-		if _owns_pause:
-			return
-		# Something else is already holding the pause. Let the bag open on top
-		# of it, but do not take ownership - releasing it later would resume a
-		# fight that a modal is deliberately holding.
-		if tree.paused:
+		# ALWAYS make the panel usable, whoever owns the pause.
+		#
+		# This used to early-out before setting the process mode when something
+		# else was already paused, which left the bag open, frozen and
+		# unclosable: BagUI is a child of this node, so it inherited PAUSABLE,
+		# and _unhandled_input never fired - neither Tab nor Escape could shut
+		# it. Making the panel work and taking the pause are two different
+		# decisions and only the second one is conditional.
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		if _owns_pause or tree.paused:
+			# Someone else is holding it. Do not take ownership - releasing it
+			# later would resume a fight a modal is deliberately holding - but
+			# do watch for them letting go, because the bag is still open and
+			# the world would otherwise start running underneath it.
 			return
 		_owns_pause = true
-		process_mode = Node.PROCESS_MODE_ALWAYS
 		tree.paused = true
 		return
+	process_mode = Node.PROCESS_MODE_INHERIT
 	if not _owns_pause:
 		return
 	_owns_pause = false
 	tree.paused = false
-	process_mode = Node.PROCESS_MODE_INHERIT
 
 
 ## A scene change while the bag is open must not leave the tree paused.
@@ -536,3 +564,4 @@ func _exit_tree() -> void:
 		var tree := get_tree()
 		if tree != null:
 			tree.paused = false
+

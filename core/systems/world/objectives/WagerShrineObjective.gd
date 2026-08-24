@@ -43,6 +43,7 @@ var _spent: int = 0
 var _finished: bool = false
 var _announced: bool = false
 var _pulse: float = 0.0
+var _refused_tier: Dictionary = {}
 
 
 func configure(objective_id: int) -> void:
@@ -102,10 +103,18 @@ func _try_raise_stake() -> void:
 	if not _can_afford(stake):
 		# Held at the last tier they could pay for, and said so - silently
 		# refusing to escalate reads as the shrine being broken.
-		if BattleText != null and BattleText.has_method("popup"):
-			BattleText.popup(global_position, "NOT ENOUGH BELIEF", Color(0.85, 0.55, 0.35, 1.0), 1.15)
+		#
+		# Once, not every frame: _dwell is clamped back to the threshold here,
+		# so the next frame crosses it again and the whole thing repeated at
+		# frame rate, flooding the callout buffer and drowning out every combat
+		# number on screen.
+		if not _refused_tier.has(next_tier):
+			_refused_tier[next_tier] = true
+			if BattleText != null and BattleText.has_method("popup"):
+				BattleText.popup(global_position, "NOT ENOUGH BELIEF", Color(0.85, 0.55, 0.35, 1.0), 1.15)
 		_dwell = seconds_per_tier * float(next_tier + 1)
 		return
+	_refused_tier.erase(next_tier)
 	_tier = next_tier
 	_spent += stake
 	if Global != null:

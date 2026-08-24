@@ -83,8 +83,10 @@ func tick_active(delta: float) -> void:
 
 		_tick_breach_spawn(index, world, delta)
 
-	if changed:
-		queue_redraw()
+	# Every frame, not just on change: the breach pulse, the core ring and the
+	# "(N OPEN)" label are all animated, and gating the redraw on progress froze
+	# all three unless the player was standing on a seal.
+	queue_redraw()
 	if steps_done() >= steps_total():
 		finish()
 

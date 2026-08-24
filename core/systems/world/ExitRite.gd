@@ -207,6 +207,10 @@ func _process(delta: float) -> void:
 			_lapse += delta
 			if _lapse > lapse_grace:
 				_hold = maxf(0.0, _hold - delta * lapse_drain_rate * _fill_rate())
+				# The waves rewind with the channel. Without this a player who
+				# drains back from 94% walks into a SILENT rite: every stage was
+				# already spent, so the 30% they now have to redo spawns nothing.
+				_resync_burst_stage()
 			queue_redraw()
 		return
 	_lapse = 0.0
@@ -270,7 +274,10 @@ const BURST_STAGES: Array[Vector2] = [
 func _mend(who: Node, delta: float) -> void:
 	if who == null or not is_instance_valid(who) or not who.has_method("heal"):
 		return
-	var max_hp: float = float(who.get("max_hp"))
+	var max_hp_value: Variant = who.get("max_hp")
+	if not (max_hp_value is float or max_hp_value is int):
+		return
+	var max_hp: float = float(max_hp_value)
 	var amount: float = (channel_regen_per_sec + max_hp * channel_regen_max_hp_pct) * delta
 	if amount > 0.0:
 		who.call("heal", amount)

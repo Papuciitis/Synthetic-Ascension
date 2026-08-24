@@ -838,7 +838,7 @@ func _build_run_tab(page: VBoxContainer, tools: Node) -> void:
 		var give: int = amount
 		_dev_button(economy, "+%d Followers" % give, "Granted %d Followers" % give, func() -> void:
 			if Global != null and Global.has_method("transaction_followers"):
-				Global.call("transaction_followers", give, &"dev_grant", "dev tools")
+				Global.call("transaction_followers", give, &"dev_grant", {"source": "dev tools"})
 		)
 	_dev_button(economy, "Luck +5", "Luck +5", func() -> void:
 		if Global != null:
@@ -1057,7 +1057,7 @@ func _build_world_tab(page: VBoxContainer, tools: Node) -> void:
 		if world != null and world.has_method("kill_all"):
 			world.call("kill_all")
 			return
-		for e in get_tree().get_nodes_in_group(&"enemy"):
+		for e in get_tree().get_nodes_in_group(&"enemies"):
 			if is_instance_valid(e) and e.has_method("die"):
 				e.call("die")
 	)
