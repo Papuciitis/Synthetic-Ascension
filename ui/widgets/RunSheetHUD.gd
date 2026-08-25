@@ -1,43 +1,87 @@
 extends PanelContainer
 class_name RunSheetHUD
 
-@onready var hpv: Label = $Margin/VBox/StatsGrid/HPV
-@onready var armv: Label = $Margin/VBox/StatsGrid/ARMV
-@onready var spdv: Label = $Margin/VBox/StatsGrid/SPDV
-@onready var powv: Label = $Margin/VBox/StatsGrid/POWV
-@onready var hstv: Label = $Margin/VBox/StatsGrid/HSTV
-@onready var lckv: Label = $Margin/VBox/StatsGrid/LCKV
+enum ArchivePage { PROFILE, SETS, MANIFESTATIONS, OBSERVATIONS }
 
-@onready var hpd: Label = $Margin/VBox/StatsGrid/HPD
-@onready var armd: Label = $Margin/VBox/StatsGrid/ARMD
-@onready var spdd: Label = $Margin/VBox/StatsGrid/SPDD
-@onready var powd: Label = $Margin/VBox/StatsGrid/POWD
-@onready var hstd: Label = $Margin/VBox/StatsGrid/HSTD
-@onready var lckd: Label = $Margin/VBox/StatsGrid/LCKD
+const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
 
-@onready var sets_vbox: VBoxContainer = $Margin/VBox/SetsVBox
+@onready var hpv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HPV
+@onready var armv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/ARMV
+@onready var spdv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/SPDV
+@onready var powv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/POWV
+@onready var hstv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTV
+@onready var lckv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/LCKV
+
+@onready var hpd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HPD
+@onready var armd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/ARMD
+@onready var spdd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/SPDD
+@onready var powd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/POWD
+@onready var hstd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTD
+@onready var lckd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/LCKD
+
+@onready var sets_vbox: VBoxContainer = $Archive/BodyMargin/Pages/SetsScroll/SetsVBox
+@onready var manifestations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox
+@onready var observations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ObservationsScroll/ObservationsVBox
+
+@onready var _page_controls: Array[Control] = [
+	$Archive/BodyMargin/Pages/ProfileScroll,
+	$Archive/BodyMargin/Pages/SetsScroll,
+	$Archive/BodyMargin/Pages/ManifestationsScroll,
+	$Archive/BodyMargin/Pages/ObservationsScroll,
+]
+@onready var _page_buttons: Array[Button] = [
+	$Archive/Index/Profile,
+	$Archive/Index/Sets,
+	$Archive/Index/Manifestations,
+	$Archive/Index/Observations,
+]
+
+var _selected_page: int = ArchivePage.PROFILE
+var _page_signatures := {
+	ArchivePage.SETS: "__UNINITIALIZED__",
+	ArchivePage.MANIFESTATIONS: "__UNINITIALIZED__",
+	ArchivePage.OBSERVATIONS: "__UNINITIALIZED__",
+}
+var _rebuild_counts := {"sets": 0, "manifestations": 0, "observations": 0}
 
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
 ## The layer's own colour. Anything naming a specific noun or rule uses that
 ## noun's colour from ManifestationNouns instead.
 const MANIFEST := ManifestationNouns.LAYER
 
+
+func _ready() -> void:
+	for index in range(_page_buttons.size()):
+		_page_buttons[index].pressed.connect(select_page.bind(index))
+	select_page(_selected_page)
+
+
+func select_page(page: int) -> void:
+	_selected_page = clampi(page, ArchivePage.PROFILE, ArchivePage.OBSERVATIONS)
+	for index in range(_page_controls.size()):
+		var selected := index == _selected_page
+		_page_controls[index].visible = selected
+		_page_buttons[index].set_pressed_no_signal(selected)
+		_page_buttons[index].text = ("◆  " if selected else "◇  ") + PAGE_LABELS[index]
+
+
+func selected_page() -> int:
+	return _selected_page
+
+
+func debug_rebuild_counts() -> Dictionary:
+	return _rebuild_counts.duplicate()
+
 func refresh(player: Node, inv: Inventory) -> void:
-	# The HUD ticks this at 10 Hz whether or not the panel is on screen, and a
-	# refresh rebuilds every child label and asks each equipped Manifestation to
-	# format its rule text. None of that is worth paying for while hidden.
 	if not visible:
 		return
-	# Do not rebuild the panel out from under a pointer that is reading it.
-	#
-	# refresh() destroys and recreates every child, ten times a second. That is
-	# fine for a readout nobody touches, and fatal for a hover card: the node
-	# under the cursor is freed before Godot's tooltip delay elapses, so the
-	# card never appears - or appears and instantly dies. Management mode pauses
-	# the game anyway, so nothing on this panel is moving while it is being
-	# read.
-	if _pointer_is_reading():
-		return
+	_refresh_profile(player, inv)
+	_refresh_sets(inv)
+	_refresh_manifestations(player)
+	_refresh_observations()
+
+
+func _refresh_profile(player: Node, inv: Inventory) -> void:
 	# Player.stats is already the complete final snapshot: race, style, permanent
 	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
 	# and active percentage rolls. Inventory deltas must not be added a second time.
@@ -76,27 +120,23 @@ func refresh(player: Node, inv: Inventory) -> void:
 	hstd.text = _fmt_pct_delta(d.haste)
 	lckd.text = _fmt_pct_delta(d.luck)
 
-	# --- sets ---
-	for c in sets_vbox.get_children():
-		c.queue_free()
 
-	if inv == null:
+func _refresh_sets(inv: Inventory) -> void:
+	var counts := _set_counts(inv)
+	var signature := _set_signature(counts)
+	if signature == String(_page_signatures[ArchivePage.SETS]):
+		return
+	_page_signatures[ArchivePage.SETS] = signature
+	_rebuild_counts["sets"] = int(_rebuild_counts["sets"]) + 1
+	_clear_children(sets_vbox)
+	_add_section_heading(sets_vbox, "SETS // EQUIPPED CONCORDANCES", ACCENT)
+	if counts.is_empty():
+		_add_target_line(sets_vbox, "NO ACTIVE CONCORDANCE", Color(1, 1, 1, 0.48), 11)
 		return
 
-	var counts: Dictionary = {}
-	if inv.has_method("get_set_counts"):
-		counts = inv.get_set_counts()
-	else:
-		for it in inv.items:
-			var inst := it as ItemInstance
-			if inst == null or inst.data == null:
-				continue
-			var sid := String(inst.data.set_id)
-			if sid == "":
-				continue
-			counts[sid] = int(counts.get(sid, 0)) + 1
-
-	for sid in counts.keys():
+	var keys := counts.keys()
+	keys.sort()
+	for sid in keys:
 		var n: int = int(counts[sid])
 		var line := Label.new()
 		line.add_theme_font_size_override("font_size", 12)
@@ -114,8 +154,98 @@ func refresh(player: Node, inv: Inventory) -> void:
 		line.modulate = (ACCENT if n >= set_max else Color(1, 1, 1, 0.85))
 		sets_vbox.add_child(line)
 
+
+func _set_counts(inv: Inventory) -> Dictionary:
+	var counts: Dictionary = {}
+	if inv == null:
+		return counts
+	if inv.has_method("get_set_counts"):
+		return inv.get_set_counts()
+	for item_value in inv.items:
+		var inst := item_value as ItemInstance
+		if inst == null or inst.data == null:
+			continue
+		var set_id := String(inst.data.set_id)
+		if set_id != "":
+			counts[set_id] = int(counts.get(set_id, 0)) + 1
+	return counts
+
+
+func _set_signature(counts: Dictionary) -> String:
+	var keys := counts.keys()
+	keys.sort()
+	var parts := PackedStringArray()
+	for key in keys:
+		parts.append("%s:%d" % [String(key), int(counts[key])])
+	return "|".join(parts)
+
+
+func _refresh_manifestations(player: Node) -> void:
+	var signature := var_to_str(_manifestation_state(player))
+	if signature == String(_page_signatures[ArchivePage.MANIFESTATIONS]):
+		return
+	_page_signatures[ArchivePage.MANIFESTATIONS] = signature
+	_rebuild_counts["manifestations"] = int(_rebuild_counts["manifestations"]) + 1
+	_clear_children(manifestations_vbox)
+	_add_section_heading(manifestations_vbox, "MANIFESTATIONS // ACTIVE DOCTRINE", MANIFEST)
 	_append_burden(player)
 	_append_manifestations(player)
+	if manifestations_vbox.get_child_count() == 1:
+		_add_target_line(manifestations_vbox, "NO ACTIVE MANIFESTATION", Color(1, 1, 1, 0.48), 11)
+
+
+func _manifestation_state(player: Node) -> Dictionary:
+	if player == null:
+		return {}
+	var state := {}
+	var burden := player.get("last_burden") as BurdenSnapshot
+	if burden != null:
+		state["burden"] = [
+			burden.neg_count, burden.pos_count, burden.active_count,
+			burden.total_active, burden.qualifying_count, burden.suppressed_slot,
+			burden.suppressed_severity,
+		]
+	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
+	var runner := player.get_node_or_null("ManifestationRunner")
+	if runner == null:
+		return state
+	if runner.has_method("get_active_summaries"):
+		state["summaries"] = runner.call("get_active_summaries")
+	if runner.has_method("get_active_pairs"):
+		state["pairs"] = runner.call("get_active_pairs")
+	if runner.has_method("get_noun_counts"):
+		state["nouns"] = runner.call("get_noun_counts")
+	if runner.has_method("get_meters"):
+		state["meters"] = runner.call("get_meters")
+	return state
+
+
+func _clear_children(container: Node) -> void:
+	for child in container.get_children():
+		container.remove_child(child)
+		child.queue_free()
+
+
+func _add_section_heading(container: VBoxContainer, text: String, colour: Color) -> void:
+	var heading := Label.new()
+	heading.text = text
+	heading.theme_type_variation = &"InstitutionalHeading"
+	heading.add_theme_font_size_override("font_size", 12)
+	heading.modulate = colour
+	container.add_child(heading)
+	var rule := ColorRect.new()
+	rule.custom_minimum_size = Vector2(0, 1)
+	rule.color = Color(colour.r, colour.g, colour.b, 0.42)
+	container.add_child(rule)
+
+
+func _add_target_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
+	var line := Label.new()
+	line.text = text
+	line.add_theme_font_size_override("font_size", font_size)
+	line.modulate = colour
+	container.add_child(line)
+	return line
 
 
 const BURDEN := Color(0.85, 0.42, 0.95, 1.0)
@@ -203,9 +333,6 @@ func _append_manifestations(player: Node) -> void:
 	if summaries.is_empty():
 		return
 
-	_add_line("", Color(1, 1, 1, 0.4), 8)
-	_add_line("MANIFESTATIONS", MANIFEST, 12)
-
 	# Noun counts first. Two of a noun is what makes two unrelated items combine,
 	# so "MOMENTUM 2" is the single most useful line on the panel - it is the
 	# readout that tells you one more movement item would turn something on.
@@ -251,7 +378,7 @@ func _append_manifestations(player: Node) -> void:
 		var box := ManifestationInfoBox.new()
 		box.add_theme_constant_override("separation", 0)
 		box.setup(entry_name, _noun_names(entry_tags), entry_rule, entry_colour)
-		sets_vbox.add_child(box)
+		manifestations_vbox.add_child(box)
 
 		var heading := Label.new()
 		heading.text = "%s  %s" % [slot_hint, entry_name]
@@ -274,6 +401,126 @@ func _append_manifestations(player: Node) -> void:
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(rule)
 
+	_append_manifestation_pairs(runner)
+
+
+func _append_manifestation_pairs(runner: Node) -> void:
+	if runner == null or not runner.has_method("get_active_pairs"):
+		return
+	var pairs: Array = runner.call("get_active_pairs")
+	if pairs.is_empty():
+		return
+
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	var section := _add_line("MANIFESTATION PAIRS", MANIFEST, 12)
+	section.theme_type_variation = &"InstitutionalHeading"
+
+	for pair_value in pairs:
+		var pair := pair_value as Dictionary
+		if pair == null or pair.is_empty():
+			continue
+		var nouns: Array = pair.get("nouns", []) as Array
+		var accent := _pair_accent(nouns)
+		var pair_name := String(pair.get("name", ""))
+		var pair_rule := String(pair.get("rule", ""))
+		var box := ManifestationInfoBox.new()
+		box.add_theme_constant_override("separation", 1)
+		box.setup(pair_name, _noun_names(nouns), pair_rule, accent)
+		manifestations_vbox.add_child(box)
+
+		var heading := Label.new()
+		heading.text = pair_name
+		heading.theme_type_variation = &"SacredHeading"
+		heading.add_theme_font_size_override("font_size", 12)
+		heading.modulate = accent
+		heading.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(heading)
+
+		var nouns_line := Label.new()
+		nouns_line.text = _noun_names(nouns)
+		nouns_line.add_theme_font_size_override("font_size", 10)
+		nouns_line.modulate = Color(1, 1, 1, 0.55)
+		nouns_line.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(nouns_line)
+
+		var rule := Label.new()
+		rule.text = "   " + pair_rule
+		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		rule.custom_minimum_size = Vector2(260, 0)
+		rule.add_theme_font_size_override("font_size", 10)
+		rule.modulate = Color(1, 1, 1, 0.76)
+		rule.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(rule)
+
+
+func _refresh_observations() -> void:
+	var ids := PackedStringArray()
+	if Global != null:
+		for enemy_id in Global.discovered_enemy_ids:
+			ids.append(String(enemy_id))
+	ids.sort()
+	var signature := "|".join(ids)
+	if signature == String(_page_signatures[ArchivePage.OBSERVATIONS]):
+		return
+	_page_signatures[ArchivePage.OBSERVATIONS] = signature
+	_rebuild_counts["observations"] = int(_rebuild_counts["observations"]) + 1
+	_clear_children(observations_vbox)
+	_add_section_heading(observations_vbox, "OBSERVATIONS // INDEXED ARCHETYPES", ACCENT)
+	if ids.is_empty():
+		_add_target_line(observations_vbox, "NO ARCHETYPE INDEXED", Color(1, 1, 1, 0.48), 11)
+		return
+
+	for enemy_id_text in ids:
+		var enemy_id := StringName(enemy_id_text)
+		var entry := EnemyDossierCatalog.get_entry(enemy_id)
+		if entry.is_empty():
+			continue
+		var name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
+		var record := VBoxContainer.new()
+		record.add_theme_constant_override("separation", 0)
+		record.focus_mode = Control.FOCUS_ALL
+		record.mouse_filter = Control.MOUSE_FILTER_STOP
+		record.tooltip_text = _observation_tooltip(entry)
+		observations_vbox.add_child(record)
+
+		var name_label := Label.new()
+		name_label.text = "[ %s ]" % name
+		name_label.theme_type_variation = &"BodyStrong"
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
+		name_label.mouse_filter = Control.MOUSE_FILTER_PASS
+		record.add_child(name_label)
+
+		var counter := Label.new()
+		counter.text = "COUNTER  //  %s" % String(entry.get("counter", "Observe and adapt."))
+		counter.custom_minimum_size = Vector2(260, 0)
+		counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		counter.max_lines_visible = 2
+		counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		counter.add_theme_font_size_override("font_size", 11)
+		counter.modulate = Color(1, 1, 1, 0.78)
+		counter.mouse_filter = Control.MOUSE_FILTER_PASS
+		record.add_child(counter)
+
+
+func _observation_tooltip(entry: Dictionary) -> String:
+	return "“%s”\n\nROLE  //  %s\nBEHAVIOUR  //  %s\nEXPECT  //  %s\nCOUNTER  //  %s" % [
+		String(entry.get("quote", "")),
+		String(entry.get("role", "Unclassified")),
+		String(entry.get("behaviour", "Unknown")),
+		String(entry.get("expect", "Unknown")),
+		String(entry.get("counter", "Observe and adapt.")),
+	]
+
+
+func _pair_accent(nouns: Array) -> Color:
+	if nouns.is_empty():
+		return MANIFEST
+	var accent := ManifestationNouns.colour(StringName(nouns[0]))
+	if nouns.size() > 1:
+		accent = accent.lerp(ManifestationNouns.colour(StringName(nouns[1])), 0.5)
+	return accent
+
 
 ## "momentum, cadence" - the nouns a rule declares, for the hover card.
 func _noun_names(tags: Array) -> String:
@@ -294,7 +541,7 @@ func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 		return
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
-	sets_vbox.add_child(row)
+	manifestations_vbox.add_child(row)
 	for part in parts:
 		var label := Label.new()
 		label.text = String(part.get("text", ""))
@@ -303,21 +550,8 @@ func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 		row.add_child(label)
 
 
-## Is the mouse inside the panel, with something already drawn to look at?
-func _pointer_is_reading() -> bool:
-	if sets_vbox == null or sets_vbox.get_child_count() == 0:
-		return false
-	if not is_inside_tree():
-		return false
-	return get_global_rect().has_point(get_global_mouse_position())
-
-
-func _add_line(text: String, colour: Color, font_size: int) -> void:
-	var line := Label.new()
-	line.text = text
-	line.add_theme_font_size_override("font_size", font_size)
-	line.modulate = colour
-	sets_vbox.add_child(line)
+func _add_line(text: String, colour: Color, font_size: int) -> Label:
+	return _add_target_line(manifestations_vbox, text, colour, font_size)
 
 # ---------------------------d
 # ---------------------------
