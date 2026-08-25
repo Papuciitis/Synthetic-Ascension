@@ -83,10 +83,12 @@ func _run() -> void:
 		complete_index = complete_index and has_button
 		_check(has_button, "side index exposes the %s tab" % page_name)
 		if has_button:
+			var tab := _run_sheet.get_node(path) as Button
 			_check(
-				(_run_sheet.get_node(path) as Button).focus_mode == Control.FOCUS_ALL,
+				tab.focus_mode == Control.FOCUS_ALL,
 				"%s tab accepts keyboard and controller focus" % page_name
 			)
+			_check(tab.get_theme_font_size("font_size") >= 12, "%s tab survives 1280 canvas scaling" % page_name)
 
 	_check(_run_sheet.has_method("select_page"), "Run Sheet exposes page selection")
 	_check(_run_sheet.has_method("selected_page"), "Run Sheet exposes stable selected-page state")
@@ -97,6 +99,13 @@ func _run() -> void:
 			_run_sheet.call("select_page", page_index)
 			await get_tree().process_frame
 			_check(_visible_page_count() == 1, "only %s page is visible" % page_names[page_index])
+		if _run_sheet.has_node("Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox"):
+			var manifestation_page := _run_sheet.get_node("Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox")
+			var boxes := manifestation_page.find_children("*", "ManifestationInfoBox", true, false)
+			_check(not boxes.is_empty(), "Manifestations expose a readable protocol record")
+			if not boxes.is_empty():
+				var rule_label := (boxes[0] as Control).get_child((boxes[0] as Control).get_child_count() - 1) as Label
+				_check(rule_label.get_theme_font_size("font_size") >= 12, "Manifestation protocols survive 1280 canvas scaling")
 
 		_run_sheet.call("select_page", 3)
 		await get_tree().process_frame
@@ -107,6 +116,10 @@ func _run() -> void:
 		)
 		var record := _first_focusable(observations)
 		if record != null:
+			var name_label := record.get_child(0) as Label
+			var counter_label := record.get_child(1) as Label
+			_check(name_label.get_theme_font_size("font_size") >= 12, "observation names survive 1280 canvas scaling")
+			_check(counter_label.get_theme_font_size("font_size") >= 13, "observation counters survive 1280 canvas scaling")
 			record.grab_focus()
 			await get_tree().process_frame
 			var focus_before := get_viewport().gui_get_focus_owner()

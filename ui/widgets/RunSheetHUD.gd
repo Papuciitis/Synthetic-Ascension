@@ -230,7 +230,7 @@ func _add_section_heading(container: VBoxContainer, text: String, colour: Color)
 	var heading := Label.new()
 	heading.text = text
 	heading.theme_type_variation = &"InstitutionalHeading"
-	heading.add_theme_font_size_override("font_size", 12)
+	heading.add_theme_font_size_override("font_size", 13)
 	heading.modulate = colour
 	container.add_child(heading)
 	var rule := ColorRect.new()
@@ -396,7 +396,7 @@ func _append_manifestations(player: Node) -> void:
 		rule.max_lines_visible = 2
 		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		rule.custom_minimum_size = Vector2(260, 0)
-		rule.add_theme_font_size_override("font_size", 10)
+		rule.add_theme_font_size_override("font_size", 12)
 		rule.modulate = Color(1, 1, 1, 0.72)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(rule)
@@ -438,7 +438,7 @@ func _append_manifestation_pairs(runner: Node) -> void:
 
 		var nouns_line := Label.new()
 		nouns_line.text = _noun_names(nouns)
-		nouns_line.add_theme_font_size_override("font_size", 10)
+		nouns_line.add_theme_font_size_override("font_size", 12)
 		nouns_line.modulate = Color(1, 1, 1, 0.55)
 		nouns_line.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(nouns_line)
@@ -447,7 +447,7 @@ func _append_manifestation_pairs(runner: Node) -> void:
 		rule.text = "   " + pair_rule
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		rule.custom_minimum_size = Vector2(260, 0)
-		rule.add_theme_font_size_override("font_size", 10)
+		rule.add_theme_font_size_override("font_size", 12)
 		rule.modulate = Color(1, 1, 1, 0.76)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(rule)
@@ -486,7 +486,7 @@ func _refresh_observations() -> void:
 		var name_label := Label.new()
 		name_label.text = "[ %s ]" % name
 		name_label.theme_type_variation = &"BodyStrong"
-		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_font_size_override("font_size", 12)
 		name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
 		name_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		record.add_child(name_label)
@@ -497,7 +497,7 @@ func _refresh_observations() -> void:
 		counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		counter.max_lines_visible = 2
 		counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		counter.add_theme_font_size_override("font_size", 11)
+		counter.add_theme_font_size_override("font_size", 13)
 		counter.modulate = Color(1, 1, 1, 0.78)
 		counter.mouse_filter = Control.MOUSE_FILTER_PASS
 		record.add_child(counter)
@@ -545,13 +545,18 @@ func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 	for part in parts:
 		var label := Label.new()
 		label.text = String(part.get("text", ""))
-		label.add_theme_font_size_override("font_size", font_size)
+		label.add_theme_font_size_override("font_size", maxi(12, font_size))
 		label.modulate = ManifestationNouns.colour(StringName(part.get("noun", &"")))
 		row.add_child(label)
 
 
 func _add_line(text: String, colour: Color, font_size: int) -> Label:
-	return _add_target_line(manifestations_vbox, text, colour, font_size)
+	return _add_target_line(
+		manifestations_vbox,
+		text,
+		colour,
+		font_size if text.is_empty() else maxi(12, font_size)
+	)
 
 # ---------------------------d
 # ---------------------------

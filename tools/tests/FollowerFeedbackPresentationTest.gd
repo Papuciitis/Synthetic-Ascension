@@ -37,6 +37,7 @@ func _run() -> void:
 	_check(panel != null and panel.theme_type_variation == &"WitnessNotice", "notice uses the shared witness surface")
 	_check(panel != null and panel.mouse_filter == Control.MOUSE_FILTER_IGNORE, "notice remains non-blocking")
 	_check(eyebrow != null and eyebrow.text == "WITNESS ACCOUNT // PATTERN FEED", "notice carries the archive classification")
+	_check(eyebrow != null and eyebrow.get_theme_font_size("font_size") >= 11, "witness classification survives 1280 canvas scaling")
 	_check(value != null and value.text == "+2 FOLLOWERS", "aggregated gain has a separate signed value")
 	_check(body != null and "containment line breaks" in body.text, "existing combat copy is preserved")
 	_check(seal != null and seal.text == "+2", "the seal cell mirrors the signed change")

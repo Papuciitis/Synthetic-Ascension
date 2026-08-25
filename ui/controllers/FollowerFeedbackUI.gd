@@ -143,7 +143,7 @@ func _build_ui() -> void:
 	eyebrow.name = "Eyebrow"
 	eyebrow.text = "WITNESS ACCOUNT // PATTERN FEED"
 	eyebrow.theme_type_variation = &"InstitutionalHeading"
-	eyebrow.add_theme_font_size_override("font_size", 10)
+	eyebrow.add_theme_font_size_override("font_size", 11)
 	eyebrow.add_theme_color_override("font_color", Color(0.82, 0.50, 0.24, 1.0))
 	copy.add_child(eyebrow)
 
