@@ -450,15 +450,15 @@ func _can_release_far_physics(ai: int, player_distance: float) -> bool:
 		lod_smart_reacquire_distance if _lod_tier == 2
 		else lod_smart_release_distance
 	)
-	# Sustained physics pressure pulls the release boundary inward so a horde
-	# sheds physics bodies instead of stacking mid-clamped ones.
+	# The scheduler owns the exact hysteretic boundaries for each pressure tier.
+	# Local exports remain as a safe fallback for isolated scenes and old saves.
 	if _sim_scheduler == null or not is_instance_valid(_sim_scheduler):
 		_sim_scheduler = get_node_or_null("/root/EnemySimulationScheduler")
 	if (
 		_sim_scheduler != null
-		and _sim_scheduler.has_method("physics_release_distance_scale")
+		and _sim_scheduler.has_method("smart_physics_boundary")
 	):
-		release *= float(_sim_scheduler.call("physics_release_distance_scale"))
+		release = float(_sim_scheduler.call("smart_physics_boundary", _lod_tier == 2))
 	return player_distance >= maxf(release, 0.0)
 
 

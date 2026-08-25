@@ -23,6 +23,9 @@ class FlowCounterFixture:
 			"pending_revision": 38,
 			"pending": false,
 			"building": false,
+			"last_snapshot_usec": 250,
+			"last_worker_usec": 700,
+			"last_publish_usec": 30,
 		}
 
 var _passes := 0
@@ -96,6 +99,9 @@ func _run() -> void:
 	_check(int(slow_snapshot.get("enemy_world_spatial_cells", -1)) > 0, "recorder samples spatial cells")
 	_check(int(slow_snapshot.get("enemy_world_max_cell_occupancy", -1)) >= 1, "recorder samples cell occupancy")
 	_check(int(slow_snapshot.get("flow_revision", -1)) == 37, "recorder reads the actual flow revision key")
+	_check(int(slow_snapshot.get("flow_snapshot_usec", -1)) == 250, "recorder captures flow snapshot cost")
+	_check(int(slow_snapshot.get("flow_worker_usec", -1)) == 700, "recorder captures flow worker cost")
+	_check(int(slow_snapshot.get("flow_publish_usec", -1)) == 30, "recorder captures flow publish cost")
 	if world != null:
 		for handle in logical_handles:
 			world.call("remove_enemy", handle, &"recorder_test_cleanup")

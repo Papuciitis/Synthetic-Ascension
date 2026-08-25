@@ -54,6 +54,24 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 @export_range(0, 1024, 1) var emergency_mid_budget: int = 16
 @export_range(0.4, 1.0, 0.05) var emergency_release_distance_scale: float = 0.6
 
+# Explicit body-physics boundaries for ordinary smart archetypes. Keeping the
+# release/re-acquire pairs together here makes the pressure contract observable
+# and avoids multiplying per-enemy values into accidental, drifting thresholds.
+@export_group("Smart Physics Boundaries")
+@export_range(0.0, 8000.0, 10.0) var normal_smart_release_distance: float = 2600.0
+@export_range(0.0, 8000.0, 10.0) var normal_smart_reacquire_distance: float = 2300.0
+@export_range(0.0, 8000.0, 10.0) var pressure_smart_release_distance: float = 1600.0
+@export_range(0.0, 8000.0, 10.0) var pressure_smart_reacquire_distance: float = 1400.0
+@export_range(0.0, 8000.0, 10.0) var emergency_smart_release_distance: float = 1450.0
+@export_range(0.0, 8000.0, 10.0) var emergency_smart_reacquire_distance: float = 1250.0
+
+# A genuinely catastrophic physics step should not spend a full second walking
+# through the ordinary two-stage fallback. It still requires a short sustained
+# window so a single profiler/import hitch cannot collapse simulation fidelity.
+@export_group("Severe Pressure Fast Path")
+@export_range(1.0, 100.0, 0.5) var severe_pressure_ms: float = 40.0
+@export_range(0.05, 1.0, 0.01) var severe_engage_sec: float = 0.15
+
 var _previous_tiers: Dictionary = {}
 var _enemy_index: Node = null
 var _player: Node2D = null
@@ -67,6 +85,7 @@ var _pressure_active := false
 var _pressure_level := 0
 var _pressure_above_sec := 0.0
 var _pressure_below_sec := 0.0
+var _severe_above_sec := 0.0
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -80,6 +99,7 @@ var _debug_counters := {
 	"spatial_demotions": 0,
 	"pressure_active": 0,
 	"pressure_level": 0,
+	"severe_engagements": 0,
 }
 var _tier_lifecycle_counters := {
 	"tier_changes": 0,
@@ -363,13 +383,40 @@ func physics_release_distance_scale() -> float:
 	return pressure_release_distance_scale if _pressure_active else 1.0
 
 
+func smart_physics_boundary(is_far: bool) -> float:
+	if _pressure_level >= 2:
+		return emergency_smart_reacquire_distance if is_far else emergency_smart_release_distance
+	if _pressure_level >= 1:
+		return pressure_smart_reacquire_distance if is_far else pressure_smart_release_distance
+	return normal_smart_reacquire_distance if is_far else normal_smart_release_distance
+
+
 func _update_pressure_state(delta: float) -> void:
 	if not adaptive_budgets:
 		_pressure_active = false
 		_pressure_level = 0
 		_pressure_above_sec = 0.0
 		_pressure_below_sec = 0.0
+		_severe_above_sec = 0.0
+		_sync_pressure_counters()
 		return
+	var physics_ms := _measured_physics_ms()
+	if physics_ms >= severe_pressure_ms:
+		_severe_above_sec += delta
+		_pressure_below_sec = 0.0
+		if _pressure_level < 2 and _severe_above_sec >= severe_engage_sec:
+			_pressure_level = 2
+			_pressure_active = true
+			_pressure_above_sec = 0.0
+			_severe_above_sec = 0.0
+			_debug_counters["severe_engagements"] = int(_debug_counters.get("severe_engagements", 0)) + 1
+			if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+				PerformanceFlightRecorder.record_counter_event(&"enemy", &"severe_pressure_engaged", 1, {
+					"physics_ms": physics_ms,
+				})
+		_sync_pressure_counters()
+		return
+	_severe_above_sec = 0.0
 	var measured := _measured_pressure_level()
 	if measured > _pressure_level:
 		_pressure_above_sec += delta
@@ -388,14 +435,24 @@ func _update_pressure_state(delta: float) -> void:
 		_pressure_below_sec = 0.0
 	_pressure_level = clampi(_pressure_level, 0, 2)
 	_pressure_active = _pressure_level >= 1
+	_sync_pressure_counters()
+
+
+func _sync_pressure_counters() -> void:
+	_debug_counters["pressure_active"] = 1 if _pressure_active else 0
+	_debug_counters["pressure_level"] = _pressure_level
+
+
+func _measured_physics_ms() -> float:
+	if _physics_pressure_override != null:
+		if _physics_pressure_override is bool:
+			return budget_pressure_ms + 0.001 if bool(_physics_pressure_override) else 0.0
+		return maxf(0.0, float(_physics_pressure_override))
+	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
 
 
 func _measured_pressure_level() -> int:
-	var physics_ms := Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
-	if _physics_pressure_override != null:
-		if _physics_pressure_override is bool:
-			return 1 if bool(_physics_pressure_override) else 0
-		physics_ms = float(_physics_pressure_override)
+	var physics_ms := _measured_physics_ms()
 	if physics_ms > emergency_pressure_ms:
 		return 2
 	if physics_ms > budget_pressure_ms:

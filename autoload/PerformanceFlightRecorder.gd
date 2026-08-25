@@ -265,6 +265,9 @@ func _collect_slow_snapshot() -> Dictionary:
 		"chunks": 0,
 		"flow_building": false,
 		"flow_revision": 0,
+		"flow_snapshot_usec": 0,
+		"flow_worker_usec": 0,
+		"flow_publish_usec": 0,
 		"segment": Global.attempt_segment if Global != null else 0,
 		"threat": 0.0,
 		"resonance": 0.0,
@@ -346,6 +349,9 @@ func _collect_slow_snapshot() -> Dictionary:
 		var flow_data := flow.call("get_debug_counters") as Dictionary
 		output["flow_building"] = bool(flow_data.get("building", false))
 		output["flow_revision"] = int(flow_data.get("last_revision", 0))
+		output["flow_snapshot_usec"] = int(flow_data.get("last_snapshot_usec", 0))
+		output["flow_worker_usec"] = int(flow_data.get("last_worker_usec", 0))
+		output["flow_publish_usec"] = int(flow_data.get("last_publish_usec", 0))
 	return output
 
 

@@ -89,6 +89,13 @@ func _run() -> void:
 	_check(flow.sample_cost(Vector2(128.0, 0.0)) > 0, "threaded field carries distances outward")
 	_check(flow.sample_cost(Vector2(3.5 * 64.0, 0.0)) >= 1_000_000_000, "walls stay unstamped in the threaded field")
 	_check(flow.sample_dir(Vector2(128.0, 0.0)) != Vector2.ZERO, "threaded field yields flow directions")
+	var threaded_counters := flow.get_debug_counters() as Dictionary
+	_check(threaded_counters.has("last_snapshot_usec"), "threaded build reports main-thread snapshot duration")
+	_check(threaded_counters.has("last_worker_usec"), "threaded build reports worker duration")
+	_check(threaded_counters.has("last_publish_usec"), "threaded build reports main-thread publish duration")
+	_check(int(threaded_counters.get("last_snapshot_usec", -1)) >= 0, "snapshot duration is non-negative")
+	_check(int(threaded_counters.get("last_worker_usec", 0)) > 0, "worker duration records completed BFS work")
+	_check(int(threaded_counters.get("last_publish_usec", -1)) >= 0, "publish duration is non-negative")
 
 	# The sliced fallback must still work and agree with the threaded result.
 	var sliced := _make_flow(false)

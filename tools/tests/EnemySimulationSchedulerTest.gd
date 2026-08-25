@@ -57,8 +57,10 @@ func _run() -> void:
 	_test_spatial_bands_cap_distant_fidelity(scheduler)
 	_test_spatial_hysteresis_prevents_flapping(scheduler)
 	_test_pressure_budget_fallback(scheduler_script)
+	_test_smart_physics_boundaries(scheduler_script)
 	_test_full_incumbent_rank_hysteresis(scheduler_script)
 	_test_emergency_pressure_tier(scheduler_script)
+	_test_severe_pressure_fast_path(scheduler_script)
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
@@ -440,6 +442,48 @@ func _test_pressure_budget_fallback(scheduler_script: Script) -> void:
 	scheduler.free()
 
 
+func _test_smart_physics_boundaries(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.call("set_physics_pressure_override", false)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", false)), 2600.0),
+		"normal smart actors release body physics at 2600px"
+	)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", true)), 2300.0),
+		"normal far smart actors re-acquire body physics at 2300px"
+	)
+	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", false)), 1600.0),
+		"pressure releases ordinary smart physics at 1600px"
+	)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", true)), 1400.0),
+		"pressure re-acquires ordinary smart physics at 1400px"
+	)
+	scheduler.call("set_physics_pressure_override", 25.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", false)), 1450.0),
+		"emergency pressure releases ordinary smart physics at 1450px"
+	)
+	_check(
+		is_equal_approx(float(scheduler.call("smart_physics_boundary", true)), 1250.0),
+		"emergency pressure re-acquires ordinary smart physics at 1250px"
+	)
+	var protected := _add_probe(Vector2(5000.0, 0.0))
+	protected.set_meta(&"objective_required", true)
+	var assignment := scheduler.call("compute_assignment", [protected], Vector2.ZERO) as Dictionary
+	_check(
+		int(assignment.get(protected.get_instance_id(), -1)) == 0,
+		"protected actors retain exact collision under emergency pressure"
+	)
+	protected.queue_free()
+	scheduler.free()
+
+
 func _test_full_incumbent_rank_hysteresis(scheduler_script: Script) -> void:
 	var scheduler := scheduler_script.new() as Node
 	scheduler.set("full_budget", 1)
@@ -486,6 +530,32 @@ func _test_emergency_pressure_tier(scheduler_script: Script) -> void:
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
 	_check(_tier_count(assignment, 0) == 32, "budgets restore fully after sustained calm")
 	_free_nodes(enemies)
+	scheduler.free()
+
+
+func _test_severe_pressure_fast_path(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.call("set_physics_pressure_override", 45.0)
+	scheduler.call("_update_pressure_state", 0.10)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 0,
+		"a sub-150ms severe sample does not trip the emergency tier"
+	)
+	scheduler.call("_update_pressure_state", 0.05)
+	var counters := scheduler.call("get_debug_counters") as Dictionary
+	_check(int(counters.get("pressure_level", -1)) == 2, "150ms above 40ms physics jumps directly to emergency")
+	_check(int(counters.get("severe_engagements", 0)) == 1, "severe fast-path engagements are counted")
+	scheduler.call("set_physics_pressure_override", 5.0)
+	scheduler.call("_update_pressure_state", 2.1)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
+		"severe pressure recovers one tier at a time"
+	)
+	scheduler.call("_update_pressure_state", 2.1)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 0,
+		"severe pressure returns to normal only after a second calm window"
+	)
 	scheduler.free()
 
 
