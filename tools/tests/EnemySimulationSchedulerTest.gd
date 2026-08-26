@@ -414,7 +414,6 @@ func _test_pressure_budget_fallback(scheduler_script: Script) -> void:
 	scheduler.set("full_budget", 32)
 	scheduler.set("mid_budget", 32)
 	scheduler.set("use_spatial_bands", false)
-	scheduler.set("pressure_full_budget", 24)
 	scheduler.set("pressure_mid_budget", 24)
 	scheduler.set("pressure_engage_sec", 0.5)
 	scheduler.set("pressure_release_sec", 2.0)
@@ -427,14 +426,14 @@ func _test_pressure_budget_fallback(scheduler_script: Script) -> void:
 	_check(_tier_count(assignment, 0) == 32, "brief physics spikes do not shrink the budgets")
 	scheduler.call("_update_pressure_state", 0.3)
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
-	_check(_tier_count(assignment, 0) == 24, "sustained physics pressure shrinks the full budget")
+	_check(_tier_count(assignment, 0) == 12, "sustained physics pressure shrinks the full budget")
 	_check(_tier_count(assignment, 1) == 24, "sustained physics pressure shrinks the mid budget")
 	var counters := scheduler.call("get_debug_counters") as Dictionary
 	_check(int(counters.get("pressure_active", 0)) == 1, "pressure fallback is visible in the debug counters")
 	scheduler.call("set_physics_pressure_override", false)
 	scheduler.call("_update_pressure_state", 0.5)
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
-	_check(_tier_count(assignment, 0) == 24, "budgets recover only after sustained relief")
+	_check(_tier_count(assignment, 0) == 12, "budgets recover only after sustained relief")
 	scheduler.call("_update_pressure_state", 2.1)
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
 	_check(_tier_count(assignment, 0) == 32, "budgets restore once physics stays calm")
@@ -515,17 +514,17 @@ func _test_emergency_pressure_tier(scheduler_script: Script) -> void:
 	scheduler.call("set_physics_pressure_override", 25.0)
 	scheduler.call("_update_pressure_state", 0.6)
 	var assignment := scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
-	_check(_tier_count(assignment, 0) == 24, "first sustained step engages the ordinary pressure budgets")
+	_check(_tier_count(assignment, 0) == 12, "first sustained step engages the ordinary pressure budgets")
 	scheduler.call("_update_pressure_state", 0.6)
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
-	_check(_tier_count(assignment, 0) == 16, "sustained emergency pressure shrinks the full budget to 16")
-	_check(_tier_count(assignment, 1) == 16, "sustained emergency pressure shrinks the mid budget to 16")
+	_check(_tier_count(assignment, 0) == 8, "sustained emergency pressure shrinks the full budget to 8")
+	_check(_tier_count(assignment, 1) == 16, "sustained emergency pressure keeps the mid budget at 16")
 	_check(
 		absf(float(scheduler.call("physics_release_distance_scale")) - 0.6) < 0.001,
 		"emergency pressure pulls the release boundary hardest"
 	)
 	scheduler.call("set_physics_pressure_override", 5.0)
-	scheduler.call("_update_pressure_state", 2.1)
+	scheduler.call("_update_pressure_state", 5.1)
 	scheduler.call("_update_pressure_state", 2.1)
 	assignment = scheduler.call("compute_assignment", enemies, Vector2.ZERO) as Dictionary
 	_check(_tier_count(assignment, 0) == 32, "budgets restore fully after sustained calm")
@@ -546,7 +545,12 @@ func _test_severe_pressure_fast_path(scheduler_script: Script) -> void:
 	_check(int(counters.get("pressure_level", -1)) == 2, "150ms above 40ms physics jumps directly to emergency")
 	_check(int(counters.get("severe_engagements", 0)) == 1, "severe fast-path engagements are counted")
 	scheduler.call("set_physics_pressure_override", 5.0)
-	scheduler.call("_update_pressure_state", 2.1)
+	scheduler.call("_update_pressure_state", 4.9)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 2,
+		"severe pressure holds the emergency tier through a short calm interval"
+	)
+	scheduler.call("_update_pressure_state", 0.2)
 	_check(
 		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
 		"severe pressure recovers one tier at a time"

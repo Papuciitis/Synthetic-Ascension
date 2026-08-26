@@ -5,9 +5,9 @@ extends Node
 # in the mid tier, plus protected snipers that must stay fully simulated.
 
 const ENEMY_COUNT := 120
-const RING_RADII: Array[float] = [900.0, 1360.0, 1820.0, 2280.0, 2740.0, 3200.0]
-const WARMUP_FRAMES := 4 * 60
-const SAMPLE_FRAMES := 20 * 60
+const RING_RADII: Array[float] = [900.0, 1500.0, 1820.0, 2280.0, 2740.0, 3200.0]
+const WARMUP_SEC := 4.0
+const SAMPLE_SEC := 20.0
 const ORDINARY_SCENES: Array[String] = [
 	"res://scenes/world/enemies/EnemyOrbiter.tscn",
 	"res://scenes/world/enemies/EnemySpitter.tscn",
@@ -16,14 +16,27 @@ const ORDINARY_SCENES: Array[String] = [
 ]
 const SNIPER_SCENE := "res://scenes/world/enemies/EnemySniper.tscn"
 
+class StationaryPlayer:
+	extends Node2D
+	var hp := 100.0
+	var max_hp := 100.0
+	var run_inventory: Variant = null
+
+	func take_damage(_amount: float, _source: Node = null) -> void:
+		pass
+
+	func hurt(_amount: float, _source: Node = null) -> void:
+		pass
+
 var _player: Node2D
 var _enemies: Array[EnemyActor] = []
 var _frame_ms: Array[float] = []
 var _process_ms: Array[float] = []
 var _physics_ms: Array[float] = []
 var _sample_count := 0
-var _warmup_count := 0
 var _sampling := false
+var _phase_started_usec := 0
+var _legacy_pressure_contract := false
 
 
 func _ready() -> void:
@@ -32,7 +45,16 @@ func _ready() -> void:
 
 
 func _setup() -> void:
-	_player = Node2D.new()
+	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+	_legacy_pressure_contract = OS.get_environment("BENCHMARK_LEGACY_PRESSURE") == "1"
+	if _legacy_pressure_contract and scheduler != null:
+		# Reproduce the pre-change scaled boundaries on the same immutable
+		# workload, so baseline and candidate differ only by scheduler policy.
+		scheduler.set("pressure_smart_release_distance", 1950.0)
+		scheduler.set("pressure_smart_reacquire_distance", 1725.0)
+		scheduler.set("emergency_smart_release_distance", 1560.0)
+		scheduler.set("emergency_smart_reacquire_distance", 1380.0)
+	_player = StationaryPlayer.new()
 	_player.name = "StationaryBenchmarkPlayer"
 	_player.add_to_group(&"player")
 	add_child(_player)
@@ -65,6 +87,14 @@ func _setup() -> void:
 		var slots_per_ring := ENEMY_COUNT / RING_RADII.size()
 		var angle := TAU * float(slot_index) / float(slots_per_ring)
 		enemy.global_position = Vector2.RIGHT.rotated(angle) * RING_RADII[ring_index]
+		# Preserve the six-ring workload for the whole sample. Zero movement still
+		# executes the real AI, scheduler, collision-role and move-and-slide paths,
+		# but prevents the benchmark from degrading into contact deaths, drops and
+		# pickup scripts whose cost depends on random path convergence.
+		if enemy.spec != null:
+			enemy.spec = enemy.spec.duplicate(true) as EnemySpec
+			enemy.spec.speed = 0.0
+			enemy.spec.projectile_damage = 0.0
 		if is_protected_sniper:
 			enemy.set_meta("sniper_combat_committed", true)
 		add_child(enemy)
@@ -73,6 +103,7 @@ func _setup() -> void:
 	if _enemies.size() != ENEMY_COUNT:
 		_fail("expected %d enemies, got %d" % [ENEMY_COUNT, _enemies.size()])
 		return
+	_phase_started_usec = Time.get_ticks_usec()
 	set_physics_process(true)
 
 
@@ -80,16 +111,16 @@ func _physics_process(delta: float) -> void:
 	if _enemies.size() != ENEMY_COUNT:
 		return
 	if not _sampling:
-		_warmup_count += 1
-		if _warmup_count >= WARMUP_FRAMES:
+		if float(Time.get_ticks_usec() - _phase_started_usec) / 1_000_000.0 >= WARMUP_SEC:
 			_sampling = true
+			_phase_started_usec = Time.get_ticks_usec()
 		return
 
 	_frame_ms.append(delta * 1000.0)
 	_process_ms.append(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
 	_physics_ms.append(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0)
 	_sample_count += 1
-	if _sample_count >= SAMPLE_FRAMES:
+	if float(Time.get_ticks_usec() - _phase_started_usec) / 1_000_000.0 >= SAMPLE_SEC:
 		_finish()
 
 
@@ -104,16 +135,22 @@ func _finish() -> void:
 	var report := {
 		"schema": 1,
 		"benchmark": "enemy-pressure",
+		"pressure_contract": "legacy-scaled" if _legacy_pressure_contract else "explicit-bands",
 		"source_sha": OS.get_environment("BENCHMARK_SOURCE_SHA"),
 		"enemy_count": ENEMY_COUNT,
 		"protected_snipers": ENEMY_COUNT / 20,
 		"ring_radii": RING_RADII,
-		"warmup_frames": WARMUP_FRAMES,
+		"warmup_seconds": WARMUP_SEC,
+		"sample_seconds": SAMPLE_SEC,
 		"sample_frames": _sample_count,
 		"frame_ms": _summary(_frame_ms),
 		"process_ms": _summary(_process_ms),
 		"physics_ms": _summary(_physics_ms),
 		"scheduler": counters,
+		"ordinary_physics_enabled": maxi(
+			0,
+			int(counters.get("physics_enabled", 0)) - int(counters.get("protected", 0))
+		),
 	}
 	var report_path := OS.get_environment("BENCHMARK_REPORT_PATH")
 	if report_path.is_empty():
@@ -131,12 +168,13 @@ func _finish() -> void:
 	file.store_string(JSON.stringify(report, "\t") + "\n")
 	file.close()
 	print(
-		"EnemyPressureBenchmark: enemies=%d physics_p95=%.2f frame_p95=%.2f physics_enabled=%s report=%s"
+		"EnemyPressureBenchmark: enemies=%d physics_p95=%.2f frame_p95=%.2f physics_enabled=%s ordinary_physics=%s report=%s"
 		% [
 			ENEMY_COUNT,
 			float((report["physics_ms"] as Dictionary)["p95"]),
 			float((report["frame_ms"] as Dictionary)["p95"]),
 			counters.get("physics_enabled", "?"),
+			report.get("ordinary_physics_enabled", "?"),
 			absolute_path,
 		]
 	)

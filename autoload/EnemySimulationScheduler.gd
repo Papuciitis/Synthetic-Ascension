@@ -38,10 +38,11 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 # baseline sits near 12-14 ms, so 8 ms would keep the reduced budgets
 # engaged almost permanently (measured 90.9% duty on 2026-08-22).
 @export_range(1.0, 33.0, 0.25) var budget_pressure_ms: float = 14.0
-@export_range(0, 512, 1) var pressure_full_budget: int = 24
+@export_range(0, 512, 1) var pressure_full_budget: int = 12
 @export_range(0, 1024, 1) var pressure_mid_budget: int = 24
 @export_range(0.05, 5.0, 0.05) var pressure_engage_sec: float = 0.5
 @export_range(0.05, 10.0, 0.05) var pressure_release_sec: float = 2.0
+@export_range(0.05, 15.0, 0.05) var emergency_release_sec: float = 5.0
 # Under sustained pressure the smart-archetype physics release distance
 # shrinks by this factor: mid-clamped smart actors otherwise scale physics
 # bodies linearly with the horde (measured 134 physics-enabled bodies at
@@ -50,7 +51,7 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 # Emergency tier: sustained physics beyond this bounds the cost by design
 # at any population (measured 30ms physics p95 at 1129 alive).
 @export_range(1.0, 33.0, 0.25) var emergency_pressure_ms: float = 20.0
-@export_range(0, 512, 1) var emergency_full_budget: int = 16
+@export_range(0, 512, 1) var emergency_full_budget: int = 8
 @export_range(0, 1024, 1) var emergency_mid_budget: int = 16
 @export_range(0.4, 1.0, 0.05) var emergency_release_distance_scale: float = 0.6
 
@@ -427,7 +428,8 @@ func _update_pressure_state(delta: float) -> void:
 	elif measured < _pressure_level:
 		_pressure_below_sec += delta
 		_pressure_above_sec = 0.0
-		if _pressure_below_sec >= pressure_release_sec:
+		var release_window := emergency_release_sec if _pressure_level >= 2 else pressure_release_sec
+		if _pressure_below_sec >= release_window:
 			_pressure_level -= 1
 			_pressure_below_sec = 0.0
 	else:
