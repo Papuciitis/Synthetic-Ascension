@@ -163,7 +163,7 @@ func _process(delta: float) -> void:
 
 	if _ticks > 0:
 		global_position = player_position()
-		queue_redraw()
+		pulse_redraw()
 
 
 ## One writer, so unequipping the rule cannot leave the world permanently

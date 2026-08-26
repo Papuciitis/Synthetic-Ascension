@@ -26,6 +26,12 @@ var _colors: PackedColorArray = PackedColorArray()
 var _scales := PackedFloat32Array()
 var _amounts := PackedFloat32Array()
 var _keys: Array[int] = []
+# Shaped text cache: draw_string() re-shapes and re-rasterises every entry
+# every frame (twice, with the outline). A TextLine per slot is shaped once
+# and only rebuilt when its text or font size changes (crit pop, merges).
+var _lines: Array[TextLine] = []
+var _line_texts: PackedStringArray = PackedStringArray()
+var _line_sizes := PackedInt32Array()
 var _count := 0
 var _overwrite_slot := 0
 var _font: Font = null
@@ -42,6 +48,9 @@ func _ready() -> void:
 	_scales.resize(MAX_ENTRIES)
 	_amounts.resize(MAX_ENTRIES)
 	_keys.resize(MAX_ENTRIES)
+	_lines.resize(MAX_ENTRIES)
+	_line_texts.resize(MAX_ENTRIES)
+	_line_sizes.resize(MAX_ENTRIES)
 	set_process(false)
 
 
@@ -178,6 +187,10 @@ func _process(delta: float) -> void:
 			_scales[i] = _scales[last]
 			_amounts[i] = _amounts[last]
 			_keys[i] = _keys[last]
+			_lines[i] = _lines[last]
+			_line_texts[i] = _line_texts[last]
+			_line_sizes[i] = _line_sizes[last]
+			_lines[last] = null
 			_count = last
 			continue
 		i += 1
@@ -206,11 +219,27 @@ func _draw() -> void:
 		var color := _colors[i]
 		color.a = alpha
 		var outline := Color(0.05, 0.05, 0.08, alpha * 0.9)
-		draw_string_outline(
-			_font, draw_pos, _texts[i], HORIZONTAL_ALIGNMENT_CENTER, 200.0,
-			font_size, 4, outline
-		)
-		draw_string(
-			_font, draw_pos, _texts[i], HORIZONTAL_ALIGNMENT_CENTER, 200.0,
-			font_size, color
-		)
+		var line := _shaped_line(i, font_size)
+		# TextLine draws from the top-left of its box; draw_string took the
+		# baseline. Keep the numbers where they were.
+		var line_pos := draw_pos - Vector2(0.0, line.get_line_ascent())
+		var canvas := get_canvas_item()
+		line.draw_outline(canvas, line_pos, 4, outline)
+		line.draw(canvas, line_pos, color)
+
+
+func _shaped_line(slot: int, font_size: int) -> TextLine:
+	var line := _lines[slot]
+	if line != null and _line_sizes[slot] == font_size and _line_texts[slot] == _texts[slot]:
+		return line
+	if line == null:
+		line = TextLine.new()
+		line.width = 200.0
+		line.alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_lines[slot] = line
+	else:
+		line.clear()
+	line.add_string(_texts[slot], _font, font_size)
+	_line_texts[slot] = _texts[slot]
+	_line_sizes[slot] = font_size
+	return line

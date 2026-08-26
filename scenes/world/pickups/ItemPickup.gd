@@ -25,10 +25,17 @@ var item_instance: ItemInstance = null
 
 const MAGNET_RADIUS: float = 110.0
 const MAGNET_SPEED_MAX: float = 420.0
+# Pickups far outside magnet range re-check the player distance at
+# MAGNET_IDLE_POLL_SEC instead of every frame: exploration loot never
+# expires, and hundreds of idle pickups each doing a group lookup and a
+# distance per frame was measurable process time.
+const MAGNET_IDLE_DISTANCE: float = MAGNET_RADIUS * 3.0
+const MAGNET_IDLE_POLL_SEC: float = 0.25
 
 var _pickup_ready: bool = false
 var _picked: bool = false
 var _magnet_cooldown: float = 0.0
+var _magnet_idle_left: float = 0.0
 var _player_ref: Node2D = null
 
 
@@ -71,12 +78,18 @@ func _process(delta: float) -> void:
 	if _magnet_cooldown > 0.0:
 		_magnet_cooldown -= delta
 		return
+	if _magnet_idle_left > 0.0:
+		_magnet_idle_left -= delta
+		return
 	if _player_ref == null or not is_instance_valid(_player_ref):
 		_player_ref = get_tree().get_first_node_in_group("player") as Node2D
 		if _player_ref == null:
+			_magnet_idle_left = MAGNET_IDLE_POLL_SEC
 			return
 	var distance: float = global_position.distance_to(_player_ref.global_position)
 	if distance > MAGNET_RADIUS:
+		if distance > MAGNET_IDLE_DISTANCE:
+			_magnet_idle_left = MAGNET_IDLE_POLL_SEC
 		return
 	var pull: float = 1.0 - distance / MAGNET_RADIUS
 	var speed: float = lerpf(60.0, MAGNET_SPEED_MAX, pull * pull)

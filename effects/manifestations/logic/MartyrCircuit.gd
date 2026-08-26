@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
 		if _echo_wait <= 0.0:
 			_fire_echo()
 
-	queue_redraw()
+	pulse_redraw()
 
 
 func echo_multiplier() -> float:

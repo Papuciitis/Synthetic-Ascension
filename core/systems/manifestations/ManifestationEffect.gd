@@ -34,6 +34,12 @@ class_name ManifestationEffect
 
 var player: Node2D = null
 var item: ItemInstance = null
+# Steady-state pulse overlays (halos, rings, tallies that breathe) redraw
+# through pulse_redraw() at PULSE_REDRAW_HZ instead of every rendered frame:
+# a full manifestation loadout was ~18 antialiased-arc canvas rebuilds per
+# frame. One-shot wipes and state-change redraws keep calling queue_redraw().
+const PULSE_REDRAW_HZ := 30.0
+var _last_pulse_redraw_usec: int = 0
 var slot_index: int = -1
 var state: ManifestationState = null
 var definition: ManifestationDef = null
@@ -133,6 +139,14 @@ func noun_colour(noun: StringName = &"") -> Color:
 # ---------------------------------------------------------------------------
 # Shared conveniences
 # ---------------------------------------------------------------------------
+
+func pulse_redraw() -> void:
+	var now := Time.get_ticks_usec()
+	if now - _last_pulse_redraw_usec < int(1_000_000.0 / PULSE_REDRAW_HZ):
+		return
+	_last_pulse_redraw_usec = now
+	queue_redraw()
+
 
 func player_position() -> Vector2:
 	if player != null and is_instance_valid(player):

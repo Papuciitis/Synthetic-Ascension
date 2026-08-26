@@ -153,7 +153,7 @@ func _process(delta: float) -> void:
 	if _refusal_cd > 0.0:
 		_refusal_cd = maxf(0.0, _refusal_cd - delta)
 	global_position = player_position()
-	queue_redraw()
+	pulse_redraw()
 
 
 func _draw() -> void:

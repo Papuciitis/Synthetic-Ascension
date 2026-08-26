@@ -7,6 +7,7 @@ extends Node
 const ENEMY_COUNT := 120
 const RING_RADII: Array[float] = [900.0, 1500.0, 1820.0, 2280.0, 2740.0, 3200.0]
 const WARMUP_SEC := 4.0
+const BASELINE_IMPROVEMENT_GATE := 0.20
 const SAMPLE_SEC := 20.0
 const ORDINARY_SCENES: Array[String] = [
 	"res://scenes/world/enemies/EnemyOrbiter.tscn",
@@ -167,6 +168,27 @@ func _finish() -> void:
 		return
 	file.store_string(JSON.stringify(report, "\t") + "\n")
 	file.close()
+	# Acceptance gate: with BENCHMARK_BASELINE_PATH pointing at a report from
+	# the legacy arm (BENCHMARK_LEGACY_PRESSURE=1), the candidate must cut
+	# physics p95 by at least BASELINE_IMPROVEMENT_GATE. Without a baseline
+	# the run is a measurement only.
+	var baseline_path := OS.get_environment("BENCHMARK_BASELINE_PATH")
+	if not baseline_path.is_empty():
+		var baseline_file := FileAccess.open(baseline_path, FileAccess.READ)
+		var baseline: Variant = JSON.parse_string(baseline_file.get_as_text()) if baseline_file != null else null
+		if not (baseline is Dictionary):
+			_fail("baseline report unreadable: %s" % baseline_path)
+			return
+		var baseline_p95 := float(((baseline as Dictionary).get("physics_ms", {}) as Dictionary).get("p95", 0.0))
+		var candidate_p95 := float((report["physics_ms"] as Dictionary)["p95"])
+		var improvement := 1.0 - candidate_p95 / maxf(baseline_p95, 0.001)
+		print(
+			"EnemyPressureBenchmark: baseline physics p95 %.2f -> candidate %.2f (%.1f%% improvement, gate %.0f%%)"
+			% [baseline_p95, candidate_p95, improvement * 100.0, BASELINE_IMPROVEMENT_GATE * 100.0]
+		)
+		if improvement < BASELINE_IMPROVEMENT_GATE:
+			_fail("GATE FAILED: physics p95 improvement %.1f%% < %.0f%%" % [improvement * 100.0, BASELINE_IMPROVEMENT_GATE * 100.0])
+			return
 	print(
 		"EnemyPressureBenchmark: enemies=%d physics_p95=%.2f frame_p95=%.2f physics_enabled=%s ordinary_physics=%s report=%s"
 		% [

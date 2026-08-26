@@ -91,7 +91,7 @@ func _process(delta: float) -> void:
 	if full:
 		_spin = fposmod(_spin + SPIN_SPEED * delta, TAU)
 		_drawn = s
-		queue_redraw()
+		pulse_redraw()
 	elif absf(s - _drawn) > 0.004 or (s <= 0.0 and _drawn > 0.0):
 		_drawn = s
 		queue_redraw()

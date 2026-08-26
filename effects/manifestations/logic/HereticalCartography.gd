@@ -165,7 +165,7 @@ func _process(delta: float) -> void:
 
 	_pulse += delta
 	global_position = player_position()
-	queue_redraw()
+	pulse_redraw()
 
 	# One recompute for however many stacks fell off this frame.
 	if lost:

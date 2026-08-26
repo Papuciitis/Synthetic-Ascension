@@ -49,7 +49,7 @@ func _process(delta: float) -> void:
 	_payout_flash = maxf(0.0, _payout_flash - delta)
 	_break_flash = maxf(0.0, _break_flash - delta)
 	global_position = player_position()
-	queue_redraw()
+	pulse_redraw()
 
 
 func resolve_window() -> float:

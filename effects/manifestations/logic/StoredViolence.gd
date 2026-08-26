@@ -44,7 +44,7 @@ func _process(delta: float) -> void:
 	_charge = clampf(since_attack() / charge_seconds(), 0.0, 1.0)
 	_release_flash = maxf(0.0, _release_flash - delta)
 	global_position = player_position()
-	queue_redraw()
+	pulse_redraw()
 
 
 func since_attack() -> float:

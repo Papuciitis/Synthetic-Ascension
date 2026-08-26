@@ -198,7 +198,7 @@ func _process(delta: float) -> void:
 		_drawn = true
 		_pulse += delta
 		global_position = player_position()
-		queue_redraw()
+		pulse_redraw()
 	elif _drawn:
 		# One last repaint to wipe the ring; after that a healthy player pays
 		# nothing per frame beyond the tier read above.

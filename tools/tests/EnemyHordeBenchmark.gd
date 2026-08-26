@@ -29,6 +29,8 @@ class Driver:
 	var _filter: Node = null
 	var _topup_left := 0.0
 	var _report_lines: PackedStringArray = []
+	var _last_stage_frame_p95 := 0.0
+	const FRAME_P95_GATE_MS := 33.0
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
@@ -139,6 +141,19 @@ class Driver:
 				Global.debug_player_god_mode = false
 				_filter.set("cap_mode", 0)
 				Global.goto_main_menu()
+				# The 500-goal gate (header): final stage frame p95 <= 33 ms.
+				# Only meaningful with a real renderer; headless frames carry
+				# no draw cost and would pass trivially.
+				var final_target := int(_stages[_stages.size() - 1])
+				if DisplayServer.get_name() != "headless" and _last_stage_frame_p95 > FRAME_P95_GATE_MS:
+					push_error(
+						"HordeBenchmark: GATE FAILED stage %d frame p95 %.2f ms > %.1f ms"
+						% [final_target, _last_stage_frame_p95, FRAME_P95_GATE_MS]
+					)
+					get_tree().quit(1)
+					return
+				if DisplayServer.get_name() != "headless":
+					print("HordeBenchmark: GATE PASSED stage %d frame p95 %.2f ms <= %.1f ms" % [final_target, _last_stage_frame_p95, FRAME_P95_GATE_MS])
 				get_tree().quit(0)
 
 	func _write_report() -> void:
@@ -191,6 +206,7 @@ class Driver:
 		)
 		print(line)
 		_report_lines.append(line)
+		_last_stage_frame_p95 = _pct(_frames, 95.0)
 
 
 func _ready() -> void:

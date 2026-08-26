@@ -86,7 +86,7 @@ func _process(delta: float) -> void:
 		_drawn_stacks = _stacks
 		queue_redraw()
 	elif _stacks > 0:
-		queue_redraw()
+		pulse_redraw()
 
 	_pulse += delta
 
