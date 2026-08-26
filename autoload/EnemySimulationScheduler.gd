@@ -65,6 +65,12 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 @export_range(0.0, 8000.0, 10.0) var pressure_smart_reacquire_distance: float = 1400.0
 @export_range(0.0, 8000.0, 10.0) var emergency_smart_release_distance: float = 1450.0
 @export_range(0.0, 8000.0, 10.0) var emergency_smart_reacquire_distance: float = 1250.0
+# Emergency pressure may drop ordinary non-contact archetypes (ranged, orbit,
+# summoner, tactical, herald) to far-tier physics closer than the smart
+# boundary, but never inside this radius: a far-tier body has no collision
+# shape and an unmonitorable hitbox, so a close one would be melee-immune and
+# walk through walls on screen. Matches the representation lease band.
+@export_range(0.0, 4000.0, 10.0) var noncontact_release_min_distance: float = 640.0
 
 # A genuinely catastrophic physics step should not spend a full second walking
 # through the ordinary two-stage fallback. It still requires a short sustained
@@ -87,6 +93,17 @@ var _pressure_level := 0
 var _pressure_above_sec := 0.0
 var _pressure_below_sec := 0.0
 var _severe_above_sec := 0.0
+# Frames at/above the current level accumulate here; only a sustained run
+# (>= pressure_spike_tolerance_sec) restarts the release window. Without it a
+# single slow frame - typically this scheduler's own 5 Hz assignment refresh -
+# reset the window every 200 ms and pinned pressure engaged forever.
+var _pressure_hold_sec := 0.0
+const PRESSURE_SPIKE_TOLERANCE_SEC := 0.1
+# The assignment refresh runs inside _physics_process, so the physics monitor
+# sampled on the NEXT frame includes it. Subtract that known cost so the
+# refresh cannot read as horde pressure.
+var _last_assignment_ms := 0.0
+var _assignment_ran_last_frame := false
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -130,8 +147,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	_update_pressure_state(maxf(0.0, delta))
 	_assignment_left -= maxf(0.0, delta)
+	_assignment_ran_last_frame = false
 	if _assignment_left <= 0.0:
 		refresh_assignments()
+		_assignment_ran_last_frame = true
+		_last_assignment_ms = float(_debug_counters.get("assignment_usec", 0)) / 1000.0
 	_mid_cursor = _run_next_group(
 		_mid_groups,
 		_mid_cursor,
@@ -396,8 +416,10 @@ func smart_physics_boundary(is_far: bool) -> float:
 	return normal_smart_reacquire_distance if is_far else normal_smart_release_distance
 
 
-func should_release_noncontact_smart(ai: int) -> bool:
+func should_release_noncontact_smart(ai: int, player_distance: float = -1.0) -> bool:
 	if _pressure_level < 2:
+		return false
+	if player_distance < maxf(noncontact_release_min_distance, 0.0):
 		return false
 	return ai in [
 		EnemySpec.AI.ORBIT,
@@ -415,12 +437,14 @@ func _update_pressure_state(delta: float) -> void:
 		_pressure_above_sec = 0.0
 		_pressure_below_sec = 0.0
 		_severe_above_sec = 0.0
+		_pressure_hold_sec = 0.0
 		_sync_pressure_counters()
 		return
 	var physics_ms := _measured_physics_ms()
 	if physics_ms >= severe_pressure_ms:
 		_severe_above_sec += delta
 		_pressure_below_sec = 0.0
+		_pressure_hold_sec = 0.0
 		if _pressure_level < 2 and _severe_above_sec >= severe_engage_sec:
 			_pressure_level = 2
 			_pressure_active = true
@@ -444,13 +468,16 @@ func _update_pressure_state(delta: float) -> void:
 	elif measured < _pressure_level:
 		_pressure_below_sec += delta
 		_pressure_above_sec = 0.0
+		_pressure_hold_sec = 0.0
 		var release_window := emergency_release_sec if _pressure_level >= 2 else pressure_release_sec
 		if _pressure_below_sec >= release_window:
 			_pressure_level -= 1
 			_pressure_below_sec = 0.0
 	else:
 		_pressure_above_sec = 0.0
-		_pressure_below_sec = 0.0
+		_pressure_hold_sec += delta
+		if _pressure_hold_sec >= PRESSURE_SPIKE_TOLERANCE_SEC:
+			_pressure_below_sec = 0.0
 	_pressure_level = clampi(_pressure_level, 0, 2)
 	_pressure_active = _pressure_level >= 1
 	_sync_pressure_counters()
@@ -462,11 +489,16 @@ func _sync_pressure_counters() -> void:
 
 
 func _measured_physics_ms() -> float:
+	var measured := 0.0
 	if _physics_pressure_override != null:
 		if _physics_pressure_override is bool:
 			return budget_pressure_ms + 0.001 if bool(_physics_pressure_override) else 0.0
-		return maxf(0.0, float(_physics_pressure_override))
-	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+		measured = maxf(0.0, float(_physics_pressure_override))
+	else:
+		measured = Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
+	if _assignment_ran_last_frame:
+		measured = maxf(0.0, measured - _last_assignment_ms)
+	return measured
 
 
 func _measured_pressure_level() -> int:

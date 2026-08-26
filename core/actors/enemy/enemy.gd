@@ -122,6 +122,10 @@ var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
 var _sim_scheduler: Node = null
 var _visual_batched := false
+# Last requested deferred collision-role values (see _set_body_shape_disabled).
+var _body_shape_disabled_request := -1
+var _hitbox_monitoring_request := -1
+var _hitbox_monitorable_request := -1
 var _batched_renderer_id: int = 0
 var _hitbox: Area2D = null
 var _body_shape: CollisionShape2D = null
@@ -449,7 +453,7 @@ func _can_release_far_physics(ai: int, player_distance: float) -> bool:
 	if (
 		_sim_scheduler != null
 		and _sim_scheduler.has_method("should_release_noncontact_smart")
-		and bool(_sim_scheduler.call("should_release_noncontact_smart", ai))
+		and bool(_sim_scheduler.call("should_release_noncontact_smart", ai, player_distance))
 	):
 		return true
 	# Once released, hold far physics until meaningfully closer so the boundary
@@ -583,10 +587,12 @@ func _register_batched_visual() -> void:
 	# node instance; the renderer skips pooled/hidden/dead actors and prunes
 	# freed ones.
 	if Global == null or not Global.debug_enemy_visual_batching:
+		_show_own_sprite()
 		return
 	var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
 	var renderer: Node = proxy_root.get("renderer") if proxy_root != null else null
 	if renderer == null or not renderer.has_method("register_actor"):
+		_show_own_sprite()
 		return
 	# Registration must be per RENDERER instance, not per node lifetime:
 	# pooled nodes outlive the per-scene renderer, so a node recycled
@@ -612,11 +618,36 @@ func _register_batched_visual() -> void:
 	_batched_renderer_id = renderer_id
 
 
+func _unregister_batched_visual() -> void:
+	# Pooled inventory must not sit in the renderer registry: publish() walks
+	# every entry each frame, so the registry has to track live enemies only.
+	if not _visual_batched:
+		return
+	var renderer := instance_from_id(_batched_renderer_id) as Node
+	if renderer != null and renderer.has_method("unregister_actor"):
+		renderer.call("unregister_actor", self)
+	_visual_batched = false
+	_batched_renderer_id = 0
+
+
+func _show_own_sprite() -> void:
+	# A node batched in an earlier scene (sprite hidden) that is reused where
+	# batching is off must draw itself again, or it is invisible forever.
+	if not _visual_batched:
+		var sprite := get_node_or_null("Sprite2D") as Sprite2D
+		if sprite != null and not sprite.visible:
+			sprite.visible = true
+		return
+	_unregister_batched_visual()
+	var own_sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if own_sprite != null:
+		own_sprite.visible = true
+
+
 func _apply_simulation_collision_roles() -> void:
 	if _body_shape == null or not is_instance_valid(_body_shape):
 		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
-	if _body_shape != null and _body_shape.disabled != (_lod_tier == 2):
-		_body_shape.set_deferred("disabled", _lod_tier == 2)
+	_set_body_shape_disabled(_lod_tier == 2)
 	var participates_in_queries := _lod_tier < 2
 	_set_hitbox_roles(
 		participates_in_queries and _get_active_ai() == EnemySpec.AI.LEECH,
@@ -624,14 +655,35 @@ func _apply_simulation_collision_roles() -> void:
 	)
 
 
+# Collision roles are written deferred (physics flush). Comparing against the
+# LIVE property while an earlier deferred write is still pending drops the
+# newer request: a same-frame recycle->obtain left the reused enemy with the
+# recycle's "disabled = true" landing last, collisionless until the next
+# assignment refresh changed its tier (never, while paused). Compare against
+# the last REQUESTED value instead. -1 = unknown (fresh node, or a direct
+# property write elsewhere), which forces one write.
+func _set_body_shape_disabled(disabled: bool) -> void:
+	if _body_shape == null:
+		return
+	var want := 1 if disabled else 0
+	if _body_shape_disabled_request == want and _body_shape.disabled == disabled:
+		return
+	_body_shape_disabled_request = want
+	_body_shape.set_deferred("disabled", disabled)
+
+
 func _set_hitbox_roles(active_monitoring: bool, can_be_monitored: bool) -> void:
 	if _hitbox == null or not is_instance_valid(_hitbox):
 		_hitbox = get_node_or_null("Hitbox") as Area2D
 	if _hitbox == null:
 		return
-	if _hitbox.monitoring != active_monitoring:
+	var want_monitoring := 1 if active_monitoring else 0
+	if _hitbox_monitoring_request != want_monitoring or _hitbox.monitoring != active_monitoring:
+		_hitbox_monitoring_request = want_monitoring
 		_hitbox.set_deferred("monitoring", active_monitoring)
-	if _hitbox.monitorable != can_be_monitored:
+	var want_monitorable := 1 if can_be_monitored else 0
+	if _hitbox_monitorable_request != want_monitorable or _hitbox.monitorable != can_be_monitored:
+		_hitbox_monitorable_request = want_monitorable
 		_hitbox.set_deferred("monitorable", can_be_monitored)
 
 
@@ -700,9 +752,9 @@ func _on_pool_recycle() -> void:
 	set_process(false)
 	set_physics_process(false)
 	visible = false
-	if _body_shape != null:
-		_body_shape.set_deferred("disabled", true)
+	_set_body_shape_disabled(true)
 	_set_hitbox_roles(false, false)
+	_unregister_batched_visual()
 
 
 func _on_pool_recycle_context(context: Dictionary) -> void:
@@ -1075,8 +1127,9 @@ func _quiesce_representation_lease() -> void:
 	if _body_shape == null or not is_instance_valid(_body_shape):
 		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
 	if _body_shape != null:
-		_body_shape.set_deferred("disabled", true)
+		_set_body_shape_disabled(true)
 	_set_hitbox_roles(false, false)
+	_unregister_batched_visual()
 
 
 func _resolve_enemy_world_handle() -> int:

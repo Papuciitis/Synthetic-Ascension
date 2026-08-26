@@ -62,6 +62,9 @@ func _run() -> void:
 	_test_full_incumbent_rank_hysteresis(scheduler_script)
 	_test_emergency_pressure_tier(scheduler_script)
 	_test_severe_pressure_fast_path(scheduler_script)
+	_test_pressure_release_survives_single_frame_spikes(scheduler_script)
+	_test_assignment_refresh_cost_is_excluded_from_pressure(scheduler_script)
+	await _test_same_frame_recycle_then_obtain_keeps_collision()
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
 	_test_pooled_actor_stale_group_is_ignored(scheduler_script)
@@ -371,24 +374,30 @@ func _test_emergency_noncontact_smart_release(scheduler_script: Script) -> void:
 	add_child(scheduler)
 	scheduler.call("set_physics_pressure_override", 45.0)
 	scheduler.call("_update_pressure_state", 0.15)
+	var floor_distance := float(scheduler.get("noncontact_release_min_distance"))
+	_check(floor_distance > 0.0, "emergency noncontact release has a distance floor")
 	_check(
-		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.RANGED)),
-		"emergency pressure may release ordinary ranged body physics at close range"
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.RANGED, floor_distance + 1.0)),
+		"emergency pressure may release ordinary ranged body physics beyond the floor"
 	)
 	_check(
-		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.ORBIT)),
-		"emergency pressure may release ordinary orbiter body physics at close range"
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.ORBIT, floor_distance + 1.0)),
+		"emergency pressure may release ordinary orbiter body physics beyond the floor"
 	)
 	_check(
-		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE)),
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.RANGED, floor_distance - 1.0)),
+		"emergency pressure keeps close ranged actors collidable (melee/contact must still land)"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE, floor_distance + 1.0)),
 		"emergency pressure keeps charger collision exact"
 	)
 	_check(
-		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.BOMBER)),
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.BOMBER, floor_distance + 1.0)),
 		"emergency pressure keeps bomber collision exact"
 	)
 	_check(
-		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.SNIPER)),
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.SNIPER, floor_distance + 1.0)),
 		"emergency pressure keeps sniper collision exact"
 	)
 	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
@@ -400,8 +409,12 @@ func _test_emergency_noncontact_smart_release(scheduler_script: Script) -> void:
 	await get_tree().process_frame
 	ranged.set("_sim_scheduler", scheduler)
 	_check(
-		int(ranged.call("max_scheduler_tier", 500.0)) == 2,
-		"close ordinary ranged actor integrates with emergency physics release"
+		int(ranged.call("max_scheduler_tier", floor_distance - 100.0)) == 1,
+		"close ordinary ranged actor stays collidable under emergency pressure"
+	)
+	_check(
+		int(ranged.call("max_scheduler_tier", floor_distance + 100.0)) == 2,
+		"distant ordinary ranged actor integrates with emergency physics release"
 	)
 	ranged.set_meta(&"objective_required", true)
 	_check(
@@ -410,6 +423,76 @@ func _test_emergency_noncontact_smart_release(scheduler_script: Script) -> void:
 	)
 	ranged.queue_free()
 	scheduler.queue_free()
+
+
+func _test_pressure_release_survives_single_frame_spikes(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	_check(int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1, "sustained budget pressure engages level 1")
+	var release_window := float(scheduler.get("pressure_release_sec"))
+	# Calm frames with one at-threshold frame every 12 (the scheduler's own
+	# 5 Hz assignment refresh at 60 fps). Total calm time is 3x the release
+	# window; an isolated spike frame must not restart the window.
+	var frames := int(ceil(release_window * 3.0 / (1.0 / 60.0)))
+	for i in range(frames):
+		scheduler.call("set_physics_pressure_override", 16.0 if i % 12 == 0 else 5.0)
+		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 0,
+		"periodic single-frame spikes cannot pin pressure engaged"
+	)
+	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	scheduler.call("set_physics_pressure_override", 5.0)
+	for i in range(int(release_window * 30.0)):
+		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.3)
+	scheduler.call("set_physics_pressure_override", 5.0)
+	for i in range(int(release_window * 30.0) + 2):
+		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
+		"a sustained (0.3 s) return to pressure still restarts the release window"
+	)
+	scheduler.free()
+
+
+func _test_assignment_refresh_cost_is_excluded_from_pressure(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	# 25 ms measured, of which 12 ms was the scheduler's own assignment
+	# refresh last physics frame: the horde is really at 13 ms (< 14 budget).
+	scheduler.set("_last_assignment_ms", 12.0)
+	scheduler.set("_assignment_ran_last_frame", true)
+	scheduler.call("set_physics_pressure_override", 25.0)
+	_check(
+		int(scheduler.call("_measured_pressure_level")) == 0,
+		"the refresh's own cost is subtracted from the pressure sample on the frame after it ran"
+	)
+	scheduler.set("_assignment_ran_last_frame", false)
+	_check(
+		int(scheduler.call("_measured_pressure_level")) == 2,
+		"frames without a refresh measure the raw physics time"
+	)
+	scheduler.free()
+
+
+func _test_same_frame_recycle_then_obtain_keeps_collision() -> void:
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var enemy := enemy_scene.instantiate() as EnemyActor
+	enemy.spec = EnemySpec.new()
+	add_child(enemy)
+	await get_tree().process_frame
+	# Pool recycle defers "disabled = true"; a same-frame obtain must still end
+	# with a collidable, monitorable enemy once the deferred writes land.
+	enemy.call("_on_pool_recycle")
+	enemy.call("_reset_for_pool_obtain", false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(bool(enemy.call("is_body_physics_enabled")), "same-frame recycle->obtain leaves body collision enabled")
+	_check(bool((enemy.call("hitbox_roles") as Dictionary).get("monitorable", false)), "same-frame recycle->obtain leaves the hitbox monitorable")
+	enemy.queue_free()
 
 
 func _test_spatial_bands_cap_distant_fidelity(scheduler: Node) -> void:
