@@ -96,8 +96,12 @@ func _update_geometry() -> void:
 	var viewport_size := _root.size
 	if viewport_size.x <= 1.0 or viewport_size.y <= 1.0:
 		viewport_size = get_viewport().get_visible_rect().size
-	if _target_is_live(_target):
-		_last_target_screen = _target.get_global_transform_with_canvas().origin
+	var target_variant: Variant = _target
+	if _target_is_live(target_variant):
+		var live_target := target_variant as Node2D
+		_last_target_screen = live_target.get_global_transform_with_canvas().origin
+	else:
+		_target = null
 	_last_target_screen = Vector2(
 		clampf(_last_target_screen.x, SCREEN_MARGIN, viewport_size.x - SCREEN_MARGIN),
 		clampf(_last_target_screen.y, TOP_MARGIN, viewport_size.y - SCREEN_MARGIN)
@@ -173,20 +177,25 @@ func _offer_pause_handoff() -> bool:
 	var tree := get_tree()
 	if tree == null:
 		return false
-	for owner in tree.get_nodes_in_group(&"pause_handoff_owner"):
-		if owner.has_method("adopt_pause_handoff") and bool(owner.call("adopt_pause_handoff")):
+	for pause_owner in tree.get_nodes_in_group(&"pause_handoff_owner"):
+		if pause_owner.has_method("adopt_pause_handoff") and bool(pause_owner.call("adopt_pause_handoff")):
 			return true
 	return false
 
 
-func _target_is_live(target: Node2D) -> bool:
-	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
+func _target_is_live(target: Variant) -> bool:
+	if target == null or not is_instance_valid(target):
 		return false
-	if bool(target.get_meta(&"__in_pool", false)):
+	if not target is Node2D:
 		return false
-	if target.process_mode == Node.PROCESS_MODE_DISABLED:
+	var target_node := target as Node2D
+	if not target_node.is_inside_tree():
 		return false
-	return target.is_visible_in_tree()
+	if bool(target_node.get_meta(&"__in_pool", false)):
+		return false
+	if target_node.process_mode == Node.PROCESS_MODE_DISABLED:
+		return false
+	return target_node.is_visible_in_tree()
 
 
 func _dismiss() -> void:

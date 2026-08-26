@@ -475,7 +475,7 @@ func _refresh_observations() -> void:
 		var entry := EnemyDossierCatalog.get_entry(enemy_id)
 		if entry.is_empty():
 			continue
-		var name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
+		var archetype_name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
 		var record := VBoxContainer.new()
 		record.add_theme_constant_override("separation", 0)
 		record.focus_mode = Control.FOCUS_ALL
@@ -484,7 +484,7 @@ func _refresh_observations() -> void:
 		observations_vbox.add_child(record)
 
 		var name_label := Label.new()
-		name_label.text = "[ %s ]" % name
+		name_label.text = "[ %s ]" % archetype_name
 		name_label.theme_type_variation = &"BodyStrong"
 		name_label.add_theme_font_size_override("font_size", 12)
 		name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))

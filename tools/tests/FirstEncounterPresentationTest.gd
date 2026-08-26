@@ -40,6 +40,16 @@ func _run() -> void:
 	if scene == null:
 		_finish()
 		return
+	var overlay_source := FileAccess.get_file_as_string("res://ui/overlays/FirstEncounterOverlay.gd")
+	var controller_source := FileAccess.get_file_as_string("res://ui/controllers/TutorialModalController.gd")
+	_check(
+		"func _target_is_live(target: Variant)" in overlay_source,
+		"overlay liveness guard accepts a freed-object variant before narrowing its type"
+	)
+	_check(
+		"func _target_is_live(target: Variant)" in controller_source,
+		"queued encounter liveness guard accepts a freed-object variant before narrowing its type"
+	)
 
 	var target := Node2D.new()
 	target.position = Vector2(420, 340)
@@ -100,6 +110,31 @@ func _run() -> void:
 		overlay.queue_free()
 	await process_frame
 
+	var doomed_target := Node2D.new()
+	doomed_target.position = Vector2(610, 410)
+	root.add_child(doomed_target)
+	var freed_target_overlay := scene.instantiate()
+	root.add_child(freed_target_overlay)
+	freed_target_overlay.call(
+		"present",
+		{"name": "Freed Target", "role": "Test", "counter": "Retain the last endpoint."},
+		doomed_target,
+		null,
+		"Threat: Basic"
+	)
+	freed_target_overlay.call("_update_geometry")
+	var endpoint_before_free: Vector2 = freed_target_overlay.call("debug_target_screen_point")
+	doomed_target.free()
+	freed_target_overlay.call("_process", 0.1)
+	_check(
+		(freed_target_overlay.call("debug_target_screen_point") as Vector2).is_equal_approx(endpoint_before_free),
+		"a freed encounter target preserves the last readable tether endpoint"
+	)
+	freed_target_overlay.call("_process", 6.0)
+	freed_target_overlay.queue_free()
+	paused = false
+	await process_frame
+
 	paused = true
 	var paused_overlay := scene.instantiate()
 	root.add_child(paused_overlay)
@@ -147,6 +182,14 @@ func _verify_controller_routes_enemy_cards(_target: Node2D) -> void:
 	var controller_script := load("res://ui/controllers/TutorialModalController.gd") as Script
 	var controller: Node = controller_script.new()
 	host.add_child(controller)
+	var expired_enemy := EnemyFixture.new()
+	host.add_child(expired_enemy)
+	var expired_enemy_variant: Variant = expired_enemy
+	expired_enemy.free()
+	_check(
+		not bool(controller.call("_target_is_live", expired_enemy_variant)),
+		"the queued encounter controller rejects a target freed before presentation"
+	)
 	var enemy := EnemyFixture.new()
 	enemy.spec = EnemySpec.new()
 	enemy.spec.id = &"enemy_runner"

@@ -133,9 +133,10 @@ func _drain_queue() -> void:
 
 
 func _present_enemy_card(card: Dictionary) -> bool:
-	var target := card.get("target", null) as Node2D
-	if not _target_is_live(target):
+	var target_variant: Variant = card.get("target", null)
+	if not _target_is_live(target_variant):
 		return false
+	var target := target_variant as Node2D
 	var overlay: Node = FIRST_ENCOUNTER_SCENE.instantiate()
 	if overlay == null:
 		return false
@@ -158,14 +159,19 @@ func _present_enemy_card(card: Dictionary) -> bool:
 	return completed
 
 
-func _target_is_live(target: Node2D) -> bool:
-	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
+func _target_is_live(target: Variant) -> bool:
+	if target == null or not is_instance_valid(target):
 		return false
-	if bool(target.get_meta(&"__in_pool", false)):
+	if not target is Node2D:
 		return false
-	if target.process_mode == Node.PROCESS_MODE_DISABLED:
+	var target_node := target as Node2D
+	if not target_node.is_inside_tree():
 		return false
-	return target.is_visible_in_tree()
+	if bool(target_node.get_meta(&"__in_pool", false)):
+		return false
+	if target_node.process_mode == Node.PROCESS_MODE_DISABLED:
+		return false
+	return target_node.is_visible_in_tree()
 
 
 func _present_blocking_card(card: Dictionary) -> void:
