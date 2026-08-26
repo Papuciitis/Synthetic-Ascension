@@ -1073,10 +1073,20 @@ func request_autosave(delay: float = 0.6) -> void:
 	if _autosave_timer != null and is_instance_valid(_autosave_timer):
 		return
 	_autosave_timer = get_tree().create_timer(maxf(delay, autosave_fallback_seconds))
-	_autosave_timer.timeout.connect(func() -> void:
-		_autosave_timer = null
-		flush_pending_save()
-	)
+	_autosave_timer.timeout.connect(_on_autosave_timeout)
+
+
+func _on_autosave_timeout() -> void:
+	_autosave_timer = null
+	flush_pending_save()
+
+
+func _cancel_autosave_timer() -> void:
+	if _autosave_timer != null and is_instance_valid(_autosave_timer):
+		var callback := Callable(self, "_on_autosave_timeout")
+		if _autosave_timer.timeout.is_connected(callback):
+			_autosave_timer.timeout.disconnect(callback)
+	_autosave_timer = null
 
 
 func _notification(what: int) -> void:
@@ -1085,6 +1095,7 @@ func _notification(what: int) -> void:
 
 
 func _exit_tree() -> void:
+	_cancel_autosave_timer()
 	# Application shutdown: release script-static caches that hold RID-backed
 	# resources (textures/materials). Script statics destruct during script
 	# server teardown — after rendering cleanup has begun — which is the window
@@ -1095,6 +1106,7 @@ func _exit_tree() -> void:
 
 
 func flush_pending_save() -> void:
+	_cancel_autosave_timer()
 	if not _autosave_dirty:
 		return
 	if SaveManager == null or SaveManager.current_save == null:
@@ -1512,6 +1524,7 @@ func write_save(save: SaveData) -> void:
 func save_current_profile(validated: bool = true) -> void:
 	if SaveManager == null or SaveManager.current_save == null:
 		return
+	_cancel_autosave_timer()
 	_autosave_dirty = false
 	write_save(SaveManager.current_save)
 	SaveManager.save_current(validated)

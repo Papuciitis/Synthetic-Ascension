@@ -55,6 +55,10 @@ func _run() -> void:
 			SaveManager.get("debug_last_save_validated") == false,
 			"autosave flush skips the synchronous read-back validation"
 		)
+		_check(
+			Global.get("_autosave_timer") == null,
+			"autosave flush releases the pending SceneTreeTimer callback"
+		)
 		Global.call("flush_pending_save")
 		_check(
 			int(SaveManager.get("debug_save_writes")) == writes_before + 1,
@@ -67,6 +71,10 @@ func _run() -> void:
 	_check(
 		SaveManager.get("debug_last_save_validated") == true,
 		"manual saves keep the synchronous read-back validation"
+	)
+	_check(
+		Global.get("_autosave_timer") == null,
+		"manual saves also release the pending SceneTreeTimer callback"
 	)
 	if Global.has_method("flush_pending_save"):
 		var writes_after_manual := int(SaveManager.get("debug_save_writes"))
