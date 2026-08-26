@@ -13,6 +13,7 @@ var manager: EnemyRepresentationManager = null
 var _world: EnemyWorldService = null
 var _player: Node2D = null
 var _flow: FlowFieldNav = null
+var _scheduler: Node = null
 
 
 func _ready() -> void:
@@ -55,6 +56,10 @@ func _physics_process(delta: float) -> void:
 		return
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+	if _scheduler == null or not is_instance_valid(_scheduler):
+		_scheduler = get_node_or_null("/root/EnemySimulationScheduler")
+	if _scheduler != null and _scheduler.has_method("physics_pressure_level"):
+		simulation.set_pressure_level(int(_scheduler.call("physics_pressure_level")))
 	var target := _player.global_position if _player != null else Vector2.ZERO
 	simulation.advance(delta, target)
 

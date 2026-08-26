@@ -444,6 +444,14 @@ func max_scheduler_tier(player_distance: float = -1.0) -> int:
 func _can_release_far_physics(ai: int, player_distance: float) -> bool:
 	if ai == EnemySpec.AI.SNIPER or not _lod_base_eligible():
 		return false
+	if _sim_scheduler == null or not is_instance_valid(_sim_scheduler):
+		_sim_scheduler = get_node_or_null("/root/EnemySimulationScheduler")
+	if (
+		_sim_scheduler != null
+		and _sim_scheduler.has_method("should_release_noncontact_smart")
+		and bool(_sim_scheduler.call("should_release_noncontact_smart", ai))
+	):
+		return true
 	# Once released, hold far physics until meaningfully closer so the boundary
 	# cannot flap materialization every assignment refresh.
 	var release := (
@@ -452,8 +460,6 @@ func _can_release_far_physics(ai: int, player_distance: float) -> bool:
 	)
 	# The scheduler owns the exact hysteretic boundaries for each pressure tier.
 	# Local exports remain as a safe fallback for isolated scenes and old saves.
-	if _sim_scheduler == null or not is_instance_valid(_sim_scheduler):
-		_sim_scheduler = get_node_or_null("/root/EnemySimulationScheduler")
 	if (
 		_sim_scheduler != null
 		and _sim_scheduler.has_method("smart_physics_boundary")

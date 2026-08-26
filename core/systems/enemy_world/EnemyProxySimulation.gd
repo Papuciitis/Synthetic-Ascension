@@ -13,6 +13,12 @@ const EXCLUDED_FLAGS := (
 	| Types.Flags.SPECIAL
 )
 
+var normal_update_hz := 10.0
+var pressure_update_hz := 6.0
+var emergency_update_hz := 3.0
+var normal_slice_count := 6
+var pressure_slice_count := 8
+var emergency_slice_count := 12
 var update_hz := 10.0
 var slice_count := 6
 var max_slices_per_advance := 24
@@ -42,6 +48,18 @@ func setup(world: EnemyWorldService) -> void:
 
 func set_direction_provider(provider: Callable) -> void:
 	_direction_provider = provider
+
+
+func set_pressure_level(level: int) -> void:
+	if level >= 2:
+		update_hz = emergency_update_hz
+		slice_count = emergency_slice_count
+	elif level >= 1:
+		update_hz = pressure_update_hz
+		slice_count = pressure_slice_count
+	else:
+		update_hz = normal_update_hz
+		slice_count = normal_slice_count
 
 
 func advance(delta: float, target_position: Vector2) -> int:

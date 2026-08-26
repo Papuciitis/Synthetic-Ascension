@@ -54,6 +54,7 @@ func _run() -> void:
 	await _test_eligible_ambient_still_reaches_far(scheduler)
 	await _test_max_scheduler_tier_contract()
 	await _test_smart_enemy_releases_far_physics()
+	await _test_emergency_noncontact_smart_release(scheduler_script)
 	_test_spatial_bands_cap_distant_fidelity(scheduler)
 	_test_spatial_hysteresis_prevents_flapping(scheduler)
 	_test_pressure_budget_fallback(scheduler_script)
@@ -363,6 +364,52 @@ func _test_smart_enemy_releases_far_physics() -> void:
 	ranged.is_elite = true
 	_check(int(ranged.call("max_scheduler_tier", 3000.0)) == 1, "distant elite keeps world collision")
 	ranged.queue_free()
+
+
+func _test_emergency_noncontact_smart_release(scheduler_script: Script) -> void:
+	var scheduler := scheduler_script.new() as Node
+	add_child(scheduler)
+	scheduler.call("set_physics_pressure_override", 45.0)
+	scheduler.call("_update_pressure_state", 0.15)
+	_check(
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.RANGED)),
+		"emergency pressure may release ordinary ranged body physics at close range"
+	)
+	_check(
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.ORBIT)),
+		"emergency pressure may release ordinary orbiter body physics at close range"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE)),
+		"emergency pressure keeps charger collision exact"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.BOMBER)),
+		"emergency pressure keeps bomber collision exact"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.SNIPER)),
+		"emergency pressure keeps sniper collision exact"
+	)
+	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
+	var ranged := enemy_scene.instantiate() as EnemyActor
+	var ranged_spec := EnemySpec.new()
+	ranged_spec.ai = EnemySpec.AI.RANGED
+	ranged.spec = ranged_spec
+	add_child(ranged)
+	await get_tree().process_frame
+	ranged.set("_sim_scheduler", scheduler)
+	_check(
+		int(ranged.call("max_scheduler_tier", 500.0)) == 2,
+		"close ordinary ranged actor integrates with emergency physics release"
+	)
+	ranged.set_meta(&"objective_required", true)
+	_check(
+		bool(ranged.call("is_simulation_protected", 500.0)),
+		"objective ranged actor remains protected from emergency demotion"
+	)
+	ranged.queue_free()
+	scheduler.queue_free()
 
 
 func _test_spatial_bands_cap_distant_fidelity(scheduler: Node) -> void:

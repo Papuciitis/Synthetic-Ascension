@@ -22,6 +22,9 @@ class Driver:
 	var _process_ms: Array[float] = []
 	var _physics_ms: Array[float] = []
 	var _draws: Array[float] = []
+	var _projectiles: Array[float] = []
+	var _projectile_ms: Array[float] = []
+	var _stages: Array[int] = STAGES.duplicate()
 	var _spawner: Node = null
 	var _filter: Node = null
 	var _topup_left := 0.0
@@ -29,6 +32,9 @@ class Driver:
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
+		var stage_override := OS.get_environment("HORDE_BENCHMARK_STAGE_ONLY").strip_edges()
+		if stage_override.is_valid_int() and int(stage_override) > 0:
+			_stages.assign([int(stage_override)])
 		Global.start_new_attempt()
 		Global.attempt_segment = 2
 		Global.debug_dev_segment = false
@@ -70,10 +76,12 @@ class Driver:
 		_process_ms.clear()
 		_physics_ms.clear()
 		_draws.clear()
+		_projectiles.clear()
+		_projectile_ms.clear()
 		var filter := get_node_or_null("/root/DebugEnemySpawnFilter")
 		if filter != null:
-			filter.set("custom_total_cap", STAGES[index])
-		print("HordeBenchmark: stage %d -> target %d" % [index, STAGES[index]])
+			filter.set("custom_total_cap", _stages[index])
+		print("HordeBenchmark: stage %d -> target %d" % [index, _stages[index]])
 
 	func _process(delta: float) -> void:
 		if _phase < 1:
@@ -104,7 +112,7 @@ class Driver:
 			_topup_left = 0.5
 			var alive := int(_spawner.call("_alive_total"))
 			var queued := int(_spawner.get("_force_spawn_queue"))
-			var deficit: int = STAGES[_stage_index] - alive - queued
+			var deficit: int = _stages[_stage_index] - alive - queued
 			if deficit > 0:
 				_spawner.call("debug_force_spawn", deficit)
 
@@ -116,9 +124,14 @@ class Driver:
 			_process_ms.append(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
 			_physics_ms.append(Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0)
 			_draws.append(float(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)))
+			var projectile_manager := get_node_or_null("/root/ProjectileManager")
+			if projectile_manager != null:
+				var projectile_counters := projectile_manager.call("get_debug_counters") as Dictionary
+				_projectiles.append(float(projectile_counters.get("active", 0)))
+				_projectile_ms.append(float(projectile_counters.get("physics_ms", 0.0)))
 		elif _sampling:
 			_report_stage()
-			if _stage_index + 1 < STAGES.size():
+			if _stage_index + 1 < _stages.size():
 				_begin_stage(_stage_index + 1)
 			else:
 				print("HordeBenchmark: completed")
@@ -155,9 +168,9 @@ class Driver:
 			else {}
 		)
 		var line := (
-			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s"
+			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | projectiles p95 %.0f projectile_ms p95 %.2f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s"
 			% [
-				STAGES[_stage_index],
+				_stages[_stage_index],
 				alive,
 				_frames.size(),
 				_mean(_frames),
@@ -166,6 +179,8 @@ class Driver:
 				_pct(_process_ms, 95.0),
 				_pct(_physics_ms, 95.0),
 				_pct(_draws, 95.0),
+				_pct(_projectiles, 95.0),
+				_pct(_projectile_ms, 95.0),
 				counters.get("full", "?"),
 				counters.get("mid", "?"),
 				counters.get("far", "?"),

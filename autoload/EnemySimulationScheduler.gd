@@ -378,6 +378,10 @@ func is_physics_pressure_active() -> bool:
 	return _pressure_active
 
 
+func physics_pressure_level() -> int:
+	return _pressure_level
+
+
 func physics_release_distance_scale() -> float:
 	if _pressure_level >= 2:
 		return emergency_release_distance_scale
@@ -390,6 +394,18 @@ func smart_physics_boundary(is_far: bool) -> float:
 	if _pressure_level >= 1:
 		return pressure_smart_reacquire_distance if is_far else pressure_smart_release_distance
 	return normal_smart_reacquire_distance if is_far else normal_smart_release_distance
+
+
+func should_release_noncontact_smart(ai: int) -> bool:
+	if _pressure_level < 2:
+		return false
+	return ai in [
+		EnemySpec.AI.ORBIT,
+		EnemySpec.AI.RANGED,
+		EnemySpec.AI.SUMMONER,
+		EnemySpec.AI.TACTICAL,
+		EnemySpec.AI.HERALD,
+	]
 
 
 func _update_pressure_state(delta: float) -> void:
