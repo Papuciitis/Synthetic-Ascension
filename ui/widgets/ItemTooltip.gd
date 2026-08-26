@@ -6,6 +6,9 @@ var name_label: Label = null
 var meta_label: Label = null
 var body_label: RichTextLabel = null
 var icon_frame: PanelContainer = null
+var kicker_label: Label = null
+
+var _dossier_mode: bool = false
 
 var _style: StyleBoxFlat
 var _icon_style: StyleBoxFlat
@@ -91,6 +94,7 @@ func _resolve_nodes() -> void:
 	meta_label = get_node_or_null("Margin/VBox/Header/HeaderText/Meta") as Label
 	body_label = get_node_or_null("Margin/VBox/Body") as RichTextLabel
 	icon_frame = get_node_or_null("Margin/VBox/Header/IconFrame") as PanelContainer
+	kicker_label = get_node_or_null("Margin/VBox/Kicker") as Label
 
 func _build_styles() -> void:
 	_style = StyleBoxFlat.new()
@@ -121,6 +125,16 @@ func _build_styles() -> void:
 func hide_tooltip() -> void:
 	visible = false
 
+
+func set_dossier_mode(enabled: bool) -> void:
+	_dossier_mode = enabled
+	custom_minimum_size = Vector2(380.0 if enabled else 360.0, 0.0)
+	if kicker_label == null:
+		_resolve_nodes()
+	if kicker_label != null:
+		kicker_label.visible = enabled
+	reset_size()
+
 func show_item(inst: ItemInstance) -> void:
 	if inst == null or inst.data == null:
 		hide_tooltip()
@@ -136,7 +150,7 @@ func show_item(inst: ItemInstance) -> void:
 
 	# Establish width before assigning wrapped text. This also prevents the old
 	# first-hover, full-height layout spike.
-	custom_minimum_size = Vector2(460, 0)
+	custom_minimum_size = Vector2(380.0 if _dossier_mode else 360.0, 0.0)
 
 	# Header
 	name_label.text = String(inst.data.display_name)
@@ -200,41 +214,10 @@ func show_item(inst: ItemInstance) -> void:
 
 	_append_stat_comparison(lines, inst)
 
-	# Set identity, progression, active/next/later tiers and terminology.
+	# Hover is a decision surface, not the set manual. The complete identity,
+	# progression, playstyle and glossary live in Run Sheet // Sets.
 	if String(inst.data.set_id) != "":
-		var sid: StringName = StringName(str(inst.data.set_id))
-		var counts: Dictionary = _current_set_counts()
-		var have: int = int(counts.get(sid, 0))
-		var sd: SetData = _set_data(sid)
-		lines.append("")
-		lines.append("SET IDENTITY")
-		if sd == null:
-			lines.append("%s  ·  %d equipped" % [String(sid).to_upper(), have])
-		else:
-			lines.append("%s  %s  %d / %d" % [sd.display_name.to_upper(), _progress_pips(have, sd.max_pieces()), have, sd.max_pieces()])
-			if sd.identity_sentence != "":
-				lines.append(sd.identity_sentence)
-			if sd.playstyle != "":
-				lines.append("PLAYSTYLE  " + sd.playstyle)
-			lines.append("")
-			lines.append("SET PROGRESSION")
-			var next_found: bool = false
-			for tier: SetTier in sd.sorted_tiers():
-				if tier == null:
-					continue
-				var state: String = "ACTIVE" if have >= tier.required_count else ("NEXT" if not next_found else "LATER")
-				if have < tier.required_count and not next_found:
-					next_found = true
-				var marker: String = "✓" if state == "ACTIVE" else ("→" if state == "NEXT" else "○")
-				lines.append("%s %s · %d PIECES · %s" % [marker, state, tier.required_count, tier.display_name.to_upper()])
-				if tier.mechanical_description != "":
-					lines.append("  " + tier.mechanical_description)
-				if tier.plain_description != "":
-					lines.append("  IN PLAIN TERMS: " + tier.plain_description)
-			if sd.best_with != "":
-				lines.append("")
-				lines.append("BEST WITH  " + sd.best_with)
-			_append_glossary(lines, sd)
+		_append_set_summary(lines, StringName(str(inst.data.set_id)))
 
 	_append_replacement_preview(lines, inst)
 
@@ -430,22 +413,36 @@ func _progress_pips(have: int, maximum: int) -> String:
 			out += "●" if pip_number <= have else "○"
 	return out
 
-func _append_glossary(lines: Array[String], data: SetData) -> void:
-	var used: Dictionary = {}
-	for tier: SetTier in data.tiers:
+
+func _append_set_summary(lines: Array[String], set_id: StringName) -> void:
+	var counts: Dictionary = _current_set_counts()
+	var have: int = int(counts.get(set_id, 0))
+	var data: SetData = _set_data(set_id)
+	lines.append("")
+	if data == null:
+		lines.append("SET // %s · %d EQUIPPED" % [String(set_id).to_upper(), have])
+		lines.append("ARCHIVE // RUN SHEET // SETS")
+		return
+	var maximum := maxi(1, data.max_pieces())
+	lines.append("SET // %s  %s  %d/%d" % [
+		data.display_name.to_upper(), _progress_pips(have, maximum), have, maximum,
+	])
+	var active_tier: SetTier = null
+	var next_tier: SetTier = null
+	for tier: SetTier in data.sorted_tiers():
 		if tier == null:
 			continue
-		for term: String in tier.glossary_terms:
-			used[term] = true
-	if used.is_empty():
-		return
-	lines.append("")
-	lines.append("TERMS")
-	for term_value: Variant in used.keys():
-		var term: String = String(term_value)
-		var definition: String = String(data.glossary.get(term, ""))
-		if definition != "":
-			lines.append("• %s — %s" % [term, definition])
+		if have >= tier.required_count:
+			active_tier = tier
+		elif next_tier == null:
+			next_tier = tier
+	if active_tier != null:
+		lines.append("ACTIVE // %s" % active_tier.display_name.to_upper())
+	if next_tier != null:
+		lines.append("NEXT // %d PIECES · %s" % [
+			next_tier.required_count, next_tier.display_name.to_upper(),
+		])
+	lines.append("ARCHIVE // RUN SHEET // SETS")
 
 func _append_replacement_preview(lines: Array[String], candidate: ItemInstance) -> void:
 	if Global == null or Global.run_inventory == null or candidate == null or candidate.data == null:

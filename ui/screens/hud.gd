@@ -300,6 +300,17 @@ func _on_inventory_changed() -> void:
 # Input
 # ----------------------------
 
+func _input(event: InputEvent) -> void:
+	# Focused Controls consume Tab as ui_focus_next before _unhandled_input.
+	# Once management is open, it owns its toggle and Escape at the earliest
+	# input stage so either key closes the paused surface instead of traversing it.
+	if bag_ctl == null or not bag_ctl.is_management_mode():
+		return
+	if event.is_action_pressed(manage_toggle_action) or event.is_action_pressed(&"ui_cancel"):
+		bag_ctl.toggle_bag_open()
+		get_viewport().set_input_as_handled()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(manage_toggle_action):
 		if bag_ctl != null:

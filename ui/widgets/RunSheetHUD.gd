@@ -37,6 +37,8 @@ const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
 ]
 
 var _selected_page: int = ArchivePage.PROFILE
+var _selected_set_id: StringName = &""
+var _last_set_counts: Dictionary = {}
 var _page_signatures := {
 	ArchivePage.SETS: "__UNINITIALIZED__",
 	ArchivePage.MANIFESTATIONS: "__UNINITIALIZED__",
@@ -123,23 +125,55 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 
 func _refresh_sets(inv: Inventory) -> void:
 	var counts := _set_counts(inv)
-	var signature := _set_signature(counts)
+	_last_set_counts = counts.duplicate()
+	var keys := counts.keys()
+	keys.sort()
+	var selected_exists := (
+		_selected_set_id != &""
+		and Global != null
+		and Global.set_db.has(_selected_set_id)
+	)
+	if not keys.is_empty() and not selected_exists:
+		_selected_set_id = StringName(keys[0])
+	var signature := "%s|selected:%s" % [_set_signature(counts), String(_selected_set_id)]
 	if signature == String(_page_signatures[ArchivePage.SETS]):
 		return
 	_page_signatures[ArchivePage.SETS] = signature
 	_rebuild_counts["sets"] = int(_rebuild_counts["sets"]) + 1
+	_rebuild_sets_page(counts, keys)
+
+
+func inspect_set(set_id: StringName) -> void:
+	if set_id == &"" or set_id == _selected_set_id:
+		return
+	_selected_set_id = set_id
+	var keys := _last_set_counts.keys()
+	keys.sort()
+	_page_signatures[ArchivePage.SETS] = "%s|selected:%s" % [
+		_set_signature(_last_set_counts), String(_selected_set_id),
+	]
+	_rebuild_counts["sets"] = int(_rebuild_counts["sets"]) + 1
+	_rebuild_sets_page(_last_set_counts, keys)
+
+
+func _rebuild_sets_page(counts: Dictionary, keys: Array) -> void:
 	_clear_children(sets_vbox)
 	_add_section_heading(sets_vbox, "SETS // EQUIPPED CONCORDANCES", ACCENT)
-	if counts.is_empty():
+	var displayed_keys := keys.duplicate()
+	if _selected_set_id != &"" and not displayed_keys.has(_selected_set_id):
+		displayed_keys.append(_selected_set_id)
+		displayed_keys.sort()
+	if displayed_keys.is_empty():
 		_add_target_line(sets_vbox, "NO ACTIVE CONCORDANCE", Color(1, 1, 1, 0.48), 11)
 		return
 
-	var keys := counts.keys()
-	keys.sort()
-	for sid in keys:
-		var n: int = int(counts[sid])
-		var line := Label.new()
-		line.add_theme_font_size_override("font_size", 12)
+	for sid in displayed_keys:
+		var n: int = int(counts.get(sid, 0))
+		var record := Button.new()
+		record.focus_mode = Control.FOCUS_ALL
+		record.flat = true
+		record.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		record.add_theme_font_size_override("font_size", 12)
 		# Display name and real piece count from the set DB, not internal
 		# ids with a hardcoded /6.
 		var set_label := String(sid).to_upper()
@@ -150,9 +184,74 @@ func _refresh_sets(inv: Inventory) -> void:
 				set_label = sd.display_name
 			if sd.has_method("max_pieces"):
 				set_max = maxi(1, int(sd.call("max_pieces")))
-		line.text = "%s %d/%d" % [set_label, n, set_max]
-		line.modulate = (ACCENT if n >= set_max else Color(1, 1, 1, 0.85))
-		sets_vbox.add_child(line)
+		var marker := "◆" if StringName(sid) == _selected_set_id else "◇"
+		record.text = "%s  %s  %d/%d" % [marker, set_label.to_upper(), n, set_max]
+		record.modulate = (ACCENT if StringName(sid) == _selected_set_id else Color(1, 1, 1, 0.72))
+		record.pressed.connect(inspect_set.bind(StringName(sid)))
+		sets_vbox.add_child(record)
+
+	var selected_data: SetData = Global.set_db.get(_selected_set_id, null) as SetData
+	if selected_data != null:
+		_append_set_dossier(selected_data, int(counts.get(_selected_set_id, 0)))
+
+
+func _append_set_dossier(data: SetData, equipped: int) -> void:
+	var accent := data.accent_color if data.accent_color.a > 0.0 else ACCENT
+	_add_section_heading(sets_vbox, "SET DOSSIER // %s" % data.display_name.to_upper(), accent)
+	if data.identity_sentence != "":
+		_add_set_body_line(data.identity_sentence, Color(1, 1, 1, 0.88), 12)
+	if data.playstyle != "":
+		_add_set_body_line("PLAYSTYLE // %s" % data.playstyle, Color(1, 1, 1, 0.70), 12)
+
+	_add_set_body_line("PROGRESSION // %d/%d PIECES" % [
+		equipped, maxi(1, data.max_pieces()),
+	], accent, 12, &"InstitutionalHeading")
+	var next_found := false
+	var glossary_terms: Dictionary = {}
+	for tier: SetTier in data.sorted_tiers():
+		if tier == null:
+			continue
+		var state := "ACTIVE" if equipped >= tier.required_count else ("NEXT" if not next_found else "LATER")
+		if equipped < tier.required_count and not next_found:
+			next_found = true
+		var marker := "✓" if state == "ACTIVE" else ("→" if state == "NEXT" else "○")
+		_add_set_body_line("%s %s // %d PIECES // %s" % [
+			marker, state, tier.required_count, tier.display_name,
+		], accent if state == "ACTIVE" else Color(1, 1, 1, 0.62), 12, &"BodyStrong")
+		if tier.mechanical_description != "":
+			_add_set_body_line(tier.mechanical_description, Color(1, 1, 1, 0.78), 12)
+		if tier.plain_description != "":
+			_add_set_body_line("PLAIN // %s" % tier.plain_description, Color(1, 1, 1, 0.58), 12)
+		for term: String in tier.glossary_terms:
+			glossary_terms[term] = true
+
+	if data.best_with != "":
+		_add_set_body_line("BEST WITH // %s" % data.best_with, Color(1, 1, 1, 0.70), 12)
+	if not glossary_terms.is_empty():
+		_add_set_body_line("TERMS", accent, 12, &"InstitutionalHeading")
+		for term_value: Variant in glossary_terms.keys():
+			var term := String(term_value)
+			var definition := String(data.glossary.get(term, ""))
+			if definition != "":
+				_add_set_body_line("• %s — %s" % [term, definition], Color(1, 1, 1, 0.62), 11)
+
+
+func _add_set_body_line(
+	text: String,
+	colour: Color,
+	font_size: int,
+	variation: StringName = &""
+) -> Label:
+	var line := Label.new()
+	line.text = text
+	line.custom_minimum_size = Vector2(260, 0)
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.add_theme_font_size_override("font_size", font_size)
+	line.modulate = colour
+	if variation != &"":
+		line.theme_type_variation = variation
+	sets_vbox.add_child(line)
+	return line
 
 
 func _set_counts(inv: Inventory) -> Dictionary:

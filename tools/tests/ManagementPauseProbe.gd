@@ -92,11 +92,53 @@ func _run() -> void:
 			image.save_png("%s/paused_inventory.png" % _dir)
 		])
 
-	bag.call("toggle_bag_open")
+	var run_sheet := hud.get("run_sheet") as Control
+	var focused_tab := (
+		run_sheet.get_node_or_null("Archive/Index/Sets") as Button
+		if run_sheet != null else null
+	)
+	_check(focused_tab != null, "the paused archive exposes its Sets tab")
+	if focused_tab != null:
+		focused_tab.grab_focus()
+		await get_tree().process_frame
+		_check(get_viewport().gui_get_focus_owner() == focused_tab, "the Sets tab owns keyboard focus")
+
+	var tab_press := InputEventKey.new()
+	tab_press.pressed = true
+	tab_press.keycode = KEY_TAB
+	tab_press.physical_keycode = KEY_TAB
+	Input.parse_input_event(tab_press)
 	for _f in range(6):
 		await get_tree().process_frame
-	_check(not bool(bag.call("is_management_mode")), "the bag closed")
-	_check(not get_tree().paused, "closing the inventory gives the world back")
+	_check(not bool(bag.call("is_management_mode")), "Tab closes management even when an archive tab has focus")
+	_check(not get_tree().paused, "Tab-closing the inventory gives the world back")
+	var tab_release := InputEventKey.new()
+	tab_release.pressed = false
+	tab_release.keycode = KEY_TAB
+	tab_release.physical_keycode = KEY_TAB
+	Input.parse_input_event(tab_release)
+
+	bag.call("toggle_bag_open")
+	for _f in range(4):
+		await get_tree().process_frame
+	_check(bool(bag.call("is_management_mode")), "management reopens for Escape routing")
+	if focused_tab != null:
+		focused_tab.grab_focus()
+		await get_tree().process_frame
+	var escape_press := InputEventKey.new()
+	escape_press.pressed = true
+	escape_press.keycode = KEY_ESCAPE
+	escape_press.physical_keycode = KEY_ESCAPE
+	Input.parse_input_event(escape_press)
+	for _f in range(6):
+		await get_tree().process_frame
+	_check(not bool(bag.call("is_management_mode")), "Escape closes management while an archive tab has focus")
+	_check(not get_tree().paused, "Escape-closing the inventory gives the world back")
+	var escape_release := InputEventKey.new()
+	escape_release.pressed = false
+	escape_release.keycode = KEY_ESCAPE
+	escape_release.physical_keycode = KEY_ESCAPE
+	Input.parse_input_event(escape_release)
 
 	# A modal already holding the pause must keep it: the bag opening on top of
 	# a tutorial card must not resume the fight when it closes.

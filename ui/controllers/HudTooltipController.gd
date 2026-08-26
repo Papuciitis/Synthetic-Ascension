@@ -5,18 +5,22 @@ class_name HudTooltipController
 @export var inv_bar_path: NodePath
 @export var bag_ui_path: NodePath            # point to BagUI (Control) OR leave empty
 @export var bag_controller_path: NodePath    # point to HudBagController OR leave empty
+@export var run_sheet_path: NodePath
 
 var _inv_bar: Node = null
 var _bag_ui: Control = null
 var _bag_ctl: Node = null
+var _run_sheet: Control = null
 
 var _tooltip: Control = null
+var _management_mode: bool = false
 
 
 func _ready() -> void:
 	_inv_bar = (get_node_or_null(inv_bar_path) if inv_bar_path != NodePath() else null)
 	_bag_ui = (get_node_or_null(bag_ui_path) as Control if bag_ui_path != NodePath() else null)
 	_bag_ctl = (get_node_or_null(bag_controller_path) if bag_controller_path != NodePath() else null)
+	_run_sheet = (get_node_or_null(run_sheet_path) as Control if run_sheet_path != NodePath() else null)
 
 	# Defer, because parent is still instancing children when this _ready runs.
 	call_deferred("_ensure_tooltip")
@@ -48,6 +52,18 @@ func _ensure_tooltip() -> void:
 		call_deferred("add_child", tip)
 
 	_tooltip = tip
+	_apply_dossier_mode()
+
+
+func set_management_mode(enabled: bool) -> void:
+	_management_mode = enabled
+	_apply_dossier_mode()
+	_hide_tooltip()
+
+
+func _apply_dossier_mode() -> void:
+	if _tooltip != null and is_instance_valid(_tooltip) and _tooltip.has_method("set_dossier_mode"):
+		_tooltip.call("set_dossier_mode", _management_mode)
 
 
 func _process(_delta: float) -> void:
@@ -95,6 +111,8 @@ func _process(_delta: float) -> void:
 func _is_bag_open() -> bool:
 	# Prefer controller method if present
 	if _bag_ctl != null:
+		if _bag_ctl.has_method("is_management_mode"):
+			return bool(_bag_ctl.call("is_management_mode"))
 		if _bag_ctl.has_method("is_bag_open"):
 			return bool(_bag_ctl.call("is_bag_open"))
 		if _bag_ctl.has_method("is_open"):
@@ -114,6 +132,10 @@ func _show_tooltip(inst: ItemInstance) -> void:
 	_tooltip.visible = true
 	if _tooltip.has_method("show_item"):
 		_tooltip.call("show_item", inst)
+	if _management_mode and _run_sheet != null and inst != null and inst.data != null:
+		var set_id := StringName(str(inst.data.set_id))
+		if set_id != &"" and _run_sheet.has_method("inspect_set"):
+			_run_sheet.call("inspect_set", set_id)
 
 
 func _hide_tooltip() -> void:
@@ -140,6 +162,10 @@ func _position_tooltip_beside(source: Control) -> void:
 	if min_sz.x > 0.0 and min_sz.y > 0.0:
 		_tooltip.size = Vector2(maxf(w, min_sz.x), min_sz.y)
 
+	if _management_mode:
+		_position_management_dossier()
+		return
+
 	var source_rect := (
 		source.get_global_rect()
 		if source != null
@@ -147,6 +173,26 @@ func _position_tooltip_beside(source: Control) -> void:
 	)
 	if _tooltip.has_method("place_beside"):
 		_tooltip.call("place_beside", source_rect, get_viewport().get_visible_rect(), 12.0)
+
+
+func _position_management_dossier() -> void:
+	if _tooltip == null:
+		return
+	var viewport_rect := get_viewport().get_visible_rect()
+	var margin := 8.0
+	var gap := 12.0
+	var bag_rect := Rect2(
+		Vector2(viewport_rect.end.x - 218.0, viewport_rect.position.y + margin),
+		Vector2(210.0, 260.0)
+	)
+	if _bag_ui != null and is_instance_valid(_bag_ui):
+		bag_rect = _bag_ui.get_global_rect()
+	var x := bag_rect.position.x - _tooltip.size.x - gap
+	var max_x := viewport_rect.end.x - _tooltip.size.x - margin
+	x = clampf(x, viewport_rect.position.x + margin, maxf(viewport_rect.position.x + margin, max_x))
+	var max_y := viewport_rect.end.y - _tooltip.size.y - margin
+	var y := clampf(bag_rect.position.y, viewport_rect.position.y + margin, maxf(viewport_rect.position.y + margin, max_y))
+	_tooltip.global_position = Vector2(x, y)
 
 
 func _is_descendant_of(n: Node, root: Node) -> bool:

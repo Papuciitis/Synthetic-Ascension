@@ -138,10 +138,167 @@ func _run() -> void:
 		var after := _run_sheet.call("debug_rebuild_counts") as Dictionary
 		_check(before == after, "unchanged static pages are not rebuilt")
 
+	await _verify_set_archive_owns_full_doctrine(player)
+
 	Global.discovered_enemy_ids.assign(saved_discoveries)
 	player.queue_free()
 	print("RunSheetArchiveTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _verify_set_archive_owns_full_doctrine(player: Node) -> void:
+	var previous_inventory: Inventory = Global.run_inventory
+	var inventory := Inventory.new()
+	var paths := [
+		"res://data/items/defs/conduit/conduit_heart.tres",
+		"res://data/items/defs/conduit/conduit_plating.tres",
+		"res://data/items/defs/conduit/conduit_greaves.tres",
+		"res://data/items/defs/conduit/conduit_lens.tres",
+		"res://data/items/defs/conduit/conduit_actuators.tres",
+		"res://data/items/defs/conduit/conduit_charm.tres",
+	]
+	var hovered_item: ItemInstance = null
+	for path: String in paths:
+		var data := load(path) as ItemData
+		_check(data != null, "Conduit fixture loads from %s" % path.get_file())
+		if data == null:
+			continue
+		var item := ItemInstance.from_roll(data, 4, ItemInstance.Polarity.POS, 0.45)
+		inventory.set_item(int(data.equip_slot), item)
+		if String(data.id) == "conduit_greaves":
+			hovered_item = item
+
+	Global.run_inventory = inventory
+	_run_sheet.refresh(player, inventory)
+	_run_sheet.select_page(RunSheetHUD.ArchivePage.SETS)
+	await get_tree().process_frame
+	var archive_text := _collect_label_text(_run_sheet)
+	_check(
+		"A velocity set that turns kills" in archive_text,
+		"Sets archive owns the selected set identity"
+	)
+	_check(
+		"Overclock Protocol" in archive_text and "Kills speed you up" in archive_text,
+		"Sets archive owns full breakpoint doctrine"
+	)
+	_check(
+		"PLAYSTYLE // Keep moving" in archive_text
+		and "BEST WITH // Fast weapons" in archive_text
+		and "Set strength — Scaling derived" in archive_text,
+		"Sets archive owns playstyle, build guidance and terminology"
+	)
+	_check(
+		_find_button_containing(_run_sheet, "CONDUIT") != null,
+		"Sets archive exposes compact selectable set records"
+	)
+	_check(_run_sheet.has_method("inspect_set"), "item hover can select a matching set record")
+
+	var tooltip_scene := load("res://ui/widgets/ItemTooltip.tscn") as PackedScene
+	var tooltip := tooltip_scene.instantiate() as ItemTooltip if tooltip_scene != null else null
+	_check(tooltip != null, "compact item dossier instantiates")
+	if tooltip != null and hovered_item != null:
+		add_child(tooltip)
+		tooltip.show_item(hovered_item)
+		var hover_text := tooltip.body_label.text
+		_check(
+			not "SET IDENTITY" in hover_text
+			and not "SET PROGRESSION" in hover_text
+			and not "BEST WITH" in hover_text
+			and not "TERMS" in hover_text,
+			"item hover omits doctrine already owned by the Sets archive"
+		)
+		_check(
+			"RUN SHEET // SETS" in hover_text and "CONDUIT" in hover_text,
+			"compact item hover preserves set status and points to its archive"
+		)
+		_check(tooltip.has_method("set_dossier_mode"), "paused hover supports a fixed dossier presentation")
+		if tooltip.has_method("set_dossier_mode"):
+			tooltip.call("set_dossier_mode", true)
+			var kicker := tooltip.get_node_or_null("Margin/VBox/Kicker") as Control
+			_check(kicker != null and kicker.visible, "paused dossier identifies itself as an equipment record")
+			await _verify_management_dossier_is_a_fixed_sidecar(
+				tooltip_scene, hovered_item, player, inventory
+			)
+		tooltip.queue_free()
+		await get_tree().process_frame
+	_run_sheet.inspect_set(&"lattice")
+	_run_sheet.refresh(player, inventory)
+	var cross_set_archive_text := _collect_label_text(_run_sheet)
+	_check(
+		"A spatial combo set that records attack positions" in cross_set_archive_text,
+		"HUD refresh preserves an unequipped set selected by bag hover"
+	)
+	_run_sheet.refresh(player, Inventory.new())
+	_run_sheet.inspect_set(&"conduit")
+	var unequipped_archive_text := _collect_label_text(_run_sheet)
+	_check(
+		"A velocity set that turns kills" in unequipped_archive_text
+		and "CONDUIT" in unequipped_archive_text,
+		"hovered bag sets remain inspectable with zero pieces equipped"
+	)
+	Global.run_inventory = previous_inventory
+
+
+func _verify_management_dossier_is_a_fixed_sidecar(
+	tooltip_scene: PackedScene,
+	hovered_item: ItemInstance,
+	player: Node,
+	equipped_inventory: Inventory
+) -> void:
+	var bag := Control.new()
+	bag.name = "DossierBag"
+	bag.position = Vector2(1000, 8)
+	bag.size = Vector2(210, 260)
+	add_child(bag)
+	var source := Control.new()
+	source.position = Vector2(24, 180)
+	source.size = Vector2(44, 44)
+	add_child(source)
+	var controller := HudTooltipController.new()
+	controller.tooltip_scene = tooltip_scene
+	controller.bag_ui_path = NodePath("../DossierBag")
+	controller.run_sheet_path = NodePath("../RunSheetHUD")
+	add_child(controller)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(controller.has_method("set_management_mode"), "tooltip controller supports paused dossier layout")
+	if controller.has_method("set_management_mode"):
+		_run_sheet.select_page(RunSheetHUD.ArchivePage.PROFILE)
+		var page_before := _run_sheet.selected_page()
+		var lattice_data := load(
+			"res://data/items/defs/lattice/lattice_focusnode.tres"
+		) as ItemData
+		var lattice_item := ItemInstance.from_roll(
+			lattice_data, 3, ItemInstance.Polarity.POS, 0.35
+		) if lattice_data != null else null
+		controller.call("set_management_mode", true)
+		controller.call("_show_tooltip", lattice_item if lattice_item != null else hovered_item)
+		controller.call("_position_tooltip_beside", source)
+		var sidecar := controller.get("_tooltip") as Control
+		_check(sidecar != null and sidecar.visible, "paused dossier remains visible beside the management surfaces")
+		if sidecar != null:
+			_check(
+				sidecar.global_position.x + sidecar.size.x <= bag.global_position.x - 8.0,
+				"paused dossier anchors left of the Bag instead of following the hovered slot"
+			)
+		var hover_archive_text := _collect_label_text(_run_sheet)
+		_check(
+			"A spatial combo set that records attack positions" in hover_archive_text,
+			"real tooltip controller routes hovered item sets into the archive"
+		)
+		_check(
+			_run_sheet.selected_page() == page_before,
+			"item hover updates set context without forcing the Sets page open"
+		)
+		_run_sheet.refresh(player, equipped_inventory)
+		_check(
+			"A spatial combo set that records attack positions" in _collect_label_text(_run_sheet),
+			"hover-selected zero-equipped doctrine survives the next HUD refresh"
+		)
+	controller.queue_free()
+	bag.queue_free()
+	source.queue_free()
+	await get_tree().process_frame
 
 
 func _visible_page_count() -> int:
@@ -173,6 +330,16 @@ func _first_focusable(node: Node) -> Control:
 		return node as Control
 	for child in node.get_children():
 		var match := _first_focusable(child)
+		if match != null:
+			return match
+	return null
+
+
+func _find_button_containing(node: Node, needle: String) -> Button:
+	if node is Button and needle in (node as Button).text.to_upper():
+		return node as Button
+	for child in node.get_children():
+		var match := _find_button_containing(child, needle)
 		if match != null:
 			return match
 	return null

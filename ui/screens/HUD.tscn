@@ -477,6 +477,7 @@ script = ExtResource("10_7roog")
 tooltip_scene = ExtResource("3_tvtyy")
 inv_bar_path = NodePath("../TopLeft/Margin/VBox/BodyRow/InventoryBar")
 bag_controller_path = NodePath("../BagController")
+run_sheet_path = NodePath("../RunSheetHUD")
 
 [node name="AugmentTooltipController" type="Node" parent="." unique_id=1158216278]
 script = ExtResource("10a_aug_tip_ctl")
