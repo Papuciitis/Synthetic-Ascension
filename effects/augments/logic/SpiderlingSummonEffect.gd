@@ -59,7 +59,7 @@ func _process(dt: float) -> void:
 
 	_update_hint(dt)
 
-	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		_try_spawn()
 
 	if Input.is_action_just_pressed(detonate_action):
@@ -74,8 +74,9 @@ func _try_spawn() -> void:
 		push_warning("[Spiderlings] spiderling_scene is NULL (assign in SpiderlingSummonEffect.tscn)")
 		return
 
-	_cd_max = cooldown
+	_cd_max = Global.doctrine_active_cooldown(cooldown)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
 	var target_pos: Vector2 = _get_target_point()
 	var power: float = _get_power()

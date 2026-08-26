@@ -4,6 +4,7 @@ class_name HudEvacOverlayController
 @export var overlay_path: NodePath
 @export var label_path: NodePath
 @export var vignette_path: NodePath
+@export var safeguard_prompt_path: NodePath
 
 @export var show_on_unseal: bool = true
 @export var show_pressure_threshold: float = 0.0
@@ -17,6 +18,8 @@ var _label: Label
 var _vignette: ColorRect
 var _vignette_mat: ShaderMaterial
 var _td: Node
+var _safeguard_prompt: Label
+var _bound_rite: Node
 
 func _enter_tree() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -30,6 +33,7 @@ func _resolve_nodes() -> void:
 	var op := overlay_path
 	var lp := label_path
 	var vp := vignette_path
+	var sp := safeguard_prompt_path
 
 	if op == NodePath():
 		op = NodePath("../EvacOverlay")
@@ -37,10 +41,13 @@ func _resolve_nodes() -> void:
 		lp = NodePath("../EvacOverlay/EvacWarning")
 	if vp == NodePath():
 		vp = NodePath("../EvacOverlay/Vignette")
+	if sp == NodePath():
+		sp = NodePath("../EvacOverlay/SafeguardPrompt")
 
 	_overlay = get_node_or_null(op) as Control
 	_label = get_node_or_null(lp) as Label
 	_vignette = get_node_or_null(vp) as ColorRect
+	_safeguard_prompt = get_node_or_null(sp) as Label
 
 	_vignette_mat = null
 	if _vignette != null and _vignette.material is ShaderMaterial:
@@ -57,7 +64,42 @@ func _process(_delta: float) -> void:
 	if _td == null or not is_instance_valid(_td):
 		_bind_director()
 		return
+	_bind_live_rite()
 	_update_from_director()
+
+
+func set_safeguard_prompt(show: bool, count: int) -> void:
+	if _safeguard_prompt == null:
+		_resolve_nodes()
+	if _safeguard_prompt == null:
+		return
+	_safeguard_prompt.visible = show and count > 0
+	_safeguard_prompt.text = "[Interact] Invoke safeguard · %d" % count if _safeguard_prompt.visible else ""
+
+
+func _bind_live_rite() -> void:
+	var rite := get_tree().get_first_node_in_group(&"exit_rite")
+	if rite == _bound_rite:
+		return
+	if _bound_rite != null and is_instance_valid(_bound_rite):
+		var old_callback := Callable(self, "_on_safeguard_state_changed")
+		if _bound_rite.is_connected("safeguard_state_changed", old_callback):
+			_bound_rite.disconnect("safeguard_state_changed", old_callback)
+	_bound_rite = rite
+	set_safeguard_prompt(false, 0)
+	if _bound_rite != null and _bound_rite.has_signal("safeguard_state_changed"):
+		var callback := Callable(self, "_on_safeguard_state_changed")
+		if not _bound_rite.is_connected("safeguard_state_changed", callback):
+			_bound_rite.connect("safeguard_state_changed", callback)
+		_on_safeguard_state_changed(
+			int(_bound_rite.call("safeguard_count")),
+			int(_bound_rite.call("safeguard_capacity")),
+			bool(_bound_rite.call("can_invoke_safeguard"))
+		)
+
+
+func _on_safeguard_state_changed(current: int, _capacity: int, can_invoke: bool) -> void:
+	set_safeguard_prompt(can_invoke, current)
 
 func _update_from_director() -> void:
 	var unsealed := bool(_td.get("gate_unsealed"))

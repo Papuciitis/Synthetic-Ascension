@@ -56,7 +56,7 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = maxf(_cd - dt, 0.0)
 
-	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		_try_cast()
 
 	_report_cd(false)
@@ -70,8 +70,9 @@ func _try_cast() -> void:
 		return
 	var target_position := EnemyCombat.position_for_handle(handle)
 
-	_cd_max = base_cd
+	_cd_max = Global.doctrine_active_cooldown(base_cd)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
 	var hit_dmg: float = _roll_hit_damage()
 	var is_crit: bool = (randf() < crit_chance)

@@ -74,7 +74,7 @@ func _process(dt: float) -> void:
 		if _mark_left <= 0.0:
 			_clear_mark()
 
-	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		if debug_prints:
 			print("[HexBlink] pressed. cd=", _cd)
 		_try_cast()
@@ -107,8 +107,9 @@ func _try_cast() -> void:
 	_spawn_mark_vfx()
 
 	# Cooldown with “1d10 > 9” refund => only 10 refunds
-	_cd_max = active_base_cd
+	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	var r: int = randi_range(1, 10)
 	if r >= 10:
 		if debug_prints:

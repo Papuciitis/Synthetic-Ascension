@@ -78,6 +78,13 @@ class_name SaveData
 
 @export var attempt_major_choice_offer_ids: Array[String] = []  # Persist offered cards (anti-reroll)
 @export var attempt_major_choice_taken_ids: Array[String] = []  # Track uniques per attempt
+@export var attempt_doctrine_version: int = 0
+@export var attempt_pending_doctrine_stage: String = ""
+@export var attempt_doctrine_stage_ids: Dictionary = {}
+@export var attempt_doctrine_rules: Dictionary = {}
+@export var attempt_doctrine_events: Array[String] = []
+@export var attempt_witness_used_segment: int = 0
+@export var attempt_doctrine_threat_debt: float = 0.0
 @export var attempt_augment_levels: Dictionary = {}             # String -> int (resets on die-die)
 @export var attempt_mod_mutations: Dictionary = {}              # String -> Variant (run rules)
 @export var attempt_mod_stat_delta: StatDelta = null            # Additive stats for this attempt

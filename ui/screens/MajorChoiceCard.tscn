@@ -1,36 +1,23 @@
-[gd_scene format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/MajorChoiceCard.gd" id="1"]
 
-[sub_resource type="StyleBoxFlat" id="StyleIconFrame"]
-bg_color = Color(0.08, 0.08, 0.08, 0.65)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+[sub_resource type="StyleBoxFlat" id="RuleStyle"]
+bg_color = Color(0.55, 0.36, 0.13, 0.9)
 
-[sub_resource type="StyleBoxFlat" id="StyleTag"]
-bg_color = Color(0, 0, 0, 0.35)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.16, 0.16, 0.16, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="StyleBoxFlat" id="SectionStyle"]
+bg_color = Color(0.08, 0.075, 0.055, 0.62)
+border_width_left = 2
+border_color = Color(0.68, 0.43, 0.15, 0.85)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [node name="MajorChoiceCard" type="Button"]
 clip_contents = true
-custom_minimum_size = Vector2(360, 320)
+custom_minimum_size = Vector2(342, 430)
 size_flags_horizontal = 3
-focus_mode = 0
 script = ExtResource("1")
 
 [node name="Margin" type="MarginContainer" parent="."]
@@ -39,103 +26,108 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
 mouse_filter = 2
 
 [node name="VBox" type="VBoxContainer" parent="Margin"]
-theme_override_constants/separation = 12
+theme_override_constants/separation = 7
 mouse_filter = 2
 
-[node name="Header" type="HBoxContainer" parent="Margin/VBox"]
-theme_override_constants/separation = 12
+[node name="SealLine" type="HBoxContainer" parent="Margin/VBox"]
 mouse_filter = 2
 
-[node name="IconFrame" type="PanelContainer" parent="Margin/VBox/Header"]
-custom_minimum_size = Vector2(64, 64)
-theme_override_styles/panel = SubResource("StyleIconFrame")
-mouse_filter = 2
-
-[node name="Icon" type="TextureRect" parent="Margin/VBox/Header/IconFrame"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-expand_mode = 1
-stretch_mode = 5
-mouse_filter = 2
-
-[node name="Glyph" type="Label" parent="Margin/VBox/Header/IconFrame"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-theme_override_font_sizes/font_size = 18
-modulate = Color(1, 1, 1, 0.85)
-text = "▲"
-mouse_filter = 2
-
-[node name="TitleBox" type="VBoxContainer" parent="Margin/VBox/Header"]
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-mouse_filter = 2
-
-[node name="Title" type="Label" parent="Margin/VBox/Header/TitleBox"]
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 20
-text = "Choice"
-mouse_filter = 2
-
-[node name="Blurb" type="Label" parent="Margin/VBox/Header/TitleBox"]
-autowrap_mode = 3
+[node name="Seal" type="Label" parent="Margin/VBox/SealLine"]
+custom_minimum_size = Vector2(38, 0)
+theme_override_colors/font_color = Color(0.91, 0.62, 0.24, 1)
 theme_override_font_sizes/font_size = 12
-modulate = Color(1, 1, 1, 0.70)
-text = "Short description."
+text = "01"
 mouse_filter = 2
 
-[node name="Tags" type="HBoxContainer" parent="Margin/VBox"]
-theme_override_constants/separation = 8
-mouse_filter = 2
-
-[node name="TagAttempt" type="PanelContainer" parent="Margin/VBox/Tags"]
-theme_override_styles/panel = SubResource("StyleTag")
-mouse_filter = 2
-
-[node name="Text" type="Label" parent="Margin/VBox/Tags/TagAttempt"]
+[node name="StageRole" type="Label" parent="Margin/VBox/SealLine"]
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.67, 0.62, 0.49, 1)
 theme_override_font_sizes/font_size = 11
-modulate = Color(1, 1, 1, 0.78)
-text = "THIS ATTEMPT"
+text = "METHOD // AMPLIFY"
+horizontal_alignment = 2
 mouse_filter = 2
 
-[node name="TagExtra" type="PanelContainer" parent="Margin/VBox/Tags"]
-theme_override_styles/panel = SubResource("StyleTag")
-visible = false
-mouse_filter = 2
-
-[node name="Text" type="Label" parent="Margin/VBox/Tags/TagExtra"]
-theme_override_font_sizes/font_size = 11
-modulate = Color(1, 1, 1, 0.78)
-text = "UNIQUE"
-mouse_filter = 2
-
-[node name="Sep" type="ColorRect" parent="Margin/VBox"]
+[node name="RuleTop" type="PanelContainer" parent="Margin/VBox"]
 custom_minimum_size = Vector2(0, 1)
-color = Color(1, 1, 1, 0.08)
+theme_override_styles/panel = SubResource("RuleStyle")
 mouse_filter = 2
 
-[node name="Bullets" type="VBoxContainer" parent="Margin/VBox"]
-theme_override_constants/separation = 6
-mouse_filter = 2
-
-[node name="BottomHint" type="Label" parent="Margin/VBox"]
+[node name="Title" type="Label" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 48)
+theme_override_colors/font_color = Color(0.94, 0.89, 0.76, 1)
+theme_override_font_sizes/font_size = 21
+text = "THESIS TITLE"
 autowrap_mode = 3
+vertical_alignment = 1
+mouse_filter = 2
+
+[node name="Family" type="Label" parent="Margin/VBox"]
+theme_override_colors/font_color = Color(0.60, 0.55, 0.43, 1)
+theme_override_font_sizes/font_size = 10
+text = "THESIS FAMILY · CIRCUIT"
+mouse_filter = 2
+
+[node name="GiftHeader" type="Label" parent="Margin/VBox"]
+theme_override_colors/font_color = Color(0.83, 0.62, 0.25, 1)
 theme_override_font_sizes/font_size = 11
-modulate = Color(1, 1, 1, 0.52)
-text = "Hover for full details"
+text = "GIFT"
+mouse_filter = 2
+
+[node name="GiftText" type="Label" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 50)
+theme_override_colors/font_color = Color(0.88, 0.87, 0.80, 1)
+theme_override_font_sizes/font_size = 13
+text = "The system yields a measurable advantage."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="PriceHeader" type="Label" parent="Margin/VBox"]
+theme_override_colors/font_color = Color(0.78, 0.35, 0.27, 1)
+theme_override_font_sizes/font_size = 11
+text = "PRICE"
+mouse_filter = 2
+
+[node name="PriceText" type="Label" parent="Margin/VBox"]
+custom_minimum_size = Vector2(0, 58)
+theme_override_colors/font_color = Color(0.90, 0.76, 0.68, 1)
+theme_override_font_sizes/font_size = 13
+text = "The apparatus extracts its due."
+autowrap_mode = 3
+mouse_filter = 2
+
+[node name="ConsequencePlate" type="PanelContainer" parent="Margin/VBox"]
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("SectionStyle")
+mouse_filter = 2
+
+[node name="Margin" type="MarginContainer" parent="Margin/VBox/ConsequencePlate"]
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+mouse_filter = 2
+
+[node name="VBox" type="VBoxContainer" parent="Margin/VBox/ConsequencePlate/Margin"]
+theme_override_constants/separation = 5
+mouse_filter = 2
+
+[node name="ConsequenceHeader" type="Label" parent="Margin/VBox/ConsequencePlate/Margin/VBox"]
+theme_override_colors/font_color = Color(0.83, 0.62, 0.25, 1)
+theme_override_font_sizes/font_size = 11
+text = "CONSEQUENCE"
+mouse_filter = 2
+
+[node name="ConsequenceText" type="Label" parent="Margin/VBox/ConsequencePlate/Margin/VBox"]
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.82, 0.80, 0.72, 0.88)
+theme_override_font_sizes/font_size = 12
+text = "The run records what this choice makes inevitable."
+autowrap_mode = 3
 mouse_filter = 2

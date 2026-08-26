@@ -1041,6 +1041,7 @@ func _restore_segment_state() -> void:
 		_wardstone_1.restore_active()
 	if _has_milestone(M_WARDSTONE_2) and _wardstone_2 != null:
 		_wardstone_2.restore_active()
+	_replay_rite_safeguards()
 	# Quit during the evidence offer: the area will not refire, but the
 	# choice is still owed. Re-present it once the scene settles.
 	if _has_milestone(M_EVIDENCE) and Global != null and Global.pending_augment_pick:
@@ -1127,9 +1128,20 @@ func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
 		_set_spawn_stage(Segment1SpawnProfile.Stage.ARCHIVE)
 	elif index == 2:
 		_grant_milestone(M_WARDSTONE_2, resonance_wardstone_2)
+	if _exit_rite != null and is_instance_valid(_exit_rite):
+		_exit_rite.grant_safeguard(StringName("segment1:wardstone:%d" % index))
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
+
+
+func _replay_rite_safeguards() -> void:
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
+		return
+	if _has_milestone(M_WARDSTONE_1):
+		_exit_rite.grant_safeguard(&"segment1:wardstone:1")
+	if _has_milestone(M_WARDSTONE_2):
+		_exit_rite.grant_safeguard(&"segment1:wardstone:2")
 
 
 func _on_enemy_defeated(context: RefCounted) -> void:

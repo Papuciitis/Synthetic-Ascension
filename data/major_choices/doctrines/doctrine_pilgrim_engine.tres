@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModAttemptFloat.gd" id="2"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="3"]
+
+[sub_resource type="Resource" id="effect_hold"]
+script = ExtResource("2")
+property = &"attempt_exit_hold_mul"
+multiply = 1.25
+clamp_min = 0.25
+clamp_max = 2.0
+
+[sub_resource type="Resource" id="effect_capacity"]
+script = ExtResource("3")
+rule_key = &"rite_safeguard_capacity"
+value = 5
+
+[sub_resource type="Resource" id="effect_sources"]
+script = ExtResource("3")
+rule_key = &"rite_safeguard_source_multiplier"
+value = 2
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_pilgrim_engine"
+title = "Pilgrim Engine"
+description = "Make every detour a component of the final rite."
+stage = &"doctrine"
+offer_role = &"covenant"
+family_id = &"archive"
+gift_text = "Safeguard capacity becomes 5. Each unique exploration source grants 2 charges."
+price_text = "Exit Rite channel time is increased by 25%."
+consequence_text = "The road itself becomes ritual machinery; preparation matters more than haste."
+build_tags = Array[StringName]([&"exploration"])
+effects = Array[Resource]([SubResource("effect_hold"), SubResource("effect_capacity"), SubResource("effect_sources")])

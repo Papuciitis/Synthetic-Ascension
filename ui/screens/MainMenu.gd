@@ -200,6 +200,8 @@ func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 		Global.pending_augment_pick = true
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
+		Global.attempt_pending_doctrine_stage = &"apotheosis" if seg >= 10 else (&"doctrine" if seg >= 7 else &"method")
+		Global.attempt_major_choice_offer_ids.clear()
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
@@ -253,6 +255,8 @@ func _on_start_dev_hub_pressed() -> void:
 		Global.pending_augment_pick = true
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
+		Global.attempt_pending_doctrine_stage = &"apotheosis" if seg >= 10 else (&"doctrine" if seg >= 7 else &"method")
+		Global.attempt_major_choice_offer_ids.clear()
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false

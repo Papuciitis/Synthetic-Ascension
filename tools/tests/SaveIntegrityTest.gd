@@ -23,6 +23,8 @@ func _run() -> void:
 	_test_delete_removes_all_slot_files()
 	_test_meta_stash_round_trip()
 	_test_active_vendor_round_trip()
+	_test_doctrine_state_round_trip()
+	_test_legacy_major_choice_migration()
 	_test_manifestation_cards_round_trip()
 	await get_tree().process_frame
 	print("SaveIntegrityTest: %d passed, %d failed" % [_passes, _failures])
@@ -296,3 +298,49 @@ func _test_active_vendor_round_trip() -> void:
 	_global.attempt_vendor_seed = previous_seed
 	_global.attempt_vendor_bag = previous_bag
 	_cleanup_slot()
+
+
+func _test_doctrine_state_round_trip() -> void:
+	var previous_active: bool = _global.attempt_active
+	var previous_stage: StringName = _global.attempt_pending_doctrine_stage
+	var previous_ids: Dictionary = _global.attempt_doctrine_stage_ids.duplicate(true)
+	var previous_rules: Dictionary = _global.attempt_doctrine_rules.duplicate(true)
+	var previous_events: Array[String] = _global.attempt_doctrine_events.duplicate()
+	_global.attempt_active = true
+	_global.attempt_pending_doctrine_stage = &"doctrine"
+	_global.attempt_doctrine_stage_ids = {&"method": &"doctrine_method_open_circuit"}
+	_global.attempt_doctrine_rules = {"max_hp_mul": 0.75}
+	var recorded_events: Array[String] = ["WITNESS EXPENDED"]
+	_global.attempt_doctrine_events = recorded_events
+	var save := SaveData.new()
+	_global.write_save(save)
+	_check(save.attempt_doctrine_version == 1, "Doctrine schema version is written")
+	_check(save.attempt_pending_doctrine_stage == "doctrine", "pending Doctrine stage is written")
+	_check(StringName(save.attempt_doctrine_stage_ids.get(&"method", &"")) == &"doctrine_method_open_circuit", "selected stage id is written")
+	_check(is_equal_approx(float(save.attempt_doctrine_rules.get("max_hp_mul", 1.0)), 0.75), "Doctrine rules are written")
+	_check(save.attempt_doctrine_events == ["WITNESS EXPENDED"], "Doctrine record is written")
+	_global.attempt_active = previous_active
+	_global.attempt_pending_doctrine_stage = previous_stage
+	_global.attempt_doctrine_stage_ids = previous_ids
+	_global.attempt_doctrine_rules = previous_rules
+	_global.attempt_doctrine_events = previous_events
+
+
+func _test_legacy_major_choice_migration() -> void:
+	var restore := SaveData.new()
+	_global.write_save(restore)
+	var legacy := SaveData.new()
+	legacy.attempt_active = true
+	legacy.attempt_major_choice_id = "major_ritual"
+	legacy.attempt_major_choice_taken_ids = []
+	legacy.attempt_mod_exit_hold_mul = 0.80
+	legacy.attempt_doctrine_version = 0
+	legacy.attempt_pending_big_choice = true
+	legacy.attempt_major_choice_offer_ids = ["major_ritual", "major_satchel", "major_sanctum"]
+	_global.apply_save(legacy)
+	_check(_global.attempt_major_choice_taken_ids.has(&"major_ritual"), "legacy selected id enters history")
+	_check(is_equal_approx(_global.attempt_exit_hold_mul, 0.80), "legacy effect remains applied")
+	_check(_global.attempt_pending_doctrine_stage == &"", "migration does not queue missed stages")
+	_check(not _global.pending_big_choice, "migration clears an obsolete pending legacy choice")
+	_check(_global.attempt_major_choice_offer_ids.is_empty(), "migration clears disabled legacy offer ids")
+	_global.apply_save(restore)

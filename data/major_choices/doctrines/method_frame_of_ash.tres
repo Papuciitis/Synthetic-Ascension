@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddStatDelta.gd" id="2"]
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="3"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="4"]
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("3")
+move_speed = 15.0
+power = 0.3
+
+[sub_resource type="Resource" id="effect_stats"]
+script = ExtResource("2")
+delta = SubResource("stats")
+
+[sub_resource type="Resource" id="effect_hp"]
+script = ExtResource("4")
+rule_key = &"max_hp_mul"
+multiply = 0.75
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_method_frame_of_ash"
+title = "Frame of Ash"
+description = "Burn away the body's safety margins and keep only the instrument."
+stage = &"method"
+offer_role = &"transfigure"
+family_id = &"vessel"
+gift_text = "+30% Power and +15 movement speed."
+price_text = "Maximum health is reduced by 25%."
+consequence_text = "The mortal frame survives only as sacrificial scaffolding."
+build_tags = Array[StringName]([&"style:melee"])
+effects = Array[Resource]([SubResource("effect_stats"), SubResource("effect_hp")])

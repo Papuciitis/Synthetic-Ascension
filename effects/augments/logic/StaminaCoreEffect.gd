@@ -53,7 +53,7 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = max(_cd - dt, 0.0)
 
-	if not Global.active_augment_input_blocked() and player != null and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and player != null and Input.is_action_just_pressed(active_action):
 		print("[StaminaCore] pressed. cd=", _cd, " active_time=", _active_time)
 		_try_activate()
 
@@ -73,8 +73,9 @@ func _try_activate() -> void:
 
 	var haste_mul: float = 1.0 + maxf(haste, -0.9)
 
-	_cd_max = maxf(3.0, active_base_cd / maxf(haste_mul, 0.05))
+	_cd_max = Global.doctrine_active_cooldown(maxf(3.0, active_base_cd / maxf(haste_mul, 0.05)))
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	_active_time = active_duration
 
 	if player.has_method("grant_invulnerability"):

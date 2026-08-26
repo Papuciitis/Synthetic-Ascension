@@ -99,7 +99,7 @@ func _process(dt: float) -> void:
 		_cleanup_window_vfx()
 	_was_active = now_active
 
-	if not Global.active_augment_input_blocked() and Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		_try_activate()
 
 	_report_cd(false)
@@ -108,8 +108,9 @@ func _try_activate() -> void:
 	if _cd > 0.0:
 		return
 
-	_cd_max = active_base_cd
+	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
 	_active_left = parry_window
 	_active_elapsed = 0.0

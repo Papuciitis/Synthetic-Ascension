@@ -594,6 +594,11 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
 		s.luck += BurdenResolver.asymptotic_rate(0.30, lens_level) * burden.suppressed_severity
 
+	# Doctrine prices are applied at the final ownership boundary so equipment,
+	# sets, manifestations and Burden cannot escape the Max-HP sacrifice.
+	if Global.has_method("apply_doctrine_final_stat_multipliers"):
+		Global.call("apply_doctrine_final_stat_multipliers", s)
+
 	Global.run_luck = s.luck
 
 	apply_run_stats(s, emit_hp_signal)
@@ -1041,7 +1046,19 @@ func _take_damage(amount: float) -> void:
 		RunEvents.player_damage_taken.emit(self, reduced, global_position)
 
 	if hp <= 0.0:
-		die()
+		if not _try_doctrine_death_intercept():
+			die()
+
+
+func _try_doctrine_death_intercept() -> bool:
+	if Global == null or not Global.has_method("try_consume_manufactured_witness"):
+		return false
+	if not bool(Global.try_consume_manufactured_witness()):
+		return false
+	hp = maxf(1.0, max_hp * 0.50)
+	grant_invulnerability(2.0)
+	hp_changed.emit(hp, max_hp)
+	return true
 
 
 func die() -> void:
@@ -1108,8 +1125,7 @@ func set_checkpoint(pos: Vector2, move_player: bool = false) -> void:
 
 func wardstone_full_restore() -> void:
 	# used on wardstone capture (one-time)
-	hp = max_hp
-	hp_changed.emit(hp, max_hp)
+	heal(max_hp, &"wardstone")
 	_weapon_cd = 0.0
 	_dash.reset()
 	dash_cd_changed.emit(0.0, PlayerDashState.COOLDOWN)
@@ -1225,9 +1241,11 @@ func _attack_origin() -> Vector2:
 	return global_position
 
 
-func heal(amount: float) -> void:
+func heal(amount: float, source: StringName = &"generic") -> void:
 	if amount <= 0.0:
 		return
+	if Global != null and Global.has_method("doctrine_healing_multiplier"):
+		amount *= float(Global.doctrine_healing_multiplier(source))
 	# Report what LANDED, never what was asked for. Anything that reacts to a
 	# heal by taking a cut was billing the player for the overflow: at 95/100 a
 	# 30-point pickup applied 5 and announced 30, so a rule refusing 55% of it

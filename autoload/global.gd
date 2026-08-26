@@ -20,6 +20,7 @@ const SETS_DIR := DATA_DIR + "/sets"
 const AUGMENTS_DIR := DATA_DIR + "/augments"
 const MAJOR_CHOICES_DIR := DATA_DIR + "/major_choices"
 const WEAPONS_DIR := DATA_DIR + "/weapons"
+const DOCTRINE_REWARD_SERVICE := preload("res://core/systems/major_choice/DoctrineRewardService.gd")
 
 # -- Scenes
 const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
@@ -185,6 +186,15 @@ var attempt_exit_hold_mul: float = 1.0
 var attempt_major_choice_offer_ids: Array[StringName] = []
 var attempt_major_choice_taken_ids: Array[StringName] = []
 
+const ASCENSION_DOCTRINE_VERSION: int = 1
+var attempt_doctrine_version: int = ASCENSION_DOCTRINE_VERSION
+var attempt_pending_doctrine_stage: StringName = &""
+var attempt_doctrine_stage_ids: Dictionary = {}
+var attempt_doctrine_rules: Dictionary = {}
+var attempt_doctrine_events: Array[String] = []
+var attempt_witness_used_segment: int = 0
+var attempt_doctrine_threat_debt: float = 0.0
+
 # Attempt-scoped augmentation levels (StringName -> int); defaults to 1
 var attempt_augment_levels: Dictionary = {}
 
@@ -200,6 +210,8 @@ var _autosave_timer: SceneTreeTimer = null
 var _suppress_autosave: bool = false
 var _autosave_dirty: bool = false
 var autosave_fallback_seconds: float = 30.0
+var _doctrine_active_slot: int = -1
+var _doctrine_active_lock_until_ms: int = 0
 # stacking bag
 var run_luck: float = 0.0
 
@@ -784,8 +796,8 @@ var _active_augment_input_locks: int = 0
 func set_active_augment_input_locked(locked: bool) -> void:
 	_active_augment_input_locks = maxi(0, _active_augment_input_locks + (1 if locked else -1))
 
-func active_augment_input_blocked() -> bool:
-	return _active_augment_input_locks > 0
+func active_augment_input_blocked(slot: int = -1) -> bool:
+	return _active_augment_input_locks > 0 or (slot >= 0 and active_augment_slot_blocked(slot))
 
 func follower_belief_power() -> float:
 	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
@@ -982,6 +994,47 @@ func add_mutation(id: StringName, value: Variant = true) -> void:
 	attempt_mutations[String(id)] = value
 	request_autosave()
 
+
+func pending_doctrine_stage() -> StringName:
+	return attempt_pending_doctrine_stage
+
+
+func get_doctrine_rule(key: StringName, fallback: Variant = null) -> Variant:
+	if attempt_doctrine_rules.has(key):
+		return attempt_doctrine_rules[key]
+	return attempt_doctrine_rules.get(String(key), fallback)
+
+
+func set_doctrine_rule(key: StringName, value: Variant) -> void:
+	if key == StringName():
+		return
+	attempt_doctrine_rules[String(key)] = value
+	request_autosave()
+
+
+func add_doctrine_rule(key: StringName, amount: float) -> void:
+	set_doctrine_rule(key, float(get_doctrine_rule(key, 0.0)) + amount)
+
+
+func doctrine_active_cooldown(base_seconds: float) -> float:
+	return maxf(0.0, base_seconds) * maxf(0.0, float(get_doctrine_rule(&"active_augment_cooldown_mul", 1.0)))
+
+
+func notify_active_augment_used(slot: int) -> void:
+	var seconds := maxf(0.0, float(get_doctrine_rule(&"active_augment_cross_lock_seconds", 0.0)))
+	_doctrine_active_slot = slot
+	_doctrine_active_lock_until_ms = Time.get_ticks_msec() + int(round(seconds * 1000.0))
+
+
+func active_augment_slot_blocked(slot: int) -> bool:
+	return slot != _doctrine_active_slot and Time.get_ticks_msec() < _doctrine_active_lock_until_ms
+
+
+func doctrine_healing_multiplier(source: StringName) -> float:
+	if source in [&"exit_rite", &"wardstone"]:
+		return maxf(0.0, float(get_doctrine_rule(&"ritual_healing_mul", 1.0)))
+	return maxf(0.0, float(get_doctrine_rule(&"other_healing_mul", 1.0)))
+
 func get_augment_level(aug_id: StringName) -> int:
 	if aug_id == StringName():
 		return 1
@@ -1000,6 +1053,47 @@ func set_augment_level(aug_id: StringName, level: int) -> void:
 func apply_attempt_modifiers_to_stats(s: Stats) -> void:
 	if attempt_stat_delta != null:
 		attempt_stat_delta.apply_to(s)
+
+func apply_doctrine_final_stat_multipliers(s: Stats) -> void:
+	if s == null:
+		return
+	s.max_hp = maxf(1.0, s.max_hp * float(get_doctrine_rule(&"max_hp_mul", 1.0)))
+
+func try_consume_manufactured_witness() -> bool:
+	if not bool(get_doctrine_rule(&"manufactured_witness", false)):
+		return false
+	if attempt_witness_used_segment == attempt_segment or followers < 100:
+		return false
+	var transaction := transaction_followers(
+		-100,
+		&"manufactured_witness",
+		{"segment": attempt_segment},
+		false,
+		false
+	)
+	if int(transaction.get("change", 0)) != -100:
+		return false
+	attempt_witness_used_segment = attempt_segment
+	attempt_doctrine_threat_debt += 25.0
+	if not attempt_doctrine_events.has("WITNESS EXPENDED"):
+		attempt_doctrine_events.append("WITNESS EXPENDED")
+	if RunEvents != null and RunEvents.doctrine_event_recorded.has_connections():
+		RunEvents.doctrine_event_recorded.emit(
+			&"witness_expended",
+			"WITNESS EXPENDED"
+		)
+	request_autosave()
+	return true
+
+func grant_doctrine_secondary_rewards(source_key: StringName) -> int:
+	var rolls := maxi(0, int(get_doctrine_rule(&"secondary_reward_rolls", 0)))
+	if rolls <= 0 or item_db.is_empty():
+		return 0
+	var delivered := 0
+	for roll_index in range(rolls):
+		if DOCTRINE_REWARD_SERVICE.grant_secondary_roll(self, source_key, roll_index):
+			delivered += 1
+	return delivered
 
 func get_major_choice_offer(count: int = 3) -> Array:
 	if not pending_big_choice:
@@ -1029,36 +1123,47 @@ func _generate_major_choice_offer(count: int) -> void:
 	var ctx_seg: int = get_major_choice_context_segment()
 	rng.seed = int(seed_val) ^ (ctx_seg * 2654435761) ^ 0x5EED5
 
-	var offer: Array[MajorChoiceDef] = major_choice_db.build_offer(self, count, rng)
+	var offer: Array[MajorChoiceDef] = []
+	if attempt_pending_doctrine_stage != StringName():
+		var context_script := load("res://core/systems/major_choice/MajorChoiceContext.gd") as Script
+		var context: RefCounted = context_script.call("from_global", self, attempt_pending_doctrine_stage)
+		offer = major_choice_db.build_stage_offer(context, attempt_major_choice_taken_ids, rng)
+	else:
+		offer = major_choice_db.build_offer(self, count, rng)
 	attempt_major_choice_offer_ids.clear()
 	for d in offer:
 		attempt_major_choice_offer_ids.append(d.id)
 
 	request_autosave()
 
-func apply_major_choice(choice_id: StringName) -> void:
+func apply_major_choice(choice_id: StringName) -> bool:
 	# Resolve the pending reward and apply a run-shaping modifier.
 	if not pending_big_choice:
-		return
+		return false
 
 	var def: MajorChoiceDef = major_choice_db.get_def(choice_id)
-	if def != null:
-		for e in def.effects:
-			if e == null:
-				continue
-			e.apply(self)
-	else:
-		push_warning("apply_major_choice: unknown id: " + String(choice_id))
+	if def == null or not attempt_major_choice_offer_ids.has(choice_id) or attempt_major_choice_taken_ids.has(choice_id):
+		return false
+	if attempt_pending_doctrine_stage != StringName() and def.stage != attempt_pending_doctrine_stage:
+		return false
+	for e in def.effects:
+		if e == null:
+			continue
+		e.apply(self)
 
 	attempt_major_choice_id = choice_id
 	if not attempt_major_choice_taken_ids.has(choice_id):
 		attempt_major_choice_taken_ids.append(choice_id)
+	if attempt_pending_doctrine_stage != StringName():
+		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
 
 	# clear offer + flag so you can't get stuck
 	attempt_major_choice_offer_ids.clear()
 	pending_big_choice = false
 	attempt_big_choice_source_segment = 0
+	attempt_pending_doctrine_stage = &""
 	request_autosave()
+	return true
 
 func request_autosave(delay: float = 0.6) -> void:
 	# Combat calls this once per kill; writing and re-validating the profile on
@@ -1307,6 +1412,30 @@ func apply_save(save: SaveData) -> void:
 			if tid != "":
 				attempt_major_choice_taken_ids.append(StringName(tid))
 
+		attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		attempt_pending_doctrine_stage = StringName(save.attempt_pending_doctrine_stage)
+		attempt_doctrine_stage_ids = save.attempt_doctrine_stage_ids.duplicate(true)
+		attempt_doctrine_rules = save.attempt_doctrine_rules.duplicate(true)
+		attempt_doctrine_events = save.attempt_doctrine_events.duplicate()
+		attempt_witness_used_segment = int(save.attempt_witness_used_segment)
+		attempt_doctrine_threat_debt = maxf(0.0, float(save.attempt_doctrine_threat_debt))
+		# Legacy major choices already wrote their effects into the old modifier
+		# fields. Preserve their identity without replaying those effects or
+		# manufacturing missed Doctrine screens.
+		if attempt_major_choice_id != StringName() and not attempt_major_choice_taken_ids.has(attempt_major_choice_id):
+			attempt_major_choice_taken_ids.append(attempt_major_choice_id)
+		if int(save.attempt_doctrine_version) <= 0:
+			# Legacy offer resources are intentionally disabled. Keeping a pending
+			# pre-Doctrine offer would open an empty modal and permanently disable
+			# Hub Continue, so retire that obsolete reward during migration.
+			pending_big_choice = false
+			attempt_big_choice_source_segment = 0
+			attempt_major_choice_offer_ids.clear()
+			attempt_pending_doctrine_stage = &""
+			attempt_doctrine_stage_ids.clear()
+			attempt_doctrine_rules.clear()
+			attempt_doctrine_events.clear()
+
 		attempt_augment_levels = save.attempt_augment_levels.duplicate(true)
 		attempt_mutations = save.attempt_mod_mutations.duplicate(true)
 		attempt_stat_delta = save.attempt_mod_stat_delta
@@ -1372,6 +1501,13 @@ func apply_save(save: SaveData) -> void:
 
 		attempt_major_choice_offer_ids.clear()
 		attempt_major_choice_taken_ids.clear()
+		attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		attempt_pending_doctrine_stage = &""
+		attempt_doctrine_stage_ids.clear()
+		attempt_doctrine_rules.clear()
+		attempt_doctrine_events.clear()
+		attempt_witness_used_segment = 0
+		attempt_doctrine_threat_debt = 0.0
 		attempt_augment_levels = {}
 		attempt_mutations = {}
 		attempt_stat_delta = null
@@ -1445,6 +1581,13 @@ func write_save(save: SaveData) -> void:
 		save.attempt_major_choice_taken_ids = []
 		for id in attempt_major_choice_taken_ids:
 			save.attempt_major_choice_taken_ids.append(String(id))
+		save.attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		save.attempt_pending_doctrine_stage = String(attempt_pending_doctrine_stage)
+		save.attempt_doctrine_stage_ids = attempt_doctrine_stage_ids.duplicate(true)
+		save.attempt_doctrine_rules = attempt_doctrine_rules.duplicate(true)
+		save.attempt_doctrine_events = attempt_doctrine_events.duplicate()
+		save.attempt_witness_used_segment = attempt_witness_used_segment
+		save.attempt_doctrine_threat_debt = attempt_doctrine_threat_debt
 
 		save.attempt_augment_levels = attempt_augment_levels.duplicate(true)
 		save.attempt_mod_mutations = attempt_mutations.duplicate(true)
@@ -1492,6 +1635,13 @@ func write_save(save: SaveData) -> void:
 
 		save.attempt_major_choice_offer_ids = []
 		save.attempt_major_choice_taken_ids = []
+		save.attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		save.attempt_pending_doctrine_stage = ""
+		save.attempt_doctrine_stage_ids = {}
+		save.attempt_doctrine_rules = {}
+		save.attempt_doctrine_events = []
+		save.attempt_witness_used_segment = 0
+		save.attempt_doctrine_threat_debt = 0.0
 		save.attempt_augment_levels = {}
 		save.attempt_mod_mutations = {}
 		save.attempt_mod_stat_delta = null
@@ -1574,6 +1724,12 @@ func start_new_attempt() -> void:
 	pending_augment_pick = (owned == 0)
 	pending_big_choice = false
 	attempt_major_choice_id = &""
+	attempt_pending_doctrine_stage = &""
+	attempt_doctrine_stage_ids.clear()
+	attempt_doctrine_rules.clear()
+	attempt_doctrine_events.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0
 	attempt_wardstone_slow_mul = 1.0
 	attempt_exit_hold_mul = 1.0
@@ -1608,14 +1764,31 @@ func on_segment_completed(completed_segment: int) -> void:
 	# Milestones
 	if completed_segment == 2 or completed_segment == 7:
 		pending_augment_pick = true
-	if completed_segment == 5:
+	var next_doctrine_stage := doctrine_stage_for_completed_segment(completed_segment)
+	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage):
 		pending_big_choice = true
+		attempt_pending_doctrine_stage = next_doctrine_stage
 		attempt_big_choice_source_segment = completed_segment
+		attempt_major_choice_offer_ids.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 
 	if SaveManager != null and SaveManager.current_save != null:
 		SaveManager.current_save.attempt_resume_scene = PATH_HUB_SHOP
 
 	save_current_profile()
+
+
+func doctrine_stage_for_completed_segment(completed_segment: int) -> StringName:
+	match completed_segment:
+		3:
+			return &"method"
+		6:
+			return &"doctrine"
+		9:
+			return &"apotheosis"
+		_:
+			return &""
 
 
 
@@ -1652,6 +1825,12 @@ func on_attempt_failed_die_die() -> void:
 	pending_big_choice = false
 	attempt_big_choice_source_segment = 0
 	attempt_major_choice_id = &""
+	attempt_pending_doctrine_stage = &""
+	attempt_doctrine_stage_ids.clear()
+	attempt_doctrine_rules.clear()
+	attempt_doctrine_events.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0
 	attempt_wardstone_slow_mul = 1.0
 	attempt_exit_hold_mul = 1.0

@@ -2,6 +2,7 @@ extends Node2D
 class_name ExitRite
 
 signal cleared(rite: ExitRite)
+signal safeguard_state_changed(current: int, capacity: int, can_invoke: bool)
 
 ## Room to fight in. At 92 px the circle was barely wider than the player, so
 ## "hold this ground" meant "stand on this spot" - there was nowhere to dodge
@@ -72,6 +73,21 @@ signal cleared(rite: ExitRite)
 @onready var vfx: Node2D = $Vfx
 
 const UNLOCK_BURST_SCENE := preload("res://assets/vfx/world/gates/VFX_GateUnlockBurst.tscn")
+const RITE_PROGRESS_LEDGER_SCRIPT: Script = preload("res://core/systems/world/rite/RiteProgressLedger.gd")
+const RITE_PULSE_RESOLVER_SCRIPT: Script = preload("res://core/systems/world/rite/RitePulseResolver.gd")
+const RITE_PULSE_VFX_SCRIPT: Script = preload("res://core/systems/world/rite/RitePulseVFX.gd")
+const AUTOMATIC_PULSES: Array[Dictionary] = [
+	{"radius": 420.0, "force": 650.0, "stun": 0.15, "heal": 0.15, "invuln": 0.0},
+	{"radius": 500.0, "force": 850.0, "stun": 0.35, "heal": 0.25, "invuln": 0.0},
+	{"radius": 620.0, "force": 1100.0, "stun": 0.60, "heal": 0.35, "invuln": 5.0},
+]
+const MANUAL_PULSE: Dictionary = {
+	"radius": 420.0,
+	"force": 700.0,
+	"stun": 0.20,
+	"heal": 0.10,
+	"invuln": 0.0,
+}
 
 var _player_inside: bool = false
 var _last_backlash_ms: int = -100000
@@ -80,6 +96,14 @@ var _lapse: float = 0.0
 var _death_taken: bool = false
 var _announced_channel: bool = false
 var _sigil_t: float = 0.0
+var _progress_ledger: RefCounted = RITE_PROGRESS_LEDGER_SCRIPT.new()
+var _safeguard_sources: Dictionary = {}
+var _safeguards: int = 0
+var _safeguard_capacity: int = 3
+var _safeguard_source_multiplier: int = 1
+var _burst_count_multiplier: float = 1.0
+var _rite_stun_bonus_seconds: float = 0.0
+var _completed: bool = false
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
 var _spawner: EnemySpawner = null
@@ -88,6 +112,7 @@ var _burst_stage: int = 0
 var _sfx_channel_tag: StringName = &"channel"
 
 func _ready() -> void:
+	add_to_group(&"exit_rite")
 	if shape != null and shape.shape is CircleShape2D:
 		(shape.shape as CircleShape2D).radius = radius
 	if zone != null:
@@ -112,9 +137,11 @@ func _ready() -> void:
 	# Apply attempt modifier (major choice)
 	if Global != null:
 		hold_time *= clampf(float(Global.attempt_exit_hold_mul), 0.25, 2.0)
+	configure_doctrine_rules()
 
 	# Share gate location with HUD (for direction arrow, etc.)
 	_share_location_with_hud()
+	_emit_safeguard_state()
 
 func _exit_tree() -> void:
 	if Global != null and Global.exit_gate_pos == global_position:
@@ -137,6 +164,9 @@ func set_locked(v: bool) -> void:
 	# State changed > reset channel state.
 	_hold = 0.0
 	_burst_stage = 0
+	_progress_ledger = RITE_PROGRESS_LEDGER_SCRIPT.new()
+	_completed = false
+	configure_doctrine_rules()
 	if locked:
 		_player_inside = false
 		remove_from_group(&"exit_rite_channeling")
@@ -166,6 +196,9 @@ func set_revealed(value: bool) -> void:
 	_hold = 0.0
 	_player_inside = false
 	_burst_stage = 0
+	_progress_ledger = RITE_PROGRESS_LEDGER_SCRIPT.new()
+	_completed = false
+	configure_doctrine_rules()
 	_apply_reveal_state()
 
 func _apply_reveal_state() -> void:
@@ -176,6 +209,7 @@ func _apply_reveal_state() -> void:
 	if not revealed:
 		remove_from_group(&"exit_rite_channeling")
 	_share_location_with_hud()
+	_emit_safeguard_state()
 
 func _sigil_refresh() -> void:
 	if sigil == null:
@@ -196,8 +230,6 @@ func _process(delta: float) -> void:
 		sigil.modulate.a = (0.10 if locked else 0.22) * breathe
 
 	if locked:
-		_hold = 0.0
-		_burst_stage = 0
 		queue_redraw()
 		return
 
@@ -206,11 +238,7 @@ func _process(delta: float) -> void:
 		if _hold > 0.0:
 			_lapse += delta
 			if _lapse > lapse_grace:
-				_hold = maxf(0.0, _hold - delta * lapse_drain_rate * _fill_rate())
-				# The waves rewind with the channel. Without this a player who
-				# drains back from 94% walks into a SILENT rite: every stage was
-				# already spent, so the 30% they now have to redo spawns nothing.
-				_resync_burst_stage()
+				_apply_progress_loss(_hold - delta * lapse_drain_rate * _fill_rate())
 			queue_redraw()
 		return
 	_lapse = 0.0
@@ -222,17 +250,15 @@ func _process(delta: float) -> void:
 		# A death is a setback, not a reset. See death_progress_kept.
 		if not _death_taken:
 			_death_taken = true
-			_hold *= clampf(death_progress_kept, 0.0, 1.0)
-			# The waves re-arm from wherever the channel now stands, so the
-			# second attempt is not the whole escalation over again.
-			_resync_burst_stage()
-		_lapse = 0.0
+			_apply_progress_loss(_hold * clampf(death_progress_kept, 0.0, 1.0))
+			_lapse = 0.0
 		queue_redraw()
 		return
 	_death_taken = false
 
 	_hold = minf(_hold + delta, hold_time)
 	_mend(channeling_player, delta)
+	_update_rite_progress()
 	queue_redraw()
 
 	var t: float = 0.0
@@ -241,6 +267,8 @@ func _process(delta: float) -> void:
 	_maybe_spawn_bursts(t)
 
 	if _hold >= hold_time:
+		_completed = true
+		_emit_safeguard_state()
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
@@ -280,32 +308,153 @@ func _mend(who: Node, delta: float) -> void:
 	var max_hp: float = float(max_hp_value)
 	var amount: float = (channel_regen_per_sec + max_hp * channel_regen_max_hp_pct) * delta
 	if amount > 0.0:
-		who.call("heal", amount)
+		who.call("heal", amount, &"exit_rite")
 
 
-## After a death the channel jumps backwards, so the wave schedule has to jump
-## with it - otherwise every stage is already spent and the rest of the rite is
-## silent.
-func _resync_burst_stage() -> void:
-	var t: float = 0.0
-	if hold_time > 0.0:
-		t = clampf(_hold / hold_time, 0.0, 1.0)
-	_burst_stage = 0
-	for stage in BURST_STAGES:
-		if t >= stage.x:
-			_burst_stage += 1
+func _apply_progress_loss(proposed_hold: float) -> void:
+	if hold_time <= 0.0:
+		_hold = 0.0
+		return
+	var fraction: float = float(_progress_ledger.call("clamp_loss_fraction", proposed_hold / hold_time))
+	_hold = fraction * hold_time
+
+
+func _update_rite_progress() -> void:
+	if hold_time <= 0.0:
+		return
+	var crossed: PackedInt32Array = _progress_ledger.call("update_fraction", _hold / hold_time)
+	for seal_number in crossed:
+		_fire_automatic_seal(seal_number)
+
+
+func _fire_automatic_seal(seal_number: int) -> void:
+	var index := seal_number - 1
+	if index < 0 or index >= AUTOMATIC_PULSES.size():
+		return
+	_apply_pulse(_automatic_pulse_profile(index))
+	queue_redraw()
+
+
+func _automatic_pulse_profile(index: int) -> Dictionary:
+	if index < 0 or index >= AUTOMATIC_PULSES.size():
+		return {}
+	var profile := AUTOMATIC_PULSES[index].duplicate(true)
+	profile["stun"] = float(profile.get("stun", 0.0)) + _rite_stun_bonus_seconds
+	return profile
+
+
+func _apply_pulse(profile: Dictionary) -> Dictionary:
+	_spawn_pulse_vfx(profile)
+	var player := get_tree().get_first_node_in_group(&"player")
+	return RITE_PULSE_RESOLVER_SCRIPT.call("apply",
+		EnemyCombat,
+		global_position,
+		float(profile.get("radius", 0.0)),
+		float(profile.get("force", 0.0)),
+		float(profile.get("stun", 0.0)),
+		player,
+		float(profile.get("heal", 0.0)),
+		float(profile.get("invuln", 0.0))
+	)
+
+
+func _spawn_pulse_vfx(profile: Dictionary) -> void:
+	if vfx == null:
+		return
+	var pulse := RITE_PULSE_VFX_SCRIPT.new() as Node2D
+	pulse.name = "RitePulseVFX"
+	vfx.add_child(pulse)
+	pulse.call(
+		"setup",
+		float(profile.get("radius", 420.0)),
+		float(profile.get("invuln", 0.0)) > 0.0
+	)
 
 
 func _maybe_spawn_bursts(t: float) -> void:
 	if _spawner == null or not is_instance_valid(_spawner):
 		return
 	while _burst_stage < BURST_STAGES.size():
-		var stage: Vector2 = BURST_STAGES[_burst_stage]
+		var current_index := _burst_stage
+		var stage: Vector2 = BURST_STAGES[current_index]
 		if t < stage.x:
 			return
 		_burst_stage += 1
-		_spawner.spawn_burst(int(stage.y))
+		if bool(_progress_ledger.call("mark_wave_spent", current_index)):
+			_spawner.spawn_burst(_burst_spawn_count(int(stage.y)))
 		return
+
+
+func _burst_spawn_count(base_count: int) -> int:
+	return maxi(0, ceili(float(base_count) * _burst_count_multiplier))
+
+
+func grant_safeguard(source_key: StringName, amount: int = 1) -> int:
+	if source_key == StringName() or amount <= 0 or _safeguard_sources.has(source_key):
+		return 0
+	_safeguard_sources[source_key] = true
+	var before := _safeguards
+	_safeguards = mini(_safeguard_capacity, _safeguards + amount * _safeguard_source_multiplier)
+	_emit_safeguard_state()
+	queue_redraw()
+	return _safeguards - before
+
+
+func consume_safeguard() -> bool:
+	if not can_invoke_safeguard():
+		return false
+	_safeguards -= 1
+	_apply_pulse(MANUAL_PULSE)
+	_emit_safeguard_state()
+	queue_redraw()
+	return true
+
+
+func safeguard_count() -> int:
+	return _safeguards
+
+
+func safeguard_capacity() -> int:
+	return _safeguard_capacity
+
+
+func can_invoke_safeguard() -> bool:
+	return revealed and not locked and not _completed and _player_inside and _safeguards > 0
+
+
+func _emit_safeguard_state() -> void:
+	safeguard_state_changed.emit(_safeguards, _safeguard_capacity, can_invoke_safeguard())
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event == null or not event.is_action_pressed(&"interact") or event.is_echo():
+		return
+	if consume_safeguard():
+		get_viewport().set_input_as_handled()
+
+
+func configure_doctrine_rules() -> void:
+	_safeguard_capacity = 3
+	_safeguard_source_multiplier = 1
+	_burst_count_multiplier = 1.0
+	_rite_stun_bonus_seconds = 0.0
+	var initial_seals := 0
+	if Global != null and Global.has_method("get_doctrine_rule"):
+		_safeguard_capacity = maxi(1, int(Global.get_doctrine_rule(&"rite_safeguard_capacity", 3)))
+		_safeguard_source_multiplier = maxi(1, int(Global.get_doctrine_rule(&"rite_safeguard_source_multiplier", 1)))
+		_burst_count_multiplier = maxf(0.0, float(Global.get_doctrine_rule(&"rite_burst_count_mul", 1.0)))
+		_rite_stun_bonus_seconds = maxf(0.0, float(Global.get_doctrine_rule(&"rite_stun_bonus_seconds", 0.0)))
+		initial_seals = clampi(int(Global.get_doctrine_rule(&"rite_initial_seals", 0)), 0, 2)
+	_safeguards = mini(_safeguards, _safeguard_capacity)
+	if initial_seals > 0 and hold_time > 0.0:
+		_progress_ledger.call("initialize_sealed", initial_seals)
+		_hold = float(_progress_ledger.call("floor_fraction")) * hold_time
+		_burst_stage = 0
+		while _burst_stage < BURST_STAGES.size() and BURST_STAGES[_burst_stage].x <= float(_progress_ledger.call("floor_fraction")):
+			_progress_ledger.call("mark_wave_spent", _burst_stage)
+			_burst_stage += 1
+	_emit_safeguard_state()
+	queue_redraw()
 
 func _on_body_entered(b: Node) -> void:
 	if b == null:
@@ -339,6 +488,7 @@ func _on_body_entered(b: Node) -> void:
 
 	_player_inside = true
 	add_to_group(&"exit_rite_channeling")
+	_emit_safeguard_state()
 	# Say what the player has just committed to, once. Twenty seconds of
 	# escalating waves with no warning reads as the game breaking, not as a
 	# siege - and the decision to start it is only a decision if they know.
@@ -365,6 +515,7 @@ func _on_body_exited(b: Node) -> void:
 	if b != null and b.is_in_group("player"):
 		_player_inside = false
 		remove_from_group(&"exit_rite_channeling")
+		_emit_safeguard_state()
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
@@ -392,3 +543,36 @@ func _draw() -> void:
 		draw_arc(Vector2.ZERO, radius + 11.0, -PI/2, -PI/2 + TAU * t, 96, prog, 10.0, true)
 		# soft glow fill
 		draw_arc(Vector2.ZERO, radius + 4.0, -PI/2, -PI/2 + TAU * t, 96, Color(prog.r, prog.g, prog.b, 0.32), 18.0, true)
+
+	# Three physical archive seals: channel thirds are durable.
+	for seal_index in range(3):
+		var angle := deg_to_rad(-150.0 + 60.0 * float(seal_index))
+		var center := Vector2.from_angle(angle) * (radius + 22.0)
+		var sealed: bool = seal_index < int(_progress_ledger.call("sealed_count"))
+		var seal_color := Color(0.98, 0.83, 0.48, 0.95) if sealed else Color(0.42, 0.32, 0.22, 0.62)
+		var points := PackedVector2Array([
+			center + Vector2(0.0, -7.0), center + Vector2(7.0, 0.0),
+			center + Vector2(0.0, 7.0), center + Vector2(-7.0, 0.0),
+		])
+		draw_colored_polygon(points, Color(seal_color.r, seal_color.g, seal_color.b, 0.18))
+		draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), seal_color, 2.0, true)
+
+	# Safeguards are a separate physical ledger. Pilgrim Engine raises this to
+	# five, so coupling them to the three archive seals hid the last two charges.
+	var pip_positions := safeguard_pip_positions()
+	for pip_index in range(pip_positions.size()):
+		var pip_center := pip_positions[pip_index]
+		draw_circle(pip_center, 4.5, Color(0.12, 0.10, 0.07, 0.90))
+		draw_arc(pip_center, 5.0, 0.0, TAU, 20, Color(0.70, 0.49, 0.22, 0.85), 1.5, true)
+		if pip_index < _safeguards:
+			draw_circle(pip_center, 2.7, Color(1.0, 0.91, 0.62, 1.0))
+
+
+func safeguard_pip_positions() -> PackedVector2Array:
+	var output := PackedVector2Array()
+	var count := maxi(1, _safeguard_capacity)
+	for index in range(count):
+		var ratio := 0.5 if count == 1 else float(index) / float(count - 1)
+		var angle := lerpf(deg_to_rad(35.0), deg_to_rad(145.0), ratio)
+		output.append(Vector2.from_angle(angle) * (radius + 23.0))
+	return output

@@ -417,34 +417,40 @@ func _recompute(force_emit: bool = false) -> void:
 		var h := ot - ot_hp_start
 		ot_hp_add = pow(h, ot_hp_pow) * ot_hp_scale
 
+	# Doctrine Threat is authoritative pressure, not merely a HUD surcharge.
+	# Multiplication bends both segment carry and live heat; Witness debt is
+	# denominated in the same units as the HUD's 55-points-per-heat term.
+	var doctrine_pressure := apply_doctrine_pressure(carry, heat)
+	var pressure_carry: float = doctrine_pressure.x
+	var pressure_heat: float = doctrine_pressure.y
+
 	# Multipliers (caps are very high: this is meant to scale "forever" in practice)
-	var new_hp := 1.0 + carry * hp_from_carry + heat * hp_from_heat + ot_hp_add
+	var new_hp := 1.0 + pressure_carry * hp_from_carry + pressure_heat * hp_from_heat + ot_hp_add
 	new_hp = clampf(new_hp, 1.0, hp_mul_cap)
 
-	var new_dmg := 1.0 + carry * dmg_from_carry + heat * dmg_from_heat + ot_dmg_add
+	var new_dmg := 1.0 + pressure_carry * dmg_from_carry + pressure_heat * dmg_from_heat + ot_dmg_add
 	new_dmg = clampf(new_dmg, 1.0, dmg_mul_cap)
 
-	var new_spd := 1.0 + carry * spd_from_carry + heat * spd_from_heat
+	var new_spd := 1.0 + pressure_carry * spd_from_carry + pressure_heat * spd_from_heat
 	new_spd = clampf(new_spd, 1.0, spd_mul_cap)
 
 	# Spawn interval multiplier from heat + unbounded overtime spawn pressure.
 	# Smaller = faster spawns (Spawner multiplies its wait_time by this).
-	var base_spawn := lerpf(spawn_mul_at_heat0, spawn_mul_at_heat1, heat)
+	var base_spawn := lerpf(spawn_mul_at_heat0, spawn_mul_at_heat1, pressure_heat)
 	var new_spawn := (base_spawn * phase_spawn_factor) / (1.0 + ot_spawn_more)
 	new_spawn = clampf(new_spawn, spawn_mul_min, spawn_mul_max)
 
 	# Elite bonus: from heat + overtime (stage 1)
-	var new_elite := heat * elite_bonus_from_heat + ot_elite_add + phase_elite_add
+	var new_elite := pressure_heat * elite_bonus_from_heat + ot_elite_add + phase_elite_add
 	new_elite = clampf(new_elite, 0.0, elite_bonus_cap)
 
 	# Loot rarity bonus: segment + heat + overtime (log so it stays readable)
-	var loot_f := float(seg - 1) * loot_bonus_from_segment + heat * loot_bonus_from_heat + log(1.0 + ot) * loot_bonus_from_overtime
+	var loot_f := float(seg - 1) * loot_bonus_from_segment + pressure_heat * loot_bonus_from_heat + log(1.0 + ot) * loot_bonus_from_overtime
 	loot_f = clampf(loot_f, 0.0, loot_bonus_cap)
 	loot_rarity_bonus = int(floor(loot_f))
 
 	# Threat value for HUD: keep readable and avoid spikes.
-	var new_threat := carry * 22.0 + heat * 55.0 + log(1.0 + ot) * 35.0
-	new_threat = maxf(0.0, new_threat)
+	var new_threat := apply_doctrine_threat(carry * 22.0 + heat * 55.0 + log(1.0 + ot) * 35.0)
 
 	var changed: bool = force_emit \
 		or absf(new_threat - threat) > 0.01 \
@@ -464,3 +470,22 @@ func _recompute(force_emit: bool = false) -> void:
 	if changed:
 		threat_changed.emit(threat)
 		multipliers_changed.emit(enemy_hp_mul, enemy_damage_mul, enemy_speed_mul, spawn_interval_mul, elite_bonus)
+
+func apply_doctrine_threat(base_threat: float) -> float:
+	var multiplier := 1.0
+	var debt := 0.0
+	if Global != null:
+		multiplier = float(Global.get_doctrine_rule(&"threat_gain_mul", 1.0))
+		debt = float(Global.attempt_doctrine_threat_debt)
+	return maxf(0.0, base_threat * multiplier + debt)
+
+func apply_doctrine_pressure(base_carry: float, base_heat: float) -> Vector2:
+	var multiplier := 1.0
+	var debt := 0.0
+	if Global != null:
+		multiplier = maxf(0.0, float(Global.get_doctrine_rule(&"threat_gain_mul", 1.0)))
+		debt = maxf(0.0, float(Global.attempt_doctrine_threat_debt))
+	return Vector2(
+		maxf(0.0, base_carry * multiplier),
+		maxf(0.0, base_heat * multiplier + debt / 55.0)
+	)

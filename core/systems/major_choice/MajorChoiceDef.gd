@@ -7,6 +7,16 @@ class_name MajorChoiceDef
 
 @export var icon: Texture2D = null
 
+@export var enabled: bool = true
+@export var stage: StringName = &"method"
+@export var offer_role: StringName = &"amplify"
+@export var family_id: StringName = &""
+@export_multiline var gift_text: String = ""
+@export_multiline var price_text: String = ""
+@export_multiline var consequence_text: String = ""
+@export var build_tags: Array[StringName] = []
+@export var base_offer_score: float = 1.0
+
 # Offer-bucketing / classification (used for Segment 5 'big choice' moments).
 # Suggested categories: &"augment", &"style", &"utility"
 @export var category: StringName = &""
@@ -23,6 +33,8 @@ class_name MajorChoiceDef
 @export var effects: Array[MajorChoiceEffect] = []
 
 func is_available(g: Node) -> bool:
+	if not enabled:
+		return false
 	if id == StringName():
 		return false
 	if g == null:
@@ -61,6 +73,31 @@ func is_available(g: Node) -> bool:
 			return false
 
 	return true
+
+
+func is_doctrine_complete() -> bool:
+	return (
+		enabled
+		and stage in [&"method", &"doctrine", &"apotheosis"]
+		and offer_role in [&"amplify", &"transfigure", &"covenant"]
+		and family_id != StringName()
+		and not gift_text.strip_edges().is_empty()
+		and not price_text.strip_edges().is_empty()
+		and not consequence_text.strip_edges().is_empty()
+	)
+
+
+func score_for(context: RefCounted) -> float:
+	var score := base_offer_score
+	if context == null:
+		return score
+	var context_tags: Dictionary = context.get("tags")
+	for tag in build_tags:
+		if context_tags.has(tag):
+			score += 10.0
+	if context_tags.has(StringName("family:%s" % String(family_id))):
+		score += 25.0
+	return score
 
 func preview_lines(g: Node) -> PackedStringArray:
 	var out: PackedStringArray = PackedStringArray()

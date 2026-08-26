@@ -60,6 +60,7 @@ var _secondary_objectives: Array[Dictionary] = []
 var _secondary_completed: Dictionary = {}
 var _active_secondary_id: int = -1
 var _secondary_feedback_token: int = 0
+var _rite_safeguard_sources: Dictionary = {}
 
 @export_group("Procedural Debug")
 @export var debug_proc_state: bool = false
@@ -318,7 +319,8 @@ func _spawn_primary_objective() -> void:
 
 func _spawn_wardstones() -> void:
 	var wards: Array = _plan.get("wardstone_world", [])
-	for p in wards:
+	for ward_index in range(wards.size()):
+		var p: Vector2 = wards[ward_index]
 		var s := WARDSTONE_SCENE.instantiate() as Wardstone
 		if s == null:
 			continue
@@ -331,9 +333,12 @@ func _spawn_wardstones() -> void:
 		s.global_position = pos
 		add_child(s)
 		# Attuning a wardstone is a meaningful act: it feeds the bar.
-		s.activated.connect(func(_stone: Wardstone) -> void:
-			grant_resonance(0.06, true)
-		)
+		s.activated.connect(_on_wardstone_activated.bind(ward_index))
+
+
+func _on_wardstone_activated(_stone: Wardstone, ward_index: int) -> void:
+	grant_resonance(0.06, true)
+	register_rite_safeguard_source(StringName("wardstone:%d" % ward_index))
 
 func _spawn_exit_gate() -> void:
 	var p: Vector2 = _plan.get("exit_world", Vector2.ZERO)
@@ -352,6 +357,7 @@ func _spawn_exit_gate() -> void:
 	_exit_rite.global_position = pos
 	add_child(_exit_rite)
 	_exit_rite.cleared.connect(_on_gate_cleared)
+	_replay_rite_safeguard_sources()
 	if not _primary_completed:
 		_exit_rite.set_revealed(false)
 
@@ -655,6 +661,8 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 	if _secondary_completed.has(objective_id):
 		return
 	_secondary_completed[objective_id] = true
+	register_rite_safeguard_source(StringName("secondary:%d" % objective_id))
+	Global.grant_doctrine_secondary_rewards(StringName("secondary:%d" % objective_id))
 	# Optional objectives are exactly the "meaningful actions" Resonance is
 	# supposed to reward: detours pay progress, not just loot.
 	grant_resonance(0.05, true)
@@ -684,6 +692,23 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
 		RunEvents.tutorial_tip.emit("Secondary complete • %s" % completion_detail, 2.4)
 	_clear_secondary_after_delay(feedback_token)
+
+
+func register_rite_safeguard_source(source_key: StringName, amount: int = 1) -> int:
+	if source_key == StringName() or amount <= 0 or _rite_safeguard_sources.has(source_key):
+		return 0
+	_rite_safeguard_sources[source_key] = amount
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
+		return 0
+	return _exit_rite.grant_safeguard(source_key, amount)
+
+
+func _replay_rite_safeguard_sources() -> void:
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
+		return
+	for source_variant in _rite_safeguard_sources.keys():
+		var source_key := StringName(str(source_variant))
+		_exit_rite.grant_safeguard(source_key, int(_rite_safeguard_sources[source_variant]))
 
 func _clear_secondary_after_delay(feedback_token: int) -> void:
 	await get_tree().create_timer(2.4).timeout

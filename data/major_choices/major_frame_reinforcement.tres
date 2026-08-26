@@ -15,6 +15,7 @@ delta = SubResource("sd")
 
 [resource]
 script = ExtResource("1")
+enabled = false
 id = &"major_frame_reinforcement"
 title = "Frame Reinforcement"
 description = "Reinforce the chassis and plating.\n• +35 Max HP\n• +6 Armor (this attempt)"

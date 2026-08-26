@@ -182,7 +182,7 @@ func _ready() -> void:
 
 	confirm_trade.confirmed.connect(_perform_trade)
 
-	# Major choice overlay (Segment 5 reward)
+	# Ascension Doctrine overlay (staged rewards after Segments 3, 6, and 9)
 	if major_choice_scene != null:
 		_major_choice = major_choice_scene.instantiate() as MajorChoice
 		add_child(_major_choice)
@@ -377,7 +377,7 @@ func _refresh_info() -> void:
 	if Global != null and Global.pending_augment_pick:
 		extra += "\n\nREWARD READY\nAugment pick available"
 	if Global != null and Global.pending_big_choice:
-		extra += "\n\nREWARD READY\nMajor choice pending"
+		extra += "\n\nDOCTRINE READY\nAscension thesis awaiting inscription"
 
 	title.text = "Aftermath"
 	var report_header: String = "SEGMENT %d CLEARED" % completed_segment if completed_segment > 0 else "PREPARING SEGMENT 1"

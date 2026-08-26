@@ -76,6 +76,9 @@ signal secondary_objective_completed(objective_id: int)
 @warning_ignore("unused_signal")
 signal segment_phase_changed(phase: StringName, label: String)
 
+@warning_ignore("unused_signal")
+signal doctrine_event_recorded(event_id: StringName, label: String)
+
 # Structured Exit Rite state for the HUD checklist. state is &"locked",
 # &"located" or &"ready"; items are {id: StringName, label: String,
 # done: bool}. Never derive READY from resonance_changed - that channel is

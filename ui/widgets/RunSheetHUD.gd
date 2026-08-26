@@ -45,6 +45,7 @@ var _page_signatures := {
 	ArchivePage.OBSERVATIONS: "__UNINITIALIZED__",
 }
 var _rebuild_counts := {"sets": 0, "manifestations": 0, "observations": 0}
+var _doctrine_events: Array[String] = []
 
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
 ## The layer's own colour. Anything naming a specific noun or rule uses that
@@ -56,6 +57,10 @@ func _ready() -> void:
 	for index in range(_page_buttons.size()):
 		_page_buttons[index].pressed.connect(select_page.bind(index))
 	select_page(_selected_page)
+	if RunEvents != null and RunEvents.has_signal("doctrine_event_recorded"):
+		var callback := Callable(self, "_on_doctrine_event_recorded")
+		if not RunEvents.doctrine_event_recorded.is_connected(callback):
+			RunEvents.doctrine_event_recorded.connect(callback)
 
 
 func select_page(page: int) -> void:
@@ -289,8 +294,42 @@ func _refresh_manifestations(player: Node) -> void:
 	_add_section_heading(manifestations_vbox, "MANIFESTATIONS // ACTIVE DOCTRINE", MANIFEST)
 	_append_burden(player)
 	_append_manifestations(player)
+	_append_doctrine_record()
 	if manifestations_vbox.get_child_count() == 1:
 		_add_target_line(manifestations_vbox, "NO ACTIVE MANIFESTATION", Color(1, 1, 1, 0.48), 11)
+
+
+func _on_doctrine_event_recorded(_event_id: StringName, label: String) -> void:
+	if label.strip_edges() != "":
+		var clean_label := label.strip_edges()
+		if not _doctrine_events.has(clean_label):
+			_doctrine_events.append(clean_label)
+	_page_signatures[ArchivePage.MANIFESTATIONS] = "__DOCTRINE_EVENT__"
+
+
+func _append_doctrine_record() -> void:
+	if Global == null:
+		return
+	var stage_ids: Dictionary = Global.attempt_doctrine_stage_ids
+	var recorded_events: Array[String] = Global.attempt_doctrine_events.duplicate()
+	for local_event in _doctrine_events:
+		if not recorded_events.has(local_event):
+			recorded_events.append(local_event)
+	if stage_ids.is_empty() and recorded_events.is_empty():
+		return
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	_add_section_heading(manifestations_vbox, "DOCTRINE RECORD // INSCRIBED", ACCENT)
+	for stage_id in [&"method", &"doctrine", &"apotheosis"]:
+		var choice_id := StringName(str(stage_ids.get(String(stage_id), stage_ids.get(stage_id, ""))))
+		if choice_id == StringName():
+			continue
+		var definition: MajorChoiceDef = Global.major_choice_db.get_def(choice_id)
+		var title := definition.title if definition != null else String(choice_id)
+		_add_target_line(manifestations_vbox, "%s // %s" % [String(stage_id).to_upper(), title.to_upper()], ACCENT, 11)
+	if bool(Global.get_doctrine_rule(&"force_augment_identity", false)):
+		_add_target_line(manifestations_vbox, "PERFECTED ENGINE // AUGMENT SEALS 3/3", ACCENT, 11)
+	for event_label in recorded_events:
+		_add_target_line(manifestations_vbox, event_label, Color(0.86, 0.35, 0.22, 1), 11)
 
 
 func _manifestation_state(player: Node) -> Dictionary:
@@ -305,6 +344,8 @@ func _manifestation_state(player: Node) -> Dictionary:
 			burden.suppressed_severity,
 		]
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
+	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
+	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
 	var runner := player.get_node_or_null("ManifestationRunner")
 	if runner == null:
 		return state
