@@ -54,6 +54,14 @@ var _last_physics_ms: float = 0.0
 var _stress_started: bool = false
 var _last_stress_enabled: bool = false
 var _debug_label: Label = null
+# Bullets step on render frames (smooth at any refresh rate) but consume
+# PHYSICS time: with max_physics_steps_per_frame capping catch-up, the world
+# clock dilates under load and bullets must dilate with it, or they outrun the
+# enemies they were aimed at. Banked time beyond MAX_BANKED_PHYSICS_SEC is
+# dropped, mirroring the physics catch-up cap.
+const MAX_BANKED_PHYSICS_SEC: float = 0.25
+const MAX_PIERCE_HITS_PER_STEP: int = 8
+var _physics_time_bank: float = 0.0
 
 func _ready() -> void:
 	z_index = 200
@@ -66,8 +74,14 @@ func _ready() -> void:
 	# is precisely when a 550-bullet torrent needs the time back.
 	set_process(true)
 
+func _physics_process(delta: float) -> void:
+	_physics_time_bank = minf(_physics_time_bank + maxf(delta, 0.0), MAX_BANKED_PHYSICS_SEC)
+
+
 func _process(delta: float) -> void:
 	var started_us := Time.get_ticks_usec()
+	var step := minf(maxf(delta, 0.0), _physics_time_bank)
+	_physics_time_bank -= step
 	var stress_enabled: bool = Global != null and Global.debug_projectile_stress_test
 	if stress_enabled != _last_stress_enabled:
 		_last_stress_enabled = stress_enabled
@@ -79,8 +93,9 @@ func _process(delta: float) -> void:
 	_pending_ledgers.clear()
 	if Global != null and Global.debug_projectile_stress_test:
 		_run_stress_step()
-	for i in range(_active_count - 1, -1, -1):
-		_simulate_one(i, delta)
+	if step > 0.0:
+		for i in range(_active_count - 1, -1, -1):
+			_simulate_one(i, step)
 	_flush_hit_ledgers()
 	_update_renderer()
 	_last_physics_ms = float(Time.get_ticks_usec() - started_us) / 1000.0
@@ -189,13 +204,28 @@ func _simulate_one(index: int, delta: float) -> void:
 		_remove(index)
 		return
 	if target_handle != 0 and target_t >= 0.0:
-		var hit_pos := old_pos.lerp(new_pos, target_t)
-		_queue_handle_hit(index, target_handle, hit_pos)
-		if _pierce[index] <= 0:
-			_remove(index)
-			return
-		_pierce[index] -= 1
-		_last_hit_handles[index] = target_handle
+		# A fast piercing bullet crosses several enemies in one step; keep
+		# sweeping from each contact instead of skipping the rest of the segment.
+		var sweep_t := target_t
+		var sweeps := 0
+		while true:
+			var hit_pos := old_pos.lerp(new_pos, sweep_t)
+			_queue_handle_hit(index, target_handle, hit_pos)
+			if _pierce[index] <= 0:
+				_remove(index)
+				return
+			_pierce[index] -= 1
+			_last_hit_handles[index] = target_handle
+			sweeps += 1
+			if sweeps >= MAX_PIERCE_HITS_PER_STEP or sweep_t >= 1.0:
+				break
+			if not _query_first_enemy_hit(hit_pos, new_pos, _radii[index], target_handle):
+				break
+			target_handle = _query_hit_handle
+			sweep_t = sweep_t + _query_hit_t * (1.0 - sweep_t)
+			if world_t >= 0.0 and world_t <= sweep_t:
+				_remove(index)
+				return
 	elif target != null and target_t >= 0.0:
 		var hit_pos := old_pos.lerp(new_pos, target_t)
 		_queue_node_hit(index, target, hit_pos)

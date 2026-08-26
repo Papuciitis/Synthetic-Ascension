@@ -163,6 +163,33 @@ func _run() -> void:
 	actor.free()
 	renderer.publish(1.0)
 	_check(renderer.registered_actor_count() == 0, "freed actor is pruned from the batch registry")
+
+	# --- buffer capacity follows the live population back down ---
+	var burst: Array[int] = []
+	for i in range(200):
+		burst.append(_spawn(world, StringName("burst_%d" % i), Vector2(float(i) * 4.0, 900.0), 0, {
+			"proxy_visual_key": &"burst",
+			"proxy_size": Vector2(8.0, 8.0),
+		}))
+	renderer.publish(1.0)
+	var burst_batch := (renderer.get("_batches") as Dictionary).get(&"burst", {}) as Dictionary
+	_check(int(burst_batch.get("capacity", 0)) >= 200, "a 200-proxy burst grows the batch to hold it")
+	for i in range(190):
+		world.remove_enemy(burst[i], &"test_shrink")
+	for i in range(240):
+		renderer.publish(1.0)
+	burst_batch = (renderer.get("_batches") as Dictionary).get(&"burst", {}) as Dictionary
+	var shrunk_capacity := int(burst_batch.get("capacity", 0))
+	_check(
+		shrunk_capacity >= 10 and shrunk_capacity <= 64,
+		"a batch that stays far below its peak shrinks its upload buffer (capacity %d)" % shrunk_capacity
+	)
+	_check(
+		renderer.debug_instance_transform(burst[195]).origin.is_equal_approx(Vector2(195.0 * 4.0, 900.0)),
+		"survivors still render at their positions after the shrink"
+	)
+	for i in range(190, 200):
+		world.remove_enemy(burst[i], &"test_cleanup")
 	renderer.queue_free()
 	world.queue_free()
 	await get_tree().process_frame

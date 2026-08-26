@@ -171,6 +171,16 @@ func set_position(handle: int, value: Vector2) -> bool:
 	return true
 
 
+func set_previous_position(handle: int, value: Vector2) -> bool:
+	# Interpolation origin only; the authoritative position and the spatial
+	# grid are untouched. Used to rebase proxies when their update rate changes.
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return false
+	_previous_positions[slot] = value
+	return true
+
+
 func reset_interpolation(handle: int) -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:

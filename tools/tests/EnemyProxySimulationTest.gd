@@ -71,6 +71,27 @@ func _run() -> void:
 	_check(world.get_facing(chase).is_equal_approx(Vector2.RIGHT), "proxy movement stores stable facing")
 	_check(simulation.call("interpolated_position", chase, 0.0) == Vector2.ZERO, "interpolation alpha zero returns previous position")
 	_check(simulation.call("interpolated_position", chase, 1.0).is_equal_approx(Vector2(10.0, 0.0)), "interpolation alpha one returns current position")
+	# Halfway through the 10 Hz interval the proxy is drawn at (5, 0). Dropping
+	# to the 3 Hz emergency rate must not recompute that blend against the
+	# longer interval (that snapped every proxy backwards on the frame pressure
+	# engaged); the drawn position is continuous across the rate change.
+	simulation.set("slice_count", 1)
+	simulation.call("advance", 0.05, Vector2(100.0, 0.0))
+	var before_rate_change: Vector2 = simulation.call("interpolated_position", chase)
+	_check(before_rate_change.is_equal_approx(Vector2(5.0, 0.0)), "mid-interval blend sits halfway (got %s)" % before_rate_change)
+	simulation.call("set_pressure_level", 2)
+	var after_rate_change: Vector2 = simulation.call("interpolated_position", chase)
+	_check(
+		after_rate_change.is_equal_approx(before_rate_change),
+		"changing the proxy update rate keeps the interpolated position continuous (got %s)" % after_rate_change
+	)
+	_check(world.get_position(chase).is_equal_approx(Vector2(10.0, 0.0)), "rate change leaves the authoritative position untouched")
+	simulation.call("set_pressure_level", 0)
+	# Consume the banked half interval with a single slice so the tests below
+	# see the original 6-slice, zero-accumulator cadence.
+	simulation.set("slice_count", 1)
+	simulation.call("advance", 0.05, Vector2(100.0, 0.0))
+	simulation.set("slice_count", 6)
 
 	var controlled := _spawn(world, &"controlled", Vector2.ZERO, 100.0, 0, 0, {"knockback_decay": 0.0})
 	world.set_stun_time(controlled, 0.2)

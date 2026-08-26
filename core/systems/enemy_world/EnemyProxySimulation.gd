@@ -51,6 +51,7 @@ func set_direction_provider(provider: Callable) -> void:
 
 
 func set_pressure_level(level: int) -> void:
+	var previous_hz := update_hz
 	if level >= 2:
 		update_hz = emergency_update_hz
 		slice_count = emergency_slice_count
@@ -60,6 +61,31 @@ func set_pressure_level(level: int) -> void:
 	else:
 		update_hz = normal_update_hz
 		slice_count = normal_slice_count
+	if not is_equal_approx(previous_hz, update_hz):
+		_rebase_interpolation(previous_hz)
+
+
+func _rebase_interpolation(previous_hz: float) -> void:
+	# The renderer blends previous -> current by (clock - update_time) /
+	# interval. Changing the interval under a live blend re-evaluates every
+	# proxy's phase against the new length: at 10 -> 3 Hz a proxy 90% through
+	# its step jumps back to 27%, a whole-swarm backwards snap on the frame
+	# pressure engages. Restart each blend from where it is drawn right now.
+	if _world == null or not is_instance_valid(_world) or previous_hz <= 0.0:
+		return
+	var previous_interval := 1.0 / previous_hz
+	_world.active_handles(_handles)
+	for handle in _handles:
+		if _world.get_representation(handle) != Types.Representation.DATA_ONLY:
+			continue
+		var blend := clampf((_clock - _world.get_proxy_update_time(handle)) / previous_interval, 0.0, 1.0)
+		if blend <= 0.0 or blend >= 1.0:
+			if blend >= 1.0:
+				_world.set_previous_position(handle, _world.get_position(handle))
+			continue
+		var drawn := _world.get_previous_position(handle).lerp(_world.get_position(handle), blend)
+		_world.set_previous_position(handle, drawn)
+		_world.set_proxy_update_time(handle, _clock)
 
 
 func advance(delta: float, target_position: Vector2) -> int:

@@ -101,6 +101,45 @@ func _run() -> void:
 
 	manager.call("_clear_all")
 	EnemyWorld.remove_enemy(replacement, &"test_cleanup")
+
+	# A piercing bullet whose single step crosses two enemies must hit both:
+	# the sweep continues from the first contact instead of skipping the rest
+	# of the segment (at 60 fps a 1800 px/s bullet covers 30 px per step).
+	var near := _spawn_record(&"near", Vector2(30.0, 0.0))
+	var far := _spawn_record(&"far", Vector2(60.0, 0.0))
+	manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(10.0, 1), source)
+	manager.call("_simulate_one", 0, 0.90)
+	manager.call("_flush_hit_ledgers")
+	_check(EnemyWorld.get_health(near) == 10.0, "pierce sweep damages the first enemy on the segment")
+	_check(EnemyWorld.get_health(far) == 10.0, "pierce sweep also damages the second enemy crossed in the same step")
+	_check(int(manager.call("active_count")) == 0, "pierce budget exhausted inside one step retires the bullet")
+	manager.call("_clear_all")
+	EnemyWorld.remove_enemy(near, &"test_cleanup")
+	EnemyWorld.remove_enemy(far, &"test_cleanup")
+
+	# Bullets advance on physics time: with the physics catch-up cap active the
+	# world clock dilates, and render-frame stepping must dilate with it or
+	# bullets outrun the enemies they were aimed at.
+	manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(), source)
+	manager.call("_process", 0.5)
+	var no_physics_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	_check(no_physics_pos.is_equal_approx(Vector2.ZERO), "render frames without a physics step do not move bullets (got %s)" % no_physics_pos)
+	manager.call("_physics_process", 1.0 / 60.0)
+	manager.call("_process", 0.5)
+	var one_step_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	_check(
+		absf(one_step_pos.x - 100.0 / 60.0) < 0.01,
+		"bullets consume exactly the physics time that elapsed (got %.3f px)" % one_step_pos.x
+	)
+	manager.call("_physics_process", 1.0 / 60.0)
+	manager.call("_physics_process", 1.0 / 60.0)
+	manager.call("_process", 1.0 / 120.0)
+	var partial_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	_check(
+		absf(partial_pos.x - (100.0 / 60.0 + 100.0 / 120.0)) < 0.01,
+		"a short render frame consumes only its own slice of banked physics time (got %.3f px)" % partial_pos.x
+	)
+	manager.call("_clear_all")
 	actor.queue_free()
 	manager.queue_free()
 	await get_tree().process_frame
