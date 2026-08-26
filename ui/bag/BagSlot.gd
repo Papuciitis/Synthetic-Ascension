@@ -74,10 +74,10 @@ func _apply_frame_style() -> void:
 	_frame_sb.bg_color = Color(0.08, 0.08, 0.08, 0.88)
 	_frame_sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
 	_frame_sb.set_border_width_all(2)
-	_frame_sb.corner_radius_top_left = 12
-	_frame_sb.corner_radius_top_right = 12
-	_frame_sb.corner_radius_bottom_left = 12
-	_frame_sb.corner_radius_bottom_right = 12
+	_frame_sb.corner_radius_top_left = 2
+	_frame_sb.corner_radius_top_right = 2
+	_frame_sb.corner_radius_bottom_left = 2
+	_frame_sb.corner_radius_bottom_right = 2
 	add_theme_stylebox_override("panel", _frame_sb)
 
 func _stack_is_locked() -> bool:

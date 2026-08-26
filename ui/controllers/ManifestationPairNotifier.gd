@@ -160,7 +160,7 @@ func _show_next() -> void:
 
 	_title.text = "MANIFESTATION PAIR" if gained else "PAIR LOST"
 	_name.text = String(pair.get("name", "")).to_upper()
-	_detail.text = _nouns_line(nouns) + "\n" + String(pair.get("rule", ""))
+	_detail.text = _nouns_line(nouns) + "\nFull protocol recorded in Run Sheet."
 
 	# A pair belongs to both its nouns, so its accent is the midpoint of the two
 	# - it should not look like it is one noun's property.
@@ -238,10 +238,12 @@ func _build_ui() -> void:
 	margin.add_child(box)
 	_title = Label.new()
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title.theme_type_variation = &"InstitutionalHeading"
 	_title.add_theme_font_size_override("font_size", 12)
 	box.add_child(_title)
 	_name = Label.new()
 	_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_name.theme_type_variation = &"SacredHeading"
 	_name.add_theme_font_size_override("font_size", 16)
 	box.add_child(_name)
 	_detail = Label.new()

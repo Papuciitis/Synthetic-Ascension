@@ -560,10 +560,11 @@ func _push_objective_ui() -> void:
 	else:
 		guidance = "All conditions met • follow the orange gate marker"
 
-	RunEvents.objective_changed.emit(
-		"EXIT RITE • %s" % String(gate_state).to_upper(),
-		guidance
-	)
+	# The checklist owns the complete post-primary gate state. Keeping an
+	# ordinary objective alive here presents the same rite twice with two
+	# different visual grammars, and makes the evacuation banner a third copy
+	# once the gate opens.
+	RunEvents.objective_changed.emit("", "")
 	_emit_gate_checklist(gate_state, items, guidance)
 
 

@@ -82,12 +82,15 @@ func _run() -> void:
 		int(hud.process_mode) == int(Node.PROCESS_MODE_ALWAYS),
 		"the HUD keeps running so the panel is still usable"
 	)
-	await RenderingServer.frame_post_draw
-	var image := get_viewport().get_texture().get_image()
-	print("PAUSE shot -> %s (err=%d)" % [
-		"%s/paused_inventory.png" % _dir,
-		image.save_png("%s/paused_inventory.png" % _dir)
-	])
+	# A paused headless viewport has no meaningful capture and may never finish a
+	# readback. Interactive runs still preserve the visual probe artifact.
+	if DisplayServer.get_name() != "headless":
+		RenderingServer.force_draw(false)
+		var image := get_viewport().get_texture().get_image()
+		print("PAUSE shot -> %s (err=%d)" % [
+			"%s/paused_inventory.png" % _dir,
+			image.save_png("%s/paused_inventory.png" % _dir)
+		])
 
 	bag.call("toggle_bag_open")
 	for _f in range(6):

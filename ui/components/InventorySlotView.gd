@@ -392,10 +392,10 @@ func _ensure_lock_border() -> void:
 		style.bg_color = Color(0, 0, 0, 0)
 		style.border_color = Color(1.0, 0.72, 0.22, 0.95)
 		style.set_border_width_all(2)
-		style.corner_radius_top_left = 10
-		style.corner_radius_top_right = 10
-		style.corner_radius_bottom_left = 10
-		style.corner_radius_bottom_right = 10
+		style.corner_radius_top_left = 2
+		style.corner_radius_top_right = 2
+		style.corner_radius_bottom_left = 2
+		style.corner_radius_bottom_right = 2
 		_lock_border.add_theme_stylebox_override("panel", style)
 		add_child(_lock_border)
 	_lock_border.visible = false

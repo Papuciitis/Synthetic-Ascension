@@ -1,0 +1,67 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://tools/tests/HudContextPresentationTest.gd" id="1_test"]
+[ext_resource type="PackedScene" path="res://ui/overlays/GateOverlay.tscn" id="2_overlay"]
+[ext_resource type="Script" path="res://ui/controllers/HudObjectiveController.gd" id="3_objective"]
+[ext_resource type="Script" path="res://ui/controllers/HudGateChecklistController.gd" id="4_gate"]
+[ext_resource type="Script" path="res://ui/controllers/ManifestationPairNotifier.gd" id="5_pair"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="6_theme"]
+[ext_resource type="PackedScene" path="res://ui/widgets/RunSheetHUD.tscn" id="7_run_sheet"]
+
+[node name="HudContextPresentationTest" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_test")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.105, 0.09, 0.075, 1)
+
+[node name="GateOverlay" parent="." instance=ExtResource("2_overlay")]
+layout_mode = 1
+
+[node name="ObjectiveController" type="Node" parent="."]
+script = ExtResource("3_objective")
+panel_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel")
+title_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel/Margin/VBox/Title")
+detail_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel/Margin/VBox/Detail")
+secondary_panel_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel")
+secondary_title_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel/Margin/VBox/Title")
+secondary_detail_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel/Margin/VBox/Detail")
+
+[node name="GateChecklistController" type="Node" parent="."]
+script = ExtResource("4_gate")
+panel_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel")
+header_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Header")
+rows_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Rows")
+hint_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Hint")
+
+[node name="ManifestationPairNotifier" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("6_theme")
+script = ExtResource("5_pair")
+
+[node name="RunSheetHUD" parent="." instance=ExtResource("7_run_sheet")]
+visible = false
+layout_mode = 0
+offset_left = 16.0
+offset_top = 96.0
+offset_right = 316.0
+offset_bottom = 700.0
+theme = ExtResource("6_theme")

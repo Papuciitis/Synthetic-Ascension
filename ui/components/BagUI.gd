@@ -149,19 +149,19 @@ func _build_slot_styles() -> void:
 	_slot_sb_quick.bg_color = Color(0, 0, 0, 0.25)
 	_slot_sb_quick.border_color = Color(0.14, 0.14, 0.14, 1.0)
 	_slot_sb_quick.set_border_width_all(2)
-	_slot_sb_quick.corner_radius_top_left = 12
-	_slot_sb_quick.corner_radius_top_right = 12
-	_slot_sb_quick.corner_radius_bottom_left = 12
-	_slot_sb_quick.corner_radius_bottom_right = 12
+	_slot_sb_quick.corner_radius_top_left = 2
+	_slot_sb_quick.corner_radius_top_right = 2
+	_slot_sb_quick.corner_radius_bottom_left = 2
+	_slot_sb_quick.corner_radius_bottom_right = 2
 
 	_slot_sb_grid = StyleBoxFlat.new()
 	_slot_sb_grid.bg_color = Color(0, 0, 0, 0.20)
 	_slot_sb_grid.border_color = Color(0.14, 0.14, 0.14, 1.0)
 	_slot_sb_grid.set_border_width_all(2)
-	_slot_sb_grid.corner_radius_top_left = 10
-	_slot_sb_grid.corner_radius_top_right = 10
-	_slot_sb_grid.corner_radius_bottom_left = 10
-	_slot_sb_grid.corner_radius_bottom_right = 10
+	_slot_sb_grid.corner_radius_top_left = 2
+	_slot_sb_grid.corner_radius_top_right = 2
+	_slot_sb_grid.corner_radius_bottom_left = 2
+	_slot_sb_grid.corner_radius_bottom_right = 2
 
 
 func _style_slot(s: BagSlot, is_quick: bool) -> void:

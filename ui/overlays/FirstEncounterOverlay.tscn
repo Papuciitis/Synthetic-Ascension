@@ -1,0 +1,110 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/overlays/FirstEncounterOverlay.gd" id="1_overlay"]
+[ext_resource type="Script" path="res://ui/overlays/FirstEncounterTether.gd" id="2_tether"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="3_theme"]
+
+[node name="FirstEncounterOverlay" type="CanvasLayer"]
+script = ExtResource("1_overlay")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("3_theme")
+
+[node name="Tether" type="Control" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_tether")
+
+[node name="Card" type="PanelContainer" parent="Root"]
+custom_minimum_size = Vector2(410, 188)
+layout_mode = 0
+offset_right = 410.0
+offset_bottom = 188.0
+mouse_filter = 2
+theme_type_variation = &"InstitutionalPanel"
+
+[node name="Margin" type="MarginContainer" parent="Root/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 14
+
+[node name="VBox" type="VBoxContainer" parent="Root/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Eyebrow" type="Label" parent="Root/Card/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"InstitutionalHeading"
+theme_override_colors/font_color = Color(0.88, 0.47, 0.19, 1)
+theme_override_font_sizes/font_size = 11
+text = "FIRST ENCOUNTER  //  ARCHETYPE INDEXED"
+
+[node name="Identity" type="HBoxContainer" parent="Root/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Portrait" type="TextureRect" parent="Root/Card/Margin/VBox/Identity"]
+custom_minimum_size = Vector2(46, 46)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Root/Card/Margin/VBox/Identity"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"InstitutionalHeading"
+theme_override_font_sizes/font_size = 22
+text = "UNKNOWN ARCHETYPE"
+vertical_alignment = 1
+
+[node name="Rule" type="ColorRect" parent="Root/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.72, 0.32, 0.11, 0.85)
+
+[node name="Role" type="Label" parent="Root/Card/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 13
+text = "ROLE  //  UNCLASSIFIED"
+
+[node name="Ratings" type="Label" parent="Root/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.74, 0.68, 1)
+theme_override_font_sizes/font_size = 11
+text = "CLASSIFICATION  //  UNRESOLVED"
+text_overrun_behavior = 3
+
+[node name="Counter" type="Label" parent="Root/Card/Margin/VBox"]
+custom_minimum_size = Vector2(360, 36)
+layout_mode = 2
+theme_type_variation = &"BodyStrong"
+theme_override_colors/font_color = Color(0.94, 0.90, 0.80, 1)
+theme_override_font_sizes/font_size = 13
+text = "COUNTER  //  OBSERVE AND ADAPT"
+autowrap_mode = 2
+max_lines_visible = 2
+text_overrun_behavior = 3
+
+[node name="Archive" type="Label" parent="Root/Card/Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.62, 0.59, 0.52, 1)
+theme_override_font_sizes/font_size = 10
+text = "ARCHIVED  //  RUN SHEET / OBSERVATIONS"
+horizontal_alignment = 2

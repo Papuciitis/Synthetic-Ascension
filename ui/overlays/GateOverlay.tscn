@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://drhjupnfrk5wy" path="res://assets/ui/arrow_triangle.png" id="1_arrow_tex"]
 [ext_resource type="Shader" uid="uid://bqu8tulqs8d7p" path="res://ui/shaders/arrow_gradient.gdshader" id="2_arrow_shd"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="3_hud_theme"]
 
 [sub_resource type="StyleBoxFlat" id="StyleArrow"]
 bg_color = Color(0, 0, 0, 0.26)
@@ -10,10 +11,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.28)
 shadow_size = 8
 shadow_offset = Vector2(0, 5)
@@ -31,10 +32,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 shadow_color = Color(0, 0, 0, 0.32)
 shadow_size = 12
 shadow_offset = Vector2(0, 8)
@@ -46,15 +47,31 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 10
 shadow_offset = Vector2(0, 6)
 
+[sub_resource type="StyleBoxFlat" id="StyleContext"]
+bg_color = Color(0.035, 0.032, 0.028, 0.88)
+border_width_left = 3
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.27, 0.2, 0.95)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0, 0, 0, 0.36)
+shadow_size = 8
+shadow_offset = Vector2(0, 5)
+
 [node name="GateOverlay" type="Control" unique_id=700980344]
+theme = ExtResource("3_hud_theme")
 z_index = 2000
 z_as_relative = false
 layout_mode = 3
@@ -143,6 +160,7 @@ alignment = 1
 
 [node name="Title" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=167210424]
 layout_mode = 2
+theme_type_variation = &"SacredHeading"
 theme_override_colors/font_color = Color(0.25, 0.75, 1, 0.98)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 10
@@ -154,6 +172,7 @@ vertical_alignment = 1
 [node name="Sub" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=608462753]
 modulate = Color(1, 1, 1, 0.78)
 layout_mode = 2
+theme_type_variation = &"BodyStrong"
 theme_override_font_sizes/font_size = 22
 text = "Rewrite the outer Rite"
 horizontal_alignment = 1
@@ -191,21 +210,24 @@ horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 
-[node name="ObjectivePanel" type="PanelContainer" parent="."]
-visible = false
+[node name="ContextStack" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -500.0
-offset_top = 124.0
+offset_left = -438.0
+offset_top = 104.0
 offset_right = -18.0
-offset_bottom = 294.0
 grow_horizontal = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleTip")
+theme_override_constants/separation = 8
 
-[node name="Margin" type="MarginContainer" parent="ObjectivePanel"]
+[node name="ObjectivePanel" type="PanelContainer" parent="ContextStack"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleContext")
+
+[node name="Margin" type="MarginContainer" parent="ContextStack/ObjectivePanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -213,13 +235,14 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="ObjectivePanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ContextStack/ObjectivePanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="Title" type="Label" parent="ObjectivePanel/Margin/VBox"]
+[node name="Title" type="Label" parent="ContextStack/ObjectivePanel/Margin/VBox"]
 layout_mode = 2
+theme_type_variation = &"InstitutionalHeading"
 theme_override_colors/font_color = Color(1, 0.64, 0.28, 0.98)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 5
@@ -227,7 +250,7 @@ theme_override_font_sizes/font_size = 16
 text = "OBJECTIVE"
 horizontal_alignment = 2
 
-[node name="Detail" type="Label" parent="ObjectivePanel/Margin/VBox"]
+[node name="Detail" type="Label" parent="ContextStack/ObjectivePanel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.9)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
@@ -237,21 +260,13 @@ text = "Objective detail"
 horizontal_alignment = 2
 autowrap_mode = 3
 
-[node name="SecondaryObjectivePanel" type="PanelContainer" parent="."]
+[node name="SecondaryObjectivePanel" type="PanelContainer" parent="ContextStack"]
 visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -500.0
-offset_top = 304.0
-offset_right = -18.0
-offset_bottom = 410.0
-grow_horizontal = 0
+layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleTip")
+theme_override_styles/panel = SubResource("StyleContext")
 
-[node name="Margin" type="MarginContainer" parent="SecondaryObjectivePanel"]
+[node name="Margin" type="MarginContainer" parent="ContextStack/SecondaryObjectivePanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -259,13 +274,14 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="SecondaryObjectivePanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ContextStack/SecondaryObjectivePanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="Title" type="Label" parent="SecondaryObjectivePanel/Margin/VBox"]
+[node name="Title" type="Label" parent="ContextStack/SecondaryObjectivePanel/Margin/VBox"]
 layout_mode = 2
+theme_type_variation = &"InstitutionalHeading"
 theme_override_colors/font_color = Color(0.25, 0.9, 0.82, 0.98)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 5
@@ -273,7 +289,7 @@ theme_override_font_sizes/font_size = 16
 text = "SECONDARY OBJECTIVE"
 horizontal_alignment = 2
 
-[node name="Detail" type="Label" parent="SecondaryObjectivePanel/Margin/VBox"]
+[node name="Detail" type="Label" parent="ContextStack/SecondaryObjectivePanel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.9)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
@@ -283,22 +299,13 @@ text = "Optional objective detail"
 horizontal_alignment = 2
 autowrap_mode = 3
 
-[node name="GateChecklistPanel" type="PanelContainer" parent="."]
+[node name="GateChecklistPanel" type="PanelContainer" parent="ContextStack"]
 visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -500.0
-offset_top = 420.0
-offset_right = -18.0
-offset_bottom = 560.0
-grow_horizontal = 0
-grow_vertical = 1
+layout_mode = 2
 mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleTip")
+theme_override_styles/panel = SubResource("StyleContext")
 
-[node name="Margin" type="MarginContainer" parent="GateChecklistPanel"]
+[node name="Margin" type="MarginContainer" parent="ContextStack/GateChecklistPanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
@@ -306,13 +313,14 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
-[node name="VBox" type="VBoxContainer" parent="GateChecklistPanel/Margin"]
+[node name="VBox" type="VBoxContainer" parent="ContextStack/GateChecklistPanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 4
 
-[node name="Header" type="Label" parent="GateChecklistPanel/Margin/VBox"]
+[node name="Header" type="Label" parent="ContextStack/GateChecklistPanel/Margin/VBox"]
 layout_mode = 2
+theme_type_variation = &"SacredHeading"
 theme_override_colors/font_color = Color(0.95, 0.45, 0.4, 0.98)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
 theme_override_constants/outline_size = 5
@@ -320,12 +328,12 @@ theme_override_font_sizes/font_size = 16
 text = "EXIT RITE • LOCKED"
 horizontal_alignment = 2
 
-[node name="Rows" type="VBoxContainer" parent="GateChecklistPanel/Margin/VBox"]
+[node name="Rows" type="VBoxContainer" parent="ContextStack/GateChecklistPanel/Margin/VBox"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="Hint" type="Label" parent="GateChecklistPanel/Margin/VBox"]
+[node name="Hint" type="Label" parent="ContextStack/GateChecklistPanel/Margin/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 0.62)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)

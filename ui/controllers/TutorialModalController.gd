@@ -2,6 +2,7 @@ extends Node
 class_name TutorialModalController
 
 const OVERLAY_SCENE := preload("res://ui/screens/TutorialCardOverlay.tscn")
+const FIRST_ENCOUNTER_SCENE := preload("res://ui/overlays/FirstEncounterOverlay.tscn")
 
 # Minimum unpaused play between enemy dossier cards. A horde that
 # introduces several new archetypes at once otherwise fires N pause
@@ -64,7 +65,8 @@ func _on_blocking_info_requested(_card_id: StringName, title: String, body: Stri
 	_enqueue({"token": 0, "title": title, "body": body, "eyebrow": "PATTERN RECORD", "texture": null, "enemy_id": &""})
 
 func _on_enemy_encountered(enemy: Node) -> void:
-	if enemy == null or not is_instance_valid(enemy):
+	var target := enemy as Node2D
+	if not _target_is_live(target):
 		return
 	var spec: EnemySpec = enemy.get("spec") as EnemySpec
 	if spec == null:
@@ -76,18 +78,22 @@ func _on_enemy_encountered(enemy: Node) -> void:
 	if Global != null and Global.is_enemy_discovered(enemy_id) and not Global.debug_force_enemy_introductions:
 		return
 	_session_enemy_ids[enemy_id] = true
-	var lore := "“%s”" % String(entry.get("quote", ""))
-	var body := "%s\n\nRole: %s\nBehaviour: %s\nExpect: %s\nCounter: %s\n\n%s" % [
-		lore, String(entry.get("role", "")), String(entry.get("behaviour", "")),
-		String(entry.get("expect", "")), String(entry.get("counter", "")), EnemyDossierCatalog.ratings(spec)
-	]
 	var texture := spec.sprite_texture
 	if texture == null:
 		var sprite := enemy.get_node_or_null("Sprite2D") as Sprite2D
 		if sprite != null:
 			texture = sprite.texture
 	var dossier_name := String(entry.get("name", spec.display_name))
-	_enqueue({"token": 0, "title": dossier_name.to_upper(), "body": body, "eyebrow": "FIRST ENCOUNTER", "texture": texture, "enemy_id": enemy_id, "typewriter_character_limit": lore.length()})
+	var encounter_entry := entry.duplicate()
+	encounter_entry["name"] = dossier_name
+	_enqueue({
+		"token": 0,
+		"entry": encounter_entry,
+		"texture": texture,
+		"enemy_id": enemy_id,
+		"target": target,
+		"ratings": EnemyDossierCatalog.ratings(spec),
+	})
 
 func _enqueue(card: Dictionary) -> void:
 	_queue.append(card)
@@ -105,28 +111,89 @@ func _drain_queue() -> void:
 			await get_tree().process_frame
 			continue
 		var card: Dictionary = _queue.pop_at(index) as Dictionary
-		var was_paused := get_tree().paused
-		get_tree().paused = true
-		if RunEvents != null:
-			RunEvents.tutorial_modal_state_changed.emit(true)
-		var overlay := OVERLAY_SCENE.instantiate() as TutorialCardOverlay
-		get_tree().current_scene.add_child(overlay)
-		overlay.present(String(card.get("title", "")), String(card.get("body", "")), String(card.get("eyebrow", "")), card.get("texture", null) as Texture2D, int(card.get("typewriter_character_limit", -1)))
-		await overlay.dismissed
 		var enemy_id: StringName = card.get("enemy_id", &"") as StringName
+		var presented := false
+		if enemy_id != &"":
+			presented = await _present_enemy_card(card)
+		else:
+			await _present_blocking_card(card)
+			presented = true
+		if not presented:
+			_session_enemy_ids.erase(enemy_id)
+			continue
+
 		if enemy_id != &"":
 			_unpaused_since_enemy_card = 0.0
 			if Global != null:
 				Global.mark_enemy_discovered(enemy_id)
-		overlay.queue_free()
-		if RunEvents != null:
-			RunEvents.tutorial_modal_state_changed.emit(false)
-		get_tree().paused = was_paused
-		_reset_spawners_after_pause()
 		var token := int(card.get("token", 0))
 		if token > 0:
 			_completed_tokens[token] = true
 	_active = false
+
+
+func _present_enemy_card(card: Dictionary) -> bool:
+	var target := card.get("target", null) as Node2D
+	if not _target_is_live(target):
+		return false
+	var overlay: Node = FIRST_ENCOUNTER_SCENE.instantiate()
+	if overlay == null:
+		return false
+	_presentation_host().add_child(overlay)
+	overlay.connect(&"freeze_released", _reset_spawners_after_pause, CONNECT_ONE_SHOT)
+	var finished := [false]
+	overlay.connect(&"dismissed", func() -> void: finished[0] = true, CONNECT_ONE_SHOT)
+	overlay.call(
+		"present",
+		card.get("entry", {}) as Dictionary,
+		target,
+		card.get("texture", null) as Texture2D,
+		String(card.get("ratings", ""))
+	)
+	while not bool(finished[0]) and is_instance_valid(overlay):
+		await get_tree().process_frame
+	var completed := bool(finished[0])
+	if is_instance_valid(overlay):
+		overlay.queue_free()
+	return completed
+
+
+func _target_is_live(target: Node2D) -> bool:
+	if target == null or not is_instance_valid(target) or not target.is_inside_tree():
+		return false
+	if bool(target.get_meta(&"__in_pool", false)):
+		return false
+	if target.process_mode == Node.PROCESS_MODE_DISABLED:
+		return false
+	return target.is_visible_in_tree()
+
+
+func _present_blocking_card(card: Dictionary) -> void:
+	var was_paused := get_tree().paused
+	get_tree().paused = true
+	if RunEvents != null:
+		RunEvents.tutorial_modal_state_changed.emit(true)
+	var overlay := OVERLAY_SCENE.instantiate() as TutorialCardOverlay
+	_presentation_host().add_child(overlay)
+	overlay.present(
+		String(card.get("title", "")),
+		String(card.get("body", "")),
+		String(card.get("eyebrow", "")),
+		card.get("texture", null) as Texture2D,
+		int(card.get("typewriter_character_limit", -1))
+	)
+	await overlay.dismissed
+	overlay.queue_free()
+	if RunEvents != null:
+		RunEvents.tutorial_modal_state_changed.emit(false)
+	get_tree().paused = was_paused
+	_reset_spawners_after_pause()
+
+
+func _presentation_host() -> Node:
+	if get_tree().current_scene != null:
+		return get_tree().current_scene
+	return get_parent()
 
 func _first_presentable_index() -> int:
 	for i in range(_queue.size()):
@@ -145,6 +212,8 @@ func _unsafe_now(card: Dictionary) -> bool:
 	# The spacing cooldown is about back-to-back dossiers, so it applies only to
 	# dossiers; a deferred scripted card waits for quiet, not for a queue.
 	if is_enemy_card and _unpaused_since_enemy_card < ENEMY_CARD_SPACING_SEC:
+		return true
+	if is_enemy_card and get_tree().paused:
 		return true
 	return not get_tree().get_nodes_in_group(&"boss_like").is_empty() or not get_tree().get_nodes_in_group(&"exit_rite_channeling").is_empty()
 

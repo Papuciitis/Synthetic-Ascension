@@ -20,7 +20,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
 	if title != null:
-		title.text = "Select Save"
+		title.text = "SELECT SAVE"
 
 	if back != null:
 		back.focus_mode = Control.FOCUS_NONE

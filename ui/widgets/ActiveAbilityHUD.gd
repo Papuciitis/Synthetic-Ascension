@@ -233,10 +233,10 @@ func _build_styles() -> void:
 	_frame_style.bg_color = Color(0.12, 0.12, 0.12, 0.92)
 	_frame_style.set_border_width_all(2)
 	_frame_style.border_color = Color(0.12, 0.12, 0.12)
-	_frame_style.corner_radius_top_left = 14
-	_frame_style.corner_radius_top_right = 14
-	_frame_style.corner_radius_bottom_left = 14
-	_frame_style.corner_radius_bottom_right = 14
+	_frame_style.corner_radius_top_left = 3
+	_frame_style.corner_radius_top_right = 3
+	_frame_style.corner_radius_bottom_left = 3
+	_frame_style.corner_radius_bottom_right = 3
 	_frame_style.shadow_size = 10
 	_frame_style.shadow_offset = Vector2(0, 6)
 	_frame_style.shadow_color = Color(0, 0, 0, 0.40)
@@ -246,37 +246,37 @@ func _build_styles() -> void:
 	_icon_style.bg_color = Color(0.08, 0.08, 0.08, 1.0)
 	_icon_style.set_border_width_all(1)
 	_icon_style.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_icon_style.corner_radius_top_left = 10
-	_icon_style.corner_radius_top_right = 10
-	_icon_style.corner_radius_bottom_left = 10
-	_icon_style.corner_radius_bottom_right = 10
+	_icon_style.corner_radius_top_left = 2
+	_icon_style.corner_radius_top_right = 2
+	_icon_style.corner_radius_bottom_left = 2
+	_icon_style.corner_radius_bottom_right = 2
 	icon_frame.add_theme_stylebox_override("panel", _icon_style)
 
 	_pill_style = StyleBoxFlat.new()
 	_pill_style.bg_color = Color(0.20, 0.20, 0.20, 0.95)
 	_pill_style.set_border_width_all(1)
 	_pill_style.border_color = Color(0.12, 0.12, 0.12)
-	_pill_style.corner_radius_top_left = 8
-	_pill_style.corner_radius_top_right = 8
-	_pill_style.corner_radius_bottom_left = 8
-	_pill_style.corner_radius_bottom_right = 8
+	_pill_style.corner_radius_top_left = 2
+	_pill_style.corner_radius_top_right = 2
+	_pill_style.corner_radius_bottom_left = 2
+	_pill_style.corner_radius_bottom_right = 2
 	key_pill.add_theme_stylebox_override("panel", _pill_style)
 
 	_bar_bg = StyleBoxFlat.new()
 	_bar_bg.bg_color = Color(0.06, 0.06, 0.06, 1.0)
 	_bar_bg.set_border_width_all(1)
 	_bar_bg.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_bar_bg.corner_radius_top_left = 8
-	_bar_bg.corner_radius_top_right = 8
-	_bar_bg.corner_radius_bottom_left = 8
-	_bar_bg.corner_radius_bottom_right = 8
+	_bar_bg.corner_radius_top_left = 2
+	_bar_bg.corner_radius_top_right = 2
+	_bar_bg.corner_radius_bottom_left = 2
+	_bar_bg.corner_radius_bottom_right = 2
 
 	_bar_fill = StyleBoxFlat.new()
 	_bar_fill.bg_color = Color(0.45, 0.45, 0.45, 0.95)
-	_bar_fill.corner_radius_top_left = 8
-	_bar_fill.corner_radius_top_right = 8
-	_bar_fill.corner_radius_bottom_left = 8
-	_bar_fill.corner_radius_bottom_right = 8
+	_bar_fill.corner_radius_top_left = 2
+	_bar_fill.corner_radius_top_right = 2
+	_bar_fill.corner_radius_bottom_left = 2
+	_bar_fill.corner_radius_bottom_right = 2
 
 	bar.add_theme_stylebox_override("background", _bar_bg)
 	bar.add_theme_stylebox_override("fill", _bar_fill)

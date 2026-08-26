@@ -66,6 +66,7 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	add_to_group(&"pause_handoff_owner")
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if _router == null:
 		push_warning("[HUD] InvRouter autoload not found at /root/InvRouter")
@@ -131,18 +132,18 @@ func _style_hp_bar() -> void:
 
 	var bg := StyleBoxFlat.new()
 	bg.bg_color = Color(0, 0, 0, 0.30)
-	bg.corner_radius_top_left = 8
-	bg.corner_radius_top_right = 8
-	bg.corner_radius_bottom_left = 8
-	bg.corner_radius_bottom_right = 8
+	bg.corner_radius_top_left = 2
+	bg.corner_radius_top_right = 2
+	bg.corner_radius_bottom_left = 2
+	bg.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("background", bg)
 
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = Color(1.0, 0.55, 0.20, 0.95)
-	fill.corner_radius_top_left = 8
-	fill.corner_radius_top_right = 8
-	fill.corner_radius_bottom_left = 8
-	fill.corner_radius_bottom_right = 8
+	fill.corner_radius_top_left = 2
+	fill.corner_radius_top_right = 2
+	fill.corner_radius_bottom_left = 2
+	fill.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("fill", fill)
 	hp_bar.add_theme_stylebox_override("fg", fill)
 
@@ -174,6 +175,16 @@ func _claim_pause_if_free() -> void:
 		return
 	_owns_pause = true
 	tree.paused = true
+
+
+## Called by a short-lived encounter freeze when the inventory was opened
+## while that freeze already owned the paused tree.
+func adopt_pause_handoff() -> bool:
+	if not pause_while_managing or bag_ctl == null or not bag_ctl.is_management_mode():
+		return false
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_owns_pause = true
+	return true
 
 
 func _refresh_run_sheet() -> void:
@@ -485,10 +496,10 @@ func _apply_top_left_style() -> void:
 	_sb_top_left.bg_color = Color(0, 0, 0, 0.35)
 	_sb_top_left.border_color = Color(0.12, 0.12, 0.12, 1.0)
 	_sb_top_left.set_border_width_all(2)
-	_sb_top_left.corner_radius_top_left = 14
-	_sb_top_left.corner_radius_top_right = 14
-	_sb_top_left.corner_radius_bottom_left = 14
-	_sb_top_left.corner_radius_bottom_right = 14
+	_sb_top_left.corner_radius_top_left = 3
+	_sb_top_left.corner_radius_top_right = 3
+	_sb_top_left.corner_radius_bottom_left = 3
+	_sb_top_left.corner_radius_bottom_right = 3
 	_sb_top_left.shadow_size = 8
 	_sb_top_left.shadow_offset = Vector2(0, 6)
 	_sb_top_left.shadow_color = Color(0, 0, 0, 0.30)
@@ -564,4 +575,3 @@ func _exit_tree() -> void:
 		var tree := get_tree()
 		if tree != null:
 			tree.paused = false
-

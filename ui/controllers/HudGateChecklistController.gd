@@ -1,16 +1,17 @@
 extends Node
 class_name HudGateChecklistController
 
-# Renders the structured Exit Rite requirement checklist
-# (RunEvents.gate_checklist_changed). The emitting builder owns all state
-# logic; this controller only draws what it is told - it must never infer
-# readiness from the resonance bar (clamped at 0.998 while blocked).
+# Renders the structured Exit Rite requirement checklist. Requirements expand
+# when they change, then settle into a persistent one-line status. Holding the
+# details action restores the full list without making it permanent combat UI.
 
 @export var panel_path: NodePath
 @export var header_path: NodePath
 @export var rows_path: NodePath
 @export var hint_path: NodePath
 @export var bag_controller_path: NodePath
+@export var details_action: StringName = &"hud_details"
+@export_range(0.1, 10.0, 0.1) var expanded_duration: float = 3.0
 
 const STATE_COLORS := {
 	&"locked": Color(0.95, 0.45, 0.40, 0.98),
@@ -27,6 +28,12 @@ var _hint: Label = null
 var _bag_controller: HudBagController = null
 var _has_items: bool = false
 var _management_open: bool = false
+var _details_requested: bool = false
+var _transient_expanded: bool = false
+var _change_revision: int = 0
+var _last_expansion_signature: String = ""
+var _header_base_text: String = ""
+var _last_prompt: String = ""
 
 
 func _enter_tree() -> void:
@@ -40,6 +47,14 @@ func _ready() -> void:
 	_resolve_nodes()
 	_hook_bag_controller()
 	_apply_visibility()
+	_apply_detail_visibility()
+	set_process(true)
+
+
+func _process(_delta: float) -> void:
+	if details_action != &"" and InputMap.has_action(details_action):
+		set_details_requested(Input.is_action_pressed(details_action))
+	_refresh_header_prompt()
 
 
 func _resolve_nodes() -> void:
@@ -75,16 +90,44 @@ func _apply_visibility() -> void:
 		_panel.visible = _has_items and not _management_open
 
 
+func set_details_requested(requested: bool) -> void:
+	if requested == _details_requested:
+		return
+	_details_requested = requested
+	_apply_detail_visibility()
+
+
+func _apply_detail_visibility() -> void:
+	var expanded := _transient_expanded or _details_requested
+	if _rows != null:
+		_rows.visible = expanded
+	if _hint != null:
+		_hint.visible = expanded and _hint.text.strip_edges() != ""
+
+
 func _on_gate_checklist_changed(state: StringName, items: Array, next_hint: String) -> void:
 	_resolve_nodes()
 	if _panel == null or _header == null or _rows == null:
 		return
 	if items.is_empty():
+		_change_revision += 1
+		_transient_expanded = false
+		_last_expansion_signature = ""
+		_header_base_text = ""
+		_last_prompt = ""
 		_has_items = false
 		_apply_visibility()
+		_apply_detail_visibility()
 		return
 	var state_label := String(state).to_upper()
-	_header.text = "EXIT RITE • %s" % state_label
+	var done_count := 0
+	for item_variant in items:
+		var progress_item := item_variant as Dictionary
+		if progress_item != null and bool(progress_item.get("done", false)):
+			done_count += 1
+	_header_base_text = "EXIT RITE  /  %s  /  %d/%d" % [state_label, done_count, items.size()]
+	_last_prompt = ""
+	_refresh_header_prompt()
 	_header.add_theme_color_override(
 		"font_color",
 		STATE_COLORS.get(state, STATE_COLORS[&"locked"]) as Color
@@ -92,13 +135,59 @@ func _on_gate_checklist_changed(state: StringName, items: Array, next_hint: Stri
 	_rebuild_rows(items)
 	if _hint != null:
 		_hint.text = next_hint.strip_edges()
-		_hint.visible = _hint.text != ""
 	_has_items = true
 	_apply_visibility()
+	var expansion_signature := _expansion_signature(state, items, next_hint)
+	if expansion_signature != _last_expansion_signature:
+		_last_expansion_signature = expansion_signature
+		_transient_expanded = true
+		_apply_detail_visibility()
+		_change_revision += 1
+		_collapse_after_delay(_change_revision)
+
+
+func _collapse_after_delay(revision: int) -> void:
+	await get_tree().create_timer(expanded_duration).timeout
+	if revision != _change_revision:
+		return
+	_transient_expanded = false
+	_apply_detail_visibility()
+
+
+func _expansion_signature(state: StringName, items: Array, next_hint: String) -> String:
+	var parts := PackedStringArray([String(state), next_hint.strip_edges()])
+	for item_variant in items:
+		var item := item_variant as Dictionary
+		if item == null or item.is_empty():
+			continue
+		parts.append("%s:%s" % [String(item.get("id", item.get("label", ""))), str(bool(item.get("done", false)))])
+	return "|".join(parts)
+
+
+func _details_prompt() -> String:
+	if details_action == &"" or not InputMap.has_action(details_action):
+		return "HOLD"
+	for event in InputMap.action_get_events(details_action):
+		if event is InputEventKey:
+			var key_event := event as InputEventKey
+			var code := key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
+			return OS.get_keycode_string(code)
+	return "HOLD"
+
+
+func _refresh_header_prompt() -> void:
+	if _header == null or _header_base_text.is_empty():
+		return
+	var prompt := _details_prompt()
+	if prompt == _last_prompt:
+		return
+	_last_prompt = prompt
+	_header.text = "%s    [%s] INSPECT" % [_header_base_text, prompt]
 
 
 func _rebuild_rows(items: Array) -> void:
 	for child in _rows.get_children():
+		_rows.remove_child(child)
 		child.queue_free()
 	for item_variant in items:
 		var item := item_variant as Dictionary

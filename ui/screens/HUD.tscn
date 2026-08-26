@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="23_set_breakpoints"]
 [ext_resource type="Script" path="res://ui/controllers/HudManifestationController.gd" id="25_manifest_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/ManifestationPairNotifier.gd" id="26_manifest_pair"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="27_hud_theme"]
 
 
 [sub_resource type="Shader" id="ShaderVignette"]
@@ -64,16 +65,16 @@ shader_parameter/noise_strength = 0.015
 shader_parameter/noise_scale = 260.0
 
 [sub_resource type="StyleBoxFlat" id="StyleTopLeft"]
-bg_color = Color(0, 0, 0, 0.35)
+bg_color = Color(0.032, 0.030, 0.027, 0.88)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+border_color = Color(0.42, 0.30, 0.20, 0.9)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.3)
 shadow_size = 8
 shadow_offset = Vector2(0, 6)
@@ -85,10 +86,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleHPBarBG"]
 bg_color = Color(0, 0, 0, 0.35)
@@ -97,17 +98,17 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleHPBarFill"]
 bg_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StylePill"]
 bg_color = Color(0, 0, 0, 0.4)
@@ -116,24 +117,24 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleResBarFill"]
 bg_color = Color(0.25, 0.75, 1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleThreatBarFill"]
 bg_color = Color(0.75, 0.25, 1, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 
 [node name="HUD" type="Control" unique_id=1187103140]
@@ -143,6 +144,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("27_hud_theme")
 script = ExtResource("1")
 augment_badge_scene = ExtResource("11")
 
@@ -170,7 +172,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-color = Color(0, 0, 0, 0.12)
+color = Color(0.015, 0.013, 0.011, 0.38)
 
 [node name="GateOverlay" parent="." unique_id=1397793156 instance=ExtResource("13_gate")]
 layout_mode = 1
@@ -191,20 +193,20 @@ tutorial_label_path = NodePath("../GateOverlay/TutorialTip/Margin/Label")
 
 [node name="ObjectiveController" type="Node" parent="."]
 script = ExtResource("22_objective_ctl")
-panel_path = NodePath("../GateOverlay/ObjectivePanel")
-title_path = NodePath("../GateOverlay/ObjectivePanel/Margin/VBox/Title")
-detail_path = NodePath("../GateOverlay/ObjectivePanel/Margin/VBox/Detail")
-secondary_panel_path = NodePath("../GateOverlay/SecondaryObjectivePanel")
-secondary_title_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Title")
-secondary_detail_path = NodePath("../GateOverlay/SecondaryObjectivePanel/Margin/VBox/Detail")
+panel_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel")
+title_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel/Margin/VBox/Title")
+detail_path = NodePath("../GateOverlay/ContextStack/ObjectivePanel/Margin/VBox/Detail")
+secondary_panel_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel")
+secondary_title_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel/Margin/VBox/Title")
+secondary_detail_path = NodePath("../GateOverlay/ContextStack/SecondaryObjectivePanel/Margin/VBox/Detail")
 bag_controller_path = NodePath("../BagController")
 
 [node name="GateChecklistController" type="Node" parent="."]
 script = ExtResource("24_checklist_ctl")
-panel_path = NodePath("../GateOverlay/GateChecklistPanel")
-header_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Header")
-rows_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Rows")
-hint_path = NodePath("../GateOverlay/GateChecklistPanel/Margin/VBox/Hint")
+panel_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel")
+header_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Header")
+rows_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Rows")
+hint_path = NodePath("../GateOverlay/ContextStack/GateChecklistPanel/Margin/VBox/Hint")
 bag_controller_path = NodePath("../BagController")
 
 [node name="ThreatController" type="Node" parent="." unique_id=924661234]
@@ -327,6 +329,7 @@ modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
 size_flags_horizontal = 6
 theme_override_font_sizes/font_size = 12
+theme_type_variation = &"InstitutionalHeading"
 text = "AUGMENTS"
 horizontal_alignment = 1
 
@@ -338,6 +341,7 @@ theme_override_constants/separation = 10
 modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
+theme_type_variation = &"InstitutionalHeading"
 text = "RESONANCE"
 
 [node name="ResonanceBar" type="ProgressBar" parent="TopLeft/Margin/VBox/ResonanceRow" unique_id=2110063346]
@@ -363,6 +367,7 @@ theme_override_constants/separation = 10
 modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
+theme_type_variation = &"InstitutionalHeading"
 text = "THREAT"
 
 [node name="ThreatBar" type="ProgressBar" parent="TopLeft/Margin/VBox/ThreatRow" unique_id=924661237]
