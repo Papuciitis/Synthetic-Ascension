@@ -31,6 +31,10 @@ func _run() -> void:
 	_test_inversion_suppresses_exactly_one()
 	_test_archetypes_disagree()
 	_test_suppressed_item_stays_neg()
+	_test_doctrine_judges_relative_burden()
+	_test_lens_selects_statistical_slots_only()
+	_test_inverted_burden_is_excluded_from_totals()
+	_test_doctrine_contribution_caps()
 	_test_drop_weighting()
 	print("BurdenSystemTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -229,6 +233,101 @@ func _test_suppressed_item_stays_neg() -> void:
 		inv.get_at(0).polarity == ItemInstance.Polarity.NEG,
 		"and the item's own polarity is untouched"
 	)
+
+
+func _ranged_curse(item_id: String, slot: int, authored_max: float, roll: float) -> ItemInstance:
+	# An item whose authored NEG range is 0 -> -authored_max, rolled at -roll.
+	var data := _make_data(item_id, slot)
+	data.pct_min = -authored_max
+	data.pct_max = authored_max
+	return ItemInstance.from_roll(data, 3, ItemInstance.Polarity.NEG, -roll, false)
+
+
+# Roadmap 5.1 / 5.4: the Doctrine judges a curse by how much of its AUTHORED
+# range it uses, not by a universal raw threshold. "Many mild but meaningful
+# curses" - a -2.1% roll on a 0..-20% item is a real burden; a -9% roll on a
+# 0..-100% item is barely a scratch of what that item can do.
+func _test_doctrine_judges_relative_burden() -> void:
+	var inv := Inventory.new()
+	inv.set_item(0, _ranged_curse("mild_range", 0, 0.20, 0.021))
+	inv.set_item(1, _ranged_curse("deep_range", 1, 1.00, 0.09))
+	var snap := BurdenResolver.resolve(inv, [])
+	_check(is_equal_approx(snap.burden_ratio_at(0), 0.105), "burden ratio is roll over authored range (%.3f)" % snap.burden_ratio_at(0))
+	_check(is_equal_approx(snap.burden_ratio_at(1), 0.09), "a -9%% roll on a -100%% item is a 9%% ratio (%.3f)" % snap.burden_ratio_at(1))
+	_check(snap.qualifies(0), "a -2.1% roll on a 0..-20% item qualifies for the Doctrine")
+	_check(not snap.qualifies(1), "a -9% roll on a 0..-100% item does not")
+	_check(snap.qualifying_count == 1, "the Doctrine counts one qualifying curse (%d)" % snap.qualifying_count)
+	# Severity itself is unchanged: Corruption Engine still eats raw severity.
+	_check(is_equal_approx(snap.total_active, 0.111), "active severity totals stay raw (%.3f)" % snap.total_active)
+	# Items without an authored NEG range (default -99.99%) keep the old
+	# reading: ratio ~= raw severity, so a plain -10% still qualifies.
+	inv.set_item(2, _cursed(2, 0.10))
+	inv.set_item(3, _cursed(3, 0.09))
+	var snap2 := BurdenResolver.resolve(inv, [])
+	_check(snap2.qualifies(2) and not snap2.qualifies(3), "an unranged item is judged against the full range")
+
+
+# Roadmap 5.2 / 5.3: the polarity census counts every equipped item; active
+# stat burden and the Lens only reason about the statistical slots.
+func _test_lens_selects_statistical_slots_only() -> void:
+	var inv := Inventory.new()
+	inv.set_item(1, _cursed(1, 0.50))
+	inv.set_item(Inventory.SLOT_RING, _cursed(Inventory.SLOT_RING, 0.90))
+
+	var plain := BurdenResolver.resolve(inv, [])
+	_check(plain.neg_count == 2, "the polarity census counts the cursed ring (%d)" % plain.neg_count)
+	_check(plain.active_count == 1, "an accessory curse is outside active stat burden (%d active)" % plain.active_count)
+	_check(is_equal_approx(plain.total_active, 0.50), "active burden is the armour curse alone (%.2f)" % plain.total_active)
+	_check(is_equal_approx(plain.heaviest(1), 0.50), "Corruption Engine cannot eat the ring (%.2f)" % plain.heaviest(1))
+
+	var lensed := BurdenResolver.resolve(inv, [&"augment_inversion_lens"])
+	_check(lensed.suppressed_slot == 1, "the Lens inverts the armour curse and ignores the deeper ring (slot %d)" % lensed.suppressed_slot)
+	_check(is_equal_approx(lensed.suppressed_severity, 0.50), "and records the armour severity, not the ring's")
+	_check(lensed.neg_count == 2, "the suppressed item and the ring both stay NEG for parity")
+
+
+# Roadmap 5.4: an inverted curse feeds nothing that eats severity.
+func _test_inverted_burden_is_excluded_from_totals() -> void:
+	var inv := Inventory.new()
+	inv.set_item(0, _cursed(0, 0.80)) # helmet
+	inv.set_item(1, _cursed(1, 0.40)) # chest
+	inv.set_item(2, _cursed(2, 0.20)) # boots
+	var lensed := BurdenResolver.resolve(inv, [&"augment_inversion_lens"])
+	_check(lensed.suppressed_slot == 0, "the Lens consumes the helmet")
+	_check(is_equal_approx(lensed.total_active, 0.60), "active burden is 60%%, not 140%% (%.2f)" % lensed.total_active)
+	_check(is_equal_approx(lensed.heaviest(2), 0.60), "Corruption Engine sees 40 + 20, never the inverted 80 (%.2f)" % lensed.heaviest(2))
+	_check(lensed.qualifying_count == 2, "the Doctrine counts two curses, not three (%d)" % lensed.qualifying_count)
+	_check(not lensed.qualifies(0), "the inverted slot does not qualify")
+	_check(lensed.neg_count == 3, "the census still reports three NEG items (%d)" % lensed.neg_count)
+	_check(
+		inv.get_at(0).polarity == ItemInstance.Polarity.NEG and is_equal_approx(inv.get_at(0).active_pct(), -0.80),
+		"the Lens modifies runtime burden only; the stored roll is untouched"
+	)
+
+
+# Roadmap 5.5: Doctrine scales with item count, so it needs a bounded ceiling.
+# Only the infrastructure is pinned here; the final numbers come from play.
+func _test_doctrine_contribution_caps() -> void:
+	var saved := BurdenResolver.doctrine_tuning()
+	var bonus: Dictionary = BurdenResolver.doctrine_bonus(1, 6)
+	_check(
+		is_equal_approx(float(bonus["armor"]), BurdenResolver.asymptotic_rate(16.0, 1) * 6.0),
+		"default caps do not bite at six curses: armour is per-item x count (%.1f)" % float(bonus["armor"])
+	)
+	_check(
+		is_equal_approx(float(bonus["hp"]), BurdenResolver.asymptotic_rate(0.09, 1) * 6.0),
+		"and Max HP is per-item x count (%.3f)" % float(bonus["hp"])
+	)
+	BurdenResolver.set_doctrine_tuning({"armor_cap": 20.0, "hp_cap": 0.10})
+	bonus = BurdenResolver.doctrine_bonus(1, 6)
+	_check(is_equal_approx(float(bonus["armor"]), 20.0), "armour bonus is capped (%.1f)" % float(bonus["armor"]))
+	_check(is_equal_approx(float(bonus["hp"]), 0.10), "Max HP bonus is capped (%.3f)" % float(bonus["hp"]))
+	BurdenResolver.set_doctrine_tuning({"armor_per_item": 4.0, "hp_per_item": 0.02})
+	bonus = BurdenResolver.doctrine_bonus(1, 2)
+	_check(is_equal_approx(float(bonus["armor"]), BurdenResolver.asymptotic_rate(4.0, 1) * 2.0), "per-item armour is configurable (%.1f)" % float(bonus["armor"]))
+	_check(is_equal_approx(float(bonus["hp"]), BurdenResolver.asymptotic_rate(0.02, 1) * 2.0), "per-item Max HP is configurable (%.3f)" % float(bonus["hp"]))
+	BurdenResolver.set_doctrine_tuning(saved)
+	_check(bool(BurdenResolver.doctrine_bonus(1, 0)["armor"] == 0.0), "no qualifying curses, no bonus")
 
 
 func _test_drop_weighting() -> void:

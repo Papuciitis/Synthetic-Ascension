@@ -580,11 +580,11 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	# stabilises a curse toward mild, which is exactly what this build wants -
 	# and exactly what Corruption Engine inverts.
 	if Global.permanent_augment_ids.has(&"augment_doctrine_of_burden") and burden.qualifying_count > 0:
-		var doctrine_level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
-		var per_curse_armour: float = BurdenResolver.asymptotic_rate(16.0, doctrine_level)
-		var per_curse_hp: float = BurdenResolver.asymptotic_rate(0.09, doctrine_level)
-		s.armor += per_curse_armour * float(burden.qualifying_count)
-		s.max_hp *= 1.0 + per_curse_hp * float(burden.qualifying_count)
+		var doctrine_bonus: Dictionary = BurdenResolver.doctrine_bonus(
+			Global.get_augment_level(&"augment_doctrine_of_burden"), burden.qualifying_count
+		)
+		s.armor += float(doctrine_bonus["armor"])
+		s.max_hp *= 1.0 + float(doctrine_bonus["hp"])
 
 	# Inversion Lens: the suppression itself happened in the slot loop above.
 	# What is left is the reading you can put on a card - and a small Luck

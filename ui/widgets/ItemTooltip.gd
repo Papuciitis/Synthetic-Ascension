@@ -245,8 +245,16 @@ func show_item(inst: ItemInstance) -> void:
 		)
 		var slot_index: int = int(inst.data.equip_slot)
 		var severity: float = absf(inst.active_pct())
+		var ratio: float = BurdenResolver.burden_ratio_for(inst)
 		lines.append("")
-		if burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
+		if slot_index >= Inventory.STAT_SLOT_COUNT:
+			# Accessory curses drive scripted behaviour, not a stat: they count
+			# for parity and sets, never for Burden arithmetic.
+			lines.append(
+				"[color=%s]ACCESSORY CURSE %d%% — counts as NEG for parity and sets; not a stat Burden.[/color]"
+				% [NEG.to_html(false), int(round(severity * 100.0))]
+			)
+		elif burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
 		and Global.run_inventory.get_at(slot_index) == inst:
 			lines.append(
 				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG for parity and sets.[/color]"
@@ -257,19 +265,20 @@ func show_item(inst: ItemInstance) -> void:
 				]
 			)
 		else:
+			var qualifies: bool = ratio >= BurdenSnapshot.QUALIFYING_BURDEN_RATIO
 			var weight: String = "catastrophic" if severity >= 0.70 else (
 				"severe" if severity >= 0.40 else (
-					"real" if severity >= BurdenSnapshot.QUALIFYING_BURDEN else "trivial"
+					"real" if qualifies else "trivial"
 				)
 			)
 			lines.append(
-				"[color=%s]ACTIVE BURDEN %d%% — %s.%s[/color]"
+				"[color=%s]ACTIVE BURDEN %d%% (%d%% of its range) — %s.%s[/color]"
 				% [
 					NEG.to_html(false),
 					int(round(severity * 100.0)),
+					int(round(ratio * 100.0)),
 					weight,
-					"" if severity >= BurdenSnapshot.QUALIFYING_BURDEN
-					else " Too mild to count as a burden.",
+					"" if qualifies else " Too mild for its range to count as a burden.",
 				]
 			)
 

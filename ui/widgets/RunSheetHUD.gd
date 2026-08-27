@@ -435,13 +435,19 @@ func _append_burden(player: Node) -> void:
 
 	if ids.has(&"augment_doctrine_of_burden"):
 		var level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
-		var armour := BurdenResolver.asymptotic_rate(16.0, level) * float(snap.qualifying_count)
-		var hp := BurdenResolver.asymptotic_rate(0.09, level) * float(snap.qualifying_count)
+		var doctrine_bonus: Dictionary = BurdenResolver.doctrine_bonus(level, snap.qualifying_count)
+		var armour := float(doctrine_bonus["armor"])
+		var hp := float(doctrine_bonus["hp"])
+		var capped: bool = (
+			armour >= BurdenResolver.doctrine_armor_cap - 0.001
+			or hp >= BurdenResolver.doctrine_hp_cap - 0.0001
+		)
 		_add_line("DOCTRINE OF BURDEN", BURDEN, 11)
 		_add_line(
-			"   %d qualifying curses (≥%d%%)  →  Armour +%d, Max HP +%d%%" % [
-				snap.qualifying_count, int(BurdenSnapshot.QUALIFYING_BURDEN * 100.0),
+			"   %d qualifying curses (≥%d%% of their range)  →  Armour +%d, Max HP +%d%%%s" % [
+				snap.qualifying_count, int(BurdenSnapshot.QUALIFYING_BURDEN_RATIO * 100.0),
 				int(round(armour)), int(round(hp * 100.0)),
+				"  (CAPPED)" if capped else "",
 			],
 			Color(1, 1, 1, 0.72), 10
 		)
