@@ -19,6 +19,11 @@ var activation_distance := 480.0
 var deactivation_distance := 640.0
 var max_promotions_per_step := 4
 var max_demotions_per_step := 4
+# When the materialized count is over budget (a spawner creating actors faster
+# than four demotions per step can retire), demotion bursts toward the budget:
+# up to max_demotions_per_step * backlog_burst_multiplier in one step. Within
+# budget the calm rate applies.
+var backlog_burst_multiplier := 4
 
 var _world: EnemyWorldService = null
 var _player_position := Vector2.ZERO
@@ -26,6 +31,12 @@ var _all_handles: Array[int] = []
 var _required_promotions: Array[int] = []
 var _ambient_promotions: Array[int] = []
 var _demotion_candidates: Array[int] = []
+# Why each materialized actor is materialized (roadmap 5.7), refreshed per
+# evaluate(): the live-vs-benchmark comparison needs the reasons, not the count.
+var _reason_required_kind := 0
+var _reason_required_flag := 0
+var _reason_in_band := 0
+var _reason_beyond_band := 0
 
 
 func effective_budget() -> int:
@@ -58,6 +69,7 @@ func evaluate(
 	world.active_handles(_all_handles)
 	var materialized_count := 0
 	var activation_squared := maxf(activation_distance, 0.0) ** 2
+	var deactivation_squared := maxf(deactivation_distance, activation_distance) ** 2
 	for handle in _all_handles:
 		if world.is_dying(handle):
 			continue
@@ -67,6 +79,14 @@ func evaluate(
 			materialized_count += 1
 			if proxy_eligible:
 				_demotion_candidates.append(handle)
+				if player_position.distance_squared_to(world.get_position(handle)) > deactivation_squared:
+					_reason_beyond_band += 1
+				else:
+					_reason_in_band += 1
+			elif world.get_ai_kind(handle) != CHASE_AI_KIND:
+				_reason_required_kind += 1
+			else:
+				_reason_required_flag += 1
 		elif representation == Types.Representation.DATA_ONLY:
 			if not proxy_eligible:
 				_required_promotions.append(handle)
@@ -78,8 +98,10 @@ func evaluate(
 	_demotion_candidates.sort_custom(_farther_first)
 
 	var projected := materialized_count
-	var deactivation_squared := maxf(deactivation_distance, activation_distance) ** 2
 	var demotion_limit := maxi(0, max_demotions_per_step)
+	var over_budget := materialized_count - effective_budget()
+	if over_budget > 0:
+		demotion_limit = clampi(over_budget, demotion_limit, demotion_limit * maxi(1, backlog_burst_multiplier))
 	for handle in _demotion_candidates:
 		if demotions.size() >= demotion_limit:
 			break
@@ -111,7 +133,7 @@ func evaluate(
 		ambient_promotions_added += 1
 		projected += 1
 
-	return _counters(materialized_count, projected)
+	return _counters(materialized_count, projected, demotions.size())
 
 
 func _make_required_room(
@@ -158,13 +180,22 @@ func _clear_buffers() -> void:
 	_required_promotions.clear()
 	_ambient_promotions.clear()
 	_demotion_candidates.clear()
+	_reason_required_kind = 0
+	_reason_required_flag = 0
+	_reason_in_band = 0
+	_reason_beyond_band = 0
 
 
-func _counters(materialized: int, projected: int) -> Dictionary:
+func _counters(materialized: int, projected: int, demoted: int = 0) -> Dictionary:
 	return {
 		"budget": effective_budget(),
 		"materialized": materialized,
 		"projected_materialized": projected,
 		"required_waiting": _required_promotions.size(),
 		"ambient_waiting": _ambient_promotions.size(),
+		"materialized_required_kind": _reason_required_kind,
+		"materialized_required_flag": _reason_required_flag,
+		"materialized_in_band": _reason_in_band,
+		"materialized_beyond_band": _reason_beyond_band,
+		"demotion_backlog": maxi(0, _reason_beyond_band - demoted),
 	}

@@ -7,6 +7,7 @@ const STATE_WATCHING := "watching"
 const STATE_AFTERMATH := "aftermath"
 const STATE_COOLDOWN := "cooldown"
 const SCHEMA_VERSION := 1
+const BuildInfoScript = preload("res://core/systems/telemetry/BuildInfo.gd")
 const MAX_SAMPLE_RATE := 120
 const MAX_EVENTS := 2048
 const EVENT_BUCKET_USEC := 250_000
@@ -295,6 +296,12 @@ func _collect_slow_snapshot() -> Dictionary:
 		var world_data := enemy_world.call("get_debug_counters") as Dictionary
 		output["enemy_world_logical"] = int(world_data.get("logical", 0))
 		output["enemy_world_materialized"] = int(world_data.get("materialized", 0))
+		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+		var manager: Node = proxy_root.get("manager") if proxy_root != null else null
+		if manager != null and manager.has_method("get_debug_counters"):
+			var policy_data := (manager.call("get_debug_counters") as Dictionary).get("policy", {}) as Dictionary
+			for key in ["materialized_required_kind", "materialized_required_flag", "materialized_in_band", "materialized_beyond_band", "demotion_backlog"]:
+				output["representation_" + key] = int(policy_data.get(key, 0))
 		output["enemy_world_data_only"] = int(world_data.get("data_only", 0))
 		output["enemy_world_dying"] = int(world_data.get("dying", 0))
 		output["enemy_world_spatial_cells"] = int(world_data.get("spatial_cells", 0))
@@ -387,6 +394,7 @@ func _finalize_incident(now_usec: int) -> void:
 	_latest_incident = {
 		"schema_version": SCHEMA_VERSION,
 		"metadata": {
+			"build": BuildInfoScript.describe(int(Global.get("attempt_world_seed")) if Global != null else 0),
 			"sequence": _sequence,
 			"segment": segment,
 			"trigger_reason": String(_trigger_reason),

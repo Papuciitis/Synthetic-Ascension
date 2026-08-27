@@ -17,6 +17,7 @@ var _decision_left := 0.0
 var _promotions: Array[int] = []
 var _demotions: Array[int] = []
 var _scene_cache: Dictionary = {}
+var _last_policy_counters: Dictionary = {}
 var _counters := {
 	"promotion_requests": 0,
 	"promotions": 0,
@@ -61,6 +62,7 @@ func step(player_position: Vector2) -> Dictionary:
 	if not enabled or _world == null or _policy == null:
 		return get_debug_counters()
 	var policy_counters := _policy.evaluate(_world, player_position, _promotions, _demotions)
+	_last_policy_counters = policy_counters
 	# Demotions run first so the same step can reuse the released actors.
 	for handle in _demotions:
 		_counters["demotion_requests"] = int(_counters["demotion_requests"]) + 1
@@ -150,6 +152,7 @@ func materialize(handle: int) -> Node2D:
 
 func get_debug_counters() -> Dictionary:
 	var result := _counters.duplicate(true)
+	result["policy"] = _last_policy_counters
 	if _world != null and is_instance_valid(_world):
 		var world_counters := _world.get_debug_counters()
 		result["logical"] = int(world_counters.get("logical", 0))

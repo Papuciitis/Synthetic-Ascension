@@ -115,5 +115,63 @@ func _run() -> void:
 
 	world.queue_free()
 	await get_tree().process_frame
+	# --- roadmap 5.7: why is each actor materialized? ---
+	# Live sessions converge on ~260 materialized actors while the benchmark
+	# holds 64-90; the policy must say WHY so the two can be compared.
+	world = WorldScript.new()
+	add_child(world)
+	policy = PolicyScript.new()
+	policy.set("materialized_budget", 8)
+	policy.set("activation_distance", 480.0)
+	policy.set("deactivation_distance", 640.0)
+	policy.set("max_demotions_per_step", 4)
+	_spawn(world, &"reason_kind", Vector2(100.0, 0.0), 2, 0, true)                       # ranged: never a proxy
+	_spawn(world, &"reason_flag", Vector2(100.0, 0.0), 0, Types.Flags.ELITE, true)       # elite chase: flagged
+	_spawn(world, &"reason_band", Vector2(300.0, 0.0), 0, 0, true)                       # chase inside the band
+	for i in range(6):
+		_spawn(world, StringName("reason_far_%d" % i), Vector2(2000.0 + float(i), 0.0), 0, 0, true)  # eligible, beyond band
+	promotions = []
+	demotions = []
+	var reasons := _evaluate(policy, world, promotions, demotions)
+	_check(int(reasons.get("materialized_required_kind", -1)) == 1, "one actor is materialized because its archetype cannot be a proxy (%s)" % reasons.get("materialized_required_kind", "?"))
+	_check(int(reasons.get("materialized_required_flag", -1)) == 1, "one because of a required flag (%s)" % reasons.get("materialized_required_flag", "?"))
+	_check(int(reasons.get("materialized_in_band", -1)) == 1, "one because it is inside the lease band (%s)" % reasons.get("materialized_in_band", "?"))
+	_check(int(reasons.get("materialized_beyond_band", -1)) == 6, "six are eligible for demotion beyond the band (%s)" % reasons.get("materialized_beyond_band", "?"))
+	_check(int(reasons.get("demotion_backlog", -1)) == 6 - demotions.size(), "the backlog is what this step could not demote (%s vs %d demoted)" % [reasons.get("demotion_backlog", "?"), demotions.size()])
+	world.queue_free()
+	await get_tree().process_frame
+
+	# --- roadmap 5.7 / 21: pathological materialized counts drain faster ---
+	# A spawner can create far more materialized actors per second than four
+	# demotions per 200 ms step can retire; when the count is over budget the
+	# policy must burst-demote toward it instead of trickling.
+	world = WorldScript.new()
+	add_child(world)
+	policy = PolicyScript.new()
+	policy.set("materialized_budget", 8)
+	policy.set("deactivation_distance", 640.0)
+	policy.set("max_demotions_per_step", 4)
+	for i in range(40):
+		_spawn(world, StringName("backlog_%d" % i), Vector2(2000.0 + float(i), 0.0), 0, 0, true)
+	promotions = []
+	demotions = []
+	var burst := _evaluate(policy, world, promotions, demotions)
+	_check(demotions.size() > 4, "over budget, one step demotes more than the calm-rate four (%d)" % demotions.size())
+	_check(demotions.size() <= 16, "but bounded, so one step cannot stall the frame (%d)" % demotions.size())
+	_check(int(burst.get("projected_materialized", -1)) == 40 - demotions.size(), "projected count reflects the burst")
+	# Within budget the calm rate still applies.
+	world.queue_free()
+	await get_tree().process_frame
+	world = WorldScript.new()
+	add_child(world)
+	for i in range(6):
+		_spawn(world, StringName("calm_%d" % i), Vector2(2000.0 + float(i), 0.0), 0, 0, true)
+	promotions = []
+	demotions = []
+	_evaluate(policy, world, promotions, demotions)
+	_check(demotions.size() == 4, "within budget, demotion keeps the calm rate (%d)" % demotions.size())
+	world.queue_free()
+	await get_tree().process_frame
+
 	print("EnemyRepresentationPolicyTest passes=", _passes, " failures=", _failures)
 	get_tree().quit(1 if _failures > 0 else 0)

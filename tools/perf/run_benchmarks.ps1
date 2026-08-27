@@ -7,9 +7,11 @@
 #                           is skipped headless because headless frames carry
 #                           no draw cost).
 # 2. MinigunStressBenchmark - headless, measurement only.
-# 3. EnemyPressureBenchmark - legacy arm (BENCHMARK_LEGACY_PRESSURE=1) writes the
-#                           baseline report, then the candidate arm must beat it
-#                           by BASELINE_IMPROVEMENT_GATE (20% physics p95).
+# 3. EnemyPressureBenchmark - both arms run under a controlled pressure override
+#                           so the emergency tier policy is exercised; the legacy
+#                           arm (BENCHMARK_LEGACY_PRESSURE=1) writes the baseline,
+#                           then the candidate must keep >= 20% fewer ordinary
+#                           physics bodies (per-step time is reported alongside).
 param(
     [string]$Godot = "$env:USERPROFILE\Downloads\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64_console.exe",
     [switch]$SkipWindowed
