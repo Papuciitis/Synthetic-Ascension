@@ -175,13 +175,22 @@ func _finish() -> void:
 	var baseline_path := OS.get_environment("BENCHMARK_BASELINE_PATH")
 	if not baseline_path.is_empty():
 		var baseline_file := FileAccess.open(baseline_path, FileAccess.READ)
-		var baseline: Variant = JSON.parse_string(baseline_file.get_as_text()) if baseline_file != null else null
+		var baseline: Variant = null
+		if baseline_file != null:
+			baseline = JSON.parse_string(baseline_file.get_as_text())
+			baseline_file.close()
 		if not (baseline is Dictionary):
 			_fail("baseline report unreadable: %s" % baseline_path)
 			return
-		var baseline_p95 := float(((baseline as Dictionary).get("physics_ms", {}) as Dictionary).get("p95", 0.0))
+		var baseline_physics: Variant = (baseline as Dictionary).get("physics_ms")
+		var baseline_p95 := (
+			float((baseline_physics as Dictionary).get("p95", 0.0)) if baseline_physics is Dictionary else 0.0
+		)
+		if baseline_p95 <= 0.0:
+			_fail("baseline report has no physics_ms.p95 (wrong file?): %s" % baseline_path)
+			return
 		var candidate_p95 := float((report["physics_ms"] as Dictionary)["p95"])
-		var improvement := 1.0 - candidate_p95 / maxf(baseline_p95, 0.001)
+		var improvement := 1.0 - candidate_p95 / baseline_p95
 		print(
 			"EnemyPressureBenchmark: baseline physics p95 %.2f -> candidate %.2f (%.1f%% improvement, gate %.0f%%)"
 			% [baseline_p95, candidate_p95, improvement * 100.0, BASELINE_IMPROVEMENT_GATE * 100.0]

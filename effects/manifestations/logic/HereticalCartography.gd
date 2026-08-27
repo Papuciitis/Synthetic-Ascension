@@ -165,7 +165,12 @@ func _process(delta: float) -> void:
 
 	_pulse += delta
 	global_position = player_position()
-	pulse_redraw()
+	if lost:
+		# The wipe frame after the last chart fades must not be throttled:
+		# _process stops running once the stacks are empty.
+		queue_redraw()
+	else:
+		pulse_redraw()
 
 	# One recompute for however many stacks fell off this frame.
 	if lost:

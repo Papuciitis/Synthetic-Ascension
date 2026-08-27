@@ -4,6 +4,11 @@ const TIER_FULL := 0
 const TIER_MID := 1
 const TIER_FAR := 2
 const TIER_REVERSAL_WINDOW_USEC := 2_000_000
+# Physics samples are smoothed with this time constant before the ordinary
+# pressure levels read them, so one slow step (a burst spawn, a flow-field
+# publish) cannot restart a release window; the severe fast path reads the
+# raw sample so a genuine collapse still engages in 0.15 s.
+const PRESSURE_SMOOTHING_SEC := 0.25
 
 @export_range(0, 512, 1) var full_budget: int = 32
 @export_range(0, 1024, 1) var mid_budget: int = 32
@@ -69,7 +74,9 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 # summoner, tactical, herald) to far-tier physics closer than the smart
 # boundary, but never inside this radius: a far-tier body has no collision
 # shape and an unmonitorable hitbox, so a close one would be melee-immune and
-# walk through walls on screen. Matches the representation lease band.
+# walk through walls on screen. Keep in step with
+# EnemyRepresentationPolicy.deactivation_distance (640): an actor may only
+# release its body where the representation policy would demote it anyway.
 @export_range(0.0, 4000.0, 10.0) var noncontact_release_min_distance: float = 640.0
 
 # A genuinely catastrophic physics step should not spend a full second walking
@@ -93,17 +100,22 @@ var _pressure_level := 0
 var _pressure_above_sec := 0.0
 var _pressure_below_sec := 0.0
 var _severe_above_sec := 0.0
-# Frames at/above the current level accumulate here; only a sustained run
-# (>= pressure_spike_tolerance_sec) restarts the release window. Without it a
-# single slow frame - typically this scheduler's own 5 Hz assignment refresh -
-# reset the window every 200 ms and pinned pressure engaged forever.
-var _pressure_hold_sec := 0.0
-const PRESSURE_SPIKE_TOLERANCE_SEC := 0.1
-# The assignment refresh runs inside _physics_process, so the physics monitor
-# sampled on the NEXT frame includes it. Subtract that known cost so the
+# Per-step physics timing. Performance.TIME_PHYSICS_PROCESS is the MAX step
+# time of the previous second, published once per second: useless for
+# per-frame reasoning, and it turned one slow step into a full second of
+# "pressure". Instead this node stamps the start of its own _physics_process
+# and closes the sample at its next callback - the next physics step (during
+# catch-up) or the frame's _process, whichever comes first. Nothing but the
+# rest of that physics step (every scene callback, then the physics server
+# step) runs in between, so the sample is the whole step. The scheduler's
+# own assignment refresh is subtracted from the step it ran in, so the 5 Hz
 # refresh cannot read as horde pressure.
-var _last_assignment_ms := 0.0
-var _assignment_ran_last_frame := false
+var _step_start_usec := 0
+var _step_start_frame := -1
+var _step_refresh_usec := 0
+var _last_step_sample_ms := 0.0
+var _smoothed_physics_ms := -1.0
+const MAX_STEP_SAMPLE_MS := 1000.0
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -118,6 +130,7 @@ var _debug_counters := {
 	"pressure_active": 0,
 	"pressure_level": 0,
 	"severe_engagements": 0,
+	"physics_step_ms": 0.0,
 }
 var _tier_lifecycle_counters := {
 	"tier_changes": 0,
@@ -142,16 +155,25 @@ func _ready() -> void:
 	# pick and tutorial modals while full-tier enemies stood frozen.
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_physics_process(true)
+	set_process(true)
+
+
+func _process(_delta: float) -> void:
+	_close_step_sample(Time.get_ticks_usec())
 
 
 func _physics_process(delta: float) -> void:
+	var step_started := Time.get_ticks_usec()
+	_close_step_sample(step_started)
 	_update_pressure_state(maxf(0.0, delta))
+	_step_start_usec = step_started
+	_step_start_frame = Engine.get_physics_frames()
+	_step_refresh_usec = 0
 	_assignment_left -= maxf(0.0, delta)
-	_assignment_ran_last_frame = false
 	if _assignment_left <= 0.0:
+		var refresh_started := Time.get_ticks_usec()
 		refresh_assignments()
-		_assignment_ran_last_frame = true
-		_last_assignment_ms = float(_debug_counters.get("assignment_usec", 0)) / 1000.0
+		_step_refresh_usec = Time.get_ticks_usec() - refresh_started
 	_mid_cursor = _run_next_group(
 		_mid_groups,
 		_mid_cursor,
@@ -416,18 +438,15 @@ func smart_physics_boundary(is_far: bool) -> float:
 	return normal_smart_reacquire_distance if is_far else normal_smart_release_distance
 
 
-func should_release_noncontact_smart(ai: int, player_distance: float = -1.0) -> bool:
+func should_release_noncontact_smart(ai: int, player_distance: float) -> bool:
 	if _pressure_level < 2:
 		return false
-	if player_distance < maxf(noncontact_release_min_distance, 0.0):
+	if player_distance < noncontact_release_min_distance:
 		return false
-	return ai in [
-		EnemySpec.AI.ORBIT,
-		EnemySpec.AI.RANGED,
-		EnemySpec.AI.SUMMONER,
-		EnemySpec.AI.TACTICAL,
-		EnemySpec.AI.HERALD,
-	]
+	match ai:
+		EnemySpec.AI.ORBIT, EnemySpec.AI.RANGED, EnemySpec.AI.SUMMONER, EnemySpec.AI.TACTICAL, EnemySpec.AI.HERALD:
+			return true
+	return false
 
 
 func _update_pressure_state(delta: float) -> void:
@@ -437,14 +456,13 @@ func _update_pressure_state(delta: float) -> void:
 		_pressure_above_sec = 0.0
 		_pressure_below_sec = 0.0
 		_severe_above_sec = 0.0
-		_pressure_hold_sec = 0.0
 		_sync_pressure_counters()
 		return
 	var physics_ms := _measured_physics_ms()
+	var smoothed := _smooth_physics_ms(physics_ms, delta)
 	if physics_ms >= severe_pressure_ms:
 		_severe_above_sec += delta
 		_pressure_below_sec = 0.0
-		_pressure_hold_sec = 0.0
 		if _pressure_level < 2 and _severe_above_sec >= severe_engage_sec:
 			_pressure_level = 2
 			_pressure_active = true
@@ -458,7 +476,7 @@ func _update_pressure_state(delta: float) -> void:
 		_sync_pressure_counters()
 		return
 	_severe_above_sec = 0.0
-	var measured := _measured_pressure_level()
+	var measured := _pressure_level_for(smoothed)
 	if measured > _pressure_level:
 		_pressure_above_sec += delta
 		_pressure_below_sec = 0.0
@@ -468,16 +486,13 @@ func _update_pressure_state(delta: float) -> void:
 	elif measured < _pressure_level:
 		_pressure_below_sec += delta
 		_pressure_above_sec = 0.0
-		_pressure_hold_sec = 0.0
 		var release_window := emergency_release_sec if _pressure_level >= 2 else pressure_release_sec
 		if _pressure_below_sec >= release_window:
 			_pressure_level -= 1
 			_pressure_below_sec = 0.0
 	else:
 		_pressure_above_sec = 0.0
-		_pressure_hold_sec += delta
-		if _pressure_hold_sec >= PRESSURE_SPIKE_TOLERANCE_SEC:
-			_pressure_below_sec = 0.0
+		_pressure_below_sec = 0.0
 	_pressure_level = clampi(_pressure_level, 0, 2)
 	_pressure_active = _pressure_level >= 1
 	_sync_pressure_counters()
@@ -489,20 +504,51 @@ func _sync_pressure_counters() -> void:
 
 
 func _measured_physics_ms() -> float:
-	var measured := 0.0
 	if _physics_pressure_override != null:
 		if _physics_pressure_override is bool:
 			return budget_pressure_ms + 0.001 if bool(_physics_pressure_override) else 0.0
-		measured = maxf(0.0, float(_physics_pressure_override))
+		return maxf(0.0, float(_physics_pressure_override))
+	return _last_step_sample_ms
+
+
+func _smooth_physics_ms(physics_ms: float, delta: float) -> float:
+	# A bool override means "pretend pressure is on/off", not a measurement:
+	# it bypasses smoothing so the budget tests read the level directly.
+	if _physics_pressure_override is bool:
+		return physics_ms
+	if _smoothed_physics_ms < 0.0:
+		_smoothed_physics_ms = physics_ms
 	else:
-		measured = Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0
-	if _assignment_ran_last_frame:
-		measured = maxf(0.0, measured - _last_assignment_ms)
-	return measured
+		var alpha := 1.0 - exp(-maxf(delta, 0.0) / PRESSURE_SMOOTHING_SEC)
+		_smoothed_physics_ms += (physics_ms - _smoothed_physics_ms) * alpha
+	return _smoothed_physics_ms
+
+
+func _close_step_sample(now_usec: int) -> void:
+	if _step_start_usec <= 0:
+		return
+	var step_ms := float(now_usec - _step_start_usec) / 1000.0
+	_step_start_usec = 0
+	# A pause (or a stall) between the stamps is not a physics step.
+	if Engine.get_physics_frames() - _step_start_frame > 1 or step_ms > MAX_STEP_SAMPLE_MS:
+		return
+	_ingest_step_sample(step_ms, float(_step_refresh_usec) / 1000.0)
+
+
+func _ingest_step_sample(step_ms: float, refresh_ms: float) -> void:
+	_last_step_sample_ms = maxf(0.0, step_ms - refresh_ms)
+	_debug_counters["physics_step_ms"] = snappedf(_last_step_sample_ms, 0.01)
+
+
+func last_step_sample_ms() -> float:
+	return _last_step_sample_ms
 
 
 func _measured_pressure_level() -> int:
-	var physics_ms := _measured_physics_ms()
+	return _pressure_level_for(_smoothed_physics_ms if _smoothed_physics_ms >= 0.0 else _measured_physics_ms())
+
+
+func _pressure_level_for(physics_ms: float) -> int:
 	if physics_ms > emergency_pressure_ms:
 		return 2
 	if physics_ms > budget_pressure_ms:

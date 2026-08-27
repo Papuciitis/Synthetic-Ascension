@@ -117,27 +117,70 @@ func _run() -> void:
 	EnemyWorld.remove_enemy(near, &"test_cleanup")
 	EnemyWorld.remove_enemy(far, &"test_cleanup")
 
-	# Bullets advance on physics time: with the physics catch-up cap active the
-	# world clock dilates, and render-frame stepping must dilate with it or
-	# bullets outrun the enemies they were aimed at.
+	# Anchor Rite bullets carry pierce 12-14: a whole line of enemies crossed
+	# in one step must all be hit, with no cap below the pierce budget.
+	var line: Array[int] = []
+	for i in range(10):
+		line.append(_spawn_record(StringName("line_%d" % i), Vector2(20.0 + float(i) * 8.0, 0.0)))
+	manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(10.0, 12), source)
+	manager.call("_simulate_one", 0, 1.2)
+	manager.call("_flush_hit_ledgers")
+	var line_hits := 0
+	for handle in line:
+		if EnemyWorld.get_health(handle) == 10.0:
+			line_hits += 1
+	_check(line_hits == 10, "a pierce-12 bullet hits all ten enemies crossed in one step (hit %d)" % line_hits)
+	_check(int(manager.call("active_count")) == 1, "the bullet survives with pierce budget to spare")
+	manager.call("_clear_all")
+	for handle in line:
+		EnemyWorld.remove_enemy(handle, &"test_cleanup")
+
+	# Touching enemies (circles overlap): each is hit exactly once per step.
+	# The sweep must not re-find an already-hit enemy whose circle still
+	# contains the contact point (t = 0) and ping-pong between the pair.
+	var touch_a := _spawn_record(&"touch_a", Vector2(30.0, 0.0))
+	var touch_b := _spawn_record(&"touch_b", Vector2(33.0, 0.0))
+	manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(10.0, 3), source)
+	manager.set("_hits_this_frame", 0)
+	manager.call("_simulate_one", 0, 0.90)
+	manager.call("_flush_hit_ledgers")
+	_check(EnemyWorld.get_health(touch_a) == 10.0, "touching enemy A is hit exactly once (health %.1f)" % EnemyWorld.get_health(touch_a))
+	_check(EnemyWorld.get_health(touch_b) == 10.0, "touching enemy B is hit exactly once (health %.1f)" % EnemyWorld.get_health(touch_b))
+	_check(int(manager.call("active_count")) == 1, "two hits spend two pierce, the pierce-3 bullet survives")
+	_check(int(manager.get("_hits_this_frame")) == 2, "exactly two hits are queued for the touching pair (got %d)" % int(manager.get("_hits_this_frame")))
+	manager.call("_clear_all")
+	EnemyWorld.remove_enemy(touch_a, &"test_cleanup")
+	EnemyWorld.remove_enemy(touch_b, &"test_cleanup")
+
+	# Bullets step every rendered frame (smooth at any refresh rate) but stay
+	# within one physics tick of banked physics time: under the
+	# max_physics_steps_per_frame cap the world clock dilates and bullets
+	# dilate with it instead of outrunning their targets.
+	var tick := 1.0 / float(Engine.physics_ticks_per_second)
 	manager.call("spawn_player", Vector2.ZERO, Vector2.RIGHT, _profile(), source)
 	manager.call("_process", 0.5)
-	var no_physics_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
-	_check(no_physics_pos.is_equal_approx(Vector2.ZERO), "render frames without a physics step do not move bullets (got %s)" % no_physics_pos)
-	manager.call("_physics_process", 1.0 / 60.0)
-	manager.call("_process", 0.5)
-	var one_step_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	var credit_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
 	_check(
-		absf(one_step_pos.x - 100.0 / 60.0) < 0.01,
-		"bullets consume exactly the physics time that elapsed (got %.3f px)" % one_step_pos.x
+		absf(credit_pos.x - 100.0 * tick) < 0.01,
+		"a render frame with no banked physics time advances at most one tick of credit (got %.3f px)" % credit_pos.x
 	)
-	manager.call("_physics_process", 1.0 / 60.0)
-	manager.call("_physics_process", 1.0 / 60.0)
-	manager.call("_process", 1.0 / 120.0)
+	manager.call("_process", 0.5)
+	var starved_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	_check(starved_pos.is_equal_approx(credit_pos), "with the credit spent, bullets wait for physics (got %.3f px)" % starved_pos.x)
+	manager.call("_physics_process", tick)
+	manager.call("_process", 0.5)
+	var one_tick_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
+	_check(
+		absf(one_tick_pos.x - 100.0 * tick * 2.0) < 0.01,
+		"each physics tick releases exactly one tick of bullet time (got %.3f px)" % one_tick_pos.x
+	)
+	manager.call("_physics_process", tick)
+	manager.call("_physics_process", tick)
+	manager.call("_process", tick * 0.5)
 	var partial_pos: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
 	_check(
-		absf(partial_pos.x - (100.0 / 60.0 + 100.0 / 120.0)) < 0.01,
-		"a short render frame consumes only its own slice of banked physics time (got %.3f px)" % partial_pos.x
+		absf(partial_pos.x - 100.0 * tick * 2.5) < 0.01,
+		"a short render frame consumes only its own delta from the bank (got %.3f px)" % partial_pos.x
 	)
 	manager.call("_clear_all")
 	actor.queue_free()

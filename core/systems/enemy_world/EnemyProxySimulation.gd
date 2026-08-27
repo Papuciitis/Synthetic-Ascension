@@ -61,31 +61,13 @@ func set_pressure_level(level: int) -> void:
 	else:
 		update_hz = normal_update_hz
 		slice_count = normal_slice_count
-	if not is_equal_approx(previous_hz, update_hz):
-		_rebase_interpolation(previous_hz)
-
-
-func _rebase_interpolation(previous_hz: float) -> void:
-	# The renderer blends previous -> current by (clock - update_time) /
-	# interval. Changing the interval under a live blend re-evaluates every
-	# proxy's phase against the new length: at 10 -> 3 Hz a proxy 90% through
-	# its step jumps back to 27%, a whole-swarm backwards snap on the frame
-	# pressure engages. Restart each blend from where it is drawn right now.
-	if _world == null or not is_instance_valid(_world) or previous_hz <= 0.0:
-		return
-	var previous_interval := 1.0 / previous_hz
-	_world.active_handles(_handles)
-	for handle in _handles:
-		if _world.get_representation(handle) != Types.Representation.DATA_ONLY:
-			continue
-		var blend := clampf((_clock - _world.get_proxy_update_time(handle)) / previous_interval, 0.0, 1.0)
-		if blend <= 0.0 or blend >= 1.0:
-			if blend >= 1.0:
-				_world.set_previous_position(handle, _world.get_position(handle))
-			continue
-		var drawn := _world.get_previous_position(handle).lerp(_world.get_position(handle), blend)
-		_world.set_previous_position(handle, drawn)
-		_world.set_proxy_update_time(handle, _clock)
+	if (
+		not is_equal_approx(previous_hz, update_hz)
+		and previous_hz > 0.0
+		and _world != null
+		and is_instance_valid(_world)
+	):
+		_world.rebase_proxy_interpolation(_clock, 1.0 / previous_hz)
 
 
 func advance(delta: float, target_position: Vector2) -> int:
@@ -195,6 +177,14 @@ func _is_proxy_chase(handle: int) -> bool:
 
 func _simulate_chase(handle: int, delta: float, target_position: Vector2) -> void:
 	var position := _world.get_position(handle)
+	# Where the renderer is drawing this proxy right now. Normally a step lands
+	# exactly one interval after the last one (blend 1, origin = position); after
+	# a rate change or slice re-mapping it can land mid-blend, and the new
+	# blend must start from the drawn point or the proxy snaps forward.
+	var step_blend := clampf((_clock - _world.get_proxy_update_time(handle)) * update_hz, 0.0, 1.0)
+	var drawn_origin := position
+	if step_blend < 0.999:
+		drawn_origin = _world.get_previous_position(handle).lerp(position, step_blend)
 	var knockback := _world.get_knockback_velocity(handle)
 	knockback = knockback.move_toward(
 		Vector2.ZERO,
@@ -218,6 +208,8 @@ func _simulate_chase(handle: int, delta: float, target_position: Vector2) -> voi
 		next_position = position
 	_world.set_velocity(handle, velocity)
 	_world.set_position(handle, next_position)
+	if step_blend < 0.999:
+		_world.set_previous_position(handle, drawn_origin)
 	_world.set_proxy_update_time(handle, _clock)
 
 

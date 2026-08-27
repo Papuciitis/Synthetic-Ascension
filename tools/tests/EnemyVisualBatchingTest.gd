@@ -65,6 +65,21 @@ func _run() -> void:
 	_check(sprite.visible, "an enemy reused with batching disabled shows its own sprite again")
 	_check(renderer.registered_actor_count() == 0, "batching disabled leaves the renderer registry empty")
 
+	# Warmed pool inventory (PoolManager sets __in_pool before add_child) must
+	# not enter the registry; its first obtain registers it.
+	Global.debug_enemy_visual_batching = true
+	var warmed := (load("res://core/actors/enemy/enemy.tscn") as PackedScene).instantiate() as EnemyActor
+	warmed.spec = EnemySpec.new()
+	warmed.set_meta("__in_pool", true)
+	warmed.set_meta("__pool_key", &"warm_test")
+	add_child(warmed)
+	await get_tree().process_frame
+	_check(renderer.registered_actor_count() == 0, "a pool-warmed enemy does not register with the renderer")
+	warmed.remove_meta("__in_pool")
+	warmed.call("_reset_for_pool_obtain", false)
+	_check(renderer.registered_actor_count() == 1, "the warmed enemy registers on its first obtain")
+	warmed.queue_free()
+
 	Global.debug_enemy_visual_batching = previous_flag
 	enemy.queue_free()
 	root.queue_free()

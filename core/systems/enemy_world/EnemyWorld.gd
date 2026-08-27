@@ -173,12 +173,31 @@ func set_position(handle: int, value: Vector2) -> bool:
 
 func set_previous_position(handle: int, value: Vector2) -> bool:
 	# Interpolation origin only; the authoritative position and the spatial
-	# grid are untouched. Used to rebase proxies when their update rate changes.
+	# grid are untouched. The proxy simulation uses it to keep the drawn
+	# position continuous across steps that land mid-blend.
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
 		return false
 	_previous_positions[slot] = value
 	return true
+
+
+func rebase_proxy_interpolation(clock: float, previous_interval: float) -> void:
+	# Renderers blend previous -> current by (clock - update_time) / interval.
+	# Changing the interval under a live blend re-evaluates every proxy's
+	# phase against the new length (10 -> 3 Hz sent a proxy 90% through its
+	# step back to 27%: a whole-swarm backwards snap on the frame pressure
+	# engaged). Restart each blend from the point drawn right now. Bulk,
+	# slot-direct: this runs on the frame a pressure tier flips.
+	if previous_interval <= 0.0:
+		return
+	for slot_variant in _active_slots:
+		var slot := int(slot_variant)
+		if _representations[slot] != Types.Representation.DATA_ONLY:
+			continue
+		var blend := clampf((clock - float(_proxy_update_times[slot])) / previous_interval, 0.0, 1.0)
+		_previous_positions[slot] = _previous_positions[slot].lerp(_positions[slot], blend)
+		_proxy_update_times[slot] = maxf(clock, 0.0)
 
 
 func reset_interpolation(handle: int) -> bool:

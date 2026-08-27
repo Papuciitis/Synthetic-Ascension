@@ -12,11 +12,6 @@ const MIN_PROXY_SIZE := 4.0
 var _world: EnemyWorldService = null
 var _handles: Array[int] = []
 var _batches: Dictionary = {}
-# Debug lookups only. Two flat maps (handle -> batch key, handle -> slot)
-# instead of one {key, index} Dictionary per proxy: at 500+ proxies that was
-# 500+ heap allocations per publish.
-var _handle_batch_keys: Dictionary = {}
-var _handle_slots: Dictionary = {}
 # Publishes in a row where a batch used <= a quarter of its capacity. After
 # SHRINK_AFTER_PUBLISHES the multimesh is reallocated to fit, so a single
 # peak does not leave every later frame uploading the high-water buffer.
@@ -83,8 +78,6 @@ func publish(
 ) -> int:
 	var started := Time.get_ticks_usec()
 	_visible_count = 0
-	_handle_batch_keys.clear()
-	_handle_slots.clear()
 	if _world == null or not is_instance_valid(_world):
 		_hide_all_batches()
 		_last_upload_usec = Time.get_ticks_usec() - started
@@ -192,7 +185,7 @@ func batch_count() -> int:
 
 
 func has_visible_handle(handle: int) -> bool:
-	return _handle_batch_keys.has(handle)
+	return not _locate(handle).is_empty()
 
 
 func last_upload_usec() -> int:
@@ -204,26 +197,28 @@ func invalidate_visual_profile(handle: int) -> void:
 
 
 func debug_instance_transform(handle: int) -> Transform2D:
-	if not _handle_batch_keys.has(handle):
+	var located := _locate(handle)
+	if located.is_empty():
 		return Transform2D()
-	var batch_variant: Variant = _batches.get(_handle_batch_keys[handle])
+	var batch_variant: Variant = located[0]
 	if not (batch_variant is Dictionary):
 		return Transform2D()
 	var transforms := (batch_variant as Dictionary).get("transforms", []) as Array[Transform2D]
-	var index := int(_handle_slots.get(handle, -1))
+	var index := int(located[1])
 	if index < 0 or index >= transforms.size():
 		return Transform2D()
 	return transforms[index]
 
 
 func debug_instance_color(handle: int) -> Color:
-	if not _handle_batch_keys.has(handle):
+	var located := _locate(handle)
+	if located.is_empty():
 		return Color(0.0, 0.0, 0.0, 0.0)
-	var batch_variant: Variant = _batches.get(_handle_batch_keys[handle])
+	var batch_variant: Variant = located[0]
 	if not (batch_variant is Dictionary):
 		return Color(0.0, 0.0, 0.0, 0.0)
 	var colors := (batch_variant as Dictionary).get("colors", []) as Array[Color]
-	var index := int(_handle_slots.get(handle, -1))
+	var index := int(located[1])
 	if index < 0 or index >= colors.size():
 		return Color(0.0, 0.0, 0.0, 0.0)
 	return colors[index]
@@ -239,26 +234,28 @@ func debug_all_batches_hidden() -> bool:
 
 
 func debug_rendered_instance_transform(handle: int) -> Transform2D:
-	if not _handle_batch_keys.has(handle):
+	var located := _locate(handle)
+	if located.is_empty():
 		return Transform2D()
-	var batch_variant: Variant = _batches.get(_handle_batch_keys[handle])
+	var batch_variant: Variant = located[0]
 	if not (batch_variant is Dictionary):
 		return Transform2D()
 	var multimesh := (batch_variant as Dictionary).get("multimesh") as MultiMesh
-	var index := int(_handle_slots.get(handle, -1))
+	var index := int(located[1])
 	if multimesh == null or index < 0 or index >= multimesh.visible_instance_count:
 		return Transform2D()
 	return multimesh.get_instance_transform_2d(index)
 
 
 func debug_rendered_instance_color(handle: int) -> Color:
-	if not _handle_batch_keys.has(handle):
+	var located := _locate(handle)
+	if located.is_empty():
 		return Color(0.0, 0.0, 0.0, 0.0)
-	var batch_variant: Variant = _batches.get(_handle_batch_keys[handle])
+	var batch_variant: Variant = located[0]
 	if not (batch_variant is Dictionary):
 		return Color(0.0, 0.0, 0.0, 0.0)
 	var multimesh := (batch_variant as Dictionary).get("multimesh") as MultiMesh
-	var index := int(_handle_slots.get(handle, -1))
+	var index := int(located[1])
 	if multimesh == null or index < 0 or index >= multimesh.visible_instance_count:
 		return Color(0.0, 0.0, 0.0, 0.0)
 	return multimesh.get_instance_color(index)
@@ -310,8 +307,6 @@ func _publish_batch(
 	# proxies, reallocating them every frame for every batch was measurable
 	# process-time churn (session 5: ~29ms avg process at 200+ enemies).
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
-	if buffer.size() != capacity * FLOATS_PER_INSTANCE:
-		buffer.resize(capacity * FLOATS_PER_INSTANCE)
 	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
 	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
 	transforms.resize(count)
@@ -344,8 +339,6 @@ func _publish_batch(
 			proxy_position,
 		)
 		colors[index] = color
-		_handle_batch_keys[handle] = visual_key
-		_handle_slots[handle] = index
 	# Only the tail that was occupied last publish needs clearing; slots past
 	# it were zeroed on allocation or by an earlier publish.
 	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
@@ -384,8 +377,6 @@ func _publish_actor_batch(
 	var count := entries.size()
 	var capacity := _ensure_capacity(batch, count)
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
-	if buffer.size() != capacity * FLOATS_PER_INSTANCE:
-		buffer.resize(capacity * FLOATS_PER_INSTANCE)
 	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
 	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
 	transforms.resize(count)
@@ -516,33 +507,38 @@ func _write_instance_transform(
 	buffer[base + 11] = color.a
 
 
+# Debug/test lookups only: locate a proxy handle's batch and slot by scanning
+# the published handle lists, so the hot publish path keeps no per-handle map.
+func _locate(handle: int) -> Array:
+	for batch_variant in _batches.values():
+		var batch := batch_variant as Dictionary
+		var index := (batch.get("handles", [] as Array[int]) as Array[int]).find(handle)
+		if index >= 0:
+			return [batch, index]
+	return []
+
+
 func _ensure_capacity(batch: Dictionary, required: int) -> int:
 	var capacity := int(batch.get("capacity", 0))
-	if required <= capacity:
-		if required * 4 <= capacity and capacity > MIN_SHRINK_CAPACITY:
-			var streak := int(batch.get("shrink_streak", 0)) + 1
-			if streak < SHRINK_AFTER_PUBLISHES:
-				batch["shrink_streak"] = streak
-				return capacity
-		else:
-			batch["shrink_streak"] = 0
-			return capacity
+	var shrinkable := required * 4 <= capacity and capacity > MIN_SHRINK_CAPACITY
+	var streak := int(batch.get("shrink_streak", 0)) + 1 if shrinkable else 0
+	batch["shrink_streak"] = streak
+	if required <= capacity and streak < SHRINK_AFTER_PUBLISHES:
+		return capacity
 	batch["shrink_streak"] = 0
-	capacity = MIN_SHRINK_CAPACITY if required <= MIN_SHRINK_CAPACITY else 1
-	while capacity < required:
-		capacity *= 2
+	capacity = maxi(MIN_SHRINK_CAPACITY, nearest_po2(required))
 	var multimesh := batch.get("multimesh") as MultiMesh
 	if multimesh != null:
-		# Resizing instance_count reallocates the buffer; every slot must be
-		# rewritten, so the occupied-tail bookkeeping restarts from capacity.
 		multimesh.instance_count = capacity
 		multimesh.visible_instance_count = 0
 	batch["capacity"] = capacity
-	batch["last_count"] = capacity
+	# The buffer is the one owner of its size: zero-filled here on every
+	# reallocation, so no stale tail exists for the publish to clear.
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
 	buffer.resize(capacity * FLOATS_PER_INSTANCE)
 	buffer.fill(0.0)
 	batch["buffer"] = buffer
+	batch["last_count"] = 0
 	return capacity
 
 
@@ -558,8 +554,6 @@ func _hide_batch(batch: Dictionary) -> void:
 
 
 func _hide_all_batches() -> void:
-	_handle_batch_keys.clear()
-	_handle_slots.clear()
 	_visible_count = 0
 	for batch_variant in _batches.values():
 		_hide_batch(batch_variant as Dictionary)

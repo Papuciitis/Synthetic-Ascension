@@ -49,7 +49,7 @@
 - Create at runtime: `performance_results/2026-08-25/enemy-pressure-baseline.json`
 
 **Interfaces:**
-- Consumes: real `enemy.tscn`, `EnemySpec_Grunt`, `EnemySpec_Runner`, `EnemySpec_Orbiter`, `EnemySpec_Spitter`, `EnemySpec_Charger`, `EnemySpec_Bomber`, `EnemySpec_Leech`, and `EnemySpec_Sniper` resources; scheduler debug counters; `ENEMY_PRESSURE_REPORT_PATH` environment variable.
+- Consumes: real `enemy.tscn`, `EnemySpec_Grunt`, `EnemySpec_Runner`, `EnemySpec_Orbiter`, `EnemySpec_Spitter`, `EnemySpec_Charger`, `EnemySpec_Bomber`, `EnemySpec_Leech`, and `EnemySpec_Sniper` resources; scheduler debug counters; `BENCHMARK_REPORT_PATH` environment variable.
 - Produces: baseline JSON fields `source_sha`, `actor_count`, `protected_count`, `frame_p95_ms`, `physics_p95_ms`, `physics_enabled`, `ordinary_physics_enabled`, and `pressure_level`.
 
 - [ ] **Step 1: Create the deterministic benchmark scene and driver**
@@ -71,7 +71,7 @@ var report := {
 }
 ```
 
-The driver exits non-zero if it creates any actor count other than 120, loses the player reference, produces fewer than 600 samples, or cannot write `ENEMY_PRESSURE_REPORT_PATH`.
+The driver exits non-zero if it creates any actor count other than 120, loses the player reference, produces fewer than 600 samples, or cannot write `BENCHMARK_REPORT_PATH`.
 
 - [ ] **Step 2: Parse the new harness before measuring**
 
@@ -87,7 +87,7 @@ Run before changing `EnemySimulationScheduler.gd` or `enemy.gd`:
 
 ```powershell
 $env:BENCHMARK_SOURCE_SHA = (git rev-parse HEAD).Trim()
-$env:ENEMY_PRESSURE_REPORT_PATH = (Resolve-Path '.\performance_results\2026-08-25').Path + '\enemy-pressure-baseline.json'
+$env:BENCHMARK_REPORT_PATH = (Resolve-Path '.\performance_results\2026-08-25').Path + '\enemy-pressure-baseline.json'
 & 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . --scene res://tools/tests/EnemyPressureBenchmark.tscn
 ```
 
@@ -365,12 +365,12 @@ git commit -m "perf: split flow field phase telemetry"
 - Create at candidate run: `performance_results/2026-08-25/enemy-pressure-candidate.json`
 
 **Interfaces:**
-- Consumes: the Task 1 harness and immutable baseline report, candidate scheduler debug counters, and `PRESSURE_BASELINE_PATH` environment variable.
+- Consumes: the Task 1 harness and immutable baseline report, candidate scheduler debug counters, and `BENCHMARK_BASELINE_PATH` environment variable.
 - Produces: JSON fields `actor_count`, `protected_count`, `frame_p95_ms`, `physics_p95_ms`, `physics_enabled`, `ordinary_physics_enabled`, `pressure_level`, and `improvement_fraction`, plus a non-zero exit on a failed acceptance gate.
 
 - [ ] **Step 1: Add the candidate acceptance gate and verify it rejects a copied baseline**
 
-When `PRESSURE_BASELINE_PATH` is set, load the baseline, compute:
+When `BENCHMARK_BASELINE_PATH` is set, load the baseline, compute:
 
 ```gdscript
 var improvement := (baseline_physics_p95 - candidate_physics_p95) / maxf(baseline_physics_p95, 0.001)
@@ -382,13 +382,13 @@ var passes := (
 )
 ```
 
-Set `improvement_fraction` in the candidate JSON and quit with code 1 when `passes` is false. First point `PRESSURE_BASELINE_PATH` and `ENEMY_PRESSURE_REPORT_PATH` to copies containing identical p95 values; expected result is non-zero exit because improvement is 0%.
+Set `improvement_fraction` in the candidate JSON and quit with code 1 when `passes` is false. First point `BENCHMARK_BASELINE_PATH` and `BENCHMARK_REPORT_PATH` to copies containing identical p95 values; expected result is non-zero exit because improvement is 0%.
 
 - [ ] **Step 2: Run the candidate benchmark with the real baseline**
 
 ```powershell
-$env:PRESSURE_BASELINE_PATH = (Resolve-Path '.\performance_results\2026-08-25\enemy-pressure-baseline.json').Path
-$env:ENEMY_PRESSURE_REPORT_PATH = (Resolve-Path '.\performance_results\2026-08-25').Path + '\enemy-pressure-candidate.json'
+$env:BENCHMARK_BASELINE_PATH = (Resolve-Path '.\performance_results\2026-08-25\enemy-pressure-baseline.json').Path
+$env:BENCHMARK_REPORT_PATH = (Resolve-Path '.\performance_results\2026-08-25').Path + '\enemy-pressure-candidate.json'
 & 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . --scene res://tools/tests/EnemyPressureBenchmark.tscn
 ```
 

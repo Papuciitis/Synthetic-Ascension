@@ -145,15 +145,20 @@ class Driver:
 				# Only meaningful with a real renderer; headless frames carry
 				# no draw cost and would pass trivially.
 				var final_target := int(_stages[_stages.size() - 1])
-				if DisplayServer.get_name() != "headless" and _last_stage_frame_p95 > FRAME_P95_GATE_MS:
-					push_error(
-						"HordeBenchmark: GATE FAILED stage %d frame p95 %.2f ms > %.1f ms"
-						% [final_target, _last_stage_frame_p95, FRAME_P95_GATE_MS]
-					)
-					get_tree().quit(1)
-					return
 				if DisplayServer.get_name() != "headless":
-					print("HordeBenchmark: GATE PASSED stage %d frame p95 %.2f ms <= %.1f ms" % [final_target, _last_stage_frame_p95, FRAME_P95_GATE_MS])
+					var gate_passed := _last_stage_frame_p95 <= FRAME_P95_GATE_MS
+					var verdict := "HordeBenchmark: GATE %s stage %d frame p95 %.2f ms %s %.1f ms" % [
+						"PASSED" if gate_passed else "FAILED",
+						final_target,
+						_last_stage_frame_p95,
+						"<=" if gate_passed else ">",
+						FRAME_P95_GATE_MS,
+					]
+					if not gate_passed:
+						push_error(verdict)
+						get_tree().quit(1)
+						return
+					print(verdict)
 				get_tree().quit(0)
 
 	func _write_report() -> void:
@@ -182,6 +187,7 @@ class Driver:
 			if world != null and world.has_method("get_debug_counters")
 			else {}
 		)
+		var frame_p95 := _pct(_frames, 95.0)
 		var line := (
 			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | projectiles p95 %.0f projectile_ms p95 %.2f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s"
 			% [
@@ -189,7 +195,7 @@ class Driver:
 				alive,
 				_frames.size(),
 				_mean(_frames),
-				_pct(_frames, 95.0),
+				frame_p95,
 				_pct(_frames, 99.0),
 				_pct(_process_ms, 95.0),
 				_pct(_physics_ms, 95.0),
@@ -206,7 +212,7 @@ class Driver:
 		)
 		print(line)
 		_report_lines.append(line)
-		_last_stage_frame_p95 = _pct(_frames, 95.0)
+		_last_stage_frame_p95 = frame_p95
 
 
 func _ready() -> void:

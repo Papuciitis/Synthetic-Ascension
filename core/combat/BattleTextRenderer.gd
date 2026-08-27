@@ -187,10 +187,17 @@ func _process(delta: float) -> void:
 			_scales[i] = _scales[last]
 			_amounts[i] = _amounts[last]
 			_keys[i] = _keys[last]
+			# Swap (not overwrite) the shaped line so every slot keeps its
+			# TextLine for the node's lifetime instead of reallocating per hit.
+			var expired_line := _lines[i]
+			var expired_text := _line_texts[i]
+			var expired_size := _line_sizes[i]
 			_lines[i] = _lines[last]
 			_line_texts[i] = _line_texts[last]
 			_line_sizes[i] = _line_sizes[last]
-			_lines[last] = null
+			_lines[last] = expired_line
+			_line_texts[last] = expired_text
+			_line_sizes[last] = expired_size
 			_count = last
 			continue
 		i += 1
@@ -208,6 +215,7 @@ func clear() -> void:
 func _draw() -> void:
 	if _font == null:
 		return
+	var canvas := get_canvas_item()
 	for i in range(_count):
 		var life_t := clampf(_ages[i] / maxf(_lifetimes[i], 0.01), 0.0, 1.0)
 		var alpha := 1.0 if life_t < 0.55 else 1.0 - (life_t - 0.55) / 0.45
@@ -223,7 +231,6 @@ func _draw() -> void:
 		# TextLine draws from the top-left of its box; draw_string took the
 		# baseline. Keep the numbers where they were.
 		var line_pos := draw_pos - Vector2(0.0, line.get_line_ascent())
-		var canvas := get_canvas_item()
 		line.draw_outline(canvas, line_pos, 4, outline)
 		line.draw(canvas, line_pos, color)
 

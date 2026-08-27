@@ -15,6 +15,15 @@ class ScheduledProbe:
 	func run_scheduled_simulation(delta: float) -> void:
 		scheduled_deltas.append(delta)
 
+class PhysicsHog:
+	extends Node
+
+	func _physics_process(_delta: float) -> void:
+		var until := Time.get_ticks_usec() + 5000
+		while Time.get_ticks_usec() < until:
+			pass
+
+
 var _passes := 0
 var _failures := 0
 
@@ -63,7 +72,7 @@ func _run() -> void:
 	_test_emergency_pressure_tier(scheduler_script)
 	_test_severe_pressure_fast_path(scheduler_script)
 	_test_pressure_release_survives_single_frame_spikes(scheduler_script)
-	_test_assignment_refresh_cost_is_excluded_from_pressure(scheduler_script)
+	await _test_pressure_uses_per_step_samples(scheduler_script)
 	await _test_same_frame_recycle_then_obtain_keeps_collision()
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
@@ -431,9 +440,9 @@ func _test_pressure_release_survives_single_frame_spikes(scheduler_script: Scrip
 	scheduler.call("_update_pressure_state", 0.6)
 	_check(int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1, "sustained budget pressure engages level 1")
 	var release_window := float(scheduler.get("pressure_release_sec"))
-	# Calm frames with one at-threshold frame every 12 (the scheduler's own
-	# 5 Hz assignment refresh at 60 fps). Total calm time is 3x the release
-	# window; an isolated spike frame must not restart the window.
+	# Calm frames with one slow frame every 12 (a 5 Hz refresh at 60 fps).
+	# Total calm time is 3x the release window; isolated spikes - at the
+	# current level or one above it - must not keep the level engaged.
 	var frames := int(ceil(release_window * 3.0 / (1.0 / 60.0)))
 	for i in range(frames):
 		scheduler.call("set_physics_pressure_override", 16.0 if i % 12 == 0 else 5.0)
@@ -444,38 +453,81 @@ func _test_pressure_release_survives_single_frame_spikes(scheduler_script: Scrip
 	)
 	scheduler.call("set_physics_pressure_override", 16.0)
 	scheduler.call("_update_pressure_state", 0.6)
-	scheduler.call("set_physics_pressure_override", 5.0)
-	for i in range(int(release_window * 30.0)):
+	for i in range(frames):
+		scheduler.call("set_physics_pressure_override", 21.0 if i % 12 == 0 else 5.0)
 		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 0,
+		"periodic single-frame spikes above the next threshold cannot pin pressure either"
+	)
+	# A genuine return to pressure (0.3 s well over budget) between two calm
+	# runs that together exceed the window must restart it.
 	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	var calm_frames := int(release_window * 0.65 * 60.0)
+	scheduler.call("set_physics_pressure_override", 5.0)
+	for i in range(calm_frames):
+		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	scheduler.call("set_physics_pressure_override", 30.0)
 	scheduler.call("_update_pressure_state", 0.3)
 	scheduler.call("set_physics_pressure_override", 5.0)
-	for i in range(int(release_window * 30.0) + 2):
+	for i in range(calm_frames):
 		scheduler.call("_update_pressure_state", 1.0 / 60.0)
 	_check(
 		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
 		"a sustained (0.3 s) return to pressure still restarts the release window"
 	)
+	# An oscillating load that is over budget most of the time stays engaged:
+	# five frames at 15 ms then one at 13.5 ms, for 8 s.
+	scheduler.call("set_physics_pressure_override", 16.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	for i in range(480):
+		scheduler.call("set_physics_pressure_override", 13.5 if i % 6 == 5 else 15.0)
+		scheduler.call("_update_pressure_state", 1.0 / 60.0)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
+		"a load over budget 5 frames in 6 stays engaged (dips do not accumulate into a release)"
+	)
 	scheduler.free()
 
 
-func _test_assignment_refresh_cost_is_excluded_from_pressure(scheduler_script: Script) -> void:
+func _test_pressure_uses_per_step_samples(scheduler_script: Script) -> void:
+	# Performance.TIME_PHYSICS_PROCESS is the MAX step time of the previous
+	# second, published once per second; per-frame reasoning needs a per-step
+	# sample the scheduler measures itself, minus its own refresh cost.
 	var scheduler := scheduler_script.new() as Node
-	# 25 ms measured, of which 12 ms was the scheduler's own assignment
-	# refresh last physics frame: the horde is really at 13 ms (< 14 budget).
-	scheduler.set("_last_assignment_ms", 12.0)
-	scheduler.set("_assignment_ran_last_frame", true)
-	scheduler.call("set_physics_pressure_override", 25.0)
+	scheduler.call("_ingest_step_sample", 25.0, 12.0)
 	_check(
-		int(scheduler.call("_measured_pressure_level")) == 0,
-		"the refresh's own cost is subtracted from the pressure sample on the frame after it ran"
+		is_equal_approx(float(scheduler.call("_measured_physics_ms")), 13.0),
+		"the refresh's own cost is subtracted from the step it ran in"
 	)
-	scheduler.set("_assignment_ran_last_frame", false)
+	scheduler.call("_update_pressure_state", 0.6)
 	_check(
-		int(scheduler.call("_measured_pressure_level")) == 2,
-		"frames without a refresh measure the raw physics time"
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 0,
+		"a 13 ms horde under a 14 ms budget stays unpressured despite a 25 ms refresh step"
+	)
+	scheduler.call("_ingest_step_sample", 25.0, 0.0)
+	scheduler.call("_update_pressure_state", 0.6)
+	_check(
+		int((scheduler.call("get_debug_counters") as Dictionary).get("pressure_level", -1)) == 1,
+		"a 25 ms step with no refresh in it engages pressure"
 	)
 	scheduler.free()
+
+	# Live measurement: the scheduler stamps the start of the physics step and
+	# closes the sample at its next physics/process callback, so a 5 ms physics
+	# callback anywhere in the scene shows up in the sample.
+	var live := scheduler_script.new() as Node
+	add_child(live)
+	var hog := PhysicsHog.new()
+	add_child(hog)
+	for i in range(4):
+		await get_tree().physics_frame
+	var sample := float(live.call("last_step_sample_ms"))
+	_check(sample >= 4.0, "per-step measurement captures scene physics callbacks (%.2f ms)" % sample)
+	hog.queue_free()
+	live.queue_free()
+	await get_tree().process_frame
 
 
 func _test_same_frame_recycle_then_obtain_keeps_collision() -> void:

@@ -56,12 +56,14 @@ var _last_stress_enabled: bool = false
 var _debug_label: Label = null
 # Bullets step on render frames (smooth at any refresh rate) but consume
 # PHYSICS time: with max_physics_steps_per_frame capping catch-up, the world
-# clock dilates under load and bullets must dilate with it, or they outrun the
-# enemies they were aimed at. Banked time beyond MAX_BANKED_PHYSICS_SEC is
-# dropped, mirroring the physics catch-up cap.
-const MAX_BANKED_PHYSICS_SEC: float = 0.25
-const MAX_PIERCE_HITS_PER_STEP: int = 8
+# clock dilates under load and bullets must dilate with it, or they outrun
+# the enemies they were aimed at. Each render frame may run up to one physics
+# tick AHEAD of the banked time (so 144 Hz frames between 60 Hz ticks stay
+# full-length); banked time is capped at what one main-loop iteration can
+# deliver, mirroring the engine's catch-up cap.
 var _physics_time_bank: float = 0.0
+var _sweep_handles: Array[int] = []
+var _sweep_ts := PackedFloat32Array()
 
 func _ready() -> void:
 	z_index = 200
@@ -74,13 +76,18 @@ func _ready() -> void:
 	# is precisely when a 550-bullet torrent needs the time back.
 	set_process(true)
 
+func _physics_tick_sec() -> float:
+	return 1.0 / float(maxi(Engine.physics_ticks_per_second, 1))
+
+
 func _physics_process(delta: float) -> void:
-	_physics_time_bank = minf(_physics_time_bank + maxf(delta, 0.0), MAX_BANKED_PHYSICS_SEC)
+	var cap := _physics_tick_sec() * float(maxi(Engine.max_physics_steps_per_frame, 1))
+	_physics_time_bank = minf(_physics_time_bank + maxf(delta, 0.0), cap)
 
 
 func _process(delta: float) -> void:
 	var started_us := Time.get_ticks_usec()
-	var step := minf(maxf(delta, 0.0), _physics_time_bank)
+	var step := clampf(delta, 0.0, _physics_time_bank + _physics_tick_sec())
 	_physics_time_bank -= step
 	var stress_enabled: bool = Global != null and Global.debug_projectile_stress_test
 	if stress_enabled != _last_stress_enabled:
@@ -191,8 +198,18 @@ func _simulate_one(index: int, delta: float) -> void:
 	var target: Node2D = null
 	var target_handle: int = 0
 	var target_t := -1.0
+	var sweep_hits := 0
 	if _teams[index] == Team.PLAYER:
-		if _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_handles[index]):
+		if _pierce[index] > 0:
+			# A fast piercing bullet crosses several enemies in one step: one
+			# gather for the whole segment, contacts in t order, each enemy once.
+			sweep_hits = EnemyCombat.enemies_on_segment(
+				old_pos, new_pos, _radii[index], _last_hit_handles[index], _sweep_handles, _sweep_ts
+			)
+			if sweep_hits > 0:
+				target_handle = _sweep_handles[0]
+				target_t = _sweep_ts[0]
+		elif _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_handles[index]):
 			target_handle = _query_hit_handle
 			target_t = _query_hit_t
 	else:
@@ -204,26 +221,20 @@ func _simulate_one(index: int, delta: float) -> void:
 		_remove(index)
 		return
 	if target_handle != 0 and target_t >= 0.0:
-		# A fast piercing bullet crosses several enemies in one step; keep
-		# sweeping from each contact instead of skipping the rest of the segment.
-		var sweep_t := target_t
-		var sweeps := 0
+		var hit_index := 0
 		while true:
-			var hit_pos := old_pos.lerp(new_pos, sweep_t)
-			_queue_handle_hit(index, target_handle, hit_pos)
+			_queue_handle_hit(index, target_handle, old_pos.lerp(new_pos, target_t))
 			if _pierce[index] <= 0:
 				_remove(index)
 				return
 			_pierce[index] -= 1
 			_last_hit_handles[index] = target_handle
-			sweeps += 1
-			if sweeps >= MAX_PIERCE_HITS_PER_STEP or sweep_t >= 1.0:
+			hit_index += 1
+			if hit_index >= sweep_hits:
 				break
-			if not _query_first_enemy_hit(hit_pos, new_pos, _radii[index], target_handle):
-				break
-			target_handle = _query_hit_handle
-			sweep_t = sweep_t + _query_hit_t * (1.0 - sweep_t)
-			if world_t >= 0.0 and world_t <= sweep_t:
+			target_handle = _sweep_handles[hit_index]
+			target_t = _sweep_ts[hit_index]
+			if world_t >= 0.0 and world_t <= target_t:
 				_remove(index)
 				return
 	elif target != null and target_t >= 0.0:

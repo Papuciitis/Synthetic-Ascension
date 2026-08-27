@@ -86,11 +86,27 @@ func _run() -> void:
 		"changing the proxy update rate keeps the interpolated position continuous (got %s)" % after_rate_change
 	)
 	_check(world.get_position(chase).is_equal_approx(Vector2(10.0, 0.0)), "rate change leaves the authoritative position untouched")
-	simulation.call("set_pressure_level", 0)
-	# Consume the banked half interval with a single slice so the tests below
-	# see the original 6-slice, zero-accumulator cadence.
+	# The proxy's next step lands mid-blend at the new rate: clock 0.15 with
+	# 0.05 s banked, the 3 Hz slice fires at 0.44 s, blend 0.78 through the
+	# rebased interval. The step must continue from the DRAWN point, not
+	# reset the origin to the old authoritative position (a forward snap).
 	simulation.set("slice_count", 1)
-	simulation.call("advance", 0.05, Vector2(100.0, 0.0))
+	simulation.call("advance", 0.29, Vector2(100.0, 0.0))
+	var drawn_before_step: Vector2 = before_rate_change.lerp(Vector2(10.0, 0.0), 0.87)
+	var drawn_after_step: Vector2 = simulation.call("interpolated_position", chase)
+	_check(
+		drawn_after_step.distance_to(drawn_before_step) < 0.25,
+		"a step that lands mid-blend keeps the drawn position continuous (before %s after %s)" % [drawn_before_step, drawn_after_step]
+	)
+	_check(
+		world.get_position(chase).is_equal_approx(Vector2(10.0 + 100.0 / 3.0, 0.0)),
+		"the authoritative step still advances a full 3 Hz interval"
+	)
+	simulation.call("set_pressure_level", 0)
+	# Consume the banked time with single slices so the tests below see the
+	# original 6-slice, zero-accumulator cadence.
+	simulation.set("slice_count", 1)
+	simulation.call("advance", 0.1 - fmod(float(simulation.get("_slice_accumulator")), 0.1), Vector2(100.0, 0.0))
 	simulation.set("slice_count", 6)
 
 	var controlled := _spawn(world, &"controlled", Vector2.ZERO, 100.0, 0, 0, {"knockback_decay": 0.0})

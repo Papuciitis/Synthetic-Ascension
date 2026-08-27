@@ -12,6 +12,10 @@ class_name HealthPickup
 
 const MAGNET_RADIUS: float = 110.0
 const MAGNET_SPEED_MAX: float = 420.0
+# Far pickups re-check the player distance at 4 Hz instead of every frame
+# (same idle poll as ItemPickup).
+const MAGNET_IDLE_DISTANCE: float = MAGNET_RADIUS * 3.0
+const MAGNET_IDLE_POLL_SEC: float = 0.25
 
 var _age: float = 0.0
 var _picked: bool = false
@@ -68,6 +72,8 @@ func _magnet(delta: float) -> void:
 		return
 	var distance: float = global_position.distance_to(_player_ref.global_position)
 	if distance > MAGNET_RADIUS:
+		if distance > MAGNET_IDLE_DISTANCE:
+			_magnet_cooldown = MAGNET_IDLE_POLL_SEC
 		return
 	var pull: float = 1.0 - distance / MAGNET_RADIUS
 	var speed: float = lerpf(60.0, MAGNET_SPEED_MAX, pull * pull)

@@ -287,6 +287,41 @@ func last_segment_hit_t() -> float:
 	return _last_segment_t
 
 
+func enemies_on_segment(
+	from: Vector2,
+	to: Vector2,
+	projectile_radius: float,
+	excluded_handle: int,
+	out_handles: Array[int],
+	out_ts: PackedFloat32Array,
+) -> int:
+	# Every enemy the segment crosses, once each, ordered by contact t. One
+	# broad-phase gather serves a whole piercing sweep; re-querying from each
+	# contact point re-found enemies whose circle still contained it (t = 0).
+	out_handles.clear()
+	out_ts.clear()
+	if _world == null or not is_instance_valid(_world):
+		return 0
+	var midpoint := (from + to) * 0.5
+	var broad_radius := from.distance_to(to) * 0.5 + maxf(projectile_radius, 0.0) + _world.largest_collision_radius()
+	gather_in_radius(midpoint, broad_radius, _query_candidates, excluded_handle)
+	for handle in _query_candidates:
+		var hit_t := _segment_circle_t(
+			from,
+			to,
+			_world.get_position(handle),
+			maxf(projectile_radius, 0.0) + _world.get_collision_radius(handle),
+		)
+		if hit_t < 0.0:
+			continue
+		var slot := out_ts.size()
+		while slot > 0 and out_ts[slot - 1] > hit_t:
+			slot -= 1
+		out_ts.insert(slot, hit_t)
+		out_handles.insert(slot, handle)
+	return out_handles.size()
+
+
 func gather_in_sector(
 	origin: Vector2,
 	forward: Vector2,
