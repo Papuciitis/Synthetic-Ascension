@@ -107,7 +107,7 @@ func _on_settings_closed() -> void:
 
 
 func _on_quit_pressed() -> void:
-	get_tree().quit()
+	Global.request_quit()
 
 
 func _go_to_saves() -> void:

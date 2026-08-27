@@ -86,6 +86,11 @@ func _process(delta: float) -> void:
 
 
 func _exit_tree() -> void:
+	flush_reports()
+
+
+## Join the background report writer; safe to call more than once.
+func flush_reports() -> void:
 	for completion in _report_write_queue.shutdown():
 		_accept_report_completion(completion)
 

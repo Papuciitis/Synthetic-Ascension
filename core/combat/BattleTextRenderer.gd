@@ -212,6 +212,16 @@ func clear() -> void:
 	queue_redraw()
 
 
+func _exit_tree() -> void:
+	# Release the shaped lines (TextServer RIDs) while the server is still up;
+	# script members are otherwise destroyed during script-server teardown,
+	# after the TextServer may already be gone.
+	_count = 0
+	for i in range(_lines.size()):
+		_lines[i] = null
+	_font = null
+
+
 func _draw() -> void:
 	if _font == null:
 		return

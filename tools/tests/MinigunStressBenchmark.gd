@@ -327,5 +327,9 @@ class Driver:
 
 
 func _ready() -> void:
+	# Benchmarks measure the ambient population; authored beats would add
+	# protected specials at 45 s and skew the stages.
+	if Global != null and "debug_encounter_beats" in Global:
+		Global.set("debug_encounter_beats", false)
 	var driver := Driver.new()
 	get_tree().root.add_child.call_deferred(driver)

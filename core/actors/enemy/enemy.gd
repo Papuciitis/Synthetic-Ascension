@@ -548,7 +548,7 @@ func is_retirement_protected(player_distance: float) -> bool:
 	if bool(get_meta("never_cull", false)):
 		return true
 	var kind := get_meta("special_spawn_kind", &"") as StringName
-	if kind == &"summon":
+	if kind == &"summon" or kind == &"beat":
 		return true
 	if kind == &"interior" and bool(get_meta("interior_active", true)):
 		return true

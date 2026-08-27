@@ -1,6 +1,8 @@
 extends PanelContainer
 class_name RunSheetHUD
 
+const BuildIdentityScript := preload("res://core/systems/run_sheet/BuildIdentity.gd")
+
 enum ArchivePage { PROFILE, SETS, MANIFESTATIONS, OBSERVATIONS }
 
 const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
@@ -292,6 +294,7 @@ func _refresh_manifestations(player: Node) -> void:
 	_rebuild_counts["manifestations"] = int(_rebuild_counts["manifestations"]) + 1
 	_clear_children(manifestations_vbox)
 	_add_section_heading(manifestations_vbox, "MANIFESTATIONS // ACTIVE DOCTRINE", MANIFEST)
+	_append_identity(player)
 	_append_burden(player)
 	_append_manifestations(player)
 	_append_doctrine_record()
@@ -330,6 +333,35 @@ func _append_doctrine_record() -> void:
 		_add_target_line(manifestations_vbox, "PERFECTED ENGINE // AUGMENT SEALS 3/3", ACCENT, 11)
 	for event_label in recorded_events:
 		_add_target_line(manifestations_vbox, event_label, Color(0.86, 0.35, 0.22, 1), 11)
+
+
+## "What am I?" - one behavioural sentence at the top of the sheet, composed
+## from the same readings the sections below show.
+func _append_identity(player: Node) -> void:
+	var identity := build_identity(player)
+	if identity.is_empty():
+		return
+	_add_target_line(manifestations_vbox, String(identity.get("sentence", "")), ACCENT, 11)
+
+
+func build_identity(player: Node) -> Dictionary:
+	if player == null:
+		return {}
+	var runner := player.get_node_or_null("ManifestationRunner")
+	var input := {
+		"burden": player.get("last_burden"),
+		"augment_ids": Global.permanent_augment_ids if Global != null else [],
+		"set_counts": Global.run_inventory.get_set_counts() if Global != null and Global.run_inventory != null else {},
+		"luck": float(Global.run_luck) if Global != null else 0.0,
+	}
+	if runner != null:
+		if runner.has_method("get_active_summaries"):
+			input["manifestations"] = runner.call("get_active_summaries")
+		if runner.has_method("get_active_pairs"):
+			input["pairs"] = runner.call("get_active_pairs")
+		if runner.has_method("get_noun_counts"):
+			input["noun_counts"] = runner.call("get_noun_counts")
+	return BuildIdentityScript.compose(input)
 
 
 func _manifestation_state(player: Node) -> Dictionary:

@@ -1165,7 +1165,17 @@ func apply_major_choice(choice_id: StringName) -> bool:
 	request_autosave()
 	return true
 
+## Test/dev seam: when true, combat autosaves are neither scheduled nor flushed
+## (exit-crash bisection; the save path is the main thing a kill arms).
+var debug_disable_autosave: bool = false
+## Authored encounter beats (EncounterDirector) - off switch for tests and
+## benchmarks that need the ambient population only.
+var debug_encounter_beats: bool = true
+
+
 func request_autosave(delay: float = 0.6) -> void:
+	if debug_disable_autosave:
+		return
 	# Combat calls this once per kill; writing and re-validating the profile on
 	# a sub-second debounce meant synchronous disk work mid-fight. Mark the
 	# profile dirty and defer the write to a safe point (scene change, quit) or
@@ -1194,9 +1204,32 @@ func _cancel_autosave_timer() -> void:
 	_autosave_timer = null
 
 
+## The engine's finalization after quit() has an intermittent access
+## violation on this build (script/resource cycles keep RID-holding resources
+## alive past server teardown; see docs/2026-08-27-improvement-backlog.md
+## D1). Player-facing quits flush everything that matters and then end the
+## process before finalization runs. Tests call get_tree().quit() directly and
+## keep their exit codes.
+var hard_exit_on_quit: bool = true
+
+
+func request_quit() -> void:
+	flush_pending_save()
+	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("flush_reports"):
+		PerformanceFlightRecorder.flush_reports()
+	if hard_exit_on_quit and not OS.has_feature("editor"):
+		OS.kill(OS.get_process_id())
+		return
+	get_tree().quit()
+
+
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		flush_pending_save()
+		if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("flush_reports"):
+			PerformanceFlightRecorder.flush_reports()
+		if hard_exit_on_quit and not OS.has_feature("editor"):
+			OS.kill(OS.get_process_id())
 
 
 func _exit_tree() -> void:
@@ -1212,7 +1245,7 @@ func _exit_tree() -> void:
 
 func flush_pending_save() -> void:
 	_cancel_autosave_timer()
-	if not _autosave_dirty:
+	if not _autosave_dirty or debug_disable_autosave:
 		return
 	if SaveManager == null or SaveManager.current_save == null:
 		_autosave_dirty = false

@@ -10,6 +10,7 @@ extends Node
 @export var summoned_population_cap: int = 36
 @export var split_population_cap: int = 48
 @export var boss_add_population_cap: int = 24
+@export var beat_population_cap: int = 24
 
 # Internal storage (do not modify returned arrays from outside)
 var _enemies: Array = [] # Array[Enemy]
@@ -672,6 +673,8 @@ func _special_kind_cap(kind: StringName) -> int:
 			return split_population_cap
 		&"boss_add":
 			return boss_add_population_cap
+		&"beat":
+			return beat_population_cap
 		_:
 			return special_population_cap
 

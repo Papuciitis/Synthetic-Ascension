@@ -627,7 +627,7 @@ func request_exit_game() -> void:
 	get_tree().paused = false
 	if Global != null:
 		Global.save_current_profile()
-	get_tree().quit()
+	Global.request_quit()
 
 
 func _confirm(action: StringName, button: Button, confirmation_text: String) -> bool:

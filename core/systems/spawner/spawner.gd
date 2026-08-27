@@ -711,6 +711,41 @@ func suspend_spawning(seconds: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left, maxf(0.0, seconds))
 	reset_spawn_clock()
 
+## Encounter beats (EncounterDirector): spawn one member of an authored
+## formation at an exact position. Beat members are specials - protected from
+## culling and counted outside the ambient cap - so a formation stays a
+## formation until the player answers it.
+func spawn_beat_member(scene_path: String, position: Vector2, elite: bool = false) -> Node:
+	if not spawning_enabled:
+		return null
+	var scene := load(scene_path) as PackedScene
+	if scene == null:
+		push_warning("[Spawner] beat member scene missing: %s" % scene_path)
+		return null
+	if _ei != null and _ei.has_method("try_reserve_special"):
+		if int(_ei.call("try_reserve_special", &"beat", 1)) <= 0:
+			return null
+	var node := _spawn_instance_node(scene, _elapsed / 60.0, 0.0, position, &"beat")
+	if node == null:
+		if _ei != null and _ei.has_method("release_special"):
+			_ei.call("release_special", &"beat", 1)
+		return null
+	if _ei != null and _ei.has_method("commit_special"):
+		_ei.call("commit_special", node, &"beat")
+	if elite and node.has_method("make_elite"):
+		node.call_deferred("make_elite")
+	return node
+
+
+func is_beat_position_valid(position: Vector2) -> bool:
+	_refresh_spawn_geometry_cache()
+	return _is_spawn_position_valid(position)
+
+
+func is_tutorial_stage() -> bool:
+	return _segment1_stage >= 0
+
+
 func queue_authored_wave(count: int, spacing: float = 0.7, delay: float = 1.5) -> void:
 	if _authored_wave_running or count <= 0:
 		return

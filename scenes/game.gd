@@ -6,6 +6,7 @@ const TUTORIAL_MODAL_CONTROLLER := preload("res://ui/controllers/TutorialModalCo
 const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/OpeningSequenceController.tscn")
 const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.tscn")
 const ENEMY_PROXY_ROOT_SCRIPT := preload("res://core/systems/enemy_world/EnemyProxyRoot.gd")
+const ENCOUNTER_DIRECTOR_SCRIPT := preload("res://core/systems/encounters/EncounterDirector.gd")
 
 @export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
@@ -118,9 +119,25 @@ func _ready() -> void:
 
 	_setup_segment_world()
 	_setup_enemy_proxy_root()
+	call_deferred("_setup_encounter_director")
 
 	# Narrative opening precedes run-level reward UI on a fresh Segment 1.
 	call_deferred("_begin_entry_sequence")
+
+
+## Authored encounter beats on top of the director's continuous pressure
+## (roadmap Phase 2.4). Deferred so the spawner and player exist.
+func _setup_encounter_director() -> void:
+	if Global != null and "debug_encounter_beats" in Global and not bool(Global.get("debug_encounter_beats")):
+		return
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if spawner == null or player == null:
+		return
+	var director := ENCOUNTER_DIRECTOR_SCRIPT.new() as Node
+	director.name = "EncounterDirector"
+	add_child(director)
+	director.call("setup", spawner, player)
 
 
 func _setup_enemy_proxy_root() -> void:
@@ -435,4 +452,4 @@ func _quit_game() -> void:
 	get_tree().paused = false
 	if Global != null:
 		Global.save_current_profile()
-	get_tree().quit()
+	Global.request_quit()

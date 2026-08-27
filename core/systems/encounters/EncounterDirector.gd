@@ -1,0 +1,235 @@
+extends Node
+class_name EncounterDirector
+
+## Schedules authored encounter beats on top of the ThreatDirector's continuous
+## pressure (roadmap §8, Phase 2.4). Pressure is not drama: every 60-90 s from
+## the "disturbance" phase on, one readable problem - a charger wedge, a
+## shield wall, a crossfire - is placed relative to the player's travel and
+## announced once, so the player stops autopiloting.
+##
+## Rules: never during a tutorial stage, never once the Exit Rite has unsealed
+## (the rite owns that time), never the same beat twice in a row, at most
+## `max_concurrent` beats alive. Members are spawned through the spawner's
+## beat API, which protects them from culling and counts them as specials.
+
+signal beat_started(id: StringName, label: String, members: int)
+signal beat_ended(id: StringName)
+
+const BeatsScript = preload("res://core/systems/encounters/EncounterBeats.gd")
+
+@export var enabled := true
+@export_range(5.0, 300.0, 1.0) var first_beat_delay := 45.0
+@export_range(5.0, 600.0, 1.0) var interval_min := 60.0
+@export_range(5.0, 600.0, 1.0) var interval_max := 90.0
+@export_range(1, 4, 1) var max_concurrent := 1
+## A beat aborts if fewer than this fraction of its members find valid ground.
+@export_range(0.1, 1.0, 0.05) var min_placed_fraction := 0.5
+
+## Seams for tests: phase / unsealed / tutorial come from the live autoloads
+## unless a provider is set. phase_provider() -> StringName,
+## unsealed_provider() -> bool.
+var phase_provider: Callable = Callable()
+var unsealed_provider: Callable = Callable()
+
+var _spawner: Node = null
+var _player: Node2D = null
+var _rng := RandomNumberGenerator.new()
+var _next_beat_in := 0.0
+var _last_beat_id: StringName = &""
+var _cooldowns: Dictionary = {}
+var _active: Dictionary = {}
+var _counters := {
+	"scheduled": 0,
+	"aborted": 0,
+	"members_spawned": 0,
+	"members_skipped": 0,
+}
+
+
+func setup(spawner: Node, player: Node2D, seed_value: int = 0) -> void:
+	_spawner = spawner
+	_player = player
+	if seed_value != 0:
+		_rng.seed = seed_value
+	else:
+		_rng.randomize()
+	_next_beat_in = first_beat_delay
+
+
+func _physics_process(delta: float) -> void:
+	tick(delta)
+
+
+func tick(delta: float) -> void:
+	for id in _cooldowns.keys():
+		_cooldowns[id] = float(_cooldowns[id]) - delta
+		if float(_cooldowns[id]) <= 0.0:
+			_cooldowns.erase(id)
+	if not enabled or _spawner == null or not is_instance_valid(_spawner):
+		return
+	if _player == null or not is_instance_valid(_player):
+		return
+	_next_beat_in -= delta
+	if _next_beat_in > 0.0:
+		return
+	if not can_schedule():
+		# Re-check soon; conditions (phase, tutorial, rite) change over time.
+		_next_beat_in = 5.0
+		return
+	var result := try_spawn_beat()
+	_next_beat_in = _rng.randf_range(interval_min, interval_max) if not result.is_empty() else 5.0
+
+
+func can_schedule() -> bool:
+	if _active.size() >= max_concurrent:
+		return false
+	if _is_tutorial_stage() or _is_unsealed():
+		return false
+	return not _candidates().is_empty()
+
+
+## Spawn a specific beat, or a random eligible one. Returns {} when nothing
+## was placed. Deterministic under a seeded setup().
+func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
+	var beat: Dictionary = BeatsScript.find(beat_id) if beat_id != &"" else _pick_random()
+	if beat.is_empty() or _player == null or _spawner == null:
+		return {}
+	var travel := _travel_direction()
+	var mode: StringName = beat["mode"]
+	var anchor_dir := travel
+	match mode:
+		&"flank":
+			anchor_dir = travel.orthogonal() * (1.0 if _rng.randf() < 0.5 else -1.0)
+		&"off_route":
+			anchor_dir = (-travel).rotated(_rng.randf_range(-0.6, 0.6))
+	var basis_x := anchor_dir
+	var basis_y := anchor_dir.orthogonal()
+	var player_pos := _player.global_position
+	var anchor := player_pos + anchor_dir * float(beat["distance"])
+	var members: Array = beat["members"]
+	var spawned: Array[Node] = []
+	var skipped := 0
+	for member_variant in members:
+		var member := member_variant as Dictionary
+		var offset := member["offset"] as Vector2
+		var pos := (
+			player_pos + offset if mode == &"around"
+			else anchor + basis_x * offset.x + basis_y * offset.y
+		)
+		if _spawner.has_method("is_beat_position_valid") and not bool(_spawner.call("is_beat_position_valid", pos)):
+			skipped += 1
+			continue
+		var node := _spawner.call("spawn_beat_member", String(member["scene"]), pos, bool(member.get("elite", false))) as Node
+		if node == null:
+			skipped += 1
+			continue
+		spawned.append(node)
+	_counters["members_skipped"] = int(_counters["members_skipped"]) + skipped
+	if spawned.is_empty() or float(spawned.size()) < float(members.size()) * min_placed_fraction:
+		for node in spawned:
+			if node.has_method("despawn"):
+				node.call("despawn", &"beat_aborted")
+			else:
+				node.queue_free()
+		_counters["aborted"] = int(_counters["aborted"]) + 1
+		return {}
+	var id: StringName = beat["id"]
+	_counters["members_spawned"] = int(_counters["members_spawned"]) + spawned.size()
+	_counters["scheduled"] = int(_counters["scheduled"]) + 1
+	_last_beat_id = id
+	_cooldowns[id] = float(beat["cooldown"])
+	var record := {"id": id, "alive": spawned.size(), "label": beat["label"]}
+	_active[id] = record
+	for node in spawned:
+		node.tree_exited.connect(_on_member_gone.bind(id), CONNECT_ONE_SHOT)
+	_announce(beat)
+	_record(&"beat_started", id, spawned.size())
+	beat_started.emit(id, String(beat["label"]), spawned.size())
+	return record
+
+
+func active_beats() -> Array:
+	return _active.keys()
+
+
+func last_beat_id() -> StringName:
+	return _last_beat_id
+
+
+func get_debug_counters() -> Dictionary:
+	var out := _counters.duplicate()
+	out["active"] = _active.size()
+	out["next_beat_in"] = snappedf(_next_beat_in, 0.1)
+	return out
+
+
+# --- internals --------------------------------------------------------------
+
+func _candidates() -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	for beat in BeatsScript.eligible(_phase()):
+		var id: StringName = beat["id"]
+		if id == _last_beat_id or _cooldowns.has(id) or _active.has(id):
+			continue
+		out.append(beat)
+	return out
+
+
+func _pick_random() -> Dictionary:
+	var candidates := _candidates()
+	if candidates.is_empty():
+		return {}
+	return candidates[_rng.randi_range(0, candidates.size() - 1)]
+
+
+func _travel_direction() -> Vector2:
+	var velocity: Variant = _player.get("velocity")
+	if velocity is Vector2 and (velocity as Vector2).length_squared() > 1.0:
+		return (velocity as Vector2).normalized()
+	var facing: Variant = _player.get("facing")
+	if facing is Vector2 and (facing as Vector2) != Vector2.ZERO:
+		return (facing as Vector2).normalized()
+	return Vector2.RIGHT.rotated(_rng.randf() * TAU)
+
+
+func _on_member_gone(id: StringName) -> void:
+	if not _active.has(id):
+		return
+	var record: Dictionary = _active[id]
+	record["alive"] = int(record["alive"]) - 1
+	if int(record["alive"]) <= 0:
+		_active.erase(id)
+		_record(&"beat_ended", id, 0)
+		beat_ended.emit(id)
+
+
+func _announce(beat: Dictionary) -> void:
+	if BattleText != null and _player != null and BattleText.has_method("popup"):
+		BattleText.popup(_player.global_position, String(beat["label"]), Color(1.0, 0.55, 0.35, 1.0), 1.25)
+
+
+func _record(event: StringName, id: StringName, members: int) -> void:
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_event(&"encounter", event, {"beat": String(id), "members": members})
+
+
+func _phase() -> StringName:
+	if phase_provider.is_valid():
+		return phase_provider.call()
+	var director := get_node_or_null("/root/ThreatDirector")
+	return StringName(director.get("segment_phase")) if director != null else &"recon"
+
+
+func _is_unsealed() -> bool:
+	if unsealed_provider.is_valid():
+		return bool(unsealed_provider.call())
+	var director := get_node_or_null("/root/ThreatDirector")
+	return director != null and bool(director.get("gate_unsealed"))
+
+
+func _is_tutorial_stage() -> bool:
+	if _spawner == null or not is_instance_valid(_spawner):
+		return false
+	if _spawner.has_method("is_tutorial_stage"):
+		return bool(_spawner.call("is_tutorial_stage"))
+	return false

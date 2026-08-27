@@ -153,5 +153,7 @@ class RolloutDriver:
 
 
 func _ready() -> void:
+	if OS.get_environment("ROLLOUT_DISABLE_AUTOSAVE") == "1":
+		Global.debug_disable_autosave = true
 	var driver := RolloutDriver.new()
 	get_tree().root.add_child.call_deferred(driver)
