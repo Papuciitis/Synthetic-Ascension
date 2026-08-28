@@ -1289,3 +1289,20 @@ document only): `docs/current_game_data.md` and the audit series under
 `docs/audits/` (cleanup, stale docs, logging, performance hygiene, Godot
 hygiene, Run Sheet completeness, save compatibility, naming).
 
+**2026-08-28, later — audit series delivered** (`d7042b4` … `dc1783a`), all
+read-only: `docs/audits/2026-08-28-cleanup-audit.md` (the ranked consolidation:
+ten safest wins, ten highest-risk legacy areas, size scenarios, future-bug
+sites) over `dead-code-orphans`, `stale-docs` (+ `-july-plans`), `stale-tests`,
+`save-compatibility`, `naming-consistency`, `godot-hygiene`, `logging`,
+`performance-hygiene`, `run-sheet-completeness`; `test-coverage-gaps` in
+progress. Headlines: 449 MB of tracked JSON captures nothing reads; ~26 MiB of
+provably dead files shipping via `all_resources`; saves keyed by `res://`
+paths (any item/script rename bricks them and the UI offers to overwrite);
+zero tests target a removed system, but 13 probes/benchmarks cannot fail.
+
+Final full sweep on the committed Phase 2 tree (`a8a535a`, headless
+`--quit-after`): **83 suites, 0 failures, 0 script errors** — with the caveat
+the stale-tests audit documents: the display-only probes report an empty
+summary and exit 0 regardless, so "83 clean" overstates coverage by about a
+dozen.
+
