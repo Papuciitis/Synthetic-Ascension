@@ -1251,3 +1251,40 @@ That is the game Synthetic Ascension is trying to become.
 # 26. One-sentence collaborator brief
 
 > **Synthetic Ascension is trying to combine horde-survivor action with Slay-the-Spire-style run construction and Risk-of-Rain / Isaac / Nova-Drift / Noita-style emergent build engines. The player should begin with understandable equipment and end with an absurd synthetic-occult machine they partially designed and partially discovered. Performance work exists to allow that escalation, not to become the project itself. The immediate design goal is to make one 20-minute run develop a clear identity, contain memorable encounter beats, visibly cross power thresholds, force meaningful build decisions, and culminate in an Exit Rite worth surviving to.**
+
+---
+
+# 27. Status log (appended by implementation; the sections above are the intent)
+
+## 2026-08-28
+
+**Phase 1 — done.** 1.1-1.4 in `9619305` (relative Doctrine burden, census vs
+active domains, Lens on statistical slots, cap infrastructure; BurdenSystemTest
++28). 1.5-1.8 in `20b1b21` (pressure benchmark runs both arms under a pressure
+override and gates on ordinary physics bodies, materialization reasons in the
+policy and recorder, burst demotion over budget, BuildInfo identity in
+incidents/reports). 1.9 in `6639ece`: three bisection arms measured on the
+rollout repro; the residual ~25% is inside engine finalization with 332 leaked
+objects; player-facing quits now end the process after flushing saves and
+reports (`Global.request_quit`), tests keep exit codes.
+
+**Phase 2 — mechanisms built, verdicts pending.** 2.1 HitFeel autoload
+(hit-stop + camera punch, exports, reduced-motion aware); 2.2/2.3
+BuildIdentity "what am I" sentence on the Run Sheet and manifestation
+thresholds at 3/5 rules; 2.4 seven authored beats + EncounterDirector; 2.5
+Cursed Vault placed from segment 2; 2.6 power-contrast window in the
+ThreatDirector; 2.7 phase-escalation cue with a newly unlocked beat; 2.8 rite
+pressure mode, specialist response, climax pulse (`6639ece`, `a8a535a`). Not
+built: elite modifiers (§9), ritual-interference beats, healing lock, the 85%
+optional rite reward, "route closes". Plan and per-item status:
+`docs/superpowers/plans/2026-08-27-phase2-one-great-run.md`.
+
+**What only a human can do next:** play the authored run and answer §25 —
+protocol in `docs/2026-08-28-playtest-protocol.md`. Phase 3 stays gated on
+that verdict (§19). Every number added in Phase 2 is an export; tuning is the
+playtest's job, not the implementation's.
+
+**Idle-time work while gated** (discover / verify / catalogue / test / clean /
+document only): `docs/2026-08-28-cleanup-audit.md`, `docs/current_game_data.md`,
+and the audit series listed there.
+
