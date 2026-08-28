@@ -387,7 +387,7 @@ Bind to the live Rite when the evacuation overlay resolves its target; clear on 
 
 ```powershell
 & 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . --scene res://tools/tests/HudContextPresentationTest.tscn
-& 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . --scene res://tools/tests/InputBindingServiceTest.tscn
+& 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . -s res://tools/tests/InputBindingServiceTest.gd
 & 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe' --headless --path . --script res://tools/tests/InterfaceThemeConsistencyTest.gd
 ```
 

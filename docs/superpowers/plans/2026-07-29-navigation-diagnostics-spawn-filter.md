@@ -29,7 +29,7 @@
 - Modify: `autoload/EnemyIndex.gd`
 - Modify: `core/systems/spawner/spawner.gd`
 - Test: `tools/tests/SpawnFilterTest.gd`
-- Create: `tools/tests/SpawnFilterTest.tscn`
+- Create: `tools/tests/SpawnFilterTest.gd` (a `SceneTree` script; run with `-s`, there is no `.tscn`)
 
 **Interfaces:**
 - Produces: `is_enemy_enabled(enemy_id: StringName, protected: bool = false) -> bool`
@@ -51,7 +51,7 @@ pending-reservation cleanup using real enemy nodes and the spawner.
 Run:
 
 ```powershell
-& 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64_console.exe' --headless --path . res://tools/tests/SpawnFilterTest.tscn
+& 'C:\Users\NaurisKrišjānis\Desktop\Godot_v4.7.1-stable_win64.exe\Godot_v4.7.1-stable_win64_console.exe' --headless --path . -s res://tools/tests/SpawnFilterTest.gd
 ```
 
 Expected: failure because `/root/DebugEnemySpawnFilter` and its API do not exist.
@@ -248,7 +248,7 @@ objective UI, ability UI, and right-side tools remain usable.
 
 - [ ] **Step 1: Run focused suites**
 
-Run `SpawnFilterTest.tscn`, `PerformanceLifecycleTest.tscn`, and
+Run `SpawnFilterTest.gd` (`-s`), `PerformanceLifecycleTest.tscn`, and
 `EnemyLifecycleStressTest.tscn`.
 
 - [ ] **Step 2: Run existing regression suites**
