@@ -405,13 +405,17 @@ func end_run() -> void:
 
 	print("GAME OVER")
 
+	# The tree is already paused above; without a game-over UI there would be
+	# no input path to unpause it, so fall back to the menu instead.
 	if game_over_ui_scene == null:
-		push_warning("game_over_ui_scene is null")
+		push_error("end_run: game_over_ui_scene is null; returning to the main menu")
+		_quit_to_menu()
 		return
 
 	_game_over_ui = game_over_ui_scene.instantiate() as Control
 	if _game_over_ui == null:
-		push_warning("Failed to instantiate game_over_ui_scene")
+		push_error("end_run: failed to instantiate game_over_ui_scene; returning to the main menu")
+		_quit_to_menu()
 		return
 
 	_game_over_ui.process_mode = Node.PROCESS_MODE_ALWAYS
