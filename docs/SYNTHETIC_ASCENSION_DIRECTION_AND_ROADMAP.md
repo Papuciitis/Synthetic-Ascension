@@ -1294,8 +1294,10 @@ read-only: `docs/audits/2026-08-28-cleanup-audit.md` (the ranked consolidation:
 ten safest wins, ten highest-risk legacy areas, size scenarios, future-bug
 sites) over `dead-code-orphans`, `stale-docs` (+ `-july-plans`), `stale-tests`,
 `save-compatibility`, `naming-consistency`, `godot-hygiene`, `logging`,
-`performance-hygiene`, `run-sheet-completeness`; `test-coverage-gaps` in
-progress. Headlines: 449 MB of tracked JSON captures nothing reads; ~26 MiB of
+`performance-hygiene`, `run-sheet-completeness`, `test-coverage-gaps` (329
+production scripts, 118 with no test, 51 of them HIGH risk: InventoryRouter,
+the item-effect scenes, the ten manifestation pair rules, the enemy-to-player
+damage path, set effects, primary objectives). Headlines: 449 MB of tracked JSON captures nothing reads; ~26 MiB of
 provably dead files shipping via `all_resources`; saves keyed by `res://`
 paths (any item/script rename bricks them and the UI offers to overwrite);
 zero tests target a removed system, but 13 probes/benchmarks cannot fail.
