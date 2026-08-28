@@ -71,9 +71,6 @@ func _setup_sprite() -> void:
 func _exit_tree() -> void:
 	pass
 
-func _stop_trail() -> void:
-	pass
-
 func _physics_process(delta: float) -> void:
 	if _hit:
 		return

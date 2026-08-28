@@ -610,26 +610,6 @@ func release_legacy_actor(actor: Node2D, reason: StringName = &"legacy_unregiste
 	return remove_enemy(handle, reason)
 
 
-func rebuild_legacy_shadow(valid_enemies: Array) -> void:
-	var legacy_handles: Array = _legacy_handles.keys().duplicate()
-	for handle_variant in legacy_handles:
-		var handle := int(handle_variant)
-		if is_valid_handle(handle):
-			remove_enemy(handle, &"legacy_rebuild")
-	_legacy_handles.clear()
-	for enemy_variant in valid_enemies:
-		if (
-			enemy_variant == null
-			or not is_instance_valid(enemy_variant)
-			or not (enemy_variant is Node2D)
-		):
-			continue
-		var enemy := enemy_variant as Node2D
-		if enemy.is_queued_for_deletion() or not enemy.is_inside_tree():
-			continue
-		adopt_legacy_actor(enemy)
-
-
 func gather_in_radius(
 	origin: Vector2,
 	radius: float,

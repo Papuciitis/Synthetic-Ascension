@@ -138,17 +138,6 @@ func _finalize_proxy_death(handle: int) -> void:
 		_world.remove_enemy(handle, &"proxy_death")
 
 
-func apply_damage_to_actor(
-	actor: Node2D,
-	raw_damage: float,
-	hit_count: int = 1,
-	source: Node = null,
-	payload: Variant = null,
-) -> float:
-	var handle := handle_for_actor(actor)
-	return apply_damage(handle, raw_damage, hit_count, source, payload)
-
-
 func apply_hit_ledger(handle: int, ledger: HitLedger) -> float:
 	if ledger == null:
 		return 0.0

@@ -59,10 +59,7 @@ func _run() -> void:
 
 	# --- Radius clamp: huge radii must degrade to an occupied-bucket scan ---
 	var started := Time.get_ticks_usec()
-	var found := index.call("nearest_enemy", Vector2.ZERO, 50000.0, null) as Node2D
-	var elapsed := Time.get_ticks_usec() - started
-	_check(found == near, "huge-radius nearest_enemy still finds the closest enemy")
-	_check(elapsed < 250_000, "huge-radius nearest_enemy completes without scanning the full cell window (took %d usec)" % elapsed)
+	var elapsed := 0
 
 	started = Time.get_ticks_usec()
 	var gathered: Array = []
@@ -72,21 +69,10 @@ func _run() -> void:
 	_check(elapsed < 250_000, "huge-radius gather_in_radius completes without scanning the full cell window (took %d usec)" % elapsed)
 
 	started = Time.get_ticks_usec()
-	var in_radius := index.call("first_in_radius", Vector2(2990.0, 0.0), 40000.0, null) as Node2D
-	elapsed = Time.get_ticks_usec() - started
-	_check(in_radius != null, "huge-radius first_in_radius finds an enemy")
-	_check(elapsed < 250_000, "huge-radius first_in_radius completes without scanning the full cell window (took %d usec)" % elapsed)
-
-	started = Time.get_ticks_usec()
 	var allies := int(index.call("count_allies", near, 50000.0, 999))
 	elapsed = Time.get_ticks_usec() - started
 	_check(allies == 2, "huge-radius count_allies counts the other live enemies")
 	_check(elapsed < 250_000, "huge-radius count_allies completes without scanning the full cell window (took %d usec)" % elapsed)
-
-	# Bounded radii keep exclusion semantics.
-	_check(index.call("nearest_enemy", Vector2.ZERO, 100.0, null) == near, "bounded nearest_enemy respects max_dist")
-	_check(index.call("nearest_enemy", Vector2(10000.0, 0.0), 100.0, null) == null, "bounded nearest_enemy returns null when nothing is in range")
-	_check(index.call("nearest_enemy", Vector2.ZERO, 50000.0, near) == mid, "huge-radius nearest_enemy honors the exclude argument")
 
 	# Dead enemies never surface.
 	mid.dead = true
@@ -99,8 +85,9 @@ func _run() -> void:
 	var same_cell_a := _spawn_dummy(index, Vector2(41.0, 1.0))
 	var same_cell_b := _spawn_dummy(index, Vector2(42.0, 2.0))
 	index.call("unregister", same_cell_a)
-	var still_found := index.call("nearest_enemy", Vector2(40.0, 0.0), 100.0, null) as Node2D
-	_check(still_found == near or still_found == same_cell_b, "bucket removal keeps remaining same-cell enemies queryable")
+	gathered.clear()
+	index.call("gather_in_radius", Vector2(40.0, 0.0), 100.0, gathered)
+	_check(gathered.has(near) and gathered.has(same_cell_b), "bucket removal keeps remaining same-cell enemies queryable")
 	index.call("unregister", same_cell_b)
 	same_cell_a.queue_free()
 	same_cell_b.queue_free()

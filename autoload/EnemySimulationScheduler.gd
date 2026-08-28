@@ -406,18 +406,8 @@ func is_under_physics_pressure() -> bool:
 	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0 > physics_pressure_ms
 
 
-func _is_over_budget_pressure() -> bool:
-	if _physics_pressure_override != null:
-		return bool(_physics_pressure_override)
-	return Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0 > budget_pressure_ms
-
-
 func set_physics_pressure_override(value: Variant) -> void:
 	_physics_pressure_override = value
-
-
-func is_physics_pressure_active() -> bool:
-	return _pressure_active
 
 
 func physics_pressure_level() -> int:
@@ -542,10 +532,6 @@ func _ingest_step_sample(step_ms: float, refresh_ms: float) -> void:
 
 func last_step_sample_ms() -> float:
 	return _last_step_sample_ms
-
-
-func _measured_pressure_level() -> int:
-	return _pressure_level_for(_smoothed_physics_ms if _smoothed_physics_ms >= 0.0 else _measured_physics_ms())
 
 
 func _pressure_level_for(physics_ms: float) -> int:

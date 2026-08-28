@@ -491,10 +491,6 @@ func set_scheduler_tier(tier: int) -> void:
 		reset_physics_interpolation()
 
 
-func run_full_simulation_next_frame() -> void:
-	set_scheduler_tier(0)
-
-
 func is_body_physics_enabled() -> bool:
 	if _body_shape == null or not is_instance_valid(_body_shape):
 		_body_shape = get_node_or_null("CollisionShape2D") as CollisionShape2D
@@ -574,10 +570,6 @@ func _lod_interval_for_tier() -> float:
 			return maxf(0.05, lod_far_steer_interval)
 		_:
 			return 0.0
-
-
-func _set_hitbox_active(value: bool) -> void:
-	_set_hitbox_roles(value and _get_active_ai() == EnemySpec.AI.LEECH, value)
 
 
 func _register_batched_visual() -> void:
