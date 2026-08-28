@@ -12,6 +12,11 @@ var current_save: SaveData = null
 var debug_save_writes: int = 0
 var debug_last_save_validated: bool = true
 
+# Slots whose primary file existed but could not be parsed at the last
+# load_slot(). The backup is then the last good generation, and save_slot must
+# not rotate the unreadable primary over it.
+var _unreadable_primary: Dictionary = {}
+
 func _slot_path(slot: int) -> String:
 	return SAVE_DIR + "slot_%d.tres" % slot
 
@@ -20,6 +25,9 @@ func _temporary_path(slot: int) -> String:
 
 func _backup_path(slot: int) -> String:
 	return SAVE_DIR + "slot_%d.bak.tres" % slot
+
+func _broken_path(slot: int) -> String:
+	return SAVE_DIR + "slot_%d.broken.tres" % slot
 
 func _load_save_data(path: String) -> SaveData:
 	if not FileAccess.file_exists(path):
@@ -51,7 +59,10 @@ func load_slot(slot: int) -> SaveData:
 		return null
 	var primary := _load_save_data(_slot_path(slot))
 	if primary != null:
+		_unreadable_primary.erase(slot)
 		return primary
+	if FileAccess.file_exists(_slot_path(slot)):
+		_unreadable_primary[slot] = true
 	return _load_save_data(_backup_path(slot))
 
 func create_slot(slot: int, profile_name: String) -> SaveData:
@@ -100,7 +111,24 @@ func save_slot(save: SaveData, validated: bool = true) -> bool:
 		return false
 
 	var moved_primary := false
-	if FileAccess.file_exists(primary_path):
+	var set_aside := false
+	var absolute_broken := ProjectSettings.globalize_path(_broken_path(slot))
+	if FileAccess.file_exists(primary_path) and bool(_unreadable_primary.get(slot, false)):
+		# The primary could not be parsed at the last load, so the backup is the
+		# last good generation. Set the primary aside instead of rotating it over
+		# the backup.
+		if FileAccess.file_exists(_broken_path(slot)):
+			DirAccess.remove_absolute(absolute_broken)
+		var aside_error := DirAccess.rename_absolute(absolute_primary, absolute_broken)
+		if aside_error != OK:
+			push_error(
+				"Failed setting aside unreadable save for slot %d, err=%s"
+				% [slot, str(aside_error)]
+			)
+			DirAccess.remove_absolute(absolute_temporary)
+			return false
+		set_aside = true
+	elif FileAccess.file_exists(primary_path):
 		if FileAccess.file_exists(backup_path):
 			var remove_backup_error := DirAccess.remove_absolute(absolute_backup)
 			if remove_backup_error != OK:
@@ -129,13 +157,17 @@ func save_slot(save: SaveData, validated: bool = true) -> bool:
 					"Failed restoring backup for slot %d, err=%s"
 					% [slot, str(restore_error)]
 				)
+		elif set_aside:
+			DirAccess.rename_absolute(absolute_broken, absolute_primary)
 		return false
+	_unreadable_primary.erase(slot)
 	return true
 
 func delete_slot(slot: int) -> void:
 	if not ensure_dir():
 		return
-	for path in [_slot_path(slot), _temporary_path(slot), _backup_path(slot)]:
+	_unreadable_primary.erase(slot)
+	for path in [_slot_path(slot), _temporary_path(slot), _backup_path(slot), _broken_path(slot)]:
 		if FileAccess.file_exists(path):
 			var error := DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 			if error != OK:

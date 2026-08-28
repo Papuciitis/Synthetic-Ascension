@@ -19,6 +19,7 @@ func _run() -> void:
 	_test_write_save_copies_active_vendor_snapshot()
 	_test_second_save_keeps_previous_backup()
 	_test_load_recovers_from_corrupt_primary()
+	_test_save_after_unreadable_primary_keeps_backup()
 	_test_load_bypasses_resource_cache()
 	_test_delete_removes_all_slot_files()
 	_test_meta_stash_round_trip()
@@ -52,8 +53,12 @@ func _backup_path() -> String:
 	return "user://saves/slot_%d.bak.tres" % TEST_SLOT
 
 
+func _broken_path() -> String:
+	return "user://saves/slot_%d.broken.tres" % TEST_SLOT
+
+
 func _cleanup_slot() -> void:
-	for path in [_primary_path(), _temporary_path(), _backup_path()]:
+	for path in [_primary_path(), _temporary_path(), _backup_path(), _broken_path()]:
 		if FileAccess.file_exists(path):
 			var error := DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 			_check(error == OK, "test fixture removes %s" % path.get_file())
@@ -153,6 +158,42 @@ func _test_load_recovers_from_corrupt_primary() -> void:
 		loaded != null and loaded.profile_name == "recoverable",
 		"invalid primary falls back to valid backup"
 	)
+	_cleanup_slot()
+
+
+func _test_save_after_unreadable_primary_keeps_backup() -> void:
+	# A primary that cannot be parsed (content rename, disk damage) used to be
+	# rotated over the backup by the next save - destroying the last good
+	# generation the backup was holding. SaveSelect's "Click to create" on such a
+	# slot was exactly that next save.
+	_cleanup_slot()
+	var first := SaveData.new()
+	first.slot_index = TEST_SLOT
+	first.profile_name = "recoverable"
+	_save_manager.save_slot(first)
+	var second := SaveData.new()
+	second.slot_index = TEST_SLOT
+	second.profile_name = "newest"
+	_save_manager.save_slot(second)
+	var file := FileAccess.open(_primary_path(), FileAccess.WRITE)
+	file.store_string("not a Godot resource")
+	file.close()
+
+	var loaded: SaveData = _save_manager.load_slot(TEST_SLOT)
+	_check(loaded != null and loaded.profile_name == "recoverable", "fixture: the backup serves the unreadable primary")
+
+	var third := SaveData.new()
+	third.slot_index = TEST_SLOT
+	third.profile_name = "after_repair"
+	_check(_save_manager.save_slot(third), "saving over an unreadable primary succeeds")
+	var backup := ResourceLoader.load(_backup_path(), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
+	_check(backup != null and backup.profile_name == "recoverable", "the last good generation survives as the backup")
+	var primary := ResourceLoader.load(_primary_path(), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
+	_check(primary != null and primary.profile_name == "after_repair", "the new save is the primary")
+	_check(FileAccess.file_exists(_broken_path()), "the unreadable file is set aside as slot_N.broken.tres")
+
+	_save_manager.delete_slot(TEST_SLOT)
+	_check(not FileAccess.file_exists(_broken_path()), "delete_slot also removes the set-aside file")
 	_cleanup_slot()
 
 
