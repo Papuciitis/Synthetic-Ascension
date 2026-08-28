@@ -48,6 +48,7 @@ func _run() -> void:
 	_test_shared_nouns_are_shared()
 	_test_dash_hook()
 	_test_identity_survives_a_save_round_trip()
+	_test_dangling_manifestation_id_is_not_a_manifestation()
 	_test_tooltip_renders_the_rule()
 	print("ManifestationSystemTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -925,6 +926,23 @@ func _test_identity_survives_a_save_round_trip() -> void:
 			"the rule survives the save round trip"
 		)
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
+
+
+func _test_dangling_manifestation_id_is_not_a_manifestation() -> void:
+	# A rule removed from the catalog leaves its id on saved items. Every reader
+	# null-checks the definition, but has_manifestation() still answered true,
+	# so the badge drew a rule-less badge and CursedVault's guaranteed
+	# manifestation was satisfied by a rule that no longer exists.
+	var data := _make_data("test_dangling", ManifestationCatalog.SLOT_RING)
+	var ids := _first_two_ids_for_slot(ManifestationCatalog.SLOT_RING)
+	var live := _make_instance(data, 4, 0.4, ids[0])
+	_check(live.has_manifestation() and live.manifestation_def() != null, "a catalogued rule counts as a manifestation")
+	var stale := _make_instance(data, 4, 0.4, &"rule_removed_in_a_patch")
+	_check(stale.manifestation_id == &"rule_removed_in_a_patch", "fixture: the stale id stays on the item (saves are never rewritten)")
+	_check(not stale.has_manifestation(), "a rule the catalog no longer knows is not a manifestation")
+	_check(stale.manifestation_def() == null, "and resolves to no definition")
+	var none := _make_instance(data, 4, 0.4, &"")
+	_check(not none.has_manifestation(), "an empty id is not a manifestation")
 
 
 func _test_tooltip_renders_the_rule() -> void:

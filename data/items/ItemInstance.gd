@@ -84,7 +84,10 @@ func _roll_manifestation() -> void:
 
 
 func has_manifestation() -> bool:
-	return manifestation_id != &""
+	# A rule removed from the catalog leaves its id on saved items; that item
+	# no longer carries a manifestation (badge, tooltip and CursedVault's
+	# guarantee all follow this answer). The id itself is kept untouched.
+	return manifestation_id != &"" and ManifestationCatalog.get_def(manifestation_id) != null
 
 
 func manifestation_def() -> ManifestationDef:
