@@ -187,14 +187,14 @@ func _update_start_state() -> void:
 
 
 # ============================================================
-# Card data (no hard paths, no dependency on selection_card.gd)
+# Card data (no hard paths; RaceCard.gd / PlaystyleCard.gd own the card scripts)
 # ============================================================
 
 func _apply_card_data(card: Button, title: String, data: Resource) -> void:
 	if card == null:
 		return
 
-	# If your selection_card.gd has set_data, call it (nice if it also sets images later).
+	# If the card script has set_data, call it (nice if it also sets images later).
 	if card.has_method("set_data"):
 		# (title, resource) matches how you were calling it before
 		card.call_deferred("set_data", title, data)
