@@ -9,6 +9,7 @@ var source: Node = null
 
 var _life_left: float = -1.0
 var _pooled: bool = false
+var _hit: bool = false
 
 func _ready() -> void:
 	add_to_group("player_projectile")
@@ -24,6 +25,7 @@ func _on_pool_obtain() -> void:
 	# PoolManager calls this when the node is re-used.
 	_pooled = true
 	_life_left = lifetime
+	_hit = false
 	if "monitoring" in self:
 		monitoring = true
 	if "monitorable" in self:
@@ -36,6 +38,8 @@ func _on_pool_recycle() -> void:
 	_life_left = -1.0
 
 func _physics_process(delta: float) -> void:
+	if _hit:
+		return
 	if _life_left < 0.0:
 		_life_left = lifetime
 
@@ -43,6 +47,7 @@ func _physics_process(delta: float) -> void:
 	var new_position := old_position + velocity * delta
 	var handle := EnemyCombat.first_enemy_on_segment(old_position, new_position, 8.0)
 	if handle != EnemyWorldTypes.INVALID_HANDLE:
+		_hit = true
 		EnemyCombat.apply_damage(handle, damage, 1, source)
 		_despawn()
 		return
@@ -53,15 +58,24 @@ func _physics_process(delta: float) -> void:
 		_despawn()
 
 func _on_area_entered(area: Area2D) -> void:
+	# The despawn is deferred until the physics flush ends, so a second hitbox
+	# in the same flush still reaches us; one projectile lands one hit.
+	if _hit:
+		return
 	# If enemy has a Hitbox, we can go to its parent (Enemy)
 	if area != null and area.is_in_group("enemy_hitbox"):
+		_hit = true
 		var enemy := area.get_parent()
 		var handle := EnemyCombat.handle_for_actor(enemy)
 		if handle != EnemyWorldTypes.INVALID_HANDLE:
 			EnemyCombat.apply_damage(handle, damage, 1, source)
 		elif enemy != null and enemy.is_in_group("enemies") and enemy.has_method("take_damage"):
 			enemy.call("take_damage", damage, source)
-		_despawn()
+		# Recycling here would flip monitoring and reparent this Area2D while the
+		# physics server is still flushing this emission (engine errors, a stale
+		# overlap map for the reused projectile, and a use-after-free with two
+		# pending events). Finish the despawn after the flush.
+		call_deferred(&"_despawn")
 
 func _despawn() -> void:
 	# Prefer pooling if available
