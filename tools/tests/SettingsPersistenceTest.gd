@@ -42,6 +42,20 @@ func _run() -> void:
 		primary.close()
 		_check(is_equal_approx(float(store.load_settings()[&"audio"][&"music_volume"]), 0.42), "corrupt primary falls back to previous generation")
 
+		# A file from a newer schema is read best-effort (normalize clamps and
+		# drops unknown keys) rather than thrown away; only its version is
+		# reported. Wiping a player's settings on a downgrade would be worse than
+		# reading them.
+		var newer := ConfigFile.new()
+		newer.set_value("schema", "version", int(schema_script.get("SCHEMA_VERSION")) + 1)
+		newer.set_value("audio", "music_volume", 0.31)
+		newer.set_value("audio", "future_only_key", 7)
+		_check(newer.save(TEST_PATH) == OK, "fixture: a newer-schema settings file is written")
+		var from_newer: Dictionary = store.load_settings()
+		_check(is_equal_approx(float(from_newer[&"audio"][&"music_volume"]), 0.31), "a newer-schema file is still read")
+		_check(not from_newer[&"audio"].has(&"future_only_key"), "unknown keys from a newer schema are dropped")
+		_check(store.last_loaded_schema_version == int(schema_script.get("SCHEMA_VERSION")) + 1, "the store reports the schema version it read (got %d)" % store.last_loaded_schema_version)
+
 		var malformed := {
 			&"audio": {&"master_volume": 12.0},
 			&"video": {&"frame_limit": 17},

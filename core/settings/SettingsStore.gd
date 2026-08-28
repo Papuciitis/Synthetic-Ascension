@@ -7,6 +7,12 @@ var _primary_path: String
 var _temporary_path: String
 var _backup_path: String
 
+# Schema version of the file the last load_settings() actually read
+# (0 = none). A value above Schema.SCHEMA_VERSION means the file came from a
+# newer build; it is still read best-effort - normalize() clamps and drops
+# unknown keys - and a warning is logged.
+var last_loaded_schema_version: int = 0
+
 
 func _init(primary_path: String) -> void:
 	_primary_path = primary_path
@@ -77,6 +83,13 @@ func _load_path(path: String) -> Dictionary:
 		return {}
 	if not config.has_section_key("schema", "version"):
 		return {}
+	var file_version := int(config.get_value("schema", "version", 0))
+	if file_version > Schema.SCHEMA_VERSION:
+		push_warning(
+			"Settings file %s uses schema version %d (this build: %d); reading best-effort."
+			% [path, file_version, Schema.SCHEMA_VERSION]
+		)
+	last_loaded_schema_version = file_version
 	var raw: Dictionary = {}
 	for section: StringName in Schema.SECTIONS:
 		var values: Dictionary = {}
