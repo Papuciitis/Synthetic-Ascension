@@ -130,8 +130,24 @@ func set_selected(v: bool) -> void:
 	_update_visuals()
 
 
-func set_slot_data(slot: int, save: SaveData) -> void:
+func set_slot_data(slot: int, save: SaveData, unreadable: bool = false) -> void:
 	_has_save = (save != null)
+
+	if not _has_save and unreadable:
+		# The files exist but SaveManager could not parse them. Presenting this
+		# as an empty slot invited a click that overwrote the last good backup.
+		name_label.text = "UNREADABLE SAVE"
+		meta_label.text = "Delete to reuse this slot"
+		stats_label.text = ""
+		details_label.text = "SLOT %d\n\nThe save files exist but could not be opened.\nDelete the slot to start again." % slot
+		details_panel.visible = false
+		btn_delete.disabled = false
+		btn_rename.disabled = true
+
+		buttons_box.visible = true
+		buttons_box.mouse_filter = Control.MOUSE_FILTER_PASS
+		_update_visuals(true)
+		return
 
 	if not _has_save:
 		name_label.text = "EMPTY SLOT"

@@ -94,11 +94,16 @@ func _refresh_ui() -> void:
 		var s: SaveData = _load_slot(slot)
 		var card: Control = _card(slot)
 		if card != null and card.has_method("set_slot_data"):
-			card.call("set_slot_data", slot, s)
+			card.call("set_slot_data", slot, s, s == null and _has_save(slot))
 
 
 func _on_slot_pressed(slot: int) -> void:
 	var s: SaveData = _load_slot(slot)
+	if s == null and _has_save(slot):
+		# The files exist but cannot be read. Creating a profile here would
+		# overwrite them; deleting the slot is the player's deliberate choice.
+		push_warning("Save slot %d exists but could not be read; not overwriting it." % slot)
+		return
 	if s == null:
 		s = _create_slot(slot, "Profile %d" % slot)
 
@@ -184,6 +189,12 @@ func _on_rename_confirmed() -> void:
 
 	_refresh_ui()
 	_apply_selection_visuals()
+
+
+func _has_save(slot: int) -> bool:
+	if _sm != null and _sm.has_method("has_save"):
+		return bool(_sm.call("has_save", slot))
+	return false
 
 
 func _load_slot(slot: int) -> SaveData:
