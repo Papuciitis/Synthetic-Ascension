@@ -1,0 +1,84 @@
+{
+	"benchmark": "enemy-pressure",
+	"build": {
+		"game_version": "0.0.0.25.5",
+		"git_branch": "enemy-world-work",
+		"git_commit": "d7042b4c788d",
+		"godot_version": "4.7.1-stable (official)",
+		"world_seed": 0
+	},
+	"enemy_count": 120,
+	"frame_ms": {
+		"max": 16.6666666666667,
+		"mean": 16.6666666666667,
+		"p50": 16.6666666666667,
+		"p95": 16.6666666666667,
+		"p99": 16.6666666666667
+	},
+	"ordinary_physics_enabled": 24,
+	"physics_ms": {
+		"max": 25.147,
+		"mean": 12.183075,
+		"p50": 10.514,
+		"p95": 22.496,
+		"p99": 25.147
+	},
+	"physics_step_ms": {
+		"max": 18.189,
+		"mean": 2.43434333333333,
+		"p50": 2.207,
+		"p95": 3.89,
+		"p99": 8.376
+	},
+	"pressure_contract": "explicit-bands",
+	"pressure_level": 2,
+	"pressure_mode": "override",
+	"pressure_override_ms": 25.0,
+	"process_ms": {
+		"max": 4.052,
+		"mean": 1.80482,
+		"p50": 1.285,
+		"p95": 3.941,
+		"p99": 4.052
+	},
+	"protected_snipers": 6,
+	"ring_radii": [
+		900.0,
+		1500.0,
+		1820.0,
+		2280.0,
+		2740.0,
+		3200.0
+	],
+	"sample_frames": 1200,
+	"sample_seconds": 20.0,
+	"scheduler": {
+		"assignment_usec": 2558,
+		"far": 90,
+		"far_steps": 18097,
+		"full": 14,
+		"lifecycle": {
+			"far_to_full": 0,
+			"far_to_mid": 0,
+			"full_to_far": 0,
+			"full_to_mid": 0,
+			"mid_to_far": 0,
+			"mid_to_full": 0,
+			"tier_changes": 0,
+			"tier_reversals": 0
+		},
+		"mid": 16,
+		"mid_steps": 8280,
+		"physics_enabled": 30,
+		"physics_step_ms": 3.19,
+		"pressure_active": 1,
+		"pressure_level": 2,
+		"protected": 6,
+		"severe_engagements": 0,
+		"spatial_demotions": 0,
+		"stale_entries": 0
+	},
+	"schema": 2,
+	"source_sha": "d7042b4c788d",
+	"warmup_seconds": 4.0
+}
