@@ -1285,6 +1285,7 @@ that verdict (§19). Every number added in Phase 2 is an export; tuning is the
 playtest's job, not the implementation's.
 
 **Idle-time work while gated** (discover / verify / catalogue / test / clean /
-document only): `docs/2026-08-28-cleanup-audit.md`, `docs/current_game_data.md`,
-and the audit series listed there.
+document only): `docs/current_game_data.md` and the audit series under
+`docs/audits/` (cleanup, stale docs, logging, performance hygiene, Godot
+hygiene, Run Sheet completeness, save compatibility, naming).
 

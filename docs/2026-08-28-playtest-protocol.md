@@ -2,8 +2,10 @@
 
 **For:** the human playtester (this is the one step in the roadmap an agent
 cannot do). **Gate:** roadmap §19 — Phase 3 starts only when this says the run
-is genuinely fun. **Build:** branch `enemy-world-work` at `a8a535a` or later;
-the in-game Run Sheet shows the commit via BuildInfo.
+is genuinely fun. **Build:** branch `enemy-world-work` at `a8a535a` or later. The game shows no
+version label yet (BuildInfo has no UI consumer — see the stale-docs audit); note
+the commit with `git rev-parse --short HEAD` before playing. Flight-recorder
+incidents carry it in their `metadata.build` block.
 
 Play three runs, one per NEG archetype, ~20 minutes each, segment 2 onward.
 Answer every question with a sentence, not a score; scores come last.
@@ -18,7 +20,7 @@ Answer every question with a sentence, not a score; scores come last.
   `debug_cursed_vault = true`); benchmarks turn beats off, play does not.
 - Turn the performance flight recorder on so beats, escalations, vault opens
   and power thresholds are in the capture (`encounter/*` events).
-- Note the version and commit from the Run Sheet header.
+- Note the version (`project.godot` → `config/version`) and the commit hash.
 
 Tuning knobs you may touch between runs (all exports, no code): `HitFeel`
 (`stop_ms`, `punch_px`, `stop_scale`), `EncounterDirector` (`first_beat_delay`,

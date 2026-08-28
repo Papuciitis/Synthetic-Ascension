@@ -1,8 +1,15 @@
 # Improvement backlog — what would make Synthetic Ascension better
 
 Written 2026-08-27 after the performance audit, the review round, and the
-benchmark re-runs on branch `enemy-world-work` (HEAD `ed1a00b`). Nothing in
-here is implemented; it is a ranked list of what I would do next and why.
+benchmark re-runs on branch `enemy-world-work` (HEAD `ed1a00b`). It is a ranked
+list of what I would do next and why.
+
+**Status 2026-08-28:** done since writing — #1/E1 pressure benchmark exercises
+pressure (`20b1b21`), A1 materialization-reason telemetry + burst demotion
+(`20b1b21`), #7/D1 option (b) `Global.request_quit()` (`6639ece`), B2 wave
+scripting → EncounterBeats/EncounterDirector (`6639ece`), E4 commit bodies now
+carry measurements. Everything else is open; priorities now follow
+`docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md` §24.
 
 Legend: **Effort** S (hours) / M (days) / L (a week or more). **Confidence**
 is how sure I am the change pays off, based on what the code and captures
