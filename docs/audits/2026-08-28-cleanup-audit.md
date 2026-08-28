@@ -30,7 +30,7 @@ independently re-grepped (all `.gd/.tscn/.tres/.cfg/.ps1` outside `.git`,
 - 2,413 tracked files, 594.0 MB. **79.3 % of tracked bytes is `performance_results/`** (642 files, 470.8 MB), of which 449.2 MB is JSON no tool reads.
 - 1,006 candidate resource/script files graphed from real roots: **~26.4 MiB provably unreferenced** and shipped by `export_filter="all_resources"`; a further 15.8 MB of source PNGs under REVIEW.
 - 489 `.gd` scripts: 11 dead scripts, ~9 dead functions with zero callers whose bodies were read, ~60 more zero-caller functions under REVIEW, 56 test-only seams.
-- 111 test entry points: **0 tests target a nonexistent system**; 3 are REMOVE (assertion-free or superseded benchmarks); ~10 are REVIEW (display-only probes, grab-bags, silent skips).
+- 108 test scripts audited (111 entry points): **0 tests target a nonexistent system**; 3 are REMOVE (assertion-free or superseded benchmarks); 13 are display-only or never-failing probes/benchmarks and 5 are grab-bags or brittle source-grep pins (all REVIEW); 9 silent-skip guard sites.
 - Root: 24 loose files from the 0.21–0.25 patch era (manifests, patches, a recovery zip, a stray plan copy); no README.
 - Zero `TODO`/`FIXME`/`XXX` markers in the code base.
 
@@ -165,7 +165,7 @@ Non-test functions referenced only from `tools/tests` (56; **KEEP** as test seam
 ### D1. Tests (per-test verdicts in `2026-08-28-stale-tests.md`)
 
 Every `res://` path, method, property, signal and constant referenced by the
-81 tests audited so far resolves against HEAD — **no test targets a removed
+108 audited tests resolves against HEAD — **no test targets a removed
 system**. What is stale is the *shape* of some tests:
 
 | # | Sev | Conf | Path | Evidence | Action |
@@ -174,9 +174,12 @@ system**. What is stale is the *shape* of some tests:
 | D1.2 | MED | 85% | `tools/tests/FlowFieldAllocationBenchmark.gd` | benchmarks a local re-implementation, touches nothing in `FlowFieldNav`; the buffer-shape invariant is pinned by `FlowFieldUnitTest:108-111` | REMOVE |
 | D1.3 | LOW | 70% | `tools/tests/ChunkScaleBenchmark.gd/.tscn` | no assertions, always quit(0); same seed/config as `ChunkStreamingPerformanceAudit`, which already emits timing | REMOVE or register in the runner |
 | D1.4 | LOW | 70% | `tools/tests/PerformanceFlightRecorderBenchmark.gd/.tscn` | sole assertion duplicates `PerformanceFlightRecorderTest:122`; timing printed, never recorded | REVIEW |
-| D1.5 | MED | 75% | Display-only "probes" that hang or pass vacuously headless: `DevConsoleShotProbe` (hangs to its 110 s watchdog), `ObjectiveShotProbe` (zero assertions), `ManifestationHoverProbe`, `ManifestationPlaytestProbe` (quit 0 when no player), `Level1DeterminismProbe` (never compares), `EnemyProxyRendererVisualTest` (self-skips with exit 0) | REVIEW → keep as documented windowed tools outside any automated sweep; extract the headless-able assertions (`_verify_pair_shortcut`, `_probe_overheal_is_never_damage`, `_probe_styles_are_all_real`) into real tests |
+| D1.5 | MED | 75% | Display-only "probes" that hang or pass vacuously headless: `DevConsoleShotProbe` (hangs to its 110 s watchdog), `ObjectiveShotProbe` (zero assertions), `ManifestationHoverProbe`, `ManifestationPlaytestProbe` (quit 0 when no player), `Level1DeterminismProbe` (never compares), `RenderChainProbe` (3 assertions buried in diagnostics), `RoamVisibilityProbe`, `Segment1StoryProbe` (prints FAIL, quits 0), `UiConsistencyVisualProbe` (zero assertions, two dead capture helpers), `EnemyProxyRendererVisualTest` (self-skips with exit 0) | REVIEW → keep as documented windowed tools outside any automated sweep; extract the headless-able assertions (`_verify_pair_shortcut`, `_probe_overheal_is_never_damage`, `_probe_styles_are_all_real`, the Segment 1 exploration-cache check) into real tests |
+| D1.5b | LOW | 70% | `tools/tests/ProjectileRenderBenchmark.gd` (pure engine MultiMesh micro-benchmark, zero project code, always exit 0), `tools/tests/StyleDpsBenchmark.gd/.tscn` (balance measurement, zero assertions) | REVIEW → move to `tools/perf/` or remove from the test set |
 | D1.6 | LOW | 80% | Grab-bags: `AuditClosureTest` (16 invariants named after the closed July audit), `PerformanceLifecycleTest` (four systems; overlay block byte-identical to `PerformanceOverlayUnitTest:29-42`) | REVIEW → split/rename |
-| D1.7 | LOW | 85% | Silent skips: `InterfaceThemeConsistencyTest:90,98` (no assertion before `if != null`), `DevForceSpawnTest:117`, `ManifestationSystemTest:811` (ThreatDirector block inside `_test_dash_hook`), `EnemyPoolTest:126-128` | REVIEW → hard asserts |
+| D1.6b | LOW | 80% | Source-text pins: `StyleParityTest:40-92` and `FirstEncounterPresentationTest:45-52` grep production source with `FileAccess.get_file_as_string` — a comment satisfies them; `RunSheetArchiveTest:204-207` asserts four strings are absent that occur in 0 production files | REVIEW → behavioural checks |
+| D1.7 | LOW | 85% | Silent skips: `InterfaceThemeConsistencyTest:90,98` (no assertion before `if != null`), `DevForceSpawnTest:117`, `ManifestationSystemTest:811` (ThreatDirector block inside `_test_dash_hook`), `EnemyPoolTest:126-128`, `RunSheetArchiveTest:102`, `Segment1ProgressionTest:79`, `SpawnFilterTest:74,96`, `StyleParityTest:98` | REVIEW → hard asserts |
+| D1.11 | LOW | 95% | `tools/tests/ScriptParseAuditTest.gd` scans `core/ ui/ autoload/ scenes/ effects/ data/` only — `res://assets` (79 VFX `.gd`), `res://spells`, `res://scripts` are never parse-checked | REVIEW → add the three roots (the dead scripts in §A all parse today, so this changes nothing until one rots) |
 | D1.8 | LOW | 85% | `tools/tests/AutosaveDebounceTest.gd` writes a real `user://saves/slot_97.tres` (+`.bak`) via `save_current_profile()` and never deletes it; `DevForceSpawnTest` / probes call `start_new_attempt` on the live profile | REVIEW → use a `.test-user-*` dir or delete on `_finish` |
 | D1.9 | LOW | 85% | `EnemyHordeBenchmark` gate is windowed-only; `docs/superpowers/plans/2026-08-25-sustained-combat-pressure.md:404` shows it run `--headless`, which silently skips the gate | UPDATE DOC |
 | D1.10 | LOW | 100% | `tools/tests/BuildIdentityTest.gd:53,88` uses noun ids `&"Momentum"/&"Shard"/&"Ward"` that never occur at runtime (`&"momentum"` …) | REVIEW (test data only) |

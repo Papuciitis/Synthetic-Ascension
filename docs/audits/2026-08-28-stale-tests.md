@@ -22,6 +22,41 @@ Verdict legend: **KEEP** (live, unique), **REVIEW** (live but structurally
 wrong for an automated suite — display-only, no assertions, grab-bag, silent
 skips), **REMOVE** (targets dead or fully superseded).
 
+## Summary (108 tests, four groups)
+
+- **Tests targeting a nonexistent system: 0.** Every production symbol, path,
+  node, signal and constant referenced by the 108 audited scripts resolves at
+  HEAD (`62bbfd3`). The only "dead" references are EnemySimulationBenchmark's
+  two `.set()` writes to properties that no longer exist (silent no-ops).
+- **REMOVE (3):** EnemySimulationBenchmark, FlowFieldAllocationBenchmark,
+  ChunkScaleBenchmark — assertion-free or superseded; none is in
+  `tools/perf/run_benchmarks.ps1`.
+- **REVIEW — display-only or never-failing "probes" (10):** DevConsoleShotProbe
+  (hangs headless to its 110 s watchdog), ObjectiveShotProbe, ManifestationHoverProbe,
+  ManifestationPlaytestProbe, Level1DeterminismProbe, RenderChainProbe,
+  RoamVisibilityProbe, Segment1StoryProbe, UiConsistencyVisualProbe,
+  EnemyProxyRendererVisualTest (self-skips with exit 0) — plus the
+  assertion-free ProjectileRenderBenchmark, StyleDpsBenchmark and
+  PerformanceFlightRecorderBenchmark. A green headless sweep says nothing
+  about any of these.
+- **REVIEW — grab-bags / brittle pins (5):** AuditClosureTest,
+  PerformanceLifecycleTest (overlay block duplicated verbatim),
+  StyleParityTest and FirstEncounterPresentationTest (source-text greps),
+  RunSheetArchiveTest (four vacuous negative assertions).
+- **Silent `has_method` / `!= null` skips (9 sites):** InterfaceThemeConsistencyTest
+  L90/98, DevForceSpawnTest L117, ManifestationSystemTest L811, EnemyPoolTest
+  L126-128, RunSheetArchiveTest L102, Segment1ProgressionTest L79,
+  SpawnFilterTest L74/96, StyleParityTest L98 — all targets present today.
+- **Side effects on the developer machine:** AutosaveDebounceTest leaves
+  `user://saves/slot_97.tres` behind; DevForceSpawnTest, the probes and the
+  benchmarks call `start_new_attempt` on the live profile.
+- **Coverage hole noticed in passing:** ScriptParseAuditTest does not scan
+  `res://assets` (79 VFX scripts), `res://spells`, `res://scripts`.
+- **Doc drift:** `EnemyHordeBenchmark` is shown run `--headless` in
+  `docs/superpowers/plans/2026-08-25-sustained-combat-pressure.md:404`, where
+  its gate silently skips; `docs/PERFORMANCE_PATCH_CHANGELOG.md:142` still
+  says PerformanceLifecycleTest cannot complete headless.
+
 ---
 
 ## Group A — Accessibility … EnemyAreaCombat (27 tests)
@@ -132,7 +167,41 @@ Group C totals: dead targets 0/27 (the "Level1" concept is live via `Level1Build
 
 ---
 
-## Group D — PlaytestRegression … WorldTileIntegration
+## Group D — PlaytestRegression … UiConsistencyVisualProbe (27 tests)
 
-_Pending — the group D agent had not reported when this file was written; its
-table is appended below when it arrives._
+Method for this group: every script read in full; sibling `.tscn` checked; all
+47 `res://` paths verified on disk; ~330 symbols/paths/strings grepped against
+a flat index of the 632 production `.gd/.tscn/.tres/.cfg/project.godot` files,
+then signatures confirmed at the definition sites.
+
+| Test | Verdict | Conf | Evidence / notes |
+|---|---|---|---|
+| PlaytestRegressionTest | KEEP | 90% | pins the four 2026-08-23 playtest fixes; L68-87 asserts the *old* bug path of a private renderer method ("bug reproduced") — droppable |
+| PrimaryObjectiveTest | KEEP | 95% | catalog + objective contract, all live |
+| ProjectileHandleCombatTest | KEEP | 90% | reaches 12 private `ProjectileSimulationManager` members via `.call/.get` — brittle to refactors, all present |
+| ProjectileRenderBenchmark (`-s`) | **REVIEW** | 75% | pure MultiMesh API micro-benchmark (`set_instance_*` vs `.buffer`); exercises zero project code; `quit()` with no code → always 0. Its conclusion is already pinned by ProjectileSlotReuseTest |
+| ProjectileSlotReuseTest | KEEP | 85% | regression for the "removing a projectile shrank 21 packed arrays" bug; L107-125 (pixel diff) silently skipped headless |
+| RenderChainProbe | **REVIEW** | 70% | 3 real assertions buried in `PROBE …` diagnostics for a fixed z-order/batching bug; bootstrap identical to RoamVisibilityProbe; boots the full game (~7 s); L41-42 crash rather than fail if the group/autoload is missing |
+| RitePulseResolverTest | KEEP | 95% | static `apply` 8-arg contract, fakes mirror EnemyCombatService/player |
+| RiteSafeguardIntegrationTest | KEEP | 85% | builder→rite replay layer; complements ExitRiteTest L47-51 |
+| RiteSafeguardPresentationTest | KEEP | 85% | asserts literal copy "Invoke safeguard" (brittle to text edits) |
+| RoamVisibilityProbe | **REVIEW** | 70% | needs display (header says so; `save_png` unguarded); no pass/fail — `_finish(0)` unconditionally; verifies an already-fixed culling bug; verbatim dismiss helpers shared with Segment1StoryProbe. REMOVE unless `roam_shots` are still eyeballed |
+| RunSheetArchiveTest | KEEP | 80% | valid but brittle (asserts `.tres` copy text and literal labels); **L204-207 are vacuous negatives** — "SET IDENTITY"/"SET PROGRESSION" occur in 0 production files, "TERMS"/"BEST WITH" only in RunSheetHUD.gd; L102 `has_node` guard silently skips 2 assertions (node present) |
+| SaveIntegrityTest | KEEP | 90% | writes real files to slot 97 (cleans up); pins the v0→v1 major-choice migration |
+| ScriptParseAuditTest | KEEP | 95% | loads every `.gd` under `core/ ui/ autoload/ scenes/ effects/ data/`; **does not scan `res://assets` (79 VFX `.gd`), `res://spells`, `res://scripts`** — a parse error there goes unnoticed |
+| SecondaryObjectiveTest | KEEP | 90% | 60 DistrictPlan generations × up to 6 retries — slow but valid; pins "two identical alley caches" fix |
+| Segment1ProgressionTest (`-s`) | KEEP | 85% | 10 private Level1Builder members via `.call/.get`; hard-coded wall cells (`Vector2i(-2,31)` …) are layout-brittle; L79 `if spawner != null` silently skips 2 spawn-filter assertions; bootstrap identical to Segment1TileIntegrationTest |
+| Segment1StoryProbe | **REVIEW** | 70% | needs display; its one real check (`FAIL: Segment 1 authored no exploration caches`, L114) cannot fail the run — `_finish(0)` unconditionally. Move that assertion into Segment1ProgressionTest; keep as a manual screenshot tool |
+| Segment1TileIntegrationTest (`-s`) | KEEP | 75% | valid; second full game boot for one assertion — fold into Segment1ProgressionTest |
+| SegmentProcStartupTest | KEEP | 85% | "handcrafted Segment 1 never starts procedural streaming" tests a bare `ChunkManager.new()`, not Segment 1 — name overstates |
+| SettingsPersistenceTest (`-s`) | KEEP | 90% | pins the pre-split migration (both keys come back ON) |
+| SettingsRuntimeTest (`-s`) | KEEP | 90% | restores `content_scale_factor`/`max_fps` after |
+| SettingsScreenTest (`-s`) | KEEP | 90% | tabs are code-built (`"%sTab"`), all resolve |
+| SpawnFilterTest (`-s`) | KEEP | 85% | relies on `EnemySpawnTable` script default `max_alive_total = 180` (the `.tres` does not override); L74/L96 `!= null` guards silently skip 4 assertions (autoloads present) |
+| SpawnerRegulationTest | KEEP | 90% | spawn-storm budget + elite cap |
+| StyleDpsBenchmark | **REVIEW** | 65% | balance-measurement tool with zero assertions (`STYLE …` rows, quit 0); full game run, 9 measurements; six silent `has_method` fallbacks. Relocate to `tools/perf` or remove from the test set |
+| StyleParityTest | KEEP | 80% | half the checks (L40-92) are **source greps** (`FileAccess.get_file_as_string`) that a comment would satisfy; L98 silently skips 6 assertions if `anchor_rite` loses its logic. Convert to behavioural checks |
+| ThreatDirectorPressureTest | KEEP | 90% | new on this branch; second ThreatDirector instance, but the `RunEvents.power_threshold_crossed` emit at L84 also reaches the live autoload |
+| UiConsistencyVisualProbe | **REVIEW** | 70% | needs display; zero assertions, quit(0) unconditionally; two capture helpers (`_capture_blocking_record`, `_capture_first_encounter`, L127-172) are defined and never called; fixture classes verbatim from RunSheetArchiveTest. REMOVE if nobody reviews `ui_consistency_shots`, else trim |
+
+Group D totals: dead targets 0/27; needs display 3 full (RoamVisibilityProbe, Segment1StoryProbe, UiConsistencyVisualProbe) + 1 partial (ProjectileSlotReuseTest L107-125); no summary / never-failing exit 5 (ProjectileRenderBenchmark, StyleDpsBenchmark, RoamVisibilityProbe, UiConsistencyVisualProbe quit 0 always; Segment1StoryProbe prints FAIL but quits 0).
