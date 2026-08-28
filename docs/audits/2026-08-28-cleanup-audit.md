@@ -18,6 +18,10 @@ Sub-reports this document ranks (each carries the full evidence):
 Severity: **HIGH** = ships in the build, costs real bytes/time, or can bite at
 runtime; **MED** = maintenance drag or misleading; **LOW** = tidy-up.
 Confidence is the reviewer's, after spot-checking the tooling with `rg -w`.
+Every REMOVE candidate in §A, §C7 (first paragraph) and §D1.1–D1.3 was
+independently re-grepped (all `.gd/.tscn/.tres/.cfg/.ps1` outside `.git`,
+`.godot`, `performance_results`, `docs`): each resolves only to its own file
+(and, for `selection_card.gd`, two comments in `ui/screens/base.gd:190,197`).
 
 ---
 
