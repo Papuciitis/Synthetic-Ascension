@@ -1,6 +1,7 @@
 extends Node
 
 const TEST_SLOT: int = 97
+const BuildInfoScript := preload("res://core/systems/telemetry/BuildInfo.gd")
 
 var _failures: int = 0
 var _passes: int = 0
@@ -27,6 +28,7 @@ func _run() -> void:
 	_test_doctrine_state_round_trip()
 	_test_legacy_major_choice_migration()
 	_test_manifestation_cards_round_trip()
+	_test_save_version_round_trip()
 	await get_tree().process_frame
 	print("SaveIntegrityTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -385,3 +387,39 @@ func _test_legacy_major_choice_migration() -> void:
 	_check(not _global.pending_big_choice, "migration clears an obsolete pending legacy choice")
 	_check(_global.attempt_major_choice_offer_ids.is_empty(), "migration clears disabled legacy offer ids")
 	_global.apply_save(restore)
+
+
+func _test_save_version_round_trip() -> void:
+	# Saves carried no version of any kind: nothing could tell a pre-versioned
+	# profile from a current one, or one written by a newer build.
+	_cleanup_slot()
+	var save := SaveData.new()
+	save.slot_index = TEST_SLOT
+	_check(save.save_version == 0, "a profile write_save never touched reads as pre-versioned (0)")
+	_global.write_save(save)
+	_check(
+		save.save_version == SaveData.CURRENT_SAVE_VERSION,
+		"write_save stamps the current save version (got %d)" % save.save_version
+	)
+	_check(
+		save.game_version != "" and save.game_version == String(BuildInfoScript.version()),
+		"write_save stamps the game version (got '%s')" % save.game_version
+	)
+	_save_manager.save_slot(save)
+	var loaded: SaveData = _save_manager.load_slot(TEST_SLOT)
+	_check(
+		loaded != null
+		and loaded.save_version == SaveData.CURRENT_SAVE_VERSION
+		and loaded.game_version == save.game_version,
+		"both versions survive the disk round trip"
+	)
+
+	# A profile from a newer build still applies best-effort instead of failing.
+	var future := SaveData.new()
+	future.slot_index = TEST_SLOT
+	future.save_version = SaveData.CURRENT_SAVE_VERSION + 1
+	future.game_version = "99.0.0"
+	future.last_style_id = "melee"
+	_global.apply_save(future)
+	_check(_global.selected_style_id == "melee", "a save with a newer save_version still applies")
+	_cleanup_slot()

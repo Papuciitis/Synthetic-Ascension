@@ -1,6 +1,25 @@
 extends Resource
 class_name SaveData
 
+# Save-format versioning (added 2026-08-29). 0 = written before this field
+# existed. Bump CURRENT_SAVE_VERSION whenever a field's meaning or a default
+# changes, and branch on save_version in Global.apply_save.
+#
+# What this text-resource format imposes (see docs/audits/2026-08-28-save-
+# compatibility.md):
+# - Defaults are NOT written to disk, so changing an @export default silently
+#   rewrites every existing save. Add a new field, or migrate on save_version.
+# - Typed sub-resource properties (meta_stash, attempt_inventory, attempt_bag,
+#   attempt_vendor_bag, attempt_mod_stat_delta) load as null if their class
+#   changes. Keep those types frozen.
+# - Scripts and item .tres are referenced by res:// path with no uid. Renaming
+#   SaveData.gd, StashInventory.gd, ItemInstance.gd, Inventory.gd,
+#   BagInventory.gd, StatDelta.gd or anything under data/items/defs/ makes
+#   every save that references it unreadable.
+const CURRENT_SAVE_VERSION := 1
+@export var save_version: int = 0
+@export var game_version: String = ""
+
 @export var slot_index: int = 0
 @export var profile_name: String = "New Profile"
 @export var mortal_name: String = "The Arcanist"

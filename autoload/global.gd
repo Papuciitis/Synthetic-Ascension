@@ -21,6 +21,7 @@ const AUGMENTS_DIR := DATA_DIR + "/augments"
 const MAJOR_CHOICES_DIR := DATA_DIR + "/major_choices"
 const WEAPONS_DIR := DATA_DIR + "/weapons"
 const DOCTRINE_REWARD_SERVICE := preload("res://core/systems/major_choice/DoctrineRewardService.gd")
+const _BUILD_INFO_SCRIPT := preload("res://core/systems/telemetry/BuildInfo.gd")
 
 # -- Scenes
 const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
@@ -1294,6 +1295,11 @@ func claim_loot(id: int) -> void:
 
 func apply_save(save: SaveData) -> void:
 	_suppress_autosave = true
+	if save.save_version > SaveData.CURRENT_SAVE_VERSION:
+		push_warning(
+			"Save slot %d was written by a newer build (save_version %d > %d, game %s); loading best-effort."
+			% [save.slot_index, save.save_version, SaveData.CURRENT_SAVE_VERSION, save.game_version]
+		)
 
 	# Last chosen setup (for Base screen defaults)
 	selected_race_id = save.last_race_id
@@ -1555,6 +1561,8 @@ func apply_save(save: SaveData) -> void:
 	_suppress_autosave = false
 func write_save(save: SaveData) -> void:
 	_suppress_autosave = true
+	save.save_version = SaveData.CURRENT_SAVE_VERSION
+	save.game_version = String(_BUILD_INFO_SCRIPT.version())
 	save.best_followers = maxi(save.best_followers, followers)
 
 	# Last chosen setup
