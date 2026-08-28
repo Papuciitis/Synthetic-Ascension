@@ -155,6 +155,27 @@ var segment_phase: StringName = &"recon"
 
 var unseal_time_sec: float = 0.0
 var kills_since_unseal: int = 0
+
+# Exit Rite climax (roadmap 2.8): while the rite is being channelled the world
+# resists departure - faster spawns, more elites. Polled from the
+# exit_rite_channeling group; the EncounterDirector sends the specialist
+# response on the rising edge.
+signal rite_channel_changed(active: bool)
+var rite_channel_active: bool = false
+@export_range(0.2, 1.0, 0.05) var rite_spawn_factor: float = 0.6
+@export_range(0.0, 0.5, 0.01) var rite_elite_add: float = 0.15
+
+# Power contrast (roadmap 2.6 / §11): after the player crosses a visible power
+# threshold, enemy HP/damage scaling holds still for a while so enemies that
+# were dangerous simply die, before the next threat is introduced.
+signal power_threshold_noted(id: StringName, label: String)
+var power_contrast_active: bool = false
+var power_thresholds_crossed: int = 0
+@export_range(0.0, 120.0, 1.0) var power_contrast_lag_sec: float = 25.0
+var _contrast_left: float = 0.0
+var _contrast_hp_mul: float = 1.0
+var _contrast_damage_mul: float = 1.0
+var _thresholds_seen: Dictionary = {}
 var evac_pressure: float = 0.0
 var evac_remaining_sec: float = 0.0
 
@@ -187,12 +208,46 @@ func _process(delta: float) -> void:
 		_unseal_time += step
 		overtime = _compute_overtime()
 
+	if power_contrast_active:
+		_contrast_left -= step
+		if _contrast_left <= 0.0:
+			power_contrast_active = false
+	var tree := get_tree()
+	if tree != null:
+		var channeling := not tree.get_nodes_in_group(&"exit_rite_channeling").is_empty()
+		if channeling != rite_channel_active:
+			set_rite_channel_active(channeling)
+
 	_update_dominance()
 	_update_evac()
 	_recompute()
 
+
+func set_rite_channel_active(active: bool) -> void:
+	if active == rite_channel_active:
+		return
+	rite_channel_active = active
+	_recompute(true)
+	rite_channel_changed.emit(active)
+
+
+## A threshold arms the contrast window once per run; repeats are ignored.
+func note_power_threshold(id: StringName, label: String = "") -> void:
+	if id == StringName() or _thresholds_seen.has(id):
+		return
+	_thresholds_seen[id] = true
+	power_thresholds_crossed += 1
+	_contrast_hp_mul = enemy_hp_mul
+	_contrast_damage_mul = enemy_damage_mul
+	power_contrast_active = power_contrast_lag_sec > 0.0
+	_contrast_left = power_contrast_lag_sec
+	power_threshold_noted.emit(id, label)
+	_recompute(true)
+
 func _hook_signals() -> void:
 	if RunEvents != null:
+		if RunEvents.has_signal("power_threshold_crossed") and not RunEvents.power_threshold_crossed.is_connected(note_power_threshold):
+			RunEvents.power_threshold_crossed.connect(note_power_threshold)
 		var cb_r := Callable(self, "_on_resonance_changed")
 		if RunEvents.has_signal("resonance_changed") and not RunEvents.resonance_changed.is_connected(cb_r):
 			RunEvents.resonance_changed.connect(cb_r)
@@ -214,6 +269,11 @@ func _on_segment_changed(new_seg: int) -> void:
 	heat = 0.0
 	overtime = 0.0
 	gate_unsealed = false
+	rite_channel_active = false
+	power_contrast_active = false
+	power_thresholds_crossed = 0
+	_contrast_left = 0.0
+	_thresholds_seen.clear()
 	_unseal_time = 0.0
 	_kills_since_unseal = 0
 	_kills_ts.clear()
@@ -393,6 +453,9 @@ func _recompute(force_emit: bool = false) -> void:
 			heat = maxf(heat, 0.85)
 			phase_spawn_factor = 0.55
 			phase_elite_add = 0.12
+	if rite_channel_active:
+		phase_spawn_factor *= rite_spawn_factor
+		phase_elite_add += rite_elite_add
 
 	# Overtime scaling (after gate unsealed). UNBOUNDED.
 	var ot := overtime if gate_unsealed else 0.0
@@ -430,6 +493,10 @@ func _recompute(force_emit: bool = false) -> void:
 
 	var new_dmg := 1.0 + pressure_carry * dmg_from_carry + pressure_heat * dmg_from_heat + ot_dmg_add
 	new_dmg = clampf(new_dmg, 1.0, dmg_mul_cap)
+	if power_contrast_active:
+		# Hold the line: the player just got stronger, let it show.
+		new_hp = minf(new_hp, _contrast_hp_mul)
+		new_dmg = minf(new_dmg, _contrast_damage_mul)
 
 	var new_spd := 1.0 + pressure_carry * spd_from_carry + pressure_heat * spd_from_heat
 	new_spd = clampf(new_spd, 1.0, spd_mul_cap)

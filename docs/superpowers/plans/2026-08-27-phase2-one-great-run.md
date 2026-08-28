@@ -2,7 +2,17 @@
 
 **Date:** 2026-08-27
 **Parent:** `docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md` §6–§11, §24 Phase 2
-**Status:** plan; nothing below is implemented yet.
+**Status (2026-08-27, end of day):** mechanisms built and unit-tested; tuning and
+the playtest verdicts are still the human's. Per section: 2.1 HitFeel autoload
+(`autoload/HitFeel.gd`, HitFeelTest); 2.2/2.3 BuildIdentity + Run Sheet sentence
+(`core/systems/run_sheet/BuildIdentity.gd`, BuildIdentityTest); 2.4 EncounterBeats +
+EncounterDirector wired in `scenes/game.gd` (EncounterDirectorTest); 2.5 CursedVault
+(`core/systems/world/CursedVault.gd`, CursedVaultTest; placed by SegmentProcBuilder
+from segment 2); 2.6 power-contrast window + 2.8 rite pressure mode in ThreatDirector
+(ThreatDirectorPressureTest), manifestation thresholds at 3/5 rules; 2.7 phase
+escalation cue + unlocked beat; 2.8 specialist response on channel and climax pulse on
+clear. Not built: the 85%-hold optional reward, ritual-interference beats, healing lock
+(no mechanism exists yet), elite modifiers (§9).
 
 Phase 2 is experiential. A coding agent can build the *mechanisms* and the
 *instrumentation*; only play decides whether they produce the three hits

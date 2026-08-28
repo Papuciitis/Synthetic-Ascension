@@ -187,6 +187,7 @@ func _sync(wanted: Dictionary) -> void:
 
 	if dirty:
 		_rebuild_hook_lists()
+		_note_power_thresholds()
 		manifestations_changed.emit()
 
 
@@ -220,6 +221,7 @@ func _clear_all() -> void:
 			node.queue_free()
 	_active.clear()
 	_rebuild_hook_lists()
+	_note_power_thresholds()
 	manifestations_changed.emit()
 
 
@@ -751,6 +753,27 @@ func consume_attack_bonus() -> float:
 # ---------------------------------------------------------------------------
 # Readout
 # ---------------------------------------------------------------------------
+
+const POWER_THRESHOLDS := {3: &"three_manifestations", 5: &"five_manifestations"}
+var _thresholds_emitted: Dictionary = {}
+
+
+## Distinct equipped rules crossing 3 and 5 are the visible "my run is
+## becoming something" moments; announce each once so the ThreatDirector can
+## open a power-contrast window (roadmap §11).
+func _note_power_thresholds() -> void:
+	var distinct: Dictionary = {}
+	for node in _active.values():
+		var effect := node as ManifestationEffect
+		if effect != null and is_instance_valid(effect) and effect.definition != null:
+			distinct[effect.definition.id] = true
+	for count in POWER_THRESHOLDS:
+		var id: StringName = POWER_THRESHOLDS[count]
+		if distinct.size() >= int(count) and not _thresholds_emitted.has(id):
+			_thresholds_emitted[id] = true
+			if RunEvents != null and RunEvents.has_signal("power_threshold_crossed"):
+				RunEvents.power_threshold_crossed.emit(id, "%d Manifestations active" % int(count))
+
 
 func get_active_summaries() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []

@@ -1171,6 +1171,9 @@ var debug_disable_autosave: bool = false
 ## Authored encounter beats (EncounterDirector) - off switch for tests and
 ## benchmarks that need the ambient population only.
 var debug_encounter_beats: bool = true
+## The Cursed Vault (roadmap 2.5) - off switch for tests that need the bare
+## district.
+var debug_cursed_vault: bool = true
 
 
 func request_autosave(delay: float = 0.6) -> void:

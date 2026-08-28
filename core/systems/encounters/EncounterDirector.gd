@@ -38,17 +38,35 @@ var _next_beat_in := 0.0
 var _last_beat_id: StringName = &""
 var _cooldowns: Dictionary = {}
 var _active: Dictionary = {}
+var _last_phase: StringName = &""
+var _unlocked_pending: Array[StringName] = []
+var _specialists_sent := false
 var _counters := {
 	"scheduled": 0,
 	"aborted": 0,
 	"members_spawned": 0,
 	"members_skipped": 0,
+	"escalations": 0,
+	"specialist_responses": 0,
 }
+## Beats sent the moment the Exit Rite is channelled (roadmap 2.8): the world
+## answers departure with a crossfire on the route and a wedge on the flank.
+@export var rite_specialist_beats: Array[StringName] = [&"sniper_crossfire", &"charger_wedge"]
+## Seconds within which a newly unlocked beat fires after a phase escalation.
+@export_range(1.0, 60.0, 1.0) var escalation_beat_delay := 10.0
+
+
+func _ready() -> void:
+	add_to_group(&"encounter_director")
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_signal("rite_channel_changed"):
+		director.connect("rite_channel_changed", _on_rite_channel_changed)
 
 
 func setup(spawner: Node, player: Node2D, seed_value: int = 0) -> void:
 	_spawner = spawner
 	_player = player
+	_last_phase = _phase()
 	if seed_value != 0:
 		_rng.seed = seed_value
 	else:
@@ -69,6 +87,7 @@ func tick(delta: float) -> void:
 		return
 	if _player == null or not is_instance_valid(_player):
 		return
+	_check_escalation()
 	_next_beat_in -= delta
 	if _next_beat_in > 0.0:
 		return
@@ -179,7 +198,44 @@ func _pick_random() -> Dictionary:
 	var candidates := _candidates()
 	if candidates.is_empty():
 		return {}
+	# A phase escalation promised something new: prefer a freshly unlocked beat.
+	while not _unlocked_pending.is_empty():
+		var preferred: StringName = _unlocked_pending.pop_front()
+		for beat in candidates:
+			if beat["id"] == preferred:
+				return beat
 	return candidates[_rng.randi_range(0, candidates.size() - 1)]
+
+
+## Phase escalation (roadmap 2.7): say that the district changed, and follow
+## it with one of the beats the new phase unlocked within escalation_beat_delay.
+func _check_escalation() -> void:
+	var phase := _phase()
+	if phase == _last_phase:
+		return
+	var previous := _last_phase
+	_last_phase = phase
+	if BeatsScript.phase_rank(phase) <= BeatsScript.phase_rank(previous):
+		return
+	_unlocked_pending.clear()
+	for beat in BeatsScript.eligible(phase):
+		if BeatsScript.phase_rank(beat["min_phase"]) > BeatsScript.phase_rank(previous):
+			_unlocked_pending.append(beat["id"])
+	_counters["escalations"] = int(_counters["escalations"]) + 1
+	if BattleText != null and _player != null and is_instance_valid(_player) and BattleText.has_method("popup"):
+		BattleText.popup(_player.global_position, "THE DISTRICT SHIFTS — %s" % String(phase).to_upper(), Color(0.85, 0.42, 0.95, 1.0), 1.3)
+	_record(&"escalation", phase, _unlocked_pending.size())
+	if not _unlocked_pending.is_empty():
+		_next_beat_in = minf(_next_beat_in, escalation_beat_delay)
+
+
+func _on_rite_channel_changed(active: bool) -> void:
+	if not active or _specialists_sent or not enabled:
+		return
+	_specialists_sent = true
+	_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
+	for id in rite_specialist_beats:
+		try_spawn_beat(id)
 
 
 func _travel_direction() -> Vector2:

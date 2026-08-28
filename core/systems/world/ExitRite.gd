@@ -269,6 +269,10 @@ func _process(delta: float) -> void:
 	if _hold >= hold_time:
 		_completed = true
 		_emit_safeguard_state()
+		# Escape looking like a god: one last, larger pulse before the segment
+		# completes (roadmap 2.8).
+		_apply_pulse(_climax_pulse_profile())
+		_spawn_pulse_vfx(_climax_pulse_profile())
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
@@ -333,6 +337,13 @@ func _fire_automatic_seal(seal_number: int) -> void:
 		return
 	_apply_pulse(_automatic_pulse_profile(index))
 	queue_redraw()
+
+
+func _climax_pulse_profile() -> Dictionary:
+	var profile := AUTOMATIC_PULSES[AUTOMATIC_PULSES.size() - 1].duplicate(true)
+	profile["radius"] = float(profile.get("radius", 620.0)) * 1.5
+	profile["stun"] = maxf(float(profile.get("stun", 0.6)), 1.0)
+	return profile
 
 
 func _automatic_pulse_profile(index: int) -> Dictionary:

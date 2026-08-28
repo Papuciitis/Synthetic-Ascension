@@ -174,6 +174,35 @@ func _run() -> void:
 	_check(not seen.has(&"leech_ring") and not seen.has(&"bomber_carpet"), "ascension beats never fire during disturbance (%s)" % [seen.keys()])
 	_check(seen.size() >= 3, "random scheduling covers several beats (%d)" % seen.size())
 
+	# --- 2.7: a phase escalation announces itself and fires a newly unlocked beat soon ---
+	_free_members(spawner)
+	await get_tree().process_frame
+	director.set("_cooldowns", {})
+	director.set("_active", {})
+	_started.clear()
+	director.phase_provider = func() -> StringName: return &"disturbance"
+	director.tick(0.1)
+	director.set("_next_beat_in", 300.0)
+	var escalations_before := int(director.get_debug_counters()["escalations"])
+	director.phase_provider = func() -> StringName: return &"ascension"
+	director.tick(0.1)
+	_check(int(director.get_debug_counters()["escalations"]) == escalations_before + 1, "a phase escalation is counted")
+	_check(float(director.get_debug_counters()["next_beat_in"]) <= 10.0, "the next beat is pulled forward to within the escalation delay (%.1f)" % float(director.get_debug_counters()["next_beat_in"]))
+	director.tick(10.5)
+	_check(_started.size() == 1 and (_started[0] == &"bomber_carpet" or _started[0] == &"leech_ring"), "the escalation beat is one the new phase unlocked (%s)" % [_started])
+
+	# --- 2.8: channelling the Exit Rite draws the specialist response ---
+	_free_members(spawner)
+	await get_tree().process_frame
+	director.set("_active", {})
+	director.set("_cooldowns", {})
+	_started.clear()
+	spawner.calls.clear()
+	director.call("_on_rite_channel_changed", true)
+	_check(_started.size() == 2 and _started.has(&"sniper_crossfire") and _started.has(&"charger_wedge"), "the rite draws a crossfire and a wedge (%s)" % [_started])
+	director.call("_on_rite_channel_changed", true)
+	_check(_started.size() == 2, "the specialist response is sent once per run")
+
 	# --- placement failure: blocked ground skips members, aborts sparse beats ---
 	spawner.calls.clear()
 	spawner.blocked = Rect2(Vector2(-100000.0, -100000.0), Vector2(200000.0, 200000.0))

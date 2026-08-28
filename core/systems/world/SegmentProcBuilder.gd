@@ -34,6 +34,7 @@ const WARDSTONE_SCENE: PackedScene = preload("res://scenes/world/wardstones/Ward
 const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.tscn")
 const MINIBOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/MiniBossArena.tscn")
 const BOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/BossArena.tscn")
+const CURSED_VAULT_SCRIPT: Script = preload("res://core/systems/world/CursedVault.gd")
 
 var _res_tick: float = 0.0
 var _time_in_segment: float = 0.0
@@ -389,6 +390,10 @@ func _spawn_segment_events() -> void:
 			(a as Node2D).global_position = pos
 			add_child(a)
 
+	# Cursed Vault (roadmap 2.5): one deliberate risk/reward off the main
+	# route, at the reward chunk farthest from the start, from segment 2 on.
+	_spawn_cursed_vault()
+
 	# Segment 10: boss arena (capstone). Boss spawns and gate stays locked until dead.
 	var b_world: Vector2 = _plan.get("boss_world", Vector2.ZERO)
 	if _segment == 10 and b_world != Vector2.ZERO:
@@ -396,6 +401,36 @@ func _spawn_segment_events() -> void:
 		if b != null:
 			(b as Node2D).global_position = _jitter_in_chunk(b_world, 2)
 			add_child(b)
+
+func _spawn_cursed_vault() -> void:
+	if _segment < 2:
+		return
+	if Global != null and "debug_cursed_vault" in Global and not bool(Global.get("debug_cursed_vault")):
+		return
+	var reward_chunks: Array = _plan.get("reward_chunks", [])
+	if reward_chunks.is_empty() or _cm == null:
+		return
+	var start_chunk: Vector2i = _plan.get("start_chunk", Vector2i.ZERO)
+	var exit_chunk: Vector2i = _plan.get("exit_chunk", Vector2i(-99999, -99999))
+	var best := Vector2i(-99999, -99999)
+	var best_distance := -1.0
+	for chunk_variant in reward_chunks:
+		var chunk := chunk_variant as Vector2i
+		if chunk == exit_chunk:
+			continue
+		var distance := Vector2(chunk - start_chunk).length()
+		if distance > best_distance:
+			best_distance = distance
+			best = chunk
+	if best_distance < 0.0:
+		return
+	var chunk_size := float(_cm.chunk_size_px)
+	var center := Vector2((float(best.x) + 0.5) * chunk_size, (float(best.y) + 0.5) * chunk_size)
+	var vault := CURSED_VAULT_SCRIPT.new() as Node2D
+	vault.name = "CursedVault"
+	vault.global_position = _jitter_in_chunk(center, 2)
+	add_child(vault)
+
 
 func grant_resonance(amount: float, immediate: bool = true) -> void:
 	if amount <= 0.0:

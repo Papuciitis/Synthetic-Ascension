@@ -76,6 +76,11 @@ signal secondary_objective_completed(objective_id: int)
 @warning_ignore("unused_signal")
 signal segment_phase_changed(phase: StringName, label: String)
 
+## The player's build crossed a visible power threshold (third / fifth
+## Manifestation, ...). The ThreatDirector opens a power-contrast window so
+## old threats crumble before the next one arrives (roadmap §11).
+signal power_threshold_crossed(id: StringName, label: String)
+
 @warning_ignore("unused_signal")
 signal doctrine_event_recorded(event_id: StringName, label: String)
 
