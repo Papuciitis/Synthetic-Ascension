@@ -18,12 +18,15 @@ All active files are 1024×1024. They repeat over 1024 world pixels and align in
 
 ## Preserved material
 
-- `_legacy_023_noisy/`: original detailed 0.23 textures.
-- `_legacy_failed_gray_0241/`: the rejected gray ground rework.
+- `_legacy_023_noisy/` (original detailed 0.23 textures), `_legacy_failed_gray_0241/`
+  (the rejected gray ground rework) and `_legacy_dense_foliage_0242/` (the pre-0.25.0
+  grass) were removed from the tree on 2026-08-28 — no scene, script or resource
+  referenced them and `export_filter="all_resources"` was shipping all 19.9 MB.
+  Recover with `git log --all -- assets/world/ground/_legacy_023_noisy` (etc.).
 - `_source_cethiel_cc0_selected/`: untouched selected Cethiel diffuse and normal maps plus provenance notes.
 
 ## 0.25.0 outdoor correction
 
 The 0.24.2 city-base material was still visible in open areas because procedural chunks used one universal substrate. The 0.25.0 generator now assigns terrain per planned chunk and a natural fallback to unplanned streamed chunks.
 
-Active outdoor grass: `ground_grass_01.png`, processed from the supplied Cethiel `Grass_04` diffuse source. The previous dense active grass is preserved in `_legacy_dense_foliage_0242/`. Main streets, secondary paths, plazas and interiors remain separate overlays, so the grass is not intended to replace authored paving.
+Active outdoor grass: `ground_grass_01.png`, processed from the supplied Cethiel `Grass_04` diffuse source. The previous dense active grass was kept in `_legacy_dense_foliage_0242/` until 2026-08-28 (see Preserved material). Main streets, secondary paths, plazas and interiors remain separate overlays, so the grass is not intended to replace authored paving.
