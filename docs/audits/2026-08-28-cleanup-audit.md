@@ -310,3 +310,48 @@ Bottom line: ~79 % of tracked bytes are generated captures nothing reads (JSON) 
 11. **`performance_results/.gitignore`** lists day folders that no longer exist — the next capture day is tracked by default (that is how 449 MB got in).
 12. **Dead alias probes** (`selection_card.gd:80-86`, `AugmentActiveBadge.gd:368-371`, `base.gd:220`) hide missing-field errors as silent fallbacks; the same pattern anywhere new will hide the next typo.
 13. **`AutosaveDebounceTest` / `DevForceSpawnTest` write the live profile directory** — a test run on a developer's machine can overwrite `slot_97` and, through `start_new_attempt`, touch real profile state.
+
+---
+
+## Status 2026-08-29 — the ten safest wins were executed
+
+One commit per win, `ScriptParseAuditTest` plus the directly affected suites
+run green after every deletion batch, every REMOVE candidate re-grepped
+(bare identifier and `"name"` string forms) immediately before removal.
+
+| Win | Commit | Note |
+|---|---|---|
+| 1 JSON captures untracked (+ stale `performance_results/.gitignore`) | `13bebb4` | 309 files, −449 MB tracked; files stay on disk |
+| 2 boot template + `_dev` scratch scene | `7a432cb` | |
+| 3 InventorySlot / SelectionCard / HudInventoryController | `ae86c60` | two `base.gd` comments reworded |
+| 4 EnemyOrbit, SegmentPlan, CoverWindow.gd, VisionOverlay + 2 shaders, SpiritSlashImpact | `0428e8d` | class cache refreshed with `--import` |
+| 5 three `_legacy_*` ground folders | `9a0376c` | `GROUND_TEXTURE_PATCH.md` "Preserved material" updated |
+| 6 loose textures | `e7d4de0` | **cover art moved, not deleted:** the three `covers/` files now live in `marketing/` under a `.gdignore` |
+| 7 zero-caller functions + `EnemyIndex.nearest_enemy/first_in_radius` | `7bfc6cb` | see the two corrections below |
+| 8 the three assertion-free benchmarks | `af4e23e` | + two generated `.uid` sidecars |
+| 9 root artifacts deleted / moved to `docs/history/` | `2244764` | no markdown links pointed at the old paths |
+| 10 doc citations + dangling folder colours | `2f40501` | |
+
+**Corrections to this audit found while executing it**
+
+- **C1.1 is partly wrong.** `EnemyIndex.gather_in_radius` has a live caller
+  the token scan missed: `core/actors/enemy/modules/EnemyHerald.gd:66-69`
+  resolves `/root/EnemyIndex` with `get_node_or_null` and calls it through
+  `has_method`/`call`. It was kept; only `nearest_enemy` and
+  `first_in_radius` were removed (their sole callers were EnemyIndexTest).
+- **C7 `Weapon.try_attack`** was not removed: it is the whole of `Weapon.gd`
+  and belongs with C2.1, which is not one of the ten wins.
+- **D3.5** (stale `performance_results/.gitignore`) was folded into win 1.
+
+**Bugfixes taken from the "highest-risk" list, as permitted** (each with a
+red→green regression test): `e549847` pooled projectile despawn deferred out
+of its own `area_entered` + hit guard (`PooledProjectileRecycleTest`);
+`3619ddd` `end_run()` never leaves the tree paused when the game-over UI is
+missing (`GameOverFallbackTest`). Note for the godot-hygiene audit: the
+suggested `PhysicsServer2D.is_flushing_queries()` guard does not exist in
+Godot 4.7.1, and the pooled `projectile.tscn` is obtained only by the dead
+`Weapon.gd` — MagicMissile pools `MagicMissileProjectile.tscn` (a Node2D) —
+so that finding was latent rather than live. The fix stands for the next
+pooled Area2D.
+
+**Regression sweep after the series:** 85 suites on `2dca035` (the 82 from the pre-series baseline plus PooledProjectileRecycleTest, GameOverFallbackTest, SaveSelectUnreadableSlotTest): **0 failures**; the only script-error lines are the corrupt save fixtures that SaveIntegrityTest and SaveSelectUnreadableSlotTest parse on purpose. Four suites exited non-zero — DevConsoleShotProbe, ManifestationHoverProbe, ObjectiveShotProbe, UiConsistencyVisualProbe — all display-only probes hitting their own watchdogs because this runner no longer quits them by frame count; that is the vacuous-pass behaviour the stale-tests audit documents, not a regression.

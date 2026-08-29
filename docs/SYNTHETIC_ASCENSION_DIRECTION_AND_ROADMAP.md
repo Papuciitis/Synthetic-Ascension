@@ -1308,3 +1308,14 @@ the stale-tests audit documents: the display-only probes report an empty
 summary and exit 0 regardless, so "83 clean" overstates coverage by about a
 dozen.
 
+**2026-08-29 — cleanup wins executed, save system hardened** (`13bebb4` …
+`2dca035`, 16 commits). The ten safest cleanup wins are done (cover art moved
+to `marketing/`, not deleted; `EnemyIndex.gather_in_radius` and
+`Weapon.try_attack` kept — see the cleanup audit's status section); two
+permitted bugfixes with regression tests (pooled projectile despawn,
+game-over fallback); save hardening per the save-compatibility audit
+(unreadable primary set aside, SaveSelect refuses to overwrite,
+`save_version`/`game_version`, dangling manifestation ids, settings schema
+warning). Risk #5 (a data-only save format) remains a design decision.
+Regression sweep: 85 suites on `2dca035` (the 82 from the pre-series baseline plus PooledProjectileRecycleTest, GameOverFallbackTest, SaveSelectUnreadableSlotTest): **0 failures**; the only script-error lines are the corrupt save fixtures that SaveIntegrityTest and SaveSelectUnreadableSlotTest parse on purpose. Four suites exited non-zero — DevConsoleShotProbe, ManifestationHoverProbe, ObjectiveShotProbe, UiConsistencyVisualProbe — all display-only probes hitting their own watchdogs because this runner no longer quits them by frame count; that is the vacuous-pass behaviour the stale-tests audit documents, not a regression.
+

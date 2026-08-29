@@ -126,3 +126,22 @@ Also relevant: 8 new curse item `.tres` files were added 2026-08-24 (`data/items
 - Untracked `tools/tests/CursedVaultTest.gd` / `ThreatDirectorPressureTest.gd` do not touch saves.
 
 Note: `user://saves/` on the development machine holds `slot_97.tres`/`slot_97.bak.tres` — leftovers of `AutosaveDebounceTest`, which writes a real profile and never deletes it (see the stale-tests audit).
+
+---
+
+## Status 2026-08-29 — risks addressed
+
+| Risk | Commit | What changed |
+|---|---|---|
+| #1 (second half) unreadable primary rotated over the last good backup | `3897ef6` | `load_slot` remembers slots whose primary exists but does not parse; `save_slot` moves such a primary to `slot_N.broken.tres` and leaves the backup in place; `delete_slot` clears it. `SaveIntegrityTest._test_save_after_unreadable_primary_keeps_backup`. |
+| #1 (first half) SaveSelect offers to overwrite | `9453f95` | card shows "UNREADABLE SAVE / Delete to reuse this slot" (delete on, rename off); `_on_slot_pressed` refuses to create when `has_save()` but `load_slot()` is null. `SaveSelectUnreadableSlotTest`. |
+| #2 no save-level version | `054f635` | `SaveData.CURRENT_SAVE_VERSION = 1`, `save_version` (0 = pre-versioned), `game_version` (BuildInfo); `write_save` stamps, `apply_save` warns on a newer version and loads best-effort. `SaveIntegrityTest._test_save_version_round_trip`. |
+| #3 default changes rewrite saves | `054f635` | documented as a rule in the `SaveData` header (add a field or migrate on `save_version`); no code can enforce it. |
+| #4 typed sub-resource properties | `054f635` | the five properties are named as frozen in the same header. |
+| #5 unrestricted `ResourceLoader.load` of user `.tres` | — | **open**; a data-only format is a design change (roadmap). |
+| #6 dangling `manifestation_id` | `bc13160` | `has_manifestation()` also requires the catalog to resolve the id. `ManifestationSystemTest._test_dangling_manifestation_id_is_not_a_manifestation`. |
+| #7 settings schema version never compared | `2dca035` | `SettingsStore` records `last_loaded_schema_version` and warns when newer; **reads best-effort rather than falling back to defaults** (deliberate departure from the suggestion above — wiping a player's settings on a downgrade is worse than clamping them). `SettingsPersistenceTest`. |
+
+The constraint in §4.1 still holds and now sits in `SaveData.gd` itself:
+scripts and item `.tres` are path-keyed with no uid; none of the 2026-08-29
+cleanup commits renamed or moved any of them.
