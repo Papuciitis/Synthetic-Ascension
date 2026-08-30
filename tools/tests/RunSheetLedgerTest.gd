@@ -106,6 +106,7 @@ func _run() -> void:
 	await _test_profile_shows_runtime_multipliers()
 	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
 	await _test_lens_line_prints_luck_kicker()
+	await _test_burden_ledger_names_slots_and_stubs_for_owned_augment()
 
 	_restore_global_state()
 	_player.queue_free()
@@ -316,6 +317,62 @@ func _test_lens_line_prints_luck_kicker() -> void:
 		"and follows the augment level (L2: 0.30 × 2/3 = 20%%) (%s)" % _one_line(levelled)
 	)
 	Global.attempt_augment_levels = {}
+	_player.last_burden = null
+
+
+# ---------------------------------------------------------------------------
+# Observability audit 2026-08-30 §6 #5 / #11: the BURDEN ledger names the
+# slots behind each count, and an owned NEG augment with no curses shows a
+# stub row instead of no section.
+# ---------------------------------------------------------------------------
+
+func _test_burden_ledger_names_slots_and_stubs_for_owned_augment() -> void:
+	var inv := Inventory.new()
+	inv.set_item(0, _cursed(0, 0.40))
+	inv.set_item(1, _cursed(1, 0.20))
+	inv.set_item(2, _cursed(2, 0.80))
+	var ids: Array[StringName] = [&"augment_corruption_engine", &"augment_doctrine_of_burden", &""]
+	Global.permanent_augment_ids = ids
+	_player.last_burden = BurdenResolver.resolve(inv, ids)
+	_run_sheet.refresh(_player, inv)
+	_run_sheet.select_page(RunSheetHUD.ArchivePage.MANIFESTATIONS)
+	await get_tree().process_frame
+	var text := _manifestations_text()
+	_check("3 NEG / 0 POS   ·   3 active" in text, "the census line is unchanged (%s)" % _one_line(text))
+	_check("active: HP −40%  ·  ARM −20%  ·  MOV −80%" in text, "the active count names its slots in slot order")
+	_check("burning: MOV −80%  ·  HP −40%" in text, "the Engine names the two slots heaviest(2) sums, heaviest first")
+	_check("qualifying: HP −40%  ·  ARM −20%  ·  MOV −80%" in text, "the Doctrine names its qualifying slots")
+
+	# A Lens takes the movement curse out of every roster it fed.
+	ids = [&"augment_corruption_engine", &"augment_inversion_lens", &""]
+	Global.permanent_augment_ids = ids
+	_player.last_burden = BurdenResolver.resolve(inv, ids)
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	var lensed := _manifestations_text()
+	_check("active: HP −40%  ·  ARM −20%" in lensed and not "active: HP −40%  ·  ARM −20%  ·  MOV" in lensed, "a suppressed curse leaves the active roster (%s)" % _one_line(lensed))
+	_check("burning: HP −40%  ·  ARM −20%" in lensed, "and the Engine's roster shows what it is left with")
+	_check("MOVEMENT suppressed: 80% curse" in lensed, "while the Lens line still names it")
+
+	# No curses, Engine owned: the section renders a stub instead of vanishing.
+	var empty := Inventory.new()
+	ids = [&"augment_corruption_engine", &"", &""]
+	Global.permanent_augment_ids = ids
+	_player.last_burden = BurdenResolver.resolve(empty, ids)
+	_run_sheet.refresh(_player, empty)
+	await get_tree().process_frame
+	var stub := _manifestations_text()
+	_check("BURDEN" in stub and "0 NEG / 0 POS" in stub, "an owned NEG augment keeps the BURDEN section with no curses (%s)" % _one_line(stub))
+	_check("CORRUPTION ENGINE — no curses equipped" in stub, "and says which augment is waiting")
+	_check(not "top two active" in stub, "without printing arithmetic over nothing")
+
+	# No curses, no NEG augment: no section, as before.
+	ids = [&"", &"", &""]
+	Global.permanent_augment_ids = ids
+	_player.last_burden = BurdenResolver.resolve(empty, ids)
+	_run_sheet.refresh(_player, empty)
+	await get_tree().process_frame
+	_check(not "BURDEN" in _manifestations_text(), "no NEG augment and no curses: no BURDEN section")
 	_player.last_burden = null
 
 

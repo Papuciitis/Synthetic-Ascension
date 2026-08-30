@@ -516,6 +516,12 @@ func _manifestation_state(player: Node) -> Dictionary:
 			burden.total_active, burden.qualifying_count, burden.suppressed_slot,
 			burden.suppressed_severity,
 		]
+		# The rosters name slots, so two equal curses swapping slots must rebuild.
+		var entries: Array = []
+		for slot_value in burden.entries.keys():
+			var slot := int(slot_value)
+			entries.append([slot, burden.severity_at(slot), burden.active_at(slot), burden.qualifies(slot)])
+		state["burden_entries"] = entries
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
 	# The Engine, Doctrine and Lens lines all read the augment level.
 	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
@@ -575,6 +581,43 @@ func _add_wrapped_line(container: VBoxContainer, text: String, colour: Color, fo
 
 const BURDEN := Color(0.85, 0.42, 0.95, 1.0)
 
+## The three NEG archetype augments the ledger explains, in the order their
+## blocks appear below.
+const NEG_ARCHETYPES: Array[Dictionary] = [
+	{"id": &"augment_corruption_engine", "label": "CORRUPTION ENGINE"},
+	{"id": &"augment_doctrine_of_burden", "label": "DOCTRINE OF BURDEN"},
+	{"id": &"augment_inversion_lens", "label": "INVERSION LENS"},
+]
+
+
+## Statistical slots the predicate keeps, in slot order.
+func _burden_slots(snap: BurdenSnapshot, keep: Callable) -> Array[int]:
+	var slots: Array[int] = []
+	for slot_value in snap.entries.keys():
+		var slot := int(slot_value)
+		if bool(keep.call(slot)):
+			slots.append(slot)
+	slots.sort()
+	return slots
+
+
+## The N most severe ACTIVE slots - the ones BurdenSnapshot.heaviest(N) sums.
+func _heaviest_slots(snap: BurdenSnapshot, count: int) -> Array[int]:
+	var slots := _burden_slots(snap, func(slot: int) -> bool: return snap.active_at(slot) > 0.0)
+	slots.sort_custom(func(a: int, b: int) -> bool: return snap.active_at(a) > snap.active_at(b))
+	var out: Array[int] = []
+	for i in range(mini(count, slots.size())):
+		out.append(slots[i])
+	return out
+
+
+## "HP −40%  ·  ARM −20%": slot hints with the severity the snapshot recorded.
+func _burden_roster(snap: BurdenSnapshot, slots: Array[int]) -> String:
+	var parts := PackedStringArray()
+	for slot in slots:
+		parts.append("%s −%d%%" % [Inventory.slot_hint(slot), int(round(snap.severity_at(slot) * 100.0))])
+	return "  ·  ".join(parts)
+
 
 ## The curse ledger, showing the ARITHMETIC rather than the augment's name.
 ##
@@ -586,9 +629,17 @@ func _append_burden(player: Node) -> void:
 	if player == null:
 		return
 	var snap: BurdenSnapshot = player.get("last_burden") as BurdenSnapshot
-	if snap == null or (snap.neg_count <= 0 and snap.pos_count <= 0):
+	if snap == null:
 		return
-	if snap.neg_count <= 0:
+	var ids: Array = Global.permanent_augment_ids if Global != null else []
+	var owned: PackedStringArray = PackedStringArray()
+	for archetype in NEG_ARCHETYPES:
+		if ids.has(StringName(archetype["id"])):
+			owned.append(String(archetype["label"]))
+	# No NEG item equipped means no arithmetic to show - unless a NEG augment
+	# is owned, in which case "nothing" IS the reading: the augment is live and
+	# waiting on curses, and a silent section reads as a broken one.
+	if snap.neg_count <= 0 and owned.is_empty():
 		return
 
 	_add_line("", Color(1, 1, 1, 0.4), 8)
@@ -600,8 +651,14 @@ func _append_burden(player: Node) -> void:
 		],
 		Color(1, 1, 1, 0.80), 11
 	)
-
-	var ids: Array = Global.permanent_augment_ids if Global != null else []
+	if snap.neg_count <= 0:
+		for label in owned:
+			_add_line("%s — no curses equipped" % label, Color(1, 1, 1, 0.55), 11)
+		return
+	# The slots behind the count, from the same entries the count came from.
+	var active_slots := _burden_slots(snap, func(slot: int) -> bool: return snap.active_at(slot) > 0.0)
+	if not active_slots.is_empty():
+		_add_wrapped_line(manifestations_vbox, "   active: %s" % _burden_roster(snap, active_slots), Color(1, 1, 1, 0.62), 10)
 
 	if ids.has(&"augment_corruption_engine"):
 		var top_two := snap.heaviest(2)
@@ -617,6 +674,11 @@ func _append_burden(player: Node) -> void:
 			],
 			Color(1, 1, 1, 0.72), 10
 		)
+		# Which two: a third curse feeds nothing, and the feed prompt on it
+		# reads as a bug unless the sheet says so.
+		var burning := _heaviest_slots(snap, 2)
+		if not burning.is_empty():
+			_add_wrapped_line(manifestations_vbox, "   burning: %s" % _burden_roster(snap, burning), Color(1, 1, 1, 0.62), 10)
 
 	if ids.has(&"augment_doctrine_of_burden"):
 		var level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
@@ -636,6 +698,9 @@ func _append_burden(player: Node) -> void:
 			],
 			Color(1, 1, 1, 0.72), 10
 		)
+		var qualifying := _burden_slots(snap, func(slot: int) -> bool: return snap.qualifies(slot))
+		if not qualifying.is_empty():
+			_add_wrapped_line(manifestations_vbox, "   qualifying: %s" % _burden_roster(snap, qualifying), Color(1, 1, 1, 0.62), 10)
 
 	if ids.has(&"augment_inversion_lens"):
 		_add_line("INVERSION LENS", BURDEN, 11)
