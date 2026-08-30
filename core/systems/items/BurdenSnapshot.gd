@@ -12,7 +12,9 @@ class_name BurdenSnapshot
 ##
 ##   POLARITY CENSUS - how many equipped items are intrinsically POS or NEG.
 ##   Counts EVERY slot, accessories included, ignores suppression. This is
-##   what parity, sets and acquisition rewards read.
+##   what the Run Sheet's BURDEN block and the BuildIdentity sentence read
+##   (neg_count / pos_count); the item tooltip names it for an accessory or
+##   a suppressed curse. Nothing else consumes it yet.
 ##
 ##   ACTIVE STAT BURDEN - how much statistical curse is presently weighing on
 ##   the player. Reasons about the statistical slots only (HP, Armour, Move,
