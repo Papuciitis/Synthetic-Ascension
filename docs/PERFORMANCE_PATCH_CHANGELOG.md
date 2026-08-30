@@ -1,5 +1,10 @@
 # Performance Patch Changelog
 
+> This changelog ends 2026-08-22 (the last entry below); later performance
+> history lives in git and the roadmap §27 status log
+> (`docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md`). Two dated
+> corrections are inline.
+
 ## Recorded root-cause fixes
 
 - Flow-field movement requests now replace one queued destination instead of
@@ -265,6 +270,10 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   separate from the 8 ms flow-shedding threshold) now
   temporarily shrinks the full/mid budgets to 24/24, restoring the normal
   32/32 only after 2 s of calm. Brief spikes never trigger the fallback.
+  (2026-08-30: the pressure budgets are now 12/24, plus an 8/16 emergency
+  tier above 20 ms and a 40 ms severe fast path —
+  `autoload/EnemySimulationScheduler.gd:46-47,59-60,86`; normal is still
+  32/32.)
 - Mid tier now steps at 20 Hz (3 groups) and far at ~8.6 Hz (7 groups); the
   default mid budget dropped from 48 to 32.
 - Incident CSVs now record the simulation LOD state per sample: full/mid/far
@@ -340,3 +349,6 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
 - Known next target: projectile rendering. At ~550 projectiles the frame
   cost is ~90ms beyond process+physics (likely additive-material overdraw),
   i.e. a minigun-tier weapon would tank frames today.
+  (2026-08-30: solved 2026-08-23 — the projectile sim moved to `_process`
+  and impact VFX are batched through ImpactBurstRenderer; see
+  `docs/OPTIMIZATION_HANDOFF.md`, TODO 1.)
