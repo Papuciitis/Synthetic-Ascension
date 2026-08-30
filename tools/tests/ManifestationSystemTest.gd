@@ -36,6 +36,7 @@ func _run() -> void:
 	_test_slot_pools()
 	_test_roll_respects_slot_and_chance()
 	_test_describe_is_detached_safe()
+	_test_rule_text_matches_the_code()
 	_test_identity_survives_merge()
 	_test_identity_survives_auto_swap_merge()
 	_test_a_deliberate_merge_keeps_the_destination_rule()
@@ -535,6 +536,104 @@ func _test_describe_is_detached_safe() -> void:
 			all_scaled = false
 	_check(all_described, "every rule produces tooltip text detached from the tree")
 	_check(all_scaled, "every rule overrides describe() with instance numbers")
+
+
+func _test_rule_text_matches_the_code() -> void:
+	# Observability audit 2026-08-30 §2/§3: the tooltip and the sheet render
+	# describe() with this instance's numbers, so a string that contradicts its
+	# code is a live UI lie. Each assertion pins one corrected string to the
+	# constant it now quotes.
+	var data := _make_data("test_rule_text", ManifestationCatalog.SLOT_RING)
+
+	# Pilgrim's Momentum: the noun fills itself from travel for ANY claimer, so
+	# the bar fills at the combined rate, never at the rule's own 15 m.
+	var pilgrim_def := ManifestationCatalog.get_def(&"pilgrims_momentum")
+	var pilgrim_consts: Dictionary = pilgrim_def.logic.get_script_constant_map()
+	var pilgrim := pilgrim_def.logic.new() as ManifestationEffect
+	pilgrim.item = _make_instance(data, 0, 0.2, &"pilgrims_momentum")
+	pilgrim.definition = pilgrim_def
+	var per_metre: float = float(pilgrim_consts["PIXELS_PER_METRE"])
+	var own: float = maxf(1.0, float(pilgrim_consts["FILL_DISTANCE"]) * pilgrim.threshold_scale())
+	var passive: float = ManifestationState.MOMENTUM_BASE_FILL_DISTANCE
+	var combined: float = 1.0 / (1.0 / own + 1.0 / passive)
+	var reported: float = float(pilgrim.call(&"combined_fill_distance")) if pilgrim.has_method(&"combined_fill_distance") else -1.0
+	_check(is_equal_approx(reported, combined), "the combined fill is 1/(1/own + 1/passive) (%.1f px)" % combined)
+	_check(combined < own, "and it is shorter than the rule's own fill")
+	var pilgrim_text := ManifestationCatalog.describe(&"pilgrims_momentum", pilgrim.item)
+	var expected_metres := "Travel %.1f m" % (combined / per_metre)
+	_check(pilgrim_text.begins_with(expected_metres), "Pilgrim's Momentum quotes the combined fill (%s)" % expected_metres)
+	_check(
+		not pilgrim_text.begins_with("Travel %.1f m" % (own / per_metre)),
+		"and no longer the own fill alone"
+	)
+	pilgrim.free()
+
+	# Orbiting Testament registers SHARD_DAMAGE_BONUS plus a per-crit sharpening
+	# the old text never mentioned; and both Luck-roll rules were silent about
+	# the ignition - LuckResolver never lets a Lucky Crit succeed at Luck <= 0.
+	var orbit_def := ManifestationCatalog.get_def(&"orbiting_testament")
+	var orbit_consts: Dictionary = orbit_def.logic.get_script_constant_map()
+	var sharpen_per_crit: float = float(orbit_consts.get("SHARPEN_PER_CRIT", 0.0))
+	var sharpen_cap: float = float(orbit_consts.get("SHARPEN_CAP", 0.0))
+	var orbit := orbit_def.logic.new() as ManifestationEffect
+	var state := ManifestationState.new()
+	add_child(state)
+	state.claim(&"fortune")
+	orbit.state = state
+	state.lucky_crits = 5
+	_check(
+		sharpen_per_crit > 0.0 and is_equal_approx(float(orbit.call(&"luck_sharpening")), 5.0 * sharpen_per_crit),
+		"sharpening pays SHARPEN_PER_CRIT per Lucky Crit"
+	)
+	state.lucky_crits = 500
+	_check(
+		sharpen_cap > 0.0 and is_equal_approx(float(orbit.call(&"luck_sharpening")), sharpen_cap),
+		"and caps at SHARPEN_CAP"
+	)
+	orbit.free()
+	state.queue_free()
+	var orbit_text := ManifestationCatalog.describe(&"orbiting_testament", _make_instance(data, 0, 0.2, &"orbiting_testament"))
+	_check(
+		orbit_text.contains("per Lucky Crit landed this run, up to +%d%%" % int(round(sharpen_cap * 100.0))),
+		"Orbiting Testament quotes the sharpening and its cap"
+	)
+	_check(
+		is_zero_approx(LuckResolver.lucky_crit_chance(0.0)) and is_zero_approx(LuckResolver.lucky_crit_chance(-3.0)),
+		"fixture: a Lucky Crit never succeeds at or below zero Luck"
+	)
+	var ignition := "Needs Luck above 0: the roll never succeeds at or below it; the cap is %d%%" % int(round(LuckResolver.lucky_crit_chance(1.0e6) * 100.0))
+	_check(orbit_text.contains(ignition), "Orbiting Testament names the Luck ignition")
+	var providence_text := ManifestationCatalog.describe(&"broken_providence", _make_instance(data, 0, 0.2, &"broken_providence"))
+	_check(providence_text.contains(ignition), "Broken Providence names the Luck ignition")
+
+	# Pairs render the same way, through ManifestationPairCatalog.describe().
+	var marching := ManifestationPairCatalog.describe(&"marching_order")
+	_check(marching.contains("does not reset your attack clock"), "Marching Order says a stride is a beat, not an attack")
+	_check(not marching.contains("counts as an attack"), "and no longer claims it counts as one")
+	var red_line_consts: Dictionary = ManifestationPairCatalog.get_def(&"red_line").logic.get_script_constant_map()
+	_check(
+		ManifestationPairCatalog.describe(&"red_line").contains("re-arms once every %.0fs" % float(red_line_consts["REARM_COOLDOWN"])),
+		"Red Line quotes the guard's re-arm cooldown"
+	)
+	var rattle_consts: Dictionary = ManifestationPairCatalog.get_def(&"death_rattle").logic.get_script_constant_map()
+	_check(
+		ManifestationPairCatalog.describe(&"death_rattle").contains("your empowered beat (every %d beats) is held" % int(rattle_consts["BEATS"])),
+		"Death Rattle says only the empowered beat is held"
+	)
+	var tithe_consts: Dictionary = ManifestationPairCatalog.get_def(&"tithe_rhythm").logic.get_script_constant_map()
+	var tithe_beats: int = int(tithe_consts["BEATS"])
+	_check(
+		ManifestationPairCatalog.describe(&"tithe_rhythm").contains("Every %d beats - %d attacks once it is running" % [tithe_beats, tithe_beats - 1]),
+		"Tithe Rhythm quotes the two-attack cadence it settles into"
+	)
+	_check(
+		ManifestationPairCatalog.describe(&"slipstream_foundry").contains("do not guard you"),
+		"Slipstream Foundry says a grounded shard is out of the orbit"
+	)
+	_check(
+		ManifestationPairCatalog.describe(&"reliquary_guard").contains("anything that spends the orbit drops the guard"),
+		"Reliquary Guard says every orbit spender drops it"
+	)
 
 
 # ---------------------------------------------------------------------------

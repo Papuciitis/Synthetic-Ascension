@@ -182,13 +182,14 @@ func on_damage_taken(_amount: float, _at: Vector2) -> void:
 
 func describe() -> String:
 	return (
-		"While below %d%% HP, spending at least %d%% Momentum turns it into escape: up to +%d%% move speed for %.1fs, decaying, and the next hit within %.0fs is ignored outright. Your attacks deal %d%% less for as long as the burst lasts."
+		"While below %d%% HP, spending at least %d%% Momentum turns it into escape: up to +%d%% move speed for %.1fs, decaying, and the next hit within %.0fs is ignored outright. The guard re-arms once every %.0fs - a spend inside that window buys the surge alone. Your attacks deal %d%% less for as long as the burst lasts."
 		% [
 			int(round(WOUNDED_AT * 100.0)),
 			int(round(MIN_SPEND * 100.0)),
 			int(round(speed_bonus() * 100.0)),
 			SURGE_MAX,
 			GUARD_TIME,
+			REARM_COOLDOWN,
 			int(round((1.0 - POWER_DURING_SURGE) * 100.0)),
 		]
 	)

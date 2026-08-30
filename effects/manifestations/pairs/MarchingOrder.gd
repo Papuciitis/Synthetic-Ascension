@@ -2,11 +2,11 @@ extends ManifestationPairEffect
 
 ## Marching Order - momentum x cadence.
 ##
-## Walking IS attacking, for rhythm purposes. Every stride of unbroken travel
-## writes one beat into the SHARED counter with state.note_attack(), the same
-## call an echo makes, so a player who keeps moving carries Third Litany's
-## litany and the Tithe Furnace's eighth-attack cycle forward without pulling
-## the trigger once.
+## Walking IS a beat, for rhythm purposes. Every stride of unbroken travel
+## writes one beat into the SHARED counter with state.advance_beat(), so a
+## player who keeps moving carries Third Litany's litany and the Tithe
+## Furnace's eighth-attack cycle forward without pulling the trigger once. A
+## beat, not an attack: the rhythm CLOCK is left alone (see _advance).
 ##
 ## The forfeit is the other half, and it is what stops this being a free tick.
 ## Stopping does not cash the part-stride in early - it throws it away - because
@@ -132,7 +132,7 @@ func _repaint_if_changed() -> void:
 
 func describe() -> String:
 	return (
-		"Every %.1f m of unbroken travel counts as an attack, advancing every rhythm you carry without firing. Stopping forfeits the stride you had banked instead of cashing it in early."
+		"Every %.1f m of unbroken travel is a beat: it advances every beat-counting rhythm you carry without firing; it does not reset your attack clock. Stopping forfeits the stride you had banked instead of cashing it in early."
 		% [stride_distance() / PIXELS_PER_METRE]
 	)
 

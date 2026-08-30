@@ -179,7 +179,7 @@ func _tick_motes(delta: float) -> void:
 
 func describe() -> String:
 	return (
-		"While you are moving, every %.1f m pulls a shard out of your orbit and leaves it where you stood: it burns everything within %d px for %d%% of a shard's damage every %.2fs, then snaps back into orbit after %.2fs. Up to %d shards can be strung out at once."
+		"While you are moving, every %.1f m pulls a shard out of your orbit and leaves it where you stood: it burns everything within %d px for %d%% of a shard's damage every %.2fs, then snaps back into orbit after %.2fs. Up to %d shards can be strung out at once. Shards on the ground are out of your orbit until they return: they do not guard you and cannot be launched."
 		% [
 			drop_distance() / PIXELS_PER_METRE,
 			int(round(MOTE_RADIUS)),

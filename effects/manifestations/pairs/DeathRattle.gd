@@ -213,9 +213,10 @@ func _pay_for_the_beat() -> void:
 
 func describe() -> String:
 	return (
-		"At or below %d%% HP, firing again within %.2fs no longer forfeits your beat - the beat is held and it costs %.1f%% of your maximum health. It never takes your last point."
+		"At or below %d%% HP, your empowered beat (every %d beats) is held for you: firing it within %.2fs of the shot before no longer forfeits it, and the held beat costs %.1f%% of your maximum health. The beats between are not held and forfeit as usual. It never takes your last point."
 		% [
 			int(round(WOUNDED_AT * 100.0)),
+			BEATS,
 			RESOLVE_WINDOW,
 			cost_fraction() * 100.0,
 		]

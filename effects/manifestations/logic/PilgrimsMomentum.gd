@@ -84,9 +84,22 @@ func _bank_travel() -> void:
 		_last_distance = travelled
 	if not state.is_moving or travelled <= _last_distance:
 		return
-	var required: float = maxf(1.0, FILL_DISTANCE * threshold_scale())
-	state.add_momentum((travelled - _last_distance) / required)
+	state.add_momentum((travelled - _last_distance) / fill_distance())
 	_last_distance = travelled
+
+
+func fill_distance() -> float:
+	return maxf(1.0, FILL_DISTANCE * threshold_scale())
+
+
+## Pixels of unbroken travel that actually fill the bar. The noun fills itself
+## from travel for ANY claimer (ManifestationState.MOMENTUM_BASE_FILL_DISTANCE)
+## and this rule's own fill runs on top of it, so the bar fills at the combined
+## rate - two taps into one bucket, 1 / (1/own + 1/passive) - never at
+## FILL_DISTANCE alone. Quoting FILL_DISTANCE read 15 m against a bar that
+## really filled in about 9.
+func combined_fill_distance() -> float:
+	return 1.0 / (1.0 / fill_distance() + 1.0 / ManifestationState.MOMENTUM_BASE_FILL_DISTANCE)
 
 
 func on_attack(
@@ -135,8 +148,13 @@ func _follow_player() -> void:
 
 
 func describe() -> String:
-	var metres: float = (FILL_DISTANCE * threshold_scale()) / PIXELS_PER_METRE
-	return "Travel %.1f m without stopping to fill Momentum. At full Momentum your next attack fires a second time at %d%% damage, spending all of it." % [metres, int(round(potency() * 100.0))]
+	var metres: float = combined_fill_distance() / PIXELS_PER_METRE
+	var own_metres: float = fill_distance() / PIXELS_PER_METRE
+	var passive_metres: float = ManifestationState.MOMENTUM_BASE_FILL_DISTANCE / PIXELS_PER_METRE
+	return (
+		"Travel %.1f m without stopping to fill Momentum - this rule's own %.1f m fill running alongside the %.0f m travel fill any Momentum rule gets. At full Momentum your next attack fires a second time at %d%% damage, spending all of it."
+		% [metres, own_metres, passive_metres, int(round(potency() * 100.0))]
+	)
 
 
 func _draw() -> void:

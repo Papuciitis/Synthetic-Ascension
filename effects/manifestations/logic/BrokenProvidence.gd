@@ -82,9 +82,14 @@ func burst_multiplier(banked: int) -> float:
 func describe() -> String:
 	var per: float = BURST_MULT_PER_POINT * potency() * 100.0
 	var jackpot: float = burst_multiplier(MISFORTUNE_CAP) * 100.0
+	# The Luck ceiling quoted with a pure argument, the way Debt Collector does:
+	# this renders detached and serves the shop and the stash, so this run's
+	# Luck is not a number it may read. But a no-Luck build banks to the cap
+	# and the payout never comes, so the ignition has to be named.
+	var ceiling: int = int(round(LuckResolver.lucky_crit_chance(1.0e6) * 100.0))
 	return (
-		"Every attack that fails its Lucky Crit banks 1 Misfortune (max %d). Your next Lucky Crit spends the bank instantly: a burst around you dealing %.0f%% weapon damage per point (%.0f%% at a full bank) in a radius that grows with it."
-		% [MISFORTUNE_CAP, per, jackpot]
+		"Every attack that fails its Lucky Crit banks 1 Misfortune (max %d). Your next Lucky Crit spends the bank instantly: a burst around you dealing %.0f%% weapon damage per point (%.0f%% at a full bank) in a radius that grows with it. Needs Luck above 0: the roll never succeeds at or below it; the cap is %d%%."
+		% [MISFORTUNE_CAP, per, jackpot, ceiling]
 	)
 
 

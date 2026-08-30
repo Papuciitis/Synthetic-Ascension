@@ -25,8 +25,9 @@ extends ManifestationPairEffect
 ## real attacks rather than every three, and Third Litany accelerates with it.
 ## The tithe compounds exactly as fast as the player can pay for it, and the
 ## reconstruction floor - not an authored cooldown - is what stops it. The
-## tooltip quotes the rule (every 3rd beat), because that is the thing the
-## player controls; the acceleration is the shared counter behaving as designed.
+## tooltip quotes both: the rule (every 3rd beat), because that is the thing
+## the player controls, and the two-attack cadence it settles into, because a
+## rule that visibly fires faster than its own text reads as broken.
 
 const BEATS: int = 3
 
@@ -187,6 +188,6 @@ func _refuse(cost: int) -> void:
 
 func describe() -> String:
 	return (
-		"Every %d attacks the beat spends 1 Follower to fire a second time for %d%% of your attack damage. A kill within %.2fs returns them. It refuses to spend if that would drop you below your reconstruction cost."
-		% [BEATS, int(round(echo_multiplier() * 100.0)), RETURN_WINDOW]
+		"Every %d beats - %d attacks once it is running, since the second shot is itself a beat - the beat spends 1 Follower to fire a second time for %d%% of your attack damage. A kill within %.2fs returns them. It refuses to spend if that would drop you below your reconstruction cost."
+		% [BEATS, BEATS - 1, int(round(echo_multiplier() * 100.0)), RETURN_WINDOW]
 	)

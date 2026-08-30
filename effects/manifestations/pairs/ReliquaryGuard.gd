@@ -163,7 +163,7 @@ func _process(delta: float) -> void:
 
 func describe() -> String:
 	return (
-		"While your orbit holds shards, a hit that would land on you shatters one instead and deals you nothing - at most one shatter every %.2fs. Your orbit holds %d more. An empty orbit is an unguarded one."
+		"While your orbit holds shards, a hit that would land on you shatters one instead and deals you nothing - at most one shatter every %.2fs. Your orbit holds %d more. An empty orbit is an unguarded one - anything that spends the orbit drops the guard."
 		% [shatter_cooldown(), cap_bonus()]
 	)
 
