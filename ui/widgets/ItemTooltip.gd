@@ -200,7 +200,10 @@ func show_item(inst: ItemInstance) -> void:
 				var noun_separator: String = "[color=%s] · [/color]" % CMP_NEUTRAL_HEX
 				lines.append(noun_separator.join(noun_names))
 			lines.append("[color=%s]%s[/color]" % [primary_hex, ManifestationCatalog.describe(inst.manifestation_id, inst)])
-			lines.append("[color=%s]Survives every merge. Duplicates rank this item up; they never reroll its rule.[/color]" % CMP_NEUTRAL_HEX)
+			# A noun counts DISTINCT rules (ManifestationRunner.get_noun_counts),
+			# so a second item carrying this rule never lights the pair - the
+			# one thing a player holding two of them expects it to do.
+			lines.append("[color=%s]Survives every merge. Duplicates rank this item up; they never reroll its rule. Two items with one rule light no second ◆ — a noun counts distinct rules.[/color]" % CMP_NEUTRAL_HEX)
 
 	var rolled_lines: Array[String] = _format_delta(inst.rolled_mods)
 	if rolled_lines.size() > 0:

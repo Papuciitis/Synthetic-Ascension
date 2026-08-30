@@ -971,6 +971,12 @@ func _test_tooltip_renders_the_rule() -> void:
 		body.contains(ManifestationCatalog.display_name(ids[0]).to_upper()),
 		"and names it"
 	)
+	# get_noun_counts counts DISTINCT rules, so a doubled ring never lights a
+	# pair; the only surface that can say so before the player tries is here.
+	_check(
+		body.contains("Two items with one rule light no second ◆ — a noun counts distinct rules."),
+		"and says a second item with the same rule lights no second pip"
+	)
 
 	tooltip.show_item(_make_instance(data, 5, 0.35, &""))
 	var plain_body: String = tooltip.body_label.text if tooltip.body_label != null else ""
