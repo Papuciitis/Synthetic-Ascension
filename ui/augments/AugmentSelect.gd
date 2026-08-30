@@ -369,7 +369,7 @@ func _build_numbers_text(a: AugmentData) -> String:
 	if det.strip_edges() != "":
 		lines.append(det.strip_edges())
 
-	# Stats at the level the pick would give - an owned augment levels up in
+	# Stats at the level the pick would give - a slotted augment levels up in
 	# place (_on_card_picked), so its card is an upgrade, and the base `mods`
 	# are stale from Lv.2 on for every augment with mods_scale_per_level.
 	if a.mods != null:
@@ -382,15 +382,20 @@ func _build_numbers_text(a: AugmentData) -> String:
 		return "(No numeric details yet)"
 	return "\n\n".join(lines)
 
-## The level this card gives: an owned augment levels up on pick, a new one
-## arrives at Lv.1.
+## The level this card gives - the one the stat pass applies after the pick,
+## Global.get_augment_level, which slotting never touches: a slotted augment
+## levels up in place (_on_card_picked); anything else is only slotted and
+## keeps its stored level - Lv.1 when never levelled, its real level when it
+## was levelled and then unslotted.
 func _level_on_pick(a: AugmentData) -> int:
-	if Global == null or not Global.permanent_augment_ids.has(a.id):
+	if Global == null:
 		return 1
 	var current: int = 1
 	if Global.has_method("get_augment_level"):
 		current = int(Global.get_augment_level(a.id))
-	return current + 1
+	if Global.permanent_augment_ids.has(a.id):
+		return current + 1
+	return current
 
 ## The level-scaled delta, read back from AugmentData.apply_to_stats_at_level -
 ## the call the stat pass makes - applied to a default Stats and diffed

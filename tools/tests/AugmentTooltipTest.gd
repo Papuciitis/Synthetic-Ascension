@@ -36,6 +36,13 @@ func _fixture() -> AugmentData:
 	return a
 
 
+## Drives the real pick handler (no card node, so no fly VFX to await) and
+## reports the level the stat pass will apply afterwards.
+func _picked_level(select: CanvasLayer, a: AugmentData) -> int:
+	await select.call("_on_card_picked", a, null)
+	return Global.get_augment_level(a.id)
+
+
 func _run() -> void:
 	var scene := load("res://ui/widgets/AugmentTooltip.tscn") as PackedScene
 	var tooltip := scene.instantiate() as AugmentTooltip if scene != null else null
@@ -73,9 +80,12 @@ func _run() -> void:
 
 	# The augment-choice screen's hover panel is an augment tooltip too, and
 	# it read the base `mods` and printed Luck as an integer (readability
-	# wave 1's deliberate leftover). It shows the level the pick would give:
-	# Lv.1 for a new augment, the next level for an owned one, which the pick
-	# levels up in place.
+	# wave 1's deliberate leftover). It shows the level the stat pass will
+	# apply after the pick - Global.get_augment_level, which slotting does not
+	# touch: Lv.1 for an augment never levelled, the stored level for an owned
+	# but unslotted one (the pick only slots it), the next level for a slotted
+	# one (the pick levels it up in place). Each case is checked against the
+	# level the real pick handler leaves behind.
 	var select_scene := load("res://ui/augments/AugmentSelect.tscn") as PackedScene
 	var select: CanvasLayer = select_scene.instantiate() as CanvasLayer if select_scene != null else null
 	if select == null:
@@ -83,21 +93,42 @@ func _run() -> void:
 	else:
 		add_child(select)
 		var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+		var saved_owned: Array[StringName] = Global.owned_augment_ids.duplicate()
 		var saved_levels: Dictionary = Global.attempt_augment_levels.duplicate()
+
+		# Never owned: no slot, no library entry, no stored level.
 		Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
+		Global.owned_augment_ids = []
+		Global.attempt_augment_levels.erase(String(a.id))
 		var text: String = str(select.call("_build_numbers_text", a))
 		_check(text.contains("Stats at Lv.1:"), "AugmentSelect: a new augment shows the Lv.1 the pick gives (%s)" % text)
 		_check(text.contains("+10 Max HP") and text.contains("+5% Power"), "AugmentSelect: Lv.1 is the base delta")
 		_check(text.contains("+50% Luck") and not text.contains("+1 Luck"), "AugmentSelect: Luck is a percentage, not +1")
+		var picked: int = await _picked_level(select, a)
+		_check(picked == 1, "AugmentSelect: and the pick leaves a new augment at Lv.1 (got %d)" % picked)
 
+		# Owned but unslotted at Lv.2: the pick slots it and keeps its level.
+		Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
+		Global.owned_augment_ids = [a.id]
+		Global.attempt_augment_levels[String(a.id)] = 2
+		text = str(select.call("_build_numbers_text", a))
+		_check(text.contains("Stats at Lv.2:"), "AugmentSelect: an owned, unslotted Lv.2 augment shows the Lv.2 the pick keeps (%s)" % text)
+		_check(text.contains("+12 Max HP") and text.contains("+6% Power") and text.contains("+60% Luck"), "AugmentSelect: scaled to Lv.2 - neither the base delta nor the next level")
+		picked = await _picked_level(select, a)
+		_check(picked == 2, "AugmentSelect: and the pick leaves an unslotted augment at its stored level (got %d)" % picked)
+
+		# Slotted at Lv.2: the pick levels it up in place.
 		Global.permanent_augment_ids = [a.id, StringName(), StringName()]
 		Global.attempt_augment_levels[String(a.id)] = 2
 		text = str(select.call("_build_numbers_text", a))
-		_check(text.contains("Stats at Lv.3:"), "AugmentSelect: an owned Lv.2 augment shows the Lv.3 the pick gives (%s)" % text)
+		_check(text.contains("Stats at Lv.3:"), "AugmentSelect: a slotted Lv.2 augment shows the Lv.3 the pick gives (%s)" % text)
 		_check(text.contains("+14 Max HP") and text.contains("+7% Power") and text.contains("+70% Luck"), "AugmentSelect: scaled through apply_to_stats_at_level")
 		_check(not text.contains("+10 Max HP") and not text.contains("+50% Luck"), "AugmentSelect: the unscaled numbers are gone")
+		picked = await _picked_level(select, a)
+		_check(picked == 3, "AugmentSelect: and the pick levels a slotted augment up in place (got %d)" % picked)
 
 		Global.permanent_augment_ids = saved_augments
+		Global.owned_augment_ids = saved_owned
 		Global.attempt_augment_levels = saved_levels
 		select.queue_free()
 
