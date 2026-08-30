@@ -1319,3 +1319,56 @@ game-over fallback); save hardening per the save-compatibility audit
 warning). Risk #5 (a data-only save format) remains a design decision.
 Regression sweep: 85 suites on `2dca035` (the 82 from the pre-series baseline plus PooledProjectileRecycleTest, GameOverFallbackTest, SaveSelectUnreadableSlotTest): **0 failures**; the only script-error lines are the corrupt save fixtures that SaveIntegrityTest and SaveSelectUnreadableSlotTest parse on purpose. Four suites exited non-zero — DevConsoleShotProbe, ManifestationHoverProbe, ObjectiveShotProbe, UiConsistencyVisualProbe — all display-only probes hitting their own watchdogs because this runner no longer quits them by frame count; that is the vacuous-pass behaviour the stale-tests audit documents, not a regression.
 
+
+## 2026-08-30
+
+**Three audit findings fixed** (`13c7d0f`, `2aebf62`, `b2b1604`): the
+BuildIdentity Luck clause compared a fraction against `20.0` and could never
+fire — a green test was hiding a dead branch (run-sheet audit #9; threshold
+`0.20`, prints `%`, fixture corrected); MagicMissile and StaminaCore printed
+in release builds (logging audit #1-#3; traces behind `debug_prints`, aura
+failures become one-shot warnings); the two manifestation catalogs' static
+caches lacked `@static_unload` (Godot hygiene §1; released from
+`Global._exit_tree` like the other caches).
+
+**Every 2026-08-28 audit now carries a status section** (`f14868a`): the ten
+that had none were re-verified finding by finding against the tree — 59
+findings fixed or overtaken by the 08-29 deletions, ~209 still open, and five
+claims in the audits themselves corrected (a perf row that costed a script
+nothing ever ran, a naming row that read a signal name as player text, a
+stale-docs row wrong on the day it was written). Coverage counts re-derived:
+322 production scripts, 111 uncovered, HIGH 51 unchanged — the new 08-29/30
+tests all deepen already-covered scripts.
+
+**Two new read-only audits, both idle-time work while Phase 3 stays gated:**
+
+- `docs/audits/2026-08-30-save-path-stable-id-plan.md` (`a2c302a`) — the
+  plan the save-compatibility audit's risk #5 was waiting for. Exactly two
+  persisted fields are `res://`-path-keyed (`attempt_resume_scene`,
+  `ItemInstance.data` through the four containers) and six scripts are
+  path-referenced; everything else already uses stable ids. A headless probe
+  (reproduced independently) shows a renamed item `.tres` kills the whole
+  profile file, both generations. Proposed: `save_version 2`, `data_id` +
+  resume token, a 31-row alias table in `res://`, resolution on the load path
+  so the slot cards see it. **Nothing renamed, nothing implemented** — the
+  format is unchanged until that decision is taken.
+- `docs/audits/2026-08-30-neg-manifestation-observability.md` (`5b6bfc3`) —
+  the three NEG archetypes, all 18 rules and all 10 pairs, judged only on
+  what the player can see. 80 mistakable-for-bug moments and 42 invisible
+  truths, ranked; the burden ledger is formula-true but two clicks deep and
+  absent at zero curses; a suppressed slot still shows its stored `-80`
+  while contributing `+44%`; the pair rule lives only in code comments; six
+  live `describe()` strings contradict their code. No balance or design
+  change proposed — this is the §15 "build debugger" gap list, and the
+  readability half of §25's "can the player describe the build".
+
+Both new audits went through two adversarial review rounds; the first round
+removed three proposed fixes that were redesigns in disguise. Local only, not
+a repo change: this machine's import cache was regenerated, which cleared two
+`ScriptParseAuditTest` failures that were never in the code (317/0 now).
+
+Regression sweep on `a2c302a` (all 89 `tools/tests/*.tscn`, headless,
+`--quit-after 3000`): every suite exited 0, zero FAIL lines, zero script
+errors. 51 suites report 1683 passed / 0 failed, 20 report 463 passes /
+0 failures, and the remaining 18 are the display-only probes and
+benchmarks the stale-tests audit documents as unable to fail.
