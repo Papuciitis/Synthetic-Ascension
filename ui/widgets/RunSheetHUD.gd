@@ -458,6 +458,18 @@ func _append_doctrine_record() -> void:
 		var definition: MajorChoiceDef = Global.major_choice_db.get_def(choice_id)
 		var title := definition.title if definition != null else String(choice_id)
 		_add_target_line(manifestations_vbox, "%s // %s" % [String(stage_id).to_upper(), title.to_upper()], ACCENT, 11)
+		# The gift and the price were only ever shown on the choice screen; a
+		# stage title alone does not tell the player what they are still paying.
+		if definition != null:
+			if definition.gift_text.strip_edges() != "":
+				_add_wrapped_line(manifestations_vbox, "  GIFT // %s" % definition.gift_text.strip_edges(), Color(1, 1, 1, 0.72), 10)
+			if definition.price_text.strip_edges() != "":
+				_add_wrapped_line(manifestations_vbox, "  PRICE // %s" % definition.price_text.strip_edges(), Color(1, 1, 1, 0.62), 10)
+	# The Max HP price is applied last in the stat pass, after equipment, sets
+	# and Burden, so it silently shrinks the Profile HP total: name it here.
+	var max_hp_mul := float(Global.get_doctrine_rule(&"max_hp_mul", 1.0))
+	if not is_equal_approx(max_hp_mul, 1.0):
+		_add_target_line(manifestations_vbox, "MAX HP ×%.2f" % max_hp_mul, Color(0.86, 0.35, 0.22, 1), 11)
 	if bool(Global.get_doctrine_rule(&"force_augment_identity", false)):
 		_add_target_line(manifestations_vbox, "PERFECTED ENGINE // AUGMENT SEALS 3/3", ACCENT, 11)
 	for event_label in recorded_events:
@@ -507,6 +519,7 @@ func _manifestation_state(player: Node) -> Dictionary:
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
 	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
 	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
+	state["max_hp_mul"] = Global.get_doctrine_rule(&"max_hp_mul", 1.0) if Global != null else 1.0
 	var runner := player.get_node_or_null("ManifestationRunner")
 	if runner == null:
 		return state
@@ -546,6 +559,15 @@ func _add_target_line(container: VBoxContainer, text: String, colour: Color, fon
 	line.add_theme_font_size_override("font_size", font_size)
 	line.modulate = colour
 	container.add_child(line)
+	return line
+
+
+## A sentence rather than a readout: wraps inside the panel's 260 px column
+## the way the set dossier's body lines do.
+func _add_wrapped_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
+	var line := _add_target_line(container, text, colour, maxi(12, font_size))
+	line.custom_minimum_size = Vector2(260, 0)
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return line
 
 

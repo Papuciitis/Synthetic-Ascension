@@ -104,6 +104,7 @@ func _run() -> void:
 
 	await _test_ledger_records_every_step()
 	await _test_profile_shows_runtime_multipliers()
+	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
 
 	_restore_global_state()
 	_player.queue_free()
@@ -256,8 +257,42 @@ func _test_profile_shows_runtime_multipliers() -> void:
 
 
 # ---------------------------------------------------------------------------
+# §4 #4: the Doctrine Record carries each stage's gift and price, and the
+# Max HP multiplier the stat pass applies last.
+# ---------------------------------------------------------------------------
+
+func _test_doctrine_record_prints_gift_price_and_hp_multiplier() -> void:
+	var definition: MajorChoiceDef = Global.major_choice_db.get_def(&"doctrine_method_frame_of_ash")
+	_check(definition != null and definition.gift_text != "" and definition.price_text != "", "Frame of Ash authors a gift and a price")
+	Global.attempt_doctrine_stage_ids = {&"method": &"doctrine_method_frame_of_ash"}
+	Global.attempt_doctrine_rules = {"max_hp_mul": 0.75}
+	_run_sheet.refresh(_player, Inventory.new())
+	_run_sheet.select_page(RunSheetHUD.ArchivePage.MANIFESTATIONS)
+	await get_tree().process_frame
+	var text := _manifestations_text()
+	_check("METHOD // FRAME OF ASH" in text, "the stage title still leads the record")
+	_check(
+		definition != null and ("GIFT // " + definition.gift_text) in text,
+		"the stage's gift is printed under it (%s)" % _one_line(text)
+	)
+	_check(definition != null and ("PRICE // " + definition.price_text) in text, "and its price")
+	_check("MAX HP ×0.75" in text, "the Max HP multiplier the pass applies last is named")
+	_check(text.find("GIFT // ") > text.find("METHOD // FRAME OF ASH"), "gift and price sit under their stage")
+
+	# Without the price rule the line is absent rather than "x1.00".
+	Global.attempt_doctrine_rules = {}
+	_run_sheet.refresh(_player, Inventory.new())
+	await get_tree().process_frame
+	_check(not "MAX HP ×" in _manifestations_text(), "no multiplier line while the rule is 1.0")
+	Global.attempt_doctrine_stage_ids = {}
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+func _manifestations_text() -> String:
+	return _collect_label_text(_run_sheet.get_node_or_null("Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox"))
 
 func _row_for(rows: Array, label: String, stat: StringName) -> Dictionary:
 	for row_value in rows:
