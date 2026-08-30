@@ -19,6 +19,8 @@ signal active_cd_changed(time_left: float, max_cd: float)
 # assign VFX_StaminaCoreAura.tscn (optional)
 @export var vfx_aura_scene: PackedScene
 
+@export var debug_prints: bool = false
+
 var player: Node2D = null
 
 var _cd := 0.0
@@ -28,13 +30,15 @@ var _last_report := -999.0
 
 var _aura: Node = null
 var _damage_cb: Callable = Callable()
+var _warned_aura := false
 
 func setup(p: Node2D) -> void:
 	player = p
 
 func _ready() -> void:
 	set_process(true)
-	print("[StaminaCore] ready. has_action=", InputMap.has_action(String(active_action)), " action=", String(active_action))
+	if debug_prints:
+		print("[StaminaCore] ready has_action=", InputMap.has_action(String(active_action)), " action=", String(active_action))
 	_connect_damage_dealt_safely()
 	_report_cd(true) # push initial state to badge
 
@@ -54,14 +58,16 @@ func _process(dt: float) -> void:
 		_cd = max(_cd - dt, 0.0)
 
 	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and player != null and Input.is_action_just_pressed(active_action):
-		print("[StaminaCore] pressed. cd=", _cd, " active_time=", _active_time)
+		if debug_prints:
+			print("[StaminaCore] pressed cd=", _cd, " active_time=", _active_time)
 		_try_activate()
 
 	_report_cd(false)
 	
 func _try_activate() -> void:
 	if _cd > 0.0:
-		print("[StaminaCore] blocked by cd:", _cd)
+		if debug_prints:
+			print("[StaminaCore] blocked by cd=", _cd)
 		return
 
 	var haste: float = 0.0
@@ -81,7 +87,8 @@ func _try_activate() -> void:
 	if player.has_method("grant_invulnerability"):
 		player.call("grant_invulnerability", invuln_duration)
 
-	print("[StaminaCore] activated. cd_max=", _cd_max, " duration=", _active_time)
+	if debug_prints:
+		print("[StaminaCore] activated cd_max=", _cd_max, " duration=", _active_time)
 
 	_spawn_aura()
 	_report_cd(true)
@@ -89,20 +96,20 @@ func _try_activate() -> void:
 func _spawn_aura() -> void:
 	_cleanup_aura()
 	if player == null:
-		print("[StaminaCore] player is NULL")
+		_warn_aura_once("player is null")
 		return
 	if vfx_aura_scene == null:
-		print("[StaminaCore] vfx_aura_scene is NULL (not assigned in StaminaCoreEffect.tscn)")
+		_warn_aura_once("vfx_aura_scene is null (not assigned in StaminaCoreEffect.tscn)")
 		return
 
 	var hb := player.get_node_or_null("Hurtbox") as Area2D
 	if hb == null:
-		print("[StaminaCore] player has no Hurtbox")
+		_warn_aura_once("player has no Hurtbox")
 		return
 
 	var aura := vfx_aura_scene.instantiate() as Node2D
 	if aura == null:
-		print("[StaminaCore] aura instantiate failed")
+		_warn_aura_once("aura instantiate failed")
 		return
 
 	# ✅ Parent to hurtbox so it shares the same world canvas/viewport
@@ -113,7 +120,15 @@ func _spawn_aura() -> void:
 	if aura.has_method("setup"):
 		aura.call("setup", hb, active_duration)
 
-	print("[StaminaCore] aura spawned OK. parent=", aura.get_parent().name)
+	if debug_prints:
+		print("[StaminaCore] aura spawned parent=", aura.get_parent().name)
+
+func _warn_aura_once(reason: String) -> void:
+	if _warned_aura:
+		return
+	_warned_aura = true
+	push_warning("[StaminaCore] cannot spawn aura: %s (scene=%s)" % [reason, scene_file_path])
+
 
 func _cleanup_aura() -> void:
 	if _aura != null and is_instance_valid(_aura):

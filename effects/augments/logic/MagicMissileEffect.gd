@@ -9,7 +9,7 @@ class_name MagicMissileEffect
 @export var damage_mult: float = 0.35
 @export var scales_with_haste: bool = true
 @export var scales_with_power: bool = true
-@export var debug_prints: bool = true
+@export var debug_prints: bool = false
 
 var _player: Node2D = null
 var _cd: float = 0.0
@@ -27,19 +27,19 @@ func _ready() -> void:
 	set_process(true)
 	process_mode = Node.PROCESS_MODE_INHERIT
 	if debug_prints:
-		print("[MM] ready. missile_scene=", missile_scene)
+		print("[MagicMissile] ready missile_scene=", missile_scene)
 
 func _process(dt: float) -> void:
 	_tick += 1
 
 	if _player == null or not is_instance_valid(_player):
 		if debug_prints and _tick % 60 == 0:
-			print("[MM] no player set (setup not called?)")
+			print("[MagicMissile] no player set (setup not called?)")
 		return
 
 	if missile_scene == null:
 		if debug_prints and _tick % 60 == 0:
-			print("[MM] missile_scene is NULL (assign it in MagicMissileEffect.tscn)")
+			print("[MagicMissile] missile_scene is null (assign it in MagicMissileEffect.tscn)")
 		return
 
 	# If we are in a burst, fire the remaining shots at interval.
@@ -59,7 +59,7 @@ func _process(dt: float) -> void:
 	var handle := _find_nearest_enemy(_player.global_position, seek_radius)
 	if handle == EnemyWorldTypes.INVALID_HANDLE:
 		if debug_prints and _tick % 60 == 0:
-			print("[MM] no enemies in radius=", seek_radius, " (group must be 'enemies')")
+			print("[MagicMissile] no enemies in radius=", seek_radius)
 		return
 
 	# cooldown scaling
@@ -71,7 +71,7 @@ func _process(dt: float) -> void:
 	_cd = maxf(cd, 0.001)
 
 	if debug_prints:
-		print("[MM] FIRE burst at handle:", handle)
+		print("[MagicMissile] fire handle=", handle)
 
 	# Start burst: first shot is immediate, remaining use interval timer.
 	_target_handle = handle
