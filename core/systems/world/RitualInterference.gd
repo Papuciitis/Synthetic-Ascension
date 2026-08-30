@@ -5,10 +5,13 @@ class_name RitualInterference
 ## 2.7): while the district collapses, one rule bends inside a sigil drawn on
 ## the ground. Here the rule is THE DEAD RISE - anything killed inside the ring
 ## stands back up after revive_delay as a revenant of the same archetype at a
-## fraction of its health, once. Built from script (ring + a listener on
-## RunEvents.enemy_defeated) like CursedVault so it needs no scene; the
-## EncounterDirector places one ahead of travel like any other beat and it
-## ends itself after duration, or when the director despawns it.
+## fraction of its health, once. The arenas' dead are the exception: a boss,
+## mini-boss, pylon or any other objective actor stays down, because its arena
+## owns its death (rules, rewards, the gate) and a boss re-spawned through the
+## beat path would rise outside all of that. Built from script (ring + a
+## listener on RunEvents.enemy_defeated) like CursedVault so it needs no
+## scene; the EncounterDirector places one ahead of travel like any other beat
+## and it ends itself after duration, or when the director despawns it.
 ##
 ## Cost discipline: the defeat listener is connected only while the ritual is
 ## alive and does one distance check per kill before anything else; revenants
@@ -142,10 +145,16 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 	var pos: Variant = context.get("position")
 	if not (pos is Vector2) or not contains(pos as Vector2):
 		return
+	# The world's own snapshot first: bosses, pylons, objective and tutorial
+	# actors are CRITICAL, and an unbound pylon reports CRITICAL on its own.
+	if EnemyWorldTypes.has_flag(int(context.get("flags")), EnemyWorldTypes.Flags.CRITICAL):
+		return
 	var actor := _actor_for(int(context.get("handle")))
 	# A data-only proxy has no actor to read an archetype from (the far path
 	# skips its drops too), and a revenant rises only once.
 	if actor == null or not is_instance_valid(actor) or actor.has_meta(REVENANT_META):
+		return
+	if _is_protected(actor):
 		return
 	var scene_path: String = actor.scene_file_path
 	if scene_path.is_empty():
@@ -208,6 +217,23 @@ func _configure_revenant(node: Node) -> void:
 		var sprite := node.get_node("Sprite2D") as CanvasItem
 		if sprite != null:
 			sprite.modulate = revenant_tint
+
+
+## The spawner's protection predicate (its _is_protected_spawn, plus
+## never_cull): a boss, mini-boss, pylon or any objective/tutorial actor.
+## Read from the live actor as well as the flag snapshot because the arenas
+## group a boss AFTER EnemyWorld derives its flags at bind time, and only the
+## ELITE bit is refreshed afterwards - so the groups are the authority here,
+## as they are for the spawner's own protection.
+static func _is_protected(actor: Node) -> bool:
+	return (
+		actor.is_in_group(&"boss_like")
+		or actor.is_in_group(&"boss")
+		or actor.is_in_group(&"miniboss")
+		or bool(actor.get_meta(&"objective_required", false))
+		or bool(actor.get_meta(&"tutorial_actor", false))
+		or bool(actor.get_meta(&"never_cull", false))
+	)
 
 
 func _actor_for(handle: int) -> Node:

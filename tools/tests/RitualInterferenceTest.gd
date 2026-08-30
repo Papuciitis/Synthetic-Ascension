@@ -3,9 +3,10 @@ extends Node
 # Roadmap §8.1 / Phase 2.7: ritual interference - a local rule change while
 # the district collapses. The rule here is "the dead rise": a kill inside the
 # sigil stands back up once, weakened, after a delay; kills outside stay down,
-# revenants stay down, the cap holds, and expiry wipes the ring and stops
-# listening. Fake spawner + synthetic death contexts; which rule the player
-# remembers is the playtest's call.
+# revenants stay down, the arenas' dead (bosses, pylons, objective actors)
+# stay down, the cap holds, and expiry wipes the ring and stops listening.
+# Fake spawner + synthetic death contexts; which rule the player remembers is
+# the playtest's call.
 #
 # Run: <godot> --headless --path . res://tools/tests/RitualInterferenceTest.tscn
 
@@ -13,6 +14,9 @@ const RitualScript = preload("res://core/systems/world/RitualInterference.gd")
 const DeathContextScript = preload("res://core/systems/enemy_world/EnemyDeathContext.gd")
 const GRUNT := "res://scenes/world/enemies/EnemyGrunt.tscn"
 const RUNNER := "res://scenes/world/enemies/EnemyRunner.tscn"
+const BOSS := "res://scenes/world/bosses/BossArcanist.tscn"
+const PYLON := "res://scenes/world/bosses/BossPylon.tscn"
+const CRITICAL: int = EnemyWorldTypes.Flags.CRITICAL | EnemyWorldTypes.Flags.NEVER_RETIRE
 
 class FakeEnemy:
 	extends Node2D
@@ -76,8 +80,8 @@ func _corpse(handle: int, scene_path: String = GRUNT, revenant: bool = false) ->
 	return actor
 
 
-func _kill(handle: int, pos: Vector2) -> void:
-	RunEvents.enemy_defeated.emit(DeathContextScript.new(handle, &"enemy_grunt", pos, 0, null, {}))
+func _kill(handle: int, pos: Vector2, flags: int = 0, spec: StringName = &"enemy_grunt", metadata: Dictionary = {}) -> void:
+	RunEvents.enemy_defeated.emit(DeathContextScript.new(handle, spec, pos, flags, null, metadata))
 
 
 func _make(max_revenants: int = 8, teach: bool = false) -> Node2D:
@@ -136,6 +140,47 @@ func _run() -> void:
 	_check(ritual.pending() == 0, "a defeat with no actor (data-only proxy) does not rise")
 	ritual._process(5.0)
 	_check(_spawner.calls.size() == 1, "none of them spawned anything")
+
+	# --- the arenas' dead stay down: a boss, a mini-boss, a pylon, an objective ---
+	# A boss dies through the normal EnemyWorld path with a bound handle and
+	# the world's CRITICAL snapshot; re-spawning BossArcanist.tscn through the
+	# beat path would raise a second boss outside its arena's rules and rewards.
+	_corpse(40, BOSS)
+	_kill(40, Vector2(1050.0, 1000.0), CRITICAL, &"boss_arcanist")
+	_check(ritual.pending() == 0, "a CRITICAL-flagged defeat (a boss) does not rise")
+	# The arena groups a boss AFTER EnemyWorld snapshots its flags and only the
+	# ELITE bit is refreshed, so the live groups decide when the snapshot is silent.
+	var boss := _corpse(41, BOSS)
+	boss.add_to_group(&"boss")
+	boss.add_to_group(&"boss_like")
+	_kill(41, Vector2(1050.0, 1000.0), 0, &"boss_arcanist")
+	_check(ritual.pending() == 0, "a boss grouped after its world snapshot does not rise")
+	var mini := _corpse(42, BOSS)
+	mini.add_to_group(&"miniboss")
+	_kill(42, Vector2(1050.0, 1000.0), 0, &"boss_bulldozer")
+	_check(ritual.pending() == 0, "a mini-boss does not rise")
+	# A pylon: boss_like, objective_required, never_cull, no configure_health
+	# and no Sprite2D - it would rise as a full-HP, untinted turret.
+	var pylon := _corpse(43, PYLON)
+	pylon.add_to_group(&"boss_like")
+	pylon.set_meta(&"objective_required", true)
+	pylon.set_meta(&"never_cull", true)
+	_kill(43, Vector2(1000.0, 1050.0), CRITICAL | EnemyWorldTypes.Flags.OBJECTIVE, &"boss_pylon", {"legacy_node": true})
+	_check(ritual.pending() == 0, "a pylon does not rise")
+	var objective := _corpse(44)
+	objective.set_meta(&"objective_required", true)
+	_kill(44, Vector2(1000.0, 1050.0))
+	_check(ritual.pending() == 0, "an objective actor with a silent snapshot does not rise")
+	var scripted := _corpse(45)
+	scripted.set_meta(&"tutorial_actor", true)
+	_kill(45, Vector2(1000.0, 1050.0))
+	_check(ritual.pending() == 0, "a tutorial actor does not rise")
+	# The filter is not over-broad: an ordinary kill beside them still rises.
+	_corpse(46)
+	_kill(46, Vector2(1000.0, 1050.0))
+	_check(ritual.pending() == 1, "an ordinary kill beside the protected dead still rises")
+	ritual._process(2.5)
+	_check(_spawner.calls.size() == 2 and ritual.raised() == 2 and String(_spawner.calls[1]["scene"]) == GRUNT, "only the grunt rose; no boss, pylon or objective scene was spawned (%s)" % [_spawner.calls.map(func(c: Dictionary) -> String: return String(c["scene"]))])
 
 	# --- the cap counts corpses still waiting ---
 	var capped := _make(2)
