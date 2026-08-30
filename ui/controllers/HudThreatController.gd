@@ -20,6 +20,15 @@ var _td: Node
 var _last_threat: float = -999999.0
 var _tip_text: String = ""
 
+# The last multipliers received, kept so the tooltip can be rebuilt between
+# emissions: the power-contrast countdown moves while no multiplier does.
+var _hp_mul: float = 1.0
+var _dmg_mul: float = 1.0
+var _spd_mul: float = 1.0
+var _spawn_mul: float = 1.0
+var _elite_bonus: float = 0.0
+var _contrast_key: int = 0
+
 func _ready() -> void:
 	_resolve_nodes()
 	_bind_director()
@@ -68,6 +77,11 @@ func _bind_director() -> void:
 		var cb2 := Callable(self, "_on_multipliers_changed")
 		if not _td.is_connected("multipliers_changed", cb2):
 			_td.connect("multipliers_changed", cb2)
+
+	if _td.has_signal("power_threshold_noted"):
+		var cb3 := Callable(self, "_on_power_threshold_noted")
+		if not _td.is_connected("power_threshold_noted", cb3):
+			_td.connect("power_threshold_noted", cb3)
 
 	# Force initial draw
 	_on_threat_changed(float(_td.get("threat")))
@@ -174,6 +188,11 @@ func _process(_delta: float) -> void:
 		_on_threat_changed(t)
 	_last_threat = t
 
+	# The contrast countdown moves while no multiplier does, so the held-scaling
+	# line is re-rendered on the second it changes rather than on the next emit.
+	if _contrast_seconds() != _contrast_key:
+		_rebuild_tip_text()
+
 	_update_tooltip_position()
 
 func _on_threat_changed(t: float) -> void:
@@ -190,13 +209,52 @@ func _on_threat_changed(t: float) -> void:
 		_bar.max_value = 1.0
 		_bar.value = clampf(within, 0.0, 1.0)
 
-func _on_multipliers_changed(hp_mul: float, dmg_mul: float, spd_mul: float, spawn_mul: float, _elite_bonus: float) -> void:
-	var spawn_rate: float = 1.0 / maxf(spawn_mul, 0.001)
+func _on_multipliers_changed(hp_mul: float, dmg_mul: float, spd_mul: float, spawn_mul: float, elite_bonus: float) -> void:
+	_hp_mul = hp_mul
+	_dmg_mul = dmg_mul
+	_spd_mul = spd_mul
+	_spawn_mul = spawn_mul
+	_elite_bonus = elite_bonus
+	_rebuild_tip_text()
+
+
+## The vision's "these guys nearly killed me earlier" beat: the director holds
+## enemy HP and damage scaling still for a while after a power threshold, and
+## nothing used to say so. The label is the director's own ("3 Manifestations
+## active"); the seconds are the window it just opened.
+func _on_power_threshold_noted(id: StringName, label: String) -> void:
+	_rebuild_tip_text()
+	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		return
+	var what: String = label if label.strip_edges() != "" else String(id).capitalize()
+	if _contrast_key > 0:
+		RunEvents.tutorial_tip.emit("%s — enemy scaling held for %ds." % [what, _contrast_key], 4.0)
+	else:
+		RunEvents.tutorial_tip.emit("%s." % what, 4.0)
+
+
+## Whole seconds left on the power-contrast window, 0 when it is closed.
+func _contrast_seconds() -> int:
+	if _td == null or not is_instance_valid(_td) or not _td.has_method("power_contrast_seconds_left"):
+		return 0
+	return int(ceil(float(_td.call("power_contrast_seconds_left"))))
+
+
+func _rebuild_tip_text() -> void:
+	var hp_mul: float = _hp_mul
+	var dmg_mul: float = _dmg_mul
+	var spd_mul: float = _spd_mul
+	var spawn_rate: float = 1.0 / maxf(_spawn_mul, 0.001)
+	_contrast_key = _contrast_seconds()
 
 	var heat_pct: int = 0
 	var ot: float = 0.0
 	var loot: int = 0
 	var unsealed: bool = false
+	var phase: String = ""
+	var rite: bool = false
+	var rite_spawn: float = 1.0
+	var rite_elite: float = 0.0
 	if _td != null:
 		var v = _td.get("heat")
 		if typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT:
@@ -210,6 +268,18 @@ func _on_multipliers_changed(hp_mul: float, dmg_mul: float, spd_mul: float, spaw
 		v = _td.get("gate_unsealed")
 		if typeof(v) == TYPE_BOOL:
 			unsealed = bool(v)
+		v = _td.get("segment_phase")
+		if typeof(v) == TYPE_STRING_NAME or typeof(v) == TYPE_STRING:
+			phase = String(v)
+		v = _td.get("rite_channel_active")
+		if typeof(v) == TYPE_BOOL:
+			rite = bool(v)
+		v = _td.get("rite_spawn_factor")
+		if typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT:
+			rite_spawn = float(v)
+		v = _td.get("rite_elite_add")
+		if typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT:
+			rite_elite = float(v)
 
 	# Player language, not raw tuning floats.
 	var lines: PackedStringArray = []
@@ -223,10 +293,18 @@ func _on_multipliers_changed(hp_mul: float, dmg_mul: float, spd_mul: float, spaw
 	elif spawn_rate > 1.001:
 		lines.append("Spawns %d%% slower" % int(round((spawn_rate - 1.0) * 100.0)))
 	lines.append("District heat: %d%%" % heat_pct)
+	if phase != "":
+		lines.append("District phase: %s" % phase.to_upper())
+	# Additive on top of the spawner's own roll (spawner.gd), so it reads as one.
+	lines.append("Elite chance +%d%% on top of the spawner's own" % int(round(_elite_bonus * 100.0)))
+	if rite:
+		lines.append("Exit Rite channelling — spawn pacing ×%.2f, elites +%d%%" % [rite_spawn, int(round(rite_elite * 100.0))])
 	if unsealed:
 		lines.append("OVERTIME ×%.1f — the city is done tolerating you. Leave." % ot)
 	if loot > 0:
 		lines.append("Loot rarity +%d from the danger" % loot)
+	if _contrast_key > 0:
+		lines.append("Enemy scaling held — %ds" % _contrast_key)
 	_tip_text = "\n".join(lines)
 
 	# Keep inline detail empty (prevents HUD stretching if label exists)

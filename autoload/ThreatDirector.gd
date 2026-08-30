@@ -244,6 +244,15 @@ func note_power_threshold(id: StringName, label: String = "") -> void:
 	power_threshold_noted.emit(id, label)
 	_recompute(true)
 
+
+## Seconds the contrast window has left; 0 once it has closed. The HUD reads
+## this so the hold is visible while it lasts - the window itself stays
+## _process's business.
+func power_contrast_seconds_left() -> float:
+	if not power_contrast_active:
+		return 0.0
+	return maxf(0.0, _contrast_left)
+
 func _hook_signals() -> void:
 	if RunEvents != null:
 		if RunEvents.has_signal("power_threshold_crossed") and not RunEvents.power_threshold_crossed.is_connected(note_power_threshold):
