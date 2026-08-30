@@ -42,9 +42,9 @@ var _runner: Node = null
 var _state: Node = null
 var _bag_controller: Node = null
 
-## noun -> { label: Label, count: int, key: int, flash: float, pulse: float,
-##           brightness: float }. Created once, mutated in place: after _ready
-##   this controller allocates nothing per tick.
+## noun -> { label: Label, count: int, key: int, channel: StringName,
+##           flash: float, pulse: float, brightness: float }. Created once,
+##   mutated in place: after _ready this controller allocates nothing per tick.
 var _entries: Dictionary = {}
 var _accum: float = 0.0
 var _intro_pending: bool = false
@@ -119,6 +119,7 @@ func _build_entries() -> void:
 			"label": label,
 			"count": 0,
 			"key": -2147483648,
+			"channel": &"",
 			"flash": 0.0,
 			"pulse": 0.0,
 			"brightness": -1.0,
@@ -270,19 +271,65 @@ func _refresh_values(force: bool) -> void:
 		var entry: Dictionary = _entries[noun]
 		if int(entry["count"]) <= 0:
 			continue
-		var channel: StringName = ManifestationState.headline_channel(noun)
+		var channel: StringName = _display_channel(noun)
 		if channel == &"":
 			continue
 		var key := _display_key(channel, float(_state.call("noun_value", channel)))
-		if not force and key == int(entry["key"]):
+		if not force and key == int(entry["key"]) and channel == StringName(entry["channel"]):
 			continue
 		entry["key"] = key
+		entry["channel"] = channel
 		var label := entry["label"] as Label
+		# The noun's own name while its headline channel is shown; the channel's
+		# name when a sibling channel won, so "STABILITY 100%" is what a planted
+		# Anchor Rite reads rather than a MOMENTUM that says 0%.
+		var shown: String = ManifestationNouns.label(noun) if channel == ManifestationState.headline_channel(noun) else String((ManifestationState.CHANNELS[channel] as Dictionary)["label"])
 		label.text = "%s %s %s" % [
-			ManifestationNouns.label(noun),
+			shown,
 			_pips(int(entry["count"])),
 			_state.call("channel_text", channel),
 		]
+
+
+## The channel this row shows for a noun: the headline channel, unless a
+## sibling channel of the same noun is fuller. Momentum owns two poles - Anchor
+## Rite fills Stability while Momentum sits at 0% - and a row that only ever
+## showed the headline read "MOMENTUM 0%" on a fully planted player, which
+## looks like a rule that is not working. Fullness is value over the channel's
+## declared full mark, so only channels with one compete; the headline keeps
+## ties.
+func _display_channel(noun: StringName) -> StringName:
+	var headline: StringName = ManifestationState.headline_channel(noun)
+	if headline == &"" or _state == null or not is_instance_valid(_state):
+		return headline
+	var channels: Variant = ManifestationState.NOUNS.get(noun, null)
+	if not (channels is Array):
+		return headline
+	var best: StringName = headline
+	var best_fill: float = _fill_of(headline)
+	for channel in (channels as Array):
+		if channel == headline:
+			continue
+		var descriptor: Variant = ManifestationState.CHANNELS.get(channel, null)
+		if not (descriptor is Dictionary) or not bool((descriptor as Dictionary).get("meter", true)):
+			continue
+		var fill := _fill_of(channel)
+		if fill > best_fill:
+			best = channel
+			best_fill = fill
+	return best
+
+
+## Value as a fraction of the channel's full mark; 0 for a channel that has
+## none, so it can never displace the headline.
+func _fill_of(channel: StringName) -> float:
+	var descriptor: Variant = ManifestationState.CHANNELS.get(channel, null)
+	if not (descriptor is Dictionary):
+		return 0.0
+	var full_at := float((descriptor as Dictionary).get("full_at", 0.0))
+	if full_at <= 0.0:
+		return 0.0
+	return float(_state.call("noun_value", channel)) / full_at
 
 
 ## The value at the precision the player can actually READ, so a clock ticking
