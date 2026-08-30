@@ -1,5 +1,13 @@
 # Segment 1 Rebuild — Handover and Runtime Checklist
 
+> Historical note (2026-08-30): superseded record, kept as history. At HEAD
+> `SEGMENT1_LAYOUT_VERSION` is `3`, not `2` (`autoload/global.gd:34`); the
+> five-stage chapter route below was replaced by the ten-beat story arc of the
+> 2026-08-23 Segment 1 story pass (admissions wing, evidence-store build choice,
+> city-reveal beat — see the roadmap §27 status log and `Level1Builder.gd`); and
+> the "Godot 4.6" playtest lines are wrong — the project is Godot 4.7 and a
+> 4.7.2 binary is available (`README.md`).
+
 ## 0.23 playable-opening integration
 
 The laboratory is no longer introduced by the generic opening card. Full mode uses the existing start/apparatus area for historical framing, Bren response, three-node synthesis, calibration, one construct and the manual officer confrontation. Short mode begins beside the same apparatus; skip grants the same durable synthesis, confrontation and assistant milestones. The Archive stage resumes with 4.5 seconds of grace after Bren commits.
