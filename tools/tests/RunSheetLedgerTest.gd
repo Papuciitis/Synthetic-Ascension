@@ -105,6 +105,7 @@ func _run() -> void:
 	await _test_ledger_records_every_step()
 	await _test_profile_shows_runtime_multipliers()
 	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
+	await _test_lens_line_prints_luck_kicker()
 
 	_restore_global_state()
 	_player.queue_free()
@@ -288,8 +289,53 @@ func _test_doctrine_record_prints_gift_price_and_hp_multiplier() -> void:
 
 
 # ---------------------------------------------------------------------------
+# §4 #8: the Lens block prints the Luck kicker the stat pass adds.
+# ---------------------------------------------------------------------------
+
+func _test_lens_line_prints_luck_kicker() -> void:
+	var inv := Inventory.new()
+	inv.set_item(1, _cursed(1, 0.80))
+	_player.last_burden = BurdenResolver.resolve(inv, [&"augment_inversion_lens"])
+	Global.permanent_augment_ids = [&"augment_inversion_lens", &"", &""]
+	Global.attempt_augment_levels = {}
+	_run_sheet.refresh(_player, inv)
+	_run_sheet.select_page(RunSheetHUD.ArchivePage.MANIFESTATIONS)
+	await get_tree().process_frame
+	var text := _manifestations_text()
+	_check("ARMOR suppressed: 80% curse  →  +44% returned, 0% burden" in text, "the suppression line is unchanged (%s)" % _one_line(text))
+	_check(
+		"Luck +12%  (80% severity  ×  15%/100%)" in text,
+		"the Lens block prints the Luck kicker: severity × asymptotic_rate(INVERSION_LUCK_KICKER, level)"
+	)
+	Global.attempt_augment_levels = {"augment_inversion_lens": 2}
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	var levelled := _manifestations_text()
+	_check(
+		"Luck +16%  (80% severity  ×  20%/100%)" in levelled,
+		"and follows the augment level (L2: 0.30 × 2/3 = 20%%) (%s)" % _one_line(levelled)
+	)
+	Global.attempt_augment_levels = {}
+	_player.last_burden = null
+
+
+# ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+func _make_data(item_id: String, slot: int) -> ItemData:
+	var data := ItemData.new()
+	data.id = item_id
+	data.display_name = item_id
+	data.equip_slot = slot as ItemData.EquipSlot
+	data.mods = StatDelta.new()
+	data.rarity_base = StatDelta.new()
+	return data
+
+
+func _cursed(slot: int, severity: float) -> ItemInstance:
+	return ItemInstance.from_roll(_make_data("curse_%d" % slot, slot), 3, ItemInstance.Polarity.NEG, -severity, false)
+
 
 func _manifestations_text() -> String:
 	return _collect_label_text(_run_sheet.get_node_or_null("Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox"))

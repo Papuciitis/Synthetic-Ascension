@@ -15,6 +15,12 @@ class_name BurdenResolver
 ## whole POS/NEG choice collapses.
 const INVERSION_RETURN: float = 0.55
 
+## Ceiling of the Inversion Lens Luck kicker. The stat pass adds
+## asymptotic_rate(INVERSION_LUCK_KICKER, lens level) x the suppressed curse's
+## severity to Luck - reinterpreting a catastrophe is the same fantasy Luck
+## sells. Named here so the Run Sheet prints the kicker the pass actually paid.
+const INVERSION_LUCK_KICKER: float = 0.30
+
 ## Doctrine of Burden tuning. The Doctrine pays per qualifying curse, so it
 ## scales with item count and needs a bounded ceiling; the ceilings default to
 ## six full-rate items (today's maximum wardrobe) so nothing changes until

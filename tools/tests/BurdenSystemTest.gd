@@ -35,6 +35,7 @@ func _run() -> void:
 	_test_lens_selects_statistical_slots_only()
 	_test_inverted_burden_is_excluded_from_totals()
 	_test_doctrine_contribution_caps()
+	_test_lens_luck_kicker_is_named()
 	_test_drop_weighting()
 	print("BurdenSystemTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -284,6 +285,20 @@ func _test_lens_selects_statistical_slots_only() -> void:
 	_check(lensed.suppressed_slot == 1, "the Lens inverts the armour curse and ignores the deeper ring (slot %d)" % lensed.suppressed_slot)
 	_check(is_equal_approx(lensed.suppressed_severity, 0.50), "and records the armour severity, not the ring's")
 	_check(lensed.neg_count == 2, "the suppressed item and the ring both stay NEG for parity")
+
+
+# Run Sheet audit 2026-08-28 #8: the Lens Luck kicker's ceiling lives beside
+# INVERSION_RETURN, so the stat pass and the sheet cannot disagree about it.
+func _test_lens_luck_kicker_is_named() -> void:
+	_check(is_equal_approx(BurdenResolver.INVERSION_LUCK_KICKER, 0.30), "the Lens Luck kicker ceiling is a named constant (%.2f)" % BurdenResolver.INVERSION_LUCK_KICKER)
+	_check(
+		is_equal_approx(BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, 1), 0.15),
+		"at level 1 the kicker pays half its ceiling per point of severity"
+	)
+	_check(
+		BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, 3) < BurdenResolver.INVERSION_LUCK_KICKER,
+		"and never reaches the ceiling"
+	)
 
 
 # Roadmap 5.4: an inverted curse feeds nothing that eats severity.

@@ -517,6 +517,8 @@ func _manifestation_state(player: Node) -> Dictionary:
 			burden.suppressed_severity,
 		]
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
+	# The Engine, Doctrine and Lens lines all read the augment level.
+	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
 	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
 	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
 	state["max_hp_mul"] = Global.get_doctrine_rule(&"max_hp_mul", 1.0) if Global != null else 1.0
@@ -643,6 +645,19 @@ func _append_burden(player: Node) -> void:
 					Inventory.slot_label(snap.suppressed_slot).to_upper(),
 					int(round(snap.suppressed_severity * 100.0)),
 					int(round(BurdenResolver.inverted_return(snap.suppressed_severity) * 100.0)),
+				],
+				Color(1, 1, 1, 0.72), 10
+			)
+			# The Luck kicker the stat pass adds for the suppressed curse: the
+			# per-level rate times the severity, in the Engine line's shape.
+			var kicker_rate := BurdenResolver.asymptotic_rate(
+				BurdenResolver.INVERSION_LUCK_KICKER, Global.get_augment_level(&"augment_inversion_lens")
+			)
+			_add_line(
+				"   Luck +%d%%  (%d%% severity  ×  %d%%/100%%)" % [
+					int(round(kicker_rate * snap.suppressed_severity * 100.0)),
+					int(round(snap.suppressed_severity * 100.0)),
+					int(round(kicker_rate * 100.0)),
 				],
 				Color(1, 1, 1, 0.72), 10
 			)
