@@ -1,4 +1,14 @@
-# Synthetic Ascension — Project Structure (0.21 recovery patch)
+# Synthetic Ascension — Project Structure (historical 0.21–0.23 ownership map)
+
+> **Historical document.** This is the ownership map of the 0.21–0.23 recovery
+> patches; the entry point for the current tree is `README.md`. The map predates
+> the August 2026 enemy-world era and does not cover
+> `core/systems/{enemy_world, manifestations, run_sheet, telemetry, encounters,
+> augments, vision, inventory, major_choice, backgrounds}` or the autoloads
+> EnemyWorld, EnemyCombat, EnemyStatus, EnemySimulationScheduler, HitFeel,
+> BattleText, PerformanceFlightRecorder, DebugEnemySpawnFilter and PoolManager
+> (see `project.godot` `[autoload]`). Four wrong claims are corrected inline,
+> dated 2026-08-30.
 
 ## 0.23 opening ownership addendum
 
@@ -6,7 +16,7 @@ The original ownership rules below remain valid. The playable Segment 1 prologue
 
 Opening copy is centralized in `data/narrative/OpeningSequenceData.gd`; presentation is isolated in `ui/screens/opening/OpeningPresentation.*`. Profile/attempt persistence remains in `SaveData`/`Global`, and the existing tutorial controller remains the sole enemy-dossier queue. See `OPENING_SEQUENCE.md`.
 
-This is the ownership map for the recovered Godot 4.6 project. The main rule is that gameplay authority, presentation and authored data should have one clear owner each.
+This is the ownership map for the recovered project (Godot 4.7 — `project.godot` declares features "4.7"; the "4.6" this line used to claim never matched the tree). The main rule is that gameplay authority, presentation and authored data should have one clear owner each.
 
 ## Top-level ownership
 
@@ -47,7 +57,7 @@ Bag, stash and Hub grids already instantiate reusable slot scenes from their bac
 
 ## Projectile and hit architecture
 
-`ProjectileSimulationManager` is an autoload and the authority for ordinary straight player `RangedBullet` shots and ordinary generic enemy `EnemyProjectile` shots emitted by `EnemyShooter`. It stores dense parallel packed arrays, performs swept target/world checks, queries `EnemyIndex`, and draws all simple bullets through one `MultiMeshInstance2D`.
+`ProjectileSimulationManager` (registered as the autoload `ProjectileManager` — corrected 2026-08-30) is the authority for ordinary straight player `RangedBullet` shots and ordinary generic enemy `EnemyProjectile` shots emitted by `EnemyShooter`. It stores dense parallel packed arrays, performs swept target/world checks, queries `EnemyIndex`, and draws all simple bullets through one `MultiMeshInstance2D`.
 
 `HitProfileAdapter` is one reusable player-owned compatibility object. Item effects modify it before the manager copies scalar values. Firestone has an explicit `apply_to_hit_profile()` path; melee and magic hooks are unchanged.
 
@@ -63,7 +73,7 @@ Gameplay collision remains CPU-authoritative. The MultiMesh is presentation only
 
 ## Developer verification
 
-Main Menu developer mode exposes enemy-introduction force/reset and projectile stress-test controls. The stress test requests a 100-shot burst, sustained fire toward several hundred active logical projectiles, several colors, and an on-screen counter block. It is instrumentation, not evidence of performance until run in Godot 4.6.
+Enemy-introduction force/reset and the projectile stress-test controls live in the developer console (2026-08-30: `ui/widgets/PerformanceOverlay.gd` — the stress toggle was never a Main Menu panel). The stress test requests a 100-shot burst, sustained fire toward several hundred active logical projectiles, several colors, and an on-screen counter block. It is instrumentation, not evidence of performance until run in Godot 4.7.
 
 ## Reference and recovery rules
 
@@ -93,4 +103,4 @@ Target hit logic remains specific to each projectile. Only the world-blocker dec
 
 `ActiveAbilityHUD` asks the bound effect for authoritative readiness/resource state. The three 6-piece effects own their live prime, bank, cooldown, mark and active-window values. `SetBreakpointNotifier` listens to explicit inventory equipment transitions but treats unlabelled load/population changes as silent baseline updates.
 
-`DevSetCollisionTools` is a developer-only autoload whose panel is enabled from Main Menu developer mode. It supports 2/4/6-piece grants, explicit item-ID grants, combat-state setup, slow/high-speed wall/corner/window/fence/cover fixtures and the existing projectile stress toggle. It is testing instrumentation and is hidden during normal play.
+`DevSetCollisionTools` is a developer-only action-service autoload; it owns no UI of its own (2026-08-30: every dev control, including the projectile stress toggle, lives in the developer console, `ui/widgets/PerformanceOverlay.gd`, which calls into it). It supports 2/4/6-piece grants, explicit item-ID grants, combat-state setup, slow/high-speed wall/corner/window/fence/cover fixtures and the existing projectile stress toggle. It is testing instrumentation and is hidden during normal play.
