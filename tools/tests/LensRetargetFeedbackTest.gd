@@ -1,17 +1,20 @@
 extends Node
 
-# Observability audit 2026-08-30 §5 #3: a stat drop that used to happen in
+# Observability audit 2026-08-30 §5 #3: two stat drops that used to happen in
 # silence. An Inversion Lens moving to a deeper curse snaps the old curse's
-# whole penalty back and recomputes at once, so the word has to come from the
-# code that already holds the before and the after - the stat pass - never
+# whole penalty back; a Corruption Engine auto-feed deepens the worn roll.
+# Both recompute at once, so the word has to come from the code that already
+# holds the before and the after - the stat pass and the feed toast - never
 # from the Run Sheet's refresh, which only runs while the bag is open.
 #
 # Run: <godot> --headless --path . res://tools/tests/LensRetargetFeedbackTest.tscn
 
 const PlayerScript = preload("res://core/actors/player/player.gd")
 const PLAYER_SCENE = preload("res://core/actors/player/player.tscn")
+const PICKUP_SCENE = preload("res://scenes/world/pickups/ItemPickup.tscn")
 
 const LENS := &"augment_inversion_lens"
+const ENGINE := &"augment_corruption_engine"
 const RETARGET := "LENS: Health curse returns — Power curse inverted"
 
 var _passes := 0
@@ -35,6 +38,8 @@ func _check(condition: bool, message: String) -> void:
 func _run() -> void:
 	_test_helper_speaks_only_on_a_retarget()
 	await _test_stat_pass_announces_the_retarget_once()
+	_test_feed_toast_names_the_deepened_roll()
+	_test_worn_pickup_feed_reaches_the_toast()
 	print("LensRetargetFeedbackTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -179,4 +184,96 @@ func _test_stat_pass_announces_the_retarget_once() -> void:
 	remove_child(player)
 	player.free()
 	Global.run_inventory = saved_inventory
+	Global.permanent_augment_ids = saved_augments
+
+
+## The toast line for an auto-feed. Under the Engine a same-id pickup deepens
+## the worn curse; the line must say where the roll went, and only then.
+func _test_feed_toast_names_the_deepened_roll() -> void:
+	var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+	Global.permanent_augment_ids = [ENGINE, StringName(), StringName()]
+
+	var inv := Inventory.new()
+	var worn := _cursed(0, 0.40)
+	inv.set_item(0, worn)
+	var rank_before := int(worn.rarity)
+	var pct_before := worn.active_pct()
+	inv.feed_roll_into(0, -0.60)
+	_check(is_equal_approx(worn.active_pct(), -0.60), "fixture: the Engine deepened the worn roll (%.2f)" % worn.active_pct())
+	var line: String = ItemPickup.feed_toast_text(worn, rank_before, pct_before)
+	_check(line.begins_with(worn.data.display_name + " "), "the line still leads with the item and its rank (%s)" % line)
+	_check(line.ends_with(" · deepened to −60%"), "and says the worn roll deepened to −60%% (%s)" % line)
+	_check(
+		not ItemPickup.feed_toast_text(worn, rank_before).contains("deepened"),
+		"a feed with no worn roll in hand (a bag stack) never claims a deepening"
+	)
+
+	# A milder pickup under the Engine leaves the deep roll where it was.
+	var deep := _cursed(1, 0.60)
+	inv.set_item(1, deep)
+	var deep_before := deep.active_pct()
+	inv.feed_roll_into(1, -0.40)
+	_check(is_equal_approx(deep.active_pct(), -0.60), "fixture: the milder roll changed nothing")
+	_check(
+		not ItemPickup.feed_toast_text(deep, int(deep.rarity), deep_before).contains("deepened"),
+		"a feed that did not deepen the roll does not say it did"
+	)
+
+	# A blessing never deepens.
+	var blessed := ItemInstance.from_roll(_make_data("bless_3", 3), 0, ItemInstance.Polarity.POS, 0.40, false)
+	inv.set_item(3, blessed)
+	var bless_before := blessed.active_pct()
+	inv.feed_roll_into(3, 0.60)
+	_check(
+		not ItemPickup.feed_toast_text(blessed, 0, bless_before).contains("deepened"),
+		"a POS roll growing is not a deepening"
+	)
+
+	# Without the Engine the merge stabilises, and the line stays as it was.
+	Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
+	var stable := _cursed(2, 0.40)
+	inv.set_item(2, stable)
+	var stable_before := stable.active_pct()
+	inv.feed_roll_into(2, -0.60)
+	_check(is_equal_approx(stable.active_pct(), -0.40), "fixture: without the Engine the mildest roll survives (%.2f)" % stable.active_pct())
+	_check(
+		not ItemPickup.feed_toast_text(stable, 0, stable_before).contains("deepened"),
+		"without the Engine the toast is the plain progress line"
+	)
+
+	Global.permanent_augment_ids = saved_augments
+
+
+## End to end: a ground pickup of the worn curse's id auto-feeds it, and the
+## combat feed line that reaches BattleText carries the deepened roll.
+func _test_worn_pickup_feed_reaches_the_toast() -> void:
+	var saved_inventory: Inventory = Global.run_inventory
+	var saved_bag: BagInventory = Global.run_bag
+	var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+	Global.run_inventory = Inventory.new()
+	Global.run_bag = BagInventory.new()
+	Global.permanent_augment_ids = [ENGINE, StringName(), StringName()]
+
+	# Every roll of this fixture is exactly -60%, so the pickup is deterministic.
+	var data := _make_data("toast_fixture", 0)
+	data.pct_min = -0.60
+	data.pct_max = -0.60
+	Global.item_db["toast_fixture"] = data
+	var worn := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.40, false)
+	Global.run_inventory.set_item(0, worn)
+
+	var pickup: ItemPickup = PICKUP_SCENE.instantiate() as ItemPickup
+	pickup.pickup_delay = 0.0
+	pickup.item_id = "toast_fixture"
+	add_child(pickup)
+	var lines_before: int = BattleText._count
+	pickup._try_pickup()
+	_check(is_equal_approx(worn.active_pct(), -0.60), "the ground roll fed and deepened the worn curse (%.2f)" % worn.active_pct())
+	_check(BattleText._count == lines_before + 1, "one feed line reached the combat text (%d)" % (BattleText._count - lines_before))
+	var line: String = BattleText._texts[lines_before] if BattleText._count > lines_before else ""
+	_check(line.contains("deepened to −60%"), "and it says the worn roll deepened (%s)" % line)
+
+	Global.item_db.erase("toast_fixture")
+	Global.run_inventory = saved_inventory
+	Global.run_bag = saved_bag
 	Global.permanent_augment_ids = saved_augments

@@ -188,9 +188,10 @@ func _try_pickup() -> void:
 			and equipped_a.data.id == inst.data.id \
 			and int(equipped_a.polarity) == int(inst.polarity):
 				var rank_before_a: int = int(equipped_a.rarity)
+				var pct_before_a: float = equipped_a.active_pct()
 				if Global.run_inventory.add_or_feed(inst, origin):
 					_dbg(["[PICKUP INST] FED EQUIPPED", "slot=", slot_a])
-					_show_feed_toast(equipped_a, rank_before_a)
+					_show_feed_toast(equipped_a, rank_before_a, pct_before_a)
 					_complete_secondary_objective()
 					queue_free()
 					return
@@ -253,9 +254,10 @@ func _try_pickup() -> void:
 			and equipped2.data.id == item_data.id \
 			and equipped2.polarity == pol:
 				var fed_rank_before: int = int(equipped2.rarity)
+				var fed_pct_before: float = equipped2.active_pct()
 				Global.run_inventory.feed_roll_into(slot, roll_pct, origin)
 				_dbg(["[EQUIP FEED]", "slot=", slot, "inst_id=", equipped2.get_instance_id()])
-				_show_feed_toast(equipped2, fed_rank_before)
+				_show_feed_toast(equipped2, fed_rank_before, fed_pct_before)
 				consumed = true
 
 		# If not consumed by equip/feed, put THIS SAME ROLL into the bag
@@ -290,18 +292,40 @@ func _try_pickup() -> void:
 	queue_free()
 
 
-func _show_feed_toast(fed: ItemInstance, rank_before: int) -> void:
+func _show_feed_toast(fed: ItemInstance, rank_before: int, pct_before: float = NAN) -> void:
 	# K6 combat split: auto-feeds show one compact, short-lived line per
 	# item (successive feeds replace it); the full math lives in tooltips.
 	if fed == null or fed.data == null or BattleText == null:
 		return
+	BattleText.progress(
+		global_position, feed_toast_text(fed, rank_before, pct_before), int(fed.get_instance_id())
+	)
+
+
+## The toast line for a feed that already happened. `pct_before` is the worn
+## roll before it, when the caller had the equipped item in hand: under the
+## Corruption Engine a same-id pickup DEEPENS the worn curse
+## (ItemInstance.merge_from) and the stat pass reacts at once, so the line
+## says where the roll went instead of leaving a Max HP drop mid-combat to
+## read as a bug. A bag stack is not worn and passes nothing.
+static func feed_toast_text(fed: ItemInstance, rank_before: int, pct_before: float = NAN) -> String:
 	var meter_pct: int = int(round(clampf(float(fed.upgrade_meter), 0.0, 1.0) * 100.0))
 	var text: String
 	if int(fed.rarity) > rank_before:
 		text = "%s → R%d!" % [fed.data.display_name, int(fed.rarity)]
 	else:
 		text = "%s R%d %d%%" % [fed.data.display_name, int(fed.rarity), meter_pct]
-	BattleText.progress(global_position, text, int(fed.get_instance_id()))
+	if _engine_deepened(fed, pct_before):
+		text += " · deepened to −%d%%" % int(round(absf(fed.active_pct()) * 100.0))
+	return text
+
+
+static func _engine_deepened(fed: ItemInstance, pct_before: float) -> bool:
+	if is_nan(pct_before) or fed.polarity != ItemInstance.Polarity.NEG:
+		return false
+	if Global == null or not Global.permanent_augment_ids.has(&"augment_corruption_engine"):
+		return false
+	return fed.active_pct() < pct_before - 0.0001
 
 
 func _complete_secondary_objective() -> void:
