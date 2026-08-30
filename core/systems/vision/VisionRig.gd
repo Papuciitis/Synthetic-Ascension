@@ -139,6 +139,15 @@ func _ready() -> void:
 	if vignette_rect != null:
 		var mat := vignette_rect.material as ShaderMaterial
 		if mat != null:
+			# The scene's material is one resource shared by every rig the
+			# scene ever instantiates, and nothing puts it back: a death or a
+			# run's end pauses the tree under the release tween and the restart
+			# frees the rig mid-fade, so the next run's rig would start from
+			# whatever the last one wrote - a tinted, tighter vignette on the
+			# indoor overlay, and a base inner_radius read off the ratchet.
+			# Write to a copy of our own; the scene's values stay the defaults.
+			mat = mat.duplicate() as ShaderMaterial
+			vignette_rect.material = mat
 			var inner: Variant = mat.get_shader_parameter("inner_radius")
 			if inner is float or inner is int:
 				_base_inner_radius = float(inner)

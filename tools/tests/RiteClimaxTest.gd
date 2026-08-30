@@ -6,7 +6,9 @@ extends Node
 # VisionRig tints the screen to it and lets go under reduced motion without a
 # fade. The 85% last chance: exactly one Cursed Vault per channel, at the
 # rite's edge on the far side from the player, configured to take every
-# safeguard; a reset or a clear takes the vault with it.
+# safeguard; a reset or a clear takes the vault with it. And a rig freed
+# mid-distortion (a restart cuts the release) leaves nothing behind for the
+# next run's rig: the scene's material stays at its defaults.
 #
 # Run: <godot> --headless --path . res://tools/tests/RiteClimaxTest.tscn
 
@@ -78,6 +80,7 @@ func _run() -> void:
 
 	await _test_rite()
 	await _test_vision_rig()
+	await _test_vision_rig_next_run()
 
 	RunEvents.rite_distortion_changed.disconnect(_on_level)
 	RunEvents.tutorial_tip.disconnect(_on_tip)
@@ -245,4 +248,64 @@ func _test_vision_rig() -> void:
 
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 	rig.queue_free()
+	await get_tree().process_frame
+
+
+# A restart frees the rig while the distortion is up (the tree is paused on
+# death and on end_run, so the release never runs) and the reloaded scene
+# instantiates the same VisionRig.tscn: its vignette material is one shared
+# sub-resource, so whatever the old rig wrote there is what the new rig would
+# start from - a tinted, washed, tighter vignette on the indoor overlay, and a
+# base inner_radius read back from the ratchet. The new rig has to start from
+# the scene's values, and the scene's own material must never be written.
+func _test_vision_rig_next_run() -> void:
+	var pristine := VISION_RIG_SCENE.instantiate()
+	var scene_mat := pristine.get_node("VignetteLayer/Vignette").material as ShaderMaterial
+	_check(scene_mat != null, "the scene carries the vignette material")
+	if scene_mat == null:
+		pristine.free()
+		return
+	var scene_inner := float(scene_mat.get_shader_parameter("inner_radius"))
+	var scene_strength := float(scene_mat.get_shader_parameter("strength"))
+	pristine.free()
+
+	var previous_reduced: Variant = SettingsManager.get_value(&"accessibility", &"reduced_motion", false)
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+
+	# The first run's rig, warped at 0.8 and then freed with the release cut
+	# short - the way a death and a restart leave it.
+	var first := VISION_RIG_SCENE.instantiate() as VisionRig
+	add_child(first)
+	await get_tree().process_frame
+	var first_mat := first.vignette_rect.material as ShaderMaterial
+	RunEvents.rite_distortion_changed.emit(0.8)
+	_check(float(first_mat.get_shader_parameter("inner_radius")) < scene_inner, "the first run's rig is warped (%.2f < %.2f)" % [float(first_mat.get_shader_parameter("inner_radius")), scene_inner])
+	RunEvents.rite_distortion_changed.emit(0.0)
+	_check(first.distortion_level() > 0.0, "and its release is under way (%.2f)" % first.distortion_level())
+	first.free()
+
+	# The next run's rig, from the same scene.
+	var second := VISION_RIG_SCENE.instantiate() as VisionRig
+	add_child(second)
+	await get_tree().process_frame
+	var second_mat := second.vignette_rect.material as ShaderMaterial
+	var second_inner := float(second_mat.get_shader_parameter("inner_radius"))
+	var second_tint: Variant = second_mat.get_shader_parameter("tint")
+	var second_wash: Variant = second_mat.get_shader_parameter("wash")
+	_check(is_equal_approx(second_inner, scene_inner), "the next run's rig starts from the scene's inner_radius (%.2f, scene %.2f)" % [second_inner, scene_inner])
+	_check((second_tint == null or second_tint == Color.BLACK) and (second_wash == null or float(second_wash) == 0.0), "with no tint and no wash left behind (%s, %s)" % [second_tint, second_wash])
+	_check(is_equal_approx(float(second_mat.get_shader_parameter("strength")), scene_strength), "and the scene's strength (%.2f)" % float(second_mat.get_shader_parameter("strength")))
+	_check(is_equal_approx(float(second.get("_base_inner_radius")), scene_inner), "its release returns to the scene's inner_radius, not the ratchet (%.2f)" % float(second.get("_base_inner_radius")))
+
+	# Its own writes reach only itself.
+	RunEvents.rite_distortion_changed.emit(0.6)
+	var untouched := VISION_RIG_SCENE.instantiate()
+	var untouched_mat := untouched.get_node("VignetteLayer/Vignette").material as ShaderMaterial
+	var untouched_tint: Variant = untouched_mat.get_shader_parameter("tint")
+	_check(is_equal_approx(float(untouched_mat.get_shader_parameter("inner_radius")), scene_inner) and (untouched_tint == null or untouched_tint == Color.BLACK), "a warped rig never writes the scene's own material (%.2f, %s)" % [float(untouched_mat.get_shader_parameter("inner_radius")), untouched_tint])
+	untouched.free()
+	RunEvents.rite_distortion_changed.emit(0.0)
+
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
+	second.queue_free()
 	await get_tree().process_frame
