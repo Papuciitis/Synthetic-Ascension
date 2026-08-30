@@ -1,5 +1,11 @@
 # Optimization handoff — enemy horde project (2026-08-22)
 
+> **Superseded (2026-08-30):** direction and priorities now live in
+> `docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md` (§24 near-term roadmap,
+> §27 status log). The figures below are as of 2026-08-22/23 and several have
+> moved since; dated corrections are inline. Still-open backlog items are
+> labelled in the "Audited but NOT implemented" list.
+
 > 2026-08-23 note: a full-project design/bug audit and fix session
 > happened on top of this (see "Design audit session" at the bottom).
 
@@ -24,8 +30,9 @@ The original game chugged at ~180 ("the 180 barrier" = spawn table
   hit via EnemyCombat's data-side segment/radius queries.
 - **EnemySimulationScheduler** (autoload) tiers materialized nodes:
   FULL 60Hz / MID 20Hz / FAR 8.6Hz, budget + spatial bands with
-  hysteresis, rank-incumbency bias, pressure tiers (physics >14ms
-  sustained → budgets 24/24; >20ms → 16/16 + harder physics shedding).
+  hysteresis, rank-incumbency bias, pressure tiers (2026-08-30: physics >14 ms
+  sustained → budgets 12/24; >20 ms → 8/16 + harder physics shedding;
+  >40 ms → a severe fast path — `autoload/EnemySimulationScheduler.gd:46-47,59-60,86`).
   Smart archetypes release body physics beyond a distance that shrinks
   under pressure. Pausable (pause now freezes everything).
 - **All enemy sprites render batched**: enemy nodes hide their Sprite2D
@@ -106,7 +113,10 @@ pending force-push happened (branch is in sync with origin).
 ## Gotchas learned today (do not relearn these)
 
 - Godot binary: `~/Downloads/Godot_v4.7.2-stable_linux.x86_64` (not on
-  PATH). Never run it while the user is playtesting.
+  PATH). Never run it while the user is playtesting. (2026-08-30: the
+  user's desktop benchmarks run on Windows through
+  `tools/perf/run_benchmarks.ps1`, Godot 4.7.1; the Linux 4.7.2 binary
+  remains the headless-suite convention.)
 - Tests: `<binary> --headless --path . res://tools/tests/<Name>.tscn`;
   two summary formats ("N passed, M failed" and "passes=N failures=M");
   some tests are SceneTree scripts run via `--script`. Full-game tests
@@ -121,7 +131,8 @@ pending force-push happened (branch is in sync with origin).
   buffer writes; no get_global_transform_interpolated for 2D in this
   build; project physics_interpolation is OFF.
 - call_deferred evaluates arguments at schedule time.
-- No AI attribution in commits (no Co-Authored-By).
+- No AI attribution in commits (no Co-Authored-By). (The rule stands;
+  a batch of Aug 23-27 commits violated it before it was enforced.)
 - Dev overlay (PerformanceOverlay): god mode, pause-game toggle, force
   spawn +1/+10/+100, population caps (typing a cap auto-switches to
   Custom), batched-sprites toggle, real ENEMIES count (logical + split).
@@ -168,7 +179,7 @@ Eight parallel auditors mapped every subsystem against the design brief
 (horde roguelite: ascension, exploration, buildcraft, systemic Luck,
 pressure). ~15 commits landed, each independently revertable. Full
 suite green before and after (plus new ScriptParseAuditTest covering
-all 253 gameplay scripts).
+all 253 gameplay scripts — 372 non-tools scripts as of 2026-08-30).
 
 Landed (highlights):
 - Damage numbers (BattleText autoload, batched single canvas item,
@@ -202,11 +213,14 @@ Landed (highlights):
 Audited but NOT implemented (backlog, roughly by value):
 1. Vendor stock quality: LuckResolver.vendor_stock_bonus is wired
    through threat_level and near-no-op; make it bump the rarity band.
+   (Still true 2026-08-30: `HubShop.gd:1428` only bumps threat_level.)
 2. Segment 1 never advances ThreatDirector segment_phase (recon damp
    flattens the authored endgame) — mirror milestone->phase at
    COURTYARD/OUTER_APPROACH/EXIT_RITE. Tuning-sensitive.
 3. spawn_burst bypasses the per-tick spawn construction budget
    (spawner.gd:668) — route through _force_spawn_queue.
+   (Still true 2026-08-30: `spawn_burst` loops `_spawn_one` directly,
+   `spawner.gd:654-690`.)
 4. Proxy deaths pay followers but never drop items/health (asymmetric
    with node kills) — decide, then implement or document.
 5. Continue mid-proc-segment can leave a ghost alley-cache secondary
@@ -216,13 +230,23 @@ Audited but NOT implemented (backlog, roughly by value):
 7. AugmentData.grant_spell_id and EnemySpec.drop_instance_roll are
    dead exported fields; positive_probability clamps unreachable;
    augment_quality_bonus has no consumer (no quality axis on offers).
+   (Still true 2026-08-30: grant_spell_id unread, drop_instance_roll
+   only assigned, augment_quality_bonus callerless —
+   `core/systems/items/LuckResolver.gd:57`.)
 8. "Interact" is rebindable in Settings but nothing reads it.
+   (Done 2026-08-30: `ExitRite.gd:597` reads `&"interact"`.)
 9. Level1 loot rooms have full secondary plumbing but never surface
    as secondaries. Vendor hover "(R5 POS)" shorthand.
 10. Heat valley: ascension phase floor 0.48 erases the authored
     70-90% dip (0.35) — pick one owner.
+    (Still true 2026-08-30: `ThreatDirector.gd:458` `maxf(heat, 0.48)`
+    vs `heat_at_90 = 0.35`.)
 
 ## Direction rulings (2026-08-23, designer)
+
+(Executed — 1 done in the story pass below, 2 Run Sheet `34cbdd2`, 3 NEG
+slice `c8d5af8`/`7c894f3`; superseded by the direction doc §24/§27. Kept as
+history — 2026-08-30.)
 
 Project state: **no longer missing systems — missing authored game.**
 Priority order for the next pushes (designer's ordering):
