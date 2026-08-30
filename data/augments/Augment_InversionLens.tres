@@ -9,14 +9,18 @@ id = &"augment_inversion_lens"
 display_name = "Inversion Lens"
 description = "It does not remove the curse. It reads it from the other side, and the wound argues in your favour instead."
 card_blurb = "Your single WORST curse stops hurting you — and gives back part of what it was taking."
-details = "Passive: your most severe equipped NEG
-item is suppressed. Its penalty does not
-apply, and 55% of its severity returns as
-the same stat it was ruining.
+details = "Passive: your most severe NEG item in a
+statistical slot (Health, Armour,
+Movement, Power, Haste, Luck - never
+Offhand or Ring) is suppressed. Its
+penalty does not apply, and 55% of its
+severity returns as the same stat it was
+ruining.
 The item is still NEG for parity, sets and
 acquisition — it just stops weighing on you.
 Wants ONE horrific curse, not many.
 Note: a suppressed curse no longer feeds
-Corruption Engine."
+Corruption Engine or counts for the
+Doctrine of Burden."
 icon = ExtResource("2_invls")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

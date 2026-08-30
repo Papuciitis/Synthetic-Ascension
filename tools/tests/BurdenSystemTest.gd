@@ -37,6 +37,7 @@ func _run() -> void:
 	_test_doctrine_contribution_caps()
 	_test_lens_luck_kicker_is_named()
 	_test_drop_weighting()
+	_test_archetype_details_state_the_slot_rule()
 	print("BurdenSystemTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -365,3 +366,29 @@ func _test_drop_weighting() -> void:
 	print("  CURSE DROPS  weighted=%.3f  uniform would be=%.3f" % [rate, uniform_rate])
 	_check(rate > 0.005, "a deep curse is findable (%.3f)" % rate)
 	_check(rate < uniform_rate, "but rarer than an ordinary item, so it stays memorable")
+
+
+# Observability audit 2026-08-30 §6 #4 and D19: the static `details` text is
+# the augment card, the pick-time tooltip and the library - the only surface a
+# player reads BEFORE committing - and it has to name the rules BurdenResolver
+# actually applies: statistical slots only, a suppressed curse feeds nothing,
+# and the Doctrine's floor is a fraction of the item's authored range.
+func _test_archetype_details_state_the_slot_rule() -> void:
+	var lens := load("res://data/augments/Augment_InversionLens.tres") as AugmentData
+	var engine := load("res://data/augments/Augment_CorruptionEngine.tres") as AugmentData
+	var doctrine := load("res://data/augments/Augment_DoctrineOfBurden.tres") as AugmentData
+	if lens == null or engine == null or doctrine == null:
+		_check(false, "the three NEG archetype augments load")
+		return
+	_check(lens.details.contains("statistical slot"), "the Lens says it reads statistical slots only")
+	_check(lens.details.contains("Doctrine of Burden"), "and that a suppressed curse leaves the Doctrine count too")
+	_check(engine.details.contains("statistical"), "the Engine says it burns statistical-slot curses only")
+	_check(engine.details.contains("suppressed"), "and that a suppressed curse feeds it nothing")
+	var floor_pct := int(round(BurdenSnapshot.QUALIFYING_BURDEN_RATIO * 100.0))
+	_check(
+		doctrine.details.contains("at least %d%% of that item's own curse" % floor_pct),
+		"the Doctrine qualifies by fraction of the item's authored range"
+	)
+	_check(not doctrine.details.contains("%d%% severity" % floor_pct), "and no longer teaches the absolute reading")
+	_check(doctrine.details.contains("statistical"), "the Doctrine says it counts statistical slots only")
+	_check(doctrine.details.contains("suppressed"), "and that a suppressed curse does not count")

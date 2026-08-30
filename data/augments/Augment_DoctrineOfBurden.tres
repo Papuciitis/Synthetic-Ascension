@@ -9,13 +9,17 @@ id = &"augment_doctrine_of_burden"
 display_name = "Doctrine of Burden"
 description = "Carry enough small wounds and the body stops noticing any of them. The Doctrine does not care how badly a thing hurts, only how many of them you are willing to bear."
 card_blurb = "Every real curse you wear makes you tougher — it counts them, it does not weigh them."
-details = "Passive: each equipped NEG item with at
-least 10% severity grants Armour and
-Max HP.
+details = "Passive: each statistical-slot NEG item
+(Health, Armour, Movement, Power, Haste,
+Luck - never Offhand or Ring) whose roll
+uses at least 10% of that item's own curse
+range grants Armour and Max HP. A curse
+suppressed by an Inversion Lens does not
+count.
 Counts curses, never measures them: six
 mild curses beat two catastrophes.
 Ordinary NEG merging stabilizes a curse
-toward mild, which is exactly what this
-build wants."
+toward mild, which suits this build while
+the roll stays above that 10%."
 icon = ExtResource("2_docbr")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"
