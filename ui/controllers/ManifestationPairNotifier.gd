@@ -160,7 +160,7 @@ func _show_next() -> void:
 
 	_title.text = "MANIFESTATION PAIR" if gained else "PAIR LOST"
 	_name.text = String(pair.get("name", "")).to_upper()
-	_detail.text = _nouns_line(nouns) + "\nFull protocol recorded in Run Sheet."
+	_detail.text = _nouns_line(nouns) + "\nTwo lit nouns always light a pair — all ten exist.\nFull protocol recorded in Run Sheet."
 
 	# A pair belongs to both its nouns, so its accent is the midpoint of the two
 	# - it should not look like it is one noun's property.

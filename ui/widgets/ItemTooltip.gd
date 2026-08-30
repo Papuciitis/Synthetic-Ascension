@@ -262,7 +262,7 @@ func show_item(inst: ItemInstance) -> void:
 		and Global.run_inventory.get_at(slot_index) == inst:
 			lens_suppressed = true
 			lines.append(
-				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG in the polarity census.[/color]"
+				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG in the polarity census; counts for neither the Doctrine nor the Engine.[/color]"
 				% [
 					CMP_POS_HEX,
 					int(round(severity * 100.0)),

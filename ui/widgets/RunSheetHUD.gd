@@ -145,7 +145,9 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 	spdv.text = str(int(round(spd_total)))
 	powv.text = _fmt_pct_fraction(pow_total) + _fmt_runtime_multiplier(pow_mul)
 	hstv.text = _fmt_pct_fraction(hst_total) + _fmt_runtime_multiplier(hst_mul)
-	lckv.text = _fmt_pct_fraction(lck_total)
+	# The one Luck number no other surface carries: the Lucky Crit roll the
+	# next hit makes, which is 0 at or below zero Luck (two rules never fire).
+	lckv.text = _fmt_pct_fraction(lck_total) + "  ·  LUCKY CRIT %d%%" % int(round(LuckResolver.lucky_crit_chance(lck_total) * 100.0))
 
 	# --- deltas (from items) ---
 	hpd.text = _fmt_int_delta(d.max_hp)      # show max hp delta
@@ -690,6 +692,7 @@ func _append_burden(player: Node) -> void:
 			or hp >= BurdenResolver.doctrine_hp_cap - 0.0001
 		)
 		_add_line("DOCTRINE OF BURDEN", BURDEN, 11)
+		_add_line("   statistical slots only; a curse the Lens suppresses does not count", Color(1, 1, 1, 0.5), 9)
 		_add_line(
 			"   %d qualifying curses (≥%d%% of their range)  →  Armour +%d, Max HP +%d%%%s" % [
 				snap.qualifying_count, int(BurdenSnapshot.QUALIFYING_BURDEN_RATIO * 100.0),
@@ -783,14 +786,15 @@ func _append_manifestations(player: Node) -> void:
 			var meter: Dictionary = meter_value
 			readout.append({
 				"noun": StringName(meter.get("noun", &"")),
-				"text": "%s %s" % [String(meter.get("label", "")), String(meter.get("text", ""))],
+				"text": "%s %s%s" % [String(meter.get("label", "")), String(meter.get("text", "")), String(meter.get("hint", ""))],
 			})
 		_add_noun_row(readout, 11)
 
-	# One box per RULE, not per item. The runner counts distinct rules for
-	# nouns and pairs, so a doubled ring is one rule ranked up, not two
-	# engines - listing it twice beside a pair that correctly never lit reads
-	# as the pair being broken.
+	# One box per RULE, not per item. Two copies of a rule are two independent
+	# effects (the second pays DUPLICATE_FALLOFF on the shared multipliers), but
+	# the runner counts distinct rules for nouns and pairs, so a doubled ring
+	# lights nothing extra - listing it twice beside a pair that correctly never
+	# lit reads as the pair being broken. The box shows the first copy's numbers.
 	var grouped: Array[Dictionary] = []
 	var by_id: Dictionary = {}
 	for entry_value in summaries:
