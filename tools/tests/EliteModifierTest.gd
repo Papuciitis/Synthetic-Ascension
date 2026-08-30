@@ -207,6 +207,14 @@ func _test_fast() -> void:
 	var sprite := enemy.get_node_or_null("Sprite2D") as CanvasItem
 	_check(sprite != null and sprite.modulate == EliteModifiers.tint(EliteModifiers.FAST), "the body carries the FAST tint")
 	_check(_mark_of(enemy) != null, "the tell is attached to the body")
+	# A replacement clears before it applies, so FAST twice is FAST once.
+	enemy.apply_elite_modifiers([EliteModifiers.FAST])
+	_check(
+		is_equal_approx(enemy.speed, base_speed * enemy.spec.elite_speed_mult * EliteModifiers.FAST_SPEED_MULT)
+		and is_equal_approx(enemy.max_hp, base_hp * enemy.spec.elite_hp_mult * EliteModifiers.FAST_HP_MULT),
+		"a second FAST request replaces, not stacks: the multipliers apply once (%.1f / %.1f)" % [enemy.speed, enemy.max_hp],
+	)
+	_check(is_equal_approx(float(enemy.get("_base_speed")), enemy.speed), "and the steering base speed follows")
 	await _free_all([enemy])
 
 
@@ -337,6 +345,8 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 	var popups_before := int(BattleText.get("_count"))
 	var seen := _spawn_enemy(Vector2(200.0, 200.0))
 	await get_tree().process_frame
+	var seen_base_hp := seen.max_hp
+	var seen_base_speed := seen.speed
 	# `enabled` alone records counters; the capture state machine (and its
 	# report files) only arms through set_enabled, which this does not call.
 	var recorder_was_enabled := bool(PerformanceFlightRecorder.get("enabled"))
@@ -372,6 +382,14 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 	_check(_ids_equal(seen.elite_modifier_ids(), [EliteModifiers.SHIELDED]), "apply_elite_modifiers on a live elite replaces the set")
 	_check(EnemyCombat.elite_armour_fraction(_handle(seen)) == 0.0 and EnemyCombat.elite_shield_bearer_count() == 1, "the old plate is unregistered and the new shield registered")
 	_check(_tips.size() == 3 and _tips[2] == EliteModifiers.teach_line(EliteModifiers.SHIELDED), "a modifier met for the first time on a replacement still teaches")
+	# FAST lives in the stats, not a registry: the replacement gives them back.
+	_check(
+		is_equal_approx(seen.speed, seen_base_speed * seen.spec.elite_speed_mult)
+		and is_equal_approx(float(seen.get("_base_speed")), seen.speed),
+		"FAST's speed goes with it: the replacement runs at the plain elite's speed (%.1f)" % seen.speed,
+	)
+	_check(is_equal_approx(seen.max_hp, seen_base_hp * seen.spec.elite_hp_mult), "and FAST's HP cut is given back (%.1f)" % seen.max_hp)
+	_check(is_equal_approx(seen.hp, seen_base_hp * seen.spec.elite_hp_mult * EliteModifiers.FAST_HP_MULT), "raising the cap back is not a heal: HP stays where FAST left it (%.1f)" % seen.hp)
 	seen.apply_elite_modifiers([])
 	var seen_sprite := seen.get_node_or_null("Sprite2D") as CanvasItem
 	_check(
@@ -382,6 +400,11 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 		"an empty replacement leaves a plain elite with no mark and no registry entry",
 	)
 	_check(seen_sprite != null and seen_sprite.modulate == seen.spec.elite_tint, "with the archetype's elite tint back on the body")
+	_check(
+		is_equal_approx(seen.speed, seen_base_speed * seen.spec.elite_speed_mult)
+		and is_equal_approx(seen.max_hp, seen_base_hp * seen.spec.elite_hp_mult),
+		"and the plain elite's speed and HP (%.1f / %.1f)" % [seen.speed, seen.max_hp],
+	)
 	again.apply_elite_modifiers([&"bogus", EliteModifiers.VAMPIRIC])
 	_check(_ids_equal(again.elite_modifier_ids(), [EliteModifiers.VAMPIRIC]), "unknown ids are dropped from an explicit request")
 

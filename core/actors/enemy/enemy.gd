@@ -999,6 +999,16 @@ func _clear_elite_modifiers() -> void:
 		return
 	if (_elite_mod_bits & (EliteModifiers.BIT_ARMOURED | EliteModifiers.BIT_SHIELDED)) != 0 and _enemy_world_handle != 0:
 		EnemyCombat.clear_elite_modifiers(_enemy_world_handle)
+	# FAST is the one modifier that lives in the actor's stats rather than a
+	# registry or a clock; without giving them back a replacement inherits
+	# them and a second FAST squares them. The exact inverse of the apply, and
+	# not a heal: raising the cap back leaves HP where FAST left it, only a
+	# promotion fills. A teardown clears too; there the pool reset overwrites
+	# both from the scene base right after, and configure_health skips a corpse.
+	if (_elite_mod_bits & EliteModifiers.BIT_FAST) != 0:
+		speed /= EliteModifiers.FAST_SPEED_MULT
+		_base_speed = speed
+		configure_health(max_hp / EliteModifiers.FAST_HP_MULT)
 	_elite_mod_bits = 0
 	_elite_modifier_ids = []
 	_vampiric_left = 0.0
