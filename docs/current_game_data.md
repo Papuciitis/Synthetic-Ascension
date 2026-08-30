@@ -249,9 +249,11 @@ Fabricated merge material never rolls (`from_roll(..., roll_manifestation=false)
 
 **Rules (`ManifestationCatalog._ensure_built`, 18)**
 
+Rule text: the rows corrected on 2026-08-30 (Pilgrim's Momentum, Broken Providence, Orbiting Testament, and the pairs Slipstream Foundry, Marching Order, Red Line, Reliquary Guard, Death Rattle, Tithe Rhythm) quote `describe()` rendered detached at base potency (R0, no upgrade meter; pairs at mean rarity 0) — the string the Run Sheet, shop and stash show, whose numbers grow with rarity. The other rows still quote the catalog's `rule` fallback, which `describe()` overrides whenever a logic script exists.
+
 | id | display name | slots | tags (nouns) | weight | rule text | logic script (`effects/manifestations/logic/`) |
 |---|---|---|---|---|---|---|
-| pilgrims_momentum | Pilgrim's Momentum | MOVE, RING | momentum, cadence | 1.2 | Travelling without stopping builds Momentum. At full Momentum your next attack fires twice. | PilgrimsMomentum.gd |
+| pilgrims_momentum | Pilgrim's Momentum | MOVE, RING | momentum, cadence | 1.2 | Travel 8.9 m without stopping to fill Momentum - this rule's own 15.0 m fill running alongside the 22 m travel fill any Momentum rule gets. At full Momentum your next attack fires a second time at 100% damage, spending all of it. | PilgrimsMomentum.gd |
 | anchor_rite | Anchor Rite | MOVE, ARMOR, RING | momentum, cadence | 1.0 | Standing still builds Stability. At full Stability your attack covers ground it otherwise could not. Moving drains it. | AnchorRite.gd |
 | sunder_wake | Sunder Wake | MOVE, OFFHAND, RING | momentum | 1.0 | Attacking spends all Momentum and tears a shockwave out of the ground where it lands. | SunderWake.gd |
 | third_litany | Third Litany | POWER, HASTE, RING | cadence | 1.0 | Every third attack is empowered — only if you let the second one finish. | ThirdLitany.gd |
@@ -262,9 +264,9 @@ Fabricated merge material never rolls (`from_roll(..., roll_manifestation=false)
 | martyr_circuit | Martyr Circuit | HP, ARMOR, RING | ward, cadence | 0.9 | Healthy, you attack slower. Wounded, you accelerate. Near death, your attacks echo. | MartyrCircuit.gd |
 | retaliation_writ | Retaliation Writ | ARMOR, MOVE, RING | ward, momentum | 1.0 | You evade more often, and every evade answers with a retaliation nova. | RetaliationWrit.gd |
 | scar_tissue | Scar Tissue | HP, ARMOR, RING | ward | 1.0 | You refuse most healing; every point refused becomes Armour that slowly bleeds away. | ScarTissue.gd |
-| broken_providence | Broken Providence | LUCK, RING | fortune | 1.0 | Every failed Lucky Crit banks Misfortune; the next Lucky Crit spends all of it. | BrokenProvidence.gd |
+| broken_providence | Broken Providence | LUCK, RING | fortune | 1.0 | Every attack that fails its Lucky Crit banks 1 Misfortune (max 25). Your next Lucky Crit spends the bank instantly: a burst around you dealing 22% weapon damage per point (600% at a full bank) in a radius that grows with it. Needs Luck above 0: the roll never succeeds at or below it; the cap is 8%. | BrokenProvidence.gd |
 | tithe_furnace | Tithe Furnace | LUCK, OFFHAND, RING | cadence, fortune | 0.9 | Every eighth attack burns a Follower to empower itself; refuses to spend below reconstruction cost. | TitheFurnace.gd |
-| orbiting_testament | Orbiting Testament | OFFHAND, RING | shard, fortune | 1.1 | Lucky Crits forge a shard into orbit; shards shred whatever they pass through. | OrbitingTestament.gd |
+| orbiting_testament | Orbiting Testament | OFFHAND, RING | shard, fortune | 1.1 | Every Lucky Crit forges a shard into orbit around you, and each orbiting shard carves for an extra 10% of your attack damage - plus 1.0% more per Lucky Crit landed this run, up to +20%. Needs Luck above 0: the roll never succeeds at or below it; the cap is 8%. | OrbitingTestament.gd |
 | splinter_dividend | Splinter Dividend | OFFHAND, POWER, RING | shard | 1.0 | Elites shatter when they die, throwing fragments into your orbit. | SplinterDividend.gd |
 | vector_halo | Vector Halo | OFFHAND, RING | shard, cadence | 1.0 | Every tenth attack sheds a shard; orbit holds more; dashing launches the halo. | VectorHalo.gd |
 | heretical_cartography | Heretical Cartography | LUCK, MOVE, RING | fortune | 1.0 | Entering somewhere new rewards you; stacks; completing a secondary extends it. | HereticalCartography.gd |
@@ -274,15 +276,15 @@ Fabricated merge material never rolls (`from_roll(..., roll_manifestation=false)
 
 | id | display name | nouns | rule text | logic script (`effects/manifestations/pairs/`) |
 |---|---|---|---|---|
-| slipstream_foundry | Slipstream Foundry | momentum + shard | While moving, shards string out behind you, holding where you left them before snapping back. | SlipstreamFoundry.gd |
-| marching_order | Marching Order | momentum + cadence | Distance advances your attack rhythm as if you had attacked; stopping forfeits the beat. | MarchingOrder.gd |
-| red_line | Red Line | momentum + ward | While wounded, spending Momentum pays out speed and one ignored hit instead of damage. | RedLine.gd |
+| slipstream_foundry | Slipstream Foundry | momentum + shard | While you are moving, every 3.0 m pulls a shard out of your orbit and leaves it where you stood: it burns everything within 34 px for 85% of a shard's damage every 0.30s, then snaps back into orbit after 1.25s. Up to 3 shards can be strung out at once. Shards on the ground are out of your orbit until they return: they do not guard you and cannot be launched. | SlipstreamFoundry.gd |
+| marching_order | Marching Order | momentum + cadence | Every 6.0 m of unbroken travel is a beat: it advances every beat-counting rhythm you carry without firing; it does not reset your attack clock. Stopping forfeits the stride you had banked instead of cashing it in early. | MarchingOrder.gd |
+| red_line | Red Line | momentum + ward | While below 40% HP, spending at least 25% Momentum turns it into escape: up to +45% move speed for 2.6s, decaying, and the next hit within 6s is ignored outright. The guard re-arms once every 5s - a spend inside that window buys the surge alone. Your attacks deal 22% less for as long as the burst lasts. | RedLine.gd |
 | pilgrims_toll | Pilgrim's Toll | fortune + momentum | First enemy touched after a long unbroken run is Marked outright. | PilgrimsToll.gd |
 | loom | Loom | cadence + shard | Your empowered beat fires the whole orbit at your aim and deals no weapon damage of its own. | Loom.gd |
-| reliquary_guard | Reliquary Guard | shard + ward | A hit that would land shatters a shard instead; an empty orbit is unguarded. | ReliquaryGuard.gd |
+| reliquary_guard | Reliquary Guard | shard + ward | While your orbit holds shards, a hit that would land on you shatters one instead and deals you nothing - at most one shatter every 0.25s. Your orbit holds 1 more. An empty orbit is an unguarded one - anything that spends the orbit drops the guard. | ReliquaryGuard.gd |
 | bad_fortune_engine | Bad Fortune Engine | fortune + shard | Every failed Luck roll forges a shard instead of banking Misfortune; every success consumes two. | BadFortuneEngine.gd |
-| death_rattle | Death Rattle | cadence + ward | While wounded, breaking rhythm no longer forfeits the beat — it costs health to hold it. | DeathRattle.gd |
-| tithe_rhythm | Tithe Rhythm | cadence + fortune | Your empowered beat spends a Follower to fire a second time, returned if that shot kills. | TitheRhythm.gd |
+| death_rattle | Death Rattle | cadence + ward | At or below 40% HP, your empowered beat (every 3 beats) is held for you: firing it within 0.30s of the shot before no longer forfeits it, and the held beat costs 5.0% of your maximum health. The beats between are not held and forfeit as usual. It never takes your last point. | DeathRattle.gd |
+| tithe_rhythm | Tithe Rhythm | cadence + fortune | Every 3 beats - 2 attacks once it is running, since the second shot is itself a beat - the beat spends 1 Follower to fire a second time for 100% of your attack damage. A kill within 0.28s returns them. It refuses to spend if that would drop you below your reconstruction cost. | TitheRhythm.gd |
 | debt_collector | Debt Collector | fortune + ward | Below a third health every Luck roll succeeds, and every success takes a Follower. | DebtCollector.gd |
 
 Pair scaling uses the mean `effective_rarity()` of the rules that formed it (`ManifestationRunner._mean_rarity_for`).
