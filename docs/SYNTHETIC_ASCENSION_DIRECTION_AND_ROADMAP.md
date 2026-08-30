@@ -1373,3 +1373,79 @@ Regression sweep on `a2c302a` (all 89 `tools/tests/*.tscn`, headless,
 errors. 51 suites report 1683 passed / 0 failed, 20 report 463 passes /
 0 failures, and the remaining 18 are the display-only probes and
 benchmarks the stale-tests audit documents as unable to fail.
+
+## 2026-08-30, later — readability wave 1 (25 commits, `333fcb6` … `8e42061`)
+
+Basis: `docs/SYNTHETIC_ASCENSION_VISION.md` is now the canonical vision
+(`b874dba`; `gamegoal.md` is bannered as superseded) and the observability /
+Run Sheet audits are its gap list. This wave implements the surfacing half of
+that list — every change shows a value, slot, condition or event the code
+already computed; no constant, threshold, rate, cap or activation rule moved.
+
+**Run Sheet as build debugger (vision §Run Sheet; §15).** The per-stat ledger:
+`recompute_run_stats` records itself step by step (race, style, belief, items,
+sets, item effects, manifestations, every slot roll — INVERTED when the Lens
+holds it — Engine, Doctrine, Lens, the Max HP price) and the Profile shows the
+rows under each stat, so "why is this stat this high?" has an answer that sums
+exactly to the number above it (`RunSheetLedgerTest`, and
+`LensRetargetFeedbackTest` drives the real pass). PWR/HST show the runtime
+multipliers the next shot uses; the Doctrine Record prints each stage's gift
+and price and the Max HP multiplier; belief and the Lens Luck kicker are
+named; the BURDEN block names the slots behind every count, says which two the
+Engine burns, renders at zero curses when an archetype is owned, and states the
+Doctrine's statistical-slot scope; the LCK row prints the Lucky Crit chance
+(0% at or below zero Luck — why two rules never fire there); one box per rule
+with a copy count; ◆◇ pips shared with the HUD; "meter appears at first bank";
+a dimmed "next pair" line.
+
+**Loot evaluated by build (vision §Corruption / Doctrine / Lens).** A slot the
+Lens suppresses now says what it *pays* (+44%) on the bar, the tooltip and the
+swap preview instead of the stored −80; the tooltip comparison reads a deeper
+curse the way the Lens will; the feed line says when feeding would shrink the
+inverted return; a Lens retarget is announced from the stat pass ("LENS: …
+curse returns — … curse inverted"); the Engine's feed toast says "deepened to
+−N%"; the SUPPRESSED line says the curse counts for neither the Doctrine nor
+the Engine; augment `details` name the statistical-slot rule and the
+Doctrine's range floor; augment tooltips show level-scaled stats and Luck as a
+percentage; "polarity census" replaces the false "parity and sets" claim and a
+POS roll prints what it does to its slot.
+
+**Power escalation should be visible (vision §Power Escalation).** The
+power-contrast window is finally announced — `power_threshold_noted` has a
+listener — and the Threat tooltip shows "Enemy scaling held — Ns", the segment
+phase, the elite chance and the rite channel (it also called sped-up spawns
+"slower"; fixed).
+
+**Manifestations as engines, readably (vision §Manifestations, Hades lesson).**
+Six `describe()` strings that contradicted their code now say what the rule
+does (Pilgrim's Momentum's real fill distance, Marching Order, Red Line's
+re-arm, Death Rattle's empowered beat, Orbiting Testament's Luck sharpening,
+Tithe Rhythm) and the two Lucky-Crit rules state their ignition condition;
+Death Rattle's toll is a damage number; Scar Tissue and Bad Fortune say when
+they act; Composure's meter says what a full bar buys (as a sheet-only hint —
+the HUD row stays bare); the pair rule is taught in the intro card and the
+pair notifier; a two-channel noun's HUD row shows the fuller channel; the
+callouts checkbox says what it silences.
+
+Method: five file-ownership clusters in isolated worktrees, each branch
+adversarially reviewed before integration (three should-fix findings, all
+fixed: an unpinned pickup path, a comment describing a mechanism that does not
+exist, the Composure clause in the wrong field). Agents refused two audit
+wordings as untrue ("ranks the rule up"; "curse returns" on removal) and
+reported five items outside their ownership, which were integrated by hand.
+The Engine's rate/cap and the Lens kicker now live in `BurdenResolver` and the
+sheet reads them — one pair of numbers, not two copies.
+
+Not done, deliberately: `AugmentSelect.gd` still formats unscaled stats (its
+own copy — a follow-up); `docs/current_game_data.md` paraphrases the old rule
+texts; the catalog's fallback rule strings are unchanged; the Engine deepen
+toast is not shown on the bag-stack path because a bagged copy moves no stat.
+Still not built from the vision: elite legibility, objectives as situations,
+the world losing normality, Followers as belief, Equilibrium, route changes in
+the Rite — Phase 3+, and still gated on the playtest, which these surfaces
+exist to make honest.
+
+Regression sweep on `8e42061` (all 95 `tools/tests/*.tscn`, headless,
+`--quit-after 3000`; six suites new this wave): every suite exited 0, zero
+FAIL lines, zero script errors — 57 suites report 1917 passed / 0 failed, 20
+report 463 passes / 0 failures, 18 are the display-only probes and benchmarks.
