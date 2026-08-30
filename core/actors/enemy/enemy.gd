@@ -111,6 +111,8 @@ var _elite_modifier_ids: Array[StringName] = []
 var _elite_mod_bits: int = 0
 var _vampiric_left: float = 0.0
 var _elite_mark: Node2D = null
+# The body colour the modifier tint replaced; the clear gives it back.
+var _elite_body_modulate: Color = Color.WHITE
 
 # Shared movement helpers
 var _orbit_angle: float = 0.0
@@ -902,11 +904,8 @@ func apply_elite_modifiers(ids: Array[StringName]) -> void:
 	if not is_elite:
 		_promote_elite(ids)
 		return
+	# The clear restores the plain elite look, so an empty set reads as one.
 	_clear_elite_modifiers()
-	# Back to the archetype's plain elite look, so an empty set reads as one.
-	var spr := get_node_or_null("Sprite2D") as CanvasItem
-	if spr != null:
-		spr.modulate = spec.elite_tint
 	_apply_elite_modifiers(ids)
 
 
@@ -986,9 +985,11 @@ func _apply_elite_modifiers(requested: Array[StringName]) -> void:
 	if (_elite_mod_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
 		_vampiric_left = EliteModifiers.VAMPIRIC_DRAIN_EVERY
 	# The tell: the first modifier's tint on the body, every modifier's mark.
+	# The colour found here is the one the clear restores.
 	var tint := EliteModifiers.tint(ids[0])
 	var spr := get_node_or_null("Sprite2D") as CanvasItem
 	if spr != null:
+		_elite_body_modulate = spr.modulate
 		spr.modulate = tint
 	_attach_elite_mark(ids, tint)
 	_announce_elite_modifiers(ids, tint)
@@ -1012,18 +1013,29 @@ func _clear_elite_modifiers() -> void:
 	_elite_mod_bits = 0
 	_elite_modifier_ids = []
 	_vampiric_left = 0.0
-	if _elite_mark != null and is_instance_valid(_elite_mark):
-		_elite_mark.queue_free()
-	_elite_mark = null
+	# The VAMPIRIC pulse writes the sprite's modulate every redraw, and a
+	# queued free still steps this frame: the mark is released before the body
+	# gets back the colour the apply found.
+	_drop_elite_mark()
+	var spr := get_node_or_null("Sprite2D") as CanvasItem
+	if spr != null:
+		spr.modulate = _elite_body_modulate
 
 
 func _attach_elite_mark(ids: Array[StringName], tint: Color) -> void:
-	if _elite_mark != null and is_instance_valid(_elite_mark):
-		_elite_mark.queue_free()
+	_drop_elite_mark()
 	var mark := VFX_EliteModifierMark.new()
 	mark.setup(self, ids, tint)
 	add_child(mark)
 	_elite_mark = mark
+
+
+func _drop_elite_mark() -> void:
+	if _elite_mark != null and is_instance_valid(_elite_mark):
+		if _elite_mark.has_method("release"):
+			_elite_mark.call("release")
+		_elite_mark.queue_free()
+	_elite_mark = null
 
 
 func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:

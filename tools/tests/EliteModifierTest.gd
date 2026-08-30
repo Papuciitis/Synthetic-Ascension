@@ -106,6 +106,7 @@ func _run() -> void:
 	await _test_armoured()
 	await _test_shielded()
 	await _test_vampiric()
+	await _test_body_colour_after_pulse()
 	await _test_splitting()
 	await _test_explicit_api_teach_and_phase_pick()
 	await _test_pool_reset()
@@ -302,6 +303,35 @@ func _test_vampiric() -> void:
 	_check(is_equal_approx(ally.hp, after), "the drain waits for its clock")
 	_check(EnemyCombat.drain_health(_handle(ally), 5.0, 1.0) == 5.0 and is_equal_approx(ally.hp, after - 5.0), "drain_health reports what it took and mirrors it to the actor")
 	await _free_all([vamp, ally, far_ally, elite_ally, weak])
+
+
+# --- the VAMPIRIC pulse borrows the body colour; a clear gives it back ---
+func _test_body_colour_after_pulse() -> void:
+	var enemy := _spawn_enemy(Vector2(2600.0, 2000.0))
+	# The mark only steps with a player in draw range; a bare node stands in.
+	var eyes := Node2D.new()
+	eyes.position = Vector2(2650.0, 2000.0)
+	add_child(eyes)
+	await get_tree().process_frame
+	enemy.player = eyes
+	enemy.apply_elite_modifiers([EliteModifiers.VAMPIRIC])
+	var sprite := enemy.get_node_or_null("Sprite2D") as CanvasItem
+	var pulsing := _mark_of(enemy)
+	var vampiric_tint := EliteModifiers.tint(EliteModifiers.VAMPIRIC)
+	_check(sprite != null and pulsing != null and sprite.modulate == vampiric_tint, "fixture: a VAMPIRIC body starts on its tint")
+	pulsing.call("_process", 0.1)
+	_check(sprite.modulate != vampiric_tint, "fixture: one step of the pulse has written the body colour (%s)" % sprite.modulate)
+	enemy.apply_elite_modifiers([EliteModifiers.ARMOURED])
+	_check(sprite.modulate == EliteModifiers.tint(EliteModifiers.ARMOURED), "a replacement puts the new first tint on the body")
+	# The replaced mark is queued for deletion, not gone: it can still step
+	# this frame, and that step must not write the body.
+	pulsing.call("_process", 0.1)
+	_check(sprite.modulate == EliteModifiers.tint(EliteModifiers.ARMOURED), "and a late step of the replaced mark leaves the body alone (%s)" % sprite.modulate)
+	enemy.apply_elite_modifiers([EliteModifiers.VAMPIRIC])
+	_mark_of(enemy).call("_process", 0.1)
+	enemy.call("_clear_elite_modifiers")
+	_check(sprite.modulate == enemy.spec.elite_tint, "a clear restores the colour the apply found - the plain elite tint (%s)" % sprite.modulate)
+	await _free_all([enemy, eyes])
 
 
 # --- SPLITTING: copies through the Splitter's machinery, shrunk, loot-less ---

@@ -31,6 +31,7 @@ var _redraw_accum: float = 0.0
 var _reduced_motion: bool = false
 var _drawn_static: bool = false
 var _feed_flash: float = 0.0
+var _released: bool = false
 
 
 func setup(enemy: EnemyActor, ids: Array[StringName], base_tint: Color) -> void:
@@ -48,6 +49,14 @@ func note_feed() -> void:
 	_feed_flash = 0.35
 	if not _animated():
 		queue_redraw()
+
+
+## The enemy is dropping the mark. A queued free lands at the end of the
+## frame; from here on no step writes the sprite's modulate, so the colour
+## the enemy restores stays.
+func release() -> void:
+	_released = true
+	set_process(false)
 
 
 func _ready() -> void:
@@ -74,7 +83,10 @@ func _animated() -> bool:
 
 
 func _process(dt: float) -> void:
+	if _released:
+		return
 	if _enemy == null or not is_instance_valid(_enemy) or _enemy.dead:
+		release()
 		queue_free()
 		return
 	var player := _enemy.player
