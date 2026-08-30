@@ -4,9 +4,11 @@ class_name VFX_EliteModifierMark
 ## The tell for roadmap §9 elite modifiers, drawn on the body as a child of the
 ## elite (the Bomber's hazard ring is the pattern): a plate ring for ARMOURED,
 ## a hexagon at the shield radius for SHIELDED, a seam across the body for
-## SPLITTING, a streak behind FAST, and the VAMPIRIC pulse on the sprite's own
-## tint. Under accessibility reduced_motion the pulse and the streak stop and
-## the static marks stay, so the modifier is still readable, just still.
+## SPLITTING, a streak behind a moving FAST, and the VAMPIRIC pulse on the
+## sprite's own tint. Under accessibility reduced_motion the pulse and the
+## streak stop and the static marks stay, so the modifier is still readable,
+## just still: FAST then draws its chevrons, as it does whenever another
+## modifier owns the body tint.
 
 @export var line_width: float = 3.0
 @export var glow_width: float = 9.0
@@ -15,11 +17,23 @@ class_name VFX_EliteModifierMark
 @export var body_radius: float = 26.0
 @export var streak_length: float = 34.0
 @export var vampiric_pulse_hz: float = 1.6
+# FAST's still tell: a row of chevrons under the body, the fast-forward glyph.
+@export var fast_chevron_count: int = 3
+@export var fast_chevron_size: float = 10.0
+@export var fast_chevron_spacing: float = 9.0
+@export var fast_chevron_offset: float = 6.0
 
 # Beyond this distance the mark cannot matter to the player; skip drawing
 # rather than tessellating rings for the elite's whole lifetime.
 const DRAW_MAX_PLAYER_DIST := 1200.0
 const REDRAW_INTERVAL := 1.0 / 30.0
+# last_drawn_bits flag for the streak, outside the EliteModifiers bit range:
+# the streak is motion, not the FAST mark that survives reduced_motion.
+const DRAWN_STREAK := 1 << 8
+
+# What the last draw pass put on the canvas: each modifier's bit when its
+# mark drew (FAST for the chevrons), plus DRAWN_STREAK.
+var last_drawn_bits: int = 0
 
 var _enemy: EnemyActor = null
 var _sprite: CanvasItem = null
@@ -78,8 +92,16 @@ func is_animated() -> bool:
 
 
 func _animated() -> bool:
-	# Only the pulse and the streak move; plate ring, hexagon and seam draw once.
+	# Only the pulse and the streak move; plate ring, hexagon, seam and
+	# chevrons draw once.
 	return not _reduced_motion and (_bits & (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST)) != 0
+
+
+func _fast_needs_still_tell() -> bool:
+	# FAST as the first modifier owns the body tint and, moving, the streak.
+	# Under reduced_motion the streak never draws, and behind another
+	# modifier's tint FAST has no colour of its own: the chevrons are the tell.
+	return (_bits & EliteModifiers.BIT_FAST) != 0 and (_reduced_motion or _ids[0] != EliteModifiers.FAST)
 
 
 func _process(dt: float) -> void:
@@ -131,14 +153,22 @@ func _draw() -> void:
 	# The mark inherits the body's scale; world-sized marks (the shield radius)
 	# divide it back out, body-sized marks scale with the body on purpose.
 	var world_scale := maxf(absf(global_scale.x), 0.01)
+	last_drawn_bits = 0
 	if (_bits & EliteModifiers.BIT_SHIELDED) != 0:
 		_draw_shield_hexagon(EliteModifiers.SHIELD_RADIUS / world_scale)
+		last_drawn_bits |= EliteModifiers.BIT_SHIELDED
 	if (_bits & EliteModifiers.BIT_ARMOURED) != 0:
 		_draw_plate_ring()
+		last_drawn_bits |= EliteModifiers.BIT_ARMOURED
 	if (_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
 		_draw_vampiric_ring()
+		last_drawn_bits |= EliteModifiers.BIT_VAMPIRIC
 	if (_bits & EliteModifiers.BIT_SPLITTING) != 0:
 		_draw_seam()
+		last_drawn_bits |= EliteModifiers.BIT_SPLITTING
+	if _fast_needs_still_tell():
+		_draw_fast_chevrons()
+		last_drawn_bits |= EliteModifiers.BIT_FAST
 	if (_bits & EliteModifiers.BIT_FAST) != 0 and not _reduced_motion:
 		_draw_streak(world_scale)
 
@@ -189,11 +219,28 @@ func _draw_seam() -> void:
 	draw_polyline(seam, Color(tint.r, tint.g, tint.b, 0.95), line_width, true)
 
 
+func _draw_fast_chevrons() -> void:
+	var tint := EliteModifiers.tint(EliteModifiers.FAST)
+	var y := body_radius + fast_chevron_offset
+	var half := fast_chevron_size * 0.5
+	var first_x := -fast_chevron_spacing * float(fast_chevron_count - 1) * 0.5
+	for i in range(fast_chevron_count):
+		var x := first_x + fast_chevron_spacing * float(i)
+		var chevron := PackedVector2Array([
+			Vector2(x - half, y - half),
+			Vector2(x + half, y),
+			Vector2(x - half, y + half),
+		])
+		draw_polyline(chevron, Color(tint.r, tint.g, tint.b, 0.35), glow_width * 0.6, true)
+		draw_polyline(chevron, Color(tint.r, tint.g, tint.b, 0.95), line_width, true)
+
+
 func _draw_streak(world_scale: float) -> void:
 	var velocity := _enemy.velocity
 	var speed := velocity.length()
 	if speed < 20.0:
 		return
+	last_drawn_bits |= DRAWN_STREAK
 	var tint := EliteModifiers.tint(EliteModifiers.FAST)
 	var back := -(velocity / speed)
 	var length := streak_length * clampf(speed / 300.0, 0.4, 1.6) / world_scale

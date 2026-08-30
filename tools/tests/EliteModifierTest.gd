@@ -78,6 +78,12 @@ func _mark_of(enemy: EnemyActor) -> VFX_EliteModifierMark:
 	return null
 
 
+## What the mark's last draw pass put on the canvas; 0 for a mark without the record.
+func _drawn_bits_of(mark: Node) -> int:
+	var bits: Variant = mark.get("last_drawn_bits") if mark != null else null
+	return bits if bits is int else 0
+
+
 func _ids_equal(actual: Array[StringName], expected: Array) -> bool:
 	if actual.size() != expected.size():
 		return false
@@ -103,6 +109,7 @@ func _run() -> void:
 
 	_test_catalog_and_phase_gating()
 	await _test_fast()
+	await _test_fast_still_tell()
 	await _test_armoured()
 	await _test_shielded()
 	await _test_vampiric()
@@ -217,6 +224,42 @@ func _test_fast() -> void:
 	)
 	_check(is_equal_approx(float(enemy.get("_base_speed")), enemy.speed), "and the steering base speed follows")
 	await _free_all([enemy])
+
+
+# --- FAST keeps a still tell: chevrons under reduced_motion and behind another tint ---
+func _test_fast_still_tell() -> void:
+	var previous_reduced: Variant = SettingsManager.get_value(&"accessibility", &"reduced_motion", false)
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	var still := _spawn_enemy(Vector2(4000.0, 2000.0))
+	await get_tree().process_frame
+	still.apply_elite_modifiers([EliteModifiers.FAST])
+	var still_mark := _mark_of(still)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
+	_check(still_mark != null and not still_mark.is_animated(), "fixture: under reduced_motion a FAST mark is still")
+	var still_drawn := _drawn_bits_of(still_mark)
+	_check((still_drawn & EliteModifiers.BIT_FAST) != 0, "and its draw pass still puts a FAST-specific mark on the body - the chevrons (drawn bits %d)" % still_drawn)
+
+	# Behind another modifier's tint FAST has no tint of its own and, standing
+	# still, no streak: the chevrons are its whole tell.
+	var second := _spawn_enemy(Vector2(4200.0, 2000.0))
+	await get_tree().process_frame
+	second.apply_elite_modifiers([EliteModifiers.ARMOURED, EliteModifiers.FAST])
+	var second_mark := _mark_of(second)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var second_sprite := second.get_node_or_null("Sprite2D") as CanvasItem
+	_check(
+		second_sprite != null and second_sprite.modulate == EliteModifiers.tint(EliteModifiers.ARMOURED) and second.velocity == Vector2.ZERO,
+		"fixture: ARMOURED carries the tint and the elite stands still",
+	)
+	var second_drawn := _drawn_bits_of(second_mark)
+	_check(
+		(second_drawn & EliteModifiers.BIT_ARMOURED) != 0 and (second_drawn & EliteModifiers.BIT_FAST) != 0,
+		"a second-modifier FAST draws its chevrons beside the plate ring (drawn bits %d)" % second_drawn,
+	)
+	await _free_all([still, second])
 
 
 # --- ARMOURED: a flat plate per hit ---
