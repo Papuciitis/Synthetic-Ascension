@@ -288,10 +288,12 @@ func _rebuild_tip_text() -> void:
 		int(round((dmg_mul - 1.0) * 100.0)),
 		int(round((spd_mul - 1.0) * 100.0)),
 	])
-	if spawn_rate < 0.999:
-		lines.append("Spawns %d%% faster" % int(round((1.0 - spawn_rate) * 100.0)))
-	elif spawn_rate > 1.001:
-		lines.append("Spawns %d%% slower" % int(round((spawn_rate - 1.0) * 100.0)))
+	# spawn_interval_mul scales the spawner's wait time (spawner.gd), so a
+	# multiplier below 1 is MORE spawns; the rate above is its inverse.
+	if spawn_rate > 1.001:
+		lines.append("Spawns %d%% faster" % int(round((spawn_rate - 1.0) * 100.0)))
+	elif spawn_rate < 0.999:
+		lines.append("Spawns %d%% slower" % int(round((1.0 - spawn_rate) * 100.0)))
 	lines.append("District heat: %d%%" % heat_pct)
 	if phase != "":
 		lines.append("District phase: %s" % phase.to_upper())

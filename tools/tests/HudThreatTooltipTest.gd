@@ -69,6 +69,10 @@ func _run() -> void:
 	_check(tip.contains("Elite chance +%d%%" % int(round(float(ThreatDirector.elite_bonus) * 100.0))), "the tooltip prints the elite chance the director is adding")
 	_check(not tip.contains("Exit Rite"), "no rite line while nothing is channelled")
 	_check(not tip.contains("Enemy scaling held"), "no held-scaling line before any power threshold")
+	# spawn_interval_mul scales the spawner's wait time, so below 1 is faster.
+	var spawn_rate := 1.0 / maxf(float(ThreatDirector.spawn_interval_mul), 0.001)
+	_check(spawn_rate > 1.001, "the fixture's director is speeding spawns up (×%.2f)" % float(ThreatDirector.spawn_interval_mul))
+	_check(tip.contains("Spawns %d%% faster" % int(round((spawn_rate - 1.0) * 100.0))) and not tip.contains("slower"), "and the tooltip says faster, not slower")
 
 	ThreatDirector.call("set_rite_channel_active", true)
 	tip = String(controller.get("_tip_text"))
