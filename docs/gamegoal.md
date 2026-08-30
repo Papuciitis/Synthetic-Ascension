@@ -1,5 +1,13 @@
 # Synthetic Ascension — Master Game Vision & Design Plan
 
+> **Superseded 2026-08-30.** The canonical statement of what the game is trying
+> to achieve is `docs/SYNTHETIC_ASCENSION_VISION.md`; priorities, phases and the
+> status log are `docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md`. This file
+> is the August 2026 design snapshot, kept for its system detail and because
+> `docs/design/*` cite its section numbers. Its status tags are stale: Doctrine
+> of Burden (§23), Inversion Lens (§23) and Manifestations (§29) are shipped and
+> tested, not DESIGNED/PROPOSED.
+
 **Current design snapshot: August 2026**
 
 This document is meant to describe **what Synthetic Ascension is actually trying to become**, not merely what exists in code today.

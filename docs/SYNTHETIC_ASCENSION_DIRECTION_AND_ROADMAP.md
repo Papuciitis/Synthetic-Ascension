@@ -1,6 +1,7 @@
 # Synthetic Ascension — Direction, Priorities, and Near-Term Roadmap
 
 **Date:** 2026-08-27  
+**Parent:** `docs/SYNTHETIC_ASCENSION_VISION.md` — the vision this roadmap serves; when they disagree, the vision wins.  
 **Purpose:** Give collaborators and coding agents the missing design context behind the current technical backlog.
 
 ---
