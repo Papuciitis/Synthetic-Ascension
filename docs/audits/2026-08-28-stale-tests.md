@@ -205,3 +205,81 @@ then signatures confirmed at the definition sites.
 | UiConsistencyVisualProbe | **REVIEW** | 70% | needs display; zero assertions, quit(0) unconditionally; two capture helpers (`_capture_blocking_record`, `_capture_first_encounter`, L127-172) are defined and never called; fixture classes verbatim from RunSheetArchiveTest. REMOVE if nobody reviews `ui_consistency_shots`, else trim |
 
 Group D totals: dead targets 0/27; needs display 3 full (RoamVisibilityProbe, Segment1StoryProbe, UiConsistencyVisualProbe) + 1 partial (ProjectileSlotReuseTest L107-125); no summary / never-failing exit 5 (ProjectileRenderBenchmark, StyleDpsBenchmark, RoamVisibilityProbe, UiConsistencyVisualProbe quit 0 always; Segment1StoryProbe prints FAIL but quits 0).
+
+---
+
+## Status 2026-08-30 — the three REMOVEs executed; every REVIEW and every silent-skip site verified still open
+
+Read-only re-check against HEAD `b2b1604`; nothing was executed. Since the
+audit, only six audited scripts changed at all (`git diff --name-status
+62bbfd3..HEAD -- tools/tests/`): three deleted, three touched in step with
+production fixes. Every other table row is byte-identical, so the line
+numbers above still hold.
+
+**Executed**
+
+- The three REMOVE rows — EnemySimulationBenchmark, FlowFieldAllocationBenchmark,
+  ChunkScaleBenchmark — deleted with their `.tscn`s in `af4e23e` (cleanup
+  win #8). `tools/perf/run_benchmarks.ps1` still lists exactly
+  horde/minigun/pressure. With EnemySimulationBenchmark gone, the tree's only
+  dead-property `.set()` writes are gone too; "tests targeting a nonexistent
+  system: 0" still holds at HEAD.
+- EnemyIndexTest's stale-comment note is overtaken: `7bfc6cb` removed
+  `rebuild_legacy_shadow` outright (zero callers re-confirmed in that commit)
+  and, deleting `nearest_enemy`/`first_in_radius` in the same change, trimmed
+  EnemyIndexTest's assertions on them — the comment naming
+  `rebuild_legacy_shadow` went with them; `grep -rn rebuild_legacy_shadow`
+  finds nothing at HEAD. The test stayed in sync; no new dead target appeared.
+
+**Verified still open**
+
+- All 10 display-only/never-failing probes plus ProjectileRenderBenchmark,
+  StyleDpsBenchmark and PerformanceFlightRecorderBenchmark: unchanged since
+  the audit. The `c363d13` sweep (85 suites on `2dca035`, 0 failures)
+  demonstrates the vacuous-pass behaviour in practice: DevConsoleShotProbe,
+  ManifestationHoverProbe, ObjectiveShotProbe and UiConsistencyVisualProbe
+  exited non-zero headless on their own watchdogs — red for lack of a
+  display, not for any caught regression — and the rest went green having
+  verified nothing.
+- All 9 silent `has_method` / `!= null` skip sites: re-verified at HEAD, every
+  guarded target still present (e.g. `detached_handles` still
+  EnemyIndex.gd:396 for DevForceSpawnTest L117). One line shift: the
+  ManifestationSystemTest director guard is now L812 — `bc13160` added a
+  dangling-id test to the file (+18 lines).
+- Grab-bags / brittle pins: AuditClosureTest and PerformanceLifecycleTest
+  untouched; the source-text greps stand (both `_target_is_live(target:
+  Variant)` definitions live for FirstEncounterPresentationTest; RunSheetArchiveTest
+  L204-207 negatives still match zero production files).
+- AutosaveDebounceTest still writes `slot_97.tres` via
+  `save_current_profile()` (L28/L70) and never deletes it. New wrinkle: slot
+  97 is now shared by three suites — SaveIntegrityTest and the new
+  SaveSelectUnreadableSlotTest (`9453f95`) both `delete_slot(97)` on entry
+  and/or exit — so the leftover survives a full sweep only when
+  AutosaveDebounceTest runs after them; the ordering coupling on one slot is
+  itself worth fixing when the leftover is.
+- Doc drift, both lines re-read: the sustained-combat-pressure plan's Step 4
+  block (~L403) still runs EnemyHordeBenchmark `--headless`;
+  `docs/PERFORMANCE_PATCH_CHANGELOG.md:142` still says PerformanceLifecycleTest
+  could not complete headless (the file was not among the records `2244764`
+  moved to `docs/history/`).
+- ScriptParseAuditTest scan roots unchanged (`core ui autoload scenes effects
+  data`); MinigunStressBenchmark's header still states the resolved
+  per-hit VFX_SpokesBurst hypothesis; BuildIdentityTest (touched by `13c7d0f`
+  for the Luck fixture) still uses the capitalised `&"Momentum"`/`&"Shard"`
+  ids at L53-54.
+
+**Corrections to this audit**
+
+- ObjectiveShotProbe "always quit(0)" is imprecise: it has a 150 s watchdog
+  `quit(1)` (L18) and a no-player `quit(1)` (L85); `quit(0)` is the
+  successful-screenshot path only. The substance is unchanged — zero
+  assertions, so neither exit code reflects a verified behaviour.
+- The ScriptParseAuditTest hole's magnitude is stale: `res://assets` holds 46
+  `.gd` at HEAD (0428e8d/e7d4de0 deleted VFX scripts), not 79. The hole
+  itself is open — 51 scripts across `assets/ spells/ scripts/` are unscanned.
+- FlowFieldAllocationBenchmark's plan-doc-misname side note is moot with the
+  benchmark deleted (`af4e23e` leaves dated docs as history).
+
+Not covered by this audit: three suites added since — SaveSelectUnreadableSlotTest
+(`9453f95`), PooledProjectileRecycleTest (`e549847`), GameOverFallbackTest
+(`3619ddd`). 105 of the audited 108 remain; the suite is back at the same size.

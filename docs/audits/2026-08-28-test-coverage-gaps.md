@@ -232,3 +232,68 @@ All already listed in `2026-08-28-dead-code-orphans.md`: `scripts/boot.gd` + `sc
 ## Appendix B — `assets/vfx` scripts (47, all pure visuals, LOW)
 
 Reached through scene closure (13): AugmentFlyVfx, UiFlyVfx, BagMergeVfx, VFX_ReflectShieldWindow, VFX_SpiderBite, VFX_SpiderExplode, VFX_SpiderlingVisual, reflect/VFX_ParryWindow, reflect/VFX_PerfectBurst, reflect/VFX_ReflectPop, sets/conduit/VFX_PulseRing, sets/conduit/VFX_SpokesBurst, wardstones/VFX_WardstoneIdleAura. Never loaded by any test (34): VFX_HexBlinkBurst, VFX_HexMarkAura, VFX_SpiritSlash, VFX_SpiritSlashImpact, VFX_StaminaCoreAura, VFX_TeslaArc2D, VFX_TeslaPulseRing, common/VFX_TrailFollow2D, enemies/VFX_BomberHazardRing, VFX_ChargeWindup, VFX_EnemyMuzzleFlash, VFX_EnemyShootCone, VFX_HeraldPulseRing, gates/VFX_GateUnlockBurst, items/VFX_FloatingPlus, VFX_SpeedStreak, manifestations/ShardSplinter, VFX_CartographyMark, VFX_GospelPulse, VFX_PairShatter, VFX_PairSlipstreamMote, VFX_ProvidenceBurst, VFX_RetaliationNova, VFX_ShardForge, VFX_ShardLaunch, VFX_SigilMark, VFX_SunderTear, VFX_TitheEmbers, sets/conduit/VFX_ArcLine, VFX_CleaveArc, VFX_ExplosiveT, VFX_ShockRing, VFX_Shockwave, wardstones/VFX_WardstoneAttuneBurst. `ScriptParseAuditTest` does not scan `assets/`, so these are not even parse-checked (stale-tests audit D1.11).
+
+---
+
+## Status 2026-08-30 — no gap closed; seven uncovered rows overtaken by deletions
+
+Verified at `b2b1604` by re-running the audit's greps against the tree and
+`git show --stat` on every commit since `cbc86ef` (the audit's own commit;
+all code changes below postdate it). Nothing executed.
+
+**Rows overtaken by deletion** (the orphans this audit said to remove
+instead of test — all seven files confirmed gone at HEAD):
+
+| Row | Commit |
+|---|---|
+| MEDIUM `ui/components/selection_card.gd` | `ae86c60` |
+| LOW `ui/controllers/HudInventoryController.gd` | `ae86c60` |
+| LOW `core/actors/enemy/modules/EnemyOrbit.gd`, `core/systems/vision/VisionOverlay.gd`, `core/systems/world/SegmentPlan.gd`, `scenes/world/cover/CoverWindow.gd` | `0428e8d` |
+| LOW `scripts/boot.gd` | `7a432cb` |
+
+`spells/logic/Weapon.gd` (LOW, orphan, cleanup C2.1) was **not** deleted —
+still present, row stays. Appendix B: `VFX_SpiritSlashImpact.gd` deleted in
+`0428e8d` → 47 vfx scripts become 46, the never-loaded list 34 → 33.
+Appendix A: 7 of 8 orphans now gone; Weapon.gd remains.
+
+**Summary counts at HEAD** (re-counted with the audit's `find`): production
+scripts 329 → **322**; uncovered 118 → **111** (HIGH 51 unchanged, MEDIUM
+38 → 37, LOW 29 → 23); covered 211 unchanged — 211 + 111 = 322 checks out.
+
+**Test inventory shifts** (Method section): `af4e23e` removed
+ChunkScaleBenchmark, EnemySimulationBenchmark and FlowFieldAllocationBenchmark;
+three regression suites were added (below) → still 111 scripts, but
+benchmarks 10 → 7, asserting tests 89 → 92, with-`.tscn` 88 → 89,
+SceneTree-only 23 → 22. The 23-name SceneTree list in the Notes section is
+stale by one entry: FlowFieldAllocationBenchmark no longer exists.
+
+**New coverage since 08-28 — all of it deepens scripts already counted
+covered, so no uncovered row closes**: `e549847`
+PooledProjectileRecycleTest (`projectile.gd` pooled recycle), `3619ddd`
+GameOverFallbackTest (`game.gd end_run` unpause fallback), `9453f95`
+SaveSelectUnreadableSlotTest (SaveSelect/SaveCard), `3897ef6` + `054f635`
+two new SaveIntegrityTest cases (broken-primary rotation, save_version
+round-trip), `bc13160` ManifestationSystemTest dangling-id, `2dca035`
+SettingsPersistenceTest newer-schema, `13c7d0f` BuildIdentityTest
+fractional-luck pin. Thin-coverage table effect: the **SaveManager** row
+improves — `has_save` is now exercised (SaveSelectUnreadableSlotTest lines
+45/78); `create_slot`/`set_current`/`save_current` still have zero callers
+in tools/tests (`grep -lw` at HEAD → none). The other 14 rows are
+unchanged: `054f635`/`b2b1604` edit inside existing `global.gd` functions
+(37/94 stands), and `2dca035` tests SettingsStore beneath the facade, not
+the SettingsManager row's methods.
+
+**Top 15: all fifteen re-verified still open.** `grep -lw` at HEAD for
+InvRouter/InventoryRouter, `refresh_effects`, ManifestationPairEffect,
+EnemyProjectile/DamageCircle/BossBeamSweep/BossMine, SetRunner, the three
+objective classes, EnemyShooter/EnemyLifecycle/BossArena,
+OpeningSequenceController, InventoryStash, HexBlink/StaminaCore, `MCE_`,
+AugmentRunner finds nothing beyond the same PerformanceRootCauseFixTest
+source scans the audit already discounted. #11 note: StaminaCoreEffect was
+edited by `2aebf62` (release-build logging) — still untested, finding
+unaffected.
+
+**Disposition of `7bfc6cb`** (ten zero-caller functions removed): every
+touched file (EnemyIndex, EnemySimulationScheduler, enemy.gd,
+EnemyCombatService, EnemyWorld, RangedBullet) is a *covered* script — no
+row of this audit is retired or altered by it.

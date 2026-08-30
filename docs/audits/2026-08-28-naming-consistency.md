@@ -142,3 +142,80 @@ Enemy spec ids are persisted (`meta_discovered_enemy_ids`) — do not rename ids
 - `&"another action"` (`ui/screens/settings/SettingsScreen.gd:356`) — StringName containing a space; reads like display text.
 - `&"style:melee"` (`data/major_choices/doctrines/method_frame_of_ash.tres:33`) — only writer of a colon-tag; confirm the reader parses the `style:` prefix.
 - `&"HB_"` (`scenes/world/combat/MeleeSlash.gd:50`), `&"__diagnostic__"` (`EnemyProxyRenderer.gd:7`), `&"exit"` (`PerformanceOverlay.gd:625`), `&"game"` (`AudioManager.gd:73`), `&"hover"`/`&"focus"` (`MajorChoiceCard.gd:89`) vs `&"ui_hover"` (`TactileButton.gd:52`), `&"capture"` (`Wardstone.gd:37`), `&"vendor"` (`HubShop.gd:1427`), `&"trade_undo"` (`HubShop.gd:344`), tile ids `&"dirt"`, `&"mud"`, `&"decal"`, `&"door"`, `&"floor"` (`ChunkManager.gd:614-648`, `Level1Builder.gd:787`) — each has one writer and no `&"…"` reader; readers may use plain Strings, so verify before deleting.
+
+---
+
+## Status 2026-08-30 — nothing executed; two findings overtaken by the 08-29 deletions
+
+No renaming or string unification from this audit has been attempted: every
+commit in `c131cd2..b2b1604` is cleanup, save hardening, or an unrelated fix.
+All 30 rows of §1 re-verified open at `b2b1604` by fresh grep — spot evidence:
+"Armour" `Augment_DoctrineOfBurden.tres:13` vs "Armor" `Inventory.gd:16` (#1);
+"recognizes" `apotheosis_law_of_admission.tres:20` vs "recognises"
+`Segment1Text.gd:36` (#2); "Scatter Doctrine" `major_ranged_shotgun.tres:15`
+(#5); "NO ACTIVE ATTEMPT" (now `SaveCard.gd:189`) vs "Start Run"
+`base.tscn:255` (#6); "Full protocol recorded" `ManifestationPairNotifier.gd:163`
+(#7); "Hold within the Gate to Escape" `ExitRite.gd:523` two lines under
+"Rewrite the Rite" (#10); "Wardstone Attuned" `Wardstone.gd:133` vs
+"WARDSTONE REWRITTEN" `Segment1Text.gd:36` (#11); "District boss defeated"
+`SegmentProcBuilder.gd:590` / "District heat" `HudThreatController.gd:225`
+(#12); "THE DISTRICT SHIFTS — %s" `EncounterDirector.gd:226` (#14);
+"CURRENT SUPPORT" `HubShop.gd:384`, "Supporters search"
+`FollowerFeedbackUI.gd:57` (#16); "r%d" `BagSlot.gd:199` vs "R%d"
+`ItemTooltip.gd:160` (#19); the divergent `EQUIP_HINTS` table
+`InventoryStash.gd:14` (#20); "SHARDS" `ManifestationNouns.gd:45` (#21);
+"Triangle Commit" vs "Index Commit" `Lattice.tres:44,45,61` (#24);
+"Offer Bag"/"Manage Inventory" `HubShop.tscn:341,197` (#25); "this HUB"
+`HubShop.gd:219` (#26). §2's ten player-visible items all stand. §3: the six
+class_name ≠ basename rows unchanged. §4: the near-duplicates are all present
+— `&"dev_grant"`/`&"developer_grant"`, `&"bren_first_follower"`/`&"followers_first"`,
+`&"retire"`/`&"retired"` still at `EnemyIndex.gd:222,383,452`/`:443` even
+after `7bfc6cb`'s removals, `&"another action"` `SettingsScreen.gd:356`; and
+`BuildIdentityTest.gd:53,88` still uses `&"Momentum"/&"Shard"` — `13c7d0f`
+edited that block but changed only the luck fixture.
+`docs/design/MANIFESTATIONS.md:157-173`'s stale family column is unchanged
+(`2f40501` fixed citations in other docs only).
+
+**Overtaken by deletion (2 findings)**
+
+- §3 enemy chain, Orbiter row: `modules/EnemyOrbit.gd` deleted in `0428e8d`;
+  zero references remain. The Orbiter has no behaviour module now, so the
+  "module named by verb" issue is moot; scene/spec/id/display still align.
+- §4 dead alias probes, first bullet: `ui/components/selection_card.gd`
+  deleted in `ae86c60`, taking the 12 dead alias ids with it. The two
+  companion probe sites stay open: `ui/screens/base.gd:216-220` (String
+  alias lists) and `ui/widgets/AugmentActiveBadge.gd:367-370` (cooldown
+  aliases).
+
+**Counts and citations gone stale (findings themselves unchanged)**
+
+- §3 casing: `selection_card.gd` (`ae86c60`) and `scripts/boot.gd` +
+  `scenes/boot.tscn` + `scenes/_dev/sprite_2d.tscn` (`7a432cb`) are gone —
+  now 9 snake `.gd` (was 11) and 6 snake `.tscn` (was 8); strike
+  `boot.tscn`→"Boot" from the root-node list. Script total 489 → 481
+  (11 deleted across `7a432cb`/`ae86c60`/`0428e8d`/`af4e23e`, 3 new test
+  scripts); the six mismatch rows are unaffected.
+- §3 tests: `FlowFieldAllocationBenchmark` removed in `af4e23e` — 22
+  `.gd`-only tests, was 23.
+- §1 #12: `SegmentPlan` deleted in `0428e8d` — strike it from the evidence
+  list; the row itself is open as quoted above.
+- Line drift from later fixes: `SaveData.gd` is 140 lines after `054f635`
+  (preamble cite `:4-121` → `:4-140`; `attempt_pending_big_choice` :66→85,
+  `attempt_big_choice_source_segment` :70→89, `attempt_major_choice_id`
+  :73→92, `attempt_doctrine_*` :81-87→100-106, `total_runs` :18→37) — every
+  persisted field family the risk ratings rest on is unchanged, and
+  `054f635` now names the save-critical ones frozen in the header.
+  `SaveCard.gd` after `9453f95`: :173→189, :205→221.
+  `ManifestationCatalog.gd` after `b2b1604` (+1/+9 lines): SLOT consts
+  :16-23→17-24, "Travelling" :59→68, Scar Tissue "Armour" :155→164,
+  `BOND_*` :280-316→289-325.
+
+None of the other 08-29 deletions touches this audit: `CoverWindow.gd`,
+`VisionOverlay`, `HudInventoryController` and `InventorySlot.tscn` are never
+cited here (`InventorySlotView.gd`, cited in #7, is a different, live file).
+
+**Correction to this audit**: #2 lists "cancelled" `SettingsScreen.gd:163`
+among UK spellings in player text — that occurrence is a signal name
+(`InputCaptureOverlay.gd:5` declares `signal cancelled`), never displayed;
+it belongs with the code identifiers the audit says to KEEP. The
+"UNIFY-UI (5 US strings)" action is unaffected.

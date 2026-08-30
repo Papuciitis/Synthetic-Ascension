@@ -133,3 +133,69 @@ Documented as "preserved", but unreferenced; all `af1fc46 2026-07-30`; each PNG 
 The graph resolves literal `res://` strings, `uid://` ids (via `.uid`/`.import`/scene headers), `class_name` word matches (generous: a mention in a comment counts as a use, which biases toward KEEP), two-level `const X := DIR + "/…"` concatenation in `global.gd`, the eight directory-scan roots, and the SFX manifest. It **cannot** see: paths assembled at runtime from data (`"%s.tscn"` in tests, `path_join` on user dirs), `get_node`/`NodePath` lookups (node names, not files), resources referenced only from untracked or `.godot/`-cached state, or assets used by tooling outside the repo. Checks that mitigate this: `git grep` for concatenations near `res://assets|scenes|ui|effects` (only `global.gd` constants, `SaveManager` `user://` slots, and `batch_icon_cutter` outputs), for `"decal_|"covers/|"backgrounds/|"textures/` fragments (none), and `-F` basename search of every REMOVE candidate across all tracked files including `.md/.txt/.json`. Test scripts were checked for existence of every `res://` target and for a sample of called methods, not executed (read-only constraint). Sizes are tracked-file bytes (`du -b`/`stat`), including `.import`/`.uid` siblings; the on-disk `.godot/imported/*.ctex` copies are extra and untracked.
 
 Out of this dimension but noticed: root-level `RECOVERY_EDITOR_TMP_ARTIFACTS.zip`, three `.patch` files and `performance_results/` (642 tracked files) are excluded from export by filter, but the `tools/*.gd|.tscn` and every asset above are not — `export_filter="all_resources"` packs them.
+
+---
+
+## Status 2026-08-30 — all 17 REMOVE rows executed; REVIEW is still open
+
+Verified against the tree at `b2b1604` (`git cat-file -e` per candidate,
+`git show --stat` per commit). The commit-per-win table lives in
+`2026-08-28-cleanup-audit.md` § Status 2026-08-29; this section maps that work
+back to the rows of this file.
+
+**REMOVE — 17/17 rows executed, nothing missed.**
+
+- A (dead scripts/scenes): `7a432cb` boot pair + `_dev` scratch pair;
+  `ae86c60` InventorySlot / SelectionCard pair / HudInventoryController;
+  `0428e8d` EnemyOrbit, VisionOverlay + both shaders, SegmentPlan,
+  CoverWindow.gd, VFX_SpiritSlashImpact pair. Every `.uid` sidecar went with
+  its file; `scripts/` and `scenes/_dev/` no longer exist as directories.
+- B (loose textures): `e7d4de0` deleted `Player_Placeholder.png`,
+  `fog_noise_01.png`, `decal_cracks_01.png`, `decal_stain_01.png`. **The three
+  covers were moved, not deleted**, per the row's risk note:
+  `marketing/covers/` under a `.gdignore` (100% renames, bytes unchanged);
+  only their `.import` sidecars were deleted. The referenced
+  `covers/main_menu_backdrop.jpg` stays put.
+- C (archived ground folders): `9a0376c` removed all three `_legacy_*` folders
+  and rewrote the `GROUND_TEXTURE_PATCH.md` "Preserved material" section in
+  the same commit, as the row required.
+
+**REVIEW — one row overtaken, four still open (re-verified at HEAD).**
+
+- Overtaken: `tools/tests/FlowFieldAllocationBenchmark.gd` was deleted by
+  `af4e23e` as one of the three assertion-free benchmarks — not run-or-adopted.
+- Open: `_source_cethiel_cc0_selected/` is unchanged (33 tracked files, no
+  `.gdignore` — still imported and exported); `tools/BatchIconCutter.tscn` +
+  `batch_icon_cutter.gd` and `tools/ProcPlanSmokeTest.gd` still sit directly
+  in `tools/`, which the export `exclude_filter` still does not cover
+  (`export_presets.cfg` last changed in `4931865`, pre-audit) — all three
+  still ship; `data/weapons/StarterMagic.tres` is still a bare script-less
+  `[gd_resource type="Resource"]`.
+- The other 25 unswept test entry points all still exist and are all still
+  outside the sweep: the post-cleanup sweep grew to 85 suites only by the
+  three new regression tests (cleanup audit § Status). Per-test verdicts
+  remain with `2026-08-28-stale-tests.md`.
+
+**UPDATE DOC — four of five rows fixed, one half-open.**
+
+- `2f40501` fixed all three phantom `.tscn` citations (exit-rite:390 now runs
+  `-s …InputBindingServiceTest.gd`; the spawn-filter and enemy-lifecycle plans
+  now cite the `.gd`) and dropped **both** dangling folder colours —
+  `res://_archive/` from this section plus `res://scripts/`, which row A.1
+  predicted would dangle once `boot.gd` went.
+- `GROUND_TEXTURE_PATCH.md` was rewritten in `9a0376c`, but
+  `DEVELOPMENT_LOG.md:334` still says the previous grass is preserved under
+  `_legacy_dense_foliage_0242/` — folder deleted; **that half of the row is
+  still open** (arguably fine as a dated log entry; rewrite or annotate).
+
+**KEEP-section hygiene, done in passing:** the three missing `.uid` sidecars
+are now committed (`CursedVault.gd.uid` in `7bfc6cb`, the two test sidecars in
+`af4e23e`). The out-of-scope root artifacts (`RECOVERY_EDITOR_TMP_ARTIFACTS.zip`,
+the three `.patch` files, the STATIC_VALIDATION json) were retired by
+`2244764`, and `13bebb4` untracked the flight-recorder captures.
+
+**Stale citations in this audit** (moved, not wrong): `GROUND_TEXTURE_PATCH.md`
+and `PATCH_MANIFEST.md` now live under `docs/history/` (`2244764`); read the
+evidence lines above accordingly. No factual claim in this audit turned out
+wrong during execution — the cleanup audit's corrections (C1.1, C7) concern
+rows that were never in this file.

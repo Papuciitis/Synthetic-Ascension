@@ -193,3 +193,67 @@ Below the cut: `CursedVault.gd:39` (~10 µs, 0-1), `MagicMissileEffect.gd:32` id
 - **`core/systems/world/ChunkManager.gd:218-229`** — replan gated on a quarter-chunk of camera movement, rationale in the comment.
 - **`effects/augments/logic/HexBlinkMarkEffect.gd:210-214`**, **`core/actors/player/PlayerDashState.gd:90-93`** — epsilon-gated signal emission.
 - **`ui/widgets/RunSheetHUD.gd:145-151, 290-293`** — signature-gated page rebuilds (only the signature computation is still per tick).
+
+---
+
+## Status 2026-08-30 — nothing executed; top-10 re-verified open, two rows overtaken by cleanup deletions
+
+No commit between `c131cd2` and `b2b1604` targets a finding of this audit.
+Every code change that touched a cited file was a cleanup or bugfix from the
+other audits; each was diffed against the cited callback and none alters it.
+
+**Re-verified still open at `b2b1604`** (read from the tree, grouped):
+
+- All ten §2 items: `HudTooltipController` still calls `_show_tooltip(inst)` →
+  `show_item` + `reset_size()` every hovered frame with no instance-id cache;
+  `ExitRite` locked branch, `PrimaryObjective` pre-activation and
+  `tick_finished`, `Wardstone` `not _player_inside` branch,
+  `VFX_WardstoneIdleAura`, `WaypointSigil` all `queue_redraw()` per frame;
+  `AugmentActiveBadge._apply_ready_blend` still writes
+  `_frame_style.border_color` unconditionally; `ProjectileSimulationManager.
+  _update_renderer` still uploads the full `capacity*12` buffer +
+  `emit_changed()` with `_active_count == 0`; `ActiveAbilityHUD` per-frame
+  poll; Oakheart/Firestone/RegenerationRing 60 Hz redraws; the three
+  gate/evac/checklist controllers.
+- Autoloads: `PerformanceFlightRecorder._poll_completed_reports()` still runs
+  before the `enabled` check; `ThreatDirector` still ticks at 5 Hz in menus;
+  `EnemyIndex.gd:74` dead `set_physics_process(true)` toggle;
+  `EnemySimulationScheduler` `_physics_process` unchanged (7bfc6cb removed
+  three zero-caller functions below line 400 only).
+- World/UI/effects spot checks: `CursedVault` and `WagerShrineObjective`
+  per-frame redraws, `Level1Builder` unconditional `resonance_changed` emit,
+  `SegmentProcBuilder` per-frame discovery + unconditional `objective_changed`
+  emits, `PlayerAimReticle.set_aim` redraw, `player.gd` three
+  `get_node_or_null` lookups per physics tick, `MagicMissileEffect` per-frame
+  `_find_nearest_enemy` while nothing is in range, `HitFeel`,
+  `FollowerFeedbackUI`, `RunSheetHUD` 10 Hz signature polling,
+  `VFX_SpiderlingVisual` per-frame redraw — all as written.
+
+**Overtaken by deletion** (cleanup audit wins, not perf work):
+
+- `scripts/boot.gd:10` dead `_process: pass` — file deleted in `7a432cb`
+  (win #2); the row's "delete" suggestion is thereby done.
+- `core/systems/vision/VisionOverlay.gd:28` — file deleted in `0428e8d`
+  (win #4), along with `vision_overlay.gdshader`.
+
+**Corrections to this audit**
+
+- The `VisionOverlay.gd:28` row was miscounted as live cost: no scene,
+  material or script referenced the file (`0428e8d`'s re-grep; VisionRig.tscn
+  uses VisionRig.gd/FogOfWar.gd/vignette.gdshader), so the node never
+  instantiated and its "4 `set_shader_parameter` calls per frame" / ~5 µs
+  below-the-cut entry was never actually paid.
+- The `CursedVault.gd:39` clause "after `_opened` it still runs the
+  distance/`is_dead` reads forever" was already false at `c131cd2`:
+  `_process` opens with `if _opened: return`. What survives `_open()` is only
+  the empty callback; the per-frame `queue_redraw()` half of the row is real
+  and open, and the `set_process(false)` suggestion stands.
+- Stale line numbers only (code unchanged): `enemy.gd:825,1047` dead
+  `set_process(true)` toggles now sit at 817/1039 after `7bfc6cb`.
+
+Incidental brushes with cited files, none of them perf-hygiene changes:
+`e549847` gives `projectile.gd` `_physics_process` a `_hit` early-return
+(bugfix; trims post-hit frames of a transient bullet), `2aebf62` defaults
+`debug_prints` off in MagicMissile/StaminaCore (logging audit), `7bfc6cb`
+removed zero-caller functions from `EnemyIndex`/`EnemySimulationScheduler`/
+`enemy.gd`/`RangedBullet`. §3's house-pattern files are all untouched.

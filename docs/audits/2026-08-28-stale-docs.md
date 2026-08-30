@@ -76,3 +76,82 @@ There are **zero** `TODO/FIXME/XXX/HACK` markers in any `.gd/.tscn/.ps1`. Findin
 3. **`PROJECT_STRUCTURE.md` + `OPENING_SEQUENCE.md`** — "Godot 4.6", a dev panel gated by the dead `debug_set_collision_tools` flag, an ownership map without enemy_world/manifestations/run_sheet/telemetry/encounters, and no README saying these are 0.21–0.23 history.
 4. **`docs/gamegoal.md`** — Doctrine of Burden and Inversion Lens tagged DESIGNED and Manifestations PROPOSED; all three are shipped and tested.
 5. **Root 0.25.6/a/b `.patch` files, `PATCH_MANIFEST.sha256`, and the stray root copy of `2026-08-19-enemy-world-foundation.md`** — version labels above the project's, a checksum that matches nothing, and a duplicate plan that is not export-excluded.
+
+---
+
+## Status 2026-08-30 — file-level rows executed; the doc content itself is untouched
+
+Verified row by row at `b2b1604` (`git log c131cd2..HEAD`, grep on the tree).
+Two commits from the cleanup series overtook every file-move/delete row; no
+document named in A/B/D was edited after the audit except the two fixed in
+this audit's own commit.
+
+**Fixed / overtaken**
+
+- `2244764` (cleanup win #9) deleted the three 0.25.6/a/b `.patch` files,
+  `PATCH_MANIFEST.sha256`, the three `STATIC_VALIDATION_0.25.*.json`,
+  `RECOVERY_EDITOR_TMP_ARTIFACTS.zip` and the root copy of
+  `2026-08-19-enemy-world-foundation.md` (the REMOVE rows in A and C), and
+  moved `CHANGE_MANIFEST_0.25.1–5.md`, `PATCH_MANIFEST.md`,
+  `PROCEDURAL_GENERATION_0.25.{0,2}.md`, `RECOVERY_AUDIT.md`,
+  `GROUND_TEXTURE_PATCH.md` and `SEGMENT1_REBUILD.md` to `docs/history/`
+  under a README that points at the direction doc — the archive resolution
+  the REVIEW rows asked for. The moves are pure renames (only
+  `GROUND_TEXTURE_PATCH.md` was edited first, by `9a0376c`), so the stale
+  statements inside them still stand, now shelved as labelled history;
+  SEGMENT1_REBUILD's UPDATE DOC row is overtaken by the archive, not fixed.
+  The now-unmatched `exclude_filter` patterns were left in
+  `export_presets.cfg`; of them only `DEVELOPMENT_LOG.md` still matches a file.
+- The playtest-protocol HIGH and the improvement-backlog header were fixed by
+  `44ec25b`, the commit that added this audit, as the rows already said:
+  the protocol now sends the tester to `project.godot` → `config/version`
+  plus the commit hash and states that BuildInfo has no UI consumer; the
+  backlog carries a "Status 2026-08-28" block.
+- The direction-doc nit is gone: the cleanup audit exists (`a813929`) and
+  §27 carries a 2026-08-29 entry (`c363d13`).
+
+**Still open — everything else.** Re-verified at HEAD, grouped:
+
+- Root: still no `README.md` (`docs/history/README.md` is not one).
+  `PROJECT_STRUCTURE.md`, `OPENING_SEQUENCE.md`,
+  `PROJECTILE_HIT_ARCHITECTURE.md` and `DEVELOPMENT_LOG.md` sit at root,
+  byte-identical to audit time — "Godot 4.6" in all four; the log still ends
+  at 0.25.4 (line 424 of 451).
+- `docs/OPTIMIZATION_HANDOFF.md`: no superseded banner, no mention of the
+  direction doc; "budgets 24/24 … 16/16" (line 28) still contradicts
+  `autoload/EnemySimulationScheduler.gd:46-47,59-60` (12/24, 8/16 — those
+  line refs are still exact).
+- `docs/PERFORMANCE_PATCH_CHANGELOG.md`, `EQUIPMENT_FOUNDATION_CHANGELOG.md`
+  (still no date header), `MANIFESTATION_LAYER_CHANGELOG.md` and
+  `manifestation_thoughts.md` (still 1201 lines): unchanged since `c131cd2`.
+  The MANIFESTATIONS.md-vs-reworked-logic question remains unverified.
+- `docs/gamegoal.md`: DESIGNED at 629 and 651, "NEW PROPOSED LAYER" at 846 —
+  untouched.
+- D: `export_presets.cfg:12` export_path and `:33-34`
+  `file_version`/`product_version="0.0.0.25"` unchanged;
+  `BuildInfo.gd:4-9` still says "the menu" and still no menu or HUD reads
+  BuildInfo — though the consumer list has since grown: `global.gd` stamps
+  `game_version` into saves (`054f635`).
+- E: every comment finding re-verified present — `debug_set_collision_tools`
+  assigned-only (`MainMenu.gd:36,210,265`, never read), the
+  `_spawn_wall_line` dead chain (`ChunkGenWalls.gd:123`,
+  `ChunkGenImpl.gd:375-381`, wrapper callerless), `BagInventory.add_pickup`
+  zero callers, `EnemyProjectile.gd:54`, the disabled-at-runtime cover
+  collider nodes, the one-way-import comments (`EnemyWorld.gd:589` survived
+  `7bfc6cb`), `SegmentProcBuilder.gd:217`, and all seven "roadmap 2.5–2.8"
+  citations. Line shifts only: `global.gd` 113→114 and 1174→1175,
+  `SaveSelect.gd` 181→186 (via `9453f95`).
+
+**Corrections to this audit**
+
+- The `SaveSelect.gd:181` row was wrong when written: `profile_name` was
+  already read at `c131cd2` by `SaveCard.gd:157` (card name fallback) and
+  `SaveSelect.gd:160` (rename-input default), not "only by SaveIntegrityTest".
+  The field is live and the comment's "older screens" exist — downgrade the
+  row to KEEP.
+- Of the five most-misleading items, #1 and #5 are resolved (`44ec25b`,
+  `2244764`); #2, #3 and #4 stand.
+
+New since the audit: an untracked 229 MB `build.zip` sits at the repo root —
+a fresh root artifact of exactly the kind win #9 retired; one `.gitignore`
+line (or deleting it) closes that before it gets committed.

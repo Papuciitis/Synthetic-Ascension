@@ -78,3 +78,65 @@ Every `RunEvents.*`/`Global.*` connect from a per-run node either has an `_exit_
 8. Timer lambdas / awaits after free (`GravemarchMassArrest.gd:171`, `player.gd:992`, `spawner.gd:757/765`, `IndoorVolume.gd:162`, `BagUI.gd:389`).
 9. `ManifestationCatalog.gd:46` / `ManifestationPairCatalog.gd:19` — static caches without `@static_unload`.
 10. `EnemySniper.gd:20,43` / `EnemyTactical.gd:25,43` / `HitFeel.gd:75` — hard-coded 60s.
+
+---
+
+## Status 2026-08-30 — top-10 rows 1 and 9 fixed; the other eight re-verified open at `b2b1604`
+
+Read-only re-verification against `b2b1604`; nothing was executed. Of every
+file this audit cites, only `projectile.gd` (`e549847`), the two manifestation
+catalogs + `global.gd` (`b2b1604`), `enemy.gd`/`RangedBullet.gd` (`7bfc6cb`,
+zero-caller removals — line drift only), `EnemyOrbit.gd` (deleted, `0428e8d`)
+and `MagicMissileEffect.gd` (`2aebf62`, logging only) changed since `c131cd2`;
+each open finding was still re-checked in the tree, not inferred from the diff.
+
+**Fixed**
+
+- **§6 HIGH (row 1)** — `e549847`; the inline blockquote in §6 already covers
+  it, including the two corrections (no `is_flushing_queries()` in 4.7.1; the
+  bug was latent, not live). Re-verified at HEAD: `projectile.gd:60-78`
+  defers `_despawn` out of `area_entered` with a `_hit` guard reset on obtain;
+  `PoolManager.recycle` deliberately unchanged.
+- **§1 LOW (row 9)** — `b2b1604` (today): `@static_unload` on both catalogs
+  plus a `release_static_caches()` that *rebinds* `_defs`/`_by_slot` and
+  `_defs`/`_by_pair_key`, called from `Global._exit_tree`
+  (`global.gd:1248-1249`) alongside the existing three; lookups rebuild
+  lazily via `_ensure_built()`.
+
+**Verified still open** — every other finding, at the cited code:
+
+- Rows 2–8 and 10: `_latest_incident.clear()` still at
+  `PerformanceFlightRecorder.gd:537` (enqueue-by-reference at `:422`, and the
+  queue's "caller guarantees a finalized incident is immutable" comment is
+  exactly what `clear_session()` violates); `EnemyProjectile.gd` still
+  integrates in `_process` (now `:101-110`); `PoisonSpiderling.gd:113,124`
+  verbatim; the `"enemies"`-group recycle cluster fully intact (`enemy.gd` has
+  no `remove_from_group` — `add_to_group` at `:191,:815`;
+  `Level1Builder.gd:1441` frees the group; `EnemyHerald.gd:76` scans it with
+  no dead/pool filter; `EnemySeparationSystem.gd:36` / `EnemyTactical.gd:138`
+  filter `dead` only); `PoolManager.gd:77-78` fallback parent unchanged;
+  `FlowFieldNav.gd:170-175` `_exit_tree` still resets none of
+  `_building/_use_snapshot/_cancel_requested/_build_task_id` and the cancel
+  flag is still a plain bool; all six timer-lambda/await sites at their exact
+  cited lines (`GravemarchMassArrest.gd:171`, `player.gd:992`,
+  `spawner.gd:757,765`, `IndoorVolume.gd:162`, `BagUI.gd:389`); the hard-coded
+  60s verbatim (`EnemySniper.gd:20,43`, `EnemyTactical.gd:25,43`,
+  `HitFeel.gd:75`).
+- §2 LOWs: `EnemyShooter.gd:404/411` still mixes a deferred `add_child(proj)`
+  with a synchronous `add_child(mf)`; `MeleeSlash.gd:81,93` still one
+  `physics_frame` await; `BagUI.gd:387` still captures slot Controls at
+  schedule time.
+
+**Corrections / stale citations**
+
+- §3's clean note lists `EnemyOrbit` among the modules that skip `_enemy`
+  validation — `EnemyOrbit.gd` was deleted (`0428e8d`, cleanup A6); the note
+  now covers `EnemyBomber`/`EnemySplitter` only.
+- Line drift from `7bfc6cb`, findings unaffected: `enemy.gd` `add_to_group`
+  820→815 and the `set_deferred` trio 663/674/678→655/666/670;
+  `RangedBullet.gd`'s `_hit` guard 150,168→33,75.
+- §6 HIGH's obtainer list re-confirmed against HEAD in the blockquote's
+  favour: `MagicMissileSpell.tscn` never assigns `projectile_scene` (`cast()`
+  bails on null) and `MagicMissileEffect.tscn` pools
+  `MagicMissileProjectile.tscn`, so the pooled `projectile.tscn` is reachable
+  only from the dead `Weapon.gd:39` and two test fixtures.

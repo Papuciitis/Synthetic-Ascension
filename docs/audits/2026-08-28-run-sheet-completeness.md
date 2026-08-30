@@ -142,3 +142,53 @@ Runner-up: Doctrine of Burden `details` says "at least 10% severity" while code 
 | `HudThreatController.gd:8,182` `tier_size 25` | `ThreatDirector.gd:520` | UI-only convention. |
 
 Key files for follow-up: `ui/widgets/RunSheetHUD.gd`, `ui/widgets/ItemTooltip.gd`, `ui/widgets/AugmentTooltip.gd`, `core/actors/player/player.gd` (481-604), `core/systems/run_sheet/BuildIdentity.gd`, `ui/controllers/HudThreatController.gd`, `autoload/ThreatDirector.gd`, `core/systems/items/BurdenResolver.gd`.
+
+---
+
+## Status 2026-08-30 — finding #9 fixed; the other nine and the §15 ledger still open
+
+**Fixed:** §4 #9 (BuildIdentity Luck clause could never fire) — `13c7d0f`.
+Exactly the fix proposed: threshold `0.20` against fractional `run_luck`, the
+sentence prints `luck * 100` with a `%` sign, `BuildIdentityTest` passes `0.38`
+and pins "Luck +38%". Verified at `b2b1604` (`BuildIdentity.gd:72-73`).
+
+**Still open — every other §4 finding re-verified at HEAD, none executed:**
+
+- #1/§3: no per-stat ledger; no ledger identifier exists anywhere in the tree,
+  `recompute_run_stats` untouched.
+- #2: Profile POW/HST are still bare `stats.power`/`stats.haste`
+  (`RunSheetHUD.gd:101-102`); only SPD goes through `get_effective_move_speed`.
+- #3: `AugmentTooltip.gd` still formats unscaled `a.mods` (:110-113) and
+  `"%+d Luck"` (:155); the six `mods_scale_per_level` augments are unchanged.
+- #4: no `gift_text`/`price_text`/`max_hp_mul` string anywhere in
+  `RunSheetHUD.gd`; the Doctrine Record still prints titles and event labels
+  only (:313-337).
+- #5: `power_threshold_noted` still has no listener — only the declaration and
+  the emit (`ThreatDirector.gd:171,244`).
+- #6: ThreatTooltip still ends at heat/overtime/loot — no phase, rite-channel
+  or elite line; `_elite_bonus` still discarded (`HudThreatController.gd:193`,
+  fed by the initial draw at :79 too).
+- #7: `follower_belief_power()` is still read only by `recompute_run_stats`;
+  no surface.
+- #8: the Lens Luck kicker still uses the `0.30` literal in `player.gd:595`
+  and the sheet's Lens block (:487-499) still says nothing about it.
+- #10: `ItemTooltip.gd:254,260` still say "counts as NEG for parity and sets".
+
+§5 spot-checked: the `0.24`/`0.30` Corruption literals still live on both
+sides (`RunSheetHUD.gd:456,462-463` vs `player.gd:574,576`), and
+`data/augments/` is untouched since `c131cd2`, so every stale-`details` row
+stands.
+
+**Nothing went stale.** The 2026-08-29 cleanup series deleted no surface this
+audit cites (`InventorySlot.tscn`/`selection_card.gd`/`HudInventoryController.gd`
+are not among them; the slot-roll label cited by basename lives at
+`ui/components/InventorySlotView.gd:311`, unchanged). `player.gd`,
+`RunSheetHUD.gd`, `ItemTooltip.gd`, `AugmentTooltip.gd`,
+`HudThreatController.gd` and `ThreatDirector.gd` are byte-identical to the
+audit tree. Line drift only, from unrelated fixes: `global.gd` +1 from :22
+growing to +10 by :1913 (`054f635`, `bc13160`, `2dca035`),
+`ItemInstance.gd` +3 (`bc13160`), `ManifestationCatalog.gd` +1/+9 and
+`ManifestationPairCatalog.gd` +1/+6 (`b2b1604`); the `scenes/game.gd`
+citations (:345, :377, :383) survive `3619ddd`, whose edits land after :405.
+
+**Corrections:** none.

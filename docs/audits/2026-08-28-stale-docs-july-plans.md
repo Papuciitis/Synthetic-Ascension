@@ -130,3 +130,64 @@ None of the 12 is current; all describe work that landed in `af1fc46` (or `31ca4
 3. **Flight recorder:** editor/`--path` runs write to `res://performance_results`, not `user://performance_captures/`, and the "Performance Lab" checkbox no longer exists — the recorder is auto-armed on every dev launch.
 
 Runner-up: audit-closure's `duplicate_feed_value = 0.10` for rings — exported, set to 0.0 everywhere, read by nothing.
+
+---
+
+## Status 2026-08-30 — nothing executed against these docs beyond two citation fixes; all five headline contradictions re-verified
+
+Since `a8a535a`, exactly one commit touched the 20 docs in scope: `2f40501`
+(cleanup-audit win #10) — in-place citation fixes, no banners, no ticked
+boxes. Everything else was re-verified open by grep at HEAD `b2b1604`.
+
+**Fixed / overtaken (named precisely)**
+
+- §2 `plan:342` `ProjectileRenderBenchmark.tscn` — fixed by `2f40501`: the
+  plan now cites the `.gd` as a `SceneTree` script run with `-s`
+  (`ProjectileRenderBenchmark.gd` itself survives at HEAD).
+- §5 third row, `SpawnFilterTest.tscn` half — fixed by `2f40501` (all three
+  citations in the navigation plan). The `FlowFieldBenchmark.gd` half is
+  untouched (`plan:147` still names it), **and the audit's stated actual,
+  `FlowFieldAllocationBenchmark.gd`, was deleted in `af4e23e`** (2026-08-29,
+  assertion-free benchmark) — neither name exists at HEAD, so the remaining
+  doc fix is "created as `FlowFieldAllocationBenchmark.gd`, removed
+  2026-08-29", not a rename. The row was correct when written; it went
+  stale a day later.
+
+**The five headline contradictions all still stand** (each re-read at HEAD):
+
+1. `ChunkManager.gd:61` `tiled_world_rendering: bool = false` — §12 HIGH.
+2. `ChunkManager.gd:11` `max_chunk_generations_per_frame: int = 4` — §7.
+3. `EnemySimulationScheduler.gd:16-17` `mid_group_count = 3` /
+   `far_group_count = 7` (≈ 20 / 8.6 Hz) — §2/§7. `7bfc6cb` removed three
+   pressure helpers lower in that file; the cited export block is
+   byte-identical to the audited tree.
+4. `PerformanceFlightRecorder.gd:28-33` `res://performance_results` under
+   the editor feature, `user://performance_captures` otherwise — §6.
+5. `PerformanceOverlay.tscn:6` background alpha 0.5 (the `0.72` at `gd:162`
+   is still the viewport-height fraction) — §8/§11.
+
+**Everything else re-verified open, grouped.** `duplicate_feed_value` is
+still the dead export (`ItemData.gd:17`, written `0.0` in every def
+including the eight curse `.tres`, read by no `.gd`; `7bfc6cb`'s ten
+zero-caller removals were functions only and did not include it) — §1/§3.
+`finalize_rarity` (`EnemyDrops.gd:128`), public `validation_score`,
+`GAP_HALF_LIFE = 1.5`, backtick-only console (`PerformanceOverlay.gd:97`;
+`DeveloperConsoleTest.gd:85-94` still asserts F8 does not open it), the
+absent "Performance Lab" string, the `MainMenu.gd` auto-arm and the
+`game.gd:193` dev-segment side-effect are all unchanged. No plan gained a
+banner or a date fix; the root-cause and keybinding plans still show 19 and
+4 unticked steps; both changelogs still sit at
+`docs/PERFORMANCE_PATCH_CHANGELOG.md` / `docs/EQUIPMENT_FOUNDATION_CHANGELOG.md`
+repeating the stale numbers (`2244764` moved the 0.25.x records to
+`docs/history/`, not these two).
+
+**Corrections:** none to the audit as written. One KEEP note deepened: §4's
+"no new save-schema fields is historical" is more historical still —
+`054f635` added `save_version`/`game_version` to `SaveData`. Of the code
+files this audit cites, only `SaveManager.gd`, `game.gd`, `EnemyIndex.gd`
+(the `7bfc6cb` removals; `retire_enemy`/`simulation_tier_counts`/
+`get_debug_counters` survive) and `EnemySimulationScheduler.gd` changed
+since `a8a535a`, and none of the changes overturns a row.
+
+Tally: 35 findings; 1 fixed (`2f40501`), 34 still present at HEAD (one of
+them half-fixed with the stale remedy noted above).
