@@ -250,16 +250,16 @@ func show_item(inst: ItemInstance) -> void:
 		lines.append("")
 		if slot_index >= Inventory.STAT_SLOT_COUNT:
 			# Accessory curses drive scripted behaviour, not a stat: they count
-			# for parity and sets, never for Burden arithmetic.
+			# as NEG in the polarity census, never in Burden arithmetic.
 			lines.append(
-				"[color=%s]ACCESSORY CURSE %d%% — counts as NEG for parity and sets; not a stat Burden.[/color]"
+				"[color=%s]ACCESSORY CURSE %d%% — counts as NEG in the polarity census; not a stat Burden.[/color]"
 				% [NEG.to_html(false), int(round(severity * 100.0))]
 			)
 		elif burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
 		and Global.run_inventory.get_at(slot_index) == inst:
 			lens_suppressed = true
 			lines.append(
-				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG for parity and sets.[/color]"
+				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG in the polarity census.[/color]"
 				% [
 					CMP_POS_HEX,
 					int(round(severity * 100.0)),
@@ -283,6 +283,8 @@ func show_item(inst: ItemInstance) -> void:
 					"" if qualifies else " Too mild for its range to count as a burden.",
 				]
 			)
+	elif inst.polarity == ItemInstance.Polarity.POS:
+		_append_pos_roll(lines, inst)
 
 	if inst.polarity == ItemInstance.Polarity.NEG:
 		var deepening: bool = (
@@ -411,6 +413,44 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 				% [set_colour, before_strength, after_strength]
 			)
 	return rows
+
+
+## Stat key each statistical slot's roll is applied to, in the order the stat
+## pass walks the slots (player.recompute_run_stats). The first three slots
+## multiply their stat by (1 + roll); the last three add the roll to it.
+const SLOT_STAT_KEYS: Array[String] = ["max_hp", "armor", "move_speed", "power", "haste", "luck"]
+const MULTIPLIED_SLOT_COUNT: int = 3
+
+
+## The POS mirror of the burden line: the roll is already on the instance and
+## on the slot label, but nothing said whether it multiplies or adds. The
+## comparison block and the slot label print it bare, so the one place the
+## player reads an item in full names the arithmetic.
+func _append_pos_roll(lines: Array[String], inst: ItemInstance) -> void:
+	var slot_index: int = int(inst.data.equip_slot)
+	if slot_index < 0:
+		return
+	var roll: float = inst.active_pct()
+	lines.append("")
+	if slot_index >= Inventory.STAT_SLOT_COUNT:
+		# The stat pass never reads an accessory's roll; its own effect scene
+		# does (Regeneration Ring, Oakheart, Firestone read active_pct()).
+		lines.append(
+			"[color=%s]ACCESSORY ROLL %+d%% — read by this item's scripted effect; not a stat.[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0))]
+		)
+		return
+	var stat: String = String(KEY_MAP.get(SLOT_STAT_KEYS[slot_index], SLOT_STAT_KEYS[slot_index].to_upper()))
+	if slot_index < MULTIPLIED_SLOT_COUNT:
+		lines.append(
+			"[color=%s]EFFECT ROLL %+d%% — %s ×%.2f on this slot[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0)), stat, 1.0 + roll]
+		)
+	else:
+		lines.append(
+			"[color=%s]EFFECT ROLL %+d%% — %s %+d%% on this slot[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0)), stat, int(round(roll * 100.0))]
+		)
 
 
 ## What the candidate's slot would pay under an Inversion Lens, phrased the

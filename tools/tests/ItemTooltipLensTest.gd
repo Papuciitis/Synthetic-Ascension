@@ -1,8 +1,9 @@
 extends Node
 
-# Observability audit 2026-08-30 §5 #1, §5 #5 and §6 #8: the slot label, the
-# item tooltip and its swap preview must say what a slot PAYS under an
-# Inversion Lens - the resolver's own arithmetic, not the stored roll.
+# Observability audit 2026-08-30 §5 #1, §5 #5, §6 #8 and Run Sheet audit
+# 2026-08-28 §4 #10: the slot label, the item tooltip and its swap preview
+# must say what a slot PAYS under an Inversion Lens - the resolver's own
+# arithmetic, not the stored roll - and what a POS roll does to its slot.
 # Exercises the real widgets headless with a fixture wardrobe.
 #
 # Run: <godot> --headless --path . res://tools/tests/ItemTooltipLensTest.tscn
@@ -84,7 +85,7 @@ func _run() -> void:
 	_set_augments([&"augment_inversion_lens"])
 
 	_test_slot_label_prints_the_return(health_curse, power_curse)
-	_test_tooltip_burden_lines(health_curse, power_curse)
+	_test_tooltip_burden_and_roll_lines(health_curse, power_curse, armour_bless)
 	_test_swap_preview_under_the_lens(inv, health_curse, power_curse)
 
 	Global.run_inventory = _saved_inventory
@@ -132,8 +133,8 @@ func _test_slot_label_prints_the_return(health_curse: ItemInstance, power_curse:
 	slot.queue_free()
 
 
-# §6 #8: the Lens-aware feed line.
-func _test_tooltip_burden_lines(health_curse: ItemInstance, power_curse: ItemInstance) -> void:
+# §4 #10 (census wording, POS roll line) and §6 #8 (Lens-aware feed line).
+func _test_tooltip_burden_and_roll_lines(health_curse: ItemInstance, power_curse: ItemInstance, armour_bless: ItemInstance) -> void:
 	var tooltip := _make_tooltip()
 	if tooltip == null:
 		return
@@ -141,12 +142,31 @@ func _test_tooltip_burden_lines(health_curse: ItemInstance, power_curse: ItemIns
 	tooltip.show_item(health_curse)
 	var body: String = tooltip.body_label.text
 	_check(body.contains("SUPPRESSED — 80% curse inverted to +44%"), "the suppressed curse is read as the Lens reads it")
+	_check(body.contains("polarity census") and not body.contains("parity and sets"), "the census claim names what actually reads it")
 	_check(body.contains("Feeding stabilizes the curse (mildest roll survives) — a milder roll shrinks your inverted return"), "and the feed line says a stabilising feed shrinks the return")
 
 	tooltip.show_item(power_curse)
 	body = tooltip.body_label.text
 	_check(body.contains("ACTIVE BURDEN 40%"), "an active curse is a burden")
 	_check(body.contains("Feeding stabilizes the curse (mildest roll survives)") and not body.contains("inverted return"), "its feed line says nothing about a return it does not have")
+	_check(not body.contains("EFFECT ROLL"), "a curse gets the burden line, not the POS roll line")
+
+	tooltip.show_item(armour_bless)
+	body = tooltip.body_label.text
+	_check(body.contains("EFFECT ROLL +25% — ARM ×1.25 on this slot"), "a POS roll on a multiplied slot names the multiplier (%s)" % body)
+	_check(not body.contains("BURDEN") and not body.contains("Feeding"), "and no burden or feed line")
+
+	tooltip.show_item(_blessed(4, 0.12))
+	body = tooltip.body_label.text
+	_check(body.contains("EFFECT ROLL +12% — HST +12% on this slot"), "a POS roll on an added slot says it adds (%s)" % body)
+
+	tooltip.show_item(_blessed(7, 0.20))
+	body = tooltip.body_label.text
+	_check(body.contains("ACCESSORY ROLL +20% — read by this item's scripted effect; not a stat."), "an accessory's POS roll is not a stat (%s)" % body)
+
+	tooltip.show_item(_cursed(7, 0.20))
+	body = tooltip.body_label.text
+	_check(body.contains("ACCESSORY CURSE 20% — counts as NEG in the polarity census; not a stat Burden."), "an accessory curse is census-only, in the census's own name (%s)" % body)
 
 	tooltip.queue_free()
 
