@@ -145,3 +145,9 @@ Note: `user://saves/` on the development machine holds `slot_97.tres`/`slot_97.b
 The constraint in §4.1 still holds and now sits in `SaveData.gd` itself:
 scripts and item `.tres` are path-keyed with no uid; none of the 2026-08-29
 cleanup commits renamed or moved any of them.
+
+**2026-08-30 — risk #5 has its plan.** `docs/audits/2026-08-30-save-path-stable-id-plan.md`
+inventories every persistence key (two `res://`-path-keyed fields, six script-path
+references, everything else already id-keyed), reproduces the rename failures with
+a headless probe, and proposes the stable-id + alias migration (`save_version 2`).
+Design only: nothing renamed, nothing implemented, the format is unchanged.
