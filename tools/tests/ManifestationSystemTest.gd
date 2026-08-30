@@ -779,13 +779,21 @@ func _test_composure_speaks() -> void:
 	add_child(state)
 	state.claim(&"ward")
 	state.time_since_hit = ManifestationState.COMPOSURE_SECONDS + 0.1
+	# The clause lives in its own key: the sheet prints label + text + hint
+	# ("COMPOSURE 6.1s · next hit -45% when full"); the HUD row prints label +
+	# text and stays "WARD ◆◇ 6.1s". Neither ever reads "when full 6.1s".
 	var ward_label := ""
+	var ward_text := ""
+	var ward_hint := ""
 	for meter in state.get_meters():
 		if StringName((meter as Dictionary).get("channel", &"")) == &"time_since_hit":
 			ward_label = String((meter as Dictionary).get("label", ""))
+			ward_text = String((meter as Dictionary).get("text", ""))
+			ward_hint = String((meter as Dictionary).get("hint", ""))
+	_check(ward_label == "COMPOSURE" and ward_text == "6.1s", "label and value stay bare for the HUD (%s %s)" % [ward_label, ward_text])
 	_check(
-		ward_label.contains("next hit -%d%% when full" % int(round(ManifestationState.COMPOSURE_REDUCTION * 100.0))),
-		"the Composure meter says what a full bar buys (%s)" % ward_label
+		ward_hint.ends_with("next hit -%d%% when full" % int(round(ManifestationState.COMPOSURE_REDUCTION * 100.0))),
+		"the hint says what a full bar buys (%s)" % ward_hint
 	)
 	_check(state.composure_ready(), "fixture: the guard is banked")
 	state.consume_composure()

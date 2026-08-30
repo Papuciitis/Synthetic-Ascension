@@ -860,6 +860,7 @@ func get_meters() -> Array[Dictionary]:
 				"channel": channel,
 				"label": _meter_label(channel),
 				"text": _meter_text(channel),
+				"hint": _meter_hint(channel),
 				"full": noun_is_full(channel),
 			})
 	return out
@@ -920,15 +921,20 @@ static func headline_channel(noun: StringName) -> StringName:
 	return &""
 
 
-## Label for one channel's meter. Composure carries what the bar is FOR: it is
-## the one noun clock whose payoff belongs to no rule, so no describe() ever
-## explains it, and "COMPOSURE 6.0s" alone was a number that changed and did
-## not say why.
+## Label for one channel's meter.
 func _meter_label(channel: StringName) -> String:
-	var label := String(CHANNELS[channel]["label"])
+	return String(CHANNELS[channel]["label"])
+
+
+## What a meter is FOR, when no rule's describe() says it. Only Composure
+## needs one: it is the noun clock whose payoff belongs to no rule, and
+## "COMPOSURE 6.0s" alone was a number that changed and did not say why. A
+## separate key so the sheet (which has room) can print it after the value
+## and the HUD row (which has none) keeps its bare "WARD ◆◇ 3.0s".
+func _meter_hint(channel: StringName) -> String:
 	if channel == &"time_since_hit":
-		return "%s - next hit -%d%% when full" % [label, int(round(COMPOSURE_REDUCTION * 100.0))]
-	return label
+		return " · next hit -%d%% when full" % int(round(COMPOSURE_REDUCTION * 100.0))
+	return ""
 
 
 func _meter_text(channel: StringName) -> String:
