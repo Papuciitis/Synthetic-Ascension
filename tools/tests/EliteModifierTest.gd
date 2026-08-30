@@ -200,6 +200,31 @@ func _test_catalog_and_phase_gating() -> void:
 	_check(EliteModifiers.consume_teach(EliteModifiers.ARMOURED), "reset_teaching starts the run over")
 	EliteModifiers.reset_teaching()
 
+	# The legibility tunables are named, at the values the playtest started from.
+	_check(
+		EnemyActor.ELITE_LABEL_OFFSET == Vector2(0.0, -34.0)
+		and is_equal_approx(EnemyActor.ELITE_LABEL_SCALE, 1.15)
+		and is_equal_approx(EnemyActor.ELITE_IN_VIEW_MARGIN, 48.0),
+		"the label offset, its emphasis and the in-view margin are named consts at their first-guess values",
+	)
+	var probe_mark := VFX_EliteModifierMark.new()
+	_check(
+		is_equal_approx(probe_mark.feed_flash_seconds, 0.35)
+		and is_equal_approx(probe_mark.plate_ring_offset, 4.0)
+		and is_equal_approx(probe_mark.vampiric_ring_inset, 4.0)
+		and is_equal_approx(probe_mark.vampiric_ring_pulse_px, 3.0)
+		and is_equal_approx(probe_mark.streak_min_speed, 20.0)
+		and is_equal_approx(probe_mark.streak_full_speed, 300.0)
+		and probe_mark.streak_lines == 3
+		and is_equal_approx(probe_mark.streak_spacing, 7.0)
+		and is_equal_approx(VFX_EliteModifierMark.SOLID_LINE_ALPHA, 0.95)
+		and is_equal_approx(VFX_EliteModifierMark.LINE_ALPHA, 0.85)
+		and is_equal_approx(VFX_EliteModifierMark.THIN_GLOW_WIDTH_MULT, 0.6)
+		and is_equal_approx(VFX_EliteModifierMark.VAMPIRIC_PULSE_BRIGHTNESS, 1.4),
+		"and the mark's bare numbers are exports and consts at theirs",
+	)
+	probe_mark.free()
+
 
 # --- FAST: speed up, HP down, on top of the archetype's elite multipliers ---
 func _test_fast() -> void:

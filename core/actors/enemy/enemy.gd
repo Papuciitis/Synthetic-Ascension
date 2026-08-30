@@ -113,6 +113,12 @@ var _vampiric_left: float = 0.0
 var _elite_mark: Node2D = null
 # The body colour the modifier tint replaced; the clear gives it back.
 var _elite_body_modulate: Color = Color.WHITE
+# Where the modifier label pops, relative to the body.
+const ELITE_LABEL_OFFSET := Vector2(0.0, -34.0)
+# BattleText entry emphasis of the modifier label.
+const ELITE_LABEL_SCALE := 1.15
+# A promotion this many px past the visible rect still pops and teaches.
+const ELITE_IN_VIEW_MARGIN := 48.0
 
 # Shared movement helpers
 var _orbit_angle: float = 0.0
@@ -1048,7 +1054,7 @@ func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
 	for id in ids:
 		labels.append(EliteModifiers.label(id))
 	if BattleText != null:
-		BattleText.popup(global_position + Vector2(0.0, -34.0), " · ".join(labels), tint, 1.15)
+		BattleText.popup(global_position + ELITE_LABEL_OFFSET, " · ".join(labels), tint, ELITE_LABEL_SCALE)
 	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
 		return
 	for id in ids:
@@ -1056,7 +1062,7 @@ func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
 			RunEvents.tutorial_tip.emit(EliteModifiers.teach_line(id), EliteModifiers.TEACH_SECONDS)
 
 
-func _in_player_view(margin: float = 48.0) -> bool:
+func _in_player_view(margin: float = ELITE_IN_VIEW_MARGIN) -> bool:
 	if not is_inside_tree():
 		return false
 	var viewport := get_viewport()
