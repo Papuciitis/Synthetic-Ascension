@@ -22,6 +22,13 @@ const COLOUR := Color(0.85, 0.42, 0.95, 1.0)
 @export var guarantee_manifestation := true
 ## Beats requested through the EncounterDirector the moment the vault opens.
 @export var cost_beats: Array[StringName] = [&"hunter", &"charger_wedge"]
+## The rite's last-chance vault (plan 2.8): opening it takes every safeguard
+## the Exit Rite holds. The rite is found up the parent chain (it spawns the
+## vault as its child), then by group.
+@export var cost_all_safeguards: bool = false
+## Healing is sealed for this long once the vault opens (plan 2.5). The
+## player owns the lock; one without it simply pays the other costs.
+@export var cost_heal_lock_sec: float = 45.0
 
 var _progress := 0.0
 var _opened := false
@@ -75,15 +82,32 @@ func _announce() -> void:
 	if BattleText != null and BattleText.has_method("popup"):
 		BattleText.popup(global_position, "CURSED VAULT", COLOUR, 1.3)
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		RunEvents.tutorial_tip.emit("Stand in the vault to open it: a guaranteed Manifestation. Something will come for you.", 4.0)
+		RunEvents.tutorial_tip.emit(announcement(), 4.0)
+
+
+## The "fuck it" moment is only a decision if the whole bill is on the sign.
+func announcement() -> String:
+	var costs := PackedStringArray()
+	if not cost_beats.is_empty():
+		costs.append("Something will come for you.")
+	if cost_all_safeguards:
+		costs.append("It takes every safeguard.")
+	if cost_heal_lock_sec > 0.0:
+		costs.append("No healing for %ds." % int(round(cost_heal_lock_sec)))
+	var text := "Stand in the vault to open it: a guaranteed Manifestation."
+	if costs.is_empty():
+		return text
+	return text + " " + " ".join(costs)
 
 
 func _open() -> void:
 	_opened = true
 	_reward = _spawn_reward()
-	_apply_cost()
+	var billed := _apply_cost()
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
-		PerformanceFlightRecorder.record_event(&"encounter", &"vault_opened", {"rarity": reward_rarity_min})
+		var details := {"rarity": reward_rarity_min}
+		details.merge(billed)
+		PerformanceFlightRecorder.record_event(&"encounter", &"vault_opened", details)
 	opened.emit(self)
 	queue_redraw()
 
@@ -122,14 +146,50 @@ func _spawn_reward() -> Node:
 	return pickup
 
 
-func _apply_cost() -> void:
+## Bills every configured cost and says what was taken, for the recorder.
+func _apply_cost() -> Dictionary:
 	if BattleText != null and BattleText.has_method("popup"):
 		BattleText.popup(global_position, "THE VAULT ANSWERS", Color(1.0, 0.45, 0.35, 1.0), 1.3)
+	var billed := {"beats": 0, "safeguards": 0, "heal_lock_sec": 0.0}
 	var director := get_tree().get_first_node_in_group(&"encounter_director")
-	if director == null or not director.has_method("try_spawn_beat"):
-		return
-	for id in cost_beats:
-		director.call("try_spawn_beat", id)
+	if director != null and director.has_method("try_spawn_beat"):
+		for id in cost_beats:
+			director.call("try_spawn_beat", id)
+			billed["beats"] = int(billed["beats"]) + 1
+	if cost_all_safeguards:
+		billed["safeguards"] = _drain_rite_safeguards()
+	if cost_heal_lock_sec > 0.0 and _player != null and is_instance_valid(_player) and _player.has_method("lock_healing"):
+		_player.call("lock_healing", cost_heal_lock_sec, &"cursed_vault")
+		billed["heal_lock_sec"] = cost_heal_lock_sec
+	return billed
+
+
+func _drain_rite_safeguards() -> int:
+	var rite := _find_rite()
+	if rite == null:
+		return 0
+	var drained := 0
+	if rite.has_method("drain_safeguards"):
+		drained = int(rite.call("drain_safeguards", &"cursed_vault"))
+	elif rite.has_method("consume_safeguard"):
+		# Older rite: spend the buffer one charge at a time (bounded, so a
+		# rite that never says no cannot hang the frame).
+		for _attempt in range(64):
+			if not bool(rite.call("consume_safeguard")):
+				break
+			drained += 1
+	if drained > 0 and BattleText != null and BattleText.has_method("popup"):
+		BattleText.popup(global_position + Vector2(0.0, 22.0), "SAFEGUARDS TAKEN", Color(1.0, 0.91, 0.62, 1.0), 1.2)
+	return drained
+
+
+func _find_rite() -> Node:
+	var node := get_parent()
+	while node != null:
+		if node.is_in_group(&"exit_rite"):
+			return node
+		node = node.get_parent()
+	return get_tree().get_first_node_in_group(&"exit_rite")
 
 
 func _draw() -> void:
@@ -138,3 +198,11 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, open_radius, Color(COLOUR.r, COLOUR.g, COLOUR.b, alpha))
 	if not _opened and _progress > 0.0:
 		draw_arc(Vector2.ZERO, open_radius + 8.0, -PI * 0.5, -PI * 0.5 + TAU * progress(), 48, COLOUR, 4.0, true)
+	# LAST CHANCE tell: the rite's safeguard pips, drawn inside the vault - it
+	# eats them. Static; nothing here pulses.
+	if cost_all_safeguards:
+		var pip_alpha := 0.35 if _opened else 0.95
+		for index in range(3):
+			var pip := Vector2.from_angle(deg_to_rad(-90.0 + 120.0 * float(index))) * (open_radius * 0.45)
+			draw_circle(pip, 4.5, Color(0.12, 0.10, 0.07, pip_alpha * 0.9))
+			draw_circle(pip, 2.7, Color(1.0, 0.91, 0.62, pip_alpha))

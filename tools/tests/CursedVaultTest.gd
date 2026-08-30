@@ -11,6 +11,15 @@ class FakePlayer:
 	extends Node2D
 	var is_dead := false
 
+# Cluster B's player grows lock_healing(seconds, reason); the vault bills it
+# through has_method, so a player with it is locked and one without is fine.
+class LockingPlayer:
+	extends FakePlayer
+	var locks: Array = []
+
+	func lock_healing(seconds: float, reason: StringName) -> void:
+		locks.append([seconds, reason])
+
 class FakeDirector:
 	extends Node
 	var beats: Array[StringName] = []
@@ -22,10 +31,15 @@ class FakeDirector:
 var _passes := 0
 var _failures := 0
 var _opened_signals := 0
+var _tips: Array[String] = []
 
 
 func _ready() -> void:
 	call_deferred(&"_run")
+
+
+func _on_tip(text: String, _duration: float) -> void:
+	_tips.append(text)
 
 
 func _check(condition: bool, message: String) -> void:
@@ -39,6 +53,7 @@ func _check(condition: bool, message: String) -> void:
 
 func _run() -> void:
 	_check(Global != null and not Global.item_db.is_empty(), "the item database is loaded")
+	RunEvents.tutorial_tip.connect(_on_tip)
 	var player := FakePlayer.new()
 	player.add_to_group(&"player")
 	player.position = Vector2(2000.0, 0.0)
@@ -58,6 +73,8 @@ func _run() -> void:
 	player.position = Vector2(200.0, 0.0)
 	vault._process(1.0)
 	_check(bool(vault.get("_announced")), "approaching announces the vault and its cost")
+	_check(vault.cost_heal_lock_sec == 45.0 and not vault.cost_all_safeguards, "the defaults: a 45 s heal lock, no safeguard cost")
+	_check(_tips.size() == 1 and _tips[0].contains("Something will come for you") and _tips[0].contains("No healing for 45s"), "the sign carries the whole bill - the hunt and the healing (%s)" % [_tips])
 	_check(vault.progress() == 0.0, "standing outside the open radius does not open it")
 
 	player.position = Vector2(10.0, 0.0)
@@ -69,6 +86,7 @@ func _run() -> void:
 	player.position = Vector2(0.0, 0.0)
 	vault._process(3.0)
 	_check(vault.is_opened(), "holding for open_time opens the vault")
+	_check(not player.has_method("lock_healing") and vault.is_opened(), "a player without lock_healing pays the other costs and the vault still opens")
 	_check(_opened_signals == 1, "the vault signals once")
 	var reward := vault.reward() as ItemPickup
 	_check(reward != null, "opening spawns a reward pickup")
@@ -91,11 +109,45 @@ func _run() -> void:
 	_check(not second.is_opened(), "a dead player does not open a vault")
 	player.is_dead = false
 
-	if reward != null:
-		reward.queue_free()
+	# --- the healing lock (plan 2.5) reaches a player that has one ---
+	player.remove_from_group(&"player")
+	var locking := LockingPlayer.new()
+	locking.add_to_group(&"player")
+	locking.position = Vector2(1200.0, 0.0)
+	add_child(locking)
+	var third := VaultScript.new()
+	third.position = Vector2(1200.0, 0.0)
+	add_child(third)
+	third._process(third.open_time + 0.1)
+	_check(third.is_opened(), "the third vault opens")
+	_check(locking.locks == [[45.0, &"cursed_vault"]], "opening locks healing for cost_heal_lock_sec, billed to the vault (%s)" % [locking.locks])
+	var third_reward := third.reward()
+
+	# --- the safeguard cost without a rite in reach, and no lock at 0 ---
+	var fourth := VaultScript.new()
+	fourth.position = Vector2(1800.0, 0.0)
+	fourth.cost_all_safeguards = true
+	fourth.cost_heal_lock_sec = 0.0
+	var no_beats: Array[StringName] = []
+	fourth.cost_beats = no_beats
+	add_child(fourth)
+	_check(fourth.announcement().contains("every safeguard") and not fourth.announcement().contains("Something will come") and not fourth.announcement().contains("healing"), "the sign lists only the costs configured (%s)" % fourth.announcement())
+	locking.position = Vector2(1800.0, 0.0)
+	fourth._process(fourth.open_time + 0.1)
+	_check(fourth.is_opened(), "a safeguard-cost vault with no rite in the tree still opens")
+	_check(locking.locks.size() == 1, "a zero heal lock bills nothing")
+	var fourth_reward := fourth.reward()
+
+	RunEvents.tutorial_tip.disconnect(_on_tip)
+	for node in [reward, third_reward, fourth_reward]:
+		if node != null and is_instance_valid(node):
+			node.queue_free()
 	vault.queue_free()
 	second.queue_free()
+	third.queue_free()
+	fourth.queue_free()
 	player.queue_free()
+	locking.queue_free()
 	director.queue_free()
 	await get_tree().process_frame
 	print("CursedVaultTest: %d passed, %d failed" % [_passes, _failures])
