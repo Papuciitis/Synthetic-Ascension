@@ -414,6 +414,7 @@ func set_run_selection(race_id: String, style_id: String) -> void:
 
 func reset_run_systems() -> void:
 	# tutorial one-shots
+	_run_taught.clear()
 	tip_shown_wardstone_attune = false
 	tip_shown_resonance = false
 	tip_shown_gate_hold = false
@@ -823,6 +824,30 @@ const STAT_LEDGER_FIELDS: Array[StringName] = [
 	&"max_hp", &"armor", &"move_speed", &"power", &"haste", &"luck",
 ]
 var last_stat_ledger: Array[Dictionary] = []
+
+## "Teach it once per run" for every first-sight line (elite modifiers, the
+## healing lock, the rite's distortion, a ritual interference). Nodes that
+## own those lines - the spawner, the player, an ExitRite, the director - are
+## re-instantiated per segment, so a flag on them repeated the lesson every
+## segment; the run is the unit, and this is the run's registry.
+var _run_taught: Dictionary = {}
+
+
+## True exactly once per run per key; the caller shows the line then.
+func teach_once(key: StringName) -> bool:
+	if key == StringName() or _run_taught.has(key):
+		return false
+	_run_taught[key] = true
+	return true
+
+
+func was_taught(key: StringName) -> bool:
+	return _run_taught.has(key)
+
+
+## Starts the lessons over; reset_run_systems calls it, tests call it directly.
+func reset_teaching() -> void:
+	_run_taught.clear()
 var _stat_ledger_prev: Stats = null
 
 

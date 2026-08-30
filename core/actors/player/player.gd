@@ -109,8 +109,6 @@ var invulnerable_time: float = 0.0
 ## it pauses with the game and holds while dead.
 var _healing_lock_left: float = 0.0
 var _healing_lock_reason: StringName = &""
-## The one-line teach goes out on the first seal of the run only.
-var _healing_lock_taught: bool = false
 const HEALING_LOCK_COLOUR := Color(0.78, 0.36, 0.90, 1.0)
 const HEALING_LOCK_TEACH := "HEALING SEALED: nothing mends you until the seal lifts - not regen, not lifesteal, not the Rite. The HP bar counts it down."
 
@@ -1355,8 +1353,8 @@ func lock_healing(seconds: float, reason: StringName) -> void:
 	if RunEvents != null:
 		if RunEvents.has_signal("healing_lock_changed"):
 			RunEvents.healing_lock_changed.emit(_healing_lock_left, reason)
-		if not _healing_lock_taught and RunEvents.has_signal("tutorial_tip"):
-			_healing_lock_taught = true
+		# The first seal of the RUN teaches (the player node is per segment).
+		if RunEvents.has_signal("tutorial_tip") and Global.teach_once(&"healing_lock"):
 			RunEvents.tutorial_tip.emit(HEALING_LOCK_TEACH, 4.0)
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_locked", 1, {

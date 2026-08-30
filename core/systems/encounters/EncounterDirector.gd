@@ -45,8 +45,6 @@ var _active: Dictionary = {}
 var _last_phase: StringName = &""
 var _unlocked_pending: Array[StringName] = []
 var _specialists_sent := false
-## The director lives for one run, so this is "taught once per run".
-var _ritual_taught := false
 var _counters := {
 	"scheduled": 0,
 	"aborted": 0,
@@ -265,8 +263,8 @@ func _place_ritual(pos: Vector2) -> Node:
 	ritual.name = "RitualInterference"
 	host.add_child(ritual)
 	ritual.global_position = pos
-	ritual.call("setup", _spawner, not _ritual_taught)
-	_ritual_taught = true
+	# The director is re-created per segment; the run remembers the lesson.
+	ritual.call("setup", _spawner, Global.teach_once(&"ritual_interference"))
 	return ritual
 
 

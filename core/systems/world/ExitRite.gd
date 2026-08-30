@@ -131,7 +131,6 @@ var _burst_count_multiplier: float = 1.0
 var _rite_stun_bonus_seconds: float = 0.0
 var _completed: bool = false
 var _distortion_level: float = 0.0
-var _distortion_taught: bool = false
 var _last_chance_vault: Node2D = null
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
@@ -400,9 +399,10 @@ func _on_distortion_started() -> void:
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_distortion_started", 1)
 	# Teach it once: a screen that turns colour with no word reads as a bug.
-	if _distortion_taught or RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
 		return
-	_distortion_taught = true
+	if not Global.teach_once(&"rite_distortion"):
+		return
 	RunEvents.tutorial_tip.emit("The Rite is half drawn — the district warps. Hold the circle.", 3.5)
 
 

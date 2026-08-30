@@ -120,9 +120,6 @@ func _ready() -> void:
 	_spawn_filter = get_node_or_null("/root/DebugEnemySpawnFilter")
 	_register_spawn_table_ids()
 	_configure_enemy_pool_limits()
-	# The spawner is per-run, so this is where "teach each elite modifier once
-	# per run" starts over (roadmap §9).
-	EliteModifiers.reset_teaching()
 	if _spawn_filter != null and _spawn_filter.has_signal("filters_changed"):
 		_spawn_filter.connect("filters_changed", _on_spawn_filters_changed)
 

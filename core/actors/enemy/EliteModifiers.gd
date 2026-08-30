@@ -98,8 +98,6 @@ const _BITS := {
 	FAST: BIT_FAST,
 }
 
-# Ids taught this run; the spawner resets it in _ready because it is per-run.
-static var _taught: Dictionary = {}
 
 
 static func is_known(id: StringName) -> bool:
@@ -187,21 +185,26 @@ static func phase_summary_line(phase: StringName) -> String:
 	return "Elite modifiers: %d per elite - %s" % [count, " · ".join(names)]
 
 
+## The run keeps the memory (Global.teach_once): the spawner is re-created per
+## segment and a per-spawner reset repeated every lesson each segment.
 static func reset_teaching() -> void:
-	_taught.clear()
+	Global.reset_teaching()
 
 
 ## True exactly once per run per id: the caller shows the teach line then.
 static func consume_teach(id: StringName) -> bool:
-	if not is_known(id) or _taught.has(id):
+	if not is_known(id):
 		return false
-	_taught[id] = true
-	return true
+	return Global.teach_once(_teach_key(id))
 
 
 static func was_taught(id: StringName) -> bool:
-	return _taught.has(id)
+	return Global.was_taught(_teach_key(id))
+
+
+static func _teach_key(id: StringName) -> StringName:
+	return StringName("elite_modifier/" + String(id))
 
 
 static func release_static_caches() -> void:
-	_taught.clear()
+	pass  # nothing RID-backed or per-process lives here any more
