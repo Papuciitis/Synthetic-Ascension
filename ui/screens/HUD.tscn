@@ -29,6 +29,7 @@
 [ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="23_set_breakpoints"]
 [ext_resource type="Script" path="res://ui/controllers/HudManifestationController.gd" id="25_manifest_ctl"]
 [ext_resource type="Script" path="res://ui/controllers/ManifestationPairNotifier.gd" id="26_manifest_pair"]
+[ext_resource type="Script" path="res://ui/controllers/HudHealthController.gd" id="28_health_ctl"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="27_hud_theme"]
 
 
@@ -220,6 +221,10 @@ tooltip_scene = ExtResource("17_threat_tip")
 script = ExtResource("25_manifest_ctl")
 row_path = NodePath("../TopLeft/Margin/VBox/ManifestationRow")
 bag_controller_path = NodePath("../BagController")
+
+[node name="HealthController" type="Node" parent="."]
+script = ExtResource("28_health_ctl")
+bar_path = NodePath("../TopLeft/Margin/VBox/TopRow/HPRow/HPBar")
 
 [node name="TopLeft" type="PanelContainer" parent="." unique_id=750648705]
 layout_mode = 0

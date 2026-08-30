@@ -43,6 +43,12 @@ signal player_evaded(player: Node, position: Vector2)
 @warning_ignore("unused_signal")
 signal player_healed(player: Node, amount: float)
 
+# Healing sealed on the player - the Cursed Vault's price, a Sacrifice, a
+# ritual interference. Emitted when a lock starts, when a longer one extends
+# it, and once with 0.0 when it lifts. Per lock, never per refused heal.
+@warning_ignore("unused_signal")
+signal healing_lock_changed(seconds_left: float, reason: StringName)
+
 # The dash. Emitted at the START of the dash, not the end: `from` is where the
 # orbit was when it left, the direction is locked at that instant, and a halo
 # leaving WITH the player is the authored fantasy. A rule that wants landing

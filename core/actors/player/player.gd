@@ -74,6 +74,13 @@ signal dash_cd_changed(time_left: float, max_cd: float)
 @export var respawn_phase_time: float = 2.0
 @export var respawn_speed_mul: float = 1.35
 
+@export_group("Healing Lock")
+## Heal sources a lock does not stop. Empty by default: a lock is a lock -
+## the Exit Rite's mend and the wardstone restore are sealed with regen,
+## lifesteal and pickups. The playtest can exempt &"exit_rite" here without
+## a code change.
+@export var healing_lock_exempt_sources: Array[StringName] = []
+
 var stats: Stats = null
 var hp: float = 100.0
 var spawn_pos: Vector2
@@ -97,6 +104,15 @@ var _dash: PlayerDashState = DashState.new()
 var _dash_trail: Node2D = null
 
 var invulnerable_time: float = 0.0
+## Seconds of healing lock left - the Cursed Vault's price, a Sacrifice, a
+## ritual interference. Counted down in _process beside invulnerable_time, so
+## it pauses with the game and holds while dead.
+var _healing_lock_left: float = 0.0
+var _healing_lock_reason: StringName = &""
+## The one-line teach goes out on the first seal of the run only.
+var _healing_lock_taught: bool = false
+const HEALING_LOCK_COLOUR := Color(0.78, 0.36, 0.90, 1.0)
+const HEALING_LOCK_TEACH := "HEALING SEALED: nothing mends you until the seal lifts - not regen, not lifesteal, not the Rite. The HP bar counts it down."
 
 var respawn_phase_left: float = 0.0
 var _base_collision_mask: int = 0
@@ -211,6 +227,11 @@ func _process(delta: float) -> void:
 
 	if invulnerable_time > 0.0:
 		invulnerable_time = max(invulnerable_time - delta, 0.0)
+
+	if _healing_lock_left > 0.0:
+		_healing_lock_left = maxf(_healing_lock_left - delta, 0.0)
+		if _healing_lock_left <= 0.0:
+			_on_healing_lock_expired()
 
 	if respawn_phase_left > 0.0:
 		respawn_phase_left = max(respawn_phase_left - delta, 0.0)
@@ -1293,6 +1314,14 @@ func _attack_origin() -> Vector2:
 func heal(amount: float, source: StringName = &"generic") -> void:
 	if amount <= 0.0:
 		return
+	# A lock is a lock: the vault's price, a Sacrifice, a ritual interference
+	# seal the Rite's mend and the wardstone with everything else unless the
+	# export says otherwise. Nothing lands and nothing is announced - a rule
+	# listening for player_healed must not hear a heal that did not happen,
+	# and the seal said its one line when it fell. The exemption list is
+	# only consulted while sealed, so the open path stays one float compare.
+	if _healing_lock_left > 0.0 and not healing_lock_exempt_sources.has(source):
+		return
 	if Global != null and Global.has_method("doctrine_healing_multiplier"):
 		amount *= float(Global.doctrine_healing_multiplier(source))
 	# Report what LANDED, never what was asked for. Anything that reacts to a
@@ -1307,6 +1336,45 @@ func heal(amount: float, source: StringName = &"generic") -> void:
 	# Guarded: passive regen calls this every frame.
 	if RunEvents != null and RunEvents.player_healed.has_connections():
 		RunEvents.player_healed.emit(self, applied)
+
+
+## Seal healing for at least `seconds` more (plan §2.5: the Cursed Vault's
+## price; roadmap §10 Sacrifice; §8.1 ritual interference). Max semantics: a
+## second lock never shortens the first, so two costs landing together cost
+## the longer one, not the later one. Speaks once per lock - the combat line,
+## the signal the HP bar listens to, the flight-recorder event and, on the
+## first seal of the run, the teach - never per refused heal.
+func lock_healing(seconds: float, reason: StringName) -> void:
+	if seconds <= 0.0 or seconds <= _healing_lock_left:
+		return
+	var extended: bool = _healing_lock_left > 0.0
+	_healing_lock_left = seconds
+	_healing_lock_reason = reason
+	if BattleText != null:
+		BattleText.popup(global_position, "HEALING SEALED - %ds" % ceili(seconds), HEALING_LOCK_COLOUR, 1.2)
+	if RunEvents != null:
+		if RunEvents.has_signal("healing_lock_changed"):
+			RunEvents.healing_lock_changed.emit(_healing_lock_left, reason)
+		if not _healing_lock_taught and RunEvents.has_signal("tutorial_tip"):
+			_healing_lock_taught = true
+			RunEvents.tutorial_tip.emit(HEALING_LOCK_TEACH, 4.0)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_locked", 1, {
+			"reason": String(reason), "extended": extended,
+		})
+
+
+func healing_locked_seconds() -> float:
+	return _healing_lock_left
+
+
+func _on_healing_lock_expired() -> void:
+	var reason: StringName = _healing_lock_reason
+	_healing_lock_reason = &""
+	if RunEvents != null and RunEvents.has_signal("healing_lock_changed"):
+		RunEvents.healing_lock_changed.emit(0.0, reason)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_lock_expired", 1, {"reason": String(reason)})
 
 
 func _debug_dump_sets() -> void:
