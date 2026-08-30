@@ -239,6 +239,7 @@ func show_item(inst: ItemInstance) -> void:
 	# A cursed item is worth different amounts to different builds, so the
 	# tooltip has to say what THIS wardrobe is currently doing with it - not
 	# just that it is NEG.
+	var lens_suppressed: bool = false
 	if inst.polarity == ItemInstance.Polarity.NEG and Global != null:
 		var burden_snapshot: BurdenSnapshot = BurdenResolver.resolve(
 			Global.run_inventory, Global.permanent_augment_ids
@@ -256,6 +257,7 @@ func show_item(inst: ItemInstance) -> void:
 			)
 		elif burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
 		and Global.run_inventory.get_at(slot_index) == inst:
+			lens_suppressed = true
 			lines.append(
 				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG for parity and sets.[/color]"
 				% [
@@ -287,10 +289,15 @@ func show_item(inst: ItemInstance) -> void:
 			Global != null
 			and Global.permanent_augment_ids.has(&"augment_corruption_engine")
 		)
-		lines.append(
-			"Feeding DEEPENS the curse (Corruption Engine)" if deepening
-			else "Feeding stabilizes the curse (mildest roll survives)"
-		)
+		if deepening:
+			lines.append("Feeding DEEPENS the curse (Corruption Engine)")
+		elif lens_suppressed:
+			# The Lens returns a share of SEVERITY, and a feed keeps the mildest
+			# roll: stabilising the one curse it is inverting is the one feed in
+			# the wardrobe that makes the player weaker.
+			lines.append("Feeding stabilizes the curse (mildest roll survives) — a milder roll shrinks your inverted return")
+		else:
+			lines.append("Feeding stabilizes the curse (mildest roll survives)")
 
 	body_label.text = "\n".join(lines)
 	reset_size()
@@ -311,7 +318,9 @@ func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> v
 	lines.append("INSTANT COMPARISON")
 	lines.append("Compared with: %s" % String(current.data.display_name))
 
-	var rows: Array[String] = build_comparison_rows(current, candidate, Global.run_inventory)
+	var rows: Array[String] = build_comparison_rows(
+		current, candidate, Global.run_inventory, Global.permanent_augment_ids
+	)
 	if rows.is_empty():
 		lines.append("[color=%s]No numeric stat change.[/color]" % CMP_NEUTRAL_HEX)
 	else:
@@ -319,7 +328,7 @@ func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> v
 			lines.append(row)
 
 
-func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory) -> Array[String]:
+func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory, augment_ids: Array = []) -> Array[String]:
 	var rows: Array[String] = []
 	if current == null or candidate == null or current.data == null or candidate.data == null:
 		return rows
@@ -343,10 +352,17 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 		var colour: String = CMP_POS_HEX if delta > 0.0 else CMP_NEG_HEX
 		rows.append("[color=%s]%-12s %s[/color]" % [colour, String(spec[0]), value_text])
 
-	var pct_delta: float = candidate.active_pct() - current.active_pct()
-	if absf(pct_delta) >= 0.0001:
-		var pct_colour: String = CMP_POS_HEX if pct_delta > 0.0 else CMP_NEG_HEX
-		rows.append("[color=%s]%-12s %+.1f%%[/color]" % [pct_colour, "Effect roll", pct_delta * 100.0])
+	# Under an Inversion Lens the raw roll diff can invert the truth - a deeper
+	# curse is a bigger return, and the penalty of a curse the Lens would take
+	# is never paid - so that slot gets the Lens's own reading instead.
+	var lens_rows: Array[String] = _lens_roll_rows(current, candidate, inventory, augment_ids)
+	if not lens_rows.is_empty():
+		rows.append_array(lens_rows)
+	else:
+		var pct_delta: float = candidate.active_pct() - current.active_pct()
+		if absf(pct_delta) >= 0.0001:
+			var pct_colour: String = CMP_POS_HEX if pct_delta > 0.0 else CMP_NEG_HEX
+			rows.append("[color=%s]%-12s %+.1f%%[/color]" % [pct_colour, "Effect roll", pct_delta * 100.0])
 
 	var current_effects: PackedStringArray = current.data.get_effects_short(current)
 	var candidate_effects: PackedStringArray = candidate.data.get_effects_short(candidate)
@@ -394,6 +410,65 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 				"[color=%s]Set strength  %.2fx → %.2fx[/color]"
 				% [set_colour, before_strength, after_strength]
 			)
+	return rows
+
+
+## What the candidate's slot would pay under an Inversion Lens, phrased the
+## way the sheet's Lens line is. Empty when the Lens has no say in this swap,
+## so the caller prints the raw roll diff. The "after" wardrobe goes through
+## the same BurdenResolver the stat pass uses, so the selection rule (most
+## severe statistical curse, lowest slot on ties) is never re-derived here.
+func _lens_roll_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory, augment_ids: Array) -> Array[String]:
+	var rows: Array[String] = []
+	if inventory == null or not augment_ids.has(&"augment_inversion_lens"):
+		return rows
+	var slot: int = int(candidate.data.equip_slot)
+	if slot < 0 or slot >= Inventory.STAT_SLOT_COUNT:
+		return rows
+	var before: BurdenSnapshot = BurdenResolver.resolve(inventory, augment_ids)
+	var preview := Inventory.new()
+	for slot_index in range(Inventory.SLOT_COUNT):
+		preview.items[slot_index] = candidate if slot_index == slot else inventory.get_at(slot_index)
+	var after: BurdenSnapshot = BurdenResolver.resolve(preview, augment_ids)
+	var current_suppressed: bool = before.is_suppressed(slot) and inventory.get_at(slot) == current
+	var candidate_suppressed: bool = after.is_suppressed(slot)
+	if not current_suppressed and not candidate_suppressed:
+		return rows
+
+	# What the slot pays now and what it would pay: the return when the Lens
+	# holds it, the stored roll when it does not.
+	var before_value: float = (
+		BurdenResolver.inverted_return(before.suppressed_severity) if current_suppressed
+		else current.active_pct()
+	)
+	var after_value: float = (
+		BurdenResolver.inverted_return(after.suppressed_severity) if candidate_suppressed
+		else candidate.active_pct()
+	)
+	var colour: String = CMP_POS_HEX if after_value >= before_value else CMP_NEG_HEX
+	if candidate_suppressed:
+		rows.append("[color=%s]%-12s would be suppressed → %+.1f%% returned[/color]" % [
+			colour, "Effect roll", after_value * 100.0,
+		])
+	else:
+		rows.append("[color=%s]%-12s %+.1f%% (ends the %+.1f%% return)[/color]" % [
+			colour, "Effect roll", (after_value - before_value) * 100.0, before_value * 100.0,
+		])
+
+	# The Lens holds exactly one slot. When this swap moves it, the curse it
+	# leaves weighs on the player again and the one it lands on stops.
+	if after.suppressed_slot != before.suppressed_slot:
+		if before.suppressed_slot >= 0 and before.suppressed_slot != slot:
+			rows.append("[color=%s]Lens leaves %s — its %d%% curse weighs again[/color]" % [
+				CMP_NEG_HEX, Inventory.slot_label(before.suppressed_slot).to_upper(),
+				int(round(before.suppressed_severity * 100.0)),
+			])
+		if after.suppressed_slot >= 0 and after.suppressed_slot != slot:
+			rows.append("[color=%s]Lens moves to %s — its %d%% curse → +%d%% returned[/color]" % [
+				CMP_POS_HEX, Inventory.slot_label(after.suppressed_slot).to_upper(),
+				int(round(after.suppressed_severity * 100.0)),
+				int(round(BurdenResolver.inverted_return(after.suppressed_severity) * 100.0)),
+			])
 	return rows
 
 func _slot_text(slot: int) -> String:

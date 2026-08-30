@@ -42,6 +42,10 @@ const ORANGE := Color(1.0, 0.55, 0.20, 0.90)
 const METER_POS := Color(0.25, 1.0, 1.0, 0.92)
 const METER_NEG := Color(1.0, 0.35, 0.55, 0.92)
 
+# The value label while the Inversion Lens is returning this slot's severity
+# as a bonus: the POS colour, because the number is one.
+const VALUE_RETURNED := Color(0.25, 1.0, 1.0, 1.0)
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
@@ -278,7 +282,9 @@ func set_item(inst: ItemInstance) -> void:
 	if inst == null or inst.data == null:
 		if icon != null: icon.texture = null
 		if overlay != null: overlay.color = Color(0, 0, 0, 0)
-		if value_label != null: value_label.text = _empty_hint()
+		if value_label != null:
+			value_label.text = _empty_hint()
+			value_label.remove_theme_color_override("font_color")
 		if count_label != null: count_label.text = ""
 		if _pol_tint != null: _pol_tint.color = Color(0, 0, 0, 0)
 		if _meter_bg != null: _meter_bg.visible = false
@@ -308,7 +314,16 @@ func set_item(inst: ItemInstance) -> void:
 		icon.texture = inst.data.icon
 
 	if value_label != null:
-		value_label.text = "%+.0f" % (inst.active_pct() * 100.0)
+		# Suppression never rewrites the stored roll, so a slot the Inversion
+		# Lens has switched off kept reading "-80" while contributing +44%.
+		# Print what the slot pays, the way the sheet's Lens line does.
+		var suppressing: BurdenSnapshot = _suppressing_snapshot(inst)
+		if suppressing != null:
+			value_label.text = "%+.0f" % (BurdenResolver.inverted_return(suppressing.suppressed_severity) * 100.0)
+			value_label.add_theme_color_override("font_color", VALUE_RETURNED)
+		else:
+			value_label.text = "%+.0f" % (inst.active_pct() * 100.0)
+			value_label.remove_theme_color_override("font_color")
 	if count_label != null:
 		count_label.text = "x%d" % int(inst.progress)
 
@@ -332,6 +347,23 @@ func set_item(inst: ItemInstance) -> void:
 		var end_col := (METER_POS if is_pos else METER_NEG)
 		_meter_fill.color = ORANGE.lerp(end_col, meter)
 		_meter_fill.anchor_right = meter
+
+## The burden snapshot when this slot's EQUIPPED instance is the one the
+## Inversion Lens is suppressing; null otherwise. Resolved here rather than
+## read from player.last_burden: the bar repaints on the same `changed` signal
+## the stat pass recomputes on and subscribes first (game.gd binds the HUD
+## before it connects the recompute), so the player's snapshot is one change
+## stale at paint time. Same resolver and same equipped-instance guard as the
+## tooltip's SUPPRESSED line, so a bag duplicate never claims the return.
+func _suppressing_snapshot(inst: ItemInstance) -> BurdenSnapshot:
+	if inst == null or int(inst.polarity) != int(ItemInstance.Polarity.NEG):
+		return null
+	if slot_index < 0 or slot_index >= Inventory.STAT_SLOT_COUNT:
+		return null
+	if Global == null or Global.run_inventory == null or Global.run_inventory.get_at(slot_index) != inst:
+		return null
+	var burden: BurdenSnapshot = BurdenResolver.resolve(Global.run_inventory, Global.permanent_augment_ids)
+	return burden if burden.is_suppressed(slot_index) else null
 
 func _rarity_color(r: int) -> Color:
 	if r <= -2: return Color(0.45, 0.0, 0.0, 1)
