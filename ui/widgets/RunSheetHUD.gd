@@ -747,7 +747,15 @@ func _append_manifestations(player: Node) -> void:
 	# readout that tells you one more movement item would turn something on.
 	if runner.has_method("get_noun_counts"):
 		var counts: Dictionary = runner.call("get_noun_counts")
+		# A noun with a claimer but no meter is an untouched claim: the state
+		# refuses to draw a bar nothing has banked into yet, so the row says
+		# when one will appear rather than looking like a missing readout.
+		var metered: Dictionary = {}
+		if runner.has_method("get_meters"):
+			for meter_value in runner.call("get_meters"):
+				metered[StringName((meter_value as Dictionary).get("noun", &""))] = true
 		var parts: Array[Dictionary] = []
+		var unmetered: PackedStringArray = PackedStringArray()
 		# Authored order, so the line does not reshuffle itself every time an
 		# unrelated item is equipped.
 		for noun in ManifestationNouns.ORDER:
@@ -756,9 +764,14 @@ func _append_manifestations(player: Node) -> void:
 				continue
 			parts.append({
 				"noun": noun,
-				"text": "%s %d%s" % [ManifestationNouns.label(noun), n, "*" if n >= 2 else ""],
+				"text": "%s %s" % [ManifestationNouns.label(noun), _pips(n)],
 			})
+			if not metered.has(noun):
+				unmetered.append(ManifestationNouns.label(noun))
 		_add_noun_row(parts, 11)
+		if not unmetered.is_empty():
+			_add_line("   %s — meter appears at first bank" % "  ·  ".join(unmetered), Color(1, 1, 1, 0.48), 10)
+		_append_next_pair(counts)
 
 	# Live resources first: with eight rules equipped the list below is long,
 	# and the numbers the player acts on mid-fight must not be the part that
@@ -774,12 +787,34 @@ func _append_manifestations(player: Node) -> void:
 			})
 		_add_noun_row(readout, 11)
 
+	# One box per RULE, not per item. The runner counts distinct rules for
+	# nouns and pairs, so a doubled ring is one rule ranked up, not two
+	# engines - listing it twice beside a pair that correctly never lit reads
+	# as the pair being broken.
+	var grouped: Array[Dictionary] = []
+	var by_id: Dictionary = {}
 	for entry_value in summaries:
 		var entry: Dictionary = entry_value
-		var slot_hint: String = Inventory.slot_hint(int(entry.get("slot", -1)))
+		var id := StringName(entry.get("id", &""))
+		var hint: String = Inventory.slot_hint(int(entry.get("slot", -1)))
+		if id != &"" and by_id.has(id):
+			var first: Dictionary = by_id[id]
+			first["copies"] = int(first["copies"]) + 1
+			(first["hints"] as Array).append(hint)
+			continue
+		var group := entry.duplicate()
+		group["copies"] = 1
+		group["hints"] = [hint]
+		if id != &"":
+			by_id[id] = group
+		grouped.append(group)
+
+	for entry in grouped:
+		var copies: int = int(entry["copies"])
+		var slot_hint: String = "·".join(PackedStringArray(entry["hints"] as Array))
 		var entry_tags: Array = entry.get("tags", []) as Array
 		var entry_colour: Color = ManifestationNouns.colour(entry_tags[0]) if not entry_tags.is_empty() else MANIFEST
-		var entry_name: String = String(entry.get("name", ""))
+		var entry_name: String = String(entry.get("name", "")) + (" ×%d" % copies if copies > 1 else "")
 		var entry_rule: String = String(entry.get("rule", ""))
 
 		# One hoverable box per entry, so the pointer does not have to find the
@@ -939,6 +974,48 @@ func _noun_names(tags: Array) -> String:
 	for tag in tags:
 		names.append(ManifestationNouns.label(tag))
 	return " · ".join(names)
+
+
+## ◆◇ at one claimer, ◆◆ at two, ◆◆+n beyond - the HUD counter's pip
+## vocabulary (HudManifestationController._pips), so the sheet and the row
+## above the health bar say the same thing about the same noun.
+func _pips(count: int) -> String:
+	if count <= 1:
+		return "◆◇"
+	if count == 2:
+		return "◆◆"
+	return "◆◆+%d" % (count - 2)
+
+
+## The pair one lit noun away, from the same counts the row shows. Two of a
+## noun lights it and two lit nouns light their pair; all ten pairs exist, so
+## every lit+lit is already live and the only candidates are a lit noun with
+## an unlit partner. The partner closest to lighting is the one named.
+func _append_next_pair(counts: Dictionary) -> void:
+	var best_def: ManifestationPairDef = null
+	var best_noun: StringName = &""
+	var best_count: int = -1
+	for lit in ManifestationNouns.ORDER:
+		if int(counts.get(lit, 0)) < ManifestationPairCatalog.NOUN_THRESHOLD:
+			continue
+		for other in ManifestationNouns.ORDER:
+			var n: int = int(counts.get(other, 0))
+			if other == lit or n >= ManifestationPairCatalog.NOUN_THRESHOLD or n <= best_count:
+				continue
+			var def := ManifestationPairCatalog.for_nouns(lit, other)
+			if def == null:
+				continue
+			best_def = def
+			best_noun = other
+			best_count = n
+	if best_def == null:
+		return
+	var missing: int = ManifestationPairCatalog.NOUN_THRESHOLD - best_count
+	var need := (
+		"one more %s rule" % ManifestationNouns.label(best_noun) if missing == 1
+		else "%d %s rules" % [missing, ManifestationNouns.label(best_noun)]
+	)
+	_add_line("   next pair: %s — %s" % [best_def.display_name.to_upper(), need], Color(1, 1, 1, 0.48), 10)
 
 
 ## One line made of several per-noun labels, so each noun can carry its own

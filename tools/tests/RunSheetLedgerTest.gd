@@ -107,6 +107,7 @@ func _run() -> void:
 	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
 	await _test_lens_line_prints_luck_kicker()
 	await _test_burden_ledger_names_slots_and_stubs_for_owned_augment()
+	await _test_manifestation_list_shares_the_hud_vocabulary()
 
 	_restore_global_state()
 	_player.queue_free()
@@ -374,6 +375,60 @@ func _test_burden_ledger_names_slots_and_stubs_for_owned_augment() -> void:
 	await get_tree().process_frame
 	_check(not "BURDEN" in _manifestations_text(), "no NEG augment and no curses: no BURDEN section")
 	_player.last_burden = null
+
+
+# ---------------------------------------------------------------------------
+# Observability audit 2026-08-30 §5 #2 / §6 #1 / §6 #10: one box per rule
+# with a copy count, the HUD's pip vocabulary on the noun row, the meter gate
+# named, and the pair one lit noun away.
+# ---------------------------------------------------------------------------
+
+func _test_manifestation_list_shares_the_hud_vocabulary() -> void:
+	Global.permanent_augment_ids = [&"", &"", &""]
+	_runner.summaries = [
+		{"id": &"anchor_rite", "name": "Anchor Rite", "tags": [&"momentum"], "slot": Inventory.SLOT_OFFHAND, "rule": "Stand still to anchor."},
+		{"id": &"anchor_rite", "name": "Anchor Rite", "tags": [&"momentum"], "slot": Inventory.SLOT_RING, "rule": "Stand still to anchor."},
+		{"id": &"pilgrims_momentum", "name": "Pilgrim's Momentum", "tags": [&"momentum"], "slot": 2, "rule": "Travel fills Momentum."},
+		{"id": &"shard_forge", "name": "Shard Forge", "tags": [&"shard"], "slot": 3, "rule": "Kills forge shards."},
+	]
+	_runner.noun_counts = {&"momentum": 2, &"shard": 1}
+	_runner.meters = [{"noun": &"shard", "channel": &"shard", "label": "SHARDS", "text": "0/4", "full": false}]
+	_runner.pairs = []
+	_run_sheet.refresh(_player, Inventory.new())
+	_run_sheet.select_page(RunSheetHUD.ArchivePage.MANIFESTATIONS)
+	await get_tree().process_frame
+	var page := _run_sheet.get_node("Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox")
+	var boxes := page.find_children("*", "ManifestationInfoBox", true, false)
+	_check(boxes.size() == 3, "two copies of one rule collapse into one box (%d boxes)" % boxes.size())
+	var text := _collect_label_text(page)
+	_check("OFF·RING  Anchor Rite ×2" in text, "the collapsed box names both slots and the copy count (%s)" % _one_line(text))
+	_check(text.count("Anchor Rite") == 1, "and the rule is listed once")
+	_check("MOV  Pilgrim's Momentum" in text and not "×1" in text, "a single copy prints as before")
+	_check("MOMENTUM ◆◆" in text and "SHARDS ◆◇" in text, "the noun row uses the HUD's pips")
+	_check(not "MOMENTUM 2*" in text, "and no longer the * glyph")
+	_check("MOMENTUM — meter appears at first bank" in text, "a claimed noun with no meter says when its meter appears")
+	_check(not "SHARDS — meter" in text, "a metered noun does not")
+	_check("next pair: SLIPSTREAM FOUNDRY — one more SHARDS rule" in text, "the pair one lit noun away is named with what lights it")
+
+	# Two nouns lit: their pair is live, and the next pair needs a third noun.
+	_runner.noun_counts = {&"momentum": 2, &"shard": 2}
+	_runner.pairs = [{"id": &"slipstream_foundry", "name": "Slipstream Foundry", "nouns": [&"momentum", &"shard"], "rule": "Shards string out behind you."}]
+	_run_sheet.refresh(_player, Inventory.new())
+	await get_tree().process_frame
+	var lit := _manifestations_text()
+	_check("MOMENTUM ◆◆" in lit and "SHARDS ◆◆" in lit, "two lit nouns")
+	_check(not "next pair: SLIPSTREAM FOUNDRY" in lit, "a live pair is not the next pair")
+	_check("next pair: RED LINE — 2 WARD rules" in lit, "the next pair is the first unlit partner in noun order with its full cost (%s)" % _one_line(lit))
+
+	# Nothing lit: nothing is one noun away.
+	_runner.noun_counts = {&"momentum": 1, &"shard": 1}
+	_runner.pairs = []
+	_run_sheet.refresh(_player, Inventory.new())
+	await get_tree().process_frame
+	_check(not "next pair:" in _manifestations_text(), "with no lit noun there is no next pair line")
+	_runner.summaries = []
+	_runner.noun_counts = {}
+	_runner.meters = []
 
 
 # ---------------------------------------------------------------------------
