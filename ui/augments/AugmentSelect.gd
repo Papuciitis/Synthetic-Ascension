@@ -369,15 +369,46 @@ func _build_numbers_text(a: AugmentData) -> String:
 	if det.strip_edges() != "":
 		lines.append(det.strip_edges())
 
+	# Stats at the level the pick would give - an owned augment levels up in
+	# place (_on_card_picked), so its card is an upgrade, and the base `mods`
+	# are stale from Lv.2 on for every augment with mods_scale_per_level.
 	if a.mods != null:
-		var mods := _format_stat_mods(a.mods)
+		var lvl: int = _level_on_pick(a)
+		var mods := _format_stat_mods(_mods_at_level(a, lvl))
 		if mods.size() > 0:
-			lines.append("Stats:\n" + "\n".join(mods))
+			lines.append(("Stats at Lv.%d:\n" % lvl) + "\n".join(mods))
 
 	if lines.size() == 0:
 		return "(No numeric details yet)"
 	return "\n\n".join(lines)
-	
+
+## The level this card gives: an owned augment levels up on pick, a new one
+## arrives at Lv.1.
+func _level_on_pick(a: AugmentData) -> int:
+	if Global == null or not Global.permanent_augment_ids.has(a.id):
+		return 1
+	var current: int = 1
+	if Global.has_method("get_augment_level"):
+		current = int(Global.get_augment_level(a.id))
+	return current + 1
+
+## The level-scaled delta, read back from AugmentData.apply_to_stats_at_level -
+## the call the stat pass makes - applied to a default Stats and diffed
+## against an untouched one, exactly as AugmentTooltip reads it, so neither
+## surface can drift from the formula.
+func _mods_at_level(a: AugmentData, level: int) -> StatDelta:
+	var base := Stats.new()
+	var scaled := Stats.new()
+	a.apply_to_stats_at_level(scaled, level)
+	var out := StatDelta.new()
+	out.max_hp = scaled.max_hp - base.max_hp
+	out.armor = scaled.armor - base.armor
+	out.move_speed = scaled.move_speed - base.move_speed
+	out.power = scaled.power - base.power
+	out.haste = scaled.haste - base.haste
+	out.luck = scaled.luck - base.luck
+	return out
+
 func _format_stat_mods(m: StatDelta) -> Array[String]:
 	var out: Array[String] = []
 	if m == null:
@@ -403,6 +434,8 @@ func _format_stat_mods(m: StatDelta) -> Array[String]:
 		out.append("%+d%% Haste" % int(round(m.haste * 100.0)))
 
 	if absf(m.luck) > EPS:
-		out.append("%+d Luck" % int(round(m.luck)))
+		# Luck is a fraction (0.5 = +50%) and every other surface prints it as
+		# one - the sheet's LCK %, the item tooltip, the augment tooltip.
+		out.append("%+d%% Luck" % int(round(m.luck * 100.0)))
 
 	return out

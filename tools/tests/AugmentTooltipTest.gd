@@ -70,5 +70,36 @@ func _run() -> void:
 	_check(body.contains("+10 Max HP") and body.contains("+50% Luck"), "no scale, no change at Lv.3 (%s)" % body)
 
 	tooltip.queue_free()
+
+	# The augment-choice screen's hover panel is an augment tooltip too, and
+	# it read the base `mods` and printed Luck as an integer (readability
+	# wave 1's deliberate leftover). It shows the level the pick would give:
+	# Lv.1 for a new augment, the next level for an owned one, which the pick
+	# levels up in place.
+	var select_scene := load("res://ui/augments/AugmentSelect.tscn") as PackedScene
+	var select: CanvasLayer = select_scene.instantiate() as CanvasLayer if select_scene != null else null
+	if select == null:
+		_check(false, "the augment select scene loads")
+	else:
+		add_child(select)
+		var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+		var saved_levels: Dictionary = Global.attempt_augment_levels.duplicate()
+		Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
+		var text: String = str(select.call("_build_numbers_text", a))
+		_check(text.contains("Stats at Lv.1:"), "AugmentSelect: a new augment shows the Lv.1 the pick gives (%s)" % text)
+		_check(text.contains("+10 Max HP") and text.contains("+5% Power"), "AugmentSelect: Lv.1 is the base delta")
+		_check(text.contains("+50% Luck") and not text.contains("+1 Luck"), "AugmentSelect: Luck is a percentage, not +1")
+
+		Global.permanent_augment_ids = [a.id, StringName(), StringName()]
+		Global.attempt_augment_levels[String(a.id)] = 2
+		text = str(select.call("_build_numbers_text", a))
+		_check(text.contains("Stats at Lv.3:"), "AugmentSelect: an owned Lv.2 augment shows the Lv.3 the pick gives (%s)" % text)
+		_check(text.contains("+14 Max HP") and text.contains("+7% Power") and text.contains("+70% Luck"), "AugmentSelect: scaled through apply_to_stats_at_level")
+		_check(not text.contains("+10 Max HP") and not text.contains("+50% Luck"), "AugmentSelect: the unscaled numbers are gone")
+
+		Global.permanent_augment_ids = saved_augments
+		Global.attempt_augment_levels = saved_levels
+		select.queue_free()
+
 	print("AugmentTooltipTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
