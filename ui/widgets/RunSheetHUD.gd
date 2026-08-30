@@ -21,6 +21,7 @@ const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
 @onready var hstd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTD
 @onready var lckd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/LCKD
 
+@onready var profile_content: VBoxContainer = $Archive/BodyMargin/Pages/ProfileScroll/Content
 @onready var sets_vbox: VBoxContainer = $Archive/BodyMargin/Pages/SetsScroll/SetsVBox
 @onready var manifestations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox
 @onready var observations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ObservationsScroll/ObservationsVBox
@@ -48,6 +49,19 @@ var _page_signatures := {
 }
 var _rebuild_counts := {"sets": 0, "manifestations": 0, "observations": 0}
 var _doctrine_events: Array[String] = []
+var _ledger_box: VBoxContainer = null
+var _ledger_signature: String = "__UNINITIALIZED__"
+
+## The Profile grid's six rows, in its order, keyed to the Stats field each
+## ledger row names. `pct` picks the grid's own formatting for that stat.
+const LEDGER_STATS: Array[Dictionary] = [
+	{"stat": &"max_hp", "key": "HP", "pct": false},
+	{"stat": &"armor", "key": "ARM", "pct": false},
+	{"stat": &"move_speed", "key": "SPD", "pct": false},
+	{"stat": &"power", "key": "PWR", "pct": true},
+	{"stat": &"haste", "key": "HST", "pct": true},
+	{"stat": &"luck", "key": "LCK", "pct": true},
+]
 
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
 ## The layer's own colour. Anything naming a specific noun or rule uses that
@@ -58,6 +72,10 @@ const MANIFEST := ManifestationNouns.LAYER
 func _ready() -> void:
 	for index in range(_page_buttons.size()):
 		_page_buttons[index].pressed.connect(select_page.bind(index))
+	_ledger_box = VBoxContainer.new()
+	_ledger_box.name = "Ledger"
+	_ledger_box.add_theme_constant_override("separation", 3)
+	profile_content.add_child(_ledger_box)
 	select_page(_selected_page)
 	if RunEvents != null and RunEvents.has_signal("doctrine_event_recorded"):
 		var callback := Callable(self, "_on_doctrine_event_recorded")
@@ -128,6 +146,109 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 	powd.text = _fmt_pct_delta(d.power)
 	hstd.text = _fmt_pct_delta(d.haste)
 	lckd.text = _fmt_pct_delta(d.luck)
+
+	_refresh_ledger()
+
+
+## "Why is this stat this high?" - the stat pass's own rows, grouped under the
+## stat each one moved. Nothing here is derived: Global.last_stat_ledger is
+## what the pass recorded, step by step, and the sheet only formats it. The
+## one exception is belief, which the pass adds to Power without a step of its
+## own; until it records one the line comes straight from
+## Global.follower_belief_power(), the same call the pass makes.
+func _refresh_ledger() -> void:
+	if _ledger_box == null or Global == null:
+		return
+	var rows: Array = Global.last_stat_ledger
+	var belief := _belief_row(rows)
+	var signature := var_to_str([rows, belief])
+	if signature == _ledger_signature:
+		return
+	_ledger_signature = signature
+	_clear_children(_ledger_box)
+
+	var grouped: Dictionary = {}
+	for row_value in rows:
+		var row: Dictionary = row_value
+		if is_equal_approx(float(row.get("before", 0.0)), float(row.get("after", 0.0))):
+			continue
+		var stat := StringName(row.get("stat", &""))
+		if not grouped.has(stat):
+			grouped[stat] = []
+		(grouped[stat] as Array).append(row)
+	if not belief.is_empty():
+		if not grouped.has(&"power"):
+			grouped[&"power"] = []
+		(grouped[&"power"] as Array).append(belief)
+	if grouped.is_empty():
+		return
+
+	_add_section_heading(_ledger_box, "LEDGER // WHY THESE NUMBERS", ACCENT)
+	for entry in LEDGER_STATS:
+		var stat: StringName = entry["stat"]
+		if not grouped.has(stat):
+			continue
+		var pct: bool = bool(entry["pct"])
+		var key := _add_target_line(_ledger_box, String(entry["key"]), Color(1, 1, 1, 0.88), 12)
+		key.theme_type_variation = &"BodyStrong"
+		var grid := GridContainer.new()
+		grid.columns = 3
+		grid.add_theme_constant_override("h_separation", 8)
+		grid.add_theme_constant_override("v_separation", 2)
+		_ledger_box.add_child(grid)
+		for row_value in grouped[stat]:
+			var row: Dictionary = row_value
+			var delta: float = (
+				float(row["delta"]) if row.has("delta")
+				else float(row.get("after", 0.0)) - float(row.get("before", 0.0))
+			)
+			var after_text := ""
+			if row.has("after"):
+				after_text = "→ %s" % _fmt_ledger_value(float(row["after"]), pct)
+			_add_ledger_cell(grid, String(row.get("label", "")), Color(1, 1, 1, 0.72), true)
+			_add_ledger_cell(grid, _fmt_ledger_delta(delta, pct), Color(1, 1, 1, 0.88), false)
+			_add_ledger_cell(grid, after_text, Color(1, 1, 1, 0.55), false)
+
+
+## The belief term as a ledger row, unless the pass already recorded one.
+func _belief_row(rows: Array) -> Dictionary:
+	for row_value in rows:
+		var row: Dictionary = row_value
+		if String(row.get("label", "")).begins_with("BELIEF"):
+			return {}
+	var belief: float = Global.follower_belief_power()
+	if is_equal_approx(belief, 0.0):
+		return {}
+	return {
+		"label": "BELIEF · %d FOLLOWERS" % int(Global.followers),
+		"stat": &"power",
+		"delta": belief,
+	}
+
+
+func _add_ledger_cell(grid: GridContainer, text: String, colour: Color, stretch: bool) -> void:
+	var cell := Label.new()
+	cell.text = text
+	cell.add_theme_font_size_override("font_size", 12)
+	cell.modulate = colour
+	if stretch:
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	else:
+		cell.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	grid.add_child(cell)
+
+
+func _fmt_ledger_value(x: float, pct: bool) -> String:
+	return _fmt_pct_fraction(x) if pct else str(int(round(x)))
+
+
+func _fmt_ledger_delta(x: float, pct: bool) -> String:
+	if pct:
+		return _fmt_pct_fraction(x)
+	if absf(x) < 0.5:
+		return "%+.2f" % x
+	return "%+d" % int(round(x))
 
 
 func _refresh_sets(inv: Inventory) -> void:
@@ -752,7 +873,9 @@ func _fmt_pct_delta(x: float) -> String:
 		return ""
 	if absf(p) < 0.01:
 		return "(+<0.01%)" if p > 0.0 else "(−<0.01%)"
-	if is_equal_approx(p, float(int(p))):
+	# round(), not int(): 9.999999999999998 is a whole 10%, and truncating it
+	# to 9 would print a sum of whole percentages with two decimals.
+	if is_equal_approx(p, round(p)):
 		return "(%+.0f%%)" % p
 	return "(%+.2f%%)" % p
 
@@ -763,7 +886,7 @@ func _fmt_pct_fraction(x: float) -> String:
 		return "0%"
 	if absf(p) < 0.01:
 		return "+<0.01%" if p > 0.0 else "−<0.01%"
-	if is_equal_approx(p, float(int(p))):
+	if is_equal_approx(p, round(p)):
 		return "%+.0f%%" % p
 	return "%+.2f%%" % p
 

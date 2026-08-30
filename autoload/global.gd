@@ -806,6 +806,45 @@ func follower_belief_power() -> float:
 	# hoarding from snowballing: 25 -> +5%, 100 -> +10%, cap +15%.
 	return minf(0.15, 0.01 * sqrt(float(maxi(0, followers))))
 
+# ============================================================
+# Run Sheet stat ledger
+# ============================================================
+
+## Every contribution of the stat pass, in order, as {label, stat, before,
+## after} rows - so the Run Sheet can answer "why is this stat this high?"
+## with the numbers the pass itself used rather than a second derivation.
+## Recorded, never recomputed: the pass opens the ledger on its base copy with
+## stat_ledger_begin() and calls stat_ledger_step() after each contribution;
+## the helper diffs the Stats it is handed against the previous step, so a
+## multiplicative step (a slot roll, the Doctrine's Max HP price) records the
+## same before/after shape as a flat one. The Global-owned steps below record
+## themselves, one row per augment rather than one row per call.
+const STAT_LEDGER_FIELDS: Array[StringName] = [
+	&"max_hp", &"armor", &"move_speed", &"power", &"haste", &"luck",
+]
+var last_stat_ledger: Array[Dictionary] = []
+var _stat_ledger_prev: Stats = null
+
+
+func stat_ledger_begin(s: Stats) -> void:
+	last_stat_ledger = []
+	_stat_ledger_prev = s.copy() if s != null else null
+
+
+## Appends one row per stat the step changed and moves the baseline. A no-op
+## until a pass has opened the ledger, so a caller outside the pass (a test,
+## the dev console) applying one step on its own leaves it untouched.
+func stat_ledger_step(label: String, s: Stats) -> void:
+	if s == null or _stat_ledger_prev == null:
+		return
+	for field in STAT_LEDGER_FIELDS:
+		var before := float(_stat_ledger_prev.get(field))
+		var after := float(s.get(field))
+		if is_equal_approx(before, after):
+			continue
+		last_stat_ledger.append({"label": label, "stat": field, "before": before, "after": after})
+	_stat_ledger_prev = s.copy()
+
 func level_up_permanent_augment(id: StringName) -> void:
 	if id == StringName():
 		return
@@ -832,6 +871,7 @@ func apply_permanent_augments_to_stats(s: Stats) -> void:
 			a.apply_to_stats_at_level(s, lvl)
 		else:
 			a.apply_to_stats(s)
+		stat_ledger_step("%s Lv.%d" % [a.display_name.to_upper(), lvl], s)
 
 func load_augments_from_dir(path: String) -> void:
 	augment_db.clear()
@@ -1054,11 +1094,14 @@ func set_augment_level(aug_id: StringName, level: int) -> void:
 func apply_attempt_modifiers_to_stats(s: Stats) -> void:
 	if attempt_stat_delta != null:
 		attempt_stat_delta.apply_to(s)
+		stat_ledger_step("DOCTRINE", s)
 
 func apply_doctrine_final_stat_multipliers(s: Stats) -> void:
 	if s == null:
 		return
-	s.max_hp = maxf(1.0, s.max_hp * float(get_doctrine_rule(&"max_hp_mul", 1.0)))
+	var max_hp_mul := float(get_doctrine_rule(&"max_hp_mul", 1.0))
+	s.max_hp = maxf(1.0, s.max_hp * max_hp_mul)
+	stat_ledger_step("MAX HP ×%.2f" % max_hp_mul, s)
 
 func try_consume_manufactured_witness() -> bool:
 	if not bool(get_doctrine_rule(&"manufactured_witness", false)):
