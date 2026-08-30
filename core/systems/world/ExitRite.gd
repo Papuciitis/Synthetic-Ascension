@@ -101,7 +101,12 @@ const RITE_PULSE_VFX_SCRIPT: Script = preload("res://core/systems/world/rite/Rit
 ## The distortion ramp is reported in this many steps per channel, not once
 ## per frame: a few dozen shader writes across the whole hold.
 const DISTORTION_STEPS: int = 32
+## How long the 50% cue's line stays on the tip channel.
+const DISTORTION_TIP_SECONDS: float = 3.5
 const LAST_CHANCE_VAULT_NAME := "LastChanceVault"
+## Each charge drain_safeguards spends leaves as a ring this fraction smaller
+## than the one before it, so the rings read as a count.
+const DRAIN_RING_SHRINK_PER_CHARGE: float = 0.18
 const AUTOMATIC_PULSES: Array[Dictionary] = [
 	{"radius": 420.0, "force": 650.0, "stun": 0.15, "heal": 0.15, "invuln": 0.0},
 	{"radius": 500.0, "force": 850.0, "stun": 0.35, "heal": 0.25, "invuln": 0.0},
@@ -403,7 +408,7 @@ func _on_distortion_started() -> void:
 		return
 	if not Global.teach_once(&"rite_distortion"):
 		return
-	RunEvents.tutorial_tip.emit("The Rite is half drawn — the district warps. Hold the circle.", 3.5)
+	RunEvents.tutorial_tip.emit("The Rite is half drawn — the district warps. Hold the circle.", DISTORTION_TIP_SECONDS)
 
 
 ## The distortion and the last-chance vault belong to one channel; a reset
@@ -562,7 +567,7 @@ func drain_safeguards(reason: StringName = &"") -> int:
 	_safeguards = 0
 	for index in range(drained):
 		_spawn_pulse_vfx({
-			"radius": float(MANUAL_PULSE.get("radius", 420.0)) * (1.0 - 0.18 * float(index)),
+			"radius": float(MANUAL_PULSE.get("radius", 420.0)) * (1.0 - DRAIN_RING_SHRINK_PER_CHARGE * float(index)),
 			"invuln": 0.0,
 		})
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):

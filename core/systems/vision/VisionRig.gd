@@ -74,6 +74,11 @@ const GROUP_ENEMIES := &"enemies"
 const GROUP_ENEMY_PROJECTILE := &"enemy_projectile"
 const GROUP_COVER_WINDOW := &"cover_window"
 
+## A rite-distortion release shorter than this is a cut, not a tween (reduced motion asks for 0.01 s).
+const DISTORTION_CUT_UNDER_SECONDS: float = 0.02
+## The inner_radius the release returns to when the material does not say: the vignette shader's default.
+const VIGNETTE_INNER_RADIUS_DEFAULT: float = 0.70
+
 # -----------------------------
 # Runtime state
 # -----------------------------
@@ -89,7 +94,7 @@ var _vig_tween: Tween = null
 var _distortion_level: float = 0.0
 var _distortion_target: float = 0.0
 var _distortion_tween: Tween = null
-var _base_inner_radius: float = 0.70
+var _base_inner_radius: float = VIGNETTE_INNER_RADIUS_DEFAULT
 
 var _t_accum: float = 0.0
 var _last_player_pos: Vector2 = Vector2.INF
@@ -297,7 +302,7 @@ func _on_rite_distortion_changed(level: float) -> void:
 	# Back to nothing (reset, lapse, death, clear): one fade, instant when the
 	# player asked for reduced motion.
 	var duration := AccessibilityPresentation.current_motion_duration(distortion_release_time)
-	if duration <= 0.02:
+	if duration <= DISTORTION_CUT_UNDER_SECONDS:
 		_set_distortion_level(0.0)
 		return
 	_distortion_tween = create_tween()

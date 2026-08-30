@@ -29,6 +29,7 @@ var _passes := 0
 var _failures := 0
 var _levels: Array[float] = []
 var _tips: Array[String] = []
+var _tip_durations: Array[float] = []
 
 
 func _ready() -> void:
@@ -48,8 +49,9 @@ func _on_level(level: float) -> void:
 	_levels.append(level)
 
 
-func _on_tip(text: String, _duration: float) -> void:
+func _on_tip(text: String, duration: float) -> void:
 	_tips.append(text)
+	_tip_durations.append(duration)
 
 
 func _last_level() -> float:
@@ -61,6 +63,13 @@ func _tip_containing(needle: String) -> bool:
 		if tip.contains(needle):
 			return true
 	return false
+
+
+func _tip_duration_of(needle: String) -> float:
+	for index in range(_tips.size()):
+		if _tips[index].contains(needle):
+			return _tip_durations[index]
+	return -1.0
 
 
 func _popups_since(start: int) -> PackedStringArray:
@@ -133,6 +142,8 @@ func _test_rite() -> void:
 	var at_60 := rite.distortion_level()
 	_check(at_60 > 0.0 and _last_level() == at_60, "the world warps past 50%% (level %.2f, reported %.2f)" % [at_60, _last_level()])
 	_check(_tip_containing("warps"), "the cue is taught (%s)" % [_tips])
+	var rite_consts: Dictionary = rite.get_script().get_script_constant_map()
+	_check(rite_consts.has("DISTORTION_TIP_SECONDS") and _tip_duration_of("warps") == float(rite_consts.get("DISTORTION_TIP_SECONDS", -1.0)), "for the named tip length (%.1f)" % _tip_duration_of("warps"))
 	rite._process(hold * 0.10)
 	var at_70 := rite.distortion_level()
 	_check(at_70 > at_60 and at_70 < 1.0, "and climbs with the hold (%.2f -> %.2f)" % [at_60, at_70])
@@ -190,10 +201,21 @@ func _test_rite() -> void:
 	vault._process(0.5)
 	_check(_tip_containing("every safeguard"), "the vault's own sign names the safeguard cost")
 	_check(_tips.size() == tips_before + 1, "and the approach does not say it again (%s)" % [_tips.slice(tips_before)])
+	var rings_before := rite.vfx.get_child_count()
 	vault._process(vault.open_time + 0.1)
 	_check(vault.is_opened(), "standing in it opens it")
 	_check(rite.safeguard_count() == 0, "and the rite's safeguards are gone (%d)" % rite.safeguard_count())
 	_check(not rite.can_invoke_safeguard(), "nothing left to invoke")
+	# The charges leave as rings, each smaller than the last by a named fraction.
+	var rings: Array = rite.vfx.get_children().slice(rings_before)
+	var shrink := float(rite_consts.get("DRAIN_RING_SHRINK_PER_CHARGE", 0.0))
+	var base_radius := float(ExitRite.MANUAL_PULSE.get("radius", 0.0))
+	_check(rite_consts.has("DRAIN_RING_SHRINK_PER_CHARGE"), "the per-charge ring shrink is a named constant")
+	_check(rings.size() == 2, "two charges leave as two rings (%d)" % rings.size())
+	if rings.size() == 2:
+		var first_radius := float(rings[0].get("_target_radius"))
+		var second_radius := float(rings[1].get("_target_radius"))
+		_check(is_equal_approx(first_radius, base_radius) and is_equal_approx(second_radius, base_radius * (1.0 - shrink)), "the second smaller by that fraction (%.1f, %.1f)" % [first_radius, second_radius])
 	var reward := vault.reward()
 
 	# --- reset takes the vault and the cue ---
@@ -262,6 +284,18 @@ func _test_vision_rig() -> void:
 	await get_tree().create_timer(rig.distortion_release_time + 0.3).timeout
 	_check(not rect.visible and rig.distortion_level() == 0.0, "and ends hidden (%.2f)" % rig.distortion_level())
 	_check(mat.get_shader_parameter("tint") == Color.BLACK and float(mat.get_shader_parameter("wash")) == 0.0 and is_equal_approx(float(mat.get_shader_parameter("inner_radius")), base_inner), "with the shader back to its defaults")
+
+	# The cut threshold and the inner_radius fallback are named; a release
+	# shorter than the threshold cuts even with motion allowed.
+	var rig_consts: Dictionary = rig.get_script().get_script_constant_map()
+	_check(rig_consts.has("DISTORTION_CUT_UNDER_SECONDS"), "the instant-cut threshold is a named constant")
+	_check(rig_consts.has("VIGNETTE_INNER_RADIUS_DEFAULT") and is_equal_approx(float(rig_consts.get("VIGNETTE_INNER_RADIUS_DEFAULT", -1.0)), base_inner), "the inner_radius fallback is named and is the scene's (%s)" % [rig_consts.get("VIGNETTE_INNER_RADIUS_DEFAULT")])
+	var saved_release := rig.distortion_release_time
+	rig.distortion_release_time = float(rig_consts.get("DISTORTION_CUT_UNDER_SECONDS", 0.02)) * 0.5
+	RunEvents.rite_distortion_changed.emit(0.8)
+	RunEvents.rite_distortion_changed.emit(0.0)
+	_check(not rect.visible and rig.distortion_level() == 0.0, "a release under the threshold cuts at once with motion allowed (%.2f)" % rig.distortion_level())
+	rig.distortion_release_time = saved_release
 
 	# Reduced motion: the ramp still shows; the release is immediate.
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
