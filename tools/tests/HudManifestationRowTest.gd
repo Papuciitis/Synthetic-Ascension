@@ -1,8 +1,9 @@
 extends Node
 
-# Observability audit 2026-08-30 §5 #11: the HUD noun row shows the fuller of
-# a two-channel noun's channels - a planted Anchor Rite reads "STABILITY 100%",
-# not "MOMENTUM 0%". Drives the real HudManifestationController against a
+# Observability audit 2026-08-30 §5 #11 and §6 #1: the HUD noun row shows the
+# fuller of a two-channel noun's channels - a planted Anchor Rite reads
+# "STABILITY 100%", not "MOMENTUM 0%" - and the first-Manifestation card
+# teaches the pair rule. Drives the real HudManifestationController against a
 # fixture runner and a real ManifestationState.
 #
 # Run: <godot> --headless --path . res://tools/tests/HudManifestationRowTest.tscn
@@ -108,6 +109,12 @@ func _run() -> void:
 	var ward := row.get_node("Noun_ward") as Label
 	_check(not momentum.visible and ward.visible, "unclaimed nouns hide, claimed ones show")
 	_check(ward.text == "WARD ◆◇ 3.0s", "a one-channel noun reads as before (%s)" % ward.text)
+
+	# --- §6 #1: the intro card teaches the pair rule, and the claim is true ---
+	var body := String(controller.call("_intro_body"))
+	_check(body.contains("Two lit nouns always light a pair"), "the intro card states the pair rule")
+	_check(body.contains("all ten exist"), "and its completeness")
+	_check(ManifestationPairCatalog.all_ids().size() == 10, "which the catalog honours (%d pairs)" % ManifestationPairCatalog.all_ids().size())
 
 	hud.queue_free()
 	player.queue_free()

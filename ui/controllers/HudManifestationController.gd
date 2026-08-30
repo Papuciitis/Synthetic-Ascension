@@ -454,4 +454,6 @@ func _intro_body() -> String:
 		"Two rules that name the SAME noun share one resource. That is when the layer stops being a proc and starts being an engine.",
 		"",
 		"The counter above your health bar reads ◆◇ while one rule feeds a noun, and ◆◆ once two do. A dim ◆◇ is the game telling you which item to look for.",
+		"",
+		"Two lit nouns always light a pair — a third rule written on no item, recorded in the Run Sheet. Every two of the five have one; all ten exist.",
 	]))
