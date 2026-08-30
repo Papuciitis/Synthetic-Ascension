@@ -106,12 +106,13 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 		lines.append("")
 		lines.append(det)
 
-	# Generic stat mods (if present)
+	# Generic stat mods (if present), at the level the header names. The base
+	# `mods` are stale from Lv.2 on for every augment with mods_scale_per_level.
 	if a.mods != null:
-		var mods_lines := _format_stat_mods(a.mods)
+		var mods_lines := _format_stat_mods(_mods_at_level(a, lvl))
 		if mods_lines.size() > 0:
 			lines.append("")
-			lines.append("Stats:\n" + "\n".join(mods_lines))
+			lines.append(("Stats at Lv.%d:\n" % lvl) + "\n".join(mods_lines))
 
 	body_label.text = "\n".join(lines)
 	# Wait until Containers have measured the wrapped body at BODY_WIDTH. Showing
@@ -135,6 +136,22 @@ func _finish_layout(ticket: int) -> void:
 	size = Vector2(TOOLTIP_WIDTH, maxf(1.0, measured.y))
 	visible = true
 
+## The level-scaled delta, read back from AugmentData.apply_to_stats_at_level -
+## the call the stat pass makes - applied to a default Stats and diffed
+## against an untouched one, so the tooltip cannot drift from the formula.
+func _mods_at_level(a: AugmentData, level: int) -> StatDelta:
+	var base := Stats.new()
+	var scaled := Stats.new()
+	a.apply_to_stats_at_level(scaled, level)
+	var out := StatDelta.new()
+	out.max_hp = scaled.max_hp - base.max_hp
+	out.armor = scaled.armor - base.armor
+	out.move_speed = scaled.move_speed - base.move_speed
+	out.power = scaled.power - base.power
+	out.haste = scaled.haste - base.haste
+	out.luck = scaled.luck - base.luck
+	return out
+
 func _format_stat_mods(m: StatDelta) -> Array[String]:
 	var out: Array[String] = []
 	if m == null:
@@ -152,6 +169,8 @@ func _format_stat_mods(m: StatDelta) -> Array[String]:
 	if absf(m.haste) > EPS:
 		out.append("%+d%% Haste" % int(round(m.haste * 100.0)))
 	if absf(m.luck) > EPS:
-		out.append("%+d Luck" % int(round(m.luck)))
+		# Luck is a fraction (0.5 = +50%) and every other surface prints it as
+		# one - the sheet's LCK %, the item tooltip, the identity line.
+		out.append("%+d%% Luck" % int(round(m.luck * 100.0)))
 
 	return out
