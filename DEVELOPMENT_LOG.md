@@ -1,5 +1,10 @@
 # Synthetic Ascension — Development Log
 
+> **Frozen.** The last entry is 0.25.4 (dated 2026-07-23) and the file was last
+> touched 2026-07-30; nothing after 0.25.4 — not 0.25.5 nor any of the
+> August 2026 enemy-world work — was logged here. Later history lives in git and
+> the roadmap §27 status log (`docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md`).
+
 ## Append-only rule
 
 This file is an append-only chronology. Never rewrite, reorder, compress or silently correct an earlier release entry. Add corrections and later findings in a new dated entry so recovery work remains auditable.
