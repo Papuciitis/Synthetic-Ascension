@@ -119,6 +119,14 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 	var pow_total: float = _get_stats_num(player, "power", _get_num(player, "power", 0.0))
 	var hst_total: float = _get_stats_num(player, "haste", _get_num(player, "haste", 0.0))
 	var lck_total: float = _get_stats_num(player, "luck", _get_num(player, "luck", 0.0))
+	# The stored Power and Haste are not what the next shot uses: _fire_weapon
+	# multiplies (1 + power) by ItemEffectRunner's and ManifestationRunner's
+	# get_power_multiplier(), and (1 + haste) by SetRunner's, ItemEffectRunner's
+	# and ManifestationRunner's get_haste_multiplier(). Polled from the same
+	# runners here, the way SPD already reads through get_effective_move_speed,
+	# so an Anchor Rite's x1.85 shows on the sheet instead of vanishing.
+	var pow_mul: float = _runtime_multiplier(player, &"get_power_multiplier", ["ItemEffectRunner", "ManifestationRunner"])
+	var hst_mul: float = _runtime_multiplier(player, &"get_haste_multiplier", ["SetRunner", "ItemEffectRunner", "ManifestationRunner"])
 
 	# Parenthesised values remain the equipped flat deltas for quick attribution;
 	# they are informational only and are not added to the final totals again.
@@ -135,8 +143,8 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 
 	armv.text = str(int(round(armor_total)))
 	spdv.text = str(int(round(spd_total)))
-	powv.text = _fmt_pct_fraction(pow_total)
-	hstv.text = _fmt_pct_fraction(hst_total)
+	powv.text = _fmt_pct_fraction(pow_total) + _fmt_runtime_multiplier(pow_mul)
+	hstv.text = _fmt_pct_fraction(hst_total) + _fmt_runtime_multiplier(hst_mul)
 	lckv.text = _fmt_pct_fraction(lck_total)
 
 	# --- deltas (from items) ---
@@ -901,6 +909,28 @@ func _get_num(obj: Object, prop: String, fallback: float) -> float:
 	if v is float or v is int:
 		return float(v)
 	return fallback
+
+## Product of one runtime multiplier over the named runner children, in the
+## order _fire_weapon polls them. A missing runner or method contributes 1.0.
+func _runtime_multiplier(player: Node, method: StringName, runner_names: Array) -> float:
+	var mul := 1.0
+	if player == null:
+		return mul
+	for runner_name in runner_names:
+		var runner: Node = player.get_node_or_null(NodePath(String(runner_name)))
+		if runner == null or not runner.has_method(method):
+			continue
+		var value: Variant = runner.call(method)
+		if value is float or value is int:
+			mul *= float(value)
+	return mul
+
+
+func _fmt_runtime_multiplier(mul: float) -> String:
+	if is_equal_approx(mul, 1.0):
+		return ""
+	return " ×%.2f" % mul
+
 
 func _get_effective_move_speed(player: Object, fallback: float) -> float:
 	if player == null:

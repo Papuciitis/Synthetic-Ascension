@@ -103,6 +103,7 @@ func _run() -> void:
 	_run_sheet.visible = true
 
 	await _test_ledger_records_every_step()
+	await _test_profile_shows_runtime_multipliers()
 
 	_restore_global_state()
 	_player.queue_free()
@@ -225,6 +226,33 @@ func _test_ledger_records_every_step() -> void:
 	_run_sheet.refresh(_player, Inventory.new())
 	await get_tree().process_frame
 	_check(not "BELIEF" in _collect_label_text(ledger), "no followers, no belief row")
+
+
+# ---------------------------------------------------------------------------
+# §4 #2: PWR/HST carry the runtime multipliers _fire_weapon applies.
+# ---------------------------------------------------------------------------
+
+func _test_profile_shows_runtime_multipliers() -> void:
+	var powv := _run_sheet.get_node("Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/POWV") as Label
+	var hstv := _run_sheet.get_node("Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTV") as Label
+	_runner.power_multiplier = 1.0
+	_runner.haste_multiplier = 1.0
+	_item_runner.power_multiplier = 1.0
+	_item_runner.haste_multiplier = 1.0
+	_run_sheet.refresh(_player, Inventory.new())
+	_check(powv.text == "+31%" and hstv.text == "+15%", "at x1.00 the totals print bare, as before (%s / %s)" % [powv.text, hstv.text])
+
+	# An Anchor Rite-shaped rule multiplier and an item multiplier, on the two
+	# runners _fire_weapon polls; the sheet shows their product.
+	_runner.power_multiplier = 1.85
+	_item_runner.haste_multiplier = 1.20
+	_runner.haste_multiplier = 1.10
+	_run_sheet.refresh(_player, Inventory.new())
+	_check(powv.text == "+31% ×1.85", "PWR appends the rule multiplier the next shot uses (%s)" % powv.text)
+	_check(hstv.text == "+15% ×1.32", "HST appends the product of the item and rule multipliers (%s)" % hstv.text)
+	_runner.power_multiplier = 1.0
+	_runner.haste_multiplier = 1.0
+	_item_runner.haste_multiplier = 1.0
 
 
 # ---------------------------------------------------------------------------
