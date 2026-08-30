@@ -43,6 +43,7 @@ var _passes := 0
 var _failures := 0
 var _started: Array = []
 var _ended: Array = []
+var _tips: Array[String] = []
 
 
 func _ready() -> void:
@@ -75,11 +76,19 @@ func _make(phase: StringName, unsealed: bool = false) -> Array:
 	director.setup(spawner, player, 4242)
 	director.beat_started.connect(func(id: StringName, _label: String, _members: int) -> void: _started.append(id))
 	director.beat_ended.connect(func(id: StringName) -> void: _ended.append(id))
+	if not RunEvents.tutorial_tip.is_connected(_on_tip):
+		RunEvents.tutorial_tip.connect(_on_tip)
 	return [director, spawner, player]
+
+
+func _on_tip(text: String, _duration: float) -> void:
+	_tips.append(text)
 
 
 func _reset(director: Node, spawner: FakeSpawner) -> void:
 	_free_members(spawner)
+	for ritual in get_tree().get_nodes_in_group(&"ritual_interference"):
+		ritual.call("expire", &"test_reset")
 	await get_tree().process_frame
 	director.set("_active", {})
 	director.set("_cooldowns", {})
@@ -248,6 +257,52 @@ func _run() -> void:
 		if not (member as FakeMember).modifiers.is_empty():
 			stray_mods = true
 	_check(spawner.members.size() == 6 and not stray_mods, "a beat without modifiers passes none")
+
+	# --- 2.7: ritual interference exists only while the district collapses ---
+	await _reset(director, spawner)
+	var ritual_beat := BeatsScript.find(&"ritual_interference")
+	_check(not ritual_beat.is_empty() and ritual_beat["min_phase"] == &"collapse" and BeatsScript.is_ritual(ritual_beat), "the ritual beat exists, is a ritual, and waits for collapse")
+	var ascension_ids: Array = []
+	for beat in BeatsScript.eligible(&"ascension"):
+		ascension_ids.append(beat["id"])
+	_check(not ascension_ids.has(&"ritual_interference"), "…and is not eligible in ascension")
+	director.phase_provider = func() -> StringName: return &"ascension"
+	_check(director.try_spawn_beat(&"ritual_interference").is_empty(), "an authored ritual is refused outside collapse")
+	director.phase_provider = func() -> StringName: return &"collapse"
+	director.unsealed_provider = func() -> bool: return true
+	_check(director.try_spawn_beat(&"ritual_interference").is_empty(), "…and once the rite has unsealed")
+	director.unsealed_provider = func() -> bool: return false
+	_check(get_tree().get_nodes_in_group(&"ritual_interference").is_empty() and spawner.calls.is_empty() and _started.is_empty(), "the refused rituals placed and announced nothing")
+	var announced_before := int(director.get_debug_counters()["announced"])
+	var placed: Dictionary = director.try_spawn_beat(&"ritual_interference")
+	var rituals := get_tree().get_nodes_in_group(&"ritual_interference")
+	_check(not placed.is_empty() and rituals.size() == 1, "in collapse the ritual is placed (%d node)" % rituals.size())
+	_check(spawner.calls.is_empty(), "the ritual spawns no enemies of its own")
+	if rituals.size() == 1:
+		var ritual := rituals[0] as Node2D
+		var rel := ritual.global_position - player.position
+		_check(is_equal_approx(rel.length(), float(ritual_beat["distance"])) and rel.normalized().dot(player.velocity.normalized()) > 0.99, "the ritual sits ahead of travel at its distance (%.0f)" % rel.length())
+		_check(ritual.get("_spawner") == spawner, "the ritual is handed the spawner for its revenants")
+	_check(_started.size() == 1 and _started[0] == &"ritual_interference", "the ritual reports beat_started once")
+	_check(int(director.get_debug_counters()["announced"]) == announced_before + 1, "…and is announced once")
+	var ritual_tips := _tips.filter(func(t: String) -> bool: return t.contains("sigil"))
+	_check(ritual_tips.size() == 1, "the first ritual of the run teaches the rule once (%d)" % ritual_tips.size())
+	_check(director.active_beats().has(&"ritual_interference") and not director.can_schedule(), "the ritual is the active beat: nothing else schedules meanwhile")
+	if rituals.size() == 1:
+		rituals[0].call("expire", &"duration")
+	await get_tree().process_frame
+	_check(_ended.size() == 1 and _ended[0] == &"ritual_interference", "the ritual's expiry ends the beat")
+	_check((director.get("_cooldowns") as Dictionary).has(&"ritual_interference") and director.active_beats().is_empty(), "…and leaves the ritual on cooldown like any beat")
+	director.set("_cooldowns", {})
+	director.set("_last_beat_id", &"")
+	var second: Dictionary = director.try_spawn_beat(&"ritual_interference")
+	ritual_tips = _tips.filter(func(t: String) -> bool: return t.contains("sigil"))
+	_check(not second.is_empty() and _started.size() == 2 and ritual_tips.size() == 1, "a second ritual is announced but does not teach again")
+	# Blocked ground aborts a ritual like any beat, and places no node.
+	await _reset(director, spawner)
+	spawner.blocked = Rect2(Vector2(-100000.0, -100000.0), Vector2(200000.0, 200000.0))
+	_check(director.try_spawn_beat(&"ritual_interference").is_empty() and get_tree().get_nodes_in_group(&"ritual_interference").is_empty(), "a ritual with no valid ground aborts and places nothing")
+	spawner.blocked = Rect2()
 	await _reset(director, spawner)
 
 	print("EncounterDirectorTest: %d passed, %d failed" % [_passes, _failures])

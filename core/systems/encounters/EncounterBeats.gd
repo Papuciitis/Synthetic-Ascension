@@ -14,7 +14,9 @@ class_name EncounterBeats
 ## the cadence, and every beat's counts and distances are plain data.
 ##
 ## Optional keys: "modifiers" names elite modifiers (§9) every member receives
-## through apply_elite_modifiers.
+## through apply_elite_modifiers; "announce" is the popup line when it should
+## say more than the label; "kind": RITUAL_KIND marks a beat whose one member
+## is a world node (RitualInterference) rather than an enemy formation.
 
 const GRUNT := "res://scenes/world/enemies/EnemyGrunt.tscn"
 const RUNNER := "res://scenes/world/enemies/EnemyRunner.tscn"
@@ -26,6 +28,10 @@ const LEECH := "res://scenes/world/enemies/EnemyLeech.tscn"
 const SNIPER := "res://scenes/world/enemies/EnemySniper.tscn"
 const HERALD := "res://scenes/world/enemies/EnemyHerald.tscn"
 const SUMMONER := "res://scenes/world/enemies/EnemySummoner.tscn"
+## Ritual interference (§8.1, Phase 2.7) is a script-built world node, placed
+## like a formation but spawning nothing itself.
+const RITUAL := "res://core/systems/world/RitualInterference.gd"
+const RITUAL_KIND := &"ritual"
 
 const PHASE_ORDER: Array[StringName] = [&"recon", &"disturbance", &"ascension", &"collapse"]
 
@@ -148,6 +154,21 @@ const CATALOG: Array[Dictionary] = [
 			{"scene": LEECH, "offset": Vector2(367.7, -367.7), "elite": false},
 		],
 	},
+	{
+		"id": &"ritual_interference",
+		"label": "RITUAL INTERFERENCE",
+		"announce": "RITUAL INTERFERENCE — THE DEAD RISE HERE",
+		"callout": "The dead rise here.",
+		"answer": "fight outside the sigil, or kill twice",
+		"mode": &"ahead",
+		"distance": 700.0,
+		"min_phase": &"collapse",
+		"cooldown": 150.0,
+		"kind": RITUAL_KIND,
+		"members": [
+			{"scene": RITUAL, "offset": Vector2(0.0, 0.0), "elite": false},
+		],
+	},
 ]
 
 
@@ -156,6 +177,11 @@ static func find(id: StringName) -> Dictionary:
 		if beat["id"] == id:
 			return beat
 	return {}
+
+
+## A beat whose member is a world node that bends a local rule, not enemies.
+static func is_ritual(beat: Dictionary) -> bool:
+	return StringName(beat.get("kind", &"")) == RITUAL_KIND
 
 
 static func phase_rank(phase: StringName) -> int:

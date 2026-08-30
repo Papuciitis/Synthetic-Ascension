@@ -11,12 +11,15 @@ class_name EncounterDirector
 ## (the rite owns that time), never the same beat twice in a row, at most
 ## `max_concurrent` beats alive. Members are spawned through the spawner's
 ## beat API, which protects them from culling and counts them as specials, and
-## receive any elite modifiers the beat entry names (§9).
+## receive any elite modifiers the beat entry names (§9). The ritual beat
+## (§8.1, 2.7) places a RitualInterference world node the same way and only
+## while the district collapses.
 
 signal beat_started(id: StringName, label: String, members: int)
 signal beat_ended(id: StringName)
 
 const BeatsScript = preload("res://core/systems/encounters/EncounterBeats.gd")
+const RitualScript = preload("res://core/systems/world/RitualInterference.gd")
 
 @export var enabled := true
 @export_range(5.0, 300.0, 1.0) var first_beat_delay := 45.0
@@ -42,6 +45,8 @@ var _active: Dictionary = {}
 var _last_phase: StringName = &""
 var _unlocked_pending: Array[StringName] = []
 var _specialists_sent := false
+## The director lives for one run, so this is "taught once per run".
+var _ritual_taught := false
 var _counters := {
 	"scheduled": 0,
 	"aborted": 0,
@@ -49,6 +54,7 @@ var _counters := {
 	"members_skipped": 0,
 	"escalations": 0,
 	"specialist_responses": 0,
+	"announced": 0,
 }
 ## Beats sent the moment the Exit Rite is channelled (roadmap 2.8): the world
 ## answers departure with a crossfire on the route and a wedge on the flank.
@@ -114,6 +120,11 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 	var beat: Dictionary = BeatsScript.find(beat_id) if beat_id != &"" else _pick_random()
 	if beat.is_empty() or _player == null or _spawner == null:
 		return {}
+	# A ritual bends a local rule: only while the district collapses, and never
+	# once the rite owns the run (2.7). Authored spawns bypass cooldowns, not this.
+	var ritual := BeatsScript.is_ritual(beat)
+	if ritual and (_phase() != &"collapse" or _is_unsealed()):
+		return {}
 	var travel := _travel_direction()
 	var mode: StringName = beat["mode"]
 	var anchor_dir := travel
@@ -139,7 +150,10 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 		if _spawner.has_method("is_beat_position_valid") and not bool(_spawner.call("is_beat_position_valid", pos)):
 			skipped += 1
 			continue
-		var node := _spawner.call("spawn_beat_member", String(member["scene"]), pos, bool(member.get("elite", false))) as Node
+		var node: Node = (
+			_place_ritual(pos) if ritual
+			else _spawner.call("spawn_beat_member", String(member["scene"]), pos, bool(member.get("elite", false))) as Node
+		)
 		if node == null:
 			skipped += 1
 			continue
@@ -240,6 +254,22 @@ func _on_rite_channel_changed(active: bool) -> void:
 		try_spawn_beat(id)
 
 
+## The ritual beat's one member is a world node, not an enemy: it takes the
+## place the spawner would have given a formation and is handed the spawner
+## for its revenants. The first of a run also teaches the rule.
+func _place_ritual(pos: Vector2) -> Node:
+	var host: Node = get_tree().current_scene if get_tree().current_scene != null else get_parent()
+	if host == null:
+		return null
+	var ritual := RitualScript.new() as Node2D
+	ritual.name = "RitualInterference"
+	host.add_child(ritual)
+	ritual.global_position = pos
+	ritual.call("setup", _spawner, not _ritual_taught)
+	_ritual_taught = true
+	return ritual
+
+
 ## Elite modifiers named on the beat entry (§9; the hunter is fast + vampiric).
 ## Deferred like the spawner's make_elite so they land on the promoted elite
 ## rather than on a base enemy the promotion then reshapes. Guarded: the enemy
@@ -283,8 +313,9 @@ func _on_member_gone(id: StringName) -> void:
 
 
 func _announce(beat: Dictionary) -> void:
+	_counters["announced"] = int(_counters["announced"]) + 1
 	if BattleText != null and _player != null and BattleText.has_method("popup"):
-		BattleText.popup(_player.global_position, String(beat["label"]), Color(1.0, 0.55, 0.35, 1.0), 1.25)
+		BattleText.popup(_player.global_position, String(beat.get("announce", beat["label"])), Color(1.0, 0.55, 0.35, 1.0), 1.25)
 
 
 func _record(event: StringName, id: StringName, members: int) -> void:
