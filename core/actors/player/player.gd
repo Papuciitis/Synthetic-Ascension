@@ -478,6 +478,31 @@ func refresh_run_state() -> void:
 		$AugmentRunner.call("refresh")
 
 
+## What the stat pass says when the Inversion Lens moves, or "" when it has
+## not. A retarget is the Lens leaving one worn curse for a deeper one: the
+## old curse is still equipped, and its whole penalty is back. Nothing is said
+## for the first curse suppressed, the last one removed, or a curse swapped
+## out of its slot - nothing "returns" in those, and the sheet's Lens line
+## already names the new target. Reads the two snapshots only, so a test can
+## drive it without a scene.
+static func lens_retarget_message(prev: BurdenSnapshot, next: BurdenSnapshot) -> String:
+	if prev == null or next == null:
+		return ""
+	if prev.suppressed_slot < 0 or next.suppressed_slot < 0:
+		return ""
+	if prev.suppressed_slot == next.suppressed_slot:
+		return ""
+	var before: Variant = prev.entries.get(prev.suppressed_slot, null)
+	var after: Variant = next.entries.get(prev.suppressed_slot, null)
+	if not (before is Dictionary) or not (after is Dictionary):
+		return ""
+	if (before as Dictionary).get("item", null) != (after as Dictionary).get("item", null):
+		return ""
+	return "LENS: %s curse returns — %s curse inverted" % [
+		Inventory.slot_label(prev.suppressed_slot), Inventory.slot_label(next.suppressed_slot),
+	]
+
+
 func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool = true) -> void:
 	if base_stats == null:
 		push_warning("Player.base_stats is null!")
@@ -527,6 +552,14 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	var burden: BurdenSnapshot = BurdenResolver.resolve(
 		Global.run_inventory, Global.permanent_augment_ids
 	)
+	# A deeper curse moving the Lens is the one change in this pass no stat
+	# explains: the old target's full penalty snaps back on what looked like
+	# an upgrade. This runs on every inventory change and is the only place
+	# the previous reading is still in hand, so it is where the player hears.
+	if Global.permanent_augment_ids.has(&"augment_inversion_lens"):
+		var retarget: String = lens_retarget_message(last_burden, burden)
+		if retarget != "" and RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit(retarget, 3.0)
 	last_burden = burden
 
 	if Global.run_inventory != null:
