@@ -9,6 +9,12 @@ var _last_segment_t: float = -1.0
 # Standalone tests run their own status service instance; production resolves
 # the /root/EnemyStatus autoload when this is null.
 var status_service_override: Node = null
+# Roadmap §9 elite modifiers that live in the damage path. Both registries are
+# empty until a modifier is live, so a hit on an ordinary horde pays one
+# is_empty() test each; entries clear on the elite's death here and on any
+# other teardown from the actor.
+var _elite_armour: Dictionary = {}   # handle -> flat fraction of max HP per hit
+var _elite_shields: Dictionary = {}  # handle -> radius covering non-elite allies
 
 
 func setup(world: EnemyWorldService) -> void:
@@ -75,6 +81,7 @@ func apply_damage(
 
 	if not _world.try_begin_death(handle):
 		return applied_damage
+	clear_elite_modifiers(handle)
 	var context := DeathContextScript.new(
 		handle,
 		_world.get_spec_id(handle),
@@ -181,6 +188,81 @@ func heal(handle: int, amount: float) -> bool:
 		_world.get_max_health(handle),
 	)
 	return true
+
+
+## VAMPIRIC (roadmap §9) feeds off allies outside the hit pipeline: no damage
+## number, no kill credit, never lethal - the ally is left at floor_health.
+## Returns what was actually taken.
+func drain_health(handle: int, amount: float, floor_health: float = 1.0) -> float:
+	if amount <= 0.0 or not _is_live_handle(handle):
+		return 0.0
+	var current_health := _world.get_health(handle)
+	var taken := clampf(minf(amount, current_health - maxf(floor_health, 0.0)), 0.0, current_health)
+	if taken <= 0.0 or not _world.set_health(handle, current_health - taken):
+		return 0.0
+	_mirror_health(_world.actor_for_handle(handle), current_health - taken, _world.get_max_health(handle))
+	return taken
+
+
+## ARMOURED (roadmap §9): every hit on `handle` loses max HP × fraction, flat.
+## A fraction of zero or less removes the plate.
+func set_elite_armour(handle: int, fraction: float) -> void:
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
+		return
+	if fraction > 0.0:
+		_elite_armour[handle] = fraction
+	else:
+		_elite_armour.erase(handle)
+
+
+## SHIELDED (roadmap §9): non-elite enemies within `radius` of `handle` take
+## reduced damage. A radius of zero or less drops the bearer.
+func set_elite_shield(handle: int, radius: float) -> void:
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
+		return
+	if radius > 0.0:
+		_elite_shields[handle] = radius
+	else:
+		_elite_shields.erase(handle)
+
+
+func clear_elite_modifiers(handle: int) -> void:
+	if not _elite_armour.is_empty():
+		_elite_armour.erase(handle)
+	if not _elite_shields.is_empty():
+		_elite_shields.erase(handle)
+
+
+func elite_armour_fraction(handle: int) -> float:
+	return float(_elite_armour.get(handle, 0.0))
+
+
+func elite_shield_bearer_count() -> int:
+	return _elite_shields.size()
+
+
+## Whether a point lies inside a live shield-bearer's radius. O(bearers), and
+## only asked while a bearer is live; a bearer whose record is gone is
+## forgotten on the way past.
+func is_shielded_at(position: Vector2, excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE) -> bool:
+	if _elite_shields.is_empty():
+		return false
+	var stale_handle := EnemyWorldTypes.INVALID_HANDLE
+	var covered := false
+	for bearer_variant in _elite_shields:
+		var bearer := int(bearer_variant)
+		if bearer == excluded_handle:
+			continue
+		if not _is_live_handle(bearer):
+			stale_handle = bearer
+			continue
+		var radius := float(_elite_shields[bearer])
+		if position.distance_squared_to(_world.get_position(bearer)) <= radius * radius:
+			covered = true
+			break
+	if stale_handle != EnemyWorldTypes.INVALID_HANDLE:
+		_elite_shields.erase(stale_handle)
+	return covered
 
 
 func configure_health(handle: int, maximum_health: float, fill_to_max: bool = false) -> bool:
@@ -425,6 +507,23 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 		if actor.has_meta("hit_cap_ratio"):
 			hit_cap_ratio = maxf(0.0, float(actor.get_meta("hit_cap_ratio")))
 	var adjusted := maxf(0.0, raw_damage) * damage_multiplier
+	if not _elite_armour.is_empty():
+		var armour_fraction := float(_elite_armour.get(handle, 0.0))
+		if armour_fraction > 0.0:
+			# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
+			# bounces, a heavy blow gets through. A batched ledger pays per pellet.
+			adjusted = maxf(
+				0.0,
+				adjusted - _world.get_max_health(handle) * armour_fraction * float(maxi(1, hit_count)),
+			)
+	if (
+		not _elite_shields.is_empty()
+		and not EnemyWorldTypes.has_flag(_world.get_flags(handle), EnemyWorldTypes.Flags.ELITE)
+		and is_shielded_at(_world.get_position(handle), handle)
+	):
+		# SHIELDED (roadmap §9): the bearer's non-elite neighbours take less;
+		# the bearer itself and other elites are never covered.
+		adjusted *= 1.0 - EliteModifiers.SHIELD_ALLY_DAMAGE_REDUCTION
 	if hit_cap_ratio > 0.0:
 		var hit_cap := _world.get_max_health(handle) * hit_cap_ratio * float(maxi(1, hit_count))
 		adjusted = minf(adjusted, hit_cap)

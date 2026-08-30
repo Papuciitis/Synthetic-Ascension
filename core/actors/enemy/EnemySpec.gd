@@ -147,6 +147,13 @@ enum AI {
 	"SNIPER:10"
 ) var elite_ai_override: int = -1
 
+@export_group("Elite Modifiers")
+# Roadmap §9: which EliteModifiers ids an elite of this archetype may carry,
+# whether picked by phase or requested by a beat. Empty allow-list = all five;
+# the deny-list wins. A splitting archetype never receives SPLITTING.
+@export var elite_modifiers_allowed: Array[StringName] = []
+@export var elite_modifiers_denied: Array[StringName] = []
+
 @export_group("Visuals")
 @export var sprite_texture: Texture2D
 @export var sprite_scale: Vector2 = Vector2.ONE

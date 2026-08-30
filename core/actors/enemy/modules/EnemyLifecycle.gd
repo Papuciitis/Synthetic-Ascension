@@ -58,6 +58,14 @@ func resolve_death(context: RefCounted) -> void:
 	var split_children: Array[EnemyActor] = []
 	if is_splitter and _splitter != null:
 		split_children = _splitter.spawn_splitters(_owner.is_elite)
+	elif _splitter != null and _owner.has_elite_modifier(EliteModifiers.SPLITTING):
+		# Roadmap §9 SPLITTING on a non-splitting archetype. The elite's own
+		# loot and reward roll below as for any elite; the copies carry none.
+		var copies := _splitter.spawn_modifier_split(EliteModifiers.SPLIT_COUNT)
+		if not copies.is_empty() and PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+			PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_split_spawned", copies.size(), {
+				"enemy_id": String(_owner.spec.id) if _owner.spec != null else "",
+			})
 
 	if root_split_item:
 		if split_children.is_empty():

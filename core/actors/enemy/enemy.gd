@@ -105,6 +105,12 @@ var _los_timer: float = 0.0
 
 # Elite
 var is_elite: bool = false
+# Elite modifiers (roadmap §9): ids in pick order, a bit mask for the physics
+# step, the VAMPIRIC drain clock and the tell drawn on the body.
+var _elite_modifier_ids: Array[StringName] = []
+var _elite_mod_bits: int = 0
+var _vampiric_left: float = 0.0
+var _elite_mark: Node2D = null
 
 # Shared movement helpers
 var _orbit_angle: float = 0.0
@@ -236,6 +242,8 @@ func _emit_archetype_encountered() -> void:
 
 
 func _exit_tree() -> void:
+	# Before unregister: it zeroes the world handle the combat registries key on.
+	_clear_elite_modifiers()
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
 		_enemy_index = get_node_or_null("/root/EnemyIndex")
 	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("unregister"):
@@ -268,6 +276,9 @@ func _run_simulation_step(delta: float) -> void:
 	var ai: int = _get_active_ai()
 	_update_los_cache(delta, ai)
 	_tick_active_modules(delta, ai)
+	# Only a live VAMPIRIC pays for its clock; every other enemy pays one int test.
+	if (_elite_mod_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
+		_tick_vampiric(delta)
 
 	# Knockback decay
 	if knockback_vel != Vector2.ZERO:
@@ -726,6 +737,8 @@ func despawn(_reason: StringName = &"death") -> void:
 
 
 func _on_pool_recycle() -> void:
+	# Before unregister: it zeroes the world handle the combat registries key on.
+	_clear_elite_modifiers()
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
 		_enemy_index = get_node_or_null("/root/EnemyIndex")
 	if _enemy_index != null and _enemy_index.has_method("unregister"):
@@ -768,8 +781,9 @@ func _on_pool_obtain_context(context: Dictionary) -> void:
 
 
 func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
+	_clear_elite_modifiers()
 	for child in get_children():
-		if child is BurnDot or child is BleedDot:
+		if child is BurnDot or child is BleedDot or child is VFX_EliteModifierMark:
 			child.free()
 	for key in [
 		&"culled",
@@ -777,6 +791,7 @@ func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
 		&"_threat_scaled",
 		&"split_generation",
 		&"split_item_entitled",
+		&"elite_split_child",
 		&"sniper_combat_committed",
 	]:
 		if has_meta(key):
@@ -874,11 +889,55 @@ func _ranged_brain(to_player: Vector2, dist: float) -> Vector2:
 func make_elite() -> void:
 	if spec == null or is_elite:
 		return
+	# Roadmap §9: from ascension on, an elite also IS something readable.
+	_promote_elite(EliteModifiers.pick_for_phase(_segment_phase(), spec))
 
+
+## Roadmap §9 / plan §2.4: a beat (the Hunter: fast + vampiric) or any other
+## caller names the modifiers it wants. Promotes a plain enemy; on a live elite
+## it replaces the current set. Unknown and archetype-denied ids are dropped.
+func apply_elite_modifiers(ids: Array[StringName]) -> void:
+	if spec == null or dead:
+		return
+	if not is_elite:
+		_promote_elite(ids)
+		return
+	_clear_elite_modifiers()
+	# Back to the archetype's plain elite look, so an empty set reads as one.
+	var spr := get_node_or_null("Sprite2D") as CanvasItem
+	if spr != null:
+		spr.modulate = spec.elite_tint
+	_apply_elite_modifiers(ids)
+
+
+func elite_modifier_ids() -> Array[StringName]:
+	return _elite_modifier_ids.duplicate()
+
+
+func has_elite_modifier(id: StringName) -> bool:
+	return (_elite_mod_bits & EliteModifiers.bit_for(id)) != 0
+
+
+func _segment_phase() -> StringName:
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director == null:
+		return &"recon"
+	var phase: Variant = director.get("segment_phase")
+	if phase is StringName or phase is String:
+		return StringName(phase)
+	return &"recon"
+
+
+func _promote_elite(requested: Array[StringName]) -> void:
+	var modifiers := EliteModifiers.filter_for_spec(requested, spec)
 	is_elite = true
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		var modifier_names: PackedStringArray = []
+		for id in modifiers:
+			modifier_names.append(String(id))
 		PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_promoted", 1, {
 			"enemy_id": scene_file_path.get_file().get_basename(),
+			"modifiers": ",".join(modifier_names),
 		})
 	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("note_elite"):
 		_enemy_index.call("note_elite", self)
@@ -902,6 +961,128 @@ func make_elite() -> void:
 		var elite_renderer: Node = elite_proxy_root.get("renderer") if elite_proxy_root != null else null
 		if elite_renderer != null and elite_renderer.has_method("invalidate_visual_profile"):
 			elite_renderer.call("invalidate_visual_profile", _enemy_world_handle)
+	_apply_elite_modifiers(modifiers)
+
+
+func _apply_elite_modifiers(requested: Array[StringName]) -> void:
+	var ids := EliteModifiers.filter_for_spec(requested, spec)
+	_elite_modifier_ids = ids
+	_elite_mod_bits = 0
+	for id in ids:
+		_elite_mod_bits |= EliteModifiers.bit_for(id)
+	if ids.is_empty():
+		return
+	var handle := _resolve_enemy_world_handle()
+	if (_elite_mod_bits & EliteModifiers.BIT_FAST) != 0:
+		# On top of the archetype's elite multipliers; the HP cut keeps it a
+		# glass cannon the player can still answer.
+		configure_health(max_hp * EliteModifiers.FAST_HP_MULT, true)
+		speed *= EliteModifiers.FAST_SPEED_MULT
+		_base_speed = speed
+	if (_elite_mod_bits & EliteModifiers.BIT_ARMOURED) != 0 and handle != 0:
+		EnemyCombat.set_elite_armour(handle, EliteModifiers.ARMOUR_FLAT_FRACTION)
+	if (_elite_mod_bits & EliteModifiers.BIT_SHIELDED) != 0 and handle != 0:
+		EnemyCombat.set_elite_shield(handle, EliteModifiers.SHIELD_RADIUS)
+	if (_elite_mod_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
+		_vampiric_left = EliteModifiers.VAMPIRIC_DRAIN_EVERY
+	# The tell: the first modifier's tint on the body, every modifier's mark.
+	var tint := EliteModifiers.tint(ids[0])
+	var spr := get_node_or_null("Sprite2D") as CanvasItem
+	if spr != null:
+		spr.modulate = tint
+	_attach_elite_mark(ids, tint)
+	_announce_elite_modifiers(ids, tint)
+
+
+func _clear_elite_modifiers() -> void:
+	if _elite_mod_bits == 0 and _elite_modifier_ids.is_empty():
+		return
+	if (_elite_mod_bits & (EliteModifiers.BIT_ARMOURED | EliteModifiers.BIT_SHIELDED)) != 0 and _enemy_world_handle != 0:
+		EnemyCombat.clear_elite_modifiers(_enemy_world_handle)
+	_elite_mod_bits = 0
+	_elite_modifier_ids = []
+	_vampiric_left = 0.0
+	if _elite_mark != null and is_instance_valid(_elite_mark):
+		_elite_mark.queue_free()
+	_elite_mark = null
+
+
+func _attach_elite_mark(ids: Array[StringName], tint: Color) -> void:
+	if _elite_mark != null and is_instance_valid(_elite_mark):
+		_elite_mark.queue_free()
+	var mark := VFX_EliteModifierMark.new()
+	mark.setup(self, ids, tint)
+	add_child(mark)
+	_elite_mark = mark
+
+
+func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
+	# Legibility is part of the mechanism: the label pops on the body when the
+	# promotion happens in view, and each modifier teaches itself once per run
+	# the first time one is promoted where the player can see it.
+	if not _in_player_view():
+		return
+	var labels: PackedStringArray = []
+	for id in ids:
+		labels.append(EliteModifiers.label(id))
+	if BattleText != null:
+		BattleText.popup(global_position + Vector2(0.0, -34.0), " · ".join(labels), tint, 1.15)
+	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		return
+	for id in ids:
+		if EliteModifiers.consume_teach(id):
+			RunEvents.tutorial_tip.emit(EliteModifiers.teach_line(id), EliteModifiers.TEACH_SECONDS)
+
+
+func _in_player_view(margin: float = 48.0) -> bool:
+	if not is_inside_tree():
+		return false
+	var viewport := get_viewport()
+	if viewport == null:
+		return false
+	var rect := viewport.get_visible_rect().grow(margin)
+	return rect.has_point(viewport.get_canvas_transform() * global_position)
+
+
+func _tick_vampiric(delta: float) -> void:
+	_vampiric_left -= delta
+	if _vampiric_left > 0.0:
+		return
+	_vampiric_left = EliteModifiers.VAMPIRIC_DRAIN_EVERY
+	# Nothing to heal: skip the gather entirely.
+	if hp >= max_hp:
+		return
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		_enemy_index = get_node_or_null("/root/EnemyIndex")
+	if _enemy_index == null or not _enemy_index.has_method("gather_in_radius"):
+		return
+	var gathered: Array = []
+	_enemy_index.call("gather_in_radius", global_position, EliteModifiers.VAMPIRIC_DRAIN_RADIUS, gathered)
+	var healed := 0.0
+	var fed := 0
+	for n in gathered:
+		var ally := n as EnemyActor
+		if ally == null or ally == self or ally.dead or ally.is_elite:
+			continue
+		var taken := EnemyCombat.drain_health(
+			EnemyCombat.handle_for_actor(ally),
+			ally.max_hp * EliteModifiers.VAMPIRIC_DRAIN_FRACTION,
+			EliteModifiers.VAMPIRIC_DRAIN_FLOOR_HP,
+		)
+		if taken <= 0.0:
+			continue
+		healed += taken
+		fed += 1
+		if fed >= EliteModifiers.VAMPIRIC_DRAIN_TARGETS:
+			break
+	if healed > 0.0:
+		heal(healed)
+		if _elite_mark != null and is_instance_valid(_elite_mark) and _elite_mark.has_method("note_feed"):
+			_elite_mark.call("note_feed")
+		if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+			PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_vampiric_fed", 1, {
+				"enemy_id": scene_file_path.get_file().get_basename(),
+			})
 
 
 # -----------------------
@@ -1098,6 +1279,7 @@ func _quiesce_representation_lease() -> void:
 		if child is BurnDot or child is BleedDot:
 			child.free()
 	_sniper.cleanup()
+	_clear_elite_modifiers()
 	# Invalidates any SceneTreeTimer-based leech loop from the old lease.
 	_leech.setup(self)
 	player = null

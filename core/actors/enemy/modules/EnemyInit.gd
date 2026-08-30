@@ -41,6 +41,7 @@ func boot() -> void:
 	_apply_spec_if_any()
 	_apply_threat_scaling()
 	_apply_split_generation()
+	_apply_elite_split_child()
 
 	_owner.hp = _owner.max_hp
 	# Group membership is added once in EnemyActor._ready and survives pooling.
@@ -128,6 +129,19 @@ func _apply_split_generation() -> void:
 	_owner.scale *= Vector2.ONE * scale_factor
 	_owner.max_hp *= pow(maxf(0.05, _owner.spec.split_hp_per_generation), generation)
 	_owner.speed *= pow(maxf(0.10, _owner.spec.split_speed_per_generation), generation)
+
+
+func _apply_elite_split_child() -> void:
+	# Roadmap §9 SPLITTING: a copy left behind by a splitting elite is a smaller,
+	# weaker, loot-less version of the archetype - the elite already rolled the
+	# family's loot, and three free rolls per careless kill would reward the
+	# mistake. Splitter descendants keep their own curve above and never carry
+	# this meta.
+	if not bool(_owner.get_meta("elite_split_child", false)):
+		return
+	_owner.scale *= Vector2.ONE * maxf(0.10, EliteModifiers.SPLIT_CHILD_SCALE)
+	_owner.max_hp *= maxf(0.05, EliteModifiers.SPLIT_CHILD_HP_FRACTION)
+	_owner.drop_chance = 0.0
 
 
 func _wire_hitbox() -> void:
