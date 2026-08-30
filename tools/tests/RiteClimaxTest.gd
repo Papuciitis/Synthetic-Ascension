@@ -6,7 +6,8 @@ extends Node
 # VisionRig tints the screen to it and lets go under reduced motion without a
 # fade. The 85% last chance: exactly one Cursed Vault per channel, at the
 # rite's edge on the far side from the player, configured to take every
-# safeguard; a reset or a clear takes the vault with it. And a rig freed
+# safeguard and announced once, as LAST CHANCE, by the vault itself; a reset
+# or a clear takes the vault with it. And a rig freed
 # mid-distortion (a restart cuts the release) leaves nothing behind for the
 # next run's rig: the scene's material stays at its defaults.
 #
@@ -62,6 +63,13 @@ func _tip_containing(needle: String) -> bool:
 	return false
 
 
+func _popups_since(start: int) -> PackedStringArray:
+	var texts := PackedStringArray()
+	for index in range(start, int(BattleText.get("_count"))):
+		texts.append(BattleText._texts[index])
+	return texts
+
+
 func _vaults_under(rite: Node) -> Array[CursedVault]:
 	var found: Array[CursedVault] = []
 	for child in rite.get_children():
@@ -75,6 +83,9 @@ func _run() -> void:
 	var saved_hold_mul: float = Global.attempt_exit_hold_mul
 	Global.attempt_doctrine_rules = {}
 	Global.attempt_exit_hold_mul = 1.0
+	# Popups are what the announce pins count, and the setting gates them.
+	var saved_callouts: Variant = SettingsManager.get_value(&"accessibility", &"ability_callouts", true)
+	SettingsManager.set_value(&"accessibility", &"ability_callouts", true, false)
 	RunEvents.rite_distortion_changed.connect(_on_level)
 	RunEvents.tutorial_tip.connect(_on_tip)
 
@@ -84,6 +95,7 @@ func _run() -> void:
 
 	RunEvents.rite_distortion_changed.disconnect(_on_level)
 	RunEvents.tutorial_tip.disconnect(_on_tip)
+	SettingsManager.set_value(&"accessibility", &"ability_callouts", saved_callouts, false)
 	Global.attempt_doctrine_rules = saved_rules
 	Global.attempt_exit_hold_mul = saved_hold_mul
 	print("RiteClimaxTest: %d passed, %d failed" % [_passes, _failures])
@@ -144,6 +156,7 @@ func _test_rite() -> void:
 
 	# --- 85%: one vault, at the edge, on the far side ---
 	var tips_before := _tips.size()
+	var popups_before := int(BattleText.get("_count"))
 	rite._process(hold * 0.25)
 	var vaults := _vaults_under(rite)
 	_check(vaults.size() == 1, "crossing 85%% spawns exactly one vault (%d)" % vaults.size())
@@ -155,17 +168,28 @@ func _test_rite() -> void:
 		await get_tree().process_frame
 		return
 	var vault: CursedVault = vaults[0]
+	# The vault's own approach check runs on its next frame, with the player
+	# already inside its approach radius.
+	vault._process(0.016)
 	_check(rite.last_chance_vault() == vault, "the rite knows its vault")
 	var distance := vault.position.length()
 	_check(distance >= rite.radius - vault.open_radius and distance <= rite.radius + vault.open_radius, "the vault's opening disc overlaps the rite's edge (%.0f for radius %.0f)" % [distance, rite.radius])
 	_check(vault.position.x < 0.0 and absf(vault.position.y) < 1.0, "on the far side from the player (%s)" % [vault.position])
 	_check(vault.cost_all_safeguards and vault.cost_beats.is_empty() and vault.guarantee_manifestation, "configured to take the safeguards, send no beat, and guarantee a Manifestation")
-	_check(_tips.size() > tips_before and _tip_containing("LAST CHANCE"), "announced once (%s)" % [_tips.slice(tips_before)])
+	var popups := int(BattleText.get("_count")) - popups_before
+	var popup_text := String(BattleText._texts[popups_before]) if popups >= 1 else ""
+	var popup_pos: Vector2 = BattleText._positions[popups_before] if popups >= 1 else Vector2.INF
+	_check(popups == 1, "one popup through the vault's first frame (%s)" % [_popups_since(popups_before)])
+	_check(popup_text == "LAST CHANCE", "and it says LAST CHANCE (%s)" % popup_text)
+	_check(popup_pos.distance_to(vault.global_position) <= 48.0, "at the vault (%s for %s)" % [popup_pos, vault.global_position])
+	var new_tips := _tips.slice(tips_before)
+	_check(new_tips.size() == 1 and new_tips[0].contains("LAST CHANCE") and new_tips[0].contains("every safeguard"), "one line: LAST CHANCE, naming the safeguard cost (%s)" % [new_tips])
 
 	# --- opening it takes the safeguards, from outside the circle ---
 	player.global_position = vault.global_position
 	vault._process(0.5)
 	_check(_tip_containing("every safeguard"), "the vault's own sign names the safeguard cost")
+	_check(_tips.size() == tips_before + 1, "and the approach does not say it again (%s)" % [_tips.slice(tips_before)])
 	vault._process(vault.open_time + 0.1)
 	_check(vault.is_opened(), "standing in it opens it")
 	_check(rite.safeguard_count() == 0, "and the rite's safeguards are gone (%d)" % rite.safeguard_count())

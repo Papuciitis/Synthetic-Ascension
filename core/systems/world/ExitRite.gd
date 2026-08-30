@@ -431,13 +431,15 @@ func _spawn_last_chance_vault() -> void:
 	vault.guarantee_manifestation = true
 	vault.cost_beats = no_beats
 	vault.cost_all_safeguards = true
+	vault.announce_label = "LAST CHANCE"
+	vault.announce_line = "LAST CHANCE — a vault at the rite's edge: a guaranteed Manifestation."
 	vault.position = away * (radius + last_chance_edge_offset)
 	add_child(vault)
 	_last_chance_vault = vault
-	if BattleText != null and BattleText.has_method("popup"):
-		BattleText.popup(vault.global_position, "LAST CHANCE", CursedVault.COLOUR, 1.3)
-	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		RunEvents.tutorial_tip.emit("LAST CHANCE — a vault at the rite's edge. It takes every safeguard.", 4.0)
+	# The vault announces itself, now: one popup and one line, the line being
+	# its own sign with the whole bill on it. Its approach check next frame
+	# finds it already said, so nothing overdraws it.
+	vault.announce()
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_last_chance_spawned", 1, {"safeguards": _safeguards})
 

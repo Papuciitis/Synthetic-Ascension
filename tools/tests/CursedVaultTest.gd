@@ -42,6 +42,13 @@ func _on_tip(text: String, _duration: float) -> void:
 	_tips.append(text)
 
 
+func _popups_since(start: int) -> PackedStringArray:
+	var texts := PackedStringArray()
+	for index in range(start, int(BattleText.get("_count"))):
+		texts.append(BattleText._texts[index])
+	return texts
+
+
 func _check(condition: bool, message: String) -> void:
 	if condition:
 		_passes += 1
@@ -54,6 +61,9 @@ func _check(condition: bool, message: String) -> void:
 func _run() -> void:
 	_check(Global != null and not Global.item_db.is_empty(), "the item database is loaded")
 	RunEvents.tutorial_tip.connect(_on_tip)
+	# Popups are what the announce pins count, and the setting gates them.
+	var saved_callouts: Variant = SettingsManager.get_value(&"accessibility", &"ability_callouts", true)
+	SettingsManager.set_value(&"accessibility", &"ability_callouts", true, false)
 	var player := FakePlayer.new()
 	player.add_to_group(&"player")
 	player.position = Vector2(2000.0, 0.0)
@@ -70,9 +80,11 @@ func _run() -> void:
 	vault._process(1.0)
 	_check(not bool(vault.get("_announced")) and vault.progress() == 0.0, "a distant player sees and does nothing")
 
+	var popups_before := int(BattleText.get("_count"))
 	player.position = Vector2(200.0, 0.0)
 	vault._process(1.0)
 	_check(bool(vault.get("_announced")), "approaching announces the vault and its cost")
+	_check(int(BattleText.get("_count")) == popups_before + 1 and String(BattleText._texts[popups_before]) == "CURSED VAULT", "as CURSED VAULT, by default (%s)" % [_popups_since(popups_before)])
 	_check(vault.cost_heal_lock_sec == 45.0 and not vault.cost_all_safeguards, "the defaults: a 45 s heal lock, no safeguard cost")
 	_check(_tips.size() == 1 and _tips[0].contains("Something will come for you") and _tips[0].contains("No healing for 45s"), "the sign carries the whole bill - the hunt and the healing (%s)" % [_tips])
 	_check(vault.progress() == 0.0, "standing outside the open radius does not open it")
@@ -138,7 +150,29 @@ func _run() -> void:
 	_check(locking.locks.size() == 1, "a zero heal lock bills nothing")
 	var fourth_reward := fourth.reward()
 
+	# --- the announce is the vault's own, under whatever name it is spawned ---
+	# The rite's last chance (plan 2.8) spawns one of these with the player
+	# already inside its approach radius and tells it to announce at once.
+	var fifth := VaultScript.new()
+	fifth.position = Vector2(2400.0, 0.0)
+	fifth.announce_label = "LAST CHANCE"
+	fifth.announce_line = "LAST CHANCE — a vault at the rite's edge: a guaranteed Manifestation."
+	fifth.cost_all_safeguards = true
+	fifth.cost_beats = no_beats
+	add_child(fifth)
+	locking.position = Vector2(2600.0, 0.0)
+	var tips_before := _tips.size()
+	var popups_at_spawn := int(BattleText.get("_count"))
+	fifth.announce()
+	fifth.announce()
+	fifth._process(0.016)
+	var popups := int(BattleText.get("_count")) - popups_at_spawn
+	_check(popups == 1 and String(BattleText._texts[popups_at_spawn]) == "LAST CHANCE", "a vault told to announce pops its label once - a repeat and the approach add nothing (%s)" % [_popups_since(popups_at_spawn)])
+	_check(_tips.size() == tips_before + 1 and _tips[tips_before] == "LAST CHANCE — a vault at the rite's edge: a guaranteed Manifestation. It takes every safeguard. No healing for 45s.", "and one line: its own sign, opening with the line it was given, with the whole bill (%s)" % [_tips.slice(tips_before)])
+	_check(vault.announce_label == "CURSED VAULT" and vault.announcement().begins_with("Stand in the vault to open it: a guaranteed Manifestation."), "the default vault keeps its label and its line")
+
 	RunEvents.tutorial_tip.disconnect(_on_tip)
+	SettingsManager.set_value(&"accessibility", &"ability_callouts", saved_callouts, false)
 	for node in [reward, third_reward, fourth_reward]:
 		if node != null and is_instance_valid(node):
 			node.queue_free()
@@ -146,6 +180,7 @@ func _run() -> void:
 	second.queue_free()
 	third.queue_free()
 	fourth.queue_free()
+	fifth.queue_free()
 	player.queue_free()
 	locking.queue_free()
 	director.queue_free()

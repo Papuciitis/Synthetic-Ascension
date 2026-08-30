@@ -13,6 +13,10 @@ signal opened(vault: CursedVault)
 
 const PICKUP_SCENE := preload("res://scenes/world/pickups/ItemPickup.tscn")
 const COLOUR := Color(0.85, 0.42, 0.95, 1.0)
+## Emphasis of the approach popup (BattleText.popup's entry_scale).
+const ANNOUNCE_POPUP_SCALE: float = 1.3
+## How long the approach line stays on the tip channel.
+const ANNOUNCE_TIP_SECONDS: float = 4.0
 
 @export var approach_radius := 320.0
 @export var open_radius := 64.0
@@ -29,6 +33,12 @@ const COLOUR := Color(0.85, 0.42, 0.95, 1.0)
 ## Healing is sealed for this long once the vault opens (plan 2.5). The
 ## player owns the lock; one without it simply pays the other costs.
 @export var cost_heal_lock_sec: float = 45.0
+## What the approach popup says. The rite's last chance (plan 2.8) is this
+## vault under another name, so the vault owns its announce - one popup, one
+## line - and nothing of its own overdraws what its spawner said.
+@export var announce_label: String = "CURSED VAULT"
+## The line's opening - what the vault is and pays - ahead of the costs.
+@export var announce_line: String = "Stand in the vault to open it: a guaranteed Manifestation."
 
 var _progress := 0.0
 var _opened := false
@@ -54,8 +64,7 @@ func _process(delta: float) -> void:
 		return
 	var distance := global_position.distance_to(_player.global_position)
 	if not _announced and distance <= approach_radius:
-		_announced = true
-		_announce()
+		announce()
 	if distance <= open_radius:
 		_progress = minf(_progress + delta, open_time)
 		if _progress >= open_time:
@@ -78,11 +87,17 @@ func reward() -> Node:
 	return _reward
 
 
-func _announce() -> void:
+## Announces the vault once: the approach check calls it, and a spawner that
+## wants the moment marked at once (the rite's last chance) calls it first.
+## Later calls say nothing.
+func announce() -> void:
+	if _announced:
+		return
+	_announced = true
 	if BattleText != null and BattleText.has_method("popup"):
-		BattleText.popup(global_position, "CURSED VAULT", COLOUR, 1.3)
+		BattleText.popup(global_position, announce_label, COLOUR, ANNOUNCE_POPUP_SCALE)
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		RunEvents.tutorial_tip.emit(announcement(), 4.0)
+		RunEvents.tutorial_tip.emit(announcement(), ANNOUNCE_TIP_SECONDS)
 
 
 ## The "fuck it" moment is only a decision if the whole bill is on the sign.
@@ -94,10 +109,9 @@ func announcement() -> String:
 		costs.append("It takes every safeguard.")
 	if cost_heal_lock_sec > 0.0:
 		costs.append("No healing for %ds." % int(round(cost_heal_lock_sec)))
-	var text := "Stand in the vault to open it: a guaranteed Manifestation."
 	if costs.is_empty():
-		return text
-	return text + " " + " ".join(costs)
+		return announce_line
+	return announce_line + " " + " ".join(costs)
 
 
 func _open() -> void:
