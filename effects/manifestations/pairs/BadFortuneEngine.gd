@@ -104,6 +104,12 @@ func _withdraw_one_misfortune() -> void:
 		return
 	state.misfortune -= 1
 	state.resource_spent.emit(&"fortune", 1.0)
+	# Broken Providence's owner watches the bank tick DOWN a point at a time,
+	# which with nothing said reads as a Providence bug. Merge-keyed: at the
+	# forge cadence this repeats a couple of times a second and says the same
+	# thing each time.
+	if BattleText != null:
+		BattleText.progress(player_position(), "-1 MISFORTUNE → SHARD", int(get_instance_id()), noun_colour(&"fortune"))
 
 
 func _spawn_forge_spark() -> void:

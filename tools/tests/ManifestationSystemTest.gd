@@ -46,6 +46,7 @@ func _run() -> void:
 	_test_describe_is_detached_safe()
 	_test_rule_text_matches_the_code()
 	_test_death_rattle_toll_is_a_damage_number()
+	_test_claw_back_and_withdrawal_are_announced()
 	_test_identity_survives_merge()
 	_test_identity_survives_auto_swap_merge()
 	_test_a_deliberate_merge_keeps_the_destination_rule()
@@ -717,6 +718,52 @@ func _test_death_rattle_toll_is_a_damage_number() -> void:
 	_check(_battle_text_has("RATTLE -5"), "and the callout half still fires")
 
 	rattle.queue_free()
+	state.queue_free()
+	fake.queue_free()
+	_restore_feedback_settings(previous)
+
+
+func _test_claw_back_and_withdrawal_are_announced() -> void:
+	# Observability audit 2026-08-30 §5 #8 and #12: two rules that take
+	# something from the player - a heal, a banked Misfortune point - with no
+	# line at the moment they do it.
+	var previous := _force_feedback_settings()
+	var fake := FakePlayer.new()
+	add_child(fake)
+	var state := ManifestationState.new()
+	add_child(state)
+	state.bind_player(fake)
+
+	# Scar Tissue: "heal, then the bar instantly drops" was the most bug-shaped
+	# visual in the layer, and the rule had no popup at all.
+	var scar_def := ManifestationCatalog.get_def(&"scar_tissue")
+	var scar := scar_def.logic.new() as ManifestationEffect
+	add_child(scar)
+	var data := _make_data("test_scar", ManifestationCatalog.SLOT_RING)
+	scar.setup_manifestation(fake, _make_instance(data, 0, 0.3, &"scar_tissue"), Inventory.SLOT_RING, state, scar_def)
+	fake.hp = 60.0
+	scar.call(&"on_healed", 20.0)
+	_check(is_equal_approx(fake.hp, 49.0), "55%% of a 20 heal is clawed back (hp %.1f)" % fake.hp)
+	_check(_battle_text_has("SCAR +18 ARMOUR"), "and the claw-back says what it became")
+	scar.queue_free()
+
+	# Bad Fortune Engine: each forge silently withdrew one Misfortune, which a
+	# Broken Providence owner watched as their bank ticking down for no reason.
+	var forge_def := ManifestationPairCatalog.get_def(&"bad_fortune_engine")
+	var forge := forge_def.logic.new() as ManifestationPairEffect
+	add_child(forge)
+	forge.setup_pair(fake, state, forge_def, 0.0)
+	state.claim(&"fortune")
+	state.claim(&"shard")
+	state.add_misfortune(3)
+	forge.call(&"on_lucky_crit_failed")
+	_check(
+		state.shard_count() == 1 and state.misfortune == 2,
+		"a missed roll forges one shard and withdraws one point (%d shards, %d banked)" % [state.shard_count(), state.misfortune]
+	)
+	_check(_battle_text_has("-1 MISFORTUNE → SHARD"), "and the withdrawal is announced")
+	forge.queue_free()
+
 	state.queue_free()
 	fake.queue_free()
 	_restore_feedback_settings(previous)

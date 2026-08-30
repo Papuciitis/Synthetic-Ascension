@@ -54,8 +54,22 @@ func on_healed(amount: float) -> void:
 		if player.has_signal("hp_changed"):
 			player.emit_signal("hp_changed", player.get("hp"), player.get("max_hp"))
 
+	var before := _armour
 	_armour = minf(ARMOUR_CAP, _armour + refused * armour_per_point())
+	_announce(_armour - before)
 	_publish()
+
+
+## "Heal, then the bar instantly drops" is the most bug-shaped moment in the
+## layer, and this rule said nothing at the moment it happened. One line,
+## merge-keyed so it replaces itself rather than stacking, because lifesteal
+## fires on_healed once per hit per enemy. Nothing under a whole point: melee
+## regen claws back a sliver every frame, and a standing "+0" would be worse
+## than silence.
+func _announce(gained: float) -> void:
+	if gained < 0.5 or BattleText == null:
+		return
+	BattleText.progress(player_position(), "SCAR +%d ARMOUR" % int(round(gained)), int(get_instance_id()), SCAR_TINT)
 
 
 ## Seconds between stat recomputes. Armour only reaches the player through
