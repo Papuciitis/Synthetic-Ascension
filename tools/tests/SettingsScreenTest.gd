@@ -54,6 +54,22 @@ func _run() -> void:
 	var expected_rows := (settings_source.call("input_entries") as Array).size()
 	_check(screen.get_tree().get_nodes_in_group(&"settings_binding_row").size() == expected_rows, "Controls builds one row per exposed action")
 
+	# The callouts checkbox says what it silences: rule and pair fire lines go
+	# quiet with it, damage numbers and the noun counter do not.
+	var accessibility_tab := screen.find_child("AccessibilityTab", true, false) as Button
+	accessibility_tab.pressed.emit()
+	await process_frame
+	var callouts: CheckBox = null
+	for node in screen.find_children("", "CheckBox", true, false):
+		if (node as CheckBox).text == "Show ability and Manifestation callouts":
+			callouts = node as CheckBox
+			break
+	_check(callouts != null, "Accessibility builds the callouts checkbox")
+	if callouts != null:
+		var tip := callouts.tooltip_text
+		_check(tip.contains("rule and pair fire lines") and tip.contains("LUCKY"), "its tooltip lists what goes silent (%s)" % tip)
+		_check(tip.contains("Damage numbers") and tip.contains("noun counter"), "and what stays")
+
 	var capture := capture_scene.instantiate()
 	root.add_child(capture)
 	await process_frame

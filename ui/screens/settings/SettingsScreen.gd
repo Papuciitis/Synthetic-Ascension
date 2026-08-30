@@ -290,6 +290,9 @@ func _build_accessibility() -> void:
 	_add_control_row("Damage Numbers", numbers)
 	var callouts := CheckBox.new()
 	callouts.text = "Show ability and Manifestation callouts"
+	# The blast radius, so nobody switches this off to quiet LUCKY and loses
+	# every word their engine says.
+	callouts.tooltip_text = "Off silences every named combat line: Manifestation rule and pair fire lines, LUCKY and EVADED, item feed toasts, encounter, objective and district callouts. Damage numbers, the noun counter above the health bar, pair cards and tutorial tips stay."
 	callouts.button_pressed = bool(_value(&"accessibility", &"ability_callouts", true))
 	callouts.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"ability_callouts", on))
 	_add_control_row("Ability Callouts", callouts)
