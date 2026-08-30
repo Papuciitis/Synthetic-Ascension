@@ -12,6 +12,9 @@ class_name EncounterBeats
 ##
 ## Numbers here are shapes to playtest, not tuning: EncounterDirector exports
 ## the cadence, and every beat's counts and distances are plain data.
+##
+## Optional keys: "modifiers" names elite modifiers (§9) every member receives
+## through apply_elite_modifiers.
 
 const GRUNT := "res://scenes/world/enemies/EnemyGrunt.tscn"
 const RUNNER := "res://scenes/world/enemies/EnemyRunner.tscn"
@@ -102,6 +105,7 @@ const CATALOG: Array[Dictionary] = [
 		"distance": 1000.0,
 		"min_phase": &"disturbance",
 		"cooldown": 100.0,
+		"modifiers": [&"fast", &"vampiric"],
 		"members": [
 			{"scene": RUNNER, "offset": Vector2(0.0, 0.0), "elite": true},
 		],

@@ -11,6 +11,13 @@ class FakePlayer:
 	extends Node2D
 	var velocity := Vector2.RIGHT * 120.0
 
+class FakeMember:
+	extends Node2D
+	var modifiers: Array[StringName] = []
+
+	func apply_elite_modifiers(ids: Array[StringName]) -> void:
+		modifiers = ids.duplicate()
+
 class FakeSpawner:
 	extends Node
 	var calls: Array[Dictionary] = []
@@ -26,7 +33,7 @@ class FakeSpawner:
 
 	func spawn_beat_member(scene_path: String, pos: Vector2, elite: bool) -> Node:
 		calls.append({"scene": scene_path, "pos": pos, "elite": elite})
-		var node := Node2D.new()
+		var node := FakeMember.new()
 		node.position = pos
 		add_child(node)
 		members.append(node)
@@ -69,6 +76,17 @@ func _make(phase: StringName, unsealed: bool = false) -> Array:
 	director.beat_started.connect(func(id: StringName, _label: String, _members: int) -> void: _started.append(id))
 	director.beat_ended.connect(func(id: StringName) -> void: _ended.append(id))
 	return [director, spawner, player]
+
+
+func _reset(director: Node, spawner: FakeSpawner) -> void:
+	_free_members(spawner)
+	await get_tree().process_frame
+	director.set("_active", {})
+	director.set("_cooldowns", {})
+	director.set("_last_beat_id", &"")
+	spawner.calls.clear()
+	_started.clear()
+	_ended.clear()
 
 
 func _free_members(spawner: FakeSpawner) -> void:
@@ -210,6 +228,27 @@ func _run() -> void:
 	_check(aborted.is_empty(), "a beat with no valid ground aborts")
 	_check(int(director.get_debug_counters()["aborted"]) >= 1 and spawner.calls.is_empty(), "nothing is spawned for an aborted beat")
 	spawner.blocked = Rect2()
+
+	# --- §9: the hunter carries fast + vampiric; any member that can take a
+	# beat's modifiers gets them, deferred behind the spawner's make_elite ---
+	await _reset(director, spawner)
+	var hunter := BeatsScript.find(&"hunter")
+	var hunter_mods: Array = hunter.get("modifiers", [])
+	_check(hunter_mods.size() == 2 and hunter_mods[0] == &"fast" and hunter_mods[1] == &"vampiric", "the hunter is composed with fast + vampiric (%s)" % [hunter_mods])
+	var hunt: Dictionary = director.try_spawn_beat(&"hunter")
+	_check(not hunt.is_empty() and spawner.members.size() == 1 and (spawner.members[0] as FakeMember).modifiers.is_empty(), "the modifiers are not applied synchronously (before the deferred promotion)")
+	await get_tree().process_frame
+	var hunter_member: FakeMember = spawner.members[0] as FakeMember if spawner.members.size() == 1 else null
+	_check(hunter_member != null and hunter_member.modifiers.size() == 2 and hunter_member.modifiers[0] == &"fast" and hunter_member.modifiers[1] == &"vampiric", "the hunter member receives the entry's modifiers (%s)" % [hunter_member.modifiers if hunter_member != null else []])
+	await _reset(director, spawner)
+	director.try_spawn_beat(&"charger_wedge")
+	await get_tree().process_frame
+	var stray_mods := false
+	for member in spawner.members:
+		if not (member as FakeMember).modifiers.is_empty():
+			stray_mods = true
+	_check(spawner.members.size() == 6 and not stray_mods, "a beat without modifiers passes none")
+	await _reset(director, spawner)
 
 	print("EncounterDirectorTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)

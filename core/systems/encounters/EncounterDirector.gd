@@ -10,7 +10,8 @@ class_name EncounterDirector
 ## Rules: never during a tutorial stage, never once the Exit Rite has unsealed
 ## (the rite owns that time), never the same beat twice in a row, at most
 ## `max_concurrent` beats alive. Members are spawned through the spawner's
-## beat API, which protects them from culling and counts them as specials.
+## beat API, which protects them from culling and counts them as specials, and
+## receive any elite modifiers the beat entry names (§9).
 
 signal beat_started(id: StringName, label: String, members: int)
 signal beat_ended(id: StringName)
@@ -161,6 +162,7 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 	_active[id] = record
 	for node in spawned:
 		node.tree_exited.connect(_on_member_gone.bind(id), CONNECT_ONE_SHOT)
+		_apply_beat_modifiers(node, beat)
 	_announce(beat)
 	_record(&"beat_started", id, spawned.size())
 	beat_started.emit(id, String(beat["label"]), spawned.size())
@@ -236,6 +238,27 @@ func _on_rite_channel_changed(active: bool) -> void:
 	_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
 	for id in rite_specialist_beats:
 		try_spawn_beat(id)
+
+
+## Elite modifiers named on the beat entry (§9; the hunter is fast + vampiric).
+## Deferred like the spawner's make_elite so they land on the promoted elite
+## rather than on a base enemy the promotion then reshapes. Guarded: the enemy
+## API is another branch's until it lands.
+func _apply_beat_modifiers(node: Node, beat: Dictionary) -> void:
+	var listed: Array = beat.get("modifiers", [])
+	if listed.is_empty() or not node.has_method("apply_elite_modifiers"):
+		return
+	var ids: Array[StringName] = []
+	var names := PackedStringArray()
+	for modifier in listed:
+		ids.append(StringName(modifier))
+		names.append(String(modifier))
+	node.call_deferred("apply_elite_modifiers", ids)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"encounter", &"beat_modifiers_applied", 1, {
+			"beat": String(beat["id"]),
+			"modifiers": ",".join(names),
+		})
 
 
 func _travel_direction() -> Vector2:
