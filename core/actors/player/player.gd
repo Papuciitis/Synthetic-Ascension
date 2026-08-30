@@ -509,11 +509,16 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		return
 
 	var s: Stats = base_stats.copy()
+	# The Run Sheet's per-stat ledger is this pass, recorded step by step:
+	# every row it shows is one of these readings, never a recomputation.
+	Global.stat_ledger_begin(s)
 
 	if race != null:
 		race.apply_to(s)
+		Global.stat_ledger_step("RACE", s)
 	if style != null:
 		style.apply_to(s)
+		Global.stat_ledger_step("STYLE", s)
 
 	if Global.has_method("apply_permanent_augments_to_stats"):
 		Global.call("apply_permanent_augments_to_stats", s)
@@ -524,26 +529,31 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	# Followers are not just currency: belief feeds the ascension.
 	if Global.has_method("follower_belief_power"):
 		s.power += Global.follower_belief_power()
+		Global.stat_ledger_step("BELIEF", s)
 
 	if Global.run_inventory != null:
 		var inv_mods: StatDelta = Global.run_inventory.sum_mods()
 		if inv_mods != null:
 			inv_mods.apply_to(s)
+			Global.stat_ledger_step("ITEMS", s)
 
 	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
 	if sr != null:
 		sr.apply_sets_to_stats(s, Global.run_inventory)
+		Global.stat_ledger_step("SETS", s)
 
 	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier != null:
 		ier.refresh_effects(Global.run_inventory)
 		ier.apply_effects_to_stats(s)
+		Global.stat_ledger_step("ITEM EFFECTS", s)
 
 	# Manifestations run on every equipped slot, not just offhand/ring.
 	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
 	if mr != null:
 		mr.refresh_effects(Global.run_inventory)
 		mr.apply_effects_to_stats(s)
+		Global.stat_ledger_step("MANIFESTATIONS", s)
 
 	# One authoritative reading of what the run's curses currently mean. Every
 	# NEG archetype below reads this rather than re-deriving severity, so they
@@ -587,6 +597,9 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 				3: s.power += pct
 				4: s.haste += pct
 				5: s.luck += pct
+			Global.stat_ledger_step(
+				"%s %s" % [Inventory.slot_label(i).to_upper(), "INVERTED" if burden.is_suppressed(i) else "ROLL"], s
+			)
 
 	# --- the NEG archetypes, all reading one snapshot ----------------------
 	#
@@ -604,9 +617,10 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		var corruption_total: float = burden.heaviest(2)
 		if corruption_total > 0.0:
 			var engine_rate: float = BurdenResolver.asymptotic_rate(
-				0.24, Global.get_augment_level(&"augment_corruption_engine")
+				BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
 			)
-			s.power += minf(0.30, corruption_total * engine_rate)
+			s.power += minf(BurdenResolver.CORRUPTION_ENGINE_CAP, corruption_total * engine_rate)
+			Global.stat_ledger_step("CORRUPTION ENGINE", s)
 
 	# Doctrine of Burden: pays for COUNT, not severity, so it wants many mild
 	# curses and is actively hurt by consolidating them. Ordinary NEG merging
@@ -618,6 +632,7 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		)
 		s.armor += float(doctrine_bonus["armor"])
 		s.max_hp *= 1.0 + float(doctrine_bonus["hp"])
+		Global.stat_ledger_step("DOCTRINE OF BURDEN", s)
 
 	# Inversion Lens: the suppression itself happened in the slot loop above.
 	# What is left is the reading you can put on a card - and a small Luck
@@ -625,7 +640,8 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	# sells: the universe quietly rearranging itself around you.
 	if Global.permanent_augment_ids.has(&"augment_inversion_lens") and burden.suppressed_slot >= 0:
 		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
-		s.luck += BurdenResolver.asymptotic_rate(0.30, lens_level) * burden.suppressed_severity
+		s.luck += BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, lens_level) * burden.suppressed_severity
+		Global.stat_ledger_step("INVERSION LENS", s)
 
 	# Doctrine prices are applied at the final ownership boundary so equipment,
 	# sets, manifestations and Burden cannot escape the Max-HP sacrifice.

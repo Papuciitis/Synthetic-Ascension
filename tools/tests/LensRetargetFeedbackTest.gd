@@ -40,6 +40,7 @@ func _run() -> void:
 	await _test_stat_pass_announces_the_retarget_once()
 	_test_feed_toast_names_the_deepened_roll()
 	_test_worn_pickup_feed_reaches_the_toast()
+	_test_dropped_instance_feed_reaches_the_toast()
 	print("LensRetargetFeedbackTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -175,6 +176,22 @@ func _test_stat_pass_announces_the_retarget_once() -> void:
 	_check(moved_snapshot != null and moved_snapshot.suppressed_slot == 3, "and the reading the sheet shows agrees")
 
 	player.call("recompute_run_stats", null, null)
+	# The Run Sheet's ledger is this pass recorded step by step: base plus every
+	# row must land exactly on the final stat, for every field the sheet shows.
+	var base: Stats = player.get("base_stats") as Stats
+	var final_stats: Stats = player.get("stats") as Stats
+	_check(not Global.last_stat_ledger.is_empty(), "the real pass fills the ledger (%d rows)" % Global.last_stat_ledger.size())
+	var ledger_ok := base != null and final_stats != null
+	for field in Global.STAT_LEDGER_FIELDS:
+		var total := float(base.get(field)) if base != null else 0.0
+		for row in Global.last_stat_ledger:
+			if StringName(row.get("stat", &"")) == field:
+				total += float(row["after"]) - float(row["before"])
+		if final_stats != null and not is_equal_approx(total, float(final_stats.get(field))):
+			ledger_ok = false
+			push_error("ledger %s: base + rows = %.4f, final %.4f" % [field, total, float(final_stats.get(field))])
+	_check(ledger_ok, "base + every ledger row equals the final stat on all six fields")
+	_check(Global.last_stat_ledger.any(func(r: Dictionary) -> bool: return String(r.get("label", "")).ends_with("INVERTED")), "the Lens slot records itself as INVERTED")
 	_check(_tips.size() == 1, "a recompute over the same wardrobe does not repeat it (%d tips)" % _tips.size())
 
 	Global.run_inventory.set_item(3, null)
@@ -272,6 +289,44 @@ func _test_worn_pickup_feed_reaches_the_toast() -> void:
 	_check(BattleText._count == lines_before + 1, "one feed line reached the combat text (%d)" % (BattleText._count - lines_before))
 	var line: String = BattleText._texts[lines_before] if BattleText._count > lines_before else ""
 	_check(line.contains("deepened to −60%"), "and it says the worn roll deepened (%s)" % line)
+
+	Global.item_db.erase("toast_fixture")
+	Global.run_inventory = saved_inventory
+	Global.run_bag = saved_bag
+	Global.permanent_augment_ids = saved_augments
+
+
+## MODE A of the pickup: a dropped ItemInstance (not an id) of the worn curse
+## feeds the equipped copy through add_or_feed, and its toast carries the
+## deepened roll too. Review of 67c0eee: this path was unpinned.
+func _test_dropped_instance_feed_reaches_the_toast() -> void:
+	var saved_inventory: Inventory = Global.run_inventory
+	var saved_bag: BagInventory = Global.run_bag
+	var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+	Global.run_inventory = Inventory.new()
+	Global.run_bag = BagInventory.new()
+	Global.permanent_augment_ids = [ENGINE, StringName(), StringName()]
+
+	var data := _make_data("toast_fixture", 0)
+	data.pct_min = -0.60
+	data.pct_max = -0.60
+	Global.item_db["toast_fixture"] = data
+	var worn := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.40, false)
+	Global.run_inventory.set_item(0, worn)
+
+	var pickup: ItemPickup = PICKUP_SCENE.instantiate() as ItemPickup
+	pickup.pickup_delay = 0.0
+	# A dropped instance enforces drop_pickup_delay in _ready (anti re-pickup);
+	# the test wants the pickup live at once.
+	pickup.drop_pickup_delay = 0.0
+	pickup.item_instance = ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.60, false)
+	add_child(pickup)
+	var lines_before: int = BattleText._count
+	pickup._try_pickup()
+	_check(is_equal_approx(worn.active_pct(), -0.60), "the dropped instance fed and deepened the worn curse (%.2f)" % worn.active_pct())
+	_check(BattleText._count == lines_before + 1, "one feed line reached the combat text (%d)" % (BattleText._count - lines_before))
+	var line: String = BattleText._texts[lines_before] if BattleText._count > lines_before else ""
+	_check(line.contains("deepened to −60%"), "and the instance path says the worn roll deepened (%s)" % line)
 
 	Global.item_db.erase("toast_fixture")
 	Global.run_inventory = saved_inventory

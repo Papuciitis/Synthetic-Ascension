@@ -663,14 +663,14 @@ func _append_burden(player: Node) -> void:
 	if ids.has(&"augment_corruption_engine"):
 		var top_two := snap.heaviest(2)
 		var rate := BurdenResolver.asymptotic_rate(
-			0.24, Global.get_augment_level(&"augment_corruption_engine")
+			BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
 		)
 		_add_line("CORRUPTION ENGINE", BURDEN, 11)
 		_add_line(
 			"   top two active: %d%%  ×  %d%%/100%%  →  Power +%.1f%%%s" % [
 				int(round(top_two * 100.0)), int(round(rate * 100.0)),
-				minf(0.30, top_two * rate) * 100.0,
-				"  (CAPPED)" if top_two * rate > 0.30 else "",
+				minf(BurdenResolver.CORRUPTION_ENGINE_CAP, top_two * rate) * 100.0,
+				"  (CAPPED)" if top_two * rate > BurdenResolver.CORRUPTION_ENGINE_CAP else "",
 			],
 			Color(1, 1, 1, 0.72), 10
 		)

@@ -21,6 +21,12 @@ const INVERSION_RETURN: float = 0.55
 ## sells. Named here so the Run Sheet prints the kicker the pass actually paid.
 const INVERSION_LUCK_KICKER: float = 0.30
 
+## Corruption Engine: Power per point of concentrated severity (asymptotic in
+## level) and the hard cap on what it pays. One home for both numbers; the
+## player pass and the Run Sheet used to carry their own copies.
+const CORRUPTION_ENGINE_RATE: float = 0.24
+const CORRUPTION_ENGINE_CAP: float = 0.30
+
 ## Doctrine of Burden tuning. The Doctrine pays per qualifying curse, so it
 ## scales with item count and needs a bounded ceiling; the ceilings default to
 ## six full-rate items (today's maximum wardrobe) so nothing changes until
