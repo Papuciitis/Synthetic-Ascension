@@ -47,6 +47,7 @@ func _run() -> void:
 	_test_rule_text_matches_the_code()
 	_test_death_rattle_toll_is_a_damage_number()
 	_test_claw_back_and_withdrawal_are_announced()
+	_test_composure_speaks()
 	_test_identity_survives_merge()
 	_test_identity_survives_auto_swap_merge()
 	_test_a_deliberate_merge_keeps_the_destination_rule()
@@ -766,6 +767,30 @@ func _test_claw_back_and_withdrawal_are_announced() -> void:
 
 	state.queue_free()
 	fake.queue_free()
+	_restore_feedback_settings(previous)
+
+
+func _test_composure_speaks() -> void:
+	# Observability audit 2026-08-30 §6 #3: Composure belongs to the ward noun,
+	# so no rule's describe() explains it; the meter said "COMPOSURE 6.0s" and
+	# the blunted hit had no line - the damage number was simply smaller.
+	var previous := _force_feedback_settings()
+	var state := ManifestationState.new()
+	add_child(state)
+	state.claim(&"ward")
+	state.time_since_hit = ManifestationState.COMPOSURE_SECONDS + 0.1
+	var ward_label := ""
+	for meter in state.get_meters():
+		if StringName((meter as Dictionary).get("channel", &"")) == &"time_since_hit":
+			ward_label = String((meter as Dictionary).get("label", ""))
+	_check(
+		ward_label.contains("next hit -%d%% when full" % int(round(ManifestationState.COMPOSURE_REDUCTION * 100.0))),
+		"the Composure meter says what a full bar buys (%s)" % ward_label
+	)
+	_check(state.composure_ready(), "fixture: the guard is banked")
+	state.consume_composure()
+	_check(_battle_text_has("COMPOSED"), "and spending it says so")
+	state.queue_free()
 	_restore_feedback_settings(previous)
 
 

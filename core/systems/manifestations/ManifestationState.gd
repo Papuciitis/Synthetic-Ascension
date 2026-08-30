@@ -558,6 +558,11 @@ func consume_composure() -> float:
 		return 1.0
 	time_since_hit = 0.0
 	resource_spent.emit(&"ward", 1.0)
+	# The blunted hit had no line: the HUD pulsed the ward pip and the damage
+	# number was simply smaller. Said here because Composure belongs to the
+	# noun, and no rule that claims ward is the one that could say it.
+	if BattleText != null:
+		BattleText.popup(_origin() + next_popup_offset(), "COMPOSED", ManifestationNouns.colour(&"ward"), 1.15)
 	return 1.0 - COMPOSURE_REDUCTION
 
 
@@ -853,7 +858,7 @@ func get_meters() -> Array[Dictionary]:
 			out.append({
 				"noun": noun,
 				"channel": channel,
-				"label": String(CHANNELS[channel]["label"]),
+				"label": _meter_label(channel),
 				"text": _meter_text(channel),
 				"full": noun_is_full(channel),
 			})
@@ -913,6 +918,17 @@ static func headline_channel(noun: StringName) -> StringName:
 		if bool((CHANNELS[channel] as Dictionary).get("meter", true)):
 			return channel
 	return &""
+
+
+## Label for one channel's meter. Composure carries what the bar is FOR: it is
+## the one noun clock whose payoff belongs to no rule, so no describe() ever
+## explains it, and "COMPOSURE 6.0s" alone was a number that changed and did
+## not say why.
+func _meter_label(channel: StringName) -> String:
+	var label := String(CHANNELS[channel]["label"])
+	if channel == &"time_since_hit":
+		return "%s - next hit -%d%% when full" % [label, int(round(COMPOSURE_REDUCTION * 100.0))]
+	return label
 
 
 func _meter_text(channel: StringName) -> String:
