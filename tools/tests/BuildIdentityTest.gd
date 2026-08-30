@@ -53,12 +53,12 @@ func _run() -> void:
 		"noun_counts": {&"Momentum": 2, &"Shard": 2},
 		"pairs": [{"id": &"pair_momentum_shard", "name": "Loom", "nouns": [&"Momentum", &"Shard"]}],
 		"set_counts": {&"gravemarch": 2},
-		"luck": 38.0,
+		"luck": 0.38,
 	})
 	_check(String(doctrine["primary"]) == "Doctrine of Burden", "six qualifying curses read as a Doctrine build (%s)" % doctrine["primary"])
 	_check(String(doctrine["secondary"]).contains("Momentum -> Shard"), "the connected pair is the secondary engine (%s)" % doctrine["secondary"])
 	var sentence := String(doctrine["sentence"])
-	_check(sentence.contains("6 mild curses") and sentence.contains("Momentum -> Shard") and sentence.contains("Luck +38"), "the sentence reads as behaviour (%s)" % sentence)
+	_check(sentence.contains("6 mild curses") and sentence.contains("Momentum -> Shard") and sentence.contains("Luck +38%"), "the sentence reads as behaviour (%s)" % sentence)
 	_check(not sentence.contains("%") or sentence.contains("active burden"), "percentages only appear as the burden reading")
 	_check(int(doctrine["connected_pairs"]) == 1 and int(doctrine["neg_count"]) == 6, "counts carry through")
 	_check((doctrine["sets"] as Array).has("gravemarch x2"), "set progress is listed (%s)" % [doctrine["sets"]])

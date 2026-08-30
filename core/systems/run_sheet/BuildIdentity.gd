@@ -69,8 +69,8 @@ static func compose(input: Dictionary) -> Dictionary:
 			sentence += "; %s" % secondary
 		if neg_count > 0 and not primary.contains("Curse") and not primary.begins_with("Doctrine") and not primary.begins_with("Corruption") and not primary.begins_with("Inversion"):
 			sentence += "; %d NEG pieces" % neg_count
-		if luck >= 20.0:
-			sentence += "; Luck +%d" % int(round(luck))
+		if luck >= 0.20:
+			sentence += "; Luck +%d%%" % int(round(luck * 100.0))
 		sentence += "."
 
 	return {
