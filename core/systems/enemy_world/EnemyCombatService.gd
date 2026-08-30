@@ -26,12 +26,31 @@ func _ready() -> void:
 		_world = get_node_or_null("/root/EnemyWorld") as EnemyWorldService
 
 
+## One hit (or a ledger of `hit_count` pellets) on `handle`.
 func apply_damage(
 	handle: int,
 	raw_damage: float,
 	hit_count: int = 1,
 	source: Node = null,
 	payload: Variant = null,
+) -> float:
+	return _apply_damage(handle, raw_damage, hit_count, source, payload, true)
+
+
+## A status tick (burn, bleed) on `handle`: the same pipeline as a hit, minus
+## the per-hit rules. The ARMOURED plate is one - a tick is not a hit, so a
+## plate never makes an elite immune to the whole DoT.
+func apply_status_damage(handle: int, raw_damage: float, source: Node = null) -> float:
+	return _apply_damage(handle, raw_damage, 1, source, null, false)
+
+
+func _apply_damage(
+	handle: int,
+	raw_damage: float,
+	hit_count: int,
+	source: Node,
+	payload: Variant,
+	is_hit: bool,
 ) -> float:
 	if _world == null or not is_instance_valid(_world):
 		return 0.0
@@ -48,7 +67,7 @@ func apply_damage(
 		and actor.has_method("take_damage")
 	):
 		return _apply_legacy_damage(handle, actor, raw_damage, source)
-	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count)
+	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count, is_hit)
 	var applied_damage := minf(adjusted_damage, current_health)
 	if applied_damage <= 0.0:
 		return 0.0
@@ -497,7 +516,7 @@ func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: floa
 	return second if second >= 0.0 and second <= 1.0 else -1.0
 
 
-func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int) -> float:
+func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int, is_hit: bool) -> float:
 	var cold_state := _world.get_cold_state(handle)
 	var damage_multiplier := maxf(0.0, float(cold_state.get("damage_taken_mul", 1.0)))
 	var hit_cap_ratio := maxf(0.0, float(cold_state.get("hit_cap_ratio", 0.0)))
@@ -507,11 +526,12 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 		if actor.has_meta("hit_cap_ratio"):
 			hit_cap_ratio = maxf(0.0, float(actor.get_meta("hit_cap_ratio")))
 	var adjusted := maxf(0.0, raw_damage) * damage_multiplier
-	if not _elite_armour.is_empty():
+	if is_hit and not _elite_armour.is_empty():
 		var armour_fraction := float(_elite_armour.get(handle, 0.0))
 		if armour_fraction > 0.0:
 			# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
-			# bounces, a heavy blow gets through. A batched ledger pays per pellet.
+			# bounces, a heavy blow gets through. A batched ledger pays per
+			# pellet; a status tick is not a hit and pays nothing.
 			adjusted = maxf(
 				0.0,
 				adjusted - _world.get_max_health(handle) * armour_fraction * float(maxi(1, hit_count)),

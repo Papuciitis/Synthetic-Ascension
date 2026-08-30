@@ -232,6 +232,17 @@ func _test_armoured() -> void:
 	_check(is_equal_approx(EnemyCombat.apply_damage(handle, heavy), heavy - flat), "a heavy hit loses only the plate")
 	_check(is_equal_approx(EnemyCombat.apply_damage(handle, flat * 4.0, 2), flat * 2.0), "a two-pellet ledger pays the plate per pellet")
 	_check(is_equal_approx(EnemyCombat.apply_damage(_handle(plain), 5.0), 5.0), "an ordinary enemy pays full while a plate is live elsewhere")
+	# The plate is a per-hit rule. A burn tick arrives through the status
+	# service, not as a hit, and a tick under the plate must still land or
+	# the elite is immune to every DoT in the game.
+	var tick := flat * 0.5
+	var hp_before_burn := enemy.hp
+	_check(EnemyStatus.apply_burn(handle, 1, 5.0, 0.5, tick), "fixture: a burn under the plate schedules on the elite")
+	EnemyStatus.advance(0.1)
+	_check(is_equal_approx(enemy.hp, hp_before_burn - tick), "a burn tick under the plate lands in full - a status tick is not a hit (%.2f of %.2f)" % [hp_before_burn - enemy.hp, tick])
+	EnemyStatus.clear_handle(handle)
+	_check(EnemyCombat.apply_damage(handle, flat * 0.5) == 0.0, "and a pellet under the plate still bounces")
+	_check(is_equal_approx(EnemyCombat.apply_status_damage(handle, tick), tick), "apply_status_damage is the seam the status service uses: it pays no plate")
 	EnemyCombat.apply_damage(handle, 99999.0)
 	_check(enemy.dead, "a lethal blow still gets through the plate")
 	_check(EnemyCombat.elite_armour_fraction(handle) == 0.0, "and the plate is dropped on death")
