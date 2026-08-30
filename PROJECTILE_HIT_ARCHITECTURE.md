@@ -22,7 +22,7 @@ The old scenes remain as compatibility/fallback implementations.
 
 `ProjectileSimulationManager` keeps a dense active range across parallel packed arrays: current/previous position, velocity, life/range, radius, team, damage, visual family and resolved hit properties. Removal swaps the last active entry into the removed index. Capacity defaults to 4096; overflow increments a rejected counter rather than allocating beyond the configured bound.
 
-Movement is swept from previous to new position. Player bullets query nearby candidates through `EnemyIndex`, select the earliest segment-circle hit and compare it with the first intentional blocker-shape hit reported by `ChunkManager`. Enemy bullets sweep against the player and the same world geometry. Lifetime/range and piercing are manager-owned.
+Movement is swept from previous to new position. Player bullets query nearby candidates through `EnemyCombat`'s data-side segment queries (2026-08-30: this doc predates the EnemyWorld/EnemyCombat split and originally said `EnemyIndex`), select the earliest segment-circle hit and compare it with the first intentional blocker-shape hit reported by `ChunkManager`. Enemy bullets sweep against the player and the same world geometry. Lifetime/range and piercing are manager-owned.
 
 One `MultiMeshInstance2D` renders simple stretched quads with per-instance color/transform. It is never collision authority. Exotic projectile scenes retain their own visuals and collision.
 
@@ -53,7 +53,7 @@ Any future item that previously expects a bullet Node must add an explicit manag
 
 ## Developer stress test
 
-Enable **Projectile Stress Test + Counters** in Main Menu developer mode. It requests:
+Enable **Projectile Stress Test + Counters** in the developer console (`ui/widgets/PerformanceOverlay.gd`, Performance tab — not the Main Menu; corrected 2026-08-30). It requests:
 
 - 100 projectiles in one frame;
 - sustained additions up to roughly 550 simultaneous logical projectiles;
@@ -61,7 +61,7 @@ Enable **Projectile Stress Test + Counters** in Main Menu developer mode. It req
 - collisions against the live world/enemy index;
 - counters for logical/visual count, hits, hit batches, capacity, rejected shots and physics-step milliseconds.
 
-This is a test harness. Record actual frame time and profiler data in Godot 4.6 before adjusting capacity or claiming a performance result.
+This is a test harness. Record actual frame time and profiler data in Godot 4.7 before adjusting capacity or claiming a performance result.
 
 ## 0.22 world-collision addendum
 
