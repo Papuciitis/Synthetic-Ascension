@@ -41,6 +41,26 @@ class_name VisionRig
 @export_range(0.01, 1.0, 0.01) var vignette_pulse_time: float = 0.18
 @export_range(0.01, 1.5, 0.01) var vignette_fade_time: float = 0.24
 
+# Exit Rite distortion (plan 2.8, vision "Exit Rite"): the ExitRite reports a
+# level 0..1 on RunEvents.rite_distortion_changed as the hold climbs past its
+# distortion_start_fraction, and the vignette ramps to it - strength up, the
+# clear centre shrinking, black giving way to a colour. A static ramp: it only
+# moves with the hold, so it never flickers and is safe under reduced_motion;
+# the release back to nothing is the one tween, and it goes through the
+# accessibility motion duration like every other. Level 0 renders the plain
+# vignette exactly. Nothing here runs per frame.
+@export_group("Rite Distortion")
+## Vignette strength at full distortion (level 1).
+@export_range(0.0, 1.0, 0.01) var distortion_strength_max: float = 0.55
+## Where the darkening starts at level 1 (the material's inner_radius at 0).
+@export_range(0.0, 1.0, 0.01) var distortion_inner_radius_min: float = 0.35
+## The colour the edge darkens toward at level 1 (black at 0).
+@export var distortion_tint_max: Color = Color(0.36, 0.08, 0.48, 1.0)
+## A flat wash of the tint across the whole screen at level 1 (0 at 0).
+@export_range(0.0, 0.5, 0.01) var distortion_wash_max: float = 0.10
+## Fade back to nothing when the level drops to 0 (reset, lapse, death, clear).
+@export_range(0.0, 2.0, 0.01) var distortion_release_time: float = 0.6
+
 # Collision layers used by LoS raycasts.
 # Walls are on layer 9 (256). Windows are on layer 10 (512).
 const LAYER_FULL_WALL: int = 1 << 8   # 256
@@ -63,6 +83,13 @@ var _camera: Camera2D
 var _was_indoors: bool = false
 var _vig_strength: float = 0.0
 var _vig_tween: Tween = null
+
+# Rite distortion: the level being shown, the level last reported, the release
+# tween, and the material's own inner_radius to return to.
+var _distortion_level: float = 0.0
+var _distortion_target: float = 0.0
+var _distortion_tween: Tween = null
+var _base_inner_radius: float = 0.70
 
 var _t_accum: float = 0.0
 var _last_player_pos: Vector2 = Vector2.INF
@@ -108,6 +135,15 @@ func _ready() -> void:
 			fog_layer.visible = false
 		if fog != null:
 			fog.visible = false
+
+	if vignette_rect != null:
+		var mat := vignette_rect.material as ShaderMaterial
+		if mat != null:
+			var inner: Variant = mat.get_shader_parameter("inner_radius")
+			if inner is float or inner is int:
+				_base_inner_radius = float(inner)
+	if RunEvents != null and RunEvents.has_signal("rite_distortion_changed"):
+		RunEvents.rite_distortion_changed.connect(_on_rite_distortion_changed)
 
 
 func _process(dt: float) -> void:
@@ -211,17 +247,17 @@ func _set_vignette_active(active: bool) -> void:
 	if vignette_rect == null:
 		return
 	if not active or indoor_vignette_strength <= 0.001:
-		vignette_rect.visible = false
+		# The rite's distortion keeps the rect up on its own.
+		if _distortion_level <= 0.0:
+			vignette_rect.visible = false
 		return
 	vignette_rect.visible = true
-	var mat := vignette_rect.material as ShaderMaterial
-	if mat != null:
-		mat.set_shader_parameter("strength", indoor_vignette_strength)
+	_apply_vignette_strength(indoor_vignette_strength)
 
 
 
 func _hide_vignette() -> void:
-	if vignette_rect != null:
+	if vignette_rect != null and _distortion_level <= 0.0:
 		vignette_rect.visible = false
 
 func _apply_vignette_strength(v: float) -> void:
@@ -230,7 +266,61 @@ func _apply_vignette_strength(v: float) -> void:
 		return
 	var mat := vignette_rect.material as ShaderMaterial
 	if mat != null:
-		mat.set_shader_parameter("strength", v)
+		# The indoor strength and the rite's distortion share one uniform; the
+		# stronger of the two shows, so neither can switch the other off.
+		mat.set_shader_parameter("strength", maxf(v, distortion_strength_max * _distortion_level))
+
+
+# -----------------------------
+# Rite distortion
+# -----------------------------
+func _on_rite_distortion_changed(level: float) -> void:
+	var target := clampf(level, 0.0, 1.0)
+	if is_equal_approx(target, _distortion_target):
+		return
+	_distortion_target = target
+	_kill_distortion_tween()
+	if target > 0.0 or _distortion_level <= 0.0:
+		# Rising with the hold, or falling with a drain: the ramp itself,
+		# applied as reported. No animation of our own on top of it.
+		_set_distortion_level(target)
+		return
+	# Back to nothing (reset, lapse, death, clear): one fade, instant when the
+	# player asked for reduced motion.
+	var duration := AccessibilityPresentation.current_motion_duration(distortion_release_time)
+	if duration <= 0.02:
+		_set_distortion_level(0.0)
+		return
+	_distortion_tween = create_tween()
+	_distortion_tween.tween_method(Callable(self, "_set_distortion_level"), _distortion_level, 0.0, duration)
+
+
+func _kill_distortion_tween() -> void:
+	if _distortion_tween != null and _distortion_tween.is_running():
+		_distortion_tween.kill()
+	_distortion_tween = null
+
+
+func _set_distortion_level(level: float) -> void:
+	_distortion_level = clampf(level, 0.0, 1.0)
+	if vignette_rect == null:
+		return
+	var mat := vignette_rect.material as ShaderMaterial
+	if mat == null:
+		return
+	mat.set_shader_parameter("inner_radius", lerpf(_base_inner_radius, distortion_inner_radius_min, _distortion_level))
+	mat.set_shader_parameter("tint", Color.BLACK.lerp(distortion_tint_max, _distortion_level))
+	mat.set_shader_parameter("wash", distortion_wash_max * _distortion_level)
+	# Re-apply the indoor strength so the shared uniform picks the stronger.
+	_apply_vignette_strength(_vig_strength)
+	if _distortion_level > 0.0:
+		vignette_rect.visible = true
+	elif not _was_indoors or indoor_vignette_strength <= 0.001:
+		vignette_rect.visible = false
+
+
+func distortion_level() -> float:
+	return _distortion_level
 
 func _kill_vignette_tween() -> void:
 	if _vig_tween != null and _vig_tween.is_running():

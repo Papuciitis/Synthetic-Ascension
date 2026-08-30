@@ -59,6 +59,28 @@ signal safeguard_state_changed(current: int, capacity: int, can_invoke: bool)
 ## Fraction of max HP per second, added to the flat rate above, so the mending
 ## still means something at a large health pool.
 @export_range(0.0, 0.10, 0.001) var channel_regen_max_hp_pct: float = 0.012
+
+## THE WORLD REALISES YOU ARE LEAVING (plan 2.8; vision "The Exit Rite").
+##
+## From this fraction of the hold the district visibly warps: the rite reports
+## a distortion level that climbs 0..1 with the channel on
+## RunEvents.rite_distortion_changed and the VisionRig tints the screen to it.
+## A static ramp - it only ever moves with progress - and it falls back to 0
+## the moment the channel lapses past its grace, the player dies, or the rite
+## resets or clears.
+@export_range(0.0, 1.0, 0.01) var distortion_start_fraction: float = 0.5
+
+## LAST CHANCE (plan 2.8): once per channel, at this fraction of the hold, a
+## Cursed Vault appears at the rite's edge on the far side from the player -
+## a guaranteed Manifestation for every safeguard the rite holds. Its opening
+## spot lies mostly outside the circle, so taking it means feeding the drain;
+## that is the tension, and the drain is untouched.
+@export_range(0.0, 1.0, 0.01) var last_chance_fraction: float = 0.85
+
+## How far past the rite's radius the vault sits. Against the vault's 64 px
+## open radius, 32 leaves a sliver of the circle it can be opened from
+## without lapsing - a precise stand, not a free lunch.
+@export var last_chance_edge_offset: float = 32.0
 @export var locked: bool = true
 @export var narrative_mode: bool = false
 @export var hide_location_while_locked: bool = false
@@ -76,6 +98,10 @@ const UNLOCK_BURST_SCENE := preload("res://assets/vfx/world/gates/VFX_GateUnlock
 const RITE_PROGRESS_LEDGER_SCRIPT: Script = preload("res://core/systems/world/rite/RiteProgressLedger.gd")
 const RITE_PULSE_RESOLVER_SCRIPT: Script = preload("res://core/systems/world/rite/RitePulseResolver.gd")
 const RITE_PULSE_VFX_SCRIPT: Script = preload("res://core/systems/world/rite/RitePulseVFX.gd")
+## The distortion ramp is reported in this many steps per channel, not once
+## per frame: a few dozen shader writes across the whole hold.
+const DISTORTION_STEPS: int = 32
+const LAST_CHANCE_VAULT_NAME := "LastChanceVault"
 const AUTOMATIC_PULSES: Array[Dictionary] = [
 	{"radius": 420.0, "force": 650.0, "stun": 0.15, "heal": 0.15, "invuln": 0.0},
 	{"radius": 500.0, "force": 850.0, "stun": 0.35, "heal": 0.25, "invuln": 0.0},
@@ -104,6 +130,9 @@ var _safeguard_source_multiplier: int = 1
 var _burst_count_multiplier: float = 1.0
 var _rite_stun_bonus_seconds: float = 0.0
 var _completed: bool = false
+var _distortion_level: float = 0.0
+var _distortion_taught: bool = false
+var _last_chance_vault: Node2D = null
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
 var _spawner: EnemySpawner = null
@@ -144,6 +173,8 @@ func _ready() -> void:
 	_emit_safeguard_state()
 
 func _exit_tree() -> void:
+	# A rite freed mid-channel must not leave the screen warped.
+	_set_distortion(0.0)
 	if Global != null and Global.exit_gate_pos == global_position:
 		Global.exit_gate_pos = Vector2.INF
 
@@ -167,6 +198,7 @@ func set_locked(v: bool) -> void:
 	_progress_ledger = RITE_PROGRESS_LEDGER_SCRIPT.new()
 	_completed = false
 	configure_doctrine_rules()
+	_reset_channel_extras()
 	if locked:
 		_player_inside = false
 		remove_from_group(&"exit_rite_channeling")
@@ -199,6 +231,7 @@ func set_revealed(value: bool) -> void:
 	_progress_ledger = RITE_PROGRESS_LEDGER_SCRIPT.new()
 	_completed = false
 	configure_doctrine_rules()
+	_reset_channel_extras()
 	_apply_reveal_state()
 
 func _apply_reveal_state() -> void:
@@ -239,6 +272,10 @@ func _process(delta: float) -> void:
 			_lapse += delta
 			if _lapse > lapse_grace:
 				_apply_progress_loss(_hold - delta * lapse_drain_rate * _fill_rate())
+				# The warp is the rite drawing on you. Past the grace it is
+				# not - the same moment the ring turns red, so a short dodge
+				# does not blink the screen.
+				_set_distortion(0.0)
 			queue_redraw()
 		return
 	_lapse = 0.0
@@ -252,6 +289,7 @@ func _process(delta: float) -> void:
 			_death_taken = true
 			_apply_progress_loss(_hold * clampf(death_progress_kept, 0.0, 1.0))
 			_lapse = 0.0
+		_set_distortion(0.0)
 		queue_redraw()
 		return
 	_death_taken = false
@@ -264,11 +302,14 @@ func _process(delta: float) -> void:
 	var t: float = 0.0
 	if hold_time > 0.0:
 		t = clampf(_hold / hold_time, 0.0, 1.0)
+	_set_distortion(_distortion_level_for(t))
 	_maybe_spawn_bursts(t)
 
 	if _hold >= hold_time:
 		_completed = true
 		_emit_safeguard_state()
+		# The world stops warping and the last chance is gone: you are leaving.
+		_reset_channel_extras()
 		# Escape looking like a god: one last, larger pulse before the segment
 		# completes (roadmap 2.8).
 		_apply_pulse(_climax_pulse_profile())
@@ -326,9 +367,95 @@ func _apply_progress_loss(proposed_hold: float) -> void:
 func _update_rite_progress() -> void:
 	if hold_time <= 0.0:
 		return
-	var crossed: PackedInt32Array = _progress_ledger.call("update_fraction", _hold / hold_time)
+	var fraction := _hold / hold_time
+	var crossed: PackedInt32Array = _progress_ledger.call("update_fraction", fraction)
 	for seal_number in crossed:
 		_fire_automatic_seal(seal_number)
+	if fraction >= last_chance_fraction and bool(_progress_ledger.call("mark_once", &"last_chance")):
+		_spawn_last_chance_vault()
+
+
+## Where the 50% cue stands for a hold fraction: 0 until the start fraction,
+## 1 at a full hold, straight between - monotone with progress.
+func _distortion_level_for(fraction: float) -> float:
+	var start := clampf(distortion_start_fraction, 0.0, 0.999)
+	return clampf((fraction - start) / (1.0 - start), 0.0, 1.0)
+
+
+## Reports the level in DISTORTION_STEPS steps, only when a step changes: a
+## handful of signals across the whole channel, none while it sits at 0.
+func _set_distortion(level: float) -> void:
+	var stepped := floorf(clampf(level, 0.0, 1.0) * float(DISTORTION_STEPS)) / float(DISTORTION_STEPS)
+	if is_equal_approx(stepped, _distortion_level):
+		return
+	var rising_from_zero := _distortion_level <= 0.0 and stepped > 0.0
+	_distortion_level = stepped
+	if RunEvents != null and RunEvents.has_signal("rite_distortion_changed"):
+		RunEvents.rite_distortion_changed.emit(stepped)
+	if rising_from_zero:
+		_on_distortion_started()
+
+
+func _on_distortion_started() -> void:
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_distortion_started", 1)
+	# Teach it once: a screen that turns colour with no word reads as a bug.
+	if _distortion_taught or RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		return
+	_distortion_taught = true
+	RunEvents.tutorial_tip.emit("The Rite is half drawn — the district warps. Hold the circle.", 3.5)
+
+
+## The distortion and the last-chance vault belong to one channel; a reset
+## takes both (their once-per-channel marks live in the ledger, which is
+## recreated on the same paths).
+func _reset_channel_extras() -> void:
+	_set_distortion(0.0)
+	_despawn_last_chance_vault()
+
+
+## LAST CHANCE. A child of the rite, so it shares the rite's visibility and
+## lifetime; its opening disc overlaps the circle's edge on the far side from
+## the player, so reaching it means crossing the circle first.
+func _spawn_last_chance_vault() -> void:
+	_despawn_last_chance_vault()
+	var away := Vector2.RIGHT.rotated(randf() * TAU)
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player != null:
+		var toward_player := player.global_position - global_position
+		if toward_player.length_squared() > 1.0:
+			away = -toward_player.normalized()
+	var no_beats: Array[StringName] = []
+	var vault := CursedVault.new()
+	vault.name = LAST_CHANCE_VAULT_NAME
+	vault.guarantee_manifestation = true
+	vault.cost_beats = no_beats
+	vault.cost_all_safeguards = true
+	vault.position = away * (radius + last_chance_edge_offset)
+	add_child(vault)
+	_last_chance_vault = vault
+	if BattleText != null and BattleText.has_method("popup"):
+		BattleText.popup(vault.global_position, "LAST CHANCE", CursedVault.COLOUR, 1.3)
+	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+		RunEvents.tutorial_tip.emit("LAST CHANCE — a vault at the rite's edge. It takes every safeguard.", 4.0)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_last_chance_spawned", 1, {"safeguards": _safeguards})
+
+
+func _despawn_last_chance_vault() -> void:
+	if _last_chance_vault != null and is_instance_valid(_last_chance_vault):
+		_last_chance_vault.queue_free()
+	_last_chance_vault = null
+
+
+func last_chance_vault() -> Node2D:
+	if _last_chance_vault != null and is_instance_valid(_last_chance_vault) and not _last_chance_vault.is_queued_for_deletion():
+		return _last_chance_vault
+	return null
+
+
+func distortion_level() -> float:
+	return _distortion_level
 
 
 func _fire_automatic_seal(seal_number: int) -> void:
@@ -419,6 +546,28 @@ func consume_safeguard() -> bool:
 	_emit_safeguard_state()
 	queue_redraw()
 	return true
+
+
+## The last-chance vault's price: every charge, at once. Not consume_safeguard
+## in a loop - that refuses unless the player stands inside the circle (the
+## vault's opening spot mostly does not), and each call fires the manual
+## pulse, so the "cost" would heal and stun on the player's behalf. The
+## charges leave as rings only: the buffer is seen going, nothing is gained.
+func drain_safeguards(reason: StringName = &"") -> int:
+	var drained := _safeguards
+	if drained <= 0:
+		return 0
+	_safeguards = 0
+	for index in range(drained):
+		_spawn_pulse_vfx({
+			"radius": float(MANUAL_PULSE.get("radius", 420.0)) * (1.0 - 0.18 * float(index)),
+			"invuln": 0.0,
+		})
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_safeguards_drained", drained, {"reason": String(reason)})
+	_emit_safeguard_state()
+	queue_redraw()
+	return drained
 
 
 func safeguard_count() -> int:

@@ -5,6 +5,7 @@ const SEAL_FRACTIONS: Array[float] = [1.0 / 3.0, 2.0 / 3.0, 1.0]
 
 var _sealed_count: int = 0
 var _spent_waves: Dictionary = {}
+var _spent_marks: Dictionary = {}
 
 
 func update_fraction(fraction: float) -> PackedInt32Array:
@@ -41,3 +42,13 @@ func mark_wave_spent(index: int) -> bool:
 
 func spent_wave_count() -> int:
 	return _spent_waves.size()
+
+
+## One-shot channel events that are not seals (the 85% last chance). Spent
+## once per ledger, and the rite recreates the ledger on every channel reset,
+## so they re-arm on exactly the paths the seals and waves do.
+func mark_once(key: StringName) -> bool:
+	if key == StringName() or _spent_marks.has(key):
+		return false
+	_spent_marks[key] = true
+	return true

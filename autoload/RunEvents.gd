@@ -67,6 +67,13 @@ signal pickup_fly_to_equip(start_global: Vector2, equip_slot: int, inst: ItemIns
 @warning_ignore("unused_signal")
 signal resonance_changed(value: float)
 
+# Exit Rite climax (plan 2.8): how far the world has warped, 0..1. The rite
+# emits it as the hold climbs past its distortion_start_fraction - a static
+# ramp that only moves with the channel - and emits 0 when the channel resets,
+# lapses, the player dies or the rite clears. The VisionRig tints to it.
+@warning_ignore("unused_signal")
+signal rite_distortion_changed(level: float)
+
 @warning_ignore("unused_signal")
 signal tutorial_tip(text: String, duration: float)
 
