@@ -297,6 +297,9 @@ func _rebuild_tip_text() -> void:
 	lines.append("District heat: %d%%" % heat_pct)
 	if phase != "":
 		lines.append("District phase: %s" % phase.to_upper())
+		# Roadmap §9: what this phase does to elites, so "why is that one steel
+		# grey" has an answer before the first plate ring is met.
+		lines.append(EliteModifiers.phase_summary_line(StringName(phase)))
 	# Additive on top of the spawner's own roll (spawner.gd), so it reads as one.
 	lines.append("Elite chance +%d%% on top of the spawner's own" % int(round(_elite_bonus * 100.0)))
 	if rite:

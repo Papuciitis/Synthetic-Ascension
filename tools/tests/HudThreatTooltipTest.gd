@@ -74,6 +74,15 @@ func _run() -> void:
 	_check(spawn_rate > 1.001, "the fixture's director is speeding spawns up (×%.2f)" % float(ThreatDirector.spawn_interval_mul))
 	_check(tip.contains("Spawns %d%% faster" % int(round((spawn_rate - 1.0) * 100.0))) and not tip.contains("slower"), "and the tooltip says faster, not slower")
 
+	# --- roadmap §9: what the phase does to elites ---
+	_check(tip.contains("Elite modifiers: none yet"), "before ascension the tooltip says elite modifiers are still locked")
+	ThreatDirector.call("set_segment_phase", &"ascension")
+	controller.call("_rebuild_tip_text")
+	tip = String(controller.get("_tip_text"))
+	_check(tip.contains("Elite modifiers: 1 per elite") and tip.contains("ARMOURED") and tip.contains("FAST"), "ascension names the unlocked modifiers and the count per elite (%s)" % tip.replace("\n", " | "))
+	ThreatDirector.call("set_segment_phase", &"disturbance")
+	controller.call("_rebuild_tip_text")
+
 	ThreatDirector.call("set_rite_channel_active", true)
 	tip = String(controller.get("_tip_text"))
 	_check(tip.contains("Exit Rite channelling"), "channelling the rite adds its line")
