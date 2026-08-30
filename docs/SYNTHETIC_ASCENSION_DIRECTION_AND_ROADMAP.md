@@ -1449,3 +1449,76 @@ Regression sweep on `8e42061` (all 95 `tools/tests/*.tscn`, headless,
 `--quit-after 3000`; six suites new this wave): every suite exited 0, zero
 FAIL lines, zero script errors — 57 suites report 1917 passed / 0 failed, 20
 report 463 passes / 0 failures, 18 are the display-only probes and benchmarks.
+
+## 2026-08-30, later still — Phase 2 completed: wave 2 (`99d2ab0` … `cdab69e`)
+
+§27's "not built" list for Phase 2 — elite modifiers, the ritual-interference
+beat, the healing lock, the Rite's 85% reward and 50% cue — is built. All of
+it is DESIGN BET work per §4: every number is an export or a commented const,
+no existing balance number moved, and each mechanism carries a tell on the
+thing itself and a first-sight teach line. Verdicts remain the playtest's.
+
+**Elite legibility (§9, plan 2.7).** `EliteModifiers`: ARMOURED (a flat plate
+per hit — small hits bounce), VAMPIRIC (drains nearby non-elite allies on a
+clock — the §9 fallback, because no enemy-owned enemy→player damage hook
+exists), SHIELDED (non-elites inside its radius take less), SPLITTING (reuses
+the Splitter machinery; an archetype that already splits never gets it), FAST.
+Picked by segment phase — recon/disturbance none (today's plain elite),
+ascension one, collapse two distinct — so "if everything is elite, nothing is
+elite" stops being true at high threat. `apply_elite_modifiers()` lets beats
+compose them: the Hunter is now fast + vampiric as the plan wrote it. Tells:
+tint + a mark per modifier (plate ring, shield hexagon, seam, streak, pulse;
+static under reduced_motion); the Threat tooltip names what the phase
+unlocks. Verified an elite is never a data-only proxy (ELITE is a required
+flag), so modifier state lives on the actor and two O(1) registries in the
+damage path. `EliteModifierTest` 92.
+
+**Ritual interference (§8.1, plan 2.7).** A collapse-only beat: a sigil radius
+where the dead rise once as weakened revenants (delay, HP fraction, cap and
+duration exported); bosses, pylons and objective actors never rise; ring tell
++ teach. `RitualInterferenceTest` 35, `EncounterDirectorTest` 56.
+
+**Healing lock (plan 2.5, §10).** `player.lock_healing(seconds, reason)` —
+max-extend semantics, a lock is a lock (the Rite's own mend included), one
+"HEALING SEALED" line per lock, a sealed state on the HP bar, a
+`healing_lock_changed` event. The Cursed Vault now bills it (45 s export)
+alongside its beats — the "fuck it" moment names its price on approach.
+`HealingLockTest` 41.
+
+**Exit Rite climax (plan 2.8).** At 50% hold the district warps — a
+distortion level drives the vignette's strength/tint on the rig's own copy of
+the material (a shared sub-resource was the first review's must-fix); at 85%
+a last-chance vault at the rite's edge, guaranteed Manifestation, costing the
+whole safeguard buffer; both once per channel via the progress ledger, both
+reset with it. `RiteClimaxTest` 54, `CursedVaultTest` 22.
+
+Three must-fix review findings repaired before integration (a replaced FAST
+elite kept its speed; arena bosses could rise as revenants; the shared
+vignette material), then one systemic defect fixed centrally: all four "teach
+once per run" guards lived on per-segment nodes and repeated every segment —
+`Global.teach_once()` is now the run's registry (`cdab69e`). Hygiene from
+wave 1 closed on the way: AugmentSelect shows level-scaled stats,
+BurdenSnapshot's header names the census's real readers, `current_game_data`
+quotes the corrected rule texts.
+
+Not done: "route closes" during the Rite (navigation/world work, Phase 3
+shaped); manifestation overlays intensifying at 50% (plan 2.8's second
+clause — the overlays are the manifestation layer's, a follow-up);
+per-archetype allow/deny values in the EnemySpec resources (exports exist,
+all default to allowed).
+
+**Polish pass** (`dd2185d` … `8ad55b7`, every review clean): a status tick is
+not a hit — burn and bleed pass the ARMOURED plate (an armoured elite had been
+immune to every DoT); a cleared elite gets its body colour back; FAST keeps a
+still tell (chevrons) under reduced_motion and behind another tint; the
+choice screen's "Lv.N" is the level a pick actually yields; the last-chance
+vault announces itself once with the whole bill; every presentation number
+named as an export or const, no value moved.
+
+Regression sweep on `8ad55b7` (all 99 `tools/tests/*.tscn`, headless,
+`--quit-after 3000`; ten suites new today): 61 suites report 2214 passed /
+1 failed, 20 report 463 passes / 0 failures, 18 display-only probes and
+benchmarks, zero script errors. The one failure — `DevForceSpawnTest`'s "no
+detached records survive a full cull" — is a wall-clock-phased soak check
+that passed 3/3 on immediate re-run and touches nothing this wave changed;
+it belongs with the timing-sensitive probes the stale-tests audit lists.
