@@ -1,3 +1,4 @@
+@static_unload
 extends RefCounted
 class_name ManifestationCatalog
 
@@ -45,6 +46,14 @@ const LUCK_CHANCE_SCALE: float = 0.12
 
 static var _defs: Dictionary = {}
 static var _by_slot: Dictionary = {}
+
+
+static func release_static_caches() -> void:
+	# Shutdown-order mitigation: drop the def cache (which holds preloaded
+	# effect scripts) before script server teardown outlives resource cleanup.
+	# Any later lookup rebuilds lazily via _ensure_built().
+	_defs = {}
+	_by_slot = {}
 
 
 static func _ensure_built() -> void:

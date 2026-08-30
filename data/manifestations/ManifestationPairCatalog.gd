@@ -1,3 +1,4 @@
+@static_unload
 extends RefCounted
 class_name ManifestationPairCatalog
 
@@ -18,6 +19,12 @@ const NOUN_THRESHOLD: int = 2
 
 static var _defs: Dictionary = {}
 static var _by_pair_key: Dictionary = {}
+
+
+static func release_static_caches() -> void:
+	# Same shutdown-order mitigation as ManifestationCatalog; rebuilds lazily.
+	_defs = {}
+	_by_pair_key = {}
 
 
 static func _ensure_built() -> void:

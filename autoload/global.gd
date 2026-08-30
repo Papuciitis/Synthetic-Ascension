@@ -1245,6 +1245,8 @@ func _exit_tree() -> void:
 	_WORLD_ART_SCRIPT.release_static_caches()
 	EnemyProjectile.release_static_caches()
 	AugmentActiveBadge.release_static_caches()
+	ManifestationCatalog.release_static_caches()
+	ManifestationPairCatalog.release_static_caches()
 
 
 func flush_pending_save() -> void:
