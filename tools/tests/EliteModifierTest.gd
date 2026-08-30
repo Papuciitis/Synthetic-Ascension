@@ -4,11 +4,12 @@ extends Node
 # picked by segment phase, each with a mechanic the player can answer, a tell
 # on the body and a once-per-run teach. Drives the real enemy scene against
 # the EnemyWorld / EnemyCombat / EnemyIndex autoloads and the ThreatDirector's
-# segment phase.
+# segment phase; the beat spawner is the real EnemySpawner.
 #
 # Run: <godot> --headless --path . res://tools/tests/EliteModifierTest.tscn
 
 const ENEMY_SCENE := preload("res://core/actors/enemy/enemy.tscn")
+const RUNNER_SCENE_PATH := "res://scenes/world/enemies/EnemyRunner.tscn"
 const PolicyScript = preload("res://core/systems/enemy_world/EnemyRepresentationPolicy.gd")
 const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 
@@ -109,6 +110,7 @@ func _run() -> void:
 	await _test_explicit_api_teach_and_phase_pick()
 	await _test_pool_reset()
 	await _test_proxy_pinning()
+	await _test_spawner_beat_api()
 
 	RunEvents.tutorial_tip.disconnect(_on_tip)
 	ThreatDirector.call("set_segment_phase", &"recon")
@@ -453,3 +455,21 @@ func _test_proxy_pinning() -> void:
 	_check(EnemyWorld.get_representation(handle) == Types.Representation.MATERIALIZED, "and the record reads materialized")
 	await _free_all([elite])
 
+
+# --- the Hunter premise from this side: the spawner passes a beat's request through ---
+func _test_spawner_beat_api() -> void:
+	var spawner := EnemySpawner.new()
+	add_child(spawner)
+	await get_tree().process_frame
+	var node := spawner.spawn_beat_member(RUNNER_SCENE_PATH, Vector2(600.0, 200.0), true, [EliteModifiers.FAST, EliteModifiers.VAMPIRIC])
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var member := node as EnemyActor
+	_check(member != null and member.is_elite, "spawn_beat_member with modifier ids promotes the member")
+	_check(member != null and _ids_equal(member.elite_modifier_ids(), [EliteModifiers.FAST, EliteModifiers.VAMPIRIC]), "and applies exactly the beat's modifiers, not the phase pick")
+	_check(member != null and member.get_meta("special_spawn_kind", &"") == &"beat", "the member is still a beat special")
+	var plain := spawner.spawn_beat_member(RUNNER_SCENE_PATH, Vector2(700.0, 200.0), true) as EnemyActor
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(plain != null and plain.is_elite and plain.elite_modifier_ids().is_empty(), "the three-argument call still promotes by phase (recon: plain)")
+	await _free_all([member, plain, spawner])

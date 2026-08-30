@@ -717,8 +717,15 @@ func suspend_spawning(seconds: float) -> void:
 ## Encounter beats (EncounterDirector): spawn one member of an authored
 ## formation at an exact position. Beat members are specials - protected from
 ## culling and counted outside the ambient cap - so a formation stays a
-## formation until the player answers it.
-func spawn_beat_member(scene_path: String, position: Vector2, elite: bool = false) -> Node:
+## formation until the player answers it. `modifier_ids` names the elite a
+## beat wants (plan §2.4 Hunter: fast + vampiric) instead of leaving it to the
+## phase pick; a non-empty list implies elite.
+func spawn_beat_member(
+	scene_path: String,
+	position: Vector2,
+	elite: bool = false,
+	modifier_ids: Array[StringName] = [],
+) -> Node:
 	if not spawning_enabled:
 		return null
 	var scene := load(scene_path) as PackedScene
@@ -735,7 +742,9 @@ func spawn_beat_member(scene_path: String, position: Vector2, elite: bool = fals
 		return null
 	if _ei != null and _ei.has_method("commit_special"):
 		_ei.call("commit_special", node, &"beat")
-	if elite and node.has_method("make_elite"):
+	if not modifier_ids.is_empty() and node.has_method("apply_elite_modifiers"):
+		node.call_deferred("apply_elite_modifiers", modifier_ids)
+	elif elite and node.has_method("make_elite"):
 		node.call_deferred("make_elite")
 	return node
 
