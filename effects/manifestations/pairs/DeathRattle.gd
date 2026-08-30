@@ -207,6 +207,11 @@ func _pay_for_the_beat() -> void:
 	# to the number, and announces itself the way the player's own bar does.
 	if player.has_signal(&"hp_changed"):
 		player.emit_signal(&"hp_changed", left, player_max_hp())
+	# A health cost is a damage number, not a callout: it rides the
+	# damage_numbers setting, so with callouts off the bar no longer drops
+	# with nothing near you and nothing said. The popup stays the callout half.
+	if BattleText != null:
+		BattleText.player_damage(player_position(), cost)
 	_flash = 0.34
 	popup("RATTLE -%d" % maxi(1, int(round(cost))), noun_colour(&"ward"), 1.25)
 

@@ -13,6 +13,14 @@ var _passes := 0
 var _failures := 0
 
 
+## The minimum the ward rules read off the player: a health bar and its signal.
+class FakePlayer extends Node2D:
+	@warning_ignore("unused_signal")
+	signal hp_changed(current: float, max_hp: float)
+	var hp: float = 100.0
+	var max_hp: float = 100.0
+
+
 func _ready() -> void:
 	call_deferred(&"_run")
 
@@ -37,6 +45,7 @@ func _run() -> void:
 	_test_roll_respects_slot_and_chance()
 	_test_describe_is_detached_safe()
 	_test_rule_text_matches_the_code()
+	_test_death_rattle_toll_is_a_damage_number()
 	_test_identity_survives_merge()
 	_test_identity_survives_auto_swap_merge()
 	_test_a_deliberate_merge_keeps_the_destination_rule()
@@ -83,6 +92,41 @@ func _first_two_ids_for_slot(slot: int) -> Array:
 		if out.size() >= 2:
 			break
 	return out
+
+
+## Everything the layer says out loud goes through the BattleText ring buffer.
+## Its entries are read back here so a line can be asserted the way a Label's
+## text is; nothing expires between two synchronous calls.
+func _battle_text_index(text: String) -> int:
+	if BattleText == null:
+		return -1
+	var texts: PackedStringArray = BattleText.get("_texts")
+	for i in range(int(BattleText.get("_count"))):
+		if texts[i] == text:
+			return i
+	return -1
+
+
+func _battle_text_has(text: String) -> bool:
+	return _battle_text_index(text) >= 0
+
+
+## Both callout channels on, unpersisted: this machine's saved settings must
+## not decide whether a line exists. Returns what to hand back to
+## _restore_feedback_settings().
+func _force_feedback_settings() -> Dictionary:
+	var previous := {
+		&"damage_numbers": SettingsManager.get_value(&"accessibility", &"damage_numbers", true),
+		&"ability_callouts": SettingsManager.get_value(&"accessibility", &"ability_callouts", true),
+	}
+	for key in previous:
+		SettingsManager.set_value(&"accessibility", key, true, false)
+	return previous
+
+
+func _restore_feedback_settings(previous: Dictionary) -> void:
+	for key in previous:
+		SettingsManager.set_value(&"accessibility", key, previous[key], false)
 
 
 # ---------------------------------------------------------------------------
@@ -634,6 +678,48 @@ func _test_rule_text_matches_the_code() -> void:
 		ManifestationPairCatalog.describe(&"reliquary_guard").contains("anything that spends the orbit drops the guard"),
 		"Reliquary Guard says every orbit spender drops it"
 	)
+
+
+func _test_death_rattle_toll_is_a_damage_number() -> void:
+	# Observability audit 2026-08-30 §5 #4: the toll is written straight to hp
+	# and only ever announced through a callout-gated popup, so with callouts
+	# off the bar dropped with nothing near and nothing said. A health cost is a
+	# damage number and rides that setting instead. The lines go through the
+	# real BattleText ring buffer and are read back the way a Label's text is.
+	var previous := _force_feedback_settings()
+	var fake := FakePlayer.new()
+	add_child(fake)
+	var state := ManifestationState.new()
+	add_child(state)
+	state.bind_player(fake)
+	state.claim(&"cadence")
+	state.claim(&"ward")
+
+	var rattle_def := ManifestationPairCatalog.get_def(&"death_rattle")
+	var rattle := rattle_def.logic.new() as ManifestationPairEffect
+	add_child(rattle)
+	rattle.setup_pair(fake, state, rattle_def, 0.0)
+	fake.hp = 30.0
+	_check(state.wound_tier() >= 2, "fixture: 30%% HP is wounded (tier %d)" % state.wound_tier())
+	while state.beat_in_cycle(3) != 2:
+		state.note_attack()
+	state.time_since_attack = 0.0
+	rattle.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
+	_check(bool(rattle.get("_hold_armed")), "fixture: the shot before the empowered beat arms the hold")
+	rattle.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
+	var toll: float = 30.0 - fake.hp
+	_check(is_equal_approx(toll, 5.0), "panic-firing into the hold bills 5%% of max HP (%.1f)" % toll)
+	var toll_index := _battle_text_index("5")
+	_check(toll_index >= 0, "the toll is emitted as a player damage number")
+	if toll_index >= 0:
+		var colours: PackedColorArray = BattleText.get("_colors")
+		_check(colours[toll_index].is_equal_approx(Color(1.0, 0.35, 0.3, 1.0)), "in the player-damage colour, not as a callout")
+	_check(_battle_text_has("RATTLE -5"), "and the callout half still fires")
+
+	rattle.queue_free()
+	state.queue_free()
+	fake.queue_free()
+	_restore_feedback_settings(previous)
 
 
 # ---------------------------------------------------------------------------
