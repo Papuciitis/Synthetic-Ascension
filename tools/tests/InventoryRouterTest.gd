@@ -418,6 +418,29 @@ func _test_eject_to_full_bag_rolls_back() -> void:
 	_check(_total(inv, bag) == bag.get_slot_count() + 1, "conservation on the full-bag eject refusal")
 
 
+## A refused eject must not leave the bag's VFX origin armed: the next
+## origin-less add (vendor buy, granted reward) would fly in from the equip
+## slot the flight never left. equip_from_bag disarms on its merge path for
+## the same reason.
+func _test_refused_eject_disarms_the_staged_origin() -> void:
+	var inv := Inventory.new()
+	var bag := BagInventory.new()
+	InvRouter.bind_equipped(inv)
+	InvRouter.bind_bag(bag)
+	inv.set_item(0, _make_item("helm", 0))
+	_fill_bag(bag)
+
+	bag.set_pending_ui_origin(null)
+	var armed_before: int = int(bag.get("_pending_ui_origin_type"))
+	var ok: bool = InvRouter.eject_equipped_to_bag(0, {"type": 1, "pos": Vector2(120, 80)})
+	_check(not ok, "a full bag refuses the eject")
+	_check(inv.get_at(0) != null, "and the item is still equipped (rollback)")
+	_check(
+		int(bag.get("_pending_ui_origin_type")) == armed_before,
+		"a refused eject leaves no armed origin behind (%d)" % int(bag.get("_pending_ui_origin_type"))
+	)
+
+
 func _test_eject_same_id_feeds_bag_stack() -> void:
 	_world_drops.clear()
 	var inv := Inventory.new()
@@ -559,6 +582,7 @@ func _run() -> void:
 	_test_equip_to_full_bag_refused()
 	_test_eject_equipped_to_bag()
 	_test_eject_to_full_bag_rolls_back()
+	_test_refused_eject_disarms_the_staged_origin()
 	_test_eject_same_id_feeds_bag_stack()
 	_test_drop_from_equip_and_bag()
 	_test_locked_items_refuse_moves()

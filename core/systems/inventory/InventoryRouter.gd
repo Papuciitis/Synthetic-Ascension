@@ -77,6 +77,13 @@ func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 	var ok: bool = _bag_add_instance(inst)
 	if not ok:
 		equipped.set_item(slot, inst) # rollback
+		# The flight this origin was staged for is not going to happen. Leaving
+		# it armed would make the NEXT origin-less bag add (a vendor buy, a
+		# granted reward) fly in from this equip slot, and the origin lives on
+		# the bag Resource across scenes - the same reason equip_from_bag
+		# disarms on its merge path.
+		if origin != null and bag.has_method("set_pending_ui_origin"):
+			bag.call("set_pending_ui_origin", null)
 		return false
 
 	return true
