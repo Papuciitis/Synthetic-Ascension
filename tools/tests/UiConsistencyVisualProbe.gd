@@ -16,6 +16,12 @@ extends Node
 ## notice and the Exchange, at each of the two resolutions.
 const EXPECTED_CAPTURES: int = 12
 
+## RunSheetHUD's page controls under $Archive/BodyMargin/Pages, in the order
+## select_page() indexes them. Each page assertion reads its own control.
+const PAGE_NODE_NAMES: Array[String] = [
+	"ProfileScroll", "SetsScroll", "ManifestationsScroll", "ObservationsScroll",
+]
+
 var _dir := ""
 var _passes := 0
 var _failures := 0
@@ -147,8 +153,22 @@ func _capture_run_sheet_pages(suffix: String) -> void:
 	for page_index in range(page_names.size()):
 		run_sheet.select_page(page_index)
 		await get_tree().process_frame
+		# Read the page control itself, not the whole RunSheetHUD: the four
+		# page-selector buttons at $Archive/Index/* keep their "◆  PROFILE" /
+		# "◇  SETS" text whatever page is showing, so a check over the whole
+		# subtree passed even with every page hidden - the empty-panel
+		# photograph these checks exist to distinguish.
+		var page := run_sheet.get_node_or_null(
+			"Archive/BodyMargin/Pages/%s" % PAGE_NODE_NAMES[page_index]
+		) as Control
 		_check(
-			_collect_label_text(run_sheet).strip_edges() != "",
+			page != null and page.is_visible_in_tree(),
+			"the Run Sheet's %s page is the one on screen (%s)" % [
+				page_names[page_index], suffix,
+			]
+		)
+		_check(
+			page != null and _collect_label_text(page).strip_edges() != "",
 			"the Run Sheet's %s page renders text to photograph (%s)" % [
 				page_names[page_index], suffix,
 			]
@@ -244,6 +264,13 @@ func _capture(file_name: String) -> void:
 
 
 func _collect_label_text(node: Node) -> String:
+	# A hidden branch is not in the photograph, so it must not satisfy a
+	# "renders text to photograph" check; recursion stops there the way
+	# drawing does.
+	if node is CanvasItem and not (node as CanvasItem).visible:
+		return ""
+	if node is CanvasLayer and not (node as CanvasLayer).visible:
+		return ""
 	var parts := PackedStringArray()
 	if node is Label:
 		parts.append((node as Label).text)
