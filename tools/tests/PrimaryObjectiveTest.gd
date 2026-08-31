@@ -178,6 +178,7 @@ func _run() -> void:
 	_test_catalog()
 	await _test_district_relay()
 	await _test_ward_vigil()
+	await _test_ward_vigil_wave_gate()
 	await _test_breach_seal()
 	await _test_rite_gate(&"district_relay", true)
 	await _test_rite_gate(&"ward_vigil", false)
@@ -489,12 +490,13 @@ func _test_ward_vigil() -> void:
 	_check(drained < held, "past the grace the vigil bleeds (%.3f -> %.3f)" % [held, drained])
 	_check(drained > 0.0, "stepping out drains the vigil, it never voids it")
 	_check(objective.is_draining(), "...and the vigil says it is bleeding")
-	# Leaving stops the siege as well as the progress. An objective that kept
-	# calling waves at a player who walked away would be spawning pressure into
-	# a part of the district that has nothing to do with it.
+	# A hold that is going backwards crosses no new stage, so no wave is due and
+	# none arrives. That is all this can see: the guard that stops the siege for
+	# a player who has walked away only shows itself when a wave IS due, which is
+	# the state _test_ward_vigil_wave_gate() builds deliberately below.
 	_check(
 		spawner.bursts.size() == waves_while_held,
-		"a vigil the player has left calls no further waves (%d, still)" % spawner.bursts.size()
+		"a bleeding vigil crosses no new stage, so no wave arrives (%d, still)" % spawner.bursts.size()
 	)
 
 	# The bleed is slower than the gain, or dodging out is never worth it.
@@ -553,6 +555,111 @@ func _test_ward_vigil() -> void:
 		if pair.x < 0 or pair.x > pair.y or pair.y != objective.steps_total():
 			in_range = false
 	_check(in_range, "every progress report the vigil emits is a real fraction of its scale")
+
+	_release(objective)
+	_release(spawner)
+	_release(player)
+	await get_tree().process_frame
+
+
+# ---------------------------------------------------------------------------
+# VIGIL - the siege belongs to the circle, not to the player
+# ---------------------------------------------------------------------------
+
+## The vigil calls its waves from inside its "the player is in the circle"
+## branch, so stepping out stops the siege as well as the progress. That guard
+## is invisible on an ordinary hold: waves are called at authored fractions of
+## the hold, and a hold that nobody is holding only ever goes DOWN, so no stage
+## is ever due while the player is away and a gated vigil and an ungated one
+## look identical.
+##
+## It becomes visible with a wave OWED. The vigil calls at most one wave per
+## frame, so a single long frame that carries the hold past two authored stages
+## at once leaves the second one owed at a fraction the hold has already
+## reached. Ticking from outside the circle in that state is the one thing that
+## tells the two apart - and the owed wave must not be dropped either: it is
+## owed until somebody holds the ground again.
+##
+## On its own vigil, so the stage accounting of the long hold above keeps
+## measuring an ordinary hold.
+func _test_ward_vigil_wave_gate() -> void:
+	_reset_capture()
+	var seed_value := _seed_for(&"ward_vigil", 6)
+	# Loud rather than a quiet skip: a section that silently stops running is
+	# exactly the failure this whole fix is about.
+	_check(seed_value >= 0, "a segment-6 seed still rolls the Ward Vigil")
+	if seed_value < 0:
+		return
+	var objective := PrimaryObjectiveCatalog.create_for(6, seed_value) as WardVigilObjective
+	_check(objective != null, "the catalog builds a second Ward Vigil for the siege gate")
+	if objective == null:
+		return
+
+	objective.vigil_seconds = 4.0
+	var home := Vector2(5120.0, -3072.0)
+	_install(objective, home)
+	var spawner := _spawn_stub_spawner()
+	var player := _spawn_stub_player(home)
+
+	var stages: Array = WardVigilObjective.WAVE_STAGES
+	var first_stage: Vector2 = stages[0]
+	var owed_stage: Vector2 = stages[1]
+
+	_tick(objective, 1)
+	_check(objective.is_activated(), "standing in the circle wakes the vigil")
+
+	# One long frame - a hitch, or simply a coarser clock - carries the hold
+	# past both of the first two stages.
+	_tick(objective, 1, owed_stage.x * objective.vigil_seconds + 0.2)
+	_check(
+		objective.progress_fraction() >= owed_stage.x,
+		"a long frame carries the hold past two stages at once (%.3f, past %.2f)"
+			% [objective.progress_fraction(), owed_stage.x]
+	)
+	_check(
+		spawner.bursts.size() == 1 and spawner.bursts[0] == int(first_stage.y),
+		"...and one frame calls one wave, never the whole siege at once (%s)" % [spawner.bursts]
+	)
+
+	# Out of the circle with that second wave owed. The waves are the price of
+	# holding the ground; a player who is not holding it is not owed a siege,
+	# and pressure poured at them would be landing wherever they walked to.
+	player.global_position = home + Vector2(objective.vigil_radius_px + 60.0, 0.0)
+	_tick(objective, 4)
+	_check(not objective.is_draining(), "a moment out of the circle is still free")
+	_check(
+		objective.progress_fraction() >= owed_stage.x,
+		"...and the wave the hold has already earned is still owed (%.3f, past %.2f)"
+			% [objective.progress_fraction(), owed_stage.x]
+	)
+	_check(
+		spawner.bursts.size() == 1,
+		"a vigil the player has stepped out of calls no wave even with one owed (%d)"
+			% spawner.bursts.size()
+	)
+
+	# Same again past the grace, while the vigil is bleeding back.
+	var bleed_ticks := _tick_until(objective, func() -> bool: return objective.is_draining(), 400)
+	_check(objective.is_draining(), "the vigil past its grace is bleeding (%d ticks)" % bleed_ticks)
+	_check(
+		objective.progress_fraction() >= owed_stage.x,
+		"...with the owed wave still behind the hold (%.3f, past %.2f)"
+			% [objective.progress_fraction(), owed_stage.x]
+	)
+	_check(
+		spawner.bursts.size() == 1,
+		"a bleeding vigil calls no wave either (%d)" % spawner.bursts.size()
+	)
+
+	# Owed, not forfeited: it arrives the moment the circle is held again. This
+	# is also what proves the two checks above were watching something real -
+	# the wave was there to be called the whole time.
+	player.global_position = home
+	_tick(objective, 1)
+	_check(
+		spawner.bursts.size() == 2 and spawner.bursts[1] == int(owed_stage.y),
+		"holding the circle again collects the owed wave at its authored size (%s)" % [spawner.bursts]
+	)
 
 	_release(objective)
 	_release(spawner)
