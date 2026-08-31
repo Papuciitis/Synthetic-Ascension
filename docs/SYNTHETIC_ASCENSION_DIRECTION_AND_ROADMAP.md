@@ -1582,3 +1582,50 @@ error count is now read alongside pass/fail.
 The last three hygiene rows (#6 `PoolManager`'s autoload fallback parent, #7
 `FlowFieldNav`'s stale build state, #8 the await-after-free sites) landed
 after that sweep and were swept clean here.
+
+## 2026-08-31, later — the audit series is closed
+
+The seven clusters the credit exhaustion killed were relaunched and all
+landed (`d1ad489` … `278c229`). Every audit in the 2026-08-28 series now has
+a status section saying what closed, what was corrected, and what was
+deliberately left. The counts: **107 suites, 3990 assertions, 0 failures, 0
+script errors.**
+
+- **Performance hygiene** — §2's ten idle-cost rows, the audit's ~0.4–0.7
+  ms/frame, using its own §3 house patterns. Verified by reverting each
+  group, not by inspection.
+- **Logging** — the top-15 closed; the floods are once-guards and errors name
+  the file and the engine's own error string.
+- **Stale tests** — the never-failing probes can fail. Giving
+  `ProjectileRenderBenchmark` its first real assertion found its packing had
+  been transposed all along, which is the whole argument for that audit in
+  one commit.
+- **Test coverage** — gaps #1, #2, #3, #5 and #6 closed: the router every
+  item move passes through, the seven item effects, all ten pair rules,
+  SetRunner's tiers, the three objectives that gate the rite. HIGH drops
+  from 51 to ~45.
+
+**Four real defects surfaced by writing tests for untested code**, two fixed:
+the whole Conduit set damaged with no source (so neither breakpoint fed
+lifesteal or any Manifestation `on_hit` rule — a build engine silently
+disconnected), and Slow Heart re-intercepted its own payout (returning
+0.89 HP/s against the 5.95 it advertises).
+
+**Two are design decisions and are recorded, not made** (details in the
+test-coverage audit's status section): an activated Breach Seal pulls waves
+after the player anywhere in the district, spawning around the *player* while
+ignoring the breach position it is handed; and `DeathRattle` clobbers a
+shared cadence clock another rule may have just reset. Both need a ruling
+before code moves.
+
+Method note worth keeping: reviewers were required to *actually mutate* the
+production code rather than reason about vacuity, and found real vacuity in
+three of four coverage suites plus two must-fix defects in the tooltip cache.
+Three separate times this week a sweep was green while emitting script
+errors, so error count is now read alongside pass/fail — that is how the
+contact-source regression was caught.
+
+**Still open:** the three LOW deferred-call rows in the Godot-hygiene audit;
+naming consistency and run-sheet rows; the remaining ~45 HIGH coverage rows.
+Save risk #5 remains a plan awaiting a format decision. Phase 2's mechanisms
+are complete and the human playtest is still the gate on Phase 3.
