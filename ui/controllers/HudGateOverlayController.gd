@@ -42,7 +42,41 @@ func _ready() -> void:
 		_gate_arrow.size = _gate_arrow.custom_minimum_size
 
 	call_deferred("_recenter_arrow")
-	set_process(true)
+	_hook_targets()
+	_refresh_arrow_processing()
+
+
+func _hook_targets() -> void:
+	if Global == null or not Global.has_signal("hud_target_positions_changed"):
+		# No signal to wake on: stay awake rather than sleep on a target that
+		# can never announce itself.
+		set_process(true)
+		return
+	var cb: Callable = Callable(self, "_on_hud_targets_changed")
+	if not Global.hud_target_positions_changed.is_connected(cb):
+		Global.hud_target_positions_changed.connect(cb)
+
+
+func _on_hud_targets_changed() -> void:
+	_refresh_arrow_processing()
+
+
+## The arrow chases a moving camera, so with something to point at it genuinely
+## needs every frame. With NEITHER target set there is nothing to point at, no
+## distance to write and no pulse worth animating - it is hidden and stays
+## hidden - so it sleeps until Global says a position appeared. Those two
+## positions, the camera and the player are the only inputs to the arrow, and
+## the other three cannot matter while there is no target.
+func _refresh_arrow_processing() -> void:
+	var has_target: bool = Global != null and (
+		Global.objective_target_pos != Vector2.INF or Global.exit_gate_pos != Vector2.INF
+	)
+	set_process(has_target)
+	if has_target:
+		return
+	_resolve_nodes()
+	if _gate_arrow != null:
+		_gate_arrow.visible = false
 
 
 func _hook_run_events() -> void:

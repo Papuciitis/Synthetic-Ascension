@@ -25,6 +25,17 @@ var _bound_rite: Node
 ## second - and its twin in HudThreatController made it a hundred and twenty.
 var _warned_missing_director: bool = false
 
+## How often the overlay re-asks the tree for the live Exit Rite. Godot has no
+## "joined a group" notification and a segment builds exactly one rite, so a
+## poll it is - four times a second instead of sixty.
+const RITE_REBIND_INTERVAL: float = 0.25
+
+var _rebind_accum: float = 0.0
+var _painted_once: bool = false
+var _last_unsealed: bool = false
+var _last_pressure: float = -1.0
+var _last_remaining: float = -1.0
+
 func _enter_tree() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 
@@ -69,13 +80,16 @@ func _bind_director() -> void:
 		+ "the evac warning and its vignette stay idle"
 	)
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _overlay == null or _label == null:
 		_resolve_nodes()
 	if _td == null or not is_instance_valid(_td):
 		_bind_director()
 		return
-	_bind_live_rite()
+	_rebind_accum += delta
+	if _rebind_accum >= RITE_REBIND_INTERVAL:
+		_rebind_accum = 0.0
+		_bind_live_rite()
 	_update_from_director()
 
 
@@ -116,6 +130,23 @@ func _update_from_director() -> void:
 	var unsealed := bool(_td.get("gate_unsealed"))
 	var pressure := float(_td.get("evac_pressure")) if _td.has_method("get") else 0.0
 	var rem := float(_td.get("evac_remaining_sec")) if _td.has_method("get") else 0.0
+
+	# The blink is the only term below with a clock in it. Everything else
+	# rewrites the value the label and the vignette already hold, and the
+	# director pins pressure and remaining to zero until the gate unseals - so
+	# the whole pre-rite segment settles after one paint. The director moves
+	# these on its own 5 Hz tick, and the signature below catches every move.
+	var blinking := unsealed and (pressure >= show_pressure_threshold) \
+		and (rem <= 0.0 or rem <= blink_when_remaining_leq)
+	if _painted_once and not blinking \
+	and unsealed == _last_unsealed \
+	and is_equal_approx(pressure, _last_pressure) \
+	and is_equal_approx(rem, _last_remaining):
+		return
+	_painted_once = true
+	_last_unsealed = unsealed
+	_last_pressure = pressure
+	_last_remaining = rem
 
 	# Visibility
 	var show := false

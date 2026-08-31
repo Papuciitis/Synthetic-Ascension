@@ -11,8 +11,14 @@ class_name MagicMissileEffect
 @export var scales_with_power: bool = true
 @export var debug_prints: bool = false
 
+## How long a scan that found nothing waits before scanning again. The spatial
+## query is this augment's entire idle cost, and a target that walks into a
+## 750 px radius stays in it for far longer than this.
+const SEEK_RETRY_SEC: float = 0.1
+
 var _player: Node2D = null
 var _cd: float = 0.0
+var _seek_retry: float = 0.0
 var _tick: int = 0
 
 # Burst state (no create_timer spam)
@@ -56,11 +62,21 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		return
 
+	# Off cooldown with nothing in range, this ran a spatial-grid query every
+	# single frame until an enemy appeared. The cooldown itself is untouched:
+	# this is a separate retry clock that only exists between a miss and the
+	# next scan.
+	if _seek_retry > 0.0:
+		_seek_retry = maxf(_seek_retry - dt, 0.0)
+		return
+
 	var handle := _find_nearest_enemy(_player.global_position, seek_radius)
 	if handle == EnemyWorldTypes.INVALID_HANDLE:
+		_seek_retry = SEEK_RETRY_SEC
 		if debug_prints and _tick % 60 == 0:
 			print("[MagicMissile] no enemies in radius=", seek_radius)
 		return
+	_seek_retry = 0.0
 
 	# cooldown scaling
 	var cd: float = base_cooldown

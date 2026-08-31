@@ -29,6 +29,14 @@ class_name AugmentActiveBadge
 
 var _target_ready: bool = true
 var _ready_blend: float = 1.0
+## The blend value _apply_ready_blend() last painted. Writing
+## StyleBoxFlat.border_color calls emit_changed() unconditionally, which
+## redraws the badge's Panel - so re-asserting a settled blend cost three
+## Control redraws a frame across the three badges with nothing on cooldown.
+## -1.0 means "never painted", which no blend value can be.
+var _painted_blend: float = -1.0
+## Ready-blend repaints since this badge was built. The idle-cost pin reads it.
+var _blend_paints: int = 0
 
 
 
@@ -116,7 +124,12 @@ func _process(dt: float) -> void:
 		
 	var target: float = 1.0 if _target_ready else 0.0
 	_ready_blend = move_toward(_ready_blend, target, ui_blend_speed * dt)
-	_apply_ready_blend()
+	# move_toward lands exactly on the target, so the frame that finishes the
+	# transition is painted and the ones after it are not.
+	if _ready_blend != _painted_blend:
+		_painted_blend = _ready_blend
+		_blend_paints += 1
+		_apply_ready_blend()
 
 
 func _setup_cd_visuals() -> void:
@@ -296,9 +309,19 @@ func _apply_cd_state() -> void:
 	else:
 		label.text = str(int(ceil(_time_left)))
 
+## Ready-blend repaints since this badge was built (perf pin).
+func debug_blend_paint_count() -> int:
+	return _blend_paints
+
+
 func _set_ready_visual(is_ready: bool) -> void:
 	if _frame_style == null:
 		return
+
+	# This writes the same three properties the blend owns, so the blend has to
+	# re-assert itself on the next tick exactly as it did when it ran every
+	# frame. Dropping the painted value is that re-assertion.
+	_painted_blend = -1.0
 
 	if is_ready:
 		_frame_style.border_color = Color(1.0, 0.55, 0.20, 1.0)

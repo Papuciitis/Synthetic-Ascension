@@ -26,7 +26,16 @@ class_name ActiveAbilityHUD
 @onready var time_label: Label = $Frame/Margin/RootHBox/RightVBox/BarWrap/TimeLabel
 @onready var state_label: Label = $Frame/Margin/RootHBox/RightVBox/StateLabel
 
+## How often the HUD asks an effect for its state, or scans the runners for one
+## to bind. A bound effect pushes every change through active_cd_changed, so
+## this poll is the safety net for state nothing announces (a resource meter, a
+## failure message timing out) - not the thing driving the readout.
+const POLL_INTERVAL: float = 0.1
+
 var _effect: Node = null
+var _poll_accum: float = 0.0
+## State polls since this HUD was built. The idle-cost pin reads it.
+var _polls: int = 0
 var _frame_style: StyleBoxFlat
 var _icon_style: StyleBoxFlat
 var _pill_style: StyleBoxFlat
@@ -52,10 +61,19 @@ func _ready() -> void:
 	bar.value = 1.0
 	time_label.text = "READY"
 
-func _process(_dt: float) -> void:
+func _process(dt: float) -> void:
 	# If bound effect got freed, unbind
 	if _effect != null and not is_instance_valid(_effect):
 		_unbind()
+
+	# Bound, this allocated a state Dictionary and rewrote two bars and two
+	# labels every frame; unbound, it walked the children of two runners with
+	# has_signal every frame. Neither answer changes 60 times a second.
+	_poll_accum += dt
+	if _poll_accum < POLL_INTERVAL:
+		return
+	_poll_accum = 0.0
+	_polls += 1
 
 	# A bound effect remains authoritative: cooldown alone is not enough for
 	# resource-gated set abilities such as Gravemarch Verdict.
@@ -96,6 +114,11 @@ func _process(_dt: float) -> void:
 
 	if best != null:
 		_bind(best)
+
+## State polls since this HUD was built (perf pin).
+func debug_poll_count() -> int:
+	return _polls
+
 
 func _bind(effect: Node) -> void:
 	_effect = effect

@@ -46,14 +46,31 @@ signal followers_changed(value: int)
 signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
 signal permanent_augments_changed(ids: Array[StringName])
 
+## Either of the two world positions the HUD's edge arrow points at has moved,
+## appeared or gone. They are plain writes from the segment builders, the
+## objectives and the Exit Rite - the rite rewrites its own every frame - so the
+## signal is gated on the value actually changing. HudGateOverlayController
+## sleeps while both are Vector2.INF and this is what wakes it.
+signal hud_target_positions_changed()
+
 
 # ============================================================
 # Run selections (chosen at start of run)
 # ============================================================
 
 # Level / segment helpers
-var exit_gate_pos: Vector2 = Vector2.INF
-var objective_target_pos: Vector2 = Vector2.INF
+var exit_gate_pos: Vector2 = Vector2.INF:
+	set(value):
+		if exit_gate_pos == value:
+			return
+		exit_gate_pos = value
+		hud_target_positions_changed.emit()
+var objective_target_pos: Vector2 = Vector2.INF:
+	set(value):
+		if objective_target_pos == value:
+			return
+		objective_target_pos = value
+		hud_target_positions_changed.emit()
 
 # Level/tutorial one-shots (reset each run)
 var tip_shown_wardstone_attune: bool = false

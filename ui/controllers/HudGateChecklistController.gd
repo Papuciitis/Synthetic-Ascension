@@ -34,6 +34,12 @@ var _change_revision: int = 0
 var _last_expansion_signature: String = ""
 var _header_base_text: String = ""
 var _last_prompt: String = ""
+## The keycode _last_prompt was rendered from, and the header text it was
+## appended to. Godot has no "InputMap changed" notification, so the binding is
+## still read every frame - but reading it now stops at an int compare instead
+## of allocating a keycode String and formatting a header every frame.
+var _prompt_keycode: int = -1
+var _prompt_base_text: String = ""
 
 
 func _enter_tree() -> void:
@@ -115,6 +121,8 @@ func _on_gate_checklist_changed(state: StringName, items: Array, next_hint: Stri
 		_last_expansion_signature = ""
 		_header_base_text = ""
 		_last_prompt = ""
+		_prompt_keycode = -1
+		_prompt_base_text = ""
 		_has_items = false
 		_apply_visibility()
 		_apply_detail_visibility()
@@ -164,25 +172,33 @@ func _expansion_signature(state: StringName, items: Array, next_hint: String) ->
 	return "|".join(parts)
 
 
-func _details_prompt() -> String:
+## The bound key as a number, so the per-frame read costs no String. 0 means
+## "no key event on this action", which renders as HOLD.
+func _details_keycode() -> int:
 	if details_action == &"" or not InputMap.has_action(details_action):
-		return "HOLD"
+		return 0
 	for event in InputMap.action_get_events(details_action):
 		if event is InputEventKey:
 			var key_event := event as InputEventKey
-			var code := key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
-			return OS.get_keycode_string(code)
-	return "HOLD"
+			return key_event.physical_keycode if key_event.physical_keycode != 0 else key_event.keycode
+	return 0
+
+
+func _details_prompt() -> String:
+	var code := _details_keycode()
+	return OS.get_keycode_string(code) if code != 0 else "HOLD"
 
 
 func _refresh_header_prompt() -> void:
 	if _header == null or _header_base_text.is_empty():
 		return
-	var prompt := _details_prompt()
-	if prompt == _last_prompt:
+	var code := _details_keycode()
+	if code == _prompt_keycode and _header_base_text == _prompt_base_text:
 		return
-	_last_prompt = prompt
-	_header.text = "%s    [%s] INSPECT" % [_header_base_text, prompt]
+	_prompt_keycode = code
+	_prompt_base_text = _header_base_text
+	_last_prompt = OS.get_keycode_string(code) if code != 0 else "HOLD"
+	_header.text = "%s    [%s] INSPECT" % [_header_base_text, _last_prompt]
 
 
 func _rebuild_rows(items: Array) -> void:
