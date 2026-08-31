@@ -3,6 +3,13 @@ extends Control
 ## Breaks if the management archive grows with its content, rebuilds unchanged
 ## records, or loses a reader's selected/focused page during a HUD refresh.
 
+## How many of the Conduit set's authored doctrine passages (playstyle, build
+## guidance, and each tier's mechanical and plain wording) the Sets archive
+## must be showing before "the compact hover omits them" means anything. The
+## archive renders all 8 at 127d4be; 6 is a floor with slack, not a target.
+const ARCHIVE_DOCTRINE_PASSAGES: int = 6
+
+
 class ManifestationRunnerFixture:
 	extends Node
 
@@ -200,13 +207,45 @@ func _verify_set_archive_owns_full_doctrine(player: Node) -> void:
 		add_child(tooltip)
 		tooltip.show_item(hovered_item)
 		var hover_text := tooltip.body_label.text
-		_check(
-			not "SET IDENTITY" in hover_text
-			and not "SET PROGRESSION" in hover_text
-			and not "BEST WITH" in hover_text
-			and not "TERMS" in hover_text,
-			"item hover omits doctrine already owned by the Sets archive"
-		)
+		# The compact hover must not repeat the long-form doctrine the Sets
+		# archive owns. This used to assert the absence of "SET IDENTITY",
+		# "SET PROGRESSION", "BEST WITH" and "TERMS": the first two occur in no
+		# production file at all and the last two only as RunSheetHUD headings,
+		# so nothing the tooltip can build could contain any of them and the
+		# check could not fail. It now reads the forbidden passages off the same
+		# SetData the tooltip itself holds, and only asserts about the ones the
+		# archive is actually showing - so inlining any of that doctrine into
+		# the hover turns it red.
+		var conduit_set: SetData = Global.set_db.get(&"conduit", null) as SetData
+		_check(conduit_set != null, "the Conduit set resource is reachable through Global.set_db")
+		if conduit_set != null:
+			var doctrine: Array[String] = [conduit_set.playstyle, conduit_set.best_with]
+			for tier: SetTier in conduit_set.sorted_tiers():
+				if tier == null:
+					continue
+				doctrine.append(tier.mechanical_description)
+				doctrine.append(tier.plain_description)
+			var owned_by_archive: Array[String] = []
+			var leaked_into_hover: Array[String] = []
+			for passage: String in doctrine:
+				var text := passage.strip_edges()
+				if text == "":
+					continue
+				if not text in archive_text:
+					continue
+				owned_by_archive.append(text)
+				if text in hover_text:
+					leaked_into_hover.append(text)
+			_check(
+				owned_by_archive.size() >= ARCHIVE_DOCTRINE_PASSAGES,
+				"the Sets archive shows the set's long-form doctrine (%d passages, floor %d)"
+					% [owned_by_archive.size(), ARCHIVE_DOCTRINE_PASSAGES]
+			)
+			_check(
+				leaked_into_hover.is_empty(),
+				"item hover omits doctrine already owned by the Sets archive (leaked: %s)"
+					% "; ".join(leaked_into_hover)
+			)
 		_check(
 			"RUN SHEET // SETS" in hover_text and "CONDUIT" in hover_text,
 			"compact item hover preserves set status and points to its archive"
