@@ -3,9 +3,17 @@ extends Node
 # Probe for the batched enemy visuals: runs the REAL game, spawns a horde, then
 # teleports the player progressively far from spawn and reports the renderer's
 # batch state at each stop, saving a screenshot too when there is a display.
-# Verifies the emit_changed()/culling-rect fix: batches must stay visible
-# wherever the camera roams, not just near the world origin. Screenshots land
-# in ROAM_SHOT_DIR (env) or user://roam_shots.
+# Guards the emit_changed()/culling-rect fix in two halves, at every stop:
+# the dragged horde must reach the multimeshes, AND every live batch must emit
+# the multimesh `changed` signal, which is the notification MultiMeshInstance2D
+# turns into the queue_redraw() that recomputes the culling rect - the rect
+# that used to stay stale-empty once the camera left the world origin.
+# Screenshots land in ROAM_SHOT_DIR (env) or user://roam_shots.
+#
+# What a headless run cannot see: the culling rect itself, or a pixel. There is
+# no rasterizer, so the change signal is the last observable link in that chain
+# and is what the headless assertions pin; a windowed run's screenshots remain
+# the only thing that shows the horde actually drawn.
 #
 # The screenshots need a display; the batch bookkeeping does not, and that is
 # the thing this probe exists to observe. It used to await
@@ -37,9 +45,17 @@ class Driver:
 	var _captured := 0
 
 	## Enemies dragged to each stop by _drag_enemies_to; every one of them must
-	## be visible in the renderer's batches at that stop, which is the culling
-	## rect regression this probe exists to catch.
+	## be published into the renderer's batches at that stop. This is the
+	## "reaches the batch" half of the roam check - the culling-rect half is
+	## the per-stop `changed` assertion in _report_and_shoot.
 	const DRAGGED_PER_STOP: int = 40
+
+	## Batch MultiMesh instance id -> `changed` emissions since the current stop
+	## began, zeroed by _watch_batches at the top of each stop. MultiMesh emits
+	## `changed` only from emit_changed(): assigning buffer, instance_count or
+	## visible_instance_count does not (checked against 4.7), so this counts the
+	## renderer's emit_changed() calls and nothing else.
+	var _batch_changes: Dictionary = {}
 
 	func _check(condition: bool, message: String) -> void:
 		if condition:
@@ -110,6 +126,7 @@ class Driver:
 			var target := _start_pos + STOPS[i]
 			player.global_position = target
 			_drag_enemies_to(target)
+			_watch_batches()
 			await get_tree().create_timer(2.0).timeout
 			if _can_capture():
 				await RenderingServer.frame_post_draw
@@ -126,6 +143,29 @@ class Driver:
 		else:
 			print("ROAM headless: no display, %d screenshots skipped" % STOPS.size())
 		_finish(1 if _failures > 0 else 0)
+
+	func _on_batch_changed(mesh_id: int) -> void:
+		_batch_changes[mesh_id] = int(_batch_changes.get(mesh_id, 0)) + 1
+
+	func _watch_batches() -> void:
+		# Subscribe to every batch multimesh's `changed` (once each) and zero the
+		# counters, so the stop about to be reported counts only its own
+		# emissions. A batch first seen mid-stop stays uncounted until the next
+		# stop rather than reading as a batch that never emitted.
+		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+		if proxy_root == null:
+			return
+		var renderer: Node = proxy_root.get("renderer")
+		if renderer == null:
+			return
+		for child in renderer.get_children():
+			var mm := child as MultiMeshInstance2D
+			if mm == null or mm.multimesh == null:
+				continue
+			var mesh_id := mm.multimesh.get_instance_id()
+			if not _batch_changes.has(mesh_id):
+				mm.multimesh.changed.connect(_on_batch_changed.bind(mesh_id))
+			_batch_changes[mesh_id] = 0
 
 	func _drag_enemies_to(center: Vector2) -> void:
 		# Teleport through EnemyWorld records, not just nodes: node moves
@@ -168,18 +208,25 @@ class Driver:
 			renderer.call("batch_count"),
 		])
 		var batched: int = 0
+		# Batches watched since the top of this stop that currently carry
+		# instances, and how many of those emitted `changed` while it ran.
+		var live_batches: int = 0
+		var signalled_batches: int = 0
 		for child in renderer.get_children():
 			var mm := child as MultiMeshInstance2D
 			if mm != null and mm.multimesh != null:
 				batched += mm.multimesh.visible_instance_count
-				print("ROAM   batch %s vis=%d inst=%d visible=%s" % [
+				var changes := int(_batch_changes.get(mm.multimesh.get_instance_id(), -1))
+				print("ROAM   batch %s vis=%d inst=%d visible=%s changed=%d" % [
 					mm.name, mm.multimesh.visible_instance_count,
-					mm.multimesh.instance_count, mm.visible,
+					mm.multimesh.instance_count, mm.visible, changes,
 				])
-		# The regression this probe exists for: batches went dark once the
-		# camera left the world origin, so a stop far from spawn showed nothing.
-		# The dragged horde must be in the batches at every stop, not only the
-		# first.
+				if changes >= 0 and mm.multimesh.visible_instance_count > 0:
+					live_batches += 1
+					if changes > 0:
+						signalled_batches += 1
+		# Half one of the roam regression: the dragged horde must reach the
+		# batches at every stop, not only the one at the world origin.
 		_check(
 			visible_instances >= DRAGGED_PER_STOP,
 			"stop=%d keeps the dragged horde batched (%d visible, expected >= %d)"
@@ -188,6 +235,19 @@ class Driver:
 		_check(
 			batched >= DRAGGED_PER_STOP,
 			"stop=%d publishes them into the multimeshes (%d instances)" % [index, batched]
+		)
+		# Half two, and the one the fix is actually made of: filling a multimesh
+		# is not the same as the canvas item knowing it was filled.
+		# MultiMeshInstance2D recomputes its culling rect only when the multimesh
+		# emits `changed`; without that emission the item keeps the rect it had
+		# while empty and the batch is culled away as soon as the camera leaves
+		# the world origin. Every batch still holding instances was republished
+		# during this stop - publish() hides any batch it skips - so every one
+		# of them must have emitted.
+		_check(
+			live_batches > 0 and signalled_batches == live_batches,
+			"stop=%d refreshed every live batch's culling rect (%d of %d emitted changed)"
+				% [index, signalled_batches, live_batches]
 		)
 		_reported += 1
 		if not _can_capture():
