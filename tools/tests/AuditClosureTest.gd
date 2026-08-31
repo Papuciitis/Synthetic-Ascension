@@ -31,6 +31,8 @@ func _run() -> void:
 	_test_enemy_drop_failures_warn_once_with_spec_context()
 	_test_missing_inventory_router_is_reported_once()
 	_test_augment_card_signal_warning_names_the_signal_it_checks()
+	_test_sealed_envelope_chunks_report_as_one_line()
+	_test_missing_cover_scenes_report_once()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -597,3 +599,47 @@ func _test_augment_card_signal_warning_names_the_signal_it_checks() -> void:
 	_check(card.has_signal("hovered"), "the offer card emits hovered")
 	_check(card.has_signal("unhovered"), "the offer card emits unhovered")
 	card.free()
+
+
+func _test_sealed_envelope_chunks_report_as_one_line() -> void:
+	# Logging audit 2026-08-28 §3 #15: the sweep over the urban envelope warned
+	# once per unreachable chunk, with nothing tying the lines to the plan.
+	var district_script := load("res://core/systems/world/proc/DistrictPlan.gd") as Script
+	_check(
+		district_script.has_method("_sealed_envelope_warning"),
+		"sealed envelope chunks aggregate into one line"
+	)
+	if district_script.has_method("_sealed_envelope_warning"):
+		var sealed: Array[Vector2i] = [Vector2i(3, -1), Vector2i(4, -1)]
+		var line: String = str(district_script.call("_sealed_envelope_warning", 4242, sealed))
+		_check(line.contains("seed=4242"), "the aggregated line carries the seed that produced the plan")
+		_check(line.contains("2 sealed"), "and the number of chunks it stands for")
+		_check(
+			line.contains("(3,-1)") and line.contains("(4,-1)"),
+			"and every chunk it dropped, so nothing the per-chunk lines said is lost"
+		)
+
+
+func _test_missing_cover_scenes_report_once() -> void:
+	# Logging audit 2026-08-28 §3 #15 / finding 33: unassigned cover scenes were
+	# warned about once per generated chunk, under a prefix borrowed from
+	# ChunkManager, even though every chunk then generates empty.
+	var impl := ChunkGenImpl.new()
+	_check(impl.get("_warned_missing_cover") == false, "the unassigned-cover report is once-guarded")
+	# Consume the guard so this fixture stays out of the error log, then confirm
+	# the generator still refuses to build anything.
+	impl.set("_warned_missing_cover", true)
+	var chunk := Node2D.new()
+	impl.call("_generate_chunk", Vector2i.ZERO, chunk)
+	_check(chunk.get_child_count() == 0, "a generator with no cover scenes builds nothing")
+	chunk.free()
+
+	var source := FileAccess.get_file_as_string("res://core/systems/world/proc/ChunkGenImpl.gd")
+	_check(
+		source.contains("[ChunkGenImpl] cannot generate chunks"),
+		"and reports it under its own class name, as an error"
+	)
+	_check(
+		not source.contains("[ChunkManager] Cover scenes"),
+		"the borrowed ChunkManager prefix is gone from that line"
+	)

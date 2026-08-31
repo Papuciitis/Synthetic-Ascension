@@ -428,7 +428,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 		role_by_chunk[boss_chunk] = &"boss_arena"
 
 	var connectors_by_chunk: Dictionary = _build_connectors(road_chunk_set)
-	var urban_access_by_chunk: Dictionary = _build_urban_access_connectors(road_chunk_set, urban_envelope_set)
+	var urban_access_by_chunk: Dictionary = _build_urban_access_connectors(road_chunk_set, urban_envelope_set, attempt_world_seed)
 	var archetype_by_chunk: Dictionary = {}
 	for role_key in role_by_chunk.keys():
 		var role_coord: Vector2i = role_key
@@ -734,7 +734,7 @@ static func _farthest_candidate(candidates: Array[Vector2i], start_chunk: Vector
 			best = candidate
 	return best
 
-static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_envelope_set: Dictionary) -> Dictionary:
+static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_envelope_set: Dictionary, plan_seed: int) -> Dictionary:
 	var result: Dictionary = {}
 	if urban_envelope_set.is_empty():
 		return result
@@ -767,11 +767,27 @@ static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_env
 	# A diagonal candidate should always have a bridge, but deterministic generation
 	# failures must never leave a sealed block. Drop unreachable envelope chunks from
 	# the access map rather than inventing a visual doorway into nowhere.
+	var sealed: Array[Vector2i] = []
 	for envelope_key in urban_envelope_set.keys():
 		var envelope_coord: Vector2i = envelope_key as Vector2i
 		if not visited.has(envelope_coord):
-			push_warning("[DistrictPlan] Urban envelope chunk has no street access: %s" % str(envelope_coord))
+			sealed.append(envelope_coord)
+	if not sealed.is_empty():
+		push_warning(_sealed_envelope_warning(plan_seed, sealed))
 	return result
+
+
+## One line for a whole plan's unreachable envelope chunks. The sweep above runs
+## over every envelope chunk, so reporting inside it produced one warning per
+## sealed chunk with nothing to tie them to the plan that made them.
+static func _sealed_envelope_warning(plan_seed: int, sealed: Array[Vector2i]) -> String:
+	var coords := PackedStringArray()
+	for coord: Vector2i in sealed:
+		coords.append("(%d,%d)" % [coord.x, coord.y])
+	return (
+		"[DistrictPlan] seed=%d dropped %d sealed envelope chunks from the street-access map: %s"
+		% [plan_seed, sealed.size(), ",".join(coords)]
+	)
 
 
 static func _build_connectors(chunk_set: Dictionary) -> Dictionary:
