@@ -1467,6 +1467,18 @@ func _test_through_the_real_player() -> void:
 	var stats: Stats = player.get("stats") as Stats
 	var armor: float = stats.armor if stats != null else 0.0
 	var hp_before: float = float(player.get("hp"))
+	# The zeroing at the top of this test does not survive the player: its stat
+	# recompute publishes its own Luck stat back into Global (player.gd:670,
+	# `Global.run_luck = s.luck`), and a stock player carries luck 0.1. That is
+	# enough to re-arm the lucky-evasion roll `_take_damage` makes before it
+	# applies any reduction (player.gd:1108-1116) - a flat 1% of hits are
+	# evaded, so this assertion failed roughly one run in a hundred. Zero the
+	# luck once the player has finished publishing it, and the roll cannot fire.
+	Global.run_luck = 0.0
+	_check(
+		LuckResolver.lucky_evasion_chance(Global.run_luck) == 0.0,
+		"fixture: no lucky evasion is left to roll, so the hit must land"
+	)
 	player.call("take_damage", 20.0, null)
 	var hp_after: float = float(player.get("hp"))
 	var expected_loss: float = 20.0 * multiplier * (100.0 / (100.0 + maxf(armor, 0.0)))
