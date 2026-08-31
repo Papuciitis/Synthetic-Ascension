@@ -17,6 +17,11 @@ var debug_last_save_validated: bool = true
 # not rotate the unreadable primary over it.
 var _unreadable_primary: Dictionary = {}
 
+## Renders one filesystem failure: the engine's own name for the error - never
+## the raw enum int - and the file the operation could not reach.
+func format_io_error(action: String, path: String, err: int) -> String:
+	return "[SaveManager] %s failed: path=%s err=%s" % [action, path, error_string(err)]
+
 func _slot_path(slot: int) -> String:
 	return SAVE_DIR + "slot_%d.tres" % slot
 
@@ -42,7 +47,7 @@ func ensure_dir() -> bool:
 	var absolute_dir: String = ProjectSettings.globalize_path(SAVE_DIR)
 	var err: int = DirAccess.make_dir_recursive_absolute(absolute_dir)
 	if err != OK and err != ERR_ALREADY_EXISTS:
-		push_error("Failed creating save directory '%s', err=%s" % [absolute_dir, str(err)])
+		push_error(format_io_error("create save directory", absolute_dir, err))
 		return false
 	return DirAccess.dir_exists_absolute(absolute_dir)
 
@@ -91,22 +96,26 @@ func save_slot(save: SaveData, validated: bool = true) -> bool:
 	if FileAccess.file_exists(temporary_path):
 		var stale_temp_error := DirAccess.remove_absolute(absolute_temporary)
 		if stale_temp_error != OK:
-			push_error(
-				"Failed removing stale temporary save for slot %d, err=%s"
-				% [slot, str(stale_temp_error)]
-			)
+			push_error(format_io_error(
+				"slot %d: remove stale temporary save" % slot, temporary_path, stale_temp_error
+			))
 			return false
 
 	var save_error := ResourceSaver.save(save, temporary_path)
 	if save_error != OK:
-		push_error("Failed writing temporary save for slot %d, err=%s" % [slot, str(save_error)])
+		push_error(format_io_error(
+			"slot %d: write temporary save" % slot, temporary_path, save_error
+		))
 		return false
 
 	# Autosaves skip the synchronous read-back: parsing the file we just wrote
 	# doubles the disk cost on the main thread. Manual and transition saves keep
 	# the full round-trip check.
 	if validated and _load_save_data(temporary_path) == null:
-		push_error("Temporary save validation failed for slot %d" % slot)
+		push_error(
+			"[SaveManager] slot %d: temporary save failed read-back validation: path=%s"
+			% [slot, temporary_path]
+		)
 		DirAccess.remove_absolute(absolute_temporary)
 		return false
 
@@ -121,10 +130,11 @@ func save_slot(save: SaveData, validated: bool = true) -> bool:
 			DirAccess.remove_absolute(absolute_broken)
 		var aside_error := DirAccess.rename_absolute(absolute_primary, absolute_broken)
 		if aside_error != OK:
-			push_error(
-				"Failed setting aside unreadable save for slot %d, err=%s"
-				% [slot, str(aside_error)]
-			)
+			push_error(format_io_error(
+				"slot %d: set aside unreadable save" % slot,
+				"%s -> %s" % [primary_path, _broken_path(slot)],
+				aside_error
+			))
 			DirAccess.remove_absolute(absolute_temporary)
 			return false
 		set_aside = true
@@ -132,31 +142,37 @@ func save_slot(save: SaveData, validated: bool = true) -> bool:
 		if FileAccess.file_exists(backup_path):
 			var remove_backup_error := DirAccess.remove_absolute(absolute_backup)
 			if remove_backup_error != OK:
-				push_error(
-					"Failed replacing backup for slot %d, err=%s"
-					% [slot, str(remove_backup_error)]
-				)
+				push_error(format_io_error(
+					"slot %d: remove previous backup" % slot, backup_path, remove_backup_error
+				))
 				DirAccess.remove_absolute(absolute_temporary)
 				return false
 		var backup_error := DirAccess.rename_absolute(absolute_primary, absolute_backup)
 		if backup_error != OK:
-			push_error(
-				"Failed backing up slot %d, err=%s" % [slot, str(backup_error)]
-			)
+			push_error(format_io_error(
+				"slot %d: rotate primary to backup" % slot,
+				"%s -> %s" % [primary_path, backup_path],
+				backup_error
+			))
 			DirAccess.remove_absolute(absolute_temporary)
 			return false
 		moved_primary = true
 
 	var replace_error := DirAccess.rename_absolute(absolute_temporary, absolute_primary)
 	if replace_error != OK:
-		push_error("Failed replacing slot %d, err=%s" % [slot, str(replace_error)])
+		push_error(format_io_error(
+			"slot %d: promote temporary save" % slot,
+			"%s -> %s" % [temporary_path, primary_path],
+			replace_error
+		))
 		if moved_primary:
 			var restore_error := DirAccess.rename_absolute(absolute_backup, absolute_primary)
 			if restore_error != OK:
-				push_error(
-					"Failed restoring backup for slot %d, err=%s"
-					% [slot, str(restore_error)]
-				)
+				push_error(format_io_error(
+					"slot %d: restore backup after a failed promote" % slot,
+					"%s -> %s" % [backup_path, primary_path],
+					restore_error
+				))
 		elif set_aside:
 			DirAccess.rename_absolute(absolute_broken, absolute_primary)
 		return false
@@ -171,9 +187,7 @@ func delete_slot(slot: int) -> void:
 		if FileAccess.file_exists(path):
 			var error := DirAccess.remove_absolute(ProjectSettings.globalize_path(path))
 			if error != OK:
-				push_error(
-					"Failed deleting save artifact '%s', err=%s" % [path, str(error)]
-				)
+				push_error(format_io_error("delete save artifact", path, error))
 
 func set_current(slot: int, save: SaveData) -> void:
 	current_slot = slot

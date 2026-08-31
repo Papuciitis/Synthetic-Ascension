@@ -29,6 +29,7 @@ func _run() -> void:
 	_test_legacy_major_choice_migration()
 	_test_manifestation_cards_round_trip()
 	_test_save_version_round_trip()
+	_test_io_failures_render_engine_error_names()
 	await get_tree().process_frame
 	print("SaveIntegrityTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -423,3 +424,36 @@ func _test_save_version_round_trip() -> void:
 	_global.apply_save(future)
 	_check(_global.selected_style_id == "melee", "a save with a newer save_version still applies")
 	_cleanup_slot()
+
+
+func _test_io_failures_render_engine_error_names() -> void:
+	# Logging audit 2026-08-28 §3 #13: every "err=%s" in SaveManager formatted
+	# the raw enum int through str(), and the read-back validation message named
+	# no path at all.
+	_check(_save_manager.has_method("format_io_error"), "SaveManager renders IO failures through one formatter")
+	if _save_manager.has_method("format_io_error"):
+		var rendered: String = str(_save_manager.call(
+			"format_io_error",
+			"slot %d: write temporary save" % TEST_SLOT,
+			_temporary_path(),
+			ERR_FILE_CANT_OPEN
+		))
+		_check(rendered.contains(_temporary_path()), "a save failure names the file it could not reach")
+		_check(rendered.contains(error_string(ERR_FILE_CANT_OPEN)), "and the engine's own name for the error")
+		var error_field := rendered.get_slice("err=", 1)
+		_check(
+			error_field != "" and not error_field.is_valid_int(),
+			"never the raw enum int (rendered '%s')" % error_field
+		)
+	# Every "err=" the file renders must be fed by error_string(), and no failure
+	# path may stringify an error code with str().
+	var source := FileAccess.get_file_as_string("res://autoload/SaveManager.gd")
+	_check(
+		source.count("error_string(") > 0 and source.count("err=%s") == source.count("error_string("),
+		"every error code SaveManager renders goes through error_string()"
+	)
+	_check(not source.contains("str("), "no SaveManager failure path stringifies an error code with str()")
+	_check(
+		source.contains("read-back validation: path="),
+		"the read-back validation failure names the temporary file"
+	)

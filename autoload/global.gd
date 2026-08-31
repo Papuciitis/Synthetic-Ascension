@@ -291,7 +291,7 @@ func goto_scene(path: String) -> void:
 	flush_pending_save()
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
-		push_error("Scene change failed: %s err=%s" % [path, err])
+		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
 
 func goto_main_menu() -> void:
 	var am := get_node_or_null("/root/AudioManager")

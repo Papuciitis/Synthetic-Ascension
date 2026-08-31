@@ -76,6 +76,32 @@ func _run() -> void:
 			bool(normalized[&"accessibility"][&"ability_callouts"]),
 			"a settings file predating the split still gets callouts on"
 		)
+
+		# Logging audit 2026-08-28 §3 #13: every "err=%s" here printed the raw
+		# enum int and no message named the file it had failed on.
+		_check(store.has_method("format_io_error"), "the store renders IO failures through one formatter")
+		if store.has_method("format_io_error"):
+			var rendered_failure: String = str(store.call(
+				"format_io_error", "write temporary settings", TEST_PATH + ".tmp", ERR_FILE_CANT_OPEN
+			))
+			_check(rendered_failure.contains(TEST_PATH + ".tmp"), "a settings failure names the file it could not reach")
+			_check(
+				rendered_failure.contains(error_string(ERR_FILE_CANT_OPEN)),
+				"and the engine's own name for the error"
+			)
+			var error_field := rendered_failure.get_slice("err=", 1)
+			_check(
+				error_field != "" and not error_field.is_valid_int(),
+				"never the raw enum int (rendered '%s')" % error_field
+			)
+		# Every "err=" the file renders must be fed by error_string(): a new site
+		# that formats a raw code breaks this balance.
+		var store_source := FileAccess.get_file_as_string("res://core/settings/SettingsStore.gd")
+		_check(
+			store_source.count("error_string(") > 0
+			and store_source.count("err=%s") == store_source.count("error_string("),
+			"every error code SettingsStore renders goes through error_string()"
+		)
 	_cleanup()
 	print("SettingsPersistenceTest: %d passed, %d failed" % [_passes, _failures])
 	quit(1 if _failures > 0 else 0)
