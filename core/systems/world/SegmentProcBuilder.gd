@@ -77,11 +77,17 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player") as Node2D
 
 	if _cm == null:
-		push_warning("[SegmentProcBuilder] ChunkManager not found.")
+		push_error(
+			"[SegmentProcBuilder] cannot build segment: seg=%d group=chunk_manager not found; the segment gets no objectives and no exit rite"
+			% _segment
+		)
 		queue_free()
 		return
 	if _player == null:
-		push_warning("[SegmentProcBuilder] Player not found (group 'player').")
+		push_error(
+			"[SegmentProcBuilder] cannot build segment: seg=%d group=player not found; the segment gets no objectives and no exit rite"
+			% _segment
+		)
 		queue_free()
 		return
 
@@ -107,11 +113,17 @@ func _ready() -> void:
 			secondary["id"] = fallback_secondary_id
 		fallback_secondary_id += 1
 		_secondary_objectives.append(secondary)
-	var debug_main_route: Array = _plan.get("main_route", [])
-	var debug_exploration: Array = _plan.get("exploration_chunks", [])
-	var debug_rewards: Array = _plan.get("reward_chunks", [])
-	var validation: Dictionary = _plan.get("validation", {}) as Dictionary
-	print("[SegmentProcBuilder] Theme=", _theme.label if _theme != null else "Legacy", " main=", debug_main_route.size(), " explore=", debug_exploration.size(), " rewards=", debug_rewards.size(), " validation=", validation)
+	if debug_proc_state:
+		# The validation dictionary is not repeated here: _set_pressure_phase()
+		# dumps it behind this same flag on the recon phase that ends _ready().
+		print("[SegmentProcBuilder] built plan seg=%d seed=%d theme=%s main=%d explore=%d rewards=%d" % [
+			_segment,
+			int(_plan.get("seed", 0)),
+			(_theme.label if _theme != null else "Legacy"),
+			(_plan.get("main_route", []) as Array).size(),
+			(_plan.get("exploration_chunks", []) as Array).size(),
+			(_plan.get("reward_chunks", []) as Array).size(),
+		])
 
 	_rng.seed = int(_plan.get("seed", 1337)) ^ 0xA53C9E1
 
