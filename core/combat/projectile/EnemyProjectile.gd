@@ -25,6 +25,8 @@ static func release_static_caches() -> void:
 	_shared_additive = null
 
 var _life_left: float = 0.0
+## Banked physics time this projectile has not spent yet (see _physics_process).
+var _physics_time_bank: float = 0.0
 var _pooled: bool = false
 var _chunk_manager: ChunkManager = null
 
@@ -83,23 +85,53 @@ func _ready() -> void:
 		material = _shared_additive
 
 	set_process(true)
+	set_physics_process(true)
 
 func _on_pool_obtain() -> void:
 	_pooled = true
 	_life_left = lifetime
+	_physics_time_bank = 0.0
 	if "monitoring" in self:
 		monitoring = true
 	if "monitorable" in self:
 		monitorable = true
 	set_process(true)
+	set_physics_process(true)
 
 func _on_pool_recycle() -> void:
 	shooter = null
 	velocity = Vector2.ZERO
+	_physics_time_bank = 0.0
 	damage = 0.0
 	_life_left = 0.0
 
-func _process(delta: float) -> void:
+## PHYSICS time, one step per RENDERED frame - the model
+## ProjectileSimulationManager documents and uses for player bullets.
+##
+## This node integrated raw render delta, so when max_physics_steps_per_frame
+## capped catch-up and the world clock dilated, enemy bullets kept real-time
+## speed while the enemies, the player and every player bullet slowed with the
+## world: on a weak machine enemy fire got relatively faster.
+##
+## Its own bank rather than the manager's: the manager consumes its bank in
+## its own _process, and a second consumer would steal time from it. Moving
+## the motion into _physics_process instead would have run this node's world
+## DDA 2-4x per frame under exactly the load that made it hurt - the reason
+## the manager runs where it does.
+func _physics_process(delta: float) -> void:
+	var tick := 1.0 / float(maxi(Engine.physics_ticks_per_second, 1))
+	var cap := tick * float(maxi(Engine.max_physics_steps_per_frame, 1))
+	_physics_time_bank = minf(_physics_time_bank + maxf(delta, 0.0), cap)
+
+
+func _process(render_delta: float) -> void:
+	# One physics tick of headroom keeps 144 Hz frames between 60 Hz ticks
+	# full-length, as the manager does.
+	var tick := 1.0 / float(maxi(Engine.physics_ticks_per_second, 1))
+	var delta := clampf(render_delta, 0.0, _physics_time_bank + tick)
+	_physics_time_bank -= delta
+	if delta <= 0.0:
+		return
 	var old_pos: Vector2 = global_position
 	var new_pos: Vector2 = old_pos + velocity * delta
 	if _hits_world(old_pos, new_pos, 5.0):
