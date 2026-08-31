@@ -15,6 +15,23 @@ var _run_sheet: Control = null
 var _tooltip: Control = null
 var _management_mode: bool = false
 
+# --- what the tooltip currently shows -------------------------------------
+# ItemTooltip.show_item() formats every line, joins them, sets a RichTextLabel
+# and calls reset_size(); the placement step then measures the Control
+# again. Doing that on every hovered frame rebuilt an identical tooltip 60
+# times a second. The key is the hovered CONTROL and the ITEM in it, not just
+# the item: swapping two stacks in a paused bag leaves the cursor over the same
+# slot with a different instance, and dragging one item across two slots leaves
+# the same instance under a different slot.
+var _shown_source_id: int = 0
+var _shown_item_id: int = 0
+var _shown_source_rect: Rect2 = Rect2()
+var _hooked_inventory: Object = null
+var _hooked_bag: Object = null
+## Tooltip rebuilds since this controller was created. The idle-cost pin reads
+## it; nothing in the game does.
+var _rebuilds: int = 0
+
 
 func _ready() -> void:
 	_inv_bar = (get_node_or_null(inv_bar_path) if inv_bar_path != NodePath() else null)
@@ -58,7 +75,14 @@ func _ensure_tooltip() -> void:
 func set_management_mode(enabled: bool) -> void:
 	_management_mode = enabled
 	_apply_dossier_mode()
+	# Also drops the shown-item cache: the dossier lays the same item out
+	# differently, so the next hover has to rebuild.
 	_hide_tooltip()
+
+
+## Tooltip rebuilds since this controller was created (perf pin).
+func debug_rebuild_count() -> int:
+	return _rebuilds
 
 
 func _apply_dossier_mode() -> void:
@@ -71,8 +95,13 @@ func _process(_delta: float) -> void:
 		return
 	if not _tooltip.is_inside_tree() or not _tooltip.is_node_ready():
 		return
+	_update_for_hovered(get_viewport().gui_get_hovered_control() as Control)
 
-	var hovered := get_viewport().gui_get_hovered_control() as Control
+
+## One frame of hover handling, split from _process so a suite can drive it: a
+## headless viewport never reports a hovered control, and this is where the
+## rebuild cache lives.
+func _update_for_hovered(hovered: Control) -> void:
 	if hovered == null:
 		_hide_tooltip()
 		return
@@ -104,8 +133,30 @@ func _process(_delta: float) -> void:
 		_hide_tooltip()
 		return
 
-	_show_tooltip(inst)
-	_position_tooltip_beside(_find_item_control_in_parents(hovered))
+	_hook_inventories()
+	var source := _find_item_control_in_parents(hovered)
+	var source_id: int = int(source.get_instance_id()) if source != null else 0
+	var item_id: int = int(inst.get_instance_id())
+	if source_id != _shown_source_id or item_id != _shown_item_id:
+		_shown_source_id = source_id
+		_shown_item_id = item_id
+		_rebuilds += 1
+		_show_tooltip(inst)
+		_measure_tooltip()
+		_place_tooltip(source)
+		_shown_source_rect = _source_rect(source)
+	else:
+		# Same control, same item: the tooltip is already correct. It still
+		# follows a source that moves (the mouse when there is no source rect,
+		# an animating bar), but without re-measuring a body that has not
+		# changed.
+		var rect := _source_rect(source)
+		if rect != _shown_source_rect:
+			_shown_source_rect = rect
+			_place_tooltip(source)
+	# Not cached: inspect_set() early-outs on an unchanged id, and re-asserting
+	# it every frame is the behaviour the dossier has always had.
+	_inspect_set_for(inst)
 
 
 func _is_bag_open() -> bool:
@@ -132,13 +183,46 @@ func _show_tooltip(inst: ItemInstance) -> void:
 	_tooltip.visible = true
 	if _tooltip.has_method("show_item"):
 		_tooltip.call("show_item", inst)
-	if _management_mode and _run_sheet != null and inst != null and inst.data != null:
-		var set_id := StringName(str(inst.data.set_id))
-		if set_id != &"" and _run_sheet.has_method("inspect_set"):
-			_run_sheet.call("inspect_set", set_id)
+
+
+func _inspect_set_for(inst: ItemInstance) -> void:
+	if not _management_mode or _run_sheet == null or inst == null or inst.data == null:
+		return
+	var set_id := StringName(str(inst.data.set_id))
+	if set_id != &"" and _run_sheet.has_method("inspect_set"):
+		_run_sheet.call("inspect_set", set_id)
+
+
+## Anything that mutates an inventory can rewrite the item under the cursor in
+## place - feeding a duplicate ranks it up, and the comparison rows read the
+## whole equipped set - so a change there drops the cache whatever the cursor is
+## doing. Both objects are replaced on a run reset, so the hook is re-checked
+## from the hover path (two identity compares) rather than bound once.
+func _hook_inventories() -> void:
+	if Global == null:
+		return
+	var inventory: Object = Global.run_inventory
+	var bag: Object = Global.run_bag
+	if inventory == _hooked_inventory and bag == _hooked_bag:
+		return
+	var callback := Callable(self, "_on_inventory_changed")
+	for previous in [_hooked_inventory, _hooked_bag]:
+		if previous != null and is_instance_valid(previous) and previous.is_connected(&"changed", callback):
+			previous.disconnect(&"changed", callback)
+	_hooked_inventory = inventory
+	_hooked_bag = bag
+	for current in [inventory, bag]:
+		if current != null and is_instance_valid(current) and not current.is_connected(&"changed", callback):
+			current.connect(&"changed", callback)
+
+
+func _on_inventory_changed() -> void:
+	_shown_item_id = 0
 
 
 func _hide_tooltip() -> void:
+	_shown_source_id = 0
+	_shown_item_id = 0
 	if _tooltip == null:
 		return
 	if _tooltip.has_method("hide_tooltip"):
@@ -146,7 +230,15 @@ func _hide_tooltip() -> void:
 	_tooltip.visible = false
 
 
-func _position_tooltip_beside(source: Control) -> void:
+func _source_rect(source: Control) -> Rect2:
+	if source != null:
+		return source.get_global_rect()
+	return Rect2(get_viewport().get_mouse_position(), Vector2.ONE)
+
+
+## The full Control relayout. Only a tooltip whose body actually changed needs
+## it, so it is split out of the placement below.
+func _measure_tooltip() -> void:
 	if _tooltip == null:
 		return
 
@@ -162,17 +254,17 @@ func _position_tooltip_beside(source: Control) -> void:
 	if min_sz.x > 0.0 and min_sz.y > 0.0:
 		_tooltip.size = Vector2(maxf(w, min_sz.x), min_sz.y)
 
+
+func _place_tooltip(source: Control) -> void:
+	if _tooltip == null:
+		return
+
 	if _management_mode:
 		_position_management_dossier()
 		return
 
-	var source_rect := (
-		source.get_global_rect()
-		if source != null
-		else Rect2(get_viewport().get_mouse_position(), Vector2.ONE)
-	)
 	if _tooltip.has_method("place_beside"):
-		_tooltip.call("place_beside", source_rect, get_viewport().get_visible_rect(), 12.0)
+		_tooltip.call("place_beside", _source_rect(source), get_viewport().get_visible_rect(), 12.0)
 
 
 func _position_management_dossier() -> void:

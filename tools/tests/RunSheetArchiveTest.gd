@@ -272,8 +272,14 @@ func _verify_management_dossier_is_a_fixed_sidecar(
 			lattice_data, 3, ItemInstance.Polarity.POS, 0.35
 		) if lattice_data != null else null
 		controller.call("set_management_mode", true)
-		controller.call("_show_tooltip", lattice_item if lattice_item != null else hovered_item)
-		controller.call("_position_tooltip_beside", source)
+		# The controller's hover step is the same three calls it always was; the
+		# measure/place split is the tooltip idle-cost fix (perf audit §2 #1),
+		# which only changes how OFTEN the first two run.
+		var shown: ItemInstance = lattice_item if lattice_item != null else hovered_item
+		controller.call("_show_tooltip", shown)
+		controller.call("_inspect_set_for", shown)
+		controller.call("_measure_tooltip")
+		controller.call("_place_tooltip", source)
 		var sidecar := controller.get("_tooltip") as Control
 		_check(sidecar != null and sidecar.visible, "paused dossier remains visible beside the management surfaces")
 		if sidecar != null:
