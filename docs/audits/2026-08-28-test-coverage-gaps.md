@@ -297,3 +297,26 @@ unaffected.
 touched file (EnemyIndex, EnemySimulationScheduler, enemy.gd,
 EnemyCombatService, EnemyWorld, RangedBullet) is a *covered* script — no
 row of this audit is retired or altered by it.
+
+## Status 2026-08-31 — top-15 gap #1 closed, and it found a defect
+
+**#1 InventoryRouter — closed** (`356b3ea`). `InventoryRouterTest` drives the
+real router through the exact call shapes of its production callers: equip
+into an empty slot, equip-swap (including against a full bag), bag↔equip and
+stash↔bag both ways, the same-id feed route vs the distinct-item swap route,
+drop-to-world through a spawner stub, full-container refusals with rollback,
+locked sources and destinations, invalid slots — and the conservation
+invariant (instances across equip + bag + stash + world) after every single
+operation. 111 checks where the audit found "proven none".
+
+Mutation-checked rather than trusted: neutralising the router's `locked`
+guards turns the suite red (8 failures) and removing the eject rollback turns
+it red (3), so the two load-bearing invariants are pinned for real.
+
+It also found a live defect, fixed with its own pin (`adb705d`): a refused
+eject left the bag's staged VFX origin armed, so the next origin-less bag add
+— a vendor buy, a granted reward — flew in from an equip slot nothing had
+left. `equip_from_bag` already disarmed on its merge path for exactly that
+reason.
+
+The other fourteen top-15 gaps are untouched; HIGH stays 50 of the 51.

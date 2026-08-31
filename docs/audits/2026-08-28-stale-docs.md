@@ -155,3 +155,33 @@ this audit's own commit.
 New since the audit: an untracked 229 MB `build.zip` sits at the repo root —
 a fresh root artifact of exactly the kind win #9 retired; one `.gitignore`
 line (or deleting it) closes that before it gets committed.
+
+## Status 2026-08-31 — §A and §B closed; §D and §E remain
+
+Every §A root-markdown row and every §B `docs/*.md` row is addressed
+(`f3bb742` … `076ac4b`), each claim re-verified against the tree of the day
+rather than copied from this audit — three of its specifics had drifted and
+were corrected in passing: the interact reader is `ExitRite.gd:597` (not
+`:441`), the dev-log freezes at 0.25.4 on its own dates, and the non-tools
+script count is 372 (this audit said 376 on 08-28).
+
+- **README.md now exists** — the missing entry point §A opens with. What the
+  game is (quoting `SYNTHETIC_ASCENSION_VISION.md`), how to run it and the
+  headless suites, the truth chain (vision → roadmap §27 → `docs/audits/` →
+  `current_game_data.md`), the playtest protocol, and the repo layout.
+- `PROJECT_STRUCTURE.md` retitled as the historical 0.21–0.23 ownership map,
+  with its four wrong claims corrected (Godot 4.7, the omitted subsystems and
+  autoloads, the dev-panel location, `ProjectileManager`).
+- `OPENING_SEQUENCE.md` (ADMISSION phase, the dead debug flag),
+  `SEGMENT1_REBUILD.md` (layout v3, the ten-beat route),
+  `PROJECTILE_HIT_ARCHITECTURE.md` (stress-toggle location, the EnemyIndex-era
+  sentence), `DEVELOPMENT_LOG.md` (frozen banner).
+- `OPTIMIZATION_HANDOFF.md` carries the superseded banner and dated
+  corrections (a)–(e): budgets are 12/24, 8/16 emergency, 40 ms severe; the
+  Windows runner noted; backlog #8 done, #1/#3/#7/#10 still true with today's
+  evidence. `PERFORMANCE_PATCH_CHANGELOG` and `EQUIPMENT_FOUNDATION_CHANGELOG`
+  get their end-date/date headers and corrected numbers.
+
+Still open: §D version strings (`BuildInfo.gd` comment, `export_presets.cfg`),
+§E code-comment rows, and `docs/gamegoal.md`'s stale tags — that file was
+bannered as superseded on 08-30 (`b874dba`) rather than re-tagged.
