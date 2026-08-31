@@ -1021,26 +1021,119 @@ func _test_regeneration_heals_over_ticks() -> void:
 		_check(all_floor, "every tick is exactly the 0.5 HP floor, never nothing")
 	_drop_rig(floor_rig)
 
-	# Rarity really moves the ring: the R25 band sits entirely above the R0 one,
-	# so a ranked ring cannot heal less than an unranked one. The ceiling scales
-	# with rarity too, which is what stops the old flat 12.0 clipping it.
-	var low := _pos(_regen, 0, 0.0)
-	var high := _pos(_regen, 25, 0.0)
+	# Rarity has to be RUN, not computed. Every ring driven above this point is
+	# R0, where `rarity_effect_multiplier()` is exactly 1.0, so none of those
+	# ticks can see rarity at all: the per-tick line
+	# `amt *= rarity_mult * _effect_multiplier(item)` and the rarity-scaled
+	# ceiling that replaced a flat 12.0 (RegenerationRingEffect.gd:67-72) are
+	# only under test once a ranked ring is instantiated and healing.
+	var low := _pos(_regen, 0, 0.30)
+	var high := _pos(_regen, 25, 0.30)
+	var high_mult: float = high.rarity_effect_multiplier()
 	var low_scale: float = low.rarity_effect_multiplier() * maxf(0.10, 1.0 + low.active_pct())
-	var high_scale: float = high.rarity_effect_multiplier() * maxf(0.10, 1.0 + high.active_pct())
-	_check(
-		heal_min * high_scale > heal_max * low_scale,
-		"an R25 ring's worst tick beats an R0 ring's best (%.3f > %.3f)" % [heal_min * high_scale, heal_max * low_scale]
-	)
-	_check(
-		heal_max * high_scale < 12.0 * high.rarity_effect_multiplier(),
-		"and the rarity-scaled ceiling still clears the band (%.3f < %.3f)"
-			% [heal_max * high_scale, 12.0 * high.rarity_effect_multiplier()]
-	)
-	_check(
-		heal_max * high_scale > 12.0,
-		"where the old flat 12.0 ceiling would have clipped it (%.3f)" % (heal_max * high_scale)
-	)
+	var high_scale: float = high_mult * maxf(0.10, 1.0 + high.active_pct())
+	# Fixture guard: if ranking a ring ever stopped moving this number, the live
+	# bands below would still line up and would assert nothing.
+	_check(high_mult > 1.0, "ranking a ring moves its effect multiplier off 1.0 (R25 = %.3f)" % high_mult)
+
+	var rank_rig := _make_rig()
+	var rank_inv: Inventory = rank_rig["inv"] as Inventory
+	var rank_stub: StubPlayer = rank_rig["stub"] as StubPlayer
+	var rank_runner: ItemEffectRunner = rank_rig["runner"] as ItemEffectRunner
+	rank_stub.max_hp = 100000.0
+	rank_stub.hp = 10.0
+	rank_inv.set_item(slot, high)
+	rank_runner.refresh_effects(rank_inv)
+	var ranked: Node = _one_effect(rank_runner, REGEN_SCENE_PATH)
+	_check(ranked != null, "an R25 Ring of Regeneration runs")
+	if ranked != null:
+		ranked.set("tick_interval", 0.02)
+		var ranked_got: bool = await _wait_until(func() -> bool: return rank_stub.heals.size() >= 6)
+		_check(ranked_got, "and heals the player repeatedly (%d ticks)" % rank_stub.heals.size())
+		var ranked_band := not rank_stub.heals.is_empty()
+		var beats_r0 := not rank_stub.heals.is_empty()
+		var ranked_total := 0.0
+		for amount: float in rank_stub.heals:
+			ranked_total += amount
+			if amount < heal_min * high_scale - 0.0001 or amount > heal_max * high_scale + 0.0001:
+				ranked_band = false
+			if amount <= heal_max * low_scale:
+				beats_r0 = false
+		_check(
+			ranked_band,
+			"every ranked tick lands in the R25 band [%.2f, %.2f]" % [heal_min * high_scale, heal_max * high_scale]
+		)
+		# Not a lucky sample: the two bands do not overlap, so a ranked ring's
+		# worst possible tick is above an R0 ring's best possible one.
+		_check(
+			beats_r0,
+			"and beats an R0 ring's best possible tick on every roll (> %.2f)" % (heal_max * low_scale)
+		)
+		_check(
+			_close(rank_stub.hp, 10.0 + ranked_total, 0.001),
+			"the ranked ring's heals land on the bar (%.3f)" % rank_stub.hp
+		)
+	_drop_rig(rank_rig)
+
+	# The ceiling carries a story: "the old flat 12.0 silently capped the ring's
+	# growth around R5" (RegenerationRingEffect.gd:70-71). At the shipped band a
+	# ranked ring rolls straight through 12.0, so the guard only holds if a
+	# top-of-band tick arrives whole. Collapsing the ring's own band onto its top
+	# edge takes the dice out of it - the clamp is then the only thing left that
+	# can move the number, and one tick must equal the whole top of the band.
+	var top_rig := _make_rig()
+	var top_inv: Inventory = top_rig["inv"] as Inventory
+	var top_stub: StubPlayer = top_rig["stub"] as StubPlayer
+	var top_runner: ItemEffectRunner = top_rig["runner"] as ItemEffectRunner
+	top_stub.max_hp = 100000.0
+	top_stub.hp = 10.0
+	top_inv.set_item(slot, _pos(_regen, 25, 0.30))
+	top_runner.refresh_effects(top_inv)
+	var topped: Node = _one_effect(top_runner, REGEN_SCENE_PATH)
+	_check(topped != null, "a top-of-band R25 ring runs")
+	if topped != null:
+		topped.set("tick_interval", 0.02)
+		topped.set("heal_min", heal_max)
+		var expected_top: float = heal_max * high_scale
+		var topped_got: bool = await _wait_until(func() -> bool: return top_stub.heals.size() >= 3)
+		_check(topped_got, "and heals (%d ticks)" % top_stub.heals.size())
+		var all_top := not top_stub.heals.is_empty()
+		for amount: float in top_stub.heals:
+			if not _close(amount, expected_top, 0.001):
+				all_top = false
+		_check(all_top, "every tick is the full rarity-scaled top of the band (%.2f HP)" % expected_top)
+		_check(
+			expected_top > 12.0,
+			"which is past the old flat 12.0 ceiling that used to clip it (%.2f)" % expected_top
+		)
+	_drop_rig(top_rig)
+
+	# And the ceiling itself still exists and scales: ask the ring for more than
+	# any roll could ever produce and the tick comes back at 12 HP x the rarity
+	# multiplier, neither uncapped nor flat.
+	var cap_rig := _make_rig()
+	var cap_inv: Inventory = cap_rig["inv"] as Inventory
+	var cap_stub: StubPlayer = cap_rig["stub"] as StubPlayer
+	var cap_runner: ItemEffectRunner = cap_rig["runner"] as ItemEffectRunner
+	cap_stub.max_hp = 100000.0
+	cap_stub.hp = 10.0
+	cap_inv.set_item(slot, _pos(_regen, 25, 0.30))
+	cap_runner.refresh_effects(cap_inv)
+	var capped: Node = _one_effect(cap_runner, REGEN_SCENE_PATH)
+	_check(capped != null, "a ring asked for more than the ceiling allows still runs")
+	if capped != null:
+		capped.set("tick_interval", 0.02)
+		capped.set("heal_min", 1000.0)
+		capped.set("heal_max", 1000.0)
+		var ceiling: float = 12.0 * high_mult
+		var capped_got: bool = await _wait_until(func() -> bool: return cap_stub.heals.size() >= 3)
+		_check(capped_got, "and heals (%d ticks)" % cap_stub.heals.size())
+		var all_capped := not cap_stub.heals.is_empty()
+		for amount: float in cap_stub.heals:
+			if not _close(amount, ceiling, 0.001):
+				all_capped = false
+		_check(all_capped, "every tick is held at 12 HP x the rarity multiplier (%.2f), not at a flat 12" % ceiling)
+	_drop_rig(cap_rig)
 
 
 # ---------------------------------------------------------------------------
