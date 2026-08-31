@@ -79,4 +79,8 @@ func _nearest_enemy(
 	return EnemyCombat.nearest_enemy(from, r, excluded_handle)
 
 func _deal_damage(handle: int, amount: float) -> void:
-	EnemyCombat.apply_damage(handle, amount)
+	# The player is the SOURCE, as every other set effect passes it: without
+	# it apply_damage emits damage_dealt with a null source, so nothing that
+	# keys on "the player dealt this" fires - lifesteal, and any Manifestation
+	# rule listening for a hit.
+	EnemyCombat.apply_damage(handle, amount, 1, player)

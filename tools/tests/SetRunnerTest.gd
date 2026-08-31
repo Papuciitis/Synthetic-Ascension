@@ -992,26 +992,25 @@ func _test_conduit_overclock_and_feedback() -> void:
 	RunEvents.weapon_fired.emit(player, &"melee", Vector2.ZERO, Vector2(200.0, 0.0), 1.0, 1.0)
 	_check(is_zero_approx(_damage_taken(lashed[0])), "someone else's kill primes nothing")
 
-	# DEFECT (not fixed here, reported instead): unlike Afterstrike, Sunderstep
-	# and Mass Arrest - which all call EnemyCombat.apply_damage(handle, dmg, 1,
-	# player) - the Conduit set damages with no source:
-	#   ConduitOverclockAndFeedback.gd:327 (the melee cleave discharge)
-	#   ConduitOverclockAndFeedback.gd:216 (the Circuit Feedback active)
-	#   ConduitArcBolts.gd:82             (the 4-piece Arc Relay chain)
-	# EnemyCombatService._apply_damage gates RunEvents.damage_dealt and
-	# RunEvents.player_hit_landed on `source != null`, so none of the Conduit
-	# set's damage feeds the player's style lifesteal or any Manifestation
-	# on_hit rule. The assertions below deliberately pin only that the damage
-	# lands; the credit pins live on the three sets that get it right.
-	var uncredited := _start_credit_recorder()
+	# The Conduit set used to damage with no source, unlike Afterstrike,
+	# Sunderstep and Mass Arrest, which all pass (handle, dmg, 1, player).
+	# EnemyCombatService gates RunEvents.damage_dealt and player_hit_landed on
+	# `source != null`, so an entire set's damage fed neither the style
+	# lifesteal nor any Manifestation on_hit rule - a whole build engine
+	# silently disconnected. Found by this suite, fixed with it.
+	var credited := _start_credit_recorder()
 	RunEvents.enemy_killed.emit(player, null, Vector2.ZERO)
 	RunEvents.weapon_fired.emit(player, &"melee", Vector2.ZERO, Vector2(200.0, 0.0), 1.0, 1.0)
 	_end_credit_recorder()
 	var lash_damage := _damage_taken(lashed[0])
 	_check(lash_damage > 0.0, "a kill primes the next melee attack into a cleave (%.1f)" % lash_damage)
-	print(
-		"NOTE: Conduit cleave dealt %.1f damage and credited %.1f to the player"
-		% [lash_damage, _credited_to(uncredited, player)]
+	var cleave_total := 0.0
+	for handle in lashed:
+		cleave_total += _damage_taken(handle)
+	_check(
+		cleave_total > 0.0 and is_equal_approx(_credited_to(credited, player), cleave_total),
+		"and every point of the cleave is credited to the player, so the engine sees it (%.1f of %.1f)"
+			% [_credited_to(credited, player), cleave_total]
 	)
 	var struck := 0
 	for handle in lashed:

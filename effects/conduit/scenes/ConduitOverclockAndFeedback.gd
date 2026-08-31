@@ -213,7 +213,7 @@ func _try_circuit_feedback() -> void:
 	EnemyCombat.gather_in_radius(origin, r, handles)
 	for handle in handles:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, base_dmg * active_damage_mult * power_mul * set_strength)
+		EnemyCombat.apply_damage(handle, base_dmg * active_damage_mult * power_mul * set_strength, 1, player)
 		var direction := (hit_position - origin).normalized()
 		EnemyCombat.apply_knockback(handle, direction * active_knockback * (0.85 + 0.25 * set_strength))
 		EnemyCombat.apply_stun(handle, active_stun * (0.85 + 0.25 * set_strength))
@@ -324,7 +324,7 @@ func _melee_lashes(origin: Vector2, target: Vector2, dmg: float) -> void:
 
 		# Impact burst on enemy (your SpokesBurst now looks good)
 		_spawn_spokes(hit_position)
-		EnemyCombat.apply_damage(handle, hit_dmg)
+		EnemyCombat.apply_damage(handle, hit_dmg, 1, player)
 		EnemyCombat.apply_knockback(handle, (hit_position - origin).normalized() * melee_lash_knockback)
 		EnemyCombat.apply_stun(handle, melee_lash_stun)
 
