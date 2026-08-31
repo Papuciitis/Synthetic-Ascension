@@ -1,16 +1,29 @@
 extends Node
 
-## Opens the developer console, walks its Tests sub-tabs and screenshots each.
+## Opens the developer console, walks its Tests sub-tabs and screenshots each,
+## then presses every pair shortcut and checks it lights its pair.
 ##
 ## The Tests tab is built in code from catalogs, so it has no scene file to
 ## eyeball - the only way to see whether it still lays out sensibly after a rule
 ## is added is to render it. Shots land in DEV_SHOT_DIR (env) or
 ## user://dev_shots.
+##
+## The screenshots need a display; the pair-shortcut checks do not, and they
+## exist nowhere else in the suite. The capture used to await
+## RenderingServer.frame_post_draw unconditionally, which never fires headless,
+## so a headless run hung there and _verify_pair_shortcut never ran at all -
+## under the documented sweep command (--quit-after 3000) that is a green run
+## that checked nothing, because the frame budget expires long before the 110 s
+## watchdog.
 
 var _dir: String = ""
 
 
 var _is_worker: bool = false
+
+
+func _can_capture() -> bool:
+	return DisplayServer.get_name() != "headless"
 
 
 func _ready() -> void:
@@ -78,25 +91,42 @@ func _run() -> void:
 		get_tree().quit(1)
 		return
 
+	_check(inner.get_tab_count() > 0, "the Tests tab built sub-tabs to walk (%d)" % inner.get_tab_count())
+	var captured := 0
 	for i in range(inner.get_tab_count()):
 		inner.current_tab = i
 		for _f in range(3):
 			await get_tree().process_frame
+		if not _can_capture():
+			continue
 		await RenderingServer.frame_post_draw
 		var image := get_viewport().get_texture().get_image()
 		var path := "%s/dev_%s.png" % [_dir, inner.get_tab_title(i).to_lower()]
-		print("DEV shot %s -> %s (err=%d)" % [inner.get_tab_title(i), path, image.save_png(path)])
+		var err := image.save_png(path)
+		print("DEV shot %s -> %s (err=%d)" % [inner.get_tab_title(i), path, err])
+		_check(err == OK, "the %s sub-tab was captured (err=%d)" % [inner.get_tab_title(i), err])
+		captured += 1
 
-	print("DevConsoleShotProbe: %d sub-tabs captured" % inner.get_tab_count())
+	if _can_capture():
+		_check(
+			captured == inner.get_tab_count(),
+			"every sub-tab was captured (%d of %d)" % [captured, inner.get_tab_count()]
+		)
+	else:
+		print("DEV headless: no display, %d sub-tab screenshots skipped" % inner.get_tab_count())
+	print("DevConsoleShotProbe: %d sub-tabs captured" % captured)
 	_verify_pair_shortcut()
+	print("DevConsoleShotProbe: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
 
 var _failures: int = 0
+var _passes: int = 0
 
 
 func _check(condition: bool, message: String) -> void:
 	if condition:
+		_passes += 1
 		print("  ok: %s" % message)
 	else:
 		_failures += 1

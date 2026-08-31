@@ -11,6 +11,16 @@ extends Node
 ## (it fires on the press, so the player's click rate is the attack rate) while
 ## ranged and magic are cooldown-gated, and the whole question is what each
 ## style does with the same hands.
+##
+## The numbers are measurements, not thresholds: nothing here asserts a balance
+## target, because moving one would be a design change. What IS asserted is that
+## every measurement is a measurement at all - the style pressed, something left
+## the weapon, and damage landed. A style that silently stops firing used to
+## print dps=0.0 in a run that exited 0.
+##
+## Takes about 100 s of measured time and needs no display, but it does need to
+## run to the end: under the sweep's --quit-after 3000 the process is killed
+## long before it finishes. Run it on its own.
 
 ## Presses per second. Fast but human; firing every frame would give melee 60
 ## attacks a second and measure nothing.
@@ -26,6 +36,17 @@ const STYLES: Array[String] = ["ranged", "melee", "magic"]
 var _is_worker: bool = false
 var _damage: float = 0.0
 var _hits: int = 0
+var _passes: int = 0
+var _failures: int = 0
+
+
+func _check(condition: bool, message: String) -> void:
+	if condition:
+		_passes += 1
+		print("PASS: ", message)
+	else:
+		_failures += 1
+		push_error("FAIL: " + message)
 
 
 func _ready() -> void:
@@ -59,9 +80,9 @@ func _run() -> void:
 		player = get_tree().get_first_node_in_group(&"player") as Node2D
 		if player != null:
 			break
+	_check(player != null, "the run built a player to swing with")
 	if player == null:
-		push_error("FAIL: no player")
-		get_tree().quit(1)
+		_finish()
 		return
 	_disable_modals(get_tree().root)
 	get_tree().paused = false
@@ -74,8 +95,12 @@ func _run() -> void:
 			await _measure(player, style, rate)
 	print("NOTE  measured with a target in contact every press. Ranged's real")
 	print("NOTE  advantage is not needing one: 520 px reach vs melee's 62 px.")
-	print("StyleDpsBenchmark: done")
-	get_tree().quit(0)
+	_finish()
+
+
+func _finish() -> void:
+	print("StyleDpsBenchmark: %d passed, %d failed" % [_passes, _failures])
+	get_tree().quit(1 if _failures > 0 else 0)
 
 
 func _on_damage(_who: Node, amount: float) -> void:
@@ -141,6 +166,22 @@ func _measure(player: Node2D, style: String, presses_per_sec: float) -> void:
 		player.call("_fire_weapon", _aim_point(player))
 
 	var dps: float = _damage / maxf(0.001, elapsed)
+	# The measurement has to BE a measurement. None of these is a balance
+	# threshold - they only say the style pressed, the press produced an attack,
+	# and the attack reached a body.
+	_check(attacks > 0, "%s @%.1f/s pressed at all (%d presses)" % [style, presses_per_sec, attacks])
+	_check(
+		_hits > 0,
+		"%s @%.1f/s landed something (%d hits)" % [style, presses_per_sec, _hits]
+	)
+	_check(
+		_damage > 0.0,
+		"%s @%.1f/s dealt damage (%.1f)" % [style, presses_per_sec, _damage]
+	)
+	_check(
+		_alive() > 0,
+		"%s @%.1f/s still had a crowd to measure against at the end" % [style, presses_per_sec]
+	)
 	print("STYLE %-7s @%4.1f/s  dps=%7.1f  dmg/press=%6.1f  presses=%3d  hits/press=%4.2f  alive=%d" % [
 		style,
 		presses_per_sec,

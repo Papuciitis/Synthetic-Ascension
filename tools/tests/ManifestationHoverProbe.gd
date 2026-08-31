@@ -6,6 +6,13 @@ extends Node
 ## way to read what a rule they are wearing does. Verifies the two things Godot
 ## actually requires (a non-IGNORE mouse filter and non-empty tooltip_text),
 ## renders the card itself, and then drives a real pointer hover.
+##
+## The screenshots and the pointer warp need a display; the checks do not. The
+## captures used to await RenderingServer.frame_post_draw unconditionally,
+## which never fires headless, so a headless run hung before the pointer-hover
+## check and the harness ended it at 0 - and the no-player bail push_error'd
+## and then exited 0 anyway, because _finish reads _failures and push_error
+## does not touch it.
 
 var _passes: int = 0
 var _failures: int = 0
@@ -19,6 +26,10 @@ func _check(condition: bool, message: String) -> void:
 	else:
 		_failures += 1
 		push_error("FAIL: %s" % message)
+
+
+func _can_capture() -> bool:
+	return DisplayServer.get_name() != "headless"
 
 
 func _ready() -> void:
@@ -56,8 +67,8 @@ func _run() -> void:
 		player = get_tree().get_first_node_in_group(&"player") as Node2D
 		if player != null:
 			break
+	_check(player != null, "the run has a player carrying the rules to hover")
 	if player == null:
-		push_error("FAIL: no player")
 		_finish()
 		return
 	_disable_modals(get_tree().root)
@@ -65,6 +76,9 @@ func _run() -> void:
 
 	# Something to read.
 	var tools := get_node_or_null("/root/DevSetCollisionTools")
+	# Hard, not a silent skip: without the dev service the probe equips nothing
+	# and every check below is about an empty panel.
+	_check(tools != null, "the dev set/collision service is available to equip rules")
 	if tools != null:
 		# grant_pair equips real gear AND stamps rules onto it;
 		# roll_all_manifestations only stamps onto items already worn, so on a
@@ -114,11 +128,12 @@ func _run() -> void:
 		for _f in range(6):
 			await get_tree().process_frame
 		_check(card.size.y > 40.0, "the card wraps to several lines (%.0f px tall)" % card.size.y)
-		await RenderingServer.frame_post_draw
-		var image := get_viewport().get_texture().get_image()
-		print("HOVER card -> %s (err=%d)" % [
-			"%s/hover_card.png" % _dir, image.save_png("%s/hover_card.png" % _dir)
-		])
+		if _can_capture():
+			await RenderingServer.frame_post_draw
+			var image := get_viewport().get_texture().get_image()
+			var card_err := image.save_png("%s/hover_card.png" % _dir)
+			print("HOVER card -> %s (err=%d)" % ["%s/hover_card.png" % _dir, card_err])
+			_check(card_err == OK, "the hover card screenshot was written (err=%d)" % card_err)
 		card.queue_free()
 
 	# And a real pointer hover, which is what a player actually does. Re-find
@@ -133,18 +148,24 @@ func _run() -> void:
 		return
 	sample = boxes[0] as ManifestationInfoBox
 	var target := sample.get_global_rect().get_center()
-	Input.warp_mouse(target)
+	if _can_capture():
+		Input.warp_mouse(target)
 	for _f in range(120):
 		await get_tree().process_frame
 	_check(
 		is_instance_valid(sample),
 		"the entry under the pointer survives the panel's refresh tick"
 	)
-	await RenderingServer.frame_post_draw
-	var hovered := get_viewport().get_texture().get_image()
-	print("HOVER live at %s -> %s (err=%d)" % [
-		str(target), "%s/hover_live.png" % _dir, hovered.save_png("%s/hover_live.png" % _dir)
-	])
+	if _can_capture():
+		await RenderingServer.frame_post_draw
+		var hovered := get_viewport().get_texture().get_image()
+		var live_err := hovered.save_png("%s/hover_live.png" % _dir)
+		print("HOVER live at %s -> %s (err=%d)" % [
+			str(target), "%s/hover_live.png" % _dir, live_err
+		])
+		_check(live_err == OK, "the live hover screenshot was written (err=%d)" % live_err)
+	else:
+		print("HOVER headless: no display, the two screenshots and the pointer warp are skipped")
 
 	_finish()
 
