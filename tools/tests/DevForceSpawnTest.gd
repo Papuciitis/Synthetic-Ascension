@@ -17,6 +17,14 @@ class Driver:
 	var _filter: Node = null
 	var _alive_after_horde := 0
 	var _wall := 0.0
+	var _cull_deadline_msec := 0
+
+	## How long the phase below waits for a full cull to land before it reads
+	## its assertions anyway. Long enough for a drain that takes several frames
+	## (~30 at 60 fps); short enough that ambient respawn - measured at about
+	## two enemies a second in this segment - cannot reach the threshold the
+	## assertion checks while the poll is still waiting.
+	const CULL_SETTLE_TIMEOUT_MSEC: int = 500
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
@@ -109,13 +117,35 @@ class Driver:
 				"the raised custom cap actually grew the population (%d -> %d)" % [_alive_after_horde, alive]
 			)
 			_filter.call("disable_all")
-		elif _phase == 4 and _elapsed >= 12.5:
-			_phase = 5
-			var culled_alive := int(_spawner.call("_alive_total"))
-			_check(culled_alive <= 5, "disable + cull all clears nodes AND detached records (alive %d)" % culled_alive)
+			_cull_deadline_msec = Time.get_ticks_msec() + CULL_SETTLE_TIMEOUT_MSEC
+		elif _phase == 4:
+			# Read the cull on the frame it lands, not at a fixed wall-clock
+			# offset after it. The audit read this as a race against an
+			# asynchronous cull; at HEAD the cull is synchronous
+			# (DebugEnemySpawnFilter._retire_disabled_live_enemies retires the
+			# nodes and releases the detached records inside disable_all), and
+			# the poll below is 0 alive / 0 detached on its very first frame.
+			# What the old +1.5 s offset raced was the REGROWTH afterwards:
+			# ambient spawning refills at about two enemies a second, so by the
+			# old read it was already 4 - just under the threshold - and a run
+			# that drifted slightly failed. Polling still uses a deadline, so a
+			# drain that ever does take frames is tolerated; it just no longer
+			# waits around for the world to refill first.
 			var index := get_node_or_null("/root/EnemyIndex")
-			if index != null and index.has_method("detached_handles"):
-				_check((index.call("detached_handles") as Array).is_empty(), "no detached records survive a full cull")
+			var index_reports_detached: bool = index != null and index.has_method("detached_handles")
+			var detached: Array = index.call("detached_handles") as Array if index_reports_detached else []
+			var culled_alive := int(_spawner.call("_alive_total"))
+			var settled: bool = culled_alive <= 5 and detached.is_empty()
+			if not settled and Time.get_ticks_msec() < _cull_deadline_msec:
+				return
+			_phase = 5
+			_check(culled_alive <= 5, "disable + cull all clears nodes AND detached records (alive %d)" % culled_alive)
+			# Hard, not a silent skip: a poll that cannot read the detached
+			# records waits on a condition it never evaluates and then asserts
+			# nothing, which is the failure mode this deflake exists to remove.
+			_check(index_reports_detached, "EnemyIndex reports its detached records")
+			if index_reports_detached:
+				_check(detached.is_empty(), "no detached records survive a full cull (%d left)" % detached.size())
 			_filter.call("enable_all")
 			_filter.set("cap_mode", 0)
 			var revived := _spawner.call("debug_force_spawn", 10) as Dictionary
