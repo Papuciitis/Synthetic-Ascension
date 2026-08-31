@@ -140,3 +140,59 @@ each open finding was still re-checked in the tree, not inferred from the diff.
   bails on null) and `MagicMissileEffect.tscn` pools
   `MagicMissileProjectile.tscn`, so the pooled `projectile.tscn` is reachable
   only from the dead `Weapon.gd:39` and two test fixtures.
+
+## Status 2026-08-31 — seven of the top ten closed
+
+`#1` projectile recycle (`e549847`), `#9` static caches (`b2b1604`) and now:
+
+- **#2 writer-thread Dictionary** (`2f3f744`) — `clear_session()` called
+  `_latest_incident.clear()`, mutating the Dictionary
+  `PerformanceIncidentWriteQueue.enqueue` hands the worker *by reference*
+  (its comment says the deep copy it avoids was the third full copy on the
+  main thread). It now rebinds. Pinned: a finalized incident survives
+  `clear_session` with its keys; 47/1 before, 48/0 after.
+- **#3 render-time enemy projectiles** (`08c77b1`) — `EnemyProjectile`
+  integrated raw render delta, so enemy fire kept real-time speed while the
+  dilating world slowed everything else. It now banks physics time and spends
+  it once per rendered frame, the model `ProjectileSimulationManager`
+  documents. Not `_physics_process`: that would run its world DDA 2–4× per
+  frame under exactly the load that made it hurt. New
+  `EnemyProjectileTimeBaseTest` — nothing drove this class before; against
+  the old code its first pin reads 1000 px where the cap is 16.7.
+- **#4 spiderling `move_and_slide` from `_process`** (`29e2a28`) — movement,
+  bite cadence and facing move to `_physics_process`; the throttled redraw
+  stays on the render loop.
+- **#5 pooled enemies never leaving `&"enemies"`** (`85b74fa`) — both park
+  paths now drop membership, after re-grepping every consumer including
+  string forms. **Correction to the row's one-line fix:** "obtain already
+  re-adds" is true of the lease path only because a lease obtain runs
+  `_reset_for_pool_obtain(false)`, whose tail re-adds; that is now pinned
+  rather than assumed, because if it ever stops, a rematerialized enemy is
+  unhittable by every weapon.
+- **#10 hard-coded 60s** (`5d2274f`) — `EnemySniper`/`EnemyTactical` derive
+  their pre-first-tick dt from `Engine.physics_ticks_per_second`; `HitFeel`'s
+  `60.0` is a wall-clock normalisation, deliberately *not* the physics rate,
+  so it became a named const saying which it is.
+
+**#5 also caused a regression, caught by its own sweep and fixed in
+`e83d588`.** The player's hurtbox *exit* handlers gated on
+`is_in_group("enemies")`, so an enemy parked mid-overlap was never
+unregistered: `_touching_enemies` stayed inflated and the player kept paying
+swarm-scaled contact damage for an enemy that was gone, until a later prune
+found the freed node and pushed "Trying to cast a freed object" (three per
+`DevForceSpawnTest` run — no suite *failed* on them). Entry may gate on the
+group; exit must remove what was tracked. New `PlayerContactSourceTest`
+(coverage gap #13's file): 7/4 against the previous `player.gd`, 11/0 now.
+
+**#7 `FlowFieldNav` stale post-`_exit_tree` state** is also closed
+(`a089db4`): all four build flags are cleared on exit, so a re-entered node
+cannot publish a cancelled build from the previous life's snapshot. Its pin
+sets the flags directly — a real build of the test size finishes inside a
+frame, and waiting for one in flight made the assertion pass with *and*
+without the fix.
+
+Still open: **#6** `PoolManager`'s `PROCESS_MODE_ALWAYS` fallback parent (the
+row says "callers already null-check" — that needs verifying per caller
+before changing, and was not done), **#8** the five await/timer-after-free
+sites and the `GravemarchMassArrest` lambda binds, plus §2's three LOW
+deferred-call rows.

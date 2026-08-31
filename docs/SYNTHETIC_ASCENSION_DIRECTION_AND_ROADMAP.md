@@ -1522,3 +1522,58 @@ benchmarks, zero script errors. The one failure — `DevForceSpawnTest`'s "no
 detached records survive a full cull" — is a wall-clock-phased soak check
 that passed 3/3 on immediate re-run and touches nothing this wave changed;
 it belongs with the timing-sensitive probes the stale-tests audit lists.
+
+## 2026-08-31 — audit closure, mostly by hand
+
+Two five-cluster agent waves were launched (audit closure; test-coverage
+gaps) and **both ran out of usage credits mid-flight**: ten of twelve agents
+died, and both survivors lost their reviewers. Everything below is either one
+of those two survivors — reviewed by hand before integration — or done
+directly. The dead clusters are listed at the end as the resume list.
+
+**Coverage: the router every item move goes through** (`356b3ea`).
+`InventoryRouterTest`, 111 checks, closes test-coverage gap #1 (audit: "zero
+tests; item loss or duplication would be invisible to the suite"). Mutation-
+checked rather than trusted: neutralising the `locked` guards turns it red,
+removing the eject rollback turns it red. It found a live defect, fixed with
+its own pin (`adb705d`): a refused eject left the bag's staged VFX origin
+armed, so the next vendor buy or granted reward flew in from an equip slot
+nothing had left.
+
+**Docs: the entry point that was missing** (`f3bb742` … `076ac4b`, 8
+commits). A real `README.md`; `PROJECT_STRUCTURE.md` retitled as the
+historical map with its four wrong claims fixed; `OPTIMIZATION_HANDOFF.md`
+superseded-bannered with dated corrections; the opening/segment/projectile/
+dev-log/changelog rows. Every claim re-verified against the tree of the day —
+three of the audit's own specifics had drifted and were corrected in passing.
+
+**Godot hygiene: eight of the top ten now closed** (`2f3f744`, `5d2274f`,
+`85b74fa`, `29e2a28`, `08c77b1`, `a089db4` — details and the two audit corrections in
+that audit's 08-31 status section). The two that matter most for feel: enemy
+bullets and spiderlings now travel in physics time like everything else, so
+they stop getting relatively faster on a weak machine; and pooled enemies
+leave the `"enemies"` group, so a segment restart no longer frees the entire
+warm pool and heralds no longer buff parked corpses.
+
+**One self-inflicted regression, caught and fixed** (`e83d588`): the group
+change broke the player's contact-source bookkeeping, inflating contact
+damage. It surfaced as three script errors in a sweep where **every suite
+passed** — the second time in two days that a green sweep was not a clean
+one. Both new suites (`PlayerContactSourceTest`,
+`EnemyProjectileTimeBaseTest`) cover classes nothing drove before.
+
+**Resume list — the seven clusters the credit exhaustion killed**, all
+specified and ready to relaunch: performance-hygiene's ten idle-cost rows;
+logging's remaining nine top-15 rows; the never-failing probes plus the
+`DevForceSpawnTest` wall-clock flake; and the four coverage clusters (item
+effects, the ten manifestation pair rules, SetRunner tiers, the three primary
+objectives). Godot hygiene #6 and #8 remain, #6 needing per-caller
+verification the audit's one-liner assumes. Save risk #5 is still a plan
+awaiting a format decision, deliberately unimplemented.
+
+Regression sweep on `08c77b1` (all 102 `tools/tests/*.tscn`, headless,
+`--quit-after 3000`; four suites new today): 64 suites report 2347 passed / 0
+failed, 20 report 465 passes / 0 failures, 18 display-only probes — and
+**zero script errors of any kind**, which is the figure that matters here:
+the previous sweep was green while quietly emitting three freed-object casts.
+`a089db4` landed after it with its own suites green.
