@@ -115,7 +115,13 @@ func _ready() -> void:
 		if not Global.run_inventory.changed.is_connected(stats_cb):
 			Global.run_inventory.changed.connect(stats_cb)
 
-	print("Game ready - segment:", (Global.attempt_segment if Global != null else -1), " race:", Global.selected_race_id, " style:", Global.selected_style_id)
+	if OS.is_debug_build():
+		print("[Game] ready seg=%d race=%s style=%s seed=%d" % [
+			(Global.attempt_segment if Global != null else -1),
+			Global.selected_race_id,
+			Global.selected_style_id,
+			(Global.attempt_world_seed if Global != null else 0),
+		])
 
 	_setup_segment_world()
 	_setup_enemy_proxy_root()
@@ -294,7 +300,8 @@ func _spawn_augment_select() -> void:
 func _on_augment_chosen(a: AugmentData) -> void:
 	# Even if a == null, unpause so the run can proceed.
 	if a != null:
-		print("AUGMENT RECEIVED IN GAME:", a.id)
+		if OS.is_debug_build():
+			print("[Game] augment received id=%s" % a.id)
 
 		# HUD display (optional; AugmentSelect already writes into Global.permanent_augment_ids)
 		if hud != null and hud.has_method("add_augment_to_next_slot"):
@@ -399,11 +406,16 @@ func end_run() -> void:
 		projectile_manager.clear_for_run_end()
 
 	var is_die_die: bool = (Global != null and Global.followers <= 0)
+	# Read before on_attempt_failed_die_die() resets the attempt snapshot.
+	if OS.is_debug_build():
+		print("[Game] run ended seg=%d followers=%d wipe=%s" % [
+			(Global.attempt_segment if Global != null else -1),
+			(Global.followers if Global != null else -1),
+			is_die_die,
+		])
 	if is_die_die and Global != null:
 		# Wipe attempt snapshot; keep meta augments/upgrades.
 		Global.on_attempt_failed_die_die()
-
-	print("GAME OVER")
 
 	# The tree is already paused above; without a game-over UI there would be
 	# no input path to unpause it, so fall back to the menu instead.
