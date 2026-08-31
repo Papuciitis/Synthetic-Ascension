@@ -320,3 +320,50 @@ left. `equip_from_bag` already disarmed on its merge path for exactly that
 reason.
 
 The other fourteen top-15 gaps are untouched; HIGH stays 50 of the 51.
+
+## Status 2026-08-31, later — gaps #2, #3, #5, #6 closed; four defects found
+
+`ItemEffectRunnerTest` (229), `ManifestationPairBehaviourTest` (232),
+`SetRunnerTest` (218) and `PrimaryObjectiveTest` (228) close the top-15 rows
+#2, #3, #5 and #6 — 907 assertions over code that had none. Reviewers were
+required to *actually mutate* the production code rather than reason about
+vacuity, and found real vacuity in three of the four suites (a rarity curve
+recomputed test-side instead of run, an assertion that could not have caught
+its own negative, a regression guard never reached, and one tautology); all
+were repaired before integration.
+
+**Two defects found and fixed with their pins:**
+
+- `39b9b84` — the whole **Conduit set damaged with no source**. All three
+  sites omitted `1, player` that every other set effect passes, and
+  `EnemyCombatService` gates `damage_dealt`/`player_hit_landed` on
+  `source != null`: neither breakpoint fed the style lifesteal or any
+  Manifestation `on_hit` rule. 0.0 of 65.0 damage credited before the fix.
+- `db21616` — **Slow Heart re-intercepted its own payout**. `_releasing` was
+  written with a comment explaining why, and never read, so 85% of each
+  released step went straight back into the bank: 0.89 HP/s returned against
+  the 5.95 the curse advertises.
+
+**Two reported, deliberately not acted on — they are design decisions:**
+
+- `BreachSealObjective`: `_activated` latches permanently
+  (`PrimaryObjective.gd:120`) and `tick_active` has no distance gate, while
+  `_tick_breach_spawn` takes the breach's world position and **ignores it**
+  (the parameter is `_world`) — spawning through `spawner.spawn_burst`,
+  which spawns around the *player*. One visit to a breach therefore pulls
+  waves after the player anywhere in the district until it is sealed. The
+  unused parameter suggests spawning *at the breach* was intended and never
+  wired; the base class comment shows a previous fix addressed only the
+  never-activated case. Changing where enemies spawn is a balance change,
+  so it is recorded here rather than made. **Decision needed.**
+- `DeathRattle.gd:137-140` writes `state.time_since_attack = _gap`
+  unconditionally when its hold expires, clobbering a shared-clock reset
+  another rule performed while the hold stood — visible only in multi-rule
+  loadouts (e.g. alongside Martyr Circuit). Whether the shared clock is
+  first-writer-wins or last-writer-wins is a rules question, not a bug with
+  an obvious right answer. **Decision needed.**
+
+Also worth knowing: `BuildInfoTest` fails 2 of 11 inside any linked git
+worktree, because `BuildInfo.gd:59` reads `res://.git/HEAD` and a worktree's
+`.git` is a file, not a directory. Environmental, not a regression — but it
+means every future worktree agent reports two phantom failures.
