@@ -189,6 +189,22 @@ func _run() -> void:
 			reobtained.call("despawn", &"cleanup")
 			await get_tree().process_frame
 
+	# A sceneless frame (mid scene-transition) has nowhere legitimate to put a
+	# live node. Obtaining used to fall back to the PoolManager autoload,
+	# which is PROCESS_MODE_ALWAYS and outlives the scene: the node kept
+	# processing while paused and survived the transition. It now refuses.
+	# Godot hygiene audit 2026-08-28 §3 MED, top-10 #6.
+	var saved_scene := get_tree().current_scene
+	get_tree().current_scene = null
+	var refused: Variant = pool.call("obtain", scene, null)
+	get_tree().current_scene = saved_scene
+	_check(refused == null, "obtaining on a sceneless frame refuses instead of parenting under the autoload")
+	var stranded := 0
+	for child in pool.get_children():
+		if child != null and not bool(child.get_meta("__in_pool", false)):
+			stranded += 1
+	_check(stranded == 0, "and leaves no live node stranded under PoolManager (%d)" % stranded)
+
 	_finish()
 
 

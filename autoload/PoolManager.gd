@@ -42,6 +42,23 @@ func get_additive_material() -> CanvasItemMaterial:
 func obtain(scene: PackedScene, parent: Node = null, context: Dictionary = {}) -> Node:
 	if scene == null:
 		return null
+
+	# Resolve the destination BEFORE taking a node, so a refusal costs
+	# nothing and cannot strand one outside the pool.
+	#
+	# The old fallback parented to this autoload when current_scene was null
+	# (the scene-transition frame). PoolManager is PROCESS_MODE_ALWAYS and
+	# outlives the scene, so a projectile obtained on that frame kept flying
+	# while the game was paused, survived the transition and rendered in the
+	# root canvas. There is nowhere legitimate to put a live node on that
+	# frame, so refuse: every caller null-checks obtain() already (spawner.gd,
+	# EnemyRepresentationManager, MagicMissileSpell, MagicMissileEffect and
+	# Weapon.gd - each verified before this changed).
+	# Godot hygiene audit 2026-08-28 §3 MED, top-10 #6.
+	var target_parent: Node = parent if (parent != null and is_instance_valid(parent)) else get_tree().current_scene
+	if target_parent == null:
+		return null
+
 	var key := _scene_key(scene)
 
 	var pool: Array = _get_pool(key)
@@ -70,13 +87,6 @@ func obtain(scene: PackedScene, parent: Node = null, context: Dictionary = {}) -
 	node.set_meta("__pool_obtain_context", context.duplicate(true))
 
 	# Attach first (some scripts expect to be in-tree during reset)
-	var target_parent: Node = null
-	if parent != null and is_instance_valid(parent):
-		target_parent = parent
-	else:
-		var cs := get_tree().current_scene
-		target_parent = cs if cs != null else self
-
 	# Nodes pulled from the pool are usually still parented under PoolManager.
 	# Detach before attaching to the requested parent/current scene.
 	if node.get_parent() != target_parent:
