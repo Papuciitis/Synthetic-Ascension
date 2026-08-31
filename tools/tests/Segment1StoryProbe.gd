@@ -4,7 +4,13 @@ extends Node
 # window, skips the scripted opening, and screenshots each new/reworked space
 # (admissions wing, lab corridor, evidence route, overlook + city backdrop,
 # gate plaza). Screenshots land in STORY_SHOT_DIR (env) or user://story_shots.
-# Run: <godot> --path . res://tools/tests/Segment1StoryProbe.tscn  (needs a display)
+# Run: <godot> --path . res://tools/tests/Segment1StoryProbe.tscn
+#
+# The screenshots need a display; the checks do not. Headless the capture is
+# skipped and announced, and the probe still runs and still reports - it used
+# to await RenderingServer.frame_post_draw, which never fires there, so it hung
+# until the harness killed it at exit 0 and its one real check ("Segment 1
+# authored no exploration caches") could not fail the run whatever it found.
 
 class Driver:
 	extends Node
@@ -23,6 +29,20 @@ class Driver:
 	var _wall := 0.0
 	var _shot_dir := ""
 	var _busy := false
+	var _passes := 0
+	var _failures := 0
+	var _captured := 0
+
+	func _check(condition: bool, message: String) -> void:
+		if condition:
+			_passes += 1
+			print("PASS: ", message)
+		else:
+			_failures += 1
+			push_error("FAIL: " + message)
+
+	func _can_capture() -> bool:
+		return DisplayServer.get_name() != "headless"
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
@@ -59,8 +79,8 @@ class Driver:
 
 	func _visit_stops() -> void:
 		var player := get_tree().get_first_node_in_group(&"player") as Node2D
+		_check(player != null, "the run has a player to walk between the stops")
 		if player == null:
-			push_error("FAIL: no player node")
 			_finish(1)
 			return
 		_check_exploration_caches()
@@ -74,12 +94,31 @@ class Driver:
 			if get_tree().paused:
 				_dismiss_blocking_ui()
 			await get_tree().create_timer(0.5, true, false, true).timeout
+			# Not asserted: that the player is still exactly on the stop. It is
+			# teleported there and then left to stand for three seconds of real
+			# gameplay, and it drifts - measured 150 px at gate_plaza. The stop
+			# is a camera placement, not a contract.
+			_check(
+				is_instance_valid(player) and player.is_inside_tree(),
+				"the player survives the visit to %s" % stop_name
+			)
+			if not _can_capture():
+				continue
 			await RenderingServer.frame_post_draw
 			var img := get_viewport().get_texture().get_image()
 			var path := _shot_dir.path_join("%s.png" % stop_name)
 			var err := img.save_png(path)
 			print("STORY shot %s at %s -> %s (err=%d)" % [stop_name, target, path, err])
-		_finish(0)
+			_check(err == OK, "%s screenshot was written (err=%d)" % [stop_name, err])
+			_captured += 1
+		if _can_capture():
+			_check(
+				_captured == STOPS.size(),
+				"every stop was captured (%d of %d)" % [_captured, STOPS.size()]
+			)
+		else:
+			print("STORY headless: no display, %d screenshots skipped" % STOPS.size())
+		_finish(1 if _failures > 0 else 0)
 
 	## Segment 1 must pay for leaving the route.
 	##
@@ -110,10 +149,8 @@ class Driver:
 				pickups += 1
 			for child in node.get_children():
 				pending.append(child)
-		if found + pickups <= 0:
-			push_error("FAIL: Segment 1 authored no exploration caches")
-		else:
-			print("STORY caches: %d spawners live, %d pickups on the ground" % [found, pickups])
+		print("STORY caches: %d spawners live, %d pickups on the ground" % [found, pickups])
+		_check(found + pickups > 0, "Segment 1 authored some exploration caches")
 
 
 	func _dismiss_tutorial_cards() -> void:
@@ -132,7 +169,9 @@ class Driver:
 		get_tree().paused = false
 
 	func _finish(code: int) -> void:
-		print("Segment1StoryProbe: done, %d stops captured" % STOPS.size())
+		print("Segment1StoryProbe: %d passed, %d failed, %d stops captured" % [
+			_passes, _failures, _captured,
+		])
 		get_tree().quit(code)
 
 
