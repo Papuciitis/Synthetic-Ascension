@@ -25,9 +25,18 @@ var player: Node2D = null
 var item: ItemInstance = null
 var slot_index: int = -1
 
+## Shared 30 Hz wall-clock bucket, the same idiom as
+## ManifestationEffect.pulse_redraw: every idle painter in the run lands on the
+## same frames instead of drifting out of phase with the others.
+const PULSE_REDRAW_MS: int = 33
+
 var _t: float = 0.0
 var _r: float = 36.0
 var _hurtbox: Area2D = null
+var _last_pulse_bucket: int = -1
+## The ring's point buffer, kept for the node's lifetime and rewritten in place,
+## as VFX_HexMarkAura and VFX_StaminaCoreAura do.
+var _pts: PackedVector2Array = PackedVector2Array()
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
@@ -72,6 +81,16 @@ func _process(dt: float) -> void:
 	_t += dt
 	# The hurtbox radius is resolved once; re-scanning its children every frame
 	# allocated a child Array per frame for a constant result.
+	_pulse_redraw()
+
+## The ring is an ambient breathe with no state behind it, so it is redrawn on
+## the shared 30 Hz bucket rather than every frame. What it paints is unchanged:
+## _t still advances every frame and the phase is read at draw time.
+func _pulse_redraw() -> void:
+	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	if bucket == _last_pulse_bucket:
+		return
+	_last_pulse_bucket = bucket
 	queue_redraw()
 
 func get_damage_taken_multiplier() -> float:
@@ -123,21 +142,24 @@ func _draw() -> void:
 	if fill_alpha > 0.0:
 		draw_circle(Vector2.ZERO, r * 0.98, Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha))
 
-	# wavy ring points
+	# wavy ring points, written into the node's own buffer instead of a fresh
+	# PackedVector2Array per repaint - the reuse VFX_HexMarkAura does. The lines
+	# below are unchanged: draw_polyline would join the segments differently, and
+	# this is a redraw-frequency fix, not a look change.
 	var seg: int = maxi(24, int(segments))
-	var pts := PackedVector2Array()
-	pts.resize(seg + 1)
+	if _pts.size() != seg + 1:
+		_pts.resize(seg + 1)
 
 	for i in range(seg + 1):
 		var a := (float(i) / float(seg)) * TAU
 		var wob := wave_amp * sin(a * wave_freq + _t * TAU * roll_speed)
 		var rr := r + wob
-		pts[i] = Vector2(cos(a), sin(a)) * rr
+		_pts[i] = Vector2(cos(a), sin(a)) * rr
 
 	# glow (wide)
 	for i in range(seg):
-		draw_line(pts[i], pts[i + 1], Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
+		draw_line(_pts[i], _pts[i + 1], Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
 
 	# core (thin)
 	for i in range(seg):
-		draw_line(pts[i], pts[i + 1], Color(color_core.r, color_core.g, color_core.b, color_core.a), core_width, true)
+		draw_line(_pts[i], _pts[i + 1], Color(color_core.r, color_core.g, color_core.b, color_core.a), core_width, true)

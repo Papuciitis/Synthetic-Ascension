@@ -38,12 +38,24 @@ signal completed
 @export var socket_count: int = 8
 @export var socket_radius_px: float = 500.0
 
+## Shared 30 Hz wall-clock bucket for idle repaints, the same idiom as
+## ManifestationEffect.pulse_redraw: every idle painter in the world lands on
+## the same frames rather than drifting out of phase with the others.
+const PULSE_REDRAW_MS: int = 33
+
+## How far past its own activation ring - the widest thing any subclass draws -
+## an objective still repaints while idle. Half of a 1920x1080 viewport's
+## diagonal is ~1101 px, and HitFeel's camera punch is capped at 18 px, so this
+## margin keeps every visible pixel painted.
+const IDLE_DRAW_MARGIN_PX: float = 1200.0
+
 var player: Node2D = null
 var seed_value: int = 0
 var pulse_time: float = 0.0
 
 var _activated: bool = false
 var _finished: bool = false
+var _last_pulse_bucket: int = -1
 
 
 func configure(new_seed: int) -> void:
@@ -119,7 +131,7 @@ func _process(delta: float) -> void:
 
 	if not _activated:
 		if player.global_position.distance_squared_to(global_position) > activation_radius_px * activation_radius_px:
-			queue_redraw()
+			idle_redraw()
 			return
 		_activated = true
 		activated.emit()
@@ -140,6 +152,23 @@ func finish() -> void:
 
 func report_progress() -> void:
 	progress_changed.emit(steps_done(), steps_total())
+
+
+## The repaint for a state nobody is acting on: the objective is thousands of
+## pixels away and only pulse_time is moving, or it is finished and painting a
+## static "done" mark. Culls to nothing beyond the range where its own drawing
+## can reach the screen, and inside that range repaints on the shared 30 Hz
+## bucket instead of every frame. What it paints is unchanged.
+func idle_redraw() -> void:
+	if player != null and is_instance_valid(player):
+		var cull := activation_radius_px + IDLE_DRAW_MARGIN_PX
+		if player.global_position.distance_squared_to(global_position) > cull * cull:
+			return
+	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	if bucket == _last_pulse_bucket:
+		return
+	_last_pulse_bucket = bucket
+	queue_redraw()
 
 
 # ---------------------------------------------------------------------------
@@ -165,7 +194,7 @@ func tick_active(_delta: float) -> void:
 
 ## One frame after completion - usually just the idle visual.
 func tick_finished(_delta: float) -> void:
-	queue_redraw()
+	idle_redraw()
 
 
 ## The player is down. Default is to do nothing, which is the safe answer for

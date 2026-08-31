@@ -240,6 +240,10 @@ func set_revealed(value: bool) -> void:
 
 func _apply_reveal_state() -> void:
 	visible = revealed
+	# set_revealed() hands the rite a fresh ledger and a zeroed hold, and the
+	# locked branch of _process no longer repaints every frame, so the state
+	# change has to say so itself.
+	queue_redraw()
 	if zone != null:
 		zone.set_deferred("monitoring", revealed)
 		zone.set_deferred("monitorable", revealed)
@@ -267,7 +271,12 @@ func _process(delta: float) -> void:
 		sigil.modulate.a = (0.10 if locked else 0.22) * breathe
 
 	if locked:
-		queue_redraw()
+		# Nothing _draw paints while locked has a time term: the ring colour is
+		# the locked constant, the three seals read a ledger that cannot advance
+		# without the channel, and the safeguard pips read latched counts. Every
+		# input repaints from the call that changes it - set_locked, the ledger
+		# resets in _apply_reveal_state, configure_doctrine_rules (capacity and
+		# initial seals) and grant/consume/drain_safeguards.
 		return
 
 	if not _player_inside:

@@ -8,8 +8,21 @@ class_name WardstoneIdleAura
 @export var sparkle_count: int = 10
 @export var z: int = -15
 
+## Shared 30 Hz wall-clock bucket, the same idiom as
+## ManifestationEffect.pulse_redraw: every idle painter lands on the same frames
+## instead of drifting out of phase with the rest.
+const PULSE_REDRAW_MS: int = 33
+
+## Beyond this the aura cannot reach the screen: half of a 1920x1080 viewport's
+## diagonal is ~1101 px, plus the outer ring's radius and HitFeel's 18 px camera
+## punch. The camera is a child of the player, so player distance is camera
+## distance. The model is VFX_BomberHazardRing.
+const DRAW_MAX_PLAYER_DIST: float = 1400.0
+
 var _t: float = 0.0
 var _spark: Array = []
+var _last_pulse_bucket: int = -1
+var _player: Node2D = null
 
 func _ready() -> void:
 	z_index = z
@@ -30,12 +43,40 @@ func _ready() -> void:
 	queue_redraw()
 
 func set_intensity(v: float) -> void:
-	intensity = clampf(v, 0.0, 1.0)
+	# The wardstone re-asserts its idle level every frame; only a level that
+	# actually moved is worth a repaint.
+	var clamped := clampf(v, 0.0, 1.0)
+	if clamped == intensity:
+		return
+	intensity = clamped
 	queue_redraw()
 
 func _process(dt: float) -> void:
 	_t += dt
+	# Off-screen the aura paints nothing anyone can see, and on-screen it is an
+	# ambient breathe: 96- and 64-segment arcs plus ten twinkling sparks look
+	# identical at the shared 30 Hz bucket. _t keeps running either way, so
+	# walking back into range resumes the animation in phase.
+	if not _in_draw_range():
+		if visible:
+			visible = false
+		return
+	if not visible:
+		visible = true
+	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	if bucket == _last_pulse_bucket:
+		return
+	_last_pulse_bucket = bucket
 	queue_redraw()
+
+func _in_draw_range() -> bool:
+	if _player == null or not is_instance_valid(_player):
+		_player = get_tree().get_first_node_in_group(&"player") as Node2D
+	if _player == null:
+		# No player, no camera to be off: never cull on a guess.
+		return true
+	return global_position.distance_squared_to(_player.global_position) \
+		<= DRAW_MAX_PLAYER_DIST * DRAW_MAX_PLAYER_DIST
 
 func _draw() -> void:
 	if intensity <= 0.001:
