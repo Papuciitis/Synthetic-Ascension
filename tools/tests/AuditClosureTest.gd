@@ -30,6 +30,7 @@ func _run() -> void:
 	_test_spawner_reports_a_missing_enemy_source_once()
 	_test_enemy_drop_failures_warn_once_with_spec_context()
 	_test_missing_inventory_router_is_reported_once()
+	_test_augment_card_signal_warning_names_the_signal_it_checks()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -573,3 +574,26 @@ func _test_missing_inventory_router_is_reported_once() -> void:
 		not hud_source.contains("InvRouter autoload not found"),
 		"and no longer emits a second warning of its own"
 	)
+
+
+func _test_augment_card_signal_warning_names_the_signal_it_checks() -> void:
+	# Logging audit 2026-08-28 §3 #14 / finding 29: the warning in the else of
+	# `if card.has_signal("unhovered")` announced a missing 'picked' signal, so
+	# it named a signal the branch had never looked at.
+	var source := FileAccess.get_file_as_string("res://ui/augments/AugmentSelect.gd")
+	_check(
+		not source.contains("has no signal 'picked'"),
+		"the offer-card warning no longer blames the pick signal"
+	)
+	_check(
+		source.contains("signal=unhovered"),
+		"it names the signal the branch actually checked"
+	)
+
+	# And the branch stays unreachable in the shipped build: the offer card
+	# carries all three signals AugmentSelect connects.
+	var card := (load("res://ui/augments/AugmentCard.tscn") as PackedScene).instantiate()
+	_check(card.has_signal("picked"), "the offer card emits picked")
+	_check(card.has_signal("hovered"), "the offer card emits hovered")
+	_check(card.has_signal("unhovered"), "the offer card emits unhovered")
+	card.free()

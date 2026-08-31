@@ -12,6 +12,9 @@ var _open_tw: Tween = null
 var _is_open: bool = false
 var _pending_open: bool = false
 var _locked: bool = false
+# Every card comes from the same card_scene, so a missing signal would repeat
+# once per offer. One report per screen is enough.
+var _warned_missing_card_signal: bool = false
 
 # Hover tooltip (flavor-first cards; numbers/details on hover)
 var _tip_panel: PanelContainer = null
@@ -138,8 +141,12 @@ func _spawn_cards(list: Array[AugmentData]) -> void:
 			card.connect("hovered", Callable(self, "_on_card_hovered"))
 		if card.has_signal("unhovered"):
 			card.connect("unhovered", Callable(self, "_on_card_unhovered"))
-		else:
-			push_warning("AugmentCard has no signal 'picked'")
+		elif not _warned_missing_card_signal:
+			_warned_missing_card_signal = true
+			push_warning(
+				"[AugmentSelect] offer card missing signal: signal=unhovered card=%s"
+				% card_scene.resource_path
+			)
 
 func _set_cards_locked(lock_it: bool) -> void:
 	_locked = lock_it
