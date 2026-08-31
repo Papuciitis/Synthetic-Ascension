@@ -387,6 +387,9 @@ func _on_stack_merged(from_slot: int, to_slot: int, src: ItemInstance) -> void:
 		merge_vfx.call_deferred("play_merge", _grid_slots[from_slot], _grid_slots[to_slot], src, is_open())
 
 	await get_tree().create_timer(merge_ghost_time).timeout
+	# The bag can close and free its slots while the ghost is fading.
+	if not is_inside_tree():
+		return
 	if int(_ghost_ids.get(from_slot, 0)) == id:
 		_ghost_ids.erase(from_slot)
 		_ghost_stacks.erase(from_slot)

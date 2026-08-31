@@ -1080,6 +1080,10 @@ func _start_contact_loop() -> void:
 		var swarm_mul := minf(2.25, 1.0 + float(_touching_enemies - 1) * 0.35)
 		_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul())
 		await get_tree().create_timer(maxf(contact_tick, 0.05), false).timeout
+		# The player can be freed mid-wait (scene change, run end); the loop
+		# would otherwise resume on a freed node.
+		if not is_inside_tree():
+			break
 
 	_damage_loop_running = false
 

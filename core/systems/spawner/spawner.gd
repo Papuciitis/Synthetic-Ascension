@@ -764,6 +764,11 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 	_authored_wave_running = true
 	if delay > 0.0:
 		await get_tree().create_timer(delay, false).timeout
+		# A segment can end, or the scene change, while this wave is waiting.
+		# Resuming would spawn into a spawner that has left the tree.
+		if not is_inside_tree():
+			_authored_wave_running = false
+			return
 	for _i in range(count):
 		if not spawning_enabled:
 			break
@@ -772,6 +777,9 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 			_spawn_one(_elapsed / 60.0, remaining_total)
 		if spacing > 0.0:
 			await get_tree().create_timer(spacing, false).timeout
+			if not is_inside_tree():
+				_authored_wave_running = false
+				return
 	_authored_wave_running = false
 
 func _tutorial_settings() -> Dictionary:

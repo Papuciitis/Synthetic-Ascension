@@ -168,12 +168,22 @@ func _melee_aftershocks(dmg: float) -> void:
 		var delay := melee_aftershock_delay * float(i + 1)
 		var r := slam_radius + melee_aftershock_radius_step * float(i + 1)
 
-		get_tree().create_timer(delay).timeout.connect(func() -> void:
-			if player == null or not is_instance_valid(player):
-				return
-			_spawn_wave(_center, r * (0.95 + 0.15 * set_strength))
-			_damage_radius(_center, r * (0.95 + 0.15 * set_strength), dmg, slam_knockback * 0.55, melee_aftershock_stun)
+		# A bound METHOD, not a lambda capturing self: the set effect can be
+		# freed before its aftershocks land (the run ends, the piece comes
+		# off), and a lambda reading self through a live SceneTreeTimer
+		# raised "lambda self freed" in debug builds. A Callable to a freed
+		# object is simply never called. ONE_SHOT because the timer fires once.
+		get_tree().create_timer(delay).timeout.connect(
+			_on_aftershock.bind(r, dmg), CONNECT_ONE_SHOT
 		)
+
+
+func _on_aftershock(radius: float, dmg: float) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	var scaled := radius * (0.95 + 0.15 * set_strength)
+	_spawn_wave(_center, scaled)
+	_damage_radius(_center, scaled, dmg, slam_knockback * 0.55, melee_aftershock_stun)
 
 func _ranged_shrapnel(dmg: float) -> void:
 	var scn: PackedScene = player.get("ranged_bullet_scene") as PackedScene
