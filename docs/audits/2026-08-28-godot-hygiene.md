@@ -141,7 +141,7 @@ each open finding was still re-checked in the tree, not inferred from the diff.
   `MagicMissileProjectile.tscn`, so the pooled `projectile.tscn` is reachable
   only from the dead `Weapon.gd:39` and two test fixtures.
 
-## Status 2026-08-31 — seven of the top ten closed
+## Status 2026-08-31 — the top ten are closed
 
 `#1` projectile recycle (`e549847`), `#9` static caches (`b2b1604`) and now:
 
@@ -184,15 +184,30 @@ found the freed node and pushed "Trying to cast a freed object" (three per
 group; exit must remove what was tracked. New `PlayerContactSourceTest`
 (coverage gap #13's file): 7/4 against the previous `player.gd`, 11/0 now.
 
-**#7 `FlowFieldNav` stale post-`_exit_tree` state** is also closed
-(`a089db4`): all four build flags are cleared on exit, so a re-entered node
-cannot publish a cancelled build from the previous life's snapshot. Its pin
-sets the flags directly — a real build of the test size finishes inside a
-frame, and waiting for one in flight made the assertion pass with *and*
-without the fix.
+**#6, #7 and #8 closed the same day.**
 
-Still open: **#6** `PoolManager`'s `PROCESS_MODE_ALWAYS` fallback parent (the
-row says "callers already null-check" — that needs verifying per caller
-before changing, and was not done), **#8** the five await/timer-after-free
-sites and the `GravemarchMassArrest` lambda binds, plus §2's three LOW
-deferred-call rows.
+- **#7 `FlowFieldNav` stale post-`_exit_tree` state** (`a089db4`) — all four
+  build flags are cleared on exit, so a re-entered node cannot publish a
+  cancelled build from the previous life's snapshot. Its pin sets the flags
+  directly: a real build of the test size finishes inside a frame, and
+  waiting for one in flight made the assertion pass with *and* without the
+  fix.
+- **#8 await/timer after free** (`518a9ce`) — the authored wave, the contact
+  loop and the bag's ghost cleanup check they still have a tree; the
+  `GravemarchMassArrest` lambda became a bound method with
+  `CONNECT_ONE_SHOT`, because a Callable to a freed object is never called.
+  Two of the row's six sites were already guarded. Deliberately not pinned:
+  each guard only bites in a race (the node freed inside the wait window),
+  and a harness forcing that reliably would be larger and more fragile than
+  the four lines it tests — recorded rather than implied.
+- **#6 `PoolManager`'s `PROCESS_MODE_ALWAYS` fallback parent** (`b223519`) —
+  it now refuses on a sceneless frame, and resolves the destination *before*
+  taking a node so a refusal cannot strand one. The row's premise ("callers
+  already null-check") was verified per caller first — all five hold. The pin
+  reads a stranded count of exactly 1 against the old code: the projectile
+  the fallback kept alive across the transition.
+
+**All ten top-10 rows are closed.** Still open from the body of the audit:
+§2's three LOW deferred-call rows (`EnemyShooter` both-sync-or-both-deferred,
+`MeleeSlash` await robustness, `BagUI` merge_vfx indices) and §5's LOW
+unsynchronised `_cancel_requested` bool, which the audit itself calls benign.

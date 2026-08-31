@@ -1547,8 +1547,9 @@ superseded-bannered with dated corrections; the opening/segment/projectile/
 dev-log/changelog rows. Every claim re-verified against the tree of the day —
 three of the audit's own specifics had drifted and were corrected in passing.
 
-**Godot hygiene: eight of the top ten now closed** (`2f3f744`, `5d2274f`,
-`85b74fa`, `29e2a28`, `08c77b1`, `a089db4` — details and the two audit corrections in
+**Godot hygiene: the top ten are closed** (`2f3f744`, `5d2274f`,
+`85b74fa`, `29e2a28`, `08c77b1`, `a089db4`, `518a9ce`, `b223519` — details and the
+audit corrections in
 that audit's 08-31 status section). The two that matter most for feel: enemy
 bullets and spiderlings now travel in physics time like everything else, so
 they stop getting relatively faster on a weak machine; and pooled enemies
@@ -1567,13 +1568,17 @@ specified and ready to relaunch: performance-hygiene's ten idle-cost rows;
 logging's remaining nine top-15 rows; the never-failing probes plus the
 `DevForceSpawnTest` wall-clock flake; and the four coverage clusters (item
 effects, the ten manifestation pair rules, SetRunner tiers, the three primary
-objectives). Godot hygiene #6 and #8 remain, #6 needing per-caller
-verification the audit's one-liner assumes. Save risk #5 is still a plan
+objectives). Save risk #5 is still a plan
 awaiting a format decision, deliberately unimplemented.
 
-Regression sweep on `08c77b1` (all 102 `tools/tests/*.tscn`, headless,
-`--quit-after 3000`; four suites new today): 64 suites report 2347 passed / 0
+Regression sweep on `b223519` (all 102 `tools/tests/*.tscn`, headless,
+`--quit-after 3000`; four suites new today): 64 suites report 2353 passed / 0
 failed, 20 report 465 passes / 0 failures, 18 display-only probes — and
-**zero script errors of any kind**, which is the figure that matters here:
-the previous sweep was green while quietly emitting three freed-object casts.
-`a089db4` landed after it with its own suites green.
+**zero script errors of any kind**, which is the figure that matters here. An
+earlier sweep the same day was green while quietly emitting three
+freed-object casts; that is how the contact-source regression was found, and
+error count is now read alongside pass/fail.
+
+The last three hygiene rows (#6 `PoolManager`'s autoload fallback parent, #7
+`FlowFieldNav`'s stale build state, #8 the await-after-free sites) landed
+after that sweep and were swept clean here.
