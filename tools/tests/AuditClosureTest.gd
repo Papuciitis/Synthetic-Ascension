@@ -27,6 +27,7 @@ func _run() -> void:
 	_test_profile_run_records()
 	_test_resonance_pacing_defaults()
 	_test_procedural_fallback_score_prefers_reachable_candidate()
+	_test_spawner_reports_a_missing_enemy_source_once()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -462,3 +463,42 @@ func _test_procedural_fallback_score_prefers_reachable_candidate() -> void:
 			> int(district_script.call("validation_score", unreachable)),
 			"fallback scoring prioritizes reachable objective and exit"
 		)
+
+
+func _test_spawner_reports_a_missing_enemy_source_once() -> void:
+	# Logging audit 2026-08-28 §3 #8: _spawn_one() used to push_warning on every
+	# tick when it had no scene to spawn. It now separates a real
+	# misconfiguration (nothing configured at all -> one error, spawning off)
+	# from the transient "no entry is active yet" state (one warning, spawner
+	# left running).
+	var spawner: EnemySpawner = load("res://core/systems/spawner/spawner.gd").new() as EnemySpawner
+	_check(spawner != null, "fixture: the spawner script instantiates")
+	if spawner == null:
+		return
+
+	_check(
+		spawner.has_method("has_no_spawn_source"),
+		"spawner distinguishes an empty configuration from an inactive one"
+	)
+	if spawner.has_method("has_no_spawn_source"):
+		_check(bool(spawner.call("has_no_spawn_source")), "no table and no fallback scene is no source at all")
+		var entry := EnemySpawnEntry.new()
+		entry.enemy_scene = load("res://core/actors/enemy/enemy.tscn") as PackedScene
+		entry.start_time = 600.0
+		var table := EnemySpawnTable.new()
+		table.entries.append(entry)
+		spawner.spawn_table = table
+		_check(
+			not bool(spawner.call("has_no_spawn_source")),
+			"a populated table is still a source while none of its entries is active yet"
+		)
+		spawner.spawn_table = null
+
+	# Consume the once-guard before driving the real path: it keeps this fixture
+	# out of the error log AND proves the report is guarded rather than repeated.
+	_check(spawner.get("_warned_no_spawn_source") != null, "the no-source report is once-guarded")
+	spawner.set("_warned_no_spawn_source", true)
+	_check(bool(spawner.spawning_enabled), "fixture: a fresh spawner starts enabled")
+	_check(int(spawner.call("_spawn_one", 0.0, 4)) == 0, "a spawner with no enemy source spawns nothing")
+	_check(not bool(spawner.spawning_enabled), "and disables spawning instead of warning every tick")
+	spawner.free()

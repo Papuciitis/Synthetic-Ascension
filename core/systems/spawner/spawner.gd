@@ -86,6 +86,10 @@ var _spawn_filter: Node = null
 # filter was never consulted and enemies could spawn outside the map.
 var _authored_spawn_filter: Node = null
 var _scene_enemy_ids: Dictionary = {}
+# _spawn_one() runs on every spawn tick, so both "nothing to spawn" reports warn
+# once per spawner instead of once per tick.
+var _warned_no_spawn_source: bool = false
+var _warned_no_active_entry: bool = false
 var _segment1_stage: int = -1
 var _spawn_pause_left: float = 0.0
 var _authored_wave_running: bool = false
@@ -339,7 +343,7 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
 		scene_to_spawn = enemy_scene
 
 	if scene_to_spawn == null:
-		push_warning("[Spawner] No enemy scene assigned (spawn_table empty + enemy_scene null).")
+		_report_missing_spawn_scene()
 		return 0
 
 	var enemy_id := _enemy_id_for_scene(scene_to_spawn)
@@ -905,6 +909,42 @@ func _drain_pool_warm_queue() -> void:
 		return
 	if not PoolManager.warm_step(scene, pool_warm_per_scene, POOL_WARM_FRAME_BUDGET_USEC):
 		_pool_warm_queue.pop_front()
+
+
+func has_no_spawn_source() -> bool:
+	# True only when nothing in the configuration can EVER produce an enemy. A
+	# populated table whose entries are simply not active yet (time windows) or
+	# are switched off by the debug filter is a transient state, not a
+	# misconfiguration, and must not disable the spawner for the rest of the run.
+	if enemy_scene != null:
+		return false
+	if spawn_table == null:
+		return true
+	for entry_variant: Variant in spawn_table.entries:
+		var entry := entry_variant as EnemySpawnEntry
+		if entry != null and entry.enemy_scene != null:
+			return false
+	return true
+
+
+func _report_missing_spawn_scene() -> void:
+	var table_path: String = spawn_table.resource_path if spawn_table != null else "<unassigned>"
+	if has_no_spawn_source():
+		if not _warned_no_spawn_source:
+			_warned_no_spawn_source = true
+			push_error(
+				"[Spawner] no enemy source: spawn_table=%s enemy_scene=<unassigned>; spawning disabled for this run"
+				% table_path
+			)
+		spawning_enabled = false
+		return
+	if _warned_no_active_entry:
+		return
+	_warned_no_active_entry = true
+	push_warning(
+		"[Spawner] nothing to spawn: spawn_table=%s entries=%d none active at t=%.1fs and enemy_scene=<unassigned>"
+		% [table_path, spawn_table.entries.size(), _elapsed]
+	)
 
 
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:
