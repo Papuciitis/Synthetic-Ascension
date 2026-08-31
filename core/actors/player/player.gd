@@ -979,8 +979,7 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 
 
 func _on_hurtbox_area_exited(area: Area2D) -> void:
-	if area.is_in_group("enemy_hitbox"):
-		_unregister_contact_source(_enemy_from_contact(area))
+	_unregister_contact_source(_tracked_contact_from(area))
 
 
 func _on_hurtbox_body_entered(body: Node) -> void:
@@ -989,8 +988,25 @@ func _on_hurtbox_body_entered(body: Node) -> void:
 
 
 func _on_hurtbox_body_exited(body: Node) -> void:
-	if body.is_in_group("enemies"):
-		_unregister_contact_source(body)
+	_unregister_contact_source(_tracked_contact_from(body))
+
+## Exit resolves what is TRACKED, never what is currently an enemy. Entry may
+## gate on the group (only real enemies get tracked), but membership can
+## legitimately end while the body is still overlapping: a pool recycle or a
+## representation-lease quiesce parks the node and drops it from the group,
+## and the exit signal arrives afterwards. Gating exit on membership left the
+## record behind - the player kept paying swarm-scaled contact damage for an
+## enemy that was gone, until a later prune found the freed object.
+func _tracked_contact_from(node: Node) -> Node:
+	var cur := node
+	for _i in range(4):
+		if cur == null:
+			break
+		if _contact_sources.has(cur.get_instance_id()):
+			return cur
+		cur = cur.get_parent()
+	return null
+
 
 func _enemy_from_contact(node: Node) -> Node:
 	var cur := node
@@ -1034,8 +1050,14 @@ func _unregister_contact_source(enemy: Node) -> void:
 func _prune_contact_sources() -> void:
 	for id in _contact_sources.keys():
 		var record: Dictionary = _contact_sources[id] as Dictionary
-		var enemy: Node = record.get("node", null) as Node
-		if enemy == null or not is_instance_valid(enemy) or not enemy.is_inside_tree():
+		var raw: Variant = record.get("node", null)
+		# is_instance_valid BEFORE the cast: `as Node` on a freed object is
+		# itself an error, and a freed node is exactly what this prunes.
+		if raw == null or not is_instance_valid(raw):
+			_contact_sources.erase(id)
+			continue
+		var enemy := raw as Node
+		if not enemy.is_inside_tree():
 			_contact_sources.erase(id)
 	_touching_enemies = _contact_sources.size()
 
