@@ -43,6 +43,12 @@ var _multimesh: MultiMesh = null
 var _impact_renderer: Node2D = null
 var debug_disable_impacts := false
 var _render_buffer := PackedFloat32Array()
+## The active count the last buffer upload described. Nothing in flight and
+## nothing in flight last frame means the GPU already holds the right picture.
+var _rendered_count: int = -1
+## Buffer uploads since this manager was built, for the idle-cost pin and the
+## performance overlay.
+var _renderer_uploads: int = 0
 var _last_scene_id: int = 0
 var _query_hit_handle: int = 0
 var _query_hit_t: float = -1.0
@@ -423,6 +429,15 @@ func _build_renderer() -> void:
 func _update_renderer() -> void:
 	if _multimesh == null:
 		return
+	# This autoload runs in menus too, and with nothing in flight it was still
+	# uploading capacity*12 floats (24 KB at capacity 2000) and firing
+	# emit_changed() every single frame. The frame the count reaches zero still
+	# uploads - that is the wipe that clears the last bullet - and only the
+	# frames after it are skipped.
+	if _active_count == 0 and _rendered_count == 0:
+		return
+	_rendered_count = _active_count
+	_renderer_uploads += 1
 	# One buffer upload instead of two RenderingServer calls per projectile per
 	# frame (~600 calls at typical bullet counts). Layout per instance:
 	# 8 floats of 2D transform rows, then 4 floats of color.
@@ -477,7 +492,7 @@ func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_con
 	return out_consumed.size()
 
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms}
+	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads}
 
 func active_count() -> int:
 	return _active_count

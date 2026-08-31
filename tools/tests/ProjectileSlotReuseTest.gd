@@ -127,6 +127,34 @@ func _run() -> void:
 	manager.call("_clear_all")
 	_check(int(manager.call("active_count")) == 0, "clear removes all projectiles")
 
+	# --- idle cost: an empty simulation stops uploading (perf audit
+	# 2026-08-28 §2 #7) ---
+	var uploads := func() -> int:
+		return int((manager.call("get_debug_counters") as Dictionary).get("renderer_uploads", -1))
+	_check(uploads.call() >= 0, "the manager reports its buffer uploads")
+	manager.call("_update_renderer")
+	var wipe_uploads: int = uploads.call()
+	for _frame in range(20):
+		manager.call("_update_renderer")
+	_check(
+		uploads.call() == wipe_uploads,
+		"twenty empty frames upload nothing (%d extra)" % [uploads.call() - wipe_uploads]
+	)
+
+	manager.call("spawn_enemy", Vector2(700.0, 0.0), Vector2.RIGHT, 100.0, 1.0, 5.0, null)
+	manager.call("_update_renderer")
+	_check(uploads.call() == wipe_uploads + 1, "a spawned projectile uploads again (%d)" % uploads.call())
+	manager.call("_clear_all")
+	manager.call("_update_renderer")
+	_check(
+		uploads.call() == wipe_uploads + 2 and multimesh.visible_instance_count == 0,
+		"and emptying it uploads exactly once more - the wipe (%d)" % uploads.call()
+	)
+	var after_wipe: int = uploads.call()
+	for _frame in range(20):
+		manager.call("_update_renderer")
+	_check(uploads.call() == after_wipe, "then it goes quiet again (%d extra)" % [uploads.call() - after_wipe])
+
 	manager.queue_free()
 	print("ProjectileSlotReuseTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
