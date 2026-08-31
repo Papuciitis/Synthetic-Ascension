@@ -2,7 +2,7 @@
 
 **For:** the human playtester (this is the one step in the roadmap an agent
 cannot do). **Gate:** roadmap §19 — Phase 3 starts only when this says the run
-is genuinely fun. **Build:** branch `enemy-world-work` at `a8a535a` or later. The game shows no
+is genuinely fun. **Build:** branch `enemy-world-work` at `77ff1fb` or later (§ *What is new since this protocol was written* below). The game shows no
 version label yet (BuildInfo has no UI consumer — see the stale-docs audit); note
 the commit with `git rev-parse --short HEAD` before playing. Flight-recorder
 incidents carry it in their `metadata.build` block.
@@ -85,3 +85,77 @@ disappointing you? Was it obvious *which* curse the Lens took?
 If all five §25 criteria are "met" on at least one archetype, Phase 3 opens.
 If not, the answers say which mechanism to tune first — not which new system
 to build (roadmap §23).
+
+
+---
+
+## What is new since this protocol was written (2026-08-30/31)
+
+The timeline above still holds. These are the things it does not yet ask
+about, and they are the reason a fresh playtest is worth more than the one
+this document originally described.
+
+### 1. Can you see what is happening? (the readability layer)
+
+Wave 1 surfaced values the code already computed but never showed. If these
+do not land, every other verdict below is unreliable — a tester who thinks a
+mechanic is broken cannot tell you whether it is fun.
+
+- The **Run Sheet's Profile now carries a per-stat ledger**: every step of the
+  stat pass, in order, summing to the number above it. Open it mid-run and
+  ask: can you answer "why is my Power this high?" without guessing?
+- A slot the **Inversion Lens has suppressed shows what it pays** (`+44%`),
+  not the stored `−80`. This was the single most bug-shaped moment in the
+  game. Does it read correctly now, on the bar, the tooltip and the swap
+  preview?
+- A **Lens retarget is announced** when a deeper curse arrives. Did you ever
+  see stats move and not know why?
+- The **power-contrast window is announced** and the Threat tooltip shows
+  "Enemy scaling held — Ns", the phase, the elite chance and the rite state.
+- The **pair rule is taught** ("two lit nouns always light a pair — all ten
+  exist") in the intro card and the pair notifier. Did you work out the noun
+  system from the UI, or only by accident?
+
+### 2. Mechanisms that have never been played
+
+- **Elite modifiers** (§9): ARMOURED, VAMPIRIC, SHIELDED, SPLITTING, FAST —
+  none at recon/disturbance, one at ascension, two at collapse. *Could you
+  tell which modifier an elite had, from its body, before it hurt you?* That
+  is the whole point of the row; if the answer is no, the tells are wrong.
+- **Ritual interference**: a collapse-phase sigil where the dead rise once as
+  weakened revenants. Legible, or just more enemies?
+- **The Exit Rite climax**: at 50% hold the district visibly warps; at 85% a
+  last-chance vault appears at the rite's edge and costs your whole safeguard
+  buffer. Was that a decision you thought about, or a trap?
+- **The healing lock**: the Cursed Vault now bills 45 s of no healing. Did the
+  approach announcement make that price clear *before* you opened it?
+
+### 3. Two gameplay fixes that change how builds feel
+
+Both landed 2026-08-31 and neither has been played:
+
+- The **Conduit set** used to deal damage with no source, so none of it fed
+  lifesteal or any Manifestation `on_hit` rule. A Conduit build should now
+  drive procs it never drove. If you can, play one.
+- The **Slow Heart curse** re-intercepted its own payout and returned healing
+  at ~15% of its advertised rate. It should now feel like the curse its
+  numbers describe — which may mean it is now too weak. Say so if it is.
+
+### 4. Two design questions the code cannot answer
+
+Recorded in `docs/audits/2026-08-28-test-coverage-gaps.md`; both need a
+ruling before anything moves.
+
+- **An activated Breach Seal follows you.** Walk into one, walk away, and it
+  keeps pulling waves to *your* position anywhere in the district until it is
+  sealed — it is handed the breach's position and ignores it. Intended
+  pressure, or should breaches pour at the breach?
+- **DeathRattle overwrites a shared cadence clock** another rule may have just
+  reset. First-writer-wins or last-writer-wins?
+
+### Extra knobs since the list above
+
+`EliteModifiers` (per-phase counts, the five modifiers' consts),
+`RitualInterference` (radius, duration, revive delay, revenant HP fraction,
+cap), `CursedVault.cost_heal_lock_sec`, the rite's distortion ramp
+end-points and `last_chance_edge_offset`.
