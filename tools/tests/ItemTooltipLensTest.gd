@@ -58,50 +58,20 @@ func _set_augments(ids: Array) -> void:
 		Global.permanent_augment_ids[i] = StringName(ids[i]) if i < ids.size() else StringName()
 
 
-func _make_tooltip() -> ItemTooltip:
-	var scene := load("res://ui/widgets/ItemTooltip.tscn") as PackedScene
-	var tooltip := scene.instantiate() as ItemTooltip if scene != null else null
-	if tooltip == null:
-		_check(false, "the item tooltip scene loads as an ItemTooltip")
-		return null
-	add_child(tooltip)
-	return tooltip
+## A body long enough that a pre-layout measurement is unmistakable: an
+## autowrapped RichTextLabel that has never had a width reports tens of
+## thousands of pixels for this description, against ~1100 once laid out.
+func _wordy(slot: int) -> ItemInstance:
+	var desc := ""
+	for i in range(24):
+		desc += "Sentence number %d of a description long enough to wrap many times. " % i
+	var data := _make_data("wordy_%d" % slot, slot)
+	data.description = desc
+	return ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.25, false)
 
 
-func _run() -> void:
-	_saved_inventory = Global.run_inventory
-	_saved_augments = Global.permanent_augment_ids.duplicate()
-
-	# The Lens wardrobe: a -80% Health curse (the one it suppresses), a -40%
-	# Power curse that stays active, a +25% Armour blessing.
-	var inv := Inventory.new()
-	var health_curse := _cursed(0, 0.80)
-	var power_curse := _cursed(3, 0.40)
-	var armour_bless := _blessed(1, 0.25)
-	inv.set_item(0, health_curse)
-	inv.set_item(3, power_curse)
-	inv.set_item(1, armour_bless)
-	Global.run_inventory = inv
-	_set_augments([&"augment_inversion_lens"])
-
-	_test_slot_label_prints_the_return(health_curse, power_curse)
-	_test_tooltip_burden_and_roll_lines(health_curse, power_curse, armour_bless)
-	_test_swap_preview_under_the_lens(inv, health_curse, power_curse)
-	await _test_hover_rebuild_cache(inv)
-
-	Global.run_inventory = _saved_inventory
-	for i in range(mini(3, _saved_augments.size())):
-		Global.permanent_augment_ids[i] = _saved_augments[i]
-	print("ItemTooltipLensTest: %d passed, %d failed" % [_passes, _failures])
-	get_tree().quit(1 if _failures > 0 else 0)
-
-
-# Performance hygiene audit 2026-08-28 §2 #1: hovering an item rebuilt the whole
-# tooltip - every formatted line, the comparison rows, the join, the RichTextLabel
-# assignment and two Control relayouts - on EVERY frame the cursor sat still. The
-# cache keys on the hovered control AND the item in it, because a paused bag can
-# swap either one under a motionless cursor.
-func _test_hover_rebuild_cache(inv: Inventory) -> void:
+## The host/controller rig both hover tests drive by hand.
+func _make_hover_rig() -> Array:
 	var host := Control.new()
 	host.name = "TipHost"
 	host.size = Vector2(900.0, 600.0)
@@ -135,6 +105,59 @@ func _test_hover_rebuild_cache(inv: Inventory) -> void:
 	# The suite drives the hover by hand: a headless viewport never reports a
 	# hovered control, so _process would do nothing.
 	controller.set_process(false)
+	return [host, controller, slot_a, slot_b]
+
+
+func _make_tooltip() -> ItemTooltip:
+	var scene := load("res://ui/widgets/ItemTooltip.tscn") as PackedScene
+	var tooltip := scene.instantiate() as ItemTooltip if scene != null else null
+	if tooltip == null:
+		_check(false, "the item tooltip scene loads as an ItemTooltip")
+		return null
+	add_child(tooltip)
+	return tooltip
+
+
+func _run() -> void:
+	_saved_inventory = Global.run_inventory
+	_saved_augments = Global.permanent_augment_ids.duplicate()
+
+	# The Lens wardrobe: a -80% Health curse (the one it suppresses), a -40%
+	# Power curse that stays active, a +25% Armour blessing.
+	var inv := Inventory.new()
+	var health_curse := _cursed(0, 0.80)
+	var power_curse := _cursed(3, 0.40)
+	var armour_bless := _blessed(1, 0.25)
+	inv.set_item(0, health_curse)
+	inv.set_item(3, power_curse)
+	inv.set_item(1, armour_bless)
+	Global.run_inventory = inv
+	_set_augments([&"augment_inversion_lens"])
+
+	_test_slot_label_prints_the_return(health_curse, power_curse)
+	_test_tooltip_burden_and_roll_lines(health_curse, power_curse, armour_bless)
+	_test_swap_preview_under_the_lens(inv, health_curse, power_curse)
+	await _test_hover_rebuild_cache(inv)
+	await _test_first_tooltip_measures_itself()
+
+	Global.run_inventory = _saved_inventory
+	for i in range(mini(3, _saved_augments.size())):
+		Global.permanent_augment_ids[i] = _saved_augments[i]
+	print("ItemTooltipLensTest: %d passed, %d failed" % [_passes, _failures])
+	get_tree().quit(1 if _failures > 0 else 0)
+
+
+# Performance hygiene audit 2026-08-28 §2 #1: hovering an item rebuilt the whole
+# tooltip - every formatted line, the comparison rows, the join, the RichTextLabel
+# assignment and two Control relayouts - on EVERY frame the cursor sat still. The
+# cache keys on the hovered control AND the item in it, because a paused bag can
+# swap either one under a motionless cursor.
+func _test_hover_rebuild_cache(inv: Inventory) -> void:
+	var rig: Array = await _make_hover_rig()
+	var host: Control = rig[0]
+	var controller: HudTooltipController = rig[1]
+	var slot_a: Control = rig[2]
+	var slot_b: Control = rig[3]
 
 	_check(
 		controller.has_method("debug_rebuild_count") and controller.has_method("_update_for_hovered"),
@@ -324,3 +347,59 @@ func _test_swap_preview_under_the_lens(inv: Inventory, health_curse: ItemInstanc
 	_check(joined.contains("Effect roll  -10.0%") and not joined.contains("suppressed"), "without a Lens the roll diff is the truth (%s)" % joined)
 
 	tooltip.queue_free()
+
+
+# Repair of the §2 #1 cache: the cache kept whatever the BUILD frame measured,
+# and the first tooltip of a HUD is measured before the engine has laid its
+# RichTextLabel out - an autowrapped label that has never had a width reports a
+# height of tens of thousands of pixels. The per-frame placement the cache
+# replaced used to re-measure on the next hovered frame, which silently
+# corrected it; without that, the first item a player looks at in a run is
+# covered by a screen-tall panel for the whole hover. Measuring twice in the
+# SAME frame does not help - only a later frame does - so the fix re-measures on
+# following hovered frames until the number stops moving.
+func _test_first_tooltip_measures_itself() -> void:
+	var rig: Array = await _make_hover_rig()
+	var host: Control = rig[0]
+	var controller: HudTooltipController = rig[1]
+	var slot_a: Control = rig[2]
+	var tip: Control = controller.get("_tooltip") as Control
+	_check(tip != null, "the hover rig owns a tooltip")
+	if tip == null:
+		host.queue_free()
+		await get_tree().process_frame
+		return
+
+	slot_a.set_meta("item_instance", _wordy(1))
+	var built := func() -> int: return int(controller.call("debug_rebuild_count"))
+	var before: int = built.call()
+
+	# Hover it the way _process does: one call per frame, real frames between.
+	controller.call("_update_for_hovered", slot_a)
+	for _frame in range(3):
+		await get_tree().process_frame
+		controller.call("_update_for_hovered", slot_a)
+
+	# What is on screen must be what a fresh measurement gives. Before the fix
+	# the settled size was the pre-layout blow-up and this re-measure shrank it
+	# by an order of magnitude.
+	var settled: Vector2 = tip.size
+	controller.call("_measure_tooltip")
+	_check(
+		tip.size.is_equal_approx(settled),
+		"the first tooltip of a HUD settles on its real height, not the pre-layout one (%s vs %s)" % [settled, tip.size]
+	)
+	_check(
+		built.call() - before == 1,
+		"and settling re-measures without rebuilding the body again (%d builds)" % [built.call() - before]
+	)
+
+	# Once settled it stays settled: no further measurement moves it.
+	var quiet: Vector2 = tip.size
+	for _frame in range(3):
+		await get_tree().process_frame
+		controller.call("_update_for_hovered", slot_a)
+	_check(tip.size.is_equal_approx(quiet), "and a motionless hover leaves it alone afterwards")
+
+	host.queue_free()
+	await get_tree().process_frame

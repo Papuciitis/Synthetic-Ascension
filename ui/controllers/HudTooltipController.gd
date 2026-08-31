@@ -28,6 +28,15 @@ var _shown_item_id: int = 0
 var _shown_source_rect: Rect2 = Rect2()
 var _hooked_inventory: Object = null
 var _hooked_bag: Object = null
+
+## How many hovered frames after a rebuild may re-measure the tooltip before it
+## is declared settled. A body the engine has not laid out yet measures wrong -
+## a RichTextLabel that has never had a width autowraps at width 0 and reports
+## tens of thousands of pixels - and no number of measurements in the SAME frame
+## fixes it; the layout pass has to run first. One extra frame is always enough
+## in practice, so this is only a bound on a pathological case.
+const MEASURE_SETTLE_FRAMES: int = 4
+var _measure_settle_left: int = 0
 ## Tooltip rebuilds since this controller was created. The idle-cost pin reads
 ## it; nothing in the game does.
 var _rebuilds: int = 0
@@ -145,18 +154,46 @@ func _update_for_hovered(hovered: Control) -> void:
 		_measure_tooltip()
 		_place_tooltip(source)
 		_shown_source_rect = _source_rect(source)
+		# The body was written this frame, so this measurement may be the
+		# pre-layout one. Keep checking it on the following frames.
+		_measure_settle_left = MEASURE_SETTLE_FRAMES
 	else:
 		# Same control, same item: the tooltip is already correct. It still
 		# follows a source that moves (the mouse when there is no source rect,
 		# an animating bar), but without re-measuring a body that has not
 		# changed.
+		var settled := _settle_measurement()
 		var rect := _source_rect(source)
-		if rect != _shown_source_rect:
+		if not settled or rect != _shown_source_rect:
 			_shown_source_rect = rect
 			_place_tooltip(source)
 	# Not cached: inspect_set() early-outs on an unchanged id, and re-asserting
 	# it every frame is the behaviour the dossier has always had.
 	_inspect_set_for(inst)
+
+
+## The frame after a rebuild, re-measure once and see whether the number moved.
+## Before this existed the cache kept whatever the build frame measured, and the
+## FIRST tooltip of a HUD - a body no layout pass had touched yet - stayed a
+## screen-tall panel for the whole hover (the bug _measure_tooltip's own comment
+## names). The old per-frame placement re-measured every hovered frame, which is
+## what used to correct it one frame later; this restores that correction
+## without restoring the per-frame cost. Returns false while the measurement is
+## still moving, so the caller re-places the tooltip it just resized.
+func _settle_measurement() -> bool:
+	if _measure_settle_left <= 0:
+		return true
+	if _tooltip == null or not is_instance_valid(_tooltip):
+		_measure_settle_left = 0
+		return true
+	_measure_settle_left -= 1
+	var before := _tooltip.size
+	_measure_tooltip()
+	if _tooltip.size.is_equal_approx(before):
+		# One last measurement agreed with the last one: stop asking.
+		_measure_settle_left = 0
+		return true
+	return false
 
 
 func _is_bag_open() -> bool:
@@ -223,6 +260,7 @@ func _on_inventory_changed() -> void:
 func _hide_tooltip() -> void:
 	_shown_source_id = 0
 	_shown_item_id = 0
+	_measure_settle_left = 0
 	if _tooltip == null:
 		return
 	if _tooltip.has_method("hide_tooltip"):
