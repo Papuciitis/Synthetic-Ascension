@@ -534,7 +534,11 @@ func clear_session() -> void:
 	_capture_samples.clear()
 	_events.clear()
 	_counter_buckets.clear()
-	_latest_incident.clear()
+	# Rebind, never clear(): a finalized incident is handed to the write
+	# worker BY REFERENCE (PerformanceIncidentWriteQueue.enqueue documents the
+	# copy it deliberately avoids), and the worker may still be serialising it
+	# on its own thread. Mutating it here would rewrite the report mid-write.
+	_latest_incident = {}
 	_latest_report_path = ""
 	_latest_error = ""
 	_sequence = 0

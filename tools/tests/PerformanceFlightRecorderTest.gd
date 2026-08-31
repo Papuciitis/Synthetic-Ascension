@@ -203,6 +203,27 @@ func _run() -> void:
 	recorder.ingest_sample(_sample(Time.get_ticks_usec() + 30_000_000, 10.0))
 	_check((recorder.get("_counter_buckets") as Dictionary).is_empty(), "expired counter event releases its bucket")
 
+	# clear_session must REBIND the latest incident, never clear() it: a
+	# finalized incident is handed to the write worker by reference (the
+	# queue documents the copy it deliberately avoids), so mutating it here
+	# would rewrite a report the worker thread is still serialising.
+	recorder.clear_session()
+	recorder.configure({"automatic_capture": true, "write_reports": false})
+	for i in range(30):
+		recorder.ingest_sample(_sample(i * 16_667, 16.0))
+	recorder.ingest_sample(_sample(600_000, 45.0))
+	for i in range(12):
+		recorder.ingest_sample(_sample(616_667 + i * 16_667, 16.0))
+	var handed: Dictionary = recorder.get("_latest_incident") as Dictionary
+	_check(not handed.is_empty(), "fixture: an incident was finalized")
+	var handed_keys: int = handed.size()
+	recorder.clear_session()
+	_check(
+		handed.size() == handed_keys and not handed.is_empty(),
+		"clear_session leaves a handed-off incident intact for the writer (%d keys)" % handed.size()
+	)
+	_check((recorder.get("_latest_incident") as Dictionary).is_empty(), "and the recorder still forgets it")
+
 	recorder.queue_free()
 	_finish()
 
