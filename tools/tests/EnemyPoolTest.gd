@@ -189,6 +189,34 @@ func _run() -> void:
 			reobtained.call("despawn", &"cleanup")
 			await get_tree().process_frame
 
+	# A representation-lease failure fires once per pooled obtain, so a starved
+	# EnemyWorld used to push one context-free error per spawn. The report is
+	# now rate-limited and each emitted line states how many failures it stands
+	# for. Logging audit 2026-08-28 §3 #11.
+	var lease_probe := pool.call("obtain", scene, self) as EnemyActor
+	_check(lease_probe != null, "lease-limiter fixture obtains an enemy")
+	if lease_probe != null:
+		_check(lease_probe.has_method("_claim_lease_error"), "representation-lease failures are rate-limited")
+		if lease_probe.has_method("_claim_lease_error"):
+			var constants: Dictionary = lease_probe.get_script().get_script_constant_map()
+			_check(constants.has("LEASE_ERROR_WINDOW_MS"), "the lease-error window is a named constant")
+			var window: int = int(constants.get("LEASE_ERROR_WINDOW_MS", 0))
+			# Far past anything this suite could already have logged, so the
+			# first claim always opens a fresh window.
+			var base_ms: int = Time.get_ticks_msec() + 1000000
+			_check(
+				int(lease_probe.call("_claim_lease_error", base_ms)) >= 1,
+				"the first lease failure in a window is reported"
+			)
+			_check(int(lease_probe.call("_claim_lease_error", base_ms + 1)) == 0, "a burst inside the window is suppressed")
+			_check(int(lease_probe.call("_claim_lease_error", base_ms + 2)) == 0, "and stays suppressed")
+			_check(
+				int(lease_probe.call("_claim_lease_error", base_ms + window)) == 3,
+				"the next report stands for the failures it suppressed"
+			)
+		lease_probe.call("despawn", &"cleanup")
+		await get_tree().process_frame
+
 	# A sceneless frame (mid scene-transition) has nowhere legitimate to put a
 	# live node. Obtaining used to fall back to the PoolManager autoload,
 	# which is PROCESS_MODE_ALWAYS and outlives the scene: the node kept

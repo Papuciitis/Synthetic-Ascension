@@ -159,6 +159,13 @@ var _scene_base_knockback_decay: float = 0.0
 var _enemy_world_handle: int = 0
 var _representation_lease_active: bool = false
 
+# A representation lease is taken on every pooled obtain, so a starved or broken
+# EnemyWorld would push one error per spawn. Report at most one line per this
+# window and carry the count of the failures it suppressed into the next one.
+const LEASE_ERROR_WINDOW_MS := 5000
+static var _lease_error_next_ms: int = 0
+static var _lease_error_suppressed: int = 0
+
 # Modules
 var _drops: EnemyDrops = EnemyDrops.new()
 var _senses: EnemySenses = EnemySenses.new()
@@ -221,7 +228,7 @@ func _ready() -> void:
 		pass # warmed inventory: no registration until first obtain
 	elif bool(obtain_context.get("enemy_representation_lease", false)) and lease_handle != 0:
 		if not hydrate_representation_lease(lease_handle):
-			push_error("EnemyActor could not hydrate representation lease")
+			_report_lease_failure("hydrate", lease_handle)
 	elif _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("register"):
 		_enemy_index.call("register", self)
 
@@ -792,7 +799,34 @@ func _on_pool_obtain_context(context: Dictionary) -> void:
 	var handle := int(context.get("enemy_world_handle", 0))
 	_reset_for_pool_obtain(false)
 	if not hydrate_representation_lease(handle):
-		push_error("EnemyActor could not attach reused representation lease")
+		_report_lease_failure("reuse", handle)
+
+
+# Returns how many failures the caller's line stands for; 0 means suppressed.
+static func _claim_lease_error(now_ms: int) -> int:
+	if now_ms < _lease_error_next_ms:
+		_lease_error_suppressed += 1
+		return 0
+	var stands_for := _lease_error_suppressed + 1
+	_lease_error_suppressed = 0
+	_lease_error_next_ms = now_ms + LEASE_ERROR_WINDOW_MS
+	return stands_for
+
+
+func _report_lease_failure(phase: String, handle: int) -> void:
+	var stands_for := _claim_lease_error(Time.get_ticks_msec())
+	if stands_for <= 0:
+		return
+	push_error(
+		"[EnemyActor] %s: representation lease unavailable handle=%d spec=%s pool_warming=%s failures=%d"
+		% [
+			phase,
+			handle,
+			(String(spec.id) if spec != null else "<no spec>"),
+			bool(get_meta("__in_pool", false)),
+			stands_for,
+		]
+	)
 
 
 func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
