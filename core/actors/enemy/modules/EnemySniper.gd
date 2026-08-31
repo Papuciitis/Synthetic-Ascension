@@ -17,7 +17,7 @@ var _aim_ang: float = 0.0
 var _tele: Line2D = null
 
 # relocation / perch logic
-var _dt: float = 1.0 / 60.0
+var _dt: float = _default_dt()
 var _spot: Vector2 = Vector2.ZERO
 var _has_spot: bool = false
 var _spot_repick_cd: float = 0.0
@@ -40,7 +40,7 @@ func setup(owner: EnemyActor) -> void:
 	_state = State.IDLE
 	_windup_left = 0.0
 
-	_dt = 1.0 / 60.0
+	_dt = _default_dt()
 	_spot = Vector2.ZERO
 	_has_spot = false
 	_spot_repick_cd = _rng.randf_range(0.2, 0.6)
@@ -698,3 +698,9 @@ func windup_mul() -> float:
 
 func cleanup() -> void:
 	_free_telegraph()
+
+
+## The pre-first-tick fallback follows the project's tick rate instead of
+## assuming 60 Hz (Godot hygiene audit 2026-08-28 §7, top-10 #10).
+static func _default_dt() -> float:
+	return 1.0 / maxf(1.0, float(Engine.physics_ticks_per_second))

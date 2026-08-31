@@ -38,6 +38,10 @@ const STYLE_MAGIC := &"magic"
 	"kill": 6.0,
 	"hurt": 12.0,
 }
+## punch_decay is expressed per frame at this reference rate, so the same
+## number decays identically at any refresh rate. Not the physics tick rate:
+## the punch decays in wall-clock time, deliberately (see _process).
+const PUNCH_DECAY_REFERENCE_HZ: float = 60.0
 @export_range(1.0, 40.0, 0.5) var punch_decay := 16.0
 @export_range(0.0, 40.0, 0.5) var punch_max_px := 18.0
 
@@ -72,7 +76,7 @@ func _process(delta: float) -> void:
 	if _punch_offset != Vector2.ZERO:
 		# Wall-clock decay: delta is scaled by the stop itself.
 		var real_delta := delta / maxf(Engine.time_scale, 0.001)
-		_punch_offset = _punch_offset.move_toward(Vector2.ZERO, punch_decay * 60.0 * real_delta)
+		_punch_offset = _punch_offset.move_toward(Vector2.ZERO, punch_decay * PUNCH_DECAY_REFERENCE_HZ * real_delta)
 		if _punch_offset.length_squared() < 0.01:
 			_punch_offset = Vector2.ZERO
 		_apply_punch()
