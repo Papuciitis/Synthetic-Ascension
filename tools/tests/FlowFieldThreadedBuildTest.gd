@@ -109,6 +109,39 @@ func _run() -> void:
 				break
 		_check(agree, "threaded and sliced builds produce identical cost fields")
 
+	# Leaving the tree must FORGET the build, not merely join its worker. A
+	# nav node that re-enters used to keep _building set, so its next
+	# _process fell into _step_build() and published a cancelled build from
+	# the previous life's snapshot. Godot hygiene audit 2026-08-28 top-10 #7.
+	# The flag is set directly: a real build of this size finishes inside a
+	# frame, so waiting for one in flight would make the assertion vacuous
+	# (it passed with and without the fix that way). What matters is the
+	# invariant - whatever state a build left behind, leaving the tree
+	# forgets it.
+	var reentered := _make_flow(true)
+	await get_tree().process_frame
+	reentered.set("_building", true)
+	reentered.set("_use_snapshot", true)
+	reentered.set("_cancel_requested", true)
+	_check(bool((reentered.get_debug_counters() as Dictionary).get("building", false)), "fixture: a build is marked in progress")
+	remove_child(reentered)
+	var after_exit := reentered.get_debug_counters() as Dictionary
+	_check(
+		not bool(after_exit.get("building", false)),
+		"leaving the tree clears the in-progress build flag (%s)" % after_exit.get("building")
+	)
+	_check(
+		not bool(reentered.get("_use_snapshot")) and not bool(reentered.get("_cancel_requested")),
+		"and the snapshot and cancel flags with it"
+	)
+	add_child(reentered)
+	await get_tree().process_frame
+	_check(
+		is_instance_valid(reentered),
+		"and the node survives being re-entered"
+	)
+	reentered.queue_free()
+
 	flow.queue_free()
 	sliced.queue_free()
 	stub.queue_free()

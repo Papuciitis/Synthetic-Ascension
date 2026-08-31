@@ -172,6 +172,15 @@ func _exit_tree() -> void:
 		_cancel_requested = true
 		WorkerThreadPool.wait_for_task_completion(_build_task_id)
 		_build_thread_running = false
+	# Joining the worker is not the same as forgetting the build. A node that
+	# leaves and re-enters the tree kept _building set, so its next _process
+	# fell straight into _step_build() and published a build that had been
+	# cancelled, from a snapshot belonging to the previous life.
+	# Godot hygiene audit 2026-08-28 §5 LOW, top-10 #7.
+	_building = false
+	_use_snapshot = false
+	_cancel_requested = false
+	_build_task_id = -1
 
 
 func _acquire_refs() -> void:
