@@ -20,6 +20,10 @@ var _vignette_mat: ShaderMaterial
 var _td: Node
 var _safeguard_prompt: Label
 var _bound_rite: Node
+## One line per controller for a missing ThreatDirector. _process retries the
+## bind every frame while _td is null, so this used to be sixty warnings a
+## second - and its twin in HudThreatController made it a hundred and twenty.
+var _warned_missing_director: bool = false
 
 func _enter_tree() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -55,8 +59,15 @@ func _resolve_nodes() -> void:
 
 func _bind_director() -> void:
 	_td = get_node_or_null("/root/ThreatDirector")
-	if _td == null:
-		push_warning("[HudEvacOverlayController] ThreatDirector not found at /root/ThreatDirector")
+	if _td != null:
+		return
+	if _warned_missing_director:
+		return
+	_warned_missing_director = true
+	push_warning(
+		"[HudEvacOverlayController] ThreatDirector autoload missing at /root/ThreatDirector; "
+		+ "the evac warning and its vignette stay idle"
+	)
 
 func _process(_delta: float) -> void:
 	if _overlay == null or _label == null:

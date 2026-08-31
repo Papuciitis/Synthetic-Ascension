@@ -121,6 +121,23 @@ func _run() -> void:
 	ThreatDirector.call("note_power_threshold", &"five_manifestations")
 	_check(_tips.size() == 2 and _tips[1].begins_with("Five Manifestations"), "an unlabelled threshold falls back to its id (%s)" % [_tips])
 
+	# Logging audit 2026-08-28 §3 #4: this bind is retried from _process on every
+	# frame the autoload is missing, and it used to warn on every one of them.
+	var has_guard: bool = controller.get("_warned_missing_director") != null
+	_check(has_guard, "the threat controller guards its missing-director warning")
+	if has_guard:
+		_with_director_parked(func() -> void:
+			controller.set("_td", null)
+			controller.set("_warned_missing_director", false)
+			for _frame in range(30):
+				controller.call("_process", 0.016)
+		)
+		_check(
+			controller.get("_warned_missing_director") == true,
+			"thirty director-less frames latch one warning instead of thirty"
+		)
+		controller.call("_bind_director")
+
 	RunEvents.tutorial_tip.disconnect(_on_tip)
 	ThreatDirector.set("power_contrast_lag_sec", previous_lag)
 	ThreatDirector.call("reset_run_state")
@@ -129,3 +146,16 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("HudThreatTooltipTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+## The only way to make the ThreatDirector autoload unreachable by path from a
+## test: it is renamed for the length of the check and put back straight after.
+## The `ThreatDirector` identifier itself is unaffected - only get_node_or_null
+## lookups are.
+func _with_director_parked(action: Callable) -> void:
+	var director := get_tree().root.get_node_or_null("ThreatDirector")
+	if director != null:
+		director.name = "ThreatDirectorParkedForWarnOnceCheck"
+	action.call()
+	if director != null:
+		director.name = "ThreatDirector"

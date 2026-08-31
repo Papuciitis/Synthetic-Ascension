@@ -22,6 +22,23 @@ func _ready() -> void:
 		_check("2" in prompt.text and "Invoke safeguard" in prompt.text, "prompt states action and count")
 		controller.call("set_safeguard_prompt", false, 0)
 		_check(not prompt.visible, "safeguard prompt clears outside the Rite")
+
+	# Logging audit 2026-08-28 §3 #4: the bind is retried from _process on every
+	# frame the autoload is missing, and this controller and HudThreatController
+	# used to emit an identical line each, sixty times a second apiece.
+	var has_guard: bool = controller.get("_warned_missing_director") != null
+	_check(has_guard, "the evac controller guards its missing-director warning")
+	if has_guard:
+		_with_director_parked(func() -> void:
+			controller.set("_td", null)
+			controller.set("_warned_missing_director", false)
+			for _frame in range(30):
+				controller.call("_process", 0.016)
+		)
+		_check(
+			controller.get("_warned_missing_director") == true,
+			"thirty director-less frames latch one warning instead of thirty"
+		)
 	_finish()
 
 
@@ -36,3 +53,16 @@ func _check(condition: bool, message: String) -> void:
 func _finish() -> void:
 	print("RiteSafeguardPresentationTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+## The only way to make the ThreatDirector autoload unreachable by path from a
+## test: it is renamed for the length of the check and put back straight after.
+## The `ThreatDirector` identifier itself is unaffected - only get_node_or_null
+## lookups are.
+func _with_director_parked(action: Callable) -> void:
+	var director := get_tree().root.get_node_or_null("ThreatDirector")
+	if director != null:
+		director.name = "ThreatDirectorParkedForWarnOnceCheck"
+	action.call()
+	if director != null:
+		director.name = "ThreatDirector"

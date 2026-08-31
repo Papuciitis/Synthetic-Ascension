@@ -28,6 +28,11 @@ var _spd_mul: float = 1.0
 var _spawn_mul: float = 1.0
 var _elite_bonus: float = 0.0
 var _contrast_key: int = 0
+## One line per controller for a missing ThreatDirector. _process retries the
+## bind every frame while _td is null, so this used to be sixty warnings a
+## second - and its twin in HudEvacOverlayController made it a hundred and
+## twenty.
+var _warned_missing_director: bool = false
 
 func _ready() -> void:
 	_resolve_nodes()
@@ -65,7 +70,12 @@ func _resolve_nodes() -> void:
 func _bind_director() -> void:
 	_td = get_node_or_null("/root/ThreatDirector")
 	if _td == null:
-		push_warning("[HudThreatController] ThreatDirector not found at /root/ThreatDirector")
+		if not _warned_missing_director:
+			_warned_missing_director = true
+			push_warning(
+				"[HudThreatController] ThreatDirector autoload missing at /root/ThreatDirector; "
+				+ "the Threat readout and its tooltip stay idle"
+			)
 		return
 
 	if _td.has_signal("threat_changed"):
