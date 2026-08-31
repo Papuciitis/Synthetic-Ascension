@@ -1221,17 +1221,22 @@ func _test_slow_heart_intercepts_healing() -> void:
 	remove_child(bystander)
 	bystander.free()
 
-	# The pool does come back. DEFECT, reported not fixed: SlowHeartCurse's
-	# `_releasing` re-entrancy guard is written at SlowHeartCurse.gd:93/95 and
-	# never read - `_on_player_healed` (line 65) does not consult it, and no
-	# other script in the repo does either. So every released step is itself
-	# intercepted: 85% of it comes straight back off HP and back into the bank.
-	# Measured on this fixture at max_hp 200 / severity 0.30: 0.89 HP/s returned
-	# against the 5.95 HP/s the curse's own release_rate and tooltip advertise -
-	# exactly the (1 - INTERCEPT) factor, and 5.97 HP/s once the dormant guard
-	# is honoured. This suite therefore pins only what is unambiguously correct
-	# - that the bank drains back into HP at all - and deliberately does NOT
-	# pin the reduced rate, so it stays green either way.
+	# The pool comes back, and comes back whole. The `_releasing` guard was
+	# written at SlowHeartCurse.gd:93/95 and had no reader, so every released
+	# step was itself intercepted: 85% of it went straight back off HP and
+	# into the bank, and the pool returned at (1 - INTERCEPT) of the rate the
+	# curse advertises - 0.89 HP/s against 5.95 on this fixture. Found by this
+	# suite, fixed with it; the guard is pinned below.
+	var guard_hp := stub.hp
+	var guard_bank := float(curse.get("_bank"))
+	curse.set("_releasing", true)
+	RunEvents.player_healed.emit(stub, 40.0)
+	curse.set("_releasing", false)
+	_check(
+		_close(stub.hp, guard_hp) and _close(float(curse.get("_bank")), guard_bank),
+		"the bank paying itself out is not re-intercepted (hp %.3f->%.3f, bank %.3f->%.3f)"
+			% [guard_hp, stub.hp, guard_bank, float(curse.get("_bank"))]
+	)
 	stub.hp = 50.0
 	stub.heal(60.0)
 	var parked := stub.hp

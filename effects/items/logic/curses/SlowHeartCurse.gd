@@ -65,6 +65,13 @@ func _exit_tree() -> void:
 func _on_player_healed(healed_player: Node, amount: float) -> void:
 	if healed_player != player or amount <= 0.0 or player == null or not is_instance_valid(player):
 		return
+	# The bank paying itself out is not a heal to intercept. Without this the
+	# curse re-took INTERCEPT of every released step and re-banked it, so the
+	# pool came back at (1 - INTERCEPT) of the advertised release_rate and
+	# never drained cleanly. The flag below was written for exactly this and
+	# had no reader.
+	if _releasing:
+		return
 	# The heal has already landed, so the interception is taken back off rather
 	# than prevented - which keeps this rule out of the player's healing path
 	# and means it composes with any other healing source.
