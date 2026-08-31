@@ -69,7 +69,8 @@ func _ready() -> void:
 	add_to_group(&"pause_handoff_owner")
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if _router == null:
-		push_warning("[HUD] InvRouter autoload not found at /root/InvRouter")
+		# One report for the whole autoload, from WorldDropSpawner (see there).
+		WorldDropSpawner.warn_missing_inventory_router("HUD")
 
 	_force_fly_vfx_on_top()
 

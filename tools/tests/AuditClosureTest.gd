@@ -29,6 +29,7 @@ func _run() -> void:
 	_test_procedural_fallback_score_prefers_reachable_candidate()
 	_test_spawner_reports_a_missing_enemy_source_once()
 	_test_enemy_drop_failures_warn_once_with_spec_context()
+	_test_missing_inventory_router_is_reported_once()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -539,3 +540,36 @@ func _test_enemy_drop_failures_warn_once_with_spec_context() -> void:
 			"a different spec would still get its own report"
 		)
 	enemy.free()
+
+
+func _test_missing_inventory_router_is_reported_once() -> void:
+	# Logging audit 2026-08-28 §3 #12 / finding 35: the HUD and WorldDropSpawner
+	# each warned about the same missing /root/InvRouter autoload. Both now route
+	# through one guarded report, so the fixture below emits exactly one
+	# "first consumer=AuditClosureTest" warning - that line is the behaviour
+	# under test.
+	var spawner := WorldDropSpawner.new()
+	_check(
+		spawner.has_method("warn_missing_inventory_router"),
+		"the missing inventory router has one shared report"
+	)
+	if spawner.has_method("warn_missing_inventory_router"):
+		_check(
+			bool(spawner.call("warn_missing_inventory_router", "AuditClosureTest")),
+			"the consumer that notices first emits the warning"
+		)
+		_check(
+			not bool(spawner.call("warn_missing_inventory_router", "AuditClosureTest")),
+			"every later consumer stays silent"
+		)
+	spawner.free()
+
+	var hud_source := FileAccess.get_file_as_string("res://ui/screens/hud.gd")
+	_check(
+		hud_source.contains("warn_missing_inventory_router"),
+		"the HUD routes its missing-router report through that shared call"
+	)
+	_check(
+		not hud_source.contains("InvRouter autoload not found"),
+		"and no longer emits a second warning of its own"
+	)

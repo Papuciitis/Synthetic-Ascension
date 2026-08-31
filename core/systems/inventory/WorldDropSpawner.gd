@@ -17,11 +17,30 @@ class_name WorldDropSpawner
 
 var _router: InventoryRouter = null
 
+# /root/InvRouter is one project-wide autoload with several consumers - this
+# spawner and the HUD both bind to it in _ready() from the same scene - so its
+# absence used to be reported once per consumer. The report lives here once and
+# every consumer routes through it.
+static var _warned_missing_router: bool = false
+
+
+## Reports the missing autoload for whichever consumer notices first.
+## Returns true when this call is the one that emitted.
+static func warn_missing_inventory_router(consumer: String) -> bool:
+	if _warned_missing_router:
+		return false
+	_warned_missing_router = true
+	push_warning(
+		"[WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=%s)"
+		% consumer
+	)
+	return true
+
 
 func _ready() -> void:
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if _router == null:
-		push_warning("[WorldDropSpawner] /root/InvRouter not found.")
+		warn_missing_inventory_router("WorldDropSpawner")
 		return
 
 	if not _router.dropped_to_world.is_connected(_on_router_dropped_to_world):
