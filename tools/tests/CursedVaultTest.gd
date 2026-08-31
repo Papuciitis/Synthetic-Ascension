@@ -32,6 +32,7 @@ var _passes := 0
 var _failures := 0
 var _opened_signals := 0
 var _tips: Array[String] = []
+var _vault_draws := 0
 
 
 func _ready() -> void:
@@ -40,6 +41,18 @@ func _ready() -> void:
 
 func _on_tip(text: String, _duration: float) -> void:
 	_tips.append(text)
+
+
+func _on_vault_draw() -> void:
+	_vault_draws += 1
+
+
+## Rendered frames, so every queue_redraw() requested since the last one has
+## turned into a _draw. Headless issues NOTIFICATION_DRAW like any other build;
+## it only draws into a dummy rasteriser.
+func _frames(count: int) -> void:
+	for _index in range(count):
+		await get_tree().process_frame
 
 
 func _popups_since(start: int) -> PackedStringArray:
@@ -111,6 +124,43 @@ func _run() -> void:
 	vault._process(3.0)
 	_check(_opened_signals == 1 and director.beats.size() == 2, "a vault opens once")
 
+	# --- idle cost: the vault paints the channel, not the clock (perf audit
+	# 2026-08-28 §2, below the cut) ---
+	var idle := VaultScript.new()
+	idle.position = Vector2(3200.0, 0.0)
+	add_child(idle)
+	idle.draw.connect(_on_vault_draw)
+	player.position = Vector2(3200.0, 400.0)
+	await _frames(3)
+	_vault_draws = 0
+	await _frames(8)
+	_check(_vault_draws == 0, "a vault nobody is standing in repaints nothing (%d draws in 8 frames)" % _vault_draws)
+
+	_vault_draws = 0
+	player.position = Vector2(3200.0, 0.0)
+	await _frames(3)
+	_check(_vault_draws > 0, "standing in it paints the filling channel again (%d draws)" % _vault_draws)
+
+	_vault_draws = 0
+	player.position = Vector2(3200.0, 400.0)
+	idle._process(60.0)
+	await _frames(2)
+	var bleed_draws := _vault_draws
+	_check(idle.progress() == 0.0, "stepping out bleeds the channel back to empty")
+	_vault_draws = 0
+	await _frames(8)
+	_check(
+		bleed_draws > 0 and _vault_draws == 0,
+		"the bleed paints down to the empty ring and then stops (%d then %d)" % [bleed_draws, _vault_draws]
+	)
+
+	player.position = Vector2(3200.0, 0.0)
+	idle._process(idle.open_time + 0.1)
+	_check(idle.is_opened(), "the idle vault opens when stood in")
+	_check(not idle.is_processing(), "an opened vault stops processing")
+	idle.draw.disconnect(_on_vault_draw)
+	var idle_reward := idle.reward()
+
 	# A dead body inside the vault cannot channel it.
 	var second := VaultScript.new()
 	second.position = Vector2(600.0, 0.0)
@@ -173,10 +223,11 @@ func _run() -> void:
 
 	RunEvents.tutorial_tip.disconnect(_on_tip)
 	SettingsManager.set_value(&"accessibility", &"ability_callouts", saved_callouts, false)
-	for node in [reward, third_reward, fourth_reward]:
+	for node in [reward, idle_reward, third_reward, fourth_reward]:
 		if node != null and is_instance_valid(node):
 			node.queue_free()
 	vault.queue_free()
+	idle.queue_free()
 	second.queue_free()
 	third.queue_free()
 	fourth.queue_free()

@@ -41,6 +41,10 @@ const ANNOUNCE_TIP_SECONDS: float = 4.0
 @export var announce_line: String = "Stand in the vault to open it: a guaranteed Manifestation."
 
 var _progress := 0.0
+## The channel fraction the last _draw painted. Everything the vault draws is a
+## function of _progress and _opened, so a frame that moved neither has nothing
+## new to show. -1.0 is "never painted": the first _process always repaints.
+var _drawn_progress := -1.0
 var _opened := false
 var _announced := false
 var _player: Node2D = null
@@ -72,7 +76,11 @@ func _process(delta: float) -> void:
 	elif _progress > 0.0:
 		# Stepping out bleeds progress rather than voiding it.
 		_progress = maxf(0.0, _progress - delta * 0.5)
-	queue_redraw()
+	if _progress != _drawn_progress:
+		# The bleed's last step lands exactly on 0.0 while _drawn_progress is
+		# still positive, so the frame that wipes the ring is painted too.
+		_drawn_progress = _progress
+		queue_redraw()
 
 
 func progress() -> float:
@@ -123,7 +131,11 @@ func _open() -> void:
 		details.merge(billed)
 		PerformanceFlightRecorder.record_event(&"encounter", &"vault_opened", details)
 	opened.emit(self)
+	_drawn_progress = _progress
 	queue_redraw()
+	# Nothing here moves again: _opened is latched, _progress is frozen, and the
+	# rest of _draw reads exports fixed before the vault entered the tree.
+	set_process(false)
 
 
 func _spawn_reward() -> Node:
