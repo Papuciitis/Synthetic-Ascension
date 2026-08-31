@@ -28,6 +28,7 @@ var _shown_item_id: int = 0
 var _shown_source_rect: Rect2 = Rect2()
 var _hooked_inventory: Object = null
 var _hooked_bag: Object = null
+var _hooked_item: Object = null
 
 ## How many hovered frames after a rebuild may re-measure the tooltip before it
 ## is declared settled. A body the engine has not laid out yet measures wrong -
@@ -149,6 +150,7 @@ func _update_for_hovered(hovered: Control) -> void:
 	if source_id != _shown_source_id or item_id != _shown_item_id:
 		_shown_source_id = source_id
 		_shown_item_id = item_id
+		_hook_shown_item(inst)
 		_rebuilds += 1
 		_show_tooltip(inst)
 		_measure_tooltip()
@@ -257,10 +259,33 @@ func _on_inventory_changed() -> void:
 	_shown_item_id = 0
 
 
+## The item under the cursor can be rewritten in place with neither inventory
+## saying a word: Ctrl+LeftClick in the run bag calls ItemInstance.toggle_locked()
+## (BagUI._on_slot_interaction), which emits the INSTANCE's own `changed` and
+## then repaints the same BagSlot Control through set_stack(). Neither half of
+## the cache key moves, so the open tooltip kept a stale LOCKED line - in the
+## header and in the body - until the cursor left the slot. Hooking the shown
+## instance is therefore the third thing that drops the cache.
+func _hook_shown_item(inst: Object) -> void:
+	if inst == _hooked_item:
+		return
+	var callback := Callable(self, "_on_shown_item_changed")
+	if _hooked_item != null and is_instance_valid(_hooked_item) and _hooked_item.is_connected(&"changed", callback):
+		_hooked_item.disconnect(&"changed", callback)
+	_hooked_item = inst
+	if inst != null and is_instance_valid(inst) and not inst.is_connected(&"changed", callback):
+		inst.connect(&"changed", callback)
+
+
+func _on_shown_item_changed() -> void:
+	_shown_item_id = 0
+
+
 func _hide_tooltip() -> void:
 	_shown_source_id = 0
 	_shown_item_id = 0
 	_measure_settle_left = 0
+	_hook_shown_item(null)
 	if _tooltip == null:
 		return
 	if _tooltip.has_method("hide_tooltip"):

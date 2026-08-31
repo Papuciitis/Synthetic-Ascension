@@ -139,6 +139,7 @@ func _run() -> void:
 	_test_swap_preview_under_the_lens(inv, health_curse, power_curse)
 	await _test_hover_rebuild_cache(inv)
 	await _test_first_tooltip_measures_itself()
+	await _test_lock_toggle_refreshes_the_open_tooltip()
 
 	Global.run_inventory = _saved_inventory
 	for i in range(mini(3, _saved_augments.size())):
@@ -400,6 +401,66 @@ func _test_first_tooltip_measures_itself() -> void:
 		await get_tree().process_frame
 		controller.call("_update_for_hovered", slot_a)
 	_check(tip.size.is_equal_approx(quiet), "and a motionless hover leaves it alone afterwards")
+
+	host.queue_free()
+	await get_tree().process_frame
+
+
+# Ctrl+LeftClick in the run bag calls ItemInstance.toggle_locked() and repaints
+# the same BagSlot Control with set_stack() (BagUI._on_slot_interaction /
+# _refresh), so neither half of the cache key - the hovered control, the item in
+# it - moves and no inventory emits `changed`. The open tooltip kept a stale
+# lock state until the cursor left the slot.
+func _test_lock_toggle_refreshes_the_open_tooltip() -> void:
+	var rig: Array = await _make_hover_rig()
+	var host: Control = rig[0]
+	var controller: HudTooltipController = rig[1]
+	var slot_a: Control = rig[2]
+	var tip: ItemTooltip = controller.get("_tooltip") as ItemTooltip
+	_check(tip != null, "the lock rig owns an ItemTooltip")
+	if tip == null:
+		host.queue_free()
+		await get_tree().process_frame
+		return
+
+	var item := _blessed(1, 0.25)
+	slot_a.set_meta("item_instance", item)
+	var built := func() -> int: return int(controller.call("debug_rebuild_count"))
+
+	controller.call("_update_for_hovered", slot_a)
+	await get_tree().process_frame
+	controller.call("_update_for_hovered", slot_a)
+	_check(not tip.meta_label.text.contains("LOCKED"), "an unlocked item says nothing about locks (%s)" % tip.meta_label.text)
+	_check(not tip.body_label.text.contains("LOCKED —"), "and neither does its body")
+
+	var before: int = built.call()
+	item.toggle_locked()
+	# BagSlot.set_stack re-sets the same meta on the same Control: both cache
+	# keys are unchanged, and no inventory emitted `changed`.
+	slot_a.set_meta("item_instance", item)
+	controller.call("_update_for_hovered", slot_a)
+	controller.call("_update_for_hovered", slot_a)
+	_check(
+		tip.meta_label.text.contains("LOCKED"),
+		"locking the hovered item refreshes the header under a motionless cursor (%s)" % tip.meta_label.text
+	)
+	_check(tip.body_label.text.contains("LOCKED —"), "and the body's protection line appears with it")
+	_check(built.call() - before == 1, "on exactly one rebuild (%d)" % [built.call() - before])
+
+	# ...and unlocking takes it away again.
+	before = built.call()
+	item.toggle_locked()
+	slot_a.set_meta("item_instance", item)
+	controller.call("_update_for_hovered", slot_a)
+	controller.call("_update_for_hovered", slot_a)
+	_check(not tip.meta_label.text.contains("LOCKED"), "unlocking takes the header line away (%s)" % tip.meta_label.text)
+	_check(built.call() - before == 1, "on one rebuild too (%d)" % [built.call() - before])
+
+	# A hover that never sees a lock toggle still builds once.
+	before = built.call()
+	for _frame in range(6):
+		controller.call("_update_for_hovered", slot_a)
+	_check(built.call() - before == 0, "and a quiet cursor rebuilds nothing (%d)" % [built.call() - before])
 
 	host.queue_free()
 	await get_tree().process_frame
