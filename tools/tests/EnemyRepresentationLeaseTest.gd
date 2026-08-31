@@ -82,6 +82,10 @@ func _run() -> void:
 	_check(int(index.call("ambient_alive_count")) == logical_ambient and int(index.call("alive_count_for_scene", scene)) == logical_scene, "dematerialization does not alter logical population counters")
 	_check(_indexed_matches(index, actor) == 0, "dematerialized actor leaves materialized spatial indexes")
 	_check(actor.process_mode == Node.PROCESS_MODE_DISABLED and not actor.visible, "pooled representation is fully quiescent")
+	# A quiesced actor has no body and must not read as a live enemy to the
+	# passes that ITERATE the group (separation, herald, tactical, the
+	# opening-restore sweep). Godot hygiene audit 2026-08-28 top-10 #5.
+	_check(not actor.is_in_group("enemies"), "a quiesced actor leaves the enemies group")
 
 	world.set_position(handle, Vector2(480.0, 240.0))
 	world.set_velocity(handle, Vector2(-20.0, 8.0))
@@ -96,6 +100,12 @@ func _run() -> void:
 	_check(world.active_count() == before_logical + 1, "promotion does not create a second logical record")
 	_check(rematerialized.global_position.is_equal_approx(Vector2(480.0, 240.0)), "hydration restores the latest data-only position")
 	_check(rematerialized.velocity.is_equal_approx(Vector2(-20.0, 8.0)), "hydration restores authoritative velocity")
+	# The guarantee that matters, whichever code provides it: a rematerialized
+	# enemy is back in the group. A lease obtain reaches it through
+	# _reset_for_pool_obtain(false); if that ever stops re-adding, every
+	# weapon's is_in_group check would miss this enemy - unhittable by melee,
+	# bullets, magic and enemy projectiles alike.
+	_check(rematerialized.is_in_group("enemies"), "and rejoins the enemies group, so weapons can hit it again")
 	_check(is_equal_approx(rematerialized.hp, 4.0), "hydration restores authoritative health")
 	_check(is_equal_approx(rematerialized.stun_time, 0.6), "hydration restores authoritative stun")
 	_check(rematerialized.knockback_vel.is_equal_approx(Vector2(-9.0, 2.0)), "hydration restores authoritative knockback")

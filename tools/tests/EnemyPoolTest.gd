@@ -169,6 +169,26 @@ func _run() -> void:
 		warmed.call("despawn", &"cleanup")
 		await get_tree().process_frame
 	_check(int(index.call("alive_count")) == alive_before, "warm test leaves population balanced")
+
+	# A RECYCLED node must leave the group too, not only a warmed one: the
+	# opening-phase restore sweeps get_nodes_in_group(&"enemies") and frees
+	# what it finds, which used to take the whole warm pool with it, and the
+	# herald/separation/tactical passes counted parked bodies as neighbours.
+	# Godot hygiene audit 2026-08-28 §3 MED, top-10 #5.
+	var recycled_probe := pool.call("obtain", scene, self) as EnemyActor
+	await get_tree().process_frame
+	_check(recycled_probe != null and recycled_probe.is_in_group("enemies"), "a live pooled enemy is in the group")
+	if recycled_probe != null:
+		recycled_probe.call("despawn", &"cleanup")
+		await get_tree().process_frame
+		_check(not recycled_probe.is_in_group("enemies"), "a recycled enemy leaves the enemies group")
+		var reobtained := pool.call("obtain", scene, self) as EnemyActor
+		await get_tree().process_frame
+		_check(reobtained != null and reobtained.is_in_group("enemies"), "and rejoins it on the next obtain")
+		if reobtained != null:
+			reobtained.call("despawn", &"cleanup")
+			await get_tree().process_frame
+
 	_finish()
 
 

@@ -759,6 +759,13 @@ func _on_pool_recycle() -> void:
 	_set_body_shape_disabled(true)
 	_set_hitbox_roles(false, false)
 	_unregister_batched_visual()
+	# A parked node is not a live enemy. Everything that ITERATES the group
+	# wants the living (separation, herald buffs, tactical neighbours, the
+	# spawner's census, Level1Builder's opening-restore sweep, which used to
+	# queue_free the whole warm pool); everything that TESTS the group asks
+	# "is this thing I just hit an enemy?", and a parked node is never hit.
+	# _reset_for_pool_obtain re-adds on the way back out.
+	remove_from_group(&"enemies")
 
 
 func _on_pool_recycle_context(context: Dictionary) -> void:
@@ -1320,6 +1327,10 @@ func _quiesce_representation_lease() -> void:
 	_set_body_shape_disabled(true)
 	_set_hitbox_roles(false, false)
 	_unregister_batched_visual()
+	# Same as the recycle path: a lease-quiesced actor is a data-only proxy
+	# with no body, and must not read as a live enemy. Rematerialization
+	# re-adds (this path does NOT go through _reset_for_pool_obtain).
+	remove_from_group(&"enemies")
 
 
 func _resolve_enemy_world_handle() -> int:
