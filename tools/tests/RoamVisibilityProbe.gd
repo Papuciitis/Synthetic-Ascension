@@ -1,11 +1,17 @@
 extends Node
 
-# Rendered-pixels probe for the batched enemy visuals: runs the REAL game in a
-# window (needs a display — headless's dummy renderer cannot cull or draw),
-# spawns a horde, then teleports the player progressively far from spawn and
-# saves a screenshot at each stop. Verifies the emit_changed()/culling-rect fix:
-# batches must stay visible wherever the camera roams, not just near the world
-# origin. Screenshots land in ROAM_SHOT_DIR (env) or user://roam_shots.
+# Probe for the batched enemy visuals: runs the REAL game, spawns a horde, then
+# teleports the player progressively far from spawn and reports the renderer's
+# batch state at each stop, saving a screenshot too when there is a display.
+# Verifies the emit_changed()/culling-rect fix: batches must stay visible
+# wherever the camera roams, not just near the world origin. Screenshots land
+# in ROAM_SHOT_DIR (env) or user://roam_shots.
+#
+# The screenshots need a display; the batch bookkeeping does not, and that is
+# the thing this probe exists to observe. It used to await
+# RenderingServer.frame_post_draw at every stop - which never fires headless -
+# so a headless run got one stop in, hung, and was killed at exit 0 having
+# checked nothing; and even with a display it called _finish(0) unconditionally.
 
 class Driver:
 	extends Node
@@ -25,6 +31,26 @@ class Driver:
 	var _start_pos := Vector2.ZERO
 	var _shot_dir := ""
 	var _busy := false
+	var _passes := 0
+	var _failures := 0
+	var _reported := 0
+	var _captured := 0
+
+	## Enemies dragged to each stop by _drag_enemies_to; every one of them must
+	## be visible in the renderer's batches at that stop, which is the culling
+	## rect regression this probe exists to catch.
+	const DRAGGED_PER_STOP: int = 40
+
+	func _check(condition: bool, message: String) -> void:
+		if condition:
+			_passes += 1
+			print("PASS: ", message)
+		else:
+			_failures += 1
+			push_error("FAIL: " + message)
+
+	func _can_capture() -> bool:
+		return DisplayServer.get_name() != "headless"
 
 	func _ready() -> void:
 		process_mode = Node.PROCESS_MODE_ALWAYS
@@ -64,8 +90,8 @@ class Driver:
 	func _spawn_horde() -> void:
 		var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
 		var filter := get_node_or_null("/root/DebugEnemySpawnFilter")
+		_check(spawner != null and filter != null, "the run has a spawner and a spawn filter")
 		if spawner == null or filter == null:
-			push_error("FAIL: spawner or spawn filter missing")
 			_finish(1)
 			return
 		filter.set("cap_mode", 2) # UNLIMITED
@@ -74,8 +100,8 @@ class Driver:
 
 	func _visit_stops() -> void:
 		var player := get_tree().get_first_node_in_group(&"player") as Node2D
+		_check(player != null, "the run has a player to roam with")
 		if player == null:
-			push_error("FAIL: no player node")
 			_finish(1)
 			return
 		_start_pos = player.global_position
@@ -85,9 +111,21 @@ class Driver:
 			player.global_position = target
 			_drag_enemies_to(target)
 			await get_tree().create_timer(2.0).timeout
-			await RenderingServer.frame_post_draw
+			if _can_capture():
+				await RenderingServer.frame_post_draw
 			_report_and_shoot(i, target)
-		_finish(0)
+		_check(
+			_reported == STOPS.size(),
+			"every stop reported its batch state (%d of %d)" % [_reported, STOPS.size()]
+		)
+		if _can_capture():
+			_check(
+				_captured == STOPS.size(),
+				"every stop was captured (%d of %d)" % [_captured, STOPS.size()]
+			)
+		else:
+			print("ROAM headless: no display, %d screenshots skipped" % STOPS.size())
+		_finish(1 if _failures > 0 else 0)
 
 	func _drag_enemies_to(center: Vector2) -> void:
 		# Teleport through EnemyWorld records, not just nodes: node moves
@@ -115,26 +153,51 @@ class Driver:
 
 	func _report_and_shoot(index: int, target: Vector2) -> void:
 		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
-		if proxy_root != null:
-			var renderer: Node = proxy_root.get("renderer")
-			if renderer != null:
-				print("ROAM stop=%d pos=%s actors=%s visible=%s batches=%s" % [
-					index, target,
-					renderer.call("registered_actor_count"),
-					renderer.call("visible_count"),
-					renderer.call("batch_count"),
+		_check(proxy_root != null, "stop=%d has a proxy root to report on" % index)
+		if proxy_root == null:
+			return
+		var renderer: Node = proxy_root.get("renderer")
+		_check(renderer != null, "stop=%d has a proxy renderer" % index)
+		if renderer == null:
+			return
+		var visible_instances := int(renderer.call("visible_count"))
+		print("ROAM stop=%d pos=%s actors=%s visible=%d batches=%s" % [
+			index, target,
+			renderer.call("registered_actor_count"),
+			visible_instances,
+			renderer.call("batch_count"),
+		])
+		var batched: int = 0
+		for child in renderer.get_children():
+			var mm := child as MultiMeshInstance2D
+			if mm != null and mm.multimesh != null:
+				batched += mm.multimesh.visible_instance_count
+				print("ROAM   batch %s vis=%d inst=%d visible=%s" % [
+					mm.name, mm.multimesh.visible_instance_count,
+					mm.multimesh.instance_count, mm.visible,
 				])
-				for child in renderer.get_children():
-					var mm := child as MultiMeshInstance2D
-					if mm != null and mm.multimesh != null:
-						print("ROAM   batch %s vis=%d inst=%d visible=%s" % [
-							mm.name, mm.multimesh.visible_instance_count,
-							mm.multimesh.instance_count, mm.visible,
-						])
+		# The regression this probe exists for: batches went dark once the
+		# camera left the world origin, so a stop far from spawn showed nothing.
+		# The dragged horde must be in the batches at every stop, not only the
+		# first.
+		_check(
+			visible_instances >= DRAGGED_PER_STOP,
+			"stop=%d keeps the dragged horde batched (%d visible, expected >= %d)"
+				% [index, visible_instances, DRAGGED_PER_STOP]
+		)
+		_check(
+			batched >= DRAGGED_PER_STOP,
+			"stop=%d publishes them into the multimeshes (%d instances)" % [index, batched]
+		)
+		_reported += 1
+		if not _can_capture():
+			return
 		var img := get_viewport().get_texture().get_image()
 		var path := _shot_dir.path_join("stop_%d.png" % index)
 		var err := img.save_png(path)
 		print("ROAM screenshot stop=%d -> %s (err=%d)" % [index, path, err])
+		_check(err == OK, "stop=%d screenshot was written (err=%d)" % [index, err])
+		_captured += 1
 
 	func _dismiss_tutorial_cards() -> void:
 		# First-encounter dossier cards dim the whole screen; a screenshot
@@ -154,7 +217,9 @@ class Driver:
 		get_tree().paused = false
 
 	func _finish(code: int) -> void:
-		print("RoamVisibilityProbe: done, %d stops captured" % STOPS.size())
+		print("RoamVisibilityProbe: %d passed, %d failed, %d stops reported, %d captured" % [
+			_passes, _failures, _reported, _captured,
+		])
 		get_tree().quit(code)
 
 

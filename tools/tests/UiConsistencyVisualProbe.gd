@@ -1,6 +1,38 @@
 extends Node
 
+## Renders the Run Sheet's four pages, the witness notice and the Exchange at
+## two resolutions and saves a screenshot of each, so the layouts can be
+## eyeballed side by side. Shots land in UI_CONSISTENCY_SHOT_DIR (env) or
+## user://ui_consistency_shots.
+##
+## The screenshots need a display; building the fixtures does not, and every
+## capture asserts that the widget it is about to photograph actually built
+## something. The probe used to await RenderingServer.frame_post_draw in
+## _capture, which never fires headless, so a headless run printed nothing at
+## all and was killed at exit 0 - and even with a display it had no assertions
+## and called quit(0) unconditionally.
+
+## Captures a windowed run must produce: four Run Sheet pages, the witness
+## notice and the Exchange, at each of the two resolutions.
+const EXPECTED_CAPTURES: int = 12
+
 var _dir := ""
+var _passes := 0
+var _failures := 0
+var _captured := 0
+
+
+func _check(condition: bool, message: String) -> void:
+	if condition:
+		_passes += 1
+		print("PASS: ", message)
+	else:
+		_failures += 1
+		push_error("FAIL: " + message)
+
+
+func _can_capture() -> bool:
+	return DisplayServer.get_name() != "headless"
 
 
 class ManifestationRunnerFixture:
@@ -59,15 +91,32 @@ func _run() -> void:
 		await _capture_run_sheet_pages(suffix)
 		await _capture_follower_notice(suffix)
 		await _capture_scene("res://ui/screens/HubShop.tscn", "exchange-%s.png" % suffix)
-	get_tree().quit(0)
+	if _can_capture():
+		_check(
+			_captured == EXPECTED_CAPTURES,
+			"every screen was captured (%d of %d)" % [_captured, EXPECTED_CAPTURES]
+		)
+	else:
+		print("UI consistency headless: no display, %d screenshots skipped" % EXPECTED_CAPTURES)
+	print("UiConsistencyVisualProbe: %d passed, %d failed, %d captured" % [
+		_passes, _failures, _captured,
+	])
+	get_tree().quit(1 if _failures > 0 else 0)
 
 
 func _capture_scene(path: String, file_name: String) -> void:
 	var scene := load(path) as PackedScene
+	_check(scene != null, "%s loads" % path.get_file())
+	if scene == null:
+		return
 	var node := scene.instantiate()
 	get_tree().root.add_child(node)
 	await get_tree().process_frame
 	await get_tree().process_frame
+	_check(
+		_collect_label_text(node).strip_edges() != "",
+		"%s renders text to photograph" % path.get_file()
+	)
 	await _capture(file_name)
 	node.queue_free()
 	await get_tree().process_frame
@@ -98,6 +147,12 @@ func _capture_run_sheet_pages(suffix: String) -> void:
 	for page_index in range(page_names.size()):
 		run_sheet.select_page(page_index)
 		await get_tree().process_frame
+		_check(
+			_collect_label_text(run_sheet).strip_edges() != "",
+			"the Run Sheet's %s page renders text to photograph (%s)" % [
+				page_names[page_index], suffix,
+			]
+		)
 		await _capture("run-sheet-%s-%s.png" % [page_names[page_index], suffix])
 	Global.discovered_enemy_ids.assign(saved_discoveries)
 	player.queue_free()
@@ -118,6 +173,10 @@ func _capture_follower_notice(suffix: String) -> void:
 	feedback.call("_on_transaction", 100, 2, 102, &"combat_influence", {}, true, true)
 	feedback.call("_process", 0.91)
 	await get_tree().process_frame
+	_check(
+		_collect_label_text(feedback).strip_edges() != "",
+		"the witness notice renders text to photograph (%s)" % suffix
+	)
 	await _capture("witness-notice-%s.png" % suffix)
 	feedback.queue_free()
 	field.queue_free()
@@ -173,7 +232,25 @@ func _capture_first_encounter() -> void:
 
 
 func _capture(file_name: String) -> void:
+	if not _can_capture():
+		return
 	await RenderingServer.frame_post_draw
 	var image := get_tree().root.get_texture().get_image()
 	var path := "%s/%s" % [_dir, file_name]
-	print("UI consistency shot -> %s (err=%d)" % [path, image.save_png(path)])
+	var err := image.save_png(path)
+	print("UI consistency shot -> %s (err=%d)" % [path, err])
+	_check(err == OK, "%s was written (err=%d)" % [file_name, err])
+	_captured += 1
+
+
+func _collect_label_text(node: Node) -> String:
+	var parts := PackedStringArray()
+	if node is Label:
+		parts.append((node as Label).text)
+	elif node is RichTextLabel:
+		parts.append((node as RichTextLabel).get_parsed_text())
+	elif node is Button:
+		parts.append((node as Button).text)
+	for child in node.get_children():
+		parts.append(_collect_label_text(child))
+	return "".join(parts)
