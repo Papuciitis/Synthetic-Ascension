@@ -283,3 +283,25 @@ numbers above still hold.
 Not covered by this audit: three suites added since — SaveSelectUnreadableSlotTest
 (`9453f95`), PooledProjectileRecycleTest (`e549847`), GameOverFallbackTest
 (`3619ddd`). 105 of the audited 108 remain; the suite is back at the same size.
+
+## Status 2026-08-31 — the never-failing probes can fail now
+
+`39e8fdf` … `c14ee82`. `ScriptParseAuditTest` scans `res://assets` and
+`res://spells` too and refuses an empty sweep; `Segment1StoryProbe`'s one
+real check now decides its exit code; the four game-booting probes run their
+checks headless and report; the roam and UI probes check what they
+photograph; `StyleParityTest` drives the styles instead of grepping their
+source; `RunSheetArchiveTest`'s vacuous negatives got fixtures that can fail;
+`AutosaveDebounceTest` owns slot 96 and deletes it on exit (slot 97 belongs
+to `SaveSelectUnreadableSlotTest`); `DevForceSpawnTest` reads the cull on the
+frame it lands instead of asserting at a fixed wall-clock phase — the
+intermittent failure the 08-30 sweep caught.
+
+The point of the exercise, in one commit: **`1afa4dc` — giving
+`ProjectileRenderBenchmark` a real assertion about its packing immediately
+found that the packing was transposed.** A benchmark that measured and never
+asserted had been carrying a defect.
+
+Review corrections folded in: the per-page Run Sheet assertions were reading
+the index buttons rather than the page they named, and the per-stop pins did
+not pin the regression their own comments claimed. Both repaired.

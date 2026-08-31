@@ -257,3 +257,36 @@ Incidental brushes with cited files, none of them perf-hygiene changes:
 `debug_prints` off in MagicMissile/StaminaCore (logging audit), `7bfc6cb`
 removed zero-caller functions from `EnemyIndex`/`EnemySimulationScheduler`/
 `enemy.gd`/`RangedBullet`. §3's house-pattern files are all untouched.
+
+## Status 2026-08-31 — §2's ten idle-cost rows are closed
+
+All ten (`d1ad489` … `fb1ebbc`, with `ecfd9f1`/`101101a` from review), using
+the §3 house patterns each row names. The tooltip builds on a cache miss
+instead of every frame; ExitRite's locked branch, `PrimaryObjective`'s
+pre-activation and post-finish branches, the Wardstone aura and the waypoint
+sigils cull by distance and share the 30 Hz bucket; the projectile renderer
+stops re-uploading an empty buffer; `AugmentActiveBadge` writes its blend
+only when it moves; the three always-on HUD controllers stop re-asking a
+settled question, the gate overlay sleeping behind a new
+`Global.hud_target_positions_changed` signal (the sanctioned `global.gd`
+edit). Below the cut: the Cursed Vault paints its channel rather than the
+clock and sleeps after opening, and `MagicMissileEffect` retries an empty
+enemy scan on its own 0.1 s clock.
+
+Wake-up completeness was the review's focus, and it earned it: the tooltip
+cache skipped `_measure_tooltip()` on the first build after HUD creation
+(wrong height until something else invalidated it) and did not drop when the
+hovered item was locked. Both repaired before integration.
+
+Verified by reverting each group and re-running, not by inspection: the new
+`WorldIdleRedrawTest` fails 18 of 24 against the previous code and
+`IdlePollGateTest` 10 of 30, with further pins added to `CursedVaultTest`,
+`ItemTooltipLensTest`, `ProjectileSlotReuseTest`, `HudThreatTooltipTest` and
+`RiteSafeguardPresentationTest`.
+
+One row half deliberately left: the checklist controller's "recompute on
+binding change" needs a signal Godot does not provide, and the game's own
+`bindings_changed` does not fire for a direct `InputMap` write — which is
+what `HudContextPresentationTest` asserts. Binding to it would trade a
+player-facing guarantee for one Array read per frame; the per-frame String
+allocation and format were removed instead.
