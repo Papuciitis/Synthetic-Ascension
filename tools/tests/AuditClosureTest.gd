@@ -28,6 +28,7 @@ func _run() -> void:
 	_test_resonance_pacing_defaults()
 	_test_procedural_fallback_score_prefers_reachable_candidate()
 	_test_spawner_reports_a_missing_enemy_source_once()
+	_test_enemy_drop_failures_warn_once_with_spec_context()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -502,3 +503,39 @@ func _test_spawner_reports_a_missing_enemy_source_once() -> void:
 	_check(int(spawner.call("_spawn_one", 0.0, 4)) == 0, "a spawner with no enemy source spawns nothing")
 	_check(not bool(spawner.spawning_enabled), "and disables spawning instead of warning every tick")
 	spawner.free()
+
+
+func _test_enemy_drop_failures_warn_once_with_spec_context() -> void:
+	# Logging audit 2026-08-28 §3 #10: the per-kill drop warnings carried no
+	# enemy context and repeated on every death. They now key a once-guard on
+	# the spec (missing pickup scene) or on the pool signature (empty pool).
+	# Driving the real path emits ONE "[EnemyDrops] no drop:
+	# spec=audit_closure_fixture ..." warning - that line is the behaviour
+	# under test, not a stray log.
+	var spec := EnemySpec.new()
+	spec.id = &"audit_closure_fixture"
+	# EnemyActor shadows the constructor with an `_init` module member, so the
+	# actor has to come from its scene. It is never added to the tree, so no
+	# _ready() work runs.
+	var enemy := (load("res://core/actors/enemy/enemy.tscn") as PackedScene).instantiate() as EnemyActor
+	enemy.spec = spec
+	enemy.item_pickup_scene = null
+	var drops := EnemyDrops.new()
+	drops.setup(enemy)
+	_check(drops.has_method("_claim_drop_warning"), "enemy drop failures route through a once-guard")
+	if drops.has_method("_claim_drop_warning"):
+		_check(not bool(drops.call("_can_drop_item")), "a spec with no pickup scene cannot drop an item")
+		_check(
+			not bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_fixture")),
+			"the failure was reported once, keyed by the spec id that identifies it"
+		)
+		_check(not bool(drops.call("_can_drop_item")), "a second kill of the same spec still cannot drop")
+		_check(
+			not bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_fixture")),
+			"and does not report again"
+		)
+		_check(
+			bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_other_spec")),
+			"a different spec would still get its own report"
+		)
+	enemy.free()

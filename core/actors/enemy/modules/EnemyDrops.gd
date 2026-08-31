@@ -12,8 +12,36 @@ var _pool: Array[String] = []
 # and every pool reuse. Cached arrays are shared read-only — never mutate _pool.
 static var _pool_cache: Dictionary = {}
 
+# Drop failures sit on the kill path: an unconfigured spec used to warn once per
+# enemy death for the whole run. Each distinct failure - one per spec for a
+# missing pickup scene, one per pool signature for an empty pool - reports once.
+static var _warned_drop_failures: Dictionary = {}
+
 func setup(enemy: EnemyActor) -> void:
 	_enemy = enemy
+
+
+static func _claim_drop_warning(key: String) -> bool:
+	if _warned_drop_failures.has(key):
+		return false
+	_warned_drop_failures[key] = true
+	return true
+
+
+func _spec_id() -> String:
+	if _enemy != null and _enemy.spec != null:
+		return String(_enemy.spec.id)
+	return "<no spec>"
+
+
+func _pool_signature() -> String:
+	if _enemy == null:
+		return "<no enemy>"
+	return "%s|%d|%d" % [
+		",".join(_enemy.drop_pool_prefixes),
+		int(_enemy.drop_fallback_to_all),
+		Global.item_db.size(),
+	]
 
 func build_drop_pool() -> void:
 	_pool = []
@@ -26,7 +54,7 @@ func build_drop_pool() -> void:
 		return
 
 	var prefixes: PackedStringArray = _enemy.drop_pool_prefixes
-	var signature := "%s|%d|%d" % [",".join(prefixes), int(_enemy.drop_fallback_to_all), keys.size()]
+	var signature := _pool_signature()
 	var cached: Variant = _pool_cache.get(signature)
 	if cached is Array:
 		_pool = cached
@@ -133,7 +161,11 @@ func _can_drop_item() -> bool:
 	if _enemy == null or not is_instance_valid(_enemy):
 		return false
 	if _enemy.item_pickup_scene == null:
-		push_warning("item_pickup_scene is null")
+		if _claim_drop_warning("pickup_scene|" + _spec_id()):
+			push_warning(
+				"[EnemyDrops] no drop: spec=%s item_pickup_scene unassigned scene=%s"
+				% [_spec_id(), _enemy.scene_file_path]
+			)
 		return false
 	if Global.item_db.is_empty():
 		push_warning("Global.item_db is EMPTY -> no items to drop")
@@ -179,7 +211,11 @@ func _roll_item_drop() -> bool:
 func _spawn_rolled_instance_pickup() -> bool:
 	var pick_id: String = _pick_drop_id()
 	if pick_id == "":
-		push_warning("Drop pool empty -> cannot drop")
+		if _claim_drop_warning("pool|" + _pool_signature()):
+			push_warning(
+				"[EnemyDrops] no drop: spec=%s pool empty prefixes=[%s] fallback=%s"
+				% [_spec_id(), ",".join(_enemy.drop_pool_prefixes), _enemy.drop_fallback_to_all]
+			)
 		return false
 
 	var data: ItemData = Global.get_item_data(pick_id)
