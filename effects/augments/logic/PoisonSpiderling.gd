@@ -50,6 +50,9 @@ func setup(p: Node2D, lifetime: float, bite_power_scale: float, power: float) ->
 
 func _ready() -> void:
 	set_process(true)
+	# Movement lives in _physics_process; _ready enables its callbacks
+	# explicitly, so name this one too rather than relying on the default.
+	set_physics_process(true)
 	add_to_group("spiderlings")
 
 	_pooled = has_meta("__pool_key")
@@ -65,7 +68,13 @@ func _ready() -> void:
 
 	queue_redraw()
 
-func _process(dt: float) -> void:
+## Movement, and the bite that is part of it, run in PHYSICS time: this is a
+## CharacterBody2D calling move_and_slide, and driving that from the render
+## loop moved the spiderling against a physics-time world - on a machine slow
+## enough to hit max_physics_steps_per_frame it outran everything it chased,
+## and it would jitter if physics interpolation were ever enabled.
+## Godot hygiene audit 2026-08-28 §6 MED, top-10 #4.
+func _physics_process(dt: float) -> void:
 	_life_left -= dt
 	if _life_left <= 0.0:
 		_despawn()
@@ -90,6 +99,9 @@ func _process(dt: float) -> void:
 		_last_vel = velocity
 		rotation = velocity.angle()
 
+
+## Drawing stays on the render loop - it is the one part that is about frames.
+func _process(dt: float) -> void:
 	# Don't redraw every frame unless fading/points change: cap to ~15fps
 	_redraw_t = maxf(_redraw_t - dt, 0.0)
 	if _redraw_t <= 0.0:
