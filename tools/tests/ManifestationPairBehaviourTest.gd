@@ -1286,14 +1286,25 @@ func _test_tithe_rhythm() -> void:
 		"a kill after the window closes returns nobody (%d)" % Global.followers
 	)
 
-	# The gate is beats ELAPSED since the last tithe, not the beat number: two
-	# shots on one counter position cannot tithe twice.
-	var before_double: int = Global.followers
-	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
-	_check(
-		Global.followers == before_double,
-		"a second shot on the same counter position tithes nothing (%d)" % Global.followers
-	)
+	# BETWEEN BEATS, nothing: only the top of the cycle pays, which is what
+	# "every 3rd beat" means to the player. Walked a full cycle past the last
+	# tithe before probing, so the elapsed-beats gate below has already reopened
+	# and the beat is the only thing left refusing - the two gates shadow each
+	# other otherwise, and a probe taken right after the echo would prove
+	# neither.
+	for _i in range(beats):
+		state.note_attack()
+	var off_beat_followers: int = Global.followers
+	while state.beat_in_cycle(beats) != 0:
+		var off_beat: int = state.beat_in_cycle(beats)
+		var index_off_beat: int = state.attack_index
+		pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
+		_check(
+			Global.followers == off_beat_followers and state.attack_index == index_off_beat,
+			"a shot on beat %d of the cycle tithes nothing and echoes nothing (%d believers, index %d)"
+			% [off_beat, Global.followers, state.attack_index]
+		)
+		state.note_attack()
 
 	# THE REFUSAL IS THE RULE: it will not spend past the reconstruction cost.
 	# The cost is read at the moment of the spend and moves with the
@@ -1321,20 +1332,47 @@ func _test_tithe_rhythm() -> void:
 		"and says what it would have cost to rebuild"
 	)
 
-	# One Follower above the floor and it pays again. A refused tithe still
-	# marks the beat it was asked on, so a full cycle has to elapse first.
+	# THE ELAPSED-BEATS GATE, which is a regression guard and needs its own
+	# position to be reached at all. The rule marks the beat it was ASKED on
+	# before it tries to spend, and a refused ask fires no echo - so the counter
+	# is still sitting on that very beat. A shot from there must tithe nothing
+	# even once the congregation can afford it, because the gate counts beats
+	# ELAPSED since the last ask, not the beat number; without it the rule pays
+	# twice inside one beat, a permanent doubling of attack rate rather than a
+	# rhythm. The refused ask is the only way to stand here: every ask the rule
+	# accepts sits on a multiple of BEATS, and an ask that pays fires an echo
+	# that carries the counter off the beat.
 	Global.followers = floor_cost + 1
 	_check(
 		Global.followers - 1 >= int(Global.compute_respawn_cost()),
 		"fixture: one believer above the floor (%d have, %d cost)" % [Global.followers, int(Global.compute_respawn_cost())]
 	)
+	_check(
+		state.attack_index == refusal_index and state.beat_in_cycle(beats) == 0,
+		"fixture: the refused ask left the counter on its own beat (%d, beat %d)" % [state.attack_index, state.beat_in_cycle(beats)]
+	)
+	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
+	_check(
+		Global.followers == floor_cost + 1,
+		"an affordable shot on the beat the last ask already marked tithes nothing (%d)" % Global.followers
+	)
+	_check(
+		state.attack_index == refusal_index,
+		"and that shot fires no echo either (%d)" % state.attack_index
+	)
+
+	# A full cycle later the same congregation pays: the gate counts beats, and
+	# these are beats nothing else had to fire to produce.
 	for _i in range(beats):
 		state.note_attack()
-	_seek_tithe_beat(state, beats)
+	_check(
+		state.attack_index - refusal_index == beats and state.beat_in_cycle(beats) == 0,
+		"fixture: a full cycle has elapsed since the marked beat (%d)" % state.attack_index
+	)
 	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
 	_check(
 		Global.followers == floor_cost,
-		"one believer above the floor is enough to pay (%d)" % Global.followers
+		"one believer above the floor is enough to pay once the cycle comes round (%d)" % Global.followers
 	)
 
 	_teardown([pair], state, fake)
