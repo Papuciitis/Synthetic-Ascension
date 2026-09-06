@@ -48,6 +48,7 @@ var _pressure_override := true
 var _sampling := false
 var _phase_started_usec := 0
 var _legacy_pressure_contract := false
+var _recorder_enabled := false
 
 
 func _ready() -> void:
@@ -57,8 +58,14 @@ func _ready() -> void:
 
 func _setup() -> void:
 	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+	var recorder := get_node_or_null("/root/PerformanceFlightRecorder")
 	_legacy_pressure_contract = OS.get_environment("BENCHMARK_LEGACY_PRESSURE") == "1"
 	_pressure_override = OS.get_environment("BENCHMARK_PRESSURE_NATURAL") != "1"
+	_recorder_enabled = OS.get_environment("BENCHMARK_RECORDER_ENABLED") == "1"
+	if recorder != null:
+		recorder.call("configure", {"automatic_capture": false, "write_reports": false})
+		recorder.call("set_enabled", _recorder_enabled)
+		recorder.call("clear_session")
 	if _legacy_pressure_contract and scheduler != null:
 		# Reproduce the pre-change scaled boundaries on the same immutable
 		# workload, so baseline and candidate differ only by scheduler policy.
@@ -146,6 +153,7 @@ func _physics_process(delta: float) -> void:
 func _finish() -> void:
 	set_physics_process(false)
 	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+	var recorder := get_node_or_null("/root/PerformanceFlightRecorder")
 	var counters := (
 		scheduler.call("get_debug_counters") as Dictionary
 		if scheduler != null and scheduler.has_method("get_debug_counters")
@@ -174,6 +182,8 @@ func _finish() -> void:
 		"warmup_seconds": WARMUP_SEC,
 		"sample_seconds": SAMPLE_SEC,
 		"sample_frames": _sample_count,
+		"recorder_enabled": _recorder_enabled,
+		"recorder": recorder.call("get_status_snapshot") if recorder != null else {},
 		"frame_ms": _summary(_frame_ms),
 		"process_ms": _summary(_process_ms),
 		"physics_ms": _summary(_physics_ms),
@@ -237,11 +247,12 @@ func _finish() -> void:
 			_fail("GATE FAILED: ordinary physics bodies reduced %.1f%% < %.0f%%" % [improvement * 100.0, BASELINE_IMPROVEMENT_GATE * 100.0])
 			return
 	print(
-		"EnemyPressureBenchmark: enemies=%d mode=%s pressure_level=%s step_p95=%.2f physics_p95=%.2f frame_p95=%.2f physics_enabled=%s ordinary_physics=%s report=%s"
+		"EnemyPressureBenchmark: enemies=%d mode=%s pressure_level=%s recorder=%s step_p95=%.2f physics_p95=%.2f frame_p95=%.2f physics_enabled=%s ordinary_physics=%s report=%s"
 		% [
 			ENEMY_COUNT,
 			report["pressure_mode"],
 			report["pressure_level"],
+			"on" if _recorder_enabled else "off",
 			float((report["physics_step_ms"] as Dictionary)["p95"]),
 			float((report["physics_ms"] as Dictionary)["p95"]),
 			float((report["frame_ms"] as Dictionary)["p95"]),

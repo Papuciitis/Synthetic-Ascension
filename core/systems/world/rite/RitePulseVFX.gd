@@ -2,7 +2,7 @@ extends Node2D
 class_name RitePulseVFX
 
 var _target_radius := 420.0
-var _duration := 0.72
+var _duration := 0.96
 var _age := 0.0
 var _accent := Color(0.94, 0.68, 0.28, 1.0)
 
@@ -27,8 +27,12 @@ func _draw() -> void:
 	var ring_radius := lerpf(18.0, _target_radius, eased)
 	var alpha := pow(1.0 - t, 1.6)
 	var colour := Color(_accent.r, _accent.g, _accent.b, alpha)
-	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 96, colour, lerpf(5.0, 1.5, t), true)
+	# A short translucent front makes the displacement read as an authored
+	# repulsion, not enemies coincidentally sliding. It never shakes the camera.
+	draw_circle(Vector2.ZERO, ring_radius, Color(colour.r, colour.g, colour.b, alpha * 0.055))
+	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 96, colour, lerpf(8.0, 2.0, t), true)
 	draw_arc(Vector2.ZERO, maxf(4.0, ring_radius - 9.0), 0.0, TAU, 96, Color(colour.r, colour.g, colour.b, alpha * 0.38), 1.0, true)
+	draw_arc(Vector2.ZERO, maxf(4.0, ring_radius * 0.72), 0.0, TAU, 96, Color(colour.r, colour.g, colour.b, alpha * 0.24), 2.0, true)
 	# Fixed ceremonial fragments read as dust/resonant material without relying
 	# on a neon particle texture or introducing random capture variance.
 	for index in range(16):

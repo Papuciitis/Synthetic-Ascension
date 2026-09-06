@@ -484,7 +484,7 @@ func _append_identity(player: Node) -> void:
 	var identity := build_identity(player)
 	if identity.is_empty():
 		return
-	_add_target_line(manifestations_vbox, String(identity.get("sentence", "")), ACCENT, 11)
+	_add_wrapped_line(manifestations_vbox, String(identity.get("sentence", "")), ACCENT, 11)
 
 
 func build_identity(player: Node) -> Dictionary:
@@ -572,11 +572,13 @@ func _add_target_line(container: VBoxContainer, text: String, colour: Color, fon
 	return line
 
 
-## A sentence rather than a readout: wraps inside the panel's 260 px column
-## the way the set dossier's body lines do.
+## A sentence rather than a readout: wraps inside the fixed archive body.
+## Giving this label a width larger than Pages makes the entire Run Sheet grow
+## to satisfy the child, which is exactly what wrapping is meant to avoid.
 func _add_wrapped_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
 	var line := _add_target_line(container, text, colour, maxi(12, font_size))
-	line.custom_minimum_size = Vector2(260, 0)
+	line.custom_minimum_size = Vector2(1, 0)
+	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return line
 
@@ -843,7 +845,8 @@ func _append_manifestations(player: Node) -> void:
 		# read anywhere in the run is worse than a long panel.
 		rule.max_lines_visible = 2
 		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		rule.custom_minimum_size = Vector2(260, 0)
+		rule.custom_minimum_size = Vector2(1, 0)
+		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		rule.add_theme_font_size_override("font_size", 12)
 		rule.modulate = Color(1, 1, 1, 0.72)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -894,7 +897,8 @@ func _append_manifestation_pairs(runner: Node) -> void:
 		var rule := Label.new()
 		rule.text = "   " + pair_rule
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		rule.custom_minimum_size = Vector2(260, 0)
+		rule.custom_minimum_size = Vector2(1, 0)
+		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		rule.add_theme_font_size_override("font_size", 12)
 		rule.modulate = Color(1, 1, 1, 0.76)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
@@ -907,7 +911,11 @@ func _refresh_observations() -> void:
 		for enemy_id in Global.discovered_enemy_ids:
 			ids.append(String(enemy_id))
 	ids.sort()
-	var signature := "|".join(ids)
+	var encountered_modifiers := _encountered_elite_modifiers()
+	var modifier_signature := PackedStringArray()
+	for modifier_id in encountered_modifiers:
+		modifier_signature.append(String(modifier_id))
+	var signature := "%s::%s" % ["|".join(ids), "|".join(modifier_signature)]
 	if signature == String(_page_signatures[ArchivePage.OBSERVATIONS]):
 		return
 	_page_signatures[ArchivePage.OBSERVATIONS] = signature
@@ -916,32 +924,78 @@ func _refresh_observations() -> void:
 	_add_section_heading(observations_vbox, "OBSERVATIONS // INDEXED ARCHETYPES", ACCENT)
 	if ids.is_empty():
 		_add_target_line(observations_vbox, "NO ARCHETYPE INDEXED", Color(1, 1, 1, 0.48), 11)
-		return
+	else:
+		for enemy_id_text in ids:
+			var enemy_id := StringName(enemy_id_text)
+			var entry := EnemyDossierCatalog.get_entry(enemy_id)
+			if entry.is_empty():
+				continue
+			var archetype_name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
+			var record := VBoxContainer.new()
+			record.add_theme_constant_override("separation", 0)
+			record.focus_mode = Control.FOCUS_ALL
+			record.mouse_filter = Control.MOUSE_FILTER_STOP
+			record.tooltip_text = _observation_tooltip(entry)
+			observations_vbox.add_child(record)
 
-	for enemy_id_text in ids:
-		var enemy_id := StringName(enemy_id_text)
-		var entry := EnemyDossierCatalog.get_entry(enemy_id)
-		if entry.is_empty():
-			continue
-		var archetype_name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
+			var name_label := Label.new()
+			name_label.text = "[ %s ]" % archetype_name
+			name_label.theme_type_variation = &"BodyStrong"
+			name_label.add_theme_font_size_override("font_size", 12)
+			name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
+			name_label.mouse_filter = Control.MOUSE_FILTER_PASS
+			record.add_child(name_label)
+
+			var counter := Label.new()
+			counter.text = "COUNTER  //  %s" % String(entry.get("counter", "Observe and adapt."))
+			counter.custom_minimum_size = Vector2(1, 0)
+			counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			counter.max_lines_visible = 2
+			counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			counter.add_theme_font_size_override("font_size", 13)
+			counter.modulate = Color(1, 1, 1, 0.78)
+			counter.mouse_filter = Control.MOUSE_FILTER_PASS
+			record.add_child(counter)
+
+	_append_elite_modifier_observations(encountered_modifiers)
+
+
+func _encountered_elite_modifiers() -> Array[StringName]:
+	var out: Array[StringName] = []
+	for modifier_id in EliteModifiers.ALL:
+		if EliteModifiers.was_taught(modifier_id):
+			out.append(modifier_id)
+	return out
+
+
+func _append_elite_modifier_observations(ids: Array[StringName]) -> void:
+	if ids.is_empty():
+		return
+	_add_section_heading(observations_vbox, "ELITE MODIFIERS // FIELD NOTES", MANIFEST)
+	for modifier_id in ids:
+		var colour := EliteModifiers.tint(modifier_id)
+		var label := EliteModifiers.label(modifier_id)
+		var rule := EliteModifiers.teach_line(modifier_id).trim_prefix(label + " - ")
 		var record := VBoxContainer.new()
 		record.add_theme_constant_override("separation", 0)
 		record.focus_mode = Control.FOCUS_ALL
 		record.mouse_filter = Control.MOUSE_FILTER_STOP
-		record.tooltip_text = _observation_tooltip(entry)
+		record.tooltip_text = EliteModifiers.teach_line(modifier_id)
 		observations_vbox.add_child(record)
 
 		var name_label := Label.new()
-		name_label.text = "[ %s ]" % archetype_name
+		name_label.text = "[ %s ]" % label
 		name_label.theme_type_variation = &"BodyStrong"
 		name_label.add_theme_font_size_override("font_size", 12)
-		name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
+		name_label.add_theme_color_override("font_color", colour)
 		name_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		record.add_child(name_label)
 
 		var counter := Label.new()
-		counter.text = "COUNTER  //  %s" % String(entry.get("counter", "Observe and adapt."))
-		counter.custom_minimum_size = Vector2(260, 0)
+		counter.text = "COUNTER  //  %s" % rule
+		counter.custom_minimum_size = Vector2(1, 0)
+		counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		counter.max_lines_visible = 2
 		counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -1029,8 +1083,14 @@ func _append_next_pair(counts: Dictionary) -> void:
 func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 	if parts.is_empty():
 		return
-	var row := HBoxContainer.new()
+	# A plain HBox makes every noun's minimum width additive. Five live nouns or
+	# long resource hints then enlarge the fixed archive itself, which pushes its
+	# left edge off-screen. Flow keeps the colour-per-noun vocabulary while
+	# wrapping at the body width the Run Sheet actually owns.
+	var row := HFlowContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_theme_constant_override("separation", 8)
+	row.add_theme_constant_override("v_separation", 2)
 	manifestations_vbox.add_child(row)
 	for part in parts:
 		var label := Label.new()

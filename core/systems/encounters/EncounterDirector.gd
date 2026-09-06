@@ -45,6 +45,9 @@ var _active: Dictionary = {}
 var _last_phase: StringName = &""
 var _unlocked_pending: Array[StringName] = []
 var _specialists_sent := false
+var _rite_channel_active := false
+var _rite_response_left := 0.0
+var _rite_response_cursor := 0
 var _counters := {
 	"scheduled": 0,
 	"aborted": 0,
@@ -56,7 +59,11 @@ var _counters := {
 }
 ## Beats sent the moment the Exit Rite is channelled (roadmap 2.8): the world
 ## answers departure with a crossfire on the route and a wedge on the flank.
-@export var rite_specialist_beats: Array[StringName] = [&"sniper_crossfire", &"charger_wedge"]
+@export var rite_specialist_beats: Array[StringName] = [&"rite_sniper_crossfire", &"charger_wedge"]
+## A cleared formation can return during the twenty-second channel, one at a
+## time. Active ids cannot duplicate, which caps the authored ranged and
+## movement pressure even when a high-damage build clears it instantly.
+@export_range(2.0, 20.0, 0.5) var rite_response_interval := 7.0
 ## Seconds within which a newly unlocked beat fires after a phase escalation.
 @export_range(1.0, 60.0, 1.0) var escalation_beat_delay := 10.0
 
@@ -66,6 +73,11 @@ func _ready() -> void:
 	var director := get_node_or_null("/root/ThreatDirector")
 	if director != null and director.has_signal("rite_channel_changed"):
 		director.connect("rite_channel_changed", _on_rite_channel_changed)
+
+
+func _exit_tree() -> void:
+	if _rite_channel_active and _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("set_rite_pressure_active"):
+		_spawner.call("set_rite_pressure_active", false)
 
 
 func setup(spawner: Node, player: Node2D, seed_value: int = 0) -> void:
@@ -91,6 +103,9 @@ func tick(delta: float) -> void:
 	if not enabled or _spawner == null or not is_instance_valid(_spawner):
 		return
 	if _player == null or not is_instance_valid(_player):
+		return
+	if _rite_channel_active:
+		_tick_rite_response(delta)
 		return
 	_check_escalation()
 	_next_beat_in -= delta
@@ -244,12 +259,49 @@ func _check_escalation() -> void:
 
 
 func _on_rite_channel_changed(active: bool) -> void:
+	if active == _rite_channel_active:
+		return
+	_rite_channel_active = active
+	_rite_response_left = rite_response_interval
+	if _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("set_rite_pressure_active"):
+		_spawner.call("set_rite_pressure_active", active)
 	if not active or _specialists_sent or not enabled:
 		return
 	_specialists_sent = true
 	_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
 	for id in rite_specialist_beats:
 		try_spawn_beat(id)
+
+
+func _tick_rite_response(delta: float) -> void:
+	_rite_response_left -= delta
+	if _rite_response_left > 0.0:
+		return
+	_rite_response_left = rite_response_interval
+	request_rite_reinforcement()
+
+
+func request_rite_reinforcement() -> bool:
+	if not _rite_channel_active or not enabled:
+		return false
+	var spawned := _spawn_next_rite_specialist()
+	if spawned:
+		_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
+	return spawned
+
+
+func _spawn_next_rite_specialist() -> bool:
+	if rite_specialist_beats.is_empty():
+		return false
+	for offset in range(rite_specialist_beats.size()):
+		var index := (_rite_response_cursor + offset) % rite_specialist_beats.size()
+		var id := rite_specialist_beats[index]
+		if _active.has(id):
+			continue
+		_rite_response_cursor = (index + 1) % rite_specialist_beats.size()
+		if not try_spawn_beat(id).is_empty():
+			return true
+	return false
 
 
 ## The ritual beat's one member is a world node, not an enemy: it takes the

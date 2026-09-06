@@ -107,10 +107,11 @@ const LAST_CHANCE_VAULT_NAME := "LastChanceVault"
 ## Each charge drain_safeguards spends leaves as a ring this fraction smaller
 ## than the one before it, so the rings read as a count.
 const DRAIN_RING_SHRINK_PER_CHARGE: float = 0.18
+const SEAL_LABELS: PackedStringArray = ["I", "II", "III"]
 const AUTOMATIC_PULSES: Array[Dictionary] = [
-	{"radius": 420.0, "force": 650.0, "stun": 0.15, "heal": 0.15, "invuln": 0.0},
-	{"radius": 500.0, "force": 850.0, "stun": 0.35, "heal": 0.25, "invuln": 0.0},
-	{"radius": 620.0, "force": 1100.0, "stun": 0.60, "heal": 0.35, "invuln": 5.0},
+	{"radius": 560.0, "force": 1050.0, "stun": 0.45, "heal": 0.15, "invuln": 0.0},
+	{"radius": 680.0, "force": 1300.0, "stun": 0.70, "heal": 0.25, "invuln": 0.0},
+	{"radius": 820.0, "force": 1600.0, "stun": 1.00, "heal": 0.35, "invuln": 5.0},
 ]
 const MANUAL_PULSE: Dictionary = {
 	"radius": 420.0,
@@ -478,7 +479,23 @@ func _fire_automatic_seal(seal_number: int) -> void:
 	var index := seal_number - 1
 	if index < 0 or index >= AUTOMATIC_PULSES.size():
 		return
-	_apply_pulse(_automatic_pulse_profile(index))
+	var result := _apply_pulse(_automatic_pulse_profile(index))
+	var seal_label := SEAL_LABELS[index] if index < SEAL_LABELS.size() else str(seal_number)
+	if BattleText != null and BattleText.has_method("popup"):
+		BattleText.popup(
+			global_position,
+			"ARCHIVE SEAL %s — %d CAST BACK" % [seal_label, int(result.get("targets", 0))],
+			Color(1.0, 0.78, 0.32, 1.0),
+			1.25
+		)
+	var sm := get_node_or_null("/root/SfxManager")
+	if sm != null:
+		sm.call("play_2d", &"exit_unlock", global_position, -2.0)
+	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+		PerformanceFlightRecorder.record_event(&"encounter", &"rite_seal_pulse", {
+			"seal": seal_number,
+			"targets": int(result.get("targets", 0)),
+		})
 	queue_redraw()
 
 

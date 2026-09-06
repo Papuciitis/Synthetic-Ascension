@@ -8,12 +8,14 @@ var _failures: int = 0
 
 class FakeCombat:
 	extends Node
-	var positions: Dictionary = {1: Vector2(100.0, 0.0), 2: Vector2(0.0, 200.0), 3: Vector2.ZERO}
+	var positions: Dictionary = {1: Vector2(100.0, 0.0), 2: Vector2(0.0, 200.0), 3: Vector2.ZERO, 4: Vector2(301.0, 0.0)}
 	var knockbacks: Dictionary = {}
 	var stuns: Dictionary = {}
 
-	func gather_in_radius(_origin: Vector2, _radius: float, out: Array[int], _excluded: int = -1) -> void:
-		out.assign([1, 2, 3])
+	func gather_in_radius(origin: Vector2, radius: float, out: Array[int], _excluded: int = -1) -> void:
+		for handle in positions:
+			if origin.distance_to(positions[handle]) <= radius:
+				out.append(handle)
 
 	func position_for_handle(handle: int) -> Vector2:
 		return positions.get(handle, Vector2.ZERO)
@@ -56,6 +58,7 @@ func _ready() -> void:
 	_check(int(result.get("targets", 0)) == 3, "all gathered handles are affected")
 	_check(combat.knockbacks.get(1, Vector2.ZERO).is_equal_approx(Vector2(600.0, 0.0)), "force points away from origin")
 	_check(combat.knockbacks.get(3, Vector2.ZERO).is_equal_approx(Vector2(600.0, 0.0)), "zero offset uses deterministic direction")
+	_check(not combat.knockbacks.has(4) and not combat.stuns.has(4), "an enemy beyond the pulse remains in the fight")
 	_check(is_equal_approx(float(combat.stuns.get(2, 0.0)), 0.25), "stun reaches every handle")
 	_check(is_equal_approx(player.health, 55.0), "healing uses missing HP")
 	_check(player.heal_source == &"exit_rite", "pulse identifies Rite healing for Doctrine rules")

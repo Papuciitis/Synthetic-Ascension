@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synthetic Ascension — Occult-Industrial Typography</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@400;500;700;800&family=Barlow+Semi+Condensed:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500;600&family=Marcellus+SC&family=Vollkorn+SC:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme:dark; --bone:#d7d1bd; --ash:#aaa99f; --brass:#b18b55; --verdigris:#7f9482; --wax:#99584f; --iron:#111311; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; padding:30px; color:var(--bone); background:
+      radial-gradient(ellipse at 50% -10%,rgba(121,112,82,.18),transparent 45%),
+      linear-gradient(rgba(15,17,15,.82),rgba(9,10,9,.92)),
+      repeating-linear-gradient(90deg,#343832 0 118px,#2b2e2a 118px 120px); font-family:'IBM Plex Sans Condensed',sans-serif; }
+    .head { max-width:1230px; margin:0 auto 22px; border-bottom:1px solid #746545; padding-bottom:15px; }
+    h1 { margin:0 0 6px; font:700 29px 'Alegreya SC',serif; letter-spacing:.07em; color:#ded6ba; }
+    .subtitle { max-width:970px; color:#b6b3a7; line-height:1.45; font-size:14px; }
+    .cards { display:grid; grid-template-columns:repeat(3,minmax(295px,1fr)); gap:18px; max-width:1230px; margin:auto; }
+    .card { position:relative; cursor:pointer; overflow:hidden; border:1px solid #554e3f; background:#101210ed; box-shadow:0 18px 42px #000a; transition:.16s ease; clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,13px 100%,0 calc(100% - 13px)); }
+    .card:before,.card:after { content:'◆'; position:absolute; z-index:3; color:#716346; font-size:8px; }
+    .card:before { left:8px; top:7px; }.card:after { right:8px; bottom:7px; }
+    .card:hover { transform:translateY(-2px); border-color:#837353; }
+    .card.selected { border-color:var(--brass); box-shadow:inset 0 0 0 1px #b18b5555,0 20px 50px #000c; }
+    .stage { min-height:430px; position:relative; padding:22px 14px; background:
+      linear-gradient(rgba(25,28,24,.42),rgba(13,15,13,.72)),
+      repeating-linear-gradient(0deg,transparent 0 78px,rgba(177,139,85,.055) 78px 80px),
+      repeating-linear-gradient(90deg,transparent 0 78px,rgba(177,139,85,.055) 78px 80px); }
+    .hud { width:100%; max-width:376px; margin-left:auto; }
+    .objective { position:relative; display:grid; grid-template-columns:46px 1fr; gap:11px; padding:11px 13px 12px 10px; background:linear-gradient(135deg,#151814f7,#0d0f0df7); border:1px solid #665b46; box-shadow:inset 0 0 0 2px #0a0c0a,0 8px 18px #000b; }
+    .objective:before,.objective:after { content:''; position:absolute; top:5px; bottom:5px; width:1px; background:#38382f; }.objective:before{left:4px}.objective:after{right:4px}
+    .seal { width:42px; height:42px; margin-top:4px; display:grid; place-items:center; border:1px solid var(--brass); border-radius:50%; color:#c4a46e; font-size:19px; background:radial-gradient(circle,#28251c 0 36%,transparent 38%),repeating-conic-gradient(#76623f 0 3deg,transparent 3deg 18deg); box-shadow:inset 0 0 0 4px #11130f; }
+    .eyebrow { display:flex; justify-content:space-between; gap:9px; color:#a89d83; font-size:10px; letter-spacing:.13em; text-transform:uppercase; border-bottom:1px solid #4b4638; padding-bottom:3px; }
+    .objective h2 { margin:5px 0 2px; color:#dfd5b9; font-size:18px; line-height:1.1; letter-spacing:.035em; }
+    .detail { color:#bdbbad; font-size:13px; line-height:1.24; }.distance{color:#8e8e83}
+    .plates { display:flex; justify-content:flex-end; gap:6px; margin-top:7px; flex-wrap:wrap; }
+    .plate { padding:5px 8px 5px 7px; color:#b8b5a7; background:#11130ff2; border:1px solid #504a3c; border-left:3px solid var(--verdigris); font-size:11px; letter-spacing:.025em; }
+    .plate.rite { border-left-color:var(--wax); color:#c4ada2; }
+    .proclamation { position:absolute; left:50%; bottom:27px; transform:translateX(-50%); width:86%; padding:9px 14px 10px; text-align:center; color:#cfc6ac; background:linear-gradient(90deg,transparent,#11130ff5 9%,#11130ff5 91%,transparent); border-top:1px solid #766646; border-bottom:1px solid #766646; }
+    .proclamation:before { content:'◇  ⟁  ◇'; display:block; color:#aa8955; font-size:10px; letter-spacing:.34em; margin-bottom:4px; }
+    .proclamation b { display:block; font-size:13px; letter-spacing:.09em; font-weight:600; }.proclamation span{font-size:11px;color:#92958c}
+    .body { min-height:164px; padding:16px 18px 19px; border-top:1px solid #5c513e; background:linear-gradient(#171916,#0f110f); }
+    .body h3 { margin:2px 0 5px; color:#d4c9aa; font-size:18px; }.body p{margin:0;color:#a9aaa1;font-size:13px;line-height:1.42}
+    .tag { display:inline-block; margin-top:10px; color:#9f9989; font-size:10px; letter-spacing:.08em; border-bottom:1px solid #665a43; }
+    .recommend { color:#bda369; font-size:10px; font-weight:600; letter-spacing:.14em; }
+    .a .objective h2,.a .proclamation b { font-family:'Alegreya SC',serif;font-weight:700; }.a .eyebrow,.a .detail,.a .plate,.a .proclamation span{font-family:'IBM Plex Sans Condensed',sans-serif}
+    .b .objective h2,.b .proclamation b { font-family:'Vollkorn SC',serif;font-weight:600; }.b .eyebrow,.b .detail,.b .plate,.b .proclamation span{font-family:'Barlow Semi Condensed',sans-serif;font-weight:500}
+    .c .objective h2,.c .proclamation b { font-family:'Marcellus SC',serif;font-weight:400; }.c .eyebrow,.c .detail,.c .plate,.c .proclamation span{font-family:'IBM Plex Sans Condensed',sans-serif}
+    .rationale { max-width:1230px; margin:18px auto 0; padding:14px 16px; background:#11130fdf; border-left:3px solid var(--brass); color:#b8b5a8; font-size:13px; line-height:1.5; }
+    .rationale strong { color:#d1c6aa; font-family:'Alegreya SC',serif; letter-spacing:.05em; }
+    @media(max-width:1000px){.cards{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="head"><h1>Occult-Industrial Typography</h1><div class="subtitle">Not a future computer: an institutional apparatus built to make the sacred reproducible. These directions combine liturgical or archival display lettering with restrained research-institute text.</div></div>
+  <div class="cards">
+    <div class="card a" data-choice="alegreya-plex" onclick="toggleSelect(this)">
+      <div class="stage"><div class="hud"><div class="objective"><div class="seal">⌬</div><div><div class="eyebrow"><span>Directive · Archive 01</span><span>0 of 3</span></div><h2>Silence the District Relay</h2><div class="detail">Attune the nearest resonant node <span class="distance">· 142 m</span></div></div></div><div class="plates"><div class="plate">Marginal rite · Wager Shrine</div><div class="plate rite">Outer Seal · 2/5</div></div></div><div class="proclamation"><b>Concordance Established · Slipstream Foundry</b><span>Full doctrine entered in the Run Sheet</span></div></div>
+      <div class="body"><div class="recommend">RECOMMENDED · SCHOLASTIC ENGINE</div><h3>Alegreya SC + IBM Plex Sans Condensed</h3><p>Scripture and laboratory recordkeeping in the same institution. Human, scholarly display forms over clear, disciplined systems text.</p><span class="tag">OPEN SOURCE · GAME EMBEDDING ALLOWED</span></div>
+    </div>
+    <div class="card b" data-choice="vollkorn-barlow" onclick="toggleSelect(this)">
+      <div class="stage"><div class="hud"><div class="objective"><div class="seal">⌬</div><div><div class="eyebrow"><span>Directive · Archive 01</span><span>0 of 3</span></div><h2>Silence the District Relay</h2><div class="detail">Attune the nearest resonant node <span class="distance">· 142 m</span></div></div></div><div class="plates"><div class="plate">Marginal rite · Wager Shrine</div><div class="plate rite">Outer Seal · 2/5</div></div></div><div class="proclamation"><b>Concordance Established · Slipstream Foundry</b><span>Full doctrine entered in the Run Sheet</span></div></div>
+      <div class="body"><h3>Vollkorn SC + Barlow Semi Condensed</h3><p>Heavier and more brutalist: an old theological press operating inside an industrial ministry. Strong at large sizes, less uncanny.</p><span class="tag">OPEN SOURCE · OFL</span></div>
+    </div>
+    <div class="card c" data-choice="marcellus-plex" onclick="toggleSelect(this)">
+      <div class="stage"><div class="hud"><div class="objective"><div class="seal">⌬</div><div><div class="eyebrow"><span>Directive · Archive 01</span><span>0 of 3</span></div><h2>Silence the District Relay</h2><div class="detail">Attune the nearest resonant node <span class="distance">· 142 m</span></div></div></div><div class="plates"><div class="plate">Marginal rite · Wager Shrine</div><div class="plate rite">Outer Seal · 2/5</div></div></div><div class="proclamation"><b>Concordance Established · Slipstream Foundry</b><span>Full doctrine entered in the Run Sheet</span></div></div>
+      <div class="body"><h3>Marcellus SC + IBM Plex Sans Condensed</h3><p>Monumental and ceremonial: strongest “manufactured divinity” voice. Its single display weight makes the hierarchy less flexible.</p><span class="tag">OPEN SOURCE · OFL</span></div>
+    </div>
+  </div>
+  <div class="rationale"><strong>Revised HUD language:</strong> one compact directive plaque remains during combat. Nearby secondaries are marginal rites, not app notifications. Exit progress is an Outer Seal status plate and expands only when it changes or while details are held. Pair formation is a brief liturgical proclamation; its full doctrine belongs in the Run Sheet.</div>
+</body>
+</html>

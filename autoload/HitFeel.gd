@@ -42,7 +42,11 @@ const STYLE_MAGIC := &"magic"
 ## number decays identically at any refresh rate. Not the physics tick rate:
 ## the punch decays in wall-clock time, deliberately (see _process).
 const PUNCH_DECAY_REFERENCE_HZ: float = 60.0
-@export_range(1.0, 40.0, 0.5) var punch_decay := 16.0
+# Three pixels per 60 Hz reference frame leaves the ordinary ranged kick a
+# short two-frame ease, a kill about three frames, and a hurt kick about five.
+# The previous 16 erased every authored kick except the 18 px cap in one frame,
+# so the camera snapped out and back like a render hitch instead of punching.
+@export_range(1.0, 40.0, 0.5) var punch_decay := 3.0
 @export_range(0.0, 40.0, 0.5) var punch_max_px := 18.0
 
 var _stop_until_msec := 0

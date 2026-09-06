@@ -30,10 +30,22 @@ class ManifestationRunnerFixture:
 		}]
 
 	func get_noun_counts() -> Dictionary:
-		return {&"momentum": 2, &"cadence": 2}
+		return {
+			&"momentum": 2,
+			&"cadence": 2,
+			&"shard": 3,
+			&"ward": 2,
+			&"fortune": 2,
+		}
 
 	func get_meters() -> Array[Dictionary]:
-		return [{"noun": &"cadence", "label": "CADENCE", "text": "1.9s"}]
+		return [
+			{"noun": &"momentum", "label": "MOMENTUM", "text": "76%"},
+			{"noun": &"cadence", "label": "CADENCE", "text": "1.9s", "hint": " · next hit +45%"},
+			{"noun": &"shard", "label": "SHARDS", "text": "12/12"},
+			{"noun": &"ward", "label": "WARD", "text": "84"},
+			{"noun": &"fortune", "label": "MISFORTUNE", "text": "99"},
+		]
 
 
 class PlayerFixture:
@@ -70,17 +82,26 @@ func _check(condition: bool, message: String) -> void:
 func _run() -> void:
 	var saved_discoveries: Array[StringName] = Global.discovered_enemy_ids.duplicate()
 	Global.discovered_enemy_ids.assign([&"enemy_grunt"])
+	Global.reset_teaching()
+	EliteModifiers.consume_teach(EliteModifiers.ARMOURED)
+	EliteModifiers.consume_teach(EliteModifiers.SHIELDED)
 	var player := PlayerFixture.new()
 	var runner := ManifestationRunnerFixture.new()
 	runner.name = "ManifestationRunner"
 	player.add_child(runner)
 	add_child(player)
 	var inventory := Inventory.new()
+	var archive_width_before_content := _run_sheet.size.x
 
 	_run_sheet.visible = true
 	_run_sheet.refresh(player, inventory)
 	await get_tree().process_frame
 	_check(_run_sheet.size.y <= 540.0, "Run Sheet remains bounded")
+	_check(
+		_run_sheet.size.x <= archive_width_before_content + 0.5,
+		"Manifestation content does not widen the Run Sheet (%.1f -> %.1f)"
+			% [archive_width_before_content, _run_sheet.size.x]
+	)
 
 	var page_names := ["Profile", "Sets", "Manifestations", "Observations"]
 	var complete_index := true
@@ -113,6 +134,17 @@ func _run() -> void:
 			if not boxes.is_empty():
 				var rule_label := (boxes[0] as Control).get_child((boxes[0] as Control).get_child_count() - 1) as Label
 				_check(rule_label.get_theme_font_size("font_size") >= 12, "Manifestation protocols survive 1280 canvas scaling")
+			var manifestation_scroll := _run_sheet.get_node(
+				"Archive/BodyMargin/Pages/ManifestationsScroll"
+			) as ScrollContainer
+			_check(
+				_controls_fit_horizontally(manifestation_page, manifestation_scroll),
+				"Manifestation rows stay inside the fixed archive body"
+			)
+			_check(
+				manifestation_scroll.get_combined_minimum_size().x <= manifestation_scroll.size.x + 0.5,
+				"Manifestation content never demands horizontal overflow"
+			)
 
 		_run_sheet.call("select_page", 3)
 		await get_tree().process_frame
@@ -120,6 +152,18 @@ func _run() -> void:
 		_check(
 			observations != null and "COUNTER  //" in _collect_label_text(observations),
 			"observation counters remain visible without hover"
+		)
+		var observation_text := _collect_label_text(observations)
+		_check(
+			"ELITE MODIFIERS" in observation_text
+			and "ARMOURED" in observation_text
+			and "SHIELDED" in observation_text,
+			"Observations preserve encountered elite modifier names after their popup"
+		)
+		_check(
+			"small hits bounce" in observation_text
+			and "break the shield-bearer first" in observation_text,
+			"Observations preserve encountered elite modifier counters"
 		)
 		var record := _first_focusable(observations)
 		if record != null:
@@ -148,6 +192,7 @@ func _run() -> void:
 	await _verify_set_archive_owns_full_doctrine(player)
 
 	Global.discovered_enemy_ids.assign(saved_discoveries)
+	Global.reset_teaching()
 	player.queue_free()
 	print("RunSheetArchiveTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -378,6 +423,20 @@ func _first_focusable(node: Node) -> Control:
 		if match != null:
 			return match
 	return null
+
+
+func _controls_fit_horizontally(root: Control, viewport: Control) -> bool:
+	if root == null or viewport == null:
+		return false
+	var left := viewport.global_position.x - 0.5
+	var right := viewport.global_position.x + viewport.size.x + 0.5
+	for child in root.find_children("*", "Control", true, false):
+		var control := child as Control
+		if control == null or not control.visible:
+			continue
+		if control.global_position.x < left or control.global_position.x + control.size.x > right:
+			return false
+	return true
 
 
 func _find_button_containing(node: Node, needle: String) -> Button:

@@ -41,6 +41,13 @@ const POOL_WARM_FRAME_BUDGET_USEC := 2500
 # saturated director cannot construct a whole batch in a single frame.
 @export_range(1, 16, 1) var max_spawn_batch_per_tick: int = 4
 
+@export_group("Exit Rite Composition")
+# Random ambient pressure is already near the process-cost knee by 80 live
+# enemies. While the Rite is channelled, authored specialists carry the siege;
+# ambient actors already present stay in the fight, but their cap and refill are
+# bounded so the circle does not become an unreadable melee carpet.
+@export_range(0.10, 1.0, 0.05) var rite_ambient_cap_ratio: float = 0.45
+
 
 @export_group("Boss Suppression (nearby boss/miniboss)")
 @export var boss_suppress_radius: float = 1050.0
@@ -114,6 +121,7 @@ var _pool_warm_queue: Array[PackedScene] = []
 # broadphase in one physics step measured as a 240-300ms physics spike.
 const FORCE_SPAWN_PER_FRAME := 12
 var _force_spawn_queue: int = 0
+var _rite_pressure_active: bool = false
 
 
 func _ready() -> void:
@@ -210,6 +218,10 @@ func _on_tick() -> void:
 		if culled > 0:
 			return
 		alive = _alive_total()
+	# Existing ambient enemies remain and distant excess can be retired above,
+	# but only authored beat members may enter while the player channels.
+	if not _ambient_spawning_allowed():
+		return
 	# A recent distance/stale cleanup opened capacity deliberately.
 	# Give the world some time before the director consumes it again.
 	if _cull_refill_left > 0.0:
@@ -660,6 +672,9 @@ func spawn_burst(extra: int) -> void:
 		return
 	if not spawning_enabled:
 		return
+	if not _ambient_spawning_allowed():
+		_request_rite_reinforcement()
+		return
 	if _player == null or not is_instance_valid(_player):
 		return
 
@@ -714,6 +729,27 @@ func reset_spawn_clock() -> void:
 func suspend_spawning(seconds: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left, maxf(0.0, seconds))
 	reset_spawn_clock()
+
+
+func set_rite_pressure_active(active: bool) -> void:
+	if _rite_pressure_active == active:
+		return
+	_rite_pressure_active = active
+	if active:
+		# Let the next spawn tick apply the smaller cap immediately rather than
+		# waiting on a cull cooldown inherited from ordinary play.
+		_cull_cd = 0.0
+	reset_spawn_clock()
+
+
+func _ambient_spawning_allowed() -> bool:
+	return not _rite_pressure_active
+
+
+func _request_rite_reinforcement() -> void:
+	var director := get_tree().get_first_node_in_group(&"encounter_director")
+	if director != null and director.has_method("request_rite_reinforcement"):
+		director.call("request_rite_reinforcement")
 
 ## Encounter beats (EncounterDirector): spawn one member of an authored
 ## formation at an exact position. Beat members are specials - protected from
@@ -793,11 +829,16 @@ func _tutorial_settings() -> Dictionary:
 
 func _current_alive_cap() -> int:
 	var cfg := _tutorial_settings()
+	var cap_total: int
 	if not cfg.is_empty():
-		return _effective_total_cap(maxi(0, int(cfg.get("cap", 0))))
-	if spawn_table != null and spawn_table.has_method("get_max_alive_total"):
-		return _effective_total_cap(int(spawn_table.call("get_max_alive_total")))
-	return _effective_total_cap(max_alive)
+		cap_total = _effective_total_cap(maxi(0, int(cfg.get("cap", 0))))
+	elif spawn_table != null and spawn_table.has_method("get_max_alive_total"):
+		cap_total = _effective_total_cap(int(spawn_table.call("get_max_alive_total")))
+	else:
+		cap_total = _effective_total_cap(max_alive)
+	if _rite_pressure_active and cap_total > 0:
+		return maxi(1, floori(float(cap_total) * rite_ambient_cap_ratio))
+	return cap_total
 
 
 func _remaining_total_capacity(cap_total: int, alive: int) -> int:

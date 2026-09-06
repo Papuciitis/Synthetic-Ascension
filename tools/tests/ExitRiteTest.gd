@@ -63,10 +63,23 @@ func _ready() -> void:
 	var pulses: Array = ExitRite.AUTOMATIC_PULSES
 	_check(pulses.size() == 3, "the Rite defines three automatic pulses")
 	_check(float(pulses[0].get("heal", 0.0)) == 0.15, "first seal heals 15 percent of missing HP")
-	_check(float(pulses[1].get("force", 0.0)) == 850.0, "second seal uses stronger knockback")
+	var ordinary_knockback_decay := 2200.0
+	for pulse_index in range(pulses.size()):
+		var pulse: Dictionary = pulses[pulse_index]
+		var force := float(pulse.get("force", 0.0))
+		var stopping_distance := force * force / (2.0 * ordinary_knockback_decay)
+		_check(float(pulse.get("radius", 0.0)) >= 520.0, "seal %d reaches beyond the crowded sigil" % (pulse_index + 1))
+		_check(stopping_distance >= rite.radius + 48.0, "seal %d has enough impulse to open a lane (%.0f px)" % [pulse_index + 1, stopping_distance])
+		_check(float(pulse.get("stun", 0.0)) >= 0.40, "seal %d holds the lane long enough to read" % (pulse_index + 1))
 	_check(float(pulses[2].get("invuln", 0.0)) == 5.0, "final seal grants the admission window")
 	rite.call("_apply_pulse", ExitRite.MANUAL_PULSE)
-	_check(rite.get_node("Vfx").find_child("RitePulseVFX*", false, false) != null, "a Rite pulse creates readable ritual-ring feedback")
+	var pulse_vfx := rite.get_node("Vfx").find_child("RitePulseVFX*", false, false)
+	_check(pulse_vfx != null, "a Rite pulse creates readable ritual-ring feedback")
+	if pulse_vfx != null:
+		_check(float(pulse_vfx.get("_duration")) >= 0.9, "the ritual ring persists long enough to read")
+	var popups_before := int(BattleText.get("_count"))
+	rite.call("_fire_automatic_seal", 1)
+	_check(int(BattleText.get("_count")) == popups_before + 1, "an automatic seal announces the lane-opening pulse")
 
 	# The stages themselves must escalate and be spread across the whole rite,
 	# not stacked at the end where nothing can reach the player in time.
@@ -120,7 +133,7 @@ func _test_doctrine_configuration() -> void:
 	_check(int(rite.get("_burst_stage")) == 2, "Law archives burst stages below the initial seal")
 	_check(int(rite.call("_burst_spawn_count", 3)) == 5, "Law rounds enlarged burst counts up")
 	var profile: Dictionary = rite.call("_automatic_pulse_profile", 0)
-	_check(is_equal_approx(float(profile.get("stun", 0.0)), 0.25), "Vessel adds stun to automatic seal pulses")
+	_check(is_equal_approx(float(profile.get("stun", 0.0)), 0.55), "Vessel adds stun to automatic seal pulses")
 	rite.queue_free()
 	Global.attempt_doctrine_rules = saved_rules
 	Global.attempt_exit_hold_mul = saved_hold_mul

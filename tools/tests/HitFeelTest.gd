@@ -123,6 +123,34 @@ func _run() -> void:
 	await get_tree().process_frame
 	_check(is_equal_approx(Engine.time_scale, 1.0), "freeing HitFeel mid-stop restores time_scale")
 
+	# Controlled A/B: the same kill is sent through every combination. This
+	# keeps a positional camera kick distinct from a temporal world slowdown,
+	# so a report that one feels like lag can be diagnosed without guessing.
+	var both := await _run_comparison_arm(player, camera, true, true)
+	var stop_only := await _run_comparison_arm(player, camera, true, false)
+	var punch_only := await _run_comparison_arm(player, camera, false, true)
+	var neither := await _run_comparison_arm(player, camera, false, false)
+	_check(
+		bool(both["temporal"]) and bool(both["positional"]),
+		"A/B both arm contains temporal slowdown and positional punch"
+	)
+	_check(
+		bool(stop_only["temporal"]) and not bool(stop_only["positional"]),
+		"A/B hit-stop-only arm changes time without moving the camera"
+	)
+	_check(
+		not bool(punch_only["temporal"]) and bool(punch_only["positional"]),
+		"A/B camera-only arm moves the camera without slowing time"
+	)
+	_check(
+		not bool(neither["temporal"]) and not bool(neither["positional"]),
+		"A/B disabled arm changes neither time nor camera"
+	)
+	_check(
+		await _camera_punch_has_decay_tail(player, camera),
+		"a kill punch eases over more than one reference frame instead of snapping like a hitch"
+	)
+
 	Global.selected_style_id = previous_style
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 	if live != null:
@@ -132,3 +160,48 @@ func _run() -> void:
 	await get_tree().process_frame
 	print("HitFeelTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+func _run_comparison_arm(
+	player: Node2D,
+	camera: Camera2D,
+	hit_stop: bool,
+	camera_punch: bool,
+) -> Dictionary:
+	Engine.time_scale = 1.0
+	camera.offset = Vector2.ZERO
+	var feel := HitFeelScript.new()
+	feel.hit_stop_enabled = hit_stop
+	feel.camera_punch_enabled = camera_punch
+	feel.min_stop_interval_ms = 120
+	feel.stop_ms = {"crit": 40, "elite": 30, "kill": 60, "melee": 35}
+	add_child(feel)
+	RunEvents.enemy_killed.emit(player, null, Vector2(180.0, 100.0))
+	var result := {
+		"temporal": not is_equal_approx(Engine.time_scale, 1.0),
+		"positional": camera.offset != Vector2.ZERO,
+	}
+	# Stop listening before cleanup so only one comparison arm receives the
+	# next shared signal. _exit_tree also restores a stop it owns.
+	feel.queue_free()
+	await get_tree().process_frame
+	Engine.time_scale = 1.0
+	camera.offset = Vector2.ZERO
+	return result
+
+
+func _camera_punch_has_decay_tail(player: Node2D, camera: Camera2D) -> bool:
+	Engine.time_scale = 1.0
+	camera.offset = Vector2.ZERO
+	var feel := HitFeelScript.new()
+	feel.hit_stop_enabled = false
+	feel.camera_punch_enabled = true
+	add_child(feel)
+	RunEvents.enemy_killed.emit(player, null, Vector2(180.0, 100.0))
+	var before := camera.offset.length()
+	feel._process(1.0 / 60.0)
+	var after := camera.offset.length()
+	feel.queue_free()
+	await get_tree().process_frame
+	camera.offset = Vector2.ZERO
+	return before > 0.0 and after > 0.0 and after < before

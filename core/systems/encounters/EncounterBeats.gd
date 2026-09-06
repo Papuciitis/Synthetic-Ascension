@@ -35,6 +35,24 @@ const RITUAL_KIND := &"ritual"
 
 const PHASE_ORDER: Array[StringName] = [&"recon", &"disturbance", &"ascension", &"collapse"]
 
+# Explicit-only Rite formation. Keeping it outside CATALOG prevents the larger
+# crossfire from silently changing ordinary district encounters.
+const RITE_SNIPER_CROSSFIRE: Dictionary = {
+	"id": &"rite_sniper_crossfire",
+	"label": "RITE CROSSFIRE",
+	"callout": "Sights settle around the Rite.",
+	"answer": "break line of sight",
+	"mode": &"around",
+	"distance": 1400.0,
+	"min_phase": &"disturbance",
+	"cooldown": 0.0,
+	"members": [
+		{"scene": SNIPER, "offset": Vector2(1400.0, 0.0), "elite": false},
+		{"scene": SNIPER, "offset": Vector2(-700.0, -1212.4), "elite": false},
+		{"scene": SNIPER, "offset": Vector2(-700.0, 1212.4), "elite": false},
+	],
+}
+
 const CATALOG: Array[Dictionary] = [
 	{
 		"id": &"charger_wedge",
@@ -173,6 +191,8 @@ const CATALOG: Array[Dictionary] = [
 
 
 static func find(id: StringName) -> Dictionary:
+	if id == &"rite_sniper_crossfire":
+		return RITE_SNIPER_CROSSFIRE
 	for beat in CATALOG:
 		if beat["id"] == id:
 			return beat

@@ -24,12 +24,16 @@ class FakeSpawner:
 	var blocked := Rect2()
 	var tutorial := false
 	var members: Array[Node] = []
+	var rite_pressure_active := false
 
 	func is_tutorial_stage() -> bool:
 		return tutorial
 
 	func is_beat_position_valid(pos: Vector2) -> bool:
 		return not blocked.has_point(pos)
+
+	func set_rite_pressure_active(active: bool) -> void:
+		rite_pressure_active = active
 
 	func spawn_beat_member(scene_path: String, pos: Vector2, elite: bool) -> Node:
 		calls.append({"scene": scene_path, "pos": pos, "elite": elite})
@@ -116,6 +120,8 @@ func _run() -> void:
 	_check(BeatsScript.eligible(&"recon").is_empty(), "no beat is eligible during recon")
 	_check(BeatsScript.eligible(&"disturbance").size() < BeatsScript.CATALOG.size(), "some beats wait for ascension")
 	_check(BeatsScript.eligible(&"collapse").size() == BeatsScript.CATALOG.size(), "every beat is eligible by collapse")
+	_check((BeatsScript.find(&"sniper_crossfire").get("members", []) as Array).size() == 2, "ordinary crossfire keeps its two-sniper shape")
+	_check((BeatsScript.find(&"rite_sniper_crossfire").get("members", []) as Array).size() >= 3, "the larger crossfire is scoped to the Exit Rite")
 
 	# --- cadence: nothing before the first delay, one beat after ---
 	var made := _make(&"disturbance")
@@ -226,9 +232,26 @@ func _run() -> void:
 	_started.clear()
 	spawner.calls.clear()
 	director.call("_on_rite_channel_changed", true)
-	_check(_started.size() == 2 and _started.has(&"sniper_crossfire") and _started.has(&"charger_wedge"), "the rite draws a crossfire and a wedge (%s)" % [_started])
+	_check(_started.size() == 2 and _started.has(&"rite_sniper_crossfire") and _started.has(&"charger_wedge"), "the rite draws a crossfire and a wedge (%s)" % [_started])
+	var rite_snipers := spawner.calls.filter(func(call: Dictionary) -> bool: return String(call["scene"]).contains("Sniper"))
+	_check(rite_snipers.size() >= 3, "the Rite crossfire is more than the ambient two-sniper cap (%d)" % rite_snipers.size())
+	_check(spawner.rite_pressure_active, "the specialist response pauses random ambient pressure")
 	director.call("_on_rite_channel_changed", true)
 	_check(_started.size() == 2, "the specialist response is sent once per run")
+	_free_members(spawner)
+	await get_tree().process_frame
+	spawner.calls.clear()
+	var rite_interval_value: Variant = director.get("rite_response_interval")
+	var rite_interval := float(rite_interval_value) if rite_interval_value is float or rite_interval_value is int else 0.0
+	_check(rite_interval > 0.0, "the Rite specialist cadence is explicit")
+	director.tick(rite_interval + 0.1)
+	_check(_started.size() == 3 and (director.active_beats().size() == 1), "one cleared specialist formation replenishes on the Rite cadence (%s)" % [_started])
+	director.tick(float(director.get("rite_response_interval")) + 0.1)
+	_check(_started.size() == 4 and director.active_beats().size() == 2, "the other formation can replenish without duplicating the first")
+	director.tick(float(director.get("rite_response_interval")) * 2.0)
+	_check(_started.size() == 4, "live Rite formations bound specialist pressure")
+	director.call("_on_rite_channel_changed", false)
+	_check(not spawner.rite_pressure_active, "ambient spawning resumes when channeling stops")
 
 	# --- placement failure: blocked ground skips members, aborts sparse beats ---
 	spawner.calls.clear()
