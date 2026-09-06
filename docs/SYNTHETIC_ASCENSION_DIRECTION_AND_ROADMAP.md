@@ -1740,3 +1740,18 @@ standing frame rather than the sheet. Hit-stop and camera punch are archived: of
 default, kept and tested, entry in the improvement backlog. The art hangs
 mid-body on the player origin (feet 42 px below it) so ability rings wrap
 the character, not the legs.
+
+## 2026-09-06, night — the Ascension tree is designed, not built
+
+The Follower economy thread above now has an answer on paper:
+`docs/design/ASCENSION_TREE_SPEC.md` (research verdicts, economy, structure,
+all nine wedges as node tables, bridges, integration, UI, tests, the numbers
+marked load-bearing or tunable, and the telemetry that settles them) and an
+interactive mock-up, `tools/design/ascension_tree_mockup.html`, generated
+from `tools/design/ascension_tree_data.py`. In one line: income scales with
+a per-segment Reach factor instead of prices ×40; belief Power keys to peak
+Followers; capital costs are fixed per class and escalate per class owned;
+peak-congregation gates the outer rings; Revelations charge per target after
+resolution; refunds shrink by segment and sworn nodes never refund; the Hub
+holds the full tree and Wardstones sell tactical nodes; the Doctrine picks
+become the tree's centre. No game code changed. Build order in the spec §8.
