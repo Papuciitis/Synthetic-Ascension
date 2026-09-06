@@ -1682,10 +1682,12 @@ Its plan (`docs/superpowers/plans/2026-09-06-playtest-stabilization.md`)
 was committed with its 32 checkboxes unticked; the work is done, the boxes
 are not, so read the commit rather than the boxes.
 
-**Two rulings given, neither implemented yet** (details in the
+**Two rulings given and implemented the same day** (details in the
 test-coverage audit's status): Breach Seal enemies pour from the breach's
-fixed location, with the culling rules rechecked alongside; a shared cadence
-clock resolves to the *best* result, not the first or last writer.
+fixed location — dormant when the player is away, capped per breach, with
+the culling condition the ruling attached made concrete; and a shared
+cadence clock resolves a restore to the *freshest* attack rather than the
+first or last writer, through one seam every rule hands a value back to.
 
 **Open design thread, not started:** the Follower economy is an order of
 magnitude out — belief Power caps at 225 Followers, most kills grant at
@@ -1707,3 +1709,10 @@ until first sight instead of dropping it. Everything else in the seven
 production files held up: the rite cap restores on channel end and on exit,
 replenishment cannot duplicate an active formation, the three-sniper
 crossfire is Rite-only.
+
+Sweep on `6bcea16` with both rulings in (all 107 `tools/tests/*.tscn`,
+headless): 75 suites report 3574 passed / 0 failed, 20 report 465 passes / 0
+failures, 12 display-only probes, zero script errors. Each ruling was proved
+red→green against the code it replaced before landing: the breach's first
+pour pin fails under the old objective (207/1), and the cadence pin fails
+with exactly the clobber it names (`0.59s vs gap 0.59s`).

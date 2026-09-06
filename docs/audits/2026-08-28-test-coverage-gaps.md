@@ -356,11 +356,13 @@ were repaired before integration.
   wired; the base class comment shows a previous fix addressed only the
   never-activated case. Changing where enemies spawn is a balance change,
   so it is recorded here rather than made. **Ruled 2026-09-06: enemies
-  pour from the breach's fixed location.** Not yet implemented — the ruling
-  came with a condition: the culling rules must be rechecked alongside it,
-  so a distant open breach neither teleports enemies to the player nor
-  stockpiles an off-screen army (a local population cap and a culling policy
-  for breach-spawned enemies).
+  pour from the breach's fixed location.** Implemented the same day: a breach
+  pours AT itself through `spawner.spawn_burst_at` (ordinary, cullable
+  ambient enemies), is dormant beyond `breach_pour_radius_px` so it neither
+  follows the player nor banks a wave, and keeps at most `breach_max_alive`
+  of its own alive — the culling condition the ruling attached, made
+  concrete. Pinned in `PrimaryObjectiveTest` (207/1 against the old
+  objective, 235/0 now).
 - `DeathRattle.gd:137-140` writes `state.time_since_attack = _gap`
   unconditionally when its hold expires, clobbering a shared-clock reset
   another rule performed while the hold stood — visible only in multi-rule
@@ -370,7 +372,10 @@ were repaired before integration.
   shared clock** — neither first- nor last-writer; effects propose a clock
   state and the most player-favourable valid cadence resolves, so broken
   combinations stay broken (that is the point) without depending on node
-  iteration order. Not yet implemented.
+  iteration order. Implemented the same day as
+  `ManifestationState.propose_time_since_attack`: a restore proposes, the
+  clock keeps the fresher attack; holding a beat open stays a direct write.
+  Pinned in `ManifestationPairBehaviourTest` (235/1 → 236/0).
 
 Also worth knowing: `BuildInfoTest` fails 2 of 11 inside any linked git
 worktree, because `BuildInfo.gd:59` reads `res://.git/HEAD` and a worktree's
