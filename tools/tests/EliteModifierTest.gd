@@ -451,6 +451,21 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 	_check(hidden.has_elite_modifier(EliteModifiers.ARMOURED), "an out-of-view promotion still applies the mechanic")
 	_check(_tips.is_empty() and not EliteModifiers.was_taught(EliteModifiers.ARMOURED), "but teaches nothing and keeps the lesson for one the player can see")
 
+	# The introduction is owed, not dropped: when that elite first comes into
+	# view it pops its label and teaches - so the Run Sheet's field notes know
+	# it even though the promotion itself was never seen.
+	var sight_popups := int(BattleText.get("_count"))
+	hidden.global_position = Vector2(220.0, 240.0)
+	hidden.call("_physics_process", 1.0 / 60.0)
+	_check(
+		EliteModifiers.was_taught(EliteModifiers.ARMOURED) and _tips.size() == 1 and _tips[0] == EliteModifiers.teach_line(EliteModifiers.ARMOURED),
+		"an elite promoted off-screen introduces itself on first sight (%s)" % [_tips]
+	)
+	if BattleText.callouts_enabled():
+		_check(int(BattleText.get("_count")) > sight_popups, "and its label pops on the body then")
+	hidden.call("_physics_process", 1.0 / 60.0)
+	_check(_tips.size() == 1, "and only once - the debt is paid")
+
 	var popups_before := int(BattleText.get("_count"))
 	var seen := _spawn_enemy(Vector2(200.0, 200.0))
 	await get_tree().process_frame
@@ -477,7 +492,7 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 		_tips.size() == 2
 		and _tips[0] == EliteModifiers.teach_line(EliteModifiers.ARMOURED)
 		and _tips[1] == EliteModifiers.teach_line(EliteModifiers.FAST),
-		"the first in-view promotion teaches each modifier once (%s)" % [_tips],
+		"an in-view promotion teaches only the modifier not yet met - FAST here, ARMOURED was taught on sight (%s)" % [_tips],
 	)
 	if BattleText.callouts_enabled():
 		_check(int(BattleText.get("_count")) > popups_before, "and the label pops on the body")

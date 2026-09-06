@@ -119,6 +119,10 @@ const ELITE_LABEL_OFFSET := Vector2(0.0, -34.0)
 const ELITE_LABEL_SCALE := 1.15
 # A promotion this many px past the visible rect still pops and teaches.
 const ELITE_IN_VIEW_MARGIN := 48.0
+## An introduction owed to the player: the promotion happened out of view, so
+## the label and teach line fire on first sight instead of being dropped.
+var _elite_intro_pending: bool = false
+var _elite_intro_tint: Color = Color.WHITE
 
 # Shared movement helpers
 var _orbit_angle: float = 0.0
@@ -294,6 +298,10 @@ func _run_simulation_step(delta: float) -> void:
 	# Only a live VAMPIRIC pays for its clock; every other enemy pays one int test.
 	if (_elite_mod_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
 		_tick_vampiric(delta)
+	# An owed introduction costs one bool per tick; the view test runs only
+	# while it is owed, and never again once paid.
+	if _elite_intro_pending and _in_player_view():
+		_announce_elite_modifiers(elite_modifier_ids(), _elite_intro_tint)
 
 	# Knockback decay
 	if knockback_vel != Vector2.ZERO:
@@ -1060,6 +1068,7 @@ func _clear_elite_modifiers() -> void:
 	_elite_mod_bits = 0
 	_elite_modifier_ids = []
 	_vampiric_left = 0.0
+	_elite_intro_pending = false
 	# The VAMPIRIC pulse writes the sprite's modulate every redraw, and a
 	# queued free still steps this frame: the mark is released before the body
 	# gets back the colour the apply found.
@@ -1090,7 +1099,13 @@ func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
 	# promotion happens in view, and each modifier teaches itself once per run
 	# the first time one is promoted where the player can see it.
 	if not _in_player_view():
+		# Defer, do not drop. An elite promoted off-screen still arrives, and
+		# the Run Sheet's field notes only know a modifier once it has been
+		# taught - a missed popup used to mean no note either.
+		_elite_intro_pending = true
+		_elite_intro_tint = tint
 		return
+	_elite_intro_pending = false
 	var labels: PackedStringArray = []
 	for id in ids:
 		labels.append(EliteModifiers.label(id))
