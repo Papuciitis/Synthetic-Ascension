@@ -113,8 +113,12 @@ bulk reads as size on a sprite this small.
 - The head sheets' scarves are bulkier than the reference GIF's, so the heads
   are baked narrower than the width match and lowered 3–4 px so the coat
   lapels show; if a race's scarf ever looks detached, `head_offsets` is the knob.
-- The elf's front and back run rows barely move their legs; the run bob is
-  what makes them read as running.
+- The elf's front and back run rows are drawn with the lifted foot
+  alternating every frame (front: right foot up in six of eight frames, left
+  in two), so played left to right they shuffle at 5 Hz instead of striding.
+  `run_frame_order` in the elf definition replays them with each foot's swing
+  contiguous (front `1 3 2 7 0 5 6 4`, back `4 2 0 6 1 3 5 7`); the 2 px run
+  bob carries what motion is left. Any race can use the same key.
 - Neighbouring enemy sprites touch across cell borders (shield to arm,
   crossbow to cloak); the split lands where they touch, so a frame can lose
   or keep a pixel-wide sliver at that edge.

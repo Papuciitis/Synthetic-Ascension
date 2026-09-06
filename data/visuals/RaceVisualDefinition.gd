@@ -25,6 +25,10 @@ const DIRECTIONS: Array[StringName] = [&"down", &"left", &"up", &"right"]
 @export var run_columns: int = 8
 ## direction -> row index; every column of that row is one stride frame.
 @export var run_rows: Dictionary = {}
+## Optional direction -> Array of column indices in playback order, for a row
+## whose frames are drawn out of stride order (the elf's front and back rows
+## alternate the lifted foot every frame). Missing = left to right.
+@export var run_frame_order: Dictionary = {}
 
 @export_group("Head sheet")
 @export var head_sheet: Texture2D

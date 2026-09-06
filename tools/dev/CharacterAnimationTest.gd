@@ -49,6 +49,9 @@ func _ready() -> void:
 	var shots_dir := _shots_argument()
 	if not shots_dir.is_empty():
 		_capture_set(shots_dir, true)
+	var cycle_dir := _argument("--cycles=")
+	if not cycle_dir.is_empty():
+		_capture_cycles(cycle_dir, true)
 
 
 func _process(delta: float) -> void:
@@ -103,10 +106,37 @@ func _hold() -> void:
 
 
 func _shots_argument() -> String:
+	return _argument("--shots=")
+
+
+func _argument(prefix: String) -> String:
 	for argument in OS.get_cmdline_user_args():
-		if argument.begins_with("--shots="):
-			return argument.trim_prefix("--shots=")
+		if argument.begins_with(prefix):
+			return argument.trim_prefix(prefix)
 	return ""
+
+
+## Every frame of every run cycle, one screenshot per frame, so a stride can
+## be read as a strip:  -- --cycles=/abs/dir
+func _capture_cycles(directory: String, quit_after: bool) -> void:
+	DirAccess.make_dir_recursive_absolute(directory)
+	var viewport := get_viewport()
+	var body := _visual.body
+	for race in RACES:
+		_visual.set_race(race)
+		for facing in FACINGS:
+			_visual.set_preview(PlayerVisualController.State.RUN, facing)
+			await get_tree().process_frame
+			while body.frame != 0:
+				await body.frame_changed
+			for index in range(body.sprite_frames.get_frame_count(body.animation)):
+				await get_tree().process_frame
+				_save(viewport, "%s/%s_%s_%d.png" % [directory, race, facing, body.frame])
+				await body.frame_changed
+	_visual.clear_preview()
+	print("CharacterAnimationTest: cycle strips written to ", directory)
+	if quit_after:
+		get_tree().quit()
 
 
 ## Every race x state x facing, plus two beats of the idle so the breathing

@@ -179,7 +179,12 @@ func _bake_race(definition: RaceVisualDefinition) -> void:
 			continue
 		var row := int(definition.run_rows[key])
 		var run_frames: Array = []
-		for column in range(definition.run_columns):
+		var order: Array = definition.run_frame_order.get(key, range(definition.run_columns))
+		for column_variant in order:
+			var column := int(column_variant)
+			if column < 0 or column >= definition.run_columns:
+				_fail("%s: run_frame_order[%s] names column %d" % [race, key, column])
+				continue
 			run_frames.append(_cut_body(run, row, column, definition.run_columns, run_scale))
 		bake.add("body_run_" + key, run_frames, definition.run_fps)
 		# Head: one pose per facing; mirror the opposite facing when missing.
