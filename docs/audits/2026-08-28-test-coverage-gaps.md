@@ -355,13 +355,22 @@ were repaired before integration.
   unused parameter suggests spawning *at the breach* was intended and never
   wired; the base class comment shows a previous fix addressed only the
   never-activated case. Changing where enemies spawn is a balance change,
-  so it is recorded here rather than made. **Decision needed.**
+  so it is recorded here rather than made. **Ruled 2026-09-06: enemies
+  pour from the breach's fixed location.** Not yet implemented — the ruling
+  came with a condition: the culling rules must be rechecked alongside it,
+  so a distant open breach neither teleports enemies to the player nor
+  stockpiles an off-screen army (a local population cap and a culling policy
+  for breach-spawned enemies).
 - `DeathRattle.gd:137-140` writes `state.time_since_attack = _gap`
   unconditionally when its hold expires, clobbering a shared-clock reset
   another rule performed while the hold stood — visible only in multi-rule
   loadouts (e.g. alongside Martyr Circuit). Whether the shared clock is
   first-writer-wins or last-writer-wins is a rules question, not a bug with
-  an obvious right answer. **Decision needed.**
+  an obvious right answer. **Ruled 2026-09-06: the best result wins, on one
+  shared clock** — neither first- nor last-writer; effects propose a clock
+  state and the most player-favourable valid cadence resolves, so broken
+  combinations stay broken (that is the point) without depending on node
+  iteration order. Not yet implemented.
 
 Also worth knowing: `BuildInfoTest` fails 2 of 11 inside any linked git
 worktree, because `BuildInfo.gd:59` reads `res://.git/HEAD` and a worktree's

@@ -1629,3 +1629,81 @@ contact-source regression was caught.
 naming consistency and run-sheet rows; the remaining ~45 HIGH coverage rows.
 Save risk #5 remains a plan awaiting a format decision. Phase 2's mechanisms
 are complete and the human playtest is still the gate on Phase 3.
+
+## 2026-09-06 — the first playtest, and the stabilization pass it triggered
+
+**One run, Elf ranged, about an hour** — the easiest combination, so this is
+a first reading, not the §19 verdict. Against the protocol's questions:
+
+- Run Sheet: the Profile mostly answers "why is my Power this value", but the
+  Manifestations page no longer fit on screen.
+- Deep curse + Lens: read correctly, with low confidence ("I think I did").
+- Noun/pair system: **not taught** — discovered, not learned.
+- Elites: read as *different*, but not *which* — the introduction popup is
+  gone too fast, and the modifier needs to be recoverable afterwards.
+- Exit Rite: better, but it plays as a bullet hell while channelling — a full
+  screen of melee and ranged with no tool to clear a lane.
+- Impact: the hit shake reads as **lag**, not impact — "I thought my game was
+  lagging".
+- Economy: ~4,000 Followers by segment 2–3 against shop prices around 100,
+  and the shop is the only sink. The vision's Followers-as-belief model
+  (§Followers) is not what the economy currently expresses.
+- FPS drops during sustained combat; captures taken.
+- Conduit and Slow Heart after their fixes: fine for now.
+
+**The stabilization pass (`24413a5`) took the four priorities that fell out
+of it**, tests before every change, on top of `a49f4ab`:
+
+1. **Run Sheet** — the overflow was the unwrapped build-identity sentence
+   plus fixed-width child labels; Manifestation rows now wrap inside the
+   archive. Observations gains a persistent, cross-archetype **elite
+   modifiers** reference for every modifier met this run, so a missed popup
+   is recoverable (`RunSheetHUD.gd`).
+2. **Hit feel** — a four-arm comparison (`HitFeelTest`) proved hit-stop and
+   camera punch independent, and found the actual defect: the default decay
+   of 16 px per reference frame erased the 3.5–12 px punch within one
+   frame, so the view snapped away and straight back — the "lag". The punch
+   now keeps a short visible decay tail (`docs/diagnostics/2026-09-06-hit-feel-comparison.md`).
+3. **Sustained combat** — the drops are real and **process-bound**, scaling
+   with materialized population: frame p95 16.7 ms below 40 enemies,
+   55.6 ms at 120+; 97 of 106 incidents process-dominant. The flight recorder
+   can hitch (one 32.9 ms snapshot; a repeat peaked at 3.1 ms) but does not
+   explain the slope. Ranked next target: the process-side cost of
+   materialized enemies at 80–130 (`docs/diagnostics/2026-09-06-sustained-combat-profile.md`).
+   The pasted compiler warnings are hygiene, not the cause.
+4. **Exit Rite composition** — channelling now caps ambient pressure (81),
+   stops random melee refills, reroutes scripted waves into bounded
+   specialists, raises the crossfire to three snipers (Rite-only; ordinary
+   crossfire stays at two) and replenishes only cleared formations. Seal
+   pulses reach 560/680/820 px with the impulse and stun to open a lane,
+   with a persistent ring, callout and sound — no damage, no screen wipe.
+
+Its plan (`docs/superpowers/plans/2026-09-06-playtest-stabilization.md`)
+was committed with its 32 checkboxes unticked; the work is done, the boxes
+are not, so read the commit rather than the boxes.
+
+**Two rulings given, neither implemented yet** (details in the
+test-coverage audit's status): Breach Seal enemies pour from the breach's
+fixed location, with the culling rules rechecked alongside; a shared cadence
+clock resolves to the *best* result, not the first or last writer.
+
+**Open design thread, not started:** the Follower economy is an order of
+magnitude out — belief Power caps at 225 Followers, most kills grant at
+least one, the overtime decay floors at one and cannot devalue them, and
+death is the only sink that scales. The vision's answer is current
+Followers as spendable reserve, *peak* Followers unlocking run-specific
+belief thresholds, and attention escalating the world's response — not a
+generic XP bar and not shop prices ×40.
+
+Verified here rather than taken on trust: the stabilization commit was made
+while its own review was still running, so the first complete review is the
+one below. Sweep on `24413a5` (all 107 `tools/tests/*.tscn`, Godot 4.7.2
+headless): 75 suites report 3560 passed / 0 failed, 20 report 465 passes /
+0 failures, 12 display-only probes, **zero script errors**. The review found
+one of the plan's own constraints half-met — elite modifiers were recoverable
+in Observations only if their introduction popped *in view*, so an elite
+promoted off-screen left no field note — fixed by owing the introduction
+until first sight instead of dropping it. Everything else in the seven
+production files held up: the rite cap restores on channel end and on exit,
+replenishment cannot duplicate an active formation, the three-sniper
+crossfire is Rite-only.
