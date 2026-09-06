@@ -111,8 +111,8 @@ func _spawn_loot(rng: RandomNumberGenerator) -> bool:
 
 		var rmin := rarity_min + bonus
 		var rmax := rarity_max + bonus
-		var context := Global.build_item_drop_context(rmin, rmax, &"exploration", 1)
-		var inst := ItemGenerator.create_instance(data, context, rng)
+		var context: ItemDropContext = Global.build_item_drop_context(rmin, rmax, &"exploration", 1)
+		var inst: ItemInstance = ItemGenerator.create_instance(data, context, rng)
 
 		var p := pickup_scene.instantiate() as ItemPickup
 		if p == null:

@@ -158,8 +158,11 @@ func _present_enemy_card(card: Dictionary) -> bool:
 		card.get("texture", null) as Texture2D,
 		String(card.get("ratings", ""))
 	)
-	while not bool(finished[0]) and is_instance_valid(overlay):
-		await get_tree().process_frame
+	while not bool(finished[0]) and is_instance_valid(overlay) and is_inside_tree():
+		var tree := get_tree()
+		if tree == null:
+			break
+		await tree.process_frame
 	var completed := bool(finished[0])
 	if is_instance_valid(overlay):
 		overlay.queue_free()

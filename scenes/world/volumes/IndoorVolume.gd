@@ -325,8 +325,8 @@ func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int,
 		if data == null:
 			continue
 
-		var context := Global.build_item_drop_context(r_min, r_max, &"indoor", 1)
-		var inst := ItemGenerator.create_instance(data, context, rng)
+		var context: ItemDropContext = Global.build_item_drop_context(r_min, r_max, &"indoor", 1)
+		var inst: ItemInstance = ItemGenerator.create_instance(data, context, rng)
 
 		var p := pickup_scene.instantiate() as ItemPickup
 		if p == null:

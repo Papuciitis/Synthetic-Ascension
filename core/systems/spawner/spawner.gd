@@ -799,7 +799,7 @@ func _request_rite_reinforcement() -> void:
 ## phase pick; a non-empty list implies elite.
 func spawn_beat_member(
 	scene_path: String,
-	position: Vector2,
+	spawn_position: Vector2,
 	elite: bool = false,
 	modifier_ids: Array[StringName] = [],
 ) -> Node:
@@ -812,7 +812,7 @@ func spawn_beat_member(
 	if _ei != null and _ei.has_method("try_reserve_special"):
 		if int(_ei.call("try_reserve_special", &"beat", 1)) <= 0:
 			return null
-	var node := _spawn_instance_node(scene, _elapsed / 60.0, 0.0, position, &"beat")
+	var node := _spawn_instance_node(scene, _elapsed / 60.0, 0.0, spawn_position, &"beat")
 	if node == null:
 		if _ei != null and _ei.has_method("release_special"):
 			_ei.call("release_special", &"beat", 1)
@@ -826,9 +826,9 @@ func spawn_beat_member(
 	return node
 
 
-func is_beat_position_valid(position: Vector2) -> bool:
+func is_beat_position_valid(spawn_position: Vector2) -> bool:
 	_refresh_spawn_geometry_cache()
-	return _is_spawn_position_valid(position)
+	return _is_spawn_position_valid(spawn_position)
 
 
 func is_tutorial_stage() -> bool:

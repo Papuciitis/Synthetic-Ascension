@@ -86,7 +86,7 @@ func _process(dt: float) -> void:
 ## the shared 30 Hz bucket rather than every frame. What it paints is unchanged:
 ## _t still advances every frame and the phase is read at draw time.
 func _pulse_redraw() -> void:
-	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
 	if bucket == _last_pulse_bucket:
 		return
 	_last_pulse_bucket = bucket

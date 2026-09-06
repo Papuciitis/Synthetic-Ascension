@@ -164,7 +164,7 @@ func idle_redraw() -> void:
 		var cull := activation_radius_px + IDLE_DRAW_MARGIN_PX
 		if player.global_position.distance_squared_to(global_position) > cull * cull:
 			return
-	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
 	if bucket == _last_pulse_bucket:
 		return
 	_last_pulse_bucket = bucket

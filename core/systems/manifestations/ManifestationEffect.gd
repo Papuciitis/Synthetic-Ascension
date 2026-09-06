@@ -143,7 +143,7 @@ func noun_colour(noun: StringName = &"") -> Color:
 func pulse_redraw() -> void:
 	# Wall-clock buckets (not per-effect timers), so every overlay redraws on
 	# the same frames and none drifts out of phase with the others.
-	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
 	if bucket == _last_pulse_bucket:
 		return
 	_last_pulse_bucket = bucket

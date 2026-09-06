@@ -162,6 +162,7 @@ func _run() -> void:
 	await process_frame
 
 	await _verify_controller_routes_enemy_cards(target)
+	await _verify_controller_teardown_during_enemy_card(target)
 	target.queue_free()
 	await process_frame
 	_finish()
@@ -218,6 +219,47 @@ func _verify_controller_routes_enemy_cards(_target: Node2D) -> void:
 	_check(bool(global.call("is_enemy_discovered", &"enemy_runner")), "completed recognition archives the archetype")
 
 	events.disconnect(&"tutorial_modal_state_changed", modal_cb)
+	host.queue_free()
+	current_scene = null
+	discoveries.assign(previous_discoveries)
+	global.set("debug_force_enemy_introductions", previous_force)
+	await process_frame
+
+
+func _verify_controller_teardown_during_enemy_card(_target: Node2D) -> void:
+	var global := root.get_node("Global")
+	var discoveries: Array = global.get("discovered_enemy_ids") as Array
+	var previous_discoveries: Array = discoveries.duplicate()
+	var previous_force: bool = bool(global.get("debug_force_enemy_introductions"))
+	global.set("debug_force_enemy_introductions", true)
+	discoveries.erase(&"enemy_runner")
+
+	var host := Node.new()
+	root.add_child(host)
+	current_scene = host
+	var controller_script := load("res://ui/controllers/TutorialModalController.gd") as Script
+	var controller: Node = controller_script.new()
+	host.add_child(controller)
+	var enemy := EnemyFixture.new()
+	enemy.spec = EnemySpec.new()
+	enemy.spec.id = &"enemy_runner"
+	enemy.spec.display_name = "Runner"
+	host.add_child(enemy)
+
+	controller.call("_on_enemy_encountered", enemy)
+	await process_frame
+	_check(
+		host.get_node_or_null("FirstEncounterOverlay") != null,
+		"teardown regression starts with an active enemy dossier"
+	)
+	host.remove_child(controller)
+	await process_frame
+	_check(
+		not controller.is_inside_tree(),
+		"removing a controller during an enemy dossier completes without a tree access error"
+	)
+
+	controller.free()
 	host.queue_free()
 	current_scene = null
 	discoveries.assign(previous_discoveries)

@@ -304,7 +304,7 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 
 
 func _publish_batch(
-	visual_key: StringName,
+	_visual_key: StringName,
 	batch: Dictionary,
 	handles: Array[int],
 	alpha: float,

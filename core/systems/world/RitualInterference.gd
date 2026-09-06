@@ -266,7 +266,7 @@ func pulse_redraw() -> void:
 func _bucket_redraw(bucket_ms: int) -> void:
 	# Wall-clock buckets, so the ring shares its redraw frames with the
 	# manifestation overlays instead of drifting out of phase with them.
-	var bucket := int(Time.get_ticks_msec() / bucket_ms)
+	var bucket := floori(float(Time.get_ticks_msec()) / float(bucket_ms))
 	if bucket == _last_pulse_bucket:
 		return
 	_last_pulse_bucket = bucket

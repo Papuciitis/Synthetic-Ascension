@@ -69,7 +69,7 @@ func _process(dt: float) -> void:
 		return
 	if not visible:
 		visible = true
-	var bucket := int(Time.get_ticks_msec() / PULSE_REDRAW_MS)
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
 	if bucket == _last_pulse_bucket:
 		return
 	_last_pulse_bucket = bucket

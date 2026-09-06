@@ -1,4 +1,3 @@
-@static_unload
 class_name EliteModifiers
 extends RefCounted
 

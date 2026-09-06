@@ -137,13 +137,13 @@ func _setup_encounter_director() -> void:
 	if Global != null and "debug_encounter_beats" in Global and not bool(Global.get("debug_encounter_beats")):
 		return
 	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
-	var player := get_tree().get_first_node_in_group(&"player") as Node2D
-	if spawner == null or player == null:
+	var player_node := get_tree().get_first_node_in_group(&"player") as Node2D
+	if spawner == null or player_node == null:
 		return
 	var director := ENCOUNTER_DIRECTOR_SCRIPT.new() as Node
 	director.name = "EncounterDirector"
 	add_child(director)
-	director.call("setup", spawner, player)
+	director.call("setup", spawner, player_node)
 
 
 func _setup_enemy_proxy_root() -> void:

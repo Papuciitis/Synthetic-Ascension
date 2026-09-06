@@ -302,9 +302,9 @@ func _collect_slow_snapshot() -> Dictionary:
 		output["enemy_world_logical"] = int(world_data.get("logical", 0))
 		output["enemy_world_materialized"] = int(world_data.get("materialized", 0))
 		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
-		var manager: Node = proxy_root.get("manager") if proxy_root != null else null
-		if manager != null and manager.has_method("get_debug_counters"):
-			var policy_data := (manager.call("get_debug_counters") as Dictionary).get("policy", {}) as Dictionary
+		var representation_manager: Node = proxy_root.get("manager") if proxy_root != null else null
+		if representation_manager != null and representation_manager.has_method("get_debug_counters"):
+			var policy_data := (representation_manager.call("get_debug_counters") as Dictionary).get("policy", {}) as Dictionary
 			for key in ["materialized_required_kind", "materialized_required_flag", "materialized_in_band", "materialized_beyond_band", "demotion_backlog"]:
 				output["representation_" + key] = int(policy_data.get(key, 0))
 		output["enemy_world_data_only"] = int(world_data.get("data_only", 0))
