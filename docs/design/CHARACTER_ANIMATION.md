@@ -14,10 +14,15 @@ what the sheets actually contain, and what is known to be missing.
    (`enemies/*.tres`). Cells are `Vector2i(row, column)`; rows are detected
    from the art as alpha bands, so uneven spacing does not matter. The same
    resource carries the on-screen sizes and the runtime nudges (`head_offsets`).
-3. **Bake** — `tools/bake_character_atlases.gd` cuts every named cell around
-   its own neck hole (the dark collar opening every body sheet has), scales it
-   to screen size with a premultiplied Lanczos, composites enemy helmets onto
-   their headless bodies, packs one atlas per character and writes a
+3. **Bake** — `tools/bake_character_atlases.gd` splits each row at the
+   emptiest column between neighbouring sprites (not the grid line: shields,
+   crossbows and tails lean into the next cell), drops every opaque piece in a
+   cell that is not the sprite (a neighbour's spill touches the cell edge, dust
+   is tiny), cuts the cell around its own neck hole (the dark collar opening
+   every body sheet has), scales it to screen size with a premultiplied
+   Lanczos, clears pixels fainter than alpha 80 and any pixel with no opaque
+   4-neighbour (resampling halo), composites enemy helmets onto their headless
+   bodies, packs one atlas per character with 2 px of clear padding and writes a
    `CharacterFrameSet` (`assets/textures/characters/baked/<id>_frames.tres`
    + `<id>_atlas.png`): a `SpriteFrames` plus, per frame, the pixel that sits
    on the origin and the collar position.
@@ -63,6 +68,10 @@ Idle: the two idle poses of a facing alternate over a 2.4 s cycle while the
 head lifts one pixel for 1.2 s of it (`breathe`, discrete keys so nothing
 shimmers). The body never moves off the ground line.
 
+Run: body and head rise `run_bob_px` on frames 1–2 and 5–6 of the eight-frame
+stride (two contact beats). It is 1 px for every race and 2 px for the elf,
+whose front and back rows are drawn almost without leg motion.
+
 ## What the sheets actually contain
 
 All four head sheets and both enemy sheets differ from the "8 × 4" ideal in
@@ -82,8 +91,9 @@ the same ways; the definitions encode the truth.
 | grunt / spitter | 2 body rows × 8 + 4 helmet rows × 8 | body: front, back; helmets: back, side, front, front looking down (8 near-identical copies each) |
 
 Per-sheet pixel densities differ (a human idle body is 284 px tall, its run
-body 172 px), so each sheet gets its own scale; the run sheet is scaled so its
-collar is the idle collar's width, then pinned at 49 px against the 48 px idle.
+body 172 px), so each sheet gets its own scale. On screen: human and elf
+bodies 48 px idle / 49 run with 38 px heads; dragonborn and warforged are
+bulkier races drawn small in their sheets, so 54 / 55 with 34 and 33 px heads.
 
 ## Art problems found (not fixable in code)
 
@@ -96,10 +106,18 @@ collar is the idle collar's width, then pinned at 49 px against the 48 px idle.
   composites them; `head_seat` in the enemy definition tunes where the helmet
   sits in the neck hole.
 - The head sheets' scarves are bulkier than the reference GIF's, so the heads
-  are baked at 90 % of the width match and lowered 3–4 px so the coat lapels
-  show; if a race's scarf ever looks detached, `head_offsets` is the knob.
+  are baked narrower than the width match and lowered 3–4 px so the coat
+  lapels show; if a race's scarf ever looks detached, `head_offsets` is the knob.
+- The elf's front and back run rows barely move their legs; the run bob is
+  what makes them read as running.
+- Neighbouring enemy sprites touch across cell borders (shield to arm,
+  crossbow to cloak); the split lands where they touch, so a frame can lose
+  or keep a pixel-wide sliver at that edge.
 - Elf idle "up" columns are mirrored duplicates, not two poses; only column 0
   is used, so the elf does not alternate poses when idle facing up.
 - Several run rows drift a few source pixels between frames (dragonborn
   tails, human side strides): the collar anchoring hides it, but a foot may
   slide by a pixel at 10 fps.
+
+Enemy dossier cards show `EnemySpec.portrait_texture()`: the standing frame
+for a baked archetype, the sprite texture otherwise.

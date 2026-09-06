@@ -17,7 +17,10 @@ const STYLE_MELEE := &"melee"
 const STYLE_RANGED := &"ranged"
 const STYLE_MAGIC := &"magic"
 
-@export var hit_stop_enabled := true
+## Off since the 2026-09-06 playtest: the time dip read as a hitch, not an
+## impact. Kept whole and tested so it can come back tuned; see the
+## improvement backlog.
+@export var hit_stop_enabled := false
 @export var camera_punch_enabled := true
 ## time_scale during a stop. Not zero: sound and VFX keep breathing.
 @export_range(0.0, 0.5, 0.01) var stop_scale := 0.05

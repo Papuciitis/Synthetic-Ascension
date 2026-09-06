@@ -38,6 +38,8 @@ func _run() -> void:
 		live.set("hit_stop_enabled", false)
 		live.set("camera_punch_enabled", false)
 	var feel := HitFeelScript.new()
+	# The stop is archived (off by default); the shapes are still pinned here.
+	feel.hit_stop_enabled = true
 	feel.min_stop_interval_ms = 120
 	feel.stop_ms = {"crit": 40, "elite": 30, "kill": 60, "melee": 35}
 	add_child(feel)

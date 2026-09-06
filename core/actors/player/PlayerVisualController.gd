@@ -37,6 +37,8 @@ const DEFAULT_RACE := &"human"
 const AXIS_BIAS := 1.25
 const MOVING_SPEED_SQ := 1.0
 const BREATHE := &"breathe"
+## Which frames of an eight-frame stride sit on the bounce; two beats per cycle.
+const RUN_BOB_PATTERN: Array[float] = [0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0]
 
 @onready var body: AnimatedSprite2D = $Body
 @onready var head_anchor: Node2D = $HeadAnchor
@@ -164,8 +166,13 @@ func _apply() -> void:
 		head.offset = -frame_set.anchor(next_head, 0)
 		changed = true
 	# Feet stay on the origin; the head rides the collar of the current frame.
+	# Running adds the stride bounce to both, so the head stays attached.
+	var bob := Vector2.ZERO
+	if state == State.RUN:
+		bob = Vector2(0.0, -definition.run_bob_px * RUN_BOB_PATTERN[body.frame % RUN_BOB_PATTERN.size()])
 	body.offset = -frame_set.anchor(body_animation, body.frame)
-	head_anchor.position = frame_set.collar(body_animation, body.frame) + definition.head_offset(facing)
+	body.position = bob
+	head_anchor.position = frame_set.collar(body_animation, body.frame) + definition.head_offset(facing) + bob
 	if changed:
 		visual_changed.emit(body_animation, head_animation, facing)
 

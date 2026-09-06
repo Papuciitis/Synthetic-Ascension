@@ -271,3 +271,16 @@ marked *opinion* are design judgement.
   transitions between the three that exist.
 - Do not tune pressure thresholds until E1 gives a benchmark that exercises
   them; today any number would be tuned against noise.
+
+---
+
+## Archived 2026-09-06: hit-stop
+
+`HitFeel.hit_stop_enabled` is now off by default. In the 2026-09-06 playtest
+the `Engine.time_scale` dip on crits, elite hits and kills read as a hitch
+("feels like lag"), not as impact. The code, its exports (`stop_scale`,
+`stop_ms`, `min_stop_interval_ms`) and `HitFeelTest` are kept whole so it can
+come back tuned; the camera punch stays on. If it returns, try a shorter stop
+(20 ms) with a visible flash on the same frame, or a stop only on kills, and
+judge it in a windowed run rather than by numbers. Effort S, confidence
+*opinion*.

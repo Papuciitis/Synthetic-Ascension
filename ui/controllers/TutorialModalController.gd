@@ -78,11 +78,18 @@ func _on_enemy_encountered(enemy: Node) -> void:
 	if Global != null and Global.is_enemy_discovered(enemy_id) and not Global.debug_force_enemy_introductions:
 		return
 	_session_enemy_ids[enemy_id] = true
-	var texture := spec.sprite_texture
+	var texture := spec.portrait_texture()
 	if texture == null:
 		var sprite := enemy.get_node_or_null("Sprite2D") as Sprite2D
 		if sprite != null:
-			texture = sprite.texture
+			# A sheet-animated sprite shows one region; the card wants that, not the sheet.
+			if sprite.region_enabled and sprite.texture != null:
+				var region := AtlasTexture.new()
+				region.atlas = sprite.texture
+				region.region = sprite.region_rect
+				texture = region
+			else:
+				texture = sprite.texture
 	var dossier_name := String(entry.get("name", spec.display_name))
 	var encounter_entry := entry.duplicate()
 	encounter_entry["name"] = dossier_name

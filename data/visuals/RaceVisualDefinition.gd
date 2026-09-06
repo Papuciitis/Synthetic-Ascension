@@ -49,6 +49,10 @@ const DIRECTIONS: Array[StringName] = [&"down", &"left", &"up", &"right"]
 ## head is placed. Keys are direction names; missing = no nudge.
 @export var head_offsets: Dictionary = {}
 @export var run_fps: float = 10.0
+## Stride bounce while running, in screen px: body and head rise this much on
+## the two contact beats of the eight-frame cycle. Carries a cycle whose
+## drawn legs barely move (the elf's front and back rows).
+@export var run_bob_px: float = 1.0
 ## Seconds for one full idle pose cycle; matches the breathing loop length.
 @export var idle_cycle_seconds: float = 2.4
 

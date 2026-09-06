@@ -163,3 +163,11 @@ enum AI {
 ## be that same atlas so anything reading the texture before init sees it.
 @export var visual_frames: CharacterFrameSet
 @export var animation_fps: float = 10.0
+
+
+## One still of this enemy for cards and tooltips: the standing frame when
+## the art is a baked sheet, otherwise the sprite texture itself.
+func portrait_texture() -> Texture2D:
+	if visual_frames != null and visual_frames.has_animation(&"idle_down"):
+		return visual_frames.frames.get_frame_texture(&"idle_down", 0)
+	return sprite_texture

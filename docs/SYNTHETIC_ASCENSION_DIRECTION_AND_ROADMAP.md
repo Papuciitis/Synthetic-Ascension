@@ -1730,3 +1730,12 @@ hysteresis) and `EnemyAnimator` (one region swap per step, batched through
 the proxy renderer's new per-instance region). Player movement, aiming,
 dash, collision and enemy AI are untouched. Known art gaps: no right-facing
 heads (left is mirrored), no enemy side views or idle poses.
+
+Same evening, from the second look: sprites are split where neighbours touch
+and stripped of spill-over and resampling halo (the enemy side artifacts,
+the dragonborn's clipped and floating tail, the stray border pixels);
+dragonborn and warforged are drawn bigger with smaller heads; a 1–2 px stride
+bob carries the elf's near-static front/back run rows; dossier cards show one
+standing frame rather than the sheet. The hit-stop is archived: off by
+default, kept and tested, entry in the improvement backlog. The camera punch
+stays.

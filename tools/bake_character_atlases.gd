@@ -33,7 +33,16 @@ const HOLE_ALPHA := 200
 const HOLE_MIN_PIXELS := 50
 const HOLE_SEARCH_FRACTION := 0.22
 const SCARF_FRACTION := 0.18
-const ATLAS_PADDING := 1
+## Transparent pixels around every atlas frame, so a frame sampled a hair
+## outside its region never shows its neighbour.
+const ATLAS_PADDING := 2
+## How far (fraction of a cell) a column boundary may move off the grid line
+## to the emptiest column between two sprites that lean into each other.
+const VALLEY_SEARCH_FRACTION := 0.3
+## Baked pixels fainter than this are resampling halo, not art.
+const EDGE_ALPHA := 80
+## Components smaller than this (source px) inside a cell are dust.
+const DUST_PIXELS := 12
 
 ## Facings whose art can stand in for each other by flipping. Front and back
 ## are never mirrors of one another, so only the side pair is here.
@@ -49,6 +58,7 @@ class Sheet:
 	var height := 0
 	var data := PackedByteArray()
 	var bands: Array[Vector2i] = []
+	var splits: Dictionary = {}  # row -> PackedInt32Array of column boundaries
 
 	func alpha(x: int, y: int) -> int:
 		return data[(y * width + x) * 4 + 3]
@@ -130,10 +140,12 @@ func _bake_race(definition: RaceVisualDefinition) -> void:
 	if definition.run_height_px > 0.0:
 		run_scale = definition.run_height_px / float(run_band.y - run_band.x)
 	else:
-		var idle_hole := _hole(idle, _bbox(idle, _cell_rect(idle, idle_down.x, idle_down.y, definition.idle_columns)))
+		var idle_cell := _cell_sheet(idle, idle_down.x, idle_down.y, definition.idle_columns)
+		var idle_hole := _hole(idle_cell, _bbox(idle_cell, _whole(idle_cell)))
 		var run_hole_width := 0.0
 		for column in range(definition.run_columns):
-			var hole := _hole(run, _bbox(run, _cell_rect(run, run_down_row, column, definition.run_columns)))
+			var run_cell := _cell_sheet(run, run_down_row, column, definition.run_columns)
+			var hole := _hole(run_cell, _bbox(run_cell, _whole(run_cell)))
 			run_hole_width += float(hole.get("width", 0))
 		run_hole_width /= float(definition.run_columns)
 		if idle_hole.is_empty() or run_hole_width <= 0.0:
@@ -142,7 +154,8 @@ func _bake_race(definition: RaceVisualDefinition) -> void:
 		else:
 			run_scale = idle_scale * float(idle_hole["width"]) / run_hole_width
 	var head_down: Vector2i = definition.head_cells.get("down", Vector2i.ZERO)
-	var head_bbox := _bbox(head, _cell_rect(head, head_down.x, head_down.y, definition.head_columns))
+	var head_cell := _cell_sheet(head, head_down.x, head_down.y, definition.head_columns)
+	var head_bbox := _bbox(head_cell, _whole(head_cell))
 	var head_scale := definition.head_height_px / float(head_bbox.size.y)
 	print("  scales idle=%.4f run=%.4f head=%.4f" % [idle_scale, run_scale, head_scale])
 
@@ -208,25 +221,26 @@ func _cut_head_for(
 ## A body frame: tight horizontally, the full row band vertically (the band's
 ## bottom is the ground line), hung from the neck hole's centre.
 func _cut_body(sheet: Sheet, row: int, column: int, columns: int, scale: float) -> Frame:
-	var band := _band(sheet, row)
-	var bbox := _bbox(sheet, _cell_rect(sheet, row, column, columns))
-	var hole := _hole(sheet, bbox)
+	var cell := _cell_sheet(sheet, row, column, columns)
+	var bbox := _bbox(cell, _whole(cell))
+	var hole := _hole(cell, bbox)
 	var collar_x := float(hole.get("cx", bbox.position.x + bbox.size.x * 0.5))
-	var collar_y := float(hole.get("cy", band.x))
-	var crop := Rect2i(bbox.position.x, band.x, bbox.size.x, band.y - band.x)
+	var collar_y := float(hole.get("cy", 0))
+	var crop := Rect2i(bbox.position.x, 0, bbox.size.x, cell.height)
 	var frame := Frame.new()
-	frame.image = _downscale(_cut(sheet, crop), scale)
+	frame.image = _downscale(_cut(cell, crop), scale)
 	frame.anchor = Vector2(roundf((collar_x - crop.position.x) * scale), frame.image.get_height())
-	frame.collar = Vector2(0.0, roundf((collar_y - band.x) * scale) - frame.image.get_height())
+	frame.collar = Vector2(0.0, roundf(collar_y * scale) - frame.image.get_height())
 	return frame
 
 
 ## A head frame: the tight cell, hung from the scarf's bottom centre.
 func _cut_head(sheet: Sheet, row: int, column: int, columns: int, scale: float, mirror: bool) -> Frame:
-	var bbox := _bbox(sheet, _cell_rect(sheet, row, column, columns))
-	var scarf_x := _mass_center_x(sheet, bbox, 1.0 - SCARF_FRACTION, 1.0)
+	var cell := _cell_sheet(sheet, row, column, columns)
+	var bbox := _bbox(cell, _whole(cell))
+	var scarf_x := _mass_center_x(cell, bbox, 1.0 - SCARF_FRACTION, 1.0)
 	var frame := Frame.new()
-	frame.image = _downscale(_cut(sheet, bbox), scale)
+	frame.image = _downscale(_cut(cell, bbox), scale)
 	var anchor_x := roundf((scarf_x - bbox.position.x) * scale)
 	if mirror:
 		frame.image.flip_x()
@@ -270,36 +284,40 @@ func _bake_enemy(definition: EnemyVisualDefinition) -> void:
 ## of one row share a canvas size so the enemy's single centred Sprite2D never
 ## jumps between them.
 func _composite_row(sheet: Sheet, row: int, head_cell: Vector2i, definition: EnemyVisualDefinition, scale: float) -> Array:
-	var band := _band(sheet, row)
-	var head_bbox := _bbox(sheet, _cell_rect(sheet, head_cell.x, head_cell.y, definition.columns))
-	var head_image := _cut(sheet, head_bbox)
-	var head_center_x := _mass_center_x(sheet, head_bbox, 1.0 - SCARF_FRACTION, 1.0) - head_bbox.position.x
+	var head_sheet := _cell_sheet(sheet, head_cell.x, head_cell.y, definition.columns)
+	var head_bbox := _bbox(head_sheet, _whole(head_sheet))
+	var head_image := _cut(head_sheet, head_bbox)
+	var head_center_x := _mass_center_x(head_sheet, head_bbox, 1.0 - SCARF_FRACTION, 1.0) - head_bbox.position.x
 	var placements: Array = []
 	var half_width := 0
-	var top := band.x
+	var top := 0
+	var cell_height := 0
 	for column in range(definition.columns):
-		var bbox := _bbox(sheet, _cell_rect(sheet, row, column, definition.columns))
-		var hole := _hole(sheet, bbox)
+		var cell := _cell_sheet(sheet, row, column, definition.columns)
+		cell_height = cell.height
+		var bbox := _bbox(cell, _whole(cell))
+		var hole := _hole(cell, bbox)
 		var cx := roundi(float(hole.get("cx", bbox.position.x + bbox.size.x * 0.5)))
 		var hole_top := int(hole.get("top", bbox.position.y))
 		var hole_bottom := int(hole.get("bottom", bbox.position.y))
 		var head_bottom := hole_top + roundi(definition.head_seat * float(hole_bottom - hole_top))
 		var head_x := cx - roundi(head_center_x)
 		var head_y := head_bottom - head_image.get_height()
-		placements.append({"bbox": bbox, "cx": cx, "head_x": head_x, "head_y": head_y})
+		placements.append({"cell": cell, "bbox": bbox, "cx": cx, "head_x": head_x, "head_y": head_y})
 		half_width = maxi(half_width, maxi(cx - mini(bbox.position.x, head_x), maxi(bbox.end.x, head_x + head_image.get_width()) - cx))
 		top = mini(top, head_y)
 	var width := half_width * 2 + 2
-	var height := band.y - top
+	var height := cell_height - top
 	var frames: Array = []
 	for placement_variant in placements:
 		var placement := placement_variant as Dictionary
+		var cell := placement["cell"] as Sheet
 		var cx := int(placement["cx"])
 		var origin := Vector2i(cx - half_width - 1, top)
 		var canvas := Image.create_empty(width, height, false, Image.FORMAT_RGBA8)
 		var bbox := placement["bbox"] as Rect2i
-		var body_rect := Rect2i(bbox.position.x, band.x, bbox.size.x, band.y - band.x)
-		canvas.blit_rect(sheet.image, body_rect, body_rect.position - origin)
+		var body_rect := Rect2i(bbox.position.x, 0, bbox.size.x, cell.height)
+		canvas.blit_rect(cell.image, body_rect, body_rect.position - origin)
 		var head_pos := Vector2i(int(placement["head_x"]), int(placement["head_y"])) - origin
 		canvas.blend_rect(head_image, Rect2i(Vector2i.ZERO, head_image.get_size()), head_pos)
 		var frame := Frame.new()
@@ -313,7 +331,8 @@ func _narrowest_column(sheet: Sheet, row: int, columns: int) -> int:
 	var best := 0
 	var best_width := 1 << 30
 	for column in range(columns):
-		var bbox := _bbox(sheet, _cell_rect(sheet, row, column, columns))
+		var cell := _cell_sheet(sheet, row, column, columns)
+		var bbox := _bbox(cell, _whole(cell))
 		if bbox.size.x < best_width:
 			best_width = bbox.size.x
 			best = column
@@ -373,11 +392,125 @@ func _band(sheet: Sheet, row: int) -> Vector2i:
 	return sheet.bands[row]
 
 
+## The cell's columns: the grid line, moved to the emptiest column nearby so
+## two sprites that lean into each other's cells are split where they touch.
 func _cell_rect(sheet: Sheet, row: int, column: int, columns: int) -> Rect2i:
 	var band := _band(sheet, row)
-	var x0 := int(float(sheet.width) * float(column) / float(columns))
-	var x1 := int(float(sheet.width) * float(column + 1) / float(columns))
-	return Rect2i(x0, band.x, x1 - x0, band.y - band.x)
+	var splits := _column_splits(sheet, row, columns)
+	return Rect2i(splits[column], band.x, splits[column + 1] - splits[column], band.y - band.x)
+
+
+func _column_splits(sheet: Sheet, row: int, columns: int) -> PackedInt32Array:
+	if sheet.splits.has(row):
+		return sheet.splits[row]
+	var band := _band(sheet, row)
+	var coverage := PackedInt32Array()
+	coverage.resize(sheet.width)
+	for x in range(sheet.width):
+		var count := 0
+		for y in range(band.x, band.y):
+			if sheet.alpha(x, y) > ALPHA_THRESHOLD:
+				count += 1
+		coverage[x] = count
+	var splits := PackedInt32Array([0])
+	var cell_width := float(sheet.width) / float(columns)
+	var radius := int(cell_width * VALLEY_SEARCH_FRACTION)
+	for k in range(1, columns):
+		var grid := int(cell_width * float(k))
+		var best := grid
+		for x in range(maxi(1, grid - radius), mini(sheet.width - 1, grid + radius + 1)):
+			if coverage[x] < coverage[best] or (coverage[x] == coverage[best] and absi(x - grid) < absi(best - grid)):
+				best = x
+		splits.append(best)
+	splits.append(sheet.width)
+	sheet.splits[row] = splits
+	return splits
+
+
+## One cell cut out as its own sheet (y = 0 is the row band's top), with the
+## neighbours' spill-over removed: every opaque component other than the
+## largest is dropped when it touches the cell's left or right edge or is dust.
+func _cell_sheet(sheet: Sheet, row: int, column: int, columns: int) -> Sheet:
+	var rect := _cell_rect(sheet, row, column, columns)
+	var cell := Sheet.new()
+	cell.path = "%s[%d,%d]" % [sheet.path.get_file(), row, column]
+	cell.image = _cut(sheet, rect)
+	_isolate(cell.image)
+	cell.width = cell.image.get_width()
+	cell.height = cell.image.get_height()
+	cell.data = cell.image.get_data()
+	cell.bands = [Vector2i(0, cell.height)]
+	return cell
+
+
+func _whole(sheet: Sheet) -> Rect2i:
+	return Rect2i(0, 0, sheet.width, sheet.height)
+
+
+func _isolate(image: Image) -> void:
+	var width := image.get_width()
+	var height := image.get_height()
+	var data := image.get_data()
+	var labels := PackedInt32Array()
+	labels.resize(width * height)
+	var stack := PackedInt32Array()
+	stack.resize(width * height)
+	var components: Array = []  # [size, min_x, max_x]
+	for start in range(width * height):
+		if labels[start] != 0 or data[start * 4 + 3] <= ALPHA_THRESHOLD:
+			continue
+		var id := components.size() + 1
+		var size := 0
+		var min_x := width
+		var max_x := -1
+		var top := 0
+		stack[0] = start
+		top = 1
+		labels[start] = id
+		while top > 0:
+			top -= 1
+			var index := stack[top]
+			size += 1
+			var x := index % width
+			var y := index / width
+			min_x = mini(min_x, x)
+			max_x = maxi(max_x, x)
+			for dy in range(-1, 2):
+				var ny := y + dy
+				if ny < 0 or ny >= height:
+					continue
+				for dx in range(-1, 2):
+					var nx := x + dx
+					if nx < 0 or nx >= width:
+						continue
+					var neighbour := ny * width + nx
+					if labels[neighbour] == 0 and data[neighbour * 4 + 3] > ALPHA_THRESHOLD:
+						labels[neighbour] = id
+						stack[top] = neighbour
+						top += 1
+		components.append([size, min_x, max_x])
+	if components.size() <= 1:
+		return
+	var largest := 0
+	for i in range(components.size()):
+		if int(components[i][0]) > int(components[largest][0]):
+			largest = i
+	var erase := PackedByteArray()
+	erase.resize(components.size() + 1)
+	var any := false
+	for i in range(components.size()):
+		if i == largest:
+			continue
+		var component: Array = components[i]
+		if int(component[0]) < DUST_PIXELS or int(component[1]) == 0 or int(component[2]) == width - 1:
+			erase[i + 1] = 1
+			any = true
+	if not any:
+		return
+	var clear := Color(0.0, 0.0, 0.0, 0.0)
+	for index in range(width * height):
+		if labels[index] != 0 and erase[labels[index]] != 0:
+			image.set_pixel(index % width, index / width, clear)
 
 
 func _bbox(sheet: Sheet, rect: Rect2i) -> Rect2i:
@@ -468,12 +601,32 @@ func _downscale(image: Image, scale: float) -> Image:
 	var work := image.duplicate() as Image
 	work.premultiply_alpha()
 	work.resize(width, height, Image.INTERPOLATE_LANCZOS)
+	var clear := Color(0.0, 0.0, 0.0, 0.0)
+	var floor_alpha := float(EDGE_ALPHA) / 255.0
 	for y in range(height):
 		for x in range(width):
 			var color := work.get_pixel(x, y)
-			if color.a > 0.0:
+			if color.a < floor_alpha:
+				work.set_pixel(x, y, clear)
+			else:
 				var inv := 1.0 / color.a
 				work.set_pixel(x, y, Color(minf(color.r * inv, 1.0), minf(color.g * inv, 1.0), minf(color.b * inv, 1.0), color.a))
+	# A pixel with no opaque 4-neighbour is resampling noise, not a detail.
+	var lone := PackedInt32Array()
+	for y in range(height):
+		for x in range(width):
+			if work.get_pixel(x, y).a <= 0.0:
+				continue
+			var attached := false
+			for offset: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				var n: Vector2i = Vector2i(x, y) + offset
+				if n.x >= 0 and n.y >= 0 and n.x < width and n.y < height and work.get_pixel(n.x, n.y).a > 0.0:
+					attached = true
+					break
+			if not attached:
+				lone.append(y * width + x)
+	for index in lone:
+		work.set_pixel(index % width, index / width, clear)
 	return work
 
 
@@ -499,13 +652,14 @@ func _write(bake: Bake, atlas_path: String, frames_path: String) -> void:
 			var frame := frame_variant as Frame
 			row_width += frame.image.get_width() + ATLAS_PADDING
 			row_height = maxi(row_height, frame.image.get_height())
-		atlas_width = maxi(atlas_width, row_width)
+		atlas_width = maxi(atlas_width, row_width + ATLAS_PADDING)
 		atlas_height += row_height + ATLAS_PADDING
+	atlas_height += ATLAS_PADDING
 	var atlas := Image.create_empty(atlas_width, atlas_height, false, Image.FORMAT_RGBA8)
 	var regions: Dictionary = {}
-	var y := 0
+	var y := ATLAS_PADDING
 	for name in names:
-		var x := 0
+		var x := ATLAS_PADDING
 		var row_height := 0
 		var rects: Array[Rect2i] = []
 		for frame_variant in bake.animations[name]:
