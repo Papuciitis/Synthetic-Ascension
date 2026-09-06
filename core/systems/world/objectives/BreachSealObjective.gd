@@ -23,11 +23,25 @@ class_name BreachSealObjective
 ## breaches genuinely read as three sources rather than one louder one.
 @export var breach_spawn_interval: float = 4.2
 @export var breach_spawn_count: int = 3
+## Ruling 2026-09-06: breaches pour from where they ARE. Before this, an
+## activated breach called spawn_burst, which rings enemies around the player
+## - so one visit pulled waves after the player anywhere in the district for
+## the rest of the segment, and the breach position handed to the spawn tick
+## went unused. Now a breach the player has walked away from is DORMANT:
+## nothing ticks until they are back within breach_pour_radius_px of THAT
+## breach, so it neither follows them nor stockpiles an off-screen army. Its
+## enemies are ordinary (pooled, under the ambient cap, distance-culled like
+## any other), and each breach keeps at most breach_max_alive of its own
+## alive, so camping one is a bounded fight rather than an exponential one.
+@export var breach_pour_radius_px: float = 1400.0
+@export var breach_max_alive: int = 6
+@export var breach_spawn_spread_px: float = 96.0
 
 var _positions: Array[Vector2] = []
 var _progress: PackedFloat32Array = PackedFloat32Array()
 var _sealed: PackedByteArray = PackedByteArray()
 var _spawn_cd: PackedFloat32Array = PackedFloat32Array()
+var _spawned: Array = [] # per breach: the enemy nodes it poured that may still be alive
 
 
 func is_layout_built() -> bool:
@@ -38,6 +52,7 @@ func build_layout(rng_source: RandomNumberGenerator) -> void:
 	var start_angle: float = rng_source.randf_range(-PI, PI)
 	var count: int = maxi(1, breach_count)
 	_positions.clear()
+	_spawned.clear()
 	_progress.resize(count)
 	_sealed.resize(count)
 	_spawn_cd.resize(count)
@@ -45,6 +60,7 @@ func build_layout(rng_source: RandomNumberGenerator) -> void:
 		var angle := start_angle + TAU * float(index) / float(count)
 		var radius := breach_orbit_px + rng_source.randf_range(-40.0, 40.0)
 		_positions.append(Vector2.RIGHT.rotated(angle) * radius)
+		_spawned.append([])
 		_progress[index] = 0.0
 		_sealed[index] = 0
 		# Stagger the first spawn so all three do not fire on the same frame.
@@ -98,14 +114,45 @@ func on_player_dead(delta: float) -> void:
 			_tick_breach_spawn(index, global_position + _positions[index], delta)
 
 
-func _tick_breach_spawn(index: int, _world: Vector2, delta: float) -> void:
+func _tick_breach_spawn(index: int, world: Vector2, delta: float) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	# Dormant beyond the pour radius: the clock does not even tick, so a
+	# returning player meets the breach as they left it, not an ambush it
+	# banked while they were away.
+	if player.global_position.distance_squared_to(world) > breach_pour_radius_px * breach_pour_radius_px:
+		return
 	_spawn_cd[index] -= delta
 	if _spawn_cd[index] > 0.0:
 		return
 	_spawn_cd[index] = breach_spawn_interval
+	var room: int = breach_max_alive - _prune_breach_spawns(index)
+	if room <= 0:
+		return
 	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
-	if spawner != null and spawner.has_method("spawn_burst"):
-		spawner.call("spawn_burst", maxi(1, breach_spawn_count))
+	if spawner == null or not spawner.has_method("spawn_burst_at"):
+		return
+	var poured: Array = spawner.call("spawn_burst_at", world, mini(maxi(1, breach_spawn_count), room), breach_spawn_spread_px)
+	(_spawned[index] as Array).append_array(poured)
+
+
+## This breach's enemies that are still in the fight: valid, still in the
+## enemies group (a parked or quiesced node has left it) and not a corpse.
+## Validity is checked before any cast - a freed node is exactly what this
+## prunes.
+func _prune_breach_spawns(index: int) -> int:
+	var kept: Array = []
+	for node_variant in (_spawned[index] as Array):
+		if node_variant == null or not is_instance_valid(node_variant):
+			continue
+		var node := node_variant as Node
+		# `get("dead")` is null on anything that is not an enemy actor; compare
+		# against true rather than converting, which null does not do.
+		if node == null or not node.is_in_group(&"enemies") or node.get("dead") == true:
+			continue
+		kept.append(node)
+	_spawned[index] = kept
+	return kept.size()
 
 
 func _on_sealed(at: Vector2) -> void:

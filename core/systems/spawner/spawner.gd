@@ -325,7 +325,10 @@ func _drain_force_spawn_queue() -> void:
 	_force_spawn_queue -= batch
 
 
-func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
+## `forced_pos` places the instances instead of ringing them around the
+## player; `out_nodes` receives what was spawned. Both default to the old
+## behaviour.
+func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Vector2 = Vector2.INF, out_nodes: Array = []) -> int:
 	if total_capacity <= 0:
 		return 0
 	var entry: EnemySpawnEntry = null
@@ -383,8 +386,10 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
 	for _j in range(amount):
 		if per_type_cap > 0 and _alive_count_for_scene(scene_to_spawn) + int(_pending_spawn_by_scene.get(scene_path, 0)) >= per_type_cap:
 			break
-		if _spawn_instance(scene_to_spawn, minutes, entry_elite):
+		var spawned_node := _spawn_instance_node(scene_to_spawn, minutes, entry_elite, forced_pos)
+		if spawned_node != null:
 			spawned_count += 1
+			out_nodes.append(spawned_node)
 
 	return spawned_count
 
@@ -670,13 +675,54 @@ func _is_in_wardstone_field(pos: Vector2) -> bool:
 func spawn_burst(extra: int) -> void:
 	if extra <= 0:
 		return
-	if not spawning_enabled:
+	var gate := _ambient_burst_gate()
+	if gate.x < 0:
 		return
+	var minutes: float = _elapsed / 60.0
+	for _i in range(extra):
+		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y)
+		if remaining_total <= 0:
+			return
+		_spawn_one(minutes, remaining_total)
+
+
+## Ruling 2026-09-06: a source that lives somewhere - a breach - pours its
+## enemies THERE, not in a ring around the player. They are ordinary ambient
+## enemies: pooled, counted under the ambient cap, distance-culled like any
+## other. The caller bounds its own local population; this refuses only what
+## the world cap refuses. Returns the nodes it spawned so the caller can count
+## them. `spread_px` scatters them so a burst is a group, not a stack.
+func spawn_burst_at(position: Vector2, count: int, spread_px: float = 0.0) -> Array:
+	var out: Array = []
+	if count <= 0:
+		return out
+	var gate := _ambient_burst_gate()
+	if gate.x < 0:
+		return out
+	var minutes: float = _elapsed / 60.0
+	for _i in range(count):
+		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y + out.size())
+		if remaining_total <= 0:
+			break
+		var pos := position
+		if spread_px > 0.0:
+			pos += Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * (Global._rng.randf() * spread_px)
+		_spawn_one(minutes, 1, pos, out)
+	return out
+
+
+## The gate every ambient burst passes: enabled, not inside a Rite channel
+## (which reroutes to the specialists), a valid player, then the cull-and-
+## refill dance at the cap. Returns (alive cap, alive now), or x = -1 when
+## nothing may spawn on this call.
+func _ambient_burst_gate() -> Vector2i:
+	if not spawning_enabled:
+		return Vector2i(-1, 0)
 	if not _ambient_spawning_allowed():
 		_request_rite_reinforcement()
-		return
+		return Vector2i(-1, 0)
 	if _player == null or not is_instance_valid(_player):
-		return
+		return Vector2i(-1, 0)
 
 	# cap alive enemies (table overrides if present)
 	var cap_total: int = _current_alive_cap()
@@ -693,19 +739,13 @@ func spawn_burst(extra: int) -> void:
 			alive
 		)
 		if culled > 0:
-			return
+			return Vector2i(-1, 0)
 		alive = _alive_total()
 	if _cull_refill_left > 0.0:
-		return
+		return Vector2i(-1, 0)
 	if cap_total > 0 and alive >= cap_total:
-		return
-
-	var minutes: float = _elapsed / 60.0
-	for _i in range(extra):
-		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
-		if remaining_total <= 0:
-			return
-		_spawn_one(minutes, remaining_total)
+		return Vector2i(-1, 0)
+	return Vector2i(cap_total, alive)
 
 func set_spawning_enabled(value: bool) -> void:
 	spawning_enabled = value

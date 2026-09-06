@@ -36,9 +36,24 @@ class StubPlayer extends Node2D:
 ## without a single real enemy.
 class StubSpawner extends Node:
 	var bursts: Array[int] = []
+	## Each breach pour: {"position", "count"}. The stand-in enemies it returns
+	## sit in the "enemies" group so the objective's own liveness count can see
+	## them - and leave it when a test "kills" them.
+	var pours: Array = []
 
 	func spawn_burst(count: int) -> void:
 		bursts.append(count)
+
+	func spawn_burst_at(position: Vector2, count: int, _spread_px: float = 0.0) -> Array:
+		pours.append({"position": position, "count": count})
+		var out: Array = []
+		for _i in range(count):
+			var enemy := Node2D.new()
+			enemy.add_to_group(&"enemies")
+			add_child(enemy)
+			enemy.global_position = position
+			out.append(enemy)
+		return out
 
 
 ## The real SegmentProcBuilder minus its world build. _ready() needs a
@@ -703,11 +718,11 @@ func _test_breach_seal() -> void:
 	# activation gate was added for.
 	_tick(objective, 40)
 	_check(not objective.is_activated(), "an unreached Breach Seal stays asleep")
-	_check(spawner.bursts.is_empty(), "...and an unreached breach pours nothing")
+	_check(spawner.pours.is_empty(), "...and an unreached breach pours nothing")
 	player.is_dead = true
 	_tick(objective, 40)
 	_check(not objective.is_activated(), "a dead player never activates a distant Breach Seal")
-	_check(spawner.bursts.is_empty(), "...and a distant breach never pours at a corpse")
+	_check(spawner.pours.is_empty(), "...and a distant breach never pours at a corpse")
 	player.is_dead = false
 
 	player.global_position = home + Vector2(objective.activation_radius_px - 20.0, 0.0)
@@ -722,29 +737,71 @@ func _test_breach_seal() -> void:
 		"the detail line counts the open breaches"
 	)
 
-	# An open breach keeps sending things: that IS the objective's timer.
-	_tick(objective, 40)
-	_check(not spawner.bursts.is_empty(), "an open breach keeps pouring while the player is near")
-	var poured: bool = true
-	for burst in spawner.bursts:
-		if burst != objective.breach_spawn_count:
-			poured = false
-	_check(poured, "every pour is the authored breach burst size (%d)" % objective.breach_spawn_count)
-
-	# DEFECT, reported rather than pinned: PrimaryObjective._activated latches
-	# (PrimaryObjective.gd:120) and BreachSealObjective._tick_breach_spawn
-	# (BreachSealObjective.gd:84,101) has no proximity check, so an activated
-	# Breach Seal calls spawn_burst() at ANY distance - and spawner.gd's
-	# _pick_spawn_pos (spawner.gd:513) rings those enemies around the PLAYER, so
-	# the pour follows them across the district for the rest of the segment.
-	# WardVigilObjective._maybe_spawn_wave (WardVigilObjective.gd:88) gates on
-	# _inside and stops correctly; that correct half is pinned in the vigil
-	# section above ("a vigil the player has left calls no further waves").
-
 	# Fixture read, not an assertion: the breaches are seeded, so the test has
 	# to ask the objective where it opened them.
 	var sites: Array = objective.get("_positions")
 	_check(sites.size() == objective.steps_total(), "every breach step has a site on the ground")
+
+	# An open breach keeps sending things: that IS the objective's timer. And
+	# it sends them FROM THE BREACH (ruling 2026-09-06) - the old spawn_burst
+	# rang them around the player instead, so a breach's pour followed the
+	# player across the district for the rest of the segment.
+	_tick(objective, 40)
+	_check(not spawner.pours.is_empty(), "an open breach keeps pouring while the player is near")
+	var sized: bool = true
+	var at_a_breach: bool = true
+	for pour in spawner.pours:
+		if int(pour["count"]) != objective.breach_spawn_count:
+			sized = false
+		var where: Vector2 = pour["position"]
+		var on_site := false
+		for site in sites:
+			if where.is_equal_approx(home + (site as Vector2)):
+				on_site = true
+		if not on_site or where.is_equal_approx(player.global_position):
+			at_a_breach = false
+	_check(sized, "every pour is the authored breach burst size (%d)" % objective.breach_spawn_count)
+	_check(at_a_breach, "and every pour is AT a breach, never around the player")
+
+	# A breach the player has walked away from is DORMANT: it neither follows
+	# them nor banks a wave for their return. The breaches sit 430 px from the
+	# centre; with the pour radius pulled in to 300 px, standing at the centre
+	# is out of reach of all three.
+	var pours_before := spawner.pours.size()
+	objective.breach_pour_radius_px = 300.0
+	player.global_position = home
+	_tick(objective, 40)
+	_check(spawner.pours.size() == pours_before, "a breach beyond its pour radius is dormant - it neither follows the player nor banks a wave")
+	# Back within reach of breach 0 - but outside its seal radius, so this is
+	# a fight next to it, not a seal.
+	var near_zero := home + (sites[0] as Vector2) + Vector2(200.0, 0.0)
+	player.global_position = near_zero
+	_tick(objective, 40)
+	_check(spawner.pours.size() > pours_before, "returning within reach of a breach wakes it")
+	var only_that_one: bool = true
+	for index in range(pours_before, spawner.pours.size()):
+		if not (spawner.pours[index]["position"] as Vector2).is_equal_approx(home + (sites[0] as Vector2)):
+			only_that_one = false
+	_check(only_that_one, "and only THAT breach pours - the two out of reach stay dormant")
+
+	# Each breach keeps at most breach_max_alive of its own alive: camping one
+	# is a bounded fight, not an exponential one. Killing them reopens it.
+	_tick(objective, 200)
+	var own: Array = (objective.get("_spawned") as Array)[0]
+	var alive_here := 0
+	for enemy_variant in own:
+		if is_instance_valid(enemy_variant) and (enemy_variant as Node).is_in_group(&"enemies"):
+			alive_here += 1
+	_check(alive_here == objective.breach_max_alive, "a camped breach keeps at most breach_max_alive of its own alive (%d)" % alive_here)
+	var pours_at_cap := spawner.pours.size()
+	_tick(objective, 40)
+	_check(spawner.pours.size() == pours_at_cap, "and pours nothing more while they live")
+	for enemy_variant in own:
+		if is_instance_valid(enemy_variant):
+			(enemy_variant as Node).remove_from_group(&"enemies")
+	_tick(objective, 40)
+	_check(spawner.pours.size() > pours_at_cap, "killing them reopens the breach")
+	objective.breach_pour_radius_px = 1400.0
 
 	player.global_position = home
 	_tick(objective, 40)
@@ -794,14 +851,19 @@ func _test_breach_seal() -> void:
 		"...but never all of it (%d ticks to resume vs %d from scratch)" % [resume_ticks, seal_ticks]
 	)
 
-	# A corpse seals nothing, but the breaches do not stop pouring either.
-	var bursts_before := spawner.bursts.size()
+	# A corpse seals nothing, but the breaches do not stop pouring either. The
+	# breach it lies on may be at its local cap from earlier: those count as
+	# killed first, which is the only way a capped breach ever pours again.
+	for enemy_variant in (objective.get("_spawned") as Array)[2]:
+		if is_instance_valid(enemy_variant):
+			(enemy_variant as Node).remove_from_group(&"enemies")
+	var pours_before_corpse := spawner.pours.size()
 	var done_before := objective.steps_done()
 	player.is_dead = true
 	player.global_position = home + (sites[2] as Vector2)
 	_tick(objective, 40)
 	_check(objective.steps_done() == done_before, "a corpse lying on a breach seals nothing")
-	_check(spawner.bursts.size() > bursts_before, "...and the breach it is lying on keeps pouring")
+	_check(spawner.pours.size() > pours_before_corpse, "...and the breach it is lying on keeps pouring - at the breach")
 	_check(not objective.is_finished(), "a corpse never finishes the Breach Seal")
 	player.is_dead = false
 
@@ -812,9 +874,9 @@ func _test_breach_seal() -> void:
 	_check(objective.objective_detail() == "Every breach is shut", "...and the detail line says so")
 	_check(reports.size() == objective.steps_total(), "one progress report per breach, no more (%d)" % reports.size())
 
-	var bursts_at_finish := spawner.bursts.size()
+	var pours_at_finish := spawner.pours.size()
 	_tick(objective, 60)
-	_check(spawner.bursts.size() == bursts_at_finish, "a sealed district stops pouring")
+	_check(spawner.pours.size() == pours_at_finish, "a sealed district stops pouring")
 	_check(completions[0] == 1, "...and never fires completed again")
 
 	_release(objective)
