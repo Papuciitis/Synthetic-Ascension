@@ -3,7 +3,11 @@ extends Node2D
 
 const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 
-const FLOATS_PER_INSTANCE := 12
+# Transform2D (8, padded) + colour (4) + custom data (4): the custom vec4 is
+# the atlas region an instance shows, see EnemyProxyRegion.gdshader.
+const FLOATS_PER_INSTANCE := 16
+const FULL_UV := Rect2(0.0, 0.0, 1.0, 1.0)
+const REGION_SHADER: Shader = preload("res://core/systems/enemy_world/EnemyProxyRegion.gdshader")
 const DIAGNOSTIC_KEY := &"__diagnostic__"
 const DIAGNOSTIC_COLOR := Color(1.0, 0.0, 0.8, 1.0)
 const ELITE_DIAGNOSTIC_COLOR := Color(1.0, 0.35, 0.05, 1.0)
@@ -19,6 +23,7 @@ const SHRINK_AFTER_PUBLISHES := 120
 const MIN_SHRINK_CAPACITY := 16
 var _visual_profiles: Dictionary = {}
 var _diagnostic_texture: ImageTexture = null
+var _region_material: ShaderMaterial = null
 var _visible_count := 0
 var _last_upload_usec := 0
 var _profile_sweep_counter := 0
@@ -268,6 +273,7 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 	var multimesh := MultiMesh.new()
 	multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	multimesh.use_colors = true
+	multimesh.use_custom_data = true
 	var quad := QuadMesh.new()
 	quad.size = Vector2.ONE
 	multimesh.mesh = quad
@@ -279,6 +285,10 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 	instance.texture = _texture_for(profile)
 	instance.z_index = int(profile.get("z_index", 0))
 	instance.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	if _region_material == null:
+		_region_material = ShaderMaterial.new()
+		_region_material.shader = REGION_SHADER
+	instance.material = _region_material
 	add_child(instance)
 	var batch := {
 		"instance": instance,
@@ -332,7 +342,8 @@ func _publish_batch(
 		# Y-down, so an unflipped basis renders the texture upside down.
 		var proxy_scale := Vector2(size.x, -size.y)
 		var color := _profile_color(handle, profile)
-		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color)
+		var uv := profile.get("region", FULL_UV) as Rect2
+		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color, uv)
 		transforms[index] = Transform2D(
 			Vector2(proxy_scale.x, 0.0),
 			Vector2(0.0, proxy_scale.y),
@@ -395,12 +406,21 @@ func _publish_actor_batch(
 		# render at the sprite's native pixel size under node/sprite scales.
 		# Texture Y is negated: the quad mesh UVs assume Y-up while the
 		# canvas is Y-down, so an unflipped basis renders upside down.
-		var texture_size := sprite.texture.get_size()
+		var texture_size := _safe_texture_size(sprite.texture)
+		# A sheet-animated sprite shows one region: size the quad to the frame
+		# and hand the shader that frame's UV rectangle.
+		var frame_size := texture_size
+		var uv := FULL_UV
+		if sprite.region_enabled:
+			frame_size = sprite.region_rect.size
+			uv = Rect2(sprite.region_rect.position / texture_size, frame_size / texture_size)
+		if sprite.flip_h:
+			uv = Rect2(uv.position.x + uv.size.x, uv.position.y, -uv.size.x, uv.size.y)
 		var instance_transform := (actor_transform * sprite.transform).scaled_local(
-			Vector2(texture_size.x, -texture_size.y)
+			Vector2(frame_size.x, -frame_size.y)
 		)
 		var color := sprite.modulate * actor.modulate
-		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color)
+		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color, uv)
 		transforms[index] = instance_transform
 		colors[index] = color
 		# Slot bookkeeping lives on the persistent entry dict: a fresh location
@@ -475,6 +495,22 @@ func debug_actor_instance_transform(actor: Node2D) -> Transform2D:
 	return transforms[index]
 
 
+## Debug/test: the atlas UV rectangle written for a registered actor.
+func debug_actor_instance_uv(actor: Node2D) -> Rect2:
+	var entry_variant: Variant = _actors.get(actor.get_instance_id()) if actor != null else null
+	if not (entry_variant is Dictionary):
+		return Rect2()
+	var entry := entry_variant as Dictionary
+	var batch_variant: Variant = _batches.get(entry.get("batch_key", &""))
+	if not (batch_variant is Dictionary):
+		return Rect2()
+	var buffer := (batch_variant as Dictionary).get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var base := int(entry.get("batch_index", -1)) * FLOATS_PER_INSTANCE
+	if base < 0 or base + FLOATS_PER_INSTANCE > buffer.size():
+		return Rect2()
+	return Rect2(buffer[base + 12], buffer[base + 13], buffer[base + 14], buffer[base + 15])
+
+
 func debug_actor_instance_color(actor: Node2D) -> Color:
 	var entry := _actors.get(actor.get_instance_id(), {}) as Dictionary
 	if entry.is_empty():
@@ -492,6 +528,7 @@ func _write_instance_transform(
 	base: int,
 	instance_transform: Transform2D,
 	color: Color,
+	uv: Rect2 = FULL_UV,
 ) -> void:
 	buffer[base] = instance_transform.x.x
 	buffer[base + 1] = instance_transform.y.x
@@ -505,6 +542,10 @@ func _write_instance_transform(
 	buffer[base + 9] = color.g
 	buffer[base + 10] = color.b
 	buffer[base + 11] = color.a
+	buffer[base + 12] = uv.position.x
+	buffer[base + 13] = uv.position.y
+	buffer[base + 14] = uv.size.x
+	buffer[base + 15] = uv.size.y
 
 
 # Debug/test lookups only: locate a proxy handle's batch and slot by scanning
@@ -592,6 +633,7 @@ func _profile_for(handle: int) -> Dictionary:
 		"color": explicit_color,
 		"texture_path": String(cold_state.get("proxy_texture_path", "")),
 		"z_index": int(cold_state.get("proxy_z_index", 0)),
+		"region": cold_state.get("proxy_region", FULL_UV) if cold_state.get("proxy_region") is Rect2 else FULL_UV,
 	}
 	_visual_profiles[handle] = profile
 	return profile
@@ -652,6 +694,7 @@ func _write_instance(
 	instance_scale: Vector2,
 	instance_position: Vector2,
 	color: Color,
+	uv: Rect2 = FULL_UV,
 ) -> void:
 	# RenderingServer stores Transform2D as two padded rows. The origin is
 	# therefore at offsets 3 and 7, followed by four RGBA floats.
@@ -667,3 +710,7 @@ func _write_instance(
 	buffer[base + 9] = color.g
 	buffer[base + 10] = color.b
 	buffer[base + 11] = color.a
+	buffer[base + 12] = uv.position.x
+	buffer[base + 13] = uv.position.y
+	buffer[base + 14] = uv.size.x
+	buffer[base + 15] = uv.size.y

@@ -10,9 +10,9 @@
 [ext_resource type="PackedScene" uid="uid://cyr4jdqmripro" path="res://assets/vfx/world/sets/conduit/VFX_PulseRing.tscn" id="6_1wie2"]
 [ext_resource type="Script" uid="uid://dlhradau0prcf" path="res://data/sets/SetRunner.gd" id="6_5jwen"]
 [ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="7_n0b1a"]
-[ext_resource type="Texture2D" uid="uid://ds2841qmi7nyw" path="res://assets/textures/Player_Placeholder64x64.png" id="8_1wie2"]
 [ext_resource type="Script" uid="uid://r2jw91kyiwz0j" path="res://core/systems/items/ItemEffectRunner.gd" id="9_itemeff"]
 [ext_resource type="Script" uid="uid://d8m3drxk3efv" path="res://core/systems/manifestations/ManifestationRunner.gd" id="10_manif"]
+[ext_resource type="Script" path="res://core/actors/player/PlayerVisualController.gd" id="11_visual"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1wie2"]
 radius = 25.0
@@ -20,6 +20,29 @@ height = 58.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4flbx"]
 size = Vector2(70, 70)
+
+[sub_resource type="Animation" id="Animation_breathe"]
+resource_name = "breathe"
+length = 2.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("HeadAnchor/Head:position")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.9),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [Vector2(0, 0), Vector2(0, -1), Vector2(0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_breathe"]
+_data = {
+&"breathe": SubResource("Animation_breathe")
+}
 
 [node name="Player" type="CharacterBody2D" unique_id=251512627 groups=["player"]]
 collision_layer = 4
@@ -37,12 +60,23 @@ vfx_spokes_scene = ExtResource("7_n0b1a")
 shape = SubResource("CapsuleShape2D_1wie2")
 
 [node name="Visual" type="Node2D" parent="." unique_id=1325796712]
+script = ExtResource("11_visual")
 
-[node name="Sprite2D" type="Sprite2D" parent="Visual" unique_id=421405262]
-texture = ExtResource("8_1wie2")
+[node name="Body" type="AnimatedSprite2D" parent="Visual"]
+texture_filter = 1
+centered = false
+
+[node name="HeadAnchor" type="Node2D" parent="Visual"]
+
+[node name="Head" type="AnimatedSprite2D" parent="Visual/HeadAnchor"]
+texture_filter = 1
+centered = false
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="Visual" unique_id=1298421160]
-root_node = NodePath("../..")
+root_node = NodePath("..")
+libraries = {
+&"": SubResource("AnimationLibrary_breathe")
+}
 
 [node name="AimPivot" type="Node2D" parent="." unique_id=1290953163]
 

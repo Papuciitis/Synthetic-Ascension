@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://cnbmqstd8vjlh" path="res://core/actors/enemy/enemy.tscn" id="1_uvjsx"]
 [ext_resource type="Resource" uid="uid://yhfncpai6iix" path="res://core/actors/enemy/EnemySpec_Spitter.tres" id="2_8ijaf"]
-[ext_resource type="Texture2D" uid="uid://gap2enrncs7r" path="res://assets/textures/Enemy_Spitter44x44.png" id="3_pc8oy"]
 
 [node name="Enemy" unique_id=947687576 instance=ExtResource("1_uvjsx")]
 spec = ExtResource("2_8ijaf")
@@ -17,6 +16,3 @@ pickup_delay = 0.25
 drop_spawn_radius = 18.0
 knockback_decay = 2200.0
 debug_drops = false
-
-[node name="Sprite2D" parent="." index="0" unique_id=1886877098]
-texture = ExtResource("3_pc8oy")

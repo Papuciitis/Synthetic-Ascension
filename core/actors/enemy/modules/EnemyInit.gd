@@ -119,6 +119,16 @@ func _apply_visuals() -> void:
 		spr.texture = s.sprite_texture
 	spr.scale = s.sprite_scale
 	spr.modulate = s.sprite_modulate
+	# Baked sheets animate through atlas regions on this same sprite.
+	if s.visual_frames != null:
+		if _owner.animator == null:
+			_owner.animator = EnemyAnimator.new()
+		if not _owner.animator.setup(_owner, spr, s.visual_frames, s.animation_fps):
+			push_warning("EnemyInit: %s has visual_frames without idle_down; animation disabled" % String(s.id))
+			_owner.animator = null
+	else:
+		_owner.animator = null
+		spr.region_enabled = false
 
 
 func _apply_split_generation() -> void:

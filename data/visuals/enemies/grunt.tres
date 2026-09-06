@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyVisualDefinition" format=3]
+
+[ext_resource type="Script" path="res://data/visuals/EnemyVisualDefinition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/enemy/grunt_test.png" id="2_sheet"]
+
+[resource]
+script = ExtResource("1_script")
+enemy_id = &"grunt"
+sheet = ExtResource("2_sheet")
+columns = 8
+body_rows = {
+"down": 0,
+"up": 1
+}
+head_cells = {
+"down": Vector2i(4, 0),
+"up": Vector2i(2, 0)
+}
+head_seat = 0.85
+idle_column = -1
+body_height_px = 50.0
+fps = 10.0

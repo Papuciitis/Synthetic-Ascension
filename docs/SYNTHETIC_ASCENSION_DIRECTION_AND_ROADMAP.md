@@ -1716,3 +1716,17 @@ failures, 12 display-only probes, zero script errors. Each ruling was proved
 red→green against the code it replaced before landing: the breach's first
 pour pin fails under the old objective (207/1), and the cadence pin fails
 with exactly the clobber it names (`0.59s vs gap 0.59s`).
+
+## 2026-09-06, later — the first character art is in the game
+
+The four races and the grunt/spitter test sheets now draw as directional
+idle/run characters; the placeholder sprites are gone from `player.tscn`.
+Map of the pipeline, the real sheet layouts and the art gaps:
+`docs/design/CHARACTER_ANIMATION.md`. In one line: hand-authored
+`data/visuals/*` definitions → `tools/bake_character_atlases.gd` →
+committed `assets/textures/characters/baked/*` → `PlayerVisualController`
+(body + separately anchored head, breathing, dominant-axis facing with
+hysteresis) and `EnemyAnimator` (one region swap per step, batched through
+the proxy renderer's new per-instance region). Player movement, aiming,
+dash, collision and enemy AI are untouched. Known art gaps: no right-facing
+heads (left is mirrored), no enemy side views or idle poses.

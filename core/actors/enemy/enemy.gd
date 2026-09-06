@@ -187,6 +187,8 @@ var _sniper: EnemySniper = EnemySniper.new()
 
 var _life: EnemyLifecycle = EnemyLifecycle.new()
 var _init: EnemyInit = EnemyInit.new()
+## Sheet-driven stride/idle frames; null for archetypes still on placeholders.
+var animator: EnemyAnimator = null
 
 # New: all horde macro+micro steering lives here
 var _horde_nav: EnemyHordeNav = EnemyHordeNav.new()
@@ -425,6 +427,8 @@ func _run_simulation_step(delta: float) -> void:
 	# Spatial buckets remain exact for the projectile manager. The cached autoload
 	# reference removes the old per-enemy scene-tree lookup from this hot path.
 	_update_enemy_index(true)
+	if animator != null:
+		animator.tick(velocity)
 
 
 func _tick_active_modules(delta: float, ai: int) -> void:
@@ -1350,9 +1354,19 @@ func _build_enemy_world_cold_state() -> Dictionary:
 			if not sprite.texture.resource_path.is_empty():
 				state["proxy_texture_path"] = sprite.texture.resource_path
 			var texture_size := sprite.texture.get_size()
+			# A sheet-animated enemy shows one atlas region; its data-only
+			# proxy keeps the standing frame rather than the whole sheet.
+			var frame_size := texture_size
+			if animator != null and animator.is_active():
+				var region := animator.idle_region()
+				frame_size = region.size
+				state["proxy_region"] = EnemyAnimator.normalized_region(region, texture_size)
+			elif sprite.region_enabled:
+				frame_size = sprite.region_rect.size
+				state["proxy_region"] = EnemyAnimator.normalized_region(sprite.region_rect, texture_size)
 			state["proxy_size"] = Vector2(
-				maxf(absf(texture_size.x * sprite.scale.x * scale.x), 4.0),
-				maxf(absf(texture_size.y * sprite.scale.y * scale.y), 4.0),
+				maxf(absf(frame_size.x * sprite.scale.x * scale.x), 4.0),
+				maxf(absf(frame_size.y * sprite.scale.y * scale.y), 4.0),
 			)
 	return state
 

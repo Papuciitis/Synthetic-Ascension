@@ -3,6 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pvv27"]
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_xjtf2"]
 [ext_resource type="PackedScene" uid="uid://vs48l4wx2ns3" path="res://core/combat/projectile/EnemyProjectile.tscn" id="2_46b0y"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/baked/spitter_atlas.png" id="9_atlas"]
+[ext_resource type="Resource" path="res://assets/textures/characters/baked/spitter_frames.tres" id="9_frames"]
 
 [resource]
 script = ExtResource("1_xjtf2")
@@ -21,4 +23,7 @@ drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "a
 drop_instance_roll = true
 drop_rarity_max = 1
 elite_ai_override = 7
+sprite_texture = ExtResource("9_atlas")
+visual_frames = ExtResource("9_frames")
+animation_fps = 10.0
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

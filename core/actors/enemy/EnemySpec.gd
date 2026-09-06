@@ -158,3 +158,8 @@ enum AI {
 @export var sprite_texture: Texture2D
 @export var sprite_scale: Vector2 = Vector2.ONE
 @export var sprite_modulate: Color = Color.WHITE
+## Baked stride/idle frames from tools/bake_character_atlases.gd. When set the
+## sprite shows one atlas region at a time and animates; sprite_texture should
+## be that same atlas so anything reading the texture before init sees it.
+@export var visual_frames: CharacterFrameSet
+@export var animation_fps: float = 10.0

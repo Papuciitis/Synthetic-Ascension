@@ -2,10 +2,15 @@
 
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_k153h"]
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_twiqa"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/baked/grunt_atlas.png" id="9_atlas"]
+[ext_resource type="Resource" path="res://assets/textures/characters/baked/grunt_frames.tres" id="9_frames"]
 
 [resource]
 script = ExtResource("1_k153h")
 item_pickup_scene = ExtResource("1_twiqa")
 drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
 elite_ai_override = 7
+sprite_texture = ExtResource("9_atlas")
+visual_frames = ExtResource("9_frames")
+animation_fps = 10.0
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"
