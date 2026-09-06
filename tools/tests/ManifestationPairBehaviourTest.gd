@@ -1086,11 +1086,25 @@ func _arm_rattle(state: ManifestationState, pair: ManifestationPairEffect, beats
 	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
 
 
+## Steps the rattle AND the shared clock together. The state's _process is off
+## in this suite, but in the game time_since_attack advances every frame -
+## and the restore resolves against the clock as it stands, so a frozen clock
+## would make "hand the true value back" read as the held value instead.
+func _tick_rattle(pair: ManifestationPairEffect, state: ManifestationState, seconds: float) -> void:
+	var step := 0.01
+	var left := seconds
+	while left > 0.0:
+		var dt := minf(step, left)
+		state.time_since_attack += dt
+		_tick(pair, dt)
+		left -= dt
+
+
 ## Waits out any standing hold, which releases it and hands the shared clock
 ## back. Each case below starts from "no beat is being carried", so a hold left
 ## armed by the previous case can never be the thing that pays.
 func _release_rattle_hold(pair: ManifestationPairEffect, resolve: float) -> void:
-	_tick(pair, resolve + 1.0)
+	_tick_rattle(pair, pair.state, resolve + 1.0)
 
 
 func _test_death_rattle() -> void:
@@ -1130,18 +1144,11 @@ func _test_death_rattle() -> void:
 
 	# WAITING THE WINDOW OUT COSTS NOTHING, and the borrowed clock is handed
 	# back rather than left permanently offset for the rules that read it.
-	#
-	# DEFECT (reported, not fixed, not asserted): DeathRattle.gd:137-140 writes
-	# `state.time_since_attack = _gap` UNCONDITIONALLY, so an echo that reset
-	# the shared clock while the hold was standing is overwritten by a stale
-	# gap - Martyr Circuit fires its echo from _process 0.09s after the shot
-	# (MartyrCircuit.gd:47-50, 84) and it lands inside this 0.30s window. Only
-	# the no-other-writer case is pinned below, which is the correct one.
 	_arm_rattle(state, pair, beats)
 	_check(is_equal_approx(state.time_since_attack, held), "fixture: the next beat is held")
 	hp_before = fake.hp
 	var waited: float = resolve + 0.20
-	_tick(pair, waited)
+	_tick_rattle(pair, state, waited)
 	_check(
 		is_equal_approx(state.time_since_attack, waited),
 		"once the real gap outruns the window the TRUE clock is handed back, not the held one (%.2fs)"
@@ -1151,6 +1158,26 @@ func _test_death_rattle() -> void:
 	_check(
 		is_equal_approx(fake.hp, hp_before),
 		"and a beat the player waited out costs nothing (%.1f)" % fake.hp
+	)
+
+	# ONE SHARED CLOCK, BEST RESULT WINS (ruling 2026-09-06). An echo another
+	# rule fires while the hold stands - Martyr Circuit's lands 0.09 s after the
+	# shot, inside this window - resets the shared clock without the rattle
+	# seeing an attack. Handing the rattle's stale gap back used to overwrite
+	# that fresher clock; the restore is now a proposal, and the more recent
+	# attack wins.
+	_release_rattle_hold(pair, resolve)
+	_arm_rattle(state, pair, beats)
+	_check(is_equal_approx(state.time_since_attack, held), "fixture: the next beat is held again")
+	_tick_rattle(pair, state, 0.09)
+	state.note_attack() # the echo: the shared clock resets, the rattle's own gap does not
+	_check(is_zero_approx(state.time_since_attack), "fixture: the echo reset the shared clock under the hold")
+	_tick_rattle(pair, state, resolve + 0.20)
+	_check(not bool(pair.get("_hold_armed")), "the hold released once the rattle's gap outran the window")
+	_check(
+		state.time_since_attack < float(pair.get("_gap")),
+		"and handing the clock back keeps the echo's fresher reading, not the rattle's stale gap (%.2fs vs gap %.2fs)"
+			% [state.time_since_attack, float(pair.get("_gap"))]
 	)
 
 	# ONLY the empowered beat is held. The beats between forfeit as usual, at

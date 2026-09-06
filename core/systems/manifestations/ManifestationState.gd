@@ -487,6 +487,20 @@ func note_attack() -> void:
 	advance_beat()
 
 
+## Ruling 2026-09-06: one shared clock, and the best result wins. A rule that
+## borrowed the rhythm clock (Death Rattle holds a beat open) hands a value
+## back through here instead of writing it. The clock keeps whichever reflects
+## the MORE RECENT attack - the only valid answer to "how long since you
+## attacked" - so a restore can never make the player's cadence staler than it
+## truly is: an echo another rule fired while the hold stood (Martyr Circuit's
+## lands 0.09 s after the shot) survives it. Holding a beat OPEN is a different
+## act - a bought lie the rule pays HP for - and stays a direct write. Returns
+## the resolved value.
+func propose_time_since_attack(proposed: float) -> float:
+	time_since_attack = minf(time_since_attack, maxf(0.0, proposed))
+	return time_since_attack
+
+
 ## Advance the shared beat WITHOUT touching the rhythm clock.
 ##
 ## For anything that supplies a beat the player did not fire - walking a stride,

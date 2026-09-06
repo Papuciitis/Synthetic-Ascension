@@ -137,7 +137,9 @@ func _process(delta: float) -> void:
 	if _hold_armed and _gap >= RESOLVE_WINDOW:
 		_hold_armed = false
 		if state != null and is_instance_valid(state):
-			state.time_since_attack = _gap
+			# A proposal, not a write: if an echo reset the shared clock while
+			# the hold stood, the fresher value is the true one and it wins.
+			state.propose_time_since_attack(_gap)
 		queue_redraw()
 	elif _hold_armed or _flash > 0.0:
 		queue_redraw()
