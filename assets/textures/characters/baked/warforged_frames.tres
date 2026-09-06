@@ -5,183 +5,183 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_down_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 2, 41, 54)
+region = Rect2(2, 2, 45, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_down_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(45, 2, 42, 54)
+region = Rect2(49, 2, 46, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_left_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 58, 29, 57)
+region = Rect2(2, 64, 32, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_left_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(33, 58, 30, 57)
+region = Rect2(36, 64, 34, 63)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_right_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 117, 30, 57)
+region = Rect2(2, 130, 34, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_right_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(34, 117, 30, 57)
+region = Rect2(38, 130, 33, 63)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_up_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 176, 41, 56)
+region = Rect2(2, 196, 46, 62)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_idle_up_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(45, 176, 41, 56)
+region = Rect2(50, 196, 46, 62)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 234, 35, 55)
+region = Rect2(2, 260, 38, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(39, 234, 34, 55)
+region = Rect2(42, 260, 38, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_2"]
 atlas = ExtResource("2_atlas")
-region = Rect2(75, 234, 34, 55)
+region = Rect2(82, 260, 38, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_3"]
 atlas = ExtResource("2_atlas")
-region = Rect2(111, 234, 35, 55)
+region = Rect2(122, 260, 38, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_4"]
 atlas = ExtResource("2_atlas")
-region = Rect2(148, 234, 34, 55)
+region = Rect2(162, 260, 37, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_5"]
 atlas = ExtResource("2_atlas")
-region = Rect2(184, 234, 34, 55)
+region = Rect2(201, 260, 37, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_6"]
 atlas = ExtResource("2_atlas")
-region = Rect2(220, 234, 33, 55)
+region = Rect2(240, 260, 37, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_down_7"]
 atlas = ExtResource("2_atlas")
-region = Rect2(255, 234, 33, 55)
+region = Rect2(279, 260, 37, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 291, 36, 55)
+region = Rect2(2, 323, 40, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(40, 291, 40, 55)
+region = Rect2(44, 323, 44, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_2"]
 atlas = ExtResource("2_atlas")
-region = Rect2(82, 291, 35, 55)
+region = Rect2(90, 323, 39, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_3"]
 atlas = ExtResource("2_atlas")
-region = Rect2(119, 291, 42, 55)
+region = Rect2(131, 323, 46, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_4"]
 atlas = ExtResource("2_atlas")
-region = Rect2(163, 291, 38, 55)
+region = Rect2(179, 323, 42, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_5"]
 atlas = ExtResource("2_atlas")
-region = Rect2(203, 291, 38, 55)
+region = Rect2(223, 323, 42, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_6"]
 atlas = ExtResource("2_atlas")
-region = Rect2(243, 291, 42, 55)
+region = Rect2(267, 323, 46, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_left_7"]
 atlas = ExtResource("2_atlas")
-region = Rect2(287, 291, 33, 55)
+region = Rect2(315, 323, 37, 60)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 348, 36, 53)
+region = Rect2(2, 385, 40, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(40, 348, 37, 53)
+region = Rect2(44, 385, 41, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_2"]
 atlas = ExtResource("2_atlas")
-region = Rect2(79, 348, 38, 53)
+region = Rect2(87, 385, 42, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_3"]
 atlas = ExtResource("2_atlas")
-region = Rect2(119, 348, 42, 53)
+region = Rect2(131, 385, 46, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_4"]
 atlas = ExtResource("2_atlas")
-region = Rect2(163, 348, 36, 53)
+region = Rect2(179, 385, 40, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_5"]
 atlas = ExtResource("2_atlas")
-region = Rect2(201, 348, 37, 53)
+region = Rect2(221, 385, 41, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_6"]
 atlas = ExtResource("2_atlas")
-region = Rect2(240, 348, 38, 53)
+region = Rect2(264, 385, 42, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_right_7"]
 atlas = ExtResource("2_atlas")
-region = Rect2(280, 348, 42, 53)
+region = Rect2(308, 385, 46, 59)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 403, 31, 55)
+region = Rect2(2, 446, 35, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_1"]
 atlas = ExtResource("2_atlas")
-region = Rect2(35, 403, 33, 55)
+region = Rect2(39, 446, 36, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_2"]
 atlas = ExtResource("2_atlas")
-region = Rect2(70, 403, 33, 55)
+region = Rect2(77, 446, 36, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_3"]
 atlas = ExtResource("2_atlas")
-region = Rect2(105, 403, 32, 55)
+region = Rect2(115, 446, 35, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_4"]
 atlas = ExtResource("2_atlas")
-region = Rect2(139, 403, 31, 55)
+region = Rect2(152, 446, 34, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_5"]
 atlas = ExtResource("2_atlas")
-region = Rect2(172, 403, 33, 55)
+region = Rect2(188, 446, 37, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_6"]
 atlas = ExtResource("2_atlas")
-region = Rect2(207, 403, 32, 55)
+region = Rect2(227, 446, 35, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_body_run_up_7"]
 atlas = ExtResource("2_atlas")
-region = Rect2(241, 403, 32, 55)
+region = Rect2(264, 446, 36, 61)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_head_idle_down_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 460, 27, 33)
+region = Rect2(2, 509, 28, 34)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_head_idle_left_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 495, 25, 31)
+region = Rect2(2, 545, 26, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_head_idle_right_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 528, 25, 31)
+region = Rect2(2, 579, 26, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_head_idle_up_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 561, 25, 31)
+region = Rect2(2, 613, 26, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_head_run_down_0"]
 atlas = ExtResource("2_atlas")
-region = Rect2(2, 594, 26, 30)
+region = Rect2(2, 647, 27, 30)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1"]
 animations = [{
@@ -390,29 +390,29 @@ animations = [{
 script = ExtResource("1_script")
 frames = SubResource("SpriteFrames_1")
 anchors = {
-"body_idle_down": PackedVector2Array(20.0, 54.0, 21.0, 54.0),
-"body_idle_left": PackedVector2Array(11.0, 57.0, 12.0, 57.0),
-"body_idle_right": PackedVector2Array(18.0, 57.0, 18.0, 57.0),
-"body_idle_up": PackedVector2Array(21.0, 56.0, 21.0, 56.0),
-"body_run_down": PackedVector2Array(17.0, 55.0, 17.0, 55.0, 17.0, 55.0, 17.0, 55.0, 16.0, 55.0, 17.0, 55.0, 16.0, 55.0, 17.0, 55.0),
-"body_run_left": PackedVector2Array(13.0, 55.0, 15.0, 55.0, 12.0, 55.0, 15.0, 55.0, 13.0, 55.0, 13.0, 55.0, 13.0, 55.0, 10.0, 55.0),
-"body_run_right": PackedVector2Array(24.0, 53.0, 25.0, 53.0, 25.0, 53.0, 27.0, 53.0, 23.0, 53.0, 25.0, 53.0, 26.0, 53.0, 28.0, 53.0),
-"body_run_up": PackedVector2Array(16.0, 55.0, 17.0, 55.0, 16.0, 55.0, 16.0, 55.0, 15.0, 55.0, 17.0, 55.0, 16.0, 55.0, 17.0, 55.0),
-"head_idle_down": PackedVector2Array(13.0, 33.0),
-"head_idle_left": PackedVector2Array(12.0, 31.0),
-"head_idle_right": PackedVector2Array(13.0, 31.0),
-"head_idle_up": PackedVector2Array(12.0, 31.0),
-"head_run_down": PackedVector2Array(13.0, 30.0)
+"body_idle_down": PackedVector2Array(23.0, 60.0, 23.0, 60.0),
+"body_idle_left": PackedVector2Array(13.0, 64.0, 13.0, 63.0),
+"body_idle_right": PackedVector2Array(20.0, 64.0, 20.0, 63.0),
+"body_idle_up": PackedVector2Array(24.0, 62.0, 23.0, 62.0),
+"body_run_down": PackedVector2Array(19.0, 61.0, 19.0, 61.0, 19.0, 61.0, 19.0, 61.0, 18.0, 61.0, 19.0, 61.0, 18.0, 61.0, 19.0, 61.0),
+"body_run_left": PackedVector2Array(15.0, 60.0, 17.0, 60.0, 13.0, 60.0, 16.0, 60.0, 15.0, 60.0, 14.0, 60.0, 14.0, 60.0, 11.0, 60.0),
+"body_run_right": PackedVector2Array(26.0, 59.0, 28.0, 59.0, 27.0, 59.0, 29.0, 59.0, 26.0, 59.0, 28.0, 59.0, 29.0, 59.0, 32.0, 59.0),
+"body_run_up": PackedVector2Array(17.0, 61.0, 18.0, 61.0, 18.0, 61.0, 18.0, 61.0, 17.0, 61.0, 18.0, 61.0, 17.0, 61.0, 18.0, 61.0),
+"head_idle_down": PackedVector2Array(13.0, 34.0),
+"head_idle_left": PackedVector2Array(12.0, 32.0),
+"head_idle_right": PackedVector2Array(14.0, 32.0),
+"head_idle_up": PackedVector2Array(13.0, 32.0),
+"head_run_down": PackedVector2Array(14.0, 30.0)
 }
 collars = {
-"body_idle_down": PackedVector2Array(0.0, -48.0, 0.0, -48.0),
-"body_idle_left": PackedVector2Array(0.0, -50.0, 0.0, -50.0),
-"body_idle_right": PackedVector2Array(0.0, -50.0, 0.0, -50.0),
-"body_idle_up": PackedVector2Array(0.0, -49.0, 0.0, -49.0),
-"body_run_down": PackedVector2Array(0.0, -47.0, 0.0, -48.0, 0.0, -48.0, 0.0, -48.0, 0.0, -48.0, 0.0, -47.0, 0.0, -48.0, 0.0, -47.0),
-"body_run_left": PackedVector2Array(0.0, -48.0, 0.0, -48.0, 0.0, -48.0, 0.0, -47.0, 0.0, -48.0, 0.0, -47.0, 0.0, -48.0, 0.0, -48.0),
-"body_run_right": PackedVector2Array(0.0, -46.0, 0.0, -46.0, 0.0, -46.0, 0.0, -46.0, 0.0, -46.0, 0.0, -46.0, 0.0, -46.0, 0.0, -47.0),
-"body_run_up": PackedVector2Array(0.0, -48.0, 0.0, -47.0, 0.0, -47.0, 0.0, -48.0, 0.0, -48.0, 0.0, -48.0, 0.0, -48.0, 0.0, -48.0),
+"body_idle_down": PackedVector2Array(0.0, -53.0, 0.0, -53.0),
+"body_idle_left": PackedVector2Array(0.0, -57.0, 0.0, -56.0),
+"body_idle_right": PackedVector2Array(0.0, -57.0, 0.0, -56.0),
+"body_idle_up": PackedVector2Array(0.0, -54.0, 0.0, -54.0),
+"body_run_down": PackedVector2Array(0.0, -52.0, 0.0, -54.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0),
+"body_run_left": PackedVector2Array(0.0, -52.0, 0.0, -52.0, 0.0, -52.0, 0.0, -51.0, 0.0, -52.0, 0.0, -51.0, 0.0, -52.0, 0.0, -53.0),
+"body_run_right": PackedVector2Array(0.0, -52.0, 0.0, -52.0, 0.0, -51.0, 0.0, -52.0, 0.0, -52.0, 0.0, -51.0, 0.0, -51.0, 0.0, -52.0),
+"body_run_up": PackedVector2Array(0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0, 0.0, -53.0),
 "head_idle_down": PackedVector2Array(0.0, 0.0),
 "head_idle_left": PackedVector2Array(0.0, 0.0),
 "head_idle_right": PackedVector2Array(0.0, 0.0),

@@ -95,7 +95,10 @@ the same ways; the definitions encode the truth.
 Per-sheet pixel densities differ (a human idle body is 284 px tall, its run
 body 172 px), so each sheet gets its own scale. On screen: human and elf
 bodies 48 px idle / 49 run with 38 px heads; dragonborn and warforged are
-bulkier races drawn small in their sheets, so 54 / 55 with 34 and 33 px heads.
+the big races (D&D puts them at about 6'4" against the human's 5'8", and
+heavier still), drawn small in their sheets, so 60 / 61 with 35 and 34 px
+heads: a quarter taller than the human, more than the book's 1.13, because
+bulk reads as size on a sprite this small.
 
 ## Art problems found (not fixable in code)
 
