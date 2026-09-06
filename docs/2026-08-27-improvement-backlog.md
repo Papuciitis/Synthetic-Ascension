@@ -274,13 +274,14 @@ marked *opinion* are design judgement.
 
 ---
 
-## Archived 2026-09-06: hit-stop
+## Archived 2026-09-06: hit-stop and camera punch
 
-`HitFeel.hit_stop_enabled` is now off by default. In the 2026-09-06 playtest
-the `Engine.time_scale` dip on crits, elite hits and kills read as a hitch
-("feels like lag"), not as impact. The code, its exports (`stop_scale`,
-`stop_ms`, `min_stop_interval_ms`) and `HitFeelTest` are kept whole so it can
-come back tuned; the camera punch stays on. If it returns, try a shorter stop
+`HitFeel.hit_stop_enabled` and `camera_punch_enabled` are both off by
+default. In the 2026-09-06 playtest the `Engine.time_scale` dip on crits,
+elite hits and kills read as a hitch ("feels like lag"), and the camera kick
+as jitter, not as impact. The code, its exports (`stop_scale`, `stop_ms`,
+`min_stop_interval_ms`, `punch_px`, `punch_decay`) and `HitFeelTest` are kept
+whole so either can come back tuned. If they return, try a shorter stop
 (20 ms) with a visible flash on the same frame, or a stop only on kills, and
-judge it in a windowed run rather than by numbers. Effort S, confidence
-*opinion*.
+a punch only on melee, and judge it in a windowed run rather than by numbers.
+Effort S, confidence *opinion*.

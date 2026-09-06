@@ -38,6 +38,7 @@ func _run() -> void:
 		live.set("hit_stop_enabled", false)
 		live.set("camera_punch_enabled", false)
 	var feel := HitFeelScript.new()
+	feel.camera_punch_enabled = true
 	# The stop is archived (off by default); the shapes are still pinned here.
 	feel.hit_stop_enabled = true
 	feel.min_stop_interval_ms = 120
@@ -173,6 +174,7 @@ func _run_comparison_arm(
 	Engine.time_scale = 1.0
 	camera.offset = Vector2.ZERO
 	var feel := HitFeelScript.new()
+	feel.camera_punch_enabled = true
 	feel.hit_stop_enabled = hit_stop
 	feel.camera_punch_enabled = camera_punch
 	feel.min_stop_interval_ms = 120
@@ -196,6 +198,7 @@ func _camera_punch_has_decay_tail(player: Node2D, camera: Camera2D) -> bool:
 	Engine.time_scale = 1.0
 	camera.offset = Vector2.ZERO
 	var feel := HitFeelScript.new()
+	feel.camera_punch_enabled = true
 	feel.hit_stop_enabled = false
 	feel.camera_punch_enabled = true
 	add_child(feel)

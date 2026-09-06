@@ -37,7 +37,9 @@ what the sheets actually contain, and what is known to be missing.
      (`Body` and `HeadAnchor/Head` are `AnimatedSprite2D`s, `AnimationPlayer`
      holds the `breathe` loop). It reads the body's `velocity`, picks
      `body_<state>_<facing>` / `head_<state>_<facing>` with fallbacks to idle,
-     hangs each frame from its baked anchor (feet on the origin) and moves the
+     hangs each frame from its baked anchor (feet `FEET_BELOW_ORIGIN` = 42 px
+     under the player origin, so the origin is mid-body and anything drawn
+     around it wraps the character) and moves the
      head anchor to the current frame's collar plus the race's `head_offsets`.
      It cancels the parent's rotation every frame: `player.gd` still rotates
      the `CharacterBody2D` for the dash and slash logic, and nothing there

@@ -1736,6 +1736,7 @@ and stripped of spill-over and resampling halo (the enemy side artifacts,
 the dragonborn's clipped and floating tail, the stray border pixels);
 dragonborn and warforged are drawn bigger with smaller heads; a 1–2 px stride
 bob carries the elf's near-static front/back run rows; dossier cards show one
-standing frame rather than the sheet. The hit-stop is archived: off by
-default, kept and tested, entry in the improvement backlog. The camera punch
-stays.
+standing frame rather than the sheet. Hit-stop and camera punch are archived: off by
+default, kept and tested, entry in the improvement backlog. The art hangs
+mid-body on the player origin (feet 42 px below it) so ability rings wrap
+the character, not the legs.

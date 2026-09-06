@@ -36,6 +36,10 @@ const DEFAULT_RACE := &"human"
 ## changes axis, so a near-diagonal path does not flicker between facings.
 const AXIS_BIAS := 1.25
 const MOVING_SPEED_SQ := 1.0
+## The art hangs from the player's origin at mid-body: the feet sit this far
+## below it, so rings, auras and anything else drawn around the origin wrap
+## the character rather than the legs.
+const FEET_BELOW_ORIGIN := 42.0
 const BREATHE := &"breathe"
 ## Which frames of an eight-frame stride sit on the bounce; two beats per cycle.
 const RUN_BOB_PATTERN: Array[float] = [0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0]
@@ -60,6 +64,9 @@ var _preview_facing: StringName = FACING_DOWN
 
 
 func _ready() -> void:
+	var parent := get_parent() as Node2D
+	if parent != null:
+		_stay_upright(parent)
 	var selected := DEFAULT_RACE
 	if Global != null and not String(Global.selected_race_id).is_empty():
 		selected = StringName(Global.selected_race_id)
@@ -69,7 +76,7 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	var parent := get_parent() as Node2D
 	if parent != null:
-		rotation = -parent.rotation
+		_stay_upright(parent)
 	if _preview:
 		facing = _preview_facing
 		state = _preview_state
@@ -80,6 +87,14 @@ func _process(_delta: float) -> void:
 		_update_facing(velocity)
 		state = State.RUN if velocity.length_squared() > MOVING_SPEED_SQ else State.IDLE
 	_apply()
+
+
+## The body rotates for the dash and slash logic; the art does not. Position
+## is expressed in the parent's rotated frame, so the mid-body offset is
+## un-rotated to stay a straight drop in world space.
+func _stay_upright(parent: Node2D) -> void:
+	rotation = -parent.rotation
+	position = Vector2(0.0, FEET_BELOW_ORIGIN).rotated(-parent.rotation)
 
 
 ## Swaps every sprite to another race's art. The current state and facing

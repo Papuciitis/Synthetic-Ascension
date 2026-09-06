@@ -71,7 +71,7 @@ func _process(delta: float) -> void:
 
 func _draw() -> void:
 	# Ground line through the player's origin: the feet must sit on it.
-	var origin := player.position
+	var origin := player.position + Vector2(0.0, PlayerVisualController.FEET_BELOW_ORIGIN)
 	draw_line(origin + Vector2(-400.0, 0.5), origin + Vector2(400.0, 0.5), Color(0.2, 0.9, 0.4, 0.5), 1.0)
 	draw_line(origin + Vector2(0.5, -80.0), origin + Vector2(0.5, 20.0), Color(0.9, 0.4, 0.2, 0.35), 1.0)
 

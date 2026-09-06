@@ -102,6 +102,8 @@ func _test_player_visuals() -> void:
 	player.rotation = 1.3
 	visual._process(0.016)
 	_check(is_zero_approx(visual.global_rotation), "the art stays upright while the body rotates")
+	var expected_drop := player.global_position + Vector2(0.0, PlayerVisualController.FEET_BELOW_ORIGIN)
+	_check(visual.global_position.is_equal_approx(expected_drop), "the art hangs mid-body on the origin whatever the body's rotation (%s)" % visual.global_position)
 	_check(player.position == Vector2.ZERO, "the visual never moves the gameplay body")
 
 	for race in RACES:
