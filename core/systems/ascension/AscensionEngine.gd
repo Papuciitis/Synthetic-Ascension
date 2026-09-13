@@ -8,11 +8,11 @@ class_name AscensionEngine
 ## its owned nodes do with those facts. Everything here is a no-op default so
 ## an engine implements only the hooks it needs.
 
-var runner: Node = null
+var runner: AscensionRunner = null
 var active: Dictionary = {}   # node id -> true for owned, enabled, equipped-as-needed nodes
 
 
-func setup(owner: Node) -> void:
+func setup(owner: AscensionRunner) -> void:
 	runner = owner
 
 
@@ -131,3 +131,9 @@ func hud_state(_slot: String) -> Dictionary:
 ## Telemetry snapshot for the flight recorder / dev readout.
 func describe() -> Dictionary:
 	return {}
+
+
+## Append [position, radius, color] entries for things the engine simulates
+## itself (seeking fragments, patches) so the runner can draw them.
+func collect_draw_points(_out: Array) -> void:
+	pass

@@ -789,6 +789,14 @@ func _refresh_dev_state() -> void:
 		if not Global.attempt_ascension.is_empty():
 			var ledger := Global.ascension_ledger()
 			parts.append("TREE %d nodes / %d spent" % [ledger.owned_ids().size() - ledger.cores().size(), int(ledger.state.get("spent", 0))])
+			var tree_runner := get_tree().get_first_node_in_group(&"player")
+			tree_runner = tree_runner.get_node_or_null("AscensionRunner") if tree_runner != null else null
+			if tree_runner != null and tree_runner.has_method("describe"):
+				var summary: Dictionary = tree_runner.call("describe")
+				parts.append("R0 %.2f" % float(summary.get("r0", 0.0)))
+				if summary.has("BR"):
+					var barrage: Dictionary = summary["BR"]
+					parts.append("HEAT %d%s" % [int(barrage.get("heat", 0.0)), " JAM" if bool(barrage.get("jammed", false)) else ""])
 	var threat := get_node_or_null("/root/ThreatDirector")
 	if threat != null:
 		parts.append("THREAT %.1f" % float(threat.get("threat")))

@@ -25,7 +25,19 @@ signal refreshed()
 
 const ROLL_CAP := 0.95
 const STATUS_SWEEP_INTERVAL := 1.0
-const ENGINE_SCRIPTS: Dictionary = {}  # discipline code -> script path, filled per milestone
+const ENGINE_SCRIPTS: Dictionary = {
+	"BR": "res://core/systems/ascension/engines/BarrageEngine.gd",
+}
+## Revelation charge: kills fill it, the equipped V spends all of it. Normals
+## give half a point (the review's correction), elites eight, bosses thirty;
+## at most four charging kills count per second and V-rooted kills never do.
+const V_CHARGE_MAX := 100.0
+const V_CHARGE_NORMAL := 0.5
+const V_CHARGE_ELITE := 8.0
+const V_CHARGE_BOSS := 30.0
+const V_CHARGE_ACTIONS_PER_SECOND := 4
+const L := 240.0   # the design's long distance
+const R := 80.0    # the design's radius unit
 
 var ledger: AscensionLedger = null
 var native_core: String = "melee"
@@ -44,6 +56,9 @@ var q_cooldown_left: float = 0.0
 var q_cooldown_max: float = 0.0
 var v_cooldown_left: float = 0.0
 var v_cooldown_max: float = 0.0
+var v_charge: float = 0.0
+var _v_charge_actions: int = 0
+var _v_charge_window: float = 0.0
 var _q_slot: AscensionSlotHud = null
 var _v_slot: AscensionSlotHud = null
 
@@ -55,7 +70,8 @@ var _player: Node = null
 var _managed_profile: HitProfileAdapter = null
 var _rng: RandomNumberGenerator = null
 
-var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0}
+var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0}
+var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
 
 
 func _ready() -> void:
@@ -391,11 +407,37 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 	telemetry["kills"] = int(telemetry["kills"]) + 1
 	if hit["family"] == AscensionTags.FAMILY_TREE:
 		telemetry["tree_kills"] = int(telemetry["tree_kills"]) + 1
+		telemetry["chain_kills"] = int(telemetry["chain_kills"]) + 1
+	elif hit["family"] == AscensionTags.FAMILY_NATIVE:
+		telemetry["seed_kills"] = int(telemetry["seed_kills"]) + 1
+	_charge_revelation(hit)
 	kill_resolved.emit(hit, context)
 	for engine in engines:
 		engine.on_kill(hit, context)
 	statuses.erase(handle)
 	_last_lethal.erase(handle)
+
+
+func _charge_revelation(hit: Dictionary) -> void:
+	if v_id.is_empty() or AscensionTags.has_flag(hit.get("tags", PackedStringArray()), "v"):
+		return
+	if _v_charge_actions >= V_CHARGE_ACTIONS_PER_SECOND:
+		return
+	_v_charge_actions += 1
+	var gain := V_CHARGE_NORMAL
+	if bool(hit.get("is_boss", false)):
+		gain = V_CHARGE_BOSS
+	elif bool(hit.get("is_elite", false)):
+		gain = V_CHARGE_ELITE
+	v_charge = minf(V_CHARGE_MAX, v_charge + gain)
+	if _v_slot != null:
+		_v_slot.announce(v_cooldown_left, v_cooldown_max)
+
+
+## Kills caused per seed kill: the review's reproduction number.
+func r0() -> float:
+	var seeds := int(telemetry["seed_kills"])
+	return float(telemetry["chain_kills"]) / float(seeds) if seeds > 0 else 0.0
 
 
 func _on_weapon_fired(who: Node, style_id: StringName, origin: Vector2, target: Vector2, power_mul: float, haste_mul: float) -> void:
@@ -472,6 +514,54 @@ func pay_health(amount: float, reason: StringName) -> float:
 	return float(_player.call("pay_health", amount, reason))
 
 
+## The visible world rectangle, from the player's camera when it has one.
+func camera_rect() -> Rect2:
+	var size := Vector2(1280, 720)
+	var center := player_position()
+	if _player != null:
+		var camera := _player.get_node_or_null("Camera2D") as Camera2D
+		var viewport := _player.get_viewport()
+		if camera != null and viewport != null and camera.is_current():
+			size = viewport.get_visible_rect().size / camera.zoom
+			center = camera.get_screen_center_position()
+	return Rect2(center - size * 0.5, size)
+
+
+## A point on the edge of the visible rectangle at `angle` from its centre.
+func camera_edge_point(angle: float) -> Vector2:
+	var rect := camera_rect()
+	var center := rect.get_center()
+	var dir := Vector2.from_angle(angle)
+	var half := rect.size * 0.5
+	var scale := INF
+	if absf(dir.x) > 0.0001:
+		scale = minf(scale, half.x / absf(dir.x))
+	if absf(dir.y) > 0.0001:
+		scale = minf(scale, half.y / absf(dir.y))
+	return center + dir * (scale * 0.96)
+
+
+## Fires the native weapon as if the input were pressed (Bottomless).
+func fire_native(target: Vector2) -> void:
+	if _player != null and _player.has_method("_fire_weapon"):
+		_player.call("_fire_weapon", target)
+
+
+## Blocks native firing for `seconds` (a Jam) using the weapon cooldown.
+func block_native_fire(seconds: float) -> void:
+	if _player != null:
+		var left := float(_player.get("_weapon_cd"))
+		_player.set("_weapon_cd", maxf(left, seconds))
+
+
+func _draw() -> void:
+	if _draw_points.is_empty():
+		return
+	draw_set_transform_matrix(get_global_transform().affine_inverse())
+	for point in _draw_points:
+		draw_circle(point[0], float(point[1]), point[2])
+
+
 # ---------------------------------------------------------------- multipliers
 
 func get_power_multiplier() -> float:
@@ -515,8 +605,17 @@ func _process(delta: float) -> void:
 		v_cooldown_left = maxf(0.0, v_cooldown_left - delta)
 		if _v_slot != null:
 			_v_slot.announce(v_cooldown_left, v_cooldown_max)
+	_v_charge_window += delta
+	if _v_charge_window >= 1.0:
+		_v_charge_window = 0.0
+		_v_charge_actions = 0
 	for engine in engines:
 		engine.tick(delta)
+	_draw_points.clear()
+	for engine in engines:
+		engine.collect_draw_points(_draw_points)
+	if not _draw_points.is_empty() or is_visible_in_tree():
+		queue_redraw()
 	_sweep_accum += delta
 	if _sweep_accum >= STATUS_SWEEP_INTERVAL:
 		_sweep_accum = 0.0
@@ -556,6 +655,10 @@ func _activate(slot: String) -> Dictionary:
 		if hud != null:
 			hud.fail("COOLING")
 		return {"ok": false, "message": "COOLING", "cooldown": left}
+	if slot == "v" and v_charge < V_CHARGE_MAX:
+		if hud != null:
+			hud.fail("CHARGING")
+		return {"ok": false, "message": "CHARGING", "cooldown": 0.0}
 	var engine := engine_for(id)
 	if engine == null:
 		if hud != null:
@@ -573,6 +676,7 @@ func _activate(slot: String) -> Dictionary:
 	else:
 		v_cooldown_max = cooldown
 		v_cooldown_left = cooldown
+		v_charge = 0.0
 	if hud != null:
 		hud.announce(cooldown, cooldown)
 	return result
@@ -592,6 +696,12 @@ func slot_state(slot: String) -> Dictionary:
 		"status_text": "READY" if left <= 0.0 else "%.1fs" % left,
 		"combat_text": "",
 	}
+	if slot == "v":
+		state["ready"] = state["ready"] and v_charge >= V_CHARGE_MAX
+		state["resource_value"] = v_charge
+		state["resource_max"] = V_CHARGE_MAX
+		if v_charge < V_CHARGE_MAX and left <= 0.0:
+			state["status_text"] = "%d%%" % int(v_charge)
 	var engine := engine_for(id)
 	if engine != null:
 		state.merge(engine.hud_state(slot), true)
@@ -599,7 +709,7 @@ func slot_state(slot: String) -> Dictionary:
 
 
 func describe() -> Dictionary:
-	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
+	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
 	for engine in engines:
 		out[engine.discipline()] = engine.describe()
 	return out
