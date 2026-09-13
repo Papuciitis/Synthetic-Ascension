@@ -129,7 +129,7 @@ func _run() -> void:
 	_check(slot != null and slot.hud_key_text == "Q" and slot.hud_title_text == "Gavel", "equipping Gavel creates the Q slot for the HUD")
 	_check(bool(runner.slot_state("q")["ready"]), "the slot reads ready with no cooldown")
 	verdict = runner.activate_q()
-	_check(not verdict["ok"] and verdict["message"] == "NOT WIRED", "a Q without an engine fails gracefully")
+	_check(bool(verdict["ok"]) and verdict["message"] == "GAVEL" and runner.q_cooldown_left > 0.0, "the equipped Q reaches its engine and starts its cooldown")
 	ledger.unequip("q", "EXQ")
 	runner.refresh()
 	await get_tree().process_frame

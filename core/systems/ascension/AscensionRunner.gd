@@ -27,6 +27,7 @@ const ROLL_CAP := 0.95
 const STATUS_SWEEP_INTERVAL := 1.0
 const ENGINE_SCRIPTS: Dictionary = {
 	"BR": "res://core/systems/ascension/engines/BarrageEngine.gd",
+	"EX": "res://core/systems/ascension/engines/ExecutionEngine.gd",
 }
 ## Revelation charge: kills fill it, the equipped V spends all of it. Normals
 ## give half a point (the review's correction), elites eight, bosses thirty;
@@ -202,7 +203,13 @@ func player_position() -> Vector2:
 	return (_player as Node2D).global_position if _player is Node2D else Vector2.ZERO
 
 
+## Tests and scripted encounters can pin the aim; INF means "use the cursor".
+var aim_override: Vector2 = Vector2.INF
+
+
 func aim_target() -> Vector2:
+	if aim_override != Vector2.INF:
+		return aim_override
 	if _player != null and _player.has_method("_current_aim_target"):
 		return _player.call("_current_aim_target")
 	return player_position()
