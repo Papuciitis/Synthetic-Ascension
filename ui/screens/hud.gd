@@ -312,7 +312,31 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+var _ascension_screen: Node = null
+
+
+## The tree key opens the advancement tree mid-run, holding the pause the
+## way the bag does; the screen releases it when it closes.
+func _open_ascension_screen() -> void:
+	if _ascension_screen != null and is_instance_valid(_ascension_screen):
+		return
+	var scene := load("res://ui/screens/AscensionScreen.tscn") as PackedScene
+	if scene == null:
+		return
+	var inst := scene.instantiate()
+	_ascension_screen = inst
+	get_tree().root.add_child(inst)
+	if inst.has_method("open"):
+		inst.call("open", true)
+	if inst.has_signal("closed"):
+		inst.connect("closed", func() -> void: _ascension_screen = null)
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ascension_open") and (bag_ctl == null or not bag_ctl.is_management_mode()):
+		_open_ascension_screen()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed(manage_toggle_action):
 		if bag_ctl != null:
 			bag_ctl.toggle_bag_open()

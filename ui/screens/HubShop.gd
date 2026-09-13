@@ -43,6 +43,9 @@ extends Control
 
 var _major_choice: MajorChoice = null
 var _augment_library: AugmentLibraryScreen = null
+const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
+var _ascension_screen: AscensionScreen = null
+var _btn_ascension: Button = null
 
 # --- vendor stock ---
 var _vendor_bag: BagInventory = null
@@ -160,6 +163,7 @@ func _ready() -> void:
 	if btn_augments != null:
 		btn_augments.pressed.connect(_open_augments)
 	btn_inventory.pressed.connect(_open_inventory)
+	_create_ascension_button()
 
 
 	btn_clear_cart.pressed.connect(_clear_selection)
@@ -1628,6 +1632,39 @@ func _open_inventory() -> void:
 		if Global != null:
 			Global.save_current_profile()
 	)
+
+func _create_ascension_button() -> void:
+	if _btn_ascension != null or btn_augments == null:
+		return
+	_btn_ascension = Button.new()
+	_btn_ascension.name = "Ascension"
+	_btn_ascension.text = "Ascension"
+	_btn_ascension.tooltip_text = "Spend Followers on the advancement tree."
+	btn_augments.get_parent().add_child(_btn_ascension)
+	btn_augments.get_parent().move_child(_btn_ascension, btn_augments.get_index() + 1)
+	_btn_ascension.pressed.connect(_open_ascension)
+
+
+func _open_ascension() -> void:
+	if _ascension_screen != null and is_instance_valid(_ascension_screen):
+		return
+	var inst := ASCENSION_SCREEN.instantiate() as AscensionScreen
+	if inst == null:
+		return
+	add_child(inst)
+	_ascension_screen = inst
+	btn_continue.disabled = true
+	if _btn_ascension != null:
+		_btn_ascension.disabled = true
+	inst.open(false)
+	inst.closed.connect(func() -> void:
+		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
+		_ascension_screen = null
+		if _btn_ascension != null:
+			_btn_ascension.disabled = false
+		_refresh_info()
+	)
+
 
 func _open_augments() -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Augment state changed.")

@@ -793,7 +793,9 @@ func _refresh_dev_state() -> void:
 			tree_runner = tree_runner.get_node_or_null("AscensionRunner") if tree_runner != null else null
 			if tree_runner != null and tree_runner.has_method("describe"):
 				var summary: Dictionary = tree_runner.call("describe")
-				parts.append("R0 %.2f" % float(summary.get("r0", 0.0)))
+				parts.append("R0 %.2f CHAIN %d" % [float(summary.get("r0", 0.0)), int((summary.get("telemetry", {}) as Dictionary).get("longest_chain", 0))])
+				if not Global.debug_ascension_revelations_enabled:
+					parts.append("V OFF")
 				if summary.has("BR"):
 					var barrage: Dictionary = summary["BR"]
 					parts.append("HEAT %d%s" % [int(barrage.get("heat", 0.0)), " JAM" if bool(barrage.get("jammed", false)) else ""])
@@ -881,6 +883,20 @@ func _build_run_tab(page: VBoxContainer, tools: Node) -> void:
 	_dev_button(routes, "Clear tree", "Ascension tree cleared", func() -> void:
 		if tools != null and tools.has_method("clear_ascension_tree"):
 			tools.call("clear_ascension_tree")
+	)
+	var switches := _dev_row(page)
+	_dev_button(switches, "Open tree", "Opened the advancement tree", func() -> void:
+		var screen := load("res://ui/screens/AscensionScreen.tscn") as PackedScene
+		if screen == null:
+			return
+		var inst := screen.instantiate()
+		get_tree().root.add_child(inst)
+		if inst.has_method("open"):
+			inst.call("open", true)
+	)
+	_dev_button(switches, "Revelations on/off", "Toggled Revelations", func() -> void:
+		if Global != null:
+			Global.debug_ascension_revelations_enabled = not Global.debug_ascension_revelations_enabled
 	)
 	var fixture := _dev_row(page)
 	for scale in [1.0, 3.0, 6.0]:

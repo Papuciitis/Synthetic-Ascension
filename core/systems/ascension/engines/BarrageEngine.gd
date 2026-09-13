@@ -414,8 +414,11 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 		return
 	if has("BR05"):
 		var bounces := 1 if has("BR10") else 0
+		var cast := AscensionTags.value_of(hit["tags"], "cast")
+		if cast.is_empty():
+			cast = "seed:%d" % handle
 		for _i in range(2):
-			_spawn_fragment(position, 0.6 * D(), 0.4, bounces, "BR05", int(hit["gen"]) + 1, handle)
+			_spawn_fragment(position, 0.6 * D(), 0.4, bounces, "BR05", int(hit["gen"]) + 1, handle, false, cast)
 	if has("BR03"):
 		_patches.append([position, 2.0])
 		counters["patches"] = int(counters["patches"]) + 1
@@ -462,11 +465,12 @@ func _tick_patches(delta: float) -> void:
 
 # ---------------------------------------------------------------- fragments
 
-func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, root: String, generation: int, exclude: int, burning: bool = false) -> void:
+func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, root: String, generation: int, exclude: int, burning: bool = false, cast: String = "") -> void:
 	var target := runner.lowest_hp_enemy_in_radius(position, FRAGMENT_SEEK_RANGE, exclude)
 	var angle := runner.rng().randf_range(0.0, TAU)
 	_pending_fragments.append({
 		"burning": burning,
+		"cast": cast,
 		"pos": position,
 		"vel": Vector2.from_angle(angle) * FRAGMENT_SPEED,
 		"target": target,
@@ -527,6 +531,8 @@ func _fragment_hit(fragment: Dictionary, target: int) -> void:
 	if bool(fragment["suppression"]):
 		flags.append("v")
 	var tags := AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, String(fragment["root"]), "fragment", int(fragment["gen"]), float(fragment["pp"]), flags)
+	if not String(fragment.get("cast", "")).is_empty():
+		tags.append("cast:" + String(fragment["cast"]))
 	if bool(fragment.get("burning", false)):
 		EnemyStatus.apply_burn(target, 1, 3.0, 0.5, 0.2 * D() * 0.5, runner.player())
 	runner.damage_enemy(target, float(fragment["damage"]), tags)

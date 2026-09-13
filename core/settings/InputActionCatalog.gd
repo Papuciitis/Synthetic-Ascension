@@ -26,6 +26,7 @@ static func entries() -> Array[Dictionary]:
 		_entry(&"augment_detonate", "Augments", "Detonate"),
 		_entry(&"ascension_active", "Ascension", "Tree Active"),
 		_entry(&"ascension_revelation", "Ascension", "Revelation"),
+		_entry(&"ascension_open", "Ascension", "Open Tree"),
 	]
 
 
@@ -63,6 +64,7 @@ static func default_bindings() -> Dictionary:
 		&"augment_detonate": [_key(KEY_G), _mouse(MOUSE_BUTTON_MIDDLE), _button(JOY_BUTTON_X)],
 		&"ascension_active": [_key(KEY_Q), _button(JOY_BUTTON_LEFT_STICK)],
 		&"ascension_revelation": [_key(KEY_V), _button(JOY_BUTTON_RIGHT_STICK)],
+		&"ascension_open": [_key(KEY_T), _button(JOY_BUTTON_START)],
 	}
 
 

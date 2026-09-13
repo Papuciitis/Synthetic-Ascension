@@ -92,7 +92,8 @@ var _player: Node = null
 var _managed_profile: HitProfileAdapter = null
 var _rng: RandomNumberGenerator = null
 
-var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0}
+var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0, "longest_chain": 0, "catastrophes": 0, "revelations": 0}
+var _chain_counts: Dictionary = {}   # cast root -> distinct victims
 var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
 var _claimed_nouns: Array[StringName] = []
 
@@ -474,6 +475,12 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 	elif hit["family"] == AscensionTags.FAMILY_NATIVE:
 		telemetry["seed_kills"] = int(telemetry["seed_kills"]) + 1
 	_charge_revelation(hit)
+	var cast := AscensionTags.value_of(hit.get("tags", PackedStringArray()), "cast")
+	if not cast.is_empty():
+		_chain_counts[cast] = int(_chain_counts.get(cast, 0)) + 1
+		telemetry["longest_chain"] = maxi(int(telemetry["longest_chain"]), int(_chain_counts[cast]))
+		if _chain_counts.size() > 512:
+			_chain_counts.clear()
 	kill_resolved.emit(hit, context)
 	for engine in engines:
 		engine.on_kill(hit, context)
@@ -567,6 +574,9 @@ func native_damage_for(core: String) -> float:
 
 ## Engines call this when a catastrophe fires; the Reaction Q answers.
 func note_catastrophe(id: String) -> void:
+	telemetry["catastrophes"] = int(telemetry["catastrophes"]) + 1
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"ascension", &"catastrophe", {"node": id, "r0": r0(), "longest_chain": int(telemetry["longest_chain"])})
 	for engine in engines:
 		engine.on_catastrophe(id)
 	_try_reaction("catastrophe:" + id)
@@ -865,6 +875,10 @@ func _activate(slot: String) -> Dictionary:
 		if hud != null:
 			hud.fail("COOLING")
 		return {"ok": false, "message": "COOLING", "cooldown": left}
+	if slot == "v" and Global != null and not Global.debug_ascension_revelations_enabled:
+		if hud != null:
+			hud.fail("REVELATIONS OFF")
+		return {"ok": false, "message": "REVELATIONS OFF", "cooldown": 0.0}
 	if slot == "v" and v_charge < V_CHARGE_MAX:
 		if hud != null:
 			hud.fail("CHARGING")
@@ -888,6 +902,9 @@ func _activate(slot: String) -> Dictionary:
 		v_cooldown_max = cooldown
 		v_cooldown_left = cooldown
 		v_charge = 0.0
+		telemetry["revelations"] = int(telemetry["revelations"]) + 1
+		if PerformanceFlightRecorder != null:
+			PerformanceFlightRecorder.record_event(&"ascension", &"revelation", {"node": id, "r0": r0()})
 	if hud != null:
 		hud.announce(cooldown, cooldown)
 	return result

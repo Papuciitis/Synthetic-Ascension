@@ -129,6 +129,9 @@ var debug_player_god_mode: bool = false
 # the execute band and chain lengths can be read (the review asks for x3).
 # Applies to enemies spawned after the value changes; never saved.
 var debug_enemy_hp_scale: float = 1.0
+# The review asks that mature routes be played with Revelations disabled
+# first, so ordinary fighting has to carry the chaos. Never saved.
+var debug_ascension_revelations_enabled: bool = true
 # Materialized enemies render through shared MultiMesh batches instead of
 # per-node sprites. Applies to enemies spawned after the flag changes.
 var debug_enemy_visual_batching: bool = true
@@ -1117,6 +1120,8 @@ func ascension_buy(id: String, chosen_core: String = "") -> Dictionary:
 			transaction_followers(-int(result.get("change", 0)), &"ascension_refund", {"node": id}, false, false)
 			return {"ok": false, "reason": "the Followers could not be spent", "cost": cost}
 	ledger.record_purchase(id, cost, chosen_core)
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"ascension", &"purchase", {"node": id, "cost": cost, "core": chosen_core, "spent": int(ledger.state.get("spent", 0))})
 	request_autosave()
 	return verdict
 
