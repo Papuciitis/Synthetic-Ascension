@@ -34,6 +34,8 @@ var _last_hit_handles := PackedInt64Array()
 var _colors := PackedColorArray()
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
+var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
+var _next_id: int = 1
 var _active_count: int = 0
 
 var _chunk_manager: ChunkManager = null
@@ -169,6 +171,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_colors[index] = color
 		_sources[index] = source
 		_tags[index] = tags
+		_ids[index] = _next_id
 	else:
 		_positions.append(origin)
 		_previous.append(origin)
@@ -192,6 +195,8 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_colors.append(color)
 		_sources.append(source)
 		_tags.append(tags)
+		_ids.append(_next_id)
+	_next_id += 1
 	_active_count += 1
 	return true
 
@@ -384,6 +389,7 @@ func _remove(index: int) -> void:
 		_colors[index] = _colors[last]
 		_sources[index] = _sources[last]
 		_tags[index] = _tags[last]
+		_ids[index] = _ids[last]
 	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
 	# a realloc + copy storm at bullet-heaven churn rates. Only the released
 	# source reference is cleared so it cannot pin a freed node's Variant.
@@ -500,6 +506,30 @@ func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_con
 			_remove(i)
 		i -= 1
 	return out_consumed.size()
+
+## Enemy-team projectiles within `radius` of `center`, appended to `out` as
+## {id, position, velocity, damage}. Ids are stable for a projectile's life
+## (slots are reused, ids never are), so a listener can tell a bullet it has
+## already judged from a new one. Nothing is removed.
+func enemy_projectiles_in_radius(center: Vector2, radius: float, out: Array) -> int:
+	var radius_squared := radius * radius
+	var added := 0
+	for i in range(_active_count):
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out.append({"id": _ids[i], "position": _positions[i], "velocity": _velocities[i], "damage": _damage[i]})
+			added += 1
+	return added
+
+
+## Removes one projectile by id (see enemy_projectiles_in_radius). Returns
+## whether it was still live.
+func remove_projectile(id: int) -> bool:
+	for i in range(_active_count):
+		if _ids[i] == id:
+			_remove(i)
+			return true
+	return false
+
 
 func get_debug_counters() -> Dictionary:
 	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads}

@@ -28,6 +28,7 @@ const STATUS_SWEEP_INTERVAL := 1.0
 const ENGINE_SCRIPTS: Dictionary = {
 	"BR": "res://core/systems/ascension/engines/BarrageEngine.gd",
 	"EX": "res://core/systems/ascension/engines/ExecutionEngine.gd",
+	"DT": "res://core/systems/ascension/engines/DistortionEngine.gd",
 }
 ## Revelation charge: kills fill it, the equipped V spends all of it. Normals
 ## give half a point (the review's correction), elites eight, bosses thirty;
@@ -73,6 +74,7 @@ var _rng: RandomNumberGenerator = null
 
 var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0}
 var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
+var _claimed_nouns: Array[StringName] = []
 
 
 func _ready() -> void:
@@ -82,6 +84,27 @@ func _ready() -> void:
 
 func _exit_tree() -> void:
 	_set_wired(false)
+	engines.clear()
+	_sync_noun_claims()
+
+
+## Claim before release (the state resets a noun that drops to zero claimers).
+func _sync_noun_claims() -> void:
+	var wanted: Array[StringName] = []
+	for engine in engines:
+		for noun in engine.claimed_nouns():
+			if not wanted.has(noun):
+				wanted.append(noun)
+	var state := manifestation_state()
+	if state == null:
+		return
+	for noun in wanted:
+		if not _claimed_nouns.has(noun):
+			state.call("claim", noun)
+	for noun in _claimed_nouns:
+		if not wanted.has(noun):
+			state.call("release", noun)
+	_claimed_nouns = wanted
 
 
 func rng() -> RandomNumberGenerator:
@@ -102,6 +125,7 @@ func refresh() -> void:
 		if ledger.effect_active(id):
 			active_ids[id] = true
 	_rebuild_engines()
+	_sync_noun_claims()
 	q_id = ledger.equipped("q") if active_ids.has(ledger.equipped("q")) else ""
 	v_id = ledger.equipped("v") if active_ids.has(ledger.equipped("v")) else ""
 	_q_slot = _sync_slot(_q_slot, "q", q_id)
@@ -334,6 +358,11 @@ func roll(name: StringName, chance: float, proc_power: float = 1.0, guaranteed: 
 	for engine in engines:
 		effective = engine.modify_roll_chance(name, effective)
 	effective *= proc_power
+	if not guaranteed:
+		for engine in engines:
+			if engine.wants_guarantee(name, proc_power):
+				guaranteed = true
+				break
 	effective = 1.0 if guaranteed else clampf(effective, 0.0, ROLL_CAP)
 	last_roll_chance = effective
 	rolls_made += 1
@@ -565,8 +594,49 @@ func _draw() -> void:
 	if _draw_points.is_empty():
 		return
 	draw_set_transform_matrix(get_global_transform().affine_inverse())
+	var font := ThemeDB.fallback_font
 	for point in _draw_points:
 		draw_circle(point[0], float(point[1]), point[2])
+		if point.size() > 3 and font != null:
+			var text := String(point[3])
+			draw_string(font, (point[0] as Vector2) + Vector2(-18.0, -float(point[1]) - 6.0), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, point[2])
+
+
+## The shared Misfortune pool lives on the Manifestation layer; the tree only
+## adds to it and spends it there, so Broken Providence and the pair rules see
+## the same number.
+func manifestation_state() -> Object:
+	if _player == null:
+		return null
+	var manifestations := _player.get_node_or_null("ManifestationRunner")
+	if manifestations == null:
+		return null
+	var state: Variant = manifestations.get("state")
+	return state as Object
+
+
+func add_misfortune(amount: int = 1) -> void:
+	var state := manifestation_state()
+	if state != null and state.has_method("add_misfortune"):
+		state.call("add_misfortune", amount)
+
+
+func misfortune() -> int:
+	var state := manifestation_state()
+	return int(state.get("misfortune")) if state != null else 0
+
+
+func spend_misfortune(amount: int) -> bool:
+	var state := manifestation_state()
+	if state == null or int(state.get("misfortune")) < amount:
+		return false
+	state.set("misfortune", int(state.get("misfortune")) - amount)
+	return true
+
+
+func heal_player(amount: float, source: StringName) -> void:
+	if _player != null and _player.has_method("heal") and amount > 0.0:
+		_player.call("heal", amount, source)
 
 
 # ---------------------------------------------------------------- multipliers

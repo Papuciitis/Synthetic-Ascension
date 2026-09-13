@@ -68,6 +68,12 @@ func wants_reroll(_name: StringName) -> bool:
 	return false
 
 
+## Whether a guarantee state (Heads, REWRITE, five Misfortune) makes this
+## roll succeed without rolling.
+func wants_guarantee(_name: StringName, _proc_power: float) -> bool:
+	return false
+
+
 func on_player_dashed(_from: Vector2, _direction: Vector2) -> void:
 	pass
 
@@ -126,6 +132,13 @@ func activate_v(_id: String) -> Dictionary:
 ## Extra HUD lines for the slot: {"resource_value", "resource_max", "combat_text"}.
 func hud_state(_slot: String) -> Dictionary:
 	return {}
+
+
+## Manifestation nouns this engine produces into (e.g. &"fortune" for Bad
+## Luck's Misfortune). The runner claims them on the shared state so the
+## pool accepts deposits even when no Manifestation rule owns the noun.
+func claimed_nouns() -> Array[StringName]:
+	return []
 
 
 ## Telemetry snapshot for the flight recorder / dev readout.
