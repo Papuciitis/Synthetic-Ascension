@@ -21,13 +21,13 @@ The earlier `docs/design/ASCENSION_TREE_SPEC.md` (2026-09-06) is a *different* p
 **Sequence (V4 fixture: D = 10, normals 2D = 20 HP):** native melee hit for 10 → 10 HP left (50%) → above the 10% line → no execution. Second hit for 10 → dead → an ordinary kill, not an execution. For a normal to sit in the execute band after a hit, its HP before the hit must be in (damage, damage + 10% max HP] = (10, 12] HP: a 2-HP window that a 10-damage weapon steps over. Kill Feed is worse: a 0.6D fragment (6) executes at half line (5% = 1 HP), so it only "executes" targets it would have killed anyway.
 **Existing:** grunt 10 HP, runner 8, spitter 16 (`core/actors/enemy/EnemySpec_*.tres`) against a 15-damage melee hit (`base_weapon_damage 12 × MELEE_DAMAGE_MULT 1.25`): every normal dies in one hit; no band exists at all.
 **Effect on the player:** Finish, Corpse Bomb, Bloodletting, Five Down, Death Debt and Kill Feed's extra fragment are bought and never fire against normals. The discipline's namesake verb is inert; only Spillover and Cleave (keyed on kills) do anything. Two of the three slice Fusions hang on the inert event.
-**Smallest correction:** define **execution = any Melee Core kill of a normal**, and keep the *line* as the thing that turns a non-lethal hit into a kill (so the line still matters for Gavel's doubled line, First Cut's wound, elites under Elite Sentence, and the sinks). Every execution-keyed node then fires on the kills the player is already making, and the line becomes the upgrade it reads as. Second, the enemy fixture must give normals room to be wounded: use 4–6D HP normals in the prototype, or scale the existing roster's HP ×3 behind a prototype flag, because at 1D HP every two-fragment chain is super-critical (F9).
+**Smallest correction (revised after review discussion):** define **execution = a normal killed by an execution-enabled hit, whether by damage or by the line**. The permission starts with Finish's Melee Core hits; Chain Sentence extends it to Spillover, Corpse Bomb and Cleave payloads, and Kill Feed extends it to fragments, so those nodes keep their purpose. The *line* stays the thing that turns a non-lethal hit into a kill (so the line still matters for Gavel's doubled line, First Cut's wound, elites under Elite Sentence, and the sinks). Every execution-keyed node then fires on the kills the player is already making, and the line becomes the upgrade it reads as. Second, the enemy fixture must give normals room to be wounded: use 4–6D HP normals in the prototype, or scale the existing roster's HP ×3 behind a prototype flag, because at 1D HP every two-fragment chain is super-critical (F9).
 
 ### F2. The flagship route's Barrage third cannot run for a Melee native, so Wildfire never triggers in it
 
 **Nodes / rule:** BR01 Heat ("native Ranged input adds 8, Witness: Shot adds 4 … after 0.35 s without firing, cool 25/s"), BR04 Hot Rounds ("above 50 Heat"), RM5 Wildfire ("Burn kills … Hot Rounds Burn"), BRV SUPPRESSION ("mirror native shots"), BRQ Burst / BRE2 Bullet Hell (only the equipped Q's Evolution operates; the route equips Gavel Chain), Witness rule ("once per fourth native input").
 
-**Sequence (Three-Core avalanche, native Melee):** melee inputs at 0.55 s → Witness: Shot every ~2.2 s → +4 Heat → cools 25/s in the gap → Heat never reaches 50 → Hot Rounds never explodes → no Burn status exists → Wildfire has no burn kill to roll on. SUPPRESSION's edge guns mirror native shots; a melee native makes none. Burst is unequipped; Bullet Hell is a dead Evolution. Fragmentation fires only on the rare Witness/Ascendant-shot kills.
+**Sequence (Three-Core avalanche, native Melee):** melee inputs at 0.55 s → Witness: Shot every ~2.2 s → +4 Heat (Witness does grant Heat; the rule is honoured) → cools 25/s in the gap → Heat never reaches 50 → Hot Rounds never explodes → no Burn status exists → Wildfire has no burn kill to roll on. SUPPRESSION's edge guns mirror native shots; a melee native makes none. Burst is unequipped; Bullet Hell is a dead Evolution. Fragmentation fires only on the rare Witness/Ascendant-shot kills.
 **Effect:** roughly 13,000 of the route's 71,000 Followers buy Revelation prerequisites, not play, and the package's promised fourth outcome ("Burn deaths roll for more burning fragments") cannot occur in the listed route. The user would build the flagship and see nothing from a third of it.
 **Smallest correction:** three changes, all local. (a) Test each discipline on its **own native** and define the avalanche as three native-specific routes (the package already says pure builds isolate problems; make that the plan, §7). (b) For cross-core Heat, put **BRA Hot Blood** (already in V4: melee and magic strikes add 5 Heat) into any route that wants Barrage from a non-Ranged native, and count Witness/Ascendant foreign strikes as "firing" for the cooling clock. (c) Let SUPPRESSION mirror **any Ranged Core strike** (Witness and Ascendant included), not only native shots.
 
@@ -37,15 +37,16 @@ The earlier `docs/design/ASCENSION_TREE_SPEC.md` (2026-09-06) is a *different* p
 
 **Sequence:** cast REWRITE → every Debt deposited from now on matures instantly → cast DECIMATION → 40 executions → Death Debt finds no unpaid Debt → 40 × 0.5D floor pops instead of stored bills; Loaded Coin blasts fall to their 0.5D floor; Pass It On has nothing to pass; Time Bomb collects nothing; The Bill's per-enemy clause reads zero.
 **Effect:** the paid combination removes its own payoff; the wipe is visibly weaker with REWRITE up, the opposite of the instruction.
-**Smallest correction:** REWRITE sets Debt due time to **0.5 s** instead of instant, and the unpaid-Debt consumers treat Debt deposited within the last 0.5 s as collectable. Instant maturity was never the fantasy; "the bill comes due now" survives at half a second.
+**Smallest correction (revised):** a fixed delay does not save the pairing: the paired cast starts the second Revelation 0.25 s after the first and DECIMATION has a 0.4 s tell, so it lands at 0.65 s, after a 0.5 s window has paid. The rule must be explicit about pending Debt instead: **during REWRITE, a matured bucket is not erased; it stays on the ledger as "paid, collectable" for 1.5 s, and Death Debt, Loaded Coin and Time Bomb may spend it once, Pass It On copying shares first.** The Debt still pays now (the fantasy), the execution still collects it (the pairing), and the doubled value during the V is the intended amplification, to be measured rather than assumed.
 
-### F4. Death Debt has no Debt producer for a Melee native until an Axiom that the route does not buy
+### F4. Death Debt's only Melee-native producer is sparse and mistimed until an Axiom the route does not buy
 
 **Nodes / rule:** MM2 Death Debt (requires EX01 + DT06), DT06 Causal Debt ("Magic Core hits save 25%"), DTA Late Payment (Axiom, 2,400 + five Distortion locals: melee hits deposit 12.5%), Witness: Impact (0.6D every fourth input), DTQ Coin Tails ("0.3D Debt per Core strike for 3 s", only while Coin is the equipped Q).
 
-**Sequence (Death Debt route, 20,600 Followers, native Melee, Gavel Chain equipped):** the only ordinary Debt producer is Witness: Impact: 25% × 0.6D = 0.15D deposited every four swings. Execute that target → Death Debt explosion = max(0.15D, 0.5D floor) = a 5-damage pop in 1.5R. The route note admits "functioning but slower"; at these numbers it is the floor every time.
+**Correction to an earlier draft of this finding:** Witness: Impact *is* a producer; it is a Magic Core strike and feeds Causal Debt. The problem is delivery: 25% × 0.6D = 0.15D deposited every four swings, on one target, due 2 s later, when the melee player's kills happen on other targets sooner than that.
+**Sequence (Death Debt route, 20,600 Followers, native Melee, Gavel Chain equipped):** Execute that target → Death Debt explosion = max(0.15D, 0.5D floor) = a 5-damage pop in 1.5R. The route note admits "functioning but slower"; at these numbers it is the floor every time.
 **Effect:** 1,600 (gate) + 400 (DT06) + 1,800 (MM2) = 3,800 Followers for an effect indistinguishable from nothing.
-**Smallest correction:** give the Fusion both halves: **Death Debt also deposits a Melee execution's overkill (or its 0.5D seed) as Debt on every survivor within 1.5R**. Now executions load the bill that the next execution pays, which is the fantasy, and Late Payment remains the upgrade that makes ordinary swings deposit too.
+**Smallest correction (revised):** use the existing solution first: **add DTA Late Payment to the Death Debt route** (melee hits deposit 12.5%), so every swing loads the bill the next execution pays. "Executions deposit their overkill as Debt on survivors" is a new mechanic, worth a separate experiment, not a rule change to the Fusion.
 
 ### F5. "Critical" is undefined in a system that registers rolls and taxes failures
 
@@ -53,13 +54,13 @@ The earlier `docs/design/ASCENSION_TREE_SPEC.md` (2026-09-06) is a *different* p
 **Existing:** the only critical is Lucky Crit, `LuckResolver.lucky_crit_chance` ≤ 8%, ×1.5 damage, rolled on every attack.
 
 **Sequence, if Lucky Crit is a registered roll:** Snake Eyes → 50% crit on every hit of every core (×1.5 damage, the strongest node in the tree by accident); Loaded Dice → every non-crit hit is a failed roll → 1% max HP per 0.5 s for any build that owns it, a hidden tax on attacking. **If it is not registered:** Heads' Debt clause fires on 8% of hits and is inert.
-**Smallest correction:** declare Lucky Crit **unregistered** (Luck stays the existing Luck consumer) and rewrite Heads' clause to "Core hits deposit 0.5D Debt immediately". Nothing else in V4 references criticals.
+**Smallest correction (revised):** declare Lucky Crit **unregistered** for the tree's guarantee, reroll and health-tax rules, and **preserve its existing success and failure signals** (`RunEvents.player_lucky_crit(succeeded)`), which Manifestations already consume: Broken Providence banks Misfortune on those failures, so registering it would also double-count into Bad Luck. Coin Heads may still *observe* a real crit ("a critical Core hit deposits 0.5D Debt") without controlling its probability.
 
 ### F6. Evolutions arrive at segment 6; the tree promises a developed run at 20 minutes
 
 **Nodes / rule:** Evolution reward rule ("guaranteed opportunities after segments 6 and 9, then every third segment"); the three slice Evolutions EXE2 Gavel Chain, BRE2 Bullet Hell, DTE2 Loaded Coin; economy section ("memorable developed run around 20 minutes").
 **Existing:** segments run about 20 minutes; the game already offers augment picks after segments 2 and 7 and Doctrine cards after 3, 6 and 9 (`Global.on_segment_completed`).
-**Effect:** the first Evolution lands around two hours into a run; the slice's three transformed Qs are unreachable in any single playtest session except through the debug loader.
+**Effect:** at roughly 20 minutes per segment (the roadmap's figure; not independently measured) the first Evolution lands around two hours into a run; the slice's three transformed Qs are unreachable in any single playtest session except through the debug loader.
 **Smallest correction:** offer Evolutions on the **existing augment-pick screens after segments 2 and 7** (the screens exist), and additionally at the next cleared encounter after the player's first catastrophe fires. Keep 6 and 9 as the guaranteed floor.
 
 ### F7. An automatic Coin can pay health without input
@@ -67,7 +68,7 @@ The earlier `docs/design/ASCENSION_TREE_SPEC.md` (2026-09-06) is a *different* p
 **Nodes / rule:** DTQ Tails ("pays 12% current HP"), automation rules ("Q cost and health risk still apply"; "Coin: ordinary face roll; Counterfeit uses the chosen safe-point default"), flagship loadout ("Loaded Coin Reaction Q on catastrophe").
 **Sequence:** Red Mist fires → Reaction Coin flips → Tails → −12% HP at the densest moment, −24% with Two Coins, with 2× recovery.
 **Effect:** unavoidable self-damage from a system the player is not touching; deaths read as the build killing you.
-**Smallest correction:** automatic and Reaction casts of Coin use the **Counterfeit default face**, or Tails on an automatic cast grants its bonus at the 60% automation rate and pays nothing.
+**Smallest correction (revised):** automatic and Reaction casts of Coin use a **deliberately selected outcome** (the Counterfeit default face) or a **separately tuned automatic version** (a smaller Tails payment for a smaller Tails bonus). Removing the payment while keeping the full Tails bonus would remove the tradeoff.
 
 ### F8. Fusion payloads have no Core tag, so which kill families they can start is undefined
 
@@ -229,10 +230,10 @@ No cross-discipline catalyst is borrowed; the slice is self-contained. Ascendant
 | Bullet Hell | Ranged | V4's route | 13,200 |
 | Loaded Coin | Magic | V4's route | 13,600 |
 | Kill Feed, ranged side | Ranged | Bullet Hell → G1 (melee) → EX01 → EX03 → EX10 → MR2 | ≈ 18,000 |
-| Death Debt, melee side | Melee | Blood domino → G1 (magic) → DT01 → DT06 → MM2 (+ DTA Late Payment if F4 is not adopted) | ≈ 16,200 (19,000 with DTA) |
+| Death Debt, melee side | Melee | Blood domino → G1 (magic) → DT01 → DT06 → MM2 → DT02 → DT03 → DT09 → DTA Late Payment | ≈ 20,800 |
 | Wildfire, ranged side | Ranged | Bullet Hell → G1 (magic) → DT02 → DT10 → RM5 | ≈ 17,600 |
 
-Each hybrid sits inside the 30,000 budget with room for items. Test each route at four stages: entry (two locals), first Q, first catastrophe, mature (Evolution + V). Play the three pure routes on their **own** natives first; the Three-Core avalanche is a phase-C test after Ascendant exists, rebuilt per F2.
+Each hybrid sits inside the 30,000 budget with room for items. Test each route at four stages: entry (two locals), first Q, first catastrophe, mature (Evolution + V). **Play every mature route with Revelations disabled first**: ordinary fighting has to produce the escalating chaos on its own; the V is then switched on to see whether it amplifies a working build or replaces it. Play the three pure routes on their **own** natives first; the Three-Core avalanche is a phase-C test after Ascendant exists, rebuilt per F2.
 
 ### 9.5 Encounters
 
@@ -242,7 +243,7 @@ Use V4's five graybox encounters with the existing roster standing in: open hord
 
 Per route and stage: time to first chain; longest chain in fresh victims; R0 (kills caused per seed kill); ordinary vs triggered damage share; time between manual decisions; time to first V and V cadence; health paid to the build's own costs; death cause and whether the player names it; boss time-to-kill and the number of distinct actions used; frames over budget, kept separate from outcomes.
 
-Pass: two purchases change where the player aims or moves; the first Q has a discipline-specific reason; the catastrophe fires from ordinary play in the open horde within two minutes; the Fusion route beats both parents on the same encounter; the boss fight has at least two distinct actions per discipline; a player can explain the last chain. Fail: the exciting part needs the Evolution; deaths are unreadable; the correct play is to wait for V; the Fusion is not distinguishable from its parents; one route requires a specific item to function.
+Pass: with Revelations off, the mature build still clears the open horde through chains; two purchases change where the player aims or moves; the first Q has a discipline-specific reason; the catastrophe fires from ordinary play in the open horde within two minutes; the Fusion route beats both parents on the same encounter; the boss fight has at least two distinct actions per discipline; a player can explain the last chain. Fail: the exciting part needs the Evolution; deaths are unreadable; the correct play is to wait for V; the Fusion is not distinguishable from its parents; one route requires a specific item to function.
 
 ### 9.7 Order of work
 
@@ -257,13 +258,13 @@ D. Ascendant and the rebuilt Three-Core route; Momentum/Precision next.
 
 | # | Change | Where |
 |---|---|---|
-| F1 | execution = any Melee Core kill of a normal; the line kills above damage; normals need HP room | EX01 and all execution-keyed nodes; fixtures |
+| F1 | execution = a normal killed by an execution-enabled hit (damage or line); Finish grants it, Chain Sentence and Kill Feed extend it; normals need HP room | EX01, EX10, MR2; fixtures |
 | F2 | test natives separately; Hot Blood for cross-core Heat; foreign strikes count as firing; SUPPRESSION mirrors any Ranged Core strike | BR01, BRA, BRV, routes |
-| F3 | REWRITE due time 0.5 s, not instant | DTV |
-| F4 | Death Debt deposits execution overkill as Debt in 1.5R | MM2 |
-| F5 | Lucky Crit unregistered; Heads deposits Debt on any Core hit | DTQ, DTK1, DTK2 |
+| F3 | REWRITE keeps matured Debt collectable for 1.5 s; consumers spend it once | DTV, MM2, DTE2, RM8, DTF2 |
+| F4 | Late Payment joins the Death Debt route; overkill-as-Debt is a separate experiment | route, DTA |
+| F5 | Lucky Crit unregistered but its signals preserved; Heads observes real crits | DTQ, DTK1, DTK2 |
 | F6 | Evolutions on the segment 2/7 pick screens and after the first catastrophe | reward rule |
-| F7 | automatic Coin uses the Counterfeit default or pays nothing | DTQ, automation table |
+| F7 | automatic Coin uses a chosen face or a separately tuned automatic version | DTQ, automation table |
 | F8 | every Fusion payload names its Core tag | all Fusions |
 | F9 | fragments seek the lowest-HP enemy; R0 instrumented | BR05, telemetry |
 | F10 | normal kills charge 0.5 | charge rule |
@@ -273,3 +274,9 @@ D. Ascendant and the rebuilt Three-Core route; Momentum/Precision next.
 | F14 | Reaction Q at G1 | G1, ASC |
 | F15–F18 | determinism scoped to tree events; `pay_health`; picks join Doctrine offers; Momentum/Mark adapters | integration |
 | F19 | flat prices for the prototype; scaling decided by telemetry | economy |
+
+---
+
+## 11. Revisions after the 2026-09-13 discussion
+
+Adopted from the reply to this review: execution as "a normal killed by an execution-enabled hit" with Finish granting and Chain Sentence / Kill Feed extending the permission (F1); an explicit pending-Debt rule for REWRITE because a 0.5 s delay still loses the 0.65 s paired cast (F3); Late Payment as the existing fix for Death Debt's sparse Witness delivery, with overkill-as-Debt demoted to an experiment (F4); Lucky Crit excluded from tree roll rules but its existing signals kept for Manifestations, Coin observing rather than controlling crits (F5); automatic Coin as a chosen face or a separately tuned version, never a free Tails (F7); Reaction Q at G1 kept as a test, not a rule (F14); the two-hour Evolution estimate marked as derived from the roadmap's segment length, not measured (F6). The plan now plays every mature route with Revelations disabled before enabling them (§9.4, §9.6).
