@@ -76,6 +76,8 @@ func _apply_damage(
 	if not _world.set_health(handle, remaining_health):
 		return 0.0
 	_mirror_health(actor, remaining_health, _world.get_max_health(handle))
+	if RunEvents != null and RunEvents.enemy_damaged.has_connections():
+		RunEvents.enemy_damaged.emit(handle, applied_damage, adjusted_damage, current_health, source, payload)
 	var ledger_payload := payload as HitLedger
 	var was_critical: bool = ledger_payload != null and ledger_payload.critical_hits > 0
 	if BattleText != null:

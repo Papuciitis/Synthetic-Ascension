@@ -33,6 +33,7 @@ var _crit := PackedByteArray()
 var _last_hit_handles := PackedInt64Array()
 var _colors := PackedColorArray()
 var _sources: Array = []
+var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _active_count: int = 0
 
 var _chunk_manager: ChunkManager = null
@@ -122,7 +123,8 @@ func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapte
 	var burn_interval := float(profile.get_meta("burn_tick", 0.5))
 	var burn_stack_count := int(profile.get_meta("burn_stacks", 0))
 	var burn_tick_mult := float(profile.get_meta("burn_tick_mult", 0.0))
-	return _spawn(origin, direction.normalized() * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core)
+	var tags: PackedStringArray = profile.get_meta("asc_tags", PackedStringArray())
+	return _spawn(origin, direction.normalized() * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core, tags)
 
 func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: float, lifetime: float, source: Node, enemy_id: StringName = &"") -> bool:
 	var visual := Visual.ENEMY_BLUE
@@ -135,7 +137,7 @@ func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: floa
 		color = Color(1.0, 0.70, 0.35, 1.0)
 	return _spawn(origin, direction.normalized() * speed, lifetime, speed * lifetime, 5.0, damage, Team.ENEMY, visual, source, 0.0, 0, false, 0, 0.0, 0.5, 0.0, 18.0, 4.0, color)
 
-func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color) -> bool:
+func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color, tags: PackedStringArray = PackedStringArray()) -> bool:
 	if _active_count >= capacity:
 		_dropped_total += 1
 		if PerformanceFlightRecorder != null:
@@ -166,6 +168,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_last_hit_handles[index] = 0
 		_colors[index] = color
 		_sources[index] = source
+		_tags[index] = tags
 	else:
 		_positions.append(origin)
 		_previous.append(origin)
@@ -188,6 +191,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_last_hit_handles.append(0)
 		_colors.append(color)
 		_sources.append(source)
+		_tags.append(tags)
 	_active_count += 1
 	return true
 
@@ -323,6 +327,10 @@ func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 	if is_instance_valid(source_value):
 		source = source_value as Node
 	var direction := _velocities[index].normalized()
+	if ledger.tags.is_empty():
+		var tags: PackedStringArray = _tags[index]
+		if not tags.is_empty():
+			ledger.tags = tags
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
 
 func _flush_hit_ledgers() -> void:
@@ -375,10 +383,12 @@ func _remove(index: int) -> void:
 		_last_hit_handles[index] = _last_hit_handles[last]
 		_colors[index] = _colors[last]
 		_sources[index] = _sources[last]
+		_tags[index] = _tags[last]
 	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
 	# a realloc + copy storm at bullet-heaven churn rates. Only the released
 	# source reference is cleared so it cannot pin a freed node's Variant.
 	_sources[last] = null
+	_tags[last] = PackedStringArray()
 	_active_count -= 1
 
 func _clear_all() -> void:

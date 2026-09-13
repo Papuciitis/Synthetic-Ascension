@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://coenp350wgqel" path="res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn" id="7_n0b1a"]
 [ext_resource type="Script" uid="uid://r2jw91kyiwz0j" path="res://core/systems/items/ItemEffectRunner.gd" id="9_itemeff"]
 [ext_resource type="Script" uid="uid://d8m3drxk3efv" path="res://core/systems/manifestations/ManifestationRunner.gd" id="10_manif"]
+[ext_resource type="Script" path="res://core/systems/ascension/AscensionRunner.gd" id="11_ascension"]
 [ext_resource type="Script" path="res://core/actors/player/PlayerVisualController.gd" id="11_visual"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1wie2"]
@@ -111,3 +112,6 @@ script = ExtResource("10_manif")
 [node name="AugmentRunner" type="Node" parent="." unique_id=233346370]
 script = ExtResource("5_l45yi")
 metadata/_custom_type_script = "uid://bnrem3r62r0pl"
+
+[node name="AscensionRunner" type="Node2D" parent="."]
+script = ExtResource("11_ascension")

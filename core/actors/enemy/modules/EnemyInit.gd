@@ -175,5 +175,7 @@ func _apply_threat_scaling() -> void:
 	if td == null:
 		return
 	_owner.max_hp *= td.enemy_hp_mul
+	if Global != null:
+		_owner.max_hp *= maxf(0.05, float(Global.debug_enemy_hp_scale))
 	_owner.speed *= td.enemy_speed_mul
 	_owner.set_meta("_threat_scaled", true)

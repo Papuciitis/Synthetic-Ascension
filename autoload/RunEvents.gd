@@ -116,3 +116,17 @@ signal tutorial_modal_state_changed(open: bool)
 
 @warning_ignore("unused_signal")
 signal opening_sequence_state_changed(active: bool, phase: int, mode: StringName)
+
+## Every point of enemy health lost to `source`, with the health it had before
+## the hit and the damage before clamping, so a listener can read execute
+## bands and overkill. `payload` is the HitLedger (or null) the hit arrived
+## with; its tags carry attack provenance for the advancement tree. Guarded by
+## has_connections at the emitter: it fires per hit at horde scale.
+@warning_ignore("unused_signal")
+signal enemy_damaged(handle: int, applied: float, unclamped: float, health_before: float, source: Node, payload: Variant)
+
+## The player spent health on purpose (a tree cost), bypassing evasion, armour
+## and i-frames and never below 1 HP. Not a hit: HitFeel and the on-damage
+## rules do not hear it.
+@warning_ignore("unused_signal")
+signal player_paid_health(player: Node, amount: float, reason: StringName)

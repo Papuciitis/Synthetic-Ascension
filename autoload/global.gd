@@ -125,6 +125,10 @@ const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_player_god_mode: bool = false
+# Advancement-tree prototype fixture: enemies spawn with this much more HP so
+# the execute band and chain lengths can be read (the review asks for x3).
+# Applies to enemies spawned after the value changes; never saved.
+var debug_enemy_hp_scale: float = 1.0
 # Materialized enemies render through shared MultiMesh batches instead of
 # per-node sprites. Applies to enemies spawned after the flag changes.
 var debug_enemy_visual_batching: bool = true

@@ -388,10 +388,15 @@ func _apply_burn_handle(handle: int) -> void:
 ## EnemyCombatService derives was_critical from a HitLedger payload, so a call
 ## with no payload is a normal hit no matter what the damage was.
 func _crit_payload() -> HitLedger:
-	if not get_meta("lucky_crit", false):
+	# A payload exists when the hit is a Lucky Crit or carries advancement-tree
+	# provenance (asc_tags); a plain hit still passes null and costs nothing.
+	var lucky: bool = get_meta("lucky_crit", false)
+	var tags: PackedStringArray = get_meta("asc_tags", PackedStringArray())
+	if not lucky and tags.is_empty():
 		return null
 	var ledger := HitLedger.new()
-	ledger.critical_hits = 1
+	ledger.critical_hits = 1 if lucky else 0
 	ledger.hit_count = 1
 	ledger.source = source
+	ledger.tags = tags
 	return ledger
