@@ -786,6 +786,9 @@ func _refresh_dev_state() -> void:
 		parts.append("SEG %d" % int(Global.attempt_segment))
 		parts.append("FOLLOWERS %d" % int(Global.followers))
 		parts.append("LUCK %.2f" % float(Global.run_luck))
+		if not Global.attempt_ascension.is_empty():
+			var ledger := Global.ascension_ledger()
+			parts.append("TREE %d nodes / %d spent" % [ledger.owned_ids().size() - ledger.cores().size(), int(ledger.state.get("spent", 0))])
 	var threat := get_node_or_null("/root/ThreatDirector")
 	if threat != null:
 		parts.append("THREAT %.1f" % float(threat.get("threat")))
@@ -847,6 +850,29 @@ func _build_run_tab(page: VBoxContainer, tools: Node) -> void:
 	_dev_button(economy, "Luck 0", "Luck reset to 0", func() -> void:
 		if Global != null:
 			Global.set("run_luck", 0.0)
+	)
+
+	_dev_heading(page, "ASCENSION ROUTES")
+	var routes := _dev_row(page)
+	var route_picker := OptionButton.new()
+	route_picker.focus_mode = Control.FOCUS_NONE
+	if tools != null and tools.has_method("ascension_route_names"):
+		for route_name in tools.call("ascension_route_names"):
+			route_picker.add_item(String(route_name))
+	routes.add_child(route_picker)
+	_dev_button(routes, "Load route", "Loading an authored route", func() -> void:
+		if tools == null or route_picker.item_count == 0:
+			return
+		var route_name := route_picker.get_item_text(route_picker.selected)
+		var result: Dictionary = tools.call("apply_ascension_route", route_name, true)
+		if String(result.get("failed", "")).is_empty():
+			_dev_note("Route '%s': %d nodes, %d Followers" % [route_name, int(result.get("bought", 0)), int(result.get("spent", 0))])
+		else:
+			_dev_note("Route '%s' stopped at %s" % [route_name, String(result.get("failed", ""))])
+	)
+	_dev_button(routes, "Clear tree", "Ascension tree cleared", func() -> void:
+		if tools != null and tools.has_method("clear_ascension_tree"):
+			tools.call("clear_ascension_tree")
 	)
 
 	_dev_heading(page, "PRESSURE")

@@ -209,6 +209,69 @@ func jump_to_segment(segment: int) -> void:
 	Global.save_current_profile()
 	Global.call_deferred("goto_game")
 
+# ============================================================
+# Ascension tree (V4 prototype)
+#
+# Buying a mature route by hand takes minutes; these load an authored route
+# from data/ascension/tree_v4.json in order, funding it first so the ledger
+# runs the real purchase rules (adjacency, requirements, gate cores).
+# ============================================================
+
+func ascension_route_names() -> PackedStringArray:
+	var out := PackedStringArray()
+	for build in AscensionTreeDB.shared().builds:
+		out.append(String((build as Dictionary).get("name", "")))
+	return out
+
+## Loads an authored route onto the current attempt. Returns
+## {"bought": n, "failed": "id: reason", "spent": followers}.
+func apply_ascension_route(route_name: String, fund: bool = true) -> Dictionary:
+	var db := AscensionTreeDB.shared()
+	var build: Dictionary = {}
+	for candidate in db.builds:
+		if String((candidate as Dictionary).get("name", "")) == route_name:
+			build = candidate
+			break
+	if build.is_empty():
+		return {"bought": 0, "failed": "unknown route " + route_name, "spent": 0}
+	var native := String(build.get("native_core", "melee"))
+	if String(Global.selected_style_id) != native:
+		Global.selected_style_id = StringName(native)
+	Global.attempt_ascension = AscensionLedger.fresh_state(native)
+	var ledger := Global.ascension_ledger()
+	ledger.note_segment_completed(9)
+	if fund:
+		var need := int(build.get("cost_followers", 0)) - Global.followers
+		if need > 0:
+			Global.transaction_followers(need, &"dev_grant", {"source": "ascension route"}, false, false)
+	var nodes: Array = build.get("nodes", [])
+	var bought := 0
+	var spent := 0
+	for index in range(nodes.size()):
+		var id := String(nodes[index])
+		if id.begins_with("core."):
+			continue
+		var chosen := ""
+		if db.kind(id) == "gate" and index + 1 < nodes.size() and String(nodes[index + 1]).begins_with("core."):
+			chosen = String(nodes[index + 1]).trim_prefix("core.")
+		if db.kind(id) == "evolution":
+			ledger.grant_evolution_claim()
+		var verdict := Global.ascension_buy(id, chosen)
+		if not bool(verdict["ok"]):
+			_refresh_player_loadout()
+			return {"bought": bought, "failed": "%s: %s" % [id, verdict["reason"]], "spent": spent}
+		bought += 1
+		spent += int(verdict["cost"])
+	_refresh_player_loadout()
+	return {"bought": bought, "failed": "", "spent": spent}
+
+func clear_ascension_tree() -> void:
+	if Global == null:
+		return
+	Global.attempt_ascension = AscensionLedger.fresh_state(String(Global.selected_style_id))
+	Global.ascension_ledger()
+	_refresh_player_loadout()
+
 func simulate_legacy_opening_save() -> void:
 	if Global == null or SaveManager == null or SaveManager.current_save == null:
 		return

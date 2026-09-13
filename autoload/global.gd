@@ -212,6 +212,11 @@ var attempt_doctrine_rules: Dictionary = {}
 var attempt_doctrine_events: Array[String] = []
 var attempt_witness_used_segment: int = 0
 var attempt_doctrine_threat_debt: float = 0.0
+## The V4 advancement tree's run state (ownership, opened Cores, equipment,
+## banked Evolution claims); a plain Dictionary so it saves as-is. Rules live
+## in AscensionLedger; the combat layer reads it through ascension_ledger().
+var attempt_ascension: Dictionary = {}
+var _ascension_ledger: AscensionLedger = null
 
 # Attempt-scoped augmentation levels (StringName -> int); defaults to 1
 var attempt_augment_levels: Dictionary = {}
@@ -1082,6 +1087,42 @@ func pending_doctrine_stage() -> StringName:
 	return attempt_pending_doctrine_stage
 
 
+## The advancement-tree ledger for this attempt, created on first use from
+## the selected style so the native Core is always the one the run chose.
+func ascension_ledger() -> AscensionLedger:
+	if _ascension_ledger == null or _ascension_ledger.state != attempt_ascension:
+		if attempt_ascension.is_empty():
+			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id))
+		_ascension_ledger = AscensionLedger.new(AscensionTreeDB.shared(), attempt_ascension)
+	return _ascension_ledger
+
+
+## Buys a tree node with this run's Followers. Returns the ledger verdict with
+## "ok"; on success the Followers are spent through the normal transaction.
+func ascension_buy(id: String, chosen_core: String = "") -> Dictionary:
+	var ledger := ascension_ledger()
+	var verdict := ledger.can_buy(id, followers, chosen_core)
+	if not bool(verdict["ok"]):
+		return verdict
+	var cost := int(verdict["cost"])
+	if cost > 0:
+		var result := transaction_followers(-cost, &"ascension_purchase", {"node": id}, true, false)
+		if int(result.get("change", 0)) != -cost:
+			transaction_followers(-int(result.get("change", 0)), &"ascension_refund", {"node": id}, false, false)
+			return {"ok": false, "reason": "the Followers could not be spent", "cost": cost}
+	ledger.record_purchase(id, cost, chosen_core)
+	request_autosave()
+	return verdict
+
+
+func ascension_refund(id: String) -> int:
+	var back := ascension_ledger().refund(id)
+	if back > 0:
+		transaction_followers(back, &"ascension_refund", {"node": id}, true, false)
+		request_autosave()
+	return back
+
+
 func get_doctrine_rule(key: StringName, fallback: Variant = null) -> Variant:
 	if attempt_doctrine_rules.has(key):
 		return attempt_doctrine_rules[key]
@@ -1546,6 +1587,8 @@ func apply_save(save: SaveData) -> void:
 		attempt_doctrine_stage_ids = save.attempt_doctrine_stage_ids.duplicate(true)
 		attempt_doctrine_rules = save.attempt_doctrine_rules.duplicate(true)
 		attempt_doctrine_events = save.attempt_doctrine_events.duplicate()
+		attempt_ascension = save.attempt_ascension.duplicate(true)
+		_ascension_ledger = null
 		attempt_witness_used_segment = int(save.attempt_witness_used_segment)
 		attempt_doctrine_threat_debt = maxf(0.0, float(save.attempt_doctrine_threat_debt))
 		# Legacy major choices already wrote their effects into the old modifier
@@ -1564,6 +1607,8 @@ func apply_save(save: SaveData) -> void:
 			attempt_doctrine_stage_ids.clear()
 			attempt_doctrine_rules.clear()
 			attempt_doctrine_events.clear()
+			attempt_ascension = {}
+			_ascension_ledger = null
 
 		attempt_augment_levels = save.attempt_augment_levels.duplicate(true)
 		attempt_mutations = save.attempt_mod_mutations.duplicate(true)
@@ -1635,6 +1680,8 @@ func apply_save(save: SaveData) -> void:
 		attempt_doctrine_stage_ids.clear()
 		attempt_doctrine_rules.clear()
 		attempt_doctrine_events.clear()
+		attempt_ascension = {}
+		_ascension_ledger = null
 		attempt_witness_used_segment = 0
 		attempt_doctrine_threat_debt = 0.0
 		attempt_augment_levels = {}
@@ -1717,6 +1764,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_doctrine_stage_ids = attempt_doctrine_stage_ids.duplicate(true)
 		save.attempt_doctrine_rules = attempt_doctrine_rules.duplicate(true)
 		save.attempt_doctrine_events = attempt_doctrine_events.duplicate()
+		save.attempt_ascension = attempt_ascension.duplicate(true)
 		save.attempt_witness_used_segment = attempt_witness_used_segment
 		save.attempt_doctrine_threat_debt = attempt_doctrine_threat_debt
 
@@ -1771,6 +1819,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_doctrine_stage_ids = {}
 		save.attempt_doctrine_rules = {}
 		save.attempt_doctrine_events = []
+		save.attempt_ascension = {}
 		save.attempt_witness_used_segment = 0
 		save.attempt_doctrine_threat_debt = 0.0
 		save.attempt_augment_levels = {}
@@ -1859,6 +1908,8 @@ func start_new_attempt() -> void:
 	attempt_doctrine_stage_ids.clear()
 	attempt_doctrine_rules.clear()
 	attempt_doctrine_events.clear()
+	attempt_ascension = {}
+	_ascension_ledger = null
 	attempt_witness_used_segment = 0
 	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0
@@ -1873,6 +1924,8 @@ func start_new_attempt() -> void:
 	save_current_profile()
 
 func on_segment_completed(completed_segment: int) -> void:
+	if not attempt_ascension.is_empty():
+		ascension_ledger().note_segment_completed(completed_segment)
 	attempt_segment = completed_segment + 1
 	attempt_deaths_this_segment = 0
 	attempt_checkpoint_pos = Vector2.INF
@@ -1960,6 +2013,8 @@ func on_attempt_failed_die_die() -> void:
 	attempt_doctrine_stage_ids.clear()
 	attempt_doctrine_rules.clear()
 	attempt_doctrine_events.clear()
+	attempt_ascension = {}
+	_ascension_ledger = null
 	attempt_witness_used_segment = 0
 	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0

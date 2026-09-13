@@ -102,6 +102,8 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_doctrine_stage_ids: Dictionary = {}
 @export var attempt_doctrine_rules: Dictionary = {}
 @export var attempt_doctrine_events: Array[String] = []
+## V4 advancement tree run state; see AscensionLedger.fresh_state for the shape.
+@export var attempt_ascension: Dictionary = {}
 @export var attempt_witness_used_segment: int = 0
 @export var attempt_doctrine_threat_debt: float = 0.0
 @export var attempt_augment_levels: Dictionary = {}             # String -> int (resets on die-die)
