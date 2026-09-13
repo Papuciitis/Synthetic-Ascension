@@ -217,10 +217,28 @@ func jump_to_segment(segment: int) -> void:
 # runs the real purchase rules (adjacency, requirements, gate cores).
 # ============================================================
 
+const ASCENSION_PROTOTYPE_ROUTES := "res://data/ascension/routes_prototype.json"
+
+
+## Authored routes from the tree package plus the review's hybrid routes.
+func ascension_routes() -> Array:
+	var out: Array = []
+	for build in AscensionTreeDB.shared().builds:
+		out.append(build)
+	var file := FileAccess.open(ASCENSION_PROTOTYPE_ROUTES, FileAccess.READ)
+	if file != null:
+		var parsed: Variant = JSON.parse_string(file.get_as_text())
+		file.close()
+		if parsed is Dictionary:
+			for route in (parsed as Dictionary).get("routes", []):
+				out.append(route)
+	return out
+
+
 func ascension_route_names() -> PackedStringArray:
 	var out := PackedStringArray()
-	for build in AscensionTreeDB.shared().builds:
-		out.append(String((build as Dictionary).get("name", "")))
+	for route in ascension_routes():
+		out.append(String((route as Dictionary).get("name", "")))
 	return out
 
 ## Loads an authored route onto the current attempt. Returns
@@ -228,7 +246,7 @@ func ascension_route_names() -> PackedStringArray:
 func apply_ascension_route(route_name: String, fund: bool = true) -> Dictionary:
 	var db := AscensionTreeDB.shared()
 	var build: Dictionary = {}
-	for candidate in db.builds:
+	for candidate in ascension_routes():
 		if String((candidate as Dictionary).get("name", "")) == route_name:
 			build = candidate
 			break
@@ -241,7 +259,7 @@ func apply_ascension_route(route_name: String, fund: bool = true) -> Dictionary:
 	var ledger := Global.ascension_ledger()
 	ledger.note_segment_completed(9)
 	if fund:
-		var need := int(build.get("cost_followers", 0)) - Global.followers
+		var need := int(build.get("cost_followers", 100000)) - Global.followers
 		if need > 0:
 			Global.transaction_followers(need, &"dev_grant", {"source": "ascension route"}, false, false)
 	var nodes: Array = build.get("nodes", [])

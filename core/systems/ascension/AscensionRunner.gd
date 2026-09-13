@@ -40,6 +40,17 @@ const V_CHARGE_BOSS := 30.0
 const V_CHARGE_ACTIONS_PER_SECOND := 4
 const L := 240.0   # the design's long distance
 const R := 80.0    # the design's radius unit
+## Witness: a foreign Core strike every second native input (review F12) for
+## each Core a Gate opened; two foreign Cores alternate. 0.6D, Proc Power 0.6.
+const WITNESS_EVERY := 2
+const WITNESS_D := 0.6
+const WITNESS_PP := 0.6
+## Reaction Q (review F14): opens with the first Gate; 60% damage and Proc
+## Power, twice the recovery; casts on a catastrophe or on losing 15% max HP
+## to enemies within a second.
+const REACTION_SCALE := 0.6
+const REACTION_RECOVERY := 2.0
+const REACTION_HP_TRIGGER := 0.15
 
 var ledger: AscensionLedger = null
 var native_core: String = "melee"
@@ -54,6 +65,15 @@ var _sweep_accum: float = 0.0
 
 var q_id: String = ""
 var v_id: String = ""
+var reaction_id: String = ""
+var reaction_cooldown_left: float = 0.0
+var reaction_cooldown_max: float = 0.0
+var reaction_cast: bool = false
+var _recent_damage: float = 0.0
+var _recent_damage_window: float = 0.0
+var _native_inputs: int = 0
+var _witness_turn: int = 0
+var witness_strikes: int = 0
 var q_cooldown_left: float = 0.0
 var q_cooldown_max: float = 0.0
 var v_cooldown_left: float = 0.0
@@ -128,6 +148,7 @@ func refresh() -> void:
 	_sync_noun_claims()
 	q_id = ledger.equipped("q") if active_ids.has(ledger.equipped("q")) else ""
 	v_id = ledger.equipped("v") if active_ids.has(ledger.equipped("v")) else ""
+	reaction_id = ledger.equipped("reaction") if active_ids.has(ledger.equipped("reaction")) else ""
 	_q_slot = _sync_slot(_q_slot, "q", q_id)
 	_v_slot = _sync_slot(_v_slot, "v", v_id)
 	_set_wired(active_ids.size() > 0)
@@ -137,12 +158,18 @@ func refresh() -> void:
 func _rebuild_engines() -> void:
 	var wanted: Dictionary = {}   # discipline -> {id: true}
 	for id in active_ids:
+		var codes := PackedStringArray()
 		var code := ledger.db.discipline_of(id)
-		if code.is_empty():
-			code = "_"  # fusions, unions, gates, ascendant: routed by their own engines later
-		if not wanted.has(code):
-			wanted[code] = {}
-		(wanted[code] as Dictionary)[id] = true
+		if not code.is_empty():
+			codes.append(code)
+		elif ledger.db.kind(id) == "fusion":
+			# A Fusion belongs to both parents: each engine sees it and runs
+			# its half (Kill Feed: Execution finishes, Barrage fragments).
+			codes = ledger.db.fusion_disciplines(id)
+		for owner in codes:
+			if not wanted.has(owner):
+				wanted[owner] = {}
+			(wanted[owner] as Dictionary)[id] = true
 	var kept: Array[AscensionEngine] = []
 	_engine_by_node.clear()
 	for code in wanted:
@@ -481,6 +508,100 @@ func _on_weapon_fired(who: Node, style_id: StringName, origin: Vector2, target: 
 		return
 	for engine in engines:
 		engine.on_native_fire(String(style_id), origin, target, power_mul, haste_mul)
+	_native_inputs += 1
+	if _native_inputs % WITNESS_EVERY == 0:
+		_witness(origin, target)
+
+
+## Cores a Gate opened, in a stable order.
+func foreign_cores() -> Array:
+	var out: Array = []
+	for core in AscensionTreeDB.CORES:
+		if core != native_core and ledger != null and ledger.has_core(core):
+			out.append(core)
+	return out
+
+
+func _witness(origin: Vector2, target: Vector2) -> void:
+	var foreign := foreign_cores()
+	if foreign.is_empty():
+		return
+	var core := String(foreign[_witness_turn % foreign.size()])
+	_witness_turn += 1
+	witness_strikes += 1
+	var flags := PackedStringArray(["core_strike", "witness"])
+	var path: String = {"melee": "slash", "ranged": "bullet", "magic": "impact"}[core]
+	var tags := AscensionTags.make(core, AscensionTags.FAMILY_TREE, "witness", path, 1, WITNESS_PP, flags)
+	tags.append("cast:witness:%d" % witness_strikes)
+	for engine in engines:
+		for extra in engine.witness_tags(core):
+			if not tags.has(extra):
+				tags.append(extra)
+	var damage := WITNESS_D * native_damage_for(core)
+	var dir := (target - origin).normalized()
+	if dir == Vector2.ZERO:
+		dir = Vector2.RIGHT
+	match core:
+		"melee":
+			spawn_slash(player_position() + dir * 10.0, dir, damage, tags, 120.0, R)
+		"ranged":
+			spawn_bullet(origin, dir, damage, tags)
+		"magic":
+			var offset := target - player_position()
+			if offset.length() > 3.0 * L:
+				offset = offset.normalized() * 3.0 * L
+			spawn_impact(player_position() + offset, damage, tags, R * 0.5)
+	for engine in engines:
+		engine.on_witness_strike(core, origin, target)
+
+
+## D for any Core: the native hit damage that Core would have.
+func native_damage_for(core: String) -> float:
+	if _player == null:
+		return 12.0
+	var base := float(_player.get("base_weapon_damage"))
+	var stats: Variant = _player.get("stats")
+	var power := 1.0 + (float(stats.get("power")) if stats != null else 0.0)
+	return base * CombatStyleTuning.damage_multiplier(StringName(core)) * power
+
+
+## Engines call this when a catastrophe fires; the Reaction Q answers.
+func note_catastrophe(id: String) -> void:
+	for engine in engines:
+		engine.on_catastrophe(id)
+	_try_reaction("catastrophe:" + id)
+
+
+## Damage scale for Q payloads: 1.0 for a manual cast, 0.6 for a Reaction cast.
+func q_scale() -> float:
+	return REACTION_SCALE if reaction_cast else 1.0
+
+
+func _try_reaction(trigger: String) -> Dictionary:
+	if reaction_id.is_empty() or reaction_cooldown_left > 0.0:
+		return {"ok": false, "message": "NO REACTION", "cooldown": 0.0}
+	var engine := engine_for(reaction_id)
+	if engine == null:
+		return {"ok": false, "message": "NOT WIRED", "cooldown": 0.0}
+	reaction_cast = true
+	var result := engine.activate_q(reaction_id)
+	reaction_cast = false
+	if bool(result.get("ok", false)):
+		var cooldown := _recovery(float(result.get("cooldown", 0.0))) * REACTION_RECOVERY
+		reaction_cooldown_max = cooldown
+		reaction_cooldown_left = cooldown
+		result["trigger"] = trigger
+		if BattleText != null:
+			BattleText.popup(player_position(), "REACTION " + String(result.get("message", "")), Color(0.9, 0.8, 0.4, 1.0), 1.2)
+	return result
+
+
+## Ordinary Q recovery after the Ascendant Recovery sink.
+func _recovery(base: float) -> float:
+	if ledger != null and ledger.rank("ASC.S2") > 0:
+		var r := float(ledger.rank("ASC.S2"))
+		return base * (1.0 - 0.20 * r / (r + 100.0))
+	return base
 
 
 func _on_player_dashed(who: Node, from: Vector2, direction: Vector2) -> void:
@@ -495,6 +616,12 @@ func _on_player_damage_taken(who: Node, amount: float, _position: Vector2) -> vo
 		return
 	for engine in engines:
 		engine.on_player_damage_taken(amount)
+	_recent_damage += amount
+	_recent_damage_window = 1.0
+	var max_hp := float(_player.get("max_hp"))
+	if max_hp > 0.0 and _recent_damage >= REACTION_HP_TRIGGER * max_hp:
+		_recent_damage = 0.0
+		_try_reaction("damage")
 
 
 # ---------------------------------------------------------------- native attack decoration
@@ -682,6 +809,12 @@ func _process(delta: float) -> void:
 		v_cooldown_left = maxf(0.0, v_cooldown_left - delta)
 		if _v_slot != null:
 			_v_slot.announce(v_cooldown_left, v_cooldown_max)
+	if reaction_cooldown_left > 0.0:
+		reaction_cooldown_left = maxf(0.0, reaction_cooldown_left - delta)
+	if _recent_damage_window > 0.0:
+		_recent_damage_window -= delta
+		if _recent_damage_window <= 0.0:
+			_recent_damage = 0.0
 	_v_charge_window += delta
 	if _v_charge_window >= 1.0:
 		_v_charge_window = 0.0
@@ -748,6 +881,7 @@ func _activate(slot: String) -> Dictionary:
 		return result
 	var cooldown := float(result.get("cooldown", 0.0))
 	if slot == "q":
+		cooldown = _recovery(cooldown)
 		q_cooldown_max = cooldown
 		q_cooldown_left = cooldown
 	else:
@@ -786,7 +920,7 @@ func slot_state(slot: String) -> Dictionary:
 
 
 func describe() -> Dictionary:
-	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
+	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "reaction": reaction_id, "witness": witness_strikes, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
 	for engine in engines:
 		out[engine.discipline()] = engine.describe()
 	return out

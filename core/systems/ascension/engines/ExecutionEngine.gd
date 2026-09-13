@@ -41,6 +41,7 @@ var _reservoir_left: float = 0.0
 var _pending_gavels: Array = []             # {delay, point, damage, radius, cast, kind}
 var _gavel_casts: int = 0
 var _gavel_windup: float = -1.0
+var _gavel_scale: float = 1.0
 var _gavel_point: Vector2 = Vector2.ZERO
 var _gavel_cast_id: String = ""
 var _gavel_executed: Dictionary = {}        # cast id -> executions
@@ -87,7 +88,9 @@ func gavel_line() -> float:
 func _hit_line(hit: Dictionary, handle: int) -> float:
 	var tags: PackedStringArray = hit["tags"]
 	var value := line()
-	if hit["path"] == "gavel":
+	if hit["path"] == "fragment":
+		value *= 0.5
+	elif hit["path"] == "gavel":
 		value = gavel_line()
 		if AscensionTags.has_flag(tags, "second_swing"):
 			value += 0.10
@@ -100,7 +103,10 @@ func _hit_line(hit: Dictionary, handle: int) -> float:
 
 
 func _execution_enabled(hit: Dictionary) -> bool:
-	return hit["core"] == "melee" and AscensionTags.has_flag(hit["tags"], "execute_enabled")
+	if hit["core"] == "melee" and AscensionTags.has_flag(hit["tags"], "execute_enabled"):
+		return true
+	# Kill Feed (MR2): fragments may apply Finish at half the line.
+	return has("MR2") and hit["path"] == "fragment"
 
 
 func _cast_of(tags: PackedStringArray) -> String:
@@ -121,6 +127,12 @@ func _payload_tags(root: String, path: String, hit: Dictionary, pp: float, extra
 
 
 # ---------------------------------------------------------------- native decoration
+
+func witness_tags(core: String) -> PackedStringArray:
+	if core != "melee":
+		return PackedStringArray()
+	return PackedStringArray(["flag:execute_enabled"]) if has("EX01") else PackedStringArray()
+
 
 func decorate_native_slash(slash: Node) -> void:
 	var tags: PackedStringArray = slash.get_meta(AscensionTags.META_KEY, PackedStringArray())
@@ -174,7 +186,7 @@ func _expire_marks() -> void:
 # ---------------------------------------------------------------- hits
 
 func on_hit(hit: Dictionary) -> void:
-	if hit["core"] != "melee":
+	if hit["core"] != "melee" and not (has("MR2") and hit["path"] == "fragment"):
 		return
 	var handle := int(hit["handle"])
 	var tags: PackedStringArray = hit["tags"]
@@ -294,7 +306,8 @@ func _finish(hit: Dictionary, handle: int) -> void:
 # ---------------------------------------------------------------- kills
 
 func on_kill(hit: Dictionary, _context: RefCounted) -> void:
-	if hit["core"] != "melee":
+	var melee_kill: bool = hit["core"] == "melee"
+	if not melee_kill and not (has("MR2") and hit["path"] == "fragment"):
 		return
 	var handle := int(hit["handle"])
 	var tags: PackedStringArray = hit["tags"]
@@ -306,6 +319,8 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 		overkill = 0.5 * D()  # the seed: a threshold kill never starts an empty chain
 	if executed:
 		_on_execution(hit, handle, cast, overkill)
+	if not melee_kill:
+		return  # a fragment execution runs the execution families only
 	_root_deaths[cast] = int(_root_deaths.get(cast, 0)) + 1
 	if has("EX03") and not (has("EXF1") and _root_spilled.get(cast, false)):
 		_spillover(hit, handle, cast, overkill)
@@ -342,6 +357,20 @@ func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) 
 	var body_count: bool = path == "sweep" and has("EXV2")
 	if has("EX05") or body_count:
 		_corpse_bomb(hit, handle, overkill, body_count and not has("EX05"))
+	# Kill Feed (MR2): a fragment execution grants one extra fragment.
+	if path == "fragment" and has("MR2"):
+		var barrage := runner.engine_for("BR05") as BarrageEngine
+		if barrage != null:
+			counters["kill_feed"] = int(counters.get("kill_feed", 0)) + 1
+			barrage.extra_fragment(hit["position"], handle)
+	# Death Debt (MM2): the victim's unpaid Debt explodes as a Magic payload.
+	if has("MM2"):
+		var distortion := runner.engine_for("DT06") as DistortionEngine
+		if distortion != null:
+			var owed := distortion.collect_for_death_debt(handle)
+			counters["death_debts"] = int(counters.get("death_debts", 0)) + 1
+			var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "MM2", "impact", int(hit["gen"]) + 1, 0.4)
+			runner.spawn_impact(hit["position"], maxf(owed, 0.5 * D()), tags, 1.5 * AscensionRunner.R)
 
 
 func _spillover(hit: Dictionary, handle: int, cast: String, overkill: float) -> void:
@@ -431,6 +460,7 @@ func _public_execution(hit: Dictionary, victim: int, overkill: float) -> void:
 func _red_mist(hit: Dictionary) -> void:
 	counters["red_mists"] = int(counters["red_mists"]) + 1
 	_red_mist_recovery = 8.0
+	runner.note_catastrophe("EXC")
 	var damage := 5.0 * D() + _reservoir
 	_reservoir = 0.0
 	if BattleText != null:
@@ -454,11 +484,12 @@ func _gavel_radius() -> float:
 
 
 func _gavel_damage() -> float:
+	var scale := _gavel_scale
 	if has("EXE1"):
-		return 5.0 * D()
+		return 5.0 * D() * scale
 	if has("EXQ1"):
-		return 2.5 * D()
-	return 3.0 * D()
+		return 2.5 * D() * scale
+	return 3.0 * D() * scale
 
 
 func activate_q(id: String) -> Dictionary:
@@ -484,6 +515,7 @@ func activate_q(id: String) -> Dictionary:
 	elif has("EXQ2"):
 		windup = 0.1
 	_gavel_windup = windup
+	_gavel_scale = runner.q_scale()
 	_gavel_casts += 1
 	_gavel_cast_id = "EXQ:%d" % _gavel_casts
 	_gavel_executed[_gavel_cast_id] = 0

@@ -1094,7 +1094,9 @@ func pending_doctrine_stage() -> StringName:
 ## The advancement-tree ledger for this attempt, created on first use from
 ## the selected style so the native Core is always the one the run chose.
 func ascension_ledger() -> AscensionLedger:
-	if _ascension_ledger == null or _ascension_ledger.state != attempt_ascension:
+	# Identity, not equality: two fresh states compare equal by value, and the
+	# ledger must follow the Dictionary the attempt actually holds.
+	if _ascension_ledger == null or not is_same(_ascension_ledger.state, attempt_ascension):
 		if attempt_ascension.is_empty():
 			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id))
 		_ascension_ledger = AscensionLedger.new(AscensionTreeDB.shared(), attempt_ascension)

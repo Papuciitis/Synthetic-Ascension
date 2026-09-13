@@ -1,0 +1,88 @@
+{
+ "version": "prototype-1",
+ "note": "The review's six routes (docs/design/2026-09-13-v4-tree-review.md section 9.4): three pure builds by their authored names, three hybrids extending them across a Gate.",
+ "routes": [
+  {
+   "name": "Kill Feed, ranged side",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "G1",
+    "core.melee",
+    "EX01",
+    "EX03",
+    "EX10",
+    "MR2"
+   ]
+  },
+  {
+   "name": "Death Debt, melee side",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXC",
+    "EXV",
+    "EXE2",
+    "G1",
+    "core.magic",
+    "DT01",
+    "DT06",
+    "MM2",
+    "DT02",
+    "DT03",
+    "DT09",
+    "DTA"
+   ]
+  },
+  {
+   "name": "Wildfire, ranged side",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "G1",
+    "core.magic",
+    "DT02",
+    "DT10",
+    "RM5"
+   ]
+  }
+ ]
+}

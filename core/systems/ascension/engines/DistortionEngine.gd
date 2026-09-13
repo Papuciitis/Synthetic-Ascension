@@ -362,6 +362,26 @@ func collect_debt(handle: int) -> float:
 	return total
 
 
+## Death Debt (MM2): with Pass It On, the ordinary shares travel first; the
+## rest is collected and the buckets are marked paid, so Interest never bills
+## the player for them.
+func collect_for_death_debt(handle: int) -> float:
+	var total := unpaid_debt(handle)
+	if total <= 0.0:
+		return 0.0
+	if has("DTF2"):
+		var passed := 0
+		for other in runner.enemies_in_radius(runner.enemy_position(handle), 3.0 * AscensionRunner.R, handle):
+			if passed >= 3:
+				break
+			_add_packet(other, 0.4 * total, "passed", _clock + 0.5, true)
+			passed += 1
+		if passed > 0:
+			counters["pass_ons"] = int(counters["pass_ons"]) + 1
+	debts.erase(handle)
+	return total
+
+
 func pending_bucket_count() -> int:
 	var count := 0
 	for handle in debts:
@@ -472,6 +492,7 @@ func _payday() -> void:
 	counters["paydays"] = int(counters["paydays"]) + 1
 	payday_left = 0.5
 	payday_recovery = 8.0
+	runner.note_catastrophe("DTC")
 	if BattleText != null:
 		BattleText.popup(runner.player_position(), "PAYDAY", Color(1.0, 0.85, 0.2, 1.0), 1.6)
 	# Oldest first over 0.5 s: reschedule every pending bucket into the window.
@@ -656,8 +677,11 @@ func activate_q(id: String) -> Dictionary:
 	if has("DTQ3"):
 		_house_edge()
 	var flips := 2 if has("DTQ4") else 1
+	# An automatic (Reaction) Coin uses a chosen face, never a blind Tails
+	# payment at the densest moment (review F7).
+	var chosen := has("DTQ5") or runner.reaction_cast
 	for _i in range(flips):
-		_flip(has("DTQ5"))
+		_flip(chosen)
 	return {"ok": true, "message": "HEADS" if heads_left > 0.0 and tails_left <= 0.0 else ("TAILS" if tails_left > 0.0 and heads_left <= 0.0 else "BOTH"), "cooldown": 9.0}
 
 

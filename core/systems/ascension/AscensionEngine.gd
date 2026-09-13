@@ -86,6 +86,22 @@ func on_enemy_projectile_seen(_position: Vector2, _velocity: Vector2) -> void:
 	pass
 
 
+## Extra tags for a Witness strike of `core` (flags such as execute_enabled,
+## or a volley id), so the strike qualifies for that Core's strike rules.
+func witness_tags(_core: String) -> PackedStringArray:
+	return PackedStringArray()
+
+
+## A Witness strike of `core` was just emitted (counters, Heat, ...).
+func on_witness_strike(_core: String, _origin: Vector2, _target: Vector2) -> void:
+	pass
+
+
+## A catastrophe (Overload, Red Mist, Payday) began; Reaction Q listens.
+func on_catastrophe(_id: String) -> void:
+	pass
+
+
 # ---- attack decoration (native attacks only; generated ones carry their own tags)
 
 func decorate_native_slash(_slash: Node) -> void:

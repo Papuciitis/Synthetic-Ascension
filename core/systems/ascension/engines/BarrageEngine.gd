@@ -55,6 +55,7 @@ var _pending_fragments: Array = []
 
 var burst_left: float = 0.0
 var burst_total: float = 0.0
+var _burst_scale: float = 1.0
 var _burst_extended: float = 0.0
 var _burst_points: int = 0
 var _burst_point_timer: float = 0.0
@@ -267,6 +268,28 @@ func _recent_count(times: Array[float], window: float) -> int:
 
 # ---------------------------------------------------------------- native strikes
 
+func witness_tags(core: String) -> PackedStringArray:
+	if core != "ranged":
+		return PackedStringArray()
+	return PackedStringArray(["volley:%d" % (_volley + 1)])
+
+
+## A Witness Shot heats the weapon (4) and advances the strike counters at
+## full weight (review F12).
+func on_witness_strike(core: String, origin: Vector2, target: Vector2) -> void:
+	if core != "ranged":
+		return
+	_volley += 1
+	add_heat(HEAT_PER_WITNESS)
+	var dir := (target - origin).normalized()
+	_core_strike(origin, dir if dir != Vector2.ZERO else Vector2.RIGHT, 1.0)
+
+
+## Kill Feed (MR2): a fragment execution grants one extra fragment (Ranged).
+func extra_fragment(position: Vector2, victim: int) -> void:
+	_spawn_fragment(position, 0.6 * D(), 0.4, 1 if has("BR10") else 0, "MR2", 2, victim)
+
+
 func decorate_native_profile(profile: HitProfileAdapter) -> void:
 	var tags: PackedStringArray = profile.get_meta(AscensionTags.META_KEY, PackedStringArray())
 	tags.append("volley:%d" % (_volley + 1))
@@ -379,10 +402,16 @@ func _ricochet(hit: Dictionary, victim: int) -> void:
 
 
 func on_kill(hit: Dictionary, _context: RefCounted) -> void:
-	if hit["core"] != "ranged":
-		return
 	var handle := int(hit["handle"])
 	var position: Vector2 = hit["position"]
+	# Wildfire (RM5): a Burn kill rolls 25% for three burning fragments.
+	if has("RM5") and hit["family"] == "status" and EnemyStatus.has_status(handle, &"burn"):
+		if runner.roll(&"wildfire", 0.25, 1.0):
+			counters["wildfires"] = int(counters.get("wildfires", 0)) + 1
+			for _i in range(3):
+				_spawn_fragment(position, 0.5 * D(), 0.4, 0, "RM5", int(hit["gen"]) + 1, handle, true)
+	if hit["core"] != "ranged":
+		return
 	if has("BR05"):
 		var bounces := 1 if has("BR10") else 0
 		for _i in range(2):
@@ -433,10 +462,11 @@ func _tick_patches(delta: float) -> void:
 
 # ---------------------------------------------------------------- fragments
 
-func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, root: String, generation: int, exclude: int) -> void:
+func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, root: String, generation: int, exclude: int, burning: bool = false) -> void:
 	var target := runner.lowest_hp_enemy_in_radius(position, FRAGMENT_SEEK_RANGE, exclude)
 	var angle := runner.rng().randf_range(0.0, TAU)
 	_pending_fragments.append({
+		"burning": burning,
 		"pos": position,
 		"vel": Vector2.from_angle(angle) * FRAGMENT_SPEED,
 		"target": target,
@@ -497,6 +527,8 @@ func _fragment_hit(fragment: Dictionary, target: int) -> void:
 	if bool(fragment["suppression"]):
 		flags.append("v")
 	var tags := AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, String(fragment["root"]), "fragment", int(fragment["gen"]), float(fragment["pp"]), flags)
+	if bool(fragment.get("burning", false)):
+		EnemyStatus.apply_burn(target, 1, 3.0, 0.5, 0.2 * D() * 0.5, runner.player())
 	runner.damage_enemy(target, float(fragment["damage"]), tags)
 	if has("BRE2") and burst_left > 0.0 and int(fragment["bounces"]) > 0:
 		_burst_points = mini(12, _burst_points + 1) if (int(counters["fragment_hits"]) % 3 == 0) else _burst_points
@@ -547,6 +579,7 @@ func activate_q(id: String) -> Dictionary:
 		return _cancel_burst()
 	burst_total = 3.0 if has("BRQ1") else 2.0
 	burst_left = burst_total
+	_burst_scale = runner.q_scale()
 	_burst_extended = 0.0
 	_burst_kills.clear()
 	_burst_points = 3 if has("BRE2") else 0
@@ -602,7 +635,7 @@ func _complete_burst() -> void:
 		runner.block_native_fire(jam_left)
 		heat = HEAT_AFTER_JAM
 	else:
-		_fan_volley(origin, aim, 12, 0.6 * D(), 0.7, "BRQ", "bullet", 50.0)
+		_fan_volley(origin, aim, 12, 0.6 * D() * _burst_scale, 0.7, "BRQ", "bullet", 50.0)
 		counters["burst_rounds"] = int(counters["burst_rounds"]) + 12
 		if extra > 0:
 			_radial_volley(origin, extra, 0.5 * D(), 0.3, "BRQ5", "bullet")
@@ -625,6 +658,7 @@ func _overload() -> void:
 	_overload_volleys_left = 4
 	_overload_timer = 0.0
 	overload_recovery_left = 8.0
+	runner.note_catastrophe("BRC")
 	if BattleText != null:
 		BattleText.popup(runner.player_position(), "OVERLOAD", Color(1.0, 0.4, 0.1, 1.0), 1.6)
 

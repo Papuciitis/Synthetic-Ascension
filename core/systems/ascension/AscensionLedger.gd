@@ -29,7 +29,7 @@ static func fresh_state(native_core: String) -> Dictionary:
 		"owned": {"core.%s" % native_core: 1},
 		"paid": {},
 		"starter": "",
-		"equipped": {"q": "", "v": "", "keystones": [], "axioms": []},
+		"equipped": {"q": "", "v": "", "reaction": "", "keystones": [], "axioms": []},
 		"disabled_mutations": [],
 		"evolution_claims": 0,
 		"segments_completed": 0,
@@ -50,6 +50,8 @@ func _init(tree: AscensionTreeDB, run_state: Dictionary) -> void:
 	for key in defaults:
 		if not state.has(key):
 			state[key] = defaults[key]
+	if not (state["equipped"] as Dictionary).has("reaction"):
+		(state["equipped"] as Dictionary)["reaction"] = ""
 
 
 # ---------------------------------------------------------------- queries
@@ -103,9 +105,15 @@ func equipped_list(slot: String) -> Array:
 
 
 func is_equipped(id: String) -> bool:
-	if equipped("q") == id or equipped("v") == id:
+	if equipped("q") == id or equipped("v") == id or equipped("reaction") == id:
 		return true
 	return equipped_list("keystones").has(id) or equipped_list("axioms").has(id)
+
+
+## The Reaction Q slot opens with the first Gate (review F14): a second owned
+## Q that casts itself on a trigger at 60% damage and twice the recovery.
+func reaction_slot_open() -> bool:
+	return owns("G1")
 
 
 ## A mutation runs when owned, enabled, and its parent Q / Revelation is equipped.
@@ -142,7 +150,7 @@ func effect_active(id: String) -> bool:
 			for req_id in db._owned_ids_in(db.node(id).get("requires", {})):
 				if db.kind(req_id) == "active":
 					q = req_id
-			return not q.is_empty() and equipped("q") == q
+			return not q.is_empty() and (equipped("q") == q or equipped("reaction") == q)
 		"keystone":
 			return equipped_list("keystones").has(id)
 		"axiom":
@@ -335,6 +343,8 @@ func can_equip(slot: String, id: String) -> bool:
 	match slot:
 		"q":
 			return db.kind(id) == "active"
+		"reaction":
+			return db.kind(id) == "active" and reaction_slot_open() and equipped("q") != id
 		"v":
 			return db.kind(id) == "revelation"
 		"keystones":
@@ -352,8 +362,10 @@ func equip(slot: String, id: String) -> bool:
 	if not can_equip(slot, id):
 		return false
 	var eq: Dictionary = state["equipped"]
-	if slot == "q" or slot == "v":
+	if slot == "q" or slot == "v" or slot == "reaction":
 		eq[slot] = id
+		if slot == "q" and String(eq.get("reaction", "")) == id:
+			eq["reaction"] = ""
 	else:
 		var list: Array = eq[slot]
 		if not list.has(id):
@@ -363,7 +375,7 @@ func equip(slot: String, id: String) -> bool:
 
 func unequip(slot: String, id: String) -> void:
 	var eq: Dictionary = state["equipped"]
-	if slot == "q" or slot == "v":
+	if slot == "q" or slot == "v" or slot == "reaction":
 		if String(eq.get(slot, "")) == id:
 			eq[slot] = ""
 	else:
@@ -376,6 +388,14 @@ func _auto_equip(id: String) -> void:
 		"active":
 			if equipped("q").is_empty():
 				equip("q", id)
+			elif equipped("reaction").is_empty():
+				equip("reaction", id)
+		"gate":
+			# The Gate opens the Reaction slot: a second owned Q fills it.
+			if equipped("reaction").is_empty():
+				for other in owned_of_kind("active"):
+					if other != equipped("q") and equip("reaction", other):
+						break
 		"revelation":
 			if equipped("v").is_empty():
 				equip("v", id)
@@ -386,7 +406,7 @@ func _auto_equip(id: String) -> void:
 
 
 func _unequip(id: String) -> void:
-	for slot in ["q", "v", "keystones", "axioms"]:
+	for slot in ["q", "v", "reaction", "keystones", "axioms"]:
 		unequip(slot, id)
 
 
