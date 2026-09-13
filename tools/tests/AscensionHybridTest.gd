@@ -182,6 +182,46 @@ func _run() -> void:
 		_runner.refresh()
 		_check(_runner.foreign_cores().size() == 1 and _runner.engines.size() == 2, "the Death Debt route runs Execution and Distortion across two Cores (%d)" % _runner.engines.size())
 
+	# --- Ascendant: one strike per foreign Core per input, Twenty Bodies, a second V
+	if tools != null:
+		var result: Dictionary = tools.call("apply_ascension_route", "Three-Core avalanche", true)
+		_check(String(result["failed"]).is_empty() and int(result["spent"]) == 71000, "the Three-Core avalanche loads at 71,000 (%s, %d)" % [String(result["failed"]), int(result["spent"])])
+		_runner.refresh()
+		ledger = Global.ascension_ledger()
+		_check(_runner.owns("ASC") and _runner.foreign_cores().size() == 2, "Ascendant with both Gates open")
+		_check(not ledger.equipped("v2").is_empty() and _runner.v2_id == ledger.equipped("v2") and ledger.equipped("v2") != ledger.equipped("v"), "Ascendant fills the second Revelation slot (%s / %s)" % [ledger.equipped("v"), ledger.equipped("v2")])
+		var witness_before := _runner.witness_strikes
+		var impacts_before := _count_nodes("MagicImpact")
+		var bullets_before := ProjectileManager.active_count()
+		_fire("melee", origin + Vector2(100, 0))
+		_check(_runner.ascendant_strikes == 2 and _runner.witness_strikes == witness_before, "every native input emits a Ranged and a Magic strike instead of a Witness")
+		_check(_count_nodes("MagicImpact") == impacts_before + 1 and ProjectileManager.active_count() == bullets_before + 1, "the strikes have real foreign geometry")
+		await _settle()
+		# Twenty Bodies: twenty distinct kills from one root command an extra 2D foreign strike.
+		var survivor := _spawn_enemy(500.0, origin + Vector2(-120, 0))
+		var root_tags := AscensionTags.native("melee", "slash")
+		root_tags = AscensionTags.with_flag(root_tags, "core_strike")
+		root_tags.append("cast:native:999")
+		var strikes_before := int(_runner.telemetry["longest_chain"])
+		bullets_before = ProjectileManager.active_count()
+		impacts_before = _count_nodes("MagicImpact")
+		for i in range(20):
+			var body := _spawn_enemy(1.0, origin + Vector2(-100 + float(i) * 4.0, 60))
+			_runner.damage_enemy(body, 500.0, root_tags)
+		_check(int(_runner.telemetry["longest_chain"]) >= 20, "twenty distinct kills from one root are counted (%d)" % int(_runner.telemetry["longest_chain"]))
+		_check(ProjectileManager.active_count() + _count_nodes("MagicImpact") > bullets_before + impacts_before, "Twenty Bodies commands an extra foreign strike at the survivor")
+		EnemyWorld.remove_enemy(survivor, &"test")
+		await _settle()
+
+	# --- Second Skin commands the Reaction Q on a heavy hit
+	ledger = _load("melee", ["EX01", "EX02", "EXQ", ["G1", "ranged"], "BR01", "BRQ", "ASC", "ASC2"])
+	_check(_runner.reaction_id == "BRQ", "Burst sits in the Reaction slot")
+	var barrage2 := _runner.engine_for("BR01") as BarrageEngine
+	var tank := _spawn_enemy(100.0, origin + Vector2(90, 0))
+	_runner.damage_enemy(tank, 20.0, AscensionTags.native("melee", "slash"))
+	_check(int(barrage2.counters["bursts"]) == 1 and is_equal_approx(_runner.reaction_cooldown_left, 8.0 * 2.0 * 2.0), "a 20%% hit commands the Reaction Burst at once and doubles its next recovery (%s)" % str(_runner.reaction_cooldown_left))
+	EnemyWorld.remove_enemy(tank, &"test")
+
 	Global.attempt_ascension = {}
 	_player.queue_free()
 	_finish()

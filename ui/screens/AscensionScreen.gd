@@ -243,6 +243,8 @@ func _show(id: String) -> void:
 				_slot_button("reaction", id, "Equip Reaction", ledger)
 			"revelation":
 				_slot_button("v", id, "Equip V", ledger)
+				if ledger.owns("ASC"):
+					_slot_button("v2", id, "Equip 2nd V", ledger)
 			"keystone":
 				_slot_button("keystones", id, "Equip Keystone", ledger)
 			"axiom":
@@ -275,7 +277,7 @@ func _first_unopened(ledger: AscensionLedger) -> String:
 
 func _slot_button(slot: String, id: String, label: String, ledger: AscensionLedger) -> void:
 	var button := Button.new()
-	var equipped := ledger.equipped(slot) == id if slot in ["q", "v", "reaction"] else ledger.equipped_list(slot).has(id)
+	var equipped := ledger.equipped(slot) == id if slot in ["q", "v", "v2", "reaction"] else ledger.equipped_list(slot).has(id)
 	button.text = "Unequip" if equipped else label
 	button.focus_mode = Control.FOCUS_NONE
 	button.disabled = not equipped and not ledger.can_equip(slot, id)

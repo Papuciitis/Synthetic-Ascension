@@ -29,7 +29,7 @@ static func fresh_state(native_core: String) -> Dictionary:
 		"owned": {"core.%s" % native_core: 1},
 		"paid": {},
 		"starter": "",
-		"equipped": {"q": "", "v": "", "reaction": "", "keystones": [], "axioms": []},
+		"equipped": {"q": "", "v": "", "v2": "", "reaction": "", "keystones": [], "axioms": []},
 		"disabled_mutations": [],
 		"evolution_claims": 0,
 		"segments_completed": 0,
@@ -50,8 +50,9 @@ func _init(tree: AscensionTreeDB, run_state: Dictionary) -> void:
 	for key in defaults:
 		if not state.has(key):
 			state[key] = defaults[key]
-	if not (state["equipped"] as Dictionary).has("reaction"):
-		(state["equipped"] as Dictionary)["reaction"] = ""
+	for slot in ["reaction", "v2"]:
+		if not (state["equipped"] as Dictionary).has(slot):
+			(state["equipped"] as Dictionary)[slot] = ""
 
 
 # ---------------------------------------------------------------- queries
@@ -105,7 +106,7 @@ func equipped_list(slot: String) -> Array:
 
 
 func is_equipped(id: String) -> bool:
-	if equipped("q") == id or equipped("v") == id or equipped("reaction") == id:
+	if equipped("q") == id or equipped("v") == id or equipped("v2") == id or equipped("reaction") == id:
 		return true
 	return equipped_list("keystones").has(id) or equipped_list("axioms").has(id)
 
@@ -347,6 +348,8 @@ func can_equip(slot: String, id: String) -> bool:
 			return db.kind(id) == "active" and reaction_slot_open() and equipped("q") != id
 		"v":
 			return db.kind(id) == "revelation"
+		"v2":
+			return db.kind(id) == "revelation" and owns("ASC") and equipped("v") != id
 		"keystones":
 			return db.kind(id) == "keystone" and (equipped_list("keystones").has(id) or equipped_list("keystones").size() < keystone_slots())
 		"axioms":
@@ -362,10 +365,12 @@ func equip(slot: String, id: String) -> bool:
 	if not can_equip(slot, id):
 		return false
 	var eq: Dictionary = state["equipped"]
-	if slot == "q" or slot == "v" or slot == "reaction":
+	if slot == "q" or slot == "v" or slot == "v2" or slot == "reaction":
 		eq[slot] = id
 		if slot == "q" and String(eq.get("reaction", "")) == id:
 			eq["reaction"] = ""
+		if slot == "v" and String(eq.get("v2", "")) == id:
+			eq["v2"] = ""
 	else:
 		var list: Array = eq[slot]
 		if not list.has(id):
@@ -375,7 +380,7 @@ func equip(slot: String, id: String) -> bool:
 
 func unequip(slot: String, id: String) -> void:
 	var eq: Dictionary = state["equipped"]
-	if slot == "q" or slot == "v" or slot == "reaction":
+	if slot == "q" or slot == "v" or slot == "v2" or slot == "reaction":
 		if String(eq.get(slot, "")) == id:
 			eq[slot] = ""
 	else:
@@ -399,6 +404,13 @@ func _auto_equip(id: String) -> void:
 		"revelation":
 			if equipped("v").is_empty():
 				equip("v", id)
+			elif equipped("v2").is_empty():
+				equip("v2", id)
+		"ascendant":
+			if equipped("v2").is_empty():
+				for other in owned_of_kind("revelation"):
+					if other != equipped("v") and equip("v2", other):
+						break
 		"keystone":
 			equip("keystones", id)
 		"axiom":
@@ -406,7 +418,7 @@ func _auto_equip(id: String) -> void:
 
 
 func _unequip(id: String) -> void:
-	for slot in ["q", "v", "reaction", "keystones", "axioms"]:
+	for slot in ["q", "v", "v2", "reaction", "keystones", "axioms"]:
 		unequip(slot, id)
 
 

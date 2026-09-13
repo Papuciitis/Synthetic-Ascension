@@ -51,6 +51,13 @@ const WITNESS_PP := 0.6
 const REACTION_SCALE := 0.6
 const REACTION_RECOVERY := 2.0
 const REACTION_HP_TRIGGER := 0.15
+## Ascendant: every native input emits one real strike from each foreign
+## Core at 0.45D, Proc Power 0.45, replacing the Witness schedule.
+const ASCENDANT_D := 0.45
+const ASCENDANT_PP := 0.45
+const ECHO_DELAY := 0.3
+const SECOND_SKIN_COOLDOWN := 15.0
+const TWENTY_BODIES := 20
 
 var ledger: AscensionLedger = null
 var native_core: String = "melee"
@@ -74,6 +81,14 @@ var _recent_damage_window: float = 0.0
 var _native_inputs: int = 0
 var _witness_turn: int = 0
 var witness_strikes: int = 0
+var ascendant_strikes: int = 0
+var _echoes: Array = []              # {delay, core, origin, target, damage, tags}
+var _second_skin_cd: float = 0.0
+var _second_skin_double: bool = false
+var _twenty_awarded: Dictionary = {} # cast root -> milestones paid
+var _twenty_core_turn: int = 0
+var v2_id: String = ""
+var _v_turn: int = 0
 var q_cooldown_left: float = 0.0
 var q_cooldown_max: float = 0.0
 var v_cooldown_left: float = 0.0
@@ -150,6 +165,7 @@ func refresh() -> void:
 	q_id = ledger.equipped("q") if active_ids.has(ledger.equipped("q")) else ""
 	v_id = ledger.equipped("v") if active_ids.has(ledger.equipped("v")) else ""
 	reaction_id = ledger.equipped("reaction") if active_ids.has(ledger.equipped("reaction")) else ""
+	v2_id = ledger.equipped("v2") if (owns("ASC") and active_ids.has(ledger.equipped("v2"))) else ""
 	_q_slot = _sync_slot(_q_slot, "q", q_id)
 	_v_slot = _sync_slot(_v_slot, "v", v_id)
 	_set_wired(active_ids.size() > 0)
@@ -419,6 +435,8 @@ func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: fl
 		telemetry["tree_hits"] = int(telemetry["tree_hits"]) + 1
 	if hit["lethal"]:
 		_last_lethal[handle] = hit
+	elif owns("ASC2") and _second_skin_cd <= 0.0 and float(hit["max_hp"]) > 0.0 and float(hit["applied"]) >= 0.15 * float(hit["max_hp"]):
+		_second_skin()
 	hit_resolved.emit(hit)
 	for engine in engines:
 		engine.on_hit(hit)
@@ -479,8 +497,10 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 	if not cast.is_empty():
 		_chain_counts[cast] = int(_chain_counts.get(cast, 0)) + 1
 		telemetry["longest_chain"] = maxi(int(telemetry["longest_chain"]), int(_chain_counts[cast]))
+		_twenty_bodies(cast, hit.get("position", player_position()))
 		if _chain_counts.size() > 512:
 			_chain_counts.clear()
+			_twenty_awarded.clear()
 	kill_resolved.emit(hit, context)
 	for engine in engines:
 		engine.on_kill(hit, context)
@@ -516,7 +536,10 @@ func _on_weapon_fired(who: Node, style_id: StringName, origin: Vector2, target: 
 	for engine in engines:
 		engine.on_native_fire(String(style_id), origin, target, power_mul, haste_mul)
 	_native_inputs += 1
-	if _native_inputs % WITNESS_EVERY == 0:
+	if owns("ASC"):
+		for core in foreign_cores():
+			_foreign_strike(String(core), origin, target, ASCENDANT_D, ASCENDANT_PP, "ascendant", true)
+	elif _native_inputs % WITNESS_EVERY == 0:
 		_witness(origin, target)
 
 
@@ -536,15 +559,46 @@ func _witness(origin: Vector2, target: Vector2) -> void:
 	var core := String(foreign[_witness_turn % foreign.size()])
 	_witness_turn += 1
 	witness_strikes += 1
-	var flags := PackedStringArray(["core_strike", "witness"])
+	_foreign_strike(core, origin, target, WITNESS_D, WITNESS_PP, "witness", true)
+
+
+## One real strike of a foreign Core with that Core's geometry: a 120-degree
+## slash at the player, a projectile along aim, or an R/2 impact at aim. It
+## qualifies for the Core's strike rules through the engines' witness tags.
+func _foreign_strike(core: String, origin: Vector2, target: Vector2, d_scale: float, pp: float, root: String, may_echo: bool) -> void:
+	var flags := PackedStringArray(["core_strike", root])
 	var path: String = {"melee": "slash", "ranged": "bullet", "magic": "impact"}[core]
-	var tags := AscensionTags.make(core, AscensionTags.FAMILY_TREE, "witness", path, 1, WITNESS_PP, flags)
-	tags.append("cast:witness:%d" % witness_strikes)
+	var tags := AscensionTags.make(core, AscensionTags.FAMILY_TREE, root, path, 1, pp, flags)
+	var serial := witness_strikes if root == "witness" else ascendant_strikes
+	if root == "ascendant":
+		ascendant_strikes += 1
+		serial = ascendant_strikes
+	tags.append("cast:%s:%d" % [root, serial])
 	for engine in engines:
 		for extra in engine.witness_tags(core):
 			if not tags.has(extra):
 				tags.append(extra)
-	var damage := WITNESS_D * native_damage_for(core)
+	var damage := d_scale * native_damage_for(core)
+	_emit_strike(core, origin, target, damage, tags)
+	for engine in engines:
+		engine.on_witness_strike(core, origin, target)
+	if may_echo and root == "ascendant" and owns("ASC1"):
+		_echoes.append({"delay": ECHO_DELAY, "core": core, "origin": origin, "target": target, "damage": damage * 0.5, "tags": _echo_tags(tags)})
+
+
+func _echo_tags(tags: PackedStringArray) -> PackedStringArray:
+	var out := PackedStringArray()
+	for tag in tags:
+		if tag.begins_with("pp:"):
+			out.append("pp:0.250")
+		elif tag == "flag:ascendant":
+			out.append("flag:echo")
+		else:
+			out.append(tag)
+	return out
+
+
+func _emit_strike(core: String, origin: Vector2, target: Vector2, damage: float, tags: PackedStringArray) -> void:
 	var dir := (target - origin).normalized()
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT
@@ -558,8 +612,42 @@ func _witness(origin: Vector2, target: Vector2) -> void:
 			if offset.length() > 3.0 * L:
 				offset = offset.normalized() * 3.0 * L
 			spawn_impact(player_position() + offset, damage, tags, R * 0.5)
-	for engine in engines:
-		engine.on_witness_strike(core, origin, target)
+
+
+func _tick_echoes(delta: float) -> void:
+	if _echoes.is_empty():
+		return
+	var due: Array = []
+	for echo in _echoes:
+		echo["delay"] = float(echo["delay"]) - delta
+		if float(echo["delay"]) <= 0.0:
+			due.append(echo)
+	for echo in due:
+		_echoes.erase(echo)
+		_emit_strike(String(echo["core"]), echo["origin"], echo["target"], float(echo["damage"]), echo["tags"])
+
+
+## Twenty Bodies (ASC3): a root that has killed twenty distinct enemies
+## commands one 2D foreign strike at the nearest survivor, cycling Cores.
+func _twenty_bodies(cast: String, position: Vector2) -> void:
+	if not owns("ASC3") or foreign_cores().is_empty():
+		return
+	var bodies := int(_chain_counts.get(cast, 0))
+	var milestones := bodies / TWENTY_BODIES
+	if milestones <= int(_twenty_awarded.get(cast, 0)):
+		return
+	_twenty_awarded[cast] = milestones
+	var target := nearest_enemy(position, L)
+	if target == 0:
+		return
+	var foreign := foreign_cores()
+	var core := String(foreign[_twenty_core_turn % foreign.size()])
+	_twenty_core_turn += 1
+	var flags := PackedStringArray(["core_strike", "twenty_bodies"])
+	var path: String = {"melee": "slash", "ranged": "bullet", "magic": "impact"}[core]
+	var tags := AscensionTags.make(core, AscensionTags.FAMILY_TREE, "ASC3", path, 2, ASCENDANT_PP, flags)
+	tags.append("cast:" + cast)
+	_emit_strike(core, player_position(), enemy_position(target), 2.0 * native_damage_for(core), tags)
 
 
 ## D for any Core: the native hit damage that Core would have.
@@ -587,6 +675,15 @@ func q_scale() -> float:
 	return REACTION_SCALE if reaction_cast else 1.0
 
 
+func _second_skin() -> void:
+	if reaction_id.is_empty():
+		return
+	_second_skin_cd = SECOND_SKIN_COOLDOWN
+	reaction_cooldown_left = 0.0
+	_second_skin_double = true
+	_try_reaction("second_skin")
+
+
 func _try_reaction(trigger: String) -> Dictionary:
 	if reaction_id.is_empty() or reaction_cooldown_left > 0.0:
 		return {"ok": false, "message": "NO REACTION", "cooldown": 0.0}
@@ -598,6 +695,9 @@ func _try_reaction(trigger: String) -> Dictionary:
 	reaction_cast = false
 	if bool(result.get("ok", false)):
 		var cooldown := _recovery(float(result.get("cooldown", 0.0))) * REACTION_RECOVERY
+		if _second_skin_double:
+			_second_skin_double = false
+			cooldown *= 2.0
 		reaction_cooldown_max = cooldown
 		reaction_cooldown_left = cooldown
 		result["trigger"] = trigger
@@ -782,6 +882,8 @@ func get_power_multiplier() -> float:
 	var total := 1.0
 	for engine in engines:
 		total *= engine.power_multiplier(native_core)
+	if ledger != null and ledger.rank("ASC.S1") > 0:
+		total *= 1.0 + 0.005 * sqrt(float(ledger.rank("ASC.S1")))
 	return total
 
 
@@ -821,6 +923,9 @@ func _process(delta: float) -> void:
 			_v_slot.announce(v_cooldown_left, v_cooldown_max)
 	if reaction_cooldown_left > 0.0:
 		reaction_cooldown_left = maxf(0.0, reaction_cooldown_left - delta)
+	if _second_skin_cd > 0.0:
+		_second_skin_cd = maxf(0.0, _second_skin_cd - delta)
+	_tick_echoes(delta)
 	if _recent_damage_window > 0.0:
 		_recent_damage_window -= delta
 		if _recent_damage_window <= 0.0:
@@ -862,12 +967,24 @@ func activate_q() -> Dictionary:
 
 
 func activate_v() -> Dictionary:
-	return _activate("v")
+	if not v2_id.is_empty() and (_v_turn % 2 == 1):
+		var result := _activate("v2")
+		if bool(result.get("ok", false)):
+			_v_turn += 1
+		return result
+	var result := _activate("v")
+	if bool(result.get("ok", false)):
+		_v_turn += 1
+	return result
 
 
 func _activate(slot: String) -> Dictionary:
-	var id := q_id if slot == "q" else v_id
+	var id := q_id if slot == "q" else (v2_id if slot == "v2" else v_id)
 	var hud := _q_slot if slot == "q" else _v_slot
+	if slot == "v2":
+		slot = "v"
+		if id.is_empty():
+			return {"ok": false, "message": "NOTHING EQUIPPED", "cooldown": 0.0}
 	if id.is_empty():
 		return {"ok": false, "message": "NOTHING EQUIPPED", "cooldown": 0.0}
 	var left := q_cooldown_left if slot == "q" else v_cooldown_left
@@ -937,7 +1054,7 @@ func slot_state(slot: String) -> Dictionary:
 
 
 func describe() -> Dictionary:
-	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "reaction": reaction_id, "witness": witness_strikes, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
+	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v2": v2_id, "reaction": reaction_id, "witness": witness_strikes, "ascendant": ascendant_strikes, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
 	for engine in engines:
 		out[engine.discipline()] = engine.describe()
 	return out
