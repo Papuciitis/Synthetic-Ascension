@@ -1755,3 +1755,28 @@ peak-congregation gates the outer rings; Revelations charge per target after
 resolution; refunds shrink by segment and sworn nodes never refund; the Hub
 holds the full tree and Wardstones sell tactical nodes; the Doctrine picks
 become the tree's centre. No game code changed. Build order in the spec §8.
+
+## 2026-09-13 — Follower economy audit against the later V4 tree
+
+The production economy is still unresolved. The 6 September Reach/peak proposal
+above was not implemented, and the 12 September V4 tree from the task
+“audit the idea” uses a different provisional economy. Neither set of prices
+has established the intended long-run, billion-Follower progression.
+
+See [the economy audit](audits/2026-09-13-follower-economy-audit.md) and its
+captured measurements. A 6,000-item production sample puts the shop after
+segment 2 at a median 154 Followers per item and 1,570 for all ten offers,
+against the user's roughly 4,000 early reserve. Belief still caps at 225.
+V4's supplied complete three-Core route costs 71,000, including its 20,000
+Ascendant node; that is prototype pricing, not a finished ascension economy.
+
+The runtime diagnostic also reproduced zero-reward actors paying one Follower,
+one-Follower kills ignoring overtime decay, and the exact reconstruction reserve
+leaving zero while the death handler requires a positive remainder. Fix these
+and the shop's post-trade survival advice before measuring a new balance curve.
+
+Next: settle V4's production progression scale, instrument income and spending,
+and balance equipment, tree investment, refreshes and recurring sacrifices
+together. Preserve early recruitment and exciting early builds; provide later
+growth and decisions beyond segment 9. This update adds audit documentation and
+a reproducible probe only; no gameplay formulas or tree prices changed.

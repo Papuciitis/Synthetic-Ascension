@@ -1301,7 +1301,11 @@ func spawn_generated_slash(position: Vector2, direction: Vector2, damage: float,
 		slash.collision_layer = hurtbox.collision_layer
 	slash.add_to_group("player_projectile")
 	slash.set_meta("asc_tags", tags)
-	get_tree().current_scene.add_child(slash)
+	# Kill chains can arrive inside an Area2D signal while physics queries flush.
+	if Engine.is_in_physics_frame():
+		get_tree().current_scene.call_deferred("add_child", slash)
+	else:
+		get_tree().current_scene.add_child(slash)
 	return slash
 
 
@@ -1320,7 +1324,10 @@ func spawn_generated_impact(position: Vector2, damage: float, tags: PackedString
 		impact.collision_mask = hurtbox.collision_mask
 		impact.collision_layer = hurtbox.collision_layer
 	impact.set_meta("asc_tags", tags)
-	get_tree().current_scene.add_child(impact)
+	if Engine.is_in_physics_frame():
+		get_tree().current_scene.call_deferred("add_child", impact)
+	else:
+		get_tree().current_scene.add_child(impact)
 	return impact
 
 

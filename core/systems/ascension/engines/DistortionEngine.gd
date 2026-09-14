@@ -398,25 +398,29 @@ func _tick_debts(delta: float) -> void:
 	while not _matured_times.is_empty() and _clock - _matured_times[0] > PAYDAY_WINDOW:
 		_matured_times.remove_at(0)
 	for handle in debts.keys():
-		var buckets: Array = debts[handle]
+		var buckets: Array = debts.get(handle, [])
 		if not runner.enemy_alive(int(handle)):
 			_debt_on_corpse(int(handle), buckets)
 			continue
-		var paid: Array = []
-		for bucket in buckets:
+		# Damage callbacks can collect, replace or extend this ledger, or kill
+		# another debtor from the outer key snapshot.
+		for bucket in buckets.duplicate():
+			if not is_same(debts.get(handle), buckets):
+				break
+			if not buckets.has(bucket):
+				continue
 			if bucket["collect_until"] != null:
 				if _clock >= float(bucket["collect_until"]):
-					paid.append(bucket)
+					buckets.erase(bucket)
 				continue
 			if _clock >= float(bucket["due"]):
-				_mature(int(handle), bucket, true)
+				# Settle before emitting damage so kills only inherit unpaid Debt.
 				if rewrite_left > 0.0:
 					bucket["collect_until"] = _clock + COLLECTABLE_WINDOW
 				else:
-					paid.append(bucket)
-		for bucket in paid:
-			buckets.erase(bucket)
-		if buckets.is_empty():
+					buckets.erase(bucket)
+				_mature(int(handle), bucket, true)
+		if buckets.is_empty() and is_same(debts.get(handle), buckets):
 			debts.erase(handle)
 
 

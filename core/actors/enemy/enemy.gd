@@ -757,7 +757,8 @@ func despawn(_reason: StringName = &"death") -> void:
 		PoolManager.recycle(self)
 		return
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
+		# An aborted encounter may cancel a member before deferred tree insertion.
+		_enemy_index = EnemyIndex
 	if _enemy_index != null and _enemy_index.has_method("unregister"):
 		_enemy_index.call("unregister", self)
 	queue_free()
