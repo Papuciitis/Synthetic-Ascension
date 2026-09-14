@@ -374,10 +374,13 @@ frames against the event log:
   changed collision state while physics flushed queries (952 errors in the
   session log). Native attacks spawned from inside a physics callback now
   insert deferred; generated ones no longer insert anything.
-- **Segment loads (not a fight problem).** The 500-900 ms process peaks
-  with zero enemies are the game scene building 1,100-1,750 nodes and a
-  nav revision at segment start (18:37, 18:40, 22:45, 22:52, 23:01,
-  23:41). Expected for a load; a loading screen would hide it.
+- **Segment loads (covered).** The 500-900 ms process peaks with zero
+  enemies are the game scene building 1,100-1,750 nodes and a nav
+  revision at segment start (18:37, 18:40, 22:45, 22:52, 23:01, 23:41).
+  Nothing to optimise; `Global.goto_scene` now shows a loading card
+  (`ui/widgets/LoadingScrim.gd`, "SEGMENT n" / "THE HUB") for two frames
+  before the change and lifts it two frames after the new scene exists,
+  so the stall reads as a transition.
 - **Flow-field rebuilds (not the cause).** `flow_completed` sits near many
   peaks, but the worker runs on `WorkerThreadPool` and the main thread
   only polls `is_task_completed`; the 160-250 ms `cpu_usec` is thread

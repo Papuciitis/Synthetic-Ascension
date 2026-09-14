@@ -298,9 +298,39 @@ func _ready() -> void:
 # Scene navigation API
 # ============================================================
 
+var _loading_scrim: LoadingScrim = null
+
+
+## The card shown over a scene change; created on first use.
+func loading_scrim() -> LoadingScrim:
+	if _loading_scrim == null or not is_instance_valid(_loading_scrim):
+		_loading_scrim = LoadingScrim.new()
+		_loading_scrim.name = "LoadingScrim"
+		add_child(_loading_scrim)
+	return _loading_scrim
+
+
+func _scene_title(path: String) -> String:
+	match path:
+		PATH_GAME:
+			return "SEGMENT %d" % maxi(1, attempt_segment)
+		PATH_HUB_SHOP:
+			return "THE HUB"
+		PATH_BASE:
+			return "BASE"
+		_:
+			return ""
+
+
 func goto_scene(path: String) -> void:
 	# Scene changes are the natural safe point for any deferred combat autosave.
 	flush_pending_save()
+	# Building the game scene blocks for most of a second; show the card and
+	# let it render before the block, so the stall reads as a transition.
+	var scrim := loading_scrim()
+	scrim.show_for(_scene_title(path), get_tree().current_scene)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
 		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
