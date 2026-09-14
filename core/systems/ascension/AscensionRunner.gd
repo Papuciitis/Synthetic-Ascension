@@ -38,6 +38,16 @@ const V_CHARGE_NORMAL := 0.5
 const V_CHARGE_ELITE := 8.0
 const V_CHARGE_BOSS := 30.0
 const V_CHARGE_ACTIONS_PER_SECOND := 4
+## Generated attacks (Cleave, Corpse Bomb, Gavel, Witness, Twice, Hot Rounds)
+## are data, not nodes: they queue here and resolve through the handle
+## queries a few per frame, so a forty-body chain spreads over a handful of
+## frames instead of dropping forty Area2Ds with eight shapes each into one
+## physics step (the 22:58 capture: physics 337 ms, 12,000 draw calls).
+const ATTACK_BUDGET_PER_FRAME := 12
+const ATTACK_FX_SECONDS := 0.16
+const SLASH_DEFAULT_ARC := 145.0
+const SLASH_DEFAULT_RADIUS := 62.0
+const IMPACT_DEFAULT_RADIUS := 48.0
 const L := 240.0   # the design's long distance
 const R := 80.0    # the design's radius unit
 ## Witness: a foreign Core strike every second native input (review F12) for
@@ -110,6 +120,9 @@ var _rng: RandomNumberGenerator = null
 var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0, "longest_chain": 0, "catastrophes": 0, "revelations": 0}
 var _chain_counts: Dictionary = {}   # cast root -> distinct victims
 var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
+var _attack_queue: Array = []  # {kind, at, dir, damage, tags, radius, arc}
+var _attack_fx: Array = []     # resolved attacks still being drawn: {kind, at, dir, radius, arc, ttl, color}
+var _sector_scratch: Array[int] = []
 var _claimed_nouns: Array[StringName] = []
 
 
@@ -760,18 +773,78 @@ func apply_to_ranged_bullet(_bullet: Node, _style_id: StringName) -> void:
 
 # ---------------------------------------------------------------- generated attacks
 
+## Queues a slash: a sector of `arc_degrees` and `arc_radius` from `at`
+## along `direction`, hitting every enemy in it once. Returns nothing; the
+## strike resolves within the next frames (see flush_attacks).
 func spawn_slash(at: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
-	if _player == null or not _player.has_method("spawn_generated_slash"):
-		return null
+	var dir := direction.normalized() if direction.length_squared() > 0.0001 else Vector2.RIGHT
+	_attack_queue.append({
+		"kind": "slash", "at": at, "dir": dir, "damage": damage, "tags": tags,
+		"radius": arc_radius if arc_radius > 0.0 else SLASH_DEFAULT_RADIUS,
+		"arc": arc_degrees if arc_degrees > 0.0 else SLASH_DEFAULT_ARC,
+	})
 	telemetry["generated"] = int(telemetry["generated"]) + 1
-	return _player.call("spawn_generated_slash", at, direction, damage, tags, arc_degrees, arc_radius)
+	return null
 
 
+## Queues an impact: every enemy within `radius` of `at` is hit once.
 func spawn_impact(at: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
-	if _player == null or not _player.has_method("spawn_generated_impact"):
-		return null
+	_attack_queue.append({
+		"kind": "impact", "at": at, "dir": Vector2.RIGHT, "damage": damage, "tags": tags,
+		"radius": radius if radius > 0.0 else IMPACT_DEFAULT_RADIUS, "arc": 360.0,
+	})
 	telemetry["generated"] = int(telemetry["generated"]) + 1
-	return _player.call("spawn_generated_impact", at, damage, tags, radius)
+	return null
+
+
+## Copies of the attacks still waiting to resolve (tests, telemetry).
+func pending_attacks() -> Array:
+	return _attack_queue.duplicate(true)
+
+
+## Resolves queued attacks, at most `max_count` (all when negative). Attacks
+## queued by the kills these cause wait for the next call, so a chain never
+## recurses inside one resolution. Returns how many resolved.
+func flush_attacks(max_count: int = -1) -> int:
+	var resolved := 0
+	var limit := _attack_queue.size() if max_count < 0 else mini(max_count, _attack_queue.size())
+	while resolved < limit and not _attack_queue.is_empty():
+		var entry: Dictionary = _attack_queue.pop_front()
+		_resolve_attack(entry)
+		resolved += 1
+	return resolved
+
+
+func _resolve_attack(entry: Dictionary) -> void:
+	var at: Vector2 = entry["at"]
+	var radius := float(entry["radius"])
+	var damage := float(entry["damage"])
+	var tags: PackedStringArray = entry["tags"]
+	var targets: Array[int] = []
+	if String(entry["kind"]) == "slash":
+		EnemyCombat.gather_in_sector(at, entry["dir"], maxf(2.0, radius * 0.95), 0.0, deg_to_rad(clampf(float(entry["arc"]), 5.0, 340.0)) * 0.5, _sector_scratch)
+		targets = _sector_scratch.duplicate()
+	else:
+		EnemyCombat.gather_in_radius(at, radius, targets)
+	for handle in targets:
+		damage_enemy(handle, damage, tags)
+	var color := Color(0.95, 0.85, 0.5, 0.85)
+	match AscensionTags.value_of(tags, "core"):
+		"melee":
+			color = Color(1.0, 0.45, 0.35, 0.85)
+		"ranged":
+			color = Color(0.5, 0.75, 1.0, 0.85)
+		"magic":
+			color = Color(0.8, 0.55, 1.0, 0.85)
+	_attack_fx.append({"kind": entry["kind"], "at": at, "dir": entry["dir"], "radius": radius, "arc": float(entry["arc"]), "ttl": ATTACK_FX_SECONDS, "color": color})
+
+
+func _tick_attack_fx(delta: float) -> void:
+	for i in range(_attack_fx.size() - 1, -1, -1):
+		var fx: Dictionary = _attack_fx[i]
+		fx["ttl"] = float(fx["ttl"]) - delta
+		if float(fx["ttl"]) <= 0.0:
+			_attack_fx.remove_at(i)
 
 
 func spawn_bullet(origin: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, overrides: Dictionary = {}) -> bool:
@@ -828,9 +901,23 @@ func block_native_fire(seconds: float) -> void:
 
 
 func _draw() -> void:
-	if _draw_points.is_empty():
+	if _draw_points.is_empty() and _attack_fx.is_empty():
 		return
 	draw_set_transform_matrix(get_global_transform().affine_inverse())
+	for fx in _attack_fx:
+		var fade := clampf(float(fx["ttl"]) / ATTACK_FX_SECONDS, 0.0, 1.0)
+		var color: Color = fx["color"]
+		color.a *= fade
+		var at: Vector2 = fx["at"]
+		var radius := float(fx["radius"])
+		if String(fx["kind"]) == "slash":
+			var facing: float = (fx["dir"] as Vector2).angle()
+			var half := deg_to_rad(float(fx["arc"])) * 0.5
+			draw_arc(at, radius * (0.75 + 0.25 * (1.0 - fade)), facing - half, facing + half, 24, color, 5.0 * fade + 1.0, true)
+		else:
+			draw_arc(at, radius * (0.6 + 0.4 * (1.0 - fade)), 0.0, TAU, 32, color, 3.0 * fade + 1.0, true)
+			color.a *= 0.15
+			draw_circle(at, radius * (0.6 + 0.4 * (1.0 - fade)), color)
 	var font := ThemeDB.fallback_font
 	for point in _draw_points:
 		draw_circle(point[0], float(point[1]), point[2])
@@ -911,7 +998,7 @@ func get_damage_taken_multiplier() -> float:
 # ---------------------------------------------------------------- Q / V
 
 func _process(delta: float) -> void:
-	if engines.is_empty() and q_id.is_empty() and v_id.is_empty():
+	if engines.is_empty() and q_id.is_empty() and v_id.is_empty() and _attack_queue.is_empty() and _attack_fx.is_empty():
 		return
 	if q_cooldown_left > 0.0:
 		q_cooldown_left = maxf(0.0, q_cooldown_left - delta)
@@ -936,10 +1023,12 @@ func _process(delta: float) -> void:
 		_v_charge_actions = 0
 	for engine in engines:
 		engine.tick(delta)
+	flush_attacks(ATTACK_BUDGET_PER_FRAME)
+	_tick_attack_fx(delta)
 	_draw_points.clear()
 	for engine in engines:
 		engine.collect_draw_points(_draw_points)
-	if not _draw_points.is_empty() or is_visible_in_tree():
+	if not _draw_points.is_empty() or not _attack_fx.is_empty():
 		queue_redraw()
 	_sweep_accum += delta
 	if _sweep_accum >= STATUS_SWEEP_INTERVAL:
@@ -1054,7 +1143,7 @@ func slot_state(slot: String) -> Dictionary:
 
 
 func describe() -> Dictionary:
-	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v2": v2_id, "reaction": reaction_id, "witness": witness_strikes, "ascendant": ascendant_strikes, "v_charge": v_charge, "r0": r0(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
+	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v2": v2_id, "reaction": reaction_id, "witness": witness_strikes, "ascendant": ascendant_strikes, "v_charge": v_charge, "r0": r0(), "queued_attacks": _attack_queue.size(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
 	for engine in engines:
 		out[engine.discipline()] = engine.describe()
 	return out

@@ -79,31 +79,30 @@ func _run() -> void:
 	# --- Witness Slash for a Ranged native that opened Melee
 	var ledger := _load("ranged", ["BR01", "BR02", "BRQ", ["G1", "melee"], "EX01"])
 	_check(_runner.foreign_cores() == ["melee"], "the Gate opens Melee as a foreign Core")
-	var slashes := _count_nodes("MeleeSlash")
+	_runner.flush_attacks()
 	_fire("ranged", origin + Vector2(100, 0))
 	_check(_runner.witness_strikes == 0, "the first native input has no Witness")
 	_fire("ranged", origin + Vector2(100, 0))
-	_check(_runner.witness_strikes == 1 and _count_nodes("MeleeSlash") == slashes + 1, "the second native input emits a Witness Slash")
-	var slash: Node = null
-	for child in get_tree().current_scene.get_children():
-		if child.has_meta("asc_tags") and AscensionTags.value_of(child.get_meta("asc_tags"), "root") == "witness":
-			slash = child
-	var slash_tags: PackedStringArray = slash.get_meta("asc_tags") if slash != null else PackedStringArray()
+	var queued := _runner.pending_attacks()
+	_check(_runner.witness_strikes == 1 and queued.size() == 1 and queued[0]["kind"] == "slash", "the second native input queues a Witness Slash")
+	var slash_tags: PackedStringArray = queued[0]["tags"] if not queued.is_empty() else PackedStringArray()
 	_check(AscensionTags.value_of(slash_tags, "core") == "melee" and AscensionTags.has_flag(slash_tags, "core_strike") and AscensionTags.has_flag(slash_tags, "execute_enabled"), "the Witness Slash is a Melee Core strike that Finish enables (%s)" % str(slash_tags))
-	_check(is_equal_approx(float(slash.get("damage")), 0.6 * 15.0), "a Witness Slash deals 0.6 of Melee's D (%s)" % str(slash.get("damage")))
-	await _settle()
+	_check(not queued.is_empty() and is_equal_approx(float(queued[0]["damage"]), 0.6 * 15.0), "a Witness Slash deals 0.6 of Melee's D")
+	var slashed := _spawn_enemy(100.0, origin + Vector2(40, 0))
+	_runner.flush_attacks()
+	_check(is_equal_approx(_runner.enemy_hp(slashed), 100.0 - 9.0), "the resolved Witness Slash hits an enemy in its arc (%s)" % str(_runner.enemy_hp(slashed)))
+	EnemyWorld.remove_enemy(slashed, &"test")
 
 	# --- Witness Impact for a Melee native that opened Magic, plus Late Payment
 	ledger = _load("melee", ["EX01", "EX02", "EXQ", ["G1", "magic"], "DT06", "DTA"])
 	var distortion := _runner.engine_for("DT06") as DistortionEngine
 	var debtor := _spawn_enemy(300.0, origin + Vector2(120, 0))
 	_runner.aim_override = origin + Vector2(120, 0)
-	var impacts := _count_nodes("MagicImpact")
 	_fire("melee", origin + Vector2(120, 0))
 	_fire("melee", origin + Vector2(120, 0))
-	await get_tree().process_frame
-	_check(_count_nodes("MagicImpact") == impacts + 1, "the Melee native's Witness is an Impact at the aim")
-	await _settle()
+	queued = _runner.pending_attacks()
+	_check(queued.size() == 1 and queued[0]["kind"] == "impact" and (queued[0]["at"] as Vector2).distance_to(origin + Vector2(120, 0)) < 1.0, "the Melee native's Witness is an Impact at the aim")
+	_runner.flush_attacks()
 	var witness_debt := distortion.unpaid_debt(debtor)
 	_check(witness_debt > 0.0 and witness_debt < 0.25 * 0.6 * 18.6 + 0.01, "the Witness Impact deposits a quarter of its damage as Debt (%s)" % str(witness_debt))
 	var melee_tags := AscensionTags.native("melee", "slash")
@@ -138,12 +137,16 @@ func _run() -> void:
 	slash_tags2 = AscensionTags.with_flag(slash_tags2, "execute_enabled")
 	_runner.damage_enemy(indebted, 40.0, slash_tags2)
 	_check(is_equal_approx(distortion.unpaid_debt(indebted), 5.0), "the swing loads a 5 Debt bill")
-	impacts = _count_nodes("MagicImpact")
+	_runner.flush_attacks()
+	var generated_before := int(_runner.telemetry["generated"])
 	_runner.damage_enemy(indebted, 51.0, slash_tags2)
 	_check(not _runner.enemy_alive(indebted) and int(execution.counters.get("death_debts", 0)) == 1, "executing the indebted target fires Death Debt")
-	await get_tree().process_frame
-	_check(distortion.unpaid_debt(indebted) == 0.0 and _count_nodes("MagicImpact") == impacts + 1, "the bill is paid by a Magic blast, not billed to the player")
-	await _settle()
+	var blast: Dictionary = {}
+	for entry in _runner.pending_attacks():
+		if AscensionTags.value_of(entry["tags"], "root") == "MM2":
+			blast = entry
+	_check(distortion.unpaid_debt(indebted) == 0.0 and not blast.is_empty() and AscensionTags.value_of(blast["tags"], "core") == "magic" and int(_runner.telemetry["generated"]) > generated_before, "the bill is paid by a Magic blast, not billed to the player")
+	_runner.flush_attacks()
 
 	# --- Wildfire
 	ledger = _load("ranged", ["BR01", "BR04", "BRQ", ["G1", "magic"], "DT02", "DT10", "RM5"])
@@ -193,26 +196,26 @@ func _run() -> void:
 		_check(_runner.owns("ASC") and _runner.foreign_cores().size() == 2, "Ascendant with both Gates open")
 		_check(not ledger.equipped("v2").is_empty() and _runner.v2_id == ledger.equipped("v2") and ledger.equipped("v2") != ledger.equipped("v"), "Ascendant fills the second Revelation slot (%s / %s)" % [ledger.equipped("v"), ledger.equipped("v2")])
 		var witness_before := _runner.witness_strikes
-		var impacts_before := _count_nodes("MagicImpact")
+		_runner.flush_attacks()
 		var bullets_before := ProjectileManager.active_count()
 		_fire("melee", origin + Vector2(100, 0))
 		_check(_runner.ascendant_strikes == 2 and _runner.witness_strikes == witness_before, "every native input emits a Ranged and a Magic strike instead of a Witness")
-		await get_tree().process_frame
-		_check(_count_nodes("MagicImpact") == impacts_before + 1 and ProjectileManager.active_count() == bullets_before + 1, "the strikes have real foreign geometry")
-		await _settle()
+		var strikes := _runner.pending_attacks()
+		_check(strikes.size() == 1 and strikes[0]["kind"] == "impact" and ProjectileManager.active_count() == bullets_before + 1, "the strikes have real foreign geometry")
+		_runner.flush_attacks()
 		# Twenty Bodies: twenty distinct kills from one root command an extra 2D foreign strike.
 		var survivor := _spawn_enemy(500.0, origin + Vector2(-120, 0))
 		var root_tags := AscensionTags.native("melee", "slash")
 		root_tags = AscensionTags.with_flag(root_tags, "core_strike")
 		root_tags.append("cast:native:999")
-		var strikes_before := int(_runner.telemetry["longest_chain"])
 		bullets_before = ProjectileManager.active_count()
-		impacts_before = _count_nodes("MagicImpact")
+		var generated_before2 := int(_runner.telemetry["generated"])
 		for i in range(20):
 			var body := _spawn_enemy(1.0, origin + Vector2(-100 + float(i) * 4.0, 60))
 			_runner.damage_enemy(body, 500.0, root_tags)
 		_check(int(_runner.telemetry["longest_chain"]) >= 20, "twenty distinct kills from one root are counted (%d)" % int(_runner.telemetry["longest_chain"]))
-		_check(ProjectileManager.active_count() + _count_nodes("MagicImpact") > bullets_before + impacts_before, "Twenty Bodies commands an extra foreign strike at the survivor")
+		_check(ProjectileManager.active_count() > bullets_before or int(_runner.telemetry["generated"]) > generated_before2, "Twenty Bodies commands an extra foreign strike at the survivor")
+		_runner.flush_attacks()
 		EnemyWorld.remove_enemy(survivor, &"test")
 		await _settle()
 
