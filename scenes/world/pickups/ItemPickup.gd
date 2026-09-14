@@ -34,6 +34,8 @@ const MAGNET_IDLE_POLL_SEC: float = 0.25
 
 var _pickup_ready: bool = false
 var _picked: bool = false
+## Spawn order, so the ground cap removes the oldest drop first.
+var ground_serial: int = 0
 var _magnet_cooldown: float = 0.0
 var _player_ref: Node2D = null
 
@@ -65,6 +67,10 @@ func _ready() -> void:
 
 	_enable_pickup_later()
 	_expire_later()
+	ground_serial = GroundLootCap.next_serial()
+	add_to_group(GroundLootCap.ITEM_GROUP)
+	if not is_exploration_loot and not persistent_world_drop:
+		GroundLootCap.enforce(get_tree(), GroundLootCap.ITEM_GROUP, GroundLootCap.ITEM_CAP, self)
 
 
 func _process(delta: float) -> void:

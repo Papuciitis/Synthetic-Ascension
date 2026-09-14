@@ -337,8 +337,9 @@ func deposit(handle: int, amount: float, source: String, immediate: bool, v_crea
 			buckets.append({"amount": amount, "due": due, "source": source, "born": _clock, "v": v_created or rewrite_left > 0.0, "passed": false, "collect_until": null})
 	counters["deposits"] = int(counters["deposits"]) + 1
 	_deposit_times.append(_clock)
-	if BattleText != null:
-		BattleText.popup(runner.enemy_position(handle), "DEBT %d" % int(round(unpaid_debt(handle))), Color(0.75, 0.55, 1.0, 1.0), 0.9, handle)
+	# No BattleText line here: the runner already draws "DEBT n  due" over
+	# every indebted enemy, and a popup keyed by handle would overwrite that
+	# enemy's damage numbers (BattleText merges by key across both).
 
 
 func _interest(bucket: Dictionary) -> float:

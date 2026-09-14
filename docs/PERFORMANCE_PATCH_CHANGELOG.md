@@ -383,7 +383,15 @@ frames against the event log:
   only polls `is_task_completed`; the 160-250 ms `cpu_usec` is thread
   time. Rebuilds trigger on `player_moved` every 0.25 s; if a low-core
   laptop shows contention, the interval is the lever.
-- **Open.** The 00:01 capture (segment 5) sits at 5,400 nodes and 36 ms
-  process with 24 enemies before the segment-end teardown takes 3 s.
-  Pickups have lifetimes (item 120 s, health 20 s), so the extra 3,400
-  nodes are something else; not identified from the samples alone.
+- **Ground loot after chains (fixed).** The 00:01 capture (segment 5) sat
+  at 5,400 nodes and 36 ms process with 24 enemies before a 3 s teardown.
+  `tools/tests/NodeCensusProbe.tscn` (boots the game headless, keeps a
+  population, kills at a set rate, prints a node census every 15 s; the dev
+  overlay's World tab has the same census as a button) reproduced it: with
+  the Blood domino route and eight seed kills a second, chains left 221
+  item pickups and 61 health pickups on the ground inside a minute, each a
+  node cluster with its own _process and a 120 s life. `GroundLootCap`
+  now holds ordinary drops at 48 items and 20 health pickups, culling the
+  lowest rarity and oldest first; exploration loot and player-placed drops
+  are never culled. Same probe after the cap: 47 item pickups, node growth
+  1,800 -> 560 over the minute.

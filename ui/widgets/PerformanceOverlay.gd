@@ -1100,6 +1100,13 @@ func _build_story_tab(page: VBoxContainer, tools: Node) -> void:
 # --- World -------------------------------------------------------------------
 
 func _build_world_tab(page: VBoxContainer, tools: Node) -> void:
+	_dev_heading(page, "SCENE")
+	var census := _dev_row(page)
+	_dev_button(census, "Node census", "Node census printed to the log", func() -> void:
+		var line := NodeCensus.report(get_tree().root, 14)
+		print("[census] ", line)
+		_dev_note(line.left(220))
+	)
 	_dev_heading(page, "ENEMIES")
 	var enemies := _dev_row(page)
 	for count in [5, 20, 60]:
