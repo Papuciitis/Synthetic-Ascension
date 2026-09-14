@@ -352,3 +352,38 @@ before/after frame-time curve and tune the full/mid budgets for the target 500+ 
   (2026-08-30: solved 2026-08-23 — the projectile sim moved to `_process`
   and impact VFX are batched through ImpactBurstRenderer; see
   `docs/OPTIMIZATION_HANDOFF.md`, TODO 1.)
+
+## 2026-09-15 — the 14 September captures: chain bursts were the fight-time lag
+
+189 automatic incidents from three sessions (segments 2-5, 30-130
+enemies). 186 of them were script-side, not physics. Reading the peak
+frames against the event log:
+
+- **Ascension chain bursts (fixed).** Red Mist, DECIMATION and the
+  Corpse Bomb + Cleave families spawned one `MeleeSlash` or `MagicImpact`
+  scene per kill inside the kill callback. Forty deaths in one frame meant
+  eighty Area2Ds with eight collision shapes each entering the physics
+  step at once: 22:58:15 shows physics 337 ms, 12,044 draw calls, 289,432
+  rendered objects and 1.4 s of process; 22:56:40 shows 208 ms process and
+  89 ms physics 0.5 s after a Red Mist with a 40-body chain. Generated
+  attacks are now data on the runner: queued, resolved twelve per frame
+  through the handle queries, drawn in one `_draw`. Benchmark:
+  `tools/tests/AscensionChainBurstBenchmark.tscn` (60 bodies, 180
+  attacks, 11 frames, zero node growth, worst frame 8 ms headless).
+- **Deferred node insertion (collaborator, e3e5bbf).** The same bursts
+  changed collision state while physics flushed queries (952 errors in the
+  session log). Native attacks spawned from inside a physics callback now
+  insert deferred; generated ones no longer insert anything.
+- **Segment loads (not a fight problem).** The 500-900 ms process peaks
+  with zero enemies are the game scene building 1,100-1,750 nodes and a
+  nav revision at segment start (18:37, 18:40, 22:45, 22:52, 23:01,
+  23:41). Expected for a load; a loading screen would hide it.
+- **Flow-field rebuilds (not the cause).** `flow_completed` sits near many
+  peaks, but the worker runs on `WorkerThreadPool` and the main thread
+  only polls `is_task_completed`; the 160-250 ms `cpu_usec` is thread
+  time. Rebuilds trigger on `player_moved` every 0.25 s; if a low-core
+  laptop shows contention, the interval is the lever.
+- **Open.** The 00:01 capture (segment 5) sits at 5,400 nodes and 36 ms
+  process with 24 enemies before the segment-end teardown takes 3 s.
+  Pickups have lifetimes (item 120 s, health 20 s), so the extra 3,400
+  nodes are something else; not identified from the samples alone.

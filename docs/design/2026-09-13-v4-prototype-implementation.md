@@ -40,6 +40,14 @@ boss classification, pairs the lethal record with `enemy_defeated`,
 keeps a per-enemy registry of tree statuses, and resolves named combat
 rolls (modifier chain, Proc Power, 95% cap, guarantee, one reroll).
 
+Generated attacks (Cleave, Corpse Bomb, Gavel, Witness and Ascendant
+strikes, Twice echoes, Hot Rounds) are data, not nodes: the runner queues
+them, resolves at most twelve per frame through the handle queries, and
+draws each resolved strike for a sixth of a second. A kill caused by a
+resolution queues its own attacks for the next frames, so chains spread
+over several frames instead of recursing inside one. Only the native
+inputs and managed bullets still use scenes.
+
 Health costs go through `player.pay_health(amount, reason)`: no
 evasion, armour or i-frames, never below 1 HP, no on-damage rules
 (Tithe Bones, Litany, HitFeel do not hear it); `player_paid_health`
@@ -92,7 +100,8 @@ Ascendant sinks.
 G=~/Downloads/Godot_v4.7.2-stable_linux.x86_64
 for t in AscensionLedgerTest AscensionRunnerTest AscensionBarrageTest \
          AscensionExecutionTest AscensionDistortionTest AscensionHybridTest \
-         AscensionScreenTest; do
+         AscensionScreenTest AscensionRuntimeSafetyTest \
+         AscensionChainBurstBenchmark; do
   $G --headless --path . res://tools/tests/$t.tscn --quit-after 3000 2>&1 | grep -E "FAIL|passed"
 done
 ```
