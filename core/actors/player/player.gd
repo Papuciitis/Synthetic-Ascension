@@ -1282,13 +1282,13 @@ func pay_health(amount: float, reason: StringName = &"ascension") -> float:
 # the attack's provenance (AscensionTags.make) and rides the hit payload.
 # ---------------------------------------------------------------------------
 
-func spawn_generated_slash(position: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
+func spawn_generated_slash(at: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
 	var inst := melee_slash_scene.instantiate()
 	var slash := inst as MeleeSlash
 	if slash == null:
 		inst.queue_free()
 		return null
-	slash.global_position = position
+	slash.global_position = at
 	slash.rotation = direction.angle() if direction.length_squared() > 0.0001 else rotation
 	slash.damage = damage
 	slash.set("source", self)
@@ -1309,13 +1309,13 @@ func spawn_generated_slash(position: Vector2, direction: Vector2, damage: float,
 	return slash
 
 
-func spawn_generated_impact(position: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
+func spawn_generated_impact(at: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
 	var inst := magic_impact_scene.instantiate()
 	var impact := inst as MagicImpact
 	if impact == null:
 		inst.queue_free()
 		return null
-	impact.global_position = position
+	impact.global_position = at
 	impact.damage = damage
 	impact.set("source", self)
 	if radius > 0.0:

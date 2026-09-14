@@ -183,10 +183,10 @@ func _rebuild_engines() -> void:
 			# A Fusion belongs to both parents: each engine sees it and runs
 			# its half (Kill Feed: Execution finishes, Barrage fragments).
 			codes = ledger.db.fusion_disciplines(id)
-		for owner in codes:
-			if not wanted.has(owner):
-				wanted[owner] = {}
-			(wanted[owner] as Dictionary)[id] = true
+		for engine_code in codes:
+			if not wanted.has(engine_code):
+				wanted[engine_code] = {}
+			(wanted[engine_code] as Dictionary)[id] = true
 	var kept: Array[AscensionEngine] = []
 	_engine_by_node.clear()
 	for code in wanted:
@@ -397,14 +397,14 @@ func _sweep_statuses() -> void:
 ## A named combat roll: chance after engine modifiers, times Proc Power,
 ## capped at 95% unless guaranteed. Failed rolls may be rerolled once when an
 ## engine grants it. Lucky Crit is not a named roll; its signals stay as is.
-func roll(name: StringName, chance: float, proc_power: float = 1.0, guaranteed: bool = false) -> bool:
+func roll(roll_name: StringName, chance: float, proc_power: float = 1.0, guaranteed: bool = false) -> bool:
 	var effective := chance
 	for engine in engines:
-		effective = engine.modify_roll_chance(name, effective)
+		effective = engine.modify_roll_chance(roll_name, effective)
 	effective *= proc_power
 	if not guaranteed:
 		for engine in engines:
-			if engine.wants_guarantee(name, proc_power):
+			if engine.wants_guarantee(roll_name, proc_power):
 				guaranteed = true
 				break
 	effective = 1.0 if guaranteed else clampf(effective, 0.0, ROLL_CAP)
@@ -413,14 +413,14 @@ func roll(name: StringName, chance: float, proc_power: float = 1.0, guaranteed: 
 	var success := rng().randf() < effective
 	if not success and not guaranteed:
 		for engine in engines:
-			if engine.wants_reroll(name):
+			if engine.wants_reroll(roll_name):
 				success = rng().randf() < effective
 				break
 	if success:
 		rolls_succeeded += 1
-	roll_resolved.emit(name, success, effective)
+	roll_resolved.emit(roll_name, success, effective)
 	for engine in engines:
-		engine.on_roll(name, success, effective)
+		engine.on_roll(roll_name, success, effective)
 	return success
 
 
@@ -629,7 +629,7 @@ func _tick_echoes(delta: float) -> void:
 
 ## Twenty Bodies (ASC3): a root that has killed twenty distinct enemies
 ## commands one 2D foreign strike at the nearest survivor, cycling Cores.
-func _twenty_bodies(cast: String, position: Vector2) -> void:
+func _twenty_bodies(cast: String, at: Vector2) -> void:
 	if not owns("ASC3") or foreign_cores().is_empty():
 		return
 	var bodies := int(_chain_counts.get(cast, 0))
@@ -637,7 +637,7 @@ func _twenty_bodies(cast: String, position: Vector2) -> void:
 	if milestones <= int(_twenty_awarded.get(cast, 0)):
 		return
 	_twenty_awarded[cast] = milestones
-	var target := nearest_enemy(position, L)
+	var target := nearest_enemy(at, L)
 	if target == 0:
 		return
 	var foreign := foreign_cores()
@@ -760,18 +760,18 @@ func apply_to_ranged_bullet(_bullet: Node, _style_id: StringName) -> void:
 
 # ---------------------------------------------------------------- generated attacks
 
-func spawn_slash(position: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
+func spawn_slash(at: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, arc_degrees: float = -1.0, arc_radius: float = -1.0) -> Node:
 	if _player == null or not _player.has_method("spawn_generated_slash"):
 		return null
 	telemetry["generated"] = int(telemetry["generated"]) + 1
-	return _player.call("spawn_generated_slash", position, direction, damage, tags, arc_degrees, arc_radius)
+	return _player.call("spawn_generated_slash", at, direction, damage, tags, arc_degrees, arc_radius)
 
 
-func spawn_impact(position: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
+func spawn_impact(at: Vector2, damage: float, tags: PackedStringArray, radius: float = -1.0) -> Node:
 	if _player == null or not _player.has_method("spawn_generated_impact"):
 		return null
 	telemetry["generated"] = int(telemetry["generated"]) + 1
-	return _player.call("spawn_generated_impact", position, damage, tags, radius)
+	return _player.call("spawn_generated_impact", at, damage, tags, radius)
 
 
 func spawn_bullet(origin: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, overrides: Dictionary = {}) -> bool:
@@ -806,12 +806,12 @@ func camera_edge_point(angle: float) -> Vector2:
 	var center := rect.get_center()
 	var dir := Vector2.from_angle(angle)
 	var half := rect.size * 0.5
-	var scale := INF
+	var reach := INF
 	if absf(dir.x) > 0.0001:
-		scale = minf(scale, half.x / absf(dir.x))
+		reach = minf(reach, half.x / absf(dir.x))
 	if absf(dir.y) > 0.0001:
-		scale = minf(scale, half.y / absf(dir.y))
-	return center + dir * (scale * 0.96)
+		reach = minf(reach, half.y / absf(dir.y))
+	return center + dir * (reach * 0.96)
 
 
 ## Fires the native weapon as if the input were pressed (Bottomless).

@@ -899,8 +899,8 @@ func _build_run_tab(page: VBoxContainer, tools: Node) -> void:
 			Global.debug_ascension_revelations_enabled = not Global.debug_ascension_revelations_enabled
 	)
 	var fixture := _dev_row(page)
-	for scale in [1.0, 3.0, 6.0]:
-		var hp_scale: float = scale
+	for factor in [1.0, 3.0, 6.0]:
+		var hp_scale: float = factor
 		_dev_button(fixture, "Enemy HP x%d" % int(hp_scale), "New enemies spawn with x%d HP" % int(hp_scale), func() -> void:
 			if Global != null:
 				Global.debug_enemy_hp_scale = hp_scale

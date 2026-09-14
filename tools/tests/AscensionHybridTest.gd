@@ -101,6 +101,7 @@ func _run() -> void:
 	var impacts := _count_nodes("MagicImpact")
 	_fire("melee", origin + Vector2(120, 0))
 	_fire("melee", origin + Vector2(120, 0))
+	await get_tree().process_frame
 	_check(_count_nodes("MagicImpact") == impacts + 1, "the Melee native's Witness is an Impact at the aim")
 	await _settle()
 	var witness_debt := distortion.unpaid_debt(debtor)
@@ -140,6 +141,7 @@ func _run() -> void:
 	impacts = _count_nodes("MagicImpact")
 	_runner.damage_enemy(indebted, 51.0, slash_tags2)
 	_check(not _runner.enemy_alive(indebted) and int(execution.counters.get("death_debts", 0)) == 1, "executing the indebted target fires Death Debt")
+	await get_tree().process_frame
 	_check(distortion.unpaid_debt(indebted) == 0.0 and _count_nodes("MagicImpact") == impacts + 1, "the bill is paid by a Magic blast, not billed to the player")
 	await _settle()
 
@@ -195,6 +197,7 @@ func _run() -> void:
 		var bullets_before := ProjectileManager.active_count()
 		_fire("melee", origin + Vector2(100, 0))
 		_check(_runner.ascendant_strikes == 2 and _runner.witness_strikes == witness_before, "every native input emits a Ranged and a Magic strike instead of a Witness")
+		await get_tree().process_frame
 		_check(_count_nodes("MagicImpact") == impacts_before + 1 and ProjectileManager.active_count() == bullets_before + 1, "the strikes have real foreign geometry")
 		await _settle()
 		# Twenty Bodies: twenty distinct kills from one root command an extra 2D foreign strike.

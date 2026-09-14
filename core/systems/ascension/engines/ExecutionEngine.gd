@@ -375,14 +375,14 @@ func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) 
 
 func _spillover(hit: Dictionary, handle: int, cast: String, overkill: float) -> void:
 	var damage := overkill if overkill > 0.0 else 0.5 * D()
-	var range := 2.0 * AscensionRunner.R
+	var reach := 2.0 * AscensionRunner.R
 	if has("EXF2"):
-		range += AscensionRunner.R
+		reach += AscensionRunner.R
 		# The victim that just died is the root's first fresh victim.
 		var victims := int(_root_victims.get(cast, 0)) + 1
 		_root_victims[cast] = victims
 		damage += minf(3.0 * D(), 0.25 * D() * float(victims))
-	var target := runner.nearest_enemy(hit["position"], range, handle)
+	var target := runner.nearest_enemy(hit["position"], reach, handle)
 	if target == 0 or not runner.enemy_alive(target):
 		if has("EX07"):
 			_reservoir = minf(8.0 * D(), _reservoir + damage)

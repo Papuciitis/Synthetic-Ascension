@@ -240,9 +240,9 @@ func _draw() -> void:
 		elif sid == hovered:
 			draw_arc(at, radius + 5.0, 0.0, TAU, 32, Color(1.0, 1.0, 1.0, 0.5), 1.0, true)
 		if _font != null and (kind in LABEL_KINDS or zoom >= 0.9) and kind != "mutation" and kind != "revelation_mutation":
-			var name := String(db.node(sid).get("name", sid))
+			var label_text := String(db.node(sid).get("name", sid))
 			var font_size := 11 if kind in LABEL_KINDS else 9
-			draw_string(_font, at + Vector2(-60.0, radius + 12.0), name, HORIZONTAL_ALIGNMENT_CENTER, 120, font_size, COLOR_TEXT if state != "locked" else COLOR_LOCKED)
+			draw_string(_font, at + Vector2(-60.0, radius + 12.0), label_text, HORIZONTAL_ALIGNMENT_CENTER, 120, font_size, COLOR_TEXT if state != "locked" else COLOR_LOCKED)
 
 
 func _draw_polygon(at: Vector2, radius: float, sides: int, color: Color, width: float) -> void:
