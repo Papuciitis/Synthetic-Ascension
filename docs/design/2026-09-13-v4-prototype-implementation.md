@@ -129,9 +129,9 @@ Never run the engine while a playtest is in progress.
 - Gather pulls through the knockback API, roughly. Only the Weak and
   One at a Time's damage reductions are applied by healing back a share
   of the hit after it lands.
-- Foreign strikes use the existing slash / impact scenes and managed
-  bullets; fragments, bolts, scars and Debt labels are drawn by the
-  runner as bare shapes and text. No sounds, no dedicated art.
+- Generated slashes and impacts, fragments, bolts, scars and Debt labels
+  are drawn by the runner as bare arcs, rings, dots and text; foreign
+  Shots ride the managed bullet pool. No sounds, no dedicated art.
 - The Wardstone purchase point from the earlier spec is not wired; the
   tree opens at the Hub and on T.
 - Prices, D, R, L and every coefficient are V4's; nothing has been
