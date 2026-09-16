@@ -105,9 +105,14 @@ func _profile(damage: float = 10.0) -> HitProfileAdapter:
 	return profile
 
 
-func _frames(count: int) -> void:
-	for _i in range(count):
+## Headless frames run at whatever pace the machine allows, so waits are
+## measured in resolved projectiles, not frames.
+func _frames(_count: int) -> void:
+	for _i in range(600):
 		await get_tree().process_frame
+		if ProjectileManager.active_count() == 0:
+			break
+	await get_tree().process_frame
 	_runner.flush_attacks()
 
 

@@ -23,12 +23,12 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Dominion (DO) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Core (core) | 3 | 0 | 0 | 0 | 0 | 3 |
 | Gate (gate) | 2 | 2 | 0 | 0 | 0 | 0 |
-| Fusion (fusion) | 27 | 3 | 0 | 24 | 0 | 0 |
-| Union (union) | 3 | 0 | 0 | 3 | 0 | 0 |
+| Fusion (fusion) | 27 | 27 | 0 | 0 | 0 | 0 |
+| Union (union) | 3 | 3 | 0 | 0 | 0 | 0 |
 | Choice (choice) | 12 | 10 | 0 | 0 | 1 | 1 |
 | Ascendant (ascendant) | 1 | 1 | 0 | 0 | 0 | 0 |
 | Sink (sink) | 2 | 2 | 0 | 0 | 0 | 0 |
-| **All** | 350 | 309 | 8 | 27 | 1 | 5 |
+| **All** | 350 | 336 | 8 | 0 | 1 | 5 |
 
 ## Shared rules
 
@@ -37,7 +37,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | 1.5 s gap between Revelation starts; hold V for both at Ascendant | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | two meters; tap casts the selected/ready one; hold 0.3 s casts both 0.25 s apart when both are full |
 | Ascendant foreign strikes | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
 | Attack identity: root, family, Core, path, generation, P, cast, V ancestry | implemented | core/systems/ascension/AscensionTags.gd | AscensionRunnerTest | hit-path family seal is per engine rule, not a generic path history |
-| Automatic Method (pick.M2, 70%) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | targeting table: Gavel wounded-normal, Burst aim, Coin chosen face; others as engines are built |
+| Automatic Method (pick.M2, 70%) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | targeting table complete: Gavel, Lunge, Guard, Deadshot, Burst, Designate, Consecrate, Coin, Compel (auto_target per engine) |
 | Control conversions (stagger bar, control caps, immunity) | missing |  |  | bosses get a 0.5 s stun from DECIMATION; no stagger bar |
 | D snapshot per attack | partial | engines |  | D read at spawn; Echo/Debt packets keep captured amounts |
 | Deterministic event queue with stable tie-breaking | partial | core/systems/ascension/AscensionRunner.gd | AscensionChainBurstBenchmark | attack queue is FIFO with a per-frame budget; fragments resolve in engine tick order |
@@ -59,7 +59,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Radial map, buy/refund/equip UI, Hub and T key | implemented | ui/screens/AscensionScreen.gd | AscensionScreenTest | headless-tested only |
 | Reaction Q (60% damage, x2 recovery) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | trigger chosen at the tree screen: catastrophe, 15% HP in 1 s, or first elite inside 2R |
 | Refund (prototype free respec, dependents cascade) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | reachability from a Core; candidate one-per-run rule not applied |
-| Revelation charge: discipline action table | partial | core/systems/ascension/AscensionRunner.gd + engines | AscensionSharedRulesTest | EX, BR, DT sources implemented, 4/s cap; other disciplines as built |
+| Revelation charge: discipline action table | implemented | core/systems/ascension/AscensionRunner.gd + engines | AscensionSharedRulesTest + discipline suites | all nine disciplines add charge through runner.add_action_charge (4/s cap per meter); tests per discipline |
 | Revelation charge: kills | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | no rate ceiling; each equipped meter fills |
 | Save / load of ownership and equipment | implemented | autoload/global.gd | AscensionLedgerTest, SaveIntegrityTest | engine transient state (Heat, Debt, Momentum) is not saved |
 | Witness strike (Slash / Shot / Impact) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest | every second native input (review F12); qualifies for Core strike rules through engine tags |
@@ -428,41 +428,41 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| MM1 | Blood Rite | fusion | 4 | missing |  |  |  |
+| MM1 | Blood Rite | fusion | 4 | implemented | core/systems/ascension/engines/InvocationEngine.gd + ExecutionEngine.gd | AscensionFusionTest | a pulse spends one Growth: victims get a blood_rite status (+3 points, cap +9, 2 s) read by Execution's per-target line; Execution reports executions so one inside a Sigil returns two Growth |
 | MM2 | Death Debt | fusion | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/DistortionEngine.gd | AscensionHybridTest | Magic blast for the collected Debt; Pass It On shares first |
-| MM3 | Corpse Well | fusion | 4 | missing |  |  |  |
-| MM4 | Riftwalk | fusion | 4 | missing |  |  |  |
-| MM5 | Double Step | fusion | 4 | missing |  |  |  |
-| MM6 | Slingshot | fusion | 4 | missing |  |  |  |
-| MM7 | Ward | fusion | 4 | missing |  |  |  |
-| MM8 | Backlash | fusion | 4 | missing |  |  |  |
-| MM9 | Gravity Armor | fusion | 4 | missing |  |  |  |
-| MR1 | Bloodshot | fusion | 4 | missing |  |  |  |
+| MM3 | Corpse Well | fusion | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd + DominionEngine.gd | AscensionFusionTest | the corpse bomb becomes a 1 s Well at the corpse, then resolves at +25% radius |
+| MM4 | Riftwalk | fusion | 4 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionFusionTest | on_dash_ended: Sigils on the dash segment (max three) move to the endpoint and pulse |
+| MM5 | Double Step | fusion | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionFusionTest | a named Twice roll (20%) at dash end repeats the endpoint slash at the start for 0.6D and leaves an Afterimage |
+| MM6 | Slingshot | fusion | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd + DominionEngine.gd | AscensionFusionTest | a dash ending inside a Well at 60+ Momentum mirrors the player across the Well's centre and releases an R dash toward aim (approximation of the arc); carried normals follow through Ram |
+| MM7 | Ward | fusion | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd + InvocationEngine.gd | AscensionFusionTest | Plate reforms in 1 s inside a grown Sigil; a Plate broken there stores a 1D Echo and adds two Growth |
+| MM8 | Backlash | fusion | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd + DistortionEngine.gd | AscensionFusionTest | Thorns deposits half its dealt damage as 'backlash' Debt; that bucket's maturity returns 10 Force |
+| MM9 | Gravity Armor | fusion | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionFusionTest | above 60 Force normals within R orbit the player (0.5 s stun on capture); a 20+ Force spend throws up to four toward aim for 0.8D; above 100 Force movement x0.8 |
+| MR1 | Bloodshot | fusion | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionFusionTest | Spillover spawns a piercing (2) blood shot carrying the captured overkill, pp 0.6 |
 | MR2 | Kill Feed | fusion | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/BarrageEngine.gd | AscensionHybridTest | fragments finish at half the line; extra fragment |
-| MR3 | Corpse Mortar | fusion | 4 | missing |  |  |  |
-| MR4 | Rail Dash | fusion | 4 | missing |  |  |  |
-| MR5 | Run and Gun | fusion | 4 | missing |  |  |  |
-| MR6 | Mine Runner | fusion | 4 | missing |  |  |  |
-| MR7 | Countershot | fusion | 4 | missing |  |  |  |
-| MR8 | Heavy Barrel | fusion | 4 | missing |  |  |  |
-| MR9 | Reactive Armor | fusion | 4 | missing |  |  |  |
-| RM1 | Spellshot | fusion | 4 | missing |  |  |  |
-| RM2 | Backtrack | fusion | 4 | missing |  |  |  |
-| RM3 | Gravity Round | fusion | 4 | missing |  |  |  |
-| RM4 | Bullet Runes | fusion | 4 | missing |  |  |  |
+| MR3 | Corpse Mortar | fusion | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd + OrdnanceEngine.gd | AscensionFusionTest | the corpse bomb is called as a 0.4 s Shell at the nearest cluster within 4R (Secondary Blast applies) |
+| MR4 | Rail Dash | fusion | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionFusionTest | returning shots within R of the dash endpoint (max three) are removed and re-fired toward aim at +0.5D |
+| MR5 | Run and Gun | fusion | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd + BarrageEngine.gd | AscensionFusionTest | Afterimage slashes also fire a 0.6D Ranged shot toward aim (pp 0.4); every third Crossfire shot queues a 0.5D Melee Afterimage at its origin; the two conversions are different families so neither re-triggers itself |
+| MR6 | Mine Runner | fusion | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd + OrdnanceEngine.gd | AscensionFusionTest | a rammed normal gets a fresh armed Mine at the endpoint living 0.5 s |
+| MR7 | Countershot | fusion | 4 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionFusionTest | a reflected (BA02) shot exposes its first target after damage; consuming an existing Weak Point returns a 0.8D shot once |
+| MR8 | Heavy Barrel | fusion | 4 | implemented | core/systems/ascension/engines/BarrageEngine.gd + BastionEngine.gd | AscensionFusionTest | a Jam spends up to 60 Force: +0.06D per Force split across the loose rounds, pierce 1 at 60 spent |
+| MR9 | Reactive Armor | fusion | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd + OrdnanceEngine.gd | AscensionFusionTest | prevented enemy damage banks Mines at the player's feet, one per 10% max HP, three per hit |
+| RM1 | Spellshot | fusion | 4 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionFusionTest | a core_strike projectile inside a Sigil loads one Echo per Sigil; its next hit releases them along the shot's direction |
+| RM2 | Backtrack | fusion | 4 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionFusionTest | a return hit pulls the oldest bucket 0.5 s closer; a maturity adds +0.3D to the projectile (ProjectileSimulationManager.add_projectile_damage), max +2D |
+| RM3 | Gravity Round | fusion | 4 | implemented | core/systems/ascension/engines/PrecisionEngine.gd + DominionEngine.gd | AscensionFusionTest | a consumed Weak Point leaves a Well R ahead along the shot; each new exposed target adds R/4 acquisition radius (max +R) to later Wells |
+| RM4 | Bullet Runes | fusion | 4 | implemented | core/systems/ascension/engines/BarrageEngine.gd + InvocationEngine.gd | AscensionFusionTest | every third Crossfire shot is flagged rune; its first impact places a rune Sigil whose pulses fire a 0.5D Ranged shot |
 | RM5 | Wildfire | fusion | 4 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionHybridTest | named 25% roll, three burning fragments |
-| RM6 | Stormwire | fusion | 4 | missing |  |  |  |
-| RM7 | Rune Bomb | fusion | 4 | missing |  |  |  |
-| RM8 | Time Bomb | fusion | 4 | missing |  |  |  |
-| RM9 | Meteor | fusion | 4 | missing |  |  |  |
+| RM6 | Stormwire | fusion | 4 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionFusionTest | a ricochet hit on a Linked enemy runs along the unvisited members for 0.5D each (flag wire) |
+| RM7 | Rune Bomb | fusion | 4 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd + InvocationEngine.gd | AscensionFusionTest | an armed Mine inside a Sigil attaches (three per Sigil); either detonation detonates the partner once (recursion guarded) |
+| RM8 | Time Bomb | fusion | 4 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd + DistortionEngine.gd | AscensionFusionTest | the Secondary Blast Shell collects the corpse's Debt, lands 0.5 s later with 75% of it, and matures living victims' oldest bucket |
+| RM9 | Meteor | fusion | 4 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd + DominionEngine.gd | AscensionFusionTest | Big One becomes 6D in 2R after 1 s with a 1 s Well at the landing |
 
 ## Union (union)
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| UMM | INCARNATE | union | 5 | missing |  |  |  |
-| UMR | TOTAL OFFENSIVE | union | 5 | missing |  |  |  |
-| URM | ARCANE BALLISTICS | union | 5 | missing |  |  |  |
+| UMM | INCARNATE | union | 5 | implemented | core/systems/ascension/engines/UnionEngine.gd | AscensionFusionTest | the newest Sigil and Well are kept within R; a native Melee hit through either releases one Echo and re-pulls the Well once per input; 10% max HP taken commands both again |
+| UMR | TOTAL OFFENSIVE | union | 5 | implemented | core/systems/ascension/engines/UnionEngine.gd | AscensionFusionTest | native Melee hits load a six-round rack, Ranged Core hits fire one; a full rack fires across the arc on a Melee input; Jam / full discharge / six-execution chain dump it and load three |
+| URM | ARCANE BALLISTICS | union | 5 | implemented | core/systems/ascension/engines/UnionEngine.gd | AscensionFusionTest | every fourth native Ranged input loads the next shot with Sigil / 1D Debt / Well in turn (missing engines skipped); a native Magic input fires a 1D piercing Ranged shot |
 
 ## Choice (choice)
 

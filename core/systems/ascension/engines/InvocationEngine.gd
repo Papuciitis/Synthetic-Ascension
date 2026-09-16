@@ -53,6 +53,9 @@ var _one_voice: Dictionary = {}
 var _band: Dictionary = {}              # Mobile Choir {left, members}
 var _web_left: float = 0.0
 var _lines_fx: Array = []
+var _last_hit_handles: Array[int] = []
+var _loaded: Dictionary = {}            # Spellshot: projectile id -> Array of echoes
+var _loaded_from: Dictionary = {}       # "pid:sigil" -> true
 
 var counters: Dictionary = {"placed": 0, "pulses": 0, "pulse_hits": 0, "echoes_stored": 0, "echoes_released": 0, "growth": 0.0, "detonations": 0, "chain_pulses": 0, "children": 0, "stretches": 0, "endure_seconds": 0.0, "warm_circles": 0, "home_touches": 0, "consecrates": 0, "resonance_lines": 0, "consumed": 0, "choirs": 0, "choir_detonations": 0, "blood_sigils": 0, "hosts": 0, "host_copies": 0, "band_waves": 0, "web_edges": 0, "one_voice_pulses": 0}
 
@@ -227,8 +230,10 @@ func _impact(sigil: Dictionary, damage: float, root: String, pp: float, flags: P
 	var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, root, "pulse", 1, pp, flags)
 	tags.append("cast:sigil:%d" % int(sigil["id"]))
 	var hits := 0
+	_last_hit_handles.clear()
 	for handle in runner.enemies_in_radius(at, r):
 		runner.damage_enemy(handle, damage, tags)
+		_last_hit_handles.append(handle)
 		hits += 1
 	runner.note_impact_fx(at, r)
 	return hits
@@ -249,6 +254,15 @@ func pulse(sigil: Dictionary, chain: int = 0, v_rooted: bool = false) -> int:
 		pp = 0.2
 	var damage := sigil_damage(sigil)
 	var hits := 0
+	if String(sigil["kind"]) == "rune":
+		# Bullet Runes (RM4): a 0.5D Ranged shot at the nearest enemy instead of radial damage.
+		var nearest := runner.nearest_enemy(sigil["at"], 3.0 * AscensionRunner.L)
+		if nearest != 0:
+			var shot_dir := (runner.enemy_position(nearest) - (sigil["at"] as Vector2)).normalized()
+			runner.spawn_bullet(sigil["at"], shot_dir if shot_dir != Vector2.ZERO else Vector2.RIGHT, 0.5 * runner.native_damage_for("ranged"), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "RM4", "bullet", 1, pp, flags))
+			hits = 1
+		counters["pulse_hits"] = int(counters["pulse_hits"]) + hits
+		return hits
 	if has("INF1") and int(sigil["parent"]) == 0 and not bool(sigil["copy"]):
 		var nearest := runner.nearest_enemy(sigil["at"], 3.0 * AscensionRunner.R)
 		var dir := ((runner.enemy_position(nearest) - (sigil["at"] as Vector2)).normalized() if nearest != 0 else Vector2.RIGHT)
@@ -264,6 +278,15 @@ func pulse(sigil: Dictionary, chain: int = 0, v_rooted: bool = false) -> int:
 		hits = _impact(sigil, damage, "IN01", pp, flags)
 	counters["pulse_hits"] = int(counters["pulse_hits"]) + hits
 	sigil["stretch"] = Vector2.ZERO
+	if has("MM1") and hits > 0 and float(sigil["growth"]) >= 1.0:
+		# Blood Rite: one Growth raises Finish's line on the pulse's victims by 3 points for 2 s.
+		sigil["growth"] = float(sigil["growth"]) - 1.0
+		for handle in _last_hit_handles:
+			if not runner.enemy_alive(handle):
+				continue
+			var rite: Dictionary = runner.status_of(handle).get("blood_rite", {"bonus": 0.0})
+			runner.status_of(handle)["blood_rite"] = {"bonus": minf(0.09, float(rite.get("bonus", 0.0)) + 0.03), "until": _clock + 2.0}
+		counters["blood_rites"] = int(counters.get("blood_rites", 0)) + 1
 	if has("IN10") and hits >= 6:
 		_chain_pulse(sigil, chain)
 	if has("INE2") and _web_left > 0.0:
@@ -312,6 +335,10 @@ func _detonate(sigil: Dictionary, destroyed: bool) -> void:
 	counters["detonations"] = int(counters["detonations"]) + 1
 	var damage := 1.5 * D() + 0.3 * D() * float(sigil["growth"])
 	_impact(sigil, damage, "IN09", 0.5)
+	if has("RM7"):
+		var ordnance := runner.engine_of_discipline("OR") as OrdnanceEngine
+		if ordnance != null:
+			ordnance.explode_attached(int(sigil["id"]))
 	if not destroyed:
 		sigil["growth"] = maxf(0.0, float(sigil["growth"]) - 3.0)
 		sigil["detonated_path"] = true
@@ -468,6 +495,51 @@ func tick(delta: float) -> void:
 	_tick_consume(delta)
 	_tick_host(delta)
 	_tick_band(delta)
+	_tick_spellshot()
+
+
+## Spellshot (RM1): a piercing Core projectile crossing a Sigil loads one Echo.
+func _tick_spellshot() -> void:
+	if not has("RM1"):
+		return
+	var found: Array = []
+	for sigil in sigils:
+		if (sigil["echoes"] as Array).is_empty():
+			continue
+		found.clear()
+		ProjectileManager.player_projectiles_in_radius(sigil["at"], sigil_radius(sigil), found)
+		for bullet in found:
+			var tags: PackedStringArray = bullet["tags"]
+			if not AscensionTags.has_flag(tags, "core_strike") or AscensionTags.value_of(tags, "path") == "echo":
+				continue
+			var key := "%d:%d" % [int(bullet["id"]), int(sigil["id"])]
+			if _loaded_from.has(key) or (sigil["echoes"] as Array).is_empty():
+				continue
+			_loaded_from[key] = true
+			var carried: Array = _loaded.get(int(bullet["id"]), [])
+			carried.append((sigil["echoes"] as Array).pop_front())
+			_loaded[int(bullet["id"])] = carried
+			counters["spellshot_loads"] = int(counters.get("spellshot_loads", 0)) + 1
+	if _loaded_from.size() > 500:
+		_loaded_from.clear()
+
+
+## Riftwalk (MM4): a dash through a Sigil carries it to the endpoint and pulses it.
+func on_dash_ended(from: Vector2, to: Vector2, _direction: Vector2) -> void:
+	if not has("MM4"):
+		return
+	var moved := 0
+	var seg := to - from
+	for sigil in sigils:
+		if moved >= 3 or bool(sigil["copy"]):
+			continue
+		var at: Vector2 = sigil["at"]
+		var t := clampf((at - from).dot(seg) / maxf(seg.length_squared(), 1.0), 0.0, 1.0)
+		if at.distance_to(from + seg * t) <= sigil_radius(sigil):
+			sigil["at"] = to + Vector2.from_angle(float(moved) * 2.1) * 12.0
+			moved += 1
+			counters["riftwalks"] = int(counters.get("riftwalks", 0)) + 1
+			pulse(sigil)
 
 
 func _expire(sigil: Dictionary) -> void:
@@ -611,6 +683,18 @@ func _nearest_sigil(point: Vector2) -> Dictionary:
 
 func on_hit(hit: Dictionary) -> void:
 	var tags: PackedStringArray = hit["tags"]
+	var pid := int(hit["projectile_id"])
+	if has("RM1") and pid != 0 and _loaded.has(pid):
+		# Spellshot: the carried Echoes release at the first impact along the shot's aim.
+		var echoes: Array = _loaded[pid]
+		_loaded.erase(pid)
+		var dir: Vector2 = hit["direction"]
+		for echo in echoes:
+			counters["spellshots"] = int(counters.get("spellshots", 0)) + 1
+			var carrier := {"id": 0, "at": hit["position"]}
+			var release_tags := AscensionTags.make(String(echo["core"]), AscensionTags.FAMILY_TREE, "RM1", "echo", int(hit["gen"]) + 1, float(echo["pp"]))
+			runner._emit_strike(String(echo["core"]), hit["position"], (hit["position"] as Vector2) + dir * AscensionRunner.R, float(echo["damage"]), release_tags)
+			counters["echoes_released"] = int(counters["echoes_released"]) + 1
 	if hit["core"] != "magic" or not AscensionTags.has_flag(tags, "core_strike"):
 		return
 	if hit["family"] == AscensionTags.FAMILY_TREE and not has("INK1"):
@@ -623,6 +707,22 @@ func on_hit(hit: Dictionary) -> void:
 			_hits -= 4.0
 			_placed_volley = _volley
 			place_sigil(hit["position"])
+
+
+## Blood Rite (MM1): Execution reports each execution; one inside a Sigil
+## returns two Growth to the least-grown Sigil containing it.
+func note_execution(position: Vector2) -> void:
+	if not has("MM1"):
+		return
+	var inside := _containing(position)
+	if inside.is_empty():
+		return
+	var least: Dictionary = inside[0]
+	for sigil in inside:
+		if float(sigil["growth"]) < float(least["growth"]):
+			least = sigil
+	add_growth(least, 2.0, false)
+	counters["blood_rite_growth"] = int(counters.get("blood_rite_growth", 0)) + 2
 
 
 func on_kill(hit: Dictionary, _context: RefCounted) -> void:

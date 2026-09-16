@@ -31,7 +31,7 @@ is a presentation reference only; none of its economy or node rules apply.
 | 3b | Momentum, Bastion (Melee) | done 2026-09-16 (66 + 62 checks; BA10 n/a, MOQ5 partial) |
 | 3c | Precision, Ordnance (Ranged) | done 2026-09-16 (47 + 63 checks; PRK1 partial) |
 | 3d | Invocation, Dominion (Magic) | done 2026-09-16 (59 + 50 checks; DO10 Throw untestable headless) |
-| 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | pending |
+| 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | done 2026-09-16 (AscensionFusionTest 50; action table and automatic targeting complete) |
 | 4 | Presets per discipline + hybrids through real purchase rules; whole-system tests; frame distributions; rendered checks | pending |
 | 5 | Scene/Resource migration boundary note and one-discipline pilot design | pending |
 | 6 | Handoff: verified / implemented-unverified / awaiting playtest | pending |
@@ -136,6 +136,24 @@ is a presentation reference only; none of its economy or node rules apply.
 - 2026-09-16 (3d): weighted-hit counters (Leave a Sigil, Gravity Well,
   Impact Fuse) compare with a 0.0005 epsilon so ten hits at Proc Power 0.4
   reach four.
+- 2026-09-16 (3e): a Fusion runs in the engine that owns its trigger and
+  reaches the partner through runner.engine_of_discipline; every cross-call
+  is null-guarded so a Fusion whose partner engine is absent does nothing.
+  Unions route to a UnionEngine ("UN") the runner builds when any Union is
+  owned. Engines report Jams, full Force discharges and executions to
+  runner.note_union_trigger for TOTAL OFFENSIVE.
+- 2026-09-16 (3e): Slingshot's arc is approximated (the player is mirrored
+  across the Well's centre, then dashes R toward aim). Blood Rite raises the
+  line through a per-target status Execution reads; executions are
+  reported by Execution rather than inferred from kill tags. Backtrack adds
+  damage to the live projectile through a new manager helper. Rune Bomb's
+  partner detonation is recursion-guarded on the Ordnance side. INCARNATE
+  carries the newest Sigil and Well (their own timers keep running, as the
+  rule states); "10% max HP taken" counts applied damage, not prevented.
+- 2026-09-16 (3e): headless tests now wait by resolved projectiles or by
+  distance travelled instead of frame counts: headless frames run as fast
+  as the machine allows, so a fixed frame count covered 4-12 px per frame
+  depending on load, and two suites flapped when another process ran.
 - 2026-09-16 (3c): AscensionBarrageDenseBenchmark's single-frame "max
   fragment update < 12 ms" bound proved noise-driven (baseline runs of the
   committed 3b state span 8.8-16.7 ms while p95 stays 4.9-5.4 ms); the
@@ -174,3 +192,7 @@ is a presentation reference only; none of its economy or node rules apply.
   the full set unchanged; ScriptParseAuditTest 401. Matrix: 309
   implemented, 8 partial, 5 n/a, 27 missing (24 Fusions, 3 Unions), 1
   ambiguous.
+- 2026-09-16 stage 3e: AscensionFusionTest 50 (24 Fusions, 3 Unions); the
+  full set green; ScriptParseAuditTest 402. Matrix: 336 implemented, 8
+  partial, 5 n/a, 0 missing among nodes (one shared row, control
+  conversions, stays missing), 1 ambiguous.

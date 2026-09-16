@@ -146,8 +146,17 @@ func _run() -> void:
 	var far_id: int = ProjectileManager._ids[ProjectileManager.active_count() - 1]
 	var found_before: Array = []
 	ProjectileManager.enemy_projectiles_in_radius(origin, 2000.0, found_before)
-	await get_tree().process_frame
-	await get_tree().process_frame
+	# Wait by travelled distance, not frames: headless frame pacing varies.
+	for _i in range(60):
+		await get_tree().process_frame
+		var probe: Array = []
+		ProjectileManager.enemy_projectiles_in_radius(origin, 2000.0, probe)
+		var moved_enough := false
+		for bullet in probe:
+			if int(bullet["id"]) == far_id and (bullet["position"] as Vector2).x - origin.x > 300.0 + 12.0:
+				moved_enough = true
+		if moved_enough:
+			break
 	var found_after: Array = []
 	ProjectileManager.enemy_projectiles_in_radius(origin, 2000.0, found_after)
 	var by_id_before: Dictionary = {}

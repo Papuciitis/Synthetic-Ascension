@@ -167,9 +167,11 @@ func _run() -> void:
 	orx = _load(["OR01", "OR02", "OR05"])
 	orx.on_player_dashed(origin + Vector2(60, 0), Vector2.RIGHT)
 	_runner.spawn_bullet(origin, Vector2.RIGHT, 5.0, _native(), {"max_range": 200.0})
-	for _i in range(8):
+	for _i in range(120):
 		await get_tree().process_frame
 		orx.tick(1.0 / 60.0)
+		if int(orx.counters["tosses"]) > 0:
+			break
 	_check(int(orx.counters["tosses"]) == 1 and is_equal_approx(float(orx.mines[0]["arm"]), 0.0) and (orx.mines[0]["at"] as Vector2).x > origin.x + 130.0, "a Core projectile pushes an unarmed Mine R toward aim and arms it (%s)" % str(orx.mines[0]["at"]))
 	_check(is_equal_approx(float(orx.mines[0]["damage"]), 1.5 * _D() + 0.5 * _D()), "a tossed Mine that travelled R/2 gains +0.5D")
 

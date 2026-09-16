@@ -1247,11 +1247,59 @@
   "test": "AscensionInvocationTest",
   "where": "core/systems/ascension/engines/InvocationEngine.gd"
  },
+ "MM1": {
+  "note": "a pulse spends one Growth: victims get a blood_rite status (+3 points, cap +9, 2 s) read by Execution's per-target line; Execution reports executions so one inside a Sigil returns two Growth",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd + ExecutionEngine.gd"
+ },
  "MM2": {
   "note": "Magic blast for the collected Debt; Pass It On shares first",
   "status": "implemented",
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "MM3": {
+  "note": "the corpse bomb becomes a 1 s Well at the corpse, then resolves at +25% radius",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd + DominionEngine.gd"
+ },
+ "MM4": {
+  "note": "on_dash_ended: Sigils on the dash segment (max three) move to the endpoint and pulse",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "MM5": {
+  "note": "a named Twice roll (20%) at dash end repeats the endpoint slash at the start for 0.6D and leaves an Afterimage",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MM6": {
+  "note": "a dash ending inside a Well at 60+ Momentum mirrors the player across the Well's centre and releases an R dash toward aim (approximation of the arc); carried normals follow through Ram",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd + DominionEngine.gd"
+ },
+ "MM7": {
+  "note": "Plate reforms in 1 s inside a grown Sigil; a Plate broken there stores a 1D Echo and adds two Growth",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd + InvocationEngine.gd"
+ },
+ "MM8": {
+  "note": "Thorns deposits half its dealt damage as 'backlash' Debt; that bucket's maturity returns 10 Force",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd + DistortionEngine.gd"
+ },
+ "MM9": {
+  "note": "above 60 Force normals within R orbit the player (0.5 s stun on capture); a 20+ Force spend throws up to four toward aim for 0.8D; above 100 Force movement x0.8",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
  },
  "MO01": {
   "note": "claims the existing Manifestation Momentum pool (0-1 read as 0-100); travel fill and still-bleed are the pool's own; dashes add 15",
@@ -1451,11 +1499,59 @@
   "test": "AscensionMomentumTest",
   "where": "core/systems/ascension/engines/MomentumEngine.gd"
  },
+ "MR1": {
+  "note": "Spillover spawns a piercing (2) blood shot carrying the captured overkill, pp 0.6",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
  "MR2": {
   "note": "fragments finish at half the line; extra fragment",
   "status": "implemented",
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "MR3": {
+  "note": "the corpse bomb is called as a 0.4 s Shell at the nearest cluster within 4R (Secondary Blast applies)",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd + OrdnanceEngine.gd"
+ },
+ "MR4": {
+  "note": "returning shots within R of the dash endpoint (max three) are removed and re-fired toward aim at +0.5D",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MR5": {
+  "note": "Afterimage slashes also fire a 0.6D Ranged shot toward aim (pp 0.4); every third Crossfire shot queues a 0.5D Melee Afterimage at its origin; the two conversions are different families so neither re-triggers itself",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd + BarrageEngine.gd"
+ },
+ "MR6": {
+  "note": "a rammed normal gets a fresh armed Mine at the endpoint living 0.5 s",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd + OrdnanceEngine.gd"
+ },
+ "MR7": {
+  "note": "a reflected (BA02) shot exposes its first target after damage; consuming an existing Weak Point returns a 0.8D shot once",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "MR8": {
+  "note": "a Jam spends up to 60 Force: +0.06D per Force split across the loose rounds, pierce 1 at 60 spent",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd + BastionEngine.gd"
+ },
+ "MR9": {
+  "note": "prevented enemy damage banks Mines at the player's feet, one per 10% max HP, three per hit",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd + OrdnanceEngine.gd"
  },
  "OR01": {
   "note": "weighted Ranged Core hits (pp) accumulate; a Shell at 4, one per native input, credit retained",
@@ -1859,11 +1955,77 @@
   "test": "AscensionPrecisionTest",
   "where": "core/systems/ascension/engines/PrecisionEngine.gd"
  },
+ "RM1": {
+  "note": "a core_strike projectile inside a Sigil loads one Echo per Sigil; its next hit releases them along the shot's direction",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "RM2": {
+  "note": "a return hit pulls the oldest bucket 0.5 s closer; a maturity adds +0.3D to the projectile (ProjectileSimulationManager.add_projectile_damage), max +2D",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "RM3": {
+  "note": "a consumed Weak Point leaves a Well R ahead along the shot; each new exposed target adds R/4 acquisition radius (max +R) to later Wells",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd + DominionEngine.gd"
+ },
+ "RM4": {
+  "note": "every third Crossfire shot is flagged rune; its first impact places a rune Sigil whose pulses fire a 0.5D Ranged shot",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd + InvocationEngine.gd"
+ },
  "RM5": {
   "note": "named 25% roll, three burning fragments",
   "status": "implemented",
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "RM6": {
+  "note": "a ricochet hit on a Linked enemy runs along the unvisited members for 0.5D each (flag wire)",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "RM7": {
+  "note": "an armed Mine inside a Sigil attaches (three per Sigil); either detonation detonates the partner once (recursion guarded)",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd + InvocationEngine.gd"
+ },
+ "RM8": {
+  "note": "the Secondary Blast Shell collects the corpse's Debt, lands 0.5 s later with 75% of it, and matures living victims' oldest bucket",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd + DistortionEngine.gd"
+ },
+ "RM9": {
+  "note": "Big One becomes 6D in 2R after 1 s with a 1 s Well at the landing",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd + DominionEngine.gd"
+ },
+ "UMM": {
+  "note": "the newest Sigil and Well are kept within R; a native Melee hit through either releases one Echo and re-pulls the Well once per input; 10% max HP taken commands both again",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/UnionEngine.gd"
+ },
+ "UMR": {
+  "note": "native Melee hits load a six-round rack, Ranged Core hits fire one; a full rack fires across the arc on a Melee input; Jam / full discharge / six-execution chain dump it and load three",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/UnionEngine.gd"
+ },
+ "URM": {
+  "note": "every fourth native Ranged input loads the next shot with Sigil / 1D Debt / Well in turn (missing engines skipped); a native Magic input fires a 1D piercing Ranged shot",
+  "status": "implemented",
+  "test": "AscensionFusionTest",
+  "where": "core/systems/ascension/engines/UnionEngine.gd"
  },
  "_shared": {
   "1.5 s gap between Revelation starts; hold V for both at Ascendant": {
@@ -1885,7 +2047,7 @@
    "where": "core/systems/ascension/AscensionTags.gd"
   },
   "Automatic Method (pick.M2, 70%)": {
-   "note": "targeting table: Gavel wounded-normal, Burst aim, Coin chosen face; others as engines are built",
+   "note": "targeting table complete: Gavel, Lunge, Guard, Deadshot, Burst, Designate, Consecrate, Coin, Compel (auto_target per engine)",
    "status": "implemented",
    "test": "AscensionSharedRulesTest",
    "where": "core/systems/ascension/AscensionRunner.gd"
@@ -2017,9 +2179,9 @@
    "where": "core/systems/ascension/AscensionLedger.gd"
   },
   "Revelation charge: discipline action table": {
-   "note": "EX, BR, DT sources implemented, 4/s cap; other disciplines as built",
-   "status": "partial",
-   "test": "AscensionSharedRulesTest",
+   "note": "all nine disciplines add charge through runner.add_action_charge (4/s cap per meter); tests per discipline",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest + discipline suites",
    "where": "core/systems/ascension/AscensionRunner.gd + engines"
   },
   "Revelation charge: kills": {

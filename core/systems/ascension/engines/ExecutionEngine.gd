@@ -103,6 +103,13 @@ func _hit_line(hit: Dictionary, handle: int) -> float:
 	if has("EX08") and runner.has_status(handle, "wound") and AscensionTags.has_flag(tags, "core_strike"):
 		value += 0.20
 		runner.clear_status(handle, "wound")
+	# Blood Rite (MM1): a Sigil pulse raised this target's line for 2 s.
+	if has("MM1") and runner.has_status(handle, "blood_rite"):
+		var rite: Dictionary = runner.status_of(handle)["blood_rite"]
+		if _clock < float(rite["until"]):
+			value += float(rite["bonus"])
+		else:
+			runner.clear_status(handle, "blood_rite")
 	return value
 
 
@@ -154,8 +161,23 @@ func on_native_fire(style: String, _origin: Vector2, _target: Vector2, _power: f
 
 # ---------------------------------------------------------------- tick
 
+var _delayed_impacts: Array = []
+
+
+func _tick_delayed_impacts(delta: float) -> void:
+	if _delayed_impacts.is_empty():
+		return
+	for i in range(_delayed_impacts.size() - 1, -1, -1):
+		var entry: Dictionary = _delayed_impacts[i]
+		entry["delay"] = float(entry["delay"]) - delta
+		if float(entry["delay"]) <= 0.0:
+			_delayed_impacts.remove_at(i)
+			runner.spawn_impact(entry["at"], float(entry["damage"]), entry["tags"], float(entry["radius"]))
+
+
 func tick(delta: float) -> void:
 	_clock += delta
+	_tick_delayed_impacts(delta)
 	if _bloodletting_left > 0.0:
 		_bloodletting_left = maxf(0.0, _bloodletting_left - delta)
 		if _bloodletting_left <= 0.0:
@@ -369,6 +391,12 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) -> void:
 	counters["executions"] = int(counters["executions"]) + 1
 	runner.add_action_charge(2.0, AscensionTags.has_flag(hit["tags"], "v"))
+	runner.note_union_trigger("execution", cast)
+	if has("MM1"):
+		# Blood Rite: an execution inside a Sigil returns two Growth.
+		var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+		if invocation != null:
+			invocation.note_execution(hit["position"])
 	if has("EX04"):
 		_stack_bloodletting()
 	if has("EX12"):
@@ -439,6 +467,12 @@ func _spillover(hit: Dictionary, handle: int, cast: String, overkill: float) -> 
 		return
 	counters["spillovers"] = int(counters["spillovers"]) + 1
 	_root_spilled[cast] = true
+	if has("MR1"):
+		# Bloodshot: a piercing blood shot carrying the captured overkill.
+		counters["bloodshots"] = int(counters.get("bloodshots", 0)) + 1
+		var dir := (runner.enemy_position(target) - (hit["position"] as Vector2)).normalized()
+		runner.spawn_bullet(hit["position"], dir if dir != Vector2.ZERO else Vector2.RIGHT, damage, _payload_tags("MR1", "bloodshot", hit, 0.6), {"pierce": 2, "max_range": reach + AscensionRunner.R})
+		return
 	_bolts.append({"pos": hit["position"], "target": target, "damage": damage, "tags": _payload_tags("EX03", "bolt", hit, 0.7), "root": cast})
 
 
@@ -481,6 +515,26 @@ func _corpse_bomb(hit: Dictionary, handle: int, overkill: float, baseline: bool)
 			hp_part = 0.0
 		damage = hp_part + 0.5 * D() + overkill
 	var pp := 0.35 if hit["path"] == "sweep" else 0.5
+	if has("MR3"):
+		# Corpse Mortar: the bomb flies to the nearest cluster within 4R as a Shell.
+		var ordnance := runner.engine_of_discipline("OR") as OrdnanceEngine
+		if ordnance != null:
+			var cluster := runner.nearest_enemy(hit["position"], 4.0 * AscensionRunner.R, handle)
+			var at: Vector2 = runner.enemy_position(cluster) if cluster != 0 else hit["position"]
+			var shell := ordnance.call_shell(at, damage / maxf(D(), 0.001), "MR3", pp, PackedStringArray(["execute_enabled"]), false)
+			if not shell.is_empty():
+				shell["left"] = 0.4
+				shell["radius"] = radius
+				counters["corpse_mortars"] = int(counters.get("corpse_mortars", 0)) + 1
+				return
+	if has("MM3"):
+		# Corpse Well: a 1 s Well pulls bodies in, then the bomb resolves wider.
+		var dominion := runner.engine_of_discipline("DO") as DominionEngine
+		if dominion != null:
+			dominion.place_well(hit["position"], "corpse", false, 0.0, 1.0)
+			_delayed_impacts.append({"delay": 1.0, "at": hit["position"], "damage": damage, "tags": _payload_tags("EX05", "impact", hit, pp), "radius": radius * 1.25})
+			counters["corpse_wells"] = int(counters.get("corpse_wells", 0)) + 1
+			return
 	runner.spawn_impact(hit["position"], damage, _payload_tags("EX05", "impact", hit, pp), radius)
 
 

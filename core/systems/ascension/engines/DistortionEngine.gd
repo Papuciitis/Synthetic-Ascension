@@ -34,6 +34,7 @@ const MISFIRE_CHANCE := 0.15
 var _clock: float = 0.0
 var _volley: int = 0
 var debts: Dictionary = {}              # handle -> Array of buckets {amount, due, source, born, v, passed, collect_until}
+var _backtrack_gain: Dictionary = {}    # projectile id -> damage added by Backtrack
 var _deposit_times: Array[float] = []
 var _matured_times: Array[float] = []
 var scars: Array = []                   # {pos, magnitude, life}
@@ -328,6 +329,15 @@ func on_hit(hit: Dictionary) -> void:
 	var core_strike := AscensionTags.has_flag(tags, "core_strike")
 	var is_debt := AscensionTags.has_flag(tags, "debt")
 	var applied := float(hit["applied"])
+	if has("RM2") and hit["root"] == "PR07" and hit["path"] == "return" and int(hit["projectile_id"]) != 0:
+		# Backtrack: a return hastens the oldest bucket; a maturity adds +0.3D to the shot.
+		if accelerate_oldest(handle, 0.5):
+			var pid := int(hit["projectile_id"])
+			var gained := float(_backtrack_gain.get(pid, 0.0))
+			if gained < 2.0 * D():
+				_backtrack_gain[pid] = gained + 0.3 * D()
+				ProjectileManager.add_projectile_damage(pid, 0.3 * D())
+				counters["backtracks"] = int(counters.get("backtracks", 0)) + 1
 	if hit["core"] == "magic" and core_strike:
 		if has("DT03"):
 			_apply_fading(handle)
@@ -546,6 +556,12 @@ func _mature(handle: int, bucket: Dictionary, natural: bool) -> void:
 		flags.append("v")
 	var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DT06", "debt", 1, DEBT_PP, flags)
 	var dealt := runner.damage_enemy(handle, amount, tags)
+	if has("MM8") and String(bucket["source"]) == "backlash":
+		# Backlash: matured Thorns Debt returns 10 Force, once per prevented hit.
+		var bastion := runner.engine_of_discipline("BA") as BastionEngine
+		if bastion != null:
+			bastion.add_force(10.0, false)
+			counters["backlash_refunds"] = int(counters.get("backlash_refunds", 0)) + 1
 	if natural:
 		_matured_times.append(_clock)
 		if dealt > 0.0:
@@ -555,6 +571,30 @@ func _mature(handle: int, bucket: Dictionary, natural: bool) -> void:
 			var lone := _matured_times.size() >= PAYDAY_BOSS_MATURED
 			if crowd or lone:
 				_payday()
+
+
+## Backtrack (RM2): pull the oldest bucket 0.5 s closer; matured now -> true.
+func accelerate_oldest(handle: int, seconds: float) -> bool:
+	var buckets: Array = debts.get(handle, [])
+	if buckets.is_empty():
+		return false
+	var oldest: Dictionary = buckets[0]
+	for bucket in buckets:
+		if float(bucket["due"]) < float(oldest["due"]):
+			oldest = bucket
+	oldest["due"] = float(oldest["due"]) - seconds
+	if float(oldest["due"]) <= _clock:
+		buckets.erase(oldest)
+		if buckets.is_empty():
+			debts.erase(handle)
+		_mature(handle, oldest, false)
+		return true
+	return false
+
+
+## Time Bomb (RM8): mature a living target's oldest bucket now.
+func mature_oldest(handle: int) -> bool:
+	return accelerate_oldest(handle, INF)
 
 
 func _debt_on_corpse(handle: int, buckets: Array) -> void:

@@ -34,6 +34,7 @@ const ENGINE_SCRIPTS: Dictionary = {
 	"OR": "res://core/systems/ascension/engines/OrdnanceEngine.gd",
 	"IN": "res://core/systems/ascension/engines/InvocationEngine.gd",
 	"DO": "res://core/systems/ascension/engines/DominionEngine.gd",
+	"UN": "res://core/systems/ascension/engines/UnionEngine.gd",
 	"BA": "res://core/systems/ascension/engines/BastionEngine.gd",
 }
 ## Dash-recovery refunds (Clean Cut, Kill Reset) share one bucket: 0.6 s per
@@ -277,6 +278,8 @@ func _rebuild_engines() -> void:
 			# A Fusion belongs to both parents: each engine sees it and runs
 			# its half (Kill Feed: Execution finishes, Barrage fragments).
 			codes = ledger.db.fusion_disciplines(id)
+		elif ledger.db.kind(id) == "union":
+			codes.append("UN")
 		for engine_code in codes:
 			if not wanted.has(engine_code):
 				wanted[engine_code] = {}
@@ -360,6 +363,19 @@ func active(id: String) -> bool:
 
 func rank(id: String) -> int:
 	return ledger.rank(id) if ledger != null else 0
+
+
+## The live engine of a discipline code ("IN", "DO", ...), or null.
+func engine_of_discipline(code: String) -> AscensionEngine:
+	return _engine_by_discipline.get(code, null) as AscensionEngine
+
+
+## TOTAL OFFENSIVE listens for a Jam, a full Force discharge or an execution
+## chain; engines report those here.
+func note_union_trigger(kind: String, cast: String = "") -> void:
+	var union := engine_of_discipline("UN") as UnionEngine
+	if union != null:
+		union.note_trigger(kind, cast)
 
 
 func engine_for(id: String) -> AscensionEngine:

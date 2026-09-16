@@ -34,6 +34,9 @@ var _read: Dictionary = {}              # handle -> weighted Read
 var _far_shot_done: Dictionary = {}
 var _exposed_at_hit: Dictionary = {}    # handle -> exposed when the damage hook ran
 var _consumed_at: Dictionary = {}       # handle -> clock of the last consumption
+var _gravity_bonus: float = 0.0
+var _gravity_targets: Dictionary = {}
+var _countershot_pids: Dictionary = {}
 var _exposed_until: Dictionary = {}     # handle -> clock when the Weak Point closes
 var _second_read: Dictionary = {}       # projectile id -> handle that consumed
 var _charged_pids: Dictionary = {}
@@ -113,6 +116,18 @@ func _consume(handle: int, hit: Dictionary) -> void:
 			_firing_squad(cast)
 	if has("PR04") and int(hit["projectile_id"]) != 0:
 		_second_read[int(hit["projectile_id"])] = handle
+	if has("RM3"):
+		# Gravity Round: a Well ahead of the shot; each new exposed target widens later Wells.
+		var dominion := runner.engine_of_discipline("DO") as DominionEngine
+		if dominion != null:
+			var dir: Vector2 = hit["direction"]
+			if dir == Vector2.ZERO:
+				dir = Vector2.RIGHT
+			dominion.place_well((hit["position"] as Vector2) + dir * AscensionRunner.R, "gravity_round", false, _gravity_bonus)
+			if not _gravity_targets.has(handle):
+				_gravity_targets[handle] = true
+				_gravity_bonus = minf(AscensionRunner.R, _gravity_bonus + AscensionRunner.R * 0.25)
+			counters["gravity_rounds"] = int(counters.get("gravity_rounds", 0)) + 1
 
 
 func _is_ranged_core(hit: Dictionary) -> bool:
@@ -308,6 +323,17 @@ func on_hit(hit: Dictionary) -> void:
 			_second_read.erase(pid)
 			expose(handle)
 			counters["second_reads"] = int(counters["second_reads"]) + 1
+	if has("MR7") and hit["root"] == "BA02" and hit["path"] == "return":
+		# Countershot: a reflected shot exposes its first target; consuming one returns it once.
+		if is_exposed(handle) and not _countershot_pids.has(pid):
+			_countershot_pids[pid] = true
+			_consume(handle, hit)
+			var back: Vector2 = -(hit["direction"] as Vector2)
+			runner.spawn_bullet(hit["position"], back if back != Vector2.ZERO else Vector2.LEFT, 0.8 * D(), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "MR7", "return", int(hit["gen"]) + 1, 0.5, PackedStringArray(["core_strike", "return"])), {"pierce": 2})
+			counters["countershots"] = int(counters.get("countershots", 0)) + 1
+		elif not _countershot_pids.has(pid):
+			_countershot_pids[pid] = true
+			expose(handle)
 	if _is_ranged_core(hit):
 		if _exposed_at_hit.has(handle):
 			_exposed_at_hit.erase(handle)

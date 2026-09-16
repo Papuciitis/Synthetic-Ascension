@@ -107,11 +107,11 @@ func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:
 
 # ---------------------------------------------------------------- wells
 
-func place_well(at: Vector2, kind: String = "well", placement_damage: bool = true) -> Dictionary:
+func place_well(at: Vector2, kind: String = "well", placement_damage: bool = true, acquire_bonus: float = 0.0, life: float = WELL_LIFE) -> Dictionary:
 	if wells.size() >= WELL_CAP:
 		_expire_well(wells[0])
 	_serial += 1
-	var well := {"id": _serial, "at": at, "life": WELL_LIFE, "radius": WELL_RADIUS_MUL * AscensionRunner.R, "budget": {}, "anchor": 0, "crush_hits": 0, "crush_tick": 0.0, "shrunk": false, "inside": 0, "resisted": 0.0, "black": 0.0, "kind": kind, "orbit": {}, "caught": {}, "orbit_left": 2.0}
+	var well := {"id": _serial, "at": at, "life": life, "radius": WELL_RADIUS_MUL * AscensionRunner.R, "budget": {}, "anchor": 0, "crush_hits": 0, "crush_tick": 0.0, "shrunk": false, "inside": 0, "resisted": 0.0, "black": 0.0, "kind": kind, "orbit": {}, "caught": {}, "orbit_left": 2.0, "acquire_bonus": acquire_bonus}
 	wells.append(well)
 	counters["wells"] = int(counters["wells"]) + 1
 	if placement_damage and has("DO01"):
@@ -188,7 +188,7 @@ func _well_radius(well: Dictionary) -> float:
 func _acquire_radius(well: Dictionary) -> float:
 	if has("DOK2") or float(well["black"]) > 0.0:
 		return runner.camera_rect().size.length() * 0.5
-	return _well_radius(well)
+	return _well_radius(well) + float(well.get("acquire_bonus", 0.0))
 
 
 func _tick_wells(delta: float) -> void:
@@ -586,6 +586,8 @@ func on_hit(hit: Dictionary) -> void:
 				if int(member) != handle and runner.enemy_alive(int(member)):
 					runner.damage_enemy(int(member), fraction * float(hit["applied"]), copy_tags)
 					counters["burdens"] = int(counters["burdens"]) + 1
+	if has("RM6") and hit["path"] == "ricochet" and not is_burden:
+		_stormwire(hit)
 	if has("DOE1") and (bool(hit["is_elite"]) or bool(hit["is_boss"])) and core_strike:
 		for grave in _graves:
 			if (grave["at"] as Vector2).distance_to(hit["position"]) <= 3.0 * AscensionRunner.R:
@@ -594,6 +596,36 @@ func on_hit(hit: Dictionary) -> void:
 					grave["durable"] = float(grave["durable"]) - 3.0 * D()
 					grave["last"] = _clock
 					_grave_pulse(grave, hit["position"])
+
+
+## Stormwire (RM6): a ricochet on a Linked enemy runs along the unvisited
+## members for 0.5D each.
+func _stormwire(hit: Dictionary) -> void:
+	var handle := int(hit["handle"])
+	var group := link_of(handle)
+	if group.is_empty():
+		return
+	var visited: Dictionary = {handle: true}
+	var at: Vector2 = hit["position"]
+	var tags := AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "RM6", "wire", int(hit["gen"]) + 1, 0.3, PackedStringArray(["wire"]))
+	var members: Array = (group["members"] as Array).duplicate()
+	for _i in range(members.size()):
+		var next := 0
+		var best := INF
+		for member in members:
+			if visited.has(int(member)) or not runner.enemy_alive(int(member)):
+				continue
+			var d := at.distance_squared_to(runner.enemy_position(int(member)))
+			if d < best:
+				best = d
+				next = int(member)
+		if next == 0:
+			break
+		visited[next] = true
+		runner.note_line_fx(at, runner.enemy_position(next), 4.0)
+		at = runner.enemy_position(next)
+		runner.damage_enemy(next, 0.5 * D(), tags)
+		counters["wires"] = int(counters.get("wires", 0)) + 1
 
 
 func on_kill(hit: Dictionary, _context: RefCounted) -> void:

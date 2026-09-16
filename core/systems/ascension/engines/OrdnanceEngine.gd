@@ -146,8 +146,16 @@ func call_shell(at: Vector2, damage_d: float = SHELL_D, root: String = "OR01", p
 	var shell := {
 		"at": at, "left": 0.9 if big else SHELL_TELL, "damage": (4.0 if big else damage_d) * D(),
 		"radius": (2.0 if big else 1.0) * AscensionRunner.R, "pp": 1.0 if big else pp, "root": root,
-		"flags": flags, "follow": follow, "seq": seq, "big": big, "automatic": automatic,
+		"flags": flags, "follow": follow, "seq": seq, "big": big, "automatic": automatic, "bonus": 0.0,
 	}
+	if big and has("RM9"):
+		# Meteor: 6D in 2R after 1 s, with a Well pulling at the landing.
+		shell["damage"] = 6.0 * D()
+		shell["left"] = 1.0
+		var dominion := runner.engine_of_discipline("DO") as DominionEngine
+		if dominion != null:
+			dominion.place_well(at, "meteor", false, 0.0, 1.0)
+		counters["meteors"] = int(counters.get("meteors", 0)) + 1
 	shells.append(shell)
 	counters["shells"] = int(counters["shells"]) + 1
 	if big:
@@ -190,7 +198,11 @@ func _tick_shells(delta: float) -> void:
 		if has("ORQ4") and bool(shell.get("trap", false)):
 			_drop_trap(shell)
 		else:
-			_blast(shell["at"], float(shell["damage"]), float(shell["radius"]), String(shell["root"]), float(shell["pp"]), shell["flags"], int(shell["seq"]), true, bool(shell["automatic"]))
+			var flags: PackedStringArray = shell["flags"]
+			if float(shell.get("bonus", 0.0)) > 0.0 and not flags.has("time_bomb"):
+				flags = flags.duplicate()
+				flags.append("time_bomb")
+			_blast(shell["at"], float(shell["damage"]) + float(shell.get("bonus", 0.0)), float(shell["radius"]), String(shell["root"]), float(shell["pp"]), flags, int(shell["seq"]), true, bool(shell["automatic"]))
 
 
 ## Resolves a blast through the runner's queue; remembers its geometry.
@@ -241,6 +253,49 @@ func _drop_trap(shell: Dictionary) -> void:
 func _explode_mine(mine: Dictionary, scale: float = 1.0) -> void:
 	counters["mine_blasts"] = int(counters["mine_blasts"]) + 1
 	_blast(mine["at"], float(mine["damage"]) * scale, float(mine["radius"]), String(mine["root"]), SHELL_PP, PackedStringArray(), int(mine["seq"]), false, false)
+	if has("RM7") and int(mine.get("sigil", 0)) != 0 and not _rune_guard:
+		# Rune Bomb: the attached Sigil detonates once with its Mine.
+		var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+		if invocation != null:
+			var sigil := invocation._find(int(mine["sigil"]))
+			if not sigil.is_empty():
+				_rune_guard = true
+				invocation._detonate(sigil, false)
+				_rune_guard = false
+
+
+var _rune_guard: bool = false
+
+
+## Rune Bomb: every Mine attached to `sigil_id` explodes (called by a Sigil detonation).
+func explode_attached(sigil_id: int) -> void:
+	if _rune_guard:
+		return
+	_rune_guard = true
+	for mine in mines.duplicate():
+		if int(mine.get("sigil", 0)) == sigil_id:
+			mines.erase(mine)
+			_explode_mine(mine)
+	_rune_guard = false
+
+
+func _tick_rune_bombs() -> void:
+	if not has("RM7"):
+		return
+	var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+	if invocation == null:
+		return
+	for mine in mines:
+		if float(mine["arm"]) > 0.0 or int(mine.get("sigil", 0)) != 0:
+			continue
+		for sigil in invocation.sigils:
+			if int(sigil.get("mines", 0)) >= 3:
+				continue
+			if (sigil["at"] as Vector2).distance_to(mine["at"]) <= invocation.sigil_radius(sigil):
+				mine["sigil"] = int(sigil["id"])
+				sigil["mines"] = int(sigil.get("mines", 0)) + 1
+				counters["rune_bombs"] = int(counters.get("rune_bombs", 0)) + 1
+				break
 
 
 func _chain_reaction(at: Vector2, radius: float, seq: int) -> void:
@@ -306,6 +361,7 @@ func tick(delta: float) -> void:
 	_track_travel(delta)
 	_tick_shells(delta)
 	_tick_mines(delta)
+	_tick_rune_bombs()
 	_tick_sequences(delta)
 	_tick_coordinates(delta)
 	_tick_beacons(delta)
@@ -389,6 +445,10 @@ func _on_blast_hit(blast_id: int, hit: Dictionary) -> void:
 	var blast: Dictionary = _blasts.get(blast_id, {})
 	if blast.is_empty():
 		return
+	if has("RM8") and AscensionTags.has_flag(hit["tags"], "time_bomb") and not bool(hit["lethal"]):
+		var distortion := runner.engine_of_discipline("DT") as DistortionEngine
+		if distortion != null:
+			distortion.mature_oldest(handle)
 	blast["hits"] = int(blast["hits"]) + 1
 	if int(blast["hits"]) == 2 and bool(blast["shell"]):
 		runner.add_action_charge(1.0)
@@ -465,7 +525,15 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 	if has("OR04") and not _secondary_done.has(handle):
 		_secondary_done[handle] = true
 		counters["secondary"] = int(counters["secondary"]) + 1
-		call_shell(hit["position"], SHELL_D, "OR04", 0.5, PackedStringArray(), true, seq)
+		var secondary := call_shell(hit["position"], SHELL_D, "OR04", 0.5, PackedStringArray(), true, seq)
+		if has("RM8") and not secondary.is_empty():
+			# Time Bomb: the Shell collects the corpse's unpaid Debt and lands 0.5 s later.
+			var distortion := runner.engine_of_discipline("DT") as DistortionEngine
+			if distortion != null:
+				var collected := distortion.collect_debt(handle)
+				secondary["left"] = float(secondary["left"]) + 0.5
+				secondary["bonus"] = 0.75 * collected
+				counters["time_bombs"] = int(counters.get("time_bombs", 0)) + 1
 	if has("OR03"):
 		for shell in shells:
 			if int(shell["follow"]) == handle or ((shell["at"] as Vector2).distance_to(hit["position"]) <= float(shell["radius"]) and not bool(shell.get("redirected", false))):

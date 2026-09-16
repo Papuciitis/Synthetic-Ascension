@@ -266,6 +266,15 @@ func on_dash_ended(from: Vector2, to: Vector2, direction: Vector2) -> void:
 		counters["trails"] = int(counters["trails"]) + 1
 	if has("MO06"):
 		_ram(crossed, to, direction)
+	if has("MM5") and runner.roll(&"twice", 0.20, 1.0):
+		# Double Step: Twice repeats the endpoint slash at the start for 0.6D.
+		counters["double_steps"] = int(counters.get("double_steps", 0)) + 1
+		runner.spawn_slash(from, direction, 0.6 * D(), AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "MM5", "slash", 1, 0.5), 145.0, 62.0)
+		_queue_afterimage(from, direction, 0.6 * D(), 0.5, "MM5")
+	if has("MR4"):
+		_rail_dash(to)
+	if has("MM6") and momentum() >= 60.0 and not _lunge_active and not _slingshot_pending:
+		_slingshot(to, direction)
 	if _lunge_active:
 		_finish_lunge(from, to, direction, crossed)
 	elif has("MO09") and _long_step_used < 2.0 * AscensionRunner.L and Input.is_action_pressed(&"dash") and momentum() >= 40.0:
@@ -303,6 +312,53 @@ func _dash_strip(from: Vector2, to: Vector2, direction: Vector2) -> Array[int]:
 	return crossed
 
 
+var _slingshot_pending: bool = false
+
+
+## Rail Dash (MR4): returning shots within R of the endpoint are caught and
+## released toward aim at +0.5D.
+func _rail_dash(endpoint: Vector2) -> void:
+	var found: Array = []
+	ProjectileManager.player_projectiles_in_radius(endpoint, AscensionRunner.R, found)
+	var caught := 0
+	var aim := (runner.aim_target() - endpoint).normalized()
+	if aim == Vector2.ZERO:
+		aim = Vector2.RIGHT
+	for bullet in found:
+		if caught >= 3:
+			break
+		var tags: PackedStringArray = bullet["tags"]
+		if not AscensionTags.has_flag(tags, "return"):
+			continue
+		if ProjectileManager.remove_projectile(int(bullet["id"])):
+			caught += 1
+			runner.spawn_bullet(endpoint, aim, float(bullet["damage"]) + 0.5 * D(), tags, {"pierce": 2})
+	if caught > 0:
+		counters["rail_dashes"] = int(counters.get("rail_dashes", 0)) + caught
+
+
+## Slingshot (MM6): a dash ending inside a Well swings halfway around its
+## centre and releases toward aim.
+func _slingshot(to: Vector2, direction: Vector2) -> void:
+	var dominion := runner.engine_of_discipline("DO") as DominionEngine
+	if dominion == null:
+		return
+	for well in dominion.wells:
+		var centre: Vector2 = well["at"]
+		if to.distance_to(centre) > dominion._well_radius(well):
+			continue
+		var mirrored := centre + (centre - to)
+		runner.teleport_player(mirrored)
+		var aim := (runner.aim_target() - mirrored).normalized()
+		if aim == Vector2.ZERO:
+			aim = direction
+		_slingshot_pending = true
+		counters["slingshots"] = int(counters.get("slingshots", 0)) + 1
+		runner.dash_toward(aim, AscensionRunner.R, false, float(runner.player().get("_dash").get("cooldown_left")))
+		_slingshot_pending = false
+		return
+
+
 func _ram(crossed: Array[int], endpoint: Vector2, direction: Vector2) -> void:
 	for handle in crossed:
 		if not runner.enemy_alive(handle) or not runner.has_status(handle, "prime"):
@@ -317,6 +373,12 @@ func _ram(crossed: Array[int], endpoint: Vector2, direction: Vector2) -> void:
 			carried_to = runner.enemy_position(handle) + direction * AscensionRunner.R * 0.5
 		runner.move_enemy_to(handle, carried_to)
 		counters["rams"] = int(counters["rams"]) + 1
+		if has("MR6"):
+			# Mine Runner: a fresh Mine rides the rammed normal, armed at the endpoint.
+			var ordnance := runner.engine_of_discipline("OR") as OrdnanceEngine
+			if ordnance != null:
+				ordnance.drop_mine(carried_to, OrdnanceEngine.MINE_D, "MR6", 0, false, 0.5, 0.0)
+				counters["mine_runners"] = int(counters.get("mine_runners", 0)) + 1
 		var struck := runner.nearest_enemy(carried_to, AscensionRunner.R, handle)
 		var tags := AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "MO06", "ram", 1, 0.5)
 		runner.damage_enemy(handle, 0.8 * D(), tags)
@@ -411,6 +473,11 @@ func _tick_delayed(delta: float) -> void:
 	for entry in due:
 		_delayed.erase(entry)
 		runner.spawn_slash(entry["at"], entry["dir"], float(entry["damage"]), entry["tags"], float(entry["arc"]), float(entry["radius"]))
+		if has("MR5") and AscensionTags.value_of(entry["tags"], "path") == "afterimage":
+			# Run and Gun: the Afterimage also fires a 0.6D Ranged shot toward aim.
+			var aim := (runner.aim_target() - (entry["at"] as Vector2)).normalized()
+			runner.spawn_bullet(entry["at"], aim if aim != Vector2.ZERO else entry["dir"], 0.6 * runner.native_damage_for("ranged"), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "MR5", "rungun", int(AscensionTags.value_of(entry["tags"], "gen")) + 1, 0.4))
+			counters["run_and_gun_shots"] = int(counters.get("run_and_gun_shots", 0)) + 1
 
 
 func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:

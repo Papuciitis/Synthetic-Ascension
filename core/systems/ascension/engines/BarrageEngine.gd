@@ -249,8 +249,21 @@ func _jam() -> void:
 	if backfire:
 		rounds *= 2
 		runner.pay_health(0.05 * float(runner.player().get("hp")), &"backfire")
+	runner.note_union_trigger("jam")
 	if rounds > 0:
-		_radial_volley(runner.player_position(), rounds, 0.6 * D(), 0.4, "BR08", "loose")
+		var round_damage := 0.6 * D()
+		var overrides := {}
+		if has("MR8"):
+			# Heavy Barrel: the Jam spends up to 60 Force across its rounds.
+			var bastion := runner.engine_of_discipline("BA") as BastionEngine
+			if bastion != null:
+				var spent := bastion.spend_force(minf(60.0, bastion.force))
+				round_damage += 0.06 * D() * spent / float(rounds)
+				_heavy_barrel_bonus = 0.06 * D() * spent * 0.5
+				if spent >= 60.0:
+					overrides["pierce"] = 1
+				counters["heavy_barrel_force"] = float(counters.get("heavy_barrel_force", 0.0)) + spent
+		_radial_volley(runner.player_position(), rounds, round_damage, 0.4, "BR08", "loose", overrides)
 		counters["loose_rounds"] = int(counters["loose_rounds"]) + rounds
 	if stored_rounds > 0:
 		_radial_volley(runner.player_position(), stored_rounds, 0.7 * D(), 0.4, "BR11", "stored")
@@ -388,7 +401,17 @@ func _crossfire_shot(damage: float, pp: float, root: String) -> void:
 	_crossfire_angle += deg_to_rad(137.5)
 	var from := runner.camera_edge_point(_crossfire_angle)
 	var to := runner.aim_target()
-	_fire(from, (to - from).normalized(), damage, pp, root, "crossfire", 1, PackedStringArray(), {"max_range": 1600.0})
+	_crossfire_count += 1
+	var flags := PackedStringArray()
+	if has("RM4") and _crossfire_count % 3 == 0:
+		flags.append("rune")   # Bullet Runes: this shot leaves a Sigil at its first impact
+	if has("MR5") and _crossfire_count % 3 == 0:
+		# Run and Gun: every third Crossfire shot leaves a 0.5D Melee Afterimage at its origin.
+		var momentum := runner.engine_of_discipline("MO") as MomentumEngine
+		if momentum != null:
+			momentum._queue_afterimage(from, (to - from).normalized(), 0.5 * runner.native_damage_for("melee"), 0.4, "MR5")
+			counters["run_and_gun_afterimages"] = int(counters.get("run_and_gun_afterimages", 0)) + 1
+	_fire(from, (to - from).normalized(), damage, pp, root, "crossfire", 1, flags, {"max_range": 1600.0})
 	counters["crossfire"] = int(counters["crossfire"]) + 1
 
 
@@ -400,6 +423,12 @@ func on_hit(hit: Dictionary) -> void:
 	var tags: PackedStringArray = hit["tags"]
 	var core_strike := AscensionTags.has_flag(tags, "core_strike")
 	var handle := int(hit["handle"])
+	if has("RM4") and hit["path"] == "crossfire" and AscensionTags.has_flag(tags, "rune") and not _rune_pids.has(int(hit["projectile_id"])):
+		_rune_pids[int(hit["projectile_id"])] = true
+		var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+		if invocation != null:
+			invocation.place_sigil(hit["position"], "rune")
+			counters["bullet_runes"] = int(counters.get("bullet_runes", 0)) + 1
 	# Hot Rounds: the first Core projectile impact of a volley above 50 Heat.
 	if has("BR04") and core_strike and heat > 50.0 and hit["path"] == "bullet":
 		var volley := int(AscensionTags.value_of(tags, "volley"))
@@ -611,10 +640,15 @@ func _fire(origin: Vector2, dir: Vector2, damage: float, pp: float, root: String
 	runner.spawn_bullet(origin, dir, damage, tags, options)
 
 
-func _radial_volley(origin: Vector2, count: int, damage: float, pp: float, root: String, path: String) -> void:
+var _heavy_barrel_bonus: float = 0.0
+var _rune_pids: Dictionary = {}
+var _crossfire_count: int = 0
+
+
+func _radial_volley(origin: Vector2, count: int, damage: float, pp: float, root: String, path: String, overrides: Dictionary = {}) -> void:
 	for i in range(count):
 		var angle := TAU * float(i) / float(count)
-		_fire(origin, Vector2.from_angle(angle), damage, pp, root, path, 1)
+		_fire(origin, Vector2.from_angle(angle), damage, pp, root, path, 1, PackedStringArray(), overrides)
 
 
 func _fan_volley(origin: Vector2, target: Vector2, count: int, damage: float, pp: float, root: String, path: String, fan_degrees: float) -> void:

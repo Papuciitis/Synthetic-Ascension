@@ -124,6 +124,8 @@ func add_force(points: float, from_pressure: bool = true) -> void:
 func spend_force(points: float) -> float:
 	var spent := minf(points, force)
 	force -= spent
+	if spent >= 20.0 and has("MM9") and not _orbiters.is_empty():
+		_throw_orbiters()
 	if spent > 0.0:
 		_discharged_bank += spent
 		while _discharged_bank >= 50.0:
@@ -135,6 +137,65 @@ func spend_force(points: float) -> float:
 
 
 var _armor_break_pending: bool = false
+var _mine_bank: float = 0.0
+var _orbiters: Dictionary = {}          # Gravity Armor: handle -> angle
+
+
+func _grown_sigil_here() -> Dictionary:
+	var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+	if invocation == null:
+		return {}
+	for sigil in invocation.player_inside():
+		if float(sigil["growth"]) >= 1.0:
+			return sigil
+	return {}
+
+
+## Gravity Armor (MM9): above 60 Force nearby normals orbit the player.
+func _tick_gravity_armor(delta: float) -> void:
+	if not has("MM9"):
+		return
+	if force <= 60.0:
+		_orbiters.clear()
+		return
+	var centre := runner.player_position()
+	for handle in runner.enemies_in_radius(centre, AscensionRunner.R):
+		if not runner.is_normal(handle) or not runner.enemy_alive(handle):
+			continue
+		if not _orbiters.has(handle):
+			_orbiters[handle] = (runner.enemy_position(handle) - centre).angle()
+			EnemyCombat.apply_stun(handle, 0.5)
+		var radius := maxf(30.0, minf(runner.enemy_position(handle).distance_to(centre), AscensionRunner.R))
+		var angle := float(_orbiters[handle]) + 1.5 * delta
+		_orbiters[handle] = angle
+		runner.move_enemy_to(handle, centre + Vector2.from_angle(angle) * radius)
+	for handle in _orbiters.keys():
+		if not runner.enemy_alive(int(handle)) or runner.enemy_position(int(handle)).distance_to(centre) > 1.5 * AscensionRunner.R:
+			_orbiters.erase(handle)
+
+
+func _throw_orbiters() -> void:
+	var thrown := 0
+	var centre := runner.player_position()
+	var dir := _facing()
+	var out: Array[int] = []
+	var ts := PackedFloat32Array()
+	for handle in _orbiters.keys():
+		if thrown >= 4:
+			break
+		if not runner.enemy_alive(int(handle)):
+			continue
+		_orbiters.erase(handle)
+		thrown += 1
+		var from := runner.enemy_position(int(handle))
+		var to := centre + dir * 2.0 * AscensionRunner.R
+		var count := EnemyCombat.enemies_on_segment(from, to, 10.0, int(handle), out, ts)
+		var tags := AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "MM9", "throw", 1, 0.4)
+		runner.damage_enemy(int(handle), 0.8 * D(), tags)
+		for i in range(count):
+			runner.damage_enemy(out[i], 0.8 * D(), tags)
+		runner.move_enemy_to(int(handle), to)
+		counters["orbiters_thrown"] = int(counters.get("orbiters_thrown", 0)) + 1
 
 
 func _facing() -> Vector2:
@@ -166,8 +227,8 @@ func tick(delta: float) -> void:
 		_no_armor_left = maxf(0.0, _no_armor_left - delta)
 	while not _catch_times.is_empty() and _clock - _catch_times[0] > 1.0:
 		_catch_times.remove_at(0)
-	# Plate: two seconds without being hit forms one, below 50 Force.
-	if has("BA03") and not _plate_ready and force < 50.0 and _clock - _last_hit_at >= 2.0:
+	# Plate: two seconds without being hit forms one, below 50 Force (Ward: one).
+	if has("BA03") and not _plate_ready and force < 50.0 and _clock - _last_hit_at >= (1.0 if (has("MM7") and not _grown_sigil_here().is_empty()) else 2.0):
 		_plate_ready = true
 		counters["plates_formed"] = int(counters["plates_formed"]) + 1
 	# Decay: only in combat, only after two seconds without pressure.
@@ -182,6 +243,7 @@ func tick(delta: float) -> void:
 				_drop_scrap()
 	_tick_scraps(delta)
 	_tick_vessel()
+	_tick_gravity_armor(delta)
 	_tick_guard(delta)
 	_tick_bunker(delta)
 	_tick_rings(delta)
@@ -273,6 +335,14 @@ func on_player_damage_resolved(source: Node, raw: float, _applied: float, _kind:
 		_plate_pending = false
 		add_force(15.0, false)
 		counters["plate_hits"] = int(counters["plate_hits"]) + 1
+		if has("MM7"):
+			# Ward: a Plate broken inside a grown Sigil stores a 1D Echo and adds two Growth.
+			var sigil := _grown_sigil_here()
+			var invocation := runner.engine_of_discipline("IN") as InvocationEngine
+			if invocation != null and not sigil.is_empty():
+				invocation._store_echo(sigil, invocation._new_echo("magic", runner.player_position(), runner.aim_target(), D(), 0.4, "MM7"))
+				invocation.add_growth(sigil, 2.0, false)
+				counters["wards"] = int(counters.get("wards", 0)) + 1
 	if _last_hit_fired:
 		# The intercepted blow emptied Force; it does not refill it.
 		_last_hit_fired = false
@@ -287,6 +357,22 @@ func on_player_damage_resolved(source: Node, raw: float, _applied: float, _kind:
 			var returned := clampf(0.35 * prevented, 0.2 * D(), 2.0 * D())
 			runner.damage_enemy(handle, returned, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "BA06", "thorns", 1, 0.25, PackedStringArray(["reflected"])))
 			counters["thorns"] = int(counters["thorns"]) + 1
+			if has("MM8"):
+				# Backlash: half the dealt damage becomes Debt on the attacker.
+				var distortion := runner.engine_of_discipline("DT") as DistortionEngine
+				if distortion != null and runner.enemy_alive(handle):
+					distortion.deposit(handle, 0.5 * returned, "backlash", false)
+	if has("MR9") and _last_prevention > 0.0 and raw > 0.0:
+		# Reactive Armor: a Mine per 10% max HP prevented, fractions banked, three per hit.
+		var ordnance := runner.engine_of_discipline("OR") as OrdnanceEngine
+		var max_hp_for_mines := runner.player_max_hp()
+		if ordnance != null and max_hp_for_mines > 0.0:
+			_mine_bank += raw * _last_prevention / (0.1 * max_hp_for_mines)
+			var mines := mini(3, int(floor(_mine_bank)))
+			_mine_bank -= float(mines)
+			for _i in range(mines):
+				ordnance.drop_mine(runner.player_position(), OrdnanceEngine.MINE_D, "MR9")
+				counters["reactive_mines"] = int(counters.get("reactive_mines", 0)) + 1
 	_last_prevention = 0.0
 
 
@@ -410,6 +496,7 @@ func _radial_blades(count: int, damage: float, pp: float, root: String, pierce: 
 ## Meltdown on a 100-Force spend.
 func _discharge(reason: String, origin: Vector2, dir: Vector2) -> void:
 	var spent := spend_force(force)
+	runner.note_union_trigger("discharge")
 	counters["full_tanks"] = int(counters["full_tanks"]) + 1
 	var damage := 3.0 * D()
 	if has("BAF2") and spent > 100.0:
@@ -663,7 +750,10 @@ func _rupture(scale: float) -> void:
 # ---------------------------------------------------------------- multipliers and HUD
 
 func move_speed_multiplier() -> float:
-	return 0.5 if guarding and has("BAQ1") else 1.0
+	var mul := 0.5 if guarding and has("BAQ1") else 1.0
+	if has("MM9") and force > 100.0:
+		mul *= 0.8
+	return mul
 
 
 func hud_state(slot: String) -> Dictionary:

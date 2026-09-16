@@ -568,6 +568,15 @@ func world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
 	return _world_hit_t(from, to, radius)
 
 
+## Adds damage to a live projectile by id (Backtrack). Returns whether found.
+func add_projectile_damage(id: int, amount: float) -> bool:
+	for i in range(_active_count):
+		if _ids[i] == id:
+			_damage[i] = maxf(0.0, _damage[i] + amount)
+			return true
+	return false
+
+
 ## PLAYER-team projectiles within `radius`, appended as {id, position,
 ## velocity, damage, tags}. Nothing is removed.
 func player_projectiles_in_radius(center: Vector2, radius: float, out: Array) -> int:
