@@ -18,9 +18,9 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Precision (PR) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Barrage (BR) | 34 | 32 | 2 | 0 | 0 | 0 |
 | Ordnance (OR) | 34 | 34 | 0 | 0 | 0 | 0 |
-| Invocation (IN) | 33 | 0 | 0 | 33 | 0 | 0 |
+| Invocation (IN) | 33 | 33 | 0 | 0 | 0 | 0 |
 | Distortion (DT) | 33 | 32 | 1 | 0 | 0 | 0 |
-| Dominion (DO) | 33 | 0 | 0 | 33 | 0 | 0 |
+| Dominion (DO) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Core (core) | 3 | 0 | 0 | 0 | 0 | 3 |
 | Gate (gate) | 2 | 2 | 0 | 0 | 0 | 0 |
 | Fusion (fusion) | 27 | 3 | 0 | 24 | 0 | 0 |
@@ -28,7 +28,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Choice (choice) | 12 | 10 | 0 | 0 | 1 | 1 |
 | Ascendant (ascendant) | 1 | 1 | 0 | 0 | 0 | 0 |
 | Sink (sink) | 2 | 2 | 0 | 0 | 0 | 0 |
-| **All** | 350 | 244 | 7 | 93 | 1 | 5 |
+| **All** | 350 | 309 | 8 | 27 | 1 | 5 |
 
 ## Shared rules
 
@@ -299,39 +299,39 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| IN01 | Leave a Sigil | local | 1 | missing |  |  |  |
-| IN02 | Stretch Sigil | local | 1 | missing |  |  |  |
-| IN03 | Endure | local | 2 | missing |  |  |  |
-| IN04 | Congregation | local | 2 | missing |  |  |  |
-| IN05 | Fed by Death | local | 2 | missing |  |  |  |
-| IN06 | Echo Shrine | local | 2 | missing |  |  |  |
-| IN07 | Warm Circle | local | 2 | missing |  |  |  |
-| INQ | Consecrate | active | 2 | missing |  |  |  |
-| IN08 | Off Beat | local | 3 | missing |  |  |  |
-| IN09 | Detonate Sigil | local | 3 | missing |  |  |  |
-| IN10 | Chain Pulse | local | 3 | missing |  |  |  |
-| IN11 | Copy Rune | local | 3 | missing |  |  |  |
-| IN12 | Home Rune | local | 3 | missing |  |  |  |
-| INF1 | Roaming Sigils | fork | 3 | missing |  |  |  |
-| INF2 | Split Sigils | fork | 3 | missing |  |  |  |
-| INK1 | Inherit the Word | keystone | 3 | missing |  |  |  |
-| INK2 | Blood Rune | keystone | 3 | missing |  |  |  |
-| INQ1 | Great Sigil | mutation | 3 | missing |  |  |  |
-| INQ2 | Open the Vault | mutation | 3 | missing |  |  |  |
-| INQ3 | Wandering Sigil | mutation | 3 | missing |  |  |  |
-| INQ4 | Swarm | mutation | 3 | missing |  |  |  |
-| INQ5 | Consume | mutation | 3 | missing |  |  |  |
-| INQ6 | Resonance | mutation | 3 | missing |  |  |  |
-| INA | Echo Chamber | axiom | 4 | missing |  |  |  |
-| INC | Choir | catastrophe | 4 | missing |  |  |  |
-| INE1 | Mobile Choir | evolution | 5 | missing |  |  |  |
-| INE2 | Sigil Web | evolution | 5 | missing |  |  |  |
-| INS1 | Sigil Life | sink | 5 | missing |  |  |  |
-| INS2 | Sigil Size | sink | 5 | missing |  |  |  |
-| INV | THE HOST | revelation | 5 | missing |  |  |  |
-| INV1 | Full Choir | revelation_mutation | 5 | missing |  |  |  |
-| INV2 | March | revelation_mutation | 5 | missing |  |  |  |
-| INV3 | One Voice | revelation_mutation | 5 | missing |  |  |  |
+| IN01 | Leave a Sigil | local | 1 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | weighted (pp) Magic Core hits; a Sigil at 4, one per activation, credit banked; oldest replaced at capacity |
+| IN02 | Stretch Sigil | local | 1 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | L of travel arms it: next impact places if none exist, else the nearest Sigil moves up to R toward the impact until its next pulse; touching Sigils exchange one Echo |
+| IN03 | Endure | local | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | player inside a Sigil with Growth: expiry paused, 1 Growth per second spent |
+| IN04 | Congregation | local | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | touching parents share kill Growth to the least-grown; +1 slot per connected parent beyond the first (max +3) |
+| IN05 | Fed by Death | local | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | real death within 1.5R: +1 Growth (generated kill +0.5); +0.15D and +8% radius per Growth; +1 action charge per whole Growth |
+| IN06 | Echo Shrine | local | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | one Echo per native activation made inside a Sigil, into the least-full containing Sigil (three each, oldest released); Echoes are released as the runner's Core strike toward the nearest enemy |
+| IN07 | Warm Circle | local | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | once per 2 s: 35% of an enemy hit taken inside a grown Sigil prevented (incoming multiplier), one Growth spent, a 0.8D Echo stored |
+| INQ | Consecrate | active | 2 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | places a Sigil at the cursor within 3L then pulses every Sigil; 7 s; automatic casts place at the densest cluster |
+| IN08 | Off Beat | local | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | impact in the outer third: next pulse -0.4 s; centre: +0.2 s (cap 2 s) and next Echo +0.4D; once per Sigil per activation |
+| IN09 | Detonate Sigil | local | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | replacement explodes 1.5D + 0.3D per Growth and releases Echoes; overflow detonation spends three Growth and keeps the Sigil once per hit path |
+| IN10 | Chain Pulse | local | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | a pulse hitting six distinct enemies commands the nearest unpulsed Sigil (chain id per Sigil) |
+| IN11 | Copy Rune | local | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | five Growth spawns one half-size child toward the nearest cluster, 6 s, one Echo slot, shared capacity |
+| IN12 | Home Rune | local | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | newest parent follows at 0.5L/s stopping R away; touching another Sigil pulses both once per second per pair and exchanges an Echo |
+| INF1 | Roaming Sigils | fork | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | parents move 0.7L/s toward enemies and pulse as 2R cones; radius and kill Growth -25%; cursor placements follow the cursor |
+| INF2 | Split Sigils | fork | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | a full parent spawns two children sharing its Growth; children may Chain Pulse; replacing the parent detonates children 1D |
+| INK1 | Inherit the Word | keystone | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | pulses carry core_strike (Magic on-hit rules, Leave a Sigil at pp 0.4); native Magic -25% through the damage hook |
+| INK2 | Blood Rune | keystone | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | each native Magic activation places a Sigil with two Growth for 3% current HP (pay_health) above 25% max HP; healing x0.75 while a blood Sigil lives (player.heal hook) |
+| INQ1 | Great Sigil | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | 2R, 1.5D pulses, six Echo slots, two capacity slots |
+| INQ2 | Open the Vault | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | releases every stored Echo after the command |
+| INQ3 | Wandering Sigil | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | new Sigils follow the cursor at L/s within 3L |
+| INQ4 | Swarm | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | three parents in a triangle, 0.7R, 0.4D, pp 0.3 |
+| INQ5 | Consume | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | the old network is destroyed first; floor(life / 1 s) pulses per Sigil released over 1 s at the cursor plus its Echoes; Detonate adds an explosion each |
+| INQ6 | Resonance | mutation | 3 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | 0.5D line per unordered pair of commanded Sigils, pp 0.25 |
+| INA | Echo Chamber | axiom | 4 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | any Core's native strike inside a Sigil stores an Echo with its real geometry at 0.6D, pp 0.4 |
+| INC | Choir | catastrophe | 4 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | three grown Sigils turn the next Chain Pulse into Choir: all pulse, release one Echo, 1D lines in creation order; a line kill detonates the nearest undetonated Sigil for 2D; 8 s |
+| INE1 | Mobile Choir | evolution | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | Consecrate's Sigils orbit the player for 6 s; each pulse sends a 0.8D wave toward the next member |
+| INE2 | Sigil Web | evolution | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | 4 s web: a pulse also travels the two nearest links for 0.5D each, once per chain |
+| INS1 | Sigil Life | sink | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | life +0.25 s sqrt(rank); pulse damage +0.5% sqrt(rank) |
+| INS2 | Sigil Size | sink | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | radius x(1 + 80% r/(r+105)) |
+| INV | THE HOST | revelation | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | 6 s: blank parents fill to three, each Sigil duplicated (half damage, pp 0.2, no slots), pulses at triple speed; copies removed and Echoes released at the end |
+| INV1 | Full Choir | revelation_mutation | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | Choir at start and end, bypassing recovery |
+| INV2 | March | revelation_mutation | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | originals move toward the cursor at L/s, copies away |
+| INV3 | One Voice | revelation_mutation | 5 | implemented | core/systems/ascension/engines/InvocationEngine.gd | AscensionInvocationTest | one screen-sized pulse per second at 60% of all originals' pulses (min 3D), originals stored and returned with Echoes released |
 
 ## Distortion (DT)
 
@@ -375,39 +375,39 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| DO01 | Gravity Well | local | 1 | missing |  |  |  |
-| DO05 | Bind | local | 1 | missing |  |  |  |
-| DO12 | Crowded Well | local | 1 | missing |  |  |  |
-| DO02 | Dead Weight | local | 2 | missing |  |  |  |
-| DO03 | Lingering Weight | local | 2 | missing |  |  |  |
-| DO04 | Collision | local | 2 | missing |  |  |  |
-| DO06 | Dragnet | local | 2 | missing |  |  |  |
-| DO07 | Collective Burden | local | 2 | missing |  |  |  |
-| DO09 | Anchor | local | 2 | missing |  |  |  |
-| DOQ | Compel | active | 2 | missing |  |  |  |
-| DO08 | Crushing | local | 3 | missing |  |  |  |
-| DO10 | Throw | local | 3 | missing |  |  |  |
-| DO11 | Collapse | local | 3 | missing |  |  |  |
-| DOF1 | Singularity | fork | 3 | missing |  |  |  |
-| DOF2 | Forced Orbit | fork | 3 | missing |  |  |  |
-| DOK1 | Sovereign Ground | keystone | 3 | missing |  |  |  |
-| DOK2 | Event Horizon | keystone | 3 | missing |  |  |  |
-| DOQ1 | Ring | mutation | 3 | missing |  |  |  |
-| DOQ2 | Chain | mutation | 3 | missing |  |  |  |
-| DOQ3 | Repulse | mutation | 3 | missing |  |  |  |
-| DOQ4 | Repeat | mutation | 3 | missing |  |  |  |
-| DOQ5 | Throw | mutation | 3 | missing |  |  |  |
-| DOQ6 | Crush | mutation | 3 | missing |  |  |  |
-| DOA | Common Ground | axiom | 4 | missing |  |  |  |
-| DOC | Black Hole | catastrophe | 4 | missing |  |  |  |
-| DOE1 | Mass Grave | evolution | 5 | missing |  |  |  |
-| DOE2 | Crowd Pinball | evolution | 5 | missing |  |  |  |
-| DOS1 | Pull | sink | 5 | missing |  |  |  |
-| DOS2 | Link Life | sink | 5 | missing |  |  |  |
-| DOV | KNEEL | revelation | 5 | missing |  |  |  |
-| DOV1 | Pile | revelation_mutation | 5 | missing |  |  |  |
-| DOV2 | Orbit | revelation_mutation | 5 | missing |  |  |  |
-| DOV3 | Again | revelation_mutation | 5 | missing |  |  |  |
+| DO01 | Gravity Well | local | 1 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | weighted Magic Core hits; a Well at 3 at the impact, placement 0.5D pp 0.4 in 1.5R |
+| DO05 | Bind | local | 1 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | two victims of one Magic Core activation (or two within 0.75 s) form a Link; later victims join up to twelve |
+| DO12 | Crowded Well | local | 1 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | a dash arms the next Magic Core impact to make a Well; +5% radius per enemy inside (max +60%), pull speed -2% each (max 24%) |
+| DO02 | Dead Weight | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | resisted pull (elites/bosses) stores Weight up to 3L; the next pulled body spends up to L of it as extra travel |
+| DO03 | Lingering Weight | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | expired Wells leave 4 s stains (max 6); a new Well within 2R consumes the nearest and pulls once along the line for 0.5D |
+| DO04 | Collision | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | a forced-moving normal within 14 px of another enemy: 0.6D to both, once per movement instruction |
+| DO06 | Dragnet | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | a pulled enemy crossing a Linked one joins; an unlinked one passing through two others forms a 2 s Link |
+| DO07 | Collective Burden | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | 20% of a member's damage copied to the others (flag burden, no re-copy), pp 0.25; +50% inside Sovereign territory |
+| DO09 | Anchor | local | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | highest-max-HP enemy inside anchors the Well; the Well follows it at L/s and everyone is pulled toward it |
+| DOQ | Compel | active | 2 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | 90-degree 3R cone toward the cursor (Ring: 2.5R circle at the cursor); up to R travel, 1D, 0.2 s stun; a Well at convergence; 6 s |
+| DO08 | Crushing | local | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | four enemies shrink the Well 20%; centre hit 0.5D per 0.3 s up to four; release 0.5D per hit in 2R when empty or expired |
+| DO10 | Throw | local | 3 | partial | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | terrain contact during a forced move stores a Throw released R further for 0.8D when the move ends. Headless tests have no terrain: unverified by test |
+| DO11 | Collapse | local | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | first real death in a Link pulls survivors R toward the corpse for 0.8D and breaks it |
+| DOF1 | Singularity | fork | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | six bodies (elite 2, boss 4) compress to the centre for 1.5D and a 0.5 s stun; the Well expires |
+| DOF2 | Forced Orbit | fork | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | normals orbit the centre for 2 s (0.5 s stun), elites 0.25 s; Throw releases tangentially on expiry |
+| DOK1 | Sovereign Ground | keystone | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | 0.75 s still leaves a 2R territory for 5 s (max two); inside: pull speed and Burden +50%; outside all: Dominion damage -25% |
+| DOK2 | Event Horizon | keystone | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | acquisition radius = camera; 2D in 2R at expiry; the strongest Well pulls the player at 0.5L/s and holds the dash in its last 0.5 s |
+| DOQ1 | Ring | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | 2.5R circle centred on the cursor within 3L |
+| DOQ2 | Chain | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | affected enemies form Links of twelve in distance order |
+| DOQ3 | Repulse | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | hold 0.3 s: the cone shoves away from the player, Ring away from its centre (interpretation); automatic casts use the ledger's compel_default |
+| DOQ4 | Repeat | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | repeats after 1 s at 60% in the opposite direction, no new activation |
+| DOQ5 | Throw | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | bodies continue 1.5R past convergence (outward with Repulse) for 0.8D to crossed enemies |
+| DOQ6 | Crush | mutation | 3 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | bodies reaching the centre take 1D + 0.25D per body moved (max 6D) |
+| DOA | Common Ground | axiom | 4 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | Melee and Ranged Core strikes bind through the same activation rule |
+| DOC | Black Hole | catastrophe | 4 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | twenty normals or eight Linked bodies (or a lone boss resisting 3L within 4 s) make a 1 s Black Hole: camera-wide pull, hostile projectiles consumed, collapse 2D + 0.3D per caught (max 8D) in 3R; 8 s |
+| DOE1 | Mass Grave | evolution | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | a 3R grave for 3 s at convergence; each real death pulls survivors R to the corpse and pulses 1D; durable targets pulse per 3D of Core damage (0.5 s) |
+| DOE2 | Crowd Pinball | evolution | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | two bumpers 2R apart for 3 s; normals travel two legs (elites one) with Collision, then launch tangentially for 1D; bosses take two 1D impacts |
+| DOS1 | Pull | sink | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | pull speed x(1 + 80% r/(r+100)) |
+| DOS2 | Link Life | sink | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | link life +2 s r/(r+70) |
+| DOV | KNEEL | revelation | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | visible normals pulled to the cursor at 900 px/s until they arrive (max 1 s), held 0.5 s, slammed 4D + 0.2D per normal (max 12D); elites move R and are slammed; bosses slammed in place with a 0.4 s stun; Links of twelve with Bind/Dragnet/Chain |
+| DOV1 | Pile | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | slam victims leave 5 s corpses counted by Crowded Well and Black Hole (+0.1D each) |
+| DOV2 | Orbit | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | 1.5 s orbit before the slam; ranged normals fire one hostile projectile outward at the midpoint; slam +50% |
+| DOV3 | Again | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DominionEngine.gd | AscensionDominionTest | survivors thrown 3R and pulled back for a second slam at 60% after 1 s |
 
 ## Core (core)
 

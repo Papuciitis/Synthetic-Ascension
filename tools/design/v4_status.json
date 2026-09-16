@@ -437,6 +437,204 @@
   "test": "AscensionBarrageTest",
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
+ "DO01": {
+  "note": "weighted Magic Core hits; a Well at 3 at the impact, placement 0.5D pp 0.4 in 1.5R",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO02": {
+  "note": "resisted pull (elites/bosses) stores Weight up to 3L; the next pulled body spends up to L of it as extra travel",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO03": {
+  "note": "expired Wells leave 4 s stains (max 6); a new Well within 2R consumes the nearest and pulls once along the line for 0.5D",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO04": {
+  "note": "a forced-moving normal within 14 px of another enemy: 0.6D to both, once per movement instruction",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO05": {
+  "note": "two victims of one Magic Core activation (or two within 0.75 s) form a Link; later victims join up to twelve",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO06": {
+  "note": "a pulled enemy crossing a Linked one joins; an unlinked one passing through two others forms a 2 s Link",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO07": {
+  "note": "20% of a member's damage copied to the others (flag burden, no re-copy), pp 0.25; +50% inside Sovereign territory",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO08": {
+  "note": "four enemies shrink the Well 20%; centre hit 0.5D per 0.3 s up to four; release 0.5D per hit in 2R when empty or expired",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO09": {
+  "note": "highest-max-HP enemy inside anchors the Well; the Well follows it at L/s and everyone is pulled toward it",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO10": {
+  "note": "terrain contact during a forced move stores a Throw released R further for 0.8D when the move ends. Headless tests have no terrain: unverified by test",
+  "status": "partial",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO11": {
+  "note": "first real death in a Link pulls survivors R toward the corpse for 0.8D and breaks it",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DO12": {
+  "note": "a dash arms the next Magic Core impact to make a Well; +5% radius per enemy inside (max +60%), pull speed -2% each (max 24%)",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOA": {
+  "note": "Melee and Ranged Core strikes bind through the same activation rule",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOC": {
+  "note": "twenty normals or eight Linked bodies (or a lone boss resisting 3L within 4 s) make a 1 s Black Hole: camera-wide pull, hostile projectiles consumed, collapse 2D + 0.3D per caught (max 8D) in 3R; 8 s",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOE1": {
+  "note": "a 3R grave for 3 s at convergence; each real death pulls survivors R to the corpse and pulses 1D; durable targets pulse per 3D of Core damage (0.5 s)",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOE2": {
+  "note": "two bumpers 2R apart for 3 s; normals travel two legs (elites one) with Collision, then launch tangentially for 1D; bosses take two 1D impacts",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOF1": {
+  "note": "six bodies (elite 2, boss 4) compress to the centre for 1.5D and a 0.5 s stun; the Well expires",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOF2": {
+  "note": "normals orbit the centre for 2 s (0.5 s stun), elites 0.25 s; Throw releases tangentially on expiry",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOK1": {
+  "note": "0.75 s still leaves a 2R territory for 5 s (max two); inside: pull speed and Burden +50%; outside all: Dominion damage -25%",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOK2": {
+  "note": "acquisition radius = camera; 2D in 2R at expiry; the strongest Well pulls the player at 0.5L/s and holds the dash in its last 0.5 s",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ": {
+  "note": "90-degree 3R cone toward the cursor (Ring: 2.5R circle at the cursor); up to R travel, 1D, 0.2 s stun; a Well at convergence; 6 s",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ1": {
+  "note": "2.5R circle centred on the cursor within 3L",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ2": {
+  "note": "affected enemies form Links of twelve in distance order",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ3": {
+  "note": "hold 0.3 s: the cone shoves away from the player, Ring away from its centre (interpretation); automatic casts use the ledger's compel_default",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ4": {
+  "note": "repeats after 1 s at 60% in the opposite direction, no new activation",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ5": {
+  "note": "bodies continue 1.5R past convergence (outward with Repulse) for 0.8D to crossed enemies",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOQ6": {
+  "note": "bodies reaching the centre take 1D + 0.25D per body moved (max 6D)",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOS1": {
+  "note": "pull speed x(1 + 80% r/(r+100))",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOS2": {
+  "note": "link life +2 s r/(r+70)",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOV": {
+  "note": "visible normals pulled to the cursor at 900 px/s until they arrive (max 1 s), held 0.5 s, slammed 4D + 0.2D per normal (max 12D); elites move R and are slammed; bosses slammed in place with a 0.4 s stun; Links of twelve with Bind/Dragnet/Chain",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOV1": {
+  "note": "slam victims leave 5 s corpses counted by Crowded Well and Black Hole (+0.1D each)",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOV2": {
+  "note": "1.5 s orbit before the slam; ranged normals fire one hostile projectile outward at the midpoint; slam +50%",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
+ "DOV3": {
+  "note": "survivors thrown 3R and pulled back for a second slam at 60% after 1 s",
+  "status": "implemented",
+  "test": "AscensionDominionTest",
+  "where": "core/systems/ascension/engines/DominionEngine.gd"
+ },
  "DT01": {
   "note": "",
   "status": "implemented",
@@ -850,6 +1048,204 @@
   "status": "implemented",
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/AscensionLedger.gd + core/systems/ascension/AscensionRunner.gd"
+ },
+ "IN01": {
+  "note": "weighted (pp) Magic Core hits; a Sigil at 4, one per activation, credit banked; oldest replaced at capacity",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN02": {
+  "note": "L of travel arms it: next impact places if none exist, else the nearest Sigil moves up to R toward the impact until its next pulse; touching Sigils exchange one Echo",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN03": {
+  "note": "player inside a Sigil with Growth: expiry paused, 1 Growth per second spent",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN04": {
+  "note": "touching parents share kill Growth to the least-grown; +1 slot per connected parent beyond the first (max +3)",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN05": {
+  "note": "real death within 1.5R: +1 Growth (generated kill +0.5); +0.15D and +8% radius per Growth; +1 action charge per whole Growth",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN06": {
+  "note": "one Echo per native activation made inside a Sigil, into the least-full containing Sigil (three each, oldest released); Echoes are released as the runner's Core strike toward the nearest enemy",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN07": {
+  "note": "once per 2 s: 35% of an enemy hit taken inside a grown Sigil prevented (incoming multiplier), one Growth spent, a 0.8D Echo stored",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN08": {
+  "note": "impact in the outer third: next pulse -0.4 s; centre: +0.2 s (cap 2 s) and next Echo +0.4D; once per Sigil per activation",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN09": {
+  "note": "replacement explodes 1.5D + 0.3D per Growth and releases Echoes; overflow detonation spends three Growth and keeps the Sigil once per hit path",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN10": {
+  "note": "a pulse hitting six distinct enemies commands the nearest unpulsed Sigil (chain id per Sigil)",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN11": {
+  "note": "five Growth spawns one half-size child toward the nearest cluster, 6 s, one Echo slot, shared capacity",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "IN12": {
+  "note": "newest parent follows at 0.5L/s stopping R away; touching another Sigil pulses both once per second per pair and exchanges an Echo",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INA": {
+  "note": "any Core's native strike inside a Sigil stores an Echo with its real geometry at 0.6D, pp 0.4",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INC": {
+  "note": "three grown Sigils turn the next Chain Pulse into Choir: all pulse, release one Echo, 1D lines in creation order; a line kill detonates the nearest undetonated Sigil for 2D; 8 s",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INE1": {
+  "note": "Consecrate's Sigils orbit the player for 6 s; each pulse sends a 0.8D wave toward the next member",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INE2": {
+  "note": "4 s web: a pulse also travels the two nearest links for 0.5D each, once per chain",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INF1": {
+  "note": "parents move 0.7L/s toward enemies and pulse as 2R cones; radius and kill Growth -25%; cursor placements follow the cursor",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INF2": {
+  "note": "a full parent spawns two children sharing its Growth; children may Chain Pulse; replacing the parent detonates children 1D",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INK1": {
+  "note": "pulses carry core_strike (Magic on-hit rules, Leave a Sigil at pp 0.4); native Magic -25% through the damage hook",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INK2": {
+  "note": "each native Magic activation places a Sigil with two Growth for 3% current HP (pay_health) above 25% max HP; healing x0.75 while a blood Sigil lives (player.heal hook)",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ": {
+  "note": "places a Sigil at the cursor within 3L then pulses every Sigil; 7 s; automatic casts place at the densest cluster",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ1": {
+  "note": "2R, 1.5D pulses, six Echo slots, two capacity slots",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ2": {
+  "note": "releases every stored Echo after the command",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ3": {
+  "note": "new Sigils follow the cursor at L/s within 3L",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ4": {
+  "note": "three parents in a triangle, 0.7R, 0.4D, pp 0.3",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ5": {
+  "note": "the old network is destroyed first; floor(life / 1 s) pulses per Sigil released over 1 s at the cursor plus its Echoes; Detonate adds an explosion each",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INQ6": {
+  "note": "0.5D line per unordered pair of commanded Sigils, pp 0.25",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INS1": {
+  "note": "life +0.25 s sqrt(rank); pulse damage +0.5% sqrt(rank)",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INS2": {
+  "note": "radius x(1 + 80% r/(r+105))",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INV": {
+  "note": "6 s: blank parents fill to three, each Sigil duplicated (half damage, pp 0.2, no slots), pulses at triple speed; copies removed and Echoes released at the end",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INV1": {
+  "note": "Choir at start and end, bypassing recovery",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INV2": {
+  "note": "originals move toward the cursor at L/s, copies away",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
+ },
+ "INV3": {
+  "note": "one screen-sized pulse per second at 60% of all originals' pulses (min 3D), originals stored and returned with Echoes released",
+  "status": "implemented",
+  "test": "AscensionInvocationTest",
+  "where": "core/systems/ascension/engines/InvocationEngine.gd"
  },
  "MM2": {
   "note": "Magic blast for the collected Debt; Pass It On shares first",

@@ -32,6 +32,8 @@ const ENGINE_SCRIPTS: Dictionary = {
 	"MO": "res://core/systems/ascension/engines/MomentumEngine.gd",
 	"PR": "res://core/systems/ascension/engines/PrecisionEngine.gd",
 	"OR": "res://core/systems/ascension/engines/OrdnanceEngine.gd",
+	"IN": "res://core/systems/ascension/engines/InvocationEngine.gd",
+	"DO": "res://core/systems/ascension/engines/DominionEngine.gd",
 	"BA": "res://core/systems/ascension/engines/BastionEngine.gd",
 }
 ## Dash-recovery refunds (Clean Cut, Kill Reset) share one bucket: 0.6 s per
@@ -1179,6 +1181,20 @@ func _resolve_attack(entry: Dictionary) -> void:
 		"magic":
 			color = Color(0.8, 0.55, 1.0, 0.85)
 	_attack_fx.append({"kind": entry["kind"], "at": at, "dir": entry["dir"], "radius": radius, "arc": float(entry["arc"]), "ttl": ATTACK_FX_SECONDS, "color": color})
+
+
+## An engine-resolved area (a Sigil pulse, a slam): drawn like an impact.
+func note_impact_fx(at: Vector2, radius: float) -> void:
+	_attack_fx.append({"kind": "impact", "at": at, "dir": Vector2.RIGHT, "radius": radius, "arc": 360.0, "ttl": ATTACK_FX_SECONDS, "color": Color(0.75, 0.6, 1.0, 0.8)})
+	queue_redraw()
+
+
+## Healing multiplier from equipped rules (Blood Rune).
+func get_heal_multiplier() -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.heal_multiplier()
+	return total
 
 
 ## A beam or line resolved: drawn for a sixth of a second like other strikes.

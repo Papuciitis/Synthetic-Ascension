@@ -364,7 +364,7 @@ func on_hit(hit: Dictionary) -> void:
 	if hit["core"] == "ranged" and core_strike:
 		if has("OR01"):
 			_fuse += float(hit["pp"])
-			if _fuse >= 4.0 and _fuse_shell_volley != _volley:
+			if _fuse >= 4.0 - 0.0005 and _fuse_shell_volley != _volley:
 				_fuse -= 4.0
 				_fuse_shell_volley = _volley
 				counters["fuse_shells"] = int(counters["fuse_shells"]) + 1

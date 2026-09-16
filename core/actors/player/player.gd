@@ -1559,6 +1559,9 @@ func heal(amount: float, source: StringName = &"generic") -> void:
 		return
 	if Global != null and Global.has_method("doctrine_healing_multiplier"):
 		amount *= float(Global.doctrine_healing_multiplier(source))
+	var ar_heal: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar_heal != null:
+		amount *= ar_heal.get_heal_multiplier()
 	# Report what LANDED, never what was asked for. Anything that reacts to a
 	# heal by taking a cut was billing the player for the overflow: at 95/100 a
 	# 30-point pickup applied 5 and announced 30, so a rule refusing 55% of it

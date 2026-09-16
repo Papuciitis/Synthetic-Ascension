@@ -30,7 +30,7 @@ is a presentation reference only; none of its economy or node rules apply.
 | 3a | Finish Execution, Barrage, Distortion omissions and the shared rules they hang on | done 2026-09-16 |
 | 3b | Momentum, Bastion (Melee) | done 2026-09-16 (66 + 62 checks; BA10 n/a, MOQ5 partial) |
 | 3c | Precision, Ordnance (Ranged) | done 2026-09-16 (47 + 63 checks; PRK1 partial) |
-| 3d | Invocation, Dominion (Magic) | pending |
+| 3d | Invocation, Dominion (Magic) | done 2026-09-16 (59 + 50 checks; DO10 Throw untestable headless) |
 | 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | pending |
 | 4 | Presets per discipline + hybrids through real purchase rules; whole-system tests; frame distributions; rendered checks | pending |
 | 5 | Scene/Resource migration boundary note and one-discipline pilot design | pending |
@@ -112,6 +112,30 @@ is a presentation reference only; none of its economy or node rules apply.
   fires, hold 0.35 s places and fires; Fire Again's dormant Coordinates
   reactivate when the runner's Q cooldown reaches zero. Fuse (axiom) hangs
   on a new on_q_activated engine hook the runner calls after any Q cast.
+- 2026-09-16 (3d): Sigil pulses resolve inside the engine (so Chain Pulse
+  and Choir know the distinct-hit count) and are drawn through a runner
+  impact effect; Echo releases reuse the runner's Core-strike geometry
+  toward the nearest enemy. A pulse that missed its interval catches up
+  within one tick (THE HOST's triple speed). Blood Rune's healing cut is a
+  new engine heal_multiplier read by player.heal after the Doctrine
+  multiplier.
+- 2026-09-16 (3d): forced movement (Wells, Compel, Collapse, KNEEL) is
+  stepped by the engine through the runner's enemy move primitive with a
+  terrain contact check (Throw) and a 14 px crossing check (Collision /
+  Dragnet) per step; since everything in a Well moves at one speed, a
+  trailing body only crosses one that has stopped. "Stagger" is a stun: a
+  boss converts L of resisted travel into 0.5 s; KNEEL's boss slam adds
+  0.4 s. Only elites and bosses "resist" (a normal that has used its travel
+  simply rests, storing no Weight). Repulse shoves the cone away from the
+  player and the Ring away from its centre.
+- 2026-09-16 (3d): KNEEL pulls at 900 px/s until every caught normal has
+  arrived (at most 1 s), holds 0.5 s (Orbit: 1.5 s), then slams; Again
+  waits 1 s after the throw and pulls back the same way. Throw (DO10)
+  cannot be exercised headless: the test world has no terrain, so it is
+  recorded partial pending a rendered check.
+- 2026-09-16 (3d): weighted-hit counters (Leave a Sigil, Gravity Well,
+  Impact Fuse) compare with a 0.0005 epsilon so ten hits at Proc Power 0.4
+  reach four.
 - 2026-09-16 (3c): AscensionBarrageDenseBenchmark's single-frame "max
   fragment update < 12 ms" bound proved noise-driven (baseline runs of the
   committed 3b state span 8.8-16.7 ms while p95 stays 4.9-5.4 ms); the
@@ -146,3 +170,7 @@ is a presentation reference only; none of its economy or node rules apply.
   added to the run); ScriptParseAuditTest 399. Dense benchmark compared
   before/after (see decisions). Matrix: 244 implemented, 7 partial, 5 n/a,
   93 missing, 1 ambiguous.
+- 2026-09-16 stage 3d: AscensionInvocationTest 59, AscensionDominionTest 50;
+  the full set unchanged; ScriptParseAuditTest 401. Matrix: 309
+  implemented, 8 partial, 5 n/a, 27 missing (24 Fusions, 3 Unions), 1
+  ambiguous.

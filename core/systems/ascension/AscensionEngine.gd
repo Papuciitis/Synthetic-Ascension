@@ -162,6 +162,11 @@ func on_q_activated(_id: String, _verdict: Dictionary) -> void:
 	pass
 
 
+## Multiplier on healing the player receives (Blood Rune).
+func heal_multiplier() -> float:
+	return 1.0
+
+
 func on_enemy_projectile_seen(_position: Vector2, _velocity: Vector2) -> void:
 	pass
 
