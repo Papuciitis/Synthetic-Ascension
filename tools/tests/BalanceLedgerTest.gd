@@ -62,6 +62,25 @@ func _run() -> void:
 		_check(s.totals.followers_close == 150 and s.totals.followers_earned == 60, "history pressure never drops accounting")
 		ledger.transaction(999, 1, 1000, "system_sync", {})
 		_check(ledger.summary().wallet_discontinuities == 1, "unobserved wallet changes are flagged")
+		# Outcomes the player's damage path reports besides a plain hit: a lethal
+		# hit a rule intercepted still removed real health; a rule-made miss is
+		# an avoided hit like an evasion.
+		var outcomes = load(path).new()
+		outcomes.start({}, 0, 2)
+		outcomes.player_damage(50.0, 50.0, 9.0, "brute", "intercepted")
+		outcomes.player_damage(10.0, 0.0, 0.0, "brute", "missed")
+		outcomes.player_damage(10.0, 0.0, 0.0, "brute", "evaded")
+		var oc: Dictionary = outcomes.summary().totals
+		_check(oc.player_hp_lost == 9.0 and oc.player_overkill == 41.0 and oc.player_damage_before_defenses == 50.0 and oc.intercepted_hits == 1, "an intercepted lethal hit charges the health it removed and counts once")
+		_check(oc.missed_hits == 1 and oc.evaded_hits == 1 and oc.player_damage_by_source.get("brute", 0.0) == 9.0, "a rule-made miss is an avoided hit, not HP loss")
+		var funded = load(path).new()
+		funded.start({}, 100, 2)
+		funded.transaction(100, 13200, 13300, "dev_grant", {"source": "ascension route"})
+		funded.transaction(13300, -12000, 1300, "ascension_purchase", {})
+		funded.transaction(1300, 25, 1325, "combat_influence", {})
+		var fd: Dictionary = funded.summary().totals
+		_check(fd.followers_earned == 25 and fd.followers_debug == 13200 and fd.followers_spent == 12000, "developer funding is its own bucket, never earned income")
+		_check(fd.followers_open + fd.followers_earned - fd.followers_spent + fd.followers_adjustments + fd.followers_debug == fd.followers_close and funded.summary().wallet_discontinuities == 0, "the wallet reconciles through debug grants")
 		var trade = load(path).new()
 		trade.start({}, 100, 2)
 		trade.transaction(100, -20, 80, "trade", {"buy_value": 50, "sell_value": 30})

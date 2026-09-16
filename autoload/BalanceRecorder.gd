@@ -254,6 +254,14 @@ func _source_id(source: Node, fallback: StringName) -> String:
 		var spec: Variant = source.get("spec")
 		if spec != null and "id" in spec:
 			return String(spec.get("id"))
+	# Actors bound to an EnemyWorld handle (proxies, plain bodies) carry their
+	# archetype in the world record rather than on the node.
+	if EnemyCombat != null and EnemyCombat.has_method("handle_for_actor"):
+		var handle := int(EnemyCombat.handle_for_actor(source))
+		if handle != 0 and EnemyWorld.is_valid_handle(handle):
+			var spec_id := String(EnemyWorld.get_spec_id(handle))
+			if not spec_id.is_empty():
+				return spec_id
 	var script := source.get_script() as Script
 	return script.resource_path if script != null else String(fallback)
 

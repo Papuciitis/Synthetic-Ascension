@@ -43,7 +43,10 @@ of `recording` means the final boundary has not been saved, not a completed run.
   timeline or allow double-counting replayed progress after save reloads.
 - `seconds_gameplay` is simulation time with a living player outside pauses and
   the hub. It includes travel. `seconds_paused`, `seconds_hub`, and
-  `seconds_loading` are separate. `wall_seconds` is actual elapsed time.
+  `seconds_loading` are separate; `segments.csv` carries all four. `wall_seconds`
+  is actual elapsed time. Simulation time follows `Engine.time_scale`, so
+  hitstop and world-time slows (Deadshot, JUDGEMENT) shorten gameplay seconds
+  relative to the wall clock; the per-second sample records the current scale.
   `Engine.time_scale`, debug modifiers, version, commit, race, style and loadout
   accompany captures; compare like-for-like sessions.
 - Enemy HP removed is clamped to remaining health. Enemy overkill is
@@ -55,16 +58,26 @@ of `recording` means the final boundary has not been saved, not a completed run.
   evasion/invulnerability counts, intentional HP spending, healing, overflow,
   healing locks, deaths, rescues and reconstruction are separate. Reconstruction
   and changes to maximum HP are not counted as healing. Contact damage is a
-  combined swarm source; other incoming hits use their immediate source.
+  combined swarm source; other incoming hits use their immediate source (the
+  actor's spec id, or the archetype of the EnemyWorld handle it is bound to).
+  Two outcomes come from advancement-tree rules: a lethal hit that a rule
+  intercepted (the player is left at 1 HP) counts the HP it removed under
+  `player_hp_lost`, its excess under `player_overkill`, and once under
+  `intercepted_hits`; a swing a rule made miss counts under `missed_hits` like
+  an evasion. Damage a rule inflicts on the player (Danger Close, a No Brakes
+  skid) is a hit from the source `self_damage`; intentional payments stay
+  under `hp_paid`.
 - Enemy HP is observed at registration or capture entry and refreshed when
   elite promotion or boss configuration changes it. Time-to-kill starts
   at the first observed damaging hit and ends at defeat, excluding pause/hub
   time. Means include only defeated enemies with an observed hit; unfinished
   enemies are not zero-second kills. Elite archetypes have separate rows.
-- Wallet opening + earnings - spending + adjustments should equal closing.
-  `wallet_discontinuities` flags unobserved/mismatched changes. Refunds, undo,
-  and system synchronization are adjustments; their operations remain in the
-  reason ledger. Buy/sell exchanges use their gross values, including even
+- Wallet opening + earnings - spending + adjustments + debug grants equals
+  closing. `wallet_discontinuities` flags unobserved/mismatched changes.
+  Refunds, undo, and system synchronization are adjustments; developer
+  funding (`dev_grant`, `developer_grant`: the overlay's route loader and
+  grants) is `followers_debug`, never earned income; both keep their
+  operations in the reason ledger. Buy/sell exchanges use their gross values, including even
   exchanges. Undo stays an explicit adjustment, so operation totals still show
   purchases that were subsequently reversed. Decimal strings preserve integers
   beyond JSON's reliable numeric range (2^53 - 1), including seeds and Followers.

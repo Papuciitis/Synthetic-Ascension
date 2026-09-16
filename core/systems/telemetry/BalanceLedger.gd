@@ -3,6 +3,14 @@ extends RefCounted
 ## Exact totals, bounded pending history. This class never reads the scene tree
 ## or writes files; all clocks and outcomes come from the runtime adapter.
 const ADJUSTMENTS := ["system_sync", "trade_undo", "ascension_refund"]
+## Developer funding (route loaders, overlay grants) is real wallet movement
+## but not play income; it gets its own bucket so earned income stays honest.
+const DEBUG_REASONS := ["dev_grant", "developer_grant"]
+## Player damage outcomes that removed health: an ordinary hit, and a lethal
+## hit a rule intercepted (the player is left at 1 HP, so the HP actually
+## removed is real). Avoided outcomes only count.
+const DAMAGING_OUTCOMES := ["hit", "intercepted"]
+const AVOIDED_OUTCOMES := ["evaded", "invulnerable", "god_mode", "missed"]
 const METRICS := [
 	"seconds_gameplay", "seconds_paused", "seconds_hub", "seconds_loading",
 	"enemy_hp_removed", "enemy_damage_after_defenses", "enemy_overkill",
@@ -10,7 +18,7 @@ const METRICS := [
 	"player_damage_after_defenses", "player_hp_lost", "player_overkill",
 	"healing", "heal_overflow", "heal_blocked", "hp_paid",
 	"attacks", "resolved_hits", "critical_hits", "kills", "deaths", "respawns", "rescues",
-	"evaded_hits", "invulnerable_hits", "god_mode_hits",
+	"evaded_hits", "invulnerable_hits", "god_mode_hits", "missed_hits", "intercepted_hits",
 ]
 
 var max_pending_records := 8192
@@ -45,7 +53,7 @@ func start(metadata: Dictionary, balance: int, segment: int) -> void:
 func _empty_stats(balance: int) -> Dictionary:
 	var stats := {
 		"followers_open": balance, "followers_close": balance,
-		"followers_earned": 0, "followers_spent": 0, "followers_adjustments": 0,
+		"followers_earned": 0, "followers_spent": 0, "followers_adjustments": 0, "followers_debug": 0,
 		"followers_by_reason": {}, "enemies": {}, "player_damage_by_source": {},
 		"healing_by_source": {},
 	}
@@ -103,6 +111,8 @@ func transaction(before: int, change: int, after: int, reason: String, context: 
 		stats.followers_close = after
 		if reason in ADJUSTMENTS:
 			stats.followers_adjustments += change
+		elif reason in DEBUG_REASONS:
+			stats.followers_debug += change
 		else:
 			stats.followers_earned += gained
 			stats.followers_spent += spent
@@ -218,10 +228,12 @@ func enemy_removed(handle: int, _reason: String) -> void:
 	_enemies.erase(handle)
 
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:
-	if outcome != "hit":
-		if outcome in ["evaded", "invulnerable", "god_mode"]:
+	if outcome not in DAMAGING_OUTCOMES:
+		if outcome in AVOIDED_OUTCOMES:
 			add_metric(outcome + "_hits")
 		return
+	if outcome == "intercepted":
+		add_metric("intercepted_hits")
 	add_metric("player_damage_before_defenses", raw)
 	add_metric("player_damage_after_defenses", after_defenses)
 	add_metric("player_hp_lost", applied)

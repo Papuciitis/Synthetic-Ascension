@@ -232,7 +232,7 @@ func _check_skid_wall() -> void:
 	if player != null and player.has_method("is_on_wall") and bool(player.call("is_on_wall")):
 		_skid_left = 0.0
 		spend_momentum(30.0)
-		player.call("take_damage", 0.05 * runner.player_max_hp(), null)
+		player.call("_take_damage", 0.05 * runner.player_max_hp(), null, &"self_damage")
 
 
 # ---------------------------------------------------------------- dashes

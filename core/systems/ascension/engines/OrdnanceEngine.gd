@@ -221,7 +221,7 @@ func _blast(at: Vector2, damage: float, radius: float, root: String, pp: float, 
 	if has("ORK2") and runner.player_position().distance_to(at) <= scaled_radius and _clock - _self_hit_at >= 0.25:
 		_self_hit_at = _clock
 		counters["self_hits"] = int(counters["self_hits"]) + 1
-		runner.player().call("take_damage", 0.03 * runner.player_max_hp(), null)
+		runner.player().call("_take_damage", 0.03 * runner.player_max_hp(), null, &"self_damage")
 	if has("OR06") and not is_shell:
 		_chain_reaction(at, scaled_radius, seq)
 	if _blasts.size() > 64:

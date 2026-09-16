@@ -58,3 +58,27 @@ Independent review found post-registration elite/boss HP changes and final
 partial-write status gaps. Failing regression cases reproduced both; the fixed
 ledger refreshes profiles and the writer persists incomplete status where JSON
 remains writable. Runtime coverage includes an actual promoted EnemyActor.
+
+## Hardening pass — 16 September 2026 (evening)
+
+Reverified the baseline on this checkout first: the eleven functional suites
+exited 0 with 299 checks; the writer's invalid-directory error and the save
+suite's parse error are the documented fixtures. Review against the six
+trust areas found three gaps, all fixed with reproducing tests:
+
+- Player damage outcomes `intercepted` (Bastion's Last Hit leaves 1 HP) and
+  `missed` (REWRITE) were dropped by the ledger: the intercepted hit's real HP
+  loss vanished and the miss was invisible. Fixed in `BalanceLedger.player_damage`
+  (`DAMAGING_OUTCOMES`, `AVOIDED_OUTCOMES`, `intercepted_hits`, `missed_hits`).
+- Developer funding (`dev_grant` from the route loader, `developer_grant`) was
+  earned income. Fixed with a `followers_debug` bucket; the wallet reconciles
+  as opening + earned - spent + adjustments + debug = closing.
+- Player damage from an actor bound to an EnemyWorld handle without a `spec`
+  property fell back to the kind label; the recorder now resolves the handle's
+  archetype. Rule self-damage (Danger Close, No Brakes skid) now reports the
+  source `self_damage` instead of `unknown`.
+
+Report and CSV carry the new columns (`seconds_loading`, `followers_debug`,
+avoided/intercepted hit rows). New suite `BalanceRecorderOutcomeTest` (15
+checks) drives the real player through the real Last Hit, REWRITE and Danger
+Close rules and the real wallet; `BalanceLedgerTest` grew to 21.

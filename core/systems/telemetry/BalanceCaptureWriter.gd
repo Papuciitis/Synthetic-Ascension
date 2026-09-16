@@ -98,9 +98,9 @@ static func markdown(summary: Dictionary) -> String:
 	text += "Capture: `%s`  \nOutcome: **%s**  \nBuild: `%s` / `%s`  \nWorld seed: `%s`\n\n" % [meta.get("capture_id", "unknown"), summary.get("outcome", "recording"), build.get("game_version", "unknown"), build.get("git_commit", "unknown"), build.get("world_seed", "unknown")]
 	text += "This is one observed session. Resuming a save starts a separate capture with the same run key; earlier gameplay is not inferred.\n\n"
 	text += "## Recording health\n\nDropped history records: **%d**. Wallet discontinuities: **%d**. Writer failures: **%d**.\n\n" % [summary.get("dropped_records", 0), summary.get("wallet_discontinuities", 0), summary.get("writer_failures", 0)]
-	text += "## Economy\n\n| Opening | Earned | Spent | Adjustments | Closing |\n|---:|---:|---:|---:|---:|\n"
-	text += "| %s | %s | %s | %s | %s |\n\n" % [t.get("followers_open", 0), t.get("followers_earned", 0), t.get("followers_spent", 0), t.get("followers_adjustments", 0), t.get("followers_close", 0)]
-	text += "Refunds, trade undo and system synchronization are adjustments. Sales count as earnings under their own reason. Amounts are actual wallet changes.\n\n"
+	text += "## Economy\n\n| Opening | Earned | Spent | Adjustments | Debug grants | Closing |\n|---:|---:|---:|---:|---:|---:|\n"
+	text += "| %s | %s | %s | %s | %s | %s |\n\n" % [t.get("followers_open", 0), t.get("followers_earned", 0), t.get("followers_spent", 0), t.get("followers_adjustments", 0), t.get("followers_debug", 0), t.get("followers_close", 0)]
+	text += "Opening + earned - spent + adjustments + debug grants = closing. Refunds, trade undo and system synchronization are adjustments; developer funding (route loaders, overlay grants) is a debug grant, never earned income. Sales count as earnings under their own reason. Amounts are actual wallet changes.\n\n"
 	text += "| Reason | Gained | Spent | Net | Count |\n|---|---:|---:|---:|---:|\n"
 	for reason in t.get("followers_by_reason", {}):
 		var row: Dictionary = t.followers_by_reason[reason]
@@ -110,7 +110,8 @@ static func markdown(summary: Dictionary) -> String:
 		["Enemy HP removed", "enemy_hp_removed"], ["Enemy overkill", "enemy_overkill"], ["Damage directly credited to player", "player_credited_damage"],
 		["Player HP lost to hits", "player_hp_lost"], ["Player overkill", "player_overkill"], ["HP intentionally paid", "hp_paid"],
 		["Healing applied", "healing"], ["Healing overflow", "heal_overflow"], ["Healing sealed", "heal_blocked"],
-		["Weapon attacks", "attacks"], ["Resolved hits/ticks", "resolved_hits"], ["Critical hits", "critical_hits"], ["Kills", "kills"], ["Deaths", "deaths"], ["Reconstructions", "respawns"], ["Rescues", "rescues"]]:
+		["Weapon attacks", "attacks"], ["Resolved hits/ticks", "resolved_hits"], ["Critical hits", "critical_hits"], ["Kills", "kills"], ["Deaths", "deaths"], ["Reconstructions", "respawns"], ["Rescues", "rescues"],
+		["Hits evaded", "evaded_hits"], ["Hits during invulnerability", "invulnerable_hits"], ["Hits missed by a rule", "missed_hits"], ["Lethal hits intercepted (left at 1 HP)", "intercepted_hits"], ["Hits under god mode", "god_mode_hits"]]:
 		text += "| %s | %.2f |\n" % [pair[0], float(t.get(pair[1], 0.0))]
 	if seconds > 0.0:
 		text += "\nEnemy HP removed / gameplay second: **%.2f**. Kills / gameplay minute: **%.2f**.\n" % [float(t.get("enemy_hp_removed", 0.0)) / seconds, float(t.get("kills", 0.0)) * 60.0 / seconds]
@@ -121,11 +122,11 @@ static func markdown(summary: Dictionary) -> String:
 		var ttk := "—" if row.ttk_count == 0 else "%.3f" % (row.ttk_seconds / row.ttk_count)
 		text += "| %s | %d | %.2f | %.2f | %d | %d | %s | %d |\n" % [_cell(key), row.seen, row.hp_sum / maxf(1.0, row.seen), row.hp_max, row.kills, row.ttk_count, ttk, row.removed_alive]
 	text += "\nTTK runs from first observed damaging hit to death using gameplay seconds. Only defeated, engaged enemies contribute; surviving enemies are not assigned zero. HP reflects registration/entry and later elite or boss configuration.\n\n"
-	text += "## Coverage\n\nPlayer damage is grouped by immediate source in summary.json. Contact pressure is a combined swarm source. Enemy HP loss comes from the authoritative EnemyWorld damage event; legacy actors that bypass it are outside this damage total. Critical counts require a HitLedger. Generic heals retain a generic source. Detailed ability ancestry, avoided-hit raw damage, loot decisions and automated balance judgments are outside this core recorder.\n\nSee events.jsonl for wallet operations, build snapshots, pressure samples and lifecycle events; segments.csv for progression comparisons.\n"
+	text += "## Coverage\n\nPlayer damage is grouped by immediate source in summary.json; self-inflicted rule damage uses the source `self_damage`. An intercepted lethal hit counts its actual HP removed under player HP lost and its excess under overkill. Contact pressure is a combined swarm source. Enemy HP loss comes from the authoritative EnemyWorld damage event; legacy actors that bypass it are outside this damage total. Critical counts require a HitLedger. Generic heals retain a generic source. Detailed ability ancestry, avoided-hit raw damage, loot decisions and automated balance judgments are outside this core recorder.\n\nSee events.jsonl for wallet operations, build snapshots, pressure samples and lifecycle events; segments.csv for progression comparisons.\n"
 	return text
 
 static func segment_csv(summary: Dictionary) -> String:
-	var fields := ["segment", "status", "seconds_gameplay", "seconds_paused", "seconds_hub", "followers_open", "followers_earned", "followers_spent", "followers_adjustments", "followers_close", "enemy_hp_removed", "player_hp_lost", "healing", "hp_paid", "kills", "deaths"]
+	var fields := ["segment", "status", "seconds_gameplay", "seconds_paused", "seconds_hub", "seconds_loading", "followers_open", "followers_earned", "followers_spent", "followers_adjustments", "followers_debug", "followers_close", "enemy_hp_removed", "player_hp_lost", "healing", "hp_paid", "kills", "deaths"]
 	var output := ",".join(fields) + "\n"
 	for segment in summary.get("segments", []):
 		var values: PackedStringArray = []
