@@ -201,6 +201,13 @@ func _exit_tree() -> void:
 	_sync_noun_claims()
 
 
+## Re-entering the tree (a reparent, a scene that keeps the player node)
+## rebuilds what _exit_tree dropped; the first entry is handled by _ready.
+func _enter_tree() -> void:
+	if _player != null and is_node_ready():
+		refresh()
+
+
 ## Claim before release (the state resets a noun that drops to zero claimers).
 func _sync_noun_claims() -> void:
 	var wanted: Array[StringName] = []

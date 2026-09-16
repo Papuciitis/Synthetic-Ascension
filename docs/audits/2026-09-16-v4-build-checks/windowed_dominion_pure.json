@@ -1,0 +1,88 @@
+{
+  "ascension_usec": {
+    "max": 166845.0,
+    "p50": 319.0,
+    "p95": 3248.0
+  },
+  "build": {
+    "game_version": "0.0.0.25.5",
+    "git_branch": "enemy-world-work",
+    "git_commit": "74c1714ee226",
+    "godot_version": "4.7.2-stable (official)",
+    "world_seed": 0
+  },
+  "casts": 13,
+  "cpu": "Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz",
+  "display_server": "X11",
+  "draw_calls": {
+    "max": 524.0,
+    "p50": 305.0
+  },
+  "events": [
+    {
+      "event": "preset",
+      "result": {
+        "bought": 15,
+        "failed": "",
+        "spent": 14000
+      },
+      "t": 3.00551122222222
+    },
+    {
+      "event": "revelation",
+      "t": 9.03356144444447
+    },
+    {
+      "event": "revelation",
+      "t": 18.0753254444447
+    },
+    {
+      "event": "revelation",
+      "t": 24.1082887777777
+    },
+    {
+      "event": "revelation",
+      "t": 27.1162861111111
+    }
+  ],
+  "frame_ms": {
+    "max": 74.9973333333333,
+    "p50": 16.6666666666667,
+    "p95": 16.6666666666667,
+    "p99": 24.9933333333333
+  },
+  "frames": 1776,
+  "godot": "4.7.2-stable (official)",
+  "gpu": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+  "headless": false,
+  "kills": 178,
+  "kills_per_sec": 6.0,
+  "nodes": {
+    "end": 2850.0,
+    "max": 2858.0,
+    "start": 2140.0
+  },
+  "note": "frame_ms is the process delta; wall_ms is real spacing between frames; headless runs have no rendering and are not a play-feel measurement.",
+  "os": "Linux",
+  "population": 60,
+  "preset": "Dominion pure",
+  "renderer": "gl_compatibility",
+  "runner_counters": {
+    "engines": 1,
+    "flush_usec": 2,
+    "flushed": 0,
+    "hit_usec": 0,
+    "hits_this_frame": 0,
+    "queued_attacks": 0,
+    "tick_usec": 197
+  },
+  "seconds": 30.019039111111,
+  "seed": 20260916,
+  "segment": 5,
+  "wall_ms": {
+    "max": 82.835,
+    "p50": 16.525,
+    "p95": 21.976,
+    "p99": 35.103
+  }
+}

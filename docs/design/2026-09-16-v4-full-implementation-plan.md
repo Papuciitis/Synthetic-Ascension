@@ -32,9 +32,9 @@ is a presentation reference only; none of its economy or node rules apply.
 | 3c | Precision, Ordnance (Ranged) | done 2026-09-16 (47 + 63 checks; PRK1 partial) |
 | 3d | Invocation, Dominion (Magic) | done 2026-09-16 (59 + 50 checks; DO10 Throw untestable headless) |
 | 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | done 2026-09-16 (AscensionFusionTest 50; action table and automatic targeting complete) |
-| 4 | Presets per discipline + hybrids through real purchase rules; whole-system tests; frame distributions; rendered checks | pending |
-| 5 | Scene/Resource migration boundary note and one-discipline pilot design | pending |
-| 6 | Handoff: verified / implemented-unverified / awaiting playtest | pending |
+| 4 | Presets per discipline + hybrids through real purchase rules; whole-system tests; frame distributions; rendered checks | done 2026-09-16 (presets_v4.json, AscensionPresetTest, AscensionBuildProbe, docs/audits/2026-09-16-v4-build-checks.md, docs/design/v4_build_test_checklist.md) |
+| 5 | Scene/Resource migration boundary note and one-discipline pilot design | done 2026-09-16 (docs/design/2026-09-16-v4-migration-boundary.md; Momentum pilot, design only) |
+| 6 | Handoff: verified / implemented-unverified / awaiting playtest | done 2026-09-16 (docs/design/2026-09-16-v4-handoff.md) |
 
 ## Decisions and interpretations (recorded as taken)
 
@@ -154,6 +154,25 @@ is a presentation reference only; none of its economy or node rules apply.
   distance travelled instead of frame counts: headless frames run as fast
   as the machine allows, so a fixed frame count covered 4-12 px per frame
   depending on load, and two suites flapped when another process ran.
+- 2026-09-16 (4): presets are derived from the authored builds in
+  tree_v4.json (early = the route's first four locals, developed = through
+  the Q, its first mutation and the fork, pure = the authored build plus the
+  keystone that touches it) and the review's hybrids; they live in
+  data/ascension/presets_v4.json, replay through the real purchase rules in
+  AscensionPresetTest, and the dev overlay's route loader lists and equips
+  them. Ordnance's pure preset takes Spotter: Danger Close sits beside Chain
+  Reaction and Blast Pull, which the authored route does not buy.
+- 2026-09-16 (4): the scripted preset fights and the build probe measure
+  process deltas and wall spacing per frame; headless numbers are labelled
+  HEADLESS everywhere and bound the simulation only. The first measured
+  frame of a preset fight includes the 60-body spawn burst, so the max is
+  read with that in mind and p95/p99 carry the judgement. Rendered runs
+  use the machine's real display (DISPLAY :0, Intel UHD 620, OpenGL) and
+  sit at a 16.7 ms median by vsync; their p95/p99/max and draw-call median
+  are the comparison.
+- 2026-09-16 (4): a runner that re-enters the tree rebuilds its engines
+  (_enter_tree), which the scene-transition check needed; a reparented
+  player previously kept an empty engine list until the next refresh.
 - 2026-09-16 (3c): AscensionBarrageDenseBenchmark's single-frame "max
   fragment update < 12 ms" bound proved noise-driven (baseline runs of the
   committed 3b state span 8.8-16.7 ms while p95 stays 4.9-5.4 ms); the
@@ -196,3 +215,15 @@ is a presentation reference only; none of its economy or node rules apply.
   full set green; ScriptParseAuditTest 402. Matrix: 336 implemented, 8
   partial, 5 n/a, 0 missing among nodes (one shared row, control
   conversions, stays missing), 1 ambiguous.
+- 2026-09-16 stages 4-6: AscensionPresetTest 246 (37 presets at real
+  prices, 37 scripted crowd fights, whole-system checks); the full set
+  green (Ledger 71, Runner 29, Barrage 38, Execution 30, Distortion 38,
+  Hybrid 41, Screen 18, RuntimeSafety 18, SharedRules 30, SliceCompletion
+  23, Momentum 66, Bastion 62, Precision 47, Ordnance 63, Invocation 59,
+  Dominion 50, Fusion 50, ChainBurst 6, BarrageDense 6, LowestHealth 10,
+  FlightRecorderSample 6, EnemyCombatQuery 19, BalanceLedger 17,
+  BalanceCaptureWriter 7, BalanceRecorderLoad 5, GroundLootCap 6,
+  LoadingScrim 6); ScriptParseAuditTest: 402 passed, 0 failed. Build probe: ten headless
+  and three rendered runs in docs/audits/2026-09-16-v4-build-checks.md.
+  Matrix: 336 implemented, 8 partial (control conversions and HUD now
+  recorded partial rather than missing), 5 n/a, 1 ambiguous.

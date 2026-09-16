@@ -38,7 +38,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Ascendant foreign strikes | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
 | Attack identity: root, family, Core, path, generation, P, cast, V ancestry | implemented | core/systems/ascension/AscensionTags.gd | AscensionRunnerTest | hit-path family seal is per engine rule, not a generic path history |
 | Automatic Method (pick.M2, 70%) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | targeting table complete: Gavel, Lunge, Guard, Deadshot, Burst, Designate, Consecrate, Coin, Compel (auto_target per engine) |
-| Control conversions (stagger bar, control caps, immunity) | missing |  |  | bosses get a 0.5 s stun from DECIMATION; no stagger bar |
+| Control conversions (stagger bar, control caps, immunity) | partial | engines (apply_stun conversions) |  | every 'stagger' is a stun: Gavel/Ram/Blast Pull/Compel/KNEEL/Singularity/Forced Orbit/resisted boss travel (L -> 0.5 s); no stagger bar, control caps or immunity; awaiting a design of the boss control bar |
 | D snapshot per attack | partial | engines |  | D read at spawn; Echo/Debt packets keep captured amounts |
 | Deterministic event queue with stable tie-breaking | partial | core/systems/ascension/AscensionRunner.gd | AscensionChainBurstBenchmark | attack queue is FIFO with a per-frame budget; fragments resolve in engine tick order |
 | Equipment slots (Q, V, 2 Keystones, 3 Axioms, Reaction, V2) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | equip at any time through the screen; 'safe point only' not enforced |
@@ -46,7 +46,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Free starter (one of three ring-1 natives) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest |  |
 | Gate G1 / G2 grants and prerequisites | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest |  |
 | Generated attacks are data (no nodes) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionChainBurstBenchmark |  |
-| HUD feedback for resources | partial | AscensionSlotHud + runner _draw |  | Q/V slots show Heat, line, Debt; other resources drawn as bare shapes/text |
+| HUD feedback for resources | partial | AscensionSlotHud + runner _draw |  | every discipline's Q slot names its resource (LINE, HEAT, MOMENTUM, FORCE, AIM, COORD/MINES, SIGILS/ECHO, DEBT, WELLS/LINKS/WEIGHT) and V slots name the state; payloads and placed objects are runner-drawn shapes, lines and text; no dedicated art or sound |
 | Health payments (bypass armour, floor 1 HP, no retaliation) | implemented | core/actors/player/player.gd | AscensionRunnerTest | The Bill and Loaded Dice may kill (lethal payments), as authored |
 | Hit-path family seal (one on-hit family cannot recall itself) | partial | engines |  | Ricochet, Contradiction and Twice seal themselves; no generic path history |
 | Milestone picks (Method 3 / Doctrine 6 / Apotheosis 9) | partial | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | M1-M3, D1, D3, P1, P2 implemented; D2 needs the reward screen; P3 moot |

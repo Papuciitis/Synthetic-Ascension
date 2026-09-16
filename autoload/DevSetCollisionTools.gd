@@ -218,20 +218,24 @@ func jump_to_segment(segment: int) -> void:
 # ============================================================
 
 const ASCENSION_PROTOTYPE_ROUTES := "res://data/ascension/routes_prototype.json"
+const ASCENSION_PRESETS := "res://data/ascension/presets_v4.json"
 
 
-## Authored routes from the tree package plus the review's hybrid routes.
+## Authored routes from the tree package, the review's hybrid routes and the
+## V4 presets (early / developed / pure per discipline, hybrids, Ascendant).
 func ascension_routes() -> Array:
 	var out: Array = []
 	for build in AscensionTreeDB.shared().builds:
 		out.append(build)
-	var file := FileAccess.open(ASCENSION_PROTOTYPE_ROUTES, FileAccess.READ)
-	if file != null:
-		var parsed: Variant = JSON.parse_string(file.get_as_text())
-		file.close()
-		if parsed is Dictionary:
-			for route in (parsed as Dictionary).get("routes", []):
-				out.append(route)
+	for path in [ASCENSION_PROTOTYPE_ROUTES, ASCENSION_PRESETS]:
+		var file := FileAccess.open(path, FileAccess.READ)
+		if file != null:
+			var parsed: Variant = JSON.parse_string(file.get_as_text())
+			file.close()
+			if parsed is Dictionary:
+				var list: Array = (parsed as Dictionary).get("routes", (parsed as Dictionary).get("presets", []))
+				for route in list:
+					out.append(route)
 	return out
 
 
@@ -280,6 +284,15 @@ func apply_ascension_route(route_name: String, fund: bool = true) -> Dictionary:
 			return {"bought": bought, "failed": "%s: %s" % [id, verdict["reason"]], "spent": spent}
 		bought += 1
 		spent += int(verdict["cost"])
+	var equip: Variant = build.get("equip")
+	if equip is Dictionary:
+		for slot in ["q", "v", "v2", "reaction"]:
+			var id_for_slot := String((equip as Dictionary).get(slot, ""))
+			if not id_for_slot.is_empty():
+				ledger.equip(slot, id_for_slot)
+		for slot in ["keystones", "axioms"]:
+			for id_for_slot in (equip as Dictionary).get(slot, []):
+				ledger.equip(slot, String(id_for_slot))
 	_refresh_player_loadout()
 	return {"bought": bought, "failed": "", "spent": spent}
 
