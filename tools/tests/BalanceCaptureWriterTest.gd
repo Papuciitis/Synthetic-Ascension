@@ -30,13 +30,21 @@ func _run() -> void:
 		var lines := FileAccess.get_file_as_string(dir.path_join("events.jsonl")).strip_edges().split("\n")
 		_check(lines.size() == 2 and JSON.parse_string(lines[1]).seq == 2, "successive batches append without overwriting history")
 		_check(FileAccess.file_exists(dir.path_join("report.md")) and FileAccess.file_exists(dir.path_join("segments.csv")), "human report and segment CSV are generated")
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(dir.path_join("report.md")))
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(dir.path_join("report.md")))
+		result = writer.write_batch({"summary": fixture}, dir)
+		parsed = JSON.parse_string(FileAccess.get_file_as_string(dir.path_join("summary.json")))
+		_check(not result.get("ok", true) and int(parsed.get("writer_failures", 0)) > 0 and not bool(parsed.get("artifacts_complete", true)), "partial final write persists incomplete status in readable summary")
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(dir.path_join("report.md")))
 		var blocker := dir.path_join("file-not-directory")
 		var f := FileAccess.open(blocker, FileAccess.WRITE)
 		f.store_string("fixture")
 		f.close()
 		result = writer.write_batch({"records": [{"seq": 3}]}, blocker.path_join("child"))
 		_check(not result.get("ok", true) and not str(result.get("error", "")).is_empty(), "I/O failure is reported instead of claiming success")
-		for name in ["events.jsonl", "summary.json", "report.md", "segments.csv", "file-not-directory"]:
+		for name in ["events.jsonl", "summary.json", "report.md", "report.md.tmp", "segments.csv", "file-not-directory"]:
+			if not FileAccess.file_exists(dir.path_join(name)):
+				continue
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(dir.path_join(name)))
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(dir))
 	print("BalanceCaptureWriterTest: %d passed, %d failed" % [_passes, _failures])

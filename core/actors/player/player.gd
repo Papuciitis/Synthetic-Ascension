@@ -676,6 +676,8 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	Global.run_luck = s.luck
 
 	apply_run_stats(s, emit_hp_signal)
+	if RunEvents != null and RunEvents.player_stats_recomputed.has_connections():
+		RunEvents.player_stats_recomputed.emit(self)
 
 
 func _fire_weapon(mouse_pos: Vector2) -> void:
@@ -1098,7 +1100,7 @@ func _start_contact_loop() -> void:
 		# One deterministic tick per interval. A single enemy's Area and Body are
 		# one source; extra unique enemies increase pressure with a capped curve.
 		var swarm_mul := minf(2.25, 1.0 + float(_touching_enemies - 1) * 0.35)
-		_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul())
+		_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul(), null, &"contact_swarm")
 		await get_tree().create_timer(maxf(contact_tick, 0.05), false).timeout
 		# The player can be freed mid-wait (scene change, run end); the loop
 		# would otherwise resume on a freed node.
@@ -1110,14 +1112,16 @@ func _start_contact_loop() -> void:
 
 # ✅ NEW: public wrapper so enemies/projectiles can damage you
 func take_damage(amount: float, _source: Node = null) -> void:
-	_take_damage(amount)
+	_take_damage(amount, _source)
 
 
 
-func _take_damage(amount: float) -> void:
+func _take_damage(amount: float, source: Node = null, kind: StringName = &"unknown") -> void:
 	if Global.debug_player_god_mode:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"god_mode")
 		return
 	if invulnerable_time > 0.0:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"invulnerable")
 		return
 	if is_dead:
 		return
@@ -1129,12 +1133,14 @@ func _take_damage(amount: float) -> void:
 	if mr4 != null:
 		evade_chance = clampf(evade_chance + mr4.get_bonus_evasion_chance(), 0.0, 0.60)
 	if Global._rng.randf() < evade_chance:
+		_report_balance_damage(amount, 0.0, 0.0, source, kind, &"evaded")
 		if BattleText != null:
 			BattleText.popup(global_position, "EVADED", Color(0.5, 0.9, 1.0, 1.0), 1.1)
 		if RunEvents != null:
 			RunEvents.player_evaded.emit(self, global_position)
 		return
 
+	var raw_amount := amount
 	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier4 != null:
 		amount *= ier4.get_damage_taken_multiplier()
@@ -1149,7 +1155,9 @@ func _take_damage(amount: float) -> void:
 		armor_val = stats.armor
 
 	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
+	var health_before := hp
 	hp = max(hp - reduced, 0.0)
+	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
 	if BattleText != null:
 		BattleText.player_damage(global_position, reduced)
 
@@ -1167,12 +1175,19 @@ func _take_damage(amount: float) -> void:
 			die()
 
 
+func _report_balance_damage(raw: float, adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
+	if RunEvents != null and RunEvents.player_damage_resolved.has_connections():
+		RunEvents.player_damage_resolved.emit(self, raw, adjusted, applied, source, kind, outcome)
+
+
 func _try_doctrine_death_intercept() -> bool:
 	if Global == null or not Global.has_method("try_consume_manufactured_witness"):
 		return false
 	if not bool(Global.try_consume_manufactured_witness()):
 		return false
 	hp = maxf(1.0, max_hp * 0.50)
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"rescue")
 	grant_invulnerability(2.0)
 	hp_changed.emit(hp, max_hp)
 	return true
@@ -1182,6 +1197,8 @@ func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"death")
 	cancel_dash()
 
 	var cost: int = death_follower_cost
@@ -1225,6 +1242,8 @@ func respawn() -> void:
 	hp_changed.emit(hp, max_hp)
 
 	# Spawn protection: invulnerability + phasing through enemy bodies
+	if RunEvents != null and RunEvents.player_life_event.has_connections():
+		RunEvents.player_life_event.emit(self, &"respawn")
 	grant_invulnerability(respawn_invuln_time)
 	start_respawn_phase(respawn_phase_time)
 
@@ -1418,7 +1437,7 @@ func _on_style_damage_dealt(a, b) -> void:
 	if healing <= 0.0:
 		return
 	_lifesteal_healed_this_window += healing
-	heal(healing)
+	heal(healing, &"lifesteal")
 
 func _update_melee_sustain(dt: float) -> void:
 	# Passive regen that scales with BONUS HP (max_hp - base_stats.max_hp), LoL-style.
@@ -1443,7 +1462,7 @@ func _update_melee_sustain(dt: float) -> void:
 	var bonus_hp := maxf(0.0, max_hp - base_hp)
 	var per_sec := melee_regen_flat_per_sec + bonus_hp * melee_regen_bonus_hp_pct_per_sec
 	if per_sec > 0.0:
-		heal(per_sec * dt)
+		heal(per_sec * dt, &"regen")
 
 
 
@@ -1456,6 +1475,7 @@ func _attack_origin() -> Vector2:
 func heal(amount: float, source: StringName = &"generic") -> void:
 	if amount <= 0.0:
 		return
+	var requested := amount
 	# A lock is a lock: the vault's price, a Sacrifice, a ritual interference
 	# seal the Rite's mend and the wardstone with everything else unless the
 	# export says otherwise. Nothing lands and nothing is announced - a rule
@@ -1463,6 +1483,8 @@ func heal(amount: float, source: StringName = &"generic") -> void:
 	# and the seal said its one line when it fell. The exemption list is
 	# only consulted while sealed, so the open path stays one float compare.
 	if _healing_lock_left > 0.0 and not healing_lock_exempt_sources.has(source):
+		if RunEvents != null and RunEvents.player_heal_resolved.has_connections():
+			RunEvents.player_heal_resolved.emit(self, requested, 0.0, 0.0, source, true)
 		return
 	if Global != null and Global.has_method("doctrine_healing_multiplier"):
 		amount *= float(Global.doctrine_healing_multiplier(source))
@@ -1472,6 +1494,8 @@ func heal(amount: float, source: StringName = &"generic") -> void:
 	# subtracted 16.5 and the pickup left you LOWER than before you touched it.
 	var applied: float = min(hp + amount, max_hp) - hp
 	hp += applied
+	if RunEvents != null and RunEvents.player_heal_resolved.has_connections():
+		RunEvents.player_heal_resolved.emit(self, requested, amount, applied, source, false)
 	hp_changed.emit(hp, max_hp)
 	if applied <= 0.0:
 		return

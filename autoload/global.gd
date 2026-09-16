@@ -43,6 +43,10 @@ const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
 # ============================================================
 
 signal followers_changed(value: int)
+signal balance_attempt_boundary(reason: StringName)
+signal balance_segment_completed(segment: int)
+signal balance_scene_requested(path: String)
+signal balance_transaction(before: int, change: int, after: int, reason: StringName, context: Dictionary)
 signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
 signal permanent_augments_changed(ids: Array[StringName])
 
@@ -323,6 +327,7 @@ func _scene_title(path: String) -> String:
 
 
 func goto_scene(path: String) -> void:
+	balance_scene_requested.emit(path)
 	# Scene changes are the natural safe point for any deferred combat autosave.
 	flush_pending_save()
 	# Building the game scene blocks for most of a second; show the card and
@@ -408,8 +413,13 @@ func transaction_followers(amount: int, reason: StringName, context: Dictionary 
 	var new_value := maxi(0, old_value + amount)
 	var actual_change := new_value - old_value
 	if actual_change == 0:
+		# A balanced buy/sell exchange has economic activity without a wallet
+		# change. Preserve the existing feedback/gameplay signal behavior.
+		if reason == &"trade" and (int(context.get("buy_value", 0)) > 0 or int(context.get("sell_value", 0)) > 0):
+			balance_transaction.emit(old_value, 0, new_value, reason, context)
 		return {"old": old_value, "change": 0, "new": new_value, "suppressed": false}
 	_followers = new_value
+	balance_transaction.emit(old_value, actual_change, new_value, reason, context)
 	followers_changed.emit(_followers)
 	followers_transaction.emit(old_value, actual_change, new_value, reason, context, show_feedback, allow_aggregate)
 	if DEBUG_GLOBAL and debug_combat_transactions:
@@ -1463,6 +1473,7 @@ func claim_loot(id: int) -> void:
 	request_autosave()
 
 func apply_save(save: SaveData) -> void:
+	balance_attempt_boundary.emit(&"save_loaded")
 	_suppress_autosave = true
 	if save.save_version > SaveData.CURRENT_SAVE_VERSION:
 		push_warning(
@@ -1905,6 +1916,7 @@ func record_new_attempt(save: SaveData) -> void:
 		save.total_runs = maxi(0, save.total_runs) + 1
 
 func start_new_attempt() -> void:
+	balance_attempt_boundary.emit(&"restarted")
 	# Attempt resets (die-die behavior)
 	attempt_active = true
 	attempt_segment = 1
@@ -1965,6 +1977,7 @@ func start_new_attempt() -> void:
 	save_current_profile()
 
 func on_segment_completed(completed_segment: int) -> void:
+	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():
 		ascension_ledger().note_segment_completed(completed_segment)
 	attempt_segment = completed_segment + 1
@@ -2032,6 +2045,7 @@ func get_major_choice_context_segment() -> int:
 	return attempt_segment
 
 func on_attempt_failed_die_die() -> void:
+	balance_attempt_boundary.emit(&"failed")
 	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
 	attempt_active = false
 	attempt_segment = 1

@@ -125,6 +125,7 @@ func _ready() -> void:
 
 	_setup_segment_world()
 	_setup_enemy_proxy_root()
+	BalanceRecorder.begin_gameplay(player)
 	call_deferred("_setup_encounter_director")
 
 	# Narrative opening precedes run-level reward UI on a fresh Segment 1.

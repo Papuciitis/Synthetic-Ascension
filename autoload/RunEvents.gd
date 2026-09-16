@@ -1,5 +1,17 @@
 extends Node
 
+# Observational balance events. They do not replace gameplay hooks: the
+# recorder needs clamped HP loss, sources and lifecycle without changing what
+# item/Manifestation listeners currently receive.
+@warning_ignore("unused_signal")
+signal player_damage_resolved(player: Node, raw: float, after_defenses: float, applied: float, source: Node, kind: StringName, outcome: StringName)
+@warning_ignore("unused_signal")
+signal player_heal_resolved(player: Node, requested: float, modified: float, applied: float, source: StringName, blocked: bool)
+@warning_ignore("unused_signal")
+signal player_stats_recomputed(player: Node)
+@warning_ignore("unused_signal")
+signal player_life_event(player: Node, kind: StringName)
+
 @warning_ignore("unused_signal")
 signal weapon_fired(player: Node, style_id: StringName, origin: Vector2, target: Vector2, power_mul: float, haste_mul: float)
 

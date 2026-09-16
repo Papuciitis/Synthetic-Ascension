@@ -1,6 +1,10 @@
 class_name EnemyWorldService
 extends Node
 
+signal enemy_registered(handle: int)
+signal enemy_removing(handle: int, reason: StringName)
+signal enemy_profile_changed(handle: int)
+
 const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 const SpatialGrid = preload("res://core/systems/enemy_world/EnemySpatialGrid.gd")
 
@@ -98,13 +102,18 @@ func create_enemy(state: EnemySpawnState) -> int:
 	_active_slot_indices[slot] = _active_slots.size()
 	_active_slots.append(slot)
 	_grid.insert(slot, state.position)
-	return Types.make_handle(slot, int(_generations[slot]))
+	var handle := Types.make_handle(slot, int(_generations[slot]))
+	if enemy_registered.has_connections():
+		enemy_registered.emit(handle)
+	return handle
 
 
 func remove_enemy(handle: int, reason: StringName = &"removed") -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
 		return false
+	if enemy_removing.has_connections():
+		enemy_removing.emit(handle, reason)
 	unbind_actor(handle)
 	_legacy_handles.erase(handle)
 	_grid.remove(slot)
@@ -329,6 +338,8 @@ func set_max_health(handle: int, value: float, fill_to_max: bool = false) -> boo
 	var safe_max := maxf(value, 0.0)
 	_max_health[slot] = safe_max
 	_health[slot] = safe_max if fill_to_max else minf(float(_health[slot]), safe_max)
+	if enemy_profile_changed.has_connections():
+		enemy_profile_changed.emit(handle)
 	return true
 
 
@@ -411,6 +422,8 @@ func set_flags(handle: int, value: int) -> bool:
 	if slot < 0:
 		return false
 	_flags[slot] = value
+	if enemy_profile_changed.has_connections():
+		enemy_profile_changed.emit(handle)
 	return true
 
 

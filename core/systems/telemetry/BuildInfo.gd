@@ -57,16 +57,28 @@ static func _resolve_git() -> void:
 			_git_commit = String((baked as Dictionary).get("git_commit", _git_commit))
 			_git_branch = String((baked as Dictionary).get("git_branch", _git_branch))
 			return
-	var head := _read_trimmed("res://.git/HEAD")
+	# Linked worktrees and submodules use a .git FILE pointing at their own
+	# HEAD directory. Branch refs may live in the shared commondir instead.
+	var git_dir := ProjectSettings.globalize_path("res://.git")
+	if FileAccess.file_exists(git_dir):
+		var link := _read_trimmed(git_dir)
+		if not link.begins_with("gitdir: "):
+			return
+		git_dir = _resolve_relative(git_dir.get_base_dir(), link.substr(8))
+	var common_dir := git_dir
+	var common_link := _read_trimmed(git_dir.path_join("commondir"))
+	if not common_link.is_empty():
+		common_dir = _resolve_relative(git_dir, common_link)
+	var head := _read_trimmed(git_dir.path_join("HEAD"))
 	if head.is_empty():
 		return
 	if head.begins_with("ref: "):
 		var ref := head.substr(5)
-		_git_branch = ref.get_file()
-		var commit := _read_trimmed("res://.git/" + ref)
+		_git_branch = ref.trim_prefix("refs/heads/")
+		var commit := _read_trimmed(common_dir.path_join(ref))
 		if commit.is_empty():
 			# Packed refs after a gc: "<sha> refs/heads/<branch>" lines.
-			for line in _read_trimmed("res://.git/packed-refs").split("\n"):
+			for line in _read_trimmed(common_dir.path_join("packed-refs")).split("\n"):
 				if line.ends_with(" " + ref):
 					commit = line.get_slice(" ", 0)
 					break
@@ -74,6 +86,10 @@ static func _resolve_git() -> void:
 	else:
 		_git_branch = "detached"
 		_git_commit = head.substr(0, 12)
+
+
+static func _resolve_relative(base: String, target: String) -> String:
+	return target.simplify_path() if target.is_absolute_path() else base.path_join(target).simplify_path()
 
 
 static func _read_trimmed(path: String) -> String:

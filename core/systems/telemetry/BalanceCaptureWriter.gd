@@ -3,6 +3,7 @@ extends RefCounted
 ## Runs only on the report worker. Inputs are immutable, JSON-safe snapshots;
 ## never access live nodes, resources, or the scene tree here.
 static func write_batch(batch: Dictionary, directory: String) -> Dictionary:
+	var summary: Dictionary = (batch.get("summary", {}) as Dictionary).duplicate(true)
 	var err := DirAccess.make_dir_recursive_absolute(directory)
 	if err != OK and err != ERR_ALREADY_EXISTS:
 		return _failure("Create capture directory", err)
@@ -11,7 +12,7 @@ static func write_batch(batch: Dictionary, directory: String) -> Dictionary:
 		var path := directory.path_join("events.jsonl")
 		var file := FileAccess.open(path, FileAccess.READ_WRITE if FileAccess.file_exists(path) else FileAccess.WRITE)
 		if file == null:
-			return _failure("Open event history", FileAccess.get_open_error())
+			return _failed_batch(directory, summary, "Open event history", FileAccess.get_open_error())
 		file.seek_end()
 		for record in records:
 			file.store_line(JSON.stringify(json_safe(record)))
@@ -19,16 +20,28 @@ static func write_batch(batch: Dictionary, directory: String) -> Dictionary:
 		err = file.get_error()
 		file.close()
 		if err != OK:
-			return _failure("Write event history", err)
-	var summary: Dictionary = batch.get("summary", {})
+			return _failed_batch(directory, summary, "Write event history", err)
 	if not summary.is_empty():
-		var files := {"summary.json": JSON.stringify(json_safe(summary), "\t"),
-			"report.md": markdown(summary), "segments.csv": segment_csv(summary)}
+		summary["artifacts_complete"] = true
+		# JSON is the final commit marker for this group of readable artifacts.
+		var files := {"report.md": markdown(summary), "segments.csv": segment_csv(summary),
+			"summary.json": JSON.stringify(json_safe(summary), "\t")}
 		for name in files:
 			err = _replace_file(directory.path_join(name), files[name])
 			if err != OK:
-				return _failure("Write " + name, err)
+				return _failed_batch(directory, summary, "Write " + name, err)
 	return {"ok": true, "error": "", "directory": directory}
+
+static func _failed_batch(directory: String, summary: Dictionary, operation: String, err: Error) -> Dictionary:
+	var result := _failure(operation, err)
+	if not summary.is_empty():
+		summary["writer_failures"] = int(summary.get("writer_failures", 0)) + 1
+		summary["last_error"] = result.error
+		summary["artifacts_complete"] = false
+		# If JSON remains writable, persist the failure of this very batch. If
+		# even that fails, the caller still exposes the error in status/output.
+		_replace_file(directory.path_join("summary.json"), JSON.stringify(json_safe(summary), "\t"))
+	return result
 
 static func _replace_file(path: String, content: String) -> Error:
 	var temp := path + ".tmp"
@@ -41,7 +54,10 @@ static func _replace_file(path: String, content: String) -> Error:
 	file.close()
 	if err != OK:
 		return err
-	return DirAccess.rename_absolute(temp, path)
+	err = DirAccess.rename_absolute(temp, path)
+	if err != OK:
+		DirAccess.remove_absolute(temp)
+	return err
 
 static func _failure(operation: String, err: Error) -> Dictionary:
 	return {"ok": false, "error": "%s: %s" % [operation, error_string(err)]}

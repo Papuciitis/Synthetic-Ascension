@@ -61,6 +61,8 @@ func _open_segment(segment: int, balance: int) -> void:
 
 func change_segment(segment: int, previous_status: String) -> void:
 	flush_window()
+	for handle in _enemies.keys():
+		enemy_removed(handle, "segment_boundary")
 	_current["status"] = previous_status
 	event("segment_ended", {"status": previous_status})
 	_enemies.clear()
@@ -89,40 +91,80 @@ func add_metric(key: String, amount: float = 1.0) -> void:
 func transaction(before: int, change: int, after: int, reason: String, context: Dictionary) -> void:
 	if before != int(_totals.followers_close) or before + change != after:
 		_discontinuities += 1
+	var gained := maxi(0, change)
+	var spent := maxi(0, -change)
+	if reason == "trade":
+		var buy_value := int(context.get("buy_value", 0))
+		var sell_value := int(context.get("sell_value", 0))
+		if buy_value >= 0 and sell_value >= 0 and sell_value - buy_value == change:
+			gained = sell_value
+			spent = buy_value
 	for stats in [_totals, _current]:
 		stats.followers_close = after
 		if reason in ADJUSTMENTS:
 			stats.followers_adjustments += change
-		elif change > 0:
-			stats.followers_earned += change
 		else:
-			stats.followers_spent -= change
+			stats.followers_earned += gained
+			stats.followers_spent += spent
 		var reasons: Dictionary = stats.followers_by_reason
 		if not reasons.has(reason):
 			reasons[reason] = {"count": 0, "gained": 0, "spent": 0, "net": 0}
 		var entry: Dictionary = reasons[reason]
 		entry.count += 1
-		entry.gained += maxi(0, change)
-		entry.spent += maxi(0, -change)
+		entry.gained += gained
+		entry.spent += spent
 		entry.net += change
 	event("transaction", {"before": before, "change": change, "after": after, "reason": reason, "context": context})
 
 func enemy_seen(handle: int, spec_id: String, elite: bool, max_hp: float, observed_at_entry: bool = false) -> void:
-	if _enemies.has(handle):
-		return
 	var key := spec_id + (" [elite]" if elite else "")
-	_enemies[handle] = {"key": key, "first_hit": -1.0, "defeated": false}
+	var enemy: Dictionary = _enemies.get(handle, {})
+	if not enemy.is_empty():
+		if bool(enemy.defeated) or (enemy.key == key and is_equal_approx(enemy.hp, max_hp)):
+			return
+		for stats in [_totals, _current]:
+			_profile_contribution(stats, enemy, -1)
+		enemy.key = key
+		enemy.hp = max_hp
+	else:
+		enemy = {"key": key, "hp": max_hp, "at_entry": observed_at_entry, "first_hit": -1.0, "defeated": false, "damage": 0.0}
+	_enemies[handle] = enemy
 	for stats in [_totals, _current]:
-		var rows: Dictionary = stats.enemies
-		if not rows.has(key):
-			rows[key] = {"seen": 0, "present_at_entry": 0, "hp_sum": 0.0, "hp_min": max_hp, "hp_max": max_hp,
-				"damage": 0.0, "engaged": 0, "kills": 0, "removed_alive": 0, "ttk_count": 0, "ttk_seconds": 0.0, "ttk_max": 0.0}
-		var row: Dictionary = rows[key]
-		row.seen += 1
-		row.present_at_entry += int(observed_at_entry)
-		row.hp_sum += max_hp
-		row.hp_min = minf(row.hp_min, max_hp)
-		row.hp_max = maxf(row.hp_max, max_hp)
+		_profile_contribution(stats, enemy, 1)
+
+func _profile_contribution(stats: Dictionary, enemy: Dictionary, direction: int) -> void:
+	var rows: Dictionary = stats.enemies
+	if not rows.has(enemy.key):
+		rows[enemy.key] = {"seen": 0, "present_at_entry": 0, "hp_sum": 0.0, "hp_min": INF, "hp_max": 0.0,
+			"damage": 0.0, "engaged": 0, "kills": 0, "removed_alive": 0, "ttk_count": 0, "ttk_seconds": 0.0, "ttk_max": 0.0,
+			"_live_hp": {}, "_retired_min": INF, "_retired_max": 0.0}
+	var row: Dictionary = rows[enemy.key]
+	row.seen += direction
+	row.present_at_entry += int(enemy.at_entry) * direction
+	row.hp_sum += float(enemy.hp) * direction
+	row.damage += float(enemy.damage) * direction
+	row.engaged += int(float(enemy.first_hit) >= 0.0) * direction
+	_change_live_hp(row, float(enemy.hp), direction)
+	if row.seen == 0:
+		rows.erase(enemy.key)
+
+func _change_live_hp(row: Dictionary, hp: float, direction: int) -> void:
+	var key := str(hp)
+	var histogram: Dictionary = row._live_hp
+	var count := int(histogram.get(key, 0)) + direction
+	if count <= 0:
+		histogram.erase(key)
+	else:
+		histogram[key] = count
+	if direction > 0:
+		row.hp_min = minf(row.hp_min, hp)
+		row.hp_max = maxf(row.hp_max, hp)
+		return
+	row.hp_min = row._retired_min
+	row.hp_max = row._retired_max
+	for value in histogram:
+		row.hp_min = minf(row.hp_min, float(value))
+		row.hp_max = maxf(row.hp_max, float(value))
 
 func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count: int, crit_count: int, credited_to_player: bool) -> void:
 	if applied <= 0.0:
@@ -137,6 +179,7 @@ func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count:
 	if not _enemies.has(handle):
 		return
 	var enemy: Dictionary = _enemies[handle]
+	enemy.damage += applied
 	var first: bool = float(enemy.first_hit) < 0.0
 	if first:
 		enemy.first_hit = float(_totals.seconds_gameplay)
@@ -167,6 +210,11 @@ func enemy_removed(handle: int, _reason: String) -> void:
 	if not bool(enemy.defeated):
 		for stats in [_totals, _current]:
 			stats.enemies[enemy.key].removed_alive += 1
+	for stats in [_totals, _current]:
+		var row: Dictionary = stats.enemies[enemy.key]
+		row._retired_min = minf(row._retired_min, float(enemy.hp))
+		row._retired_max = maxf(row._retired_max, float(enemy.hp))
+		_change_live_hp(row, float(enemy.hp), -1)
 	_enemies.erase(handle)
 
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:
@@ -181,7 +229,10 @@ func player_damage(raw: float, after_defenses: float, applied: float, source: St
 	for stats in [_totals, _current]:
 		var sources: Dictionary = stats.player_damage_by_source
 		sources[source] = float(sources.get(source, 0.0)) + applied
-	event("player_damage", {"raw": raw, "after_defenses": after_defenses, "hp_lost": applied, "source": source})
+	if not _window.has("player_damage_by_source"):
+		_window["player_damage_by_source"] = {}
+	var window_sources: Dictionary = _window.player_damage_by_source
+	window_sources[source] = float(window_sources.get(source, 0.0)) + applied
 
 func player_heal(requested: float, modified: float, applied: float, source: String, blocked: bool) -> void:
 	add_metric("healing", applied)
@@ -213,6 +264,13 @@ func pending_count() -> int:
 	return _records.size()
 
 func summary() -> Dictionary:
-	return {"schema_version": 1, "metadata": _metadata.duplicate(true), "outcome": _outcome,
+	var result := {"schema_version": 1, "metadata": _metadata.duplicate(true), "outcome": _outcome,
 		"elapsed_seconds": _elapsed, "totals": _totals.duplicate(true), "segments": _segments.duplicate(true),
 		"dropped_records": _dropped, "wallet_discontinuities": _discontinuities, "last_sequence": _sequence}
+	var stats_rows: Array = [result.totals]
+	stats_rows.append_array(result.segments)
+	for stats in stats_rows:
+		for enemy_row in stats.enemies.values():
+			for key in ["_live_hp", "_retired_min", "_retired_max"]:
+				enemy_row.erase(key)
+	return result
