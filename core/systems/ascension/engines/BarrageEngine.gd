@@ -62,6 +62,18 @@ var _fragment_cost: Dictionary = {"fragment_usec": 0, "retargets": 0, "retargets
 var burst_left: float = 0.0
 var burst_total: float = 0.0
 var _burst_scale: float = 1.0
+var _burst_pp: float = 1.0
+# Heat Beam (BRE1): Burst as a swept piercing beam.
+var beam_left: float = 0.0
+var _beam_tick: float = 0.0
+var _beam_from: Vector2 = Vector2.ZERO
+var _beam_to: Vector2 = Vector2.ZERO
+var stationary_beam_left: float = 0.0
+var _stationary_from: Vector2 = Vector2.ZERO
+var _stationary_to: Vector2 = Vector2.ZERO
+var _stationary_tick: float = 0.0
+var _segment_scratch: Array[int] = []
+var _segment_ts := PackedFloat32Array()
 var _burst_extended: float = 0.0
 var _burst_points: int = 0
 var _burst_point_timer: float = 0.0
@@ -88,8 +100,16 @@ func discipline() -> String:
 
 func refresh(active_ids: Dictionary) -> void:
 	super.refresh(active_ids)
-	heat_cap = 200.0 if has("BRK1") else 100.0
+	heat_cap = 200.0 * runner.keystone_bonus() if has("BRK1") else 100.0
 	heat = minf(heat, heat_cap)
+
+
+## Projectile Life sink: friendly projectiles and fragments live longer.
+func projectile_life_multiplier() -> float:
+	if not has("BRS2"):
+		return 1.0
+	var r := float(rank("BRS2"))
+	return 1.0 + 0.5 * r / (r + 100.0)
 
 
 func claims_heat() -> bool:
@@ -100,7 +120,13 @@ func claims_heat() -> bool:
 
 
 func _tiers() -> Array:
-	return TIERS_OVERCLOCK if has("BRK1") else TIERS_BASE
+	if not has("BRK1"):
+		return TIERS_BASE
+	var bonus := runner.keystone_bonus()
+	if bonus == 1.0:
+		return TIERS_OVERCLOCK
+	# Commitment: the keystone's beneficial numbers grow 25% (counts round down).
+	return [[50.0, 0.15, 1], [75.0, 0.30, 2], [100.0, 0.45 * bonus, int(3.0 * bonus)], [150.0, 0.60 * bonus, int(4.0 * bonus)]]
 
 
 func tier_index() -> int:
@@ -199,8 +225,10 @@ func add_heat(amount: float, from_input: bool = true) -> void:
 func _note_tier_change() -> void:
 	var now := tier_index()
 	if now != _tier:
-		if now > _tier and BattleText != null:
-			BattleText.popup(runner.player_position(), "HEAT %d" % int(heat), Color(1.0, 0.6, 0.2, 1.0), 1.1)
+		if now > _tier:
+			runner.add_action_charge(1.0)
+			if BattleText != null:
+				BattleText.popup(runner.player_position(), "HEAT %d" % int(heat), Color(1.0, 0.6, 0.2, 1.0), 1.1)
 		_tier = now
 	if has("BR11"):
 		for threshold in [50.0, 75.0]:
@@ -210,6 +238,7 @@ func _note_tier_change() -> void:
 
 func _jam() -> void:
 	counters["jams"] = int(counters["jams"]) + 1
+	runner.add_action_charge(2.0)
 	jam_left = HEAT_JAM_SECONDS
 	runner.block_native_fire(jam_left)
 	_jams_recent.append(_clock)
@@ -258,6 +287,7 @@ func _cool_head_check() -> void:
 
 ## A deliberate vent (Cool Head, Burst completion): stored rounds fire at aim.
 func _vent(to: float) -> void:
+	runner.add_action_charge(2.0)
 	heat = minf(heat, to)
 	_note_tier_change()
 	if stored_rounds > 0:
@@ -477,11 +507,12 @@ func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, 
 	_pending_fragments.append({
 		"burning": burning,
 		"cast": cast,
+		"life_scale": projectile_life_multiplier(),
 		"pos": position,
 		"vel": Vector2.from_angle(angle) * FRAGMENT_SPEED,
 		"target": target,
 		"damage": damage,
-		"life": FRAGMENT_LIFE,
+		"life": FRAGMENT_LIFE * projectile_life_multiplier(),
 		"pp": pp,
 		"bounces": bounces,
 		"root": root,
@@ -561,6 +592,7 @@ func _fragment_hit(fragment: Dictionary, target: int) -> void:
 
 
 func collect_draw_points(out: Array) -> void:
+	collect_beam_points(out)
 	for fragment in fragments:
 		out.append([fragment["pos"], 3.5, Color(1.0, 0.75, 0.3, 0.95)])
 	for patch in _patches:
@@ -601,11 +633,18 @@ func activate_q(id: String) -> Dictionary:
 		return {"ok": false, "message": "NOT BARRAGE", "cooldown": 0.0}
 	if jammed():
 		return {"ok": false, "message": "JAMMED", "cooldown": 0.0}
-	if burst_left > 0.0:
+	if burst_left > 0.0 or beam_left > 0.0:
 		return _cancel_burst()
 	burst_total = 3.0 if has("BRQ1") else 2.0
-	burst_left = burst_total
 	_burst_scale = runner.q_scale()
+	_burst_pp = runner.q_proc_scale()
+	if has("BRE1"):
+		# Heat Beam: the Burst is a swept piercing beam instead of a firing-rate window.
+		beam_left = burst_total
+		_beam_tick = 0.0
+		counters["bursts"] = int(counters["bursts"]) + 1
+		return {"ok": true, "message": "HEAT BEAM", "cooldown": 8.0}
+	burst_left = burst_total
 	_burst_extended = 0.0
 	_burst_kills.clear()
 	_burst_points = 3 if has("BRE2") else 0
@@ -614,7 +653,20 @@ func activate_q(id: String) -> Dictionary:
 	return {"ok": true, "message": "BURST", "cooldown": 8.0}
 
 
+func q_active(id: String) -> bool:
+	return id == "BRQ" and (burst_left > 0.0 or beam_left > 0.0)
+
+
 func _cancel_burst() -> Dictionary:
+	if beam_left > 0.0:
+		# Releasing the beam in the Cool Head band leaves a stationary beam.
+		beam_left = 0.0
+		if heat >= 65.0 and heat <= 80.0:
+			stationary_beam_left = 1.0
+			_stationary_from = _beam_from
+			_stationary_to = _beam_to
+			_stationary_tick = 0.0
+		return {"ok": false, "message": "RELEASED", "cooldown": 0.0}
 	var first_half := burst_left > burst_total * 0.5
 	burst_left = 0.0
 	_burst_points = 0
@@ -626,7 +678,37 @@ func _cancel_burst() -> Dictionary:
 	return {"ok": false, "message": "CANCELLED", "cooldown": 0.0}
 
 
+func _tick_beam(delta: float) -> void:
+	if beam_left > 0.0:
+		beam_left = maxf(0.0, beam_left - delta)
+		_beam_from = runner.player_position()
+		_beam_to = _beam_from + (runner.aim_target() - _beam_from).normalized() * 5.0 * AscensionRunner.L
+		_beam_tick += delta
+		while _beam_tick >= 0.15:
+			_beam_tick -= 0.15
+			_beam_strike(_beam_from, _beam_to, 0.75 * D() * _burst_scale)
+			add_heat(5.0, false)
+	if stationary_beam_left > 0.0:
+		stationary_beam_left = maxf(0.0, stationary_beam_left - delta)
+		_stationary_tick += delta
+		while _stationary_tick >= 0.15:
+			_stationary_tick -= 0.15
+			_beam_strike(_stationary_from, _stationary_to, 0.375 * D() * _burst_scale)
+
+
+func _beam_strike(from: Vector2, to: Vector2, damage: float) -> void:
+	var count := EnemyCombat.enemies_on_segment(from, to, 10.0, 0, _segment_scratch, _segment_ts)
+	var flags := PackedStringArray(["core_strike"])
+	if suppression_left > 0.0:
+		flags.append("v")
+	var tags := AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "BRQ", "beam", 1, 0.2 * _burst_pp, flags)
+	for i in range(count):
+		runner.damage_enemy(_segment_scratch[i], damage, tags)
+	counters["beam_ticks"] = int(counters.get("beam_ticks", 0)) + 1
+
+
 func _tick_burst(delta: float) -> void:
+	_tick_beam(delta)
 	if burst_left <= 0.0:
 		return
 	burst_left = maxf(0.0, burst_left - delta)
@@ -638,7 +720,7 @@ func _tick_burst(delta: float) -> void:
 			for i in range(_burst_points):
 				var angle := _clock * 1.5 + TAU * float(i) / float(_burst_points)
 				var from := runner.player_position() + Vector2.from_angle(angle) * 48.0
-				_fire(from, (aim - from).normalized(), 0.5 * D(), 0.7, "BRQ", "bullet", 1, PackedStringArray(["core_strike"]))
+				_fire(from, (aim - from).normalized(), 0.5 * D() * _burst_scale, 0.7 * _burst_pp, "BRQ", "bullet", 1, PackedStringArray(["core_strike"]))
 				counters["burst_rounds"] = int(counters["burst_rounds"]) + 1
 	if burst_left <= 0.0:
 		_complete_burst()
@@ -661,7 +743,7 @@ func _complete_burst() -> void:
 		runner.block_native_fire(jam_left)
 		heat = HEAT_AFTER_JAM
 	else:
-		_fan_volley(origin, aim, 12, 0.6 * D() * _burst_scale, 0.7, "BRQ", "bullet", 50.0)
+		_fan_volley(origin, aim, 12, 0.6 * D() * _burst_scale, 0.7 * _burst_pp, "BRQ", "bullet", 50.0)
 		counters["burst_rounds"] = int(counters["burst_rounds"]) + 12
 		if extra > 0:
 			_radial_volley(origin, extra, 0.5 * D(), 0.3, "BRQ5", "bullet")
@@ -740,6 +822,8 @@ func _tick_suppression(delta: float) -> void:
 		while _suppression_timer >= 0.25:
 			_suppression_timer -= 0.25
 			_suppression_mirror(runner.aim_target())
+	if suppression_left <= 0.0:
+		runner.note_revelation_ended("BRV")
 	if suppression_left <= 0.0 and has("BRV3"):
 		var rounds := mini(60, _suppression_shots / 4)
 		if rounds > 0:
@@ -763,6 +847,13 @@ func haste_multiplier(core: String) -> float:
 	return rate
 
 
+func collect_beam_points(out: Array) -> void:
+	if beam_left > 0.0:
+		out.append([_beam_from, 6.0, Color(1.0, 0.55, 0.2, 0.85), _beam_to])
+	if stationary_beam_left > 0.0:
+		out.append([_stationary_from, 4.0, Color(1.0, 0.7, 0.3, 0.6), _stationary_to])
+
+
 func move_speed_multiplier() -> float:
 	var mul := 1.0
 	if burst_left > 0.0 and has("BRQ1"):
@@ -783,6 +874,8 @@ func hud_state(slot: String) -> Dictionary:
 		state["resource_max"] = heat_cap
 		if jammed():
 			state["combat_text"] = "JAM"
+		elif beam_left > 0.0:
+			state["combat_text"] = "BEAM %.1fs" % beam_left
 		elif burst_left > 0.0:
 			state["combat_text"] = "BURST %.1fs" % burst_left
 		else:

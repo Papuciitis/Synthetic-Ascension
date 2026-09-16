@@ -1980,6 +1980,12 @@ func on_segment_completed(completed_segment: int) -> void:
 	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():
 		ascension_ledger().note_segment_completed(completed_segment)
+		# Guaranteed Evolution opportunities after segments 6 and 9, then every
+		# third segment. A qualified recipe is bought with the claim at the tree;
+		# with none, the claim stays banked (V4 "Purchase and recipe rules").
+		if completed_segment == 6 or completed_segment == 9 or (completed_segment > 9 and (completed_segment - 9) % 3 == 0):
+			ascension_ledger().grant_evolution_claim()
+			request_autosave()
 	attempt_segment = completed_segment + 1
 	attempt_deaths_this_segment = 0
 	attempt_checkpoint_pos = Vector2.INF

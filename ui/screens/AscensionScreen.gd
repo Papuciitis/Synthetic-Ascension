@@ -19,6 +19,7 @@ var _status: Label = null
 var _buttons: HBoxContainer = null
 var _gate_row: HBoxContainer = null
 var _pause_on_close: bool = false
+var _trigger_button: Button = null
 var _pause_was: bool = false
 var _selected: String = ""
 
@@ -131,6 +132,19 @@ func _build() -> void:
 	fit_button.focus_mode = Control.FOCUS_NONE
 	fit_button.pressed.connect(func() -> void: view.fit())
 	footer.add_child(fit_button)
+	_trigger_button = Button.new()
+	_trigger_button.text = "Reaction trigger"
+	_trigger_button.focus_mode = Control.FOCUS_NONE
+	_trigger_button.tooltip_text = "When the Reaction Q casts itself: a catastrophe begins, you lose 15% max HP within a second, or the first elite enters 2R."
+	_trigger_button.pressed.connect(func() -> void:
+		var ledger := _ledger()
+		if ledger == null:
+			return
+		var options := AscensionLedger.REACTION_TRIGGERS
+		var index := options.find(ledger.reaction_trigger())
+		ledger.set_reaction_trigger(options[(index + 1) % options.size()])
+		_after_change())
+	footer.add_child(_trigger_button)
 	var close_button := Button.new()
 	close_button.text = "Close"
 	close_button.focus_mode = Control.FOCUS_NONE
@@ -157,9 +171,14 @@ func _refresh_all() -> void:
 	var cores := PackedStringArray()
 	for core in ledger.cores():
 		cores.append(String(core).to_upper())
-	_header.text = "FOLLOWERS %d   ·   SPENT %d\nNATIVE %s   ·   CORES %s\nQ %s   ·   REACTION %s   ·   V %s" % [
-		Global.followers, int(ledger.state.get("spent", 0)), ledger.native_core().to_upper(), " ".join(cores),
-		_name_of(ledger.equipped("q")), _name_of(ledger.equipped("reaction")), _name_of(ledger.equipped("v"))]
+	var claims := int(ledger.state.get("evolution_claims", 0))
+	_header.text = "FOLLOWERS %d   ·   SPENT %d   ·   EVOLUTION CLAIMS %d\nNATIVE %s   ·   CORES %s\nQ %s   ·   REACTION %s (on %s)   ·   V %s%s" % [
+		Global.followers, int(ledger.state.get("spent", 0)), claims, ledger.native_core().to_upper(), " ".join(cores),
+		_name_of(ledger.equipped("q")), _name_of(ledger.equipped("reaction")), ledger.reaction_trigger(), _name_of(ledger.equipped("v")),
+		("  ·  V2 " + _name_of(ledger.equipped("v2"))) if not ledger.equipped("v2").is_empty() else ""]
+	if _trigger_button != null:
+		_trigger_button.text = "Reaction trigger: " + ledger.reaction_trigger()
+		_trigger_button.visible = ledger.reaction_slot_open()
 	if not _selected.is_empty():
 		_show(_selected)
 

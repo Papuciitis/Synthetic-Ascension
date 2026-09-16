@@ -116,7 +116,9 @@ func _run() -> void:
 	var elite := _spawn_enemy(100.0, origin + Vector2(0, -80), EnemyWorldTypes.Flags.ELITE)
 	_runner.damage_enemy(elite, 88.0, _slash_tags(4))
 	_check(_runner.enemy_alive(elite), "an elite at 12% survives: half the line is 6%")
-	_runner.damage_enemy(elite, 8.0, _slash_tags(5))
+	# The second Core hit consumes the Mark for +0.5D inside the hit itself,
+	# so a 0.5 raw hit lands 8 and leaves the elite at 4%.
+	_runner.damage_enemy(elite, 0.5, _slash_tags(5))
 	_check(not _runner.enemy_alive(elite) and int(_engine.counters["elite_sentences"]) == 1, "an elite at 4% is sentenced")
 	await _settle()
 

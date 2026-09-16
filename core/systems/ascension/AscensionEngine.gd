@@ -82,6 +82,38 @@ func on_player_damage_taken(_amount: float) -> void:
 	pass
 
 
+## Enemy damage that reached the player, with its source (Undo, Fixed Coin).
+func on_player_damage_resolved(_source: Node, _applied: float, _kind: StringName) -> void:
+	pass
+
+
+## Multiplier on incoming damage from one source; 0 makes it miss.
+func damage_taken_multiplier_for(_source: Node, _kind: StringName) -> float:
+	return damage_taken_multiplier()
+
+
+## Outgoing damage adjustment for one player hit, before mitigation.
+## `preview` = {handle, raw, tags, core, core_strike, family}. Return the
+## damage to apply (raw for no change).
+func modify_outgoing_damage(_preview: Dictionary, raw: float) -> float:
+	return raw
+
+
+## Lifetime multiplier for friendly projectiles and fragments.
+func projectile_life_multiplier() -> float:
+	return 1.0
+
+
+## Where an automatic cast of this engine's Q aims (V4 automation table).
+func auto_target(_id: String) -> Vector2:
+	return runner.nearest_enemy_position(AscensionRunner.L) if runner != null else Vector2.ZERO
+
+
+## Whether the engine wants the runner to keep each enemy's last hits (Replay).
+func wants_hit_history() -> bool:
+	return false
+
+
 func on_enemy_projectile_seen(_position: Vector2, _velocity: Vector2) -> void:
 	pass
 
@@ -143,6 +175,13 @@ func activate_q(_id: String) -> Dictionary:
 
 func activate_v(_id: String) -> Dictionary:
 	return {"ok": false, "message": "NOT WIRED", "cooldown": 0.0}
+
+
+## Whether this Q is in a running state (Burst, beam, a held Guard) that a
+## second press cancels or releases; the runner then routes the press to
+## activate_q even while the recovery is counting.
+func q_active(_id: String) -> bool:
+	return false
 
 
 ## Extra HUD lines for the slot: {"resource_value", "resource_max", "combat_text"}.

@@ -30,6 +30,7 @@ static func fresh_state(native_core: String) -> Dictionary:
 		"paid": {},
 		"starter": "",
 		"equipped": {"q": "", "v": "", "v2": "", "reaction": "", "keystones": [], "axioms": []},
+		"reaction_trigger": "catastrophe",
 		"disabled_mutations": [],
 		"evolution_claims": 0,
 		"segments_completed": 0,
@@ -53,6 +54,8 @@ func _init(tree: AscensionTreeDB, run_state: Dictionary) -> void:
 	for slot in ["reaction", "v2"]:
 		if not (state["equipped"] as Dictionary).has(slot):
 			(state["equipped"] as Dictionary)[slot] = ""
+	if not state.has("reaction_trigger"):
+		state["reaction_trigger"] = "catastrophe"
 
 
 # ---------------------------------------------------------------- queries
@@ -420,6 +423,20 @@ func _auto_equip(id: String) -> void:
 func _unequip(id: String) -> void:
 	for slot in ["q", "v", "v2", "reaction", "keystones", "axioms"]:
 		unequip(slot, id)
+
+
+const REACTION_TRIGGERS: Array[String] = ["catastrophe", "damage", "elite"]
+
+
+## The chosen Reaction Q trigger (V4: catastrophe begins, lose 15% max HP
+## to enemies, or the first elite enters 2R).
+func reaction_trigger() -> String:
+	return String(state.get("reaction_trigger", "catastrophe"))
+
+
+func set_reaction_trigger(trigger: String) -> void:
+	if REACTION_TRIGGERS.has(trigger):
+		state["reaction_trigger"] = trigger
 
 
 func set_mutation_enabled(id: String, enabled: bool) -> void:

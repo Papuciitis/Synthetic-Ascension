@@ -65,12 +65,118 @@ var payday_recovery: float = 0.0
 var rewrite_left: float = 0.0
 var _rewrite_kills: int = 0
 var _rewrite_big_damage: float = 0.0
+# Undo (DTF1): a one-second window of enemy damage that can be rewound.
+var _undo_cd: float = 0.0
+var _undo_window: Array = []          # [{t, source_handle, applied}]
+var _self_debts: Array = []           # [{amount, due, contributor, cancelled, paused}]
+# Fixed Coin (DTE1): the Heads refund bank.
+var _heads_bank: float = 0.0
+var _last_faces: Array = []
+var _slow_zone_set: bool = false
 
 var counters: Dictionary = {"twice": 0, "rerolls": 0, "scars": 0, "scar_releases": 0, "misfires": 0, "misfire_rolls": 0, "deposits": 0, "matured": 0, "debt_damage": 0.0, "back_pays": 0, "pass_ons": 0, "self_debt": 0, "compound": 0, "contradictions": 0, "coins": 0, "heads": 0, "tails": 0, "pennies": 0, "loaded_blasts": 0, "paydays": 0, "rewrites": 0, "misfortune_added": 0, "guarantees": 0, "dice_payments": 0, "fading_ticks": 0}
 
 
 func discipline() -> String:
 	return "DT"
+
+
+func wants_hit_history() -> bool:
+	return has("DTV2")
+
+
+## REWRITE: normals' melee swings miss. A "swing" is damage from a normal
+## enemy adjacent to the player (contact, or a source within 1.5R); ranged
+## hits and elite/boss attacks still land.
+func damage_taken_multiplier_for(source: Node, kind: StringName) -> float:
+	if rewrite_left <= 0.0 or source == null or not is_instance_valid(source):
+		return 1.0
+	if kind == &"contact_swarm":
+		return 0.0
+	var handle := EnemyCombat.handle_for_actor(source)
+	if handle == 0 or not runner.is_normal(handle):
+		return 1.0
+	if runner.enemy_position(handle).distance_to(runner.player_position()) <= 1.5 * AscensionRunner.R:
+		return 0.0
+	return 1.0
+
+
+## Undo and Fixed Coin watch the damage the player actually took.
+func on_player_damage_resolved(source: Node, applied: float, _kind: StringName) -> void:
+	if heads_left > 0.0 and has("DTE1"):
+		_heads_bank += 0.3 * applied
+	if not has("DTF1"):
+		return
+	var handle := EnemyCombat.handle_for_actor(source) if source != null and is_instance_valid(source) else 0
+	_undo_window.append({"t": _clock, "source": handle, "applied": applied})
+	while not _undo_window.is_empty() and _clock - float(_undo_window[0]["t"]) > 1.0:
+		_undo_window.pop_front()
+	if _undo_cd > 0.0:
+		return
+	var max_hp := float(runner.player().get("max_hp"))
+	var total := 0.0
+	var by_source: Dictionary = {}
+	for entry in _undo_window:
+		total += float(entry["applied"])
+		by_source[entry["source"]] = float(by_source.get(entry["source"], 0.0)) + float(entry["applied"])
+	if total < 0.25 * max_hp or float(runner.player().get("hp")) <= 0.0:
+		return
+	_undo_cd = 12.0
+	_undo_window.clear()
+	var greatest := 0
+	var greatest_amount := 0.0
+	for source_handle in by_source:
+		if float(by_source[source_handle]) > greatest_amount:
+			greatest_amount = float(by_source[source_handle])
+			greatest = int(source_handle)
+	var lost := float(runner.player().get("max_hp")) - float(runner.player().get("hp"))
+	var restored := minf(total, lost)
+	runner.heal_player(restored, &"undo")
+	_self_debts.append({"amount": restored, "due": _clock + 3.0, "contributor": greatest, "cancelled": 0.0, "dealt": 0.0, "paused": false})
+	counters["undos"] = int(counters.get("undos", 0)) + 1
+	if BattleText != null:
+		BattleText.popup(runner.player_position(), "UNDO", Color(0.8, 0.9, 1.0, 1.0), 1.4)
+
+
+func _tick_self_debts(delta: float) -> void:
+	_undo_cd = maxf(0.0, _undo_cd - delta)
+	if _self_debts.is_empty():
+		return
+	var paused := tails_left > 0.0 and has("DTE1")
+	for i in range(_self_debts.size() - 1, -1, -1):
+		var debt: Dictionary = _self_debts[i]
+		if paused:
+			debt["due"] = float(debt["due"]) + delta
+			continue
+		if _clock >= float(debt["due"]):
+			var owed := float(debt["amount"]) * (1.0 - clampf(float(debt["cancelled"]), 0.0, 1.0))
+			if owed > 0.0:
+				runner.pay_health(owed, &"undo_debt")
+			_self_debts.remove_at(i)
+
+
+## Killing the greatest contributor cancels half of a self-Debt; each 2D dealt
+## to it cancels another 10%. With Fixed Coin, cancelled Debt during Tails
+## becomes a 2R blast worth 1D per 5% max HP cancelled.
+func _cancel_self_debt(handle: int, dealt: float, killed: bool) -> void:
+	if _self_debts.is_empty():
+		return
+	var max_hp := float(runner.player().get("max_hp"))
+	for debt in _self_debts:
+		if int(debt["contributor"]) != handle:
+			continue
+		var before := float(debt["cancelled"])
+		if killed:
+			debt["cancelled"] = minf(1.0, before + 0.5)
+		else:
+			debt["dealt"] = float(debt["dealt"]) + dealt
+			while float(debt["dealt"]) >= 2.0 * D() and float(debt["cancelled"]) < 1.0:
+				debt["dealt"] = float(debt["dealt"]) - 2.0 * D()
+				debt["cancelled"] = minf(1.0, float(debt["cancelled"]) + 0.1)
+		var cancelled_amount := float(debt["amount"]) * (float(debt["cancelled"]) - before)
+		if cancelled_amount > 0.0 and tails_left > 0.0 and has("DTE1") and max_hp > 0.0:
+			var blast := D() * (cancelled_amount / max_hp) / 0.05
+			runner.spawn_impact(runner.enemy_position(handle) if runner.enemy_alive(handle) else runner.player_position(), blast, AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DTE1", "impact", 1, 0.4), 2.0 * AscensionRunner.R)
 
 
 func claimed_nouns() -> Array[StringName]:
@@ -148,7 +254,7 @@ func on_roll(name: StringName, success: bool, chance: float) -> void:
 		if has("DTK1") and _dice_payment_cd <= 0.0:
 			_dice_payment_cd = 0.5
 			counters["dice_payments"] = int(counters["dice_payments"]) + 1
-			runner.pay_health(0.01 * float(runner.player().get("max_hp")), &"loaded_dice")
+			runner.pay_health_lethal(0.01 * float(runner.player().get("max_hp")), &"loaded_dice")
 
 
 ## Payload scaling from Loaded Dice and Bad Luck, consumed once.
@@ -157,8 +263,8 @@ func _payload_boost() -> Dictionary:
 	var pp := 1.0
 	if _loaded_payload:
 		_loaded_payload = false
-		damage *= 1.5
-		pp *= 1.5
+		damage *= 1.0 + 0.5 * runner.keystone_bonus()
+		pp *= 1.0 + 0.5 * runner.keystone_bonus()
 	if _bad_luck_boost:
 		_bad_luck_boost = false
 		pp *= 2.0
@@ -239,6 +345,8 @@ func on_hit(hit: Dictionary) -> void:
 		_coin_tagged[handle] = true
 	if hit["family"] == AscensionTags.FAMILY_TREE and has("DT08") and not is_debt:
 		_contradiction(hit, handle)
+	if has("DTF1") and not _self_debts.is_empty():
+		_cancel_self_debt(handle, applied, false)
 	if bool(hit["is_boss"]) and (heads_left > 0.0 or tails_left > 0.0):
 		_coin_boss_damage += applied
 		while _coin_boss_damage >= 3.0 * D():
@@ -437,9 +545,11 @@ func _mature(handle: int, bucket: Dictionary, natural: bool) -> void:
 	if bool(bucket["v"]):
 		flags.append("v")
 	var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DT06", "debt", 1, DEBT_PP, flags)
-	runner.damage_enemy(handle, amount, tags)
+	var dealt := runner.damage_enemy(handle, amount, tags)
 	if natural:
 		_matured_times.append(_clock)
+		if dealt > 0.0:
+			runner.add_action_charge(1.0, bool(bucket["v"]))
 		if has("DTC") and payday_recovery <= 0.0 and payday_left <= 0.0:
 			var crowd := _deposit_times.size() >= PAYDAY_DEPOSITS
 			var lone := _matured_times.size() >= PAYDAY_BOSS_MATURED
@@ -518,6 +628,10 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 	var position: Vector2 = hit["position"]
 	var tags: PackedStringArray = hit["tags"]
 	var by_debt := AscensionTags.has_flag(tags, "debt")
+	if has("DTF1") and not _self_debts.is_empty():
+		_cancel_self_debt(handle, 0.0, true)
+	if has("DTV2") and rewrite_left > 0.0 and not AscensionTags.has_flag(tags, "replay"):
+		_replay(handle, position)
 	if has("DTE2") and _coin_tagged.has(handle):
 		_coin_tagged.erase(handle)
 		var owed := collect_debt(handle)
@@ -542,6 +656,25 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 		_rewrite_kills += 1
 	_fading.erase(handle)
 	_slows.erase(handle)
+
+
+## Replay (DTV2): each real death during REWRITE repeats its last three
+## non-Replay hits at the corpse, 35% damage, original geometry, P 0.3.
+func _replay(handle: int, position: Vector2) -> void:
+	var history: Array = runner.hit_history(handle)
+	for entry in history:
+		var damage := 0.35 * float(entry["damage"])
+		if damage <= 0.0:
+			continue
+		var core := AscensionTags.value_of(entry["tags"], "core")
+		if core.is_empty():
+			core = "magic"
+		var tags := AscensionTags.make(core, AscensionTags.FAMILY_TREE, "DTV2", String(entry["kind"]), 2, 0.3, PackedStringArray(["v", "replay"]))
+		if String(entry["kind"]) == "slash":
+			runner.spawn_slash(position, entry["dir"], damage, tags, float(entry["arc"]), float(entry["radius"]))
+		else:
+			runner.spawn_impact(position, damage, tags, float(entry["radius"]))
+		counters["replays"] = int(counters.get("replays", 0)) + 1
 
 
 func _bad_penny(position: Vector2, victim: int) -> void:
@@ -641,6 +774,7 @@ func _tick_misfire(_delta: float) -> void:
 		counters["misfire_rolls"] = int(counters["misfire_rolls"]) + 1
 		if runner.roll(&"misfire", MISFIRE_CHANCE, 1.0):
 			counters["misfires"] = int(counters["misfires"]) + 1
+			runner.add_action_charge(1.0)
 			ProjectileManager.remove_projectile(id)
 			add_scar(bullet["position"], 0.3 * D())
 			_denial_bonus = 0.0
@@ -682,17 +816,27 @@ func activate_q(id: String) -> Dictionary:
 	if has("DTQ3"):
 		_house_edge()
 	var flips := 2 if has("DTQ4") else 1
-	# An automatic (Reaction) Coin uses a chosen face, never a blind Tails
-	# payment at the densest moment (review F7).
-	var chosen := has("DTQ5") or runner.reaction_cast
+	if runner.encore_cast and not _last_faces.is_empty():
+		# Encore repeats the opening cast's faces; health is paid only once.
+		for face in _last_faces:
+			_flip(true, bool(face), true)
+		return {"ok": true, "message": "ENCORE", "cooldown": 0.0}
+	# An automatic (Reaction / Method) Coin uses a chosen face, never a blind
+	# Tails payment at the densest moment (review F7).
+	var chosen := has("DTQ5") or runner.reaction_cast or runner.automatic_cast
+	_last_faces.clear()
 	for _i in range(flips):
 		_flip(chosen)
 	return {"ok": true, "message": "HEADS" if heads_left > 0.0 and tails_left <= 0.0 else ("TAILS" if tails_left > 0.0 and heads_left <= 0.0 else "BOTH"), "cooldown": 9.0}
 
 
-func _flip(chosen_heads: bool) -> void:
+func _flip(chosen_heads: bool, forced_face: bool = false, free: bool = false) -> void:
 	var heads_chance := 0.75 if has("DTQ1") else 0.5
 	var heads := chosen_heads or runner.rng().randf() < heads_chance
+	if free:
+		heads = forced_face
+	else:
+		_last_faces.append(heads)
 	var scale := 0.5 if has("DTQ5") else 1.0
 	if heads:
 		counters["heads"] = int(counters["heads"]) + 1
@@ -703,7 +847,7 @@ func _flip(chosen_heads: bool) -> void:
 	else:
 		counters["tails"] = int(counters["tails"]) + 1
 		_tails_stacks += 1
-		var paid := runner.pay_health(0.12 * float(runner.player().get("hp")), &"coin_tails")
+		var paid := 0.0 if free else runner.pay_health(0.12 * float(runner.player().get("hp")), &"coin_tails")
 		_coin_paid += paid
 		tails_left = 3.0 * scale
 		_double_window = 1.0
@@ -734,6 +878,11 @@ func _coin_refund() -> void:
 func _tick_coin(delta: float) -> void:
 	if heads_left > 0.0:
 		heads_left = maxf(0.0, heads_left - delta)
+		if heads_left <= 0.0 and has("DTE1") and _heads_bank > 0.0 and float(runner.player().get("hp")) > 0.0:
+			# Fixed Coin: the Heads refund lands when the state ends, if alive.
+			runner.heal_player(_heads_bank, &"fixed_coin")
+			counters["heads_refunds"] = int(counters.get("heads_refunds", 0)) + 1
+			_heads_bank = 0.0
 	if tails_left > 0.0:
 		tails_left = maxf(0.0, tails_left - delta)
 		if tails_left <= 0.0:
@@ -766,6 +915,8 @@ func _tick_rewrite(delta: float) -> void:
 	if rewrite_left <= 0.0:
 		return
 	rewrite_left = maxf(0.0, rewrite_left - delta)
+	if rewrite_left <= 0.0:
+		runner.note_revelation_ended("DTV")
 	if rewrite_left <= 0.0 and has("DTV3"):
 		var carrying := 0
 		for handle in debts:
@@ -776,7 +927,7 @@ func _tick_rewrite(delta: float) -> void:
 		var bill := minf(0.70, 0.40 + 0.02 * float(carrying))
 		bill -= 0.01 * float(_rewrite_kills)
 		bill = maxf(0.0, bill)
-		runner.pay_health(bill * float(runner.player().get("max_hp")), &"the_bill")
+		runner.pay_health_lethal(bill * float(runner.player().get("max_hp")), &"the_bill")
 
 
 # ---------------------------------------------------------------- tick, multipliers, HUD
@@ -789,6 +940,13 @@ func tick(delta: float) -> void:
 		payday_recovery = maxf(0.0, payday_recovery - delta)
 	_tick_coin(delta)
 	_tick_rewrite(delta)
+	_tick_self_debts(delta)
+	if has("DT05"):
+		ProjectileManager.set_enemy_slow_zone(runner.player_position(), AscensionRunner.R, 0.7)
+		_slow_zone_set = true
+	elif _slow_zone_set:
+		ProjectileManager.clear_enemy_slow_zone()
+		_slow_zone_set = false
 	_tick_echoes(delta)
 	_tick_fading(delta)
 	_tick_debts(delta)

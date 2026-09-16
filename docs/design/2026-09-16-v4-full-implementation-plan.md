@@ -27,7 +27,7 @@ is a presentation reference only; none of its economy or node rules apply.
 | 0 | Read-first: checkout, collaborator commits, recorder, audit, baseline suites | done 2026-09-16 (14 suites green) |
 | 1 | Implementation matrix for all 350 nodes and shared rules | done; regenerate after every slice |
 | 2 | Stability pass: fragment acquisition, recorder trust, regression coverage, baselines | done 2026-09-16 (see PERFORMANCE_PATCH_CHANGELOG); rendered check deferred to stage 4 |
-| 3a | Finish Execution, Barrage, Distortion omissions (EX12, EXA, BRE1, BRS2, DT05 slow, DTF1, DTE1, DTV2, approximations) | pending |
+| 3a | Finish Execution, Barrage, Distortion omissions and the shared rules they hang on | done 2026-09-16 |
 | 3b | Momentum, Bastion (Melee) | pending |
 | 3c | Precision, Ordnance (Ranged) | pending |
 | 3d | Invocation, Dominion (Magic) | pending |
@@ -45,6 +45,19 @@ is a presentation reference only; none of its economy or node rules apply.
   identifier) so authored definitions can later move to Resources that
   reference behaviours by id rather than by display text (stage 5 boundary).
 
+- 2026-09-16: keystone and Mark damage rules run through an explicit
+  outgoing-damage hook on EnemyCombatService instead of heal-backs; a
+  reduction applies to the whole hit including a consumed Mark's +0.5D.
+- 2026-09-16: REWRITE's "normals' melee swings miss" reads as contact damage
+  or a normal enemy within 1.5R of the player; elite and boss attacks land.
+- 2026-09-16: Only the Weak / One at a Time treat the Core hit that marks an
+  unmarked target as marked (authored: application precedes evaluation).
+- 2026-09-16: Ascendant's two Revelations have independent meters; kills and
+  actions fill both; tap casts the selected (alternating) or the ready one.
+- 2026-09-16: Doctrine pick Fortune (reward reroll) is out of the combat
+  scope; Wild Card is moot because a claim can already buy any qualified
+  Evolution. Both recorded in the matrix.
+
 ## Verification log
 
 - 2026-09-16 baseline on 31a84e4 + local: AscensionLedgerTest 71,
@@ -59,3 +72,5 @@ is a presentation reference only; none of its economy or node rules apply.
   6, FlightRecorderSampleTest 6, PerformanceFlightRecorderTest 48,
   EnemyCombatQueryTest 19, AscensionBarrageTest 38, AscensionHybridTest 41,
   AscensionRuntimeSafetyTest 18; all 0 failed. Numbers in the changelog.
+- 2026-09-16 stage 3a: AscensionSharedRulesTest 30, AscensionSliceCompletionTest
+  23, plus the nine earlier ascension suites unchanged; ScriptParseAuditTest 395.

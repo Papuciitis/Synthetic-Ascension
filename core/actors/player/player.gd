@@ -1148,7 +1148,14 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		amount *= mr4.get_damage_taken_multiplier()
 	var ar4: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
 	if ar4 != null:
-		amount *= ar4.get_damage_taken_multiplier()
+		var tree_mul := ar4.get_damage_taken_multiplier_for(source, kind)
+		if tree_mul <= 0.0:
+			# A tree rule made this attack miss (REWRITE: normals' swings).
+			_report_balance_damage(raw_amount, 0.0, 0.0, source, kind, &"missed")
+			if BattleText != null:
+				BattleText.popup(global_position, "MISS", Color(0.8, 0.6, 1.0, 1.0), 1.0)
+			return
+		amount *= tree_mul
 
 	var armor_val: float = 0.0
 	if stats != null:
@@ -1275,12 +1282,13 @@ func grant_invulnerability(duration: float) -> void:
 
 
 ## Health spent on purpose by an advancement-tree rule (Tails, Backfire, Bad
-## Luck). Not a hit: no evasion, no armour, no i-frames, no on-damage rules,
-## and it can never kill - the floor is 1 HP. Returns what was actually paid.
-func pay_health(amount: float, reason: StringName = &"ascension") -> float:
+## Luck). Not a hit: no evasion, no armour, no i-frames, no on-damage rules.
+## Ordinary payments floor at 1 HP; `lethal` payments (The Bill, Loaded Dice,
+## as authored) may kill. Returns what was actually paid.
+func pay_health(amount: float, reason: StringName = &"ascension", lethal: bool = false) -> float:
 	if is_dead or amount <= 0.0 or Global.debug_player_god_mode:
 		return 0.0
-	var paid: float = minf(amount, maxf(hp - 1.0, 0.0))
+	var paid: float = minf(amount, hp if lethal else maxf(hp - 1.0, 0.0))
 	if paid <= 0.0:
 		return 0.0
 	hp -= paid
@@ -1291,7 +1299,26 @@ func pay_health(amount: float, reason: StringName = &"ascension") -> float:
 	hp_changed.emit(hp, max_hp)
 	if RunEvents != null and RunEvents.player_paid_health.has_connections():
 		RunEvents.player_paid_health.emit(self, paid, reason)
+	if hp <= 0.0 and not _try_doctrine_death_intercept():
+		die()
 	return paid
+
+
+## Attack recovery left on the native weapon, and its removal (Clean Cut).
+func native_recovery_left() -> float:
+	return _weapon_cd
+
+
+func clear_native_recovery() -> void:
+	_weapon_cd = 0.0
+
+
+## Gives back dash recovery (Clean Cut's generated executions).
+func refund_dash_recovery(seconds: float) -> void:
+	if seconds <= 0.0:
+		return
+	_dash.cooldown_left = maxf(0.0, _dash.cooldown_left - seconds)
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
 
 
 # ---------------------------------------------------------------------------

@@ -9,6 +9,12 @@ var _last_segment_t: float = -1.0
 # Standalone tests run their own status service instance; production resolves
 # the /root/EnemyStatus autoload when this is null.
 var status_service_override: Node = null
+## Optional hook the player's advancement tree registers: called for every
+## player-sourced hit (not status ticks) before mitigation, with
+## (handle, raw_damage, payload) and returning the damage to apply. This is
+## how keystones such as Only the Weak reduce a hit against a healthy target
+## exactly, instead of healing a share back after the fact.
+var player_damage_modifier: Callable = Callable()
 # Roadmap §9 elite modifiers that live in the damage path. Both registries are
 # empty until a modifier is live, so a hit on an ordinary horde pays one
 # is_empty() test each; entries clear on the elite's death here and on any
@@ -67,6 +73,10 @@ func _apply_damage(
 		and actor.has_method("take_damage")
 	):
 		return _apply_legacy_damage(handle, actor, raw_damage, source)
+	if is_hit and source != null and player_damage_modifier.is_valid():
+		raw_damage = maxf(0.0, float(player_damage_modifier.call(handle, raw_damage, payload)))
+		if raw_damage <= 0.0:
+			return 0.0
 	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count, is_hit)
 	var applied_damage := minf(adjusted_damage, current_health)
 	if applied_damage <= 0.0:

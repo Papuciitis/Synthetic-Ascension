@@ -51,6 +51,10 @@ var _decimation_tell: float = -1.0
 var _decimation_casts: int = 0
 var _boss_sentence_cd: float = 0.0
 var _clock: float = 0.0
+var _clean_cut_volley: int = -1
+var _dash_refund_window: float = 0.0
+var _dash_refund_used: float = 0.0
+var _elite_damage_bank: float = 0.0
 
 var counters: Dictionary = {"executions": 0, "line_finishes": 0, "spillovers": 0, "bolt_hits": 0, "corpse_bombs": 0, "cleaves": 0, "marks": 0, "mark_consumed": 0, "first_cuts": 0, "last_words": 0, "reservoir_releases": 0, "gavels": 0, "gavel_executions": 0, "public_executions": 0, "chain_gavels": 0, "lesser_gavels": 0, "second_swings": 0, "red_mists": 0, "decimations": 0, "elite_sentences": 0, "boss_sentences": 0, "cracks": 0}
 
@@ -71,7 +75,7 @@ func line() -> float:
 	if has("EXS2"):
 		value += 0.0015 * float(mini(rank("EXS2"), 30))
 	if has("EXK1"):
-		value += 0.12
+		value += 0.12 * runner.keystone_bonus()
 	if has("EX04"):
 		value += BLOODLETTING_STEP * float(_bloodletting_stacks)
 	if has("EXQ7") and _five_down_left > 0.0:
@@ -213,46 +217,70 @@ func on_hit(hit: Dictionary) -> void:
 			_finish(hit, handle)
 
 
-## Mark, First Cut, Reservoir release, Cracked and keystone modifiers on a Core hit.
+## Exact hit adjustments, applied before mitigation: Mark's +0.5D on the
+## consuming hit, First Cut's +1D on a full-health target, Cracked's +15%,
+## Only the Weak's -25% above half HP, One at a Time's +50% / -30%.
+func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:
+	var handle := int(preview["handle"])
+	var core_strike := bool(preview["core_strike"])
+	var damage := raw
+	var max_hp := runner.enemy_max_hp(handle)
+	var hp := runner.enemy_hp(handle)
+	if core_strike:
+		if has("EX02") and runner.has_status(handle, "mark") and not runner.has_status(handle, "mark_fresh"):
+			damage += 0.5 * D()
+		if has("EX08") and max_hp > 0.0 and is_equal_approx(hp, max_hp):
+			damage += D()
+		if runner.has_status(handle, "cracked"):
+			damage *= 1.15
+	if has("EXK2"):
+		# Mark application happens before the hit is evaluated (authored), so
+		# the Core hit that marks an unmarked target already counts as marked.
+		var marked := runner.has_status(handle, "mark") or (core_strike and has("EX02"))
+		if marked:
+			damage *= 1.0 + 0.5 * runner.keystone_bonus()
+		else:
+			damage *= 0.7
+	elif has("EXK1") and core_strike and max_hp > 0.0 and hp > 0.5 * max_hp:
+		damage *= 0.75
+	return damage
+
+
+## Mark, First Cut, Reservoir release and Cracked bookkeeping on a Core hit
+## (the damage itself was adjusted in modify_outgoing_damage).
 func _core_strike_hit(hit: Dictionary, handle: int) -> void:
-	var applied := float(hit["applied"])
-	var bonus := 0.0
 	if has("EX02") and runner.has_status(handle, "mark") and not runner.has_status(handle, "mark_fresh"):
 		runner.clear_status(handle, "mark")
 		_marks.erase(handle)
-		bonus += 0.5 * D()
 		counters["mark_consumed"] = int(counters["mark_consumed"]) + 1
 	if has("EX02") and not runner.has_status(handle, "mark"):
 		_mark(handle, hit)
 	if has("EX08") and is_equal_approx(float(hit["before"]), float(hit["max_hp"])) and float(hit["max_hp"]) > 0.0:
-		bonus += D()
 		runner.status_of(handle)["wound"] = _clock + 2.0
 		counters["first_cuts"] = int(counters["first_cuts"]) + 1
 	if has("EX07") and _reservoir > 0.0:
-		bonus += _reservoir
+		var stored := _reservoir
 		_release_reservoir_line(hit, handle)
 		_reservoir = 0.0
 		_reservoir_left = 0.0
+		if runner.enemy_alive(handle):
+			runner.damage_enemy(handle, stored, _payload_tags("EX07", "bonus", hit, 0.0))
 	if runner.has_status(handle, "cracked"):
 		var record := runner.status_of(handle)
-		bonus += 0.15 * applied
 		record["cracked"] = int(record["cracked"]) - 1
 		if int(record["cracked"]) <= 0:
 			runner.clear_status(handle, "cracked")
-	if has("EXK2"):
-		if runner.has_status(handle, "mark"):
-			bonus += 0.5 * applied
-		else:
-			EnemyCombat.heal(handle, 0.3 * applied)
-	elif has("EXK1") and float(hit["before"]) > 0.5 * float(hit["max_hp"]):
-		EnemyCombat.heal(handle, 0.25 * applied)
 	runner.clear_status(handle, "mark_fresh")
-	if bonus > 0.0 and runner.enemy_alive(handle):
-		runner.damage_enemy(handle, bonus, _payload_tags("EX02", "bonus", hit, 0.0))
+	if (bool(hit["is_elite"]) or bool(hit["is_boss"])) and hit["core"] == "melee":
+		# Action charge: +1 per 2D of Core damage to an elite or boss.
+		_elite_damage_bank += float(hit["applied"])
+		while _elite_damage_bank >= 2.0 * D():
+			_elite_damage_bank -= 2.0 * D()
+			runner.add_action_charge(1.0, AscensionTags.has_flag(hit["tags"], "v"))
 
 
 func _mark(handle: int, hit: Dictionary) -> void:
-	var capacity := 8 if has("EXK2") else 1
+	var capacity := int(8.0 * runner.keystone_bonus()) if has("EXK2") else 1
 	while _marks.size() >= capacity and not _marks.is_empty():
 		var old: int = _marks.pop_front()
 		runner.clear_status(old, "mark")
@@ -307,11 +335,15 @@ func _finish(hit: Dictionary, handle: int) -> void:
 
 func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 	var melee_kill: bool = hit["core"] == "melee"
-	if not melee_kill and not (has("MR2") and hit["path"] == "fragment"):
-		return
 	var handle := int(hit["handle"])
 	var tags: PackedStringArray = hit["tags"]
 	var cast := _cast_of(tags)
+	# Overkill (Axiom): any Core kill may Spillover, at 60% overkill, 0.3D seed.
+	if not melee_kill and has("EXA") and has("EX03") and AscensionTags.has_flag(tags, "core_strike"):
+		var axiom_overkill := 0.6 * float(hit["overkill"])
+		_spillover(hit, handle, cast, maxf(axiom_overkill, 0.3 * D()))
+	if not melee_kill and not (has("MR2") and hit["path"] == "fragment"):
+		return
 	var by_line := AscensionTags.has_flag(tags, "line_kill")
 	var executed := _execution_enabled(hit) and (bool(hit["is_normal"]) or by_line)
 	var overkill := float(hit["overkill"])
@@ -336,8 +368,11 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 
 func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) -> void:
 	counters["executions"] = int(counters["executions"]) + 1
+	runner.add_action_charge(2.0, AscensionTags.has_flag(hit["tags"], "v"))
 	if has("EX04"):
 		_stack_bloodletting()
+	if has("EX12"):
+		_clean_cut(hit)
 	var path := String(hit["path"])
 	var from_gavel: bool = path == "gavel" or path == "chain_gavel" or path == "lesser_gavel"
 	if from_gavel:
@@ -371,6 +406,26 @@ func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) 
 			counters["death_debts"] = int(counters.get("death_debts", 0)) + 1
 			var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "MM2", "impact", int(hit["gen"]) + 1, 0.4)
 			runner.spawn_impact(hit["position"], maxf(owed, 0.5 * D()), tags, 1.5 * AscensionRunner.R)
+
+
+## Clean Cut: the first execution after a native Melee input removes the
+## rest of that attack's recovery; generated executions return 0.15 s of
+## dash recovery each, at most 0.6 s per second.
+func _clean_cut(hit: Dictionary) -> void:
+	if hit["family"] == AscensionTags.FAMILY_NATIVE:
+		if _clean_cut_volley != _volley:
+			_clean_cut_volley = _volley
+			runner.clear_native_recovery()
+			counters["clean_cuts"] = int(counters.get("clean_cuts", 0)) + 1
+		return
+	if _clock - _dash_refund_window >= 1.0:
+		_dash_refund_window = _clock
+		_dash_refund_used = 0.0
+	var refund := minf(0.15, 0.6 - _dash_refund_used)
+	if refund > 0.0:
+		_dash_refund_used += refund
+		runner.refund_dash_recovery(refund)
+		counters["dash_refunds"] = int(counters.get("dash_refunds", 0)) + 1
 
 
 func _spillover(hit: Dictionary, handle: int, cast: String, overkill: float) -> void:
@@ -476,11 +531,36 @@ func _red_mist(hit: Dictionary) -> void:
 # ---------------------------------------------------------------- Gavel (Q)
 
 func _gavel_radius() -> float:
+	var scale := _gavel_area_scale
 	if has("EXE1") or has("EXQ1"):
-		return 2.0 * AscensionRunner.R
+		return 2.0 * AscensionRunner.R * scale
 	if has("EXQ2"):
-		return AscensionRunner.R
-	return 1.25 * AscensionRunner.R
+		return AscensionRunner.R * scale
+	return 1.25 * AscensionRunner.R * scale
+
+
+var _gavel_area_scale: float = 1.0
+var _gavel_pp_scale: float = 1.0
+
+
+## Automatic Gavel: the nearest wounded normal within L, else the nearest enemy.
+func auto_target(_id: String) -> Vector2:
+	var origin := runner.player_position()
+	var best := 0
+	var best_distance := INF
+	for handle in runner.enemies_in_radius(origin, AscensionRunner.L):
+		if not runner.is_normal(handle):
+			continue
+		var max_hp := runner.enemy_max_hp(handle)
+		if max_hp <= 0.0 or runner.enemy_hp(handle) / max_hp > 2.0 * line():
+			continue
+		var distance := origin.distance_to(runner.enemy_position(handle))
+		if distance < best_distance:
+			best_distance = distance
+			best = handle
+	if best == 0:
+		best = runner.nearest_enemy(origin, AscensionRunner.L)
+	return runner.enemy_position(best) if best != 0 else runner.aim_target()
 
 
 func _gavel_damage() -> float:
@@ -498,7 +578,9 @@ func activate_q(id: String) -> Dictionary:
 	if _gavel_windup >= 0.0:
 		return {"ok": false, "message": "WINDING UP", "cooldown": 0.0}
 	var origin := runner.player_position()
-	var aim := runner.aim_target()
+	var aim := runner.auto_aim_for("EXQ") if runner.automatic_cast else runner.aim_target()
+	_gavel_area_scale = runner.q_area_scale()
+	_gavel_pp_scale = runner.q_proc_scale()
 	if has("EXQ4"):
 		var rect := runner.camera_rect()
 		_gavel_point = Vector2(clampf(aim.x, rect.position.x, rect.end.x), clampf(aim.y, rect.position.y, rect.end.y))
@@ -547,7 +629,7 @@ func _gather(delta: float) -> void:
 		var to_point := _gavel_point - runner.enemy_position(handle)
 		if to_point.length() < 8.0:
 			continue
-		var pull := 1.0
+		var pull := _gavel_area_scale
 		if runner.is_boss(handle):
 			continue
 		if runner.is_elite(handle):
@@ -558,7 +640,7 @@ func _gather(delta: float) -> void:
 func _strike(point: Vector2, damage: float, radius: float, cast: String, path: String, extra_flags: PackedStringArray) -> void:
 	var flags := PackedStringArray(["execute_enabled", "core_strike"])
 	flags.append_array(extra_flags)
-	var tags := AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "EXQ", path, 1, 1.0, flags)
+	var tags := AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "EXQ", path, 1, _gavel_pp_scale, flags)
 	tags.append("cast:" + cast)
 	runner.spawn_impact(point, damage, tags, radius)
 	for handle in runner.enemies_in_radius(point, radius):
@@ -643,6 +725,7 @@ func _tick_decimation(delta: float) -> void:
 
 func _decimate() -> void:
 	counters["decimations"] = int(counters["decimations"]) + 1
+	runner.note_revelation_ended("EXV")
 	if BattleText != null:
 		BattleText.popup(runner.player_position(), "DECIMATION", Color(0.9, 0.1, 0.1, 1.0), 1.8)
 	var rect := runner.camera_rect()

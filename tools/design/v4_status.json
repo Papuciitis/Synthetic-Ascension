@@ -120,10 +120,10 @@
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
  "BRE1": {
-  "note": "Heat Beam: Burst becomes a swept piercing beam",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "swept piercing beam, 0.75D per 0.15 s, +5 Heat per tick, stationary half-damage beam on a Cool Head release",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
  "BRE2": {
   "note": "rotating points fire 0.5D at 4/s, Three Guns seeds three, points grow per third fragment bounce; completion dump and 1.5 s Jam",
@@ -144,7 +144,7 @@
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
  "BRK1": {
-  "note": "",
+  "note": "Commitment scales cap, tier rates and side rounds",
   "status": "implemented",
   "test": "AscensionBarrageTest",
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
@@ -210,10 +210,10 @@
   "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
  "BRS2": {
-  "note": "Projectile Life: friendly projectile lifetime +50% x rank/(rank+100)",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "native bullets, generated bullets and fragments live longer",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
  },
  "BRV": {
   "note": "",
@@ -264,9 +264,9 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DT05": {
-  "note": "Misfire bonus per failure implemented; the 30% hostile projectile slow inside R is not",
-  "status": "partial",
-  "test": "",
+  "note": "hostile projectiles inside R move at 70% (ProjectileSimulationManager slow zone) plus the Misfire bonus",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DT06": {
@@ -324,10 +324,10 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTE1": {
-  "note": "Fixed Coin: Heads banks a refund, Tails pauses self-Debt and converts cancelled Undo debt",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "Heads banks 30% of damage suffered as a refund at state end; Tails pauses self-Debt and blasts cancelled Undo debt",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTE2": {
   "note": "",
@@ -336,10 +336,10 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTF1": {
-  "note": "Undo: rewind 25% max HP of enemy damage into self-Debt, cancelled by killing the contributor",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "25% max HP within 1 s restored as health, self-Debt due in 3 s; contributor kill cancels half, 2D dealt cancels 10%",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTF2": {
   "note": "",
@@ -348,7 +348,7 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTK1": {
-  "note": "",
+  "note": "payment may kill, as authored; Commitment scales the +50%",
   "status": "implemented",
   "test": "AscensionDistortionTest",
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
@@ -390,9 +390,9 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTQ5": {
-  "note": "Counterfeit always chooses Heads (tap); hold-for-Tails is not modelled",
+  "note": "tap = Heads (chosen face); hold-for-Tails not modelled",
   "status": "partial",
-  "test": "",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTQ6": {
@@ -414,9 +414,9 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTV": {
-  "note": "collectable Debt (review F3), guaranteed Core checks, Twice, scars from screen projectiles; 'normals' melee swings miss' is not applied",
-  "status": "partial",
-  "test": "AscensionDistortionTest",
+  "note": "normals' adjacent swings and contact miss during REWRITE; ranged and elite/boss hits land",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTV1": {
@@ -426,10 +426,10 @@
   "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTV2": {
-  "note": "Replay: repeat each dying enemy's last three hits at the corpse",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "last three non-Replay hits repeat at the corpse at 35% with their geometry",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
  },
  "DTV3": {
   "note": "",
@@ -444,9 +444,9 @@
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EX02": {
-  "note": "",
+  "note": "the consuming hit itself carries +0.5D",
   "status": "implemented",
-  "test": "AscensionExecutionTest",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EX03": {
@@ -480,9 +480,9 @@
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EX08": {
-  "note": "wound +20% line consumed on the next Core hit",
+  "note": "the full-health hit itself carries +1D",
   "status": "implemented",
-  "test": "AscensionExecutionTest",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EX09": {
@@ -504,16 +504,16 @@
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EX12": {
-  "note": "Clean Cut: attack recovery removal after the first execution; generated executions' dash recovery refund",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "native execution clears attack recovery; generated ones refund 0.15 s dash, 0.6 s/s (Kill Reset shares the bucket once built)",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EXA": {
-  "note": "Overkill Axiom: Spillover from non-Melee kills at 60% overkill, 0.3D seed",
-  "status": "missing",
-  "test": "",
-  "where": ""
+  "note": "Ranged/Magic Core kills Spillover at 60% overkill, 0.3D seed",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EXC": {
   "note": "sweep covers the camera rectangle",
@@ -546,15 +546,15 @@
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EXK1": {
-  "note": "+12 points implemented; the -25% above half HP is applied by healing back a share after the hit",
-  "status": "partial",
-  "test": "",
+  "note": "exact: the hit is reduced 25% above half HP through EnemyCombat.player_damage_modifier",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EXK2": {
-  "note": "eight Marks and elite line implemented; +50%/-30% applied as bonus damage / heal-back",
-  "status": "partial",
-  "test": "",
+  "note": "exact: marked +50% (the marking hit counts), unmarked -30%, eight Marks (ten with Commitment)",
+  "status": "implemented",
+  "test": "AscensionSliceCompletionTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd"
  },
  "EXQ": {
@@ -673,9 +673,9 @@
  },
  "_shared": {
   "1.5 s gap between Revelation starts; hold V for both at Ascendant": {
-   "note": "V alternates between the two slots; no gap, no hold",
-   "status": "partial",
-   "test": "",
+   "note": "two meters; tap casts the selected/ready one; hold 0.3 s casts both 0.25 s apart when both are full",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest",
    "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Ascendant foreign strikes": {
@@ -691,10 +691,10 @@
    "where": "core/systems/ascension/AscensionTags.gd"
   },
   "Automatic Method (pick.M2, 70%)": {
-   "note": "",
-   "status": "missing",
-   "test": "",
-   "where": ""
+   "note": "targeting table: Gavel wounded-normal, Burst aim, Coin chosen face; others as engines are built",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Control conversions (stagger bar, control caps, immunity)": {
    "note": "bosses get a 0.5 s stun from DECIMATION; no stagger bar",
@@ -721,10 +721,10 @@
    "where": "core/systems/ascension/AscensionLedger.gd"
   },
   "Evolution reward timing (segments 6, 9, then every third; banked claims)": {
-   "note": "claims are only granted by the dev route loader",
-   "status": "missing",
-   "test": "",
-   "where": ""
+   "note": "elite-offered extra opportunities not implemented (ambiguous: no elite reward hook)",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest",
+   "where": "autoload/global.gd"
   },
   "Free starter (one of three ring-1 natives)": {
    "note": "",
@@ -751,7 +751,7 @@
    "where": "AscensionSlotHud + runner _draw"
   },
   "Health payments (bypass armour, floor 1 HP, no retaliation)": {
-   "note": "The Bill and Loaded Dice cannot kill (floor) - authored says they may",
+   "note": "The Bill and Loaded Dice may kill (lethal payments), as authored",
    "status": "implemented",
    "test": "AscensionRunnerTest",
    "where": "core/actors/player/player.gd"
@@ -763,10 +763,10 @@
    "where": "engines"
   },
   "Milestone picks (Method 3 / Doctrine 6 / Apotheosis 9)": {
-   "note": "offered after the segment as free exclusive choices; effects missing",
+   "note": "M1-M3, D1, D3, P1, P2 implemented; D2 needs the reward screen; P3 moot",
    "status": "partial",
-   "test": "AscensionLedgerTest",
-   "where": "core/systems/ascension/AscensionLedger.gd"
+   "test": "AscensionSharedRulesTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Mutation enable/disable": {
    "note": "",
@@ -779,6 +779,12 @@
    "status": "implemented",
    "test": "AscensionRunnerTest, AscensionDistortionTest",
    "where": "core/systems/ascension/AscensionRunner.gd + core/systems/ascension/engines/DistortionEngine.gd"
+  },
+  "Outgoing damage hook (exact per-hit rules)": {
+   "note": "EnemyCombat.player_damage_modifier, registered by the runner",
+   "status": "implemented",
+   "test": "AscensionSliceCompletionTest",
+   "where": "core/systems/enemy_world/EnemyCombatService.gd"
   },
   "Per-enemy tree statuses": {
    "note": "",
@@ -793,10 +799,10 @@
    "where": "core/systems/ascension/AscensionLedger.gd"
   },
   "Q recovery carries over on swap": {
-   "note": "swapping Q does not keep the greater remaining recovery",
-   "status": "missing",
-   "test": "",
-   "where": ""
+   "note": "greater of remaining and the new Q's saved recovery",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Radial map, buy/refund/equip UI, Hub and T key": {
    "note": "headless-tested only",
@@ -805,9 +811,9 @@
    "where": "ui/screens/AscensionScreen.gd"
   },
   "Reaction Q (60% damage, x2 recovery)": {
-   "note": "opens at G1 (review F14); triggers: catastrophe and 15% HP loss; 'first elite enters 2R' and trigger choice missing",
-   "status": "partial",
-   "test": "AscensionHybridTest",
+   "note": "trigger chosen at the tree screen: catastrophe, 15% HP in 1 s, or first elite inside 2R",
+   "status": "implemented",
+   "test": "AscensionSharedRulesTest",
    "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Refund (prototype free respec, dependents cascade)": {
@@ -817,15 +823,15 @@
    "where": "core/systems/ascension/AscensionLedger.gd"
   },
   "Revelation charge: discipline action table": {
-   "note": "no action charge for any discipline",
-   "status": "missing",
-   "test": "",
-   "where": ""
+   "note": "EX, BR, DT sources implemented, 4/s cap; other disciplines as built",
+   "status": "partial",
+   "test": "AscensionSharedRulesTest",
+   "where": "core/systems/ascension/AscensionRunner.gd + engines"
   },
   "Revelation charge: kills": {
-   "note": "normals 0.5 (review), elites 8, bosses 30, 4 actions/s, V descendants none",
+   "note": "no rate ceiling; each equipped meter fills",
    "status": "implemented",
-   "test": "AscensionBarrageTest",
+   "test": "AscensionSharedRulesTest",
    "where": "core/systems/ascension/AscensionRunner.gd"
   },
   "Save / load of ownership and equipment": {
@@ -860,56 +866,56 @@
   "where": "core/systems/ascension/AscensionLedger.gd"
  },
  "pick.D1": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.D2": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "reward-screen reroll: needs the item reward UI, out of combat scope; not implemented",
+  "status": "ambiguous",
+  "test": "",
+  "where": ""
  },
  "pick.D3": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "applies to EXK1, EXK2, BRK1, DTK1 numbers; other keystones as their engines are built",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.M1": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.M2": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "Automatic Method: casts the ready Q at 70% damage / P on the automation table target; holding Q pauses it",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.M3": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.P1": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.P2": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
-  "test": "AscensionLedgerTest",
-  "where": "core/systems/ascension/AscensionLedger.gd"
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionSharedRulesTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
  },
  "pick.P3": {
-  "note": "purchasable as a free milestone choice; effect not implemented",
-  "status": "missing",
+  "note": "the tree already lets a banked claim buy any qualified Evolution, so 'offer every qualified form' is the standing behaviour",
+  "status": "n/a",
   "test": "AscensionLedgerTest",
   "where": "core/systems/ascension/AscensionLedger.gd"
  }

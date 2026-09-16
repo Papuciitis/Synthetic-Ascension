@@ -35,6 +35,11 @@ var _colors := PackedColorArray()
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
+## Hostile projectiles inside this circle move at `factor` speed (Denial).
+## Radius 0 disables it; the owner re-asserts it every frame it applies.
+var _slow_zone_center := Vector2.ZERO
+var _slow_zone_radius := 0.0
+var _slow_zone_factor := 1.0
 var _next_id: int = 1
 var _active_count: int = 0
 
@@ -205,6 +210,8 @@ func _simulate_one(index: int, delta: float) -> void:
 		return
 	var old_pos := _positions[index]
 	var movement := _velocities[index] * delta
+	if _slow_zone_radius > 0.0 and _teams[index] == Team.ENEMY and old_pos.distance_squared_to(_slow_zone_center) <= _slow_zone_radius * _slow_zone_radius:
+		movement *= _slow_zone_factor
 	var new_pos := old_pos + movement
 	_previous[index] = old_pos
 	_life_left[index] -= delta
@@ -529,6 +536,16 @@ func remove_projectile(id: int) -> bool:
 			_remove(i)
 			return true
 	return false
+
+
+func set_enemy_slow_zone(center: Vector2, radius: float, factor: float) -> void:
+	_slow_zone_center = center
+	_slow_zone_radius = maxf(0.0, radius)
+	_slow_zone_factor = clampf(factor, 0.0, 1.0)
+
+
+func clear_enemy_slow_zone() -> void:
+	_slow_zone_radius = 0.0
 
 
 func get_debug_counters() -> Dictionary:

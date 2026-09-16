@@ -68,6 +68,21 @@ const ASCENDANT_PP := 0.45
 const ECHO_DELAY := 0.3
 const SECOND_SKIN_COOLDOWN := 15.0
 const TWENTY_BODIES := 20
+## Revelation start gap and the Ascendant hold-for-both (V4 "Revelation
+## charge and automatic casts").
+const V_START_GAP := 1.5
+const V_HOLD_SECONDS := 0.3
+const V_PAIR_GAP := 0.25
+## Milestone picks (Method / Doctrine / Apotheosis).
+const AUTOMATIC_SCALE := 0.7
+const HANDS_ON_SCALE := 1.2
+const PATIENT_SCALE := 1.3
+const PATIENT_IDLE := 2.0
+const ENCORE_WINDOW := 4.0
+const ENCORE_DELAY := 0.4
+const ENCORE_SCALE := 0.5
+const OVERFLOW_RESERVE := 25.0
+const ACTION_CHARGE_PER_SECOND := 4.0
 
 var ledger: AscensionLedger = null
 var native_core: String = "melee"
@@ -86,6 +101,28 @@ var reaction_id: String = ""
 var reaction_cooldown_left: float = 0.0
 var reaction_cooldown_max: float = 0.0
 var reaction_cast: bool = false
+var automatic_cast: bool = false
+var encore_cast: bool = false
+var _v_gap_left: float = 0.0
+var _v_hold: float = -1.0
+var _v_pair_pending: String = ""
+var _v_pair_delay: float = 0.0
+var _saved_recovery: Dictionary = {}     # q id -> remaining recovery when unequipped
+var _q_idle: float = 999.0
+var _encore_left: float = 0.0
+var _encore_id: String = ""
+var _encore_delay: float = -1.0
+var v_reserve: float = 0.0
+var _action_charge_window: float = 0.0
+var _action_charge_used: float = 0.0
+var _travel_since_refund: float = 0.0
+var _inputs_since_refund: int = 0
+var _last_player_position: Vector2 = Vector2.INF
+var _elite_trigger_accum: float = 0.0
+var _elite_triggered: Dictionary = {}
+var _hit_history: Dictionary = {}        # handle -> Array of {damage, kind, dir, radius, arc, tags}
+var _current_attack: Dictionary = {}
+var _history_wanted: bool = false
 var _recent_damage: float = 0.0
 var _recent_damage_window: float = 0.0
 var _native_inputs: int = 0
@@ -104,6 +141,8 @@ var q_cooldown_max: float = 0.0
 var v_cooldown_left: float = 0.0
 var v_cooldown_max: float = 0.0
 var v_charge: float = 0.0
+var v2_charge: float = 0.0
+var v2_reserve: float = 0.0
 var _v_charge_actions: int = 0
 var _v_charge_window: float = 0.0
 var _q_slot: AscensionSlotHud = null
@@ -172,7 +211,15 @@ func rng() -> RandomNumberGenerator:
 func refresh() -> void:
 	if Global == null:
 		return
-	ledger = Global.ascension_ledger()
+	var next_ledger := Global.ascension_ledger()
+	if ledger != null and not is_same(next_ledger, ledger):
+		# A different attempt: engine state (Heat, Debt, wind-ups) belongs to
+		# the old run and must not leak into the new one.
+		_engine_by_discipline.clear()
+		_engine_by_node.clear()
+		engines.clear()
+		_saved_recovery.clear()
+	ledger = next_ledger
 	native_core = ledger.native_core()
 	active_ids.clear()
 	for id in ledger.owned_ids():
@@ -180,7 +227,17 @@ func refresh() -> void:
 			active_ids[id] = true
 	_rebuild_engines()
 	_sync_noun_claims()
+	var previous_q := q_id
 	q_id = ledger.equipped("q") if active_ids.has(ledger.equipped("q")) else ""
+	if q_id != previous_q:
+		# Swapping keeps the greater of the current remaining recovery and the
+		# new Q's saved recovery; the old Q remembers what it had left.
+		if not previous_q.is_empty():
+			_saved_recovery[previous_q] = q_cooldown_left
+		var saved := float(_saved_recovery.get(q_id, 0.0))
+		if saved > q_cooldown_left:
+			q_cooldown_left = saved
+			q_cooldown_max = maxf(q_cooldown_max, saved)
 	v_id = ledger.equipped("v") if active_ids.has(ledger.equipped("v")) else ""
 	reaction_id = ledger.equipped("reaction") if active_ids.has(ledger.equipped("reaction")) else ""
 	v2_id = ledger.equipped("v2") if (owns("ASC") and active_ids.has(ledger.equipped("v2"))) else ""
@@ -229,6 +286,10 @@ func _rebuild_engines() -> void:
 		if not wanted.has(code):
 			_engine_by_discipline.erase(code)
 	engines = kept
+	_history_wanted = false
+	for engine in engines:
+		if engine.wants_hit_history():
+			_history_wanted = true
 
 
 func _sync_slot(slot: AscensionSlotHud, slot_name: String, id: String) -> AscensionSlotHud:
@@ -253,7 +314,10 @@ func _set_wired(on: bool) -> void:
 		[RunEvents.weapon_fired, Callable(self, "_on_weapon_fired")],
 		[RunEvents.player_dashed, Callable(self, "_on_player_dashed")],
 		[RunEvents.player_damage_taken, Callable(self, "_on_player_damage_taken")],
+		[RunEvents.player_damage_resolved, Callable(self, "_on_player_damage_resolved")],
 	]
+	if EnemyCombat != null:
+		EnemyCombat.player_damage_modifier = Callable(self, "_modify_outgoing_damage") if on else Callable()
 	for pair in wiring:
 		var sig: Signal = pair[0]
 		var cb: Callable = pair[1]
@@ -444,6 +508,8 @@ func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: fl
 	_frame_hits += 1
 	var hit := _make_hit(handle, applied, unclamped, before, payload)
 	telemetry["hits"] = int(telemetry["hits"]) + 1
+	if _history_wanted:
+		_record_hit_history(handle, hit)
 	if hit["family"] == AscensionTags.FAMILY_TREE:
 		telemetry["tree_hits"] = int(telemetry["tree_hits"]) + 1
 	if hit["lethal"]:
@@ -520,20 +586,47 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 		engine.on_kill(hit, context)
 	statuses.erase(handle)
 	_last_lethal.erase(handle)
+	_hit_history.erase(handle)
 
 
+## Kill charge has no rate ceiling (V4); V-rooted kills give none.
 func _charge_revelation(hit: Dictionary) -> void:
 	if v_id.is_empty() or AscensionTags.has_flag(hit.get("tags", PackedStringArray()), "v"):
 		return
-	if _v_charge_actions >= V_CHARGE_ACTIONS_PER_SECOND:
-		return
-	_v_charge_actions += 1
 	var gain := V_CHARGE_NORMAL
 	if bool(hit.get("is_boss", false)):
 		gain = V_CHARGE_BOSS
 	elif bool(hit.get("is_elite", false)):
 		gain = V_CHARGE_ELITE
-	v_charge = minf(V_CHARGE_MAX, v_charge + gain)
+	_gain_charge(gain)
+
+
+## Discipline action charge, summed to at most four points a second.
+func add_action_charge(points: float, v_rooted: bool = false) -> void:
+	if v_id.is_empty() or v_rooted or points <= 0.0:
+		return
+	var room := ACTION_CHARGE_PER_SECOND - _action_charge_used
+	if room <= 0.0:
+		return
+	var granted := minf(points, room)
+	_action_charge_used += granted
+	_gain_charge(granted)
+
+
+## Each equipped Revelation has its own meter (V4); both fill from the
+## same kills and actions. Overflow banks up to 25 reserve per meter.
+func _gain_charge(gain: float) -> void:
+	if v_charge >= V_CHARGE_MAX:
+		if owns("pick.P2"):
+			v_reserve = minf(OVERFLOW_RESERVE, v_reserve + gain)
+	else:
+		v_charge = minf(V_CHARGE_MAX, v_charge + gain)
+	if not v2_id.is_empty():
+		if v2_charge >= V_CHARGE_MAX:
+			if owns("pick.P2"):
+				v2_reserve = minf(OVERFLOW_RESERVE, v2_reserve + gain)
+		else:
+			v2_charge = minf(V_CHARGE_MAX, v2_charge + gain)
 	if _v_slot != null:
 		_v_slot.announce(v_cooldown_left, v_cooldown_max)
 
@@ -550,6 +643,7 @@ func _on_weapon_fired(who: Node, style_id: StringName, origin: Vector2, target: 
 	for engine in engines:
 		engine.on_native_fire(String(style_id), origin, target, power_mul, haste_mul)
 	_native_inputs += 1
+	_note_native_input_for_refund()
 	if owns("ASC"):
 		for core in foreign_cores():
 			_foreign_strike(String(core), origin, target, ASCENDANT_D, ASCENDANT_PP, "ascendant", true)
@@ -684,9 +778,117 @@ func note_catastrophe(id: String) -> void:
 	_try_reaction("catastrophe:" + id)
 
 
-## Damage scale for Q payloads: 1.0 for a manual cast, 0.6 for a Reaction cast.
+var _q_idle_at_cast: float = 999.0
+
+
+## Damage scale for Q payloads: 0.6 for a Reaction cast, 0.7 automatic
+## (Method: Automatic), 0.5 for an Encore repeat; manual casts +20% with
+## Hands On and +30% with Patient after two idle seconds.
 func q_scale() -> float:
-	return REACTION_SCALE if reaction_cast else 1.0
+	if encore_cast:
+		return ENCORE_SCALE
+	if reaction_cast:
+		return REACTION_SCALE
+	if automatic_cast:
+		return AUTOMATIC_SCALE
+	var scale := 1.0
+	if owns("pick.M1"):
+		scale *= HANDS_ON_SCALE
+	if owns("pick.M3") and _q_idle_at_cast >= PATIENT_IDLE:
+		scale *= PATIENT_SCALE
+	return scale
+
+
+## Proc Power scale for Q payloads (Reaction 0.6, automatic 0.7).
+func q_proc_scale() -> float:
+	if reaction_cast:
+		return REACTION_SCALE
+	if automatic_cast:
+		return AUTOMATIC_SCALE
+	return 1.0
+
+
+## Area / pull-distance scale for Q payloads (Hands On +20% distance,
+## Patient +30% area).
+func q_area_scale() -> float:
+	if reaction_cast or automatic_cast or encore_cast:
+		return 1.0
+	var scale := 1.0
+	if owns("pick.M1"):
+		scale *= HANDS_ON_SCALE
+	if owns("pick.M3") and _q_idle_at_cast >= PATIENT_IDLE:
+		scale *= PATIENT_SCALE
+	return scale
+
+
+## Commitment (Doctrine pick): one equipped Keystone strengthens its
+## beneficial numbers by 25%.
+func keystone_bonus() -> float:
+	return 1.25 if owns("pick.D3") and ledger != null and ledger.equipped_list("keystones").size() == 1 else 1.0
+
+
+## Where an automatic cast aims: the engine's table entry, else the cursor.
+func auto_aim_for(id: String) -> Vector2:
+	var engine := engine_for(id)
+	return engine.auto_target(id) if engine != null else aim_target()
+
+
+func nearest_enemy_position(radius: float) -> Vector2:
+	var handle := nearest_enemy(player_position(), radius)
+	return enemy_position(handle) if handle != 0 else aim_target()
+
+
+func _cast_encore() -> void:
+	if _encore_id.is_empty() or _encore_id != q_id:
+		return
+	var engine := engine_for(_encore_id)
+	if engine == null:
+		return
+	encore_cast = true
+	engine.activate_q(_encore_id)
+	encore_cast = false
+
+
+## Engines report a persistent Revelation ending (Encore window).
+func note_revelation_ended(_id: String) -> void:
+	if owns("pick.P1"):
+		_encore_left = ENCORE_WINDOW
+
+
+## Doctrine pick Momentum: every third native input after travelling L
+## refunds 0.5 s of Q recovery; distance is consumed.
+func _track_travel() -> void:
+	var at := player_position()
+	if _last_player_position != Vector2.INF:
+		_travel_since_refund += at.distance_to(_last_player_position)
+	_last_player_position = at
+
+
+func _note_native_input_for_refund() -> void:
+	if not owns("pick.D1"):
+		return
+	_inputs_since_refund += 1
+	if _inputs_since_refund >= 3 and _travel_since_refund >= L:
+		_inputs_since_refund = 0
+		_travel_since_refund -= L
+		q_cooldown_left = maxf(0.0, q_cooldown_left - 0.5)
+
+
+## Reaction trigger "first elite enters 2R", polled four times a second.
+func _tick_reaction_triggers(delta: float) -> void:
+	if reaction_id.is_empty() or ledger == null or ledger.reaction_trigger() != "elite":
+		return
+	_elite_trigger_accum += delta
+	if _elite_trigger_accum < 0.25:
+		return
+	_elite_trigger_accum = 0.0
+	for handle in enemies_in_radius(player_position(), 2.0 * R):
+		if is_elite(handle) and not _elite_triggered.has(handle):
+			_elite_triggered[handle] = true
+			_try_reaction("elite")
+			break
+	if _elite_triggered.size() > 256:
+		_elite_triggered.clear()
 
 
 func _second_skin() -> void:
@@ -701,6 +903,10 @@ func _second_skin() -> void:
 func _try_reaction(trigger: String) -> Dictionary:
 	if reaction_id.is_empty() or reaction_cooldown_left > 0.0:
 		return {"ok": false, "message": "NO REACTION", "cooldown": 0.0}
+	var chosen := ledger.reaction_trigger() if ledger != null else "catastrophe"
+	var kind := trigger.split(":")[0]
+	if kind != "second_skin" and kind != chosen:
+		return {"ok": false, "message": "OTHER TRIGGER", "cooldown": 0.0}
 	var engine := engine_for(reaction_id)
 	if engine == null:
 		return {"ok": false, "message": "NOT WIRED", "cooldown": 0.0}
@@ -764,6 +970,7 @@ func apply_to_magic_impact(impact: Node) -> void:
 
 func apply_to_managed_hit_profile(profile: HitProfileAdapter, style_id: StringName) -> void:
 	profile.set_meta(AscensionTags.META_KEY, AscensionTags.native(String(style_id), "bullet"))
+	profile.max_range *= projectile_life_multiplier()
 	for engine in engines:
 		engine.decorate_native_profile(profile)
 
@@ -827,8 +1034,10 @@ func _resolve_attack(entry: Dictionary) -> void:
 		targets = _sector_scratch.duplicate()
 	else:
 		EnemyCombat.gather_in_radius(at, radius, targets)
+	_current_attack = entry
 	for handle in targets:
 		damage_enemy(handle, damage, tags)
+	_current_attack = {}
 	var color := Color(0.95, 0.85, 0.5, 0.85)
 	match AscensionTags.value_of(tags, "core"):
 		"melee":
@@ -852,6 +1061,10 @@ func spawn_bullet(origin: Vector2, direction: Vector2, damage: float, tags: Pack
 	if _player == null or not _player.has_method("spawn_generated_bullet"):
 		return false
 	telemetry["generated"] = int(telemetry["generated"]) + 1
+	var life := projectile_life_multiplier()
+	if life != 1.0:
+		overrides = overrides.duplicate()
+		overrides["max_range"] = float(overrides.get("max_range", 520.0)) * life
 	return bool(_player.call("spawn_generated_bullet", origin, direction, damage, tags, overrides))
 
 
@@ -859,6 +1072,13 @@ func pay_health(amount: float, reason: StringName) -> float:
 	if _player == null or not _player.has_method("pay_health"):
 		return 0.0
 	return float(_player.call("pay_health", amount, reason))
+
+
+## A payment that may kill (The Bill, Loaded Dice, as authored).
+func pay_health_lethal(amount: float, reason: StringName) -> float:
+	if _player == null or not _player.has_method("pay_health"):
+		return 0.0
+	return float(_player.call("pay_health", amount, reason, true))
 
 
 ## The visible world rectangle, from the player's camera when it has one.
@@ -921,6 +1141,10 @@ func _draw() -> void:
 			draw_circle(at, radius * (0.6 + 0.4 * (1.0 - fade)), color)
 	var font := ThemeDB.fallback_font
 	for point in _draw_points:
+		if point.size() >= 4 and point[3] is Vector2:
+			# [from, width, color, to]: a beam or a link.
+			draw_line(point[0], point[3], point[2], float(point[1]), true)
+			continue
 		draw_circle(point[0], float(point[1]), point[2])
 		if point.size() > 3 and font != null:
 			var text := String(point[3])
@@ -996,6 +1220,77 @@ func get_damage_taken_multiplier() -> float:
 	return total
 
 
+## Incoming damage multiplier for one source; 0 means the attack misses.
+func get_damage_taken_multiplier_for(source: Node, kind: StringName) -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.damage_taken_multiplier_for(source, kind)
+	return total
+
+
+## EnemyCombat calls this for every player-sourced hit before mitigation.
+func _modify_outgoing_damage(handle: int, raw: float, payload: Variant) -> float:
+	if engines.is_empty():
+		return raw
+	var tags := PackedStringArray()
+	var ledger_payload := payload as HitLedger
+	if ledger_payload != null:
+		tags = ledger_payload.tags
+	var preview := {
+		"handle": handle,
+		"raw": raw,
+		"tags": tags,
+		"core": AscensionTags.value_of(tags, "core"),
+		"family": AscensionTags.value_of(tags, "family"),
+		"core_strike": AscensionTags.has_flag(tags, "core_strike"),
+	}
+	var damage := raw
+	for engine in engines:
+		damage = engine.modify_outgoing_damage(preview, damage)
+	return damage
+
+
+func _on_player_damage_resolved(who: Node, _raw: float, _adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
+	if who != _player or outcome != &"hit" or applied <= 0.0:
+		return
+	for engine in engines:
+		engine.on_player_damage_resolved(source, applied, kind)
+
+
+func clear_native_recovery() -> void:
+	if _player != null and _player.has_method("clear_native_recovery"):
+		_player.call("clear_native_recovery")
+
+
+func refund_dash_recovery(seconds: float) -> void:
+	if _player != null and _player.has_method("refund_dash_recovery"):
+		_player.call("refund_dash_recovery", seconds)
+
+
+## Lifetime multiplier for friendly projectiles (Projectile Life sink).
+func projectile_life_multiplier() -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.projectile_life_multiplier()
+	return total
+
+
+## Hit history for Replay: the last three non-Replay hits per enemy.
+func hit_history(handle: int) -> Array:
+	return _hit_history.get(handle, [])
+
+
+func _record_hit_history(handle: int, hit: Dictionary) -> void:
+	if AscensionTags.has_flag(hit["tags"], "replay"):
+		return
+	var geometry: Dictionary = _current_attack if not _current_attack.is_empty() else {"kind": "impact", "radius": R * 0.5, "arc": 360.0, "dir": Vector2.RIGHT}
+	var entries: Array = _hit_history.get(handle, [])
+	entries.append({"damage": float(hit["applied"]), "kind": geometry["kind"], "dir": geometry["dir"], "radius": float(geometry["radius"]), "arc": float(geometry["arc"]), "tags": hit["tags"]})
+	while entries.size() > 3:
+		entries.pop_front()
+	_hit_history[handle] = entries
+
+
 # ---------------------------------------------------------------- Q / V
 
 func _process(delta: float) -> void:
@@ -1022,9 +1317,33 @@ func _process(delta: float) -> void:
 	if _v_charge_window >= 1.0:
 		_v_charge_window = 0.0
 		_v_charge_actions = 0
+	_action_charge_window += delta
+	if _action_charge_window >= 1.0:
+		_action_charge_window = 0.0
+		_action_charge_used = 0.0
+	if _v_gap_left > 0.0:
+		_v_gap_left = maxf(0.0, _v_gap_left - delta)
+	if not _v_pair_pending.is_empty():
+		_v_pair_delay -= delta
+		if _v_pair_delay <= 0.0:
+			var pending := _v_pair_pending
+			_v_pair_pending = ""
+			_activate(pending)
+	_q_idle += delta
+	if _encore_left > 0.0:
+		_encore_left = maxf(0.0, _encore_left - delta)
+	_track_travel()
+	_tick_reaction_triggers(delta)
 	var tick_started := Time.get_ticks_usec()
 	for engine in engines:
 		engine.tick(delta)
+	# The Encore repeat fires after the engines ticked, so the opening cast's
+	# wind-up has resolved before the repeat is asked for.
+	if _encore_delay >= 0.0:
+		_encore_delay -= delta
+		if _encore_delay <= 0.0:
+			_encore_delay = -1.0
+			_cast_encore()
 	var flush_started := Time.get_ticks_usec()
 	var flushed := flush_attacks(ATTACK_BUDGET_PER_FRAME)
 	var flush_ended := Time.get_ticks_usec()
@@ -1049,8 +1368,14 @@ func _process(delta: float) -> void:
 	if _input_allowed():
 		if Input.is_action_just_pressed(&"ascension_active"):
 			activate_q()
-		if Input.is_action_just_pressed(&"ascension_revelation"):
-			activate_v()
+		elif owns("pick.M2") and not Input.is_action_pressed(&"ascension_active"):
+			# Automatic Method: the equipped Q casts itself when ready; holding
+			# the manual key pauses it.
+			if not q_id.is_empty() and q_cooldown_left <= 0.0:
+				automatic_cast = true
+				_activate("q")
+				automatic_cast = false
+		_poll_revelation_key()
 
 
 func _input_allowed() -> bool:
@@ -1067,9 +1392,34 @@ func activate_q() -> Dictionary:
 	return _activate("q")
 
 
+## Tap casts the selected Revelation; at Ascendant, holding 0.3 s casts both
+## in order 0.25 s apart when both are full (V4). A tap while a pair is
+## pending does nothing.
+func _poll_revelation_key() -> void:
+	if Input.is_action_just_pressed(&"ascension_revelation"):
+		_v_hold = 0.0
+	elif _v_hold >= 0.0 and Input.is_action_pressed(&"ascension_revelation"):
+		_v_hold += get_process_delta_time()
+		if _v_hold >= V_HOLD_SECONDS and not v2_id.is_empty():
+			_v_hold = -1.0
+			activate_v_pair()
+	elif _v_hold >= 0.0:
+		_v_hold = -1.0
+		activate_v()
+
+
+## Tap: the selected Revelation. With two equipped, the selection alternates
+## after each cast; a tap while only the other meter is full casts that one.
 func activate_v() -> Dictionary:
-	if not v2_id.is_empty() and (_v_turn % 2 == 1):
-		var result := _activate("v2")
+	if not _v_pair_pending.is_empty():
+		return {"ok": false, "message": "PAIR PENDING", "cooldown": 0.0}
+	if not v2_id.is_empty():
+		var prefer_second := (_v_turn % 2 == 1)
+		if prefer_second and v2_charge < V_CHARGE_MAX and v_charge >= V_CHARGE_MAX:
+			prefer_second = false
+		elif not prefer_second and v_charge < V_CHARGE_MAX and v2_charge >= V_CHARGE_MAX:
+			prefer_second = true
+		var result := _activate("v2" if prefer_second else "v")
 		if bool(result.get("ok", false)):
 			_v_turn += 1
 		return result
@@ -1079,13 +1429,37 @@ func activate_v() -> Dictionary:
 	return result
 
 
-func _activate(slot: String) -> Dictionary:
+## Both Revelations, selected first, 0.25 s apart, only when both meters are
+## full; an insufficient meter never spends the other as a failed pair.
+func activate_v_pair() -> Dictionary:
+	if v2_id.is_empty():
+		return activate_v()
+	if v_charge < V_CHARGE_MAX or v2_charge < V_CHARGE_MAX:
+		return {"ok": false, "message": "PAIR NOT READY", "cooldown": 0.0}
+	var first := _activate("v", true)
+	if not bool(first.get("ok", false)):
+		return first
+	_v_pair_pending = "v2"
+	_v_pair_delay = V_PAIR_GAP
+	return first
+
+
+func _activate(slot: String, pair: bool = false) -> Dictionary:
 	var id := q_id if slot == "q" else (v2_id if slot == "v2" else v_id)
 	var hud := _q_slot if slot == "q" else _v_slot
+	var is_second := slot == "v2"
 	if slot == "v2":
 		slot = "v"
 		if id.is_empty():
 			return {"ok": false, "message": "NOTHING EQUIPPED", "cooldown": 0.0}
+	if slot == "v" and _v_gap_left > 0.0 and not is_second:
+		if hud != null:
+			hud.fail("TOO SOON")
+		return {"ok": false, "message": "TOO SOON", "cooldown": _v_gap_left}
+	var engine_for_press := engine_for(id)
+	if slot == "q" and engine_for_press != null and engine_for_press.q_active(id):
+		# A second press reaches a running Q (cancel / release) regardless of recovery.
+		return engine_for_press.activate_q(id)
 	if id.is_empty():
 		return {"ok": false, "message": "NOTHING EQUIPPED", "cooldown": 0.0}
 	var left := q_cooldown_left if slot == "q" else v_cooldown_left
@@ -1097,10 +1471,12 @@ func _activate(slot: String) -> Dictionary:
 		if hud != null:
 			hud.fail("REVELATIONS OFF")
 		return {"ok": false, "message": "REVELATIONS OFF", "cooldown": 0.0}
-	if slot == "v" and v_charge < V_CHARGE_MAX:
+	if slot == "v" and (v2_charge if is_second else v_charge) < V_CHARGE_MAX:
 		if hud != null:
 			hud.fail("CHARGING")
 		return {"ok": false, "message": "CHARGING", "cooldown": 0.0}
+	if slot == "q" and not automatic_cast and not encore_cast:
+		_q_idle_at_cast = _q_idle
 	var engine := engine_for(id)
 	if engine == null:
 		if hud != null:
@@ -1114,12 +1490,31 @@ func _activate(slot: String) -> Dictionary:
 	var cooldown := float(result.get("cooldown", 0.0))
 	if slot == "q":
 		cooldown = _recovery(cooldown)
-		q_cooldown_max = cooldown
-		q_cooldown_left = cooldown
+		if encore_cast:
+			cooldown = 0.0
+		q_cooldown_max = maxf(q_cooldown_max, cooldown) if encore_cast else cooldown
+		q_cooldown_left = maxf(q_cooldown_left, cooldown)
+		_q_idle = 0.0
+		if not automatic_cast and not encore_cast and _encore_left > 0.0:
+			# Encore: the next manual Q after a Revelation repeats once.
+			_encore_left = 0.0
+			_encore_id = id
+			_encore_delay = ENCORE_DELAY
 	else:
 		v_cooldown_max = cooldown
 		v_cooldown_left = cooldown
-		v_charge = 0.0
+		if is_second:
+			v2_charge = 0.0
+			if owns("pick.P2") and v2_reserve > 0.0:
+				v2_charge = minf(V_CHARGE_MAX, v2_reserve)
+				v2_reserve = 0.0
+		else:
+			v_charge = 0.0
+			if owns("pick.P2") and v_reserve > 0.0:
+				v_charge = minf(V_CHARGE_MAX, v_reserve)
+				v_reserve = 0.0
+		if not pair or not is_second:
+			_v_gap_left = V_START_GAP if not pair else 0.0
 		telemetry["revelations"] = int(telemetry["revelations"]) + 1
 		if PerformanceFlightRecorder != null:
 			PerformanceFlightRecorder.record_event(&"ascension", &"revelation", {"node": id, "r0": r0()})
@@ -1173,7 +1568,7 @@ func get_debug_counters() -> Dictionary:
 
 
 func describe() -> Dictionary:
-	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v2": v2_id, "reaction": reaction_id, "witness": witness_strikes, "ascendant": ascendant_strikes, "v_charge": v_charge, "r0": r0(), "queued_attacks": _attack_queue.size(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
+	var out := {"native": native_core, "active": active_ids.keys(), "q": q_id, "v": v_id, "v2": v2_id, "reaction": reaction_id, "witness": witness_strikes, "ascendant": ascendant_strikes, "v_charge": v_charge, "v_reserve": v_reserve, "v2_charge": v2_charge, "r0": r0(), "queued_attacks": _attack_queue.size(), "telemetry": telemetry.duplicate(), "rolls": [rolls_made, rolls_succeeded]}
 	for engine in engines:
 		out[engine.discipline()] = engine.describe()
 	return out

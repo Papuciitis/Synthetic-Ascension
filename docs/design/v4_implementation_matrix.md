@@ -12,54 +12,55 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Group | Nodes | Implemented | Partial | Missing | Ambiguous | n/a |
 |---|---:|---:|---:|---:|---:|---:|
-| Execution (EX) | 34 | 28 | 4 | 2 | 0 | 0 |
+| Execution (EX) | 34 | 32 | 2 | 0 | 0 | 0 |
 | Momentum (MO) | 33 | 0 | 0 | 33 | 0 | 0 |
 | Bastion (BA) | 33 | 0 | 0 | 33 | 0 | 0 |
 | Precision (PR) | 33 | 0 | 0 | 33 | 0 | 0 |
-| Barrage (BR) | 34 | 30 | 2 | 2 | 0 | 0 |
+| Barrage (BR) | 34 | 32 | 2 | 0 | 0 | 0 |
 | Ordnance (OR) | 34 | 0 | 0 | 34 | 0 | 0 |
 | Invocation (IN) | 33 | 0 | 0 | 33 | 0 | 0 |
-| Distortion (DT) | 33 | 27 | 3 | 3 | 0 | 0 |
+| Distortion (DT) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Dominion (DO) | 33 | 0 | 0 | 33 | 0 | 0 |
 | Core (core) | 3 | 0 | 0 | 0 | 0 | 3 |
 | Gate (gate) | 2 | 2 | 0 | 0 | 0 | 0 |
 | Fusion (fusion) | 27 | 3 | 0 | 24 | 0 | 0 |
 | Union (union) | 3 | 0 | 0 | 3 | 0 | 0 |
-| Choice (choice) | 12 | 3 | 0 | 9 | 0 | 0 |
+| Choice (choice) | 12 | 10 | 0 | 0 | 1 | 1 |
 | Ascendant (ascendant) | 1 | 1 | 0 | 0 | 0 | 0 |
 | Sink (sink) | 2 | 2 | 0 | 0 | 0 | 0 |
-| **All** | 350 | 96 | 9 | 242 | 0 | 3 |
+| **All** | 350 | 114 | 5 | 226 | 1 | 4 |
 
 ## Shared rules
 
 | Rule | Status | Where | Verified by | Note |
 |---|---|---|---|---|
-| 1.5 s gap between Revelation starts; hold V for both at Ascendant | partial | core/systems/ascension/AscensionRunner.gd |  | V alternates between the two slots; no gap, no hold |
+| 1.5 s gap between Revelation starts; hold V for both at Ascendant | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | two meters; tap casts the selected/ready one; hold 0.3 s casts both 0.25 s apart when both are full |
 | Ascendant foreign strikes | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
 | Attack identity: root, family, Core, path, generation, P, cast, V ancestry | implemented | core/systems/ascension/AscensionTags.gd | AscensionRunnerTest | hit-path family seal is per engine rule, not a generic path history |
-| Automatic Method (pick.M2, 70%) | missing |  |  |  |
+| Automatic Method (pick.M2, 70%) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | targeting table: Gavel wounded-normal, Burst aim, Coin chosen face; others as engines are built |
 | Control conversions (stagger bar, control caps, immunity) | missing |  |  | bosses get a 0.5 s stun from DECIMATION; no stagger bar |
 | D snapshot per attack | partial | engines |  | D read at spawn; Echo/Debt packets keep captured amounts |
 | Deterministic event queue with stable tie-breaking | partial | core/systems/ascension/AscensionRunner.gd | AscensionChainBurstBenchmark | attack queue is FIFO with a per-frame budget; fragments resolve in engine tick order |
 | Equipment slots (Q, V, 2 Keystones, 3 Axioms, Reaction, V2) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | equip at any time through the screen; 'safe point only' not enforced |
-| Evolution reward timing (segments 6, 9, then every third; banked claims) | missing |  |  | claims are only granted by the dev route loader |
+| Evolution reward timing (segments 6, 9, then every third; banked claims) | implemented | autoload/global.gd | AscensionSharedRulesTest | elite-offered extra opportunities not implemented (ambiguous: no elite reward hook) |
 | Free starter (one of three ring-1 natives) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest |  |
 | Gate G1 / G2 grants and prerequisites | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest |  |
 | Generated attacks are data (no nodes) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionChainBurstBenchmark |  |
 | HUD feedback for resources | partial | AscensionSlotHud + runner _draw |  | Q/V slots show Heat, line, Debt; other resources drawn as bare shapes/text |
-| Health payments (bypass armour, floor 1 HP, no retaliation) | implemented | core/actors/player/player.gd | AscensionRunnerTest | The Bill and Loaded Dice cannot kill (floor) - authored says they may |
+| Health payments (bypass armour, floor 1 HP, no retaliation) | implemented | core/actors/player/player.gd | AscensionRunnerTest | The Bill and Loaded Dice may kill (lethal payments), as authored |
 | Hit-path family seal (one on-hit family cannot recall itself) | partial | engines |  | Ricochet, Contradiction and Twice seal themselves; no generic path history |
-| Milestone picks (Method 3 / Doctrine 6 / Apotheosis 9) | partial | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | offered after the segment as free exclusive choices; effects missing |
+| Milestone picks (Method 3 / Doctrine 6 / Apotheosis 9) | partial | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | M1-M3, D1, D3, P1, P2 implemented; D2 needs the reward screen; P3 moot |
 | Mutation enable/disable | implemented | core/systems/ascension/AscensionLedger.gd | AscensionScreenTest |  |
 | Named combat rolls (order, P, cap, guarantee, reroll) | implemented | core/systems/ascension/AscensionRunner.gd + core/systems/ascension/engines/DistortionEngine.gd | AscensionRunnerTest, AscensionDistortionTest | Lucky Crit unregistered (review F5) |
+| Outgoing damage hook (exact per-hit rules) | implemented | core/systems/enemy_world/EnemyCombatService.gd | AscensionSliceCompletionTest | EnemyCombat.player_damage_modifier, registered by the runner |
 | Per-enemy tree statuses | implemented | core/systems/ascension/AscensionRunner.gd | AscensionRunnerTest |  |
 | Purchase, adjacency, requirements, conflicts, prices, sinks | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | all 16 authored routes replay at authored prices |
-| Q recovery carries over on swap | missing |  |  | swapping Q does not keep the greater remaining recovery |
+| Q recovery carries over on swap | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | greater of remaining and the new Q's saved recovery |
 | Radial map, buy/refund/equip UI, Hub and T key | implemented | ui/screens/AscensionScreen.gd | AscensionScreenTest | headless-tested only |
-| Reaction Q (60% damage, x2 recovery) | partial | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest | opens at G1 (review F14); triggers: catastrophe and 15% HP loss; 'first elite enters 2R' and trigger choice missing |
+| Reaction Q (60% damage, x2 recovery) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | trigger chosen at the tree screen: catastrophe, 15% HP in 1 s, or first elite inside 2R |
 | Refund (prototype free respec, dependents cascade) | implemented | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | reachability from a Core; candidate one-per-run rule not applied |
-| Revelation charge: discipline action table | missing |  |  | no action charge for any discipline |
-| Revelation charge: kills | implemented | core/systems/ascension/AscensionRunner.gd | AscensionBarrageTest | normals 0.5 (review), elites 8, bosses 30, 4 actions/s, V descendants none |
+| Revelation charge: discipline action table | partial | core/systems/ascension/AscensionRunner.gd + engines | AscensionSharedRulesTest | EX, BR, DT sources implemented, 4/s cap; other disciplines as built |
+| Revelation charge: kills | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | no rate ceiling; each equipped meter fills |
 | Save / load of ownership and equipment | implemented | autoload/global.gd | AscensionLedgerTest, SaveIntegrityTest | engine transient state (Heat, Debt, Momentum) is not saved |
 | Witness strike (Slash / Shot / Impact) | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest | every second native input (review F12); qualifies for Core strike rules through engine tags |
 
@@ -68,22 +69,22 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
 | EX01 | Finish | local | 1 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
-| EX02 | Mark | local | 1 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
+| EX02 | Mark | local | 1 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | the consuming hit itself carries +0.5D |
 | EX03 | Spillover | local | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX04 | Bloodletting | local | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX05 | Corpse Bomb | local | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX06 | Cleave | local | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX07 | Reservoir | local | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest | storage cap 8D, 4 s; line release through gather_in_sector |
 | EXQ | Gavel | active | 2 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
-| EX08 | First Cut | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest | wound +20% line consumed on the next Core hit |
+| EX08 | First Cut | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | the full-health hit itself carries +1D |
 | EX09 | Elite Sentence | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX10 | Chain Sentence | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EX11 | Last Word | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionHybridTest | blade rides the managed bullet pool with pierce 4 |
-| EX12 | Clean Cut | local | 3 | missing |  |  | Clean Cut: attack recovery removal after the first execution; generated executions' dash recovery refund |
+| EX12 | Clean Cut | local | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | native execution clears attack recovery; generated ones refund 0.15 s dash, 0.6 s/s (Kill Reset shares the bucket once built) |
 | EXF1 | Meat | fork | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EXF2 | Blood | fork | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
-| EXK1 | Only the Weak | keystone | 3 | partial | core/systems/ascension/engines/ExecutionEngine.gd |  | +12 points implemented; the -25% above half HP is applied by healing back a share after the hit |
-| EXK2 | One at a Time | keystone | 3 | partial | core/systems/ascension/engines/ExecutionEngine.gd |  | eight Marks and elite line implemented; +50%/-30% applied as bonus damage / heal-back |
+| EXK1 | Only the Weak | keystone | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | exact: the hit is reduced 25% above half HP through EnemyCombat.player_damage_modifier |
+| EXK2 | One at a Time | keystone | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | exact: marked +50% (the marking hit counts), unmarked -30%, eight Marks (ten with Commitment) |
 | EXQ1 | Wide | mutation | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EXQ2 | Quick | mutation | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EXQ3 | Public Execution | mutation | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
@@ -91,7 +92,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | EXQ5 | Second Swing | mutation | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
 | EXQ6 | Gather | mutation | 3 | partial | core/systems/ascension/engines/ExecutionEngine.gd |  | Gather pulls through apply_knockback; elites half, bosses stagger not applied |
 | EXQ7 | Five Down | mutation | 3 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest |  |
-| EXA | Overkill | axiom | 4 | missing |  |  | Overkill Axiom: Spillover from non-Melee kills at 60% overkill, 0.3D seed |
+| EXA | Overkill | axiom | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionSliceCompletionTest | Ranged/Magic Core kills Spillover at 60% overkill, 0.3D seed |
 | EXC | Red Mist | catastrophe | 4 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionExecutionTest | sweep covers the camera rectangle |
 | EXE1 | Falling Gavel | evolution | 5 | partial | core/systems/ascension/engines/ExecutionEngine.gd |  | 5D, 2R, 0.8 s tell and lesser Gavels at marked survivors implemented; no dedicated visuals |
 | EXE2 | Gavel Chain | evolution | 5 | implemented | core/systems/ascension/engines/ExecutionEngine.gd | AscensionHybridTest |  |
@@ -235,7 +236,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | BR12 | Cluster Rounds | local | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRF1 | Cool Head | fork | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRF2 | Backfire | fork | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
-| BRK1 | Overclock | keystone | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
+| BRK1 | Overclock | keystone | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest | Commitment scales cap, tier rates and side rounds |
 | BRK2 | Bottomless | keystone | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRQ1 | Sustained | mutation | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRQ2 | Vented | mutation | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
@@ -246,10 +247,10 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | BRQ7 | Belt-Fed | mutation | 3 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRA | Hot Blood | axiom | 4 | implemented | core/systems/ascension/engines/BarrageEngine.gd |  | Melee/Magic strikes heat, tier rate bonus, side rounds become slashes/impacts; Jam blocks every native |
 | BRC | Overload | catastrophe | 4 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
-| BRE1 | Heat Beam | evolution | 5 | missing |  |  | Heat Beam: Burst becomes a swept piercing beam |
+| BRE1 | Heat Beam | evolution | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionSliceCompletionTest | swept piercing beam, 0.75D per 0.15 s, +5 Heat per tick, stationary half-damage beam on a Cool Head release |
 | BRE2 | Bullet Hell | evolution | 5 | partial | core/systems/ascension/engines/BarrageEngine.gd |  | rotating points fire 0.5D at 4/s, Three Guns seeds three, points grow per third fragment bounce; completion dump and 1.5 s Jam |
 | BRS1 | Heat Control | sink | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd |  |  |
-| BRS2 | Projectile Life | sink | 5 | missing |  |  | Projectile Life: friendly projectile lifetime +50% x rank/(rank+100) |
+| BRS2 | Projectile Life | sink | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionSliceCompletionTest | native bullets, generated bullets and fragments live longer |
 | BRV | SUPPRESSION | revelation | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRV1 | Six Guns | revelation_mutation | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
 | BRV2 | Sweep | revelation_mutation | 5 | implemented | core/systems/ascension/engines/BarrageEngine.gd | AscensionBarrageTest |  |
@@ -340,7 +341,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | DT02 | Second Chance | local | 1 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DT03 | Residue | local | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DT04 | Misfire | local | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
-| DT05 | Denial | local | 2 | partial | core/systems/ascension/engines/DistortionEngine.gd |  | Misfire bonus per failure implemented; the 30% hostile projectile slow inside R is not |
+| DT05 | Denial | local | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | hostile projectiles inside R move at 70% (ProjectileSimulationManager slow zone) plus the Misfire bonus |
 | DT06 | Causal Debt | local | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DT07 | Interest | local | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTQ | Coin | active | 2 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
@@ -349,25 +350,25 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | DT10 | Bad Luck | local | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DT11 | Scar Tissue | local | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DT12 | Compound Interest | local | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
-| DTF1 | Undo | fork | 3 | missing |  |  | Undo: rewind 25% max HP of enemy damage into self-Debt, cancelled by killing the contributor |
+| DTF1 | Undo | fork | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | 25% max HP within 1 s restored as health, self-Debt due in 3 s; contributor kill cancels half, 2D dealt cancels 10% |
 | DTF2 | Pass It On | fork | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
-| DTK1 | Loaded Dice | keystone | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
+| DTK1 | Loaded Dice | keystone | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest | payment may kill, as authored; Commitment scales the +50% |
 | DTK2 | Snake Eyes | keystone | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTQ1 | Weighted | mutation | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTQ2 | Double or Nothing | mutation | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTQ3 | House Edge | mutation | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTQ4 | Two Coins | mutation | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
-| DTQ5 | Counterfeit | mutation | 3 | partial | core/systems/ascension/engines/DistortionEngine.gd |  | Counterfeit always chooses Heads (tap); hold-for-Tails is not modelled |
+| DTQ5 | Counterfeit | mutation | 3 | partial | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | tap = Heads (chosen face); hold-for-Tails not modelled |
 | DTQ6 | Bad Penny | mutation | 3 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTA | Late Payment | axiom | 4 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionHybridTest |  |
 | DTC | Payday | catastrophe | 4 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest | review F11: 20 deposits in 4 s or 8 natural maturities in 4 s |
-| DTE1 | Fixed Coin | evolution | 5 | missing |  |  | Fixed Coin: Heads banks a refund, Tails pauses self-Debt and converts cancelled Undo debt |
+| DTE1 | Fixed Coin | evolution | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | Heads banks 30% of damage suffered as a refund at state end; Tails pauses self-Debt and blasts cancelled Undo debt |
 | DTE2 | Loaded Coin | evolution | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd |  |  |
 | DTS1 | Roll Chance | sink | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
 | DTS2 | Debt Damage | sink | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest |  |
-| DTV | REWRITE | revelation | 5 | partial | core/systems/ascension/engines/DistortionEngine.gd | AscensionDistortionTest | collectable Debt (review F3), guaranteed Core checks, Twice, scars from screen projectiles; 'normals' melee swings miss' is not applied |
+| DTV | REWRITE | revelation | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | normals' adjacent swings and contact miss during REWRITE; ranged and elite/boss hits land |
 | DTV1 | No Exceptions | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd |  |  |
-| DTV2 | Replay | revelation_mutation | 5 | missing |  |  | Replay: repeat each dying enemy's last three hits at the corpse |
+| DTV2 | Replay | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd | AscensionSliceCompletionTest | last three non-Replay hits repeat at the corpse at 35% with their geometry |
 | DTV3 | The Bill | revelation_mutation | 5 | implemented | core/systems/ascension/engines/DistortionEngine.gd |  |  |
 
 ## Dominion (DO)
@@ -467,15 +468,15 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| pick.D1 | Momentum | choice | 3 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.M1 | Hands On | choice | 3 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.P1 | Encore | choice | 3 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.D2 | Fortune | choice | 4 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.M2 | Automatic | choice | 4 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.P2 | Overflow | choice | 4 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.D3 | Commitment | choice | 5 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.M3 | Patient | choice | 5 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
-| pick.P3 | Wild Card | choice | 5 | missing | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | purchasable as a free milestone choice; effect not implemented |
+| pick.D1 | Momentum | choice | 3 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest |  |
+| pick.M1 | Hands On | choice | 3 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest |  |
+| pick.P1 | Encore | choice | 3 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest |  |
+| pick.D2 | Fortune | choice | 4 | ambiguous |  |  | reward-screen reroll: needs the item reward UI, out of combat scope; not implemented |
+| pick.M2 | Automatic | choice | 4 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | Automatic Method: casts the ready Q at 70% damage / P on the automation table target; holding Q pauses it |
+| pick.P2 | Overflow | choice | 4 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest |  |
+| pick.D3 | Commitment | choice | 5 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest | applies to EXK1, EXK2, BRK1, DTK1 numbers; other keystones as their engines are built |
+| pick.M3 | Patient | choice | 5 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionSharedRulesTest |  |
+| pick.P3 | Wild Card | choice | 5 | n/a | core/systems/ascension/AscensionLedger.gd | AscensionLedgerTest | the tree already lets a banked claim buy any qualified Evolution, so 'offer every qualified form' is the standing behaviour |
 | ASC1 | Echoes | choice | 6 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
 | ASC2 | Second Skin | choice | 6 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
 | ASC3 | Chain Reaction | choice | 6 | implemented | core/systems/ascension/AscensionRunner.gd | AscensionHybridTest |  |
