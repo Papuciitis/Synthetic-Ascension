@@ -35,6 +35,26 @@ var _colors := PackedColorArray()
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
+# Advancement-tree projectile behaviours (see HitProfileAdapter): the path
+# flown (origin, bounce points), targets crossed, pierce damage ramp,
+# terrain bounces, seeking, and the end-of-flight report.
+var _paths: Array = []
+var _crossed := PackedInt32Array()
+var _ramp := PackedFloat32Array()
+var _ramp_cap := PackedFloat32Array()
+var _bounces := PackedInt32Array()
+var _bounce_scale := PackedFloat32Array()
+var _bounce_pp := PackedFloat32Array()
+var _seek := PackedInt64Array()
+var _turn_left := PackedFloat32Array()
+var _max_range := PackedFloat32Array()
+var _ended: Array = []
+## Called after each simulation step with {id, tags, origin, path, position,
+## direction, reason, damage, pierce_left, crossed, source, max_range} for
+## every PLAYER-team tagged projectile that ended (range, life, pierce,
+## world, consumed).
+var projectile_ended: Callable = Callable()
+const SEEK_TURN_RATE_DEG := 240.0
 ## Hostile projectiles inside this circle move at `factor` speed (Denial).
 ## Radius 0 disables it; the owner re-asserts it every frame it applies.
 var _slow_zone_center := Vector2.ZERO
@@ -118,6 +138,7 @@ func _process(delta: float) -> void:
 		for i in range(_active_count - 1, -1, -1):
 			_simulate_one(i, step)
 	_flush_hit_ledgers()
+	_flush_ended()
 	_update_renderer()
 	_last_physics_ms = float(Time.get_ticks_usec() - started_us) / 1000.0
 	_update_debug_overlay()
@@ -131,7 +152,20 @@ func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapte
 	var burn_stack_count := int(profile.get_meta("burn_stacks", 0))
 	var burn_tick_mult := float(profile.get_meta("burn_tick_mult", 0.0))
 	var tags: PackedStringArray = profile.get_meta("asc_tags", PackedStringArray())
-	return _spawn(origin, direction.normalized() * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core, tags)
+	var dir := direction.normalized()
+	if profile.direction_offset_degrees != 0.0:
+		dir = dir.rotated(deg_to_rad(profile.direction_offset_degrees))
+	if not _spawn(origin, dir * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core, tags):
+		return false
+	var index := _active_count - 1
+	_ramp[index] = maxf(0.0, profile.pierce_ramp)
+	_ramp_cap[index] = maxf(0.0, profile.pierce_ramp_cap)
+	_bounces[index] = maxi(0, profile.bounces)
+	_bounce_scale[index] = profile.bounce_scale
+	_bounce_pp[index] = profile.bounce_proc_power
+	_seek[index] = profile.seek_handle
+	_turn_left[index] = maxf(0.0, profile.seek_turn_degrees)
+	return true
 
 func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: float, lifetime: float, source: Node, enemy_id: StringName = &"") -> bool:
 	var visual := Visual.ENEMY_BLUE
@@ -177,6 +211,16 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_sources[index] = source
 		_tags[index] = tags
 		_ids[index] = _next_id
+		_paths[index] = PackedVector2Array([origin])
+		_crossed[index] = 0
+		_ramp[index] = 0.0
+		_ramp_cap[index] = 0.0
+		_bounces[index] = 0
+		_bounce_scale[index] = 1.0
+		_bounce_pp[index] = 0.0
+		_seek[index] = 0
+		_turn_left[index] = 0.0
+		_max_range[index] = maxf(0.0, max_range)
 	else:
 		_positions.append(origin)
 		_previous.append(origin)
@@ -201,6 +245,16 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_sources.append(source)
 		_tags.append(tags)
 		_ids.append(_next_id)
+		_paths.append(PackedVector2Array([origin]))
+		_crossed.append(0)
+		_ramp.append(0.0)
+		_ramp_cap.append(0.0)
+		_bounces.append(0)
+		_bounce_scale.append(1.0)
+		_bounce_pp.append(0.0)
+		_seek.append(0)
+		_turn_left.append(0.0)
+		_max_range.append(maxf(0.0, max_range))
 	_next_id += 1
 	_active_count += 1
 	return true
@@ -209,6 +263,19 @@ func _simulate_one(index: int, delta: float) -> void:
 	if index >= _active_count:
 		return
 	var old_pos := _positions[index]
+	if _turn_left[index] > 0.0 and _seek[index] != 0:
+		# Smart Rounds: curve toward the marked enemy within the turn budget.
+		var seek_handle: int = int(_seek[index])
+		if EnemyWorld.is_valid_handle(seek_handle) and not EnemyWorld.is_dying(seek_handle):
+			var desired := EnemyWorld.get_position(seek_handle) - old_pos
+			if desired.length_squared() > 1.0:
+				var angle := _velocities[index].angle_to(desired)
+				var max_step := deg_to_rad(minf(SEEK_TURN_RATE_DEG * delta, _turn_left[index]))
+				var step_angle := clampf(angle, -max_step, max_step)
+				_velocities[index] = _velocities[index].rotated(step_angle)
+				_turn_left[index] -= rad_to_deg(absf(step_angle))
+		else:
+			_seek[index] = 0
 	var movement := _velocities[index] * delta
 	if _slow_zone_radius > 0.0 and _teams[index] == Team.ENEMY and old_pos.distance_squared_to(_slow_zone_center) <= _slow_zone_radius * _slow_zone_radius:
 		movement *= _slow_zone_factor
@@ -240,14 +307,22 @@ func _simulate_one(index: int, delta: float) -> void:
 			target_t = _segment_circle_t(old_pos, new_pos, target.global_position, PLAYER_RADIUS + _radii[index])
 
 	if world_t >= 0.0 and (target_t < 0.0 or world_t <= target_t):
-		_remove(index)
+		if _bounces[index] > 0 and _teams[index] == Team.PLAYER:
+			_bounce(index, old_pos, new_pos, world_t)
+			return
+		_remove(index, &"world")
 		return
 	if target_handle != 0 and target_t >= 0.0:
 		var hit_index := 0
 		while true:
 			_queue_handle_hit(index, target_handle, old_pos.lerp(new_pos, target_t))
+			_crossed[index] += 1
+			if _ramp[index] > 0.0 and _ramp_cap[index] > 0.0:
+				var added := minf(_ramp[index], _ramp_cap[index])
+				_damage[index] += added
+				_ramp_cap[index] -= added
 			if _pierce[index] <= 0:
-				_remove(index)
+				_remove(index, &"pierce")
 				return
 			_pierce[index] -= 1
 			_last_hit_handles[index] = target_handle
@@ -257,7 +332,10 @@ func _simulate_one(index: int, delta: float) -> void:
 			target_handle = _sweep_handles[hit_index]
 			target_t = _sweep_ts[hit_index]
 			if world_t >= 0.0 and world_t <= target_t:
-				_remove(index)
+				if _bounces[index] > 0 and _teams[index] == Team.PLAYER:
+					_bounce(index, old_pos, new_pos, world_t)
+					return
+				_remove(index, &"world")
 				return
 	elif target != null and target_t >= 0.0:
 		var hit_pos := old_pos.lerp(new_pos, target_t)
@@ -267,8 +345,43 @@ func _simulate_one(index: int, delta: float) -> void:
 			return
 		_pierce[index] -= 1
 	_positions[index] = new_pos
-	if _life_left[index] <= 0.0 or _range_left[index] <= 0.0:
-		_remove(index)
+	if _range_left[index] <= 0.0:
+		_remove(index, &"range")
+	elif _life_left[index] <= 0.0:
+		_remove(index, &"life")
+
+
+## Bank Shot: reflect off the terrain contact instead of dying. The wall
+## normal is probed per axis; an ambiguous corner reverses the shot.
+func _bounce(index: int, old_pos: Vector2, new_pos: Vector2, world_t: float) -> void:
+	var contact := old_pos.lerp(new_pos, maxf(0.0, world_t - 0.02))
+	var movement := new_pos - old_pos
+	var velocity := _velocities[index]
+	var radius := _radii[index]
+	var blocked_x := movement.x != 0.0 and _world_hit_t(contact, contact + Vector2(movement.x, 0.0), radius) >= 0.0
+	var blocked_y := movement.y != 0.0 and _world_hit_t(contact, contact + Vector2(0.0, movement.y), radius) >= 0.0
+	if blocked_x == blocked_y:
+		velocity = -velocity
+	elif blocked_x:
+		velocity.x = -velocity.x
+	else:
+		velocity.y = -velocity.y
+	_velocities[index] = velocity
+	_positions[index] = contact
+	_bounces[index] -= 1
+	_damage[index] *= _bounce_scale[index]
+	_last_hit_handles[index] = 0
+	var path: PackedVector2Array = _paths[index]
+	path.append(contact)
+	_paths[index] = path
+	if _bounce_pp[index] > 0.0 and not _tags[index].is_empty():
+		var tags: PackedStringArray = _tags[index]
+		for i in range(tags.size()):
+			if tags[i].begins_with("pp:"):
+				tags[i] = "pp:%.3f" % _bounce_pp[index]
+		if not tags.has("flag:bounce"):
+			tags.append("flag:bounce")
+		_tags[index] = tags
 
 func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_handle: int) -> bool:
 	_query_hit_handle = 0
@@ -343,6 +456,9 @@ func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 		var tags: PackedStringArray = _tags[index]
 		if not tags.is_empty():
 			ledger.tags = tags
+	ledger.projectile_id = _ids[index]
+	ledger.direction = direction
+	ledger.projectile_crossed = _crossed[index]
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
 
 func _flush_hit_ledgers() -> void:
@@ -369,10 +485,27 @@ func _spawn_impact(world_position: Vector2) -> void:
 		add_child(_impact_renderer)
 	_impact_renderer.call("add_burst", world_position)
 
-func _remove(index: int) -> void:
+func _remove(index: int, reason: StringName = &"consumed") -> void:
 	var last := _active_count - 1
 	if index < 0 or index > last:
 		return
+	if _teams[index] == Team.PLAYER and projectile_ended.is_valid() and not (_tags[index] as PackedStringArray).is_empty():
+		var source_value: Variant = _sources[index]
+		var path: PackedVector2Array = _paths[index]
+		_ended.append({
+			"id": _ids[index],
+			"tags": _tags[index],
+			"origin": path[0] if path.size() > 0 else _positions[index],
+			"path": path,
+			"position": _positions[index],
+			"direction": _velocities[index].normalized(),
+			"reason": reason,
+			"damage": _damage[index],
+			"pierce_left": _pierce[index],
+			"crossed": _crossed[index],
+			"source": source_value if is_instance_valid(source_value) else null,
+			"max_range": _max_range[index],
+		})
 	if index != last:
 		_positions[index] = _positions[last]
 		_previous[index] = _previous[last]
@@ -397,14 +530,57 @@ func _remove(index: int) -> void:
 		_sources[index] = _sources[last]
 		_tags[index] = _tags[last]
 		_ids[index] = _ids[last]
+		_paths[index] = _paths[last]
+		_crossed[index] = _crossed[last]
+		_ramp[index] = _ramp[last]
+		_ramp_cap[index] = _ramp_cap[last]
+		_bounces[index] = _bounces[last]
+		_bounce_scale[index] = _bounce_scale[last]
+		_bounce_pp[index] = _bounce_pp[last]
+		_seek[index] = _seek[last]
+		_turn_left[index] = _turn_left[last]
+		_max_range[index] = _max_range[last]
 	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
 	# a realloc + copy storm at bullet-heaven churn rates. Only the released
 	# source reference is cleared so it cannot pin a freed node's Variant.
 	_sources[last] = null
 	_tags[last] = PackedStringArray()
+	_paths[last] = PackedVector2Array()
 	_active_count -= 1
 
+
+## Delivers end-of-flight reports after the step, so a listener that spawns
+## replacements (Return Shot) never races the swap-remove.
+func _flush_ended() -> void:
+	if _ended.is_empty():
+		return
+	var reports := _ended
+	_ended = []
+	if not projectile_ended.is_valid():
+		return
+	for info in reports:
+		projectile_ended.call(info)
+
+
+## Terrain contact along a segment (t in 0..1, or -1): for beams that count
+## obstructions and shots that bounce.
+func world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
+	return _world_hit_t(from, to, radius)
+
+
+## PLAYER-team projectiles within `radius`, appended as {id, position,
+## velocity, damage, tags}. Nothing is removed.
+func player_projectiles_in_radius(center: Vector2, radius: float, out: Array) -> int:
+	var radius_squared := radius * radius
+	var added := 0
+	for i in range(_active_count):
+		if _teams[i] == Team.PLAYER and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out.append({"id": _ids[i], "position": _positions[i], "velocity": _velocities[i], "damage": _damage[i], "tags": _tags[i]})
+			added += 1
+	return added
+
 func _clear_all() -> void:
+	_ended.clear()
 	while _active_count > 0:
 		_remove(_active_count - 1)
 	_update_renderer()

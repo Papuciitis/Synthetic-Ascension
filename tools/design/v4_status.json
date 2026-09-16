@@ -1061,6 +1061,408 @@
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/BarrageEngine.gd"
  },
+ "OR01": {
+  "note": "weighted Ranged Core hits (pp) accumulate; a Shell at 4, one per native input, credit retained",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR02": {
+  "note": "a Mine at every dash start; contact 22 px after arming; cap replacement detonates the oldest at half",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR03": {
+  "note": "a Core hit on an enemy inside a pending Shell's radius advances it 0.15 s once per input; on that enemy's death the Shell redirects once to the nearest enemy within 3R",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR04": {
+  "note": "a blast kill calls one Shell on the corpse, once per victim, pp 0.5, same sequence root",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR05": {
+  "note": "a player projectile within 14 px of an unarmed Mine pushes it R toward aim, +0.5D, armed at once",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR06": {
+  "note": "a Mine blast detonates every armed Mine inside its radius (removed first, each once)",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR07": {
+  "note": "hits in the outer half pull normals R/2 (elites R/4) toward the centre after damage; bosses 0.25D stagger",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR08": {
+  "note": "three distinct blasts arm Fracture; the next consumes it for three 0.6D shrapnel shots along the incoming blast directions",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR09": {
+  "note": "L of travel calls a Shell R behind the heading, at most one per 0.5 s",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR10": {
+  "note": "cap 18, full-power replacement; a Coordinate replaced beyond three fires one Shell",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR11": {
+  "note": "first blast kill after R of travel: three Shells at the densest point within 3R",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "OR12": {
+  "note": "every seventh Shell (Mines excluded) is 4D in 2R with a 0.9 s tell, pp 1",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORA": {
+  "note": "on_q_activated: a non-Shell Q leaves a Shell at the aim point within L; Designate advances Big One by one",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORC": {
+  "note": "twelve blasts under one sequence root: six horizontal lanes across the camera rect, four 2D Shells each over 1 s, armed Mines on lanes detonate; recovery 8 s",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORE1": {
+  "note": "an activated Coordinate follows 3 s dropping a Shell every 0.3 s behind the route (allowance 10); stopping 0.3 s fires the rest",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORE2": {
+  "note": "each activated Coordinate becomes one 8D Shell in 2R at the nearest durable target after a 1 s tell, position fixed 0.2 s before landing",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORF1": {
+  "note": "automatic Shells avoid cells used within 2 s; three blast kills within 1 s call an extra pp-0.4 Shell at the least-covered enemy; Shells -15%",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORF2": {
+  "note": "latest Core hit on an elite/boss guides automatic Shells for 4 s at +50%; every second automatic Shell suppressed",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORK1": {
+  "note": "three distinct blasts on a durable target make a Beacon (max three, 5 s): a 1D Shell every 0.8 s; other Shells -15%",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORK2": {
+  "note": "+40% radius, +25% damage; a blast covering the player costs 3% max HP through take_damage, one per 0.25 s",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ": {
+  "note": "hold-Q: tap on empty ground places (0.25 s), tap on a Coordinate fires four Shells 0.2 s apart (7 s), hold 0.35 s places and fires; automatic casts fire existing Coordinates or place at the densest group",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ1": {
+  "note": "seven Shells spread over a 3R circle",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ2": {
+  "note": "three 2.5D Shells that follow the chosen enemy until the final 0.15 s",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ3": {
+  "note": "each distinct kill under the sequence root adds a Shell at the victim, six per Coordinate",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ4": {
+  "note": "Designate Shells land as 3 s traps (separate cap 24), no landing damage",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ5": {
+  "note": "the Coordinate keeps an aim-set offset from the player (up to L)",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ6": {
+  "note": "firing one starts every Coordinate in creation order 0.2 s apart",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORQ7": {
+  "note": "fired Coordinates go dormant and reactivate when the Q cooldown completes",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORS1": {
+  "note": "blast damage x(1 + 1% sqrt(rank))",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORS2": {
+  "note": "blast radius x(1 + 70% r/(r+95))",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORV": {
+  "note": "1 s tell then 24 3D Shells (0.2 s fall) over 1 s across occupied 80 px cells, least-used cell first; pp 0.25, flag v",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORV1": {
+  "note": "48 Shells, half of them on random cells including gaps",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORV2": {
+  "note": "Shells ahead of the heading within 1.5R are moved behind the player",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "ORV3": {
+  "note": "the mission repeats after 2 s at 60% on current occupancy",
+  "status": "implemented",
+  "test": "AscensionOrdnanceTest",
+  "where": "core/systems/ascension/engines/OrdnanceEngine.gd"
+ },
+ "PR01": {
+  "note": "per-target weighted Read (Proc Power); Weak Point status 3 s expired by the engine; +1D on consumption through the outgoing-damage hook; one hit never both exposes and consumes",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR02": {
+  "note": "first Ranged Core hit beyond 2R exposes once per enemy",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR03": {
+  "note": "native profile: +2 pierce, 0.2D ramp per crossed target capped at 1D (ProjectileSimulationManager)",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR04": {
+  "note": "the projectile id that consumed is remembered; its next victim is exposed after damage",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR05": {
+  "note": "Aim after 0.8 s without native input: +1D and pp 1.25 on the native profile; enemy damage clears it; a Witness shot spends it via its cast tag",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR06": {
+  "note": "native profile: one terrain bounce (axis probed), 75%, pp 0.7 rewritten on the projectile's tags",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR07": {
+  "note": "end-of-flight report (range or pierce) spawns the return along the last leg for 60%, pierce = crossed + 2; returns never return",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR08": {
+  "note": "unused pierce on a return: +0.2D and +R/4 width each (max +1D/+R); without PR07 a 1D burst in R/2 at the endpoint",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR09": {
+  "note": "kill of an exposed (or just-consumed) victim by a projectile that crossed another: two 0.7D shots at +-20 degrees with one pierce",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR10": {
+  "note": "aim line through the central half (5 px) of an exposed target: -0.25 s Q recovery and half the Aim timer kept; once per input",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR11": {
+  "note": "per-target trajectory memory (projectile id + direction) within 0.5 s; +1D once per target per second",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PR12": {
+  "note": "returning kills bank up to three spare rounds fired from the return endpoint toward aim on the next native Ranged input",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRA": {
+  "note": "per native input: a projectile that ends with no hits retraces from its end; a slash or impact with no native hit within 0.35 s repeats as a 0.8D wave / impact",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRC": {
+  "note": "per cast: twelve distinct enemies crossed or six Weak Points consumed; six edge guns fire 2D lines through the densest targets; One Bullet: an 8D aim sweep over 0.8 s; recovery 8 s",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRE1": {
+  "note": "one 2D line per fresh Deadshot victim toward aim, recursive; consecutive misses counted",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRE2": {
+  "note": "four edge guns for 2 s, a 1.5D line every 0.5 s through the nearest exposed enemy or the cursor",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRF1": {
+  "note": "centred Weak Point shots gain +1D and one pierce on the native profile",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRF2": {
+  "note": "native profile seeks the nearest exposed target within 3L, 30-degree budget, 80% damage; a miss returns once from the far edge (only without Return Shot, which takes precedence)",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRK1": {
+  "note": "haste 0.5 for Ranged; native profile 3D at pp 1.25. Extra projectiles from the same volley (+0.4D, +R/8) not applied to Barrage side rounds",
+  "status": "partial",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRK2": {
+  "note": "alternating +-20 degrees via direction_offset; three bounces at x1.5; returns at 90%",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ": {
+  "note": "hold Q: world time 35% for up to 0.6 real seconds (runner.set_time_slow); release fires a 4D beam R/3 wide to the far edge, each target once; automatic casts pick the densest line through aim without a pause",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ1": {
+  "note": "second line R to the right of the first origin (both fire at 62.5% each = 2.5D)",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ2": {
+  "note": "immediate, 5 s, 3D; Twin's second line 0.15 s later at 65%",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ3": {
+  "note": "obstructions counted along the line with the terrain query; +0.5D each up to +2D; width halved",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ4": {
+  "note": "five parallel lines R/3 apart at 35%, pp 0.3",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ5": {
+  "note": "first three real kills of the opening beam fire 1.5D lines from the victims toward aim (flag recalculated blocks recursion)",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRQ6": {
+  "note": "normals under 25% after damage are finished; elites/bosses under 25% take +1D via the damage hook",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRS1": {
+  "note": "speed and max range x(1 + 80% r/(r+80)) on the native profile",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRS2": {
+  "note": "runner.q_scale() multiplies by every engine's q_damage_multiplier: 1 + 1% sqrt(rank)",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRV": {
+  "note": "world time 20% for 1.5 real seconds; attack presses place up to three lines through the player and cursor (tests call place_line); fires 5D lines R wide, every crossing hits",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRV1": {
+  "note": "three high-density lines chosen automatically (separate groups), 0.4 s tell, no pause",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRV2": {
+  "note": "each line repeats after 0.5 s from the opposite end at 60%; One Line adds a 0.75 s reverse sweep at half",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
+ "PRV3": {
+  "note": "cursor-steered sweep 1.5 s, 3D per target every 0.3 s, five hits per target",
+  "status": "implemented",
+  "test": "AscensionPrecisionTest",
+  "where": "core/systems/ascension/engines/PrecisionEngine.gd"
+ },
  "RM5": {
   "note": "named 25% roll, three burning fragments",
   "status": "implemented",

@@ -17,6 +17,11 @@ var burn_duration: float = 0.0
 var burn_tick: float = 0.5
 var burn_damage_per_tick_per_stack: float = 0.0
 var tags: PackedStringArray = PackedStringArray()
+# Provenance of the last projectile that contributed (advancement tree):
+# its stable id, travel direction and how many targets it had crossed.
+var projectile_id: int = 0
+var direction: Vector2 = Vector2.ZERO
+var projectile_crossed: int = 0
 
 func add_resolved_hit(damage: float, source_node: Node, knockback_force: Vector2, was_critical: bool, burn_stack_count: int, burn_time: float, burn_interval: float, burn_damage: float) -> void:
 	total_raw_damage += maxf(0.0, damage)

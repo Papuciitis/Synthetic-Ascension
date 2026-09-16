@@ -399,6 +399,18 @@ frames against the event log:
   are never culled. Same probe after the cap: 47 item pickups, node growth
   1,800 -> 560 over the minute.
 
+## 2026-09-16 (later): dense benchmark guard made stable
+
+AscensionBarrageDenseBenchmark asserted "no fragment update exceeded
+12 ms". Six runs of the same committed build (before and after the
+Precision/Ordnance projectile changes) put that single worst frame at
+8.8-16.7 ms while p95 stayed 4.9-6.0 ms, so the bound flapped without any
+code change. The guard now checks p99 < 15 ms (max still printed) and the
+chain's RNG is seeded; frame timing still steers the fragments (127-180 of
+180 killed across runs), so the "kills most of the crowd" floor is 60%. Measured after the projectile-manager additions (pierce ramp,
+bounce, seeking, end-of-flight reports): fragment update p50 1.0-1.5 ms,
+p95 5.0-6.0 ms; headless frame p95 7.5-7.6 ms. Same machine as above.
+
 ## 2026-09-16 — Barrage fragment acquisition and recorder trust (stage 2 of the V4 plan)
 
 Follows `docs/audits/2026-09-15-performance-captures.md`.

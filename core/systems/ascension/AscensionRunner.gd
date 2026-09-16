@@ -30,6 +30,8 @@ const ENGINE_SCRIPTS: Dictionary = {
 	"EX": "res://core/systems/ascension/engines/ExecutionEngine.gd",
 	"DT": "res://core/systems/ascension/engines/DistortionEngine.gd",
 	"MO": "res://core/systems/ascension/engines/MomentumEngine.gd",
+	"PR": "res://core/systems/ascension/engines/PrecisionEngine.gd",
+	"OR": "res://core/systems/ascension/engines/OrdnanceEngine.gd",
 	"BA": "res://core/systems/ascension/engines/BastionEngine.gd",
 }
 ## Dash-recovery refunds (Clean Cut, Kill Reset) share one bucket: 0.6 s per
@@ -333,6 +335,8 @@ func _set_wired(on: bool) -> void:
 	]
 	if EnemyCombat != null:
 		EnemyCombat.player_damage_modifier = Callable(self, "_modify_outgoing_damage") if on else Callable()
+	if ProjectileManager != null:
+		ProjectileManager.projectile_ended = Callable(self, "_on_projectile_ended") if on else Callable()
 	for pair in wiring:
 		var sig: Signal = pair[0]
 		var cb: Callable = pair[1]
@@ -569,6 +573,9 @@ func _make_hit(handle: int, applied: float, unclamped: float, before: float, pay
 		"gen": parsed["gen"],
 		"pp": parsed["pp"],
 		"flags": parsed["flags"],
+		"projectile_id": ledger_payload.projectile_id if ledger_payload != null else 0,
+		"direction": ledger_payload.direction if ledger_payload != null else Vector2.ZERO,
+		"crossed": ledger_payload.projectile_crossed if ledger_payload != null else 0,
 	}
 	hit["is_normal"] = not hit["is_elite"] and not hit["is_boss"]
 	return hit
@@ -800,13 +807,16 @@ var _q_idle_at_cast: float = 999.0
 ## (Method: Automatic), 0.5 for an Encore repeat; manual casts +20% with
 ## Hands On and +30% with Patient after two idle seconds.
 func q_scale() -> float:
+	var sinks := 1.0
+	for engine in engines:
+		sinks *= engine.q_damage_multiplier()
 	if encore_cast:
-		return ENCORE_SCALE
+		return ENCORE_SCALE * sinks
 	if reaction_cast:
-		return REACTION_SCALE
+		return REACTION_SCALE * sinks
 	if automatic_cast:
-		return AUTOMATIC_SCALE
-	var scale := 1.0
+		return AUTOMATIC_SCALE * sinks
+	var scale := sinks
 	if owns("pick.M1"):
 		scale *= HANDS_ON_SCALE
 	if owns("pick.M3") and _q_idle_at_cast >= PATIENT_IDLE:
@@ -1171,6 +1181,12 @@ func _resolve_attack(entry: Dictionary) -> void:
 	_attack_fx.append({"kind": entry["kind"], "at": at, "dir": entry["dir"], "radius": radius, "arc": float(entry["arc"]), "ttl": ATTACK_FX_SECONDS, "color": color})
 
 
+## A beam or line resolved: drawn for a sixth of a second like other strikes.
+func note_line_fx(from: Vector2, to: Vector2, radius: float) -> void:
+	_attack_fx.append({"kind": "line", "at": from, "dir": to, "radius": radius, "arc": 0.0, "ttl": ATTACK_FX_SECONDS, "color": Color(1.0, 0.9, 0.6, 0.8)})
+	queue_redraw()
+
+
 func _tick_attack_fx(delta: float) -> void:
 	for i in range(_attack_fx.size() - 1, -1, -1):
 		var fx: Dictionary = _attack_fx[i]
@@ -1253,7 +1269,9 @@ func _draw() -> void:
 		color.a *= fade
 		var at: Vector2 = fx["at"]
 		var radius := float(fx["radius"])
-		if String(fx["kind"]) == "slash":
+		if String(fx["kind"]) == "line":
+			draw_line(at, fx["dir"], color, maxf(2.0, radius * 2.0 * fade), true)
+		elif String(fx["kind"]) == "slash":
 			var facing: float = (fx["dir"] as Vector2).angle()
 			var half := deg_to_rad(float(fx["arc"])) * 0.5
 			draw_arc(at, radius * (0.75 + 0.25 * (1.0 - fade)), facing - half, facing + half, 24, color, 5.0 * fade + 1.0, true)
@@ -1372,6 +1390,40 @@ func _modify_outgoing_damage(handle: int, raw: float, payload: Variant) -> float
 	return damage
 
 
+func _on_projectile_ended(info: Dictionary) -> void:
+	if info.get("source") != _player:
+		return
+	for engine in engines:
+		engine.on_projectile_ended(info)
+
+
+## World-time slow for a real-time budget (Deadshot, JUDGEMENT). Restored
+## by the runner's own clock; HitFeel's hitstop keeps its own restore.
+var _time_slow_left: float = 0.0
+
+
+func set_time_slow(scale: float, real_seconds: float) -> void:
+	Engine.time_scale = clampf(scale, 0.05, 1.0)
+	_time_slow_left = maxf(0.0, real_seconds)
+
+
+func end_time_slow() -> void:
+	if _time_slow_left > 0.0:
+		_time_slow_left = 0.0
+		Engine.time_scale = 1.0
+
+
+func time_slowed() -> bool:
+	return _time_slow_left > 0.0
+
+
+## Terrain contact along a segment (t in 0..1 or -1).
+func terrain_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
+	if ProjectileManager == null:
+		return -1.0
+	return ProjectileManager.world_hit_t(from, to, radius)
+
+
 func _on_player_damage_resolved(who: Node, raw: float, _adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
 	if who != _player or (outcome != &"hit" and outcome != &"intercepted") or applied <= 0.0:
 		return
@@ -1453,6 +1505,11 @@ func _process(delta: float) -> void:
 			_activate(pending)
 	_clock += delta
 	_q_idle += delta
+	if _time_slow_left > 0.0:
+		_time_slow_left -= delta / maxf(Engine.time_scale, 0.001)
+		if _time_slow_left <= 0.0:
+			_time_slow_left = 0.0
+			Engine.time_scale = 1.0
 	if _encore_left > 0.0:
 		_encore_left = maxf(0.0, _encore_left - delta)
 	_track_travel()
@@ -1632,6 +1689,9 @@ func _activate(slot: String, pair: bool = false) -> Dictionary:
 			hud.fail(String(result.get("message", "FAILED")))
 		return result
 	var cooldown := float(result.get("cooldown", 0.0))
+	if slot == "q":
+		for other in engines:
+			other.on_q_activated(id, result)
 	if slot == "q":
 		cooldown = _recovery(cooldown)
 		if encore_cast:

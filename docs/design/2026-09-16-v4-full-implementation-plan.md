@@ -29,7 +29,7 @@ is a presentation reference only; none of its economy or node rules apply.
 | 2 | Stability pass: fragment acquisition, recorder trust, regression coverage, baselines | done 2026-09-16 (see PERFORMANCE_PATCH_CHANGELOG); rendered check deferred to stage 4 |
 | 3a | Finish Execution, Barrage, Distortion omissions and the shared rules they hang on | done 2026-09-16 |
 | 3b | Momentum, Bastion (Melee) | done 2026-09-16 (66 + 62 checks; BA10 n/a, MOQ5 partial) |
-| 3c | Precision, Ordnance (Ranged) | pending |
+| 3c | Precision, Ordnance (Ranged) | done 2026-09-16 (47 + 63 checks; PRK1 partial) |
 | 3d | Invocation, Dominion (Magic) | pending |
 | 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | pending |
 | 4 | Presets per discipline + hybrids through real purchase rules; whole-system tests; frame distributions; rendered checks | pending |
@@ -78,6 +78,45 @@ is a presentation reference only; none of its economy or node rules apply.
   Force on the same strike when both are owned.
 - 2026-09-16 (3b): Carry (MOQ5) drags one normal now; friendly Mines, Sigils
   and Wells follow once Ordnance/Invocation exist (partial until 3c/3d).
+- 2026-09-16 (3c): projectile behaviours the tree needs (pierce damage ramp,
+  terrain bounce, seeking within a turn budget, direction offset, and an
+  end-of-flight report with the path flown) live in
+  ProjectileSimulationManager as per-slot data set from HitProfileAdapter
+  fields; reports are delivered after the simulation step so a listener
+  that spawns replacements never races the swap-remove. Hit records carry
+  the projectile id, direction and targets crossed.
+- 2026-09-16 (3c): a Weak Point is a runner status plus an engine-owned
+  expiry (3 s); the runner's status sweep only clears dead enemies.
+  Consumption and Read happen in one on_hit pass with the rule "the hit that
+  exposes never consumes" enforced by ordering.
+- 2026-09-16 (3c): Return Shot returns along the last leg (a bounced path
+  reverses its final segment, then continues straight). With both Return
+  Shot and Smart Rounds owned, the return takes precedence over the
+  edge return. Deadshot and JUDGEMENT slow world time through
+  Engine.time_scale with a real-time budget kept by the runner; automatic
+  and Reaction casts of Deadshot pick the densest line through aim with no
+  pause. JUDGEMENT's lines are placed by attack presses during the pause
+  (a line runs across the screen through the player and cursor); tests
+  place them directly.
+- 2026-09-16 (3c): One Bullet's "+0.4D and +R/8 per extra projectile of the
+  same volley" is not applied to Barrage's side rounds (partial, recorded).
+- 2026-09-16 (3c): every blast is an impact on the runner's queue tagged
+  "cast:blast:N"; the engine keeps centre and radius so Blast Pull,
+  Fracture, Spotter, Danger Close and the action-charge rules resolve from
+  the hit record. Mines trigger on an enemy within 22 px after arming.
+  Shells fall 0.6 s (Big One 0.9 s, FIRE MISSION 0.2 s after its 1 s grid
+  tell, Bunker Buster fixed 0.2 s before landing). "Occupied cell" is an
+  80 px grid cell holding an enemy. Rolling Thunder's lanes are six
+  horizontal lanes across the camera rect.
+- 2026-09-16 (3c): Designate is a held Q: tap places, tap on a Coordinate
+  fires, hold 0.35 s places and fires; Fire Again's dormant Coordinates
+  reactivate when the runner's Q cooldown reaches zero. Fuse (axiom) hangs
+  on a new on_q_activated engine hook the runner calls after any Q cast.
+- 2026-09-16 (3c): AscensionBarrageDenseBenchmark's single-frame "max
+  fragment update < 12 ms" bound proved noise-driven (baseline runs of the
+  committed 3b state span 8.8-16.7 ms while p95 stays 4.9-5.4 ms); the
+  guard now checks p99 and the kill-count floor reflects the unseeded
+  chain's spread. No throughput change: p95 5.0-6.0 ms after 3c.
 
 ## Verification log
 
@@ -102,3 +141,8 @@ is a presentation reference only; none of its economy or node rules apply.
   BalanceLedger 17, BalanceCaptureWriter 7, BalanceRecorderLoad 5,
   GroundLootCap 6, LoadingScrim 6) 0 failed; ScriptParseAuditTest 397.
   Matrix: 178 implemented, 6 partial, 5 n/a, 160 missing, 1 ambiguous.
+- 2026-09-16 stage 3c: AscensionPrecisionTest 47, AscensionOrdnanceTest 63;
+  the full set unchanged (Momentum 66, Bastion 62, EnemyCombatQueryTest 19
+  added to the run); ScriptParseAuditTest 399. Dense benchmark compared
+  before/after (see decisions). Matrix: 244 implemented, 7 partial, 5 n/a,
+  93 missing, 1 ambiguous.

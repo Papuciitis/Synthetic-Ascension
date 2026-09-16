@@ -15,9 +15,9 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Execution (EX) | 34 | 32 | 2 | 0 | 0 | 0 |
 | Momentum (MO) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Bastion (BA) | 33 | 32 | 0 | 0 | 0 | 1 |
-| Precision (PR) | 33 | 0 | 0 | 33 | 0 | 0 |
+| Precision (PR) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Barrage (BR) | 34 | 32 | 2 | 0 | 0 | 0 |
-| Ordnance (OR) | 34 | 0 | 0 | 34 | 0 | 0 |
+| Ordnance (OR) | 34 | 34 | 0 | 0 | 0 | 0 |
 | Invocation (IN) | 33 | 0 | 0 | 33 | 0 | 0 |
 | Distortion (DT) | 33 | 32 | 1 | 0 | 0 | 0 |
 | Dominion (DO) | 33 | 0 | 0 | 33 | 0 | 0 |
@@ -28,7 +28,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Choice (choice) | 12 | 10 | 0 | 0 | 1 | 1 |
 | Ascendant (ascendant) | 1 | 1 | 0 | 0 | 0 | 0 |
 | Sink (sink) | 2 | 2 | 0 | 0 | 0 | 0 |
-| **All** | 350 | 178 | 6 | 160 | 1 | 5 |
+| **All** | 350 | 244 | 7 | 93 | 1 | 5 |
 
 ## Shared rules
 
@@ -183,39 +183,39 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| PR01 | Read | local | 1 | missing |  |  |  |
-| PR02 | Far Shot | local | 1 | missing |  |  |  |
-| PR03 | Penetrator | local | 2 | missing |  |  |  |
-| PR04 | Second Read | local | 2 | missing |  |  |  |
-| PR05 | Held Breath | local | 2 | missing |  |  |  |
-| PR06 | Bank Shot | local | 2 | missing |  |  |  |
-| PR07 | Return Shot | local | 2 | missing |  |  |  |
-| PR08 | Overpenetrate | local | 2 | missing |  |  |  |
-| PRQ | Deadshot | active | 2 | missing |  |  |  |
-| PR09 | Split Line | local | 3 | missing |  |  |  |
-| PR10 | Dead Center | local | 3 | missing |  |  |  |
-| PR11 | Crossing Fire | local | 3 | missing |  |  |  |
-| PR12 | Long Game | local | 3 | missing |  |  |  |
-| PRF1 | Deadeye | fork | 3 | missing |  |  |  |
-| PRF2 | Smart Rounds | fork | 3 | missing |  |  |  |
-| PRK1 | One Bullet | keystone | 3 | missing |  |  |  |
-| PRK2 | Cross-Eyed | keystone | 3 | missing |  |  |  |
-| PRQ1 | Twin Shot | mutation | 3 | missing |  |  |  |
-| PRQ2 | Quick Draw | mutation | 3 | missing |  |  |  |
-| PRQ3 | Wallbang | mutation | 3 | missing |  |  |  |
-| PRQ4 | Fan | mutation | 3 | missing |  |  |  |
-| PRQ5 | Recalculate | mutation | 3 | missing |  |  |  |
-| PRQ6 | Last Round | mutation | 3 | missing |  |  |  |
-| PRA | Nothing Wasted | axiom | 4 | missing |  |  |  |
-| PRC | Firing Squad | catastrophe | 4 | missing |  |  |  |
-| PRE1 | Kill Line | evolution | 5 | missing |  |  |  |
-| PRE2 | Smart Grid | evolution | 5 | missing |  |  |  |
-| PRS1 | Shot Speed | sink | 5 | missing |  |  |  |
-| PRS2 | Q Damage | sink | 5 | missing |  |  |  |
-| PRV | JUDGEMENT | revelation | 5 | missing |  |  |  |
-| PRV1 | Auto-Plot | revelation_mutation | 5 | missing |  |  |  |
-| PRV2 | Back and Forth | revelation_mutation | 5 | missing |  |  |  |
-| PRV3 | One Line | revelation_mutation | 5 | missing |  |  |  |
+| PR01 | Read | local | 1 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | per-target weighted Read (Proc Power); Weak Point status 3 s expired by the engine; +1D on consumption through the outgoing-damage hook; one hit never both exposes and consumes |
+| PR02 | Far Shot | local | 1 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | first Ranged Core hit beyond 2R exposes once per enemy |
+| PR03 | Penetrator | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | native profile: +2 pierce, 0.2D ramp per crossed target capped at 1D (ProjectileSimulationManager) |
+| PR04 | Second Read | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | the projectile id that consumed is remembered; its next victim is exposed after damage |
+| PR05 | Held Breath | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | Aim after 0.8 s without native input: +1D and pp 1.25 on the native profile; enemy damage clears it; a Witness shot spends it via its cast tag |
+| PR06 | Bank Shot | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | native profile: one terrain bounce (axis probed), 75%, pp 0.7 rewritten on the projectile's tags |
+| PR07 | Return Shot | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | end-of-flight report (range or pierce) spawns the return along the last leg for 60%, pierce = crossed + 2; returns never return |
+| PR08 | Overpenetrate | local | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | unused pierce on a return: +0.2D and +R/4 width each (max +1D/+R); without PR07 a 1D burst in R/2 at the endpoint |
+| PRQ | Deadshot | active | 2 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | hold Q: world time 35% for up to 0.6 real seconds (runner.set_time_slow); release fires a 4D beam R/3 wide to the far edge, each target once; automatic casts pick the densest line through aim without a pause |
+| PR09 | Split Line | local | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | kill of an exposed (or just-consumed) victim by a projectile that crossed another: two 0.7D shots at +-20 degrees with one pierce |
+| PR10 | Dead Center | local | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | aim line through the central half (5 px) of an exposed target: -0.25 s Q recovery and half the Aim timer kept; once per input |
+| PR11 | Crossing Fire | local | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | per-target trajectory memory (projectile id + direction) within 0.5 s; +1D once per target per second |
+| PR12 | Long Game | local | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | returning kills bank up to three spare rounds fired from the return endpoint toward aim on the next native Ranged input |
+| PRF1 | Deadeye | fork | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | centred Weak Point shots gain +1D and one pierce on the native profile |
+| PRF2 | Smart Rounds | fork | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | native profile seeks the nearest exposed target within 3L, 30-degree budget, 80% damage; a miss returns once from the far edge (only without Return Shot, which takes precedence) |
+| PRK1 | One Bullet | keystone | 3 | partial | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | haste 0.5 for Ranged; native profile 3D at pp 1.25. Extra projectiles from the same volley (+0.4D, +R/8) not applied to Barrage side rounds |
+| PRK2 | Cross-Eyed | keystone | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | alternating +-20 degrees via direction_offset; three bounces at x1.5; returns at 90% |
+| PRQ1 | Twin Shot | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | second line R to the right of the first origin (both fire at 62.5% each = 2.5D) |
+| PRQ2 | Quick Draw | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | immediate, 5 s, 3D; Twin's second line 0.15 s later at 65% |
+| PRQ3 | Wallbang | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | obstructions counted along the line with the terrain query; +0.5D each up to +2D; width halved |
+| PRQ4 | Fan | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | five parallel lines R/3 apart at 35%, pp 0.3 |
+| PRQ5 | Recalculate | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | first three real kills of the opening beam fire 1.5D lines from the victims toward aim (flag recalculated blocks recursion) |
+| PRQ6 | Last Round | mutation | 3 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | normals under 25% after damage are finished; elites/bosses under 25% take +1D via the damage hook |
+| PRA | Nothing Wasted | axiom | 4 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | per native input: a projectile that ends with no hits retraces from its end; a slash or impact with no native hit within 0.35 s repeats as a 0.8D wave / impact |
+| PRC | Firing Squad | catastrophe | 4 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | per cast: twelve distinct enemies crossed or six Weak Points consumed; six edge guns fire 2D lines through the densest targets; One Bullet: an 8D aim sweep over 0.8 s; recovery 8 s |
+| PRE1 | Kill Line | evolution | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | one 2D line per fresh Deadshot victim toward aim, recursive; consecutive misses counted |
+| PRE2 | Smart Grid | evolution | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | four edge guns for 2 s, a 1.5D line every 0.5 s through the nearest exposed enemy or the cursor |
+| PRS1 | Shot Speed | sink | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | speed and max range x(1 + 80% r/(r+80)) on the native profile |
+| PRS2 | Q Damage | sink | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | runner.q_scale() multiplies by every engine's q_damage_multiplier: 1 + 1% sqrt(rank) |
+| PRV | JUDGEMENT | revelation | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | world time 20% for 1.5 real seconds; attack presses place up to three lines through the player and cursor (tests call place_line); fires 5D lines R wide, every crossing hits |
+| PRV1 | Auto-Plot | revelation_mutation | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | three high-density lines chosen automatically (separate groups), 0.4 s tell, no pause |
+| PRV2 | Back and Forth | revelation_mutation | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | each line repeats after 0.5 s from the opposite end at 60%; One Line adds a 0.75 s reverse sweep at half |
+| PRV3 | One Line | revelation_mutation | 5 | implemented | core/systems/ascension/engines/PrecisionEngine.gd | AscensionPrecisionTest | cursor-steered sweep 1.5 s, 3D per target every 0.3 s, five hits per target |
 
 ## Barrage (BR)
 
@@ -260,40 +260,40 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| OR01 | Impact Fuse | local | 1 | missing |  |  |  |
-| OR02 | Caltrops | local | 1 | missing |  |  |  |
-| OR03 | Short Fuse | local | 2 | missing |  |  |  |
-| OR04 | Secondary Blast | local | 2 | missing |  |  |  |
-| OR05 | Mine Toss | local | 2 | missing |  |  |  |
-| OR06 | Chain Reaction | local | 2 | missing |  |  |  |
-| OR07 | Blast Pull | local | 2 | missing |  |  |  |
-| OR08 | Fracture | local | 2 | missing |  |  |  |
-| ORQ | Designate | active | 2 | missing |  |  |  |
-| OR09 | Walking Barrage | local | 3 | missing |  |  |  |
-| OR10 | Magazine | local | 3 | missing |  |  |  |
-| OR11 | Saturation Scan | local | 3 | missing |  |  |  |
-| OR12 | Big One | local | 3 | missing |  |  |  |
-| ORF1 | Carpet Fire | fork | 3 | missing |  |  |  |
-| ORF2 | Guidance | fork | 3 | missing |  |  |  |
-| ORK1 | Spotter | keystone | 3 | missing |  |  |  |
-| ORK2 | Danger Close | keystone | 3 | missing |  |  |  |
-| ORQ1 | Saturation | mutation | 3 | missing |  |  |  |
-| ORQ2 | Homing | mutation | 3 | missing |  |  |  |
-| ORQ3 | Cascade | mutation | 3 | missing |  |  |  |
-| ORQ4 | Proximity | mutation | 3 | missing |  |  |  |
-| ORQ5 | Walking Target | mutation | 3 | missing |  |  |  |
-| ORQ6 | All Coordinates | mutation | 3 | missing |  |  |  |
-| ORQ7 | Fire Again | mutation | 3 | missing |  |  |  |
-| ORA | Fuse | axiom | 4 | missing |  |  |  |
-| ORC | Rolling Thunder | catastrophe | 4 | missing |  |  |  |
-| ORE1 | Carpet Bomb | evolution | 5 | missing |  |  |  |
-| ORE2 | Bunker Buster | evolution | 5 | missing |  |  |  |
-| ORS1 | Blast Damage | sink | 5 | missing |  |  |  |
-| ORS2 | Blast Radius | sink | 5 | missing |  |  |  |
-| ORV | FIRE MISSION | revelation | 5 | missing |  |  |  |
-| ORV1 | No Safe Ground | revelation_mutation | 5 | missing |  |  |  |
-| ORV2 | Firewalk | revelation_mutation | 5 | missing |  |  |  |
-| ORV3 | Second Salvo | revelation_mutation | 5 | missing |  |  |  |
+| OR01 | Impact Fuse | local | 1 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | weighted Ranged Core hits (pp) accumulate; a Shell at 4, one per native input, credit retained |
+| OR02 | Caltrops | local | 1 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | a Mine at every dash start; contact 22 px after arming; cap replacement detonates the oldest at half |
+| OR03 | Short Fuse | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | a Core hit on an enemy inside a pending Shell's radius advances it 0.15 s once per input; on that enemy's death the Shell redirects once to the nearest enemy within 3R |
+| OR04 | Secondary Blast | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | a blast kill calls one Shell on the corpse, once per victim, pp 0.5, same sequence root |
+| OR05 | Mine Toss | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | a player projectile within 14 px of an unarmed Mine pushes it R toward aim, +0.5D, armed at once |
+| OR06 | Chain Reaction | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | a Mine blast detonates every armed Mine inside its radius (removed first, each once) |
+| OR07 | Blast Pull | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | hits in the outer half pull normals R/2 (elites R/4) toward the centre after damage; bosses 0.25D stagger |
+| OR08 | Fracture | local | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | three distinct blasts arm Fracture; the next consumes it for three 0.6D shrapnel shots along the incoming blast directions |
+| ORQ | Designate | active | 2 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | hold-Q: tap on empty ground places (0.25 s), tap on a Coordinate fires four Shells 0.2 s apart (7 s), hold 0.35 s places and fires; automatic casts fire existing Coordinates or place at the densest group |
+| OR09 | Walking Barrage | local | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | L of travel calls a Shell R behind the heading, at most one per 0.5 s |
+| OR10 | Magazine | local | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | cap 18, full-power replacement; a Coordinate replaced beyond three fires one Shell |
+| OR11 | Saturation Scan | local | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | first blast kill after R of travel: three Shells at the densest point within 3R |
+| OR12 | Big One | local | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | every seventh Shell (Mines excluded) is 4D in 2R with a 0.9 s tell, pp 1 |
+| ORF1 | Carpet Fire | fork | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | automatic Shells avoid cells used within 2 s; three blast kills within 1 s call an extra pp-0.4 Shell at the least-covered enemy; Shells -15% |
+| ORF2 | Guidance | fork | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | latest Core hit on an elite/boss guides automatic Shells for 4 s at +50%; every second automatic Shell suppressed |
+| ORK1 | Spotter | keystone | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | three distinct blasts on a durable target make a Beacon (max three, 5 s): a 1D Shell every 0.8 s; other Shells -15% |
+| ORK2 | Danger Close | keystone | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | +40% radius, +25% damage; a blast covering the player costs 3% max HP through take_damage, one per 0.25 s |
+| ORQ1 | Saturation | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | seven Shells spread over a 3R circle |
+| ORQ2 | Homing | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | three 2.5D Shells that follow the chosen enemy until the final 0.15 s |
+| ORQ3 | Cascade | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | each distinct kill under the sequence root adds a Shell at the victim, six per Coordinate |
+| ORQ4 | Proximity | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | Designate Shells land as 3 s traps (separate cap 24), no landing damage |
+| ORQ5 | Walking Target | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | the Coordinate keeps an aim-set offset from the player (up to L) |
+| ORQ6 | All Coordinates | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | firing one starts every Coordinate in creation order 0.2 s apart |
+| ORQ7 | Fire Again | mutation | 3 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | fired Coordinates go dormant and reactivate when the Q cooldown completes |
+| ORA | Fuse | axiom | 4 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | on_q_activated: a non-Shell Q leaves a Shell at the aim point within L; Designate advances Big One by one |
+| ORC | Rolling Thunder | catastrophe | 4 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | twelve blasts under one sequence root: six horizontal lanes across the camera rect, four 2D Shells each over 1 s, armed Mines on lanes detonate; recovery 8 s |
+| ORE1 | Carpet Bomb | evolution | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | an activated Coordinate follows 3 s dropping a Shell every 0.3 s behind the route (allowance 10); stopping 0.3 s fires the rest |
+| ORE2 | Bunker Buster | evolution | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | each activated Coordinate becomes one 8D Shell in 2R at the nearest durable target after a 1 s tell, position fixed 0.2 s before landing |
+| ORS1 | Blast Damage | sink | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | blast damage x(1 + 1% sqrt(rank)) |
+| ORS2 | Blast Radius | sink | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | blast radius x(1 + 70% r/(r+95)) |
+| ORV | FIRE MISSION | revelation | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | 1 s tell then 24 3D Shells (0.2 s fall) over 1 s across occupied 80 px cells, least-used cell first; pp 0.25, flag v |
+| ORV1 | No Safe Ground | revelation_mutation | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | 48 Shells, half of them on random cells including gaps |
+| ORV2 | Firewalk | revelation_mutation | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | Shells ahead of the heading within 1.5R are moved behind the player |
+| ORV3 | Second Salvo | revelation_mutation | 5 | implemented | core/systems/ascension/engines/OrdnanceEngine.gd | AscensionOrdnanceTest | the mission repeats after 2 s at 60% on current occupancy |
 
 ## Invocation (IN)
 

@@ -145,6 +145,23 @@ func wants_hit_history() -> bool:
 	return false
 
 
+## A tagged player projectile ended (range, life, pierce, world, consumed):
+## see ProjectileSimulationManager.projectile_ended for the report's keys.
+func on_projectile_ended(_info: Dictionary) -> void:
+	pass
+
+
+## Multiplier on direct Q damage (the Q Damage sink); applies to every Q.
+func q_damage_multiplier() -> float:
+	return 1.0
+
+
+## Any Q (including a Reaction or automatic cast) was activated: `verdict`
+## is the casting engine's result. Fuse (axiom) hangs on it.
+func on_q_activated(_id: String, _verdict: Dictionary) -> void:
+	pass
+
+
 func on_enemy_projectile_seen(_position: Vector2, _velocity: Vector2) -> void:
 	pass
 
