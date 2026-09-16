@@ -28,6 +28,11 @@ const FRAGMENT_SPEED := 520.0
 const FRAGMENT_LIFE := 2.0
 const FRAGMENT_SEEK_RANGE := 240.0
 const FRAGMENT_HIT_PAD := 6.0
+## Reacquisitions per frame. A fragment whose target died keeps flying on its
+## last heading and retries next frame when the budget is spent; with a
+## 2 s life and 520 px/s it loses nothing but a few frames of steering. The
+## 2026-09-15 audit measured unbounded reacquisition at 50-150 ms per frame.
+const FRAGMENT_RETARGETS_PER_FRAME := 48
 const BULLET_SPEED := 900.0
 const BULLET_RANGE := 520.0
 
@@ -52,6 +57,7 @@ var _quadrant_anchor: Vector2 = Vector2.ZERO
 var _patches: Array = []            # [position, time_left]
 var fragments: Array = []           # {pos, vel, target, damage, life, pp, bounces, root, gen}
 var _pending_fragments: Array = []
+var _fragment_cost: Dictionary = {"fragment_usec": 0, "retargets": 0, "retargets_deferred": 0, "fragments_live": 0, "fragments_pending": 0}
 
 var burst_left: float = 0.0
 var burst_total: float = 0.0
@@ -487,11 +493,18 @@ func _spawn_fragment(position: Vector2, damage: float, pp: float, bounces: int, 
 
 
 func _tick_fragments(delta: float) -> void:
+	var started := Time.get_ticks_usec()
+	_fragment_cost["retargets"] = 0
+	_fragment_cost["retargets_deferred"] = 0
+	_fragment_cost["fragments_pending"] = _pending_fragments.size()
 	if not _pending_fragments.is_empty():
 		fragments.append_array(_pending_fragments)
 		_pending_fragments.clear()
+	_fragment_cost["fragments_live"] = fragments.size()
 	if fragments.is_empty():
+		_fragment_cost["fragment_usec"] = Time.get_ticks_usec() - started
 		return
+	var retargets_left := FRAGMENT_RETARGETS_PER_FRAME
 	for i in range(fragments.size() - 1, -1, -1):
 		var fragment: Dictionary = fragments[i]
 		fragment["life"] = float(fragment["life"]) - delta
@@ -500,8 +513,14 @@ func _tick_fragments(delta: float) -> void:
 			continue
 		var target := int(fragment["target"])
 		if not runner.enemy_alive(target):
-			target = runner.lowest_hp_enemy_in_radius(fragment["pos"], FRAGMENT_SEEK_RANGE, int(fragment["last"]))
-			fragment["target"] = target
+			if retargets_left > 0:
+				retargets_left -= 1
+				_fragment_cost["retargets"] = int(_fragment_cost["retargets"]) + 1
+				target = runner.lowest_hp_enemy_in_radius(fragment["pos"], FRAGMENT_SEEK_RANGE, int(fragment["last"]))
+				fragment["target"] = target
+			else:
+				_fragment_cost["retargets_deferred"] = int(_fragment_cost["retargets_deferred"]) + 1
+				target = 0
 		var pos: Vector2 = fragment["pos"]
 		var vel: Vector2 = fragment["vel"]
 		if target != 0:
@@ -523,6 +542,7 @@ func _tick_fragments(delta: float) -> void:
 				continue
 		fragment["vel"] = vel
 		fragment["pos"] = pos + vel * delta
+	_fragment_cost["fragment_usec"] = Time.get_ticks_usec() - started
 
 
 func _fragment_hit(fragment: Dictionary, target: int) -> void:
@@ -770,6 +790,10 @@ func hud_state(slot: String) -> Dictionary:
 	elif slot == "v" and suppression_left > 0.0:
 		state["combat_text"] = "SUPPRESSION %.1fs" % suppression_left
 	return state
+
+
+func frame_cost() -> Dictionary:
+	return _fragment_cost
 
 
 func describe() -> Dictionary:

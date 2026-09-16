@@ -49,6 +49,7 @@ var _session_started_usec := 0
 var _slow_snapshot_left := 0.0
 var _cached_slow_snapshot: Dictionary = {}
 var _sampling_overhead_usec := 0
+var _last_sample_usec := 0
 var _max_sampling_overhead_usec := 0
 var _dropped_samples := 0
 var _automatic_armed := true
@@ -76,10 +77,16 @@ func _process(delta: float) -> void:
 		_slow_snapshot_left = 0.5
 		_cached_slow_snapshot = _collect_slow_snapshot()
 	var sample := collect_runtime_sample()
-	# frame_ms is the real spacing of this frame (delta); process_ms stays the
-	# engine monitor, which reports the PREVIOUS frame's process step. The two
-	# describe different frames by design — see collect_runtime_sample().
+	# delta_ms is the engine's process delta, which Godot caps and smooths, so
+	# it is NOT a wall-clock frame timer; wall_ms is the real spacing between
+	# this sample and the previous one. frame_ms keeps the delta for older
+	# readers. process_ms / physics_ms are the engine's windowed monitors
+	# (published about once a second, include rendering synchronisation) and
+	# do not attribute a stall to scripts.
 	sample["frame_ms"] = delta * 1000.0
+	sample["delta_ms"] = delta * 1000.0
+	sample["wall_ms"] = (float(int(sample["t_usec"]) - _last_sample_usec) / 1000.0) if _last_sample_usec > 0 else delta * 1000.0
+	_last_sample_usec = int(sample["t_usec"])
 	ingest_sample(sample)
 	_sampling_overhead_usec = Time.get_ticks_usec() - started
 	_max_sampling_overhead_usec = maxi(_max_sampling_overhead_usec, _sampling_overhead_usec)
@@ -220,6 +227,13 @@ func collect_runtime_sample() -> Dictionary:
 		"sampling_overhead_usec": _sampling_overhead_usec,
 	}
 	sample.merge(_cached_slow_snapshot, true)
+	# Combat subsystem costs per frame: the advancement tree's engine ticks,
+	# attack queue flush and backlog, Barrage fragment updates and
+	# reacquisitions. Cheap: the runner keeps these as plain counters.
+	var player := get_tree().get_first_node_in_group(&"player") if get_tree() != null else null
+	var runner := player.get_node_or_null("AscensionRunner") if player != null else null
+	if runner != null and runner.has_method("get_debug_counters"):
+		sample["ascension"] = runner.call("get_debug_counters")
 	return sample
 
 
@@ -268,6 +282,8 @@ func _collect_slow_snapshot() -> Dictionary:
 		"enemy_world_spatial_cells": 0,
 		"enemy_world_max_cell_occupancy": 0,
 		"projectiles": 0,
+		"projectile_ms": 0.0,
+		"chunk_stream": {},
 		"chunks": 0,
 		"flow_building": false,
 		"flow_revision": 0,
@@ -296,6 +312,15 @@ func _collect_slow_snapshot() -> Dictionary:
 				(counters["lifecycle"] as Dictionary),
 				true
 			)
+	var chunk_manager := get_tree().get_first_node_in_group(&"chunk_manager") if get_tree() != null else null
+	if chunk_manager != null and chunk_manager.has_method("get_chunk_stream_debug_stats"):
+		var stream := chunk_manager.call("get_chunk_stream_debug_stats") as Dictionary
+		output["chunk_stream"] = {
+			"queue_length": int(stream.get("queue_length", 0)),
+			"last_build_ms": float(stream.get("last_build_ms", 0.0)),
+			"max_build_ms": float(stream.get("max_build_ms", 0.0)),
+			"last_plan_ms": float(stream.get("last_plan_ms", 0.0)),
+		}
 	var enemy_world := get_node_or_null("/root/EnemyWorld")
 	if enemy_world != null and enemy_world.has_method("get_debug_counters"):
 		var world_data := enemy_world.call("get_debug_counters") as Dictionary
@@ -351,6 +376,8 @@ func _collect_slow_snapshot() -> Dictionary:
 	if manager != null:
 		if manager.has_method("active_count"):
 			output["projectiles"] = int(manager.call("active_count"))
+			if manager.has_method("get_debug_counters"):
+				output["projectile_ms"] = float((manager.call("get_debug_counters") as Dictionary).get("physics_ms", 0.0))
 		elif "active_count" in manager:
 			output["projectiles"] = int(manager.get("active_count"))
 	var chunks := get_tree().get_first_node_in_group(&"chunk_manager")
@@ -426,33 +453,56 @@ func _finalize_incident(now_usec: int) -> void:
 
 func _build_summary(samples: Array[Dictionary], events: Array) -> Dictionary:
 	var frame_times: Array[float] = []
+	var wall_times: Array[float] = []
 	var worst := 0.0
+	var worst_wall := 0.0
 	var below_60 := 0
 	var below_45 := 0
 	var below_30 := 0
 	var process_peak := 0.0
 	var physics_peak := 0.0
+	var ascension_peak_usec := 0
+	var fragment_peak_usec := 0
 	for sample in samples:
 		var frame_ms := float(sample.get("frame_ms", 0.0))
 		frame_times.append(frame_ms)
 		worst = maxf(worst, frame_ms)
+		var wall_ms := float(sample.get("wall_ms", frame_ms))
+		wall_times.append(wall_ms)
+		worst_wall = maxf(worst_wall, wall_ms)
+		var ascension: Dictionary = sample.get("ascension", {})
+		if not ascension.is_empty():
+			ascension_peak_usec = maxi(ascension_peak_usec, int(ascension.get("tick_usec", 0)) + int(ascension.get("flush_usec", 0)) + int(ascension.get("hit_usec", 0)))
+			var barrage: Dictionary = ascension.get("BR", {})
+			fragment_peak_usec = maxi(fragment_peak_usec, int(barrage.get("fragment_usec", 0)))
 		process_peak = maxf(process_peak, float(sample.get("process_ms", 0.0)))
 		physics_peak = maxf(physics_peak, float(sample.get("physics_ms", 0.0)))
 		if frame_ms > 1000.0 / 60.0: below_60 += 1
 		if frame_ms > 1000.0 / 45.0: below_45 += 1
 		if frame_ms > 1000.0 / 30.0: below_30 += 1
 	frame_times.sort()
+	wall_times.sort()
 	return {
 		"worst_frame_ms": worst,
 		"median_frame_ms": _percentile(frame_times, 0.50),
 		"p95_frame_ms": _percentile(frame_times, 0.95),
 		"p99_frame_ms": _percentile(frame_times, 0.99),
+		# Wall-clock spacing between samples: the frame time the player felt.
+		"worst_wall_ms": worst_wall,
+		"median_wall_ms": _percentile(wall_times, 0.50),
+		"p95_wall_ms": _percentile(wall_times, 0.95),
+		"p99_wall_ms": _percentile(wall_times, 0.99),
 		"frames_below_60": below_60,
 		"frames_below_45": below_45,
 		"frames_below_30": below_30,
+		# Windowed engine monitors (about one publish a second, rendering
+		# synchronisation included): which side peaked, not which script.
 		"peak_process_ms": process_peak,
 		"peak_physics_ms": physics_peak,
 		"dominant_thread": "physics" if physics_peak > process_peak else "process",
+		"monitor_note": "process_ms/physics_ms are Godot's windowed monitors and include render sync; frame_ms/delta_ms are the capped process delta; wall_ms is real sample spacing.",
+		"peak_ascension_usec": ascension_peak_usec,
+		"peak_fragment_usec": fragment_peak_usec,
 		"nearby_event_groups": _event_group_summary(events),
 		"note": "Events overlap the incident timeline; correlation does not prove causation.",
 	}

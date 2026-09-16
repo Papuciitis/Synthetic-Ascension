@@ -330,6 +330,13 @@ func gather_in_radius(
 			out.remove_at(index)
 
 
+## Lowest-health living enemy within `radius` (see EnemyWorldService).
+func lowest_health_in_radius(origin: Vector2, radius: float, excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE) -> int:
+	if _world == null or not is_instance_valid(_world):
+		return EnemyWorldTypes.INVALID_HANDLE
+	return _world.lowest_health_in_radius(origin, radius, excluded_handle)
+
+
 func nearest_enemy(
 	origin: Vector2,
 	max_distance: float,

@@ -1,0 +1,916 @@
+{
+ "ASC": {
+  "note": "two foreign strikes per input, third Keystone slot, second Revelation slot; Reaction Q already open from G1",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "ASC.S1": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "ASC.S2": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "ASC1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "ASC2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "ASC3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionRunner.gd"
+ },
+ "BR01": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR02": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR03": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR04": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR05": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR06": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR07": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR08": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR09": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR10": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR11": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BR12": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRA": {
+  "note": "Melee/Magic strikes heat, tier rate bonus, side rounds become slashes/impacts; Jam blocks every native",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRC": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRE1": {
+  "note": "Heat Beam: Burst becomes a swept piercing beam",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "BRE2": {
+  "note": "rotating points fire 0.5D at 4/s, Three Guns seeds three, points grow per third fragment bounce; completion dump and 1.5 s Jam",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRF1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRF2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRK1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRK2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ4": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ5": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ6": {
+  "note": "Emergency Stop cancels on a second Q press during the first half; 'release Q' is not modelled",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRQ7": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRS1": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRS2": {
+  "note": "Projectile Life: friendly projectile lifetime +50% x rank/(rank+100)",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "BRV": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRV1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRV2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "BRV3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBarrageTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "DT01": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT02": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT03": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT04": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT05": {
+  "note": "Misfire bonus per failure implemented; the 30% hostile projectile slow inside R is not",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT06": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT07": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT08": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT09": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT10": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT11": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DT12": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTA": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTC": {
+  "note": "review F11: 20 deposits in 4 s or 8 natural maturities in 4 s",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTE1": {
+  "note": "Fixed Coin: Heads banks a refund, Tails pauses self-Debt and converts cancelled Undo debt",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "DTE2": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTF1": {
+  "note": "Undo: rewind 25% max HP of enemy damage into self-Debt, cancelled by killing the contributor",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "DTF2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTK1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTK2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ4": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ5": {
+  "note": "Counterfeit always chooses Heads (tap); hold-for-Tails is not modelled",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTQ6": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTS1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTS2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTV": {
+  "note": "collectable Debt (review F3), guaranteed Core checks, Twice, scars from screen projectiles; 'normals' melee swings miss' is not applied",
+  "status": "partial",
+  "test": "AscensionDistortionTest",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTV1": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "DTV2": {
+  "note": "Replay: repeat each dying enemy's last three hits at the corpse",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "DTV3": {
+  "note": "",
+  "status": "implemented",
+  "test": "",
+  "where": "core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "EX01": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX02": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX03": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX04": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX05": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX06": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX07": {
+  "note": "storage cap 8D, 4 s; line release through gather_in_sector",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX08": {
+  "note": "wound +20% line consumed on the next Core hit",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX09": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX10": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX11": {
+  "note": "blade rides the managed bullet pool with pierce 4",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EX12": {
+  "note": "Clean Cut: attack recovery removal after the first execution; generated executions' dash recovery refund",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "EXA": {
+  "note": "Overkill Axiom: Spillover from non-Melee kills at 60% overkill, 0.3D seed",
+  "status": "missing",
+  "test": "",
+  "where": ""
+ },
+ "EXC": {
+  "note": "sweep covers the camera rectangle",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXE1": {
+  "note": "5D, 2R, 0.8 s tell and lesser Gavels at marked survivors implemented; no dedicated visuals",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXE2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXF1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXF2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXK1": {
+  "note": "+12 points implemented; the -25% above half HP is applied by healing back a share after the hit",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXK2": {
+  "note": "eight Marks and elite line implemented; +50%/-30% applied as bonus damage / heal-back",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ4": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ5": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ6": {
+  "note": "Gather pulls through apply_knockback; elites half, bosses stagger not applied",
+  "status": "partial",
+  "test": "",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXQ7": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXS1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXS2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXV": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXV1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXV2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "EXV3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionExecutionTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd"
+ },
+ "G1": {
+  "note": "core grant, Witness one-in-two (review F12), second Witness alternates",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionLedger.gd + core/systems/ascension/AscensionRunner.gd"
+ },
+ "G2": {
+  "note": "core grant, Witness one-in-two (review F12), second Witness alternates",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/AscensionLedger.gd + core/systems/ascension/AscensionRunner.gd"
+ },
+ "MM2": {
+  "note": "Magic blast for the collected Debt; Pass It On shares first",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "MR2": {
+  "note": "fragments finish at half the line; extra fragment",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "RM5": {
+  "note": "named 25% roll, three burning fragments",
+  "status": "implemented",
+  "test": "AscensionHybridTest",
+  "where": "core/systems/ascension/engines/BarrageEngine.gd"
+ },
+ "_shared": {
+  "1.5 s gap between Revelation starts; hold V for both at Ascendant": {
+   "note": "V alternates between the two slots; no gap, no hold",
+   "status": "partial",
+   "test": "",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Ascendant foreign strikes": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionHybridTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Attack identity: root, family, Core, path, generation, P, cast, V ancestry": {
+   "note": "hit-path family seal is per engine rule, not a generic path history",
+   "status": "implemented",
+   "test": "AscensionRunnerTest",
+   "where": "core/systems/ascension/AscensionTags.gd"
+  },
+  "Automatic Method (pick.M2, 70%)": {
+   "note": "",
+   "status": "missing",
+   "test": "",
+   "where": ""
+  },
+  "Control conversions (stagger bar, control caps, immunity)": {
+   "note": "bosses get a 0.5 s stun from DECIMATION; no stagger bar",
+   "status": "missing",
+   "test": "",
+   "where": ""
+  },
+  "D snapshot per attack": {
+   "note": "D read at spawn; Echo/Debt packets keep captured amounts",
+   "status": "partial",
+   "test": "",
+   "where": "engines"
+  },
+  "Deterministic event queue with stable tie-breaking": {
+   "note": "attack queue is FIFO with a per-frame budget; fragments resolve in engine tick order",
+   "status": "partial",
+   "test": "AscensionChainBurstBenchmark",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Equipment slots (Q, V, 2 Keystones, 3 Axioms, Reaction, V2)": {
+   "note": "equip at any time through the screen; 'safe point only' not enforced",
+   "status": "implemented",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Evolution reward timing (segments 6, 9, then every third; banked claims)": {
+   "note": "claims are only granted by the dev route loader",
+   "status": "missing",
+   "test": "",
+   "where": ""
+  },
+  "Free starter (one of three ring-1 natives)": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Gate G1 / G2 grants and prerequisites": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Generated attacks are data (no nodes)": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionChainBurstBenchmark",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "HUD feedback for resources": {
+   "note": "Q/V slots show Heat, line, Debt; other resources drawn as bare shapes/text",
+   "status": "partial",
+   "test": "",
+   "where": "AscensionSlotHud + runner _draw"
+  },
+  "Health payments (bypass armour, floor 1 HP, no retaliation)": {
+   "note": "The Bill and Loaded Dice cannot kill (floor) - authored says they may",
+   "status": "implemented",
+   "test": "AscensionRunnerTest",
+   "where": "core/actors/player/player.gd"
+  },
+  "Hit-path family seal (one on-hit family cannot recall itself)": {
+   "note": "Ricochet, Contradiction and Twice seal themselves; no generic path history",
+   "status": "partial",
+   "test": "",
+   "where": "engines"
+  },
+  "Milestone picks (Method 3 / Doctrine 6 / Apotheosis 9)": {
+   "note": "offered after the segment as free exclusive choices; effects missing",
+   "status": "partial",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Mutation enable/disable": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionScreenTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Named combat rolls (order, P, cap, guarantee, reroll)": {
+   "note": "Lucky Crit unregistered (review F5)",
+   "status": "implemented",
+   "test": "AscensionRunnerTest, AscensionDistortionTest",
+   "where": "core/systems/ascension/AscensionRunner.gd + core/systems/ascension/engines/DistortionEngine.gd"
+  },
+  "Per-enemy tree statuses": {
+   "note": "",
+   "status": "implemented",
+   "test": "AscensionRunnerTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Purchase, adjacency, requirements, conflicts, prices, sinks": {
+   "note": "all 16 authored routes replay at authored prices",
+   "status": "implemented",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Q recovery carries over on swap": {
+   "note": "swapping Q does not keep the greater remaining recovery",
+   "status": "missing",
+   "test": "",
+   "where": ""
+  },
+  "Radial map, buy/refund/equip UI, Hub and T key": {
+   "note": "headless-tested only",
+   "status": "implemented",
+   "test": "AscensionScreenTest",
+   "where": "ui/screens/AscensionScreen.gd"
+  },
+  "Reaction Q (60% damage, x2 recovery)": {
+   "note": "opens at G1 (review F14); triggers: catastrophe and 15% HP loss; 'first elite enters 2R' and trigger choice missing",
+   "status": "partial",
+   "test": "AscensionHybridTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Refund (prototype free respec, dependents cascade)": {
+   "note": "reachability from a Core; candidate one-per-run rule not applied",
+   "status": "implemented",
+   "test": "AscensionLedgerTest",
+   "where": "core/systems/ascension/AscensionLedger.gd"
+  },
+  "Revelation charge: discipline action table": {
+   "note": "no action charge for any discipline",
+   "status": "missing",
+   "test": "",
+   "where": ""
+  },
+  "Revelation charge: kills": {
+   "note": "normals 0.5 (review), elites 8, bosses 30, 4 actions/s, V descendants none",
+   "status": "implemented",
+   "test": "AscensionBarrageTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  },
+  "Save / load of ownership and equipment": {
+   "note": "engine transient state (Heat, Debt, Momentum) is not saved",
+   "status": "implemented",
+   "test": "AscensionLedgerTest, SaveIntegrityTest",
+   "where": "autoload/global.gd"
+  },
+  "Witness strike (Slash / Shot / Impact)": {
+   "note": "every second native input (review F12); qualifies for Core strike rules through engine tags",
+   "status": "implemented",
+   "test": "AscensionHybridTest",
+   "where": "core/systems/ascension/AscensionRunner.gd"
+  }
+ },
+ "core.magic": {
+  "note": "anchors: native choice or Gate grant",
+  "status": "n/a",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "core.melee": {
+  "note": "anchors: native choice or Gate grant",
+  "status": "n/a",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "core.ranged": {
+  "note": "anchors: native choice or Gate grant",
+  "status": "n/a",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.D1": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.D2": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.D3": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.M1": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.M2": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.M3": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.P1": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.P2": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ },
+ "pick.P3": {
+  "note": "purchasable as a free milestone choice; effect not implemented",
+  "status": "missing",
+  "test": "AscensionLedgerTest",
+  "where": "core/systems/ascension/AscensionLedger.gd"
+ }
+}

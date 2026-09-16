@@ -644,6 +644,41 @@ func gather_in_radius(
 			out.append(handle)
 
 
+## The living enemy with the least health within `radius`, read straight from
+## the slot arrays: no candidate handle array, no per-handle lookups, dying
+## records skipped. Ties keep the lowest slot (stable across calls). Returns
+## INVALID_HANDLE when nothing qualifies. Barrage fragments retarget through
+## this; the 2026-09-15 audit measured the array-building path at 50-150 ms
+## per frame when hundreds of fragments reacquired at once.
+var _lowest_scratch: Array[int] = []
+
+
+func lowest_health_in_radius(origin: Vector2, radius: float, excluded_handle: int = Types.INVALID_HANDLE) -> int:
+	var safe_radius := maxf(radius, 0.0)
+	var radius_squared := safe_radius * safe_radius
+	_lowest_scratch.clear()
+	_grid.gather_candidate_slots(origin, safe_radius, _lowest_scratch)
+	var best_slot := -1
+	var best_health := INF
+	for slot in _lowest_scratch:
+		if slot < 0 or slot >= _active.size() or _active[slot] == 0:
+			continue
+		if _representations[slot] == Types.Representation.DYING:
+			continue
+		var health := _health[slot]
+		if health <= 0.0 or health > best_health or (health == best_health and slot > best_slot):
+			continue
+		if origin.distance_squared_to(_positions[slot]) > radius_squared:
+			continue
+		if excluded_handle != Types.INVALID_HANDLE and Types.make_handle(slot, int(_generations[slot])) == excluded_handle:
+			continue
+		best_health = health
+		best_slot = slot
+	if best_slot < 0:
+		return Types.INVALID_HANDLE
+	return Types.make_handle(best_slot, int(_generations[best_slot]))
+
+
 func nearest_enemy(
 	origin: Vector2,
 	max_distance: float,

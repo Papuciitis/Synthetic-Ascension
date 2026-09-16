@@ -162,6 +162,12 @@ func describe() -> Dictionary:
 	return {}
 
 
+## Per-frame cost counters (microseconds and counts) for the recorder;
+## empty when the engine has nothing worth attributing.
+func frame_cost() -> Dictionary:
+	return {}
+
+
 ## Append [position, radius, color] entries for things the engine simulates
 ## itself (seeking fragments, patches) so the runner can draw them.
 func collect_draw_points(_out: Array) -> void:

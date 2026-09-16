@@ -118,6 +118,11 @@ var _managed_profile: HitProfileAdapter = null
 var _rng: RandomNumberGenerator = null
 
 var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0, "longest_chain": 0, "catastrophes": 0, "revelations": 0}
+## Per-frame cost attribution for the flight recorder: engine ticks, the
+## attack queue flush and the queue backlog, in microseconds and counts.
+var frame_cost: Dictionary = {"tick_usec": 0, "flush_usec": 0, "flushed": 0, "queued": 0, "hit_usec": 0, "hits_this_frame": 0}
+var _frame_hit_usec: int = 0
+var _frame_hits: int = 0
 var _chain_counts: Dictionary = {}   # cast root -> distinct victims
 var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
 var _attack_queue: Array = []  # {kind, at, dir, damage, tags, radius, arc}
@@ -356,14 +361,7 @@ func nearest_enemy(center: Vector2, radius: float, exclude: int = 0) -> int:
 
 
 func lowest_hp_enemy_in_radius(center: Vector2, radius: float, exclude: int = 0) -> int:
-	var best := 0
-	var best_hp := INF
-	for handle in enemies_in_radius(center, radius, exclude):
-		var hp := enemy_hp(handle)
-		if hp > 0.0 and hp < best_hp:
-			best_hp = hp
-			best = handle
-	return best
+	return EnemyCombat.lowest_health_in_radius(center, radius, exclude)
 
 
 func damage_enemy(handle: int, amount: float, tags: PackedStringArray) -> float:
@@ -442,6 +440,8 @@ func roll(roll_name: StringName, chance: float, proc_power: float = 1.0, guarant
 func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: float, source: Node, payload: Variant) -> void:
 	if source != _player:
 		return
+	var started := Time.get_ticks_usec()
+	_frame_hits += 1
 	var hit := _make_hit(handle, applied, unclamped, before, payload)
 	telemetry["hits"] = int(telemetry["hits"]) + 1
 	if hit["family"] == AscensionTags.FAMILY_TREE:
@@ -453,6 +453,7 @@ func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: fl
 	hit_resolved.emit(hit)
 	for engine in engines:
 		engine.on_hit(hit)
+	_frame_hit_usec += Time.get_ticks_usec() - started
 
 
 func _make_hit(handle: int, applied: float, unclamped: float, before: float, payload: Variant) -> Dictionary:
@@ -1021,9 +1022,20 @@ func _process(delta: float) -> void:
 	if _v_charge_window >= 1.0:
 		_v_charge_window = 0.0
 		_v_charge_actions = 0
+	var tick_started := Time.get_ticks_usec()
 	for engine in engines:
 		engine.tick(delta)
-	flush_attacks(ATTACK_BUDGET_PER_FRAME)
+	var flush_started := Time.get_ticks_usec()
+	var flushed := flush_attacks(ATTACK_BUDGET_PER_FRAME)
+	var flush_ended := Time.get_ticks_usec()
+	frame_cost["tick_usec"] = flush_started - tick_started
+	frame_cost["flush_usec"] = flush_ended - flush_started
+	frame_cost["flushed"] = flushed
+	frame_cost["queued"] = _attack_queue.size()
+	frame_cost["hit_usec"] = _frame_hit_usec
+	frame_cost["hits_this_frame"] = _frame_hits
+	_frame_hit_usec = 0
+	_frame_hits = 0
 	_tick_attack_fx(delta)
 	_draw_points.clear()
 	for engine in engines:
@@ -1140,6 +1152,24 @@ func slot_state(slot: String) -> Dictionary:
 	if engine != null:
 		state.merge(engine.hud_state(slot), true)
 	return state
+
+
+## Cheap counters for the flight recorder (no allocation beyond the dict).
+func get_debug_counters() -> Dictionary:
+	var out := {
+		"queued_attacks": _attack_queue.size(),
+		"tick_usec": int(frame_cost["tick_usec"]),
+		"flush_usec": int(frame_cost["flush_usec"]),
+		"flushed": int(frame_cost["flushed"]),
+		"hit_usec": int(frame_cost["hit_usec"]),
+		"hits_this_frame": int(frame_cost["hits_this_frame"]),
+		"engines": engines.size(),
+	}
+	for engine in engines:
+		var cost := engine.frame_cost()
+		if not cost.is_empty():
+			out[engine.discipline()] = cost
+	return out
 
 
 func describe() -> Dictionary:

@@ -398,3 +398,42 @@ frames against the event log:
   lowest rarity and oldest first; exploration loot and player-placed drops
   are never culled. Same probe after the cap: 47 item pickups, node growth
   1,800 -> 560 over the minute.
+
+## 2026-09-16 — Barrage fragment acquisition and recorder trust (stage 2 of the V4 plan)
+
+Follows `docs/audits/2026-09-15-performance-captures.md`.
+
+- **Fragment reacquisition (fixed).** `EnemyWorld.lowest_health_in_radius`
+  reads the slot arrays directly (no candidate handle array, no per-handle
+  lookups, dying skipped, ties to the lowest slot); `EnemyLowestHealthQueryTest`
+  pins its agreement with the gather-then-compare path on 150 random enemies.
+  Barrage fragments whose target died reacquire through it, at most 48 per
+  frame; the rest keep their heading and retry next frame (2 s life, 520 px/s,
+  a few frames of steering lost at worst). `AscensionBarrageDenseBenchmark`
+  repeats the audit's workload headless on this machine (i7-8650U, Godot
+  4.7.2, no rendering):
+
+  | Case | Audit (4.7.1, Windows) | Now |
+  |---|---:|---:|
+  | 120 fragments, target retained | 0.84 ms median | 0.74 ms |
+  | 120 fragments, forced reacquisition | 51.25 ms median | 3.33 ms |
+  | 360 fragments, target retained | 1.32 ms | 1.65 ms |
+  | 360 fragments, forced reacquisition | 149.44 ms | 1.51 ms (48 retargets, 312 deferred) |
+  | 180-body wounded crowd, full chain | update max 38-41 ms | p95 4.9 ms, max 11.7 ms; 179/180 dead, 283 live fragments at peak |
+
+  Damage, targets, exclusions and roll outcomes are unchanged; only the
+  search and its pacing changed. The audit's numbers came from a different
+  machine and build, so the table is a like-for-like workload, not a
+  like-for-like clock.
+- **Recorder (fixed).** Every sample now carries `wall_ms` (real spacing to
+  the previous sample), `delta_ms` (the engine's capped process delta; the
+  old `frame_ms` keeps it for older readers), the `ascension` block (queue
+  backlog, engine tick / flush / hit-handling microseconds, Barrage fragment
+  update time, live and pending fragments, retargets and deferrals),
+  `projectile_ms` and `chunk_stream` (queue length, last/max build and plan
+  ms). Summaries add wall-clock percentiles, the tree's peak cost and a
+  `monitor_note` saying that `process_ms` / `physics_ms` are Godot's
+  windowed monitors with render sync included. `FlightRecorderSampleTest`.
+- **Not done here.** Chunk activation staging (the audit's item 3) and a
+  rendered stationary Barrage playtest; the rendered check is scheduled for
+  the whole-system stage with the presets.
