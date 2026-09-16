@@ -265,6 +265,9 @@ var _contributions: Dictionary = {}
 
 var last_attack_gap: float = 999.0
 var _momentum_odometer: float = 0.0
+## Seconds during which Momentum does not bleed (tree rules such as
+## Slipstream and Keep Moving pause decay after kills). Counts down here.
+var momentum_hold_seconds: float = 0.0
 var _last_position: Vector2 = Vector2.ZERO
 var _has_last_position: bool = false
 var _drew_shards: bool = false
@@ -1025,6 +1028,9 @@ func _tick_decay(delta: float) -> void:
 			continue
 		var gate := StringName(entry.get("decay_when", DECAY_NEVER))
 		if gate == DECAY_WHEN_STILL and is_moving:
+			continue
+		if channel == &"momentum" and momentum_hold_seconds > 0.0:
+			momentum_hold_seconds = maxf(0.0, momentum_hold_seconds - delta)
 			continue
 		if gate == DECAY_WHEN_MOVING and not is_moving:
 			continue

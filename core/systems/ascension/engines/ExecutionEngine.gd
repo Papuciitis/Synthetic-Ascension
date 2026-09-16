@@ -418,13 +418,7 @@ func _clean_cut(hit: Dictionary) -> void:
 			runner.clear_native_recovery()
 			counters["clean_cuts"] = int(counters.get("clean_cuts", 0)) + 1
 		return
-	if _clock - _dash_refund_window >= 1.0:
-		_dash_refund_window = _clock
-		_dash_refund_used = 0.0
-	var refund := minf(0.15, 0.6 - _dash_refund_used)
-	if refund > 0.0:
-		_dash_refund_used += refund
-		runner.refund_dash_recovery(refund)
+	if runner.refund_dash_recovery_budgeted(0.15) > 0.0:
 		counters["dash_refunds"] = int(counters.get("dash_refunds", 0)) + 1
 
 

@@ -82,9 +82,40 @@ func on_player_damage_taken(_amount: float) -> void:
 	pass
 
 
-## Enemy damage that reached the player, with its source (Undo, Fixed Coin).
-func on_player_damage_resolved(_source: Node, _applied: float, _kind: StringName) -> void:
+## Enemy damage that reached the player: pre-mitigation `raw`, `applied`
+## HP lost, and its source (Undo, Fixed Coin, Force).
+func on_player_damage_resolved(_source: Node, _raw: float, _applied: float, _kind: StringName) -> void:
 	pass
+
+
+## A dash the player started (from RunEvents) and one that just ended.
+func on_dash_ended(_from: Vector2, _to: Vector2, _direction: Vector2) -> void:
+	pass
+
+
+## Hold-to-use Qs (Guard): the runner starts them with activate_q, feeds the
+## hold each frame, and releases them when the key lifts.
+func q_is_hold(_id: String) -> bool:
+	return false
+
+
+func hold_q(_id: String, _delta: float) -> void:
+	pass
+
+
+func release_q(_id: String) -> Dictionary:
+	return {"ok": false, "message": "", "cooldown": 0.0}
+
+
+## A killing blow the engine may refuse (Last Hit). Return true to leave the
+## player at 1 HP instead.
+func intercept_lethal_hit(_damage: float) -> bool:
+	return false
+
+
+## Width multiplier for native Melee arcs (Stride, Slash Width).
+func arc_multiplier() -> float:
+	return 1.0
 
 
 ## Multiplier on incoming damage from one source; 0 makes it miss.

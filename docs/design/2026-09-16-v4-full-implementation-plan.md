@@ -28,7 +28,7 @@ is a presentation reference only; none of its economy or node rules apply.
 | 1 | Implementation matrix for all 350 nodes and shared rules | done; regenerate after every slice |
 | 2 | Stability pass: fragment acquisition, recorder trust, regression coverage, baselines | done 2026-09-16 (see PERFORMANCE_PATCH_CHANGELOG); rendered check deferred to stage 4 |
 | 3a | Finish Execution, Barrage, Distortion omissions and the shared rules they hang on | done 2026-09-16 |
-| 3b | Momentum, Bastion (Melee) | pending |
+| 3b | Momentum, Bastion (Melee) | done 2026-09-16 (66 + 62 checks; BA10 n/a, MOQ5 partial) |
 | 3c | Precision, Ordnance (Ranged) | pending |
 | 3d | Invocation, Dominion (Magic) | pending |
 | 3e | Remaining 24 Fusions, 3 Unions, milestone picks, Evolution reward timing, action charge, Reaction triggers, Automatic Method | pending |
@@ -57,6 +57,27 @@ is a presentation reference only; none of its economy or node rules apply.
 - 2026-09-16: Doctrine pick Fortune (reward reroll) is out of the combat
   scope; Wild Card is moot because a claim can already buy any qualified
   Evolution. Both recorded in the matrix.
+- 2026-09-16 (3b): Momentum claims the existing Manifestation pool as V4
+  asks; its 0-1 value is read as 0-100, its travel fill and still-bleed stay
+  as tuned for items, and the engine adds V4's dash producer (+15). No
+  Brakes' 100-150 overflow lives in the engine. Dash-shaped effects use the
+  player's real dash (160 px) while ranges use L = 240.
+- 2026-09-16 (3b): Lunge counts as a dash, so it also grants the +15; under
+  Burnout the pool therefore reads 15 after a Lunge, not 0.
+- 2026-09-16 (3b): Immovable (BA10) has no trigger: nothing displaces the
+  player. It stays purchasable with no effect and is recorded n/a rather
+  than given a replacement mechanic. Aftershock's "reverse knockback" is
+  likewise moot (RUPTURE staggers by stun).
+- 2026-09-16 (3b): Bastion prevention (Guard, Plate, Anvil, Glass Armor) and
+  armor changes (Glass Armor, Armor sink, Zero Armor) are expressed through
+  the per-source incoming-damage multiplier; Thorns reads the prevented
+  share of that hit. Meltdown's third ring applies Thorns' virtual 20%-max-HP
+  block to enemies within R, since a virtual hit has no source.
+- 2026-09-16 (3b): Last Hit's intercepted blow grants no Force (it empties
+  the pool by rule); Return to Sender's caught Force is then spent by Stored
+  Force on the same strike when both are owned.
+- 2026-09-16 (3b): Carry (MOQ5) drags one normal now; friendly Mines, Sigils
+  and Wells follow once Ordnance/Invocation exist (partial until 3c/3d).
 
 ## Verification log
 
@@ -74,3 +95,10 @@ is a presentation reference only; none of its economy or node rules apply.
   AscensionRuntimeSafetyTest 18; all 0 failed. Numbers in the changelog.
 - 2026-09-16 stage 3a: AscensionSharedRulesTest 30, AscensionSliceCompletionTest
   23, plus the nine earlier ascension suites unchanged; ScriptParseAuditTest 395.
+- 2026-09-16 stage 3b: AscensionMomentumTest 66, AscensionBastionTest 62; the
+  full set (Ledger 71, Runner 29, Barrage 38, Execution 30, Distortion 38,
+  Hybrid 41, Screen 18, RuntimeSafety 18, SharedRules 30, SliceCompletion 23,
+  ChainBurst 6, BarrageDense 6, LowestHealth 10, FlightRecorderSample 6,
+  BalanceLedger 17, BalanceCaptureWriter 7, BalanceRecorderLoad 5,
+  GroundLootCap 6, LoadingScrim 6) 0 failed; ScriptParseAuditTest 397.
+  Matrix: 178 implemented, 6 partial, 5 n/a, 160 missing, 1 ambiguous.

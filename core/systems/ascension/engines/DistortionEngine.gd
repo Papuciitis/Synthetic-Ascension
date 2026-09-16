@@ -102,7 +102,7 @@ func damage_taken_multiplier_for(source: Node, kind: StringName) -> float:
 
 
 ## Undo and Fixed Coin watch the damage the player actually took.
-func on_player_damage_resolved(source: Node, applied: float, _kind: StringName) -> void:
+func on_player_damage_resolved(source: Node, _raw: float, applied: float, _kind: StringName) -> void:
 	if heads_left > 0.0 and has("DTE1"):
 		_heads_bank += 0.3 * applied
 	if not has("DTF1"):

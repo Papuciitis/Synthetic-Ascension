@@ -13,8 +13,8 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Group | Nodes | Implemented | Partial | Missing | Ambiguous | n/a |
 |---|---:|---:|---:|---:|---:|---:|
 | Execution (EX) | 34 | 32 | 2 | 0 | 0 | 0 |
-| Momentum (MO) | 33 | 0 | 0 | 33 | 0 | 0 |
-| Bastion (BA) | 33 | 0 | 0 | 33 | 0 | 0 |
+| Momentum (MO) | 33 | 32 | 1 | 0 | 0 | 0 |
+| Bastion (BA) | 33 | 32 | 0 | 0 | 0 | 1 |
 | Precision (PR) | 33 | 0 | 0 | 33 | 0 | 0 |
 | Barrage (BR) | 34 | 32 | 2 | 0 | 0 | 0 |
 | Ordnance (OR) | 34 | 0 | 0 | 34 | 0 | 0 |
@@ -28,7 +28,7 @@ Status: **implemented** (authored rule runs, verified by the named test),
 | Choice (choice) | 12 | 10 | 0 | 0 | 1 | 1 |
 | Ascendant (ascendant) | 1 | 1 | 0 | 0 | 0 | 0 |
 | Sink (sink) | 2 | 2 | 0 | 0 | 0 | 0 |
-| **All** | 350 | 114 | 5 | 226 | 1 | 4 |
+| **All** | 350 | 178 | 6 | 160 | 1 | 5 |
 
 ## Shared rules
 
@@ -107,77 +107,77 @@ Status: **implemented** (authored rule runs, verified by the named test),
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| MO01 | Stride | local | 1 | missing |  |  |  |
-| MO02 | Passing Blade | local | 1 | missing |  |  |  |
-| MO03 | Kill Reset | local | 2 | missing |  |  |  |
-| MO04 | Afterimage | local | 2 | missing |  |  |  |
-| MO05 | Turn | local | 2 | missing |  |  |  |
-| MO06 | Ram | local | 2 | missing |  |  |  |
-| MO07 | Running Cut | local | 2 | missing |  |  |  |
-| MO08 | Slipstream | local | 2 | missing |  |  |  |
-| MOQ | Lunge | active | 2 | missing |  |  |  |
-| MO09 | Long Step | local | 3 | missing |  |  |  |
-| MO10 | Shock Front | local | 3 | missing |  |  |  |
-| MO11 | Trail | local | 3 | missing |  |  |  |
-| MO12 | Thousand Cuts | local | 3 | missing |  |  |  |
-| MOF1 | Keep Moving | fork | 3 | missing |  |  |  |
-| MOF2 | Burnout | fork | 3 | missing |  |  |  |
-| MOK1 | Never Stop | keystone | 3 | missing |  |  |  |
-| MOK2 | No Brakes | keystone | 3 | missing |  |  |  |
-| MOQ1 | Rebound | mutation | 3 | missing |  |  |  |
-| MOQ2 | Wake | mutation | 3 | missing |  |  |  |
-| MOQ3 | Shadow Step | mutation | 3 | missing |  |  |  |
-| MOQ4 | Fork | mutation | 3 | missing |  |  |  |
-| MOQ5 | Carry | mutation | 3 | missing |  |  |  |
-| MOQ6 | Long Lunge | mutation | 3 | missing |  |  |  |
-| MOA | Moving Fire | axiom | 4 | missing |  |  |  |
-| MOC | Blade Storm | catastrophe | 4 | missing |  |  |  |
-| MOE1 | Endless Lunge | evolution | 5 | missing |  |  |  |
-| MOE2 | Crash Run | evolution | 5 | missing |  |  |  |
-| MOS1 | Run Speed | sink | 5 | missing |  |  |  |
-| MOS2 | Slash Width | sink | 5 | missing |  |  |  |
-| MOV | BLINK | revelation | 5 | missing |  |  |  |
-| MOV1 | All of Them | revelation_mutation | 5 | missing |  |  |  |
-| MOV2 | Back Again | revelation_mutation | 5 | missing |  |  |  |
-| MOV3 | Don’t Blink | revelation_mutation | 5 | missing |  |  |  |
+| MO01 | Stride | local | 1 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | claims the existing Manifestation Momentum pool (0-1 read as 0-100); travel fill and still-bleed are the pool's own; dashes add 15 |
+| MO02 | Passing Blade | local | 1 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | strip R/2 wide along the real dash path (160 px), Prime 3 s consumed by the next Melee Core hit via the outgoing-damage hook |
+| MO03 | Kill Reset | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | shares the 0.6 s/s refund bucket with Clean Cut (0.9 s/s with both) |
+| MO04 | Afterimage | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MO05 | Turn | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | turn detection from the runner's frame travel; credit consumed on the arming turn |
+| MO06 | Ram | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | carried normals ride to the endpoint (data + actor moved); elites R/2; bosses 0.5D + 0.25 s stun |
+| MO07 | Running Cut | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MO08 | Slipstream | local | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | lane 2R behind the player, 4 s (interpretation), renewed not stacked |
+| MOQ | Lunge | active | 2 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | dash_toward the aim up to 1.5L (min R); endpoint 2D semicircle radius R with core_strike; counts as a dash (+15 Momentum) |
+| MO09 | Long Step | local | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | hold dash at the endpoint: another L without invulnerability, 40 Momentum per L, up to 2L; continues Passing Blade and Ram |
+| MO10 | Shock Front | local | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MO11 | Trail | local | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MO12 | Thousand Cuts | local | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOF1 | Keep Moving | fork | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOF2 | Burnout | fork | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOK1 | Never Stop | keystone | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | second charge: the first dash refunds 1.6 s so a second dash is available at once; the charge returns after 1.6 s |
+| MOK2 | No Brakes | keystone | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | overflow 100-150 owned by the engine; skid 0.25 s on a 90-degree turn; wall contact during the skid via is_on_wall |
+| MOQ1 | Rebound | mutation | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOQ2 | Wake | mutation | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOQ3 | Shadow Step | mutation | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOQ4 | Fork | mutation | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOQ5 | Carry | mutation | 3 | partial | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | drags one crossed normal; friendly Mines/Sigils/Wells follow when those objects exist (stages 3c/3d) |
+| MOQ6 | Long Lunge | mutation | 3 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOA | Moving Fire | axiom | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | first native Ranged/Magic hit of the strike gains +0.5D through the outgoing-damage hook |
+| MOC | Blade Storm | catastrophe | 4 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | six cutters, four 1D line cuts each every 0.75 s, recovery 8 s; fires on six Afterimages within 4 s |
+| MOE1 | Endless Lunge | evolution | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | free returns within 2 s, -10%/return floored at 0.5D, never the same victim; six returns release Blade Storm |
+| MOE2 | Crash Run | evolution | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | spends all Momentum, 4L, carries up to twenty normals, 3D + Burnout, one 1D Shock Front per 25 spent (max 4) |
+| MOS1 | Run Speed | sink | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOS2 | Slash Width | sink | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
+| MOV | BLINK | revelation | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | held attack (tests force landings) teleports every 0.15 s to the cursor-nearest visible enemy; normals once, elites/bosses after 0.5 s; 0.1 s invulnerability per landing |
+| MOV1 | All of Them | revelation_mutation | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | ghost strike is an impact at the unvisited normal (an arc centred on it cannot contain it) |
+| MOV2 | Back Again | revelation_mutation | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest | retrace starts the frame after the chain ends, 0.1 s per landing, up to 12 |
+| MOV3 | Don’t Blink | revelation_mutation | 5 | implemented | core/systems/ascension/engines/MomentumEngine.gd | AscensionMomentumTest |  |
 
 ## Bastion (BA)
 
 | Id | Name | Kind | Ring | Status | Where | Verified by | Note |
 |---|---|---|---:|---|---|---|---|
-| BA01 | Stored Force | local | 1 | missing |  |  |  |
-| BA02 | Return to Sender | local | 1 | missing |  |  |  |
-| BA03 | Plate | local | 2 | missing |  |  |  |
-| BA04 | Full Tank | local | 2 | missing |  |  |  |
-| BA05 | Razor Guard | local | 2 | missing |  |  |  |
-| BA06 | Thorns | local | 2 | missing |  |  |  |
-| BA07 | Surrounded | local | 2 | missing |  |  |  |
-| BA08 | Vessel | local | 2 | missing |  |  |  |
-| BAQ | Guard | active | 2 | missing |  |  |  |
-| BA09 | Armor Break | local | 3 | missing |  |  |  |
-| BA10 | Immovable | local | 3 | missing |  |  |  |
-| BA11 | Slow Leak | local | 3 | missing |  |  |  |
-| BA12 | Last Hit | local | 3 | missing |  |  |  |
-| BAF1 | Pressure Vessel | fork | 3 | missing |  |  |  |
-| BAF2 | Overpressure | fork | 3 | missing |  |  |  |
-| BAK1 | Anvil | keystone | 3 | missing |  |  |  |
-| BAK2 | Glass Armor | keystone | 3 | missing |  |  |  |
-| BAQ1 | Bulwark | mutation | 3 | missing |  |  |  |
-| BAQ2 | Counterweight | mutation | 3 | missing |  |  |  |
-| BAQ3 | Mirror | mutation | 3 | missing |  |  |  |
-| BAQ4 | Bunker | mutation | 3 | missing |  |  |  |
-| BAQ5 | Martyr | mutation | 3 | missing |  |  |  |
-| BAQ6 | Living Rampart | mutation | 3 | missing |  |  |  |
-| BAA | Heavy Hands | axiom | 4 | missing |  |  |  |
-| BAC | Meltdown | catastrophe | 4 | missing |  |  |  |
-| BAE1 | Gun Shield | evolution | 5 | missing |  |  |  |
-| BAE2 | Bomb Bunker | evolution | 5 | missing |  |  |  |
-| BAS1 | Force Capacity | sink | 5 | missing |  |  |  |
-| BAS2 | Armor | sink | 5 | missing |  |  |  |
-| BAV | RUPTURE | revelation | 5 | missing |  |  |  |
-| BAV1 | Aftershock | revelation_mutation | 5 | missing |  |  |  |
-| BAV2 | Fallout | revelation_mutation | 5 | missing |  |  |  |
-| BAV3 | Zero Armor | revelation_mutation | 5 | missing |  |  |  |
+| BA01 | Stored Force | local | 1 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | spend decided at native fire; +0.05D per point to the strike's Core hits via the outgoing-damage hook; +R/2 radius at 20 via decorate_native_slash |
+| BA02 | Return to Sender | local | 1 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | consume_enemy_projectiles_in_sector (R, 60-degree half angle, limit 3); copies fly back toward the owner |
+| BA03 | Plate | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | forms after 2 s without a hit below 50 Force; consumed inside damage_taken_multiplier_for |
+| BA04 | Full Tank | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | discharge on the next Melee Core strike or Guard release; nova 3D in 2R |
+| BA05 | Razor Guard | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BA06 | Thorns | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | prevented share remembered from the incoming-damage hook; returned to the source handle, bounded 0.2D-2D, flag reflected |
+| BA07 | Surrounded | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | arc 340 via decorate_native_slash; rear-half victims grant 5 Force each up to 20 |
+| BA08 | Vessel | local | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | plates intercept hostile projectiles within 34 px; a discharge fires them as 1D piercing blades |
+| BAQ | Guard | active | 2 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | hold-Q through the runner; upkeep 12/s above zero; catches in a 160-degree sector; automatic casts hold 0.75 s |
+| BA09 | Armor Break | local | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | reuses the Cracked status (five charges); bosses also stunned 0.25 s |
+| BA10 | Immovable | local | 3 | n/a | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | nothing in the game displaces the player, so the resist trigger cannot occur; purchasable, no effect |
+| BA11 | Slow Leak | local | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | scraps arm once the player steps off them; enemy contact within 20 px shocks 0.8D |
+| BA12 | Last Hit | local | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | intercept_lethal_hit through player._take_damage; the intercepted blow grants no Force; 45 s recovery |
+| BAF1 | Pressure Vessel | fork | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAF2 | Overpressure | fork | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAK1 | Anvil | keystone | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | prevention and doubled gain after 0.5 s still (runner.still_seconds); keystone bonus raises 20% to 25% |
+| BAK2 | Glass Armor | keystone | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | armor halved and 60% DR at full Force expressed as multipliers in damage_taken_multiplier_for; decay x2 |
+| BAQ1 | Bulwark | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAQ2 | Counterweight | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAQ3 | Mirror | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAQ4 | Bunker | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | one bunker; catches drain its 30 Force; wave 2D when depleted or expired |
+| BAQ5 | Martyr | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | pays 2% max HP/s via pay_health while above 25% HP; payments fill no Force |
+| BAQ6 | Living Rampart | mutation | 3 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | no upkeep while still_seconds > 0 and not moving; hits under 2% max HP grant nothing during the free hold |
+| BAA | Heavy Hands | axiom | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | Ranged/Magic native fire spends at half coefficient; Ranged hits add a 0.5R impact, Magic hits stun 0.25 s |
+| BAC | Meltdown | catastrophe | 4 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | three rings at 0/0.4/0.8 s (2R, 4R, screen); second erases hostile projectiles; third applies Thorns to enemies within R from a virtual 20%-max-HP prevented hit and Razor Guard's ring |
+| BAE1 | Gun Shield | evolution | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | stored projectiles fire one per 0.15 s while guarding; a discharge launches the rest and Meltdown if owned |
+| BAE2 | Bomb Bunker | evolution | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | 8 s bunker with its own pool to 150; tap Q while not guarding detonates for 2D + 0.04D per stored |
+| BAS1 | Force Capacity | sink | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest |  |
+| BAS2 | Armor | sink | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | multiplies armor rating (not final DR) through the incoming-damage multiplier |
+| BAV | RUPTURE | revelation | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | 0.5 s tell, then 5D + 0.04D per Force spent to every enemy in the camera rect, stun 0.5 s, hostile projectiles erased; works at zero Force |
+| BAV1 | Aftershock | revelation_mutation | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | repeat after 1 s at half; no knockback exists to reverse |
+| BAV2 | Fallout | revelation_mutation | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | each erased projectile becomes a 0.5D impact at a random survivor |
+| BAV3 | Zero Armor | revelation_mutation | 5 | implemented | core/systems/ascension/engines/BastionEngine.gd | AscensionBastionTest | +100% and armor contribution zero for 3 s |
 
 ## Precision (PR)
 

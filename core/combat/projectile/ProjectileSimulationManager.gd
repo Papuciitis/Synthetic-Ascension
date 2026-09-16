@@ -538,6 +538,32 @@ func remove_projectile(id: int) -> bool:
 	return false
 
 
+## Removes ENEMY-team projectiles within `radius` of `center` and inside the
+## sector facing `forward` (half-angle `half_angle`), appending
+## {position, velocity, damage, source} for each. `limit` < 0 removes all.
+func consume_enemy_projectiles_in_sector(center: Vector2, radius: float, forward: Vector2, half_angle: float, out_consumed: Array, limit: int = -1) -> int:
+	var radius_squared := radius * radius
+	var facing := forward.normalized() if forward.length_squared() > 0.0001 else Vector2.RIGHT
+	var cos_limit := cos(clampf(half_angle, 0.0, PI))
+	var removed := 0
+	var i := _active_count - 1
+	while i >= 0 and (limit < 0 or removed < limit):
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			var offset := _positions[i] - center
+			if offset.length_squared() <= 1.0 or offset.normalized().dot(facing) >= cos_limit:
+				var source_value: Variant = _sources[i]
+				out_consumed.append({
+					"position": _positions[i],
+					"velocity": _velocities[i],
+					"damage": _damage[i],
+					"source": source_value if is_instance_valid(source_value) else null,
+				})
+				_remove(i)
+				removed += 1
+		i -= 1
+	return removed
+
+
 func set_enemy_slow_zone(center: Vector2, radius: float, factor: float) -> void:
 	_slow_zone_center = center
 	_slow_zone_radius = maxf(0.0, radius)

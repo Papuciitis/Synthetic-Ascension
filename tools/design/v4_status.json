@@ -35,6 +35,204 @@
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/AscensionRunner.gd"
  },
+ "BA01": {
+  "note": "spend decided at native fire; +0.05D per point to the strike's Core hits via the outgoing-damage hook; +R/2 radius at 20 via decorate_native_slash",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA02": {
+  "note": "consume_enemy_projectiles_in_sector (R, 60-degree half angle, limit 3); copies fly back toward the owner",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA03": {
+  "note": "forms after 2 s without a hit below 50 Force; consumed inside damage_taken_multiplier_for",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA04": {
+  "note": "discharge on the next Melee Core strike or Guard release; nova 3D in 2R",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA05": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA06": {
+  "note": "prevented share remembered from the incoming-damage hook; returned to the source handle, bounded 0.2D-2D, flag reflected",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA07": {
+  "note": "arc 340 via decorate_native_slash; rear-half victims grant 5 Force each up to 20",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA08": {
+  "note": "plates intercept hostile projectiles within 34 px; a discharge fires them as 1D piercing blades",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA09": {
+  "note": "reuses the Cracked status (five charges); bosses also stunned 0.25 s",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA10": {
+  "note": "nothing in the game displaces the player, so the resist trigger cannot occur; purchasable, no effect",
+  "status": "n/a",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA11": {
+  "note": "scraps arm once the player steps off them; enemy contact within 20 px shocks 0.8D",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BA12": {
+  "note": "intercept_lethal_hit through player._take_damage; the intercepted blow grants no Force; 45 s recovery",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAA": {
+  "note": "Ranged/Magic native fire spends at half coefficient; Ranged hits add a 0.5R impact, Magic hits stun 0.25 s",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAC": {
+  "note": "three rings at 0/0.4/0.8 s (2R, 4R, screen); second erases hostile projectiles; third applies Thorns to enemies within R from a virtual 20%-max-HP prevented hit and Razor Guard's ring",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAE1": {
+  "note": "stored projectiles fire one per 0.15 s while guarding; a discharge launches the rest and Meltdown if owned",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAE2": {
+  "note": "8 s bunker with its own pool to 150; tap Q while not guarding detonates for 2D + 0.04D per stored",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAF1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAF2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAK1": {
+  "note": "prevention and doubled gain after 0.5 s still (runner.still_seconds); keystone bonus raises 20% to 25%",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAK2": {
+  "note": "armor halved and 60% DR at full Force expressed as multipliers in damage_taken_multiplier_for; decay x2",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ": {
+  "note": "hold-Q through the runner; upkeep 12/s above zero; catches in a 160-degree sector; automatic casts hold 0.75 s",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ4": {
+  "note": "one bunker; catches drain its 30 Force; wave 2D when depleted or expired",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ5": {
+  "note": "pays 2% max HP/s via pay_health while above 25% HP; payments fill no Force",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAQ6": {
+  "note": "no upkeep while still_seconds > 0 and not moving; hits under 2% max HP grant nothing during the free hold",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAS1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAS2": {
+  "note": "multiplies armor rating (not final DR) through the incoming-damage multiplier",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAV": {
+  "note": "0.5 s tell, then 5D + 0.04D per Force spent to every enemy in the camera rect, stun 0.5 s, hostile projectiles erased; works at zero Force",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAV1": {
+  "note": "repeat after 1 s at half; no knockback exists to reverse",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAV2": {
+  "note": "each erased projectile becomes a 0.5D impact at a random survivor",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
+ "BAV3": {
+  "note": "+100% and armor contribution zero for 3 s",
+  "status": "implemented",
+  "test": "AscensionBastionTest",
+  "where": "core/systems/ascension/engines/BastionEngine.gd"
+ },
  "BR01": {
   "note": "",
   "status": "implemented",
@@ -658,6 +856,204 @@
   "status": "implemented",
   "test": "AscensionHybridTest",
   "where": "core/systems/ascension/engines/ExecutionEngine.gd + core/systems/ascension/engines/DistortionEngine.gd"
+ },
+ "MO01": {
+  "note": "claims the existing Manifestation Momentum pool (0-1 read as 0-100); travel fill and still-bleed are the pool's own; dashes add 15",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO02": {
+  "note": "strip R/2 wide along the real dash path (160 px), Prime 3 s consumed by the next Melee Core hit via the outgoing-damage hook",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO03": {
+  "note": "shares the 0.6 s/s refund bucket with Clean Cut (0.9 s/s with both)",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO04": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO05": {
+  "note": "turn detection from the runner's frame travel; credit consumed on the arming turn",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO06": {
+  "note": "carried normals ride to the endpoint (data + actor moved); elites R/2; bosses 0.5D + 0.25 s stun",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO07": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO08": {
+  "note": "lane 2R behind the player, 4 s (interpretation), renewed not stacked",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO09": {
+  "note": "hold dash at the endpoint: another L without invulnerability, 40 Momentum per L, up to 2L; continues Passing Blade and Ram",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO10": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO11": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MO12": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOA": {
+  "note": "first native Ranged/Magic hit of the strike gains +0.5D through the outgoing-damage hook",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOC": {
+  "note": "six cutters, four 1D line cuts each every 0.75 s, recovery 8 s; fires on six Afterimages within 4 s",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOE1": {
+  "note": "free returns within 2 s, -10%/return floored at 0.5D, never the same victim; six returns release Blade Storm",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOE2": {
+  "note": "spends all Momentum, 4L, carries up to twenty normals, 3D + Burnout, one 1D Shock Front per 25 spent (max 4)",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOF1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOF2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOK1": {
+  "note": "second charge: the first dash refunds 1.6 s so a second dash is available at once; the charge returns after 1.6 s",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOK2": {
+  "note": "overflow 100-150 owned by the engine; skid 0.25 s on a 90-degree turn; wall contact during the skid via is_on_wall",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ": {
+  "note": "dash_toward the aim up to 1.5L (min R); endpoint 2D semicircle radius R with core_strike; counts as a dash (+15 Momentum)",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ4": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ5": {
+  "note": "drags one crossed normal; friendly Mines/Sigils/Wells follow when those objects exist (stages 3c/3d)",
+  "status": "partial",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOQ6": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOS1": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOS2": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOV": {
+  "note": "held attack (tests force landings) teleports every 0.15 s to the cursor-nearest visible enemy; normals once, elites/bosses after 0.5 s; 0.1 s invulnerability per landing",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOV1": {
+  "note": "ghost strike is an impact at the unvisited normal (an arc centred on it cannot contain it)",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOV2": {
+  "note": "retrace starts the frame after the chain ends, 0.1 s per landing, up to 12",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
+ },
+ "MOV3": {
+  "note": "",
+  "status": "implemented",
+  "test": "AscensionMomentumTest",
+  "where": "core/systems/ascension/engines/MomentumEngine.gd"
  },
  "MR2": {
   "note": "fragments finish at half the line; extra fragment",

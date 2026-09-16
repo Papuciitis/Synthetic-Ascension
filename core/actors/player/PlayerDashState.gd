@@ -36,6 +36,9 @@ var time_left: float = 0.0
 var cooldown_left: float = 0.0
 var buffer_left: float = 0.0
 var direction: Vector2 = Vector2.RIGHT
+## The distance of the current dash; ordinary dashes use DISTANCE, a Lunge
+## sets its own. Speed stays DISTANCE / DURATION so a longer dash lasts longer.
+var distance: float = DISTANCE
 
 var _last_reported: float = -1.0
 
@@ -69,9 +72,27 @@ func consume_request() -> bool:
 
 func start(dir: Vector2) -> void:
 	direction = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
+	distance = DISTANCE
 	time_left = DURATION
 	cooldown_left = COOLDOWN
 	buffer_left = 0.0
+
+
+## A directed dash of `travel` px at the ordinary dash speed (a Lunge).
+func start_toward(dir: Vector2, travel: float, cooldown: float = COOLDOWN) -> void:
+	direction = dir.normalized() if dir.length_squared() > 0.0001 else Vector2.RIGHT
+	distance = maxf(travel, 1.0)
+	time_left = distance / speed()
+	cooldown_left = cooldown
+	buffer_left = 0.0
+
+
+## Lengthens the current dash by `travel` px (Long Step).
+func extend(travel: float) -> void:
+	if time_left <= 0.0 or travel <= 0.0:
+		return
+	distance += travel
+	time_left += travel / speed()
 
 
 func cancel() -> void:

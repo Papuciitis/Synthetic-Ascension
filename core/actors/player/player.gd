@@ -344,6 +344,42 @@ func _end_dash() -> void:
 	_release_dash_trail()
 
 
+## A directed dash of `travel` px toward `dir` (a Lunge). Invulnerability
+## covers only the ordinary dash duration when `full_invulnerability` is false.
+func dash_toward(dir: Vector2, travel: float, full_invulnerability: bool = false, cooldown: float = PlayerDashState.COOLDOWN) -> bool:
+	if is_dead or dir.length_squared() < 0.0001:
+		return false
+	if _dash.is_dashing():
+		_end_dash()
+	_dash.start_toward(dir, travel, cooldown)
+	rotation = _dash.direction.angle()
+	grant_invulnerability(_dash.time_left + PlayerDashState.IFRAME_GRACE if full_invulnerability else PlayerDashState.DURATION + PlayerDashState.IFRAME_GRACE)
+	_apply_body_phasing()
+	_spawn_dash_trail()
+	dash_cd_changed.emit(_dash.cooldown_left, PlayerDashState.COOLDOWN)
+	if RunEvents != null and RunEvents.player_dashed.has_connections():
+		RunEvents.player_dashed.emit(self, global_position, _dash.direction)
+	return true
+
+
+## Lengthens the current dash without invulnerability (Long Step).
+func extend_dash(travel: float) -> void:
+	_dash.extend(travel)
+
+
+func is_dashing() -> bool:
+	return _dash.is_dashing()
+
+
+func dash_direction() -> Vector2:
+	return _dash.direction
+
+
+## Scales what is left of the native attack recovery (Running Cut).
+func scale_native_recovery(multiplier: float) -> void:
+	_weapon_cd = maxf(0.0, _weapon_cd * multiplier)
+
+
 func cancel_dash() -> void:
 	if not _dash.is_dashing():
 		_dash.cancel()
@@ -1163,6 +1199,14 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 
 	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
 	var health_before := hp
+	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
+		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
+		hp = 1.0
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
 	hp = max(hp - reduced, 0.0)
 	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
 	if BattleText != null:

@@ -29,7 +29,13 @@ const ENGINE_SCRIPTS: Dictionary = {
 	"BR": "res://core/systems/ascension/engines/BarrageEngine.gd",
 	"EX": "res://core/systems/ascension/engines/ExecutionEngine.gd",
 	"DT": "res://core/systems/ascension/engines/DistortionEngine.gd",
+	"MO": "res://core/systems/ascension/engines/MomentumEngine.gd",
+	"BA": "res://core/systems/ascension/engines/BastionEngine.gd",
 }
+## Dash-recovery refunds (Clean Cut, Kill Reset) share one bucket: 0.6 s per
+## second, 0.9 when both are owned.
+const DASH_REFUND_PER_SECOND := 0.6
+const DASH_REFUND_PER_SECOND_BOTH := 0.9
 ## Revelation charge: kills fill it, the equipped V spends all of it. Normals
 ## give half a point (the review's correction), elites eight, bosses thirty;
 ## at most four charging kills count per second and V-rooted kills never do.
@@ -121,6 +127,15 @@ var _last_player_position: Vector2 = Vector2.INF
 var _elite_trigger_accum: float = 0.0
 var _elite_triggered: Dictionary = {}
 var _hit_history: Dictionary = {}        # handle -> Array of {damage, kind, dir, radius, arc, tags}
+var _dash_refund_window: float = 0.0
+var _dash_refund_used: float = 0.0
+var _clock: float = 0.0
+var still_seconds: float = 0.0
+var travel_this_frame: float = 0.0
+var _dash_active: bool = false
+var _dash_from: Vector2 = Vector2.ZERO
+var _dash_dir: Vector2 = Vector2.RIGHT
+var _q_holding: bool = false
 var _current_attack: Dictionary = {}
 var _history_wanted: bool = false
 var _recent_damage: float = 0.0
@@ -859,9 +874,113 @@ func note_revelation_ended(_id: String) -> void:
 ## refunds 0.5 s of Q recovery; distance is consumed.
 func _track_travel() -> void:
 	var at := player_position()
+	travel_this_frame = 0.0
 	if _last_player_position != Vector2.INF:
-		_travel_since_refund += at.distance_to(_last_player_position)
+		travel_this_frame = at.distance_to(_last_player_position)
+		_travel_since_refund += travel_this_frame
 	_last_player_position = at
+
+
+func is_player_moving() -> bool:
+	return travel_this_frame > 0.5
+
+
+func _track_dash() -> void:
+	if _player == null or not _player.has_method("is_dashing"):
+		return
+	var dashing: bool = _player.call("is_dashing")
+	if dashing and not _dash_active:
+		_dash_active = true
+		_dash_from = player_position()
+		_dash_dir = _player.call("dash_direction")
+	elif not dashing and _dash_active:
+		_dash_active = false
+		var to := player_position()
+		for engine in engines:
+			engine.on_dash_ended(_dash_from, to, _dash_dir)
+
+
+func is_dash_active() -> bool:
+	return _dash_active
+
+
+## The shared dash-refund bucket (Clean Cut and Kill Reset). Returns the
+## seconds actually refunded.
+func refund_dash_recovery_budgeted(seconds: float) -> float:
+	if _clock - _dash_refund_window >= 1.0:
+		_dash_refund_window = _clock
+		_dash_refund_used = 0.0
+	var cap := DASH_REFUND_PER_SECOND_BOTH if (owns("EX12") and owns("MO03")) else DASH_REFUND_PER_SECOND
+	var refund := minf(seconds, cap - _dash_refund_used)
+	if refund <= 0.0:
+		return 0.0
+	_dash_refund_used += refund
+	refund_dash_recovery(refund)
+	return refund
+
+
+## A directed dash (Lunge) and its extension (Long Step).
+func dash_toward(direction: Vector2, travel: float, full_invulnerability: bool = false, cooldown: float = 1.6) -> bool:
+	if _player == null or not _player.has_method("dash_toward"):
+		return false
+	return bool(_player.call("dash_toward", direction, travel, full_invulnerability, cooldown))
+
+
+func extend_dash(travel: float) -> void:
+	if _player != null and _player.has_method("extend_dash"):
+		_player.call("extend_dash", travel)
+
+
+func scale_native_recovery(multiplier: float) -> void:
+	if _player != null and _player.has_method("scale_native_recovery"):
+		_player.call("scale_native_recovery", multiplier)
+
+
+## Moves an enemy record (and its actor, when materialized) to `at`.
+func move_enemy_to(handle: int, at: Vector2) -> void:
+	if not enemy_alive(handle):
+		return
+	var actor := EnemyWorld.actor_for_handle(handle)
+	if actor != null and is_instance_valid(actor):
+		actor.global_position = at
+	EnemyWorld.set_position(handle, at)
+
+
+func teleport_player(at: Vector2) -> void:
+	if _player is Node2D:
+		(_player as Node2D).global_position = at
+		_last_player_position = at
+
+
+func player_max_hp() -> float:
+	return float(_player.get("max_hp")) if _player != null else 100.0
+
+
+func player_hp() -> float:
+	return float(_player.get("hp")) if _player != null else 0.0
+
+
+func player_armor() -> float:
+	if _player == null:
+		return 0.0
+	var stats: Variant = _player.get("stats")
+	return float(stats.get("armor")) if stats != null else 0.0
+
+
+## Last Hit and similar: an engine may refuse the killing blow.
+func intercept_lethal_damage(damage: float) -> bool:
+	for engine in engines:
+		if engine.intercept_lethal_hit(damage):
+			return true
+	return false
+
+
+## Width multiplier for native Melee arcs.
+func get_arc_multiplier() -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.arc_multiplier()
+	return total
 
 
 func _note_native_input_for_refund() -> void:
@@ -958,6 +1077,9 @@ func _on_player_damage_taken(who: Node, amount: float, _position: Vector2) -> vo
 
 func apply_to_melee_slash(slash: Node) -> void:
 	slash.set_meta(AscensionTags.META_KEY, AscensionTags.native("melee", "slash"))
+	var arc := get_arc_multiplier()
+	if arc != 1.0:
+		slash.set("arc_degrees", clampf(float(slash.get("arc_degrees")) * arc, 5.0, 340.0))
 	for engine in engines:
 		engine.decorate_native_slash(slash)
 
@@ -1250,11 +1372,11 @@ func _modify_outgoing_damage(handle: int, raw: float, payload: Variant) -> float
 	return damage
 
 
-func _on_player_damage_resolved(who: Node, _raw: float, _adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
-	if who != _player or outcome != &"hit" or applied <= 0.0:
+func _on_player_damage_resolved(who: Node, raw: float, _adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
+	if who != _player or (outcome != &"hit" and outcome != &"intercepted") or applied <= 0.0:
 		return
 	for engine in engines:
-		engine.on_player_damage_resolved(source, applied, kind)
+		engine.on_player_damage_resolved(source, raw, applied, kind)
 
 
 func clear_native_recovery() -> void:
@@ -1329,10 +1451,16 @@ func _process(delta: float) -> void:
 			var pending := _v_pair_pending
 			_v_pair_pending = ""
 			_activate(pending)
+	_clock += delta
 	_q_idle += delta
 	if _encore_left > 0.0:
 		_encore_left = maxf(0.0, _encore_left - delta)
 	_track_travel()
+	if travel_this_frame > 0.5:
+		still_seconds = 0.0
+	else:
+		still_seconds += delta
+	_track_dash()
 	_tick_reaction_triggers(delta)
 	var tick_started := Time.get_ticks_usec()
 	for engine in engines:
@@ -1366,7 +1494,23 @@ func _process(delta: float) -> void:
 		_sweep_accum = 0.0
 		_sweep_statuses()
 	if _input_allowed():
-		if Input.is_action_just_pressed(&"ascension_active"):
+		var hold_engine := engine_for(q_id)
+		var hold_q := hold_engine != null and hold_engine.q_is_hold(q_id)
+		if hold_q:
+			if Input.is_action_just_pressed(&"ascension_active"):
+				var started := activate_q()
+				_q_holding = bool(started.get("ok", false))
+			elif _q_holding and Input.is_action_pressed(&"ascension_active"):
+				hold_engine.hold_q(q_id, delta)
+			elif _q_holding:
+				_q_holding = false
+				var released := hold_engine.release_q(q_id)
+				var cooldown := _recovery(float(released.get("cooldown", 0.0)))
+				q_cooldown_max = cooldown
+				q_cooldown_left = cooldown
+				if _q_slot != null:
+					_q_slot.announce(cooldown, cooldown)
+		elif Input.is_action_just_pressed(&"ascension_active"):
 			activate_q()
 		elif owns("pick.M2") and not Input.is_action_pressed(&"ascension_active"):
 			# Automatic Method: the equipped Q casts itself when ready; holding
