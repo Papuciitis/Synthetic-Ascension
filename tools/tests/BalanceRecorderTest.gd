@@ -92,6 +92,22 @@ func _run() -> void:
 	Global.transaction_followers(0, &"trade", {"buy_value": 40, "sell_value": 40})
 	summary = recorder.get_summary()
 	_check(summary.totals.followers_earned == 40 and summary.totals.followers_spent == 40, "zero-net shop exchange still records both sides")
+	var elite := preload("res://core/actors/enemy/enemy.tscn").instantiate() as EnemyActor
+	var spec := EnemySpec.new()
+	spec.id = &"recorder_elite"
+	spec.max_hp = 100.0
+	spec.elite_hp_mult = 1.6
+	spec.item_pickup_scene = elite.item_pickup_scene
+	elite.spec = spec
+	elite.position = Vector2(10000.0, 10000.0)
+	add_child(elite)
+	elite.make_elite()
+	# Boss arenas also change health after registration; use the real adapter.
+	elite.configure_health(400.0, true)
+	var enemy_rows: Dictionary = recorder.get_summary().totals.enemies
+	var elite_key := String(EnemyWorld.get_spec_id(EnemyCombat.handle_for_actor(elite))) + " [elite]"
+	_check(enemy_rows.has(elite_key) and enemy_rows[elite_key].hp_max == 400.0 and enemy_rows[elite_key].seen == 1, "real elite promotion and post-registration HP changes refresh scaling records")
+	elite.free()
 	player.stats.armor = 100.0
 	player.hp = 10.0
 	player.invulnerable_time = 0.0

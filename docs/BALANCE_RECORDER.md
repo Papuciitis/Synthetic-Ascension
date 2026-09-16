@@ -30,7 +30,9 @@ The recorder holds at most two submitted batches and 8,192 pending history
 records. If disk cannot keep up, exact ledger totals continue; skipped history
 is counted in `dropped_records`, and sequence gaps locate missing detail. File
 errors appear as `[BalanceRecorder] Capture incomplete` warnings and in
-`writer_failures` / `last_error` when a later summary can be saved. An `outcome`
+`writer_failures` / `last_error` when a summary can be saved. `artifacts_complete`
+is false if the current report batch only partially succeeded; `summary.json`
+is the authority for that status. An `outcome`
 of `recording` means the final boundary has not been saved, not a completed run.
 
 ## Interpret the numbers
@@ -54,7 +56,8 @@ of `recording` means the final boundary has not been saved, not a completed run.
   healing locks, deaths, rescues and reconstruction are separate. Reconstruction
   and changes to maximum HP are not counted as healing. Contact damage is a
   combined swarm source; other incoming hits use their immediate source.
-- Enemy HP is observed at registration or capture entry. Time-to-kill starts
+- Enemy HP is observed at registration or capture entry and refreshed when
+  elite promotion or boss configuration changes it. Time-to-kill starts
   at the first observed damaging hit and ends at defeat, excluding pause/hub
   time. Means include only defeated enemies with an observed hit; unfinished
   enemies are not zero-second kills. Elite archetypes have separate rows.
