@@ -1,23 +1,23 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene format=3 uid="uid://dadp40ya7gjvd"]
 
 [ext_resource type="PackedScene" path="res://scenes/world/dev_segment/pieces/EmptyOutdoor.tscn" id="1_outdoor"]
 [ext_resource type="PackedScene" path="res://scenes/world/dev_segment/pieces/RoomCorner.tscn" id="2_corner"]
 
-[node name="DevSegment" type="Node2D"]
+[node name="DevSegment" type="Node2D" unique_id=1798970447]
 
-[node name="EmptyOutdoor" parent="." instance=ExtResource("1_outdoor")]
+[node name="EmptyOutdoor" parent="." unique_id=1097829063 instance=ExtResource("1_outdoor")]
 
-[node name="RoomCornerNW" parent="." instance=ExtResource("2_corner")]
+[node name="RoomCornerNW" parent="." unique_id=1075879292 instance=ExtResource("2_corner")]
 position = Vector2(-512, -512)
 
-[node name="RoomCornerNE" parent="." instance=ExtResource("2_corner")]
+[node name="RoomCornerNE" parent="." unique_id=866262407 instance=ExtResource("2_corner")]
 position = Vector2(512, -512)
-rotation = 1.57079632679
+rotation = 1.5707964
 
-[node name="RoomCornerSE" parent="." instance=ExtResource("2_corner")]
+[node name="RoomCornerSE" parent="." unique_id=239414336 instance=ExtResource("2_corner")]
 position = Vector2(512, 512)
-rotation = 3.14159265359
+rotation = 3.1415927
 
-[node name="RoomCornerSW" parent="." instance=ExtResource("2_corner")]
+[node name="RoomCornerSW" parent="." unique_id=916908845 instance=ExtResource("2_corner")]
 position = Vector2(-512, 512)
-rotation = -1.57079632679
+rotation = -1.5707964

@@ -15,6 +15,7 @@ delta = SubResource("sd")
 
 [resource]
 script = ExtResource("1")
+enabled = false
 id = &"major_resonant_focus"
 title = "Resonant Focus"
 description = "Tune reflex and probability toward the escape vector.\n• +12% Haste\n• +8% Luck (this attempt)"

@@ -220,11 +220,12 @@ func get_set_polarity_composition(set_id: StringName) -> Dictionary:
 		result[key] = int(result[key]) + 1
 	return result
 
-func _merge_into(dest: ItemInstance, src: ItemInstance) -> void:
-	if dest != null:
-		dest.merge_from(src)
+func _merge_into(dest: ItemInstance, src: ItemInstance) -> bool:
+	if dest == null:
+		return false
+	return dest.merge_from(src)
 
-func add_or_feed(inst: ItemInstance, origin: Variant = null) -> bool:
+func add_or_feed(inst: ItemInstance, origin: Variant = null, allow_rule_loss: bool = false) -> bool:
 	if inst == null or inst.data == null:
 		return false
 
@@ -236,10 +237,20 @@ func add_or_feed(inst: ItemInstance, origin: Variant = null) -> bool:
 		if it == null or it.locked or inst.locked:
 			continue
 		if it.data != null and it.data.id == inst.data.id and int(it.polarity) == int(inst.polarity):
+			# Automatic routing must not dissolve a Manifestation the player
+			# has never seen. Decline instead and let the caller bag it, so
+			# choosing between two rules stays a decision rather than an
+			# accident. Player-driven merges pass allow_rule_loss.
+			if not allow_rule_loss and not it.can_absorb_manifestation_of(inst):
+				continue
+
 			var old_r: int = int(it.rarity)
 
 			# Merge the whole incoming instance (progress + meters) into the equipped one.
-			_merge_into(it, inst)
+			# A refused merge must NOT be reported as consumed - the caller
+			# would drop the item on the floor.
+			if not _merge_into(it, inst):
+				continue
 
 			emit_changed()
 

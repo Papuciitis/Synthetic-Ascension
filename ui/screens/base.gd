@@ -89,11 +89,9 @@ func _populate_races(race_scene: PackedScene) -> void:
 		_apply_card_data(card, display_name, rd)
 
 		var rd_local: RaceData = rd
-		var name_local: String = display_name
 		card.pressed.connect(func() -> void:
 			card.button_pressed = true
 			selected_race = rd_local
-			print("Selected race:", name_local)
 			_commit_selection()
 		)
 
@@ -142,11 +140,9 @@ func _populate_styles(style_scene: PackedScene) -> void:
 		_apply_card_data(card, "Base stats", sd)
 
 		var sd_local: StyleData = sd
-		var name_local: String = display_name
 		card.pressed.connect(func() -> void:
 			card.button_pressed = true
 			selected_style = sd_local
-			print("Selected style:", name_local)
 			_commit_selection()
 		)
 
@@ -173,7 +169,10 @@ func _commit_selection() -> void:
 	tree.set_meta("run_race_id", Global.selected_race_id)
 	tree.set_meta("run_style_id", Global.selected_style_id)
 
-	print("COMMIT -> Global race:", Global.selected_race_id, " style:", Global.selected_style_id, " weapon:", Global.selected_weapon_id)
+	if OS.is_debug_build():
+		print("[Base] commit selection race=%s style=%s weapon=%s" % [
+			Global.selected_race_id, Global.selected_style_id, Global.selected_weapon_id
+		])
 	_update_start_state()
 
 
@@ -187,14 +186,14 @@ func _update_start_state() -> void:
 
 
 # ============================================================
-# Card data (no hard paths, no dependency on selection_card.gd)
+# Card data (no hard paths; RaceCard.gd / PlaystyleCard.gd own the card scripts)
 # ============================================================
 
 func _apply_card_data(card: Button, title: String, data: Resource) -> void:
 	if card == null:
 		return
 
-	# If your selection_card.gd has set_data, call it (nice if it also sets images later).
+	# If the card script has set_data, call it (nice if it also sets images later).
 	if card.has_method("set_data"):
 		# (title, resource) matches how you were calling it before
 		card.call_deferred("set_data", title, data)

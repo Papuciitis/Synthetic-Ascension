@@ -12,6 +12,9 @@ var _open_tw: Tween = null
 var _is_open: bool = false
 var _pending_open: bool = false
 var _locked: bool = false
+# Every card comes from the same card_scene, so a missing signal would repeat
+# once per offer. One report per screen is enough.
+var _warned_missing_card_signal: bool = false
 
 # Hover tooltip (flavor-first cards; numbers/details on hover)
 var _tip_panel: PanelContainer = null
@@ -85,14 +88,37 @@ func _do_open_choose_3() -> void:
 				if v is AugmentData:
 					options.append(v)
 
-	print("Augments loaded:", options.size())
+	if OS.is_debug_build():
+		print("Augments loaded:", options.size())
 
 	if options.size() < 3:
 		push_warning("Not enough augments in Global.augment_db")
 		return
 
 	options.shuffle()
-	_spawn_cards(options.slice(0, 3))
+	_spawn_cards(_build_offers(options))
+
+func _build_offers(options: Array[AugmentData]) -> Array[AugmentData]:
+	# While a slot is free, prefer augments the player does not own; pad with
+	# owned ones (they level up on pick). With all three slots full, every
+	# offer is an owned augment upgrade — never a silent slot-0 overwrite.
+	Global.init_permanent_augments()
+	var fresh: Array[AugmentData] = []
+	var owned: Array[AugmentData] = []
+	for a in options:
+		if Global.permanent_augment_ids.has(a.id):
+			owned.append(a)
+		else:
+			fresh.append(a)
+	var has_empty_slot: bool = Global.permanent_augment_ids.find(StringName()) != -1
+	var primary: Array[AugmentData] = fresh if has_empty_slot else owned
+	var filler: Array[AugmentData] = owned if has_empty_slot else fresh
+	var offers: Array[AugmentData] = primary.duplicate()
+	for a in filler:
+		if offers.size() >= 3:
+			break
+		offers.append(a)
+	return offers.slice(0, 3)
 
 func _spawn_cards(list: Array[AugmentData]) -> void:
 	if cards_box == null:
@@ -115,8 +141,12 @@ func _spawn_cards(list: Array[AugmentData]) -> void:
 			card.connect("hovered", Callable(self, "_on_card_hovered"))
 		if card.has_signal("unhovered"):
 			card.connect("unhovered", Callable(self, "_on_card_unhovered"))
-		else:
-			push_warning("AugmentCard has no signal 'picked'")
+		elif not _warned_missing_card_signal:
+			_warned_missing_card_signal = true
+			push_warning(
+				"[AugmentSelect] offer card missing signal: signal=unhovered card=%s"
+				% card_scene.resource_path
+			)
 
 func _set_cards_locked(lock_it: bool) -> void:
 	_locked = lock_it
@@ -145,9 +175,12 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 
 	_set_cards_locked(true)
 
-	print("AUGMENT PICKED:", a.id)
+	if OS.is_debug_build():
+		print("AUGMENT PICKED:", a.id)
 
-	var slot: int = _choose_slot_for_pick()
+	# Picking an augment you already own levels it up in place.
+	var owned_slot: int = Global.permanent_augment_ids.find(a.id)
+	var slot: int = owned_slot if owned_slot != -1 else _choose_slot_for_pick()
 
 	var vfx_node := get_tree().get_first_node_in_group("augment_fly_vfx")
 	var vfx := vfx_node as AugmentFlyVfx
@@ -157,7 +190,10 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 		if is_instance_valid(card_node):
 			card_node.modulate = Color(1, 1, 1, 0)
 
-	Global.set_permanent_augment(slot, a.id)
+	if owned_slot != -1:
+		Global.level_up_permanent_augment(a.id)
+	else:
+		Global.set_permanent_augment(slot, a.id)
 	augment_chosen.emit(a)
 	_close()
 
@@ -340,15 +376,51 @@ func _build_numbers_text(a: AugmentData) -> String:
 	if det.strip_edges() != "":
 		lines.append(det.strip_edges())
 
+	# Stats at the level the pick would give - a slotted augment levels up in
+	# place (_on_card_picked), so its card is an upgrade, and the base `mods`
+	# are stale from Lv.2 on for every augment with mods_scale_per_level.
 	if a.mods != null:
-		var mods := _format_stat_mods(a.mods)
+		var lvl: int = _level_on_pick(a)
+		var mods := _format_stat_mods(_mods_at_level(a, lvl))
 		if mods.size() > 0:
-			lines.append("Stats:\n" + "\n".join(mods))
+			lines.append(("Stats at Lv.%d:\n" % lvl) + "\n".join(mods))
 
 	if lines.size() == 0:
 		return "(No numeric details yet)"
 	return "\n\n".join(lines)
-	
+
+## The level this card gives - the one the stat pass applies after the pick,
+## Global.get_augment_level, which slotting never touches: a slotted augment
+## levels up in place (_on_card_picked); anything else is only slotted and
+## keeps its stored level - Lv.1 when never levelled, its real level when it
+## was levelled and then unslotted.
+func _level_on_pick(a: AugmentData) -> int:
+	if Global == null:
+		return 1
+	var current: int = 1
+	if Global.has_method("get_augment_level"):
+		current = int(Global.get_augment_level(a.id))
+	if Global.permanent_augment_ids.has(a.id):
+		return current + 1
+	return current
+
+## The level-scaled delta, read back from AugmentData.apply_to_stats_at_level -
+## the call the stat pass makes - applied to a default Stats and diffed
+## against an untouched one, exactly as AugmentTooltip reads it, so neither
+## surface can drift from the formula.
+func _mods_at_level(a: AugmentData, level: int) -> StatDelta:
+	var base := Stats.new()
+	var scaled := Stats.new()
+	a.apply_to_stats_at_level(scaled, level)
+	var out := StatDelta.new()
+	out.max_hp = scaled.max_hp - base.max_hp
+	out.armor = scaled.armor - base.armor
+	out.move_speed = scaled.move_speed - base.move_speed
+	out.power = scaled.power - base.power
+	out.haste = scaled.haste - base.haste
+	out.luck = scaled.luck - base.luck
+	return out
+
 func _format_stat_mods(m: StatDelta) -> Array[String]:
 	var out: Array[String] = []
 	if m == null:
@@ -374,6 +446,8 @@ func _format_stat_mods(m: StatDelta) -> Array[String]:
 		out.append("%+d%% Haste" % int(round(m.haste * 100.0)))
 
 	if absf(m.luck) > EPS:
-		out.append("%+d Luck" % int(round(m.luck)))
+		# Luck is a fraction (0.5 = +50%) and every other surface prints it as
+		# one - the sheet's LCK %, the item tooltip, the augment tooltip.
+		out.append("%+d%% Luck" % int(round(m.luck * 100.0)))
 
 	return out

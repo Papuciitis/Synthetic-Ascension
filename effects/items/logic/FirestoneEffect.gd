@@ -25,10 +25,16 @@ class_name FirestoneEffect
 @export var burn_mult_roll_scale: float = 0.60
 @export var burn_stacks: int = 1
 
+## Shared 30 Hz wall-clock bucket, the same idiom as
+## ManifestationEffect.pulse_redraw: every idle painter in the run lands on the
+## same frames instead of drifting out of phase with the others.
+const PULSE_REDRAW_MS: int = 33
+
 var player: Node2D = null
 var item: ItemInstance = null
 var slot_index: int = -1
 var _t: float = 0.0
+var _last_pulse_bucket: int = -1
 
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
@@ -38,11 +44,12 @@ func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	if inst != null:
 		pct = maxf(inst.active_pct(), 0.0)
 
-	var pow_bonus: float = base_magic_power + (pct * pct_to_magic_power)
-	var hst_bonus: float = base_magic_haste
-	out.append("Magic: +%.1f%% Power, +%.1f%% Haste (roll scales Power)." % [pow_bonus * 100.0, hst_bonus * 100.0])
+	var short_mult: float = (inst.rarity_effect_multiplier() if inst != null else 1.0)
+	var pow_bonus: float = (base_magic_power + (pct * pct_to_magic_power)) * short_mult
+	var hst_bonus: float = base_magic_haste * minf(short_mult, 2.25)
+	out.append("Magic: +%.1f%% Power, +%.1f%% Haste (roll and rarity scale)." % [pow_bonus * 100.0, hst_bonus * 100.0])
 
-	var burn_mult_scaled: float = burn_tick_mult * (1.0 + pct * burn_mult_roll_scale)
+	var burn_mult_scaled: float = burn_tick_mult * (1.0 + pct * burn_mult_roll_scale) * short_mult
 	out.append("Burn: %.1fs for %d stack(s). Each tick deals ~%.1f%% of hit." % [burn_duration, burn_stacks, burn_mult_scaled * 100.0])
 	return out
 
@@ -66,7 +73,18 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
+	_pulse_redraw()
+
+## The ring is an ambient breathe with no state behind it, so it is redrawn on
+## the shared 30 Hz bucket rather than every frame. What it paints is unchanged:
+## _t still advances every frame and the phase is read at draw time.
+func _pulse_redraw() -> void:
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
+	if bucket == _last_pulse_bucket:
+		return
+	_last_pulse_bucket = bucket
 	queue_redraw()
+
 
 func _pct() -> float:
 	if item == null:
@@ -77,7 +95,8 @@ func _burn_mult_scaled() -> float:
 	var pct: float = 0.0
 	if item != null:
 		pct = maxf(item.active_pct(), 0.0)
-	return burn_tick_mult * (1.0 + pct * burn_mult_roll_scale)
+	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
+	return burn_tick_mult * (1.0 + pct * burn_mult_roll_scale) * rarity_mult
 
 func _apply_burn_meta(attack: Object) -> void:
 	if attack == null:
@@ -93,8 +112,10 @@ func apply_to_stats(s: Stats) -> void:
 		return
 
 	var pct := _pct()
-	s.power += base_magic_power + (pct * pct_to_magic_power)
-	s.haste += base_magic_haste
+	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
+	s.power += (base_magic_power + (pct * pct_to_magic_power)) * rarity_mult
+	# Haste is a rate stat: capped growth (spec §1.6 guardrail).
+	s.haste += base_magic_haste * minf(rarity_mult, 2.25)
 
 # --- Visual "fire attacks" tint hooks ---
 func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:

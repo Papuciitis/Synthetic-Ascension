@@ -21,6 +21,7 @@ delta = SubResource("sd_pow")
 
 [resource]
 script = ExtResource("1")
+enabled = false
 id = &"major_augment_overclock"
 title = "Augment Overclock"
 description = "Force your installed augments into a higher harmonic.\n• +1 level to each equipped permanent augment\n• +6% Power (this attempt)"

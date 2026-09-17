@@ -14,13 +14,13 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("1_pbls3")
 id = &"augment_tesla_aura"
 display_name = "Tesla Aura"
-description = """A crackling aura that periodically chains lightning to nearby enemies."""
+description = "A crackling aura that periodically chains lightning to nearby enemies."
 mods_scale_per_level = 0.2
 card_blurb = "Periodic lightning aura that chains between nearby enemies."
-details = """Pulse: every 0.55s
+details = "Pulse: every 0.55s
 Chain: up to 4 targets within 180px
 Damage: 0.45× Power
-+10% Haste"""
++10% Haste"
 icon = ExtResource("1_4w0gu")
 mods = SubResource("Resource_u8ek0")
 effect_scenes = Array[PackedScene]([ExtResource("1_akl0p")])

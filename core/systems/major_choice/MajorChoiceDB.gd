@@ -77,6 +77,37 @@ func build_offer(g: Node, count: int, rng: RandomNumberGenerator) -> Array[Major
 	return out
 
 
+func build_stage_offer(context: RefCounted, taken_ids: Array, rng: RandomNumberGenerator) -> Array[MajorChoiceDef]:
+	if context == null:
+		return []
+	var taken: Dictionary = {}
+	for value in taken_ids:
+		taken[StringName(str(value))] = true
+	var output: Array[MajorChoiceDef] = []
+	for role in [&"amplify", &"transfigure", &"covenant"]:
+		var candidates: Array[MajorChoiceDef] = []
+		for definition in defs:
+			if definition == null or not definition.is_doctrine_complete():
+				continue
+			if definition.stage != context.get("stage_id") or definition.offer_role != role:
+				continue
+			if definition.unique_per_attempt and taken.has(definition.id):
+				continue
+			candidates.append(definition)
+		if candidates.is_empty():
+			return []
+		_shuffle_in_place(candidates, rng)
+		var selected := candidates[0]
+		var selected_score := selected.score_for(context)
+		for candidate in candidates:
+			var candidate_score := candidate.score_for(context)
+			if candidate_score > selected_score:
+				selected = candidate
+				selected_score = candidate_score
+		output.append(selected)
+	return output
+
+
 func _build_bucketed_offer(
 	candidates_in: Array[MajorChoiceDef],
 	count: int,

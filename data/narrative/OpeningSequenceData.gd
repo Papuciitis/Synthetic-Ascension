@@ -12,6 +12,12 @@ const HISTORICAL_LINES: Array[String] = [
 	"It may not be manufactured.",
 ]
 
+# Admissions wing (beats 1-2: normal institution, something wrong).
+const ADMISSION_PROMPT := "Evening admission • the experimental laboratory is through the north gallery"
+const ADMISSION_DESK_TITLE := "NIGHT ADMISSION — RESEARCH FLOOR"
+const FLICKER_TITLE := "NOTICE TO STAFF"
+const FLICKER_BODY := "Scheduled ward-lattice maintenance is in effect.\nDisregard lattice irregularities.\nPersistent irregularities should be reported to Containment."
+
 const BREN_ROLE := "LATTICE SPECIALIST"
 const BREN_OPENING := "The ward lattice changed when you connected the third sequence."
 const BREN_BEFORE_SYNTHESIS := "Three alignments. Keep the intervals clean. Do not improvise until the array answers."
@@ -65,6 +71,9 @@ static func safe_name(value: String) -> String:
 static func historical_body(mortal_name: String) -> String:
 	var lines := PackedStringArray(HISTORICAL_LINES)
 	return "%s\n\nOn this night, %s intended to prove otherwise." % ["\n".join(lines), safe_name(mortal_name)]
+
+static func admission_desk_body(mortal_name: String) -> String:
+	return "Researcher %s. Badge accepted.\nAfter-hours presence is recorded.\nThe Registry thanks you for your compliance." % safe_name(mortal_name)
 
 static func officer_arrest(mortal_name: String) -> String:
 	return "Researcher %s. Place the conduit on the floor and step away from the apparatus." % safe_name(mortal_name)

@@ -26,11 +26,18 @@ var _ui: AudioStreamPlayer
 var _ui_current_id: StringName = &""
 
 var _pool: Array[AudioStreamPlayer2D] = []
+var _headless := false
 var _loops: Dictionary = {} # String -> AudioStreamPlayer2D (key = "<owner_id>:<tag>")
 
 var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
+	# Nothing is audible in headless runs (the real audio driver still mixes
+	# silently), so skipping voice starts is lossless and saves mixer work in
+	# CI. Note: this does NOT fix the intermittent engine exit crash — that
+	# reproduces even with all playback suppressed and with --audio-driver
+	# Dummy, and is a pre-existing Godot 4.7.1 teardown race.
+	_headless = DisplayServer.get_name() == "headless"
 	_rng.randomize()
 	_load_manifest()
 
@@ -56,8 +63,8 @@ func _hook_run_events() -> void:
 		return
 	if re.has_signal("weapon_fired"):
 		re.weapon_fired.connect(_on_weapon_fired)
-	if re.has_signal("enemy_killed"):
-		re.enemy_killed.connect(_on_enemy_killed)
+	if re.has_signal("enemy_defeated"):
+		re.enemy_defeated.connect(_on_enemy_defeated)
 	if re.has_signal("boss_spawned"):
 		re.boss_spawned.connect(_on_boss_spawned)
 
@@ -66,6 +73,8 @@ func _hook_run_events() -> void:
 # ----------------------------
 
 func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
+	if _headless:
+		return
 	var def := _defs.get(id) as SoundDef
 	if def == null or def.stream == null:
 		return
@@ -87,6 +96,8 @@ func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
 	_inc(id)
 
 func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0) -> void:
+	if _headless:
+		return
 	var def := _defs.get(id) as SoundDef
 	if def == null or def.stream == null:
 		return
@@ -160,8 +171,9 @@ func _on_weapon_fired(_player: Node, style_id: StringName, origin: Vector2, _tar
 	else:
 		play_2d(&"player_ranged_shot", origin)
 
-func _on_enemy_killed(_player: Node, _enemy: Node, pos: Vector2) -> void:
-	play_2d(&"enemy_death", pos)
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if context != null:
+		play_2d(&"enemy_death", context.get("position") as Vector2)
 
 func _on_boss_spawned(boss: Node, _tier: int, _portrait: Texture2D, _title: String) -> void:
 	if boss is Node2D:
@@ -285,6 +297,19 @@ func _on_ui_finished() -> void:
 	if _ui_current_id != &"":
 		_dec(_ui_current_id)
 		_ui_current_id = &""
+
+func _exit_tree() -> void:
+	# Shutdown hygiene: leave no active or stream-holding voices for
+	# AudioServer finalization. This narrows the teardown surface but does not
+	# eliminate the pre-existing engine exit race (see _ready note).
+	if _ui != null and is_instance_valid(_ui):
+		_ui.stop()
+		_ui.stream = null
+	for p in _pool:
+		if p != null and is_instance_valid(p):
+			p.stop()
+			p.stream = null
+
 
 func _on_pooled_finished(p: AudioStreamPlayer2D) -> void:
 	# release per-id concurrency bookkeeping

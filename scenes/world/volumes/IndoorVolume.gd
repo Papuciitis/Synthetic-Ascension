@@ -33,6 +33,10 @@ class_name IndoorVolume
 @export var pickup_delay: float = 0.15
 @export var require_walkable: bool = true
 @export var pos_attempts: int = 14
+# Reward interiors keep ambient spawns out (their encounters own the room).
+# Playfield interiors - the Segment 1 facility - set this false so ambient
+# pressure can spawn inside the building instead of in the void outside it.
+@export var ambient_spawn_excluded: bool = true
 @export var ready_retry_interval: float = 0.10
 @export var ready_retry_timeout: float = 3.0
 
@@ -118,6 +122,18 @@ func _update_shape() -> void:
 
 
 func _on_body_entered(b: Node) -> void:
+	if b != null and b.is_in_group("player") and RunEvents != null:
+		# Exploration hook. first_visit is keyed on the stable seeded
+		# building_id, not on this node: chunks are streamed, so a volume the
+		# player walks away from is freed and rebuilt fresh. A node-local flag
+		# would let an exploration rule be farmed by pacing a chunk boundary.
+		# An unauthored volume (building_id 0) never counts as a first visit.
+		var first_visit: bool = (
+			Global != null
+			and Global.has_method("note_building_visit")
+			and bool(Global.call("note_building_visit", building_id))
+		)
+		RunEvents.player_entered_building.emit(self, first_visit)
 	if _loot_attempted:
 		return
 	if not exploration_loot_enabled:
@@ -165,14 +181,34 @@ func _activate_local_encounter() -> void:
 			_encounter_remaining -= 1
 			continue
 		_encounter_enemy_ids.append(enemy.get_instance_id())
-		enemy.tree_exited.connect(_on_local_enemy_left, CONNECT_ONE_SHOT)
+		enemy.tree_exited.connect(_on_local_enemy_left.bind(enemy), CONNECT_ONE_SHOT)
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
 
-func _on_local_enemy_left() -> void:
+func _on_local_enemy_left(enemy: Node) -> void:
+	# tree_exited fires for deaths AND for enemies culled/streamed out
+	# alive; only deaths may advance the encounter, otherwise the secondary
+	# auto-completes while the player is somewhere else entirely.
+	if enemy == null or not _encounter_enemy_ids.has(enemy.get_instance_id()):
+		return # stale connection from an aborted earlier encounter
+	var died: bool = (
+		is_instance_valid(enemy)
+		and "dead" in enemy and bool(enemy.get("dead"))
+	)
+	if not died:
+		_abort_local_encounter()
+		return
 	_encounter_remaining = maxi(0, _encounter_remaining - 1)
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
+
+func _abort_local_encounter() -> void:
+	# Re-entering the building re-arms a fresh encounter.
+	if _encounter_completed:
+		return
+	_encounter_started = false
+	_encounter_remaining = 0
+	_encounter_enemy_ids.clear()
 
 func _finish_local_encounter() -> void:
 	if _encounter_completed:
@@ -223,7 +259,16 @@ func _try_spawn_loot() -> void:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _mix_seed((Global.attempt_world_seed if Global != null else 1337), building_id)
 
-	var chance: float = clampf(large_loot_chance if is_large else small_loot_chance, 0.0, 1.0)
+	# Luck sweetens exploration: the roll itself stays seeded per building,
+	# but the threshold shifts with the player's CURRENT Luck — outcomes can
+	# differ depending on when the building streams in, which is acceptable
+	# for "the universe treats you better".
+	var chance: float = clampf(
+		(large_loot_chance if is_large else small_loot_chance)
+			+ LuckResolver.secondary_event_bonus(Global.run_luck if Global != null else 0.0),
+		0.0,
+		1.0
+	)
 	_loot_attempted = true
 	if rng.randf() > chance:
 		return
@@ -238,6 +283,10 @@ func _try_spawn_loot() -> void:
 	if _spawn_loot(rng, n_min, n_max, r_min, r_max):
 		if Global != null:
 			Global.claim_loot(building_id)
+		# Plain loot rooms (no local encounter) complete their secondary the
+		# moment the room pays out; encounter rooms already notified when the
+		# fight cleared, and the id resets to 0 after the first emission.
+		_notify_secondary_completed()
 	else:
 		_loot_attempted = false
 		_schedule_loot_retry()
@@ -270,14 +319,14 @@ func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int,
 	var made := false
 
 	for _i in range(n):
-		var item_key = keys[rng.randi_range(0, keys.size() - 1)]
+		var item_key = Global.pick_weighted_item_id(rng, keys)
 		var item_id_str: String = str(item_key)
 		var data: ItemData = Global.get_item_data(item_id_str)
 		if data == null:
 			continue
 
-		var context := Global.build_item_drop_context(r_min, r_max, &"indoor", 1)
-		var inst := ItemGenerator.create_instance(data, context, rng)
+		var context: ItemDropContext = Global.build_item_drop_context(r_min, r_max, &"indoor", 1)
+		var inst: ItemInstance = ItemGenerator.create_instance(data, context, rng)
 
 		var p := pickup_scene.instantiate() as ItemPickup
 		if p == null:

@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dke2jhvv0v712" path="res://ui/screens/SaveSelect.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://crvemvwsw7fa6" path="res://ui/components/SaveCard.tscn" id="2"]
 [ext_resource type="Script" uid="uid://d20bqkw442jvv" path="res://ui/components/TactileButton.gd" id="3_sp2uh"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="4_theme"]
 
 [sub_resource type="Shader" id="ShaderVignette"]
 code = "shader_type canvas_item;
@@ -37,16 +38,16 @@ shader_parameter/noise_strength = 0.02
 shader_parameter/noise_scale = 260.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
-bg_color = Color(0, 0, 0, 0.3)
+bg_color = Color(0.052, 0.047, 0.042, 0.94)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.25)
 shadow_size = 8
 shadow_offset = Vector2(0, 5)
@@ -58,10 +59,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.18)
 shadow_size = 6
 shadow_offset = Vector2(0, 4)
@@ -73,10 +74,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.28)
 shadow_size = 9
 shadow_offset = Vector2(0, 6)
@@ -89,13 +90,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
+theme = ExtResource("4_theme")
 
 [node name="BG" type="ColorRect" parent="." unique_id=1956333127]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-color = Color(0.13, 0.13, 0.13, 1)
+color = Color(0.045, 0.041, 0.037, 1)
 
 [node name="Vignette" type="ColorRect" parent="." unique_id=955264414]
 material = SubResource("MatVignette")
@@ -128,8 +130,9 @@ size_flags_vertical = 3
 
 [node name="Title" type="Label" parent="Margin/Main" unique_id=1569731931]
 layout_mode = 2
+theme_type_variation = &"InstitutionalHeading"
 theme_override_font_sizes/font_size = 28
-text = "Select Save"
+text = "SELECT SAVE"
 horizontal_alignment = 1
 
 [node name="CenterContainer" type="CenterContainer" parent="Margin/Main" unique_id=81306024]
@@ -174,5 +177,6 @@ theme_override_font_sizes/font_size = 16
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
 theme_override_styles/hover = SubResource("StyleBtnHover")
-text = "Back"
+theme_type_variation = &"InstitutionalButton"
+text = "BACK"
 script = ExtResource("3_sp2uh")

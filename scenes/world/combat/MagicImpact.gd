@@ -68,19 +68,22 @@ func _burst_once() -> void:
 
 	var r2: float = radius * radius
 
-	# Spatial index instead of a full "enemy_hitbox" group scan per impact
-	# (a magic triangle spawns up to 15 impacts at once).
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and ei.has_method("gather_in_radius"):
-		var targets: Array = []
-		ei.call("gather_in_radius", global_position, radius, targets)
-		for n in targets:
-			var enemy := n as Node
-			if enemy != null and is_instance_valid(enemy) and enemy.has_method("take_damage"):
-				enemy.call("take_damage", damage, source)
-		return
+	# The authoritative query reaches both represented and data-only enemies.
+	# Critical legacy actors are intentionally left for the compatibility scan
+	# below until their Node-owned lifecycle is bridged.
+	var combat := get_node_or_null("/root/EnemyCombat") as EnemyCombatService
+	if combat != null:
+		var handles: Array[int] = []
+		combat.gather_in_radius(global_position, radius, handles)
+		for handle in handles:
+			var actor := combat.actor_for_handle(handle)
+			if actor != null and not actor.has_method("_apply_enemy_world_health"):
+				continue
+			combat.apply_damage(handle, damage, 1, source, _crit_payload())
+			_apply_burn_handle(handle)
 
 	var hitboxes: Array = get_tree().get_nodes_in_group("enemy_hitbox")
+	var legacy_hit_ids: Dictionary = {}
 
 	for h in hitboxes:
 		var hb: Area2D = h as Area2D
@@ -91,8 +94,18 @@ func _burst_once() -> void:
 			continue
 
 		var enemy_node: Node = hb.get_parent()
-		if enemy_node != null and enemy_node.is_in_group("enemies") and enemy_node.has_method("take_damage"):
-			enemy_node.call("take_damage", damage, source)
+		if enemy_node == null or not enemy_node.is_in_group("enemies") or not enemy_node.has_method("take_damage"):
+			continue
+		if combat != null:
+			var handle := combat.handle_for_actor(enemy_node)
+			if handle != EnemyWorldTypes.INVALID_HANDLE and enemy_node.has_method("_apply_enemy_world_health"):
+				continue
+		var instance_id := enemy_node.get_instance_id()
+		if legacy_hit_ids.has(instance_id):
+			continue
+		legacy_hit_ids[instance_id] = true
+		enemy_node.call("take_damage", damage, source)
+		_apply_burn_dot(enemy_node)
 
 
 func _ease_out(x: float) -> float:
@@ -147,6 +160,35 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, maxf(2.0, w * 0.35), Color(color_core.r, color_core.g, color_core.b, 0.35 * fade))
 
 
+## Burn on the authoritative handle path.
+##
+## This whole file could receive burn metadata - player.gd wires
+## apply_to_magic_impact correctly - and then never read it: _burst_once() dealt
+## damage and called neither burn function, so _apply_burn_dot below was dead
+## code. Firestone's Burn therefore worked on exactly one style, ranged, while
+## its tooltip is the one item in the game that says it is FOR magic.
+func _apply_burn_handle(handle: int) -> void:
+	if not has_meta("burn_duration"):
+		return
+	var duration := float(get_meta("burn_duration", 0.0))
+	var tick_interval := float(get_meta("burn_tick", 0.0))
+	var stacks := int(get_meta("burn_stacks", 0))
+	var multiplier := float(get_meta("burn_tick_mult", 0.0))
+	if duration <= 0.0 or tick_interval <= 0.0 or stacks <= 0:
+		return
+	var status := get_node_or_null("/root/EnemyStatus")
+	if status != null and status.has_method("apply_burn"):
+		status.call(
+			"apply_burn",
+			handle,
+			stacks,
+			duration,
+			tick_interval,
+			maxf(0.05, damage * multiplier),
+			source,
+		)
+
+
 func _apply_burn_dot(enemy: Node) -> void:
 	if enemy == null:
 		return
@@ -175,3 +217,20 @@ func _apply_burn_dot(enemy: Node) -> void:
 		dot.name = "BurnDot"
 		enemy.add_child(dot)
 	dot.setup(enemy, source, stacks, duration, tick, dmg_per_tick_per_stack)
+
+## A Lucky Crit has to be reported as one, not just applied as extra damage.
+## EnemyCombatService derives was_critical from a HitLedger payload, so a call
+## with no payload is a normal hit no matter what the damage was.
+func _crit_payload() -> HitLedger:
+	# A payload exists when the hit is a Lucky Crit or carries advancement-tree
+	# provenance (asc_tags); a plain hit still passes null and costs nothing.
+	var lucky: bool = get_meta("lucky_crit", false)
+	var tags: PackedStringArray = get_meta("asc_tags", PackedStringArray())
+	if not lucky and tags.is_empty():
+		return null
+	var ledger := HitLedger.new()
+	ledger.critical_hits = 1 if lucky else 0
+	ledger.hit_count = 1
+	ledger.source = source
+	ledger.tags = tags
+	return ledger

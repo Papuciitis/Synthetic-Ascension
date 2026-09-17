@@ -10,7 +10,9 @@ config_version=5
 
 [application]
 
-config/name="Syntethic Ascension"
+config/name="Synthetic Ascension"
+config/description="An exploration-driven horde roguelite about becoming an increasingly broken technological god."
+config/version="0.0.0.25.5"
 run/main_scene="uid://c446qid4khmif"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
@@ -24,13 +26,19 @@ RunEvents="*uid://ccl4jmelm4exp"
 ThreatDirector="*res://autoload/ThreatDirector.gd"
 InvRouter="*uid://cjp6ktemc5dt2"
 EnemyIndex="*uid://cdck6uckl2cph"
+EnemyWorld="*res://core/systems/enemy_world/EnemyWorld.gd"
+EnemyCombat="*res://core/systems/enemy_world/EnemyCombatService.gd"
+EnemyStatus="*res://core/systems/enemy_world/EnemyStatusService.gd"
 EnemySimulationScheduler="*res://autoload/EnemySimulationScheduler.gd"
+HitFeel="*res://autoload/HitFeel.gd"
 DebugEnemySpawnFilter="*res://autoload/DebugEnemySpawnFilter.gd"
 PerformanceFlightRecorder="*res://autoload/PerformanceFlightRecorder.gd"
+BalanceRecorder="*res://autoload/BalanceRecorder.gd"
 PoolManager="*uid://b7sbjn5yaokey"
 AudioManager="*res://autoload/AudioManager.gd"
 SfxManager="*res://autoload/SfxManager.gd"
 ProjectileManager="*res://core/combat/projectile/ProjectileSimulationManager.gd"
+BattleText="*res://core/combat/BattleTextRenderer.gd"
 FollowerFeedbackUI="*res://ui/controllers/FollowerFeedbackUI.gd"
 DevSetCollisionTools="*res://autoload/DevSetCollisionTools.gd"
 
@@ -44,7 +52,6 @@ window/stretch/mode="canvas_items"
 [file_customization]
 
 folder_colors={
-"res://_archive/": "gray",
 "res://assets/": "blue",
 "res://assets/vfx/": "purple",
 "res://autoload/": "red",
@@ -52,7 +59,6 @@ folder_colors={
 "res://data/": "green",
 "res://effects/": "yellow",
 "res://scenes/": "orange",
-"res://scripts/": "purple",
 "res://spells/": "green",
 "res://ui/": "orange",
 "res://ui/components/": "teal",
@@ -98,6 +104,12 @@ bag_toggle={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194306,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":73,"key_label":0,"unicode":105,"location":0,"echo":false,"script":null)
 , Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":69,"key_label":0,"unicode":101,"location":0,"echo":false,"script":null)
+]
+}
+hud_details={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":72,"key_label":0,"unicode":104,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":12,"pressure":0.0,"pressed":false,"script":null)
 ]
 }
 set_active={
@@ -146,6 +158,21 @@ augment_detonate={
 , Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":4,"position":Vector2(462, 24),"global_position":Vector2(471, 72),"factor":1.0,"button_index":3,"canceled":false,"pressed":true,"double_click":false,"script":null)
 ]
 }
+ascension_active={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":81,"key_label":0,"unicode":113,"location":0,"echo":false,"script":null)
+]
+}
+ascension_revelation={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":86,"key_label":0,"unicode":118,"location":0,"echo":false,"script":null)
+]
+}
+ascension_open={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":84,"key_label":0,"unicode":116,"location":0,"echo":false,"script":null)
+]
+}
 move_left={
 "deadzone": 0.2,
 "events": []
@@ -159,6 +186,10 @@ move_up={
 "events": []
 }
 move_down={
+"deadzone": 0.2,
+"events": []
+}
+dash={
 "deadzone": 0.2,
 "events": []
 }
@@ -194,6 +225,7 @@ interact={
 
 [physics]
 
+common/max_physics_steps_per_frame=4
 3d/physics_engine="Jolt Physics"
 
 [rendering]

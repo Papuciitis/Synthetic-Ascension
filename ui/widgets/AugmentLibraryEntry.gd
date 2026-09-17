@@ -27,6 +27,25 @@ func set_data(a: AugmentData, tags: PackedStringArray = PackedStringArray()) -> 
 		else:
 			tag_label.text = ""
 			tag_label.visible = false
+	# The library used to show only the name — hovering now answers
+	# "yes I have this, but what does it DO?"
+	tooltip_text = _compose_tooltip(a)
+
+
+func _compose_tooltip(a: AugmentData) -> String:
+	if a == null:
+		return ""
+	var parts: PackedStringArray = []
+	if a.card_blurb.strip_edges() != "":
+		parts.append(a.card_blurb.strip_edges())
+	elif a.description.strip_edges() != "":
+		parts.append(a.description.strip_edges())
+	if a.details.strip_edges() != "":
+		parts.append(a.details.strip_edges())
+	var level: int = Global.get_augment_level(a.id) if Global != null and Global.has_method("get_augment_level") else 1
+	if level > 1:
+		parts.append("Level %d" % level)
+	return "\n\n".join(parts)
 
 func _ready() -> void:
 	focus_mode = Control.FOCUS_NONE

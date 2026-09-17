@@ -147,7 +147,27 @@ enum AI {
 	"SNIPER:10"
 ) var elite_ai_override: int = -1
 
+@export_group("Elite Modifiers")
+# Roadmap §9: which EliteModifiers ids an elite of this archetype may carry,
+# whether picked by phase or requested by a beat. Empty allow-list = all five;
+# the deny-list wins. A splitting archetype never receives SPLITTING.
+@export var elite_modifiers_allowed: Array[StringName] = []
+@export var elite_modifiers_denied: Array[StringName] = []
+
 @export_group("Visuals")
 @export var sprite_texture: Texture2D
 @export var sprite_scale: Vector2 = Vector2.ONE
 @export var sprite_modulate: Color = Color.WHITE
+## Baked stride/idle frames from tools/bake_character_atlases.gd. When set the
+## sprite shows one atlas region at a time and animates; sprite_texture should
+## be that same atlas so anything reading the texture before init sees it.
+@export var visual_frames: CharacterFrameSet
+@export var animation_fps: float = 10.0
+
+
+## One still of this enemy for cards and tooltips: the standing frame when
+## the art is a baked sheet, otherwise the sprite texture itself.
+func portrait_texture() -> Texture2D:
+	if visual_frames != null and visual_frames.has_animation(&"idle_down"):
+		return visual_frames.frames.get_frame_texture(&"idle_down", 0)
+	return sprite_texture

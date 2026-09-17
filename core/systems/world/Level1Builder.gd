@@ -1,6 +1,10 @@
 extends Node2D
 class_name Level1Builder
 
+# Emitted after a milestone is processed; the opening controller awaits this
+# to sequence the admissions-wing beats.
+signal milestone_reached(id: StringName)
+
 ## Deterministic, authored Segment 1 layout.
 ##
 ## The route deliberately bends through five readable spaces:
@@ -45,17 +49,35 @@ const _TEX_DIRT_PATH := preload("res://assets/world/ground/ground_dirt_path_01.p
 const _TEX_VEG_BUSH := preload("res://assets/world/vegetation/veg_bush_cluster_01.png")
 const _TEX_VEG_OVER := preload("res://assets/world/vegetation/veg_overgrowth_island_01.png")
 const _TEX_VEG_TREE := preload("res://assets/world/vegetation/veg_dead_tree_01.png")
+const _TEX_CRACKS := preload("res://assets/world/decals/floor/floor_cracks_01.png")
+const _TEX_GRIME := preload("res://assets/world/decals/floor/floor_grime_01.png")
+const _TEX_SCORCH := preload("res://assets/world/decals/floor/floor_scorch_01.png")
+const _TEX_SPILL := preload("res://assets/world/decals/floor/floor_spill_01.png")
+const _TEX_MARKING := preload("res://assets/world/decals/floor/floor_marking_01.png")
+const _TEX_SCUFF := preload("res://assets/world/decals/floor/floor_scuff_01.png")
+const _TEX_RUBBLE := preload("res://assets/world/decals/floor/floor_rubble_01.png")
 const _MILESTONE_AREA := preload("res://core/systems/world/Level1MilestoneArea.gd")
+
+# The public wing beats before the incident (story pass beats 1-2). All
+# three are record-only: no resonance, no cards from the builder - the
+# opening controller presents them during the full prologue.
+const M_ADMITTED: StringName = &"admitted"
+const M_WARD_FLICKER: StringName = &"ward_flicker"
+const M_LAB_DOOR: StringName = &"lab_door"
 
 const M_SYNTHESIS: StringName = &"synthesis"
 const M_FIRST_CONFRONTATION: StringName = &"first_confrontation"
 const M_WARDSTONE_1: StringName = &"wardstone_1"
 const M_ASSISTANT: StringName = &"assistant_commitment"
+const M_EVIDENCE: StringName = &"evidence_store"
 const M_SECURITY_STARTED: StringName = &"security_started"
 const M_SECURITY_CLEARED: StringName = &"security_cleared"
 const M_WARDSTONE_2: StringName = &"wardstone_2"
 const M_FINAL_CHECKPOINT: StringName = &"final_checkpoint"
+const M_CITY_REVEAL: StringName = &"city_reveal"
 const M_FINAL_PLAZA: StringName = &"final_plaza"
+
+const _ACCESSIBILITY := preload("res://core/settings/AccessibilityPresentation.gd")
 
 const B_ARCHIVE_EXIT: StringName = &"archive_exit"
 const B_COURTYARD_SERVICE: StringName = &"courtyard_service"
@@ -63,6 +85,9 @@ const B_OUTER_APPROACH: StringName = &"outer_approach"
 
 const FACILITY_TL := Vector2i(-20, -4)
 const FACILITY_SIZE := Vector2i(42, 35)
+# Public admissions wing south of the facility: reception, registry gallery,
+# the "normal institution" the run opens inside before anything goes wrong.
+const ADMISSIONS_RECT := Rect2i(Vector2i(-2, 31), Vector2i(24, 15))
 const COURTYARD_RECT := Rect2i(Vector2i(-18, -23), Vector2i(37, 19))
 const SERVICE_RECT := Rect2i(Vector2i(19, -35), Vector2i(35, 30))
 const APPROACH_RECT := Rect2i(Vector2i(12, -60), Vector2i(43, 25))
@@ -89,12 +114,24 @@ var _playable_regions: Array[Rect2i] = []
 var _spawn_exclusions: Array[Rect2i] = []
 
 var _start_cell := Vector2i(15, 25)
+# Full-prologue runs open at the street entrance of the admissions wing;
+# short/skip veterans keep starting beside the apparatus corridor.
+var _entrance_cell := Vector2i(9, 43)
 var _wardstone_1_cell := Vector2i(-11, 0)
 var _wardstone_2_cell := Vector2i(43, -28)
 var _gate_cell := Vector2i(20, -50)
 var _res_ui_tick: float = 0.0
 var _security_kills: int = 0
 var _opening_sequence_active: bool = false
+
+# Tracked secondaries (the three service-district rooms).
+@export var resonance_secondary: float = 0.02
+var _secondaries: Array[Dictionary] = []
+var _secondary_completed: Dictionary = {}
+var _active_secondary_id: int = -1
+var _secondary_feedback_token: int = 0
+var _secondary_tick: float = 0.0
+var _last_checklist_key: String = ""
 
 
 func _ready() -> void:
@@ -140,14 +177,24 @@ func _ready() -> void:
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
+	# The chunk-streaming rearchitecture made streaming start explicit, but
+	# only SegmentProcBuilder was updated. Without streamed chunk records,
+	# is_cell_walkable() is false everywhere in Segment 1, which silently
+	# killed ambient ring spawns AND flow-field walkability. Generation stays
+	# disabled (game.gd), so streamed chunks are empty records + fallback
+	# ground outside the authored footprint.
+	if _cm != null and is_instance_valid(_cm) and _cm.has_method("start_streaming"):
+		var player := get_tree().get_first_node_in_group(&"player") as Node2D
+		var stream_center := player.global_position if player != null else _cell_to_world(_start_cell)
+		_cm.start_streaming(stream_center)
 
 
 func _exit_tree() -> void:
 	if RunEvents == null:
 		return
-	var killed_cb := Callable(self, "_on_enemy_killed")
-	if RunEvents.enemy_killed.is_connected(killed_cb):
-		RunEvents.enemy_killed.disconnect(killed_cb)
+	var killed_cb := Callable(self, "_on_enemy_defeated")
+	if RunEvents.enemy_defeated.is_connected(killed_cb):
+		RunEvents.enemy_defeated.disconnect(killed_cb)
 	var pickup_cb := Callable(self, "_on_pickup_to_equip")
 	if RunEvents.pickup_fly_to_equip.is_connected(pickup_cb):
 		RunEvents.pickup_fly_to_equip.disconnect(pickup_cb)
@@ -168,16 +215,20 @@ func _plan_level() -> void:
 	_spawn_exclusions.clear()
 
 	_playable_regions.append(Rect2i(FACILITY_TL + Vector2i(1, 1), FACILITY_SIZE - Vector2i(2, 2)))
+	_playable_regions.append(ADMISSIONS_RECT)
 	_playable_regions.append(COURTYARD_RECT)
 	_playable_regions.append(SERVICE_RECT)
 	_playable_regions.append(APPROACH_RECT)
 	_spawn_exclusions.append(CLOSED_WAREHOUSE_RECT)
 
 	_plan_facility()
+	_plan_admissions_wing()
 	_plan_containment_courtyard()
 	_plan_service_district()
 	_plan_outer_approach()
 	_plan_cover_and_landmarks()
+	_plan_interior_dressing()
+	_plan_exploration_caches()
 
 
 func _plan_facility() -> void:
@@ -190,7 +241,9 @@ func _plan_facility() -> void:
 	for x in range(x0, x1 + 1):
 		if x < -8 or x > -5:
 			_add_wall_cell(Vector2i(x, y0), _facility_window(Vector2i(x, y0)))
-		_add_wall_cell(Vector2i(x, y1), false)
+		# The lab door: the only connection to the public admissions wing.
+		if x < 14 or x > 16:
+			_add_wall_cell(Vector2i(x, y1), false)
 	for y in range(y0, y1 + 1):
 		_add_wall_cell(Vector2i(x0, y), _facility_window(Vector2i(x0, y)))
 		_add_wall_cell(Vector2i(x1, y), _facility_window(Vector2i(x1, y)))
@@ -224,6 +277,39 @@ func _plan_facility() -> void:
 	_define_barrier(B_ARCHIVE_EXIT, [
 		Vector2i(-8, -4), Vector2i(-7, -4), Vector2i(-6, -4), Vector2i(-5, -4),
 	])
+
+
+func _plan_admissions_wing() -> void:
+	var x0 := ADMISSIONS_RECT.position.x
+	var y0 := ADMISSIONS_RECT.position.y
+	var x1 := ADMISSIONS_RECT.end.x - 1
+	var y1 := ADMISSIONS_RECT.end.y - 1
+
+	# Perimeter. North side is the facility's own south wall (lab door cut
+	# there); the street entrance is a three-cell gap in the south wall.
+	for x in range(x0, x1 + 1):
+		if x < 8 or x > 10:
+			_add_wall_cell(Vector2i(x, y1), false)
+	for y in range(y0, y1):
+		_add_wall_cell(Vector2i(x0, y), _facility_window(Vector2i(x0, y)))
+		_add_wall_cell(Vector2i(x1, y), _facility_window(Vector2i(x1, y)))
+
+	# Reception (south half) and registry gallery (north half), split by a
+	# divider that funnels traffic toward the lab door.
+	for x in range(x0 + 1, x1):
+		if x < 13 or x > 16:
+			_add_wall_cell(Vector2i(x, 37), false)
+
+	# The night desk, notice boards and waiting benches: institutional
+	# normalcy as furniture.
+	for x in range(5, 10):
+		_add_half_cell(Vector2i(x, 40))
+	for c in [
+		Vector2i(x0 + 1, 33), Vector2i(x0 + 1, 35),
+		Vector2i(x1 - 1, 33), Vector2i(x1 - 1, 35),
+		Vector2i(2, 43), Vector2i(15, 43), Vector2i(18, 34),
+	]:
+		_add_half_cell(c)
 
 
 func _plan_containment_courtyard() -> void:
@@ -265,17 +351,40 @@ func _plan_service_district() -> void:
 			_add_fence_cell(Vector2i(x0, y))
 		_add_fence_cell(Vector2i(x1, y))
 
+	# The three service rooms are tracked secondaries (SEGMENT1_REBUILD's
+	# "detours"): guaranteed single-item payout so a searched room never
+	# reads as empty, announced on approach, completed on claim.
+
 	# Loading office: optional records/loot room, entered from the yard.
 	_rect_perimeter_with_bottom_door(Vector2i(23, -32), Vector2i(10, 10), 27, 28)
-	_register_building_rect(Vector2i(23, -32), Vector2i(10, 10), true)
+	_register_building_rect(Vector2i(23, -32), Vector2i(10, 10), true, {
+		"small_loot_chance": 1.0,
+		"secondary": true,
+		"sec_title": "SECONDARY • LOADING OFFICE",
+		"sec_detail": "Manifest records and unshipped stock. Containment has not swept it.",
+	})
 
 	# Service warehouse: optional detour with a wide western loading door.
+	# The "controlled security encounter": entering starts a small interior
+	# fight; the reward releases when it is cleared.
 	_rect_perimeter_with_left_door(Vector2i(38, -24), Vector2i(12, 13), -20, -17)
-	_register_building_rect(Vector2i(38, -24), Vector2i(12, 13), true)
+	_register_building_rect(Vector2i(38, -24), Vector2i(12, 13), true, {
+		"small_loot_chance": 1.0,
+		"local_encounter_enabled": true,
+		"local_encounter_count": 4,
+		"secondary": true,
+		"sec_title": "SECONDARY • SERVICE WAREHOUSE",
+		"sec_detail": "Sealed stock behind a security detail. Clear the interior to claim it.",
+	})
 
 	# Maintenance kiosk and checkpoint cover give the combat arena landmarks.
 	_rect_perimeter_with_bottom_door(Vector2i(25, -12), Vector2i(8, 5), 28, 29)
-	_register_building_rect(Vector2i(25, -12), Vector2i(8, 5), true)
+	_register_building_rect(Vector2i(25, -12), Vector2i(8, 5), true, {
+		"small_loot_chance": 1.0,
+		"secondary": true,
+		"sec_title": "SECONDARY • MAINTENANCE KIOSK",
+		"sec_detail": "Tool lockers and ward spares. A quick detour.",
+	})
 	_fill_rect_walls(Vector2i(21, -22), Vector2i(4, 5))
 	_fill_rect_walls(Vector2i(32, -29), Vector2i(4, 4))
 
@@ -350,6 +459,298 @@ func _plan_cover_and_landmarks() -> void:
 
 
 # -----------------------------------------------------------------------------
+# Exploration caches
+# -----------------------------------------------------------------------------
+
+## Segment 1 had no reason to leave the critical path.
+##
+## The procedural districts put an ExplorationLootSpawner at every true dead end
+## - the comment there says it exactly right, "this makes side travel
+## intentional" - but the authored segment, which is the game's current
+## authoring priority and every player's FIRST run, placed none at all. So the
+## one stretch of the game everybody sees was the thing the design doc forbids:
+## "random corridors with no reason to explore them".
+##
+## Caches go in the far corners of each region, deliberately away from the
+## centres and doorways the route runs through. The corner of a room IS the
+## alley - it is the place you only reach by choosing to.
+const CACHE_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
+
+## Cells in from the region edge. Far enough to be off the wall-hugging route,
+## not so far that the cache drifts back into the middle of the room.
+const CACHE_INSET: int = 4
+
+## Deterministic, and distinct from the dressing seed so moving one does not
+## move the other.
+const CACHE_SEED: int = 0xCA5E1
+
+## Alphas are quantised to this many steps.
+##
+## Segment 1 paints through the tiled renderer, which caches an atlas source per
+## (texture, transform, MODULATE) key - so a continuously random alpha minted a
+## fresh 512x512 Lanczos downscale, ImageTexture and TileSetAtlasSource for
+## nearly every one of the ~640 marks, synchronously during _ready. Six steps
+## are visually indistinguishable from a continuum at these alphas and turn
+## ~500 cache misses into at most 42.
+const DECAL_ALPHA_STEPS: int = 6
+
+
+func _plan_exploration_caches() -> void:
+	if CACHE_SCENE == null or _geo == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = CACHE_SEED
+	var region_index: int = 0
+	for rect in _playable_regions:
+		region_index += 1
+		# Two per region: enough that exploring pays, few enough that the route
+		# is still the fastest way through.
+		var corners: Array[Vector2i] = [
+			rect.position + Vector2i(CACHE_INSET, CACHE_INSET),
+			rect.position + Vector2i(rect.size.x - CACHE_INSET - 1, CACHE_INSET),
+			rect.position + Vector2i(CACHE_INSET, rect.size.y - CACHE_INSET - 1),
+			rect.position + Vector2i(rect.size.x - CACHE_INSET - 1, rect.size.y - CACHE_INSET - 1),
+		]
+		var placed: int = 0
+		var offset: int = rng.randi_range(0, 3)
+		for i in range(corners.size()):
+			if placed >= 2:
+				break
+			var cell: Vector2i = corners[(i + offset) % corners.size()]
+			if not _is_dressable_cell(cell, rect):
+				continue
+			placed += 1
+			_spawn_cache(cell, region_index * 100 + placed)
+
+
+func _spawn_cache(cell: Vector2i, loot_id: int) -> void:
+	var spawner := CACHE_SCENE.instantiate() as Node2D
+	if spawner == null:
+		return
+	# Non-zero and stable: the spawner frees itself at 0, and seeds its own
+	# deterministic roll from this, so the same corner holds the same cache
+	# every time the level is built.
+	spawner.set("loot_id", loot_id)
+	spawner.set("spawn_chance", 1.0)
+	spawner.set("count_min", 1)
+	spawner.set("count_max", 2)
+	# The spawner's own walkability test asks the ChunkManager, which does not
+	# know this authored geometry the way the builder does - so it rejected
+	# every corner and the caches produced nothing at all. _is_dressable_cell()
+	# has already checked this cell against the walls, cover, fences, barriers
+	# and spawn exclusions that were actually authored here, which is the
+	# stronger check; drop straight onto it.
+	spawner.set("require_walkable", false)
+	spawner.set("scatter_radius", 0.0)
+	spawner.global_position = _cell_to_world(cell)
+	_geo.add_child(spawner)
+
+
+# -----------------------------------------------------------------------------
+# Interior dressing
+# -----------------------------------------------------------------------------
+
+## The facility is 42x35 cells and the authored plan put about thirty pieces of
+## cover in it, in tidy rows. That reads as exactly what the design doc forbids -
+## "large empty filler", "random corridors with no reason to explore them" - and
+## it is also why the fighting is flat: a horde crossing an unbroken floor has no
+## geometry to break on, so there is nothing to kite around and no corner worth
+## holding.
+##
+## The dressing below is deliberately NOT random-looking. Cover arrives in small
+## clusters with a guaranteed gap between them, which is what makes a floor read
+## as a room that was used rather than a plane that was sprinkled.
+const DRESSING_SEED: int = 0x5A17E1
+
+## Cells between clusters. Three is the crowd lane the authored rows already
+## assume, so this cannot pinch a route the level was built around.
+const DRESSING_CLUSTER_GAP: int = 3
+
+## Off the region border, so doorways and wall-hugging routes stay clear.
+const DRESSING_EDGE_MARGIN: int = 2
+
+
+func _plan_interior_dressing() -> void:
+	var rng := RandomNumberGenerator.new()
+	# Fixed: an authored level has to be the same place every time it loads.
+	rng.seed = DRESSING_SEED
+	_dressing_cells.clear()
+
+	var anchors: Array[Vector2i] = []
+	for rect in _playable_regions:
+		var area: int = maxi(1, rect.size.x * rect.size.y)
+		# One cluster per ~90 cells. Dense enough to break sightlines, sparse
+		# enough that the floor is still mostly floor.
+		# Integer division is the intent: one cluster per whole 48 cells.
+		@warning_ignore("integer_division")
+		# One cluster per ~110 cells. Every placed cell becomes a fully
+		# non-walkable nav cell, so this was ~270 new blockers in an authored
+		# level - a ninefold increase over the authored cover, in a level whose
+		# routes were hand-tuned around the original count.
+		@warning_ignore("integer_division")
+		var clusters: int = clampi(area / 110, 2, 16)
+		for _i in range(clusters):
+			var cell := _pick_dressing_cell(rng, rect, anchors)
+			if cell.x == -9999:
+				continue
+			anchors.append(cell)
+			_stamp_cover_cluster(rng, rect, cell)
+
+	_scatter_floor_detail(rng)
+
+
+## An L, a stub wall or a lone crate - three silhouettes rather than one, so the
+## eye reads furniture instead of a pattern.
+func _stamp_cover_cluster(rng: RandomNumberGenerator, rect: Rect2i, origin: Vector2i) -> void:
+	_current_cluster.clear()
+	var shape: int = rng.randi_range(0, 2)
+	var horizontal: bool = rng.randf() < 0.5
+	var length: int = rng.randi_range(2, 4)
+	var cells: Array[Vector2i] = [origin]
+
+	match shape:
+		0:
+			# A run of shelving or benching.
+			for i in range(1, length):
+				cells.append(origin + (Vector2i(i, 0) if horizontal else Vector2i(0, i)))
+		1:
+			# An L - a corner you can actually take cover behind.
+			for i in range(1, length):
+				cells.append(origin + Vector2i(i, 0))
+			for i in range(1, maxi(2, length - 1)):
+				cells.append(origin + Vector2i(0, i))
+		_:
+			# A pair of crates left where someone dropped them.
+			cells.append(origin + Vector2i(rng.randi_range(1, 2), rng.randi_range(0, 1)))
+
+	for cell in cells:
+		if not _is_dressable_cell(cell, rect):
+			continue
+		# The anchor gap alone does not bound the RESULT: two anchors exactly
+		# DRESSING_CLUSTER_GAP apart, each with a four-cell run, chain into one
+		# unbroken wall. Checking every placed cell against every other cluster's
+		# cells is what actually keeps a lane open.
+		if _too_close_to_other_cluster(cell):
+			continue
+		_dressing_cells[cell] = true
+		_current_cluster[cell] = true
+		_add_half_cell(cell)
+
+
+## Cells this pass has placed, so the spacing rule can be enforced on the
+## geometry rather than only on the seeds it grew from.
+var _dressing_cells: Dictionary = {}
+
+
+func _too_close_to_other_cluster(cell: Vector2i) -> bool:
+	for key in _dressing_cells:
+		var other: Vector2i = key
+		if other == cell:
+			continue
+		if maxi(absi(other.x - cell.x), absi(other.y - cell.y)) < DRESSING_CLUSTER_GAP:
+			# Same cluster's own run is allowed to be contiguous; only cells
+			# from a DIFFERENT cluster have to keep their distance.
+			if not _current_cluster.has(other):
+				return true
+	return false
+
+
+var _current_cluster: Dictionary = {}
+
+
+func _pick_dressing_cell(
+	rng: RandomNumberGenerator,
+	rect: Rect2i,
+	anchors: Array[Vector2i]
+) -> Vector2i:
+	for _attempt in range(40):
+		var cell := Vector2i(
+			rng.randi_range(
+				rect.position.x + DRESSING_EDGE_MARGIN,
+				rect.position.x + rect.size.x - DRESSING_EDGE_MARGIN - 1
+			),
+			rng.randi_range(
+				rect.position.y + DRESSING_EDGE_MARGIN,
+				rect.position.y + rect.size.y - DRESSING_EDGE_MARGIN - 1
+			)
+		)
+		if not _is_dressable_cell(cell, rect):
+			continue
+		var too_close := false
+		for other in anchors:
+			# Chebyshev: a diagonal gap is a gap you can walk through.
+			if maxi(absi(other.x - cell.x), absi(other.y - cell.y)) < DRESSING_CLUSTER_GAP:
+				too_close = true
+				break
+		if too_close:
+			continue
+		return cell
+	return Vector2i(-9999, -9999)
+
+
+func _is_dressable_cell(cell: Vector2i, rect: Rect2i) -> bool:
+	if cell.x < rect.position.x + DRESSING_EDGE_MARGIN:
+		return false
+	if cell.y < rect.position.y + DRESSING_EDGE_MARGIN:
+		return false
+	if cell.x > rect.position.x + rect.size.x - DRESSING_EDGE_MARGIN - 1:
+		return false
+	if cell.y > rect.position.y + rect.size.y - DRESSING_EDGE_MARGIN - 1:
+		return false
+	# Never over anything the level already placed - authored geometry wins.
+	if _wall_kind.has(cell) or _half_cells.has(cell):
+		return false
+	if _fence_cells.has(cell) or _barrier_cells.has(cell):
+		return false
+	for excluded in _spawn_exclusions:
+		if excluded.has_point(cell):
+			return false
+	return true
+
+
+## Cracks, stains and the odd sigil across the floors. Non-blocking and drawn
+## under everything, so this is pure texture - but an unbroken grey plane is the
+## single loudest thing saying "filler" in the whole level, and three decals
+## repeated at varied scale and rotation break it completely.
+func _quantised_alpha(rng: RandomNumberGenerator, low: float, high: float) -> float:
+	var step: int = rng.randi_range(0, DECAL_ALPHA_STEPS - 1)
+	return lerpf(low, high, float(step) / float(maxi(1, DECAL_ALPHA_STEPS - 1)))
+
+
+func _scatter_floor_detail(rng: RandomNumberGenerator) -> void:
+	# Weighted: wear and grime are what a floor is mostly covered in. Scorches
+	# and spills are events, so they stay rare enough to still read as one.
+	var textures: Array[Texture2D] = [
+		_TEX_CRACKS, _TEX_CRACKS,
+		_TEX_GRIME, _TEX_GRIME, _TEX_GRIME,
+		_TEX_SCUFF, _TEX_SCUFF, _TEX_SCUFF,
+		_TEX_RUBBLE, _TEX_RUBBLE,
+		_TEX_SCORCH,
+		_TEX_SPILL,
+		_TEX_MARKING,
+	]
+	for rect in _playable_regions:
+		var area: int = maxi(1, rect.size.x * rect.size.y)
+		@warning_ignore("integer_division")
+		var marks: int = clampi(area / 7, 12, 260)
+		for _i in range(marks):
+			var cell := Vector2i(
+				rng.randi_range(rect.position.x, rect.position.x + rect.size.x - 1),
+				rng.randi_range(rect.position.y, rect.position.y + rect.size.y - 1)
+			)
+			var texture: Texture2D = textures[rng.randi_range(0, textures.size() - 1)]
+			# Markings are painted lines - they read wrong at a jaunty angle and
+			# wrong at half size, so they get their own band.
+			if texture == _TEX_MARKING:
+				_place_deco(texture, cell, rng.randf_range(0.22, 0.30), _quantised_alpha(rng, 0.30, 0.55), -88)
+				continue
+			# Wear is measured in metres, not pixels. The first pass at this drew
+			# marks about one cell across, which read as litter dropped on a clean
+			# floor rather than as a floor that has been used.
+			_place_deco(texture, cell, rng.randf_range(0.22, 0.68), _quantised_alpha(rng, 0.30, 0.70), -88)
+
+
+# -----------------------------------------------------------------------------
 # Ground coverage
 # -----------------------------------------------------------------------------
 
@@ -358,6 +759,8 @@ func _build_ground_stamps() -> void:
 	# few regional stamps establish stage identity without thousands of tiles.
 	_stamp_ground(FACILITY_TL, FACILITY_SIZE, _TEX_STONE, 0.96, 0.56)
 	_stamp_ground(FACILITY_TL + Vector2i(1, 1), FACILITY_SIZE - Vector2i(2, 2), _TEX_STONE, 0.98, 0.48)
+	# Admissions wing: brighter public stone than the research floor.
+	_stamp_ground(ADMISSIONS_RECT.position, ADMISSIONS_RECT.size, _TEX_STONE, 0.97, 0.66)
 	_stamp_ground(COURTYARD_RECT.position, COURTYARD_RECT.size, _TEX_COBBLE, 0.90, 0.64)
 	_stamp_ground(Vector2i(19, -23), Vector2i(35, 18), _TEX_DIRT_PATH, 0.72, 0.68)
 	_stamp_ground(Vector2i(20, -35), Vector2i(34, 12), _TEX_COBBLE, 0.78, 0.61)
@@ -365,6 +768,15 @@ func _build_ground_stamps() -> void:
 	_stamp_ground(Vector2i(27, -59), Vector2i(27, 6), _TEX_DIRT_PATH, 0.76, 0.68)
 	_stamp_ground(Vector2i(13, -57), Vector2i(15, 14), _TEX_STONE, 0.96, 0.58)
 	_stamp_ground(Vector2i(15, -55), Vector2i(11, 10), _TEX_COBBLE, 0.58, 0.63)
+	# City backdrop beyond the north wall: reveal-camera scenery only (the
+	# approach perimeter blocks travel). Coarse block-and-street rhythm,
+	# dimmed for distance.
+	_stamp_ground(Vector2i(8, -76), Vector2i(52, 15), _TEX_DIRT_PATH, 0.85, 0.42)
+	for block in range(4):
+		var block_x := 10 + block * 13
+		_stamp_ground(Vector2i(block_x, -74), Vector2i(9, 5), _TEX_STONE, 0.95, 0.40)
+		_stamp_ground(Vector2i(block_x + 2, -68), Vector2i(9, 6), _TEX_STONE, 0.95, 0.36)
+	_stamp_ground(Vector2i(8, -63), Vector2i(52, 2), _TEX_COBBLE, 0.90, 0.45)
 
 
 func _stamp_ground(cell_tl: Vector2i, size: Vector2i, tex: Texture2D, alpha: float, brightness: float) -> void:
@@ -527,7 +939,29 @@ func _spawn_indoor_volumes() -> void:
 			continue
 		_geo.add_child(volume)
 		volume.exploration_loot_enabled = bool(entry["loot"])
-		volume.configure(rect.position, rect.size, cell_size_px, building_id)
+		# The facility interior is the playfield, not a reward room: ambient
+		# containment pressure must spawn inside it. Reward rooms (loot=true)
+		# keep the default exclusion so their encounters own the interior.
+		volume.ambient_spawn_excluded = bool(entry["loot"])
+		var cfg: Dictionary = (entry.get("cfg", {}) as Dictionary).duplicate()
+		var is_secondary := bool(cfg.get("secondary", false))
+		cfg.erase("secondary")
+		var sec_title := String(cfg.get("sec_title", ""))
+		var sec_detail := String(cfg.get("sec_detail", ""))
+		cfg.erase("sec_title")
+		cfg.erase("sec_detail")
+		if is_secondary:
+			cfg["secondary_objective_id"] = building_id
+			_secondaries.append({
+				"id": building_id,
+				"world": Rect2(
+					Vector2(rect.position) * float(cell_size_px),
+					Vector2(rect.size) * float(cell_size_px)
+				).get_center(),
+				"title": sec_title,
+				"detail": sec_detail,
+			})
+		volume.configure(rect.position, rect.size, cell_size_px, building_id, cfg)
 		building_id += 1
 
 
@@ -565,11 +999,23 @@ func _place_wardstones_and_gate() -> void:
 
 
 func _place_story_areas() -> void:
+	# Admissions-wing beats (normalcy, wrongness, handoff to the prologue).
+	_make_milestone_area(M_ADMITTED, Vector2i(9, 41), Vector2i(7, 3), false)
+	_make_milestone_area(M_WARD_FLICKER, Vector2i(15, 34), Vector2i(7, 4), false)
+	_make_milestone_area(M_LAB_DOOR, Vector2i(15, 30), Vector2i(5, 3), false)
 	_make_milestone_area(M_SYNTHESIS, Vector2i(12, 21), Vector2i(5, 5), true)
 	# Full-height threshold strips make the two story beats unavoidable while
 	# preserving freedom inside each combat space.
 	_make_milestone_area(M_ASSISTANT, Vector2i(4, -14), Vector2i(5, 17), false)
+	# The first build choice fires on the mandatory route into the service
+	# district, before the security fight; the kiosk beside it is the
+	# fiction anchor (evidence store 3-B) and stays a loot secondary.
+	_make_milestone_area(M_EVIDENCE, Vector2i(25, -20), Vector2i(3, 27), false)
 	_make_milestone_area(M_SECURITY_STARTED, Vector2i(34, -20), Vector2i(5, 27), false)
+	# Beat 9: rounding the sealed warehouse after the breach, the city shows
+	# itself for the first time. Full-width strip so the moment cannot be
+	# missed on the way to the plaza.
+	_make_milestone_area(M_CITY_REVEAL, Vector2i(49, -45), Vector2i(8, 5), false)
 	_make_milestone_area(M_FINAL_PLAZA, Vector2i(26, -50), Vector2i(7, 11), false)
 
 
@@ -595,18 +1041,27 @@ func _restore_segment_state() -> void:
 		_wardstone_1.restore_active()
 	if _has_milestone(M_WARDSTONE_2) and _wardstone_2 != null:
 		_wardstone_2.restore_active()
+	_replay_rite_safeguards()
+	# Quit during the evidence offer: the area will not refire, but the
+	# choice is still owed. Re-present it once the scene settles.
+	if _has_milestone(M_EVIDENCE) and Global != null and Global.pending_augment_pick:
+		call_deferred("_begin_evidence_choice")
 	_apply_restored_spawn_stage()
 
 
 func _connect_run_events() -> void:
 	if RunEvents == null:
 		return
-	var killed_cb := Callable(self, "_on_enemy_killed")
-	if not RunEvents.enemy_killed.is_connected(killed_cb):
-		RunEvents.enemy_killed.connect(killed_cb)
+	var killed_cb := Callable(self, "_on_enemy_defeated")
+	if not RunEvents.enemy_defeated.is_connected(killed_cb):
+		RunEvents.enemy_defeated.connect(killed_cb)
 	var pickup_cb := Callable(self, "_on_pickup_to_equip")
 	if not RunEvents.pickup_fly_to_equip.is_connected(pickup_cb):
 		RunEvents.pickup_fly_to_equip.connect(pickup_cb)
+	if RunEvents.has_signal("secondary_objective_completed"):
+		var secondary_cb := Callable(self, "_on_secondary_completed")
+		if not RunEvents.secondary_objective_completed.is_connected(secondary_cb):
+			RunEvents.secondary_objective_completed.connect(secondary_cb)
 
 
 func _on_milestone_reached(id: StringName) -> void:
@@ -615,6 +1070,14 @@ func _on_milestone_reached(id: StringName) -> void:
 	if _opening_sequence_active and id in [M_SYNTHESIS, M_ASSISTANT]:
 		return
 	match id:
+		M_ADMITTED, M_WARD_FLICKER, M_LAB_DOOR:
+			_record_milestone(id)
+		M_EVIDENCE:
+			if _record_milestone(M_EVIDENCE):
+				_begin_evidence_choice()
+		M_CITY_REVEAL:
+			if _record_milestone(M_CITY_REVEAL):
+				_begin_city_reveal()
 		M_SYNTHESIS:
 			if _grant_milestone(M_SYNTHESIS, resonance_synthesis):
 				_blocking_card(
@@ -643,6 +1106,9 @@ func _on_milestone_reached(id: StringName) -> void:
 					_spawner.queue_authored_wave(3, 0.8, 2.25)
 		M_FINAL_PLAZA:
 			if _record_milestone(M_FINAL_PLAZA):
+				# Arrived: the arrow's job is done.
+				if Global != null:
+					Global.objective_target_pos = Vector2.INF
 				# Milestones provide 93%; ordinary play normally supplies the rest.
 				# This arrival top-up is the anti-wait safety net, not a passive timer.
 				if resonance < 1.0:
@@ -653,6 +1119,7 @@ func _on_milestone_reached(id: StringName) -> void:
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
+	milestone_reached.emit(id)
 
 
 func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
@@ -661,19 +1128,29 @@ func _on_wardstone_activated(_stone: Wardstone, index: int) -> void:
 		_set_spawn_stage(Segment1SpawnProfile.Stage.ARCHIVE)
 	elif index == 2:
 		_grant_milestone(M_WARDSTONE_2, resonance_wardstone_2)
+	if _exit_rite != null and is_instance_valid(_exit_rite):
+		_exit_rite.grant_safeguard(StringName("segment1:wardstone:%d" % index))
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
 
 
-func _on_enemy_killed(_player: Node, enemy: Node, _pos: Vector2) -> void:
-	if enemy != null and enemy.has_meta(&"opening_scripted") and bool(enemy.get_meta(&"opening_scripted")):
+func _replay_rite_safeguards() -> void:
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
 		return
-	var is_elite := false
-	if enemy != null:
-		var elite_value = enemy.get("is_elite")
-		if elite_value != null:
-			is_elite = bool(elite_value)
+	if _has_milestone(M_WARDSTONE_1):
+		_exit_rite.grant_safeguard(&"segment1:wardstone:1")
+	if _has_milestone(M_WARDSTONE_2):
+		_exit_rite.grant_safeguard(&"segment1:wardstone:2")
+
+
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if context == null:
+		return
+	var metadata := context.get("metadata") as Dictionary
+	if bool(metadata.get("opening_scripted", false)):
+		return
+	var is_elite := bool(context.get("is_elite"))
 	_add_resonance(resonance_per_elite_kill if is_elite else resonance_per_kill, false)
 
 	if _has_milestone(M_SYNTHESIS) and not _has_milestone(M_FIRST_CONFRONTATION):
@@ -704,6 +1181,138 @@ func _on_pickup_to_equip(_start: Vector2, _slot: int, inst: ItemInstance, _upgra
 	_update_gate_lock()
 
 
+# Beat 9: the city reveal. Slow zoom-out and pan over the backdrop while
+# the player is locked and protected, a tree-pausing card carries the copy,
+# then everything restores exactly. Reduced-motion setting shortens the
+# camera work via AccessibilityPresentation.
+func _begin_city_reveal() -> void:
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player == null:
+		return
+	if _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("suspend_spawning"):
+		_spawner.suspend_spawning(6.0)
+	if player.has_method("grant_invulnerability"):
+		player.call("grant_invulnerability", 6.0)
+	if player.has_method("set_cinematic_input"):
+		player.call("set_cinematic_input", true, true)
+	var camera := player.get_node_or_null("Camera2D") as Camera2D
+	var zoom_origin := camera.zoom if camera != null else Vector2.ONE
+	var cam_origin := camera.position if camera != null else Vector2.ZERO
+	if camera != null:
+		var out_tween := create_tween().set_parallel(true)
+		out_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		var out_seconds: float = _ACCESSIBILITY.current_motion_duration(1.4)
+		out_tween.tween_property(camera, "zoom", zoom_origin * 0.72, out_seconds)
+		out_tween.tween_property(camera, "position", cam_origin + Vector2(48.0, -400.0), out_seconds)
+		await out_tween.finished
+		await get_tree().create_timer(0.5).timeout
+	var modal := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
+	if modal != null and modal.has_method("present_card_and_wait"):
+		await modal.call(
+			"present_card_and_wait",
+			Segment1Text.CITY_REVEAL_TITLE, Segment1Text.CITY_REVEAL_BODY, "BEYOND THE WALL"
+		)
+	if camera != null:
+		var back_tween := create_tween().set_parallel(true)
+		back_tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+		var back_seconds: float = _ACCESSIBILITY.current_motion_duration(0.8)
+		back_tween.tween_property(camera, "zoom", zoom_origin, back_seconds)
+		back_tween.tween_property(camera, "position", cam_origin, back_seconds)
+		await back_tween.finished
+		camera.zoom = zoom_origin
+		camera.position = cam_origin
+	if player.has_method("set_cinematic_input"):
+		player.call("set_cinematic_input", false, false)
+
+
+# Beat 7: the first build choice, staged as looting the institution's own
+# evidence store. Card first, then the augment offer; veterans who already
+# own augments get flavor only (their pick never pends).
+func _begin_evidence_choice() -> void:
+	if Global == null or not Global.pending_augment_pick:
+		_tip(Segment1Text.EVIDENCE_EMPTY_TIP, 4.5)
+		return
+	var modal := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
+	if modal != null and modal.has_method("present_card_and_wait"):
+		await modal.call(
+			"present_card_and_wait",
+			Segment1Text.EVIDENCE_TITLE, Segment1Text.EVIDENCE_BODY, "EVIDENCE STORE 3-B"
+		)
+	var game := get_tree().current_scene
+	if game != null and game.has_method("present_augment_pick_and_wait"):
+		await game.call("present_augment_pick_and_wait")
+
+
+func _on_secondary_completed(objective_id: int) -> void:
+	if objective_id <= 0 or _secondary_completed.has(objective_id):
+		return
+	var entry := _find_secondary(objective_id)
+	if entry.is_empty():
+		return
+	_secondary_completed[objective_id] = true
+	_add_resonance(resonance_secondary, true)
+	if _active_secondary_id == objective_id:
+		_active_secondary_id = -1
+	_secondary_feedback_token += 1
+	var feedback_token := _secondary_feedback_token
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("✓ SECONDARY COMPLETE", String(entry.get("detail", "")))
+	_clear_secondary_after_delay(feedback_token)
+
+
+func _clear_secondary_after_delay(feedback_token: int) -> void:
+	await get_tree().create_timer(2.4).timeout
+	if feedback_token != _secondary_feedback_token:
+		return
+	_clear_secondary_ui()
+
+
+func _clear_secondary_ui() -> void:
+	_secondary_feedback_token += 1
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit("", "")
+
+
+func _find_secondary(objective_id: int) -> Dictionary:
+	for entry in _secondaries:
+		if int(entry.get("id", 0)) == objective_id:
+			return entry
+	return {}
+
+
+func _update_secondary_announcement() -> void:
+	if _opening_sequence_active or _secondaries.is_empty():
+		return
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player == null:
+		return
+	var nearby_id := -1
+	var nearby_entry: Dictionary = {}
+	var best_distance_sq := 600.0 * 600.0
+	for entry in _secondaries:
+		var objective_id := int(entry.get("id", 0))
+		if _secondary_completed.has(objective_id):
+			continue
+		# A room whose loot was claimed in an earlier session has nothing
+		# left to offer; do not advertise it after Continue.
+		if Global != null and Global.has_claimed_loot(objective_id):
+			continue
+		var distance_sq := player.global_position.distance_squared_to(entry.get("world", Vector2.INF) as Vector2)
+		if distance_sq < best_distance_sq:
+			best_distance_sq = distance_sq
+			nearby_id = objective_id
+			nearby_entry = entry
+	if nearby_id == _active_secondary_id:
+		return
+	_active_secondary_id = nearby_id
+	_secondary_feedback_token += 1
+	if nearby_id == -1:
+		_clear_secondary_ui()
+		return
+	if RunEvents != null and RunEvents.has_signal("secondary_objective_changed"):
+		RunEvents.secondary_objective_changed.emit(String(nearby_entry.get("title", "")), String(nearby_entry.get("detail", "")))
+
+
 func _refresh_progression_seals() -> void:
 	if _has_milestone(M_WARDSTONE_1):
 		_open_barrier(B_ARCHIVE_EXIT)
@@ -713,6 +1322,10 @@ func _refresh_progression_seals() -> void:
 		if not _has_milestone(M_FINAL_CHECKPOINT):
 			if _grant_milestone(M_FINAL_CHECKPOINT, resonance_final_checkpoint):
 				_tip(Segment1Text.CHECKPOINT_DISABLED, 4.0)
+				# Late-segment guidance: from here the player should know
+				# WHERE they're escaping to, not wander the campus.
+				if Global != null:
+					Global.objective_target_pos = _cell_to_world(_gate_cell)
 		_open_barrier(B_OUTER_APPROACH)
 		_set_spawn_stage(Segment1SpawnProfile.Stage.OUTER_APPROACH)
 
@@ -813,6 +1426,8 @@ func get_opening_anchors() -> Dictionary:
 		"construct": _cell_to_world(Vector2i(9, 21)),
 		"officer": _cell_to_world(Vector2i(16, 18)),
 		"records": _cell_to_world(Vector2i(8, 17)),
+		"entrance": _cell_to_world(_entrance_cell),
+		"desk": _cell_to_world(Vector2i(7, 39)),
 	}
 
 func begin_opening_sequence() -> void:
@@ -874,11 +1489,25 @@ func _mark_milestone_area_completed(id: StringName) -> void:
 	if area != null and is_instance_valid(area):
 		area.mark_completed()
 
+# Spawn stages are the segment's authored pressure tiers; the ThreatDirector
+# phase must track them or the whole segment sits in the recon damp
+# (heat x0.72, spawns x1.15) and the authored 100% heat peak is unreachable.
+const STAGE_PHASE := {
+	Segment1SpawnProfile.Stage.COURTYARD: &"disturbance",
+	Segment1SpawnProfile.Stage.SERVICE: &"disturbance",
+	Segment1SpawnProfile.Stage.OUTER_APPROACH: &"ascension",
+	Segment1SpawnProfile.Stage.EXIT_RITE: &"collapse",
+}
+
 func _set_spawn_stage(stage: int) -> void:
 	if _spawner == null or not is_instance_valid(_spawner):
 		_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
 	if _spawner != null:
 		_spawner.set_segment1_stage(stage)
+	var phase: StringName = STAGE_PHASE.get(stage, &"recon")
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("set_segment_phase"):
+		director.call("set_segment_phase", phase)
 
 func _apply_restored_spawn_stage() -> void:
 	var stage := Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS
@@ -915,6 +1544,8 @@ func _move_player_to_start() -> void:
 	if player == null:
 		return
 	var spawn_here := _cell_to_world(_start_cell)
+	if _opening_wants_entrance_start():
+		spawn_here = _cell_to_world(_entrance_cell)
 	if Global != null and Global.attempt_checkpoint_pos != Vector2.INF:
 		if _is_valid_checkpoint(Global.attempt_checkpoint_pos):
 			spawn_here = Global.attempt_checkpoint_pos
@@ -926,6 +1557,18 @@ func _move_player_to_start() -> void:
 		player.call("set_checkpoint", spawn_here, true)
 	else:
 		player.global_position = spawn_here
+
+
+# OpeningSequenceController.Phase.ADMISSION; kept as a plain int so the
+# builder does not preload the controller script.
+const OPENING_PHASE_ADMISSION := 2
+
+func _opening_wants_entrance_start() -> bool:
+	if Global == null or Global.attempt_opening_completed:
+		return false
+	if String(Global.attempt_opening_mode) != "full":
+		return false
+	return int(Global.attempt_opening_phase) <= OPENING_PHASE_ADMISSION
 
 
 func _is_valid_checkpoint(world_pos: Vector2) -> bool:
@@ -978,6 +1621,10 @@ func _process(delta: float) -> void:
 	if _res_ui_tick >= resonance_ui_push_every:
 		_res_ui_tick = 0.0
 		_update_gate_lock()
+	_secondary_tick += delta
+	if _secondary_tick >= 0.35:
+		_secondary_tick = 0.0
+		_update_secondary_announcement()
 
 
 func _update_gate_lock() -> void:
@@ -990,6 +1637,58 @@ func _update_gate_lock() -> void:
 		if Global != null:
 			Global.tip_shown_gate_unsealed = true
 	_push_resonance_ui()
+	_push_gate_checklist(should_lock)
+
+
+func _push_gate_checklist(gate_locked: bool) -> void:
+	if RunEvents == null or not RunEvents.has_signal("gate_checklist_changed"):
+		return
+	if _opening_sequence_active:
+		if _last_checklist_key != "opening":
+			_last_checklist_key = "opening"
+			RunEvents.gate_checklist_changed.emit(&"locked", [], "")
+		return
+	var percent := int(round(clampf(resonance, 0.0, 1.0) * 100.0))
+	var resonance_complete := resonance >= 0.999
+	var state: StringName = &"locked"
+	if not gate_locked:
+		state = &"ready"
+	elif _has_milestone(M_FINAL_CHECKPOINT):
+		# LOCATED: the HUD arrow points at the Rite from the final checkpoint on.
+		state = &"located"
+
+	var items: Array = [
+		{"id": &"wardstone_1", "label": "Archive Wardstone rewritten", "done": _has_milestone(M_WARDSTONE_1)},
+		{"id": &"wardstone_2", "label": "Service Wardstone rewritten", "done": _has_milestone(M_WARDSTONE_2)},
+		{"id": &"checkpoint", "label": "Outer checkpoint disabled", "done": _has_milestone(M_FINAL_CHECKPOINT)},
+		{"id": &"resonance", "label": "Resonance 100%% (%d%%)" % percent, "done": resonance_complete},
+		{"id": &"plaza", "label": "Reach the outer Rite", "done": _has_milestone(M_FINAL_PLAZA)},
+	]
+
+	var hint := ""
+	if state == &"ready":
+		# The journey rows can lag in dev/teleport contexts; a READY gate
+		# always hints the channel, never an earlier step.
+		hint = "Stand in the sigil • hold the channel"
+	elif not _has_milestone(M_WARDSTONE_1):
+		hint = "Next: rewrite the archive Wardstone"
+	elif not _has_milestone(M_WARDSTONE_2):
+		hint = "Next: rewrite the service-district Wardstone"
+	elif not _has_milestone(M_FINAL_CHECKPOINT):
+		hint = "Next: both Wardstones can interrupt the outer checkpoint"
+	elif not _has_milestone(M_FINAL_PLAZA):
+		hint = "Follow the marker to the outer Rite"
+	elif not resonance_complete:
+		hint = "Build resonance • kills and loot feed the Pattern"
+	else:
+		hint = "Stand in the sigil • hold the channel"
+
+	# Emit only on real change; this runs on the 0.15s resonance UI tick.
+	var key := "%s|%d|%s" % [state, percent, str(items.map(func(item: Dictionary) -> bool: return bool(item["done"])))]
+	if key == _last_checklist_key:
+		return
+	_last_checklist_key = key
+	RunEvents.gate_checklist_changed.emit(state, items, hint)
 
 
 func _push_resonance_ui() -> void:
@@ -1078,12 +1777,13 @@ func _rect_perimeter_with_doors(top_left: Vector2i, size: Vector2i, bottom_door_
 			_add_wall_cell(Vector2i(x1, y), false)
 
 
-func _register_building_rect(top_left: Vector2i, size: Vector2i, loot: bool) -> void:
+func _register_building_rect(top_left: Vector2i, size: Vector2i, loot: bool, cfg: Dictionary = {}) -> void:
 	if size.x <= 2 or size.y <= 2:
 		return
 	_building_interiors.append({
 		"rect": Rect2i(top_left + Vector2i.ONE, size - Vector2i(2, 2)),
 		"loot": loot,
+		"cfg": cfg,
 	})
 
 

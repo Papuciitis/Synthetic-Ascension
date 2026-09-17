@@ -1,0 +1,3465 @@
+{
+ "version": 1,
+ "rings": [
+  {
+   "index": 0,
+   "name": "CORE",
+   "radius": 0,
+   "role": "style core and Doctrine sockets"
+  },
+  {
+   "index": 1,
+   "name": "MORTAL",
+   "radius": 150,
+   "role": "Fundamentals"
+  },
+  {
+   "index": 2,
+   "name": "BELIEVER",
+   "radius": 290,
+   "role": "Mechanics"
+  },
+  {
+   "index": 3,
+   "name": "PROPHET",
+   "radius": 440,
+   "role": "Specialization: forks, keystones, actives, mutations, axioms"
+  },
+  {
+   "index": 4,
+   "name": "ICON",
+   "radius": 600,
+   "role": "Revelations and capstones"
+  },
+  {
+   "index": 5,
+   "name": "ASCENDANT",
+   "radius": 760,
+   "role": "Witness, bridges, sinks, Ascendant"
+  }
+ ],
+ "classes": {
+  "core": {
+   "base": [
+    0
+   ],
+   "escalation": "none",
+   "rate": 0,
+   "refundable": false,
+   "hub_only": false,
+   "permanent": true
+  },
+  "doctrine": {
+   "base": [
+    0
+   ],
+   "escalation": "none",
+   "rate": 0,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "small": {
+   "base": [
+    150,
+    300,
+    600
+   ],
+   "escalation": "linear",
+   "rate": 0.1,
+   "refundable": true,
+   "hub_only": false,
+   "permanent": false
+  },
+  "mechanic": {
+   "base": [
+    2500,
+    4000,
+    12000
+   ],
+   "escalation": "geometric",
+   "rate": 1.15,
+   "refundable": true,
+   "hub_only": false,
+   "permanent": false
+  },
+  "mutation": {
+   "base": [
+    25000
+   ],
+   "escalation": "geometric",
+   "rate": 1.25,
+   "refundable": true,
+   "hub_only": false,
+   "permanent": false
+  },
+  "capstone": {
+   "base": [
+    80000
+   ],
+   "escalation": "geometric",
+   "rate": 1.25,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "keystone": {
+   "base": [
+    35000
+   ],
+   "escalation": "geometric",
+   "rate": 1.5,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "fork": {
+   "base": [
+    50000
+   ],
+   "escalation": "geometric",
+   "rate": 1.5,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "active": {
+   "base": [
+    60000
+   ],
+   "escalation": "geometric",
+   "rate": 1.5,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "axiom": {
+   "base": [
+    40000
+   ],
+   "escalation": "geometric",
+   "rate": 1.5,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "revelation": {
+   "base": [
+    300000
+   ],
+   "escalation": "geometric",
+   "rate": 2.0,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "witness": {
+   "base": [
+    300000
+   ],
+   "escalation": "geometric",
+   "rate": 2.0,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "bridge": {
+   "base": [
+    2500000
+   ],
+   "escalation": "geometric",
+   "rate": 2.0,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "ascendant": {
+   "base": [
+    25000000
+   ],
+   "escalation": "none",
+   "rate": 0,
+   "refundable": false,
+   "hub_only": true,
+   "permanent": true
+  },
+  "sink": {
+   "base": [
+    60000
+   ],
+   "escalation": "sink",
+   "rate": 1.35,
+   "refundable": false,
+   "hub_only": false,
+   "permanent": true
+  }
+ },
+ "peak_gates": {
+  "ring3": 30000,
+  "revelation": 500000,
+  "witness": 5000000,
+  "bridge": 5000000,
+  "ascendant": 50000000
+ },
+ "economy": {
+  "reach_ratio": 1.35,
+  "reach_from_segment": 3,
+  "gross_segment_1": 1500,
+  "gross_segment_2plus": 6000,
+  "on_hand_table": {
+   "1": 1400,
+   "2": 5700,
+   "3": 8900,
+   "5": 16000,
+   "10": 73000,
+   "20": 1500000,
+   "40": 590000000
+  },
+  "refund": {
+   "start": 0.5,
+   "decay": 0.9,
+   "floor": 0.1
+  },
+  "floor_base": 10,
+  "floor_per_segment": 2,
+  "floor_death_growth": 1.7,
+  "floor_tax": 0.2,
+  "wipe_per_normal": 2,
+  "wipe_per_elite": 10,
+  "sink_base": 60000
+ },
+ "styles": [
+  {
+   "id": "melee",
+   "name": "Melee",
+   "hue": "#b8452e",
+   "core": "mel_core",
+   "subtrees": [
+    {
+     "id": "execution",
+     "name": "Execution",
+     "prefix": "mel_exe",
+     "fantasy": "I touch something and it dies.",
+     "input": "Hunt HP fractions, not bodies: ignore healthy targets, sweep through weakened ones, time Gavel and Decimation for the moment the crowd dips under the Verdict line.",
+     "hud": "VERDICT 16% readout; enemies under the threshold get a red tick (reuses the Mark overlay path)."
+    },
+    {
+     "id": "momentum",
+     "name": "Momentum",
+     "prefix": "mel_mom",
+     "fantasy": "Movement is violence.",
+     "input": "Never stop: dash through enemies to prime them, chain dashes on kills, attack mid-stride.",
+     "hud": "The existing MOMENTUM row (the tree claims the manifestation noun) plus dash-charge pips."
+    },
+    {
+     "id": "bastion",
+     "name": "Bastion",
+     "prefix": "mel_bas",
+     "fantasy": "Their violence is mine.",
+     "input": "Walk into crowds, hold Guard to bank Force, release it through slashes or the rupture; standing still is rewarded (fights Momentum, pairs with Anchor Rite).",
+     "hud": "FORCE 64/100 meter (new noun, hue at least 12 degrees from ward)."
+    }
+   ]
+  },
+  {
+   "id": "ranged",
+   "name": "Ranged",
+   "hue": "#c9a24a",
+   "core": "rng_core",
+   "subtrees": [
+    {
+     "id": "precision",
+     "name": "Precision",
+     "prefix": "rng_pre",
+     "fantasy": "One shot, perfect consequence.",
+     "input": "Keep hitting the same target to Read it, line enemies up for pierce, stay far.",
+     "hud": "READ n counter; Read enemies show a reticle."
+    },
+    {
+     "id": "barrage",
+     "name": "Barrage",
+     "prefix": "rng_bar",
+     "fantasy": "Random bullshit, engineered.",
+     "input": "Manage Heat: hold fire to climb tiers, kill to vent, back off before the Jam (or take Overclock and live hot).",
+     "hud": "HEAT bar with tier ticks at 25/50/75 and a red Jam zone."
+    },
+    {
+     "id": "ordnance",
+     "name": "Ordnance",
+     "prefix": "rng_ord",
+     "fantasy": "Prepare the field, then cause a disaster.",
+     "input": "Place things before enemies arrive: mines via dashes, Coordinates via cursor, then herd enemies into the timers.",
+     "hud": "COORD 2/3 plus mine count; telegraph circles are the language."
+    }
+   ]
+  },
+  {
+   "id": "magic",
+   "name": "Magic",
+   "hue": "#7c5cff",
+   "core": "mag_core",
+   "subtrees": [
+    {
+     "id": "invocation",
+     "name": "Invocation",
+     "prefix": "mag_inv",
+     "fantasy": "Bring impossible things into existence.",
+     "input": "Choose where to fight: near Sigils. Feed them kills, cast through them, Consecrate to reposition the arena.",
+     "hud": "SIGILS 3/5 plus Echo pips per Sigil."
+    },
+    {
+     "id": "distortion",
+     "name": "Distortion",
+     "prefix": "mag_dis",
+     "fantasy": "Reality behaves incorrectly around you.",
+     "input": "Gamble on purpose: flip the Coin before committing, cash Debt timing, let enemy projectiles fail.",
+     "hud": "DEBT 412 pending damage plus coin state."
+    },
+    {
+     "id": "dominion",
+     "name": "Dominion",
+     "prefix": "mag_dom",
+     "fantasy": "The battlefield obeys.",
+     "input": "The cursor becomes a second body: decide where enemies go, compress them into impact radius, link them so one hit is many, hold ground.",
+     "hud": "LINKS 8 plus Sovereign zone timers."
+    }
+   ]
+  }
+ ],
+ "subtree_order": {
+  "melee": [
+   "execution",
+   "momentum",
+   "bastion"
+  ],
+  "ranged": [
+   "precision",
+   "barrage",
+   "ordnance"
+  ],
+  "magic": [
+   "invocation",
+   "distortion",
+   "dominion"
+  ]
+ },
+ "bridge_open": {
+  "melee": [
+   "mel_exe_02",
+   "mel_mom_04"
+  ],
+  "ranged": [
+   "rng_pre_02",
+   "rng_bar_07",
+   "rng_ord_02"
+  ],
+  "magic": [
+   "mag_inv_02",
+   "mag_dom_01",
+   "mag_dis_02"
+  ]
+ },
+ "proc_tags": {
+  "origins": [
+   "PRIMARY",
+   "ACTIVE",
+   "REVELATION",
+   "SIGIL",
+   "BRIDGE"
+  ],
+  "rules": [
+   "PRIMARY chains stop at generation 2; BRIDGE chains at generation 1.",
+   "Generation >= 1 never emits weapon_fired (a beat is not an attack) but does emit player_hit_landed.",
+   "no_self tags: AFTERIMAGE, RETARGET, RICOCHET, FRAGMENT, ORDNANCE_TRIGGER, SIGIL_SPAWN, TWICE, LINK_SHARE, CROSSFIRE.",
+   "Every generator checks allowed_children and the remaining budget before spawning."
+  ]
+ },
+ "nodes": [
+  {
+   "id": "mel_core",
+   "ring": 0,
+   "type": "core",
+   "name": "MELEE",
+   "effect": "Your starting style. Owned from minute one.",
+   "style": "melee",
+   "subtree": null,
+   "base_cost": 0
+  },
+  {
+   "id": "mel_doc_method",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Method",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 3.",
+   "style": "melee",
+   "subtree": null,
+   "segment": 3,
+   "base_cost": 0
+  },
+  {
+   "id": "mel_doc_doctrine",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Doctrine",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 6.",
+   "style": "melee",
+   "subtree": null,
+   "segment": 6,
+   "base_cost": 0
+  },
+  {
+   "id": "mel_doc_apotheosis",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Apotheosis",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 9.",
+   "style": "melee",
+   "subtree": null,
+   "segment": 9,
+   "base_cost": 0
+  },
+  {
+   "id": "rng_core",
+   "ring": 0,
+   "type": "core",
+   "name": "RANGED",
+   "effect": "Your starting style. Owned from minute one.",
+   "style": "ranged",
+   "subtree": null,
+   "base_cost": 0
+  },
+  {
+   "id": "rng_doc_method",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Method",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 3.",
+   "style": "ranged",
+   "subtree": null,
+   "segment": 3,
+   "base_cost": 0
+  },
+  {
+   "id": "rng_doc_doctrine",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Doctrine",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 6.",
+   "style": "ranged",
+   "subtree": null,
+   "segment": 6,
+   "base_cost": 0
+  },
+  {
+   "id": "rng_doc_apotheosis",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Apotheosis",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 9.",
+   "style": "ranged",
+   "subtree": null,
+   "segment": 9,
+   "base_cost": 0
+  },
+  {
+   "id": "mag_core",
+   "ring": 0,
+   "type": "core",
+   "name": "MAGIC",
+   "effect": "Your starting style. Owned from minute one.",
+   "style": "magic",
+   "subtree": null,
+   "base_cost": 0
+  },
+  {
+   "id": "mag_doc_method",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Method",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 3.",
+   "style": "magic",
+   "subtree": null,
+   "segment": 3,
+   "base_cost": 0
+  },
+  {
+   "id": "mag_doc_doctrine",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Doctrine",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 6.",
+   "style": "magic",
+   "subtree": null,
+   "segment": 6,
+   "base_cost": 0
+  },
+  {
+   "id": "mag_doc_apotheosis",
+   "ring": 0,
+   "type": "doctrine",
+   "name": "Apotheosis",
+   "effect": "Doctrine socket: filled by the free 1-of-3 pick after segment 9.",
+   "style": "magic",
+   "subtree": null,
+   "segment": 9,
+   "base_cost": 0
+  },
+  {
+   "id": "mel_exe_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Heavy Hand",
+   "effect": "+6% melee damage per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_core"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_exe_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "First Verdict",
+   "effect": "Grants an execute threshold of 10%: a melee hit that leaves a normal enemy at or below 10% HP kills it, ignoring armor; overkill is captured.",
+   "req": [
+    "mel_exe_01"
+   ],
+   "needs": [
+    "execute_threshold channel",
+    "overkill on EnemyDeathContext"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 2500
+  },
+  {
+   "id": "mel_exe_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Lower Bar",
+   "effect": "+3% execute threshold per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_exe_02"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_exe_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Spillover",
+   "effect": "Overkill from a melee kill hits the nearest enemy within 90 px.",
+   "req": [
+    "mel_exe_02"
+   ],
+   "needs": [
+    "nearest_enemy"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_exe_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Clean Cut",
+   "effect": "Executions refund 25% of slash cooldown per rank.",
+   "ranks": 2,
+   "req": [
+    "mel_exe_03",
+    "mel_exe_04"
+   ],
+   "needs": [
+    "refund_attack_cooldown API"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_exe_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Elite Sentence",
+   "effect": "The execute threshold applies to elites at half value.",
+   "req": [
+    "mel_exe_04"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_exe_07",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Bloodletting",
+   "effect": "Each execution grants +2% threshold for 4 s (5 stacks, refreshing).",
+   "req": [
+    "mel_exe_05",
+    "mel_exe_06"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_exe_08",
+   "ring": 2,
+   "type": "small",
+   "name": "Reservoir",
+   "effect": "Spillover carries +25% of the overkill per rank (base 100%).",
+   "ranks": 2,
+   "req": [
+    "mel_exe_04"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_exe_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Quiet Sentence",
+   "effect": "Your first hit on any enemy Sentences it for 3 s; a second melee hit on a Sentenced enemy executes at 2x threshold.",
+   "side": "A",
+   "req": [
+    "mel_exe_07"
+   ],
+   "excl": [
+    "mel_exe_fork_b"
+   ],
+   "needs": [
+    "per-handle Sentenced status"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_exe_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Collective Sentence",
+   "effect": "Executions cleave: 60% of the victim's max HP to enemies in a 70 px arc.",
+   "side": "B",
+   "req": [
+    "mel_exe_07"
+   ],
+   "excl": [
+    "mel_exe_fork_a"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_exe_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Only the Weak Die",
+   "effect": "+12% execute threshold.",
+   "price": "-25% damage against enemies above 50% HP.",
+   "req": [
+    "mel_exe_07"
+   ],
+   "gate_nodes": 5,
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 35000
+  },
+  {
+   "id": "mel_exe_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Gavel",
+   "effect": "Q: 0.25 s windup, then a 90 px radius strike at 3.0x slash damage that executes at 2x threshold inside the radius.",
+   "bounds": "6 s cooldown.",
+   "req": [
+    "mel_exe_06"
+   ],
+   "gate_nodes": 4,
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 60000
+  },
+  {
+   "id": "mel_exe_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Public Execution",
+   "effect": "Gavel overkill spills to every enemy within 120 px.",
+   "parent": "mel_exe_act",
+   "req": [
+    "mel_exe_act"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_exe_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Swift Justice",
+   "effect": "Gavel cooldown 6 -> 3.5 s, radius 90 -> 62 px.",
+   "parent": "mel_exe_act",
+   "req": [
+    "mel_exe_act"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_exe_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Tithe of the Condemned",
+   "effect": "+1 Follower per 10 Gavel executions (cap 20 per segment).",
+   "parent": "mel_exe_act",
+   "req": [
+    "mel_exe_act"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_exe_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "The Verdict Stands",
+   "effect": "A Gavel that kills 5 or more grants +10% threshold for 6 s.",
+   "parent": "mel_exe_act",
+   "req": [
+    "mel_exe_mut1",
+    "mel_exe_mut2",
+    "mel_exe_mut3"
+   ],
+   "req_min": 2,
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 80000
+  },
+  {
+   "id": "mel_exe_axiom",
+   "ring": 3,
+   "type": "axiom",
+   "name": "Violence Propagates",
+   "effect": "Spillover applies to kills of any style you can produce.",
+   "price": "Spill range 90 -> 60 px for non-melee kills.",
+   "req": [
+    "mel_exe_08"
+   ],
+   "gate_nodes": 6,
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 40000
+  },
+  {
+   "id": "mel_exe_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "DECIMATION",
+   "effect": "V: 0.6 s stationary cast. Every normal enemy in the camera rect (+64 px) at or below the threshold dies; elites at or below half the threshold lose 50% max HP.",
+   "bounds": "Max 150 targets (lowest HP fraction first); cannot touch bosses; 45 s cooldown.",
+   "op_cost": "1 Follower per 4 executed (min 5), previewed on the HUD before commit; refuses if unaffordable.",
+   "req": [
+    "mel_exe_act"
+   ],
+   "gate_nodes": 8,
+   "needs": [
+    "camera-rect gather"
+   ],
+   "style": "melee",
+   "subtree": "execution",
+   "base_cost": 300000
+  },
+  {
+   "id": "mel_mom_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Light Feet",
+   "effect": "+4% move speed per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_core"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_mom_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Stride",
+   "effect": "Claims the Momentum meter: a dash adds +25% Momentum; slashes deal +10% damage per 25% Momentum (cap +40%).",
+   "req": [
+    "mel_mom_01"
+   ],
+   "needs": [
+    "claim ManifestationState.momentum"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 2500
+  },
+  {
+   "id": "mel_mom_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Second Wind",
+   "effect": "Dash cooldown -10% per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_mom_02"
+   ],
+   "needs": [
+    "dash_cooldown_multiplier poll"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_mom_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Passing Blade",
+   "effect": "The dash path (40 px wide) deals 0.6x slash damage and Primes enemies hit: their next melee hit taken is +50% (3 s).",
+   "req": [
+    "mel_mom_02"
+   ],
+   "needs": [
+    "gather_in_sector along dash",
+    "per-handle Primed status"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_mom_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Reach",
+   "effect": "Slash arc radius +6 px per rank while Momentum is at or above 50%.",
+   "ranks": 3,
+   "req": [
+    "mel_mom_04"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_mom_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Kill Reset",
+   "effect": "A melee kill cuts the remaining dash cooldown by 0.5 s (0.3 s ICD).",
+   "req": [
+    "mel_mom_03",
+    "mel_mom_04"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_mom_07",
+   "ring": 2,
+   "type": "small",
+   "name": "Running Cut",
+   "effect": "Slash cooldown -5% per rank while moving.",
+   "ranks": 2,
+   "req": [
+    "mel_mom_05"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_mom_08",
+   "ring": 3,
+   "type": "mechanic",
+   "name": "Afterimage",
+   "effect": "At Momentum >= 75% every slash repeats 0.25 s later at its origin for 50% (generation 1, NO_AFTERIMAGE).",
+   "req": [
+    "mel_mom_06",
+    "mel_mom_07"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 12000
+  },
+  {
+   "id": "mel_mom_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Unbroken Motion",
+   "effect": "Momentum does not decay for 2 s after a kill.",
+   "price": "Stability can never fill.",
+   "side": "A",
+   "req": [
+    "mel_mom_08"
+   ],
+   "excl": [
+    "mel_mom_fork_b"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_mom_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Thousand Cuts",
+   "effect": "At Momentum >= 90% slashes echo once at 35% (generation 1).",
+   "price": "Momentum drains 10%/s while attacking.",
+   "side": "B",
+   "req": [
+    "mel_mom_08"
+   ],
+   "excl": [
+    "mel_mom_fork_a"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_mom_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Never Stop",
+   "effect": "The dash gains a second charge (each 1.6 s, i-frames kept).",
+   "price": "Slashes deal -30% while Momentum is below 25%.",
+   "req": [
+    "mel_mom_06"
+   ],
+   "gate_nodes": 5,
+   "excl": [
+    "mel_bas_key",
+    "mag_dom_key"
+   ],
+   "needs": [
+    "dash charges"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 35000
+  },
+  {
+   "id": "mel_mom_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Lunge",
+   "effect": "Q: 240 px dash toward the aim point ending in a 1.5x 180-degree slash; counts as a dash (emits player_dashed).",
+   "bounds": "5 s cooldown.",
+   "req": [
+    "mel_mom_04"
+   ],
+   "gate_nodes": 4,
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 60000
+  },
+  {
+   "id": "mel_mom_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Rebound",
+   "effect": "A Lunge kill resets Lunge's cooldown (1.0 s ICD).",
+   "parent": "mel_mom_act",
+   "req": [
+    "mel_mom_act"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_mom_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Wake",
+   "effect": "The Lunge path deals Passing Blade at 1.0x, 60 px wide.",
+   "parent": "mel_mom_act",
+   "req": [
+    "mel_mom_act"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_mom_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Shadow Step",
+   "effect": "Lunge leaves an Afterimage that slashes twice over 0.5 s.",
+   "parent": "mel_mom_act",
+   "req": [
+    "mel_mom_act"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_mom_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Blur",
+   "effect": "After a Lunge: 0.6 s of 100% evasion and +25% move speed for 2 s.",
+   "parent": "mel_mom_act",
+   "req": [
+    "mel_mom_mut1",
+    "mel_mom_mut2",
+    "mel_mom_mut3"
+   ],
+   "req_min": 2,
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 80000
+  },
+  {
+   "id": "mel_mom_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "NO DISTANCE BETWEEN US",
+   "effect": "V: for 4 s each slash first teleports you to the nearest not-yet-hit normal or elite within 400 px (one hop per 0.12 s, 0.1 s i-frames per landing); ends early after 0.5 s without a target.",
+   "bounds": "Cannot hop to bosses; 60 s cooldown; Momentum set to 0 on end.",
+   "op_cost": "3% of current Followers (min 10).",
+   "req": [
+    "mel_mom_act"
+   ],
+   "gate_nodes": 8,
+   "needs": [
+    "teleport with i-frames API"
+   ],
+   "style": "melee",
+   "subtree": "momentum",
+   "base_cost": 300000
+  },
+  {
+   "id": "mel_bas_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Plate",
+   "effect": "+3 armor per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_core"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_bas_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Stored Force",
+   "effect": "Claims Force (cap 100): 40% of post-armor damage taken becomes Force (1 per 2 HP); a slash consumes up to 30 Force for +1% damage each.",
+   "req": [
+    "mel_bas_01"
+   ],
+   "needs": [
+    "Force resource on AscensionState"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 2500
+  },
+  {
+   "id": "mel_bas_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Thick Skin",
+   "effect": "Damage taken -4% per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_bas_02"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 150
+  },
+  {
+   "id": "mel_bas_04",
+   "ring": 2,
+   "type": "small",
+   "name": "Vessel",
+   "effect": "Force cap +20 per rank.",
+   "ranks": 3,
+   "req": [
+    "mel_bas_02"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_bas_05",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Surrounded",
+   "effect": "+5% melee damage per enemy within 90 px at swing time (max +40%).",
+   "req": [
+    "mel_bas_03"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_bas_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Immovable",
+   "effect": "Displacement of the player is negated; each resisted knockback grants +8 Force and a 70 px 0.4x shockwave.",
+   "req": [
+    "mel_bas_04",
+    "mel_bas_05"
+   ],
+   "needs": [
+    "player displacement hook"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mel_bas_07",
+   "ring": 2,
+   "type": "small",
+   "name": "Slow Leak",
+   "effect": "Force decay -3%/s per rank (base 6%/s after 3 s idle).",
+   "ranks": 2,
+   "req": [
+    "mel_bas_04"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 300
+  },
+  {
+   "id": "mel_bas_08",
+   "ring": 3,
+   "type": "mechanic",
+   "name": "Return to Sender",
+   "effect": "Enemy projectiles within 48 px during a slash are consumed: +5 Force and +10% slash damage each (max 5).",
+   "req": [
+    "mel_bas_06"
+   ],
+   "needs": [
+    "consume_enemy_projectiles_in_radius"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 12000
+  },
+  {
+   "id": "mel_bas_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Pressure Vessel",
+   "effect": "Force at cap auto-detonates: 160 px burst dealing Force x2.5, Force -> 0.",
+   "side": "A",
+   "req": [
+    "mel_bas_08"
+   ],
+   "excl": [
+    "mel_bas_fork_b"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_bas_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Overpressure",
+   "effect": "Force may exceed its cap by 50%; slashes consume up to 60 Force; no auto-detonate.",
+   "side": "B",
+   "req": [
+    "mel_bas_08"
+   ],
+   "excl": [
+    "mel_bas_fork_a"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mel_bas_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Anvil",
+   "effect": "Standing still for 0.5 s: damage taken -35% and Force gain x2.",
+   "price": "Move speed -15%, dash cooldown +0.6 s.",
+   "req": [
+    "mel_bas_07"
+   ],
+   "gate_nodes": 5,
+   "excl": [
+    "mel_mom_key"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 35000
+  },
+  {
+   "id": "mel_bas_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Guard",
+   "effect": "Hold Q: move -50%, damage taken -60%, damage taken becomes Force at 100%, projectiles touching a 72 px ring are consumed (+3 Force).",
+   "bounds": "Drains 4 Force/s and ends at 0; no cooldown.",
+   "req": [
+    "mel_bas_05"
+   ],
+   "gate_nodes": 4,
+   "needs": [
+    "hold-input semantics for Q"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 60000
+  },
+  {
+   "id": "mel_bas_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Bulwark",
+   "effect": "Melee attackers striking the Guard ring are stunned 0.4 s (2 s ICD per enemy).",
+   "parent": "mel_bas_act",
+   "req": [
+    "mel_bas_act"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_bas_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Counterweight",
+   "effect": "Releasing Guard after 1 s fires a 2.0x 145-degree shockwave spending 50% Force.",
+   "parent": "mel_bas_act",
+   "req": [
+    "mel_bas_act"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_bas_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Martyr's Ledger",
+   "effect": "Guard also converts 2% max HP/s into +6 Force/s (never below 30% HP).",
+   "parent": "mel_bas_act",
+   "req": [
+    "mel_bas_act"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mel_bas_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Living Rampart",
+   "effect": "Guard's drain is removed; Force gain while guarding +50%.",
+   "parent": "mel_bas_act",
+   "req": [
+    "mel_bas_mut1",
+    "mel_bas_mut2",
+    "mel_bas_mut3"
+   ],
+   "req_min": 2,
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 80000
+  },
+  {
+   "id": "mel_bas_axiom",
+   "ring": 3,
+   "type": "axiom",
+   "name": "Pressure Is Power",
+   "effect": "Damage taken fills Force under any style; ranged and magic attacks may consume Force at half rate.",
+   "price": "Force cap -20.",
+   "req": [
+    "mel_bas_07"
+   ],
+   "gate_nodes": 6,
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 40000
+  },
+  {
+   "id": "mel_bas_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "THE WORLD BREAKS FIRST",
+   "effect": "V: needs 40+ Force. A rupture of radius 160 + 2.4 x Force (cap 400) deals Force x4 plus 30% of the damage you took in the last 10 s, knockback 600, stun 0.8 s; Force -> 0.",
+   "bounds": "Bosses capped at 15% max HP; 30 s cooldown.",
+   "op_cost": "2% of current Followers, 4% if Force was at cap.",
+   "req": [
+    "mel_bas_act"
+   ],
+   "gate_nodes": 8,
+   "needs": [
+    "10 s damage-taken ledger"
+   ],
+   "style": "melee",
+   "subtree": "bastion",
+   "base_cost": 300000
+  },
+  {
+   "id": "rng_pre_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Rifling",
+   "effect": "Projectile speed +10% per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_core"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_pre_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Read the Target",
+   "effect": "The third consecutive hit on one enemy exposes a Weak Point for 4 s: hits deal x1.4 and report as critical (Lucky Crit rolls untouched).",
+   "req": [
+    "rng_pre_01"
+   ],
+   "needs": [
+    "per-handle hit streak + Read record"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 2500
+  },
+  {
+   "id": "rng_pre_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Sharp Eye",
+   "effect": "Weak Point multiplier +0.1 per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_pre_02"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_pre_04",
+   "ring": 2,
+   "type": "small",
+   "name": "Long Arm",
+   "effect": "Range +60 px per rank.",
+   "ranks": 2,
+   "req": [
+    "rng_pre_01"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_pre_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Distance Is Contempt",
+   "effect": "+8% damage per rank against targets 300+ px away.",
+   "ranks": 3,
+   "req": [
+    "rng_pre_04"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_pre_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Penetrator",
+   "effect": "Pierce +1; +15% damage per enemy already pierced (max +60%).",
+   "req": [
+    "rng_pre_03"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_pre_07",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Second Read",
+   "effect": "Hits on a Weak Point gain +1 pierce; the enemy behind becomes Read after one hit.",
+   "req": [
+    "rng_pre_06"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_pre_08",
+   "ring": 2,
+   "type": "small",
+   "name": "Held Breath",
+   "effect": "Weak Point duration +1 s per rank.",
+   "ranks": 2,
+   "req": [
+    "rng_pre_03"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_pre_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Impossible Shot",
+   "effect": "A projectile expiring without a hit retargets once to the nearest enemy within 240 px (generation 1, NO_RETARGET).",
+   "side": "A",
+   "req": [
+    "rng_pre_07"
+   ],
+   "excl": [
+    "rng_pre_fork_b"
+   ],
+   "needs": [
+    "projectile expire callback + retarget API"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_pre_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Terminal Geometry",
+   "effect": "After piercing a Read enemy the projectile bends up to 45 degrees toward the nearest other Read enemy within 200 px (once).",
+   "side": "B",
+   "req": [
+    "rng_pre_07"
+   ],
+   "excl": [
+    "rng_pre_fork_a"
+   ],
+   "needs": [
+    "projectile bend API"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_pre_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "One Bullet",
+   "effect": "Ranged cooldown 0.22 -> 0.44 s, damage x2.4, pierce +2.",
+   "price": "Every extra-projectile source is disabled (the shotgun mutation included).",
+   "req": [
+    "rng_pre_06"
+   ],
+   "gate_nodes": 5,
+   "excl": [
+    "rng_bar_key"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 35000
+  },
+  {
+   "id": "rng_pre_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Ballistic Solution",
+   "effect": "Q: 0.5 s stop, then one 5x infinite-pierce shot (speed 1400) along the line through the most enemies in a 60-degree aim cone.",
+   "bounds": "8 s cooldown.",
+   "req": [
+    "rng_pre_06"
+   ],
+   "gate_nodes": 4,
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 60000
+  },
+  {
+   "id": "rng_pre_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Twin Solution",
+   "effect": "Two lines (best and second best, at least 20 degrees apart).",
+   "parent": "rng_pre_act",
+   "req": [
+    "rng_pre_act"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_pre_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Executioner's Solution",
+   "effect": "Normals at or below 25% HP on the line die outright.",
+   "parent": "rng_pre_act",
+   "req": [
+    "rng_pre_act"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_pre_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Quick Solution",
+   "effect": "No stop; cooldown 8 -> 5 s; damage 5x -> 3.5x.",
+   "parent": "rng_pre_act",
+   "req": [
+    "rng_pre_act"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_pre_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Perfect Solution",
+   "effect": "Every enemy hit by the Solution becomes Read; kills refund 2 s of its cooldown.",
+   "parent": "rng_pre_act",
+   "req": [
+    "rng_pre_mut1",
+    "rng_pre_mut2",
+    "rng_pre_mut3"
+   ],
+   "req_min": 2,
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 80000
+  },
+  {
+   "id": "rng_pre_axiom",
+   "ring": 3,
+   "type": "axiom",
+   "name": "Nothing Is Wasted",
+   "effect": "Any projectile or magic impact that hits nothing retargets once to the nearest enemy within 200 px (generation +1, NO_RETARGET).",
+   "price": "Base range -10%.",
+   "req": [
+    "rng_pre_08"
+   ],
+   "gate_nodes": 6,
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 40000
+  },
+  {
+   "id": "rng_pre_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "LINE OF JUDGEMENT",
+   "effect": "V: 1.0 s designation (enemies at 15% time scale while you aim) computes up to three lines maximizing on-screen intersections; on release each fires as an 8x hitscan beam (24 px wide) 0.2 s apart.",
+   "bounds": "Max 60 targets per line; bosses capped at 10% max HP per line; 50 s cooldown.",
+   "op_cost": "5% of current Followers (min 15).",
+   "req": [
+    "rng_pre_act"
+   ],
+   "gate_nodes": 8,
+   "needs": [
+    "hitscan helper",
+    "local time scale during designation"
+   ],
+   "style": "ranged",
+   "subtree": "precision",
+   "base_cost": 300000
+  },
+  {
+   "id": "rng_bar_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Trigger Discipline",
+   "effect": "Ranged cooldown -4% per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_core"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_bar_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Heat",
+   "effect": "Claims Heat: +6 per shot, decays 15/s after 0.6 s idle. At 25: +10% rate; 50: +20% and +1 pellet; 75: +30% and +2; 100: Jam for 1.2 s and Heat -> 0.",
+   "req": [
+    "rng_bar_01"
+   ],
+   "needs": [
+    "Heat resource",
+    "extra_projectiles on the hit profile"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 2500
+  },
+  {
+   "id": "rng_bar_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Heat Sink",
+   "effect": "Jam duration -0.2 s per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_bar_02"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_bar_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Fragmentation",
+   "effect": "Ranged kills release 2 fragments (generation 1, 30%, seeking the nearest enemy within 140 px, NO_FRAGMENT).",
+   "req": [
+    "rng_bar_02"
+   ],
+   "needs": [
+    "spawn-from-point API"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_bar_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Coolant",
+   "effect": "Heat decay +3/s per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_bar_03"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_bar_06",
+   "ring": 2,
+   "type": "small",
+   "name": "Kill Reload",
+   "effect": "Kills vent 8 Heat per rank.",
+   "ranks": 2,
+   "req": [
+    "rng_bar_04"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_bar_07",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Ricochet",
+   "effect": "Projectiles bounce once toward the nearest enemy within 160 px at 60% (generation 1, NO_RICOCHET).",
+   "req": [
+    "rng_bar_04"
+   ],
+   "needs": [
+    "on-hit retarget API"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_bar_08",
+   "ring": 3,
+   "type": "mechanic",
+   "name": "Ricochets Ricochet",
+   "effect": "+1 bounce (generation 2, budget 2), -20% per bounce.",
+   "req": [
+    "rng_bar_07"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 12000
+  },
+  {
+   "id": "rng_bar_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "ONE WEAPON, INFINITE BULLETS",
+   "effect": "The 75 tier becomes +60% rate and +3 pellets.",
+   "price": "Jam lasts 2.0 s.",
+   "side": "A",
+   "req": [
+    "rng_bar_08"
+   ],
+   "excl": [
+    "rng_bar_fork_b"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_bar_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "INFINITE WEAPONS, ONE TARGET",
+   "effect": "At Heat >= 50 every third shot also fires from a Crossfire point on a 380 px ring, aimed at your target (generation 1, CROSSFIRE, 70%).",
+   "side": "B",
+   "req": [
+    "rng_bar_08"
+   ],
+   "excl": [
+    "rng_bar_fork_a"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_bar_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Overclock",
+   "effect": "The Jam is removed; Heat cap 150 with a fourth tier at 100 (+40% rate, +3 pellets).",
+   "price": "Damage taken +35% and decay only 5/s while Heat is 100 or more.",
+   "req": [
+    "rng_bar_05"
+   ],
+   "gate_nodes": 5,
+   "excl": [
+    "rng_pre_key"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 35000
+  },
+  {
+   "id": "rng_bar_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Suppressive Burst",
+   "effect": "Q: 1.5 s at +150% fire rate with no Heat gain; ends by setting Heat to 75.",
+   "bounds": "10 s cooldown.",
+   "req": [
+    "rng_bar_04"
+   ],
+   "gate_nodes": 4,
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 60000
+  },
+  {
+   "id": "rng_bar_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Sustained",
+   "effect": "Burst lasts 2.5 s instead of 1.5 s.",
+   "parent": "rng_bar_act",
+   "req": [
+    "rng_bar_act"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_bar_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Vented",
+   "effect": "Burst ends at Heat 25 instead of 75, venting a 120 px 1.0x burn nova.",
+   "parent": "rng_bar_act",
+   "req": [
+    "rng_bar_act"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_bar_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Enfilade",
+   "effect": "Every Burst shot ricochets (+1, generation budget respected).",
+   "parent": "rng_bar_act",
+   "req": [
+    "rng_bar_act"
+   ],
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_bar_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Belt-Fed",
+   "effect": "Burst kills extend it by 0.15 s each (max +2 s).",
+   "parent": "rng_bar_act",
+   "req": [
+    "rng_bar_mut1",
+    "rng_bar_mut2",
+    "rng_bar_mut3"
+   ],
+   "req_min": 2,
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 80000
+  },
+  {
+   "id": "rng_bar_axiom",
+   "ring": 3,
+   "type": "axiom",
+   "name": "Heat Is Universal",
+   "effect": "Slashes and casts add +4 Heat; Heat rate tiers apply to every style's attack cooldown.",
+   "price": "The Jam applies to every style.",
+   "req": [
+    "rng_bar_06"
+   ],
+   "gate_nodes": 6,
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 40000
+  },
+  {
+   "id": "rng_bar_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "ABSOLUTE SUPPRESSION",
+   "effect": "V: for 5 s every shot you fire spawns 3 more from three rotating Crossfire points on a 420 px ring (generation 1, CROSSFIRE, 60%, no fragments or ricochets); Heat is frozen.",
+   "bounds": "Cap 300 secondary shots; Crossfire never targets bosses; 60 s cooldown.",
+   "op_cost": "1 Follower per 20 shots spawned (min 8), charged on end.",
+   "req": [
+    "rng_bar_act"
+   ],
+   "gate_nodes": 8,
+   "style": "ranged",
+   "subtree": "barrage",
+   "base_cost": 300000
+  },
+  {
+   "id": "rng_ord_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Blast Radius",
+   "effect": "Ordnance blast radius +8% per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_core"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_ord_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Impact Fuse",
+   "effect": "Every fifth ranged hit drops a Shell at the impact point (0.6 s delay, radius 80, 1.8x, generation 1, ORDNANCE, NO_ORDNANCE_TRIGGER).",
+   "req": [
+    "rng_ord_01"
+   ],
+   "needs": [
+    "pooled Shell scene: telegraph + delayed blast"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 2500
+  },
+  {
+   "id": "rng_ord_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Shorter Fuse",
+   "effect": "Shell delay -0.1 s per rank.",
+   "ranks": 2,
+   "req": [
+    "rng_ord_02"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 150
+  },
+  {
+   "id": "rng_ord_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Caltrops",
+   "effect": "Dashing drops a Mine at the start point (arms in 0.5 s, radius 70, 1.5x, 12 s life, max 6).",
+   "req": [
+    "rng_ord_02"
+   ],
+   "needs": [
+    "pooled Mine scene"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_ord_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Magazine",
+   "effect": "Max mines +2 per rank.",
+   "ranks": 2,
+   "req": [
+    "rng_ord_04"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 300
+  },
+  {
+   "id": "rng_ord_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Fracture",
+   "effect": "Blast hits apply Fractured: +6% damage taken per stack (max 5, 5 s).",
+   "req": [
+    "rng_ord_03"
+   ],
+   "needs": [
+    "per-handle Fractured status"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_ord_07",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Secondary Detonation",
+   "effect": "A killing blast spawns one follow-up Shell at the victim (generation +1, budget 2).",
+   "req": [
+    "rng_ord_06"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 4000
+  },
+  {
+   "id": "rng_ord_08",
+   "ring": 3,
+   "type": "small",
+   "name": "Heavier Shells",
+   "effect": "Blast damage +10% per rank.",
+   "ranks": 3,
+   "req": [
+    "rng_ord_07"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 600
+  },
+  {
+   "id": "rng_ord_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Saturation Coordinates",
+   "effect": "Every 3 s the densest cluster (6+ enemies within 100 px, scanned at 10 Hz) is auto-designated: 3 Shells over 1 s.",
+   "side": "A",
+   "req": [
+    "rng_ord_08"
+   ],
+   "excl": [
+    "rng_ord_fork_b"
+   ],
+   "needs": [
+    "cluster density scan"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_ord_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Walking Barrage",
+   "effect": "While moving, a Shell lands 120 px behind you every 0.8 s.",
+   "side": "B",
+   "req": [
+    "rng_ord_08"
+   ],
+   "excl": [
+    "rng_ord_fork_a"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 50000
+  },
+  {
+   "id": "rng_ord_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Beacon Doctrine",
+   "effect": "Elites hit by three blasts become Beacons: a Shell strikes them every 1.5 s until death (max 3 Beacons).",
+   "price": "Mines and Impact Fuse deal -50% to normals.",
+   "req": [
+    "rng_ord_06"
+   ],
+   "gate_nodes": 5,
+   "needs": [
+    "per-handle Beacon status"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 35000
+  },
+  {
+   "id": "rng_ord_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Designate",
+   "effect": "Q: place a Coordinate at the cursor (max 3, 15 s). Press on an existing one: it receives 4 Shells over 1.6 s at 2.0x.",
+   "bounds": "12 s cooldown from firing.",
+   "req": [
+    "rng_ord_04"
+   ],
+   "gate_nodes": 4,
+   "needs": [
+    "Coordinates list"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 60000
+  },
+  {
+   "id": "rng_ord_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Saturation",
+   "effect": "4 -> 7 Shells, scattered over 160 px.",
+   "parent": "rng_ord_act",
+   "req": [
+    "rng_ord_act"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_ord_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Guidance",
+   "effect": "Coordinates track the nearest elite; 4 -> 3 Shells at 3.0x.",
+   "parent": "rng_ord_act",
+   "req": [
+    "rng_ord_act"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_ord_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Cascade",
+   "effect": "Each Designate kill adds a Shell to the sequence (max +6).",
+   "parent": "rng_ord_act",
+   "req": [
+    "rng_ord_act"
+   ],
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 25000
+  },
+  {
+   "id": "rng_ord_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Fire for Effect",
+   "effect": "Coordinates persist after firing; cooldown 12 -> 8 s.",
+   "parent": "rng_ord_act",
+   "req": [
+    "rng_ord_mut1",
+    "rng_ord_mut2",
+    "rng_ord_mut3"
+   ],
+   "req_min": 2,
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 80000
+  },
+  {
+   "id": "rng_ord_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "TOTAL FIRE MISSION",
+   "effect": "V: 1.2 s grid telegraph over the screen, then 24 Shells over 4 s on a density-biased stratified grid (3.0x, radius 110, 0.16 s stagger).",
+   "bounds": "90 px player-safe radius per Shell; bosses capped at 12% max HP total; 75 s cooldown.",
+   "op_cost": "6% of current Followers (min 20) plus 1 per Cascade Shell.",
+   "req": [
+    "rng_ord_act"
+   ],
+   "gate_nodes": 8,
+   "style": "ranged",
+   "subtree": "ordnance",
+   "base_cost": 300000
+  },
+  {
+   "id": "mag_inv_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Wider Sigil",
+   "effect": "Magic impact radius +6 px per rank.",
+   "ranks": 3,
+   "req": [
+    "mag_core"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_inv_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Leave a Sigil",
+   "effect": "Every fourth impact leaves a Sigil (8 s, max 3) that pulses a 0.35x 48 px impact every 1.0 s (generation 1, SIGIL, NO_SIGIL_SPAWN).",
+   "req": [
+    "mag_inv_01"
+   ],
+   "needs": [
+    "pooled Sigil scene"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 2500
+  },
+  {
+   "id": "mag_inv_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Endure",
+   "effect": "Sigil life +3 s per rank.",
+   "ranks": 3,
+   "req": [
+    "mag_inv_02"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_inv_04",
+   "ring": 2,
+   "type": "small",
+   "name": "Congregation",
+   "effect": "Max Sigils +1 per rank.",
+   "ranks": 2,
+   "req": [
+    "mag_inv_03"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 300
+  },
+  {
+   "id": "mag_inv_05",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Fed by Death",
+   "effect": "Kills within 90 px of a Sigil grow it: +5% pulse damage and +2 px radius (max +100% / +40 px).",
+   "req": [
+    "mag_inv_02"
+   ],
+   "needs": [
+    "Sigil growth record"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_inv_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Echo Shrine",
+   "effect": "Casting within 70 px of a Sigil stores an Echo (max 3), released as full impacts when it expires or is triggered.",
+   "req": [
+    "mag_inv_05"
+   ],
+   "needs": [
+    "Echo store"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_inv_07",
+   "ring": 2,
+   "type": "small",
+   "name": "Warm Circle",
+   "effect": "+6% magic damage per rank per Sigil within 150 px (max 3 counted).",
+   "ranks": 2,
+   "req": [
+    "mag_inv_04"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 300
+  },
+  {
+   "id": "mag_inv_08",
+   "ring": 3,
+   "type": "small",
+   "name": "Pulse Rate",
+   "effect": "Sigil pulse interval -0.1 s per rank.",
+   "ranks": 2,
+   "req": [
+    "mag_inv_06"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 600
+  },
+  {
+   "id": "mag_inv_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Autonomous Invocation",
+   "effect": "Sigils aim: pulses become 0.5x impacts thrown at the nearest enemy within 220 px.",
+   "side": "A",
+   "req": [
+    "mag_inv_08"
+   ],
+   "excl": [
+    "mag_inv_fork_b"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_inv_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Recursive Ritual",
+   "effect": "A fully grown Sigil splits once: a child at 60% (generation 2, budget 1, cannot split) at the nearest cluster within 200 px.",
+   "side": "B",
+   "req": [
+    "mag_inv_08"
+   ],
+   "excl": [
+    "mag_inv_fork_a"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_inv_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Inherit the Word",
+   "effect": "Sigil pulses run apply_to_magic_impact and fire player_hit_landed as yours, so item on-hit rules trigger (0.5 s ICD per Sigil).",
+   "price": "Your direct casts deal -25%.",
+   "req": [
+    "mag_inv_07"
+   ],
+   "gate_nodes": 5,
+   "needs": [
+    "as-player hook proxy with SIGIL origin"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 35000
+  },
+  {
+   "id": "mag_inv_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Consecrate",
+   "effect": "Q: place a Sigil at the cursor (within 260 px) now and pulse every Sigil immediately.",
+   "bounds": "7 s cooldown.",
+   "req": [
+    "mag_inv_05"
+   ],
+   "gate_nodes": 4,
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 60000
+  },
+  {
+   "id": "mag_inv_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Great Sigil",
+   "effect": "The Consecrated Sigil has 1.5x radius and damage and counts as 2 toward the cap.",
+   "parent": "mag_inv_act",
+   "req": [
+    "mag_inv_act"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_inv_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Beacon of Ruin",
+   "effect": "Consecrate also releases every stored Echo.",
+   "parent": "mag_inv_act",
+   "req": [
+    "mag_inv_act"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_inv_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Wandering Sigil",
+   "effect": "The Consecrated Sigil follows you at 120 px/s (one at a time).",
+   "parent": "mag_inv_act",
+   "req": [
+    "mag_inv_act"
+   ],
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_inv_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Liturgy",
+   "effect": "Cooldown 7 -> 4 s; Consecrated Sigils never expire while you are within 200 px.",
+   "parent": "mag_inv_act",
+   "req": [
+    "mag_inv_mut1",
+    "mag_inv_mut2",
+    "mag_inv_mut3"
+   ],
+   "req_min": 2,
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 80000
+  },
+  {
+   "id": "mag_inv_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "THE HOST",
+   "effect": "V: for 6 s every Sigil duplicates once (60 px offset, generation 2, cannot grow or split, dies with the Host) and all Sigils pulse at 3x rate; Host copies release their Echoes on end.",
+   "bounds": "Cap 12 Sigils on the field; bosses capped at 10% max HP total; 70 s cooldown.",
+   "op_cost": "4% of current Followers (min 15) plus 1 per Sigil duplicated.",
+   "req": [
+    "mag_inv_act"
+   ],
+   "gate_nodes": 8,
+   "style": "magic",
+   "subtree": "invocation",
+   "base_cost": 300000
+  },
+  {
+   "id": "mag_dis_01",
+   "ring": 1,
+   "type": "small",
+   "name": "Improbable",
+   "effect": "Luck +6% per rank.",
+   "ranks": 3,
+   "req": [
+    "mag_core"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_dis_02",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Twice",
+   "effect": "12% chance (Luck-scaled, cap 20%) that an impact bursts again 0.15 s later at 50% (generation 1, NO_TWICE).",
+   "req": [
+    "mag_dis_01"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 2500
+  },
+  {
+   "id": "mag_dis_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Lingering Wrong",
+   "effect": "Durations of statuses you apply +10% per rank.",
+   "ranks": 2,
+   "req": [
+    "mag_dis_02"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_dis_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Misfire",
+   "effect": "Enemy projectiles within 90 px have a 15%/s chance each to be consumed (10 Hz poll, random subset).",
+   "req": [
+    "mag_dis_02"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_dis_05",
+   "ring": 2,
+   "type": "small",
+   "name": "Denial",
+   "effect": "Misfire chance +5% per rank.",
+   "ranks": 2,
+   "req": [
+    "mag_dis_04"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 300
+  },
+  {
+   "id": "mag_dis_06",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Causal Debt",
+   "effect": "Each hit re-applies 20% of its damage after 2.0 s (deferred ledger, max 3 pending per enemy; voided on death).",
+   "req": [
+    "mag_dis_03"
+   ],
+   "needs": [
+    "deferred damage ledger"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_dis_07",
+   "ring": 2,
+   "type": "small",
+   "name": "Interest",
+   "effect": "Debt +5% per rank.",
+   "ranks": 3,
+   "req": [
+    "mag_dis_06"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 300
+  },
+  {
+   "id": "mag_dis_08",
+   "ring": 3,
+   "type": "mechanic",
+   "name": "Contradiction",
+   "effect": "An enemy holding two or more of burn, stun, slow, Fractured, Primed, Read or Debt takes +15% from you.",
+   "req": [
+    "mag_dis_05",
+    "mag_dis_07"
+   ],
+   "needs": [
+    "per-handle status registry"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 12000
+  },
+  {
+   "id": "mag_dis_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Revision",
+   "effect": "Once per 12 s a hit of 25%+ max HP is undone (healed back, 0.5 s i-frames).",
+   "price": "1 Follower per Revision.",
+   "side": "A",
+   "req": [
+    "mag_dis_08"
+   ],
+   "excl": [
+    "mag_dis_fork_b"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_dis_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Inheritance",
+   "effect": "Pending Debt on a dying enemy transfers to the nearest enemy within 120 px (generation +1, budget 2).",
+   "side": "B",
+   "req": [
+    "mag_dis_08"
+   ],
+   "excl": [
+    "mag_dis_fork_a"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_dis_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Loaded Dice",
+   "effect": "Lucky Crit cap 8% -> 16%, multiplier 1.5x -> 2.0x.",
+   "price": "Every failed Luck roll costs 1% max HP (0.2 s ICD).",
+   "req": [
+    "mag_dis_07"
+   ],
+   "gate_nodes": 5,
+   "needs": [
+    "Lucky Crit cap and multiplier as parameters"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 35000
+  },
+  {
+   "id": "mag_dis_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Coin",
+   "effect": "Q: a 50/50 flip (Luck-biased up to 65/35). HEADS: 3 s of guaranteed Lucky Crits and Debt timers at 0.3 s. TAILS: -10% current HP and +40% magic damage for 3 s.",
+   "bounds": "9 s cooldown.",
+   "req": [
+    "mag_dis_04"
+   ],
+   "gate_nodes": 4,
+   "needs": [
+    "LuckResolver force-success window"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 60000
+  },
+  {
+   "id": "mag_dis_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Weighted",
+   "effect": "HEADS bias +10%.",
+   "parent": "mag_dis_act",
+   "req": [
+    "mag_dis_act"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dis_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Double or Nothing",
+   "effect": "TAILS may be re-flipped within 1 s; a second TAILS costs 20% HP.",
+   "parent": "mag_dis_act",
+   "req": [
+    "mag_dis_act"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dis_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "House Edge",
+   "effect": "Either result consumes all enemy projectiles within 160 px.",
+   "parent": "mag_dis_act",
+   "req": [
+    "mag_dis_act"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dis_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Rigged",
+   "effect": "Cooldown 9 -> 6 s; HEADS refunds 25% of the Revelation cooldown (once per 30 s).",
+   "parent": "mag_dis_act",
+   "req": [
+    "mag_dis_mut1",
+    "mag_dis_mut2",
+    "mag_dis_mut3"
+   ],
+   "req_min": 2,
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 80000
+  },
+  {
+   "id": "mag_dis_axiom",
+   "ring": 3,
+   "type": "axiom",
+   "name": "Effects Have Memory",
+   "effect": "Statuses you apply under any style have a 20% chance to reapply once at 50% duration when they expire.",
+   "price": "Base status durations -15%.",
+   "req": [
+    "mag_dis_03"
+   ],
+   "gate_nodes": 6,
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 40000
+  },
+  {
+   "id": "mag_dis_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "CONSENSUS FAILURE",
+   "effect": "V: for 4 s every Luck check you make succeeds, Twice always fires, Debt applies instantly, enemy projectiles within 220 px are consumed, and enemy melee against you misses.",
+   "bounds": "Explicitly excluded: cooldown resets, item internal cooldowns, boss arena mechanics; generation budgets enforced. 90 s cooldown, then 6 s of forced Luck failure (banks Misfortune for Broken Providence on purpose).",
+   "op_cost": "8% of current Followers (min 25).",
+   "req": [
+    "mag_dis_act"
+   ],
+   "gate_nodes": 8,
+   "needs": [
+    "evasion override"
+   ],
+   "style": "magic",
+   "subtree": "distortion",
+   "base_cost": 300000
+  },
+  {
+   "id": "mag_dom_01",
+   "ring": 1,
+   "type": "mechanic",
+   "name": "Gravity Well",
+   "effect": "Impacts pull enemies in a 120 px ring inward by 40 px and slow them 30% for 1.5 s.",
+   "req": [
+    "mag_core"
+   ],
+   "needs": [
+    "apply_knockback inward"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 2500
+  },
+  {
+   "id": "mag_dom_02",
+   "ring": 1,
+   "type": "small",
+   "name": "Heavier",
+   "effect": "Pull +10 px per rank.",
+   "ranks": 3,
+   "req": [
+    "mag_dom_01"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_dom_03",
+   "ring": 1,
+   "type": "small",
+   "name": "Lingering Weight",
+   "effect": "Slow +0.5 s per rank.",
+   "ranks": 2,
+   "req": [
+    "mag_dom_01"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 150
+  },
+  {
+   "id": "mag_dom_04",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Collision",
+   "effect": "Pulled enemies ending within 14 px of each other take 0.4x impact damage each (once per pull, max 20 pairs).",
+   "req": [
+    "mag_dom_02"
+   ],
+   "needs": [
+    "pairwise collision check"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_dom_05",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Bind",
+   "effect": "Enemies hit by one impact become Linked (up to 6, 6 s): Linked enemies share slows and stuns.",
+   "req": [
+    "mag_dom_03"
+   ],
+   "needs": [
+    "Link registry"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_dom_06",
+   "ring": 2,
+   "type": "small",
+   "name": "Longer Chain",
+   "effect": "Link +2 s per rank; rank 2 also raises members 6 -> 8.",
+   "ranks": 2,
+   "req": [
+    "mag_dom_05"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 300
+  },
+  {
+   "id": "mag_dom_07",
+   "ring": 2,
+   "type": "mechanic",
+   "name": "Collective Burden",
+   "effect": "25% of damage dealt to a Linked enemy is copied to each partner (generation 1, NO_LINK_SHARE, max 5).",
+   "req": [
+    "mag_dom_05"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 4000
+  },
+  {
+   "id": "mag_dom_08",
+   "ring": 3,
+   "type": "small",
+   "name": "Crushing",
+   "effect": "+5% magic damage per rank per enemy within 60 px of the impact centre (max +40%).",
+   "ranks": 2,
+   "req": [
+    "mag_dom_04",
+    "mag_dom_07"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 600
+  },
+  {
+   "id": "mag_dom_fork_a",
+   "ring": 3,
+   "type": "fork",
+   "name": "Singularity",
+   "effect": "An impact on 6+ enemies collapses them to its centre with a 0.3 s stun.",
+   "side": "A",
+   "req": [
+    "mag_dom_08"
+   ],
+   "excl": [
+    "mag_dom_fork_b"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_dom_fork_b",
+   "ring": 3,
+   "type": "fork",
+   "name": "Forced Orbit",
+   "effect": "Pulled enemies orbit you at 110 px for 2 s, unable to attack (velocity override).",
+   "side": "B",
+   "req": [
+    "mag_dom_08"
+   ],
+   "excl": [
+    "mag_dom_fork_a"
+   ],
+   "needs": [
+    "enemy velocity override"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 50000
+  },
+  {
+   "id": "mag_dom_key",
+   "ring": 3,
+   "type": "keystone",
+   "name": "Sovereign Ground",
+   "effect": "Standing still for 1 s leaves a 90 px zone (max 2, 6 s): enemies inside are slowed 50% and take +20% damage.",
+   "price": "Move speed -10%, dash cooldown +0.4 s.",
+   "req": [
+    "mag_dom_06"
+   ],
+   "gate_nodes": 5,
+   "excl": [
+    "mel_mom_key"
+   ],
+   "needs": [
+    "Sovereign zones"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 35000
+  },
+  {
+   "id": "mag_dom_act",
+   "ring": 3,
+   "type": "active",
+   "name": "Compel",
+   "effect": "Q (aimed): a 200 px cone; every enemy in it is dragged 140 px toward the cursor point and stunned 0.4 s.",
+   "bounds": "8 s cooldown.",
+   "req": [
+    "mag_dom_04"
+   ],
+   "gate_nodes": 4,
+   "needs": [
+    "pull-to-point velocity override"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 60000
+  },
+  {
+   "id": "mag_dom_mut1",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Compel: Ring",
+   "effect": "Compel becomes a 220 px circle around the cursor.",
+   "parent": "mag_dom_act",
+   "req": [
+    "mag_dom_act"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dom_mut2",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Compel: Chain",
+   "effect": "Every pulled enemy is Linked together (cap 12 for that batch).",
+   "parent": "mag_dom_act",
+   "req": [
+    "mag_dom_act"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dom_mut3",
+   "ring": 3,
+   "type": "mutation",
+   "name": "Compel: Repulse",
+   "effect": "Hold to invert: shove 260 px; 0.6x on collision.",
+   "parent": "mag_dom_act",
+   "req": [
+    "mag_dom_act"
+   ],
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 25000
+  },
+  {
+   "id": "mag_dom_cap",
+   "ring": 4,
+   "type": "capstone",
+   "name": "Absolute Compel",
+   "effect": "Cooldown 8 -> 5 s; pulled enemies are Subjugated (+10% damage taken, 3 s).",
+   "parent": "mag_dom_act",
+   "req": [
+    "mag_dom_mut1",
+    "mag_dom_mut2",
+    "mag_dom_mut3"
+   ],
+   "req_min": 2,
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 80000
+  },
+  {
+   "id": "mag_dom_rev",
+   "ring": 4,
+   "type": "revelation",
+   "name": "KNEEL",
+   "effect": "V: every normal on screen is pulled to the cursor point at 900 px/s for 0.8 s and held 2.0 s; elites are slowed 70% and held 1.0 s.",
+   "bounds": "Bosses unaffected; max 300 targets; released with a 0.5 s no-attack stumble; 60 s cooldown.",
+   "op_cost": "5% of current Followers (min 15) plus 1 per 25 pulled.",
+   "req": [
+    "mag_dom_act"
+   ],
+   "gate_nodes": 8,
+   "style": "magic",
+   "subtree": "dominion",
+   "base_cost": 300000
+  },
+  {
+   "id": "snk_mel_sharpen",
+   "ring": 5,
+   "type": "sink",
+   "name": "Sharpen",
+   "effect": "+3% melee damage per rank.",
+   "style": "melee",
+   "subtree": "execution",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "ratio": 1.35,
+   "cap": "none",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_mel_verdict",
+   "ring": 5,
+   "type": "sink",
+   "name": "Verdict",
+   "effect": "+0.5% execute threshold per rank.",
+   "style": "melee",
+   "subtree": "execution",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "ratio": 1.5,
+   "cap": "threshold total 40%",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_mel_ledger",
+   "ring": 5,
+   "type": "sink",
+   "name": "Ledger",
+   "effect": "Force cap +5 per rank.",
+   "style": "melee",
+   "subtree": "bastion",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "ratio": 1.3,
+   "cap": "Force cap 300",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_rng_rifling",
+   "ring": 5,
+   "type": "sink",
+   "name": "Rifling",
+   "effect": "+2% projectile speed and range per rank.",
+   "style": "ranged",
+   "subtree": "precision",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "ratio": 1.3,
+   "cap": "+60% total",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_rng_judgement",
+   "ring": 5,
+   "type": "sink",
+   "name": "Judgement",
+   "effect": "+4% Active and Revelation damage per rank.",
+   "style": "ranged",
+   "subtree": "precision",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "ratio": 1.35,
+   "cap": "none",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_rng_barrel",
+   "ring": 5,
+   "type": "sink",
+   "name": "Barrel",
+   "effect": "Heat per shot -1% per rank.",
+   "style": "ranged",
+   "subtree": "barrage",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "ratio": 1.4,
+   "cap": "-40% total",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_mag_dominion",
+   "ring": 5,
+   "type": "sink",
+   "name": "Dominion",
+   "effect": "+2% impact radius per rank.",
+   "style": "magic",
+   "subtree": "dominion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "ratio": 1.35,
+   "cap": "+50% total",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_mag_invocation",
+   "ring": 5,
+   "type": "sink",
+   "name": "Invocation",
+   "effect": "Sigil life +0.5 s and pulse damage +2% per rank.",
+   "style": "magic",
+   "subtree": "invocation",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "ratio": 1.35,
+   "cap": "none",
+   "base_cost": 60000
+  },
+  {
+   "id": "snk_mag_consensus",
+   "ring": 5,
+   "type": "sink",
+   "name": "Consensus",
+   "effect": "Luck +1% and Revelation Follower cost -1% per rank.",
+   "style": "magic",
+   "subtree": "distortion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "ratio": 1.5,
+   "cap": "cost floor 50% of base",
+   "base_cost": 60000
+  },
+  {
+   "id": "wit_magic@melee",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Sign",
+   "effect": "Grants the magic core impact as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "melee",
+   "subtree": null,
+   "gutter": "execution|momentum",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "canonical": "wit_magic",
+   "target_style": "magic",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_mel_mag@melee",
+   "ring": 5,
+   "type": "bridge",
+   "name": "INCARNATE",
+   "effect": "Every third slash spawns a MagicImpact at the arc's far edge (0.7x); every impact that hits 3+ enemies fires a 0.5x slash arc from you toward its centre.",
+   "style": "melee",
+   "subtree": null,
+   "gutter": "execution|momentum",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "req_all": [
+    "wit_magic@melee"
+   ],
+   "canonical": "brg_mel_mag",
+   "target_style": "magic",
+   "opens": [
+    "mel_exe_02",
+    "mel_mom_04",
+    "mag_inv_02",
+    "mag_dom_01",
+    "mag_dis_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "wit_ranged@melee",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Shot",
+   "effect": "Grants the ranged core projectile as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "melee",
+   "subtree": null,
+   "gutter": "momentum|bastion",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "canonical": "wit_ranged",
+   "target_style": "ranged",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_mel_rng@melee",
+   "ring": 5,
+   "type": "bridge",
+   "name": "TOTAL OFFENSIVE",
+   "effect": "A slash hitting 2+ enemies fires one projectile per extra enemy (max 3) at the farthest; a ranged kill within 100 px of you triggers a 0.5x slash arc.",
+   "style": "melee",
+   "subtree": null,
+   "gutter": "momentum|bastion",
+   "req": [
+    "mel_exe_rev",
+    "mel_mom_rev",
+    "mel_bas_rev"
+   ],
+   "req_all": [
+    "wit_ranged@melee"
+   ],
+   "canonical": "brg_mel_rng",
+   "target_style": "ranged",
+   "opens": [
+    "mel_exe_02",
+    "mel_mom_04",
+    "rng_pre_02",
+    "rng_bar_07",
+    "rng_ord_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "brg_asc@melee",
+   "ring": 5,
+   "type": "ascendant",
+   "name": "ASCENDANT",
+   "effect": "Every primary attack carries all three style tags for the bridge-open nodes; each bridge-open list fires at most once per source attack; chains get budget 2 total. Prize: a second Revelation from a different subtree may be slotted on V (both share the longer cooldown).",
+   "style": "melee",
+   "subtree": null,
+   "gutter": "bastion|execution",
+   "req_all": [
+    "brg_mel_mag@melee",
+    "brg_mel_rng@melee"
+   ],
+   "canonical": "brg_asc",
+   "op_cost": "1 Follower per 50 bridge-generated attacks, charged per segment.",
+   "bounds": "Needs both bridges of your style and a peak congregation of 50,000,000.",
+   "base_cost": 25000000
+  },
+  {
+   "id": "wit_melee@ranged",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Blade",
+   "effect": "Grants the melee core slash as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "ranged",
+   "subtree": null,
+   "gutter": "precision|barrage",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "canonical": "wit_melee",
+   "target_style": "melee",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_mel_rng@ranged",
+   "ring": 5,
+   "type": "bridge",
+   "name": "TOTAL OFFENSIVE",
+   "effect": "A slash hitting 2+ enemies fires one projectile per extra enemy (max 3) at the farthest; a ranged kill within 100 px of you triggers a 0.5x slash arc.",
+   "style": "ranged",
+   "subtree": null,
+   "gutter": "precision|barrage",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "req_all": [
+    "wit_melee@ranged"
+   ],
+   "canonical": "brg_mel_rng",
+   "target_style": "melee",
+   "opens": [
+    "mel_exe_02",
+    "mel_mom_04",
+    "rng_pre_02",
+    "rng_bar_07",
+    "rng_ord_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "wit_magic@ranged",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Sign",
+   "effect": "Grants the magic core impact as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "ranged",
+   "subtree": null,
+   "gutter": "barrage|ordnance",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "canonical": "wit_magic",
+   "target_style": "magic",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_rng_mag@ranged",
+   "ring": 5,
+   "type": "bridge",
+   "name": "ARCANE BALLISTICS",
+   "effect": "A projectile that expires or exhausts its pierce bursts as a 0.6x MagicImpact; an impact fires one projectile outward per 3 enemies hit (max 3).",
+   "style": "ranged",
+   "subtree": null,
+   "gutter": "barrage|ordnance",
+   "req": [
+    "rng_pre_rev",
+    "rng_bar_rev",
+    "rng_ord_rev"
+   ],
+   "req_all": [
+    "wit_magic@ranged"
+   ],
+   "canonical": "brg_rng_mag",
+   "target_style": "magic",
+   "opens": [
+    "rng_pre_02",
+    "rng_bar_07",
+    "rng_ord_02",
+    "mag_inv_02",
+    "mag_dom_01",
+    "mag_dis_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "brg_asc@ranged",
+   "ring": 5,
+   "type": "ascendant",
+   "name": "ASCENDANT",
+   "effect": "Every primary attack carries all three style tags for the bridge-open nodes; each bridge-open list fires at most once per source attack; chains get budget 2 total. Prize: a second Revelation from a different subtree may be slotted on V (both share the longer cooldown).",
+   "style": "ranged",
+   "subtree": null,
+   "gutter": "ordnance|precision",
+   "req_all": [
+    "brg_mel_rng@ranged",
+    "brg_rng_mag@ranged"
+   ],
+   "canonical": "brg_asc",
+   "op_cost": "1 Follower per 50 bridge-generated attacks, charged per segment.",
+   "bounds": "Needs both bridges of your style and a peak congregation of 50,000,000.",
+   "base_cost": 25000000
+  },
+  {
+   "id": "wit_melee@magic",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Blade",
+   "effect": "Grants the melee core slash as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "magic",
+   "subtree": null,
+   "gutter": "invocation|distortion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "canonical": "wit_melee",
+   "target_style": "melee",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_mel_mag@magic",
+   "ring": 5,
+   "type": "bridge",
+   "name": "INCARNATE",
+   "effect": "Every third slash spawns a MagicImpact at the arc's far edge (0.7x); every impact that hits 3+ enemies fires a 0.5x slash arc from you toward its centre.",
+   "style": "magic",
+   "subtree": null,
+   "gutter": "invocation|distortion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "req_all": [
+    "wit_melee@magic"
+   ],
+   "canonical": "brg_mel_mag",
+   "target_style": "melee",
+   "opens": [
+    "mel_exe_02",
+    "mel_mom_04",
+    "mag_inv_02",
+    "mag_dom_01",
+    "mag_dis_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "wit_ranged@magic",
+   "ring": 5,
+   "type": "witness",
+   "name": "Witness of the Shot",
+   "effect": "Grants the ranged core projectile as a tree-triggerable secondary attack (never input-triggered).",
+   "style": "magic",
+   "subtree": null,
+   "gutter": "distortion|dominion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "canonical": "wit_ranged",
+   "target_style": "ranged",
+   "bounds": "Needs any Revelation of your style and a peak congregation of 5,000,000.",
+   "base_cost": 300000
+  },
+  {
+   "id": "brg_rng_mag@magic",
+   "ring": 5,
+   "type": "bridge",
+   "name": "ARCANE BALLISTICS",
+   "effect": "A projectile that expires or exhausts its pierce bursts as a 0.6x MagicImpact; an impact fires one projectile outward per 3 enemies hit (max 3).",
+   "style": "magic",
+   "subtree": null,
+   "gutter": "distortion|dominion",
+   "req": [
+    "mag_inv_rev",
+    "mag_dis_rev",
+    "mag_dom_rev"
+   ],
+   "req_all": [
+    "wit_ranged@magic"
+   ],
+   "canonical": "brg_rng_mag",
+   "target_style": "ranged",
+   "opens": [
+    "rng_pre_02",
+    "rng_bar_07",
+    "rng_ord_02",
+    "mag_inv_02",
+    "mag_dom_01",
+    "mag_dis_02"
+   ],
+   "bounds": "Bridge attacks carry origin BRIDGE, generation 1, budget 1, never emit weapon_fired, and count as the other style only for the bridge-open nodes listed.",
+   "base_cost": 2500000
+  },
+  {
+   "id": "brg_asc@magic",
+   "ring": 5,
+   "type": "ascendant",
+   "name": "ASCENDANT",
+   "effect": "Every primary attack carries all three style tags for the bridge-open nodes; each bridge-open list fires at most once per source attack; chains get budget 2 total. Prize: a second Revelation from a different subtree may be slotted on V (both share the longer cooldown).",
+   "style": "magic",
+   "subtree": null,
+   "gutter": "dominion|invocation",
+   "req_all": [
+    "brg_mel_mag@magic",
+    "brg_rng_mag@magic"
+   ],
+   "canonical": "brg_asc",
+   "op_cost": "1 Follower per 50 bridge-generated attacks, charged per segment.",
+   "bounds": "Needs both bridges of your style and a peak congregation of 50,000,000.",
+   "base_cost": 25000000
+  }
+ ]
+}

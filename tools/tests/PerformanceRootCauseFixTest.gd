@@ -22,6 +22,8 @@ func _run() -> void:
 	_test_scheduler_tier_contract()
 	_test_projectile_query_contract()
 	_test_chunk_queue_contract()
+	_test_enemy_health_authority_contract()
+	_test_handle_combat_contract()
 	print("PerformanceRootCauseFixTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -75,11 +77,14 @@ func _test_projectile_query_contract() -> void:
 	add_child(far_enemy)
 	index.call("register", near_enemy)
 	index.call("register", far_enemy)
-	manager.set("_enemy_index", index)
+	var near_handle := EnemyWorld.handle_for_actor(near_enemy)
+	var far_handle := EnemyWorld.handle_for_actor(far_enemy)
 	_check(bool(manager.call("_query_first_enemy_hit", Vector2.ZERO, Vector2(100, 0), 0.0, 0)), "projectile query finds an enemy")
 	_check((manager.call("debug_last_enemy_hit") as Dictionary).get("target") == near_enemy, "projectile query selects nearest exact hit")
-	_check(bool(manager.call("_query_first_enemy_hit", Vector2.ZERO, Vector2(100, 0), 0.0, near_enemy.get_instance_id())), "projectile exclusion still permits later hit")
+	_check(int((manager.call("debug_last_enemy_hit") as Dictionary).get("handle", 0)) == near_handle, "projectile query returns stable target handle")
+	_check(bool(manager.call("_query_first_enemy_hit", Vector2.ZERO, Vector2(100, 0), 0.0, near_handle)), "projectile exclusion still permits later hit")
 	_check((manager.call("debug_last_enemy_hit") as Dictionary).get("target") == far_enemy, "projectile exclusion preserves piercing order")
+	_check(int((manager.call("debug_last_enemy_hit") as Dictionary).get("handle", 0)) == far_handle, "piercing query exclusion is generation-safe")
 	index.call("unregister", near_enemy)
 	index.call("unregister", far_enemy)
 	near_enemy.queue_free()
@@ -104,3 +109,47 @@ func _test_chunk_queue_contract() -> void:
 	var generated := int(manager.call("process_chunk_generation_queue", 1))
 	_check(generated == 1 and (manager.call("debug_chunk_queue") as Array).size() == before - 1, "chunk queue obeys one-chunk budget")
 	manager.queue_free()
+
+
+func _test_enemy_health_authority_contract() -> void:
+	var lifecycle_source := FileAccess.get_file_as_string("res://core/actors/enemy/modules/EnemyLifecycle.gd")
+	var actor_source := FileAccess.get_file_as_string("res://core/actors/enemy/enemy.gd")
+	var boss_arena_source := FileAccess.get_file_as_string("res://scenes/world/events/BossArena.gd")
+	var miniboss_arena_source := FileAccess.get_file_as_string("res://scenes/world/events/MiniBossArena.gd")
+	_check(lifecycle_source.find("_owner.hp -=") < 0, "enemy lifecycle cannot subtract from actor health directly")
+	_check(actor_source.find("EnemyCombat.apply_damage(") >= 0, "enemy damage facade routes through authoritative combat service")
+	_check(boss_arena_source.find("en.hp =") < 0, "boss scaling cannot write actor health behind the world")
+	_check(miniboss_arena_source.find("en.hp =") < 0, "miniboss scaling cannot write actor health behind the world")
+
+
+func _test_handle_combat_contract() -> void:
+	var attack_paths: Array[String] = [
+		"res://core/combat/projectile/projectile.gd",
+		"res://scenes/world/combat/RangedBullet.gd",
+		"res://scenes/world/combat/MeleeSlash.gd",
+		"res://scenes/world/combat/MagicImpact.gd",
+		"res://effects/augments/logic/MagicMissileEffect.gd",
+		"res://effects/augments/logic/MagicMissileProjectile.gd",
+		"res://spells/logic/MagicMissileSpell.gd",
+		"res://effects/augments/logic/PoisonSpiderling.gd",
+		"res://effects/augments/logic/ReflectedProjectile.gd",
+		"res://effects/augments/logic/ReflectShieldEffect.gd",
+		"res://effects/augments/logic/SpiritSlashEffect.gd",
+		"res://effects/augments/logic/TeslaAuraEffect.gd",
+		"res://effects/conduit/scenes/ConduitArcBolts.gd",
+		"res://effects/conduit/scenes/ConduitOverclockAndFeedback.gd",
+		"res://effects/gravemarch/scenes/GravemarchMassArrest.gd",
+		"res://effects/gravemarch/scenes/GravemarchSunderstep.gd",
+		"res://effects/lattice/scenes/LatticeAfterstrike.gd",
+		"res://effects/lattice/scenes/LatticeEchoBuffer.gd",
+	]
+	var node_scan_free := true
+	var legacy_index_free := true
+	for path in attack_paths:
+		var source := FileAccess.get_file_as_string(path)
+		node_scan_free = node_scan_free and source.find("get_nodes_in_group(\"enemies\")") < 0
+		legacy_index_free = legacy_index_free and source.find("/root/EnemyIndex") < 0
+	_check(node_scan_free, "production player attacks cannot scan the enemies Node group")
+	_check(legacy_index_free, "production player attacks cannot target through EnemyIndex")
+	var missile_source := FileAccess.get_file_as_string("res://effects/augments/logic/MagicMissileProjectile.gd")
+	_check(missile_source.find("var target: Node2D") < 0, "homing projectile identity is a stable handle, never an enemy Node")

@@ -1,0 +1,76 @@
+{
+  "ascension_usec": {
+    "max": 27154.0,
+    "p50": 15.0,
+    "p95": 42.0
+  },
+  "build": {
+    "game_version": "0.0.0.25.5",
+    "git_branch": "enemy-world-work",
+    "git_commit": "74c1714ee226",
+    "godot_version": "4.7.2-stable (official)",
+    "world_seed": 0
+  },
+  "casts": 14,
+  "cpu": "Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz",
+  "display_server": "headless",
+  "draw_calls": {
+    "max": 0.0,
+    "p50": 0.0
+  },
+  "events": [
+    {
+      "event": "preset",
+      "result": {
+        "bought": 15,
+        "failed": "",
+        "spent": 14200
+      },
+      "t": 3.00508355555556
+    },
+    {
+      "event": "revelation",
+      "t": 33.0535941111106
+    }
+  ],
+  "frame_ms": {
+    "max": 27.0253333333333,
+    "p50": 6.896,
+    "p95": 7.14285714285714,
+    "p99": 8.33333333333333
+  },
+  "frames": 5745,
+  "godot": "4.7.2-stable (official)",
+  "gpu": "",
+  "headless": true,
+  "kills": 240,
+  "kills_per_sec": 6.0,
+  "nodes": {
+    "end": 2522.0,
+    "max": 2537.0,
+    "start": 2247.0
+  },
+  "note": "frame_ms is the process delta; wall_ms is real spacing between frames; headless runs have no rendering and are not a play-feel measurement.",
+  "os": "Linux",
+  "population": 60,
+  "preset": "Bastion pure",
+  "renderer": "none",
+  "runner_counters": {
+    "engines": 1,
+    "flush_usec": 1,
+    "flushed": 0,
+    "hit_usec": 0,
+    "hits_this_frame": 0,
+    "queued_attacks": 0,
+    "tick_usec": 14
+  },
+  "seconds": 40.0014419999983,
+  "seed": 20260916,
+  "segment": 5,
+  "wall_ms": {
+    "max": 29.225,
+    "p50": 6.893,
+    "p95": 11.814,
+    "p99": 17.18
+  }
+}

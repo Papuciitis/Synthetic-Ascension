@@ -49,7 +49,9 @@ func _ready() -> void:
 	btn_quit.pressed.connect(_on_quit_pressed)
 	btn_continue.call_deferred("grab_focus")
 
-	# Dev mode
+	# Dev mode: the whole entry point (segment jump, free loadouts, follower
+	# grants) disappears in release exports.
+	chk_dev.visible = OS.is_debug_build()
 	dev_panel.visible = false
 	_set_dev_label(false)
 	chk_dev.toggled.connect(func(on: bool) -> void:
@@ -105,7 +107,7 @@ func _on_settings_closed() -> void:
 
 
 func _on_quit_pressed() -> void:
-	get_tree().quit()
+	Global.request_quit()
 
 
 func _go_to_saves() -> void:
@@ -198,6 +200,8 @@ func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 		Global.pending_augment_pick = true
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
+		Global.attempt_pending_doctrine_stage = &"apotheosis" if seg >= 10 else (&"doctrine" if seg >= 7 else &"method")
+		Global.attempt_major_choice_offer_ids.clear()
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false
@@ -251,6 +255,8 @@ func _on_start_dev_hub_pressed() -> void:
 		Global.pending_augment_pick = true
 	if chk_force_major.button_pressed:
 		Global.pending_big_choice = true
+		Global.attempt_pending_doctrine_stage = &"apotheosis" if seg >= 10 else (&"doctrine" if seg >= 7 else &"method")
+		Global.attempt_major_choice_offer_ids.clear()
 	Global.debug_force_enemy_introductions = chk_force_enemy_intros.button_pressed
 	Global.debug_dev_mode = true
 	Global.debug_projectile_stress_test = false

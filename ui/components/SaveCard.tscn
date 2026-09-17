@@ -2,18 +2,19 @@
 
 [ext_resource type="Script" uid="uid://dbjqnrleeyvs3" path="res://ui/components/SaveCard.gd" id="1"]
 [ext_resource type="Script" uid="uid://d20bqkw442jvv" path="res://ui/components/TactileButton.gd" id="2_tc06p"]
+[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="3_theme"]
 
 [sub_resource type="StyleBoxFlat" id="StyleCardNormal"]
-bg_color = Color(0, 0, 0, 0.18)
+bg_color = Color(0.068, 0.061, 0.054, 0.97)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 shadow_color = Color(0, 0, 0, 0.32)
 shadow_size = 12
 shadow_offset = Vector2(0, 8)
@@ -25,10 +26,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+corner_radius_top_left = 0
+corner_radius_top_right = 0
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
 
 [sub_resource type="StyleBoxFlat" id="StyleDetailsPanel"]
 bg_color = Color(0.025, 0.025, 0.03, 0.88)
@@ -37,10 +38,10 @@ border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
 border_color = Color(1, 0.55, 0.2, 0.42)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
 bg_color = Color(0, 0, 0, 0.26)
@@ -49,10 +50,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.18)
 shadow_size = 6
 shadow_offset = Vector2(0, 4)
@@ -64,10 +65,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.14)
 shadow_size = 5
 shadow_offset = Vector2(0, 3)
@@ -79,10 +80,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 shadow_color = Color(0, 0, 0, 0.2)
 shadow_size = 7
 shadow_offset = Vector2(0, 5)
@@ -94,6 +95,8 @@ anchors_preset = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1")
+theme = ExtResource("3_theme")
+corner_radius = 3
 
 [node name="CardPanel" type="Panel" parent="." unique_id=1818890899]
 layout_mode = 0
@@ -101,6 +104,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleCardNormal")
+theme_type_variation = &"ArchiveCard"
 
 [node name="Preview" type="TextureRect" parent="CardPanel" unique_id=1683016989]
 modulate = Color(1, 1, 1, 0.22)
@@ -170,6 +174,7 @@ theme_override_constants/separation = 6
 
 [node name="Name" type="Label" parent="CardPanel/RootVBox/BottomPanel/Margin/InfoVBox" unique_id=257996878]
 layout_mode = 2
+theme_type_variation = &"InstitutionalHeading"
 theme_override_font_sizes/font_size = 17
 text = "EMPTY SLOT"
 horizontal_alignment = 1
@@ -204,6 +209,7 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
 theme_override_styles/hover = SubResource("StyleBtnHover")
+theme_type_variation = &"InstitutionalButton"
 text = "Delete"
 script = ExtResource("2_tc06p")
 
@@ -216,5 +222,6 @@ theme_override_font_sizes/font_size = 13
 theme_override_styles/normal = SubResource("StyleBtnNormal")
 theme_override_styles/pressed = SubResource("StyleBtnPressed")
 theme_override_styles/hover = SubResource("StyleBtnHover")
+theme_type_variation = &"InstitutionalButton"
 text = "Rename"
 script = ExtResource("2_tc06p")

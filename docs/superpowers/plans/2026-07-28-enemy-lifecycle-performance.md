@@ -339,7 +339,7 @@ Add stress cycle counts and maximum retained populations to the changelog.
 **Files:**
 - Modify: `core/combat/projectile/ProjectileSimulationManager.gd`
 - Create: `tools/tests/ProjectileRenderBenchmark.gd`
-- Create: `tools/tests/ProjectileRenderBenchmark.tscn`
+- Create: `tools/tests/ProjectileRenderBenchmark.gd` (a `SceneTree` script; run with `-s`, there is no `.tscn`)
 - Modify: `docs/PERFORMANCE_PATCH_CHANGELOG.md`
 
 **Interfaces:**

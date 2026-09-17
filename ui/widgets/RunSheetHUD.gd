@@ -1,25 +1,114 @@
 extends PanelContainer
 class_name RunSheetHUD
 
-@onready var hpv: Label = $Margin/VBox/StatsGrid/HPV
-@onready var armv: Label = $Margin/VBox/StatsGrid/ARMV
-@onready var spdv: Label = $Margin/VBox/StatsGrid/SPDV
-@onready var powv: Label = $Margin/VBox/StatsGrid/POWV
-@onready var hstv: Label = $Margin/VBox/StatsGrid/HSTV
-@onready var lckv: Label = $Margin/VBox/StatsGrid/LCKV
+const BuildIdentityScript := preload("res://core/systems/run_sheet/BuildIdentity.gd")
 
-@onready var hpd: Label = $Margin/VBox/StatsGrid/HPD
-@onready var armd: Label = $Margin/VBox/StatsGrid/ARMD
-@onready var spdd: Label = $Margin/VBox/StatsGrid/SPDD
-@onready var powd: Label = $Margin/VBox/StatsGrid/POWD
-@onready var hstd: Label = $Margin/VBox/StatsGrid/HSTD
-@onready var lckd: Label = $Margin/VBox/StatsGrid/LCKD
+enum ArchivePage { PROFILE, SETS, MANIFESTATIONS, OBSERVATIONS }
 
-@onready var sets_vbox: VBoxContainer = $Margin/VBox/SetsVBox
+const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
+
+@onready var hpv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HPV
+@onready var armv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/ARMV
+@onready var spdv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/SPDV
+@onready var powv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/POWV
+@onready var hstv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTV
+@onready var lckv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/LCKV
+
+@onready var hpd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HPD
+@onready var armd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/ARMD
+@onready var spdd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/SPDD
+@onready var powd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/POWD
+@onready var hstd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HSTD
+@onready var lckd: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/LCKD
+
+@onready var profile_content: VBoxContainer = $Archive/BodyMargin/Pages/ProfileScroll/Content
+@onready var sets_vbox: VBoxContainer = $Archive/BodyMargin/Pages/SetsScroll/SetsVBox
+@onready var manifestations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ManifestationsScroll/ManifestationsVBox
+@onready var observations_vbox: VBoxContainer = $Archive/BodyMargin/Pages/ObservationsScroll/ObservationsVBox
+
+@onready var _page_controls: Array[Control] = [
+	$Archive/BodyMargin/Pages/ProfileScroll,
+	$Archive/BodyMargin/Pages/SetsScroll,
+	$Archive/BodyMargin/Pages/ManifestationsScroll,
+	$Archive/BodyMargin/Pages/ObservationsScroll,
+]
+@onready var _page_buttons: Array[Button] = [
+	$Archive/Index/Profile,
+	$Archive/Index/Sets,
+	$Archive/Index/Manifestations,
+	$Archive/Index/Observations,
+]
+
+var _selected_page: int = ArchivePage.PROFILE
+var _selected_set_id: StringName = &""
+var _last_set_counts: Dictionary = {}
+var _page_signatures := {
+	ArchivePage.SETS: "__UNINITIALIZED__",
+	ArchivePage.MANIFESTATIONS: "__UNINITIALIZED__",
+	ArchivePage.OBSERVATIONS: "__UNINITIALIZED__",
+}
+var _rebuild_counts := {"sets": 0, "manifestations": 0, "observations": 0}
+var _doctrine_events: Array[String] = []
+var _ledger_box: VBoxContainer = null
+var _ledger_signature: String = "__UNINITIALIZED__"
+
+## The Profile grid's six rows, in its order, keyed to the Stats field each
+## ledger row names. `pct` picks the grid's own formatting for that stat.
+const LEDGER_STATS: Array[Dictionary] = [
+	{"stat": &"max_hp", "key": "HP", "pct": false},
+	{"stat": &"armor", "key": "ARM", "pct": false},
+	{"stat": &"move_speed", "key": "SPD", "pct": false},
+	{"stat": &"power", "key": "PWR", "pct": true},
+	{"stat": &"haste", "key": "HST", "pct": true},
+	{"stat": &"luck", "key": "LCK", "pct": true},
+]
 
 const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
+## The layer's own colour. Anything naming a specific noun or rule uses that
+## noun's colour from ManifestationNouns instead.
+const MANIFEST := ManifestationNouns.LAYER
+
+
+func _ready() -> void:
+	for index in range(_page_buttons.size()):
+		_page_buttons[index].pressed.connect(select_page.bind(index))
+	_ledger_box = VBoxContainer.new()
+	_ledger_box.name = "Ledger"
+	_ledger_box.add_theme_constant_override("separation", 3)
+	profile_content.add_child(_ledger_box)
+	select_page(_selected_page)
+	if RunEvents != null and RunEvents.has_signal("doctrine_event_recorded"):
+		var callback := Callable(self, "_on_doctrine_event_recorded")
+		if not RunEvents.doctrine_event_recorded.is_connected(callback):
+			RunEvents.doctrine_event_recorded.connect(callback)
+
+
+func select_page(page: int) -> void:
+	_selected_page = clampi(page, ArchivePage.PROFILE, ArchivePage.OBSERVATIONS)
+	for index in range(_page_controls.size()):
+		var selected := index == _selected_page
+		_page_controls[index].visible = selected
+		_page_buttons[index].set_pressed_no_signal(selected)
+		_page_buttons[index].text = ("◆  " if selected else "◇  ") + PAGE_LABELS[index]
+
+
+func selected_page() -> int:
+	return _selected_page
+
+
+func debug_rebuild_counts() -> Dictionary:
+	return _rebuild_counts.duplicate()
 
 func refresh(player: Node, inv: Inventory) -> void:
+	if not visible:
+		return
+	_refresh_profile(player, inv)
+	_refresh_sets(inv)
+	_refresh_manifestations(player)
+	_refresh_observations()
+
+
+func _refresh_profile(player: Node, inv: Inventory) -> void:
 	# Player.stats is already the complete final snapshot: race, style, permanent
 	# augments, attempt modifiers, equipped item deltas, set tiers, item effects
 	# and active percentage rolls. Inventory deltas must not be added a second time.
@@ -30,6 +119,14 @@ func refresh(player: Node, inv: Inventory) -> void:
 	var pow_total: float = _get_stats_num(player, "power", _get_num(player, "power", 0.0))
 	var hst_total: float = _get_stats_num(player, "haste", _get_num(player, "haste", 0.0))
 	var lck_total: float = _get_stats_num(player, "luck", _get_num(player, "luck", 0.0))
+	# The stored Power and Haste are not what the next shot uses: _fire_weapon
+	# multiplies (1 + power) by ItemEffectRunner's and ManifestationRunner's
+	# get_power_multiplier(), and (1 + haste) by SetRunner's, ItemEffectRunner's
+	# and ManifestationRunner's get_haste_multiplier(). Polled from the same
+	# runners here, the way SPD already reads through get_effective_move_speed,
+	# so an Anchor Rite's x1.85 shows on the sheet instead of vanishing.
+	var pow_mul: float = _runtime_multiplier(player, &"get_power_multiplier", ["ItemEffectRunner", "ManifestationRunner"])
+	var hst_mul: float = _runtime_multiplier(player, &"get_haste_multiplier", ["SetRunner", "ItemEffectRunner", "ManifestationRunner"])
 
 	# Parenthesised values remain the equipped flat deltas for quick attribution;
 	# they are informational only and are not added to the final totals again.
@@ -46,9 +143,11 @@ func refresh(player: Node, inv: Inventory) -> void:
 
 	armv.text = str(int(round(armor_total)))
 	spdv.text = str(int(round(spd_total)))
-	powv.text = _fmt_pct_fraction(pow_total)
-	hstv.text = _fmt_pct_fraction(hst_total)
-	lckv.text = _fmt_pct_fraction(lck_total)
+	powv.text = _fmt_pct_fraction(pow_total) + _fmt_runtime_multiplier(pow_mul)
+	hstv.text = _fmt_pct_fraction(hst_total) + _fmt_runtime_multiplier(hst_mul)
+	# The one Luck number no other surface carries: the Lucky Crit roll the
+	# next hit makes, which is 0 at or below zero Luck (two rules never fire).
+	lckv.text = _fmt_pct_fraction(lck_total) + "  ·  LUCKY CRIT %d%%" % int(round(LuckResolver.lucky_crit_chance(lck_total) * 100.0))
 
 	# --- deltas (from items) ---
 	hpd.text = _fmt_int_delta(d.max_hp)      # show max hp delta
@@ -58,33 +157,956 @@ func refresh(player: Node, inv: Inventory) -> void:
 	hstd.text = _fmt_pct_delta(d.haste)
 	lckd.text = _fmt_pct_delta(d.luck)
 
-	# --- sets ---
-	for c in sets_vbox.get_children():
-		c.queue_free()
+	_refresh_ledger()
 
-	if inv == null:
+
+## "Why is this stat this high?" - the stat pass's own rows, grouped under the
+## stat each one moved. Nothing here is derived: Global.last_stat_ledger is
+## what the pass recorded, step by step, and the sheet only formats it. The
+## one exception is belief, which the pass adds to Power without a step of its
+## own; until it records one the line comes straight from
+## Global.follower_belief_power(), the same call the pass makes.
+func _refresh_ledger() -> void:
+	if _ledger_box == null or Global == null:
+		return
+	var rows: Array = Global.last_stat_ledger
+	var belief := _belief_row(rows)
+	var signature := var_to_str([rows, belief])
+	if signature == _ledger_signature:
+		return
+	_ledger_signature = signature
+	_clear_children(_ledger_box)
+
+	var grouped: Dictionary = {}
+	for row_value in rows:
+		var row: Dictionary = row_value
+		if is_equal_approx(float(row.get("before", 0.0)), float(row.get("after", 0.0))):
+			continue
+		var stat := StringName(row.get("stat", &""))
+		if not grouped.has(stat):
+			grouped[stat] = []
+		(grouped[stat] as Array).append(row)
+	if not belief.is_empty():
+		if not grouped.has(&"power"):
+			grouped[&"power"] = []
+		(grouped[&"power"] as Array).append(belief)
+	if grouped.is_empty():
 		return
 
-	var counts: Dictionary = {}
-	if inv.has_method("get_set_counts"):
-		counts = inv.get_set_counts()
-	else:
-		for it in inv.items:
-			var inst := it as ItemInstance
-			if inst == null or inst.data == null:
-				continue
-			var sid := String(inst.data.set_id)
-			if sid == "":
-				continue
-			counts[sid] = int(counts.get(sid, 0)) + 1
+	_add_section_heading(_ledger_box, "LEDGER // WHY THESE NUMBERS", ACCENT)
+	for entry in LEDGER_STATS:
+		var stat: StringName = entry["stat"]
+		if not grouped.has(stat):
+			continue
+		var pct: bool = bool(entry["pct"])
+		var key := _add_target_line(_ledger_box, String(entry["key"]), Color(1, 1, 1, 0.88), 12)
+		key.theme_type_variation = &"BodyStrong"
+		var grid := GridContainer.new()
+		grid.columns = 3
+		grid.add_theme_constant_override("h_separation", 8)
+		grid.add_theme_constant_override("v_separation", 2)
+		_ledger_box.add_child(grid)
+		for row_value in grouped[stat]:
+			var row: Dictionary = row_value
+			var delta: float = (
+				float(row["delta"]) if row.has("delta")
+				else float(row.get("after", 0.0)) - float(row.get("before", 0.0))
+			)
+			var after_text := ""
+			if row.has("after"):
+				after_text = "→ %s" % _fmt_ledger_value(float(row["after"]), pct)
+			_add_ledger_cell(grid, String(row.get("label", "")), Color(1, 1, 1, 0.72), true)
+			_add_ledger_cell(grid, _fmt_ledger_delta(delta, pct), Color(1, 1, 1, 0.88), false)
+			_add_ledger_cell(grid, after_text, Color(1, 1, 1, 0.55), false)
 
-	for sid in counts.keys():
-		var n: int = int(counts[sid])
-		var line := Label.new()
-		line.add_theme_font_size_override("font_size", 12)
-		line.text = "%s %d/6" % [String(sid).to_upper(), n]
-		line.modulate = (ACCENT if n >= 6 else Color(1, 1, 1, 0.85))
-		sets_vbox.add_child(line)
+
+## The belief term as a ledger row, unless the pass already recorded one.
+func _belief_row(rows: Array) -> Dictionary:
+	for row_value in rows:
+		var row: Dictionary = row_value
+		if String(row.get("label", "")).begins_with("BELIEF"):
+			return {}
+	var belief: float = Global.follower_belief_power()
+	if is_equal_approx(belief, 0.0):
+		return {}
+	return {
+		"label": "BELIEF · %d FOLLOWERS" % int(Global.followers),
+		"stat": &"power",
+		"delta": belief,
+	}
+
+
+func _add_ledger_cell(grid: GridContainer, text: String, colour: Color, stretch: bool) -> void:
+	var cell := Label.new()
+	cell.text = text
+	cell.add_theme_font_size_override("font_size", 12)
+	cell.modulate = colour
+	if stretch:
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	else:
+		cell.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	grid.add_child(cell)
+
+
+func _fmt_ledger_value(x: float, pct: bool) -> String:
+	return _fmt_pct_fraction(x) if pct else str(int(round(x)))
+
+
+func _fmt_ledger_delta(x: float, pct: bool) -> String:
+	if pct:
+		return _fmt_pct_fraction(x)
+	if absf(x) < 0.5:
+		return "%+.2f" % x
+	return "%+d" % int(round(x))
+
+
+func _refresh_sets(inv: Inventory) -> void:
+	var counts := _set_counts(inv)
+	_last_set_counts = counts.duplicate()
+	var keys := counts.keys()
+	keys.sort()
+	var selected_exists := (
+		_selected_set_id != &""
+		and Global != null
+		and Global.set_db.has(_selected_set_id)
+	)
+	if not keys.is_empty() and not selected_exists:
+		_selected_set_id = StringName(keys[0])
+	var signature := "%s|selected:%s" % [_set_signature(counts), String(_selected_set_id)]
+	if signature == String(_page_signatures[ArchivePage.SETS]):
+		return
+	_page_signatures[ArchivePage.SETS] = signature
+	_rebuild_counts["sets"] = int(_rebuild_counts["sets"]) + 1
+	_rebuild_sets_page(counts, keys)
+
+
+func inspect_set(set_id: StringName) -> void:
+	if set_id == &"" or set_id == _selected_set_id:
+		return
+	_selected_set_id = set_id
+	var keys := _last_set_counts.keys()
+	keys.sort()
+	_page_signatures[ArchivePage.SETS] = "%s|selected:%s" % [
+		_set_signature(_last_set_counts), String(_selected_set_id),
+	]
+	_rebuild_counts["sets"] = int(_rebuild_counts["sets"]) + 1
+	_rebuild_sets_page(_last_set_counts, keys)
+
+
+func _rebuild_sets_page(counts: Dictionary, keys: Array) -> void:
+	_clear_children(sets_vbox)
+	_add_section_heading(sets_vbox, "SETS // EQUIPPED CONCORDANCES", ACCENT)
+	var displayed_keys := keys.duplicate()
+	if _selected_set_id != &"" and not displayed_keys.has(_selected_set_id):
+		displayed_keys.append(_selected_set_id)
+		displayed_keys.sort()
+	if displayed_keys.is_empty():
+		_add_target_line(sets_vbox, "NO ACTIVE CONCORDANCE", Color(1, 1, 1, 0.48), 11)
+		return
+
+	for sid in displayed_keys:
+		var n: int = int(counts.get(sid, 0))
+		var record := Button.new()
+		record.focus_mode = Control.FOCUS_ALL
+		record.flat = true
+		record.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		record.add_theme_font_size_override("font_size", 12)
+		# Display name and real piece count from the set DB, not internal
+		# ids with a hardcoded /6.
+		var set_label := String(sid).to_upper()
+		var set_max := 6
+		var sd: SetData = Global.set_db.get(StringName(sid), null) as SetData
+		if sd != null:
+			if sd.display_name != "":
+				set_label = sd.display_name
+			if sd.has_method("max_pieces"):
+				set_max = maxi(1, int(sd.call("max_pieces")))
+		var marker := "◆" if StringName(sid) == _selected_set_id else "◇"
+		record.text = "%s  %s  %d/%d" % [marker, set_label.to_upper(), n, set_max]
+		record.modulate = (ACCENT if StringName(sid) == _selected_set_id else Color(1, 1, 1, 0.72))
+		record.pressed.connect(inspect_set.bind(StringName(sid)))
+		sets_vbox.add_child(record)
+
+	var selected_data: SetData = Global.set_db.get(_selected_set_id, null) as SetData
+	if selected_data != null:
+		_append_set_dossier(selected_data, int(counts.get(_selected_set_id, 0)))
+
+
+func _append_set_dossier(data: SetData, equipped: int) -> void:
+	var accent := data.accent_color if data.accent_color.a > 0.0 else ACCENT
+	_add_section_heading(sets_vbox, "SET DOSSIER // %s" % data.display_name.to_upper(), accent)
+	if data.identity_sentence != "":
+		_add_set_body_line(data.identity_sentence, Color(1, 1, 1, 0.88), 12)
+	if data.playstyle != "":
+		_add_set_body_line("PLAYSTYLE // %s" % data.playstyle, Color(1, 1, 1, 0.70), 12)
+
+	_add_set_body_line("PROGRESSION // %d/%d PIECES" % [
+		equipped, maxi(1, data.max_pieces()),
+	], accent, 12, &"InstitutionalHeading")
+	var next_found := false
+	var glossary_terms: Dictionary = {}
+	for tier: SetTier in data.sorted_tiers():
+		if tier == null:
+			continue
+		var state := "ACTIVE" if equipped >= tier.required_count else ("NEXT" if not next_found else "LATER")
+		if equipped < tier.required_count and not next_found:
+			next_found = true
+		var marker := "✓" if state == "ACTIVE" else ("→" if state == "NEXT" else "○")
+		_add_set_body_line("%s %s // %d PIECES // %s" % [
+			marker, state, tier.required_count, tier.display_name,
+		], accent if state == "ACTIVE" else Color(1, 1, 1, 0.62), 12, &"BodyStrong")
+		if tier.mechanical_description != "":
+			_add_set_body_line(tier.mechanical_description, Color(1, 1, 1, 0.78), 12)
+		if tier.plain_description != "":
+			_add_set_body_line("PLAIN // %s" % tier.plain_description, Color(1, 1, 1, 0.58), 12)
+		for term: String in tier.glossary_terms:
+			glossary_terms[term] = true
+
+	if data.best_with != "":
+		_add_set_body_line("BEST WITH // %s" % data.best_with, Color(1, 1, 1, 0.70), 12)
+	if not glossary_terms.is_empty():
+		_add_set_body_line("TERMS", accent, 12, &"InstitutionalHeading")
+		for term_value: Variant in glossary_terms.keys():
+			var term := String(term_value)
+			var definition := String(data.glossary.get(term, ""))
+			if definition != "":
+				_add_set_body_line("• %s — %s" % [term, definition], Color(1, 1, 1, 0.62), 11)
+
+
+func _add_set_body_line(
+	text: String,
+	colour: Color,
+	font_size: int,
+	variation: StringName = &""
+) -> Label:
+	var line := Label.new()
+	line.text = text
+	line.custom_minimum_size = Vector2(260, 0)
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.add_theme_font_size_override("font_size", font_size)
+	line.modulate = colour
+	if variation != &"":
+		line.theme_type_variation = variation
+	sets_vbox.add_child(line)
+	return line
+
+
+func _set_counts(inv: Inventory) -> Dictionary:
+	var counts: Dictionary = {}
+	if inv == null:
+		return counts
+	if inv.has_method("get_set_counts"):
+		return inv.get_set_counts()
+	for item_value in inv.items:
+		var inst := item_value as ItemInstance
+		if inst == null or inst.data == null:
+			continue
+		var set_id := String(inst.data.set_id)
+		if set_id != "":
+			counts[set_id] = int(counts.get(set_id, 0)) + 1
+	return counts
+
+
+func _set_signature(counts: Dictionary) -> String:
+	var keys := counts.keys()
+	keys.sort()
+	var parts := PackedStringArray()
+	for key in keys:
+		parts.append("%s:%d" % [String(key), int(counts[key])])
+	return "|".join(parts)
+
+
+func _refresh_manifestations(player: Node) -> void:
+	var signature := var_to_str(_manifestation_state(player))
+	if signature == String(_page_signatures[ArchivePage.MANIFESTATIONS]):
+		return
+	_page_signatures[ArchivePage.MANIFESTATIONS] = signature
+	_rebuild_counts["manifestations"] = int(_rebuild_counts["manifestations"]) + 1
+	_clear_children(manifestations_vbox)
+	_add_section_heading(manifestations_vbox, "MANIFESTATIONS // ACTIVE DOCTRINE", MANIFEST)
+	_append_identity(player)
+	_append_burden(player)
+	_append_manifestations(player)
+	_append_doctrine_record()
+	if manifestations_vbox.get_child_count() == 1:
+		_add_target_line(manifestations_vbox, "NO ACTIVE MANIFESTATION", Color(1, 1, 1, 0.48), 11)
+
+
+func _on_doctrine_event_recorded(_event_id: StringName, label: String) -> void:
+	if label.strip_edges() != "":
+		var clean_label := label.strip_edges()
+		if not _doctrine_events.has(clean_label):
+			_doctrine_events.append(clean_label)
+	_page_signatures[ArchivePage.MANIFESTATIONS] = "__DOCTRINE_EVENT__"
+
+
+func _append_doctrine_record() -> void:
+	if Global == null:
+		return
+	var stage_ids: Dictionary = Global.attempt_doctrine_stage_ids
+	var recorded_events: Array[String] = Global.attempt_doctrine_events.duplicate()
+	for local_event in _doctrine_events:
+		if not recorded_events.has(local_event):
+			recorded_events.append(local_event)
+	if stage_ids.is_empty() and recorded_events.is_empty():
+		return
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	_add_section_heading(manifestations_vbox, "DOCTRINE RECORD // INSCRIBED", ACCENT)
+	for stage_id in [&"method", &"doctrine", &"apotheosis"]:
+		var choice_id := StringName(str(stage_ids.get(String(stage_id), stage_ids.get(stage_id, ""))))
+		if choice_id == StringName():
+			continue
+		var definition: MajorChoiceDef = Global.major_choice_db.get_def(choice_id)
+		var title := definition.title if definition != null else String(choice_id)
+		_add_target_line(manifestations_vbox, "%s // %s" % [String(stage_id).to_upper(), title.to_upper()], ACCENT, 11)
+		# The gift and the price were only ever shown on the choice screen; a
+		# stage title alone does not tell the player what they are still paying.
+		if definition != null:
+			if definition.gift_text.strip_edges() != "":
+				_add_wrapped_line(manifestations_vbox, "  GIFT // %s" % definition.gift_text.strip_edges(), Color(1, 1, 1, 0.72), 10)
+			if definition.price_text.strip_edges() != "":
+				_add_wrapped_line(manifestations_vbox, "  PRICE // %s" % definition.price_text.strip_edges(), Color(1, 1, 1, 0.62), 10)
+	# The Max HP price is applied last in the stat pass, after equipment, sets
+	# and Burden, so it silently shrinks the Profile HP total: name it here.
+	var max_hp_mul := float(Global.get_doctrine_rule(&"max_hp_mul", 1.0))
+	if not is_equal_approx(max_hp_mul, 1.0):
+		_add_target_line(manifestations_vbox, "MAX HP ×%.2f" % max_hp_mul, Color(0.86, 0.35, 0.22, 1), 11)
+	if bool(Global.get_doctrine_rule(&"force_augment_identity", false)):
+		_add_target_line(manifestations_vbox, "PERFECTED ENGINE // AUGMENT SEALS 3/3", ACCENT, 11)
+	for event_label in recorded_events:
+		_add_target_line(manifestations_vbox, event_label, Color(0.86, 0.35, 0.22, 1), 11)
+
+
+## "What am I?" - one behavioural sentence at the top of the sheet, composed
+## from the same readings the sections below show.
+func _append_identity(player: Node) -> void:
+	var identity := build_identity(player)
+	if identity.is_empty():
+		return
+	_add_wrapped_line(manifestations_vbox, String(identity.get("sentence", "")), ACCENT, 11)
+
+
+func build_identity(player: Node) -> Dictionary:
+	if player == null:
+		return {}
+	var runner := player.get_node_or_null("ManifestationRunner")
+	var input := {
+		"burden": player.get("last_burden"),
+		"augment_ids": Global.permanent_augment_ids if Global != null else [],
+		"set_counts": Global.run_inventory.get_set_counts() if Global != null and Global.run_inventory != null else {},
+		"luck": float(Global.run_luck) if Global != null else 0.0,
+	}
+	if runner != null:
+		if runner.has_method("get_active_summaries"):
+			input["manifestations"] = runner.call("get_active_summaries")
+		if runner.has_method("get_active_pairs"):
+			input["pairs"] = runner.call("get_active_pairs")
+		if runner.has_method("get_noun_counts"):
+			input["noun_counts"] = runner.call("get_noun_counts")
+	return BuildIdentityScript.compose(input)
+
+
+func _manifestation_state(player: Node) -> Dictionary:
+	if player == null:
+		return {}
+	var state := {}
+	var burden := player.get("last_burden") as BurdenSnapshot
+	if burden != null:
+		state["burden"] = [
+			burden.neg_count, burden.pos_count, burden.active_count,
+			burden.total_active, burden.qualifying_count, burden.suppressed_slot,
+			burden.suppressed_severity,
+		]
+		# The rosters name slots, so two equal curses swapping slots must rebuild.
+		var entries: Array = []
+		for slot_value in burden.entries.keys():
+			var slot := int(slot_value)
+			entries.append([slot, burden.severity_at(slot), burden.active_at(slot), burden.qualifies(slot)])
+		state["burden_entries"] = entries
+	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
+	# The Engine, Doctrine and Lens lines all read the augment level.
+	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
+	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
+	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
+	state["max_hp_mul"] = Global.get_doctrine_rule(&"max_hp_mul", 1.0) if Global != null else 1.0
+	var runner := player.get_node_or_null("ManifestationRunner")
+	if runner == null:
+		return state
+	if runner.has_method("get_active_summaries"):
+		state["summaries"] = runner.call("get_active_summaries")
+	if runner.has_method("get_active_pairs"):
+		state["pairs"] = runner.call("get_active_pairs")
+	if runner.has_method("get_noun_counts"):
+		state["nouns"] = runner.call("get_noun_counts")
+	if runner.has_method("get_meters"):
+		state["meters"] = runner.call("get_meters")
+	return state
+
+
+func _clear_children(container: Node) -> void:
+	for child in container.get_children():
+		container.remove_child(child)
+		child.queue_free()
+
+
+func _add_section_heading(container: VBoxContainer, text: String, colour: Color) -> void:
+	var heading := Label.new()
+	heading.text = text
+	heading.theme_type_variation = &"InstitutionalHeading"
+	heading.add_theme_font_size_override("font_size", 13)
+	heading.modulate = colour
+	container.add_child(heading)
+	var rule := ColorRect.new()
+	rule.custom_minimum_size = Vector2(0, 1)
+	rule.color = Color(colour.r, colour.g, colour.b, 0.42)
+	container.add_child(rule)
+
+
+func _add_target_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
+	var line := Label.new()
+	line.text = text
+	line.add_theme_font_size_override("font_size", font_size)
+	line.modulate = colour
+	container.add_child(line)
+	return line
+
+
+## A sentence rather than a readout: wraps inside the fixed archive body.
+## Giving this label a width larger than Pages makes the entire Run Sheet grow
+## to satisfy the child, which is exactly what wrapping is meant to avoid.
+func _add_wrapped_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
+	var line := _add_target_line(container, text, colour, maxi(12, font_size))
+	line.custom_minimum_size = Vector2(1, 0)
+	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	return line
+
+
+const BURDEN := Color(0.85, 0.42, 0.95, 1.0)
+
+## The three NEG archetype augments the ledger explains, in the order their
+## blocks appear below.
+const NEG_ARCHETYPES: Array[Dictionary] = [
+	{"id": &"augment_corruption_engine", "label": "CORRUPTION ENGINE"},
+	{"id": &"augment_doctrine_of_burden", "label": "DOCTRINE OF BURDEN"},
+	{"id": &"augment_inversion_lens", "label": "INVERSION LENS"},
+]
+
+
+## Statistical slots the predicate keeps, in slot order.
+func _burden_slots(snap: BurdenSnapshot, keep: Callable) -> Array[int]:
+	var slots: Array[int] = []
+	for slot_value in snap.entries.keys():
+		var slot := int(slot_value)
+		if bool(keep.call(slot)):
+			slots.append(slot)
+	slots.sort()
+	return slots
+
+
+## The N most severe ACTIVE slots - the ones BurdenSnapshot.heaviest(N) sums.
+func _heaviest_slots(snap: BurdenSnapshot, count: int) -> Array[int]:
+	var slots := _burden_slots(snap, func(slot: int) -> bool: return snap.active_at(slot) > 0.0)
+	slots.sort_custom(func(a: int, b: int) -> bool: return snap.active_at(a) > snap.active_at(b))
+	var out: Array[int] = []
+	for i in range(mini(count, slots.size())):
+		out.append(slots[i])
+	return out
+
+
+## "HP −40%  ·  ARM −20%": slot hints with the severity the snapshot recorded.
+func _burden_roster(snap: BurdenSnapshot, slots: Array[int]) -> String:
+	var parts := PackedStringArray()
+	for slot in slots:
+		parts.append("%s −%d%%" % [Inventory.slot_hint(slot), int(round(snap.severity_at(slot) * 100.0))])
+	return "  ·  ".join(parts)
+
+
+## The curse ledger, showing the ARITHMETIC rather than the augment's name.
+##
+## Three archetypes read the same wardrobe and disagree about it, so "Corruption
+## Engine: active" tells the player nothing they can act on. What they need is
+## which curses are live, which one is switched off, and what the augment turned
+## that into.
+func _append_burden(player: Node) -> void:
+	if player == null:
+		return
+	var snap: BurdenSnapshot = player.get("last_burden") as BurdenSnapshot
+	if snap == null:
+		return
+	var ids: Array = Global.permanent_augment_ids if Global != null else []
+	var owned: PackedStringArray = PackedStringArray()
+	for archetype in NEG_ARCHETYPES:
+		if ids.has(StringName(archetype["id"])):
+			owned.append(String(archetype["label"]))
+	# No NEG item equipped means no arithmetic to show - unless a NEG augment
+	# is owned, in which case "nothing" IS the reading: the augment is live and
+	# waiting on curses, and a silent section reads as a broken one.
+	if snap.neg_count <= 0 and owned.is_empty():
+		return
+
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	_add_line("BURDEN", BURDEN, 12)
+	_add_line(
+		"%d NEG / %d POS   ·   %d active   ·   %d%% total severity" % [
+			snap.neg_count, snap.pos_count, snap.active_count,
+			int(round(snap.total_active * 100.0)),
+		],
+		Color(1, 1, 1, 0.80), 11
+	)
+	if snap.neg_count <= 0:
+		for label in owned:
+			_add_line("%s — no curses equipped" % label, Color(1, 1, 1, 0.55), 11)
+		return
+	# The slots behind the count, from the same entries the count came from.
+	var active_slots := _burden_slots(snap, func(slot: int) -> bool: return snap.active_at(slot) > 0.0)
+	if not active_slots.is_empty():
+		_add_wrapped_line(manifestations_vbox, "   active: %s" % _burden_roster(snap, active_slots), Color(1, 1, 1, 0.62), 10)
+
+	if ids.has(&"augment_corruption_engine"):
+		var top_two := snap.heaviest(2)
+		var rate := BurdenResolver.asymptotic_rate(
+			BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
+		)
+		_add_line("CORRUPTION ENGINE", BURDEN, 11)
+		_add_line(
+			"   top two active: %d%%  ×  %d%%/100%%  →  Power +%.1f%%%s" % [
+				int(round(top_two * 100.0)), int(round(rate * 100.0)),
+				minf(BurdenResolver.CORRUPTION_ENGINE_CAP, top_two * rate) * 100.0,
+				"  (CAPPED)" if top_two * rate > BurdenResolver.CORRUPTION_ENGINE_CAP else "",
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
+		# Which two: a third curse feeds nothing, and the feed prompt on it
+		# reads as a bug unless the sheet says so.
+		var burning := _heaviest_slots(snap, 2)
+		if not burning.is_empty():
+			_add_wrapped_line(manifestations_vbox, "   burning: %s" % _burden_roster(snap, burning), Color(1, 1, 1, 0.62), 10)
+
+	if ids.has(&"augment_doctrine_of_burden"):
+		var level: int = Global.get_augment_level(&"augment_doctrine_of_burden")
+		var doctrine_bonus: Dictionary = BurdenResolver.doctrine_bonus(level, snap.qualifying_count)
+		var armour := float(doctrine_bonus["armor"])
+		var hp := float(doctrine_bonus["hp"])
+		var capped: bool = (
+			armour >= BurdenResolver.doctrine_armor_cap - 0.001
+			or hp >= BurdenResolver.doctrine_hp_cap - 0.0001
+		)
+		_add_line("DOCTRINE OF BURDEN", BURDEN, 11)
+		_add_line("   statistical slots only; a curse the Lens suppresses does not count", Color(1, 1, 1, 0.5), 9)
+		_add_line(
+			"   %d qualifying curses (≥%d%% of their range)  →  Armour +%d, Max HP +%d%%%s" % [
+				snap.qualifying_count, int(BurdenSnapshot.QUALIFYING_BURDEN_RATIO * 100.0),
+				int(round(armour)), int(round(hp * 100.0)),
+				"  (CAPPED)" if capped else "",
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
+		var qualifying := _burden_slots(snap, func(slot: int) -> bool: return snap.qualifies(slot))
+		if not qualifying.is_empty():
+			_add_wrapped_line(manifestations_vbox, "   qualifying: %s" % _burden_roster(snap, qualifying), Color(1, 1, 1, 0.62), 10)
+
+	if ids.has(&"augment_inversion_lens"):
+		_add_line("INVERSION LENS", BURDEN, 11)
+		if snap.suppressed_slot >= 0:
+			_add_line(
+				"   %s suppressed: %d%% curse  →  +%d%% returned, 0%% burden" % [
+					Inventory.slot_label(snap.suppressed_slot).to_upper(),
+					int(round(snap.suppressed_severity * 100.0)),
+					int(round(BurdenResolver.inverted_return(snap.suppressed_severity) * 100.0)),
+				],
+				Color(1, 1, 1, 0.72), 10
+			)
+			# The Luck kicker the stat pass adds for the suppressed curse: the
+			# per-level rate times the severity, in the Engine line's shape.
+			var kicker_rate := BurdenResolver.asymptotic_rate(
+				BurdenResolver.INVERSION_LUCK_KICKER, Global.get_augment_level(&"augment_inversion_lens")
+			)
+			_add_line(
+				"   Luck +%d%%  (%d%% severity  ×  %d%%/100%%)" % [
+					int(round(kicker_rate * snap.suppressed_severity * 100.0)),
+					int(round(snap.suppressed_severity * 100.0)),
+					int(round(kicker_rate * 100.0)),
+				],
+				Color(1, 1, 1, 0.72), 10
+			)
+		else:
+			_add_line("   nothing cursed to suppress", Color(1, 1, 1, 0.55), 10)
+
+
+func _append_manifestations(player: Node) -> void:
+	# The chain readout. Sets say what the build IS; this says what this
+	# particular run mutated into, in the order the slots are worn.
+	if player == null:
+		return
+	var runner: Node = player.get_node_or_null("ManifestationRunner")
+	if runner == null or not runner.has_method("get_active_summaries"):
+		return
+	var summaries: Array = runner.call("get_active_summaries")
+	if summaries.is_empty():
+		return
+
+	# Noun counts first. Two of a noun is what makes two unrelated items combine,
+	# so "MOMENTUM 2" is the single most useful line on the panel - it is the
+	# readout that tells you one more movement item would turn something on.
+	if runner.has_method("get_noun_counts"):
+		var counts: Dictionary = runner.call("get_noun_counts")
+		# A noun with a claimer but no meter is an untouched claim: the state
+		# refuses to draw a bar nothing has banked into yet, so the row says
+		# when one will appear rather than looking like a missing readout.
+		var metered: Dictionary = {}
+		if runner.has_method("get_meters"):
+			for meter_value in runner.call("get_meters"):
+				metered[StringName((meter_value as Dictionary).get("noun", &""))] = true
+		var parts: Array[Dictionary] = []
+		var unmetered: PackedStringArray = PackedStringArray()
+		# Authored order, so the line does not reshuffle itself every time an
+		# unrelated item is equipped.
+		for noun in ManifestationNouns.ORDER:
+			var n: int = int(counts.get(noun, 0))
+			if n <= 0:
+				continue
+			parts.append({
+				"noun": noun,
+				"text": "%s %s" % [ManifestationNouns.label(noun), _pips(n)],
+			})
+			if not metered.has(noun):
+				unmetered.append(ManifestationNouns.label(noun))
+		_add_noun_row(parts, 11)
+		if not unmetered.is_empty():
+			_add_line("   %s — meter appears at first bank" % "  ·  ".join(unmetered), Color(1, 1, 1, 0.48), 10)
+		_append_next_pair(counts)
+
+	# Live resources first: with eight rules equipped the list below is long,
+	# and the numbers the player acts on mid-fight must not be the part that
+	# falls off the bottom of the panel.
+	if runner.has_method("get_meters"):
+		var meters: Array = runner.call("get_meters")
+		var readout: Array[Dictionary] = []
+		for meter_value in meters:
+			var meter: Dictionary = meter_value
+			readout.append({
+				"noun": StringName(meter.get("noun", &"")),
+				"text": "%s %s%s" % [String(meter.get("label", "")), String(meter.get("text", "")), String(meter.get("hint", ""))],
+			})
+		_add_noun_row(readout, 11)
+
+	# One box per RULE, not per item. Two copies of a rule are two independent
+	# effects (the second pays DUPLICATE_FALLOFF on the shared multipliers), but
+	# the runner counts distinct rules for nouns and pairs, so a doubled ring
+	# lights nothing extra - listing it twice beside a pair that correctly never
+	# lit reads as the pair being broken. The box shows the first copy's numbers.
+	var grouped: Array[Dictionary] = []
+	var by_id: Dictionary = {}
+	for entry_value in summaries:
+		var entry: Dictionary = entry_value
+		var id := StringName(entry.get("id", &""))
+		var hint: String = Inventory.slot_hint(int(entry.get("slot", -1)))
+		if id != &"" and by_id.has(id):
+			var first: Dictionary = by_id[id]
+			first["copies"] = int(first["copies"]) + 1
+			(first["hints"] as Array).append(hint)
+			continue
+		var group := entry.duplicate()
+		group["copies"] = 1
+		group["hints"] = [hint]
+		if id != &"":
+			by_id[id] = group
+		grouped.append(group)
+
+	for entry in grouped:
+		var copies: int = int(entry["copies"])
+		var slot_hint: String = "·".join(PackedStringArray(entry["hints"] as Array))
+		var entry_tags: Array = entry.get("tags", []) as Array
+		var entry_colour: Color = ManifestationNouns.colour(entry_tags[0]) if not entry_tags.is_empty() else MANIFEST
+		var entry_name: String = String(entry.get("name", "")) + (" ×%d" % copies if copies > 1 else "")
+		var entry_rule: String = String(entry.get("rule", ""))
+
+		# One hoverable box per entry, so the pointer does not have to find the
+		# two-line rule label specifically - the name is what a player aims at.
+		var box := ManifestationInfoBox.new()
+		box.add_theme_constant_override("separation", 0)
+		box.setup(entry_name, _noun_names(entry_tags), entry_rule, entry_colour)
+		manifestations_vbox.add_child(box)
+
+		var heading := Label.new()
+		heading.text = "%s  %s" % [slot_hint, entry_name]
+		heading.add_theme_font_size_override("font_size", 12)
+		heading.modulate = entry_colour
+		heading.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(heading)
+
+		var rule := Label.new()
+		rule.text = "   " + entry_rule
+		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		# Trimmed here, complete on hover. Eight untrimmed paragraphs push the
+		# panel past the bottom of a 1080p screen, but a rule the player cannot
+		# read anywhere in the run is worse than a long panel.
+		rule.max_lines_visible = 2
+		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		rule.custom_minimum_size = Vector2(1, 0)
+		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		rule.add_theme_font_size_override("font_size", 12)
+		rule.modulate = Color(1, 1, 1, 0.72)
+		rule.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(rule)
+
+	_append_manifestation_pairs(runner)
+
+
+func _append_manifestation_pairs(runner: Node) -> void:
+	if runner == null or not runner.has_method("get_active_pairs"):
+		return
+	var pairs: Array = runner.call("get_active_pairs")
+	if pairs.is_empty():
+		return
+
+	_add_line("", Color(1, 1, 1, 0.4), 8)
+	var section := _add_line("MANIFESTATION PAIRS", MANIFEST, 12)
+	section.theme_type_variation = &"InstitutionalHeading"
+
+	for pair_value in pairs:
+		var pair := pair_value as Dictionary
+		if pair == null or pair.is_empty():
+			continue
+		var nouns: Array = pair.get("nouns", []) as Array
+		var accent := _pair_accent(nouns)
+		var pair_name := String(pair.get("name", ""))
+		var pair_rule := String(pair.get("rule", ""))
+		var box := ManifestationInfoBox.new()
+		box.add_theme_constant_override("separation", 1)
+		box.setup(pair_name, _noun_names(nouns), pair_rule, accent)
+		manifestations_vbox.add_child(box)
+
+		var heading := Label.new()
+		heading.text = pair_name
+		heading.theme_type_variation = &"SacredHeading"
+		heading.add_theme_font_size_override("font_size", 12)
+		heading.modulate = accent
+		heading.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(heading)
+
+		var nouns_line := Label.new()
+		nouns_line.text = _noun_names(nouns)
+		nouns_line.add_theme_font_size_override("font_size", 12)
+		nouns_line.modulate = Color(1, 1, 1, 0.55)
+		nouns_line.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(nouns_line)
+
+		var rule := Label.new()
+		rule.text = "   " + pair_rule
+		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		rule.custom_minimum_size = Vector2(1, 0)
+		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		rule.add_theme_font_size_override("font_size", 12)
+		rule.modulate = Color(1, 1, 1, 0.76)
+		rule.mouse_filter = Control.MOUSE_FILTER_PASS
+		box.add_child(rule)
+
+
+func _refresh_observations() -> void:
+	var ids := PackedStringArray()
+	if Global != null:
+		for enemy_id in Global.discovered_enemy_ids:
+			ids.append(String(enemy_id))
+	ids.sort()
+	var encountered_modifiers := _encountered_elite_modifiers()
+	var modifier_signature := PackedStringArray()
+	for modifier_id in encountered_modifiers:
+		modifier_signature.append(String(modifier_id))
+	var signature := "%s::%s" % ["|".join(ids), "|".join(modifier_signature)]
+	if signature == String(_page_signatures[ArchivePage.OBSERVATIONS]):
+		return
+	_page_signatures[ArchivePage.OBSERVATIONS] = signature
+	_rebuild_counts["observations"] = int(_rebuild_counts["observations"]) + 1
+	_clear_children(observations_vbox)
+	_add_section_heading(observations_vbox, "OBSERVATIONS // INDEXED ARCHETYPES", ACCENT)
+	if ids.is_empty():
+		_add_target_line(observations_vbox, "NO ARCHETYPE INDEXED", Color(1, 1, 1, 0.48), 11)
+	else:
+		for enemy_id_text in ids:
+			var enemy_id := StringName(enemy_id_text)
+			var entry := EnemyDossierCatalog.get_entry(enemy_id)
+			if entry.is_empty():
+				continue
+			var archetype_name := String(entry.get("name", String(enemy_id).trim_prefix("enemy_").replace("_", " "))).to_upper()
+			var record := VBoxContainer.new()
+			record.add_theme_constant_override("separation", 0)
+			record.focus_mode = Control.FOCUS_ALL
+			record.mouse_filter = Control.MOUSE_FILTER_STOP
+			record.tooltip_text = _observation_tooltip(entry)
+			observations_vbox.add_child(record)
+
+			var name_label := Label.new()
+			name_label.text = "[ %s ]" % archetype_name
+			name_label.theme_type_variation = &"BodyStrong"
+			name_label.add_theme_font_size_override("font_size", 12)
+			name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
+			name_label.mouse_filter = Control.MOUSE_FILTER_PASS
+			record.add_child(name_label)
+
+			var counter := Label.new()
+			counter.text = "COUNTER  //  %s" % String(entry.get("counter", "Observe and adapt."))
+			counter.custom_minimum_size = Vector2(1, 0)
+			counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			counter.max_lines_visible = 2
+			counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+			counter.add_theme_font_size_override("font_size", 13)
+			counter.modulate = Color(1, 1, 1, 0.78)
+			counter.mouse_filter = Control.MOUSE_FILTER_PASS
+			record.add_child(counter)
+
+	_append_elite_modifier_observations(encountered_modifiers)
+
+
+func _encountered_elite_modifiers() -> Array[StringName]:
+	var out: Array[StringName] = []
+	for modifier_id in EliteModifiers.ALL:
+		if EliteModifiers.was_taught(modifier_id):
+			out.append(modifier_id)
+	return out
+
+
+func _append_elite_modifier_observations(ids: Array[StringName]) -> void:
+	if ids.is_empty():
+		return
+	_add_section_heading(observations_vbox, "ELITE MODIFIERS // FIELD NOTES", MANIFEST)
+	for modifier_id in ids:
+		var colour := EliteModifiers.tint(modifier_id)
+		var label := EliteModifiers.label(modifier_id)
+		var rule := EliteModifiers.teach_line(modifier_id).trim_prefix(label + " - ")
+		var record := VBoxContainer.new()
+		record.add_theme_constant_override("separation", 0)
+		record.focus_mode = Control.FOCUS_ALL
+		record.mouse_filter = Control.MOUSE_FILTER_STOP
+		record.tooltip_text = EliteModifiers.teach_line(modifier_id)
+		observations_vbox.add_child(record)
+
+		var name_label := Label.new()
+		name_label.text = "[ %s ]" % label
+		name_label.theme_type_variation = &"BodyStrong"
+		name_label.add_theme_font_size_override("font_size", 12)
+		name_label.add_theme_color_override("font_color", colour)
+		name_label.mouse_filter = Control.MOUSE_FILTER_PASS
+		record.add_child(name_label)
+
+		var counter := Label.new()
+		counter.text = "COUNTER  //  %s" % rule
+		counter.custom_minimum_size = Vector2(1, 0)
+		counter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		counter.max_lines_visible = 2
+		counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		counter.add_theme_font_size_override("font_size", 13)
+		counter.modulate = Color(1, 1, 1, 0.78)
+		counter.mouse_filter = Control.MOUSE_FILTER_PASS
+		record.add_child(counter)
+
+
+func _observation_tooltip(entry: Dictionary) -> String:
+	return "“%s”\n\nROLE  //  %s\nBEHAVIOUR  //  %s\nEXPECT  //  %s\nCOUNTER  //  %s" % [
+		String(entry.get("quote", "")),
+		String(entry.get("role", "Unclassified")),
+		String(entry.get("behaviour", "Unknown")),
+		String(entry.get("expect", "Unknown")),
+		String(entry.get("counter", "Observe and adapt.")),
+	]
+
+
+func _pair_accent(nouns: Array) -> Color:
+	if nouns.is_empty():
+		return MANIFEST
+	var accent := ManifestationNouns.colour(StringName(nouns[0]))
+	if nouns.size() > 1:
+		accent = accent.lerp(ManifestationNouns.colour(StringName(nouns[1])), 0.5)
+	return accent
+
+
+## "momentum, cadence" - the nouns a rule declares, for the hover card.
+func _noun_names(tags: Array) -> String:
+	if tags.is_empty():
+		return ""
+	var names: PackedStringArray = PackedStringArray()
+	for tag in tags:
+		names.append(ManifestationNouns.label(tag))
+	return " · ".join(names)
+
+
+## ◆◇ at one claimer, ◆◆ at two, ◆◆+n beyond - the HUD counter's pip
+## vocabulary (HudManifestationController._pips), so the sheet and the row
+## above the health bar say the same thing about the same noun.
+func _pips(count: int) -> String:
+	if count <= 1:
+		return "◆◇"
+	if count == 2:
+		return "◆◆"
+	return "◆◆+%d" % (count - 2)
+
+
+## The pair one lit noun away, from the same counts the row shows. Two of a
+## noun lights it and two lit nouns light their pair; all ten pairs exist, so
+## every lit+lit is already live and the only candidates are a lit noun with
+## an unlit partner. The partner closest to lighting is the one named.
+func _append_next_pair(counts: Dictionary) -> void:
+	var best_def: ManifestationPairDef = null
+	var best_noun: StringName = &""
+	var best_count: int = -1
+	for lit in ManifestationNouns.ORDER:
+		if int(counts.get(lit, 0)) < ManifestationPairCatalog.NOUN_THRESHOLD:
+			continue
+		for other in ManifestationNouns.ORDER:
+			var n: int = int(counts.get(other, 0))
+			if other == lit or n >= ManifestationPairCatalog.NOUN_THRESHOLD or n <= best_count:
+				continue
+			var def := ManifestationPairCatalog.for_nouns(lit, other)
+			if def == null:
+				continue
+			best_def = def
+			best_noun = other
+			best_count = n
+	if best_def == null:
+		return
+	var missing: int = ManifestationPairCatalog.NOUN_THRESHOLD - best_count
+	var need := (
+		"one more %s rule" % ManifestationNouns.label(best_noun) if missing == 1
+		else "%d %s rules" % [missing, ManifestationNouns.label(best_noun)]
+	)
+	_add_line("   next pair: %s — %s" % [best_def.display_name.to_upper(), need], Color(1, 1, 1, 0.48), 10)
+
+
+## One line made of several per-noun labels, so each noun can carry its own
+## colour. A Label cannot colour a span, and the noun colours are the whole
+## point of the line - "MOMENTUM 2" in the same orange the item badge and the
+## HUD counter use is what makes the vocabulary learnable.
+func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
+	if parts.is_empty():
+		return
+	# A plain HBox makes every noun's minimum width additive. Five live nouns or
+	# long resource hints then enlarge the fixed archive itself, which pushes its
+	# left edge off-screen. Flow keeps the colour-per-noun vocabulary while
+	# wrapping at the body width the Run Sheet actually owns.
+	var row := HFlowContainer.new()
+	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_theme_constant_override("separation", 8)
+	row.add_theme_constant_override("v_separation", 2)
+	manifestations_vbox.add_child(row)
+	for part in parts:
+		var label := Label.new()
+		label.text = String(part.get("text", ""))
+		label.add_theme_font_size_override("font_size", maxi(12, font_size))
+		label.modulate = ManifestationNouns.colour(StringName(part.get("noun", &"")))
+		row.add_child(label)
+
+
+func _add_line(text: String, colour: Color, font_size: int) -> Label:
+	return _add_target_line(
+		manifestations_vbox,
+		text,
+		colour,
+		font_size if text.is_empty() else maxi(12, font_size)
+	)
 
 # ---------------------------d
 # ---------------------------
@@ -102,7 +1124,9 @@ func _fmt_pct_delta(x: float) -> String:
 		return ""
 	if absf(p) < 0.01:
 		return "(+<0.01%)" if p > 0.0 else "(−<0.01%)"
-	if is_equal_approx(p, float(int(p))):
+	# round(), not int(): 9.999999999999998 is a whole 10%, and truncating it
+	# to 9 would print a sum of whole percentages with two decimals.
+	if is_equal_approx(p, round(p)):
 		return "(%+.0f%%)" % p
 	return "(%+.2f%%)" % p
 
@@ -113,7 +1137,7 @@ func _fmt_pct_fraction(x: float) -> String:
 		return "0%"
 	if absf(p) < 0.01:
 		return "+<0.01%" if p > 0.0 else "−<0.01%"
-	if is_equal_approx(p, float(int(p))):
+	if is_equal_approx(p, round(p)):
 		return "%+.0f%%" % p
 	return "%+.2f%%" % p
 
@@ -128,6 +1152,28 @@ func _get_num(obj: Object, prop: String, fallback: float) -> float:
 	if v is float or v is int:
 		return float(v)
 	return fallback
+
+## Product of one runtime multiplier over the named runner children, in the
+## order _fire_weapon polls them. A missing runner or method contributes 1.0.
+func _runtime_multiplier(player: Node, method: StringName, runner_names: Array) -> float:
+	var mul := 1.0
+	if player == null:
+		return mul
+	for runner_name in runner_names:
+		var runner: Node = player.get_node_or_null(NodePath(String(runner_name)))
+		if runner == null or not runner.has_method(method):
+			continue
+		var value: Variant = runner.call(method)
+		if value is float or value is int:
+			mul *= float(value)
+	return mul
+
+
+func _fmt_runtime_multiplier(mul: float) -> String:
+	if is_equal_approx(mul, 1.0):
+		return ""
+	return " ×%.2f" % mul
+
 
 func _get_effective_move_speed(player: Object, fallback: float) -> float:
 	if player == null:

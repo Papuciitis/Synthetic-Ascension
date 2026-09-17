@@ -91,7 +91,7 @@ func _ensure_overlay() -> void:
 		_overlay.visible = false
 		_overlay.z_index = 50
 		_overlay.set_anchors_preset(Control.PRESET_FULL_RECT, true)
-		_overlay.color = Color(0, 0, 0, 0.12)
+		_overlay.color = Color(0.015, 0.013, 0.011, 0.38)
 		return
 
 	_overlay = ColorRect.new()
@@ -99,7 +99,7 @@ func _ensure_overlay() -> void:
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_overlay.visible = false
 	_overlay.z_index = 50
-	_overlay.color = Color(0, 0, 0, 0.12)
+	_overlay.color = Color(0.015, 0.013, 0.011, 0.38)
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT, true)
 	host.add_child(_overlay)
 
@@ -179,6 +179,7 @@ func _on_bag_open_changed(is_open: bool) -> void:
 
 	if _overlay != null:
 		_overlay.visible = management_mode
+	_set_management_surface_layer(management_mode)
 
 	if _inv_bar != null and _inv_bar.has_method("set_management_mode"):
 		_inv_bar.call("set_management_mode", management_mode)
@@ -190,6 +191,14 @@ func _on_bag_open_changed(is_open: bool) -> void:
 
 
 	management_mode_changed.emit(management_mode)
+
+
+func _set_management_surface_layer(is_open: bool) -> void:
+	var layer := 60 if is_open else 0
+	for surface in [_top_left, _run_sheet, bag_ui]:
+		var control := surface as Control
+		if control != null and is_instance_valid(control):
+			control.z_index = layer
 
 func _position_run_sheet_under_top_left() -> void:
 	if _run_sheet == null or _top_left == null:

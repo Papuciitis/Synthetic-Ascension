@@ -11,7 +11,7 @@ signal active_cd_changed(time_left: float, max_cd: float)
 # Default fallback action
 @export var active_action: StringName = &"augment_active"
 
-@export var debug_prints: bool = true
+@export var debug_prints: bool = false
 
 @export var blink_range: float = 320.0
 @export var active_base_cd: float = 6.0
@@ -74,7 +74,7 @@ func _process(dt: float) -> void:
 		if _mark_left <= 0.0:
 			_clear_mark()
 
-	if Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		if debug_prints:
 			print("[HexBlink] pressed. cd=", _cd)
 		_try_cast()
@@ -107,8 +107,9 @@ func _try_cast() -> void:
 	_spawn_mark_vfx()
 
 	# Cooldown with “1d10 > 9” refund => only 10 refunds
-	_cd_max = active_base_cd
+	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	var r: int = randi_range(1, 10)
 	if r >= 10:
 		if debug_prints:
@@ -118,7 +119,13 @@ func _try_cast() -> void:
 	_report_cd(true)
 
 func _clamped_mouse_point() -> Vector2:
-	var mouse: Vector2 = player.get_global_mouse_position()
+	# Aim-aware: on controller the mouse cursor is a stale screen point with
+	# no relation to where the player is aiming — blinking toward it read
+	# as a random teleport. The player's aim state resolves both devices.
+	var aim: Vector2 = player.get_global_mouse_position()
+	if player.has_method("_current_aim_target"):
+		aim = player.call("_current_aim_target")
+	var mouse: Vector2 = aim
 	var dir: Vector2 = mouse - player.global_position
 	var d: float = dir.length()
 	if d <= 0.001:

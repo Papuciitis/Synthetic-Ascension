@@ -5,6 +5,8 @@ const SEGMENT1_NARRATIVE_OVERLAY := preload("res://ui/screens/Segment1NarrativeO
 const TUTORIAL_MODAL_CONTROLLER := preload("res://ui/controllers/TutorialModalController.gd")
 const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/OpeningSequenceController.tscn")
 const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.tscn")
+const ENEMY_PROXY_ROOT_SCRIPT := preload("res://core/systems/enemy_world/EnemyProxyRoot.gd")
+const ENCOUNTER_DIRECTOR_SCRIPT := preload("res://core/systems/encounters/EncounterDirector.gd")
 
 @export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
@@ -17,6 +19,7 @@ const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.ts
 
 # IMPORTANT: only ONE augment_select var (no duplicate @onready + var)
 var augment_select: CanvasLayer = null
+var _augment_prior_paused: bool = false
 
 var _game_over_ui: Control = null
 var _run_ended: bool = false
@@ -112,13 +115,57 @@ func _ready() -> void:
 		if not Global.run_inventory.changed.is_connected(stats_cb):
 			Global.run_inventory.changed.connect(stats_cb)
 
-	print("Game ready - segment:", (Global.attempt_segment if Global != null else -1), " race:", Global.selected_race_id, " style:", Global.selected_style_id)
+	if OS.is_debug_build():
+		print("[Game] ready seg=%d race=%s style=%s seed=%d" % [
+			(Global.attempt_segment if Global != null else -1),
+			Global.selected_race_id,
+			Global.selected_style_id,
+			(Global.attempt_world_seed if Global != null else 0),
+		])
 
 	_setup_segment_world()
+	_setup_enemy_proxy_root()
+	BalanceRecorder.begin_gameplay(player)
+	call_deferred("_setup_encounter_director")
 
 	# Narrative opening precedes run-level reward UI on a fresh Segment 1.
 	call_deferred("_begin_entry_sequence")
 
+
+## Authored encounter beats on top of the director's continuous pressure
+## (roadmap Phase 2.4). Deferred so the spawner and player exist.
+func _setup_encounter_director() -> void:
+	if Global != null and "debug_encounter_beats" in Global and not bool(Global.get("debug_encounter_beats")):
+		return
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
+	var player_node := get_tree().get_first_node_in_group(&"player") as Node2D
+	if spawner == null or player_node == null:
+		return
+	var director := ENCOUNTER_DIRECTOR_SCRIPT.new() as Node
+	director.name = "EncounterDirector"
+	add_child(director)
+	director.call("setup", spawner, player_node)
+
+
+func _setup_enemy_proxy_root() -> void:
+	if Global == null or not Global.enemy_proxy_rollout:
+		return
+	var proxy_root := ENEMY_PROXY_ROOT_SCRIPT.new() as Node2D
+	proxy_root.name = "EnemyProxyRoot"
+	add_child(proxy_root)
+	# The batched enemy visuals must draw above the world builder and the
+	# chunk canvas items that stream in later; enemy nodes historically
+	# rendered above them purely by spawning later in the tree. Deferred
+	# METHOD, not deferred move_child: call_deferred captures argument
+	# values at schedule time, which froze the target index mid-setup.
+	call_deferred("_move_enemy_proxy_root_to_front")
+
+
+
+func _move_enemy_proxy_root_to_front() -> void:
+	var proxy_root := get_node_or_null("EnemyProxyRoot")
+	if proxy_root != null:
+		move_child(proxy_root, get_child_count() - 1)
 
 
 func _setup_segment_world() -> void:
@@ -185,7 +232,10 @@ func _begin_entry_sequence() -> void:
 			_opening_sequence.queue_free()
 			_opening_sequence = null
 
-	if Global != null and Global.pending_augment_pick:
+	# Segment 1 stages the first build choice inside the level (the evidence
+	# store beat); the run-start picker remains for direct later-segment
+	# entries where no store exists.
+	if Global != null and Global.pending_augment_pick and seg != 1:
 		_spawn_augment_select()
 	else:
 		call_deferred("_tutorial_intro_sequence")
@@ -198,6 +248,21 @@ func _on_inventory_changed() -> void:
 func _on_bag_changed() -> void:
 	if Global != null:
 		Global.request_autosave()
+
+
+# Mid-level build choice (Segment 1 evidence store). Same picker as run
+# start, but sequenced: awaits the choice, restores the prior pause state,
+# and resets spawn clocks so reading the offer cannot bank a wave.
+func present_augment_pick_and_wait() -> void:
+	if Global == null or not Global.pending_augment_pick:
+		return
+	if augment_select != null and is_instance_valid(augment_select):
+		return
+	_spawn_augment_select()
+	if augment_select == null:
+		return
+	if augment_select.has_signal("augment_chosen"):
+		await augment_select.augment_chosen
 
 
 func _spawn_augment_select() -> void:
@@ -216,7 +281,8 @@ func _spawn_augment_select() -> void:
 	augment_select.process_mode = Node.PROCESS_MODE_ALWAYS
 	augment_select.layer = 100
 
-	# Pause the game while choosing.
+	# Pause the game while choosing; remember what to restore.
+	_augment_prior_paused = get_tree().paused
 	get_tree().paused = true
 
 	# connect signal
@@ -235,7 +301,8 @@ func _spawn_augment_select() -> void:
 func _on_augment_chosen(a: AugmentData) -> void:
 	# Even if a == null, unpause so the run can proceed.
 	if a != null:
-		print("AUGMENT RECEIVED IN GAME:", a.id)
+		if OS.is_debug_build():
+			print("[Game] augment received id=%s" % a.id)
 
 		# HUD display (optional; AugmentSelect already writes into Global.permanent_augment_ids)
 		if hud != null and hud.has_method("add_augment_to_next_slot"):
@@ -249,7 +316,13 @@ func _on_augment_chosen(a: AugmentData) -> void:
 
 
 func _unpause_after_augment() -> void:
-	get_tree().paused = false
+	get_tree().paused = _augment_prior_paused
+	_augment_prior_paused = false
+
+	# A pause the player spent reading must not release as a banked wave.
+	for spawner_node in get_tree().get_nodes_in_group(&"enemy_spawner"):
+		if spawner_node.has_method("reset_spawn_clock"):
+			spawner_node.call("reset_spawn_clock")
 
 	# Remove overlay so it can't visually cover tutorial tips.
 	if augment_select != null and is_instance_valid(augment_select):
@@ -334,19 +407,28 @@ func end_run() -> void:
 		projectile_manager.clear_for_run_end()
 
 	var is_die_die: bool = (Global != null and Global.followers <= 0)
+	# Read before on_attempt_failed_die_die() resets the attempt snapshot.
+	if OS.is_debug_build():
+		print("[Game] run ended seg=%d followers=%d wipe=%s" % [
+			(Global.attempt_segment if Global != null else -1),
+			(Global.followers if Global != null else -1),
+			is_die_die,
+		])
 	if is_die_die and Global != null:
 		# Wipe attempt snapshot; keep meta augments/upgrades.
 		Global.on_attempt_failed_die_die()
 
-	print("GAME OVER")
-
+	# The tree is already paused above; without a game-over UI there would be
+	# no input path to unpause it, so fall back to the menu instead.
 	if game_over_ui_scene == null:
-		push_warning("game_over_ui_scene is null")
+		push_error("end_run: game_over_ui_scene is null; returning to the main menu")
+		_quit_to_menu()
 		return
 
 	_game_over_ui = game_over_ui_scene.instantiate() as Control
 	if _game_over_ui == null:
-		push_warning("Failed to instantiate game_over_ui_scene")
+		push_error("end_run: failed to instantiate game_over_ui_scene; returning to the main menu")
+		_quit_to_menu()
 		return
 
 	_game_over_ui.process_mode = Node.PROCESS_MODE_ALWAYS
@@ -387,4 +469,4 @@ func _quit_game() -> void:
 	get_tree().paused = false
 	if Global != null:
 		Global.save_current_profile()
-	get_tree().quit()
+	Global.request_quit()

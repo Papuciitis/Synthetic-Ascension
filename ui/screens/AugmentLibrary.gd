@@ -234,6 +234,12 @@ func _on_entry_quick_equip(id: StringName) -> void:
 		return
 	Global.init_permanent_augments()
 
+	# One slot per augment id. The drag path resolves duplicates by swapping;
+	# quick-equip has no target slot, so re-clicking an equipped augment is a
+	# no-op (a free repeatable level-up here would be an exploit).
+	if Global.permanent_augment_ids.find(id) != -1:
+		return
+
 	var chosen := -1
 	for i in range(3):
 		var is_locked := false

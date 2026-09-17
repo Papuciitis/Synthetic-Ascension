@@ -35,6 +35,11 @@ func add_chunk(data: ChunkBuildData) -> void:
 		return
 	remove_chunk(data.coord)
 	var chunk_origin := Vector2(data.coord) * float(_chunk_size)
+	# key -> instance count BEFORE this chunk appended anything, so the upload
+	# below can write only the new tail. _sync_batch used to rewrite every
+	# instance in the batch on every activation, so loading chunk 25 re-uploaded
+	# all twenty-five chunks' transforms - quadratic in the number of live
+	# chunks, for an append.
 	var touched: Dictionary = {}
 	for occupied_index in data.occupied_indices():
 		var cell := data.cell_for_index(occupied_index)
@@ -51,15 +56,16 @@ func add_chunk(data: ChunkBuildData) -> void:
 			continue
 		var key := _texture_key(texture)
 		var batch := _get_or_create_batch(key, texture)
+		if not touched.has(key):
+			touched[key] = batch.transforms.size()
 		var world_center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * float(_cell_size)
 		var transform := Transform2D(rotation, world_center).scaled_local(VISUAL_SCALE)
 		var shadow_transform := Transform2D(rotation, world_center + SHADOW_OFFSET).scaled_local(VISUAL_SCALE)
 		batch.transforms.append(transform)
 		batch.shadow_transforms.append(shadow_transform)
 		batch.owners.append(data.coord)
-		touched[key] = true
 	for key in touched:
-		_sync_batch(_batches[key] as TextureBatch)
+		_sync_batch(_batches[key] as TextureBatch, int(touched[key]))
 
 
 func remove_chunk(coord: Vector2i) -> void:
@@ -151,7 +157,10 @@ func _new_instance(node_name: String, texture: Texture2D, multimesh: MultiMesh) 
 	return instance
 
 
-func _sync_batch(batch: TextureBatch) -> void:
+## `from_index` is the first instance that actually changed. Appends pass the
+## pre-append count; anything that compacts the arrays (remove_chunk) must pass
+## 0, because every index after the removal has shifted.
+func _sync_batch(batch: TextureBatch, from_index: int = 0) -> void:
 	var count := batch.transforms.size()
 	if count > batch.capacity:
 		batch.capacity = maxi(1, batch.capacity)
@@ -159,7 +168,10 @@ func _sync_batch(batch: TextureBatch) -> void:
 			batch.capacity *= 2
 		batch.visual_mesh.instance_count = batch.capacity
 		batch.shadow_mesh.instance_count = batch.capacity
-	for index in count:
+		# Growing reallocates the MultiMesh, so every instance has to be
+		# rewritten regardless of what the caller asked for.
+		from_index = 0
+	for index in range(clampi(from_index, 0, count), count):
 		batch.visual_mesh.set_instance_transform_2d(index, batch.transforms[index])
 		batch.shadow_mesh.set_instance_transform_2d(index, batch.shadow_transforms[index])
 	batch.visual_mesh.visible_instance_count = count

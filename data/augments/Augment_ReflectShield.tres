@@ -14,14 +14,14 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("1_cn18f")
 id = &"augment_reflect_shield"
 display_name = "Reflect Shield"
-description = """A ward that turns incoming force back on its owner — if your timing is clean."""
+description = "A ward that turns incoming force back on its owner — if your timing is clean."
 mods_scale_per_level = 0.2
 card_blurb = "Parry to reflect shots back. Perfect parries chain-zap nearby enemies."
-details = """Parry Window: 0.14s (Perfect: 0.06s)
+details = "Parry Window: 0.14s (Perfect: 0.06s)
 Cooldown: 0.40s (Perfect: 0.10s)
 Reflect: 0.95× damage, 1.05× speed
 Perfect Zap: chains 3 targets in 220px
-Zap Damage: 0.35× Power, Stun: 0.12s"""
+Zap Damage: 0.35× Power, Stun: 0.12s"
 icon = ExtResource("2_oauxa")
 mods = SubResource("Resource_5jej5")
 effect_scenes = Array[PackedScene]([ExtResource("1_8icvy")])

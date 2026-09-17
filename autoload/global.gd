@@ -3,7 +3,7 @@ extends Node
 # ============================================================
 # Paths (centralized)
 # ============================================================
-const DEBUG_GLOBAL := true
+const DEBUG_GLOBAL := false
 
 # -- Data roots (must be plain constants; no function calls inside const)
 # -- Root folders
@@ -20,6 +20,8 @@ const SETS_DIR := DATA_DIR + "/sets"
 const AUGMENTS_DIR := DATA_DIR + "/augments"
 const MAJOR_CHOICES_DIR := DATA_DIR + "/major_choices"
 const WEAPONS_DIR := DATA_DIR + "/weapons"
+const DOCTRINE_REWARD_SERVICE := preload("res://core/systems/major_choice/DoctrineRewardService.gd")
+const _BUILD_INFO_SCRIPT := preload("res://core/systems/telemetry/BuildInfo.gd")
 
 # -- Scenes
 const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
@@ -27,8 +29,11 @@ const PATH_SAVE_SELECT := UI_DIR + "/screens/SaveSelect.tscn"
 const PATH_BASE := UI_DIR + "/screens/base.tscn"
 const PATH_GAME := SCENES_DIR + "/game.tscn"
 const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
-const SEGMENT1_LAYOUT_VERSION: int = 2
-const OPENING_SEQUENCE_VERSION: int = 1
+# v3: story-pass layout - admissions wing added, full-opening start moved to
+# the street entrance. Stale checkpoints and spatial milestones reset.
+const SEGMENT1_LAYOUT_VERSION: int = 3
+# v2: ADMISSION phase inserted after HISTORICAL; saved phase ints >= 2 shift.
+const OPENING_SEQUENCE_VERSION: int = 2
 
 const VFX_DIR := "res://assets/vfx/world/augments"
 const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
@@ -38,8 +43,19 @@ const PATH_VFX_STAMINA_AURA := VFX_DIR + "/VFX_StaminaCoreAura.tscn"
 # ============================================================
 
 signal followers_changed(value: int)
+signal balance_attempt_boundary(reason: StringName)
+signal balance_segment_completed(segment: int)
+signal balance_scene_requested(path: String)
+signal balance_transaction(before: int, change: int, after: int, reason: StringName, context: Dictionary)
 signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
 signal permanent_augments_changed(ids: Array[StringName])
+
+## Either of the two world positions the HUD's edge arrow points at has moved,
+## appeared or gone. They are plain writes from the segment builders, the
+## objectives and the Exit Rite - the rite rewrites its own every frame - so the
+## signal is gated on the value actually changing. HudGateOverlayController
+## sleeps while both are Vector2.INF and this is what wakes it.
+signal hud_target_positions_changed()
 
 
 # ============================================================
@@ -47,8 +63,18 @@ signal permanent_augments_changed(ids: Array[StringName])
 # ============================================================
 
 # Level / segment helpers
-var exit_gate_pos: Vector2 = Vector2.INF
-var objective_target_pos: Vector2 = Vector2.INF
+var exit_gate_pos: Vector2 = Vector2.INF:
+	set(value):
+		if exit_gate_pos == value:
+			return
+		exit_gate_pos = value
+		hud_target_positions_changed.emit()
+var objective_target_pos: Vector2 = Vector2.INF:
+	set(value):
+		if objective_target_pos == value:
+			return
+		objective_target_pos = value
+		hud_target_positions_changed.emit()
 
 # Level/tutorial one-shots (reset each run)
 var tip_shown_wardstone_attune: bool = false
@@ -88,10 +114,31 @@ var owned_augment_ids: Array[StringName] = []       # owned augment library (met
 var augment_slot_locks: Array[bool] = [false, false, false]       # lock equipped slots in hub
 var meta_stash: StashInventory = null
 var discovered_enemy_ids: Array[StringName] = []
+## Manifestation explainer cards already shown, as prefixed ids ("intro",
+## "noun:momentum", "pair:..."). Profile knowledge, exactly like the enemy
+## dossiers above.
+var seen_manifestation_cards: Array[StringName] = []
 var debug_dev_mode: bool = false
 var debug_dev_segment: bool = false
+# Rollout flag for the authoritative Enemy World proxy slice: distant ordinary
+# enemies become data-only records with batched rendering.
+var enemy_proxy_rollout: bool = true
+
+# WorldArt is deliberately not a global class; consumers preload it.
+const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
+var debug_player_god_mode: bool = false
+# Advancement-tree prototype fixture: enemies spawn with this much more HP so
+# the execute band and chain lengths can be read (the review asks for x3).
+# Applies to enemies spawned after the value changes; never saved.
+var debug_enemy_hp_scale: float = 1.0
+# The review asks that mature routes be played with Revelations disabled
+# first, so ordinary fighting has to carry the chaos. Never saved.
+var debug_ascension_revelations_enabled: bool = true
+# Materialized enemies render through shared MultiMesh batches instead of
+# per-node sprites. Applies to enemies spawned after the flag changes.
+var debug_enemy_visual_batching: bool = true
 var debug_set_collision_tools: bool = false
 var debug_performance_lab: bool = false
 var debug_combat_transactions: bool = false
@@ -148,6 +195,11 @@ var attempt_vendor_bag: BagInventory = null
 var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
 var _claimed_loot_set: Dictionary = {} # int -> true
 
+# Buildings the player has walked into this attempt, keyed by the same stable
+# seeded building_id the loot claim uses. Chunks are streamed, so the volume
+# NODE is not an identity - walking three chunks away and back rebuilds it.
+var _visited_building_set: Dictionary = {} # int -> true
+
 var pending_augment_pick: bool = false
 var pending_big_choice: bool = false
 var attempt_big_choice_source_segment: int = 0 # Segment index that granted the pending big choice (usually 5)
@@ -162,6 +214,20 @@ var attempt_exit_hold_mul: float = 1.0
 # Stored offer so you cannot reroll by reopening HubShop
 var attempt_major_choice_offer_ids: Array[StringName] = []
 var attempt_major_choice_taken_ids: Array[StringName] = []
+
+const ASCENSION_DOCTRINE_VERSION: int = 1
+var attempt_doctrine_version: int = ASCENSION_DOCTRINE_VERSION
+var attempt_pending_doctrine_stage: StringName = &""
+var attempt_doctrine_stage_ids: Dictionary = {}
+var attempt_doctrine_rules: Dictionary = {}
+var attempt_doctrine_events: Array[String] = []
+var attempt_witness_used_segment: int = 0
+var attempt_doctrine_threat_debt: float = 0.0
+## The V4 advancement tree's run state (ownership, opened Cores, equipment,
+## banked Evolution claims); a plain Dictionary so it saves as-is. Rules live
+## in AscensionLedger; the combat layer reads it through ascension_ledger().
+var attempt_ascension: Dictionary = {}
+var _ascension_ledger: AscensionLedger = null
 
 # Attempt-scoped augmentation levels (StringName -> int); defaults to 1
 var attempt_augment_levels: Dictionary = {}
@@ -178,8 +244,15 @@ var _autosave_timer: SceneTreeTimer = null
 var _suppress_autosave: bool = false
 var _autosave_dirty: bool = false
 var autosave_fallback_seconds: float = 30.0
+var _doctrine_active_slot: int = -1
+var _doctrine_active_lock_until_ms: int = 0
 # stacking bag
 var run_luck: float = 0.0
+
+## Pushes newly rolled items toward NEG polarity. Raised by curses that tax the
+## LOOT TABLE rather than the player - a shape that is a poison to an ordinary
+## run and a supply line to a curse build. Reset per attempt with everything else.
+var curse_drop_bias: float = 0.0
 
 var _followers: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -229,12 +302,43 @@ func _ready() -> void:
 # Scene navigation API
 # ============================================================
 
+var _loading_scrim: LoadingScrim = null
+
+
+## The card shown over a scene change; created on first use.
+func loading_scrim() -> LoadingScrim:
+	if _loading_scrim == null or not is_instance_valid(_loading_scrim):
+		_loading_scrim = LoadingScrim.new()
+		_loading_scrim.name = "LoadingScrim"
+		add_child(_loading_scrim)
+	return _loading_scrim
+
+
+func _scene_title(path: String) -> String:
+	match path:
+		PATH_GAME:
+			return "SEGMENT %d" % maxi(1, attempt_segment)
+		PATH_HUB_SHOP:
+			return "THE HUB"
+		PATH_BASE:
+			return "BASE"
+		_:
+			return ""
+
+
 func goto_scene(path: String) -> void:
+	balance_scene_requested.emit(path)
 	# Scene changes are the natural safe point for any deferred combat autosave.
 	flush_pending_save()
+	# Building the game scene blocks for most of a second; show the card and
+	# let it render before the block, so the stall reads as a transition.
+	var scrim := loading_scrim()
+	scrim.show_for(_scene_title(path), get_tree().current_scene)
+	await get_tree().process_frame
+	await get_tree().process_frame
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
-		push_error("Scene change failed: %s err=%s" % [path, err])
+		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
 
 func goto_main_menu() -> void:
 	var am := get_node_or_null("/root/AudioManager")
@@ -309,8 +413,13 @@ func transaction_followers(amount: int, reason: StringName, context: Dictionary 
 	var new_value := maxi(0, old_value + amount)
 	var actual_change := new_value - old_value
 	if actual_change == 0:
+		# A balanced buy/sell exchange has economic activity without a wallet
+		# change. Preserve the existing feedback/gameplay signal behavior.
+		if reason == &"trade" and (int(context.get("buy_value", 0)) > 0 or int(context.get("sell_value", 0)) > 0):
+			balance_transaction.emit(old_value, 0, new_value, reason, context)
 		return {"old": old_value, "change": 0, "new": new_value, "suppressed": false}
 	_followers = new_value
+	balance_transaction.emit(old_value, actual_change, new_value, reason, context)
 	followers_changed.emit(_followers)
 	followers_transaction.emit(old_value, actual_change, new_value, reason, context, show_feedback, allow_aggregate)
 	if DEBUG_GLOBAL and debug_combat_transactions:
@@ -330,6 +439,15 @@ func mark_enemy_discovered(enemy_id: StringName) -> void:
 func reset_enemy_discoveries() -> void:
 	discovered_enemy_ids.clear()
 	save_current_profile()
+
+func is_manifestation_card_seen(card_id: StringName) -> bool:
+	return seen_manifestation_cards.has(card_id)
+
+func mark_manifestation_card_seen(card_id: StringName) -> void:
+	if card_id == &"" or seen_manifestation_cards.has(card_id):
+		return
+	seen_manifestation_cards.append(card_id)
+	request_autosave()
 
 
 # ============================================================
@@ -365,6 +483,7 @@ func set_run_selection(race_id: String, style_id: String) -> void:
 
 func reset_run_systems() -> void:
 	# tutorial one-shots
+	_run_taught.clear()
 	tip_shown_wardstone_attune = false
 	tip_shown_resonance = false
 	tip_shown_gate_hold = false
@@ -376,14 +495,23 @@ func reset_run_systems() -> void:
 	reset_run_inventory()
 	reset_run_bag_inventory()
 	run_luck = 0.0
+	curse_drop_bias = 0.0
 
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
 	_claimed_loot_set.clear()
+	_visited_building_set.clear()
 	attempt_vendor_segment = 0
 	attempt_vendor_refreshes = 0
 	attempt_vendor_seed = 0
 	attempt_vendor_bag = null
+
+	# A fresh attempt in the same segment never trips ThreatDirector's
+	# segment-change poll, so tell it explicitly or overtime/elite pressure
+	# from the previous run bleeds into the new one.
+	var threat_director := get_node_or_null("/root/ThreatDirector")
+	if threat_director != null and threat_director.has_method("reset_run_state"):
+		threat_director.call("reset_run_state")
 
 func reset_run_inventory() -> void:
 	run_inventory = Inventory.new()
@@ -404,6 +532,30 @@ func get_item_data(item_id: String) -> ItemData:
 	return item_db.get(item_id, null) as ItemData
 
 
+## Pick a random item id, honouring each item's drop_weight.
+##
+## Every random-item path funnels through here so authored rarity means the same
+## thing whether the item came from an enemy, a building, exploration or a
+## vendor shelf. Passing no keys means "anything in the database".
+func pick_weighted_item_id(rng: RandomNumberGenerator, keys: Array = []) -> String:
+	var pool: Array = keys if not keys.is_empty() else item_db.keys()
+	if pool.is_empty():
+		return ""
+	var total := 0.0
+	for key in pool:
+		var data: ItemData = item_db.get(str(key), null) as ItemData
+		total += maxf(0.0, data.drop_weight) if data != null else 1.0
+	if total <= 0.0:
+		return str(pool[rng.randi_range(0, pool.size() - 1)])
+	var target := rng.randf() * total
+	for key in pool:
+		var data: ItemData = item_db.get(str(key), null) as ItemData
+		target -= maxf(0.0, data.drop_weight) if data != null else 1.0
+		if target <= 0.0:
+			return str(key)
+	return str(pool[pool.size() - 1])
+
+
 func get_equipped_rarity_average() -> float:
 	if run_inventory == null:
 		return 0.0
@@ -416,6 +568,36 @@ func get_equipped_rarity_average() -> float:
 		total += float(instance.rarity)
 		count += 1
 	return total / float(count) if count > 0 else 0.0
+
+
+## Which Manifestation nouns the player currently wears, and how many rules of
+## each. Feeds the drop roll's prerequisite weighting - a rule that talks about
+## a noun you already carry is likelier to be the one that appears.
+## Nouns the player holds, counted the way the PAIR system counts them.
+##
+## This used to count instances while ManifestationRunner counts DISTINCT rules,
+## so two copies of one two-noun rule told the roller "momentum x2, cadence x2"
+## - and the prerequisite weighting then steered every later drop toward those
+## nouns - while the pair system read "x1, x1" and lit nothing. The player was
+## being aimed at an engine they could not reach. One counting convention.
+func equipped_manifestation_tags() -> Dictionary:
+	var held: Dictionary = {}
+	if run_inventory == null:
+		return held
+	var seen: Dictionary = {}
+	for slot_index in range(Inventory.SLOT_COUNT):
+		var instance: ItemInstance = run_inventory.get_at(slot_index)
+		if instance == null or instance.manifestation_id == &"":
+			continue
+		if seen.has(instance.manifestation_id):
+			continue
+		seen[instance.manifestation_id] = true
+		var def := ManifestationCatalog.get_def(instance.manifestation_id)
+		if def == null:
+			continue
+		for tag in def.tags:
+			held[tag] = int(held.get(tag, 0)) + 1
+	return held
 
 
 func build_item_drop_context(
@@ -663,9 +845,106 @@ func set_permanent_augment(slot: int, id: StringName) -> void:
 	init_permanent_augments()
 	if slot < 0 or slot >= 3:
 		return
+	# Invariant: an augment id occupies at most one slot. Callers that mean
+	# "move" (the library drag path) resolve the old slot themselves before
+	# reaching here; anything else clearing the stale copy is the bug fix.
+	if id != StringName():
+		for other in range(3):
+			if other != slot and permanent_augment_ids[other] == id:
+				permanent_augment_ids[other] = StringName()
 	permanent_augment_ids[slot] = id
 	add_owned_augment(id)
-	print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
+	if DEBUG_GLOBAL:
+		print("[AUG] set_permanent_augment slot=", slot, " id=", id, " -> ", permanent_augment_ids)
+	permanent_augments_changed.emit(permanent_augment_ids)
+
+# In-game UI surfaces (bag, overlays) that swallow number keys must also
+# suppress active-augment hotkeys: the effects poll raw Input state, which
+# is blind to GUI focus — pressing "2" while sorting the bag used to blink
+# the player across the screen.
+var _active_augment_input_locks: int = 0
+
+func set_active_augment_input_locked(locked: bool) -> void:
+	_active_augment_input_locks = maxi(0, _active_augment_input_locks + (1 if locked else -1))
+
+func active_augment_input_blocked(slot: int = -1) -> bool:
+	return _active_augment_input_locks > 0 or (slot >= 0 and active_augment_slot_blocked(slot))
+
+func follower_belief_power() -> float:
+	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
+	# the current congregation. sqrt keeps early followers meaningful and
+	# hoarding from snowballing: 25 -> +5%, 100 -> +10%, cap +15%.
+	return minf(0.15, 0.01 * sqrt(float(maxi(0, followers))))
+
+# ============================================================
+# Run Sheet stat ledger
+# ============================================================
+
+## Every contribution of the stat pass, in order, as {label, stat, before,
+## after} rows - so the Run Sheet can answer "why is this stat this high?"
+## with the numbers the pass itself used rather than a second derivation.
+## Recorded, never recomputed: the pass opens the ledger on its base copy with
+## stat_ledger_begin() and calls stat_ledger_step() after each contribution;
+## the helper diffs the Stats it is handed against the previous step, so a
+## multiplicative step (a slot roll, the Doctrine's Max HP price) records the
+## same before/after shape as a flat one. The Global-owned steps below record
+## themselves, one row per augment rather than one row per call.
+const STAT_LEDGER_FIELDS: Array[StringName] = [
+	&"max_hp", &"armor", &"move_speed", &"power", &"haste", &"luck",
+]
+var last_stat_ledger: Array[Dictionary] = []
+
+## "Teach it once per run" for every first-sight line (elite modifiers, the
+## healing lock, the rite's distortion, a ritual interference). Nodes that
+## own those lines - the spawner, the player, an ExitRite, the director - are
+## re-instantiated per segment, so a flag on them repeated the lesson every
+## segment; the run is the unit, and this is the run's registry.
+var _run_taught: Dictionary = {}
+
+
+## True exactly once per run per key; the caller shows the line then.
+func teach_once(key: StringName) -> bool:
+	if key == StringName() or _run_taught.has(key):
+		return false
+	_run_taught[key] = true
+	return true
+
+
+func was_taught(key: StringName) -> bool:
+	return _run_taught.has(key)
+
+
+## Starts the lessons over; reset_run_systems calls it, tests call it directly.
+func reset_teaching() -> void:
+	_run_taught.clear()
+var _stat_ledger_prev: Stats = null
+
+
+func stat_ledger_begin(s: Stats) -> void:
+	last_stat_ledger = []
+	_stat_ledger_prev = s.copy() if s != null else null
+
+
+## Appends one row per stat the step changed and moves the baseline. A no-op
+## until a pass has opened the ledger, so a caller outside the pass (a test,
+## the dev console) applying one step on its own leaves it untouched.
+func stat_ledger_step(label: String, s: Stats) -> void:
+	if s == null or _stat_ledger_prev == null:
+		return
+	for field in STAT_LEDGER_FIELDS:
+		var before := float(_stat_ledger_prev.get(field))
+		var after := float(s.get(field))
+		if is_equal_approx(before, after):
+			continue
+		last_stat_ledger.append({"label": label, "stat": field, "before": before, "after": after})
+	_stat_ledger_prev = s.copy()
+
+func level_up_permanent_augment(id: StringName) -> void:
+	if id == StringName():
+		return
+	set_augment_level(id, get_augment_level(id) + 1)
+	if DEBUG_GLOBAL:
+		print("[AUG] level_up_permanent_augment id=", id, " -> L", get_augment_level(id))
 	permanent_augments_changed.emit(permanent_augment_ids)
 
 func apply_permanent_augments_to_stats(s: Stats) -> void:
@@ -686,6 +965,7 @@ func apply_permanent_augments_to_stats(s: Stats) -> void:
 			a.apply_to_stats_at_level(s, lvl)
 		else:
 			a.apply_to_stats(s)
+		stat_ledger_step("%s Lv.%d" % [a.display_name.to_upper(), lvl], s)
 
 func load_augments_from_dir(path: String) -> void:
 	augment_db.clear()
@@ -762,13 +1042,6 @@ func _scan_dir_recursive(dir_path: String, on_loaded: Callable) -> void:
 # ============================================================
 # Luck roll shaping
 # ============================================================
-
-func _roll_standard_unit() -> float:
-	var x: float = 0.0
-	for i in range(6):
-		x += _rng.randf()
-	x = (x - 3.0) / 3.0
-	return clampf(x, -1.0, 1.0)
 
 func roll_percent(luck: float, min_pct: float, max_pct: float) -> float:
 	return clampf(
@@ -856,6 +1129,87 @@ func add_mutation(id: StringName, value: Variant = true) -> void:
 	attempt_mutations[String(id)] = value
 	request_autosave()
 
+
+func pending_doctrine_stage() -> StringName:
+	return attempt_pending_doctrine_stage
+
+
+## The advancement-tree ledger for this attempt, created on first use from
+## the selected style so the native Core is always the one the run chose.
+func ascension_ledger() -> AscensionLedger:
+	# Identity, not equality: two fresh states compare equal by value, and the
+	# ledger must follow the Dictionary the attempt actually holds.
+	if _ascension_ledger == null or not is_same(_ascension_ledger.state, attempt_ascension):
+		if attempt_ascension.is_empty():
+			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id))
+		_ascension_ledger = AscensionLedger.new(AscensionTreeDB.shared(), attempt_ascension)
+	return _ascension_ledger
+
+
+## Buys a tree node with this run's Followers. Returns the ledger verdict with
+## "ok"; on success the Followers are spent through the normal transaction.
+func ascension_buy(id: String, chosen_core: String = "") -> Dictionary:
+	var ledger := ascension_ledger()
+	var verdict := ledger.can_buy(id, followers, chosen_core)
+	if not bool(verdict["ok"]):
+		return verdict
+	var cost := int(verdict["cost"])
+	if cost > 0:
+		var result := transaction_followers(-cost, &"ascension_purchase", {"node": id}, true, false)
+		if int(result.get("change", 0)) != -cost:
+			transaction_followers(-int(result.get("change", 0)), &"ascension_refund", {"node": id}, false, false)
+			return {"ok": false, "reason": "the Followers could not be spent", "cost": cost}
+	ledger.record_purchase(id, cost, chosen_core)
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_event(&"ascension", &"purchase", {"node": id, "cost": cost, "core": chosen_core, "spent": int(ledger.state.get("spent", 0))})
+	request_autosave()
+	return verdict
+
+
+func ascension_refund(id: String) -> int:
+	var back := ascension_ledger().refund(id)
+	if back > 0:
+		transaction_followers(back, &"ascension_refund", {"node": id}, true, false)
+		request_autosave()
+	return back
+
+
+func get_doctrine_rule(key: StringName, fallback: Variant = null) -> Variant:
+	if attempt_doctrine_rules.has(key):
+		return attempt_doctrine_rules[key]
+	return attempt_doctrine_rules.get(String(key), fallback)
+
+
+func set_doctrine_rule(key: StringName, value: Variant) -> void:
+	if key == StringName():
+		return
+	attempt_doctrine_rules[String(key)] = value
+	request_autosave()
+
+
+func add_doctrine_rule(key: StringName, amount: float) -> void:
+	set_doctrine_rule(key, float(get_doctrine_rule(key, 0.0)) + amount)
+
+
+func doctrine_active_cooldown(base_seconds: float) -> float:
+	return maxf(0.0, base_seconds) * maxf(0.0, float(get_doctrine_rule(&"active_augment_cooldown_mul", 1.0)))
+
+
+func notify_active_augment_used(slot: int) -> void:
+	var seconds := maxf(0.0, float(get_doctrine_rule(&"active_augment_cross_lock_seconds", 0.0)))
+	_doctrine_active_slot = slot
+	_doctrine_active_lock_until_ms = Time.get_ticks_msec() + int(round(seconds * 1000.0))
+
+
+func active_augment_slot_blocked(slot: int) -> bool:
+	return slot != _doctrine_active_slot and Time.get_ticks_msec() < _doctrine_active_lock_until_ms
+
+
+func doctrine_healing_multiplier(source: StringName) -> float:
+	if source in [&"exit_rite", &"wardstone"]:
+		return maxf(0.0, float(get_doctrine_rule(&"ritual_healing_mul", 1.0)))
+	return maxf(0.0, float(get_doctrine_rule(&"other_healing_mul", 1.0)))
+
 func get_augment_level(aug_id: StringName) -> int:
 	if aug_id == StringName():
 		return 1
@@ -874,6 +1228,50 @@ func set_augment_level(aug_id: StringName, level: int) -> void:
 func apply_attempt_modifiers_to_stats(s: Stats) -> void:
 	if attempt_stat_delta != null:
 		attempt_stat_delta.apply_to(s)
+		stat_ledger_step("DOCTRINE", s)
+
+func apply_doctrine_final_stat_multipliers(s: Stats) -> void:
+	if s == null:
+		return
+	var max_hp_mul := float(get_doctrine_rule(&"max_hp_mul", 1.0))
+	s.max_hp = maxf(1.0, s.max_hp * max_hp_mul)
+	stat_ledger_step("MAX HP ×%.2f" % max_hp_mul, s)
+
+func try_consume_manufactured_witness() -> bool:
+	if not bool(get_doctrine_rule(&"manufactured_witness", false)):
+		return false
+	if attempt_witness_used_segment == attempt_segment or followers < 100:
+		return false
+	var transaction := transaction_followers(
+		-100,
+		&"manufactured_witness",
+		{"segment": attempt_segment},
+		false,
+		false
+	)
+	if int(transaction.get("change", 0)) != -100:
+		return false
+	attempt_witness_used_segment = attempt_segment
+	attempt_doctrine_threat_debt += 25.0
+	if not attempt_doctrine_events.has("WITNESS EXPENDED"):
+		attempt_doctrine_events.append("WITNESS EXPENDED")
+	if RunEvents != null and RunEvents.doctrine_event_recorded.has_connections():
+		RunEvents.doctrine_event_recorded.emit(
+			&"witness_expended",
+			"WITNESS EXPENDED"
+		)
+	request_autosave()
+	return true
+
+func grant_doctrine_secondary_rewards(source_key: StringName) -> int:
+	var rolls := maxi(0, int(get_doctrine_rule(&"secondary_reward_rolls", 0)))
+	if rolls <= 0 or item_db.is_empty():
+		return 0
+	var delivered := 0
+	for roll_index in range(rolls):
+		if DOCTRINE_REWARD_SERVICE.grant_secondary_roll(self, source_key, roll_index):
+			delivered += 1
+	return delivered
 
 func get_major_choice_offer(count: int = 3) -> Array:
 	if not pending_big_choice:
@@ -903,38 +1301,62 @@ func _generate_major_choice_offer(count: int) -> void:
 	var ctx_seg: int = get_major_choice_context_segment()
 	rng.seed = int(seed_val) ^ (ctx_seg * 2654435761) ^ 0x5EED5
 
-	var offer: Array[MajorChoiceDef] = major_choice_db.build_offer(self, count, rng)
+	var offer: Array[MajorChoiceDef] = []
+	if attempt_pending_doctrine_stage != StringName():
+		var context_script := load("res://core/systems/major_choice/MajorChoiceContext.gd") as Script
+		var context: RefCounted = context_script.call("from_global", self, attempt_pending_doctrine_stage)
+		offer = major_choice_db.build_stage_offer(context, attempt_major_choice_taken_ids, rng)
+	else:
+		offer = major_choice_db.build_offer(self, count, rng)
 	attempt_major_choice_offer_ids.clear()
 	for d in offer:
 		attempt_major_choice_offer_ids.append(d.id)
 
 	request_autosave()
 
-func apply_major_choice(choice_id: StringName) -> void:
+func apply_major_choice(choice_id: StringName) -> bool:
 	# Resolve the pending reward and apply a run-shaping modifier.
 	if not pending_big_choice:
-		return
+		return false
 
 	var def: MajorChoiceDef = major_choice_db.get_def(choice_id)
-	if def != null:
-		for e in def.effects:
-			if e == null:
-				continue
-			e.apply(self)
-	else:
-		push_warning("apply_major_choice: unknown id: " + String(choice_id))
+	if def == null or not attempt_major_choice_offer_ids.has(choice_id) or attempt_major_choice_taken_ids.has(choice_id):
+		return false
+	if attempt_pending_doctrine_stage != StringName() and def.stage != attempt_pending_doctrine_stage:
+		return false
+	for e in def.effects:
+		if e == null:
+			continue
+		e.apply(self)
 
 	attempt_major_choice_id = choice_id
 	if not attempt_major_choice_taken_ids.has(choice_id):
 		attempt_major_choice_taken_ids.append(choice_id)
+	if attempt_pending_doctrine_stage != StringName():
+		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
 
 	# clear offer + flag so you can't get stuck
 	attempt_major_choice_offer_ids.clear()
 	pending_big_choice = false
 	attempt_big_choice_source_segment = 0
+	attempt_pending_doctrine_stage = &""
 	request_autosave()
+	return true
+
+## Test/dev seam: when true, combat autosaves are neither scheduled nor flushed
+## (exit-crash bisection; the save path is the main thing a kill arms).
+var debug_disable_autosave: bool = false
+## Authored encounter beats (EncounterDirector) - off switch for tests and
+## benchmarks that need the ambient population only.
+var debug_encounter_beats: bool = true
+## The Cursed Vault (roadmap 2.5) - off switch for tests that need the bare
+## district.
+var debug_cursed_vault: bool = true
+
 
 func request_autosave(delay: float = 0.6) -> void:
+	if debug_disable_autosave:
+		return
 	# Combat calls this once per kill; writing and re-validating the profile on
 	# a sub-second debounce meant synchronous disk work mid-fight. Mark the
 	# profile dirty and defer the write to a safe point (scene change, quit) or
@@ -947,19 +1369,66 @@ func request_autosave(delay: float = 0.6) -> void:
 	if _autosave_timer != null and is_instance_valid(_autosave_timer):
 		return
 	_autosave_timer = get_tree().create_timer(maxf(delay, autosave_fallback_seconds))
-	_autosave_timer.timeout.connect(func() -> void:
-		_autosave_timer = null
-		flush_pending_save()
-	)
+	_autosave_timer.timeout.connect(_on_autosave_timeout)
+
+
+func _on_autosave_timeout() -> void:
+	_autosave_timer = null
+	flush_pending_save()
+
+
+func _cancel_autosave_timer() -> void:
+	if _autosave_timer != null and is_instance_valid(_autosave_timer):
+		var callback := Callable(self, "_on_autosave_timeout")
+		if _autosave_timer.timeout.is_connected(callback):
+			_autosave_timer.timeout.disconnect(callback)
+	_autosave_timer = null
+
+
+## The engine's finalization after quit() has an intermittent access
+## violation on this build (script/resource cycles keep RID-holding resources
+## alive past server teardown; see docs/2026-08-27-improvement-backlog.md
+## D1). Player-facing quits flush everything that matters and then end the
+## process before finalization runs. Tests call get_tree().quit() directly and
+## keep their exit codes.
+var hard_exit_on_quit: bool = true
+
+
+func request_quit() -> void:
+	flush_pending_save()
+	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("flush_reports"):
+		PerformanceFlightRecorder.flush_reports()
+	if hard_exit_on_quit and not OS.has_feature("editor"):
+		OS.kill(OS.get_process_id())
+		return
+	get_tree().quit()
 
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_WM_CLOSE_REQUEST:
 		flush_pending_save()
+		if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("flush_reports"):
+			PerformanceFlightRecorder.flush_reports()
+		if hard_exit_on_quit and not OS.has_feature("editor"):
+			OS.kill(OS.get_process_id())
+
+
+func _exit_tree() -> void:
+	_cancel_autosave_timer()
+	# Application shutdown: release script-static caches that hold RID-backed
+	# resources (textures/materials). Script statics destruct during script
+	# server teardown — after rendering cleanup has begun — which is the window
+	# the intermittent exit segfault lives in.
+	_WORLD_ART_SCRIPT.release_static_caches()
+	EnemyProjectile.release_static_caches()
+	AugmentActiveBadge.release_static_caches()
+	ManifestationCatalog.release_static_caches()
+	ManifestationPairCatalog.release_static_caches()
 
 
 func flush_pending_save() -> void:
-	if not _autosave_dirty:
+	_cancel_autosave_timer()
+	if not _autosave_dirty or debug_disable_autosave:
 		return
 	if SaveManager == null or SaveManager.current_save == null:
 		_autosave_dirty = false
@@ -978,6 +1447,22 @@ func _rebuild_claimed_loot_set() -> void:
 func has_claimed_loot(id: int) -> bool:
 	return _claimed_loot_set.has(id)
 
+## True the first time this attempt sees `id`, false ever after. Identity is
+## the seeded building id, never the streamed node, so exploration rewards
+## cannot be farmed by walking out of and back into load radius.
+func note_building_visit(id: int) -> bool:
+	if id == 0:
+		return false
+	if _visited_building_set.has(id):
+		return false
+	_visited_building_set[id] = true
+	return true
+
+
+func has_visited_building(id: int) -> bool:
+	return _visited_building_set.has(id)
+
+
 func claim_loot(id: int) -> void:
 	if id == 0:
 		return
@@ -988,7 +1473,13 @@ func claim_loot(id: int) -> void:
 	request_autosave()
 
 func apply_save(save: SaveData) -> void:
+	balance_attempt_boundary.emit(&"save_loaded")
 	_suppress_autosave = true
+	if save.save_version > SaveData.CURRENT_SAVE_VERSION:
+		push_warning(
+			"Save slot %d was written by a newer build (save_version %d > %d, game %s); loading best-effort."
+			% [save.slot_index, save.save_version, SaveData.CURRENT_SAVE_VERSION, save.game_version]
+		)
 
 	# Last chosen setup (for Base screen defaults)
 	selected_race_id = save.last_race_id
@@ -1006,6 +1497,14 @@ func apply_save(save: SaveData) -> void:
 	for i in range(3):
 		var s: String = save.meta_permanent_augment_ids[i]
 		permanent_augment_ids[i] = (StringName(s) if s != "" else StringName())
+	# Heal saves corrupted by the old duplicate-slotting bug: an id may occupy
+	# only one slot; keep the first occurrence (preserves slot order/locks).
+	for i in range(3):
+		if permanent_augment_ids[i] == StringName():
+			continue
+		for j in range(i + 1, 3):
+			if permanent_augment_ids[j] == permanent_augment_ids[i]:
+				permanent_augment_ids[j] = StringName()
 	init_permanent_augments()
 	permanent_augments_changed.emit(permanent_augment_ids)
 
@@ -1023,6 +1522,11 @@ func apply_save(save: SaveData) -> void:
 		var clean_enemy_id := String(enemy_id).strip_edges()
 		if clean_enemy_id != "" and not discovered_enemy_ids.has(StringName(clean_enemy_id)):
 			discovered_enemy_ids.append(StringName(clean_enemy_id))
+	seen_manifestation_cards.clear()
+	for card_id in save.meta_seen_manifestation_cards:
+		var clean_card_id := String(card_id).strip_edges()
+		if clean_card_id != "" and not seen_manifestation_cards.has(StringName(clean_card_id)):
+			seen_manifestation_cards.append(StringName(clean_card_id))
 
 	# Opening Chronicle profile state. Exported defaults make this safe for old
 	# saves that predate the playable cinematic.
@@ -1074,13 +1578,21 @@ func apply_save(save: SaveData) -> void:
 			var passed_synthesis := attempt_segment1_milestones.has(&"synthesis")
 			if attempt_segment > 1 or passed_synthesis:
 				attempt_opening_completed = true
-				attempt_opening_phase = 9
+				attempt_opening_phase = 10
 				attempt_opening_mode = &"legacy"
 				attempt_opening_officer_completed = attempt_segment1_milestones.has(&"first_confrontation")
 				attempt_opening_bren_committed = attempt_segment1_milestones.has(&"assistant_commitment")
 				opening_full_intro_seen = true
 				if attempt_opening_bren_committed:
 					opening_follower_explanation_seen = true
+			attempt_opening_version = OPENING_SEQUENCE_VERSION
+
+		# v1 -> v2: the ADMISSION phase was inserted after HISTORICAL, so every
+		# saved phase from the old BREN (2) up shifts one slot later. Completed
+		# openings only care about the flag; mid-opening saves resume correctly.
+		if attempt_opening_version == 1:
+			if attempt_opening_phase >= 2:
+				attempt_opening_phase += 1
 			attempt_opening_version = OPENING_SEQUENCE_VERSION
 
 		# Checkpoints from the compact recovery layout are unsafe in the rebuilt map.
@@ -1121,6 +1633,34 @@ func apply_save(save: SaveData) -> void:
 			var tid: String = String(t_id)
 			if tid != "":
 				attempt_major_choice_taken_ids.append(StringName(tid))
+
+		attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		attempt_pending_doctrine_stage = StringName(save.attempt_pending_doctrine_stage)
+		attempt_doctrine_stage_ids = save.attempt_doctrine_stage_ids.duplicate(true)
+		attempt_doctrine_rules = save.attempt_doctrine_rules.duplicate(true)
+		attempt_doctrine_events = save.attempt_doctrine_events.duplicate()
+		attempt_ascension = save.attempt_ascension.duplicate(true)
+		_ascension_ledger = null
+		attempt_witness_used_segment = int(save.attempt_witness_used_segment)
+		attempt_doctrine_threat_debt = maxf(0.0, float(save.attempt_doctrine_threat_debt))
+		# Legacy major choices already wrote their effects into the old modifier
+		# fields. Preserve their identity without replaying those effects or
+		# manufacturing missed Doctrine screens.
+		if attempt_major_choice_id != StringName() and not attempt_major_choice_taken_ids.has(attempt_major_choice_id):
+			attempt_major_choice_taken_ids.append(attempt_major_choice_id)
+		if int(save.attempt_doctrine_version) <= 0:
+			# Legacy offer resources are intentionally disabled. Keeping a pending
+			# pre-Doctrine offer would open an empty modal and permanently disable
+			# Hub Continue, so retire that obsolete reward during migration.
+			pending_big_choice = false
+			attempt_big_choice_source_segment = 0
+			attempt_major_choice_offer_ids.clear()
+			attempt_pending_doctrine_stage = &""
+			attempt_doctrine_stage_ids.clear()
+			attempt_doctrine_rules.clear()
+			attempt_doctrine_events.clear()
+			attempt_ascension = {}
+			_ascension_ledger = null
 
 		attempt_augment_levels = save.attempt_augment_levels.duplicate(true)
 		attempt_mutations = save.attempt_mod_mutations.duplicate(true)
@@ -1187,6 +1727,15 @@ func apply_save(save: SaveData) -> void:
 
 		attempt_major_choice_offer_ids.clear()
 		attempt_major_choice_taken_ids.clear()
+		attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		attempt_pending_doctrine_stage = &""
+		attempt_doctrine_stage_ids.clear()
+		attempt_doctrine_rules.clear()
+		attempt_doctrine_events.clear()
+		attempt_ascension = {}
+		_ascension_ledger = null
+		attempt_witness_used_segment = 0
+		attempt_doctrine_threat_debt = 0.0
 		attempt_augment_levels = {}
 		attempt_mutations = {}
 		attempt_stat_delta = null
@@ -1198,6 +1747,8 @@ func apply_save(save: SaveData) -> void:
 	_suppress_autosave = false
 func write_save(save: SaveData) -> void:
 	_suppress_autosave = true
+	save.save_version = SaveData.CURRENT_SAVE_VERSION
+	save.game_version = String(_BUILD_INFO_SCRIPT.version())
 	save.best_followers = maxi(save.best_followers, followers)
 
 	# Last chosen setup
@@ -1222,6 +1773,9 @@ func write_save(save: SaveData) -> void:
 	save.meta_discovered_enemy_ids = []
 	for enemy_id in discovered_enemy_ids:
 		save.meta_discovered_enemy_ids.append(String(enemy_id))
+	save.meta_seen_manifestation_cards = []
+	for card_id in seen_manifestation_cards:
+		save.meta_seen_manifestation_cards.append(String(card_id))
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen
 	save.opening_response_id = String(opening_response_id)
@@ -1257,6 +1811,14 @@ func write_save(save: SaveData) -> void:
 		save.attempt_major_choice_taken_ids = []
 		for id in attempt_major_choice_taken_ids:
 			save.attempt_major_choice_taken_ids.append(String(id))
+		save.attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		save.attempt_pending_doctrine_stage = String(attempt_pending_doctrine_stage)
+		save.attempt_doctrine_stage_ids = attempt_doctrine_stage_ids.duplicate(true)
+		save.attempt_doctrine_rules = attempt_doctrine_rules.duplicate(true)
+		save.attempt_doctrine_events = attempt_doctrine_events.duplicate()
+		save.attempt_ascension = attempt_ascension.duplicate(true)
+		save.attempt_witness_used_segment = attempt_witness_used_segment
+		save.attempt_doctrine_threat_debt = attempt_doctrine_threat_debt
 
 		save.attempt_augment_levels = attempt_augment_levels.duplicate(true)
 		save.attempt_mod_mutations = attempt_mutations.duplicate(true)
@@ -1304,6 +1866,14 @@ func write_save(save: SaveData) -> void:
 
 		save.attempt_major_choice_offer_ids = []
 		save.attempt_major_choice_taken_ids = []
+		save.attempt_doctrine_version = ASCENSION_DOCTRINE_VERSION
+		save.attempt_pending_doctrine_stage = ""
+		save.attempt_doctrine_stage_ids = {}
+		save.attempt_doctrine_rules = {}
+		save.attempt_doctrine_events = []
+		save.attempt_ascension = {}
+		save.attempt_witness_used_segment = 0
+		save.attempt_doctrine_threat_debt = 0.0
 		save.attempt_augment_levels = {}
 		save.attempt_mod_mutations = {}
 		save.attempt_mod_stat_delta = null
@@ -1336,6 +1906,7 @@ func write_save(save: SaveData) -> void:
 func save_current_profile(validated: bool = true) -> void:
 	if SaveManager == null or SaveManager.current_save == null:
 		return
+	_cancel_autosave_timer()
 	_autosave_dirty = false
 	write_save(SaveManager.current_save)
 	SaveManager.save_current(validated)
@@ -1345,6 +1916,7 @@ func record_new_attempt(save: SaveData) -> void:
 		save.total_runs = maxi(0, save.total_runs) + 1
 
 func start_new_attempt() -> void:
+	balance_attempt_boundary.emit(&"restarted")
 	# Attempt resets (die-die behavior)
 	attempt_active = true
 	attempt_segment = 1
@@ -1385,6 +1957,14 @@ func start_new_attempt() -> void:
 	pending_augment_pick = (owned == 0)
 	pending_big_choice = false
 	attempt_major_choice_id = &""
+	attempt_pending_doctrine_stage = &""
+	attempt_doctrine_stage_ids.clear()
+	attempt_doctrine_rules.clear()
+	attempt_doctrine_events.clear()
+	attempt_ascension = {}
+	_ascension_ledger = null
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0
 	attempt_wardstone_slow_mul = 1.0
 	attempt_exit_hold_mul = 1.0
@@ -1397,6 +1977,15 @@ func start_new_attempt() -> void:
 	save_current_profile()
 
 func on_segment_completed(completed_segment: int) -> void:
+	balance_segment_completed.emit(completed_segment)
+	if not attempt_ascension.is_empty():
+		ascension_ledger().note_segment_completed(completed_segment)
+		# Guaranteed Evolution opportunities after segments 6 and 9, then every
+		# third segment. A qualified recipe is bought with the claim at the tree;
+		# with none, the claim stays banked (V4 "Purchase and recipe rules").
+		if completed_segment == 6 or completed_segment == 9 or (completed_segment > 9 and (completed_segment - 9) % 3 == 0):
+			ascension_ledger().grant_evolution_claim()
+			request_autosave()
 	attempt_segment = completed_segment + 1
 	attempt_deaths_this_segment = 0
 	attempt_checkpoint_pos = Vector2.INF
@@ -1404,7 +1993,7 @@ func on_segment_completed(completed_segment: int) -> void:
 		attempt_segment1_resonance = 0.0
 		attempt_segment1_milestones.clear()
 		attempt_opening_completed = true
-		attempt_opening_phase = 9
+		attempt_opening_phase = 10
 
 	# New segment: reset exploration loot claim state
 	attempt_claimed_loot_ids = PackedInt32Array()
@@ -1419,14 +2008,31 @@ func on_segment_completed(completed_segment: int) -> void:
 	# Milestones
 	if completed_segment == 2 or completed_segment == 7:
 		pending_augment_pick = true
-	if completed_segment == 5:
+	var next_doctrine_stage := doctrine_stage_for_completed_segment(completed_segment)
+	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage):
 		pending_big_choice = true
+		attempt_pending_doctrine_stage = next_doctrine_stage
 		attempt_big_choice_source_segment = completed_segment
+		attempt_major_choice_offer_ids.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 
 	if SaveManager != null and SaveManager.current_save != null:
 		SaveManager.current_save.attempt_resume_scene = PATH_HUB_SHOP
 
 	save_current_profile()
+
+
+func doctrine_stage_for_completed_segment(completed_segment: int) -> StringName:
+	match completed_segment:
+		3:
+			return &"method"
+		6:
+			return &"doctrine"
+		9:
+			return &"apotheosis"
+		_:
+			return &""
 
 
 
@@ -1445,6 +2051,7 @@ func get_major_choice_context_segment() -> int:
 	return attempt_segment
 
 func on_attempt_failed_die_die() -> void:
+	balance_attempt_boundary.emit(&"failed")
 	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
 	attempt_active = false
 	attempt_segment = 1
@@ -1463,6 +2070,14 @@ func on_attempt_failed_die_die() -> void:
 	pending_big_choice = false
 	attempt_big_choice_source_segment = 0
 	attempt_major_choice_id = &""
+	attempt_pending_doctrine_stage = &""
+	attempt_doctrine_stage_ids.clear()
+	attempt_doctrine_rules.clear()
+	attempt_doctrine_events.clear()
+	attempt_ascension = {}
+	_ascension_ledger = null
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 	attempt_wardstone_radius_mul = 1.0
 	attempt_wardstone_slow_mul = 1.0
 	attempt_exit_hold_mul = 1.0
@@ -1497,7 +2112,7 @@ func set_opening_phase(value: int) -> void:
 
 func mark_opening_completed() -> void:
 	attempt_opening_completed = true
-	attempt_opening_phase = 9
+	attempt_opening_phase = 10
 	attempt_opening_version = OPENING_SEQUENCE_VERSION
 	opening_full_intro_seen = true
 	request_autosave(0.1)
@@ -1535,8 +2150,12 @@ func compute_item_value(inst: ItemInstance) -> int:
 		return 0
 
 	var r: int = maxi(0, int(inst.rarity))
-	# Uncapped quadratic growth keeps every rarity increase economically meaningful.
-	var base: float = 10.0 + float(r) * 18.0 + float(r * r) * 2.5
+	# Uncapped quadratic growth keeps every rarity increase economically
+	# meaningful. The constant term prices the item's worth AS MERGE
+	# MATERIAL: at 10 the R0->R1 rank-up loop (buy peer, merge, sell) was
+	# Follower-positive at high Luck. Invariant (tested): no vendor
+	# buy->merge->sell sequence may net Followers.
+	var base: float = 26.0 + float(r) * 18.0 + float(r * r) * 2.5
 
 	var q: float = clampf(absf(float(inst.active_pct())), 0.0, 1.0)
 	var quality_mul: float = lerpf(0.90, 1.40, q)
@@ -1582,6 +2201,16 @@ func deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> b
 			)
 			if run_inventory.get_at(slot) == inst:
 				return true
+		# Same item already equipped: feed the reward into the equipped copy
+		# instead of stranding a frozen duplicate stack in the bag.
+		if slot >= 0 and slot < Inventory.SLOT_COUNT:
+			var equipped := run_inventory.get_at(slot) as ItemInstance
+			if equipped != null and equipped.data != null \
+			and not equipped.locked and not inst.locked \
+			and equipped.data.id == inst.data.id \
+			and int(equipped.polarity) == int(inst.polarity):
+				if run_inventory.add_or_feed(inst, {"type": Inventory.UIOriginType.SCREEN, "pos": Vector2.ZERO}):
+					return true
 
 	if run_bag != null and run_bag.add_instance(inst):
 		return true

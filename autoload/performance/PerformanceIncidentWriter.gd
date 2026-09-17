@@ -3,16 +3,19 @@ class_name PerformanceIncidentWriter
 
 
 static func write_incident(incident: Dictionary, directory: String) -> Dictionary:
-	var error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(directory))
-	if error != OK and error != ERR_ALREADY_EXISTS:
-		return {"ok": false, "json_path": "", "csv_path": "", "error": error_string(error)}
 	var metadata := incident.get("metadata", {}) as Dictionary
 	var sequence := int(metadata.get("sequence", 0))
 	var segment := int(metadata.get("segment", 0))
 	var stamp := Time.get_datetime_string_from_system(false, true).replace(":", "-").replace(" ", "_")
+	# Captures batch into one folder per day, so old days can be dropped
+	# from version control (or archived) without touching current work.
+	var day_directory := directory.path_join(stamp.substr(0, 10))
+	var error := DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(day_directory))
+	if error != OK and error != ERR_ALREADY_EXISTS:
+		return {"ok": false, "json_path": "", "csv_path": "", "error": error_string(error)}
 	var base := "%s_segment-%02d_incident-%03d" % [stamp, segment, sequence]
-	var json_path := directory.path_join(base + ".json")
-	var csv_path := directory.path_join(base + ".csv")
+	var json_path := day_directory.path_join(base + ".json")
+	var csv_path := day_directory.path_join(base + ".csv")
 	var json_file := FileAccess.open(json_path, FileAccess.WRITE)
 	if json_file == null:
 		return {"ok": false, "json_path": "", "csv_path": "", "error": "Cannot open JSON report: %s" % FileAccess.get_open_error()}
@@ -21,7 +24,7 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 	var csv_file := FileAccess.open(csv_path, FileAccess.WRITE)
 	if csv_file == null:
 		return {"ok": false, "json_path": json_path, "csv_path": "", "error": "Cannot open CSV report: %s" % FileAccess.get_open_error()}
-	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building")
+	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only")
 	for sample_variant in incident.get("samples", []):
 		var sample := sample_variant as Dictionary
 		csv_file.store_csv_line(PackedStringArray([
@@ -37,6 +40,17 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 			str(sample.get("nodes", 0)),
 			str(sample.get("chunks", 0)),
 			str(sample.get("flow_building", false)),
+			str(sample.get("sim_full", 0)),
+			str(sample.get("sim_mid", 0)),
+			str(sample.get("sim_far", 0)),
+			str(sample.get("sim_protected", 0)),
+			str(sample.get("sim_physics_enabled", 0)),
+			str(sample.get("sim_pressure", 0)),
+			str(sample.get("sim_spatial_demotions", 0)),
+			str(sample.get("tier_changes_total", 0)),
+			str(sample.get("tier_reversals_total", 0)),
+			str(sample.get("enemy_world_materialized", 0)),
+			str(sample.get("enemy_world_data_only", 0)),
 		]))
 	csv_file.close()
 	return {"ok": true, "json_path": json_path, "csv_path": csv_path, "error": ""}

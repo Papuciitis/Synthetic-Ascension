@@ -51,10 +51,14 @@ func _start_loop() -> void:
 		if _enemy.spec == null:
 			break
 
-		if _enemy.spec.leech_amount > 0:
+		# No drain from a dead player (the reconstruction modal pauses the
+		# tree, but this loop's timer used to keep ticking through it).
+		var player := _enemy.get_tree().get_first_node_in_group("player")
+		var player_dead: bool = player != null and bool(player.get("is_dead"))
+		if _enemy.spec.leech_amount > 0 and not player_dead:
 			Global.transaction_followers(-_enemy.spec.leech_amount, &"enemy_drain", {"enemy_id": String(_enemy.spec.id)}, true, true)
 
-		await _enemy.get_tree().create_timer(maxf(_enemy.spec.leech_every, 0.05)).timeout
+		await _enemy.get_tree().create_timer(maxf(_enemy.spec.leech_every, 0.05), false).timeout
 		if generation != _loop_generation:
 			return
 

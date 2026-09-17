@@ -8,6 +8,12 @@ var blocker_mask := PackedByteArray()
 var blocker_variant := PackedByteArray()
 var floor_rect_and_style := PackedInt32Array()
 var floor_alpha := PackedFloat32Array()
+## Nothing reads this any more.
+##
+## It was filled by two full recursive find_children() scans of every freshly
+## built chunk - inside the blocker phase, which is the most expensive phase of
+## a chunk build - and then never looked at by anything. Kept as a field only
+## because ChunkBuildData is serialised shape; the scans are gone.
 var interactive_nodes: Array[Node] = []
 
 var _occupied := PackedInt32Array()

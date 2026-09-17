@@ -1,5 +1,8 @@
 # Equipment Foundation Patch
 
+Date: entered the repo 2026-07-30 (`af1fc46`), during the 0.25.x line; the
+verification below cites Godot 4.7.1. Kept as history.
+
 ## Implemented
 
 - Added a single continuous rarity-mass merge model.
@@ -44,6 +47,10 @@ merges use the corrected mass and overflow rules.
 - Luck affects polarity only slightly and remains capped, so NEG builds stay viable.
 - Luck APIs for crits, evasion, events, followers, and augments are hooks only. No speculative
   gameplay behavior was activated without corresponding finished systems.
+  (2026-08-30: since the 2026-08-23 audit session, crits, evasion, follower
+  gain and exploration loot are live consumers; only `augment_quality_bonus`
+  remains an unconsumed hook — `core/systems/items/LuckResolver.gd:57`, no
+  caller.)
 - NEG-specific effect slots fall back to existing shared effects. The patch provides the
   foundation but does not invent item or set variants.
 

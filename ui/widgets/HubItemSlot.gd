@@ -16,6 +16,7 @@ enum Kind { EQUIPPED, BAG, STASH }
 
 var _host: Node = null
 var _set_emblem: SetEmblem = null
+var _manifest_badge: ManifestBadge = null
 
 # --- Drag helpers (ScrollContainer-safe) ---
 var _drag_armed: bool = false
@@ -35,6 +36,11 @@ func _ready() -> void:
 	_set_emblem.offset_right = -4.0
 	_set_emblem.offset_bottom = -4.0
 	_set_emblem.configure(&"")
+
+	# Vendor stock rolls Manifestations like any other drop, so the shop grid
+	# has to say which rings are the interesting ones before you buy.
+	_manifest_badge = ManifestBadge.attach(self, Control.PRESET_BOTTOM_LEFT, Rect2(4, -20, 16, 16), 9)
+
 	# Force UI-friendly filtering and prevent atlas-looking pixel blocks.
 	if icon_rect != null:
 		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
@@ -84,7 +90,12 @@ func set_item(inst: ItemInstance, marked_for_sale: bool) -> void:
 			icon_rect.texture = null
 		if _set_emblem != null:
 			_set_emblem.configure(&"")
+		if _manifest_badge != null:
+			_manifest_badge.visible = false
 		return
+
+	if _manifest_badge != null:
+		_manifest_badge.show_for_item(inst)
 
 	if icon_rect != null:
 		# ItemData.icon is a Texture2D in this project.

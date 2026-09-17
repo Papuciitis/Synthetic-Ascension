@@ -9,161 +9,131 @@ signal choice_committed(choice_id: StringName)
 
 @onready var overlay: ColorRect = $Overlay
 @onready var window: PanelContainer = $Center/Window
+@onready var stage_label: Label = $Center/Window/Margin/VBox/Stage
 @onready var cards_box: HBoxContainer = $Center/Window/Margin/VBox/Cards
-@onready var details_panel: PanelContainer = $Center/Window/Margin/VBox/DetailsPanel
-@onready var details_label: Label = $Center/Window/Margin/VBox/DetailsPanel/Margin/Details
-@onready var foot: Label = $Center/Window/Margin/VBox/Foot
+@onready var warning_label: Label = $Center/Window/Margin/VBox/Warning
+@onready var confirm_button: Button = $Center/Window/Margin/VBox/Actions/Confirm
+@onready var back_button: Button = $Center/Window/Margin/VBox/Actions/Back
 
-var _open_tw: Tween = null
-var _is_open: bool = false
-var _locked: bool = false
+var _open_tw: Tween
+var _is_open := false
+var _locked := false
+var _focused_id: StringName = &""
 
-var _default_foot_text: String = ""
-var _default_details_text: String = ""
-var _hovered_card: MajorChoiceCard = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 120
 	visible = false
-
-	if overlay:
-		overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-		overlay.color = Color(0, 0, 0, 0.55)
-
-	if card_scene == null:
-		push_error("MajorChoice: card_scene not assigned.")
-		return
-
-	# Keep clicks from leaking behind the overlay.
-	if window != null:
-		window.mouse_filter = Control.MOUSE_FILTER_STOP
-
-	# Defaults / hover preview area
-	if foot != null:
-		_default_foot_text = foot.text
-
-	if details_label != null:
-		_default_details_text = "Hover a card to view full details. Cards only show top highlights."
-		details_label.text = _default_details_text
-
-	if details_panel != null:
-		details_panel.visible = true
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	window.mouse_filter = Control.MOUSE_FILTER_STOP
+	confirm_button.pressed.connect(confirm_focused_choice)
+	back_button.pressed.connect(_clear_focus)
+	confirm_button.disabled = true
 
 
 func open() -> void:
-
 	if _is_open:
 		return
 	_is_open = true
 	_locked = false
 	visible = true
-	_hovered_card = null
-	if details_panel != null:
-		details_panel.visible = true
-	if details_label != null:
-		details_label.text = _default_details_text
-	if foot != null:
-		foot.text = _default_foot_text
+	_clear_focus()
+	_update_stage_copy()
 	_spawn_cards()
 	_play_open_anim()
 
+
+func _update_stage_copy() -> void:
+	var stage_id: StringName = Global.pending_doctrine_stage() if Global != null else &""
+	var descriptor := "METHOD // THE INSTRUMENT IS CHOSEN"
+	match stage_id:
+		&"doctrine": descriptor = "DOCTRINE // THE SYSTEM LEARNS TO WORSHIP"
+		&"apotheosis": descriptor = "APOTHEOSIS // DIVINITY IS MADE REPEATABLE"
+	stage_label.text = descriptor
+
+
 func _spawn_cards() -> void:
-	if cards_box == null:
-		return
-	for c in cards_box.get_children():
-		c.queue_free()
-
-	var offer: Array = []
-	if Global != null and Global.has_method("get_major_choice_offer"):
-		offer = Global.get_major_choice_offer(3)
-
-	if offer.is_empty():
-		push_warning("MajorChoice: offer is empty (no defs found).")
-		return
-
-	for def in offer:
-		var d := def as MajorChoiceDef
-		if d == null:
+	for child in cards_box.get_children():
+		child.queue_free()
+	var offer: Array = Global.get_major_choice_offer(3) if Global != null else []
+	var seal_index := 1
+	for candidate in offer:
+		var definition := candidate as MajorChoiceDef
+		if definition == null or not definition.is_doctrine_complete():
 			continue
-
 		var card := card_scene.instantiate() as MajorChoiceCard
-		if card == null:
-			continue
 		cards_box.add_child(card)
+		card.set_def(definition, definition.preview_lines(Global), seal_index)
+		card.focused.connect(_on_card_focused)
+		seal_index += 1
+	if cards_box.get_child_count() > 0:
+		(cards_box.get_child(0) as Control).grab_focus()
 
-		var preview: PackedStringArray = d.preview_lines(Global)
-		card.set_def(d, preview)
-		card.picked.connect(_on_card_picked)
-		if card.has_signal("hovered"):
-			card.hovered.connect(_on_card_hovered)
-		if card.has_signal("unhovered"):
-			card.unhovered.connect(_on_card_unhovered)
 
-func _on_card_picked(id: StringName, _card: MajorChoiceCard) -> void:
-	if _locked:
+func _on_card_focused(card: MajorChoiceCard) -> void:
+	if _locked or card == null:
 		return
+	_focused_id = card.choice_id
+	for child in cards_box.get_children():
+		if child is MajorChoiceCard:
+			(child as MajorChoiceCard).set_plate_focused(child == card)
+	confirm_button.disabled = false
+	warning_label.text = "SEAL READY · THIS INSCRIPTION CANNOT BE REVISED"
+	confirm_button.grab_focus()
+
+
+func focus_choice(definition: MajorChoiceDef) -> void:
+	if definition == null:
+		return
+	for child in cards_box.get_children():
+		if child is MajorChoiceCard and (child as MajorChoiceCard).choice_id == definition.id:
+			_on_card_focused(child)
+			return
+
+
+func confirm_focused_choice() -> bool:
+	if _locked or _focused_id == StringName() or Global == null:
+		return false
 	_locked = true
-
-	if Global != null and Global.has_method("apply_major_choice"):
-		Global.apply_major_choice(id)
-
-	choice_committed.emit(id)
+	var applied := bool(Global.apply_major_choice(_focused_id))
+	if not applied:
+		_locked = false
+		return false
+	choice_committed.emit(_focused_id)
 	_close()
+	return true
 
 
+func _clear_focus() -> void:
+	_focused_id = &""
+	confirm_button.disabled = true
+	warning_label.text = "SELECT A THESIS PLATE TO EXAMINE ITS SEAL"
+	for child in cards_box.get_children():
+		if child is MajorChoiceCard:
+			(child as MajorChoiceCard).set_plate_focused(false)
 
-func _on_card_hovered(card: MajorChoiceCard) -> void:
-	_hovered_card = card
-	if details_label != null and card != null and card.has_method("get_detail_text"):
-		details_label.text = card.get_detail_text(999)
-	if details_panel != null:
-		details_panel.visible = true
-	if foot != null:
-		foot.text = "Click a card to choose. Your choice locks in immediately."
 
-func _on_card_unhovered(card: MajorChoiceCard) -> void:
-	if _hovered_card != card:
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_open:
 		return
-	_hovered_card = null
-	if details_label != null:
-		details_label.text = _default_details_text
-	if details_panel != null:
-		details_panel.visible = true
-	if foot != null:
-		foot.text = _default_foot_text
+	if event.is_action_pressed(&"ui_cancel") and _focused_id != StringName():
+		_clear_focus()
+		get_viewport().set_input_as_handled()
+
 
 func _close() -> void:
 	_is_open = false
-	_locked = false
 	visible = false
-	if details_panel != null:
-		details_panel.visible = true
-	if details_label != null:
-		details_label.text = _default_details_text
-	if foot != null:
-		foot.text = _default_foot_text
-	if cards_box:
-		for c in cards_box.get_children():
-			c.queue_free()
+	for child in cards_box.get_children():
+		child.queue_free()
+
 
 func _play_open_anim() -> void:
-	if overlay == null:
-		return
 	if _open_tw != null:
 		_open_tw.kill()
-		_open_tw = null
-
-	overlay.modulate = Color(1, 1, 1, 0)
-	if window != null:
-		window.modulate = Color(1, 1, 1, 0)
-		window.scale = Vector2(0.985, 0.985)
-
-	_open_tw = create_tween()
-	_open_tw.set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	_open_tw.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	_open_tw.tween_property(overlay, "modulate", Color(1, 1, 1, 1), Accessibility.current_motion_duration(0.12))
-
-	if window != null:
-		_open_tw.parallel().tween_property(window, "modulate", Color(1, 1, 1, 1), Accessibility.current_motion_duration(0.12))
-		_open_tw.parallel().tween_property(window, "scale", Vector2(1, 1), Accessibility.current_motion_duration(0.16)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	overlay.modulate.a = 0.0
+	window.modulate.a = 0.0
+	_open_tw = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
+	_open_tw.tween_property(overlay, "modulate:a", 1.0, Accessibility.current_motion_duration(0.10))
+	_open_tw.parallel().tween_property(window, "modulate:a", 1.0, Accessibility.current_motion_duration(0.14))

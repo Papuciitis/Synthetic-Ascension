@@ -92,6 +92,8 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var base_terrain: StringName = &"grass"
 	var exploration_terrain: StringName = &"grass"
 	var theme_id: StringName = &"service_courtyards"
+	var envelope_cardinal_chance: float = 0.88
+	var envelope_diagonal_chance: float = 0.42
 	var want_miniboss_arena: bool = (segment == 5)
 	var want_boss_arena: bool = (segment == 10)
 
@@ -114,6 +116,8 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 		exploration_reconnect_chance = clampf(theme.exploration_reconnect_chance, 0.0, 1.0)
 		exploration_band_bonus = maxi(1, theme.exploration_band_bonus)
 		landmark_count = clampi(theme.landmark_count, 1, 4)
+		envelope_cardinal_chance = clampf(theme.urban_envelope_cardinal_chance, 0.0, 1.0)
+		envelope_diagonal_chance = clampf(theme.urban_envelope_diagonal_chance, 0.0, 1.0)
 		base_terrain = StringName(theme.base_terrain)
 		exploration_terrain = StringName(theme.exploration_terrain)
 		theme_id = theme.id
@@ -242,7 +246,10 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var road_chunk_set: Dictionary = chunk_set.duplicate()
 	var urban_envelope_set: Dictionary = {}
 	var urban_envelope_chunks: Array[Vector2i] = []
-	if theme_id == &"service_courtyards":
+	# Every theme gets an envelope now, at its own density. This used to read
+	# `if theme_id == &"service_courtyards"`, which is why segments 3-10 were
+	# routes drawn across an empty field.
+	if envelope_cardinal_chance > 0.0:
 		var cardinal_dirs: Array[Vector2i] = [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]
 		var diagonal_dirs: Array[Vector2i] = [Vector2i(1, -1), Vector2i(1, 1), Vector2i(-1, 1), Vector2i(-1, -1)]
 		var road_keys: Array = road_chunk_set.keys()
@@ -253,7 +260,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 				var cardinal_candidate: Vector2i = road_chunk + cardinal_dir
 				if road_chunk_set.has(cardinal_candidate) or urban_envelope_set.has(cardinal_candidate):
 					continue
-				if rng.randf() > 0.88:
+				if rng.randf() > envelope_cardinal_chance:
 					continue
 				chunk_set[cardinal_candidate] = true
 				urban_envelope_set[cardinal_candidate] = true
@@ -265,7 +272,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 				var diagonal_candidate: Vector2i = road_chunk2 + diagonal_dir
 				if road_chunk_set.has(diagonal_candidate) or urban_envelope_set.has(diagonal_candidate):
 					continue
-				if rng.randf() > 0.42:
+				if rng.randf() > envelope_diagonal_chance:
 					continue
 				var has_cardinal_bridge: bool = false
 				for cardinal_dir in cardinal_dirs:
@@ -338,9 +345,14 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var secondary_target_count: int = 2 if segment == 2 else rng.randi_range(0, 3)
 	var secondary_objectives: Array[Dictionary] = []
 	var secondary_used: Dictionary = {}
+	# The miniboss arena claims its chunk later with higher priority; a
+	# secondary planned on the same endpoint would be advertised but never
+	# spawned (the arena role overwrites it).
+	if miniboss_chunk != INVALID_CHUNK:
+		secondary_used[miniboss_chunk] = true
 	if secondary_target_count >= 1 and not exploration_paths.is_empty():
 		var alley_path: Array = exploration_paths[rng.randi_range(0, exploration_paths.size() - 1)] as Array
-		if not alley_path.is_empty():
+		if not alley_path.is_empty() and not secondary_used.has(alley_path[alley_path.size() - 1] as Vector2i):
 			var alley_endpoint: Vector2i = alley_path[alley_path.size() - 1]
 			for alley_index in range(maxi(0, alley_path.size() - 2), alley_path.size() - 1):
 				var alley_chunk: Vector2i = alley_path[alley_index]
@@ -370,17 +382,21 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 			})
 			break
 
+	# The third slot used to be a second alley cache, so a district with three
+	# secondaries offered two identical ones. A shrine is a different KIND of
+	# detour - a decision rather than a trip - and it wants an open floor to
+	# stand on, so it takes a plaza role rather than a dead end.
 	if secondary_target_count >= 3:
 		for extra_endpoint: Vector2i in exploration_end_chunks:
 			if secondary_used.has(extra_endpoint):
 				continue
-			role_by_chunk[extra_endpoint] = &"secondary_alley_cache"
+			role_by_chunk[extra_endpoint] = &"secondary_wager_shrine"
 			secondary_used[extra_endpoint] = true
 			if not reward_chunks.has(extra_endpoint):
 				reward_chunks.append(extra_endpoint)
 			secondary_objectives.append({
-				"id": secondary_objective_id(int(rng.seed), extra_endpoint, &"dangerous_alley_cache"),
-				"type": &"dangerous_alley_cache",
+				"id": secondary_objective_id(int(rng.seed), extra_endpoint, &"wager_shrine"),
+				"type": &"wager_shrine",
 				"chunk": extra_endpoint,
 				"world": _chunk_center_world(extra_endpoint, chunk_size_px),
 			})
@@ -412,7 +428,7 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 		role_by_chunk[boss_chunk] = &"boss_arena"
 
 	var connectors_by_chunk: Dictionary = _build_connectors(road_chunk_set)
-	var urban_access_by_chunk: Dictionary = _build_urban_access_connectors(road_chunk_set, urban_envelope_set)
+	var urban_access_by_chunk: Dictionary = _build_urban_access_connectors(road_chunk_set, urban_envelope_set, attempt_world_seed)
 	var archetype_by_chunk: Dictionary = {}
 	for role_key in role_by_chunk.keys():
 		var role_coord: Vector2i = role_key
@@ -718,7 +734,7 @@ static func _farthest_candidate(candidates: Array[Vector2i], start_chunk: Vector
 			best = candidate
 	return best
 
-static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_envelope_set: Dictionary) -> Dictionary:
+static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_envelope_set: Dictionary, plan_seed: int) -> Dictionary:
 	var result: Dictionary = {}
 	if urban_envelope_set.is_empty():
 		return result
@@ -751,11 +767,27 @@ static func _build_urban_access_connectors(road_chunk_set: Dictionary, urban_env
 	# A diagonal candidate should always have a bridge, but deterministic generation
 	# failures must never leave a sealed block. Drop unreachable envelope chunks from
 	# the access map rather than inventing a visual doorway into nowhere.
+	var sealed: Array[Vector2i] = []
 	for envelope_key in urban_envelope_set.keys():
 		var envelope_coord: Vector2i = envelope_key as Vector2i
 		if not visited.has(envelope_coord):
-			push_warning("[DistrictPlan] Urban envelope chunk has no street access: %s" % str(envelope_coord))
+			sealed.append(envelope_coord)
+	if not sealed.is_empty():
+		push_warning(_sealed_envelope_warning(plan_seed, sealed))
 	return result
+
+
+## One line for a whole plan's unreachable envelope chunks. The sweep above runs
+## over every envelope chunk, so reporting inside it produced one warning per
+## sealed chunk with nothing to tie them to the plan that made them.
+static func _sealed_envelope_warning(plan_seed: int, sealed: Array[Vector2i]) -> String:
+	var coords := PackedStringArray()
+	for coord: Vector2i in sealed:
+		coords.append("(%d,%d)" % [coord.x, coord.y])
+	return (
+		"[DistrictPlan] seed=%d dropped %d sealed envelope chunks from the street-access map: %s"
+		% [plan_seed, sealed.size(), ",".join(coords)]
+	)
 
 
 static func _build_connectors(chunk_set: Dictionary) -> Dictionary:
@@ -772,7 +804,7 @@ static func _build_connectors(chunk_set: Dictionary) -> Dictionary:
 
 static func _archetype_for_role(role: StringName) -> StringName:
 	match role:
-		&"entry_court", &"landmark_plaza", &"exploration_reward", &"primary_objective":
+		&"entry_court", &"landmark_plaza", &"exploration_reward", &"primary_objective", &"secondary_wager_shrine":
 			return &"plaza"
 		&"wardstone_court", &"checkpoint", &"miniboss_arena", &"boss_arena":
 			return &"arena"

@@ -9,7 +9,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$version = '0.0.0.25.5'
+# Single source of truth: application/config/version in project.godot.
+$version = (Select-String -Path (Join-Path $PSScriptRoot '..\project.godot') -Pattern '^config/version="(.+)"').Matches[0].Groups[1].Value
+if ([string]::IsNullOrWhiteSpace($version)) { throw 'config/version missing from project.godot' }
 $presetName = 'Windows Desktop'
 $projectRoot = [System.IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $godotPath = [System.IO.Path]::GetFullPath($GodotConsole)
@@ -37,9 +39,20 @@ if ($DryRun) {
 }
 
 New-Item -ItemType Directory -Path $versionDirectory | Out-Null
-& $godotPath --headless --path $projectRoot --export-release $presetName $executablePath
-if ($LASTEXITCODE -ne 0) {
-    throw "Godot export failed with exit code $LASTEXITCODE"
+# Bake the git identity for BuildInfo: exported builds have no .git to read.
+# The file is git-ignored and removed again after the export.
+$buildInfoPath = Join-Path $projectRoot 'build_info.json'
+$gitCommit = (& git -C $projectRoot rev-parse --short=12 HEAD 2>$null)
+$gitBranch = (& git -C $projectRoot rev-parse --abbrev-ref HEAD 2>$null)
+@{ git_commit = "$gitCommit"; git_branch = "$gitBranch"; game_version = $version } |
+    ConvertTo-Json -Compress | Set-Content -LiteralPath $buildInfoPath -Encoding utf8
+try {
+    & $godotPath --headless --path $projectRoot --export-release $presetName $executablePath
+    if ($LASTEXITCODE -ne 0) {
+        throw "Godot export failed with exit code $LASTEXITCODE"
+    }
+} finally {
+    Remove-Item -LiteralPath $buildInfoPath -Force -ErrorAction SilentlyContinue
 }
 if (-not (Test-Path -LiteralPath $executablePath -PathType Leaf)) {
     throw "Godot reported success but did not create $executablePath"

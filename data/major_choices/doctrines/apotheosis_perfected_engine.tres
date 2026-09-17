@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_UpgradeEquippedAugments.gd" id="2"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddStatDelta.gd" id="3"]
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="4"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="5"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="6"]
+
+[sub_resource type="Resource" id="effect_levels"]
+script = ExtResource("2")
+amount = 2
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("4")
+power = 0.35
+
+[sub_resource type="Resource" id="effect_stats"]
+script = ExtResource("3")
+delta = SubResource("stats")
+
+[sub_resource type="Resource" id="effect_hp"]
+script = ExtResource("5")
+rule_key = &"max_hp_mul"
+multiply = 0.7
+
+[sub_resource type="Resource" id="effect_identity"]
+script = ExtResource("6")
+rule_key = &"force_augment_identity"
+value = true
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_apotheosis_perfected_engine"
+title = "Perfected Engine"
+description = "Declare the installed system complete and the remaining flesh incidental."
+stage = &"apotheosis"
+offer_role = &"amplify"
+family_id = &"circuit"
+gift_text = "+2 levels to every equipped augment and +35% Power."
+price_text = "Maximum health is reduced by 30%."
+consequence_text = "All three augment seals define your manufactured identity, even when a slot is empty."
+build_tags = Array[StringName]([&"active_augment"])
+effects = Array[Resource]([SubResource("effect_levels"), SubResource("effect_stats"), SubResource("effect_hp"), SubResource("effect_identity")])

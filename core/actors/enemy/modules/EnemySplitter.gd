@@ -29,7 +29,32 @@ func spawn_splitters(is_elite: bool) -> Array[EnemyActor]:
 	var amount_low: int = mini(maxi(1, count_min), maxi(1, count_max))
 	var amount_high: int = maxi(maxi(1, count_min), maxi(1, count_max))
 	var wanted: int = Global._rng.randi_range(amount_low, amount_high)
+	return _spawn_children(child_scene, wanted, generation, spec.split_inherit_elite and is_elite, {})
 
+
+## Roadmap §9 SPLITTING: an elite of a non-splitting archetype leaves `count`
+## smaller non-elite copies behind, through the same reservation, placement
+## and spawn path as the Splitter. The copies carry `elite_split_child` so
+## EnemyInit shrinks them; they never split again - not elite, not splitters.
+func spawn_modifier_split(count: int) -> Array[EnemyActor]:
+	var spawned_children: Array[EnemyActor] = []
+	if _owner == null or _owner.spec == null or count <= 0:
+		return spawned_children
+	var child_scene: PackedScene = _resolve_child_scene(_owner.spec)
+	if child_scene == null:
+		return spawned_children
+	var generation: int = maxi(0, int(_owner.get_meta("split_generation", 0)))
+	return _spawn_children(child_scene, count, generation, false, {&"elite_split_child": true})
+
+
+func _spawn_children(
+	child_scene: PackedScene,
+	wanted: int,
+	generation: int,
+	inherit_elite: bool,
+	extra_meta: Dictionary,
+) -> Array[EnemyActor]:
+	var spawned_children: Array[EnemyActor] = []
 	var enemy_index: Node = _owner.get_node_or_null("/root/EnemyIndex")
 	var granted: int = wanted
 	if enemy_index != null and enemy_index.has_method("try_reserve_special"):
@@ -56,6 +81,8 @@ func spawn_splitters(is_elite: bool) -> Array[EnemyActor]:
 				continue
 		child.set_meta("split_generation", generation + 1)
 		child.set_meta("split_root_id", int(_owner.get_meta("split_root_id", _owner.get_instance_id())))
+		for key in extra_meta:
+			child.set_meta(key, extra_meta[key])
 		child.add_to_group("splitter_spawned")
 		child.global_position = child_position
 
@@ -73,7 +100,7 @@ func spawn_splitters(is_elite: bool) -> Array[EnemyActor]:
 			spawn_filter.call("record_spawn", StringName(child.spec.id))
 		spawned_children.append(child)
 
-		if spec.split_inherit_elite and is_elite and child.has_method("make_elite"):
+		if inherit_elite and child.has_method("make_elite"):
 			child.call_deferred("make_elite")
 
 	return spawned_children

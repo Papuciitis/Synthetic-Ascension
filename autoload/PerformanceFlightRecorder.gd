@@ -7,6 +7,7 @@ const STATE_WATCHING := "watching"
 const STATE_AFTERMATH := "aftermath"
 const STATE_COOLDOWN := "cooldown"
 const SCHEMA_VERSION := 1
+const BuildInfoScript = preload("res://core/systems/telemetry/BuildInfo.gd")
 const MAX_SAMPLE_RATE := 120
 const MAX_EVENTS := 2048
 const EVENT_BUCKET_USEC := 250_000
@@ -21,7 +22,14 @@ var cooldown_seconds := 2.0
 var absolute_threshold_ms := 28.0
 var relative_multiplier := 1.8
 var baseline_alpha := 0.025
-var report_directory := "user://performance_captures"
+# Running from the project (editor / --path) captures straight into the repo's
+# tracked performance_results folder so runs are comparable across machines.
+# Exported builds fall back to user:// because res:// is read-only there.
+var report_directory := (
+	"res://performance_results"
+	if OS.has_feature("editor")
+	else "user://performance_captures"
+)
 
 var _state := STATE_DISABLED
 var _history: Array[Dictionary] = []
@@ -41,6 +49,7 @@ var _session_started_usec := 0
 var _slow_snapshot_left := 0.0
 var _cached_slow_snapshot: Dictionary = {}
 var _sampling_overhead_usec := 0
+var _last_sample_usec := 0
 var _max_sampling_overhead_usec := 0
 var _dropped_samples := 0
 var _automatic_armed := true
@@ -68,16 +77,27 @@ func _process(delta: float) -> void:
 		_slow_snapshot_left = 0.5
 		_cached_slow_snapshot = _collect_slow_snapshot()
 	var sample := collect_runtime_sample()
-	# frame_ms is the real spacing of this frame (delta); process_ms stays the
-	# engine monitor, which reports the PREVIOUS frame's process step. The two
-	# describe different frames by design — see collect_runtime_sample().
+	# delta_ms is the engine's process delta, which Godot caps and smooths, so
+	# it is NOT a wall-clock frame timer; wall_ms is the real spacing between
+	# this sample and the previous one. frame_ms keeps the delta for older
+	# readers. process_ms / physics_ms are the engine's windowed monitors
+	# (published about once a second, include rendering synchronisation) and
+	# do not attribute a stall to scripts.
 	sample["frame_ms"] = delta * 1000.0
+	sample["delta_ms"] = delta * 1000.0
+	sample["wall_ms"] = (float(int(sample["t_usec"]) - _last_sample_usec) / 1000.0) if _last_sample_usec > 0 else delta * 1000.0
+	_last_sample_usec = int(sample["t_usec"])
 	ingest_sample(sample)
 	_sampling_overhead_usec = Time.get_ticks_usec() - started
 	_max_sampling_overhead_usec = maxi(_max_sampling_overhead_usec, _sampling_overhead_usec)
 
 
 func _exit_tree() -> void:
+	flush_reports()
+
+
+## Join the background report writer; safe to call more than once.
+func flush_reports() -> void:
 	for completion in _report_write_queue.shutdown():
 		_accept_report_completion(completion)
 
@@ -207,6 +227,13 @@ func collect_runtime_sample() -> Dictionary:
 		"sampling_overhead_usec": _sampling_overhead_usec,
 	}
 	sample.merge(_cached_slow_snapshot, true)
+	# Combat subsystem costs per frame: the advancement tree's engine ticks,
+	# attack queue flush and backlog, Barrage fragment updates and
+	# reacquisitions. Cheap: the runner keeps these as plain counters.
+	var player := get_tree().get_first_node_in_group(&"player") if get_tree() != null else null
+	var runner := player.get_node_or_null("AscensionRunner") if player != null else null
+	if runner != null and runner.has_method("get_debug_counters"):
+		sample["ascension"] = runner.call("get_debug_counters")
 	return sample
 
 
@@ -217,10 +244,52 @@ func _collect_slow_snapshot() -> Dictionary:
 		"special_enemies": 0,
 		"enemy_tiers": {},
 		"enemy_scheduler": {},
+		"sim_full": 0,
+		"sim_mid": 0,
+		"sim_far": 0,
+		"sim_protected": 0,
+		"sim_physics_enabled": 0,
+		"sim_pressure": 0,
+		"sim_spatial_demotions": 0,
+		"tier_changes_total": 0,
+		"tier_reversals_total": 0,
 		"enemy_pool": {},
+		"enemy_lifecycle": {
+			"attached": 0,
+			"detached": 0,
+			"retired": 0,
+			"reversals": 0,
+
+			"tier_changes": 0,
+			"full_to_mid": 0,
+			"mid_to_full": 0,
+			"mid_to_far": 0,
+			"far_to_mid": 0,
+			"full_to_far": 0,
+			"far_to_full": 0,
+
+			"attach_total_usec": 0,
+			"attach_max_usec": 0,
+			"detach_total_usec": 0,
+			"detach_max_usec": 0,
+			"retire_total_usec": 0,
+			"retire_max_usec": 0,
+		},
+		"enemy_world_logical": 0,
+		"enemy_world_materialized": 0,
+		"enemy_world_data_only": 0,
+		"enemy_world_dying": 0,
+		"enemy_world_spatial_cells": 0,
+		"enemy_world_max_cell_occupancy": 0,
 		"projectiles": 0,
+		"projectile_ms": 0.0,
+		"chunk_stream": {},
 		"chunks": 0,
 		"flow_building": false,
+		"flow_revision": 0,
+		"flow_snapshot_usec": 0,
+		"flow_worker_usec": 0,
+		"flow_publish_usec": 0,
 		"segment": Global.attempt_segment if Global != null else 0,
 		"threat": 0.0,
 		"resonance": 0.0,
@@ -236,9 +305,70 @@ func _collect_slow_snapshot() -> Dictionary:
 		output["ambient_enemies"] = int(counters.get("ambient", 0))
 		output["special_enemies"] = int(counters.get("special", 0))
 		output["enemy_tiers"] = counters.get("tiers", {})
+		if counters.has("lifecycle"):
+			var lifecycle := output["enemy_lifecycle"] as Dictionary
+
+			lifecycle.merge(
+				(counters["lifecycle"] as Dictionary),
+				true
+			)
+	var chunk_manager := get_tree().get_first_node_in_group(&"chunk_manager") if get_tree() != null else null
+	if chunk_manager != null and chunk_manager.has_method("get_chunk_stream_debug_stats"):
+		var stream := chunk_manager.call("get_chunk_stream_debug_stats") as Dictionary
+		output["chunk_stream"] = {
+			"queue_length": int(stream.get("queue_length", 0)),
+			"last_build_ms": float(stream.get("last_build_ms", 0.0)),
+			"max_build_ms": float(stream.get("max_build_ms", 0.0)),
+			"last_plan_ms": float(stream.get("last_plan_ms", 0.0)),
+		}
+	var enemy_world := get_node_or_null("/root/EnemyWorld")
+	if enemy_world != null and enemy_world.has_method("get_debug_counters"):
+		var world_data := enemy_world.call("get_debug_counters") as Dictionary
+		output["enemy_world_logical"] = int(world_data.get("logical", 0))
+		output["enemy_world_materialized"] = int(world_data.get("materialized", 0))
+		var proxy_root := get_tree().get_first_node_in_group(&"enemy_proxy_root")
+		var representation_manager: Node = proxy_root.get("manager") if proxy_root != null else null
+		if representation_manager != null and representation_manager.has_method("get_debug_counters"):
+			var policy_data := (representation_manager.call("get_debug_counters") as Dictionary).get("policy", {}) as Dictionary
+			for key in ["materialized_required_kind", "materialized_required_flag", "materialized_in_band", "materialized_beyond_band", "demotion_backlog"]:
+				output["representation_" + key] = int(policy_data.get(key, 0))
+		output["enemy_world_data_only"] = int(world_data.get("data_only", 0))
+		output["enemy_world_dying"] = int(world_data.get("dying", 0))
+		output["enemy_world_spatial_cells"] = int(world_data.get("spatial_cells", 0))
+		output["enemy_world_max_cell_occupancy"] = int(world_data.get("max_cell_occupancy", 0))
 	var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+
 	if scheduler != null and scheduler.has_method("get_debug_counters"):
-		output["enemy_scheduler"] = (scheduler.call("get_debug_counters") as Dictionary).duplicate(true)
+		var scheduler_data := (
+			scheduler.call("get_debug_counters") as Dictionary
+		).duplicate(true)
+
+		output["enemy_scheduler"] = scheduler_data
+
+		# Flat copies so incident CSV rows can carry the simulation LOD state.
+		output["sim_full"] = int(scheduler_data.get("full", 0))
+		output["sim_mid"] = int(scheduler_data.get("mid", 0))
+		output["sim_far"] = int(scheduler_data.get("far", 0))
+		output["sim_protected"] = int(scheduler_data.get("protected", 0))
+		output["sim_physics_enabled"] = int(scheduler_data.get("physics_enabled", 0))
+		output["sim_pressure"] = int(scheduler_data.get("pressure_active", 0))
+		output["sim_spatial_demotions"] = int(scheduler_data.get("spatial_demotions", 0))
+
+		if scheduler_data.has("lifecycle"):
+			var lifecycle := output["enemy_lifecycle"] as Dictionary
+
+			lifecycle.merge(
+				(scheduler_data["lifecycle"] as Dictionary),
+				true
+			)
+
+			lifecycle["reversals"] = (
+				int(lifecycle.get("representation_reversals", 0))
+				+ int(lifecycle.get("tier_reversals", 0))
+			)
+
+			output["tier_changes_total"] = int(lifecycle.get("tier_changes", 0))
+			output["tier_reversals_total"] = int(lifecycle.get("tier_reversals", 0))
 	var pool := get_node_or_null("/root/PoolManager")
 	if pool != null and pool.has_method("get_debug_counters"):
 		output["enemy_pool"] = (pool.call("get_debug_counters") as Dictionary).duplicate(true)
@@ -246,6 +376,8 @@ func _collect_slow_snapshot() -> Dictionary:
 	if manager != null:
 		if manager.has_method("active_count"):
 			output["projectiles"] = int(manager.call("active_count"))
+			if manager.has_method("get_debug_counters"):
+				output["projectile_ms"] = float((manager.call("get_debug_counters") as Dictionary).get("physics_ms", 0.0))
 		elif "active_count" in manager:
 			output["projectiles"] = int(manager.get("active_count"))
 	var chunks := get_tree().get_first_node_in_group(&"chunk_manager")
@@ -255,7 +387,10 @@ func _collect_slow_snapshot() -> Dictionary:
 	if flow != null and flow.has_method("get_debug_counters"):
 		var flow_data := flow.call("get_debug_counters") as Dictionary
 		output["flow_building"] = bool(flow_data.get("building", false))
-		output["flow_revision"] = int(flow_data.get("revision", 0))
+		output["flow_revision"] = int(flow_data.get("last_revision", 0))
+		output["flow_snapshot_usec"] = int(flow_data.get("last_snapshot_usec", 0))
+		output["flow_worker_usec"] = int(flow_data.get("last_worker_usec", 0))
+		output["flow_publish_usec"] = int(flow_data.get("last_publish_usec", 0))
 	return output
 
 
@@ -291,6 +426,7 @@ func _finalize_incident(now_usec: int) -> void:
 	_latest_incident = {
 		"schema_version": SCHEMA_VERSION,
 		"metadata": {
+			"build": BuildInfoScript.describe(int(Global.get("attempt_world_seed")) if Global != null else 0),
 			"sequence": _sequence,
 			"segment": segment,
 			"trigger_reason": String(_trigger_reason),
@@ -317,33 +453,56 @@ func _finalize_incident(now_usec: int) -> void:
 
 func _build_summary(samples: Array[Dictionary], events: Array) -> Dictionary:
 	var frame_times: Array[float] = []
+	var wall_times: Array[float] = []
 	var worst := 0.0
+	var worst_wall := 0.0
 	var below_60 := 0
 	var below_45 := 0
 	var below_30 := 0
 	var process_peak := 0.0
 	var physics_peak := 0.0
+	var ascension_peak_usec := 0
+	var fragment_peak_usec := 0
 	for sample in samples:
 		var frame_ms := float(sample.get("frame_ms", 0.0))
 		frame_times.append(frame_ms)
 		worst = maxf(worst, frame_ms)
+		var wall_ms := float(sample.get("wall_ms", frame_ms))
+		wall_times.append(wall_ms)
+		worst_wall = maxf(worst_wall, wall_ms)
+		var ascension: Dictionary = sample.get("ascension", {})
+		if not ascension.is_empty():
+			ascension_peak_usec = maxi(ascension_peak_usec, int(ascension.get("tick_usec", 0)) + int(ascension.get("flush_usec", 0)) + int(ascension.get("hit_usec", 0)))
+			var barrage: Dictionary = ascension.get("BR", {})
+			fragment_peak_usec = maxi(fragment_peak_usec, int(barrage.get("fragment_usec", 0)))
 		process_peak = maxf(process_peak, float(sample.get("process_ms", 0.0)))
 		physics_peak = maxf(physics_peak, float(sample.get("physics_ms", 0.0)))
 		if frame_ms > 1000.0 / 60.0: below_60 += 1
 		if frame_ms > 1000.0 / 45.0: below_45 += 1
 		if frame_ms > 1000.0 / 30.0: below_30 += 1
 	frame_times.sort()
+	wall_times.sort()
 	return {
 		"worst_frame_ms": worst,
 		"median_frame_ms": _percentile(frame_times, 0.50),
 		"p95_frame_ms": _percentile(frame_times, 0.95),
 		"p99_frame_ms": _percentile(frame_times, 0.99),
+		# Wall-clock spacing between samples: the frame time the player felt.
+		"worst_wall_ms": worst_wall,
+		"median_wall_ms": _percentile(wall_times, 0.50),
+		"p95_wall_ms": _percentile(wall_times, 0.95),
+		"p99_wall_ms": _percentile(wall_times, 0.99),
 		"frames_below_60": below_60,
 		"frames_below_45": below_45,
 		"frames_below_30": below_30,
+		# Windowed engine monitors (about one publish a second, rendering
+		# synchronisation included): which side peaked, not which script.
 		"peak_process_ms": process_peak,
 		"peak_physics_ms": physics_peak,
 		"dominant_thread": "physics" if physics_peak > process_peak else "process",
+		"monitor_note": "process_ms/physics_ms are Godot's windowed monitors and include render sync; frame_ms/delta_ms are the capped process delta; wall_ms is real sample spacing.",
+		"peak_ascension_usec": ascension_peak_usec,
+		"peak_fragment_usec": fragment_peak_usec,
 		"nearby_event_groups": _event_group_summary(events),
 		"note": "Events overlap the incident timeline; correlation does not prove causation.",
 	}
@@ -425,7 +584,11 @@ func clear_session() -> void:
 	_capture_samples.clear()
 	_events.clear()
 	_counter_buckets.clear()
-	_latest_incident.clear()
+	# Rebind, never clear(): a finalized incident is handed to the write
+	# worker BY REFERENCE (PerformanceIncidentWriteQueue.enqueue documents the
+	# copy it deliberately avoids), and the worker may still be serialising it
+	# on its own thread. Mutating it here would rewrite the report mid-write.
+	_latest_incident = {}
 	_latest_report_path = ""
 	_latest_error = ""
 	_sequence = 0

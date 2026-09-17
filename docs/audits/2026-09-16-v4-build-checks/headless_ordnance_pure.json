@@ -1,0 +1,120 @@
+{
+  "ascension_usec": {
+    "max": 19135.0,
+    "p50": 124.0,
+    "p95": 4677.0
+  },
+  "build": {
+    "game_version": "0.0.0.25.5",
+    "git_branch": "enemy-world-work",
+    "git_commit": "74c1714ee226",
+    "godot_version": "4.7.2-stable (official)",
+    "world_seed": 0
+  },
+  "casts": 25,
+  "cpu": "Intel(R) Core(TM) i7-8650U CPU @ 1.90GHz",
+  "display_server": "headless",
+  "draw_calls": {
+    "max": 0.0,
+    "p50": 0.0
+  },
+  "events": [
+    {
+      "event": "preset",
+      "result": {
+        "bought": 14,
+        "failed": "",
+        "spent": 13600
+      },
+      "t": 3.00341044444444
+    },
+    {
+      "event": "revelation",
+      "t": 6.00973607936511
+    },
+    {
+      "event": "revelation",
+      "t": 9.01010377777781
+    },
+    {
+      "event": "revelation",
+      "t": 12.0129933333333
+    },
+    {
+      "event": "revelation",
+      "t": 15.0190148888887
+    },
+    {
+      "event": "revelation",
+      "t": 18.0195631428568
+    },
+    {
+      "event": "revelation",
+      "t": 21.0242794708989
+    },
+    {
+      "event": "revelation",
+      "t": 24.0272973333328
+    },
+    {
+      "event": "revelation",
+      "t": 27.0309663333327
+    },
+    {
+      "event": "revelation",
+      "t": 30.0311048888883
+    },
+    {
+      "event": "revelation",
+      "t": 33.0356394444441
+    },
+    {
+      "event": "revelation",
+      "t": 36.0364282222217
+    },
+    {
+      "event": "revelation",
+      "t": 39.040237587301
+    }
+  ],
+  "frame_ms": {
+    "max": 35.1553333333345,
+    "p50": 6.936,
+    "p95": 8.33333333333333,
+    "p99": 13.601
+  },
+  "frames": 5563,
+  "godot": "4.7.2-stable (official)",
+  "gpu": "",
+  "headless": true,
+  "kills": 240,
+  "kills_per_sec": 6.0,
+  "nodes": {
+    "end": 2695.0,
+    "max": 2769.0,
+    "start": 2120.0
+  },
+  "note": "frame_ms is the process delta; wall_ms is real spacing between frames; headless runs have no rendering and are not a play-feel measurement.",
+  "os": "Linux",
+  "population": 60,
+  "preset": "Ordnance pure",
+  "renderer": "none",
+  "runner_counters": {
+    "engines": 1,
+    "flush_usec": 2,
+    "flushed": 0,
+    "hit_usec": 0,
+    "hits_this_frame": 0,
+    "queued_attacks": 0,
+    "tick_usec": 66
+  },
+  "seconds": 40.0020738888882,
+  "seed": 20260916,
+  "segment": 5,
+  "wall_ms": {
+    "max": 62.778,
+    "p50": 6.91,
+    "p95": 11.565,
+    "p99": 17.884
+  }
+}

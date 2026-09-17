@@ -43,6 +43,9 @@ extends Control
 
 var _major_choice: MajorChoice = null
 var _augment_library: AugmentLibraryScreen = null
+const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
+var _ascension_screen: AscensionScreen = null
+var _btn_ascension: Button = null
 
 # --- vendor stock ---
 var _vendor_bag: BagInventory = null
@@ -160,6 +163,7 @@ func _ready() -> void:
 	if btn_augments != null:
 		btn_augments.pressed.connect(_open_augments)
 	btn_inventory.pressed.connect(_open_inventory)
+	_create_ascension_button()
 
 
 	btn_clear_cart.pressed.connect(_clear_selection)
@@ -182,7 +186,7 @@ func _ready() -> void:
 
 	confirm_trade.confirmed.connect(_perform_trade)
 
-	# Major choice overlay (Segment 5 reward)
+	# Ascension Doctrine overlay (staged rewards after Segments 3, 6, and 9)
 	if major_choice_scene != null:
 		_major_choice = major_choice_scene.instantiate() as MajorChoice
 		add_child(_major_choice)
@@ -276,7 +280,7 @@ func _toggle_item_lock(inst: ItemInstance) -> void:
 			trade_status.text = "LOCKED · Protected from trade, movement, replacement and duplicate cleanup."
 	elif trade_status != null:
 		trade_status.text = "UNLOCKED · Item actions restored."
-	_refresh_cart()
+	_refresh_cart(trade_status.text if trade_status != null else "")
 	_refresh_overlays()
 	if Global != null:
 		Global.save_current_profile()
@@ -338,7 +342,10 @@ func _refresh_undo_button_details() -> void:
 func _undo_last_trade() -> void:
 	if _undo_trade.is_empty() or Global == null:
 		return
-	Global.followers = int(_undo_trade.get("followers", Global.followers))
+	# Route the restore through the ledger so every follower mutation is
+	# auditable under one reason stream.
+	var restored_followers: int = int(_undo_trade.get("followers", Global.followers))
+	Global.transaction_followers(restored_followers - int(Global.followers), &"trade_undo", {}, false, false)
 	_restore_inventory_snapshot(_undo_trade.get("inventory", []) as Array)
 	_restore_bag_snapshot(Global.run_bag, _undo_trade.get("bag", []) as Array)
 	_restore_bag_snapshot(_vendor_bag, _undo_trade.get("vendor", []) as Array)
@@ -374,7 +381,7 @@ func _refresh_info() -> void:
 	if Global != null and Global.pending_augment_pick:
 		extra += "\n\nREWARD READY\nAugment pick available"
 	if Global != null and Global.pending_big_choice:
-		extra += "\n\nREWARD READY\nMajor choice pending"
+		extra += "\n\nDOCTRINE READY\nAscension thesis awaiting inscription"
 
 	title.text = "Aftermath"
 	var report_header: String = "SEGMENT %d CLEARED" % completed_segment if completed_segment > 0 else "PREPARING SEGMENT 1"
@@ -528,6 +535,7 @@ func _make_preview_bag() -> BagInventory:
 func _init_or_reuse_vendor() -> void:
 	if Global == null:
 		_vendor_bag = BagInventory.new()
+		_vendor_bag.auto_consolidate = false
 		_vendor_bag._ensure_size()
 		return
 
@@ -536,6 +544,8 @@ func _init_or_reuse_vendor() -> void:
 	# Reuse if the vendor snapshot matches this segment.
 	if Global.attempt_vendor_segment == seg and Global.attempt_vendor_bag != null:
 		_vendor_bag = Global.attempt_vendor_bag
+		# Older saves persisted the vendor bag before the flag existed.
+		_vendor_bag.auto_consolidate = false
 		_vendor_seed = int(Global.attempt_vendor_seed)
 		# Ensure correct size
 		if _vendor_bag.has_method("_ensure_size"):
@@ -555,6 +565,7 @@ func _init_or_reuse_vendor() -> void:
 
 	# New segment vendor
 	_vendor_bag = BagInventory.new()
+	_vendor_bag.auto_consolidate = false
 	_vendor_bag.slots = []
 	for _i in range(BagInventory.SLOT_COUNT):
 		_vendor_bag.slots.append(null)
@@ -823,8 +834,7 @@ func _quick_move_equipped_to_bag(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_inv.erase(slot)
 	if InvRouter.move_between(Global.run_inventory, slot, Global.run_bag, dst, null):
-		if trade_status != null: trade_status.text = "MOVED TO BACKPACK"
-		_refresh_cart()
+		_refresh_cart("MOVED TO BACKPACK")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -848,8 +858,7 @@ func _quick_equip_from_bag(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_bag.erase(slot)
 	if InvRouter.move_between(Global.run_bag, slot, Global.run_inventory, equip_slot, null):
-		if trade_status != null: trade_status.text = "ITEM EQUIPPED"
-		_refresh_cart()
+		_refresh_cart("ITEM EQUIPPED")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -871,8 +880,7 @@ func _quick_move_bag_to_stash(slot: int) -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
 	_sell_bag.erase(slot)
 	if InvRouter.move_between(Global.run_bag, slot, Global.meta_stash, dst, null):
-		if trade_status != null: trade_status.text = "MOVED TO STASH"
-		_refresh_cart()
+		_refresh_cart("MOVED TO STASH")
 		_refresh_overlays()
 		Global.save_current_profile()
 
@@ -1107,9 +1115,18 @@ func _trade_validation() -> Dictionary:
 			"reason": "Insufficient support • %d more Followers required." % (-after),
 		}
 
+	# Followers are also lives: warn before the player barters away their
+	# next reconstruction.
+	var respawn_cost: int = Global.compute_respawn_cost() if Global != null and Global.has_method("compute_respawn_cost") else 1
+	if after < respawn_cost:
+		return {
+			"valid": true,
+			"reason": "⚠ %d Followers left — below the next reconstruction cost (%d). Death would end the Ascension." % [after, respawn_cost],
+		}
+
 	return {"valid": true, "reason": "Exchange is viable."}
 
-func _refresh_cart() -> void:
+func _refresh_cart(status_override: String = "") -> void:
 	_rebuild_cart_previews()
 
 	var sell_v: int = _sell_total()
@@ -1133,8 +1150,15 @@ func _refresh_cart() -> void:
 	var can_trade: bool = bool(validation.get("valid", false))
 	var overlay_open: bool = _augment_library != null and is_instance_valid(_augment_library)
 	if trade_status != null:
-		trade_status.text = String(validation.get("reason", ""))
-		trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
+		# A caller's action feedback ("MOVED TO BACKPACK", "LOCKED ...") must
+		# survive this refresh instead of being clobbered by validation text
+		# in the same frame.
+		if status_override != "":
+			trade_status.text = status_override
+			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95)
+		else:
+			trade_status.text = String(validation.get("reason", ""))
+			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
 	if btn_barter_cart != null:
 		btn_barter_cart.disabled = (not can_trade) or overlay_open
 		btn_barter_cart.tooltip_text = "Confirm this exchange." if can_trade else String(validation.get("reason", ""))
@@ -1249,15 +1273,22 @@ func _perform_trade() -> void:
 
 	_capture_trade_undo()
 
-	# --- SELL (remove items) ---
+	# --- SELL (remove items; keep them for the buyback shelf) ---
+	var sold_instances: Array[ItemInstance] = []
 	if Global.run_inventory != null:
 		for k in _sell_inv.keys():
 			var slot: int = int(k)
+			var sold_equipped: ItemInstance = Global.run_inventory.get_at(slot)
+			if sold_equipped != null:
+				sold_instances.append(sold_equipped)
 			Global.run_inventory.remove_at(slot, {"player_driven": true})
 
 	if Global.run_bag != null:
 		for k2 in _sell_bag.keys():
 			var slot2: int = int(k2)
+			var sold_bagged: ItemInstance = Global.run_bag.get_at(slot2)
+			if sold_bagged != null:
+				sold_instances.append(sold_bagged)
 			Global.run_bag.remove_at(slot2)
 
 	# --- BUY (add items) ---
@@ -1288,6 +1319,20 @@ func _perform_trade() -> void:
 			# Add to player bag
 			Global.run_bag.add_instance(inst)
 
+	# --- BUYBACK: what you sold sits on the vendor's shelf, rebuyable
+	# exactly as it was (until the stock refreshes or the shelf is full).
+	if _vendor_bag != null:
+		for sold_variant in sold_instances:
+			var sold := sold_variant as ItemInstance
+			if sold == null:
+				continue
+			var buyback_slot: int = _vendor_bag.first_empty_slot()
+			if buyback_slot == -1:
+				break
+			_vendor_bag.set_at(buyback_slot, sold)
+		if not sold_instances.is_empty():
+			_apply_vendor_filters()
+
 	# Apply through the central transaction ledger. Positive net is a cost;
 	# negative net is influence/resources returned to the movement.
 	if Global != null:
@@ -1297,6 +1342,12 @@ func _perform_trade() -> void:
 
 	_clear_selection()
 	_refresh_info()
+	var completion_text := "EXCHANGE COMPLETE"
+	if net > 0:
+		completion_text += " · %d Followers committed" % net
+	elif net < 0:
+		completion_text += " · %d Followers gained" % (-net)
+	_refresh_cart(completion_text)
 
 func _refresh_vendor_pressed() -> void:
 	if Global == null:
@@ -1372,7 +1423,7 @@ func _generate_vendor_stock(force: bool) -> void:
 		if slot_idx == -1:
 			break
 
-		var item_id: String = str(keys[rng.randi_range(0, keys.size() - 1)])
+		var item_id: String = Global.pick_weighted_item_id(rng, keys)
 		var data: ItemData = Global.get_item_data(item_id)
 		if data == null:
 			continue
@@ -1393,22 +1444,6 @@ func _ctrl_center(c: Control) -> Vector2:
 		return Vector2.ZERO
 	var r: Rect2 = c.get_global_rect()
 	return r.position + r.size * 0.5
-
-func _roll_standard_unit_rng(rng: RandomNumberGenerator) -> float:
-	var x: float = 0.0
-	for _i in range(6):
-		x += rng.randf()
-	x = (x - 3.0) / 3.0
-	return clampf(x, -1.0, 1.0)
-
-func _roll_percent_rng(rng: RandomNumberGenerator, luck: float, min_pct: float, max_pct: float) -> float:
-	var x: float = _roll_standard_unit_rng(rng)
-	var shape: float = exp(-luck * 1.25)
-	shape = clampf(shape, 0.25, 4.0)
-	var y: float = signf(x) * pow(absf(x), shape)
-	var t: float = (y + 1.0) * 0.5
-	var pct: float = lerpf(min_pct, max_pct, t)
-	return clampf(pct, -0.9999, 0.9999)
 
 func _mix_seed(a: int, b: int, c: int) -> int:
 	var h: int = int((a ^ (b * 0x9E3779B9) ^ (c * 0x7F4A7C15)) & 0x7FFFFFFF)
@@ -1597,6 +1632,39 @@ func _open_inventory() -> void:
 		if Global != null:
 			Global.save_current_profile()
 	)
+
+func _create_ascension_button() -> void:
+	if _btn_ascension != null or btn_augments == null:
+		return
+	_btn_ascension = Button.new()
+	_btn_ascension.name = "Ascension"
+	_btn_ascension.text = "Ascension"
+	_btn_ascension.tooltip_text = "Spend Followers on the advancement tree."
+	btn_augments.get_parent().add_child(_btn_ascension)
+	btn_augments.get_parent().move_child(_btn_ascension, btn_augments.get_index() + 1)
+	_btn_ascension.pressed.connect(_open_ascension)
+
+
+func _open_ascension() -> void:
+	if _ascension_screen != null and is_instance_valid(_ascension_screen):
+		return
+	var inst := ASCENSION_SCREEN.instantiate() as AscensionScreen
+	if inst == null:
+		return
+	add_child(inst)
+	_ascension_screen = inst
+	btn_continue.disabled = true
+	if _btn_ascension != null:
+		_btn_ascension.disabled = true
+	inst.open(false)
+	inst.closed.connect(func() -> void:
+		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
+		_ascension_screen = null
+		if _btn_ascension != null:
+			_btn_ascension.disabled = false
+		_refresh_info()
+	)
+
 
 func _open_augments() -> void:
 	_invalidate_trade_undo("UNDO CLEARED · Augment state changed.")

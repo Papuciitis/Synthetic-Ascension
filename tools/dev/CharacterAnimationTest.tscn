@@ -1,0 +1,17 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://tools/dev/CharacterAnimationTest.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://0f4cntwas3au" path="res://core/actors/player/player.tscn" id="2_player"]
+
+[node name="CharacterAnimationTest" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 1200.0
+offset_bottom = 40.0

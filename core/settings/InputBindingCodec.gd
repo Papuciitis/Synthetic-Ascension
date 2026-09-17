@@ -32,7 +32,7 @@ static func decode(data: Dictionary) -> InputEvent:
 			if code == 0:
 				return null
 			var key := InputEventKey.new()
-			key.physical_keycode = code
+			key.physical_keycode = code as Key
 			key.alt_pressed = bool(data.get(&"alt", false))
 			key.shift_pressed = bool(data.get(&"shift", false))
 			key.ctrl_pressed = bool(data.get(&"ctrl", false))
@@ -43,14 +43,14 @@ static func decode(data: Dictionary) -> InputEvent:
 			if mouse_button <= 0:
 				return null
 			var mouse := InputEventMouseButton.new()
-			mouse.button_index = mouse_button
+			mouse.button_index = mouse_button as MouseButton
 			return mouse
 		&"joy_button":
 			var joy_button := int(data.get(&"button", -1))
 			if joy_button < 0:
 				return null
 			var button := InputEventJoypadButton.new()
-			button.button_index = joy_button
+			button.button_index = joy_button as JoyButton
 			return button
 		&"joy_axis":
 			var axis := int(data.get(&"axis", -1))
@@ -58,7 +58,7 @@ static func decode(data: Dictionary) -> InputEvent:
 			if axis < 0 or direction == 0:
 				return null
 			var motion := InputEventJoypadMotion.new()
-			motion.axis = axis
+			motion.axis = axis as JoyAxis
 			motion.axis_value = -1.0 if direction < 0 else 1.0
 			return motion
 	return null

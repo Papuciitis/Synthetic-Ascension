@@ -1,14 +1,20 @@
 extends CanvasLayer
 
+## Developer ACTION SERVICE. It owns no UI of its own.
+##
+## It used to also build an 860 px panel of about forty-five buttons - which was
+## never shown, because nothing ever called _build_panel(). Every real dev
+## control lives in the developer console (PerformanceOverlay), which calls into
+## this script; the panel was a second, invisible copy of the same buttons that
+## still had to be kept in sync by hand.
+
 const WALL_SCENE: PackedScene = preload("res://scenes/world/cover/CoverFull.tscn")
 const WINDOW_SCENE: PackedScene = preload("res://scenes/world/cover/CoverWindow.tscn")
 const FENCE_SCENE: PackedScene = preload("res://scenes/world/fence/FenceBlock.tscn")
 const HALF_COVER_SCENE: PackedScene = preload("res://scenes/world/cover/CoverHalf.tscn")
 const BULLET_SCENE: PackedScene = preload("res://scenes/world/combat/RangedBullet.tscn")
 
-var _panel: PanelContainer = null
 var _fixture: Node2D = null
-var _item_id_edit: LineEdit = null
 
 func _ready() -> void:
 	layer = 120
@@ -160,10 +166,10 @@ func restart_opening(mode: String, phase: int = 0, response: String = "") -> voi
 	Global.attempt_segment1_milestones.clear()
 	Global.attempt_opening_version = Global.OPENING_SEQUENCE_VERSION
 	Global.attempt_opening_mode = StringName(mode)
-	Global.attempt_opening_phase = clampi(phase, 0, 8)
+	Global.attempt_opening_phase = clampi(phase, 0, 9)
 	Global.attempt_opening_completed = false
-	Global.attempt_opening_officer_completed = phase >= 7
-	Global.attempt_opening_bren_committed = phase >= 8
+	Global.attempt_opening_officer_completed = phase >= 8
+	Global.attempt_opening_bren_committed = phase >= 9
 	Global.debug_opening_mode_override = mode
 	Global.debug_opening_force_phase = phase
 	Global.debug_opening_response_override = response
@@ -199,9 +205,103 @@ func jump_to_segment(segment: int) -> void:
 	Global.attempt_segment = maxi(1, segment)
 	if segment > 1:
 		Global.attempt_opening_completed = true
-		Global.attempt_opening_phase = 9
+		Global.attempt_opening_phase = 10
 	Global.save_current_profile()
 	Global.call_deferred("goto_game")
+
+# ============================================================
+# Ascension tree (V4 prototype)
+#
+# Buying a mature route by hand takes minutes; these load an authored route
+# from data/ascension/tree_v4.json in order, funding it first so the ledger
+# runs the real purchase rules (adjacency, requirements, gate cores).
+# ============================================================
+
+const ASCENSION_PROTOTYPE_ROUTES := "res://data/ascension/routes_prototype.json"
+const ASCENSION_PRESETS := "res://data/ascension/presets_v4.json"
+
+
+## Authored routes from the tree package, the review's hybrid routes and the
+## V4 presets (early / developed / pure per discipline, hybrids, Ascendant).
+func ascension_routes() -> Array:
+	var out: Array = []
+	for build in AscensionTreeDB.shared().builds:
+		out.append(build)
+	for path in [ASCENSION_PROTOTYPE_ROUTES, ASCENSION_PRESETS]:
+		var file := FileAccess.open(path, FileAccess.READ)
+		if file != null:
+			var parsed: Variant = JSON.parse_string(file.get_as_text())
+			file.close()
+			if parsed is Dictionary:
+				var list: Array = (parsed as Dictionary).get("routes", (parsed as Dictionary).get("presets", []))
+				for route in list:
+					out.append(route)
+	return out
+
+
+func ascension_route_names() -> PackedStringArray:
+	var out := PackedStringArray()
+	for route in ascension_routes():
+		out.append(String((route as Dictionary).get("name", "")))
+	return out
+
+## Loads an authored route onto the current attempt. Returns
+## {"bought": n, "failed": "id: reason", "spent": followers}.
+func apply_ascension_route(route_name: String, fund: bool = true) -> Dictionary:
+	var db := AscensionTreeDB.shared()
+	var build: Dictionary = {}
+	for candidate in ascension_routes():
+		if String((candidate as Dictionary).get("name", "")) == route_name:
+			build = candidate
+			break
+	if build.is_empty():
+		return {"bought": 0, "failed": "unknown route " + route_name, "spent": 0}
+	var native := String(build.get("native_core", "melee"))
+	if String(Global.selected_style_id) != native:
+		Global.selected_style_id = StringName(native)
+	Global.attempt_ascension = AscensionLedger.fresh_state(native)
+	var ledger := Global.ascension_ledger()
+	ledger.note_segment_completed(9)
+	if fund:
+		var need := int(build.get("cost_followers", 100000)) - Global.followers
+		if need > 0:
+			Global.transaction_followers(need, &"dev_grant", {"source": "ascension route"}, false, false)
+	var nodes: Array = build.get("nodes", [])
+	var bought := 0
+	var spent := 0
+	for index in range(nodes.size()):
+		var id := String(nodes[index])
+		if id.begins_with("core."):
+			continue
+		var chosen := ""
+		if db.kind(id) == "gate" and index + 1 < nodes.size() and String(nodes[index + 1]).begins_with("core."):
+			chosen = String(nodes[index + 1]).trim_prefix("core.")
+		if db.kind(id) == "evolution":
+			ledger.grant_evolution_claim()
+		var verdict := Global.ascension_buy(id, chosen)
+		if not bool(verdict["ok"]):
+			_refresh_player_loadout()
+			return {"bought": bought, "failed": "%s: %s" % [id, verdict["reason"]], "spent": spent}
+		bought += 1
+		spent += int(verdict["cost"])
+	var equip: Variant = build.get("equip")
+	if equip is Dictionary:
+		for slot in ["q", "v", "v2", "reaction"]:
+			var id_for_slot := String((equip as Dictionary).get(slot, ""))
+			if not id_for_slot.is_empty():
+				ledger.equip(slot, id_for_slot)
+		for slot in ["keystones", "axioms"]:
+			for id_for_slot in (equip as Dictionary).get(slot, []):
+				ledger.equip(slot, String(id_for_slot))
+	_refresh_player_loadout()
+	return {"bought": bought, "failed": "", "spent": spent}
+
+func clear_ascension_tree() -> void:
+	if Global == null:
+		return
+	Global.attempt_ascension = AscensionLedger.fresh_state(String(Global.selected_style_id))
+	Global.ascension_ledger()
+	_refresh_player_loadout()
 
 func simulate_legacy_opening_save() -> void:
 	if Global == null or SaveManager == null or SaveManager.current_save == null:
@@ -221,100 +321,257 @@ func simulate_legacy_opening_save() -> void:
 	Global.apply_save(SaveManager.current_save)
 	Global.call_deferred("goto_game")
 
-func _build_panel() -> void:
-	_panel = PanelContainer.new()
-	_panel.visible = false
-	_panel.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT, true)
-	_panel.offset_left = -390.0
-	_panel.offset_top = -650.0
-	_panel.offset_right = -16.0
-	_panel.offset_bottom = -16.0
-	add_child(_panel)
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 10)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_right", 10)
-	margin.add_theme_constant_override("margin_bottom", 8)
-	_panel.add_child(margin)
-	var root := VBoxContainer.new()
-	margin.add_child(root)
-	var title := Label.new()
-	title.text = "0.23 OPENING / SET / COLLISION TESTS"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(title)
-	_add_set_row(root, "Conduit", &"conduit")
-	_add_set_row(root, "Gravemarch", &"gravemarch")
-	_add_set_row(root, "Lattice", &"lattice")
-	var clear_button := _button("Clear gear", clear_sets)
-	root.add_child(clear_button)
-	var combat := HBoxContainer.new()
-	root.add_child(combat)
-	combat.add_child(_button("Prime", prime_conduit))
-	combat.add_child(_button("Fill bank", fill_gravemarch_bank))
-	combat.add_child(_button("2 marks", place_lattice_marks))
-	combat.add_child(_button("Clear state", clear_combat_state))
-	var item_row := HBoxContainer.new()
-	root.add_child(item_row)
-	_item_id_edit = LineEdit.new()
-	_item_id_edit.placeholder_text = "specific set item ID"
-	_item_id_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	item_row.add_child(_item_id_edit)
-	item_row.add_child(_button("Grant ID", func() -> void: grant_specific_set_item(StringName(_item_id_edit.text.strip_edges()))))
-	var tests := HBoxContainer.new()
-	root.add_child(tests)
-	tests.add_child(_button("Force notice", force_breakpoint_notification))
-	tests.add_child(_button("Collision fixture", spawn_collision_fixture))
-	tests.add_child(_button("Toggle stress", func() -> void: Global.debug_projectile_stress_test = not Global.debug_projectile_stress_test))
-	tests.add_child(_button("Performance", func() -> void:
-		var overlay := get_tree().get_first_node_in_group(&"performance_overlay")
-		if overlay != null and overlay.has_method("toggle_overlay"):
-			overlay.call("toggle_overlay")
-	))
-	var opening_title := Label.new()
-	opening_title.text = "OPENING SEQUENCE"
-	opening_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	root.add_child(opening_title)
-	var modes := HBoxContainer.new()
-	root.add_child(modes)
-	modes.add_child(_button("Full", func() -> void: restart_opening("full")))
-	modes.add_child(_button("Short", func() -> void: restart_opening("short")))
-	modes.add_child(_button("Skip", func() -> void: restart_opening("skip")))
-	modes.add_child(_button("Replay next", set_next_run_full_replay))
-	modes.add_child(_button("Reset history", reset_opening_history))
-	modes.add_child(_button("Legacy save", simulate_legacy_opening_save))
-	var phases := HBoxContainer.new()
-	root.add_child(phases)
-	phases.add_child(_button("Synthesis", func() -> void: restart_opening("full", 3)))
-	phases.add_child(_button("Target", func() -> void: restart_opening("full", 4)))
-	phases.add_child(_button("Construct", func() -> void: restart_opening("full", 5)))
-	phases.add_child(_button("Officer", func() -> void: restart_opening("full", 6)))
-	phases.add_child(_button("Death", func() -> void: restart_opening("full", 7)))
-	phases.add_child(_button("Bren", func() -> void: restart_opening("full", 8)))
-	var responses := HBoxContainer.new()
-	root.add_child(responses)
-	responses.add_child(_button("Analytical", func() -> void: restart_opening("full", 2, "analytical")))
-	responses.add_child(_button("Decisive", func() -> void: restart_opening("full", 2, "decisive")))
-	responses.add_child(_button("Protective", func() -> void: restart_opening("full", 2, "protective")))
-	responses.add_child(_button("Withdrawn", func() -> void: restart_opening("full", 2, "withdrawn")))
-	var segments := HBoxContainer.new()
-	root.add_child(segments)
-	segments.add_child(_button("Segment 2", func() -> void: jump_to_segment(2)))
-	segments.add_child(_button("Segment 5", func() -> void: jump_to_segment(5)))
-	segments.add_child(_button("Segment 10", func() -> void: jump_to_segment(10)))
+# ============================================================
+# Manifestations
+#
+# The layer is deliberately low-roll-rate, so playtesting it by farming drops
+# is hopeless. These force a specific rule onto real equipped gear.
+# ============================================================
 
-func _add_set_row(parent: VBoxContainer, label_text: String, set_id: StringName) -> void:
-	var row := HBoxContainer.new()
-	parent.add_child(row)
-	var label := Label.new()
-	label.custom_minimum_size.x = 100.0
-	label.text = label_text
-	row.add_child(label)
-	for count in [2, 4, 6]:
-		row.add_child(_button("%dP" % count, func() -> void: grant_set(set_id, count)))
+func grant_manifestation(id: StringName) -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	var def := ManifestationCatalog.get_def(id)
+	if def == null:
+		push_warning("[manifestations] unknown rule: %s" % String(id))
+		return
 
-func _button(label_text: String, action: Callable) -> Button:
-	var button := Button.new()
-	button.text = label_text
-	button.focus_mode = Control.FOCUS_NONE
-	button.pressed.connect(action)
-	return button
+	# Prefer stamping it onto gear that is already worn - that keeps the rest of
+	# the loadout (and any set bonus being tested) intact.
+	for slot in def.slots:
+		var worn: ItemInstance = Global.run_inventory.get_at(int(slot))
+		if worn != null and worn.data != null:
+			worn.manifestation_id = id
+			Global.run_inventory.emit_changed()
+			_refresh_player_loadout()
+			return
+
+	for slot in def.slots:
+		var data := _first_item_data_for_slot(int(slot))
+		if data == null:
+			continue
+		var granted := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.45, false)
+		granted.manifestation_id = id
+		Global.run_inventory.set_item(int(slot), granted, null)
+		_refresh_player_loadout()
+		return
+
+	push_warning("[manifestations] no item definition exists for any slot %s allows" % String(id))
+
+
+func roll_all_manifestations() -> void:
+	# Every worn item gets a legal rule for its slot. This is the "what does
+	# eight of them at once actually feel like?" button.
+	if Global == null or Global.run_inventory == null:
+		return
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	for slot in range(Inventory.SLOT_COUNT):
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn == null or worn.data == null:
+			continue
+		var pool := ManifestationCatalog.pool_for_slot(slot)
+		if pool.is_empty():
+			continue
+		worn.manifestation_id = pool[rng.randi_range(0, pool.size() - 1)].id
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+
+
+func clear_manifestations() -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	for slot in range(Inventory.SLOT_COUNT):
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn != null:
+			worn.manifestation_id = &""
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+
+
+func _first_item_data_for_slot(slot: int) -> ItemData:
+	if Global == null or Global.item_db == null:
+		return null
+	for value: Variant in Global.item_db.values():
+		var data: ItemData = value as ItemData
+		if data != null and int(data.equip_slot) == slot:
+			return data
+	return null
+
+
+func _refresh_player_loadout() -> void:
+	var player := get_tree().get_first_node_in_group(&"player")
+	if player != null and player.has_method("refresh_run_state"):
+		player.call("refresh_run_state")
+
+
+# ============================================================
+# Curses / burden
+#
+# The NEG slice is deliberately low-roll-rate, so hand-testing the three
+# archetypes by farming drops is hopeless.
+# ============================================================
+
+func grant_deep_curses() -> void:
+	if Global == null or Global.run_inventory == null:
+		return
+	for id in Global.item_db.keys():
+		var data: ItemData = Global.item_db[id] as ItemData
+		if data == null or not String(data.id).begins_with("curse_"):
+			continue
+		var slot: int = int(data.equip_slot)
+		if slot < 0 or slot >= Inventory.SLOT_COUNT:
+			continue
+		# Rolled at its own floor, so every archetype sees the real thing.
+		var cursed := ItemInstance.from_roll(data, 4, ItemInstance.Polarity.NEG, data.pct_min, false)
+		Global.run_inventory.set_item(slot, cursed, null)
+	_refresh_player_loadout()
+
+
+func grant_mild_curses() -> void:
+	# The Doctrine's wardrobe: many small real curses rather than two horrors.
+	if Global == null or Global.run_inventory == null:
+		return
+	for slot in range(Inventory.SLOT_COUNT):
+		var data := _first_item_data_for_slot(slot)
+		if data == null:
+			continue
+		Global.run_inventory.set_item(
+			slot, ItemInstance.from_roll(data, 3, ItemInstance.Polarity.NEG, -0.18, false), null
+		)
+	_refresh_player_loadout()
+
+
+## First free slot, not always slot 0.
+##
+## All three NEG augment buttons wrote slot 0, so each evicted the last - and
+## the interaction they exist to test (Corruption Engine and Doctrine of Burden
+## genuinely fight each other) needs two of them equipped at once.
+func grant_neg_augment(id: StringName) -> void:
+	if Global == null:
+		return
+	var slots: Array = Global.permanent_augment_ids
+	for index in range(slots.size()):
+		if StringName(slots[index]) == id:
+			_refresh_player_loadout()
+			return
+	for index in range(slots.size()):
+		if StringName(slots[index]) == &"":
+			Global.set_permanent_augment(index, id)
+			_refresh_player_loadout()
+			return
+	Global.set_permanent_augment(0, id)
+	_refresh_player_loadout()
+
+
+## Light a pair on demand: grant two distinct rules of each of its two nouns.
+##
+## A pair needs two DISTINCT rules of noun A and two of noun B, which through
+## the ordinary roll is a specific and uncommon loadout - so the ten authored
+## payoffs were, in practice, untestable without fishing for them. Returns how
+## many rules it managed to place; 0 means there were not enough free slots.
+func grant_pair(pair_id: StringName) -> int:
+	var def := ManifestationPairCatalog.get_def(pair_id)
+	if def == null or def.nouns.size() < 2:
+		return 0
+	if Global == null or Global.run_inventory == null:
+		return 0
+
+	# Two DISTINCT rules per noun is the activation contract. Rules carrying
+	# BOTH of the pair's nouns are taken first: one of those satisfies two
+	# requirements at once, which matters because a slot a rule may legally live
+	# on is the scarce resource here, not the rules themselves.
+	var need: Dictionary = {}
+	for noun in def.nouns:
+		need[noun] = 2
+	var chosen: Array[StringName] = []
+	for pass_index in range(2):
+		for id_value in ManifestationCatalog.all_ids():
+			if chosen.has(id_value):
+				continue
+			var tags := ManifestationCatalog.tags_of(id_value)
+			var serves: Array[StringName] = []
+			for noun in def.nouns:
+				if int(need.get(noun, 0)) > 0 and tags.has(noun):
+					serves.append(noun)
+			# First pass: only rules that cover both nouns at once.
+			if serves.is_empty() or (pass_index == 0 and serves.size() < 2):
+				continue
+			chosen.append(id_value)
+			for noun in serves:
+				need[noun] = int(need[noun]) - 1
+
+	# Every noun must be fully satisfied before anything is placed. A short
+	# selection still assigns cleanly, so without this the console reported
+	# "Lit 'X' with 3 rules" for a pair that can never activate.
+	for noun in def.nouns:
+		if int(need.get(noun, 0)) > 0:
+			return 0
+
+	# Each rule may only live on certain slots, so first-come-first-served loses
+	# pairs it could have satisfied: a rule legal on three slots takes the one
+	# that a later, pickier rule needed. Assign properly instead.
+	var assignment := _assign_rules_to_slots(chosen)
+	if assignment.is_empty():
+		return 0
+
+	var placed: int = 0
+	for slot_key in assignment:
+		var slot := int(slot_key)
+		var rule_id: StringName = assignment[slot_key]
+		var worn: ItemInstance = Global.run_inventory.get_at(slot)
+		if worn == null or worn.data == null:
+			var data := _first_item_data_for_slot(slot)
+			if data == null:
+				continue
+			worn = ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.45, false)
+			Global.run_inventory.set_item(slot, worn, null)
+		worn.manifestation_id = rule_id
+		placed += 1
+	Global.run_inventory.emit_changed()
+	_refresh_player_loadout()
+	return placed
+
+
+## slot -> rule id, or {} if every rule could not be placed at once.
+##
+## Pickiest rule first, then backtrack. Four rules over eight slots with
+## per-rule slot restrictions is small enough that exhaustive search is instant
+## and greedy is simply wrong.
+func _assign_rules_to_slots(rules: Array[StringName]) -> Dictionary:
+	var options: Array = []
+	for rule_id in rules:
+		var rule_def := ManifestationCatalog.get_def(rule_id)
+		if rule_def == null:
+			return {}
+		var slots: Array[int] = []
+		for slot_value in rule_def.slots:
+			var slot := int(slot_value)
+			# A slot with no item definition can never carry a rule.
+			if _first_item_data_for_slot(slot) != null or Global.run_inventory.get_at(slot) != null:
+				slots.append(slot)
+		if slots.is_empty():
+			return {}
+		options.append({"id": rule_id, "slots": slots})
+	options.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return (a["slots"] as Array).size() < (b["slots"] as Array).size())
+
+	var result: Dictionary = {}
+	if _place_from(options, 0, result):
+		return result
+	return {}
+
+
+func _place_from(options: Array, index: int, result: Dictionary) -> bool:
+	if index >= options.size():
+		return true
+	var entry: Dictionary = options[index]
+	for slot_value in (entry["slots"] as Array):
+		var slot := int(slot_value)
+		if result.has(slot):
+			continue
+		result[slot] = entry["id"]
+		if _place_from(options, index + 1, result):
+			return true
+		result.erase(slot)
+	return false

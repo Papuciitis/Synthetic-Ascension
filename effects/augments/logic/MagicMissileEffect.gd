@@ -9,16 +9,22 @@ class_name MagicMissileEffect
 @export var damage_mult: float = 0.35
 @export var scales_with_haste: bool = true
 @export var scales_with_power: bool = true
-@export var debug_prints: bool = true
+@export var debug_prints: bool = false
+
+## How long a scan that found nothing waits before scanning again. The spatial
+## query is this augment's entire idle cost, and a target that walks into a
+## 750 px radius stays in it for far longer than this.
+const SEEK_RETRY_SEC: float = 0.1
 
 var _player: Node2D = null
 var _cd: float = 0.0
+var _seek_retry: float = 0.0
 var _tick: int = 0
 
 # Burst state (no create_timer spam)
 var _burst_left: int = 0
 var _burst_t: float = 0.0
-var _target_wr: WeakRef = null
+var _target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 
 func setup(p: Node) -> void:
 	_player = p as Node2D
@@ -27,28 +33,27 @@ func _ready() -> void:
 	set_process(true)
 	process_mode = Node.PROCESS_MODE_INHERIT
 	if debug_prints:
-		print("[MM] ready. missile_scene=", missile_scene)
+		print("[MagicMissile] ready missile_scene=", missile_scene)
 
 func _process(dt: float) -> void:
 	_tick += 1
 
 	if _player == null or not is_instance_valid(_player):
 		if debug_prints and _tick % 60 == 0:
-			print("[MM] no player set (setup not called?)")
+			print("[MagicMissile] no player set (setup not called?)")
 		return
 
 	if missile_scene == null:
 		if debug_prints and _tick % 60 == 0:
-			print("[MM] missile_scene is NULL (assign it in MagicMissileEffect.tscn)")
+			print("[MagicMissile] missile_scene is null (assign it in MagicMissileEffect.tscn)")
 		return
 
 	# If we are in a burst, fire the remaining shots at interval.
 	if _burst_left > 0:
 		_burst_t -= dt
 		if _burst_t <= 0.0:
-			var tt := (_target_wr.get_ref() as Node2D) if _target_wr != null else null
-			if tt != null and is_instance_valid(tt):
-				_spawn_one(tt)
+			if EnemyWorld.is_valid_handle(_target_handle) and not EnemyWorld.is_dying(_target_handle):
+				_spawn_one(_target_handle)
 			_burst_left -= 1
 			_burst_t = burst_interval
 		return
@@ -57,11 +62,21 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		return
 
-	var t: Node2D = _find_nearest_enemy(_player.global_position, seek_radius)
-	if t == null:
-		if debug_prints and _tick % 60 == 0:
-			print("[MM] no enemies in radius=", seek_radius, " (group must be 'enemies')")
+	# Off cooldown with nothing in range, this ran a spatial-grid query every
+	# single frame until an enemy appeared. The cooldown itself is untouched:
+	# this is a separate retry clock that only exists between a miss and the
+	# next scan.
+	if _seek_retry > 0.0:
+		_seek_retry = maxf(_seek_retry - dt, 0.0)
 		return
+
+	var handle := _find_nearest_enemy(_player.global_position, seek_radius)
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
+		_seek_retry = SEEK_RETRY_SEC
+		if debug_prints and _tick % 60 == 0:
+			print("[MagicMissile] no enemies in radius=", seek_radius)
+		return
+	_seek_retry = 0.0
 
 	# cooldown scaling
 	var cd: float = base_cooldown
@@ -72,16 +87,17 @@ func _process(dt: float) -> void:
 	_cd = maxf(cd, 0.001)
 
 	if debug_prints:
-		print("[MM] FIRE burst at:", t.name)
+		print("[MagicMissile] fire handle=", handle)
 
 	# Start burst: first shot is immediate, remaining use interval timer.
-	_target_wr = weakref(t)
+	_target_handle = handle
 	_burst_left = maxi(1, burst_count)
 	_burst_t = 0.0
 
-func _spawn_one(t: Node2D) -> void:
-	if t == null or not is_instance_valid(t) or missile_scene == null:
+func _spawn_one(handle: int) -> void:
+	if not EnemyWorld.is_valid_handle(handle) or EnemyWorld.is_dying(handle) or missile_scene == null:
 		return
+	var target_position := EnemyCombat.position_for_handle(handle)
 
 	var dmg: float = _compute_damage()
 
@@ -104,13 +120,17 @@ func _spawn_one(t: Node2D) -> void:
 
 	m2.global_position = _player.global_position
 
-	var start_dir: Vector2 = (t.global_position - _player.global_position).normalized()
+	var start_dir: Vector2 = (target_position - _player.global_position).normalized()
 	if start_dir == Vector2.ZERO:
 		start_dir = Vector2.RIGHT
 	start_dir = start_dir.rotated(randf_range(-0.35, 0.35))
 
-	if m2.has_method("setup"):
-		m2.call("setup", t, dmg, start_dir)
+	if m2.has_method("setup_handle"):
+		m2.call("setup_handle", handle, dmg, start_dir, _player)
+	elif m2.has_method("setup"):
+		var actor := EnemyCombat.actor_for_handle(handle)
+		if actor != null:
+			m2.call("setup", actor, dmg, start_dir)
 
 func _compute_damage() -> float:
 	var base_dmg: float = 12.0
@@ -125,24 +145,8 @@ func _compute_damage() -> float:
 
 	return base_dmg * mul
 
-func _find_nearest_enemy(center: Vector2, radius: float) -> Node2D:
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("nearest_enemy"):
-		# nearest_enemy uses max_dist; pass radius to limit queries
-		return ei.call("nearest_enemy", center, radius, null) as Node2D
-
-	# fallback (slow)
-	var best: Node2D = null
-	var best_d2: float = radius * radius
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		var d2 := center.distance_squared_to(e.global_position)
-		if d2 < best_d2:
-			best_d2 = d2
-			best = e
-	return best
+func _find_nearest_enemy(center: Vector2, radius: float) -> int:
+	return EnemyCombat.nearest_enemy(center, radius)
 
 
 const _AUG_MAX_LEVEL: int = 5

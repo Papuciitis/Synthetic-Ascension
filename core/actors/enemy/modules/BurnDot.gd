@@ -10,12 +10,12 @@ var _tick: float = 0.5
 var _tick_left: float = 0.0
 var _dmg_per_tick_per_stack: float = 0.1
 
-func setup(target: Node, source: Node, stacks: int, duration: float, tick: float, dmg_per_tick_per_stack: float) -> void:
+func setup(target: Node, source: Node, stacks: int, duration: float, tick_interval: float, dmg_per_tick_per_stack: float) -> void:
 	_target = target
 	_source = source
 	_stacks = maxi(_stacks, stacks) # refresh can increase stacks
 	_time_left = maxf(_time_left, duration)
-	_tick = maxf(tick, 0.05)
+	_tick = maxf(tick_interval, 0.05)
 	_dmg_per_tick_per_stack = maxf(dmg_per_tick_per_stack, 0.01)
 	_tick_left = minf(_tick_left, _tick) # make it feel responsive
 	# When attached to an enemy that drives its own dots, the enemy's simulation

@@ -1,11 +1,22 @@
+@static_unload
 extends RefCounted
 # Centralised texture access for ChunkManager and procedural generators.
 # Deliberately not a global class: consumers explicitly preload this script, avoiding stale global-class member caches.
 
 const _TEX_TILE_PX: int = 1024
 # Cethiel source tiles are 512 px, processed to 1024 px. One active tile covers 1024 world pixels.
-const _GROUND_REPEAT_WORLD_PX: int = 1024
-const _GROUND_GRASS_REPEAT_WORLD_PX: int = 768
+## World pixels one ground tile covers.
+##
+## This was 1024, and the masonry textures carry about four blocks across a
+## tile - so a single paving stone rendered roughly 256 px, five times the
+## player sprite. The whole world read as a giant's floor rather than a street,
+## and the enormous repeat also made every chunk seam a hard visible step
+## because two adjacent chunks each showed a different quarter of the pattern.
+##
+## 384 puts a paving stone at about 96 px - a stride and a half - which is the
+## scale the wall and prop art is already drawn at.
+const _GROUND_REPEAT_WORLD_PX: int = 384
+const _GROUND_GRASS_REPEAT_WORLD_PX: int = 320
 const _GROUND_BASE_TEX_INDEX: int = 0
 
 const _GROUND_TEX_PATHS := [
@@ -27,10 +38,19 @@ const _GROUND_TEX_PATHS := [
 # does not depend on generated .godot import metadata.
 static var _ground_tex_cache: Array[Texture2D] = []
 
+# Floor marks with real alpha. The three decal_*.png that used to be here are
+# rendered images with a baked black-to-white vignette instead of transparency,
+# so every one of them painted a glowing white asterisk onto the ground - which
+# is what the world's "subtle repetition-breaking decals" have actually been.
+# They are still on disk; nothing should scatter them.
 const _DECAL_TEX := [
-	preload("res://assets/world/decals/decal_cracks_01.png"),
-	preload("res://assets/world/decals/decal_stain_01.png"),
-	preload("res://assets/world/decals/decal_sigil_01.png"),
+	preload("res://assets/world/decals/floor/floor_cracks_01.png"),
+	preload("res://assets/world/decals/floor/floor_grime_01.png"),
+	preload("res://assets/world/decals/floor/floor_scorch_01.png"),
+	preload("res://assets/world/decals/floor/floor_spill_01.png"),
+	preload("res://assets/world/decals/floor/floor_marking_01.png"),
+	preload("res://assets/world/decals/floor/floor_scuff_01.png"),
+	preload("res://assets/world/decals/floor/floor_rubble_01.png"),
 ]
 
 const _VEG_TEX := [
@@ -86,6 +106,13 @@ static func ground_texture(index: int) -> Texture2D:
 
 	_ground_tex_cache[index] = cached
 	return cached
+
+
+static func release_static_caches() -> void:
+	# Called at application shutdown: script statics destruct during script
+	# server teardown, after rendering cleanup has begun, so RID-backed
+	# resources held here must be released while the servers are still whole.
+	_ground_tex_cache.clear()
 
 
 static func warm_ground_textures(indices: PackedInt32Array) -> void:

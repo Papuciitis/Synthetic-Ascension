@@ -13,6 +13,7 @@ func _ready() -> void:
 func _run() -> void:
 	_test_development_item_is_not_runtime_eligible()
 	_test_rarity_and_luck_math()
+	_test_vendor_merge_arbitrage_is_lossy()
 	_test_canonical_rarity_merging()
 	_test_enemy_drops_use_instances_and_all_rarity_bonuses()
 	_test_accessories_use_normal_progression()
@@ -26,6 +27,12 @@ func _run() -> void:
 	_test_profile_run_records()
 	_test_resonance_pacing_defaults()
 	_test_procedural_fallback_score_prefers_reachable_candidate()
+	_test_spawner_reports_a_missing_enemy_source_once()
+	_test_enemy_drop_failures_warn_once_with_spec_context()
+	_test_missing_inventory_router_is_reported_once()
+	_test_augment_card_signal_warning_names_the_signal_it_checks()
+	_test_sealed_envelope_chunks_report_as_one_line()
+	_test_missing_cover_scenes_report_once()
 	await get_tree().process_frame
 	print("AuditClosureTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -66,6 +73,36 @@ func _test_rarity_and_luck_math() -> void:
 		"NEG items remain possible at extreme Luck"
 	)
 
+	# Luck must make NEG rolls MILDER, never more severe (regression guard:
+	# the old negative branch lerped high quality toward min_pct).
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 1337
+	var neg_mean_unlucky := 0.0
+	var neg_mean_lucky := 0.0
+	var samples := 3000
+	for _i in range(samples):
+		neg_mean_unlucky += ItemGenerator.roll_signed_range(-1.0, 0.0, 0.0, rng)
+	for _i in range(samples):
+		neg_mean_lucky += ItemGenerator.roll_signed_range(-1.0, 0.0, 3.0, rng)
+	neg_mean_unlucky /= float(samples)
+	neg_mean_lucky /= float(samples)
+	_check(
+		neg_mean_lucky > neg_mean_unlucky + 0.02,
+		"high Luck pulls NEG roll severity toward zero (%.3f vs %.3f)" % [neg_mean_lucky, neg_mean_unlucky]
+	)
+	var pos_mean_unlucky := 0.0
+	var pos_mean_lucky := 0.0
+	for _i in range(samples):
+		pos_mean_unlucky += ItemGenerator.roll_signed_range(0.0, 1.0, 0.0, rng)
+	for _i in range(samples):
+		pos_mean_lucky += ItemGenerator.roll_signed_range(0.0, 1.0, 3.0, rng)
+	pos_mean_unlucky /= float(samples)
+	pos_mean_lucky /= float(samples)
+	_check(
+		pos_mean_lucky > pos_mean_unlucky + 0.02,
+		"high Luck strengthens POS rolls (%.3f vs %.3f)" % [pos_mean_lucky, pos_mean_unlucky]
+	)
+
 
 func _test_canonical_rarity_merging() -> void:
 	var data := ItemData.new()
@@ -90,6 +127,85 @@ func _test_canonical_rarity_merging() -> void:
 	_check(is_equal_approx(strong_dest.best_pct, 0.5), "POS merge preserves strongest roll")
 	var negative := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.5)
 	_check(not strong_dest.merge_from(negative), "POS and NEG projects never merge")
+
+	# NEG merge direction: default STABILIZES (mildest roll survives);
+	# Corruption Engine flips progression to DEEPEN the curse.
+	var mild_neg := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.1)
+	var severe_neg := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.45)
+	var had_engine: bool = Global.permanent_augment_ids.has(&"augment_corruption_engine")
+	Global.permanent_augment_ids.erase(&"augment_corruption_engine")
+	mild_neg.merge_from(severe_neg)
+	_check(
+		is_equal_approx(mild_neg.best_pct, -0.1),
+		"NEG merge stabilizes toward the mildest curse by default"
+	)
+	Global.init_permanent_augments()
+	var engine_slot: int = Global.permanent_augment_ids.find(StringName())
+	if engine_slot != -1:
+		Global.permanent_augment_ids[engine_slot] = &"augment_corruption_engine"
+	var mild_neg2 := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.1)
+	var severe_neg2 := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.NEG, -0.45)
+	mild_neg2.merge_from(severe_neg2)
+	_check(
+		is_equal_approx(mild_neg2.best_pct, -0.45),
+		"Corruption Engine makes NEG merges deepen the curse"
+	)
+	if engine_slot != -1 and not had_engine:
+		Global.permanent_augment_ids[engine_slot] = StringName()
+
+	# --- Merge-math v2 invariants (docs/design/RARITY_MERGE_SPEC.md §1) ---
+
+	# Path-independence: pre-merging into a carrier must never create mass.
+	var pi_direct := ItemInstance.from_roll(data, 5, ItemInstance.Polarity.POS, 0.25)
+	pi_direct.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	pi_direct.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	var pi_carrier := ItemInstance.from_roll(data, 5, ItemInstance.Polarity.POS, 0.25)
+	var carrier := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0)
+	carrier.merge_from(ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.0))
+	pi_carrier.merge_from(carrier)
+	_check(
+		absf(pi_direct.upgrade_meter - pi_carrier.upgrade_meter) < 0.000001,
+		"merge mass is path-independent (direct %.6f vs carrier %.6f)" % [pi_direct.upgrade_meter, pi_carrier.upgrade_meter]
+	)
+
+	# Auto-swap: the higher-rarity incoming becomes the mathematical
+	# destination while THIS object keeps its identity.
+	var low_stack := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.25)
+	var low_stack_id := low_stack.get_instance_id()
+	low_stack.merge_from(ItemInstance.from_roll(data, 4, ItemInstance.Polarity.POS, 0.25))
+	_check(low_stack.rarity == 4, "auto-swap adopts the higher rarity (got R%d)" % low_stack.rarity)
+	_check(low_stack.get_instance_id() == low_stack_id, "auto-swap preserves object identity")
+	_check(
+		low_stack.upgrade_meter > 0.0 and low_stack.upgrade_meter < 0.2,
+		"auto-swap charges the low side as gap-priced material (meter %.3f)" % low_stack.upgrade_meter
+	)
+
+	# Overflow converts at the gap law's per-rank ratio 2^(-1/H).
+	var of_dest := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.25)
+	of_dest.upgrade_meter = 0.9
+	of_dest.merge_from(ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.25))
+	var expected_overflow := 0.9 * pow(2.0, -1.0 / RarityMath.GAP_HALF_LIFE)
+	_check(
+		of_dest.rarity == 4 and absf(of_dest.upgrade_meter - expected_overflow) < 0.000001,
+		"overflow uses the gap law's rank ratio (meter %.4f, expected %.4f)" % [of_dest.upgrade_meter, expected_overflow]
+	)
+
+	# Continuous rarity power: banked meter grants real stats.
+	var cp_data := ItemData.new()
+	cp_data.id = "continuous_fixture"
+	cp_data.pct_min = -0.5
+	cp_data.pct_max = 0.5
+	cp_data.mods = StatDelta.new()
+	cp_data.rarity_base = StatDelta.new()
+	cp_data.rarity_base.max_hp = 20.0
+	var cp := ItemInstance.from_roll(cp_data, 0, ItemInstance.Polarity.POS, 0.25)
+	var hp_at_zero: float = cp.rolled_mods.max_hp
+	cp.upgrade_meter = 0.5
+	cp._recompute_flat_mods()
+	_check(
+		cp.rolled_mods.max_hp > hp_at_zero + 3.0,
+		"banked meter grants real stats (continuous power: +%.1f HP at 50%%)" % (cp.rolled_mods.max_hp - hp_at_zero)
+	)
 
 
 func _test_enemy_drops_use_instances_and_all_rarity_bonuses() -> void:
@@ -144,6 +260,41 @@ func _item_with(data: ItemData, rarity: int) -> ItemInstance:
 	instance.polarity = ItemInstance.Polarity.POS
 	instance._recompute_flat_mods()
 	return instance
+
+
+func _test_vendor_merge_arbitrage_is_lossy() -> void:
+	# Invariant (design ruling): no vendor buy -> merge -> sell sequence may
+	# produce more Followers than it consumes, at any rarity, meter state,
+	# roll quality or Luck. Followers are money AND lives AND power - a
+	# repeatable positive loop here would be 'stand at merchant and
+	# manufacture religion'.
+	var data := ItemData.new()
+	data.id = "arbitrage_fixture"
+	data.pct_min = -0.5
+	data.pct_max = 0.5
+	data.mods = StatDelta.new()
+	data.rarity_base = StatDelta.new()
+	data.rarity_base.max_hp = 20.0
+	var old_luck: float = _global.run_luck
+	var worst: float = -INF
+	for luck_value in [0.0, 100.0]:
+		_global.run_luck = luck_value
+		for dest_rarity in [0, 1, 2, 3, 5, 8]:
+			for dest_meter in [0.0, 0.5]:
+				for dest_roll in [0.0, 0.5]:
+					for material_roll in [0.0, 0.5]:
+						for material_rarity in [maxi(0, dest_rarity - 1), dest_rarity]:
+							var dest := ItemInstance.from_roll(data, dest_rarity, ItemInstance.Polarity.POS, dest_roll)
+							dest.upgrade_meter = dest_meter
+							dest._recompute_flat_mods()
+							var material := ItemInstance.from_roll(data, material_rarity, ItemInstance.Polarity.POS, material_roll)
+							var buy_cost: int = int(_global.compute_buy_value(material))
+							var sell_before: int = int(_global.compute_sell_value(dest))
+							dest.merge_from(material)
+							var sell_after: int = int(_global.compute_sell_value(dest))
+							worst = maxf(worst, float(sell_after - sell_before - buy_cost))
+	_global.run_luck = old_luck
+	_check(worst < 0.0, "no vendor buy->merge->sell sequence nets Followers (worst case %+.1f)" % worst)
 
 
 func _test_item_value_keeps_growing_after_r12() -> void:
@@ -317,3 +468,178 @@ func _test_procedural_fallback_score_prefers_reachable_candidate() -> void:
 			> int(district_script.call("validation_score", unreachable)),
 			"fallback scoring prioritizes reachable objective and exit"
 		)
+
+
+func _test_spawner_reports_a_missing_enemy_source_once() -> void:
+	# Logging audit 2026-08-28 §3 #8: _spawn_one() used to push_warning on every
+	# tick when it had no scene to spawn. It now separates a real
+	# misconfiguration (nothing configured at all -> one error, spawning off)
+	# from the transient "no entry is active yet" state (one warning, spawner
+	# left running).
+	var spawner: EnemySpawner = load("res://core/systems/spawner/spawner.gd").new() as EnemySpawner
+	_check(spawner != null, "fixture: the spawner script instantiates")
+	if spawner == null:
+		return
+
+	_check(
+		spawner.has_method("has_no_spawn_source"),
+		"spawner distinguishes an empty configuration from an inactive one"
+	)
+	if spawner.has_method("has_no_spawn_source"):
+		_check(bool(spawner.call("has_no_spawn_source")), "no table and no fallback scene is no source at all")
+		var entry := EnemySpawnEntry.new()
+		entry.enemy_scene = load("res://core/actors/enemy/enemy.tscn") as PackedScene
+		entry.start_time = 600.0
+		var table := EnemySpawnTable.new()
+		table.entries.append(entry)
+		spawner.spawn_table = table
+		_check(
+			not bool(spawner.call("has_no_spawn_source")),
+			"a populated table is still a source while none of its entries is active yet"
+		)
+		spawner.spawn_table = null
+
+	# Consume the once-guard before driving the real path: it keeps this fixture
+	# out of the error log AND proves the report is guarded rather than repeated.
+	_check(spawner.get("_warned_no_spawn_source") != null, "the no-source report is once-guarded")
+	spawner.set("_warned_no_spawn_source", true)
+	_check(bool(spawner.spawning_enabled), "fixture: a fresh spawner starts enabled")
+	_check(int(spawner.call("_spawn_one", 0.0, 4)) == 0, "a spawner with no enemy source spawns nothing")
+	_check(not bool(spawner.spawning_enabled), "and disables spawning instead of warning every tick")
+	spawner.free()
+
+
+func _test_enemy_drop_failures_warn_once_with_spec_context() -> void:
+	# Logging audit 2026-08-28 §3 #10: the per-kill drop warnings carried no
+	# enemy context and repeated on every death. They now key a once-guard on
+	# the spec (missing pickup scene) or on the pool signature (empty pool).
+	# Driving the real path emits ONE "[EnemyDrops] no drop:
+	# spec=audit_closure_fixture ..." warning - that line is the behaviour
+	# under test, not a stray log.
+	var spec := EnemySpec.new()
+	spec.id = &"audit_closure_fixture"
+	# EnemyActor shadows the constructor with an `_init` module member, so the
+	# actor has to come from its scene. It is never added to the tree, so no
+	# _ready() work runs.
+	var enemy := (load("res://core/actors/enemy/enemy.tscn") as PackedScene).instantiate() as EnemyActor
+	enemy.spec = spec
+	enemy.item_pickup_scene = null
+	var drops := EnemyDrops.new()
+	drops.setup(enemy)
+	_check(drops.has_method("_claim_drop_warning"), "enemy drop failures route through a once-guard")
+	if drops.has_method("_claim_drop_warning"):
+		_check(not bool(drops.call("_can_drop_item")), "a spec with no pickup scene cannot drop an item")
+		_check(
+			not bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_fixture")),
+			"the failure was reported once, keyed by the spec id that identifies it"
+		)
+		_check(not bool(drops.call("_can_drop_item")), "a second kill of the same spec still cannot drop")
+		_check(
+			not bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_fixture")),
+			"and does not report again"
+		)
+		_check(
+			bool(drops.call("_claim_drop_warning", "pickup_scene|audit_closure_other_spec")),
+			"a different spec would still get its own report"
+		)
+	enemy.free()
+
+
+func _test_missing_inventory_router_is_reported_once() -> void:
+	# Logging audit 2026-08-28 §3 #12 / finding 35: the HUD and WorldDropSpawner
+	# each warned about the same missing /root/InvRouter autoload. Both now route
+	# through one guarded report, so the fixture below emits exactly one
+	# "first consumer=AuditClosureTest" warning - that line is the behaviour
+	# under test.
+	var spawner := WorldDropSpawner.new()
+	_check(
+		spawner.has_method("warn_missing_inventory_router"),
+		"the missing inventory router has one shared report"
+	)
+	if spawner.has_method("warn_missing_inventory_router"):
+		_check(
+			bool(spawner.call("warn_missing_inventory_router", "AuditClosureTest")),
+			"the consumer that notices first emits the warning"
+		)
+		_check(
+			not bool(spawner.call("warn_missing_inventory_router", "AuditClosureTest")),
+			"every later consumer stays silent"
+		)
+	spawner.free()
+
+	var hud_source := FileAccess.get_file_as_string("res://ui/screens/hud.gd")
+	_check(
+		hud_source.contains("warn_missing_inventory_router"),
+		"the HUD routes its missing-router report through that shared call"
+	)
+	_check(
+		not hud_source.contains("InvRouter autoload not found"),
+		"and no longer emits a second warning of its own"
+	)
+
+
+func _test_augment_card_signal_warning_names_the_signal_it_checks() -> void:
+	# Logging audit 2026-08-28 §3 #14 / finding 29: the warning in the else of
+	# `if card.has_signal("unhovered")` announced a missing 'picked' signal, so
+	# it named a signal the branch had never looked at.
+	var source := FileAccess.get_file_as_string("res://ui/augments/AugmentSelect.gd")
+	_check(
+		not source.contains("has no signal 'picked'"),
+		"the offer-card warning no longer blames the pick signal"
+	)
+	_check(
+		source.contains("signal=unhovered"),
+		"it names the signal the branch actually checked"
+	)
+
+	# And the branch stays unreachable in the shipped build: the offer card
+	# carries all three signals AugmentSelect connects.
+	var card := (load("res://ui/augments/AugmentCard.tscn") as PackedScene).instantiate()
+	_check(card.has_signal("picked"), "the offer card emits picked")
+	_check(card.has_signal("hovered"), "the offer card emits hovered")
+	_check(card.has_signal("unhovered"), "the offer card emits unhovered")
+	card.free()
+
+
+func _test_sealed_envelope_chunks_report_as_one_line() -> void:
+	# Logging audit 2026-08-28 §3 #15: the sweep over the urban envelope warned
+	# once per unreachable chunk, with nothing tying the lines to the plan.
+	var district_script := load("res://core/systems/world/proc/DistrictPlan.gd") as Script
+	_check(
+		district_script.has_method("_sealed_envelope_warning"),
+		"sealed envelope chunks aggregate into one line"
+	)
+	if district_script.has_method("_sealed_envelope_warning"):
+		var sealed: Array[Vector2i] = [Vector2i(3, -1), Vector2i(4, -1)]
+		var line: String = str(district_script.call("_sealed_envelope_warning", 4242, sealed))
+		_check(line.contains("seed=4242"), "the aggregated line carries the seed that produced the plan")
+		_check(line.contains("2 sealed"), "and the number of chunks it stands for")
+		_check(
+			line.contains("(3,-1)") and line.contains("(4,-1)"),
+			"and every chunk it dropped, so nothing the per-chunk lines said is lost"
+		)
+
+
+func _test_missing_cover_scenes_report_once() -> void:
+	# Logging audit 2026-08-28 §3 #15 / finding 33: unassigned cover scenes were
+	# warned about once per generated chunk, under a prefix borrowed from
+	# ChunkManager, even though every chunk then generates empty.
+	var impl := ChunkGenImpl.new()
+	_check(impl.get("_warned_missing_cover") == false, "the unassigned-cover report is once-guarded")
+	# Consume the guard so this fixture stays out of the error log, then confirm
+	# the generator still refuses to build anything.
+	impl.set("_warned_missing_cover", true)
+	var chunk := Node2D.new()
+	impl.call("_generate_chunk", Vector2i.ZERO, chunk)
+	_check(chunk.get_child_count() == 0, "a generator with no cover scenes builds nothing")
+	chunk.free()
+
+	var source := FileAccess.get_file_as_string("res://core/systems/world/proc/ChunkGenImpl.gd")
+	_check(
+		source.contains("[ChunkGenImpl] cannot generate chunks"),
+		"and reports it under its own class name, as an error"
+	)
+	_check(
+		not source.contains("[ChunkManager] Cover scenes"),
+		"the borrowed ChunkManager prefix is gone from that line"
+	)

@@ -42,6 +42,20 @@ func _run() -> void:
 		primary.close()
 		_check(is_equal_approx(float(store.load_settings()[&"audio"][&"music_volume"]), 0.42), "corrupt primary falls back to previous generation")
 
+		# A file from a newer schema is read best-effort (normalize clamps and
+		# drops unknown keys) rather than thrown away; only its version is
+		# reported. Wiping a player's settings on a downgrade would be worse than
+		# reading them.
+		var newer := ConfigFile.new()
+		newer.set_value("schema", "version", int(schema_script.get("SCHEMA_VERSION")) + 1)
+		newer.set_value("audio", "music_volume", 0.31)
+		newer.set_value("audio", "future_only_key", 7)
+		_check(newer.save(TEST_PATH) == OK, "fixture: a newer-schema settings file is written")
+		var from_newer: Dictionary = store.load_settings()
+		_check(is_equal_approx(float(from_newer[&"audio"][&"music_volume"]), 0.31), "a newer-schema file is still read")
+		_check(not from_newer[&"audio"].has(&"future_only_key"), "unknown keys from a newer schema are dropped")
+		_check(store.last_loaded_schema_version == int(schema_script.get("SCHEMA_VERSION")) + 1, "the store reports the schema version it read (got %d)" % store.last_loaded_schema_version)
+
 		var malformed := {
 			&"audio": {&"master_volume": 12.0},
 			&"video": {&"frame_limit": 17},
@@ -52,6 +66,42 @@ func _run() -> void:
 		_check(normalized[&"video"][&"frame_limit"] == 0, "unsupported frame limit falls back to unlimited")
 		_check(normalized[&"accessibility"][&"ui_scale"] == 1.5, "UI scale clamps to 150 percent")
 		_check(normalized[&"accessibility"][&"typewriter_speed"] == &"normal", "unknown text speed uses default")
+		# Damage numbers and ability callouts are two settings, not one. A save
+		# written before the split has neither key here, and both must come back
+		# ON - silently defaulting callouts off would mute the whole
+		# Manifestation layer for every existing profile.
+		_check(bool(defaults[&"accessibility"][&"damage_numbers"]), "damage numbers default on")
+		_check(bool(defaults[&"accessibility"][&"ability_callouts"]), "ability callouts default on")
+		_check(
+			bool(normalized[&"accessibility"][&"ability_callouts"]),
+			"a settings file predating the split still gets callouts on"
+		)
+
+		# Logging audit 2026-08-28 §3 #13: every "err=%s" here printed the raw
+		# enum int and no message named the file it had failed on.
+		_check(store.has_method("format_io_error"), "the store renders IO failures through one formatter")
+		if store.has_method("format_io_error"):
+			var rendered_failure: String = str(store.call(
+				"format_io_error", "write temporary settings", TEST_PATH + ".tmp", ERR_FILE_CANT_OPEN
+			))
+			_check(rendered_failure.contains(TEST_PATH + ".tmp"), "a settings failure names the file it could not reach")
+			_check(
+				rendered_failure.contains(error_string(ERR_FILE_CANT_OPEN)),
+				"and the engine's own name for the error"
+			)
+			var error_field := rendered_failure.get_slice("err=", 1)
+			_check(
+				error_field != "" and not error_field.is_valid_int(),
+				"never the raw enum int (rendered '%s')" % error_field
+			)
+		# Every "err=" the file renders must be fed by error_string(): a new site
+		# that formats a raw code breaks this balance.
+		var store_source := FileAccess.get_file_as_string("res://core/settings/SettingsStore.gd")
+		_check(
+			store_source.count("error_string(") > 0
+			and store_source.count("err=%s") == store_source.count("error_string("),
+			"every error code SettingsStore renders goes through error_string()"
+		)
 	_cleanup()
 	print("SettingsPersistenceTest: %d passed, %d failed" % [_passes, _failures])
 	quit(1 if _failures > 0 else 0)

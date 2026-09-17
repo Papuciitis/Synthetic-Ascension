@@ -149,19 +149,19 @@ func _build_slot_styles() -> void:
 	_slot_sb_quick.bg_color = Color(0, 0, 0, 0.25)
 	_slot_sb_quick.border_color = Color(0.14, 0.14, 0.14, 1.0)
 	_slot_sb_quick.set_border_width_all(2)
-	_slot_sb_quick.corner_radius_top_left = 12
-	_slot_sb_quick.corner_radius_top_right = 12
-	_slot_sb_quick.corner_radius_bottom_left = 12
-	_slot_sb_quick.corner_radius_bottom_right = 12
+	_slot_sb_quick.corner_radius_top_left = 2
+	_slot_sb_quick.corner_radius_top_right = 2
+	_slot_sb_quick.corner_radius_bottom_left = 2
+	_slot_sb_quick.corner_radius_bottom_right = 2
 
 	_slot_sb_grid = StyleBoxFlat.new()
 	_slot_sb_grid.bg_color = Color(0, 0, 0, 0.20)
 	_slot_sb_grid.border_color = Color(0.14, 0.14, 0.14, 1.0)
 	_slot_sb_grid.set_border_width_all(2)
-	_slot_sb_grid.corner_radius_top_left = 10
-	_slot_sb_grid.corner_radius_top_right = 10
-	_slot_sb_grid.corner_radius_bottom_left = 10
-	_slot_sb_grid.corner_radius_bottom_right = 10
+	_slot_sb_grid.corner_radius_top_left = 2
+	_slot_sb_grid.corner_radius_top_right = 2
+	_slot_sb_grid.corner_radius_bottom_left = 2
+	_slot_sb_grid.corner_radius_bottom_right = 2
 
 
 func _style_slot(s: BagSlot, is_quick: bool) -> void:
@@ -207,6 +207,9 @@ func _build_slots(grid_slot_count: int = BagInventory.SLOT_COUNT) -> void:
 			g.discard_requested.connect(cb_discard)
 		if not g.equip_requested.is_connected(cb_equip):
 			g.equip_requested.connect(cb_equip)
+		var cb_interact := Callable(self, "_on_slot_interaction")
+		if not g.interaction_requested.is_connected(cb_interact):
+			g.interaction_requested.connect(cb_interact)
 
 	# clicking empty space in quick bar toggles too
 	if not quick_bar.gui_input.is_connected(_on_quickbar_gui_input):
@@ -233,6 +236,7 @@ func set_open(v: bool) -> void:
 	if full_panel.visible == v:
 		return
 	full_panel.visible = v
+	_notify_augment_input_lock(v)
 	_apply_size()
 	open_changed.emit(full_panel.visible)
 	_refresh()
@@ -240,9 +244,26 @@ func set_open(v: bool) -> void:
 
 func _toggle_full() -> void:
 	full_panel.visible = not full_panel.visible
+	_notify_augment_input_lock(full_panel.visible)
 	_apply_size()
 	open_changed.emit(full_panel.visible)
 	_refresh()
+
+
+var _augment_lock_held: bool = false
+
+func _notify_augment_input_lock(open: bool) -> void:
+	# While the bag is open, number keys belong to the bag — not to active
+	# augment hotkeys (pressing "2" mid-sort used to Hex-Blink the player).
+	if open == _augment_lock_held:
+		return
+	_augment_lock_held = open
+	if Global != null and Global.has_method("set_active_augment_input_locked"):
+		Global.set_active_augment_input_locked(open)
+
+
+func _exit_tree() -> void:
+	_notify_augment_input_lock(false)
 
 
 func _apply_size() -> void:
@@ -280,6 +301,28 @@ func _on_discard_requested(slot_index: int) -> void:
 	# Use mouse position for now; world listener decides final spawn position
 	var mouse: Vector2 = get_viewport().get_mouse_position()
 	_router.drop_from(_bag, slot_index, mouse)
+
+
+func _on_slot_interaction(slot_index: int, button: int, _double_click: bool, _shift: bool, ctrl: bool) -> void:
+	# Lock toggling in the RUN bag, not just the hub screens: BagSlot
+	# reserves Ctrl and refuses locked stacks, but nothing listened, so
+	# locked items were silently inert in-run.
+	if _bag == null or slot_index < 0 or slot_index >= _bag.get_slot_count():
+		return
+	var inst: ItemInstance = _bag.get_at(slot_index)
+	if inst == null:
+		return
+	if ctrl and button == MOUSE_BUTTON_LEFT:
+		inst.toggle_locked()
+		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit(
+				"Item locked · protected from equip, discard and sale." if inst.locked else "Item unlocked.",
+				2.0
+			)
+		_refresh()
+	elif inst.locked and button == MOUSE_BUTTON_LEFT:
+		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
+			RunEvents.tutorial_tip.emit("Item locked · Ctrl-click to unlock.", 2.0)
 
 
 func _on_equip_requested(bag_slot_index: int) -> void:
@@ -344,6 +387,9 @@ func _on_stack_merged(from_slot: int, to_slot: int, src: ItemInstance) -> void:
 		merge_vfx.call_deferred("play_merge", _grid_slots[from_slot], _grid_slots[to_slot], src, is_open())
 
 	await get_tree().create_timer(merge_ghost_time).timeout
+	# The bag can close and free its slots while the ghost is fading.
+	if not is_inside_tree():
+		return
 	if int(_ghost_ids.get(from_slot, 0)) == id:
 		_ghost_ids.erase(from_slot)
 		_ghost_stacks.erase(from_slot)

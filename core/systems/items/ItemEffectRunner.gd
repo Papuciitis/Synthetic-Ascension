@@ -5,7 +5,13 @@ signal effect_added(effect: Node)
 signal effect_removed(effect: Node)
 
 @export var debug_items: bool = false
-@export var watched_slots: Array[int] = [Inventory.SLOT_OFFHAND, Inventory.SLOT_RING]
+## Every equipped slot, not just the two accessory slots. Scripted item effects
+## were originally an accessory-only idea, which quietly meant ItemData's
+## negative_effect_scenes could never fire on armour, boots or a weapon - so a
+## curse could only ever be a stat penalty. A curse whose SHAPE is interesting
+## (a rate cap, a currency tax, a biased loot table) has to live on the slot it
+## belongs to.
+@export var watched_slots: Array[int] = [0, 1, 2, 3, 4, 5, 6, 7]
 
 # key(StringName) -> Node(effect instance)
 var _active_effects: Dictionary = {}

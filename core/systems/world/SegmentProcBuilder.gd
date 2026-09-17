@@ -34,7 +34,7 @@ const WARDSTONE_SCENE: PackedScene = preload("res://scenes/world/wardstones/Ward
 const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.tscn")
 const MINIBOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/MiniBossArena.tscn")
 const BOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/BossArena.tscn")
-const DISTRICT_RELAY_SCENE: PackedScene = preload("res://scenes/world/objectives/DistrictRelayObjective.tscn")
+const CURSED_VAULT_SCRIPT: Script = preload("res://core/systems/world/CursedVault.gd")
 
 var _res_tick: float = 0.0
 var _time_in_segment: float = 0.0
@@ -43,7 +43,7 @@ var _pending_bonus_res: float = 0.0
 var _cm: ChunkManager = null
 var _player: Node2D = null
 var _exit_rite: ExitRite = null
-var _primary_objective: DistrictRelayObjective = null
+var _primary_objective: PrimaryObjective = null
 var _segment: int = 1
 var _plan: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -61,6 +61,7 @@ var _secondary_objectives: Array[Dictionary] = []
 var _secondary_completed: Dictionary = {}
 var _active_secondary_id: int = -1
 var _secondary_feedback_token: int = 0
+var _rite_safeguard_sources: Dictionary = {}
 
 @export_group("Procedural Debug")
 @export var debug_proc_state: bool = false
@@ -76,11 +77,17 @@ func _ready() -> void:
 	_player = get_tree().get_first_node_in_group("player") as Node2D
 
 	if _cm == null:
-		push_warning("[SegmentProcBuilder] ChunkManager not found.")
+		push_error(
+			"[SegmentProcBuilder] cannot build segment: seg=%d group=chunk_manager not found; the segment gets no objectives and no exit rite"
+			% _segment
+		)
 		queue_free()
 		return
 	if _player == null:
-		push_warning("[SegmentProcBuilder] Player not found (group 'player').")
+		push_error(
+			"[SegmentProcBuilder] cannot build segment: seg=%d group=player not found; the segment gets no objectives and no exit rite"
+			% _segment
+		)
 		queue_free()
 		return
 
@@ -106,11 +113,17 @@ func _ready() -> void:
 			secondary["id"] = fallback_secondary_id
 		fallback_secondary_id += 1
 		_secondary_objectives.append(secondary)
-	var debug_main_route: Array = _plan.get("main_route", [])
-	var debug_exploration: Array = _plan.get("exploration_chunks", [])
-	var debug_rewards: Array = _plan.get("reward_chunks", [])
-	var validation: Dictionary = _plan.get("validation", {}) as Dictionary
-	print("[SegmentProcBuilder] Theme=", _theme.label if _theme != null else "Legacy", " main=", debug_main_route.size(), " explore=", debug_exploration.size(), " rewards=", debug_rewards.size(), " validation=", validation)
+	if debug_proc_state:
+		# The validation dictionary is not repeated here: _set_pressure_phase()
+		# dumps it behind this same flag on the recon phase that ends _ready().
+		print("[SegmentProcBuilder] built plan seg=%d seed=%d theme=%s main=%d explore=%d rewards=%d" % [
+			_segment,
+			int(_plan.get("seed", 0)),
+			(_theme.label if _theme != null else "Legacy"),
+			(_plan.get("main_route", []) as Array).size(),
+			(_plan.get("exploration_chunks", []) as Array).size(),
+			(_plan.get("reward_chunks", []) as Array).size(),
+		])
 
 	_rng.seed = int(_plan.get("seed", 1337)) ^ 0xA53C9E1
 
@@ -127,6 +140,22 @@ func _ready() -> void:
 	_update_gate_marker()
 	_push_resonance_ui()
 	_clear_secondary_objective_ui()
+	_announce_secondaries()
+
+func _announce_secondaries() -> void:
+	# "A secondary appeared" was a designed feedback moment with no signal
+	# behind it: tell the player up front the district holds optional work.
+	if _secondary_objectives.is_empty():
+		return
+	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		return
+	var n := _secondary_objectives.size()
+	var text := (
+		"1 optional signal detected in this district."
+		if n == 1
+		else "%d optional signals detected in this district." % n
+	)
+	RunEvents.tutorial_tip.emit(text, 4.0)
 
 func _exit_tree() -> void:
 	_unhook_resonance()
@@ -151,11 +180,14 @@ func _process(delta: float) -> void:
 	var dt := _res_tick
 	_res_tick = 0.0
 
-	# Ambient resonance backbone (keeps pacing consistent even if spawns are light).
-	var ambient := resonance_per_sec * dt
+	# Ambient resonance backbone — but only once the primary objective is
+	# done (the pacing test has always described it that way: "finishes near
+	# four minutes AFTER primary completion"). Before that, Resonance comes
+	# from actions: the relay, wardstones, secondaries, kills and loot.
+	var ambient := (resonance_per_sec * dt) if _primary_completed else 0.0
 
 	# Small early boost to reduce "slow start" feel.
-	if resonance_early_boost_seconds > 0.0 and _time_in_segment < resonance_early_boost_seconds:
+	if ambient > 0.0 and resonance_early_boost_seconds > 0.0 and _time_in_segment < resonance_early_boost_seconds:
 		var t := clampf(_time_in_segment / resonance_early_boost_seconds, 0.0, 1.0)
 		ambient *= lerpf(resonance_early_boost_mul, 1.0, t)
 
@@ -255,7 +287,12 @@ func _build_world_from_plan() -> void:
 	)
 
 	# Move the player to the segment start and set their default checkpoint.
+	# A saved wardstone checkpoint from this attempt takes priority (mirrors
+	# Level1Builder): resuming mid-segment used to silently overwrite it and
+	# dump the player back at the district entrance.
 	var start_world: Vector2 = _plan.get("start_world", Vector2.ZERO)
+	if Global != null and Global.attempt_checkpoint_pos != Vector2.INF:
+		start_world = Global.attempt_checkpoint_pos
 	if _player != null and _player.has_method("set_checkpoint"):
 		_player.call("set_checkpoint", start_world, true)
 	else:
@@ -270,16 +307,22 @@ func _build_world_from_plan() -> void:
 	_spawn_wardstones()
 	_spawn_exit_gate()
 	_spawn_segment_events()
+	_spawn_secondary_nodes()
 
 func _spawn_primary_objective() -> void:
 	var objective_world: Vector2 = _plan.get("primary_world", Vector2.ZERO) as Vector2
-	_primary_objective = DISTRICT_RELAY_SCENE.instantiate() as DistrictRelayObjective
+	# The type is chosen from the seed rather than hardcoded here. That choice
+	# used to live in this function AND its wording lived in _push_objective_ui,
+	# which is why there was only ever one objective: a second one meant editing
+	# the builder in two places instead of adding a file.
+	_primary_objective = PrimaryObjectiveCatalog.create_for(
+		_segment, int(_plan.get("seed", 1337)) ^ 0x51A7CE
+	)
 	if _primary_objective == null:
-		push_warning("[SegmentProcBuilder] District relay scene could not instantiate; bypassing primary gate to keep the run recoverable.")
+		push_warning("[SegmentProcBuilder] No primary objective could be built; bypassing the primary gate to keep the run recoverable.")
 		_primary_completed = true
 		return
 	_primary_objective.global_position = objective_world
-	_primary_objective.configure(int(_plan.get("seed", 1337)) ^ 0x51A7CE)
 	_primary_objective.activated.connect(_on_primary_activated)
 	_primary_objective.progress_changed.connect(_on_primary_progress_changed)
 	_primary_objective.completed.connect(_on_primary_completed)
@@ -289,7 +332,8 @@ func _spawn_primary_objective() -> void:
 
 func _spawn_wardstones() -> void:
 	var wards: Array = _plan.get("wardstone_world", [])
-	for p in wards:
+	for ward_index in range(wards.size()):
+		var p: Vector2 = wards[ward_index]
 		var s := WARDSTONE_SCENE.instantiate() as Wardstone
 		if s == null:
 			continue
@@ -301,6 +345,13 @@ func _spawn_wardstones() -> void:
 
 		s.global_position = pos
 		add_child(s)
+		# Attuning a wardstone is a meaningful act: it feeds the bar.
+		s.activated.connect(_on_wardstone_activated.bind(ward_index))
+
+
+func _on_wardstone_activated(_stone: Wardstone, ward_index: int) -> void:
+	grant_resonance(0.06, true)
+	register_rite_safeguard_source(StringName("wardstone:%d" % ward_index))
 
 func _spawn_exit_gate() -> void:
 	var p: Vector2 = _plan.get("exit_world", Vector2.ZERO)
@@ -319,8 +370,24 @@ func _spawn_exit_gate() -> void:
 	_exit_rite.global_position = pos
 	add_child(_exit_rite)
 	_exit_rite.cleared.connect(_on_gate_cleared)
+	_replay_rite_safeguard_sources()
 	if not _primary_completed:
 		_exit_rite.set_revealed(false)
+
+
+## Most secondaries are consequences of a chunk ROLE - a loot spawner at a dead
+## end, a forced building with an encounter in it. The wager shrine is a
+## gameplay node with its own state, so it is spawned imperatively from the plan
+## the way the relay, the wardstones and the Exit Rite are.
+func _spawn_secondary_nodes() -> void:
+	for secondary in _secondary_objectives:
+		if StringName(secondary.get("type", &"")) != &"wager_shrine":
+			continue
+		var shrine := WagerShrineObjective.new()
+		shrine.name = "WagerShrine%d" % int(secondary.get("id", 0))
+		shrine.configure(int(secondary.get("id", 0)))
+		shrine.global_position = _jitter_in_chunk(secondary.get("world", Vector2.ZERO) as Vector2, 3)
+		add_child(shrine)
 
 
 func _spawn_segment_events() -> void:
@@ -335,6 +402,10 @@ func _spawn_segment_events() -> void:
 			(a as Node2D).global_position = pos
 			add_child(a)
 
+	# Cursed Vault (roadmap 2.5): one deliberate risk/reward off the main
+	# route, at the reward chunk farthest from the start, from segment 2 on.
+	_spawn_cursed_vault()
+
 	# Segment 10: boss arena (capstone). Boss spawns and gate stays locked until dead.
 	var b_world: Vector2 = _plan.get("boss_world", Vector2.ZERO)
 	if _segment == 10 and b_world != Vector2.ZERO:
@@ -342,6 +413,36 @@ func _spawn_segment_events() -> void:
 		if b != null:
 			(b as Node2D).global_position = _jitter_in_chunk(b_world, 2)
 			add_child(b)
+
+func _spawn_cursed_vault() -> void:
+	if _segment < 2:
+		return
+	if Global != null and "debug_cursed_vault" in Global and not bool(Global.get("debug_cursed_vault")):
+		return
+	var reward_chunks: Array = _plan.get("reward_chunks", [])
+	if reward_chunks.is_empty() or _cm == null:
+		return
+	var start_chunk: Vector2i = _plan.get("start_chunk", Vector2i.ZERO)
+	var exit_chunk: Vector2i = _plan.get("exit_chunk", Vector2i(-99999, -99999))
+	var best := Vector2i(-99999, -99999)
+	var best_distance := -1.0
+	for chunk_variant in reward_chunks:
+		var chunk := chunk_variant as Vector2i
+		if chunk == exit_chunk:
+			continue
+		var distance := Vector2(chunk - start_chunk).length()
+		if distance > best_distance:
+			best_distance = distance
+			best = chunk
+	if best_distance < 0.0:
+		return
+	var chunk_size := float(_cm.chunk_size_px)
+	var center := Vector2((float(best.x) + 0.5) * chunk_size, (float(best.y) + 0.5) * chunk_size)
+	var vault := CURSED_VAULT_SCRIPT.new() as Node2D
+	vault.name = "CursedVault"
+	vault.global_position = _jitter_in_chunk(center, 2)
+	add_child(vault)
+
 
 func grant_resonance(amount: float, immediate: bool = true) -> void:
 	if amount <= 0.0:
@@ -362,11 +463,13 @@ func set_boss_defeated() -> void:
 	_boss_defeated = true
 	_update_gate_lock()
 	_push_objective_ui()
+	_push_resonance_ui()
 
 func set_miniboss_defeated() -> void:
 	_miniboss_defeated = true
 	_update_gate_lock()
 	_push_objective_ui()
+	_push_resonance_ui()
 
 func is_boss_defeated() -> bool:
 	return _boss_defeated
@@ -437,17 +540,43 @@ func _phase_label(phase: StringName) -> String:
 		&"collapse": return "COLLAPSE"
 		_: return "RECON"
 
-func _gate_requirement_line(done: bool, label: String) -> String:
-	return "%s %s" % ["✓" if done else "○", label]
+## The objective owns its own wording; these are the fallbacks for the window
+## between "the objective failed to build" and "the run bypassed the gate".
+func _primary_title() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.objective_title()
+	return "Primary Objective"
+
+
+func _primary_detail() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.objective_detail()
+	return "%d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
+
+
+func _primary_checklist_label() -> String:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.checklist_label()
+	return "Primary objective complete"
+
+
+func _primary_checklist_id() -> StringName:
+	if _primary_objective != null and is_instance_valid(_primary_objective):
+		return _primary_objective.checklist_id()
+	return &"primary"
+
 
 func _push_objective_ui() -> void:
 	if RunEvents == null or not RunEvents.has_signal("objective_changed"):
 		return
 	if not _primary_completed:
+		# Ask the objective what it is called and what it wants. Anything else
+		# means every new objective type has to be taught to this function.
 		RunEvents.objective_changed.emit(
-			"Silence the District Relay • %s" % _phase_label(_pressure_phase),
-			"Attune relay nodes %d/%d • The exit remains hidden" % [_primary_done_count, _primary_total_count]
+			"%s • %s" % [_primary_title(), _phase_label(_pressure_phase)],
+			_primary_detail()
 		)
+		_emit_gate_checklist(&"locked", [], "")
 		return
 
 	var percent: int = int(round(clampf(resonance, 0.0, 1.0) * 100.0))
@@ -458,19 +587,19 @@ func _push_objective_ui() -> void:
 	var gate_ready: bool = resonance_complete and miniboss_complete and boss_complete
 	var marker_visible: bool = resonance >= gate_marker_reveal_resonance
 
-	var gate_state: String = "LOCKED"
+	var gate_state: StringName = &"locked"
 	if gate_ready:
-		gate_state = "READY"
+		gate_state = &"ready"
 	elif marker_visible:
-		gate_state = "LOCATED"
+		gate_state = &"located"
 
-	var checklist := PackedStringArray()
-	checklist.append(_gate_requirement_line(true, "District Relay silenced"))
-	checklist.append(_gate_requirement_line(resonance_complete, "Resonance 100%% (%d%%)" % percent))
+	var items: Array = []
+	items.append({"id": _primary_checklist_id(), "label": _primary_checklist_label(), "done": true})
+	items.append({"id": &"resonance", "label": "Resonance 100%% (%d%%)" % percent, "done": resonance_complete})
 	if _miniboss_required:
-		checklist.append(_gate_requirement_line(_miniboss_defeated, "Miniboss defeated"))
+		items.append({"id": &"miniboss", "label": "Miniboss defeated", "done": _miniboss_defeated})
 	if _boss_required:
-		checklist.append(_gate_requirement_line(_boss_defeated, "District boss defeated"))
+		items.append({"id": &"boss", "label": "District boss defeated", "done": _boss_defeated})
 
 	var guidance: String
 	if not marker_visible:
@@ -483,12 +612,19 @@ func _push_objective_ui() -> void:
 		guidance = "Next: defeat the district boss"
 	else:
 		guidance = "All conditions met • follow the orange gate marker"
-	checklist.append(guidance)
 
-	RunEvents.objective_changed.emit(
-		"EXIT RITE • %s" % gate_state,
-		"\n".join(checklist)
-	)
+	# The checklist owns the complete post-primary gate state. Keeping an
+	# ordinary objective alive here presents the same rite twice with two
+	# different visual grammars, and makes the evacuation banner a third copy
+	# once the gate opens.
+	RunEvents.objective_changed.emit("", "")
+	_emit_gate_checklist(gate_state, items, guidance)
+
+
+func _emit_gate_checklist(state: StringName, items: Array, next_hint: String) -> void:
+	if RunEvents == null or not RunEvents.has_signal("gate_checklist_changed"):
+		return
+	RunEvents.gate_checklist_changed.emit(state, items, next_hint)
 
 func _check_secondary_objective_discovery() -> void:
 	if _secondary_objectives.is_empty() or not is_instance_valid(_player) or not is_instance_valid(_cm):
@@ -545,6 +681,9 @@ func _show_secondary_objective(objective: Dictionary) -> void:
 		&"searchable_reward_building":
 			title = "SECONDARY • Searchable Building"
 			detail = "Enter and search the building for its optional reward."
+		&"wager_shrine":
+			title = "SECONDARY • Wager Shrine"
+			detail = "Stand in the shrine to raise the stake. Step out to settle it."
 	RunEvents.secondary_objective_changed.emit(title, detail)
 
 func _hook_secondary_objectives() -> void:
@@ -564,7 +703,16 @@ func _unhook_secondary_objectives() -> void:
 func _on_secondary_objective_completed(objective_id: int) -> void:
 	if objective_id <= 0:
 		return
+	# An alley cache spawning two pickups fires this once per pickup;
+	# announce (and later, reward) each secondary exactly once.
+	if _secondary_completed.has(objective_id):
+		return
 	_secondary_completed[objective_id] = true
+	register_rite_safeguard_source(StringName("secondary:%d" % objective_id))
+	Global.grant_doctrine_secondary_rewards(StringName("secondary:%d" % objective_id))
+	# Optional objectives are exactly the "meaningful actions" Resonance is
+	# supposed to reward: detours pay progress, not just loot.
+	grant_resonance(0.05, true)
 	if _active_secondary_id == objective_id:
 		_active_secondary_id = -1
 
@@ -581,6 +729,8 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 			completion_detail = "Guarded alley cache secured."
 		&"searchable_reward_building":
 			completion_detail = "Building searched • optional reward recovered."
+		&"wager_shrine":
+			completion_detail = "The wager is settled."
 
 	_secondary_feedback_token += 1
 	var feedback_token: int = _secondary_feedback_token
@@ -589,6 +739,23 @@ func _on_secondary_objective_completed(objective_id: int) -> void:
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
 		RunEvents.tutorial_tip.emit("Secondary complete • %s" % completion_detail, 2.4)
 	_clear_secondary_after_delay(feedback_token)
+
+
+func register_rite_safeguard_source(source_key: StringName, amount: int = 1) -> int:
+	if source_key == StringName() or amount <= 0 or _rite_safeguard_sources.has(source_key):
+		return 0
+	_rite_safeguard_sources[source_key] = amount
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
+		return 0
+	return _exit_rite.grant_safeguard(source_key, amount)
+
+
+func _replay_rite_safeguard_sources() -> void:
+	if _exit_rite == null or not is_instance_valid(_exit_rite):
+		return
+	for source_variant in _rite_safeguard_sources.keys():
+		var source_key := StringName(str(source_variant))
+		_exit_rite.grant_safeguard(source_key, int(_rite_safeguard_sources[source_variant]))
 
 func _clear_secondary_after_delay(feedback_token: int) -> void:
 	await get_tree().create_timer(2.4).timeout
@@ -608,9 +775,9 @@ func _clear_secondary_objective_ui() -> void:
 func _hook_resonance() -> void:
 	if RunEvents == null:
 		return
-	var cb1 := Callable(self, "_on_enemy_killed")
-	if not RunEvents.enemy_killed.is_connected(cb1):
-		RunEvents.enemy_killed.connect(cb1)
+	var cb1 := Callable(self, "_on_enemy_defeated")
+	if not RunEvents.enemy_defeated.is_connected(cb1):
+		RunEvents.enemy_defeated.connect(cb1)
 
 	var cb2 := Callable(self, "_on_pickup_to_equip")
 	if not RunEvents.pickup_fly_to_equip.is_connected(cb2):
@@ -619,23 +786,21 @@ func _hook_resonance() -> void:
 func _unhook_resonance() -> void:
 	if RunEvents == null:
 		return
-	var cb1 := Callable(self, "_on_enemy_killed")
-	if RunEvents.enemy_killed.is_connected(cb1):
-		RunEvents.enemy_killed.disconnect(cb1)
+	var cb1 := Callable(self, "_on_enemy_defeated")
+	if RunEvents.enemy_defeated.is_connected(cb1):
+		RunEvents.enemy_defeated.disconnect(cb1)
 
 	var cb2 := Callable(self, "_on_pickup_to_equip")
 	if RunEvents.pickup_fly_to_equip.is_connected(cb2):
 		RunEvents.pickup_fly_to_equip.disconnect(cb2)
 
-func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
+func _on_enemy_defeated(context: RefCounted) -> void:
 	if resonance >= 1.0:
 		return
 
 	var gain := resonance_per_kill
-	if enemy != null and enemy.has_method("get"):
-		var elite: bool = bool(enemy.get("is_elite"))
-		if elite:
-			gain = resonance_per_elite_kill
+	if context != null and bool(context.get("is_elite")):
+		gain = resonance_per_elite_kill
 
 	_pending_bonus_res += gain
 	_pending_bonus_res = minf(_pending_bonus_res, 1.0) # avoid runaway buffer if something goes wild
@@ -659,6 +824,21 @@ func _update_gate_marker() -> void:
 	var should_show: bool = gate_is_valid and resonance >= gate_marker_reveal_resonance
 	Global.objective_target_pos = _exit_rite.global_position if should_show else Vector2.INF
 
+func _gate_conditions_met() -> bool:
+	return (
+		_primary_completed
+		and (not _boss_required or _boss_defeated)
+		and (not _miniboss_required or _miniboss_defeated)
+	)
+
 func _push_resonance_ui() -> void:
 	if RunEvents != null and RunEvents.has_signal("resonance_changed"):
-		RunEvents.resonance_changed.emit(resonance)
+		# Hold the public bar just under the unseal threshold while the gate
+		# is still blocked by primary/miniboss/boss: ThreatDirector's
+		# overtime, EVAC NOW and the HUD's GATE READY all key off this
+		# signal reaching 0.999, and none of them should fire while the
+		# Exit Rite cannot actually open (same pattern as Level1Builder).
+		var shown := resonance
+		if not _gate_conditions_met():
+			shown = minf(shown, 0.998)
+		RunEvents.resonance_changed.emit(shown)

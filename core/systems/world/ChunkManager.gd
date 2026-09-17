@@ -20,13 +20,30 @@ class_name ChunkManager
 @export_group("Ground Art")
 @export var ground_enabled: bool = true
 @export var decals_enabled: bool = true
-@export_range(0, 6, 1) var decals_per_chunk_min: int = 0
-@export_range(0, 6, 1) var decals_per_chunk_max: int = 2
+## Per CHUNK, and a chunk is 2048 px - roughly 32x32 cells. The old ceiling of
+## two decals and three plants meant a whole city block carried five props, so
+## every room read as a grey box with a few specks in it and there was never an
+## answer to "what is down this alley?". Decals are alpha 0.12-0.25 and purely
+## repetition-breaking, so they are cheap to be generous with.
+## A wash over the whole district's ground and floors. Set by the segment theme;
+## white is "no theme opinion".
+@export var district_tint: Color = Color(1, 1, 1, 1)
+
+@export_range(0, 40, 1) var decals_per_chunk_min: int = 5
+@export_range(0, 40, 1) var decals_per_chunk_max: int = 13
 
 @export_group("Environment Deco")
 @export var deco_enabled: bool = true
-@export_range(0, 8, 1) var veg_per_chunk_min: int = 0
-@export_range(0, 8, 1) var veg_per_chunk_max: int = 3
+## Vegetation is placed in CLUMPS rather than scattered - see
+## _scatter_vegetation(). Raising a uniform scatter from 3 to 18 still reads as
+## noise; the same 18 in four thickets reads as a place someone left alone.
+@export_range(0, 40, 1) var veg_per_chunk_min: int = 9
+@export_range(0, 40, 1) var veg_per_chunk_max: int = 20
+
+## Plants per thicket. The scatter picks clump centres, then walks outward.
+@export_range(1, 12, 1) var veg_clump_min: int = 2
+@export_range(1, 12, 1) var veg_clump_max: int = 6
+@export_range(1, 8, 1) var veg_clump_radius_cells: int = 3
 @export_range(0, 3, 1) var landmark_chance_per_special_chunk: int = 1 # 1 => ~33%
 
 
@@ -129,9 +146,9 @@ var _external_tile_roots: Array[Node2D] = []
 @export var cover_half_scene: PackedScene
 
 @export_group("Debug")
-@export var debug_draw_chunk_outlines: bool = true
+@export var debug_draw_chunk_outlines: bool = false
 @export var debug_chunk_line_width: float = 4.0
-@export var debug_show_blocks: bool = true
+@export var debug_show_blocks: bool = false
 @export var debug_block_color: Color = Color(0.2, 0.9, 0.4, 0.35)
 @export var debug_force_content: bool = false   # <- turn ON to force buildings/ruins in every chunk
 @export var debug_print_generation: bool = false
@@ -542,12 +559,9 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 		return
 
 	var terrain: StringName = get_chunk_terrain(coord)
-	if terrain == &"":
+	var wilderness: bool = terrain == &""
+	if wilderness:
 		terrain = _fallback_terrain
-		# Unplanned streamed chunks stay explorable and natural instead of becoming
-		# square city slabs. Add a little deterministic dirt variation.
-		if terrain == &"grass" and posmod(_seed_for_chunk(coord), 5) == 0:
-			terrain = &"dirt"
 
 	var tex_index: int = _ground_index_for_terrain(terrain)
 	tex_index = clampi(tex_index, 0, ground_count - 1)
@@ -576,7 +590,20 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 
 	var texture_scale: float = float(repeat_world_px) / float(tile_px)
 	spr.scale = Vector2(texture_scale, texture_scale)
-	spr.modulate = Color.WHITE
+	# Wilderness used to swap one chunk in five to a different TEXTURE, which
+	# drew a hard 2048 px rectangle across the ground wherever it landed. The
+	# variation is worth keeping; the rectangle is not. A small deterministic
+	# shade of the same material breaks the flatness without announcing the
+	# chunk grid.
+	var shade: float = 1.0
+	if wilderness:
+		shade = 1.0 + (float(posmod(_seed_for_chunk(coord), 9)) / 8.0 - 0.5) * 0.09
+	spr.modulate = Color(
+		district_tint.r * shade,
+		district_tint.g * shade,
+		district_tint.b * shade,
+		1.0
+	)
 	spr.position = Vector2(float(chunk_size_px) * 0.5, float(chunk_size_px) * 0.5)
 	chunk.add_child(spr)
 
@@ -657,35 +684,7 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 	if archetype == &"gate" or role == &"checkpoint" or role == &"miniboss_arena":
 		n = maxi(0, n - 1)
 
-	var vegetation_count: int = _WORLD_ART.vegetation_texture_count()
-	if vegetation_count > 0:
-		for i in range(n):
-			var c := _pick_free_cell_local(rng, cells)
-			if c.x < 0:
-				break
-			var texture := _WORLD_ART.vegetation_texture(rng.randi_range(0, vegetation_count - 1))
-			var _scale_variation := rng.randf_range(0.9, 1.15)
-			var quarter_turns := rng.randi_range(0, 3)
-			var alpha := rng.randf_range(0.55, 0.85)
-			if tiled_world_rendering:
-				_ensure_tile_renderer()
-				if _tile_renderer != null:
-					_tile_renderer.paint_transformed_texture(
-						chunk, &"deco", c, texture, -85,
-						quarter_turns, false, false, Color(1, 1, 1, alpha)
-					)
-				continue
-			var spr := Sprite2D.new()
-			spr.name = "Veg_%d" % i
-			spr.z_index = -85
-			spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-			spr.texture = texture
-			spr.scale = Vector2(0.0625, 0.0625) * _scale_variation
-			spr.rotation = float(quarter_turns) * PI * 0.5
-			spr.modulate.a = alpha
-			spr.position = Vector2(float(c.x * cell_size_px) + float(cell_size_px) * 0.5, float(c.y * cell_size_px) + float(cell_size_px) * 0.5)
-			spr.set_meta(&"_tile_repeat_visual", true)
-			chunk.add_child(spr)
+	_scatter_vegetation(chunk, rng, cells, n)
 
 	# Landmark plazas always receive a memorable object; other special chunks keep a rare chance.
 	var force_landmark: bool = (role == &"landmark_plaza")
@@ -720,6 +719,92 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 		spr2.position = Vector2(float(chunk_size_px) * 0.5 + ox, float(chunk_size_px) * 0.5 + oy)
 		spr2.modulate.a = alpha
 		chunk.add_child(spr2)
+
+## Vegetation in thickets rather than confetti.
+##
+## Uniform scatter is the reason raising the old count would not have helped:
+## evenly-spread specks read as noise on the floor no matter how many there are,
+## because nothing about them says a person or a season put them there. The same
+## budget spent on a handful of clumps gives the eye edges to read - a thicket
+## has an inside and an outside, so it becomes a thing you can stand behind,
+## walk around, or notice from across a plaza.
+func _scatter_vegetation(chunk: Node2D, rng: RandomNumberGenerator, cells: int, budget: int) -> void:
+	var vegetation_count: int = _WORLD_ART.vegetation_texture_count()
+	if vegetation_count <= 0 or budget <= 0:
+		return
+
+	var placed: int = 0
+	var index: int = 0
+	# Bounded rather than while-true: a chunk that is almost entirely blocked
+	# must not spin looking for room that is not there.
+	for _clump in range(24):
+		if placed >= budget:
+			break
+		var centre := _pick_free_cell_local(rng, cells)
+		if centre.x < 0:
+			return
+		# One species per thicket. Mixing textures inside a clump turns it back
+		# into confetti that happens to be nearby.
+		var texture := _WORLD_ART.vegetation_texture(rng.randi_range(0, vegetation_count - 1))
+		var want: int = mini(rng.randi_range(veg_clump_min, veg_clump_max), budget - placed)
+		for _member in range(want):
+			var c := centre
+			if _member > 0:
+				var r: int = veg_clump_radius_cells
+				c = centre + Vector2i(rng.randi_range(-r, r), rng.randi_range(-r, r))
+				if not _is_free_cell_local(c, cells):
+					continue
+			# Denser at the heart of the clump, thinning at its edge, so the
+			# thicket has a silhouette instead of a hard boundary.
+			var distance: float = Vector2(c - centre).length() / maxf(1.0, float(veg_clump_radius_cells))
+			var alpha: float = rng.randf_range(0.55, 0.85) * lerpf(1.0, 0.62, clampf(distance, 0.0, 1.0))
+			var scale_variation: float = rng.randf_range(0.78, 1.34) * lerpf(1.0, 0.74, clampf(distance, 0.0, 1.0))
+			_paint_vegetation(chunk, c, texture, alpha, scale_variation, rng.randi_range(0, 3), index)
+			index += 1
+			placed += 1
+
+
+func _paint_vegetation(
+	chunk: Node2D,
+	c: Vector2i,
+	texture: Texture2D,
+	alpha: float,
+	scale_variation: float,
+	quarter_turns: int,
+	index: int
+) -> void:
+	if tiled_world_rendering:
+		_ensure_tile_renderer()
+		if _tile_renderer != null:
+			_tile_renderer.paint_transformed_texture(
+				chunk, &"deco", c, texture, -85,
+				quarter_turns, false, false, Color(1, 1, 1, alpha)
+			)
+		return
+	var spr := Sprite2D.new()
+	spr.name = "Veg_%d" % index
+	spr.z_index = -85
+	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	spr.texture = texture
+	spr.scale = Vector2(0.0625, 0.0625) * scale_variation
+	spr.rotation = float(quarter_turns) * PI * 0.5
+	spr.modulate.a = alpha
+	spr.position = Vector2(
+		float(c.x * cell_size_px) + float(cell_size_px) * 0.5,
+		float(c.y * cell_size_px) + float(cell_size_px) * 0.5
+	)
+	spr.set_meta(&"_tile_repeat_visual", true)
+	chunk.add_child(spr)
+
+
+func _is_free_cell_local(c: Vector2i, cells: int) -> bool:
+	if c.x < padding_cells or c.y < padding_cells:
+		return false
+	if c.x > cells - padding_cells - 1 or c.y > cells - padding_cells - 1:
+		return false
+	var global_cell: Vector2i = Vector2i(_gen_coord.x * cells + c.x, _gen_coord.y * cells + c.y)
+	return not (_blocked_cells.has(global_cell) or _manual_blocked_cells.has(global_cell))
+
 
 func _pick_free_cell_local(rng: RandomNumberGenerator, cells: int) -> Vector2i:
 	# Picks a local cell that isn't blocked by our spawned cover. Used for decorative sprites.
@@ -886,7 +971,6 @@ func _ensure_block_renderer() -> void:
 
 
 func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
-	_capture_interactive_nodes(data, chunk)
 	var physics := _BLOCK_PHYSICS.new() as ChunkBlockPhysics
 	physics.name = "ChunkBlockPhysics"
 	physics.build(data, cell_size_px)
@@ -951,13 +1035,6 @@ func _add_floor_stamp_sprite(chunk: Node2D, coord: Vector2i, rect: Rect2i, textu
 	spr.modulate = Color(1.0, 1.0, 1.0, alpha)
 	spr.position = (Vector2(rect.position) + Vector2(rect.size) * 0.5) * float(cell_size_px)
 	chunk.add_child(spr)
-
-
-func _capture_interactive_nodes(data: ChunkBuildData, chunk: Node2D) -> void:
-	for candidate in chunk.find_children("*", "Area2D", true, false):
-		data.interactive_nodes.append(candidate)
-	for candidate in chunk.find_children("*", "Marker2D", true, false):
-		data.interactive_nodes.append(candidate)
 
 
 func get_chunk_build_data(coord: Vector2i) -> ChunkBuildData:

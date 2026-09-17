@@ -1,0 +1,274 @@
+{
+  "billion_save_snapshot": 1000000000,
+  "conditions": {
+    "equipped_items": 0,
+    "luck": 0.0,
+    "note": "Synthetic price/reward fixtures, not a timed gameplay or income sample.",
+    "seed": 20260913,
+    "stock_samples_per_segment": 100
+  },
+  "death_path_rewards": [
+    {
+      "base_reward": 0,
+      "materialized_reward": 1,
+      "overtime_multiplier": 1.0,
+      "proxy_reward": 0
+    },
+    {
+      "base_reward": 1,
+      "materialized_reward": 1,
+      "overtime_multiplier": 1.0,
+      "proxy_reward": 1
+    },
+    {
+      "base_reward": 2,
+      "materialized_reward": 2,
+      "overtime_multiplier": 1.0,
+      "proxy_reward": 2
+    },
+    {
+      "base_reward": 3,
+      "materialized_reward": 3,
+      "overtime_multiplier": 1.0,
+      "proxy_reward": 3
+    },
+    {
+      "base_reward": 5,
+      "materialized_reward": 5,
+      "overtime_multiplier": 1.0,
+      "proxy_reward": 5
+    },
+    {
+      "base_reward": 0,
+      "materialized_reward": 1,
+      "overtime_multiplier": 0.35,
+      "proxy_reward": 0
+    },
+    {
+      "base_reward": 1,
+      "materialized_reward": 1,
+      "overtime_multiplier": 0.35,
+      "proxy_reward": 1
+    },
+    {
+      "base_reward": 2,
+      "materialized_reward": 1,
+      "overtime_multiplier": 0.35,
+      "proxy_reward": 1
+    },
+    {
+      "base_reward": 3,
+      "materialized_reward": 1,
+      "overtime_multiplier": 0.35,
+      "proxy_reward": 1
+    },
+    {
+      "base_reward": 5,
+      "materialized_reward": 2,
+      "overtime_multiplier": 0.35,
+      "proxy_reward": 2
+    }
+  ],
+  "doctrine_stage_at_12": "",
+  "exact_reconstruction_reserve": {
+    "after": 0,
+    "before": 12,
+    "player_die_would_respawn": false,
+    "quoted_cost": 12
+  },
+  "markets": [
+    {
+      "buy": {
+        "count": 1000,
+        "max": 359,
+        "median": 116,
+        "min": 49,
+        "p90": 193
+      },
+      "hub_next_segment": 2,
+      "sell": {
+        "count": 1000,
+        "max": 197,
+        "median": 63,
+        "min": 26,
+        "p90": 106
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 1617,
+        "median": 1232,
+        "min": 820,
+        "p90": 1453
+      }
+    },
+    {
+      "buy": {
+        "count": 1000,
+        "max": 458,
+        "median": 154,
+        "min": 76,
+        "p90": 237
+      },
+      "hub_next_segment": 3,
+      "sell": {
+        "count": 1000,
+        "max": 251,
+        "median": 84,
+        "min": 41,
+        "p90": 130
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 2108,
+        "median": 1570,
+        "min": 1076,
+        "p90": 1835
+      }
+    },
+    {
+      "buy": {
+        "count": 1000,
+        "max": 452,
+        "median": 202,
+        "min": 109,
+        "p90": 289
+      },
+      "hub_next_segment": 5,
+      "sell": {
+        "count": 1000,
+        "max": 248,
+        "median": 111,
+        "min": 59,
+        "p90": 158
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 2499,
+        "median": 2043,
+        "min": 1572,
+        "p90": 2315
+      }
+    },
+    {
+      "buy": {
+        "count": 1000,
+        "max": 578,
+        "median": 305,
+        "min": 184,
+        "p90": 428
+      },
+      "hub_next_segment": 10,
+      "sell": {
+        "count": 1000,
+        "max": 317,
+        "median": 167,
+        "min": 101,
+        "p90": 235
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 3746,
+        "median": 3120,
+        "min": 2408,
+        "p90": 3477
+      }
+    },
+    {
+      "buy": {
+        "count": 1000,
+        "max": 752,
+        "median": 484,
+        "min": 316,
+        "p90": 597
+      },
+      "hub_next_segment": 20,
+      "sell": {
+        "count": 1000,
+        "max": 413,
+        "median": 266,
+        "min": 173,
+        "p90": 328
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 5602,
+        "median": 4832,
+        "min": 4147,
+        "p90": 5171
+      }
+    },
+    {
+      "buy": {
+        "count": 1000,
+        "max": 890,
+        "median": 474,
+        "min": 320,
+        "p90": 607
+      },
+      "hub_next_segment": 40,
+      "sell": {
+        "count": 1000,
+        "max": 489,
+        "median": 260,
+        "min": 176,
+        "p90": 333
+      },
+      "whole_stock": {
+        "count": 100,
+        "max": 5485,
+        "median": 4825,
+        "min": 4241,
+        "p90": 5210
+      }
+    }
+  ],
+  "refresh_prices": [
+    3,
+    5,
+    9,
+    16,
+    28,
+    49,
+    86,
+    151,
+    264,
+    462,
+    808,
+    999,
+    999,
+    999,
+    999
+  ],
+  "wallets_segment_2": [
+    {
+      "belief_power": 0.0346410161513775,
+      "followers": 12,
+      "reconstruction_cost": 12
+    },
+    {
+      "belief_power": 0.1,
+      "followers": 100,
+      "reconstruction_cost": 20
+    },
+    {
+      "belief_power": 0.15,
+      "followers": 225,
+      "reconstruction_cost": 45
+    },
+    {
+      "belief_power": 0.15,
+      "followers": 4000,
+      "reconstruction_cost": 800
+    },
+    {
+      "belief_power": 0.15,
+      "followers": 1000000,
+      "reconstruction_cost": 200000
+    },
+    {
+      "belief_power": 0.15,
+      "followers": 1000000000,
+      "reconstruction_cost": 200000000
+    }
+  ]
+}

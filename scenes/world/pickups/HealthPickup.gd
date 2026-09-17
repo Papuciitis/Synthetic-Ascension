@@ -10,11 +10,21 @@ class_name HealthPickup
 @onready var icon: Sprite2D = $Icon
 @onready var glow: Sprite2D = $Glow
 
+const MAGNET_RADIUS: float = 110.0
+const MAGNET_SPEED_MAX: float = 420.0
+# Far pickups re-check the player distance at 4 Hz instead of every frame
+# (same idle poll as ItemPickup).
+const MAGNET_IDLE_DISTANCE: float = MAGNET_RADIUS * 3.0
+const MAGNET_IDLE_POLL_SEC: float = 0.25
+
 var _age: float = 0.0
 var _picked: bool = false
 var _pickup_ready: bool = false
 var _icon_start: Vector2 = Vector2.ZERO
 var _glow_start: Vector2 = Vector2.ZERO
+var _magnet_cooldown: float = 0.0
+var _player_ref: Node2D = null
+var ground_serial: int = 0
 
 
 func _ready() -> void:
@@ -22,6 +32,9 @@ func _ready() -> void:
 	monitorable = false
 	_icon_start = icon.position
 	_glow_start = glow.position
+	ground_serial = GroundLootCap.next_serial()
+	add_to_group(GroundLootCap.HEALTH_GROUP)
+	GroundLootCap.enforce(get_tree(), GroundLootCap.HEALTH_GROUP, GroundLootCap.HEALTH_CAP, self)
 
 	if not area_entered.is_connected(_on_area_entered):
 		area_entered.connect(_on_area_entered)
@@ -42,6 +55,37 @@ func _process(delta: float) -> void:
 	glow.position = _glow_start + Vector2(0.0, bob)
 	var pulse: float = 1.08 + sin(_age * 4.0) * 0.08
 	glow.scale = Vector2.ONE * pulse
+	_magnet(delta)
+
+
+func _magnet(delta: float) -> void:
+	# Drift toward a nearby wounded player; the close-range retry also fixes
+	# the latch where a full-HP player standing inside the pickup never
+	# triggers it again after healing down (area signals only fire on entry).
+	if _picked or not _pickup_ready:
+		return
+	if _magnet_cooldown > 0.0:
+		_magnet_cooldown -= delta
+		return
+	if _player_ref == null or not is_instance_valid(_player_ref):
+		_player_ref = get_tree().get_first_node_in_group("player") as Node2D
+		if _player_ref == null:
+			return
+	var maximum_hp: float = float(_player_ref.get("max_hp"))
+	if maximum_hp <= 0.0 or float(_player_ref.get("hp")) >= maximum_hp - 0.001:
+		return
+	var distance: float = global_position.distance_to(_player_ref.global_position)
+	if distance > MAGNET_RADIUS:
+		if distance > MAGNET_IDLE_DISTANCE:
+			_magnet_cooldown = MAGNET_IDLE_POLL_SEC
+		return
+	var pull: float = 1.0 - distance / MAGNET_RADIUS
+	var speed: float = lerpf(60.0, MAGNET_SPEED_MAX, pull * pull)
+	global_position = global_position.move_toward(_player_ref.global_position, speed * delta)
+	if distance < 16.0:
+		_try_pickup(_player_ref)
+		if not _picked:
+			_magnet_cooldown = 1.0
 
 
 func _arm_pickup() -> void:

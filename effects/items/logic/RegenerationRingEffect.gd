@@ -18,15 +18,18 @@ var player: Node = null
 var item: ItemInstance = null
 var slot_index: int = -1
 
+## Shared 30 Hz wall-clock bucket, the same idiom as
+## ManifestationEffect.pulse_redraw: every idle painter in the run lands on the
+## same frames instead of drifting out of phase with the others.
+const PULSE_REDRAW_MS: int = 33
+
 var _t: float = 0.0
 var _acc: float = 0.0
+var _last_pulse_bucket: int = -1
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
-	var r := 0
-	if inst != null:
-		r = int(inst.rarity)
-	var heal_scale := (1.0 + float(r) * rarity_scale) * _effect_multiplier(inst)
+	var heal_scale := (inst.rarity_effect_multiplier() if inst != null else 1.0) * _effect_multiplier(inst)
 	out.append("Heals every %.1fs: %.1f–%.1f HP (rarity scales)." % [tick_interval, heal_min * heal_scale, heal_max * heal_scale])
 	out.append("Plays green regen pulses (+).")
 	return out
@@ -55,7 +58,7 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
-	queue_redraw()
+	_pulse_redraw()
 
 	if player == null or not is_instance_valid(player):
 		return
@@ -68,12 +71,26 @@ func _process(dt: float) -> void:
 	_acc = 0.0
 
 	var amt := lerpf(heal_min, heal_max, randf())
-	var r := (int(item.rarity) if item != null else 0)
-	amt *= (1.0 + float(r) * rarity_scale) * _effect_multiplier(item)
-	amt = clampf(amt, 0.5, 12.0)
+	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
+	amt *= rarity_mult * _effect_multiplier(item)
+	# Ceiling scales with rarity too — the old flat 12.0 silently capped
+	# the ring's growth around R5.
+	amt = clampf(amt, 0.5, 12.0 * rarity_mult)
 
 	player.call("heal", amt)
 	_spawn_plus()
+
+
+
+## The ring is an ambient breathe with no state behind it, so it is redrawn on
+## the shared 30 Hz bucket rather than every frame. What it paints is unchanged:
+## _t still advances every frame and the phase is read at draw time.
+func _pulse_redraw() -> void:
+	var bucket := floori(float(Time.get_ticks_msec()) / float(PULSE_REDRAW_MS))
+	if bucket == _last_pulse_bucket:
+		return
+	_last_pulse_bucket = bucket
+	queue_redraw()
 
 
 func _effect_multiplier(inst: ItemInstance) -> float:

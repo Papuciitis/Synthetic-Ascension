@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddStatDelta.gd" id="2"]
+[ext_resource type="Script" path="res://data/StatDelta.gd" id="3"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="4"]
+
+[sub_resource type="Resource" id="stats"]
+script = ExtResource("3")
+luck = 0.2
+
+[sub_resource type="Resource" id="effect_stats"]
+script = ExtResource("2")
+delta = SubResource("stats")
+
+[sub_resource type="Resource" id="effect_rewards"]
+script = ExtResource("4")
+rule_key = &"secondary_reward_rolls"
+value = 1
+
+[sub_resource type="Resource" id="effect_threat"]
+script = ExtResource("4")
+rule_key = &"threat_gain_mul"
+value = 1.25
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_method_black_archive"
+title = "Black Archive"
+description = "Authorize the field to answer every dangerous question twice."
+stage = &"method"
+offer_role = &"covenant"
+family_id = &"archive"
+gift_text = "+20% Luck. Each unique secondary objective grants one additional item roll."
+price_text = "Threat generation is increased by 25%."
+consequence_text = "Exploration becomes profitable because the district notices every intrusion."
+build_tags = Array[StringName]([&"exploration"])
+effects = Array[Resource]([SubResource("effect_stats"), SubResource("effect_rewards"), SubResource("effect_threat")])

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+armor = 34.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+armor = 7.0
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("2_itemdata")
+id = "curse_ashen_ballast"
+display_name = "Ashen Ballast"
+description = "Slag that was armour once. It still remembers the shape.
+• A catastrophic Armour curse.
+• Armour can be lost almost entirely and survived — which is why this one is allowed to be this bad."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = -0.95
+pct_max = 0.0
+duplicate_feed_value = 0.0
+scripted_value_weight = 0.0
+drop_weight = 0.3
+equip_slot = 1
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

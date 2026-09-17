@@ -8,12 +8,12 @@
 script = ExtResource("1_2e64r")
 id = &"augment_magic_missile"
 display_name = "Magic Missile"
-description = """A disciplined weave that auto-launches missiles at intruders."""
+description = "A disciplined weave that auto-launches missiles at intruders."
 card_blurb = "Auto-fires seeking missiles on cooldown."
-details = """Cooldown: 0.75s
+details = "Cooldown: 0.75s
 Burst: 2 missiles (0.08s spacing)
 Seek Radius: 750px
-Damage: 0.35× Power"""
+Damage: 0.35× Power"
 icon = ExtResource("1_a3vd7")
 effect_scenes = Array[PackedScene]([ExtResource("1_n1mum")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

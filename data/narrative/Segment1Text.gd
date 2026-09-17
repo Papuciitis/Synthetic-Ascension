@@ -25,6 +25,10 @@ const OBJECTIVE_GATE_DETAIL := "Follow the outer wall around the warehouse. The 
 const OBJECTIVE_RITE_TITLE := "REWRITE THE RITE"
 const OBJECTIVE_RITE_DETAIL := "Remain within the sigil while the Pattern alters it."
 
+const EVIDENCE_TITLE := "CONFISCATED THAUMIC INSTRUMENTS"
+const EVIDENCE_BODY := "Evidence store 3-B. Instruments seized from unlicensed practitioners.\n\nCatalogued. Sealed. Waiting.\n\nThe seals recognise every registered discipline. Yours is not one of them."
+const EVIDENCE_EMPTY_TIP := "Evidence store 3-B. The useful instruments are already part of your Pattern."
+
 const SYNTHESIS_STABLE := "SYNTHESIS STABLE"
 const SYNTHESIS_RESULT := "No patron answered. No bloodline awakened. The spell worked anyway."
 const CONTAINMENT_NOTICE := "Unclassified thaumaturgical event detected.\nLaboratory containment initiated."
@@ -36,6 +40,9 @@ const SECURITY_START := "Security checkpoint sealed. Containment squad inbound."
 const SECURITY_CLEAR := "Containment squad broken. The service seal is losing coherence."
 const WARDSTONE_2 := "WARDSTONE REWRITTEN\nThe Pattern accepts the alteration more easily this time."
 const CHECKPOINT_DISABLED := "FINAL SECURITY CHECKPOINT DISABLED\nThe outer approach is open."
+const CITY_REVEAL_TITLE := "AREA I — THE CITY"
+const CITY_REVEAL_BODY := "The institution ends at its wall.\nThe city does not.\n\nEverything it knows about you is already moving through those streets.\n\nThe outer Rite is the way out."
+
 const RITE_LOGIC := "The Rite prohibits every recognised school of magic.\nSynthetic magic was never included."
 const GATE_UNSEALED := "OUTER RITE DESTABILISED\nRewrite the Rite."
 

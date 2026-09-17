@@ -7,9 +7,8 @@ class_name ProjectileSimulationManager
 enum Team { PLAYER, ENEMY }
 enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
-const IMPACT_SCENE := preload("res://assets/vfx/world/sets/conduit/VFX_SpokesBurst.tscn")
+const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
 const DEFAULT_CAPACITY: int = 4096
-const ENEMY_RADIUS: float = 24.0
 const PLAYER_RADIUS: float = 25.0
 
 var capacity: int = DEFAULT_CAPACITY
@@ -31,21 +30,55 @@ var _visuals := PackedInt32Array()
 var _pierce := PackedInt32Array()
 var _burn_stacks := PackedInt32Array()
 var _crit := PackedByteArray()
-var _last_hit_ids := PackedInt64Array()
+var _last_hit_handles := PackedInt64Array()
 var _colors := PackedColorArray()
 var _sources: Array = []
+var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
+var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
+# Advancement-tree projectile behaviours (see HitProfileAdapter): the path
+# flown (origin, bounce points), targets crossed, pierce damage ramp,
+# terrain bounces, seeking, and the end-of-flight report.
+var _paths: Array = []
+var _crossed := PackedInt32Array()
+var _ramp := PackedFloat32Array()
+var _ramp_cap := PackedFloat32Array()
+var _bounces := PackedInt32Array()
+var _bounce_scale := PackedFloat32Array()
+var _bounce_pp := PackedFloat32Array()
+var _seek := PackedInt64Array()
+var _turn_left := PackedFloat32Array()
+var _max_range := PackedFloat32Array()
+var _ended: Array = []
+## Called after each simulation step with {id, tags, origin, path, position,
+## direction, reason, damage, pierce_left, crossed, source, max_range} for
+## every PLAYER-team tagged projectile that ended (range, life, pierce,
+## world, consumed).
+var projectile_ended: Callable = Callable()
+const SEEK_TURN_RATE_DEG := 240.0
+## Hostile projectiles inside this circle move at `factor` speed (Denial).
+## Radius 0 disables it; the owner re-asserts it every frame it applies.
+var _slow_zone_center := Vector2.ZERO
+var _slow_zone_radius := 0.0
+var _slow_zone_factor := 1.0
+var _next_id: int = 1
 var _active_count: int = 0
 
-var _enemy_index: Node = null
 var _chunk_manager: ChunkManager = null
 var _player: Node2D = null
-var _enemy_candidates: Array = []
 var _pending_ledgers: Dictionary = {}
 var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
+var _impact_renderer: Node2D = null
+var debug_disable_impacts := false
 var _render_buffer := PackedFloat32Array()
+## The active count the last buffer upload described. Nothing in flight and
+## nothing in flight last frame means the GPU already holds the right picture.
+var _rendered_count: int = -1
+## Buffer uploads since this manager was built, for the idle-cost pin and the
+## performance overlay.
+var _renderer_uploads: int = 0
 var _last_scene_id: int = 0
-var _query_hit_target: Node2D = null
+var _query_hit_handle: int = 0
 var _query_hit_t: float = -1.0
 
 var _hits_this_frame: int = 0
@@ -55,15 +88,41 @@ var _last_physics_ms: float = 0.0
 var _stress_started: bool = false
 var _last_stress_enabled: bool = false
 var _debug_label: Label = null
+# Bullets step on render frames (smooth at any refresh rate) but consume
+# PHYSICS time: with max_physics_steps_per_frame capping catch-up, the world
+# clock dilates under load and bullets must dilate with it, or they outrun
+# the enemies they were aimed at. Each render frame may run up to one physics
+# tick AHEAD of the banked time (so 144 Hz frames between 60 Hz ticks stay
+# full-length); banked time is capped at what one main-loop iteration can
+# deliver, mirroring the engine's catch-up cap.
+var _physics_time_bank: float = 0.0
+var _sweep_handles: Array[int] = []
+var _sweep_ts := PackedFloat32Array()
 
 func _ready() -> void:
 	z_index = 200
 	add_to_group(&"projectile_simulation_manager")
 	_build_renderer()
-	set_physics_process(true)
+	# The sim is fully physics-server-free (grid DDA for walls, data-side
+	# spatial-grid queries for enemies), so it runs in _process: exactly one
+	# swept-segment step per RENDERED frame. In _physics_process it ran 2-4x
+	# per frame whenever the physics step exceeded 16.7ms (catch-up), which
+	# is precisely when a 550-bullet torrent needs the time back.
+	set_process(true)
+
+func _physics_tick_sec() -> float:
+	return 1.0 / float(maxi(Engine.physics_ticks_per_second, 1))
+
 
 func _physics_process(delta: float) -> void:
+	var cap := _physics_tick_sec() * float(maxi(Engine.max_physics_steps_per_frame, 1))
+	_physics_time_bank = minf(_physics_time_bank + maxf(delta, 0.0), cap)
+
+
+func _process(delta: float) -> void:
 	var started_us := Time.get_ticks_usec()
+	var step := clampf(delta, 0.0, _physics_time_bank + _physics_tick_sec())
+	_physics_time_bank -= step
 	var stress_enabled: bool = Global != null and Global.debug_projectile_stress_test
 	if stress_enabled != _last_stress_enabled:
 		_last_stress_enabled = stress_enabled
@@ -75,9 +134,11 @@ func _physics_process(delta: float) -> void:
 	_pending_ledgers.clear()
 	if Global != null and Global.debug_projectile_stress_test:
 		_run_stress_step()
-	for i in range(_active_count - 1, -1, -1):
-		_simulate_one(i, delta)
+	if step > 0.0:
+		for i in range(_active_count - 1, -1, -1):
+			_simulate_one(i, step)
 	_flush_hit_ledgers()
+	_flush_ended()
 	_update_renderer()
 	_last_physics_ms = float(Time.get_ticks_usec() - started_us) / 1000.0
 	_update_debug_overlay()
@@ -90,7 +151,21 @@ func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapte
 	var burn_interval := float(profile.get_meta("burn_tick", 0.5))
 	var burn_stack_count := int(profile.get_meta("burn_stacks", 0))
 	var burn_tick_mult := float(profile.get_meta("burn_tick_mult", 0.0))
-	return _spawn(origin, direction.normalized() * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core)
+	var tags: PackedStringArray = profile.get_meta("asc_tags", PackedStringArray())
+	var dir := direction.normalized()
+	if profile.direction_offset_degrees != 0.0:
+		dir = dir.rotated(deg_to_rad(profile.direction_offset_degrees))
+	if not _spawn(origin, dir * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core, tags):
+		return false
+	var index := _active_count - 1
+	_ramp[index] = maxf(0.0, profile.pierce_ramp)
+	_ramp_cap[index] = maxf(0.0, profile.pierce_ramp_cap)
+	_bounces[index] = maxi(0, profile.bounces)
+	_bounce_scale[index] = profile.bounce_scale
+	_bounce_pp[index] = profile.bounce_proc_power
+	_seek[index] = profile.seek_handle
+	_turn_left[index] = maxf(0.0, profile.seek_turn_degrees)
+	return true
 
 func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: float, lifetime: float, source: Node, enemy_id: StringName = &"") -> bool:
 	var visual := Visual.ENEMY_BLUE
@@ -103,7 +178,7 @@ func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: floa
 		color = Color(1.0, 0.70, 0.35, 1.0)
 	return _spawn(origin, direction.normalized() * speed, lifetime, speed * lifetime, 5.0, damage, Team.ENEMY, visual, source, 0.0, 0, false, 0, 0.0, 0.5, 0.0, 18.0, 4.0, color)
 
-func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color) -> bool:
+func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color, tags: PackedStringArray = PackedStringArray()) -> bool:
 	if _active_count >= capacity:
 		_dropped_total += 1
 		if PerformanceFlightRecorder != null:
@@ -131,9 +206,21 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_pierce[index] = maxi(0, pierce)
 		_burn_stacks[index] = maxi(0, burn_stacks)
 		_crit[index] = 1 if critical else 0
-		_last_hit_ids[index] = 0
+		_last_hit_handles[index] = 0
 		_colors[index] = color
 		_sources[index] = source
+		_tags[index] = tags
+		_ids[index] = _next_id
+		_paths[index] = PackedVector2Array([origin])
+		_crossed[index] = 0
+		_ramp[index] = 0.0
+		_ramp_cap[index] = 0.0
+		_bounces[index] = 0
+		_bounce_scale[index] = 1.0
+		_bounce_pp[index] = 0.0
+		_seek[index] = 0
+		_turn_left[index] = 0.0
+		_max_range[index] = maxf(0.0, max_range)
 	else:
 		_positions.append(origin)
 		_previous.append(origin)
@@ -153,9 +240,22 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_pierce.append(maxi(0, pierce))
 		_burn_stacks.append(maxi(0, burn_stacks))
 		_crit.append(1 if critical else 0)
-		_last_hit_ids.append(0)
+		_last_hit_handles.append(0)
 		_colors.append(color)
 		_sources.append(source)
+		_tags.append(tags)
+		_ids.append(_next_id)
+		_paths.append(PackedVector2Array([origin]))
+		_crossed.append(0)
+		_ramp.append(0.0)
+		_ramp_cap.append(0.0)
+		_bounces.append(0)
+		_bounce_scale.append(1.0)
+		_bounce_pp.append(0.0)
+		_seek.append(0)
+		_turn_left.append(0.0)
+		_max_range.append(maxf(0.0, max_range))
+	_next_id += 1
 	_active_count += 1
 	return true
 
@@ -163,17 +263,43 @@ func _simulate_one(index: int, delta: float) -> void:
 	if index >= _active_count:
 		return
 	var old_pos := _positions[index]
+	if _turn_left[index] > 0.0 and _seek[index] != 0:
+		# Smart Rounds: curve toward the marked enemy within the turn budget.
+		var seek_handle: int = int(_seek[index])
+		if EnemyWorld.is_valid_handle(seek_handle) and not EnemyWorld.is_dying(seek_handle):
+			var desired := EnemyWorld.get_position(seek_handle) - old_pos
+			if desired.length_squared() > 1.0:
+				var angle := _velocities[index].angle_to(desired)
+				var max_step := deg_to_rad(minf(SEEK_TURN_RATE_DEG * delta, _turn_left[index]))
+				var step_angle := clampf(angle, -max_step, max_step)
+				_velocities[index] = _velocities[index].rotated(step_angle)
+				_turn_left[index] -= rad_to_deg(absf(step_angle))
+		else:
+			_seek[index] = 0
 	var movement := _velocities[index] * delta
+	if _slow_zone_radius > 0.0 and _teams[index] == Team.ENEMY and old_pos.distance_squared_to(_slow_zone_center) <= _slow_zone_radius * _slow_zone_radius:
+		movement *= _slow_zone_factor
 	var new_pos := old_pos + movement
 	_previous[index] = old_pos
 	_life_left[index] -= delta
 	_range_left[index] -= movement.length()
 	var world_t := _world_hit_t(old_pos, new_pos, _radii[index])
 	var target: Node2D = null
+	var target_handle: int = 0
 	var target_t := -1.0
+	var sweep_hits := 0
 	if _teams[index] == Team.PLAYER:
-		if _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_ids[index]):
-			target = _query_hit_target
+		if _pierce[index] > 0:
+			# A fast piercing bullet crosses several enemies in one step: one
+			# gather for the whole segment, contacts in t order, each enemy once.
+			sweep_hits = EnemyCombat.enemies_on_segment(
+				old_pos, new_pos, _radii[index], _last_hit_handles[index], _sweep_handles, _sweep_ts
+			)
+			if sweep_hits > 0:
+				target_handle = _sweep_handles[0]
+				target_t = _sweep_ts[0]
+		elif _query_first_enemy_hit(old_pos, new_pos, _radii[index], _last_hit_handles[index]):
+			target_handle = _query_hit_handle
 			target_t = _query_hit_t
 	else:
 		target = _player
@@ -181,44 +307,100 @@ func _simulate_one(index: int, delta: float) -> void:
 			target_t = _segment_circle_t(old_pos, new_pos, target.global_position, PLAYER_RADIUS + _radii[index])
 
 	if world_t >= 0.0 and (target_t < 0.0 or world_t <= target_t):
-		_remove(index)
+		if _bounces[index] > 0 and _teams[index] == Team.PLAYER:
+			_bounce(index, old_pos, new_pos, world_t)
+			return
+		_remove(index, &"world")
 		return
-	if target != null and target_t >= 0.0:
+	if target_handle != 0 and target_t >= 0.0:
+		var hit_index := 0
+		while true:
+			_queue_handle_hit(index, target_handle, old_pos.lerp(new_pos, target_t))
+			_crossed[index] += 1
+			if _ramp[index] > 0.0 and _ramp_cap[index] > 0.0:
+				var added := minf(_ramp[index], _ramp_cap[index])
+				_damage[index] += added
+				_ramp_cap[index] -= added
+			if _pierce[index] <= 0:
+				_remove(index, &"pierce")
+				return
+			_pierce[index] -= 1
+			_last_hit_handles[index] = target_handle
+			hit_index += 1
+			if hit_index >= sweep_hits:
+				break
+			target_handle = _sweep_handles[hit_index]
+			target_t = _sweep_ts[hit_index]
+			if world_t >= 0.0 and world_t <= target_t:
+				if _bounces[index] > 0 and _teams[index] == Team.PLAYER:
+					_bounce(index, old_pos, new_pos, world_t)
+					return
+				_remove(index, &"world")
+				return
+	elif target != null and target_t >= 0.0:
 		var hit_pos := old_pos.lerp(new_pos, target_t)
-		_queue_hit(index, target, hit_pos)
+		_queue_node_hit(index, target, hit_pos)
 		if _pierce[index] <= 0:
 			_remove(index)
 			return
 		_pierce[index] -= 1
-		_last_hit_ids[index] = target.get_instance_id()
 	_positions[index] = new_pos
-	if _life_left[index] <= 0.0 or _range_left[index] <= 0.0:
-		_remove(index)
+	if _range_left[index] <= 0.0:
+		_remove(index, &"range")
+	elif _life_left[index] <= 0.0:
+		_remove(index, &"life")
 
-func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_id: int) -> bool:
-	_query_hit_target = null
+
+## Bank Shot: reflect off the terrain contact instead of dying. The wall
+## normal is probed per axis; an ambiguous corner reverses the shot.
+func _bounce(index: int, old_pos: Vector2, new_pos: Vector2, world_t: float) -> void:
+	var contact := old_pos.lerp(new_pos, maxf(0.0, world_t - 0.02))
+	var movement := new_pos - old_pos
+	var velocity := _velocities[index]
+	var radius := _radii[index]
+	var blocked_x := movement.x != 0.0 and _world_hit_t(contact, contact + Vector2(movement.x, 0.0), radius) >= 0.0
+	var blocked_y := movement.y != 0.0 and _world_hit_t(contact, contact + Vector2(0.0, movement.y), radius) >= 0.0
+	if blocked_x == blocked_y:
+		velocity = -velocity
+	elif blocked_x:
+		velocity.x = -velocity.x
+	else:
+		velocity.y = -velocity.y
+	_velocities[index] = velocity
+	_positions[index] = contact
+	_bounces[index] -= 1
+	_damage[index] *= _bounce_scale[index]
+	_last_hit_handles[index] = 0
+	var path: PackedVector2Array = _paths[index]
+	path.append(contact)
+	_paths[index] = path
+	if _bounce_pp[index] > 0.0 and not _tags[index].is_empty():
+		var tags: PackedStringArray = _tags[index]
+		for i in range(tags.size()):
+			if tags[i].begins_with("pp:"):
+				tags[i] = "pp:%.3f" % _bounce_pp[index]
+		if not tags.has("flag:bounce"):
+			tags.append("flag:bounce")
+		_tags[index] = tags
+
+func _query_first_enemy_hit(from: Vector2, to: Vector2, radius: float, excluded_handle: int) -> bool:
+	_query_hit_handle = 0
 	_query_hit_t = -1.0
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
+	if EnemyCombat == null:
 		return false
-	var mid := (from + to) * 0.5
-	_enemy_index.call("gather_in_radius", mid, from.distance_to(to) * 0.5 + ENEMY_RADIUS + radius, _enemy_candidates)
-	var best_t := 2.0
-	for candidate in _enemy_candidates:
-		var enemy := candidate as Node2D
-		if enemy == null or not is_instance_valid(enemy) or enemy.get_instance_id() == excluded_id:
-			continue
-		var t := _segment_circle_t(from, to, enemy.global_position, ENEMY_RADIUS + radius)
-		if t >= 0.0 and t < best_t:
-			best_t = t
-			_query_hit_target = enemy
-	if _query_hit_target == null:
+	_query_hit_handle = EnemyCombat.first_enemy_on_segment(from, to, radius, excluded_handle)
+	if _query_hit_handle == 0:
 		return false
-	_query_hit_t = best_t
+	_query_hit_t = EnemyCombat.last_segment_hit_t()
 	return true
 
 
 func debug_last_enemy_hit() -> Dictionary:
-	return {"target": _query_hit_target, "t": _query_hit_t}
+	return {
+		"handle": _query_hit_handle,
+		"target": EnemyCombat.actor_for_handle(_query_hit_handle) if _query_hit_handle != 0 else null,
+		"t": _query_hit_t,
+	}
 
 func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: float) -> float:
 	var segment := to - from
@@ -233,7 +415,21 @@ func _world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
 		return -1.0
 	return _chunk_manager.projectile_hit_t(from, to, radius)
 
-func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
+func _queue_handle_hit(index: int, target_handle: int, hit_position: Vector2) -> void:
+	if target_handle == 0 or not EnemyWorld.is_valid_handle(target_handle):
+		return
+	_hits_this_frame += 1
+	var ledger: HitLedger = _pending_ledgers.get(target_handle, null) as HitLedger
+	if ledger == null:
+		ledger = HitLedger.new()
+		ledger.target_handle = target_handle
+		_pending_ledgers[target_handle] = ledger
+	_add_projectile_to_ledger(index, ledger)
+	if _teams[index] == Team.PLAYER:
+		_spawn_impact(hit_position)
+
+
+func _queue_node_hit(index: int, target: Node, hit_position: Vector2) -> void:
 	if target == null or not is_instance_valid(target):
 		return
 	_hits_this_frame += 1
@@ -243,6 +439,12 @@ func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
 		ledger = HitLedger.new()
 		ledger.target = target
 		_pending_ledgers[target_id] = ledger
+	_add_projectile_to_ledger(index, ledger)
+	if _teams[index] == Team.PLAYER:
+		_spawn_impact(hit_position)
+
+
+func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 	# A queued projectile may outlive its firing node. Check the raw Variant before
 	# casting it; casting a stale Object reference raises "Trying to cast a freed object".
 	var source: Node = null
@@ -250,34 +452,60 @@ func _queue_hit(index: int, target: Node, hit_position: Vector2) -> void:
 	if is_instance_valid(source_value):
 		source = source_value as Node
 	var direction := _velocities[index].normalized()
+	if ledger.tags.is_empty():
+		var tags: PackedStringArray = _tags[index]
+		if not tags.is_empty():
+			ledger.tags = tags
+	ledger.projectile_id = _ids[index]
+	ledger.direction = direction
+	ledger.projectile_crossed = _crossed[index]
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
-	if _teams[index] == Team.PLAYER:
-		_spawn_impact(hit_position)
 
 func _flush_hit_ledgers() -> void:
 	_batches_this_frame = _pending_ledgers.size()
 	for value in _pending_ledgers.values():
 		var ledger := value as HitLedger
-		if ledger == null or ledger.target == null or not is_instance_valid(ledger.target):
+		if ledger == null:
 			continue
-		if ledger.target.has_method("apply_hit_ledger"):
+		if ledger.target_handle != 0:
+			EnemyCombat.apply_hit_ledger(ledger.target_handle, ledger)
+		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("apply_hit_ledger"):
 			ledger.target.call("apply_hit_ledger", ledger)
-		elif ledger.target.has_method("take_damage"):
+		elif ledger.target != null and is_instance_valid(ledger.target) and ledger.target.has_method("take_damage"):
 			ledger.target.call("take_damage", ledger.total_raw_damage, ledger.source)
 
 func _spawn_impact(world_position: Vector2) -> void:
-	var scene := get_tree().current_scene
-	if scene == null:
+	if debug_disable_impacts:
 		return
-	var impact := IMPACT_SCENE.instantiate()
-	scene.add_child(impact)
-	if impact.has_method("setup"):
-		impact.call("setup", world_position)
+	# One shared canvas item for every burst; a node per impact melted frames
+	# under minigun fire (~70 live unbatchable Node2Ds at 8 hits/frame).
+	if _impact_renderer == null or not is_instance_valid(_impact_renderer):
+		_impact_renderer = ImpactBurstRendererScript.new()
+		_impact_renderer.name = "BatchedImpactRenderer"
+		add_child(_impact_renderer)
+	_impact_renderer.call("add_burst", world_position)
 
-func _remove(index: int) -> void:
+func _remove(index: int, reason: StringName = &"consumed") -> void:
 	var last := _active_count - 1
 	if index < 0 or index > last:
 		return
+	if _teams[index] == Team.PLAYER and projectile_ended.is_valid() and not (_tags[index] as PackedStringArray).is_empty():
+		var source_value: Variant = _sources[index]
+		var path: PackedVector2Array = _paths[index]
+		_ended.append({
+			"id": _ids[index],
+			"tags": _tags[index],
+			"origin": path[0] if path.size() > 0 else _positions[index],
+			"path": path,
+			"position": _positions[index],
+			"direction": _velocities[index].normalized(),
+			"reason": reason,
+			"damage": _damage[index],
+			"pierce_left": _pierce[index],
+			"crossed": _crossed[index],
+			"source": source_value if is_instance_valid(source_value) else null,
+			"max_range": _max_range[index],
+		})
 	if index != last:
 		_positions[index] = _positions[last]
 		_previous[index] = _previous[last]
@@ -297,16 +525,71 @@ func _remove(index: int) -> void:
 		_pierce[index] = _pierce[last]
 		_burn_stacks[index] = _burn_stacks[last]
 		_crit[index] = _crit[last]
-		_last_hit_ids[index] = _last_hit_ids[last]
+		_last_hit_handles[index] = _last_hit_handles[last]
 		_colors[index] = _colors[last]
 		_sources[index] = _sources[last]
+		_tags[index] = _tags[last]
+		_ids[index] = _ids[last]
+		_paths[index] = _paths[last]
+		_crossed[index] = _crossed[last]
+		_ramp[index] = _ramp[last]
+		_ramp_cap[index] = _ramp_cap[last]
+		_bounces[index] = _bounces[last]
+		_bounce_scale[index] = _bounce_scale[last]
+		_bounce_pp[index] = _bounce_pp[last]
+		_seek[index] = _seek[last]
+		_turn_left[index] = _turn_left[last]
+		_max_range[index] = _max_range[last]
 	# Keep the high-water capacity: shrinking 21 packed arrays per despawn was
 	# a realloc + copy storm at bullet-heaven churn rates. Only the released
 	# source reference is cleared so it cannot pin a freed node's Variant.
 	_sources[last] = null
+	_tags[last] = PackedStringArray()
+	_paths[last] = PackedVector2Array()
 	_active_count -= 1
 
+
+## Delivers end-of-flight reports after the step, so a listener that spawns
+## replacements (Return Shot) never races the swap-remove.
+func _flush_ended() -> void:
+	if _ended.is_empty():
+		return
+	var reports := _ended
+	_ended = []
+	if not projectile_ended.is_valid():
+		return
+	for info in reports:
+		projectile_ended.call(info)
+
+
+## Terrain contact along a segment (t in 0..1, or -1): for beams that count
+## obstructions and shots that bounce.
+func world_hit_t(from: Vector2, to: Vector2, radius: float) -> float:
+	return _world_hit_t(from, to, radius)
+
+
+## Adds damage to a live projectile by id (Backtrack). Returns whether found.
+func add_projectile_damage(id: int, amount: float) -> bool:
+	for i in range(_active_count):
+		if _ids[i] == id:
+			_damage[i] = maxf(0.0, _damage[i] + amount)
+			return true
+	return false
+
+
+## PLAYER-team projectiles within `radius`, appended as {id, position,
+## velocity, damage, tags}. Nothing is removed.
+func player_projectiles_in_radius(center: Vector2, radius: float, out: Array) -> int:
+	var radius_squared := radius * radius
+	var added := 0
+	for i in range(_active_count):
+		if _teams[i] == Team.PLAYER and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out.append({"id": _ids[i], "position": _positions[i], "velocity": _velocities[i], "damage": _damage[i], "tags": _tags[i]})
+			added += 1
+	return added
+
 func _clear_all() -> void:
+	_ended.clear()
 	while _active_count > 0:
 		_remove(_active_count - 1)
 	_update_renderer()
@@ -321,14 +604,13 @@ func _sync_scene_refs() -> void:
 	var scene_id := scene.get_instance_id() if scene != null else 0
 	if scene_id != _last_scene_id:
 		_clear_all()
+		if _impact_renderer != null and is_instance_valid(_impact_renderer):
+			_impact_renderer.call("clear")
 		_last_scene_id = scene_id
 		_stress_started = false
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 		return
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	if _player == null or not is_instance_valid(_player):
@@ -355,6 +637,15 @@ func _build_renderer() -> void:
 func _update_renderer() -> void:
 	if _multimesh == null:
 		return
+	# This autoload runs in menus too, and with nothing in flight it was still
+	# uploading capacity*12 floats (24 KB at capacity 2000) and firing
+	# emit_changed() every single frame. The frame the count reaches zero still
+	# uploads - that is the wipe that clears the last bullet - and only the
+	# frames after it are skipped.
+	if _active_count == 0 and _rendered_count == 0:
+		return
+	_rendered_count = _active_count
+	_renderer_uploads += 1
 	# One buffer upload instead of two RenderingServer calls per projectile per
 	# frame (~600 calls at typical bullet counts). Layout per instance:
 	# 8 floats of 2D transform rows, then 4 floats of color.
@@ -372,25 +663,104 @@ func _update_renderer() -> void:
 			sin_a = direction.y / length
 		var scale_x := _body_length[i] / 18.0
 		var scale_y := _body_width[i] / 4.0
-		var position := _positions[i]
+		var projectile_position := _positions[i]
 		var color := _colors[i]
 		_render_buffer[base + 0] = cos_a * scale_x
 		_render_buffer[base + 1] = -sin_a * scale_y
 		_render_buffer[base + 2] = 0.0
-		_render_buffer[base + 3] = position.x
+		_render_buffer[base + 3] = projectile_position.x
 		_render_buffer[base + 4] = sin_a * scale_x
 		_render_buffer[base + 5] = cos_a * scale_y
 		_render_buffer[base + 6] = 0.0
-		_render_buffer[base + 7] = position.y
+		_render_buffer[base + 7] = projectile_position.y
 		_render_buffer[base + 8] = color.r
 		_render_buffer[base + 9] = color.g
 		_render_buffer[base + 10] = color.b
 		_render_buffer[base + 11] = color.a
 	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
+	_multimesh.emit_changed()
 	_multimesh.visible_instance_count = _active_count
 
+func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_consumed: Array) -> int:
+	# Parry/reflect support: simulated enemy bullets are invisible to
+	# group-scanning effects (they are data, not nodes). Removes every
+	# ENEMY-team projectile within radius and appends
+	# {position, velocity, damage} per bullet to out_consumed.
+	var radius_squared := radius * radius
+	var i := _active_count - 1
+	while i >= 0:
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out_consumed.append({
+				"position": _positions[i],
+				"velocity": _velocities[i],
+				"damage": _damage[i],
+			})
+			_remove(i)
+		i -= 1
+	return out_consumed.size()
+
+## Enemy-team projectiles within `radius` of `center`, appended to `out` as
+## {id, position, velocity, damage}. Ids are stable for a projectile's life
+## (slots are reused, ids never are), so a listener can tell a bullet it has
+## already judged from a new one. Nothing is removed.
+func enemy_projectiles_in_radius(center: Vector2, radius: float, out: Array) -> int:
+	var radius_squared := radius * radius
+	var added := 0
+	for i in range(_active_count):
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			out.append({"id": _ids[i], "position": _positions[i], "velocity": _velocities[i], "damage": _damage[i]})
+			added += 1
+	return added
+
+
+## Removes one projectile by id (see enemy_projectiles_in_radius). Returns
+## whether it was still live.
+func remove_projectile(id: int) -> bool:
+	for i in range(_active_count):
+		if _ids[i] == id:
+			_remove(i)
+			return true
+	return false
+
+
+## Removes ENEMY-team projectiles within `radius` of `center` and inside the
+## sector facing `forward` (half-angle `half_angle`), appending
+## {position, velocity, damage, source} for each. `limit` < 0 removes all.
+func consume_enemy_projectiles_in_sector(center: Vector2, radius: float, forward: Vector2, half_angle: float, out_consumed: Array, limit: int = -1) -> int:
+	var radius_squared := radius * radius
+	var facing := forward.normalized() if forward.length_squared() > 0.0001 else Vector2.RIGHT
+	var cos_limit := cos(clampf(half_angle, 0.0, PI))
+	var removed := 0
+	var i := _active_count - 1
+	while i >= 0 and (limit < 0 or removed < limit):
+		if _teams[i] == Team.ENEMY and center.distance_squared_to(_positions[i]) <= radius_squared:
+			var offset := _positions[i] - center
+			if offset.length_squared() <= 1.0 or offset.normalized().dot(facing) >= cos_limit:
+				var source_value: Variant = _sources[i]
+				out_consumed.append({
+					"position": _positions[i],
+					"velocity": _velocities[i],
+					"damage": _damage[i],
+					"source": source_value if is_instance_valid(source_value) else null,
+				})
+				_remove(i)
+				removed += 1
+		i -= 1
+	return removed
+
+
+func set_enemy_slow_zone(center: Vector2, radius: float, factor: float) -> void:
+	_slow_zone_center = center
+	_slow_zone_radius = maxf(0.0, radius)
+	_slow_zone_factor = clampf(factor, 0.0, 1.0)
+
+
+func clear_enemy_slow_zone() -> void:
+	_slow_zone_radius = 0.0
+
+
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms}
+	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads}
 
 func active_count() -> int:
 	return _active_count

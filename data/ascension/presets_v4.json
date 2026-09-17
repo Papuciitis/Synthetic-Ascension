@@ -1,0 +1,1192 @@
+{
+ "version": "4.0-presets-1",
+ "note": "Playable presets derived from the authored builds in tree_v4.json (early = first four locals, developed = through the Q, its first mutation and the fork, pure = the authored build plus one keystone) and the review's hybrids. Every preset is replayed through the real purchase rules by AscensionPresetTest; the dev overlay's route loader lists them.",
+ "presets": [
+  {
+   "name": "Execution early",
+   "tier": "early",
+   "discipline": "EX",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Blood domino' route's first four locals."
+  },
+  {
+   "name": "Execution developed",
+   "tier": "developed",
+   "discipline": "EX",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Execution pure",
+   "tier": "pure",
+   "discipline": "EX",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXK1",
+    "EXC",
+    "EXV",
+    "EXE2"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "EXV",
+    "keystones": [
+     "EXK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Wound a pack with Gavel, execute one, then let Spillover and new Gavels jump through fresh bodies. Red Mist is an earned wipe before V.",
+   "authored_build": "Blood domino",
+   "authored_cost_without_keystone": 12000
+  },
+  {
+   "name": "Momentum early",
+   "tier": "early",
+   "discipline": "MO",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "MO01",
+    "MO02",
+    "MO03",
+    "MO04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Endless Lunge' route's first four locals."
+  },
+  {
+   "name": "Momentum developed",
+   "tier": "developed",
+   "discipline": "MO",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "MO01",
+    "MO02",
+    "MO03",
+    "MO04",
+    "MO07",
+    "MO12",
+    "MOQ",
+    "MOQ1",
+    "MOF1"
+   ],
+   "equip": {
+    "q": "MOQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Momentum pure",
+   "tier": "pure",
+   "discipline": "MO",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "MO01",
+    "MO02",
+    "MO03",
+    "MO04",
+    "MO07",
+    "MO12",
+    "MOQ",
+    "MOQ1",
+    "MOF1",
+    "MOK1",
+    "MOC",
+    "MOV",
+    "MOE1"
+   ],
+   "equip": {
+    "q": "MOQ",
+    "v": "MOV",
+    "keystones": [
+     "MOK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Aim successive returns through new victims. Afterimages make the path dangerous and six returns finish in Blade Storm.",
+   "authored_build": "Endless Lunge",
+   "authored_cost_without_keystone": 11600
+  },
+  {
+   "name": "Bastion early",
+   "tier": "early",
+   "discipline": "BA",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "BA01",
+    "BA02",
+    "BA03",
+    "BA04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Bomb suit' route's first four locals."
+  },
+  {
+   "name": "Bastion developed",
+   "tier": "developed",
+   "discipline": "BA",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "BA01",
+    "BA02",
+    "BA03",
+    "BA04",
+    "BA08",
+    "BA09",
+    "BA10",
+    "BAQ",
+    "BAQ2",
+    "BAQ4",
+    "BAF2"
+   ],
+   "equip": {
+    "q": "BAQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Bastion pure",
+   "tier": "pure",
+   "discipline": "BA",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "BA01",
+    "BA02",
+    "BA03",
+    "BA04",
+    "BA08",
+    "BA09",
+    "BA10",
+    "BAQ",
+    "BAQ2",
+    "BAQ4",
+    "BAF2",
+    "BAK1",
+    "BAC",
+    "BAV",
+    "BAE2"
+   ],
+   "equip": {
+    "q": "BAQ",
+    "v": "BAV",
+    "keystones": [
+     "BAK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Build Force, hold the bunker, then remotely detonate a stored hit and Meltdown. RUPTURE works even when the tank is empty.",
+   "authored_build": "Bomb suit",
+   "authored_cost_without_keystone": 13000
+  },
+  {
+   "name": "Precision early",
+   "tier": "early",
+   "discipline": "PR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "PR01",
+    "PR02",
+    "PR03",
+    "PR04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Kill Line' route's first four locals."
+  },
+  {
+   "name": "Precision developed",
+   "tier": "developed",
+   "discipline": "PR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "PR01",
+    "PR02",
+    "PR03",
+    "PR04",
+    "PR07",
+    "PR09",
+    "PR12",
+    "PRQ",
+    "PRQ5",
+    "PR05",
+    "PRF1"
+   ],
+   "equip": {
+    "q": "PRQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Precision pure",
+   "tier": "pure",
+   "discipline": "PR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "PR01",
+    "PR02",
+    "PR03",
+    "PR04",
+    "PR07",
+    "PR09",
+    "PR12",
+    "PRQ",
+    "PRQ5",
+    "PR05",
+    "PRF1",
+    "PRK1",
+    "PRC",
+    "PRV",
+    "PRE1"
+   ],
+   "equip": {
+    "q": "PRQ",
+    "v": "PRV",
+    "keystones": [
+     "PRK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Line enemies up so the first shot exposes and returns through them. Deadshot kills redraw new lines through the horde.",
+   "authored_build": "Kill Line",
+   "authored_cost_without_keystone": 12800
+  },
+  {
+   "name": "Barrage early",
+   "tier": "early",
+   "discipline": "BR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Bullet Hell' route's first four locals."
+  },
+  {
+   "name": "Barrage developed",
+   "tier": "developed",
+   "discipline": "BR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2"
+   ],
+   "equip": {
+    "q": "BRQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Barrage pure",
+   "tier": "pure",
+   "discipline": "BR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRK1",
+    "BRC",
+    "BRV",
+    "BRE2"
+   ],
+   "equip": {
+    "q": "BRQ",
+    "v": "BRV",
+    "keystones": [
+     "BRK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Fragments bounce into fresh victims, growing rotating guns during Burst. Backfire and Overload turn the eventual Jam into a second attack.",
+   "authored_build": "Bullet Hell",
+   "authored_cost_without_keystone": 13200
+  },
+  {
+   "name": "Ordnance early",
+   "tier": "early",
+   "discipline": "OR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "OR01",
+    "OR02",
+    "OR03",
+    "OR04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Carpet Bomb' route's first four locals."
+  },
+  {
+   "name": "Ordnance developed",
+   "tier": "developed",
+   "discipline": "OR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "OR01",
+    "OR02",
+    "OR03",
+    "OR04",
+    "OR09",
+    "OR08",
+    "OR12",
+    "ORQ",
+    "ORQ1",
+    "ORF1"
+   ],
+   "equip": {
+    "q": "ORQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Ordnance pure",
+   "tier": "pure",
+   "discipline": "OR",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "OR01",
+    "OR02",
+    "OR03",
+    "OR04",
+    "OR09",
+    "OR08",
+    "OR12",
+    "ORQ",
+    "ORQ1",
+    "ORF1",
+    "ORK1",
+    "ORC",
+    "ORV",
+    "ORE1"
+   ],
+   "equip": {
+    "q": "ORQ",
+    "v": "ORV",
+    "keystones": [
+     "ORK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Draw the route of Coordinates, lay mines, then stop to unload the remaining Shells. Blast kills call more Shells. Spotter is the keystone that touches this route (Danger Close needs Chain Reaction or Blast Pull).",
+   "authored_build": "Carpet Bomb",
+   "authored_cost_without_keystone": 12400
+  },
+  {
+   "name": "Invocation early",
+   "tier": "early",
+   "discipline": "IN",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "IN01",
+    "IN02",
+    "IN05",
+    "IN04"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Sigil Web' route's first four locals."
+  },
+  {
+   "name": "Invocation developed",
+   "tier": "developed",
+   "discipline": "IN",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "IN01",
+    "IN02",
+    "IN05",
+    "IN04",
+    "IN10",
+    "IN11",
+    "IN06",
+    "INQ",
+    "INQ6",
+    "INF2"
+   ],
+   "equip": {
+    "q": "INQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Invocation pure",
+   "tier": "pure",
+   "discipline": "IN",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "IN01",
+    "IN02",
+    "IN05",
+    "IN04",
+    "IN10",
+    "IN11",
+    "IN06",
+    "INQ",
+    "INQ6",
+    "INF2",
+    "INK1",
+    "INC",
+    "INV",
+    "INE2"
+   ],
+   "equip": {
+    "q": "INQ",
+    "v": "INV",
+    "keystones": [
+     "INK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Grow parents in a dense fight, let them create children, then command crossing lines and Choir. THE HOST multiplies the prepared field.",
+   "authored_build": "Sigil Web",
+   "authored_cost_without_keystone": 12400
+  },
+  {
+   "name": "Distortion early",
+   "tier": "early",
+   "discipline": "DT",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DT01",
+    "DT02",
+    "DT03",
+    "DT06"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Loaded Coin' route's first four locals."
+  },
+  {
+   "name": "Distortion developed",
+   "tier": "developed",
+   "discipline": "DT",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DT01",
+    "DT02",
+    "DT03",
+    "DT06",
+    "DT10",
+    "DT08",
+    "DT09",
+    "DT12",
+    "DTQ",
+    "DTQ6",
+    "DTF2"
+   ],
+   "equip": {
+    "q": "DTQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Distortion pure",
+   "tier": "pure",
+   "discipline": "DT",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DT01",
+    "DT02",
+    "DT03",
+    "DT06",
+    "DT10",
+    "DT08",
+    "DT09",
+    "DT12",
+    "DTQ",
+    "DTQ6",
+    "DTF2",
+    "DTK1",
+    "DTC",
+    "DTV",
+    "DTE2"
+   ],
+   "equip": {
+    "q": "DTQ",
+    "v": "DTV",
+    "keystones": [
+     "DTK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Apply Fading and slow, seed Debt, then let an early kill pass it to three more victims. Coin turns those transfers into blasts.",
+   "authored_build": "Loaded Coin",
+   "authored_cost_without_keystone": 13600
+  },
+  {
+   "name": "Dominion early",
+   "tier": "early",
+   "discipline": "DO",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DO01",
+    "DO02",
+    "DO04",
+    "DO06"
+   ],
+   "equip": {
+    "q": "",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The authored 'Mass Grave' route's first four locals."
+  },
+  {
+   "name": "Dominion developed",
+   "tier": "developed",
+   "discipline": "DO",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DO01",
+    "DO02",
+    "DO04",
+    "DO06",
+    "DO05",
+    "DO07",
+    "DO08",
+    "DO11",
+    "DOQ",
+    "DOQ6",
+    "DOF1"
+   ],
+   "equip": {
+    "q": "DOQ",
+    "v": "",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Through the Q, its first mutation and the fork."
+  },
+  {
+   "name": "Dominion pure",
+   "tier": "pure",
+   "discipline": "DO",
+   "native_core": "magic",
+   "nodes": [
+    "core.magic",
+    "DO01",
+    "DO02",
+    "DO04",
+    "DO06",
+    "DO05",
+    "DO07",
+    "DO08",
+    "DO11",
+    "DOQ",
+    "DOQ6",
+    "DOF1",
+    "DOK1",
+    "DOC",
+    "DOV",
+    "DOE1"
+   ],
+   "equip": {
+    "q": "DOQ",
+    "v": "DOV",
+    "keystones": [
+     "DOK1"
+    ],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Link a crowd, pull it into the grave and use each collapse to feed the next. Shared damage makes density a damage multiplier.",
+   "authored_build": "Mass Grave",
+   "authored_cost_without_keystone": 12800
+  },
+  {
+   "name": "Hybrid: Running guns",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "MO01",
+    "MO02",
+    "MO03",
+    "MO04",
+    "MO07",
+    "MO12",
+    "MOQ",
+    "MOQ1",
+    "MOF1",
+    "MOC",
+    "MOV",
+    "MOE1",
+    "G1",
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR06",
+    "MR5"
+   ],
+   "equip": {
+    "q": "MOQ",
+    "v": "MOV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Afterimages slash and fire. Crossfire periodically puts another Afterimage at the edge of the screen, making movement leave a spreading firing formation.",
+   "authored_build": "Running guns",
+   "authored_cost": 15800
+  },
+  {
+   "name": "Hybrid: Corpse artillery",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXC",
+    "EXV",
+    "EXE2",
+    "G1",
+    "core.ranged",
+    "OR01",
+    "OR03",
+    "OR04",
+    "MR3"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "EXV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "The first execution launches a corpse at a distant group. Mortar kills call more Shells; Execution continues inside the new crowd.",
+   "authored_build": "Corpse artillery",
+   "authored_cost": 16400
+  },
+  {
+   "name": "Hybrid: Death Debt",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXC",
+    "EXV",
+    "EXE2",
+    "G1",
+    "core.magic",
+    "DT01",
+    "DT06",
+    "DT03",
+    "DT02",
+    "DT10",
+    "DT08",
+    "DT09",
+    "DT12",
+    "DTF2",
+    "MM2"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "EXV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Witness seeds Debt between melee inputs. Execute an indebted target to turn its remaining bill into an explosion and transfer shares to new targets.",
+   "authored_build": "Death Debt",
+   "authored_cost": 20600
+  },
+  {
+   "name": "Hybrid: Stormwire",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "G1",
+    "core.magic",
+    "DO05",
+    "DO07",
+    "DO01",
+    "DO02",
+    "DO06",
+    "DOA",
+    "RM6"
+   ],
+   "equip": {
+    "q": "BRQ",
+    "v": "BRV",
+    "keystones": [],
+    "axioms": [
+     "DOA"
+    ],
+    "reaction": ""
+   },
+   "play": "Native shots Bind targets after Common Ground. Ricochets then travel through the Link, and each hit shares damage across the group.",
+   "authored_build": "Stormwire",
+   "authored_cost": 20600
+  },
+  {
+   "name": "Hybrid: Spell-loaded rail",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "PR01",
+    "PR02",
+    "PR03",
+    "PR04",
+    "PR07",
+    "PR09",
+    "PR12",
+    "PRQ",
+    "PRQ5",
+    "PR05",
+    "PRF1",
+    "PRC",
+    "PRV",
+    "PRE1",
+    "G1",
+    "core.magic",
+    "IN02",
+    "IN06",
+    "RM1",
+    "IN01",
+    "IN05",
+    "IN04",
+    "INA"
+   ],
+   "equip": {
+    "q": "PRQ",
+    "v": "PRV",
+    "keystones": [],
+    "axioms": [
+     "INA"
+    ],
+    "reaction": ""
+   },
+   "play": "Place a Sigil with foreign impacts and store Echoes using the foreign-echo bridge described below. Shoot through it to carry a spell down the piercing line.",
+   "authored_build": "Spell-loaded rail",
+   "authored_cost": 20200
+  },
+  {
+   "name": "Hybrid: Runes and mines",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "OR01",
+    "OR02",
+    "OR03",
+    "OR04",
+    "OR09",
+    "OR08",
+    "OR12",
+    "ORQ",
+    "ORQ1",
+    "ORF1",
+    "ORC",
+    "ORV",
+    "ORE1",
+    "G1",
+    "core.magic",
+    "IN02",
+    "IN06",
+    "IN09",
+    "RM7",
+    "OR05",
+    "OR06"
+   ],
+   "equip": {
+    "q": "ORQ",
+    "v": "ORV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Attach mines to Sigils and let either side detonate the other. Chain Reaction can extend through different Mines after one Sigil goes off.",
+   "authored_build": "Runes and mines",
+   "authored_cost": 18000
+  },
+  {
+   "name": "Hybrid: Kill Feed, ranged side",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "G1",
+    "core.melee",
+    "EX01",
+    "EX03",
+    "EX10",
+    "MR2"
+   ],
+   "equip": {
+    "q": "BRQ",
+    "v": "BRV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Review hybrid (routes_prototype.json)."
+  },
+  {
+   "name": "Hybrid: Death Debt, melee side",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXC",
+    "EXV",
+    "EXE2",
+    "G1",
+    "core.magic",
+    "DT01",
+    "DT06",
+    "MM2",
+    "DT02",
+    "DT03",
+    "DT09",
+    "DTA"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "EXV",
+    "keystones": [],
+    "axioms": [
+     "DTA"
+    ],
+    "reaction": ""
+   },
+   "play": "Review hybrid (routes_prototype.json)."
+  },
+  {
+   "name": "Hybrid: Wildfire, ranged side",
+   "tier": "hybrid",
+   "discipline": "",
+   "native_core": "ranged",
+   "nodes": [
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "G1",
+    "core.magic",
+    "DT02",
+    "DT10",
+    "RM5"
+   ],
+   "equip": {
+    "q": "BRQ",
+    "v": "BRV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": ""
+   },
+   "play": "Review hybrid (routes_prototype.json)."
+  },
+  {
+   "name": "Ascendant: Three-Core avalanche",
+   "tier": "ascendant",
+   "discipline": "",
+   "native_core": "melee",
+   "nodes": [
+    "core.melee",
+    "EX01",
+    "EX02",
+    "EX03",
+    "EX04",
+    "EX05",
+    "EX06",
+    "EX10",
+    "EXQ",
+    "EXQ3",
+    "EXF2",
+    "EXC",
+    "EXV",
+    "EXE2",
+    "G1",
+    "core.ranged",
+    "BR01",
+    "BR02",
+    "BR04",
+    "BR05",
+    "BR09",
+    "BR10",
+    "BR11",
+    "BR08",
+    "BRQ",
+    "BRQ4",
+    "BRF2",
+    "BRC",
+    "BRV",
+    "BRE2",
+    "MR2",
+    "G2",
+    "core.magic",
+    "DT01",
+    "DT02",
+    "DT03",
+    "DT06",
+    "DT10",
+    "DT08",
+    "DT09",
+    "DT12",
+    "DTQ",
+    "DTQ6",
+    "DTF2",
+    "DTC",
+    "DTV",
+    "DTE2",
+    "MM2",
+    "RM5",
+    "ASC",
+    "ASC3"
+   ],
+   "equip": {
+    "q": "EXQ",
+    "v": "EXV",
+    "keystones": [],
+    "axioms": [],
+    "reaction": "DTQ",
+    "v2": "DTV"
+   },
+   "play": "Every native slash supplies shot and spell strikes. Fragments execute weakened normals, Debt is paid by executions, and twenty fresh bodies seed another foreign attack. Trigger REWRITE before DECIMATION to make the wipe operate the whole machine.",
+   "authored_build": "Three-Core avalanche",
+   "authored_cost": 71000
+  }
+ ]
+}

@@ -99,7 +99,7 @@ func _process(dt: float) -> void:
 		_cleanup_window_vfx()
 	_was_active = now_active
 
-	if Input.is_action_just_pressed(active_action):
+	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		_try_activate()
 
 	_report_cd(false)
@@ -108,8 +108,9 @@ func _try_activate() -> void:
 	if _cd > 0.0:
 		return
 
-	_cd_max = active_base_cd
+	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
+	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
 	_active_left = parry_window
 	_active_elapsed = 0.0
@@ -195,6 +196,45 @@ func _scan_and_reflect() -> void:
 		var do_perfect: bool = is_perfect_now and (not _perfect_used_this_cast)
 		_reflect_one(p2, do_perfect)
 
+	# Simulated enemy bullets (ProjectileManager) are data records, not
+	# nodes — the group scan above can never see them, which made the
+	# shield a no-op against ordinary ranged enemies.
+	var budget: int = max_reflect_per_frame - to_reflect.size()
+	if budget > 0:
+		var manager := get_node_or_null("/root/ProjectileManager")
+		if manager != null and manager.has_method("consume_enemy_projectiles_in_radius"):
+			var consumed: Array = []
+			manager.call("consume_enemy_projectiles_in_radius", player.global_position, r, consumed)
+			for entry_variant in consumed:
+				if budget <= 0:
+					break
+				budget -= 1
+				var entry := entry_variant as Dictionary
+				var do_perfect_sim: bool = is_perfect_now and (not _perfect_used_this_cast)
+				_reflect_simulated(entry, do_perfect_sim)
+
+func _reflect_simulated(entry: Dictionary, is_perfect: bool) -> void:
+	var ppos: Vector2 = entry.get("position", Vector2.ZERO)
+	var velocity: Vector2 = entry.get("velocity", Vector2.ZERO)
+	var dmg: float = float(entry.get("damage", 10.0)) * reflect_damage_mult
+	var spd: float = maxf(200.0, velocity.length()) * reflect_speed_mult
+	var dir: Vector2 = -velocity.normalized() if velocity != Vector2.ZERO else Vector2.RIGHT
+
+	var rp: Node2D = reflected_projectile_scene.instantiate() as Node2D
+	if rp != null:
+		get_tree().current_scene.add_child(rp)
+		rp.global_position = ppos
+		if rp.get("speed") != null:
+			rp.set("speed", spd)
+		if rp.has_method("setup"):
+			rp.call("setup", dir, dmg, player)
+
+	_spawn_flash(vfx_reflect_flash_scene, ppos)
+
+	if is_perfect and (not _perfect_used_this_cast):
+		_perfect_used_this_cast = true
+		_on_perfect_reflect(ppos, dmg)
+
 func _reflect_one(p: Node2D, is_perfect: bool) -> void:
 	if p == null or not is_instance_valid(p):
 		return
@@ -239,25 +279,17 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 	_spawn_flash(vfx_perfect_flash_scene, pos)
 
 	var zap_dmg: float = maxf(1.0, reflected_dmg * perfect_zap_damage_mult)
-	var r2: float = perfect_zap_radius * perfect_zap_radius
-
-	var hit: int = 0
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e: Node2D = n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if e.global_position.distance_squared_to(pos) > r2:
-			continue
-
-		if e.has_method("take_damage"):
-			e.call("take_damage", zap_dmg, player)
-
-		if perfect_zap_stun > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", perfect_zap_stun)
-
-		hit += 1
-		if hit >= perfect_zap_max_targets:
-			break
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(pos, perfect_zap_radius, handles)
+	handles.sort_custom(func(a: int, b: int) -> bool:
+		return pos.distance_squared_to(EnemyCombat.position_for_handle(a)) < pos.distance_squared_to(EnemyCombat.position_for_handle(b))
+	)
+	if handles.size() > perfect_zap_max_targets:
+		handles.resize(perfect_zap_max_targets)
+	for handle in handles:
+		EnemyCombat.apply_damage(handle, zap_dmg, 1, player)
+		if perfect_zap_stun > 0.0:
+			EnemyCombat.apply_stun(handle, perfect_zap_stun)
 
 	if debug_prints:
 		print("[ReflectShield] PERFECT! cd->", _cd, " zap_dmg=", zap_dmg)

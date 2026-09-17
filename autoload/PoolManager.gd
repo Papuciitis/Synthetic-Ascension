@@ -39,17 +39,44 @@ func get_additive_material() -> CanvasItemMaterial:
 	_ensure_material()
 	return _additive_material
 
-func obtain(scene: PackedScene, parent: Node = null) -> Node:
+func obtain(scene: PackedScene, parent: Node = null, context: Dictionary = {}) -> Node:
 	if scene == null:
 		return null
+
+	# Resolve the destination BEFORE taking a node, so a refusal costs
+	# nothing and cannot strand one outside the pool.
+	#
+	# The old fallback parented to this autoload when current_scene was null
+	# (the scene-transition frame). PoolManager is PROCESS_MODE_ALWAYS and
+	# outlives the scene, so a projectile obtained on that frame kept flying
+	# while the game was paused, survived the transition and rendered in the
+	# root canvas. There is nowhere legitimate to put a live node on that
+	# frame, so refuse: every caller null-checks obtain() already (spawner.gd,
+	# EnemyRepresentationManager, MagicMissileSpell, MagicMissileEffect and
+	# Weapon.gd - each verified before this changed).
+	# Godot hygiene audit 2026-08-28 §3 MED, top-10 #6.
+	var target_parent: Node = parent if (parent != null and is_instance_valid(parent)) else get_tree().current_scene
+	if target_parent == null:
+		return null
+
 	var key := _scene_key(scene)
 
 	var pool: Array = _get_pool(key)
 	var node: Node = null
-	if pool != null and pool.size() > 0:
-		node = pool.pop_back() as Node
-		_reuse_hits += 1
-	else:
+	while not pool.is_empty():
+		# A late queue_free() can run after recycle and leave a freed Object Variant
+		# in this array. Validate the raw value before any typed cast.
+		var candidate: Variant = pool.pop_back()
+		if not is_instance_valid(candidate):
+			_discarded += 1
+			continue
+		node = candidate as Node
+		if node != null and not node.is_queued_for_deletion():
+			_reuse_hits += 1
+			break
+		_discarded += 1
+		node = null
+	if node == null:
 		node = scene.instantiate()
 
 	if node == null:
@@ -57,15 +84,9 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 
 	node.set_meta("__pool_key", key)
 	node.set_meta("__in_pool", false)
+	node.set_meta("__pool_obtain_context", context.duplicate(true))
 
 	# Attach first (some scripts expect to be in-tree during reset)
-	var target_parent: Node = null
-	if parent != null and is_instance_valid(parent):
-		target_parent = parent
-	else:
-		var cs := get_tree().current_scene
-		target_parent = cs if cs != null else self
-
 	# Nodes pulled from the pool are usually still parented under PoolManager.
 	# Detach before attaching to the requested parent/current scene.
 	if node.get_parent() != target_parent:
@@ -86,15 +107,21 @@ func obtain(scene: PackedScene, parent: Node = null) -> Node:
 	if "monitorable" in node:
 		node.set("monitorable", true)
 
-	if node.has_method("_on_pool_obtain"):
+	if not context.is_empty() and node.has_method("_on_pool_obtain_context"):
+		node.call("_on_pool_obtain_context", context)
+	elif node.has_method("_on_pool_obtain"):
 		node.call("_on_pool_obtain")
+	if node.has_meta("__pool_obtain_context"):
+		node.remove_meta("__pool_obtain_context")
 
 	return node
 
-func recycle(node: Node) -> void:
+func recycle(node: Node, context: Dictionary = {}) -> void:
 	if node == null:
 		return
 	if not is_instance_valid(node):
+		return
+	if node.is_queued_for_deletion():
 		return
 
 	var key: String = ""
@@ -107,8 +134,11 @@ func recycle(node: Node) -> void:
 	if bool(node.get_meta("__in_pool", false)):
 		return
 
-	# custom hook first (so scripts can reset internal state while still in tree)
-	if node.has_method("_on_pool_recycle"):
+	# Custom hook first so scripts can commit/quiesce while still in-tree. Lease
+	# context is opt-in and never changes legacy pool hooks for other node types.
+	if not context.is_empty() and node.has_method("_on_pool_recycle_context"):
+		node.call("_on_pool_recycle_context", context)
+	elif node.has_method("_on_pool_recycle"):
 		node.call("_on_pool_recycle")
 
 	var pool: Array = _get_pool(key)
@@ -152,16 +182,44 @@ func warm(scene: PackedScene, count: int) -> void:
 	var limit := int(_limits.get(key, -1))
 	var target := mini(count, limit) if limit >= 0 else count
 	while pool.size() < target:
-		var n: Node = scene.instantiate()
-		if n == null:
+		if not _warm_one(key, pool, scene):
 			break
-		n.set_meta("__pool_key", key)
-		n.process_mode = Node.PROCESS_MODE_DISABLED
-		if n is CanvasItem:
-			(n as CanvasItem).visible = false
-		add_child(n)
-		n.set_meta("__in_pool", true)
-		pool.append(n)
+
+
+func warm_step(scene: PackedScene, count: int, budget_usec: int) -> bool:
+	# Budgeted warm-up: instantiates until the pool reaches the target or the
+	# frame budget is spent. Returns true while work remains so callers can
+	# spread pool construction across frames instead of paying for a whole
+	# fleet inside the scene-change frame.
+	if scene == null or count <= 0:
+		return false
+	var key := _scene_key(scene)
+	var pool: Array = _get_pool(key)
+	var limit := int(_limits.get(key, -1))
+	var target := mini(count, limit) if limit >= 0 else count
+	var started := Time.get_ticks_usec()
+	while pool.size() < target:
+		if Time.get_ticks_usec() - started > maxi(0, budget_usec):
+			return true
+		if not _warm_one(key, pool, scene):
+			return false
+	return false
+
+
+func _warm_one(key: String, pool: Array, scene: PackedScene) -> bool:
+	var n: Node = scene.instantiate()
+	if n == null:
+		return false
+	n.set_meta("__pool_key", key)
+	# Set BEFORE add_child so _ready can tell it is being warmed and skip
+	# live registration (groups, EnemyIndex, EnemyWorld).
+	n.set_meta("__in_pool", true)
+	n.process_mode = Node.PROCESS_MODE_DISABLED
+	if n is CanvasItem:
+		(n as CanvasItem).visible = false
+	add_child(n)
+	pool.append(n)
+	return true
 
 
 func set_limit_for_scene(scene: PackedScene, limit: int) -> void:

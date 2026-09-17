@@ -24,8 +24,18 @@ var _current_key: StringName = &"none"
 var _tween: Tween
 
 
+var _headless := false
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	# Same convention as SfxManager: nothing is audible in headless runs, so
+	# skip decoding and playing music entirely. This also stops every headless
+	# test run from decoding the menu mp3 and leaking its playback at exit.
+	_headless = DisplayServer.get_name() == "headless"
+	if _headless:
+		return
 
 	_menu_stream = load(MENU_MUSIC_PATH)
 	_game_stream = load(GAME_MUSIC_PATH)
@@ -64,6 +74,8 @@ func to_game(immediate: bool = false) -> void:
 
 
 func stop_all(immediate: bool = false) -> void:
+	if _headless:
+		return
 	_current_key = &"none"
 	_kill_tween()
 	if immediate:
@@ -77,6 +89,19 @@ func stop_all(immediate: bool = false) -> void:
 			_tween = create_tween()
 			_tween.tween_property(_active, "volume_db", -80.0, fade_time)
 			_tween.tween_callback(func() -> void: _active.stop())
+
+
+func _exit_tree() -> void:
+	# Release the mp3 streams and their playback objects before engine
+	# teardown; otherwise every clean exit (and every headless test run)
+	# reports two leaked AudioStreamMP3/AudioStreamPlaybackMP3 instances.
+	_kill_tween()
+	for player in [_a, _b]:
+		if player != null and is_instance_valid(player):
+			player.stop()
+			player.stream = null
+	_menu_stream = null
+	_game_stream = null
 
 
 # ------------------------------------------------------------

@@ -59,32 +59,22 @@ func _process(dt: float) -> void:
 
 	var old_pos: Vector2 = global_position
 	var new_pos: Vector2 = old_pos + _vel * dt
-	if _hits_world(old_pos, new_pos):
+	var world_hit_t := _world_hit_t(old_pos, new_pos)
+	var hit_handle := EnemyCombat.first_enemy_on_segment(old_pos, new_pos, hit_radius)
+	var enemy_hit_t := EnemyCombat.last_segment_hit_t()
+	if (
+		hit_handle != EnemyWorldTypes.INVALID_HANDLE
+		and enemy_hit_t >= 0.0
+		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
+	):
+		EnemyCombat.apply_damage(hit_handle, damage, 1, source)
+		_despawn()
+		return
+	if world_hit_t >= 0.0:
 		_despawn()
 		return
 	global_position = new_pos
 	rotation = _vel.angle()
-
-	# Collision: use EnemyIndex spatial hash when available
-	var hit: Node2D = null
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("first_in_radius"):
-		hit = ei.call("first_in_radius", global_position, hit_radius, null) as Node2D
-	else:
-		var r2: float = hit_radius * hit_radius
-		for n in get_tree().get_nodes_in_group("enemies"):
-			var e: Node2D = n as Node2D
-			if e == null or not is_instance_valid(e):
-				continue
-			if global_position.distance_squared_to(e.global_position) <= r2:
-				hit = e
-				break
-
-	if hit != null and is_instance_valid(hit):
-		if hit.has_method("take_damage"):
-			hit.call("take_damage", damage, source)
-		_despawn()
-		return
 
 	# Animated bolt: redraw at ~30fps instead of every frame
 	_redraw_accum += dt
@@ -93,9 +83,13 @@ func _process(dt: float) -> void:
 		queue_redraw()
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
+	return _world_hit_t(from_pos, to_pos) >= 0.0
+
+
+func _world_hit_t(from_pos: Vector2, to_pos: Vector2) -> float:
 	if _chunk_manager == null or not is_instance_valid(_chunk_manager):
 		_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
-	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, 4.0) >= 0.0
+	return _chunk_manager.projectile_hit_t(from_pos, to_pos, 4.0) if _chunk_manager != null else -1.0
 
 func _draw() -> void:
 	var p: float = clampf(_life / maxf(max_life, 0.001), 0.0, 1.0)

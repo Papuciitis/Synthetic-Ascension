@@ -1,5 +1,10 @@
 # Performance Patch Changelog
 
+> This changelog ends 2026-08-22 (the last entry below); later performance
+> history lives in git and the roadmap §27 status log
+> (`docs/SYNTHETIC_ASCENSION_DIRECTION_AND_ROADMAP.md`). Two dated
+> corrections are inline.
+
 ## Recorded root-cause fixes
 
 - Flow-field movement requests now replace one queued destination instead of
@@ -247,3 +252,200 @@ with zero failures, and the existing chunk audit. The 180-enemy synthetic simula
 improved from 379.15 ms to 89.17 ms across 120 frames (4.25x speedup, 0.743 ms per adaptive frame).
 These are deterministic test results; the next gameplay capture is required to establish the live
 before/after frame-time curve and tune the full/mid budgets for the target 500+ on-screen horde.
+
+## Spatial simulation LOD and adaptive budgets
+
+- The enemy simulation scheduler now combines its budget LOD with spatial
+  bands: actors beyond the mid band demote to far even when budget slots are
+  free, and free budget never keeps offscreen actors in full simulation. Each
+  band boundary has separate enter/exit distances (1200/1400 full, 1800/2100
+  mid) so an actor hovering on an edge cannot flap tiers between refreshes.
+- Ordinary smart archetypes (ranged, charge, tactical, orbit, bomber,
+  summoner, herald) may now release body and hitbox physics beyond 2600 px,
+  re-acquiring at 2300 px. Player projectiles resolve through EnemyCombat's
+  data-side segment tests, so distant smart actors stay shootable without a
+  broadphase body. Elites, snipers, bosses, and special actors keep world
+  collision at any distance, exactly as before.
+- Sustained physics pressure (default: physics above 14 ms for 0.5 s,
+  separate from the 8 ms flow-shedding threshold) now
+  temporarily shrinks the full/mid budgets to 24/24, restoring the normal
+  32/32 only after 2 s of calm. Brief spikes never trigger the fallback.
+  (2026-08-30: the pressure budgets are now 12/24, plus an 8/16 emergency
+  tier above 20 ms and a 40 ms severe fast path —
+  `autoload/EnemySimulationScheduler.gd:46-47,59-60,86`; normal is still
+  32/32.)
+- Mid tier now steps at 20 Hz (3 groups) and far at ~8.6 Hz (7 groups); the
+  default mid budget dropped from 48 to 32.
+- Incident CSVs now record the simulation LOD state per sample: full/mid/far
+  tier counts, protected actors, physics-enabled bodies, pressure fallback
+  state, spatial demotions, cumulative tier changes/reversals, and the enemy
+  world materialized/data-only counts.
+- When running from the project (editor or --path), the flight recorder now
+  writes captures directly into the tracked performance_results folder;
+  exported builds keep using user://performance_captures.
+
+## Transition and stability pass (2026-08-22)
+
+- Pool warm-up no longer stalls the scene-change frame: the spawner used to
+  instantiate 12 enemy scenes x 6 instances synchronously in _ready (the
+  setup half of a measured 436ms segment-transition process spike). Warm-up
+  now drains through a 2.5ms/frame budgeted queue in the first second of a
+  segment.
+- The run-transition soak test now asserts that a full run cycle does not
+  accumulate live objects (measured growth: 31 objects/cycle, slack 128).
+- AudioManager skips music decode/playback in headless runs, matching the
+  SfxManager convention, and releases its streams on exit.
+- The scheduler ranks tier incumbents with a 10% distance bias so budget
+  boundary ranks cannot flap on tiny distance oscillations (84% of the
+  2026-08-22 session-2 tier churn was full<->mid rank flapping), and the
+  budget pressure fallback got its own 14ms threshold, separate from the
+  8ms flow-shedding threshold that the game's ~13ms physics baseline kept
+  permanently engaged.
+- tools/perf/analyze_captures.py summarizes capture folders per day or per
+  session: frame percentiles, enemy buckets, and the simulation LOD columns.
+
+## Horde session findings (2026-08-22 evening)
+
+- At 130-250 enemies the physics lever held (physics p95 ~29ms) but
+  physics-enabled bodies scaled linearly (measured avg 134): smart archetypes
+  clamp to mid inside their release distance and a converging horde never
+  crosses it. Under sustained pressure the release boundary now shrinks by
+  pressure_release_distance_scale (default 0.75, i.e. ~1950px).
+- Force-spawn presses entered up to 100 bodies into the broadphase in one
+  physics step (measured 240-300ms physics spikes). Forced spawns now run 12
+  per frame through a drained queue; a fully capped queue clears instead of
+  retrying forever.
+- Draw calls spiked to ~2.3-2.7k during hordes (vs ~660 calm) - the next
+  rendering lever is batching materialized enemy sprites.
+- Pause semantics are now consistent: the enemy simulation scheduler was
+  PROCESS_MODE_ALWAYS, so the offscreen horde kept closing in during the
+  augment pick and tutorial modals while full-tier enemies stood frozen.
+  The scheduler is pausable, and the dev overlay footer gained a general
+  "Pause game" toggle for freezing the run to inspect it.
+
+## Proxy renderer scaling (2026-08-22, 669-enemy session)
+
+- Session 5 reached 669 logical enemies (~400 data-only proxies). Physics
+  held (p95 ~22ms at 229 avg materialized; far tier 92-119 actors thanks to
+  the pressure-scaled release), leaving script process time (~29ms avg) as
+  the dominant cost at 200+.
+- The proxy renderer no longer reallocates its instance buffer, transform
+  and color mirrors, and handle arrays for every batch every frame, and only
+  zero-fills the tail occupied by the previous publish.
+- Above 150 drawn proxies, visual uploads run every other frame; distant
+  swarm sprites at 30Hz are visually indistinguishable.
+
+## Full Horde project (phase 1: batched enemy visuals)
+
+- New staged horde benchmark (tools/tests/EnemyHordeBenchmark.tscn) forces
+  120/250/400/550 populations and prints percentiles + sim counters per
+  stage. Headless baseline: 619 alive at 8.2ms avg CPU frame.
+- Materialized enemies now render through the same per-texture MultiMesh
+  batches as proxies: the enemy sprite hides and the shared renderer draws
+  transform (interpolated, rotation-aware) + modulate per instance. Elite
+  tints carry through; batched actor uploads stay per-frame while proxy
+  buffers half-rate under load. Toggle: "Batched enemy sprites" in the dev
+  overlay (applies to newly spawned enemies).
+- Known next target: projectile rendering. At ~550 projectiles the frame
+  cost is ~90ms beyond process+physics (likely additive-material overdraw),
+  i.e. a minigun-tier weapon would tank frames today.
+  (2026-08-30: solved 2026-08-23 — the projectile sim moved to `_process`
+  and impact VFX are batched through ImpactBurstRenderer; see
+  `docs/OPTIMIZATION_HANDOFF.md`, TODO 1.)
+
+## 2026-09-15 — the 14 September captures: chain bursts were the fight-time lag
+
+189 automatic incidents from three sessions (segments 2-5, 30-130
+enemies). 186 of them were script-side, not physics. Reading the peak
+frames against the event log:
+
+- **Ascension chain bursts (fixed).** Red Mist, DECIMATION and the
+  Corpse Bomb + Cleave families spawned one `MeleeSlash` or `MagicImpact`
+  scene per kill inside the kill callback. Forty deaths in one frame meant
+  eighty Area2Ds with eight collision shapes each entering the physics
+  step at once: 22:58:15 shows physics 337 ms, 12,044 draw calls, 289,432
+  rendered objects and 1.4 s of process; 22:56:40 shows 208 ms process and
+  89 ms physics 0.5 s after a Red Mist with a 40-body chain. Generated
+  attacks are now data on the runner: queued, resolved twelve per frame
+  through the handle queries, drawn in one `_draw`. Benchmark:
+  `tools/tests/AscensionChainBurstBenchmark.tscn` (60 bodies, 180
+  attacks, 11 frames, zero node growth, worst frame 8 ms headless).
+- **Deferred node insertion (collaborator, e3e5bbf).** The same bursts
+  changed collision state while physics flushed queries (952 errors in the
+  session log). Native attacks spawned from inside a physics callback now
+  insert deferred; generated ones no longer insert anything.
+- **Segment loads (covered).** The 500-900 ms process peaks with zero
+  enemies are the game scene building 1,100-1,750 nodes and a nav
+  revision at segment start (18:37, 18:40, 22:45, 22:52, 23:01, 23:41).
+  Nothing to optimise; `Global.goto_scene` now shows a loading card
+  (`ui/widgets/LoadingScrim.gd`, "SEGMENT n" / "THE HUB") for two frames
+  before the change and lifts it two frames after the new scene exists,
+  so the stall reads as a transition.
+- **Flow-field rebuilds (not the cause).** `flow_completed` sits near many
+  peaks, but the worker runs on `WorkerThreadPool` and the main thread
+  only polls `is_task_completed`; the 160-250 ms `cpu_usec` is thread
+  time. Rebuilds trigger on `player_moved` every 0.25 s; if a low-core
+  laptop shows contention, the interval is the lever.
+- **Ground loot after chains (fixed).** The 00:01 capture (segment 5) sat
+  at 5,400 nodes and 36 ms process with 24 enemies before a 3 s teardown.
+  `tools/tests/NodeCensusProbe.tscn` (boots the game headless, keeps a
+  population, kills at a set rate, prints a node census every 15 s; the dev
+  overlay's World tab has the same census as a button) reproduced it: with
+  the Blood domino route and eight seed kills a second, chains left 221
+  item pickups and 61 health pickups on the ground inside a minute, each a
+  node cluster with its own _process and a 120 s life. `GroundLootCap`
+  now holds ordinary drops at 48 items and 20 health pickups, culling the
+  lowest rarity and oldest first; exploration loot and player-placed drops
+  are never culled. Same probe after the cap: 47 item pickups, node growth
+  1,800 -> 560 over the minute.
+
+## 2026-09-16 (later): dense benchmark guard made stable
+
+AscensionBarrageDenseBenchmark asserted "no fragment update exceeded
+12 ms". Six runs of the same committed build (before and after the
+Precision/Ordnance projectile changes) put that single worst frame at
+8.8-16.7 ms while p95 stayed 4.9-6.0 ms, so the bound flapped without any
+code change. The guard now checks p99 < 15 ms (max still printed) and the
+chain's RNG is seeded; frame timing still steers the fragments (127-180 of
+180 killed across runs), so the "kills most of the crowd" floor is 60%. Measured after the projectile-manager additions (pierce ramp,
+bounce, seeking, end-of-flight reports): fragment update p50 1.0-1.5 ms,
+p95 5.0-6.0 ms; headless frame p95 7.5-7.6 ms. Same machine as above.
+
+## 2026-09-16 — Barrage fragment acquisition and recorder trust (stage 2 of the V4 plan)
+
+Follows `docs/audits/2026-09-15-performance-captures.md`.
+
+- **Fragment reacquisition (fixed).** `EnemyWorld.lowest_health_in_radius`
+  reads the slot arrays directly (no candidate handle array, no per-handle
+  lookups, dying skipped, ties to the lowest slot); `EnemyLowestHealthQueryTest`
+  pins its agreement with the gather-then-compare path on 150 random enemies.
+  Barrage fragments whose target died reacquire through it, at most 48 per
+  frame; the rest keep their heading and retry next frame (2 s life, 520 px/s,
+  a few frames of steering lost at worst). `AscensionBarrageDenseBenchmark`
+  repeats the audit's workload headless on this machine (i7-8650U, Godot
+  4.7.2, no rendering):
+
+  | Case | Audit (4.7.1, Windows) | Now |
+  |---|---:|---:|
+  | 120 fragments, target retained | 0.84 ms median | 0.74 ms |
+  | 120 fragments, forced reacquisition | 51.25 ms median | 3.33 ms |
+  | 360 fragments, target retained | 1.32 ms | 1.65 ms |
+  | 360 fragments, forced reacquisition | 149.44 ms | 1.51 ms (48 retargets, 312 deferred) |
+  | 180-body wounded crowd, full chain | update max 38-41 ms | p95 4.9 ms, max 11.7 ms; 179/180 dead, 283 live fragments at peak |
+
+  Damage, targets, exclusions and roll outcomes are unchanged; only the
+  search and its pacing changed. The audit's numbers came from a different
+  machine and build, so the table is a like-for-like workload, not a
+  like-for-like clock.
+- **Recorder (fixed).** Every sample now carries `wall_ms` (real spacing to
+  the previous sample), `delta_ms` (the engine's capped process delta; the
+  old `frame_ms` keeps it for older readers), the `ascension` block (queue
+  backlog, engine tick / flush / hit-handling microseconds, Barrage fragment
+  update time, live and pending fragments, retargets and deferrals),
+  `projectile_ms` and `chunk_stream` (queue length, last/max build and plan
+  ms). Summaries add wall-clock percentiles, the tree's peak cost and a
+  `monitor_note` saying that `process_ms` / `physics_ms` are Godot's
+  windowed monitors with render sync included. `FlightRecorderSampleTest`.
+- **Not done here.** Chunk activation staging (the audit's item 3) and a
+  rendered stationary Barrage playtest; the rendered check is scheduled for
+  the whole-system stage with the presets.

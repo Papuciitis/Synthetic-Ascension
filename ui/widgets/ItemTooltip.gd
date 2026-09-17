@@ -6,6 +6,9 @@ var name_label: Label = null
 var meta_label: Label = null
 var body_label: RichTextLabel = null
 var icon_frame: PanelContainer = null
+var kicker_label: Label = null
+
+var _dossier_mode: bool = false
 
 var _style: StyleBoxFlat
 var _icon_style: StyleBoxFlat
@@ -19,6 +22,10 @@ const CMP_POS_HEX: String = "#78E08F"
 const CMP_NEG_HEX: String = "#D77A86"
 const CMP_NEUTRAL_HEX: String = "#A8A8A8"
 const LOCK_HEX: String = "#F2C35B"
+## The layer's own colour, for chrome that is about Manifestations in general.
+## Anything that names a specific rule uses that rule's NOUN hex instead - see
+## ManifestationNouns.
+const MANIFEST_HEX: String = ManifestationNouns.LAYER_HEX
 
 const KEY_MAP: Dictionary = {
 	"max_hp": "HP",
@@ -87,6 +94,7 @@ func _resolve_nodes() -> void:
 	meta_label = get_node_or_null("Margin/VBox/Header/HeaderText/Meta") as Label
 	body_label = get_node_or_null("Margin/VBox/Body") as RichTextLabel
 	icon_frame = get_node_or_null("Margin/VBox/Header/IconFrame") as PanelContainer
+	kicker_label = get_node_or_null("Margin/VBox/Kicker") as Label
 
 func _build_styles() -> void:
 	_style = StyleBoxFlat.new()
@@ -117,6 +125,16 @@ func _build_styles() -> void:
 func hide_tooltip() -> void:
 	visible = false
 
+
+func set_dossier_mode(enabled: bool) -> void:
+	_dossier_mode = enabled
+	custom_minimum_size = Vector2(380.0 if enabled else 360.0, 0.0)
+	if kicker_label == null:
+		_resolve_nodes()
+	if kicker_label != null:
+		kicker_label.visible = enabled
+	reset_size()
+
 func show_item(inst: ItemInstance) -> void:
 	if inst == null or inst.data == null:
 		hide_tooltip()
@@ -132,7 +150,7 @@ func show_item(inst: ItemInstance) -> void:
 
 	# Establish width before assigning wrapped text. This also prevents the old
 	# first-hover, full-height layout spike.
-	custom_minimum_size = Vector2(460, 0)
+	custom_minimum_size = Vector2(380.0 if _dossier_mode else 360.0, 0.0)
 
 	# Header
 	name_label.text = String(inst.data.display_name)
@@ -158,6 +176,35 @@ func show_item(inst: ItemInstance) -> void:
 		for e in eff:
 			lines.append("• %s" % String(e))
 
+	# Manifestation is identity, not a stat, so it sits above the numbers.
+	if inst.has_manifestation():
+		var manifest_def: ManifestationDef = inst.manifestation_def()
+		if manifest_def != null:
+			lines.append("")
+			# Coloured by the rule's own noun, not by the layer. The palette is
+			# the vocabulary: the same orange on the tooltip, on the item badge
+			# and on the HUD counter is what teaches "these two combine"
+			# without the player reading a word.
+			var primary_hex: String = MANIFEST_HEX
+			if manifest_def.primary_tag() != &"":
+				primary_hex = ManifestationNouns.hex(manifest_def.primary_tag())
+			var noun_names: PackedStringArray = PackedStringArray()
+			for tag in manifest_def.tags:
+				noun_names.append("[color=%s]%s[/color]" % [
+					ManifestationNouns.hex(tag), ManifestationNouns.label(tag),
+				])
+			lines.append("[color=%s]MANIFESTATION — %s[/color]" % [primary_hex, manifest_def.display_name.to_upper()])
+			if not noun_names.is_empty():
+				# Naming the nouns is how the player learns which items combine:
+				# two of a noun is what turns an accident into a build.
+				var noun_separator: String = "[color=%s] · [/color]" % CMP_NEUTRAL_HEX
+				lines.append(noun_separator.join(noun_names))
+			lines.append("[color=%s]%s[/color]" % [primary_hex, ManifestationCatalog.describe(inst.manifestation_id, inst)])
+			# A noun counts DISTINCT rules (ManifestationRunner.get_noun_counts),
+			# so a second item carrying this rule never lights the pair - the
+			# one thing a player holding two of them expects it to do.
+			lines.append("[color=%s]Survives every merge. Duplicates rank this item up; they never reroll its rule. Two items with one rule light no second ◆ — a noun counts distinct rules.[/color]" % CMP_NEUTRAL_HEX)
+
 	var rolled_lines: Array[String] = _format_delta(inst.rolled_mods)
 	if rolled_lines.size() > 0:
 		lines.append("")
@@ -170,51 +217,92 @@ func show_item(inst: ItemInstance) -> void:
 
 	_append_stat_comparison(lines, inst)
 
-	# Set identity, progression, active/next/later tiers and terminology.
+	# Hover is a decision surface, not the set manual. The complete identity,
+	# progression, playstyle and glossary live in Run Sheet // Sets.
 	if String(inst.data.set_id) != "":
-		var sid: StringName = StringName(str(inst.data.set_id))
-		var counts: Dictionary = _current_set_counts()
-		var have: int = int(counts.get(sid, 0))
-		var sd: SetData = _set_data(sid)
-		lines.append("")
-		lines.append("SET IDENTITY")
-		if sd == null:
-			lines.append("%s  ·  %d equipped" % [String(sid).to_upper(), have])
-		else:
-			lines.append("%s  %s  %d / %d" % [sd.display_name.to_upper(), _progress_pips(have, sd.max_pieces()), have, sd.max_pieces()])
-			if sd.identity_sentence != "":
-				lines.append(sd.identity_sentence)
-			if sd.playstyle != "":
-				lines.append("PLAYSTYLE  " + sd.playstyle)
-			lines.append("")
-			lines.append("SET PROGRESSION")
-			var next_found: bool = false
-			for tier: SetTier in sd.sorted_tiers():
-				if tier == null:
-					continue
-				var state: String = "ACTIVE" if have >= tier.required_count else ("NEXT" if not next_found else "LATER")
-				if have < tier.required_count and not next_found:
-					next_found = true
-				var marker: String = "✓" if state == "ACTIVE" else ("→" if state == "NEXT" else "○")
-				lines.append("%s %s · %d PIECES · %s" % [marker, state, tier.required_count, tier.display_name.to_upper()])
-				if tier.mechanical_description != "":
-					lines.append("  " + tier.mechanical_description)
-				if tier.plain_description != "":
-					lines.append("  IN PLAIN TERMS: " + tier.plain_description)
-			if sd.best_with != "":
-				lines.append("")
-				lines.append("BEST WITH  " + sd.best_with)
-			_append_glossary(lines, sd)
+		_append_set_summary(lines, StringName(str(inst.data.set_id)))
 
 	_append_replacement_preview(lines, inst)
 
 	# Secondary economy/progression information.
 	lines.append("")
-	var um: float = clampf(float(inst.upgrade_meter), 0.0, 1.0) * 100.0
+	# K6 legibility: the meter is real power now (continuous rarity), so
+	# frame it as progress toward the next rank, not an abstract percent.
+	var meter_frac: float = clampf(float(inst.upgrade_meter), 0.0, 1.0)
+	var filled: int = int(round(meter_frac * 8.0))
+	var meter_bar := ""
+	for bar_i in range(8):
+		meter_bar += ("▰" if bar_i < filled else "▱")
 	var sell_v: int = 0
 	if Global != null and Global.has_method("compute_sell_value"):
 		sell_v = int(Global.compute_sell_value(inst))
-	lines.append("UPGRADE %d%%  ·  SELL %d" % [int(round(um)), sell_v])
+	lines.append("R%d → R%d  %s %d%%  ·  SELL %d" % [
+		int(inst.rarity), int(inst.rarity) + 1, meter_bar, int(round(meter_frac * 100.0)), sell_v,
+	])
+	# A cursed item is worth different amounts to different builds, so the
+	# tooltip has to say what THIS wardrobe is currently doing with it - not
+	# just that it is NEG.
+	var lens_suppressed: bool = false
+	if inst.polarity == ItemInstance.Polarity.NEG and Global != null:
+		var burden_snapshot: BurdenSnapshot = BurdenResolver.resolve(
+			Global.run_inventory, Global.permanent_augment_ids
+		)
+		var slot_index: int = int(inst.data.equip_slot)
+		var severity: float = absf(inst.active_pct())
+		var ratio: float = BurdenResolver.burden_ratio_for(inst)
+		lines.append("")
+		if slot_index >= Inventory.STAT_SLOT_COUNT:
+			# Accessory curses drive scripted behaviour, not a stat: they count
+			# as NEG in the polarity census, never in Burden arithmetic.
+			lines.append(
+				"[color=%s]ACCESSORY CURSE %d%% — counts as NEG in the polarity census; not a stat Burden.[/color]"
+				% [NEG.to_html(false), int(round(severity * 100.0))]
+			)
+		elif burden_snapshot.is_suppressed(slot_index) and Global.run_inventory != null \
+		and Global.run_inventory.get_at(slot_index) == inst:
+			lens_suppressed = true
+			lines.append(
+				"[color=%s]SUPPRESSED — %d%% curse inverted to +%d%%. Still NEG in the polarity census; counts for neither the Doctrine nor the Engine.[/color]"
+				% [
+					CMP_POS_HEX,
+					int(round(severity * 100.0)),
+					int(round(BurdenResolver.inverted_return(severity) * 100.0)),
+				]
+			)
+		else:
+			var qualifies: bool = ratio >= BurdenSnapshot.QUALIFYING_BURDEN_RATIO
+			var weight: String = "catastrophic" if severity >= 0.70 else (
+				"severe" if severity >= 0.40 else (
+					"real" if qualifies else "trivial"
+				)
+			)
+			lines.append(
+				"[color=%s]ACTIVE BURDEN %d%% (%d%% of its range) — %s.%s[/color]"
+				% [
+					NEG.to_html(false),
+					int(round(severity * 100.0)),
+					int(round(ratio * 100.0)),
+					weight,
+					"" if qualifies else " Too mild for its range to count as a burden.",
+				]
+			)
+	elif inst.polarity == ItemInstance.Polarity.POS:
+		_append_pos_roll(lines, inst)
+
+	if inst.polarity == ItemInstance.Polarity.NEG:
+		var deepening: bool = (
+			Global != null
+			and Global.permanent_augment_ids.has(&"augment_corruption_engine")
+		)
+		if deepening:
+			lines.append("Feeding DEEPENS the curse (Corruption Engine)")
+		elif lens_suppressed:
+			# The Lens returns a share of SEVERITY, and a feed keeps the mildest
+			# roll: stabilising the one curse it is inverting is the one feed in
+			# the wardrobe that makes the player weaker.
+			lines.append("Feeding stabilizes the curse (mildest roll survives) — a milder roll shrinks your inverted return")
+		else:
+			lines.append("Feeding stabilizes the curse (mildest roll survives)")
 
 	body_label.text = "\n".join(lines)
 	reset_size()
@@ -235,7 +323,9 @@ func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> v
 	lines.append("INSTANT COMPARISON")
 	lines.append("Compared with: %s" % String(current.data.display_name))
 
-	var rows: Array[String] = build_comparison_rows(current, candidate, Global.run_inventory)
+	var rows: Array[String] = build_comparison_rows(
+		current, candidate, Global.run_inventory, Global.permanent_augment_ids
+	)
 	if rows.is_empty():
 		lines.append("[color=%s]No numeric stat change.[/color]" % CMP_NEUTRAL_HEX)
 	else:
@@ -243,7 +333,7 @@ func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> v
 			lines.append(row)
 
 
-func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory) -> Array[String]:
+func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory, augment_ids: Array = []) -> Array[String]:
 	var rows: Array[String] = []
 	if current == null or candidate == null or current.data == null or candidate.data == null:
 		return rows
@@ -267,10 +357,17 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 		var colour: String = CMP_POS_HEX if delta > 0.0 else CMP_NEG_HEX
 		rows.append("[color=%s]%-12s %s[/color]" % [colour, String(spec[0]), value_text])
 
-	var pct_delta: float = candidate.active_pct() - current.active_pct()
-	if absf(pct_delta) >= 0.0001:
-		var pct_colour: String = CMP_POS_HEX if pct_delta > 0.0 else CMP_NEG_HEX
-		rows.append("[color=%s]%-12s %+.1f%%[/color]" % [pct_colour, "Effect roll", pct_delta * 100.0])
+	# Under an Inversion Lens the raw roll diff can invert the truth - a deeper
+	# curse is a bigger return, and the penalty of a curse the Lens would take
+	# is never paid - so that slot gets the Lens's own reading instead.
+	var lens_rows: Array[String] = _lens_roll_rows(current, candidate, inventory, augment_ids)
+	if not lens_rows.is_empty():
+		rows.append_array(lens_rows)
+	else:
+		var pct_delta: float = candidate.active_pct() - current.active_pct()
+		if absf(pct_delta) >= 0.0001:
+			var pct_colour: String = CMP_POS_HEX if pct_delta > 0.0 else CMP_NEG_HEX
+			rows.append("[color=%s]%-12s %+.1f%%[/color]" % [pct_colour, "Effect roll", pct_delta * 100.0])
 
 	var current_effects: PackedStringArray = current.data.get_effects_short(current)
 	var candidate_effects: PackedStringArray = candidate.data.get_effects_short(candidate)
@@ -280,6 +377,24 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 			rows.append("[color=%s]Before: %s[/color]" % [CMP_NEG_HEX, "; ".join(current_effects)])
 		if not candidate_effects.is_empty():
 			rows.append("[color=%s]After: %s[/color]" % [CMP_POS_HEX, "; ".join(candidate_effects)])
+
+	# The whole point of the layer: an R2 with the right rule can beat an R9
+	# with a dull one, and a merge will never hand you the rule for free.
+	if current.manifestation_id != candidate.manifestation_id:
+		rows.append("[color=%s]MANIFESTATION CHANGES[/color]" % CMP_NEUTRAL_HEX)
+		rows.append("[color=%s]Before: %s[/color]" % [
+			CMP_NEG_HEX,
+			ManifestationCatalog.display_name(current.manifestation_id) if current.has_manifestation() else "none",
+		])
+		var after_hex: String = MANIFEST_HEX
+		if candidate.has_manifestation():
+			var after_noun := ManifestationNouns.primary_of(candidate.manifestation_id)
+			if after_noun != &"":
+				after_hex = ManifestationNouns.hex(after_noun)
+		rows.append("[color=%s]After: %s[/color]" % [
+			after_hex,
+			ManifestationCatalog.display_name(candidate.manifestation_id) if candidate.has_manifestation() else "none",
+		])
 
 	var set_id := StringName(candidate.data.set_id)
 	if inventory != null and set_id != StringName() and int(candidate.data.equip_slot) < Inventory.STAT_SLOT_COUNT:
@@ -300,6 +415,103 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 				"[color=%s]Set strength  %.2fx → %.2fx[/color]"
 				% [set_colour, before_strength, after_strength]
 			)
+	return rows
+
+
+## Stat key each statistical slot's roll is applied to, in the order the stat
+## pass walks the slots (player.recompute_run_stats). The first three slots
+## multiply their stat by (1 + roll); the last three add the roll to it.
+const SLOT_STAT_KEYS: Array[String] = ["max_hp", "armor", "move_speed", "power", "haste", "luck"]
+const MULTIPLIED_SLOT_COUNT: int = 3
+
+
+## The POS mirror of the burden line: the roll is already on the instance and
+## on the slot label, but nothing said whether it multiplies or adds. The
+## comparison block and the slot label print it bare, so the one place the
+## player reads an item in full names the arithmetic.
+func _append_pos_roll(lines: Array[String], inst: ItemInstance) -> void:
+	var slot_index: int = int(inst.data.equip_slot)
+	if slot_index < 0:
+		return
+	var roll: float = inst.active_pct()
+	lines.append("")
+	if slot_index >= Inventory.STAT_SLOT_COUNT:
+		# The stat pass never reads an accessory's roll; its own effect scene
+		# does (Regeneration Ring, Oakheart, Firestone read active_pct()).
+		lines.append(
+			"[color=%s]ACCESSORY ROLL %+d%% — read by this item's scripted effect; not a stat.[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0))]
+		)
+		return
+	var stat: String = String(KEY_MAP.get(SLOT_STAT_KEYS[slot_index], SLOT_STAT_KEYS[slot_index].to_upper()))
+	if slot_index < MULTIPLIED_SLOT_COUNT:
+		lines.append(
+			"[color=%s]EFFECT ROLL %+d%% — %s ×%.2f on this slot[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0)), stat, 1.0 + roll]
+		)
+	else:
+		lines.append(
+			"[color=%s]EFFECT ROLL %+d%% — %s %+d%% on this slot[/color]"
+			% [POS.to_html(false), int(round(roll * 100.0)), stat, int(round(roll * 100.0))]
+		)
+
+
+## What the candidate's slot would pay under an Inversion Lens, phrased the
+## way the sheet's Lens line is. Empty when the Lens has no say in this swap,
+## so the caller prints the raw roll diff. The "after" wardrobe goes through
+## the same BurdenResolver the stat pass uses, so the selection rule (most
+## severe statistical curse, lowest slot on ties) is never re-derived here.
+func _lens_roll_rows(current: ItemInstance, candidate: ItemInstance, inventory: Inventory, augment_ids: Array) -> Array[String]:
+	var rows: Array[String] = []
+	if inventory == null or not augment_ids.has(&"augment_inversion_lens"):
+		return rows
+	var slot: int = int(candidate.data.equip_slot)
+	if slot < 0 or slot >= Inventory.STAT_SLOT_COUNT:
+		return rows
+	var before: BurdenSnapshot = BurdenResolver.resolve(inventory, augment_ids)
+	var preview := Inventory.new()
+	for slot_index in range(Inventory.SLOT_COUNT):
+		preview.items[slot_index] = candidate if slot_index == slot else inventory.get_at(slot_index)
+	var after: BurdenSnapshot = BurdenResolver.resolve(preview, augment_ids)
+	var current_suppressed: bool = before.is_suppressed(slot) and inventory.get_at(slot) == current
+	var candidate_suppressed: bool = after.is_suppressed(slot)
+	if not current_suppressed and not candidate_suppressed:
+		return rows
+
+	# What the slot pays now and what it would pay: the return when the Lens
+	# holds it, the stored roll when it does not.
+	var before_value: float = (
+		BurdenResolver.inverted_return(before.suppressed_severity) if current_suppressed
+		else current.active_pct()
+	)
+	var after_value: float = (
+		BurdenResolver.inverted_return(after.suppressed_severity) if candidate_suppressed
+		else candidate.active_pct()
+	)
+	var colour: String = CMP_POS_HEX if after_value >= before_value else CMP_NEG_HEX
+	if candidate_suppressed:
+		rows.append("[color=%s]%-12s would be suppressed → %+.1f%% returned[/color]" % [
+			colour, "Effect roll", after_value * 100.0,
+		])
+	else:
+		rows.append("[color=%s]%-12s %+.1f%% (ends the %+.1f%% return)[/color]" % [
+			colour, "Effect roll", (after_value - before_value) * 100.0, before_value * 100.0,
+		])
+
+	# The Lens holds exactly one slot. When this swap moves it, the curse it
+	# leaves weighs on the player again and the one it lands on stops.
+	if after.suppressed_slot != before.suppressed_slot:
+		if before.suppressed_slot >= 0 and before.suppressed_slot != slot:
+			rows.append("[color=%s]Lens leaves %s — its %d%% curse weighs again[/color]" % [
+				CMP_NEG_HEX, Inventory.slot_label(before.suppressed_slot).to_upper(),
+				int(round(before.suppressed_severity * 100.0)),
+			])
+		if after.suppressed_slot >= 0 and after.suppressed_slot != slot:
+			rows.append("[color=%s]Lens moves to %s — its %d%% curse → +%d%% returned[/color]" % [
+				CMP_POS_HEX, Inventory.slot_label(after.suppressed_slot).to_upper(),
+				int(round(after.suppressed_severity * 100.0)),
+				int(round(BurdenResolver.inverted_return(after.suppressed_severity) * 100.0)),
+			])
 	return rows
 
 func _slot_text(slot: int) -> String:
@@ -328,22 +540,36 @@ func _progress_pips(have: int, maximum: int) -> String:
 			out += "●" if pip_number <= have else "○"
 	return out
 
-func _append_glossary(lines: Array[String], data: SetData) -> void:
-	var used: Dictionary = {}
-	for tier: SetTier in data.tiers:
+
+func _append_set_summary(lines: Array[String], set_id: StringName) -> void:
+	var counts: Dictionary = _current_set_counts()
+	var have: int = int(counts.get(set_id, 0))
+	var data: SetData = _set_data(set_id)
+	lines.append("")
+	if data == null:
+		lines.append("SET // %s · %d EQUIPPED" % [String(set_id).to_upper(), have])
+		lines.append("ARCHIVE // RUN SHEET // SETS")
+		return
+	var maximum := maxi(1, data.max_pieces())
+	lines.append("SET // %s  %s  %d/%d" % [
+		data.display_name.to_upper(), _progress_pips(have, maximum), have, maximum,
+	])
+	var active_tier: SetTier = null
+	var next_tier: SetTier = null
+	for tier: SetTier in data.sorted_tiers():
 		if tier == null:
 			continue
-		for term: String in tier.glossary_terms:
-			used[term] = true
-	if used.is_empty():
-		return
-	lines.append("")
-	lines.append("TERMS")
-	for term_value: Variant in used.keys():
-		var term: String = String(term_value)
-		var definition: String = String(data.glossary.get(term, ""))
-		if definition != "":
-			lines.append("• %s — %s" % [term, definition])
+		if have >= tier.required_count:
+			active_tier = tier
+		elif next_tier == null:
+			next_tier = tier
+	if active_tier != null:
+		lines.append("ACTIVE // %s" % active_tier.display_name.to_upper())
+	if next_tier != null:
+		lines.append("NEXT // %d PIECES · %s" % [
+			next_tier.required_count, next_tier.display_name.to_upper(),
+		])
+	lines.append("ARCHIVE // RUN SHEET // SETS")
 
 func _append_replacement_preview(lines: Array[String], candidate: ItemInstance) -> void:
 	if Global == null or Global.run_inventory == null or candidate == null or candidate.data == null:

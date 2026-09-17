@@ -1,6 +1,25 @@
 extends Resource
 class_name SaveData
 
+# Save-format versioning (added 2026-08-29). 0 = written before this field
+# existed. Bump CURRENT_SAVE_VERSION whenever a field's meaning or a default
+# changes, and branch on save_version in Global.apply_save.
+#
+# What this text-resource format imposes (see docs/audits/2026-08-28-save-
+# compatibility.md):
+# - Defaults are NOT written to disk, so changing an @export default silently
+#   rewrites every existing save. Add a new field, or migrate on save_version.
+# - Typed sub-resource properties (meta_stash, attempt_inventory, attempt_bag,
+#   attempt_vendor_bag, attempt_mod_stat_delta) load as null if their class
+#   changes. Keep those types frozen.
+# - Scripts and item .tres are referenced by res:// path with no uid. Renaming
+#   SaveData.gd, StashInventory.gd, ItemInstance.gd, Inventory.gd,
+#   BagInventory.gd, StatDelta.gd or anything under data/items/defs/ makes
+#   every save that references it unreadable.
+const CURRENT_SAVE_VERSION := 1
+@export var save_version: int = 0
+@export var game_version: String = ""
+
 @export var slot_index: int = 0
 @export var profile_name: String = "New Profile"
 @export var mortal_name: String = "The Arcanist"
@@ -32,6 +51,11 @@ class_name SaveData
 @export var meta_augment_levels: Dictionary = {}
 @export var meta_stash: StashInventory = null
 @export var meta_discovered_enemy_ids: Array[String] = []
+# Manifestation explainer cards already shown, as PREFIXED ids - "intro",
+# "noun:momentum", "pair:slipstream_foundry". One field rather than one per
+# card kind, so the next card to earn an explainer is a new string and not a
+# new save migration.
+@export var meta_seen_manifestation_cards: Array[String] = []
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.
@@ -73,6 +97,15 @@ class_name SaveData
 
 @export var attempt_major_choice_offer_ids: Array[String] = []  # Persist offered cards (anti-reroll)
 @export var attempt_major_choice_taken_ids: Array[String] = []  # Track uniques per attempt
+@export var attempt_doctrine_version: int = 0
+@export var attempt_pending_doctrine_stage: String = ""
+@export var attempt_doctrine_stage_ids: Dictionary = {}
+@export var attempt_doctrine_rules: Dictionary = {}
+@export var attempt_doctrine_events: Array[String] = []
+## V4 advancement tree run state; see AscensionLedger.fresh_state for the shape.
+@export var attempt_ascension: Dictionary = {}
+@export var attempt_witness_used_segment: int = 0
+@export var attempt_doctrine_threat_debt: float = 0.0
 @export var attempt_augment_levels: Dictionary = {}             # String -> int (resets on die-die)
 @export var attempt_mod_mutations: Dictionary = {}              # String -> Variant (run rules)
 @export var attempt_mod_stat_delta: StatDelta = null            # Additive stats for this attempt

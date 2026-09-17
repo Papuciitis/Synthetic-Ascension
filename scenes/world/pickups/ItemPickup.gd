@@ -23,8 +23,21 @@ class_name ItemPickup
 # If set, pickup uses this full instance (dropped from bag/equip) instead of item_id/amount
 var item_instance: ItemInstance = null
 
+const MAGNET_RADIUS: float = 110.0
+const MAGNET_SPEED_MAX: float = 420.0
+# Pickups far outside magnet range re-check the player distance at
+# MAGNET_IDLE_POLL_SEC instead of every frame: exploration loot never
+# expires, and hundreds of idle pickups each doing a group lookup and a
+# distance per frame was measurable process time.
+const MAGNET_IDLE_DISTANCE: float = MAGNET_RADIUS * 3.0
+const MAGNET_IDLE_POLL_SEC: float = 0.25
+
 var _pickup_ready: bool = false
 var _picked: bool = false
+## Spawn order, so the ground cap removes the oldest drop first.
+var ground_serial: int = 0
+var _magnet_cooldown: float = 0.0
+var _player_ref: Node2D = null
 
 
 func _ready() -> void:
@@ -54,6 +67,39 @@ func _ready() -> void:
 
 	_enable_pickup_later()
 	_expire_later()
+	ground_serial = GroundLootCap.next_serial()
+	add_to_group(GroundLootCap.ITEM_GROUP)
+	if not is_exploration_loot and not persistent_world_drop:
+		GroundLootCap.enforce(get_tree(), GroundLootCap.ITEM_GROUP, GroundLootCap.ITEM_CAP, self)
+
+
+func _process(delta: float) -> void:
+	# Loot magnet: enemy/world drops drift to the player at close range.
+	# Deliberate player drops (persistent_world_drop) stay where they were
+	# put. The close-range retry un-latches bag-full pickups once space
+	# frees up, instead of requiring the player to walk out and back in.
+	if _picked or not _pickup_ready or persistent_world_drop:
+		return
+	if _magnet_cooldown > 0.0:
+		_magnet_cooldown -= delta
+		return
+	if _player_ref == null or not is_instance_valid(_player_ref):
+		_player_ref = get_tree().get_first_node_in_group("player") as Node2D
+		if _player_ref == null:
+			_magnet_cooldown = MAGNET_IDLE_POLL_SEC
+			return
+	var distance: float = global_position.distance_to(_player_ref.global_position)
+	if distance > MAGNET_RADIUS:
+		if distance > MAGNET_IDLE_DISTANCE:
+			_magnet_cooldown = MAGNET_IDLE_POLL_SEC
+		return
+	var pull: float = 1.0 - distance / MAGNET_RADIUS
+	var speed: float = lerpf(60.0, MAGNET_SPEED_MAX, pull * pull)
+	global_position = global_position.move_toward(_player_ref.global_position, speed * delta)
+	if distance < 16.0:
+		_try_pickup()
+		if not _picked:
+			_magnet_cooldown = 1.5
 
 
 func _expire_later() -> void:
@@ -138,6 +184,24 @@ func _try_pickup() -> void:
 			queue_free()
 			return
 
+		# Same id + polarity already equipped -> feed the instance into the
+		# equipped copy (K6: merging is not container-local; bagging the
+		# duplicate here is how r0-in-bag / r1-equipped splits were born).
+		if slot_a >= 0 and slot_a < Inventory.SLOT_COUNT:
+			var equipped_a: ItemInstance = Global.run_inventory.get_at(slot_a) as ItemInstance
+			if equipped_a != null and equipped_a.data != null \
+			and not equipped_a.locked and not inst.locked \
+			and equipped_a.data.id == inst.data.id \
+			and int(equipped_a.polarity) == int(inst.polarity):
+				var rank_before_a: int = int(equipped_a.rarity)
+				var pct_before_a: float = equipped_a.active_pct()
+				if Global.run_inventory.add_or_feed(inst, origin):
+					_dbg(["[PICKUP INST] FED EQUIPPED", "slot=", slot_a])
+					_show_feed_toast(equipped_a, rank_before_a, pct_before_a)
+					_complete_secondary_objective()
+					queue_free()
+					return
+
 		# Otherwise, add the instance back into the bag (keeps its state)
 		_set_bag_origin_from_pickup_world()
 		var ok_inst: bool = Global.run_bag.add_instance(inst)
@@ -189,19 +253,35 @@ func _try_pickup() -> void:
 				_dbg(["[EQUIP NEW]", "slot=", slot, "inst_id=", equipped_inst.get_instance_id()])
 				consumed = true
 
-			# Same id + rarity + polarity -> feed roll into equipped item
+			# Same id + polarity -> feed roll into equipped item (any rarity:
+			# the merge math prices the gap; ground rolls are rank-0 material)
 			elif equipped2.data != null \
 			and not equipped2.locked \
 			and equipped2.data.id == item_data.id \
 			and equipped2.polarity == pol:
+				var fed_rank_before: int = int(equipped2.rarity)
+				var fed_pct_before: float = equipped2.active_pct()
 				Global.run_inventory.feed_roll_into(slot, roll_pct, origin)
 				_dbg(["[EQUIP FEED]", "slot=", slot, "inst_id=", equipped2.get_instance_id()])
+				_show_feed_toast(equipped2, fed_rank_before, fed_pct_before)
 				consumed = true
 
 		# If not consumed by equip/feed, put THIS SAME ROLL into the bag
 		if not consumed:
 			_set_bag_origin_from_pickup_world()
+			# One-shot capture: if the roll FEEDS an existing stack, show the
+			# compact progress toast (lambda captures copy scalars, so the
+			# array container carries the result out).
+			var fed_info: Array = []
+			var fed_cb := func(_idx: int, stack: ItemInstance, _roll: float, _upgraded: bool, old_r: int) -> void:
+				fed_info.append([stack, old_r])
+			Global.run_bag.stack_fed.connect(fed_cb, CONNECT_ONE_SHOT)
 			var ok: bool = Global.run_bag.add_roll(item_data, r, pol, roll_pct)
+			if Global.run_bag.stack_fed.is_connected(fed_cb):
+				Global.run_bag.stack_fed.disconnect(fed_cb)
+			if not fed_info.is_empty():
+				var fed_entry: Array = fed_info[0]
+				_show_feed_toast(fed_entry[0] as ItemInstance, int(fed_entry[1]))
 			if not ok:
 				_clear_bag_origin()
 				_dbg(["[BAG FULL] leave pickup on ground", "remaining=", (copies - i)])
@@ -216,6 +296,42 @@ func _try_pickup() -> void:
 	if sm != null:
 		sm.call("play_2d", &"pickup", global_position)
 	queue_free()
+
+
+func _show_feed_toast(fed: ItemInstance, rank_before: int, pct_before: float = NAN) -> void:
+	# K6 combat split: auto-feeds show one compact, short-lived line per
+	# item (successive feeds replace it); the full math lives in tooltips.
+	if fed == null or fed.data == null or BattleText == null:
+		return
+	BattleText.progress(
+		global_position, feed_toast_text(fed, rank_before, pct_before), int(fed.get_instance_id())
+	)
+
+
+## The toast line for a feed that already happened. `pct_before` is the worn
+## roll before it, when the caller had the equipped item in hand: under the
+## Corruption Engine a same-id pickup DEEPENS the worn curse
+## (ItemInstance.merge_from) and the stat pass reacts at once, so the line
+## says where the roll went instead of leaving a Max HP drop mid-combat to
+## read as a bug. A bag stack is not worn and passes nothing.
+static func feed_toast_text(fed: ItemInstance, rank_before: int, pct_before: float = NAN) -> String:
+	var meter_pct: int = int(round(clampf(float(fed.upgrade_meter), 0.0, 1.0) * 100.0))
+	var text: String
+	if int(fed.rarity) > rank_before:
+		text = "%s → R%d!" % [fed.data.display_name, int(fed.rarity)]
+	else:
+		text = "%s R%d %d%%" % [fed.data.display_name, int(fed.rarity), meter_pct]
+	if _engine_deepened(fed, pct_before):
+		text += " · deepened to −%d%%" % int(round(absf(fed.active_pct()) * 100.0))
+	return text
+
+
+static func _engine_deepened(fed: ItemInstance, pct_before: float) -> bool:
+	if is_nan(pct_before) or fed.polarity != ItemInstance.Polarity.NEG:
+		return false
+	if Global == null or not Global.permanent_augment_ids.has(&"augment_corruption_engine"):
+		return false
+	return fed.active_pct() < pct_before - 0.0001
 
 
 func _complete_secondary_objective() -> void:

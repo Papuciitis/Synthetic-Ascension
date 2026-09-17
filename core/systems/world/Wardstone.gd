@@ -26,13 +26,24 @@ signal activated(stone: Wardstone)
 
 const ATTUNE_BURST_SCENE := preload("res://assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.tscn")
 
+## How often an inactive wardstone re-asks whether the player is near enough for
+## the stability ring to show. The ring is a proximity tell, not an animation;
+## four looks a second is below the threshold at which "it appeared as I walked
+## up" reads as late.
+const STABILITY_POLL_INTERVAL: float = 0.25
+
 var _player_inside: bool = false
 var _player: Node2D = null
 var _capture: float = 0.0
 var _active: bool = false
 var _spin_t: float = 0.0
+## Whether the last proximity poll put the player inside the stability ring's
+## reveal range. _draw reads this rather than measuring again, so the ring can
+## only change on a poll - and a poll only repaints when it flips.
+var _stability_ring_near: bool = false
+var _stability_poll_t: float = 0.0
 var _enemy_index: Node = null
-var _pulse_targets: Array = []
+var _pulse_targets: Array[int] = []
 
 var _sfx_capture_tag: StringName = &"capture"
 
@@ -89,10 +100,15 @@ func _process(delta: float) -> void:
 		_set_idle_intensity(0.65)
 		return
 
+	_poll_stability_ring(delta)
+
 	if not _player_inside:
-		_capture = 0.0
+		if _capture != 0.0:
+			# The frame that clears the capture arc still paints: one last wipe,
+			# then the wardstone is a still image until something moves.
+			_capture = 0.0
+			queue_redraw()
 		_set_idle_intensity(0.28)
-		queue_redraw()
 		return
 
 	_capture = minf(_capture + delta, capture_time)
@@ -103,6 +119,24 @@ func _process(delta: float) -> void:
 
 	if _capture >= capture_time:
 		_activate()
+
+
+## The stability ring "shows when near", which used to mean measuring the moving
+## player every frame and repainting two arcs for an answer that changes twice a
+## segment. Coarse hysteresis instead: look four times a second, repaint on the
+## flip.
+func _poll_stability_ring(delta: float) -> void:
+	_stability_poll_t -= delta
+	if _stability_poll_t > 0.0:
+		return
+	_stability_poll_t = STABILITY_POLL_INTERVAL
+	var near := false
+	if _player != null and is_instance_valid(_player):
+		near = global_position.distance_to(_player.global_position) <= (stability_radius * 1.12)
+	if near == _stability_ring_near:
+		return
+	_stability_ring_near = near
+	queue_redraw()
 
 
 func _activate() -> void:
@@ -166,27 +200,16 @@ func restore_active() -> void:
 
 
 func _pulse() -> void:
-	var enemies: Array = []
-	if _enemy_index == null or not is_instance_valid(_enemy_index):
-		_enemy_index = get_node_or_null("/root/EnemyIndex")
-	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("gather_in_radius"):
-		_enemy_index.call("gather_in_radius", global_position, pulse_radius, _pulse_targets)
-		enemies = _pulse_targets
-	else:
-		enemies = get_tree().get_nodes_in_group("enemies")
-	for e in enemies:
-		var en := e as Node2D
-		if en == null or not is_instance_valid(en):
-			continue
-		var d: Vector2 = en.global_position - global_position
+	EnemyCombat.gather_in_radius(global_position, pulse_radius, _pulse_targets)
+	for handle in _pulse_targets:
+		var d: Vector2 = EnemyCombat.position_for_handle(handle) - global_position
 		var dist: float = d.length()
 		if dist <= 0.001 or dist > pulse_radius:
 			continue
 		var dir: Vector2 = d / dist
-		if e.has_method("apply_knockback"):
-			e.call("apply_knockback", dir * pulse_force)
-		if pulse_stun > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", pulse_stun)
+		EnemyCombat.apply_knockback(handle, dir * pulse_force)
+		if pulse_stun > 0.0:
+			EnemyCombat.apply_stun(handle, pulse_stun)
 
 
 func get_stability_radius() -> float:
@@ -248,9 +271,7 @@ func _set_idle_intensity(v: float) -> void:
 
 func _draw() -> void:
 	# In-world readability (capture ring + progress) + stability ring when relevant.
-	var show_stability: bool = _active
-	if (not show_stability) and _player != null:
-		show_stability = global_position.distance_to(_player.global_position) <= (stability_radius * 1.12)
+	var show_stability: bool = _active or _stability_ring_near
 
 	if show_stability:
 		var c := Color(0.25, 0.55, 0.70, 0.10) if not _active else Color(0.35, 0.88, 0.80, 0.16)

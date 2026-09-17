@@ -16,63 +16,29 @@ func setup(owner: EnemyActor, drops: EnemyDrops, bomber: EnemyBomber, splitter: 
 	_splitter = splitter
 
 func take_damage(amount: float, source: Node = null) -> void:
-	_apply_damage(amount, 1, source)
+	if _owner != null and is_instance_valid(_owner):
+		_owner.take_damage(amount, source)
 
 func apply_hit_ledger(ledger: HitLedger) -> void:
-	if ledger == null:
-		return
-	_apply_damage(ledger.total_raw_damage, maxi(1, ledger.hit_count), ledger.source)
+	if _owner != null and is_instance_valid(_owner):
+		_owner.apply_hit_ledger(ledger)
+
+func apply_damage_feedback(applied_damage: float, _source: Node, _payload: Variant) -> void:
 	if _owner == null or not is_instance_valid(_owner) or _owner.dead:
 		return
-	var combined_knockback := ledger.clamped_knockback()
-	if combined_knockback != Vector2.ZERO:
-		_owner.apply_knockback(combined_knockback)
-	if ledger.burn_stacks > 0 and ledger.burn_duration > 0.0 and ledger.burn_damage_per_tick_per_stack > 0.0:
-		var dot := _owner.get_node_or_null("BurnDot") as BurnDot
-		if dot == null:
-			dot = BurnDot.new()
-			dot.name = "BurnDot"
-			_owner.add_child(dot)
-		dot.setup(_owner, ledger.source, ledger.burn_stacks, ledger.burn_duration, ledger.burn_tick, ledger.burn_damage_per_tick_per_stack)
 
-func _apply_damage(amount: float, hit_count: int, source: Node = null) -> void:
-	if _owner == null:
+	# Hurt SFX (rate-limited so a single enemy doesn't spam).
+	var now := Time.get_ticks_msec()
+	if now - _last_hurt_sfx_ms >= HURT_SFX_COOLDOWN_MS and _owner.is_inside_tree() and applied_damage >= 0.5:
+		_last_hurt_sfx_ms = now
+		if SfxManager != null:
+			SfxManager.play_2d(&"enemy_hurt", _owner.global_position)
+
+
+func resolve_death(context: RefCounted) -> void:
+	if _owner == null or not is_instance_valid(_owner) or _owner.dead:
 		return
-	if _owner.dead:
-		return
-
-	var dmg := amount
-	# Boss tuning hooks (set by arenas via metadata):
-	# - damage_taken_mul: float (e.g. 0.55)
-	# - hit_cap_ratio: float (e.g. 0.08 means max 8% of max_hp per hit)
-	if _owner.has_meta("damage_taken_mul"):
-		dmg *= float(_owner.get_meta("damage_taken_mul"))
-	if _owner.has_meta("hit_cap_ratio"):
-		var cap := float(_owner.max_hp) * float(_owner.get_meta("hit_cap_ratio"))
-		if cap > 0.0:
-			# A batch is several already-resolved hits, so boss per-hit caps scale by
-			# hit_count instead of collapsing the entire frame into one capped hit.
-			dmg = min(dmg, cap * float(maxi(1, hit_count)))
-
-	_owner.hp -= dmg
-
-	if source != null:
-		RunEvents.damage_dealt.emit(source, dmg)
-
-	if _owner.hp > 0.0:
-		# Hurt SFX (rate-limited so a single enemy doesn't spam)
-		var now := Time.get_ticks_msec()
-		if now - _last_hurt_sfx_ms >= HURT_SFX_COOLDOWN_MS and _owner.is_inside_tree() and dmg >= 0.5:
-			_last_hurt_sfx_ms = now
-			if SfxManager != null:
-				SfxManager.play_2d(&"enemy_hurt", _owner.global_position)
-		return
-
-	_die(source)
-
-func _die(source: Node) -> void:
-	if _owner == null:
-		return
+	var source: Node = context.get("source") as Node if context != null else null
 
 	_owner.dead = true
 	# Release population budgets immediately; queue_free unregisters later and
@@ -92,6 +58,14 @@ func _die(source: Node) -> void:
 	var split_children: Array[EnemyActor] = []
 	if is_splitter and _splitter != null:
 		split_children = _splitter.spawn_splitters(_owner.is_elite)
+	elif _splitter != null and _owner.has_elite_modifier(EliteModifiers.SPLITTING):
+		# Roadmap §9 SPLITTING on a non-splitting archetype. The elite's own
+		# loot and reward roll below as for any elite; the copies carry none.
+		var copies := _splitter.spawn_modifier_split(EliteModifiers.SPLIT_COUNT)
+		if not copies.is_empty() and PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+			PerformanceFlightRecorder.record_counter_event(&"enemy", &"elite_split_spawned", copies.size(), {
+				"enemy_id": String(_owner.spec.id) if _owner.spec != null else "",
+			})
 
 	if root_split_item:
 		if split_children.is_empty():
@@ -99,6 +73,9 @@ func _die(source: Node) -> void:
 		else:
 			var heir_index: int = Global._rng.randi_range(0, split_children.size() - 1)
 			split_children[heir_index].set_meta("split_item_entitled", true)
+			# Rarity context must reflect the parent that QUALIFIED for the
+			# drop, not whichever small heir eventually dies holding it.
+			split_children[heir_index].set_meta("split_item_entitled_elite", _owner.is_elite)
 	elif inherited_split_item and _drops != null:
 		_drops.drop_entitled_item()
 
@@ -115,7 +92,24 @@ func _die(source: Node) -> void:
 		gain = Global._rng.randi_range(_owner.spec.follower_reward_min, _owner.spec.follower_reward_max)
 		if _owner.is_elite:
 			gain += _owner.spec.elite_follower_bonus
+	# Luck: witnesses of a lucky kill are extra impressed (mirrors the
+	# proxy-death path in EnemyCombatService).
+	if gain > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
+		gain += 1
+	# Cult of Personality: violence as recruitment seminar.
+	if gain > 0 and Global.permanent_augment_ids.has(&"augment_cult_of_personality"):
+		var cult_level: int = Global.get_augment_level(&"augment_cult_of_personality")
+		var cult_chance: float = 0.10 + 0.05 * float(cult_level - 1) + LuckResolver.extra_follower_chance(Global.run_luck)
+		if Global._rng.randf() < cult_chance:
+			gain += 1
 
+	# Belief earned during Overtime is worth less the longer you refuse to
+	# leave. See ThreatDirector.overtime_reward_multiplier().
+	var threat_director: Node = null
+	if _owner != null and is_instance_valid(_owner) and _owner.is_inside_tree():
+		threat_director = _owner.get_node_or_null("/root/ThreatDirector")
+	if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
+		gain = maxi(1, int(round(float(gain) * float(threat_director.call("overtime_reward_multiplier")))))
 	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
 
 	# Health pickups keep their existing per-body behavior. Item loot for a

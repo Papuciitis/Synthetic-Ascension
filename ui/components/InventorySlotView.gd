@@ -25,6 +25,7 @@ var _rarity_lbl: Label = null
 var _set_emblem: SetEmblem = null
 var _lock_badge: Label = null
 var _lock_border: Panel = null
+var _manifest_badge: ManifestBadge = null
 
 var _shown_rarity: int = 0
 
@@ -41,11 +42,16 @@ const ORANGE := Color(1.0, 0.55, 0.20, 0.90)
 const METER_POS := Color(0.25, 1.0, 1.0, 0.92)
 const METER_NEG := Color(1.0, 0.35, 0.55, 0.92)
 
+# The value label while the Inversion Lens is returning this slot's severity
+# as a bonus: the POS colour, because the number is one.
+const VALUE_RETURNED := Color(0.25, 1.0, 1.0, 1.0)
+
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_ensure_optional_ui()
 	_ensure_lock_badge()
+	_ensure_manifest_badge()
 	_ensure_lock_border()
 	_apply_text_style()
 	_apply_insets()
@@ -276,7 +282,9 @@ func set_item(inst: ItemInstance) -> void:
 	if inst == null or inst.data == null:
 		if icon != null: icon.texture = null
 		if overlay != null: overlay.color = Color(0, 0, 0, 0)
-		if value_label != null: value_label.text = _empty_hint()
+		if value_label != null:
+			value_label.text = _empty_hint()
+			value_label.remove_theme_color_override("font_color")
 		if count_label != null: count_label.text = ""
 		if _pol_tint != null: _pol_tint.color = Color(0, 0, 0, 0)
 		if _meter_bg != null: _meter_bg.visible = false
@@ -286,9 +294,15 @@ func set_item(inst: ItemInstance) -> void:
 			_set_emblem.configure(&"")
 		if _lock_badge != null: _lock_badge.visible = false
 		if _lock_border != null: _lock_border.visible = false
+		if _manifest_badge != null: _manifest_badge.visible = false
 		return
 
 	set_meta("item_instance", inst)
+	# Manifestation is identity, so it needs to read at a glance from the bar -
+	# the tooltip explains the rule, this only says "this one is not ordinary",
+	# and its colour says which noun it speaks about.
+	if _manifest_badge != null:
+		_manifest_badge.show_for_item(inst)
 	if _set_emblem != null:
 		_set_emblem.configure(StringName(inst.data.set_id))
 	if _lock_badge != null:
@@ -300,7 +314,16 @@ func set_item(inst: ItemInstance) -> void:
 		icon.texture = inst.data.icon
 
 	if value_label != null:
-		value_label.text = "%+.0f" % (inst.active_pct() * 100.0)
+		# Suppression never rewrites the stored roll, so a slot the Inversion
+		# Lens has switched off kept reading "-80" while contributing +44%.
+		# Print what the slot pays, the way the sheet's Lens line does.
+		var suppressing: BurdenSnapshot = _suppressing_snapshot(inst)
+		if suppressing != null:
+			value_label.text = "%+.0f" % (BurdenResolver.inverted_return(suppressing.suppressed_severity) * 100.0)
+			value_label.add_theme_color_override("font_color", VALUE_RETURNED)
+		else:
+			value_label.text = "%+.0f" % (inst.active_pct() * 100.0)
+			value_label.remove_theme_color_override("font_color")
 	if count_label != null:
 		count_label.text = "x%d" % int(inst.progress)
 
@@ -324,6 +347,23 @@ func set_item(inst: ItemInstance) -> void:
 		var end_col := (METER_POS if is_pos else METER_NEG)
 		_meter_fill.color = ORANGE.lerp(end_col, meter)
 		_meter_fill.anchor_right = meter
+
+## The burden snapshot when this slot's EQUIPPED instance is the one the
+## Inversion Lens is suppressing; null otherwise. Resolved here rather than
+## read from player.last_burden: the bar repaints on the same `changed` signal
+## the stat pass recomputes on and subscribes first (game.gd binds the HUD
+## before it connects the recompute), so the player's snapshot is one change
+## stale at paint time. Same resolver and same equipped-instance guard as the
+## tooltip's SUPPRESSED line, so a bag duplicate never claims the return.
+func _suppressing_snapshot(inst: ItemInstance) -> BurdenSnapshot:
+	if inst == null or int(inst.polarity) != int(ItemInstance.Polarity.NEG):
+		return null
+	if slot_index < 0 or slot_index >= Inventory.STAT_SLOT_COUNT:
+		return null
+	if Global == null or Global.run_inventory == null or Global.run_inventory.get_at(slot_index) != inst:
+		return null
+	var burden: BurdenSnapshot = BurdenResolver.resolve(Global.run_inventory, Global.permanent_augment_ids)
+	return burden if burden.is_suppressed(slot_index) else null
 
 func _rarity_color(r: int) -> Color:
 	if r <= -2: return Color(0.45, 0.0, 0.0, 1)
@@ -361,6 +401,15 @@ func _ensure_lock_badge() -> void:
 		content.add_child(_lock_badge)
 	_lock_badge.visible = false
 
+func _ensure_manifest_badge() -> void:
+	if content == null:
+		content = get_node_or_null("Content") as Control
+	if content == null:
+		return
+	# Directly under the set emblem, so the two never overlap.
+	_manifest_badge = ManifestBadge.attach(content, Control.PRESET_TOP_RIGHT, Rect2(-20, 22, 16, 14))
+
+
 func _ensure_lock_border() -> void:
 	if _lock_border != null:
 		return
@@ -375,10 +424,10 @@ func _ensure_lock_border() -> void:
 		style.bg_color = Color(0, 0, 0, 0)
 		style.border_color = Color(1.0, 0.72, 0.22, 0.95)
 		style.set_border_width_all(2)
-		style.corner_radius_top_left = 10
-		style.corner_radius_top_right = 10
-		style.corner_radius_bottom_left = 10
-		style.corner_radius_bottom_right = 10
+		style.corner_radius_top_left = 2
+		style.corner_radius_top_right = 2
+		style.corner_radius_bottom_left = 2
+		style.corner_radius_bottom_right = 2
 		_lock_border.add_theme_stylebox_override("panel", style)
 		add_child(_lock_border)
 	_lock_border.visible = false

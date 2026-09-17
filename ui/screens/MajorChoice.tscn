@@ -1,35 +1,46 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/MajorChoice.gd" id="1"]
 [ext_resource type="PackedScene" path="res://ui/screens/MajorChoiceCard.tscn" id="2"]
 
-[sub_resource type="StyleBoxFlat" id="StyleWindow"]
-bg_color = Color(0.04, 0.04, 0.04, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_size = 18
-shadow_offset = Vector2(0, 10)
-shadow_color = Color(0, 0, 0, 0.55)
-
-[sub_resource type="StyleBoxFlat" id="StyleDetails"]
-bg_color = Color(0.06, 0.06, 0.06, 0.62)
+[sub_resource type="StyleBoxFlat" id="WindowStyle"]
+bg_color = Color(0.025, 0.03, 0.025, 0.98)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.14, 0.14, 0.14, 1)
-corner_radius_top_left = 14
-corner_radius_top_right = 14
-corner_radius_bottom_right = 14
-corner_radius_bottom_left = 14
+border_color = Color(0.52, 0.35, 0.15, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_size = 14
+shadow_offset = Vector2(0, 8)
+shadow_color = Color(0, 0, 0, 0.72)
 
+[sub_resource type="StyleBoxFlat" id="ConfirmStyle"]
+bg_color = Color(0.20, 0.13, 0.055, 0.96)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.82, 0.55, 0.20, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxFlat" id="BackStyle"]
+bg_color = Color(0.055, 0.055, 0.045, 0.95)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.31, 0.28, 0.21, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [node name="MajorChoice" type="CanvasLayer"]
 script = ExtResource("1")
@@ -41,8 +52,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
-color = Color(0, 0, 0, 0.55)
+color = Color(0.005, 0.007, 0.005, 0.82)
 
 [node name="Center" type="CenterContainer" parent="."]
 anchors_preset = 15
@@ -52,59 +62,60 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Window" type="PanelContainer" parent="Center"]
-theme_override_styles/panel = SubResource("StyleWindow")
+custom_minimum_size = Vector2(1160, 0)
+theme_override_styles/panel = SubResource("WindowStyle")
 
 [node name="Margin" type="MarginContainer" parent="Center/Window"]
-theme_override_constants/margin_left = 28
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 28
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 30
 theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Center/Window/Margin"]
-theme_override_constants/separation = 16
+theme_override_constants/separation = 11
 
 [node name="Title" type="Label" parent="Center/Window/Margin/VBox"]
-theme_override_font_sizes/font_size = 28
-text = "Major Choice"
+theme_override_colors/font_color = Color(0.94, 0.82, 0.56, 1)
+theme_override_font_sizes/font_size = 26
+text = "ASCENSION DOCTRINE"
+horizontal_alignment = 1
 
-[node name="Hint" type="Label" parent="Center/Window/Margin/VBox"]
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 14
-modulate = Color(1, 1, 1, 0.82)
-text = "Choose one path modifier. Applies for this attempt."
+[node name="Stage" type="Label" parent="Center/Window/Margin/VBox"]
+theme_override_colors/font_color = Color(0.62, 0.57, 0.45, 1)
+theme_override_font_sizes/font_size = 12
+text = "METHOD // THE INSTRUMENT IS CHOSEN"
+horizontal_alignment = 1
+
+[node name="Instruction" type="Label" parent="Center/Window/Margin/VBox"]
+theme_override_colors/font_color = Color(0.80, 0.78, 0.70, 1)
+theme_override_font_sizes/font_size = 13
+text = "Examine each thesis. Every gift is coupled to an extraction."
+horizontal_alignment = 1
 
 [node name="Cards" type="HBoxContainer" parent="Center/Window/Margin/VBox"]
-theme_override_constants/separation = 22
+theme_override_constants/separation = 20
 
-[node name="DetailsPanel" type="PanelContainer" parent="Center/Window/Margin/VBox"]
-custom_minimum_size = Vector2(0, 80)
-theme_override_styles/panel = SubResource("StyleDetails")
-visible = false
+[node name="Warning" type="Label" parent="Center/Window/Margin/VBox"]
+theme_override_colors/font_color = Color(0.72, 0.48, 0.19, 1)
+theme_override_font_sizes/font_size = 11
+text = "SELECT A THESIS PLATE TO EXAMINE ITS SEAL"
+horizontal_alignment = 1
 
-[node name="Margin" type="MarginContainer" parent="Center/Window/Margin/VBox/DetailsPanel"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+[node name="Actions" type="HBoxContainer" parent="Center/Window/Margin/VBox"]
+alignment = 1
+theme_override_constants/separation = 10
 
-[node name="Details" type="Label" parent="Center/Window/Margin/VBox/DetailsPanel/Margin"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 13
-modulate = Color(1, 1, 1, 0.82)
-text = ""
+[node name="Back" type="Button" parent="Center/Window/Margin/VBox/Actions"]
+custom_minimum_size = Vector2(180, 38)
+theme_override_styles/normal = SubResource("BackStyle")
+theme_override_styles/hover = SubResource("BackStyle")
+theme_override_styles/pressed = SubResource("BackStyle")
+text = "CLEAR SELECTION"
 
-[node name="Foot" type="Label" parent="Center/Window/Margin/VBox"]
-autowrap_mode = 3
-theme_override_font_sizes/font_size = 12
-modulate = Color(1, 1, 1, 0.55)
-text = "Tip: Hover cards to read details. Your choice locks in immediately."
+[node name="Confirm" type="Button" parent="Center/Window/Margin/VBox/Actions"]
+custom_minimum_size = Vector2(280, 38)
+theme_override_styles/normal = SubResource("ConfirmStyle")
+theme_override_styles/hover = SubResource("ConfirmStyle")
+theme_override_styles/pressed = SubResource("ConfirmStyle")
+disabled = true
+text = "INSCRIBE DOCTRINE"

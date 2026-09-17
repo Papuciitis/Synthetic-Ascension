@@ -22,7 +22,7 @@ var _cover_target: Vector2 = Vector2.ZERO
 var _has_cover_target: bool = false
 
 # cached dt (so we can use EnemyNavigator without changing EnemyActor.gd signature)
-var _dt: float = 1.0 / 60.0
+var _dt: float = _default_dt()
 
 # detect "took damage" without extra hooks
 var _last_hp: float = -1.0
@@ -40,7 +40,7 @@ func setup(enemy: EnemyActor) -> void:
 	_cover_target = Vector2.ZERO
 	_has_cover_target = false
 
-	_dt = 1.0 / 60.0
+	_dt = _default_dt()
 	_last_hp = (-1.0 if _enemy == null else _enemy.hp)
 	_reposition_t = 0.0
 	_sep = null
@@ -311,3 +311,9 @@ func _movement_blocked(p: Vector2) -> bool:
 
 	var hits: Array = space.intersect_point(_point_params, 1)
 	return not hits.is_empty()
+
+
+## The pre-first-tick fallback follows the project's tick rate instead of
+## assuming 60 Hz (Godot hygiene audit 2026-08-28 §7, top-10 #10).
+static func _default_dt() -> float:
+	return 1.0 / maxf(1.0, float(Engine.physics_ticks_per_second))

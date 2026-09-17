@@ -69,7 +69,22 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		&"dangerous_alley", &"secondary_alley_cache": lane_w = 2
 		&"checkpoint", &"exit_approach", &"gate": lane_w = 7
 		&"primary_objective": lane_w = 6
-		_: lane_w = clampi(gen.district_lane_width_cells, 6, 8)
+		# REMAPPED, not clamped.
+		#
+		# Themes author 10-16 and this originally clamped to 6-8, so every main
+		# street collapsed to exactly 8 and boulevard districts were the same
+		# width as tight-lane ones. Widening the clamp to 14 fixed that and
+		# broke something worse: the donjon side regions are the road lane's
+		# leftovers, they are dropped below 10x10, and at lane_w 13-14 roughly
+		# HALF of all rows produce no carvable region at all - so half the
+		# chunks lost their buildings and became two wall lines flanking a road.
+		# That is the exact "routes drawn across a field" symptom the envelope
+		# change was fixing.
+		#
+		# Remapping preserves the ordering the themes are expressing while
+		# keeping every width inside the band that still leaves a carvable
+		# region on both sides.
+		_: lane_w = _remapped_lane_width(gen.district_lane_width_cells)
 	lane_w = clampi(lane_w, 2, cells - 6)
 
 	var plaza_size := clampi(gen.district_plaza_size_cells, 10, cells - 4)
@@ -363,20 +378,28 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			for wk2 in result.window_cells.keys():
 				window_cells[wk2] = true
 
-				if gap_cells.size() > 0:
-					door_gaps.append(gap_cells)
+			# Everything below is PER CARVED REGION, not per window cell. It used to
+			# be indented into the loop above, which meant a region with twenty
+			# windows built twenty identical overlapping IndoorVolume areas - twenty
+			# physics bodies and twenty loot/encounter state machines on one room -
+			# and appended the same door-gap array twenty times. Worse, a region with
+			# NO windows never reached `used_donjon = true`, so the fallback
+			# street-edge wall lines further down ran as well and stacked a second
+			# set of walls on top of the carved geometry.
+			if gap_cells.size() > 0:
+				door_gaps.append(gap_cells)
 
-				# Mark connected Donjon rooms as interiors so ambient spawns stay on
-				# streets until the player actually enters the structure.
-				if INDOOR_VOLUME_SCENE != null:
-					var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
-					if indoor_volume != null:
-						var global_tl: Vector2i = coord * cells + r.position
-						var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
-						indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
-						chunk.add_child(indoor_volume)
+			# Mark connected Donjon rooms as interiors so ambient spawns stay on
+			# streets until the player actually enters the structure.
+			if INDOOR_VOLUME_SCENE != null:
+				var indoor_volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
+				if indoor_volume != null:
+					var global_tl: Vector2i = coord * cells + r.position
+					var building_id: int = int(gen._mix_seed_int(base_seed, r.position.x * 101 + r.position.y * 307) & 0x7fffffff) + 1
+					indoor_volume.configure(global_tl, r.size, gen.cell_size_px, building_id, {"exploration_loot_enabled": false})
+					chunk.add_child(indoor_volume)
 
-				used_donjon = true
+			used_donjon = true
 
 
 
@@ -604,6 +627,14 @@ static func _add_connector_spawn_sockets(chunk: Node2D, conn_mask: int, lane_cx:
 		marker.add_to_group(&"enemy_spawn_socket")
 		marker.set_meta("spawn_socket_kind", &"street")
 		chunk.add_child(marker)
+
+
+## Authored 10-16 -> 6-9 cells. The top of the band is chosen so the leftover
+## side regions clear the carver's 10x10 minimum for every lane centre the
+## deterministic row/column hash can produce.
+static func _remapped_lane_width(authored_cells: int) -> int:
+	var t: float = clampf((float(authored_cells) - 10.0) / 6.0, 0.0, 1.0)
+	return clampi(int(round(lerpf(6.0, 9.0, t))), 6, 9)
 
 
 static func _lane_center_for_row(gen: ChunkGenImpl, row: int, cells: int) -> int:

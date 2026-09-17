@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="2"]
+
+[sub_resource type="Resource" id="effect_witness"]
+script = ExtResource("2")
+rule_key = &"manufactured_witness"
+value = true
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_apotheosis_manufactured_witness"
+title = "Manufactured Witness"
+description = "Spend belief itself to deny one death in every district."
+stage = &"apotheosis"
+offer_role = &"covenant"
+family_id = &"archive"
+gift_text = "Once per segment, lethal damage consumes 100 Followers, restores 50% health, and grants 2 seconds of invulnerability."
+price_text = "Each rescue adds 25 Threat for the rest of that segment."
+consequence_text = "The Run Sheet records WITNESS EXPENDED: salvation is an industrial transaction."
+build_tags = Array[StringName]([&"exploration"])
+effects = Array[Resource]([SubResource("effect_witness")])

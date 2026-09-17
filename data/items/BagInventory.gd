@@ -10,6 +10,10 @@ const SLOT_COUNT: int = 16
 # Fixed-size slots. Each slot holds one "stack project" (ItemInstance) or null.
 @export var slots: Array[ItemInstance] = []
 @export var debug_bag: bool = false
+# K6 duplicate consolidation/feeding is a PLAYER-bag behavior. Merchant-style
+# containers (the Hub vendor stock) must hold items inertly: selling an item
+# the vendor also stocks used to FEED the vendor's copy and rank it up.
+@export var auto_consolidate: bool = true
 # Extra slots granted by attempt modifiers / upgrades (persists in SaveData attempt snapshot)
 @export var extra_slots: int = 0
 
@@ -198,7 +202,8 @@ func get_best(n: int) -> Array[ItemInstance]:
 
 func _after_stack_changed() -> void:
 	# Merge any same-key stacks (eg r0 upgrading into existing r1)
-	_consolidate_duplicates()
+	if auto_consolidate:
+		_consolidate_duplicates()
 	_rebuild_index()
 	emit_changed()
 	_dbg_dump("after _after_stack_changed")
@@ -234,11 +239,28 @@ func _consolidate_duplicates() -> void:
 
 			var k := _key(s.data.id, s.rarity, s.polarity)
 
+			# One key can legitimately own SEVERAL stacks, because two stacks of
+			# the same item can carry different Manifestations and consolidation
+			# must never destroy one of the rules. Track every candidate: with a
+			# single remembered slot, a rival-ruled stack sitting first would
+			# stop same-ruled stacks from ever finding each other, and that ring
+			# could never rank up from its own duplicates.
 			if not seen.has(k):
-				seen[k] = i
+				seen[k] = ([] as Array[int])
+			var candidates: Array[int] = seen[k]
+
+			var keep_i: int = -1
+			for candidate in candidates:
+				var candidate_stack: ItemInstance = slots[candidate]
+				if candidate_stack == null or candidate_stack == s:
+					continue
+				if candidate_stack.can_absorb_manifestation_of(s):
+					keep_i = candidate
+					break
+			if keep_i < 0:
+				candidates.append(i)
 				continue
 
-			var keep_i: int = int(seen[k])
 			var keep: ItemInstance = slots[keep_i]
 
 			# Safety
@@ -252,7 +274,8 @@ func _consolidate_duplicates() -> void:
 				print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
 			stack_merged.emit(i, keep_i, s) # UI ghost feedback
 
-			_merge_into(keep, s)
+			if not _merge_into(keep, s):
+				continue
 			slots[i] = null
 
 			did_merge = true
@@ -293,9 +316,12 @@ func add_instance(inst: ItemInstance) -> bool:
 	# Locked incoming items are protected from duplicate feeding/cleanup and
 	# therefore always need their own slot. Unlocked items may only merge into
 	# unlocked destinations because _rebuild_index excludes locked stacks.
-	if not inst.locked and _index.has(key):
-		var idx: int = int(_index[key])
-		var dest: ItemInstance = slots[idx]
+	if not inst.locked and auto_consolidate and _index.has(key):
+		# _index remembers one representative per key; scan for a destination
+		# that can actually take this item's rule, or a rival-ruled stack in the
+		# first slot sends every same-ruled duplicate to a fresh slot instead.
+		var idx: int = _find_absorbing_slot(key, inst)
+		var dest: ItemInstance = slots[idx] if idx >= 0 else null
 
 		if dest == inst:
 			_dbg_dump("after add_instance (dest==inst)")
@@ -304,7 +330,8 @@ func add_instance(inst: ItemInstance) -> bool:
 		if dest != null:
 			var old_rarity: int = int(dest.rarity)
 
-			_merge_into(dest, inst) # consumes inst into dest
+			if not _merge_into(dest, inst): # consumes inst into dest
+				return _place_in_empty_slot(inst)
 			_after_stack_changed()
 
 			var upgraded: bool = (int(dest.rarity) != old_rarity)
@@ -320,6 +347,10 @@ func add_instance(inst: ItemInstance) -> bool:
 			return true
 
 	# Need new slot
+	return _place_in_empty_slot(inst)
+
+
+func _place_in_empty_slot(inst: ItemInstance) -> bool:
 	var empty: int = first_empty_slot()
 	if empty == -1:
 		return false
@@ -335,9 +366,24 @@ func add_instance(inst: ItemInstance) -> bool:
 	return true
 
 
-func _merge_into(dest: ItemInstance, src: ItemInstance) -> void:
-	if dest != null:
-		dest.merge_from(src)
+func _find_absorbing_slot(key: String, incoming: ItemInstance) -> int:
+	for i in range(slots.size()):
+		var candidate: ItemInstance = slots[i]
+		if candidate == null or candidate.data == null or candidate.locked:
+			continue
+		if candidate == incoming:
+			return i
+		if _key(candidate.data.id, candidate.rarity, candidate.polarity) != key:
+			continue
+		if candidate.can_absorb_manifestation_of(incoming):
+			return i
+	return -1
+
+
+func _merge_into(dest: ItemInstance, src: ItemInstance) -> bool:
+	if dest == null:
+		return false
+	return dest.merge_from(src)
 
 
 func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) -> bool:
@@ -349,21 +395,23 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 
 	var key := _key(item_data.id, rarity, polarity)
 
-	# Existing stack? -> FEED
-	if _index.has(key):
+	# Existing stack? -> FEED through the one real merge path. A
+	# higher-rarity incoming becomes the mathematical destination via
+	# merge_from's auto-swap (the old code overwrote stack.rarity for
+	# free — a zero-mass rank promotion).
+	if auto_consolidate and _index.has(key):
 		var idx: int = int(_index[key])
 		var stack: ItemInstance = slots[idx]
 		if stack != null:
 			var old_r: int = int(stack.rarity)
 
-			# If future systems pass a higher rarity roll, carry it into the existing stack.
-			if int(rarity) > int(stack.rarity):
-				stack.rarity = int(rarity)
-				stack._recompute_flat_mods()
 			if debug_bag:
 				print("[BagInventory] FEED roll into slot=", idx, " id=", item_data.id, " r=", rarity, " pol=", polarity, " roll=", roll_pct)
 
-			stack.feed_roll(roll_pct)
+			# Fabricated merge material: never rolls a Manifestation of its
+			# own, so it always feeds whatever rule the stack already has.
+			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct, false)
+			stack.merge_from(incoming)
 			var upgraded: bool = int(stack.rarity) > old_r
 
 			_after_stack_changed()

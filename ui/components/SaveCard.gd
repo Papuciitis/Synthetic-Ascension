@@ -4,12 +4,12 @@ signal pressed
 signal delete_requested
 signal rename_requested
 
-@export var base_bg := Color(0.18, 0.18, 0.18)
-@export var base_border := Color(0.10, 0.10, 0.10)
-@export var hover_border := Color(1.0, 0.55, 0.20, 1.0)
-@export var selected_border := Color(1.0, 0.55, 0.20, 1.0)
+@export var base_bg := Color(0.068, 0.061, 0.054, 0.97)
+@export var base_border := Color(0.34, 0.27, 0.20, 0.9)
+@export var hover_border := Color(0.82, 0.43, 0.17, 1.0)
+@export var selected_border := Color(0.94, 0.50, 0.18, 1.0)
 
-@export var corner_radius := 14
+@export var corner_radius := 3
 @export var border_width := 2
 
 @export var hover_scale: float = 1.02
@@ -130,8 +130,24 @@ func set_selected(v: bool) -> void:
 	_update_visuals()
 
 
-func set_slot_data(slot: int, save: SaveData) -> void:
+func set_slot_data(slot: int, save: SaveData, unreadable: bool = false) -> void:
 	_has_save = (save != null)
+
+	if not _has_save and unreadable:
+		# The files exist but SaveManager could not parse them. Presenting this
+		# as an empty slot invited a click that overwrote the last good backup.
+		name_label.text = "UNREADABLE SAVE"
+		meta_label.text = "Delete to reuse this slot"
+		stats_label.text = ""
+		details_label.text = "SLOT %d\n\nThe save files exist but could not be opened.\nDelete the slot to start again." % slot
+		details_panel.visible = false
+		btn_delete.disabled = false
+		btn_rename.disabled = true
+
+		buttons_box.visible = true
+		buttons_box.mouse_filter = Control.MOUSE_FILTER_PASS
+		_update_visuals(true)
+		return
 
 	if not _has_save:
 		name_label.text = "EMPTY SLOT"
@@ -240,15 +256,15 @@ func _build_styles() -> void:
 	_card_style.set_border_width_all(border_width)
 	_card_style.border_color = base_border
 	_card_style.bg_color = base_bg
-	_card_style.shadow_size = 12
-	_card_style.shadow_offset = Vector2(0, 8)
+	_card_style.shadow_size = 7
+	_card_style.shadow_offset = Vector2(0, 5)
 	_card_style.shadow_color = Color(0, 0, 0, 0.34)
 	card_panel.add_theme_stylebox_override("panel", _card_style)
 
 	_bottom_style = StyleBoxFlat.new()
 	_bottom_style.bg_color = Color(0, 0, 0, 0.60)
 	_bottom_style.set_border_width_all(2)
-	_bottom_style.border_color = Color(0.12, 0.12, 0.12, 1)
+	_bottom_style.border_color = Color(0.34, 0.27, 0.20, 0.9)
 	# This is an attached footer, not a second card floating over the preview.
 	_bottom_style.corner_radius_top_left = 0
 	_bottom_style.corner_radius_top_right = 0

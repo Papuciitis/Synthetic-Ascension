@@ -22,9 +22,10 @@ func cast() -> bool:
 	if projectile_scene == null:
 		return false
 
-	var target := _nearest_enemy()
-	if target == null:
+	var target_handle := _nearest_enemy()
+	if target_handle == EnemyWorldTypes.INVALID_HANDLE:
 		return false
+	var target_position := EnemyCombat.position_for_handle(target_handle)
 
 	var pm := get_node_or_null("/root/PoolManager")
 	var p: Node = null
@@ -43,7 +44,7 @@ func cast() -> bool:
 		(p as Node2D).global_position = caster.global_position
 
 	# direction
-	var dir := (target.global_position - caster.global_position).normalized()
+	var dir := (target_position - caster.global_position).normalized()
 
 	# velocity (your projectile seems to use 'velocity')
 	if p.has_method("set"):
@@ -67,25 +68,7 @@ func cast() -> bool:
 
 @export var target_search_radius: float = 1600.0
 
-func _nearest_enemy() -> Node2D:
-	var ei := get_node_or_null("/root/EnemyIndex")
-	if ei != null and is_instance_valid(ei) and ei.has_method("nearest_enemy"):
-		# A bounded radius: anything beyond ~a screen cannot meaningfully be a
-		# missile target, and unbounded radii force worst-case index scans.
-		return ei.call("nearest_enemy", caster.global_position, target_search_radius, null) as Node2D
-
-	# fallback (slow)
-	var enemies := get_tree().get_nodes_in_group("enemies")
-	var best: Node2D = null
-	var best_d := INF
-
-	for e in enemies:
-		var n := e as Node2D
-		if n == null or not is_instance_valid(n):
-			continue
-		var d := caster.global_position.distance_squared_to(n.global_position)
-		if d < best_d:
-			best_d = d
-			best = n
-
-	return best
+func _nearest_enemy() -> int:
+	if caster == null or not is_instance_valid(caster):
+		return EnemyWorldTypes.INVALID_HANDLE
+	return EnemyCombat.nearest_enemy(caster.global_position, target_search_radius)

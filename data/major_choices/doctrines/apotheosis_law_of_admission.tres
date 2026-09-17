@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="2"]
+
+[sub_resource type="Resource" id="effect_seals"]
+script = ExtResource("2")
+rule_key = &"rite_initial_seals"
+value = 1
+
+[sub_resource type="Resource" id="effect_bursts"]
+script = ExtResource("2")
+rule_key = &"rite_burst_count_mul"
+value = 1.5
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_apotheosis_law_of_admission"
+title = "Law of Admission"
+description = "Rewrite every threshold so the Rite recognizes you before you arrive."
+stage = &"apotheosis"
+offer_role = &"transfigure"
+family_id = &"vessel"
+gift_text = "Every Exit Rite begins with its first third permanently sealed."
+price_text = "Every scripted Rite burst contains 50% more enemies, rounded up."
+consequence_text = "The archived first pulse is already spent; divinity receives no free repetition."
+effects = Array[Resource]([SubResource("effect_seals"), SubResource("effect_bursts")])

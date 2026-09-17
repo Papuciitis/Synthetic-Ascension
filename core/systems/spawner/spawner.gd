@@ -30,12 +30,23 @@ class_name EnemySpawner
 # Pre-fill pools at segment start so the first spawn waves reuse instead of
 # paying scene.instantiate() during gameplay.
 @export_range(0, 32, 1) var pool_warm_per_scene: int = 6
+# Warm-up instantiation budget per frame: pool construction spreads across
+# the first second of a segment instead of stalling the scene-change frame
+# (measured 436ms process spike warming 12 scenes x 6 instances inline).
+const POOL_WARM_FRAME_BUDGET_USEC := 2500
 # Hard bound on live elites: promotion chance saturates at high threat and an
 # uncapped elite population defeats pooling and the full-simulation budget.
 @export_range(0, 128, 1) var max_concurrent_elites: int = 24
 # Cap on _spawn_one calls per tick; the overflow carries to later ticks so a
 # saturated director cannot construct a whole batch in a single frame.
 @export_range(1, 16, 1) var max_spawn_batch_per_tick: int = 4
+
+@export_group("Exit Rite Composition")
+# Random ambient pressure is already near the process-cost knee by 80 live
+# enemies. While the Rite is channelled, authored specialists carry the siege;
+# ambient actors already present stay in the fight, but their cap and refill are
+# bounded so the circle does not become an unreadable melee carpet.
+@export_range(0.10, 1.0, 0.05) var rite_ambient_cap_ratio: float = 0.45
 
 
 @export_group("Boss Suppression (nearby boss/miniboss)")
@@ -46,9 +57,19 @@ class_name EnemySpawner
 
 @export_group("Culling (prevent spawner dead)")
 @export var cull_enabled: bool = true
-@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 0.72
+
+# Don't start deleting ambient enemies merely because we're moderately full.
+# 0.90 means a 220-enemy cap starts pressure culling at ~198 enemies.
+@export_range(0.50, 1.00, 0.01) var cull_threshold_ratio: float = 0.90
+
 @export var cull_interval: float = 0.75
-@export var cull_max_per_tick: int = 40
+
+# Never retire giant batches in one frame.
+@export_range(1, 32, 1) var cull_max_per_tick: int = 8
+
+# After a cull, don't immediately refill the slots we just freed.
+@export_range(0.0, 3.0, 0.05) var cull_refill_grace: float = 0.90
+
 @export_range(1, 8, 1) var cull_keep_chunks: int = 2
 @export var cull_distance_px_fallback: float = 3600.0
 
@@ -66,7 +87,16 @@ var _timer: Timer = null
 var _elapsed: float = 0.0
 var _ei: Node = null
 var _spawn_filter: Node = null
+# Authored per-segment bounds (the segment_spawn_filter group, e.g.
+# Level1Builder). Kept separate from _spawn_filter: that one is the debug
+# autoload and is never null, so sharing the variable meant the authored
+# filter was never consulted and enemies could spawn outside the map.
+var _authored_spawn_filter: Node = null
 var _scene_enemy_ids: Dictionary = {}
+# _spawn_one() runs on every spawn tick, so both "nothing to spawn" reports warn
+# once per spawner instead of once per tick.
+var _warned_no_spawn_source: bool = false
+var _warned_no_active_entry: bool = false
 var _segment1_stage: int = -1
 var _spawn_pause_left: float = 0.0
 var _authored_wave_running: bool = false
@@ -78,12 +108,21 @@ var _pending_spawn_by_scene: Dictionary = {}
 var _wardstones: Array = []
 var _wardstone_refresh_t: float = 0.0
 var _cull_cd: float = 0.0
+var _cull_refill_left: float = 0.0
 var _maintenance_cd: float = 0.0
 var _stale_samples: Dictionary = {} # enemy id -> {pos: Vector2, still: float}
 var _spawn_geometry_refresh_t: float = 0.0
 var _spawn_sockets: Array = []
 var _indoor_volumes: Array = []
 var _cull_counts: Dictionary = {}
+
+var _pool_warm_queue: Array[PackedScene] = []
+# Forced spawns drain in per-frame batches: entering ~100 bodies into the
+# broadphase in one physics step measured as a 240-300ms physics spike.
+const FORCE_SPAWN_PER_FRAME := 12
+var _force_spawn_queue: int = 0
+var _rite_pressure_active: bool = false
+
 
 func _ready() -> void:
 	add_to_group("enemy_spawner")
@@ -105,9 +144,12 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_elapsed += delta
+	_drain_pool_warm_queue()
+	_drain_force_spawn_queue()
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
+	_cull_refill_left = maxf(_cull_refill_left - delta, 0.0)
 	_maintenance_cd = maxf(_maintenance_cd - delta, 0.0)
 	_spawn_geometry_refresh_t = maxf(_spawn_geometry_refresh_t - delta, 0.0)
 	if _ei == null or not is_instance_valid(_ei):
@@ -161,13 +203,33 @@ func _on_tick() -> void:
 		cap_total = maxi(8, int(floor(float(cap_total) * boss_max_alive_mul)))
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	var threshold := (
+		ceili(float(cap_total) * cull_threshold_ratio)
+		if cap_total > 0
+		else 2147483647
+	)
 	if cap_total > 0 and alive >= threshold:
-		_maybe_cull(cap_total, alive)
-		alive = _alive_total()
-		if alive + _pending_spawn_total >= cap_total:
+		var culled := _maybe_cull(
+			cap_total,
+			alive
+		)
+		# Critical:
+		# Don't delete enemies and create replacements during the same tick.
+		if culled > 0:
 			return
-	elif cap_total > 0 and alive + _pending_spawn_total >= cap_total:
+		alive = _alive_total()
+	# Existing ambient enemies remain and distant excess can be retired above,
+	# but only authored beat members may enter while the player channels.
+	if not _ambient_spawning_allowed():
+		return
+	# A recent distance/stale cleanup opened capacity deliberately.
+	# Give the world some time before the director consumes it again.
+	if _cull_refill_left > 0.0:
+		return
+	if (
+		cap_total > 0
+		and alive + _pending_spawn_total >= cap_total
+	):
 		return
 
 	# batch scaling
@@ -212,7 +274,61 @@ func _is_boss_near_player() -> bool:
 
 	return false
 
-func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
+func debug_force_spawn(count: int) -> Dictionary:
+	# Dev overlay: fill the population immediately, bypassing spawn pacing
+	# (timer interval, batch budget, cull-refill grace) while still honoring
+	# the effective alive cap, spawn filters, and per-type caps so forced
+	# populations stay comparable to director-driven ones. The director keeps
+	# the population pinned near the cap during a run, so the result carries
+	# alive/cap for the overlay to explain a zero instead of just showing it.
+	var immediate := _force_spawn_batch(mini(count, FORCE_SPAWN_PER_FRAME))
+	var queued := 0
+	if immediate > 0 and count > FORCE_SPAWN_PER_FRAME:
+		queued = count - FORCE_SPAWN_PER_FRAME
+		_force_spawn_queue += queued
+	return {
+		"spawned": immediate,
+		"queued": queued,
+		"alive": _alive_total(),
+		"pending": _pending_spawn_total,
+		"cap": _current_alive_cap(),
+	}
+
+
+func _force_spawn_batch(count: int) -> int:
+	var minutes: float = _elapsed / 60.0
+	var spawned_total := 0
+	# Weighted rolls can land on an entry whose type cap is full and return 0;
+	# retry a bounded number of times instead of treating that as exhaustion.
+	var attempts := maxi(count * 4, count + 8)
+	while spawned_total < count and attempts > 0:
+		attempts -= 1
+		var cap_total: int = _current_alive_cap()
+		var remaining: int = _remaining_total_capacity(cap_total, _alive_total())
+		if remaining <= 0:
+			break
+		spawned_total += _spawn_one(
+			minutes,
+			mini(remaining, count - spawned_total)
+		)
+	return spawned_total
+
+
+func _drain_force_spawn_queue() -> void:
+	if _force_spawn_queue <= 0:
+		return
+	var batch := mini(_force_spawn_queue, FORCE_SPAWN_PER_FRAME)
+	if _force_spawn_batch(batch) <= 0:
+		# Cap or filters block everything; retrying forever is pointless.
+		_force_spawn_queue = 0
+		return
+	_force_spawn_queue -= batch
+
+
+## `forced_pos` places the instances instead of ringing them around the
+## player; `out_nodes` receives what was spawned. Both default to the old
+## behaviour.
+func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Vector2 = Vector2.INF, out_nodes: Array = []) -> int:
 	if total_capacity <= 0:
 		return 0
 	var entry: EnemySpawnEntry = null
@@ -242,7 +358,7 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
 		scene_to_spawn = enemy_scene
 
 	if scene_to_spawn == null:
-		push_warning("[Spawner] No enemy scene assigned (spawn_table empty + enemy_scene null).")
+		_report_missing_spawn_scene()
 		return 0
 
 	var enemy_id := _enemy_id_for_scene(scene_to_spawn)
@@ -270,8 +386,10 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647) -> int:
 	for _j in range(amount):
 		if per_type_cap > 0 and _alive_count_for_scene(scene_to_spawn) + int(_pending_spawn_by_scene.get(scene_path, 0)) >= per_type_cap:
 			break
-		if _spawn_instance(scene_to_spawn, minutes, entry_elite):
+		var spawned_node := _spawn_instance_node(scene_to_spawn, minutes, entry_elite, forced_pos)
+		if spawned_node != null:
 			spawned_count += 1
+			out_nodes.append(spawned_node)
 
 	return spawned_count
 
@@ -313,6 +431,16 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 		e2d.global_position = pos
 	if use_pool and _ei != null and _ei.has_method("update_enemy"):
 		_ei.call("update_enemy", e)
+		# A reused record was re-adopted at its old death position before the
+		# spawn position was assigned above; without a snapshot reset the
+		# straddling previous-position renders one stale frame if the handle
+		# demotes to data-only before its next position write.
+		var world := get_node_or_null("/root/EnemyWorld")
+		if world != null and world.has_method("handle_for_actor"):
+			var handle := int(world.call("handle_for_actor", e))
+			# INVALID_HANDLE is 0 in this build.
+			if handle != 0 and world.has_method("reset_interpolation"):
+				world.call("reset_interpolation", handle)
 	if special_kind != &"":
 		e.set_meta("special_spawn_kind", special_kind)
 
@@ -457,10 +585,10 @@ func _pick_socket_spawn_pos() -> Vector2:
 
 func _is_spawn_position_valid(pos: Vector2) -> bool:
 	# Handcrafted segments may provide authored playable bounds.
-	if _spawn_filter == null or not is_instance_valid(_spawn_filter):
-		_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
-	if _spawn_filter != null and _spawn_filter.has_method("is_spawn_position_allowed"):
-		if not bool(_spawn_filter.call("is_spawn_position_allowed", pos)):
+	if _authored_spawn_filter == null or not is_instance_valid(_authored_spawn_filter):
+		_authored_spawn_filter = get_tree().get_first_node_in_group(&"segment_spawn_filter")
+	if _authored_spawn_filter != null and _authored_spawn_filter.has_method("is_spawn_position_allowed"):
+		if not bool(_authored_spawn_filter.call("is_spawn_position_allowed", pos)):
 			return false
 	if _is_in_wardstone_field(pos):
 		return false
@@ -475,6 +603,8 @@ func _is_spawn_position_valid(pos: Vector2) -> bool:
 			continue
 		var volume := volume_variant as Node
 		if volume == null or not volume.is_inside_tree():
+			continue
+		if not bool(volume.get("ambient_spawn_excluded")):
 			continue
 		if volume.has_method("contains_world_point") and bool(volume.call("contains_world_point", pos)):
 			return false
@@ -545,28 +675,77 @@ func _is_in_wardstone_field(pos: Vector2) -> bool:
 func spawn_burst(extra: int) -> void:
 	if extra <= 0:
 		return
+	var gate := _ambient_burst_gate()
+	if gate.x < 0:
+		return
+	var minutes: float = _elapsed / 60.0
+	for _i in range(extra):
+		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y)
+		if remaining_total <= 0:
+			return
+		_spawn_one(minutes, remaining_total)
+
+
+## Ruling 2026-09-06: a source that lives somewhere - a breach - pours its
+## enemies THERE, not in a ring around the player. They are ordinary ambient
+## enemies: pooled, counted under the ambient cap, distance-culled like any
+## other. The caller bounds its own local population; this refuses only what
+## the world cap refuses. Returns the nodes it spawned so the caller can count
+## them. `spread_px` scatters them so a burst is a group, not a stack.
+func spawn_burst_at(position: Vector2, count: int, spread_px: float = 0.0) -> Array:
+	var out: Array = []
+	if count <= 0:
+		return out
+	var gate := _ambient_burst_gate()
+	if gate.x < 0:
+		return out
+	var minutes: float = _elapsed / 60.0
+	for _i in range(count):
+		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y + out.size())
+		if remaining_total <= 0:
+			break
+		var pos := position
+		if spread_px > 0.0:
+			pos += Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * (Global._rng.randf() * spread_px)
+		_spawn_one(minutes, 1, pos, out)
+	return out
+
+
+## The gate every ambient burst passes: enabled, not inside a Rite channel
+## (which reroutes to the specialists), a valid player, then the cull-and-
+## refill dance at the cap. Returns (alive cap, alive now), or x = -1 when
+## nothing may spawn on this call.
+func _ambient_burst_gate() -> Vector2i:
 	if not spawning_enabled:
-		return
+		return Vector2i(-1, 0)
+	if not _ambient_spawning_allowed():
+		_request_rite_reinforcement()
+		return Vector2i(-1, 0)
 	if _player == null or not is_instance_valid(_player):
-		return
+		return Vector2i(-1, 0)
 
 	# cap alive enemies (table overrides if present)
 	var cap_total: int = _current_alive_cap()
 
 	var alive: int = _alive_total()
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio) if cap_total > 0 else 2147483647
+	var threshold := (
+		ceili(float(cap_total) * cull_threshold_ratio)
+		if cap_total > 0
+		else 2147483647
+	)
 	if cap_total > 0 and alive >= threshold:
-		_maybe_cull(cap_total, alive)
+		var culled := _maybe_cull(
+			cap_total,
+			alive
+		)
+		if culled > 0:
+			return Vector2i(-1, 0)
 		alive = _alive_total()
-		if alive >= cap_total:
-			return
-
-	var minutes: float = _elapsed / 60.0
-	for _i in range(extra):
-		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
-		if remaining_total <= 0:
-			return
-		_spawn_one(minutes, remaining_total)
+	if _cull_refill_left > 0.0:
+		return Vector2i(-1, 0)
+	if cap_total > 0 and alive >= cap_total:
+		return Vector2i(-1, 0)
+	return Vector2i(cap_total, alive)
 
 func set_spawning_enabled(value: bool) -> void:
 	spawning_enabled = value
@@ -591,6 +770,71 @@ func suspend_spawning(seconds: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left, maxf(0.0, seconds))
 	reset_spawn_clock()
 
+
+func set_rite_pressure_active(active: bool) -> void:
+	if _rite_pressure_active == active:
+		return
+	_rite_pressure_active = active
+	if active:
+		# Let the next spawn tick apply the smaller cap immediately rather than
+		# waiting on a cull cooldown inherited from ordinary play.
+		_cull_cd = 0.0
+	reset_spawn_clock()
+
+
+func _ambient_spawning_allowed() -> bool:
+	return not _rite_pressure_active
+
+
+func _request_rite_reinforcement() -> void:
+	var director := get_tree().get_first_node_in_group(&"encounter_director")
+	if director != null and director.has_method("request_rite_reinforcement"):
+		director.call("request_rite_reinforcement")
+
+## Encounter beats (EncounterDirector): spawn one member of an authored
+## formation at an exact position. Beat members are specials - protected from
+## culling and counted outside the ambient cap - so a formation stays a
+## formation until the player answers it. `modifier_ids` names the elite a
+## beat wants (plan §2.4 Hunter: fast + vampiric) instead of leaving it to the
+## phase pick; a non-empty list implies elite.
+func spawn_beat_member(
+	scene_path: String,
+	spawn_position: Vector2,
+	elite: bool = false,
+	modifier_ids: Array[StringName] = [],
+) -> Node:
+	if not spawning_enabled:
+		return null
+	var scene := load(scene_path) as PackedScene
+	if scene == null:
+		push_warning("[Spawner] beat member scene missing: %s" % scene_path)
+		return null
+	if _ei != null and _ei.has_method("try_reserve_special"):
+		if int(_ei.call("try_reserve_special", &"beat", 1)) <= 0:
+			return null
+	var node := _spawn_instance_node(scene, _elapsed / 60.0, 0.0, spawn_position, &"beat")
+	if node == null:
+		if _ei != null and _ei.has_method("release_special"):
+			_ei.call("release_special", &"beat", 1)
+		return null
+	if _ei != null and _ei.has_method("commit_special"):
+		_ei.call("commit_special", node, &"beat")
+	if not modifier_ids.is_empty() and node.has_method("apply_elite_modifiers"):
+		node.call_deferred("apply_elite_modifiers", modifier_ids)
+	elif elite and node.has_method("make_elite"):
+		node.call_deferred("make_elite")
+	return node
+
+
+func is_beat_position_valid(spawn_position: Vector2) -> bool:
+	_refresh_spawn_geometry_cache()
+	return _is_spawn_position_valid(spawn_position)
+
+
+func is_tutorial_stage() -> bool:
+	return _segment1_stage >= 0
+
+
 func queue_authored_wave(count: int, spacing: float = 0.7, delay: float = 1.5) -> void:
 	if _authored_wave_running or count <= 0:
 		return
@@ -600,6 +844,11 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 	_authored_wave_running = true
 	if delay > 0.0:
 		await get_tree().create_timer(delay, false).timeout
+		# A segment can end, or the scene change, while this wave is waiting.
+		# Resuming would spawn into a spawner that has left the tree.
+		if not is_inside_tree():
+			_authored_wave_running = false
+			return
 	for _i in range(count):
 		if not spawning_enabled:
 			break
@@ -608,6 +857,9 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 			_spawn_one(_elapsed / 60.0, remaining_total)
 		if spacing > 0.0:
 			await get_tree().create_timer(spacing, false).timeout
+			if not is_inside_tree():
+				_authored_wave_running = false
+				return
 	_authored_wave_running = false
 
 func _tutorial_settings() -> Dictionary:
@@ -617,11 +869,16 @@ func _tutorial_settings() -> Dictionary:
 
 func _current_alive_cap() -> int:
 	var cfg := _tutorial_settings()
+	var cap_total: int
 	if not cfg.is_empty():
-		return _effective_total_cap(maxi(0, int(cfg.get("cap", 0))))
-	if spawn_table != null and spawn_table.has_method("get_max_alive_total"):
-		return _effective_total_cap(int(spawn_table.call("get_max_alive_total")))
-	return _effective_total_cap(max_alive)
+		cap_total = _effective_total_cap(maxi(0, int(cfg.get("cap", 0))))
+	elif spawn_table != null and spawn_table.has_method("get_max_alive_total"):
+		cap_total = _effective_total_cap(int(spawn_table.call("get_max_alive_total")))
+	else:
+		cap_total = _effective_total_cap(max_alive)
+	if _rite_pressure_active and cap_total > 0:
+		return maxi(1, floori(float(cap_total) * rite_ambient_cap_ratio))
+	return cap_total
 
 
 func _remaining_total_capacity(cap_total: int, alive: int) -> int:
@@ -709,11 +966,11 @@ func _elite_cap_reached() -> bool:
 func _configure_enemy_pool_limits() -> void:
 	if PoolManager == null or not PoolManager.has_method("set_limit_for_scene"):
 		return
-	var can_warm := PoolManager.has_method("warm") and pool_warm_per_scene > 0
+	var can_warm := PoolManager.has_method("warm_step") and pool_warm_per_scene > 0
 	if enemy_scene != null:
 		PoolManager.set_limit_for_scene(enemy_scene, ambient_pool_limit_per_scene)
 		if can_warm:
-			PoolManager.warm(enemy_scene, pool_warm_per_scene)
+			_pool_warm_queue.append(enemy_scene)
 	if spawn_table == null:
 		return
 	for entry_variant: Variant in spawn_table.entries:
@@ -721,7 +978,54 @@ func _configure_enemy_pool_limits() -> void:
 		if entry != null and entry.enemy_scene != null:
 			PoolManager.set_limit_for_scene(entry.enemy_scene, ambient_pool_limit_per_scene)
 			if can_warm:
-				PoolManager.warm(entry.enemy_scene, pool_warm_per_scene)
+				_pool_warm_queue.append(entry.enemy_scene)
+
+
+func _drain_pool_warm_queue() -> void:
+	if _pool_warm_queue.is_empty():
+		return
+	var scene := _pool_warm_queue[0]
+	if scene == null:
+		_pool_warm_queue.pop_front()
+		return
+	if not PoolManager.warm_step(scene, pool_warm_per_scene, POOL_WARM_FRAME_BUDGET_USEC):
+		_pool_warm_queue.pop_front()
+
+
+func has_no_spawn_source() -> bool:
+	# True only when nothing in the configuration can EVER produce an enemy. A
+	# populated table whose entries are simply not active yet (time windows) or
+	# are switched off by the debug filter is a transient state, not a
+	# misconfiguration, and must not disable the spawner for the rest of the run.
+	if enemy_scene != null:
+		return false
+	if spawn_table == null:
+		return true
+	for entry_variant: Variant in spawn_table.entries:
+		var entry := entry_variant as EnemySpawnEntry
+		if entry != null and entry.enemy_scene != null:
+			return false
+	return true
+
+
+func _report_missing_spawn_scene() -> void:
+	var table_path: String = spawn_table.resource_path if spawn_table != null else "<unassigned>"
+	if has_no_spawn_source():
+		if not _warned_no_spawn_source:
+			_warned_no_spawn_source = true
+			push_error(
+				"[Spawner] no enemy source: spawn_table=%s enemy_scene=<unassigned>; spawning disabled for this run"
+				% table_path
+			)
+		spawning_enabled = false
+		return
+	if _warned_no_active_entry:
+		return
+	_warned_no_active_entry = true
+	push_warning(
+		"[Spawner] nothing to spawn: spawn_table=%s entries=%d none active at t=%.1fs and enemy_scene=<unassigned>"
+		% [table_path, spawn_table.entries.size(), _elapsed]
+	)
 
 
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:
@@ -777,23 +1081,47 @@ func _run_enemy_maintenance() -> void:
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("prune_invalid"):
 		_ei.call("prune_invalid")
 
-	# Proactive pass: distant ambient enemies no longer wait for the population cap
-	# before being retired. The cap-triggered pass below can remove a larger batch.
-	_cull_far_enemies(stale_max_per_tick)
-	_cull_stale_enemies(stale_max_per_tick)
+	# Distance retirement is handled exclusively by _maybe_cull().
+	# Having another distance-cull pass here allowed maintenance + cap culling
+	# to stack in the same frame.
+	var stale_culled := _cull_stale_enemies(stale_max_per_tick)
 
-func _maybe_cull(cap_total: int, alive: int) -> void:
+	if stale_culled > 0:
+		_cull_refill_left = maxf(
+			_cull_refill_left,
+			cull_refill_grace
+		)
+
+func _maybe_cull(cap_total: int, alive: int) -> int:
 	if not cull_enabled:
-		return
+		return 0
+	if cap_total <= 0:
+		return 0
 	if _cull_cd > 0.0:
-		return
-	var threshold: int = ceili(float(cap_total) * cull_threshold_ratio)
+		return 0
+	var threshold := ceili(
+		float(cap_total) * cull_threshold_ratio
+	)
 	if alive < threshold:
-		return
+		return 0
 	_cull_cd = maxf(0.10, cull_interval)
-	var culled: int = _cull_far_enemies(cull_max_per_tick)
-	if debug_spawns and culled > 0:
-		print("[SPAWN] Culled ", culled, " distant ambient enemies to free cap.")
+	var culled := _cull_far_enemies(
+		maxi(1, cull_max_per_tick)
+	)
+	if culled > 0:
+		_cull_refill_left = maxf(
+			_cull_refill_left,
+			cull_refill_grace
+		)
+		if debug_spawns:
+			print(
+				"[SPAWN] Culled ",
+				culled,
+				" distant ambient enemies; refill paused for ",
+				cull_refill_grace,
+				"s."
+			)
+	return culled
 
 func _enemy_list_for_cleanup() -> Array:
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("get_all"):
@@ -810,6 +1138,10 @@ func is_enemy_cull_eligible(enemy: Node2D, player_position: Vector2) -> bool:
 	if bool(enemy.get_meta("objective_required", false)) or bool(enemy.get_meta("tutorial_actor", false)):
 		return false
 	if bool(enemy.get_meta("never_cull", false)):
+		return false
+	# A splitter family's qualified drop lives on exactly one heir; culling
+	# that heir would silently destroy loot the player already earned.
+	if bool(enemy.get_meta("split_item_entitled", false)):
 		return false
 	if "dead" in enemy and bool(enemy.get("dead")):
 		return false

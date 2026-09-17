@@ -203,34 +203,22 @@ func _magic_edge(a: Vector2, b: Vector2, hits: int, dmg: float) -> void:
 		player.call("_spawn_magic", p, dmg)
 
 func _damage_radius(center: Vector2, r: float, dmg: float, kb: float, st: float) -> void:
-	var r2 := r * r
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		if center.distance_squared_to(e.global_position) > r2:
-			continue
-		if e.has_method("take_damage"):
-			e.call("take_damage", dmg, player)
-		if e.has_method("apply_knockback"):
-			var dir := e.global_position - center
-			if dir.length_squared() > 0.001:
-				e.call("apply_knockback", dir.normalized() * kb)
-		if st > 0.0 and e.has_method("apply_stun"):
-			e.call("apply_stun", st)
+	var handles: Array[int] = []
+	EnemyCombat.gather_in_radius(center, r, handles)
+	for handle in handles:
+		var hit_position := EnemyCombat.position_for_handle(handle)
+		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		var direction := hit_position - center
+		if direction.length_squared() > 0.001 and kb > 0.0:
+			EnemyCombat.apply_knockback(handle, direction.normalized() * kb)
+		if st > 0.0:
+			EnemyCombat.apply_stun(handle, st)
 
 func _aim_dir_from(from: Vector2) -> Vector2:
-	var best: Node2D = null
-	var best_d2 := 99999999.0
-	for n in get_tree().get_nodes_in_group("enemies"):
-		var e := n as Node2D
-		if e == null or not is_instance_valid(e):
-			continue
-		var d2 := from.distance_squared_to(e.global_position)
-		if d2 < best_d2:
-			best_d2 = d2
-			best = e
-	return (best.global_position - from).normalized() if best != null else Vector2.ZERO
+	var handle := EnemyCombat.nearest_enemy(from, 100000.0)
+	if handle == EnemyWorldTypes.INVALID_HANDLE:
+		return Vector2.ZERO
+	return (EnemyCombat.position_for_handle(handle) - from).normalized()
 
 func _get_player_base_damage() -> float:
 	if player != null:

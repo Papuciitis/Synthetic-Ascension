@@ -17,6 +17,9 @@ var _site_mgr: SiteManager = null
 
 # Internal (kept here so debug printing stays local)
 var _printed_once: bool = false
+# _generate_chunk() runs for every streamed chunk, so the unassigned-cover
+# report is claimed once per generator.
+var _warned_missing_cover: bool = false
 var _gen_coord: Vector2i = Vector2i.ZERO
 
 # Mirrored settings from ChunkManager (sync_from_chunk_manager()).
@@ -212,7 +215,19 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, c
 
 func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 	if cover_full_scene == null or cover_window_scene == null or cover_half_scene == null:
-		push_warning("[ChunkManager] Cover scenes not assigned in Inspector (full/window/half).")
+		if not _warned_missing_cover:
+			_warned_missing_cover = true
+			var missing := PackedStringArray()
+			if cover_full_scene == null:
+				missing.append("full")
+			if cover_window_scene == null:
+				missing.append("window")
+			if cover_half_scene == null:
+				missing.append("half")
+			push_error(
+				"[ChunkGenImpl] cannot generate chunks: cover scenes unassigned=[%s] chunk_manager=%s; every streamed chunk stays empty"
+				% [",".join(missing), (String(cm.name) if cm != null else "<null>")]
+			)
 		return
 
 	# Remember which chunk we're generating so _spawn_block can register cells

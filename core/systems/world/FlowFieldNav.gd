@@ -111,6 +111,9 @@ var _debug_current_cells := 0
 var _debug_current_cpu_us := 0
 var _debug_last_cells := 0
 var _debug_last_cpu_us := 0
+var _debug_last_snapshot_usec := 0
+var _debug_last_worker_usec := 0
+var _debug_last_publish_usec := 0
 var _debug_last_request_reason: StringName = &""
 var _debug_last_completed_reason: StringName = &""
 var _debug_current_reason: StringName = &""
@@ -169,6 +172,15 @@ func _exit_tree() -> void:
 		_cancel_requested = true
 		WorkerThreadPool.wait_for_task_completion(_build_task_id)
 		_build_thread_running = false
+	# Joining the worker is not the same as forgetting the build. A node that
+	# leaves and re-enters the tree kept _building set, so its next _process
+	# fell straight into _step_build() and published a build that had been
+	# cancelled, from a snapshot belonging to the previous life.
+	# Godot hygiene audit 2026-08-28 §5 LOW, top-10 #7.
+	_building = false
+	_use_snapshot = false
+	_cancel_requested = false
+	_build_task_id = -1
 
 
 func _acquire_refs() -> void:
@@ -314,7 +326,9 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 		})
 
 	if threaded_build and _cm.has_method("build_nav_walkability_snapshot"):
+		var snapshot_started_usec := Time.get_ticks_usec()
 		var snapshot := _cm.build_nav_walkability_snapshot() as Dictionary
+		_debug_last_snapshot_usec = Time.get_ticks_usec() - snapshot_started_usec
 		_snapshot_chunks = snapshot.get("chunks", {})
 		_snapshot_blocked = snapshot.get("blocked", {})
 		_snapshot_manual = snapshot.get("manual", {})
@@ -325,6 +339,9 @@ func _start_rebuild(player_cell: Vector2i, nav_revision: int) -> void:
 		_thread_build_us = 0
 		_build_task_id = WorkerThreadPool.add_task(_run_threaded_build, false, "FlowFieldNav build")
 		_build_thread_running = true
+	else:
+		_debug_last_snapshot_usec = 0
+		_debug_last_worker_usec = 0
 
 
 func _run_threaded_build() -> void:
@@ -358,11 +375,14 @@ func _poll_threaded_build() -> void:
 	_debug_current_cpu_us += _thread_build_us
 	_debug_cells_total += _thread_build_cells
 	_debug_build_cpu_us += _thread_build_us
+	_debug_last_worker_usec = _thread_build_us
 	if _cancel_requested:
 		_cancel_requested = false
 		_debug_superseded += 1
 		return
+	var publish_started_usec := Time.get_ticks_usec()
 	_publish_completed_build()
+	_debug_last_publish_usec = Time.get_ticks_usec() - publish_started_usec
 	_debug_completed += 1
 	_debug_last_cells = _debug_current_cells
 	_debug_last_cpu_us = _debug_current_cpu_us
@@ -414,7 +434,9 @@ func _step_build() -> void:
 	_debug_build_cpu_us += elapsed_us
 	if _q_head >= _q_tail:
 		_building = false
+		var publish_started_usec := Time.get_ticks_usec()
 		_publish_completed_build()
+		_debug_last_publish_usec = Time.get_ticks_usec() - publish_started_usec
 		_debug_completed += 1
 		_debug_last_cells = _debug_current_cells
 		_debug_last_cpu_us = _debug_current_cpu_us
@@ -691,6 +713,9 @@ func get_debug_counters() -> Dictionary:
 		"cpu_us_total": _debug_build_cpu_us,
 		"last_cells": _debug_last_cells,
 		"last_cpu_us": _debug_last_cpu_us,
+		"last_snapshot_usec": _debug_last_snapshot_usec,
+		"last_worker_usec": _debug_last_worker_usec,
+		"last_publish_usec": _debug_last_publish_usec,
 		"last_request_reason": _debug_last_request_reason,
 		"last_completed_reason": _debug_last_completed_reason,
 		"player_moved": _debug_player_moved,

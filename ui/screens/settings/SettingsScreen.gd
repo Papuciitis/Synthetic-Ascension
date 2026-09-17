@@ -266,13 +266,13 @@ func _build_controls() -> void:
 
 func _build_accessibility() -> void:
 	_add_heading("ACCESSIBILITY")
-	var scale := HSlider.new()
-	scale.min_value = 80
-	scale.max_value = 150
-	scale.step = 5
-	scale.value = float(_value(&"accessibility", &"ui_scale", 1.0)) * 100.0
-	scale.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"accessibility", &"ui_scale", value / 100.0))
-	_add_control_row("UI Scale", scale)
+	var scale_slider := HSlider.new()
+	scale_slider.min_value = 80
+	scale_slider.max_value = 150
+	scale_slider.step = 5
+	scale_slider.value = float(_value(&"accessibility", &"ui_scale", 1.0)) * 100.0
+	scale_slider.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"accessibility", &"ui_scale", value / 100.0))
+	_add_control_row("UI Scale", scale_slider)
 	_add_option_setting("Typewriter Speed", &"accessibility", &"typewriter_speed", [["Instant", &"instant"], ["Slow", &"slow"], ["Normal", &"normal"], ["Fast", &"fast"]])
 	var reduced := CheckBox.new()
 	reduced.text = "Reduce nonessential camera and interface motion"
@@ -280,6 +280,22 @@ func _build_accessibility() -> void:
 	reduced.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"reduced_motion", on))
 	_add_control_row("Reduced Motion", reduced)
 	_add_option_setting("Combat Flashes", &"accessibility", &"combat_flash", [["Off", &"off"], ["Reduced", &"reduced"], ["Full", &"full"]])
+	# Two rows, not one. Damage numbers are the per-hit stream; callouts are the
+	# named lines an ability speaks, and for a Manifestation build they are the
+	# only text there is - so switching the stream off must not silence them.
+	var numbers := CheckBox.new()
+	numbers.text = "Show floating damage numbers"
+	numbers.button_pressed = bool(_value(&"accessibility", &"damage_numbers", true))
+	numbers.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"damage_numbers", on))
+	_add_control_row("Damage Numbers", numbers)
+	var callouts := CheckBox.new()
+	callouts.text = "Show ability and Manifestation callouts"
+	# The blast radius, so nobody switches this off to quiet LUCKY and loses
+	# every word their engine says.
+	callouts.tooltip_text = "Off silences every named combat line: Manifestation rule and pair fire lines, LUCKY and EVADED, item feed toasts, encounter, objective and district callouts. Damage numbers, the noun counter above the health bar, pair cards and tutorial tips stay."
+	callouts.button_pressed = bool(_value(&"accessibility", &"ability_callouts", true))
+	callouts.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"ability_callouts", on))
+	_add_control_row("Ability Callouts", callouts)
 
 
 func _add_heading(text: String) -> void:

@@ -9,6 +9,7 @@ Area 1, Segment 1 now begins inside the existing handcrafted laboratory. The seq
 | Phase | Player action / presentation | Durable result |
 |---|---|---|
 | Historical | Two minimal dark-screen beats; mortal name substituted | Current phase saved |
+| Admission | Walk the public admissions wing: desk registration, ward flicker, laboratory door; movement free, attack locked | Record-only admission milestones; phase saved |
 | Bren | One four-option response; a short reaction | `opening_response_id` saved |
 | Synthesis | Move to and activate nodes 0, 1 and 2 | Synthesis milestone and Resonance |
 | Calibration | Fire the selected starting attack at a safe procedural target | Demonstrates unclassified attack |
@@ -17,6 +18,8 @@ Area 1, Segment 1 now begins inside the existing handcrafted laboratory. The seq
 | Aftermath | Time reduction, music reduction, death alert and Bren response | Lethal escalation recorded |
 | Separation | Records-conduit dialogue and restrained camera framing | Bren commitment milestone |
 | First Follower | Human presentation, not a currency toast | Followers set to one |
+
+The ADMISSION phase was inserted after HISTORICAL by `OPENING_SEQUENCE_VERSION = 2` (`autoload/global.gd:34-36`); saved v1 phase ints at or beyond it migrate by +1.
 
 `core/systems/world/opening/OpeningSequenceController.gd` owns ordering, input restriction, camera offset, spawn suspension, save phases and cleanup. `OpeningSequenceWorld.gd` draws the light procedural apparatus and three interaction nodes. `OpeningActor.gd` supplies the calibration, construct and officer targets without ordinary drops, kill events or Follower rewards. `Level1Builder.gd` remains authoritative for milestones, Resonance, barriers and the post-opening spawn stage.
 
@@ -61,7 +64,7 @@ Attempt-scoped:
 
 ## Developer controls
 
-The existing developer panel, still hidden unless `Global.debug_set_collision_tools` is enabled, now supports full/short/skip, replay-next-run, fresh opening-state reset, a serialized legacy-save migration simulation, synthesis/target/construct/officer/death/Bren phase starts, all four response dispositions, and direct Segment 2/5/10 launches.
+The opening developer controls live in the developer console (`ui/widgets/PerformanceOverlay.gd`, OPENING MODE section), which calls into `DevSetCollisionTools`; `Global.debug_set_collision_tools` is a dead flag — only ever assigned `false`, never read (corrected 2026-08-30). They support full/short/skip, replay-next-run, fresh opening-state reset, a serialized legacy-save migration simulation, synthesis/target/construct/officer/death/Bren phase starts, all four response dispositions, and direct Segment 2/5/10 launches.
 
 ## Placeholders and extension points
 
@@ -72,4 +75,4 @@ The existing developer panel, still hidden unless `Global.debug_set_collision_to
 
 ## Runtime boundary
 
-No Godot 4.6 or 4.7 executable is installed in the packaging environment. Static class, resource-path, scene, archive and source audits can be completed here, but cinematic pacing, typed GDScript loading, imported resources, save migration, camera feel, input, physics, audio, UI layout and spawn transitions require the supplied runtime checklist.
+Historical 0.23 note: no Godot executable was installed in the packaging environment of the time. Since August 2026 the project runs under Godot 4.7 (headless suites via the Linux 4.7.2 binary — see `README.md`), so the boundary below no longer applies as written: cinematic pacing, typed GDScript loading, imported resources, save migration, camera feel, input, physics, audio, UI layout and spawn transitions require the supplied runtime checklist.

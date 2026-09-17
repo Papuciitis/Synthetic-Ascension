@@ -31,6 +31,20 @@ extends Control
 @onready var inv_bar: InventoryBar = get_node_or_null("TopLeft/Margin/VBox/BodyRow/InventoryBar") as InventoryBar
 
 @export var manage_toggle_action: StringName = &"bag_toggle"
+
+## Opening the inventory stops the world.
+##
+## Reading what an item does, comparing two rings and deciding what to feed to
+## what are all things the build systems ask the player to do carefully - and
+## they were being asked to do them while a horde ate them. That is not
+## difficulty, it is a tax on engaging with the systems the game is built
+## around, and it gets worse exactly as the run gets more interesting.
+@export var pause_while_managing: bool = true
+
+## True only while THIS panel is what paused the game. A tutorial card, an
+## augment choice or the developer console can all own the pause, and closing
+## the bag must never resume a fight that one of those is holding.
+var _owns_pause: bool = false
 @onready var run_sheet: Control = get_node_or_null("RunSheetHUD") as Control
 
 @export var augment_badge_scene: PackedScene
@@ -52,9 +66,11 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	add_to_group(&"pause_handoff_owner")
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if _router == null:
-		push_warning("[HUD] InvRouter autoload not found at /root/InvRouter")
+		# One report for the whole autoload, from WorldDropSpawner (see there).
+		WorldDropSpawner.warn_missing_inventory_router("HUD")
 
 	_force_fly_vfx_on_top()
 
@@ -117,18 +133,18 @@ func _style_hp_bar() -> void:
 
 	var bg := StyleBoxFlat.new()
 	bg.bg_color = Color(0, 0, 0, 0.30)
-	bg.corner_radius_top_left = 8
-	bg.corner_radius_top_right = 8
-	bg.corner_radius_bottom_left = 8
-	bg.corner_radius_bottom_right = 8
+	bg.corner_radius_top_left = 2
+	bg.corner_radius_top_right = 2
+	bg.corner_radius_bottom_left = 2
+	bg.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("background", bg)
 
 	var fill := StyleBoxFlat.new()
 	fill.bg_color = Color(1.0, 0.55, 0.20, 0.95)
-	fill.corner_radius_top_left = 8
-	fill.corner_radius_top_right = 8
-	fill.corner_radius_bottom_left = 8
-	fill.corner_radius_bottom_right = 8
+	fill.corner_radius_top_left = 2
+	fill.corner_radius_top_right = 2
+	fill.corner_radius_bottom_left = 2
+	fill.corner_radius_bottom_right = 2
 	hp_bar.add_theme_stylebox_override("fill", fill)
 	hp_bar.add_theme_stylebox_override("fg", fill)
 
@@ -139,6 +155,37 @@ func _process(delta: float) -> void:
 		_rs_tick = 0.0
 		_refresh_run_sheet()
 	# Gate arrow/popup are handled by HudGateOverlayController.
+	_claim_pause_if_free()
+
+
+## Claim the pause the moment whoever had it lets go.
+##
+## The first time a player opens the bag with a Manifestation equipped, the
+## intro card fires from the same signal and takes the pause FIRST - so the HUD
+## declined ownership, and when the card was dismissed the world started running
+## with the inventory still open. That is once per profile, at exactly the open
+## where the game is explaining the build system, and it would read as "the
+## pause sometimes does not work".
+func _claim_pause_if_free() -> void:
+	if not pause_while_managing or _owns_pause:
+		return
+	if bag_ctl == null or not bag_ctl.is_management_mode():
+		return
+	var tree := get_tree()
+	if tree == null or tree.paused:
+		return
+	_owns_pause = true
+	tree.paused = true
+
+
+## Called by a short-lived encounter freeze when the inventory was opened
+## while that freeze already owned the paused tree.
+func adopt_pause_handoff() -> bool:
+	if not pause_while_managing or bag_ctl == null or not bag_ctl.is_management_mode():
+		return false
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_owns_pause = true
+	return true
 
 
 func _refresh_run_sheet() -> void:
@@ -254,10 +301,51 @@ func _on_inventory_changed() -> void:
 # Input
 # ----------------------------
 
+func _input(event: InputEvent) -> void:
+	# Focused Controls consume Tab as ui_focus_next before _unhandled_input.
+	# Once management is open, it owns its toggle and Escape at the earliest
+	# input stage so either key closes the paused surface instead of traversing it.
+	if bag_ctl == null or not bag_ctl.is_management_mode():
+		return
+	if event.is_action_pressed(manage_toggle_action) or event.is_action_pressed(&"ui_cancel"):
+		bag_ctl.toggle_bag_open()
+		get_viewport().set_input_as_handled()
+
+
+var _ascension_screen: Node = null
+
+
+## The tree key opens the advancement tree mid-run, holding the pause the
+## way the bag does; the screen releases it when it closes.
+func _open_ascension_screen() -> void:
+	if _ascension_screen != null and is_instance_valid(_ascension_screen):
+		return
+	var scene := load("res://ui/screens/AscensionScreen.tscn") as PackedScene
+	if scene == null:
+		return
+	var inst := scene.instantiate()
+	_ascension_screen = inst
+	get_tree().root.add_child(inst)
+	if inst.has_method("open"):
+		inst.call("open", true)
+	if inst.has_signal("closed"):
+		inst.connect("closed", func() -> void: _ascension_screen = null)
+
+
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ascension_open") and (bag_ctl == null or not bag_ctl.is_management_mode()):
+		_open_ascension_screen()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed(manage_toggle_action):
 		if bag_ctl != null:
 			bag_ctl.toggle_bag_open()
+		get_viewport().set_input_as_handled()
+		return
+	# Escape closes it too. It is the key everyone reaches for to back out of a
+	# screen, and while the bag is open there is nothing else for it to do.
+	if bag_ctl != null and bag_ctl.is_management_mode() and event.is_action_pressed(&"ui_cancel"):
+		bag_ctl.toggle_bag_open()
 		get_viewport().set_input_as_handled()
 
 
@@ -266,6 +354,7 @@ func _unhandled_input(event: InputEvent) -> void:
 # ----------------------------
 
 func _on_management_mode_changed(is_open: bool) -> void:
+	_apply_management_pause(is_open)
 	if run_sheet != null:
 		run_sheet.visible = is_open
 		if is_open:
@@ -443,10 +532,10 @@ func _apply_top_left_style() -> void:
 	_sb_top_left.bg_color = Color(0, 0, 0, 0.35)
 	_sb_top_left.border_color = Color(0.12, 0.12, 0.12, 1.0)
 	_sb_top_left.set_border_width_all(2)
-	_sb_top_left.corner_radius_top_left = 14
-	_sb_top_left.corner_radius_top_right = 14
-	_sb_top_left.corner_radius_bottom_left = 14
-	_sb_top_left.corner_radius_bottom_right = 14
+	_sb_top_left.corner_radius_top_left = 3
+	_sb_top_left.corner_radius_top_right = 3
+	_sb_top_left.corner_radius_bottom_left = 3
+	_sb_top_left.corner_radius_bottom_right = 3
 	_sb_top_left.shadow_size = 8
 	_sb_top_left.shadow_offset = Vector2(0, 6)
 	_sb_top_left.shadow_color = Color(0, 0, 0, 0.30)
@@ -478,3 +567,47 @@ func set_followers(value: int) -> void:
 		followers_label.text = str(value)
 	if followers_pill != null and Global != null:
 		followers_pill.tooltip_text = "People committed to preserving the Pattern.\nNext reconstruction cost: %d Followers" % Global.compute_respawn_cost()
+
+
+## PROCESS_MODE_ALWAYS on the HUD, not on the whole UI layer: BagUI and the Run
+## Sheet are children of this node, so they keep running and keep receiving
+## input while everything else in the world is stopped.
+func _apply_management_pause(is_open: bool) -> void:
+	if not pause_while_managing:
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	if is_open:
+		# ALWAYS make the panel usable, whoever owns the pause.
+		#
+		# This used to early-out before setting the process mode when something
+		# else was already paused, which left the bag open, frozen and
+		# unclosable: BagUI is a child of this node, so it inherited PAUSABLE,
+		# and _unhandled_input never fired - neither Tab nor Escape could shut
+		# it. Making the panel work and taking the pause are two different
+		# decisions and only the second one is conditional.
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		if _owns_pause or tree.paused:
+			# Someone else is holding it. Do not take ownership - releasing it
+			# later would resume a fight a modal is deliberately holding - but
+			# do watch for them letting go, because the bag is still open and
+			# the world would otherwise start running underneath it.
+			return
+		_owns_pause = true
+		tree.paused = true
+		return
+	process_mode = Node.PROCESS_MODE_INHERIT
+	if not _owns_pause:
+		return
+	_owns_pause = false
+	tree.paused = false
+
+
+## A scene change while the bag is open must not leave the tree paused.
+func _exit_tree() -> void:
+	if _owns_pause:
+		_owns_pause = false
+		var tree := get_tree()
+		if tree != null:
+			tree.paused = false

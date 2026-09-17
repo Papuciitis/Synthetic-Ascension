@@ -168,10 +168,10 @@ func _make_slot_style() -> StyleBoxFlat:
 	sb.bg_color = BG
 	sb.border_color = BORDER
 	sb.set_border_width_all(2)
-	sb.corner_radius_top_left = 14
-	sb.corner_radius_top_right = 14
-	sb.corner_radius_bottom_left = 14
-	sb.corner_radius_bottom_right = 14
+	sb.corner_radius_top_left = 3
+	sb.corner_radius_top_right = 3
+	sb.corner_radius_bottom_left = 3
+	sb.corner_radius_bottom_right = 3
 	sb.shadow_size = 8
 	sb.shadow_offset = Vector2(0, 4)
 	sb.shadow_color = Color(0, 0, 0, 0.25)

@@ -41,6 +41,7 @@ func boot() -> void:
 	_apply_spec_if_any()
 	_apply_threat_scaling()
 	_apply_split_generation()
+	_apply_elite_split_child()
 
 	_owner.hp = _owner.max_hp
 	# Group membership is added once in EnemyActor._ready and survives pooling.
@@ -118,6 +119,16 @@ func _apply_visuals() -> void:
 		spr.texture = s.sprite_texture
 	spr.scale = s.sprite_scale
 	spr.modulate = s.sprite_modulate
+	# Baked sheets animate through atlas regions on this same sprite.
+	if s.visual_frames != null:
+		if _owner.animator == null:
+			_owner.animator = EnemyAnimator.new()
+		if not _owner.animator.setup(_owner, spr, s.visual_frames, s.animation_fps):
+			push_warning("EnemyInit: %s has visual_frames without idle_down; animation disabled" % String(s.id))
+			_owner.animator = null
+	else:
+		_owner.animator = null
+		spr.region_enabled = false
 
 
 func _apply_split_generation() -> void:
@@ -128,6 +139,19 @@ func _apply_split_generation() -> void:
 	_owner.scale *= Vector2.ONE * scale_factor
 	_owner.max_hp *= pow(maxf(0.05, _owner.spec.split_hp_per_generation), generation)
 	_owner.speed *= pow(maxf(0.10, _owner.spec.split_speed_per_generation), generation)
+
+
+func _apply_elite_split_child() -> void:
+	# Roadmap §9 SPLITTING: a copy left behind by a splitting elite is a smaller,
+	# weaker, loot-less version of the archetype - the elite already rolled the
+	# family's loot, and three free rolls per careless kill would reward the
+	# mistake. Splitter descendants keep their own curve above and never carry
+	# this meta.
+	if not bool(_owner.get_meta("elite_split_child", false)):
+		return
+	_owner.scale *= Vector2.ONE * maxf(0.10, EliteModifiers.SPLIT_CHILD_SCALE)
+	_owner.max_hp *= maxf(0.05, EliteModifiers.SPLIT_CHILD_HP_FRACTION)
+	_owner.drop_chance = 0.0
 
 
 func _wire_hitbox() -> void:
@@ -151,5 +175,7 @@ func _apply_threat_scaling() -> void:
 	if td == null:
 		return
 	_owner.max_hp *= td.enemy_hp_mul
+	if Global != null:
+		_owner.max_hp *= maxf(0.05, float(Global.debug_enemy_hp_scale))
 	_owner.speed *= td.enemy_speed_mul
 	_owner.set_meta("_threat_scaled", true)

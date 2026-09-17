@@ -15,14 +15,14 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("1_7lfam")
 id = &"augment_stamina_core"
 display_name = "Stamina Core"
-description = """A grafted core that hardens your frame and surges when danger peaks."""
+description = "A grafted core that hardens your frame and surges when danger peaks."
 mods_scale_per_level = 0.15
 card_blurb = "Tank core: big HP/Armor, plus periodic invulnerability and lifesteal burst."
-details = """Passive: +80 Max HP, +10 Armor
+details = "Passive: +80 Max HP, +10 Armor
 Active: every 12s (scales with Haste)
 • Duration: 4.0s
 • Invulnerable: 2.0s
-• Lifesteal: 25% during active"""
+• Lifesteal: 25% during active"
 icon = ExtResource("2_8jwqf")
 mods = SubResource("Resource_vvqko")
 effect_scenes = Array[PackedScene]([ExtResource("1_vvqko")])

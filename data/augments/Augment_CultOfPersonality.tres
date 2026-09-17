@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_cltsc"]
+[ext_resource type="Texture2D" uid="uid://b83l6uxp1enqv" path="res://assets/textures/Augment_Placeholder_Summon_Spiderlings.png" id="2_cltic"]
+
+[resource]
+script = ExtResource("1_cltsc")
+id = &"augment_cult_of_personality"
+display_name = "Cult of Personality"
+description = "Every public display of violence doubles as a recruitment seminar."
+card_blurb = "Kills have a chance to convert an extra witness into a Follower. Scales with Luck."
+details = "On kill: 10% chance of +1 Follower
++5% chance per augment level
+Luck adds up to +20% more
+Belief feeds your Power."
+icon = ExtResource("2_cltic")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

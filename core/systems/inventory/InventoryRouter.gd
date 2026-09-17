@@ -77,6 +77,13 @@ func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 	var ok: bool = _bag_add_instance(inst)
 	if not ok:
 		equipped.set_item(slot, inst) # rollback
+		# The flight this origin was staged for is not going to happen. Leaving
+		# it armed would make the NEXT origin-less bag add (a vendor buy, a
+		# granted reward) fly in from this equip slot, and the origin lives on
+		# the bag Resource across scenes - the same reason equip_from_bag
+		# disarms on its merge path.
+		if origin != null and bag.has_method("set_pending_ui_origin"):
+			bag.call("set_pending_ui_origin", null)
 		return false
 
 	return true
@@ -101,6 +108,23 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		var protected_current: ItemInstance = inv.get_at(equip_slot)
 		if protected_current != null and protected_current.locked:
 			return false
+		# Equipping a duplicate of the equipped item MERGES instead of
+		# swapping: the swap just traded which copy was frozen and made a
+		# diverged r0-bag/r1-equipped pair impossible to consolidate.
+		if protected_current != null and protected_current.data != null \
+		and protected_current.data.id == inst.data.id \
+		and int(protected_current.polarity) == int(inst.polarity):
+			# The UI staged a bag origin for the swap-back flight that is not
+			# going to happen; leaving it armed would make the NEXT origin-less
+			# bag add (a vendor buy, a granted reward) fly in from this slot,
+			# and the origin lives on the bag Resource across scenes.
+			if bag_inv.has_method("set_pending_ui_origin"):
+				bag_inv.set_pending_ui_origin(null)
+			bag_inv.remove_at(bag_slot_index)
+			# Player-driven: they chose this copy, so a Manifestation loss is
+			# their decision (and the bag slot is already gone - declining
+			# here would destroy the item).
+			return inv.add_or_feed(inst, origin, true)
 		# Free bag slot first
 		bag_inv.remove_at(bag_slot_index)
 
@@ -118,7 +142,7 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 		return true
 
 	# Fallback: add to first empty OR feed (pass origin so it can animate)
-	var ok_inv: bool = inv.add_or_feed(inst, origin)
+	var ok_inv: bool = inv.add_or_feed(inst, origin, true)
 	if ok_inv:
 		bag_inv.remove_at(bag_slot_index)
 	return ok_inv
@@ -149,6 +173,23 @@ func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, orig
 			return false
 		if int(inst.data.equip_slot) != int(dst_i):
 			return false
+		# Duplicate dragged onto its own equipped copy: merge, don't swap
+		# (same rule as equip_from_bag - swapping trades which copy stays
+		# frozen and can never consolidate a diverged pair).
+		if dst != null and dst.data != null \
+		and dst.data.id == inst.data.id \
+		and int(dst.polarity) == int(inst.polarity):
+			# No swap-back flight happens on a merge; disarm the staged origin
+			# (see equip_from_bag) before the source stack disappears.
+			if not (src_inv is Inventory) and src_inv.has_method("set_pending_ui_origin"):
+				src_inv.call("set_pending_ui_origin", null)
+			if src_inv is Inventory:
+				src_inv.call("remove_at", src_i, _player_origin(origin))
+			else:
+				src_inv.call("remove_at", src_i)
+			# Player-driven, and the source slot is already emptied above, so
+			# this merge must not be declinable.
+			return bool(dst_inv.call("add_or_feed", inst, origin, true))
 
 	# CRITICAL: If moving FROM equipped inventory into an occupied non-equipped slot,
 	# never swap back unless the destination item is valid for the equipped slot.

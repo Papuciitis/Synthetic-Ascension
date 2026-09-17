@@ -26,7 +26,12 @@ func get_move_speed_multiplier() -> float:
 
 
 func _effect_multiplier(inst: ItemInstance) -> float:
-	return maxf(0.10, 1.0 + (inst.active_pct() if inst != null else 0.0))
+	# Move speed is the most dangerous rate stat: the roll's bonus portion
+	# grows with rarity but on a tightly capped multiplier (spec §1.6).
+	var bonus := (inst.active_pct() if inst != null else 0.0)
+	if inst != null and bonus > 0.0:
+		bonus *= minf(inst.rarity_effect_multiplier(), 1.75)
+	return maxf(0.10, 1.0 + bonus)
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p
