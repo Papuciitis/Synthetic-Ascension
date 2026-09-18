@@ -245,7 +245,7 @@ def main():
     variants = [r for r in all_ok if r["source"] == "ablation"]
     if bases and variants:
         L.append("## Ablation: each node's contribution to its own authored build\n")
-        L.append("Every pure preset was fought whole, then once per owned node with that node refunded through the real refund rule (dependents leave with it; a refunded Q or V is replaced by another owned one). Same crowd stream and gear as the base. A change inside about +/-5% is within this scenario's noise; a node whose removal changes neither output nor survivability there is a candidate dead node in that build, not a verdict.\n")
+        L.append("Every pure preset was fought whole, then once per owned node with that node refunded through the real refund rule (dependents leave with it; a refunded Q or V is replaced by another owned one). Same crowd stream and gear as the base. A change inside the preset's noise floor (the repeat row below) is not a finding, and an HP-lost change against a base under 1 HP is shown as an absolute number; a node whose removal changes neither output nor survivability there is a candidate dead node in that build, not a verdict.\n")
         L.append("| Build | Node removed (with) | Kind | Enemy HP/s | Change | HP lost | Change | Deaths | Casts Q/V | Status |\n|---|---|---|---:|---:|---:|---:|---:|---|---|")
         for v in sorted(variants, key=lambda r: (r["ablation_of"], r["ablate"])):
             b = bases.get(v["ablation_of"])
@@ -253,15 +253,16 @@ def main():
                 continue
             d_out = (v["hp_per_second"] - b["hp_per_second"]) / max(1.0, b["hp_per_second"]) * 100.0
             d_lost = (v["player_hp_lost"] - b["player_hp_lost"]) / max(1.0, b["player_hp_lost"]) * 100.0
+            lost_change = (f"{d_lost:+.0f}%" if b["player_hp_lost"] >= 1.0 else f"{v['player_hp_lost'] - b['player_hp_lost']:+.0f} abs")
             extra = [n for n in v.get("removed", []) if n != v["ablate"]]
             st = status.get(v["ablate"], {}).get("status", "unknown") if isinstance(status, dict) else "unknown"
-            L.append(f"| {v['ablation_of']} | {v['ablate']}{(' (+' + ', '.join(extra) + ')') if extra else ''} | {nodes.get(v['ablate'], {}).get('kind', '?')} | {v['hp_per_second']:.0f} | {d_out:+.0f}% | {v['player_hp_lost']:.0f} | {d_lost:+.0f}% | {v['deaths']} | {v['q_casts']}/{v['v_casts']} | {st} |")
+            L.append(f"| {v['ablation_of']} | {v['ablate']}{(' (+' + ', '.join(extra) + ')') if extra else ''} | {nodes.get(v['ablate'], {}).get('kind', '?')} | {v['hp_per_second']:.0f} | {d_out:+.0f}% | {v['player_hp_lost']:.0f} | {lost_change} | {v['deaths']} | {v['q_casts']}/{v['v_casts']} | {st} |")
         L.append("")
         repeats = {r["name"].replace("Ablation repeat: ", ""): r for r in all_ok if r["source"] == "ablation_repeat"}
         L.append("| Build (base) | Enemy HP/s | HP lost | Deaths | Casts Q/V | Repeat on another crowd stream: HP/s, HP lost (noise floor) |\n|---|---:|---:|---:|---|---|")
         for name, b in sorted(bases.items()):
             rep = repeats.get(name)
-            noise = f"{rep['hp_per_second']:.0f} ({(rep['hp_per_second'] - b['hp_per_second']) / max(1.0, b['hp_per_second']) * 100:+.0f}%), {rep['player_hp_lost']:.0f} ({(rep['player_hp_lost'] - b['player_hp_lost']) / max(1.0, b['player_hp_lost']) * 100:+.0f}%)" if rep else "-"
+            noise = f"{rep['hp_per_second']:.0f} ({(rep['hp_per_second'] - b['hp_per_second']) / max(1.0, b['hp_per_second']) * 100:+.0f}%), {rep['player_hp_lost']:.0f} ({((rep['player_hp_lost'] - b['player_hp_lost']) / max(1.0, b['player_hp_lost']) * 100) if b['player_hp_lost'] >= 1.0 else (rep['player_hp_lost'] - b['player_hp_lost']):+.0f}{'%' if b['player_hp_lost'] >= 1.0 else ' abs'})" if rep else "-"
             L.append(f"| {name} | {b['hp_per_second']:.0f} | {b['player_hp_lost']:.0f} | {b['deaths']} | {b['q_casts']}/{b['v_casts']} | {noise} |")
         L.append("")
 

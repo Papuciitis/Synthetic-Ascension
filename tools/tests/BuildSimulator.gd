@@ -23,6 +23,7 @@ extends Node
 #      SIM_BUILDS (random builds per core per tier; default 4), SIM_FRAMES (600),
 #      SIM_SEED (20260919), SIM_SHARD ("i/n", default "0/1"), SIM_PRESETS (1),
 #      SIM_STRUCTURE (1), SIM_CROWD (60), SIM_TIERS (comma list of tier indices),
+#      SIM_SET ("" = the gear seed picks the set; a set id pins it for every build),
 #      SIM_ABLATE (0; 1 = for every authored "pure" preset, also fight one variant
 #      per owned node with that node refunded through the real refund rule, so a
 #      node's contribution to its own authored build is measured directly)
@@ -87,6 +88,8 @@ var _seed := 20260919
 var _shard := 0
 var _shards := 1
 var _include_presets := true
+## SIM_SET: wear this set on every build instead of the gear seed's pick.
+var _forced_set := ""
 var _structure := true
 var _crowd := 60
 var _durability := HP_DURABILITY
@@ -134,6 +137,7 @@ func _run() -> void:
 	_shard = int(shard[0])
 	_shards = maxi(1, int(shard[1]) if shard.size() > 1 else 1)
 	_include_presets = _env("SIM_PRESETS", "1") != "0"
+	_forced_set = _env("SIM_SET", "")
 	_structure = _env("SIM_STRUCTURE", "1") != "0"
 	_crowd = int(_env("SIM_CROWD", "60"))
 	_durability = float(_env("SIM_HP_MUL", str(HP_DURABILITY)))
@@ -778,6 +782,8 @@ func _wear_gear(job: Dictionary, tier: Dictionary) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed * 31 + int(job.get("gear_seed", job.job_index)) * 977
 	var set_id: String = SETS[rng.randi_range(0, SETS.size() - 1)]
+	if SETS.has(_forced_set):
+		set_id = _forced_set
 	var rank := int(tier.gear_rank)
 	Global.run_inventory.clear()
 	var worn: Array = []
@@ -902,6 +908,8 @@ func _simulate(job: Dictionary) -> Dictionary:
 	var hp_samples: Array = []
 	var frame_ms: Array = []
 	var v_first_frame := -1
+	var q_hold_until := 0
+	var q_holding := false
 	var spawned_total := _crowd
 	var hp_before_frames: float = _player.hp
 	for frame in range(_frames):
@@ -928,10 +936,29 @@ func _simulate(job: Dictionary) -> Dictionary:
 				_player.call("_spawn_ranged_bullet", _origin, (target_pos - _origin).normalized(), _runner.native_damage())
 			else:
 				_runner.damage_enemy(target, _runner.native_damage(), _native_tags(core, strikes))
-		if _runner.q_cooldown_left <= 0.0 and not _runner.q_id.is_empty() and frame % 6 == 3 and not _runner._q_holding:
-			# A held Q (Guard) stays held once pressed; pressing again releases it.
+		# A held Q (Guard, Deadshot, Designate) is pressed once, fed through
+		# the engine's hold hook for two seconds, then released with the
+		# runner's recovery rule, exactly as a held key does; the hold state
+		# is tracked here because not every hold engine reports q_active.
+		# A tap Q is pressed whenever it is off recovery.
+		var q_engine: AscensionEngine = _runner.engine_for(_runner.q_id) if not _runner.q_id.is_empty() else null
+		if q_holding:
+			if q_engine == null:
+				q_holding = false
+			else:
+				q_engine.hold_q(_runner.q_id, 1.0 / 60.0)
+				if frame >= q_hold_until:
+					q_holding = false
+					var released: Dictionary = q_engine.release_q(_runner.q_id)
+					var cooldown: float = _runner._recovery(float(released.get("cooldown", 0.0)))
+					_runner.q_cooldown_max = cooldown
+					_runner.q_cooldown_left = cooldown
+		elif _runner.q_cooldown_left <= 0.0 and not _runner.q_id.is_empty() and frame % 6 == 3:
 			if bool(_runner.activate_q().get("ok", false)):
 				q_casts += 1
+				if q_engine != null and q_engine.q_is_hold(_runner.q_id):
+					q_holding = true
+					q_hold_until = frame + 120
 		if _runner.v_charge >= AscensionRunner.V_CHARGE_MAX and not _runner.v_id.is_empty() and _runner._v_gap_left <= 0.0:
 			if bool(_runner.activate_v().get("ok", false)):
 				v_casts += 1

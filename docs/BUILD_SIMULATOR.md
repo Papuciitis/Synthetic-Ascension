@@ -21,7 +21,16 @@ shards split one job list by index, so four shards in parallel finish four
 times sooner), `SIM_PRESETS` (include every preset, authored build and
 prototype route), `SIM_STRUCTURE` (the tree structure pass, shard 0 only),
 `SIM_TIERS` (comma list of tier indices), `SIM_CROWD`, `SIM_HP_MUL` (crowd
-durability). Never run it during a human playtest.
+durability), `SIM_SET` (pin one set on every build; the gear seed picks it
+otherwise), `SIM_ABLATE` / `SIM_ABLATE_PRESETS` (ablation mode). Never
+run it during a human playtest.
+
+Held Qs (Guard, Deadshot, Designate) are pressed once, fed through the
+engine's hold hook for two seconds and released through the runner's
+recovery rule; campaigns 2 and 3 predate this and re-pressed them every
+six frames, so their Bastion and Precision rows are not trustworthy.
+`tools/sim/set_output_report.py` compares the same builds under each set
+(`docs/audits/2026-09-19-build-simulator/set-output-rev2/`).
 
 ## What a build is
 
