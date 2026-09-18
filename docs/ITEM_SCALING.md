@@ -89,6 +89,18 @@ enemy HP removed up 7-19%; seg2 (rank 1, unchanged numbers) moved within
 noise except for Oakheart's early cut (melee seg2 HP lost +11%). One
 scripted scenario; see the simulator caveats.
 
+## Measured effect of the complete revision 2 (campaign 4)
+
+`docs/audits/2026-09-19-build-simulator/rev2-items-vs-full.md` compares
+the same 296 builds under revision 2 items only (campaign 3) and the
+complete revision 2 (campaign 4: accessories, set channels, the merge and
+price law, Conduit's proxy-kill prime). Because campaign 4 also carries
+the simulator's held-Q fix, the honest read is the split by held Q in that
+document: without one, output rose 21% at seg4 and 5% at seg6 and was
+flat at seg9-seg12, HP lost rose 3-13% (Oakheart wearers +16-18%,
+Firestone +9-10%), and seg2 deaths per fight rose from 0.74 to 0.91. The
+next tuning question is seg2 survivability, not output.
+
 ## Merge effort and prices (Task 5)
 
 `RarityMath.GAP_HALF_LIFE` is 3.0: merge mass is `quality x 2^((incoming -
