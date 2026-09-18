@@ -137,6 +137,10 @@ var _burst_count_multiplier: float = 1.0
 var _rite_stun_bonus_seconds: float = 0.0
 var _completed: bool = false
 var _distortion_level: float = 0.0
+## Telemetry only: a lapse past the grace drains every frame, so it is
+## reported as one started/ended pair with the progress it cost.
+var _lapse_draining: bool = false
+var _lapse_drain_from: float = 0.0
 var _last_chance_vault: Node2D = null
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
@@ -211,6 +215,9 @@ func set_locked(v: bool) -> void:
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
 
+	_lapse_draining = false
+	_report(&"unlocked" if not locked else &"locked", {"hold_time": hold_time})
+
 	# On unlock: punchy but cheap VFX
 	if was_locked and (not locked):
 		if vfx != null:
@@ -235,9 +242,11 @@ func set_revealed(value: bool) -> void:
 	_burst_stage = 0
 	_progress_ledger = RITE_PROGRESS_LEDGER_SCRIPT.new()
 	_completed = false
+	_lapse_draining = false
 	configure_doctrine_rules()
 	_reset_channel_extras()
 	_apply_reveal_state()
+	_report(&"revealed", {"revealed": revealed})
 
 func _apply_reveal_state() -> void:
 	visible = revealed
@@ -285,7 +294,11 @@ func _process(delta: float) -> void:
 		if _hold > 0.0:
 			_lapse += delta
 			if _lapse > lapse_grace:
-				_apply_progress_loss(_hold - delta * lapse_drain_rate * _fill_rate())
+				if not _lapse_draining:
+					_lapse_draining = true
+					_lapse_drain_from = _hold
+					_report(&"lapse_drain_started", {"lapse": _lapse})
+				_apply_progress_loss(_hold - delta * lapse_drain_rate * _fill_rate(), &"lapse")
 				# The warp is the rite drawing on you. Past the grace it is
 				# not - the same moment the ring turns red, so a short dodge
 				# does not blink the screen.
@@ -293,6 +306,9 @@ func _process(delta: float) -> void:
 			queue_redraw()
 		return
 	_lapse = 0.0
+	if _lapse_draining:
+		_lapse_draining = false
+		_report(&"lapse_drain_ended", {"hold_before": _lapse_drain_from, "lost": _lapse_drain_from - _hold})
 
 	# A dead body inside the circle must not keep channeling the rite
 	# (same guard DistrictRelayObjective got for the same bug).
@@ -301,7 +317,7 @@ func _process(delta: float) -> void:
 		# A death is a setback, not a reset. See death_progress_kept.
 		if not _death_taken:
 			_death_taken = true
-			_apply_progress_loss(_hold * clampf(death_progress_kept, 0.0, 1.0))
+			_apply_progress_loss(_hold * clampf(death_progress_kept, 0.0, 1.0), &"death")
 			_lapse = 0.0
 		_set_distortion(0.0)
 		queue_redraw()
@@ -321,6 +337,7 @@ func _process(delta: float) -> void:
 
 	if _hold >= hold_time:
 		_completed = true
+		_report(&"completed", {"hold_time": hold_time})
 		_emit_safeguard_state()
 		# The world stops warping and the last chance is gone: you are leaving.
 		_reset_channel_extras()
@@ -370,12 +387,16 @@ func _mend(who: Node, delta: float) -> void:
 		who.call("heal", amount, &"exit_rite")
 
 
-func _apply_progress_loss(proposed_hold: float) -> void:
+func _apply_progress_loss(proposed_hold: float, reason: StringName = &"unknown") -> void:
+	var before := _hold
 	if hold_time <= 0.0:
 		_hold = 0.0
-		return
-	var fraction: float = float(_progress_ledger.call("clamp_loss_fraction", proposed_hold / hold_time))
-	_hold = fraction * hold_time
+	else:
+		var fraction: float = float(_progress_ledger.call("clamp_loss_fraction", proposed_hold / hold_time))
+		_hold = fraction * hold_time
+	# A lapse drains per frame and is reported as one started/ended pair.
+	if reason != &"lapse":
+		_report(&"progress_lost", {"reason": String(reason), "hold_before": before, "lost": before - _hold, "proposed": proposed_hold})
 
 
 func _update_rite_progress() -> void:
@@ -451,6 +472,7 @@ func _spawn_last_chance_vault() -> void:
 	vault.position = away * (radius + last_chance_edge_offset)
 	add_child(vault)
 	_last_chance_vault = vault
+	_report(&"last_chance", {"safeguards": _safeguards})
 	# The vault announces itself, now: one popup and one line, the line being
 	# its own sign with the whole bill on it. Its approach check next frame
 	# finds it already said, so nothing overdraws it.
@@ -470,9 +492,22 @@ func _despawn_last_chance_vault() -> void:
 func balance_snapshot() -> Dictionary:
 	return {"locked": locked, "revealed": revealed, "inside": _player_inside, "hold": _hold, "hold_time": hold_time,
 		"progress": clampf(_hold / hold_time, 0.0, 1.0) if hold_time > 0.0 else 0.0, "lapse": _lapse,
-		"completed": _completed, "safeguards": _safeguards, "safeguard_capacity": _safeguard_capacity,
-		"distortion": _distortion_level, "burst_stage": _burst_stage,
-		"position": [global_position.x, global_position.y]}
+		"lapse_draining": _lapse_draining, "completed": _completed, "safeguards": _safeguards,
+		"safeguard_capacity": _safeguard_capacity, "distortion": _distortion_level, "burst_stage": _burst_stage,
+		"seals": int(_progress_ledger.call("sealed_count")), "waves_spent": int(_progress_ledger.call("spent_wave_count")),
+		"floor": float(_progress_ledger.call("floor_fraction")), "position": [global_position.x, global_position.y]}
+
+
+## Telemetry only (RunEvents.exit_rite_event): what the rite just did, with
+## the hold and progress after it. Nothing may react to these.
+func _report(kind: StringName, data: Dictionary) -> void:
+	if RunEvents == null or not RunEvents.exit_rite_event.has_connections():
+		return
+	data["hold"] = _hold
+	data["progress"] = clampf(_hold / hold_time, 0.0, 1.0) if hold_time > 0.0 else 0.0
+	data["inside"] = _player_inside
+	data["locked"] = locked
+	RunEvents.exit_rite_event.emit(self, kind, data)
 
 
 func last_chance_vault() -> Node2D:
@@ -490,6 +525,7 @@ func _fire_automatic_seal(seal_number: int) -> void:
 	if index < 0 or index >= AUTOMATIC_PULSES.size():
 		return
 	var result := _apply_pulse(_automatic_pulse_profile(index))
+	_report(&"seal", {"seal": seal_number, "targets": int(result.get("targets", 0))})
 	var seal_label := SEAL_LABELS[index] if index < SEAL_LABELS.size() else str(seal_number)
 	if BattleText != null and BattleText.has_method("popup"):
 		BattleText.popup(
@@ -562,7 +598,9 @@ func _maybe_spawn_bursts(t: float) -> void:
 			return
 		_burst_stage += 1
 		if bool(_progress_ledger.call("mark_wave_spent", current_index)):
-			_spawner.spawn_burst(_burst_spawn_count(int(stage.y)))
+			var count := _burst_spawn_count(int(stage.y))
+			_report(&"wave", {"stage": current_index, "count": count, "at": stage.x})
+			_spawner.spawn_burst(count)
 		return
 
 
@@ -578,6 +616,7 @@ func grant_safeguard(source_key: StringName, amount: int = 1) -> int:
 	_safeguards = mini(_safeguard_capacity, _safeguards + amount * _safeguard_source_multiplier)
 	_emit_safeguard_state()
 	queue_redraw()
+	_report(&"safeguard_granted", {"source": String(source_key), "granted": _safeguards - before, "total": _safeguards})
 	return _safeguards - before
 
 
@@ -585,9 +624,10 @@ func consume_safeguard() -> bool:
 	if not can_invoke_safeguard():
 		return false
 	_safeguards -= 1
-	_apply_pulse(MANUAL_PULSE)
+	var result := _apply_pulse(MANUAL_PULSE)
 	_emit_safeguard_state()
 	queue_redraw()
+	_report(&"safeguard_used", {"total": _safeguards, "targets": int(result.get("targets", 0))})
 	return true
 
 
@@ -610,6 +650,7 @@ func drain_safeguards(reason: StringName = &"") -> int:
 		PerformanceFlightRecorder.record_counter_event(&"encounter", &"rite_safeguards_drained", drained, {"reason": String(reason)})
 	_emit_safeguard_state()
 	queue_redraw()
+	_report(&"safeguards_drained", {"count": drained, "reason": String(reason)})
 	return drained
 
 
@@ -687,11 +728,13 @@ func _on_body_entered(b: Node) -> void:
 			b.call("grant_invulnerability", backlash_invuln)
 		if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
 			RunEvents.tutorial_tip.emit("The rite rejects you — it is not ready.", 2.0)
+		_report(&"rejected", {})
 		return
 
 	_player_inside = true
 	add_to_group(&"exit_rite_channeling")
 	_emit_safeguard_state()
+	_report(&"channel_entered", {"safeguards": _safeguards})
 	# Say what the player has just committed to, once. Twenty seconds of
 	# escalating waves with no warning reads as the game breaking, not as a
 	# siege - and the decision to start it is only a decision if they know.
@@ -719,6 +762,7 @@ func _on_body_exited(b: Node) -> void:
 		_player_inside = false
 		remove_from_group(&"exit_rite_channeling")
 		_emit_safeguard_state()
+		_report(&"channel_left", {})
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)

@@ -184,7 +184,8 @@ func _preach() -> void:
 	_power_bonus = minf(POWER_CAP, _power_bonus + POWER_PER_TICK * potency() * escalation)
 
 	if ThreatDirector != null and ThreatDirector.has_method("add_overtime_pressure"):
-		ThreatDirector.add_overtime_pressure(PRESSURE_SECONDS * (1.0 + PRESSURE_ESCALATION * float(_ticks - 1)))
+		# Tagged per slot and instance: two equipped Gospels are two contributors.
+		ThreatDirector.add_overtime_pressure(PRESSURE_SECONDS * (1.0 + PRESSURE_ESCALATION * float(_ticks - 1)), contributor_tag())
 
 	# The warning is the point: the player must be able to feel the trade going
 	# bad while the damage number is still going up.
@@ -231,6 +232,10 @@ func _draw() -> void:
 		draw_line(dir * radius, dir * (radius + 7.0 + 9.0 * heat * breathe), Color(tint.r, tint.g, tint.b, 0.45 * breathe), 2.0, true)
 
 
-## Pure: reads the banked Power bonus.
+## Pure: reads the banked Power bonus and the sermon count.
 func balance_snapshot() -> Dictionary:
-	return {"power_multiplier": get_power_multiplier()}
+	return {"power_multiplier": get_power_multiplier(), "ticks": _ticks, "open": _open, "luck_bonus": _luck_bonus, "contributor": contributor_tag()}
+
+
+func contributor_tag() -> String:
+	return "manifestation:overtime_gospel@slot%d#%d" % [slot_index, item.get_instance_id() if item != null else 0]

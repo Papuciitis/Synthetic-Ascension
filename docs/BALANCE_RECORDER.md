@@ -140,6 +140,60 @@ of `recording` means the final boundary has not been saved, not a completed run.
   Captures written before this change carry the old `effect_multipliers` key,
   whose values were taken through the consuming getters.
 
+## Exit and pressure
+
+The owners of the exit and pressure state report what they did, through
+telemetry-only signals nothing may react to:
+
+- `ExitRite` reports unlock/lock and reveal, rejections (a locked rite's
+  backlash), actual channel entry and leave, a lapse past the grace as one
+  started/ended pair with the hold it drained, death retention as a
+  `progress_lost` event with the exact hold lost, seals, waves (with the
+  spawn count requested), the last-chance vault, safeguards granted, used and
+  drained, and completion. Its pure `balance_snapshot()` (hold, progress,
+  lapse, seals, waves, safeguards, floor) rides every 1 Hz sample and every 5
+  Hz incident sample.
+- `ThreatDirector.balance_snapshot()` reports the pressure components with
+  the same terms the director uses: elapsed and injected unseal seconds
+  (separately, summing to the clock it uses), kills since unseal and the
+  excess past the buffer, the time and kill parts of Overtime, dominance, the
+  final HP/damage/speed/spawn/elite values and whether a cap or the power
+  contrast hold is binding. `add_overtime_pressure(seconds, contributor)`
+  emits one `overtime_pressure_injected` per injection; Overtime Gospel tags
+  its slot and item instance, so two equipped copies are two contributors.
+  The injection changes nothing: the final Overtime is exactly the
+  pre-instrumentation calculation.
+- The spawner reports every resolved request (`spawn_request_resolved`) by
+  source (ambient, burst, burst_at, beat, interior, authored, forced) and
+  outcome: `spawned` with the count, or the gate that refused it as the
+  spawner itself decided it (paused, no_player, culled, rite_pressure,
+  refill_hold, alive_cap, no_batch, type_cap, filtered, missing_scene,
+  no_capacity, invalid_spawn_position, spawning_disabled, scene_missing,
+  special_cap, placement_failed). Its `balance_snapshot()` reads pending
+  reservations, population, cap and gates without reserving anything.
+- `EncounterDirector` reports beats started, ended and aborted (with placed
+  and wanted members), escalations and specialist responses; its snapshot
+  lists the formations alive by beat id with its own member counts.
+
+The ledger derives, per segment: status (not_unlocked, unlocked, channeling,
+unfinished, completed), unlock-to-first-channel time, attempts (an attempt is
+an actual channel entry; proximity is not one), channel seconds, progress
+lost by cause (lapse, death, other), seals, waves and their enemies, deaths
+while channeling, deaths within ten gameplay seconds of a reconstruction,
+reconstruction spending beside Followers earned, time from each
+reconstruction back to the channel, reinforcement counts, spawn requests by
+source and outcome (also aggregated into each metrics window), and Overtime
+injections by contributor with the director's own injected total beside the
+ledger's sum. A sudden rise in pressure is never attributed to a contributor
+without its injection event.
+
+Not measured: the Exit Encounter Controller proposed by the balance plan does
+not exist yet, so its fields (planned reinforcement waves, recovery
+protection) are unavailable rather than zero. Placement failures inside the
+ambient ring pick are reported as `invalid_spawn_position` only when the
+spawner refuses the position itself. There is no proxy-to-actor promotion
+path in this build to count.
+
 ## Incident history
 
 The recorder keeps the last five gameplay seconds in a bounded ring: at most
@@ -199,8 +253,8 @@ elapsed time, build and debug context together.
 ## Verification
 
 Run `BalanceLedgerTest`, `BalanceCaptureWriterTest`, `BalanceRecorderTest`,
-`BalanceIncidentHistoryTest`, `BalanceHealthAccountingTest`, `BalanceSnapshotPurityTest`
-and `BalanceAttributionTest`
+`BalanceIncidentHistoryTest`, `BalanceExitDiagnosticsTest`, `BalanceHealthAccountingTest`,
+`BalanceSnapshotPurityTest` and `BalanceAttributionTest`
 with the repository's normal headless test commands. The writer suite
 deliberately targets an invalid directory to verify failure reporting; its
 expected filesystem error must be followed by a passing assertion. Existing

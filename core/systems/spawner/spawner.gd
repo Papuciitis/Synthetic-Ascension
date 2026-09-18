@@ -122,6 +122,9 @@ var _pool_warm_queue: Array[PackedScene] = []
 const FORCE_SPAWN_PER_FRAME := 12
 var _force_spawn_queue: int = 0
 var _rite_pressure_active: bool = false
+## Telemetry only: why the last spawn attempt produced nothing, read by the
+## caller that reports the request (RunEvents.spawn_request_resolved).
+var _last_reject: StringName = &""
 
 
 func _ready() -> void:
@@ -163,12 +166,15 @@ func _on_tick() -> void:
 		return
 	if not spawning_enabled:
 		return
+	_last_reject = &""
 	if _spawn_pause_left > 0.0:
+		_report_spawn(&"ambient", &"paused", 0, {"pause_left": _spawn_pause_left})
 		return
 
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group("player") as Node2D
 		if _player == null:
+			_report_spawn(&"ambient", &"no_player", 0)
 			return
 
 	if _cm == null or not is_instance_valid(_cm):
@@ -216,26 +222,31 @@ func _on_tick() -> void:
 		# Critical:
 		# Don't delete enemies and create replacements during the same tick.
 		if culled > 0:
+			_report_spawn(&"ambient", &"culled", 0, {"culled": culled, "alive": alive, "cap": cap_total})
 			return
 		alive = _alive_total()
 	# Existing ambient enemies remain and distant excess can be retired above,
 	# but only authored beat members may enter while the player channels.
 	if not _ambient_spawning_allowed():
+		_report_spawn(&"ambient", &"rite_pressure", 0, {"alive": alive, "cap": cap_total})
 		return
 	# A recent distance/stale cleanup opened capacity deliberately.
 	# Give the world some time before the director consumes it again.
 	if _cull_refill_left > 0.0:
+		_report_spawn(&"ambient", &"refill_hold", 0, {"refill_left": _cull_refill_left})
 		return
 	if (
 		cap_total > 0
 		and alive + _pending_spawn_total >= cap_total
 	):
+		_report_spawn(&"ambient", &"alive_cap", 0, {"alive": alive, "pending": _pending_spawn_total, "cap": cap_total})
 		return
 
 	# batch scaling
 	var batch: int = int(tutorial_cfg.get("batch", 0)) if tutorial_active else batch_base + int(floor(batch_per_min * minutes))
 	batch = clampi(batch, 0 if tutorial_active else 1, batch_cap)
 	if batch <= 0:
+		_report_spawn(&"ambient", &"no_batch", 0)
 		return
 	if boss_near:
 		batch = maxi(1, int(round(float(batch) * boss_batch_mul)))
@@ -243,11 +254,38 @@ func _on_tick() -> void:
 	# Enemy construction runs inline in this tick; budget it so a saturated
 	# director cannot build a whole batch in one frame. Overflow carries.
 	var budgeted: int = _take_spawn_budget(batch)
+	var spawned_now := 0
 	for _i in range(budgeted):
 		var remaining_total: int = _remaining_total_capacity(cap_total, alive)
 		if remaining_total <= 0:
-			return
-		_spawn_one(minutes, remaining_total)
+			_last_reject = &"alive_cap"
+			break
+		spawned_now += _spawn_one(minutes, remaining_total)
+	_report_spawn(&"ambient", &"spawned" if spawned_now > 0 else _reject_or(&"nothing"), spawned_now,
+		{"requested": budgeted, "alive": alive, "pending": _pending_spawn_total, "cap": cap_total, "interval": _timer.wait_time})
+
+
+## Telemetry only (RunEvents.spawn_request_resolved): one resolved request
+## from `source`, its outcome (spawned or the reason nothing was) and count.
+func _report_spawn(source: StringName, outcome: StringName, count: int, data: Dictionary = {}) -> void:
+	if RunEvents == null or not RunEvents.spawn_request_resolved.has_connections():
+		return
+	RunEvents.spawn_request_resolved.emit(source, outcome, count, data)
+
+
+func _reject_or(fallback: StringName) -> StringName:
+	return _last_reject if _last_reject != &"" else fallback
+
+
+## Observation only (balance recorder): population, reservations and the
+## gates that decide the next ambient tick. Reads counters, reserves nothing.
+func balance_snapshot() -> Dictionary:
+	return {"spawning_enabled": spawning_enabled, "rite_pressure_active": _rite_pressure_active,
+		"pending_spawns": _pending_spawn_total, "pending_scenes": _pending_spawn_by_scene.size(),
+		"alive": _alive_total(), "cap": _current_alive_cap(), "spawn_pause_left": _spawn_pause_left,
+		"cull_refill_left": _cull_refill_left, "interval": _timer.wait_time if _timer != null else 0.0,
+		"elapsed": _elapsed, "authored_wave_running": _authored_wave_running, "force_queue": _force_spawn_queue,
+		"spawn_debt": _spawn_debt}
 
 func _is_boss_near_player() -> bool:
 	if _player == null or not is_instance_valid(_player):
@@ -301,16 +339,19 @@ func _force_spawn_batch(count: int) -> int:
 	# Weighted rolls can land on an entry whose type cap is full and return 0;
 	# retry a bounded number of times instead of treating that as exhaustion.
 	var attempts := maxi(count * 4, count + 8)
+	_last_reject = &""
 	while spawned_total < count and attempts > 0:
 		attempts -= 1
 		var cap_total: int = _current_alive_cap()
 		var remaining: int = _remaining_total_capacity(cap_total, _alive_total())
 		if remaining <= 0:
+			_last_reject = &"alive_cap"
 			break
 		spawned_total += _spawn_one(
 			minutes,
 			mini(remaining, count - spawned_total)
 		)
+	_report_spawn(&"forced", &"spawned" if spawned_total > 0 else _reject_or(&"nothing"), spawned_total, {"requested": count})
 	return spawned_total
 
 
@@ -330,6 +371,7 @@ func _drain_force_spawn_queue() -> void:
 ## behaviour.
 func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Vector2 = Vector2.INF, out_nodes: Array = []) -> int:
 	if total_capacity <= 0:
+		_last_reject = &"no_capacity"
 		return 0
 	var entry: EnemySpawnEntry = null
 	var tutorial_cfg: Dictionary = _tutorial_settings()
@@ -344,6 +386,7 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Ve
 	if not tutorial_cfg.is_empty():
 		var roster: Array = tutorial_cfg.get("roster", []) as Array
 		if roster.is_empty():
+			_last_reject = &"no_roster"
 			return 0
 		scene_to_spawn = roster[Global._rng.randi_range(0, roster.size() - 1)] as PackedScene
 
@@ -359,10 +402,12 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Ve
 
 	if scene_to_spawn == null:
 		_report_missing_spawn_scene()
+		_last_reject = &"missing_scene"
 		return 0
 
 	var enemy_id := _enemy_id_for_scene(scene_to_spawn)
 	if not _debug_enemy_enabled(enemy_id, false):
+		_last_reject = &"filtered"
 		return 0
 	per_type_cap = _effective_type_cap(enemy_id, per_type_cap)
 
@@ -373,6 +418,7 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Ve
 	if per_type_cap > 0:
 		var alive_of_type: int = _alive_count_for_scene(scene_to_spawn)
 		if alive_of_type + pending_of_type >= per_type_cap:
+			_last_reject = &"type_cap"
 			return 0
 
 	var amount: int = Global._rng.randi_range(count_min, count_max)
@@ -380,6 +426,7 @@ func _spawn_one(minutes: float, total_capacity: int = 2147483647, forced_pos: Ve
 	if per_type_cap > 0:
 		amount = mini(amount, per_type_cap - _alive_count_for_scene(scene_to_spawn) - pending_of_type)
 	if amount <= 0:
+		_last_reject = &"no_capacity"
 		return 0
 	var spawned_count: int = 0
 
@@ -399,6 +446,7 @@ func _spawn_instance(scene_to_spawn: PackedScene, minutes: float, entry_elite: f
 func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_elite: float, forced_pos: Vector2 = Vector2.INF, special_kind: StringName = &"") -> Node:
 	var current_scene: Node = get_tree().current_scene
 	if current_scene == null:
+		_last_reject = &"no_scene_root"
 		return null
 	var use_pool := special_kind == &"" and PoolManager != null
 	var e: Node = (
@@ -407,6 +455,7 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 		else scene_to_spawn.instantiate()
 	)
 	if e == null:
+		_last_reject = &"instantiate_failed"
 		return null
 	var enemy_id := _enemy_id_from_node(e)
 	var protected := _is_protected_spawn(e)
@@ -415,6 +464,7 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 			e.call("despawn", &"spawn_filter")
 		else:
 			e.free()
+		_last_reject = &"filtered"
 		return null
 
 	# position: ring around player + jitter (avoid blocked cells + wardstone fields)
@@ -424,6 +474,7 @@ func _spawn_instance_node(scene_to_spawn: PackedScene, minutes: float, entry_eli
 			e.call("despawn", &"invalid_spawn_position")
 		else:
 			e.queue_free()
+		_last_reject = &"invalid_spawn_position"
 		return null
 
 	var e2d: Node2D = e as Node2D
@@ -613,7 +664,9 @@ func _is_spawn_position_valid(pos: Vector2) -> bool:
 func spawn_local_encounter(area: Rect2, count: int, encounter_owner: Node = null) -> Array:
 	var spawned: Array = []
 	if count <= 0 or not spawning_enabled:
+		_report_spawn(&"interior", &"spawning_disabled" if not spawning_enabled else &"nothing", 0, {"requested": count})
 		return spawned
+	_last_reject = &""
 	var amount: int = clampi(count, 1, 12)
 	for _index in range(amount):
 		var entry: EnemySpawnEntry = null
@@ -631,6 +684,7 @@ func spawn_local_encounter(area: Rect2, count: int, encounter_owner: Node = null
 			enemy.set_meta("interior_owner_id", encounter_owner.get_instance_id() if encounter_owner != null else 0)
 			enemy.set_meta("interior_active", true)
 			spawned.append(enemy)
+	_report_spawn(&"interior", &"spawned" if not spawned.is_empty() else _reject_or(&"nothing"), spawned.size(), {"requested": amount})
 	return spawned
 
 func _pick_local_encounter_pos(area: Rect2) -> Vector2:
@@ -675,15 +729,20 @@ func _is_in_wardstone_field(pos: Vector2) -> bool:
 func spawn_burst(extra: int) -> void:
 	if extra <= 0:
 		return
+	_last_reject = &""
 	var gate := _ambient_burst_gate()
 	if gate.x < 0:
+		_report_spawn(&"burst", _reject_or(&"gated"), 0, {"requested": extra})
 		return
 	var minutes: float = _elapsed / 60.0
+	var spawned := 0
 	for _i in range(extra):
 		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y)
 		if remaining_total <= 0:
-			return
-		_spawn_one(minutes, remaining_total)
+			_last_reject = &"alive_cap"
+			break
+		spawned += _spawn_one(minutes, remaining_total)
+	_report_spawn(&"burst", &"spawned" if spawned > 0 else _reject_or(&"nothing"), spawned, {"requested": extra, "alive": gate.y, "cap": gate.x})
 
 
 ## Ruling 2026-09-06: a source that lives somewhere - a breach - pours its
@@ -696,18 +755,22 @@ func spawn_burst_at(world_position: Vector2, count: int, spread_px: float = 0.0)
 	var out: Array = []
 	if count <= 0:
 		return out
+	_last_reject = &""
 	var gate := _ambient_burst_gate()
 	if gate.x < 0:
+		_report_spawn(&"burst_at", _reject_or(&"gated"), 0, {"requested": count})
 		return out
 	var minutes: float = _elapsed / 60.0
 	for _i in range(count):
 		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y + out.size())
 		if remaining_total <= 0:
+			_last_reject = &"alive_cap"
 			break
 		var pos := world_position
 		if spread_px > 0.0:
 			pos += Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * (Global._rng.randf() * spread_px)
 		_spawn_one(minutes, 1, pos, out)
+	_report_spawn(&"burst_at", &"spawned" if not out.is_empty() else _reject_or(&"nothing"), out.size(), {"requested": count, "alive": gate.y, "cap": gate.x})
 	return out
 
 
@@ -717,11 +780,14 @@ func spawn_burst_at(world_position: Vector2, count: int, spread_px: float = 0.0)
 ## nothing may spawn on this call.
 func _ambient_burst_gate() -> Vector2i:
 	if not spawning_enabled:
+		_last_reject = &"spawning_disabled"
 		return Vector2i(-1, 0)
 	if not _ambient_spawning_allowed():
+		_last_reject = &"rite_pressure"
 		_request_rite_reinforcement()
 		return Vector2i(-1, 0)
 	if _player == null or not is_instance_valid(_player):
+		_last_reject = &"no_player"
 		return Vector2i(-1, 0)
 
 	# cap alive enemies (table overrides if present)
@@ -739,11 +805,14 @@ func _ambient_burst_gate() -> Vector2i:
 			alive
 		)
 		if culled > 0:
+			_last_reject = &"culled"
 			return Vector2i(-1, 0)
 		alive = _alive_total()
 	if _cull_refill_left > 0.0:
+		_last_reject = &"refill_hold"
 		return Vector2i(-1, 0)
 	if cap_total > 0 and alive >= cap_total:
+		_last_reject = &"alive_cap"
 		return Vector2i(-1, 0)
 	return Vector2i(cap_total, alive)
 
@@ -804,21 +873,27 @@ func spawn_beat_member(
 	modifier_ids: Array[StringName] = [],
 ) -> Node:
 	if not spawning_enabled:
+		_report_spawn(&"beat", &"spawning_disabled", 0, {"scene": scene_path})
 		return null
 	var scene := load(scene_path) as PackedScene
 	if scene == null:
 		push_warning("[Spawner] beat member scene missing: %s" % scene_path)
+		_report_spawn(&"beat", &"scene_missing", 0, {"scene": scene_path})
 		return null
 	if _ei != null and _ei.has_method("try_reserve_special"):
 		if int(_ei.call("try_reserve_special", &"beat", 1)) <= 0:
+			_report_spawn(&"beat", &"special_cap", 0, {"scene": scene_path})
 			return null
+	_last_reject = &""
 	var node := _spawn_instance_node(scene, _elapsed / 60.0, 0.0, spawn_position, &"beat")
 	if node == null:
 		if _ei != null and _ei.has_method("release_special"):
 			_ei.call("release_special", &"beat", 1)
+		_report_spawn(&"beat", _reject_or(&"placement_failed"), 0, {"scene": scene_path})
 		return null
 	if _ei != null and _ei.has_method("commit_special"):
 		_ei.call("commit_special", node, &"beat")
+	_report_spawn(&"beat", &"spawned", 1, {"scene": scene_path, "elite": elite or not modifier_ids.is_empty()})
 	if not modifier_ids.is_empty() and node.has_method("apply_elite_modifiers"):
 		node.call_deferred("apply_elite_modifiers", modifier_ids)
 	elif elite and node.has_method("make_elite"):
@@ -853,8 +928,9 @@ func _run_authored_wave(count: int, spacing: float, delay: float) -> void:
 		if not spawning_enabled:
 			break
 		var remaining_total: int = _remaining_total_capacity(_current_alive_cap(), _alive_total())
-		if remaining_total > 0:
-			_spawn_one(_elapsed / 60.0, remaining_total)
+		_last_reject = &""
+		var placed := _spawn_one(_elapsed / 60.0, remaining_total) if remaining_total > 0 else 0
+		_report_spawn(&"authored", &"spawned" if placed > 0 else _reject_or(&"alive_cap"), placed, {"requested": 1})
 		if spacing > 0.0:
 			await get_tree().create_timer(spacing, false).timeout
 			if not is_inside_tree():

@@ -179,6 +179,7 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 			else:
 				node.queue_free()
 		_counters["aborted"] = int(_counters["aborted"]) + 1
+		_record(&"beat_aborted", beat["id"], spawned.size(), {"skipped": skipped, "wanted": members.size()})
 		return {}
 	var id: StringName = beat["id"]
 	_counters["members_spawned"] = int(_counters["members_spawned"]) + spawned.size()
@@ -269,6 +270,7 @@ func _on_rite_channel_changed(active: bool) -> void:
 		return
 	_specialists_sent = true
 	_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
+	_record(&"specialist_response", &"initial", rite_specialist_beats.size())
 	for id in rite_specialist_beats:
 		try_spawn_beat(id)
 
@@ -287,6 +289,7 @@ func request_rite_reinforcement() -> bool:
 	var spawned := _spawn_next_rite_specialist()
 	if spawned:
 		_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
+		_record(&"specialist_response", _last_beat_id, 1)
 	return spawned
 
 
@@ -368,9 +371,23 @@ func _announce(beat: Dictionary) -> void:
 		BattleText.popup(_player.global_position, String(beat.get("announce", beat["label"])), Color(1.0, 0.55, 0.35, 1.0), 1.25)
 
 
-func _record(event: StringName, id: StringName, members: int) -> void:
+func _record(event: StringName, id: StringName, members: int, extra: Dictionary = {}) -> void:
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_event(&"encounter", event, {"beat": String(id), "members": members})
+	if RunEvents != null and RunEvents.encounter_event.has_connections():
+		var data := {"beat": String(id), "members": members, "rite": _rite_channel_active}
+		data.merge(extra)
+		RunEvents.encounter_event.emit(event, data)
+
+
+## Observation only (balance recorder): the formations alive right now, by
+## beat id with the director's own member counts, and its counters.
+func balance_snapshot() -> Dictionary:
+	var beats := {}
+	for id in _active:
+		beats[String(id)] = int((_active[id] as Dictionary).get("alive", 0))
+	return {"active_beats": beats, "counters": _counters.duplicate(), "rite_channel_active": _rite_channel_active,
+		"rite_response_left": _rite_response_left, "next_beat_in": _next_beat_in}
 
 
 func _phase() -> StringName:

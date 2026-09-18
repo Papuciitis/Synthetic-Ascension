@@ -31,6 +31,11 @@ const SCHEMA_VERSION := 2
 ## ids are remembered in a bounded window only.
 const ATTRIBUTION_KEY_CAP := 512
 const RECENT_CASTS_KEPT := 256
+## Exit and pressure diagnostics: a death this soon after reconstruction is
+## counted as a reconstruction death; spawn and contributor keys are capped.
+const RECONSTRUCTION_DEATH_WINDOW := 10.0
+const SPAWN_KEY_CAP := 128
+const OVERTIME_CONTRIBUTOR_CAP := 64
 
 var max_pending_records := 8192
 var _health: Dictionary = {}
@@ -51,6 +56,9 @@ var _elapsed := 0.0
 var _dropped := 0
 var _discontinuities := 0
 var _outcome := "recording"
+var _channel_entered_at := -1.0
+var _last_respawn_at := -1.0
+var _reentry_pending := false
 
 func start(metadata: Dictionary, balance: int, segment: int) -> void:
 	_metadata = metadata.duplicate(true)
@@ -80,10 +88,23 @@ func _empty_stats(balance: int) -> Dictionary:
 		"followers_by_reason": {}, "enemies": {}, "player_damage_by_source": {},
 		"healing_by_source": {},
 		"attribution": {"by_origin": {}, "by_emitter": {}, "overflow": {"by_origin": 0, "by_emitter": 0}, "mixed_raw_breakdown": {}},
+		"exit": _empty_exit(),
 	}
 	for metric in METRICS:
 		stats[metric] = 0.0
 	return stats
+
+## Per segment (the rite is per segment); the totals row keeps the counters.
+static func _empty_exit() -> Dictionary:
+	return {"status": "not_unlocked", "unlocked_at": null, "first_channel_at": null, "unlock_to_first_channel": null,
+		"completed_at": null, "attempts": 0, "rejections": 0, "lapses": 0, "channel_seconds": 0.0,
+		"progress_lost": {"lapse": 0.0, "death": 0.0, "other": 0.0}, "seals": 0, "waves": 0, "wave_enemies": 0,
+		"last_chance": 0, "safeguards_granted": 0, "safeguards_used": 0, "safeguards_drained": 0,
+		"deaths_while_channeling": 0, "deaths_after_reconstruction": 0, "reconstruction_spent": 0, "reentry_seconds": [],
+		"reinforcements": {"beats_started": 0, "beats_ended": 0, "beats_aborted": 0, "members": 0, "specialist_responses": 0, "escalations": 0},
+		"spawns": {}, "spawn_overflow": 0,
+		"overtime": {"injections": {}, "injection_count": 0, "injected_seconds": 0.0, "injection_overflow": 0,
+			"max_overtime": 0.0, "final_overtime": 0.0, "final_unseal_seconds": 0.0, "director_injected_seconds": 0.0}}
 
 func _open_segment(segment: int, balance: int) -> void:
 	_current = _empty_stats(balance)
@@ -270,6 +291,9 @@ func transaction(before: int, change: int, after: int, reason: String, context: 
 		_discontinuities += 1
 	var gained := maxi(0, change)
 	var spent := maxi(0, -change)
+	if reason == "reconstruction":
+		for row in _exit_rows():
+			row["reconstruction_spent"] = int(row["reconstruction_spent"]) + spent
 	if reason == "trade":
 		var buy_value := int(context.get("buy_value", 0))
 		var sell_value := int(context.get("sell_value", 0))
@@ -475,6 +499,175 @@ static func attribution_coverage(stats: Dictionary) -> Dictionary:
 	var attributed := maxf(0.0, total - unknown - mixed)
 	return {"hp_removed": total, "attributed": attributed, "unknown": unknown, "mixed": mixed,
 		"attributed_share": (attributed / total) if total > 0.0 else null}
+
+
+# ---------------------------------------------------------------- exit and pressure
+
+func _exit_rows() -> Array:
+	return [_totals.exit, _current.exit]
+
+
+func _exit_add(key: String, amount: float = 1.0) -> void:
+	for row in _exit_rows():
+		row[key] = row[key] + amount
+
+
+## One ExitRite event (RunEvents.exit_rite_event) with its hold/progress.
+## An attempt is an actual channel entry; proximity is not one.
+func exit_event(kind: String, data: Dictionary) -> void:
+	var now := gameplay_seconds()
+	var seg: Dictionary = _current.exit
+	match kind:
+		"unlocked":
+			if seg.unlocked_at == null:
+				seg["unlocked_at"] = now
+			seg["status"] = "unlocked"
+		"channel_entered":
+			_exit_add("attempts")
+			if seg.first_channel_at == null:
+				seg["first_channel_at"] = now
+				if seg.unlocked_at != null:
+					seg["unlock_to_first_channel"] = now - float(seg.unlocked_at)
+			seg["status"] = "channeling"
+			_channel_entered_at = now
+			if _reentry_pending and _last_respawn_at >= 0.0:
+				(seg.reentry_seconds as Array).append(now - _last_respawn_at)
+				_reentry_pending = false
+		"channel_left":
+			if String(seg.status) != "completed":
+				seg["status"] = "unfinished"
+			_close_channel(now)
+		"rejected":
+			_exit_add("rejections")
+		"lapse_drain_started":
+			_exit_add("lapses")
+		"lapse_drain_ended":
+			_lose_progress("lapse", float(data.get("lost", 0.0)))
+		"progress_lost":
+			var reason := String(data.get("reason", "other"))
+			_lose_progress(reason if reason in ["lapse", "death"] else "other", float(data.get("lost", 0.0)))
+		"seal":
+			_exit_add("seals")
+		"wave":
+			_exit_add("waves")
+			_exit_add("wave_enemies", float(data.get("count", 0)))
+		"last_chance":
+			_exit_add("last_chance")
+		"safeguard_granted":
+			_exit_add("safeguards_granted", float(data.get("granted", 0)))
+		"safeguard_used":
+			_exit_add("safeguards_used")
+		"safeguards_drained":
+			_exit_add("safeguards_drained", float(data.get("count", 0)))
+		"completed":
+			seg["status"] = "completed"
+			seg["completed_at"] = now
+			_close_channel(now)
+	var record := data.duplicate()
+	record["kind"] = kind
+	event("exit", record)
+
+
+func _close_channel(now: float) -> void:
+	if _channel_entered_at >= 0.0:
+		_exit_add("channel_seconds", now - _channel_entered_at)
+		_channel_entered_at = -1.0
+
+
+func _lose_progress(reason: String, lost: float) -> void:
+	for row in _exit_rows():
+		var table: Dictionary = row.progress_lost
+		table[reason] = float(table.get(reason, 0.0)) + lost
+
+
+## A death while the rite was being channelled, and one inside the window
+## after a reconstruction (the life's start reason says whether it was one).
+func note_death(channeling: bool) -> void:
+	if channeling:
+		_exit_add("deaths_while_channeling")
+	if String(_health.get("reason", "")) == "respawn" and gameplay_seconds() - float(_health.get("started_gameplay", 0.0)) <= RECONSTRUCTION_DEATH_WINDOW:
+		_exit_add("deaths_after_reconstruction")
+
+
+func note_respawn() -> void:
+	_last_respawn_at = gameplay_seconds()
+	_reentry_pending = true
+
+
+## One resolved spawn request; repeated results aggregate by source:outcome
+## per segment and per metrics window.
+func spawn_resolved(source: String, outcome: String, count: int) -> void:
+	var key := source + ":" + outcome
+	for row in _exit_rows():
+		var table: Dictionary = row.spawns
+		if table.has(key) or table.size() < SPAWN_KEY_CAP:
+			if not table.has(key):
+				table[key] = {"requests": 0, "enemies": 0}
+			table[key]["requests"] = int(table[key]["requests"]) + 1
+			table[key]["enemies"] = int(table[key]["enemies"]) + count
+		else:
+			row["spawn_overflow"] = int(row["spawn_overflow"]) + 1
+	if not _window.has("spawns"):
+		_window["spawns"] = {}
+	var window: Dictionary = _window.spawns
+	if not window.has(key):
+		window[key] = {"requests": 0, "enemies": 0}
+	window[key]["requests"] = int(window[key]["requests"]) + 1
+	window[key]["enemies"] = int(window[key]["enemies"]) + count
+
+
+func encounter_event(kind: String, data: Dictionary) -> void:
+	var members := int(data.get("members", 0))
+	for row in _exit_rows():
+		var table: Dictionary = row.reinforcements
+		match kind:
+			"beat_started":
+				table["beats_started"] = int(table["beats_started"]) + 1
+				table["members"] = int(table["members"]) + members
+			"beat_ended":
+				table["beats_ended"] = int(table["beats_ended"]) + 1
+			"beat_aborted":
+				table["beats_aborted"] = int(table["beats_aborted"]) + 1
+			"specialist_response":
+				table["specialist_responses"] = int(table["specialist_responses"]) + 1
+			"escalation":
+				table["escalations"] = int(table["escalations"]) + 1
+	var record := data.duplicate()
+	record["kind"] = kind
+	event("encounter", record)
+
+
+## Extra unseal seconds accepted by the director from one contributor. The
+## clock and overtime after it come from the director; nothing is added twice.
+func overtime_injection(contributor: String, seconds: float, unseal_seconds: float, overtime: float) -> void:
+	var name := contributor if not contributor.is_empty() else "unknown"
+	for row in _exit_rows():
+		var table: Dictionary = row.overtime
+		var injections: Dictionary = table.injections
+		if injections.has(name) or injections.size() < OVERTIME_CONTRIBUTOR_CAP:
+			injections[name] = float(injections.get(name, 0.0)) + seconds
+		else:
+			table["injection_overflow"] = int(table["injection_overflow"]) + 1
+		table["injection_count"] = int(table["injection_count"]) + 1
+		table["injected_seconds"] = float(table["injected_seconds"]) + seconds
+		table["final_unseal_seconds"] = unseal_seconds
+		table["final_overtime"] = overtime
+		table["max_overtime"] = maxf(float(table["max_overtime"]), overtime)
+	event("overtime_injection", {"contributor": name, "seconds": seconds, "unseal_seconds": unseal_seconds, "overtime": overtime})
+
+
+## The director's pure snapshot at a sample: final values and its own
+## injection accounting, kept beside the ledger's sum for cross-checking.
+func observe_pressure(snapshot: Dictionary) -> void:
+	if snapshot.is_empty():
+		return
+	var overtime := float(snapshot.get("overtime", 0.0))
+	for row in _exit_rows():
+		var table: Dictionary = row.overtime
+		table["final_overtime"] = overtime
+		table["max_overtime"] = maxf(float(table["max_overtime"]), overtime)
+		table["final_unseal_seconds"] = float(snapshot.get("unseal_seconds", table["final_unseal_seconds"]))
+		table["director_injected_seconds"] = float(snapshot.get("injected_seconds", table["director_injected_seconds"]))
 
 
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:

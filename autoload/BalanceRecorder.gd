@@ -14,7 +14,7 @@ const RECORDER_REVISION := 2
 const BALANCE_REVISION := 1
 ## What this recorder measures; an omitted feature reads as unavailable, not 0.
 const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": true,
-	"incidents": true, "exit_detail": false, "progression": false}
+	"incidents": true, "exit_detail": true, "progression": false}
 ## Incident history: cheap state at 5 Hz during live gameplay, enemies counted
 ## by archetype inside NEARBY_RADIUS px through the bounded spatial query, and
 ## a serialized ceiling per persisted incident (oldest history trimmed first).
@@ -168,6 +168,11 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"power_threshold_crossed", _on_power_threshold)
 	_subscribe(RunEvents, &"player_ability_activated", _on_ability_activated)
 	_subscribe(RunEvents, &"player_dashed", _on_dashed)
+	_subscribe(RunEvents, &"exit_rite_event", _on_exit_event)
+	_subscribe(RunEvents, &"spawn_request_resolved", _on_spawn_resolved)
+	_subscribe(RunEvents, &"encounter_event", _on_encounter_event)
+	_subscribe(RunEvents, &"overtime_pressure_injected", _on_overtime_injected)
+	_subscribe(ThreatDirector, &"rite_channel_changed", _on_rite_channel)
 
 func _subscribe(object: Object, signal_name: StringName, callback: Callable) -> void:
 	object.connect(signal_name, callback)
@@ -379,13 +384,23 @@ func _on_life_event(player: Node, kind: StringName) -> void:
 	if not metric.is_empty():
 		_ledger.add_metric(metric)
 	_push_history("life", {"event": String(kind), "hp": float(player.get("hp")), "max_hp": float(player.get("max_hp"))})
+	var record := {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "followers": Global.followers}
 	if kind == &"death":
 		# Frozen here, inside die(), before the reconstruction card, the
 		# respawn or a scene change can touch the player or the ring.
 		_persist_incident("death_context", "death", player)
 		_incidents["deaths"] = int(_incidents["deaths"]) + 1
+		_ledger.note_death(bool(_exit_snapshot().get("inside", false)))
 		_ledger.end_life("death")
-	_ledger.event("player_" + String(kind), {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "followers": Global.followers})
+	elif kind == &"respawn":
+		# The reconstruction anchor and its protection, and how far the exit is.
+		_ledger.note_respawn()
+		var anchor: Vector2 = player.get("spawn_pos")
+		record["anchor"] = [anchor.x, anchor.y]
+		record["invulnerable"] = float(player.get("invulnerable_time"))
+		record["phase_left"] = float(player.get("respawn_phase_left"))
+		record["exit_distance"] = player.global_position.distance_to(Global.exit_gate_pos) if Global.exit_gate_pos != Vector2.INF else null
+	_ledger.event("player_" + String(kind), record)
 	_capture_sample()
 
 func _on_stats_changed(player: Node) -> void:
@@ -413,6 +428,46 @@ func _on_resource_spent(noun: StringName, amount: float) -> void:
 
 func _on_resource_filled(noun: StringName) -> void:
 	_push_history("resource_filled", {"noun": String(noun)})
+
+func _on_exit_event(_rite: Node, kind: StringName, data: Dictionary) -> void:
+	_ledger.exit_event(String(kind), Writer.json_safe(data))
+	_push_history("exit", {"event": String(kind), "hold": float(data.get("hold", 0.0)), "progress": float(data.get("progress", 0.0)), "inside": bool(data.get("inside", false))})
+
+func _on_spawn_resolved(source: StringName, outcome: StringName, count: int, _data: Dictionary) -> void:
+	_ledger.spawn_resolved(String(source), String(outcome), count)
+	_push_history("spawn", {"source": String(source), "outcome": String(outcome), "count": count})
+
+func _on_encounter_event(kind: StringName, data: Dictionary) -> void:
+	_ledger.encounter_event(String(kind), Writer.json_safe(data))
+	_push_history("encounter", {"event": String(kind), "beat": String(data.get("beat", "")), "members": int(data.get("members", 0))})
+
+func _on_overtime_injected(contributor: String, seconds: float, unseal_seconds: float, overtime: float) -> void:
+	_ledger.overtime_injection(contributor, seconds, unseal_seconds, overtime)
+	_push_history("overtime", {"contributor": contributor, "seconds": seconds, "unseal_seconds": unseal_seconds, "overtime": overtime})
+
+func _on_rite_channel(active: bool) -> void:
+	_ledger.event("rite_channel", {"active": active, "pressure": _pressure_snapshot()})
+	_push_history("rite_channel", {"active": active})
+
+func _pressure_snapshot() -> Dictionary:
+	if ThreatDirector.has_method("balance_snapshot"):
+		return ThreatDirector.balance_snapshot()
+	var result := {}
+	for field in PRESSURE_FIELDS:
+		result[field] = ThreatDirector.get(field)
+	return result
+
+## Living and pending exit reinforcements as their owners count them: the
+## encounter director's formations by beat id and the spawner's reservations.
+func _reinforcements() -> Dictionary:
+	var result := {}
+	var director := get_tree().get_first_node_in_group(&"encounter_director")
+	if director != null and director.has_method("balance_snapshot"):
+		result["encounters"] = director.call("balance_snapshot")
+	var spawner := get_tree().get_first_node_in_group(&"enemy_spawner")
+	if spawner != null and spawner.has_method("balance_snapshot"):
+		result["spawner"] = spawner.call("balance_snapshot")
+	return result
 
 ## Public: freeze the current context on request (developer overlay, tests).
 ## Persisted only here and on death, never on a normal tick.
@@ -564,9 +619,9 @@ func _capture_build() -> void:
 
 func _capture_sample() -> void:
 	var sample := {"mode": _mode, "paused": get_tree().paused, "build_index": _build_index,
-		"followers": Global.followers, "enemies_alive": EnemyWorld.active_count(), "pressure": {}, "debug": _debug_snapshot()}
-	for field in PRESSURE_FIELDS:
-		sample.pressure[field] = ThreatDirector.get(field)
+		"followers": Global.followers, "enemies_alive": EnemyWorld.active_count(), "pressure": _pressure_snapshot(),
+		"exit": _exit_snapshot(), "reinforcements": _reinforcements(), "debug": _debug_snapshot()}
+	_ledger.observe_pressure(sample.pressure)
 	var player := _player()
 	if player != null and _mode == "gameplay":
 		if not bool(player.get("is_dead")):

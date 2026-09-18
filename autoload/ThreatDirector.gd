@@ -185,6 +185,10 @@ var _last_segment: int = 0
 var _kills_ts: Array[float] = []
 var _unseal_time: float = 0.0
 var _kills_since_unseal: int = 0
+## Reporting only: how much of _unseal_time came from add_overtime_pressure
+## (Overtime Gospel). _unseal_time itself is unchanged, so overtime is exactly
+## what it was before the accounting existed.
+var _injected_seconds: float = 0.0
 
 func _ready() -> void:
 	set_process(true)
@@ -284,6 +288,7 @@ func _on_segment_changed(new_seg: int) -> void:
 	_contrast_left = 0.0
 	_thresholds_seen.clear()
 	_unseal_time = 0.0
+	_injected_seconds = 0.0
 	_kills_since_unseal = 0
 	_kills_ts.clear()
 	dominance_kps = 0.0
@@ -308,6 +313,7 @@ func _on_resonance_changed(v: float) -> void:
 	if (not gate_unsealed) and resonance >= gate_unseal_resonance:
 		gate_unsealed = true
 		_unseal_time = 0.0
+		_injected_seconds = 0.0
 		_kills_since_unseal = 0
 		overtime = 0.0
 		_update_evac()
@@ -406,7 +412,7 @@ func overtime_reward_multiplier() -> float:
 var belief_defiance: float = 0.0
 
 
-func add_overtime_pressure(extra_seconds: float) -> void:
+func add_overtime_pressure(extra_seconds: float, contributor: String = "") -> void:
 	# Public lever for greed mechanics (Overtime Gospel): a rule that pays the
 	# player for refusing to leave must also make the refusing cost more.
 	# Expressed in seconds of unseal time because that is the only accumulator
@@ -414,8 +420,37 @@ func add_overtime_pressure(extra_seconds: float) -> void:
 	if extra_seconds <= 0.0 or not gate_unsealed:
 		return
 	_unseal_time += extra_seconds
+	_injected_seconds += extra_seconds
 	overtime = _compute_overtime()
 	_recompute()
+	if RunEvents != null and RunEvents.overtime_pressure_injected.has_connections():
+		RunEvents.overtime_pressure_injected.emit(contributor, extra_seconds, _unseal_time, overtime)
+
+
+## Observation only (balance recorder): the pressure the director is applying
+## and the components it came from, computed with the same terms
+## _compute_overtime() and _recompute() use. Reads nothing that ticks.
+func balance_snapshot() -> Dictionary:
+	var k_excess := maxi(0, _kills_since_unseal - overtime_kill_buffer)
+	var ot := overtime if gate_unsealed else 0.0
+	var raw_hp := 1.0 + carry * hp_from_carry + heat * hp_from_heat
+	return {
+		"threat": threat, "heat": heat, "carry": carry, "resonance": resonance, "overtime": ot,
+		"segment_phase": String(segment_phase), "gate_unsealed": gate_unsealed,
+		"rite_channel_active": rite_channel_active, "power_contrast_active": power_contrast_active,
+		"power_contrast_left": power_contrast_seconds_left(), "belief_defiance": belief_defiance,
+		"unseal_seconds": _unseal_time, "elapsed_unseal_seconds": _unseal_time - _injected_seconds,
+		"injected_seconds": _injected_seconds, "kills_since_unseal": _kills_since_unseal, "kill_excess": k_excess,
+		"overtime_time_part": (_unseal_time * overtime_time_rate) if gate_unsealed else 0.0,
+		"overtime_kill_part": (float(k_excess) * overtime_kill_rate * dominance_mul) if gate_unsealed else 0.0,
+		"dominance_kps": dominance_kps, "dominance_mul": dominance_mul,
+		"enemy_hp_mul": enemy_hp_mul, "enemy_damage_mul": enemy_damage_mul, "enemy_speed_mul": enemy_speed_mul,
+		"spawn_interval_mul": spawn_interval_mul, "elite_bonus": elite_bonus,
+		"hp_mul_at_cap": enemy_hp_mul >= hp_mul_cap - 0.000001, "damage_mul_at_cap": enemy_damage_mul >= dmg_mul_cap - 0.000001,
+		"hp_mul_contrast_held": power_contrast_active and enemy_hp_mul < raw_hp - 0.000001,
+		"evac_pressure": evac_pressure, "evac_remaining_sec": evac_remaining_sec,
+		"reward_multiplier": overtime_reward_multiplier(),
+	}
 
 
 func _update_evac() -> void:

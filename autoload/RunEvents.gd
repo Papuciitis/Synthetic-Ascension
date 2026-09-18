@@ -157,3 +157,24 @@ signal balance_health_changed(player: Node, change: Dictionary)
 ## charged. Telemetry only, emitted after the engine accepted the activation.
 @warning_ignore("unused_signal")
 signal player_ability_activated(player: Node, slot: StringName, id: String, cooldown: float)
+
+## Exit diagnostics (balance recorder). Emitted by the owners of the state:
+## nothing may react to these; they describe what the runtime actually did.
+## ExitRite: unlocked/locked/revealed, rejected, channel_entered/left,
+## lapse_drain_started/ended, progress_lost (death), seal, wave, last_chance,
+## safeguard_granted/used/drained, completed. `data` carries hold/progress.
+@warning_ignore("unused_signal")
+signal exit_rite_event(rite: Node, kind: StringName, data: Dictionary)
+## One resolved spawn request: source (ambient, burst, burst_at, beat,
+## interior, authored, forced), outcome (spawned or a rejection reason) and
+## how many enemies it produced.
+@warning_ignore("unused_signal")
+signal spawn_request_resolved(source: StringName, outcome: StringName, count: int, data: Dictionary)
+## EncounterDirector lifecycle: beat_started/ended/aborted, escalation,
+## specialist_response.
+@warning_ignore("unused_signal")
+signal encounter_event(kind: StringName, data: Dictionary)
+## ThreatDirector accepted extra unseal seconds from a contributor (an
+## Overtime Gospel instance); the unseal clock and overtime after it.
+@warning_ignore("unused_signal")
+signal overtime_pressure_injected(contributor: String, seconds: float, unseal_seconds: float, overtime: float)

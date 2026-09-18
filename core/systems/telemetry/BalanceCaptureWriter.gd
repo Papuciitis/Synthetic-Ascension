@@ -149,6 +149,29 @@ static func markdown(summary: Dictionary) -> String:
 		var ttk := "—" if row.ttk_count == 0 else "%.3f" % (row.ttk_seconds / row.ttk_count)
 		text += "| %s | %d | %.2f | %.2f | %d | %d | %s | %d |\n" % [_cell(key), row.seen, row.hp_sum / maxf(1.0, row.seen), row.hp_max, row.kills, row.ttk_count, ttk, row.removed_alive]
 	text += "\nTTK runs from first observed damaging hit to death using gameplay seconds. Only defeated, engaged enemies contribute; surviving enemies are not assigned zero. HP reflects registration/entry and later elite or boss configuration.\n\n"
+	if t.has("exit"):
+		text += "## Exit and pressure\n\nAn attempt is an actual channel entry (proximity is not one). Progress lost is in hold seconds by cause. A reconstruction death is one within %.0f gameplay seconds of a respawn. Reconstruction spending is compared with all Followers earned in the segment.\n\n| Segment | Status | Unlock to first channel (s) | Attempts | Channel (s) | Lost: lapse / death | Seals | Waves (enemies) | Deaths channeling / after reconstruction | Reconstruction spent / earned | Beats (members, specialists) | Overtime injected (s) / final |\n|---|---|---:|---:|---:|---|---:|---|---|---|---|---|\n" % 10.0
+		for segment in summary.get("segments", []):
+			var ex: Dictionary = segment.get("exit", {})
+			if ex.is_empty():
+				continue
+			var lost: Dictionary = ex.get("progress_lost", {})
+			var re: Dictionary = ex.get("reinforcements", {})
+			var ot: Dictionary = ex.get("overtime", {})
+			text += "| %s | %s | %s | %d | %.1f | %.1f / %.1f | %d | %d (%d) | %d / %d | %d / %d | %d (%d, %d) | %.0f / %.2f |\n" % [str(segment.get("segment", "?")), str(ex.get("status", "")), ("%.1f" % float(ex.unlock_to_first_channel)) if ex.get("unlock_to_first_channel") != null else "-", int(ex.get("attempts", 0)), float(ex.get("channel_seconds", 0.0)), float(lost.get("lapse", 0.0)), float(lost.get("death", 0.0)), int(ex.get("seals", 0)), int(ex.get("waves", 0)), int(ex.get("wave_enemies", 0)), int(ex.get("deaths_while_channeling", 0)), int(ex.get("deaths_after_reconstruction", 0)), int(ex.get("reconstruction_spent", 0)), int(segment.get("followers_earned", 0)), int(re.get("beats_started", 0)), int(re.get("members", 0)), int(re.get("specialist_responses", 0)), float(ot.get("injected_seconds", 0.0)), float(ot.get("final_overtime", 0.0))]
+		var spawns: Dictionary = t.exit.get("spawns", {})
+		if not spawns.is_empty():
+			text += "\nSpawn requests by source and outcome (whole capture; a rejection names the gate that refused it, as the spawner reported it):\n\n| Source:outcome | Requests | Enemies |\n|---|---:|---:|\n"
+			var keys: Array = spawns.keys()
+			keys.sort_custom(func(a: String, b: String) -> bool: return int(spawns[a].requests) > int(spawns[b].requests))
+			for key in keys.slice(0, 24):
+				text += "| %s | %d | %d |\n" % [_cell(key), int(spawns[key].requests), int(spawns[key].enemies)]
+		var injections: Dictionary = t.exit.get("overtime", {}).get("injections", {})
+		if not injections.is_empty():
+			text += "\nOvertime clock injections by contributor (seconds of unseal time; the director's final overtime already includes them once):\n\n| Contributor | Seconds |\n|---|---:|\n"
+			for name in injections:
+				text += "| %s | %.1f |\n" % [_cell(name), float(injections[name])]
+		text += "\n"
 	if summary.has("incidents"):
 		var inc: Dictionary = summary.incidents
 		var ring: Dictionary = summary.get("history", {})
