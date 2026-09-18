@@ -22,7 +22,10 @@ extends Node
 # Env: SIM_OUT (directory, relative to the project; default user://build_sim),
 #      SIM_BUILDS (random builds per core per tier; default 4), SIM_FRAMES (600),
 #      SIM_SEED (20260919), SIM_SHARD ("i/n", default "0/1"), SIM_PRESETS (1),
-#      SIM_STRUCTURE (1), SIM_CROWD (60), SIM_TIERS (comma list of tier indices)
+#      SIM_STRUCTURE (1), SIM_CROWD (60), SIM_TIERS (comma list of tier indices),
+#      SIM_ABLATE (0; 1 = for every authored "pure" preset, also fight one variant
+#      per owned node with that node refunded through the real refund rule, so a
+#      node's contribution to its own authored build is measured directly)
 
 const PLAYER := preload("res://core/actors/player/player.tscn")
 const SpawnState := preload("res://core/systems/enemy_world/EnemySpawnState.gd")
@@ -87,6 +90,7 @@ var _include_presets := true
 var _structure := true
 var _crowd := 60
 var _durability := HP_DURABILITY
+var _ablate := false
 var _tiers: Array = []
 var _rng := RandomNumberGenerator.new()
 var _player: Node = null
@@ -133,6 +137,7 @@ func _run() -> void:
 	_structure = _env("SIM_STRUCTURE", "1") != "0"
 	_crowd = int(_env("SIM_CROWD", "60"))
 	_durability = float(_env("SIM_HP_MUL", str(HP_DURABILITY)))
+	_ablate = _env("SIM_ABLATE", "0") != "0"
 	for index in _env("SIM_TIERS", "0,1,2,3,4").split(","):
 		if not index.strip_edges().is_empty():
 			_tiers.append(int(index))
@@ -561,6 +566,31 @@ func _jobs() -> Array:
 		for core in AscensionTreeDB.CORES:
 			for n in range(_builds_per_core):
 				jobs.append({"name": "random %s %s #%d" % [core, TIERS[tier_index].name, n], "source": "random", "core": core, "nodes": [], "equip": {}, "tier": tier_index, "random_index": n})
+	if _ablate:
+		# Every "pure" preset, then one variant per owned node with that node
+		# (and whatever the real refund rule removes with it) taken away.
+		var presets: Array = _load_json(PRESETS).get("presets", [])
+		var only := _env("SIM_ABLATE_PRESETS", "")
+		var base_index := jobs.size()
+		for preset in presets:
+			if String(preset.get("tier", "")) != "pure":
+				continue
+			if not only.is_empty() and not only.split(",").has(String(preset.name)):
+				continue
+			var base_job := {"name": "Ablation base: " + String(preset.name), "source": "ablation_base", "core": String(preset.native_core), "nodes": preset.nodes, "equip": preset.get("equip", {}), "tier": _tier_for_cost(preset), "gear_seed": base_index, "ablation_of": String(preset.name)}
+			jobs.append(base_job)
+			# The same whole build on a second crowd stream: the noise floor.
+			var repeat := base_job.duplicate()
+			repeat["name"] = "Ablation repeat: " + String(preset.name)
+			repeat["source"] = "ablation_repeat"
+			repeat["fight_seed_offset"] = 1
+			jobs.append(repeat)
+			for id in preset.nodes:
+				var kind := _db.kind(String(id))
+				if kind in ["core", "gate", "choice"]:
+					continue
+				jobs.append({"name": "Ablation: %s - %s" % [String(preset.name), String(id)], "source": "ablation", "core": String(preset.native_core), "nodes": preset.nodes, "equip": preset.get("equip", {}), "tier": int(base_job.tier), "gear_seed": base_index, "ablation_of": String(preset.name), "ablate": String(id)})
+			base_index = jobs.size()
 	# Shard by stable index so shards never overlap and never miss a job.
 	var mine: Array = []
 	for index in range(jobs.size()):
@@ -699,6 +729,24 @@ func _install(job: Dictionary) -> Dictionary:
 			for slot in ["keystones", "axioms"]:
 				for id_for_slot in (equip as Dictionary).get(slot, []):
 					ledger.equip(slot, String(id_for_slot))
+		var ablate := String(job.get("ablate", ""))
+		if not ablate.is_empty():
+			# The real refund rule: dependents that can no longer reach a Core
+			# or whose requirements no longer hold leave with the node.
+			var before: Array = ledger.owned_ids().duplicate()
+			ledger.refund(ablate)
+			var removed: Array = []
+			for id in before:
+				if not ledger.owns(String(id)):
+					removed.append(String(id))
+			result["removed"] = removed
+			# Re-equip what the refund left unequipped, as the ledger would on a
+			# later purchase, so a refunded Q does not silently disable casting.
+			for slot in ["q", "v"]:
+				if ledger.equipped(slot).is_empty():
+					for other in ledger.owned_of_kind("active" if slot == "q" else "revelation"):
+						if ledger.equip(slot, String(other)):
+							break
 	Global.ascension_ledger()
 	Global.attempt_segment = int(tier.segment)
 	_wear_gear(job, tier)
@@ -728,7 +776,7 @@ func _install(job: Dictionary) -> Dictionary:
 ## chosen from the job's seed so a build is reproducible.
 func _wear_gear(job: Dictionary, tier: Dictionary) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
-	rng.seed = _seed * 31 + int(job.job_index) * 977
+	rng.seed = _seed * 31 + int(job.get("gear_seed", job.job_index)) * 977
 	var set_id: String = SETS[rng.randi_range(0, SETS.size() - 1)]
 	var rank := int(tier.gear_rank)
 	Global.run_inventory.clear()
@@ -821,6 +869,7 @@ func _simulate(job: Dictionary) -> Dictionary:
 	var ledger := Global.ascension_ledger()
 	var row := {"name": job.name, "source": job.source, "core": core, "tier": tier.name, "segment": int(tier.segment), "budget": int(tier.budget),
 		"job_index": int(job.job_index), "failed": installed.failed, "spent": int(installed.spent), "nodes": ledger.owned_ids(), "node_count": ledger.owned_ids().size(),
+		"ablation_of": job.get("ablation_of", ""), "ablate": job.get("ablate", ""), "removed": installed.get("removed", []),
 		"order": installed.order, "equipped": (ledger.state.get("equipped", {}) as Dictionary).duplicate(true), "gear": gear,
 		"player": {"max_hp": float(_player.max_hp), "armor": float(_player.stats.armor), "power": float(_player.stats.power), "haste": float(_player.stats.haste), "luck": float(_player.stats.luck), "move_speed": float(_player.stats.move_speed)},
 		"pressure": pressure, "frames": _frames, "crowd": _crowd, "durability": _durability, "refill_per_tick": REFILL_PER_TICK}
@@ -836,7 +885,7 @@ func _simulate(job: Dictionary) -> Dictionary:
 	Global.set_followers(100000)
 	Global.attempt_deaths_this_segment = 0
 	var rng := RandomNumberGenerator.new()
-	rng.seed = _seed * 13 + int(job.job_index)
+	rng.seed = _seed * 13 + int(job.get("gear_seed", job.job_index)) + int(job.get("fight_seed_offset", 0)) * 7919
 	var hp_mul := float(pressure.enemy_hp_mul)
 	var dmg_mul := float(pressure.enemy_damage_mul)
 	for i in range(_crowd):
