@@ -424,6 +424,8 @@ func _mark_incident() -> void:
 	if not PerformanceFlightRecorder.enabled:
 		PerformanceFlightRecorder.set_enabled(true)
 	PerformanceFlightRecorder.mark_incident(&"manual")
+	if BalanceRecorder != null and BalanceRecorder.is_recording():
+		BalanceRecorder.capture_incident(&"manual")
 
 
 func _clear_recorder() -> void:

@@ -1778,6 +1778,8 @@ func _activate(slot: String, pair: bool = false) -> Dictionary:
 		telemetry["revelations"] = int(telemetry["revelations"]) + 1
 		if PerformanceFlightRecorder != null:
 			PerformanceFlightRecorder.record_event(&"ascension", &"revelation", {"node": id, "r0": r0()})
+	if RunEvents != null and RunEvents.player_ability_activated.has_connections():
+		RunEvents.player_ability_activated.emit(_player, StringName("v2" if is_second else slot), id, cooldown)
 	if hud != null:
 		hud.announce(cooldown, cooldown)
 	return result

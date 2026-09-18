@@ -4,6 +4,7 @@ const Ledger := preload("res://core/systems/telemetry/BalanceLedger.gd")
 const Writer := preload("res://core/systems/telemetry/BalanceCaptureWriter.gd")
 const WriteQueue := preload("res://autoload/performance/PerformanceIncidentWriteQueue.gd")
 const Build := preload("res://core/systems/telemetry/BuildInfo.gd")
+const History := preload("res://core/systems/telemetry/BalanceRecentHistory.gd")
 const Types := preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 const STAT_FIELDS := ["max_hp", "armor", "move_speed", "power", "haste", "luck"]
 const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_mul", "enemy_damage_mul", "enemy_speed_mul", "spawn_interval_mul", "elite_bonus", "segment_phase", "rite_channel_active", "power_contrast_active"]
@@ -13,7 +14,15 @@ const RECORDER_REVISION := 2
 const BALANCE_REVISION := 1
 ## What this recorder measures; an omitted feature reads as unavailable, not 0.
 const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": true,
-	"incidents": false, "exit_detail": false, "progression": false}
+	"incidents": true, "exit_detail": false, "progression": false}
+## Incident history: cheap state at 5 Hz during live gameplay, enemies counted
+## by archetype inside NEARBY_RADIUS px through the bounded spatial query, and
+## a serialized ceiling per persisted incident (oldest history trimmed first).
+const HISTORY_SAMPLE_INTERVAL := 0.2
+const NEARBY_RADIUS := 240.0
+const NEARBY_QUERY_CAP := 256
+const INCIDENT_BYTE_CEILING := 2 * 1024 * 1024
+const HISTORY_PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_mul", "enemy_damage_mul", "spawn_interval_mul", "elite_bonus", "segment_phase", "rite_channel_active"]
 const DEBUG_FIELDS := ["debug_dev_mode", "debug_dev_segment", "debug_player_god_mode", "debug_enemy_hp_scale", "debug_ascension_revelations_enabled", "enemy_proxy_rollout", "debug_opening_mode_override"]
 
 var enabled := true
@@ -37,6 +46,11 @@ var _serial := 0
 var _writer_failures := 0
 var _last_error := ""
 var _max_callback_usec := 0
+var _history: RefCounted = History.new()
+var _history_left := HISTORY_SAMPLE_INTERVAL
+var _player_subscriptions: Array = []
+var _nearby: Array[int] = []
+var _incidents: Dictionary = _empty_incidents()
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -85,8 +99,12 @@ func begin_gameplay(player: Node) -> void:
 		_summary_left = 15.0
 		_last_build = {}
 		_build_index = 0
+		_history.reset(_ledger.current_life_id(), 0.0)
+		_history_left = HISTORY_SAMPLE_INTERVAL
+		_incidents = _empty_incidents()
 		_connect_runtime()
 		print("[BalanceRecorder] Recording to ", capture_directory)
+	_connect_player(player)
 	var handles: Array[int] = []
 	EnemyWorld.active_handles(handles)
 	for handle in handles:
@@ -112,6 +130,11 @@ func _process(delta: float) -> void:
 	elif mode == "gameplay" and (player == null or bool(player.get("is_dead"))):
 		mode = "loading"
 	_ledger.advance(delta, mode)
+	if mode == "gameplay":
+		_history_left -= delta
+		if _history_left <= 0.0:
+			_history_left = HISTORY_SAMPLE_INTERVAL
+			_history.push_sample(_history_sample(player))
 	if _build_dirty:
 		_capture_build()
 	_sample_left -= delta
@@ -143,10 +166,30 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"segment_phase_changed", _on_phase)
 	_subscribe(RunEvents, &"healing_lock_changed", _on_healing_lock)
 	_subscribe(RunEvents, &"power_threshold_crossed", _on_power_threshold)
+	_subscribe(RunEvents, &"player_ability_activated", _on_ability_activated)
+	_subscribe(RunEvents, &"player_dashed", _on_dashed)
 
 func _subscribe(object: Object, signal_name: StringName, callback: Callable) -> void:
 	object.connect(signal_name, callback)
 	_subscriptions.append([object, signal_name, callback])
+
+## Per-player signals (guard and resource spends live on the Manifestation
+## state under the player, not on an autoload); rebound on every gameplay entry.
+func _connect_player(player: Node) -> void:
+	_disconnect_player()
+	var runner := player.get_node_or_null(^"ManifestationRunner")
+	var state: Variant = runner.get("state") if runner != null else null
+	if state is Object and (state as Object).has_signal("resource_spent"):
+		state.connect(&"resource_spent", _on_resource_spent)
+		state.connect(&"resource_filled", _on_resource_filled)
+		_player_subscriptions.append([state, &"resource_spent", _on_resource_spent])
+		_player_subscriptions.append([state, &"resource_filled", _on_resource_filled])
+
+func _disconnect_player() -> void:
+	for entry in _player_subscriptions:
+		if is_instance_valid(entry[0]) and entry[0].is_connected(entry[1], entry[2]):
+			entry[0].disconnect(entry[1], entry[2])
+	_player_subscriptions.clear()
 
 func _on_boundary(reason: StringName) -> void:
 	end_capture(String(reason))
@@ -182,6 +225,7 @@ func end_capture(outcome: String = "suspended") -> void:
 		if is_instance_valid(entry[0]) and entry[0].is_connected(entry[1], entry[2]):
 			entry[0].disconnect(entry[1], entry[2])
 	_subscriptions.clear()
+	_disconnect_player()
 	# Boundaries are safe points; drain the bounded queue before final output.
 	flush_reports()
 	_submit(true)
@@ -223,8 +267,20 @@ func get_summary() -> Dictionary:
 	result["writer_failures"] = _writer_failures
 	result["last_error"] = _last_error
 	result["max_sample_callback_usec"] = _max_callback_usec
-	result["wall_seconds"] = float(Time.get_ticks_usec() - _started_usec) / 1000000.0
+	result["wall_seconds"] = _wall_seconds()
+	result["incidents"] = _incidents.duplicate()
+	var ring: Dictionary = _history.stats()
+	ring["retain_seconds"] = _history.retain_seconds
+	ring["event_cap"] = _history.event_cap
+	ring["sample_cap"] = _history.sample_cap
+	result["history"] = ring
 	return result
+
+func _wall_seconds() -> float:
+	return float(Time.get_ticks_usec() - _started_usec) / 1000000.0
+
+static func _empty_incidents() -> Dictionary:
+	return {"deaths": 0, "captures": 0, "bytes": 0, "ceiling": INCIDENT_BYTE_CEILING, "trimmed_events": 0, "trimmed_samples": 0, "history_incomplete": 0}
 
 func _player() -> Node:
 	return _player_ref.get_ref() as Node if _player_ref != null else null
@@ -258,8 +314,11 @@ func _on_weapon_fired(player: Node, _style: StringName, _origin: Vector2, _targe
 		_ledger.add_metric("attacks")
 
 func _on_player_damage(player: Node, raw: float, adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:
-	if player == _player():
-		_ledger.player_damage(raw, adjusted, applied, _source_id(source, kind), String(outcome))
+	if player != _player():
+		return
+	var source_id := _source_id(source, kind)
+	_ledger.player_damage(raw, adjusted, applied, source_id, String(outcome))
+	_push_history("damage", {"source": source_id, "attack": String(kind), "outcome": String(outcome), "raw": raw, "adjusted": adjusted, "applied": applied})
 
 func _source_id(source: Node, fallback: StringName) -> String:
 	if not is_instance_valid(source):
@@ -280,8 +339,13 @@ func _source_id(source: Node, fallback: StringName) -> String:
 	return script.resource_path if script != null else String(fallback)
 
 func _on_player_heal(player: Node, requested: float, modified: float, applied: float, source: StringName, blocked: bool) -> void:
-	if player == _player():
-		_ledger.player_heal(requested, modified, applied, String(source), blocked)
+	if player != _player():
+		return
+	_ledger.player_heal(requested, modified, applied, String(source), blocked)
+	# Applied heals reach the ring through their health-change record; a heal
+	# that moved no HP leaves none, so it is kept here (lock, full health).
+	if blocked or applied <= 0.0:
+		_push_history("heal_refused", {"source": String(source), "requested": requested, "blocked": blocked, "key": String(source)})
 
 ## The canonical health-change record. Costs feed the hp_paid metric here
 ## (once); hits and heals keep their metrics from the resolved signals.
@@ -293,8 +357,20 @@ func _on_health_changed(player: Node, change: Dictionary) -> void:
 	record.erase("source_node")
 	if String(record.get("source_id", "")).is_empty():
 		record["source_id"] = _source_id(source_node as Node if source_node is Node else null, StringName(String(record.get("reason", "unknown"))))
-	record["wall_seconds"] = float(Time.get_ticks_usec() - _started_usec) / 1000000.0
+	record["wall_seconds"] = _wall_seconds()
 	_ledger.record_health_change(Writer.json_safe(record))
+	var category := String(record.get("category", ""))
+	if category == "respawn":
+		# The death context was frozen at the death event; the new life starts
+		# with an empty ring whose first record is the reconstruction itself.
+		_history.reset(_ledger.current_life_id(), _ledger.gameplay_seconds())
+	var entry := {"category": category, "source": String(record.get("source_id", "")), "reason": String(record.get("reason", "")),
+		"hp_before": float(record.get("hp_before", 0.0)), "hp_after": float(record.get("hp_after", 0.0)),
+		"max_hp": float(record.get("max_hp_after", 0.0)), "requested": float(record.get("requested", 0.0)),
+		"delta": float(record.get("hp_after", 0.0)) - float(record.get("hp_before", 0.0)), "life": _ledger.current_life_id()}
+	if category == "heal":
+		entry["key"] = entry["source"]
+	_push_history("health", entry)
 
 func _on_life_event(player: Node, kind: StringName) -> void:
 	if player != _player():
@@ -302,7 +378,12 @@ func _on_life_event(player: Node, kind: StringName) -> void:
 	var metric: String = {"death": "deaths", "respawn": "respawns", "rescue": "rescues"}.get(String(kind), "")
 	if not metric.is_empty():
 		_ledger.add_metric(metric)
+	_push_history("life", {"event": String(kind), "hp": float(player.get("hp")), "max_hp": float(player.get("max_hp"))})
 	if kind == &"death":
+		# Frozen here, inside die(), before the reconstruction card, the
+		# respawn or a scene change can touch the player or the ring.
+		_persist_incident("death_context", "death", player)
+		_incidents["deaths"] = int(_incidents["deaths"]) + 1
 		_ledger.end_life("death")
 	_ledger.event("player_" + String(kind), {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "followers": Global.followers})
 	_capture_sample()
@@ -313,9 +394,129 @@ func _on_stats_changed(player: Node) -> void:
 
 func _on_phase(phase: StringName, label: String) -> void:
 	_ledger.event("phase", {"phase": String(phase), "label": label})
+	_push_history("phase", {"phase": String(phase), "label": label})
 
 func _on_healing_lock(seconds: float, reason: StringName) -> void:
 	_ledger.event("healing_lock", {"seconds": seconds, "reason": String(reason)})
+	_push_history("healing_lock", {"seconds": seconds, "reason": String(reason)})
+
+func _on_ability_activated(player: Node, slot: StringName, id: String, cooldown: float) -> void:
+	if player == _player():
+		_push_history("ability", {"slot": String(slot), "id": id, "cooldown": cooldown})
+
+func _on_dashed(player: Node, from: Vector2, direction: Vector2) -> void:
+	if player == _player():
+		_push_history("dash", {"pos": [from.x, from.y], "dir": [direction.x, direction.y]})
+
+func _on_resource_spent(noun: StringName, amount: float) -> void:
+	_push_history("resource_spent", {"noun": String(noun), "amount": amount})
+
+func _on_resource_filled(noun: StringName) -> void:
+	_push_history("resource_filled", {"noun": String(noun)})
+
+## Public: freeze the current context on request (developer overlay, tests).
+## Persisted only here and on death, never on a normal tick.
+func capture_incident(reason: StringName = &"manual") -> void:
+	if not _active:
+		return
+	_persist_incident("incident_context", String(reason), _player())
+	_incidents["captures"] = int(_incidents["captures"]) + 1
+
+func _push_history(kind: String, data: Dictionary) -> void:
+	data["kind"] = kind
+	data["t"] = _ledger.gameplay_seconds()
+	data["wall"] = _wall_seconds()
+	_history.push_event(data)
+
+# ---------------------------------------------------------------- incident context
+
+func _persist_incident(record_kind: String, reason: String, player: Node) -> void:
+	var context := _build_incident(reason, player)
+	_incidents["bytes"] = int(_incidents["bytes"]) + int(context.get("serialized_bytes", 0))
+	var trimmed: Dictionary = context.get("trimmed", {})
+	_incidents["trimmed_events"] = int(_incidents["trimmed_events"]) + int(trimmed.get("events", 0))
+	_incidents["trimmed_samples"] = int(_incidents["trimmed_samples"]) + int(trimmed.get("samples", 0))
+	if not bool(context.history.get("complete", true)):
+		_incidents["history_incomplete"] = int(_incidents["history_incomplete"]) + 1
+	# Owned: the snapshot is already an immutable copy. Critical: the pending
+	# cap protects against per-frame floods, not one record per death.
+	_ledger.event(record_kind, context, true, true)
+	_submit(false)
+
+## Everything a reader needs to explain this moment from the incident alone.
+## The history is a deep copy at this instant; the effect snapshot is the
+## runners' pure report; the build is referenced by index and copied once.
+func _build_incident(reason: String, player: Node) -> Dictionary:
+	var now: float = _ledger.gameplay_seconds()
+	var life: Dictionary = _ledger.life_info()
+	var alive := is_instance_valid(player) and "hp" in player
+	var history: Dictionary = _history.snapshot(now)
+	var context := {"reason": reason, "life_id": int(life.life_id), "t": now, "wall": _wall_seconds(),
+		"segment": Global.attempt_segment, "segment_phase": String(ThreatDirector.segment_phase), "mode": _mode,
+		"paused": get_tree().paused, "followers": Global.followers,
+		"terminal": _terminal_event(), "history": history,
+		"state": _history_sample(player) if alive else {}, "effects": _effects(player) if alive else {},
+		"build_index": _build_index, "build": _last_build.duplicate(true),
+		"health": {"expected_hp": float(life.expected_hp), "residual": float(life.residual),
+			"unexplained_checks": int(life.unexplained_checks), "changes": int(life.changes)},
+		"reconstruction_age": now - float(life.started_gameplay), "debug": _debug_snapshot()}
+	context["trimmed"] = History.fit_to_bytes(context, INCIDENT_BYTE_CEILING)
+	return context
+
+## The exact terminal health change (the last record that left HP at 0) and
+## the resolved-damage record that followed it, if any; null while alive.
+func _terminal_event() -> Variant:
+	var lethal: Dictionary = _history.find_last("health", func(record: Dictionary) -> bool: return float(record.get("hp_after", 1.0)) <= 0.0)
+	if lethal.is_empty():
+		return null
+	var following: Dictionary = _history.event_after(int(lethal.get("seq", 0)))
+	var resolution: Variant = following.duplicate(true) if String(following.get("kind", "")) == "damage" else null
+	return {"event": lethal.duplicate(true), "resolution": resolution}
+
+## Cheap live state at 5 Hz: no runner snapshots, no inventory copies (the
+## build is referenced by index) and one bounded spatial query.
+func _history_sample(player: Node) -> Dictionary:
+	var now: float = _ledger.gameplay_seconds()
+	var life: Dictionary = _ledger.life_info()
+	var stats: Variant = player.get("stats")
+	var sample := {"t": now, "wall": _wall_seconds(), "hp": float(player.get("hp")), "max_hp": float(player.get("max_hp")),
+		"armor": float(stats.get("armor")) if stats is Resource else null,
+		"pos": [player.global_position.x, player.global_position.y],
+		"dash_ready": player.call("dash_ready") if player.has_method("dash_ready") else null,
+		"dash_cooldown": player.call("dash_cooldown_left") if player.has_method("dash_cooldown_left") else null,
+		"dashing": player.call("is_dashing") if player.has_method("is_dashing") else null,
+		"invulnerable": float(player.get("invulnerable_time")), "phase_left": float(player.get("respawn_phase_left")),
+		"healing_lock": player.call("healing_locked_seconds") if player.has_method("healing_locked_seconds") else null,
+		"life": int(life.life_id), "since_life_start": now - float(life.started_gameplay), "expected_hp": float(life.expected_hp),
+		"enemies_alive": EnemyWorld.active_count(), "nearby": _nearby_counts(player.global_position),
+		"pressure": {}, "exit": _exit_snapshot(), "build_index": _build_index}
+	for field in HISTORY_PRESSURE_FIELDS:
+		sample.pressure[field] = ThreatDirector.get(field)
+	return sample
+
+func _nearby_counts(origin: Vector2) -> Dictionary:
+	var result := {"radius": NEARBY_RADIUS, "total": 0, "elite": 0, "by_spec": {}, "truncated": false}
+	if EnemyCombat == null or not EnemyCombat.has_method("gather_in_radius"):
+		return result
+	EnemyCombat.gather_in_radius(origin, NEARBY_RADIUS, _nearby)
+	result["total"] = _nearby.size()
+	var counted := 0
+	for handle in _nearby:
+		if counted >= NEARBY_QUERY_CAP:
+			result["truncated"] = true
+			break
+		counted += 1
+		var spec := String(EnemyWorld.get_spec_id(handle))
+		result.by_spec[spec] = int(result.by_spec.get(spec, 0)) + 1
+		if Types.has_flag(EnemyWorld.get_flags(handle), Types.Flags.ELITE):
+			result["elite"] = int(result["elite"]) + 1
+	return result
+
+func _exit_snapshot() -> Dictionary:
+	var rite := get_tree().get_first_node_in_group(&"exit_rite")
+	if rite == null or not rite.has_method("balance_snapshot"):
+		return {}
+	return rite.call("balance_snapshot")
 
 func _on_power_threshold(id: StringName, label: String) -> void:
 	_ledger.event("power_threshold", {"id": String(id), "label": label})
@@ -372,16 +573,19 @@ func _capture_sample() -> void:
 			_ledger.observe_hp(float(player.get("hp")), float(player.get("max_hp")))
 		sample["player"] = {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "stats": _stats(player.get("stats")),
 			"position": [player.global_position.x, player.global_position.y], "dead": player.get("is_dead"), "healing_lock_seconds": player.call("healing_locked_seconds")}
-		# Observation only. The runners' get_*_multiplier() getters are combat
-		# operations (ManifestationRunner's spends the banked Composure guard and
-		# Reliquary Guard's arms the latch that pays a shard), so a sample never
-		# calls them; each runner reports through its pure get_balance_snapshot()
-		# and a runner without one is recorded as unavailable, not as 1.0.
-		var effects := {}
-		for runner_name in ["ItemEffectRunner", "ManifestationRunner", "AscensionRunner"]:
-			var runner := player.get_node_or_null(NodePath(runner_name))
-			if runner == null:
-				continue
-			effects[runner_name] = runner.call("get_balance_snapshot") if runner.has_method("get_balance_snapshot") else null
-		sample["effects"] = effects
+		sample["effects"] = _effects(player)
 	_ledger.event("sample", sample)
+
+## Observation only. The runners' get_*_multiplier() getters are combat
+## operations (ManifestationRunner's spends the banked Composure guard and
+## Reliquary Guard's arms the latch that pays a shard), so a sample never
+## calls them; each runner reports through its pure get_balance_snapshot()
+## and a runner without one is recorded as unavailable, not as 1.0.
+func _effects(player: Node) -> Dictionary:
+	var effects := {}
+	for runner_name in ["ItemEffectRunner", "ManifestationRunner", "AscensionRunner"]:
+		var runner := player.get_node_or_null(NodePath(runner_name))
+		if runner == null:
+			continue
+		effects[runner_name] = runner.call("get_balance_snapshot") if runner.has_method("get_balance_snapshot") else null
+	return effects

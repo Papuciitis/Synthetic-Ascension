@@ -465,6 +465,16 @@ func _despawn_last_chance_vault() -> void:
 	_last_chance_vault = null
 
 
+## Observation only, for the balance recorder: reads the channel without
+## advancing, draining or announcing anything.
+func balance_snapshot() -> Dictionary:
+	return {"locked": locked, "revealed": revealed, "inside": _player_inside, "hold": _hold, "hold_time": hold_time,
+		"progress": clampf(_hold / hold_time, 0.0, 1.0) if hold_time > 0.0 else 0.0, "lapse": _lapse,
+		"completed": _completed, "safeguards": _safeguards, "safeguard_capacity": _safeguard_capacity,
+		"distortion": _distortion_level, "burst_stage": _burst_stage,
+		"position": [global_position.x, global_position.y]}
+
+
 func last_chance_vault() -> Node2D:
 	if _last_chance_vault != null and is_instance_valid(_last_chance_vault) and not _last_chance_vault.is_queued_for_deletion():
 		return _last_chance_vault

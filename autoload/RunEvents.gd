@@ -152,3 +152,8 @@ signal player_paid_health(player: Node, amount: float, reason: StringName)
 ##          max_hp_before, max_hp_after, requested, reason}
 @warning_ignore("unused_signal")
 signal balance_health_changed(player: Node, change: Dictionary)
+
+## An advancement-tree ability went off (slot q, v or v2) with the recovery it
+## charged. Telemetry only, emitted after the engine accepted the activation.
+@warning_ignore("unused_signal")
+signal player_ability_activated(player: Node, slot: StringName, id: String, cooldown: float)

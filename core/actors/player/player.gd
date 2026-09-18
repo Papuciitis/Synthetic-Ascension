@@ -371,6 +371,16 @@ func is_dashing() -> bool:
 	return _dash.is_dashing()
 
 
+## Observation only (balance recorder): could a dash start now, and how much
+## recovery is left on it. Neither call changes the dash.
+func dash_ready() -> bool:
+	return _dash.can_start()
+
+
+func dash_cooldown_left() -> float:
+	return _dash.cooldown_left
+
+
 func dash_direction() -> Vector2:
 	return _dash.direction
 

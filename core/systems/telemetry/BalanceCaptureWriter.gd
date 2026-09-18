@@ -149,6 +149,10 @@ static func markdown(summary: Dictionary) -> String:
 		var ttk := "—" if row.ttk_count == 0 else "%.3f" % (row.ttk_seconds / row.ttk_count)
 		text += "| %s | %d | %.2f | %.2f | %d | %d | %s | %d |\n" % [_cell(key), row.seen, row.hp_sum / maxf(1.0, row.seen), row.hp_max, row.kills, row.ttk_count, ttk, row.removed_alive]
 	text += "\nTTK runs from first observed damaging hit to death using gameplay seconds. Only defeated, engaged enemies contribute; surviving enemies are not assigned zero. HP reflects registration/entry and later elite or boss configuration.\n\n"
+	if summary.has("incidents"):
+		var inc: Dictionary = summary.incidents
+		var ring: Dictionary = summary.get("history", {})
+		text += "## Incidents\n\nDeath contexts: **%d**; manual captures: **%d**. Each `death_context` / `incident_context` record in events.jsonl holds the exact terminal health change and its resolution, the last %.0f gameplay seconds of events (at most %d) and 5 Hz state samples (at most %d), the pure effect snapshot, the build index and the health residual at that moment. Incident payload bytes: **%d** (ceiling %d per incident); history trimmed to fit: %d events, %d samples (oldest first; the terminal event and latest state are never trimmed). Incidents whose ring had already overwritten context: %d. Live ring now: %d events, %d samples, %d overwritten.\n\n" % [int(inc.get("deaths", 0)), int(inc.get("captures", 0)), float(ring.get("retain_seconds", 5.0)), int(ring.get("event_cap", 2048)), int(ring.get("sample_cap", 32)), int(inc.get("bytes", 0)), int(inc.get("ceiling", 0)), int(inc.get("trimmed_events", 0)), int(inc.get("trimmed_samples", 0)), int(inc.get("history_incomplete", 0)), int(ring.get("events", 0)), int(ring.get("samples", 0)), int(ring.get("events_overwritten", 0)) + int(ring.get("samples_overwritten", 0))]
 	var features: Dictionary = meta.get("features", {})
 	if not features.is_empty():
 		var measured: Array = []

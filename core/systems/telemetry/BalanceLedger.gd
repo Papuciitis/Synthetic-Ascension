@@ -143,6 +143,21 @@ func current_life_id() -> int:
 	return int(_health.get("life_id", 0))
 
 
+## The live life's reconciliation state, for incident context.
+func life_info() -> Dictionary:
+	if _health.is_empty():
+		return {"life_id": 0, "started_gameplay": 0.0, "expected_hp": 0.0, "residual": 0.0, "unexplained_checks": 0, "changes": 0}
+	return {"life_id": int(_health["life_id"]), "started_gameplay": float(_health["started_gameplay"]),
+		"expected_hp": float(_health["expected_hp"]), "residual": float(_health["residual"]),
+		"unexplained_checks": int(_health["unexplained_checks"]), "changes": int(_health["changes"])}
+
+
+## The gameplay clock: advances only while live gameplay runs, never during a
+## pause, the hub or a load. Incident history ages by it.
+func gameplay_seconds() -> float:
+	return float(_totals.get("seconds_gameplay", 0.0))
+
+
 func _close_life(reason: String) -> void:
 	if _health.is_empty():
 		return
@@ -489,13 +504,17 @@ func player_heal(requested: float, modified: float, applied: float, source: Stri
 		var sources: Dictionary = stats.healing_by_source
 		sources[source] = float(sources.get(source, 0.0)) + applied
 
-func event(kind: String, data: Dictionary) -> void:
+## `owned`: the caller hands over an immutable dictionary it will not touch
+## again (an incident snapshot), so it is stored without another deep copy.
+## `critical`: a bounded, rare record (a death context) that the pending cap
+## may not drop; the cap protects against per-frame floods, not these.
+func event(kind: String, data: Dictionary, owned: bool = false, critical: bool = false) -> void:
 	_sequence += 1
-	if _records.size() >= max_pending_records:
+	if _records.size() >= max_pending_records and not critical:
 		_dropped += 1
 		return
 	_records.append({"seq": _sequence, "elapsed_seconds": _elapsed, "gameplay_seconds": _totals.get("seconds_gameplay", 0.0),
-		"segment": _current.get("segment", 0), "kind": kind, "data": data.duplicate(true)})
+		"segment": _current.get("segment", 0), "kind": kind, "data": data if owned else data.duplicate(true)})
 
 func flush_window() -> void:
 	if not _window.is_empty():

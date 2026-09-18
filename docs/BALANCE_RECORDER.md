@@ -140,6 +140,35 @@ of `recording` means the final boundary has not been saved, not a completed run.
   Captures written before this change carry the old `effect_multipliers` key,
   whose values were taken through the consuming getters.
 
+## Incident history
+
+The recorder keeps the last five gameplay seconds in a bounded ring: at most
+2,048 compact events (resolved incoming attacks with raw/adjusted/applied and
+outcome, every health change with HP before/after, refused heals, healing
+locks, phase changes, ability activations, dashes, Manifestation resource
+spends and fills, life transitions) and at most 32 cheap state samples taken
+at 5 Hz during live gameplay (HP, armour, position, dash and protection state,
+enemies within 240 px by archetype through the bounded spatial query, pressure
+components, exit-rite progress, life age and the build index). The ring ages
+by the gameplay clock, so a pause never expires the last fight; wall time is
+carried separately. Both caps apply independently and whatever they discard
+is counted as overwritten, never hidden.
+
+Nothing is persisted per tick. On death the recorder freezes a
+`death_context` record inside `die()`, before the reconstruction card, the
+respawn or any scene change can touch the player: the exact terminal health
+change and the resolved-damage record that followed it, the chronological
+history, the state at that instant (not a one-second-old sample), the pure
+effect snapshot, the build index (with one copy of the build), the segment
+phase, exit state, life id, reconstruction age and the health residual. The new
+life starts with an empty ring whose first record is the reconstruction.
+`BalanceRecorder.capture_incident(reason)` writes the same context as an
+`incident_context` record on request; the performance overlay's manual
+incident button calls it while a capture is live. Each persisted incident is
+held under a 2 MiB serialized ceiling: the oldest events go first, then the
+oldest samples, never the terminal event or the latest state, and the trim is
+reported in the record and in the summary's `incidents` block.
+
 ## Developer controls
 
 The `BalanceRecorder` autoload exposes:
@@ -149,6 +178,7 @@ BalanceRecorder.set_enabled(false) # finishes the current recording
 BalanceRecorder.set_enabled(true)  # arms recording for the next gameplay entry
 BalanceRecorder.get_summary()      # copy of the current/last ledger, no disk read
 BalanceRecorder.capture_directory # absolute path of the current/last capture
+BalanceRecorder.capture_incident(&"manual") # freeze the recent history now
 ```
 
 Headless runs are excluded by default. A dedicated headless fixture can set
@@ -168,7 +198,9 @@ elapsed time, build and debug context together.
 
 ## Verification
 
-Run `BalanceLedgerTest`, `BalanceCaptureWriterTest`, and `BalanceRecorderTest`
+Run `BalanceLedgerTest`, `BalanceCaptureWriterTest`, `BalanceRecorderTest`,
+`BalanceIncidentHistoryTest`, `BalanceHealthAccountingTest`, `BalanceSnapshotPurityTest`
+and `BalanceAttributionTest`
 with the repository's normal headless test commands. The writer suite
 deliberately targets an invalid directory to verify failure reporting; its
 expected filesystem error must be followed by a passing assertion. Existing
