@@ -195,6 +195,9 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	# A Deadshot or JUDGEMENT slow must not outlive the run: the scene that
+	# ends the run pauses the tree first, so _process can never expire it.
+	end_time_slow()
 	_set_wired(false)
 	engines.clear()
 	_sync_noun_claims()

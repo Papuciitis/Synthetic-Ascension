@@ -40,6 +40,8 @@ func _run() -> void:
 	_test_bag_consolidation_never_creates_value()
 	_test_ascension_buy_refund_is_neutral()
 	_test_undo_snapshots_keep_value()
+	_test_reconstruction_rule()
+	_test_rebuild_normalizes_damaged_instances()
 	print("LootLoopTest: %d passed, %d failed" % [_passes, _failures])
 	print("passes=%d failures=%d" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -237,6 +239,55 @@ func _test_ascension_buy_refund_is_neutral() -> void:
 	Global.attempt_ascension = saved_state
 	Global.ascension_ledger()
 	Global.followers = saved_followers
+
+
+# ---------------------------------------------------------------------------
+# 6. Followers are lives: the survival rule the Hub and the wager read
+# ---------------------------------------------------------------------------
+
+func _test_reconstruction_rule() -> void:
+	var saved_segment := int(Global.attempt_segment)
+	var saved_deaths := int(Global.attempt_deaths_this_segment)
+	var saved_followers := int(Global.followers)
+	var consistent := true
+	var boundary_ok := true
+	for segment in [1, 5, 12]:
+		Global.attempt_segment = segment
+		for deaths in [0, 1, 2]:
+			Global.attempt_deaths_this_segment = deaths
+			var flat := int(ceil(float(10 + (segment - 1) * 2) * pow(1.7, float(deaths))))
+			for balance in range(0, 400):
+				Global.followers = balance
+				var cost := Global.compute_respawn_cost()
+				if cost != Global.reconstruction_cost_for(balance):
+					consistent = false
+				# player.die charges the cost, then reconstructs only above zero.
+				if Global.reconstruction_survivable(balance) != (balance - cost > 0):
+					consistent = false
+			if Global.reconstruction_survivable(flat) or not Global.reconstruction_survivable(flat + 1):
+				boundary_ok = false
+	_check(consistent, "the survival rule is exactly 'balance after the cost is above zero' for every balance, segment and death count")
+	_check(boundary_ok, "a balance equal to the flat cost is not survivable and one more Follower is")
+	Global.attempt_segment = saved_segment
+	Global.attempt_deaths_this_segment = saved_deaths
+	Global.followers = saved_followers
+
+
+# ---------------------------------------------------------------------------
+# 7. Damaged saves
+# ---------------------------------------------------------------------------
+
+func _test_rebuild_normalizes_damaged_instances() -> void:
+	var data: ItemData = Global.item_db[_item_ids()[0]]
+	var negative := _instance(data, 0, 0.0)
+	negative.rarity = -4
+	var overfull := _instance(data, 3, 0.0)
+	overfull.upgrade_meter = 2.5
+	var fine := _instance(data, 6, 0.0, 0.5)
+	var count := ItemScaling.rebuild([negative, overfull, null, fine, "not an item"])
+	_check(count == 3, "rebuild counts only real instances (%d)" % count)
+	_check(negative.rarity == 0 and overfull.rarity == 3 and overfull.upgrade_meter < 1.0 and fine.rarity == 6 and is_equal_approx(fine.upgrade_meter, 0.5), "a negative rank and a meter past a whole rank are normalized on load; sound instances are untouched")
+	_check(Global.compute_item_value(overfull) <= Global.compute_item_value(_instance(data, 4, 0.0)), "so a damaged meter is never worth more than the next rank")
 
 
 # ---------------------------------------------------------------------------

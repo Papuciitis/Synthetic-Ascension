@@ -402,6 +402,9 @@ func end_run() -> void:
 	# Freeze world processing before clearing the attempt snapshot. This prevents
 	# projectiles and spawners from observing half-reset die-die state.
 	get_tree().paused = true
+	# Nothing that slowed the clock (a Revelation, a hit-stop) can expire it
+	# once the tree is paused; the run's end always hands back real time.
+	Engine.time_scale = 1.0
 	var projectile_manager: ProjectileSimulationManager = get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
 	if projectile_manager != null:
 		projectile_manager.clear_for_run_end()

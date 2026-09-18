@@ -1358,6 +1358,10 @@ var debug_encounter_beats: bool = true
 var debug_cursed_vault: bool = true
 
 
+func _release_autosave_suppression() -> void:
+	_suppress_autosave = false
+
+
 func request_autosave(delay: float = 0.6) -> void:
 	if debug_disable_autosave:
 		return
@@ -1479,6 +1483,9 @@ func claim_loot(id: int) -> void:
 func apply_save(save: SaveData) -> void:
 	balance_attempt_boundary.emit(&"save_loaded")
 	_suppress_autosave = true
+	# If anything below aborts, the suppression must not silently disable
+	# every later autosave; the deferred release runs after the normal one.
+	_release_autosave_suppression.call_deferred()
 	if save.save_version > SaveData.CURRENT_SAVE_VERSION:
 		push_warning(
 			"Save slot %d was written by a newer build (save_version %d > %d, game %s); loading best-effort."
@@ -2135,16 +2142,27 @@ func mark_opening_completed() -> void:
 # ==============================
 
 func compute_respawn_cost() -> int:
+	return reconstruction_cost_for(followers)
+
+
+## The reconstruction cost a death would charge against `balance`: the flat
+## segment/death cost or a 20% tax on the balance, whichever is larger.
+func reconstruction_cost_for(balance: int) -> int:
 	var seg: int = maxi(1, attempt_segment)
 	var deaths: int = maxi(0, attempt_deaths_this_segment)
-
 	var base_cost: int = 10 + (seg - 1) * 2
 	var growth: float = 1.7
 	var flat_cost: int = int(ceil(float(base_cost) * pow(growth, float(deaths))))
-
-	# Hoard killer: at least 20% of current followers
-	var pct_tax: int = int(ceil(float(maxi(followers, 1)) * 0.20))
+	var pct_tax: int = int(ceil(float(maxi(balance, 1)) * 0.20))
 	return maxi(flat_cost, pct_tax)
+
+
+## Whether a death at `balance` reconstructs the player: the cost is paid
+## first and a balance of zero afterwards ends the Ascension (player.die),
+## so the balance must exceed the cost, not merely cover it. The Hub's
+## warning and the wager shrine's stake floor read this rule.
+func reconstruction_survivable(balance: int) -> bool:
+	return balance - reconstruction_cost_for(balance) > 0
 
 func consume_respawn_cost() -> int:
 	var cost: int = compute_respawn_cost()

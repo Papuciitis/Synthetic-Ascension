@@ -173,6 +173,15 @@ func _run() -> void:
 	_engine._tick_debts(0.0)
 	_check(is_equal_approx(_runner.enemy_hp(replaced), 83.0), "replacement Debt pays on the next tick")
 	_check_errors("Debt replaced during a damage callback")
+
+	# A Deadshot / JUDGEMENT slow must be released when the runner leaves the
+	# tree, because a run that ends pauses the tree before _process could.
+	_runner.set_time_slow(0.2, 5.0)
+	_check(is_equal_approx(Engine.time_scale, 0.2) and _runner.time_slowed(), "fixture: a Revelation-style slow is running")
+	remove_child(_player)
+	_check(is_equal_approx(Engine.time_scale, 1.0) and not _runner.time_slowed(), "a runner leaving the tree mid-slow hands back real time")
+	add_child(_player)
+	_check_errors("time slow released on exit")
 	EnemyWorld.remove_enemy(replaced, &"test")
 
 	Global.attempt_ascension = {}

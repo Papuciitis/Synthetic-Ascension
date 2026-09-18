@@ -1133,11 +1133,11 @@ func _trade_validation() -> Dictionary:
 
 	# Followers are also lives: warn before the player barters away their
 	# next reconstruction.
-	var respawn_cost: int = Global.compute_respawn_cost() if Global != null and Global.has_method("compute_respawn_cost") else 1
-	if after < respawn_cost:
+	var respawn_cost: int = Global.reconstruction_cost_for(after) if Global != null and Global.has_method("reconstruction_cost_for") else 1
+	if Global != null and Global.has_method("reconstruction_survivable") and not Global.reconstruction_survivable(after):
 		return {
 			"valid": true,
-			"reason": "⚠ %d Followers left — below the next reconstruction cost (%d). Death would end the Ascension." % [after, respawn_cost],
+			"reason": "⚠ %d Followers left — not above the next reconstruction cost (%d). Death would end the Ascension." % [after, respawn_cost],
 		}
 
 	return {"valid": true, "reason": "Exchange is viable."}

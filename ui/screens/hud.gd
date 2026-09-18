@@ -334,6 +334,9 @@ func _open_ascension_screen() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ascension_open") and (bag_ctl == null or not bag_ctl.is_management_mode()):
+		if _bound_player != null and is_instance_valid(_bound_player) and bool(_bound_player.get("is_dead")):
+			get_viewport().set_input_as_handled()
+			return
 		_open_ascension_screen()
 		get_viewport().set_input_as_handled()
 		return

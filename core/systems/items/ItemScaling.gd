@@ -243,7 +243,12 @@ static func rebuild(items: Array) -> int:
 	var count := 0
 	for item in items:
 		if item is ItemInstance and (item as ItemInstance).data != null:
-			(item as ItemInstance)._recompute_flat_mods()
+			var inst := item as ItemInstance
+			# A hand-edited or damaged save can carry a negative rank or a
+			# meter past a whole rank; the merge law never produces either.
+			inst.rarity = maxi(0, int(inst.rarity))
+			inst.upgrade_meter = clampf(float(inst.upgrade_meter), 0.0, 0.999999)
+			inst._recompute_flat_mods()
 			count += 1
 	return count
 

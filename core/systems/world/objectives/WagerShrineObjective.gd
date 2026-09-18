@@ -133,10 +133,10 @@ func _try_raise_stake() -> void:
 func _can_afford(stake: int) -> bool:
 	if Global == null:
 		return false
-	var floor_cost: int = 0
-	if Global.has_method("compute_respawn_cost"):
-		floor_cost = int(Global.compute_respawn_cost())
-	return Global.followers - stake >= floor_cost
+	# The stake may never leave a balance a death could not reconstruct from.
+	if Global.has_method("reconstruction_survivable"):
+		return bool(Global.reconstruction_survivable(int(Global.followers) - stake))
+	return Global.followers - stake > 0
 
 
 func odds_for(tier: int) -> float:

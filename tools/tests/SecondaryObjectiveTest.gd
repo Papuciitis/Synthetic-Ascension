@@ -89,8 +89,12 @@ func _test_wager_cannot_strand_the_player() -> void:
 	var floor_cost: int = int(Global.compute_respawn_cost())
 	var stake: int = int(WagerShrineObjective.TIERS[0]["stake"])
 
+	# A death charges the cost and then needs a balance above zero, so the
+	# stake must leave more than the cost, not exactly the cost.
+	Global.followers = floor_cost + stake + 1
+	_check(shrine.call("_can_afford", stake), "the stake is allowed when it leaves more than the reconstruction cost")
 	Global.followers = floor_cost + stake
-	_check(shrine.call("_can_afford", stake), "the stake is allowed above the reconstruction floor")
+	_check(not shrine.call("_can_afford", stake), "a stake that leaves exactly the reconstruction cost is refused: that death would end the run")
 	Global.followers = floor_cost + stake - 1
 	_check(
 		not shrine.call("_can_afford", stake),
