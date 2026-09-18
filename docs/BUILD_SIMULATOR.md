@@ -22,7 +22,12 @@ times sooner), `SIM_PRESETS` (include every preset, authored build and
 prototype route), `SIM_STRUCTURE` (the tree structure pass, shard 0 only),
 `SIM_TIERS` (comma list of tier indices), `SIM_CROWD`, `SIM_HP_MUL` (crowd
 durability), `SIM_SET` (pin one set on every build; the gear seed picks it
-otherwise), `SIM_ABLATE` / `SIM_ABLATE_PRESETS` (ablation mode). Never
+otherwise), `SIM_GEAR_POLARITY=neg:<n>` (the first n statistical set pieces
+roll NEG at their authored floor), `SIM_CURSES` (curse relic ids worn in
+their slots at their floor), `SIM_AUGMENTS` (up to three augment ids, for
+the NEG archetypes), `SIM_ABLATE` / `SIM_ABLATE_PRESETS` (ablation mode).
+`tools/sim/neg_archetype_report.py` compares NEG wardrobes with a POS
+baseline (`docs/audits/2026-09-19-build-simulator/neg-archetypes/`). Never
 run it during a human playtest.
 
 Held Qs (Guard, Deadshot, Designate) are pressed once, fed through the

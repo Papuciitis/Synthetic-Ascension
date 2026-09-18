@@ -134,15 +134,17 @@ Then, once built: S4 Equilibrium Sigil (parity), S5 Litany of Wounds
 
 ### 3.4 Simulator pre-check (before spending a human session)
 
-Add `SIM_GEAR_POLARITY=neg:<count>` to the build simulator (`_wear_gear`
-rolls that many statistical pieces NEG at the tier's authored floor) and
-`SIM_AUGMENTS=<ids>` (the three archetype augments already resolve
-through `Global.permanent_augment_ids`). Run the nine pure presets under
-POS, Engine-with-two-relics, Doctrine-with-four-mild and Lens-with-one
-apocalyptic at seg6, same seed. The check is coarse (no positioning,
-lower-bound ranged/magic set shares) but answers "is any archetype
-outright non-viable at its cap" for free, and `BurdenSystemTest` keeps
-the arithmetic honest.
+The build simulator has `SIM_GEAR_POLARITY=neg:<count>` (the first n
+statistical set pieces roll NEG at their authored floor), `SIM_CURSES`
+(relics worn at their floor) and `SIM_AUGMENTS` (up to three augment
+ids); `tools/sim/neg_archetype_report.py` compares each wardrobe with the
+POS baseline. The first run (seven wardrobes, seg6 presets and authored
+builds, Gravemarch set) is filed under
+`docs/audits/2026-09-19-build-simulator/neg-archetypes/` and read in
+`docs/design/2026-09-19-neg-archetypes-and-the-tree.md`. The check is
+coarse (no positioning, lower-bound ranged/magic set shares) but answers
+"is any archetype outright non-viable at its cap" for free, and
+`BurdenSystemTest` and `NegArchetypesTest` keep the arithmetic honest.
 
 ### 3.5 Acceptance for the expansion
 
