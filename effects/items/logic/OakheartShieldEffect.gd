@@ -163,3 +163,8 @@ func _draw() -> void:
 	# core (thin)
 	for i in range(seg):
 		draw_line(_pts[i], _pts[i + 1], Color(color_core.r, color_core.g, color_core.b, color_core.a), core_width, true)
+
+
+## Pure: the reduction is derived from the item's roll and rarity alone.
+func balance_snapshot() -> Dictionary:
+	return {"damage_taken_multiplier": get_damage_taken_multiplier()}

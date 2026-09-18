@@ -264,3 +264,12 @@ func frame_cost() -> Dictionary:
 ## itself (seeking fragments, patches) so the runner can draw them.
 func collect_draw_points(_out: Array) -> void:
 	pass
+
+
+## Observational report for the balance recorder: conditional guards and
+## resources a sample should show without evaluating a hit. The per-source
+## incoming-damage rule (damage_taken_multiplier_for) consumes state (Plate)
+## and is never called from a sample; the plain multiplier getters read
+## fields only and the runner reports them directly.
+func balance_snapshot() -> Dictionary:
+	return {}

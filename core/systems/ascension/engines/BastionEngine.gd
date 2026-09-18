@@ -787,3 +787,14 @@ func describe() -> Dictionary:
 	out["guarding"] = guarding
 	out["plate_ready"] = _plate_ready
 	return out
+
+
+func balance_snapshot() -> Dictionary:
+	var guards: Array = []
+	if has("BA03"):
+		guards.append({"id": "ascension:BA03", "ready": _plate_ready})
+	if has("BA12"):
+		guards.append({"id": "ascension:BA12", "ready": force >= 50.0 and _last_hit_recovery <= 0.0, "cooldown_left": _last_hit_recovery})
+	if has("BAQ"):
+		guards.append({"id": "ascension:BAQ", "ready": guarding})
+	return {"conditional_guards": guards, "force": force, "plates": plates}

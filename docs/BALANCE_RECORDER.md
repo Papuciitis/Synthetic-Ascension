@@ -85,8 +85,19 @@ of `recording` means the final boundary has not been saved, not a completed run.
   Manifestations, augments and levels, Ascension ownership/equipped state,
   Doctrine rules, final player stats and the existing stat contribution ledger.
   Changes within one frame are coalesced. Hub loadouts are checked each second;
-  player stats are unavailable until gameplay resumes. Temporary effect
-  multipliers, HP and current Threat pressure are sampled once per second.
+  player stats are unavailable until gameplay resumes. HP and current Threat
+  pressure are sampled once per second.
+- Samples are observation only. Each runner reports through a pure
+  `get_balance_snapshot()` (the `effects` key of a sample): stable multipliers,
+  `composure_ready`, and `conditional_guards` (Reliquary Guard, Red Line,
+  Composure, Bastion's Plate / Last Hit / Guard) with their readiness and
+  resources. A one-hit guard is never reported as a persistent multiplier.
+  The runners' `get_*_multiplier()` getters are combat operations (the
+  Manifestation one spends Composure, Reliquary Guard's arms its latch) and a
+  sample never calls them; an effect with a multiplier that has not opted into
+  the pure report is listed under `unreported`, never assumed to be 1.0.
+  Captures written before this change carry the old `effect_multipliers` key,
+  whose values were taken through the consuming getters.
 
 ## Developer controls
 

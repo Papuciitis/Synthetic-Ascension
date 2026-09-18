@@ -148,3 +148,8 @@ func _draw() -> void:
 	if _echo_flash > 0.0:
 		var t := _echo_flash / 0.22
 		draw_arc(Vector2.ZERO, radius * (1.4 + 0.9 * (1.0 - t)), 0.0, TAU, 30, Color(1.0, 0.95, 0.70, 0.55 * t), 2.0, true)
+
+
+## Pure: reads the player's HP fraction.
+func balance_snapshot() -> Dictionary:
+	return {"haste_multiplier": get_haste_multiplier()}

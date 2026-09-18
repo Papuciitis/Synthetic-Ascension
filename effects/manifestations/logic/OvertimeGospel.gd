@@ -229,3 +229,8 @@ func _draw() -> void:
 		var angle: float = _pulse * 0.35 + TAU * (float(i) / float(rays))
 		var dir: Vector2 = Vector2(cos(angle), sin(angle))
 		draw_line(dir * radius, dir * (radius + 7.0 + 9.0 * heat * breathe), Color(tint.r, tint.g, tint.b, 0.45 * breathe), 2.0, true)
+
+
+## Pure: reads the banked Power bonus.
+func balance_snapshot() -> Dictionary:
+	return {"power_multiplier": get_power_multiplier()}

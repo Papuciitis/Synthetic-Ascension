@@ -1144,3 +1144,29 @@ func _draw() -> void:
 			pos - facing * 7.5,
 			pos - side * 3.6,
 		]), Color(core.r, core.g, core.b, core.a * spark))
+
+
+## Observational report for the balance recorder: fields and pure helpers
+## only. consume_composure() is the consuming counterpart of composure_ready()
+## and is never called from here.
+func get_balance_snapshot() -> Dictionary:
+	var nouns: Array = []
+	for key in _sources:
+		if int(_sources[key]) > 0:
+			nouns.append(String(key))
+	return {
+		"nouns": nouns,
+		"composure_ready": composure_ready(),
+		"composure_reduction": COMPOSURE_REDUCTION,
+		"time_since_hit": time_since_hit,
+		"shards": shard_count(),
+		"shard_cap": shard_cap(),
+		"momentum": momentum,
+		"stability": stability,
+		"misfortune": misfortune,
+		"time_since_attack": time_since_attack,
+		"attack_index": attack_index,
+		"wound_tier": wound_tier(),
+		"retaliation_cooldown": _retaliation_cd,
+		"bonus_evasion": bonus_evasion(),
+	}

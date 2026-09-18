@@ -142,3 +142,8 @@ func _spend_shards(at: Vector2, radius: float) -> int:
 		var angle: float = TAU * float(i) / float(count)
 		damage_radius(at + Vector2(cos(angle), sin(angle)) * ring, SHARD_BURST_RADIUS, damage, 140.0)
 	return count
+
+
+## Pure: reads the shared Mark timer.
+func balance_snapshot() -> Dictionary:
+	return {"power_multiplier": get_power_multiplier()}

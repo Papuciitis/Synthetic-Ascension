@@ -145,3 +145,8 @@ func _draw() -> void:
 		var angle := -PI * 0.5 + TAU * (float(i) / float(MAX_STACKS))
 		var dir := Vector2(cos(angle), sin(angle))
 		draw_line(dir * 22.0, dir * (26.0 + 4.0 * breathe), tint, 2.0, true)
+
+
+## Pure: reads the Fever stack count.
+func balance_snapshot() -> Dictionary:
+	return {"haste_multiplier": get_haste_multiplier()}

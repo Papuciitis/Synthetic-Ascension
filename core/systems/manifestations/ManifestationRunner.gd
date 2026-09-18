@@ -822,3 +822,50 @@ func active_count() -> int:
 
 func active_pair_count() -> int:
 	return _pairs.size()
+
+
+## Observational report for the balance recorder. Nothing here may spend a
+## guard: get_damage_taken_multiplier() consumes Composure and Reliquary
+## Guard's getter arms the latch that pays a shard, so a recording sample
+## never calls the polled getters. Rules report through balance_snapshot();
+## a rule that has a multiplier method and has not opted in is listed under
+## `unreported` rather than polled, so an omitted value reads as unavailable,
+## never as a measured 1.0.
+func get_balance_snapshot() -> Dictionary:
+	var out := {
+		"passive_damage_taken_multiplier": 1.0, "power_multiplier": 1.0,
+		"haste_multiplier": 1.0, "move_speed_multiplier": 1.0,
+		"composure_ready": false, "conditional_guards": [], "effects": [], "unreported": [],
+	}
+	if state != null and is_instance_valid(state):
+		out["state"] = state.get_balance_snapshot()
+		out["composure_ready"] = state.composure_ready()
+		if state.has_source(&"ward"):
+			out.conditional_guards.append({
+				"id": "manifestation:composure", "ready": state.composure_ready(),
+				"reduction": ManifestationState.COMPOSURE_REDUCTION, "time_since_hit": state.time_since_hit,
+			})
+	var seen: Dictionary = {}
+	for node in _all_effects():
+		if not is_instance_valid(node):
+			continue
+		var effect := node as ManifestationEffect
+		if effect == null:
+			continue
+		var id := String(effect.manifestation_id())
+		out.effects.append(id)
+		var report: Dictionary = effect.balance_snapshot()
+		var share := _duplicate_share(seen, effect)
+		for key in ["power_multiplier", "haste_multiplier", "move_speed_multiplier"]:
+			if report.has(key):
+				out[key] *= _shared_multiplier(float(report[key]), share)
+		if report.has("damage_taken_multiplier"):
+			out.passive_damage_taken_multiplier *= _shared_multiplier(float(report.damage_taken_multiplier), share)
+		for guard in report.get("conditional_guards", []):
+			out.conditional_guards.append(guard)
+		if report.is_empty():
+			for method in [&"get_power_multiplier", &"get_haste_multiplier", &"get_move_speed_multiplier", &"get_damage_taken_multiplier"]:
+				if effect.has_method(method):
+					out.unreported.append(id)
+					break
+	return out

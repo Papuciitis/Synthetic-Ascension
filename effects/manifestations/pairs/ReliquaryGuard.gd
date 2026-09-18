@@ -192,3 +192,13 @@ func _draw() -> void:
 		var angle := TAU * float(i) / 6.0
 		points.append(Vector2(cos(angle), sin(angle)) * ORBIT_RADIUS * 1.26)
 	draw_polyline(points, Color(ward.r, ward.g, ward.b, 0.26), 1.6, true)
+
+
+## Pure: is_guarding() reads the cooldown and the shard count. The latch is
+## armed only by get_damage_taken_multiplier(), which a sample never calls.
+func balance_snapshot() -> Dictionary:
+	return {"conditional_guards": [{
+		"id": "manifestation_pair:reliquary_guard", "ready": is_guarding(),
+		"cooldown_left": _cooldown, "latched": _latched,
+		"resource": state.shard_count() if state != null and is_instance_valid(state) else 0,
+	}]}

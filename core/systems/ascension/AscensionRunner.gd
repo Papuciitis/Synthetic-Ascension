@@ -1398,6 +1398,24 @@ func get_damage_taken_multiplier() -> float:
 	return total
 
 
+## Observational report for the balance recorder. The engine multiplier
+## getters read engine fields only (audited 2026-09-18), so a sample may call
+## them; get_damage_taken_multiplier_for() is not safe (Plate consumes) and
+## is never called from a sample.
+func get_balance_snapshot() -> Dictionary:
+	var out := {
+		"power_multiplier": get_power_multiplier(), "haste_multiplier": get_haste_multiplier(),
+		"move_speed_multiplier": get_move_speed_multiplier(), "damage_taken_multiplier": get_damage_taken_multiplier(),
+		"engines": [], "conditional_guards": [], "q": q_id, "v": v_id, "v_charge": v_charge,
+	}
+	for engine in engines:
+		out.engines.append(engine.discipline())
+		var report: Dictionary = engine.balance_snapshot()
+		for guard in report.get("conditional_guards", []):
+			out.conditional_guards.append(guard)
+	return out
+
+
 ## Incoming damage multiplier for one source; 0 means the attack misses.
 func get_damage_taken_multiplier_for(source: Node, kind: StringName) -> float:
 	var total := 1.0

@@ -255,3 +255,12 @@ func _draw() -> void:
 			2.6,
 			true
 		)
+
+
+## Pure: the surge and guard getters read timers only.
+func balance_snapshot() -> Dictionary:
+	return {
+		"power_multiplier": get_power_multiplier(),
+		"move_speed_multiplier": get_move_speed_multiplier(),
+		"conditional_guards": [{"id": "manifestation_pair:red_line", "ready": _guard_left > 0.0, "remaining": _guard_left}],
+	}

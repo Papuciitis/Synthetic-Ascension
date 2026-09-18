@@ -346,15 +346,16 @@ func _capture_sample() -> void:
 	if player != null and _mode == "gameplay":
 		sample["player"] = {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "stats": _stats(player.get("stats")),
 			"position": [player.global_position.x, player.global_position.y], "dead": player.get("is_dead"), "healing_lock_seconds": player.call("healing_locked_seconds")}
+		# Observation only. The runners' get_*_multiplier() getters are combat
+		# operations (ManifestationRunner's spends the banked Composure guard and
+		# Reliquary Guard's arms the latch that pays a shard), so a sample never
+		# calls them; each runner reports through its pure get_balance_snapshot()
+		# and a runner without one is recorded as unavailable, not as 1.0.
 		var effects := {}
 		for runner_name in ["ItemEffectRunner", "ManifestationRunner", "AscensionRunner"]:
 			var runner := player.get_node_or_null(NodePath(runner_name))
 			if runner == null:
 				continue
-			var row := {}
-			for method in ["get_power_multiplier", "get_haste_multiplier", "get_damage_taken_multiplier"]:
-				if runner.has_method(method):
-					row[method] = runner.call(method)
-			effects[runner_name] = row
-		sample["effect_multipliers"] = effects
+			effects[runner_name] = runner.call("get_balance_snapshot") if runner.has_method("get_balance_snapshot") else null
+		sample["effects"] = effects
 	_ledger.event("sample", sample)

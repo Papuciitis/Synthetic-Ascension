@@ -238,3 +238,15 @@ func popup(text: String, color: Color, scale_in: float = 1.15, merge_key: int = 
 	if state != null and is_instance_valid(state):
 		at += state.next_popup_offset()
 	BattleText.popup(at, text, color, scale_in, merge_key)
+
+
+## Observational report for the balance recorder. A sample is not a hit: this
+## reads fields (or explicitly pure helpers) only - no timer reset, no latch,
+## no shard spent, no popup, no random draw. The runner never calls the polled
+## get_*_multiplier() getters from a recording sample, because that is where
+## one-shot guards commit. Return {} when the rule has nothing the recorder
+## should know. Keys the runner aggregates: power_multiplier,
+## haste_multiplier, move_speed_multiplier, damage_taken_multiplier (stable
+## values only) and conditional_guards (an Array of {id, ready, ...}).
+func balance_snapshot() -> Dictionary:
+	return {}

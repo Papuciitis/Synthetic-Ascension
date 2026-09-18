@@ -206,3 +206,26 @@ func _clear_all() -> void:
 		if is_instance_valid(n):
 			effect_removed.emit(n)
 			n.queue_free()
+
+
+## Observational report for the balance recorder. Effects report through
+## balance_snapshot(); an effect with a multiplier method that has not opted
+## in is listed as unreported and is never polled from a recording sample.
+func get_balance_snapshot() -> Dictionary:
+	var out := {"power_multiplier": 1.0, "haste_multiplier": 1.0, "move_speed_multiplier": 1.0, "damage_taken_multiplier": 1.0, "effects": [], "unreported": []}
+	for key in _active_effects:
+		var n: Node = _active_effects[key]
+		if not is_instance_valid(n):
+			continue
+		out.effects.append(String(key))
+		if n.has_method("balance_snapshot"):
+			var report: Dictionary = n.call("balance_snapshot")
+			for field in ["power_multiplier", "haste_multiplier", "move_speed_multiplier", "damage_taken_multiplier"]:
+				if report.has(field):
+					out[field] *= float(report[field])
+			continue
+		for method in ["get_power_multiplier", "get_haste_multiplier", "get_move_speed_multiplier", "get_damage_taken_multiplier"]:
+			if n.has_method(method):
+				out.unreported.append(String(key))
+				break
+	return out

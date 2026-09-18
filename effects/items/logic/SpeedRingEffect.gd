@@ -95,3 +95,8 @@ func _spawn_streak(vel: Vector2) -> void:
 	var offset := dir * randf_range(8.0, 18.0) + side * randf_range(-14.0, 14.0)
 	s.global_position = global_position + offset
 	s.rotation = dir.angle()
+
+
+## Pure: derived from the item's roll and rarity alone.
+func balance_snapshot() -> Dictionary:
+	return {"move_speed_multiplier": get_move_speed_multiplier()}
