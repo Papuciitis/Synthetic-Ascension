@@ -1,0 +1,9110 @@
+{
+	"by_kind": {
+		"active": 9,
+		"ascendant": 1,
+		"axiom": 9,
+		"catastrophe": 9,
+		"choice": 12,
+		"core": 3,
+		"evolution": 18,
+		"fork": 18,
+		"fusion": 27,
+		"gate": 2,
+		"keystone": 18,
+		"local": 108,
+		"mutation": 57,
+		"revelation": 9,
+		"revelation_mutation": 27,
+		"sink": 20,
+		"union": 3
+	},
+	"method": "AscensionLedger.can_buy with unlimited Followers, segment 12 completed and four evolution claims; per node, a guided walk from each Core buys only the requirement closure and the shortest link path, so guided_unlock is an upper bound on the cheapest unlock.",
+	"node_count": 350,
+	"nodes": {
+		"ASC": {
+			"closure": [
+				"G2",
+				"G1"
+			],
+			"conflicts": [],
+			"cost": 20000,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"EX01",
+				"EX02",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX04",
+				"EX05",
+				"MO06",
+				"EX10",
+				"MO12",
+				"BAQ",
+				"G1",
+				"PR01",
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR02",
+				"PR03",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR05",
+				"PR06",
+				"PR07",
+				"BR08",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"PR04",
+				"OR05",
+				"OR06",
+				"MR8",
+				"OR04",
+				"EXQ",
+				"MOQ",
+				"PRQ",
+				"BRQ",
+				"ORQ",
+				"OR12",
+				"BAK1",
+				"MOK1",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3",
+				"PRQ1",
+				"PRQ2",
+				"PRQ3",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"ORQ1",
+				"ORQ3",
+				"ORQ4",
+				"EXK2",
+				"BAV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT08",
+				"DT09",
+				"MM9",
+				"RM5",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"DOQ",
+				"DTQ",
+				"INQ",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3",
+				"INQ1",
+				"INQ2",
+				"INQ3",
+				"PRV",
+				"DOV"
+			],
+			"guided_unlock": 108800,
+			"id": "ASC",
+			"kind": "ascendant",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"ASC.S1": {
+			"closure": [
+				"ASC",
+				"G2",
+				"G1"
+			],
+			"conflicts": [],
+			"cost": 1000,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR03",
+				"PR05",
+				"PR06",
+				"BR08",
+				"PR07",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR05",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BRQ",
+				"G1",
+				"EX02",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX05",
+				"EX07",
+				"EX04",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MR5",
+				"OR12",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAK1",
+				"MOK1",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"EXK2",
+				"ORC",
+				"MOC",
+				"EXC",
+				"BRV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT09",
+				"RM5",
+				"MM9",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOC",
+				"DTC",
+				"INC",
+				"MOV",
+				"DOV",
+				"ASC"
+			],
+			"guided_unlock": 103000,
+			"id": "ASC.S1",
+			"kind": "sink",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"ASC.S2": {
+			"closure": [
+				"ASC",
+				"G2",
+				"G1"
+			],
+			"conflicts": [],
+			"cost": 1000,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR03",
+				"PR05",
+				"PR06",
+				"BR08",
+				"PR07",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR05",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BRQ",
+				"G1",
+				"EX02",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX05",
+				"EX07",
+				"EX04",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MR5",
+				"OR12",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAK1",
+				"MOK1",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"EXK2",
+				"ORC",
+				"MOC",
+				"EXC",
+				"BRV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT09",
+				"RM5",
+				"MM9",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOC",
+				"DTC",
+				"INC",
+				"MOV",
+				"DOV",
+				"ASC"
+			],
+			"guided_unlock": 103000,
+			"id": "ASC.S2",
+			"kind": "sink",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"ASC1": {
+			"closure": [
+				"ASC",
+				"G2",
+				"G1"
+			],
+			"conflicts": [
+				"ASC2",
+				"ASC3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR03",
+				"PR05",
+				"PR06",
+				"BR08",
+				"PR07",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR05",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BRQ",
+				"G1",
+				"EX02",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX05",
+				"EX07",
+				"EX04",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MR5",
+				"OR12",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAK1",
+				"MOK1",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"EXK2",
+				"ORC",
+				"MOC",
+				"EXC",
+				"BRV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT09",
+				"RM5",
+				"MM9",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOC",
+				"DTC",
+				"INC",
+				"MOV",
+				"DOV",
+				"ASC"
+			],
+			"guided_unlock": 102000,
+			"id": "ASC1",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"ASC2": {
+			"closure": [
+				"ASC",
+				"G2",
+				"G1"
+			],
+			"conflicts": [
+				"ASC1",
+				"ASC3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR03",
+				"PR05",
+				"PR06",
+				"BR08",
+				"PR07",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR05",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BRQ",
+				"G1",
+				"EX02",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX05",
+				"EX07",
+				"EX04",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MR5",
+				"OR12",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAK1",
+				"MOK1",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"EXK2",
+				"ORC",
+				"MOC",
+				"EXC",
+				"BRV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT09",
+				"RM5",
+				"MM9",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOC",
+				"DTC",
+				"INC",
+				"MOV",
+				"DOV",
+				"ASC"
+			],
+			"guided_unlock": 102000,
+			"id": "ASC2",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"ASC3": {
+			"closure": [
+				"ASC",
+				"G2",
+				"G1"
+			],
+			"conflicts": [
+				"ASC1",
+				"ASC2"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"PR03",
+				"PR05",
+				"PR06",
+				"BR08",
+				"PR07",
+				"BR09",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR05",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BRQ",
+				"G1",
+				"EX02",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX05",
+				"EX07",
+				"EX04",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MR5",
+				"OR12",
+				"BRK2",
+				"PRK1",
+				"ORK1",
+				"BAK1",
+				"MOK1",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"EXK2",
+				"ORC",
+				"MOC",
+				"EXC",
+				"BRV",
+				"G2",
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT09",
+				"RM5",
+				"MM9",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"IN10",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"DOC",
+				"DTC",
+				"INC",
+				"MOV",
+				"DOV",
+				"ASC"
+			],
+			"guided_unlock": 102000,
+			"id": "ASC3",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 6,
+			"status": "implemented"
+		},
+		"BA01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "BA01",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"BA02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "BA02",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"BA03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01"
+			],
+			"guided_unlock": 400,
+			"id": "BA03",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01"
+			],
+			"guided_unlock": 400,
+			"id": "BA04",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02"
+			],
+			"guided_unlock": 600,
+			"id": "BA05",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA02"
+			],
+			"guided_unlock": 400,
+			"id": "BA06",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA03"
+			],
+			"guided_unlock": 800,
+			"id": "BA07",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA08": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA03"
+			],
+			"guided_unlock": 800,
+			"id": "BA08",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BA09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04"
+			],
+			"guided_unlock": 1200,
+			"id": "BA09",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BA10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA02",
+				"BA05"
+			],
+			"guided_unlock": 1200,
+			"id": "BA10",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "n/a"
+		},
+		"BA11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA02",
+				"BA06"
+			],
+			"guided_unlock": 1200,
+			"id": "BA11",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BA12": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA03",
+				"BA07"
+			],
+			"guided_unlock": 1600,
+			"id": "BA12",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAA": {
+			"closure": [
+				"BA01"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"BA09"
+			],
+			"guided_unlock": 4600,
+			"id": "BAA",
+			"kind": "axiom",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"BAC": {
+			"closure": [
+				"BA04"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04",
+				"BA02",
+				"BA03",
+				"BA08",
+				"BA06",
+				"BA09"
+			],
+			"guided_unlock": 5000,
+			"id": "BAC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"BAE1": {
+			"closure": [
+				"BAQ",
+				"BAF1",
+				"BAQ3",
+				"BR06",
+				"BA04"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04",
+				"BAQ",
+				"BAQ3",
+				"BA02",
+				"BA03",
+				"BAF1",
+				"G1",
+				"BR02",
+				"BR06"
+			],
+			"guided_unlock": 5400,
+			"id": "BAE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAE2": {
+			"closure": [
+				"BAQ",
+				"BAF2",
+				"BAQ4",
+				"BAQ2",
+				"BA04"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04",
+				"BAQ",
+				"BAQ2",
+				"BAQ4",
+				"BA02",
+				"BA03",
+				"BAF2"
+			],
+			"guided_unlock": 3800,
+			"id": "BAE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAF1": {
+			"closure": [
+				"BA04"
+			],
+			"conflicts": [
+				"BAF2"
+			],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04",
+				"BA02",
+				"BA03"
+			],
+			"guided_unlock": 1800,
+			"id": "BAF1",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAF2": {
+			"closure": [
+				"BA04"
+			],
+			"conflicts": [
+				"BAF1"
+			],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA04",
+				"BA02",
+				"BA03"
+			],
+			"guided_unlock": 1800,
+			"id": "BAF2",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04"
+			],
+			"guided_unlock": 2200,
+			"id": "BAK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA08"
+			],
+			"guided_unlock": 2600,
+			"id": "BAK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02"
+			],
+			"guided_unlock": 1000,
+			"id": "BAQ",
+			"kind": "active",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BAQ1": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ2": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ3": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ4": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ5": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAQ6": {
+			"closure": [
+				"BAQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BAQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BAQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BAS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA09"
+			],
+			"guided_unlock": 2000,
+			"id": "BAS1",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA09"
+			],
+			"guided_unlock": 2000,
+			"id": "BAS2",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"BA07",
+				"BAQ",
+				"BAK1",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3"
+			],
+			"guided_unlock": 10400,
+			"id": "BAV",
+			"kind": "revelation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAV1": {
+			"closure": [
+				"BAV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"BA07",
+				"BAQ",
+				"BAK1",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3",
+				"BAV"
+			],
+			"guided_unlock": 12200,
+			"id": "BAV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAV2": {
+			"closure": [
+				"BAV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"BA07",
+				"BAQ",
+				"BAK1",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3",
+				"BAV"
+			],
+			"guided_unlock": 12200,
+			"id": "BAV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BAV3": {
+			"closure": [
+				"BAV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BA",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"BA07",
+				"BAQ",
+				"BAK1",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3",
+				"BAV"
+			],
+			"guided_unlock": 12200,
+			"id": "BAV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BR01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "BR01",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"BR02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "BR02",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"BR03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01"
+			],
+			"guided_unlock": 400,
+			"id": "BR03",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01"
+			],
+			"guided_unlock": 400,
+			"id": "BR04",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02"
+			],
+			"guided_unlock": 400,
+			"id": "BR05",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02"
+			],
+			"guided_unlock": 400,
+			"id": "BR06",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR03"
+			],
+			"guided_unlock": 800,
+			"id": "BR07",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR08": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR03"
+			],
+			"guided_unlock": 800,
+			"id": "BR08",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BR09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR04"
+			],
+			"guided_unlock": 1200,
+			"id": "BR09",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BR10": {
+			"closure": [
+				"BR05",
+				"BR09"
+			],
+			"conflicts": [
+				"BR12"
+			],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR05",
+				"BR01",
+				"BR04",
+				"BR09"
+			],
+			"guided_unlock": 2600,
+			"id": "BR10",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BR11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01"
+			],
+			"guided_unlock": 800,
+			"id": "BR11",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BR12": {
+			"closure": [
+				"BR05",
+				"BR09"
+			],
+			"conflicts": [
+				"BR10"
+			],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR05",
+				"BR01",
+				"BR04",
+				"BR09"
+			],
+			"guided_unlock": 2600,
+			"id": "BR12",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRA": {
+			"closure": [
+				"BR01"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR07"
+			],
+			"guided_unlock": 4200,
+			"id": "BRA",
+			"kind": "axiom",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"BRC": {
+			"closure": [
+				"BR01"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"BR08"
+			],
+			"guided_unlock": 4600,
+			"id": "BRC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"BRE1": {
+			"closure": [
+				"BRQ",
+				"BRF1",
+				"BRQ2",
+				"PR05"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ",
+				"BRQ2",
+				"BR03",
+				"BR04",
+				"BRF1",
+				"PR02",
+				"PR05"
+			],
+			"guided_unlock": 3800,
+			"id": "BRE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRE2": {
+			"closure": [
+				"BRQ",
+				"BRF2",
+				"BRQ4",
+				"BR10",
+				"BR05",
+				"BR09"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR05",
+				"BRQ",
+				"BRQ4",
+				"BR03",
+				"BR04",
+				"BR09",
+				"BR10",
+				"BR08",
+				"BRF2"
+			],
+			"guided_unlock": 5600,
+			"id": "BRE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "partial"
+		},
+		"BRF1": {
+			"closure": [],
+			"conflicts": [
+				"BRF2"
+			],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04"
+			],
+			"guided_unlock": 1800,
+			"id": "BRF1",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRF2": {
+			"closure": [],
+			"conflicts": [
+				"BRF1"
+			],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR08"
+			],
+			"guided_unlock": 2200,
+			"id": "BRF2",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04"
+			],
+			"guided_unlock": 2200,
+			"id": "BRK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04"
+			],
+			"guided_unlock": 2200,
+			"id": "BRK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02"
+			],
+			"guided_unlock": 1000,
+			"id": "BRQ",
+			"kind": "active",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"BRQ1": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ2": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ3": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ4": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ5": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRQ6": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"BRQ7": {
+			"closure": [
+				"BRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "BRQ7",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"BRS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"OR01",
+				"BR11"
+			],
+			"guided_unlock": 2200,
+			"id": "BRS1",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"OR01",
+				"BR11"
+			],
+			"guided_unlock": 2200,
+			"id": "BRS2",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"BR08",
+				"BRQ",
+				"BRK2",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3"
+			],
+			"guided_unlock": 10800,
+			"id": "BRV",
+			"kind": "revelation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRV1": {
+			"closure": [
+				"BRV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"BR08",
+				"BRQ",
+				"BRK2",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"BRV"
+			],
+			"guided_unlock": 12600,
+			"id": "BRV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRV2": {
+			"closure": [
+				"BRV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"BR08",
+				"BRQ",
+				"BRK2",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"BRV"
+			],
+			"guided_unlock": 12600,
+			"id": "BRV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"BRV3": {
+			"closure": [
+				"BRV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "BR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR01",
+				"BR02",
+				"BR03",
+				"BR04",
+				"BR05",
+				"BR06",
+				"BR08",
+				"BRQ",
+				"BRK2",
+				"BRQ1",
+				"BRQ2",
+				"BRQ3",
+				"BRV"
+			],
+			"guided_unlock": 12600,
+			"id": "BRV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DO01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "DO01",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"DO02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01"
+			],
+			"guided_unlock": 400,
+			"id": "DO02",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01"
+			],
+			"guided_unlock": 400,
+			"id": "DO03",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO02"
+			],
+			"guided_unlock": 800,
+			"id": "DO04",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "DO05",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"DO06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05"
+			],
+			"guided_unlock": 600,
+			"id": "DO06",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05"
+			],
+			"guided_unlock": 600,
+			"id": "DO07",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO08": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO06"
+			],
+			"guided_unlock": 1400,
+			"id": "DO08",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DO09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO12"
+			],
+			"guided_unlock": 600,
+			"id": "DO09",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DO10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO12",
+				"DO09"
+			],
+			"guided_unlock": 1400,
+			"id": "DO10",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"DO11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12"
+			],
+			"guided_unlock": 1200,
+			"id": "DO11",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DO12": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "DO12",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"DOA": {
+			"closure": [
+				"DO05"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO05",
+				"DO01",
+				"DO12",
+				"DO03",
+				"DO06"
+			],
+			"guided_unlock": 3600,
+			"id": "DOA",
+			"kind": "axiom",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"DOC": {
+			"closure": [
+				"DO07"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO07",
+				"DO12",
+				"DO02",
+				"DO03"
+			],
+			"guided_unlock": 4000,
+			"id": "DOC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"DOE1": {
+			"closure": [
+				"DOQ",
+				"DOF1",
+				"DOQ6",
+				"DO11"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ",
+				"DOQ6",
+				"DO12",
+				"DO11",
+				"DOF1"
+			],
+			"guided_unlock": 3400,
+			"id": "DOE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOE2": {
+			"closure": [
+				"DOQ",
+				"DOF2",
+				"DOQ5",
+				"DO04"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ",
+				"DOQ5",
+				"DO12",
+				"DO02",
+				"DO04",
+				"DOF2"
+			],
+			"guided_unlock": 3400,
+			"id": "DOE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOF1": {
+			"closure": [],
+			"conflicts": [
+				"DOF2"
+			],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02"
+			],
+			"guided_unlock": 1600,
+			"id": "DOF1",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOF2": {
+			"closure": [],
+			"conflicts": [
+				"DOF1"
+			],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO04"
+			],
+			"guided_unlock": 2000,
+			"id": "DOF2",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO07"
+			],
+			"guided_unlock": 2400,
+			"id": "DOK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02"
+			],
+			"guided_unlock": 2000,
+			"id": "DOK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05"
+			],
+			"guided_unlock": 1000,
+			"id": "DOQ",
+			"kind": "active",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DOQ1": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ2": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ3": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ4": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ5": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOQ6": {
+			"closure": [
+				"DOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DOQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DOS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02"
+			],
+			"guided_unlock": 1000,
+			"id": "DOS1",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO07"
+			],
+			"guided_unlock": 1400,
+			"id": "DOS2",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"DOQ",
+				"DOK2",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3"
+			],
+			"guided_unlock": 10600,
+			"id": "DOV",
+			"kind": "revelation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOV1": {
+			"closure": [
+				"DOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"DOQ",
+				"DOK2",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3",
+				"DOV"
+			],
+			"guided_unlock": 12400,
+			"id": "DOV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOV2": {
+			"closure": [
+				"DOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"DOQ",
+				"DOK2",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3",
+				"DOV"
+			],
+			"guided_unlock": 12400,
+			"id": "DOV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DOV3": {
+			"closure": [
+				"DOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DO",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"DOQ",
+				"DOK2",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3",
+				"DOV"
+			],
+			"guided_unlock": 12400,
+			"id": "DOV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DT01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "DT01",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"DT02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "DT02",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"DT03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT02"
+			],
+			"guided_unlock": 400,
+			"id": "DT03",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DT04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01"
+			],
+			"guided_unlock": 400,
+			"id": "DT04",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DT05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO02"
+			],
+			"guided_unlock": 800,
+			"id": "DT05",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DT06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01"
+			],
+			"guided_unlock": 400,
+			"id": "DT06",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DT07": {
+			"closure": [
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06"
+			],
+			"guided_unlock": 800,
+			"id": "DT07",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DT08": {
+			"closure": [
+				"DT03"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT02",
+				"DT03",
+				"DO05"
+			],
+			"guided_unlock": 1400,
+			"id": "DT08",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DT09": {
+			"closure": [
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06"
+			],
+			"guided_unlock": 1200,
+			"id": "DT09",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DT10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT02"
+			],
+			"guided_unlock": 800,
+			"id": "DT10",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DT11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT02",
+				"DT03"
+			],
+			"guided_unlock": 1200,
+			"id": "DT11",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DT12": {
+			"closure": [
+				"DT06",
+				"DT08",
+				"DT03"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO05",
+				"DT01",
+				"DT06",
+				"DT03",
+				"DT08",
+				"DT07"
+			],
+			"guided_unlock": 3000,
+			"id": "DT12",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTA": {
+			"closure": [
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT02",
+				"DT04",
+				"DT03"
+			],
+			"guided_unlock": 3800,
+			"id": "DTA",
+			"kind": "axiom",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"DTC": {
+			"closure": [
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT02",
+				"DT04",
+				"DT03",
+				"DT05",
+				"DT09"
+			],
+			"guided_unlock": 5000,
+			"id": "DTC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"DTE1": {
+			"closure": [
+				"DTQ",
+				"DTF1",
+				"DTQ5",
+				"DT11"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ",
+				"DTQ5",
+				"DT04",
+				"DT11",
+				"DTF1"
+			],
+			"guided_unlock": 3600,
+			"id": "DTE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTE2": {
+			"closure": [
+				"DTQ",
+				"DTF2",
+				"DTQ6",
+				"DT09",
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT09",
+				"DTQ",
+				"DTQ6",
+				"DT02",
+				"DTF2"
+			],
+			"guided_unlock": 3600,
+			"id": "DTE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTF1": {
+			"closure": [],
+			"conflicts": [
+				"DTF2"
+			],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT07"
+			],
+			"guided_unlock": 2200,
+			"id": "DTF1",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTF2": {
+			"closure": [
+				"DT06"
+			],
+			"conflicts": [
+				"DTF1"
+			],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT02",
+				"DT04",
+				"DT09"
+			],
+			"guided_unlock": 2600,
+			"id": "DTF2",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06"
+			],
+			"guided_unlock": 2200,
+			"id": "DTK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT10"
+			],
+			"guided_unlock": 3000,
+			"id": "DTK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02"
+			],
+			"guided_unlock": 1000,
+			"id": "DTQ",
+			"kind": "active",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"DTQ1": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [
+				"DTQ5"
+			],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTQ2": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTQ3": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTQ4": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTQ5": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [
+				"DTQ1"
+			],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"DTQ6": {
+			"closure": [
+				"DTQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DTQ"
+			],
+			"guided_unlock": 1600,
+			"id": "DTQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"DTS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT10"
+			],
+			"guided_unlock": 2000,
+			"id": "DTS1",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT09"
+			],
+			"guided_unlock": 2000,
+			"id": "DTS2",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT09",
+				"DTQ",
+				"DTK1",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3"
+			],
+			"guided_unlock": 11200,
+			"id": "DTV",
+			"kind": "revelation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTV1": {
+			"closure": [
+				"DTV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT09",
+				"DTQ",
+				"DTK1",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3",
+				"DTV"
+			],
+			"guided_unlock": 13000,
+			"id": "DTV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTV2": {
+			"closure": [
+				"DTV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT09",
+				"DTQ",
+				"DTK1",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3",
+				"DTV"
+			],
+			"guided_unlock": 13000,
+			"id": "DTV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"DTV3": {
+			"closure": [
+				"DTV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "DT",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT09",
+				"DTQ",
+				"DTK1",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3",
+				"DTV"
+			],
+			"guided_unlock": 13000,
+			"id": "DTV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EX01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "EX01",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"EX02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "EX02",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"EX03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01"
+			],
+			"guided_unlock": 400,
+			"id": "EX03",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EX04": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01"
+			],
+			"guided_unlock": 400,
+			"id": "EX04",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EX05": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02"
+			],
+			"guided_unlock": 600,
+			"id": "EX05",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EX06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03"
+			],
+			"guided_unlock": 800,
+			"id": "EX06",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EX07": {
+			"closure": [
+				"EX03"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03"
+			],
+			"guided_unlock": 800,
+			"id": "EX07",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EX08": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX04"
+			],
+			"guided_unlock": 1200,
+			"id": "EX08",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EX09": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX04"
+			],
+			"guided_unlock": 1200,
+			"id": "EX09",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EX10": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03"
+			],
+			"guided_unlock": 1200,
+			"id": "EX10",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EX11": {
+			"closure": [
+				"EX02"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX02",
+				"EX01",
+				"EX05"
+			],
+			"guided_unlock": 1400,
+			"id": "EX11",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EX12": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"MO01",
+				"MO03"
+			],
+			"guided_unlock": 1400,
+			"id": "EX12",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXA": {
+			"closure": [
+				"EX03"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03",
+				"EX02",
+				"EX06",
+				"EX04",
+				"EX07"
+			],
+			"guided_unlock": 4200,
+			"id": "EXA",
+			"kind": "axiom",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"EXC": {
+			"closure": [
+				"EX10",
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX10",
+				"EX06",
+				"EX04"
+			],
+			"guided_unlock": 4600,
+			"id": "EXC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"EXE1": {
+			"closure": [
+				"EXQ",
+				"EXF1",
+				"EXQ4",
+				"OR12",
+				"EX05"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX05",
+				"EXQ",
+				"EXQ4",
+				"EX03",
+				"EXF1",
+				"G1",
+				"OR01",
+				"OR03",
+				"OR07",
+				"OR12"
+			],
+			"guided_unlock": 6600,
+			"id": "EXE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "partial"
+		},
+		"EXE2": {
+			"closure": [
+				"EXQ",
+				"EXF2",
+				"EXQ3",
+				"EX03"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03",
+				"EXQ",
+				"EXQ3",
+				"EX02",
+				"EX06",
+				"EXF2"
+			],
+			"guided_unlock": 3200,
+			"id": "EXE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXF1": {
+			"closure": [
+				"EX05",
+				"EX01"
+			],
+			"conflicts": [
+				"EXF2"
+			],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX05",
+				"EX03"
+			],
+			"guided_unlock": 1800,
+			"id": "EXF1",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXF2": {
+			"closure": [
+				"EX03"
+			],
+			"conflicts": [
+				"EXF1"
+			],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX03",
+				"EX02",
+				"EX06"
+			],
+			"guided_unlock": 1800,
+			"id": "EXF2",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXK1": {
+			"closure": [
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX04"
+			],
+			"guided_unlock": 2600,
+			"id": "EXK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXK2": {
+			"closure": [
+				"EX02"
+			],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX02",
+				"EX01",
+				"EX03",
+				"EX06"
+			],
+			"guided_unlock": 2200,
+			"id": "EXK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02"
+			],
+			"guided_unlock": 1000,
+			"id": "EXQ",
+			"kind": "active",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"EXQ1": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [
+				"EXQ2"
+			],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ2": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [
+				"EXQ1"
+			],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ3": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ4": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ5": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXQ6": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"EXQ7": {
+			"closure": [
+				"EXQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EXQ"
+			],
+			"guided_unlock": 1600,
+			"id": "EXQ7",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"EXS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX12"
+			],
+			"guided_unlock": 2000,
+			"id": "EXS1",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX12"
+			],
+			"guided_unlock": 2200,
+			"id": "EXS2",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX04",
+				"EX05",
+				"EX10",
+				"EXQ",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"EXK2"
+			],
+			"guided_unlock": 11200,
+			"id": "EXV",
+			"kind": "revelation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXV1": {
+			"closure": [
+				"EXV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX04",
+				"EX05",
+				"EX10",
+				"EXQ",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"EXK2",
+				"EXV"
+			],
+			"guided_unlock": 13000,
+			"id": "EXV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXV2": {
+			"closure": [
+				"EXV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX04",
+				"EX05",
+				"EX10",
+				"EXQ",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"EXK2",
+				"EXV"
+			],
+			"guided_unlock": 13000,
+			"id": "EXV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"EXV3": {
+			"closure": [
+				"EXV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "EX",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX02",
+				"EX03",
+				"EX06",
+				"EX04",
+				"EX05",
+				"EX10",
+				"EXQ",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"EXK2",
+				"EXV"
+			],
+			"guided_unlock": 13000,
+			"id": "EXV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"G1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1600,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DO02",
+				"IN03",
+				"IN05",
+				"DOQ"
+			],
+			"guided_unlock": 5600,
+			"id": "G1",
+			"kind": "gate",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"G2": {
+			"closure": [
+				"G1"
+			],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO12",
+				"DT01",
+				"DT02",
+				"IN01",
+				"IN02",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT05",
+				"DT10",
+				"DT08",
+				"DT09",
+				"DO02",
+				"DO03",
+				"DO06",
+				"DO07",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"DOQ",
+				"G1",
+				"BA01",
+				"BA02",
+				"EX01",
+				"EX02",
+				"MO01",
+				"MO02",
+				"BA03",
+				"BA04",
+				"BA06",
+				"EX03",
+				"MO03",
+				"MO04",
+				"MO05",
+				"BA07",
+				"EX06",
+				"MO07",
+				"MO09",
+				"EX04",
+				"EX05",
+				"MO06",
+				"EX10",
+				"MO12",
+				"MM9",
+				"DTQ",
+				"INQ",
+				"IN10",
+				"BAQ",
+				"EXQ",
+				"MOQ",
+				"DOK2",
+				"DTK1",
+				"INK2",
+				"BAK1",
+				"MOK1",
+				"DOQ1",
+				"DOQ2",
+				"DOQ3",
+				"DTQ1",
+				"DTQ2",
+				"DTQ3",
+				"INQ1",
+				"INQ2",
+				"INQ3",
+				"BAQ1",
+				"BAQ2",
+				"BAQ3",
+				"EXQ1",
+				"EXQ3",
+				"EXQ4",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3",
+				"EXK2",
+				"DOV"
+			],
+			"guided_unlock": 53800,
+			"id": "G2",
+			"kind": "gate",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"IN01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "IN01",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"IN02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "IN02",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"IN03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01"
+			],
+			"guided_unlock": 400,
+			"id": "IN03",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"IN04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN03"
+			],
+			"guided_unlock": 800,
+			"id": "IN04",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"IN05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01"
+			],
+			"guided_unlock": 400,
+			"id": "IN05",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"IN06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02"
+			],
+			"guided_unlock": 600,
+			"id": "IN06",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"IN07": {
+			"closure": [
+				"IN05"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN03"
+			],
+			"guided_unlock": 1200,
+			"id": "IN07",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"IN08": {
+			"closure": [
+				"IN06"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN06"
+			],
+			"guided_unlock": 1400,
+			"id": "IN08",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"IN09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN02",
+				"IN06"
+			],
+			"guided_unlock": 1800,
+			"id": "IN09",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"IN10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1800,
+			"id": "IN10",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"IN11": {
+			"closure": [
+				"IN05"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05"
+			],
+			"guided_unlock": 1200,
+			"id": "IN11",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"IN12": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN11"
+			],
+			"guided_unlock": 2000,
+			"id": "IN12",
+			"kind": "local",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INA": {
+			"closure": [
+				"IN06"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN06",
+				"IN03",
+				"IN05"
+			],
+			"guided_unlock": 3800,
+			"id": "INA",
+			"kind": "axiom",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"INC": {
+			"closure": [
+				"IN05",
+				"IN10"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN02",
+				"IN03",
+				"IN04",
+				"IN10"
+			],
+			"guided_unlock": 4600,
+			"id": "INC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"INE1": {
+			"closure": [
+				"INQ",
+				"INF1",
+				"INQ3",
+				"MO04"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ",
+				"INQ3",
+				"IN03",
+				"IN05",
+				"G1",
+				"MO01",
+				"MO04",
+				"IN06",
+				"INF1"
+			],
+			"guided_unlock": 5800,
+			"id": "INE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INE2": {
+			"closure": [
+				"INQ",
+				"INF2",
+				"INQ6",
+				"IN10",
+				"IN11"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN11",
+				"IN10",
+				"INQ",
+				"INQ6",
+				"INF2"
+			],
+			"guided_unlock": 4200,
+			"id": "INE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INF1": {
+			"closure": [],
+			"conflicts": [
+				"INF2"
+			],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06"
+			],
+			"guided_unlock": 2200,
+			"id": "INF1",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INF2": {
+			"closure": [
+				"IN11",
+				"IN05"
+			],
+			"conflicts": [
+				"INF1"
+			],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN11",
+				"IN02"
+			],
+			"guided_unlock": 2200,
+			"id": "INF2",
+			"kind": "fork",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06"
+			],
+			"guided_unlock": 2600,
+			"id": "INK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05"
+			],
+			"guided_unlock": 2200,
+			"id": "INK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02"
+			],
+			"guided_unlock": 1000,
+			"id": "INQ",
+			"kind": "active",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"INQ1": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [
+				"INQ4"
+			],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ2": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ3": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ4": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [
+				"INQ1"
+			],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ5": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INQ6": {
+			"closure": [
+				"INQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"INQ"
+			],
+			"guided_unlock": 1600,
+			"id": "INQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"INS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN11"
+			],
+			"guided_unlock": 2000,
+			"id": "INS1",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN11"
+			],
+			"guided_unlock": 2000,
+			"id": "INS2",
+			"kind": "sink",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"INQ",
+				"IN10",
+				"INK2",
+				"INQ1",
+				"INQ2",
+				"INQ3"
+			],
+			"guided_unlock": 11200,
+			"id": "INV",
+			"kind": "revelation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INV1": {
+			"closure": [
+				"INV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"INQ",
+				"IN10",
+				"INK2",
+				"INQ1",
+				"INQ2",
+				"INQ3",
+				"INV"
+			],
+			"guided_unlock": 13000,
+			"id": "INV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INV2": {
+			"closure": [
+				"INV"
+			],
+			"conflicts": [
+				"INV3"
+			],
+			"cost": 1800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"INQ",
+				"IN10",
+				"INK2",
+				"INQ1",
+				"INQ2",
+				"INQ3",
+				"INV"
+			],
+			"guided_unlock": 13000,
+			"id": "INV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"INV3": {
+			"closure": [
+				"INV"
+			],
+			"conflicts": [
+				"INV2"
+			],
+			"cost": 1800,
+			"discipline": "IN",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN03",
+				"IN05",
+				"IN06",
+				"IN04",
+				"INQ",
+				"IN10",
+				"INK2",
+				"INQ1",
+				"INQ2",
+				"INQ3",
+				"INV"
+			],
+			"guided_unlock": 13000,
+			"id": "INV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MM1": {
+			"closure": [
+				"EX04",
+				"IN05",
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"EX01",
+				"EX04",
+				"MO02",
+				"BA01",
+				"BA03",
+				"MO01",
+				"MO05",
+				"MO06",
+				"BA07",
+				"BA08",
+				"EX08",
+				"EX09",
+				"MOQ",
+				"G1",
+				"IN01",
+				"IN05"
+			],
+			"guided_unlock": 9400,
+			"id": "MM1",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM2": {
+			"closure": [
+				"EX01",
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT03",
+				"DT07",
+				"DT09",
+				"DTQ",
+				"G1",
+				"EX01"
+			],
+			"guided_unlock": 6400,
+			"id": "MM2",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM3": {
+			"closure": [
+				"EX05",
+				"DO01",
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO12",
+				"DT01",
+				"DT06",
+				"IN02",
+				"DO02",
+				"DO03",
+				"DT03",
+				"DT07",
+				"DT09",
+				"DTQ",
+				"G1",
+				"EX01",
+				"EX02",
+				"EX05"
+			],
+			"guided_unlock": 8400,
+			"id": "MM3",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM4": {
+			"closure": [
+				"MO02",
+				"IN12"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02",
+				"BA01",
+				"BA03",
+				"EX01",
+				"EX04",
+				"MO01",
+				"MO05",
+				"MO06",
+				"BA07",
+				"BA08",
+				"MOQ",
+				"G1",
+				"IN01",
+				"IN05",
+				"IN11",
+				"IN12"
+			],
+			"guided_unlock": 9400,
+			"id": "MM4",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM5": {
+			"closure": [
+				"MO04",
+				"DT01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT02",
+				"DT04",
+				"DT06",
+				"DO01",
+				"DO05",
+				"DO12",
+				"IN01",
+				"IN02",
+				"DT03",
+				"DT05",
+				"DT07",
+				"IN05",
+				"DT10",
+				"DTQ",
+				"G1",
+				"MO01",
+				"MO04"
+			],
+			"guided_unlock": 9200,
+			"id": "MM5",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM6": {
+			"closure": [
+				"MO06",
+				"DO01",
+				"MO02"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02",
+				"MO06",
+				"BA01",
+				"BA02",
+				"EX02",
+				"BA07",
+				"BA03",
+				"BA04",
+				"MO10",
+				"MO11",
+				"BAQ",
+				"G1",
+				"DO01"
+			],
+			"guided_unlock": 8200,
+			"id": "MM6",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM7": {
+			"closure": [
+				"BA03",
+				"IN07",
+				"IN05"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN05",
+				"IN03",
+				"IN07",
+				"DO01",
+				"INK2",
+				"G1",
+				"BA01",
+				"BA03"
+			],
+			"guided_unlock": 6600,
+			"id": "MM7",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM8": {
+			"closure": [
+				"BA06",
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT03",
+				"DT07",
+				"DT09",
+				"DTQ",
+				"G1",
+				"BA02",
+				"BA06"
+			],
+			"guided_unlock": 6800,
+			"id": "MM8",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MM9": {
+			"closure": [
+				"BA01",
+				"DO01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"EX02",
+				"MO02",
+				"MO06",
+				"BA03",
+				"BA04",
+				"BA07",
+				"BAQ",
+				"G1",
+				"DO01"
+			],
+			"guided_unlock": 6600,
+			"id": "MM9",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MO01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "MO01",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"MO02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "MO02",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"MO03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01"
+			],
+			"guided_unlock": 400,
+			"id": "MO03",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01"
+			],
+			"guided_unlock": 400,
+			"id": "MO04",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02"
+			],
+			"guided_unlock": 400,
+			"id": "MO05",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO06": {
+			"closure": [
+				"MO02"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02"
+			],
+			"guided_unlock": 400,
+			"id": "MO06",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO03"
+			],
+			"guided_unlock": 800,
+			"id": "MO07",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO08": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO03"
+			],
+			"guided_unlock": 800,
+			"id": "MO08",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MO09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO04"
+			],
+			"guided_unlock": 1200,
+			"id": "MO09",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MO10": {
+			"closure": [
+				"MO02"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02",
+				"MO05"
+			],
+			"guided_unlock": 1200,
+			"id": "MO10",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MO11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02",
+				"MO06"
+			],
+			"guided_unlock": 1200,
+			"id": "MO11",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MO12": {
+			"closure": [
+				"MO04"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO04",
+				"MO07"
+			],
+			"guided_unlock": 1600,
+			"id": "MO12",
+			"kind": "local",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOA": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05",
+				"MO07"
+			],
+			"guided_unlock": 4200,
+			"id": "MOA",
+			"kind": "axiom",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MOC": {
+			"closure": [
+				"MO04"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO04",
+				"MO02",
+				"MO03",
+				"MO07",
+				"MO05",
+				"MO12"
+			],
+			"guided_unlock": 5000,
+			"id": "MOC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MOE1": {
+			"closure": [
+				"MOQ",
+				"MOF1",
+				"MOQ1",
+				"MO03"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO03",
+				"MOQ",
+				"MOQ1",
+				"MO02",
+				"MO04",
+				"MOF1"
+			],
+			"guided_unlock": 3200,
+			"id": "MOE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOE2": {
+			"closure": [
+				"MOQ",
+				"MOF2",
+				"MOQ6",
+				"MO10",
+				"MO02"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO02",
+				"MO01",
+				"MOQ",
+				"MOQ6",
+				"MO05",
+				"MO10",
+				"MOF2"
+			],
+			"guided_unlock": 3600,
+			"id": "MOE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOF1": {
+			"closure": [],
+			"conflicts": [
+				"MOF2"
+			],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04"
+			],
+			"guided_unlock": 1800,
+			"id": "MOF1",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOF2": {
+			"closure": [],
+			"conflicts": [
+				"MOF1"
+			],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05"
+			],
+			"guided_unlock": 2200,
+			"id": "MOF2",
+			"kind": "fork",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04"
+			],
+			"guided_unlock": 2200,
+			"id": "MOK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05"
+			],
+			"guided_unlock": 2600,
+			"id": "MOK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02"
+			],
+			"guided_unlock": 1000,
+			"id": "MOQ",
+			"kind": "active",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"MOQ1": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOQ2": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOQ3": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOQ4": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOQ5": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"MOQ6": {
+			"closure": [
+				"MOQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MOQ"
+			],
+			"guided_unlock": 1600,
+			"id": "MOQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"MOS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO09"
+			],
+			"guided_unlock": 2000,
+			"id": "MOS1",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO09"
+			],
+			"guided_unlock": 2000,
+			"id": "MOS2",
+			"kind": "sink",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05",
+				"MO07",
+				"MO12",
+				"MOQ",
+				"MOK1",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3"
+			],
+			"guided_unlock": 11200,
+			"id": "MOV",
+			"kind": "revelation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOV1": {
+			"closure": [
+				"MOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05",
+				"MO07",
+				"MO12",
+				"MOQ",
+				"MOK1",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3",
+				"MOV"
+			],
+			"guided_unlock": 13000,
+			"id": "MOV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOV2": {
+			"closure": [
+				"MOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05",
+				"MO07",
+				"MO12",
+				"MOQ",
+				"MOK1",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3",
+				"MOV"
+			],
+			"guided_unlock": 13000,
+			"id": "MOV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MOV3": {
+			"closure": [
+				"MOV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "MO",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO02",
+				"MO03",
+				"MO04",
+				"MO05",
+				"MO07",
+				"MO12",
+				"MOQ",
+				"MOK1",
+				"MOQ1",
+				"MOQ2",
+				"MOQ3",
+				"MOV"
+			],
+			"guided_unlock": 13000,
+			"id": "MOV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"MR1": {
+			"closure": [
+				"EX03",
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03",
+				"PR07",
+				"PR08",
+				"PRK1",
+				"G1",
+				"EX01",
+				"EX03"
+			],
+			"guided_unlock": 6400,
+			"id": "MR1",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR2": {
+			"closure": [
+				"EX10",
+				"BR05",
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR05",
+				"PR01",
+				"PR02",
+				"BR06",
+				"PR03",
+				"PR04",
+				"PRQ",
+				"G1",
+				"EX01",
+				"EX03",
+				"EX10"
+			],
+			"guided_unlock": 7600,
+			"id": "MR2",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR3": {
+			"closure": [
+				"EX05",
+				"OR04",
+				"EX01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR04",
+				"PR01",
+				"PR02",
+				"OR08",
+				"PR03",
+				"PR04",
+				"OR09",
+				"PRQ",
+				"G1",
+				"EX01",
+				"EX02",
+				"EX05"
+			],
+			"guided_unlock": 7800,
+			"id": "MR3",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR4": {
+			"closure": [
+				"MO09",
+				"PR07"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"MO01",
+				"MO04",
+				"MO09",
+				"EX02",
+				"MO12",
+				"MOS1",
+				"MOS2",
+				"MOK2",
+				"G1",
+				"PR01",
+				"PR03",
+				"PR07"
+			],
+			"guided_unlock": 8200,
+			"id": "MR4",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR5": {
+			"closure": [
+				"MO04",
+				"BR06"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR06",
+				"BR05",
+				"BRQ",
+				"BR11",
+				"G1",
+				"MO01",
+				"MO04"
+			],
+			"guided_unlock": 6400,
+			"id": "MR5",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR6": {
+			"closure": [
+				"MO06",
+				"OR02",
+				"MO02"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02",
+				"OR01",
+				"PR01",
+				"OR05",
+				"OR06",
+				"ORQ",
+				"G1",
+				"MO02",
+				"MO06"
+			],
+			"guided_unlock": 6000,
+			"id": "MR6",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR7": {
+			"closure": [
+				"BA02",
+				"PR04",
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA02",
+				"EX02",
+				"EX01",
+				"EX05",
+				"EX03",
+				"EX07",
+				"EXQ",
+				"G1",
+				"PR01",
+				"PR03",
+				"PR04"
+			],
+			"guided_unlock": 6800,
+			"id": "MR7",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR8": {
+			"closure": [
+				"BA01",
+				"BR08"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"BA02",
+				"BA03",
+				"BA04",
+				"BAQ",
+				"G1",
+				"BR01",
+				"BR03",
+				"BR08"
+			],
+			"guided_unlock": 6200,
+			"id": "MR8",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"MR9": {
+			"closure": [
+				"BA06",
+				"OR06",
+				"OR02"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02",
+				"OR06",
+				"OR05",
+				"OR11",
+				"ORK2",
+				"G1",
+				"BA02",
+				"BA06"
+			],
+			"guided_unlock": 6800,
+			"id": "MR9",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"OR01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "OR01",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"OR02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "OR02",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"OR03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01"
+			],
+			"guided_unlock": 400,
+			"id": "OR03",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR04": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01"
+			],
+			"guided_unlock": 400,
+			"id": "OR04",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR05": {
+			"closure": [
+				"OR02"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02"
+			],
+			"guided_unlock": 400,
+			"id": "OR05",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR06": {
+			"closure": [
+				"OR02"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02"
+			],
+			"guided_unlock": 400,
+			"id": "OR06",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR03"
+			],
+			"guided_unlock": 800,
+			"id": "OR07",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR08": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR03"
+			],
+			"guided_unlock": 800,
+			"id": "OR08",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"OR09": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR04"
+			],
+			"guided_unlock": 1200,
+			"id": "OR09",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"OR10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02",
+				"OR05"
+			],
+			"guided_unlock": 1200,
+			"id": "OR10",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"OR11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02",
+				"OR06"
+			],
+			"guided_unlock": 1200,
+			"id": "OR11",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"OR12": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR03",
+				"OR07"
+			],
+			"guided_unlock": 1600,
+			"id": "OR12",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORA": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09"
+			],
+			"guided_unlock": 4600,
+			"id": "ORA",
+			"kind": "axiom",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"ORC": {
+			"closure": [
+				"OR12"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09",
+				"OR12",
+				"OR06"
+			],
+			"guided_unlock": 5800,
+			"id": "ORC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"ORE1": {
+			"closure": [
+				"ORQ",
+				"ORF1",
+				"ORQ1",
+				"OR09"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ",
+				"ORQ1",
+				"OR07",
+				"OR08",
+				"OR04",
+				"OR09",
+				"ORF1"
+			],
+			"guided_unlock": 4400,
+			"id": "ORE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORE2": {
+			"closure": [
+				"ORQ",
+				"ORF2",
+				"ORQ2",
+				"OR12"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ",
+				"ORQ2",
+				"OR07",
+				"OR12",
+				"OR03",
+				"ORF2"
+			],
+			"guided_unlock": 4000,
+			"id": "ORE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORF1": {
+			"closure": [],
+			"conflicts": [
+				"ORF2"
+			],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09"
+			],
+			"guided_unlock": 3000,
+			"id": "ORF1",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORF2": {
+			"closure": [],
+			"conflicts": [
+				"ORF1"
+			],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR03"
+			],
+			"guided_unlock": 2600,
+			"id": "ORF2",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR11"
+			],
+			"guided_unlock": 3400,
+			"id": "ORK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORK2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR06"
+			],
+			"guided_unlock": 3000,
+			"id": "ORK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02"
+			],
+			"guided_unlock": 1000,
+			"id": "ORQ",
+			"kind": "active",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"ORQ1": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [
+				"ORQ2"
+			],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ2": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [
+				"ORQ1"
+			],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ3": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ4": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ5": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ6": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORQ7": {
+			"closure": [
+				"ORQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"ORQ"
+			],
+			"guided_unlock": 1600,
+			"id": "ORQ7",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"ORS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR11"
+			],
+			"guided_unlock": 2400,
+			"id": "ORS1",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR11"
+			],
+			"guided_unlock": 2400,
+			"id": "ORS2",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR06",
+				"ORQ",
+				"OR12",
+				"ORK1",
+				"ORQ1",
+				"ORQ3",
+				"ORQ4"
+			],
+			"guided_unlock": 12800,
+			"id": "ORV",
+			"kind": "revelation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORV1": {
+			"closure": [
+				"ORV"
+			],
+			"conflicts": [
+				"ORV2"
+			],
+			"cost": 1800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR06",
+				"ORQ",
+				"OR12",
+				"ORK1",
+				"ORQ1",
+				"ORQ3",
+				"ORQ4",
+				"ORV"
+			],
+			"guided_unlock": 14600,
+			"id": "ORV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORV2": {
+			"closure": [
+				"ORV"
+			],
+			"conflicts": [
+				"ORV1"
+			],
+			"cost": 1800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR06",
+				"ORQ",
+				"OR12",
+				"ORK1",
+				"ORQ1",
+				"ORQ3",
+				"ORQ4",
+				"ORV"
+			],
+			"guided_unlock": 14600,
+			"id": "ORV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"ORV3": {
+			"closure": [
+				"ORV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "OR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"OR05",
+				"OR10",
+				"OR09",
+				"OR11",
+				"OR06",
+				"ORQ",
+				"OR12",
+				"ORK1",
+				"ORQ1",
+				"ORQ3",
+				"ORQ4",
+				"ORV"
+			],
+			"guided_unlock": 14600,
+			"id": "ORV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PR01": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "PR01",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"PR02": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "PR02",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 1,
+			"status": "implemented"
+		},
+		"PR03": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01"
+			],
+			"guided_unlock": 400,
+			"id": "PR03",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR04": {
+			"closure": [
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03"
+			],
+			"guided_unlock": 800,
+			"id": "PR04",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR05": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR02"
+			],
+			"guided_unlock": 400,
+			"id": "PR05",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR06": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR02"
+			],
+			"guided_unlock": 400,
+			"id": "PR06",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR07": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03"
+			],
+			"guided_unlock": 800,
+			"id": "PR07",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR08": {
+			"closure": [
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03"
+			],
+			"guided_unlock": 800,
+			"id": "PR08",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PR09": {
+			"closure": [
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03",
+				"PR04"
+			],
+			"guided_unlock": 1600,
+			"id": "PR09",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PR10": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR05"
+			],
+			"guided_unlock": 1400,
+			"id": "PR10",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PR11": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR06"
+			],
+			"guided_unlock": 1200,
+			"id": "PR11",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PR12": {
+			"closure": [
+				"PR07"
+			],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03",
+				"PR07"
+			],
+			"guided_unlock": 1600,
+			"id": "PR12",
+			"kind": "local",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRA": {
+			"closure": [
+				"PR07"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR07",
+				"PR05"
+			],
+			"guided_unlock": 3800,
+			"id": "PRA",
+			"kind": "axiom",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"PRC": {
+			"closure": [
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 2400,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03",
+				"PR02",
+				"PR07",
+				"PR05",
+				"PR06",
+				"PR12"
+			],
+			"guided_unlock": 5000,
+			"id": "PRC",
+			"kind": "catastrophe",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"PRE1": {
+			"closure": [
+				"PRQ",
+				"PRF1",
+				"PRQ5",
+				"PR04",
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR03",
+				"PR04",
+				"PRQ",
+				"PRQ5",
+				"PR02",
+				"PR05",
+				"PRF1"
+			],
+			"guided_unlock": 3600,
+			"id": "PRE1",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRE2": {
+			"closure": [
+				"PRQ",
+				"PRF2",
+				"PRQ4",
+				"BR06"
+			],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ",
+				"PRQ4",
+				"PR03",
+				"PR05",
+				"PRF2",
+				"BR02",
+				"BR06"
+			],
+			"guided_unlock": 3800,
+			"id": "PRE2",
+			"kind": "evolution",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRF1": {
+			"closure": [],
+			"conflicts": [
+				"PRF2"
+			],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05"
+			],
+			"guided_unlock": 1800,
+			"id": "PRF1",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRF2": {
+			"closure": [],
+			"conflicts": [
+				"PRF1"
+			],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05"
+			],
+			"guided_unlock": 1800,
+			"id": "PRF2",
+			"kind": "fork",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRK1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05"
+			],
+			"guided_unlock": 2200,
+			"id": "PRK1",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "partial"
+		},
+		"PRK2": {
+			"closure": [
+				"PR06"
+			],
+			"conflicts": [],
+			"cost": 1200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR06",
+				"PR03"
+			],
+			"guided_unlock": 2200,
+			"id": "PRK2",
+			"kind": "keystone",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02"
+			],
+			"guided_unlock": 1000,
+			"id": "PRQ",
+			"kind": "active",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 2,
+			"status": "implemented"
+		},
+		"PRQ1": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ1",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ2": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ2",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ3": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ3",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ4": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ4",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ5": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ5",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRQ6": {
+			"closure": [
+				"PRQ"
+			],
+			"conflicts": [],
+			"cost": 600,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PRQ"
+			],
+			"guided_unlock": 1600,
+			"id": "PRQ6",
+			"kind": "mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"PRS1": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR10"
+			],
+			"guided_unlock": 2000,
+			"id": "PRS1",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRS2": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 200,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR10"
+			],
+			"guided_unlock": 2000,
+			"id": "PRS2",
+			"kind": "sink",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRV": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 4800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR06",
+				"PR07",
+				"PRQ",
+				"PRK1",
+				"PRQ1",
+				"PRQ2",
+				"PRQ3"
+			],
+			"guided_unlock": 10400,
+			"id": "PRV",
+			"kind": "revelation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRV1": {
+			"closure": [
+				"PRV"
+			],
+			"conflicts": [
+				"PRV3"
+			],
+			"cost": 1800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR06",
+				"PR07",
+				"PRQ",
+				"PRK1",
+				"PRQ1",
+				"PRQ2",
+				"PRQ3",
+				"PRV"
+			],
+			"guided_unlock": 12200,
+			"id": "PRV1",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRV2": {
+			"closure": [
+				"PRV"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR06",
+				"PR07",
+				"PRQ",
+				"PRK1",
+				"PRQ1",
+				"PRQ2",
+				"PRQ3",
+				"PRV"
+			],
+			"guided_unlock": 12200,
+			"id": "PRV2",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"PRV3": {
+			"closure": [
+				"PRV"
+			],
+			"conflicts": [
+				"PRV1"
+			],
+			"cost": 1800,
+			"discipline": "PR",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"PR01",
+				"PR02",
+				"PR03",
+				"PR05",
+				"PR06",
+				"PR07",
+				"PRQ",
+				"PRK1",
+				"PRQ1",
+				"PRQ2",
+				"PRQ3",
+				"PRV"
+			],
+			"guided_unlock": 12200,
+			"id": "PRV3",
+			"kind": "revelation_mutation",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"RM1": {
+			"closure": [
+				"PR03",
+				"IN06"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"IN01",
+				"IN02",
+				"IN06",
+				"DT03",
+				"DT06",
+				"INQ",
+				"G1",
+				"PR01",
+				"PR03"
+			],
+			"guided_unlock": 6200,
+			"id": "RM1",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM2": {
+			"closure": [
+				"PR07",
+				"DT06",
+				"DTA"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT01",
+				"DT06",
+				"DT02",
+				"DT04",
+				"DT03",
+				"DTA",
+				"DT07",
+				"DT09",
+				"DTQ",
+				"G1",
+				"PR01",
+				"PR03",
+				"PR07"
+			],
+			"guided_unlock": 10200,
+			"id": "RM2",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM3": {
+			"closure": [
+				"PR04",
+				"DO01",
+				"PR03"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO12",
+				"IN02",
+				"IN06",
+				"DO02",
+				"DO03",
+				"DT03",
+				"DT06",
+				"INQ",
+				"G1",
+				"PR01",
+				"PR03",
+				"PR04"
+			],
+			"guided_unlock": 7600,
+			"id": "RM3",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM4": {
+			"closure": [
+				"BR06",
+				"IN01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"BR02",
+				"BR06",
+				"BR05",
+				"BRQ",
+				"BR11",
+				"G1",
+				"IN01"
+			],
+			"guided_unlock": 6000,
+			"id": "RM4",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM5": {
+			"closure": [
+				"BR04",
+				"DT10"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DT02",
+				"DT10",
+				"DTQ",
+				"DO01",
+				"DO05",
+				"G1",
+				"BR01",
+				"BR04"
+			],
+			"guided_unlock": 6000,
+			"id": "RM5",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM6": {
+			"closure": [
+				"BR09",
+				"DO07"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DO07",
+				"DO08",
+				"DOS2",
+				"DOK1",
+				"G1",
+				"BR01",
+				"BR04",
+				"BR09"
+			],
+			"guided_unlock": 7600,
+			"id": "RM6",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM7": {
+			"closure": [
+				"OR02",
+				"IN09"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR02",
+				"BR02",
+				"BR06",
+				"OR01",
+				"PR01",
+				"PR03",
+				"OR05",
+				"OR06",
+				"BR05",
+				"PR04",
+				"PR07",
+				"PR08",
+				"ORQ",
+				"G1",
+				"IN01",
+				"IN05",
+				"IN02",
+				"IN06",
+				"IN09"
+			],
+			"guided_unlock": 10000,
+			"id": "RM7",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM8": {
+			"closure": [
+				"OR04",
+				"DT09",
+				"DT06"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR04",
+				"OR08",
+				"OR09",
+				"OR02",
+				"PR01",
+				"PR03",
+				"PR07",
+				"PR08",
+				"BR09",
+				"PR12",
+				"PRF2",
+				"PRA",
+				"PR02",
+				"PRS1",
+				"PRS2",
+				"OR03",
+				"OR07",
+				"OR06",
+				"PR04",
+				"BR04",
+				"BR11",
+				"BR06",
+				"ORQ",
+				"G1",
+				"DT01",
+				"DT06",
+				"DT09"
+			],
+			"guided_unlock": 17400,
+			"id": "RM8",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"RM9": {
+			"closure": [
+				"OR12",
+				"DO01"
+			],
+			"conflicts": [],
+			"cost": 1800,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR03",
+				"OR07",
+				"OR12",
+				"PR01",
+				"ORS1",
+				"ORS2",
+				"OR09",
+				"OR11",
+				"ORA",
+				"BR01",
+				"BR02",
+				"OR02",
+				"PR02",
+				"OR04",
+				"ORC",
+				"OR08",
+				"PR03",
+				"PR04",
+				"PR08",
+				"PR09",
+				"OR06",
+				"BR04",
+				"BR06",
+				"PR07",
+				"BR08",
+				"ORQ",
+				"G1",
+				"DO01"
+			],
+			"guided_unlock": 18600,
+			"id": "RM9",
+			"kind": "fusion",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"UMM": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 6000,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [
+				"BA01",
+				"EX01",
+				"MO02",
+				"BA03",
+				"EX04",
+				"MO06",
+				"BA02",
+				"BA06",
+				"EX02",
+				"EX05",
+				"MO01",
+				"MO04",
+				"BA04",
+				"EX03",
+				"MO05",
+				"BA07",
+				"BA08",
+				"BA05",
+				"EX06",
+				"MO07",
+				"BAQ",
+				"G1",
+				"DO01",
+				"DT01",
+				"IN01",
+				"DT06",
+				"MM9",
+				"MM2",
+				"MM8"
+			],
+			"guided_unlock": 21400,
+			"id": "UMM",
+			"kind": "union",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"UMR": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 6000,
+			"discipline": "",
+			"guided_core": "ranged",
+			"guided_purchases": [
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR03",
+				"PR07",
+				"OR06",
+				"PR04",
+				"OR04",
+				"BR02",
+				"BR05",
+				"BR06",
+				"BR01",
+				"BR03",
+				"BR08",
+				"OR05",
+				"PR08",
+				"OR08",
+				"BR04",
+				"BR07",
+				"BR11",
+				"ORQ",
+				"G1",
+				"BA01",
+				"BA02",
+				"EX01",
+				"MO02",
+				"BA06",
+				"EX03",
+				"MO06",
+				"EX10",
+				"MR1",
+				"MR8",
+				"MR6"
+			],
+			"guided_unlock": 23800,
+			"id": "UMR",
+			"kind": "union",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"URM": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 6000,
+			"discipline": "",
+			"guided_core": "magic",
+			"guided_purchases": [
+				"DO01",
+				"DO05",
+				"DT01",
+				"DT02",
+				"IN01",
+				"DT04",
+				"DT06",
+				"DT03",
+				"DT10",
+				"DT09",
+				"DO07",
+				"IN05",
+				"IN06",
+				"IN09",
+				"DTA",
+				"DO12",
+				"IN02",
+				"DTS1",
+				"DTS2",
+				"DOS2",
+				"DO02",
+				"DO03",
+				"IN03",
+				"DT07",
+				"IN07",
+				"DT08",
+				"DTQ",
+				"G1",
+				"OR01",
+				"OR02",
+				"PR01",
+				"PR03",
+				"PR07",
+				"BR09",
+				"BR04",
+				"PR04",
+				"RM5",
+				"OR04",
+				"RM3",
+				"RM6"
+			],
+			"guided_unlock": 29000,
+			"id": "URM",
+			"kind": "union",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"core.magic": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "",
+			"guided_purchases": null,
+			"guided_unlock": 0,
+			"id": "core.magic",
+			"kind": "core",
+			"reachable_from": [
+				"magic"
+			],
+			"ring": 0,
+			"status": "n/a"
+		},
+		"core.melee": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "",
+			"guided_purchases": null,
+			"guided_unlock": 0,
+			"id": "core.melee",
+			"kind": "core",
+			"reachable_from": [
+				"melee"
+			],
+			"ring": 0,
+			"status": "n/a"
+		},
+		"core.ranged": {
+			"closure": [],
+			"conflicts": [],
+			"cost": 0,
+			"discipline": "",
+			"guided_purchases": null,
+			"guided_unlock": 0,
+			"id": "core.ranged",
+			"kind": "core",
+			"reachable_from": [
+				"ranged"
+			],
+			"ring": 0,
+			"status": "n/a"
+		},
+		"pick.D1": {
+			"closure": [],
+			"conflicts": [
+				"pick.D2",
+				"pick.D3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.D1",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"pick.D2": {
+			"closure": [],
+			"conflicts": [
+				"pick.D1",
+				"pick.D3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.D2",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "ambiguous"
+		},
+		"pick.D3": {
+			"closure": [],
+			"conflicts": [
+				"pick.D1",
+				"pick.D2"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.D3",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"pick.M1": {
+			"closure": [],
+			"conflicts": [
+				"pick.M2",
+				"pick.M3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.M1",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"pick.M2": {
+			"closure": [],
+			"conflicts": [
+				"pick.M1",
+				"pick.M3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.M2",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"pick.M3": {
+			"closure": [],
+			"conflicts": [
+				"pick.M1",
+				"pick.M2"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.M3",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "implemented"
+		},
+		"pick.P1": {
+			"closure": [],
+			"conflicts": [
+				"pick.P2",
+				"pick.P3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.P1",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 3,
+			"status": "implemented"
+		},
+		"pick.P2": {
+			"closure": [],
+			"conflicts": [
+				"pick.P1",
+				"pick.P3"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.P2",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 4,
+			"status": "implemented"
+		},
+		"pick.P3": {
+			"closure": [],
+			"conflicts": [
+				"pick.P1",
+				"pick.P2"
+			],
+			"cost": 0,
+			"discipline": "",
+			"guided_core": "melee",
+			"guided_purchases": [],
+			"guided_unlock": 0,
+			"id": "pick.P3",
+			"kind": "choice",
+			"reachable_from": [
+				"melee",
+				"ranged",
+				"magic"
+			],
+			"ring": 5,
+			"status": "n/a"
+		}
+	},
+	"seconds": 44.542041,
+	"unreachable": []
+}
