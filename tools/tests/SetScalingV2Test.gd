@@ -83,6 +83,7 @@ func _run() -> void:
 	await _test_fractional_feed_keeps_live_effects()
 	await _test_counts_bounded()
 	await _test_overclock_never_compounds()
+	await _test_overclock_primes_on_proxy_kill()
 	await _test_bank_chain_bounded()
 	_cleanup_enemies()
 	await get_tree().process_frame
@@ -506,6 +507,33 @@ func _test_overclock_never_compounds() -> void:
 	_check(far_runner.get_move_speed_multiplier() <= 1.0 + float(far_overclock.get("overclock_move_gain")) * 1.5 + 1e-6, "even at R1000 the overclock never exceeds gain x 1.5")
 	far_runner.apply_sets_to_stats(Stats.new(), null)
 	_drop(far)
+	await get_tree().process_frame
+
+
+# ---------------------------------------------------------------------------
+# 7b. A kill with no actor behind it still primes Overclock
+# ---------------------------------------------------------------------------
+
+func _test_overclock_primes_on_proxy_kill() -> void:
+	var followers_before: int = int(Global.followers)
+	var host := _host()
+	var runner := _runner_for(host)
+	runner.apply_sets_to_stats(Stats.new(), _wardrobe("conduit", 6, 0))
+	var stranger := _host()
+	# Handle-only enemies: their death runs the proxy path, which emits
+	# enemy_defeated and never enemy_killed.
+	var victim: int = EnemyWorld.create_enemy(SpawnState.new(&"proxy_victim", "res://proxy_victim.tscn", Vector2(80.0, 0.0), 10.0, 0.0, 4.0, 0))
+	var bystander: int = EnemyWorld.create_enemy(SpawnState.new(&"proxy_bystander", "res://proxy_bystander.tscn", Vector2(-80.0, 0.0), 10.0, 0.0, 4.0, 0))
+	_check(_near(runner.get_move_speed_multiplier(), 1.0), "fixture: no overclock before any kill")
+	EnemyCombat.apply_damage(bystander, 1000.0, 1, stranger, null)
+	_check(_near(runner.get_move_speed_multiplier(), 1.0), "a proxy killed by someone else primes nothing")
+	EnemyCombat.apply_damage(victim, 1000.0, 1, host, null)
+	_check(not EnemyWorld.is_valid_handle(victim), "fixture: the victim died through the proxy path")
+	_check(runner.get_move_speed_multiplier() > 1.0 and runner.get_haste_multiplier() > 1.0, "a proxy kill credited to the player overclocks (x%.2f move)" % runner.get_move_speed_multiplier())
+	runner.apply_sets_to_stats(Stats.new(), null)
+	_drop(stranger)
+	_drop(host)
+	Global.followers = followers_before
 	await get_tree().process_frame
 
 

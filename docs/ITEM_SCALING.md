@@ -126,4 +126,9 @@ The Run Sheet tier text names the R0 numbers and says they grow; the item
 tooltip's "Set strength" comparison shows the `damage` channel before and
 after the candidate piece.
 
+Conduit's Overclock primes on every defeat the player caused, actor-backed
+or proxy (`enemy_defeated`), not only on `enemy_killed`; before this fix a
+handle-only kill never overclocked, which is why the set probe measured
+its six-piece at 45-92 HP per fight.
+
 Captures from this build carry `tuning_stages` `["items", "sets"]`.

@@ -81,12 +81,17 @@ func _init() -> void:
 func _ready() -> void:
 	_rng.randomize()
 	RunEvents.enemy_killed.connect(_on_enemy_killed)
+	# Proxy (actor-less) deaths only emit enemy_defeated; actor deaths emit
+	# both, and a second prime of the same kill is harmless.
+	RunEvents.enemy_defeated.connect(_on_enemy_defeated)
 	RunEvents.weapon_fired.connect(_on_weapon_fired)
 	_report_active_cd(true)
 
 func _exit_tree() -> void:
 	if RunEvents.enemy_killed.is_connected(_on_enemy_killed):
 		RunEvents.enemy_killed.disconnect(_on_enemy_killed)
+	if RunEvents.enemy_defeated.is_connected(_on_enemy_defeated):
+		RunEvents.enemy_defeated.disconnect(_on_enemy_defeated)
 	if RunEvents.weapon_fired.is_connected(_on_weapon_fired):
 		RunEvents.weapon_fired.disconnect(_on_weapon_fired)
 
@@ -115,6 +120,18 @@ func _process(dt: float) -> void:
 func _on_enemy_killed(p: Node, _enemy: Node, pos: Vector2) -> void:
 	if p != player:
 		return
+	_prime_from_kill(pos)
+
+
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if context == null or player == null:
+		return
+	if context.get("source") != player:
+		return
+	_prime_from_kill(context.get("position"))
+
+
+func _prime_from_kill(pos: Vector2) -> void:
 	_overclock_time = overclock_duration
 	_prime_next_shot = true
 
