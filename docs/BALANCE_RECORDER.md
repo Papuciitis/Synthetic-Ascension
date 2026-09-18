@@ -24,6 +24,13 @@ Each directory contains:
 | `summary.json` | Read full totals, per-segment breakdowns and recording health. |
 | `events.jsonl` | One JSON object per line: time windows, wallet transactions, builds, pressure and lifecycle. |
 
+To read many captures at once, `python3 tools/telemetry/run_history.py`
+prints one row per capture (newest first: build, start and last segment,
+outcome, gameplay and hub minutes, kills, deaths, Followers earned / spent /
+closing, HP lost and healing per minute, enemy HP per second, the balance
+revision and tuning stages, recording health); `--segments` gives one row
+per segment, `--days`, `--min-minutes` and `--csv` filter and export.
+
 Reports are refreshed every 15 simulation seconds and at boundaries. History
 batches are submitted once per simulation second. Disk writes run on a worker.
 The recorder holds at most two submitted batches and 8,192 pending history
