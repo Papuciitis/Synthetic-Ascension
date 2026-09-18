@@ -59,8 +59,9 @@ func _run() -> void:
 
 	# Revision and profile identity.
 	var meta: Dictionary = recorder.get_summary().metadata
-	_check(int(meta.balance_revision) == 1 and int(meta.recorder_revision) == 2 and (meta.tuning_stages as Array).is_empty(), "an instrumentation-only capture declares balance revision 1 and no tuning stages")
 	var profile_exists := FileAccess.file_exists(recorder.TUNING_PROFILE_PATH)
+	var expected_revision := 2 if profile_exists and ItemScaling.active() else 1
+	_check(int(meta.balance_revision) == expected_revision and int(meta.recorder_revision) == 2 and ((meta.tuning_stages as Array) == (["items"] if expected_revision == 2 else [])), "the capture declares the live item-balance revision (%d) and its tuning stages" % expected_revision)
 	var hash_now: String = recorder.tuning_hash()
 	_check(String(meta.tuning_hash) == hash_now and hash_now == recorder.tuning_hash() and (profile_exists == (not hash_now.is_empty())), "the tuning hash is stable and empty exactly when no tuning profile exists (profile %s)" % ("present" if profile_exists else "absent"))
 	var features: Dictionary = meta.features
@@ -109,7 +110,7 @@ func _run() -> void:
 	recorder.end_capture("suspended")
 	recorder.flush_reports()
 	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(capture_path.path_join("summary.json")))
-	_check(saved is Dictionary and int(saved.metadata.balance_revision) == 1 and String(saved.metadata.tuning_hash) == hash_now, "the saved capture carries the revision and hash")
+	_check(saved is Dictionary and int(saved.metadata.balance_revision) == expected_revision and String(saved.metadata.tuning_hash) == hash_now, "the saved capture carries the revision and hash")
 	player.free()
 	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
 		DirAccess.remove_absolute(capture_path.path_join(name))

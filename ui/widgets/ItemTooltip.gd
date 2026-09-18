@@ -210,6 +210,11 @@ func show_item(inst: ItemInstance) -> void:
 		lines.append("")
 		lines.append("ITEM STATS")
 		lines.append("  " + "  ·  ".join(rolled_lines))
+		# The next whole rank's change, from the same evaluator that made the
+		# stats above (balance revision 2 curves; legacy items too).
+		var next_lines: Array[String] = _format_delta(ItemScaling.next_rank_delta(inst))
+		if not next_lines.is_empty():
+			lines.append("[color=%s]  next rank: %s[/color]" % [CMP_NEUTRAL_HEX, "  ·  ".join(next_lines)])
 
 	if inst.locked:
 		lines.append("")

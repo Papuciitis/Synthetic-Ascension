@@ -11,7 +11,10 @@ const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_m
 ## Recorder contract revision, separate from the item-balance revision so an
 ## instrumentation-only capture can never be mistaken for a tuned build.
 const RECORDER_REVISION := 2
+## Item balance revision 1 is the pre-curve formula; revision 2 means the
+## ItemScaling profiles are live. Read at capture start, never assumed.
 const BALANCE_REVISION := 1
+const BALANCE_REVISION_ITEM_CURVES := 2
 ## The tuning profile the balance revision reads (introduced by the item
 ## balance plan's stat curves). Its content hash travels in the capture
 ## metadata so two captures with different numbers can never be confused;
@@ -78,6 +81,16 @@ func _ready() -> void:
 func is_recording() -> bool:
 	return _active
 
+## The item-balance revision this capture plays under: 2 once the item
+## scaling profiles loaded and validated, otherwise 1.
+static func balance_revision() -> int:
+	return BALANCE_REVISION_ITEM_CURVES if ItemScaling.active() else BALANCE_REVISION
+
+## The tuning stages that are live (item curves so far; sets and exit
+## pressure will name themselves here when they land).
+static func tuning_stages() -> Array:
+	return ["items"] if ItemScaling.active() else []
+
 ## SHA-256 of the tuning profile, or "" when there is none. Stable across
 ## calls and processes for the same file content.
 static func tuning_hash() -> String:
@@ -117,8 +130,8 @@ func begin_gameplay(player: Node) -> void:
 		var metadata := {"capture_id": capture_id, "run_key": "%d:%s" % [slot, str(Global.attempt_world_seed)],
 			"save_slot": slot, "build": Build.describe(Global.attempt_world_seed), "start_segment": Global.attempt_segment,
 			"coverage": "observed_session", "starting_debug": _debug_snapshot(),
-			"recorder_revision": RECORDER_REVISION, "balance_revision": BALANCE_REVISION,
-			"tuning_stages": [], "tuning_hash": tuning_hash(), "features": features()}
+			"recorder_revision": RECORDER_REVISION, "balance_revision": balance_revision(),
+			"tuning_stages": tuning_stages(), "tuning_hash": tuning_hash(), "features": features()}
 		_ledger = Ledger.new()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)
 		if "hp" in player and "max_hp" in player:

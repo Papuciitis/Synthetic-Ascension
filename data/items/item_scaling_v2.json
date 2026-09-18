@@ -1,0 +1,510 @@
+{
+ "version": 2,
+ "source": "docs/superpowers/plans/2026-09-17-item-set-exit-balance.md sections 3.2-3.5 (V1 specification)",
+ "anchor_ranks": [
+  0,
+  1,
+  6,
+  15,
+  30
+ ],
+ "rules": {
+  "effective_rank": "max(0, rarity) + clamp(upgrade_meter, 0, 0.999999)",
+  "anchors": "linear between anchor ranks; below the first anchor its value; above the last anchor the last segment's slope continues",
+  "rates": "value(r) = lerp(r0, r1, r) for r < 1; r1 + (limit - r1) * (1 - exp(-(r - 1) / tau)) for r >= 1",
+  "flat": "added at every rank",
+  "roll": "the existing roll is applied once afterward in the stat pipeline",
+  "effect": "scripted-effect scale used by Task 3 (accessory_factor); Task 2 evaluates it but no effect reads it yet"
+ },
+ "profiles": {
+  "conduit_heart": {
+   "anchors": {
+    "max_hp": [
+     0,
+     10,
+     70,
+     180,
+     380
+    ]
+   }
+  },
+  "lattice_pulsecoil": {
+   "anchors": {
+    "max_hp": [
+     8,
+     9,
+     55,
+     150,
+     310
+    ]
+   }
+  },
+  "gravemarch_vessel": {
+   "anchors": {
+    "max_hp": [
+     14,
+     15.5,
+     85,
+     230,
+     490
+    ]
+   }
+  },
+  "conduit_plating": {
+   "anchors": {
+    "armor": [
+     0,
+     1,
+     14,
+     35,
+     70
+    ]
+   }
+  },
+  "lattice_shellplate": {
+   "anchors": {
+    "armor": [
+     1,
+     1.125,
+     10,
+     26,
+     52
+    ]
+   }
+  },
+  "gravemarch_carapace": {
+   "anchors": {
+    "armor": [
+     1.5,
+     1.675,
+     18,
+     46,
+     92
+    ]
+   }
+  },
+  "conduit_lens": {
+   "anchors": {
+    "power": [
+     0,
+     0.01,
+     0.35,
+     1.0,
+     2.2
+    ]
+   }
+  },
+  "lattice_focusnode": {
+   "anchors": {
+    "power": [
+     0.03,
+     0.035,
+     0.3,
+     0.9,
+     2.0
+    ]
+   }
+  },
+  "gravemarch_censer": {
+   "anchors": {
+    "power": [
+     0.04,
+     0.0475,
+     0.38,
+     1.1,
+     2.4
+    ]
+   }
+  },
+  "conduit_charm": {
+   "anchors": {
+    "luck": [
+     0,
+     0.005,
+     0.08,
+     0.2,
+     0.4
+    ],
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "lattice_fingerprint": {
+   "anchors": {
+    "luck": [
+     0.02,
+     0.025,
+     0.1,
+     0.24,
+     0.48
+    ],
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "gravemarch_bonekey": {
+   "anchors": {
+    "luck": [
+     0.015,
+     0.02,
+     0.07,
+     0.18,
+     0.36
+    ],
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "conduit_greaves": {
+   "rates": {
+    "move_speed": {
+     "r0": 0,
+     "r1": 5,
+     "limit": 45,
+     "tau": 12
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "lattice_strideframe": {
+   "rates": {
+    "move_speed": {
+     "r0": 8,
+     "r1": 9,
+     "limit": 34,
+     "tau": 12
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "gravemarch_stompers": {
+   "rates": {
+    "move_speed": {
+     "r0": -4,
+     "r1": -3.5,
+     "limit": 12,
+     "tau": 12
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "conduit_actuators": {
+   "rates": {
+    "haste": {
+     "r0": 0,
+     "r1": 0.01,
+     "limit": 0.45,
+     "tau": 14
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "lattice_tickspurs": {
+   "rates": {
+    "haste": {
+     "r0": 0.02,
+     "r1": 0.025,
+     "limit": 0.32,
+     "tau": 14
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "gravemarch_clockjaw": {
+   "rates": {
+    "haste": {
+     "r0": -0.01,
+     "r1": -0.0075,
+     "limit": 0.24,
+     "tau": 14
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "acc_oakheart": {
+   "anchors": {
+    "max_hp": [
+     10,
+     12,
+     30,
+     70,
+     140
+    ],
+    "armor": [
+     6,
+     8,
+     12,
+     20,
+     32
+    ]
+   },
+   "flat": {
+    "move_speed": -10
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.4,
+    "tau": 12,
+    "from_rank": 1,
+    "note": "shield reduction scale E(r); 1 at R0"
+   }
+  },
+  "ring_regeneration": {
+   "anchors": {
+    "max_hp": [
+     10,
+     12.5,
+     24,
+     55,
+     110
+    ]
+   },
+   "effect": {
+    "type": "anchors",
+    "points": [
+     0.9,
+     1.0,
+     1.2,
+     1.5,
+     1.9
+    ],
+    "tail": {
+     "gain": 0.2,
+     "tau": 20
+    },
+    "note": "regeneration scale A(r)"
+   }
+  },
+  "acc_firestone": {
+   "anchors": {
+    "power": [
+     0.02,
+     0.025,
+     0.08,
+     0.2,
+     0.42
+    ]
+   },
+   "flat": {
+    "haste": 0.01
+   },
+   "effect": {
+    "type": "anchors",
+    "points": [
+     0.6666667,
+     1.0,
+     1.2,
+     1.5,
+     1.8
+    ],
+    "tail": {
+     "gain": 0.2,
+     "tau": 20
+    },
+    "note": "burn scale B(r)"
+   }
+  },
+  "ring_crusher": {
+   "rates": {
+    "move_speed": {
+     "r0": 35,
+     "r1": 39,
+     "limit": 70,
+     "tau": 12
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     12,
+     36,
+     85
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.5,
+    "gain": 0.5,
+    "tau": 12,
+    "from_rank": 1,
+    "r0_value": 1.0,
+    "note": "positive-roll amplification, 1 at R0 rising to 1.5 at R1"
+   }
+  },
+  "curse_starving_crown": {
+   "anchors": {
+    "max_hp": [
+     55,
+     61,
+     105,
+     220,
+     450
+    ]
+   }
+  },
+  "curse_slow_heart": {
+   "anchors": {
+    "max_hp": [
+     40,
+     44.5,
+     95,
+     205,
+     430
+    ]
+   }
+  },
+  "curse_ashen_ballast": {
+   "anchors": {
+    "armor": [
+     34,
+     37.5,
+     48,
+     80,
+     140
+    ]
+   }
+  },
+  "curse_tithe_bones": {
+   "anchors": {
+    "armor": [
+     26,
+     29,
+     40,
+     68,
+     118
+    ]
+   }
+  },
+  "curse_hollow_reliquary": {
+   "anchors": {
+    "power": [
+     0.22,
+     0.245,
+     0.5,
+     1.25,
+     2.8
+    ]
+   }
+  },
+  "curse_jinxed_coin": {
+   "anchors": {
+    "luck": [
+     0.3,
+     0.33,
+     0.5,
+     0.9,
+     1.6
+    ],
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "curse_sour_providence": {
+   "anchors": {
+    "luck": [
+     0.22,
+     0.245,
+     0.4,
+     0.8,
+     1.4
+    ],
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  },
+  "curse_leadfoot_vigil": {
+   "rates": {
+    "move_speed": {
+     "r0": 30,
+     "r1": 33,
+     "limit": 65,
+     "tau": 12
+    }
+   },
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     8,
+     24,
+     60
+    ]
+   }
+  }
+ }
+}

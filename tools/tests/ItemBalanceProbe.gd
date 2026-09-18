@@ -106,7 +106,7 @@ func _run() -> void:
 	var race: RaceData = Global.race_db.get("human", null)
 	var style: StyleData = Global.style_db.get("ranged", null)
 	_check(race != null and style != null, "the human race and ranged style load")
-	_baseline = {"balance_revision": recorder.BALANCE_REVISION, "recorder_revision": recorder.RECORDER_REVISION,
+	_baseline = {"balance_revision": recorder.balance_revision(), "tuning_stages": recorder.tuning_stages(), "recorder_revision": recorder.RECORDER_REVISION,
 		"tuning_hash": recorder.tuning_hash(), "generated": Time.get_datetime_string_from_system(true, true),
 		"segment": Global.attempt_segment, "ranks": ranks, "race": "human", "style_for_landed_hit": "ranged",
 		"notes": ["Neutral positive rolls; no Manifestations, augments, doctrine or Ascension rules.",

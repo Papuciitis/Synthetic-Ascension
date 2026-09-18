@@ -233,24 +233,13 @@ func _balance_state() -> Dictionary:
 
 
 func _recompute_flat_mods() -> void:
-	# Flat mods are: base mods (data.mods) + rarity scaling (data.rarity_base).
-	# CONTINUOUS RARITY POWER: potency reads rarity + banked meter, so every
-	# merge physically moves the item's stats — "R0 at 60%" really is a
-	# stronger R0, per the original design promise.
-	rolled_mods = (data.mods.copy() if data != null and data.mods != null else StatDelta.new())
-
-	if data != null and data.rarity_base != null:
-		var effective_rarity := float(rarity) + clampf(upgrade_meter, 0.0, 0.999999)
-		var k := RarityMath.potency(effective_rarity) - 1.0
-		# Rate-family guardrail (spec §1.6): speed/haste contributions
-		# plateau (~R13) instead of scaling through the raw curve forever.
-		var k_rate := minf(k, RarityMath.RATE_STAT_POTENCY_CAP)
-		rolled_mods.max_hp += data.rarity_base.max_hp * k
-		rolled_mods.armor += data.rarity_base.armor * k
-		rolled_mods.move_speed += data.rarity_base.move_speed * k_rate
-		rolled_mods.power += data.rarity_base.power * k
-		rolled_mods.haste += data.rarity_base.haste * k_rate
-		rolled_mods.luck += data.rarity_base.luck * k
+	# Derived, never saved as truth: the item's TOTAL flat contribution at its
+	# effective rank (rarity + banked meter) from ItemScaling. Items with a
+	# balance profile follow the explicit anchor/rate curves; anything else
+	# keeps the legacy potency formula (mods + rarity_base scaled). Every
+	# merge physically moves the item's stats either way — "R0 at 60%" really
+	# is a stronger R0. A fresh StatDelta each time: ItemData is never mutated.
+	rolled_mods = ItemScaling.flat_mods(self) if data != null else StatDelta.new()
 static func from_data(d: ItemData, copies: int = 1, rarity_in: int = 0, polarity_in: int = Polarity.POS) -> ItemInstance:
 	var inst := ItemInstance.new()
 	inst.data = d

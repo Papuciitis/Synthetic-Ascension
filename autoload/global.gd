@@ -277,6 +277,10 @@ func _ready() -> void:
 	_load_weapons()
 
 	load_items_from_dir(ITEMS_DIR)
+	# Balance revision 2 item curves: validated once, loudly, before any
+	# instance derives stats. A rejected file leaves the legacy formula.
+	if not ItemScaling.load_profiles():
+		push_warning("ItemScaling: item profiles rejected; items use the legacy potency formula")
 	if DEBUG_GLOBAL:
 		print("Item DB keys:", item_db.keys())
 
@@ -1548,6 +1552,7 @@ func apply_save(save: SaveData) -> void:
 	meta_stash = save.meta_stash
 	if meta_stash == null:
 		meta_stash = StashInventory.new()
+	ItemScaling.rebuild(meta_stash.slots)
 
 
 
@@ -1685,6 +1690,13 @@ func apply_save(save: SaveData) -> void:
 			run_bag._ensure_size()
 		if run_bag != null and run_bag.has_method("_rebuild_index"):
 			run_bag._rebuild_index()
+		# Derived stats are recomputed from id, rank and meter on every load
+		# (no feeding, no rerolling), so a save made under older item curves
+		# adopts the current balance revision while keeping its progress exact.
+		if run_inventory != null:
+			ItemScaling.rebuild(run_inventory.items)
+		if run_bag != null:
+			ItemScaling.rebuild(run_bag.slots)
 
 		# Vendor snapshot (HubShop anti-reroll)
 		attempt_vendor_segment = int(save.attempt_vendor_segment) if save.has_method("get") else int(save.attempt_vendor_segment)
@@ -1694,6 +1706,7 @@ func apply_save(save: SaveData) -> void:
 
 		if attempt_vendor_bag != null and attempt_vendor_bag.has_method("_ensure_size"):
 			attempt_vendor_bag._ensure_size()
+			ItemScaling.rebuild(attempt_vendor_bag.slots)
 
 		set_followers(save.attempt_followers)
 	else:
