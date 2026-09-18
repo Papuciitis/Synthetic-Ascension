@@ -130,7 +130,7 @@ was implemented in seven local commits on `enemy-world-work`:
 | Incident history | `538c660` | `BalanceIncidentHistoryTest` (35): 5 s / 2,048-event / 32-sample ring, exact terminal hit, 2 MiB ceiling, death context frozen before reconstruction |
 | Exit and pressure | `a054bed` | `BalanceExitDiagnosticsTest` (34): channel attempts, lapse and death losses, seals, completion, two tagged Overtime injections, spawn refusals and reservations |
 | Upgrade effort | `d1f83c9` | `BalanceUpgradeDiagnosticsTest` (30): fractional feed, manual, bag and stash merges, higher-rank swap, real hub-shop purchase and undo |
-| Regression, cost | this commit | `BalanceRecorderLoadTest` (22): identical gameplay state with recording disabled, core and extended; failures, scene change, shutdown, resume; schema-1 rendering |
+| Regression, cost | `248540f` | `BalanceRecorderLoadTest` (22): identical gameplay state with recording disabled, core and extended; failures, scene change, shutdown, resume; schema-1 rendering |
 
 Recording cost, measured by `BalanceRecorderLoadTest` on one seeded 1,200-frame
 scripted workload (hits, heals, costs, income, feeds, five deaths) in one
