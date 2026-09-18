@@ -60,6 +60,13 @@ func _emit_ui(action: StringName, inst: ItemInstance, info: Dictionary) -> void:
 # --------------------------
 
 func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
+	var op := BalanceItemContext.begin(&"player", {"action": "eject_to_bag"})
+	var ok := _eject_equipped_to_bag(slot, origin)
+	BalanceItemContext.end(op)
+	return ok
+
+
+func _eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 	if equipped == null or bag == null:
 		return false
 
@@ -89,6 +96,13 @@ func eject_equipped_to_bag(slot: int, origin: Variant = null) -> bool:
 	return true
 
 func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, origin: Variant = null) -> bool:
+	var op := BalanceItemContext.begin(&"player", {"action": "equip_from_bag"})
+	var ok := _equip_from_bag(bag_inv, bag_slot_index, inv, origin)
+	BalanceItemContext.end(op)
+	return ok
+
+
+func _equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, origin: Variant = null) -> bool:
 	if bag_inv == null or inv == null:
 		return false
 	if bag_slot_index < 0 or bag_slot_index >= bag_inv.get_slot_count():
@@ -148,6 +162,13 @@ func equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory, 
 	return ok_inv
 
 func move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, origin: Variant = null) -> bool:
+	var op := BalanceItemContext.begin(&"player", {"action": "move_between"})
+	var ok := _move_between(src_inv, src_i, dst_inv, dst_i, origin)
+	BalanceItemContext.end(op)
+	return ok
+
+
+func _move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, origin: Variant = null) -> bool:
 	if src_inv == null or dst_inv == null:
 		return false
 	if not src_inv.has_method("get_at"): return false
@@ -235,10 +256,13 @@ func drop_from(src_inv: Object, src_i: int, world_pos: Vector2) -> bool:
 	if inst == null or inst.locked:
 		return false
 
+	var op := BalanceItemContext.begin(&"player", {"action": "drop"})
 	if src_inv is Inventory:
 		src_inv.call("remove_at", src_i, _player_origin(null))
 	else:
 		src_inv.call("remove_at", src_i)
+	BalanceItemContext.report(&"dropped_to_world", inst, {"from": "equipped" if src_inv is Inventory else "bag", "slot": src_i})
+	BalanceItemContext.end(op)
 	dropped_to_world.emit(inst, world_pos)
 
 	_emit_ui(&"drop", inst, {

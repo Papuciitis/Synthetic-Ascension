@@ -24,6 +24,12 @@ func _process(_delta: float) -> void:
 	pass
 
 func grant_set(set_id: StringName, pieces: int) -> void:
+	var op := BalanceItemContext.begin(&"debug", {"tool": "grant_set"})
+	_grant_set(set_id, pieces)
+	BalanceItemContext.end(op)
+
+
+func _grant_set(set_id: StringName, pieces: int) -> void:
 	if Global == null or Global.run_inventory == null:
 		return
 	for slot in range(Inventory.STAT_SLOT_COUNT):
@@ -47,6 +53,12 @@ func clear_sets() -> void:
 		Global.run_inventory.set_item(slot, null, null)
 
 func grant_specific_set_item(item_id: StringName) -> void:
+	var op := BalanceItemContext.begin(&"debug", {"tool": "grant_specific_set_item"})
+	_grant_specific_set_item(item_id)
+	BalanceItemContext.end(op)
+
+
+func _grant_specific_set_item(item_id: StringName) -> void:
 	if Global == null or Global.run_inventory == null:
 		return
 	var data: ItemData = Global.item_db.get(String(item_id), null) as ItemData
@@ -329,6 +341,12 @@ func simulate_legacy_opening_save() -> void:
 # ============================================================
 
 func grant_manifestation(id: StringName) -> void:
+	var op := BalanceItemContext.begin(&"debug", {"tool": "grant_manifestation"})
+	_grant_manifestation(id)
+	BalanceItemContext.end(op)
+
+
+func _grant_manifestation(id: StringName) -> void:
 	if Global == null or Global.run_inventory == null:
 		return
 	var def := ManifestationCatalog.get_def(id)
@@ -360,6 +378,12 @@ func grant_manifestation(id: StringName) -> void:
 
 
 func roll_all_manifestations() -> void:
+	var op := BalanceItemContext.begin(&"debug", {"tool": "roll_all_manifestations"})
+	_roll_all_manifestations()
+	BalanceItemContext.end(op)
+
+
+func _roll_all_manifestations() -> void:
 	# Every worn item gets a legal rule for its slot. This is the "what does
 	# eight of them at once actually feel like?" button.
 	if Global == null or Global.run_inventory == null:

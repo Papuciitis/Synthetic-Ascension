@@ -14,7 +14,11 @@ const RECORDER_REVISION := 2
 const BALANCE_REVISION := 1
 ## What this recorder measures; an omitted feature reads as unavailable, not 0.
 const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": true,
-	"incidents": true, "exit_detail": true, "progression": false}
+	"incidents": true, "exit_detail": true, "progression": true}
+## Capture-local item identities (never the save format) and the bounded
+## list of equipment operations waiting for the next stat recompute.
+const ITEM_ID_CAP := 65536
+const UPGRADE_LINK_CAP := 64
 ## Incident history: cheap state at 5 Hz during live gameplay, enemies counted
 ## by archetype inside NEARBY_RADIUS px through the bounded spatial query, and
 ## a serialized ceiling per persisted incident (oldest history trimmed first).
@@ -51,6 +55,9 @@ var _history_left := HISTORY_SAMPLE_INTERVAL
 var _player_subscriptions: Array = []
 var _nearby: Array[int] = []
 var _incidents: Dictionary = _empty_incidents()
+var _item_ids: Dictionary = {}
+var _item_serial := 0
+var _pending_upgrade_links: Array[Dictionary] = []
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -102,6 +109,9 @@ func begin_gameplay(player: Node) -> void:
 		_history.reset(_ledger.current_life_id(), 0.0)
 		_history_left = HISTORY_SAMPLE_INTERVAL
 		_incidents = _empty_incidents()
+		_item_ids.clear()
+		_item_serial = 0
+		_pending_upgrade_links.clear()
 		_connect_runtime()
 		print("[BalanceRecorder] Recording to ", capture_directory)
 	_connect_player(player)
@@ -173,6 +183,8 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"encounter_event", _on_encounter_event)
 	_subscribe(RunEvents, &"overtime_pressure_injected", _on_overtime_injected)
 	_subscribe(ThreatDirector, &"rite_channel_changed", _on_rite_channel)
+	_subscribe(RunEvents, &"item_generated", _on_item_generated)
+	_subscribe(RunEvents, &"item_operation", _on_item_operation)
 
 func _subscribe(object: Object, signal_name: StringName, callback: Callable) -> void:
 	object.connect(signal_name, callback)
@@ -404,8 +416,100 @@ func _on_life_event(player: Node, kind: StringName) -> void:
 	_capture_sample()
 
 func _on_stats_changed(player: Node) -> void:
-	if player == _player():
-		_build_dirty = true
+	if player != _player():
+		return
+	_build_dirty = true
+	if _pending_upgrade_links.is_empty():
+		return
+	# Equipment changed and the player recomputed: link each waiting
+	# operation to the stats and set ranks after it. Observation only.
+	_capture_build()
+	var sets_after := _sets()
+	for link in _pending_upgrade_links:
+		link["stats_after"] = _last_build.get("stats", {})
+		link["build_after"] = _build_index
+		link["sets_after"] = sets_after
+		_ledger.event("upgrade_effect", link)
+	_pending_upgrade_links.clear()
+
+# ---------------------------------------------------------------- upgrades
+
+## Capture-local identity for an item instance: stable across moves and
+## merges (the destination object survives a merge) and never saved.
+func _item_id(inst: ItemInstance) -> int:
+	if inst == null:
+		return 0
+	var key := inst.get_instance_id()
+	if _item_ids.has(key):
+		return int(_item_ids[key])
+	if _item_ids.size() >= ITEM_ID_CAP:
+		return -1
+	_item_serial += 1
+	_item_ids[key] = _item_serial
+	return _item_serial
+
+## Observation only: the item's identity, progression and flat contributions.
+func _describe_item(inst: ItemInstance) -> Dictionary:
+	if inst == null:
+		return {}
+	var data: ItemData = inst.data
+	return {"iid": _item_id(inst), "id": String(data.id) if data != null else "", "rarity": inst.rarity, "polarity": inst.polarity,
+		"pct": inst.best_pct, "meter": inst.upgrade_meter, "progress": inst.progress, "manifestation": String(inst.manifestation_id),
+		"locked": inst.locked, "equip_slot": int(data.equip_slot) if data != null else -1, "set": String(data.set_id) if data != null else "",
+		"flat": _stats(inst.rolled_mods), "value": Global.compute_item_value(inst)}
+
+## The equipped item this one could feed (same id and polarity), with the
+## rank gap; empty when nothing equipped matches.
+func _compatible(inst: ItemInstance) -> Dictionary:
+	if inst == null or inst.data == null or Global.run_inventory == null:
+		return {}
+	for equipped in Global.run_inventory.items:
+		if equipped == null or equipped == inst or equipped.data == null:
+			continue
+		if equipped.data.id == inst.data.id and int(equipped.polarity) == int(inst.polarity):
+			return {"equipped_iid": _item_id(equipped), "equipped_rarity": equipped.rarity, "gap": equipped.rarity - inst.rarity, "equipped_locked": equipped.locked}
+	return {}
+
+## Active sets by id with count and mean rank, from the inventory's own
+## pure helpers.
+func _sets() -> Dictionary:
+	var result := {}
+	if Global.run_inventory == null:
+		return result
+	var counts: Dictionary = Global.run_inventory.get_set_counts()
+	for set_id in counts:
+		result[String(set_id)] = {"count": int(counts[set_id]), "mean_rank": Global.run_inventory.get_set_rarity_average(set_id)}
+	return result
+
+func _on_item_generated(inst: ItemInstance, source: StringName, context: Dictionary) -> void:
+	var item := _describe_item(inst)
+	_ledger.item_generated(item, String(source), _compatible(inst))
+	_ledger.event("item_generation_context", {"iid": item.get("iid", 0), "source": String(source), "context": Writer.json_safe(context)})
+	_push_history("item_generated", {"id": item.get("id", ""), "rarity": item.get("rarity", 0), "source": String(source)})
+
+func _on_item_operation(kind: StringName, inst: ItemInstance, data: Dictionary) -> void:
+	var record: Dictionary = Writer.json_safe(data)
+	record["kind"] = String(kind)
+	record["t"] = _ledger.gameplay_seconds()
+	if inst != null:
+		record["item"] = _describe_item(inst)
+		record["compatible"] = _compatible(inst)
+	var container: Variant = record.get("container", null)
+	var equipped_side := String(kind) in ["equipped", "unequipped"] or (String(kind) == "merged" and container is Dictionary and String(container.get("kind", "")) == "equipped")
+	if equipped_side:
+		record["stats_before"] = _last_build.get("stats", {})
+		record["build_before"] = _build_index
+		record["sets_before"] = _sets()
+		var op := int(record.get("op", 0))
+		var known := false
+		for link in _pending_upgrade_links:
+			if int(link.get("op", 0)) == op:
+				known = true
+		if not known and _pending_upgrade_links.size() < UPGRADE_LINK_CAP:
+			_pending_upgrade_links.append({"op": op, "kind": String(kind), "iid": record.get("item", {}).get("iid", 0),
+				"stats_before": record["stats_before"], "build_before": _build_index, "sets_before": record["sets_before"]})
+	_ledger.item_operation(record)
+	_push_history("item", {"event": String(kind), "id": record.get("item", {}).get("id", ""), "source": record.get("source", ""), "op": record.get("op", 0)})
 
 func _on_phase(phase: StringName, label: String) -> void:
 	_ledger.event("phase", {"phase": String(phase), "label": label})

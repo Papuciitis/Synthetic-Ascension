@@ -88,4 +88,10 @@ static func create_instance(
 		return null
 	var roll := roll_signed_percent(data, context.player_luck, rng)
 	var polarity := ItemInstance.Polarity.POS if roll >= 0.0 else ItemInstance.Polarity.NEG
-	return ItemInstance.from_roll(data, roll_rarity(context, rng), polarity, roll)
+	var inst := ItemInstance.from_roll(data, roll_rarity(context, rng), polarity, roll)
+	# Telemetry only: what was generated and for whom (an offer or a drop).
+	if RunEvents != null and RunEvents.item_generated.has_connections():
+		RunEvents.item_generated.emit(inst, context.source_type, {"rarity_min": context.rarity_min, "rarity_max": context.rarity_max,
+			"is_elite": context.is_elite, "segment": context.segment_index, "source_rank": context.source_rank,
+			"equipped_rarity_average": context.equipped_rarity_average, "player_luck": context.player_luck})
+	return inst

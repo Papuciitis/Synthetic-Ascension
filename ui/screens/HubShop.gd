@@ -345,11 +345,19 @@ func _undo_last_trade() -> void:
 	# Route the restore through the ledger so every follower mutation is
 	# auditable under one reason stream.
 	var restored_followers: int = int(_undo_trade.get("followers", Global.followers))
-	Global.transaction_followers(restored_followers - int(Global.followers), &"trade_undo", {}, false, false)
+	var original_op := int(_undo_trade.get("op", 0))
+	var sold_count := int(_undo_trade.get("sold_count", 0))
+	var bought_count := int(_undo_trade.get("bought_count", 0))
+	var op := BalanceItemContext.begin(&"undo", {"undoes": original_op})
+	Global.transaction_followers(restored_followers - int(Global.followers), &"trade_undo", {"op": op, "undoes": original_op, "sold_count": sold_count, "bought_count": bought_count}, false, false)
 	_restore_inventory_snapshot(_undo_trade.get("inventory", []) as Array)
 	_restore_bag_snapshot(Global.run_bag, _undo_trade.get("bag", []) as Array)
 	_restore_bag_snapshot(_vendor_bag, _undo_trade.get("vendor", []) as Array)
 	Global.attempt_vendor_bag = _vendor_bag
+	# The undo is tied to the trade it reverses; nothing about it is a new
+	# acquisition or sale.
+	BalanceItemContext.report(&"undo", null, {"undoes": original_op, "sold_count": sold_count, "bought_count": bought_count, "followers_restored": restored_followers})
+	BalanceItemContext.end(op)
 	_undo_trade.clear()
 	if _btn_undo_trade != null:
 		_btn_undo_trade.disabled = true
@@ -724,6 +732,14 @@ func _sell_value(inst: ItemInstance) -> int:
 	if Global == null or inst == null:
 		return 0
 	return Global.compute_sell_value(inst) if Global.has_method("compute_sell_value") else 0
+
+
+## Telemetry only: one item of the trade with its own value, reported and
+## returned for the transaction's item list.
+func _report_trade_item(kind: StringName, inst: ItemInstance, value: int, container: String, slot: int) -> Dictionary:
+	var entry := {"kind": String(kind), "id": String(inst.data.id) if inst.data != null else "", "rarity": inst.rarity, "value": value}
+	BalanceItemContext.report(kind, inst, {"value": value, "container": container, "slot": slot})
+	return entry
 
 func _buy_value(inst: ItemInstance) -> int:
 	if Global == null or inst == null:
@@ -1272,6 +1288,9 @@ func _perform_trade() -> void:
 	var net: int = buy_v - sell_v
 
 	_capture_trade_undo()
+	var op := BalanceItemContext.begin(&"trade", {"buy_value": buy_v, "sell_value": sell_v})
+	_undo_trade["op"] = op
+	var trade_items: Array = []
 
 	# --- SELL (remove items; keep them for the buyback shelf) ---
 	var sold_instances: Array[ItemInstance] = []
@@ -1281,6 +1300,7 @@ func _perform_trade() -> void:
 			var sold_equipped: ItemInstance = Global.run_inventory.get_at(slot)
 			if sold_equipped != null:
 				sold_instances.append(sold_equipped)
+				trade_items.append(_report_trade_item(&"sold", sold_equipped, _sell_value(sold_equipped), "equipped", slot))
 			Global.run_inventory.remove_at(slot, {"player_driven": true})
 
 	if Global.run_bag != null:
@@ -1289,6 +1309,7 @@ func _perform_trade() -> void:
 			var sold_bagged: ItemInstance = Global.run_bag.get_at(slot2)
 			if sold_bagged != null:
 				sold_instances.append(sold_bagged)
+				trade_items.append(_report_trade_item(&"sold", sold_bagged, _sell_value(sold_bagged), "bag", slot2))
 			Global.run_bag.remove_at(slot2)
 
 	# --- BUY (add items) ---
@@ -1317,6 +1338,7 @@ func _perform_trade() -> void:
 			_vendor_bag.remove_at(vs)
 
 			# Add to player bag
+			trade_items.append(_report_trade_item(&"purchased", inst, _buy_value(inst), "vendor", vs))
 			Global.run_bag.add_instance(inst)
 
 	# --- BUYBACK: what you sold sits on the vendor's shelf, rebuyable
@@ -1334,10 +1356,12 @@ func _perform_trade() -> void:
 			_apply_vendor_filters()
 
 	# Apply through the central transaction ledger. Positive net is a cost;
-	# negative net is influence/resources returned to the movement.
+	# negative net is influence/resources returned to the movement. The
+	# item-level values ride inside the same transaction for the recorder.
 	if Global != null:
-		Global.transaction_followers(-net, &"trade", {"buy_value": buy_v, "sell_value": sell_v}, true, false)
+		Global.transaction_followers(-net, &"trade", {"buy_value": buy_v, "sell_value": sell_v, "op": op, "items": trade_items}, true, false)
 		Global.save_current_profile()
+	BalanceItemContext.end(op)
 	_refresh_undo_button_details()
 
 	_clear_selection()
@@ -1403,6 +1427,7 @@ func _generate_vendor_stock(force: bool) -> void:
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _vendor_seed
+	var op := BalanceItemContext.begin(&"vendor_stock", {"refresh": force, "seed": _vendor_seed})
 
 	# wipe
 	for i in range(_vendor_bag.slots.size()):
@@ -1434,6 +1459,7 @@ func _generate_vendor_stock(force: bool) -> void:
 		_vendor_bag.slots[slot_idx] = inst
 
 	_vendor_bag.emit_changed()
+	BalanceItemContext.end(op)
 
 	# Persist seed so reopening the hub cannot reroll via Global._rng
 	if Global != null:

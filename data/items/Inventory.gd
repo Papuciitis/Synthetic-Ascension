@@ -134,6 +134,10 @@ func set_item(slot: int, inst: ItemInstance, origin: Variant = null) -> ItemInst
 	var player_driven: bool = origin is Dictionary and bool((origin as Dictionary).get("player_driven", false))
 	player_driven = player_driven or origin is Vector2
 	equipment_changed.emit(slot, inst, prev, player_driven)
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unequipped", prev, {"container": "equipped", "slot": slot, "player_driven": player_driven, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"equipped", inst, {"container": "equipped", "slot": slot, "player_driven": player_driven, "replaced_prev": prev != null})
 
 	var o := _normalize_origin(origin)
 	if not o.is_empty():
@@ -155,6 +159,8 @@ func remove_at(index: int, origin: Variant = null) -> void:
 	var player_driven: bool = origin is Dictionary and bool((origin as Dictionary).get("player_driven", false))
 	player_driven = player_driven or origin is Vector2
 	equipment_changed.emit(index, null, prev, player_driven)
+	if prev != null:
+		BalanceItemContext.report(&"unequipped", prev, {"container": "equipped", "slot": index, "player_driven": player_driven, "replaced": false})
 
 func get_at(index: int) -> ItemInstance:
 	_ensure_size()
@@ -249,7 +255,9 @@ func add_or_feed(inst: ItemInstance, origin: Variant = null, allow_rule_loss: bo
 			# Merge the whole incoming instance (progress + meters) into the equipped one.
 			# A refused merge must NOT be reported as consumed - the caller
 			# would drop the item on the floor.
+			BalanceItemContext.container = {"kind": "equipped", "slot": i}
 			if not _merge_into(it, inst):
+				BalanceItemContext.container = {}
 				continue
 
 			emit_changed()
@@ -276,7 +284,9 @@ func feed_roll_into(slot: int, roll_pct: float, origin: Variant = null) -> bool:
 		return false
 
 	var old_r: int = int(it.rarity)
+	BalanceItemContext.container = {"kind": "equipped", "slot": slot}
 	it.feed_roll(roll_pct)
+	BalanceItemContext.container = {}
 	emit_changed()
 
 	var upgraded: bool = int(it.rarity) != old_r

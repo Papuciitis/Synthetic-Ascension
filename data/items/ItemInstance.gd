@@ -151,6 +151,11 @@ func can_absorb_manifestation_of(incoming: ItemInstance) -> bool:
 func merge_from(incoming: ItemInstance) -> bool:
 	if not can_merge(incoming):
 		return false
+	# Telemetry only: the exact state before this merge (the incoming copy
+	# as material, before the auto-swap moves its payload).
+	var reporting := RunEvents != null and RunEvents.item_operation.has_connections()
+	var before := _balance_state() if reporting else {}
+	var material := incoming._balance_state() if reporting else {}
 	# NOTE: manifestation_id is deliberately absent from the swap below.
 	# THIS object is the destination and keeps its own rule, even when the
 	# incoming copy is the higher-rank side of the maths.
@@ -209,7 +214,22 @@ func merge_from(incoming: ItemInstance) -> bool:
 	# Recompute ONCE from the normalized post-merge state — never from a
 	# transient meter >= 1.0 mid-loop (continuous-power requirement).
 	_recompute_flat_mods()
+	if reporting:
+		BalanceItemContext.report(&"merged", self, {"dest_before": before, "dest_after": _balance_state(), "incoming": material,
+			"mass": mass, "quality": quality, "swapped": int(before.get("rarity", 0)) < int(material.get("rarity", 0)),
+			"ranked_up": rarity > int(before.get("rarity", 0)), "container": BalanceItemContext.take_container()})
 	return true
+
+
+## Observation only (balance recorder): this instance's progression state
+## and flat contributions, never the object itself.
+func _balance_state() -> Dictionary:
+	var flat := {}
+	if rolled_mods != null:
+		flat = {"max_hp": rolled_mods.max_hp, "armor": rolled_mods.armor, "move_speed": rolled_mods.move_speed,
+			"power": rolled_mods.power, "haste": rolled_mods.haste, "luck": rolled_mods.luck}
+	return {"id": String(data.id) if data != null else "", "rarity": rarity, "polarity": polarity, "pct": best_pct,
+		"meter": upgrade_meter, "progress": progress, "manifestation": String(manifestation_id), "locked": locked, "flat": flat}
 
 
 func _recompute_flat_mods() -> void:

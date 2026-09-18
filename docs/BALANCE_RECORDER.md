@@ -140,6 +140,47 @@ of `recording` means the final boundary has not been saved, not a completed run.
   Captures written before this change carry the old `effect_multipliers` key,
   whose values were taken through the consuming getters.
 
+## Upgrade effort and benefit
+
+Item operations are reported by their owners after they succeed, inside an
+operation scope (`BalanceItemContext`) that the caller opens: a pickup
+(`ground`, `drop`, `world_drop`, `exploration`), a player move through the
+router, a trade or its undo in the hub shop, a guaranteed reward, or a
+developer grant (`debug`). Every report carries the scope's operation id and
+source, so "remove from bag, place in equipment, merge" is one operation.
+The reports are:
+
+- `merged` from `ItemInstance.merge_from`, the one real merge path (feeds,
+  bag and equipment merges, consolidation): destination rank, meter, roll,
+  progress and flat contributions before and after, the consumed material's
+  rank, meter and quality before the auto-swap, the merge mass, whether the
+  rank swapped to the destination and whether it ranked up, and the container
+  and slot the destination lives in.
+- `equipped`/`unequipped`, `bagged`/`unbagged`, `stashed`/`unstashed` from the
+  containers, `dropped_to_world` from the router, `purchased`/`sold` with the
+  item's own value from the shop, and `undo` naming the trade it reverses.
+- `item_generated` from `ItemGenerator` with the drop context: a vendor item
+  is an offer, never an acquisition; other sources are drops, aggregated by
+  item id, polarity and rank gap when an equipped copy could absorb them.
+
+Each item gets a capture-local id (never saved) that survives moves and
+merges, since the destination object survives a merge. Equipment operations
+link to the player's stat snapshot and active set mean ranks before, and an
+`upgrade_effect` record after the next stat recompute. Comparisons use the
+instances' own flat contributions; nothing is previewed by equipping. The
+shop's item-level values ride inside the existing `trade` transaction with
+the operation id, and the undo's `trade_undo` transaction names the trade.
+
+The ledger derives, per segment and overall: drops and offers, compatible
+drops with their value, acquisitions by source (a player move is never one),
+purchases and sales with values and the undone counts (an undone purchase is
+not counted twice; `net_purchases` is what remains), merges by container, the
+mass and meter gained on equipped items, rank-ups on equipped items with the
+gameplay time between them, organic income per minute (excluding trades,
+undo, vendor refreshes, reconstruction, adjustments and debug grants) and the
+mean purchase expressed in minutes of that income, which is unavailable, not
+zero, when nothing organic was earned. Debug grants are listed apart.
+
 ## Exit and pressure
 
 The owners of the exit and pressure state report what they did, through
@@ -253,8 +294,8 @@ elapsed time, build and debug context together.
 ## Verification
 
 Run `BalanceLedgerTest`, `BalanceCaptureWriterTest`, `BalanceRecorderTest`,
-`BalanceIncidentHistoryTest`, `BalanceExitDiagnosticsTest`, `BalanceHealthAccountingTest`,
-`BalanceSnapshotPurityTest` and `BalanceAttributionTest`
+`BalanceIncidentHistoryTest`, `BalanceExitDiagnosticsTest`, `BalanceUpgradeDiagnosticsTest`,
+`BalanceHealthAccountingTest`, `BalanceSnapshotPurityTest` and `BalanceAttributionTest`
 with the repository's normal headless test commands. The writer suite
 deliberately targets an invalid directory to verify failure reporting; its
 expected filesystem error must be followed by a passing assertion. Existing

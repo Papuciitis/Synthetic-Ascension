@@ -149,6 +149,32 @@ static func markdown(summary: Dictionary) -> String:
 		var ttk := "—" if row.ttk_count == 0 else "%.3f" % (row.ttk_seconds / row.ttk_count)
 		text += "| %s | %d | %.2f | %.2f | %d | %d | %s | %d |\n" % [_cell(key), row.seen, row.hp_sum / maxf(1.0, row.seen), row.hp_max, row.kills, row.ttk_count, ttk, row.removed_alive]
 	text += "\nTTK runs from first observed damaging hit to death using gameplay seconds. Only defeated, engaged enemies contribute; surviving enemies are not assigned zero. HP reflects registration/entry and later elite or boss configuration.\n\n"
+	if t.has("upgrades"):
+		text += "## Upgrade effort and benefit\n\nAn offer is a vendor item shown, never an acquisition; an acquisition is a pickup, reward, purchase or debug grant that landed in a container or fed one, and a player move never is. An undone trade reverses its own counts. Merges are counted where the destination lives; meter gained is in ranks. Organic income excludes trades, undo, vendor refreshes, reconstruction, adjustments and debug grants; with no organic income the shop cost in minutes is unavailable (-), not zero. Debug grants are prepared fixtures, listed apart from earned progression.\n\n| Segment | Dropped / offered | Compatible drops | Acquired (pickup / reward / trade / debug) | Purchases (value), net of undo | Sales (value) | Merges (equipped) | Meter gained (equipped) | Rank-ups (mean s between) | Organic income / min | Shop cost (min) |\n|---|---|---:|---|---|---|---|---:|---|---:|---:|\n"
+		var rows: Array = [t]
+		rows.append_array(summary.get("segments", []))
+		for row in rows:
+			var up: Dictionary = row.get("upgrades", {})
+			var derived: Dictionary = row.get("upgrade_summary", {})
+			if up.is_empty():
+				continue
+			var label := "all" if row == t else str(row.get("segment", "?"))
+			var acquired: Dictionary = up.get("acquired", {})
+			var compatible := 0
+			for entry in (up.get("compatible_drops", {}) as Dictionary).values():
+				compatible += int(entry.get("count", 0))
+			var interval: Variant = derived.get("mean_seconds_between_rank_ups")
+			var income: Variant = derived.get("organic_income_per_minute")
+			var cost: Variant = derived.get("shop_cost_in_minutes")
+			text += "| %s | %d / %d | %d | %d / %d / %d / %d | %d (%d), net %d | %d (%d) | %d (%d) | %.2f | %d (%s) | %s | %s |\n" % [label, int(up.generated.get("dropped", 0)), int(up.generated.get("offered", 0)), compatible, int(acquired.get("pickup", 0)), int(acquired.get("reward", 0)), int(acquired.get("trade", 0)), int(acquired.get("debug", 0)), int(up.get("purchased", 0)), int(up.get("purchase_value", 0)), int(derived.get("net_purchases", 0)), int(up.get("sold", 0)), int(up.get("sale_value", 0)), int(up.get("merges", 0)), int((up.get("merges_by_container", {}) as Dictionary).get("equipped", 0)), float(up.get("meter_gained_equipped", 0.0)), int(up.get("rank_ups_equipped", 0)), ("%.1f" % float(interval)) if interval != null else "-", ("%.2f" % float(income)) if income != null else "-", ("%.1f" % float(cost)) if cost != null else "-"]
+		var drops: Dictionary = t.upgrades.get("compatible_drops", {})
+		if not drops.is_empty():
+			text += "\nCompatible drops by item, polarity and rank gap (equipped rank minus dropped rank; whole capture):\n\n| Item:polarity:gap | Count | Value |\n|---|---:|---:|\n"
+			var keys: Array = drops.keys()
+			keys.sort_custom(func(a: String, b: String) -> bool: return int(drops[a].count) > int(drops[b].count))
+			for key in keys.slice(0, 16):
+				text += "| %s | %d | %d |\n" % [_cell(key), int(drops[key].count), int(drops[key].value)]
+		text += "\n"
 	if t.has("exit"):
 		text += "## Exit and pressure\n\nAn attempt is an actual channel entry (proximity is not one). Progress lost is in hold seconds by cause. A reconstruction death is one within %.0f gameplay seconds of a respawn. Reconstruction spending is compared with all Followers earned in the segment.\n\n| Segment | Status | Unlock to first channel (s) | Attempts | Channel (s) | Lost: lapse / death | Seals | Waves (enemies) | Deaths channeling / after reconstruction | Reconstruction spent / earned | Beats (members, specialists) | Overtime injected (s) / final |\n|---|---|---:|---:|---:|---|---:|---|---|---|---|---|\n" % 10.0
 		for segment in summary.get("segments", []):

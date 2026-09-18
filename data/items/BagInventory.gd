@@ -145,6 +145,10 @@ func set_item(slot: int, inst: ItemInstance, _origin: Variant = null) -> ItemIns
 	var prev: ItemInstance = slots[slot]
 	slots[slot] = inst
 	_after_stack_changed()
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": slot, "path": "set_item"})
 	return prev
 
 
@@ -152,8 +156,11 @@ func remove_at(slot: int) -> void:
 	_ensure_size()
 	if slot < 0 or slot >= slots.size():
 		return
+	var prev: ItemInstance = slots[slot]
 	slots[slot] = null
 	_after_stack_changed()
+	if prev != null:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": false})
 
 
 func add_pickup(item_data: ItemData, copies: int = 1, rarity: int = 0) -> bool:
@@ -180,8 +187,13 @@ func set_at(slot: int, inst: ItemInstance) -> void:
 	_ensure_size()
 	if slot < 0 or slot >= slots.size():
 		return
+	var prev: ItemInstance = slots[slot]
 	slots[slot] = inst
 	_after_stack_changed()
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unbagged", prev, {"container": "bag", "slot": slot, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": slot, "path": "set_at"})
 
 
 func get_best(n: int) -> Array[ItemInstance]:
@@ -274,7 +286,9 @@ func _consolidate_duplicates() -> void:
 				print("[BagInventory] EMIT stack_merged ", i, " -> ", keep_i, " bag_id=", get_instance_id())
 			stack_merged.emit(i, keep_i, s) # UI ghost feedback
 
+			BalanceItemContext.container = {"kind": "bag", "slot": keep_i, "consolidated_from": i}
 			if not _merge_into(keep, s):
+				BalanceItemContext.container = {}
 				continue
 			slots[i] = null
 
@@ -330,7 +344,9 @@ func add_instance(inst: ItemInstance) -> bool:
 		if dest != null:
 			var old_rarity: int = int(dest.rarity)
 
+			BalanceItemContext.container = {"kind": "bag", "slot": idx}
 			if not _merge_into(dest, inst): # consumes inst into dest
+				BalanceItemContext.container = {}
 				return _place_in_empty_slot(inst)
 			_after_stack_changed()
 
@@ -361,6 +377,7 @@ func _place_in_empty_slot(inst: ItemInstance) -> bool:
 	if debug_bag:
 		print("[BagInventory] stack_added slot=", empty, " id=", inst.data.id)
 	stack_added.emit(empty, inst)
+	BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": empty, "path": "add_instance"})
 
 	_dbg_dump("after add_instance (placed in empty)")
 	return true
@@ -411,7 +428,9 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 			# Fabricated merge material: never rolls a Manifestation of its
 			# own, so it always feeds whatever rule the stack already has.
 			var incoming := ItemInstance.from_roll(item_data, rarity, polarity, roll_pct, false)
+			BalanceItemContext.container = {"kind": "bag", "slot": idx}
 			stack.merge_from(incoming)
+			BalanceItemContext.container = {}
 			var upgraded: bool = int(stack.rarity) > old_r
 
 			_after_stack_changed()
@@ -435,6 +454,7 @@ func add_roll(item_data: ItemData, rarity: int, polarity: int, roll_pct: float) 
 
 	# Tell UI to play “added” VFX
 	stack_added.emit(empty, inst)
+	BalanceItemContext.report(&"bagged", inst, {"container": "bag", "slot": empty, "path": "add_roll"})
 	return true
 
 

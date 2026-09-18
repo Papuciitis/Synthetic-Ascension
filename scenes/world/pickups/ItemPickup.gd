@@ -152,6 +152,22 @@ func _clear_bag_origin() -> void:
 func _try_pickup() -> void:
 	if _picked or not _pickup_ready:
 		return
+	# Telemetry scope: everything this collection does to the containers is
+	# one operation from one kind of pickup.
+	var op := BalanceItemContext.begin(&"pickup", {"pickup": _pickup_kind(), "ground_serial": ground_serial, "item_id": item_id})
+	_collect()
+	BalanceItemContext.end(op)
+
+
+func _pickup_kind() -> String:
+	if persistent_world_drop:
+		return "world_drop"
+	if is_exploration_loot:
+		return "exploration"
+	return "drop" if item_instance != null else "ground"
+
+
+func _collect() -> void:
 
 	# UI fly origin (screen/canvas space)
 	var start_screen: Vector2 = _get_screen_pos_of_pickup()

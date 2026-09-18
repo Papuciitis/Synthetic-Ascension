@@ -23,8 +23,11 @@ func remove_at(i: int) -> void:
 	_ensure_size()
 	if i < 0 or i >= slots.size():
 		return
+	var prev: ItemInstance = slots[i]
 	slots[i] = null
 	emit_changed()
+	if prev != null:
+		BalanceItemContext.report(&"unstashed", prev, {"container": "stash", "slot": i, "replaced": false})
 
 # Duck-typed signature for routing/swap helpers.
 # Keep origin optional (Inventory passes it; Bag doesn't).
@@ -35,6 +38,10 @@ func set_item(i: int, inst: ItemInstance, _origin: Variant = null) -> ItemInstan
 	var prev: ItemInstance = slots[i]
 	slots[i] = inst
 	emit_changed()
+	if prev != null and prev != inst:
+		BalanceItemContext.report(&"unstashed", prev, {"container": "stash", "slot": i, "replaced": inst != null})
+	if inst != null and inst != prev:
+		BalanceItemContext.report(&"stashed", inst, {"container": "stash", "slot": i})
 	return prev
 
 func first_empty_slot() -> int:

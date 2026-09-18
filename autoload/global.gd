@@ -2188,6 +2188,13 @@ func compute_sell_value(inst: ItemInstance) -> int:
 
 
 func deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> bool:
+	var op := BalanceItemContext.begin(&"reward", {"prefer_equip": prefer_equip})
+	var ok := _deliver_guaranteed_item(inst, prefer_equip)
+	BalanceItemContext.end(op)
+	return ok
+
+
+func _deliver_guaranteed_item(inst: ItemInstance, prefer_equip: bool = true) -> bool:
 	if inst == null or inst.data == null:
 		return false
 

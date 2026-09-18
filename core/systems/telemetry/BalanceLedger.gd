@@ -36,6 +36,12 @@ const RECENT_CASTS_KEPT := 256
 const RECONSTRUCTION_DEATH_WINDOW := 10.0
 const SPAWN_KEY_CAP := 128
 const OVERTIME_CONTRIBUTOR_CAP := 64
+## Upgrade diagnostics: acquisition sources, capped tables, and the wallet
+## reasons that are not organic combat income.
+const ACQUISITION_SOURCES := ["pickup", "reward", "trade", "debug"]
+const UPGRADE_KEY_CAP := 256
+const RANK_UP_TIMES_KEPT := 128
+const NON_ORGANIC_REASONS := ["trade", "trade_undo", "vendor_refresh", "reconstruction"]
 
 var max_pending_records := 8192
 var _health: Dictionary = {}
@@ -89,10 +95,18 @@ func _empty_stats(balance: int) -> Dictionary:
 		"healing_by_source": {},
 		"attribution": {"by_origin": {}, "by_emitter": {}, "overflow": {"by_origin": 0, "by_emitter": 0}, "mixed_raw_breakdown": {}},
 		"exit": _empty_exit(),
+		"upgrades": _empty_upgrades(),
 	}
 	for metric in METRICS:
 		stats[metric] = 0.0
 	return stats
+
+static func _empty_upgrades() -> Dictionary:
+	return {"generated": {"dropped": 0, "offered": 0}, "generated_by_source": {}, "compatible_drops": {}, "compatible_overflow": 0,
+		"acquired": {}, "acquired_total": 0, "material_value": 0, "purchased": 0, "purchase_value": 0, "sold": 0, "sale_value": 0,
+		"undone_ops": 0, "undone_purchases": 0, "undone_sales": 0, "merges": 0, "merges_by_container": {}, "merge_mass": 0.0,
+		"meter_gained_equipped": 0.0, "rank_ups_equipped": 0, "rank_up_times": [], "swaps_equipped": 0,
+		"equips": 0, "unequips": 0, "moves": 0, "stashed": 0, "dropped_to_world": 0, "debug_operations": 0, "operations": 0}
 
 ## Per segment (the rite is per segment); the totals row keeps the counters.
 static func _empty_exit() -> Dictionary:
@@ -670,6 +684,148 @@ func observe_pressure(snapshot: Dictionary) -> void:
 		table["director_injected_seconds"] = float(snapshot.get("injected_seconds", table["director_injected_seconds"]))
 
 
+# ---------------------------------------------------------------- upgrades
+
+func _upgrade_rows() -> Array:
+	return [_totals.upgrades, _current.upgrades]
+
+
+func _upgrade_add(key: String, amount: float = 1.0) -> void:
+	for row in _upgrade_rows():
+		row[key] = row[key] + amount
+
+
+static func _count_key(table: Dictionary, key: String, overflow_row: Dictionary, overflow_key: String, amount: int = 1, value: int = 0) -> void:
+	if table.has(key) or table.size() < UPGRADE_KEY_CAP:
+		if not table.has(key):
+			table[key] = {"count": 0, "value": 0}
+		table[key]["count"] = int(table[key]["count"]) + amount
+		table[key]["value"] = int(table[key]["value"]) + value
+	else:
+		overflow_row[overflow_key] = int(overflow_row[overflow_key]) + 1
+
+
+## A generated item: a vendor item is an offer, anything else a drop. A drop
+## compatible with an equipped item is aggregated by id, polarity and rank gap.
+func item_generated(item: Dictionary, source: String, compatible: Dictionary) -> void:
+	var offered := source == "vendor"
+	for row in _upgrade_rows():
+		var generated: Dictionary = row.generated
+		generated["offered" if offered else "dropped"] = int(generated["offered" if offered else "dropped"]) + 1
+		var by_source: Dictionary = row.generated_by_source
+		by_source[source] = int(by_source.get(source, 0)) + 1
+		if not offered and not compatible.is_empty():
+			var key := "%s:%s:%d" % [String(item.get("id", "")), "pos" if int(item.get("polarity", 1)) > 0 else "neg", int(compatible.get("gap", 0))]
+			_count_key(row.compatible_drops, key, row, "compatible_overflow", 1, int(item.get("value", 0)))
+	event("item_generated", {"item": item, "source": source, "compatible": compatible})
+
+
+## One reported item operation (see RunEvents.item_operation). An
+## acquisition is a pickup, reward, purchase or debug grant landing in a
+## container or feeding one; a player move never is; an undo reverses its
+## trade's counts instead of adding.
+func item_operation(record: Dictionary) -> void:
+	var kind := String(record.get("kind", ""))
+	var source := String(record.get("source", ""))
+	var container: Variant = record.get("container", null)
+	var container_kind := String(container.get("kind", "")) if container is Dictionary else str(container) if container != null else ""
+	var item: Dictionary = record.get("item", {})
+	var value := int(item.get("value", 0))
+	var compatible := not (record.get("compatible", {}) as Dictionary).is_empty()
+	var acquisition := false
+	_upgrade_add("operations")
+	if source == "debug":
+		_upgrade_add("debug_operations")
+	match kind:
+		"merged":
+			var before: Dictionary = record.get("dest_before", {})
+			var after: Dictionary = record.get("dest_after", {})
+			_upgrade_add("merges")
+			_upgrade_add("merge_mass", float(record.get("mass", 0.0)))
+			for row in _upgrade_rows():
+				var table: Dictionary = row.merges_by_container
+				var label := container_kind if not container_kind.is_empty() else "unknown"
+				table[label] = int(table.get(label, 0)) + 1
+			if container_kind == "equipped":
+				_upgrade_add("meter_gained_equipped", float(int(after.get("rarity", 0)) - int(before.get("rarity", 0))) + float(after.get("meter", 0.0)) - float(before.get("meter", 0.0)))
+				if bool(record.get("ranked_up", false)):
+					_upgrade_add("rank_ups_equipped")
+					for row in _upgrade_rows():
+						var times: Array = row.rank_up_times
+						if times.size() < RANK_UP_TIMES_KEPT:
+							times.append(gameplay_seconds())
+				if bool(record.get("swapped", false)):
+					_upgrade_add("swaps_equipped")
+			acquisition = source in ACQUISITION_SOURCES and source != "trade"
+		"equipped":
+			_upgrade_add("equips")
+			acquisition = source in ACQUISITION_SOURCES and source != "trade"
+		"bagged", "stashed":
+			if kind == "stashed":
+				_upgrade_add("stashed")
+			acquisition = source in ACQUISITION_SOURCES and source != "trade"
+		"unequipped":
+			_upgrade_add("unequips")
+		"purchased":
+			_upgrade_add("purchased")
+			_upgrade_add("purchase_value", float(record.get("value", 0)))
+			acquisition = true
+		"sold":
+			_upgrade_add("sold")
+			_upgrade_add("sale_value", float(record.get("value", 0)))
+		"undo":
+			_upgrade_add("undone_ops")
+			_upgrade_add("undone_purchases", float(record.get("bought_count", 0)))
+			_upgrade_add("undone_sales", float(record.get("sold_count", 0)))
+		"dropped_to_world":
+			_upgrade_add("dropped_to_world")
+	if source == "player" and kind in ["equipped", "bagged", "stashed"]:
+		_upgrade_add("moves")
+	if acquisition:
+		_upgrade_add("acquired_total")
+		for row in _upgrade_rows():
+			var table: Dictionary = row.acquired
+			table[source] = int(table.get(source, 0)) + 1
+		if compatible:
+			_upgrade_add("material_value", float(value))
+	event("item", record)
+
+
+## Derived, per stats row: pace and affordability. Organic income excludes
+## trades, undo, vendor refreshes, reconstruction, adjustments and debug
+## grants; with no organic income a time-to-afford is unavailable, not zero.
+static func upgrade_summary(stats: Dictionary) -> Dictionary:
+	var up: Dictionary = stats.get("upgrades", {})
+	if up.is_empty():
+		return {}
+	var minutes := float(stats.get("seconds_gameplay", 0.0)) / 60.0
+	var organic := 0
+	var reasons: Dictionary = stats.get("followers_by_reason", {})
+	for reason in reasons:
+		if String(reason) in NON_ORGANIC_REASONS or String(reason) in ADJUSTMENTS or String(reason) in DEBUG_REASONS:
+			continue
+		organic += int(reasons[reason].get("gained", 0))
+	var income_per_minute: Variant = (float(organic) / minutes) if minutes > 0.0 else null
+	var purchased := int(up.get("purchased", 0))
+	var mean_purchase: Variant = (float(up.get("purchase_value", 0)) / purchased) if purchased > 0 else null
+	var cost_minutes: Variant = null
+	if mean_purchase != null and income_per_minute != null and float(income_per_minute) > 0.0:
+		cost_minutes = float(mean_purchase) / float(income_per_minute)
+	var times: Array = up.get("rank_up_times", [])
+	var interval: Variant = null
+	if times.size() >= 2:
+		var total := 0.0
+		for index in range(1, times.size()):
+			total += float(times[index]) - float(times[index - 1])
+		interval = total / float(times.size() - 1)
+	return {"organic_income": organic, "organic_income_per_minute": income_per_minute, "mean_purchase_value": mean_purchase,
+		"shop_cost_in_minutes": cost_minutes, "net_purchases": purchased - int(up.get("undone_purchases", 0)),
+		"net_sales": int(up.get("sold", 0)) - int(up.get("undone_sales", 0)), "rank_ups_equipped": int(up.get("rank_ups_equipped", 0)),
+		"mean_seconds_between_rank_ups": interval, "first_rank_up_at": times[0] if not times.is_empty() else null,
+		"meter_gained_equipped": float(up.get("meter_gained_equipped", 0.0)), "acquired_total": int(up.get("acquired_total", 0)),
+		"debug_operations": int(up.get("debug_operations", 0)), "material_value": int(up.get("material_value", 0))}
+
+
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:
 	if outcome not in DAMAGING_OUTCOMES:
 		if outcome in AVOIDED_OUTCOMES:
@@ -726,11 +882,12 @@ func summary() -> Dictionary:
 	var result := {"schema_version": SCHEMA_VERSION, "metadata": _metadata.duplicate(true), "outcome": _outcome,
 		"elapsed_seconds": _elapsed, "totals": _totals.duplicate(true), "segments": _segments.duplicate(true),
 		"dropped_records": _dropped, "wallet_discontinuities": _discontinuities, "last_sequence": _sequence,
-		"health": health_summary(), "attribution_coverage": attribution_coverage(_totals)}
+		"health": health_summary(), "attribution_coverage": attribution_coverage(_totals), "upgrades": upgrade_summary(_totals)}
 	var stats_rows: Array = [result.totals]
 	stats_rows.append_array(result.segments)
 	for stats in stats_rows:
 		for enemy_row in stats.enemies.values():
 			for key in ["_live_hp", "_retired_min", "_retired_max"]:
 				enemy_row.erase(key)
+		stats["upgrade_summary"] = upgrade_summary(stats)
 	return result
