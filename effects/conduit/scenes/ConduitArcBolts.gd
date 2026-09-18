@@ -36,8 +36,8 @@ func _on_weapon_fired(p: Node, _style_id: StringName, origin: Vector2, _target: 
 	if debug_proc_logging:
 		print("[Conduit] ArcBolts proc")
 
-	var r := radius * (0.90 + 0.15 * set_strength)
-	var cr := chain_radius * (0.90 + 0.15 * set_strength)
+	var r := radius * (0.90 + 0.15 * channel("control"))
+	var cr := chain_radius * (0.90 + 0.15 * channel("control"))
 
 	var first_handle := _nearest_enemy(origin, r)
 	if first_handle == EnemyWorldTypes.INVALID_HANDLE:
@@ -47,12 +47,12 @@ func _on_weapon_fired(p: Node, _style_id: StringName, origin: Vector2, _target: 
 	_spawn_arc_vfx(origin, first_position)
 
 	var base_dmg := _get_player_base_damage()
-	_deal_damage(first_handle, base_dmg * dmg1_mult * power_mul * set_strength)
+	_deal_damage(first_handle, base_dmg * dmg1_mult * power_mul * channel("damage"))
 
 	var second_handle := _nearest_enemy(first_position, cr, first_handle)
 	if second_handle != EnemyWorldTypes.INVALID_HANDLE:
 		_spawn_arc_vfx(first_position, EnemyCombat.position_for_handle(second_handle))
-		_deal_damage(second_handle, base_dmg * dmg2_mult * power_mul * set_strength)
+		_deal_damage(second_handle, base_dmg * dmg2_mult * power_mul * channel("damage"))
 
 func _spawn_arc_vfx(a: Vector2, b: Vector2) -> void:
 	if vfx_arc_line_scene == null:

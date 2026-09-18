@@ -39,11 +39,11 @@ func _on_weapon_fired(p: Node, _style: StringName, _origin: Vector2, _target: Ve
 		return
 
 	var center := p2.global_position
-	var r := radius * (0.92 + 0.18 * set_strength)
+	var r := radius * (0.92 + 0.18 * channel("control"))
 	_spawn_wave(center, r)
 
 	var base := _get_player_base_damage()
-	var dmg := base * dmg_mult * power_mul * set_strength
+	var dmg := base * dmg_mult * power_mul * channel("damage")
 	var handles: Array[int] = []
 	EnemyCombat.gather_in_radius(center, r, handles)
 	for handle in handles:
@@ -53,9 +53,9 @@ func _on_weapon_fired(p: Node, _style: StringName, _origin: Vector2, _target: Ve
 		if direction.length_squared() > 0.001:
 			EnemyCombat.apply_knockback(
 				handle,
-				direction.normalized() * knockback * (0.85 + 0.25 * set_strength),
+				direction.normalized() * knockback * (0.85 + 0.25 * channel("control")),
 			)
-		EnemyCombat.apply_stun(handle, stun_time * (0.85 + 0.20 * set_strength))
+		EnemyCombat.apply_stun(handle, stun_time * (0.85 + 0.20 * channel("control")))
 
 func _get_player_base_damage() -> float:
 	if player != null:

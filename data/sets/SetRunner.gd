@@ -38,7 +38,8 @@ func apply_sets_to_stats(s: Stats, inv: Inventory) -> void:
 				continue
 
 			# Apply stat deltas (flat; effects handle rarity scaling)
-			t.apply_to(s)
+			# Balance revision 2: flat bonuses by channel (stat / rate), drawbacks fixed.
+			t.apply_scaled(s, SetScaling.profile(avg_r))
 
 			# Collect effect scenes
 			for scn: PackedScene in t.effect_scenes:

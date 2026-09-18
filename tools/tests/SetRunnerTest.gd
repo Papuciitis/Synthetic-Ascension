@@ -949,8 +949,8 @@ func _test_conduit_overclock_and_feedback() -> void:
 	_check(move_mul > 1.0, "a kill overclocks the player's movement (x%.2f)" % move_mul)
 	_check(haste_mul > 1.0, "and their haste (x%.2f)" % haste_mul)
 	_check(
-		is_equal_approx(move_mul, float(overclock.get("overclock_move_mul")))
-		and is_equal_approx(haste_mul, float(overclock.get("overclock_haste_mul"))),
+		is_equal_approx(move_mul, 1.0 + float(overclock.get("overclock_move_gain")) * float(overclock.call("channel", "rate")))
+		and is_equal_approx(haste_mul, 1.0 + float(overclock.get("overclock_haste_gain")) * float(overclock.call("channel", "rate"))),
 		"the runner hands the player exactly the effect's overclock",
 	)
 

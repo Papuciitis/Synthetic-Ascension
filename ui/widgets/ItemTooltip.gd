@@ -409,12 +409,13 @@ func build_comparison_rows(current: ItemInstance, candidate: ItemInstance, inven
 		for slot_index in range(Inventory.STAT_SLOT_COUNT):
 			var item: ItemInstance = candidate if slot_index == int(candidate.data.equip_slot) else inventory.get_at(slot_index)
 			if item != null and item.data != null and StringName(item.data.set_id) == set_id:
-				sum_rarity += float(item.rarity)
+				sum_rarity += float(maxi(0, item.rarity)) + clampf(float(item.upgrade_meter), 0.0, 0.999999)
 				piece_count += 1
 		var after_average: float = sum_rarity / float(piece_count) if piece_count > 0 else 0.0
 		if not is_equal_approx(before_average, after_average):
-			var before_strength: float = RarityMath.potency(before_average)
-			var after_strength: float = RarityMath.potency(after_average)
+			# The set's damage channel (balance revision 2), not the old potency.
+			var before_strength: float = float(SetScaling.profile(before_average).damage)
+			var after_strength: float = float(SetScaling.profile(after_average).damage)
 			var set_colour: String = CMP_POS_HEX if after_strength > before_strength else CMP_NEG_HEX
 			rows.append(
 				"[color=%s]Set strength  %.2fx → %.2fx[/color]"

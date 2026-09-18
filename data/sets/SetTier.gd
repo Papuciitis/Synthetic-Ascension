@@ -14,3 +14,9 @@ class_name SetTier
 func apply_to(s: Stats) -> void:
 	if mods != null:
 		mods.apply_to(s)
+
+
+## Balance revision 2: the flat bonuses scaled by the set's channels.
+func apply_scaled(s: Stats, scaling: Dictionary) -> void:
+	if mods != null:
+		SetScaling.scaled_tier_mods(mods, scaling).apply_to(s)

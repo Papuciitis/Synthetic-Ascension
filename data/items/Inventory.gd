@@ -333,7 +333,8 @@ func get_set_rarity_average(set_id: StringName) -> float:
 			continue
 		if StringName(str(it.data.set_id)) != set_id:
 			continue
-		sum_r += float(it.rarity)
+		# Effective rank: banked meter counts, so a fed piece moves the set.
+		sum_r += float(maxi(0, it.rarity)) + clampf(float(it.upgrade_meter), 0.0, 0.999999)
 		n += 1
 	return (sum_r / float(n)) if n > 0 else 0.0
 

@@ -103,7 +103,7 @@ func _add_mark(pos: Vector2, style_id: StringName, origin: Vector2, target: Vect
 	_marks.append({ "pos": pos, "t": mark_lifetime, "mirrored": mirrored, "vfx": _spawn_mark_vfx(pos, mirrored) })
 
 	_spawn_spokes(pos)
-	_spawn_pulse(pos, 44.0 + 12.0 * set_strength)
+	_spawn_pulse(pos, 44.0 + 12.0 * channel("control"))
 
 	# keep only last N marks
 	while _marks.size() > marks_needed:
@@ -144,9 +144,9 @@ func _ranged_triangle(power_mul: float, a: Vector2, b: Vector2, c: Vector2) -> v
 		return
 
 	var base := _get_player_base_damage()
-	var dmg := base * ranged_bullet_damage_mult * power_mul * set_strength
+	var dmg := base * ranged_bullet_damage_mult * power_mul * channel("damage")
 
-	var extra := int(floor((set_strength - 1.0) * 3.0))
+	var extra := int(floor((channel("density") - 1.0) * 3.0))
 	var n_per := clampi(ranged_bullets_per_node + extra, 4, 7)
 	var spread := deg_to_rad(ranged_spread_deg)
 
@@ -162,11 +162,11 @@ func _ranged_triangle(power_mul: float, a: Vector2, b: Vector2, c: Vector2) -> v
 
 func _melee_triangle(power_mul: float, a: Vector2, b: Vector2, c: Vector2) -> void:
 	var base := _get_player_base_damage()
-	var dmg := base * melee_node_damage_mult * power_mul * set_strength
+	var dmg := base * melee_node_damage_mult * power_mul * channel("damage")
 
-	var r := node_radius * (0.90 + 0.18 * set_strength)
-	var kb := node_knockback * (0.85 + 0.25 * set_strength)
-	var st := node_stun * (0.85 + 0.25 * set_strength)
+	var r := node_radius * (0.90 + 0.18 * channel("control"))
+	var kb := node_knockback * (0.85 + 0.25 * channel("control"))
+	var st := node_stun * (0.85 + 0.25 * channel("control"))
 
 	for pnt in [a, b, c]:
 		_spawn_cleave(pnt, (pnt - (player as Node2D).global_position).normalized(), r * 0.70)
@@ -181,14 +181,14 @@ func _melee_triangle(power_mul: float, a: Vector2, b: Vector2, c: Vector2) -> vo
 
 func _magic_triangle(power_mul: float, a: Vector2, b: Vector2, c: Vector2) -> void:
 	var base := _get_player_base_damage()
-	var dmg := base * magic_edge_damage_mult * power_mul * set_strength
+	var dmg := base * magic_edge_damage_mult * power_mul * channel("damage")
 
-	var hits_extra := int(floor((set_strength - 1.0) * 2.0))
+	var hits_extra := int(floor((channel("density") - 1.0) * 2.0))
 	var hits := clampi(magic_hits_per_edge + hits_extra, 2, 4)
 
 	# Node pops
 	for pnt in [a, b, c]:
-		_spawn_pulse(pnt, 66.0 + 18.0 * set_strength)
+		_spawn_pulse(pnt, 66.0 + 18.0 * channel("control"))
 		player.call("_spawn_magic", pnt, dmg * 1.15)
 
 	# Edge stitching (lots of impacts = big magic wow)
@@ -271,7 +271,7 @@ func _try_active() -> void:
 	# Immediate pop so it feels responsive
 	var p2 := player as Node2D
 	if p2 != null:
-		_spawn_pulse(p2.global_position, 92.0 + 22.0 * set_strength)
+		_spawn_pulse(p2.global_position, 92.0 + 22.0 * channel("control"))
 		_spawn_spokes(p2.global_position)
 
 	_report_active_cd(true)

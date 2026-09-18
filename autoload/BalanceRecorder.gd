@@ -89,7 +89,11 @@ static func balance_revision() -> int:
 ## The tuning stages that are live (item curves so far; sets and exit
 ## pressure will name themselves here when they land).
 static func tuning_stages() -> Array:
-	return ["items"] if ItemScaling.active() else []
+	# "sets" (continuous set growth, SetScaling) has no data file and no
+	# switch, so every capture from this build carries it.
+	var stages: Array = ["items"] if ItemScaling.active() else []
+	stages.append("sets")
+	return stages
 
 ## SHA-256 of the tuning profile, or "" when there is none. Stable across
 ## calls and processes for the same file content.

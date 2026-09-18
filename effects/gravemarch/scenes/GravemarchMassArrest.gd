@@ -114,7 +114,7 @@ func _on_damage_dealt(p: Node, amount: float) -> void:
 func _damage_needed() -> float:
 	# Rarity scaling: stronger set => procs more often (a bit) AND hits harder (handled in damage).
 	# This is the "collect rarity -> feels stronger" part.
-	return maxf(60.0, damage_needed_base / pow(maxf(set_strength, 0.1), 0.75))
+	return maxf(60.0, damage_needed_base / pow(maxf(channel("frequency"), 0.1), 0.75))
 
 func _start_verdict() -> void:
 	var p2 := player as Node2D
@@ -131,7 +131,7 @@ func _start_verdict() -> void:
 
 func _pull_tick(dt: float) -> void:
 	var r := _pull_effect_radius()
-	var force := pull_force * (0.85 + 0.25 * set_strength)
+	var force := pull_force * (0.85 + 0.25 * channel("control"))
 
 	EnemyCombat.gather_in_radius(_center, r, _pull_candidates)
 	for handle in _pull_candidates:
@@ -141,27 +141,27 @@ func _pull_tick(dt: float) -> void:
 			EnemyCombat.apply_knockback(handle, direction.normalized() * force * dt)
 
 func _slam() -> void:
-	_spawn_wave(_center, slam_radius * (0.92 + 0.18 * set_strength))
-	_spawn_pulse(_center, slam_radius * (0.92 + 0.18 * set_strength))
+	_spawn_wave(_center, slam_radius * (0.92 + 0.18 * channel("control")))
+	_spawn_pulse(_center, slam_radius * (0.92 + 0.18 * channel("control")))
 
 	var base := _get_player_base_damage()
 	var power_mul := _get_power_mul()
-	var dmg := base * slam_damage_mult * power_mul * set_strength
-	var kb := slam_knockback * (0.85 + 0.25 * set_strength)
-	var st := slam_stun * (0.85 + 0.25 * set_strength)
+	var dmg := base * slam_damage_mult * power_mul * channel("damage")
+	var kb := slam_knockback * (0.85 + 0.25 * channel("control"))
+	var st := slam_stun * (0.85 + 0.25 * channel("control"))
 
-	_damage_radius(_center, slam_radius * (0.92 + 0.18 * set_strength), dmg, kb, st)
+	_damage_radius(_center, slam_radius * (0.92 + 0.18 * channel("control")), dmg, kb, st)
 
 	# Style follow-ups (this is where each style feels different)
 	if _style == &"ranged":
-		_ranged_shrapnel(base * power_mul * ranged_shrapnel_damage_mult * set_strength)
+		_ranged_shrapnel(base * power_mul * ranged_shrapnel_damage_mult * channel("damage"))
 	elif _style == &"magic":
-		_magic_splinters(base * power_mul * magic_splinter_damage_mult * set_strength)
+		_magic_splinters(base * power_mul * magic_splinter_damage_mult * channel("damage"))
 	else:
-		_melee_aftershocks(base * power_mul * melee_aftershock_damage_mult * set_strength)
+		_melee_aftershocks(base * power_mul * melee_aftershock_damage_mult * channel("damage"))
 
 func _melee_aftershocks(dmg: float) -> void:
-	var count_extra := int(floor((set_strength - 1.0) * 2.0))
+	var count_extra := int(floor((channel("density") - 1.0) * 2.0))
 	var n := clampi(melee_aftershocks + count_extra, 2, 4)
 
 	for i in range(n):
@@ -181,7 +181,7 @@ func _melee_aftershocks(dmg: float) -> void:
 func _on_aftershock(radius: float, dmg: float) -> void:
 	if player == null or not is_instance_valid(player):
 		return
-	var scaled := radius * (0.95 + 0.15 * set_strength)
+	var scaled := radius * (0.95 + 0.15 * channel("control"))
 	_spawn_wave(_center, scaled)
 	_damage_radius(_center, scaled, dmg, slam_knockback * 0.55, melee_aftershock_stun)
 
@@ -190,7 +190,7 @@ func _ranged_shrapnel(dmg: float) -> void:
 	if scn == null:
 		return
 
-	var extra := int(floor((set_strength - 1.0) * 8.0))
+	var extra := int(floor((channel("density") - 1.0) * 8.0))
 	var n := clampi(ranged_shrapnel_count + extra, 12, 22)
 
 	for i in range(n):
@@ -198,7 +198,7 @@ func _ranged_shrapnel(dmg: float) -> void:
 		_spawn_bullet(scn, _center, Vector2.RIGHT.rotated(a), dmg)
 
 func _magic_splinters(dmg: float) -> void:
-	var extra := int(floor((set_strength - 1.0) * 3.0))
+	var extra := int(floor((channel("density") - 1.0) * 3.0))
 	var n := clampi(magic_splinters + extra, 5, 10)
 
 	for i in range(n):
@@ -239,7 +239,7 @@ func _try_active() -> void:
 	_report_active_cd(true)
 
 func _pull_effect_radius() -> float:
-	return pull_radius * (0.88 + 0.18 * set_strength)
+	return pull_radius * (0.88 + 0.18 * channel("control"))
 
 func get_active_state() -> Dictionary:
 	var full_threshold: float = _damage_needed()

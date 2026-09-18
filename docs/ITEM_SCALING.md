@@ -89,6 +89,41 @@ enemy HP removed up 7-19%; seg2 (rank 1, unchanged numbers) moved within
 noise except for Oakheart's early cut (melee seg2 HP lost +11%). One
 scripted scenario; see the simulator caveats.
 
-Not in this revision: set bonuses are still flat and read the integer mean
-rank (Task 4), merge mass and prices are unchanged (Task 5). Prices move
-slightly because `compute_item_value` reads the flat stats.
+Not in this revision: merge mass and prices are unchanged (Task 5). Prices
+move slightly because `compute_item_value` reads the flat stats.
+
+## Set scaling (Task 4)
+
+Set bonuses read one profile of the set's **mean effective rank**
+(`Inventory.get_set_rarity_average`: each of the six statistical slots'
+rank plus its banked upgrade meter, accessories excluded), through
+`SetScaling.profile(mean_rank)`, and every effect reads named channels
+(`SetEffectBase.channel(name)`) instead of the old single potency:
+
+| channel | drives | curve |
+|---|---|---|
+| `stat` | positive tier bonuses: HP, armour, Power, Luck | anchors 1 / 1 / 1.5 / 2.5 / 4 at R0 / 1 / 6 / 15 / 30, last slope continued |
+| `damage` | every set payload's damage | anchors 1 / 1.5 / 2.025 / 2.85 / 4.2, last slope continued |
+| `rate` | movement and Haste from tiers, the Overclock gains | 1 through R1, then `1 + 0.5 (1 - e^-(r-1)/12)`, never above 1.5 |
+| `control` | radius, knockback, stun | the old potency at `min(r, 15)` |
+| `density` | projectile and hit counts, inside their authored clamps | the old potency at `min(r, 15)` |
+| `frequency` | rank-based trigger thresholds (the Mass Arrest bank) | the old potency at `min(r, 15)`; minimum cooldowns and action locks stay |
+
+Drawbacks (Gravemarch's movement) stay fixed. Each channel is applied once
+per tier and once per effect; `damage` is never combined with potency. So at
+mean R15 Gravemarch's 2-piece is +45 HP and its 2+6-piece armour 8.75; the
+R15 slam lands exactly 2.85 times the R0 slam; Lattice's Index Commit and
+the ranged Verdict reach their authored maximum counts (3 x 7 bullets, 3 + 3
+x 4 impacts, 22 shrapnel) at R15 and never grow past them; the bank
+threshold stops falling at R15 and never under 60, and the slam's own
+credited damage cannot start a second Verdict inside the 2.25 s internal
+cooldown. A fractional feed updates the live effects in place (same nodes,
+bank and cooldown untouched). `SetScalingV2Test` pins all of this through
+the real inventory feed, `SetRunner`, `weapon_fired`, `damage_dealt` and
+`enemy_killed` paths; `SetRunnerTest` still passes unchanged at R0.
+
+The Run Sheet tier text names the R0 numbers and says they grow; the item
+tooltip's "Set strength" comparison shows the `damage` channel before and
+after the candidate piece.
+
+Captures from this build carry `tuning_stages` `["items", "sets"]`.

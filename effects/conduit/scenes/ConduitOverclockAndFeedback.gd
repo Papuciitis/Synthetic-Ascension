@@ -18,8 +18,9 @@ signal active_failed(message: String)
 
 # ---- passive: Overclock ----
 @export var overclock_duration: float = 2.5
-@export var overclock_move_mul: float = 1.18
-@export var overclock_haste_mul: float = 1.22
+## Balance revision 2: Overclock's movement and Haste are 1 + gain * rate.
+@export var overclock_move_gain: float = 0.18
+@export var overclock_haste_gain: float = 0.22
 
 # Ranged identity: split shot
 @export var split_angle_deg: float = 10.0
@@ -121,10 +122,10 @@ func _on_enemy_killed(p: Node, _enemy: Node, pos: Vector2) -> void:
 	_has_last_kill_pos = true
 
 func get_move_speed_multiplier() -> float:
-	return overclock_move_mul if _overclock_time > 0.0 else 1.0
+	return (1.0 + overclock_move_gain * channel("rate")) if _overclock_time > 0.0 else 1.0
 
 func get_haste_multiplier() -> float:
-	return overclock_haste_mul if _overclock_time > 0.0 else 1.0
+	return (1.0 + overclock_haste_gain * channel("rate")) if _overclock_time > 0.0 else 1.0
 
 func _on_weapon_fired(p: Node, style_id: StringName, origin: Vector2, target: Vector2, power_mul: float, _haste_mul: float) -> void:
 	if p != player:
@@ -148,7 +149,7 @@ func _on_weapon_fired(p: Node, style_id: StringName, origin: Vector2, target: Ve
 		style_mul = 1.15
 
 	var base_dmg: float = _get_player_base_damage()
-	var main_like_dmg: float = base_dmg * style_mul * power_mul * set_strength
+	var main_like_dmg: float = base_dmg * style_mul * power_mul * channel("damage")
 
 	# --- RANGED
 	if style_id == &"ranged":
@@ -156,14 +157,14 @@ func _on_weapon_fired(p: Node, style_id: StringName, origin: Vector2, target: Ve
 		if scn == null:
 			return
 
-		var split_dmg: float = base_dmg * split_damage_mult * power_mul * set_strength
+		var split_dmg: float = base_dmg * split_damage_mult * power_mul * channel("damage")
 		_spawn_bullet(scn, origin, base_dir.rotated(ang), split_dmg)
 		_spawn_bullet(scn, origin, base_dir.rotated(-ang), split_dmg)
 
 		var aim: Vector2 = target
 		if _has_last_kill_pos:
 			aim = _last_kill_pos
-		_start_ranged_burst(origin, aim, base_dmg * power_mul * burst_damage_mult * set_strength)
+		_start_ranged_burst(origin, aim, base_dmg * power_mul * burst_damage_mult * channel("damage"))
 		return
 
 	# --- MELEE (clean cleave VFX)
@@ -199,7 +200,7 @@ func _try_circuit_feedback() -> void:
 	var origin: Vector2 = (player as Node2D).global_position
 
 	# VFX
-	var r := active_radius * (0.90 + 0.15 * set_strength)
+	var r := active_radius * (0.90 + 0.15 * channel("control"))
 	_spawn_pulse(origin, r)
 	_spawn_spokes(origin)
 
@@ -213,10 +214,10 @@ func _try_circuit_feedback() -> void:
 	EnemyCombat.gather_in_radius(origin, r, handles)
 	for handle in handles:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, base_dmg * active_damage_mult * power_mul * set_strength, 1, player, balance_provenance("discharge"))
+		EnemyCombat.apply_damage(handle, base_dmg * active_damage_mult * power_mul * channel("damage"), 1, player, balance_provenance("discharge"))
 		var direction := (hit_position - origin).normalized()
-		EnemyCombat.apply_knockback(handle, direction * active_knockback * (0.85 + 0.25 * set_strength))
-		EnemyCombat.apply_stun(handle, active_stun * (0.85 + 0.25 * set_strength))
+		EnemyCombat.apply_knockback(handle, direction * active_knockback * (0.85 + 0.25 * channel("control")))
+		EnemyCombat.apply_stun(handle, active_stun * (0.85 + 0.25 * channel("control")))
 
 func get_active_state() -> Dictionary:
 	var is_ready: bool = player != null and _active_cd <= 0.05
