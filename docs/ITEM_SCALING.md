@@ -89,8 +89,29 @@ enemy HP removed up 7-19%; seg2 (rank 1, unchanged numbers) moved within
 noise except for Oakheart's early cut (melee seg2 HP lost +11%). One
 scripted scenario; see the simulator caveats.
 
-Not in this revision: merge mass and prices are unchanged (Task 5). Prices
-move slightly because `compute_item_value` reads the flat stats.
+## Merge effort and prices (Task 5)
+
+`RarityMath.GAP_HALF_LIFE` is 3.0: merge mass is `quality x 2^((incoming -
+destination) / 3)`, so an R0 fed into an R6 is worth a quarter of a peer
+(a sixteenth before), and the overflow across a rank boundary keeps
+`2^(-1/3)` of the excess. Equal-rank merges, swapping, locks, polarity and
+Manifestation matching are unchanged.
+
+Prices: the rarity component is `RarityMath.rank_price(r) = 26 + 14r + r^2`
+at integer rank and a banked meter is worth exactly `lerp(price(r),
+price(r + 1), meter)` (R6 146, R7 173, a half-filled R6 159.5), from one
+helper. Quality factor `0.9 + 0.5 x |roll|`, set premium 1.15, scripted
+weights, the Luck multipliers and the 55% sell spread stay; stat weights
+are HP 0.30, armour 0.80, movement 0.35, Power 60, Haste 50, Luck 35 per
+stored unit. `ItemEconomyV2Test` pins the constants; `LootLoopTest` and
+`AuditClosureTest` keep buy -> merge -> sell lossy on every item at R0-R30.
+
+Measured with `FollowerEconomyAuditProbe` (synthetic stock, Luck 0,
+`docs/audits/2026-09-19-economy-v2-probe.md`): the median vendor price
+falls about 25-40% (segment 2: buy 120 -> 91, sell 66 -> 50; segment 10:
+322 -> 205 / 177 -> 112) and a whole stock of ten items about 25-40%, so
+the shop is cheaper against the same income; the acquisition targets of
+section 5.3 are not measured here.
 
 ## Set scaling (Task 4)
 

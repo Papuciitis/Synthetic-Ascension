@@ -2163,30 +2163,27 @@ func compute_item_value(inst: ItemInstance) -> int:
 		return 0
 
 	var r: int = maxi(0, int(inst.rarity))
-	# Uncapped quadratic growth keeps every rarity increase economically
-	# meaningful. The constant term prices the item's worth AS MERGE
-	# MATERIAL: at 10 the R0->R1 rank-up loop (buy peer, merge, sell) was
-	# Follower-positive at high Luck. Invariant (tested): no vendor
+	# Balance revision 2 (section 5.2): the rarity component is
+	# RarityMath.rank_price at integer rank, and a banked meter is worth
+	# exactly the lerp to the next rank, so both endpoints come from one
+	# helper. The constant term prices the item's worth AS MERGE MATERIAL.
+	# Invariant (LootLoopTest, AuditClosureTest): no vendor
 	# buy->merge->sell sequence may net Followers.
-	var base: float = 26.0 + float(r) * 18.0 + float(r * r) * 2.5
+	var rarity_value: float = RarityMath.fractional_rank_price(r, float(inst.upgrade_meter))
 
 	var q: float = clampf(absf(float(inst.active_pct())), 0.0, 1.0)
 	var quality_mul: float = lerpf(0.90, 1.40, q)
 	var stat_value: float = 0.0
 	if inst.rolled_mods != null:
-		stat_value += absf(inst.rolled_mods.max_hp) * 0.45
-		stat_value += absf(inst.rolled_mods.armor) * 2.5
+		stat_value += absf(inst.rolled_mods.max_hp) * 0.30
+		stat_value += absf(inst.rolled_mods.armor) * 0.80
 		stat_value += absf(inst.rolled_mods.move_speed) * 0.35
 		stat_value += absf(inst.rolled_mods.power) * 60.0
 		stat_value += absf(inst.rolled_mods.haste) * 50.0
-		stat_value += absf(inst.rolled_mods.luck) * 45.0
+		stat_value += absf(inst.rolled_mods.luck) * 35.0
 	var scripted_value: float = maxf(0.0, inst.data.scripted_value_weight)
 	var set_mul: float = 1.15 if not inst.data.set_id.is_empty() else 1.0
-	var progress_ratio := clampf(float(inst.upgrade_meter), 0.0, 1.0)
-	var next_base: float = 10.0 + float(r + 1) * 18.0 + float((r + 1) * (r + 1)) * 2.5
-	var progress_value := maxf(0.0, next_base - base) * progress_ratio
-
-	return int(round(((base + progress_value) * quality_mul + stat_value + scripted_value) * set_mul))
+	return int(round((rarity_value * quality_mul + stat_value + scripted_value) * set_mul))
 
 func compute_buy_value(inst: ItemInstance) -> int:
 	# What the vendor charges (followers).

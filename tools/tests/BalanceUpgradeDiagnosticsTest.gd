@@ -111,7 +111,9 @@ func _run() -> void:
 	# earned progression.
 	var alpha := _make_data("alpha", ItemData.EquipSlot.POWER)
 	# Worn at rank 1 so a rank-0 feed pays the gap and moves only the meter.
-	var worn := _make_item(alpha, 1, 0.4)
+	# R2: at the revision-2 half-life two minimum-quality R0 feeds would
+	# cross an R1, and step 5 needs the worn rank stable until the swap.
+	var worn := _make_item(alpha, 2, 0.4)
 	worn.manifestation_id = &"scar_tissue"
 	var op := BalanceItemContext.begin(&"debug", {"tool": "test"})
 	inventory.set_item(ItemData.EquipSlot.POWER, worn, null)
@@ -127,7 +129,7 @@ func _run() -> void:
 	BalanceItemContext.end(op)
 	var merged := _last("merged")
 	_check(fed and _count("merged") == 1 and merged.inst == worn, "an auto-feed reports exactly one merge on the worn instance")
-	_check(float(merged.dest_before.meter) == 0.0 and float(merged.dest_after.meter) == worn.upgrade_meter and worn.upgrade_meter > 0.0 and worn.upgrade_meter < 1.0 and int(merged.dest_after.rarity) == 1 and not bool(merged.ranked_up), "the merge carries the exact meter before/after and no rank change (meter %.4f)" % worn.upgrade_meter)
+	_check(float(merged.dest_before.meter) == 0.0 and float(merged.dest_after.meter) == worn.upgrade_meter and worn.upgrade_meter > 0.0 and worn.upgrade_meter < 1.0 and int(merged.dest_after.rarity) == 2 and not bool(merged.ranked_up), "the merge carries the exact meter before/after and no rank change (meter %.4f)" % worn.upgrade_meter)
 	_check(String(merged.container.kind) == "equipped" and int(merged.container.slot) == ItemData.EquipSlot.POWER and String(merged.source) == "pickup" and int(merged.incoming.rarity) == 0 and float(merged.incoming.pct) == 0.0 and float(merged.mass) > 0.0, "the merge names its container, source, consumed material and mass")
 	_check(int(upgrades.merges) == 1 and int(upgrades.merges_by_container.get("equipped", 0)) == 1 and absf(float(upgrades.meter_gained_equipped) - worn.upgrade_meter) < 0.000001 and int(upgrades.rank_ups_equipped) == 0 and int(upgrades.acquired.get("pickup", 0)) == 1, "the ledger counts the feed once as a pickup acquisition with the meter it added")
 	_check(float(merged.dest_after.flat.power) > float(merged.dest_before.flat.power), "flat contributions before and after come from the instance's own mods")
@@ -175,13 +177,13 @@ func _run() -> void:
 
 	# 5. A higher-rank incoming copy: the worn instance keeps its identity,
 	# rule and lock while the rank swaps to it.
-	var strong := _make_item(alpha, 2, 0.7)
+	var strong := _make_item(alpha, 3, 0.7)
 	var rarity_before: int = worn.rarity
 	op = BalanceItemContext.begin(&"pickup", {"pickup": "drop"})
 	fed = inventory.add_or_feed(strong, {"type": 1, "pos": Vector2.ZERO})
 	BalanceItemContext.end(op)
 	merged = _last("merged")
-	_check(fed and merged.inst == worn and int(merged.dest_before.rarity) == rarity_before and int(merged.incoming.rarity) == 2 and int(merged.dest_after.rarity) == worn.rarity and worn.rarity >= 2 and bool(merged.swapped) and bool(merged.ranked_up), "a higher-rank incoming swap is recorded with the pre-swap material and the rank it produced (%d -> %d)" % [rarity_before, worn.rarity])
+	_check(fed and merged.inst == worn and int(merged.dest_before.rarity) == rarity_before and int(merged.incoming.rarity) == 3 and int(merged.dest_after.rarity) == worn.rarity and worn.rarity >= 3 and bool(merged.swapped) and bool(merged.ranked_up), "a higher-rank incoming swap is recorded with the pre-swap material and the rank it produced (%d -> %d)" % [rarity_before, worn.rarity])
 	_check(int(upgrades.rank_ups_equipped) == 1 and upgrades.rank_up_times.size() == 1 and int(upgrades.swaps_equipped) == 1 and inventory.get_at(ItemData.EquipSlot.POWER) == worn, "the rank-up is counted on the equipped item with its gameplay time")
 	_check(worn.manifestation_id == &"scar_tissue" and not worn.locked and String(merged.dest_after.manifestation) == "scar_tissue", "instrumentation never changes the destination's rule or lock")
 	# The player recomputes: the pending equipment operations link to the

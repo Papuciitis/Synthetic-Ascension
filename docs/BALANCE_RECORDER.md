@@ -40,7 +40,7 @@ of `recording` means the final boundary has not been saved, not a completed run.
 - `schema_version` 2 captures carry `metadata.recorder_revision` (the
   recorder's contract), `metadata.balance_revision` (the item/encounter tuning
   state, 1 until the balance plan's profiles are active), `tuning_stages`,
-  `balance_revision` (1 for the pre-curve item formula, 2 once the item scaling profiles are live), `tuning_stages` (`["items", "sets"]` when they are; `"sets"`, the continuous set growth, is always present because it has no switch), `tuning_hash` (SHA-256 of `data/items/item_scaling_v2.json` when a valid profile exists, empty otherwise) and `metadata.features`: which measurements this recorder
+  `balance_revision` (1 for the pre-curve item formula, 2 once the item scaling profiles are live), `tuning_stages` (`["items", "sets", "economy"]` when they are; `"sets"` and `"economy"`, the continuous set growth and the revision-2 merge/price law, are always present because they have no switch), `tuning_hash` (SHA-256 of `data/items/item_scaling_v2.json` when a valid profile exists, empty otherwise) and `metadata.features`: which measurements this recorder
   makes. A feature that is false (or a field absent from an older capture)
   means unavailable, never a measured zero.
 - Health reconciliation (`summary.health`): every actual HP change is recorded

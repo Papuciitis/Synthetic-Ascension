@@ -61,7 +61,7 @@ func _run() -> void:
 	var meta: Dictionary = recorder.get_summary().metadata
 	var profile_exists := FileAccess.file_exists(recorder.TUNING_PROFILE_PATH)
 	var expected_revision := 2 if profile_exists and ItemScaling.active() else 1
-	_check(int(meta.balance_revision) == expected_revision and int(meta.recorder_revision) == 2 and ((meta.tuning_stages as Array) == (["items", "sets"] if expected_revision == 2 else ["sets"])), "the capture declares the live item-balance revision (%d) and its tuning stages" % expected_revision)
+	_check(int(meta.balance_revision) == expected_revision and int(meta.recorder_revision) == 2 and ((meta.tuning_stages as Array) == (["items", "sets", "economy"] if expected_revision == 2 else ["sets", "economy"])), "the capture declares the live item-balance revision (%d) and its tuning stages" % expected_revision)
 	var hash_now: String = recorder.tuning_hash()
 	_check(String(meta.tuning_hash) == hash_now and hash_now == recorder.tuning_hash() and (profile_exists == (not hash_now.is_empty())), "the tuning hash is stable and empty exactly when no tuning profile exists (profile %s)" % ("present" if profile_exists else "absent"))
 	var features: Dictionary = meta.features

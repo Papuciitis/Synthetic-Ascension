@@ -112,7 +112,7 @@ game; the guardrails decide which physics are breakable.
 
 | # | Knob | Decision |
 |---|---|---|
-| K1 | Gap half-life H | **1.5** (accepted as first playtest value) |
+| K1 | Gap half-life H | **3.0** since balance revision 2 (2026-09-19, plan section 5.1; was 1.5 as the first playtest value) |
 | K2 | Quality band | **keep 0.75–1.25** (widening vetoed; 0.70–1.30 allowed as a later experiment) |
 | K3 | Potency curve | **keep**, with per-stat-family guardrails (§1.6) |
 | K4 | Same-rank avg merge ≈ +1 rank | **keep** |

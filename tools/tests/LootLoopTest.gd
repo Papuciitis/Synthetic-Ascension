@@ -116,7 +116,7 @@ func _test_vendor_merge_sell_is_lossy_on_real_items() -> void:
 	for id in _item_ids():
 		var data: ItemData = Global.item_db[id]
 		var rolls := _rolls(data)
-		for dest_rank in [0, 1, 2, 3, 5, 8, 12, 15]:
+		for dest_rank in [0, 1, 2, 3, 5, 8, 12, 15, 20, 30]:
 			for dest_meter in [0.0, 0.5]:
 				for dest_roll in rolls:
 					for material_roll in rolls:

@@ -93,6 +93,7 @@ static func tuning_stages() -> Array:
 	# switch, so every capture from this build carries it.
 	var stages: Array = ["items"] if ItemScaling.active() else []
 	stages.append("sets")
+	stages.append("economy")
 	return stages
 
 ## SHA-256 of the tuning profile, or "" when there is none. Stable across

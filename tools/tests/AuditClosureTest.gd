@@ -175,9 +175,10 @@ func _test_canonical_rarity_merging() -> void:
 	low_stack.merge_from(ItemInstance.from_roll(data, 4, ItemInstance.Polarity.POS, 0.25))
 	_check(low_stack.rarity == 4, "auto-swap adopts the higher rarity (got R%d)" % low_stack.rarity)
 	_check(low_stack.get_instance_id() == low_stack_id, "auto-swap preserves object identity")
+	var swap_expected := RarityMath.merge_mass(0, 4, RarityMath.merge_quality(data, 0.25))
 	_check(
-		low_stack.upgrade_meter > 0.0 and low_stack.upgrade_meter < 0.2,
-		"auto-swap charges the low side as gap-priced material (meter %.3f)" % low_stack.upgrade_meter
+		absf(low_stack.upgrade_meter - swap_expected) < 0.000001,
+		"auto-swap charges the low side as gap-priced material (meter %.3f, gap law %.3f)" % [low_stack.upgrade_meter, swap_expected]
 	)
 
 	# Overflow converts at the gap law's per-rank ratio 2^(-1/H).
