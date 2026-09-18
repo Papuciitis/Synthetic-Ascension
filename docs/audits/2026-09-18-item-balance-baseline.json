@@ -1,0 +1,3229 @@
+{
+	"attribution": {
+		"coverage": {
+			"attributed": 15.6965446472168,
+			"attributed_share": 1.0,
+			"hp_removed": 15.6965446472168,
+			"mixed": 0.0,
+			"unknown": 0.0
+		},
+		"note": "No set attack was fired by this probe; set root coverage is measured only in play or the controlled set-output probe.",
+		"origins_observed": [
+			"native:ranged"
+		],
+		"set_origins_observed": []
+	},
+	"balance_revision": 1,
+	"capture": {
+		"features": {
+			"exit_detail": true,
+			"health_reconciliation": true,
+			"incidents": true,
+			"progression": true,
+			"pure_snapshots": true,
+			"source_attribution": true
+		},
+		"health_unexplained_checks": 0,
+		"schema_version": 2
+	},
+	"ehp_fixture": {
+		"armor": 50.0,
+		"constant_ehp": 375.0,
+		"formula": "HP * (1 + max(armor,0)/100) / product(other damage-taken multipliers); evasion, invulnerability and healing reported separately",
+		"max_hp": 200.0,
+		"observed_hp_loss": 26.6666666666667,
+		"other_damage_multiplier": 0.8,
+		"raw_hit": 50.0
+	},
+	"generated": "2026-09-18 19:10:49",
+	"items": {
+		"acc_firestone": {
+			"by_rank": {
+				"0": {
+					"buy": 43,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.02
+					},
+					"sell": 23,
+					"value": 43
+				},
+				"1": {
+					"buy": 61,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.025
+					},
+					"sell": 34,
+					"value": 62
+				},
+				"15": {
+					"buy": 779,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0449
+					},
+					"sell": 442,
+					"value": 794
+				},
+				"30": {
+					"buy": 2505,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0596
+					},
+					"sell": 1424,
+					"value": 2556
+				},
+				"6": {
+					"buy": 218,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.034
+					},
+					"sell": 123,
+					"value": 222
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0347
+					},
+					"value": 238
+				}
+			},
+			"pct_range": [
+				-0.1,
+				0.25
+			],
+			"set": "",
+			"slot": 6
+		},
+		"acc_oakheart": {
+			"by_rank": {
+				"0": {
+					"buy": 155,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 40.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 20.0,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"sell": 88,
+					"value": 158
+				},
+				"1": {
+					"buy": 194,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 47.5,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 25.0,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"sell": 109,
+					"value": 197
+				},
+				"15": {
+					"buy": 992,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 77.3926,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 44.9284,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"sell": 564,
+					"value": 1012
+				},
+				"30": {
+					"buy": 2779,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 99.4713,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 59.6475,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"sell": 1580,
+					"value": 2835
+				},
+				"6": {
+					"buy": 388,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 61.0341,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 34.0227,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"sell": 220,
+					"value": 395
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 62.0842,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 34.7228,
+						"move_speed": -10.0,
+						"power": 0.0
+					},
+					"value": 413
+				}
+			},
+			"pct_range": [
+				-0.1,
+				0.2
+			],
+			"set": "",
+			"slot": 6
+		},
+		"conduit_actuators": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 49
+				},
+				"15": {
+					"buy": 874,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.045,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 496,
+					"value": 891
+				},
+				"30": {
+					"buy": 2859,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.045,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1625,
+					"value": 2917
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.028,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0294,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 251
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "conduit",
+			"slot": 4
+		},
+		"conduit_charm": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 48,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.005,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 26,
+					"value": 48
+				},
+				"15": {
+					"buy": 873,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0249,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 496,
+					"value": 890
+				},
+				"30": {
+					"buy": 2859,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0396,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1625,
+					"value": 2917
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.014,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0147,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 250
+				}
+			},
+			"pct_range": [
+				-0.5,
+				0.8
+			],
+			"set": "conduit",
+			"slot": 5
+		},
+		"conduit_greaves": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 5.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 50
+				},
+				"15": {
+					"buy": 881,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 22.5,
+						"power": 0.0
+					},
+					"sell": 500,
+					"value": 898
+				},
+				"30": {
+					"buy": 2866,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 22.5,
+						"power": 0.0
+					},
+					"sell": 1629,
+					"value": 2924
+				},
+				"6": {
+					"buy": 233,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 14.0227,
+						"power": 0.0
+					},
+					"sell": 132,
+					"value": 237
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 14.7228,
+						"power": 0.0
+					},
+					"value": 256
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "conduit",
+			"slot": 2
+		},
+		"conduit_heart": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 52,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 10.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 29,
+					"value": 53
+				},
+				"15": {
+					"buy": 896,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 49.8569,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 509,
+					"value": 914
+				},
+				"30": {
+					"buy": 2897,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 79.295,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1647,
+					"value": 2956
+				},
+				"6": {
+					"buy": 242,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 28.0454,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 137,
+					"value": 246
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 29.4456,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 265
+				}
+			},
+			"pct_range": [
+				-0.35,
+				0.5
+			],
+			"set": "conduit",
+			"slot": 0
+		},
+		"conduit_lens": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.01
+					},
+					"sell": 27,
+					"value": 49
+				},
+				"15": {
+					"buy": 875,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0499
+					},
+					"sell": 497,
+					"value": 892
+				},
+				"30": {
+					"buy": 2862,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0793
+					},
+					"sell": 1627,
+					"value": 2920
+				},
+				"6": {
+					"buy": 230,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.028
+					},
+					"sell": 130,
+					"value": 234
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0294
+					},
+					"value": 252
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "conduit",
+			"slot": 3
+		},
+		"conduit_plating": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 50,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 1.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 28,
+					"value": 51
+				},
+				"15": {
+					"buy": 885,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 4.9857,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 503,
+					"value": 903
+				},
+				"30": {
+					"buy": 2879,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 7.9295,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1636,
+					"value": 2937
+				},
+				"6": {
+					"buy": 236,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 2.8045,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 133,
+					"value": 240
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 2.9446,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 258
+				}
+			},
+			"pct_range": [
+				-0.35,
+				0.5
+			],
+			"set": "conduit",
+			"slot": 1
+		},
+		"curse_ashen_ballast": {
+			"by_rank": {
+				"0": {
+					"buy": 106,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 34.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 60,
+					"value": 108
+				},
+				"1": {
+					"buy": 134,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 37.5,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 75,
+					"value": 136
+				},
+				"15": {
+					"buy": 883,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 51.4499,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 502,
+					"value": 901
+				},
+				"30": {
+					"buy": 2636,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 61.7533,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1498,
+					"value": 2689
+				},
+				"6": {
+					"buy": 305,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 43.8159,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 173,
+					"value": 311
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 44.306,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 328
+				}
+			},
+			"pct_range": [
+				-0.95,
+				0.0
+			],
+			"set": "",
+			"slot": 1
+		},
+		"curse_hollow_reliquary": {
+			"by_rank": {
+				"0": {
+					"buy": 37,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.22
+					},
+					"sell": 20,
+					"value": 37
+				},
+				"1": {
+					"buy": 56,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.245
+					},
+					"sell": 31,
+					"value": 57
+				},
+				"15": {
+					"buy": 778,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.3446
+					},
+					"sell": 441,
+					"value": 793
+				},
+				"30": {
+					"buy": 2508,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.4182
+					},
+					"sell": 1426,
+					"value": 2559
+				},
+				"6": {
+					"buy": 215,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.2901
+					},
+					"sell": 122,
+					"value": 219
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.2936
+					},
+					"value": 235
+				}
+			},
+			"pct_range": [
+				-0.8,
+				0.0
+			],
+			"set": "",
+			"slot": 3
+		},
+		"curse_jinxed_coin": {
+			"by_rank": {
+				"0": {
+					"buy": 37,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.3,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 20,
+					"value": 37
+				},
+				"1": {
+					"buy": 56,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.33,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 31,
+					"value": 57
+				},
+				"15": {
+					"buy": 778,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.4496,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 441,
+					"value": 793
+				},
+				"30": {
+					"buy": 2508,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.5379,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1426,
+					"value": 2559
+				},
+				"6": {
+					"buy": 215,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.3841,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 122,
+					"value": 219
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.3883,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 235
+				}
+			},
+			"pct_range": [
+				-0.95,
+				0.0
+			],
+			"set": "",
+			"slot": 5
+		},
+		"curse_leadfoot_vigil": {
+			"by_rank": {
+				"0": {
+					"buy": 34,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 30.0,
+						"power": 0.0
+					},
+					"sell": 18,
+					"value": 34
+				},
+				"1": {
+					"buy": 52,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 33.0,
+						"power": 0.0
+					},
+					"sell": 29,
+					"value": 53
+				},
+				"15": {
+					"buy": 773,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 43.5,
+						"power": 0.0
+					},
+					"sell": 439,
+					"value": 788
+				},
+				"30": {
+					"buy": 2499,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 43.5,
+						"power": 0.0
+					},
+					"sell": 1421,
+					"value": 2550
+				},
+				"6": {
+					"buy": 211,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 38.4136,
+						"power": 0.0
+					},
+					"sell": 119,
+					"value": 215
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 38.8337,
+						"power": 0.0
+					},
+					"value": 231
+				}
+			},
+			"pct_range": [
+				-0.45,
+				0.0
+			],
+			"set": "",
+			"slot": 2
+		},
+		"curse_slow_heart": {
+			"by_rank": {
+				"0": {
+					"buy": 58,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 40.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 32,
+					"value": 59
+				},
+				"1": {
+					"buy": 79,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 44.5,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 44,
+					"value": 80
+				},
+				"15": {
+					"buy": 803,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 62.4356,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 456,
+					"value": 819
+				},
+				"30": {
+					"buy": 2535,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 75.6828,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1441,
+					"value": 2586
+				},
+				"6": {
+					"buy": 239,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 52.6204,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 135,
+					"value": 243
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 53.2505,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 259
+				}
+			},
+			"pct_range": [
+				-0.3,
+				0.0
+			],
+			"set": "",
+			"slot": 0
+		},
+		"curse_sour_providence": {
+			"by_rank": {
+				"0": {
+					"buy": 50,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.22,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 28,
+					"value": 51
+				},
+				"1": {
+					"buy": 70,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.245,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 39,
+					"value": 71
+				},
+				"15": {
+					"buy": 790,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.3446,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 449,
+					"value": 806
+				},
+				"30": {
+					"buy": 2520,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.4182,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1432,
+					"value": 2571
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.2901,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.2936,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 248
+				}
+			},
+			"pct_range": [
+				-0.3,
+				0.0
+			],
+			"set": "",
+			"slot": 5
+		},
+		"curse_starving_crown": {
+			"by_rank": {
+				"0": {
+					"buy": 48,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 55.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 26,
+					"value": 48
+				},
+				"1": {
+					"buy": 68,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 61.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 38,
+					"value": 69
+				},
+				"15": {
+					"buy": 795,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 84.9141,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 451,
+					"value": 811
+				},
+				"30": {
+					"buy": 2530,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 102.577,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1438,
+					"value": 2581
+				},
+				"6": {
+					"buy": 230,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 71.8272,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 130,
+					"value": 234
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 72.6674,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 250
+				}
+			},
+			"pct_range": [
+				-0.6,
+				0.0
+			],
+			"set": "",
+			"slot": 0
+		},
+		"curse_tithe_bones": {
+			"by_rank": {
+				"0": {
+					"buy": 104,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 26.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 59,
+					"value": 106
+				},
+				"1": {
+					"buy": 130,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 29.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 73,
+					"value": 132
+				},
+				"15": {
+					"buy": 876,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 40.9571,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 497,
+					"value": 893
+				},
+				"30": {
+					"buy": 2624,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 49.7885,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1491,
+					"value": 2677
+				},
+				"6": {
+					"buy": 300,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 34.4136,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 170,
+					"value": 306
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 34.8337,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 322
+				}
+			},
+			"pct_range": [
+				-0.3,
+				0.0
+			],
+			"set": "",
+			"slot": 1
+		},
+		"gravemarch_bonekey": {
+			"by_rank": {
+				"0": {
+					"buy": 28,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.015,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 28
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.02,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 49
+				},
+				"15": {
+					"buy": 874,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0399,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 496,
+					"value": 891
+				},
+				"30": {
+					"buy": 2859,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0546,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1625,
+					"value": 2917
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.029,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0297,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 251
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 5
+		},
+		"gravemarch_carapace": {
+			"by_rank": {
+				"0": {
+					"buy": 31,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 1.5,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 17,
+					"value": 31
+				},
+				"1": {
+					"buy": 52,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 1.675,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 29,
+					"value": 53
+				},
+				"15": {
+					"buy": 878,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 2.3725,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 498,
+					"value": 895
+				},
+				"30": {
+					"buy": 2865,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 2.8877,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1629,
+					"value": 2923
+				},
+				"6": {
+					"buy": 234,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 1.9908,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 132,
+					"value": 238
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 2.0153,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 255
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 1
+		},
+		"gravemarch_censer": {
+			"by_rank": {
+				"0": {
+					"buy": 30,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.04
+					},
+					"sell": 16,
+					"value": 30
+				},
+				"1": {
+					"buy": 50,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0475
+					},
+					"sell": 28,
+					"value": 51
+				},
+				"15": {
+					"buy": 877,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0774
+					},
+					"sell": 498,
+					"value": 894
+				},
+				"30": {
+					"buy": 2863,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0995
+					},
+					"sell": 1627,
+					"value": 2921
+				},
+				"6": {
+					"buy": 232,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.061
+					},
+					"sell": 131,
+					"value": 236
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0621
+					},
+					"value": 254
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 3
+		},
+		"gravemarch_clockjaw": {
+			"by_rank": {
+				"0": {
+					"buy": 27,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": -0.01,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 27
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": -0.0075,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 49
+				},
+				"15": {
+					"buy": 872,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0012,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 495,
+					"value": 889
+				},
+				"30": {
+					"buy": 2857,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0012,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1624,
+					"value": 2915
+				},
+				"6": {
+					"buy": 228,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": -0.003,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 232
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": -0.0026,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 250
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 4
+		},
+		"gravemarch_stompers": {
+			"by_rank": {
+				"0": {
+					"buy": 29,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -4.0,
+						"power": 0.0
+					},
+					"sell": 16,
+					"value": 29
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -3.5,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 50
+				},
+				"15": {
+					"buy": 872,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -1.75,
+						"power": 0.0
+					},
+					"sell": 495,
+					"value": 889
+				},
+				"30": {
+					"buy": 2857,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -1.75,
+						"power": 0.0
+					},
+					"sell": 1624,
+					"value": 2915
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -2.5977,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": -2.5277,
+						"power": 0.0
+					},
+					"value": 251
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 2
+		},
+		"gravemarch_vessel": {
+			"by_rank": {
+				"0": {
+					"buy": 34,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 14.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 18,
+					"value": 34
+				},
+				"1": {
+					"buy": 55,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 15.5,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 31,
+					"value": 56
+				},
+				"15": {
+					"buy": 882,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 21.4785,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 501,
+					"value": 900
+				},
+				"30": {
+					"buy": 2870,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 25.8943,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1631,
+					"value": 2928
+				},
+				"6": {
+					"buy": 237,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 18.2068,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 134,
+					"value": 241
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 18.4168,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 259
+				}
+			},
+			"pct_range": [
+				-0.25,
+				0.4
+			],
+			"set": "gravemarch",
+			"slot": 0
+		},
+		"lattice_fingerprint": {
+			"by_rank": {
+				"0": {
+					"buy": 28,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.02,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 28
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.025,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 49
+				},
+				"15": {
+					"buy": 874,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0449,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 496,
+					"value": 891
+				},
+				"30": {
+					"buy": 2860,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0596,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1626,
+					"value": 2918
+				},
+				"6": {
+					"buy": 230,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.034,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 130,
+					"value": 234
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0347,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 251
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 5
+		},
+		"lattice_focusnode": {
+			"by_rank": {
+				"0": {
+					"buy": 29,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.03
+					},
+					"sell": 16,
+					"value": 29
+				},
+				"1": {
+					"buy": 50,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.035
+					},
+					"sell": 28,
+					"value": 51
+				},
+				"15": {
+					"buy": 875,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0549
+					},
+					"sell": 497,
+					"value": 892
+				},
+				"30": {
+					"buy": 2861,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0696
+					},
+					"sell": 1626,
+					"value": 2919
+				},
+				"6": {
+					"buy": 231,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.044
+					},
+					"sell": 130,
+					"value": 235
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0447
+					},
+					"value": 253
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 3
+		},
+		"lattice_pulsecoil": {
+			"by_rank": {
+				"0": {
+					"buy": 31,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 8.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 17,
+					"value": 31
+				},
+				"1": {
+					"buy": 52,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 9.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 29,
+					"value": 53
+				},
+				"15": {
+					"buy": 878,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 12.9857,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 498,
+					"value": 895
+				},
+				"30": {
+					"buy": 2865,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 15.9295,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1629,
+					"value": 2923
+				},
+				"6": {
+					"buy": 233,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 10.8045,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 132,
+					"value": 237
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 10.9446,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 255
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 0
+		},
+		"lattice_shellplate": {
+			"by_rank": {
+				"0": {
+					"buy": 30,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 1.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 16,
+					"value": 30
+				},
+				"1": {
+					"buy": 50,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 1.125,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 28,
+					"value": 51
+				},
+				"15": {
+					"buy": 876,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 1.6232,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 497,
+					"value": 893
+				},
+				"30": {
+					"buy": 2862,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 1.9912,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1627,
+					"value": 2920
+				},
+				"6": {
+					"buy": 232,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 1.3506,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 131,
+					"value": 236
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 1.3681,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 254
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 1
+		},
+		"lattice_strideframe": {
+			"by_rank": {
+				"0": {
+					"buy": 30,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 8.0,
+						"power": 0.0
+					},
+					"sell": 16,
+					"value": 30
+				},
+				"1": {
+					"buy": 51,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 9.0,
+						"power": 0.0
+					},
+					"sell": 28,
+					"value": 52
+				},
+				"15": {
+					"buy": 877,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 12.5,
+						"power": 0.0
+					},
+					"sell": 498,
+					"value": 894
+				},
+				"30": {
+					"buy": 2862,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 12.5,
+						"power": 0.0
+					},
+					"sell": 1627,
+					"value": 2920
+				},
+				"6": {
+					"buy": 232,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 10.8045,
+						"power": 0.0
+					},
+					"sell": 131,
+					"value": 236
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 10.9446,
+						"power": 0.0
+					},
+					"value": 254
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 2
+		},
+		"lattice_tickspurs": {
+			"by_rank": {
+				"0": {
+					"buy": 28,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.02,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 15,
+					"value": 28
+				},
+				"1": {
+					"buy": 49,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.025,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 27,
+					"value": 50
+				},
+				"15": {
+					"buy": 874,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0425,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 496,
+					"value": 891
+				},
+				"30": {
+					"buy": 2859,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0425,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1625,
+					"value": 2917
+				},
+				"6": {
+					"buy": 230,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.034,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 130,
+					"value": 234
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0347,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 252
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "lattice",
+			"slot": 4
+		},
+		"ring_crusher": {
+			"by_rank": {
+				"0": {
+					"buy": 59,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 35.0,
+						"power": 0.0
+					},
+					"sell": 33,
+					"value": 60
+				},
+				"1": {
+					"buy": 79,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 39.0,
+						"power": 0.0
+					},
+					"sell": 44,
+					"value": 80
+				},
+				"15": {
+					"buy": 799,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 53.0,
+						"power": 0.0
+					},
+					"sell": 454,
+					"value": 815
+				},
+				"30": {
+					"buy": 2526,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 53.0,
+						"power": 0.0
+					},
+					"sell": 1436,
+					"value": 2577
+				},
+				"6": {
+					"buy": 238,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 46.2182,
+						"power": 0.0
+					},
+					"sell": 134,
+					"value": 242
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 46.7782,
+						"power": 0.0
+					},
+					"value": 257
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.35
+			],
+			"set": "",
+			"slot": 7
+		},
+		"ring_regeneration": {
+			"by_rank": {
+				"0": {
+					"buy": 51,
+					"effect_multiplier": 1.0,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 10.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 28,
+					"value": 52
+				},
+				"1": {
+					"buy": 70,
+					"effect_multiplier": 1.5,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 12.5,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 39,
+					"value": 71
+				},
+				"15": {
+					"buy": 791,
+					"effect_multiplier": 3.4928,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 22.4642,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 449,
+					"value": 807
+				},
+				"30": {
+					"buy": 2521,
+					"effect_multiplier": 4.9648,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 29.8238,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 1433,
+					"value": 2572
+				},
+				"6": {
+					"buy": 229,
+					"effect_multiplier": 2.4023,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 17.0114,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"sell": 129,
+					"value": 233
+				},
+				"6.5": {
+					"effect_multiplier": 2.4723,
+					"flat": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 17.3614,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"value": 249
+				}
+			},
+			"pct_range": [
+				-0.2,
+				0.3
+			],
+			"set": "",
+			"slot": 7
+		}
+	},
+	"notes": [
+		"Neutral positive rolls; no Manifestations, augments, doctrine or Ascension rules.",
+		"Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (mods + rarity_base * (potency - 1)); the roll is applied later in the stat pipeline.",
+		"Primary-hit damage is base_weapon_damage * style multiplier * (1 + Power) with luck 0 (no crit); only the ranged value is a landed hit, melee and magic are formula values.",
+		"Set rows wear the set's six core items at the same rank; set effects run but no set attack was fired, so set origins are absent from attribution by construction."
+	],
+	"primary_hit": {
+		"base_weapon_damage": 12.0,
+		"by_rank": {
+			"0": {
+				"magic": 23.808,
+				"measured": {},
+				"melee": 19.2,
+				"power": 0.28,
+				"ranged": 15.36,
+				"stats": {
+					"armor": 2.0,
+					"haste": 0.1,
+					"luck": 0.1,
+					"max_hp": 110.0,
+					"move_speed": 115.0,
+					"power": 0.28
+				}
+			},
+			"1": {
+				"magic": 23.994,
+				"measured": {},
+				"melee": 19.35,
+				"power": 0.29,
+				"ranged": 15.48,
+				"stats": {
+					"armor": 2.0,
+					"haste": 0.1,
+					"luck": 0.1,
+					"max_hp": 110.0,
+					"move_speed": 115.0,
+					"power": 0.29
+				}
+			},
+			"15": {
+				"magic": 24.735,
+				"measured": {},
+				"melee": 19.948,
+				"power": 0.3299,
+				"ranged": 15.958,
+				"stats": {
+					"armor": 2.0,
+					"haste": 0.1,
+					"luck": 0.1,
+					"max_hp": 110.0,
+					"move_speed": 115.0,
+					"power": 0.3299
+				}
+			},
+			"30": {
+				"magic": 25.283,
+				"measured": {},
+				"melee": 20.389,
+				"power": 0.3593,
+				"ranged": 16.312,
+				"stats": {
+					"armor": 2.0,
+					"haste": 0.1,
+					"luck": 0.1,
+					"max_hp": 110.0,
+					"move_speed": 115.0,
+					"power": 0.3593
+				}
+			},
+			"6": {
+				"magic": 24.33,
+				"measured": {
+					"formula": 15.6965448922206,
+					"matches_formula": true,
+					"ranged_landed": 15.696533203125,
+					"target": "standard 1000 HP handle, no armour"
+				},
+				"melee": 19.621,
+				"power": 0.308,
+				"ranged": 15.697,
+				"stats": {
+					"armor": 2.0,
+					"haste": 0.1,
+					"luck": 0.1,
+					"max_hp": 110.0,
+					"move_speed": 115.0,
+					"power": 0.308
+				}
+			}
+		},
+		"style_multipliers": {
+			"magic": 1.55,
+			"melee": 1.25,
+			"ranged": 1.0
+		}
+	},
+	"race": "human",
+	"ranks": [
+		0.0,
+		1.0,
+		6.0,
+		15.0,
+		30.0
+	],
+	"recorder_revision": 2,
+	"segment": 5,
+	"sets": {
+		"conduit": {
+			"by_rank": {
+				"1": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 1.0,
+					"player_stats": {
+						"armor": 3.0,
+						"haste": 0.17,
+						"luck": 0.105,
+						"max_hp": 120.0,
+						"move_speed": 135.0,
+						"power": 0.29
+					},
+					"strength": 1.5
+				},
+				"15": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 15.0,
+					"player_stats": {
+						"armor": 6.9857,
+						"haste": 0.205,
+						"luck": 0.1249,
+						"max_hp": 159.8569,
+						"move_speed": 152.5,
+						"power": 0.3299
+					},
+					"strength": 3.4928
+				},
+				"30": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 30.0,
+					"player_stats": {
+						"armor": 9.9295,
+						"haste": 0.205,
+						"luck": 0.1396,
+						"max_hp": 189.295,
+						"move_speed": 152.5,
+						"power": 0.3593
+					},
+					"strength": 4.9648
+				},
+				"6": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 6.0,
+					"player_stats": {
+						"armor": 4.8045,
+						"haste": 0.188,
+						"luck": 0.114,
+						"max_hp": 138.0454,
+						"move_speed": 144.0227,
+						"power": 0.308
+					},
+					"strength": 2.4023
+				}
+			},
+			"members": [
+				"conduit_actuators",
+				"conduit_charm",
+				"conduit_greaves",
+				"conduit_heart",
+				"conduit_lens",
+				"conduit_plating"
+			],
+			"tiers": {
+				"2": {
+					"effects": 0,
+					"mods": {
+						"armor": 0.0,
+						"haste": 0.06,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 15.0,
+						"power": 0.0
+					},
+					"name": "Live Circuit"
+				},
+				"4": {
+					"effects": 1,
+					"mods": {
+						"armor": null,
+						"haste": null,
+						"luck": null,
+						"max_hp": null,
+						"move_speed": null,
+						"power": null
+					},
+					"name": "Arc Relay"
+				},
+				"6": {
+					"effects": 1,
+					"mods": {
+						"armor": null,
+						"haste": null,
+						"luck": null,
+						"max_hp": null,
+						"move_speed": null,
+						"power": null
+					},
+					"name": "Overclock Protocol"
+				}
+			}
+		},
+		"gravemarch": {
+			"by_rank": {
+				"1": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 1.0,
+					"player_stats": {
+						"armor": 7.175,
+						"haste": 0.0925,
+						"luck": 0.12,
+						"max_hp": 143.5,
+						"move_speed": 105.5,
+						"power": 0.3475
+					},
+					"strength": 1.5
+				},
+				"15": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 15.0,
+					"player_stats": {
+						"armor": 7.8725,
+						"haste": 0.1013,
+						"luck": 0.1399,
+						"max_hp": 149.4785,
+						"move_speed": 107.25,
+						"power": 0.3774
+					},
+					"strength": 3.4928
+				},
+				"30": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 30.0,
+					"player_stats": {
+						"armor": 8.3877,
+						"haste": 0.1013,
+						"luck": 0.1546,
+						"max_hp": 153.8943,
+						"move_speed": 107.25,
+						"power": 0.3995
+					},
+					"strength": 4.9648
+				},
+				"6": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 6.0,
+					"player_stats": {
+						"armor": 7.4908,
+						"haste": 0.097,
+						"luck": 0.129,
+						"max_hp": 146.2068,
+						"move_speed": 106.4023,
+						"power": 0.361
+					},
+					"strength": 2.4023
+				}
+			},
+			"members": [
+				"gravemarch_bonekey",
+				"gravemarch_carapace",
+				"gravemarch_censer",
+				"gravemarch_clockjaw",
+				"gravemarch_stompers",
+				"gravemarch_vessel"
+			],
+			"tiers": {
+				"2": {
+					"effects": 0,
+					"mods": {
+						"armor": 2.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 18.0,
+						"move_speed": -6.0,
+						"power": 0.0
+					},
+					"name": "Ballast Frame"
+				},
+				"4": {
+					"effects": 1,
+					"mods": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.02
+					},
+					"name": "Sunderstep"
+				},
+				"6": {
+					"effects": 1,
+					"mods": {
+						"armor": 1.5,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"name": "Mass Arrest"
+				}
+			}
+		},
+		"lattice": {
+			"by_rank": {
+				"1": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 1.0,
+					"player_stats": {
+						"armor": 3.125,
+						"haste": 0.185,
+						"luck": 0.145,
+						"max_hp": 119.0,
+						"move_speed": 134.0,
+						"power": 0.345
+					},
+					"strength": 1.5
+				},
+				"15": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 15.0,
+					"player_stats": {
+						"armor": 3.6232,
+						"haste": 0.2025,
+						"luck": 0.1649,
+						"max_hp": 122.9857,
+						"move_speed": 137.5,
+						"power": 0.3649
+					},
+					"strength": 3.4928
+				},
+				"30": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 30.0,
+					"player_stats": {
+						"armor": 3.9912,
+						"haste": 0.2025,
+						"luck": 0.1796,
+						"max_hp": 125.9295,
+						"move_speed": 137.5,
+						"power": 0.3796
+					},
+					"strength": 4.9648
+				},
+				"6": {
+					"active_effects": 2,
+					"count": 6,
+					"mean_rank": 6.0,
+					"player_stats": {
+						"armor": 3.3506,
+						"haste": 0.194,
+						"luck": 0.154,
+						"max_hp": 120.8045,
+						"move_speed": 135.8045,
+						"power": 0.354
+					},
+					"strength": 2.4023
+				}
+			},
+			"members": [
+				"lattice_fingerprint",
+				"lattice_focusnode",
+				"lattice_pulsecoil",
+				"lattice_shellplate",
+				"lattice_strideframe",
+				"lattice_tickspurs"
+			],
+			"tiers": {
+				"2": {
+					"effects": 0,
+					"mods": {
+						"armor": 0.0,
+						"haste": 0.0,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 10.0,
+						"power": 0.03
+					},
+					"name": "Indexed Motion"
+				},
+				"4": {
+					"effects": 1,
+					"mods": {
+						"armor": 0.0,
+						"haste": 0.02,
+						"luck": 0.0,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"name": "Afterstrike"
+				},
+				"6": {
+					"effects": 1,
+					"mods": {
+						"armor": 0.0,
+						"haste": 0.04,
+						"luck": 0.02,
+						"max_hp": 0.0,
+						"move_speed": 0.0,
+						"power": 0.0
+					},
+					"name": "Triangle Commit"
+				}
+			}
+		}
+	},
+	"style_for_landed_hit": "ranged",
+	"tuning_hash": ""
+}

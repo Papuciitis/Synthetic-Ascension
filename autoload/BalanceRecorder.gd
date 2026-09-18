@@ -12,6 +12,11 @@ const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_m
 ## instrumentation-only capture can never be mistaken for a tuned build.
 const RECORDER_REVISION := 2
 const BALANCE_REVISION := 1
+## The tuning profile the balance revision reads (introduced by the item
+## balance plan's stat curves). Its content hash travels in the capture
+## metadata so two captures with different numbers can never be confused;
+## with no profile on disk the hash is empty, meaning "no tuning profile".
+const TUNING_PROFILE_PATH := "res://data/items/item_scaling_v2.json"
 ## What this recorder measures; an omitted feature reads as unavailable, not 0.
 const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": true,
 	"incidents": true, "exit_detail": true, "progression": true}
@@ -73,6 +78,13 @@ func _ready() -> void:
 func is_recording() -> bool:
 	return _active
 
+## SHA-256 of the tuning profile, or "" when there is none. Stable across
+## calls and processes for the same file content.
+static func tuning_hash() -> String:
+	if not FileAccess.file_exists(TUNING_PROFILE_PATH):
+		return ""
+	return FileAccess.get_sha256(TUNING_PROFILE_PATH)
+
 ## What this capture measures: the extended features are declared only when
 ## they are switched on, so an omitted feature never reads as a zero.
 func features() -> Dictionary:
@@ -106,7 +118,7 @@ func begin_gameplay(player: Node) -> void:
 			"save_slot": slot, "build": Build.describe(Global.attempt_world_seed), "start_segment": Global.attempt_segment,
 			"coverage": "observed_session", "starting_debug": _debug_snapshot(),
 			"recorder_revision": RECORDER_REVISION, "balance_revision": BALANCE_REVISION,
-			"tuning_stages": [], "tuning_hash": "", "features": features()}
+			"tuning_stages": [], "tuning_hash": tuning_hash(), "features": features()}
 		_ledger = Ledger.new()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)
 		if "hp" in player and "max_hp" in player:

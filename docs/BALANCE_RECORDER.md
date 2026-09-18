@@ -40,7 +40,7 @@ of `recording` means the final boundary has not been saved, not a completed run.
 - `schema_version` 2 captures carry `metadata.recorder_revision` (the
   recorder's contract), `metadata.balance_revision` (the item/encounter tuning
   state, 1 until the balance plan's profiles are active), `tuning_stages`,
-  `tuning_hash` and `metadata.features`: which measurements this recorder
+  `tuning_hash` (SHA-256 of `data/items/item_scaling_v2.json` when a tuning profile exists, empty otherwise) and `metadata.features`: which measurements this recorder
   makes. A feature that is false (or a field absent from an older capture)
   means unavailable, never a measured zero.
 - Health reconciliation (`summary.health`): every actual HP change is recorded
@@ -263,6 +263,20 @@ incident button calls it while a capture is live. Each persisted incident is
 held under a 2 MiB serialized ceiling: the oldest events go first, then the
 oldest samples, never the terminal event or the latest state, and the trim is
 reported in the record and in the summary's `incidents` block.
+
+## Baseline probe
+
+`tools/tests/ItemBalanceProbe.tscn` exports the laboratory half of a balance
+baseline from the current production formulas: every runtime item's flat
+contributions, effect potency and market values at ranks 0/1/6/15/30 and
+6.5, the primary-hit damage each style's formula yields at those Power ranks
+with one real landed ranged hit as verification, the constant-EHP fixture
+fed through the real damage path, each set's mean rank, strength and tier
+bonuses with its six core items worn, and the attribution coverage the
+recorder observed. `PROBE_OUT=<path>` writes the JSON relative to the
+project; `BalanceRevisionTest` checks that a capture declares its balance
+revision and tuning hash and that ring healing and Slow Heart reconcile. The
+2026-09-18 export is `docs/audits/2026-09-18-item-balance-baseline.{json,md}`.
 
 ## Recording cost and compatibility
 

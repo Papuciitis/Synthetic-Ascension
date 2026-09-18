@@ -1,0 +1,10 @@
+{
+	"description": "Constant-EHP fixture for the balance probe: HP * (1 + armor/100) / other_multiplier against one ordinary hit with evasion, invulnerability and healing disabled.",
+	"max_hp": 200.0,
+	"armor": 50.0,
+	"other_damage_multiplier": 0.8,
+	"raw_hit": 50.0,
+	"expected_hp_loss": 26.6667,
+	"expected_ehp": 375.0,
+	"tolerance": 0.001
+}
