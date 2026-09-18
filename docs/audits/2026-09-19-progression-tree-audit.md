@@ -101,15 +101,20 @@ size of the effect explicit:
 | seg6 | magic | 0% / 3,845 | 12% / 5,160 | 2% / 4,960 |
 | seg12 | melee | 0% / 7,601 | 21% / 7,936 | 55% / 8,293 |
 
-The median spread between the best and worst set for the same build is
-1.79x, 19 of 56 builds move by 2x or more on the set alone, and Endless
-Lunge reads 352 / 2,472 / 6,023 HP/s under Conduit / Gravemarch /
-Lattice. Conduit's six-piece landed 45-92 HP per fight because its
+In that first probe the median spread between the best and worst set for
+the same build was 1.79x and 19 of 56 builds moved by 2x or more on the
+set alone; Conduit's six-piece landed 45-92 HP per fight because its
 Overclock only listened to `enemy_killed`, which actor-less (proxy)
-deaths never emit; that is fixed after this probe (Overclock now primes
-on `enemy_defeated` too), so the Conduit column will move on a rerun.
-Lattice's numbers are its own. Momentum pure is 87% set damage and in the ablation every one
-of its thirteen nodes lands inside the noise floor. Part of this is the
+deaths never emit. With that fixed (Overclock primes on `enemy_defeated`
+too) the rerun (`set-output-rev2b/`) reads Conduit at 24-36% of melee
+damage through seg6, the median spread 1.48x and 13 of 56 builds at 2x
+or more; Gravemarch and Lattice are unchanged. Ranged and magic set shares
+are lower bounds in this simulator (their set payloads are node-based
+bullets and impacts that never connect with the handle-only crowd; see
+`docs/BUILD_SIMULATOR.md`). Lattice's melee numbers are its own.
+
+Momentum pure is 87% set damage and in the ablation every one of its
+thirteen nodes lands inside the noise floor. Part of this is the
 scenario (see the Momentum note above), but Execution pure, whose nodes
 do fire, is still 75% sets at seg6. Magic is the mirror image: 82-88%
 tree. The set scaling change of balance revision 2 (bounded channels)

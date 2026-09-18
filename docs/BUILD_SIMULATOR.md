@@ -30,7 +30,15 @@ engine's hold hook for two seconds and released through the runner's
 recovery rule; campaigns 2 and 3 predate this and re-pressed them every
 six frames, so their Bastion and Precision rows are not trustworthy.
 `tools/sim/set_output_report.py` compares the same builds under each set
-(`docs/audits/2026-09-19-build-simulator/set-output-rev2/`).
+(`docs/audits/2026-09-19-build-simulator/set-output-rev2/`, and `-rev2b/`
+after Conduit's Overclock learned to prime on proxy kills).
+
+The crowd is handle-only (no actor nodes), so set payloads that are
+node-based projectiles or impacts (Lattice's and Gravemarch's ranged
+bullets, the magic impacts they ask the player to spawn, Conduit's ranged
+bursts and magic barrages) never connect: ranged and magic set shares in
+the simulator are lower bounds, melee set shares (radius damage through
+the combat service) are measured.
 
 ## What a build is
 
