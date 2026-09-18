@@ -88,6 +88,7 @@ class StubPlayer:
 	var hp: float = 50.0
 	var max_hp: float = 100.0
 	var heals: Array[float] = []
+	var is_dead: bool = false
 
 	func heal(amount: float, _source: StringName = &"generic") -> void:
 		if amount <= 0.0:
@@ -295,6 +296,7 @@ func _run() -> void:
 	_test_speed_ring_multiplier()
 	await _test_firestone_burn_reaches_an_enemy()
 	await _test_regeneration_heals_over_ticks()
+	await _test_revision_two_accessory_contracts()
 	await _test_slow_heart_intercepts_healing()
 	await _test_sour_providence_biases_the_drop_table()
 	await _test_tithe_bones_bills_followers()
@@ -572,17 +574,17 @@ func _test_apply_effects_to_stats() -> void:
 	)
 
 	Global.selected_style_id = "magic"
-	var base_power: float = float(fire.get("base_magic_power"))
-	var base_haste: float = float(fire.get("base_magic_haste"))
-	var pct_to_power: float = float(fire.get("pct_to_magic_power"))
+	var worn_stone: ItemInstance = inv.get_at(offhand)
+	var expected_power: float = float(fire.call("magic_power_bonus_at", worn_stone, 0.0))
+	var expected_haste: float = float(fire.call("magic_haste_at", 0.0))
 
 	var magic_stats := Stats.new()
 	runner.apply_effects_to_stats(magic_stats)
 	_check(
-		_close(magic_stats.power, base_power + 0.25 * pct_to_power),
-		"a magic run gets base Power plus the rolled share (%.4f)" % magic_stats.power
+		_close(magic_stats.power, expected_power) and _close(expected_power, (0.06 + 0.525 * 0.25) * ItemScaling.accessory_factor("acc_firestone", 0.0)),
+		"a magic run gets (0.06 + 0.525 roll) * B(0) Power (%.4f)" % magic_stats.power
 	)
-	_check(_close(magic_stats.haste, base_haste), "and the base Haste at R0 (%.4f)" % magic_stats.haste)
+	_check(_close(magic_stats.haste, expected_haste) and _close(expected_haste, 0.02), "and 0.02 Haste at R0 (%.4f)" % magic_stats.haste)
 
 	# apply_effects_to_stats ADDS to whatever the caller already computed - the
 	# player passes a Stats that already carries race, style and equipment.
@@ -599,23 +601,17 @@ func _test_apply_effects_to_stats() -> void:
 	# Haste - a rate stat - is capped at the spec's 2.25 (FirestoneEffect:101).
 	inv.set_item(offhand, _pos(_firestone, 10, 0.90))
 	runner.refresh_effects(inv)
-	var rarity_mult: float = RarityMath.potency(10.0)
 	var rich := Stats.new()
 	runner.apply_effects_to_stats(rich)
+	var scale_r10: float = ItemScaling.accessory_factor("acc_firestone", 10.0)
 	_check(
-		_close(rich.power, (base_power + 0.5 * pct_to_power) * rarity_mult, 0.001),
-		"a wild roll's Power share stops at the +50%% clamp, then rarity scales it (%.4f)" % rich.power
+		_close(rich.power, (0.06 + 0.525 * 0.5) * scale_r10, 0.001),
+		"a wild roll's Power share stops at the +50%% clamp, then B(10) scales it (%.4f)" % rich.power
 	)
 	_check(
-		_close(rich.haste, base_haste * RarityMath.RATE_STAT_POTENCY_CAP, 0.001),
-		"Haste stops at the rate-stat cap (%.4f)" % rich.haste
+		_close(rich.haste, ItemScaling.sample_rate(10.0, 0.02, 0.03, 0.05, 12.0), 0.001) and rich.haste < 0.05,
+		"Haste follows the smooth curve toward its 0.05 limit (%.4f)" % rich.haste
 	)
-	_check(
-		rich.haste < base_haste * rarity_mult,
-		"which is strictly less than the uncapped curve would give (%.4f < %.4f)" % [rich.haste, base_haste * rarity_mult]
-	)
-
-	# The other six move nothing through this channel.
 	inv.set_item(offhand, _pos(_oakheart, 4, 0.2))
 	inv.set_item(int(_regen.equip_slot), _pos(_regen, 4, 0.2))
 	inv.set_item(int(_slow_heart.equip_slot), _neg(_slow_heart, 4, 0.30))
@@ -696,8 +692,8 @@ func _test_oakheart_damage_taken_multiplier() -> void:
 	runner.refresh_effects(inv)
 	var r6 := runner.get_damage_taken_multiplier()
 	_check(
-		_close(r6, 1.0 - base_dr * RarityMath.potency(6.0), 0.001),
-		"rarity scales the reduction along the potency curve (%.4f)" % r6
+		_close(r6, 1.0 - minf(0.15, base_dr * ItemScaling.accessory_factor("acc_oakheart", 6.0)), 0.001),
+		"rank scales the reduction along the profile's curve (%.4f)" % r6
 	)
 	_check(r6 < 1.0 - base_dr, "so a ranked-up shield really does take less (%.4f)" % r6)
 
@@ -705,8 +701,8 @@ func _test_oakheart_damage_taken_multiplier() -> void:
 	inv.set_item(slot, _pos(_oakheart, 50, 0.50))
 	runner.refresh_effects(inv)
 	_check(
-		_close(runner.get_damage_taken_multiplier(), 0.50),
-		"an absurd shield still lets half the hit through - the 50%% cap holds (%.4f)"
+		_close(runner.get_damage_taken_multiplier(), 1.0 - minf(0.15, 0.09 * ItemScaling.accessory_factor("acc_oakheart", 50.0)), 0.0001) and runner.get_damage_taken_multiplier() >= 0.85,
+		"an absurd shield stops at the formula's own ceiling, inside the 15%% cap (%.4f)"
 			% runner.get_damage_taken_multiplier()
 	)
 
@@ -723,8 +719,8 @@ func _test_oakheart_damage_taken_multiplier() -> void:
 	stack_runner.refresh_effects(stack_inv)
 	_check(_effects(stack_runner, OAKHEART_SCENE_PATH).size() == 2, "two shields are running")
 	_check(
-		_close(stack_runner.get_damage_taken_multiplier(), 0.25),
-		"two capped shields multiply to a quarter, never to zero (%.4f)" % stack_runner.get_damage_taken_multiplier()
+		_close(stack_runner.get_damage_taken_multiplier(), pow(1.0 - minf(0.15, 0.09 * ItemScaling.accessory_factor("acc_oakheart", 50.0)), 2.0)),
+		"two shields multiply their reductions, never to zero (%.4f)" % stack_runner.get_damage_taken_multiplier()
 	)
 	_check(stack_runner.get_damage_taken_multiplier() > 0.0, "damage taken can never reach immunity")
 	_drop_rig(stack_rig)
@@ -755,14 +751,14 @@ func _test_speed_ring_multiplier() -> void:
 	inv.set_item(slot, _pos(_crusher, 4, 0.30))
 	runner.refresh_effects(inv)
 	_check(
-		_close(runner.get_move_speed_multiplier(), 1.0 + 0.30 * minf(RarityMath.potency(4.0), 1.75), 0.001),
-		"rarity grows the bonus along the curve (%.4f)" % runner.get_move_speed_multiplier()
+		_close(runner.get_move_speed_multiplier(), 1.0 + 0.30 * ItemScaling.accessory_factor("ring_crusher", 4.0), 0.001),
+		"rank grows the bonus along the profile's amplification (%.4f)" % runner.get_move_speed_multiplier()
 	)
 	inv.set_item(slot, _pos(_crusher, 40, 0.30))
 	runner.refresh_effects(inv)
 	_check(
-		_close(runner.get_move_speed_multiplier(), 1.0 + 0.30 * 1.75, 0.001),
-		"and stops at the 1.75x rarity cap however high the rank goes (%.4f)" % runner.get_move_speed_multiplier()
+		_close(runner.get_move_speed_multiplier(), 1.0 + 0.30 * ItemScaling.accessory_factor("ring_crusher", 40.0), 0.001) and ItemScaling.accessory_factor("ring_crusher", 40.0) < 2.0,
+		"and approaches the 2.0x amplification limit however high the rank goes (%.4f)" % runner.get_move_speed_multiplier()
 	)
 
 	# A negative roll is NOT rarity-scaled: ranking up a bad ring must not
@@ -815,7 +811,7 @@ func _test_firestone_burn_reaches_an_enemy() -> void:
 	var duration: float = float(fire.get("burn_duration"))
 	var tick: float = float(fire.get("burn_tick"))
 	var stacks: int = int(fire.get("burn_stacks"))
-	var expected_mult: float = tick_mult * (1.0 + 0.25 * roll_scale)
+	var expected_mult: float = tick_mult * (1.0 + 0.25 * roll_scale) * ItemScaling.accessory_factor("acc_firestone", 0.0)
 
 	var clean := HitProfileAdapter.new()
 	clean.reset(40.0)
@@ -847,8 +843,8 @@ func _test_firestone_burn_reaches_an_enemy() -> void:
 	ranked.reset(40.0)
 	runner.apply_to_managed_hit_profile(ranked, &"ranged")
 	_check(
-		_close(float(ranked.get_meta("burn_tick_mult")), expected_mult * RarityMath.potency(9.0), 0.00001),
-		"a ranked Firestone burns harder along the potency curve (%.5f)" % float(ranked.get_meta("burn_tick_mult"))
+		_close(float(ranked.get_meta("burn_tick_mult")), expected_mult / ItemScaling.accessory_factor("acc_firestone", 0.0) * ItemScaling.accessory_factor("acc_firestone", 9.0), 0.00001),
+		"a ranked Firestone burns harder along the profile's curve (%.5f)" % float(ranked.get_meta("burn_tick_mult"))
 	)
 
 	# Melee and magic must carry the same rider. The dispatcher existed and
@@ -948,15 +944,16 @@ func _test_firestone_burn_reaches_an_enemy() -> void:
 # ---------------------------------------------------------------------------
 
 func _test_regeneration_heals_over_ticks() -> void:
+	# Revision 2: mean = (1.5 + 0.015 * max HP) * A(r) * max(0.10, 1 + roll),
+	# a 0.4..1.6 roll (injected here), a 5% max-HP cap, never on a dead player.
 	var rig := _make_rig()
 	var inv: Inventory = rig["inv"] as Inventory
 	var stub: StubPlayer = rig["stub"] as StubPlayer
 	var runner: ItemEffectRunner = rig["runner"] as ItemEffectRunner
 	var slot: int = int(_regen.equip_slot)
-
-	stub.max_hp = 100000.0
+	stub.max_hp = 200.0
 	stub.hp = 10.0
-	var worn := _pos(_regen, 0, 0.30)
+	var worn := _pos(_regen, 6, 0.0)
 	inv.set_item(slot, worn)
 	runner.refresh_effects(inv)
 	var ring: Node = _one_effect(runner, REGEN_SCENE_PATH)
@@ -964,78 +961,60 @@ func _test_regeneration_heals_over_ticks() -> void:
 	if ring == null:
 		_drop_rig(rig)
 		return
-
-	var heal_min: float = float(ring.get("heal_min"))
-	var heal_max: float = float(ring.get("heal_max"))
-	# The authored interval is one second; shortening it keeps the suite well
-	# inside its time budget without changing the rule under test.
+	_check(_close(float(ring.call("mean_heal", worn, 200.0)), 5.4), "at 200 max HP a neutral R6 ring means 5.4 HP per tick (%.3f)" % float(ring.call("mean_heal", worn, 200.0)))
 	ring.set("tick_interval", 0.02)
-
-	var effect_mult: float = maxf(0.10, 1.0 + worn.active_pct())
-	var scale: float = worn.rarity_effect_multiplier() * effect_mult
+	ring.set("roll_override", 1.0)
 	var got: bool = await _wait_until(func() -> bool: return stub.heals.size() >= 5)
 	_check(got, "wearing it heals the player repeatedly (%d ticks)" % stub.heals.size())
-
-	var in_band := true
+	var exact := not stub.heals.is_empty()
 	for amount: float in stub.heals:
-		if amount < heal_min * scale - 0.0001 or amount > heal_max * scale + 0.0001:
-			in_band = false
-			push_error("heal %.4f outside [%.4f, %.4f]" % [amount, heal_min * scale, heal_max * scale])
-	_check(in_band, "every tick heals inside the rolled band [%.2f, %.2f]" % [heal_min * scale, heal_max * scale])
+		if not _close(amount, 5.4, 0.0001):
+			exact = false
+	_check(exact, "a midpoint roll heals exactly the mean every tick")
 	var total := 0.0
 	for amount: float in stub.heals:
 		total += amount
 	_check(_close(stub.hp, 10.0 + total, 0.001), "and the HP on the bar is the sum of what landed (%.3f)" % stub.hp)
-
-	# Unequipping must stop it dead - a regen that outlives the ring would heal
-	# through the rest of the run.
+	_check(_close(float(ring.call("tick_amount", worn, 200.0, 0.4)), 2.16) and _close(float(ring.call("tick_amount", worn, 200.0, 1.6)), 8.64), "the roll endpoints give 2.16 and 8.64 HP under the 10 HP cap")
+	_check(_close(float(ring.call("tick_amount", worn, 40.0, 1.6)), 2.0), "at 40 max HP the best roll is capped to 5%% of max HP (%.3f)" % float(ring.call("tick_amount", worn, 40.0, 1.6)))
+	stub.heals.clear()
+	stub.is_dead = true
+	await _wait_until(func() -> bool: return false, 0.2)
+	_check(stub.heals.is_empty(), "a dead player is never healed (%d ticks)" % stub.heals.size())
+	stub.is_dead = false
 	inv.remove_at(slot)
 	runner.refresh_effects(inv)
 	await _wait_until(func() -> bool: return runner.get_child_count() == 0)
 	stub.heals.clear()
 	var frozen := stub.hp
-	await _wait_until(func() -> bool: return false, 0.5)
+	await _wait_until(func() -> bool: return false, 0.3)
 	_check(stub.heals.is_empty() and _close(stub.hp, frozen), "unequipping the ring stops the healing (%d ticks)" % stub.heals.size())
 	_drop_rig(rig)
-
-	# A ruined roll still heals the floor rather than nothing: the clamp's lower
-	# bound is what keeps a bad ring from being a dead slot.
+	# A ruined roll keeps 10% of the mean rather than a fixed floor.
 	var floor_rig := _make_rig()
 	var floor_inv: Inventory = floor_rig["inv"] as Inventory
 	var floor_stub: StubPlayer = floor_rig["stub"] as StubPlayer
 	var floor_runner: ItemEffectRunner = floor_rig["runner"] as ItemEffectRunner
-	floor_stub.max_hp = 100000.0
+	floor_stub.max_hp = 200.0
 	floor_stub.hp = 10.0
-	floor_inv.set_item(slot, _item(_regen, 0, ItemInstance.Polarity.NEG, -0.95))
+	floor_inv.set_item(slot, _item(_regen, 6, ItemInstance.Polarity.NEG, -0.95))
 	floor_runner.refresh_effects(floor_inv)
 	var ruined: Node = _one_effect(floor_runner, REGEN_SCENE_PATH)
 	_check(ruined != null, "a ruined Ring of Regeneration still runs")
 	if ruined != null:
 		ruined.set("tick_interval", 0.02)
+		ruined.set("roll_override", 1.0)
 		var floored: bool = await _wait_until(func() -> bool: return floor_stub.heals.size() >= 4)
 		_check(floored, "and still heals (%d ticks)" % floor_stub.heals.size())
 		var all_floor := not floor_stub.heals.is_empty()
 		for amount: float in floor_stub.heals:
-			if not _close(amount, 0.5, 0.0001):
+			if not _close(amount, 4.5 * 1.2 * 0.10, 0.0001):
 				all_floor = false
-		_check(all_floor, "every tick is exactly the 0.5 HP floor, never nothing")
+		_check(all_floor, "every tick is one tenth of the mean, never nothing")
 	_drop_rig(floor_rig)
-
-	# Rarity has to be RUN, not computed. Every ring driven above this point is
-	# R0, where `rarity_effect_multiplier()` is exactly 1.0, so none of those
-	# ticks can see rarity at all: the per-tick line
-	# `amt *= rarity_mult * _effect_multiplier(item)` and the rarity-scaled
-	# ceiling that replaced a flat 12.0 (RegenerationRingEffect.gd:67-72) are
-	# only under test once a ranked ring is instantiated and healing.
+	# Rank grows the mean along the profile: R25 beats R0 on every roll.
 	var low := _pos(_regen, 0, 0.30)
 	var high := _pos(_regen, 25, 0.30)
-	var high_mult: float = high.rarity_effect_multiplier()
-	var low_scale: float = low.rarity_effect_multiplier() * maxf(0.10, 1.0 + low.active_pct())
-	var high_scale: float = high_mult * maxf(0.10, 1.0 + high.active_pct())
-	# Fixture guard: if ranking a ring ever stopped moving this number, the live
-	# bands below would still line up and would assert nothing.
-	_check(high_mult > 1.0, "ranking a ring moves its effect multiplier off 1.0 (R25 = %.3f)" % high_mult)
-
 	var rank_rig := _make_rig()
 	var rank_inv: Inventory = rank_rig["inv"] as Inventory
 	var rank_stub: StubPlayer = rank_rig["stub"] as StubPlayer
@@ -1047,98 +1026,22 @@ func _test_regeneration_heals_over_ticks() -> void:
 	var ranked: Node = _one_effect(rank_runner, REGEN_SCENE_PATH)
 	_check(ranked != null, "an R25 Ring of Regeneration runs")
 	if ranked != null:
+		var low_best: float = float(ranked.call("mean_heal", low, 100000.0)) * 1.6
+		var high_mean: float = float(ranked.call("mean_heal", high, 100000.0))
+		_check(high_mean > low_best, "an R25 ring's mean beats an R0 ring's best possible roll (%.1f > %.1f)" % [high_mean, low_best])
 		ranked.set("tick_interval", 0.02)
 		var ranked_got: bool = await _wait_until(func() -> bool: return rank_stub.heals.size() >= 6)
 		_check(ranked_got, "and heals the player repeatedly (%d ticks)" % rank_stub.heals.size())
 		var ranked_band := not rank_stub.heals.is_empty()
-		var beats_r0 := not rank_stub.heals.is_empty()
 		var ranked_total := 0.0
 		for amount: float in rank_stub.heals:
 			ranked_total += amount
-			if amount < heal_min * high_scale - 0.0001 or amount > heal_max * high_scale + 0.0001:
+			if amount < high_mean * 0.4 - 0.0001 or amount > minf(high_mean * 1.6, 5000.0) + 0.0001:
 				ranked_band = false
-			if amount <= heal_max * low_scale:
-				beats_r0 = false
-		_check(
-			ranked_band,
-			"every ranked tick lands in the R25 band [%.2f, %.2f]" % [heal_min * high_scale, heal_max * high_scale]
-		)
-		# Not a lucky sample: the two bands do not overlap, so a ranked ring's
-		# worst possible tick is above an R0 ring's best possible one.
-		_check(
-			beats_r0,
-			"and beats an R0 ring's best possible tick on every roll (> %.2f)" % (heal_max * low_scale)
-		)
-		_check(
-			_close(rank_stub.hp, 10.0 + ranked_total, 0.001),
-			"the ranked ring's heals land on the bar (%.3f)" % rank_stub.hp
-		)
+		_check(ranked_band, "every ranked tick lands in the R25 band [%.1f, %.1f]" % [high_mean * 0.4, minf(high_mean * 1.6, 5000.0)])
+		_check(_close(rank_stub.hp, 10.0 + ranked_total, 0.001), "the ranked ring's heals land on the bar (%.3f)" % rank_stub.hp)
 	_drop_rig(rank_rig)
 
-	# The ceiling carries a story: "the old flat 12.0 silently capped the ring's
-	# growth around R5" (RegenerationRingEffect.gd:70-71). At the shipped band a
-	# ranked ring rolls straight through 12.0, so the guard only holds if a
-	# top-of-band tick arrives whole. Collapsing the ring's own band onto its top
-	# edge takes the dice out of it - the clamp is then the only thing left that
-	# can move the number, and one tick must equal the whole top of the band.
-	var top_rig := _make_rig()
-	var top_inv: Inventory = top_rig["inv"] as Inventory
-	var top_stub: StubPlayer = top_rig["stub"] as StubPlayer
-	var top_runner: ItemEffectRunner = top_rig["runner"] as ItemEffectRunner
-	top_stub.max_hp = 100000.0
-	top_stub.hp = 10.0
-	top_inv.set_item(slot, _pos(_regen, 25, 0.30))
-	top_runner.refresh_effects(top_inv)
-	var topped: Node = _one_effect(top_runner, REGEN_SCENE_PATH)
-	_check(topped != null, "a top-of-band R25 ring runs")
-	if topped != null:
-		topped.set("tick_interval", 0.02)
-		topped.set("heal_min", heal_max)
-		var expected_top: float = heal_max * high_scale
-		var topped_got: bool = await _wait_until(func() -> bool: return top_stub.heals.size() >= 3)
-		_check(topped_got, "and heals (%d ticks)" % top_stub.heals.size())
-		var all_top := not top_stub.heals.is_empty()
-		for amount: float in top_stub.heals:
-			if not _close(amount, expected_top, 0.001):
-				all_top = false
-		_check(all_top, "every tick is the full rarity-scaled top of the band (%.2f HP)" % expected_top)
-		_check(
-			expected_top > 12.0,
-			"which is past the old flat 12.0 ceiling that used to clip it (%.2f)" % expected_top
-		)
-	_drop_rig(top_rig)
-
-	# And the ceiling itself still exists and scales: ask the ring for more than
-	# any roll could ever produce and the tick comes back at 12 HP x the rarity
-	# multiplier, neither uncapped nor flat.
-	var cap_rig := _make_rig()
-	var cap_inv: Inventory = cap_rig["inv"] as Inventory
-	var cap_stub: StubPlayer = cap_rig["stub"] as StubPlayer
-	var cap_runner: ItemEffectRunner = cap_rig["runner"] as ItemEffectRunner
-	cap_stub.max_hp = 100000.0
-	cap_stub.hp = 10.0
-	cap_inv.set_item(slot, _pos(_regen, 25, 0.30))
-	cap_runner.refresh_effects(cap_inv)
-	var capped: Node = _one_effect(cap_runner, REGEN_SCENE_PATH)
-	_check(capped != null, "a ring asked for more than the ceiling allows still runs")
-	if capped != null:
-		capped.set("tick_interval", 0.02)
-		capped.set("heal_min", 1000.0)
-		capped.set("heal_max", 1000.0)
-		var ceiling: float = 12.0 * high_mult
-		var capped_got: bool = await _wait_until(func() -> bool: return cap_stub.heals.size() >= 3)
-		_check(capped_got, "and heals (%d ticks)" % cap_stub.heals.size())
-		var all_capped := not cap_stub.heals.is_empty()
-		for amount: float in cap_stub.heals:
-			if not _close(amount, ceiling, 0.001):
-				all_capped = false
-		_check(all_capped, "every tick is held at 12 HP x the rarity multiplier (%.2f), not at a flat 12" % ceiling)
-	_drop_rig(cap_rig)
-
-
-# ---------------------------------------------------------------------------
-# 8. Slow Heart - a rate cap, not a subtraction
-# ---------------------------------------------------------------------------
 
 func _test_slow_heart_intercepts_healing() -> void:
 	var rig := _make_rig()
@@ -1520,3 +1423,113 @@ func _test_through_the_real_player() -> void:
 	remove_child(player)
 	player.free()
 	await _settle()
+
+
+## Balance plan Task 3: the accessory contracts of section 3.4, on the real
+## runner, the real hit profile and status service, and a real magic impact.
+func _test_revision_two_accessory_contracts() -> void:
+	var rig := _make_rig()
+	var inv: Inventory = rig["inv"] as Inventory
+	var runner: ItemEffectRunner = rig["runner"] as ItemEffectRunner
+	# Oakheart: neutral R1 gives 8 armour and a 4% shield; with no other
+	# armour the combined multiplier is 100/108 * 0.96, not 100/147.5 * 0.88.
+	var oak := _pos(_oakheart, 1, 0.0)
+	inv.set_item(int(_oakheart.equip_slot), oak)
+	runner.refresh_effects(inv)
+	_check(_close(oak.rolled_mods.armor, 8.0) and _close(oak.rolled_mods.max_hp, 12.0) and _close(oak.rolled_mods.move_speed, -10.0), "a neutral R1 Oakheart carries 8 armour, 12 HP and -10 movement (%.2f armour)" % oak.rolled_mods.armor)
+	_check(_close(runner.get_damage_taken_multiplier(), 0.96), "and a 4%% shield reduction (%.4f)" % runner.get_damage_taken_multiplier())
+	var combined: float = (100.0 / (100.0 + oak.rolled_mods.armor)) * runner.get_damage_taken_multiplier()
+	_check(_close(combined, 100.0 / 108.0 * 0.96, 0.0001) and combined > 100.0 / 147.5 * 0.88, "its combined mitigation is 100/108 * 0.96 (%.4f), a deliberate early cut" % combined)
+	inv.set_item(int(_oakheart.equip_slot), _pos(_oakheart, 30, 0.5))
+	runner.refresh_effects(inv)
+	_check(runner.get_damage_taken_multiplier() >= 0.85 - 0.0001, "the shield never exceeds 15%% however high the rank and roll (%.4f)" % runner.get_damage_taken_multiplier())
+	inv.remove_at(int(_oakheart.equip_slot))
+	# Crusher: 36 secondary HP at R15, more at R16, a continuous speed profile,
+	# positive and negative rolls on their own paths.
+	var crusher15 := _pos(_crusher, 15, 0.0)
+	var crusher16 := _pos(_crusher, 16, 0.0)
+	_check(_close(crusher15.rolled_mods.max_hp, 36.0) and crusher16.rolled_mods.max_hp > 36.0, "an R15 Crusher's Ring carries 36 secondary HP and R16 more (%.2f)" % crusher16.rolled_mods.max_hp)
+	var speed_ok := true
+	var previous: float = ItemScaling.flat_mods_at(_crusher, 0.0).move_speed
+	for step in range(1, 61):
+		var current: float = ItemScaling.flat_mods_at(_crusher, float(step) * 0.5).move_speed
+		if current < previous - 0.000001 or absf(current - previous) > 3.0:
+			speed_ok = false
+		previous = current
+	_check(speed_ok and _close(ItemScaling.flat_mods_at(_crusher, 0.0).move_speed, 35.0) and _close(ItemScaling.flat_mods_at(_crusher, 1.0).move_speed, 39.0), "its movement profile rises continuously from 35 through 39 toward 70")
+	inv.set_item(int(_crusher.equip_slot), _pos(_crusher, 1, 0.30))
+	runner.refresh_effects(inv)
+	_check(_close(runner.get_move_speed_multiplier(), 1.0 + 0.30 * 1.5, 0.0001), "a +30%% roll is amplified 1.5x at R1 (%.4f)" % runner.get_move_speed_multiplier())
+	inv.set_item(int(_crusher.equip_slot), _neg(_crusher, 15, 0.30))
+	runner.refresh_effects(inv)
+	_check(_close(runner.get_move_speed_multiplier(), 0.70), "a -30%% roll keeps its original treatment at R15 (%.4f)" % runner.get_move_speed_multiplier())
+	inv.remove_at(int(_crusher.equip_slot))
+	# Firestone: R15 neutral burns 6.75% of the hit per tick; a 100-damage
+	# attack therefore carries 6.75 per tick on the pooled profile path and on
+	# a real magic impact, with no second multiplication by Power.
+	var stone := _pos(_firestone, 15, 0.0)
+	inv.set_item(int(_firestone.equip_slot), stone)
+	runner.refresh_effects(inv)
+	var fire: Node = _one_effect(runner, FIRESTONE_SCENE_PATH)
+	_check(fire != null and _close(float(fire.call("burn_share_at", stone, 15.0)), 0.0675, 0.00001), "an R15 neutral Firestone burns 6.75%% of the hit per tick")
+	var profile := HitProfileAdapter.new()
+	profile.reset(100.0)
+	runner.apply_to_managed_hit_profile(profile, &"ranged")
+	_check(_close(float(profile.get_meta("burn_tick_mult")), 0.0675, 0.00001), "the pooled hit profile carries that share")
+	var world: EnemyWorldService = WorldScript.new() as EnemyWorldService
+	add_child(world)
+	var combat: EnemyCombatService = CombatScript.new() as EnemyCombatService
+	combat.setup(world)
+	add_child(combat)
+	var status: EnemyStatusService = StatusScript.new() as EnemyStatusService
+	status.setup(world, combat)
+	add_child(status)
+	status.set_physics_process(false)
+	var handle: int = world.create_enemy(SpawnState.new(&"burn_target", "res://burn_target.tscn", Vector2.ZERO, 500.0, 0.0, 4.0, 0))
+	status.apply_burn(handle, int(profile.get_meta("burn_stacks")), float(profile.get_meta("burn_duration")), float(profile.get_meta("burn_tick")), profile.damage * float(profile.get_meta("burn_tick_mult")))
+	status.advance(0.01)
+	_check(_close(world.get_health(handle), 500.0 - 6.75, 0.001), "a 100-damage pooled hit burns 6.75 per tick (%.3f)" % (500.0 - world.get_health(handle)))
+	status.clear_all()
+	# The node path talks to the global services, so it gets a global enemy.
+	var impact_scene: PackedScene = load("res://scenes/world/combat/MagicImpact.tscn")
+	if impact_scene != null:
+		var impact: Node = impact_scene.instantiate()
+		impact.set("damage", 100.0)
+		add_child(impact)
+		runner.apply_to_magic_impact(impact)
+		var global_handle: int = EnemyWorld.create_enemy(SpawnState.new(&"burn_target_global", "res://burn_target_global.tscn", Vector2(4000, 4000), 500.0, 0.0, 4.0, 0))
+		var before: float = EnemyWorld.get_health(global_handle)
+		impact.call("_apply_burn_handle", global_handle)
+		EnemyStatus.advance(0.01)
+		_check(_close(before - EnemyWorld.get_health(global_handle), 6.75, 0.001), "a 100-damage magic impact burns 6.75 per tick on the node path (%.3f)" % (before - EnemyWorld.get_health(global_handle)))
+		EnemyStatus.clear_handle(global_handle)
+		EnemyWorld.remove_enemy(global_handle, &"test")
+		impact.queue_free()
+	else:
+		_check(false, "the magic impact scene loads for the node-path burn check")
+	status.clear_all()
+	remove_child(status)
+	status.free()
+	remove_child(combat)
+	combat.free()
+	remove_child(world)
+	world.free()
+	# Magic-only stat bonuses: none for ranged, the profile's values for magic.
+	var style_before := String(Global.selected_style_id)
+	Global.selected_style_id = "ranged"
+	var stats := Stats.new()
+	runner.apply_effects_to_stats(stats)
+	_check(_close(stats.power, 0.0) and _close(stats.haste, 0.0), "Firestone adds no Power or Haste outside magic")
+	Global.selected_style_id = "magic"
+	stats = Stats.new()
+	runner.apply_effects_to_stats(stats)
+	_check(_close(stats.power, 0.06 * ItemScaling.accessory_factor("acc_firestone", 15.0), 0.0001) and _close(stats.haste, ItemScaling.sample_rate(15.0, 0.02, 0.03, 0.05, 12.0), 0.0001), "magic gets (0.06 + 0.525 roll) * B Power and the smooth Haste (%.4f, %.4f)" % [stats.power, stats.haste])
+	inv.set_item(int(_firestone.equip_slot), _pos(_firestone, 0, 0.0))
+	runner.refresh_effects(inv)
+	stats = Stats.new()
+	runner.apply_effects_to_stats(stats)
+	_check(_close(stats.power, 0.06 * ItemScaling.accessory_factor("acc_firestone", 0.0), 0.0001) and _close(stats.haste, 0.02, 0.0001), "at R0 the magic Haste is 0.02 and the Power bonus scales by B(0)")
+	Global.selected_style_id = style_before
+	inv.remove_at(int(_firestone.equip_slot))
+	runner.refresh_effects(inv)
+	_drop_rig(rig)

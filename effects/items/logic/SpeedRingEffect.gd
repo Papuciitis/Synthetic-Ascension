@@ -25,13 +25,16 @@ func get_move_speed_multiplier() -> float:
 	return _effect_multiplier(item)
 
 
+## Balance revision 2 (section 3.4): a positive roll is amplified by the
+## item's effect profile (1 at R0, 1.5 at R1, approaching 2.0); a negative
+## roll keeps its original treatment. The flat movement and the secondary
+## HP come from the item's stat profile.
 func _effect_multiplier(inst: ItemInstance) -> float:
-	# Move speed is the most dangerous rate stat: the roll's bonus portion
-	# grows with rarity but on a tightly capped multiplier (spec §1.6).
 	var bonus := (inst.active_pct() if inst != null else 0.0)
 	if inst != null and bonus > 0.0:
-		bonus *= minf(inst.rarity_effect_multiplier(), 1.75)
+		bonus *= ItemScaling.accessory_factor("ring_crusher", ItemScaling.effective_rank(inst))
 	return maxf(0.10, 1.0 + bonus)
+
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p

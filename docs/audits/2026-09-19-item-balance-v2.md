@@ -1,4 +1,4 @@
-# Item and encounter baseline: 2026-09-19, item curves live (balance revision 2, tuning stages ['items'])
+# Item and encounter baseline: 2026-09-19, item curves and accessory effects live (balance revision 2, tuning stages ['items'])
 
 Exported by `tools/tests/ItemBalanceProbe.tscn` from the production formulas on the human race, ranged style, neutral positive rolls, no Manifestations, augments, doctrine or Ascension rules, segment 5. Tuning hash: `7bbd5d5448b9a95e3bdc300acc64fa7b47652e33366c34b0371ae1df6f0e8ded`. Laboratory ranks, not natural rank-to-segment mappings.
 
@@ -68,6 +68,6 @@ Origins observed: native:ranged. Attributed share 1 of 19.5600 enemy HP removed;
 ## Notes
 
 - Neutral positive rolls; no Manifestations, augments, doctrine or Ascension rules.
-- Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (mods + rarity_base * (potency - 1)); the roll is applied later in the stat pipeline.
+- Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (ItemScaling profiles at balance revision 2, the legacy potency formula for items without a profile); the roll is applied later in the stat pipeline. effect_multiplier is the legacy potency scale; effect_factor is the accessory effect scale the scripted effects read at revision 2.
 - Primary-hit damage is base_weapon_damage * style multiplier * (1 + Power) with luck 0 (no crit); only the ranged value is a landed hit, melee and magic are formula values.
 - Set rows wear the set's six core items at the same rank; set effects run but no set attack was fired, so set origins are absent from attribution by construction.

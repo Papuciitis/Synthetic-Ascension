@@ -53,7 +53,42 @@ captures without a valid profile stay at revision 1 (see
 `docs/audits/2026-09-19-item-balance-v2.md` (revision 2), both produced by
 `ItemBalanceProbe` and rendered with `tools/sim/item_baseline_report.py`.
 
-Not in this revision: accessory scripted effects still scale with
-`rarity_effect_multiplier` (Task 3), set bonuses are still flat and read the
-integer mean rank (Task 4), merge mass and prices are unchanged (Task 5).
-Prices do move slightly because `compute_item_value` reads the flat stats.
+## Accessory effects (Task 3)
+
+The four scripted accessories read `ItemScaling.accessory_factor` (the
+profile's `effect` block) instead of the old potency multiplier:
+
+- Oakheart: separate reduction `(0.04 + max(roll, 0) * 0.10) * E(r)`, E = 1 at
+  R0 rising toward 1.4, clamped to 15%; a neutral R1 is 8 armour and a 4%
+  shield (combined `100/108 * 0.96`), a deliberate early cut while
+  armour-slot growth rises.
+- Regeneration Ring: every second `(1.5 + 0.015 * max HP) * A(r) * max(0.10,
+  1 + roll)` times a uniform 0.4..1.6 roll (mean 1), never more than 5% of
+  max HP per tick, never on a dead player; A runs 0.9 / 1.0 / 1.2 / 1.5 /
+  1.9 at R0 / 1 / 6 / 15 / 30 with a slow tail. Tests inject the roll
+  through `roll_override`.
+- Crusher's Ring: a positive roll is amplified by 1 at R0, 1.5 at R1 and
+  toward 2.0 with rank; negative rolls keep their treatment; movement and
+  secondary HP come from the stat profile.
+- Firestone: burn per tick `0.045 * B(r) * (1 + max(roll, 0) * 0.6)` of the
+  originating hit (which already carries Power, and is not multiplied by it
+  again on either the pooled or the node path); magic only, Power `(0.06 +
+  0.525 * roll) * B` and Haste rising smoothly from 0.02 through 0.03 at R1
+  toward 0.05; B runs 2/3 / 1 / 1.2 / 1.5 / 1.8 with a slow tail.
+
+`ItemEffectRunnerTest` pins these on the real runner, hit profile, status
+service and a real magic impact.
+
+## Measured effect of revision 2 (simulator, same seed and scenario)
+
+`docs/audits/2026-09-19-build-simulator/rev1-vs-rev2.md` compares 296
+identical builds under revision 1 and revision 2 item stats (before Task 3):
+at seg9 and seg12 the deaths per fight fell from 0.31 and 0.34 to 0.06 and
+0.04 and the median minimum HP rose from 37% and 56% to 64% and 82%, with
+enemy HP removed up 7-19%; seg2 (rank 1, unchanged numbers) moved within
+noise except for Oakheart's early cut (melee seg2 HP lost +11%). One
+scripted scenario; see the simulator caveats.
+
+Not in this revision: set bonuses are still flat and read the integer mean
+rank (Task 4), merge mass and prices are unchanged (Task 5). Prices move
+slightly because `compute_item_value` reads the flat stats.

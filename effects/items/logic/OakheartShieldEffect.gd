@@ -2,8 +2,13 @@ extends Node2D
 class_name OakheartShieldEffect
 
 # Gameplay: damage reduction is applied BEFORE armor in Player._take_damage.
-@export var base_damage_reduction: float = 0.08  # 8%
+## Balance revision 2 (section 3.4): the separate reduction is
+## (0.04 + max(roll, 0) * 0.10) * E(r), E from the item's effect profile
+## (1 at R0, rising toward 1.4), clamped to 0..0.15. Armour and HP come from
+## the item's flat profile; the -10 movement is its flat block.
+@export var base_damage_reduction: float = 0.04  # 4%
 @export var extra_reduction_from_positive_pct: float = 0.10 # up to +10% at very high rolls
+const REDUCTION_CAP: float = 0.15
 
 # VFX tuning
 @export var radius_padding: float = 8.0
@@ -40,15 +45,26 @@ var _pts: PackedVector2Array = PackedVector2Array()
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
-	var pct := 0.0
-	if inst != null:
-		pct = clampf(inst.active_pct(), -0.25, 0.5)
-	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
-	var short_mult: float = (inst.rarity_effect_multiplier() if inst != null else 1.0)
-	var dr := clampf((base_damage_reduction + extra) * short_mult, 0.0, 0.50)
-	out.append("Reduces incoming damage by ~%.0f%% (before armor; rarity scales, cap 50%%)." % (dr * 100.0))
+	var dr := reduction_for(inst)
+	var next := reduction_at(inst, float(maxi(0, inst.rarity) + 1)) if inst != null else dr
+	out.append("Reduces incoming damage by %.1f%% before armour (next rank %.1f%%; cap %.0f%%)." % [dr * 100.0, next * 100.0, REDUCTION_CAP * 100.0])
 	out.append("Shows a protective shield aura.")
 	return out
+
+
+## The separate reduction at the item's effective rank.
+func reduction_for(inst: ItemInstance) -> float:
+	if inst == null:
+		return 0.0
+	return reduction_at(inst, ItemScaling.effective_rank(inst))
+
+
+func reduction_at(inst: ItemInstance, rank: float) -> float:
+	var pct := clampf(inst.active_pct(), -0.25, 0.5) if inst != null else 0.0
+	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
+	var scale := ItemScaling.accessory_factor("acc_oakheart", rank)
+	return clampf((base_damage_reduction + extra) * scale, 0.0, REDUCTION_CAP)
+
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p as Node2D
@@ -94,17 +110,8 @@ func _pulse_redraw() -> void:
 	queue_redraw()
 
 func get_damage_taken_multiplier() -> float:
-	var pct := 0.0
-	if item != null:
-		pct = clampf(item.active_pct(), -0.25, 0.5)
+	return 1.0 - reduction_for(item)
 
-	# Only positive rolls increase DR (negative just keeps base DR).
-	# Rarity grows the reduction along the shared potency curve, with a
-	# hard ceiling so damage reduction can never approach immunity.
-	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
-	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
-	var dr := clampf((base_damage_reduction + extra) * rarity_mult, 0.0, 0.50)
-	return 1.0 - dr
 
 func _get_hurtbox_radius(hb: Area2D) -> float:
 	var csn: CollisionShape2D = null

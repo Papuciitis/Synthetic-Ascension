@@ -1,12 +1,21 @@
 extends Node2D
 class_name RegenerationRingEffect
 
+## Balance revision 2 (section 3.4): every tick heals
+## mean = (base_heal + max_hp_share * max HP) * A(r) * max(0.10, 1 + roll)
+## times a uniform roll in [roll_min, roll_max] (mean 1), hard-limited to
+## tick_cap_share of max HP, never on a dead player. A(r) is the item's
+## effect profile (0.9 at R0, 1.0 at R1, 1.9 at R30, then a slow tail).
 @export var tick_interval: float = 1.0
-@export var heal_min: float = 1.0
-@export var heal_max: float = 4.0
+@export var base_heal: float = 1.5
+@export var max_hp_share: float = 0.015
+@export var roll_min: float = 0.4
+@export var roll_max: float = 1.6
+@export var tick_cap_share: float = 0.05
+## Tests inject a deterministic roll multiplier here (-1 = random).
+var roll_override: float = -1.0
 
 # Scales with rarity: heal *= (1 + rarity * rarity_scale)
-@export var rarity_scale: float = 0.20
 
 # VFX
 @export var vfx_plus_scene: PackedScene
@@ -29,10 +38,34 @@ var _last_pulse_bucket: int = -1
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
-	var heal_scale := (inst.rarity_effect_multiplier() if inst != null else 1.0) * _effect_multiplier(inst)
-	out.append("Heals every %.1fs: %.1f–%.1f HP (rarity scales)." % [tick_interval, heal_min * heal_scale, heal_max * heal_scale])
+	var max_hp := _player_max_hp()
+	var mean := mean_heal(inst, max_hp)
+	var next := mean_heal_at(inst, max_hp, float(maxi(0, inst.rarity) + 1)) if inst != null else mean
+	out.append("Heals every %.1fs: about %.1f HP (%.1f-%.1f; next rank %.1f), never more than %.0f%% of max HP." % [tick_interval, mean, mean * roll_min, mean * roll_max, next, tick_cap_share * 100.0])
 	out.append("Plays green regen pulses (+).")
 	return out
+
+
+## The mean tick before the random roll and the cap, at the item's rank.
+func mean_heal(inst: ItemInstance, max_hp: float) -> float:
+	return mean_heal_at(inst, max_hp, ItemScaling.effective_rank(inst) if inst != null else 0.0)
+
+
+func mean_heal_at(inst: ItemInstance, max_hp: float, rank: float) -> float:
+	return (base_heal + max_hp_share * maxf(0.0, max_hp)) * ItemScaling.accessory_factor("ring_regeneration", rank) * _effect_multiplier(inst)
+
+
+## One tick: the mean times the roll, hard-limited to a share of max HP.
+func tick_amount(inst: ItemInstance, max_hp: float, roll: float) -> float:
+	return minf(mean_heal(inst, max_hp) * roll, tick_cap_share * maxf(0.0, max_hp))
+
+
+func _player_max_hp() -> float:
+	if player == null or not is_instance_valid(player):
+		return 0.0
+	var value: Variant = player.get("max_hp")
+	return float(value) if value is float or value is int else 0.0
+
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p
@@ -70,12 +103,13 @@ func _process(dt: float) -> void:
 		return
 	_acc = 0.0
 
-	var amt := lerpf(heal_min, heal_max, randf())
-	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
-	amt *= rarity_mult * _effect_multiplier(item)
-	# Ceiling scales with rarity too — the old flat 12.0 silently capped
-	# the ring's growth around R5.
-	amt = clampf(amt, 0.5, 12.0 * rarity_mult)
+	var dead: Variant = player.get("is_dead")
+	if dead is bool and dead:
+		return
+	var roll := roll_override if roll_override >= 0.0 else randf_range(roll_min, roll_max)
+	var amt := tick_amount(item, _player_max_hp(), roll)
+	if amt <= 0.0:
+		return
 
 	# The source name only labels telemetry (healing_by_source); the heal
 	# itself follows the generic path exactly as before.

@@ -110,7 +110,7 @@ func _run() -> void:
 		"tuning_hash": recorder.tuning_hash(), "generated": Time.get_datetime_string_from_system(true, true),
 		"segment": Global.attempt_segment, "ranks": ranks, "race": "human", "style_for_landed_hit": "ranged",
 		"notes": ["Neutral positive rolls; no Manifestations, augments, doctrine or Ascension rules.",
-			"Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (mods + rarity_base * (potency - 1)); the roll is applied later in the stat pipeline.",
+			"Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (ItemScaling profiles at balance revision 2, the legacy potency formula for items without a profile); the roll is applied later in the stat pipeline. effect_multiplier is the legacy potency scale; effect_factor is the accessory effect scale the scripted effects read at revision 2.",
 			"Primary-hit damage is base_weapon_damage * style multiplier * (1 + Power) with luck 0 (no crit); only the ranged value is a landed hit, melee and magic are formula values.",
 			"Set rows wear the set's six core items at the same rank; set effects run but no set attack was fired, so set origins are absent from attribution by construction."]}
 
@@ -154,10 +154,11 @@ func _run() -> void:
 		for rank in ranks:
 			var inst := _instance(data, int(rank), neutral_roll)
 			row.by_rank[str(int(rank))] = {"flat": _stats(inst.rolled_mods), "effect_multiplier": snappedf(inst.rarity_effect_multiplier(), 0.0001),
+				"effect_factor": snappedf(ItemScaling.accessory_factor(String(id), float(int(rank))), 0.0001),
 				"value": Global.compute_item_value(inst), "buy": Global.compute_buy_value(inst), "sell": Global.compute_sell_value(inst)}
 		var fractional := float(ranks_fixture.get("fractional_rank", 6.5))
 		var half := _instance(data, int(floor(fractional)), neutral_roll, fractional - floor(fractional))
-		row.by_rank[str(fractional)] = {"flat": _stats(half.rolled_mods), "effect_multiplier": snappedf(half.rarity_effect_multiplier(), 0.0001), "value": Global.compute_item_value(half)}
+		row.by_rank[str(fractional)] = {"flat": _stats(half.rolled_mods), "effect_multiplier": snappedf(half.rarity_effect_multiplier(), 0.0001), "effect_factor": snappedf(ItemScaling.accessory_factor(String(id), fractional), 0.0001), "value": Global.compute_item_value(half)}
 		items[String(id)] = row
 	_baseline["items"] = items
 	_check(items.size() >= 30 and items.has("conduit_heart") and float(items.conduit_heart.by_rank["15"].flat.max_hp) > float(items.conduit_heart.by_rank["1"].flat.max_hp), "%d runtime items exported with growing contributions" % items.size())

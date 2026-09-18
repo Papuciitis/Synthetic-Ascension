@@ -10,18 +10,27 @@ class_name FirestoneEffect
 
 # --- Gameplay tuning ---
 # Baseline bonus when equipped (kept small; real tuning later)
-@export var base_magic_power: float = 0.04
-@export var base_magic_haste: float = 0.02
+## Balance revision 2 (section 3.4): burn per tick is
+## burn_tick_mult * B(r) * (1 + max(roll, 0) * burn_mult_roll_scale) of the
+## originating attack's damage (which already carries Power); B is the item's
+## effect profile (2/3 at R0, 1 at R1, 1.8 at R30, then a slow tail). Magic
+## only: extra Power (magic_power_base + magic_power_per_roll * roll) * B and
+## Haste rising smoothly from 0.02 through 0.03 at R1 toward 0.05.
+@export var magic_power_base: float = 0.06
+@export var magic_power_per_roll: float = 0.525
+@export var magic_haste_r0: float = 0.02
+@export var magic_haste_r1: float = 0.03
+@export var magic_haste_limit: float = 0.05
+@export var magic_haste_tau: float = 12.0
 
 # Extra bonus that scales with the rolled % (ItemInstance.active_pct)
-@export var pct_to_magic_power: float = 0.35  # active_pct * this -> added to Stats.power
 
 
 # --- Burn (DoT) tuning ---
 @export var burn_duration: float = 2.5
 @export var burn_tick: float = 0.5
 # Damage per tick per stack = hit_damage * burn_tick_mult (scaled by roll)
-@export var burn_tick_mult: float = 0.03
+@export var burn_tick_mult: float = 0.045
 @export var burn_mult_roll_scale: float = 0.60
 @export var burn_stacks: int = 1
 
@@ -40,18 +49,31 @@ var _last_pulse_bucket: int = -1
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out: PackedStringArray = PackedStringArray()
 	out.append("Your hits apply Burn (DoT) and your attacks look fiery.")
-	var pct: float = 0.0
-	if inst != null:
-		pct = maxf(inst.active_pct(), 0.0)
-
-	var short_mult: float = (inst.rarity_effect_multiplier() if inst != null else 1.0)
-	var pow_bonus: float = (base_magic_power + (pct * pct_to_magic_power)) * short_mult
-	var hst_bonus: float = base_magic_haste * minf(short_mult, 2.25)
-	out.append("Magic: +%.1f%% Power, +%.1f%% Haste (roll and rarity scale)." % [pow_bonus * 100.0, hst_bonus * 100.0])
-
-	var burn_mult_scaled: float = burn_tick_mult * (1.0 + pct * burn_mult_roll_scale) * short_mult
-	out.append("Burn: %.1fs for %d stack(s). Each tick deals ~%.1f%% of hit." % [burn_duration, burn_stacks, burn_mult_scaled * 100.0])
+	var rank := ItemScaling.effective_rank(inst) if inst != null else 0.0
+	out.append("Magic only: +%.1f%% Power, +%.1f%% Haste (roll and rank scale)." % [magic_power_bonus_at(inst, rank) * 100.0, magic_haste_at(rank) * 100.0])
+	var next_rank := float(maxi(0, inst.rarity) + 1) if inst != null else rank
+	out.append("Burn: %.1fs for %d stack(s). Each tick deals %.2f%% of the hit (next rank %.2f%%)." % [burn_duration, burn_stacks, burn_share_at(inst, rank) * 100.0, burn_share_at(inst, next_rank) * 100.0])
 	return out
+
+
+func _scale_at(rank: float) -> float:
+	return ItemScaling.accessory_factor("acc_firestone", rank)
+
+
+## Burn per tick as a share of the originating hit's damage.
+func burn_share_at(inst: ItemInstance, rank: float) -> float:
+	var pct: float = maxf(inst.active_pct(), 0.0) if inst != null else 0.0
+	return burn_tick_mult * (1.0 + pct * burn_mult_roll_scale) * _scale_at(rank)
+
+
+func magic_power_bonus_at(inst: ItemInstance, rank: float) -> float:
+	var pct := clampf(inst.active_pct(), -0.25, 0.5) if inst != null else 0.0
+	return (magic_power_base + magic_power_per_roll * pct) * _scale_at(rank)
+
+
+func magic_haste_at(rank: float) -> float:
+	return ItemScaling.sample_rate(rank, magic_haste_r0, magic_haste_r1, magic_haste_limit, magic_haste_tau)
+
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:
 	player = p as Node2D
@@ -92,11 +114,8 @@ func _pct() -> float:
 	return clampf(item.active_pct(), -0.25, 0.5)
 
 func _burn_mult_scaled() -> float:
-	var pct: float = 0.0
-	if item != null:
-		pct = maxf(item.active_pct(), 0.0)
-	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
-	return burn_tick_mult * (1.0 + pct * burn_mult_roll_scale) * rarity_mult
+	return burn_share_at(item, ItemScaling.effective_rank(item) if item != null else 0.0)
+
 
 func _apply_burn_meta(attack: Object) -> void:
 	if attack == null:
@@ -107,15 +126,12 @@ func _apply_burn_meta(attack: Object) -> void:
 	attack.set_meta("burn_tick_mult", _burn_mult_scaled())
 
 func apply_to_stats(s: Stats) -> void:
-	# Firestone's *numbers* are for magic style.
 	if Global == null or str(Global.selected_style_id) != "magic":
 		return
+	var rank := ItemScaling.effective_rank(item) if item != null else 0.0
+	s.power += magic_power_bonus_at(item, rank)
+	s.haste += magic_haste_at(rank)
 
-	var pct := _pct()
-	var rarity_mult := (item.rarity_effect_multiplier() if item != null else 1.0)
-	s.power += (base_magic_power + (pct * pct_to_magic_power)) * rarity_mult
-	# Haste is a rate stat: capped growth (spec §1.6 guardrail).
-	s.haste += base_magic_haste * minf(rarity_mult, 2.25)
 
 # --- Visual "fire attacks" tint hooks ---
 func apply_to_ranged_bullet(bullet: Node, _style_id: StringName) -> void:

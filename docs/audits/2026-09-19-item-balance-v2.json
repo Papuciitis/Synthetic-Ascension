@@ -35,12 +35,13 @@
 		"other_damage_multiplier": 0.8,
 		"raw_hit": 50.0
 	},
-	"generated": "2026-09-18 20:21:36",
+	"generated": "2026-09-18 20:40:05",
 	"items": {
 		"acc_firestone": {
 			"by_rank": {
 				"0": {
 					"buy": 43,
+					"effect_factor": 0.6667,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -55,6 +56,7 @@
 				},
 				"1": {
 					"buy": 61,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -69,6 +71,7 @@
 				},
 				"15": {
 					"buy": 787,
+					"effect_factor": 1.5,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -83,6 +86,7 @@
 				},
 				"30": {
 					"buy": 2527,
+					"effect_factor": 1.8,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -97,6 +101,7 @@
 				},
 				"6": {
 					"buy": 221,
+					"effect_factor": 1.2,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -110,6 +115,7 @@
 					"value": 225
 				},
 				"6.5": {
+					"effect_factor": 1.2167,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -133,6 +139,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 67,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 6.0,
@@ -147,6 +154,7 @@
 				},
 				"1": {
 					"buy": 92,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 8.0,
@@ -161,6 +169,7 @@
 				},
 				"15": {
 					"buy": 863,
+					"effect_factor": 1.2754,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 20.0,
@@ -175,6 +184,7 @@
 				},
 				"30": {
 					"buy": 2649,
+					"effect_factor": 1.3643,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 32.0,
@@ -189,6 +199,7 @@
 				},
 				"6": {
 					"buy": 266,
+					"effect_factor": 1.1363,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 12.0,
@@ -202,6 +213,7 @@
 					"value": 271
 				},
 				"6.5": {
+					"effect_factor": 1.1471,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 12.4444,
@@ -225,6 +237,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -239,6 +252,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -253,6 +267,7 @@
 				},
 				"15": {
 					"buy": 900,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -267,6 +282,7 @@
 				},
 				"30": {
 					"buy": 2909,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -281,6 +297,7 @@
 				},
 				"6": {
 					"buy": 240,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -294,6 +311,7 @@
 					"value": 244
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -317,6 +335,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -331,6 +350,7 @@
 				},
 				"1": {
 					"buy": 48,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -345,6 +365,7 @@
 				},
 				"15": {
 					"buy": 893,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -359,6 +380,7 @@
 				},
 				"30": {
 					"buy": 2907,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -373,6 +395,7 @@
 				},
 				"6": {
 					"buy": 236,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -386,6 +409,7 @@
 					"value": 240
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -409,6 +433,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -423,6 +448,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -437,6 +463,7 @@
 				},
 				"15": {
 					"buy": 896,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -451,6 +478,7 @@
 				},
 				"30": {
 					"buy": 2903,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -465,6 +493,7 @@
 				},
 				"6": {
 					"buy": 239,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -478,6 +507,7 @@
 					"value": 243
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -501,6 +531,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -515,6 +546,7 @@
 				},
 				"1": {
 					"buy": 52,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -529,6 +561,7 @@
 				},
 				"15": {
 					"buy": 963,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -543,6 +576,7 @@
 				},
 				"30": {
 					"buy": 3049,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -557,6 +591,7 @@
 				},
 				"6": {
 					"buy": 263,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -570,6 +605,7 @@
 					"value": 268
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -593,6 +629,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -607,6 +644,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -621,6 +659,7 @@
 				},
 				"15": {
 					"buy": 939,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -635,6 +674,7 @@
 				},
 				"30": {
 					"buy": 3005,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -649,6 +689,7 @@
 				},
 				"6": {
 					"buy": 251,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -662,6 +703,7 @@
 					"value": 256
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -685,6 +727,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -699,6 +742,7 @@
 				},
 				"1": {
 					"buy": 50,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 1.0,
@@ -713,6 +757,7 @@
 				},
 				"15": {
 					"buy": 970,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 35.0,
@@ -727,6 +772,7 @@
 				},
 				"30": {
 					"buy": 3054,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 70.0,
@@ -741,6 +787,7 @@
 				},
 				"6": {
 					"buy": 267,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 14.0,
@@ -754,6 +801,7 @@
 					"value": 272
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 15.1667,
@@ -777,6 +825,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 106,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 34.0,
@@ -791,6 +840,7 @@
 				},
 				"1": {
 					"buy": 134,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 37.5,
@@ -805,6 +855,7 @@
 				},
 				"15": {
 					"buy": 954,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 80.0,
@@ -819,6 +870,7 @@
 				},
 				"30": {
 					"buy": 2827,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 140.0,
@@ -833,6 +885,7 @@
 				},
 				"6": {
 					"buy": 316,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 48.0,
@@ -846,6 +899,7 @@
 					"value": 322
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 49.7778,
@@ -869,6 +923,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 37,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -883,6 +938,7 @@
 				},
 				"1": {
 					"buy": 56,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -897,6 +953,7 @@
 				},
 				"15": {
 					"buy": 832,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -911,6 +968,7 @@
 				},
 				"30": {
 					"buy": 2648,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -925,6 +983,7 @@
 				},
 				"6": {
 					"buy": 228,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -938,6 +997,7 @@
 					"value": 232
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -961,6 +1021,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 37,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -975,6 +1036,7 @@
 				},
 				"1": {
 					"buy": 56,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -989,6 +1051,7 @@
 				},
 				"15": {
 					"buy": 808,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1003,6 +1066,7 @@
 				},
 				"30": {
 					"buy": 2581,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1017,6 +1081,7 @@
 				},
 				"6": {
 					"buy": 224,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1030,6 +1095,7 @@
 					"value": 228
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1053,6 +1119,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 34,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1067,6 +1134,7 @@
 				},
 				"1": {
 					"buy": 52,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1081,6 +1149,7 @@
 				},
 				"15": {
 					"buy": 787,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1095,6 +1164,7 @@
 				},
 				"30": {
 					"buy": 2532,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1109,6 +1179,7 @@
 				},
 				"6": {
 					"buy": 217,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1122,6 +1193,7 @@
 					"value": 221
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1145,6 +1217,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 58,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1159,6 +1232,7 @@
 				},
 				"1": {
 					"buy": 79,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1173,6 +1247,7 @@
 				},
 				"15": {
 					"buy": 866,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1187,6 +1262,7 @@
 				},
 				"30": {
 					"buy": 2692,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1201,6 +1277,7 @@
 				},
 				"6": {
 					"buy": 257,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1214,6 +1291,7 @@
 					"value": 262
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1237,6 +1315,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 50,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1251,6 +1330,7 @@
 				},
 				"1": {
 					"buy": 70,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1265,6 +1345,7 @@
 				},
 				"15": {
 					"buy": 821,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1279,6 +1360,7 @@
 				},
 				"30": {
 					"buy": 2590,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1293,6 +1375,7 @@
 				},
 				"6": {
 					"buy": 237,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1306,6 +1389,7 @@
 					"value": 241
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1329,6 +1413,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 48,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1343,6 +1428,7 @@
 				},
 				"1": {
 					"buy": 68,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1357,6 +1443,7 @@
 				},
 				"15": {
 					"buy": 855,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1371,6 +1458,7 @@
 				},
 				"30": {
 					"buy": 2683,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1385,6 +1473,7 @@
 				},
 				"6": {
 					"buy": 245,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1398,6 +1487,7 @@
 					"value": 249
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1421,6 +1511,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 104,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 26.0,
@@ -1435,6 +1526,7 @@
 				},
 				"1": {
 					"buy": 130,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 29.0,
@@ -1449,6 +1541,7 @@
 				},
 				"15": {
 					"buy": 942,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 68.0,
@@ -1463,6 +1556,7 @@
 				},
 				"30": {
 					"buy": 2791,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 118.0,
@@ -1477,6 +1571,7 @@
 				},
 				"6": {
 					"buy": 314,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 40.0,
@@ -1490,6 +1585,7 @@
 					"value": 320
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 41.5556,
@@ -1513,6 +1609,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 28,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1527,6 +1624,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1541,6 +1639,7 @@
 				},
 				"15": {
 					"buy": 892,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1555,6 +1654,7 @@
 				},
 				"30": {
 					"buy": 2905,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1569,6 +1669,7 @@
 				},
 				"6": {
 					"buy": 236,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1582,6 +1683,7 @@
 					"value": 240
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1605,6 +1707,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 31,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 1.5,
@@ -1619,6 +1722,7 @@
 				},
 				"1": {
 					"buy": 52,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 1.675,
@@ -1633,6 +1737,7 @@
 				},
 				"15": {
 					"buy": 1001,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 46.0,
@@ -1647,6 +1752,7 @@
 				},
 				"30": {
 					"buy": 3116,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 92.0,
@@ -1661,6 +1767,7 @@
 				},
 				"6": {
 					"buy": 279,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 18.0,
@@ -1674,6 +1781,7 @@
 					"value": 284
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 19.5556,
@@ -1697,6 +1805,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 30,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1711,6 +1820,7 @@
 				},
 				"1": {
 					"buy": 50,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1725,6 +1835,7 @@
 				},
 				"15": {
 					"buy": 945,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1739,6 +1850,7 @@
 				},
 				"30": {
 					"buy": 3019,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1753,6 +1865,7 @@
 				},
 				"6": {
 					"buy": 253,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1766,6 +1879,7 @@
 					"value": 258
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1789,6 +1903,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 27,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1803,6 +1918,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1817,6 +1933,7 @@
 				},
 				"15": {
 					"buy": 892,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1831,6 +1948,7 @@
 				},
 				"30": {
 					"buy": 2899,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1845,6 +1963,7 @@
 				},
 				"6": {
 					"buy": 236,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1858,6 +1977,7 @@
 					"value": 240
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1881,6 +2001,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 29,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1895,6 +2016,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -1909,6 +2031,7 @@
 				},
 				"15": {
 					"buy": 886,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -1923,6 +2046,7 @@
 				},
 				"30": {
 					"buy": 2891,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -1937,6 +2061,7 @@
 				},
 				"6": {
 					"buy": 233,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -1950,6 +2075,7 @@
 					"value": 237
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -1973,6 +2099,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 34,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -1987,6 +2114,7 @@
 				},
 				"1": {
 					"buy": 55,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2001,6 +2129,7 @@
 				},
 				"15": {
 					"buy": 988,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2015,6 +2144,7 @@
 				},
 				"30": {
 					"buy": 3105,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2029,6 +2159,7 @@
 				},
 				"6": {
 					"buy": 271,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2042,6 +2173,7 @@
 					"value": 276
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2065,6 +2197,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 28,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2079,6 +2212,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2093,6 +2227,7 @@
 				},
 				"15": {
 					"buy": 895,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2107,6 +2242,7 @@
 				},
 				"30": {
 					"buy": 2911,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2121,6 +2257,7 @@
 				},
 				"6": {
 					"buy": 237,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2134,6 +2271,7 @@
 					"value": 241
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2157,6 +2295,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 29,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2171,6 +2310,7 @@
 				},
 				"1": {
 					"buy": 50,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2185,6 +2325,7 @@
 				},
 				"15": {
 					"buy": 932,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2199,6 +2340,7 @@
 				},
 				"30": {
 					"buy": 2992,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2213,6 +2355,7 @@
 				},
 				"6": {
 					"buy": 248,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2226,6 +2369,7 @@
 					"value": 253
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2249,6 +2393,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 31,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2263,6 +2408,7 @@
 				},
 				"1": {
 					"buy": 52,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2277,6 +2423,7 @@
 				},
 				"15": {
 					"buy": 947,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2291,6 +2438,7 @@
 				},
 				"30": {
 					"buy": 3014,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2305,6 +2453,7 @@
 				},
 				"6": {
 					"buy": 255,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2318,6 +2467,7 @@
 					"value": 260
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2341,6 +2491,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 30,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 1.0,
@@ -2355,6 +2506,7 @@
 				},
 				"1": {
 					"buy": 50,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 1.125,
@@ -2369,6 +2521,7 @@
 				},
 				"15": {
 					"buy": 944,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 26.0,
@@ -2383,6 +2536,7 @@
 				},
 				"30": {
 					"buy": 3003,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 52.0,
@@ -2397,6 +2551,7 @@
 				},
 				"6": {
 					"buy": 256,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 10.0,
@@ -2410,6 +2565,7 @@
 					"value": 261
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 10.8889,
@@ -2433,6 +2589,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 30,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2447,6 +2604,7 @@
 				},
 				"1": {
 					"buy": 51,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2461,6 +2619,7 @@
 				},
 				"15": {
 					"buy": 894,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2475,6 +2634,7 @@
 				},
 				"30": {
 					"buy": 2899,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2489,6 +2649,7 @@
 				},
 				"6": {
 					"buy": 239,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2502,6 +2663,7 @@
 					"value": 243
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2525,6 +2687,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 28,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2539,6 +2702,7 @@
 				},
 				"1": {
 					"buy": 49,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2553,6 +2717,7 @@
 				},
 				"15": {
 					"buy": 895,
+					"effect_factor": 1.0,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2567,6 +2732,7 @@
 				},
 				"30": {
 					"buy": 2903,
+					"effect_factor": 1.0,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2581,6 +2747,7 @@
 				},
 				"6": {
 					"buy": 239,
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2594,6 +2761,7 @@
 					"value": 243
 				},
 				"6.5": {
+					"effect_factor": 1.0,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2617,6 +2785,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 59,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2631,6 +2800,7 @@
 				},
 				"1": {
 					"buy": 79,
+					"effect_factor": 1.5,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2645,6 +2815,7 @@
 				},
 				"15": {
 					"buy": 818,
+					"effect_factor": 1.8443,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2659,6 +2830,7 @@
 				},
 				"30": {
 					"buy": 2568,
+					"effect_factor": 1.9554,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2673,6 +2845,7 @@
 				},
 				"6": {
 					"buy": 244,
+					"effect_factor": 1.6704,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2686,6 +2859,7 @@
 					"value": 248
 				},
 				"6.5": {
+					"effect_factor": 1.6838,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2709,6 +2883,7 @@
 			"by_rank": {
 				"0": {
 					"buy": 51,
+					"effect_factor": 0.9,
 					"effect_multiplier": 1.0,
 					"flat": {
 						"armor": 0.0,
@@ -2723,6 +2898,7 @@
 				},
 				"1": {
 					"buy": 70,
+					"effect_factor": 1.0,
 					"effect_multiplier": 1.5,
 					"flat": {
 						"armor": 0.0,
@@ -2737,6 +2913,7 @@
 				},
 				"15": {
 					"buy": 805,
+					"effect_factor": 1.5,
 					"effect_multiplier": 3.4928,
 					"flat": {
 						"armor": 0.0,
@@ -2751,6 +2928,7 @@
 				},
 				"30": {
 					"buy": 2556,
+					"effect_factor": 1.9,
 					"effect_multiplier": 4.9648,
 					"flat": {
 						"armor": 0.0,
@@ -2765,6 +2943,7 @@
 				},
 				"6": {
 					"buy": 232,
+					"effect_factor": 1.2,
 					"effect_multiplier": 2.4023,
 					"flat": {
 						"armor": 0.0,
@@ -2778,6 +2957,7 @@
 					"value": 236
 				},
 				"6.5": {
+					"effect_factor": 1.2167,
 					"effect_multiplier": 2.4723,
 					"flat": {
 						"armor": 0.0,
@@ -2800,7 +2980,7 @@
 	},
 	"notes": [
 		"Neutral positive rolls; no Manifestations, augments, doctrine or Ascension rules.",
-		"Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (mods + rarity_base * (potency - 1)); the roll is applied later in the stat pipeline.",
+		"Item flat values are ItemInstance.rolled_mods after _recompute_flat_mods (ItemScaling profiles at balance revision 2, the legacy potency formula for items without a profile); the roll is applied later in the stat pipeline. effect_multiplier is the legacy potency scale; effect_factor is the accessory effect scale the scripted effects read at revision 2.",
 		"Primary-hit damage is base_weapon_damage * style multiplier * (1 + Power) with luck 0 (no crit); only the ranged value is a landed hit, melee and magic are formula values.",
 		"Set rows wear the set's six core items at the same rank; set effects run but no set attack was fired, so set origins are absent from attribution by construction."
 	],
