@@ -719,6 +719,12 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	# What is left is the reading you can put on a card - and a small Luck
 	# kicker, because reinterpreting a catastrophe is the same fantasy Luck
 	# sells: the universe quietly rearranging itself around you.
+	if Global.permanent_augment_ids.has(&"augment_equilibrium_sigil"):
+		var equilibrium: float = BurdenResolver.equilibrium_bonus(Global.get_augment_level(&"augment_equilibrium_sigil"), burden)
+		if equilibrium > 0.0:
+			s.power += equilibrium
+			s.haste += equilibrium
+			Global.stat_ledger_step("EQUILIBRIUM SIGIL", s)
 	if Global.permanent_augment_ids.has(&"augment_inversion_lens") and burden.suppressed_slot >= 0:
 		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
 		s.luck += BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, lens_level) * burden.suppressed_severity
@@ -763,6 +769,10 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	if ar3 != null:
 		haste_mul *= ar3.get_haste_multiplier()
 		power_mul *= ar3.get_power_multiplier()
+	var aur3: AugmentRunner = get_node_or_null("AugmentRunner") as AugmentRunner
+	if aur3 != null:
+		haste_mul *= aur3.get_haste_multiplier()
+		power_mul *= aur3.get_power_multiplier()
 
 	var cd: float = 0.0
 	if style_id == "melee":

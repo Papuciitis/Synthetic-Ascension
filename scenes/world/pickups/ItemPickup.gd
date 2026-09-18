@@ -193,7 +193,7 @@ func _collect() -> void:
 		_dbg(["[PICKUP INST]", "id=", inst.data.id, "slot=", slot_a, "inst_id=", inst.get_instance_id()])
 
 		# Equip the whole instance if slot is empty
-		if slot_a >= 0 and slot_a < Inventory.SLOT_COUNT and Global.run_inventory.is_slot_empty(slot_a):
+		if slot_a >= 0 and slot_a < Inventory.SLOT_COUNT and Global.run_inventory.is_slot_empty(slot_a) and not Global.equilibrium_curation():
 			Global.run_inventory.set_item(slot_a, inst, origin)
 			_dbg(["[PICKUP INST] EQUIPPED", "slot=", slot_a])
 			_complete_secondary_objective()
@@ -263,7 +263,7 @@ func _collect() -> void:
 			var equipped2: ItemInstance = Global.run_inventory.get_at(slot) as ItemInstance
 
 			# Empty equip slot -> equip this roll as a new instance
-			if equipped2 == null:
+			if equipped2 == null and not Global.equilibrium_curation():
 				var equipped_inst: ItemInstance = ItemInstance.from_roll(item_data, r, pol, roll_pct)
 				Global.run_inventory.set_item(slot, equipped_inst, origin)
 				_dbg(["[EQUIP NEW]", "slot=", slot, "inst_id=", equipped_inst.get_instance_id()])
@@ -271,7 +271,7 @@ func _collect() -> void:
 
 			# Same id + polarity -> feed roll into equipped item (any rarity:
 			# the merge math prices the gap; ground rolls are rank-0 material)
-			elif equipped2.data != null \
+			elif equipped2 != null and equipped2.data != null \
 			and not equipped2.locked \
 			and equipped2.data.id == item_data.id \
 			and equipped2.polarity == pol:

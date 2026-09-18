@@ -15,7 +15,7 @@ move_speed = -6.0
 [sub_resource type="Resource" id="tier2"]
 script = ExtResource("2")
 display_name = "Ballast Frame"
-mechanical_description = "Gain +18 maximum HP and +2 armor at set rank 0 (both grow with the set's mean rank), but lose 6 movement speed."
+mechanical_description = "Gain +18 maximum HP and +2 armor at set rank 0 (both grow with the set's mean rank), but lose 6 movement speed. With three or more cursed Gravemarch pieces the armor becomes a life-drain aura and cursed pieces deepen when fed."
 plain_description = "Become tougher and heavier."
 glossary_terms = PackedStringArray("Armor")
 mods = SubResource("mods2")

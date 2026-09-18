@@ -6,6 +6,9 @@ signal effect_removed(effect: Node)
 
 @export var debug_sets: bool = false
 
+## Gravemarch polarity rule (NEG archetype A6).
+const GRAVEMARCH_CURSED_BALLAST: PackedScene = preload("res://effects/gravemarch/scenes/GravemarchCursedBallast.tscn")
+
 # key(StringName scene_path) -> Node(effect instance)
 var _active_effects: Dictionary = {}
 
@@ -39,7 +42,17 @@ func apply_sets_to_stats(s: Stats, inv: Inventory) -> void:
 
 			# Apply stat deltas (flat; effects handle rarity scaling)
 			# Balance revision 2: flat bonuses by channel (stat / rate), drawbacks fixed.
-			t.apply_scaled(s, SetScaling.profile(avg_r))
+			if _cursed_ballast(sid, t, inv):
+				# NEG archetype A6: the Ballast Frame's armour becomes the
+				# life-drain aura; HP and the movement drawback stay.
+				var stripped := SetScaling.scaled_tier_mods(t.mods, SetScaling.profile(avg_r))
+				stripped.armor = 0.0
+				stripped.apply_to(s)
+				wanted[StringName(GRAVEMARCH_CURSED_BALLAST.resource_path)] = {
+					"scn": GRAVEMARCH_CURSED_BALLAST, "sid": sid, "count": c, "avg_r": avg_r, "strength": strength,
+				}
+			else:
+				t.apply_scaled(s, SetScaling.profile(avg_r))
 
 			# Collect effect scenes
 			for scn: PackedScene in t.effect_scenes:
@@ -63,6 +76,15 @@ func apply_sets_to_stats(s: Stats, inv: Inventory) -> void:
 	if debug_sets:
 		print("[SetRunner] wanted:", wanted.keys())
 		print("[SetRunner] active :", _active_effects.keys())
+
+## True for Gravemarch's two-piece tier while three or more equipped
+## Gravemarch pieces are NEG (Inventory.get_set_polarity_composition).
+func _cursed_ballast(sid: StringName, tier: SetTier, inv: Inventory) -> bool:
+	if sid != &"gravemarch" or tier == null or tier.required_count != 2 or inv == null:
+		return false
+	var composition: Dictionary = inv.get_set_polarity_composition(sid)
+	return int(composition.get("neg", 0)) >= BurdenResolver.GRAVEMARCH_CURSE_MIN_PIECES
+
 
 func _sync_effects(wanted: Dictionary) -> void:
 	# 1) Remove effects that are no longer wanted
@@ -184,6 +206,8 @@ func refresh_effects(inv: Inventory) -> void:
 			if t == null:
 				continue
 
+			if _cursed_ballast(sid, t, inv):
+				wanted[StringName(GRAVEMARCH_CURSED_BALLAST.resource_path)] = { "scn": GRAVEMARCH_CURSED_BALLAST, "sid": sid, "count": c, "avg_r": avg_r, "strength": strength }
 			for scn: PackedScene in t.effect_scenes:
 				if scn == null:
 					continue

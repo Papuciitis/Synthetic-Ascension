@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_aug"]
+[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"augment_gamblers_rite"
+display_name = "Gambler's Rite"
+description = "The crowd loves watching him court disaster."
+card_blurb = "Every new curse you pick up may pay a Follower; the first of each distinct curse per segment banks Resonance."
+details = "Passive: every legitimately new NEG item you
+pick up from the world (equipped, bagged or
+fed) has a 15% chance (+ up to 20% from Luck)
+of +1 Follower. The first pickup of each
+distinct NEG base item per segment adds +0.5%
+Resonance, capped at +4% per segment.
+Trades, rewards, moves and undo are not
+pickups. You never have to wear the curse."
+icon = ExtResource("2_icon")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

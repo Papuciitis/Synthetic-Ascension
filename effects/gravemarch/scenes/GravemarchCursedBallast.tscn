@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://effects/gravemarch/scenes/GravemarchCursedBallast.gd" id="1"]
+
+[node name="GravemarchCursedBallast" type="Node"]
+script = ExtResource("1")
+tooltip_short = "Three cursed pieces turn the Ballast Frame's armour into a life-drain aura."

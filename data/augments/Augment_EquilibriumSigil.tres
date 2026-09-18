@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_aug"]
+[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"augment_equilibrium_sigil"
+display_name = "Equilibrium Sigil"
+description = "The lattice holds when the ledger balances."
+card_blurb = "Equal POS and NEG counts (at least 2 each) grant Power and Haste. While slotted, pickups never auto-equip."
+details = "Passive: while your equipped POS count equals
+your NEG count (at least 2 of each, all eight
+slots, polarity not burden), gain Power and
+Haste (12% at L1, approaching 24% with levels;
+cap +20% each). All or nothing: one extra
+piece of either kind breaks it.
+A curse suppressed by an Inversion Lens still
+counts as NEG here.
+While slotted, pickups never auto-equip into
+an empty slot: they go to the bag, and you
+curate the wardrobe by hand."
+icon = ExtResource("2_icon")
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

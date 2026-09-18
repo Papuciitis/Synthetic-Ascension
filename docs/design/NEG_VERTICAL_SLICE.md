@@ -86,7 +86,10 @@ worthless to another, and the player cannot tell from the roll alone.
 
 ## Not done
 
-- Equilibrium Sigil (parity), Litany of Wounds (HP→Haste conversion),
-  Gravemarch polarity mutation and Gambler's Rite remain designed and unbuilt.
-  The snapshot already exposes `is_balanced()` and per-slot severity for them.
+- Equilibrium Sigil, Litany of Wounds, Gambler's Rite and the Gravemarch
+  polarity rule landed on 2026-09-19 (`docs/design/2026-09-19-neg-expansion-and-playtest-spec.md`,
+  `tools/tests/NegArchetypesTest.tscn`): `BurdenResolver.equilibrium_bonus`,
+  `litany_haste`, `gambler_follower_chance`, `Global.gravemarch_curse_active`,
+  `effects/augments/LitanyOfWoundsEffect.gd`, `core/systems/items/GamblersRite.gd`,
+  `effects/gravemarch/scenes/GravemarchCursedBallast.gd`.
 - Deep curses have no authored icons yet.

@@ -24,6 +24,9 @@ extends Node
 #      SIM_SEED (20260919), SIM_SHARD ("i/n", default "0/1"), SIM_PRESETS (1),
 #      SIM_STRUCTURE (1), SIM_CROWD (60), SIM_TIERS (comma list of tier indices),
 #      SIM_SET ("" = the gear seed picks the set; a set id pins it for every build),
+#      SIM_GEAR_POLARITY (neg:<n>: the first n statistical set pieces roll NEG at
+#      their authored floor), SIM_CURSES (comma list of curse relic ids worn in
+#      their slots at their floor), SIM_AUGMENTS (up to three augment ids),
 #      SIM_ABLATE (0; 1 = for every authored "pure" preset, also fight one variant
 #      per owned node with that node refunded through the real refund rule, so a
 #      node's contribution to its own authored build is measured directly)
@@ -90,6 +93,12 @@ var _shards := 1
 var _include_presets := true
 ## SIM_SET: wear this set on every build instead of the gear seed's pick.
 var _forced_set := ""
+## SIM_GEAR_POLARITY=neg:<n>: the first n statistical set pieces roll NEG at
+## their authored floor; SIM_CURSES=<ids>: curse relics worn in their slots
+## at their floor, replacing the set piece there; SIM_AUGMENTS as above.
+var _neg_pieces := 0
+var _curses := ""
+var _augments := ""
 var _structure := true
 var _crowd := 60
 var _durability := HP_DURABILITY
@@ -152,6 +161,18 @@ func _run() -> void:
 	Global.debug_player_god_mode = false
 	Global.debug_ascension_revelations_enabled = true
 	Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
+	# SIM_AUGMENTS: up to three augment ids slotted for every build (the NEG
+	# archetypes read them in the stat pass and the augment runner).
+	var slot := 0
+	for aug in _env("SIM_AUGMENTS", "").split(","):
+		var aug_id := aug.strip_edges()
+		if aug_id.is_empty() or slot >= 3 or not Global.augment_db.has(StringName(aug_id)):
+			continue
+		Global.permanent_augment_ids[slot] = StringName(aug_id)
+		slot += 1
+	_augments = _env("SIM_AUGMENTS", "")
+	_neg_pieces = int(_env("SIM_GEAR_POLARITY", "neg:0").trim_prefix("neg:"))
+	_curses = _env("SIM_CURSES", "")
 	Global.run_luck = 0.0
 	_player = PLAYER.instantiate()
 	add_child(_player)
@@ -799,7 +820,23 @@ func _wear_gear(job: Dictionary, tier: Dictionary) -> Dictionary:
 		if data != null:
 			Global.run_inventory.set_item(int(data.equip_slot), ItemInstance.from_roll(data, rank, ItemInstance.Polarity.POS, 0.0, false), null)
 			worn.append(id)
-	return {"set": set_id, "rank": rank, "worn": worn}
+	# NEG wardrobes: the first n statistical pieces at their authored floor.
+	var cursed_slots: Array = []
+	for slot in range(mini(_neg_pieces, Inventory.STAT_SLOT_COUNT)):
+		var piece: ItemInstance = Global.run_inventory.get_at(slot)
+		if piece == null or piece.data == null or piece.data.pct_min >= 0.0:
+			continue
+		Global.run_inventory.set_item(slot, ItemInstance.from_roll(piece.data, rank, ItemInstance.Polarity.NEG, piece.data.pct_min, false), null)
+		cursed_slots.append(slot)
+	var relics: Array = []
+	for curse in _curses.split(","):
+		var curse_id := curse.strip_edges()
+		var data: ItemData = Global.item_db.get(curse_id, null)
+		if curse_id.is_empty() or data == null or int(data.equip_slot) < 0 or int(data.equip_slot) >= Inventory.STAT_SLOT_COUNT:
+			continue
+		Global.run_inventory.set_item(int(data.equip_slot), ItemInstance.from_roll(data, rank, ItemInstance.Polarity.NEG, data.pct_min, false), null)
+		relics.append(curse_id)
+	return {"set": set_id, "rank": rank, "worn": worn, "cursed_slots": cursed_slots, "relics": relics, "augments": _augments}
 
 
 # ---------------------------------------------------------------- crowd

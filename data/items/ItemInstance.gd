@@ -196,9 +196,14 @@ func merge_from(incoming: ItemInstance) -> bool:
 		# so duplicate progression never ruins a deliberately mild NEG item
 		# (Ballast-style builds). Corruption Engine inverts the meaning of
 		# NEG progression: while it is equipped, merging DEEPENS the curse.
+		# The Corruption Engine deepens every NEG merge; a cursed Gravemarch
+		# (NEG archetype A6) deepens its own NEG pieces without the Engine.
 		var deepen_curses: bool = (
 			Global != null
-			and Global.permanent_augment_ids.has(&"augment_corruption_engine")
+			and (
+				Global.permanent_augment_ids.has(&"augment_corruption_engine")
+				or (String(data.set_id) == "gravemarch" and Global.has_method("gravemarch_curse_active") and bool(Global.call("gravemarch_curse_active")))
+			)
 		)
 		if deepen_curses:
 			best_pct = minf(best_pct, incoming.best_pct)

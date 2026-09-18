@@ -125,8 +125,8 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 	# and ManifestationRunner's get_haste_multiplier(). Polled from the same
 	# runners here, the way SPD already reads through get_effective_move_speed,
 	# so an Anchor Rite's x1.85 shows on the sheet instead of vanishing.
-	var pow_mul: float = _runtime_multiplier(player, &"get_power_multiplier", ["ItemEffectRunner", "ManifestationRunner"])
-	var hst_mul: float = _runtime_multiplier(player, &"get_haste_multiplier", ["SetRunner", "ItemEffectRunner", "ManifestationRunner"])
+	var pow_mul: float = _runtime_multiplier(player, &"get_power_multiplier", ["ItemEffectRunner", "ManifestationRunner", "AugmentRunner"])
+	var hst_mul: float = _runtime_multiplier(player, &"get_haste_multiplier", ["SetRunner", "ItemEffectRunner", "ManifestationRunner", "AugmentRunner"])
 
 	# Parenthesised values remain the equipped flat deltas for quick attribution;
 	# they are informational only and are not added to the final totals again.
@@ -591,6 +591,9 @@ const NEG_ARCHETYPES: Array[Dictionary] = [
 	{"id": &"augment_corruption_engine", "label": "CORRUPTION ENGINE"},
 	{"id": &"augment_doctrine_of_burden", "label": "DOCTRINE OF BURDEN"},
 	{"id": &"augment_inversion_lens", "label": "INVERSION LENS"},
+	{"id": &"augment_equilibrium_sigil", "label": "EQUILIBRIUM SIGIL"},
+	{"id": &"augment_litany_of_wounds", "label": "LITANY OF WOUNDS"},
+	{"id": &"augment_gamblers_rite", "label": "GAMBLER'S RITE"},
 ]
 
 
@@ -733,6 +736,38 @@ func _append_burden(player: Node) -> void:
 			)
 		else:
 			_add_line("   nothing cursed to suppress", Color(1, 1, 1, 0.55), 10)
+	if ids.has(&"augment_equilibrium_sigil"):
+		var equilibrium := BurdenResolver.equilibrium_bonus(Global.get_augment_level(&"augment_equilibrium_sigil"), snap)
+		_add_line("EQUILIBRIUM SIGIL", BURDEN, 11)
+		if equilibrium > 0.0:
+			_add_line("   %d NEG = %d POS  →  Power +%d%%, Haste +%d%%" % [snap.neg_count, snap.pos_count, int(round(equilibrium * 100.0)), int(round(equilibrium * 100.0))], Color(1, 1, 1, 0.72), 10)
+		else:
+			_add_line("   out of balance: %d NEG / %d POS (equal counts, at least %d each)" % [snap.neg_count, snap.pos_count, BurdenResolver.EQUILIBRIUM_MIN_EACH], Color(1, 1, 1, 0.55), 10)
+		_add_line("   pickups go to the bag while the Sigil is slotted", Color(1, 1, 1, 0.5), 9)
+	if ids.has(&"augment_litany_of_wounds"):
+		var max_hp := maxf(1.0, float(player.get("max_hp")))
+		var hp_ratio := clampf(float(player.get("hp")) / max_hp, 0.0, 1.0)
+		var litany_level: int = Global.get_augment_level(&"augment_litany_of_wounds")
+		var litany_share := BurdenResolver.asymptotic_rate(BurdenResolver.LITANY_SHARE, litany_level)
+		var litany := BurdenResolver.litany_haste(litany_level, snap.total_active, hp_ratio)
+		_add_line("LITANY OF WOUNDS", BURDEN, 11)
+		_add_line(
+			"   HP %d%%  ×  ramp %d%%  ×  %d%% of %d%% severity  →  Haste +%d%%%s" % [
+				int(round(hp_ratio * 100.0)), int(round(BurdenResolver.litany_ramp(hp_ratio) * 100.0)),
+				int(round(litany_share * 100.0)), int(round(snap.total_active * 100.0)), int(round(litany * 100.0)),
+				"  (CAPPED)" if litany > 0.0 and litany_share * snap.total_active >= BurdenResolver.LITANY_CAP else "",
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
+	if ids.has(&"augment_gamblers_rite"):
+		_add_line("GAMBLER'S RITE", BURDEN, 11)
+		_add_line(
+			"   this segment: %d Followers won, Resonance +%.1f%% of +%.0f%% (%d distinct curses found)" % [
+				int(Global.attempt_gambler_followers), Global.attempt_gambler_resonance * 100.0,
+				BurdenResolver.GAMBLER_RESONANCE_CAP * 100.0, Global.attempt_gambler_seen.size(),
+			],
+			Color(1, 1, 1, 0.72), 10
+		)
 
 
 func _append_manifestations(player: Node) -> void:

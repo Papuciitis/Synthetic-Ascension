@@ -26,6 +26,23 @@ const INVERSION_LUCK_KICKER: float = 0.30
 ## player pass and the Run Sheet used to carry their own copies.
 const CORRUPTION_ENGINE_RATE: float = 0.24
 const CORRUPTION_ENGINE_CAP: float = 0.30
+# Equilibrium Sigil (A3): equal POS and NEG counts, at least this many each.
+const EQUILIBRIUM_RATE: float = 0.24
+const EQUILIBRIUM_CAP: float = 0.20
+const EQUILIBRIUM_MIN_EACH: int = 2
+# Litany of Wounds (A5): severity converts to Haste on a ramp from 60% HP,
+# complete at 20% HP; the share grows by level, the Haste has a hard cap.
+const LITANY_START_HP: float = 0.60
+const LITANY_FULL_HP: float = 0.20
+const LITANY_SHARE: float = 0.50
+const LITANY_CAP: float = 0.35
+# Gambler's Rite (A7): Followers per new curse found, Resonance per distinct
+# curse per segment.
+const GAMBLER_FOLLOWER_BASE: float = 0.15
+const GAMBLER_RESONANCE_PER_ITEM: float = 0.005
+const GAMBLER_RESONANCE_CAP: float = 0.04
+# Gravemarch polarity rule (A6): this many NEG pieces curse the set.
+const GRAVEMARCH_CURSE_MIN_PIECES: int = 3
 
 ## Doctrine of Burden tuning. The Doctrine pays per qualifying curse, so it
 ## scales with item count and needs a bounded ceiling; the ceilings default to
@@ -125,6 +142,32 @@ static func resolve(inventory: Inventory, augment_ids: Array) -> BurdenSnapshot:
 ## What a suppressed item contributes to its own slot stat instead of its curse.
 ## Positive, and expressed in the same units the slot's multiplier uses, so the
 ## stat pass can substitute it for the roll without knowing about the Lens.
+## A3: the Sigil pays only while the wardrobe is exactly balanced and each
+## side has at least EQUILIBRIUM_MIN_EACH pieces; polarity, never burden.
+static func equilibrium_bonus(level: int, snapshot: BurdenSnapshot) -> float:
+	if snapshot == null or not snapshot.is_balanced() or snapshot.neg_count < EQUILIBRIUM_MIN_EACH:
+		return 0.0
+	return minf(EQUILIBRIUM_CAP, asymptotic_rate(EQUILIBRIUM_RATE, level))
+
+
+## A5: 0 at or above 60% HP, 1 at or below 20% HP, linear between.
+static func litany_ramp(hp_ratio: float) -> float:
+	return clampf((LITANY_START_HP - hp_ratio) / (LITANY_START_HP - LITANY_FULL_HP), 0.0, 1.0)
+
+
+## A5: the Haste the Litany grants for a total active severity at this HP.
+static func litany_haste(level: int, total_active_severity: float, hp_ratio: float) -> float:
+	var ramp := litany_ramp(hp_ratio)
+	if ramp <= 0.0 or total_active_severity <= 0.0:
+		return 0.0
+	return ramp * minf(LITANY_CAP, asymptotic_rate(LITANY_SHARE, level) * total_active_severity)
+
+
+## A7: the chance a newly found curse pays one Follower.
+static func gambler_follower_chance(luck: float) -> float:
+	return clampf(GAMBLER_FOLLOWER_BASE + LuckResolver.extra_follower_chance(luck), 0.0, 0.35)
+
+
 static func inverted_return(severity: float) -> float:
 	return maxf(0.0, severity) * INVERSION_RETURN
 

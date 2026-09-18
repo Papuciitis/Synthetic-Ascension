@@ -113,6 +113,24 @@ func _sync(wanted: Dictionary) -> void:
 
 		_active[k3] = inst
 
+## Runtime multipliers the augment effects expose (Litany of Wounds' Haste),
+## aggregated the way SetRunner and ItemEffectRunner aggregate theirs.
+func get_haste_multiplier() -> float:
+	var mul := 1.0
+	for n in get_children():
+		if is_instance_valid(n) and n.has_method("get_haste_multiplier"):
+			mul *= float(n.call("get_haste_multiplier"))
+	return mul
+
+
+func get_power_multiplier() -> float:
+	var mul := 1.0
+	for n in get_children():
+		if is_instance_valid(n) and n.has_method("get_power_multiplier"):
+			mul *= float(n.call("get_power_multiplier"))
+	return mul
+
+
 func get_children_effects() -> Array:
 	return get_children()
 

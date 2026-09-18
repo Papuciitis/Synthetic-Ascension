@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="AugmentData" format=3]
+
+[ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_aug"]
+[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_icon"]
+[ext_resource type="PackedScene" path="res://effects/augments/LitanyOfWounds.tscn" id="3_fx"]
+
+[resource]
+script = ExtResource("1_aug")
+id = &"augment_litany_of_wounds"
+display_name = "Litany of Wounds"
+description = "He walks better bleeding."
+card_blurb = "Below 60% HP, your active curse severity converts to Haste on a ramp that peaks at 20% HP."
+details = "Passive: below 60% HP, the total active
+severity of your statistical-slot curses
+converts to Haste on a ramp that is complete
+at 20% HP (at 20% HP: 25% of total severity
+at L1, approaching 50% with levels; hard cap
++35% Haste). No on-hit window: the health bar
+is the resource.
+A curse suppressed by an Inversion Lens
+contributes nothing."
+icon = ExtResource("2_icon")
+effect_scenes = Array[PackedScene]([ExtResource("3_fx")])
+metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

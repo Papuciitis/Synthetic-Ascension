@@ -253,6 +253,12 @@ var run_luck: float = 0.0
 ## LOOT TABLE rather than the player - a shape that is a poison to an ordinary
 ## run and a supply line to a curse build. Reset per attempt with everything else.
 var curse_drop_bias: float = 0.0
+# Gambler's Rite (NEG archetype A7): per-segment registry of distinct NEG base
+# items found, the Resonance banked from them and the Followers won. Reset with
+# the segment and the attempt; not saved (a reload mid-segment forgives it).
+var attempt_gambler_seen: Dictionary = {}
+var attempt_gambler_resonance: float = 0.0
+var attempt_gambler_followers: int = 0
 
 var _followers: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -263,6 +269,9 @@ var vfx_stamina_aura_scene: PackedScene
 # ============================================================
 
 func _ready() -> void:
+	# The Gambler's Rite listens to item operations; connected after every
+	# autoload exists.
+	_connect_gambler_listener.call_deferred()
 	_rng.randomize()
 
 	_load_spells()
@@ -1362,6 +1371,73 @@ func _release_autosave_suppression() -> void:
 	_suppress_autosave = false
 
 
+## Equilibrium Sigil (A3): while slotted, pickups never auto-equip.
+func equilibrium_curation() -> bool:
+	return permanent_augment_ids.has(&"augment_equilibrium_sigil")
+
+
+## Gravemarch polarity rule (A6): three or more equipped Gravemarch pieces
+## NEG turn the Ballast Frame's armour into a life-drain aura and make NEG
+## Gravemarch merges deepen.
+func gravemarch_curse_active() -> bool:
+	if run_inventory == null:
+		return false
+	var composition: Dictionary = run_inventory.get_set_polarity_composition(&"gravemarch")
+	return int(composition.get("neg", 0)) >= BurdenResolver.GRAVEMARCH_CURSE_MIN_PIECES
+
+
+func gambler_reset_segment() -> void:
+	attempt_gambler_seen.clear()
+	attempt_gambler_resonance = 0.0
+	attempt_gambler_followers = 0
+
+
+func _connect_gambler_listener() -> void:
+	if RunEvents != null and not RunEvents.item_operation.is_connected(_on_item_operation_for_gambler):
+		RunEvents.item_operation.connect(_on_item_operation_for_gambler)
+
+
+func _on_item_operation_for_gambler(kind: StringName, inst: ItemInstance, data: Dictionary) -> void:
+	if not permanent_augment_ids.has(&"augment_gamblers_rite"):
+		return
+	if not GamblersRite.is_new_neg_acquisition(kind, inst, data):
+		return
+	gambler_note_acquisition(inst)
+
+
+## Gambler's Rite (A7): one Follower roll per new curse found, Resonance for
+## the first of each distinct base item per segment up to the cap.
+func gambler_note_acquisition(inst: ItemInstance) -> Dictionary:
+	var result := {"follower": false, "resonance": 0.0}
+	var item_id := String(inst.data.id) if inst != null and inst.data != null else ""
+	if _rng.randf() < BurdenResolver.gambler_follower_chance(run_luck):
+		transaction_followers(1, &"gamblers_rite", {"item": item_id}, true, true)
+		attempt_gambler_followers += 1
+		result["follower"] = true
+	if item_id != "" and not attempt_gambler_seen.has(item_id):
+		attempt_gambler_seen[item_id] = true
+		var grant := minf(BurdenResolver.GAMBLER_RESONANCE_PER_ITEM, BurdenResolver.GAMBLER_RESONANCE_CAP - attempt_gambler_resonance)
+		if grant > 0.0:
+			attempt_gambler_resonance += grant
+			result["resonance"] = grant
+			_grant_gambler_resonance(grant)
+	return result
+
+
+func _grant_gambler_resonance(amount: float) -> void:
+	var tree := get_tree()
+	if tree == null:
+		return
+	var builder := tree.get_first_node_in_group(&"segment_proc_builder")
+	if builder != null and builder.has_method("grant_resonance"):
+		builder.call("grant_resonance", amount, true)
+		return
+	for node in tree.get_nodes_in_group(&"segment_spawn_filter"):
+		if node.has_method("_add_resonance"):
+			node.call("_add_resonance", amount, true)
+			return
+
+
 func request_autosave(delay: float = 0.6) -> void:
 	if debug_disable_autosave:
 		return
@@ -1757,6 +1833,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_witness_used_segment = 0
 		attempt_doctrine_threat_debt = 0.0
 		attempt_augment_levels = {}
+		gambler_reset_segment()
 		attempt_mutations = {}
 		attempt_stat_delta = null
 
@@ -2008,6 +2085,7 @@ func on_segment_completed(completed_segment: int) -> void:
 			request_autosave()
 	attempt_segment = completed_segment + 1
 	attempt_deaths_this_segment = 0
+	gambler_reset_segment()
 	attempt_checkpoint_pos = Vector2.INF
 	if completed_segment == 1:
 		attempt_segment1_resonance = 0.0
