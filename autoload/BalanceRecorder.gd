@@ -31,6 +31,11 @@ const DEBUG_FIELDS := ["debug_dev_mode", "debug_dev_segment", "debug_player_god_
 
 var enabled := true
 var record_headless := false
+## The extended diagnostics (incident history, exit/pressure and upgrade
+## reports) on top of the core recorder (pure snapshots, health
+## reconciliation, attribution). Read at the start of a capture; the cost
+## comparison in BalanceRecorderLoadTest measures both.
+var extended := true
 var report_directory := "res://balance_captures" if OS.has_feature("editor") else "user://balance_captures"
 var capture_directory := ""
 var _active := false
@@ -68,6 +73,14 @@ func _ready() -> void:
 func is_recording() -> bool:
 	return _active
 
+## What this capture measures: the extended features are declared only when
+## they are switched on, so an omitted feature never reads as a zero.
+func features() -> Dictionary:
+	var result: Dictionary = FEATURES.duplicate()
+	for key in ["incidents", "exit_detail", "progression"]:
+		result[key] = bool(result[key]) and extended
+	return result
+
 func set_enabled(value: bool) -> void:
 	if not value:
 		end_capture("disabled")
@@ -93,7 +106,7 @@ func begin_gameplay(player: Node) -> void:
 			"save_slot": slot, "build": Build.describe(Global.attempt_world_seed), "start_segment": Global.attempt_segment,
 			"coverage": "observed_session", "starting_debug": _debug_snapshot(),
 			"recorder_revision": RECORDER_REVISION, "balance_revision": BALANCE_REVISION,
-			"tuning_stages": [], "tuning_hash": "", "features": FEATURES.duplicate()}
+			"tuning_stages": [], "tuning_hash": "", "features": features()}
 		_ledger = Ledger.new()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)
 		if "hp" in player and "max_hp" in player:
@@ -140,7 +153,7 @@ func _process(delta: float) -> void:
 	elif mode == "gameplay" and (player == null or bool(player.get("is_dead"))):
 		mode = "loading"
 	_ledger.advance(delta, mode)
-	if mode == "gameplay":
+	if mode == "gameplay" and extended:
 		_history_left -= delta
 		if _history_left <= 0.0:
 			_history_left = HISTORY_SAMPLE_INTERVAL
@@ -176,6 +189,8 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"segment_phase_changed", _on_phase)
 	_subscribe(RunEvents, &"healing_lock_changed", _on_healing_lock)
 	_subscribe(RunEvents, &"power_threshold_crossed", _on_power_threshold)
+	if not extended:
+		return
 	_subscribe(RunEvents, &"player_ability_activated", _on_ability_activated)
 	_subscribe(RunEvents, &"player_dashed", _on_dashed)
 	_subscribe(RunEvents, &"exit_rite_event", _on_exit_event)
@@ -194,6 +209,8 @@ func _subscribe(object: Object, signal_name: StringName, callback: Callable) -> 
 ## state under the player, not on an autoload); rebound on every gameplay entry.
 func _connect_player(player: Node) -> void:
 	_disconnect_player()
+	if not extended:
+		return
 	var runner := player.get_node_or_null(^"ManifestationRunner")
 	var state: Variant = runner.get("state") if runner != null else null
 	if state is Object and (state as Object).has_signal("resource_spent"):
@@ -400,9 +417,10 @@ func _on_life_event(player: Node, kind: StringName) -> void:
 	if kind == &"death":
 		# Frozen here, inside die(), before the reconstruction card, the
 		# respawn or a scene change can touch the player or the ring.
-		_persist_incident("death_context", "death", player)
-		_incidents["deaths"] = int(_incidents["deaths"]) + 1
-		_ledger.note_death(bool(_exit_snapshot().get("inside", false)))
+		if extended:
+			_persist_incident("death_context", "death", player)
+			_incidents["deaths"] = int(_incidents["deaths"]) + 1
+			_ledger.note_death(bool(_exit_snapshot().get("inside", false)))
 		_ledger.end_life("death")
 	elif kind == &"respawn":
 		# The reconstruction anchor and its protection, and how far the exit is.
@@ -554,7 +572,7 @@ func _on_rite_channel(active: bool) -> void:
 	_push_history("rite_channel", {"active": active})
 
 func _pressure_snapshot() -> Dictionary:
-	if ThreatDirector.has_method("balance_snapshot"):
+	if extended and ThreatDirector.has_method("balance_snapshot"):
 		return ThreatDirector.balance_snapshot()
 	var result := {}
 	for field in PRESSURE_FIELDS:
@@ -565,6 +583,8 @@ func _pressure_snapshot() -> Dictionary:
 ## encounter director's formations by beat id and the spawner's reservations.
 func _reinforcements() -> Dictionary:
 	var result := {}
+	if not extended:
+		return result
 	var director := get_tree().get_first_node_in_group(&"encounter_director")
 	if director != null and director.has_method("balance_snapshot"):
 		result["encounters"] = director.call("balance_snapshot")
@@ -576,12 +596,14 @@ func _reinforcements() -> Dictionary:
 ## Public: freeze the current context on request (developer overlay, tests).
 ## Persisted only here and on death, never on a normal tick.
 func capture_incident(reason: StringName = &"manual") -> void:
-	if not _active:
+	if not _active or not extended:
 		return
 	_persist_incident("incident_context", String(reason), _player())
 	_incidents["captures"] = int(_incidents["captures"]) + 1
 
 func _push_history(kind: String, data: Dictionary) -> void:
+	if not extended:
+		return
 	data["kind"] = kind
 	data["t"] = _ledger.gameplay_seconds()
 	data["wall"] = _wall_seconds()
@@ -672,6 +694,8 @@ func _nearby_counts(origin: Vector2) -> Dictionary:
 	return result
 
 func _exit_snapshot() -> Dictionary:
+	if not extended:
+		return {}
 	var rite := get_tree().get_first_node_in_group(&"exit_rite")
 	if rite == null or not rite.has_method("balance_snapshot"):
 		return {}

@@ -264,6 +264,26 @@ held under a 2 MiB serialized ceiling: the oldest events go first, then the
 oldest samples, never the terminal event or the latest state, and the trim is
 reported in the record and in the summary's `incidents` block.
 
+## Recording cost and compatibility
+
+`BalanceRecorderLoadTest` runs one seeded, scripted workload three times,
+with recording disabled, with the core recorder (`extended = false`: pure
+snapshots, health reconciliation, attribution) and with the extended
+diagnostics, and asserts the gameplay fingerprint (HP, RNG state, wallet,
+enemy health, cooldowns, items, deaths) is identical, so recording is
+passive by construction. It prints frame-time and recorder callback p50/p95/
+p99, memory delta, queued bytes and output size per configuration; the
+2026-09-18 numbers are in `docs/audits/2026-09-18-gravemarch-playtest.md`.
+A single maximum callback duration is never the evidence.
+
+`BalanceRecorder.extended` switches the extended diagnostics off for the next
+capture; the capture's `metadata.features` then declares only what was
+measured. Schema-1 captures (before health reconciliation) still render and
+round-trip; their reports carry none of the newer sections, because those
+were not measured. Schema-2 artifacts are checked to reconcile: the wallet
+identity, player HP lost against its source table, attributed plus unknown
+plus mixed enemy HP against enemy HP removed, and health residuals per life.
+
 ## Developer controls
 
 The `BalanceRecorder` autoload exposes:
@@ -274,6 +294,7 @@ BalanceRecorder.set_enabled(true)  # arms recording for the next gameplay entry
 BalanceRecorder.get_summary()      # copy of the current/last ledger, no disk read
 BalanceRecorder.capture_directory # absolute path of the current/last capture
 BalanceRecorder.capture_incident(&"manual") # freeze the recent history now
+BalanceRecorder.extended = false      # core recorder only, from the next capture
 ```
 
 Headless runs are excluded by default. A dedicated headless fixture can set

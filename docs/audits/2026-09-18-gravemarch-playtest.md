@@ -114,3 +114,59 @@ Recommended next implementation: add a side-effect-free preview/snapshot API, pr
 6. Keep Ascension redesign deferred. Compare fixed choices and flag concerns for the separate tree review.
 
 No original balance-plan values were changed by this analysis.
+
+## Implementation and validation status (appended 2026-09-18, after the recorder diagnostics)
+
+The evidence above is preserved as captured; the September 18 capture itself
+is not retroactively complete. The recorder problems it found were fixed and
+the diagnostics plan (`docs/superpowers/plans/2026-09-18-balance-recorder-diagnostics.md`)
+was implemented in seven local commits on `enemy-world-work`:
+
+| Stage | Commit | Verified by (headless, 0 failures) |
+|---|---|---|
+| Pure snapshots (finding 2) | `3f43c1b` | `BalanceSnapshotPurityTest` (36): 100 samples plus paused and dead sampling change no ward, latch, shard, cooldown, HP or RNG; the next real hit spends exactly one Composure and one shard |
+| Health accounting (finding 1) | `169cee3` | `BalanceHealthAccountingTest` (34): Death Rattle's held-beat cost, Scar Tissue refusals, Slow Heart takebacks, ring regeneration, max-HP clamps, rescue and reconstruction reconcile per life |
+| Damage attribution | `35f80b1` | `BalanceAttributionTest` (23): origins vs immediate effects, pooled and mixed batches, status ticks, tagless hits reported as unknown |
+| Incident history | `538c660` | `BalanceIncidentHistoryTest` (35): 5 s / 2,048-event / 32-sample ring, exact terminal hit, 2 MiB ceiling, death context frozen before reconstruction |
+| Exit and pressure | `a054bed` | `BalanceExitDiagnosticsTest` (34): channel attempts, lapse and death losses, seals, completion, two tagged Overtime injections, spawn refusals and reservations |
+| Upgrade effort | `d1f83c9` | `BalanceUpgradeDiagnosticsTest` (30): fractional feed, manual, bag and stash merges, higher-rank swap, real hub-shop purchase and undo |
+| Regression, cost | this commit | `BalanceRecorderLoadTest` (22): identical gameplay state with recording disabled, core and extended; failures, scene change, shutdown, resume; schema-1 rendering |
+
+Recording cost, measured by `BalanceRecorderLoadTest` on one seeded 1,200-frame
+scripted workload (hits, heals, costs, income, feeds, five deaths) in one
+headless process on the development machine (2026-09-18); the gameplay
+fingerprint was identical in all three configurations:
+
+| Configuration | Frame p50 / p95 / p99 (usec) | Recorder `_process` p50 / p95 / p99 (usec) | Max callback (usec) | Memory delta | Output |
+|---|---:|---:|---:|---:|---:|
+| Recording disabled | 76 / 209 / 398 | 3 / 6 / 11 | 0 | 130 KB | 0 |
+| Core recorder | 175 / 389 / 610 | 8 / 19 / 258 | 496 | 220 KB | 161 KB |
+| Extended diagnostics | 209 / 534 / 953 | 8 / 96 / 309 | 1,111 | 571 KB | 568 KB |
+
+The frame columns include the workload's own event emission (which is what
+a recorded session pays in its signal handlers), so the recorder's cost is
+the difference from the disabled row: roughly 0.1 ms per frame at p50 and
+0.3 ms at p95 for the extended recorder in this dense workload, with the
+ledger at about 8 microseconds per enemy hit. No records were dropped and the
+incident ring never overflowed. Wall-clock numbers are machine-specific; the
+state equality is not.
+
+Remaining coverage gaps, reported rather than estimated:
+
+- Attribution: Manifestation echoes that re-fire native attacks land as
+  native; spells and Manifestation rules with their own projectiles show as
+  native or unknown until they carry provenance; set rules are not sampled
+  in the runner snapshots.
+- Exit: the proposed Exit Encounter Controller does not exist, so its fields
+  are unavailable; ambient placement failures are reported only when the
+  spawner refuses a position itself; there is no proxy-to-actor promotion
+  path in this build to count.
+- Upgrades: developer grants from the console are tagged `debug`; any other
+  direct `set_item` outside a scope is recorded with an empty source.
+- Health: an unexplained residual is reported per life; none appeared in the
+  suites, but a live playtest is the only way to find a source that bypasses
+  the owner's report.
+
+What still needs a human playtest: a fresh baseline capture of the same
+Gravemarch/Momentum build (and the September 17 ranged build) with this
+recorder, to replace the September 18 evidence before any tuning.
