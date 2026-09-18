@@ -22,11 +22,11 @@ var db: AscensionTreeDB
 var state: Dictionary
 
 
-static func fresh_state(native_core: String) -> Dictionary:
+static func fresh_state(native_core_id: String) -> Dictionary:
 	return {
-		"native_core": native_core,
-		"cores": [native_core],
-		"owned": {"core.%s" % native_core: 1},
+		"native_core": native_core_id,
+		"cores": [native_core_id],
+		"owned": {"core.%s" % native_core_id: 1},
 		"paid": {},
 		"starter": "",
 		"equipped": {"q": "", "v": "", "v2": "", "reaction": "", "keystones": [], "axioms": []},

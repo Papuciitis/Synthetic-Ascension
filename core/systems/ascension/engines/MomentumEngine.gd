@@ -289,7 +289,7 @@ func on_dash_ended(from: Vector2, to: Vector2, direction: Vector2) -> void:
 
 
 ## Passing Blade along the dash path; primes victims; remembers who was crossed.
-func _dash_strip(from: Vector2, to: Vector2, direction: Vector2) -> Array[int]:
+func _dash_strip(from: Vector2, to: Vector2, _direction: Vector2) -> Array[int]:
 	var out: Array[int] = []
 	var ts := PackedFloat32Array()
 	var count := EnemyCombat.enemies_on_segment(from, to, AscensionRunner.R * 0.25, 0, out, ts)

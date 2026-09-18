@@ -692,7 +692,7 @@ func spawn_burst(extra: int) -> void:
 ## other. The caller bounds its own local population; this refuses only what
 ## the world cap refuses. Returns the nodes it spawned so the caller can count
 ## them. `spread_px` scatters them so a burst is a group, not a stack.
-func spawn_burst_at(position: Vector2, count: int, spread_px: float = 0.0) -> Array:
+func spawn_burst_at(world_position: Vector2, count: int, spread_px: float = 0.0) -> Array:
 	var out: Array = []
 	if count <= 0:
 		return out
@@ -704,7 +704,7 @@ func spawn_burst_at(position: Vector2, count: int, spread_px: float = 0.0) -> Ar
 		var remaining_total: int = _remaining_total_capacity(gate.x, gate.y + out.size())
 		if remaining_total <= 0:
 			break
-		var pos := position
+		var pos := world_position
 		if spread_px > 0.0:
 			pos += Vector2.RIGHT.rotated(Global._rng.randf() * TAU) * (Global._rng.randf() * spread_px)
 		_spawn_one(minutes, 1, pos, out)

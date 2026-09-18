@@ -141,7 +141,7 @@ func _run_full() -> void:
 
 	if resume_phase <= Phase.CALIBRATION:
 		_set_phase(Phase.CALIBRATION)
-		var target := _spawn_actor(&"calibration", _anchor + Vector2(210, 10), null, false, 8.0)
+		var target := await _spawn_actor(&"calibration", _anchor + Vector2(210, 10), null, false, 8.0)
 		_presentation.show_prompt(OpeningSequenceData.CALIBRATION_PROMPT)
 		_bind_calibration_target(target)
 		_set_player_lock(false, false)
@@ -158,7 +158,7 @@ func _run_full() -> void:
 	if resume_phase <= Phase.CONSTRUCT:
 		_set_phase(Phase.CONSTRUCT)
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_CONSTRUCT)
-		var construct := _spawn_actor(&"construct", _anchor + Vector2(-210, -30), CONSTRUCT_SPEC, false, 18.0)
+		var construct := await _spawn_actor(&"construct", _anchor + Vector2(-210, -30), CONSTRUCT_SPEC, false, 18.0)
 		if construct != null and RunEvents != null:
 			RunEvents.enemy_archetype_encountered.emit(construct)
 			await get_tree().process_frame
@@ -175,7 +175,7 @@ func _run_full() -> void:
 
 	if resume_phase <= Phase.OFFICER:
 		_set_phase(Phase.OFFICER)
-		var officer := _spawn_actor(&"officer", _anchor + Vector2(235, -85), OFFICER_SPEC, false, 22.0)
+		var officer := await _spawn_actor(&"officer", _anchor + Vector2(235, -85), OFFICER_SPEC, false, 22.0)
 		if officer != null:
 			officer.requires_manual_fire = true
 		await _presentation.present_dialogue("OFFICER", "CONTAINMENT OFFICER", OpeningSequenceData.officer_arrest(Global.mortal_name))
@@ -216,7 +216,7 @@ func _run_admission_walk() -> void:
 	# Beats 1-2: the institution while it is still normal, then the first
 	# wrongness. The player walks freely (attack locked); Level1 milestone
 	# areas drive the beats, this loop presents them.
-	var warden := _spawn_actor(
+	var warden := await _spawn_actor(
 		&"desk_warden",
 		_level.get_opening_anchors().get("desk", _player.global_position) as Vector2,
 		null, false, 8.0
@@ -305,6 +305,11 @@ func _spawn_actor(role: StringName, world_position: Vector2, actor_spec: EnemySp
 	actor.hostile = starts_hostile
 	actor.max_hp = fallback_hp
 	actor.global_position = world_position
+	# A defeat signal can resume this sequence inside an Area2D overlap callback.
+	# Cross an idle-frame boundary before adding collision objects so the physics
+	# server has finished flushing its current queries. Awaiting callers still
+	# receive an actor that is already in-tree and ready.
+	await get_tree().process_frame
 	get_tree().current_scene.add_child(actor)
 	_actors.append(actor)
 	return actor

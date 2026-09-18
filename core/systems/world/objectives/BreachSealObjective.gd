@@ -76,7 +76,6 @@ func on_activated() -> void:
 
 
 func tick_active(delta: float) -> void:
-	var changed: bool = false
 	for index in range(_positions.size()):
 		if _sealed[index] != 0:
 			continue
@@ -85,7 +84,6 @@ func tick_active(delta: float) -> void:
 
 		if inside:
 			_progress[index] = minf(seal_seconds, _progress[index] + delta)
-			changed = true
 			if _progress[index] >= seal_seconds:
 				_sealed[index] = 1
 				_on_sealed(world)
@@ -95,7 +93,6 @@ func tick_active(delta: float) -> void:
 			# Bailing out costs progress, never all of it - a breach you gave up
 			# on halfway should still be the one worth coming back to.
 			_progress[index] = maxf(0.0, _progress[index] - delta * seal_decay_rate)
-			changed = true
 
 		_tick_breach_spawn(index, world, delta)
 

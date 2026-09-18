@@ -41,7 +41,6 @@ var _stretch_armed: bool = false
 var _warm_cooldown: float = 0.0
 var _warm_pending: bool = false
 var _growth_bank: float = 0.0
-var _chain_recovery: float = 0.0
 var _choir_recovery: float = 0.0
 var _pair_cooldowns: Dictionary = {}    # "a:b" -> clock
 var _consume_queue: Array = []          # {at, pulses, tick, echoes}
@@ -52,7 +51,6 @@ var _host_stored: Array = []
 var _one_voice: Dictionary = {}
 var _band: Dictionary = {}              # Mobile Choir {left, members}
 var _web_left: float = 0.0
-var _lines_fx: Array = []
 var _last_hit_handles: Array[int] = []
 var _loaded: Dictionary = {}            # Spellshot: projectile id -> Array of echoes
 var _loaded_from: Dictionary = {}       # "pid:sigil" -> true
@@ -691,7 +689,6 @@ func on_hit(hit: Dictionary) -> void:
 		var dir: Vector2 = hit["direction"]
 		for echo in echoes:
 			counters["spellshots"] = int(counters.get("spellshots", 0)) + 1
-			var carrier := {"id": 0, "at": hit["position"]}
 			var release_tags := AscensionTags.make(String(echo["core"]), AscensionTags.FAMILY_TREE, "RM1", "echo", int(hit["gen"]) + 1, float(echo["pp"]))
 			runner._emit_strike(String(echo["core"]), hit["position"], (hit["position"] as Vector2) + dir * AscensionRunner.R, float(echo["damage"]), release_tags)
 			counters["echoes_released"] = int(counters["echoes_released"]) + 1
@@ -856,7 +853,6 @@ func _tick_consume(delta: float) -> void:
 		while int(entry["pulses"]) > 0 and float(entry["tick"]) >= float(entry["interval"]):
 			entry["tick"] = float(entry["tick"]) - float(entry["interval"])
 			entry["pulses"] = int(entry["pulses"]) - 1
-			var ghost := {"id": int(entry["id"]), "at": entry["at"], "radius": float(entry["radius"]), "growth": 0.0}
 			_impact({"id": int(entry["id"]), "at": entry["at"], "radius": float(entry["radius"]), "growth": 0.0, "copy": false}, float(entry["damage"]), "INQ5", float(entry["pp"]), PackedStringArray(), float(entry["radius"]))
 			counters["pulses"] = int(counters["pulses"]) + 1
 		if int(entry["pulses"]) <= 0:

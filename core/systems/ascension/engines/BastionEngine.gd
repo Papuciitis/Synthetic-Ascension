@@ -39,8 +39,6 @@ var _refill_pause: float = 0.0
 var _volley: int = 0
 var _strike_bonus: float = 0.0
 var _bonus_volley: int = -1
-var _spend_volley: int = -1
-var _pending_spend: float = 0.0
 var _surrounded_volley: int = -1
 var _surrounded_force: float = 0.0
 var _catch_times: Array[float] = []
@@ -52,7 +50,6 @@ var _last_hit_fired: bool = false
 var _last_prevention: float = 0.0
 var _earned_bank: float = 0.0
 var _discharged_bank: float = 0.0
-var _armor_break_targets: Dictionary = {}
 var _no_armor_left: float = 0.0
 # Guard
 var guarding: bool = false
@@ -494,7 +491,7 @@ func _radial_blades(count: int, damage: float, pp: float, root: String, pierce: 
 
 ## Full Tank (and Q release with a full tank): 3D nova in 2R, plates fired,
 ## Meltdown on a 100-Force spend.
-func _discharge(reason: String, origin: Vector2, dir: Vector2) -> void:
+func _discharge(reason: String, origin: Vector2, _dir: Vector2) -> void:
 	var spent := spend_force(force)
 	runner.note_union_trigger("discharge")
 	counters["full_tanks"] = int(counters["full_tanks"]) + 1

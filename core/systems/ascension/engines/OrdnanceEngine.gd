@@ -45,7 +45,6 @@ var _volley: int = 0
 var _short_fuse_volley: int = -1
 var _secondary_done: Dictionary = {}
 var _blasts_on: Dictionary = {}         # handle -> {cast: direction}
-var _recent_blast_dirs: Dictionary = {} # handle -> Array of Vector2
 var _travel_credit: float = 0.0
 var _walk_cooldown: float = 0.0
 var _scan_travel: float = 0.0
@@ -65,7 +64,6 @@ var _lanes: Array = []                  # {from, to, shots, tick}
 var _sequences: Array = []              # {at, left, shells, tick, root, follow, radius, damage, seq, coord}
 var _q_hold: float = 0.0
 var _hold_placed: int = -1
-var _fire_pending_at_release: bool = false
 var _dormant_wait: bool = false
 var _mission_tell: float = -1.0
 var _mission_left: float = 0.0
@@ -77,7 +75,6 @@ var _salvo_delay: float = -1.0
 var _cell_use: Dictionary = {}
 var _heading: Vector2 = Vector2.RIGHT
 var _stop_timer: float = 0.0
-var _mission_gaps: bool = false
 
 var counters: Dictionary = {"shells": 0, "big_ones": 0, "mines": 0, "mine_blasts": 0, "chain": 0, "fuse_shells": 0, "short_fuses": 0, "redirects": 0, "secondary": 0, "tosses": 0, "pulls": 0, "fractures": 0, "shrapnel": 0, "walking": 0, "scans": 0, "coordinates": 0, "designates": 0, "cascades": 0, "traps": 0, "carpet_extra": 0, "suppressed": 0, "beacons": 0, "beacon_shells": 0, "self_hits": 0, "fuse_q": 0, "thunder": 0, "lane_shells": 0, "carpet_drops": 0, "busters": 0, "missions": 0, "mission_shells": 0, "salvos": 0}
 
@@ -493,7 +490,7 @@ func _on_blast_hit(blast_id: int, hit: Dictionary) -> void:
 			counters["pulls"] = int(counters["pulls"]) + 1
 
 
-func _shrapnel(handle: int, at: Vector2, seen: Dictionary) -> void:
+func _shrapnel(_handle: int, at: Vector2, seen: Dictionary) -> void:
 	counters["shrapnel"] = int(counters["shrapnel"]) + 1
 	var dirs: Array = seen.values()
 	var fired := 0

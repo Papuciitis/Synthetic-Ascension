@@ -52,8 +52,6 @@ var _decimation_casts: int = 0
 var _boss_sentence_cd: float = 0.0
 var _clock: float = 0.0
 var _clean_cut_volley: int = -1
-var _dash_refund_window: float = 0.0
-var _dash_refund_used: float = 0.0
 var _elite_damage_bank: float = 0.0
 
 var counters: Dictionary = {"executions": 0, "line_finishes": 0, "spillovers": 0, "bolt_hits": 0, "corpse_bombs": 0, "cleaves": 0, "marks": 0, "mark_consumed": 0, "first_cuts": 0, "last_words": 0, "reservoir_releases": 0, "gavels": 0, "gavel_executions": 0, "public_executions": 0, "chain_gavels": 0, "lesser_gavels": 0, "second_swings": 0, "red_mists": 0, "decimations": 0, "elite_sentences": 0, "boss_sentences": 0, "cracks": 0}

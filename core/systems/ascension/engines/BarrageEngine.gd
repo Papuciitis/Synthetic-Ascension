@@ -859,7 +859,7 @@ func _tick_suppression(delta: float) -> void:
 	if suppression_left <= 0.0:
 		runner.note_revelation_ended("BRV")
 	if suppression_left <= 0.0 and has("BRV3"):
-		var rounds := mini(60, _suppression_shots / 4)
+		var rounds := mini(60, floori(float(_suppression_shots) / 4.0))
 		if rounds > 0:
 			_radial_volley(runner.player_position(), rounds, D(), 0.4, "BRV3", "bullet")
 		_native_block_left = 1.5

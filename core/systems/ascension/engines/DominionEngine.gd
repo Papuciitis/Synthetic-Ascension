@@ -283,7 +283,7 @@ func _tick_wells(delta: float) -> void:
 				_expire_well(well)
 
 
-func _instruction_for(well: Dictionary, handle: int) -> void:
+func _instruction_for(_well: Dictionary, _handle: int) -> void:
 	pass
 
 

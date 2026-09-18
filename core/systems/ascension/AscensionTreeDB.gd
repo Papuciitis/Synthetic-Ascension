@@ -60,24 +60,24 @@ func load_from(path: String) -> bool:
 	_by_kind.clear()
 	_by_discipline.clear()
 	for node_variant in data.get("nodes", []):
-		var node := node_variant as Dictionary
-		var id := String(node.get("id", ""))
-		nodes[id] = node
-		var kind := String(node.get("kind", ""))
-		if not _by_kind.has(kind):
-			_by_kind[kind] = []
-		(_by_kind[kind] as Array).append(id)
-		var discipline: Variant = node.get("discipline")
-		if discipline != null and kind == "local":
+		var node_data := node_variant as Dictionary
+		var id := String(node_data.get("id", ""))
+		nodes[id] = node_data
+		var node_kind := String(node_data.get("kind", ""))
+		if not _by_kind.has(node_kind):
+			_by_kind[node_kind] = []
+		(_by_kind[node_kind] as Array).append(id)
+		var discipline: Variant = node_data.get("discipline")
+		if discipline != null and node_kind == "local":
 			var code := String(discipline)
 			if not _by_discipline.has(code):
 				_by_discipline[code] = []
 			(_by_discipline[code] as Array).append(id)
 	for node_variant in data.get("nodes", []):
-		var node := node_variant as Dictionary
-		var id := String(node.get("id", ""))
+		var node_data := node_variant as Dictionary
+		var id := String(node_data.get("id", ""))
 		var out := PackedStringArray()
-		for other in node.get("links", []):
+		for other in node_data.get("links", []):
 			out.append(String(other))
 		links[id] = out
 	return true

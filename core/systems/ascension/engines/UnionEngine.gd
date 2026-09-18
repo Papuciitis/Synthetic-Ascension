@@ -16,7 +16,6 @@ var _ranged_inputs: int = 0
 var _spell_cycle: int = 0
 var _loaded_rule: String = ""
 var _loaded_volley: int = -1
-var _rule_pid: int = 0
 
 var counters: Dictionary = {"incarnate_commands": 0, "rack_loaded": 0, "rack_fired": 0, "rack_volleys": 0, "rack_dumps": 0, "spell_shots": 0, "spell_rules": 0, "magic_shots": 0}
 

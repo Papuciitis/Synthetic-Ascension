@@ -347,14 +347,14 @@ func _capture_sample() -> void:
 		sample["player"] = {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "stats": _stats(player.get("stats")),
 			"position": [player.global_position.x, player.global_position.y], "dead": player.get("is_dead"), "healing_lock_seconds": player.call("healing_locked_seconds")}
 		var effects := {}
-		for name in ["ItemEffectRunner", "ManifestationRunner", "AscensionRunner"]:
-			var runner := player.get_node_or_null(NodePath(name))
+		for runner_name in ["ItemEffectRunner", "ManifestationRunner", "AscensionRunner"]:
+			var runner := player.get_node_or_null(NodePath(runner_name))
 			if runner == null:
 				continue
 			var row := {}
 			for method in ["get_power_multiplier", "get_haste_multiplier", "get_damage_taken_multiplier"]:
 				if runner.has_method(method):
 					row[method] = runner.call(method)
-			effects[name] = row
+			effects[runner_name] = row
 		sample["effect_multipliers"] = effects
 	_ledger.event("sample", sample)

@@ -173,7 +173,6 @@ var rolls_made: int = 0
 var rolls_succeeded: int = 0
 var _wired: bool = false
 var _player: Node = null
-var _managed_profile: HitProfileAdapter = null
 var _rng: RandomNumberGenerator = null
 
 var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills": 0, "generated": 0, "seed_kills": 0, "chain_kills": 0, "longest_chain": 0, "catastrophes": 0, "revelations": 0}
@@ -788,7 +787,7 @@ func _twenty_bodies(cast: String, at: Vector2) -> void:
 	if not owns("ASC3") or foreign_cores().is_empty():
 		return
 	var bodies := int(_chain_counts.get(cast, 0))
-	var milestones := bodies / TWENTY_BODIES
+	var milestones := floori(float(bodies) / float(TWENTY_BODIES))
 	if milestones <= int(_twenty_awarded.get(cast, 0)):
 		return
 	_twenty_awarded[cast] = milestones
@@ -841,12 +840,12 @@ func q_scale() -> float:
 		return REACTION_SCALE * sinks
 	if automatic_cast:
 		return AUTOMATIC_SCALE * sinks
-	var scale := sinks
+	var damage_scale := sinks
 	if owns("pick.M1"):
-		scale *= HANDS_ON_SCALE
+		damage_scale *= HANDS_ON_SCALE
 	if owns("pick.M3") and _q_idle_at_cast >= PATIENT_IDLE:
-		scale *= PATIENT_SCALE
-	return scale
+		damage_scale *= PATIENT_SCALE
+	return damage_scale
 
 
 ## Proc Power scale for Q payloads (Reaction 0.6, automatic 0.7).
@@ -863,12 +862,12 @@ func q_proc_scale() -> float:
 func q_area_scale() -> float:
 	if reaction_cast or automatic_cast or encore_cast:
 		return 1.0
-	var scale := 1.0
+	var area_scale := 1.0
 	if owns("pick.M1"):
-		scale *= HANDS_ON_SCALE
+		area_scale *= HANDS_ON_SCALE
 	if owns("pick.M3") and _q_idle_at_cast >= PATIENT_IDLE:
-		scale *= PATIENT_SCALE
-	return scale
+		area_scale *= PATIENT_SCALE
+	return area_scale
 
 
 ## Commitment (Doctrine pick): one equipped Keystone strengthens its
@@ -1441,8 +1440,8 @@ func _on_projectile_ended(info: Dictionary) -> void:
 var _time_slow_left: float = 0.0
 
 
-func set_time_slow(scale: float, real_seconds: float) -> void:
-	Engine.time_scale = clampf(scale, 0.05, 1.0)
+func set_time_slow(time_scale: float, real_seconds: float) -> void:
+	Engine.time_scale = clampf(time_scale, 0.05, 1.0)
 	_time_slow_left = maxf(0.0, real_seconds)
 
 
@@ -1659,10 +1658,10 @@ func activate_v() -> Dictionary:
 			prefer_second = false
 		elif not prefer_second and v_charge < V_CHARGE_MAX and v2_charge >= V_CHARGE_MAX:
 			prefer_second = true
-		var result := _activate("v2" if prefer_second else "v")
-		if bool(result.get("ok", false)):
+		var selected_result := _activate("v2" if prefer_second else "v")
+		if bool(selected_result.get("ok", false)):
 			_v_turn += 1
-		return result
+		return selected_result
 	var result := _activate("v")
 	if bool(result.get("ok", false)):
 		_v_turn += 1
