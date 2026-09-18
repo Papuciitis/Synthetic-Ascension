@@ -37,6 +37,30 @@ of `recording` means the final boundary has not been saved, not a completed run.
 
 ## Interpret the numbers
 
+- `schema_version` 2 captures carry `metadata.recorder_revision` (the
+  recorder's contract), `metadata.balance_revision` (the item/encounter tuning
+  state, 1 until the balance plan's profiles are active), `tuning_stages`,
+  `tuning_hash` and `metadata.features`: which measurements this recorder
+  makes. A feature that is false (or a field absent from an older capture)
+  means unavailable, never a measured zero.
+- Health reconciliation (`summary.health`): every actual HP change is recorded
+  once at its owner as a canonical change (`RunEvents.balance_health_changed`),
+  by category (`hit`, `heal`, `cost`, `adjustment`, `rescue`, `respawn`) and
+  source. Each life starts at the observed HP (capture start or reconstruction,
+  never counted as healing), sums the signed changes, and compares the result
+  with the sampled HP once per second. `unexplained_checks` and
+  `unexplained_hp_delta` say how often and by how much a sampled HP disagreed
+  with the records; the expectation resyncs to the sample so each gap is
+  measured once, and nothing is ever invented to balance it. Costs (tree
+  payments, Death Rattle's held beat) are the single source of `hp_paid`.
+  Healing takebacks (Scar Tissue, Slow Heart) are adjustments attributed to
+  their rule, never enemy damage; Slow Heart's release and the Regeneration
+  Ring heal under `item:curse_slow_heart` / `item:ring_regeneration`. Stat
+  refreshes that move maximum HP, preserve full health or clamp are
+  adjustments from `player:stats`. Hits and heals are aggregated per second
+  in the `metrics` window (`health_changes`); costs, adjustments, rescues and
+  reconstruction are discrete `health_change` events.
+
 - A capture represents an **observed session**, not necessarily an entire
   attempt. Resuming produces a new capture ID. `metadata.run_key` combines save
   slot and world seed to link sessions. It does not prove an uninterrupted

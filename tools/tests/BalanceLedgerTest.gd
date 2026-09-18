@@ -73,6 +73,26 @@ func _run() -> void:
 		var oc: Dictionary = outcomes.summary().totals
 		_check(oc.player_hp_lost == 9.0 and oc.player_overkill == 41.0 and oc.player_damage_before_defenses == 50.0 and oc.intercepted_hits == 1, "an intercepted lethal hit charges the health it removed and counts once")
 		_check(oc.missed_hits == 1 and oc.evaded_hits == 1 and oc.player_damage_by_source.get("brute", 0.0) == 9.0, "a rule-made miss is an avoided hit, not HP loss")
+		# Health reconciliation: canonical changes sum to the sampled HP; a
+		# gap is reported as unexplained, never balanced away; reconstruction
+		# starts a new life at its restored HP.
+		var lives = load(path).new()
+		lives.start({}, 0, 2)
+		lives.begin_life(100.0, 100.0, "capture_start")
+		lives.record_health_change({"category": "hit", "source_id": "brute", "hp_before": 100.0, "hp_after": 70.0, "max_hp_before": 100.0, "max_hp_after": 100.0, "requested": 30.0, "reason": "hit"})
+		lives.record_health_change({"category": "heal", "source_id": "heal:pickup", "hp_before": 70.0, "hp_after": 80.0, "max_hp_before": 100.0, "max_hp_after": 100.0, "requested": 10.0, "reason": "pickup"})
+		lives.record_health_change({"category": "cost", "source_id": "manifestation_pair:death_rattle", "hp_before": 80.0, "hp_after": 75.0, "max_hp_before": 100.0, "max_hp_after": 100.0, "requested": 5.0, "reason": "held_beat"})
+		lives.observe_hp(75.0, 100.0)
+		var hs: Dictionary = lives.health_summary()
+		_check(float(hs.current_life.expected_hp) == 75.0 and float(hs.current_life.residual) == 0.0 and lives.summary().totals.hp_paid == 5.0, "hit, heal and cost reconcile and the cost is paid HP once")
+		lives.observe_hp(60.0, 100.0)
+		hs = lives.health_summary()
+		_check(int(hs.current_life.unexplained_checks) == 1 and float(hs.current_life.unexplained_hp_delta) == -15.0 and float(hs.current_life.expected_hp) == 60.0, "a sampled gap is reported as unexplained and the expectation resyncs")
+		lives.end_life("death")
+		lives.record_health_change({"category": "respawn", "source_id": "player:reconstruction", "hp_before": 0.0, "hp_after": 100.0, "max_hp_before": 100.0, "max_hp_after": 100.0, "requested": 100.0, "reason": "respawn"})
+		hs = lives.health_summary()
+		_check(int(hs.lives_completed) == 1 and int(hs.current_life.life_id) == 2 and float(hs.current_life.hp_start) == 100.0 and String(hs.lives[0].ended_reason) == "death", "reconstruction closes the dead life and baselines the next")
+		_check(lives.summary().schema_version == 2, "the summary declares schema 2")
 		var funded = load(path).new()
 		funded.start({}, 100, 2)
 		funded.transaction(100, 13200, 13300, "dev_grant", {"source": "ascension route"})

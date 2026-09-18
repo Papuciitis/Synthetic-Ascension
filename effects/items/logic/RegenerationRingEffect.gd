@@ -77,7 +77,9 @@ func _process(dt: float) -> void:
 	# the ring's growth around R5.
 	amt = clampf(amt, 0.5, 12.0 * rarity_mult)
 
-	player.call("heal", amt)
+	# The source name only labels telemetry (healing_by_source); the heal
+	# itself follows the generic path exactly as before.
+	player.call("heal", amt, &"item:ring_regeneration")
 	_spawn_plus()
 
 

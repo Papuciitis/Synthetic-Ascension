@@ -202,6 +202,16 @@ func _pay_for_the_beat() -> void:
 		return
 	var left := hp - cost
 	player.set("hp", left)
+	# Telemetry only. Reported here rather than through player.pay_health(),
+	# which would also check god mode and pause melee regeneration: the toll
+	# keeps its own semantics (direct, nonlethal, no evasion, no armour) and
+	# the recorder receives the canonical record of what it removed.
+	if RunEvents != null and RunEvents.balance_health_changed.has_connections():
+		RunEvents.balance_health_changed.emit(player, {
+			"category": "cost", "source_id": "manifestation_pair:death_rattle",
+			"hp_before": hp, "hp_after": left, "max_hp_before": player_max_hp(), "max_hp_after": player_max_hp(),
+			"requested": hold_cost(), "reason": "held_beat",
+		})
 	# NOT player.take_damage(). That path rolls evasion, divides the amount by
 	# armour and emits player_damage_taken, which would let a ward rule retaliate
 	# against a cost the player charged to themselves - and would let armour

@@ -50,7 +50,15 @@ func on_healed(amount: float) -> void:
 	var refused := amount * REFUSE_FRACTION
 	var hp: Variant = player.get("hp")
 	if hp is float or hp is int:
-		player.set("hp", maxf(1.0, float(hp) - refused))
+		var after := maxf(1.0, float(hp) - refused)
+		player.set("hp", after)
+		# Telemetry only: a healing takeback is an adjustment, not enemy damage.
+		if RunEvents != null and RunEvents.balance_health_changed.has_connections():
+			RunEvents.balance_health_changed.emit(player, {
+				"category": "adjustment", "source_id": "manifestation:scar_tissue",
+				"hp_before": float(hp), "hp_after": after, "max_hp_before": player.get("max_hp"), "max_hp_after": player.get("max_hp"),
+				"requested": refused, "reason": "healing_refused",
+			})
 		if player.has_signal("hp_changed"):
 			player.emit_signal("hp_changed", player.get("hp"), player.get("max_hp"))
 

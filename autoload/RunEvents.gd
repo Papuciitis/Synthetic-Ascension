@@ -142,3 +142,13 @@ signal enemy_damaged(handle: int, applied: float, unclamped: float, health_befor
 ## rules do not hear it.
 @warning_ignore("unused_signal")
 signal player_paid_health(player: Node, amount: float, reason: StringName)
+
+## One canonical record per actual player HP mutation, emitted by the owner of
+## the mutation right after the assignment (and before callbacks that could
+## mutate again), so the balance recorder can reconcile every health change:
+## hits, heals, intentional costs, takebacks and developer adjustments,
+## rescues and reconstruction. Telemetry only; nothing may react to it.
+## change: {category, source_id, source_node, hp_before, hp_after,
+##          max_hp_before, max_hp_after, requested, reason}
+@warning_ignore("unused_signal")
+signal balance_health_changed(player: Node, change: Dictionary)

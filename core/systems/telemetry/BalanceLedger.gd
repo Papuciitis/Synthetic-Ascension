@@ -21,7 +21,18 @@ const METRICS := [
 	"evaded_hits", "invulnerable_hits", "god_mode_hits", "missed_hits", "intercepted_hits",
 ]
 
+## Health reconciliation: one life at a time, closed on reconstruction.
+const HEALTH_SOURCE_CAP := 512
+const HEALTH_LIVES_KEPT := 32
+## Frequent categories are aggregated per window; the rest are discrete records.
+const DISCRETE_HEALTH_CATEGORIES := ["cost", "adjustment", "rescue", "respawn"]
+const SCHEMA_VERSION := 2
+
 var max_pending_records := 8192
+var _health: Dictionary = {}
+var _health_totals: Dictionary = {}
+var _lives: Array[Dictionary] = []
+var _lives_completed := 0
 var _metadata: Dictionary = {}
 var _totals: Dictionary = {}
 var _segments: Array[Dictionary] = []
@@ -47,6 +58,10 @@ func start(metadata: Dictionary, balance: int, segment: int) -> void:
 	_dropped = 0
 	_discontinuities = 0
 	_outcome = "recording"
+	_health = {}
+	_health_totals = _empty_health_totals()
+	_lives.clear()
+	_lives_completed = 0
 	_open_segment(segment, balance)
 	event("capture_started", _metadata)
 
@@ -81,7 +96,137 @@ func finish(outcome: String) -> void:
 	flush_window()
 	_outcome = outcome
 	_current["status"] = outcome
+	if not _health.is_empty():
+		_health["closed_reason"] = outcome
 	event("capture_ended", {"outcome": outcome})
+
+
+# ---------------------------------------------------------------- health reconciliation
+
+func _empty_health_totals() -> Dictionary:
+	return {"changes": 0, "checks": 0, "unexplained_checks": 0, "unexplained_hp_delta": 0.0, "max_abs_residual": 0.0, "by_category": {}}
+
+
+func _empty_life(life_id: int, hp: float, max_hp: float, reason: String) -> Dictionary:
+	return {"life_id": life_id, "reason": reason, "started_gameplay": float(_totals.get("seconds_gameplay", 0.0)),
+		"hp_start": hp, "max_hp": max_hp, "expected_hp": hp, "changes": 0, "by_category": {}, "by_source": {},
+		"by_source_overflow": 0, "checks": 0, "residual": 0.0, "max_abs_residual": 0.0,
+		"unexplained_hp_delta": 0.0, "unexplained_checks": 0}
+
+
+## Starts a life baseline at the observed HP (capture start, reconstruction).
+## Initialization is a baseline, never healing.
+func begin_life(hp: float, max_hp: float, reason: String) -> void:
+	var next_id := int(_health.get("life_id", _lives_completed)) + 1
+	_close_life(reason)
+	_health = _empty_life(next_id, hp, max_hp, reason)
+	event("life_started", {"life_id": next_id, "hp": hp, "max_hp": max_hp, "reason": reason})
+
+
+func end_life(reason: String) -> void:
+	if _health.is_empty():
+		return
+	_health["ended_reason"] = reason
+	_health["ended_gameplay"] = float(_totals.get("seconds_gameplay", 0.0))
+
+
+func current_life_id() -> int:
+	return int(_health.get("life_id", 0))
+
+
+func _close_life(reason: String) -> void:
+	if _health.is_empty():
+		return
+	var done := _health.duplicate(true)
+	done["closed_reason"] = reason
+	done["ended_gameplay"] = float(_totals.get("seconds_gameplay", 0.0))
+	done["hp_end"] = float(_health.get("expected_hp", 0.0))
+	_lives_completed += 1
+	if _lives.size() >= HEALTH_LIVES_KEPT:
+		_lives.pop_front()
+	_lives.append(done)
+	_health = {}
+
+
+## The canonical health-change record: hp_after - hp_before is authoritative.
+## Updates reconciliation only; the hit/heal metrics keep coming from the
+## resolved-damage/heal signals. Intentional costs are the one source of the
+## hp_paid metric, so a cost is counted once.
+func record_health_change(change: Dictionary) -> void:
+	var category := String(change.get("category", "unknown"))
+	var hp_before := float(change.get("hp_before", 0.0))
+	var hp_after := float(change.get("hp_after", 0.0))
+	var max_after := float(change.get("max_hp_after", 0.0))
+	var delta := hp_after - hp_before
+	if category == "respawn":
+		begin_life(hp_after, max_after, "respawn")
+		change["life_id"] = current_life_id()
+		event("health_change", change)
+		return
+	if _health.is_empty():
+		begin_life(hp_before, float(change.get("max_hp_before", max_after)), "first_change")
+	change["life_id"] = current_life_id()
+	_health["expected_hp"] = float(_health["expected_hp"]) + delta
+	_health["max_hp"] = max_after
+	_health["changes"] = int(_health["changes"]) + 1
+	_health_totals["changes"] = int(_health_totals["changes"]) + 1
+	for table in [_health["by_category"], _health_totals["by_category"]]:
+		var cats: Dictionary = table
+		if not cats.has(category):
+			cats[category] = {"count": 0, "delta": 0.0}
+		cats[category]["count"] = int(cats[category]["count"]) + 1
+		cats[category]["delta"] = float(cats[category]["delta"]) + delta
+	var source := String(change.get("source_id", "unknown"))
+	var sources: Dictionary = _health["by_source"]
+	if sources.has(source) or sources.size() < HEALTH_SOURCE_CAP:
+		sources[source] = float(sources.get(source, 0.0)) + delta
+	else:
+		_health["by_source_overflow"] = int(_health["by_source_overflow"]) + 1
+		sources["other"] = float(sources.get("other", 0.0)) + delta
+	if category == "cost":
+		add_metric("hp_paid", maxf(0.0, -delta))
+	if category in DISCRETE_HEALTH_CATEGORIES:
+		event("health_change", change)
+	else:
+		# Hits and heals arrive per frame under regen and per contact tick:
+		# aggregated per window by category and source, exact in total.
+		if not _window.has("health_changes"):
+			_window["health_changes"] = {}
+		var rows: Dictionary = _window["health_changes"]
+		var key := category + ":" + source
+		if not rows.has(key):
+			rows[key] = {"count": 0, "delta": 0.0}
+		rows[key]["count"] = int(rows[key]["count"]) + 1
+		rows[key]["delta"] = float(rows[key]["delta"]) + delta
+
+
+## A sampled HP against the reconciled expectation. A gap is reported as
+## unexplained (and the expectation resynced so the next gap is measured on
+## its own); nothing is ever invented to balance it.
+func observe_hp(hp: float, max_hp: float) -> void:
+	if _health.is_empty():
+		begin_life(hp, max_hp, "observed")
+		return
+	var tolerance := maxf(0.001, 0.00001 * maxf(max_hp, float(_health.get("max_hp", 0.0))))
+	var expected := float(_health["expected_hp"])
+	var residual := hp - expected
+	_health["checks"] = int(_health["checks"]) + 1
+	_health_totals["checks"] = int(_health_totals["checks"]) + 1
+	_health["residual"] = residual
+	_health["max_abs_residual"] = maxf(float(_health["max_abs_residual"]), absf(residual))
+	_health_totals["max_abs_residual"] = maxf(float(_health_totals["max_abs_residual"]), absf(residual))
+	if absf(residual) > tolerance:
+		_health["unexplained_checks"] = int(_health["unexplained_checks"]) + 1
+		_health["unexplained_hp_delta"] = float(_health["unexplained_hp_delta"]) + residual
+		_health_totals["unexplained_checks"] = int(_health_totals["unexplained_checks"]) + 1
+		_health_totals["unexplained_hp_delta"] = float(_health_totals["unexplained_hp_delta"]) + residual
+		_health["expected_hp"] = hp
+		event("health_unexplained", {"life_id": current_life_id(), "expected": expected, "observed": hp, "residual": residual})
+
+
+func health_summary() -> Dictionary:
+	return {"current_life": _health.duplicate(true), "totals": _health_totals.duplicate(true),
+		"lives": _lives.duplicate(true), "lives_completed": _lives_completed}
 
 func advance(seconds: float, mode: String) -> void:
 	if seconds <= 0.0 or not is_finite(seconds):
@@ -276,9 +421,10 @@ func pending_count() -> int:
 	return _records.size()
 
 func summary() -> Dictionary:
-	var result := {"schema_version": 1, "metadata": _metadata.duplicate(true), "outcome": _outcome,
+	var result := {"schema_version": SCHEMA_VERSION, "metadata": _metadata.duplicate(true), "outcome": _outcome,
 		"elapsed_seconds": _elapsed, "totals": _totals.duplicate(true), "segments": _segments.duplicate(true),
-		"dropped_records": _dropped, "wallet_discontinuities": _discontinuities, "last_sequence": _sequence}
+		"dropped_records": _dropped, "wallet_discontinuities": _discontinuities, "last_sequence": _sequence,
+		"health": health_summary()}
 	var stats_rows: Array = [result.totals]
 	stats_rows.append_array(result.segments)
 	for stats in stats_rows:

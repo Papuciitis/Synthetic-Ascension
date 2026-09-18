@@ -116,12 +116,29 @@ static func markdown(summary: Dictionary) -> String:
 	if seconds > 0.0:
 		text += "\nEnemy HP removed / gameplay second: **%.2f**. Kills / gameplay minute: **%.2f**.\n" % [float(t.get("enemy_hp_removed", 0.0)) / seconds, float(t.get("kills", 0.0)) * 60.0 / seconds]
 	text += "\nGameplay time includes travel while the player is alive; it excludes pauses, hub time, loading and death screens. These rates are not combat-only or training-dummy DPS.\n\n"
+	var health: Dictionary = summary.get("health", {})
+	if not health.is_empty():
+		var ht: Dictionary = health.get("totals", {})
+		var live_life: Dictionary = health.get("current_life", {})
+		text += "## Health reconciliation\n\nEvery HP change is recorded at its owner (hits, heals, costs, takebacks, adjustments, rescues, reconstruction) and each life's expected HP is compared with the sampled HP once per second. Lives observed: **%d** (completed %d). Recorded changes: **%d**. Checks: **%d**, unexplained: **%d** (net unexplained HP %.2f, largest residual %.3f). An unexplained check means some HP change reached no record; it is reported, never balanced away.\n\n" % [int(health.get("lives_completed", 0)) + (0 if live_life.is_empty() else 1), int(health.get("lives_completed", 0)), int(ht.get("changes", 0)), int(ht.get("checks", 0)), int(ht.get("unexplained_checks", 0)), float(ht.get("unexplained_hp_delta", 0.0)), float(ht.get("max_abs_residual", 0.0))]
+		text += "| Category | Changes | Net HP |\n|---|---:|---:|\n"
+		for category in ht.get("by_category", {}):
+			var row: Dictionary = ht.by_category[category]
+			text += "| %s | %s | %.2f |\n" % [_cell(category), row.get("count", 0), float(row.get("delta", 0.0))]
+		text += "\nSources per life, including Death Rattle payments, Scar Tissue and Slow Heart takebacks and stat-refresh clamps, are in summary.json under health.\n\n"
 	text += "## Enemy scaling\n\n| Archetype | Seen | Mean HP | Max HP | Kills | TTK samples | Mean TTK (s) | Removed alive |\n|---|---:|---:|---:|---:|---:|---:|---:|\n"
 	for key in t.get("enemies", {}):
 		var row: Dictionary = t.enemies[key]
 		var ttk := "—" if row.ttk_count == 0 else "%.3f" % (row.ttk_seconds / row.ttk_count)
 		text += "| %s | %d | %.2f | %.2f | %d | %d | %s | %d |\n" % [_cell(key), row.seen, row.hp_sum / maxf(1.0, row.seen), row.hp_max, row.kills, row.ttk_count, ttk, row.removed_alive]
 	text += "\nTTK runs from first observed damaging hit to death using gameplay seconds. Only defeated, engaged enemies contribute; surviving enemies are not assigned zero. HP reflects registration/entry and later elite or boss configuration.\n\n"
+	var features: Dictionary = meta.get("features", {})
+	if not features.is_empty():
+		var measured: Array = []
+		var missing: Array = []
+		for feature in features:
+			(measured if bool(features[feature]) else missing).append(String(feature))
+		text += "## Recorder coverage\n\nRecorder revision %s, balance revision %s. Measured: %s. Not measured by this revision (absent means unavailable, never zero): %s.\n\n" % [str(meta.get("recorder_revision", "unknown")), str(meta.get("balance_revision", "unknown")), ", ".join(measured) if not measured.is_empty() else "none", ", ".join(missing) if not missing.is_empty() else "none"]
 	text += "## Coverage\n\nPlayer damage is grouped by immediate source in summary.json; self-inflicted rule damage uses the source `self_damage`. An intercepted lethal hit counts its actual HP removed under player HP lost and its excess under overkill. Contact pressure is a combined swarm source. Enemy HP loss comes from the authoritative EnemyWorld damage event; legacy actors that bypass it are outside this damage total. Critical counts require a HitLedger. Generic heals retain a generic source. Detailed ability ancestry, avoided-hit raw damage, loot decisions and automated balance judgments are outside this core recorder.\n\nSee events.jsonl for wallet operations, build snapshots, pressure samples and lifecycle events; segments.csv for progression comparisons.\n"
 	return text
 

@@ -501,10 +501,20 @@ func apply_run_stats(new_stats: Stats, emit_hp_signal: bool = true) -> void:
 	speed = stats.move_speed
 	max_hp = stats.max_hp
 
+	var old_hp: float = hp
 	if was_full:
 		hp = max_hp
 	else:
 		hp = min(hp, max_hp)
+	if not is_equal_approx(hp, old_hp) or not is_equal_approx(max_hp, old_max):
+		# A stat refresh that moved the maximum (or clamped the current value)
+		# is an adjustment, never healing or damage.
+		var reason := &"max_hp_change"
+		if was_full and not is_equal_approx(max_hp, old_max):
+			reason = &"full_health_preserved"
+		elif hp < old_hp:
+			reason = &"clamped_to_max"
+		_report_health_change(&"adjustment", "player:stats", old_hp, old_max, hp - old_hp, reason)
 
 	if emit_hp_signal:
 		hp_changed.emit(hp, max_hp)
@@ -1202,12 +1212,14 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
 		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
 		hp = 1.0
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
 		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
 		hp_changed.emit(hp, max_hp)
 		if RunEvents != null:
 			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
 		return
 	hp = max(hp - reduced, 0.0)
+	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
 	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
 	if BattleText != null:
 		BattleText.player_damage(global_position, reduced)
@@ -1231,12 +1243,28 @@ func _report_balance_damage(raw: float, adjusted: float, applied: float, source:
 		RunEvents.player_damage_resolved.emit(self, raw, adjusted, applied, source, kind, outcome)
 
 
+## The canonical health-change record (RunEvents.balance_health_changed):
+## called right after an HP assignment, reading the new value from `hp`.
+## Telemetry only: guarded by has_connections so an unrecorded run pays
+## nothing for it.
+func _report_health_change(category: StringName, source_id: String, hp_before: float, max_hp_before: float, requested: float, reason: StringName, source: Node = null) -> void:
+	if RunEvents == null or not RunEvents.balance_health_changed.has_connections():
+		return
+	RunEvents.balance_health_changed.emit(self, {
+		"category": String(category), "source_id": source_id, "source_node": source,
+		"hp_before": hp_before, "hp_after": hp, "max_hp_before": max_hp_before, "max_hp_after": max_hp,
+		"requested": requested, "reason": String(reason),
+	})
+
+
 func _try_doctrine_death_intercept() -> bool:
 	if Global == null or not Global.has_method("try_consume_manufactured_witness"):
 		return false
 	if not bool(Global.try_consume_manufactured_witness()):
 		return false
+	var hp_before_rescue := hp
 	hp = maxf(1.0, max_hp * 0.50)
+	_report_health_change(&"rescue", "doctrine:manufactured_witness", hp_before_rescue, max_hp, hp, &"rescue")
 	if RunEvents != null and RunEvents.player_life_event.has_connections():
 		RunEvents.player_life_event.emit(self, &"rescue")
 	grant_invulnerability(2.0)
@@ -1286,7 +1314,9 @@ func respawn() -> void:
 
 	# Hard reset to checkpoint using the final rebuilt maximum. Emit one coherent
 	# HP snapshot after both current and maximum HP are settled.
+	var hp_before_respawn := hp
 	hp = max_hp
+	_report_health_change(&"respawn", "player:reconstruction", hp_before_respawn, max_hp, max_hp, &"respawn")
 	global_position = spawn_pos
 	_contact_sources.clear()
 	_touching_enemies = 0
@@ -1335,7 +1365,9 @@ func pay_health(amount: float, reason: StringName = &"ascension", lethal: bool =
 	var paid: float = minf(amount, hp if lethal else maxf(hp - 1.0, 0.0))
 	if paid <= 0.0:
 		return 0.0
+	var hp_before_payment := hp
 	hp -= paid
+	_report_health_change(&"cost", "ascension:" + String(reason), hp_before_payment, max_hp, amount, reason)
 	if BattleText != null:
 		BattleText.player_damage(global_position, paid)
 	if _is_melee_style_active():
@@ -1567,7 +1599,10 @@ func heal(amount: float, source: StringName = &"generic") -> void:
 	# 30-point pickup applied 5 and announced 30, so a rule refusing 55% of it
 	# subtracted 16.5 and the pickup left you LOWER than before you touched it.
 	var applied: float = min(hp + amount, max_hp) - hp
+	var hp_before_heal := hp
 	hp += applied
+	if applied > 0.0:
+		_report_health_change(&"heal", "heal:" + String(source), hp_before_heal, max_hp, requested, source)
 	if RunEvents != null and RunEvents.player_heal_resolved.has_connections():
 		RunEvents.player_heal_resolved.emit(self, requested, amount, applied, source, false)
 	hp_changed.emit(hp, max_hp)

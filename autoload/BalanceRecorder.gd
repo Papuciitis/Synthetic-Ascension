@@ -7,6 +7,13 @@ const Build := preload("res://core/systems/telemetry/BuildInfo.gd")
 const Types := preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 const STAT_FIELDS := ["max_hp", "armor", "move_speed", "power", "haste", "luck"]
 const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_mul", "enemy_damage_mul", "enemy_speed_mul", "spawn_interval_mul", "elite_bonus", "segment_phase", "rite_channel_active", "power_contrast_active"]
+## Recorder contract revision, separate from the item-balance revision so an
+## instrumentation-only capture can never be mistaken for a tuned build.
+const RECORDER_REVISION := 2
+const BALANCE_REVISION := 1
+## What this recorder measures; an omitted feature reads as unavailable, not 0.
+const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": false,
+	"incidents": false, "exit_detail": false, "progression": false}
 const DEBUG_FIELDS := ["debug_dev_mode", "debug_dev_segment", "debug_player_god_mode", "debug_enemy_hp_scale", "debug_ascension_revelations_enabled", "enemy_proxy_rollout", "debug_opening_mode_override"]
 
 var enabled := true
@@ -63,9 +70,13 @@ func begin_gameplay(player: Node) -> void:
 		var slot: int = SaveManager.current_save.slot_index if SaveManager.current_save != null else -1
 		var metadata := {"capture_id": capture_id, "run_key": "%d:%s" % [slot, str(Global.attempt_world_seed)],
 			"save_slot": slot, "build": Build.describe(Global.attempt_world_seed), "start_segment": Global.attempt_segment,
-			"coverage": "observed_session", "starting_debug": _debug_snapshot()}
+			"coverage": "observed_session", "starting_debug": _debug_snapshot(),
+			"recorder_revision": RECORDER_REVISION, "balance_revision": BALANCE_REVISION,
+			"tuning_stages": [], "tuning_hash": "", "features": FEATURES.duplicate()}
 		_ledger = Ledger.new()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)
+		if "hp" in player and "max_hp" in player:
+			_ledger.begin_life(float(player.get("hp")), float(player.get("max_hp")), "capture_start")
 		_active = true
 		_writer_failures = 0
 		_last_error = ""
@@ -126,7 +137,7 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"weapon_fired", _on_weapon_fired)
 	_subscribe(RunEvents, &"player_damage_resolved", _on_player_damage)
 	_subscribe(RunEvents, &"player_heal_resolved", _on_player_heal)
-	_subscribe(RunEvents, &"player_paid_health", _on_health_paid)
+	_subscribe(RunEvents, &"balance_health_changed", _on_health_changed)
 	_subscribe(RunEvents, &"player_life_event", _on_life_event)
 	_subscribe(RunEvents, &"player_stats_recomputed", _on_stats_changed)
 	_subscribe(RunEvents, &"segment_phase_changed", _on_phase)
@@ -269,10 +280,18 @@ func _on_player_heal(player: Node, requested: float, modified: float, applied: f
 	if player == _player():
 		_ledger.player_heal(requested, modified, applied, String(source), blocked)
 
-func _on_health_paid(player: Node, amount: float, reason: StringName) -> void:
-	if player == _player():
-		_ledger.add_metric("hp_paid", amount)
-		_ledger.event("health_paid", {"amount": amount, "reason": String(reason)})
+## The canonical health-change record. Costs feed the hp_paid metric here
+## (once); hits and heals keep their metrics from the resolved signals.
+func _on_health_changed(player: Node, change: Dictionary) -> void:
+	if player != _player():
+		return
+	var record := change.duplicate()
+	var source_node: Variant = record.get("source_node", null)
+	record.erase("source_node")
+	if String(record.get("source_id", "")).is_empty():
+		record["source_id"] = _source_id(source_node as Node if source_node is Node else null, StringName(String(record.get("reason", "unknown"))))
+	record["wall_seconds"] = float(Time.get_ticks_usec() - _started_usec) / 1000000.0
+	_ledger.record_health_change(Writer.json_safe(record))
 
 func _on_life_event(player: Node, kind: StringName) -> void:
 	if player != _player():
@@ -280,6 +299,8 @@ func _on_life_event(player: Node, kind: StringName) -> void:
 	var metric: String = {"death": "deaths", "respawn": "respawns", "rescue": "rescues"}.get(String(kind), "")
 	if not metric.is_empty():
 		_ledger.add_metric(metric)
+	if kind == &"death":
+		_ledger.end_life("death")
 	_ledger.event("player_" + String(kind), {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "followers": Global.followers})
 	_capture_sample()
 
@@ -344,6 +365,8 @@ func _capture_sample() -> void:
 		sample.pressure[field] = ThreatDirector.get(field)
 	var player := _player()
 	if player != null and _mode == "gameplay":
+		if not bool(player.get("is_dead")):
+			_ledger.observe_hp(float(player.get("hp")), float(player.get("max_hp")))
 		sample["player"] = {"hp": player.get("hp"), "max_hp": player.get("max_hp"), "stats": _stats(player.get("stats")),
 			"position": [player.global_position.x, player.global_position.y], "dead": player.get("is_dead"), "healing_lock_seconds": player.call("healing_locked_seconds")}
 		# Observation only. The runners' get_*_multiplier() getters are combat

@@ -79,7 +79,16 @@ func _on_player_healed(healed_player: Node, amount: float) -> void:
 	var hp: Variant = player.get("hp")
 	if not (hp is float or hp is int):
 		return
-	player.set("hp", maxf(1.0, float(hp) - taken))
+	var after := maxf(1.0, float(hp) - taken)
+	player.set("hp", after)
+	# Telemetry only: the interception is an adjustment, not enemy damage, and
+	# the later release is healing under this item's own source.
+	if RunEvents != null and RunEvents.balance_health_changed.has_connections():
+		RunEvents.balance_health_changed.emit(player, {
+			"category": "adjustment", "source_id": "item:curse_slow_heart",
+			"hp_before": float(hp), "hp_after": after, "max_hp_before": _max_hp(), "max_hp_after": _max_hp(),
+			"requested": taken, "reason": "healing_intercepted",
+		})
 	var cap := _max_hp() * BANK_CAP_FRACTION
 	_bank = minf(cap, _bank + taken)
 
@@ -98,7 +107,9 @@ func _process(delta: float) -> void:
 	# guard is the flag rather than disconnecting, so another heal arriving in
 	# the same frame is still intercepted correctly.
 	_releasing = true
-	player.call("heal", step)
+	# The source name only labels telemetry: doctrine healing multipliers and
+	# lock exemptions single out exit/wardstone sources, never this one.
+	player.call("heal", step, &"item:curse_slow_heart")
 	_releasing = false
 
 

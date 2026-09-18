@@ -836,7 +836,10 @@ func _build_run_tab(page: VBoxContainer, tools: Node) -> void:
 	_dev_button(vitals, "Brink (1 HP)", "Dropped to 1 HP - ward rules should light", func() -> void:
 		var p := get_tree().get_first_node_in_group(&"player")
 		if p != null:
+			var hp_before: float = float(p.get("hp"))
 			p.set("hp", 1.0)
+			if RunEvents != null and RunEvents.balance_health_changed.has_connections():
+				RunEvents.balance_health_changed.emit(p, {"category": "adjustment", "source_id": "developer:brink", "hp_before": hp_before, "hp_after": 1.0, "max_hp_before": p.get("max_hp"), "max_hp_after": p.get("max_hp"), "requested": hp_before - 1.0, "reason": "dev_brink"})
 			p.emit_signal("hp_changed", 1.0, p.get("max_hp"))
 	)
 	_dev_button(vitals, "Invulnerable 30s", "30s of i-frames", func() -> void:
