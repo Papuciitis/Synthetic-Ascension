@@ -48,7 +48,7 @@ func _on_weapon_fired(p: Node, _style: StringName, _origin: Vector2, _target: Ve
 	EnemyCombat.gather_in_radius(center, r, handles)
 	for handle in handles:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		EnemyCombat.apply_damage(handle, dmg, 1, player, balance_provenance("sunderstep"))
 		var direction := hit_position - center
 		if direction.length_squared() > 0.001:
 			EnemyCombat.apply_knockback(

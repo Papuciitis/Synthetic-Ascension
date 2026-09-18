@@ -175,7 +175,16 @@ func attack_damage(multiplier: float) -> float:
 func damage_radius(center: Vector2, radius: float, damage: float, knockback: float = 0.0) -> int:
 	if state == null:
 		return 0
-	return state.damage_radius(center, radius, damage, knockback)
+	return state.damage_radius(center, radius, damage, knockback, balance_provenance())
+
+
+## Telemetry-only provenance for the balance recorder: this rule (or pair)
+## as both origin and immediate source. Passed as the damage payload; it is
+## not a HitLedger, so nothing in combat reads it.
+func balance_provenance(emitter_suffix: String = "") -> BalanceProvenance:
+	var family := "manifestation_pair" if self is ManifestationPairEffect else "manifestation"
+	var origin := family + ":" + String(manifestation_id())
+	return BalanceAttribution.provenance(origin, origin + (":" + emitter_suffix if not emitter_suffix.is_empty() else ""), family)
 
 
 func aim_direction() -> Vector2:

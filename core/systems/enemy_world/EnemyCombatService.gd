@@ -46,8 +46,10 @@ func apply_damage(
 ## A status tick (burn, bleed) on `handle`: the same pipeline as a hit, minus
 ## the per-hit rules. The ARMOURED plate is one - a tick is not a hit, so a
 ## plate never makes an elite immune to the whole DoT.
-func apply_status_damage(handle: int, raw_damage: float, source: Node = null) -> float:
-	return _apply_damage(handle, raw_damage, 1, source, null, false)
+func apply_status_damage(handle: int, raw_damage: float, source: Node = null, kind: StringName = &"status") -> float:
+	# The provenance object is telemetry only: it is not a HitLedger, so crit
+	# detection and the tree's outgoing-damage rules see what they saw.
+	return _apply_damage(handle, raw_damage, 1, source, BalanceAttribution.status(kind), false)
 
 
 func _apply_damage(

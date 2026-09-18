@@ -813,13 +813,14 @@ func scaled_attack_damage(multiplier: float) -> float:
 	return maxf(0.0, player_base_damage() * multiplier * player_power_multiplier())
 
 
-func damage_radius(center: Vector2, radius: float, damage: float, knockback: float = 0.0) -> int:
+func damage_radius(center: Vector2, radius: float, damage: float, knockback: float = 0.0, provenance: BalanceProvenance = null) -> int:
 	if EnemyCombat == null or damage <= 0.0:
 		return 0
 	var handles: Array[int] = []
 	EnemyCombat.gather_in_radius(center, radius, handles)
+	# The provenance is telemetry only; without one the payload is null as before.
 	for handle in handles:
-		EnemyCombat.apply_damage(handle, damage, 1, player)
+		EnemyCombat.apply_damage(handle, damage, 1, player, provenance)
 		if knockback > 0.0:
 			var offset := EnemyCombat.position_for_handle(handle) - center
 			if offset.length_squared() > 0.01:
@@ -1118,7 +1119,7 @@ func _tick_shards(delta: float) -> void:
 		if handles.is_empty():
 			continue
 		shard["cd"] = SHARD_HIT_COOLDOWN
-		EnemyCombat.apply_damage(handles[0], damage, 1, player)
+		EnemyCombat.apply_damage(handles[0], damage, 1, player, BalanceAttribution.provenance("manifestation:shard", "manifestation:shard:orbit", "manifestation"))
 
 
 func _draw() -> void:

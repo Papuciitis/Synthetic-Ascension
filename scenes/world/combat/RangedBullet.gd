@@ -164,7 +164,7 @@ func _hit_handle(handle: int, hit_position: Vector2) -> void:
 	if _hit:
 		return
 	_hit = true
-	EnemyCombat.apply_damage(handle, damage, 1, source)
+	EnemyCombat.apply_damage(handle, damage, 1, source, BalanceAttribution.provenance("native:ranged", "native:ranged:bullet_node", "native", "ranged"))
 	_spawn_hit_vfx(hit_position)
 	_despawn()
 

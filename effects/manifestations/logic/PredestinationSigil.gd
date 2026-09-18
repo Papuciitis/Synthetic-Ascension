@@ -69,7 +69,7 @@ func on_hit(handle: int, at: Vector2, amount: float, _is_crit: bool, is_elite: b
 		if bonus > 0.0 and EnemyCombat != null and state.begin_exclusive(&"sigil_bonus"):
 			# The bonus can kill the Mark, which runs on_kill (and its
 			# detonation) inside this call, so the latch has to survive it.
-			EnemyCombat.apply_damage(handle, bonus, 1, player)
+			EnemyCombat.apply_damage(handle, bonus, 1, player, balance_provenance("mark_bonus"))
 			state.end_exclusive(&"sigil_bonus")
 		return
 

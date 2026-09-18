@@ -287,7 +287,7 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 	if handles.size() > perfect_zap_max_targets:
 		handles.resize(perfect_zap_max_targets)
 	for handle in handles:
-		EnemyCombat.apply_damage(handle, zap_dmg, 1, player)
+		EnemyCombat.apply_damage(handle, zap_dmg, 1, player, BalanceAttribution.provenance("augment:reflect_shield", "augment:reflect_shield:perfect_zap", "augment"))
 		if perfect_zap_stun > 0.0:
 			EnemyCombat.apply_stun(handle, perfect_zap_stun)
 

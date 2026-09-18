@@ -83,4 +83,4 @@ func _deal_damage(handle: int, amount: float) -> void:
 	# it apply_damage emits damage_dealt with a null source, so nothing that
 	# keys on "the player dealt this" fires - lifesteal, and any Manifestation
 	# rule listening for a hit.
-	EnemyCombat.apply_damage(handle, amount, 1, player)
+	EnemyCombat.apply_damage(handle, amount, 1, player, balance_provenance("arc_bolt"))

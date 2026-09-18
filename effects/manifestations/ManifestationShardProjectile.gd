@@ -76,7 +76,7 @@ func _sweep_at(point: Vector2) -> bool:
 	for handle in _sweep:
 		if _hits.has(handle):
 			continue
-		EnemyCombat.apply_damage(handle, damage, 1, source)
+		EnemyCombat.apply_damage(handle, damage, 1, source, BalanceAttribution.provenance("manifestation:shard", "manifestation:shard:projectile", "manifestation"))
 		_hits.append(handle)
 		if _hits.size() >= max_hits:
 			global_position = point

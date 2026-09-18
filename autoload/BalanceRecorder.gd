@@ -12,7 +12,7 @@ const PRESSURE_FIELDS := ["threat", "heat", "overtime", "resonance", "enemy_hp_m
 const RECORDER_REVISION := 2
 const BALANCE_REVISION := 1
 ## What this recorder measures; an omitted feature reads as unavailable, not 0.
-const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": false,
+const FEATURES := {"pure_snapshots": true, "health_reconciliation": true, "source_attribution": true,
 	"incidents": false, "exit_detail": false, "progression": false}
 const DEBUG_FIELDS := ["debug_dev_mode", "debug_dev_segment", "debug_player_god_mode", "debug_enemy_hp_scale", "debug_ascension_revelations_enabled", "enemy_proxy_rollout", "debug_opening_mode_override"]
 
@@ -243,9 +243,12 @@ func _on_enemy_registered(handle: int) -> void:
 func _on_enemy_removing(handle: int, reason: StringName) -> void:
 	_ledger.enemy_removed(handle, String(reason))
 
-func _on_enemy_damaged(handle: int, applied: float, adjusted: float, _health_before: float, source: Node, payload: Variant) -> void:
+func _on_enemy_damaged(handle: int, applied: float, adjusted: float, health_before: float, source: Node, payload: Variant) -> void:
 	var hit := payload as HitLedger
-	_ledger.enemy_damage(handle, applied, adjusted, hit.hit_count if hit != null else 1, hit.critical_hits if hit != null else 0, source != null and source == _player())
+	# Provenance is normalized from the payload only (tags or a telemetry-only
+	# object); a tagless hit is unknown even when the player owns the node.
+	var provenance := BalanceAttribution.from_payload(payload)
+	_ledger.enemy_damage(handle, applied, adjusted, hit.hit_count if hit != null else 1, hit.critical_hits if hit != null else 0, source != null and source == _player(), provenance, applied >= health_before - 0.000001)
 
 func _on_enemy_defeated(context: RefCounted) -> void:
 	_ledger.enemy_defeated(int(context.get("handle")))

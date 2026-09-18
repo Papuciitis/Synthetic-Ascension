@@ -96,7 +96,7 @@ func advance(delta: float) -> void:
 		record.tick_left = record.tick_interval
 		var damage := float(record.stacks) * record.damage_per_tick_per_stack
 		# A tick is not a hit: it skips the per-hit rules (the ARMOURED plate).
-		_combat.apply_status_damage(record.handle, damage, record.source())
+		_combat.apply_status_damage(record.handle, damage, record.source(), record.kind)
 		# The damage call can finalize a proxy death, which re-enters
 		# clear_handle; only remove by index if this exact record still
 		# occupies it.

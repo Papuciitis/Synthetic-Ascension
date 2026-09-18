@@ -60,7 +60,7 @@ func _detonate(pos: Vector2, power_mul: float) -> void:
 	EnemyCombat.gather_in_radius(pos, r, targets)
 	for handle in targets:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		EnemyCombat.apply_damage(handle, dmg, 1, player, balance_provenance("afterstrike"))
 		var direction := hit_position - pos
 		if direction.length_squared() > 0.001:
 			EnemyCombat.apply_knockback(

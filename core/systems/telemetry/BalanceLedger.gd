@@ -27,12 +27,18 @@ const HEALTH_LIVES_KEPT := 32
 ## Frequent categories are aggregated per window; the rest are discrete records.
 const DISCRETE_HEALTH_CATEGORIES := ["cost", "adjustment", "rescue", "respawn"]
 const SCHEMA_VERSION := 2
+## Damage attribution: aggregate keys per table, overflow to "other"; cast
+## ids are remembered in a bounded window only.
+const ATTRIBUTION_KEY_CAP := 512
+const RECENT_CASTS_KEPT := 256
 
 var max_pending_records := 8192
 var _health: Dictionary = {}
 var _health_totals: Dictionary = {}
 var _lives: Array[Dictionary] = []
 var _lives_completed := 0
+var _recent_casts: Array[String] = []
+var _recent_cast_set: Dictionary = {}
 var _metadata: Dictionary = {}
 var _totals: Dictionary = {}
 var _segments: Array[Dictionary] = []
@@ -62,6 +68,8 @@ func start(metadata: Dictionary, balance: int, segment: int) -> void:
 	_health_totals = _empty_health_totals()
 	_lives.clear()
 	_lives_completed = 0
+	_recent_casts.clear()
+	_recent_cast_set.clear()
 	_open_segment(segment, balance)
 	event("capture_started", _metadata)
 
@@ -71,6 +79,7 @@ func _empty_stats(balance: int) -> Dictionary:
 		"followers_earned": 0, "followers_spent": 0, "followers_adjustments": 0, "followers_debug": 0,
 		"followers_by_reason": {}, "enemies": {}, "player_damage_by_source": {},
 		"healing_by_source": {},
+		"attribution": {"by_origin": {}, "by_emitter": {}, "overflow": {"by_origin": 0, "by_emitter": 0}, "mixed_raw_breakdown": {}},
 	}
 	for metric in METRICS:
 		stats[metric] = 0.0
@@ -321,7 +330,7 @@ func _change_live_hp(row: Dictionary, hp: float, direction: int) -> void:
 		row.hp_min = minf(row.hp_min, float(value))
 		row.hp_max = maxf(row.hp_max, float(value))
 
-func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count: int, crit_count: int, credited_to_player: bool) -> void:
+func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count: int, crit_count: int, credited_to_player: bool, provenance: Dictionary = {}, lethal: bool = false) -> void:
 	if applied <= 0.0:
 		return
 	add_metric("enemy_hp_removed", applied)
@@ -331,9 +340,15 @@ func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count:
 	add_metric("critical_hits", crit_count)
 	if credited_to_player:
 		add_metric("player_credited_damage", applied)
+	if not provenance.is_empty():
+		_attribute(provenance, applied, maxf(0.0, after_defenses - applied), hit_count)
 	if not _enemies.has(handle):
 		return
 	var enemy: Dictionary = _enemies[handle]
+	if not provenance.is_empty():
+		enemy["last_provenance"] = provenance
+		if lethal:
+			enemy["lethal_provenance"] = provenance
 	enemy.damage += applied
 	var first: bool = float(enemy.first_hit) < 0.0
 	if first:
@@ -349,6 +364,10 @@ func enemy_defeated(handle: int) -> void:
 	var enemy: Dictionary = _enemies[handle]
 	enemy.defeated = true
 	add_metric("kills")
+	# The hit that emptied the bar is credited once; a mixed lethal batch
+	# stays mixed, a defeat with no damage record is unknown.
+	var lethal_provenance: Dictionary = enemy.get("lethal_provenance", enemy.get("last_provenance", {}))
+	_credit_kill(lethal_provenance)
 	for stats in [_totals, _current]:
 		var row: Dictionary = stats.enemies[enemy.key]
 		row.kills += 1
@@ -371,6 +390,77 @@ func enemy_removed(handle: int, _reason: String) -> void:
 		row._retired_max = maxf(row._retired_max, float(enemy.hp))
 		_change_live_hp(row, float(enemy.hp), -1)
 	_enemies.erase(handle)
+
+# ---------------------------------------------------------------- damage attribution
+
+func _attribution_row(table: Dictionary, name: String, overflow: Dictionary, key: String) -> Dictionary:
+	var use := key
+	if not table.has(use) and table.size() >= ATTRIBUTION_KEY_CAP:
+		use = "other"
+		overflow[name] = int(overflow.get(name, 0)) + 1
+	if not table.has(use):
+		table[use] = {"hp_removed": 0.0, "overkill": 0.0, "hits": 0, "kills": 0, "casts": 0}
+	return table[use]
+
+
+## Origin and immediate-source tables are alternate groupings of the same HP.
+func _attribute(provenance: Dictionary, applied: float, overkill: float, hits: int) -> void:
+	var origin := String(provenance.get("origin_id", "unknown"))
+	var emitter := String(provenance.get("emitter_id", "unknown"))
+	for stats in [_totals, _current]:
+		var tables: Dictionary = stats.attribution
+		for pair in [["by_origin", origin], ["by_emitter", emitter]]:
+			var row := _attribution_row(tables[pair[0]], pair[0], tables.overflow, pair[1])
+			row.hp_removed = float(row.hp_removed) + applied
+			row.overkill = float(row.overkill) + overkill
+			row.hits = int(row.hits) + hits
+		if origin == "mixed":
+			var breakdown: Dictionary = tables.mixed_raw_breakdown
+			var raw: Dictionary = provenance.get("raw_breakdown", {})
+			for key in raw:
+				if breakdown.has(key) or breakdown.size() < ATTRIBUTION_KEY_CAP:
+					breakdown[key] = float(breakdown.get(key, 0.0)) + float(raw[key])
+	_note_cast(origin, String(provenance.get("cast_id", "")))
+
+
+## A cast id seen for the first time counts one activation for its origin;
+## pellets and ticks of the same cast do not.
+func _note_cast(origin: String, cast_id: String) -> void:
+	if cast_id.is_empty():
+		return
+	var key := origin + "|" + cast_id
+	if _recent_cast_set.has(key):
+		return
+	_recent_cast_set[key] = true
+	_recent_casts.append(key)
+	if _recent_casts.size() > RECENT_CASTS_KEPT:
+		_recent_cast_set.erase(_recent_casts.pop_front())
+	for stats in [_totals, _current]:
+		var tables: Dictionary = stats.attribution
+		var row := _attribution_row(tables.by_origin, "by_origin", tables.overflow, origin)
+		row.casts = int(row.casts) + 1
+
+
+func _credit_kill(provenance: Dictionary) -> void:
+	var origin := String(provenance.get("origin_id", "unknown"))
+	var emitter := String(provenance.get("emitter_id", "unknown"))
+	for stats in [_totals, _current]:
+		var tables: Dictionary = stats.attribution
+		for pair in [["by_origin", origin], ["by_emitter", emitter]]:
+			var row := _attribution_row(tables[pair[0]], pair[0], tables.overflow, pair[1])
+			row.kills = int(row.kills) + 1
+
+
+## How much of the removed HP the origin table explains.
+static func attribution_coverage(stats: Dictionary) -> Dictionary:
+	var total := float(stats.get("enemy_hp_removed", 0.0))
+	var by_origin: Dictionary = (stats.get("attribution", {}) as Dictionary).get("by_origin", {})
+	var unknown := float((by_origin.get("unknown", {}) as Dictionary).get("hp_removed", 0.0))
+	var mixed := float((by_origin.get("mixed", {}) as Dictionary).get("hp_removed", 0.0))
+	var attributed := maxf(0.0, total - unknown - mixed)
+	return {"hp_removed": total, "attributed": attributed, "unknown": unknown, "mixed": mixed,
+		"attributed_share": (attributed / total) if total > 0.0 else null}
+
 
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:
 	if outcome not in DAMAGING_OUTCOMES:
@@ -424,7 +514,7 @@ func summary() -> Dictionary:
 	var result := {"schema_version": SCHEMA_VERSION, "metadata": _metadata.duplicate(true), "outcome": _outcome,
 		"elapsed_seconds": _elapsed, "totals": _totals.duplicate(true), "segments": _segments.duplicate(true),
 		"dropped_records": _dropped, "wallet_discontinuities": _discontinuities, "last_sequence": _sequence,
-		"health": health_summary()}
+		"health": health_summary(), "attribution_coverage": attribution_coverage(_totals)}
 	var stats_rows: Array = [result.totals]
 	stats_rows.append_array(result.segments)
 	for stats in stats_rows:

@@ -43,3 +43,11 @@ func get_tooltip_short() -> String:
 
 func get_tooltip_long() -> String:
 	return tooltip_long
+
+
+## Telemetry-only provenance for the balance recorder: this set, its active
+## tier and the named payload. Passed as the damage payload; it is not a
+## HitLedger, so nothing in combat reads it.
+func balance_provenance(emitter: String) -> BalanceProvenance:
+	var origin := "set:%s:%d" % [String(source_set_id), set_count]
+	return BalanceAttribution.provenance(origin, origin + ":" + emitter, "set")

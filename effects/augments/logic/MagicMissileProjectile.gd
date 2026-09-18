@@ -125,7 +125,7 @@ func _physics_process(dt: float) -> void:
 		and enemy_hit_t >= 0.0
 		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
 	):
-		EnemyCombat.apply_damage(hit_handle, damage, 1, source)
+		EnemyCombat.apply_damage(hit_handle, damage, 1, source, BalanceAttribution.provenance("augment:magic_missile", "augment:magic_missile:missile", "augment"))
 		_despawn()
 		return
 	if world_hit_t >= 0.0:

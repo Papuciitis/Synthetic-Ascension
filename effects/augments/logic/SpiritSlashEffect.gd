@@ -77,7 +77,7 @@ func _try_cast() -> void:
 	var hit_dmg: float = _roll_hit_damage()
 	var is_crit: bool = (randf() < crit_chance)
 
-	EnemyCombat.apply_damage(handle, hit_dmg, 1, player)
+	EnemyCombat.apply_damage(handle, hit_dmg, 1, player, BalanceAttribution.provenance("augment:spirit_slash", "augment:spirit_slash:slash", "augment"))
 
 	var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
 	_apply_bleed(handle, stacks, hit_dmg)

@@ -295,7 +295,7 @@ func _damage_radius(center: Vector2, r: float, dmg: float, kb: float, st: float)
 	EnemyCombat.gather_in_radius(center, r, handles)
 	for handle in handles:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		EnemyCombat.apply_damage(handle, dmg, 1, player, balance_provenance("mass_arrest"))
 		var direction := hit_position - center
 		if kb > 0.0 and direction.length_squared() > 0.001:
 			EnemyCombat.apply_knockback(handle, direction.normalized() * kb)

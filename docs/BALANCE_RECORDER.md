@@ -91,6 +91,23 @@ of `recording` means the final boundary has not been saved, not a completed run.
   an evasion. Damage a rule inflicts on the player (Danger Close, a No Brakes
   skid) is a hit from the source `self_damage`; intentional payments stay
   under `hp_paid`.
+- Damage attribution (`totals.attribution`, `attribution_coverage`): every
+  enemy hit is grouped twice over the same HP removed, by origin (what
+  initiated the chain: `native:melee`, `ascension:MOV` for a BLINK strike and
+  every descendant it generated, `status:burn`, `set:gravemarch:6`,
+  `augment:tesla_aura`, `manifestation:<rule>`) and by immediate source (the
+  payload that landed: `ascension:MOV3:afterimage`, `set:gravemarch:6:mass_arrest`).
+  Never add the two tables. Provenance comes from the payload only: the tree's
+  tags, or a telemetry-only object the set, augment, Manifestation, status and
+  legacy-bullet emitters attach; a payload with none is `unknown` even when
+  the player owns the node, and a same-frame batch of unlike projectiles is
+  `mixed` with its raw damage breakdown. Kills are credited once to the hit
+  that emptied the bar. `casts` counts a cast id the first time it is seen,
+  never its pellets or ticks. Tables cap at 512 keys (overflow to `other`).
+  Not attributed by this revision: a Manifestation echo that re-fires the
+  player's native attack (it lands as native), spells, and the Manifestation
+  rules that damage through their own projectiles rather than the shared
+  helpers; those show as native or unknown, never as a guessed source.
 - Enemy HP is observed at registration or capture entry and refreshed when
   elite promotion or boss configuration changes it. Time-to-kill starts
   at the first observed damaging hit and ends at defeat, excluding pause/hub

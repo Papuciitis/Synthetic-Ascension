@@ -221,7 +221,7 @@ func _run() -> void:
 	recorder.end_capture("suspended")
 	recorder.flush_reports()
 	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(capture_path.path_join("summary.json")))
-	_check(saved is Dictionary and int(saved.schema_version) == 2 and int(saved.metadata.recorder_revision) == 2 and int(saved.metadata.balance_revision) == 1 and bool(saved.metadata.features.health_reconciliation) and not bool(saved.metadata.features.source_attribution), "the saved summary separates recorder and balance revisions and declares feature coverage")
+	_check(saved is Dictionary and int(saved.schema_version) == 2 and int(saved.metadata.recorder_revision) == 2 and int(saved.metadata.balance_revision) == 1 and bool(saved.metadata.features.health_reconciliation) and not bool(saved.metadata.features.incidents), "the saved summary separates recorder and balance revisions and declares feature coverage")
 	_check(saved is Dictionary and int(saved.health.totals.unexplained_checks) == 1 and int(saved.health.lives_completed) == 1, "the saved summary carries the health reconciliation")
 	var report := FileAccess.get_file_as_string(capture_path.path_join("report.md"))
 	var headings: PackedStringArray = []

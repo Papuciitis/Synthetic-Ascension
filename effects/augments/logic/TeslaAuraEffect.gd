@@ -53,7 +53,7 @@ func _process(dt: float) -> void:
 	var hit: int = 0
 	for handle in candidates:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, dmg, 1, player)
+		EnemyCombat.apply_damage(handle, dmg, 1, player, BalanceAttribution.provenance("augment:tesla_aura", "augment:tesla_aura:zap", "augment"))
 		_spawn_arc(origin, hit_position)
 
 		hit += 1

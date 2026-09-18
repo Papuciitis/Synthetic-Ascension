@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 	var handle := EnemyCombat.first_enemy_on_segment(old_position, new_position, 8.0)
 	if handle != EnemyWorldTypes.INVALID_HANDLE:
 		_hit = true
-		EnemyCombat.apply_damage(handle, damage, 1, source)
+		EnemyCombat.apply_damage(handle, damage, 1, source, BalanceAttribution.provenance("legacy:projectile", "legacy:projectile", "legacy"))
 		_despawn()
 		return
 	global_position = new_position
@@ -68,7 +68,7 @@ func _on_area_entered(area: Area2D) -> void:
 		var enemy := area.get_parent()
 		var handle := EnemyCombat.handle_for_actor(enemy)
 		if handle != EnemyWorldTypes.INVALID_HANDLE:
-			EnemyCombat.apply_damage(handle, damage, 1, source)
+			EnemyCombat.apply_damage(handle, damage, 1, source, BalanceAttribution.provenance("legacy:projectile", "legacy:projectile", "legacy"))
 		elif enemy != null and enemy.is_in_group("enemies") and enemy.has_method("take_damage"):
 			enemy.call("take_damage", damage, source)
 		# Recycling here would flip monitoring and reparent this Area2D while the

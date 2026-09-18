@@ -126,6 +126,23 @@ static func markdown(summary: Dictionary) -> String:
 			var row: Dictionary = ht.by_category[category]
 			text += "| %s | %s | %.2f |\n" % [_cell(category), row.get("count", 0), float(row.get("delta", 0.0))]
 		text += "\nSources per life, including Death Rattle payments, Scar Tissue and Slow Heart takebacks and stat-refresh clamps, are in summary.json under health.\n\n"
+	var coverage: Dictionary = summary.get("attribution_coverage", {})
+	var attribution: Dictionary = t.get("attribution", {})
+	if not coverage.is_empty() and not attribution.is_empty():
+		var removed := float(coverage.get("hp_removed", 0.0))
+		var share := func(value: float) -> String: return ("%.1f%%" % (100.0 * value / removed)) if removed > 0.0 else "n/a"
+		text += "## Damage attribution\n\nOf enemy HP removed, %s is attributed to an origin, %s is unknown (a payload with no provenance) and %s came from same-frame batches of unlike shots (mixed). Origin (what initiated the chain) and immediate source are alternate groupings of the same HP; never add the two tables. Casts count a cast id the first time it is seen, not its pellets or ticks.\n\n" % [share.call(float(coverage.get("attributed", 0.0))), share.call(float(coverage.get("unknown", 0.0))), share.call(float(coverage.get("mixed", 0.0)))]
+		for pair in [["Origin", "by_origin", true], ["Immediate source", "by_emitter", false]]:
+			var table: Dictionary = attribution.get(pair[1], {})
+			var keys: Array = table.keys()
+			keys.sort_custom(func(a, b): return float(table[a].hp_removed) > float(table[b].hp_removed))
+			text += "| %s | HP removed | Overkill | Hits | Kills |%s\n|---|---:|---:|---:|---:|%s\n" % [pair[0], " Casts |" if pair[2] else "", "---:|" if pair[2] else ""]
+			for key in keys.slice(0, 16):
+				var row: Dictionary = table[key]
+				text += "| %s | %.2f | %.2f | %d | %d |%s\n" % [_cell(key), float(row.hp_removed), float(row.overkill), int(row.hits), int(row.kills), (" %d |" % int(row.get("casts", 0))) if pair[2] else ""]
+			if keys.size() > 16:
+				text += "| … %d more rows in summary.json | | | | |%s\n" % [keys.size() - 16, " |" if pair[2] else ""]
+			text += "\n"
 	text += "## Enemy scaling\n\n| Archetype | Seen | Mean HP | Max HP | Kills | TTK samples | Mean TTK (s) | Removed alive |\n|---|---:|---:|---:|---:|---:|---:|---:|\n"
 	for key in t.get("enemies", {}):
 		var row: Dictionary = t.enemies[key]

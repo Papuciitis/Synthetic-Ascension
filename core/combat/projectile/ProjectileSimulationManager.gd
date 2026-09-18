@@ -459,6 +459,7 @@ func _add_projectile_to_ledger(index: int, ledger: HitLedger) -> void:
 	ledger.projectile_id = _ids[index]
 	ledger.direction = direction
 	ledger.projectile_crossed = _crossed[index]
+	ledger.contributions.append({"tags": _tags[index], "damage": _damage[index]})
 	ledger.add_resolved_hit(_damage[index], source, direction * _knockback[index], _crit[index] != 0, _burn_stacks[index], _burn_duration[index], _burn_tick[index], _damage[index] * _burn_mult[index])
 
 func _flush_hit_ledgers() -> void:

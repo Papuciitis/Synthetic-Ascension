@@ -154,7 +154,7 @@ func _deal_bite(handle: int, target_position: Vector2) -> void:
 
 	# Credit the summoner: without a source, bites emit no damage_dealt
 	# (no lifesteal) and kills have no attribution, unlike detonations.
-	EnemyCombat.apply_damage(handle, dmg, 1, player)
+	EnemyCombat.apply_damage(handle, dmg, 1, player, BalanceAttribution.provenance("augment:poison_spiderling", "augment:poison_spiderling:bite", "augment"))
 
 
 func explode(dmg: float, radius: float, source: Node = null) -> void:
@@ -163,7 +163,7 @@ func explode(dmg: float, radius: float, source: Node = null) -> void:
 	var handles: Array[int] = []
 	EnemyCombat.gather_in_radius(global_position, radius, handles)
 	for handle in handles:
-		EnemyCombat.apply_damage(handle, dmg, 1, source)
+		EnemyCombat.apply_damage(handle, dmg, 1, source, BalanceAttribution.provenance("augment:poison_spiderling", "augment:poison_spiderling:detonation", "augment"))
 
 	_despawn()
 
