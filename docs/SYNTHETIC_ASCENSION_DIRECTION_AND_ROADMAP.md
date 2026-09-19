@@ -1827,3 +1827,41 @@ none pushed. What landed, by the ten workstreams asked for:
 Everything here is a headless result; the next human run with both
 recorders on is what turns "built" into "verified".
 
+## 2026-09-19, later — the audits acted on: loops closed, segment 1 decisions, the roster rebased, new enemies, VFX and terrain
+
+Fourteen local commits (`ece47c9` … `647502f`), all headless-verified,
+none pushed, none seen rendered. What the audits proposed and this
+stretch built:
+
+- **Loot loops (L1-L6, P5, P6).** Refunds are Hub-only, return half the
+  price through segment 2 and a tenth less per segment after, and sworn
+  nodes (Revelations, forks, Unions, Axioms, Catastrophes) never refund;
+  one rarity soft cap for every source, the vendor band and every wager
+  tier riding it; a same-item equip that would dissolve a Manifestation
+  swaps instead of feeding; items whose data is gone leave saves; the run
+  RNG's state rides the save.
+- **Segment 1 (S1-S3, S5, S6, S10).** Veterans get a blessed / cursed
+  "take one" pair at the evidence store; the first augment offer carries
+  a NEG archetype; the three service rooms pay Followers; a charger wedge
+  after the security clear and a sniper pair at the checkpoint; the
+  Sniper in the approach; six vendor offers at the first Hubs.
+- **Roster (E1-E6, N1-N3).** HP re-based to time-to-act, phase-gated
+  unlocks with segment-scaled start times, weights toward specialists,
+  rewards by durability, elite chances doubled, the Herald's pulse wards
+  allies; three new enemies: the Warden (frontal shield, melee passes),
+  the Chanter (mends and wards), the Lurker (charges the moment you
+  stop), each on the ambient table and in an authored beat.
+- **NEG-versus-tree (T3, T4).** Luck bends named tree rolls by at most
+  five points; the shot-rate multiplier caps at x2.5.
+- **Assets.** Kenney's CC0 particle textures power a pooled burst layer
+  (death, elite death, pickup, dash, cast; the hit spark is available,
+  not wired); three CC0 terrains (meadow, scrub, moss) and per-theme
+  vegetation and decal density, so segments 4-9 stop looking alike.
+- **Performance.** Tag attribution memoized (M8's first step).
+
+Not done from the audits: the Weaver and the Siphon (N4, N5), miniboss
+specialist pools (E7), the tree audit's 28 proposals (redesign deferred),
+segment 1's S4 / S7-S9 / S11 (measure first), the rest of M8, M0
+(display). Every number here is the audit's proposal; the human run with
+both recorders on is still the gate.
+
