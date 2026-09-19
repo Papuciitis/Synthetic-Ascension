@@ -1829,8 +1829,9 @@ recorders on is what turns "built" into "verified".
 
 ## 2026-09-19, later — the audits acted on: loops closed, segment 1 decisions, the roster rebased, new enemies, VFX and terrain
 
-Fourteen local commits (`ece47c9` … `647502f`), all headless-verified,
-none pushed, none seen rendered. What the audits proposed and this
+Sixteen local commits (`ece47c9` … `b610947`), all headless-verified,
+none pushed, none seen rendered; the full headless regression (144
+test scenes) is green. What the audits proposed and this
 stretch built:
 
 - **Loot loops (L1-L6, P5, P6).** Refunds are Hub-only, return half the
@@ -1845,12 +1846,13 @@ stretch built:
   a NEG archetype; the three service rooms pay Followers; a charger wedge
   after the security clear and a sniper pair at the checkpoint; the
   Sniper in the approach; six vendor offers at the first Hubs.
-- **Roster (E1-E6, N1-N3).** HP re-based to time-to-act, phase-gated
+- **Roster (E1-E6, N1-N3, N5).** HP re-based to time-to-act, phase-gated
   unlocks with segment-scaled start times, weights toward specialists,
   rewards by durability, elite chances doubled, the Herald's pulse wards
   allies; three new enemies: the Warden (frontal shield, melee passes),
   the Chanter (mends and wards), the Lurker (charges the moment you
-  stop), each on the ambient table and in an authored beat.
+  stop), the Siphon (drinks Force, Momentum or Heat instead of
+  Followers), each on the ambient table, three of them in authored beats.
 - **NEG-versus-tree (T3, T4).** Luck bends named tree rolls by at most
   five points; the shot-rate multiplier caps at x2.5.
 - **Assets.** Kenney's CC0 particle textures power a pooled burst layer
@@ -1859,8 +1861,8 @@ stretch built:
   vegetation and decal density, so segments 4-9 stop looking alike.
 - **Performance.** Tag attribution memoized (M8's first step).
 
-Not done from the audits: the Weaver and the Siphon (N4, N5), miniboss
-specialist pools (E7), the tree audit's 28 proposals (redesign deferred),
+Not done from the audits: the Weaver (N4), the Siphon's placed-object
+half, miniboss specialist pools (E7), the tree audit's 28 proposals (redesign deferred),
 segment 1's S4 / S7-S9 / S11 (measure first), the rest of M8, M0
 (display). Every number here is the audit's proposal; the human run with
 both recorders on is still the gate.
