@@ -82,15 +82,25 @@ collected.
 |---|---:|---|---:|---:|---:|---|
 | 902611 / 10 | 75 | 0.40 / 2.69 / 43.96 | 73% | 9 | 2 | (0,-2) initial 43.96 (content 42.6); (-2,-1) initial 23.4 (content 22.3) |
 | 123457 / 20 | 125 | 0.41 / 1.98 / 40.14 | 65% | 6 | 2 | (0,-1) initial 40.1 (content 39.1); (5,0) streamed 23.1 (content 22.1) |
+| 123457 / 40 | 225 | 0.38 / 1.99 / 40.46 | 59% | 11 | 2 | the same two chunks; nothing else above 2.5 ms |
+| 555001 / 40 | 225 | 0.38 / 2.03 / 41.95 | 60% | 14 | 2 | (0,-1) initial 41.95; (-1,2) initial 22.8; nothing else above 3.2 ms |
 
 Three facts. Setup, ground, floor and blocker phases never exceed 3 ms.
-The first activations of a fresh seed pay 40 ms once (cold resource
-loads; the warmed audit pre-builds exactly that chunk and then asserts
-median < 4 ms, max < 12 ms, which still holds). And one streamed chunk in
-125 costs 22-23 ms entirely in content generation: the site chunks
-(`SiteOverlayImpl.decorate_chunk` with its indoor volumes and door
-thresholds). That is the mid-run hitch the September 15 captures saw,
-and the only phase worth staging.
+Exactly two activations per run exceed 16.7 ms whatever the distance
+walked, and both are made of the same things as the cheap chunks
+(28-33 children, 2-3 static bodies, 25-30 sprites): they are one-time
+cold costs of a session (the first chunk ever generated, about 40 ms,
+and the first chunk of a second kind, about 22 ms: resource and scene
+loads), not a per-chunk phase. The warmed audit pre-builds the first chunk
+and then holds median < 4 ms and max < 12 ms on today's code. And the
+generic manager the probe drives never decorates a site (0 site chunks in
+every run), so the September 15 mid-run activations of 30-77 ms with 1-7
+cached enemies are **not reproduced headless here**: they happen on the
+real segment world (districts, parcels, sites, cached-enemy
+re-materialization on activation) and need the reproduction in M1 before
+anything is staged. The site decoration now carries sub-step timers
+(plan, floor, walls, cover, door, volumes) in the stream stats for that
+run.
 
 ## 3. What the numbers do and do not say
 
@@ -116,7 +126,7 @@ previous milestones unchanged.
 | # | Milestone | Design | Gate (benchmark) | Risk |
 |---|---|---|---|---|
 | M0 | **Rendered baseline** (needs the display) | Run `EnemyHordeBenchmark` windowed at 60 / 180 / 300 and a stationary Endless Lunge + Mass Grave capture at seg6 with the recorder's extended features; record render CPU / GPU from `viewport_get_measured_render_time_*`. | A filed table in this document; no code. | none |
-| M1 | **Site chunk staging** | Split `SiteOverlayImpl.decorate_chunk` into plan (pure data, deterministic from the seed: parcels, walls, door cells) and instantiate (nodes). Plan the next ring's site chunks one frame ahead in `queue_missing_chunks` (or on `WorkerThreadPool` if the plan is node-free), and instantiate indoor volumes across two activations. The blocker phase stays synchronous so collisions never lag the visual. | `ChunkColdStreamProbe`: no streamed activation above 12 ms over 20 steps on three seeds; `ChunkStreamingPerformanceAudit` unchanged; `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green. | medium: a half-built site visible for a frame; navigation revision must commit after the last phase (`commit_pending_nav_revision` already defers to the queue's end). |
+| M1 | **Reproduce, then stage, the live activation hitch** | Step 1 (measurement): a headless probe on the real segment-2 world (`Global.goto_game()` like the horde benchmark, the player teleported one chunk per step along a route through districts and sites, a horde alive so chunks carry cached enemies) reading the game `ChunkManager`'s phase samples and the new site sub-step timers, plus the recorder's `chunk_stream.last_phases`. Step 2 (staging): whichever phase the reproduction names. If it is site content, split `SiteOverlayImpl.decorate_chunk` into plan (data, deterministic from the seed) and instantiate (nodes) and spread the instantiate across two activations with blockers synchronous; if it is cached-enemy re-materialization, budget it through the representation policy's promotion cap instead of the activation. | Step 1 reproduces at least one activation above 16.7 ms on the real world and names its phase; step 2: no activation above 12 ms on that route over three seeds, `ChunkStreamingPerformanceAudit`, `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green. | medium: a half-built chunk visible for a frame; navigation revision must commit after the last phase (`commit_pending_nav_revision` already defers to the queue's end). |
 | M2 | **Set VFX pooling** | One pooled scene per VFX kind (pulse ring, spokes, arc line, cleave arc, shockwave) with a cap on simultaneous instances per kind; Lattice's triangle and Mass Arrest's slam draw from the pool. | Build simulator: Lattice melee p95 median from 4.5 ms to under 2 ms, Mass Grave p99 under 16 ms; `SetRunnerTest`, `SetScalingV2Test` unchanged. | low: visual only. |
 | M3 | **Hitch tagging** | Tag every recorder sample over 28 ms with the dominant subsystem from the fields already carried (tree tick / flush / hits, fragments, projectile ms, chunk phase, flow publish, proxy slice) and print the tag distribution in `analyze_captures.py`. | Next playtest's incidents carry a tag; the distribution names the top cause without a manual read. | none |
 | M4 | **Materialized budget decision** (yours) | Either raise `materialized_budget` 64 -> 96 (the ceiling) so proxies near the player deal contact damage sooner, or give proxies within 200 px a data-side contact tick. Both are gameplay decisions; the August handoff left them open. | Horde 180 / 300 p95 within 2 ms of today at 96; playtest feel. | design |
@@ -143,10 +153,12 @@ August handoff is closed by `summoned_population_cap` 36).
 ## 6. What was changed today
 
 - `ChunkColdStreamProbe.tscn`: the cold, walking, per-phase streaming
-  profile (section 2.3), read-only.
+  profile (section 2.3) with each heavy chunk's composition, read-only.
 - The flight recorder's `chunk_stream` block carries the newest chunk's
-  phase split, so an incident during a site activation names the phase.
-  `FlightRecorderSampleTest` and `PerformanceFlightRecorderTest` pass.
+  phase split, so an incident during an activation names the phase;
+  `SiteOverlayImpl.decorate_chunk` times its six sub-steps into the
+  stream stats (`site_last_step_usec`). `FlightRecorderSampleTest` and
+  `PerformanceFlightRecorderTest` pass.
 - Fresh horde numbers at 60 / 100 / 180 / 300 (section 2.1).
 
 Nothing in the plan is implemented beyond the instrumentation.

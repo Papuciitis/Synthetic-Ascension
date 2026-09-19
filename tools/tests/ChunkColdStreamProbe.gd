@@ -53,11 +53,28 @@ func _configured_manager(seed_value: int, radius: int) -> ChunkManager:
 	return manager
 
 
+var _site_steps: Dictionary = {}  # coord string -> site sub-step usec
+var _kinds: Dictionary = {}  # coord string -> composition
+
+
 func _collect(manager: ChunkManager) -> void:
 	var stats := manager.get_chunk_stream_debug_stats()
 	for sample in stats.get("build_phase_samples", []):
 		if sample is Dictionary:
 			_samples[String((sample as Dictionary).get("coord", "?"))] = (sample as Dictionary).duplicate()
+	var site: Dictionary = stats.get("site_last_step_usec", {}) as Dictionary
+	if site.has("coord"):
+		_site_steps[String(site["coord"])] = site.duplicate()
+	# What each loaded chunk is made of, recorded once while it is loaded.
+	var chunks: Dictionary = manager.get("_chunks") as Dictionary
+	for coord in chunks:
+		var key := str(coord)
+		if _kinds.has(key):
+			continue
+		var node: Node = chunks[coord] as Node
+		if node == null:
+			continue
+		_kinds[key] = "%d children, %d bodies, %d sprites" % [node.get_child_count(), node.find_children("*", "StaticBody2D", true, false).size(), node.find_children("*", "Sprite2D", true, false).size()]
 
 
 func _pct(values: Array, p: float) -> float:
@@ -86,7 +103,9 @@ func _run() -> void:
 		manager.call("_update_streaming")
 		# Activate every queued chunk this step, like a frame with no budget
 		# left would not: the point is the per-activation cost, not pacing.
-		manager.process_chunk_generation_queue(100)
+		# One activation at a time so every site chunk's sub-step split is kept.
+		while manager.process_chunk_generation_queue(1) > 0:
+			_collect(manager)
 		await get_tree().process_frame
 		_collect(manager)
 	var rows: Array = _samples.values()
@@ -117,5 +136,11 @@ func _run() -> void:
 		var r: Dictionary = rows[i]
 		var coord_key := String(r.get("coord", "?"))
 		print("  %s%s %.2f ms: %.2f / %.2f / %.2f / %.2f / %.2f" % [coord_key, " (initial)" if initial_coords.has(coord_key) else "", float(r.get("total_ms", 0.0)), float(r.get("setup_ms", 0.0)), float(r.get("ground_ms", 0.0)), float(r.get("content_ms", 0.0)), float(r.get("floor_ms", 0.0)), float(r.get("blocker_ms", 0.0))])
+		if _kinds.has(coord_key):
+			print("      made of: %s" % String(_kinds[coord_key]))
+		if _site_steps.has(coord_key):
+			var st: Dictionary = _site_steps[coord_key]
+			print("      site sub-steps ms: plan %.2f / floor %.2f / walls %.2f / cover %.2f / door %.2f / volumes %.2f" % [float(st.get("plan", 0)) / 1000.0, float(st.get("floor", 0)) / 1000.0, float(st.get("walls", 0)) / 1000.0, float(st.get("cover", 0)) / 1000.0, float(st.get("door", 0)) / 1000.0, float(st.get("volumes", 0)) / 1000.0])
+	print("site chunks decorated: %d" % _site_steps.size())
 	print("passes=1 failures=0")
 	get_tree().quit(0)

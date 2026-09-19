@@ -465,6 +465,7 @@ func get_chunk_stream_debug_stats() -> Dictionary:
 		"last_plan_ms": _last_stream_plan_ms,
 		"build_samples_ms": _chunk_build_samples_ms.duplicate(),
 		"build_phase_samples": _chunk_build_phase_samples.duplicate(true),
+		"site_last_step_usec": SiteOverlayImpl.debug_last_step_usec.duplicate(),
 		"activation_budget_ms": stream_activation_budget_ms,
 		"max_activations_per_frame": max_chunk_generations_per_frame,
 		"activations_total": _stream_activations_total,

@@ -34,12 +34,19 @@ func reset() -> void:
 	_cache_order.clear()
 
 
+## Sub-step costs of the last site chunk decorated (microseconds), for the
+## streaming diagnostics: plan, floor, walls, cover, door, volumes.
+static var debug_last_step_usec: Dictionary = {}
+
+
 func decorate_chunk(
 	chunk_manager: Node,
 	chunk: Node2D,
 	coord: Vector2i,
 	cfg: Dictionary
 ) -> bool:
+	var step_started_usec := Time.get_ticks_usec()
+	var steps: Dictionary = {}
 	# Find an overlapping site (by scanning possible roots around this chunk).
 	var cpc: int = int(chunk_manager._cells_per_chunk())
 	var spacing: int = int(cfg.get("anchor_spacing", 2))
@@ -69,6 +76,8 @@ func decorate_chunk(
 		return false
 
 	# Stamp into this chunk.
+	steps["plan"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	var chunk_offset_cells := (coord - chosen.root_chunk) * cpc
 	var chunk_site_rect := Rect2i(chunk_offset_cells, Vector2i(cpc, cpc))
 
@@ -92,6 +101,8 @@ func decorate_chunk(
 		chunk_manager._stamp_floor_rect_cells(chunk, local_r, int(s["tex"]), rng2, float(s["alpha"]), int(s["z"]))
 
 	# Walls (clipped)
+	steps["floor"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	var wall_cells_chunk: Dictionary = {}
 	var window_cells_chunk: Dictionary = {}
 	for k in chosen.carve.wall_cells.keys():
@@ -115,6 +126,8 @@ func decorate_chunk(
 	chunk_manager._spawn_wall_cells(chunk, wall_cells_chunk, window_cells_chunk)
 
 	# Some half-cover props from carve (clipped)
+	steps["walls"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	var max_props: int = int(cfg.get("indoor_cover_budget", 4))
 	var placed := 0
 	for p in chosen.carve.half_cover_cells:
@@ -126,10 +139,17 @@ func decorate_chunk(
 			placed += 1
 
 	# Door threshold: stamp a small apron outside the entrance (if it lands in this chunk)
+	steps["cover"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	_stamp_door_threshold(chunk_manager, chunk, coord, chosen, cfg)
 
 	# Indoor volume: per-chunk overlap of interior (region inset by 1 cell)
+	steps["door"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	_spawn_indoor_volumes(chunk_manager, chunk, coord, chosen, cfg)
+	steps["volumes"] = Time.get_ticks_usec() - step_started_usec
+	steps["coord"] = str(coord)
+	debug_last_step_usec = steps
 
 	# Optional debug label
 	if bool(cfg.get("debug_label", false)):
