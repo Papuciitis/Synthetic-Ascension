@@ -102,6 +102,30 @@ anything is staged. The site decoration now carries sub-step timers
 (plan, floor, walls, cover, door, volumes) in the stream stats for that
 run.
 
+### 2.4 Chunk streaming on the real segment-2 world (new probe, today)
+
+`RoamStreamProbe`: the real game like the horde benchmark, a 120-enemy
+horde held by the debug spawn filter, the player teleported one chunk
+(2,048 px) east every 2 s for 16 stops, the game `ChunkManager` sampled
+every frame. Two runs, two seeds (`start_new_attempt` rolls one):
+
+| Run | Activations while roaming | Total p50 / p95 / max (ms) | Content p50 / p95 / max | Blocker p50 / p95 / max | Over 16.7 ms | Roaming frame p50 / p95 / p99 / max |
+|---|---:|---|---|---|---:|---|
+| 1 | 48 | 4.67 / 12.92 / 19.70 | 2.04 / 6.09 / 7.43 | 2.44 / 6.62 / 11.83 | 1 | 6.90 / 6.94 / 7.41 / 30.51 |
+| 2 | 48 | 6.16 / 12.18 / 99.63 | 2.73 / 5.01 / 98.63 | 2.81 / 6.75 / 7.23 | 1 | 6.90 / 7.14 / 8.33 / 61.57 |
+
+The blocker phase splits into physics (bodies and shapes, 3.6-6.9 ms on
+the worst chunks) and the MultiMesh renderer's add (2.2-4.9 ms). The site
+decoration itself is cheap (2-4 site chunks per run, 2.6 ms on the one
+printed). So on the real world an ordinary parcel chunk costs 12-20 ms
+to activate (content 5-7 + physics 4-7 + render 2-5), the queue's 2 ms
+budget admits one such activation per frame, and a 7 ms frame becomes a
+12-20 ms one: the steady mid-run hitch. On top of that, run 2 paid a
+single 99.6 ms content phase at chunk (4,0), stop 3, with a cheap blocker
+phase: the once-per-region plan cost (district or site plan computed on
+first touch), which is the 30-77 ms class the September 15 captures
+recorded. These are headless CPU numbers; rendering adds to them.
+
 ## 3. What the numbers do and do not say
 
 - The simulation side is solved for the counts you asked about: 300 live
@@ -126,7 +150,7 @@ previous milestones unchanged.
 | # | Milestone | Design | Gate (benchmark) | Risk |
 |---|---|---|---|---|
 | M0 | **Rendered baseline** (needs the display) | Run `EnemyHordeBenchmark` windowed at 60 / 180 / 300 and a stationary Endless Lunge + Mass Grave capture at seg6 with the recorder's extended features; record render CPU / GPU from `viewport_get_measured_render_time_*`. | A filed table in this document; no code. | none |
-| M1 | **Reproduce, then stage, the live activation hitch** | Step 1 (measurement): a headless probe on the real segment-2 world (`Global.goto_game()` like the horde benchmark, the player teleported one chunk per step along a route through districts and sites, a horde alive so chunks carry cached enemies) reading the game `ChunkManager`'s phase samples and the new site sub-step timers, plus the recorder's `chunk_stream.last_phases`. Step 2 (staging): whichever phase the reproduction names. If it is site content, split `SiteOverlayImpl.decorate_chunk` into plan (data, deterministic from the seed) and instantiate (nodes) and spread the instantiate across two activations with blockers synchronous; if it is cached-enemy re-materialization, budget it through the representation policy's promotion cap instead of the activation. | Step 1 reproduces at least one activation above 16.7 ms on the real world and names its phase; step 2: no activation above 12 ms on that route over three seeds, `ChunkStreamingPerformanceAudit`, `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green. | medium: a half-built chunk visible for a frame; navigation revision must commit after the last phase (`commit_pending_nav_revision` already defers to the queue's end). |
+| M1 | **Stage the real-world activation** (reproduced, section 2.4) | M1a: precompute the once-per-region plans (`SiteOverlayImpl._get_plan`, and the district/parcel plan behind the 99 ms content phase) off the activation: they are data, deterministic from the seed, and cached per root, so compute them for the anchor roots inside the prefetch ring when `queue_missing_chunks` plans, on `WorkerThreadPool` if the plan touches no node, else amortised one root per frame. M1b: defer the blocker renderer's `add_chunk` (2-5 ms, visual only) to the frame after activation through a small queue drained under the activation budget, guarded so an unloaded chunk is never added; physics bodies stay synchronous. M1c: split parcel content generation (5-7 ms) into plan and instantiate the same way as M1a, only if M1a and M1b leave the total above the gate. | `RoamStreamProbe` on three seeds: no content phase above 20 ms (M1a), blocker phase p95 under 5 ms (M1b), total activation p95 under 9 ms and none above 16.7 ms (M1c); `ChunkStreamingPerformanceAudit`, `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green; the recorder's `chunk_stream.last_phases` in the next playtest's incidents. | medium: a chunk's blockers invisible for one frame while already colliding (M1b); a worker-thread plan must not touch nodes (M1a); navigation revision still commits after the queue drains. |
 | M2 | **Set VFX pooling** | One pooled scene per VFX kind (pulse ring, spokes, arc line, cleave arc, shockwave) with a cap on simultaneous instances per kind; Lattice's triangle and Mass Arrest's slam draw from the pool. | Build simulator: Lattice melee p95 median from 4.5 ms to under 2 ms, Mass Grave p99 under 16 ms; `SetRunnerTest`, `SetScalingV2Test` unchanged. | low: visual only. |
 | M3 | **Hitch tagging** | Tag every recorder sample over 28 ms with the dominant subsystem from the fields already carried (tree tick / flush / hits, fragments, projectile ms, chunk phase, flow publish, proxy slice) and print the tag distribution in `analyze_captures.py`. | Next playtest's incidents carry a tag; the distribution names the top cause without a manual read. | none |
 | M4 | **Materialized budget decision** (yours) | Either raise `materialized_budget` 64 -> 96 (the ceiling) so proxies near the player deal contact damage sooner, or give proxies within 200 px a data-side contact tick. Both are gameplay decisions; the August handoff left them open. | Horde 180 / 300 p95 within 2 ms of today at 96; playtest feel. | design |
@@ -160,5 +184,9 @@ August handoff is closed by `summoned_population_cap` 36).
   stream stats (`site_last_step_usec`). `FlightRecorderSampleTest` and
   `PerformanceFlightRecorderTest` pass.
 - Fresh horde numbers at 60 / 100 / 180 / 300 (section 2.1).
+- `RoamStreamProbe.tscn`: the real-world roaming reproduction (section
+  2.4), read-only; the blocker phase's physics / renderer split is now in
+  every phase sample.
 
-Nothing in the plan is implemented beyond the instrumentation.
+Nothing in the plan is implemented beyond the instrumentation; M1 is
+specified from measured phases and is the next thing to build.

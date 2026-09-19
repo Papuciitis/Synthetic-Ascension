@@ -437,7 +437,11 @@ func _record_chunk_build_time(
 		"content_ms": float(content_finished_usec - ground_finished_usec) / 1000.0,
 		"floor_ms": float(floor_finished_usec - content_finished_usec) / 1000.0,
 		"blocker_ms": float(blocker_finished_usec - floor_finished_usec) / 1000.0,
+		"blocker_physics_ms": float(_last_blocker_physics_usec) / 1000.0,
+		"blocker_render_ms": float(_last_blocker_render_usec) / 1000.0,
 	})
+	_last_blocker_physics_usec = 0
+	_last_blocker_render_usec = 0
 	if _chunk_build_samples_ms.size() > 64:
 		_chunk_build_samples_ms.pop_front()
 		_chunk_build_phase_samples.pop_front()
@@ -971,7 +975,14 @@ func _ensure_block_renderer() -> void:
 		_block_renderer.configure(self, chunk_size_px, cell_size_px)
 
 
+## Split of the last blocker activation, for the phase samples: bodies and
+## shapes versus the MultiMesh renderer's add.
+var _last_blocker_physics_usec := 0
+var _last_blocker_render_usec := 0
+
+
 func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
+	var physics_started := Time.get_ticks_usec()
 	var physics := _BLOCK_PHYSICS.new() as ChunkBlockPhysics
 	physics.name = "ChunkBlockPhysics"
 	physics.build(data, cell_size_px)
@@ -979,9 +990,12 @@ func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
 		chunk.add_child(physics)
 	else:
 		physics.free()
+	_last_blocker_physics_usec = Time.get_ticks_usec() - physics_started
+	var render_started := Time.get_ticks_usec()
 	_ensure_block_renderer()
 	if _block_renderer != null:
 		_block_renderer.add_chunk(data)
+	_last_blocker_render_usec = Time.get_ticks_usec() - render_started
 
 
 func _record_floor_stamp(rect: Rect2i, texture_index: int, alpha: float, z: int) -> bool:
