@@ -390,9 +390,17 @@ func _enable_pickup_later() -> void:
 			vfx.set_locked(false)
 		return
 
-	await get_tree().create_timer(pickup_delay).timeout
+	# Pause-aware: a throw from the paused bag must not have its delay spent
+	# before the bag closes. A deliberate drop then arms only once the player
+	# has stepped off it, so it cannot be re-collected on the spot.
+	await get_tree().create_timer(pickup_delay, false).timeout
 	if not is_inside_tree():
 		return
+	if persistent_world_drop:
+		while is_inside_tree() and _player_within(56.0):
+			await get_tree().create_timer(0.2, false).timeout
+		if not is_inside_tree():
+			return
 
 	monitorable = true
 	monitoring = true
@@ -400,6 +408,14 @@ func _enable_pickup_later() -> void:
 
 	if vfx != null:
 		vfx.set_locked(false)
+
+func _player_within(radius: float) -> bool:
+	if _player_ref == null or not is_instance_valid(_player_ref):
+		_player_ref = get_tree().get_first_node_in_group("player") as Node2D
+	if _player_ref == null:
+		return false
+	return global_position.distance_to(_player_ref.global_position) <= radius
+
 
 func _world_to_screen(p_world: Vector2) -> Vector2:
 	# Godot 4 (2D): world/canvas -> screen using the viewport canvas transform (includes Camera2D)

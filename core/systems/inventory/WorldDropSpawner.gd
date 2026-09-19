@@ -4,10 +4,10 @@ class_name WorldDropSpawner
 @export var pickup_scene: PackedScene
 
 @export var scatter_radius: float = 50.0          # random spread around the drop point
-@export var throw_towards_mouse: float = 100.0    # base distance away from player in mouse direction
-@export var min_drop_distance: float = 60.0       # NEVER drop closer than this to player
+@export var throw_towards_mouse: float = 200.0    # base distance away from player in mouse direction
+@export var min_drop_distance: float = 120.0      # NEVER drop closer than this to player
 
-@export var dropped_pickup_delay: float = 1.2     # dropped items can't be picked instantly
+@export var dropped_pickup_delay: float = 1.5     # dropped items can't be picked instantly (pause-aware)
 
 # Throw feel
 @export var throw_anim_time: float = 0.18
