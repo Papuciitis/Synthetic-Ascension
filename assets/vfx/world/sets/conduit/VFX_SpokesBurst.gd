@@ -26,10 +26,17 @@ func setup(pos: Vector2) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-
+	material = PooledVfx.additive_material()
 	_rng.randomize()
+	_reset()
+
+## Pooled reuse (PooledVfx): fresh spokes, first frame.
+func _on_pool_obtain() -> void:
+	_reset()
+
+func _reset() -> void:
+	_t = 0.0
+	rotation = 0.0
 	_angles = PackedFloat32Array()
 	_lens = PackedFloat32Array()
 
@@ -44,7 +51,7 @@ func _ready() -> void:
 func _process(dt: float) -> void:
 	_t += dt
 	if _t >= duration:
-		queue_free()
+		PooledVfx.release(self)
 		return
 
 	rotation += rotate_speed * dt

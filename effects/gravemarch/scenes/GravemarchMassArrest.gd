@@ -329,13 +329,9 @@ func _spawn_bullet(scn: PackedScene, pos: Vector2, dir: Vector2, dmg: float) -> 
 func _spawn_wave(pos: Vector2, r: float) -> void:
 	if vfx_shockwave_scene == null:
 		return
-	var vfx := vfx_shockwave_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_shockwave_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos, r)
 	else:
@@ -344,13 +340,9 @@ func _spawn_wave(pos: Vector2, r: float) -> void:
 func _spawn_pulse(pos: Vector2, r: float) -> void:
 	if vfx_pulse_ring_scene == null:
 		return
-	var vfx := vfx_pulse_ring_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_pulse_ring_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos, r)
 	else:
@@ -359,13 +351,9 @@ func _spawn_pulse(pos: Vector2, r: float) -> void:
 func _spawn_spokes(pos: Vector2) -> void:
 	if vfx_spokes_scene == null:
 		return
-	var vfx := vfx_spokes_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_spokes_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos)
 	else:

@@ -351,23 +351,18 @@ func _report_active_cd(force: bool = false) -> void:
 func _spawn_arc(a: Vector2, b: Vector2) -> void:
 	if vfx_arc_line_scene == null:
 		return
-	var vfx := vfx_arc_line_scene.instantiate()
+	var vfx := PooledVfx.obtain(vfx_arc_line_scene, get_tree().current_scene)
 	if vfx == null:
 		return
-	get_tree().current_scene.add_child(vfx)
 	if vfx.has_method("setup"):
 		vfx.call("setup", a, b)
 
 func _spawn_spokes(pos: Vector2) -> void:
 	if vfx_spokes_scene == null:
 		return
-	var vfx := vfx_spokes_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_spokes_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos)
 	else:
@@ -376,13 +371,9 @@ func _spawn_spokes(pos: Vector2) -> void:
 func _spawn_pulse(pos: Vector2, r: float) -> void:
 	if vfx_pulse_ring_scene == null:
 		return
-	var vfx := vfx_pulse_ring_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_pulse_ring_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos, r)
 	else:
@@ -391,13 +382,9 @@ func _spawn_pulse(pos: Vector2, r: float) -> void:
 func _spawn_cleave(pos: Vector2, dir: Vector2, r: float) -> void:
 	if vfx_cleave_arc_scene == null:
 		return
-	var vfx := vfx_cleave_arc_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_cleave_arc_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos, dir, r)
 	else:

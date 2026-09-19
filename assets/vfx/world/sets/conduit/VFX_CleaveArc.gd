@@ -26,10 +26,17 @@ func setup(pos: Vector2, dir: Vector2, r: float = -1.0) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-
+	material = PooledVfx.additive_material()
 	_rng.randomize()
+	_reset()
+
+## Pooled reuse (PooledVfx): fresh sparks, first frame, unit scale.
+func _on_pool_obtain() -> void:
+	_reset()
+
+func _reset() -> void:
+	_t = 0.0
+	scale = Vector2.ONE
 	_sparks.clear()
 
 	var half := deg_to_rad(arc_degrees) * 0.5
@@ -46,7 +53,7 @@ func _ready() -> void:
 func _process(dt: float) -> void:
 	_t += dt
 	if _t >= duration:
-		queue_free()
+		PooledVfx.release(self)
 		return
 
 	# slight punch scaling

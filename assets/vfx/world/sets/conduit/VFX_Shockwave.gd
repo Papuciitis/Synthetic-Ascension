@@ -11,13 +11,19 @@ func setup(pos: Vector2, radius: float) -> void:
 	global_position = pos
 	max_radius = radius
 
+## Pooled reuse (PooledVfx): first frame of the ring.
+func _on_pool_obtain() -> void:
+	_t = 0.0
+	_r = 0.0
+	queue_redraw()
+
 func _process(dt: float) -> void:
 	_t += dt
 	var k := clampf(_t / max(duration, 0.001), 0.0, 1.0)
 	_r = lerpf(0.0, max_radius, k)
 	queue_redraw()
 	if _t >= duration:
-		queue_free()
+		PooledVfx.release(self)
 
 func _draw() -> void:
 	# clean expanding ring

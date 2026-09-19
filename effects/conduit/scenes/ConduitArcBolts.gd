@@ -57,10 +57,9 @@ func _on_weapon_fired(p: Node, _style_id: StringName, origin: Vector2, _target: 
 func _spawn_arc_vfx(a: Vector2, b: Vector2) -> void:
 	if vfx_arc_line_scene == null:
 		return
-	var vfx := vfx_arc_line_scene.instantiate()
+	var vfx := PooledVfx.obtain(vfx_arc_line_scene, get_tree().current_scene)
 	if vfx == null:
 		return
-	get_tree().current_scene.add_child(vfx)
 	if vfx.has_method("setup"):
 		vfx.call("setup", a, b)
 

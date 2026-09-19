@@ -78,13 +78,9 @@ func _get_player_base_damage() -> float:
 func _spawn_pulse(pos: Vector2, r: float) -> void:
 	if vfx_pulse_ring_scene == null:
 		return
-	var vfx := vfx_pulse_ring_scene.instantiate()
-	var n2 := vfx as Node2D
+	var n2 := PooledVfx.obtain(vfx_pulse_ring_scene, get_tree().current_scene) as Node2D
 	if n2 == null:
-		if vfx != null:
-			vfx.queue_free()
 		return
-	get_tree().current_scene.add_child(n2)
 	if n2.has_method("setup"):
 		n2.call("setup", pos, r)
 	else:

@@ -305,10 +305,9 @@ func _get_nearest_enemies(center: Vector2, radius: float, max_targets: int) -> A
 func _spawn_cleave_arc(pos: Vector2, dir: Vector2, r: float) -> void:
 	if vfx_cleave_arc_scene == null:
 		return
-	var n := vfx_cleave_arc_scene.instantiate()
+	var n := PooledVfx.obtain(vfx_cleave_arc_scene, get_tree().current_scene)
 	if n == null:
 		return
-	get_tree().current_scene.add_child(n)
 	if n.has_method("setup"):
 		n.call("setup", pos, dir, r)
 
@@ -400,11 +399,9 @@ func _spawn_pulse(pos: Vector2, radius: float) -> void:
 	if scn == null:
 		return
 
-	var n: Node = scn.instantiate()
+	var n: Node = PooledVfx.obtain(scn, get_tree().current_scene)
 	if n == null:
 		return
-
-	get_tree().current_scene.add_child(n)
 
 	if n.has_method("setup"):
 		n.call("setup", pos, radius)
@@ -415,11 +412,9 @@ func _spawn_spokes(pos: Vector2) -> void:
 	if vfx_spokes_scene == null:
 		return
 
-	var n: Node = vfx_spokes_scene.instantiate()
+	var n: Node = PooledVfx.obtain(vfx_spokes_scene, get_tree().current_scene)
 	if n == null:
 		return
-
-	get_tree().current_scene.add_child(n)
 
 	if n.has_method("setup"):
 		n.call("setup", pos)

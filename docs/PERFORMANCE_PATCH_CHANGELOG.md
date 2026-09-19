@@ -479,4 +479,16 @@ Follows `docs/audits/2026-09-15-performance-captures.md`.
 - **Not verified rendered.** Both are headless results; the next rendered
   capture on the display checks that the tags name real causes and that the
   staged activation holds up with draw cost on top.
+- **Set VFX pool (M2).** The five conduit VFX (pulse ring, spokes burst,
+  arc line, cleave arc, shockwave) come from the `PoolManager` through
+  `PooledVfx`: reset on reuse, one shared additive material instead of one
+  per burst, 48 retained per kind, a live cap of 64 per kind that refuses
+  further spawns, `queue_free` for a VFX the pool never saw. Lattice,
+  Gravemarch and Conduit spawners obtain through it. Churn benchmark
+  (30 rings per frame, headless): raw p50 20.1 ms, pooled 6.9 ms.
+  Build simulator with Lattice pinned, 62 builds, same seed: melee p99
+  11.70 before, 11.64 after, ranged and magic within noise, so the
+  September 19 audit's reading of the melee tail as VFX churn is not
+  confirmed headless; the pool stays as a per-burst saving and a cap.
+  `SetVfxPoolTest` (21 checks).
 

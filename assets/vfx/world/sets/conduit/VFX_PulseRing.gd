@@ -23,15 +23,22 @@ func setup(pos: Vector2, radius: float) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = PooledVfx.additive_material()
+	_reset()
+
+## Pooled reuse (PooledVfx): back to the first frame of the burst.
+func _on_pool_obtain() -> void:
+	_reset()
+
+func _reset() -> void:
+	_t = 0.0
 	set_process(true)
 	queue_redraw()
 
 func _process(dt: float) -> void:
 	_t += dt
 	if _t >= duration:
-		queue_free()
+		PooledVfx.release(self)
 		return
 	queue_redraw()
 

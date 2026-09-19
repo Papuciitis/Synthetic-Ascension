@@ -25,9 +25,27 @@ func setup(from: Vector2, to: Vector2) -> void:
 		var off := n * randf_range(-jitter, jitter) * w
 		add_point(p + off)
 
+var _tween: Tween = null
+
 func _ready() -> void:
 	z_index = 100
 	width = 4.0
-	var tw := create_tween()
-	tw.tween_property(self, "modulate:a", 0.0, lifetime)
-	tw.tween_callback(queue_free)
+	_start_fade()
+
+## Pooled reuse (PooledVfx): opaque again, a new fade.
+func _on_pool_obtain() -> void:
+	clear_points()
+	_start_fade()
+
+func _on_pool_recycle() -> void:
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+	_tween = null
+
+func _start_fade() -> void:
+	if _tween != null and _tween.is_valid():
+		_tween.kill()
+	modulate.a = 1.0
+	_tween = create_tween()
+	_tween.tween_property(self, "modulate:a", 0.0, lifetime)
+	_tween.tween_callback(func() -> void: PooledVfx.release(self))
