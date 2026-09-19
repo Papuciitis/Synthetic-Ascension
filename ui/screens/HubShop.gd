@@ -1444,8 +1444,8 @@ func _generate_vendor_stock(force: bool) -> void:
 	var r_lo: int = band.x
 	var r_hi: int = band.y
 
-	# Fill ~10 slots
-	var want: int = 10
+	# Segment 1 pass S10: fewer, weighed purchases at the first Hubs.
+	var want: int = vendor_slot_count(seg)
 	for _i2 in range(want):
 		var slot_idx: int = _first_empty_vendor_slot()
 		if slot_idx == -1:
@@ -1676,6 +1676,16 @@ func _create_ascension_button() -> void:
 
 ## The vendor's rarity band at a segment (x = min, y = max): it follows the
 ## segment's rarity cap instead of outrunning it.
+## How many offers the vendor lays out: six through segment 2, eight at
+## 3-5, ten from segment 6.
+static func vendor_slot_count(seg: int) -> int:
+	if seg <= 2:
+		return 6
+	if seg <= 5:
+		return 8
+	return 10
+
+
 static func vendor_band(seg: int) -> Vector2i:
 	var r_lo: int = clampi(int(floor(float(maxi(1, seg)) / 3.0)) + 1, 1, 8)
 	return Vector2i(r_lo, clampi(r_lo + 2, r_lo, 10))

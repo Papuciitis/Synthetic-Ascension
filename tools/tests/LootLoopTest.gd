@@ -289,6 +289,7 @@ func _test_vendor_band_and_dead_items() -> void:
 	var saved_segment := int(Global.attempt_segment)
 	_check(HUB_SHOP.vendor_band(1) == Vector2i(1, 3) and HUB_SHOP.vendor_band(2) == Vector2i(1, 3), "the vendor sells R1-R3 through segment 2")
 	_check(HUB_SHOP.vendor_band(4) == Vector2i(2, 4) and HUB_SHOP.vendor_band(9) == Vector2i(4, 6) and HUB_SHOP.vendor_band(15) == Vector2i(6, 8), "then R2-R4 at 4, R4-R6 at 9, R6-R8 at 15")
+	_check(HUB_SHOP.vendor_slot_count(1) == 6 and HUB_SHOP.vendor_slot_count(4) == 8 and HUB_SHOP.vendor_slot_count(9) == 10, "the vendor lays out six offers through segment 2, eight at 3-5, ten after")
 	var within := true
 	for segment in range(1, 30):
 		Global.attempt_segment = segment
