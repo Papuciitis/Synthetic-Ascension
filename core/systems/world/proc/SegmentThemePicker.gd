@@ -157,6 +157,8 @@ static func _theme_collapsed_ward() -> SegmentThemeData:
 	t.exploration_turn_chance = 0.48
 	t.exploration_reconnect_chance = 0.48
 	t.exploration_band_bonus = 4
+	t.veg_per_chunk_max = 28
+	t.decals_per_chunk_max = 16
 	return t
 
 static func _theme_civilian_cutthrough() -> SegmentThemeData:
@@ -193,6 +195,7 @@ static func _theme_civilian_cutthrough() -> SegmentThemeData:
 	t.exploration_turn_chance = 0.44
 	t.exploration_reconnect_chance = 0.55
 	t.exploration_band_bonus = 4
+	t.veg_per_chunk_max = 24
 	return t
 
 static func _theme_inner_district_gate() -> SegmentThemeData:
@@ -285,6 +288,8 @@ static func _theme_ruined_services() -> SegmentThemeData:
 	t.district_gap_chance = 0.18
 	t.donjon_strength = 0.50
 	t.meander_chance = 0.32
+	t.veg_per_chunk_max = 26
+	t.decals_per_chunk_max = 16
 	return t
 
 static func _theme_underpass_veins() -> SegmentThemeData:
@@ -339,6 +344,8 @@ static func _theme_canal_services() -> SegmentThemeData:
 	t.district_lane_width_cells = 13
 	t.donjon_strength = 0.58
 	t.meander_chance = 0.42
+	t.veg_per_chunk_max = 24
+	t.decals_per_chunk_max = 16
 	return t
 
 static func _theme_rail_yard() -> SegmentThemeData:
@@ -375,6 +382,8 @@ static func _theme_rail_yard() -> SegmentThemeData:
 	t.exploration_turn_chance = 0.34
 	t.exploration_reconnect_chance = 0.55
 	t.exploration_band_bonus = 5
+	t.veg_per_chunk_max = 8
+	t.decals_per_chunk_max = 18
 	return t
 
 static func _theme_military_staging() -> SegmentThemeData:
@@ -392,6 +401,8 @@ static func _theme_military_staging() -> SegmentThemeData:
 	t.donjon_strength = 0.62
 	t.meander_chance = 0.20
 	t.exploration_branch_count_max = 5
+	t.veg_per_chunk_max = 4
+	t.decals_per_chunk_max = 14
 	return t
 
 static func _theme_outer_wall() -> SegmentThemeData:
@@ -483,6 +494,8 @@ static func _theme_gate_district() -> SegmentThemeData:
 	t.exploration_band_bonus = 5
 	t.has_boss_arena = true
 	t.end_mode = "BOSS_GATE"
+	t.veg_per_chunk_max = 10
+	t.decals_per_chunk_max = 10
 	return t
 
 static func _mix_seed(a: int, b: int) -> int:

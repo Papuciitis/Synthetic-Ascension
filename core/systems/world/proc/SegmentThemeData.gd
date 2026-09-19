@@ -41,6 +41,12 @@ class_name SegmentThemeData
 
 @export_range(1, 4, 1) var landmark_count: int = 2
 
+@export_group("Decoration")
+## Vegetation and floor decals per streamed chunk: overgrown themes scatter
+## more, yards and staging grounds less.
+@export_range(0, 40, 1) var veg_per_chunk_max: int = 20
+@export_range(0, 40, 1) var decals_per_chunk_max: int = 13
+
 @export_group("World Gen (ChunkManager)")
 @export var weight_empty: float = 0.50
 @export var weight_building: float = 0.30
@@ -155,3 +161,7 @@ func apply_to_chunk_manager(cm: ChunkManager) -> void:
 	cm.donjon_ca_steps = donjon_ca_steps
 	cm.set_fallback_terrain(StringName(exploration_terrain))
 	cm.district_tint = district_tint
+	cm.veg_per_chunk_max = veg_per_chunk_max
+	cm.veg_per_chunk_min = mini(cm.veg_per_chunk_min, veg_per_chunk_max)
+	cm.decals_per_chunk_max = decals_per_chunk_max
+	cm.decals_per_chunk_min = mini(cm.decals_per_chunk_min, decals_per_chunk_max)
