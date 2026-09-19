@@ -20,7 +20,8 @@ Environment: `SIM_OUT` (output directory, relative to the project or
 shards split one job list by index, so four shards in parallel finish four
 times sooner), `SIM_PRESETS` (include every preset, authored build and
 prototype route), `SIM_STRUCTURE` (the tree structure pass, shard 0 only),
-`SIM_TIERS` (comma list of tier indices), `SIM_CROWD`, `SIM_HP_MUL` (crowd
+`SIM_TIERS` (comma list of tier indices), `SIM_CORES` (comma list of
+native cores to keep), `SIM_CROWD`, `SIM_HP_MUL` (crowd
 durability), `SIM_SET` (pin one set on every build; the gear seed picks it
 otherwise), `SIM_GEAR_POLARITY=neg:<n>` (the first n statistical set pieces
 roll NEG at their authored floor), `SIM_CURSES` (curse relic ids worn in
@@ -95,3 +96,16 @@ construction); nodes by mean damage share; outliers within a tier; node
 pairs enriched among the top decile; every authored build; the structure
 summary; simulation cost. Lifts are correlational within one scripted
 scenario. Campaign reports live under `docs/audits/2026-09-19-build-simulator/`.
+
+## Where the simulated frame goes
+
+Each row also carries `step_p95_ms` and `step_max_ms` for the scripted
+frame's steps (`recorder`, `strike`, `casts`, `pressure`, `refill`),
+`tail_step` (the step that dominated the slowest 1% of frames) and the
+strike's split (`strike_split_p95_ms`: the tree's hit handling, the
+combat service's `enemy_damaged` listeners, BattleText, `player_hit_landed`
+listeners, the death path, enemy lifecycle, and the rest). The progress
+line prints the tail step and its worst frame. The engine's own frame
+(physics, the runner's tick, projectiles) runs between samples and is not
+in these numbers; the performance war room's probes cover that side.
+

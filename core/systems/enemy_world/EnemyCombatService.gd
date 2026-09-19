@@ -52,6 +52,14 @@ func apply_status_damage(handle: int, raw_damage: float, source: Node = null, ki
 	return _apply_damage(handle, raw_damage, 1, source, BalanceAttribution.status(kind), false)
 
 
+## Diagnostic split of _apply_damage (microseconds, cumulative) for the
+## build simulator and the war room: the recorder's enemy_damaged listeners,
+## BattleText, the player_hit_landed listeners, the death path. Off unless
+## a probe turns it on; four clock reads per hit when on.
+static var debug_timing := false
+static var debug_usec: Dictionary = {"damaged_emit": 0, "battletext": 0, "hit_landed": 0, "death": 0, "hits": 0}
+
+
 func _apply_damage(
 	handle: int,
 	raw_damage: float,
@@ -88,12 +96,22 @@ func _apply_damage(
 	if not _world.set_health(handle, remaining_health):
 		return 0.0
 	_mirror_health(actor, remaining_health, _world.get_max_health(handle))
+	var clock := Time.get_ticks_usec() if debug_timing else 0
 	if RunEvents != null and RunEvents.enemy_damaged.has_connections():
 		RunEvents.enemy_damaged.emit(handle, applied_damage, adjusted_damage, current_health, source, payload)
+	if debug_timing:
+		var now := Time.get_ticks_usec()
+		debug_usec["damaged_emit"] = int(debug_usec["damaged_emit"]) + (now - clock)
+		debug_usec["hits"] = int(debug_usec["hits"]) + 1
+		clock = now
 	var ledger_payload := payload as HitLedger
 	var was_critical: bool = ledger_payload != null and ledger_payload.critical_hits > 0
 	if BattleText != null:
 		BattleText.damage(_world.get_position(handle), applied_damage, was_critical, handle)
+	if debug_timing:
+		var now := Time.get_ticks_usec()
+		debug_usec["battletext"] = int(debug_usec["battletext"]) + (now - clock)
+		clock = now
 	if source != null and is_instance_valid(source) and RunEvents != null:
 		RunEvents.damage_dealt.emit(source, applied_damage)
 		# Manifestation hook. Guarded: at horde scale this runs per pellet per
@@ -107,6 +125,10 @@ func _apply_damage(
 				was_critical,
 				EnemyWorldTypes.has_flag(_world.get_flags(handle), EnemyWorldTypes.Flags.ELITE),
 			)
+	if debug_timing:
+		var now := Time.get_ticks_usec()
+		debug_usec["hit_landed"] = int(debug_usec["hit_landed"]) + (now - clock)
+		clock = now
 
 	if remaining_health > 0.0:
 		_apply_survivor_feedback(actor, applied_damage, source, payload)
@@ -129,6 +151,8 @@ func _apply_damage(
 		actor.call("_apply_enemy_world_death", context)
 	else:
 		_finalize_proxy_death(handle)
+	if debug_timing:
+		debug_usec["death"] = int(debug_usec["death"]) + (Time.get_ticks_usec() - clock)
 	return applied_damage
 
 

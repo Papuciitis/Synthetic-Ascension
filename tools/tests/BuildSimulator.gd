@@ -23,6 +23,7 @@ extends Node
 #      SIM_BUILDS (random builds per core per tier; default 4), SIM_FRAMES (600),
 #      SIM_SEED (20260919), SIM_SHARD ("i/n", default "0/1"), SIM_PRESETS (1),
 #      SIM_STRUCTURE (1), SIM_CROWD (60), SIM_TIERS (comma list of tier indices),
+#      SIM_CORES (comma list of native cores to keep: melee, ranged, magic),
 #      SIM_SET ("" = the gear seed picks the set; a set id pins it for every build),
 #      SIM_GEAR_POLARITY (neg:<n>: the first n statistical set pieces roll NEG at
 #      their authored floor), SIM_CURSES (comma list of curse relic ids worn in
@@ -90,6 +91,7 @@ var _frames := 600
 var _seed := 20260919
 var _shard := 0
 var _shards := 1
+var _cores: Array = []
 var _include_presets := true
 ## SIM_SET: wear this set on every build instead of the gear seed's pick.
 var _forced_set := ""
@@ -154,6 +156,9 @@ func _run() -> void:
 	for index in _env("SIM_TIERS", "0,1,2,3,4").split(","):
 		if not index.strip_edges().is_empty():
 			_tiers.append(int(index))
+	for core_name in _env("SIM_CORES", "").split(","):
+		if not core_name.strip_edges().is_empty():
+			_cores.append(core_name.strip_edges())
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out_dir) if _out_dir.begins_with("user://") else _out_dir)
 	_db = AscensionTreeDB.shared()
 	_status = _load_json(FEATURE_STATUS)
@@ -199,6 +204,8 @@ func _run() -> void:
 		_write_json("structure.json", _structure_pass())
 	_rows_file = FileAccess.open(_out_dir.path_join("builds_%d.jsonl" % _shard), FileAccess.WRITE)
 	var jobs := _jobs()
+	if not _cores.is_empty():
+		jobs = jobs.filter(func(job: Dictionary) -> bool: return _cores.has(String(job.get("core", ""))))
 	print("[sim] shard %d/%d: %d builds, %d frames each, seed %d -> %s" % [_shard, _shards, jobs.size(), _frames, _seed, _out_dir])
 	var index := 0
 	for job in jobs:
@@ -207,7 +214,7 @@ func _run() -> void:
 		_rows_file.store_line(JSON.stringify(_recorder.Writer.json_safe(row)))
 		_rows_file.flush()
 		_rows += 1
-		print("[sim] %3d/%d %-34s core %-6s tier %-5s nodes %2d spent %6d | hp removed %8.0f kills %3d | lost %6.0f deaths %d | casts q%d v%d | frame p95 %.1f ms" % [index, jobs.size(), String(row.name).left(34), row.core, row.tier, int(row.node_count), int(row.spent), float(row.enemy_hp_removed), int(row.kills), float(row.player_hp_lost), int(row.deaths), int(row.q_casts), int(row.v_casts), float(row.frame_p95_ms)])
+		print("[sim] %3d/%d %-34s core %-6s tier %-5s nodes %2d spent %6d | hp removed %8.0f kills %3d | lost %6.0f deaths %d | casts q%d v%d | frame p95 %.1f ms | tail %s %.1f" % [index, jobs.size(), String(row.name).left(34), row.core, row.tier, int(row.node_count), int(row.spent), float(row.enemy_hp_removed), int(row.kills), float(row.player_hp_lost), int(row.deaths), int(row.q_casts), int(row.v_casts), float(row.frame_p95_ms), String(row.tail_step), float((row.step_max_ms as Dictionary).get(row.tail_step, 0.0))])
 	_rows_file.close()
 	print("[sim] done: %d rows in %.1f s" % [_rows, float(Time.get_ticks_usec() - _started_usec) / 1000000.0])
 	get_tree().quit(0)
@@ -944,6 +951,16 @@ func _simulate(job: Dictionary) -> Dictionary:
 	var min_hp: float = _player.hp
 	var hp_samples: Array = []
 	var frame_ms: Array = []
+	# Per-step cost of the scripted frame (the fight's own synchronous work:
+	# the recorder's window, the native strike and every hook it fires, Q / V
+	# / dash, scripted pressure, the crowd refill), so a slow build names
+	# the step behind its tail.
+	var step_ms: Dictionary = {"recorder": [], "strike": [], "casts": [], "pressure": [], "refill": []}
+	# Inside the strike: the tree's hit handling (runner + engines on_hit) and
+	# the enemy lifecycle work of the kills it causes; the rest is the combat
+	# service, set hooks, drops and the recorder's callbacks.
+	var strike_split: Dictionary = {"tree_hit": [], "lifecycle": [], "damaged_emit": [], "battletext": [], "hit_landed": [], "death": [], "other": []}
+	EnemyCombatService.debug_timing = true
 	var v_first_frame := -1
 	var q_hold_until := 0
 	var q_holding := false
@@ -952,8 +969,14 @@ func _simulate(job: Dictionary) -> Dictionary:
 	for frame in range(_frames):
 		await get_tree().process_frame
 		var frame_start := Time.get_ticks_usec()
+		var step_usec := frame_start
 		_recorder._process(1.0 / 60.0)
+		var frame_steps: Dictionary = {"recorder": float(Time.get_ticks_usec() - step_usec) / 1000.0}
+		step_usec = Time.get_ticks_usec()
 		var alive := _alive()
+		var hit_usec_before: int = int(_runner.get("_frame_hit_usec"))
+		var lifecycle_before := _lifecycle_usec()
+		var combat_before: Dictionary = EnemyCombatService.debug_usec.duplicate()
 		if frame % 4 == 0 and not alive.is_empty():
 			# Fight what is on you: the nearest body most of the time, a random
 			# one otherwise so ranged builds still spread their attention.
@@ -973,6 +996,18 @@ func _simulate(job: Dictionary) -> Dictionary:
 				_player.call("_spawn_ranged_bullet", _origin, (target_pos - _origin).normalized(), _runner.native_damage())
 			else:
 				_runner.damage_enemy(target, _runner.native_damage(), _native_tags(core, strikes))
+		frame_steps["strike"] = float(Time.get_ticks_usec() - step_usec) / 1000.0
+		var tree_hit_ms := float(int(_runner.get("_frame_hit_usec")) - hit_usec_before) / 1000.0
+		var lifecycle_ms := float(_lifecycle_usec() - lifecycle_before) / 1000.0
+		(strike_split["tree_hit"] as Array).append(tree_hit_ms)
+		(strike_split["lifecycle"] as Array).append(lifecycle_ms)
+		var combat_ms := 0.0
+		for part in ["damaged_emit", "battletext", "hit_landed", "death"]:
+			var part_ms := float(int(EnemyCombatService.debug_usec[part]) - int(combat_before[part])) / 1000.0
+			(strike_split[part] as Array).append(part_ms)
+			combat_ms += part_ms
+		(strike_split["other"] as Array).append(maxf(0.0, float(frame_steps["strike"]) - tree_hit_ms - lifecycle_ms - combat_ms))
+		step_usec = Time.get_ticks_usec()
 		# A held Q (Guard, Deadshot, Designate) is pressed once, fed through
 		# the engine's hold hook for two seconds, then released with the
 		# runner's recovery rule, exactly as a held key does; the hold state
@@ -1003,6 +1038,8 @@ func _simulate(job: Dictionary) -> Dictionary:
 					v_first_frame = frame
 		if frame % 90 == 40 and not _player.is_dashing():
 			_runner.dash_toward(Vector2.from_angle(rng.randf_range(0.0, TAU)), 160.0)
+		frame_steps["casts"] = float(Time.get_ticks_usec() - step_usec) / 1000.0
+		step_usec = Time.get_ticks_usec()
 		# Scripted pressure through the real damage path: contact ticks from
 		# enemies within reach, spitter volleys in range, one sniper shot.
 		if frame % CONTACT_TICK_FRAMES == CONTACT_TICK_FRAMES - 1:
@@ -1030,6 +1067,8 @@ func _simulate(job: Dictionary) -> Dictionary:
 				volleys += 1
 			if _player.hp < hp_before_frames and _player.hp <= 0.0:
 				deaths += 1
+		frame_steps["pressure"] = float(Time.get_ticks_usec() - step_usec) / 1000.0
+		step_usec = Time.get_ticks_usec()
 		min_hp = minf(min_hp, float(_player.hp))
 		if frame % 30 == 0:
 			hp_samples.append(float(_player.hp))
@@ -1038,7 +1077,10 @@ func _simulate(job: Dictionary) -> Dictionary:
 			for i in range(mini(deficit, REFILL_PER_TICK)):
 				_spawn(_pick_spec(rng), _origin + Vector2.from_angle(rng.randf_range(0.0, TAU)) * rng.randf_range(40.0, 320.0), hp_mul, false)
 				spawned_total += 1
+		frame_steps["refill"] = float(Time.get_ticks_usec() - step_usec) / 1000.0
 		frame_ms.append(float(Time.get_ticks_usec() - frame_start) / 1000.0)
+		for step_name in step_ms:
+			(step_ms[step_name] as Array).append(float(frame_steps.get(step_name, 0.0)))
 	for _i in range(90):
 		await get_tree().process_frame
 		if _runner.pending_attacks().is_empty() and ProjectileManager.active_count() == 0:
@@ -1080,9 +1122,57 @@ func _simulate(job: Dictionary) -> Dictionary:
 		"chain_kills": int(_runner.telemetry.get("chain_kills", 0)), "catastrophes": int(_runner.telemetry.get("catastrophes", 0)), "r0": _runner.r0(),
 		"by_node": by_node, "by_origin": by_origin, "engines": engines, "attribution_coverage": summary.attribution_coverage,
 		"frame_p50_ms": _pct(frame_ms, 0.5), "frame_p95_ms": _pct(frame_ms, 0.95), "frame_p99_ms": _pct(frame_ms, 0.99), "frame_max_ms": _pct(frame_ms, 1.0),
+		"step_p95_ms": _step_percentiles(step_ms, 0.95), "step_max_ms": _step_percentiles(step_ms, 1.0), "tail_step": _tail_step(frame_ms, step_ms),
+		"strike_split_p95_ms": _step_percentiles(strike_split, 0.95), "strike_split_max_ms": _step_percentiles(strike_split, 1.0),
 	})
 	_clear_enemies()
 	return row
+
+
+static func _lifecycle_usec() -> int:
+	var loop := Engine.get_main_loop() as SceneTree
+	if loop == null or loop.root == null:
+		return 0
+	var index: Node = loop.root.get_node_or_null("EnemyIndex")
+	if index == null or not index.has_method("get_debug_counters"):
+		return 0
+	var lifecycle: Dictionary = (index.call("get_debug_counters") as Dictionary).get("lifecycle", {})
+	return int(lifecycle.get("attach_total_usec", 0)) + int(lifecycle.get("detach_total_usec", 0)) + int(lifecycle.get("retire_total_usec", 0))
+
+
+static func _step_percentiles(step_ms: Dictionary, fraction: float) -> Dictionary:
+	var out := {}
+	for step_name in step_ms:
+		out[step_name] = _pct(step_ms[step_name], fraction)
+	return out
+
+
+## The step that dominated the slowest 1% of frames (at least three), by
+## count; "" when no frame was measured.
+static func _tail_step(frame_ms: Array, step_ms: Dictionary) -> String:
+	if frame_ms.is_empty():
+		return ""
+	var order: Array = range(frame_ms.size())
+	order.sort_custom(func(a: int, b: int) -> bool: return float(frame_ms[a]) > float(frame_ms[b]))
+	var tail_count := maxi(3, int(ceil(0.01 * frame_ms.size())))
+	var votes := {}
+	for i in range(mini(tail_count, order.size())):
+		var frame_index: int = order[i]
+		var best := ""
+		var best_ms := -1.0
+		for step_name in step_ms:
+			var values: Array = step_ms[step_name]
+			if frame_index < values.size() and float(values[frame_index]) > best_ms:
+				best_ms = float(values[frame_index])
+				best = String(step_name)
+		votes[best] = int(votes.get(best, 0)) + 1
+	var winner := ""
+	var winner_votes := 0
+	for step_name in votes:
+		if int(votes[step_name]) > winner_votes:
+			winner_votes = int(votes[step_name])
+			winner = String(step_name)
+	return winner
 
 
 static func _pct(values: Array, fraction: float) -> float:

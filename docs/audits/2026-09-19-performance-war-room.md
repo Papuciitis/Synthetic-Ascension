@@ -158,6 +158,43 @@ longer a streaming step; the recorder's hitch tagging (M3) is what names
 it next. Gate for M1c (split the parcel content itself) is not met by
 need: no step above 12 ms on three seeds, so M1c stays unbuilt.
 
+### 2.5 The simulator's melee tail, named (after M2)
+
+The build simulator's frame time is the cost of its own scripted frame
+(the recorder's window, the native strike and every hook it fires, Q / V
+/ dash, scripted pressure, the crowd refill); the engine's own frame runs
+between samples. Each step is now timed and the slowest 1% of frames
+vote for the step behind them (`step_p95_ms`, `tail_step` per build).
+Melee-only runs, one build per Core per tier plus the presets, seed 77,
+480 frames, 60 bodies:
+
+| Set pinned | Melee builds | Frame p95 / p99 (ms) | Strike step p95 / max | Tail step |
+|---|---:|---|---|---|
+| Lattice | 27 | 6.75 / 11.92 | 6.70 / 22.6 | strike, 27 of 27 |
+| Conduit | 27 | 3.24 / 5.58 | 3.10 / 12.3 | strike |
+| Gravemarch | 27 | 2.02 / 3.97 | 1.79 / 9.5 | strike |
+
+The strike step is the synchronous hit chain of one native melee hit:
+under Lattice, a triangle fires four area pops over the 60-body crowd,
+which is up to 240 `apply_damage` calls in one frame. The combat
+service's per-hit stages, timed under a debug flag
+(`EnemyCombatService.debug_timing`), split a Lattice melee strike
+(p95 6.35 ms) as:
+
+| Piece | p95 (ms) | Share | What it is |
+|---|---:|---:|---|
+| `enemy_damaged` listeners | 1.93 | 30% | the balance recorder's ledger: provenance from the hit's tags, metrics, per-enemy rows (7 us per hit in isolation, more with a multi-contribution HitLedger) |
+| other | 2.14 | 34% | gather in radius, knockback and stun per handle, `_adjust_damage`, `damage_dealt` listeners, the runner's wrapper, VFX |
+| tree hit handling | 0.86 | 14% | `AscensionRunner` hit resolution and the engines' `on_hit` |
+| death path | 0.83 | 13% | defeat signal, proxy death payout, transaction, removal |
+| `player_hit_landed` listeners | 0.40 | 6% | Manifestation hooks |
+| BattleText | 0.34 | 5% | one floating number per hit |
+
+So the melee tail is per-hit fan-out at roughly 25 us a hit, not VFX
+churn (M2) and not the tree. It is the same fan-out a Barrage fragment
+storm or a 300-body horde pays per hit in play, which makes the per-hit
+overhead a target of its own (M8 below).
+
 ## 3. What the numbers do and do not say
 
 - The simulation side is solved for the counts you asked about: 300 live
@@ -189,6 +226,7 @@ previous milestones unchanged.
 | M5 | **Scheduler refresh cost** | Profile `EnemySimulationScheduler` assignment (0.2 s interval, incumbent bias 0.9) at 300-550 live; move the ranking to a data-side pass over `EnemyWorld` arrays if it shows above 1 ms per refresh. | Horde 550 p95 from 27 ms toward 20 ms; `EnemyPressureBenchmark` gate (20% over its baseline arm) kept. | medium |
 | M6 | **Rapier 2D A/B** (your go-ahead) | The biggest remaining physics lever for the 64 actors (August: 30 ms p95 at about 90 bodies); third-party binary, may change `move_and_slide` feel. | Horde 300 physics monitor and the pressure benchmark's physics step, both arms. | high: feel |
 | M7 | **GDExtension hot loops** | Only if M5 and M6 leave the proxy slice or the projectile `_simulate_one` above budget at 550+: proxy step, batch fill, projectile sim. | Minigun benchmark massacre stage p95 from 39 ms toward 25 ms. | high: build pipeline |
+| M8 | **Per-hit overhead** (from section 2.5) | Cheapen the fixed cost every `apply_damage` pays: memoize `BalanceAttribution.from_tags` by tag signature (a hit's tags repeat thousands of times per run), coalesce BattleText to one number per handle per frame, batch knockback and stun into the world arrays instead of per-handle calls, and let the recorder's `enemy_damage` skip the per-enemy row work for handles it has already seen this window. | Build simulator, Lattice pinned, melee only, seed 77: strike step p95 from 6.35 ms to under 4 ms with identical kills and HP removed; `BalanceRecorderLoadTest` ledger cost from 7.2 us per hit toward 4; `BalanceAttributionTest`, `BalanceLedgerTest` green. | low-medium: attribution and ledger totals must not change (the tests compare them); BattleText coalescing changes what the player sees on multi-hit frames. |
 
 Not on the list because they are done: attack budget (September 15),
 fragment targeting and recorder trust (September 16), projectile
@@ -237,7 +275,11 @@ August handoff is closed by `summoned_population_cap` 36).
   `PoolManager`; `SetVfxPoolTest`. The simulator's Lattice tail did not
   move, which retires the P4 reading (plan table).
 
-M4-M7 are not implemented. M0 (rendered baseline) still needs the
+- The build simulator times its scripted steps (`step_p95_ms`,
+  `tail_step`, the strike split) and takes `SIM_CORES`; the combat service
+  carries a debug-only per-hit timer. Section 2.5 names the melee tail.
+
+M4-M8 are not implemented. M0 (rendered baseline) still needs the
 display; the first rendered capture after this commit is the check that
 the tags name real causes (M3) and that the staged activation holds up
 with draw cost on top (M1).
