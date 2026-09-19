@@ -60,6 +60,13 @@ const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkSt
 @export_group("Rendering")
 @export var tiled_world_rendering: bool = false
 @export var batched_chunk_blockers: bool = true
+## Stage a streamed chunk's blocker work over the frames after its content
+## activation: bodies and shapes on the next queue step, the MultiMesh add
+## on the one after (performance war room M1b). Blocked cells are registered
+## during content generation, so navigation and the walkability snapshot
+## are unaffected. Only the per-frame (budgeted) queue path stages; explicit
+## limit calls stay synchronous and flush anything pending first.
+@export var staged_blocker_activation: bool = true
 
 @export_group("Generation Weights")
 @export_range(0.0, 1.0, 0.01) var weight_empty: float = 0.70
@@ -256,11 +263,14 @@ func configure_procedural_world(
 
 
 func _warm_ground_textures_for_plan() -> void:
-	var indices := PackedInt32Array([0, 1])
-	for terrain_value in _chunk_terrain.values():
-		var index := _ground_index_for_terrain(StringName(terrain_value))
-		if not indices.has(index):
-			indices.append(index)
+	# Every ground texture, not only the terrain ones: the district generator
+	# stamps roads, sidewalks, plazas, aprons and mud from the same list, and a
+	# first-touch load of one of these ~1 MB PNGs costs 25-30 ms inside the
+	# activation of whichever chunk stamps it first (the primary plaza, the
+	# wardstone court). Warming them here moves that onto the segment build.
+	var indices := PackedInt32Array()
+	for index in _WORLD_ART.ground_texture_count():
+		indices.append(index)
 	_WORLD_ART.warm_ground_textures(indices)
 
 
@@ -327,18 +337,25 @@ func process_chunk_generation_queue(limit: int = -1) -> int:
 	var started_usec := Time.get_ticks_usec()
 	var budget_usec := maxi(1, ceili(stream_activation_budget_ms * 1000.0))
 	var generated := 0
-	while generated < count_ceiling and not _chunk_generation_queue.is_empty():
-		var coord: Vector2i = _chunk_generation_queue.pop_front()
-		_queued_chunk_coords.erase(coord)
-		if _chunks.has(coord):
-			continue
-		if not _desired_chunk_coords.has(coord):
-			continue
-		_chunks[coord] = _create_chunk(coord)
-		generated += 1
-		_stream_activations_total += 1
+	if not enforce_elapsed_budget:
+		flush_pending_blocker_stages()
+	_stage_blockers_now = staged_blocker_activation and batched_chunk_blockers and enforce_elapsed_budget
+	while generated < count_ceiling and (not _chunk_generation_queue.is_empty() or not _pending_blocker_stages.is_empty()):
+		if not _pending_blocker_stages.is_empty():
+			_run_blocker_stage(_pending_blocker_stages.pop_front())
+		else:
+			var coord: Vector2i = _chunk_generation_queue.pop_front()
+			_queued_chunk_coords.erase(coord)
+			if _chunks.has(coord):
+				continue
+			if not _desired_chunk_coords.has(coord):
+				continue
+			_chunks[coord] = _create_chunk(coord)
+			generated += 1
+			_stream_activations_total += 1
 		if enforce_elapsed_budget and Time.get_ticks_usec() - started_usec >= budget_usec:
 			break
+	_stage_blockers_now = false
 	if _chunk_generation_queue.is_empty() and _nav_revision_pending:
 		call_deferred("commit_pending_nav_revision")
 	return generated
@@ -346,6 +363,50 @@ func process_chunk_generation_queue(limit: int = -1) -> int:
 
 func debug_chunk_queue() -> Array[Vector2i]:
 	return _chunk_generation_queue.duplicate()
+
+
+func pending_blocker_stage_count() -> int:
+	return _pending_blocker_stages.size()
+
+
+## Runs every staged blocker step now (tests, synchronous queue calls).
+func flush_pending_blocker_stages() -> void:
+	while not _pending_blocker_stages.is_empty():
+		_run_blocker_stage(_pending_blocker_stages.pop_front())
+
+
+func _run_blocker_stage(entry: Dictionary) -> void:
+	var coord: Vector2i = entry.get("coord", Vector2i(999999, 999999))
+	var chunk := entry.get("chunk") as Node2D
+	var data := entry.get("data") as ChunkBuildData
+	var sample: Dictionary = _phase_sample_by_coord.get(coord, {})
+	if data == null or not is_instance_valid(chunk) or not _chunks.has(coord) or _chunks[coord] != chunk:
+		# Unloaded (or replaced) before its turn: nothing to build, nothing to draw.
+		if is_same(sample, _phase_sample_by_coord.get(coord, {})):
+			sample["staged_pending"] = false
+		return
+	var started_usec := Time.get_ticks_usec()
+	if int(entry.get("stage", 0)) == 0:
+		_activate_blocker_physics(data, chunk)
+		var physics_ms := float(Time.get_ticks_usec() - started_usec) / 1000.0
+		sample["blocker_physics_ms"] = physics_ms
+		_note_blocker_stage(physics_ms)
+		entry["stage"] = 1
+		_pending_blocker_stages.push_front(entry)
+		return
+	_activate_blocker_render(data)
+	var render_ms := float(Time.get_ticks_usec() - started_usec) / 1000.0
+	sample["blocker_render_ms"] = render_ms
+	_note_blocker_stage(render_ms)
+	var blocker_ms := float(sample.get("blocker_physics_ms", 0.0)) + render_ms
+	sample["blocker_ms"] = blocker_ms
+	sample["total_ms"] = float(sample.get("total_ms", 0.0)) + blocker_ms
+	sample["staged_pending"] = false
+
+
+func _note_blocker_stage(ms: float) -> void:
+	_last_blocker_stage_ms = ms
+	_max_blocker_stage_ms = maxf(_max_blocker_stage_ms, ms)
 
 
 func _desired_coords_for(center: Vector2i) -> Array[Vector2i]:
@@ -402,7 +463,8 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 	if build_data != null:
 		_activate_floor_stamps(build_data, chunk)
 	var floor_finished := Time.get_ticks_usec()
-	if build_data != null:
+	var staged := build_data != null and _stage_blockers_now
+	if build_data != null and not staged:
 		_activate_chunk_blockers(build_data, chunk)
 	if not batched_chunk_blockers:
 		_tile_repeated_visuals(chunk)
@@ -413,6 +475,11 @@ func _create_chunk(coord: Vector2i) -> Node2D:
 			"generation_usec": Time.get_ticks_usec() - generation_started,
 		})
 	_record_chunk_build_time(coord, generation_started, setup_finished, ground_finished, content_finished, floor_finished, blocker_finished)
+	if staged:
+		var sample: Dictionary = _phase_sample_by_coord.get(coord, {})
+		sample["staged_pending"] = true
+		sample["blocker_ms"] = 0.0
+		_pending_blocker_stages.append({"coord": coord, "data": build_data, "chunk": chunk, "stage": 0})
 	return chunk
 
 
@@ -429,7 +496,7 @@ func _record_chunk_build_time(
 	_last_chunk_build_ms = float(elapsed_usec) / 1000.0
 	_max_chunk_build_ms = maxf(_max_chunk_build_ms, _last_chunk_build_ms)
 	_chunk_build_samples_ms.append(_last_chunk_build_ms)
-	_chunk_build_phase_samples.append({
+	var sample := {
 		"coord": str(coord),
 		"total_ms": _last_chunk_build_ms,
 		"setup_ms": float(setup_finished_usec - started_usec) / 1000.0,
@@ -439,12 +506,25 @@ func _record_chunk_build_time(
 		"blocker_ms": float(blocker_finished_usec - floor_finished_usec) / 1000.0,
 		"blocker_physics_ms": float(_last_blocker_physics_usec) / 1000.0,
 		"blocker_render_ms": float(_last_blocker_render_usec) / 1000.0,
-	})
+		"staged_pending": false,
+	}
+	_chunk_build_phase_samples.append(sample)
+	_phase_sample_by_coord[coord] = sample
 	_last_blocker_physics_usec = 0
 	_last_blocker_render_usec = 0
 	if _chunk_build_samples_ms.size() > 64:
 		_chunk_build_samples_ms.pop_front()
-		_chunk_build_phase_samples.pop_front()
+		var dropped: Dictionary = _chunk_build_phase_samples.pop_front()
+		var dropped_coord := _coord_from_key(String(dropped.get("coord", "")))
+		if _phase_sample_by_coord.has(dropped_coord) and is_same(_phase_sample_by_coord[dropped_coord], dropped):
+			_phase_sample_by_coord.erase(dropped_coord)
+
+
+func _coord_from_key(key: String) -> Vector2i:
+	var parts := key.trim_prefix("(").trim_suffix(")").split(",")
+	if parts.size() != 2:
+		return Vector2i(999999, 999999)
+	return Vector2i(int(parts[0].strip_edges()), int(parts[1].strip_edges()))
 
 
 func get_chunk_stream_debug_stats() -> Dictionary:
@@ -470,9 +550,13 @@ func get_chunk_stream_debug_stats() -> Dictionary:
 		"build_samples_ms": _chunk_build_samples_ms.duplicate(),
 		"build_phase_samples": _chunk_build_phase_samples.duplicate(true),
 		"site_last_step_usec": SiteOverlayImpl.debug_last_step_usec.duplicate(),
+		"content_last_steps": ChunkGenImpl.debug_last_content_steps.duplicate(true),
 		"activation_budget_ms": stream_activation_budget_ms,
 		"max_activations_per_frame": max_chunk_generations_per_frame,
 		"activations_total": _stream_activations_total,
+		"pending_blocker_stages": _pending_blocker_stages.size(),
+		"last_blocker_stage_ms": _last_blocker_stage_ms,
+		"max_blocker_stage_ms": _max_blocker_stage_ms,
 	}
 
 
@@ -547,6 +631,7 @@ func reset_world() -> void:
 	_projectile_blocker_owners.clear()
 	_chunk_build_data.clear()
 	_active_build_data = null
+	_pending_blocker_stages.clear()
 	if _block_renderer != null:
 		_block_renderer.clear()
 	if _site_mgr != null:
@@ -980,9 +1065,25 @@ func _ensure_block_renderer() -> void:
 var _last_blocker_physics_usec := 0
 var _last_blocker_render_usec := 0
 
+## Staged blocker work (see staged_blocker_activation): entries of
+## {coord, data, chunk, stage} with stage 0 = physics, 1 = renderer add.
+var _pending_blocker_stages: Array[Dictionary] = []
+var _stage_blockers_now := false
+var _phase_sample_by_coord: Dictionary = {}
+var _last_blocker_stage_ms := 0.0
+var _max_blocker_stage_ms := 0.0
+
 
 func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
 	var physics_started := Time.get_ticks_usec()
+	_activate_blocker_physics(data, chunk)
+	_last_blocker_physics_usec = Time.get_ticks_usec() - physics_started
+	var render_started := Time.get_ticks_usec()
+	_activate_blocker_render(data)
+	_last_blocker_render_usec = Time.get_ticks_usec() - render_started
+
+
+func _activate_blocker_physics(data: ChunkBuildData, chunk: Node2D) -> void:
 	var physics := _BLOCK_PHYSICS.new() as ChunkBlockPhysics
 	physics.name = "ChunkBlockPhysics"
 	physics.build(data, cell_size_px)
@@ -990,12 +1091,12 @@ func _activate_chunk_blockers(data: ChunkBuildData, chunk: Node2D) -> void:
 		chunk.add_child(physics)
 	else:
 		physics.free()
-	_last_blocker_physics_usec = Time.get_ticks_usec() - physics_started
-	var render_started := Time.get_ticks_usec()
+
+
+func _activate_blocker_render(data: ChunkBuildData) -> void:
 	_ensure_block_renderer()
 	if _block_renderer != null:
 		_block_renderer.add_chunk(data)
-	_last_blocker_render_usec = Time.get_ticks_usec() - render_started
 
 
 func _record_floor_stamp(rect: Rect2i, texture_index: int, alpha: float, z: int) -> bool:

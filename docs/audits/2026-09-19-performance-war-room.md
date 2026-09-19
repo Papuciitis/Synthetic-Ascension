@@ -120,11 +120,43 @@ decoration itself is cheap (2-4 site chunks per run, 2.6 ms on the one
 printed). So on the real world an ordinary parcel chunk costs 12-20 ms
 to activate (content 5-7 + physics 4-7 + render 2-5), the queue's 2 ms
 budget admits one such activation per frame, and a 7 ms frame becomes a
-12-20 ms one: the steady mid-run hitch. On top of that, run 2 paid a
-single 99.6 ms content phase at chunk (4,0), stop 3, with a cheap blocker
-phase: the once-per-region plan cost (district or site plan computed on
-first touch), which is the 30-77 ms class the September 15 captures
-recorded. These are headless CPU numbers; rendering adds to them.
+12-20 ms one: the steady mid-run hitch. These are headless CPU numbers;
+rendering adds to them.
+
+**Named, with the probe on the plan's main route (seeds 11 / 22 / 33,
+content and district sub-steps timed).** Walking east through unplanned
+grass never reproduced the hitch (max 11 ms, all site chunks); following
+`main_route` through the district did, and the content generator's
+sub-step timers name every heavy phase:
+
+| Phase | Chunk kind | Cost (ms) | Cause |
+|---|---|---|---|
+| content, "roads" step | the primary plaza, the wardstone court, an optional interior: the first chunk to stamp road / plaza texture 7, 3 or 8 | 24-31 per texture, 99 when three coincide | `WorldArt.ground_texture` loads each ~1 MB ground PNG on first use; the warm-up only covered the base and terrain indices, so the first plaza paid the stamps' textures inside its activation. |
+| content, "fill" step | `district_fill` (urban envelope courtyard blocks) | 4-8 (15 once) | `decorate_urban_fill`: parcel carving and building instantiation, real work per chunk. |
+| blocker physics | every parcel chunk | 4-7.5 | `ChunkBlockPhysics.build`: one shape per merged wall interval, 40-120 per chunk. |
+| blocker render | every parcel chunk | 2.5-5 | `ChunkBlockRenderer.add_chunk`: one MultiMesh instance per blocker cell. |
+| site decoration | 1-2 per route | 3-5 | plan 1-2 + walls 1.5-2.5; not a hitch. |
+
+**M1 result (built today, headless, three seeds).** M1a warms every
+ground texture at world configure time (`ChunkManager._warm_ground_textures_for_plan`);
+M1b stages a streamed chunk's blocker work over the queue steps after its
+content activation: bodies on the next step, the MultiMesh add on the one
+after, blocked cells still registered at content time so navigation is
+unchanged (`staged_blocker_activation`, on by default; explicit-limit
+queue calls stay synchronous and flush first).
+
+| Seed | Before: worst activation (ms) | After M1a: worst activation | After M1a+M1b: worst single-frame step (p50 / p95 / max) | Steps over 12 ms | Roaming frame p95 / p99 / max |
+|---|---:|---:|---|---:|---|
+| 11 | 33.7 (wardstone court, textures) | 13.6 | 3.05 / 5.99 / 7.07 | 0 | 6.94 / 7.41 / 20.2 |
+| 33 | 33.1 (primary plaza, textures) | 16.5 | 3.75 / 6.31 / 8.44 | 0 | 7.14 / 8.33 / 19.2 |
+| 22 | 29.6 (primary plaza, textures) | not rerun | not rerun | | |
+
+The streaming step is now bounded at about 8 ms on these seeds: the
+content side of a `district_fill` chunk (5-8 ms) or its physics (4-7.5
+ms), each on its own frame. The roaming frame's max (19-20 ms) is no
+longer a streaming step; the recorder's hitch tagging (M3) is what names
+it next. Gate for M1c (split the parcel content itself) is not met by
+need: no step above 12 ms on three seeds, so M1c stays unbuilt.
 
 ## 3. What the numbers do and do not say
 
@@ -150,7 +182,7 @@ previous milestones unchanged.
 | # | Milestone | Design | Gate (benchmark) | Risk |
 |---|---|---|---|---|
 | M0 | **Rendered baseline** (needs the display) | Run `EnemyHordeBenchmark` windowed at 60 / 180 / 300 and a stationary Endless Lunge + Mass Grave capture at seg6 with the recorder's extended features; record render CPU / GPU from `viewport_get_measured_render_time_*`. | A filed table in this document; no code. | none |
-| M1 | **Stage the real-world activation** (reproduced, section 2.4) | M1a: precompute the once-per-region plans (`SiteOverlayImpl._get_plan`, and the district/parcel plan behind the 99 ms content phase) off the activation: they are data, deterministic from the seed, and cached per root, so compute them for the anchor roots inside the prefetch ring when `queue_missing_chunks` plans, on `WorkerThreadPool` if the plan touches no node, else amortised one root per frame. M1b: defer the blocker renderer's `add_chunk` (2-5 ms, visual only) to the frame after activation through a small queue drained under the activation budget, guarded so an unloaded chunk is never added; physics bodies stay synchronous. M1c: split parcel content generation (5-7 ms) into plan and instantiate the same way as M1a, only if M1a and M1b leave the total above the gate. | `RoamStreamProbe` on three seeds: no content phase above 20 ms (M1a), blocker phase p95 under 5 ms (M1b), total activation p95 under 9 ms and none above 16.7 ms (M1c); `ChunkStreamingPerformanceAudit`, `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green; the recorder's `chunk_stream.last_phases` in the next playtest's incidents. | medium: a chunk's blockers invisible for one frame while already colliding (M1b); a worker-thread plan must not touch nodes (M1a); navigation revision still commits after the queue drains. |
+| M1 | **Stage the real-world activation** (DONE, section 2.4) | M1a (built): warm every ground texture at `configure_procedural_world`, since the district generator stamps roads, sidewalks, plazas, aprons and mud from the same list and the first plaza paid three first-touch PNG loads inside its activation. M1b (built): stage a streamed chunk's blocker physics and MultiMesh add over the two queue steps after its content activation; blocked cells are registered at content time, so navigation and the walkability snapshot are unchanged; an unloaded chunk's pending steps are dropped. M1c (not needed): split parcel content generation into plan and instantiate, only if a step exceeds 12 ms on a route. | `RoamStreamProbe` on the plan's main route: no step above 12 ms on seeds 11 and 33 (max 7.1 / 8.4 ms, was 33.7 / 33.1 per activation); `ChunkStagedBlockerTest` (27 checks: stages follow content, staged equals synchronous, unload before a stage, explicit-limit calls synchronous, textures warm), `ChunkStreamingPerformanceAudit`, `ChunkStreamingSchedulerTest`, `ChunkStreamReplanThrottleTest`, `ChunkBlockIntegrationTest` green. | low: a chunk's blockers invisible for one queue step while already colliding, its bodies absent for one step (the chunk is in the prefetch ring, not under the player). Not verified rendered. |
 | M2 | **Set VFX pooling** | One pooled scene per VFX kind (pulse ring, spokes, arc line, cleave arc, shockwave) with a cap on simultaneous instances per kind; Lattice's triangle and Mass Arrest's slam draw from the pool. | Build simulator: Lattice melee p95 median from 4.5 ms to under 2 ms, Mass Grave p99 under 16 ms; `SetRunnerTest`, `SetScalingV2Test` unchanged. | low: visual only. |
 | M3 | **Hitch tagging** | Tag every recorder sample over 28 ms with the dominant subsystem from the fields already carried (tree tick / flush / hits, fragments, projectile ms, chunk phase, flow publish, proxy slice) and print the tag distribution in `analyze_captures.py`. | Next playtest's incidents carry a tag; the distribution names the top cause without a manual read. | none |
 | M4 | **Materialized budget decision** (yours) | Either raise `materialized_budget` 64 -> 96 (the ceiling) so proxies near the player deal contact damage sooner, or give proxies within 200 px a data-side contact tick. Both are gameplay decisions; the August handoff left them open. | Horde 180 / 300 p95 within 2 ms of today at 96; playtest feel. | design |
@@ -185,8 +217,17 @@ August handoff is closed by `summoned_population_cap` 36).
   `PerformanceFlightRecorderTest` pass.
 - Fresh horde numbers at 60 / 100 / 180 / 300 (section 2.1).
 - `RoamStreamProbe.tscn`: the real-world roaming reproduction (section
-  2.4), read-only; the blocker phase's physics / renderer split is now in
-  every phase sample.
+  2.4); follows the plan's main route (`ROAM_ROUTE=east` for the old
+  walk), takes `ROAM_SEED`, prints each heavy activation's content and
+  district sub-steps and the worst single-frame step per activation. The
+  blocker phase's physics / renderer split is in every phase sample;
+  `ChunkGenImpl.debug_last_content_steps` and
+  `ChunkGenDistrict.debug_last_step_usec` carry the content split into
+  the stream stats (`content_last_steps`).
+- M1a and M1b built (section 2.4 and the plan table): every ground
+  texture warmed at configure time; blocker physics and renderer staged
+  over the queue steps after content, `staged_blocker_activation` on the
+  `ChunkManager`; `ChunkStagedBlockerTest` added; stream stats expose
+  `pending_blocker_stages`, `last_blocker_stage_ms`, `max_blocker_stage_ms`.
 
-Nothing in the plan is implemented beyond the instrumentation; M1 is
-specified from measured phases and is the next thing to build.
+M2-M7 are not implemented. M0 (rendered baseline) still needs the display.

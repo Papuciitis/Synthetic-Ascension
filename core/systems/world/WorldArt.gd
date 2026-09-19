@@ -115,6 +115,10 @@ static func release_static_caches() -> void:
 	_ground_tex_cache.clear()
 
 
+static func ground_texture_is_cached(index: int) -> bool:
+	return index >= 0 and index < _ground_tex_cache.size() and _ground_tex_cache[index] != null
+
+
 static func warm_ground_textures(indices: PackedInt32Array) -> void:
 	# Resource loading is deliberately kept outside chunk activation. A first-time
 	# PNG import/cache miss can take tens of milliseconds even though creating the

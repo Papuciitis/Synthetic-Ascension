@@ -10,12 +10,20 @@ const _DIR_W: int = 8
 # Auto-extracted from ChunkGenImpl.gd to keep the generator modular.
 # Do not keep state here; use the passed `gen` (ChunkGenImpl) as context.
 
+## Sub-step costs of the last district chunk generated (microseconds): urban
+## fill, road stamps, parcels, plaza and Donjon carving, the fallback wall
+## lines and props, wall spawning, the reward spawner.
+static var debug_last_step_usec: Dictionary = {}
+
+
 static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberGenerator, coord: Vector2i, archetype: StringName, conn_mask: int) -> void:
 	var cells := gen._cells_per_chunk()
 	if cells < 8:
 		return
 	var role: StringName = gen.get_chunk_role(coord)
 	var urban_access_mask: int = gen.get_chunk_urban_access(coord)
+	var steps: Dictionary = {}
+	var step_started_usec := Time.get_ticks_usec()
 
 	# Urban-envelope chunks are full courtyard blocks rather than empty terrain. They
 	# intentionally have no road connectors, so they cannot create fake streets.
@@ -44,6 +52,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			"urban_access_mask": urban_access_mask,
 		}
 		gen._site_mgr.decorate_urban_fill(gen.cm, chunk, coord, fill_cfg)
+		steps["fill"] = Time.get_ticks_usec() - step_started_usec
+		debug_last_step_usec = steps
 		return
 
 	# Dedicated RNGs for floor/sidewalk visuals so wall/prop layout stays stable.
@@ -180,6 +190,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# --- sidewalks + curb pads (visual readability) ---
 	gen._stamp_district_sidewalks(chunk, bounds, lane_rect_h, lane_rect_v, rng_sidewalk)
 	gen._stamp_district_road_edge_noise(chunk, bounds, lane_rect_h, lane_rect_v, rng_edge)
+	steps["roads"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 
 	# --- streetfront parcels (shops/facilities hugging the lane) ---
 	var parcels_placed: bool = false
@@ -236,6 +248,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				parcels_placed = true
 				for r: Rect2i in parcel_rects:
 					keepout_rects.append(r)
+
+	steps["parcels"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 
 	# --- walls / building edges (kept connected to avoid unreachable spawn pockets) ---
 	var wall_cells: Dictionary = {}
@@ -403,6 +418,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 
 
 
+	steps["donjon"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
+
 	# ------------------------------------------------------------
 	# Exploration loot: big dungeon interiors (Donjon-carved regions)
 	# Guarantee at least 1 item if this chunk used Donjon carving.
@@ -504,7 +522,11 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 		if not wall_cells.has(k):
 			window_cells.erase(k)
 
+	steps["wall_lines"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	gen._spawn_wall_cells(chunk, wall_cells, window_cells)
+	steps["walls"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 
 	# Every true exploration dead end carries a reward. This makes side travel intentional
 	# and lets the macro validator treat these endpoints as meaningful rather than accidental.
@@ -532,6 +554,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			reward_spawner.set("pickup_delay", 0.15)
 			reward_spawner.position = (Vector2(reward_cell) + Vector2(0.5, 0.5)) * float(gen.cell_size_px)
 			chunk.add_child(reward_spawner)
+	steps["reward"] = Time.get_ticks_usec() - step_started_usec
+	debug_last_step_usec = steps
 
 
 static func _add_wall_segment_line(gen: ChunkGenImpl, wall_cells: Dictionary, window_cells: Dictionary, start: Vector2i, dir: Vector2i, length: int, rng: RandomNumberGenerator) -> void:

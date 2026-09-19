@@ -22,6 +22,13 @@ var _printed_once: bool = false
 var _warned_missing_cover: bool = false
 var _gen_coord: Vector2i = Vector2i.ZERO
 
+## Sub-step costs of the last chunk's content phase (microseconds) with its
+## archetype, role and connector mask, for the streaming diagnostics: the
+## site overlay probe or decoration, the body (district or archetype
+## generator, with the district generator's own split under "district")
+## and the environment deco.
+static var debug_last_content_steps: Dictionary = {}
+
 # Mirrored settings from ChunkManager (sync_from_chunk_manager()).
 var world_seed: int = 1337
 var chunk_size_px: int = 2048
@@ -242,6 +249,13 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 
 	var archetype: StringName = get_chunk_archetype(coord)
 	var conn_mask: int = get_chunk_connectors(coord)
+	var steps: Dictionary = {
+		"coord": str(coord),
+		"archetype": String(archetype),
+		"role": String(get_chunk_role(coord)),
+		"conn": conn_mask,
+	}
+	var step_started_usec := Time.get_ticks_usec()
 
 	# Sites overlay (multi-chunk POIs). Runs before base chunk content.
 	if sites_enabled and _site_mgr != null:
@@ -263,8 +277,12 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 				"site_loot_scatter_radius": 48.0,
 				"site_loot_pickup_delay": 0.15,
 			}
-			if _site_mgr.decorate_chunk(cm, chunk, coord, cfg):
+			var decorated := _site_mgr.decorate_chunk(cm, chunk, coord, cfg)
+			steps["site" if decorated else "site_probe"] = Time.get_ticks_usec() - step_started_usec
+			step_started_usec = Time.get_ticks_usec()
+			if decorated:
 				# Skip base content generation; site already placed.
+				debug_last_content_steps = steps
 				_bump_nav_revision()
 				return
 
@@ -272,6 +290,7 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 	# Donjon-ish district chunks (connector-driven). Segment builders set archetype+connectors.
 	if district_enabled and (conn_mask != 0 or archetype == &"district" or archetype == &"plaza" or archetype == &"gate" or archetype == &"arena"):
 		_generate_district(chunk, rng, coord, archetype, conn_mask)
+		steps["district"] = _DIST.debug_last_step_usec.duplicate()
 	else:
 		match archetype:
 			&"arena":
@@ -284,9 +303,13 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 				# Default weighted mix
 				_generate_default(chunk, rng)
 
+	steps["body"] = Time.get_ticks_usec() - step_started_usec
+	step_started_usec = Time.get_ticks_usec()
 	# Post-pass: non-blocking environment deco (veg/landmarks)
 	if deco_enabled:
 		_add_environment_deco(chunk, rng, archetype, conn_mask)
+	steps["deco"] = Time.get_ticks_usec() - step_started_usec
+	debug_last_content_steps = steps
 
 	# ✅ tell nav "the blocked grid changed"
 	_bump_nav_revision()
