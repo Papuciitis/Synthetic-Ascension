@@ -30,6 +30,7 @@ const HERALD := "res://scenes/world/enemies/EnemyHerald.tscn"
 const SUMMONER := "res://scenes/world/enemies/EnemySummoner.tscn"
 const CHANTER := "res://scenes/world/enemies/EnemyChanter.tscn"
 const LURKER := "res://scenes/world/enemies/EnemyLurker.tscn"
+const WARDEN := "res://scenes/world/enemies/EnemyWarden.tscn"
 ## Ritual interference (§8.1, Phase 2.7) is a script-built world node, placed
 ## like a formation but spawning nothing itself.
 const RITUAL := "res://core/systems/world/RitualInterference.gd"
@@ -85,6 +86,23 @@ const CATALOG: Array[Dictionary] = [
 		"members": [
 			{"scene": SNIPER, "offset": Vector2(520.0, -380.0), "elite": false},
 			{"scene": SNIPER, "offset": Vector2(-520.0, 380.0), "elite": false},
+		],
+	},
+	{
+		"id": &"warden_line",
+		"label": "WARDEN LINE",
+		"callout": "Shields lock across the street.",
+		"answer": "flank the shields",
+		"mode": &"ahead",
+		"distance": 700.0,
+		"min_phase": &"ascension",
+		"cooldown": 160.0,
+		"members": [
+			{"scene": WARDEN, "offset": Vector2(0.0, -90.0), "elite": false},
+			{"scene": WARDEN, "offset": Vector2(0.0, 90.0), "elite": false},
+			{"scene": SPITTER, "offset": Vector2(150.0, -140.0), "elite": false},
+			{"scene": SPITTER, "offset": Vector2(150.0, 0.0), "elite": false},
+			{"scene": SPITTER, "offset": Vector2(150.0, 140.0), "elite": false},
 		],
 	},
 	{

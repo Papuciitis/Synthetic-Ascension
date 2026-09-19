@@ -45,6 +45,16 @@ enum AI {
 @export var projectile_lifetime: float = 3.0
 @export var strafe_strength: float = 0.8
 
+@export_group("Front Shield")
+## Warden (roster audit N1): a frontal sector that consumes ordinary
+## projectiles and impacts (anything not melee); it drops for a while after
+## absorbing front_shield_hits or when the Warden is struck from behind.
+@export var front_shield_enabled: bool = false
+@export_range(10.0, 170.0, 1.0) var front_shield_half_angle_deg: float = 80.0
+@export var front_shield_hits: int = 8
+@export var front_shield_down_seconds: float = 1.0
+@export var front_shield_turn_deg_per_sec: float = 140.0
+
 @export_group("Charge AI")
 @export var charge_trigger_range: float = 260.0
 @export var charge_windup: float = 0.5

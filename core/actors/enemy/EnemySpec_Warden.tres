@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pickup"]
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="2_spec"]
+[ext_resource type="Texture2D" path="res://assets/textures/Enemy_Brute44x44.png" id="3_tex"]
+
+[resource]
+script = ExtResource("2_spec")
+id = &"enemy_warden"
+display_name = "Warden"
+ai = 0
+max_hp = 40.0
+speed = 62.0
+follower_reward_min = 3
+follower_reward_max = 4
+elite_follower_bonus = 3
+front_shield_enabled = true
+front_shield_half_angle_deg = 80.0
+front_shield_hits = 8
+front_shield_down_seconds = 1.0
+front_shield_turn_deg_per_sec = 140.0
+item_pickup_scene = ExtResource("1_pickup")
+drop_chance = 0.25
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_rarity_min = 1
+drop_rarity_max = 3
+elite_hp_mult = 1.6
+sprite_texture = ExtResource("3_tex")
+sprite_modulate = Color(0.7, 0.82, 1.0, 1)

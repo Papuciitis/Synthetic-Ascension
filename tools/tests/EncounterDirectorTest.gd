@@ -111,7 +111,7 @@ func _free_members(spawner: FakeSpawner) -> void:
 
 func _run() -> void:
 	# --- catalog shape ---
-	_check(BeatsScript.CATALOG.size() >= 5 and BeatsScript.CATALOG.size() <= 12, "five to twelve authored beats exist (%d)" % BeatsScript.CATALOG.size())
+	_check(BeatsScript.CATALOG.size() >= 5 and BeatsScript.CATALOG.size() <= 14, "five to fourteen authored beats exist (%d)" % BeatsScript.CATALOG.size())
 	var ids: Dictionary = {}
 	for beat in BeatsScript.CATALOG:
 		ids[beat["id"]] = true

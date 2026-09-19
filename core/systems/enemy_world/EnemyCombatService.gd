@@ -83,6 +83,14 @@ func _apply_damage(
 		and actor.has_method("take_damage")
 	):
 		return _apply_legacy_damage(handle, actor, raw_damage, source)
+	# A Warden's frontal shield consumes projectiles and impacts from the
+	# front; melee passes, and a hit from behind drops the shield.
+	if is_hit and actor != null and source != null and is_instance_valid(source) and source is Node2D and actor.has_method("front_shield_absorbs") and bool(actor.call("is_front_shield_up")):
+		var style := "melee" if payload == null else String(BalanceAttribution.from_payload(payload).get("style", ""))
+		if bool(actor.call("front_shield_absorbs", (source as Node2D).global_position, style)):
+			if BattleText != null and BattleText.has_method("popup"):
+				BattleText.popup(_world.get_position(handle), "BLOCKED", Color(0.7, 0.85, 1.0, 0.9), 0.8)
+			return 0.0
 	if is_hit and source != null and player_damage_modifier.is_valid():
 		raw_damage = maxf(0.0, float(player_damage_modifier.call(handle, raw_damage, payload)))
 		if raw_damage <= 0.0:

@@ -293,6 +293,8 @@ func _run_simulation_step(delta: float) -> void:
 	# Acquire player if needed
 	if player == null or not is_instance_valid(player):
 		player = get_tree().get_first_node_in_group("player") as Node2D
+	if spec != null and spec.front_shield_enabled:
+		_update_front_shield(delta)
 
 	var ai: int = _get_active_ai()
 	_update_los_cache(delta, ai)
@@ -803,6 +805,9 @@ func _on_pool_recycle_context(context: Dictionary) -> void:
 
 
 func _on_pool_obtain() -> void:
+	_shield_facing = Vector2.RIGHT
+	_shield_hits = 0
+	_shield_down_left = 0.0
 	if _pool_fresh_obtain_pending:
 		_pool_fresh_obtain_pending = false
 		return
@@ -1240,6 +1245,68 @@ func apply_ward_buff(fraction: float, duration: float) -> void:
 
 func is_warded() -> bool:
 	return has_meta("warded")
+
+
+# -----------------------
+# Front shield (Warden)
+# -----------------------
+const _FRONT_SHIELD_VISUAL := preload("res://core/actors/enemy/FrontShieldVisual.gd")
+var _shield_facing: Vector2 = Vector2.RIGHT
+var _shield_hits: int = 0
+var _shield_down_left: float = 0.0
+var _shield_visual: Node2D = null
+
+
+## The shield turns toward the player at a limited rate, so a dash around
+## the Warden exposes its back for a moment.
+func _update_front_shield(delta: float) -> void:
+	_shield_down_left = maxf(_shield_down_left - delta, 0.0)
+	if player != null and is_instance_valid(player):
+		var wanted := (player.global_position - global_position)
+		if wanted.length_squared() > 1.0:
+			var max_turn := deg_to_rad(maxf(spec.front_shield_turn_deg_per_sec, 1.0)) * delta
+			var diff := wrapf(wanted.angle() - _shield_facing.angle(), -PI, PI)
+			_shield_facing = Vector2.from_angle(_shield_facing.angle() + clampf(diff, -max_turn, max_turn))
+	if _shield_visual == null or not is_instance_valid(_shield_visual):
+		_shield_visual = _FRONT_SHIELD_VISUAL.new()
+		add_child(_shield_visual)
+	_shield_visual.call("sync", _shield_facing, is_front_shield_up(), deg_to_rad(spec.front_shield_half_angle_deg))
+
+
+func is_front_shield_up() -> bool:
+	return spec != null and spec.front_shield_enabled and _shield_down_left <= 0.0
+
+
+func front_shield_facing() -> Vector2:
+	return _shield_facing
+
+
+## Called by the combat service for every hit with a source position and
+## the hit's style. True = absorbed (no damage). A hit from behind while the
+## shield is up drops it; the eighth absorbed hit drops it too.
+func front_shield_absorbs(from_position: Vector2, style: String) -> bool:
+	if not is_front_shield_up():
+		return false
+	var to_source := from_position - global_position
+	if to_source.length_squared() <= 1.0:
+		return false
+	var in_front := absf(wrapf(to_source.angle() - _shield_facing.angle(), -PI, PI)) <= deg_to_rad(spec.front_shield_half_angle_deg)
+	if not in_front:
+		_drop_front_shield()
+		return false
+	if style == "melee":
+		return false
+	_shield_hits += 1
+	if _shield_hits >= maxi(1, spec.front_shield_hits):
+		_drop_front_shield()
+	return true
+
+
+func _drop_front_shield() -> void:
+	_shield_hits = 0
+	_shield_down_left = maxf(spec.front_shield_down_seconds, 0.1)
+	if _shield_visual != null and is_instance_valid(_shield_visual):
+		_shield_visual.call("sync", _shield_facing, false, deg_to_rad(spec.front_shield_half_angle_deg))
 
 
 func apply_speed_buff(mult: float, duration: float) -> void:
