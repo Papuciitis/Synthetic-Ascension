@@ -123,7 +123,7 @@ decision, T = tuning, C = code (with the test that would pin it).
 | S7 | Resonance top-up: keep the top-up (a stuck bar at 0.99 is worse), but stop displaying kill and pickup resonance in segment 1; the bar moves on beats. | D | F4 | trivial |
 | S8 | Heat valley: measure first. One human run with the recorder's pressure section decides whether 0.35 at 90% stays. | D | F6 | none |
 | S9 | Rite answer at segment 1: let Overtime start at the final checkpoint instead of the unseal, so the last 60-90 s carry decay and specialists. | T: `Level1Builder` at `final_checkpoint` | F7 | small |
-| S10 | **Done** (`HubShop.vendor_slot_count`: 6 / 8 / 10). First-Hub vendor: six slots at segment 1 instead of ten, prices unchanged. | D | F3: fewer, weighed purchases; the loot pass's soft cap does not reach the vendor | trivial |
+| S10 | **Done, then widened** (`HubShop.vendor_slot_count`: 8 / 10 / 12 after play feedback that the shop felt limited). First-Hub vendor: six slots at segment 1 instead of ten, prices unchanged. | D | F3: fewer, weighed purchases; the loot pass's soft cap does not reach the vendor | trivial |
 | S11 | Short opening for veterans starts with the "ward flicker" beat instead of the apparatus so the tone lands in under a minute. | D | F8 | small |
 
 S1, S3, S5 and S9 change what the player does; they wait for the first

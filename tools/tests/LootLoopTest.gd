@@ -287,15 +287,16 @@ func _test_ascension_buy_refund_is_neutral() -> void:
 
 func _test_vendor_band_and_dead_items() -> void:
 	var saved_segment := int(Global.attempt_segment)
-	_check(HUB_SHOP.vendor_band(1) == Vector2i(1, 3) and HUB_SHOP.vendor_band(2) == Vector2i(1, 3), "the vendor sells R1-R3 through segment 2")
-	_check(HUB_SHOP.vendor_band(4) == Vector2i(2, 4) and HUB_SHOP.vendor_band(9) == Vector2i(4, 6) and HUB_SHOP.vendor_band(15) == Vector2i(6, 8), "then R2-R4 at 4, R4-R6 at 9, R6-R8 at 15")
-	_check(HUB_SHOP.vendor_slot_count(1) == 6 and HUB_SHOP.vendor_slot_count(4) == 8 and HUB_SHOP.vendor_slot_count(9) == 10, "the vendor lays out six offers through segment 2, eight at 3-5, ten after")
+	_check(HUB_SHOP.vendor_band(1) == Vector2i(1, 4) and HUB_SHOP.vendor_band(2) == Vector2i(1, 4), "the vendor sells R1-R4 through segment 2")
+	_check(HUB_SHOP.vendor_band(4) == Vector2i(2, 5) and HUB_SHOP.vendor_band(9) == Vector2i(4, 7) and HUB_SHOP.vendor_band(15) == Vector2i(6, 9), "then R2-R5 at 4, R4-R7 at 9, R6-R9 at 15")
+	_check(HUB_SHOP.vendor_slot_count(1) == 8 and HUB_SHOP.vendor_slot_count(4) == 10 and HUB_SHOP.vendor_slot_count(9) == 12, "the vendor lays out eight offers through segment 2, ten at 3-5, twelve after")
 	var within := true
 	for segment in range(1, 30):
 		Global.attempt_segment = segment
-		if HUB_SHOP.vendor_band(segment).y > Global.rarity_soft_cap_for(1) + 1:
+		var cap := Global.rarity_soft_cap_for(1)
+		if HUB_SHOP.vendor_band(segment).y > mini(10, cap + 2) or HUB_SHOP.vendor_band(segment).x < mini(8, cap - 1):
 			within = false
-	_check(within, "at every segment the band's top is at most one rank above the vendor's cap")
+	_check(within, "at every segment the band runs from one under the vendor's cap to two over it")
 	Global.attempt_segment = saved_segment
 	var dead := ItemInstance.new()
 	var live_data := ItemData.new()
