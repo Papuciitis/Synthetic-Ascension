@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://core/systems/vfx/VfxBurst.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/particles/kenney/star_04.png" id="2_tex"]
+
+[sub_resource type="Gradient" id="Gradient_fade"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.75, 0.95, 1, 0.9, 0.4, 0.7, 1, 0)
+
+[sub_resource type="Curve" id="Curve_shrink"]
+_data = [Vector2(0, 0.55), 0.0, 2.2, 0, 0, Vector2(0.25, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.15), -1.1, 0.0, 0, 0]
+point_count = 3
+
+[node name="BurstPickup" type="CPUParticles2D"]
+z_index = 190
+emitting = false
+amount = 7
+lifetime = 0.55
+one_shot = true
+explosiveness = 1.0
+randomness = 0.35
+local_coords = false
+texture = ExtResource("2_tex")
+emission_shape = 1
+emission_sphere_radius = 8.0
+direction = Vector2(1, 0)
+spread = 60.0
+gravity = Vector2(0, -90)
+initial_velocity_min = 60.0
+initial_velocity_max = 120.0
+angular_velocity_min = -0.0
+angular_velocity_max = 0.0
+damping_min = 0.0
+damping_max = 0.0
+scale_amount_min = 0.04
+scale_amount_max = 0.07
+scale_amount_curve = SubResource("Curve_shrink")
+color_ramp = SubResource("Gradient_fade")
+script = ExtResource("1_script")
+additive = true
+direction = Vector2(0, -1)

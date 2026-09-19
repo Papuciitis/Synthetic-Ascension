@@ -182,6 +182,7 @@ func _collect() -> void:
 		return
 
 	_picked = true
+	VfxBursts.play(&"pickup", global_position)
 
 	# -------------------------
 	# MODE A: pickup carries a full ItemInstance (dropped from bag/equip)
