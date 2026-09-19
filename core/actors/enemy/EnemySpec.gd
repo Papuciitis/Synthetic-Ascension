@@ -51,6 +51,13 @@ enum AI {
 @export var charge_speed: float = 520.0
 @export var charge_duration: float = 0.25
 @export var charge_cooldown: float = 2.8
+## Lurker (roster audit N3): dormant after spawning, holds a distance while
+## the player moves, and charges only once the player has stood still (or
+## channelled) for charge_player_still_seconds.
+@export var charge_only_when_player_still: bool = false
+@export var charge_player_still_seconds: float = 1.0
+@export var charge_dormant_seconds: float = 0.0
+@export var charge_hold_distance: float = 360.0
 
 @export_group("Bomber AI")
 @export var explode_trigger_distance: float = 70.0

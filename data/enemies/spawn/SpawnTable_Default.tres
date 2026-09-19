@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bcci5cebextf1" path="res://scenes/world/enemies/EnemyOrbiter.tscn" id="4_h4ahp"]
 [ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyBrute.tscn" id="13_brute"]
 [ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyChanter.tscn" id="14_chanter"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyLurker.tscn" id="15_lurker"]
 [ext_resource type="PackedScene" uid="uid://b2h0h48hdltig" path="res://scenes/world/enemies/EnemySpitter.tscn" id="4_m7f03"]
 [ext_resource type="PackedScene" uid="uid://cg4x7hv38df6i" path="res://scenes/world/enemies/EnemyCharger.tscn" id="6_4vxks"]
 [ext_resource type="PackedScene" uid="uid://bmqumxnpt61gx" path="res://scenes/world/enemies/EnemyLeech.tscn" id="6_y2a8g"]
@@ -143,7 +144,17 @@ elite_chance = 0.05
 min_phase = &"ascension"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
+[sub_resource type="Resource" id="Resource_lurker"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("15_lurker")
+weight = 0.5
+start_time = 120.0
+max_alive = 4
+elite_chance = 0.04
+min_phase = &"ascension"
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
 [resource]
 script = ExtResource("2_fppje")
-entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter"), SubResource("Resource_brute"), SubResource("Resource_chanter")])
+entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter"), SubResource("Resource_brute"), SubResource("Resource_chanter"), SubResource("Resource_lurker")])
 metadata/_custom_type_script = "uid://b36vdt2238b6j"

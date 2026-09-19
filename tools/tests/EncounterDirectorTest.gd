@@ -111,7 +111,7 @@ func _free_members(spawner: FakeSpawner) -> void:
 
 func _run() -> void:
 	# --- catalog shape ---
-	_check(BeatsScript.CATALOG.size() >= 5 and BeatsScript.CATALOG.size() <= 10, "five to ten authored beats exist (%d)" % BeatsScript.CATALOG.size())
+	_check(BeatsScript.CATALOG.size() >= 5 and BeatsScript.CATALOG.size() <= 12, "five to twelve authored beats exist (%d)" % BeatsScript.CATALOG.size())
 	var ids: Dictionary = {}
 	for beat in BeatsScript.CATALOG:
 		ids[beat["id"]] = true
@@ -222,7 +222,11 @@ func _run() -> void:
 	_check(int(director.get_debug_counters()["escalations"]) == escalations_before + 1, "a phase escalation is counted")
 	_check(float(director.get_debug_counters()["next_beat_in"]) <= 10.0, "the next beat is pulled forward to within the escalation delay (%.1f)" % float(director.get_debug_counters()["next_beat_in"]))
 	director.tick(10.5)
-	_check(_started.size() == 1 and (_started[0] == &"bomber_carpet" or _started[0] == &"leech_ring"), "the escalation beat is one the new phase unlocked (%s)" % [_started])
+	var unlocked_by_ascension: Array = []
+	for beat in BeatsScript.CATALOG:
+		if beat["min_phase"] == &"ascension":
+			unlocked_by_ascension.append(beat["id"])
+	_check(_started.size() == 1 and unlocked_by_ascension.has(_started[0]), "the escalation beat is one the new phase unlocked (%s of %s)" % [_started, unlocked_by_ascension])
 
 	# --- 2.8: channelling the Exit Rite draws the specialist response ---
 	_free_members(spawner)

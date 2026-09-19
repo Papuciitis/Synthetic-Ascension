@@ -28,6 +28,8 @@ const LEECH := "res://scenes/world/enemies/EnemyLeech.tscn"
 const SNIPER := "res://scenes/world/enemies/EnemySniper.tscn"
 const HERALD := "res://scenes/world/enemies/EnemyHerald.tscn"
 const SUMMONER := "res://scenes/world/enemies/EnemySummoner.tscn"
+const CHANTER := "res://scenes/world/enemies/EnemyChanter.tscn"
+const LURKER := "res://scenes/world/enemies/EnemyLurker.tscn"
 ## Ritual interference (§8.1, Phase 2.7) is a script-built world node, placed
 ## like a formation but spawning nothing itself.
 const RITUAL := "res://core/systems/world/RitualInterference.gd"
@@ -83,6 +85,38 @@ const CATALOG: Array[Dictionary] = [
 		"members": [
 			{"scene": SNIPER, "offset": Vector2(520.0, -380.0), "elite": false},
 			{"scene": SNIPER, "offset": Vector2(-520.0, 380.0), "elite": false},
+		],
+	},
+	{
+		"id": &"chanter_choir",
+		"label": "CHOIR",
+		"callout": "A chant rises behind the line.",
+		"answer": "silence the chanter",
+		"mode": &"ahead",
+		"distance": 720.0,
+		"min_phase": &"ascension",
+		"cooldown": 150.0,
+		"members": [
+			{"scene": CHANTER, "offset": Vector2(160.0, 0.0), "elite": false},
+			{"scene": GRUNT, "offset": Vector2(0.0, -120.0), "elite": false},
+			{"scene": GRUNT, "offset": Vector2(0.0, -40.0), "elite": false},
+			{"scene": GRUNT, "offset": Vector2(0.0, 40.0), "elite": false},
+			{"scene": GRUNT, "offset": Vector2(0.0, 120.0), "elite": false},
+			{"scene": BRUTE, "offset": Vector2(60.0, 0.0), "elite": false},
+		],
+	},
+	{
+		"id": &"lurker_pair",
+		"label": "LURKERS",
+		"callout": "Something waits for you to stop.",
+		"answer": "keep moving",
+		"mode": &"around",
+		"distance": 520.0,
+		"min_phase": &"ascension",
+		"cooldown": 140.0,
+		"members": [
+			{"scene": LURKER, "offset": Vector2(-460.0, 240.0), "elite": false},
+			{"scene": LURKER, "offset": Vector2(440.0, -260.0), "elite": false},
 		],
 	},
 	{
