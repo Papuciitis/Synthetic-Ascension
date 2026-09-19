@@ -52,6 +52,18 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 
 	return desired
 
+## Speed, the ward (E6) and, for a Chanter, a heal: one pulse, every ally.
+func _buff_ally(e: EnemyActor) -> void:
+	var spec: EnemySpec = _enemy.spec
+	e.apply_speed_buff(spec.herald_ally_speed_mult, spec.herald_ally_speed_duration)
+	if spec.herald_ally_ward_fraction > 0.0:
+		e.apply_ward_buff(spec.herald_ally_ward_fraction, spec.herald_ally_ward_duration)
+	if spec.herald_ally_heal_pct > 0.0 and EnemyCombat != null:
+		var handle: int = EnemyCombat.handle_for_actor(e)
+		if EnemyWorld != null and EnemyWorld.is_valid_handle(handle):
+			EnemyCombat.heal(handle, EnemyWorld.get_max_health(handle) * spec.herald_ally_heal_pct)
+
+
 func _do_pulse() -> void:
 	if _enemy == null or not is_instance_valid(_enemy):
 		return
@@ -71,7 +83,7 @@ func _do_pulse() -> void:
 			var e: EnemyActor = n as EnemyActor
 			if e == null or e == _enemy:
 				continue
-			e.apply_speed_buff(_enemy.spec.herald_ally_speed_mult, _enemy.spec.herald_ally_speed_duration)
+			_buff_ally(e)
 	else:
 		var nodes: Array = _enemy.get_tree().get_nodes_in_group("enemies")
 		for n in nodes:
@@ -79,7 +91,7 @@ func _do_pulse() -> void:
 			if e == null or e == _enemy:
 				continue
 			if e.global_position.distance_to(_enemy.global_position) <= r:
-				e.apply_speed_buff(_enemy.spec.herald_ally_speed_mult, _enemy.spec.herald_ally_speed_duration)
+				_buff_ally(e)
 
 	# Drain followers if player is inside radius
 	if _enemy.spec.herald_player_drain_followers and _enemy.spec.herald_player_drain_amount > 0:

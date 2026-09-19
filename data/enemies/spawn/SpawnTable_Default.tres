@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://tfp57neu5o2" path="res://scenes/world/enemies/EnemyRunner.tscn" id="3_vg2pm"]
 [ext_resource type="PackedScene" uid="uid://bcci5cebextf1" path="res://scenes/world/enemies/EnemyOrbiter.tscn" id="4_h4ahp"]
 [ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyBrute.tscn" id="13_brute"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyChanter.tscn" id="14_chanter"]
 [ext_resource type="PackedScene" uid="uid://b2h0h48hdltig" path="res://scenes/world/enemies/EnemySpitter.tscn" id="4_m7f03"]
 [ext_resource type="PackedScene" uid="uid://cg4x7hv38df6i" path="res://scenes/world/enemies/EnemyCharger.tscn" id="6_4vxks"]
 [ext_resource type="PackedScene" uid="uid://bmqumxnpt61gx" path="res://scenes/world/enemies/EnemyLeech.tscn" id="6_y2a8g"]
@@ -132,7 +133,17 @@ elite_chance = 0.03
 min_phase = &"disturbance"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
+[sub_resource type="Resource" id="Resource_chanter"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("14_chanter")
+weight = 0.6
+start_time = 150.0
+max_alive = 5
+elite_chance = 0.05
+min_phase = &"ascension"
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
 [resource]
 script = ExtResource("2_fppje")
-entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter"), SubResource("Resource_brute")])
+entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter"), SubResource("Resource_brute"), SubResource("Resource_chanter")])
 metadata/_custom_type_script = "uid://b36vdt2238b6j"

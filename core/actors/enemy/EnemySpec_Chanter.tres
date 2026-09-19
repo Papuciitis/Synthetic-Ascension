@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3]
+
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1_spec"]
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="2_pickup"]
+[ext_resource type="Texture2D" path="res://assets/textures/Enemy_Herald44x44.png" id="3_tex"]
+
+[resource]
+script = ExtResource("1_spec")
+id = &"enemy_chanter"
+display_name = "Chanter"
+ai = 9
+max_hp = 20.0
+speed = 70.0
+follower_reward_min = 3
+follower_reward_max = 5
+elite_follower_bonus = 3
+preferred_range = 300.0
+range_tolerance = 90.0
+shoot_every = 999.0
+strafe_strength = 1.0
+herald_pulse_every = 2.0
+herald_pulse_radius = 200.0
+herald_ally_speed_mult = 1.0
+herald_ally_speed_duration = 0.0
+herald_ally_ward_fraction = 0.15
+herald_ally_ward_duration = 2.0
+herald_ally_heal_pct = 0.08
+herald_player_drain_followers = false
+herald_player_drain_amount = 0
+item_pickup_scene = ExtResource("2_pickup")
+drop_chance = 0.3
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_min = 2
+drop_rarity_max = 3
+elite_hp_mult = 1.6
+elite_speed_mult = 1.1
+sprite_texture = ExtResource("3_tex")

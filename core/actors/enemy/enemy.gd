@@ -765,6 +765,13 @@ func despawn(_reason: StringName = &"death") -> void:
 
 
 func _on_pool_recycle() -> void:
+	# A Herald's ward must not follow a recycled body into its next life.
+	_ward_token += 1
+	if has_meta("damage_taken_mul_unwarded"):
+		set_meta("damage_taken_mul", float(get_meta("damage_taken_mul_unwarded")))
+	for key in ["damage_taken_mul_unwarded", "damage_taken_mul_warded", "warded"]:
+		if has_meta(key):
+			remove_meta(key)
 	# Before unregister: it zeroes the world handle the combat registries key on.
 	_clear_elite_modifiers()
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
@@ -1194,6 +1201,46 @@ func apply_stun(seconds: float) -> void:
 
 func _apply_enemy_world_stun(seconds: float) -> void:
 	stun_time = maxf(stun_time, seconds)
+
+## A Herald's ward: damage taken is multiplied by (1 - fraction) for the
+## duration, composed on top of whatever damage_taken_mul the actor already
+## carries and restored afterwards (a later ward supersedes an earlier one).
+var _ward_token: int = 0
+
+
+func apply_ward_buff(fraction: float, duration: float) -> void:
+	if fraction <= 0.0 or duration <= 0.0:
+		return
+	_ward_token += 1
+	var token := _ward_token
+	var current := float(get_meta("damage_taken_mul", 1.0))
+	# Compose on the value before our own ward; if something else changed
+	# the multiplier meanwhile (an arena), that is the new unwarded value.
+	var unwarded := current
+	if has_meta("damage_taken_mul_unwarded") and has_meta("damage_taken_mul_warded") and is_equal_approx(current, float(get_meta("damage_taken_mul_warded"))):
+		unwarded = float(get_meta("damage_taken_mul_unwarded"))
+	set_meta("damage_taken_mul_unwarded", unwarded)
+	var warded := unwarded * (1.0 - clampf(fraction, 0.0, 0.9))
+	set_meta("damage_taken_mul_warded", warded)
+	set_meta("damage_taken_mul", warded)
+	set_meta("warded", true)
+	var tree := get_tree()
+	if tree == null:
+		return
+	tree.create_timer(duration).timeout.connect(func() -> void:
+		if not is_instance_valid(self) or token != _ward_token:
+			return
+		if is_equal_approx(float(get_meta("damage_taken_mul", 1.0)), warded):
+			set_meta("damage_taken_mul", unwarded)
+		for key in ["damage_taken_mul_unwarded", "damage_taken_mul_warded", "warded"]:
+			if has_meta(key):
+				remove_meta(key)
+	)
+
+
+func is_warded() -> bool:
+	return has_meta("warded")
+
 
 func apply_speed_buff(mult: float, duration: float) -> void:
 	if mult <= 1.0 or duration <= 0.0:

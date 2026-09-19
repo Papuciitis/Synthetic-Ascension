@@ -96,6 +96,11 @@ enum AI {
 @export var herald_pulse_radius: float = 220.0
 @export var herald_ally_speed_mult: float = 1.35
 @export var herald_ally_speed_duration: float = 1.8
+## Roster audit E6: the pulse also wards allies (a fraction of damage
+## taken, for a while) and, for the Chanter, heals them a share of max HP.
+@export_range(0.0, 0.9, 0.01) var herald_ally_ward_fraction: float = 0.20
+@export var herald_ally_ward_duration: float = 1.8
+@export_range(0.0, 0.5, 0.01) var herald_ally_heal_pct: float = 0.0
 @export var herald_player_drain_followers: bool = true
 @export var herald_player_drain_amount: int = 1
 
