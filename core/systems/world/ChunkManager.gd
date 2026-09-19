@@ -707,6 +707,12 @@ func _ground_index_for_terrain(terrain: StringName) -> int:
 			return 5
 		&"urban":
 			return 6
+		&"meadow":
+			return 10
+		&"scrub":
+			return 11
+		&"moss":
+			return 12
 		_:
 			return 0
 

@@ -4,6 +4,9 @@ class_name SegmentThemePicker
 # Area 1 uses progression-aware theme pools. Layouts remain procedural, but the city
 # now changes identity as Bren moves away from the institution.
 
+## Terrains: grass, dirt, urban, mud, and the later variants meadow (a
+## greener grass), scrub (dry, pale) and moss (cold blue-green), so the
+## segments past the fourth stop painting the same two grounds.
 static func get_theme(segment: int, attempt_world_seed: int) -> SegmentThemeData:
 	segment = maxi(1, segment)
 	var rng := RandomNumberGenerator.new()
@@ -125,7 +128,7 @@ static func _theme_collapsed_ward() -> SegmentThemeData:
 	t.district_tint = Color(1.00, 0.93, 0.88)
 	t.urban_envelope_cardinal_chance = 0.70
 	t.urban_envelope_diagonal_chance = 0.30
-	t.base_terrain = "grass"
+	t.base_terrain = "scrub"
 	t.exploration_terrain = "grass"
 	t.landmark_count = 3
 	t.weight_empty = 0.48
@@ -162,7 +165,7 @@ static func _theme_civilian_cutthrough() -> SegmentThemeData:
 	t.urban_envelope_cardinal_chance = 0.92
 	t.urban_envelope_diagonal_chance = 0.50
 	t.base_terrain = "grass"
-	t.exploration_terrain = "dirt"
+	t.exploration_terrain = "meadow"
 	t.landmark_count = 2
 	t.weight_empty = 0.42
 	t.weight_building = 0.38
@@ -274,7 +277,7 @@ static func _theme_ruined_services() -> SegmentThemeData:
 	t.id = &"ruined_services"
 	t.label = "Ruined Service District"
 	t.district_family = &"ruined_services"
-	t.base_terrain = "grass"
+	t.base_terrain = "scrub"
 	t.exploration_terrain = "dirt"
 	t.weight_empty = 0.44
 	t.weight_building = 0.24
@@ -290,7 +293,7 @@ static func _theme_underpass_veins() -> SegmentThemeData:
 	t.urban_envelope_cardinal_chance = 0.90
 	t.urban_envelope_diagonal_chance = 0.48
 	t.base_terrain = "dirt"
-	t.exploration_terrain = "mud"
+	t.exploration_terrain = "moss"
 	t.landmark_count = 2
 	t.weight_empty = 0.24
 	t.weight_building = 0.50
@@ -328,7 +331,7 @@ static func _theme_canal_services() -> SegmentThemeData:
 	t.id = &"canal_services"
 	t.label = "Canal Service Routes"
 	t.district_family = &"canal_services"
-	t.base_terrain = "grass"
+	t.base_terrain = "moss"
 	t.exploration_terrain = "mud"
 	t.weight_empty = 0.42
 	t.weight_building = 0.36
@@ -397,7 +400,7 @@ static func _theme_outer_wall() -> SegmentThemeData:
 	t.urban_envelope_cardinal_chance = 0.48
 	t.urban_envelope_diagonal_chance = 0.18
 	t.base_terrain = "grass"
-	t.exploration_terrain = "grass"
+	t.exploration_terrain = "scrub"
 	t.landmark_count = 3
 	t.weight_empty = 0.40
 	t.weight_building = 0.40

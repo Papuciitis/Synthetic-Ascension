@@ -7,8 +7,8 @@ class_name SegmentThemeData
 
 @export_group("District Identity")
 @export var district_family: StringName = &"service_courtyards"
-@export_enum("grass", "dirt", "urban", "mud") var base_terrain: String = "grass"
-@export_enum("grass", "dirt", "urban", "mud") var exploration_terrain: String = "grass"
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var base_terrain: String = "grass"
+@export_enum("grass", "dirt", "urban", "mud", "meadow", "scrub", "moss") var exploration_terrain: String = "grass"
 ## How much city sits OFF the streets.
 ##
 ## The urban envelope - the ring of courtyard blocks around every road chunk -

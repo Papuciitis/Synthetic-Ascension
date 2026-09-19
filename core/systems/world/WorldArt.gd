@@ -30,7 +30,16 @@ const _GROUND_TEX_PATHS := [
 	"res://assets/world/ground/ground_civic_brick_01.png",
 	"res://assets/world/ground/ground_mossy_brick_01.png",
 	"res://assets/world/ground/ground_round_cobble_01.png",
+	# Terrain variants for the later themes (CC0, LICENSE_cethiel_cc0.txt):
+	# meadow (a greener, denser grass), scrub (dry, pale) and moss (a cold,
+	# blue-green ground for canals and underpasses).
+	"res://assets/world/ground/ground_grass_02.png",
+	"res://assets/world/ground/ground_grass_dry_01.png",
+	"res://assets/world/ground/ground_moss_01.png",
 ]
+
+## Indices that read as vegetation and repeat at the grass scale.
+const _GRASS_LIKE_INDICES := [0, 10, 11, 12]
 
 # Ground assets can arrive in the same overlay that introduces WorldArt. Directly
 # preloading them makes Godot parse this script before its importer has registered
@@ -70,7 +79,7 @@ static func texture_tile_px() -> int:
 
 static func ground_repeat_world_px(texture_index: int = -1) -> int:
 	# The quieter patchy grass reads better slightly smaller than the masonry materials.
-	if texture_index == 0:
+	if texture_index in _GRASS_LIKE_INDICES:
 		return _GROUND_GRASS_REPEAT_WORLD_PX
 	return _GROUND_REPEAT_WORLD_PX
 
