@@ -387,6 +387,30 @@ func note_union_trigger(kind: String, cast: String = "") -> void:
 		union.note_trigger(kind, cast)
 
 
+## Drains up to `amount` from the discipline meters the run carries (Force,
+## Momentum, Heat, in that order) and returns how much left; 0 when the
+## build has no meter. The Siphon's bite.
+func drain_discipline(amount: float) -> float:
+	var left := maxf(amount, 0.0)
+	var drained := 0.0
+	for engine in engines:
+		if left <= 0.0:
+			break
+		if engine.has_method("spend_force") and float(engine.get("force")) > 0.0:
+			var got := float(engine.call("spend_force", left))
+			drained += got
+			left -= got
+		elif engine.has_method("spend_momentum"):
+			var got_m := float(engine.call("spend_momentum", left))
+			drained += got_m
+			left -= got_m
+		elif engine.has_method("vent_heat") and float(engine.get("heat")) > 0.0:
+			var got_h := float(engine.call("vent_heat", left))
+			drained += got_h
+			left -= got_h
+	return drained
+
+
 func engine_for(id: String) -> AscensionEngine:
 	return _engine_by_node.get(id, null)
 

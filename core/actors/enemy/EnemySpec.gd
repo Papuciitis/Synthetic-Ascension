@@ -100,6 +100,11 @@ enum AI {
 @export_group("LEECH (Follower Sucker)")
 @export var leech_every: float = 0.75
 @export var leech_amount: int = 1
+## Siphon (roster audit N5): while attached it drains the equipped
+## discipline's meter (Force, Momentum, Heat) instead of Followers; a
+## build with no meter loses Followers at leech_amount instead.
+@export var leech_drains_meter: bool = false
+@export var leech_meter_amount: float = 8.0
 
 @export_group("TACTICAL (SWIT)")
 @export_range(0.0, 1.0, 0.01) var retreat_hp_ratio: float = 0.35

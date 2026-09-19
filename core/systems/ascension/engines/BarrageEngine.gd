@@ -195,6 +195,14 @@ func tick(delta: float) -> void:
 
 # ---------------------------------------------------------------- Heat
 
+## Heat taken away by something outside the discipline (a Siphon). Returns
+## how much left.
+func vent_heat(amount: float) -> float:
+	var vented := minf(maxf(amount, 0.0), heat)
+	heat -= vented
+	return vented
+
+
 func add_heat(amount: float, from_input: bool = true) -> void:
 	if not claims_heat():
 		return

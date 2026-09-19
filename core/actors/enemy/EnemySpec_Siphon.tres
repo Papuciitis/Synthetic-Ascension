@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="EnemySpec" format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pickup"]
+[ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="2_spec"]
+
+[resource]
+script = ExtResource("2_spec")
+id = &"enemy_siphon"
+display_name = "Siphon"
+ai = 8
+max_hp = 22.0
+speed = 100.0
+follower_reward_min = 3
+follower_reward_max = 5
+leech_every = 0.75
+leech_amount = 1
+leech_drains_meter = true
+leech_meter_amount = 8.0
+item_pickup_scene = ExtResource("1_pickup")
+drop_chance = 0.24
+drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
+drop_instance_roll = true
+drop_rarity_min = 1
+drop_rarity_max = 3
+elite_speed_mult = 1.1
+elite_ai_override = 7
+sprite_modulate = Color(0.75, 0.6, 1.0, 1)
