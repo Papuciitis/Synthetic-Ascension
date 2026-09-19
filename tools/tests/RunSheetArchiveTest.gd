@@ -236,7 +236,7 @@ func _verify_set_archive_owns_full_doctrine(player: Node) -> void:
 	_check(
 		"PLAYSTYLE // Keep moving" in archive_text
 		and "BEST WITH // Fast weapons" in archive_text
-		and "Set strength — Scaling derived" in archive_text,
+		and "Set strength — Scaling from the set's mean rank" in archive_text,
 		"Sets archive owns playstyle, build guidance and terminology"
 	)
 	_check(
