@@ -315,11 +315,15 @@ func _collect_slow_snapshot() -> Dictionary:
 	var chunk_manager := get_tree().get_first_node_in_group(&"chunk_manager") if get_tree() != null else null
 	if chunk_manager != null and chunk_manager.has_method("get_chunk_stream_debug_stats"):
 		var stream := chunk_manager.call("get_chunk_stream_debug_stats") as Dictionary
+		var phases: Array = stream.get("build_phase_samples", []) as Array
 		output["chunk_stream"] = {
 			"queue_length": int(stream.get("queue_length", 0)),
 			"last_build_ms": float(stream.get("last_build_ms", 0.0)),
 			"max_build_ms": float(stream.get("max_build_ms", 0.0)),
 			"last_plan_ms": float(stream.get("last_plan_ms", 0.0)),
+			# The newest chunk's per-phase cost, so an incident says which
+			# phase of the build it caught (setup, ground, content, floor, blocker).
+			"last_phases": (phases[-1] as Dictionary).duplicate() if not phases.is_empty() and phases[-1] is Dictionary else {},
 		}
 	var enemy_world := get_node_or_null("/root/EnemyWorld")
 	if enemy_world != null and enemy_world.has_method("get_debug_counters"):
