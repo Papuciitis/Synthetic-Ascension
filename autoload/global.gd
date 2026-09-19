@@ -1664,6 +1664,8 @@ func apply_save(save: SaveData) -> void:
 		attempt_deaths_this_segment = max(0, save.attempt_deaths_this_segment)
 		attempt_checkpoint_pos = save.attempt_checkpoint_pos
 		attempt_world_seed = save.attempt_world_seed
+		if int(save.get("attempt_rng_state")) != 0:
+			_rng.state = int(save.get("attempt_rng_state"))
 		attempt_segment1_layout_version = int(save.attempt_segment1_layout_version)
 		attempt_segment1_resonance = clampf(float(save.attempt_segment1_resonance), 0.0, 1.0)
 		attempt_segment1_milestones.clear()
@@ -1946,6 +1948,7 @@ func write_save(save: SaveData) -> void:
 
 		save.attempt_checkpoint_pos = attempt_checkpoint_pos
 		save.attempt_world_seed = attempt_world_seed
+		save.attempt_rng_state = int(_rng.state)
 		save.attempt_segment1_layout_version = attempt_segment1_layout_version
 		save.attempt_segment1_resonance = attempt_segment1_resonance
 		save.attempt_segment1_milestones = []
@@ -2000,6 +2003,7 @@ func write_save(save: SaveData) -> void:
 
 		save.attempt_checkpoint_pos = Vector2.INF
 		save.attempt_world_seed = 0
+		save.attempt_rng_state = 0
 		save.attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 		save.attempt_segment1_resonance = 0.0
 		save.attempt_segment1_milestones = []

@@ -75,6 +75,9 @@ const CURRENT_SAVE_VERSION := 1
 
 # Seed used to generate procedural segments consistently for this attempt (Continue-safe).
 @export var attempt_world_seed: int = 0
+## The run RNG's state at save time, so quitting before a kill cannot
+## re-roll its drop (break-the-game audit P6). 0 = not carried.
+@export var attempt_rng_state: int = 0
 @export var attempt_deaths_this_segment: int = 0
 
 # res:// path to resume from (usually Game or HubShop)
