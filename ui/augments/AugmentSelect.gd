@@ -118,7 +118,34 @@ func _build_offers(options: Array[AugmentData]) -> Array[AugmentData]:
 		if offers.size() >= 3:
 			break
 		offers.append(a)
-	return offers.slice(0, 3)
+	var result: Array[AugmentData] = offers.slice(0, 3)
+	var fresh_profile := true
+	for id in Global.permanent_augment_ids:
+		if id != StringName():
+			fresh_profile = false
+	if fresh_profile:
+		result = ensure_neg_archetype(result, fresh)
+	return result
+
+
+## The three NEG archetypes the slice promises; a fresh profile's first
+## offer always shows one, so the first curse the run finds has a reader
+## (segment 1 pass S2).
+const NEG_ARCHETYPE_IDS: Array[StringName] = [&"augment_corruption_engine", &"augment_doctrine_of_burden", &"augment_inversion_lens"]
+
+
+static func ensure_neg_archetype(offers: Array[AugmentData], pool: Array[AugmentData]) -> Array[AugmentData]:
+	for a in offers:
+		if a != null and NEG_ARCHETYPE_IDS.has(a.id):
+			return offers
+	for a in pool:
+		if a != null and NEG_ARCHETYPE_IDS.has(a.id):
+			if offers.size() >= 3:
+				offers[offers.size() - 1] = a
+			else:
+				offers.append(a)
+			return offers
+	return offers
 
 func _spawn_cards(list: Array[AugmentData]) -> void:
 	if cards_box == null:

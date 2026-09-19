@@ -17,6 +17,9 @@ class_name ItemPickup
 @export var is_exploration_loot: bool = false # set true for exploration cache drops
 @export var secondary_objective_id: int = 0
 @export var persistent_world_drop: bool = false # player-dropped equipment should never be cleaned up behind them
+## Non-zero: this pickup is one of a "take one" group; taking it seals the
+## others of the same group away (the evidence store's POS / NEG pair).
+@export var choice_group: int = 0
 @export_range(0.0, 900.0, 1.0) var lifetime_seconds: float = 120.0
 @export var max_icon_px: float = 32.0 # max width/height in pixels (world size)
 
@@ -183,6 +186,8 @@ func _collect() -> void:
 
 	_picked = true
 	VfxBursts.play(&"pickup", global_position)
+	if choice_group != 0:
+		_resolve_choice_group()
 
 	# -------------------------
 	# MODE A: pickup carries a full ItemInstance (dropped from bag/equip)
@@ -349,6 +354,24 @@ static func _engine_deepened(fed: ItemInstance, pct_before: float) -> bool:
 	if Global == null or not Global.permanent_augment_ids.has(&"augment_corruption_engine"):
 		return false
 	return fed.active_pct() < pct_before - 0.0001
+
+
+func _resolve_choice_group() -> void:
+	var group := choice_group
+	choice_group = 0
+	if get_tree() == null:
+		return
+	for node in get_tree().get_nodes_in_group(GroundLootCap.ITEM_GROUP):
+		if node == self or not (node is ItemPickup):
+			continue
+		var other := node as ItemPickup
+		if other.choice_group != group:
+			continue
+		other.choice_group = 0
+		VfxBursts.play(&"dash", other.global_position, 0.8)
+		other.queue_free()
+	if RunEvents != null:
+		RunEvents.choice_pickup_taken.emit(group, item_instance)
 
 
 func _complete_secondary_objective() -> void:

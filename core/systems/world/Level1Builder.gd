@@ -70,6 +70,10 @@ const M_FIRST_CONFRONTATION: StringName = &"first_confrontation"
 const M_WARDSTONE_1: StringName = &"wardstone_1"
 const M_ASSISTANT: StringName = &"assistant_commitment"
 const M_EVIDENCE: StringName = &"evidence_store"
+## Record-only: the veteran's POS / NEG pair at the evidence store was taken.
+const M_EVIDENCE_TAKEN: StringName = &"evidence_taken"
+const EVIDENCE_CHOICE_GROUP := 31
+const EVIDENCE_PICKUP_SCENE: PackedScene = preload("res://scenes/world/pickups/ItemPickup.tscn")
 const M_SECURITY_STARTED: StringName = &"security_started"
 const M_SECURITY_CLEARED: StringName = &"security_cleared"
 const M_WARDSTONE_2: StringName = &"wardstone_2"
@@ -1054,12 +1058,16 @@ func _restore_segment_state() -> void:
 	# choice is still owed. Re-present it once the scene settles.
 	if _has_milestone(M_EVIDENCE) and Global != null and Global.pending_augment_pick:
 		call_deferred("_begin_evidence_choice")
+	elif _has_milestone(M_EVIDENCE) and not _has_milestone(M_EVIDENCE_TAKEN) and Global != null and not Global.pending_augment_pick:
+		call_deferred("_offer_evidence_pair")
 	_apply_restored_spawn_stage()
 
 
 func _connect_run_events() -> void:
 	if RunEvents == null:
 		return
+	if not RunEvents.choice_pickup_taken.is_connected(_on_choice_pickup_taken):
+		RunEvents.choice_pickup_taken.connect(_on_choice_pickup_taken)
 	var killed_cb := Callable(self, "_on_enemy_defeated")
 	if not RunEvents.enemy_defeated.is_connected(killed_cb):
 		RunEvents.enemy_defeated.connect(killed_cb)
@@ -1240,7 +1248,15 @@ func _begin_city_reveal() -> void:
 # own augments get flavor only (their pick never pends).
 func _begin_evidence_choice() -> void:
 	if Global == null or not Global.pending_augment_pick:
-		_tip(Segment1Text.EVIDENCE_EMPTY_TIP, 4.5)
+		# Segment 1 pass S1: a veteran still gets a decision here, two copies
+		# of one instrument, one blessed and one deeply cursed, take one.
+		if _has_milestone(M_EVIDENCE_TAKEN):
+			_tip(Segment1Text.EVIDENCE_EMPTY_TIP, 4.5)
+			return
+		var modal_card := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
+		if modal_card != null and modal_card.has_method("present_card_and_wait"):
+			await modal_card.call("present_card_and_wait", Segment1Text.EVIDENCE_TITLE, Segment1Text.EVIDENCE_BODY, "EVIDENCE STORE 3-B")
+		_offer_evidence_pair()
 		return
 	var modal := get_tree().get_first_node_in_group(&"tutorial_modal_controller")
 	if modal != null and modal.has_method("present_card_and_wait"):
@@ -1251,6 +1267,48 @@ func _begin_evidence_choice() -> void:
 	var game := get_tree().current_scene
 	if game != null and game.has_method("present_augment_pick_and_wait"):
 		await game.call("present_augment_pick_and_wait")
+
+
+## The evidence store's pair for a profile whose augment pick is spent: one
+## instrument rolled twice from the attempt's seed, blessed and cursed, as
+## two pickups that seal each other away. Deterministic, so a quit before
+## the choice re-offers the same pair.
+func _offer_evidence_pair() -> void:
+	if Global == null or _has_milestone(M_EVIDENCE_TAKEN) or Global.item_db.is_empty():
+		return
+	for node in get_tree().get_nodes_in_group(GroundLootCap.ITEM_GROUP):
+		if node is ItemPickup and (node as ItemPickup).choice_group == EVIDENCE_CHOICE_GROUP:
+			return
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(Global.attempt_world_seed) ^ 0x3B1DE7CE
+	var item_id := Global.pick_weighted_item_id(rng, Global.item_db.keys())
+	var data: ItemData = Global.get_item_data(item_id)
+	if data == null:
+		return
+	var blessed := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.72)
+	var cursed := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.NEG, 0.9)
+	var centre := (Vector2(29, -10) + Vector2(0.5, 0.5)) * float(cell_size_px)
+	var offsets := [Vector2(-44.0, 0.0), Vector2(44.0, 0.0)]
+	var instances := [blessed, cursed]
+	for index in 2:
+		var pickup := EVIDENCE_PICKUP_SCENE.instantiate() as ItemPickup
+		if pickup == null:
+			continue
+		pickup.item_instance = instances[index]
+		pickup.item_id = String(data.id)
+		pickup.amount = 1
+		pickup.pickup_delay = 0.4
+		pickup.is_exploration_loot = true
+		pickup.persistent_world_drop = true
+		pickup.choice_group = EVIDENCE_CHOICE_GROUP
+		pickup.global_position = centre + offsets[index]
+		get_tree().current_scene.add_child(pickup)
+	_tip(Segment1Text.EVIDENCE_PAIR_TIP, 5.0)
+
+
+func _on_choice_pickup_taken(group: int, _inst: ItemInstance) -> void:
+	if group == EVIDENCE_CHOICE_GROUP:
+		_record_milestone(M_EVIDENCE_TAKEN)
 
 
 func _on_secondary_completed(objective_id: int) -> void:

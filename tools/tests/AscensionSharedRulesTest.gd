@@ -70,6 +70,18 @@ func _run() -> void:
 	_runner = _player.get_node("AscensionRunner") as AscensionRunner
 	var origin := _player.global_position
 
+	# --- Luck bends named rolls by at most five points (T3)
+	Global.run_luck = 100.0
+	_runner.roll(&"luck_probe", 0.5)
+	var lucky: float = _runner.last_roll_chance
+	Global.run_luck = -100.0
+	_runner.roll(&"luck_probe", 0.5)
+	var jinxed: float = _runner.last_roll_chance
+	Global.run_luck = 0.0
+	_runner.roll(&"luck_probe", 0.5)
+	_check(lucky > 0.545 and lucky < 0.551 and jinxed > 0.449 and jinxed < 0.455 and is_equal_approx(_runner.last_roll_chance, 0.5), "a 50%% roll reads 55%% at +100 Luck, 45%% at -100, 50%% at zero (%.3f / %.3f)" % [lucky, jinxed])
+	_check(is_equal_approx(_player.clamp_shot_haste(4.0), 2.5) and is_equal_approx(_player.clamp_shot_haste(1.8), 1.8), "the shot haste multiplier caps at x2.5 (T4)")
+
 	# --- Q swap keeps the greater remaining recovery
 	_load("melee", ["EX01", "EX02", "EXQ", ["G1", "ranged"], "BR01", "BRQ"])
 	_runner.aim_override = origin + Vector2(80, 0)

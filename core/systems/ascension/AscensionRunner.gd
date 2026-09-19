@@ -518,11 +518,19 @@ func _sweep_statuses() -> void:
 ## A named combat roll: chance after engine modifiers, times Proc Power,
 ## capped at 95% unless guaranteed. Failed rolls may be rerolled once when an
 ## engine grants it. Lucky Crit is not a named roll; its signals stay as is.
+const LUCK_ROLL_SHIFT := 0.05
+
+
 func roll(roll_name: StringName, chance: float, proc_power: float = 1.0, guaranteed: bool = false) -> bool:
 	var effective := chance
 	for engine in engines:
 		effective = engine.modify_roll_chance(roll_name, effective)
 	effective *= proc_power
+	# Luck bends named rolls by at most five points either way (NEG-versus-tree
+	# study T3): a Jinxed Coin wardrobe fails Barrage and Distortion rolls a
+	# little more often, a Lucky one a little less; never a guarantee.
+	if effective > 0.0 and Global != null:
+		effective += LuckResolver.effective(Global.run_luck) * LUCK_ROLL_SHIFT
 	if not guaranteed:
 		for engine in engines:
 			if engine.wants_guarantee(roll_name, proc_power):

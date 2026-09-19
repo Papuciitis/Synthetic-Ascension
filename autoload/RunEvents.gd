@@ -97,6 +97,8 @@ signal secondary_objective_changed(title: String, detail: String)
 
 @warning_ignore("unused_signal")
 signal secondary_objective_completed(objective_id: int)
+## One of a "take one" group of pickups was taken; the others sealed away.
+signal choice_pickup_taken(group: int, inst: ItemInstance)
 
 @warning_ignore("unused_signal")
 signal segment_phase_changed(phase: StringName, label: String)

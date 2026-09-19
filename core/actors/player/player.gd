@@ -742,6 +742,17 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		RunEvents.player_stats_recomputed.emit(self)
 
 
+## The ceiling on the shot-rate multiplier after every runner has
+## multiplied in (NEG-versus-tree study T4): Fever Litany, Burst, the
+## Litany of Wounds and Overclock stack without one, and a x4 fire rate
+## is a frame budget, not a build.
+const SHOT_HASTE_CAP := 2.5
+
+
+static func clamp_shot_haste(multiplier: float) -> float:
+	return minf(multiplier, SHOT_HASTE_CAP)
+
+
 func _fire_weapon(mouse_pos: Vector2) -> void:
 	var style_id: String = str(Global.selected_style_id)
 
@@ -786,6 +797,7 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 		return
 
 	if cd > 0.0:
+		haste_mul = clamp_shot_haste(haste_mul)
 		_weapon_cd = cd / max(haste_mul, 0.05)
 
 	# Charge/rhythm/tithe Manifestations empower exactly one attack. Consumed
