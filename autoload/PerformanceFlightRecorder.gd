@@ -321,6 +321,9 @@ func _collect_slow_snapshot() -> Dictionary:
 			"last_build_ms": float(stream.get("last_build_ms", 0.0)),
 			"max_build_ms": float(stream.get("max_build_ms", 0.0)),
 			"last_plan_ms": float(stream.get("last_plan_ms", 0.0)),
+			"activations_total": int(stream.get("activations_total", 0)),
+			"pending_blocker_stages": int(stream.get("pending_blocker_stages", 0)),
+			"last_blocker_stage_ms": float(stream.get("last_blocker_stage_ms", 0.0)),
 			# The newest chunk's per-phase cost, so an incident says which
 			# phase of the build it caught (setup, ground, content, floor, blocker).
 			"last_phases": (phases[-1] as Dictionary).duplicate() if not phases.is_empty() and phases[-1] is Dictionary else {},
@@ -486,6 +489,7 @@ func _build_summary(samples: Array[Dictionary], events: Array) -> Dictionary:
 		if frame_ms > 1000.0 / 30.0: below_30 += 1
 	frame_times.sort()
 	wall_times.sort()
+	var hitches := PerformanceHitchTagger.distribution(samples)
 	return {
 		"worst_frame_ms": worst,
 		"median_frame_ms": _percentile(frame_times, 0.50),
@@ -509,6 +513,11 @@ func _build_summary(samples: Array[Dictionary], events: Array) -> Dictionary:
 		"peak_fragment_usec": fragment_peak_usec,
 		"nearby_event_groups": _event_group_summary(events),
 		"note": "Events overlap the incident timeline; correlation does not prove causation.",
+		# War room M3: every sample over 28 ms wall time named by its largest
+		# measured cost (see PerformanceHitchTagger).
+		"hitch_count": int(hitches.get("hitches", 0)),
+		"hitch_tags": hitches.get("tags", []),
+		"worst_hitches": hitches.get("worst", []),
 	}
 
 

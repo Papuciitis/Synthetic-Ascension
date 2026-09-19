@@ -24,9 +24,15 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 	var csv_file := FileAccess.open(csv_path, FileAccess.WRITE)
 	if csv_file == null:
 		return {"ok": false, "json_path": json_path, "csv_path": "", "error": "Cannot open CSV report: %s" % FileAccess.get_open_error()}
-	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only")
+	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only,wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms")
+	var previous: Dictionary = {}
 	for sample_variant in incident.get("samples", []):
 		var sample := sample_variant as Dictionary
+		var ascension: Dictionary = sample.get("ascension", {})
+		var barrage: Dictionary = ascension.get("BR", {})
+		var phases: Dictionary = (sample.get("chunk_stream", {}) as Dictionary).get("last_phases", {})
+		var hitch := PerformanceHitchTagger.tag(sample, previous)
+		previous = sample
 		csv_file.store_csv_line(PackedStringArray([
 			str(sample.get("t_usec", 0)),
 			str(sample.get("elapsed_sec", 0.0)),
@@ -51,6 +57,14 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 			str(sample.get("tier_reversals_total", 0)),
 			str(sample.get("enemy_world_materialized", 0)),
 			str(sample.get("enemy_world_data_only", 0)),
+			str(sample.get("wall_ms", sample.get("frame_ms", 0.0))),
+			str(int(ascension.get("tick_usec", 0)) + int(ascension.get("flush_usec", 0)) + int(ascension.get("hit_usec", 0))),
+			str(int(barrage.get("fragment_usec", 0))),
+			str(sample.get("projectile_ms", 0.0)),
+			str(phases.get("total_ms", 0.0)),
+			str(sample.get("flow_publish_usec", 0)),
+			String(hitch["tag"]),
+			str(hitch["ms"]),
 		]))
 	csv_file.close()
 	return {"ok": true, "json_path": json_path, "csv_path": csv_path, "error": ""}

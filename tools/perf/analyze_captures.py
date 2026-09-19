@@ -105,6 +105,9 @@ def summarize(label, rows_by_t):
         }
         for key in SIM_KEYS:
             entry[key] = to_float(raw, key)
+        entry["hitch_tag"] = (raw.get("hitch_tag") or "").strip()
+        entry["hitch_ms"] = to_float(raw, "hitch_ms") or 0.0
+        entry["wall"] = to_float(raw, "wall_ms")
         rows.append(entry)
     if not rows:
         print("%s: no usable frames" % label)
@@ -139,6 +142,7 @@ def summarize(label, rows_by_t):
             parts.append("[%d-%d] %5.1fms (n=%d)" % (low, high, percentile(bucket, 95), len(bucket)))
     if parts:
         print("p95 frame by enemies: " + "  ".join(parts))
+    print_hitch_tags(rows)
     sim_rows = [r for r in rows if r["sim_full"] is not None]
     if sim_rows:
         reversals = max(r["tier_reversals_total"] or 0 for r in sim_rows)
@@ -165,6 +169,24 @@ def summarize(label, rows_by_t):
                 max((r["world_materialized"] or 0) + (r["world_data_only"] or 0) for r in sim_rows),
             )
         )
+
+
+def print_hitch_tags(rows):
+    """Distribution of the recorder's hitch tags (war room M3): every frame
+    over 28 ms wall time carries the subsystem whose measured cost was
+    largest, or 'unattributed'. Older captures have no tag column."""
+    tagged = [r for r in rows if r["hitch_tag"]]
+    if not tagged:
+        return
+    counts = {}
+    for r in tagged:
+        entry = counts.setdefault(r["hitch_tag"], {"count": 0, "worst_frame": 0.0, "worst_ms": 0.0})
+        entry["count"] += 1
+        entry["worst_frame"] = max(entry["worst_frame"], r["wall"] or r["frame"])
+        entry["worst_ms"] = max(entry["worst_ms"], r["hitch_ms"])
+    ordered = sorted(counts.items(), key=lambda item: -item[1]["count"])
+    print("hitch tags (%d frames over 28 ms): " % len(tagged) + "  ".join(
+        "%s %d (worst frame %.1f ms, cost %.1f ms)" % (tag, e["count"], e["worst_frame"], e["worst_ms"]) for tag, e in ordered))
 
 
 def main():

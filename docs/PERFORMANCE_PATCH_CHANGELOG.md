@@ -449,3 +449,34 @@ Follows `docs/audits/2026-09-15-performance-captures.md`.
 - **Not done here.** Chunk activation staging (the audit's item 3) and a
   rendered stationary Barrage playtest; the rendered check is scheduled for
   the whole-system stage with the presets.
+
+## 2026-09-19: war room M1 (streaming) and M3 (hitch tagging)
+
+- **Streaming hitch named and staged (M1).** `RoamStreamProbe` follows the
+  district plan's main route on a fixed seed with a 120 horde and times the
+  content generator's sub-steps. Two causes: the first plaza chunk to stamp
+  a road or plaza texture paid 25-31 ms per texture because `WorldArt`
+  loads each ~1 MB ground PNG on first use and the warm-up covered only the
+  base and terrain indices (three at once made the 99 ms activation); and
+  an ordinary parcel chunk cost 12-20 ms in one frame (content 5-8, blocker
+  physics 4-7.5, MultiMesh add 2.5-5). Every ground texture is now warmed at
+  `configure_procedural_world`, and a streamed chunk's blocker physics and
+  renderer add are staged over the two queue steps after its content
+  (`ChunkManager.staged_blocker_activation`, on by default; blocked cells
+  are still registered at content time, so navigation is unchanged;
+  explicit-limit queue calls stay synchronous). Worst single-frame
+  streaming step on seeds 11 / 33: 33.7 / 33.1 ms before, 7.1 / 8.4 ms
+  after, headless. `ChunkStagedBlockerTest` (27 checks); stream stats add
+  `pending_blocker_stages`, `last_blocker_stage_ms`, `max_blocker_stage_ms`
+  and the content split (`content_last_steps`).
+- **Hitch tagging (M3).** `PerformanceHitchTagger` charges every sample over
+  28 ms wall time to its largest measured cost (tree, fragments,
+  projectiles, chunk phase or staged step, flow, lifecycle, enemy step,
+  sampling, physics monitor, else unattributed). Summaries carry
+  `hitch_count`, `hitch_tags`, `worst_hitches`; incident CSVs gain
+  `wall_ms ... hitch_tag, hitch_ms`; `analyze_captures.py` prints the
+  distribution. `PerformanceHitchTaggerTest` (23 checks).
+- **Not verified rendered.** Both are headless results; the next rendered
+  capture on the display checks that the tags name real causes and that the
+  staged activation holds up with draw cost on top.
+
