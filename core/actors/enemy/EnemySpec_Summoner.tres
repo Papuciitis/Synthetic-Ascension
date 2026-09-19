@@ -7,11 +7,12 @@
 
 [resource]
 script = ExtResource("1_xjpae")
+max_hp = 28.0
 id = &"enemy_summoner"
 display_name = "Summoner"
 ai = 5
-follower_reward_min = 2
-follower_reward_max = 3
+follower_reward_min = 3
+follower_reward_max = 4
 summon_count_max = 3
 summon_scene = ExtResource("3_cqkqk")
 item_pickup_scene = ExtResource("1_cqkqk")

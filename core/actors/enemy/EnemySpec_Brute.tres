@@ -7,10 +7,10 @@
 script = ExtResource("1_m4j6x")
 id = &"enemy_brute"
 display_name = "Brute"
-max_hp = 55.0
+max_hp = 70.0
 speed = 55.0
-follower_reward_min = 2
-follower_reward_max = 3
+follower_reward_min = 4
+follower_reward_max = 5
 item_pickup_scene = ExtResource("1_c0s0h")
 drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
 drop_instance_roll = true

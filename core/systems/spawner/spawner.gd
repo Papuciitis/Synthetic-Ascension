@@ -671,7 +671,7 @@ func spawn_local_encounter(area: Rect2, count: int, encounter_owner: Node = null
 	for _index in range(amount):
 		var entry: EnemySpawnEntry = null
 		if spawn_table != null:
-			entry = spawn_table.pick(_elapsed, Global._rng)
+			entry = spawn_table.pick(_elapsed, Global._rng, _segment_phase(), EnemySpawnTable.unlock_time_scale(int(Global.attempt_segment) if Global != null else 1))
 		var scene_to_spawn: PackedScene = entry.enemy_scene if entry != null else enemy_scene
 		if scene_to_spawn == null:
 			continue
@@ -1203,6 +1203,11 @@ func _enemy_list_for_cleanup() -> Array:
 	if _ei != null and is_instance_valid(_ei) and _ei.has_method("get_all"):
 		return _ei.call("get_all") as Array
 	return get_tree().get_nodes_in_group("enemies")
+
+func _segment_phase() -> StringName:
+	var director := get_node_or_null("/root/ThreatDirector")
+	return StringName(director.get("segment_phase")) if director != null else &""
+
 
 func is_enemy_cull_eligible(enemy: Node2D, player_position: Vector2) -> bool:
 	if enemy == null or not is_instance_valid(enemy) or not enemy.is_inside_tree():

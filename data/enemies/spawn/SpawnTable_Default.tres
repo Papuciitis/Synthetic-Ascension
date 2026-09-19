@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://b36vdt2238b6j" path="res://core/systems/spawner/EnemySpawnTable.gd" id="2_fppje"]
 [ext_resource type="PackedScene" uid="uid://tfp57neu5o2" path="res://scenes/world/enemies/EnemyRunner.tscn" id="3_vg2pm"]
 [ext_resource type="PackedScene" uid="uid://bcci5cebextf1" path="res://scenes/world/enemies/EnemyOrbiter.tscn" id="4_h4ahp"]
+[ext_resource type="PackedScene" path="res://scenes/world/enemies/EnemyBrute.tscn" id="13_brute"]
 [ext_resource type="PackedScene" uid="uid://b2h0h48hdltig" path="res://scenes/world/enemies/EnemySpitter.tscn" id="4_m7f03"]
 [ext_resource type="PackedScene" uid="uid://cg4x7hv38df6i" path="res://scenes/world/enemies/EnemyCharger.tscn" id="6_4vxks"]
 [ext_resource type="PackedScene" uid="uid://bmqumxnpt61gx" path="res://scenes/world/enemies/EnemyLeech.tscn" id="6_y2a8g"]
@@ -17,18 +18,18 @@
 [sub_resource type="Resource" id="Resource_4vxks"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("2_80hnt")
-weight = 6.0
+weight = 4.5
 count_max = 2
 max_alive = 80
-elite_chance = 0.005
+elite_chance = 0.01
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_5daiq"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("3_vg2pm")
-weight = 2.6
+weight = 2.2
 max_alive = 40
-elite_chance = 0.006
+elite_chance = 0.012
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_yl2hb"]
@@ -37,7 +38,8 @@ enemy_scene = ExtResource("4_h4ahp")
 weight = 2.0
 start_time = 30.0
 max_alive = 30
-elite_chance = 0.01
+elite_chance = 0.02
+min_phase = &"disturbance"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_8h2pl"]
@@ -46,7 +48,8 @@ enemy_scene = ExtResource("4_m7f03")
 weight = 1.8
 start_time = 60.0
 max_alive = 28
-elite_chance = 0.012
+elite_chance = 0.024
+min_phase = &"disturbance"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_p0itl"]
@@ -55,7 +58,8 @@ enemy_scene = ExtResource("6_4vxks")
 weight = 1.2
 start_time = 90.0
 max_alive = 18
-elite_chance = 0.018
+elite_chance = 0.036
+min_phase = &"disturbance"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_qva4u"]
@@ -64,55 +68,71 @@ enemy_scene = ExtResource("7_5daiq")
 weight = 1.1
 start_time = 120.0
 max_alive = 16
-elite_chance = 0.02
+elite_chance = 0.04
+min_phase = &"ascension"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_cfccn"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("6_y2a8g")
-weight = 0.7
+weight = 1.0
 start_time = 150.0
 max_alive = 8
-elite_chance = 0.03
+elite_chance = 0.06
+min_phase = &"ascension"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_y2a8g"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("9_h4ahp")
-weight = 0.55
+weight = 0.8
 start_time = 210.0
 max_alive = 6
-elite_chance = 0.035
+elite_chance = 0.07
+min_phase = &"collapse"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_fsfoh"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("10_y2a8g")
-weight = 0.6
+weight = 0.9
 start_time = 180.0
 max_alive = 7
-elite_chance = 0.033
+elite_chance = 0.066
+min_phase = &"collapse"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_ef17o"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("11_4vxks")
-weight = 0.28
+weight = 0.4
 start_time = 90.0
 max_alive = 2
 elite_chance = 0.2
+min_phase = &"ascension"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_splitter"]
 script = ExtResource("1_uq6bm")
 enemy_scene = ExtResource("12_splitter")
-weight = 0.32
+weight = 0.5
 start_time = 210.0
 max_alive = 4
 elite_chance = 0.001
+min_phase = &"collapse"
+metadata/_custom_type_script = "uid://c72t5o5jqij7r"
+
+[sub_resource type="Resource" id="Resource_brute"]
+script = ExtResource("1_uq6bm")
+enemy_scene = ExtResource("13_brute")
+weight = 0.5
+start_time = 75.0
+max_alive = 6
+elite_chance = 0.03
+min_phase = &"disturbance"
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [resource]
 script = ExtResource("2_fppje")
-entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter")])
+entries = Array[ExtResource("1_uq6bm")]([SubResource("Resource_4vxks"), SubResource("Resource_5daiq"), SubResource("Resource_yl2hb"), SubResource("Resource_8h2pl"), SubResource("Resource_p0itl"), SubResource("Resource_qva4u"), SubResource("Resource_cfccn"), SubResource("Resource_y2a8g"), SubResource("Resource_fsfoh"), SubResource("Resource_ef17o"), SubResource("Resource_splitter"), SubResource("Resource_brute")])
 metadata/_custom_type_script = "uid://b36vdt2238b6j"

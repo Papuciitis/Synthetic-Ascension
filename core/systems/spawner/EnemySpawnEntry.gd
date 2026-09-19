@@ -6,6 +6,10 @@ class_name EnemySpawnEntry
 @export var weight: float = 1.0
 
 @export var start_time: float = 0.0
+## Earliest Threat Director phase this entry may spawn in (recon,
+## disturbance, ascension, collapse); empty = any. Roster audit E2: unlock
+## by where the run is, not by seconds since the spawner started.
+@export var min_phase: StringName = &""
 @export var end_time: float = -1.0 # -1 = never ends
 
 @export var count_min: int = 1
