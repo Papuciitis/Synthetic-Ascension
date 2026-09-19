@@ -22,7 +22,7 @@ Each directory contains:
 | `report.md` | Read the economy, combat, survival, and enemy-scaling summary. |
 | `segments.csv` | Compare segment totals in a spreadsheet. |
 | `summary.json` | Read full totals, per-segment breakdowns and recording health. |
-| `events.jsonl` | One JSON object per line: time windows, wallet transactions, builds, pressure and lifecycle. |
+| `events.jsonl` | One JSON object per line: time windows, wallet transactions, builds, pressure and lifecycle; `objective` (each new objective title with its detail), `secondary_completed` and `gate_checklist` (each LOCKED / LOCATED / READY transition with the rows done) carry the gameplay clock of every authored beat. |
 
 To read many captures at once, `python3 tools/telemetry/run_history.py`
 prints one row per capture (newest first: build, start and last segment,

@@ -47,6 +47,13 @@ func _run() -> void:
 	Global.transaction_followers(50, &"combat_influence", {"enemy_id": "test"})
 	Global.transaction_followers(-20, &"shop_buy")
 	Global.transaction_followers(20, &"ascension_refund")
+	# Objective beats and the Rite checklist ride the capture with the
+	# gameplay clock; repeated titles and states record once.
+	RunEvents.objective_changed.emit("ESCAPE THE ARCHIVE", "Find the seal")
+	RunEvents.objective_changed.emit("ESCAPE THE ARCHIVE", "Find the seal (1/2)")
+	RunEvents.secondary_objective_completed.emit(42)
+	RunEvents.gate_checklist_changed.emit(&"located", [{"done": true}, {"done": false}], "Reach the Rite")
+	RunEvents.gate_checklist_changed.emit(&"located", [{"done": true}, {"done": true}], "Reach the Rite")
 	# Use real damage; suppress reconstruction side effects by disconnecting the
 	# final lethal action from this test with a larger remaining health pool.
 	player.hp = 80.0
@@ -83,6 +90,9 @@ func _run() -> void:
 	_check(saved is Dictionary and saved.outcome == "failed" and saved.totals.followers_close == 140, "saved final summary keeps pre-reset wallet")
 	var history := FileAccess.get_file_as_string(capture_path.path_join("events.jsonl"))
 	_check(history.contains('"kind":"build"') and history.contains('"kind":"sample"'), "capture contains loadout and runtime snapshots")
+	_check(history.count('"kind":"objective"') == 1 and history.contains('"title":"ESCAPE THE ARCHIVE"'), "an objective beat records once per title with its detail")
+	_check(history.contains('"kind":"secondary_completed"') and history.contains('"id":42'), "a secondary completion records its id")
+	_check(history.count('"kind":"gate_checklist"') == 1 and history.contains('"state":"located"') and history.contains('"done":1'), "a Rite checklist transition records once per state with the rows done")
 	Global.attempt_active = true
 	Global.attempt_segment = 3
 	Global.set_followers(500)

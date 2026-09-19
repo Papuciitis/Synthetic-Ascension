@@ -217,6 +217,12 @@ func _connect_runtime() -> void:
 	_subscribe(RunEvents, &"player_life_event", _on_life_event)
 	_subscribe(RunEvents, &"player_stats_recomputed", _on_stats_changed)
 	_subscribe(RunEvents, &"segment_phase_changed", _on_phase)
+	# Objective beats and the Exit Rite checklist, so a capture carries the
+	# gameplay clock of every authored milestone (segment 1's ten beats) and
+	# of the Rite's LOCKED / LOCATED / READY transitions.
+	_subscribe(RunEvents, &"objective_changed", _on_objective_changed)
+	_subscribe(RunEvents, &"secondary_objective_completed", _on_secondary_objective_completed)
+	_subscribe(RunEvents, &"gate_checklist_changed", _on_gate_checklist_changed)
 	_subscribe(RunEvents, &"healing_lock_changed", _on_healing_lock)
 	_subscribe(RunEvents, &"power_threshold_crossed", _on_power_threshold)
 	if not extended:
@@ -562,6 +568,33 @@ func _on_item_operation(kind: StringName, inst: ItemInstance, data: Dictionary) 
 func _on_phase(phase: StringName, label: String) -> void:
 	_ledger.event("phase", {"phase": String(phase), "label": label})
 	_push_history("phase", {"phase": String(phase), "label": label})
+
+var _last_objective_title := ""
+var _last_gate_state := &""
+
+func _on_objective_changed(title: String, detail: String) -> void:
+	# The HUD re-emits the same title with a live counter; record the beat
+	# once, when the title changes.
+	if title == _last_objective_title:
+		return
+	_last_objective_title = title
+	_ledger.event("objective", {"title": title, "detail": detail})
+	_push_history("objective", {"title": title})
+
+func _on_secondary_objective_completed(objective_id: int) -> void:
+	_ledger.event("secondary_completed", {"id": objective_id})
+	_push_history("secondary", {"id": objective_id})
+
+func _on_gate_checklist_changed(state: StringName, items: Array, next_hint: String) -> void:
+	if state == _last_gate_state:
+		return
+	_last_gate_state = state
+	var done := 0
+	for item in items:
+		if item is Dictionary and bool((item as Dictionary).get("done", false)):
+			done += 1
+	_ledger.event("gate_checklist", {"state": String(state), "done": done, "items": items.size(), "hint": next_hint})
+	_push_history("gate", {"state": String(state), "done": done})
 
 func _on_healing_lock(seconds: float, reason: StringName) -> void:
 	_ledger.event("healing_lock", {"seconds": seconds, "reason": String(reason)})
