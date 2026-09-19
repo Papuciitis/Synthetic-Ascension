@@ -39,10 +39,10 @@ deaths per fight):
 
 | Wardrobe | Melee | Ranged | Magic |
 |---|---|---|---|
-| cursed_set | +17%, +29%, 0.09 -> 0.09 | -9%, +5%, 0.14 -> 0.27 | -3%, -11%, 0.42 -> 0.33 |
-| doctrine | -10%, -1%, 0.09 -> 0.00 | -18%, -5%, 0.14 -> 0.00 | -8%, -4%, 0.42 -> 0.17 |
-| sigil | -4%, +19%, 0.09 -> 0.05 | -14%, +2%, 0.14 -> 0.18 | -6%, -2%, 0.42 -> 0.42 |
-| litany | -4%, +37%, 0.09 -> 0.09 | -17%, +1%, 0.14 -> 0.18 | -9%, +3%, 0.42 -> 0.42 |
+| cursed_set | +16%, +13%, 0.09 -> 0.09 | -9%, 0%, 0.14 -> 0.27 | -3%, -2%, 0.42 -> 0.50 |
+| doctrine | -17%, -2%, 0.09 -> 0.05 | -18%, -7%, 0.14 -> 0.05 | -13%, -9%, 0.42 -> 0.25 |
+| sigil | +6%, +12%, 0.09 -> 0.14 | -15%, -3%, 0.14 -> 0.27 | -6%, -4%, 0.42 -> 0.42 |
+| litany | +1%, +31%, 0.09 -> 0.14 | -16%, +6%, 0.14 -> 0.23 | -17%, -16%, 0.42 -> 0.50 |
 | engine | -18%, +41%, 0.09 -> 0.05 | -31%, +23%, 0.14 -> 0.23 | -10%, -2%, 0.42 -> 0.50 |
 | lens | -35%, -34%, 0.09 -> 0.00 | -34%, -30%, 0.14 -> 0.00 | -21%, -23%, 0.42 -> 0.17 |
 
@@ -62,10 +62,10 @@ build is Mass Arrest.
 
 ### 2.2 The Doctrine is the free archetype for set builds
 
-Four mild curses on set pieces: output -8 to -18% (the Power piece is
-cursed, -25% Power), deaths zero across every Core, armour 41 -> 61, HP
-lost flat. Momentum pure -2%, Execution pure 0%. Nothing else keeps a set
-build whole while making it safer.
+Four mild curses on set pieces: output -13 to -18% (the Power piece is
+cursed, -25% Power), deaths 0.05-0.25 against 0.09-0.42, armour 41 -> 61,
+HP lost down 2-9%. Momentum pure 0%, Execution pure -5%. Nothing else
+keeps a set build whole while making it safer.
 
 ### 2.3 The Lens is the survivability archetype, at a third of the output
 
@@ -76,21 +76,25 @@ the set, reads +2% output and -34% HP lost under it.
 
 ### 2.4 The cursed set is a melee engine and an uncapped healer
 
-Three cursed Gravemarch pieces (no augment): melee +17%, Bastion pure
-+38% (the aura's drain is credited to the player, so it fills Mass
-Arrest's bank and feeds Sunderstep), magic min HP -74% (the armour is
+Three cursed Gravemarch pieces (no augment): melee +16%, Bastion pure
++37% (the aura's drain is credited to the player, so it fills Mass
+Arrest's bank and feeds Sunderstep), magic min HP -82% (the armour is
 gone). The aura heals 30% of what it drains from every enemy in reach,
 and reach is 120-400 px around a 60-body crowd: the drain is 2% of max
 HP per second *per enemy*, so healing rose from a median 10 to 46 per
-fight, and with a full crowd it is a heal engine with no cap. That is the
-one broken number in the set: cap it (section 5).
+fight, and with a full crowd it was a heal engine with no cap. Capped
+after this campaign (T1, same day): at most eight enemies' worth of drain
+per tick and healing at most 4% of max HP per second; the four
+wardrobes that carry the aura were rerun with the cap (the report on
+disk is the capped run).
 
 ### 2.5 The Litany and the Sigil do not pay for their curses yet
 
-Both lose 4-17% output and gain nothing measurable in survivability at
-seg6, because the scripted player rarely sits below 60% HP for long
-(Litany) and because the four curses land on stats the build uses
-(Sigil's +12% cannot repay a -25% Power piece). The Sigil's real wardrobe
+Both lose output on ranged and magic (-6 to -17%) and gain nothing
+measurable in survivability at seg6, because the scripted player rarely
+sits below 60% HP for long (Litany) and because the four curses land on
+stats the build uses (Sigil's +12% cannot repay a -25% Power piece);
+their melee gains (+1 to +6%) are the cursed set's aura, not the augment. The Sigil's real wardrobe
 is curses on the stats a build ignores (Luck and movement for a
 stationary Bastion), which no preset wears; the Litany's is deliberate
 low-HP play, which the script does not do. Both need the human sessions
@@ -99,11 +103,12 @@ of the playtest spec.
 ### 2.6 Two swings to probe before believing
 
 Distortion pure under the Engine took 11 damage instead of 236, and
-Precision pure under the cursed set lost 23 HP instead of 201, with
-healing unchanged in both. Nothing in either wardrobe explains a 10x
-drop in damage taken; these are single fights and the ablation's noise
-floor on HP lost is +/-7-49%. Rerun both on five crowd streams before
-citing them.
+Execution pure under the Sigil lost 8 HP instead of 114, with healing
+unchanged in both. Nothing in either wardrobe explains a 10x drop in
+damage taken; these are single fights and the ablation's noise floor on
+HP lost is +/-7-49% (the first run's Precision swing under the cursed set
+vanished on the rerun). Rerun both on five crowd streams before citing
+them.
 
 ## 3. Interaction matrix (code read)
 
@@ -139,7 +144,7 @@ player can feel and steer; **nasty** = a loop or trap the player will hit;
 
 | # | Proposal | Why | Confirm |
 |---|---|---|---|
-| T1 | `GravemarchCursedBallast`: cap healing at 4% of max HP per second (`heal_share` applies up to the cap) and cap the drained damage per tick at 8 enemies' worth. | 2.4: uncapped heal engine with a crowd. | `NegArchetypesTest`: 60-enemy pulse heals no more than the cap; set probe rerun with `cursed_set`. |
+| T1 | **Applied.** `GravemarchCursedBallast` drains at most eight enemies' worth per tick and heals at most 4% of max HP per second. | 2.4: uncapped heal engine with a crowd. | `NegArchetypesTest`: twenty enemies in reach drain eight enemies' worth and heal 4%/s; the four aura wardrobes rerun. |
 | T2 | Either (a) two accessory relics (offhand and ring, -95% Luck-style) that the Engine may burn, so a relic build keeps the six-piece, or (b) the Engine's and the Lens's cards say "your two relic slots replace two set pieces". | 2.1. Decision for the designer; (a) contradicts the v3 "statistical slots only" ruling, (b) is honest and cheap. | Rerun the `engine` and `lens` wardrobes with accessory relics; melee output within 15% of the baseline. |
 | T3 | `AscensionRunner.roll`: add `LuckResolver.effective(Global.run_luck) x 0.05` before the cap, so Luck moves named rolls by at most 5 points either way. | Finding 3. | `AscensionSharedRulesTest`: a -95% Luck wardrobe fails 5 points more often; Distortion pure under Jinxed Coin loses output. |
 | T4 | A global cap on the shot haste multiplier in `_fire_weapon` (x2.5), applied after every runner multiplies in. | Fever Litany x Burst x Litany x Overclock has no ceiling. | Test: stacked multipliers clamp; Barrage pure output with all four unchanged below the cap. |

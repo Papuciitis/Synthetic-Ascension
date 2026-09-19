@@ -414,6 +414,14 @@ func _test_cursed_ballast_drains_and_heals() -> void:
 		_check(_near(dealt, 2.0, 0.01) and _near(FIXTURE_HP - EnemyWorld.get_health(near), 2.0, 0.01), "half a second drains 1%% of max HP from an enemy in reach (%.2f)" % dealt)
 		_check(_near(FIXTURE_HP - EnemyWorld.get_health(far), 0.0), "and nothing from one beyond the aura")
 		_check(_near(host.healed, 0.6, 0.01), "30%% of the drain comes back as healing (%.2f)" % host.healed)
+		# A crowd must not turn the aura into a heal engine: the drain stops
+		# at drain_targets_cap enemies and the heal at 4% of max HP per second.
+		host.healed = 0.0
+		for i in range(20):
+			_spawn(&"ballast_crowd_%d" % i, Vector2(40.0 + 3.0 * float(i), 30.0))
+		var crowd_dealt := float(aura.call("pulse", 0.5))
+		_check(_near(crowd_dealt, 16.0, 0.05), "twenty enemies in reach drain eight enemies' worth, not twenty (%.1f)" % crowd_dealt)
+		_check(_near(host.healed, 4.0, 0.01) and host.healed <= 0.04 * host.max_hp * 0.5 + 0.0001, "and the healing stops at 4%% of max HP per second (%.2f)" % host.healed)
 	runner.apply_sets_to_stats(Stats.new(), null)
 	_drop(host)
 	_cleanup_enemies()

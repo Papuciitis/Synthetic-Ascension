@@ -15,6 +15,11 @@ class_name GravemarchCursedBallast
 @export var base_radius: float = 120.0
 @export var radius_per_severity: float = 160.0
 @export var radius_cap: float = 400.0
+## The drain is per enemy, so a crowd would make it a heal engine: at
+## most this many enemies' worth of drain per tick, and the healing never
+## exceeds this share of max HP per second.
+@export var drain_targets_cap: int = 8
+@export var heal_cap_share_of_max_hp_per_second: float = 0.04
 
 var _tick: float = 0.0
 var _handles: Array[int] = []
@@ -58,8 +63,12 @@ func pulse(seconds: float) -> float:
 	var drain := drain_share_of_max_hp_per_second * max_hp * seconds
 	EnemyCombat.gather_in_radius(p2.global_position, radius(), _handles)
 	var dealt := 0.0
+	var drained := 0
 	for handle in _handles:
+		if drained >= drain_targets_cap:
+			break
 		dealt += float(EnemyCombat.apply_damage(handle, drain, 1, player, balance_provenance("cursed_ballast")))
+		drained += 1
 	if dealt > 0.0 and player.has_method("heal"):
-		player.call("heal", dealt * heal_share, &"cursed_ballast")
+		player.call("heal", minf(dealt * heal_share, heal_cap_share_of_max_hp_per_second * max_hp * seconds), &"cursed_ballast")
 	return dealt
