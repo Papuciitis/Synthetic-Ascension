@@ -193,6 +193,10 @@ var attempt_vendor_seed: int = 0
 var attempt_vendor_bag: BagInventory = null
 
 var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
+## Manifestation imprints: rules dissolved by merges this attempt, kept for
+## the Hub's imprinter (design note 2026-09-19-manifestation-imprints).
+const IMPRINT_CAP := 8
+var attempt_imprints: Array[StringName] = []
 var _claimed_loot_set: Dictionary = {} # int -> true
 
 # Buildings the player has walked into this attempt, keyed by the same stable
@@ -512,6 +516,7 @@ func reset_run_systems() -> void:
 
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
+	attempt_imprints.clear()
 	_claimed_loot_set.clear()
 	_visited_building_set.clear()
 	attempt_vendor_segment = 0
@@ -593,6 +598,30 @@ func get_equipped_rarity_average() -> float:
 ## - and the prerequisite weighting then steered every later drop toward those
 ## nouns - while the pair system read "x1, x1" and lit nothing. The player was
 ## being aimed at an engine they could not reach. One counting convention.
+## Keeps a dissolved rule as an imprint (newest last, oldest forgotten past
+## IMPRINT_CAP, one of each). Returns true when it was new.
+func store_imprint(imprint_id: StringName) -> bool:
+	if imprint_id == StringName() or ManifestationCatalog.get_def(imprint_id) == null:
+		return false
+	if attempt_imprints.has(imprint_id):
+		return false
+	attempt_imprints.append(imprint_id)
+	while attempt_imprints.size() > IMPRINT_CAP:
+		attempt_imprints.pop_front()
+	if RunEvents != null:
+		RunEvents.imprint_stored.emit(imprint_id)
+	request_autosave()
+	return true
+
+
+func take_imprint(imprint_id: StringName) -> bool:
+	if not attempt_imprints.has(imprint_id):
+		return false
+	attempt_imprints.erase(imprint_id)
+	request_autosave()
+	return true
+
+
 func equipped_manifestation_tags() -> Dictionary:
 	var held: Dictionary = {}
 	if run_inventory == null:
@@ -1718,6 +1747,9 @@ func apply_save(save: SaveData) -> void:
 				if attempt_opening_bren_committed:
 					attempt_segment1_milestones.append(&"assistant_commitment")
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
+		attempt_imprints.clear()
+		for imprint_id in save.get("attempt_imprints"):
+			attempt_imprints.append(StringName(imprint_id))
 		_rebuild_claimed_loot_set()
 		pending_augment_pick = save.attempt_pending_augment_pick
 		pending_big_choice = save.attempt_pending_big_choice
@@ -1827,6 +1859,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_opening_officer_completed = false
 		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
+		attempt_imprints.clear()
 		_claimed_loot_set.clear()
 		attempt_vendor_segment = 0
 		attempt_vendor_refreshes = 0
@@ -1961,6 +1994,10 @@ func write_save(save: SaveData) -> void:
 		save.attempt_opening_officer_completed = attempt_opening_officer_completed
 		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
+		var imprints := PackedStringArray()
+		for imprint_id in attempt_imprints:
+			imprints.append(String(imprint_id))
+		save.attempt_imprints = imprints
 		save.attempt_inventory = run_inventory
 		save.attempt_bag = run_bag
 		save.attempt_vendor_segment = attempt_vendor_segment
@@ -2004,6 +2041,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_checkpoint_pos = Vector2.INF
 		save.attempt_world_seed = 0
 		save.attempt_rng_state = 0
+		save.attempt_imprints = PackedStringArray()
 		save.attempt_segment1_layout_version = SEGMENT1_LAYOUT_VERSION
 		save.attempt_segment1_resonance = 0.0
 		save.attempt_segment1_milestones = []

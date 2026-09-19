@@ -164,6 +164,7 @@ func _ready() -> void:
 		btn_augments.pressed.connect(_open_augments)
 	btn_inventory.pressed.connect(_open_inventory)
 	_create_ascension_button()
+	_create_imprint_button()
 
 
 	btn_clear_cart.pressed.connect(_clear_selection)
@@ -1342,7 +1343,8 @@ func _perform_trade() -> void:
 			Global.run_bag.add_instance(inst)
 
 	# --- BUYBACK: what you sold sits on the vendor's shelf, rebuyable
-	# exactly as it was (until the stock refreshes or the shelf is full).
+	# exactly as it was until the stock refreshes; the shelf grows to hold it.
+	var shelf_grew := false
 	if _vendor_bag != null:
 		for sold_variant in sold_instances:
 			var sold := sold_variant as ItemInstance
@@ -1350,8 +1352,18 @@ func _perform_trade() -> void:
 				continue
 			var buyback_slot: int = _vendor_bag.first_empty_slot()
 			if buyback_slot == -1:
-				break
+				# The shelf grows rather than losing what you sold.
+				if _vendor_bag.get_slot_count() >= VENDOR_SHELF_MAX:
+					break
+				_vendor_bag.extra_slots += 8
+				_vendor_bag._ensure_size()
+				shelf_grew = true
+				buyback_slot = _vendor_bag.first_empty_slot()
+				if buyback_slot == -1:
+					break
 			_vendor_bag.set_at(buyback_slot, sold)
+		if shelf_grew and vendor_grid != null:
+			vendor_grid.bind_bag(_vendor_bag)
 		if not sold_instances.is_empty():
 			_apply_vendor_filters()
 
@@ -1662,6 +1674,42 @@ func _open_inventory() -> void:
 			Global.save_current_profile()
 	)
 
+var _btn_imprints: Button = null
+var _imprint_screen: CanvasLayer = null
+const IMPRINT_SCREEN := preload("res://ui/screens/ImprintScreen.gd")
+
+
+## The imprinter: held Manifestation imprints onto worn or bagged items.
+func _create_imprint_button() -> void:
+	if _btn_imprints != null or btn_augments == null:
+		return
+	_btn_imprints = Button.new()
+	_btn_imprints.name = "Imprints"
+	_btn_imprints.text = "Imprints"
+	_btn_imprints.tooltip_text = "Put a held Manifestation onto an item, for Followers. Rules dissolved by merges are kept here."
+	var anchor: Node = _btn_ascension if _btn_ascension != null else btn_augments
+	anchor.get_parent().add_child(_btn_imprints)
+	anchor.get_parent().move_child(_btn_imprints, anchor.get_index() + 1)
+	_btn_imprints.pressed.connect(_open_imprints)
+
+
+func _open_imprints() -> void:
+	if _imprint_screen != null and is_instance_valid(_imprint_screen):
+		return
+	var screen := IMPRINT_SCREEN.new() as CanvasLayer
+	add_child(screen)
+	_imprint_screen = screen
+	if _btn_imprints != null:
+		_btn_imprints.disabled = true
+	screen.closed.connect(func() -> void:
+		_imprint_screen = null
+		if _btn_imprints != null:
+			_btn_imprints.disabled = false
+		_invalidate_trade_undo("UNDO CLEARED · Imprint applied.")
+		_refresh_info()
+	)
+
+
 func _create_ascension_button() -> void:
 	if _btn_ascension != null or btn_augments == null:
 		return
@@ -1676,19 +1724,28 @@ func _create_ascension_button() -> void:
 
 ## The vendor's rarity band at a segment (x = min, y = max): it follows the
 ## segment's rarity cap instead of outrunning it.
-## How many offers the vendor lays out: six through segment 2, eight at
-## 3-5, ten from segment 6.
+## The vendor's shelf never drops what you sold: it grows by eight slots up
+## to this many.
+const VENDOR_SHELF_MAX := 64
+
+
+## How many offers the vendor lays out: eight through segment 2, ten at
+## 3-5, twelve from segment 6.
 static func vendor_slot_count(seg: int) -> int:
 	if seg <= 2:
-		return 6
-	if seg <= 5:
 		return 8
-	return 10
+	if seg <= 5:
+		return 10
+	return 12
 
 
+## The vendor's rarity band at a segment (x = min, y = max): one rank under
+## the segment's rarity cap to two above it, so the shop is where rarity is
+## bought without outrunning the run (R1-R4 at segments 1-2, R2-R5 at 3-5,
+## R4-R7 at 9).
 static func vendor_band(seg: int) -> Vector2i:
-	var r_lo: int = clampi(int(floor(float(maxi(1, seg)) / 3.0)) + 1, 1, 8)
-	return Vector2i(r_lo, clampi(r_lo + 2, r_lo, 10))
+	var cap: int = int(floor(float(maxi(1, seg)) / 3.0)) + 2
+	return Vector2i(clampi(cap - 1, 1, 8), clampi(cap + 2, 2, 10))
 
 
 func _open_ascension() -> void:

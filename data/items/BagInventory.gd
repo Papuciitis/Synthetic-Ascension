@@ -266,9 +266,8 @@ func _consolidate_duplicates() -> void:
 				var candidate_stack: ItemInstance = slots[candidate]
 				if candidate_stack == null or candidate_stack == s:
 					continue
-				if candidate_stack.can_absorb_manifestation_of(s):
-					keep_i = candidate
-					break
+				keep_i = candidate
+				break
 			if keep_i < 0:
 				candidates.append(i)
 				continue
@@ -392,8 +391,9 @@ func _find_absorbing_slot(key: String, incoming: ItemInstance) -> int:
 			return i
 		if _key(candidate.data.id, candidate.rarity, candidate.polarity) != key:
 			continue
-		if candidate.can_absorb_manifestation_of(incoming):
-			return i
+		# Any same-key stack takes the duplicate: a differing rule becomes an
+		# imprint in merge_from instead of a rival stack.
+		return i
 	return -1
 
 

@@ -151,6 +151,15 @@ func can_absorb_manifestation_of(incoming: ItemInstance) -> bool:
 func merge_from(incoming: ItemInstance) -> bool:
 	if not can_merge(incoming):
 		return false
+	# Rules: the destination keeps its own (the copy you committed to), adopts
+	# one it lacks, and a different rule on the incoming copy is not destroyed
+	# but kept as an imprint for the Hub's imprinter.
+	var dissolved_rule: StringName = &""
+	if incoming.manifestation_id != &"" and incoming.manifestation_id != manifestation_id:
+		if manifestation_id == &"":
+			manifestation_id = incoming.manifestation_id
+		else:
+			dissolved_rule = incoming.manifestation_id
 	# Telemetry only: the exact state before this merge (the incoming copy
 	# as material, before the auto-swap moves its payload).
 	var reporting := RunEvents != null and RunEvents.item_operation.has_connections()
@@ -223,6 +232,8 @@ func merge_from(incoming: ItemInstance) -> bool:
 		BalanceItemContext.report(&"merged", self, {"dest_before": before, "dest_after": _balance_state(), "incoming": material,
 			"mass": mass, "quality": quality, "swapped": int(before.get("rarity", 0)) < int(material.get("rarity", 0)),
 			"ranked_up": rarity > int(before.get("rarity", 0)), "container": BalanceItemContext.take_container()})
+	if dissolved_rule != &"" and Global != null and Global.has_method("store_imprint"):
+		Global.store_imprint(dissolved_rule)
 	return true
 
 

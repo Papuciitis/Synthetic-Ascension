@@ -850,11 +850,12 @@ func _test_a_deliberate_merge_keeps_the_destination_rule() -> void:
 	)
 	_check(destination.manifestation_id == ids[0], "the destination's rule wins; the incoming one dissolves")
 
-	# An item with no rule of its own does not silently inherit one either:
-	# that would make Manifestations farmable by feeding duplicates.
+	# An item with no rule of its own adopts the one fed into it: with the
+	# imprint model nothing a merge touches is ever lost.
 	var blank := _make_instance(data, 4, 0.4, &"")
 	_check(blank.merge_from(_make_instance(data, 4, 0.4, ids[1])), "a plain item still merges duplicates")
-	_check(blank.manifestation_id == &"", "but it stays plain - rules are never gained by feeding")
+	_check(blank.manifestation_id == ids[1], "and adopts the rule the copy carried")
+	_check(Global.attempt_imprints.has(ids[1]), "the rule the first merge dissolved is held as an imprint")
 
 	# The protection lives one level up, in AUTOMATIC routing.
 	_check(
@@ -920,8 +921,9 @@ func _test_equipped_feed_declines_conflicting_rule() -> void:
 	inventory.set_item(ManifestationCatalog.SLOT_RING, worn)
 
 	var found := _make_instance(data, 2, 0.2, ids[1])
+	Global.attempt_imprints.clear()
 	var consumed := inventory.add_or_feed(found)
-	_check(not consumed, "an auto-pickup will not dissolve a rival rule into the worn item")
+	_check(consumed and worn.manifestation_id == ids[0] and Global.attempt_imprints.has(ids[1]), "an auto-pickup feeds the worn item: its rule wins and the rival rule is held as an imprint")
 	_check(worn.manifestation_id == ids[0], "the worn item is unchanged")
 	_check(found.manifestation_id == ids[1], "the found item still exists with its own rule to choose from")
 
@@ -963,7 +965,7 @@ func _test_bag_consolidation_keeps_rules_apart() -> void:
 		var stack: ItemInstance = bag.get_at(slot_index)
 		if stack != null:
 			surviving[stack.manifestation_id] = true
-	_check(surviving.has(ids[0]) and surviving.has(ids[1]), "the bag keeps two differently-manifested stacks apart")
+	_check(surviving.size() == 1 and surviving.has(ids[0]) and Global.attempt_imprints.has(ids[1]), "the bag consolidates two differently-manifested stacks; the first rule stays, the second is held as an imprint")
 
 	# But a plain copy must still consolidate into one of them.
 	var plain := _make_instance(data, 3, 0.3, &"")
@@ -972,36 +974,26 @@ func _test_bag_consolidation_keeps_rules_apart() -> void:
 	for slot_index in range(bag.get_slot_count()):
 		if bag.get_at(slot_index) != null:
 			stacks += 1
-	_check(stacks == 2, "a plain duplicate consolidates instead of taking a third slot (%d stacks)" % stacks)
+	_check(stacks == 1, "a plain duplicate consolidates into the same stack (%d stacks)" % stacks)
 
-	# And a duplicate of the SECOND rule must find that second stack, not stall
-	# on the rival-ruled one the index happens to remember first. Otherwise a
-	# manifested item could never rank up from its own duplicates, which is the
-	# promise that makes committing to a low-rank rule safe.
-	var second_rule_before: int = int((bag.get_at(1) as ItemInstance).rarity)
+	# And duplicates of the SECOND rule feed that one stack too: a manifested
+	# item always ranks up from its own duplicates, whichever rule they roll,
+	# which is the promise that makes committing to a low-rank rule safe.
+	var stack_before: int = int((bag.get_at(0) as ItemInstance).rarity)
 	for _i in range(10):
 		bag.add_instance(_make_instance(data, 3, 0.3, ids[1]))
-	var still_two := 0
-	var second_stack: ItemInstance = null
+	var still_one := 0
+	var the_stack: ItemInstance = null
 	for slot_index in range(bag.get_slot_count()):
 		var stack: ItemInstance = bag.get_at(slot_index)
 		if stack == null:
 			continue
-		still_two += 1
-		if stack.manifestation_id == ids[1]:
-			second_stack = stack
-	_check(still_two == 2, "same-rule duplicates keep consolidating (%d stacks)" % still_two)
-	_check(
-		second_stack != null and second_stack.rarity > second_rule_before,
-		"and they rank their own stack up (R%d -> R%d)" % [
-			second_rule_before,
-			(second_stack.rarity if second_stack != null else -1),
-		]
-	)
+		still_one += 1
+		the_stack = stack
+	_check(still_one == 1 and the_stack != null and int(the_stack.rarity) > stack_before and the_stack.manifestation_id == ids[0], "ten duplicates of the other rule rank the one stack up (R%d -> R%d) and its rule stays" % [stack_before, int(the_stack.rarity) if the_stack != null else -1])
+	_check(Global.attempt_imprints.size() == 1, "the dissolved rule is held once, not ten times")
 
 
-## The point of the restructure: a noun is a resource several rules read and
-## write, not a label. These assert the sharing itself, one noun at a time.
 func _test_shared_nouns_are_shared() -> void:
 	var state := ManifestationState.new()
 	add_child(state)

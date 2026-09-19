@@ -243,12 +243,10 @@ func add_or_feed(inst: ItemInstance, origin: Variant = null, allow_rule_loss: bo
 		if it == null or it.locked or inst.locked:
 			continue
 		if it.data != null and it.data.id == inst.data.id and int(it.polarity) == int(inst.polarity):
-			# Automatic routing must not dissolve a Manifestation the player
-			# has never seen. Decline instead and let the caller bag it, so
-			# choosing between two rules stays a decision rather than an
-			# accident. Player-driven merges pass allow_rule_loss.
-			if not allow_rule_loss and not it.can_absorb_manifestation_of(inst):
-				continue
+			# Duplicates always feed the copy you wear: its rule wins, and a
+			# different rule on the copy is kept as an imprint by merge_from,
+			# so nothing needs to be declined here (allow_rule_loss is kept
+			# for callers, it no longer changes the outcome).
 
 			var old_r: int = int(it.rarity)
 

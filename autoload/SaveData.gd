@@ -89,6 +89,8 @@ const CURRENT_SAVE_VERSION := 1
 
 # Exploration loot (prevents infinite respawn when chunks stream)
 @export var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
+## Manifestation imprints held for the Hub's imprinter.
+@export var attempt_imprints: PackedStringArray = PackedStringArray()
 @export var attempt_big_choice_source_segment: int = 0 # Segment index that granted the pending big choice (usually 5)
 
 # Attempt modifiers (run-shaping choices; persists for this attempt only)
