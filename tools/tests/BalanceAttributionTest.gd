@@ -71,6 +71,9 @@ func _settle() -> void:
 func _run() -> void:
 	# Pure normalization first.
 	var basic := BalanceAttribution.from_tags(_native("melee", "slash"))
+	# War room M8: the same tags read from the memo, equal and shared.
+	var again := BalanceAttribution.from_tags(_native("melee", "slash"))
+	_check(again == basic and is_same(again, basic) and BalanceAttribution._memo.size() >= 1, "a repeated tag set is served from the memo")
 	_check(basic.origin_id == "native:melee" and basic.emitter_id == "native:melee:slash" and basic.cast_id == "native:1", "a native slash is its own origin and emitter")
 	var blink := BalanceAttribution.from_tags(_tree("melee", "MOV", "lunge", "blink:1"))
 	_check(blink.origin_id == "ascension:MOV" and blink.emitter_id == "ascension:MOV:lunge", "a BLINK strike is rooted at BLINK")

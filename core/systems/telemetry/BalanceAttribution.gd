@@ -35,9 +35,28 @@ static func unknown() -> Dictionary:
 	return {"origin_id": UNKNOWN, "emitter_id": UNKNOWN, "family": UNKNOWN, "style": "", "generation": 0, "cast_id": ""}
 
 
+## A hit's tags repeat thousands of times per run; the parsed attribution
+## is memoized by the joined tags (war room M8). Callers never mutate the
+## returned dictionary.
+const MEMO_CAP := 4096
+static var _memo: Dictionary = {}
+
+
 static func from_tags(tags: PackedStringArray) -> Dictionary:
 	if tags.is_empty():
 		return unknown()
+	var key := "|".join(tags)
+	var cached: Variant = _memo.get(key)
+	if cached != null:
+		return cached
+	var parsed_out := _from_tags_uncached(tags)
+	if _memo.size() >= MEMO_CAP:
+		_memo.clear()
+	_memo[key] = parsed_out
+	return parsed_out
+
+
+static func _from_tags_uncached(tags: PackedStringArray) -> Dictionary:
 	var parsed := AscensionTags.parse(tags)
 	var family := String(parsed["family"])
 	var core := String(parsed["core"])
