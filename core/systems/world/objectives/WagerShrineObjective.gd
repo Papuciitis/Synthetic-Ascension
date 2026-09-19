@@ -22,11 +22,26 @@ signal resolved(shrine: WagerShrineObjective, tier: int, won: bool)
 
 ## Followers staked and the rarity band bought, per tier. Deliberately steep -
 ## a wager the player takes automatically is not a wager.
+## Every tier's band rides the segment's rarity cap (`over_cap_min` /
+## `over_cap_max` above `Global.rarity_soft_cap_for(1)`) instead of fixed
+## R3-R5 / R5-R7 / R7-R10, so the shrine stops being the segment-1 source
+## of R7+ and keeps paying more as the run goes deeper (loot loop pass L5).
 const TIERS: Array[Dictionary] = [
-	{"stake": 8, "rarity_min": 3, "rarity_max": 5, "base_odds": 0.85, "label": "OFFERING"},
-	{"stake": 22, "rarity_min": 5, "rarity_max": 7, "base_odds": 0.62, "label": "PLEDGE"},
-	{"stake": 55, "rarity_min": 7, "rarity_max": 10, "base_odds": 0.40, "label": "COVENANT"},
+	{"stake": 20, "over_cap_min": 0, "over_cap_max": 2, "base_odds": 0.85, "label": "OFFERING"},
+	{"stake": 35, "over_cap_min": 1, "over_cap_max": 3, "base_odds": 0.62, "label": "PLEDGE"},
+	{"stake": 55, "over_cap_min": 2, "over_cap_max": 4, "base_odds": 0.40, "label": "COVENANT"},
 ]
+
+
+## The rarity band a tier pays at the current segment (x = min, y = max).
+static func tier_band(tier: int) -> Vector2i:
+	if tier < 0 or tier >= TIERS.size():
+		return Vector2i.ZERO
+	var entry: Dictionary = TIERS[tier]
+	if entry.has("rarity_min"):
+		return Vector2i(int(entry["rarity_min"]), int(entry["rarity_max"]))
+	var cap: int = Global.rarity_soft_cap_for(1) if Global != null else 2
+	return Vector2i(cap + int(entry.get("over_cap_min", 2)), cap + int(entry.get("over_cap_max", 4)))
 
 const LOOT_SPAWNER_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
 
@@ -185,8 +200,9 @@ func _pay_out(tier: int) -> void:
 	spawner.set("spawn_chance", 1.0)
 	spawner.set("count_min", 1)
 	spawner.set("count_max", 1 if tier < 2 else 2)
-	spawner.set("rarity_min", int(TIERS[tier]["rarity_min"]))
-	spawner.set("rarity_max", int(TIERS[tier]["rarity_max"]))
+	var band := tier_band(tier)
+	spawner.set("rarity_min", band.x)
+	spawner.set("rarity_max", band.y)
 	spawner.set("require_walkable", false)
 	spawner.set("scatter_radius", 40.0)
 	spawner.global_position = global_position

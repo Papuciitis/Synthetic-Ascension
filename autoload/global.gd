@@ -613,6 +613,12 @@ func equipped_manifestation_tags() -> Dictionary:
 	return held
 
 
+## The segment's rarity soft cap for a source of the given rank: rarity
+## promotions at or above it run at the context's over-cap chance.
+func rarity_soft_cap_for(source_rank: int = 0) -> int:
+	return floori(float(maxi(1, attempt_segment)) / 3.0) + source_rank + 1
+
+
 func build_item_drop_context(
 	rarity_min: int,
 	rarity_max: int,
@@ -632,7 +638,10 @@ func build_item_drop_context(
 	context.is_elite = is_elite
 	context.rarity_min = rarity_min
 	context.rarity_max = rarity_max
-	context.rarity_soft_cap = maxi(rarity_max + 1, floori(float(context.segment_index) / 3.0) + source_rank)
+	# One cap for every source (loot loop pass L4): an authored band above it
+	# keeps its minimum but promotes at the over-cap chance. The old
+	# max(rarity_max + 1, ...) exempted any source that asked for a high band.
+	context.rarity_soft_cap = rarity_soft_cap_for(source_rank)
 	context.player_luck = run_luck
 	context.equipped_rarity_average = get_equipped_rarity_average()
 	context.source_type = source_type

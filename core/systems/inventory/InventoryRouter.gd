@@ -125,9 +125,13 @@ func _equip_from_bag(bag_inv: BagInventory, bag_slot_index: int, inv: Inventory,
 		# Equipping a duplicate of the equipped item MERGES instead of
 		# swapping: the swap just traded which copy was frozen and made a
 		# diverged r0-bag/r1-equipped pair impossible to consolidate.
+		# ... unless the bag copy carries a Manifestation the worn one would
+		# dissolve: that copy swaps in instead, and the merge stays a deliberate
+		# bag action (loot loop pass L6).
 		if protected_current != null and protected_current.data != null \
 		and protected_current.data.id == inst.data.id \
-		and int(protected_current.polarity) == int(inst.polarity):
+		and int(protected_current.polarity) == int(inst.polarity) \
+		and protected_current.can_absorb_manifestation_of(inst):
 			# The UI staged a bag origin for the swap-back flight that is not
 			# going to happen; leaving it armed would make the NEXT origin-less
 			# bag add (a vendor buy, a granted reward) fly in from this slot,
@@ -199,7 +203,8 @@ func _move_between(src_inv: Object, src_i: int, dst_inv: Object, dst_i: int, ori
 		# frozen and can never consolidate a diverged pair).
 		if dst != null and dst.data != null \
 		and dst.data.id == inst.data.id \
-		and int(dst.polarity) == int(inst.polarity):
+		and int(dst.polarity) == int(inst.polarity) \
+		and dst.can_absorb_manifestation_of(inst):
 			# No swap-back flight happens on a merge; disarm the staged origin
 			# (see equip_from_bag) before the source stack disappears.
 			if not (src_inv is Inventory) and src_inv.has_method("set_pending_ui_origin"):

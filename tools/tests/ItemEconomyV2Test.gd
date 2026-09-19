@@ -66,6 +66,7 @@ func _run() -> void:
 	_test_repeated_merges_never_profit()
 	_test_carrier_path_report()
 	_test_auto_swap_keeps_manifestation()
+	_test_rarity_cap_binds_every_source()
 	print("ItemEconomyV2Test: %d passed, %d failed" % [_passes, _failures])
 	print("passes=%d failures=%d" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -197,6 +198,29 @@ func _test_carrier_path_report() -> void:
 	for line in report:
 		print("[carrier] ", line)
 	_check(worst_value <= 1, "pre-merging low ranks into a carrier is worth at most one Follower of rounding more than feeding them directly (worst %+d; largest effective-rank gain %.4f)" % [worst_value, worst_meter])
+
+
+# Loot loop pass L4: one rarity soft cap for every source. The old cap
+# deferred to the asked band, so the vendor, the shrine and authored loot
+# never met it; now an authored band keeps its minimum but promotes at the
+# over-cap chance once it reaches the segment's cap.
+func _test_rarity_cap_binds_every_source() -> void:
+	var saved_segment := int(Global.attempt_segment)
+	var saved_luck := float(Global.run_luck)
+	Global.run_luck = 0.0
+	Global.attempt_segment = 1
+	_check(Global.rarity_soft_cap_for(0) == 1 and Global.rarity_soft_cap_for(1) == 2, "segment 1: cap 1 for enemies, 2 for rank-1 sources")
+	var vendor := Global.build_item_drop_context(1, 3, &"vendor", 1)
+	_check(vendor.rarity_soft_cap == 2, "the vendor's R1-R3 band no longer lifts the cap (cap %d)" % vendor.rarity_soft_cap)
+	var below := ItemGenerator.promotion_chance(vendor, 1)
+	var above := ItemGenerator.promotion_chance(vendor, 3)
+	_check(above < below and _near(above, below * vendor.overcap_chance, 0.000001), "a vendor item at or above the cap promotes at the over-cap share (%.3f of %.3f)" % [above, below])
+	var shrine := Global.build_item_drop_context(4, 6, &"exploration", 1)
+	_check(shrine.rarity_soft_cap == 2 and ItemGenerator.promotion_chance(shrine, 6) < ItemGenerator.promotion_chance(shrine, 1), "an authored R4-R6 band keeps its minimum but promotes slowly above the cap")
+	Global.attempt_segment = 9
+	_check(Global.rarity_soft_cap_for(1) == 5 and Global.build_item_drop_context(0, 0, &"enemy", 0).rarity_soft_cap == 4, "segment 9: cap 5 for rank-1 sources, 4 for enemies")
+	Global.attempt_segment = saved_segment
+	Global.run_luck = saved_luck
 
 
 func _test_auto_swap_keeps_manifestation() -> void:

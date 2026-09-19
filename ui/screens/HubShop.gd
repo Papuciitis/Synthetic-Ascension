@@ -1438,8 +1438,11 @@ func _generate_vendor_stock(force: bool) -> void:
 		return
 
 	# Rarity range grows with segment, but stays sane.
-	var r_lo: int = clampi(1 + int(floor(float(seg - 1) / 2.0)), 1, 8)
-	var r_hi: int = clampi(r_lo + 3, r_lo, 10)
+	# Loot loop pass L3: the band follows the segment's rarity cap instead of
+	# outrunning it (R1-R3 through segment 2, R2-R4 at 3-5, R3-R5 at 6-8).
+	var band := vendor_band(seg)
+	var r_lo: int = band.x
+	var r_hi: int = band.y
 
 	# Fill ~10 slots
 	var want: int = 10
@@ -1669,6 +1672,13 @@ func _create_ascension_button() -> void:
 	btn_augments.get_parent().add_child(_btn_ascension)
 	btn_augments.get_parent().move_child(_btn_ascension, btn_augments.get_index() + 1)
 	_btn_ascension.pressed.connect(_open_ascension)
+
+
+## The vendor's rarity band at a segment (x = min, y = max): it follows the
+## segment's rarity cap instead of outrunning it.
+static func vendor_band(seg: int) -> Vector2i:
+	var r_lo: int = clampi(int(floor(float(maxi(1, seg)) / 3.0)) + 1, 1, 8)
+	return Vector2i(r_lo, clampi(r_lo + 2, r_lo, 10))
 
 
 func _open_ascension() -> void:

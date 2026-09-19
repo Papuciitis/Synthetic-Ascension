@@ -1,5 +1,7 @@
 extends Node
 
+const HUB_SHOP := preload("res://ui/screens/HubShop.gd")
+
 # Loot degenerate-loop pass (2026-09-19). Every Follower- or item-creating
 # loop the item layer could offer, pinned on the real item database, the
 # real pricing, the real merge law, the real bag consolidation and the real
@@ -39,6 +41,7 @@ func _run() -> void:
 	_test_vendor_merge_sell_is_lossy_on_real_items()
 	_test_bag_consolidation_never_creates_value()
 	_test_ascension_buy_refund_is_neutral()
+	_test_vendor_band_and_dead_items()
 	_test_undo_snapshots_keep_value()
 	_test_reconstruction_rule()
 	_test_rebuild_normalizes_damaged_instances()
@@ -276,6 +279,32 @@ func _test_ascension_buy_refund_is_neutral() -> void:
 	Global.attempt_ascension = saved_state
 	Global.ascension_ledger()
 	Global.followers = saved_followers
+
+
+# ---------------------------------------------------------------------------
+# 5. The vendor band follows the cap (L3); dead items leave on load (P5)
+# ---------------------------------------------------------------------------
+
+func _test_vendor_band_and_dead_items() -> void:
+	var saved_segment := int(Global.attempt_segment)
+	_check(HUB_SHOP.vendor_band(1) == Vector2i(1, 3) and HUB_SHOP.vendor_band(2) == Vector2i(1, 3), "the vendor sells R1-R3 through segment 2")
+	_check(HUB_SHOP.vendor_band(4) == Vector2i(2, 4) and HUB_SHOP.vendor_band(9) == Vector2i(4, 6) and HUB_SHOP.vendor_band(15) == Vector2i(6, 8), "then R2-R4 at 4, R4-R6 at 9, R6-R8 at 15")
+	var within := true
+	for segment in range(1, 30):
+		Global.attempt_segment = segment
+		if HUB_SHOP.vendor_band(segment).y > Global.rarity_soft_cap_for(1) + 1:
+			within = false
+	_check(within, "at every segment the band's top is at most one rank above the vendor's cap")
+	Global.attempt_segment = saved_segment
+	var dead := ItemInstance.new()
+	var live_data := ItemData.new()
+	live_data.id = "loop_live"
+	live_data.mods = StatDelta.new()
+	live_data.rarity_base = StatDelta.new()
+	var live := ItemInstance.from_roll(live_data, 2, ItemInstance.Polarity.POS, 0.5, false)
+	var slots: Array = [dead, null, live]
+	var rebuilt := ItemScaling.rebuild(slots)
+	_check(slots[0] == null and slots[2] == live and rebuilt == 1, "rebuild drops an instance whose data is gone and keeps the live one (%d rebuilt)" % rebuilt)
 
 
 # ---------------------------------------------------------------------------

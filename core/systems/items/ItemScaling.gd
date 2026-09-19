@@ -241,7 +241,15 @@ static func accessory_factor(item_id: String, rank: float) -> float:
 ## id, rank and meter alone: no feeding, no rerolling, no shared resources.
 static func rebuild(items: Array) -> int:
 	var count := 0
-	for item in items:
+	for index in items.size():
+		var item: Variant = items[index]
+		if item is ItemInstance and (item as ItemInstance).data == null:
+			# An instance whose ItemData no longer exists (a removed or renamed
+			# item in an old save) would be worth 0, offered for 0 and land
+			# in the bag as a dead stack (break-the-game audit P5). Drop it.
+			push_warning("ItemScaling.rebuild: dropping an item whose data no longer exists from slot %d" % index)
+			items[index] = null
+			continue
 		if item is ItemInstance and (item as ItemInstance).data != null:
 			var inst := item as ItemInstance
 			# A hand-edited or damaged save can carry a negative rank or a

@@ -62,7 +62,7 @@ func _test_wager_tiers() -> void:
 		var higher: Dictionary = tiers[index]
 		_check(int(higher["stake"]) > int(lower["stake"]), "tier %d costs more" % index)
 		_check(
-			int(higher["rarity_min"]) > int(lower["rarity_min"]),
+			WagerShrineObjective.tier_band(index).x > WagerShrineObjective.tier_band(index - 1).x,
 			"tier %d pays better" % index
 		)
 		_check(
@@ -70,6 +70,15 @@ func _test_wager_tiers() -> void:
 			"tier %d is less likely to pay at all" % index
 		)
 
+	# The top tier rides the segment's rarity cap (loot loop pass L5): no
+	# R7+ at segment 1, and it keeps climbing with the segment.
+	var saved_segment := int(Global.attempt_segment)
+	Global.attempt_segment = 1
+	_check(WagerShrineObjective.tier_band(0) == Vector2i(2, 4) and WagerShrineObjective.tier_band(2) == Vector2i(4, 6), "at segment 1 the Offering pays R2-R4 and the Covenant R4-R6 (%s)" % str(WagerShrineObjective.tier_band(2)))
+	Global.attempt_segment = 9
+	_check(WagerShrineObjective.tier_band(2) == Vector2i(7, 9), "at segment 9 it pays R7-R9")
+	Global.attempt_segment = saved_segment
+	_check(int(tiers[0]["stake"]) == 20, "the first stake is 20 Followers, not pocket change")
 	# Luck has to bend it, and the curve must stay a probability.
 	var before: float = shrine.odds_for(1)
 	Global.run_luck = 40.0

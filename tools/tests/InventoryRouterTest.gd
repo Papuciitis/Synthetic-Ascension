@@ -193,6 +193,40 @@ func _test_equip_same_id_feeds_instead_of_swapping() -> void:
 	_check(_total(inv, bag) == 1, "two copies became one fed instance - consumed by design, never lost")
 
 
+# Loot loop pass L6: a bag copy carrying a Manifestation the worn copy would
+# dissolve is not fed into it by an equip; it swaps in, and the merge stays
+# a deliberate bag action.
+func _test_equip_same_id_with_other_manifestation_swaps() -> void:
+	_world_drops.clear()
+	var inv := Inventory.new()
+	var bag := BagInventory.new()
+	var worn := _make_item("ring_rule", ItemData.EquipSlot.RING)
+	worn.manifestation_id = &"momentum"
+	var copy := _make_item("ring_rule", ItemData.EquipSlot.RING)
+	copy.manifestation_id = &"shard"
+	inv.set_item(ItemData.EquipSlot.RING, worn)
+	bag.set_at(0, copy)
+	var ok := InvRouter.equip_from_bag(bag, 0, inv)
+	_check(ok, "equipping a same-id copy with a different Manifestation succeeds")
+	_check(inv.get_at(ItemData.EquipSlot.RING) == copy and _bag_find(bag, worn) >= 0, "and SWAPS: the copy is worn, the old one is in the bag, nothing dissolved")
+	_check(_total(inv, bag) == 2 and copy.manifestation_id == &"shard" and worn.manifestation_id == &"momentum", "both rules survive")
+	# Same through a drag between containers.
+	var inv2 := Inventory.new()
+	var bag2 := BagInventory.new()
+	var worn2 := _make_item("ring_rule", ItemData.EquipSlot.RING)
+	worn2.manifestation_id = &"momentum"
+	var copy2 := _make_item("ring_rule", ItemData.EquipSlot.RING)
+	copy2.manifestation_id = &"shard"
+	inv2.set_item(ItemData.EquipSlot.RING, worn2)
+	bag2.set_at(3, copy2)
+	var moved := InvRouter.move_between(bag2, 3, inv2, ItemData.EquipSlot.RING)
+	_check(moved and inv2.get_at(ItemData.EquipSlot.RING) == copy2 and _total(inv2, bag2) == 2, "a drag onto the worn copy swaps too")
+	var plain := _make_item("ring_rule", ItemData.EquipSlot.RING)
+	bag2.set_at(0, plain)
+	var fed := InvRouter.equip_from_bag(bag2, 0, inv2)
+	_check(fed and inv2.get_at(ItemData.EquipSlot.RING) == copy2 and _total(inv2, bag2) == 2, "a rule-less copy still feeds the worn one")
+
+
 func _test_bag_only_item_wont_equip() -> void:
 	_world_drops.clear()
 	var inv := Inventory.new()
@@ -569,6 +603,7 @@ func _run() -> void:
 	_test_equip_swap_occupied()
 	_test_equip_swap_with_full_bag()
 	_test_equip_same_id_feeds_instead_of_swapping()
+	_test_equip_same_id_with_other_manifestation_swaps()
 	_test_bag_only_item_wont_equip()
 	_test_move_between_bag_and_equip_both_ways()
 	_test_move_between_wrong_equip_slot_refused()
