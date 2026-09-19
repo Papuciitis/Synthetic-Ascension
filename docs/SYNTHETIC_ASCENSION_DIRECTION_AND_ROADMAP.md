@@ -1780,3 +1780,50 @@ and balance equipment, tree investment, refreshes and recurring sacrifices
 together. Preserve early recruitment and exciting early builds; provide later
 growth and decisions beyond segment 9. This update adds audit documentation and
 a reproducible probe only; no gameplay formulas or tree prices changed.
+
+## 2026-09-19 — balance revision 2, the seven NEG archetypes, the audit series, the performance war room
+
+Thirty-five local commits (`4d56d7b` … `b5304a3`), all headless-verified,
+none pushed. What landed, by the ten workstreams asked for:
+
+1. **Progression-tree audit**: `docs/audits/2026-09-19-progression-tree-audit.md`,
+   28 proposals, no code; the redesign stays deferred.
+2. **NEG expansion**: Equilibrium Sigil, Litany of Wounds, Gambler's Rite and
+   the Gravemarch polarity rule are built on the shared `BurdenResolver`
+   (`NegArchetypesTest`, 62 checks); the spec is
+   `docs/design/2026-09-19-neg-expansion-and-playtest-spec.md` and the
+   measured study of all seven against the tree is
+   `docs/design/2026-09-19-neg-archetypes-and-the-tree.md` (a relic costs a
+   set slot; Doctrine is safe; the Lens is survivability; Luck is invisible
+   to the tree; no global haste cap; the cursed Ballast Frame now capped).
+3. **Build simulator**: `tools/tests/BuildSimulator.tscn` with campaigns,
+   ablation, set, NEG-wardrobe and held-Q modes and the report scripts under
+   `tools/sim/`; results under `docs/audits/2026-09-19-build-simulator/`.
+   Balance revision 2 rode on it: continuous item curves, accessory
+   effects, set scaling channels, merge progress and prices aligned with
+   upgrade value (`ItemScaling`, `SetScaling`, `RarityMath`).
+4. **Performance war room**: `docs/audits/2026-09-19-performance-war-room.md`
+   with fresh horde numbers at 60 / 100 / 180 / 300, the plan M0-M7, and
+   M1 and M3 built: every ground texture warmed at configure (the first
+   plaza paid 25-31 ms per first-touch PNG), blocker physics and rendering
+   staged over the queue steps after content (worst streaming step 33 ms
+   to 8 ms headless), and every recorder hitch over 28 ms tagged with the
+   subsystem behind it. `RoamStreamProbe`, `ChunkStagedBlockerTest`,
+   `PerformanceHitchTaggerTest`. M0 (rendered) needs the display.
+5. **Segment 1 design pass**: `docs/design/2026-09-19-segment-1-design-pass.md`.
+6. **Enemy roster audit**: `docs/audits/2026-09-19-enemy-roster-audit.md`,
+   eight findings, roster changes and five new enemies proposed, not built.
+7. **Loot deep pass**: `docs/audits/2026-09-19-loot-loop-pass.md`, the loop
+   invariants pinned by `LootLoopTest` (27 checks), proposals L1-L6 open.
+8. **Run telemetry**: balance recorder revision 2 with `run_history.py`
+   across captures; the human baseline capture is still owed.
+9. **Break-the-game audit**: `docs/audits/2026-09-19-break-the-game-audit.md`;
+   five fixed with tests (slow-motion leak at run end, the reconstruction
+   survival rule shared by the Hub and the wager shrine, damaged saves
+   normalized, autosave suppression released, the tree hotkey while dead).
+10. **Vertical slice**: `docs/design/2026-09-19-vertical-slice-definition.md`,
+    acceptance criteria A1-A10 with their measures and the playtest script.
+
+Everything here is a headless result; the next human run with both
+recorders on is what turns "built" into "verified".
+
