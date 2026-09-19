@@ -54,6 +54,37 @@ const RITE_SNIPER_CROSSFIRE: Dictionary = {
 }
 
 const CATALOG: Array[Dictionary] = [
+	# Segment 1 pass S5: two authored punctuations sized for the tutorial's
+	# service street and approach (three chargers, two snipers close in).
+	{
+		"id": &"charger_wedge_small",
+		"label": "CHARGER WEDGE",
+		"callout": "Three chargers line up on your flank.",
+		"answer": "move laterally",
+		"mode": &"flank",
+		"distance": 640.0,
+		"min_phase": &"disturbance",
+		"cooldown": 180.0,
+		"members": [
+			{"scene": CHARGER, "offset": Vector2(0.0, 0.0), "elite": false},
+			{"scene": CHARGER, "offset": Vector2(70.0, -80.0), "elite": false},
+			{"scene": CHARGER, "offset": Vector2(70.0, 80.0), "elite": false},
+		],
+	},
+	{
+		"id": &"sniper_pair",
+		"label": "CROSSFIRE",
+		"callout": "Two sights settle on you.",
+		"answer": "break line of sight",
+		"mode": &"around",
+		"distance": 640.0,
+		"min_phase": &"disturbance",
+		"cooldown": 180.0,
+		"members": [
+			{"scene": SNIPER, "offset": Vector2(520.0, -380.0), "elite": false},
+			{"scene": SNIPER, "offset": Vector2(-520.0, 380.0), "elite": false},
+		],
+	},
 	{
 		"id": &"charger_wedge",
 		"label": "CHARGER WEDGE",

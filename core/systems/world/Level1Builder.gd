@@ -362,6 +362,7 @@ func _plan_service_district() -> void:
 		"secondary": true,
 		"sec_title": "SECONDARY • LOADING OFFICE",
 		"sec_detail": "Manifest records and unshipped stock. Containment has not swept it.",
+		"sec_followers": 15,
 	})
 
 	# Service warehouse: optional detour with a wide western loading door.
@@ -375,6 +376,7 @@ func _plan_service_district() -> void:
 		"secondary": true,
 		"sec_title": "SECONDARY • SERVICE WAREHOUSE",
 		"sec_detail": "Sealed stock behind a security detail. Clear the interior to claim it.",
+		"sec_followers": 25,
 	})
 
 	# Maintenance kiosk and checkpoint cover give the combat arena landmarks.
@@ -384,6 +386,7 @@ func _plan_service_district() -> void:
 		"secondary": true,
 		"sec_title": "SECONDARY • MAINTENANCE KIOSK",
 		"sec_detail": "Tool lockers and ward spares. A quick detour.",
+		"sec_followers": 20,
 	})
 	_fill_rect_walls(Vector2i(21, -22), Vector2i(4, 5))
 	_fill_rect_walls(Vector2i(32, -29), Vector2i(4, 4))
@@ -948,8 +951,12 @@ func _spawn_indoor_volumes() -> void:
 		cfg.erase("secondary")
 		var sec_title := String(cfg.get("sec_title", ""))
 		var sec_detail := String(cfg.get("sec_detail", ""))
+		# Segment 1 pass S3: a searched room pays believers, not only a bar the
+		# final plaza tops up anyway.
+		var sec_followers := int(cfg.get("sec_followers", 0))
 		cfg.erase("sec_title")
 		cfg.erase("sec_detail")
+		cfg.erase("sec_followers")
 		if is_secondary:
 			cfg["secondary_objective_id"] = building_id
 			_secondaries.append({
@@ -960,6 +967,7 @@ func _spawn_indoor_volumes() -> void:
 				).get_center(),
 				"title": sec_title,
 				"detail": sec_detail,
+				"followers": sec_followers,
 			})
 		volume.configure(rect.position, rect.size, cell_size_px, building_id, cfg)
 		building_id += 1
@@ -1162,6 +1170,8 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 		_security_kills += 1
 		if _security_kills >= maxi(1, security_kills_required):
 			if _grant_milestone(M_SECURITY_CLEARED, resonance_security_clear):
+				# Segment 1 pass S5: the street answers the clear with a wedge.
+				_request_beat(&"charger_wedge_small")
 				_tip(Segment1Text.SECURITY_CLEAR, 3.5)
 		else:
 			_emit_objective(
@@ -1251,6 +1261,9 @@ func _on_secondary_completed(objective_id: int) -> void:
 		return
 	_secondary_completed[objective_id] = true
 	_add_resonance(resonance_secondary, true)
+	var followers := int(entry.get("followers", 0))
+	if followers > 0 and Global != null:
+		Global.transaction_followers(followers, &"secondary_objective", {"objective_id": objective_id}, true, false)
 	if _active_secondary_id == objective_id:
 		_active_secondary_id = -1
 	_secondary_feedback_token += 1
@@ -1321,6 +1334,8 @@ func _refresh_progression_seals() -> void:
 	if _has_milestone(M_WARDSTONE_2) and _has_milestone(M_SECURITY_CLEARED):
 		if not _has_milestone(M_FINAL_CHECKPOINT):
 			if _grant_milestone(M_FINAL_CHECKPOINT, resonance_final_checkpoint):
+				# Segment 1 pass S5: two sights on the approach.
+				_request_beat(&"sniper_pair")
 				_tip(Segment1Text.CHECKPOINT_DISABLED, 4.0)
 				# Late-segment guidance: from here the player should know
 				# WHERE they're escaping to, not wander the campus.
@@ -1498,6 +1513,14 @@ const STAGE_PHASE := {
 	Segment1SpawnProfile.Stage.OUTER_APPROACH: &"ascension",
 	Segment1SpawnProfile.Stage.EXIT_RITE: &"collapse",
 }
+
+## An authored encounter beat through the director (it places, announces
+## and records it; a placement the footprint refuses is dropped quietly).
+func _request_beat(beat_id: StringName) -> void:
+	var director := get_tree().get_first_node_in_group(&"encounter_director")
+	if director != null and director.has_method("try_spawn_beat"):
+		director.call("try_spawn_beat", beat_id)
+
 
 func _set_spawn_stage(stage: int) -> void:
 	if _spawner == null or not is_instance_valid(_spawner):

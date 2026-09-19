@@ -21,6 +21,7 @@ const ORBITER := preload("res://scenes/world/enemies/EnemyOrbiter.tscn")
 const SPITTER := preload("res://scenes/world/enemies/EnemySpitter.tscn")
 const CHARGER := preload("res://scenes/world/enemies/EnemyCharger.tscn")
 const BOMBER := preload("res://scenes/world/enemies/EnemyBomber.tscn")
+const SNIPER := preload("res://scenes/world/enemies/EnemySniper.tscn")
 
 # interval, alive cap, batch, roster, grace, allow Threat/elite scaling.
 const STAGES: Array[Dictionary] = [
@@ -29,8 +30,10 @@ const STAGES: Array[Dictionary] = [
 	{"interval": 3.8, "cap": 6, "batch": 1, "roster": [GRUNT, RUNNER], "grace": 1.25, "threat": false},
 	{"interval": 3.25, "cap": 8, "batch": 1, "roster": [GRUNT, RUNNER, ORBITER], "grace": 1.5, "threat": false},
 	{"interval": 2.8, "cap": 11, "batch": 1, "roster": [GRUNT, RUNNER, ORBITER, SPITTER, CHARGER], "grace": 1.5, "threat": false},
-	{"interval": 2.15, "cap": 15, "batch": 2, "roster": [GRUNT, RUNNER, ORBITER, SPITTER, CHARGER, BOMBER], "grace": 1.0, "threat": true},
-	{"interval": 1.35, "cap": 20, "batch": 2, "roster": [GRUNT, RUNNER, ORBITER, SPITTER, CHARGER, BOMBER], "grace": 0.25, "threat": true},
+	# The Sniper joins from the approach (segment 1 pass S6): the one enemy
+	# that changes movement before segment 2's crossfires.
+	{"interval": 2.15, "cap": 15, "batch": 2, "roster": [GRUNT, RUNNER, ORBITER, SPITTER, CHARGER, BOMBER, SNIPER], "grace": 1.0, "threat": true},
+	{"interval": 1.35, "cap": 20, "batch": 2, "roster": [GRUNT, RUNNER, ORBITER, SPITTER, CHARGER, BOMBER, SNIPER], "grace": 0.25, "threat": true},
 ]
 
 static func settings(stage: int) -> Dictionary:
