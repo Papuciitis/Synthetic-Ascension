@@ -201,10 +201,23 @@ func _test_bag_consolidation_never_creates_value() -> void:
 func _test_ascension_buy_refund_is_neutral() -> void:
 	var saved_state: Dictionary = Global.attempt_ascension.duplicate(true)
 	var saved_followers := int(Global.followers)
+	var saved_segment := int(Global.attempt_segment)
 	Global.attempt_ascension = AscensionLedger.fresh_state("melee")
 	var ledger := Global.ascension_ledger()
 	var start := 100000
 	Global.followers = start
+	Global.attempt_segment = 2
+	# L1: refunds only from the Hub.
+	Global.ascension_refund_context_hub = false
+	var mark_cost := int(Global.ascension_buy("EX02").get("cost", 0))
+	_check(Global.ascension_refund("EX02") == 0 and ledger.owns("EX02"), "a refund outside the Hub is refused and the node stays")
+	Global.ascension_refund_context_hub = true
+	var mark_back := Global.ascension_refund("EX02")
+	_check(mark_back == int(round(float(mark_cost) * 0.5)) and not ledger.owns("EX02"), "from the Hub at segment 2 a node refunds half its price (%d of %d)" % [mark_back, mark_cost])
+	_check(is_equal_approx(AscensionLedger.refund_share(1), 0.5) and is_equal_approx(AscensionLedger.refund_share(5), 0.5 * pow(0.9, 3.0)) and is_equal_approx(AscensionLedger.refund_share(40), 0.1), "the share is half through segment 2, a tenth less per segment, floor a tenth")
+	Global.followers = start
+	Global.attempt_ascension = AscensionLedger.fresh_state("melee")
+	ledger = Global.ascension_ledger()
 	# EX02 sits beside the Core and depends on nothing, so the sink's
 	# four-local requirement survives the Spillover refund below.
 	var chain := ["EX01", "EX02", "EX03", "EX04", "EX07", "EX09"]
@@ -221,21 +234,45 @@ func _test_ascension_buy_refund_is_neutral() -> void:
 	spent += sink_paid
 	_check(int(Global.followers) == start - spent and int(ledger.state.get("spent", 0)) == spent, "the ledger and the wallet agree on %d spent" % spent)
 	var back_ex03 := Global.ascension_refund("EX03")
-	_check(back_ex03 == 800 and not ledger.owns("EX07"), "refunding Spillover returns its 400 and Reservoir's 400 (%d) and removes the dependent" % back_ex03)
-	_check(int(Global.followers) == start - spent + 800, "and the wallet gets exactly that back")
+	_check(back_ex03 == 400 and not ledger.owns("EX07"), "refunding Spillover returns half its 400 and half Reservoir's 400 (%d) and removes the dependent" % back_ex03)
+	_check(int(Global.followers) == start - spent + 400, "and the wallet gets exactly that back")
 	var back_sink := Global.ascension_refund("EXS1")
-	_check(back_sink == sink_paid, "refunding the sink returns every rank's price (%d of %d)" % [back_sink, sink_paid])
+	_check(back_sink == int(round(float(sink_paid) * 0.5)), "refunding the sink returns half of every rank's price (%d of %d)" % [back_sink, sink_paid])
 	var back_root := Global.ascension_refund("EX01")
 	_check(not ledger.owns("EX04") and not ledger.owns("EX09") and ledger.owns("EX02"), "refunding Finish takes Bloodletting and Elite Sentence with it and leaves Mark, which never needed it")
-	_check(back_root == spent - 800 - sink_paid - 200, "the root refund is the rest of what was paid except Mark's 200, no more (%d)" % back_root)
-	Global.ascension_refund("EX02")
-	_check(int(Global.followers) == start, "after refunding everything the wallet is exactly where it started (%d)" % int(Global.followers))
+	_check(absi(back_root * 2 - (spent - 800 - sink_paid - 200)) <= 3, "the root refund is half the rest of what was paid except Mark's 200 (%d)" % back_root)
+	var back_mark := Global.ascension_refund("EX02")
+	var refunded := back_ex03 + back_sink + back_root + back_mark
+	_check(int(Global.followers) == start - (spent - refunded) and int(ledger.state.get("forfeited", 0)) == spent - refunded, "after refunding everything the wallet is down by the forfeited half (%d of %d) and the ledger says so" % [spent - refunded, spent])
 	_check(int(ledger.state.get("spent", 0)) == 0 and ledger.owned_ids().size() == 1, "and the ledger holds only the Core again (spent 0, refunded %d)" % int(ledger.state.get("refunded", 0)))
+	var before_cycles := int(Global.followers)
+	var cycle_cost := 0
 	for cycle in range(25):
-		Global.ascension_buy("EX01")
-		Global.ascension_buy("EX04")
+		cycle_cost = int(Global.ascension_buy("EX01").get("cost", 0)) + int(Global.ascension_buy("EX04").get("cost", 0))
 		Global.ascension_refund("EX01")
-	_check(int(Global.followers) == start, "25 buy/refund cycles create nothing (%d)" % int(Global.followers))
+	_check(int(Global.followers) < before_cycles and absi(before_cycles - int(Global.followers) - 25 * cycle_cost / 2) <= 25, "25 buy/refund cycles forfeit half of each cycle's price (%d)" % (before_cycles - int(Global.followers)))
+	# Sworn nodes: a fork never refunds, and a node a fork depends on cannot
+	# be refunded out from under it.
+	Global.followers = start
+	Global.attempt_ascension = AscensionLedger.fresh_state("melee")
+	ledger = Global.ascension_ledger()
+	# Five locals: the fork counts four, so one local can leave without it.
+	var ex04_cost := 0
+	for id in ["EX01", "EX02", "EX03", "EX04", "EX05"]:
+		var cost := int(Global.ascension_buy(id).get("cost", 0))
+		if id == "EX04":
+			ex04_cost = cost
+	var fork_verdict: Dictionary = Global.ascension_buy("EXF2")
+	_check(bool(fork_verdict.get("ok", false)), "fixture: the fork is bought (%s)" % String(fork_verdict.get("reason", "")))
+	_check(Global.ascension_refund("EXF2") == 0 and ledger.owns("EXF2"), "a fork never refunds")
+	var preview: Dictionary = ledger.refund_preview("EX03")
+	_check((preview.get("blocked", []) as Array) == ["EXF2"] and Global.ascension_refund("EX03") == 0 and ledger.owns("EX03"), "refunding the local the fork stands on is refused, naming the fork")
+	var preview_count: Dictionary = ledger.refund_preview("EX01")
+	_check((preview_count.get("blocked", []) as Array) == ["EXF2"], "refunding the root local would drop EX05 and the fork's count, so it is refused too")
+	var ex04_back := Global.ascension_refund("EX04")
+	_check(ex04_back == int(round(float(ex04_cost) * 0.5)) and not ledger.owns("EX04"), "a local nothing sworn depends on still refunds (%d of %d)" % [ex04_back, ex04_cost])
+	Global.ascension_refund_context_hub = false
+	Global.attempt_segment = saved_segment
 	Global.attempt_ascension = saved_state
 	Global.ascension_ledger()
 	Global.followers = saved_followers

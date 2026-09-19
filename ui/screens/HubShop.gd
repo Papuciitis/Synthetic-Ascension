@@ -1682,8 +1682,12 @@ func _open_ascension() -> void:
 	btn_continue.disabled = true
 	if _btn_ascension != null:
 		_btn_ascension.disabled = true
+	if Global != null:
+		Global.ascension_refund_context_hub = true
 	inst.open(false)
 	inst.closed.connect(func() -> void:
+		if Global != null:
+			Global.ascension_refund_context_hub = false
 		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
 		_ascension_screen = null
 		if _btn_ascension != null:

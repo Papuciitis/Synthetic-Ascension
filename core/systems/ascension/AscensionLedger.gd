@@ -286,14 +286,27 @@ func record_purchase(id: String, cost: int, chosen_core: String = "") -> int:
 	return cost
 
 
-## Refund: removes the node and everything that depended on it, returning what
-## was paid (the prototype's free respec). A dependent is an owned node that
-## can no longer reach a Core anchor through owned links, or whose authored
-## requirements no longer hold. Returns the total refunded.
-func refund(id: String) -> int:
+## Sworn nodes never refund (the V4 economy rule): a Revelation, a fork, a
+## Union, an Axiom or a Catastrophe is a commitment, and a refund that would
+## take one down with it is refused rather than forfeited by accident.
+const NON_REFUNDABLE_KINDS := ["core", "gate", "choice", "revelation", "fork", "union", "axiom", "catastrophe", "ascendant"]
+
+
+## The share of a node's recorded price a refund returns at a segment: half
+## in the first two segments, a tenth less each segment after, floor a tenth.
+static func refund_share(segment: int) -> float:
+	return clampf(0.5 * pow(0.9, float(maxi(0, segment - 2))), 0.1, 0.5)
+
+
+## What refunding `id` would do, without doing it: every node that would
+## leave (the node and each dependent that could no longer reach a Core or
+## keep its requirements), the sworn nodes among them (which block the
+## refund), and the total recorded price of the leavers.
+func refund_preview(id: String) -> Dictionary:
+	var out := {"removed": [], "blocked": [], "paid": 0}
 	if not owns(id) or db.kind(id) in ["core", "gate", "choice"]:
-		return 0
-	var owned_map: Dictionary = state["owned"]
+		return out
+	var owned_map: Dictionary = (state["owned"] as Dictionary).duplicate()
 	var paid: Dictionary = state["paid"]
 	var removed: Array = []
 	var total := 0
@@ -303,37 +316,74 @@ func refund(id: String) -> int:
 			if owned_map.has(dep):
 				total += int(paid.get(dep, 0))
 				owned_map.erase(dep)
-				paid.erase(dep)
 				removed.append(dep)
 		pending.clear()
-		var reachable := _reachable_owned()
-		for other in owned_ids():
+		var reachable := _reachable_in(owned_map)
+		for other_key in owned_map.keys():
+			var other := String(other_key)
 			if db.kind(other) in ["core", "gate", "choice"]:
 				continue
 			var holds := db.requirement_holds(db.node(other).get("requires", {}), owned_map, Callable(self, "milestone"))
 			if not holds or not reachable.has(other):
 				pending.append(other)
+	var blocked: Array = []
 	for gone in removed:
+		if db.kind(String(gone)) in NON_REFUNDABLE_KINDS:
+			blocked.append(gone)
+	out["removed"] = removed
+	out["blocked"] = blocked
+	out["paid"] = total
+	return out
+
+
+## Refund: removes the node and everything that depended on it and returns
+## `share` of each leaver's recorded price (the rest is forfeited). Refused
+## when a sworn node would leave, unless `force` (the simulator's ablation
+## removes nodes to measure them, not to respec). Returns the amount refunded.
+func refund(id: String, share: float = 1.0, force: bool = false) -> int:
+	var preview := refund_preview(id)
+	var removed: Array = preview["removed"]
+	if removed.is_empty():
+		return 0
+	if not force and not (preview["blocked"] as Array).is_empty():
+		return 0
+	var owned_map: Dictionary = state["owned"]
+	var paid: Dictionary = state["paid"]
+	var safe_share := clampf(share, 0.0, 1.0)
+	var total := 0
+	var returned := 0
+	for gone_key in removed:
+		var gone := String(gone_key)
+		var price := int(paid.get(gone, 0))
+		total += price
+		returned += int(round(float(price) * safe_share))
+		owned_map.erase(gone)
+		paid.erase(gone)
 		_unequip(gone)
-	state["refunded"] = int(state.get("refunded", 0)) + total
+	state["refunded"] = int(state.get("refunded", 0)) + returned
+	state["forfeited"] = int(state.get("forfeited", 0)) + (total - returned)
 	state["spent"] = maxi(0, int(state.get("spent", 0)) - total)
-	return total
+	return returned
 
 
 ## Owned nodes connected to an owned Core anchor through owned links.
 func _reachable_owned() -> Dictionary:
+	return _reachable_in(state["owned"])
+
+
+func _reachable_in(owned_map: Dictionary) -> Dictionary:
 	var seen: Dictionary = {}
 	var frontier: Array = []
 	for core in cores():
 		var anchor := "core.%s" % core
-		if owns(anchor):
+		if owned_map.has(anchor):
 			seen[anchor] = true
 			frontier.append(anchor)
 	while not frontier.is_empty():
 		var current: String = frontier.pop_back()
 		for other in db.neighbours(current):
 			var next := String(other)
-			if owns(next) and not seen.has(next):
+			if owned_map.has(next) and not seen.has(next):
 				seen[next] = true
 				frontier.append(next)
 	return seen

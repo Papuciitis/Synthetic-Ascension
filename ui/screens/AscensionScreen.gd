@@ -278,12 +278,13 @@ func _show(id: String) -> void:
 					_after_change())
 				_buttons.add_child(toggle)
 		if kind != "core" and kind != "gate" and kind != "choice":
-			var refund := Button.new()
-			refund.text = "Refund"
-			refund.focus_mode = Control.FOCUS_NONE
-			refund.tooltip_text = "Right-click a node to refund it and everything that depended on it."
-			refund.pressed.connect(func() -> void: _refund(id))
-			_buttons.add_child(refund)
+			if Global != null and Global.ascension_refund_context_hub:
+				var refund := Button.new()
+				refund.text = "Refund %d%%" % int(round(100.0 * AscensionLedger.refund_share(Global.attempt_segment)))
+				refund.focus_mode = Control.FOCUS_NONE
+				refund.tooltip_text = "Refund this node and everything that depended on it for a share of the price; Revelations, forks, Unions, Axioms and Catastrophes never refund."
+				refund.pressed.connect(func() -> void: _refund(id))
+				_buttons.add_child(refund)
 	_status.text = "\n".join(lines)
 
 
@@ -321,6 +322,16 @@ func _buy(id: String, chosen_core: String) -> void:
 
 func _refund(id: String) -> void:
 	if Global == null:
+		return
+	if not Global.ascension_refund_context_hub:
+		if _status != null:
+			_status.text = "Refunds are a Hub decision."
+		return
+	var preview: Dictionary = _ledger().refund_preview(id)
+	var blocked: Array = preview.get("blocked", [])
+	if not blocked.is_empty():
+		if _status != null:
+			_status.text = "Sworn: %s never refund%s." % [", ".join(PackedStringArray(blocked)), "" if blocked.size() == 1 else ""]
 		return
 	var back := Global.ascension_refund(id)
 	if back > 0 or not _ledger().owns(id):

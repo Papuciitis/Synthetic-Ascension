@@ -88,9 +88,25 @@ func _run() -> void:
 	var labels := PackedStringArray()
 	for child in screen._buttons.get_children():
 		labels.append(String(child.text))
-	_check(labels.has("Unequip") and labels.has("Refund"), "an owned, equipped Q offers Unequip and Refund (%s)" % str(labels))
+	var has_refund := false
+	for label in labels:
+		if label.begins_with("Refund"):
+			has_refund = true
+	_check(labels.has("Unequip") and not has_refund, "mid-run, an owned, equipped Q offers Unequip and no Refund (%s)" % str(labels))
+	Global.ascension_refund_context_hub = true
+	screen._show("EXQ")
+	has_refund = false
+	for child in screen._buttons.get_children():
+		if String(child.text).begins_with("Refund"):
+			has_refund = true
+	Global.ascension_refund_context_hub = false
+	_check(has_refund, "from the Hub the same node offers a Refund button with its share")
+	_check(Global.ascension_refund("EX02") == 0 and ledger.owns("EX02"), "the mid-run screen cannot refund (Hub only)")
+	Global.ascension_refund_context_hub = true
+	var expected_back := int(round(200.0 * AscensionLedger.refund_share(Global.attempt_segment)))
 	var back: int = Global.ascension_refund("EX02")
-	_check(back == 200 and not ledger.owns("EX02") and Global.followers == 4600 - 200 - 400 - 800 + 200, "a refund returns the price to the wallet (%d)" % Global.followers)
+	Global.ascension_refund_context_hub = false
+	_check(back == expected_back and not ledger.owns("EX02") and Global.followers == 4600 - 200 - 400 - 800 + expected_back, "a Hub refund returns the segment's share of the price to the wallet (%d of 200)" % back)
 	var closed: Array[bool] = []
 	screen.closed.connect(func() -> void: closed.append(true))
 	screen.close()

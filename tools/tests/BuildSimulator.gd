@@ -766,7 +766,7 @@ func _install(job: Dictionary) -> Dictionary:
 			# The real refund rule: dependents that can no longer reach a Core
 			# or whose requirements no longer hold leave with the node.
 			var before: Array = ledger.owned_ids().duplicate()
-			ledger.refund(ablate)
+			ledger.refund(ablate, 1.0, true)
 			var removed: Array = []
 			for id in before:
 				if not ledger.owns(String(id)):

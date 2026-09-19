@@ -363,7 +363,9 @@ func _run() -> void:
 	# still winding up: the refund lands while its engine has live state)
 	var ledger_live := Global.ascension_ledger()
 	Global.set_followers(0)
+	Global.ascension_refund_context_hub = true
 	var back := Global.ascension_refund("EXQ3")
+	Global.ascension_refund_context_hub = false
 	_check(back > 0 and not ledger_live.owns("EXQ3") and _runner.engines.size() >= 1, "refunding a mutation mid-run returns Followers (%d) and rebuilds the engines" % back)
 	for _i in range(90):
 		await get_tree().process_frame

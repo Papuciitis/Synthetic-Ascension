@@ -1179,8 +1179,17 @@ func ascension_buy(id: String, chosen_core: String = "") -> Dictionary:
 	return verdict
 
 
+## True only while the Hub's tree screen is open: refunds are a Hub decision
+## (the loot loop pass, L1); the mid-run screen buys and equips only.
+var ascension_refund_context_hub: bool = false
+
+
+## Refunds `share` of the recorded prices (AscensionLedger.refund_share for
+## the segment) and only from the Hub; sworn nodes never refund.
 func ascension_refund(id: String) -> int:
-	var back := ascension_ledger().refund(id)
+	if not ascension_refund_context_hub:
+		return 0
+	var back := ascension_ledger().refund(id, AscensionLedger.refund_share(attempt_segment))
 	if back > 0:
 		transaction_followers(back, &"ascension_refund", {"node": id}, true, false)
 		request_autosave()
