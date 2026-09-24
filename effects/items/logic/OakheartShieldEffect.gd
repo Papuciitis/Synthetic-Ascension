@@ -62,8 +62,8 @@ func reduction_for(inst: ItemInstance) -> float:
 func reduction_at(inst: ItemInstance, rank: float) -> float:
 	var pct := clampf(inst.active_pct(), -0.25, 0.5) if inst != null else 0.0
 	var extra := maxf(pct, 0.0) * extra_reduction_from_positive_pct
-	var scale := ItemScaling.accessory_factor("acc_oakheart", rank)
-	return clampf((base_damage_reduction + extra) * scale, 0.0, REDUCTION_CAP)
+	var scaling_factor := ItemScaling.accessory_factor("acc_oakheart", rank)
+	return clampf((base_damage_reduction + extra) * scaling_factor, 0.0, REDUCTION_CAP)
 
 
 func setup_with_item(p: Node, inst: ItemInstance, slot: int) -> void:

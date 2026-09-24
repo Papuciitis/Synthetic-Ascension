@@ -106,6 +106,39 @@ func _native(core: String = "magic", path: String = "impact") -> PackedStringArr
 	return tags
 
 
+func _test_tick_replacement() -> void:
+	# Inherit the Word can replace a parent synchronously inside a pulse.
+	# Split Sigils also removes that parent's children, shrinking the array
+	# by two before tick advances to the next entry.
+	var inv := _load(["IN01", "IN04", "IN05", "IN11", "INF2", "INK1"])
+	var parent := inv.place_sigil(_origin)
+	var second := inv.place_sigil(_origin + Vector2(80, 0))
+	var third := inv.place_sigil(_origin + Vector2(160, 0))
+	inv.add_growth(parent, 5.0)
+	_check(inv.sigils.size() == 5, "replacement fixture has three connected parents and two children")
+	var children: Array = inv.sigils.slice(3)
+	_spawn(50000.0, children[-1]["at"])
+	inv._hits = 3.6
+	inv.tick(1.0)
+	_check(inv.sigils.size() == 3 and not inv.sigils.has(parent) and not inv.sigils.has(children[0]) and not inv.sigils.has(children[1]), "a pulse replaces the full parent and both split children")
+	_check(is_equal_approx(float(second["life"]), 7.0) and is_equal_approx(float(third["life"]), 7.0), "surviving parents each advance once after the network shrinks")
+	_check(is_equal_approx(float(inv.sigils[-1]["life"]), 8.0) and int(inv.sigils[-1]["pulsed"]) == 0, "a replacement starts ticking on the next frame")
+	_check(is_equal_approx(float(children[0]["life"]), 6.0) and int(children[0]["pulsed"]) == 0, "a child removed before its turn does not tick")
+
+	# Even without children the length stays fixed but the live indices shift:
+	# the newest original must not tick twice when it replaces the oldest.
+	inv = _load(["IN01", "INK1"])
+	parent = inv.place_sigil(_origin)
+	second = inv.place_sigil(_origin + Vector2(300, 0))
+	third = inv.place_sigil(_origin + Vector2(600, 0))
+	_spawn(50000.0, third["at"])
+	inv._hits = 3.6
+	inv.tick(1.0)
+	_check(not inv.sigils.has(parent) and inv.sigils.size() == 3, "pulse replacement also works at base capacity")
+	_check(is_equal_approx(float(second["life"]), 7.0) and is_equal_approx(float(third["life"]), 7.0) and int(third["pulsed"]) == 1, "same-size replacement does not tick the current sigil twice")
+	_check(is_equal_approx(float(inv.sigils[-1]["life"]), 8.0) and int(inv.sigils[-1]["pulsed"]) == 0, "same-size replacement waits until the next frame")
+
+
 func _run() -> void:
 	_player = PLAYER_SCENE.instantiate()
 	add_child(_player)
@@ -340,6 +373,7 @@ func _run() -> void:
 	inv.tick(5.1)
 	_check(inv.sigils.size() == 1 and inv.host_left <= 0.0, "originals return when the state ends")
 
+	_test_tick_replacement()
 	_clear_enemies()
 	Global.attempt_ascension = {}
 	_player.queue_free()

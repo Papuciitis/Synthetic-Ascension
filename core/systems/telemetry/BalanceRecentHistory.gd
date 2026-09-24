@@ -36,11 +36,11 @@ var _samples_expired := 0
 var _coalesced := 0
 
 
-func reset(life_id: int = 0, now: float = 0.0) -> void:
+func reset(new_life_id: int = 0, now: float = 0.0) -> void:
 	_events = []
 	_samples = []
 	_sequence = 0
-	_life_id = life_id
+	_life_id = new_life_id
 	_reset_t = now
 	_events_pushed = 0
 	_samples_pushed = 0

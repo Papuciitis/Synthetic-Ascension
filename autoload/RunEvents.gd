@@ -98,10 +98,13 @@ signal secondary_objective_changed(title: String, detail: String)
 @warning_ignore("unused_signal")
 signal secondary_objective_completed(objective_id: int)
 ## One of a "take one" group of pickups was taken; the others sealed away.
+@warning_ignore("unused_signal")
 signal choice_pickup_taken(group: int, inst: ItemInstance)
 ## A merge dissolved a Manifestation; it is kept as an imprint for the Hub.
+@warning_ignore("unused_signal")
 signal imprint_stored(imprint_id: StringName)
 ## The imprinter put a held rule onto an item (replaced may be empty).
+@warning_ignore("unused_signal")
 signal imprint_applied(inst: ItemInstance, imprint_id: StringName, replaced: StringName)
 
 @warning_ignore("unused_signal")

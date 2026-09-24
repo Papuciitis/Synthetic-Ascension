@@ -511,8 +511,11 @@ static func attribution_coverage(stats: Dictionary) -> Dictionary:
 	var unknown := float((by_origin.get("unknown", {}) as Dictionary).get("hp_removed", 0.0))
 	var mixed := float((by_origin.get("mixed", {}) as Dictionary).get("hp_removed", 0.0))
 	var attributed := maxf(0.0, total - unknown - mixed)
+	var attributed_share: Variant = null
+	if total > 0.0:
+		attributed_share = attributed / total
 	return {"hp_removed": total, "attributed": attributed, "unknown": unknown, "mixed": mixed,
-		"attributed_share": (attributed / total) if total > 0.0 else null}
+		"attributed_share": attributed_share}
 
 
 # ---------------------------------------------------------------- exit and pressure
@@ -805,9 +808,13 @@ static func upgrade_summary(stats: Dictionary) -> Dictionary:
 		if String(reason) in NON_ORGANIC_REASONS or String(reason) in ADJUSTMENTS or String(reason) in DEBUG_REASONS:
 			continue
 		organic += int(reasons[reason].get("gained", 0))
-	var income_per_minute: Variant = (float(organic) / minutes) if minutes > 0.0 else null
+	var income_per_minute: Variant = null
+	if minutes > 0.0:
+		income_per_minute = float(organic) / minutes
 	var purchased := int(up.get("purchased", 0))
-	var mean_purchase: Variant = (float(up.get("purchase_value", 0)) / purchased) if purchased > 0 else null
+	var mean_purchase: Variant = null
+	if purchased > 0:
+		mean_purchase = float(up.get("purchase_value", 0)) / purchased
 	var cost_minutes: Variant = null
 	if mean_purchase != null and income_per_minute != null and float(income_per_minute) > 0.0:
 		cost_minutes = float(mean_purchase) / float(income_per_minute)

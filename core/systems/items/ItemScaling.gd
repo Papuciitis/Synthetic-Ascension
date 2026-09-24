@@ -52,21 +52,21 @@ static func load_profiles(path: String = PROFILE_PATH, force: bool = false) -> b
 			_errors.append("anchor_ranks must be strictly increasing and finite")
 	var profiles: Dictionary = doc.get("profiles", {})
 	for item_id in profiles:
-		var profile: Variant = profiles[item_id]
-		if not (profile is Dictionary):
+		var item_profile: Variant = profiles[item_id]
+		if not (item_profile is Dictionary):
 			_errors.append("%s: profile is not an object" % item_id)
 			continue
 		var seen := {}
-		for stat in (profile as Dictionary).get("anchors", {}):
-			var values: Array = (profile as Dictionary)["anchors"][stat]
+		for stat in (item_profile as Dictionary).get("anchors", {}):
+			var values: Array = (item_profile as Dictionary)["anchors"][stat]
 			_validate_stat(String(item_id), String(stat), seen)
 			if values.size() != ranks.size():
 				_errors.append("%s.%s: %d anchors for %d ranks" % [item_id, stat, values.size(), ranks.size()])
 			for value in values:
 				if not (value is float or value is int) or not is_finite(float(value)):
 					_errors.append("%s.%s: non-finite anchor" % [item_id, stat])
-		for stat in (profile as Dictionary).get("rates", {}):
-			var rate: Variant = (profile as Dictionary)["rates"][stat]
+		for stat in (item_profile as Dictionary).get("rates", {}):
+			var rate: Variant = (item_profile as Dictionary)["rates"][stat]
 			_validate_stat(String(item_id), String(stat), seen)
 			if not (rate is Dictionary) or float((rate as Dictionary).get("tau", 0.0)) <= 0.0:
 				_errors.append("%s.%s: rate needs r0, r1, limit and a positive tau" % [item_id, stat])
@@ -74,9 +74,9 @@ static func load_profiles(path: String = PROFILE_PATH, force: bool = false) -> b
 				for key in ["r0", "r1", "limit"]:
 					if not is_finite(float((rate as Dictionary).get(key, NAN))):
 						_errors.append("%s.%s: rate %s is not finite" % [item_id, stat, key])
-		for stat in (profile as Dictionary).get("flat", {}):
+		for stat in (item_profile as Dictionary).get("flat", {}):
 			_validate_stat(String(item_id), String(stat), seen)
-			if not is_finite(float((profile as Dictionary)["flat"][stat])):
+			if not is_finite(float((item_profile as Dictionary)["flat"][stat])):
 				_errors.append("%s.%s: flat is not finite" % [item_id, stat])
 	if not _errors.is_empty():
 		for error in _errors:

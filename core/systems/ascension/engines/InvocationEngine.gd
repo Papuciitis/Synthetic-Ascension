@@ -471,8 +471,13 @@ func tick(delta: float) -> void:
 	var player_pos := runner.player_position()
 	var inside := _containing(player_pos)
 	var speed_scale := 3.0 if host_left > 0.0 else 1.0
-	for i in range(sigils.size() - 1, -1, -1):
-		var sigil: Dictionary = sigils[i]
+	# Pulses can replace a parent and remove its split children synchronously.
+	# Keep this frame's order stable; new sigils start ticking next frame.
+	var ticking := sigils.duplicate()
+	for i in range(ticking.size() - 1, -1, -1):
+		var sigil: Dictionary = ticking[i]
+		if not sigils.has(sigil):
+			continue
 		_move_sigil(sigil, delta, player_pos)
 		if has("IN03") and inside.has(sigil) and float(sigil["growth"]) > 0.0:
 			sigil["growth"] = maxf(0.0, float(sigil["growth"]) - delta)
@@ -487,7 +492,7 @@ func tick(delta: float) -> void:
 			sigil["chain"] = 0
 			if float(sigil["damage"]) > 0.0 or float(sigil["growth"]) > 0.0:
 				pulse(sigil)
-		if float(sigil["life"]) <= 0.0:
+		if float(sigil["life"]) <= 0.0 and sigils.has(sigil):
 			_expire(sigil)
 	_tick_home_touches()
 	_tick_consume(delta)

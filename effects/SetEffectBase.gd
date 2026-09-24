@@ -38,8 +38,8 @@ func set_set_scaling(set_id: StringName, count: int, avg_rarity: float, strength
 	set_scaling = SetScaling.profile(avg_rarity)
 
 
-func channel(name: String) -> float:
-	return float(set_scaling.get(name, 1.0))
+func channel(channel_name: String) -> float:
+	return float(set_scaling.get(channel_name, 1.0))
 
 func get_move_speed_multiplier() -> float:
 	return 1.0

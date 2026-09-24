@@ -231,7 +231,7 @@ func _merge_into(dest: ItemInstance, src: ItemInstance) -> bool:
 		return false
 	return dest.merge_from(src)
 
-func add_or_feed(inst: ItemInstance, origin: Variant = null, allow_rule_loss: bool = false) -> bool:
+func add_or_feed(inst: ItemInstance, origin: Variant = null, _allow_rule_loss: bool = false) -> bool:
 	if inst == null or inst.data == null:
 		return false
 

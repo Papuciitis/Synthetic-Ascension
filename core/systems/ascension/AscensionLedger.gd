@@ -354,9 +354,9 @@ func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 	var returned := 0
 	for gone_key in removed:
 		var gone := String(gone_key)
-		var price := int(paid.get(gone, 0))
-		total += price
-		returned += int(round(float(price) * safe_share))
+		var paid_price := int(paid.get(gone, 0))
+		total += paid_price
+		returned += int(round(float(paid_price) * safe_share))
 		owned_map.erase(gone)
 		paid.erase(gone)
 		_unequip(gone)

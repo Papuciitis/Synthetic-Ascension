@@ -714,7 +714,9 @@ func _terminal_event() -> Variant:
 	if lethal.is_empty():
 		return null
 	var following: Dictionary = _history.event_after(int(lethal.get("seq", 0)))
-	var resolution: Variant = following.duplicate(true) if String(following.get("kind", "")) == "damage" else null
+	var resolution: Variant = null
+	if String(following.get("kind", "")) == "damage":
+		resolution = following.duplicate(true)
 	return {"event": lethal.duplicate(true), "resolution": resolution}
 
 ## Cheap live state at 5 Hz: no runner snapshots, no inventory copies (the
@@ -723,8 +725,11 @@ func _history_sample(player: Node) -> Dictionary:
 	var now: float = _ledger.gameplay_seconds()
 	var life: Dictionary = _ledger.life_info()
 	var stats: Variant = player.get("stats")
+	var armor: Variant = null
+	if stats is Resource:
+		armor = float(stats.get("armor"))
 	var sample := {"t": now, "wall": _wall_seconds(), "hp": float(player.get("hp")), "max_hp": float(player.get("max_hp")),
-		"armor": float(stats.get("armor")) if stats is Resource else null,
+		"armor": armor,
 		"pos": [player.global_position.x, player.global_position.y],
 		"dash_ready": player.call("dash_ready") if player.has_method("dash_ready") else null,
 		"dash_cooldown": player.call("dash_cooldown_left") if player.has_method("dash_cooldown_left") else null,
