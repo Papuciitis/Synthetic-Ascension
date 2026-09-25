@@ -371,9 +371,18 @@ func _plan_service_district() -> void:
 
 	# Service warehouse: optional detour with a wide western loading door.
 	# The "controlled security encounter": entering starts a small interior
-	# fight; the reward releases when it is cleared.
-	_rect_perimeter_with_left_door(Vector2i(38, -24), Vector2i(12, 13), -20, -17)
-	_register_building_rect(Vector2i(38, -24), Vector2i(12, 13), true, {
+	# fight; the reward releases when it is cleared. An L footprint (the
+	# north-east corner bitten away) so the yard reads as a real place
+	# rather than another rectangle.
+	var warehouse: Dictionary = {}
+	_rect_cells(warehouse, Vector2i(38, -24), Vector2i(8, 13))   # west wing, full height, carries the door
+	_rect_cells(warehouse, Vector2i(46, -19), Vector2i(4, 8))    # east wing, lower half
+	var warehouse_doors: Array = []
+	for y in range(-20, -16):
+		warehouse_doors.append(Vector2i(38, y))
+	_footprint_perimeter(warehouse, warehouse_doors)
+	_register_building_rect(Vector2i(38, -24), Vector2i(8, 13), true, {
+		"extra_rects": [Rect2i(Vector2i(47, -18), Vector2i(3, 6))],
 		"small_loot_chance": 1.0,
 		"local_encounter_enabled": true,
 		"local_encounter_count": 4,
@@ -384,7 +393,13 @@ func _plan_service_district() -> void:
 	})
 
 	# Maintenance kiosk and checkpoint cover give the combat arena landmarks.
-	_rect_perimeter_with_bottom_door(Vector2i(25, -12), Vector2i(8, 5), 28, 29)
+	# The doorway sits in a one-cell recessed bay, the same silhouette rule
+	# the procedural parcels use.
+	var kiosk: Dictionary = {}
+	_rect_cells(kiosk, Vector2i(25, -12), Vector2i(8, 5))
+	for x in range(27, 31):
+		kiosk.erase(Vector2i(x, -8))   # the bay: the bottom row folds inward
+	_footprint_perimeter(kiosk, [Vector2i(28, -9), Vector2i(29, -9)])
 	_register_building_rect(Vector2i(25, -12), Vector2i(8, 5), true, {
 		"small_loot_chance": 1.0,
 		"secondary": true,
@@ -953,6 +968,7 @@ func _spawn_indoor_volumes() -> void:
 		var cfg: Dictionary = (entry.get("cfg", {}) as Dictionary).duplicate()
 		var is_secondary := bool(cfg.get("secondary", false))
 		cfg.erase("secondary")
+		cfg.erase("extra_rects")
 		var sec_title := String(cfg.get("sec_title", ""))
 		var sec_detail := String(cfg.get("sec_detail", ""))
 		# Segment 1 pass S3: a searched room pays believers, not only a bar the
@@ -974,6 +990,17 @@ func _spawn_indoor_volumes() -> void:
 				"followers": sec_followers,
 			})
 		volume.configure(rect.position, rect.size, cell_size_px, building_id, cfg)
+		# An irregular footprint's other wings: same building identity, no
+		# second loot roll, no duplicate secondary.
+		for extra_variant in (entry.get("cfg", {}) as Dictionary).get("extra_rects", []):
+			var extra_rect := extra_variant as Rect2i
+			var extra := indoor_volume_scene.instantiate() as IndoorVolume
+			if extra == null:
+				continue
+			_geo.add_child(extra)
+			extra.exploration_loot_enabled = false
+			extra.ambient_spawn_excluded = volume.ambient_spawn_excluded
+			extra.configure(extra_rect.position, extra_rect.size, cell_size_px, building_id, {"small_loot_chance": 0.0})
 		building_id += 1
 
 
@@ -1840,6 +1867,27 @@ func _rect_perimeter_with_left_door(top_left: Vector2i, size: Vector2i, door_y_a
 	for y in range(door_y_a, door_y_b + 1):
 		left_door_ys.append(y)
 	_rect_perimeter_with_doors(top_left, size, [], left_door_ys, [])
+
+
+## Phase 3 in the authored level: perimeter walls straight from a footprint
+## cell set (an L, a recessed bay), minus explicit door cells — the same
+## rule the procedural parcels use, so collision, nav and the depth faces
+## follow one convention in both level paths.
+func _footprint_perimeter(cells: Dictionary, door_cells: Array) -> void:
+	for cell_key in cells.keys():
+		var cell := cell_key as Vector2i
+		if door_cells.has(cell):
+			continue
+		for offset in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+			if not cells.has(cell + offset):
+				_add_wall_cell(cell, false)
+				break
+
+
+func _rect_cells(into: Dictionary, top_left: Vector2i, size: Vector2i) -> void:
+	for y in range(top_left.y, top_left.y + size.y):
+		for x in range(top_left.x, top_left.x + size.x):
+			into[Vector2i(x, y)] = true
 
 
 func _rect_perimeter_with_doors(top_left: Vector2i, size: Vector2i, bottom_door_xs: Array, left_door_ys: Array, right_door_ys: Array) -> void:
