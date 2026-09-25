@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/curses/curse_starving_crown.png" id="90_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
 
 [sub_resource type="Resource" id="mods"]
@@ -17,6 +18,7 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("2_itemdata")
 id = "curse_starving_crown"
 display_name = "Starving Crown"
+icon = ExtResource("90_icon")
 description = "It fits perfectly. It has been resized.
 • A severe Max HP curse.
 • Everything that pays you for being nearly dead pays constantly."

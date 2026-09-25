@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/curses/curse_leadfoot_vigil.png" id="90_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
 
 [sub_resource type="Resource" id="mods"]
@@ -17,6 +18,7 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("2_itemdata")
 id = "curse_leadfoot_vigil"
 display_name = "Leadfoot Vigil"
+icon = ExtResource("90_icon")
 description = "The floor has opinions about where you should stand.
 • A heavy Movement curse — capped, because a horde does not forgive being slow.
 • The stillness is the point."

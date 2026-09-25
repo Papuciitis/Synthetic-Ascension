@@ -1,6 +1,7 @@
 [gd_resource type="Resource" script_class="ItemData" format=3]
 
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/curses/curse_tithe_bones.png" id="90_icon"]
 [ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="2_itemdata"]
 [ext_resource type="PackedScene" path="res://effects/items/scenes/TitheBonesCurse.tscn" id="3_eff"]
 
@@ -18,6 +19,7 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("2_itemdata")
 id = "curse_tithe_bones"
 display_name = "Tithe Bones"
+icon = ExtResource("90_icon")
 description = "Every wound is itemised. Someone is keeping the ledger.
 • Taking damage costs Followers.
 • It never touches your combat stats — it bills your congregation."

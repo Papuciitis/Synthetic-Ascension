@@ -101,4 +101,28 @@ in a folder is not integrated art.
   the identity table: Barrage darts/broken-ring rework, Ordnance
   pressure-ring telegraph, once the chat's remaining references are read.
 
-(remaining entries arrive with the existing-item texture audit)
+### curse-relic-icons — 8 authored icons (2026-09-26)
+- **Identity:** UI icons for curse_slow_heart, curse_sour_providence,
+  curse_tithe_bones, curse_jinxed_coin, curse_ashen_ballast,
+  curse_hollow_reliquary, curse_leadfoot_vigil, curse_starving_crown.
+- **Need (found by the audit):** every curse .tres shipped with NO icon —
+  blank in the inventory bar, shop grid, tooltip and ground loot. This was
+  the catalog's only missing binding.
+- **Brief:** 32x32 pixel icons, one family language: bold dark silhouette,
+  ember/bone/gold accent, shared broken murky-violet rim so a curse reads
+  as a curse at a glance.
+- **Provenance:** authored procedurally
+  (`tools/design/build_curse_icons.py`); license-free, reproducible.
+- **Files:** `assets/textures/items/curses/curse_*.png`, bound in each
+  .tres (`icon = ExtResource("90_icon")`).
+- **Verification:** contact sheet reviewed; item suites green
+  (EffectRunner 239, BurdenSystem 74, ScalingV2 27). Rendered inventory
+  check pending the next human run.
+- **Status:** integrated (authored placeholders open to a later art pass).
+
+### audit conclusion (2026-09-26)
+All 33 item defs now carry icons. Ground loot, inventory, shop and tooltip
+all read `data.icon` directly, so one binding covers every surface. No
+null or misassigned world sprites found; Oakheart's shared placeholder is
+intentional. Beka's set (icon + sit/sleep) is text-described likeness,
+provisional until a photo arrives.
