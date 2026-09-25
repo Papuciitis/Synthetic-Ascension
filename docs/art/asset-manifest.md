@@ -24,5 +24,34 @@ in a folder is not integrated art.
 - **Verification:** pending.
 - **Status:** needed.
 
+### precision-vfx-reference — approved WIP direction image (2026-09-25)
+- **Identity:** style reference for the whole Precision effect family and
+  the "2.5D" shallow-depth environment look. Not a runtime asset.
+- **What it shows (user-supplied image, described for recovery):** top-down
+  stone-paved courtyard with moss/vegetation between slabs and low ruined
+  walls whose caps and side faces read as shallow height; ~15 dark armored
+  knight enemies casting soft drop shadows. The player stands center in a
+  thin double aim-ring. Precision effects in near-white cores with pale
+  warm-gold glow and small muted violet accents at impact centers:
+  straight needle-like beams with elongated diamond/rhombus nodes along
+  the shafts, a multi-segment pierce chain crossing three enemies in a row
+  (left), branching lines to separate targets, one heavy wide beam to the
+  right ending in a large radial needle-burst impact, smaller star-burst
+  impacts on other victims, one curved ricochet/return trail (bottom
+  right) with diamond pips along the path, and diamond "spark" motes
+  floating along trajectories. No rune circles, no filigree, no large
+  purple halos — matches the handoff §8 Precision language exactly.
+- **Provenance:** user message 2026-09-25 ("one of the first image
+  references to the 2.5d thing with the precision vfx… everything is
+  w.i.p."), followed by: **this image is only a first prototype — the
+  actual current reference set lives in the ChatGPT browser chat history
+  and must be requested there** (start with the "JSON lasīšana" chat per
+  handoff §13.1) when the Phase 2 visual pass begins.
+- **Files:** none on disk. Retrieve the authoritative references from
+  browser ChatGPT before generating any Precision VFX asset; the
+  description above is a fallback anchor only.
+- **Status:** prototype reference recorded; authoritative set pending
+  browser retrieval at Phase 2 start.
+
 (remaining entries arrive with the existing-item texture audit and the
 Ranged VFX inventory)

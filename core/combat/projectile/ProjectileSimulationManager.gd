@@ -84,6 +84,15 @@ var _query_hit_t: float = -1.0
 var _hits_this_frame: int = 0
 var _batches_this_frame: int = 0
 var _dropped_total: int = 0
+## Player-attack overflow (Ranged V5, finding E): at capacity a player spawn
+## queues instead of vanishing, and drains as slots free. Delayed emission is
+## the documented tradeoff; the queue is bounded so a runaway loop still
+## surfaces as real drops rather than unbounded memory.
+const OVERFLOW_QUEUE_MAX := 2048
+var _overflow_queue: Array = []
+var _overflow_queued_total: int = 0
+var _overflow_released_total: int = 0
+var _overflow_dropped_total: int = 0
 var _last_physics_ms: float = 0.0
 var _stress_started: bool = false
 var _last_stress_enabled: bool = false
@@ -134,6 +143,7 @@ func _process(delta: float) -> void:
 	_pending_ledgers.clear()
 	if Global != null and Global.debug_projectile_stress_test:
 		_run_stress_step()
+	_drain_overflow()
 	if step > 0.0:
 		for i in range(_active_count - 1, -1, -1):
 			_simulate_one(i, step)
@@ -155,17 +165,65 @@ func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapte
 	var dir := direction.normalized()
 	if profile.direction_offset_degrees != 0.0:
 		dir = dir.rotated(deg_to_rad(profile.direction_offset_degrees))
-	if not _spawn(origin, dir * profile.speed, maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1), profile.max_range, profile.collision_radius, profile.damage, Team.PLAYER, visual, source, profile.knockback, profile.pierce, profile.critical, burn_stack_count, burn_time, burn_interval, burn_tick_mult, profile.body_len, profile.body_width, profile.body_core, tags):
+	var request := {
+		"origin": origin, "velocity": dir * profile.speed,
+		"lifetime": maxf(0.05, profile.max_range / maxf(profile.speed, 1.0) + 0.1),
+		"max_range": profile.max_range, "radius": profile.collision_radius,
+		"damage": profile.damage, "visual": visual, "source": source,
+		"knockback": profile.knockback, "pierce": profile.pierce,
+		"critical": profile.critical, "burn_stacks": burn_stack_count,
+		"burn_duration": burn_time, "burn_tick": burn_interval,
+		"burn_mult": burn_tick_mult, "body_len": profile.body_len,
+		"body_width": profile.body_width, "color": profile.body_core,
+		"tags": tags, "ramp": maxf(0.0, profile.pierce_ramp),
+		"ramp_cap": maxf(0.0, profile.pierce_ramp_cap),
+		"bounces": maxi(0, profile.bounces), "bounce_scale": profile.bounce_scale,
+		"bounce_pp": profile.bounce_proc_power, "seek": profile.seek_handle,
+		"turn": maxf(0.0, profile.seek_turn_degrees),
+	}
+	if _active_count >= capacity:
+		return _queue_overflow(request)
+	return _spawn_request(request)
+
+
+## A retained player attack waiting for a free slot. Beyond the bound it is
+## a genuine drop, counted separately from the legacy counter.
+func _queue_overflow(request: Dictionary) -> bool:
+	if _overflow_queue.size() >= OVERFLOW_QUEUE_MAX:
+		_overflow_dropped_total += 1
+		_dropped_total += 1
+		if PerformanceFlightRecorder != null:
+			PerformanceFlightRecorder.record_counter_event(&"projectile", &"overflow_dropped", 1, {"queued": _overflow_queue.size()})
+		return false
+	_overflow_queue.append(request)
+	_overflow_queued_total += 1
+	if PerformanceFlightRecorder != null:
+		PerformanceFlightRecorder.record_counter_event(&"projectile", &"overflow_queued", 1, {"queued": _overflow_queue.size()})
+	return true
+
+
+func _spawn_request(request: Dictionary) -> bool:
+	if not _spawn(request["origin"], request["velocity"], request["lifetime"], request["max_range"], request["radius"], request["damage"], Team.PLAYER, request["visual"], request["source"], request["knockback"], request["pierce"], request["critical"], request["burn_stacks"], request["burn_duration"], request["burn_tick"], request["burn_mult"], request["body_len"], request["body_width"], request["color"], request["tags"]):
 		return false
 	var index := _active_count - 1
-	_ramp[index] = maxf(0.0, profile.pierce_ramp)
-	_ramp_cap[index] = maxf(0.0, profile.pierce_ramp_cap)
-	_bounces[index] = maxi(0, profile.bounces)
-	_bounce_scale[index] = profile.bounce_scale
-	_bounce_pp[index] = profile.bounce_proc_power
-	_seek[index] = profile.seek_handle
-	_turn_left[index] = maxf(0.0, profile.seek_turn_degrees)
+	_ramp[index] = request["ramp"]
+	_ramp_cap[index] = request["ramp_cap"]
+	_bounces[index] = request["bounces"]
+	_bounce_scale[index] = request["bounce_scale"]
+	_bounce_pp[index] = request["bounce_pp"]
+	_seek[index] = request["seek"]
+	_turn_left[index] = request["turn"]
 	return true
+
+
+func _drain_overflow() -> void:
+	while not _overflow_queue.is_empty() and _active_count < capacity:
+		var request: Dictionary = _overflow_queue.pop_front()
+		var source: Variant = request["source"]
+		if source is Node and not is_instance_valid(source):
+			continue
+		if _spawn_request(request):
+			_overflow_released_total += 1
 
 func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: float, lifetime: float, source: Node, enemy_id: StringName = &"") -> bool:
 	var visual := Visual.ENEMY_BLUE
@@ -591,6 +649,7 @@ func player_projectiles_in_radius(center: Vector2, radius: float, out: Array) ->
 
 func _clear_all() -> void:
 	_ended.clear()
+	_overflow_queue.clear()
 	while _active_count > 0:
 		_remove(_active_count - 1)
 	_update_renderer()
@@ -598,6 +657,7 @@ func _clear_all() -> void:
 func clear_for_run_end() -> void:
 	# Public lifecycle hook used before pausing or replacing the active run scene.
 	_pending_ledgers.clear()
+	_overflow_queue.clear()
 	_clear_all()
 
 func _sync_scene_refs() -> void:
@@ -761,7 +821,7 @@ func clear_enemy_slow_zone() -> void:
 
 
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads}
+	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
 
 func active_count() -> int:
 	return _active_count

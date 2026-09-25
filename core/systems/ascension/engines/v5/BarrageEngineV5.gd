@@ -580,14 +580,47 @@ func _auto_vent_volley(origin: Vector2, with_heat_vent: bool) -> void:
 		merged = mini(6, stored_rounds)
 		stored_rounds -= merged
 		counters["stored_fired"] = int(counters["stored_fired"]) + merged
-	_radial_volley(origin, rounds, 0.6 * D(), 0.3, "BR08", "loose")
+	# Heavy Barrel (MR8): a real Vent Volley spends up to 60 Force ONCE,
+	# spreading the whole +0.06D-per-Force bonus across the release rounds;
+	# at the full 60 each round pierces once. BRC snapshots half the total.
+	var round_bonus := 0.0
+	var overrides := {}
+	if has("MR8"):
+		var bastion := runner.engine_of_discipline("BA") as BastionEngine
+		if bastion != null and float(bastion.force) > 0.0:
+			var force_spent := bastion.spend_force(minf(60.0, bastion.force))
+			var total_bonus := 0.06 * D() * force_spent
+			round_bonus = total_bonus / float(rounds + merged + extra)
+			_heavy_barrel_bonus = total_bonus * 0.5
+			if force_spent >= 60.0:
+				overrides["pierce"] = 1
+			counters["heavy_barrel_force"] = float(counters.get("heavy_barrel_force", 0.0)) + force_spent
+	_radial_volley(origin, rounds, 0.6 * D() + round_bonus, 0.3, "BR08", "loose", overrides)
 	if merged > 0:
-		_radial_volley(origin, merged, 0.7 * D(), 0.3, "BR11", "stored")
+		_radial_volley(origin, merged, 0.7 * D() + round_bonus, 0.3, "BR11", "stored", overrides)
 	if extra > 0:
-		_radial_volley(origin, extra, 0.4 * D(), 0.3, "BR08", "loose")
+		_radial_volley(origin, extra, 0.4 * D() + round_bonus, 0.3, "BR08", "loose", overrides)
 	counters["loose_rounds"] = int(counters["loose_rounds"]) + rounds + extra
 	_last_vent_input = _vent_inputs
 	runner.note_union_trigger("jam")
+
+
+## Overload's four volleys carry the Heavy Barrel half-snapshot without a
+## second Force spend, spread across the 48 rounds, then it clears.
+func _tick_overload(delta: float) -> void:
+	if _overload_volleys_left <= 0:
+		return
+	_overload_timer -= delta
+	var bonus_per_round := _heavy_barrel_bonus / 48.0 if has("MR8") else 0.0
+	while _overload_timer <= 0.0 and _overload_volleys_left > 0:
+		_overload_timer += 0.15
+		_overload_volleys_left -= 1
+		_radial_volley(runner.player_position(), 12, 0.8 * D() + bonus_per_round, 0.4, "BRC", "bullet")
+		counters["overload_rounds"] = int(counters["overload_rounds"]) + 12
+		if has("BR06"):
+			_crossfire_shot(0.8 * D(), 0.4, "BRC")
+		if _overload_volleys_left <= 0:
+			_heavy_barrel_bonus = 0.0
 
 
 var _last_vent_input: int = -1
