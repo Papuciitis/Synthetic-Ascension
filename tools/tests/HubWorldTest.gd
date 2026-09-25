@@ -99,6 +99,18 @@ func _run() -> void:
 	(_hub._open_panel as Node).emit_signal("embedded_closed")
 	await get_tree().process_frame
 
+	# The gear corner opens the run's own bag panel, not the vendor.
+	_hub._open_gear()
+	await get_tree().process_frame
+	var gear_panel := _hub._open_panel
+	_check(gear_panel != null, "the gear corner opens its own panel")
+	var bag_ui: Node = gear_panel.get_child(0) if gear_panel != null and gear_panel.get_child_count() > 0 else null
+	_check(bag_ui != null and bag_ui.has_method("is_open") and bool(bag_ui.call("is_open")), "the bag view opens bound to the run's containers")
+	if bag_ui != null:
+		bag_ui.call("toggle_open")
+	await get_tree().process_frame
+	_check(_hub._open_panel == null, "closing the bag returns to the courtyard")
+
 	# Departure: gated by a pending mandatory choice, and only once.
 	Global.pending_big_choice = true
 	_hub._update_pending_cue()

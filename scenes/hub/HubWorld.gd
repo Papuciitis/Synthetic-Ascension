@@ -16,6 +16,7 @@ const PLAYER_SCENE := preload("res://core/actors/player/player.tscn")
 const HUB_SHOP_SCENE := preload("res://ui/screens/HubShop.tscn")
 const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
 const MAJOR_CHOICE_SCENE := preload("res://ui/screens/MajorChoice.tscn")
+const BAG_UI_SCENE := preload("res://ui/components/BagUI.tscn")
 const COVER_FULL := preload("res://scenes/world/cover/CoverFull.tscn")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 
@@ -225,10 +226,29 @@ func _open_merchant() -> void:
 		shop.connect("embedded_closed", _on_panel_closed)
 
 
-## The gear corner is a shortcut to the same counter for now (it presents
-## the existing equipment/backpack capabilities; nothing new is invented).
+## The gear corner: the run's own bag and equipment, without the vendor —
+## the existing BagUI component bound to the run's containers. Nothing new
+## is invented and no cross-run storage appears because a chest is drawn.
 func _open_gear() -> void:
-	_open_merchant()
+	if _panel_is_open():
+		return
+	var wrap := Control.new()
+	wrap.set_anchors_preset(Control.PRESET_FULL_RECT)
+	var bag := BAG_UI_SCENE.instantiate()
+	wrap.add_child(bag)
+	_panel_layer.add_child(wrap)
+	if bag.has_method("bind_bag"):
+		bag.call("bind_bag", Global.run_bag)
+	if bag.has_method("bind_core_inventory"):
+		bag.call("bind_core_inventory", Global.run_inventory)
+	if bag.has_method("toggle_open") and not bool(bag.call("is_open")):
+		bag.call("toggle_open")
+	_open_panel = wrap
+	_stations_enabled(false)
+	if bag.has_signal("open_changed"):
+		bag.connect("open_changed", func(now_open: bool) -> void:
+			if not now_open:
+				_on_panel_closed())
 
 
 func _open_ascension() -> void:
