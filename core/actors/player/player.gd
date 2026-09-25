@@ -1267,6 +1267,16 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		if RunEvents != null:
 			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
 		return
+	if reduced >= hp and ier4 != null and ier4.intercept_lethal_damage(reduced, source):
+		# An item rule (Plot Armor) refused the killing blow, after the tree
+		# had its chance; the item marks its own rearm condition.
+		hp = 1.0
+		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
+		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
+		hp_changed.emit(hp, max_hp)
+		if RunEvents != null:
+			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
+		return
 	hp = max(hp - reduced, 0.0)
 	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
 	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")

@@ -143,6 +143,16 @@ func get_damage_taken_multiplier() -> float:
 	return mul
 
 
+## A killing blow an item may refuse (Plot Armor), consulted after the
+## tree's own interceptors. The first effect that accepts wins.
+func intercept_lethal_damage(amount: float, source: Node) -> bool:
+	for n in _active_effects.values():
+		if is_instance_valid(n) and n.has_method("intercept_lethal_damage"):
+			if bool(n.call("intercept_lethal_damage", amount, source)):
+				return true
+	return false
+
+
 ## A real absorbable barrier (Beka's Comfortable Company): effects with
 ## absorb_damage soak part of the mitigated hit and return what they took.
 ## Called by Player._take_damage after armour, before lethality is tested.

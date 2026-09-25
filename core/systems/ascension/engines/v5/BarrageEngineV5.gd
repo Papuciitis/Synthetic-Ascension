@@ -949,15 +949,16 @@ func move_speed_multiplier() -> float:
 func collect_draw_points(out: Array) -> void:
 	collect_beam_points(out)
 	for fragment in fragments:
-		runner.note_texture_point(fragment["pos"], 7.0, Color(1.0, 0.85, 0.5, 0.95), "diamond_mote")
+		runner.note_texture_point(fragment["pos"], 7.0, Color(1.0, 0.95, 0.85, 0.95), "barrage_dart")
 	# The radiant aura's true damaging radius, always world-accurate: the
 	# ring texture is drawn at exactly the damaging edge.
 	var state := aura_state()
 	if float(state[0]) > 0.0:
 		var intensity: float = clampf(float(state[1]) / (0.5 * D()), 0.2, 1.0)
 		var radius := float(state[0])
-		# aura_ring.png carries its ring at 58/64 of its half-size.
-		runner.note_texture_point(runner.player_position(), radius * (64.0 / 58.0), Color(1.0, 1.0, 1.0, 0.35 + 0.45 * intensity), "aura_ring")
+		# The broken heat ring carries its edge at 58/64 of its half-size:
+		# overheating, breaking down — never a clean magic circle.
+		runner.note_texture_point(runner.player_position(), radius * (64.0 / 58.0), Color(1.0, 1.0, 1.0, 0.35 + 0.45 * intensity), "heat_ring_broken")
 		out.append([runner.player_position(), radius, Color(1.0, 0.45, 0.15, 0.08)])
 	# Spin Up stage glow at the muzzle: unmistakably not a Heat readout.
 	var stage := spin_stage()

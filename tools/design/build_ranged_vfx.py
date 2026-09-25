@@ -267,8 +267,84 @@ def bullet_shared() -> None:
     _save("bullet_shared.png", c)
 
 
+def barrage_dart() -> None:
+    """Barrage's identity is dart / aperture / broken ring ("JSON lasīšana"
+    table): an angular dart head with a short broken-ring exhaust, for the
+    engine-simulated fragments."""
+    s = 32
+    c = _canvas(s, s)
+    x, y = _grid(s, s)
+    cx = cy = (s - 1) / 2.0
+    dx, dy = x - cx, y - cy
+    # Dart head: a chevron pointing +x (rotation happens in-engine via color
+    # modulate only, so the dart reads directionless-sharp at this size).
+    head = _soft(np.abs(dy) * 2.2 + np.abs(dx - 4.0), 0.0, 7.0) * (dx > -2)
+    _add(c, TRACER_HOT, head)
+    _add(c, TRACER_AMBER, _soft(np.abs(dy) * 1.6 + np.abs(dx - 2.0), 2.0, 9.0) * 0.8)
+    # Broken-ring exhaust behind the head: two arc stubs.
+    r = np.hypot(dx + 6.0, dy)
+    ang = np.arctan2(dy, dx + 6.0)
+    ring = _soft(np.abs(r - 7.0), 0.0, 1.8)
+    gaps = (np.abs(np.angle(np.exp(1j * (ang - math.pi)))) < 0.9) | (np.abs(ang) < 0.7)
+    _add(c, TRACER_AMBER, ring * np.where(gaps, 0.0, 0.75))
+    _save("barrage_dart.png", c)
+
+
+def heat_ring_broken() -> None:
+    """The Hot Core aura as a BROKEN ring: overheating, breaking down —
+    not a clean magic circle. Ring at 58/64 of half-size like aura_ring."""
+    s = 128
+    c = _canvas(s, s)
+    x, y = _grid(s, s)
+    cx = cy = (s - 1) / 2.0
+    dx, dy = x - cx, y - cy
+    r = np.hypot(dx, dy)
+    ang = np.arctan2(dy, dx)
+    edge = 58.0
+    ring = _soft(np.abs(r - edge), 0.0, 4.5)
+    # Six segments with ragged gaps; a faint inner shimmer ring.
+    seg = np.mod(ang + math.pi, math.pi / 3.0)
+    gap = seg < 0.22
+    _add(c, HEAT_ORANGE, ring * np.where(gap, 0.0, 0.9))
+    _add(c, TRACER_HOT, _soft(np.abs(r - edge), 0.0, 1.5) * np.where(gap, 0.0, 0.5))
+    inner = _soft(np.abs(r - edge * 0.75), 0.0, 2.0)
+    inner_gap = np.mod(ang, math.pi / 2.0) < 0.35
+    _add(c, HEAT_ORANGE, inner * np.where(inner_gap, 0.0, 0.30))
+    _add(c, HEAT_ORANGE, _soft(r, 0.0, edge) * 0.08)
+    _save("heat_ring_broken.png", c)
+
+
+def pressure_ring() -> None:
+    """Ordnance's Shell telegraph as a PRESSURE ring (shell / charge /
+    pressure ring): concentric double ring with gauge ticks, reading as
+    'contained force about to land', replacing the hollow diamond."""
+    s = 64
+    c = _canvas(s, s)
+    x, y = _grid(s, s)
+    cx = cy = (s - 1) / 2.0
+    dx, dy = x - cx, y - cy
+    r = np.hypot(dx, dy)
+    ang = np.arctan2(dy, dx)
+    outer = _soft(np.abs(r - 27.0), 0.0, 2.2)
+    _add(c, ORDNANCE_ORANGE, outer * 0.95)
+    inner = _soft(np.abs(r - 19.0), 0.0, 1.6)
+    _add(c, TRACER_AMBER, inner * 0.7)
+    # Twelve gauge ticks crossing the outer ring.
+    for k in range(12):
+        a = k * math.pi / 6.0
+        d_ang = np.abs(np.angle(np.exp(1j * (ang - a))))
+        tick = _soft(d_ang, 0.0, 0.05) * _soft(np.abs(r - 27.0), 0.0, 5.5)
+        _add(c, TRACER_HOT, tick * 0.85)
+    # Core charge dot.
+    _add(c, ORDNANCE_ORANGE, _soft(r, 0.0, 3.5) * 0.9)
+    _save("pressure_ring.png", c)
+
+
 if __name__ == "__main__":
     bullet_shared()
+    barrage_dart()
+    heat_ring_broken()
+    pressure_ring()
     needle_bullet()
     tracer_bullet()
     diamond_mote()

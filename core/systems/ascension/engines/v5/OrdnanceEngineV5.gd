@@ -516,7 +516,7 @@ func collect_draw_points(out: Array) -> void:
 		var footprint := float(shell["radius"]) * _blast_radius_scale()
 		out.append([shell["at"], footprint, Color(1.0, 0.5, 0.3, 0.25)])
 		var urgency: float = clampf(1.0 - float(shell["left"]) / SHELL_TELL, 0.3, 1.0)
-		runner.note_texture_point(shell["at"], footprint * 0.5, Color(1.0, 1.0, 1.0, urgency), "shell_marker")
+		runner.note_texture_point(shell["at"], footprint * (32.0 / 27.0) * 0.5, Color(1.0, 1.0, 1.0, urgency), "pressure_ring")
 	for lane in _lanes:
 		out.append([lane["from"], 2.0, Color(1.0, 0.7, 0.4, 0.4), lane["to"]])
 	for grenade in grenades:

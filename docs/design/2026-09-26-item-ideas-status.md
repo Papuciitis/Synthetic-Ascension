@@ -10,11 +10,11 @@ the user before naming a mechanic). Nothing here is silently invented; a
 | Item | Status | Notes |
 |---|---|---|
 | **Beka** | **implemented** (2026-09-26) | Approved shield + pulse prototype; `BekaEffectTest` 30/30. Art is a text-described likeness (black/white tuxedo, white nose/neck/boots — user, 2026-09-25); photo/meow still welcome. |
-| The Missing Pālis | design-ready | Bounded wavy-screen pickup effect (Varis) is settled and small; the delayed-damage-debt mechanic stays a proposal needing anti-duplication rules. Build the visual half first. |
-| Plot Armor | design-ready | Assistant proposal with clear safeguards spelled out (rival marking, rearm on rival death, invalid-target fallback). Slots as Offhand. |
+| The Missing Pālis | **implemented** (2026-09-26, visual half) | One shared hard-bounded screen wave (never above 5 px, idle 1.6 px, stacking adds nothing) + odd Luck. The delayed-damage-debt mechanic stays an unbuilt proposal. `ItemBatch2Test`. |
+| Plot Armor | **implemented** (2026-09-26) | Offhand: survive one lethal at 1 HP, culprit becomes the rival; rearms on rival death, 45 s fallback when fate loses track, segment end clears; 1 s grace; never permanent. `ItemBatch2Test`. |
 | Grandma's Bazooka | design-ready | Delayed homing retaliation; define damage/cadence/target-loss before build. |
 | 7-Mile Boots | design-ready | Dash extension + return-to-start window; needs terrain/exit validation pass. |
-| Second Breakfast | design-ready | Delayed second portion of any heal through real healing attribution; recursion guard. |
+| Second Breakfast | **implemented** (2026-09-26) | Ring: half of any applied heal, 3 s later, through the real heal path (locks apply); recursion-proof; pending portions coalesce. `ItemBatch2Test`. |
 | Beer | design-ready | Power+Luck with the existing diminishing progression; "one million" is flavour, not a cap authorization. |
 | Bazinga | design-ready | Near-miss sound decoy; bound audio repetition; define which AI reads decoys. |
 | Trauma | design-ready | Adaptation vs the most recent major damage source; define source categories + cap. |
