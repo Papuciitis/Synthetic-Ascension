@@ -143,14 +143,37 @@ difference. Working tree clean apart from untracked docs/archives.
 - [ ] §15.6 rendered checks (walkthrough capture, input feel, legibility at
       zoom, several full segment/hub cycles): need a human run
 
-## Current checkpoint
+## Current checkpoint (handback, 2026-09-26)
 
-**Now:** Phase 1 Checkpoint 4 — hybrids/foreign completion. Named burn
-attribution (EnemyStatusService.apply_named_burn + tagged ticks) is done;
-foreign BR01/BR07/BRQ/BR11/BRC adapters are in BarrageEngineV5 but only
-the native path is test-covered so far.
-**Next task:** hybrid/foreign regression suite (HYB-01..05 V5 variants,
-foreign witness adapters), then Checkpoint 5 capacity/balance evidence.
-**Test state (2026-09-25):** V5 suites 63+37+33+23 all green; V4 battery
-(Barrage 38, Precision 47, Ordnance 63, Hybrid 41, SharedRules 32, Runner
-29, Screen 20, Status 19, Combat 38) all green; parse audit 422/422.
+**All five phases have their cores implemented and headless-verified.**
+Six commits on `enemy-world-work` (1e6ce14…1ebebd4), **not pushed** — this
+session has no GitHub credentials; one `git push` sends everything.
+
+**Blocked, with resume path:**
+- Browser-ChatGPT retrieval/generation (authoritative Precision refs, the
+  user's "ask GPT what the handoff missed" request, reference recovery for
+  the needs-reference items): the permission classifier stopped GUI input
+  into the live browser after the first retrieval (decision log B-1). The
+  GUI driver works otherwise (scratchpad gui.py). Either add a Bash allow
+  rule for it, or run the questions manually. Ready-to-send GPT prompt:
+
+  > I am handing back the Synthetic Ascension 2026-09-25 development
+  > handoff (Ranged V5 + visuals + world shapes + items/Beka + walkable
+  > hub — all implemented to prototype). Looking at what such a handoff
+  > should have covered: what did we miss, what should be added or
+  > improved, and what risks does a V5 prototype like this usually hide?
+  > Separate established user decisions from your own new suggestions.
+
+**Owed to the next human playtest (headless cannot judge these):**
+rendered legibility of faces/VFX/hub at gameplay zoom; rank-purchase
+noticeability; free-choice + durable-target comparison runs; Beka vs other
+Offhands with the balance recorder; §15.6 hub walkthrough capture; Spin Up
+feel (the B1-vs-P1 A/B).
+
+**Next implementation tasks, in order:**
+1. Retrieve the remaining "JSON lasīšana" references → Barrage
+   darts/broken-ring + Ordnance pressure-ring texture rework.
+2. Item batch 2 (design-ready rows of 2026-09-26-item-ideas-status.md:
+   Missing Pālis visual, Plot Armor, Second Breakfast).
+3. Level1 authored irregular footprints (the depth pass already applies).
+4. Hub polish: gear corner's own panel, walkthrough capture.

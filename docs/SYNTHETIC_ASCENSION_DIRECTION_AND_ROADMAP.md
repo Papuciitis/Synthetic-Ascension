@@ -1867,3 +1867,63 @@ segment 1's S4 / S7-S9 / S11 (measure first), the rest of M8, M0
 (display). Every number here is the audit's proposal; the human run with
 both recorders on is still the gate.
 
+
+## 2026-09-25/26 — the Ranged V5 handoff: five phases' cores, headless-verified
+
+Executed from `Synthetic_Ascension_Claude_Handoff_2026-09-25.md` while the
+user slept. Six local commits (`1e6ce14` … `1ebebd4`), none pushed (no
+credentials in this session — one `git push` sends them all). Everything
+below is a headless result; the rendered checks are listed as owed.
+
+- **Ranged V5 (Phase 1).** `tree_v5_ranged.json` (generated + validated,
+  V4 untouched and byte-verified against the handoff hash); ordinary local
+  ranks with exact receipts, gates, Hub-only downgrades, cascades; Spin Up
+  replaces baseline Heat (Hot Core optional, Meltdown never stops the gun);
+  Grenadier replaces Caltrops (tap-Q instant, hold-Q places); Big One
+  requires a true Shell producer; named burns with strongest-rate refresh
+  and full provenance; foreign Witness adapters; Burst's ×2 rides after the
+  ×2.5 cap as an explicit window (finding A, decision D-4); the projectile
+  overflow queue retains player attacks at capacity (finding E). New
+  suites: LedgerV5Rank 63, BarrageV5 37, OrdnanceV5 33, PrecisionV5 23,
+  V5HybridForeign 26, ProjectileOverflow 11 — green; the V4 battery
+  (Barrage 38 / Precision 47 / Ordnance 63 / Hybrid 41 / SharedRules 32 /
+  Runner 29 / Screen 20 / Status 19 / Combat 38) unchanged and green.
+  First matched V4/V5 simulator baseline (seeds 101/202/303):
+  `docs/audits/2026-09-26-v5-sim-baseline.md` — B1 competitive without
+  Heat, B2's risk pays, O1 strong, O2 flagged for density review.
+- **Ranged visuals (Phase 2, first pass).** Twelve authored textures in
+  the retrieved identity (needle/diamond gold-white Precision, tracer
+  Barrage, round/spiked/reticle Ordnance silhouettes, true-radius Hot Core
+  aura, Spin Up muzzle glow), integrated: shaped batched bullets, textured
+  beams + needle-burst caps, fragment motes. Identity table recovered from
+  the "JSON lasīšana" chat; the rest of that chat (and GPT asset
+  generation) is blocked on browser-automation permissions — exact resume
+  prompt in the decision log (B-1).
+- **World shapes (Phase 3).** L-footprint parcels with recessed entrances
+  on the real procedural path: footprint cells drive floor, perimeter
+  walls, collision, two IndoorVolumes (one id, one loot owner) and a real
+  outline-polygon roof; interiors stay open reachable halls. Shallow
+  depth: authored south stone faces + slight cap lift in both render
+  paths. WorldFootprintTest 10/10; world battery green.
+- **Beka (Phase 4 first).** The approved memorial companion: a real
+  absorbable shield (4 s / 4%/s / min(30%, 20%·S)) consumed before
+  lethality, telemetry-distinct from HP loss; the 12 s / 320 u pulse pulls
+  health to a wounded player with line of sight and highlights equipment
+  without touching it; provisional tuxedo-cat art from the user's
+  description; she sleeps while the shield regrows. BekaEffectTest 30/30
+  (stable ×5). Existing-item audit: the eight curse relics were the only
+  icon-less defs — authored and bound a consistent cursed-relic set.
+  Remaining item ideas: statuses in
+  `docs/design/2026-09-26-item-ideas-status.md`.
+- **The hub (Phase 5).** `scenes/hub/HubWorld.tscn`: a walkable courtyard
+  between segments — arrival→exit walk, recessed service bays, merchant /
+  Ascension / gear / quiet alcove / exit gate stations; HubShop embeds as
+  the trade panel (economy identical, no scene-level side effects);
+  combat inputs disabled in the safe hub; departure single-fire and gated
+  by pending mandatory choices; old shop-target saves route in; Beka
+  sleeps in the alcove. HubWorldTest 19/19; save/economy battery green.
+
+Owed to the next human run: rendered legibility (faces, VFX, hub) at
+gameplay zoom, rank-purchase noticeability, the free-choice and
+durable-target comparisons, Beka-vs-Offhands with the balance recorder,
+and the §15.6 walkthrough capture. Parse audit finished at 425/425.
