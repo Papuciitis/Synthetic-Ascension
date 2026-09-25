@@ -59,19 +59,29 @@ difference. Working tree clean apart from untracked docs/archives.
 - [ ] Cross-Core matrix (§5.1–5.2) incl. RM7 Rune Bomb, Mine producers
 - [ ] Remaining spec acceptance cases; deferred items reported separately
 
-### Checkpoint 5 — Capacity, balance, presentation evidence
-- [ ] Projectile overflow policy implemented and stressed
-- [ ] Matched V4/V5 runs: P1/B1/B2/O1/O2, 3+ seeds, free-choice run
-- [ ] Rank-purchase noticeability evidence
-- [ ] Exact test commands + results recorded
-- [ ] Production VFX asset list carried into Phase 2
+### Checkpoint 5 — Capacity, balance, presentation evidence  ◐ headless done 2026-09-26
+- [x] Overflow policy: bounded retry queue in ProjectileSimulationManager;
+      `ProjectileOverflowTest` 11/11 (fill, retain, drain, exact damage,
+      bounded overrun)
+- [x] Matched headless V4/V5 runs: P1/B1/B2/O1/O2 + matched random walks,
+      seeds 101/202/303 → `docs/audits/2026-09-26-v5-sim-baseline.md`
+      (B1 competitive sans Heat; B2's risk pays; O1 strong; O2 flagged)
+- [ ] Rank noticeability + free-choice + durable-target scenarios: need a
+      rendered human run (headless cannot judge feel)
+- [x] Commands and raw rows preserved in the audit dir
+- [x] VFX needs list → asset manifest (authored set integrated)
 
-## Phase 2 — Ranged visuals (all three disciplines)
-- [ ] Asset workflow per handoff §13 for each effect family
-- [ ] Precision visual language (white/gold/violet accents, needles)
-- [ ] Barrage: Spin Up stages, density, Heat cues, Meltdown, aura
-- [ ] Ordnance: grenade/Mine/Shell silhouettes, Big One, chains, tap/hold Q
-- [ ] Legibility at gameplay zoom over light roads and dark interiors
+## Phase 2 — Ranged visuals (all three disciplines)  ◐ first pass 2026-09-26
+- [x] 12 authored textures (build_ranged_vfx.py) integrated: shaped pool
+      bullets, textured beams+caps, needle bursts, fragment motes,
+      grenade/mine/shell silhouettes, true-radius aura ring, spin glow
+- [x] Precision language honoured (white/gold, needles/diamonds, violet
+      accents only); identity table retrieved from "JSON lasīšana"
+- [◐] Barrage cues: spin glow + aura + Meltdown text; darts/broken-ring
+      rework pending the chat's remaining references
+- [◐] Ordnance silhouettes distinct; pressure-ring telegraph pending
+- [ ] Legibility at gameplay zoom: needs a rendered human run; contact
+      sheets checked on light/dark grounds only
 
 ## Phase 3 — 2D world shapes and shallow depth
 - [ ] Small proof scene: irregular footprint, recessed entrance,

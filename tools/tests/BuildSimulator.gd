@@ -116,6 +116,8 @@ var _spawn_roles: Dictionary = {}
 var _attacker: Node2D = null
 var _attacker_handle := 0
 var _db: AscensionTreeDB = null
+## SIM_TREE: "v4" (default control) or "v5_ranged" (the 2026-09-25 prototype).
+var _tree_version := "v4"
 var _status: Dictionary = {}
 var _rows_file: FileAccess = null
 var _footprints: Dictionary = {}
@@ -160,7 +162,8 @@ func _run() -> void:
 		if not core_name.strip_edges().is_empty():
 			_cores.append(core_name.strip_edges())
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out_dir) if _out_dir.begins_with("user://") else _out_dir)
-	_db = AscensionTreeDB.shared()
+	_tree_version = _env("SIM_TREE", "v4")
+	_db = AscensionTreeDB.shared_for(_tree_version)
 	_status = _load_json(FEATURE_STATUS)
 	Global.start_new_attempt()
 	Global.debug_player_god_mode = false
@@ -206,6 +209,12 @@ func _run() -> void:
 	var jobs := _jobs()
 	if not _cores.is_empty():
 		jobs = jobs.filter(func(job: Dictionary) -> bool: return _cores.has(String(job.get("core", ""))))
+	# SIM_SOURCES: comma list of job sources to keep (preset, authored,
+	# route, random, ablation_base, ablation); empty keeps everything.
+	var sources_env := _env("SIM_SOURCES", "")
+	if not sources_env.is_empty():
+		var kept_sources := sources_env.split(",")
+		jobs = jobs.filter(func(job: Dictionary) -> bool: return kept_sources.has(String(job.get("source", ""))))
 	print("[sim] shard %d/%d: %d builds, %d frames each, seed %d -> %s" % [_shard, _shards, jobs.size(), _frames, _seed, _out_dir])
 	var index := 0
 	for job in jobs:
@@ -313,7 +322,7 @@ func _structure_pass() -> Dictionary:
 
 
 func _fresh_ledger(core: String, segments_completed: int) -> AscensionLedger:
-	var ledger := AscensionLedger.new(_db, AscensionLedger.fresh_state(core))
+	var ledger := AscensionLedger.new(_db, AscensionLedger.fresh_state(core, _tree_version))
 	ledger.note_segment_completed(segments_completed)
 	return ledger
 
@@ -589,7 +598,7 @@ func _jobs() -> Array:
 		for preset in presets:
 			jobs.append({"name": String(preset.name), "source": "preset", "core": String(preset.native_core), "nodes": preset.nodes, "equip": preset.get("equip", {}), "tier": _tier_for_cost(preset)})
 		for build in _db.builds:
-			jobs.append({"name": "Authored: " + String(build.name), "source": "authored", "core": String(build.native_core), "nodes": build.nodes, "equip": build.get("equip", {}), "tier": _tier_for_cost(build)})
+			jobs.append({"name": "Authored: " + String(build.name), "source": "authored", "core": String(build.native_core), "nodes": build.nodes, "ranks": build.get("ranks", {}), "equip": build.get("equip", {}), "tier": _tier_for_cost(build)})
 		for route in _load_json(ROUTES).get("routes", []):
 			jobs.append({"name": "Route: " + String(route.name), "source": "route", "core": String(route.native_core), "nodes": route.nodes, "equip": route.get("equip", {}), "tier": _tier_for_cost(route)})
 	for tier_index in _tiers:
@@ -649,7 +658,7 @@ func _tier_for_cost(build: Dictionary) -> int:
 func _random_build(core: String, tier: Dictionary, seed_value: int) -> Dictionary:
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
-	var state := AscensionLedger.fresh_state(core)
+	var state := AscensionLedger.fresh_state(core, _tree_version)
 	var ledger := AscensionLedger.new(_db, state)
 	var segment := int(tier.segment)
 	ledger.note_segment_completed(segment - 1)
@@ -669,7 +678,7 @@ func _random_build(core: String, tier: Dictionary, seed_value: int) -> Dictionar
 			var kind := _db.kind(id)
 			if kind == "core":
 				continue
-			if ledger.owns(id) and kind != "sink":
+			if ledger.owns(id) and kind != "sink" and not (kind == "local" and ledger.rank(id) < _db.max_rank(id)):
 				continue
 			var chosen := ""
 			if kind == "gate":
@@ -684,7 +693,7 @@ func _random_build(core: String, tier: Dictionary, seed_value: int) -> Dictionar
 			if not bool(verdict.ok):
 				continue
 			var weight := float(KIND_WEIGHTS.get(kind, 1.0))
-			if kind == "sink":
+			if kind == "sink" or (kind == "local" and ledger.owns(id)):
 				weight = weight / float(1 + ledger.rank(id))
 			options.append({"id": id, "cost": int(verdict.cost), "core": chosen})
 			weights.append(weight)
@@ -734,7 +743,7 @@ func _install(job: Dictionary) -> Dictionary:
 		result["spent"] = int(built.spent)
 		result["order"] = built.order
 	else:
-		Global.attempt_ascension = AscensionLedger.fresh_state(core)
+		Global.attempt_ascension = AscensionLedger.fresh_state(core, _tree_version)
 		var ledger := Global.ascension_ledger()
 		ledger.note_segment_completed(12)
 		ledger.grant_evolution_claim(4)
@@ -752,6 +761,20 @@ func _install(job: Dictionary) -> Dictionary:
 				break
 			result["spent"] = int(result.spent) + ledger.record_purchase(id, int(verdict.cost), chosen)
 			(result.order as Array).append(id)
+		# V5 authored builds invest ranks on already-owned nodes.
+		var ranks: Variant = job.get("ranks", {})
+		if ranks is Dictionary and result.failed == "":
+			for rank_id in (ranks as Dictionary):
+				var target := int((ranks as Dictionary)[rank_id])
+				while ledger.rank(String(rank_id)) < target:
+					var rank_verdict := ledger.can_buy(String(rank_id), 100000000)
+					if not bool(rank_verdict.ok):
+						result["failed"] = "%s rank %d: %s" % [rank_id, ledger.rank(String(rank_id)) + 1, rank_verdict.reason]
+						break
+					result["spent"] = int(result.spent) + ledger.record_purchase(String(rank_id), int(rank_verdict.cost))
+					(result.order as Array).append("%s+%d" % [rank_id, ledger.rank(String(rank_id))])
+				if result.failed != "":
+					break
 		var equip: Variant = job.get("equip", {})
 		if equip is Dictionary:
 			for slot in ["q", "v", "v2", "reaction"]:

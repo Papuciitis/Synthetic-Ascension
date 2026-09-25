@@ -693,6 +693,11 @@ func _build_renderer() -> void:
 	var bullet_material := CanvasItemMaterial.new()
 	bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	_renderer.material = bullet_material
+	# A shaped grayscale quad (white core, soft tail) instead of a flat
+	# rectangle; each projectile's instance colour still does the tinting
+	# (Ranged V5 presentation pass). Missing texture = the old flat quad.
+	if ResourceLoader.exists("res://assets/textures/vfx/ranged/bullet_shared.png"):
+		_renderer.texture = load("res://assets/textures/vfx/ranged/bullet_shared.png")
 	add_child(_renderer)
 
 func _update_renderer() -> void:

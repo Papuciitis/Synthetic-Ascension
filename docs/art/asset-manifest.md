@@ -53,5 +53,52 @@ in a folder is not integrated art.
 - **Status:** prototype reference recorded; authoritative set pending
   browser retrieval at Phase 2 start.
 
-(remaining entries arrive with the existing-item texture audit and the
-Ranged VFX inventory)
+### ranged-visual-identity — retrieved from ChatGPT "JSON lasīšana" (2026-09-26)
+- **What was retrieved (screenshot of the chat's final summary, captured
+  via the user-authorized browser automation before the permission
+  classifier stopped further scrolling):**
+  | Discipline | Core fantasy | Shape language | Motion | Payoff |
+  |---|---|---|---|---|
+  | Precision | Manufactured killing magic | needle / line / diamond / bracket | instant, straight, exact | piercing / perfect alignment |
+  | Barrage | Mana pushed beyond safe throughput | dart / aperture / broken ring | accelerating, repeated | projectile storm / overheating |
+  | Ordnance | Sealed synthetic magic used as artillery | shell / charge / pressure ring | arcing, delayed, heavy | detonation / chain reaction |
+  Shared rule: **"Synthetic magic always looks constructed."** Precision
+  constructs perfect geometry; Barrage constructs too quickly and starts
+  breaking down; Ordnance constructs containers ruptured on purpose.
+- **Open questions GPT posed there (user's answers not yet retrieved):**
+  literal heat vs abstract destabilization for Barrage; conjured solid
+  charges vs pure energy payloads for Ordnance. Earlier messages of the
+  chat (and any reference images) are still unread — scrolling was blocked.
+- **Consequence for the authored texture set:** Precision set matches.
+  Barrage should move toward darts/broken rings (tracer acceptable
+  interim); Ordnance shell telegraph should read as a pressure ring
+  (current hollow diamond is interim), grenade as a conjured solid charge.
+- **Status:** partial retrieval; the remainder needs either the Bash
+  permission rule for the GUI driver or a manual look by the user.
+
+### ranged-vfx-authored-set — 12 procedural textures (2026-09-26)
+- **Identity:** runtime VFX components in `assets/textures/vfx/ranged/`:
+  `bullet_shared` (batched pool quad, grayscale, tinted per instance),
+  `needle_bullet`/`tracer_bullet` (reserved for per-discipline layering),
+  `diamond_mote` (Barrage fragments), `beam_core`+`beam_cap` (Deadshot /
+  Judgement / Firing Squad lines), `impact_burst` (generated impacts),
+  `grenade_body`/`mine_body`/`shell_marker` (Ordnance silhouettes),
+  `aura_ring` (Hot Core's true damaging radius), `spin_glow` (Spin Up
+  stage muzzle glow).
+- **Brief/provenance:** authored as geometry in
+  `tools/design/build_ranged_vfx.py` (reproducible, license-free) against
+  the user's WIP reference and the retrieved identity table (needle/
+  diamond/gold-white for Precision; violet only as small accents). Not AI
+  generated, not sourced — the shapes are exact math.
+- **Files:** PNGs + Godot .import; bound in ProjectileSimulationManager
+  (pool texture), AscensionRunner (_draw: beams, bursts, billboards),
+  BarrageEngineV5 / OrdnanceEngineV5 (collect_draw_points).
+- **Verification:** contact sheets reviewed on dark and light grounds;
+  alpha real (no baked checkerboard); parse audit + full suite battery
+  green. NOT yet reviewed in rendered gameplay — headless cannot render;
+  needs the next human run at gameplay zoom.
+- **Status:** integrated (rendered-review pending). Known follow-ups from
+  the identity table: Barrage darts/broken-ring rework, Ordnance
+  pressure-ring telegraph, once the chat's remaining references are read.
+
+(remaining entries arrive with the existing-item texture audit)

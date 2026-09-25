@@ -949,12 +949,21 @@ func move_speed_multiplier() -> float:
 func collect_draw_points(out: Array) -> void:
 	collect_beam_points(out)
 	for fragment in fragments:
-		out.append([fragment["pos"], 3.5, Color(1.0, 0.75, 0.3, 0.95)])
-	# The radiant aura's true damaging radius, always world-accurate.
+		runner.note_texture_point(fragment["pos"], 7.0, Color(1.0, 0.85, 0.5, 0.95), "diamond_mote")
+	# The radiant aura's true damaging radius, always world-accurate: the
+	# ring texture is drawn at exactly the damaging edge.
 	var state := aura_state()
 	if float(state[0]) > 0.0:
 		var intensity: float = clampf(float(state[1]) / (0.5 * D()), 0.2, 1.0)
-		out.append([runner.player_position(), float(state[0]), Color(1.0, 0.45, 0.15, 0.10 + 0.25 * intensity)])
+		var radius := float(state[0])
+		# aura_ring.png carries its ring at 58/64 of its half-size.
+		runner.note_texture_point(runner.player_position(), radius * (64.0 / 58.0), Color(1.0, 1.0, 1.0, 0.35 + 0.45 * intensity), "aura_ring")
+		out.append([runner.player_position(), radius, Color(1.0, 0.45, 0.15, 0.08)])
+	# Spin Up stage glow at the muzzle: unmistakably not a Heat readout.
+	var stage := spin_stage()
+	if stage > 0:
+		var glow_color: Color = [Color(0.65, 0.85, 1.0, 0.35), Color(0.75, 0.9, 1.0, 0.55), Color(1.0, 0.95, 0.8, 0.8)][stage - 1]
+		runner.note_texture_point(runner.player_position() + (runner.aim_target() - runner.player_position()).normalized() * 26.0, 8.0 + 3.0 * stage, glow_color, "spin_glow")
 
 
 func hud_state(slot: String) -> Dictionary:

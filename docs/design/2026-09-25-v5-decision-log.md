@@ -65,6 +65,21 @@ Format: **D-n** — decision · reason · evidence · authority
   owned Grenade/Shell/Mine blasts and excludes ORC and ORV roots
   ("ordinary OR sources only"). Authority: spec §4.5 wording.
 
+- **B-1 (blocker)** — **Browser ChatGPT is unreachable from this session
+  (2026-09-26).** The session has no browser-control or computer-use tools
+  (checked the tool registry directly), so the signed-in ChatGPT window in
+  Firefox cannot be driven, per handoff §13.1's warning that the handoff
+  itself cannot grant missing tool access. Consequences: (1) asset
+  generation via GPT and (2) history retrieval (authoritative Precision
+  references, "JSON lasīšana"/"Game Shape Improvement" chats, the user's
+  requested "what did the handoff miss" GPT consult) are deferred, not
+  skipped. Fallbacks in use: WebSearch/WebFetch for licensed (CC0) asset
+  research — the repo already uses Kenney CC0 packs — and text-described
+  references recorded in the manifest. **To unblock:** run a session with
+  Claude desktop computer use enabled, or move ChatGPT to Chrome with the
+  Claude-in-Chrome extension connected. Exact ready-to-send GPT request is
+  kept in the phase checklist's next-task section.
+
 - **D-3** — **Beka's appearance (user direction, 2026-09-25, mid-session):
   a black and white female cat — white nose, white neck/chest, white
   "boots" (paws/lower legs), black elsewhere (tuxedo-style).** This is the

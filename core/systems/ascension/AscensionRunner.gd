@@ -1269,6 +1269,30 @@ func note_line_fx(from: Vector2, to: Vector2, radius: float) -> void:
 	queue_redraw()
 
 
+## Authored VFX textures (Ranged V5 presentation pass); a missing file just
+## falls back to the vector drawing that was always there.
+const VFX_DIR := "res://assets/textures/vfx/ranged/"
+static var _vfx_cache: Dictionary = {}
+
+
+static func vfx_texture(name: String) -> Texture2D:
+	if _vfx_cache.has(name):
+		return _vfx_cache[name]
+	var path := VFX_DIR + name + ".png"
+	var texture: Texture2D = load(path) if ResourceLoader.exists(path) else null
+	_vfx_cache[name] = texture
+	return texture
+
+
+## An engine-owned world marker drawn as a textured billboard this frame:
+## [at, half-size in world units, modulate colour, texture name].
+var _texture_points: Array = []
+
+
+func note_texture_point(at: Vector2, half_size: float, color: Color, texture_name: String) -> void:
+	_texture_points.append([at, half_size, color, texture_name])
+
+
 func _tick_attack_fx(delta: float) -> void:
 	for i in range(_attack_fx.size() - 1, -1, -1):
 		var fx: Dictionary = _attack_fx[i]
@@ -1342,9 +1366,20 @@ func block_native_fire(seconds: float) -> void:
 
 
 func _draw() -> void:
-	if _draw_points.is_empty() and _attack_fx.is_empty():
+	if _draw_points.is_empty() and _attack_fx.is_empty() and _texture_points.is_empty():
 		return
-	draw_set_transform_matrix(get_global_transform().affine_inverse())
+	var base_inverse := get_global_transform().affine_inverse()
+	draw_set_transform_matrix(base_inverse)
+	var beam_core := vfx_texture("beam_core")
+	var beam_cap := vfx_texture("beam_cap")
+	var burst := vfx_texture("impact_burst")
+	for point in _texture_points:
+		var texture := vfx_texture(String(point[3]))
+		var half := float(point[1])
+		if texture == null:
+			draw_circle(point[0], half, point[2])
+			continue
+		draw_texture_rect(texture, Rect2((point[0] as Vector2) - Vector2.ONE * half, Vector2.ONE * half * 2.0), false, point[2])
 	for fx in _attack_fx:
 		var fade := clampf(float(fx["ttl"]) / ATTACK_FX_SECONDS, 0.0, 1.0)
 		var color: Color = fx["color"]
@@ -1352,13 +1387,30 @@ func _draw() -> void:
 		var at: Vector2 = fx["at"]
 		var radius := float(fx["radius"])
 		if String(fx["kind"]) == "line":
-			draw_line(at, fx["dir"], color, maxf(2.0, radius * 2.0 * fade), true)
+			if beam_core != null and beam_cap != null:
+				# Authored beam: stretched core plus a needle-burst end cap,
+				# drawn in the beam's own frame (Ranged V5 presentation).
+				var to: Vector2 = fx["dir"]
+				var length := at.distance_to(to)
+				var width := maxf(8.0, radius * 3.0) * (0.6 + 0.4 * fade)
+				draw_set_transform_matrix(base_inverse * Transform2D((to - at).angle(), at))
+				draw_texture_rect(beam_core, Rect2(Vector2(0.0, -width * 0.5), Vector2(length, width)), false, color)
+				var cap := width * 2.6
+				draw_texture_rect(beam_cap, Rect2(Vector2(length - cap * 0.5, -cap * 0.5), Vector2.ONE * cap), false, color)
+				draw_set_transform_matrix(base_inverse)
+			else:
+				draw_line(at, fx["dir"], color, maxf(2.0, radius * 2.0 * fade), true)
 		elif String(fx["kind"]) == "slash":
 			var facing: float = (fx["dir"] as Vector2).angle()
 			var half := deg_to_rad(float(fx["arc"])) * 0.5
 			draw_arc(at, radius * (0.75 + 0.25 * (1.0 - fade)), facing - half, facing + half, 24, color, 5.0 * fade + 1.0, true)
 		else:
 			draw_arc(at, radius * (0.6 + 0.4 * (1.0 - fade)), 0.0, TAU, 32, color, 3.0 * fade + 1.0, true)
+			if burst != null:
+				var burst_half := radius * (0.7 + 0.5 * (1.0 - fade))
+				var burst_color := color
+				burst_color.a = fade
+				draw_texture_rect(burst, Rect2(at - Vector2.ONE * burst_half, Vector2.ONE * burst_half * 2.0), false, burst_color)
 			color.a *= 0.15
 			draw_circle(at, radius * (0.6 + 0.4 * (1.0 - fade)), color)
 	var font := ThemeDB.fallback_font
@@ -1652,9 +1704,10 @@ func _process(delta: float) -> void:
 	_frame_hits = 0
 	_tick_attack_fx(delta)
 	_draw_points.clear()
+	_texture_points.clear()
 	for engine in engines:
 		engine.collect_draw_points(_draw_points)
-	if not _draw_points.is_empty() or not _attack_fx.is_empty():
+	if not _draw_points.is_empty() or not _texture_points.is_empty() or not _attack_fx.is_empty():
 		queue_redraw()
 	_sweep_accum += delta
 	if _sweep_accum >= STATUS_SWEEP_INTERVAL:

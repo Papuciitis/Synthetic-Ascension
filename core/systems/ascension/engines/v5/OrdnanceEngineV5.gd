@@ -503,16 +503,30 @@ func hud_state(slot: String) -> Dictionary:
 	return state
 
 
+## Distinct silhouettes (spec §4.6): grenades travel as round charges, Mines
+## sit as spiked discs, falling Shells telegraph as pressure reticles over
+## their true blast circle. Textures fall back to the V4 circles when absent.
 func collect_draw_points(out: Array) -> void:
-	super.collect_draw_points(out)
+	for mine in mines:
+		var armed := float(mine["arm"]) <= 0.0
+		runner.note_texture_point(mine["at"], 12.0 if armed else 9.0, Color(1.0, 1.0, 1.0, 1.0 if armed else 0.55), "mine_body")
+	for coord in coordinates:
+		out.append([coord["at"], 14.0, Color(1.0, 0.9, 0.5, 0.3 if bool(coord["dormant"]) else 0.7)])
+	for shell in shells:
+		var footprint := float(shell["radius"]) * _blast_radius_scale()
+		out.append([shell["at"], footprint, Color(1.0, 0.5, 0.3, 0.25)])
+		var urgency: float = clampf(1.0 - float(shell["left"]) / SHELL_TELL, 0.3, 1.0)
+		runner.note_texture_point(shell["at"], footprint * 0.5, Color(1.0, 1.0, 1.0, urgency), "shell_marker")
+	for lane in _lanes:
+		out.append([lane["from"], 2.0, Color(1.0, 0.7, 0.4, 0.4), lane["to"]])
 	for grenade in grenades:
-		var color := Color(0.5, 1.0, 0.4, 0.95)
+		var tint := Color(1.0, 1.0, 1.0, 1.0)
 		match String(grenade["state"]):
 			"attached":
-				color = Color(1.0, 0.85, 0.2, 1.0)
+				tint = Color(1.4, 1.1, 0.6, 1.0)
 			"grounded":
-				color = Color(1.0, 0.6, 0.2, 0.9)
-		out.append([grenade["pos"], 5.0, color])
+				tint = Color(1.3, 0.9, 0.6, 1.0)
+		runner.note_texture_point(grenade["pos"], 8.0, tint, "grenade_body")
 
 
 func describe() -> Dictionary:
