@@ -83,12 +83,25 @@ difference. Working tree clean apart from untracked docs/archives.
 - [ ] Legibility at gameplay zoom: needs a rendered human run; contact
       sheets checked on light/dark grounds only
 
-## Phase 3 — 2D world shapes and shallow depth
-- [ ] Small proof scene: irregular footprint, recessed entrance,
-      street-width transition, shallow wall depth
-- [ ] Footprint drives floor/walls/doors/collision/indoor/roof consistently
-- [ ] Overlap/batching strategy proven vs ChunkBlockRenderer/EnemyProxyRenderer
-- [ ] Extended into Level1Builder AND procedural paths
+## Phase 3 — 2D world shapes and shallow depth  ◐ 2026-09-26
+- [x] Proof on the real parcel path (`WorldFootprintTest` 10/10): L building
+      with recessed entrance at a fixed seed; roads/streets vary by role
+      already (widths 2–7)
+- [x] Footprint cells drive floor, perimeter walls, collision, projectile
+      grid, two IndoorVolumes (one building id, one loot owner) and a
+      polygon RoofOverlay consistently; interior stays an open reachable
+      hall (no carver connectivity risk)
+- [x] Shallow depth: south wall faces + slight cap lift in BOTH render
+      paths (ChunkBlockRenderer batches, shadowless face batch, counted
+      separately; CoverWall DepthFace sprite for Level 1 / unbatched);
+      authored face texture in the caps' palette
+      (tools/design/build_world_textures.py); world battery green
+- [◐] Level1Builder gets the depth pass via CoverWall automatically;
+      irregular AUTHORED footprints for segment 1 not yet planned in
+- [ ] Rendered legibility check (actors beside faces at gameplay zoom):
+      needs the next human run — headless cannot render
+- [ ] Rubble/vegetation/dirt transitions: per-theme decor exists; no new
+      pass yet
 
 ## Phase 4 — Items: Beka first, then batches; existing-item textures
 - [x] Beka shield: real absorb pool in Player._take_damage (after armour,

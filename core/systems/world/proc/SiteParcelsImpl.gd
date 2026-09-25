@@ -292,7 +292,17 @@ func _fill_frontage_band(
 				x0v = usable.position.x + usable.size.x - building_depth
 			build_rect = Rect2i(Vector2i(x0v, y0v), Vector2i(building_depth, lot_len))
 
-		if _spawn_building_rect(chunk_manager, chunk, coord, build_rect, door_dir, template, keepout_rects, placed, cfg, rng, chunk_rect):
+		# Phase 3: workshops and row buildings sometimes take an L footprint
+		# with a recessed entrance, so streets stop reading as pure rectangles.
+		var irregular: bool = (template == &"workshop" or template == &"row_house") \
+			and lot_len >= 9 and building_depth >= 8 \
+			and rng.randf() < float(cfg.get("parcel_l_chance", 0.35))
+		var spawned: bool = false
+		if irregular:
+			spawned = _spawn_building_footprint(chunk_manager, chunk, coord, build_rect, door_dir, template, keepout_rects, placed, cfg, rng, chunk_rect)
+		else:
+			spawned = _spawn_building_rect(chunk_manager, chunk, coord, build_rect, door_dir, template, keepout_rects, placed, cfg, rng, chunk_rect)
+		if spawned:
 			made_any = true
 			coverage += lot_len
 			cursor += lot_len
@@ -476,6 +486,241 @@ func _spawn_building_rect(
 
 	placed.append(build_rect)
 	return true
+
+
+## Phase 3 (2026-09-25 handoff): an irregular hall building. The rect loses a
+## rear-corner notch (an L) and may gain a one-cell recessed entrance bay;
+## perimeter walls derive from the footprint cells, the interior stays one
+## open hall (always reachable), and floor, collision, indoor volumes and the
+## roof polygon all follow the same cells. Interior rooms stay a rectangle
+## luxury — halls read as workshops and row buildings from the street.
+func _spawn_building_footprint(
+	chunk_manager: Node,
+	chunk: Node2D,
+	coord: Vector2i,
+	build_rect: Rect2i,
+	door_dir: Vector2i,
+	template: StringName,
+	keepout_rects: Array[Rect2i],
+	placed: Array[Rect2i],
+	cfg: Dictionary,
+	rng: RandomNumberGenerator,
+	chunk_rect: Rect2i
+) -> bool:
+	if not _rect_can_place(build_rect, chunk_rect, keepout_rects, placed):
+		return false
+	var cpc: int = int(chunk_manager._cells_per_chunk())
+	var cell_px: int = int(chunk_manager.cell_size_px)
+	var door_w: int = maxi(2, int(cfg.get("parcel_door_width", 2)))
+	var apron_len: int = maxi(1, int(cfg.get("parcel_apron_len", 2)))
+
+	# The notch bites the rear corner away from the street; wings A (front
+	# slab, full frontage) and B (rear slab, flush to one side) tile the L.
+	var horizontal: bool = door_dir.y != 0
+	var front_len: int = build_rect.size.x if horizontal else build_rect.size.y
+	var depth: int = build_rect.size.y if horizontal else build_rect.size.x
+	var notch_len: int = clampi(rng.randi_range(3, front_len / 2), 3, front_len - 5)
+	var notch_deep: int = clampi(rng.randi_range(2, depth / 2), 2, depth - 5)
+	var flush_left: bool = rng.randf() < 0.5
+
+	var wing_a := Rect2i()
+	var wing_b := Rect2i()
+	if horizontal:
+		var front_at_top := door_dir == Vector2i(0, -1)
+		var a_y := build_rect.position.y if front_at_top else build_rect.position.y + notch_deep
+		wing_a = Rect2i(Vector2i(build_rect.position.x, a_y), Vector2i(front_len, depth - notch_deep))
+		var b_y := build_rect.position.y + depth - notch_deep if front_at_top else build_rect.position.y
+		var b_x := build_rect.position.x if flush_left else build_rect.position.x + notch_len
+		wing_b = Rect2i(Vector2i(b_x, b_y), Vector2i(front_len - notch_len, notch_deep))
+	else:
+		var front_at_left := door_dir == Vector2i(-1, 0)
+		var a_x := build_rect.position.x if front_at_left else build_rect.position.x + notch_deep
+		wing_a = Rect2i(Vector2i(a_x, build_rect.position.y), Vector2i(depth - notch_deep, front_len))
+		var b_x2 := build_rect.position.x + depth - notch_deep if front_at_left else build_rect.position.x
+		var b_y2 := build_rect.position.y if flush_left else build_rect.position.y + notch_len
+		wing_b = Rect2i(Vector2i(b_x2, b_y2), Vector2i(notch_deep, front_len - notch_len))
+
+	var footprint: Dictionary = {}
+	for wing in [wing_a, wing_b]:
+		for y in range(wing.position.y, wing.position.y + wing.size.y):
+			for x in range(wing.position.x, wing.position.x + wing.size.x):
+				footprint[Vector2i(x, y)] = true
+
+	# The door sits on the street edge of wing A; a recessed bay pulls it one
+	# cell inward by removing the bay cells from the footprint, so the
+	# perimeter wraps into the alcove by itself.
+	var center_along: int = wing_a.position.x + wing_a.size.x / 2 if horizontal else wing_a.position.y + wing_a.size.y / 2
+	var door_pos := Vector2i.ZERO
+	if door_dir == Vector2i(0, -1):
+		door_pos = Vector2i(center_along, wing_a.position.y)
+	elif door_dir == Vector2i(0, 1):
+		door_pos = Vector2i(center_along, wing_a.position.y + wing_a.size.y - 1)
+	elif door_dir == Vector2i(1, 0):
+		door_pos = Vector2i(wing_a.position.x + wing_a.size.x - 1, center_along)
+	else:
+		door_pos = Vector2i(wing_a.position.x, center_along)
+	var recess: bool = front_len >= 9 and rng.randf() < float(cfg.get("parcel_recess_chance", 0.5))
+	var across := Vector2i(1, 0) if horizontal else Vector2i(0, 1)
+	if recess:
+		for step in range(-(door_w / 2) - 1, door_w / 2 + 2):
+			footprint.erase(door_pos + across * step)
+		door_pos += door_dir * -1  # one cell inward; the alcove is outside now
+
+	# Perimeter walls come straight from the footprint; the interior is open.
+	var wall_cells: Dictionary = {}
+	for cell_key in footprint.keys():
+		var cell := cell_key as Vector2i
+		for offset in [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)]:
+			if not footprint.has(cell + offset):
+				wall_cells[cell] = true
+				break
+	# The doorway: an opening of door_w in the (possibly recessed) front wall.
+	for step in range(-(door_w - 1) / 2, door_w / 2 + 1):
+		wall_cells.erase(door_pos + across * step)
+	# Windows on straight runs only, at the authored chance.
+	var window_cells: Dictionary = {}
+	var window_chance := float(cfg.get("facility_window_chance", 0.18))
+	for cell_key in wall_cells.keys():
+		var cell := cell_key as Vector2i
+		var mask := 0
+		if wall_cells.has(cell + Vector2i(0, -1)):
+			mask |= 1
+		if wall_cells.has(cell + Vector2i(1, 0)):
+			mask |= 2
+		if wall_cells.has(cell + Vector2i(0, 1)):
+			mask |= 4
+		if wall_cells.has(cell + Vector2i(-1, 0)):
+			mask |= 8
+		if (mask == 5 or mask == 10) and rng.randf() < window_chance:
+			window_cells[cell] = true
+
+	# Floors per wing, then the shared spawn/collision path.
+	var floor_tex: int = int(cfg.get("workshop_floor_tex", 4)) if template == &"workshop" else int(cfg.get("residential_floor_tex", 2))
+	var stamp_rng := RandomNumberGenerator.new()
+	stamp_rng.seed = _mix_seed(int(chunk_manager.world_seed), coord.x, coord.y, 5013 + build_rect.position.x * 17 + build_rect.position.y * 31)
+	for wing in [wing_a, wing_b]:
+		chunk_manager._stamp_floor_rect_cells(chunk, wing, floor_tex, stamp_rng, float(cfg.get("indoor_floor_alpha", 0.95)), int(cfg.get("indoor_floor_z", -94)))
+	chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
+	_stamp_door_apron(chunk_manager, chunk, coord, build_rect, door_pos, door_dir, apron_len + (1 if recess else 0), cfg, chunk_rect)
+	var door_socket := Marker2D.new()
+	door_socket.name = "DoorSpawnSocket"
+	door_socket.position = (Vector2(door_pos + door_dir) + Vector2(0.5, 0.5)) * float(cell_px)
+	door_socket.add_to_group(&"enemy_spawn_socket")
+	door_socket.set_meta("spawn_socket_kind", &"door")
+	chunk.add_child(door_socket)
+
+	# Two indoor volumes tile the open interior exactly (wing A's grow(-1)
+	# plus wing B's interior extended one row/column across the seam); both
+	# carry one building identity, only the first carries loot rights.
+	if INDOOR_VOLUME_SCENE != null:
+		var interior_a: Rect2i = wing_a.grow(-1)
+		# Wing B's interior drops its three walled margins and extends one
+		# cell across the open seam into wing A, so the two volumes tile the
+		# whole hall with no uncovered row at the join.
+		var interior_b := Rect2i()
+		if horizontal:
+			if wing_a.position.y > wing_b.position.y:
+				interior_b = Rect2i(wing_b.position + Vector2i(1, 1), Vector2i(wing_b.size.x - 2, wing_b.size.y))
+			else:
+				interior_b = Rect2i(wing_b.position + Vector2i(1, -1), Vector2i(wing_b.size.x - 2, wing_b.size.y))
+		else:
+			if wing_a.position.x > wing_b.position.x:
+				interior_b = Rect2i(wing_b.position + Vector2i(1, 1), Vector2i(wing_b.size.x, wing_b.size.y - 2))
+			else:
+				interior_b = Rect2i(Vector2i(wing_b.position.x - 1, wing_b.position.y + 1), Vector2i(wing_b.size.x, wing_b.size.y - 2))
+		var global_tl: Vector2i = coord * cpc + interior_a.position
+		var building_id: int = int(_mix_seed(int(chunk_manager.world_seed), global_tl.x, global_tl.y, 78) & 0x7fffffff) + 1
+		var loot_cfg: Dictionary = {
+			"small_loot_chance": float(cfg.get("parcel_loot_chance", 0.22)),
+			"small_count_min": int(cfg.get("parcel_loot_count_min", 1)),
+			"small_count_max": int(cfg.get("parcel_loot_count_max", 1)),
+			"small_rarity_min": int(cfg.get("parcel_loot_rarity_min", 3)),
+			"small_rarity_max": int(cfg.get("parcel_loot_rarity_max", 6)),
+			"small_rarity_bonus_per_segment": int(cfg.get("parcel_loot_rarity_bonus_per_segment", 0)),
+			"scatter_radius_px": float(cfg.get("parcel_loot_scatter_radius", 24.0)),
+			"pickup_delay": float(cfg.get("parcel_loot_pickup_delay", 0.15)),
+			"local_encounter_enabled": false,
+			"local_encounter_count": int(cfg.get("local_encounter_count", 5)),
+			"secondary_objective_id": 0,
+		}
+		var volumes: Array = []
+		for pair in [[interior_a, loot_cfg], [interior_b, {"small_loot_chance": 0.0}]]:
+			var rect := pair[0] as Rect2i
+			if rect.size.x <= 0 or rect.size.y <= 0:
+				continue
+			var volume := INDOOR_VOLUME_SCENE.instantiate() as IndoorVolume
+			if volume == null:
+				continue
+			volume.configure(coord * cpc + rect.position, rect.size, cell_px, building_id, pair[1] as Dictionary)
+			chunk.add_child(volume)
+			volumes.append(volume)
+		if ROOF_OVERLAY_SCENE != null and not volumes.is_empty():
+			var roof := ROOF_OVERLAY_SCENE.instantiate()
+			chunk.add_child(roof)
+			if roof.has_method("configure_polygon"):
+				var outline := _footprint_outline(footprint, cell_px)
+				var facade := _edge_span_px(wing_a, door_dir, cell_px)
+				roof.configure_polygon(outline, facade[0], facade[1], volumes, template, building_id)
+
+	placed.append(build_rect)
+	return true
+
+
+## The closed outline of an orthogonal cell set, in pixels: boundary edges
+## between footprint and outside, chained into one loop.
+func _footprint_outline(footprint: Dictionary, cell_px: int) -> PackedVector2Array:
+	var edges: Dictionary = {}   # corner -> Array of next corners
+	for cell_key in footprint.keys():
+		var cell := cell_key as Vector2i
+		var corners := [cell, cell + Vector2i(1, 0), cell + Vector2i(1, 1), cell + Vector2i(0, 1)]
+		var sides := [[Vector2i(0, -1), 0, 1], [Vector2i(1, 0), 1, 2], [Vector2i(0, 1), 2, 3], [Vector2i(-1, 0), 3, 0]]
+		for side in sides:
+			if not footprint.has(cell + (side[0] as Vector2i)):
+				var from_corner: Vector2i = corners[side[1]]
+				var to_corner: Vector2i = corners[side[2]]
+				if not edges.has(from_corner):
+					edges[from_corner] = []
+				(edges[from_corner] as Array).append(to_corner)
+	var chained: Array[Vector2i] = []
+	if edges.is_empty():
+		return PackedVector2Array()
+	var start := edges.keys()[0] as Vector2i
+	var current := start
+	var guard := 0
+	while guard < 4096:
+		guard += 1
+		chained.append(current)
+		var nexts: Array = edges.get(current, [])
+		if nexts.is_empty():
+			break
+		var next_corner := nexts.pop_back() as Vector2i
+		if nexts.is_empty():
+			edges.erase(current)
+		current = next_corner
+		if current == start:
+			break
+	# Merge collinear runs so the polygon carries real corners only.
+	var out := PackedVector2Array()
+	var count := chained.size()
+	for i in range(count):
+		var prev := chained[(i - 1 + count) % count]
+		var here := chained[i]
+		var next := chained[(i + 1) % count]
+		if (here - prev).sign() != (next - here).sign():
+			out.append(Vector2(here) * float(cell_px))
+	return out
+
+
+func _edge_span_px(rect: Rect2i, door_dir: Vector2i, cell_px: int) -> Array:
+	var tl := Vector2(rect.position) * float(cell_px)
+	var br := Vector2(rect.position + rect.size) * float(cell_px)
+	if door_dir == Vector2i(0, -1):
+		return [tl, Vector2(br.x, tl.y)]
+	if door_dir == Vector2i(0, 1):
+		return [Vector2(tl.x, br.y), br]
+	if door_dir == Vector2i(1, 0):
+		return [Vector2(br.x, tl.y), br]
+	return [tl, Vector2(tl.x, br.y)]
 
 
 func _stamp_door_apron(chunk_manager: Node, chunk: Node2D, coord: Vector2i, build_rect: Rect2i, door_pos: Vector2i, door_dir: Vector2i, apron_len: int, cfg: Dictionary, chunk_rect: Rect2i) -> void:

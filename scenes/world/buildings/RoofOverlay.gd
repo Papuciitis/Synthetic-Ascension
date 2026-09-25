@@ -74,6 +74,31 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 			indoor_volume.body_exited.connect(_on_volume_body_exited)
 
 
+## An irregular footprint's roof (Phase 3): the polygon is the footprint's
+## authored outline; the façade edge runs along the given street-side span;
+## fades listen to every sub-volume of the building through one counter, so
+## crossing between overlapping volumes never flickers.
+func configure_polygon(outline_px: PackedVector2Array, facade_from: Vector2, facade_to: Vector2, volumes: Array, building_kind: StringName = &"row_house", visual_seed: int = 0) -> void:
+	_apply_visual_variant(building_kind, visual_seed)
+	_poly.polygon = outline_px
+	_poly.z_index = -92
+	_edge.clear_points()
+	_edge.width = front_edge_width_px
+	_edge.z_index = -91
+	_edge.antialiased = true
+	_edge.add_point(facade_from)
+	_edge.add_point(facade_to)
+	_set_alpha(outside_alpha)
+	for volume_variant in volumes:
+		var volume := volume_variant as Area2D
+		if volume == null:
+			continue
+		if not volume.body_entered.is_connected(_on_volume_body_entered):
+			volume.body_entered.connect(_on_volume_body_entered)
+		if not volume.body_exited.is_connected(_on_volume_body_exited):
+			volume.body_exited.connect(_on_volume_body_exited)
+
+
 func _apply_visual_variant(building_kind: StringName, visual_seed: int) -> void:
 	var base := Color(0.13, 0.14, 0.15, 1.0)
 	match building_kind:

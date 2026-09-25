@@ -85,6 +85,27 @@ func _apply() -> void:
 		return
 	spr.texture = tex
 
+	# Shallow depth (Phase 3), matching ChunkBlockRenderer: the cap lifts
+	# slightly and an exposed south edge hangs the stone face under it.
+	if ChunkBlockRenderer.depth_faces_enabled:
+		spr.position.y = ChunkBlockRenderer.CAP_LIFT.y
+		var face := get_node_or_null("DepthFace") as Sprite2D
+		var face_tex := ChunkBlockVisualCatalog.face_texture(
+			WorldBlockerGeometry.Kind.WINDOW if is_window else WorldBlockerGeometry.Kind.WALL,
+			connections_mask)
+		if face_tex != null:
+			if face == null:
+				face = Sprite2D.new()
+				face.name = "DepthFace"
+				add_child(face)
+			face.texture = face_tex
+			face.texture_filter = spr.texture_filter
+			face.scale = spr.scale
+			face.position = spr.position + ChunkBlockRenderer.FACE_OFFSET
+			face.z_index = spr.z_index
+		elif face != null:
+			face.queue_free()
+
 	# Quick win readability: cheap drop-shadow sprite (optional)
 	var sh := get_node_or_null("Shadow") as Sprite2D
 	if sh != null:

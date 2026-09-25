@@ -4,6 +4,12 @@ class_name ChunkBlockRenderer
 const VISUAL_SCALE := Vector2(0.0625, 0.0625)
 const SHADOW_OFFSET := Vector2(2.0, 3.0)
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
+## Shallow depth (Phase 3): caps lift slightly north and an exposed south
+## edge hangs a stone face under the cap band (the art occupies the middle
+## ~24 px of the cell, so the face sits at the band's foot, inside the cell).
+const CAP_LIFT := Vector2(0.0, -6.0)
+const FACE_OFFSET := Vector2(0.0, 17.0)
+static var depth_faces_enabled := true
 
 class TextureBatch extends RefCounted:
 	var texture: Texture2D
@@ -15,6 +21,8 @@ class TextureBatch extends RefCounted:
 	var shadow_transforms: Array[Transform2D] = []
 	var owners: Array[Vector2i] = []
 	var capacity := 0
+	## Faces are pure depth dressing: no drop shadow of their own.
+	var shadowless := false
 
 var _host: Node2D
 var _chunk_size := 2048
@@ -59,11 +67,24 @@ func add_chunk(data: ChunkBuildData) -> void:
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var world_center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * float(_cell_size)
-		var transform := Transform2D(rotation, world_center).scaled_local(VISUAL_SCALE)
+		var lift := Vector2.ZERO
+		if depth_faces_enabled and kind != WorldBlockerGeometry.Kind.HALF_COVER:
+			lift = CAP_LIFT
+		var transform := Transform2D(rotation, world_center + lift).scaled_local(VISUAL_SCALE)
 		var shadow_transform := Transform2D(rotation, world_center + SHADOW_OFFSET).scaled_local(VISUAL_SCALE)
 		batch.transforms.append(transform)
 		batch.shadow_transforms.append(shadow_transform)
 		batch.owners.append(data.coord)
+		if depth_faces_enabled:
+			var face := ChunkBlockVisualCatalog.face_texture(kind, data.mask_at(cell))
+			if face != null:
+				var face_key := _texture_key(face)
+				var face_batch := _get_or_create_batch(face_key, face, true)
+				if not touched.has(face_key):
+					touched[face_key] = face_batch.transforms.size()
+				face_batch.transforms.append(Transform2D(0.0, world_center + lift + FACE_OFFSET).scaled_local(VISUAL_SCALE))
+				face_batch.shadow_transforms.append(Transform2D())
+				face_batch.owners.append(data.coord)
 	for key in touched:
 		_sync_batch(_batches[key] as TextureBatch, int(touched[key]))
 
@@ -106,31 +127,38 @@ func clear() -> void:
 func get_stats() -> Dictionary:
 	var instances := 0
 	var shadow_instances := 0
+	var face_instances := 0
 	var batch_nodes := 0
 	for batch_value in _batches.values():
 		var batch := batch_value as TextureBatch
-		instances += batch.visual_mesh.visible_instance_count
+		if batch.shadowless:
+			face_instances += batch.visual_mesh.visible_instance_count
+		else:
+			instances += batch.visual_mesh.visible_instance_count
 		shadow_instances += batch.shadow_mesh.visible_instance_count
 		batch_nodes += 2
 	return {
 		"batches": batch_nodes,
 		"instances": instances,
 		"shadow_instances": shadow_instances,
+		"face_instances": face_instances,
 		"runtime_images_created": 0,
 	}
 
 
-func _get_or_create_batch(key: String, texture: Texture2D) -> TextureBatch:
+func _get_or_create_batch(key: String, texture: Texture2D, shadowless: bool = false) -> TextureBatch:
 	if _batches.has(key):
 		return _batches[key] as TextureBatch
 	var batch := TextureBatch.new()
 	batch.texture = texture
+	batch.shadowless = shadowless
 	batch.visual_mesh = _new_multimesh(texture)
 	batch.shadow_mesh = _new_multimesh(texture)
 	batch.visual = _new_instance("BlockVisual_%s" % _safe_name(key), texture, batch.visual_mesh)
 	batch.shadow = _new_instance("BlockShadow_%s" % _safe_name(key), texture, batch.shadow_mesh)
 	batch.shadow.self_modulate = SHADOW_COLOR
 	batch.shadow.z_index = -1
+	batch.shadow.visible = not shadowless
 	_host.add_child(batch.shadow)
 	_host.add_child(batch.visual)
 	_batches[key] = batch
@@ -173,9 +201,10 @@ func _sync_batch(batch: TextureBatch, from_index: int = 0) -> void:
 		from_index = 0
 	for index in range(clampi(from_index, 0, count), count):
 		batch.visual_mesh.set_instance_transform_2d(index, batch.transforms[index])
-		batch.shadow_mesh.set_instance_transform_2d(index, batch.shadow_transforms[index])
+		if not batch.shadowless:
+			batch.shadow_mesh.set_instance_transform_2d(index, batch.shadow_transforms[index])
 	batch.visual_mesh.visible_instance_count = count
-	batch.shadow_mesh.visible_instance_count = count
+	batch.shadow_mesh.visible_instance_count = 0 if batch.shadowless else count
 
 
 func _destroy_batch(batch: TextureBatch) -> void:

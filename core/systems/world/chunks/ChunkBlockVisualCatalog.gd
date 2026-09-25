@@ -23,6 +23,10 @@ const TEX_T_W := preload("res://assets/world/walls/wall_stone_t_w.png")
 const TEX_CROSS := preload("res://assets/world/walls/wall_stone_cross.png")
 const TEX_WIN_V := preload("res://assets/world/walls/wall_stone_window_v.png")
 const TEX_WIN_H := preload("res://assets/world/walls/wall_stone_window_h.png")
+## Shallow depth (Phase 3): the vertical stone face drawn under a cap
+## wherever no wall continues south. Authored by
+## tools/design/build_world_textures.py in the caps' palette.
+const TEX_FACE := preload("res://assets/world/walls/wall_stone_face.png")
 
 const HALF_TEXTURES: Array[Texture2D] = [
 	preload("res://assets/world/props/prop_crate_01.png"),
@@ -71,7 +75,17 @@ static func half_rotation(variant: int) -> float:
 
 
 static func texture_count() -> int:
-	return 17 + HALF_TEXTURES.size()
+	return 18 + HALF_TEXTURES.size()
+
+
+## The south face for a wall-like cell, or null where one is not drawn: a
+## wall connecting south shows no face, and fences/half cover have none.
+static func face_texture(kind: int, mask: int) -> Texture2D:
+	if kind == WorldBlockerGeometry.Kind.FENCE or kind == WorldBlockerGeometry.Kind.HALF_COVER:
+		return null
+	if (mask & S) != 0:
+		return null
+	return TEX_FACE
 
 
 static func _full_wall_texture(mask: int) -> Texture2D:
