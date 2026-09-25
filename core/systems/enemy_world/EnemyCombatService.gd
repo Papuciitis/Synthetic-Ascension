@@ -52,6 +52,19 @@ func apply_status_damage(handle: int, raw_damage: float, source: Node = null, ki
 	return _apply_damage(handle, raw_damage, 1, source, BalanceAttribution.status(kind), false)
 
 
+## A named status tick (V5 Hot Rounds burn): still not a hit — no plate, no
+## outgoing-damage modifier — but the tags ride the payload so a lethal tick
+## attributes to the ability that applied the burn.
+func apply_status_damage_tagged(handle: int, raw_damage: float, source: Node, tags: PackedStringArray) -> float:
+	var ledger := HitLedger.new()
+	ledger.target_handle = handle
+	ledger.source = source
+	ledger.hit_count = 1
+	ledger.total_raw_damage = raw_damage
+	ledger.tags = tags
+	return _apply_damage(handle, raw_damage, 1, source, ledger, false)
+
+
 ## Diagnostic split of _apply_damage (microseconds, cumulative) for the
 ## build simulator and the war room: the recorder's enemy_damaged listeners,
 ## BattleText, the player_hit_landed listeners, the death path. Off unless

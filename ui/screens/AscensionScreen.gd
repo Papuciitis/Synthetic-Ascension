@@ -152,8 +152,9 @@ func _build() -> void:
 	footer.add_child(close_button)
 
 	var layout := AscensionTreeLayout.new()
-	layout.compute(AscensionTreeDB.shared())
-	view.setup(AscensionTreeDB.shared(), layout)
+	var db := _db()
+	layout.compute(db)
+	view.setup(db, layout)
 	view.call_deferred("fit")
 
 
@@ -161,6 +162,12 @@ func _build() -> void:
 
 func _ledger() -> AscensionLedger:
 	return Global.ascension_ledger() if Global != null else null
+
+
+## The run's own tree data (V4 or the V5 prototype), never assumed V4.
+func _db() -> AscensionTreeDB:
+	var ledger := _ledger()
+	return ledger.db if ledger != null else AscensionTreeDB.shared()
 
 
 func _refresh_all() -> void:
@@ -186,7 +193,7 @@ func _refresh_all() -> void:
 func _name_of(id: String) -> String:
 	if id.is_empty():
 		return "-"
-	return String(AscensionTreeDB.shared().node(id).get("name", id))
+	return String(_db().node(id).get("name", id))
 
 
 func _on_hovered(id: String) -> void:
@@ -202,7 +209,7 @@ func _on_clicked(id: String, button: int) -> void:
 
 
 func _show(id: String) -> void:
-	var db := AscensionTreeDB.shared()
+	var db := _db()
 	var ledger := _ledger()
 	if not db.has(id) or ledger == null:
 		return
@@ -225,9 +232,23 @@ func _show(id: String) -> void:
 	for child in _gate_row.get_children():
 		child.queue_free()
 	var lines := PackedStringArray()
+	var ranked := kind == "local" and db.max_rank(id) > 1
 	if ledger.owns(id):
 		if kind == "sink":
 			lines.append("Rank %d owned. Next rank %d Followers." % [ledger.rank(id), ledger.price(id)])
+		elif ranked:
+			var current := ledger.rank(id)
+			var top := db.max_rank(id)
+			var paid_total := 0
+			for receipt in ledger.rank_receipts(id):
+				paid_total += int(receipt)
+			lines.append("Rank %s of %d.  Paid so far: %d." % [_roman(current), top, paid_total])
+			var now_effect := db.rank_effect(id, current)
+			if not now_effect.is_empty():
+				lines.append("Now: %s." % now_effect)
+			if current < top:
+				var next_effect := db.rank_effect(id, current + 1)
+				lines.append("Next rank (%d Followers): %s." % [db.rank_cost(id, current + 1), next_effect])
 		else:
 			lines.append("Owned." + (" Equipped." if ledger.is_equipped(id) else ""))
 	if kind == "gate" and not ledger.owns(id):
@@ -243,11 +264,14 @@ func _show(id: String) -> void:
 				_gate_row.add_child(gate_button)
 		if not any_core:
 			lines.append(String(ledger.can_buy(id, Global.followers, _first_unopened(ledger))["reason"]))
-	elif not ledger.owns(id) or kind == "sink":
+	elif not ledger.owns(id) or kind == "sink" or (ranked and ledger.rank(id) < db.max_rank(id)):
 		var verdict := ledger.can_buy(id, Global.followers)
 		if bool(verdict["ok"]):
 			var buy := Button.new()
-			buy.text = "Buy" if int(verdict["cost"]) == 0 else "Buy for %d" % int(verdict["cost"])
+			if bool(verdict.get("rank_up", false)):
+				buy.text = "Rank %s for %d" % [_roman(int(verdict["next_rank"])), int(verdict["cost"])]
+			else:
+				buy.text = "Buy" if int(verdict["cost"]) == 0 else "Buy for %d" % int(verdict["cost"])
 			buy.focus_mode = Control.FOCUS_NONE
 			buy.pressed.connect(func() -> void: _buy(id, ""))
 			_buttons.add_child(buy)
@@ -279,10 +303,21 @@ func _show(id: String) -> void:
 				_buttons.add_child(toggle)
 		if kind != "core" and kind != "gate" and kind != "choice":
 			if Global != null and Global.ascension_refund_context_hub:
+				if ranked and ledger.rank(id) >= 2:
+					var downgrade_preview := ledger.downgrade_preview(id)
+					if bool(downgrade_preview["ok"]):
+						var down := Button.new()
+						down.text = "Downgrade (+%d)" % int(downgrade_preview["refund"])
+						down.focus_mode = Control.FOCUS_NONE
+						down.tooltip_text = "Remove the highest rank; its exact recorded payment returns."
+						down.pressed.connect(func() -> void: _downgrade(id))
+						_buttons.add_child(down)
+				var share := AscensionLedger.refund_share(Global.attempt_segment)
+				var actual := ledger.refund_value(id, share)
 				var refund := Button.new()
-				refund.text = "Refund %d%%" % int(round(100.0 * AscensionLedger.refund_share(Global.attempt_segment)))
+				refund.text = "Refund %d%% (+%d)" % [int(round(100.0 * share)), actual]
 				refund.focus_mode = Control.FOCUS_NONE
-				refund.tooltip_text = "Refund this node and everything that depended on it for a share of the price; Revelations, forks, Unions, Axioms and Catastrophes never refund."
+				refund.tooltip_text = "Refund this node and everything that depended on it. Rank payments above rank one return exactly; the rest returns the shown share. Revelations, forks, Unions, Axioms and Catastrophes never refund."
 				refund.pressed.connect(func() -> void: _refund(id))
 				_buttons.add_child(refund)
 	_status.text = "\n".join(lines)
@@ -318,6 +353,24 @@ func _buy(id: String, chosen_core: String) -> void:
 		_status.text = String(verdict["reason"]).capitalize()
 		return
 	_after_change()
+
+
+const ROMAN := ["0", "I", "II", "III", "IV", "V"]
+
+
+func _roman(rank: int) -> String:
+	return ROMAN[rank] if rank >= 0 and rank < ROMAN.size() else str(rank)
+
+
+func _downgrade(id: String) -> void:
+	if Global == null:
+		return
+	if not Global.ascension_refund_context_hub:
+		_status.text = "Downgrades are a Hub decision."
+		return
+	var back := Global.ascension_downgrade(id)
+	if back > 0:
+		_after_change()
 
 
 func _refund(id: String) -> void:

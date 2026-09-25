@@ -37,6 +37,13 @@ const ENGINE_SCRIPTS: Dictionary = {
 	"UN": "res://core/systems/ascension/engines/UnionEngine.gd",
 	"BA": "res://core/systems/ascension/engines/BastionEngine.gd",
 }
+## A V5-tree run replaces the three Ranged discipline engines; every other
+## discipline and the V4 control keep the scripts above.
+const ENGINE_SCRIPTS_V5: Dictionary = {
+	"BR": "res://core/systems/ascension/engines/v5/BarrageEngineV5.gd",
+	"PR": "res://core/systems/ascension/engines/v5/PrecisionEngineV5.gd",
+	"OR": "res://core/systems/ascension/engines/v5/OrdnanceEngineV5.gd",
+}
 ## Dash-recovery refunds (Clean Cut, Kill Reset) share one bucket: 0.6 s per
 ## second, 0.9 when both are owned.
 const DASH_REFUND_PER_SECOND := 0.6
@@ -299,6 +306,8 @@ func _rebuild_engines() -> void:
 		var engine: AscensionEngine = _engine_by_discipline.get(code, null)
 		if engine == null:
 			var script_path: String = String(ENGINE_SCRIPTS.get(code, ""))
+			if ledger != null and ledger.is_v5() and ENGINE_SCRIPTS_V5.has(code):
+				script_path = String(ENGINE_SCRIPTS_V5[code])
 			if script_path.is_empty():
 				continue
 			var script: Script = load(script_path)
@@ -1419,6 +1428,16 @@ func get_haste_multiplier() -> float:
 	return total
 
 
+## An explicit, time-boxed firing-rate multiplier applied AFTER the shot-rate
+## cap (V5 Burst's x2; finding A of the 2026-09-25 handoff). V4 engines
+## return 1.0, so the control configuration never crosses the cap.
+func get_post_cap_haste_multiplier() -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.post_cap_haste_multiplier()
+	return total
+
+
 func get_move_speed_multiplier() -> float:
 	var total := 1.0
 	for engine in engines:
@@ -1654,8 +1673,11 @@ func _process(delta: float) -> void:
 				_q_holding = false
 				var released := hold_engine.release_q(q_id)
 				var cooldown := _recovery(float(released.get("cooldown", 0.0)))
-				q_cooldown_max = cooldown
-				q_cooldown_left = cooldown
+				# A release that merely reports the remaining recovery (V5
+				# Designate placement during the fire cooldown) must not
+				# shorten it through the recovery sink.
+				q_cooldown_max = maxf(q_cooldown_max, cooldown) if cooldown < q_cooldown_left else cooldown
+				q_cooldown_left = maxf(q_cooldown_left, cooldown)
 				if _q_slot != null:
 					_q_slot.announce(cooldown, cooldown)
 		elif Input.is_action_just_pressed(&"ascension_active"):
@@ -1756,9 +1778,13 @@ func _activate(slot: String, pair: bool = false) -> Dictionary:
 		return {"ok": false, "message": "NOTHING EQUIPPED", "cooldown": 0.0}
 	var left := q_cooldown_left if slot == "q" else v_cooldown_left
 	if left > 0.0:
-		if hud != null:
-			hud.fail("COOLING")
-		return {"ok": false, "message": "COOLING", "cooldown": left}
+		# V5 Designate: a press may still reach the engine during the fire
+		# cooldown (Coordinate placement); the engine refuses actual firing.
+		var during_ok := slot == "q" and engine_for_press != null and engine_for_press.q_press_during_cooldown(id)
+		if not during_ok:
+			if hud != null:
+				hud.fail("COOLING")
+			return {"ok": false, "message": "COOLING", "cooldown": left}
 	if slot == "v" and Global != null and not Global.debug_ascension_revelations_enabled:
 		if hud != null:
 			hud.fail("REVELATIONS OFF")

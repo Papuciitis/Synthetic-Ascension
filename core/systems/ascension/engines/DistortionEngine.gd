@@ -386,7 +386,7 @@ func ordinary_statuses(handle: int) -> Array[String]:
 		out.append("fading")
 	if _slows.has(handle):
 		out.append("slow")
-	if EnemyStatus.has_status(handle, &"burn"):
+	if EnemyStatus.is_burning(handle):
 		out.append("burn")
 	if EnemyStatus.has_status(handle, &"bleed"):
 		out.append("bleed")

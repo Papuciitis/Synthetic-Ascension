@@ -107,6 +107,13 @@ func release_q(_id: String) -> Dictionary:
 	return {"ok": false, "message": "", "cooldown": 0.0}
 
 
+## Whether a press may reach this hold-Q while its recovery is counting
+## (V5 Designate: Coordinate placement during the fire cooldown). The engine
+## then refuses the parts that genuinely need the cooldown.
+func q_press_during_cooldown(_id: String) -> bool:
+	return false
+
+
 ## A killing blow the engine may refuse (Last Hit). Return true to leave the
 ## player at 1 HP instead.
 func intercept_lethal_hit(_damage: float) -> bool:
@@ -208,6 +215,13 @@ func power_multiplier(_core: String) -> float:
 
 
 func haste_multiplier(_core: String) -> float:
+	return 1.0
+
+
+## Firing-rate multiplier applied after the player's shot-rate cap: reserved
+## for explicit, time-boxed windows (V5 Burst). Sustained bonuses stay in
+## haste_multiplier under the cap.
+func post_cap_haste_multiplier() -> float:
 	return 1.0
 
 

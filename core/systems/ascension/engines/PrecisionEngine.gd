@@ -38,6 +38,7 @@ var _gravity_bonus: float = 0.0
 var _gravity_targets: Dictionary = {}
 var _countershot_pids: Dictionary = {}
 var _exposed_until: Dictionary = {}     # handle -> clock when the Weak Point closes
+var _exposed_origin: Dictionary = {}    # handle -> which node exposed it ("far_shot", "")
 var _second_read: Dictionary = {}       # projectile id -> handle that consumed
 var _charged_pids: Dictionary = {}
 var _trajectories: Dictionary = {}      # handle -> Array of {pid, dir, t}
@@ -89,23 +90,64 @@ func D() -> float:
 	return runner.native_damage_for("ranged")
 
 
+# ---- V4 values behind overridable getters, so the V5 prototype can rank
+# them without touching this control implementation.
+
+func _read_threshold() -> float:
+	return READ_TO_EXPOSE
+
+
+func _pierce_bonus() -> int:
+	return 2
+
+
+func _aim_seconds() -> float:
+	return AIM_SECONDS
+
+
+func _terrain_bounces() -> int:
+	return 1
+
+
+func _return_fraction() -> float:
+	return 0.9 if has("PRK2") else 0.6
+
+
+func _split_angles() -> Array:
+	return [-20.0, 20.0]
+
+
+func _crossing_window() -> float:
+	return 0.5
+
+
+func _spare_cap() -> int:
+	return 3
+
+
+func _smart_rounds_scale() -> float:
+	return 0.8
+
+
 # ---------------------------------------------------------------- Weak Points
 
 func is_exposed(handle: int) -> bool:
 	return runner.has_status(handle, "weak_point")
 
 
-func expose(handle: int) -> void:
+func expose(handle: int, origin: String = "") -> void:
 	if not runner.enemy_alive(handle):
 		return
 	runner.status_of(handle)["weak_point"] = _clock + WEAK_POINT_SECONDS
 	_exposed_until[handle] = _clock + WEAK_POINT_SECONDS
+	_exposed_origin[handle] = origin
 	counters["exposed"] = int(counters["exposed"]) + 1
 
 
 func _consume(handle: int, hit: Dictionary) -> void:
 	runner.clear_status(handle, "weak_point")
 	_exposed_until.erase(handle)
+	_exposed_origin.erase(handle)
 	_consumed_at[handle] = _clock
 	counters["consumed"] = int(counters["consumed"]) + 1
 	runner.add_action_charge(2.0)
@@ -147,6 +189,7 @@ func tick(delta: float) -> void:
 	for key in _exposed_until.keys():
 		if _clock >= float(_exposed_until[key]):
 			_exposed_until.erase(key)
+			_exposed_origin.erase(key)
 			runner.clear_status(int(key), "weak_point")
 	_tick_delayed_lines(delta)
 	_tick_miss_watch()
@@ -171,7 +214,7 @@ func decorate_native_profile(profile: HitProfileAdapter) -> void:
 	profile.set_meta("asc_tags", tags)
 	var pp := 1.0
 	if has("PR03"):
-		profile.pierce += 2
+		profile.pierce += _pierce_bonus()
 		profile.pierce_ramp = 0.2 * D()
 		profile.pierce_ramp_cap = 1.0 * D()
 	if has("PRS1"):
@@ -188,16 +231,16 @@ func decorate_native_profile(profile: HitProfileAdapter) -> void:
 		profile.bounces = 3
 		profile.bounce_scale = 1.5
 	elif has("PR06"):
-		profile.bounces = 1
+		profile.bounces = _terrain_bounces()
 		profile.bounce_scale = 0.75
 		profile.bounce_proc_power = 0.7
 	if has("PRF2"):
-		profile.damage *= 0.8
+		profile.damage *= _smart_rounds_scale()
 		var target := _nearest_exposed(runner.player_position(), 3.0 * AscensionRunner.L)
 		if target != 0:
 			profile.seek_handle = target
 			profile.seek_turn_degrees = 30.0
-	if has("PR05") and _since_native >= AIM_SECONDS and _aim_spent_volley != _volley + 1:
+	if has("PR05") and _since_native >= _aim_seconds() and _aim_spent_volley != _volley + 1:
 		profile.damage += D()
 		pp = maxf(pp, 1.25)
 		_aim_spent_volley = _volley + 1
@@ -253,7 +296,7 @@ func q_damage_multiplier() -> float:
 
 func on_native_fire(style: String, origin: Vector2, target: Vector2, _power: float, _haste: float) -> void:
 	_volley += 1
-	var aim_ready := has("PR05") and _since_native >= AIM_SECONDS
+	var aim_ready := has("PR05") and _since_native >= _aim_seconds()
 	var refunded := false
 	if style == "ranged":
 		if has("PR10") and _aim_crosses_exposed(origin, target):
@@ -268,13 +311,13 @@ func on_native_fire(style: String, origin: Vector2, target: Vector2, _power: flo
 				runner.spawn_bullet(_spare_origin, dir.rotated(deg_to_rad(-6.0 + 6.0 * float(i))), 0.8 * D(), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "PR12", "spare", 1, 0.5, PackedStringArray(["core_strike", "spare"])))
 			counters["spares"] = int(counters["spares"]) + _spare_rounds
 			_spare_rounds = 0
-	_since_native = (AIM_SECONDS * 0.5) if (refunded and aim_ready) else 0.0
+	_since_native = (_aim_seconds() * 0.5) if (refunded and aim_ready) else 0.0
 	if has("PRA") and _miss_used_input != _volley:
 		_miss_watch = {"core": style, "origin": origin, "target": target, "deadline": _clock + 0.35, "input": _volley}
 
 
 func on_witness_strike(core: String, _origin: Vector2, _target: Vector2) -> void:
-	if core == "ranged" and has("PR05") and _since_native >= AIM_SECONDS:
+	if core == "ranged" and has("PR05") and _since_native >= _aim_seconds():
 		_since_native = 0.0
 		_witness_aim_cast = runner.witness_strikes
 		counters["aims"] = int(counters["aims"]) + 1
@@ -342,13 +385,13 @@ func on_hit(hit: Dictionary) -> void:
 			var exposed_now := false
 			if has("PR02") and not _far_shot_done.has(handle) and runner.player_position().distance_to(hit["position"]) > 2.0 * AscensionRunner.R:
 				_far_shot_done[handle] = true
-				expose(handle)
+				expose(handle, "far_shot")
 				counters["far_shots"] = int(counters["far_shots"]) + 1
 				exposed_now = true
 			if has("PR01") and not exposed_now and not is_exposed(handle):
 				_read[handle] = float(_read.get(handle, 0.0)) + float(hit["pp"])
-				if float(_read[handle]) >= READ_TO_EXPOSE:
-					_read[handle] = float(_read[handle]) - READ_TO_EXPOSE
+				if float(_read[handle]) >= _read_threshold():
+					_read[handle] = float(_read[handle]) - _read_threshold()
 					expose(handle)
 	if hit["root"] == "PRQ" and has("PRQ6") and bool(hit["is_normal"]) and not bool(hit["lethal"]) and float(hit["fraction_after"]) < 0.25:
 		runner.damage_enemy(handle, float(hit["after"]) + 1.0, AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "PRQ6", "execute", int(hit["gen"]) + 1, 0.0, PackedStringArray(["execute"])))
@@ -364,7 +407,7 @@ func _note_trajectory(hit: Dictionary) -> void:
 	var list: Array = _trajectories.get(handle, [])
 	var crossed := false
 	for entry in list:
-		if _clock - float(entry["t"]) <= 0.5 and int(entry["pid"]) != pid and absf((entry["dir"] as Vector2).angle_to(dir)) > deg_to_rad(10.0):
+		if _clock - float(entry["t"]) <= _crossing_window() and int(entry["pid"]) != pid and absf((entry["dir"] as Vector2).angle_to(dir)) > deg_to_rad(10.0):
 			crossed = true
 	list.append({"pid": pid, "dir": dir, "t": _clock})
 	while list.size() > 6:
@@ -382,11 +425,12 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 		var exposed_victim := is_exposed(handle) or _clock - float(_consumed_at.get(handle, -INF)) < 0.05
 		if has("PR09") and int(hit["crossed"]) >= 1 and exposed_victim:
 			_split_line(hit)
-		if has("PR12") and hit["root"] == "PR07" and hit["path"] == "return" and _spare_rounds < 3:
+		if has("PR12") and hit["root"] == "PR07" and hit["path"] == "return" and _spare_rounds < _spare_cap():
 			_spare_rounds += 1
 			_spare_origin = hit["position"]
 	_exposed_at_hit.erase(handle)
 	_consumed_at.erase(handle)
+	_exposed_origin.erase(handle)
 	_read.erase(handle)
 	_trajectories.erase(handle)
 	if hit["root"] == "PRQ" or hit["root"] == "PRE1":
@@ -398,7 +442,7 @@ func _split_line(hit: Dictionary) -> void:
 	var dir: Vector2 = hit["direction"]
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT
-	for angle in [-20.0, 20.0]:
+	for angle in _split_angles():
 		runner.spawn_bullet(hit["position"], dir.rotated(deg_to_rad(angle)), 0.7 * D(), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "PR09", "split", int(hit["gen"]) + 1, 0.4, PackedStringArray(["core_strike", "split"])), {"pierce": 1})
 
 
@@ -457,7 +501,7 @@ func _return_shot(info: Dictionary) -> void:
 	var travelled := position.distance_to(leg_start)
 	for i in range(1, path.size()):
 		travelled += path[i].distance_to(path[i - 1])
-	var damage := float(info["damage"]) * (0.9 if has("PRK2") else 0.6)
+	var damage := float(info["damage"]) * _return_fraction()
 	var overrides := {"pierce": int(info["crossed"]) + 2, "max_range": maxf(travelled, AscensionRunner.R)}
 	if has("PR08"):
 		var unused := mini(int(info["pierce_left"]), 5)
@@ -920,7 +964,7 @@ func hud_state(slot: String) -> Dictionary:
 	if slot == "q":
 		if _aiming:
 			state["combat_text"] = "AIMING"
-		elif has("PR05") and _since_native >= AIM_SECONDS:
+		elif has("PR05") and _since_native >= _aim_seconds():
 			state["combat_text"] = "AIM READY"
 		elif _spare_rounds > 0:
 			state["combat_text"] = "SPARE %d" % _spare_rounds

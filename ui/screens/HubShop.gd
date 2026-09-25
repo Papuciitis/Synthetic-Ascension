@@ -1751,6 +1751,10 @@ static func vendor_band(seg: int) -> Vector2i:
 func _open_ascension() -> void:
 	if _ascension_screen != null and is_instance_valid(_ascension_screen):
 		return
+	# A trade undo must not restore a Follower snapshot from before tree
+	# purchases or refunds (RANK-07); the tree screen invalidates it like
+	# every other state-changing overlay.
+	_invalidate_trade_undo("UNDO CLEARED · Ascension state changed.")
 	var inst := ASCENSION_SCREEN.instantiate() as AscensionScreen
 	if inst == null:
 		return

@@ -14,6 +14,9 @@ class StatusRecord:
 	var tick_left: float
 	var damage_per_tick_per_stack: float
 	var source_ref: WeakRef = null
+	## Named statuses (V5): provenance tags carried through every tick so a
+	## lethal tick attributes to the ability that applied the burn.
+	var tags: PackedStringArray = PackedStringArray()
 
 	func source() -> Node:
 		if source_ref == null:
@@ -75,6 +78,82 @@ func apply_bleed(
 	return _apply_status(handle, BLEED, stacks, duration, tick_interval, damage_per_tick_per_stack, source)
 
 
+## A named burn (V5): one record per (handle, name), single stack, the
+## STRONGEST active damage rate wins and reapplication refreshes duration —
+## a weaker refresh never weakens an active stronger burn, and pellets never
+## create independent stacks. `tags` ride every tick for kill attribution.
+func apply_named_burn(
+	handle: int,
+	burn_name: StringName,
+	duration: float,
+	tick_interval: float,
+	damage_per_second: float,
+	source: Node = null,
+	tags: PackedStringArray = PackedStringArray(),
+) -> bool:
+	if (
+		_world == null
+		or not _world.is_valid_handle(handle)
+		or _world.is_dying(handle)
+		or duration <= 0.0
+		or damage_per_second <= 0.0
+	):
+		return false
+	var kind := StringName("burn:" + String(burn_name))
+	var interval := maxf(tick_interval, 0.05)
+	var per_tick := damage_per_second * interval
+	var by_kind_variant: Variant = _by_handle.get(handle)
+	var by_kind: Dictionary
+	if by_kind_variant is Dictionary:
+		by_kind = by_kind_variant as Dictionary
+	else:
+		by_kind = {}
+		_by_handle[handle] = by_kind
+	var existing_variant: Variant = by_kind.get(kind)
+	if existing_variant is StatusRecord:
+		var existing := existing_variant as StatusRecord
+		existing.time_left = maxf(existing.time_left, duration)
+		# Strongest current rate, compared per second so a different tick
+		# interval cannot smuggle a weaker rate in as "stronger per tick".
+		var existing_rate := existing.damage_per_tick_per_stack / maxf(existing.tick_interval, 0.05)
+		if damage_per_second > existing_rate:
+			existing.tick_interval = interval
+			existing.tick_left = minf(existing.tick_left, interval)
+			existing.damage_per_tick_per_stack = per_tick
+			existing.tags = tags
+			if source != null and is_instance_valid(source):
+				existing.source_ref = weakref(source)
+		return true
+	var record := StatusRecord.new()
+	record.handle = handle
+	record.kind = kind
+	record.stacks = 1
+	record.time_left = duration
+	record.tick_interval = interval
+	record.tick_left = 0.0
+	record.damage_per_tick_per_stack = maxf(per_tick, 0.01)
+	record.source_ref = weakref(source) if source != null and is_instance_valid(source) else null
+	record.tags = tags
+	by_kind[kind] = record
+	_active.append(record)
+	return true
+
+
+## Any burn, generic or named ("burn:...").
+func is_burning(handle: int) -> bool:
+	var by_kind: Variant = _by_handle.get(handle)
+	if not (by_kind is Dictionary):
+		return false
+	for kind in (by_kind as Dictionary):
+		if kind == BURN or String(kind).begins_with("burn:"):
+			return true
+	return false
+
+
+func has_named_burn(handle: int, burn_name: StringName) -> bool:
+	return has_status(handle, StringName("burn:" + String(burn_name)))
+
+
 func advance(delta: float) -> void:
 	if delta <= 0.0 or _world == null or _combat == null:
 		return
@@ -96,7 +175,10 @@ func advance(delta: float) -> void:
 		record.tick_left = record.tick_interval
 		var damage := float(record.stacks) * record.damage_per_tick_per_stack
 		# A tick is not a hit: it skips the per-hit rules (the ARMOURED plate).
-		_combat.apply_status_damage(record.handle, damage, record.source(), record.kind)
+		if record.tags.is_empty():
+			_combat.apply_status_damage(record.handle, damage, record.source(), record.kind)
+		else:
+			_combat.apply_status_damage_tagged(record.handle, damage, record.source(), record.tags)
 		# The damage call can finalize a proxy death, which re-enters
 		# clear_handle; only remove by index if this exact record still
 		# occupies it.

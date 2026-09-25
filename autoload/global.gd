@@ -1187,13 +1187,20 @@ func pending_doctrine_stage() -> StringName:
 
 ## The advancement-tree ledger for this attempt, created on first use from
 ## the selected style so the native Core is always the one the run chose.
+## The tree new attempts use: "v4" (default control) or "v5_ranged" (the
+## 2026-09-25 Ranged prototype). A saved run keeps the tree it started with;
+## nothing converts an existing ledger.
+var new_run_tree_version: String = "v4"
+
+
 func ascension_ledger() -> AscensionLedger:
 	# Identity, not equality: two fresh states compare equal by value, and the
 	# ledger must follow the Dictionary the attempt actually holds.
 	if _ascension_ledger == null or not is_same(_ascension_ledger.state, attempt_ascension):
 		if attempt_ascension.is_empty():
-			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id))
-		_ascension_ledger = AscensionLedger.new(AscensionTreeDB.shared(), attempt_ascension)
+			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id), new_run_tree_version)
+		var tree := AscensionTreeDB.shared_for(String(attempt_ascension.get("tree_version", "v4")))
+		_ascension_ledger = AscensionLedger.new(tree, attempt_ascension)
 	return _ascension_ledger
 
 
@@ -1230,6 +1237,18 @@ func ascension_refund(id: String) -> int:
 	var back := ascension_ledger().refund(id, AscensionLedger.refund_share(attempt_segment))
 	if back > 0:
 		transaction_followers(back, &"ascension_refund", {"node": id}, true, false)
+		request_autosave()
+	return back
+
+
+## Removes one rank of a V5 ranked local, returning its exact recorded
+## payment (RANK-06). A Hub decision, like every other refund.
+func ascension_downgrade(id: String) -> int:
+	if not ascension_refund_context_hub:
+		return 0
+	var back := ascension_ledger().downgrade_rank(id)
+	if back > 0:
+		transaction_followers(back, &"ascension_refund", {"node": id, "downgrade": true}, true, false)
 		request_autosave()
 	return back
 

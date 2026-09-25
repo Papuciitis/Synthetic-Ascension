@@ -12,6 +12,10 @@ class_name AscensionTreeDB
 ##   {"count": {"ids": [...], "at_least": N}}  {"milestone": "name"}
 
 const TREE_PATH := "res://data/ascension/tree_v4.json"
+## The Ranged V5 prototype tree (2026-09-25 handoff). V4 stays the immutable
+## control; a run selects its tree through the ledger state's tree_version.
+const TREE_PATH_V5_RANGED := "res://data/ascension/tree_v5_ranged.json"
+const VARIANT_PATHS: Dictionary = {"v4": TREE_PATH, "v5_ranged": TREE_PATH_V5_RANGED}
 
 ## Sinks charge base x (rank+1)^exponent; the two Ascendant sinks use a
 ## steeper curve, and Execute Line stops at rank 30 (authored on the nodes).
@@ -24,7 +28,9 @@ const REWARD_KINDS: Array[String] = ["evolution", "choice"]
 const CORES: Array[String] = ["melee", "ranged", "magic"]
 
 static var _shared: AscensionTreeDB = null
+static var _shared_variants: Dictionary = {}
 
+var variant: String = "v4"
 var version: String = ""
 var nodes: Dictionary = {}          # id -> node Dictionary (as authored)
 var links: Dictionary = {}          # id -> PackedStringArray of neighbour ids
@@ -39,6 +45,19 @@ static func shared() -> AscensionTreeDB:
 		_shared = AscensionTreeDB.new()
 		_shared.load_from(TREE_PATH)
 	return _shared
+
+
+## The shared DB for a tree variant ("v4", "v5_ranged"); unknown names fall
+## back to V4 so an old or hand-edited save can always open its tree.
+static func shared_for(tree_variant: String) -> AscensionTreeDB:
+	if tree_variant.is_empty() or tree_variant == "v4" or not VARIANT_PATHS.has(tree_variant):
+		return shared()
+	if not _shared_variants.has(tree_variant):
+		var db := AscensionTreeDB.new()
+		db.variant = tree_variant
+		db.load_from(String(VARIANT_PATHS[tree_variant]))
+		_shared_variants[tree_variant] = db
+	return _shared_variants[tree_variant]
 
 
 func load_from(path: String) -> bool:
@@ -157,6 +176,29 @@ func _owned_ids_in(rule: Variant) -> PackedStringArray:
 				for child in dict[key]:
 					out.append_array(_owned_ids_in(child))
 	return out
+
+
+## Ordinary local ranks (V5): a node with authored "max_rank" > 1 can be
+## invested in on the same id. Unauthored nodes report 1, so V4 data keeps
+## every existing rule untouched.
+func max_rank(id: String) -> int:
+	return int(node(id).get("max_rank", 1))
+
+
+## Price of buying `next_rank` (2-based; rank 1 uses the ordinary cost path).
+func rank_cost(id: String, next_rank: int) -> int:
+	var costs: Array = node(id).get("rank_costs", [])
+	var index := next_rank - 1
+	if index < 0 or index >= costs.size():
+		return 0
+	return int(costs[index])
+
+
+## Short authored effect line for `rank` (1-based), for previews.
+func rank_effect(id: String, rank: int) -> String:
+	var effects: Array = node(id).get("rank_effects", [])
+	var index := rank - 1
+	return String(effects[index]) if index >= 0 and index < effects.size() else ""
 
 
 ## Sink price for the next rank (rank = ranks already owned).

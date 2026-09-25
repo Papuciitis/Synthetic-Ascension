@@ -91,6 +91,55 @@ func mine_cap() -> int:
 	return 18 if has("OR10") else 12
 
 
+# ---- V4 behaviours behind overridable hooks, so the V5 prototype can
+# replace them without touching this control implementation.
+
+## OR05 Mine Toss's projectile push (V4); V5 replaces OR05 entirely.
+func _mine_toss_enabled() -> bool:
+	return has("OR05")
+
+
+## OR02 Caltrops' dash Mine (V4); V5's Grenadier drops none.
+func _dash_mine_enabled() -> bool:
+	return has("OR02")
+
+
+## Chain Reaction's initiation rule: V4 chains only Mine blasts.
+func _maybe_chain(at: Vector2, radius: float, seq: int, is_shell: bool) -> void:
+	if has("OR06") and not is_shell:
+		_chain_reaction(at, radius, seq)
+
+
+## OR09 Walking Barrage's travel payoff (V4 Shell behind the player).
+func _walking_trigger() -> void:
+	call_shell(runner.player_position() - _heading * AscensionRunner.R, SHELL_D, "OR09")
+
+
+## OR10 Magazine's replaced-Coordinate Shell (V4).
+func _magazine_replaces_with_shell() -> bool:
+	return has("OR10")
+
+
+func _fuse_threshold() -> float:
+	return 4.0
+
+
+func _scan_shell_count() -> int:
+	return 3
+
+
+func _big_one_interval() -> int:
+	return 7
+
+
+func _fracture_arm_interval() -> int:
+	return 3
+
+
+func _shrapnel_count() -> int:
+	return 3
+
+
 func _blast_damage_scale(is_shell: bool, automatic: bool, target: int = 0) -> float:
 	var scale := 1.0
 	if has("ORS1"):
@@ -135,7 +184,7 @@ func call_shell(at: Vector2, damage_d: float = SHELL_D, root: String = "OR01", p
 	if big_allowed and has("OR12") and not flags.has("beacon"):
 		_shell_count += 1 + _big_one_bonus
 		_big_one_bonus = 0
-		if _shell_count % 7 == 0:
+		if _shell_count % _big_one_interval() == 0:
 			big = true
 	if seq == 0:
 		_seq_serial += 1
@@ -219,8 +268,7 @@ func _blast(at: Vector2, damage: float, radius: float, root: String, pp: float, 
 		_self_hit_at = _clock
 		counters["self_hits"] = int(counters["self_hits"]) + 1
 		runner.player().call("_take_damage", 0.03 * runner.player_max_hp(), null, &"self_damage")
-	if has("OR06") and not is_shell:
-		_chain_reaction(at, scaled_radius, seq)
+	_maybe_chain(at, scaled_radius, seq, is_shell)
 	if _blasts.size() > 64:
 		_blasts.erase(_blasts.keys()[0])
 
@@ -313,7 +361,7 @@ func _tick_mines(delta: float) -> void:
 		return
 	var aim_dir := (runner.aim_target() - runner.player_position()).normalized()
 	var bullets: Array = []
-	if has("OR05"):
+	if _mine_toss_enabled():
 		for mine in mines:
 			if float(mine["arm"]) > 0.0:
 				ProjectileManager.player_projectiles_in_radius(mine["at"], 14.0, bullets)
@@ -323,7 +371,7 @@ func _tick_mines(delta: float) -> void:
 		mine["life"] = float(mine["life"]) - delta
 		if float(mine["arm"]) > 0.0:
 			mine["arm"] = float(mine["arm"]) - delta
-			if has("OR05") and int(mine["pushed_by"]) == 0:
+			if _mine_toss_enabled() and int(mine["pushed_by"]) == 0:
 				var near: Array = []
 				ProjectileManager.player_projectiles_in_radius(mine["at"], 14.0, near)
 				if not near.is_empty():
@@ -384,7 +432,7 @@ func _track_travel(delta: float) -> void:
 			_travel_credit = 0.0
 			_walk_cooldown = 0.5
 			counters["walking"] = int(counters["walking"]) + 1
-			call_shell(runner.player_position() - _heading * AscensionRunner.R, SHELL_D, "OR09")
+			_walking_trigger()
 
 
 # ---------------------------------------------------------------- hits and kills
@@ -399,7 +447,7 @@ func decorate_native_profile(profile: HitProfileAdapter) -> void:
 
 
 func on_player_dashed(from: Vector2, _direction: Vector2) -> void:
-	if has("OR02"):
+	if _dash_mine_enabled():
 		drop_mine(from)
 
 
@@ -417,8 +465,8 @@ func on_hit(hit: Dictionary) -> void:
 	if hit["core"] == "ranged" and core_strike:
 		if has("OR01"):
 			_fuse += float(hit["pp"])
-			if _fuse >= 4.0 - 0.0005 and _fuse_shell_volley != _volley:
-				_fuse -= 4.0
+			if _fuse >= _fuse_threshold() - 0.0005 and _fuse_shell_volley != _volley:
+				_fuse -= _fuse_threshold()
 				_fuse_shell_volley = _volley
 				counters["fuse_shells"] = int(counters["fuse_shells"]) + 1
 				call_shell(hit["position"], SHELL_D, "OR01")
@@ -469,7 +517,7 @@ func _on_blast_hit(blast_id: int, hit: Dictionary) -> void:
 			if runner.has_status(handle, "fracture"):
 				runner.clear_status(handle, "fracture")
 				_shrapnel(handle, at, seen)
-			elif seen.size() % 3 == 0:
+			elif seen.size() % _fracture_arm_interval() == 0:
 				runner.status_of(handle)["fracture"] = 30
 				counters["fractures"] = int(counters["fractures"]) + 1
 		if has("ORK1") and (bool(hit["is_elite"]) or bool(hit["is_boss"])) and runner.enemy_alive(handle) and String(blast["root"]) != "ORK1":
@@ -495,11 +543,11 @@ func _shrapnel(_handle: int, at: Vector2, seen: Dictionary) -> void:
 	var dirs: Array = seen.values()
 	var fired := 0
 	for i in range(dirs.size() - 1, -1, -1):
-		if fired >= 3:
+		if fired >= _shrapnel_count():
 			break
 		runner.spawn_bullet(at, dirs[i], 0.6 * D(), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "OR08", "shrapnel", 2, 0.35))
 		fired += 1
-	while fired < 3:
+	while fired < _shrapnel_count():
 		runner.spawn_bullet(at, Vector2.from_angle(runner.rng().randf_range(0.0, TAU)), 0.6 * D(), AscensionTags.make("ranged", AscensionTags.FAMILY_TREE, "OR08", "shrapnel", 2, 0.35))
 		fired += 1
 
@@ -545,7 +593,7 @@ func on_kill(hit: Dictionary, _context: RefCounted) -> void:
 		_scan_travel = 0.0
 		counters["scans"] = int(counters["scans"]) + 1
 		var cell := _densest_point(hit["position"], 3.0 * AscensionRunner.R)
-		_sequences.append({"at": cell, "shells": 3, "tick": 0.0, "root": "OR11", "damage": SHELL_D, "follow": 0, "radius": 0.0, "seq": seq, "coord": -1, "automatic": true, "pp": SHELL_PP})
+		_sequences.append({"at": cell, "shells": _scan_shell_count(), "tick": 0.0, "root": "OR11", "damage": SHELL_D, "follow": 0, "radius": 0.0, "seq": seq, "coord": -1, "automatic": true, "pp": SHELL_PP})
 	if has("ORF1") and _blast_kill_times.size() >= 3:
 		_blast_kill_times.clear()
 		counters["carpet_extra"] = int(counters["carpet_extra"]) + 1
@@ -659,7 +707,7 @@ func _coordinate_at(point: Vector2) -> int:
 func place_coordinate(at: Vector2) -> int:
 	if coordinates.size() >= 3:
 		var oldest: Dictionary = coordinates.pop_front()
-		if has("OR10"):
+		if _magazine_replaces_with_shell():
 			call_shell(oldest["at"], SHELL_D, "OR10", SHELL_PP, PackedStringArray(), false)
 	var offset := Vector2.ZERO
 	if has("ORQ5"):

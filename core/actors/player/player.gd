@@ -798,6 +798,10 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 
 	if cd > 0.0:
 		haste_mul = clamp_shot_haste(haste_mul)
+		if ar3 != null:
+			# A time-boxed window (V5 Burst) multiplies after the cap; V4
+			# engines return 1.0 so the control behaviour is unchanged.
+			haste_mul *= ar3.get_post_cap_haste_multiplier()
 		_weapon_cd = cd / max(haste_mul, 0.05)
 
 	# Charge/rhythm/tithe Manifestations empower exactly one attack. Consumed

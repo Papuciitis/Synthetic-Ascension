@@ -22,12 +22,14 @@ var db: AscensionTreeDB
 var state: Dictionary
 
 
-static func fresh_state(native_core_id: String) -> Dictionary:
+static func fresh_state(native_core_id: String, tree_version: String = "v4") -> Dictionary:
 	return {
+		"tree_version": tree_version,
 		"native_core": native_core_id,
 		"cores": [native_core_id],
 		"owned": {"core.%s" % native_core_id: 1},
 		"paid": {},
+		"paid_ranks": {},
 		"starter": "",
 		"equipped": {"q": "", "v": "", "v2": "", "reaction": "", "keystones": [], "axioms": []},
 		"reaction_trigger": "catastrophe",
@@ -62,6 +64,16 @@ func _init(tree: AscensionTreeDB, run_state: Dictionary) -> void:
 
 func native_core() -> String:
 	return String(state.get("native_core", "melee"))
+
+
+## Which authored tree this run uses ("v4" for every save from before the
+## field existed). Saved ledgers are never converted between versions.
+func tree_version() -> String:
+	return String(state.get("tree_version", "v4"))
+
+
+func is_v5() -> bool:
+	return tree_version() == "v5_ranged"
 
 
 func cores() -> Array:
@@ -209,6 +221,8 @@ func price(id: String) -> int:
 		return 0
 	if kind == "sink":
 		return db.sink_price(id, rank(id))
+	if kind == "local" and owns(id) and rank(id) < db.max_rank(id):
+		return db.rank_cost(id, rank(id) + 1)
 	if is_free_starter(id):
 		return 0
 	return db.base_cost(id)
@@ -234,6 +248,9 @@ func can_buy(id: String, followers: int, chosen_core: String = "") -> Dictionary
 		if rank(id) >= db.sink_rank_cap(id):
 			return _no("at maximum rank")
 	elif owns(id):
+		# Ordinary local ranks (V5): investing in an already-owned node.
+		if kind == "local" and rank(id) < db.max_rank(id):
+			return _can_buy_rank(id, followers)
 		return _no("already owned")
 	var core := db.core_of(id)
 	if not core.is_empty() and not has_core(core):
@@ -263,11 +280,132 @@ func _no(reason: String) -> Dictionary:
 	return {"ok": false, "reason": reason, "cost": 0}
 
 
+# ------------------------------------------------------------ ordinary ranks
+## V5 local ranks: invested on the owned node, never traversing an edge.
+## Rank 2 needs the node alone; rank 3 needs 2 OTHER owned unique locals of
+## the discipline; rank 4 needs 4. Core access still applies; adjacency,
+## requires and conflicts were settled at rank 1 (spec §1.1-1.2).
+
+const RANK_GATE_OTHERS: Dictionary = {2: 0, 3: 2, 4: 4}
+
+
+## Owned unique local nodes of `discipline`, excluding `except`. A rank-4
+## node still counts once (RANK-02): ownership, not investment depth.
+func other_unique_locals(discipline: String, except: String) -> int:
+	var count := 0
+	for id in db.local_ids(discipline):
+		if String(id) != except and owns(String(id)):
+			count += 1
+	return count
+
+
+func rank_gate_satisfied(id: String, next_rank: int) -> bool:
+	var needed := int(RANK_GATE_OTHERS.get(next_rank, 0))
+	if needed <= 0:
+		return true
+	return other_unique_locals(db.discipline_of(id), id) >= needed
+
+
+## Highest rank of `id` the current ownership allows (gates only).
+func max_legal_rank(id: String) -> int:
+	var top := db.max_rank(id)
+	var legal := 1
+	for next_rank in range(2, top + 1):
+		if rank_gate_satisfied(id, next_rank):
+			legal = next_rank
+		else:
+			break
+	return legal
+
+
+func _can_buy_rank(id: String, followers: int) -> Dictionary:
+	var core := db.core_of(id)
+	if not core.is_empty() and not has_core(core):
+		return _no("no access to the %s Core" % core)
+	var next_rank := rank(id) + 1
+	if not rank_gate_satisfied(id, next_rank):
+		var needed := int(RANK_GATE_OTHERS.get(next_rank, 0))
+		return _no("rank %d needs %d other owned %s locals (%d owned)" % [next_rank, needed, db.discipline_of(id), other_unique_locals(db.discipline_of(id), id)])
+	var cost := db.rank_cost(id, next_rank)
+	if cost <= 0:
+		return _no("no authored rank price")
+	if followers < cost:
+		return _no("needs %d Followers" % cost)
+	return {"ok": true, "reason": "", "cost": cost, "rank_up": true, "next_rank": next_rank}
+
+
+## Recorded per-rank payments for `id` (index 0 = rank 1).
+func rank_receipts(id: String) -> Array:
+	return (state.get("paid_ranks", {}) as Dictionary).get(id, [])
+
+
+func _push_receipt(id: String, cost: int) -> void:
+	if db.kind(id) != "local" or db.max_rank(id) <= 1:
+		return
+	var ranks: Dictionary = state.get("paid_ranks", {})
+	if not state.has("paid_ranks"):
+		state["paid_ranks"] = ranks
+	var receipts: Array = ranks.get(id, [])
+	receipts.append(cost)
+	ranks[id] = receipts
+
+
+## What one downgrade of `id` would return: the exact recorded payment of the
+## highest rank (RANK-06). {ok, refund, from_rank, reason}.
+func downgrade_preview(id: String) -> Dictionary:
+	if not owns(id) or db.kind(id) != "local" or db.max_rank(id) <= 1:
+		return {"ok": false, "refund": 0, "from_rank": 0, "reason": "not a ranked node"}
+	var current := rank(id)
+	if current <= 1:
+		return {"ok": false, "refund": 0, "from_rank": current, "reason": "rank 1 leaves through an ordinary refund"}
+	var receipts := rank_receipts(id)
+	var refund := int(receipts[current - 1]) if receipts.size() >= current else db.rank_cost(id, current)
+	return {"ok": true, "refund": refund, "from_rank": current, "reason": ""}
+
+
+## Removes the highest rank of `id`, returning its exact recorded payment.
+func downgrade_rank(id: String) -> int:
+	var preview := downgrade_preview(id)
+	if not bool(preview["ok"]):
+		return 0
+	var refund := int(preview["refund"])
+	var owned_map: Dictionary = state["owned"]
+	owned_map[id] = int(owned_map[id]) - 1
+	var ranks: Dictionary = state.get("paid_ranks", {})
+	var receipts: Array = ranks.get(id, [])
+	if not receipts.is_empty():
+		receipts.pop_back()
+	var paid: Dictionary = state["paid"]
+	paid[id] = maxi(0, int(paid.get(id, 0)) - refund)
+	state["spent"] = maxi(0, int(state.get("spent", 0)) - refund)
+	state["refunded"] = int(state.get("refunded", 0)) + refund
+	return refund
+
+
+## After ownership changed, ranks whose gates no longer hold leave, returning
+## their exact receipts (RANK-06 cascade). Returns the total refunded.
+func cascade_illegal_ranks() -> int:
+	var returned := 0
+	for id in owned_ids():
+		if db.kind(id) != "local" or db.max_rank(id) <= 1:
+			continue
+		var legal := max_legal_rank(id)
+		while rank(id) > legal:
+			var got := downgrade_rank(id)
+			if got <= 0 and rank(id) > legal:
+				# A missing receipt must not loop forever; drop the rank dry.
+				(state["owned"] as Dictionary)[id] = legal
+				break
+			returned += got
+	return returned
+
+
 ## Records ownership after the caller has paid. Returns the amount recorded.
 func record_purchase(id: String, cost: int, chosen_core: String = "") -> int:
 	var kind := db.kind(id)
 	var owned_map: Dictionary = state["owned"]
 	owned_map[id] = int(owned_map.get(id, 0)) + 1
+	_push_receipt(id, cost)
 	if cost > 0:
 		var paid: Dictionary = state["paid"]
 		paid[id] = int(paid.get(id, 0)) + cost
@@ -336,6 +474,52 @@ func refund_preview(id: String) -> Dictionary:
 	return out
 
 
+## The Followers a refund of `id` would actually return at `share`, without
+## doing it: exact rank receipts above rank 1, the share of everything else,
+## plus the exact receipts of ranks elsewhere whose gates would break.
+func refund_value(id: String, share: float) -> int:
+	var preview := refund_preview(id)
+	var removed: Array = preview["removed"]
+	if removed.is_empty() or not (preview["blocked"] as Array).is_empty():
+		return 0
+	var safe_share := clampf(share, 0.0, 1.0)
+	var paid: Dictionary = state["paid"]
+	var value := 0
+	var hypothetical: Dictionary = (state["owned"] as Dictionary).duplicate()
+	for gone_key in removed:
+		var gone := String(gone_key)
+		hypothetical.erase(gone)
+		var receipts := rank_receipts(gone)
+		if receipts.size() > 1:
+			for i in range(1, receipts.size()):
+				value += int(receipts[i])
+			value += int(round(float(int(receipts[0])) * safe_share))
+		else:
+			value += int(round(float(int(paid.get(gone, 0))) * safe_share))
+	# Ranks elsewhere that would fall to their legal gate return exactly.
+	for other_key in hypothetical.keys():
+		var other := String(other_key)
+		if db.kind(other) != "local" or db.max_rank(other) <= 1:
+			continue
+		var current := int(hypothetical[other])
+		var legal := 1
+		for next_rank in range(2, db.max_rank(other) + 1):
+			var needed := int(RANK_GATE_OTHERS.get(next_rank, 0))
+			var others := 0
+			for local_id in db.local_ids(db.discipline_of(other)):
+				if String(local_id) != other and int(hypothetical.get(String(local_id), 0)) > 0:
+					others += 1
+			if others >= needed:
+				legal = next_rank
+			else:
+				break
+		var receipts_other := rank_receipts(other)
+		for lost_rank in range(legal + 1, current + 1):
+			if receipts_other.size() >= lost_rank:
+				value += int(receipts_other[lost_rank - 1])
+	return value
+
+
 ## Refund: removes the node and everything that depended on it and returns
 ## `share` of each leaver's recorded price (the rest is forfeited). Refused
 ## when a sworn node would leave, unless `force` (the simulator's ablation
@@ -349,6 +533,7 @@ func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 		return 0
 	var owned_map: Dictionary = state["owned"]
 	var paid: Dictionary = state["paid"]
+	var paid_ranks: Dictionary = state.get("paid_ranks", {})
 	var safe_share := clampf(share, 0.0, 1.0)
 	var total := 0
 	var returned := 0
@@ -356,13 +541,27 @@ func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 		var gone := String(gone_key)
 		var paid_price := int(paid.get(gone, 0))
 		total += paid_price
-		returned += int(round(float(paid_price) * safe_share))
+		var receipts: Array = paid_ranks.get(gone, [])
+		if receipts.size() > 1:
+			# V5 ranked local: rank receipts above rank 1 return exactly
+			# (RANK-06); the rank-1 payment follows the ordinary share.
+			var exact := 0
+			for i in range(1, receipts.size()):
+				exact += int(receipts[i])
+			var base := int(receipts[0])
+			returned += exact + int(round(float(base) * safe_share))
+		else:
+			returned += int(round(float(paid_price) * safe_share))
 		owned_map.erase(gone)
 		paid.erase(gone)
+		paid_ranks.erase(gone)
 		_unequip(gone)
 	state["refunded"] = int(state.get("refunded", 0)) + returned
 	state["forfeited"] = int(state.get("forfeited", 0)) + (total - returned)
 	state["spent"] = maxi(0, int(state.get("spent", 0)) - total)
+	# Locals that left can invalidate rank 3/4 gates elsewhere; those ranks
+	# leave too, returning their exact receipts.
+	returned += cascade_illegal_ranks()
 	return returned
 
 

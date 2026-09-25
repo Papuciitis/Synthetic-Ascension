@@ -233,6 +233,11 @@ func _draw() -> void:
 				draw_string(_font, at + Vector2(-radius, radius + 12.0), "x%d" % ledger.rank(sid), HORIZONTAL_ALIGNMENT_CENTER, int(radius * 2.0), 10, COLOR_OWNED)
 		else:
 			draw_arc(at, radius, 0.0, TAU, 32, color, width, true)
+			# V5 ranked local: a compact I/II/III/IV investment marker.
+			if ledger != null and db.max_rank(sid) > 1 and ledger.rank(sid) > 0 and _font != null:
+				var roman: Array = ["", "I", "II", "III", "IV"]
+				var mark := String(roman[mini(ledger.rank(sid), 4)])
+				draw_string(_font, at + Vector2(-radius, radius * 0.45), mark, HORIZONTAL_ALIGNMENT_CENTER, int(radius * 2.0), 10, COLOR_OWNED if state == "owned" else COLOR_TEXT)
 		if ledger != null and ledger.is_equipped(sid):
 			draw_arc(at, radius + 4.0, 0.0, TAU, 32, COLOR_EQUIPPED, 1.5, true)
 		if sid == selected:
