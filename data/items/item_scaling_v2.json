@@ -505,6 +505,27 @@
      60
     ]
    }
+  },
+  "beka": {
+   "anchors": {
+    "max_hp": [
+     0,
+     0,
+     0,
+     0,
+     0
+    ]
+   },
+   "flat": {},
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.5,
+    "tau": 12,
+    "from_rank": 1,
+    "note": "Beka companion strength S; shield capacity fraction min(0.30, 0.20 x S) reaches its 0.30 cap at S = 1.5"
+   },
+   "note": "no flat stats by design (handoff prototype default); the zero anchors satisfy the one-channel schema rule"
   }
  }
 }

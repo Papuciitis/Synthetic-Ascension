@@ -1244,6 +1244,19 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		armor_val = stats.armor
 
 	var reduced: float = amount * (100.0 / (100.0 + max(armor_val, 0.0)))
+	# A companion shield (Beka) absorbs from the mitigated hit BEFORE HP
+	# lethality is tested, so a shielded nonlethal hit never spends a
+	# last-chance effect. Absorption is real damage for hit reactions but
+	# is never reported as HP loss; evasions and pay_health never get here.
+	if ier4 != null and reduced > 0.0:
+		var absorbed: float = ier4.absorb_incoming_damage(reduced)
+		if absorbed > 0.0:
+			reduced -= absorbed
+			_report_balance_damage(raw_amount, absorbed, 0.0, source, kind, &"absorbed")
+			if BattleText != null:
+				BattleText.popup(global_position, "-%d" % int(round(absorbed)), Color(0.75, 0.9, 1.0, 0.9), 0.9)
+			if reduced <= 0.001:
+				return
 	var health_before := hp
 	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
 		# A tree rule (Last Hit) took the killing blow: left at 1 HP.

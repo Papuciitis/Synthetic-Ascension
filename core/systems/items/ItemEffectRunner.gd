@@ -142,6 +142,19 @@ func get_damage_taken_multiplier() -> float:
 			mul *= float(n.call("get_damage_taken_multiplier"))
 	return mul
 
+
+## A real absorbable barrier (Beka's Comfortable Company): effects with
+## absorb_damage soak part of the mitigated hit and return what they took.
+## Called by Player._take_damage after armour, before lethality is tested.
+func absorb_incoming_damage(amount: float) -> float:
+	var absorbed := 0.0
+	for n in _active_effects.values():
+		if amount - absorbed <= 0.0:
+			break
+		if is_instance_valid(n) and n.has_method("absorb_damage"):
+			absorbed += float(n.call("absorb_damage", amount - absorbed))
+	return minf(absorbed, amount)
+
 func _sync_effects(wanted: Dictionary) -> void:
 	# 1) Remove effects that are no longer wanted
 	var old_keys: Array = _active_effects.keys()

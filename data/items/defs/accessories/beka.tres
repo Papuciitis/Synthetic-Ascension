@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_sd"]
+[ext_resource type="Texture2D" path="res://assets/textures/items/offhand/beka_icon.png" id="2_icon"]
+[ext_resource type="Script" uid="uid://lmfq2m3cp68m" path="res://data/items/ItemData.gd" id="3_itemdata"]
+[ext_resource type="PackedScene" path="res://effects/items/scenes/BekaCompanionEffect.tscn" id="4_eff"]
+
+[sub_resource type="Resource" id="mods"]
+script = ExtResource("1_sd")
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[sub_resource type="Resource" id="rarity_base"]
+script = ExtResource("1_sd")
+metadata/_custom_type_script = "uid://gbut6h2xvcgp"
+
+[resource]
+script = ExtResource("3_itemdata")
+id = "beka"
+display_name = "Beka"
+icon = ExtResource("2_icon")
+description = "A small black-and-white cat, asleep on a folded blanket.
+• Comfortable Company: a shield regrows while nothing hurts you.
+• What Have You Got There?: she points things out, and drags snacks over when you look rough.
+She is in no danger, and she is not going anywhere."
+mods = SubResource("mods")
+rarity_base = SubResource("rarity_base")
+pct_min = 0.0
+pct_max = 0.2
+scripted_value_weight = 30.0
+drop_weight = 0.2
+equip_slot = 6
+effect_scenes = Array[PackedScene]([ExtResource("4_eff")])
+metadata/_custom_type_script = "uid://lmfq2m3cp68m"

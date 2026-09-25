@@ -91,11 +91,21 @@ difference. Working tree clean apart from untracked docs/archives.
 - [ ] Extended into Level1Builder AND procedural paths
 
 ## Phase 4 — Items: Beka first, then batches; existing-item textures
-- [ ] Beka: Comfortable Company shield (approved numbers)
-- [ ] Beka: 12 s / 320 u pulse — pull health pickups, highlight equipment
-- [ ] Beka presentation (provisional art labelled as such until real
-      markings/reference obtained)
-- [ ] Beka required checks (handoff §14.2 list)
+- [x] Beka shield: real absorb pool in Player._take_damage (after armour,
+      before lethality; absorbed ≠ HP loss in telemetry), 4 s delay,
+      4%/s regen, cap min(0.30, 0.20 S) via rarity_effect_multiplier;
+      pay_health and evasions never touch it
+- [x] Beka pulse: 12 s / 320 u, LoS at selection, pulls armed health to a
+      wounded player at ≤420 u/s ≤2 s, stops at full HP, highlights
+      equipment 3 s without touching it, quiet when it finds nothing
+- [x] Beka presentation: provisional tuxedo-cat sprites from the user's
+      description (D-3) — sit/sleep + icon-on-blanket; sleeping = shield
+      regenerating; restrained meow popup + ring on a find; shield arc
+- [x] §14.2 checks: `BekaEffectTest` 30/30 (stable across 5 runs); item
+      battery green (EffectRunner 239, ScalingV2 27, EconomyV2 32,
+      InventoryRouter 115, SaveIntegrity 62)
+- [ ] Beka vs other Offhands comparison: needs the balance recorder in a
+      rendered run (headless done: opportunity cost is zero flat stats)
 - [ ] Existing-item texture audit → asset manifest
 - [ ] Remaining item ideas: per-item status (implemented / designed / blocked)
 
