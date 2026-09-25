@@ -170,10 +170,27 @@ noticeability; free-choice + durable-target comparison runs; Beka vs other
 Offhands with the balance recorder; §15.6 hub walkthrough capture; Spin Up
 feel (the B1-vs-P1 A/B).
 
-**Next implementation tasks, in order:**
-1. Retrieve the remaining "JSON lasīšana" references → Barrage
-   darts/broken-ring + Ordnance pressure-ring texture rework.
-2. Item batch 2 (design-ready rows of 2026-09-26-item-ideas-status.md:
-   Missing Pālis visual, Plot Armor, Second Breakfast).
-3. Level1 authored irregular footprints (the depth pass already applies).
-4. Hub polish: gear corner's own panel, walkthrough capture.
+**Done in the continuation pass (2026-09-26, second sitting):**
+1. [x] Barrage darts + broken heat ring + Ordnance pressure-ring
+   telegraphs, from the identity table alone (chat retrieval still
+   pending); wired into the V5 engines.
+2. [x] Item batch 2: Plot Armor, Second Breakfast, The Missing Pālis —
+   `ItemBatch2Test` 27/27; items gain a lethal-intercept hook after the
+   tree's interceptors.
+3. [x] Level1 authored footprints: the service warehouse is an L, the
+   kiosk door sits in a recessed bay; wall probe green, determinism
+   fingerprints unchanged across runs.
+4. [x] Hub gear corner opens its own BagUI panel (HubWorldTest 22/22).
+
+**Still waiting on one keypress:** the "what did the handoff miss" GPT
+consult is fully staged in a new ChatGPT chat's composer (browser window
+"ChatGPT — Mozilla Firefox"); the permission classifier will not let this
+session press Enter or scroll the reference chat. Press Enter there and
+say so — reading the answer via screenshots is not blocked.
+
+**Next implementation tasks:**
+1. Read GPT's answer once sent; act on (a)-list items it surfaces.
+2. Retrieve the remaining "JSON lasīšana" references (same constraint).
+3. Rendered pass: §15.6 hub walkthrough, VFX/faces legibility, B1-vs-P1
+   feel, Beka-vs-Offhands recorder run.
+4. Item batch 3 candidates: 7-Mile Boots, Bazinga, Trauma, Dignity.
