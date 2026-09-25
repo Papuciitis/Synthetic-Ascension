@@ -122,12 +122,26 @@ difference. Working tree clean apart from untracked docs/archives.
 - [ ] Existing-item texture audit → asset manifest
 - [ ] Remaining item ideas: per-item status (implemented / designed / blocked)
 
-## Phase 5 — Walkable between-segment hub
-- [ ] Hub world scene: arrival, merchant, Ascension/choice station,
-      gear/stash, quiet alcove, exit gate
-- [ ] Transition rewire without double segment advance
-- [ ] Save/resume in hub; old-save compatibility route
-- [ ] Hub checks (§15.6)
+## Phase 5 — Walkable between-segment hub  ◐ core 2026-09-26
+- [x] `scenes/hub/HubWorld.tscn`: a ~30x18-cell sheltered courtyard with a
+      clear arrival→exit walk, recessed east/west service bays, five
+      stations (merchant, Ascension, gear corner, quiet alcove, exit gate),
+      a statue landmark, real player + camera limits, and Beka sleeping in
+      the alcove when she rides with the run
+- [x] Merchant/gear open the existing HubShop embedded (economy identical:
+      vendor snapshot reuse, undo rules, refresh pricing); Ascension opens
+      the tree screen in hub-refund context; embedded mode never writes the
+      resume target, never opens MajorChoice, swaps Continue for Close
+- [x] Combat isolation: attack lock + AscensionRunner.combat_inputs_enabled
+      (no Q/Heat/Spin-Up/charge farming in the hub)
+- [x] Transition: on_segment_completed targets the hub world; the gate
+      departs once (double-activation guarded) and is blocked by a pending
+      mandatory choice with an in-world cue; old HubShop-target saves route
+      into the hub world at resume
+- [x] `HubWorldTest` 19/19; SaveIntegrity 62, InventoryRouter 115,
+      EconomyV2 32, ChoicePickup 5, parse 425 all green
+- [ ] §15.6 rendered checks (walkthrough capture, input feel, legibility at
+      zoom, several full segment/hub cycles): need a human run
 
 ## Current checkpoint
 

@@ -4,6 +4,13 @@ extends Control
 @onready var info: Label = $Root/HBox/Left/Margin/VBox/Info
 @onready var hover: Label = $Root/HBox/Left/Margin/VBox/Hover
 
+## Embedded mode (the walkable hub): the screen is a focused trade panel
+## inside HubWorld — it never writes the resume target, never opens the
+## Major Choice itself, and swaps Continue/Menu for a Close that emits
+## embedded_closed. All economy behaviour is identical.
+signal embedded_closed
+var embedded: bool = false
+
 @onready var btn_mark_all_bag: Button = $Root/HBox/CartPanel/Margin/VBox/TradeTools/MarkAllBag
 @onready var btn_mark_neg: Button = $Root/HBox/CartPanel/Margin/VBox/TradeTools/MarkNEG
 @onready var btn_augments: Button = $Root/HBox/Left/Margin/VBox/Augments
@@ -110,10 +117,11 @@ func _ready() -> void:
 	# Mark resume target as Hub/Shop. Unvalidated: the segment-complete save one
 	# frame earlier already ran the full read-back check, and stacking three
 	# validated writes on the transition frame was part of its 144 ms hitch.
-	if SaveManager != null and SaveManager.current_save != null:
-		SaveManager.current_save.attempt_resume_scene = Global.PATH_HUB_SHOP
-	if Global != null:
-		Global.save_current_profile(false)
+	if not embedded:
+		if SaveManager != null and SaveManager.current_save != null:
+			SaveManager.current_save.attempt_resume_scene = Global.PATH_HUB_SHOP
+		if Global != null:
+			Global.save_current_profile(false)
 
 	# Bind player data
 	# HubShop owns double-click actions so it can invalidate Undo before any
@@ -160,6 +168,9 @@ func _ready() -> void:
 	chk_include_equipped.toggled.connect(_on_include_equipped_toggled)
 	btn_continue.pressed.connect(_start_next_segment)
 	btn_menu.pressed.connect(_to_menu)
+	if embedded:
+		btn_continue.text = "Close"
+		btn_menu.visible = false
 	if btn_augments != null:
 		btn_augments.pressed.connect(_open_augments)
 	btn_inventory.pressed.connect(_open_inventory)
@@ -196,7 +207,7 @@ func _ready() -> void:
 			_refresh_info()
 		)
 
-	if Global != null and Global.pending_big_choice:
+	if Global != null and Global.pending_big_choice and not embedded:
 		btn_continue.disabled = true
 		if _major_choice != null:
 			_major_choice.open()
@@ -1799,6 +1810,10 @@ func _open_augments() -> void:
 	)
 
 func _start_next_segment() -> void:
+	if embedded:
+		_invalidate_trade_undo()
+		embedded_closed.emit()
+		return
 	_invalidate_trade_undo()
 	_reset_vendor_memory()
 	if Global != null and Global.pending_big_choice:

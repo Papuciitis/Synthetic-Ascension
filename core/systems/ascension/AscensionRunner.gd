@@ -1745,7 +1745,14 @@ func _process(delta: float) -> void:
 		_poll_revelation_key()
 
 
+## Safe places (the between-segment hub) disable ability inputs entirely so
+## service visits can never farm Q casts, Heat, Spin Up or charge.
+var combat_inputs_enabled: bool = true
+
+
 func _input_allowed() -> bool:
+	if not combat_inputs_enabled:
+		return false
 	if get_tree() == null or get_tree().paused:
 		return false
 	if _player != null and bool(_player.get("is_dead")):

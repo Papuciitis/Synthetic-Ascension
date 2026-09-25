@@ -214,7 +214,7 @@ func _save_status(save: SaveData) -> String:
 	if not save.attempt_active:
 		return "BETWEEN ATTEMPTS"
 	var resume_path: String = save.attempt_resume_scene.to_lower()
-	if resume_path.contains("hubshop"):
+	if resume_path.contains("hubshop") or resume_path.contains("hubworld"):
 		return "RESPITE"
 	if resume_path.contains("game"):
 		return "IN SEGMENT"

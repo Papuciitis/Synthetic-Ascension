@@ -29,6 +29,9 @@ const PATH_SAVE_SELECT := UI_DIR + "/screens/SaveSelect.tscn"
 const PATH_BASE := UI_DIR + "/screens/base.tscn"
 const PATH_GAME := SCENES_DIR + "/game.tscn"
 const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
+## The walkable between-segment hub (2026-09-25 handoff, Phase 5); the old
+## HubShop screen remains as its embedded trade panel.
+const PATH_HUB_WORLD := "res://scenes/hub/HubWorld.tscn"
 # v3: story-pass layout - admissions wing added, full-opening start moved to
 # the street entrance. Stale checkpoints and spatial milestones reset.
 const SEGMENT1_LAYOUT_VERSION: int = 3
@@ -335,7 +338,7 @@ func _scene_title(path: String) -> String:
 	match path:
 		PATH_GAME:
 			return "SEGMENT %d" % maxi(1, attempt_segment)
-		PATH_HUB_SHOP:
+		PATH_HUB_SHOP, PATH_HUB_WORLD:
 			return "THE HUB"
 		PATH_BASE:
 			return "BASE"
@@ -385,7 +388,7 @@ func goto_hub_shop() -> void:
 	var am := get_node_or_null("/root/AudioManager")
 	if am != null:
 		am.call("to_game")
-	goto_scene(PATH_HUB_SHOP)
+	goto_scene(PATH_HUB_WORLD)
 
 func goto_resume() -> void:
 	var am := get_node_or_null("/root/AudioManager")
@@ -398,7 +401,11 @@ func goto_resume() -> void:
 	if SaveManager.current_save.attempt_active:
 		var path: String = SaveManager.current_save.attempt_resume_scene
 		if path == "":
-			path = PATH_HUB_SHOP
+			path = PATH_HUB_WORLD
+		# Older saves resumed into the full-screen shop; the walkable hub is
+		# its compatible successor and preserves the same pending state.
+		if path == PATH_HUB_SHOP:
+			path = PATH_HUB_WORLD
 		goto_scene(path)
 	else:
 		goto_base()
@@ -2195,7 +2202,7 @@ func on_segment_completed(completed_segment: int) -> void:
 	attempt_doctrine_threat_debt = 0.0
 
 	if SaveManager != null and SaveManager.current_save != null:
-		SaveManager.current_save.attempt_resume_scene = PATH_HUB_SHOP
+		SaveManager.current_save.attempt_resume_scene = PATH_HUB_WORLD
 
 	save_current_profile()
 
