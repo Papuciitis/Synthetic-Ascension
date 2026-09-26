@@ -524,12 +524,21 @@ func collect_draw_points(out: Array) -> void:
 		out.append([lane["from"], 2.0, Color(1.0, 0.7, 0.4, 0.4), lane["to"]])
 	for grenade in grenades:
 		var tint := Color(1.0, 1.0, 1.0, 1.0)
+		var draw_at: Vector2 = grenade["pos"]
 		match String(grenade["state"]):
 			"attached":
 				tint = Color(1.4, 1.1, 0.6, 1.0)
 			"grounded":
 				tint = Color(1.3, 0.9, 0.6, 1.0)
-		runner.note_texture_point(grenade["pos"], 8.0, tint, "grenade_body")
+			"flight":
+				# A heavy thrown payload READS as thrown: the drawn body
+				# arcs and casts a ground shadow while the simulated pos —
+				# collisions, chains, blasts — stays the straight truth
+				# (playtest review finding 15; visual only, by instruction).
+				var arc: float = sin(clampf(float(grenade["t"]) / GRENADE_FLIGHT, 0.0, 1.0) * PI)
+				out.append([grenade["pos"] + Vector2(0.0, 3.0), 5.0 * (1.0 - 0.4 * arc), Color(0.0, 0.0, 0.0, 0.35 * (1.0 - 0.5 * arc))])
+				draw_at = (grenade["pos"] as Vector2) + Vector2(0.0, -22.0 * arc)
+		runner.note_texture_point(draw_at, 8.0, tint, "grenade_body")
 
 
 func describe() -> Dictionary:
