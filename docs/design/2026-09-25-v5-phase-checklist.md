@@ -223,3 +223,19 @@ pass, carried forward):** vertical-slice run test; run-truth telemetry
 dump; tap/hold-Q panic feel; Beka run-friction measurement; building
 abuse (pathing/projectiles/pickups through footprints); procedural
 gameplay validator; save migration matrix; hub friction walkthrough.
+
+**Integration pass, fourth block (2026-09-26, later):**
+8. [x] Run-truth telemetry per segment inside the balance capture
+   (BalanceLedger/Recorder `truth` block; absorbed damage no longer
+   dropped; secondary funnel counted; slow_frames PFR-independent;
+   BalanceLedgerTest 35/35).
+9. [x] VerticalSliceTest 19/19 — the real game scene runs the segment
+   loop end to end headless; ExitRite gained its own completion
+   idempotence guard (abuse finding).
+10. [x] Exit Rite READY blocker truth table + witness-needs-a-gate in
+    InvariantsTest (32/32). GPT's invariant list is now fully covered.
+11. [x] SAVE INCIDENT found + fixed: HubWorldTest wrote real
+    user://saves/slot_0.tres (test residue, both primary and .bak).
+    Slot pinned to 97 (D-18); the contaminated files await the user.
+12. [x] CC0 sourcing candidates recorded in the asset manifest (D-13);
+    downloads deferred to a supervised pass.

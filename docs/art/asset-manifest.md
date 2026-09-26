@@ -126,3 +126,24 @@ all read `data.icon` directly, so one binding covers every surface. No
 null or misassigned world sprites found; Oakheart's shared placeholder is
 intentional. Beka's set (icon + sit/sleep) is text-described likeness,
 provisional until a photo arrives.
+
+### online sourcing candidates — CC0 only (2026-09-26, D-13)
+Per the user's direction, no GPT-generated art; the next quality pass
+sources licensed packs online. Rules: **CC0 only** (no attribution debt),
+verify the license ON the pack page before download, keep provenance per
+file here. Search hubs (verified reachable, US search):
+- OpenGameArt CC0 filter — item icons and roguelike sets:
+  https://opengameart.org/content/rpg-items-pixel-art ,
+  https://opengameart.org/content/03-pixel-art-items ,
+  Kenney's all-CC0 index: https://opengameart.org/content/all-cc0-uploader-kenney
+- itch.io CC0 catalogue — https://itch.io/game-assets/assets-cc0
+  (cats, top-down: https://itch.io/game-assets/free/tag-cats/tag-top-down —
+  "five 32x32 pixel cats with 4-directional walks" fits Beka's tuxedo
+  brief if recolored black/white; check each pack's license line)
+- Top-down shooter VFX: https://opengameart.org/content/assets-for-top-down-shooter
+  (CC0 bullet + ammo sprites), Jettelly Muzzle Flash Pack 01 (CC0
+  spritesheet): https://jettelly.com/game-assets/muzzle-flash-pack-01 ,
+  CGHEVEN muzzle/impact VFX (CC0, PNG sheets): https://cgheven.com/top-20-free-muzzle-flash-vfx-assets-in-2025/
+- Existing in-repo baseline stays Kenney CC0; recolors/edits of CC0 are fine.
+Downloads deferred to a supervised pass: the user reviews fit at gameplay
+zoom before anything replaces an authored placeholder.
