@@ -143,6 +143,16 @@ func get_damage_taken_multiplier() -> float:
 	return mul
 
 
+## Per-source incoming-damage multiplier (Trauma's learned resistance):
+## multiplied alongside the flat get_damage_taken_multiplier.
+func get_damage_taken_multiplier_for(source: Node, kind: StringName) -> float:
+	var mul := 1.0
+	for n in _active_effects.values():
+		if is_instance_valid(n) and n.has_method("get_damage_taken_multiplier_for"):
+			mul *= float(n.call("get_damage_taken_multiplier_for", source, kind))
+	return mul
+
+
 ## A killing blow an item may refuse (Plot Armor), consulted after the
 ## tree's own interceptors. The first effect that accepts wins.
 func intercept_lethal_damage(amount: float, source: Node) -> bool:

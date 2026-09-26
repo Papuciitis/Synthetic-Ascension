@@ -1226,6 +1226,8 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier4 != null:
 		amount *= ier4.get_damage_taken_multiplier()
+		# Per-source item rules (Trauma's learned resistance).
+		amount *= ier4.get_damage_taken_multiplier_for(source, kind)
 	if mr4 != null:
 		amount *= mr4.get_damage_taken_multiplier()
 	var ar4: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner

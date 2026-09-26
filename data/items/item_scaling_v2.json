@@ -576,6 +576,44 @@
     ]
    },
    "note": "the wave amplitude is deliberately NOT scaled: readability bound is absolute"
+  },
+  "trauma": {
+   "anchors": {
+    "max_hp": [
+     6,
+     8,
+     15,
+     30,
+     52
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.35,
+    "tau": 14,
+    "from_rank": 1,
+    "note": "learned resistance scale; reduction min(0.40, 0.30 x S)"
+   }
+  },
+  "dignity": {
+   "anchors": {
+    "power": [
+     0.005,
+     0.01,
+     0.02,
+     0.04,
+     0.07
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.4,
+    "tau": 14,
+    "from_rank": 1,
+    "note": "intact power bonus min(0.14, 0.08 x S)"
+   }
   }
  }
 }

@@ -112,6 +112,46 @@ def second_breakfast():
     return img
 
 
+SCAR = (166, 128, 120, 255)
+GAUZE = (216, 210, 198, 255)
+CREST_GOLD = (222, 184, 96, 255)
+CREST_BLUE = (86, 108, 162, 255)
+
+
+def trauma():
+    """A shield that learned: cracked, gauze-bound, and harder for it."""
+    img = _c()
+    # Shield silhouette.
+    _rect(img, 9, 6, 22, 12, STEEL)
+    _rect(img, 10, 13, 21, 18, STEEL)
+    _rect(img, 12, 19, 19, 22, STEEL_D)
+    _rect(img, 14, 23, 17, 25, STEEL_D)
+    # The remembered wound: a scar seam down one side.
+    for x, y in [(13, 7), (14, 9), (13, 11), (14, 13), (15, 15), (14, 17), (15, 19)]:
+        _px(img, x, y, SCAR)
+    # Gauze wrap across the middle.
+    _rect(img, 9, 14, 22, 15, GAUZE)
+    _px(img, 11, 16, GAUZE)
+    _px(img, 20, 13, GAUZE)
+    return img
+
+
+def dignity():
+    """An upright little standard: a crest on a staff, held high."""
+    img = _c()
+    # Staff.
+    _rect(img, 15, 6, 16, 26, (110, 88, 62, 255))
+    # Banner crest.
+    _rect(img, 17, 7, 26, 14, CREST_BLUE)
+    for y in range(15, 18):
+        _rect(img, 17, y, 26 - (y - 14) * 3, y, CREST_BLUE)
+    _rect(img, 18, 8, 20, 10, CREST_GOLD)
+    _px(img, 22, 11, CREST_GOLD)
+    # Base footing: it stands, it does not kneel.
+    _rect(img, 12, 26, 19, 27, STEEL_D)
+    return img
+
+
 if __name__ == "__main__":
     rings = ROOT / "assets/textures/items/rings"
     offhand = ROOT / "assets/textures/items/offhand"
@@ -120,4 +160,6 @@ if __name__ == "__main__":
     missing_palis().save(rings / "missing_palis.png")
     plot_armor().save(offhand / "plot_armor.png")
     second_breakfast().save(rings / "second_breakfast.png")
-    print("wrote missing_palis, plot_armor, second_breakfast")
+    trauma().save(offhand / "trauma.png")
+    dignity().save(rings / "dignity.png")
+    print("wrote missing_palis, plot_armor, second_breakfast, trauma, dignity")
