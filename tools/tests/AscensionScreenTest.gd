@@ -84,6 +84,10 @@ func _run() -> void:
 	screen._show("G1")
 	await get_tree().process_frame
 	_check(screen._gate_row.get_child_count() == 2, "a Gate offers the two unopened Cores (%d)" % screen._gate_row.get_child_count())
+	# A Gate double-click carries the same Core choice into the confirmation.
+	screen._on_activated("G1")
+	_check(screen._pending_purchase == "G1" and screen._confirm_core.visible and screen._confirm_core.item_count == 2, "a Gate confirmation offers the unopened Cores (%d)" % screen._confirm_core.item_count)
+	screen._pending_purchase = ""
 	screen._show("EXQ")
 	var labels := PackedStringArray()
 	for child in screen._buttons.get_children():
@@ -107,6 +111,36 @@ func _run() -> void:
 	var back: int = Global.ascension_refund("EX02")
 	Global.ascension_refund_context_hub = false
 	_check(back == expected_back and not ledger.owns("EX02") and Global.followers == 4600 - 200 - 400 - 800 + expected_back, "a Hub refund returns the segment's share of the price to the wallet (%d of 200)" % back)
+	# --- Double-click purchase: name/rank/exact cost, and eligibility
+	# rechecked at the moment of confirmation (playtest review).
+	screen._on_activated("EX05")
+	_check(screen._pending_purchase == "EX05" if ledger.can_buy("EX05", Global.followers)["ok"] else screen._pending_purchase.is_empty(), "activation opens a confirmation only when the node is eligible")
+	if not screen._pending_purchase.is_empty():
+		_check(screen._confirm_text.text.contains("Exact cost"), "the confirmation names the exact cost")
+		screen._confirm_pending_purchase()
+		_check(ledger.owns("EX05"), "confirming buys through the ordinary transaction")
+	# The recheck: the wallet drains while the dialog stands open.
+	screen._on_activated("EX06")
+	if not screen._pending_purchase.is_empty():
+		var drained: int = Global.followers
+		Global.transaction_followers(-drained, &"dev_drain", {}, false, false)
+		screen._confirm_pending_purchase()
+		_check(not ledger.owns("EX06"), "a stale confirmation cannot buy what the wallet no longer affords")
+		_check(not screen._status.text.is_empty(), "the refusal names the ledger's reason")
+		Global.transaction_followers(drained, &"dev_grant", {}, false, false)
+	# --- Overview declutter: at fit zoom only focus, cores, the equipped
+	# loadout and what is buyable NOW carry labels; hover always reads.
+	screen.view.zoom = 0.3
+	screen.view.hovered = ""
+	screen.view.selected = ""
+	_check(screen.view._label_visible("core.melee", "core", "owned"), "cores stay named on the overview")
+	_check(not screen.view._label_visible("EX10", "local", "locked"), "a locked far local is silent on the overview")
+	_check(screen.view._label_visible("EX10", "local", "buyable"), "anything buyable NOW is named")
+	screen.view.hovered = "EX10"
+	_check(screen.view._label_visible("EX10", "local", "locked"), "hover always reads, whatever the state")
+	screen.view.zoom = 1.0
+	_check(screen.view._label_visible("EX09", "local", "locked"), "close zoom names everything again")
+
 	var closed: Array[bool] = []
 	screen.closed.connect(func() -> void: closed.append(true))
 	screen.close()

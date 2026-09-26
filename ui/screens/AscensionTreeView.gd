@@ -10,6 +10,9 @@ class_name AscensionTreeView
 
 signal node_hovered(id: String)
 signal node_clicked(id: String, button: int)
+## A deliberate purchase gesture (double-click). The screen confirms with
+## the exact cost and rechecks eligibility before buying.
+signal node_activated(id: String)
 
 const COLOR_BG := Color(0.07, 0.06, 0.055, 1.0)
 const COLOR_RING := Color(0.32, 0.27, 0.22, 0.55)
@@ -25,6 +28,10 @@ const COLOR_EQUIPPED := Color(1.0, 0.95, 0.8, 1.0)
 const COLOR_TEXT := Color(0.88, 0.84, 0.78, 1.0)
 const CORE_TINT: Dictionary = {"melee": Color(0.85, 0.35, 0.3), "ranged": Color(0.35, 0.65, 0.9), "magic": Color(0.7, 0.45, 0.95)}
 const LABEL_KINDS: Array[String] = ["active", "keystone", "axiom", "catastrophe", "evolution", "revelation", "fusion", "union", "gate", "ascendant", "core", "fork"]
+## Below this zoom the view is an OVERVIEW: labels collapse to what the
+## player is looking at and edges to what is theirs or in reach (playtest
+## finding: fixed-width labels overlapped into noise at fit zoom).
+const OVERVIEW_ZOOM := 0.55
 
 var db: AscensionTreeDB = null
 var layout: AscensionTreeLayout = null
@@ -133,6 +140,14 @@ func _gui_input(event: InputEvent) -> void:
 			return
 		if mouse.button_index == MOUSE_BUTTON_LEFT or mouse.button_index == MOUSE_BUTTON_RIGHT or mouse.button_index == MOUSE_BUTTON_MIDDLE:
 			if mouse.pressed:
+				if mouse.double_click and mouse.button_index == MOUSE_BUTTON_LEFT:
+					var target := layout.hit(screen_to_world(mouse.position), 6.0 / zoom)
+					if not target.is_empty():
+						selected = target
+						node_activated.emit(target)
+						queue_redraw()
+					accept_event()
+					return
 				_dragging = true
 				_drag_moved = 0.0
 			else:
@@ -188,14 +203,23 @@ func _draw() -> void:
 			var label := String(core).to_upper()
 			var at := center + dir * 790.0 * zoom
 			draw_string(_font, at + Vector2(-20.0, 4.0), label, HORIZONTAL_ALIGNMENT_CENTER, 40, 13, tint)
-	# edges
+	# edges — at overview zoom only the connections that MEAN something now:
+	# owned lattice, anything buyable, and whatever is under consideration.
+	var overview := zoom < OVERVIEW_ZOOM
 	for id in db.links:
-		var from: Vector2 = layout.position_of(String(id))
+		var sid_from := String(id)
+		var from: Vector2 = layout.position_of(sid_from)
 		for other in db.links[id]:
-			if String(other) < String(id):
+			var sid_to := String(other)
+			if sid_to < sid_from:
 				continue
-			var to: Vector2 = layout.position_of(String(other))
-			var owned_edge := ledger != null and ledger.owns(String(id)) and ledger.owns(String(other))
+			var owned_edge := ledger != null and ledger.owns(sid_from) and ledger.owns(sid_to)
+			if overview and not owned_edge:
+				var touches_focus := sid_from == hovered or sid_to == hovered or sid_from == selected or sid_to == selected
+				var touches_buyable := state_of(sid_from) == "buyable" or state_of(sid_to) == "buyable"
+				if not touches_focus and not touches_buyable:
+					continue
+			var to: Vector2 = layout.position_of(sid_to)
 			draw_line(world_to_screen(from), world_to_screen(to), COLOR_EDGE_OWNED if owned_edge else COLOR_EDGE, 1.5 if owned_edge else 1.0, true)
 	# nodes
 	var pulse := 0.5 + 0.5 * sin(_time * 3.0)
@@ -244,10 +268,29 @@ func _draw() -> void:
 			draw_arc(at, radius + 7.0, 0.0, TAU, 32, Color(1.0, 1.0, 1.0, 0.9), 1.0, true)
 		elif sid == hovered:
 			draw_arc(at, radius + 5.0, 0.0, TAU, 32, Color(1.0, 1.0, 1.0, 0.5), 1.0, true)
-		if _font != null and (kind in LABEL_KINDS or zoom >= 0.9) and kind != "mutation" and kind != "revelation_mutation":
+		if _font != null and _label_visible(sid, kind, state):
 			var label_text := String(db.node(sid).get("name", sid))
 			var font_size := 11 if kind in LABEL_KINDS else 9
 			draw_string(_font, at + Vector2(-60.0, radius + 12.0), label_text, HORIZONTAL_ALIGNMENT_CENTER, 120, font_size, COLOR_TEXT if state != "locked" else COLOR_LOCKED)
+
+
+## What deserves a written name at the current zoom. Hover and selection
+## always; close zoom names everything; mid zoom the landmark kinds; the
+## overview only cores, the equipped loadout and what is buyable NOW.
+func _label_visible(sid: String, kind: String, state: String) -> bool:
+	if kind == "mutation" or kind == "revelation_mutation":
+		return sid == hovered or sid == selected
+	if sid == hovered or sid == selected:
+		return true
+	if zoom >= 0.9:
+		return true
+	if zoom >= OVERVIEW_ZOOM:
+		return kind in LABEL_KINDS
+	if kind == "core":
+		return true
+	if state == "buyable":
+		return true
+	return ledger != null and ledger.is_equipped(sid)
 
 
 func _draw_polygon(at: Vector2, radius: float, sides: int, color: Color, width: float) -> void:

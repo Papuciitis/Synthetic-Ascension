@@ -81,6 +81,7 @@ func _build() -> void:
 	split.add_child(view)
 	view.node_hovered.connect(_on_hovered)
 	view.node_clicked.connect(_on_clicked)
+	view.node_activated.connect(_on_activated)
 
 	var side := PanelContainer.new()
 	side.custom_minimum_size = Vector2(360, 0)
@@ -108,13 +109,6 @@ func _build() -> void:
 	_meta.add_theme_font_size_override("font_size", 11)
 	_meta.modulate = Color(1, 1, 1, 0.7)
 	_panel.add_child(_meta)
-	_rules = RichTextLabel.new()
-	_rules.bbcode_enabled = false
-	_rules.fit_content = false
-	_rules.scroll_active = true
-	_rules.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_rules.custom_minimum_size = Vector2(0, 160)
-	_panel.add_child(_rules)
 	_status = Label.new()
 	_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_status.add_theme_font_size_override("font_size", 12)
@@ -124,6 +118,16 @@ func _build() -> void:
 	_buttons = HBoxContainer.new()
 	_buttons.add_theme_constant_override("separation", 6)
 	_panel.add_child(_buttons)
+	_panel.add_child(HSeparator.new())
+	# The details SCROLL below the actions (playtest finding: a long rules
+	# text crammed the footer and hid what you could actually do).
+	_rules = RichTextLabel.new()
+	_rules.bbcode_enabled = false
+	_rules.fit_content = false
+	_rules.scroll_active = true
+	_rules.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_rules.custom_minimum_size = Vector2(0, 160)
+	_panel.add_child(_rules)
 	_panel.add_child(HSeparator.new())
 	var footer := HBoxContainer.new()
 	_panel.add_child(footer)
@@ -150,6 +154,22 @@ func _build() -> void:
 	close_button.focus_mode = Control.FOCUS_NONE
 	close_button.pressed.connect(close)
 	footer.add_child(close_button)
+
+	_confirm = ConfirmationDialog.new()
+	_confirm.title = "Confirm purchase"
+	_confirm.ok_button_text = "Buy"
+	_confirm.exclusive = true
+	var confirm_box := VBoxContainer.new()
+	_confirm_text = Label.new()
+	_confirm_text.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_confirm_text.custom_minimum_size = Vector2(320, 0)
+	confirm_box.add_child(_confirm_text)
+	_confirm_core = OptionButton.new()
+	_confirm_core.visible = false
+	confirm_box.add_child(_confirm_core)
+	_confirm.add_child(confirm_box)
+	_confirm.confirmed.connect(_confirm_pending_purchase)
+	root.add_child(_confirm)
 
 	var layout := AscensionTreeLayout.new()
 	var db := _db()
@@ -201,6 +221,12 @@ func _name_of(id: String) -> String:
 	return String(_db().node(id).get("name", id))
 
 
+var _confirm: ConfirmationDialog = null
+var _confirm_text: Label = null
+var _confirm_core: OptionButton = null
+var _pending_purchase: String = ""
+
+
 func _on_hovered(id: String) -> void:
 	if _selected.is_empty() and not id.is_empty():
 		_show(id)
@@ -211,6 +237,80 @@ func _on_clicked(id: String, button: int) -> void:
 	_show(id)
 	if button == MOUSE_BUTTON_RIGHT:
 		_refund(id)
+
+
+## Double-click is the purchase gesture: name, rank and the EXACT cost in a
+## confirmation, a Core choice where the node is a Gate, and a fresh
+## eligibility check at the moment of confirmation (playtest review).
+func _on_activated(id: String) -> void:
+	_selected = id
+	_show(id)
+	_request_purchase(id)
+
+
+func _request_purchase(id: String) -> void:
+	var ledger := _ledger()
+	var db := _db()
+	if ledger == null or _confirm == null or not db.has(id):
+		return
+	var kind := db.kind(id)
+	_confirm_core.visible = false
+	_confirm_core.clear()
+	var verdict: Dictionary
+	if kind == "gate" and not ledger.owns(id):
+		# The Gate needs a Core decision; the dialog carries the choice.
+		var any := false
+		for core_id in GATE_CORES:
+			var core_verdict := ledger.can_buy(id, Global.followers, core_id)
+			if bool(core_verdict["ok"]):
+				_confirm_core.add_item("%s  (%d Followers)" % [core_id.to_upper(), int(core_verdict["cost"])])
+				_confirm_core.set_item_metadata(_confirm_core.item_count - 1, core_id)
+				any = true
+		if not any:
+			_status.text = String(ledger.can_buy(id, Global.followers, _first_unopened(ledger))["reason"]).capitalize()
+			return
+		_confirm_core.visible = true
+		_confirm_core.select(0)
+		verdict = {"ok": true, "cost": -1}
+	else:
+		verdict = ledger.can_buy(id, Global.followers)
+		if not bool(verdict["ok"]):
+			_status.text = String(verdict["reason"]).capitalize()
+			return
+	_pending_purchase = id
+	var name_text := _name_of(id)
+	if bool(verdict.get("rank_up", false)):
+		_confirm_text.text = "%s — Rank %s -> %s
+Exact cost: %d Followers (you have %d)." % [
+			name_text, _roman(ledger.rank(id)), _roman(int(verdict["next_rank"])), int(verdict["cost"]), Global.followers]
+	elif kind == "gate":
+		_confirm_text.text = "%s — opening a foreign Core.
+Choose which Core this Gate opens." % name_text
+	else:
+		_confirm_text.text = "%s
+Exact cost: %d Followers (you have %d)." % [name_text, int(verdict["cost"]), Global.followers]
+	_confirm.popup_centered()
+
+
+func _confirm_pending_purchase() -> void:
+	var id := _pending_purchase
+	_pending_purchase = ""
+	if id.is_empty():
+		return
+	var ledger := _ledger()
+	if ledger == null:
+		return
+	var chosen_core := ""
+	if _confirm_core != null and _confirm_core.visible and _confirm_core.selected >= 0:
+		chosen_core = String(_confirm_core.get_item_metadata(_confirm_core.selected))
+	# Eligibility is rechecked NOW: the wallet, gates or ranks may have
+	# moved while the dialog stood open. _buy routes through the ordinary
+	# transaction and surfaces the ledger's reason on refusal.
+	var verdict := ledger.can_buy(id, Global.followers, chosen_core)
+	if not bool(verdict["ok"]):
+		_status.text = String(verdict["reason"]).capitalize()
+		return
+	_buy(id, chosen_core)
 
 
 func _show(id: String) -> void:
