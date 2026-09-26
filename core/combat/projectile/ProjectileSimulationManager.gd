@@ -20,7 +20,7 @@ const RENDER_BUDGET: int = 4096
 ## Drawn size only (playtest 2026-09-26: 18x4-unit bodies were invisible at
 ## gameplay zoom). Collision radii and hit timing are untouched — visuals
 ## are free where the simulation is authoritative.
-const VISUAL_SCALE := 2.0
+const VISUAL_SCALE := 3.0
 const PLAYER_RADIUS: float = 25.0
 
 var capacity: int = DEFAULT_CAPACITY
