@@ -143,6 +143,17 @@ func get_damage_taken_multiplier() -> float:
 	return mul
 
 
+## Dash reach (7-Mile Boots): multiplied over effects, applied by the
+## player exactly once per dash start — like a Lunge, the ITEM sets the
+## distance, the authored speed stays.
+func get_dash_distance_multiplier() -> float:
+	var mul := 1.0
+	for n in _active_effects.values():
+		if is_instance_valid(n) and n.has_method("get_dash_distance_multiplier"):
+			mul *= float(n.call("get_dash_distance_multiplier"))
+	return mul
+
+
 ## Per-source incoming-damage multiplier (Trauma's learned resistance):
 ## multiplied alongside the flat get_damage_taken_multiplier.
 func get_damage_taken_multiplier_for(source: Node, kind: StringName) -> float:

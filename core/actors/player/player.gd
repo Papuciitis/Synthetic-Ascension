@@ -325,6 +325,11 @@ func _start_dash() -> void:
 	if dir.length_squared() < 0.0001:
 		dir = Vector2.RIGHT.rotated(rotation)
 	_dash.start(dir)
+	# Items may lengthen the dash (7-Mile Boots) the same way a Lunge sets
+	# its own distance: speed stays authored, a longer dash lasts longer.
+	var dash_items: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if dash_items != null:
+		_dash.distance *= dash_items.get_dash_distance_multiplier()
 
 	# Locked once at the start, not re-derived per frame - releasing the stick
 	# mid-dash would otherwise snap the sprite.

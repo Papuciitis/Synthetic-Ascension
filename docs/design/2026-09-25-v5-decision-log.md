@@ -163,3 +163,32 @@ Format: **D-n** — decision · reason · evidence · authority
   round-trips over disk.** The contaminated files were left in place for
   the user to inspect/delete (the permission layer rightly refuses me
   touching them); starting or saving a real run will overwrite them.
+
+- **D-19 — Item batch 4 (user-approved 2026-09-26, "All four of those"):**
+  exact numbers for the four middle-tier ideas. **7-Mile Boots** (Ring):
+  dash distance ×(1 + min(0.60, 0.40×S)) applied once at dash start via a
+  new ItemEffectRunner.get_dash_distance_multiplier() channel (the item
+  sets distance the way a Lunge does; authored speed unchanged); a 1.5 s
+  return window after each dash — the dash input while the dash recovers
+  steps back to the start; new dash/scene change forfeits it. **Grandma's
+  Bazooka** (Offhand): real wounds (hit/absorbed/intercepted) schedule one
+  homing rocket after 1.2 s — damage min(44, 26×S), speed 520, seek via
+  the projectile sim's existing seek_handle; ≥2.5 s between rockets; a
+  vanished culprit passes the grudge to the nearest enemy within 400 px,
+  nobody there = no rocket AND no cooldown. **IDFK** (Ring): fixed
+  learnable rule — stand still 0.6 s to arm +min(0.16, 0.10×S) Power until
+  you move; "…" clue per arming; description becomes "Oh." after 8
+  armings. **Bazinga** (Offhand): near miss = lucky evasion or a hit
+  broken on DASH i-frames; drops one decoy per 6 s at the pre-dodge spot —
+  up to 6 enemies within 220 px hesitate at half speed for 1.1 s
+  (originals restored, validity-guarded). V1 scope note: the engine has no
+  aggro-redirect; full "enemies target the decoy" is parked with
+  Metaknowledge-class systems rather than invented per the review's
+  warning.
+
+- **D-20 — Idea-table triage stands:** name-only entries (Just Molly, Duck
+  Corkscrew, Dad's Penis, Supa Manki, Eldritch Crystal, Soul of Coul)
+  remain unimplemented pending the user's reference/decision; system-scale
+  entries (Metaknowledge, Godot Engine item, Druid Tuning Staff, Beer's
+  economy hook, The List, Friendmaker, Worthless Degree) await their own
+  design passes.

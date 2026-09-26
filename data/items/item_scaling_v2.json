@@ -614,6 +614,75 @@
     "from_rank": 1,
     "note": "intact power bonus min(0.14, 0.08 x S)"
    }
+  },
+  "seven_mile_boots": {
+   "anchors": {
+    "move_speed": [
+     3,
+     4,
+     6,
+     9,
+     14
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.35,
+    "tau": 14,
+    "from_rank": 1,
+    "note": "dash bonus min(0.60, 0.40 x S)"
+   }
+  },
+  "grandmas_bazooka": {
+   "anchors": {
+    "power": [
+     2,
+     3,
+     5,
+     8,
+     13
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.35,
+    "tau": 14,
+    "from_rank": 1,
+    "note": "rocket damage min(44, 26 x S)"
+   }
+  },
+  "idfk": {
+   "anchors": {
+    "luck": [
+     0.03,
+     0.05,
+     0.08,
+     0.13,
+     0.2
+    ]
+   },
+   "effect": {
+    "type": "exp",
+    "base": 1.0,
+    "gain": 0.3,
+    "tau": 14,
+    "from_rank": 1,
+    "note": "armed power bonus min(0.16, 0.10 x S)"
+   }
+  },
+  "bazinga": {
+   "anchors": {
+    "max_hp": [
+     4,
+     6,
+     10,
+     18,
+     30
+    ]
+   },
+   "note": "decoy radius/duration deliberately NOT scaled: the joke's timing is authored"
   }
  }
 }
