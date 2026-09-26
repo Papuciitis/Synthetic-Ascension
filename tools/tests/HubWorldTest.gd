@@ -83,6 +83,11 @@ func _run() -> void:
 	Global.selected_style_id = "ranged"
 	Global.start_new_attempt()
 	var save := SaveData.new()
+	# The repo's test-save convention (SaveIntegrityTest/AutosaveDebounceTest):
+	# NEVER slot 0 — SaveData defaults there, and autosave/debounce timers plus
+	# the trade path's save_current_profile write real files in user://saves/.
+	# A default here once overwrote a real player save with test data.
+	save.slot_index = 97
 	SaveManager.current_save = save
 	Global.attempt_segment = 2
 	Global.on_segment_completed(2)

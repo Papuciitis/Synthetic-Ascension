@@ -147,3 +147,19 @@ Format: **D-n** — decision · reason · evidence · authority
   through a real trade + undo (one ItemInstance object, one container)
   lives in HubWorldTest (31); damage conservation through overflow in
   ProjectileOverflowTest (17).
+
+- **INCIDENT + D-18** — **Headless tests overwrote the real player save
+  (found 2026-09-26, integration pass).** `HubWorldTest` set
+  `SaveManager.current_save = SaveData.new()`, and `SaveData.slot_index`
+  defaults to **0** — the autosave debounce (armed by follower
+  transactions) and the trade path's `save_current_profile()` then wrote
+  real files. `user://saves/slot_0.tres` AND its `.bak` now both contain
+  test residue (followers=1000000, hub/trade state, mtime 06:21 today);
+  the previous slot-0 content is unrecoverable from disk. Fix: HubWorldTest
+  now uses the repo's existing test convention (`slot_index = 97`, as
+  SaveIntegrityTest/AutosaveDebounceTest already did). **Rule (D-18): a
+  test that assigns `SaveManager.current_save` must set `slot_index = 97`,
+  and new tests should prefer in-memory `Global.write_save(SaveData)`
+  round-trips over disk.** The contaminated files were left in place for
+  the user to inspect/delete (the permission layer rightly refuses me
+  touching them); starting or saving a real run will overwrite them.
