@@ -162,6 +162,18 @@ func _unbind() -> void:
 func _refresh_authoritative_state() -> void:
 	if _effect == null or not is_instance_valid(_effect):
 		return
+	# A reused slot HUD can be re-configured to a different ability without a
+	# rebind (equipping a new Q/V re-titles the same AscensionSlotHud), so the
+	# poll re-reads identity too — a stale label executing a new ability was a
+	# playtest finding. Cheap: this runs at POLL_INTERVAL, not per frame.
+	var title_now := _get_effect_title_text(_effect)
+	if title_now != "" and title_label.text != title_now:
+		title_label.text = title_now
+		var icon_now := _get_effect_icon(_effect)
+		if icon_now != null:
+			icon.texture = icon_now
+		var key_now := _get_effect_key_text(_effect)
+		key_label.text = key_now if key_now != "" else default_key_text
 	if not _effect.has_method("get_active_state"):
 		return
 	var state: Dictionary = _effect.call("get_active_state") as Dictionary

@@ -29,6 +29,7 @@ const GATE_HALF_W := 2  # gap half-width in cells for arrival / exit
 var _player: Node2D = null
 var _panel_layer: CanvasLayer = null
 var _open_panel: Node = null
+var _gear_bag: Node = null
 var _stations: Array[HubStation] = []
 var _exit_station: HubStation = null
 var _ascension_station: HubStation = null
@@ -53,6 +54,14 @@ func _ready() -> void:
 	_panel_layer = CanvasLayer.new()
 	_panel_layer.layer = 120
 	add_child(_panel_layer)
+	# The hub owns its own developer console (playtest finding: the only
+	# instance lived inside the embedded shop and died with it).
+	var dev_console_scene := load("res://ui/widgets/PerformanceOverlay.tscn") as PackedScene
+	if dev_console_scene != null:
+		var console_layer := CanvasLayer.new()
+		console_layer.layer = 140
+		add_child(console_layer)
+		console_layer.add_child(dev_console_scene.instantiate())
 	_build_courtyard()
 	_spawn_player()
 	_build_stations()
@@ -236,6 +245,17 @@ func _open_gear() -> void:
 	wrap.set_anchors_preset(Control.PRESET_FULL_RECT)
 	var bag := BAG_UI_SCENE.instantiate()
 	wrap.add_child(bag)
+	# A visible way out (playtest finding: the wrapper trapped station input
+	# with no discoverable close). Esc and the bag key also close, below.
+	var close_btn := Button.new()
+	close_btn.text = "CLOSE  (Esc)"
+	close_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	close_btn.offset_left = -150.0
+	close_btn.offset_top = 12.0
+	close_btn.offset_right = -16.0
+	close_btn.offset_bottom = 48.0
+	wrap.add_child(close_btn)
+	close_btn.pressed.connect(_close_gear)
 	_panel_layer.add_child(wrap)
 	if bag.has_method("bind_bag"):
 		bag.call("bind_bag", Global.run_bag)
@@ -244,11 +264,31 @@ func _open_gear() -> void:
 	if bag.has_method("toggle_open") and not bool(bag.call("is_open")):
 		bag.call("toggle_open")
 	_open_panel = wrap
+	_gear_bag = bag
 	_stations_enabled(false)
 	if bag.has_signal("open_changed"):
 		bag.connect("open_changed", func(now_open: bool) -> void:
 			if not now_open:
+				_gear_bag = null
 				_on_panel_closed())
+
+
+## One close path: through the bag's own toggle, so its input lock and the
+## open_changed -> _on_panel_closed chain always run exactly once.
+func _close_gear() -> void:
+	if _gear_bag != null and is_instance_valid(_gear_bag) and bool(_gear_bag.call("is_open")):
+		_gear_bag.call("toggle_open")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if _gear_bag == null:
+		return
+	var close := event.is_action_pressed(&"ui_cancel")
+	if not close and InputMap.has_action(&"bag_toggle"):
+		close = event.is_action_pressed(&"bag_toggle")
+	if close:
+		_close_gear()
+		get_viewport().set_input_as_handled()
 
 
 func _open_ascension() -> void:
@@ -266,8 +306,14 @@ func _open_ascension() -> void:
 
 
 func _rest_a_moment() -> void:
-	if BattleText != null and _player != null:
-		BattleText.popup(_beka_home + Vector2(0, -20), "…", Color(0.8, 0.8, 0.85, 0.8), 1.4)
+	# Honest about what it is (playtest finding): a quiet spot — Beka's, when
+	# she travels with you — not a recovery service.
+	if BattleText == null or _player == null:
+		return
+	var line := "a quiet corner"
+	if Global.run_inventory != null and Global.run_inventory.get_at(Inventory.SLOT_OFFHAND) != null 			and String(Global.run_inventory.get_at(Inventory.SLOT_OFFHAND).data.id) == "beka":
+		line = "Beka is comfortable here"
+	BattleText.popup(_beka_home + Vector2(0, -20), line, Color(0.8, 0.8, 0.85, 0.8), 1.6)
 
 
 func _open_major_choice() -> void:

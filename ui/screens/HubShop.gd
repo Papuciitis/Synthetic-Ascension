@@ -415,7 +415,9 @@ func _refresh_info() -> void:
 		bag_capacity,
 		extra,
 	]
-	btn_continue.text = "Continue to Segment %d" % seg
+	# Embedded in the hub, this button RETURNS to the courtyard; departure
+	# belongs to the gate. The full-screen legacy shop keeps its old label.
+	btn_continue.text = "Return to Courtyard" if embedded else "Continue to Segment %d" % seg
 
 	# Refresh button affordance
 	if btn_refresh_vendor != null:
@@ -1780,7 +1782,9 @@ func _open_ascension() -> void:
 	inst.closed.connect(func() -> void:
 		if Global != null:
 			Global.ascension_refund_context_hub = false
-		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
+		# A pending mandatory choice gates DEPARTURE, never the way back to
+		# the courtyard (the embedded panel's button only closes).
+		btn_continue.disabled = false if (embedded or Global == null or not Global.pending_big_choice) else true
 		_ascension_screen = null
 		if _btn_ascension != null:
 			_btn_ascension.disabled = false
@@ -1803,7 +1807,7 @@ func _open_augments() -> void:
 	btn_barter_cart.disabled = true
 	btn_augments.disabled = true
 	inst.closed.connect(func() -> void:
-		btn_continue.disabled = false if (Global == null or not Global.pending_big_choice) else true
+		btn_continue.disabled = false if (embedded or Global == null or not Global.pending_big_choice) else true
 		_augment_library = null
 		_refresh_cart()
 		btn_augments.disabled = false

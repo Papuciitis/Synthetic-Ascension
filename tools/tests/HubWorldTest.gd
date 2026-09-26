@@ -117,6 +117,14 @@ func _run() -> void:
 	await get_tree().process_frame
 	var shop := _hub._open_panel
 	_check(shop != null and bool(shop.get("embedded")), "the merchant opens the existing trade post as an embedded panel")
+	var btn_return: Button = shop.get("btn_continue")
+	_check(btn_return != null and btn_return.text == "Return to Courtyard", "the embedded return button says what it does (%s)" % (btn_return.text if btn_return != null else "missing"))
+	var pending_before: bool = Global.pending_big_choice
+	Global.pending_big_choice = true
+	shop.call("_refresh_info")
+	_check(btn_return != null and not btn_return.disabled and btn_return.text == "Return to Courtyard", "a pending mandatory choice never traps the player in the shop")
+	Global.pending_big_choice = pending_before
+	shop.call("_refresh_info")
 	var stock_ids: Array = _stock_snapshot()
 	_check(not stock_ids.is_empty(), "the vendor stocked its shelf")
 	var segment_after_open: int = Global.attempt_segment
@@ -180,10 +188,33 @@ func _run() -> void:
 	_check(gear_panel != null, "the gear corner opens its own panel")
 	var bag_ui: Node = gear_panel.get_child(0) if gear_panel != null and gear_panel.get_child_count() > 0 else null
 	_check(bag_ui != null and bag_ui.has_method("is_open") and bool(bag_ui.call("is_open")), "the bag view opens bound to the run's containers")
-	if bag_ui != null:
-		bag_ui.call("toggle_open")
+	var close_button: Button = null
+	for child in gear_panel.get_children():
+		if child is Button:
+			close_button = child
+	_check(close_button != null and close_button.visible, "the gear panel shows a visible close button")
+	# Real input: Escape closes the panel (playtest finding: the wrapper
+	# trapped station input with no discoverable way out).
+	var escape := InputEventAction.new()
+	escape.action = &"ui_cancel"
+	escape.pressed = true
+	Input.parse_input_event(escape)
 	await get_tree().process_frame
-	_check(_hub._open_panel == null, "closing the bag returns to the courtyard")
+	await get_tree().process_frame
+	_check(_hub._open_panel == null, "Escape closes the gear panel and returns to the courtyard")
+	_check(_hub._gear_bag == null, "the bag reference is released with the panel")
+
+	# The close button path too: reopen, click, closed again.
+	_hub._open_gear()
+	await get_tree().process_frame
+	close_button = null
+	for child in (_hub._open_panel as Node).get_children():
+		if child is Button:
+			close_button = child
+	if close_button != null:
+		close_button.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(_hub._open_panel == null, "the close button also returns to the courtyard")
 
 	# Departure: gated by a pending mandatory choice, and only once.
 	Global.pending_big_choice = true
