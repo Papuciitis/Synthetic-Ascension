@@ -566,7 +566,7 @@ func _spawn_building_footprint(
 	var across := Vector2i(1, 0) if horizontal else Vector2i(0, 1)
 	if recess:
 		@warning_ignore("integer_division")
-	for step in range(-(door_w / 2) - 1, door_w / 2 + 2):
+		for step in range(-(door_w / 2) - 1, door_w / 2 + 2):
 			footprint.erase(door_pos + across * step)
 		door_pos += door_dir * -1  # one cell inward; the alcove is outside now
 
