@@ -202,3 +202,14 @@ lamp pools. Its "generated in code" panel matches the existing
 floor → prefabs → props/lighting build order in HubWorld. Current prop
 placement (batch 4) is the first step toward this; plaza shape, banner
 rows and greenery are open work.
+
+### batches 5-6 — curses + batch-4 item icons (2026-09-26)
+Batch 5: the eight curse relics, each inside the family's thin broken
+murky-violet ring (fresh GPT session anchored on beka_stand + trauma +
+bonekey samples). Batch 6: 7-Mile Boots (one boot glowing with
+distance), Grandma's Bazooka (knitted rose cozy), IDFK (blank-tagged
+cube, question-mark wisp), Bazinga (jester box, golden sound rings) —
+replacing the day-one placeholders. THE ART PROGRAM IS COMPLETE: every
+item, curse, set piece, companion, attack VFX and hub prop now carries
+user-supplied art; remaining visual work is rendered-pass composition,
+not assets.
