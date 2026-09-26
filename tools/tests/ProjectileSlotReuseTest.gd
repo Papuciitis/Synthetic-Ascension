@@ -62,7 +62,7 @@ func _run() -> void:
 	# Transform read-back is not supported by the headless dummy renderer (it
 	# also failed against the old per-instance API), so the buffer content is
 	# validated directly instead.
-	var buffer: PackedFloat32Array = manager.get("_render_buffer")
+	var buffer: PackedFloat32Array = manager.get("_buffer_shared")
 	var expected: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
 	_check(
 		buffer.size() >= 12
@@ -92,7 +92,7 @@ func _run() -> void:
 	reference.set_instance_transform_2d(0, reference_transform)
 	reference.set_instance_color(0, colors[diagonal_index])
 	var canonical: PackedFloat32Array = reference.get_buffer()
-	buffer = manager.get("_render_buffer") as PackedFloat32Array
+	buffer = manager.get("_buffer_shared") as PackedFloat32Array
 	var record_matches := canonical.is_empty() or canonical.size() == 12
 	if not canonical.is_empty():
 		for offset in range(8):

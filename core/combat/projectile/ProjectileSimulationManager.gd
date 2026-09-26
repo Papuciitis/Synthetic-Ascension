@@ -47,6 +47,17 @@ var _colors := PackedColorArray()
 ## Projectile identity (playtest review finding 15): which atlas tile the
 ## batched renderer draws — 0 shared, 1 Precision needle, 2 Barrage tracer.
 var _identity_tiles := PackedFloat32Array()
+## Identity rendering, GL-Compatibility-safe (playtest 2026-09-26: 2D
+## MultiMesh custom data is unsupported on the Compatibility renderer — the
+## misaligned 16-float upload drew giant white quads). One plain MultiMesh
+## per silhouette family instead: 0 shared bolt, 1 Precision needle,
+## 2 Barrage tracer. No shaders, no custom data.
+var _identity_meshes: Array[MultiMesh] = []
+var _identity_instances: Array[MultiMeshInstance2D] = []
+var _identity_prev_counts := PackedInt32Array()
+var _buffer_shared := PackedFloat32Array()
+var _buffer_needle := PackedFloat32Array()
+var _buffer_tracer := PackedFloat32Array()
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
@@ -85,7 +96,6 @@ var _renderer: MultiMeshInstance2D = null
 var _multimesh: MultiMesh = null
 var _impact_renderer: Node2D = null
 var debug_disable_impacts := false
-var _render_buffer := PackedFloat32Array()
 ## The active count the last buffer upload described. Nothing in flight and
 ## nothing in flight last frame means the GPU already holds the right picture.
 var _rendered_count: int = -1
@@ -719,82 +729,45 @@ static func _tile_for_tags(tags: PackedStringArray) -> float:
 func _build_renderer() -> void:
 	var quad := QuadMesh.new()
 	quad.size = Vector2(18.0, 4.0)
-	_multimesh = MultiMesh.new()
-	_multimesh.transform_format = MultiMesh.TRANSFORM_2D
-	_multimesh.use_colors = true
-	var atlas := _build_identity_atlas()
-	_multimesh.use_custom_data = atlas != null
-	_multimesh.mesh = quad
-	_multimesh.instance_count = RENDER_BUDGET
-	_multimesh.visible_instance_count = 0
-	_renderer = MultiMeshInstance2D.new()
-	_renderer.name = "BatchedBulletRenderer"
-	_renderer.multimesh = _multimesh
-	_renderer.z_index = 200
-	if atlas != null:
-		# One batch, three silhouettes: the per-instance custom data picks
-		# the atlas row (0 shared, 1 needle, 2 tracer) in the shader.
-		_renderer.texture = atlas
-		var shader := Shader.new()
-		# Normal alpha blending: the art carries its own colors and dark
-		# outlines, which additive blending erased (playtest finding — the
-		# additive path was designed for the grayscale mask fallback). The
-		# per-instance color survives as a soft tint plus full alpha control.
-		shader.code = """
-shader_type canvas_item;
-varying float identity_tile;
-varying vec4 instance_tint;
-void vertex() {
-	identity_tile = INSTANCE_CUSTOM.x;
-	instance_tint = COLOR;
-}
-void fragment() {
-	vec2 uv = vec2(UV.x, (UV.y + identity_tile) / 3.0);
-	vec4 tex = texture(TEXTURE, uv);
-	vec3 tint = mix(vec3(1.0), instance_tint.rgb, 0.45);
-	COLOR = vec4(tex.rgb * tint, tex.a * instance_tint.a);
-}
-"""
-		var identity_material := ShaderMaterial.new()
-		identity_material.shader = shader
-		_renderer.material = identity_material
-	else:
-		var bullet_material := CanvasItemMaterial.new()
-		bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-		_renderer.material = bullet_material
-		# A shaped grayscale quad (white core, soft tail) instead of a flat
-		# rectangle; each projectile's instance colour still does the tinting
-		# (Ranged V5 presentation pass). Missing texture = the old flat quad.
-		if ResourceLoader.exists("res://assets/textures/vfx/ranged/bullet_shared.png"):
-			_renderer.texture = load("res://assets/textures/vfx/ranged/bullet_shared.png")
-	add_child(_renderer)
-
-
-## Three 64x16 rows: shared body, Precision needle, Barrage tracer (the
-## tracer's 48x12 art centres in its row). Composited at runtime so the
-## generator PNGs stay the single source of truth; any of them missing
-## falls back to the legacy single-texture renderer.
-func _build_identity_atlas() -> ImageTexture:
-	var paths := ["res://assets/textures/vfx/ranged/bullet_shared.png",
+	var family_paths := ["res://assets/textures/vfx/ranged/bullet_shared.png",
 		"res://assets/textures/vfx/ranged/needle_bullet.png",
 		"res://assets/textures/vfx/ranged/tracer_bullet.png"]
-	var images: Array[Image] = []
-	for path in paths:
-		if not ResourceLoader.exists(path):
-			return null
-		var texture := load(path) as Texture2D
-		if texture == null:
-			return null
-		images.append(texture.get_image())
-	var atlas := Image.create(64, 48, false, Image.FORMAT_RGBA8)
-	for row in range(3):
-		var source := images[row]
-		if source.get_format() != Image.FORMAT_RGBA8:
-			source.convert(Image.FORMAT_RGBA8)
-		var x := (64 - source.get_width()) >> 1
-		var y := row * 16 + ((16 - source.get_height()) >> 1)
-		atlas.blit_rect(source, Rect2i(Vector2i.ZERO, source.get_size()), Vector2i(x, y))
-	return ImageTexture.create_from_image(atlas)
+	var family_textures: Array = []
+	for path in family_paths:
+		family_textures.append(load(path) if ResourceLoader.exists(path) else null)
+	var identity_split: bool = family_textures[0] != null and family_textures[1] != null and family_textures[2] != null
+	var families := 3 if identity_split else 1
+	for family in range(families):
+		var mesh := MultiMesh.new()
+		mesh.transform_format = MultiMesh.TRANSFORM_2D
+		mesh.use_colors = true
+		mesh.mesh = quad
+		mesh.instance_count = RENDER_BUDGET
+		mesh.visible_instance_count = 0
+		var instance := MultiMeshInstance2D.new()
+		instance.name = "BatchedBulletRenderer%d" % family
+		instance.multimesh = mesh
+		instance.z_index = 200
+		var bullet_material := CanvasItemMaterial.new()
+		if identity_split:
+			# The art carries its own colors and dark rims: normal blending.
+			# The instance color tints it softly (softened CPU-side in the
+			# upload, since there is deliberately no shader on this path).
+			bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX
+			instance.texture = family_textures[family]
+		else:
+			# Legacy fallback: the old grayscale-mask glow (or a flat quad).
+			bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+			if family_textures[0] != null:
+				instance.texture = family_textures[0]
+		instance.material = bullet_material
+		add_child(instance)
+		_identity_meshes.append(mesh)
+		_identity_instances.append(instance)
+	_identity_prev_counts.resize(families)
+	# The first mesh keeps the historical field names for tests and tooling.
+	_multimesh = _identity_meshes[0]
+	_renderer = _identity_instances[0]
 
 func _update_renderer() -> void:
 	if _multimesh == null:
@@ -808,20 +781,26 @@ func _update_renderer() -> void:
 		return
 	_rendered_count = _active_count
 	_renderer_uploads += 1
-	# One buffer upload instead of two RenderingServer calls per projectile per
-	# frame (~600 calls at typical bullet counts). Layout per instance:
-	# 8 floats of 2D transform rows, then 4 floats of color. At most
-	# RENDER_BUDGET instances are drawn; simulation beyond that is exact but
-	# undrawn (the visual degradation the design allows).
+	# One buffer upload per FAMILY instead of two RenderingServer calls per
+	# projectile per frame. Layout per instance: 8 floats of 2D transform
+	# rows, then 4 floats of color — the plain 12-float layout everywhere,
+	# because the GL Compatibility renderer supports nothing fancier for 2D
+	# MultiMeshes. At most RENDER_BUDGET instances are drawn in total;
+	# simulation beyond that is exact but undrawn.
 	var drawn := mini(_active_count, RENDER_BUDGET)
-	# With custom data (the identity atlas) each instance carries 4 more
-	# floats after the color; without it the legacy 12-float layout holds.
-	var stride := 16 if _multimesh.use_custom_data else 12
-	var expected_size := RENDER_BUDGET * stride
-	if _render_buffer.size() != expected_size:
-		_render_buffer.resize(expected_size)
+	var families := _identity_meshes.size()
+	var expected_size := RENDER_BUDGET * 12
+	if _buffer_shared.size() != expected_size:
+		_buffer_shared.resize(expected_size)
+	if families == 3:
+		if _buffer_needle.size() != expected_size:
+			_buffer_needle.resize(expected_size)
+		if _buffer_tracer.size() != expected_size:
+			_buffer_tracer.resize(expected_size)
+	var count_shared := 0
+	var count_needle := 0
+	var count_tracer := 0
 	for i in range(drawn):
-		var base := i * stride
 		var direction := _velocities[i]
 		var length := direction.length()
 		var cos_a := 1.0
@@ -833,26 +812,60 @@ func _update_renderer() -> void:
 		var scale_y := _body_width[i] / 4.0 * VISUAL_SCALE
 		var projectile_position := _positions[i]
 		var color := _colors[i]
-		_render_buffer[base + 0] = cos_a * scale_x
-		_render_buffer[base + 1] = -sin_a * scale_y
-		_render_buffer[base + 2] = 0.0
-		_render_buffer[base + 3] = projectile_position.x
-		_render_buffer[base + 4] = sin_a * scale_x
-		_render_buffer[base + 5] = cos_a * scale_y
-		_render_buffer[base + 6] = 0.0
-		_render_buffer[base + 7] = projectile_position.y
-		_render_buffer[base + 8] = color.r
-		_render_buffer[base + 9] = color.g
-		_render_buffer[base + 10] = color.b
-		_render_buffer[base + 11] = color.a
-		if stride == 16:
-			_render_buffer[base + 12] = _identity_tiles[i]
-			_render_buffer[base + 13] = 0.0
-			_render_buffer[base + 14] = 0.0
-			_render_buffer[base + 15] = 0.0
-	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
-	_multimesh.emit_changed()
-	_multimesh.visible_instance_count = drawn
+		var tile := int(_identity_tiles[i]) if families == 3 else 0
+		var base: int
+		if tile == 1:
+			base = count_needle * 12
+			count_needle += 1
+		elif tile == 2:
+			base = count_tracer * 12
+			count_tracer += 1
+		else:
+			base = count_shared * 12
+			count_shared += 1
+		var target: PackedFloat32Array
+		match tile:
+			1: target = _buffer_needle
+			2: target = _buffer_tracer
+			_: target = _buffer_shared
+		if families == 3:
+			# The art carries its own colors; the instance color lands as a
+			# SOFT tint (45%) so families and enemy hues stay readable
+			# without erasing the artwork. The legacy glow path keeps the
+			# full color, as its grayscale mask was designed for.
+			color = Color(
+				1.0 + (color.r - 1.0) * 0.45,
+				1.0 + (color.g - 1.0) * 0.45,
+				1.0 + (color.b - 1.0) * 0.45,
+				color.a)
+		target[base + 0] = cos_a * scale_x
+		target[base + 1] = -sin_a * scale_y
+		target[base + 2] = 0.0
+		target[base + 3] = projectile_position.x
+		target[base + 4] = sin_a * scale_x
+		target[base + 5] = cos_a * scale_y
+		target[base + 6] = 0.0
+		target[base + 7] = projectile_position.y
+		target[base + 8] = color.r
+		target[base + 9] = color.g
+		target[base + 10] = color.b
+		target[base + 11] = color.a
+	var counts := PackedInt32Array([count_shared, count_needle, count_tracer])
+	for family in range(families):
+		var mesh: MultiMesh = _identity_meshes[family]
+		var family_count := counts[family]
+		# A family uploads while it has instances, plus one wipe frame after
+		# it empties; idle families cost nothing.
+		if family_count > 0 or _identity_prev_counts[family] > 0:
+			var buffer: PackedFloat32Array
+			match family:
+				1: buffer = _buffer_needle
+				2: buffer = _buffer_tracer
+				_: buffer = _buffer_shared
+			RenderingServer.multimesh_set_buffer(mesh.get_rid(), buffer)
+			mesh.emit_changed()
+		mesh.visible_instance_count = family_count
+		_identity_prev_counts[family] = family_count
 
 func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_consumed: Array) -> int:
 	# Parry/reflect support: simulated enemy bullets are invisible to
@@ -933,7 +946,7 @@ func clear_enemy_slow_zone() -> void:
 
 
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": mini(_active_count, RENDER_BUDGET), "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "sim_capacity_max": SIM_CAPACITY_MAX, "render_budget": RENDER_BUDGET, "undrawn": maxi(0, _active_count - RENDER_BUDGET), "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "identity_atlas": _multimesh != null and _multimesh.use_custom_data, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
+	return {"active": _active_count, "visuals": mini(_active_count, RENDER_BUDGET), "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "sim_capacity_max": SIM_CAPACITY_MAX, "render_budget": RENDER_BUDGET, "undrawn": maxi(0, _active_count - RENDER_BUDGET), "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "identity_atlas": _identity_meshes.size() == 3, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
 
 func active_count() -> int:
 	return _active_count
