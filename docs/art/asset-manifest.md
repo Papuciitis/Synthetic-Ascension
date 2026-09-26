@@ -192,3 +192,13 @@ zoom before anything replaces an authored placeholder.
   visual furnishing" finding at the placement level; composition tuning
   is a rendered-pass concern.
 - **Provenance:** user-generated 2026-09-26; originals at repo root.
+
+### hub composition reference (2026-09-26, user-supplied mockup)
+`docs/art/reference/2026-09-26-hub-composition-reference.png` — the
+rendered-pass target for the courtyard: a circular paved plaza around a
+glowing rune obelisk/fountain centerpiece, station bays as real
+structures (stall, forge-like gear corner), banners, trees, and warm
+lamp pools. Its "generated in code" panel matches the existing
+floor → prefabs → props/lighting build order in HubWorld. Current prop
+placement (batch 4) is the first step toward this; plaza shape, banner
+rows and greenery are open work.
