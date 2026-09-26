@@ -124,6 +124,11 @@ func begin_gameplay(player: Node) -> void:
 	_player_ref = weakref(player)
 	_mode = "gameplay"
 	_destination = ""
+	# Run-truth baselines compare cumulative engine/companion counters that
+	# live on THIS player's nodes; every gameplay entry binds a fresh player
+	# whose counters restart at zero, so stale baselines from an earlier
+	# segment or capture would silently undercount the new one.
+	_proc_baselines.clear()
 	if not _active:
 		flush_reports()
 		_serial += 1
@@ -174,7 +179,7 @@ func _process(delta: float) -> void:
 	if not _destination.is_empty():
 		var scene := get_tree().current_scene
 		if scene != null and scene.scene_file_path == _destination:
-			_mode = "hub" if _destination == Global.PATH_HUB_SHOP else "gameplay"
+			_mode = "hub" if _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP] else "gameplay"
 			_destination = ""
 	var mode := _mode
 	var player := _player()
@@ -272,7 +277,9 @@ func _on_boundary(reason: StringName) -> void:
 func _on_scene_requested(path: String) -> void:
 	if not _active:
 		return
-	if path not in [Global.PATH_GAME, Global.PATH_HUB_SHOP]:
+	# The run's own scenes: segments, the walkable hub, and the legacy
+	# full-screen shop old saves may still name. Anything else leaves the run.
+	if path not in [Global.PATH_GAME, Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]:
 		end_capture("suspended")
 		return
 	_ledger.event("scene_transition", {"target": path})

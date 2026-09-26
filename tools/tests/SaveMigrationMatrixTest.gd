@@ -157,6 +157,40 @@ func _run() -> void:
 	_check(Global.mortal_name == "The Arcanist", "a blank mortal name falls back to the default")
 	_check(Global.permanent_augment_ids[0] == &"augment_inversion_lens" and Global.permanent_augment_ids[1] == StringName(), "the duplicate-augment-slot corruption heals, first slot wins")
 
+	# --- Migration -> save -> reload stability: a migrated state written by
+	# the CURRENT build and loaded again is identical, and the migrations
+	# never re-fire (they are idempotent on current-version saves).
+	save = _old_save(1)
+	save.attempt_opening_version = 1
+	save.attempt_opening_phase = 2
+	save.attempt_segment1_layout_version = 2
+	save.attempt_segment1_resonance = 0.6
+	save.attempt_segment1_milestones = ["synthesis"]
+	save.attempt_opening_completed = true
+	Global.apply_save(save)
+	var migrated := {
+		"phase": Global.attempt_opening_phase,
+		"opening_version": Global.attempt_opening_version,
+		"layout_version": Global.attempt_segment1_layout_version,
+		"milestones": Global.attempt_segment1_milestones.duplicate(),
+		"resonance": Global.attempt_segment1_resonance,
+		"checkpoint": Global.attempt_checkpoint_pos,
+	}
+	var rewritten := SaveData.new()
+	rewritten.slot_index = 97
+	Global.write_save(rewritten)
+	Global.apply_save(rewritten)
+	var reloaded := {
+		"phase": Global.attempt_opening_phase,
+		"opening_version": Global.attempt_opening_version,
+		"layout_version": Global.attempt_segment1_layout_version,
+		"milestones": Global.attempt_segment1_milestones.duplicate(),
+		"resonance": Global.attempt_segment1_resonance,
+		"checkpoint": Global.attempt_checkpoint_pos,
+	}
+	_check(reloaded == migrated, "migrate -> save -> reload is a fixed point (%s vs %s)" % [str(reloaded), str(migrated)])
+	_check(rewritten.attempt_opening_version == Global.OPENING_SEQUENCE_VERSION and rewritten.attempt_segment1_layout_version == Global.SEGMENT1_LAYOUT_VERSION, "the rewritten save carries current versions, so migrations never re-fire")
+
 	# --- A save from a NEWER build loads best-effort instead of refusing.
 	save = _old_save(2)
 	save.save_version = SaveData.CURRENT_SAVE_VERSION + 5

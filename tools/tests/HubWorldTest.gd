@@ -83,10 +83,11 @@ func _run() -> void:
 	Global.selected_style_id = "ranged"
 	Global.start_new_attempt()
 	var save := SaveData.new()
-	# The repo's test-save convention (SaveIntegrityTest/AutosaveDebounceTest):
-	# NEVER slot 0 — SaveData defaults there, and autosave/debounce timers plus
-	# the trade path's save_current_profile write real files in user://saves/.
-	# A default here once overwrote a real player save with test data.
+	# Full isolation (D-18, after the slot-0 incident): this test's flows
+	# (autosave debounce, the trade path's save_current_profile) write real
+	# files, so they write into their own directory on the test slot — no
+	# path here can touch a player's slots.
+	SaveManager.save_dir = "user://saves_test_hub/"
 	save.slot_index = 97
 	SaveManager.current_save = save
 	Global.attempt_segment = 2
@@ -207,14 +208,26 @@ func _run() -> void:
 	_hub._try_depart()
 	_check(_hub._departing and resume_after == Global.PATH_GAME, "spamming the gate cannot load the next segment twice; the resume target is the run (%s)" % resume_after)
 
-	# Old saves that pointed at the full-screen shop route into the hub.
-	save.attempt_resume_scene = Global.PATH_HUB_SHOP
+	# Old saves that pointed at the full-screen shop route into the hub —
+	# through the production mapping goto_resume itself uses.
 	save.attempt_active = true
-	var mapped: String = save.attempt_resume_scene
-	# goto_resume would change scenes; assert the mapping rule directly.
-	if mapped == Global.PATH_HUB_SHOP:
-		mapped = Global.PATH_HUB_WORLD
-	_check(mapped == Global.PATH_HUB_WORLD, "an old shop-target save resumes into the walkable hub")
+	save.attempt_resume_scene = Global.PATH_HUB_SHOP
+	_check(Global.resume_scene_for(save) == Global.PATH_HUB_WORLD, "an old shop-target save resumes into the walkable hub")
+	save.attempt_resume_scene = ""
+	_check(Global.resume_scene_for(save) == Global.PATH_HUB_WORLD, "a save with no resume target lands in the hub, never nowhere")
+	save.attempt_resume_scene = Global.PATH_GAME
+	_check(Global.resume_scene_for(save) == Global.PATH_GAME, "a mid-segment save resumes into the segment")
+
+	# Leave no residue: remove this run's isolated save files and hand the
+	# manager its production directory back.
+	var test_dir := ProjectSettings.globalize_path(SaveManager.save_dir)
+	if DirAccess.dir_exists_absolute(test_dir):
+		for file in DirAccess.get_files_at(test_dir):
+			DirAccess.remove_absolute(test_dir.path_join(file))
+		DirAccess.remove_absolute(test_dir)
+	SaveManager.save_dir = SaveManager.SAVE_DIR
+	SaveManager.current_save = null
+	_check(not FileAccess.file_exists("user://saves_test_hub/slot_97.tres"), "the isolated save directory is cleaned up")
 
 	print("HubWorldTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)

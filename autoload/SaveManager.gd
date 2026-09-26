@@ -4,6 +4,11 @@ extends Node
 const SAVE_DIR := "user://saves/"
 const SLOT_COUNT := 3
 
+## Where slot files live. Production always uses SAVE_DIR; tests point this
+## at an isolated directory so no test write can ever touch a player's real
+## slots again (decision D-18, after the 2026-09-26 slot-0 incident).
+var save_dir: String = SAVE_DIR
+
 var current_slot: int = -1
 var current_save: SaveData = null
 
@@ -23,16 +28,16 @@ func format_io_error(action: String, path: String, err: int) -> String:
 	return "[SaveManager] %s failed: path=%s err=%s" % [action, path, error_string(err)]
 
 func _slot_path(slot: int) -> String:
-	return SAVE_DIR + "slot_%d.tres" % slot
+	return save_dir + "slot_%d.tres" % slot
 
 func _temporary_path(slot: int) -> String:
-	return SAVE_DIR + "slot_%d.tmp.tres" % slot
+	return save_dir + "slot_%d.tmp.tres" % slot
 
 func _backup_path(slot: int) -> String:
-	return SAVE_DIR + "slot_%d.bak.tres" % slot
+	return save_dir + "slot_%d.bak.tres" % slot
 
 func _broken_path(slot: int) -> String:
-	return SAVE_DIR + "slot_%d.broken.tres" % slot
+	return save_dir + "slot_%d.broken.tres" % slot
 
 func _load_save_data(path: String) -> SaveData:
 	if not FileAccess.file_exists(path):
@@ -44,7 +49,7 @@ func ensure_dir() -> bool:
 	# make_dir_recursive_absolute() needs an OS path. Passing user:// directly can
 	# fail with ERR_CANT_OPEN on Windows/Godot 4.7 even though ResourceSaver later
 	# accepts the virtual path.
-	var absolute_dir: String = ProjectSettings.globalize_path(SAVE_DIR)
+	var absolute_dir: String = ProjectSettings.globalize_path(save_dir)
 	var err: int = DirAccess.make_dir_recursive_absolute(absolute_dir)
 	if err != OK and err != ERR_ALREADY_EXISTS:
 		push_error(format_io_error("create save directory", absolute_dir, err))

@@ -142,12 +142,16 @@ func _run() -> void:
 	recorder._queue = Queue.new(Writer.write_batch)
 	var first_capture: String = recorder.capture_directory
 	var first_key: String = recorder.get_summary().metadata.run_key
+	Global.balance_scene_requested.emit(Global.PATH_HUB_WORLD)
+	_check(recorder.is_recording() and recorder._mode == "loading", "the walkable-hub transition keeps the capture and marks loading")
 	Global.balance_scene_requested.emit(Global.PATH_HUB_SHOP)
-	_check(recorder.is_recording() and recorder._mode == "loading", "a hub transition keeps the capture and marks loading")
+	_check(recorder.is_recording(), "a legacy shop target also keeps the capture")
 	Global.balance_scene_requested.emit("res://scenes/menus/MainMenu.tscn")
 	_check(not recorder.is_recording(), "leaving the run suspends the capture")
+	recorder._proc_baselines["ascension"] = {"BR.stale": 10.0}
 	recorder.begin_gameplay(player)
 	_check(recorder.is_recording() and recorder.capture_directory != first_capture and recorder.get_summary().metadata.run_key == first_key and int(recorder.get_summary().totals.kills) == 0, "resuming starts a separate capture with the same run key and fresh totals")
+	_check(recorder._proc_baselines.is_empty(), "run-truth baselines never survive into a new player binding")
 	var resumed: String = recorder.capture_directory
 	recorder.end_capture("suspended")
 	recorder.flush_reports()

@@ -405,16 +405,19 @@ func goto_resume() -> void:
 		goto_save_select()
 		return
 	if SaveManager.current_save.attempt_active:
-		var path: String = SaveManager.current_save.attempt_resume_scene
-		if path == "":
-			path = PATH_HUB_WORLD
-		# Older saves resumed into the full-screen shop; the walkable hub is
-		# its compatible successor and preserves the same pending state.
-		if path == PATH_HUB_SHOP:
-			path = PATH_HUB_WORLD
-		goto_scene(path)
+		goto_scene(resume_scene_for(SaveManager.current_save))
 	else:
 		goto_base()
+
+
+## The scene an active attempt resumes into. Pure so tests exercise the real
+## mapping: empty and legacy full-screen-shop targets resolve to the walkable
+## hub, its compatible successor, preserving the same pending state.
+func resume_scene_for(save: SaveData) -> String:
+	var path: String = save.attempt_resume_scene
+	if path == "" or path == PATH_HUB_SHOP:
+		return PATH_HUB_WORLD
+	return path
 
 
 # ============================================================
