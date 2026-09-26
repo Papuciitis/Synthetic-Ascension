@@ -207,6 +207,80 @@ func _run() -> void:
 	_engine.add_heat(200.0)
 	_check(is_equal_approx(_engine.heat, 99.0), "during lockout ordinary Heat stops at 99")
 
+	# --- Overclock + Thermal Fury: sustained Meltdown IS a Meltdown
+	# (playtest review findings 7 and 8). BRF2 needs BR08+BR11-adjacent
+	# locals; both routes — Overclock owned before heating, and heat carried
+	# through the lockout — must deliver the fork.
+	ledger.record_purchase("BR03", 0)   # idempotent for a fresh read below
+	for id in ["BRF2", "BRK1"]:
+		ledger.record_purchase(id, 100)
+	_runner.refresh()
+	_engine = _runner.engine_for("BR01") as BarrageEngineV5
+	_engine._meltdown_lockout_left = 0.0
+	_engine.heat = 0.0
+	var loose_before := int(_engine.counters["loose_rounds"])
+	_engine.add_heat(120.0)
+	_check(_engine._sustained_meltdown and _engine.in_meltdown(), "Overclock crossing 100 enters SUSTAINED Meltdown")
+	_check(int(_engine.counters.get("sustained_meltdowns", 0)) == 1, "the episode is counted")
+	var aura_hot: Array = _engine.aura_state()
+	var expected_dps := 0.35 * D * 2.0
+	_check(is_equal_approx(float(aura_hot[1]), expected_dps), "Thermal Fury doubles the Overclock aura while sustained (%.2f)" % float(aura_hot[1]))
+	var hp_at_sustained := float(_player.get("hp"))
+	_engine._idle = 999.0
+	_engine.tick(1.0)   # cools 25/s -> 95, exits the sustained region
+	_check(not _engine._sustained_meltdown and _engine.heat < 100.0, "cooling below 100 leaves sustained Meltdown")
+	_check(float(_player.get("hp")) < hp_at_sustained, "Thermal Fury's 5%% tax lands at the end of the sustained episode")
+	_check(is_zero_approx(float(_engine.aura_state()[1])), "below 100 the Overclock aura (and its doubling) is gone")
+
+	# The 180 emergency vent is a Heavy Barrel release (finding 8): one
+	# Force spend, the bonus spread over 16 rounds, BRC half-snapshot free.
+	ledger.record_purchase("BA01", 100)
+	ledger.record_purchase("MR8", 100)
+	_runner.refresh()
+	_engine = _runner.engine_for("BR01") as BarrageEngineV5
+	var bastion := _runner.engine_of_discipline("BA") as BastionEngine
+	_check(bastion != null, "the rig owns a Bastion engine for Force")
+	if bastion != null:
+		bastion.force = 60.0
+		_engine._meltdown_lockout_left = 0.0
+		_engine._emergency_vent_left = 0.0
+		_engine.heat = 0.0
+		_engine.add_heat(185.0)
+		_check(int(_engine.counters.get("emergency_vents", 0)) == 1, "185 Heat fires the emergency vent")
+		_check(is_zero_approx(bastion.force) and is_equal_approx(float(_engine.counters.get("heavy_barrel_force", 0.0)), 60.0), "the vent spends the 60 Force exactly once")
+		_check(is_equal_approx(_engine._heavy_barrel_bonus, 0.06 * D * 60.0 * 0.5), "BRC's half-snapshot is banked without a second spend")
+		# Zero-Force: the vent still fires, nothing is spent.
+		_engine.tick(0.7)   # vent recovery, heat rest
+		_engine._meltdown_lockout_left = 0.0
+		_engine._heavy_barrel_bonus = 0.0
+		_engine.heat = 0.0
+		_engine.add_heat(185.0)
+		_check(int(_engine.counters.get("emergency_vents", 0)) == 2 and is_equal_approx(float(_engine.counters.get("heavy_barrel_force", 0.0)), 60.0), "a zero-Force vent fires without a spend")
+
+	# Overclock acquired DURING an ordinary Meltdown converts the frozen
+	# window into the sustained region (the second acceptance route).
+	_engine._sustained_meltdown = false
+	_engine._meltdown_left = 1.2
+	_engine._meltdown_lockout_left = 0.0
+	_engine.heat = 100.0
+	_engine.tick(0.1)
+	_check(_engine._meltdown_left <= 0.0 and _engine._sustained_meltdown, "a mid-Meltdown Overclock purchase converts to sustained instead of freezing")
+	_engine._idle = 999.0
+	_engine.tick(1.0)
+
+	# --- Foreign Spin Up expires on the clock (finding 9).
+	_engine._foreign_stage = 3
+	_engine._foreign_last_witness = _engine._clock
+	_engine.tick(3.0)
+	_check(_engine._foreign_stage == 3, "a fresh foreign stage survives inside the 4 s window")
+	_engine.tick(1.5)
+	_check(_engine._foreign_stage == 0, "an idle foreign stage expires after 4 s without a Witness")
+
+	# --- A Q-less Hot Core build keeps a persistent readout (finding 10).
+	var q_state: Dictionary = _runner.slot_state("q")
+	_check(float(q_state.get("resource_max", 0.0)) > 0.0, "the Heat pool reaches the Q readout without a Q equipped")
+	_check(_runner._passive_q_readout_exists(), "a passive Hot Core build keeps its slot HUD")
+
 	_finish()
 
 

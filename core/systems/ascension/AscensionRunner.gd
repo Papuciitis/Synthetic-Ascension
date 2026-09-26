@@ -334,6 +334,14 @@ func _rebuild_engines() -> void:
 
 func _sync_slot(slot: AscensionSlotHud, slot_name: String, id: String) -> AscensionSlotHud:
 	if id.is_empty():
+		# A Q-less build with a passive resource (Spin/Heat) keeps a readout:
+		# the display belongs to the build, not the ability (finding 10).
+		if slot_name == "q" and _passive_q_readout_exists():
+			if slot == null or not is_instance_valid(slot):
+				slot = AscensionSlotHud.new()
+				add_child(slot)
+			slot.configure(slot_name, "", "Barrage")
+			return slot
 		if slot != null and is_instance_valid(slot):
 			slot.queue_free()
 		return null
@@ -342,6 +350,16 @@ func _sync_slot(slot: AscensionSlotHud, slot_name: String, id: String) -> Ascens
 		add_child(slot)
 	slot.configure(slot_name, id, String(ledger.db.node(id).get("name", id)))
 	return slot
+
+
+func _passive_q_readout_exists() -> bool:
+	# Only a persistent resource POOL (Hot Core's Heat) earns a Q-less
+	# readout; ambient combat text (Execution's LINE, an idle Spin 0) does
+	# not, or every discipline would grow a phantom slot.
+	for engine in engines:
+		if float(engine.hud_state("q").get("resource_max", 0.0)) > 0.0:
+			return true
+	return false
 
 
 func _set_wired(on: bool) -> void:
@@ -1941,6 +1959,25 @@ func slot_state(slot: String) -> Dictionary:
 	var engine := engine_for(id)
 	if engine != null:
 		state.merge(engine.hud_state(slot), true)
+	if slot == "q":
+		if id.is_empty():
+			state["status_text"] = ""
+		# Passive resource readouts (Spin, Heat) belong to the BUILD, not to
+		# whichever ability sits on Q: a passive-Barrage build or a foreign Q
+		# keeps its persistent display (playtest review finding 10).
+		for other in engines:
+			if other == engine:
+				continue
+			var passive: Dictionary = other.hud_state("q")
+			if passive.is_empty():
+				continue
+			var extra_text := String(passive.get("combat_text", ""))
+			if not extra_text.is_empty():
+				var base_text := String(state.get("combat_text", ""))
+				state["combat_text"] = extra_text if base_text.is_empty() else base_text + "  " + extra_text
+			if float(state.get("resource_max", 0.0)) <= 0.0 and float(passive.get("resource_max", 0.0)) > 0.0:
+				state["resource_value"] = passive.get("resource_value", 0.0)
+				state["resource_max"] = passive.get("resource_max", 0.0)
 	return state
 
 

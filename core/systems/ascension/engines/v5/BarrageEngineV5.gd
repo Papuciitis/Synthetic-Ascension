@@ -51,6 +51,10 @@ var _strike_credit: float = 0.0          # weighted Core-strike bank (Fifth Shot
 var _crossfire_credit: float = 0.0
 var _fifth_package: int = 0
 var _meltdown_left: float = 0.0
+## Overclock's OWN meltdown notion (spec §3.5): at 100 Heat enter sustained
+## Meltdown and remain until cooling below 100 or the emergency vent. This is
+## what Thermal Fury's "while in Meltdown" means on a BRK1 build.
+var _sustained_meltdown: bool = false
 var _meltdown_lockout_left: float = 0.0
 var _meltdown_volley_done: bool = false
 var _aura_tick_left: float = 0.0
@@ -191,6 +195,8 @@ func add_heat(amount: float, from_input: bool = true) -> void:
 	heat = minf(ceiling, heat + amount)
 	_note_tier_change_v5(before)
 	if has("BRK1"):
+		if heat >= 100.0 and not _sustained_meltdown and _meltdown_lockout_left <= 0.0:
+			_enter_sustained_meltdown()
 		if heat >= OVERCLOCK_VENT_AT and _emergency_vent_left <= 0.0:
 			_overclock_vent()
 	elif heat >= 100.0 and _meltdown_left <= 0.0 and _meltdown_lockout_left <= 0.0:
@@ -255,9 +261,40 @@ func aura_state() -> Array:
 			dps_d = float(_tiers()[index - 1][3])
 	if dps_d <= 0.0:
 		return [0.0, 0.0]
-	if has("BRF2") and _meltdown_left > 0.0:
+	if has("BRF2") and in_meltdown():
 		dps_d *= 2.0
 	return [radius_r * AscensionRunner.R, dps_d * D()]
+
+
+## Meltdown as the forks see it: the ordinary 2 s window, or Overclock's
+## sustained 100+ region. BRF2's aura doubling and release events follow this.
+func in_meltdown() -> bool:
+	return _meltdown_left > 0.0 or _sustained_meltdown
+
+
+func _enter_sustained_meltdown() -> void:
+	_sustained_meltdown = true
+	counters["sustained_meltdowns"] = int(counters.get("sustained_meltdowns", 0)) + 1
+	if BattleText != null:
+		BattleText.popup(runner.player_position(), "SUSTAINED MELTDOWN", Color(1.0, 0.35, 0.1, 1.0), 1.5)
+	# Thermal Fury's transition release, once per sustained episode — the
+	# same once-per-Meltdown event the ordinary window fires (spec BRF2).
+	if has("BRF2"):
+		if has("BR08"):
+			_radial_volley(runner.player_position(), _vent_round_count() * 2, 0.6 * D(), 0.3, "BRF2", "loose")
+		else:
+			_radial_volley(runner.player_position(), 8, 0.6 * D(), 0.3, "BRF2", "loose")
+
+
+func _exit_sustained_meltdown() -> void:
+	if not _sustained_meltdown:
+		return
+	_sustained_meltdown = false
+	# Thermal Fury's danger tax lands at the END of each Meltdown, however
+	# it ends — cooling below 100 or the vent (the vent's OWN costs are
+	# separate; cooling out pays no vent cost, spec §3.5).
+	if has("BRF2"):
+		runner.pay_health(0.05 * float(runner.player().get("hp")), &"thermal_fury")
 
 
 func _begin_meltdown() -> void:
@@ -292,7 +329,24 @@ func _end_meltdown() -> void:
 
 func _overclock_vent() -> void:
 	counters["emergency_vents"] = int(counters.get("emergency_vents", 0)) + 1
-	_radial_volley(runner.player_position(), 16, 0.6 * D(), 0.3, "BRK1", "loose")
+	_exit_sustained_meltdown()
+	# Heavy Barrel (MR8): the spec names the Overclock emergency vent a legal
+	# release event, exactly like a real Vent Volley — one Force spend of up
+	# to 60, the whole bonus spread over the 16 rounds, pierce at the full
+	# spend, and BRC's half-snapshot banked without a second spend.
+	var round_bonus := 0.0
+	var overrides := {}
+	if has("MR8"):
+		var bastion := runner.engine_of_discipline("BA") as BastionEngine
+		if bastion != null and float(bastion.force) > 0.0:
+			var force_spent := bastion.spend_force(minf(60.0, bastion.force))
+			var total_bonus := 0.06 * D() * force_spent
+			round_bonus = total_bonus / 16.0
+			_heavy_barrel_bonus = total_bonus * 0.5
+			if force_spent >= 60.0:
+				overrides["pierce"] = 1
+			counters["heavy_barrel_force"] = float(counters.get("heavy_barrel_force", 0.0)) + force_spent
+	_radial_volley(runner.player_position(), 16, 0.6 * D() + round_bonus, 0.3, "BRK1", "loose", overrides)
 	_emergency_vent_left = 0.60
 	runner.block_native_fire(_emergency_vent_left)
 	_meltdown_lockout_left = MELTDOWN_LOCKOUT
@@ -317,6 +371,11 @@ func tick(delta: float) -> void:
 	if _meltdown_lockout_left > 0.0:
 		_meltdown_lockout_left = maxf(0.0, _meltdown_lockout_left - delta)
 	_spin_decay(delta)
+	# Foreign Spin Up expires on the clock, not on the NEXT Witness: a stale
+	# stage was still feeding Kill Throttle and the HUD during idle gaps
+	# (playtest review finding 9).
+	if _foreign_stage > 0 and _clock - _foreign_last_witness > 4.0:
+		_foreign_stage = 0
 	if _overdrive_left > 0.0:
 		_overdrive_left = maxf(0.0, _overdrive_left - delta)
 	if _emergency_vent_left > 0.0:
@@ -333,6 +392,13 @@ func tick(delta: float) -> void:
 	if _native_block_left > 0.0:
 		_native_block_left = maxf(0.0, _native_block_left - delta)
 		runner.block_native_fire(_native_block_left)
+	# Overclock bought MID ordinary Meltdown converts the window into the
+	# sustained region instead of freezing it forever (the decay branch
+	# below skips on BRK1; review finding 7's second acceptance route).
+	if has("BRK1") and _meltdown_left > 0.0:
+		_meltdown_left = 0.0
+		if heat >= 100.0 and not _sustained_meltdown:
+			_enter_sustained_meltdown()
 	# Ordinary Meltdown: a 2 s locked window, then rest at 40.
 	if _meltdown_left > 0.0 and not has("BRK1"):
 		_meltdown_left = maxf(0.0, _meltdown_left - delta)
@@ -345,6 +411,8 @@ func tick(delta: float) -> void:
 			_controlled_fire_vent_check()
 			heat = maxf(0.0, heat - HEAT_COOL_PER_SECOND * delta)
 			_note_tier_change_v5(heat)
+			if _sustained_meltdown and heat < 100.0:
+				_exit_sustained_meltdown()
 	_tick_aura(delta)
 	_tick_burst(delta)
 	_tick_overload(delta)
