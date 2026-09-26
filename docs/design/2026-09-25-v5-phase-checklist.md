@@ -194,3 +194,32 @@ say so — reading the answer via screenshots is not blocked.
 3. Rendered pass: §15.6 hub walkthrough, VFX/faces legibility, B1-vs-P1
    feel, Beka-vs-Offhands recorder run.
 4. Item batch 3 candidates: 7-Mile Boots, Bazinga, Trauma, Dignity.
+
+**Done in the Integration & Abuse Pass (2026-09-26, third sitting —
+work order: chatgpt-synthetic-ascension.md, user: "Don't stop till
+resolved"):**
+1. [x] Item batch 3a: Trauma + Dignity (`ItemBatch3Test` 19/19); items
+   gain per-source damage-taken multipliers after the flat item pass.
+2. [x] Projectile capacity redesign per the review's authority rule:
+   simulation grows (to 16384) with zero delay, rendering clamps at a
+   4096 budget, queue demoted to a loud last resort past the sim max
+   (`ProjectileOverflowTest` 17/17, D-14).
+3. [x] Beka flake root-caused and killed: rolled ward Manifestation
+   banking Composure (−45% once) + recompute-restored luck evasion
+   (≤6%); test-determinism rules applied to all damage-asserting item
+   suites; 60/60 soak (D-15).
+4. [x] `InvariantsTest` 27/27: V4 tree sha256 pin, ledger
+   purchase→refund round trip, followers never negative, V5
+   meltdown-never-jams (BRE2 sole authored writer), Big One purity
+   (true call_shell Shells only) (D-17).
+5. [x] Item identity through trade + undo in `HubWorldTest` (31/31).
+6. [x] `segment == 5/10` literals centralized as
+   `Global.MINIBOSS_SEGMENT` / `Global.FINAL_SEGMENT` (D-16).
+7. [x] Asset policy recorded: no GPT-generated art; online CC0 packs
+   first, procedural generators as placeholders (D-13).
+
+**Review items that need rendered play or design time (unchanged by this
+pass, carried forward):** vertical-slice run test; run-truth telemetry
+dump; tap/hold-Q panic feel; Beka run-friction measurement; building
+abuse (pathing/projectiles/pickups through footprints); procedural
+gameplay validator; save migration matrix; hub friction walkthrough.

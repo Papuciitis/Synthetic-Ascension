@@ -88,3 +88,62 @@ Format: **D-n** — decision · reason · evidence · authority
   message. No photo or meow audio supplied yet — sprite from this text
   description is acceptable, but label it "text-described likeness" in the
   asset manifest, not a photo-verified one.
+
+- **D-13** — **No GPT-generated art assets (user direction, 2026-09-26):**
+  "no gpt generating assets i mean" — the ChatGPT→Claude pipeline is not
+  trusted for art, so nothing GPT generates ships as an asset. Sourcing
+  order for the next art pass: (1) licensed online packs (CC0 — the repo
+  already uses Kenney; OpenGameArt/Kenney searches), (2) the existing
+  procedural generators (tools/design/build_*.py) as placeholders. GPT
+  remains fine for *review text* (the integration-pass work order came from
+  it); only its images are excluded. Supersedes the "ask GPT to generate
+  VFX" fallback inside B-1.
+
+- **D-14** — **Projectiles: simulation is authoritative, rendering has a
+  budget (integration pass, 2026-09-26).** The GPT review's rule "gameplay
+  events may never be deleted *or delayed* by renderer capacity" made the
+  finding-E overflow queue wrong as a first resort: it delayed
+  materialization at the old 4096 cap. Now `ProjectileSimulationManager`
+  grows its SoA arrays on demand (doubling to `SIM_CAPACITY_MAX` 16384)
+  with zero queueing, while the MultiMesh draws at most `RENDER_BUDGET`
+  4096 instances — excess is *undrawn but fully real* (`undrawn` counter).
+  The bounded queue survives only past the 16384 simulation maximum
+  (pathological, loudly counted), and only its overrun drops. Verified by
+  the reworked ProjectileOverflowTest (17), incl. exact damage from an
+  undrawn projectile.
+
+- **D-15** — **The Beka test flake was two RNG leaks, not Beka
+  (2026-09-26).** Forensics (resolved-event log in the failing check):
+  (1) `ItemInstance.from_data` rolls a random Manifestation from
+  `Global._rng`; a rolled **ward** noun banks Composure (`time_since_hit`
+  starts 999) and blunts the next landed hit by exactly 45% (30 → 16.5).
+  (2) The equip stat recompute rewrites `Global.run_luck` from race/style,
+  re-enabling lucky evasion (≤6%) that randomly voids a test hit.
+  Rule for damage-asserting suites: equip via a `_bare()` copy
+  (`manifestation_id = &""`) and re-pin `Global.run_luck = 0.0` inside the
+  `_hit()` helper alongside spawn-protection/armor zeroing. Applied to
+  BekaEffectTest, ItemBatch2Test, ItemBatch3Test; 60/60 soak clean. The
+  game behavior itself is intended (drops do roll manifestations) — this
+  is a test-determinism rule, not a game fix.
+
+- **D-16** — **Authored segment milestones are named constants
+  (2026-09-26).** The GPT review's `segment <= 10` audit found the run
+  never hard-stops in Global (the reward cadence deliberately extends past
+  9); the only authored milestones were bare literals in the proc-gen.
+  Now `Global.MINIBOSS_SEGMENT = 5` / `Global.FINAL_SEGMENT = 10`, read by
+  DistrictPlan and SegmentProcBuilder. A future run-length change is one
+  edit plus content review, not a repo-wide literal hunt.
+
+- **D-17** — **Cross-system invariants got their own suite
+  (2026-09-26, InvariantsTest, 27 checks):** the V4 tree is pinned by
+  sha256 (byte-identical control since the handoff began);
+  refund(purchase(x)) restores the ledger's semantic state exactly and
+  repays every follower at share 1.0, ranks and gate-neighbours included;
+  no follower mutation path goes below zero; V5 Meltdown/lockout/re-overheat
+  never writes `jam_left` (BRE2's authored shutdown is the only V5 jam
+  writer, proven by owning it and completing a Burst); the Big One counts
+  only true `call_shell` Shells — shell-tagged blasts that bypass
+  `call_shell` and beacon-flagged shells never feed it. Item identity
+  through a real trade + undo (one ItemInstance object, one container)
+  lives in HubWorldTest (31); damage conservation through overflow in
+  ProjectileOverflowTest (17).
