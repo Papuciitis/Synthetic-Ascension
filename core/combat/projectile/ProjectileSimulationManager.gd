@@ -9,6 +9,14 @@ enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
 const DEFAULT_CAPACITY: int = 4096
+## Simulation is authoritative (integration pass, 2026-09-26): gameplay
+## events are never deleted or delayed by rendering. The simulation arrays
+## grow on demand up to SIM_CAPACITY_MAX; the MultiMesh renders at most
+## RENDER_BUDGET instances and simply leaves the excess undrawn (visuals
+## degrade, hit timing and provenance stay exact). The overflow queue only
+## exists beyond SIM_CAPACITY_MAX, which is pathological and loudly counted.
+const SIM_CAPACITY_MAX: int = 16384
+const RENDER_BUDGET: int = 4096
 const PLAYER_RADIUS: float = 25.0
 
 var capacity: int = DEFAULT_CAPACITY
@@ -181,7 +189,10 @@ func spawn_player(origin: Vector2, direction: Vector2, profile: HitProfileAdapte
 		"bounce_pp": profile.bounce_proc_power, "seek": profile.seek_handle,
 		"turn": maxf(0.0, profile.seek_turn_degrees),
 	}
-	if _active_count >= capacity:
+	if _active_count >= SIM_CAPACITY_MAX:
+		# Pathological load: even the elastic simulation is full. The queue
+		# retains the attack rather than deleting it, and the counters make
+		# the delay visible instead of silent.
 		return _queue_overflow(request)
 	return _spawn_request(request)
 
@@ -238,10 +249,15 @@ func spawn_enemy(origin: Vector2, direction: Vector2, speed: float, damage: floa
 
 func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: float, radius: float, damage: float, team: int, visual: int, source: Node, knockback: float, pierce: int, critical: bool, burn_stacks: int, burn_duration: float, burn_tick: float, burn_mult: float, body_len: float, body_width: float, color: Color, tags: PackedStringArray = PackedStringArray()) -> bool:
 	if _active_count >= capacity:
-		_dropped_total += 1
-		if PerformanceFlightRecorder != null:
-			PerformanceFlightRecorder.record_counter_event(&"projectile", &"capacity_dropped", 1, {"capacity": capacity})
-		return false
+		if capacity < SIM_CAPACITY_MAX:
+			capacity = mini(SIM_CAPACITY_MAX, capacity * 2)
+			if PerformanceFlightRecorder != null:
+				PerformanceFlightRecorder.record_counter_event(&"projectile", &"sim_capacity_grown", 1, {"capacity": capacity})
+		else:
+			_dropped_total += 1
+			if PerformanceFlightRecorder != null:
+				PerformanceFlightRecorder.record_counter_event(&"projectile", &"capacity_dropped", 1, {"capacity": capacity})
+			return false
 	var index := _active_count
 	if _positions.size() > index:
 		# Reuse a retained slot: arrays keep their high-water capacity so churn
@@ -684,7 +700,7 @@ func _build_renderer() -> void:
 	_multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	_multimesh.use_colors = true
 	_multimesh.mesh = quad
-	_multimesh.instance_count = capacity
+	_multimesh.instance_count = RENDER_BUDGET
 	_multimesh.visible_instance_count = 0
 	_renderer = MultiMeshInstance2D.new()
 	_renderer.name = "BatchedBulletRenderer"
@@ -714,11 +730,14 @@ func _update_renderer() -> void:
 	_renderer_uploads += 1
 	# One buffer upload instead of two RenderingServer calls per projectile per
 	# frame (~600 calls at typical bullet counts). Layout per instance:
-	# 8 floats of 2D transform rows, then 4 floats of color.
-	var expected_size := capacity * 12
+	# 8 floats of 2D transform rows, then 4 floats of color. At most
+	# RENDER_BUDGET instances are drawn; simulation beyond that is exact but
+	# undrawn (the visual degradation the design allows).
+	var drawn := mini(_active_count, RENDER_BUDGET)
+	var expected_size := RENDER_BUDGET * 12
 	if _render_buffer.size() != expected_size:
 		_render_buffer.resize(expected_size)
-	for i in range(_active_count):
+	for i in range(drawn):
 		var base := i * 12
 		var direction := _velocities[i]
 		var length := direction.length()
@@ -745,7 +764,7 @@ func _update_renderer() -> void:
 		_render_buffer[base + 11] = color.a
 	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
 	_multimesh.emit_changed()
-	_multimesh.visible_instance_count = _active_count
+	_multimesh.visible_instance_count = drawn
 
 func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_consumed: Array) -> int:
 	# Parry/reflect support: simulated enemy bullets are invisible to
@@ -826,7 +845,7 @@ func clear_enemy_slow_zone() -> void:
 
 
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": _active_count, "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
+	return {"active": _active_count, "visuals": mini(_active_count, RENDER_BUDGET), "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "sim_capacity_max": SIM_CAPACITY_MAX, "render_budget": RENDER_BUDGET, "undrawn": maxi(0, _active_count - RENDER_BUDGET), "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
 
 func active_count() -> int:
 	return _active_count
@@ -866,4 +885,4 @@ func _update_debug_overlay() -> void:
 	if _debug_label != null:
 		_debug_label.visible = enabled
 		if enabled:
-			_debug_label.text = "PROJECTILES  active:%d  visuals:%d  hits:%d  batches:%d\ncapacity:%d  dropped:%d  physics step:%.2f ms" % [_active_count, _active_count, _hits_this_frame, _batches_this_frame, capacity, _dropped_total, _last_physics_ms]
+			_debug_label.text = "PROJECTILES  active:%d  drawn:%d  hits:%d  batches:%d\ncapacity:%d  dropped:%d  physics step:%.2f ms" % [_active_count, mini(_active_count, RENDER_BUDGET), _hits_this_frame, _batches_this_frame, capacity, _dropped_total, _last_physics_ms]
