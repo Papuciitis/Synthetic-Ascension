@@ -10,12 +10,18 @@ extends Node
 #      in V5 is Bullet Hell's (BRE2) authored shutdown.
 #   5. The Big One counts only true call_shell Shells: shell-tagged blasts
 #      that bypass call_shell, and beacon-flagged shells, never feed it.
+#   6. The Exit Rite can never be READY (unlocked) with an unmet required
+#      blocker — the full truth table of both builders' gate rules.
+#   7. Witness strikes exist only for ledger-owned foreign Cores: without a
+#      Gate, no amount of native fire manufactures one (engines credit
+#      witness only through the runner's validated call).
 # (Damage conservation through projectile overflow lives in
 # ProjectileOverflowTest; item identity through trade+undo in HubWorldTest.)
 #
 # Run: <godot> --headless --path . res://tools/tests/InvariantsTest.tscn
 
 const PLAYER_SCENE = preload("res://core/actors/player/player.tscn")
+const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.tscn")
 
 ## The V4 control, byte-identical since the 2026-09-25 handoff began. If this
 ## fails, the V4 tree was edited — that is a design decision, not a tweak:
@@ -72,6 +78,8 @@ func _run() -> void:
 	_test_followers_never_negative()
 	await _test_v5_meltdown_never_jams()
 	await _test_big_one_purity()
+	await _test_exit_rite_blockers()
+	await _test_witness_needs_a_gate()
 	print("InvariantsTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -217,6 +225,90 @@ func _test_big_one_purity() -> void:
 	for i in range(interval):
 		engine.call_shell(Vector2(160, 0))
 	_check(engine._shell_count == interval and int(engine.counters["big_ones"]) == 1, "exactly %d true Shells raise exactly one Big One" % interval)
+	_player.queue_free()
+	await get_tree().process_frame
+	_player = null
+	_runner = null
+
+
+# --- 6: the Exit Rite can never be READY past an unmet required blocker.
+func _test_exit_rite_blockers() -> void:
+	var rite := EXIT_RITE_SCENE.instantiate() as ExitRite
+	add_child(rite)
+	await get_tree().process_frame
+
+	# SegmentProcBuilder's rule: primary + full resonance + every required
+	# arena boss. All 16 requirement combinations, plus the not-required rows.
+	var builder := SegmentProcBuilder.new()
+	builder._exit_rite = rite
+	var violations := 0
+	for mask in range(16):
+		builder._primary_completed = (mask & 1) != 0
+		builder.resonance = 1.0 if (mask & 2) != 0 else 0.5
+		builder._boss_required = true
+		builder._boss_defeated = (mask & 4) != 0
+		builder._miniboss_required = true
+		builder._miniboss_defeated = (mask & 8) != 0
+		builder._update_gate_lock()
+		var all_met: bool = mask == 15
+		if rite.locked != (not all_met):
+			violations += 1
+	builder._boss_required = false
+	builder._miniboss_required = false
+	builder._primary_completed = true
+	builder.resonance = 1.0
+	builder._boss_defeated = false
+	builder._miniboss_defeated = false
+	builder._update_gate_lock()
+	if rite.locked:
+		violations += 1
+	_check(violations == 0, "SegmentProcBuilder: READY exactly when every required blocker is met (%d violations)" % violations)
+	builder.free()
+
+	# Level1Builder's rule: full resonance + the authored final plaza.
+	var l1 := Level1Builder.new()
+	l1._exit_rite = rite
+	var had_plaza := Global.attempt_segment1_milestones.has(&"final_plaza")
+	var l1_violations := 0
+	for mask in range(4):
+		l1.resonance = 1.0 if (mask & 1) != 0 else 0.5
+		Global.attempt_segment1_milestones.erase(&"final_plaza")
+		if (mask & 2) != 0:
+			Global.attempt_segment1_milestones.append(&"final_plaza")
+		l1._update_gate_lock()
+		if rite.locked != (mask != 3):
+			l1_violations += 1
+	_check(l1_violations == 0, "Level1Builder: READY exactly at full resonance in the final plaza (%d violations)" % l1_violations)
+	Global.attempt_segment1_milestones.erase(&"final_plaza")
+	if had_plaza:
+		Global.attempt_segment1_milestones.append(&"final_plaza")
+	l1.free()
+	rite.queue_free()
+	await get_tree().process_frame
+
+
+# --- 7: Witness strikes exist only for ledger-owned foreign Cores.
+func _test_witness_needs_a_gate() -> void:
+	Global.selected_style_id = "ranged"
+	Global.attempt_ascension = AscensionLedger.fresh_state("ranged", "v5_ranged")
+	var ledger := Global.ascension_ledger()
+	ledger.record_purchase("BR01", 0)
+	_player = PLAYER_SCENE.instantiate()
+	add_child(_player)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_runner = _player.get_node("AscensionRunner") as AscensionRunner
+	_runner.refresh()
+	for _i in range(8):
+		RunEvents.weapon_fired.emit(_player, &"ranged", _player.global_position, _player.global_position + Vector2(200, 0), 1.0, 1.0)
+	_check(_runner.witness_strikes == 0, "without a Gate, native fire never manufactures a witness strike (%d)" % _runner.witness_strikes)
+	_check(_runner.foreign_cores().is_empty(), "no foreign Core exists without a ledger-owned Gate")
+	# The positive control: a real Gate makes the same fire witness.
+	ledger.record_purchase("G1", 1600, "melee")
+	_runner.refresh()
+	for _i in range(8):
+		RunEvents.weapon_fired.emit(_player, &"ranged", _player.global_position, _player.global_position + Vector2(200, 0), 1.0, 1.0)
+	_check(_runner.witness_strikes > 0, "with a ledger-owned Gate the very same fire witnesses (%d)" % _runner.witness_strikes)
 	_player.queue_free()
 	await get_tree().process_frame
 	_player = null
