@@ -40,6 +40,9 @@ var _burn_stacks := PackedInt32Array()
 var _crit := PackedByteArray()
 var _last_hit_handles := PackedInt64Array()
 var _colors := PackedColorArray()
+## Projectile identity (playtest review finding 15): which atlas tile the
+## batched renderer draws — 0 shared, 1 Precision needle, 2 Barrage tracer.
+var _identity_tiles := PackedFloat32Array()
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
@@ -282,6 +285,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_crit[index] = 1 if critical else 0
 		_last_hit_handles[index] = 0
 		_colors[index] = color
+		_identity_tiles[index] = _tile_for_tags(tags)
 		_sources[index] = source
 		_tags[index] = tags
 		_ids[index] = _next_id
@@ -316,6 +320,7 @@ func _spawn(origin: Vector2, velocity: Vector2, lifetime: float, max_range: floa
 		_crit.append(1 if critical else 0)
 		_last_hit_handles.append(0)
 		_colors.append(color)
+		_identity_tiles.append(_tile_for_tags(tags))
 		_sources.append(source)
 		_tags.append(tags)
 		_ids.append(_next_id)
@@ -602,6 +607,7 @@ func _remove(index: int, reason: StringName = &"consumed") -> void:
 		_crit[index] = _crit[last]
 		_last_hit_handles[index] = _last_hit_handles[last]
 		_colors[index] = _colors[last]
+		_identity_tiles[index] = _identity_tiles[last]
 		_sources[index] = _sources[last]
 		_tags[index] = _tags[last]
 		_ids[index] = _ids[last]
@@ -693,12 +699,27 @@ func _sync_scene_refs() -> void:
 	if _player == null or not is_instance_valid(_player):
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 
+## The discipline the attack CAME from picks its silhouette: Precision
+## roots ride the needle, Barrage roots the tracer, everything else (the
+## native weapon, enemies) the shared body. Tags are provenance, so the
+## choice can never disagree with the damage attribution.
+static func _tile_for_tags(tags: PackedStringArray) -> float:
+	for tag in tags:
+		if tag.begins_with("root:PR"):
+			return 1.0
+		if tag.begins_with("root:BR"):
+			return 2.0
+	return 0.0
+
+
 func _build_renderer() -> void:
 	var quad := QuadMesh.new()
 	quad.size = Vector2(18.0, 4.0)
 	_multimesh = MultiMesh.new()
 	_multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	_multimesh.use_colors = true
+	var atlas := _build_identity_atlas()
+	_multimesh.use_custom_data = atlas != null
 	_multimesh.mesh = quad
 	_multimesh.instance_count = RENDER_BUDGET
 	_multimesh.visible_instance_count = 0
@@ -706,15 +727,63 @@ func _build_renderer() -> void:
 	_renderer.name = "BatchedBulletRenderer"
 	_renderer.multimesh = _multimesh
 	_renderer.z_index = 200
-	var bullet_material := CanvasItemMaterial.new()
-	bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-	_renderer.material = bullet_material
-	# A shaped grayscale quad (white core, soft tail) instead of a flat
-	# rectangle; each projectile's instance colour still does the tinting
-	# (Ranged V5 presentation pass). Missing texture = the old flat quad.
-	if ResourceLoader.exists("res://assets/textures/vfx/ranged/bullet_shared.png"):
-		_renderer.texture = load("res://assets/textures/vfx/ranged/bullet_shared.png")
+	if atlas != null:
+		# One batch, three silhouettes: the per-instance custom data picks
+		# the atlas row (0 shared, 1 needle, 2 tracer) in the shader.
+		_renderer.texture = atlas
+		var shader := Shader.new()
+		shader.code = """
+shader_type canvas_item;
+render_mode blend_add;
+varying float identity_tile;
+void vertex() {
+	identity_tile = INSTANCE_CUSTOM.x;
+}
+void fragment() {
+	vec2 uv = vec2(UV.x, (UV.y + identity_tile) / 3.0);
+	COLOR = texture(TEXTURE, uv) * COLOR;
+}
+"""
+		var identity_material := ShaderMaterial.new()
+		identity_material.shader = shader
+		_renderer.material = identity_material
+	else:
+		var bullet_material := CanvasItemMaterial.new()
+		bullet_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		_renderer.material = bullet_material
+		# A shaped grayscale quad (white core, soft tail) instead of a flat
+		# rectangle; each projectile's instance colour still does the tinting
+		# (Ranged V5 presentation pass). Missing texture = the old flat quad.
+		if ResourceLoader.exists("res://assets/textures/vfx/ranged/bullet_shared.png"):
+			_renderer.texture = load("res://assets/textures/vfx/ranged/bullet_shared.png")
 	add_child(_renderer)
+
+
+## Three 64x16 rows: shared body, Precision needle, Barrage tracer (the
+## tracer's 48x12 art centres in its row). Composited at runtime so the
+## generator PNGs stay the single source of truth; any of them missing
+## falls back to the legacy single-texture renderer.
+func _build_identity_atlas() -> ImageTexture:
+	var paths := ["res://assets/textures/vfx/ranged/bullet_shared.png",
+		"res://assets/textures/vfx/ranged/needle_bullet.png",
+		"res://assets/textures/vfx/ranged/tracer_bullet.png"]
+	var images: Array[Image] = []
+	for path in paths:
+		if not ResourceLoader.exists(path):
+			return null
+		var texture := load(path) as Texture2D
+		if texture == null:
+			return null
+		images.append(texture.get_image())
+	var atlas := Image.create(64, 48, false, Image.FORMAT_RGBA8)
+	for row in range(3):
+		var source := images[row]
+		if source.get_format() != Image.FORMAT_RGBA8:
+			source.convert(Image.FORMAT_RGBA8)
+		var x := (64 - source.get_width()) >> 1
+		var y := row * 16 + ((16 - source.get_height()) >> 1)
+		atlas.blit_rect(source, Rect2i(Vector2i.ZERO, source.get_size()), Vector2i(x, y))
+	return ImageTexture.create_from_image(atlas)
 
 func _update_renderer() -> void:
 	if _multimesh == null:
@@ -734,11 +803,14 @@ func _update_renderer() -> void:
 	# RENDER_BUDGET instances are drawn; simulation beyond that is exact but
 	# undrawn (the visual degradation the design allows).
 	var drawn := mini(_active_count, RENDER_BUDGET)
-	var expected_size := RENDER_BUDGET * 12
+	# With custom data (the identity atlas) each instance carries 4 more
+	# floats after the color; without it the legacy 12-float layout holds.
+	var stride := 16 if _multimesh.use_custom_data else 12
+	var expected_size := RENDER_BUDGET * stride
 	if _render_buffer.size() != expected_size:
 		_render_buffer.resize(expected_size)
 	for i in range(drawn):
-		var base := i * 12
+		var base := i * stride
 		var direction := _velocities[i]
 		var length := direction.length()
 		var cos_a := 1.0
@@ -762,6 +834,11 @@ func _update_renderer() -> void:
 		_render_buffer[base + 9] = color.g
 		_render_buffer[base + 10] = color.b
 		_render_buffer[base + 11] = color.a
+		if stride == 16:
+			_render_buffer[base + 12] = _identity_tiles[i]
+			_render_buffer[base + 13] = 0.0
+			_render_buffer[base + 14] = 0.0
+			_render_buffer[base + 15] = 0.0
 	RenderingServer.multimesh_set_buffer(_multimesh.get_rid(), _render_buffer)
 	_multimesh.emit_changed()
 	_multimesh.visible_instance_count = drawn
@@ -845,7 +922,7 @@ func clear_enemy_slow_zone() -> void:
 
 
 func get_debug_counters() -> Dictionary:
-	return {"active": _active_count, "visuals": mini(_active_count, RENDER_BUDGET), "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "sim_capacity_max": SIM_CAPACITY_MAX, "render_budget": RENDER_BUDGET, "undrawn": maxi(0, _active_count - RENDER_BUDGET), "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
+	return {"active": _active_count, "visuals": mini(_active_count, RENDER_BUDGET), "hits": _hits_this_frame, "batches": _batches_this_frame, "capacity": capacity, "sim_capacity_max": SIM_CAPACITY_MAX, "render_budget": RENDER_BUDGET, "undrawn": maxi(0, _active_count - RENDER_BUDGET), "dropped": _dropped_total, "physics_ms": _last_physics_ms, "renderer_uploads": _renderer_uploads, "identity_atlas": _multimesh != null and _multimesh.use_custom_data, "overflow_queue": _overflow_queue.size(), "overflow_queued": _overflow_queued_total, "overflow_released": _overflow_released_total, "overflow_dropped": _overflow_dropped_total}
 
 func active_count() -> int:
 	return _active_count
