@@ -17,6 +17,10 @@ const DEFAULT_CAPACITY: int = 4096
 ## exists beyond SIM_CAPACITY_MAX, which is pathological and loudly counted.
 const SIM_CAPACITY_MAX: int = 16384
 const RENDER_BUDGET: int = 4096
+## Drawn size only (playtest 2026-09-26: 18x4-unit bodies were invisible at
+## gameplay zoom). Collision radii and hit timing are untouched — visuals
+## are free where the simulation is authoritative.
+const VISUAL_SCALE := 2.0
 const PLAYER_RADIUS: float = 25.0
 
 var capacity: int = DEFAULT_CAPACITY
@@ -732,16 +736,23 @@ func _build_renderer() -> void:
 		# the atlas row (0 shared, 1 needle, 2 tracer) in the shader.
 		_renderer.texture = atlas
 		var shader := Shader.new()
+		# Normal alpha blending: the art carries its own colors and dark
+		# outlines, which additive blending erased (playtest finding — the
+		# additive path was designed for the grayscale mask fallback). The
+		# per-instance color survives as a soft tint plus full alpha control.
 		shader.code = """
 shader_type canvas_item;
-render_mode blend_add;
 varying float identity_tile;
+varying vec4 instance_tint;
 void vertex() {
 	identity_tile = INSTANCE_CUSTOM.x;
+	instance_tint = COLOR;
 }
 void fragment() {
 	vec2 uv = vec2(UV.x, (UV.y + identity_tile) / 3.0);
-	COLOR = texture(TEXTURE, uv) * COLOR;
+	vec4 tex = texture(TEXTURE, uv);
+	vec3 tint = mix(vec3(1.0), instance_tint.rgb, 0.45);
+	COLOR = vec4(tex.rgb * tint, tex.a * instance_tint.a);
 }
 """
 		var identity_material := ShaderMaterial.new()
@@ -818,8 +829,8 @@ func _update_renderer() -> void:
 		if length > 0.000001:
 			cos_a = direction.x / length
 			sin_a = direction.y / length
-		var scale_x := _body_length[i] / 18.0
-		var scale_y := _body_width[i] / 4.0
+		var scale_x := _body_length[i] / 18.0 * VISUAL_SCALE
+		var scale_y := _body_width[i] / 4.0 * VISUAL_SCALE
 		var projectile_position := _positions[i]
 		var color := _colors[i]
 		_render_buffer[base + 0] = cos_a * scale_x
