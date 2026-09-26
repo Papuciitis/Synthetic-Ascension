@@ -35,7 +35,10 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _equip(data: ItemData) -> void:
-	_inv.set_item(int(data.equip_slot), ItemInstance.from_data(data))
+	var inst := ItemInstance.from_data(data)
+	# No rolled manifestation: a ward roll banks Composure and bends the numbers.
+	inst.manifestation_id = &""
+	_inv.set_item(int(data.equip_slot), inst)
 
 
 func _effect(type_name: String) -> Node:
@@ -48,6 +51,17 @@ func _effect(type_name: String) -> Node:
 func _settle() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
+
+
+func _hit(amount: float, source: Node, kind: StringName) -> void:
+	# Deterministic hits: re-pin luck (the equip recompute rewrites it and
+	# lucky evasion would randomly void the hit), spawn protection and armor.
+	Global.run_luck = 0.0
+	_player.set("invulnerable_time", 0.0)
+	var stats_now: Variant = _player.get("stats")
+	if stats_now != null:
+		stats_now.armor = 0.0
+	_player.call("_take_damage", amount, source, kind)
 
 
 func _run() -> void:
@@ -73,7 +87,7 @@ func _run() -> void:
 		var rival_node := Node2D.new()
 		add_child(rival_node)
 		_player.set("hp", 10.0)
-		_player.call("_take_damage", 50.0, rival_node, &"test")
+		_hit(50.0, rival_node, &"test")
 		_check(is_equal_approx(float(_player.get("hp")), 1.0) and not bool(_player.get("is_dead")), "a lethal hit leaves the protagonist at 1 HP")
 		_check(not armor.armed and armor.rival == rival_node, "the protection disarms and marks the culprit as rival")
 		_check(float(_player.get("invulnerable_time")) > 0.0, "one brief grace follows the save")
@@ -84,7 +98,7 @@ func _run() -> void:
 		# An untrackable killer: the fallback timer carries the rearm.
 		_player.set("invulnerable_time", 0.0)
 		_player.set("hp", 5.0)
-		_player.call("_take_damage", 50.0, null, &"test")
+		_hit(50.0, null, &"test")
 		_check(is_equal_approx(float(_player.get("hp")), 1.0) and not armor.armed and armor.rival == null, "an untrackable killer still costs the charge")
 		armor._process(46.0)
 		_check(armor.armed, "the fallback timer rearms when fate loses track")
@@ -93,7 +107,7 @@ func _run() -> void:
 		add_child(vanishing)
 		_player.set("invulnerable_time", 0.0)
 		_player.set("hp", 5.0)
-		_player.call("_take_damage", 50.0, vanishing, &"test")
+		_hit(50.0, vanishing, &"test")
 		vanishing.free()
 		armor._process(0.1)
 		armor._process(46.0)

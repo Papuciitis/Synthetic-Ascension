@@ -18,6 +18,9 @@ var _failures := 0
 var _player: Node2D
 var _effect: BekaCompanionEffect
 var _hp_loss_events: Array = []
+## Forensics for the 1-in-N flake: every resolved damage event with its
+## stage breakdown, so a failing message says WHERE the number bent.
+var _resolved_log: Array = []
 
 
 func _ready() -> void:
@@ -34,7 +37,25 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _hit(amount: float) -> void:
+	# Determinism under load: a slow frame can leave spawn protection or a
+	# recomputed armor value standing right when the hit lands. The stat
+	# recompute also rewrites Global.run_luck from race/style, and lucky
+	# evasion (up to 6%) would randomly void the hit — re-pin it to 0.
+	Global.run_luck = 0.0
+	_player.set("invulnerable_time", 0.0)
+	var stats_now: Variant = _player.get("stats")
+	if stats_now != null:
+		stats_now.armor = 0.0
 	_player.call("_take_damage", amount, null, &"test")
+
+
+## from_data rolls a random Manifestation (intended for real drops). A rolled
+## ward noun banks Composure and blunts the next hit by 45%, which bends the
+## exact numbers this suite pins — so test instances carry no manifestation.
+static func _bare(data: ItemData) -> ItemInstance:
+	var inst := ItemInstance.from_data(data)
+	inst.manifestation_id = &""
+	return inst
 
 
 func _run() -> void:
@@ -48,8 +69,11 @@ func _run() -> void:
 	RunEvents.player_damage_taken.connect(func(who: Node, amount: float, _p: Vector2) -> void:
 		if who == _player:
 			_hp_loss_events.append(amount))
+	RunEvents.player_damage_resolved.connect(func(who: Node, raw: float, adjusted: float, applied: float, _s: Node, kind: StringName, outcome: StringName) -> void:
+		if who == _player:
+			_resolved_log.append("%s raw=%.2f adj=%.2f applied=%.2f kind=%s" % [outcome, raw, adjusted, applied, kind]))
 
-	var beka := ItemInstance.from_data(BEKA_DATA)
+	var beka := _bare(BEKA_DATA)
 	inv.set_item(int(BEKA_DATA.equip_slot), beka)
 	var runner := _player.get_node("ItemEffectRunner") as ItemEffectRunner
 	await get_tree().process_frame
@@ -81,7 +105,7 @@ func _run() -> void:
 	_effect._process(10.0)
 	_check(is_equal_approx(_effect.shield, 40.0), "charging stops at capacity (%.1f)" % _effect.shield)
 	# Scaling cap: even a maximal item strength stays at or below 30%.
-	var strong := ItemInstance.from_data(BEKA_DATA)
+	var strong := _bare(BEKA_DATA)
 	strong.rarity = 30
 	_check(_effect.capacity_fraction_for(strong) <= 0.30 + 0.0001, "scaled capacity never exceeds 30%% of max HP (%.3f)" % _effect.capacity_fraction_for(strong))
 
@@ -168,7 +192,7 @@ func _run() -> void:
 		if child is BekaCompanionEffect:
 			still = true
 	_check(not still, "unequipping removes the companion and her shield")
-	inv.set_item(int(BEKA_DATA.equip_slot), ItemInstance.from_data(BEKA_DATA))
+	inv.set_item(int(BEKA_DATA.equip_slot), _bare(BEKA_DATA))
 	await get_tree().process_frame
 	await get_tree().process_frame
 	var fresh: BekaCompanionEffect = null
@@ -182,6 +206,7 @@ func _run() -> void:
 		fresh.set_process(false)
 		fresh.shield = 10.0
 		_hp_loss_events.clear()
+		_resolved_log.clear()
 		_player.set("max_hp", 200.0)
 		_player.set("hp", 200.0)
 		var stats2: Variant = _player.get("stats")
@@ -189,7 +214,7 @@ func _run() -> void:
 			stats2.armor = 0.0
 		fresh._delay_left = 999.0
 		_hit(30.0)
-		_check(is_equal_approx(float(_player.get("hp")), 180.0), "one companion, one shield: exactly 20 reaches HP (hp %.2f, shield %.2f, events %s)" % [float(_player.get("hp")), fresh.shield, str(_hp_loss_events)])
+		_check(is_equal_approx(float(_player.get("hp")), 180.0), "one companion, one shield: exactly 20 reaches HP (hp %.2f, shield %.2f, events %s, resolved %s)" % [float(_player.get("hp")), fresh.shield, str(_hp_loss_events), str(_resolved_log)])
 
 	_finish()
 
