@@ -163,3 +163,18 @@ zoom before anything replaces an authored placeholder.
   resolution can change freely from here.
 - **Still procedural:** Trauma's icon (generation failed on the user's
   side); the curse-icon set; everything else in the earlier sections.
+
+### batches 1-2 — user-supplied VFX + accessory icons (2026-09-26)
+- **Batch 1 (attack VFX, 10 files):** needle/tracer bullets (identity
+  atlas rebuilds from them), barrage dart, grenade/mine bodies,
+  pressure + broken-heat rings (ring normalized onto the damage edge),
+  spin glow, impact burst (renderer loads art, procedural bake kept as
+  fallback), judgment_mark (NEW — Precision V5 draws it over exposed
+  Weak Points and Firing Squad positions).
+- **Batch 2 (accessory icons, 8 files):** Trauma (stitched ember heart —
+  retry wording worked), Plot Armor, Second Breakfast, The Missing Pālis,
+  Firestone, Oakheart, Crusher's Ring, Ring of Regeneration.
+- **Provenance:** user-generated 2026-09-26, processed in-repo (trim,
+  LANCZOS downscale, alpha verified; originals at repo root under
+  "ChatGPT Image Sep 26 ..."). Batches 3 (set icons) and 4 (hub props)
+  pending on the user's side.
