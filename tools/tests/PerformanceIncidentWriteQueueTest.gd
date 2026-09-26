@@ -48,17 +48,26 @@ func _run() -> void:
 		_check(int(second_result.get("sequence", 0)) == 2, "the next report starts after the first")
 	write_queue.call("shutdown")
 
-	# The recorder guarantees a finalized incident is immutable, so enqueue must
-	# hand it to the worker without a main-thread deep copy.
+	# The worker must only ever see pure data (the 2026-09-26 playtest crash:
+	# a live Object inside a sample was stringified from the worker thread —
+	# scene-tree thread guard, then signal 11). Enqueue sanitizes ONCE on the
+	# main thread; identity passthrough was the old, crashing contract.
 	var passthrough_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
-	var owned_incident := {"metadata": {"sequence": 7}}
+	var live_node := Node.new()
+	add_child(live_node)
+	var freed_node := Node.new()
+	freed_node.free()
+	var owned_incident := {"metadata": {"sequence": 7}, "samples": [{"who": live_node, "gone": freed_node, "at": Vector2(3, 4)}]}
 	passthrough_queue.call("enqueue", owned_incident, "user://ignored-by-test")
 	var handed_over: Array = passthrough_queue.call("shutdown") as Array
-	_check(
-		handed_over.size() == 1
-		and is_same((handed_over[0] as Dictionary).get("incident"), owned_incident),
-		"enqueue hands the incident to the writer without a main-thread deep copy"
-	)
+	var handed: Dictionary = (handed_over[0] as Dictionary).get("incident", {}) if handed_over.size() == 1 else {}
+	var sample_row: Dictionary = ((handed.get("samples", []) as Array)[0] as Dictionary) if not handed.is_empty() else {}
+	_check(handed_over.size() == 1 and not is_same(handed, owned_incident), "enqueue hands the worker a sanitized copy, never the live dict")
+	_check(String(sample_row.get("who", "")).begins_with("<Node#"), "a live Object becomes a tag, never a cross-thread call (%s)" % str(sample_row.get("who")))
+	_check(String(sample_row.get("gone", "")) == "<freed object>", "a freed Object becomes a tag instead of a segfault")
+	_check(String(sample_row.get("at", "")).begins_with("("), "vectors serialize as text")
+	_check(JSON.stringify(handed) != "", "the sanitized incident stringifies without touching the tree")
+	live_node.queue_free()
 	_finish()
 
 

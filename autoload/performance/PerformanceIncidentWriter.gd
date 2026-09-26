@@ -84,5 +84,13 @@ static func _json_safe(value: Variant) -> Variant:
 			return output
 		TYPE_VECTOR2, TYPE_VECTOR2I, TYPE_STRING_NAME:
 			return str(value)
+		TYPE_OBJECT:
+			# An incident is DATA. Stringifying a live Object here ran its
+			# script from the worker thread (and a freed one segfaulted) —
+			# the 2026-09-26 playtest crash and, in all likelihood, the
+			# earlier unexplained PC crash. Tag it without calling into it.
+			if value == null or not is_instance_valid(value):
+				return "<freed object>"
+			return "<%s#%d>" % [(value as Object).get_class(), (value as Object).get_instance_id()]
 		_:
 			return value

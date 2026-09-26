@@ -13,11 +13,14 @@ func _init(writer: Callable = Callable()) -> void:
 
 
 func enqueue(incident: Dictionary, directory: String) -> void:
-	# The caller guarantees a finalized incident is immutable, so it is handed
-	# to the worker as-is; a deep copy here used to be the third full copy of
-	# the incident made on the main thread before the write even started.
+	# The worker must only ever see pure data. The old contract handed the
+	# incident over as-is on an immutability promise, but samples can carry
+	# live Object references — stringifying those from the worker thread
+	# tripped the scene-tree thread guard and segfaulted (2026-09-26 crash).
+	# One sanitizing copy on the MAIN thread replaces that promise with a
+	# type-level guarantee; it is also the only copy made.
 	_jobs.append({
-		"incident": incident,
+		"incident": PerformanceIncidentWriter._json_safe(incident),
 		"directory": directory,
 	})
 	_start_next()
