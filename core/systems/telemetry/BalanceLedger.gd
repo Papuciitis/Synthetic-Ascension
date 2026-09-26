@@ -19,6 +19,9 @@ const METRICS := [
 	"healing", "heal_overflow", "heal_blocked", "hp_paid",
 	"attacks", "resolved_hits", "critical_hits", "kills", "deaths", "respawns", "rescues",
 	"evaded_hits", "invulnerable_hits", "god_mode_hits", "missed_hits", "intercepted_hits",
+	# Run truth (integration pass 2026-09-26): companion absorption, secondary
+	# objective funnel and a PFR-independent slow-frame count, per segment.
+	"absorbed_hits", "damage_absorbed", "secondary_discovered", "secondary_completed_count", "slow_frames",
 ]
 
 ## Health reconciliation: one life at a time, closed on reconstruction.
@@ -96,6 +99,7 @@ func _empty_stats(balance: int) -> Dictionary:
 		"attribution": {"by_origin": {}, "by_emitter": {}, "overflow": {"by_origin": 0, "by_emitter": 0}, "mixed_raw_breakdown": {}},
 		"exit": _empty_exit(),
 		"upgrades": _empty_upgrades(),
+		"truth": _empty_truth(),
 	}
 	for metric in METRICS:
 		stats[metric] = 0.0
@@ -107,6 +111,49 @@ static func _empty_upgrades() -> Dictionary:
 		"undone_ops": 0, "undone_purchases": 0, "undone_sales": 0, "merges": 0, "merges_by_container": {}, "merge_mass": 0.0,
 		"meter_gained_equipped": 0.0, "rank_ups_equipped": 0, "rank_up_times": [], "swaps_equipped": 0,
 		"equips": 0, "unequips": 0, "moves": 0, "stashed": 0, "dropped_to_world": 0, "debug_operations": 0, "operations": 0}
+
+## Run truth per segment (integration pass 2026-09-26): the segment clock of
+## each milestone (seconds_gameplay is per segment, so it IS the clock), a
+## 1 Hz performance aggregate, and end-of-segment engine/companion counters.
+static func _empty_truth() -> Dictionary:
+	return {"primary_completed_at": null, "resonance_full_at": null,
+		"perf": {"samples": 0, "projectiles_sum": 0.0, "projectiles_max": 0, "undrawn_max": 0,
+			"overflow_queue_max": 0, "sim_capacity_max_seen": 0,
+			"enemies_sum": 0.0, "enemies_max": 0, "materialized_max": 0, "data_only_max": 0},
+		"procs": {}}
+
+
+## First-time-only milestone stamp on the current segment's own clock.
+func truth_mark(key: String) -> void:
+	var truth: Dictionary = _current.get("truth", {})
+	if truth.get(key, null) == null:
+		truth[key] = snappedf(float(_current.get("seconds_gameplay", 0.0)), 0.1)
+
+
+## One 1 Hz observation of the projectile and enemy populations.
+func truth_perf_sample(projectiles: Dictionary, enemies: Dictionary) -> void:
+	var perf: Dictionary = (_current.get("truth", {}) as Dictionary).get("perf", {})
+	if perf.is_empty():
+		return
+	perf["samples"] = int(perf["samples"]) + 1
+	var active := int(projectiles.get("active", 0))
+	perf["projectiles_sum"] = float(perf["projectiles_sum"]) + active
+	perf["projectiles_max"] = maxi(int(perf["projectiles_max"]), active)
+	perf["undrawn_max"] = maxi(int(perf["undrawn_max"]), int(projectiles.get("undrawn", 0)))
+	perf["overflow_queue_max"] = maxi(int(perf["overflow_queue_max"]), int(projectiles.get("overflow_queue", 0)))
+	perf["sim_capacity_max_seen"] = maxi(int(perf["sim_capacity_max_seen"]), int(projectiles.get("capacity", 0)))
+	var logical := int(enemies.get("logical", 0))
+	perf["enemies_sum"] = float(perf["enemies_sum"]) + logical
+	perf["enemies_max"] = maxi(int(perf["enemies_max"]), logical)
+	perf["materialized_max"] = maxi(int(perf["materialized_max"]), int(enemies.get("materialized", 0)))
+	perf["data_only_max"] = maxi(int(perf["data_only_max"]), int(enemies.get("data_only", 0)))
+
+
+## End-of-segment cumulative counters (ascension engines, Beka, ...), already
+## delta-ed by the recorder against its own baselines.
+func truth_counters(group: String, counters: Dictionary) -> void:
+	((_current.get("truth", {}) as Dictionary).get("procs", {}) as Dictionary)[group] = counters
+
 
 ## Per segment (the rite is per segment); the totals row keeps the counters.
 static func _empty_exit() -> Dictionary:
@@ -834,6 +881,12 @@ static func upgrade_summary(stats: Dictionary) -> Dictionary:
 
 
 func player_damage(raw: float, after_defenses: float, applied: float, source: String, outcome: String) -> void:
+	if outcome == "absorbed":
+		# A companion shield (Beka) soaked this much of the mitigated hit
+		# before HP was tested; `after_defenses` carries the soaked amount.
+		add_metric("absorbed_hits")
+		add_metric("damage_absorbed", after_defenses)
+		return
 	if outcome not in DAMAGING_OUTCOMES:
 		if outcome in AVOIDED_OUTCOMES:
 			add_metric(outcome + "_hits")

@@ -183,6 +183,10 @@ func _process(delta: float) -> void:
 	elif mode == "gameplay" and (player == null or bool(player.get("is_dead"))):
 		mode = "loading"
 	_ledger.advance(delta, mode)
+	# A PFR-independent spike count: PFR is a dev-menu tool, the run truth
+	# should not depend on it being armed.
+	if mode == "gameplay" and delta > 0.028:
+		_ledger.add_metric("slow_frames")
 	if mode == "gameplay" and extended:
 		_history_left -= delta
 		if _history_left <= 0.0:
@@ -221,6 +225,7 @@ func _connect_runtime() -> void:
 	# gameplay clock of every authored milestone (segment 1's ten beats) and
 	# of the Rite's LOCKED / LOCATED / READY transitions.
 	_subscribe(RunEvents, &"objective_changed", _on_objective_changed)
+	_subscribe(RunEvents, &"secondary_objective_changed", _on_secondary_objective_changed)
 	_subscribe(RunEvents, &"secondary_objective_completed", _on_secondary_objective_completed)
 	_subscribe(RunEvents, &"gate_checklist_changed", _on_gate_checklist_changed)
 	_subscribe(RunEvents, &"healing_lock_changed", _on_healing_lock)
@@ -281,6 +286,7 @@ func _on_segment_completed(segment: int) -> void:
 		return
 	_capture_build()
 	_capture_sample()
+	_capture_proc_truth()
 	_ledger.change_segment(segment + 1, "completed")
 	_mode = "hub"
 	_submit(true)
@@ -290,6 +296,7 @@ func end_capture(outcome: String = "suspended") -> void:
 		return
 	_capture_build()
 	_capture_sample()
+	_capture_proc_truth()
 	_ledger.finish(outcome)
 	for entry in _subscriptions:
 		if is_instance_valid(entry[0]) and entry[0].is_connected(entry[1], entry[2]):
@@ -566,6 +573,12 @@ func _on_item_operation(kind: StringName, inst: ItemInstance, data: Dictionary) 
 	_push_history("item", {"event": String(kind), "id": record.get("item", {}).get("id", ""), "source": record.get("source", ""), "op": record.get("op", 0)})
 
 func _on_phase(phase: StringName, label: String) -> void:
+	# The proc builder enters "ascension" (or straight to "collapse") exactly
+	# when the primary completes; either stamps the run-truth milestone.
+	if phase == &"ascension" or phase == &"collapse":
+		_ledger.truth_mark("primary_completed_at")
+	if phase == &"collapse":
+		_ledger.truth_mark("resonance_full_at")
 	_ledger.event("phase", {"phase": String(phase), "label": label})
 	_push_history("phase", {"phase": String(phase), "label": label})
 
@@ -581,7 +594,19 @@ func _on_objective_changed(title: String, detail: String) -> void:
 	_ledger.event("objective", {"title": title, "detail": detail})
 	_push_history("objective", {"title": title})
 
+var _last_secondary_title := ""
+
+func _on_secondary_objective_changed(title: String, detail: String) -> void:
+	# A discovery beat: the HUD re-emits with live counters, count per title.
+	if title == _last_secondary_title:
+		return
+	_last_secondary_title = title
+	if not title.is_empty():
+		_ledger.add_metric("secondary_discovered")
+	_ledger.event("secondary_changed", {"title": title, "detail": detail})
+
 func _on_secondary_objective_completed(objective_id: int) -> void:
+	_ledger.add_metric("secondary_completed_count")
 	_ledger.event("secondary_completed", {"id": objective_id})
 	_push_history("secondary", {"id": objective_id})
 
@@ -813,11 +838,68 @@ func _capture_build() -> void:
 		snapshot["build_index"] = _build_index
 		_ledger.event("build", snapshot)
 
+## Run truth: cumulative in-memory counters (ascension engines, the runner's
+## own telemetry, Beka) snapshotted at segment boundaries as per-segment
+## deltas. Engines rebuilt by a refresh mid-segment restart their counters at
+## zero, so a delta clamps at 0 and under-reports rather than going negative.
+var _proc_baselines: Dictionary = {}
+
+func _capture_proc_truth() -> void:
+	var player := _player()
+	if player == null:
+		return
+	var runner := player.get_node_or_null("AscensionRunner")
+	if runner != null:
+		var merged: Dictionary = {}
+		var telemetry: Variant = runner.get("telemetry")
+		if telemetry is Dictionary:
+			for key in telemetry:
+				if (telemetry[key] is int or telemetry[key] is float):
+					merged["runner." + String(key)] = float(telemetry[key])
+		var engines: Variant = runner.get("engines")
+		if engines is Array:
+			for engine in engines:
+				var counters: Variant = engine.get("counters")
+				if counters is Dictionary:
+					var prefix := String(engine.call("discipline"))
+					for key in counters:
+						if counters[key] is int or counters[key] is float:
+							merged[prefix + "." + String(key)] = float(counters[key])
+		_ledger.truth_counters("ascension", _truth_delta("ascension", merged))
+	var ier := player.get_node_or_null("ItemEffectRunner")
+	if ier != null:
+		for child in ier.get_children():
+			if child is BekaCompanionEffect:
+				var beka: Dictionary = {}
+				for key in child.telemetry:
+					beka[String(key)] = float(child.telemetry[key])
+				_ledger.truth_counters("beka", _truth_delta("beka", beka))
+				break
+
+func _truth_delta(group: String, now: Dictionary) -> Dictionary:
+	var baseline: Dictionary = _proc_baselines.get(group, {})
+	var delta: Dictionary = {}
+	for key in now:
+		var change: float = float(now[key]) - float(baseline.get(key, 0.0))
+		if change < 0.0:
+			change = float(now[key])
+		if change != 0.0:
+			delta[key] = snappedf(change, 0.01)
+	_proc_baselines[group] = now
+	return delta
+
+
 func _capture_sample() -> void:
 	var sample := {"mode": _mode, "paused": get_tree().paused, "build_index": _build_index,
 		"followers": Global.followers, "enemies_alive": EnemyWorld.active_count(), "pressure": _pressure_snapshot(),
 		"exit": _exit_snapshot(), "reinforcements": _reinforcements(), "debug": _debug_snapshot()}
 	_ledger.observe_pressure(sample.pressure)
+	# Run truth: resonance completion on the 1 Hz clock (covers fills that
+	# happen after the phase event), and the population aggregate.
+	if float((sample.pressure as Dictionary).get("resonance", 0.0)) >= 0.999:
+		_ledger.truth_mark("resonance_full_at")
+	if _mode == "gameplay":
+		_ledger.truth_perf_sample(ProjectileManager.get_debug_counters(), EnemyWorld.get_debug_counters())
 	var player := _player()
 	if player != null and _mode == "gameplay":
 		if not bool(player.get("is_dead")):

@@ -117,5 +117,45 @@ func _run() -> void:
 		var rows: Dictionary = promoted.summary().totals.enemies
 		_check(rows.has("brute [elite]") and rows["brute [elite]"].seen == 1 and rows["brute [elite]"].hp_max == 100.0 and rows["brute [elite]"].kills == 1, "deferred elite promotion updates cohort and HP without double counting")
 		_check(rows["brute"].seen == 1 and rows["brute"].hp_min == 50.0, "promotion removes obsolete normal HP samples")
+	# --- Run truth (integration pass 2026-09-26): milestones on the segment
+	# clock, companion absorption, population aggregates, per-segment procs.
+	var truth = load("res://core/systems/telemetry/BalanceLedger.gd").new()
+	truth.start({"capture_id": "truth"}, 0, 4)
+	truth.advance(12.0, "gameplay")
+	truth.truth_mark("primary_completed_at")
+	truth.advance(8.0, "gameplay")
+	truth.truth_mark("primary_completed_at")
+	truth.truth_mark("resonance_full_at")
+	var row: Dictionary = truth.summary().segments[0]
+	_check(is_equal_approx(float(row.truth.primary_completed_at), 12.0), "a truth milestone stamps the segment clock once (%.1f)" % float(row.truth.primary_completed_at))
+	_check(is_equal_approx(float(row.truth.resonance_full_at), 20.0), "later milestones read the advanced clock")
+	truth.player_damage(30.0, 10.0, 0.0, "brute", "absorbed")
+	truth.player_damage(30.0, 20.0, 20.0, "brute", "hit")
+	row = truth.summary().segments[0]
+	_check(is_equal_approx(float(row.damage_absorbed), 10.0) and int(row.absorbed_hits) == 1, "companion absorption is counted, not dropped")
+	_check(is_equal_approx(float(row.player_hp_lost), 20.0), "the absorbed hit never counts as HP loss")
+	truth.truth_perf_sample({"active": 100, "undrawn": 0, "overflow_queue": 0, "capacity": 4096}, {"logical": 30, "materialized": 12, "data_only": 18})
+	truth.truth_perf_sample({"active": 5000, "undrawn": 904, "overflow_queue": 3, "capacity": 8192}, {"logical": 60, "materialized": 20, "data_only": 40})
+	row = truth.summary().segments[0]
+	var perf: Dictionary = row.truth.perf
+	_check(int(perf.samples) == 2 and int(perf.projectiles_max) == 5000 and is_equal_approx(float(perf.projectiles_sum), 5100.0), "population aggregate keeps sums and maxima")
+	_check(int(perf.undrawn_max) == 904 and int(perf.overflow_queue_max) == 3 and int(perf.sim_capacity_max_seen) == 8192, "render-budget honesty rides the run truth")
+	truth.truth_counters("ascension", {"BR.meltdowns": 2.0})
+	truth.change_segment(5, "completed")
+	truth.truth_mark("primary_completed_at")
+	var segs: Array = truth.summary().segments
+	_check(segs[0].truth.procs.ascension["BR.meltdowns"] == 2.0, "segment procs live on their own segment's row")
+	_check(is_equal_approx(float(segs[1].truth.primary_completed_at), 0.0) and segs[1].truth.procs.is_empty(), "a new segment opens a fresh truth block")
+	# The recorder's delta helper: cumulative counters become per-segment
+	# deltas, and a counter reset (engine rebuild) clamps instead of going
+	# negative.
+	BalanceRecorder._proc_baselines.clear()
+	var d1: Dictionary = BalanceRecorder._truth_delta("t", {"shells": 7.0})
+	var d2: Dictionary = BalanceRecorder._truth_delta("t", {"shells": 10.0})
+	var d3: Dictionary = BalanceRecorder._truth_delta("t", {"shells": 2.0})
+	_check(d1.get("shells") == 7.0 and d2.get("shells") == 3.0, "cumulative counters become per-segment deltas")
+	_check(d3.get("shells") == 2.0, "a rebuilt engine's reset counter clamps, never negative")
+	BalanceRecorder._proc_baselines.clear()
+
 	print("BalanceLedgerTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures else 0)
