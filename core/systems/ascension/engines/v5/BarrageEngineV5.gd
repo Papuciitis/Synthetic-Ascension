@@ -949,7 +949,7 @@ func move_speed_multiplier() -> float:
 func collect_draw_points(out: Array) -> void:
 	collect_beam_points(out)
 	for fragment in fragments:
-		runner.note_texture_point(fragment["pos"], 7.0, Color(1.0, 0.95, 0.85, 0.95), "barrage_dart")
+		runner.note_texture_point(fragment["pos"], 7.0, Color(1.0, 0.95, 0.85, 0.95), "barrage_dart", (fragment["vel"] as Vector2).angle())
 	# The radiant aura's true damaging radius, always world-accurate: the
 	# ring texture is drawn at exactly the damaging edge.
 	var state := aura_state()

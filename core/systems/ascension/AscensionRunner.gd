@@ -1287,10 +1287,11 @@ static func vfx_texture(name: String) -> Texture2D:
 ## An engine-owned world marker drawn as a textured billboard this frame:
 ## [at, half-size in world units, modulate colour, texture name].
 var _texture_points: Array = []
+var _had_visuals: bool = false
 
 
-func note_texture_point(at: Vector2, half_size: float, color: Color, texture_name: String) -> void:
-	_texture_points.append([at, half_size, color, texture_name])
+func note_texture_point(at: Vector2, half_size: float, color: Color, texture_name: String, rotation: float = 0.0) -> void:
+	_texture_points.append([at, half_size, color, texture_name, rotation])
 
 
 func _tick_attack_fx(delta: float) -> void:
@@ -1378,6 +1379,13 @@ func _draw() -> void:
 		var half := float(point[1])
 		if texture == null:
 			draw_circle(point[0], half, point[2])
+			continue
+		var point_rotation := float(point[4]) if point.size() > 4 else 0.0
+		if point_rotation != 0.0:
+			# Directional textures (the Barrage dart) face their velocity.
+			draw_set_transform(point[0], point_rotation)
+			draw_texture_rect(texture, Rect2(-Vector2.ONE * half, Vector2.ONE * half * 2.0), false, point[2])
+			draw_set_transform(Vector2.ZERO, 0.0)
 			continue
 		draw_texture_rect(texture, Rect2((point[0] as Vector2) - Vector2.ONE * half, Vector2.ONE * half * 2.0), false, point[2])
 	for fx in _attack_fx:
@@ -1707,8 +1715,12 @@ func _process(delta: float) -> void:
 	_texture_points.clear()
 	for engine in engines:
 		engine.collect_draw_points(_draw_points)
-	if not _draw_points.is_empty() or not _texture_points.is_empty() or not _attack_fx.is_empty():
+	# The frame the LAST visual expires still needs one redraw, or the
+	# canvas keeps replaying the cached final beam/marker/glow forever.
+	var has_visuals := not _draw_points.is_empty() or not _texture_points.is_empty() or not _attack_fx.is_empty()
+	if has_visuals or _had_visuals:
 		queue_redraw()
+	_had_visuals = has_visuals
 	_sweep_accum += delta
 	if _sweep_accum >= STATUS_SWEEP_INTERVAL:
 		_sweep_accum = 0.0
