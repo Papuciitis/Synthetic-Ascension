@@ -239,3 +239,9 @@ gameplay validator; save migration matrix; hub friction walkthrough.
     Slot pinned to 97 (D-18); the contaminated files await the user.
 12. [x] CC0 sourcing candidates recorded in the asset manifest (D-13);
     downloads deferred to a supervised pass.
+13. [x] SaveMigrationMatrixTest 32/32 — opening v0/v1, layout v2,
+    pre-Doctrine retirement, pre-V5 ascension repair, clamps/healing,
+    newer-build best-effort; in memory only (D-18).
+14. [x] ProcSeedSweepTest 6/6 — 360 plans (40 seeds x seg 2..10): zero
+    fallbacks, reachability at authored minimums, milestones exact,
+    seed-deterministic.
