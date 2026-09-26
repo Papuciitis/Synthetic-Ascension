@@ -245,3 +245,35 @@ gameplay validator; save migration matrix; hub friction walkthrough.
 14. [x] ProcSeedSweepTest 6/6 — 360 plans (40 seeds x seg 2..10): zero
     fallbacks, reachability at authored minimums, milestones exact,
     seed-deterministic.
+
+**Playtest-review response (2026-09-26, fifth block — work order:
+docs/audits/2026-09-26-playtest-v5-integration-review.md):**
+15. [x] Hub block: gear panel close button + Esc/bag-key routing (one
+    lock, one release), embedded merchant reads "Return to Courtyard"
+    and a pending choice never traps the player in the shop, the hub
+    owns a dev console, ability HUD re-reads titles on poll, honest
+    alcove line (HubWorldTest 39/39).
+16. [x] V5 DEFAULT for new runs (user decision): version label on the
+    ascension header, V4 one switch away, saves never convert
+    (InvariantsTest 36/36; preset/parity/ledger suites green).
+17. [x] Exit encounter lifecycle §6.1: ExitEncounterController drives
+    the channeling group — dodges keep suppression, 8 s living
+    disengage, recovery holds, completion terminal (ExitEncounterTest
+    21/21). §6.2-6.4 remain separate audited items.
+18. [x] V5 combos: sustained Meltdown under Overclock feeds Thermal
+    Fury (entry volley, aura doubling, exit tax; mid-Meltdown purchase
+    converts), MR8 adapter on the emergency vent, foreign stage expires
+    on the clock, Q-less Hot Core keeps a passive readout
+    (AscensionBarrageV5Test 53/53).
+19. [x] PRC boss fallback proven through three REAL projectiles
+    (AscensionPrecisionV5Test 24/24).
+20. [x] VFX source defects (fixed pre-review-sync in commits 1a58704^..):
+    pressure ring at true radius, trailing redraw, burst scale, dart
+    rotation. Warning pass: no shadowing in the named files, explicit
+    floor-division intent in SiteParcelsImpl.
+
+**Still open from the review (needs rendered/design work):** tree view
+double-click purchase + overview declutter; hub visual furnishing pass;
+projectile identity atlas (needle/tracer at runtime), grenade arc/shadow
+visual, Spin aperture progression; §6.2-6.4 exit budgets/overtime/
+recovery anchors; the rendered acceptance passes themselves.
