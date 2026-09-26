@@ -271,6 +271,11 @@ func _sigil_refresh() -> void:
 func _process(delta: float) -> void:
 	# Share gate location with HUD every frame (the HUD arrow reads this).
 	_share_location_with_hud()
+	if _completed:
+		# Completion disables processing, but the rite guards its own
+		# idempotence too: no re-entry may ever emit `cleared` twice
+		# (integration pass 2026-09-26 abuse finding).
+		return
 	if not revealed:
 		return
 
