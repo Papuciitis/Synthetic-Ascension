@@ -96,11 +96,11 @@ void fragment() {
 	COLOR = texture(screen_texture, SCREEN_UV + offset);
 }
 """
-	var material := ShaderMaterial.new()
-	material.shader = shader
-	material.set_shader_parameter("frequency", WAVE_FREQUENCY)
-	material.set_shader_parameter("speed", WAVE_SPEED)
-	rect.material = material
+	var wave_material := ShaderMaterial.new()
+	wave_material.shader = shader
+	wave_material.set_shader_parameter("frequency", WAVE_FREQUENCY)
+	wave_material.set_shader_parameter("speed", WAVE_SPEED)
+	rect.material = wave_material
 	layer.add_child(rect)
 	return layer
 

@@ -137,6 +137,33 @@ func _run() -> void:
 	_check(int(_engine.counters["squads"]) == squads_before + 1, "the fallback respects the recovery period")
 	EnemyWorld.remove_enemy(boss, &"test")
 
+	# --- The same route through REAL projectiles (playtest review finding
+	# 11): three legal trajectories from the player's position, colliding
+	# through the actual simulation, each with its own projectile id but one
+	# cast root. No synthetic HitLedger anywhere in this section.
+	_engine._squad_recovery = 0.0
+	_engine._boss_roots.clear()
+	var durable := _spawn_enemy(4000.0, _player.global_position + Vector2(300, 0), true)
+	var squads_real := int(_engine.counters["squads"])
+	var profile := HitProfileAdapter.new()
+	profile.damage = 5.0 * D
+	profile.speed = 900.0
+	profile.max_range = 500.0
+	profile.collision_radius = 6.0
+	profile.set_meta("asc_tags", _bullet_tags("real:boss", 0))
+	for _shot in range(3):
+		ProjectileManager.spawn_player(_player.global_position + Vector2(40, 0), Vector2.RIGHT, profile, _player)
+		for _frame in range(30):
+			await get_tree().process_frame
+			if int(_engine.counters["squads"]) > squads_real:
+				break
+			var record_count := (_engine._boss_roots as Dictionary).size()
+			if record_count > 0 and _shot < 2:
+				break
+	_check(int(_engine.counters["squads"]) == squads_real + 1, "three REAL projectile hits on one elite fire the Firing Squad (%d)" % int(_engine.counters["squads"]))
+	EnemyWorld.remove_enemy(durable, &"test")
+	ProjectileManager.clear_for_run_end()
+
 	_finish()
 
 

@@ -519,7 +519,9 @@ func _spawn_building_footprint(
 	var horizontal: bool = door_dir.y != 0
 	var front_len: int = build_rect.size.x if horizontal else build_rect.size.y
 	var depth: int = build_rect.size.y if horizontal else build_rect.size.x
+	@warning_ignore("integer_division")
 	var notch_len: int = clampi(rng.randi_range(3, front_len / 2), 3, front_len - 5)
+	@warning_ignore("integer_division")
 	var notch_deep: int = clampi(rng.randi_range(2, depth / 2), 2, depth - 5)
 	var flush_left: bool = rng.randf() < 0.5
 
@@ -549,6 +551,7 @@ func _spawn_building_footprint(
 	# The door sits on the street edge of wing A; a recessed bay pulls it one
 	# cell inward by removing the bay cells from the footprint, so the
 	# perimeter wraps into the alcove by itself.
+	@warning_ignore("integer_division")
 	var center_along: int = wing_a.position.x + wing_a.size.x / 2 if horizontal else wing_a.position.y + wing_a.size.y / 2
 	var door_pos := Vector2i.ZERO
 	if door_dir == Vector2i(0, -1):
@@ -562,7 +565,8 @@ func _spawn_building_footprint(
 	var recess: bool = front_len >= 9 and rng.randf() < float(cfg.get("parcel_recess_chance", 0.5))
 	var across := Vector2i(1, 0) if horizontal else Vector2i(0, 1)
 	if recess:
-		for step in range(-(door_w / 2) - 1, door_w / 2 + 2):
+		@warning_ignore("integer_division")
+	for step in range(-(door_w / 2) - 1, door_w / 2 + 2):
 			footprint.erase(door_pos + across * step)
 		door_pos += door_dir * -1  # one cell inward; the alcove is outside now
 
@@ -575,6 +579,7 @@ func _spawn_building_footprint(
 				wall_cells[cell] = true
 				break
 	# The doorway: an opening of door_w in the (possibly recessed) front wall.
+	@warning_ignore("integer_division")
 	for step in range(-(door_w - 1) / 2, door_w / 2 + 1):
 		wall_cells.erase(door_pos + across * step)
 	# Windows on straight runs only, at the authored chance.

@@ -1293,12 +1293,12 @@ const VFX_DIR := "res://assets/textures/vfx/ranged/"
 static var _vfx_cache: Dictionary = {}
 
 
-static func vfx_texture(name: String) -> Texture2D:
-	if _vfx_cache.has(name):
-		return _vfx_cache[name]
-	var path := VFX_DIR + name + ".png"
+static func vfx_texture(texture_name: String) -> Texture2D:
+	if _vfx_cache.has(texture_name):
+		return _vfx_cache[texture_name]
+	var path := VFX_DIR + texture_name + ".png"
 	var texture: Texture2D = load(path) if ResourceLoader.exists(path) else null
-	_vfx_cache[name] = texture
+	_vfx_cache[texture_name] = texture
 	return texture
 
 
