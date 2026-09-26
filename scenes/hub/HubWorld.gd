@@ -388,7 +388,7 @@ func _draw() -> void:
 		if texture != null:
 			var blanket := Rect2(_beka_home + Vector2(-20, 6), Vector2(40, 12))
 			draw_rect(blanket, Color(0.42, 0.3, 0.24, 1.0))
-			var size: Vector2 = texture.get_size() * 1.6
+			var size: Vector2 = texture.get_size() * (24.0 / maxf(texture.get_size().y, 1.0))
 			draw_texture_rect(texture, Rect2(_beka_home - size * 0.5, size), false)
 			var rise := fmod(_clock, 2.2) / 2.2
 			draw_circle(_beka_home + Vector2(10.0, -8.0 - rise * 7.0), 1.4, Color(0.9, 0.9, 1.0, 0.6 * (1.0 - rise)))

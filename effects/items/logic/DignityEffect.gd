@@ -116,7 +116,9 @@ func _draw() -> void:
 	draw_set_transform_matrix(get_global_transform().affine_inverse())
 	var texture := load("res://assets/textures/items/rings/dignity.png") as Texture2D
 	if texture != null:
-		var size: Vector2 = texture.get_size() * 1.4
+		# Fixed world height: the dropped standard reads at the same size
+		# whatever resolution the icon art ships at.
+		var size: Vector2 = texture.get_size() * (44.0 / maxf(texture.get_size().y, 1.0))
 		draw_texture_rect(texture, Rect2(_drop_at - size * 0.5, size), false)
 	var wave := 0.5 + 0.5 * sin(Time.get_ticks_msec() / 300.0)
 	draw_arc(_drop_at, RECOVER_RADIUS * (0.8 + 0.2 * wave), 0.0, TAU, 32, Color(0.95, 0.88, 0.6, 0.35 + 0.25 * wave), 1.5, true)

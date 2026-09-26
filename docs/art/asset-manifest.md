@@ -147,3 +147,19 @@ file here. Search hubs (verified reachable, US search):
 - Existing in-repo baseline stays Kenney CC0; recolors/edits of CC0 are fine.
 Downloads deferred to a supervised pass: the user reviews fit at gameplay
 zoom before anything replaces an authored placeholder.
+
+### beka + dignity — user-supplied art (2026-09-26)
+- **Files:** `companions/beka_sit.png` (61x64), `companions/beka_sleep.png`
+  (50x48), `items/offhand/beka_icon.png` (32x32),
+  `items/rings/dignity.png` (32x32, the standard's banner with the paw
+  motif — it doubles as the in-world dropped standard).
+- **Provenance:** supplied by the user 2026-09-26 (their own generation,
+  per their offer); trimmed/downscaled in-repo from 1254px masters
+  (originals at repo root: beka_stand/beka_sleep/beka_face/banner_icon).
+- **Likeness:** matches the D-3 description (tuxedo, white nose/chest/
+  boots) — supersedes the "text-described likeness" placeholders.
+- **Draw sizes decoupled:** BekaCompanionEffect, the hub alcove cameo and
+  DignityEffect draw at fixed WORLD heights (34/24/44 px), so art
+  resolution can change freely from here.
+- **Still procedural:** Trauma's icon (generation failed on the user's
+  side); the curse-icon set; everything else in the earlier sections.

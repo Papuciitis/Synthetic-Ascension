@@ -268,7 +268,10 @@ func _draw() -> void:
 	var sleeping := is_regenerating()
 	var texture := _sleep_texture if sleeping else _sit_texture
 	if texture != null:
-		var size := texture.get_size() * 1.6
+		# Fixed WORLD height regardless of the art's resolution (the
+		# user-supplied sprites are 64 px masters; the cat stays cat-sized).
+		var target_height := 24.0 if sleeping else 34.0
+		var size := texture.get_size() * (target_height / maxf(texture.get_size().y, 1.0))
 		var at := _cat_pos - size * 0.5
 		if _cat_face_left:
 			draw_set_transform_matrix(get_global_transform().affine_inverse() * Transform2D(0.0, Vector2(-1.0, 1.0), 0.0, _cat_pos))
