@@ -149,8 +149,16 @@ var _burst_stage: int = 0
 
 var _sfx_channel_tag: StringName = &"channel"
 
+## The exit encounter's lifecycle (plan 2026-09-17 §6.1): pressure follows
+## THIS, not raw circle occupancy — a dodge across the channel edge no
+## longer hands the spawner its ambient paths back (playtest finding 4).
+var _encounter := ExitEncounterController.new()
+
 func _ready() -> void:
 	add_to_group(&"exit_rite")
+	_encounter.state_changed.connect(_on_encounter_state_changed)
+	if RunEvents != null and not RunEvents.player_life_event.is_connected(_on_player_life_event):
+		RunEvents.player_life_event.connect(_on_player_life_event)
 	if shape != null and shape.shape is CircleShape2D:
 		(shape.shape as CircleShape2D).radius = radius
 	if zone != null:
@@ -182,6 +190,10 @@ func _ready() -> void:
 	_emit_safeguard_state()
 
 func _exit_tree() -> void:
+	# Scene cleanup releases all encounter state exactly once (plan §6.1).
+	remove_from_group(&"exit_rite_channeling")
+	if RunEvents != null and RunEvents.player_life_event.is_connected(_on_player_life_event):
+		RunEvents.player_life_event.disconnect(_on_player_life_event)
 	# A rite freed mid-channel must not leave the screen warped.
 	_set_distortion(0.0)
 	if Global != null and Global.exit_gate_pos == global_position:
@@ -210,7 +222,8 @@ func set_locked(v: bool) -> void:
 	_reset_channel_extras()
 	if locked:
 		_player_inside = false
-		remove_from_group(&"exit_rite_channeling")
+		_encounter.set_channeling(false)
+		_encounter.update_state(false, INF, true, 0.0)
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
@@ -258,7 +271,8 @@ func _apply_reveal_state() -> void:
 		zone.set_deferred("monitoring", revealed)
 		zone.set_deferred("monitorable", revealed)
 	if not revealed:
-		remove_from_group(&"exit_rite_channeling")
+		_encounter.set_channeling(false)
+		_encounter.update_state(false, INF, true, 0.0)
 	_share_location_with_hud()
 	_emit_safeguard_state()
 
@@ -271,6 +285,7 @@ func _sigil_refresh() -> void:
 func _process(delta: float) -> void:
 	# Share gate location with HUD every frame (the HUD arrow reads this).
 	_share_location_with_hud()
+	_feed_encounter(delta)
 	if _completed:
 		# Completion disables processing, but the rite guards its own
 		# idempotence too: no re-entry may ever emit `cleared` twice
@@ -354,7 +369,7 @@ func _process(delta: float) -> void:
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
 			sm.call("play_2d", &"exit_complete", global_position)
-		remove_from_group(&"exit_rite_channeling")
+		_encounter.complete()
 		cleared.emit(self)
 		set_process(false)
 
@@ -705,6 +720,36 @@ func configure_doctrine_rules() -> void:
 	_emit_safeguard_state()
 	queue_redraw()
 
+## The controller sees eligibility, player distance and vitality every
+## gameplay frame; everything it decides comes back through state_changed.
+func _feed_encounter(delta: float) -> void:
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	if player == null:
+		_encounter.update_state(false, INF, true, delta)
+		return
+	var dead: Variant = player.get("is_dead")
+	var alive: bool = not (dead is bool and dead)
+	var eligible := (not locked) and revealed and not _completed
+	_encounter.update_state(eligible, global_position.distance_to(player.global_position), alive, delta)
+
+
+## ThreatDirector/EncounterDirector/spawner already derive suppression from
+## this group; its membership now means "the exit encounter is live", which
+## survives channel-edge exits and dodges until a real 8 s disengage.
+func _on_encounter_state_changed(_state: StringName) -> void:
+	if _encounter.is_active():
+		add_to_group(&"exit_rite_channeling")
+	else:
+		remove_from_group(&"exit_rite_channeling")
+
+
+func _on_player_life_event(_player: Node, kind: StringName) -> void:
+	# Dying at the gate holds the encounter through reconstruction rather
+	# than letting the disengage timer run while the player is rebuilt.
+	if kind == &"death" and _encounter.is_active():
+		_encounter.begin_recovery()
+
+
 func _on_body_entered(b: Node) -> void:
 	if b == null:
 		return
@@ -737,7 +782,7 @@ func _on_body_entered(b: Node) -> void:
 		return
 
 	_player_inside = true
-	add_to_group(&"exit_rite_channeling")
+	_encounter.set_channeling(true)
 	_emit_safeguard_state()
 	_report(&"channel_entered", {"safeguards": _safeguards})
 	# Say what the player has just committed to, once. Twenty seconds of
@@ -765,7 +810,9 @@ func _on_body_entered(b: Node) -> void:
 func _on_body_exited(b: Node) -> void:
 	if b != null and b.is_in_group("player"):
 		_player_inside = false
-		remove_from_group(&"exit_rite_channeling")
+		# The encounter stays live: a channel-edge exit is approach, not
+		# disengagement. Ambient spawning stays suppressed.
+		_encounter.set_channeling(false)
 		_emit_safeguard_state()
 		_report(&"channel_left", {})
 		var sm := get_node_or_null("/root/SfxManager")

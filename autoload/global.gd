@@ -1203,10 +1203,12 @@ func pending_doctrine_stage() -> StringName:
 
 ## The advancement-tree ledger for this attempt, created on first use from
 ## the selected style so the native Core is always the one the run chose.
-## The tree new attempts use: "v4" (default control) or "v5_ranged" (the
-## 2026-09-25 Ranged prototype). A saved run keeps the tree it started with;
-## nothing converts an existing ledger.
-var new_run_tree_version: String = "v4"
+## The tree new attempts use. V5 is the shipped default (user decision,
+## 2026-09-26 playtest review finding 1); "v4" remains the untouched control
+## for A/B runs via this switch. A saved run KEEPS the tree it started with —
+## nothing converts an existing ledger, and node ids mean different things
+## across versions, so conversion would corrupt receipts.
+var new_run_tree_version: String = "v5_ranged"
 
 
 func ascension_ledger() -> AscensionLedger:

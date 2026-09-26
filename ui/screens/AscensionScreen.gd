@@ -179,7 +179,12 @@ func _refresh_all() -> void:
 	for core in ledger.cores():
 		cores.append(String(core).to_upper())
 	var claims := int(ledger.state.get("evolution_claims", 0))
-	_header.text = "FOLLOWERS %d   ·   SPENT %d   ·   EVOLUTION CLAIMS %d\nNATIVE %s   ·   CORES %s\nQ %s   ·   REACTION %s (on %s)   ·   V %s%s" % [
+	# The run's tree version is visible, always (playtest review finding 1):
+	# V4 and V5 reuse node ids with different meanings, so the player must
+	# never have to infer which tree they are buying into.
+	var version_label := "TREE V5 (RANGED PROTOTYPE)" if ledger.is_v5() else "TREE V4"
+	_header.text = "%s\nFOLLOWERS %d   ·   SPENT %d   ·   EVOLUTION CLAIMS %d\nNATIVE %s   ·   CORES %s\nQ %s   ·   REACTION %s (on %s)   ·   V %s%s" % [
+		version_label,
 		Global.followers, int(ledger.state.get("spent", 0)), claims, ledger.native_core().to_upper(), " ".join(cores),
 		_name_of(ledger.equipped("q")), _name_of(ledger.equipped("reaction")), ledger.reaction_trigger(), _name_of(ledger.equipped("v")),
 		("  ·  V2 " + _name_of(ledger.equipped("v2"))) if not ledger.equipped("v2").is_empty() else ""]

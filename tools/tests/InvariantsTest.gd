@@ -76,6 +76,7 @@ func _run() -> void:
 	_test_v4_control_pinned()
 	_test_refund_roundtrip()
 	_test_followers_never_negative()
+	await _test_new_runs_reach_v5()
 	await _test_v5_meltdown_never_jams()
 	await _test_big_one_purity()
 	await _test_exit_rite_blockers()
@@ -309,6 +310,39 @@ func _test_witness_needs_a_gate() -> void:
 	for _i in range(8):
 		RunEvents.weapon_fired.emit(_player, &"ranged", _player.global_position, _player.global_position + Vector2(200, 0), 1.0, 1.0)
 	_check(_runner.witness_strikes > 0, "with a ledger-owned Gate the very same fire witnesses (%d)" % _runner.witness_strikes)
+	_player.queue_free()
+	await get_tree().process_frame
+	_player = null
+	_runner = null
+
+
+# --- Finding 1 (playtest review): the ordinary new-run path reaches V5.
+func _test_new_runs_reach_v5() -> void:
+	Global.selected_style_id = "ranged"
+	Global.start_new_attempt()
+	var ledger := Global.ascension_ledger()
+	_check(ledger.is_v5() and ledger.tree_version() == "v5_ranged", "a plain new run creates a V5 ledger (%s)" % ledger.tree_version())
+	ledger.record_purchase("BR01", 0)
+	_player = PLAYER_SCENE.instantiate()
+	add_child(_player)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_runner = _player.get_node("AscensionRunner") as AscensionRunner
+	_runner.refresh()
+	_check(_runner.engine_for("BR01") is BarrageEngineV5, "the ordinary run instantiates the V5 engines")
+	# The version survives an in-memory save round trip untouched.
+	var save := SaveData.new()
+	save.slot_index = 97
+	Global.write_save(save)
+	Global.apply_save(save)
+	_check(Global.ascension_ledger().tree_version() == "v5_ranged", "the run keeps its tree version through save/load")
+	# And the control stays selectable: the switch is honored, not hardwired.
+	var previous := Global.new_run_tree_version
+	Global.new_run_tree_version = "v4"
+	Global.attempt_ascension = {}
+	Global._ascension_ledger = null
+	_check(not Global.ascension_ledger().is_v5(), "the V4 control remains one switch away")
+	Global.new_run_tree_version = previous
 	_player.queue_free()
 	await get_tree().process_frame
 	_player = null
