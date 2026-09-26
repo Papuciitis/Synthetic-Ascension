@@ -277,3 +277,18 @@ double-click purchase + overview declutter; hub visual furnishing pass;
 projectile identity atlas (needle/tracer at runtime), grenade arc/shadow
 visual, Spin aperture progression; §6.2-6.4 exit budgets/overtime/
 recovery anchors; the rendered acceptance passes themselves.
+
+**Sixth block (2026-09-26, "go for it"):**
+21. [x] Tree UI: double-click purchase with exact-cost confirmation and
+    fresh eligibility recheck, Gate Core choice in the dialog, overview
+    label/edge declutter (hover/selection always; cores, equipped and
+    buyable-now at fit zoom), actions above the scrolling details
+    (AscensionScreenTest 29/29).
+22. [x] Projectile identity atlas: needle/tracer/shared silhouettes per
+    provenance tags via MultiMesh custom data + canvas shader; legacy
+    fallback when textures are missing (ProjectileIdentityTest 7/7).
+
+**Remaining from the review:** grenade arc/ground-shadow visual (visual
+only, never the collision path), Spin aperture progression presentation,
+hub furnishing pass, §6.2-6.4 exit budgets/overtime/recovery, rendered
+acceptance passes, Beka/icon art (user supplies per the spec list).
