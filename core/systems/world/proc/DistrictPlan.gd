@@ -94,8 +94,8 @@ static func _generate_once(segment: int, attempt_world_seed: int, chunk_size_px:
 	var theme_id: StringName = &"service_courtyards"
 	var envelope_cardinal_chance: float = 0.88
 	var envelope_diagonal_chance: float = 0.42
-	var want_miniboss_arena: bool = (segment == 5)
-	var want_boss_arena: bool = (segment == 10)
+	var want_miniboss_arena: bool = (segment == Global.MINIBOSS_SEGMENT)
+	var want_boss_arena: bool = (segment == Global.FINAL_SEGMENT)
 
 	if theme != null:
 		goal_dist_offset = theme.goal_dist_offset

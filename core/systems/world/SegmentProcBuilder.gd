@@ -406,9 +406,9 @@ func _spawn_segment_events() -> void:
 	# route, at the reward chunk farthest from the start, from segment 2 on.
 	_spawn_cursed_vault()
 
-	# Segment 10: boss arena (capstone). Boss spawns and gate stays locked until dead.
+	# The final segment: boss arena (capstone). Boss spawns and gate stays locked until dead.
 	var b_world: Vector2 = _plan.get("boss_world", Vector2.ZERO)
-	if _segment == 10 and b_world != Vector2.ZERO:
+	if _segment == Global.FINAL_SEGMENT and b_world != Vector2.ZERO:
 		var b := BOSS_ARENA_SCENE.instantiate()
 		if b != null:
 			(b as Node2D).global_position = _jitter_in_chunk(b_world, 2)

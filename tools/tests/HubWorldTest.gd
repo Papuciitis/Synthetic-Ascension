@@ -11,6 +11,7 @@ extends Node
 # Run: <godot> --headless --path . res://tools/tests/HubWorldTest.tscn
 
 const HUB_WORLD := preload("res://scenes/hub/HubWorld.tscn")
+const BEKA_DATA := preload("res://data/items/defs/accessories/beka.tres")
 
 var _passes := 0
 var _failures := 0
@@ -46,6 +47,33 @@ func _stock_snapshot() -> Array:
 		var inst := vendor_bag.get_at(slot)
 		if inst != null and inst.data != null:
 			out.append(String(inst.data.id) + ":" + str(inst.rarity))
+	return out
+
+
+## Item identity is unique (integration pass b-4): one ItemInstance object
+## lives in exactly one container, through trades and their undo alike.
+func _identity_violations(shop: Node) -> Array:
+	var containers := {
+		"equipped": Global.run_inventory.items if Global.run_inventory != null else [],
+		"bag": Global.run_bag.slots if Global.run_bag != null else [],
+		"vendor": Global.attempt_vendor_bag.slots if Global.attempt_vendor_bag != null else [],
+	}
+	if shop != null:
+		for extra in ["_offer_bag", "_demand_bag"]:
+			var preview: BagInventory = shop.get(extra)
+			if preview != null:
+				containers[extra] = preview.slots
+	var seen := {}
+	var out: Array = []
+	for where in containers:
+		for inst in (containers[where] as Array):
+			if inst == null:
+				continue
+			var id: int = (inst as Object).get_instance_id()
+			if seen.has(id):
+				out.append("%s duplicates %s" % [where, seen[id]])
+			else:
+				seen[id] = where
 	return out
 
 
@@ -97,6 +125,46 @@ func _run() -> void:
 	var stock_again: Array = _stock_snapshot()
 	_check(stock_again == stock_ids, "reopening the merchant is never a free reroll")
 	(_hub._open_panel as Node).emit_signal("embedded_closed")
+	await get_tree().process_frame
+
+
+	# --- Item identity through a real trade and its undo (invariants b-4):
+	# an ItemInstance object never sits in two containers at once, followers
+	# come back exactly, and buyback keeps the sold item's identity.
+	_hub._open_merchant()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var trade_shop := _hub._open_panel
+	_check(trade_shop != null, "the identity pass trades in a live merchant panel")
+	var owned := ItemInstance.from_data(BEKA_DATA)
+	owned.manifestation_id = &""
+	Global.run_bag.add_instance(owned)
+	var owned_slot: int = Global.run_bag.slots.find(owned)
+	var vendor_bag: BagInventory = Global.attempt_vendor_bag
+	var buy_slot := -1
+	for slot in range(vendor_bag.get_slot_count()):
+		if vendor_bag.get_at(slot) != null:
+			buy_slot = slot
+			break
+	var bought: ItemInstance = vendor_bag.get_at(buy_slot)
+	Global.set_followers(1000000)
+	var followers_before: int = Global.followers
+	_check(_identity_violations(trade_shop).is_empty(), "before the trade every item lives in exactly one container")
+	trade_shop._sell_bag[owned_slot] = true
+	trade_shop._buy_vendor[buy_slot] = true
+	trade_shop.call("_refresh_cart")
+	trade_shop.call("_perform_trade")
+	var violations: Array = _identity_violations(trade_shop)
+	_check(violations.is_empty(), "the trade moved items without duplicating any (%s)" % str(violations))
+	_check(Global.run_bag.slots.has(bought) and not vendor_bag.slots.has(bought), "the bought instance moved vendor -> bag by identity")
+	_check(vendor_bag.slots.has(owned) and not Global.run_bag.slots.has(owned), "the sold instance sits on the buyback shelf by identity")
+	_check(Global.followers != followers_before, "the trade settled a real follower net")
+	trade_shop.call("_undo_last_trade")
+	violations = _identity_violations(trade_shop)
+	_check(violations.is_empty(), "undo restores snapshots without duplicating any item (%s)" % str(violations))
+	_check(Global.followers == followers_before, "undo returns the exact follower balance (%d)" % Global.followers)
+	_check(not Global.run_bag.slots.has(owned) or not vendor_bag.slots.has(owned), "the sold original exists at most once after undo")
+	(trade_shop as Node).emit_signal("embedded_closed")
 	await get_tree().process_frame
 
 	# The gear corner opens the run's own bag panel, not the vendor.

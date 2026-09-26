@@ -35,6 +35,12 @@ const PATH_HUB_WORLD := "res://scenes/hub/HubWorld.tscn"
 # v3: story-pass layout - admissions wing added, full-opening start moved to
 # the street entrance. Stale checkpoints and spatial milestones reset.
 const SEGMENT1_LAYOUT_VERSION: int = 3
+# The authored run shape (integration pass 2026-09-26): segment milestones
+# were bare `== 5` / `== 10` literals in the proc-gen; the run itself never
+# hard-stops (reward cadence extends past 9 on purpose), so these two are the
+# ONLY authored milestones and every reader must use them by name.
+const MINIBOSS_SEGMENT: int = 5
+const FINAL_SEGMENT: int = 10
 # v2: ADMISSION phase inserted after HISTORICAL; saved phase ints >= 2 shift.
 const OPENING_SEQUENCE_VERSION: int = 2
 
