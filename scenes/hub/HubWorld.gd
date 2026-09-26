@@ -122,12 +122,11 @@ func _build_courtyard() -> void:
 	_spawn_walls(cells)
 
 	# The central landmark: a statue ring beside the walk, not on it.
-	var statue := Sprite2D.new()
-	statue.texture = load("res://assets/world/props/prop_statue_01.png")
-	statue.scale = Vector2(0.0625, 0.0625)
-	statue.position = _cell(mid + 4, HEIGHT / 2.0 - 1)
-	statue.z_index = -10
-	add_child(statue)
+	_prop("hub_statue", _cell(mid + 4, HEIGHT / 2.0 - 1), 130.0)
+	# Courtyard furnishing (playtest finding: three flat polygons do not
+	# establish places). Lamps mark the walk loop's corners.
+	for lamp_at in [Vector2(4.0, 4.0), Vector2(WIDTH - 4.0, 4.0), Vector2(4.0, HEIGHT - 6.5), Vector2(WIDTH - 7.5, HEIGHT - 4.0)]:
+		_prop("hub_lamp", _cell(lamp_at.x, lamp_at.y), 84.0)
 	# Bay floors.
 	for bay in [[_cell(WIDTH - 1, 6), _cell(WIDTH + 2, 12)], [_cell(-3, 6), _cell(0, 12)]]:
 		var floor_poly := Polygon2D.new()
@@ -199,14 +198,31 @@ func _build_stations() -> void:
 	alcove.activated.connect(_rest_a_moment)
 	_exit_station = _make_station(_cell(WIDTH / 2.0, 0.9), "Next Segment", Color(0.95, 0.55, 0.4))
 	_exit_station.activated.connect(_try_depart)
-	# Gear corner props.
-	for i in range(2):
-		var crate := Sprite2D.new()
-		crate.texture = load("res://assets/world/props/prop_crate_01.png")
-		crate.scale = Vector2(0.0625, 0.0625)
-		crate.position = _cell(WIDTH - 3.0 + float(i) * 0.9, HEIGHT - 3.2)
-		crate.z_index = -10
-		add_child(crate)
+	# Each service reads as a PLACE (user props, batch 4): the stall in the
+	# merchant bay, the carved obelisk in the ascension bay, the rack and
+	# crates at the gear corner, the sealed arch over the departure gate,
+	# and Beka's cushion in the quiet alcove.
+	_prop("hub_merchant_stall", _cell(WIDTH + 0.6, 7.6), 96.0)
+	_prop("hub_ascension_obelisk", _cell(-1.6, 7.4), 104.0)
+	_prop("hub_gear_rack", _cell(WIDTH - 4.0, HEIGHT - 5.2), 72.0)
+	_prop("hub_crates", _cell(WIDTH - 2.8, HEIGHT - 3.4), 56.0)
+	_prop("hub_gate_arch", _cell(WIDTH / 2.0, 0.4), 96.0, -20)
+	_prop("hub_alcove_bed", _beka_home + Vector2(0, 6), 30.0)
+
+
+## One prop sprite at a fixed WORLD height, whatever the art's resolution.
+func _prop(texture_name: String, at: Vector2, world_height: float, z: int = -10) -> void:
+	var path := "res://assets/textures/hub/%s.png" % texture_name
+	if not ResourceLoader.exists(path):
+		return
+	var sprite := Sprite2D.new()
+	sprite.texture = load(path)
+	var height := maxf(1.0, float(sprite.texture.get_height()))
+	sprite.scale = Vector2.ONE * (world_height / height)
+	# Feet on the ground: the position is the BASE of the prop.
+	sprite.position = at - Vector2(0, world_height * 0.5)
+	sprite.z_index = z
+	add_child(sprite)
 
 
 func _stations_enabled(enabled: bool) -> void:
@@ -386,8 +402,6 @@ func _draw() -> void:
 	if _beka_visiting():
 		var texture := load("res://assets/textures/companions/beka_sleep.png") as Texture2D
 		if texture != null:
-			var blanket := Rect2(_beka_home + Vector2(-20, 6), Vector2(40, 12))
-			draw_rect(blanket, Color(0.42, 0.3, 0.24, 1.0))
 			var size: Vector2 = texture.get_size() * (24.0 / maxf(texture.get_size().y, 1.0))
 			draw_texture_rect(texture, Rect2(_beka_home - size * 0.5, size), false)
 			var rise := fmod(_clock, 2.2) / 2.2

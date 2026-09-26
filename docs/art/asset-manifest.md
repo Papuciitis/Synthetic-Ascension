@@ -178,3 +178,17 @@ zoom before anything replaces an authored placeholder.
   LANCZOS downscale, alpha verified; originals at repo root under
   "ChatGPT Image Sep 26 ..."). Batches 3 (set icons) and 4 (hub props)
   pending on the user's side.
+
+### batches 3-4 — user-supplied set icons + hub props (2026-09-26)
+- **Batch 3 (18 set icons):** Conduit (copper/teal machines), Gravemarch
+  (funeral iron + bone + ember), Lattice (pale crystal in gold). One
+  family language per set; installed over the .tres icon paths.
+- **Batch 4 (8 hub props):** statue, merchant stall, gear rack, ascension
+  obelisk, gate arch, crates, Beka's alcove cushion, lamp posts —
+  masters in assets/textures/hub/, placed by HubWorld._prop() at fixed
+  world heights (statue 130, stall 96, obelisk 104, rack 72, crates 56,
+  arch 96 over the departure gate, cushion 30 under the cameo, lamps 84
+  at the walk-loop corners). This answers the playtest review's "no
+  visual furnishing" finding at the placement level; composition tuning
+  is a rendered-pass concern.
+- **Provenance:** user-generated 2026-09-26; originals at repo root.
