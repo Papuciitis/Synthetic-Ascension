@@ -82,7 +82,9 @@ func on_hit(hit: Dictionary) -> void:
 	var key := "%s|%d" % [cast, int(hit["handle"])]
 	var record: Dictionary = _boss_roots.get(key, {"damage": 0.0, "hits": 0})
 	record["damage"] = float(record["damage"]) + float(hit["applied"])
-	record["hits"] = int(record["hits"]) + 1
+	# Same-frame projectile hits coalesce into one batched ledger event; the
+	# rule counts ACTUAL hits, so read the batch's count, never the event.
+	record["hits"] = int(record["hits"]) + maxi(1, int(hit.get("hit_count", 1)))
 	_boss_roots[key] = record
 	if int(record["hits"]) >= SQUAD_BOSS_HITS and float(record["damage"]) >= SQUAD_BOSS_DAMAGE_D * D():
 		_boss_roots.erase(key)
@@ -98,6 +100,18 @@ func on_kill(hit: Dictionary, context: RefCounted) -> void:
 	for key in _boss_roots.keys():
 		if String(key).ends_with("|%d" % handle):
 			_boss_roots.erase(key)
+
+
+## Precision's marks read as MARKS (user art, batch 1): the judgment sigil
+## hovers over exposed Weak Points and stands where the Firing Squad forms,
+## on top of the V4 base's lines and circles.
+func collect_draw_points(out: Array) -> void:
+	super.collect_draw_points(out)
+	for handle in _exposed_until.keys():
+		if runner.enemy_alive(int(handle)):
+			runner.note_texture_point(runner.enemy_position(int(handle)) + Vector2(0.0, -18.0), 10.0, Color(1.0, 0.98, 0.9, 0.9), "judgment_mark")
+	for gun in _guns:
+		runner.note_texture_point(gun["at"], 9.0, Color(1.0, 0.95, 0.85, 0.95), "judgment_mark")
 
 
 func describe() -> Dictionary:

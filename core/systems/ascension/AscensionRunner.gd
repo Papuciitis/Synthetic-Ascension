@@ -660,6 +660,7 @@ func _make_hit(handle: int, applied: float, unclamped: float, before: float, pay
 		"pp": parsed["pp"],
 		"flags": parsed["flags"],
 		"projectile_id": ledger_payload.projectile_id if ledger_payload != null else 0,
+		"hit_count": maxi(1, ledger_payload.hit_count) if ledger_payload != null else 1,
 		"direction": ledger_payload.direction if ledger_payload != null else Vector2.ZERO,
 		"crossed": ledger_payload.projectile_crossed if ledger_payload != null else 0,
 	}

@@ -143,7 +143,10 @@ func _run() -> void:
 	# cast root. No synthetic HitLedger anywhere in this section.
 	_engine._squad_recovery = 0.0
 	_engine._boss_roots.clear()
-	var durable := _spawn_enemy(4000.0, _player.global_position + Vector2(300, 0), true)
+	# A STATIONARY elite: the shared helper's walk speed let the target
+	# sidestep a later shot on unlucky frame timing (flake), and this route
+	# is about the hit rule, not marksmanship.
+	var durable := EnemyWorld.create_enemy(SpawnState.new(&"asc_pr_v5", "res://asc_pr_v5.tscn", _player.global_position + Vector2(300, 0), 4000.0, 0.0, 8.0, 0, EnemyWorldTypes.Flags.ELITE))
 	var squads_real := int(_engine.counters["squads"])
 	var profile := HitProfileAdapter.new()
 	profile.damage = 5.0 * D
@@ -151,16 +154,26 @@ func _run() -> void:
 	profile.max_range = 500.0
 	profile.collision_radius = 6.0
 	profile.set_meta("asc_tags", _bullet_tags("real:boss", 0))
+	# Projectiles advance on the PHYSICS clock (ProjectileHandleCombatTest
+	# pins that), so the waits are physics frames gated on the hit actually
+	# landing — render-frame pacing in headless runs outruns flight time.
+	var shot_log: Array = []
 	for _shot in range(3):
-		ProjectileManager.spawn_player(_player.global_position + Vector2(40, 0), Vector2.RIGHT, profile, _player)
-		for _frame in range(30):
-			await get_tree().process_frame
+		var aim := (EnemyWorld.get_position(durable) - (_player.global_position + Vector2(40, 0))).normalized()
+		var hp_before_shot := EnemyWorld.get_health(durable)
+		var spawned := ProjectileManager.spawn_player(_player.global_position + Vector2(40, 0), aim, profile, _player)
+		for _frame in range(120):
+			await get_tree().physics_frame
 			if int(_engine.counters["squads"]) > squads_real:
 				break
-			var record_count := (_engine._boss_roots as Dictionary).size()
-			if record_count > 0 and _shot < 2:
+			if EnemyWorld.get_health(durable) < hp_before_shot:
 				break
-	_check(int(_engine.counters["squads"]) == squads_real + 1, "three REAL projectile hits on one elite fire the Firing Squad (%d)" % int(_engine.counters["squads"]))
+		shot_log.append([_shot, spawned, ProjectileManager.active_count(), EnemyWorld.get_health(durable)])
+	for _frame in range(60):
+		await get_tree().physics_frame
+		if int(_engine.counters["squads"]) > squads_real:
+			break
+	_check(int(_engine.counters["squads"]) == squads_real + 1, "three REAL projectile hits on one elite fire the Firing Squad (%d, hp %.0f, roots %s, shots %s, active %d)" % [int(_engine.counters["squads"]), EnemyWorld.get_health(durable) if EnemyWorld.is_valid_handle(durable) else -1.0, str(_engine._boss_roots), str(shot_log), ProjectileManager.active_count()])
 	EnemyWorld.remove_enemy(durable, &"test")
 	ProjectileManager.clear_for_run_end()
 

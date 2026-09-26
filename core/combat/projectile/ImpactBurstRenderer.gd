@@ -48,7 +48,10 @@ func _ready() -> void:
 	_instance = MultiMeshInstance2D.new()
 	_instance.name = "BurstBatch"
 	_instance.multimesh = _multimesh
-	_instance.texture = _bake_burst_texture()
+	# User-supplied burst art when present; the procedural bake stays the
+	# fallback so a missing file can never cost the impact feedback.
+	var art_path := "res://assets/textures/vfx/ranged/impact_burst.png"
+	_instance.texture = load(art_path) if ResourceLoader.exists(art_path) else _bake_burst_texture()
 	var burst_material := CanvasItemMaterial.new()
 	burst_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	_instance.material = burst_material
