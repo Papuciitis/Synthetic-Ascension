@@ -60,8 +60,7 @@ func _on_manifestation_ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4076
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	set_process(true)
 
 
@@ -160,8 +159,10 @@ func _draw() -> void:
 
 	if _flash > 0.0:
 		var f := _flash / 0.30
-		draw_arc(Vector2.ZERO, ORBIT_RADIUS * (1.0 + 0.9 * (1.0 - f)), 0.0, TAU, 32,
-			Color(shard.r, shard.g, shard.b, 0.45 * f), 2.4, true)
+		# Pixel-art kit (Batch C, 2026-09-27): a ring sprite replaces the
+		# expanding launch-flash arc.
+		VfxKit.draw_ring(self, Vector2.ZERO, ORBIT_RADIUS * (1.0 + 0.9 * (1.0 - f)),
+			Color(shard.r, shard.g, shard.b, 0.45 * f), 2.4)
 
 	if not is_armed():
 		return
@@ -170,18 +171,17 @@ func _draw() -> void:
 	# the loose direction marked. It says "this is pointed now", which is the one
 	# thing the player has to know before pressing fire.
 	var pulse := 0.80 + 0.20 * sin(_t * 10.0)
-	draw_arc(Vector2.ZERO, ORBIT_RADIUS * 1.20, 0.0, TAU, 36,
-		Color(cadence.r, cadence.g, cadence.b, 0.30 * pulse), 1.6, true)
+	# Pixel-art kit (Batch C, 2026-09-27): a ring sprite replaces the cadence
+	# ring that announces the armed beat.
+	VfxKit.draw_ring(self, Vector2.ZERO, ORBIT_RADIUS * 1.20,
+		Color(cadence.r, cadence.g, cadence.b, 0.30 * pulse), 1.6)
 	var facing := aim_direction()
 	if facing.length_squared() < 0.0001:
 		return
-	var side := Vector2(-facing.y, facing.x)
-	for sign_index in range(2):
-		var edge: float = 1.0 if sign_index == 0 else -1.0
-		draw_line(
-			side * edge * ORBIT_RADIUS * 1.20,
-			facing * ORBIT_RADIUS * (1.30 + 0.16 * pulse),
-			Color(shard.r, shard.g, shard.b, 0.42 * pulse),
-			1.8,
-			true
-		)
+	# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite replaces the two
+	# lines that ran from the ring's flanks to the apex on the aim line. The
+	# sprite is as long as the old apex reach and centred at half that reach,
+	# so the apex still lands at ORBIT_RADIUS * (1.30 + 0.16 * pulse).
+	var reach: float = ORBIT_RADIUS * (1.30 + 0.16 * pulse)
+	VfxKit.draw_chevron(self, facing * reach * 0.5, facing.angle(), reach,
+		Color(shard.r, shard.g, shard.b, 0.42 * pulse), 1.8)

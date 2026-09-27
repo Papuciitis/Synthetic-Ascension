@@ -16,8 +16,7 @@ func setup(pos: Vector2, radius: float) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -40,33 +39,17 @@ func _draw() -> void:
 	var r: float = lerpf(r0, _radius * 1.25, _ease_out(p))
 	var w: float = lerpf(line_width, line_width * 0.35, p)
 
-	# Core flash
+	# Pixel-art kit (Batch B, 2026-09-27): a soft disc sprite replaces the flash circle, one dashed-ring sprite (spun as the dashes were) replaces the twelve dash arcs, one ring sprite replaces the inner arc, and one spokes sprite (its own centre dot) replaces the nine spoke lines and the centre kick circle.
 	var flash := clampf(1.0 - (p / 0.32), 0.0, 1.0)
 	if flash > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.52, Color(0.55, 0.88, 1.0, 0.22 * flash * k))
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.52, Color(0.55, 0.88, 1.0, 0.22 * flash * k))
 
-	# Dashed outer ring
 	var base_col := Color(0.92, 0.98, 1.0, 0.85 * k)
-	var dash_len: float = TAU / float(max(dash_count, 1))
-	for i in range(dash_count):
-		var a0: float = i * dash_len + p * 0.35
-		var a1: float = a0 + dash_len * (1.0 - dash_gap)
-		draw_arc(Vector2.ZERO, r, a0, a1, 24, base_col, w, true)
+	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, base_col, p * 0.35, w)
 
-	# Inner ring
 	var r2 := r * 0.72
-	draw_arc(Vector2.ZERO, r2, 0.0, TAU, 96, Color(0.55, 0.85, 1.0, 0.22 * k), maxf(2.0, w * 0.25), true)
+	VfxKit.draw_ring(self, Vector2.ZERO, r2, Color(0.55, 0.85, 1.0, 0.22 * k), maxf(2.0, w * 0.25))
 
-	# Spokes burst
-	var spoke_n := 9
 	var spoke_len := r * 0.44
 	var spoke_col := Color(0.75, 0.93, 1.0, 0.55 * k)
-	for j in range(spoke_n):
-		var a := (TAU / float(spoke_n)) * float(j) + p * 0.65
-		var d := Vector2(cos(a), sin(a))
-		var s0 := d * (r * 0.15)
-		var s1 := d * (r * 0.15 + spoke_len)
-		draw_line(s0, s1, spoke_col, maxf(1.5, w * 0.18), true)
-
-	# Tiny center kick
-	draw_circle(Vector2.ZERO, maxf(3.0, w * 0.20), Color(0.95, 0.99, 1.0, 0.55 * k))
+	VfxKit.draw_spokes(self, Vector2.ZERO, r * 0.15 + spoke_len, spoke_col, p * 0.65)

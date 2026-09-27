@@ -25,8 +25,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4095
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	_build_droplets()
 	set_process(true)
@@ -61,18 +60,10 @@ func _draw() -> void:
 	var fade: float = 1.0 - u
 	fade = fade * fade
 
-	# mist fill (soft)
-	draw_circle(Vector2.ZERO, r * 0.92, Color(_core.r, _core.g, _core.b, mist_alpha * fade))
+	# Pixel-art kit (Batch B, 2026-09-27): a soft disc sprite replaces the mist circle, one ring sprite replaces the glow+core arc pair, and the centre flash circle is dropped.
+	VfxKit.draw_disc(self, Vector2.ZERO, r * 0.92, Color(_core.r, _core.g, _core.b, mist_alpha * fade))
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(_core.r, _core.g, _core.b, 0.75 * fade), ring_width)
 
-	# ring glow + core
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 72, Color(_glow.r, _glow.g, _glow.b, _glow.a * fade), glow_width, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 72, Color(_core.r, _core.g, _core.b, 0.75 * fade), ring_width, true)
-
-	# droplets / shards (short outward streaks)
-	for d in _drops:
-		var p: Vector2 = d * r
-		var q: Vector2 = d * (r + droplet_len)
-		draw_line(p, q, Color(_core.r, _core.g, _core.b, 0.55 * fade), 2.0, true)
-
-	# small center flash
-	draw_circle(Vector2.ZERO, 6.0, Color(1, 1, 1, 0.12 * fade))
+	# Pixel-art kit (Batch C, 2026-09-27): one splash sprite at the ring radius replaces the ten droplet streaks; the first seeded droplet direction gives each burst its own spin.
+	var spin: float = _drops[0].angle() if _drops.size() > 0 else 0.0
+	VfxKit.draw_splash(self, Vector2.ZERO, r, Color(_core.r, _core.g, _core.b, 0.55 * fade), spin)

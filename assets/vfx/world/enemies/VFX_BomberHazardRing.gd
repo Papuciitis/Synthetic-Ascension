@@ -34,8 +34,7 @@ func _ready() -> void:
 	position = Vector2.ZERO
 	z_index = -1
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -74,20 +73,6 @@ func _draw() -> void:
 	var pulse: float = 0.85 + 0.15 * sin(_t * lerpf(2.0, 7.0, hot) * TAU)
 	var r: float = _r * pulse
 
-	# dashed ring; each dash spans ~20 degrees, so a handful of segments per
-	# dash is visually identical at a fraction of the tessellation cost.
-	var segs: int = 8
-	var dash_len: float = TAU / float(max(dash_count, 1))
+	# Pixel-art kit (Batch B, 2026-09-27): one dashed-ring sprite in the core colour, spun by the phase, replaces the dash_count glow+core arc pairs.
 	var phase: float = _t * lerpf(0.35, 1.35, hot)
-
-	for i in range(dash_count):
-		var a0 := i * dash_len + phase
-		var a1 := a0 + dash_len * (1.0 - dash_gap)
-
-		draw_arc(Vector2.ZERO, r, a0, a1, segs,
-			Color(color_glow.r, color_glow.g, color_glow.b, fade * 0.65),
-			glow_width, true)
-
-		draw_arc(Vector2.ZERO, r, a0, a1, segs,
-			Color(color_core.r, color_core.g, color_core.b, fade),
-			line_width, true)
+	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, fade), phase, line_width)

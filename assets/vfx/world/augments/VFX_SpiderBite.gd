@@ -24,8 +24,7 @@ func setup(world_pos: Vector2, dir: Vector2 = Vector2.RIGHT) -> void:
 func _ready() -> void:
 	top_level = true
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	set_process(true)
 
 func _process(dt: float) -> void:
@@ -44,32 +43,11 @@ func _draw() -> void:
 
 	var s: float = scale_mul
 
-	# glow puff
-	draw_circle(Vector2.ZERO, 10.0 * s, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade))
+	# Pixel-art kit (Batch C, 2026-09-27): a soft disc sprite replaces the glow puff circle.
+	VfxKit.draw_disc(self, Vector2.ZERO, 10.0 * s, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade))
 
-	# two fangs
-	var fang_len: float = 7.0 * s
-	var fang_ang: float = deg_to_rad(25.0)
-	var start: Vector2 = Vector2(1.6 * s, 0.0)
+	# Pixel-art kit (Batch C, 2026-09-27): one fangs sprite along +X (the node's rotation carries the bite direction, _rnd the wobble) replaces the two fang lines, their white under-strokes and the dark puncture dots.
+	VfxKit.draw_fangs(self, Vector2.ZERO, _rnd, 16.0 * s, Color(color_poison.r, color_poison.g, color_poison.b, color_poison.a * fade), 2.4 * s)
 
-	var a: float = -fang_ang + _rnd
-	var b: float = +fang_ang + _rnd
-	var p1: Vector2 = start + Vector2(cos(a), sin(a)) * fang_len
-	var p2: Vector2 = start + Vector2(cos(b), sin(b)) * fang_len
-
-	# punctures
-	draw_circle(p1, 1.6 * s, Color(color_dark.r, color_dark.g, color_dark.b, 0.9 * fade))
-	draw_circle(p2, 1.6 * s, Color(color_dark.r, color_dark.g, color_dark.b, 0.9 * fade))
-
-	# fang slashes (compact, no tail)
-	draw_line(start, p1, Color(color_poison.r, color_poison.g, color_poison.b, color_poison.a * fade), 2.4 * s, true)
-	draw_line(start, p2, Color(color_poison.r, color_poison.g, color_poison.b, color_poison.a * fade), 2.4 * s, true)
-	draw_line(start, p1, Color(1, 1, 1, 0.10 * fade), 5.0 * s, true)
-	draw_line(start, p2, Color(1, 1, 1, 0.10 * fade), 5.0 * s, true)
-
-	# little scratch “legs” makes it read insect-y
-	for i in range(6):
-		var ang: float = deg_to_rad(-70.0 + float(i) * 28.0) + _rnd * 0.5
-		var pA: Vector2 = Vector2(cos(ang), sin(ang)) * (4.0 * s)
-		var pB: Vector2 = Vector2(cos(ang), sin(ang)) * (10.0 * s)
-		draw_line(pA, pB, Color(color_poison.r, color_poison.g, color_poison.b, 0.35 * fade), 1.3 * s, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one splash sprite, spun by the same wobble, replaces the six scratch "legs".
+	VfxKit.draw_splash(self, Vector2.ZERO, 10.0 * s, Color(color_poison.r, color_poison.g, color_poison.b, 0.35 * fade), _rnd * 0.5, 1.3 * s)

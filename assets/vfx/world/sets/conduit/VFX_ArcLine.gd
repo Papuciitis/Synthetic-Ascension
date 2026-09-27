@@ -8,6 +8,16 @@ class_name VFX_ArcLine
 func setup(from: Vector2, to: Vector2) -> void:
 	clear_points()
 
+	# Pixel-art kit (Batch B, 2026-09-27): the bolt sprite stretched along the line supplies the zig-zag, so only the two end points are added; the jittered polyline below stays as the fallback without the art.
+	var bolt := VfxKit.texture("bolt")
+	if bolt != null:
+		texture = bolt
+		texture_mode = Line2D.LINE_TEXTURE_STRETCH
+		width = 10.0
+		add_point(from)
+		add_point(to)
+		return
+
 	var dir := to - from
 	var dist: float = dir.length()
 	if dist < 0.001:
@@ -29,7 +39,8 @@ var _tween: Tween = null
 
 func _ready() -> void:
 	z_index = 100
-	width = 4.0
+	if texture == null:  # the sprite path in setup() owns the width
+		width = 4.0
 	_start_fade()
 
 ## Pooled reuse (PooledVfx): opaque again, a new fade.

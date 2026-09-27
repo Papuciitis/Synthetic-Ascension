@@ -41,8 +41,7 @@ func _ready() -> void:
 	shape_node.disabled = false
 
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	# hide old Line2D if it exists
 	var old_line := get_node_or_null("Line2D") as Line2D
@@ -130,34 +129,21 @@ func _draw() -> void:
 
 	var w := lerpf(line_width, line_width * 0.35, p)
 
+	# Pixel-art kit (Batch B, 2026-09-27): the disc sprite replaces the orange
+	# fill circle, one dashed-ring sprite in the core colour (the dash phase as
+	# its spin) replaces the ten glow+core dash arcs, a ring sprite replaces the
+	# trailing faint arc, and the centre dot is dropped.
 	# soft fill early
 	var fill_k := clampf(1.0 - (p / 0.55), 0.0, 1.0)
 	if fill_k > 0.0 and fill_alpha > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.96, Color(color_fill.r, color_fill.g, color_fill.b, fill_alpha * fill_k * fade * flick))
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.96, Color(color_fill.r, color_fill.g, color_fill.b, fill_alpha * fill_k * fade * flick))
 
 	# dashed bright ring
-	var dash_len := TAU / float(max(dash_count, 1))
 	var phase := sin(_t * wobble_speed * 0.35 + _seed) * 0.18
-
-	for i in range(dash_count):
-		var a0 := i * dash_len + phase
-		var a1 := a0 + dash_len * (1.0 - dash_gap)
-
-		draw_arc(Vector2.ZERO, r, a0, a1, 24,
-			Color(color_glow.r, color_glow.g, color_glow.b, (line_alpha * 0.55) * fade * flick),
-			w * 1.25, true)
-
-		draw_arc(Vector2.ZERO, r, a0, a1, 24,
-			Color(color_core.r, color_core.g, color_core.b, line_alpha * fade),
-			w, true)
+	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, line_alpha * fade), phase, w)
 
 	# trailing faint ring
-	draw_arc(Vector2.ZERO, r * 0.86, 0.0, TAU, 56,
-		Color(color_glow.r, color_glow.g, color_glow.b, 0.18 * fade),
-		maxf(2.0, w * 0.40), true)
-
-	# center pop
-	draw_circle(Vector2.ZERO, maxf(2.0, w * 0.35), Color(color_core.r, color_core.g, color_core.b, 0.35 * fade))
+	VfxKit.draw_ring(self, Vector2.ZERO, r * 0.86, Color(color_glow.r, color_glow.g, color_glow.b, 0.18 * fade), maxf(2.0, w * 0.40))
 
 
 ## Burn on the authoritative handle path.

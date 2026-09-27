@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://core/systems/vfx/VfxBurst.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/vfx/particles/kenney/circle_05.png" id="2_tex"]
+[ext_resource type="Texture2D" path="res://assets/textures/vfx/motes/mote_ember.png" id="2_tex"]
 
 [sub_resource type="Gradient" id="Gradient_fade"]
 offsets = PackedFloat32Array(0, 0.35, 1)
@@ -32,8 +32,8 @@ angular_velocity_min = -0.0
 angular_velocity_max = 0.0
 damping_min = 180.0
 damping_max = 180.0
-scale_amount_min = 0.035
-scale_amount_max = 0.07
+scale_amount_min = 0.28
+scale_amount_max = 0.56
 scale_amount_curve = SubResource("Curve_shrink")
 color_ramp = SubResource("Gradient_fade")
 script = ExtResource("1_script")

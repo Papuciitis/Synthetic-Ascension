@@ -29,8 +29,7 @@ func _ready() -> void:
 	# floor, and it should not paint over the things standing on it.
 	z_index = 3980
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	# One seed per tear, so two waves in the same second do not land as the
 	# same stamp rotated zero degrees.
@@ -57,20 +56,19 @@ func _draw() -> void:
 	var a: float = (0.35 + 0.65 * intensity) * fade
 	var weight: float = 0.55 + 0.45 * intensity
 
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 56, Color(tint.r, tint.g, tint.b, 0.42 * a), 11.0 * weight, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 56, Color(1.0, 0.94, 0.86, 0.85 * a), 2.2, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one ring sprite in the core colour
+	# replaces the glow+core arc pair of the expanding tear ring.
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(1.0, 0.94, 0.86, 0.85 * a), 2.2)
 
 	var crack := Color(tint.r, tint.g, tint.b, 0.60 * a)
 	var n: int = maxi(5, int(round(float(spokes) * (0.6 + 0.4 * intensity))))
 	for i in range(n):
 		var ang: float = _seed + TAU * float(i) / float(n)
 		var dir := Vector2(cos(ang), sin(ang))
-		var side := Vector2(-dir.y, dir.x)
-		var wobble: float = sin(_seed + float(i) * 2.1)
 		var inner := dir * (r * 0.16)
 		var outer := dir * (r * (0.92 + 0.14 * sin(_seed * 3.0 + float(i))))
-		# Kink the crack off-axis so it reads as torn ground rather than a
-		# clean radial starburst.
-		var kink := (inner + outer) * 0.5 + side * (r * 0.10 * wobble)
-		draw_line(inner, kink, crack, 4.2 * weight, true)
-		draw_line(kink, outer, crack, 2.8 * weight, true)
+		# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched from the
+		# inner to the outer end replaces the two kinked line segments; the sprite
+		# carries its own jag, mirrored on every other crack so the tear does not
+		# read as a clean radial starburst.
+		VfxKit.draw_crack(self, inner, outer, 4.2 * weight, crack, i % 2 == 1)

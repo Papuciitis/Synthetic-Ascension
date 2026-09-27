@@ -92,8 +92,7 @@ func _on_manifestation_ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4075
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 
 
@@ -251,8 +250,9 @@ func _draw() -> void:
 		# The toll being taken, drawn as a ring closing inward: the cost arrives
 		# on the same frame as the beat it bought, so it must not read as a hit.
 		var f := _flash / 0.34
-		draw_arc(Vector2.ZERO, 20.0 + 16.0 * f, 0.0, TAU, 26,
-			Color(ward.r, ward.g, ward.b, 0.60 * f), 2.4, true)
+		# Pixel-art kit (Batch D, 2026-09-27): the ring sprite replaces the arc.
+		VfxKit.draw_ring(self, Vector2.ZERO, 20.0 + 16.0 * f,
+			Color(ward.r, ward.g, ward.b, 0.60 * f), 2.4)
 
 	if not _hold_armed:
 		return
@@ -261,13 +261,13 @@ func _draw() -> void:
 	# so it reads as "this one is being carried for you" instead of as an aura.
 	var pulse := 0.78 + 0.22 * sin(_t * 12.0)
 	var at := Vector2(0.0, 34.0)
-	for side_index in range(2):
-		var edge: float = 1.0 if side_index == 0 else -1.0
-		var x := at.x + edge * 24.0
-		draw_line(Vector2(x, at.y - 7.0), Vector2(x, at.y + 7.0),
-			Color(cadence.r, cadence.g, cadence.b, 0.70 * pulse), 1.8, true)
-		draw_line(Vector2(x, at.y - 7.0), Vector2(x - edge * 5.0, at.y - 7.0),
-			Color(cadence.r, cadence.g, cadence.b, 0.70 * pulse), 1.8, true)
-		draw_line(Vector2(x, at.y + 7.0), Vector2(x - edge * 5.0, at.y + 7.0),
-			Color(cadence.r, cadence.g, cadence.b, 0.70 * pulse), 1.8, true)
-	draw_circle(at, 3.0 * pulse, Color(ward.r, ward.g, ward.b, 0.55 * pulse))
+	# Pixel-art kit (Batch D, 2026-09-27): two corner-bracket sprites replace
+	# the six bracket lines. Each corner sits where the old bracket's top arm
+	# met its upright (x = +-24, 7 px above the readout) with 14 px arms, the
+	# old bracket height; the left one is unrotated (arms +X, +Y) and the right
+	# one is turned a quarter so its arms run -X, +Y and the pair faces inward.
+	# A small disc sprite replaces the dot.
+	var bracket_colour := Color(cadence.r, cadence.g, cadence.b, 0.70 * pulse)
+	VfxKit.draw_bracket(self, Vector2(at.x - 24.0, at.y - 7.0), 0.0, 14.0, bracket_colour, 1.8)
+	VfxKit.draw_bracket(self, Vector2(at.x + 24.0, at.y - 7.0), PI * 0.5, 14.0, bracket_colour, 1.8)
+	VfxKit.draw_disc(self, at, 3.0 * pulse, Color(ward.r, ward.g, ward.b, 0.55 * pulse))

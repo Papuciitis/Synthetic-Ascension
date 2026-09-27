@@ -22,8 +22,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 3996
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -40,16 +39,19 @@ func _draw() -> void:
 	var p: float = clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
 	var fade: float = 1.0 - p * p
 
+	# Pixel-art kit (Batch D, 2026-09-27): one ring sprite per stack replaces each expanding arc.
 	for i in range(stacks):
 		var r: float = lerpf(14.0, 40.0 + 9.0 * float(i), sqrt(p))
-		draw_arc(Vector2.ZERO, r, 0.0, TAU, 44, Color(CHART.r, CHART.g, CHART.b, 0.45 * fade / float(i + 1)), 1.8, true)
+		VfxKit.draw_ring(self, Vector2.ZERO, r, Color(CHART.r, CHART.g, CHART.b, 0.45 * fade / float(i + 1)), 1.8)
 
 	# Corner brackets: the "you are here" of a map you are not supposed to have.
+	# Pixel-art kit (Batch D, 2026-09-27): one bracket sprite per corner replaces
+	# each pair of "L" lines; rot steps of PI/2 walk the arms round the four
+	# corners of the closing square, always pointing back at the centre.
 	var reach: float = lerpf(56.0, 34.0, p)
 	var arm: float = 11.0
-	var signs: Array[float] = [-1.0, 1.0]
-	for qx: float in signs:
-		for qy: float in signs:
-			var corner: Vector2 = Vector2(qx * reach, qy * reach)
-			draw_line(corner, corner - Vector2(qx * arm, 0.0), Color(CHART.r, CHART.g, CHART.b, 0.85 * fade), 2.0, true)
-			draw_line(corner, corner - Vector2(0.0, qy * arm), Color(CHART.r, CHART.g, CHART.b, 0.85 * fade), 2.0, true)
+	var bracket := Color(CHART.r, CHART.g, CHART.b, 0.85 * fade)
+	VfxKit.draw_bracket(self, Vector2(-reach, -reach), 0.0, arm, bracket, 2.0)
+	VfxKit.draw_bracket(self, Vector2(reach, -reach), PI * 0.5, arm, bracket, 2.0)
+	VfxKit.draw_bracket(self, Vector2(reach, reach), PI, arm, bracket, 2.0)
+	VfxKit.draw_bracket(self, Vector2(-reach, reach), PI * 1.5, arm, bracket, 2.0)

@@ -18,7 +18,7 @@ var _life: float = 0.0
 
 var _trail_pts: PackedVector2Array = PackedVector2Array()
 var _trail_line: Line2D = null
-var _body: Polygon2D = null
+var _body: Node2D = null  # the missile sprite, or the polygon fallback without the art
 var _pooled: bool = false
 var _chunk_manager: ChunkManager = null
 
@@ -67,12 +67,27 @@ func _on_pool_recycle() -> void:
 
 func _ensure_visuals() -> void:
 	# Body
-	_body = get_node_or_null("Body") as Polygon2D
+	# Pixel-art kit (Batch D, 2026-09-27): the missile sprite replaces the
+	# code-built triangle. Its tip points along +X as the polygon's did, so the
+	# node's own rotation (set from the velocity each step) aims it; the scale
+	# makes it ~14 px long and the offset puts the sprite's content centre on
+	# the origin. Without the art the polygon stays as the fallback.
+	_body = get_node_or_null("Body") as Node2D
 	if _body == null:
-		_body = Polygon2D.new()
-		_body.name = "Body"
-		_body.polygon = PackedVector2Array([Vector2(12, 0), Vector2(-8, -5), Vector2(-8, 5)])
-		_body.color = Color(1, 1, 1, 1)
+		var missile := VfxKit.texture("missile")
+		if missile != null:
+			var sprite := Sprite2D.new()
+			sprite.name = "Body"
+			sprite.texture = missile
+			sprite.offset = missile.get_size() * 0.5 - VfxKit.MISSILE_CENTER
+			sprite.scale = Vector2.ONE * (14.0 / VfxKit.MISSILE_LENGTH)
+			_body = sprite
+		else:
+			var polygon := Polygon2D.new()
+			polygon.name = "Body"
+			polygon.polygon = PackedVector2Array([Vector2(12, 0), Vector2(-8, -5), Vector2(-8, 5)])
+			polygon.color = Color(1, 1, 1, 1)
+			_body = polygon
 		add_child(_body)
 
 	# Trail (world-space)
@@ -84,20 +99,32 @@ func _ensure_visuals() -> void:
 		_trail_line.default_color = Color(1, 1, 1, 0.55)
 		_trail_line.antialiased = true
 		_trail_line.set_as_top_level(true) # points in global space
+		# Pixel-art kit (Batch D, 2026-09-27): the streak sprite stretched along
+		# the trail. Its bright end is the RIGHT of the texture, which STRETCH
+		# puts at the LAST point, and _add_trail_point appends the newest
+		# position last, so the bright end rides on the missile. Without the
+		# art the plain 2 px line stays.
+		var streak := VfxKit.texture("streak")
+		if streak != null:
+			_trail_line.texture = streak
+			_trail_line.texture_mode = Line2D.LINE_TEXTURE_STRETCH
+			_trail_line.width = 6.0
 		add_child(_trail_line)
 
-	# Shared additive material if available
+	# Shared additive material if available: the trail keeps it; the body
+	# sprite carries its own light and blends normally.
 	var pm := get_node_or_null("/root/PoolManager")
 	if pm != null and is_instance_valid(pm) and pm.has_method("get_additive_material"):
-		material = pm.call("get_additive_material")
-		_trail_line.material = material
-		_body.material = material
+		_trail_line.material = pm.call("get_additive_material")
+	elif _trail_line.material == null:
+		var additive := CanvasItemMaterial.new()
+		additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+		_trail_line.material = additive
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
+	if _body is Sprite2D:
+		_body.material = null
 	else:
-		if material == null:
-			material = CanvasItemMaterial.new()
-			(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
-		_trail_line.material = material
-		_body.material = material
+		_body.material = _trail_line.material
 
 func _physics_process(dt: float) -> void:
 	_life += dt

@@ -23,8 +23,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 3998
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -42,13 +41,13 @@ func _draw() -> void:
 	var fade: float = (1.0 - p) * (1.0 - p)
 	var r: float = lerpf(radius * 0.25, radius, sqrt(p))
 
-	draw_circle(Vector2.ZERO, r * 0.55, Color(GLOW.r, GLOW.g, GLOW.b, 0.22 * fade))
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(GLOW.r, GLOW.g, GLOW.b, GLOW.a * fade), 11.0, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(CORE.r, CORE.g, CORE.b, fade), 2.5, true)
+	# Pixel-art kit (Batch B, 2026-09-27): the disc sprite replaces the glow
+	# fill, one ring sprite in the core colour replaces the glow+core arc pair,
+	# and the fourteen-spoke sprite replaces the one-line-per-point spokes; its
+	# alpha scales with the banked count so a small payout still reads fainter.
+	VfxKit.draw_disc(self, Vector2.ZERO, r * 0.55, Color(GLOW.r, GLOW.g, GLOW.b, 0.22 * fade))
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(CORE.r, CORE.g, CORE.b, fade), 2.5)
 
 	# Spokes lag the ring slightly so the burst reads as thrown outward.
 	var spoke_r: float = r * lerpf(0.35, 1.12, p)
-	for i in range(spokes):
-		var angle: float = TAU * (float(i) / float(spokes)) - PI * 0.5
-		var dir: Vector2 = Vector2(cos(angle), sin(angle))
-		draw_line(dir * (spoke_r * 0.45), dir * spoke_r, Color(CORE.r, CORE.g, CORE.b, 0.9 * fade), 3.0, true)
+	VfxKit.draw_spokes(self, Vector2.ZERO, spoke_r, Color(CORE.r, CORE.g, CORE.b, 0.9 * fade * minf(1.0, float(spokes) / 14.0)), 0.0)

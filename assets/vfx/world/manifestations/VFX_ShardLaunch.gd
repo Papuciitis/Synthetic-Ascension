@@ -24,8 +24,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4073
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	if _lines.is_empty():
 		_build(4)
 	set_process(true)
@@ -59,15 +58,17 @@ func _draw() -> void:
 	var eased := 1.0 - pow(1.0 - p, 3.0)
 
 	var ring := lerpf(radius * 0.35, radius, eased)
-	draw_arc(Vector2.ZERO, ring, 0.0, TAU, 48, Color(tint.r, tint.g, tint.b, 0.45 * fade), 11.0, true)
-	draw_arc(Vector2.ZERO, ring, 0.0, TAU, 48, Color(1.0, 1.0, 1.0, 0.85 * fade), 2.2, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the white core
+	# colour replaces the tint glow + white core arc pair, one streak sprite per
+	# launch line (bright end outward, the old glow width as its band) replaces
+	# each glow+core line pair, and a small disc replaces the white centre flash.
+	VfxKit.draw_ring(self, Vector2.ZERO, ring, Color(1.0, 1.0, 1.0, 0.85 * fade), 2.2)
 
 	for line in _lines:
 		var dir := _facing.rotated(float(line.get("angle", 0.0)))
 		var reach: float = radius * 2.1 * float(line.get("reach", 1.0)) * eased
 		var head := dir * reach
 		var tail := dir * (reach * 0.35)
-		draw_line(tail, head, Color(tint.r, tint.g, tint.b, 0.40 * fade), 8.0, true)
-		draw_line(tail, head, Color(1.0, 1.0, 1.0, 0.80 * fade), 2.0, true)
+		VfxKit.draw_streak(self, tail, head, 8.0, Color(1.0, 1.0, 1.0, 0.80 * fade))
 
-	draw_circle(Vector2.ZERO, lerpf(26.0, 8.0, p), Color(1.0, 1.0, 1.0, 0.55 * fade))
+	VfxKit.draw_disc(self, Vector2.ZERO, lerpf(26.0, 8.0, p), Color(1.0, 1.0, 1.0, 0.55 * fade))

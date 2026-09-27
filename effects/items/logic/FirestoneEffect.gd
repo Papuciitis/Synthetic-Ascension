@@ -87,8 +87,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4080
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -189,8 +188,10 @@ func _draw() -> void:
 	var glow_mul := 1.0 + maxf(pct, 0.0) * 0.8
 	var a_glow := glow_alpha * glow_mul
 
-	draw_circle(Vector2.ZERO, glow_radius * glow_mul, Color(1.0, 0.40, 0.10, a_glow))
-	draw_circle(Vector2.ZERO, (glow_radius * 0.55) * glow_mul, Color(1.0, 0.70, 0.25, a_glow * 0.85))
+	# Pixel-art kit (Batch D, 2026-09-27): the two glow circles become two disc
+	# sprites at the same radii and colours.
+	VfxKit.draw_disc(self, Vector2.ZERO, glow_radius * glow_mul, Color(1.0, 0.40, 0.10, a_glow))
+	VfxKit.draw_disc(self, Vector2.ZERO, (glow_radius * 0.55) * glow_mul, Color(1.0, 0.70, 0.25, a_glow * 0.85))
 
 	# Orbiting ember (small flame blob)
 	var ang := _t * TAU * orbit_speed
@@ -198,16 +199,8 @@ func _draw() -> void:
 	var flick := 0.85 + 0.15 * sin(_t * TAU * 6.0)
 	var a := ember_alpha * flick
 
-	# ember core + glow
-	draw_circle(p, 4.6, Color(1.0, 0.60, 0.20, a))
-	draw_circle(p, 9.5, Color(1.0, 0.20, 0.05, a * 0.35))
-
-	# little flame lick (triangle-ish)
-	var up := Vector2(0, -1).rotated(ang)
-	var side := Vector2(1, 0).rotated(ang)
-	var poly := PackedVector2Array([
-		p + up * 10.0,
-		p - up * 4.0 + side * 5.0,
-		p - up * 4.0 - side * 5.0
-	])
-	draw_colored_polygon(poly, Color(1.0, 0.35, 0.10, a * 0.55))
+	# Pixel-art kit (Batch D, 2026-09-27): one flame sprite replaces the ember
+	# core dot, its glow dot and the triangular lick. The sprite carries its own
+	# fire colours, so it is tinted white at the ember alpha; it licks along -Y
+	# before rotation, and ang + PI/2 turns that to point away from the player.
+	VfxKit.draw_flame(self, p, 10.0, Color(1.0, 1.0, 1.0, a), ang + PI * 0.5)

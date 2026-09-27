@@ -59,12 +59,7 @@ func _ready() -> void:
 	_target_refresh = randf_range(0.0, 0.1)
 	_redraw_t = 0.0
 
-	var pm := get_node_or_null("/root/PoolManager")
-	if pm != null and is_instance_valid(pm) and pm.has_method("get_additive_material"):
-		material = pm.call("get_additive_material")
-	else:
-		material = CanvasItemMaterial.new()
-		(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 
 	queue_redraw()
 
@@ -244,27 +239,7 @@ func _draw() -> void:
 	var a: float = trail_alpha
 	var back: Vector2 = Vector2.LEFT * tail_length
 
-	# glow underlay (wide)
-	draw_line(
-		Vector2.ZERO,
-		back,
-		Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * a),
-		trail_width * 3.2,
-		true
-	)
-
-	# core
-	draw_line(
-		Vector2.ZERO,
-		back,
-		Color(color_core.r, color_core.g, color_core.b, a),
-		trail_width,
-		true
-	)
-
-	# head dot
-	draw_circle(
-		Vector2.ZERO,
-		maxf(2.0, trail_width * 0.75),
-		Color(color_core.r, color_core.g, color_core.b, 0.9)
-	)
+	# Pixel-art kit (Batch D, 2026-09-27): one streak sprite from the tail end
+	# to the head, in the core colour at the core width, replaces the wide glow
+	# line, the core line and the head dot (the streak's bright end is the head).
+	VfxKit.draw_streak(self, back, Vector2.ZERO, trail_width, Color(color_core.r, color_core.g, color_core.b, a))

@@ -37,8 +37,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4090
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the fan sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -55,19 +54,16 @@ func _draw() -> void:
 	var fade: float = 1.0 - p
 	fade = fade * fade
 
-	# “cone” lines
+	# Pixel-art kit: one three-ray fan sprite along local +X, squeezed to
+	# this style's spread; the line rays remain the fallback without the art.
+	var core := Color(color_core.r, color_core.g, color_core.b, color_core.a * fade)
+	if VfxKit.has("fan"):
+		VfxKit.draw_fan(self, Vector2.ZERO, 0.0, length, core, spread_deg)
+		return
 	var half: float = deg_to_rad(spread_deg) * 0.5
-	var a0: float = -half
-	var a1: float = +half
-
-	# two rays + center ray
-	var rays := [a0, 0.0, a1]
-	for a in rays:
+	for a in [-half, 0.0, half]:
 		var dir := Vector2.RIGHT.rotated(a)
 		var end := dir * length
-
 		draw_line(Vector2.ZERO, end, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
-		draw_line(Vector2.ZERO, end, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
-
-	# tiny pop at origin
+		draw_line(Vector2.ZERO, end, core, core_width, true)
 	draw_circle(Vector2.ZERO, 2.0, Color(color_core.r, color_core.g, color_core.b, 0.30 * fade))

@@ -63,8 +63,7 @@ func _on_manifestation_ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4077
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	set_process(true)
 	_apply_cap_bonus()
 
@@ -177,21 +176,22 @@ func _draw() -> void:
 
 	if _flash > 0.0:
 		var f := _flash / 0.30
-		draw_arc(Vector2.ZERO, ORBIT_RADIUS * (1.30 - 0.24 * f), 0.0, TAU, 32,
-			Color(ward.r, ward.g, ward.b, 0.55 * f), 3.0, true)
-		draw_arc(Vector2.ZERO, ORBIT_RADIUS * 1.30, 0.0, TAU, 32,
-			Color(shard.r, shard.g, shard.b, 0.30 * f), 1.4, true)
+		# Pixel-art kit (Batch C, 2026-09-27): ring sprites replace the two
+		# shatter-flash arcs (the ward ring swelling out to the shard ring).
+		VfxKit.draw_ring(self, Vector2.ZERO, ORBIT_RADIUS * (1.30 - 0.24 * f),
+			Color(ward.r, ward.g, ward.b, 0.55 * f), 3.0)
+		VfxKit.draw_ring(self, Vector2.ZERO, ORBIT_RADIUS * 1.30,
+			Color(shard.r, shard.g, shard.b, 0.30 * f), 1.4)
 
 	if not is_guarding():
 		return
 
 	# A hexagonal ward outside the orbit: the shards are the bar, this says the
 	# bar is currently the thing standing between the player and the next hit.
-	var points := PackedVector2Array()
-	for i in range(7):
-		var angle := TAU * float(i) / 6.0
-		points.append(Vector2(cos(angle), sin(angle)) * ORBIT_RADIUS * 1.26)
-	draw_polyline(points, Color(ward.r, ward.g, ward.b, 0.26), 1.6, true)
+	# Pixel-art kit (Batch C, 2026-09-27): the hexagon sprite replaces the
+	# seven-point polyline (and its per-repaint PackedVector2Array). The sprite
+	# is pointy-top, so a sixth of a turn keeps the old corner on the +X axis.
+	VfxKit.draw_hexagon(self, Vector2.ZERO, ORBIT_RADIUS * 1.26, Color(ward.r, ward.g, ward.b, 0.26), PI / 6.0, 1.6)
 
 
 ## Pure: is_guarding() reads the cooldown and the shard count. The latch is

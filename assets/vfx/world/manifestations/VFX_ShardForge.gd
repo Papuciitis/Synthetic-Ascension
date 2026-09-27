@@ -26,8 +26,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4072
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	if _frags.is_empty():
 		_build(1)
 	set_process(true)
@@ -57,23 +56,22 @@ func _draw() -> void:
 	var p := clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
 	var flash := 1.0 - p
 	flash *= flash
-	draw_circle(Vector2.ZERO, lerpf(28.0, 5.0, p), Color(tint.r, tint.g, tint.b, 0.38 * flash))
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the flash circle.
+	VfxKit.draw_disc(self, Vector2.ZERO, lerpf(28.0, 5.0, p), Color(tint.r, tint.g, tint.b, 0.38 * flash))
 
 	var side := Vector2(-_target.y, _target.x) * 0.32
 	for frag in _frags:
 		var lag := float(frag.get("lag", 0.0))
 		var k := clampf((p - lag) / maxf(1.0 - lag, 0.001), 0.0, 1.0)
 		var eased := k * k * (3.0 - 2.0 * k)
-		var pos := _target * eased + side * float(frag.get("bow", 0.0)) * sin(eased * PI)
+		var bow := float(frag.get("bow", 0.0))
+		var pos := _target * eased + side * bow * sin(eased * PI)
 		var fade := 1.0 - eased
 		var size := float(frag.get("size", 1.0)) * (0.55 + 0.45 * fade)
-		draw_circle(pos, 7.0 * size, Color(tint.r, tint.g, tint.b, 0.30 * fade))
-		var angle := float(frag.get("spin", 0.0)) * _t
-		var facing := Vector2(cos(angle), sin(angle))
-		var flank := Vector2(-facing.y, facing.x)
-		draw_colored_polygon(PackedVector2Array([
-			pos + facing * 6.5 * size,
-			pos + flank * 3.0 * size,
-			pos - facing * 6.5 * size,
-			pos - flank * 3.0 * size,
-		]), Color(1.0, 1.0, 1.0, 0.90 * fade))
+		# Pixel-art kit (Batch D, 2026-09-27): a small disc sprite replaces the
+		# fragment's glow circle, and one shard sprite replaces the white diamond
+		# polygon, its tip along the flight's tangent (the derivative of `pos`
+		# with respect to `eased`) rather than the old free spin.
+		var travel: float = (_target + side * bow * PI * cos(eased * PI)).angle()
+		VfxKit.draw_disc(self, pos, 7.0 * size, Color(tint.r, tint.g, tint.b, 0.30 * fade))
+		VfxKit.draw_shard(self, pos, travel, 13.0 * size, Color(1.0, 1.0, 1.0, 0.90 * fade))

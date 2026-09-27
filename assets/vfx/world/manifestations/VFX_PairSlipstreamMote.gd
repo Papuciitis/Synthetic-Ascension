@@ -39,8 +39,7 @@ func _ready() -> void:
 	# Under the orbit band the state paints at (4070), because this is a shard
 	# the player has left behind, not one still flying with them.
 	z_index = 4056
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	# One seed per mote, so a trail of three does not read as the same stamp
 	# printed three times.
 	_seed = randf() * TAU
@@ -68,32 +67,31 @@ func _draw() -> void:
 
 	# The ground it holds - the reach the pair actually damages, so the player
 	# can read where standing is a bad idea.
-	draw_arc(Vector2.ZERO, bite, 0.0, TAU, 30, Color(tint.r, tint.g, tint.b, 0.20 * fade), 1.6, true)
-	draw_circle(Vector2.ZERO, bite * 0.42, Color(tint.r, tint.g, tint.b, 0.10 * fade))
+	# Pixel-art kit (Batch D, 2026-09-27): the ring sprite replaces the thin arc and the disc sprite the soft fill.
+	VfxKit.draw_ring(self, Vector2.ZERO, bite, Color(tint.r, tint.g, tint.b, 0.20 * fade), 1.6)
+	VfxKit.draw_disc(self, Vector2.ZERO, bite * 0.42, Color(tint.r, tint.g, tint.b, 0.10 * fade))
 
 	# The stranded shard itself, drawn as the state draws an orbiting one so the
 	# trail and the halo are visibly the same object in two states.
 	var angle: float = _seed + _spin * _t
-	var facing := Vector2(cos(angle), sin(angle))
-	var side := Vector2(-facing.y, facing.x)
 	var stretch: float = 1.0 + 2.6 * snap
 	var pull: Vector2 = _heading * (SNAP_REACH * snap * snap)
 	var spark: float = 0.85 + 0.15 * sin(_t * 9.0 + _seed)
 
-	draw_circle(pull, 8.0 * spark * fade, Color(tint.r, tint.g, tint.b, 0.36 * fade))
-	draw_colored_polygon(PackedVector2Array([
-		pull + facing * 7.5 * stretch,
-		pull + side * 3.6,
-		pull - facing * 7.5 * stretch,
-		pull - side * 3.6,
-	]), Color(1.0, 1.0, 1.0, 0.90 * fade))
+	# Pixel-art kit (Batch D, 2026-09-27): a disc sprite replaces the tinted spark
+	# glow, and one shard sprite spun by the same angle and stretched on the snap
+	# replaces the white diamond polygon.
+	VfxKit.draw_disc(self, pull, 8.0 * spark * fade, Color(tint.r, tint.g, tint.b, 0.36 * fade))
+	VfxKit.draw_shard(self, pull, angle, 15.0 * stretch, Color(1.0, 1.0, 1.0, 0.90 * fade))
 
 	if snap <= 0.0:
 		# A tether back toward the run, so a held shard reads as owed rather
 		# than as dropped litter.
+		# Pixel-art kit (Batch D, 2026-09-27): a streak sprite replaces the tether line, bright end at the shard.
 		var tail: Vector2 = -_heading * (bite * 0.9)
-		draw_line(tail * 0.35, tail, Color(tint.r, tint.g, tint.b, 0.28 * fade), 1.6, true)
+		VfxKit.draw_streak(self, tail, tail * 0.35, 1.6, Color(tint.r, tint.g, tint.b, 0.28 * fade))
 		return
 
 	# Snapping back: a streak along the heading, drawn from where it stood.
-	draw_line(Vector2.ZERO, pull, Color(tint.r, tint.g, tint.b, 0.55 * (1.0 - snap)), 2.4, true)
+	# Pixel-art kit (Batch D, 2026-09-27): a streak sprite replaces the pull line, bright end at the shard's head.
+	VfxKit.draw_streak(self, Vector2.ZERO, pull, 2.4, Color(tint.r, tint.g, tint.b, 0.55 * (1.0 - snap)))

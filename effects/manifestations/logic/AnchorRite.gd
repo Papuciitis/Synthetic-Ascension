@@ -54,8 +54,7 @@ func _on_manifestation_ready() -> void:
 	z_as_relative = false
 	z_index = 4058
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	if state != null:
 		# Seed from the running clock: equipping this while already parked must
@@ -267,15 +266,17 @@ func _draw() -> void:
 	# and chevrons turning inward on the spot the player has claimed.
 	var pulse: float = 0.80 + 0.20 * sin(_spin * 3.0)
 	var bright := Color(lock.r, lock.g, lock.b, 0.55 * pulse)
-	draw_arc(Vector2.ZERO, RING_RADIUS + 7.0, 0.0, TAU, 56, bright, 3.4, true)
-	draw_arc(Vector2.ZERO, RING_RADIUS * 0.42, 0.0, TAU, 32, Color(lock.r, lock.g, lock.b, 0.42 * pulse), 2.0, true)
+	# Pixel-art kit (Batch C, 2026-09-27): ring sprites replace the bright
+	# outer ring and the inner core ring of the locked picture.
+	VfxKit.draw_ring(self, Vector2.ZERO, RING_RADIUS + 7.0, bright, 3.4)
+	VfxKit.draw_ring(self, Vector2.ZERO, RING_RADIUS * 0.42, Color(lock.r, lock.g, lock.b, 0.42 * pulse), 2.0)
 
 	var arrow := Color(lock.r, lock.g, lock.b, 0.75 * pulse)
+	# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite per chevron
+	# replaces each two-line inward "V" (vertex at RING_RADIUS + 15, arms 10 px
+	# further out and 7 px to each side): 14 px long (the old span), pointing
+	# inward, centred half its length outside the old vertex so the tip stays.
 	for i in range(6):
 		var a: float = _spin + TAU * float(i) / 6.0
 		var facing := Vector2(cos(a), sin(a))
-		var side := Vector2(-facing.y, facing.x)
-		var tip: Vector2 = facing * (RING_RADIUS + 15.0)
-		var tail: Vector2 = facing * (RING_RADIUS + 25.0)
-		draw_line(tip, tail + side * 7.0, arrow, 2.4, true)
-		draw_line(tip, tail - side * 7.0, arrow, 2.4, true)
+		VfxKit.draw_chevron(self, facing * (RING_RADIUS + 22.0), a + PI, 14.0, arrow, 2.4)

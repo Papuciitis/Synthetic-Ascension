@@ -28,7 +28,6 @@ var _t: float = 0.0
 var _r: float = 32.0
 var _seed: float = 0.0
 var _base_radius: float = -1.0
-var _pts: PackedVector2Array = PackedVector2Array()
 
 func setup(hb: Area2D, dur: float = -1.0) -> void:
 	hurtbox = hb
@@ -43,9 +42,7 @@ func _ready() -> void:
 	z_index = 4095
 	visible = true
 
-	var mat := CanvasItemMaterial.new()
-	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_MIX if force_mix_blend else CanvasItemMaterial.BLEND_MODE_ADD
-	material = mat
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -107,29 +104,19 @@ func _draw() -> void:
 	var pulse := 0.80 + 0.20 * sin(_t * TAU * pulse_speed)
 	var r := _r * (0.98 + 0.02 * pulse)
 
-	# fill
+	# Pixel-art kit (Batch C, 2026-09-27): a soft disc sprite replaces the fill circle; one wavy ring sprite in the core colour replaces the double-sine polyline and its glow+core strokes.
 	if fill_alpha > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.98,
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.98,
 			Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha * fade))
 
-	# wavy ring points (buffer reused across frames)
-	var seg: int = max(24, segments)
-	if _pts.size() != seg + 1:
-		_pts.resize(seg + 1)
-	for i in range(seg + 1):
-		var a := TAU * float(i) / float(seg)
-		var w := sin(a * wave_freq + _t * roll_speed + _seed) * wave_amp
-		var w2 := sin(a * (wave_freq * 0.5) - _t * (roll_speed * 1.35) + _seed * 0.7) * (wave_amp * 0.45)
-		var rr := r + (w + w2) * pulse
-		_pts[i] = Vector2(cos(a), sin(a)) * rr
-
-	# glow + core
-	draw_polyline(_pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
-	draw_polyline(_pts, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
+	# The old crests travelled at roll_speed / wave_freq rad/s from the seeded phase; the sprite spins at that rate so the ripple still rolls.
+	var spin := -(_t * roll_speed + _seed) / maxf(wave_freq, 1.0)
+	VfxKit.draw_ring_wavy(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), spin, core_width)
 
 	# rolling packets
 	for k in range(2):
 		var aa := fmod(_t * 2.9 + float(k) * (TAU / 2.0), TAU)
 		var rr2 := r + sin(aa * wave_freq + _t * roll_speed + _seed) * wave_amp
 		var p := Vector2(cos(aa), sin(aa)) * rr2
-		draw_circle(p, 3.2, Color(1, 1, 1, 0.22 * fade))
+		# Pixel-art kit (Batch C, 2026-09-27): a small disc sprite replaces each sparkle circle.
+		VfxKit.draw_disc(self, p, 3.2, Color(1, 1, 1, 0.22 * fade))

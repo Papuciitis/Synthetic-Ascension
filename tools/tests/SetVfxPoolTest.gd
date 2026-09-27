@@ -69,7 +69,9 @@ func _test_reuse_and_reset() -> void:
 	var ring := PooledVfx.obtain(PULSE, self) as Node2D
 	_check(ring != null and ring.get_parent() == self, "a pulse ring is obtained under the requested parent")
 	ring.call("setup", Vector2(100, 100), 80.0)
-	_check(ring.material == PooledVfx.additive_material() and ring.material == pool.call("get_additive_material"), "the ring shares the pool's additive material")
+	# Pixel-art kit (Batch B, 2026-09-27): the ring is a tinted sprite that
+	# blends normally, so it no longer takes the pool's additive material.
+	_check(ring.material == null, "the ring blends normally (no additive material) since the pixel-art kit")
 	_check(PooledVfx.live_count(PULSE) == 1, "one pulse ring is live")
 	await _wait(0.45)
 	_check(is_instance_valid(ring) and ring.get_parent() == pool and bool(ring.get_meta("__in_pool", false)), "after its 0.26 s the ring went back to the pool (parked under the PoolManager) instead of being freed")
@@ -114,7 +116,10 @@ func _test_live_cap_and_retention() -> void:
 func _test_arc_line() -> void:
 	var arc := PooledVfx.obtain(ARC, self) as Line2D
 	arc.call("setup", Vector2.ZERO, Vector2(120, 40))
-	_check(arc != null and arc.points.size() == int(arc.get("segments")) + 1, "an arc line draws its jittered segments")
+	# With the kit's bolt sprite the line is two textured points (the art
+	# carries the jaggedness); without the art it still jitters its segments.
+	var expected_points: int = 2 if VfxKit.texture("bolt") != null else int(arc.get("segments")) + 1
+	_check(arc != null and arc.points.size() == expected_points, "an arc line draws the bolt sprite between two points, or its jittered segments without the art (%d)" % arc.points.size())
 	await _wait(0.3)
 	_check(is_instance_valid(arc) and bool(arc.get_meta("__in_pool", false)), "the arc line went back to the pool after its fade")
 	var again := PooledVfx.obtain(ARC, self) as Line2D

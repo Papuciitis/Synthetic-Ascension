@@ -23,7 +23,7 @@ func setup(pos: Vector2, radius: float) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = PooledVfx.additive_material()
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_reset()
 
 ## Pooled reuse (PooledVfx): back to the first frame of the burst.
@@ -60,22 +60,16 @@ func _draw() -> void:
 	# brief inner fill flash (only early)
 	var fill_k: float = clampf(1.0 - (p / 0.55), 0.0, 1.0)
 	if fill_k > 0.0 and fill_alpha > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.96, Color(0.25, 0.60, 1.0, fill_alpha * fill_k * k))
+		# Pixel-art kit (Batch B, 2026-09-27): the soft disc sprite replaces the filled fill-flash circle.
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.96, Color(0.25, 0.60, 1.0, fill_alpha * fill_k * k))
 
 	# dashed main ring (reads as “force”, less like a UI circle)
-	var segs := 24
+	# Pixel-art kit (Batch B, 2026-09-27): one ten-dash ring sprite replaces the dash_count drawn arcs; the dashes start at angle 0 as the arcs did, so no spin.
 	var base_col := Color(0.92, 0.97, 1.0, line_alpha * k)
-	var dash_len: float = TAU / float(max(dash_count, 1))
-
-	for i in range(dash_count):
-		var a0: float = i * dash_len
-		var a1: float = a0 + dash_len * (1.0 - dash_gap)
-		draw_arc(Vector2.ZERO, r, a0, a1, segs, base_col, w, true)
+	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, base_col, 0.0, w)
 
 	# trailing ring (gives depth)
+	# Pixel-art kit (Batch B, 2026-09-27): the ring sprite replaces the full trailing arc; the centre dot is dropped.
 	var r2: float = r * trailing_ring_mul
 	var col2 := Color(0.70, 0.90, 1.0, line_alpha * trailing_alpha_mul * k)
-	draw_arc(Vector2.ZERO, r2, 0.0, TAU, 64, col2, maxf(2.0, w * 0.35), true)
-
-	# tiny center “kick”
-	draw_circle(Vector2.ZERO, maxf(2.0, w * 0.22), Color(0.95, 0.98, 1.0, 0.40 * k))
+	VfxKit.draw_ring(self, Vector2.ZERO, r2, col2, maxf(2.0, w * 0.35))

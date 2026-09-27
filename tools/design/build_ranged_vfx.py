@@ -37,7 +37,22 @@ def _canvas(w: int, h: int) -> np.ndarray:
     return np.zeros((h, w, 4), dtype=np.float64)
 
 
-def _save(name: str, rgba: np.ndarray) -> None:
+# Files the USER authored (Batch 1 of 2026-09-26 and Batch A of 2026-09-27,
+# see docs/art/asset-manifest.md). The procedural versions below are kept as
+# history and fallbacks, but running this script must never overwrite the
+# art. Pass force=True to a single _save call if you really mean it.
+USER_ART = {
+    "needle_bullet.png", "tracer_bullet.png", "barrage_dart.png",
+    "grenade_body.png", "mine_body.png", "pressure_ring.png",
+    "heat_ring_broken.png", "spin_glow.png", "impact_burst.png",
+    "judgment_mark.png", "beam_core.png", "beam_cap.png",
+}
+
+
+def _save(name: str, rgba: np.ndarray, force: bool = False) -> None:
+    if name in USER_ART and not force and (OUT / name).exists():
+        print("skip", name, "(user art; pass force=True to overwrite)")
+        return
     rgba = np.clip(rgba, 0.0, 255.0).astype(np.uint8)
     OUT.mkdir(parents=True, exist_ok=True)
     Image.fromarray(rgba, "RGBA").save(OUT / name)
@@ -251,20 +266,57 @@ def spin_glow() -> None:
     _save("spin_glow.png", c)
 
 
+def _over(canvas: np.ndarray, color, alpha: np.ndarray) -> None:
+    """Standard straight-alpha OVER compose (paint back to front). Used where
+    a dark layer must sit UNDER a bright one; _add's per-channel max cannot
+    express that."""
+    a_src = np.clip(alpha, 0.0, 1.0)[..., None]
+    a_dst = canvas[..., 3:4] / 255.0
+    a_out = a_src + a_dst * (1.0 - a_src)
+    col_src = np.asarray(color, dtype=np.float64)[None, None, :]
+    col_out = (col_src * a_src + canvas[..., :3] * a_dst * (1.0 - a_src)) / np.maximum(a_out, 1e-6)
+    canvas[..., :3] = col_out
+    canvas[..., 3] = a_out[..., 0] * 255.0
+
+
 def bullet_shared() -> None:
-    """The batched pool's shared quad texture: white core and soft tail in
-    grayscale, so each projectile's instance colour does the tinting for
-    every team and discipline."""
+    """The batched pool's shared body — the native weapon and every enemy
+    shot. Travel is +x (head on the right). A warm-white bolt: rounded head,
+    gold sheath, amber tail thinning and fading out to the left, wrapped in
+    a soft near-black halo so it keeps contrast on pale ground under the
+    runtime's normal blending (the pool draws MIX, not additive). The
+    instance colour lands as a 45% tint at runtime, so the body stays
+    near-neutral and enemy hues survive."""
     w, h = 64, 16
     c = _canvas(w, h)
     x, y = _grid(w, h)
     cy = (h - 1) / 2.0
-    t = x / (w - 1)
-    dist = np.abs(y - cy)
-    half_width = 5.0 * np.clip(t * 1.5, 0.18, 1.0) * np.where(t > 0.85, (1.0 - t) / 0.15, 1.0)
-    _add(c, (255, 255, 255), _soft(dist, half_width * 0.25, half_width) * (0.18 + 0.62 * t))
-    _add(c, (255, 255, 255), _soft(dist, 0.0, 1.7) * (0.35 + 0.65 * t ** 1.4))
+    head_x = w - 9.0
+    dx = x - head_x
+    dist_y = np.abs(y - cy)
+    t = np.clip(x / head_x, 0.0, 1.0)  # 0 at the tail, 1 at the head centre
+    ahead = dx > 0.0
+    radius = 4.6
+    r_head = np.sqrt(dx ** 2 + dist_y ** 2)
+    body_half = radius * (0.32 + 0.68 * t ** 1.3)
+    # Distance outside the silhouette: radial past the head centre (so the
+    # halo wraps the cap instead of streaking off the canvas), vertical
+    # along the body.
+    edge = np.where(ahead, r_head - radius, dist_y - body_half)
+    # The tail thins and fades to nothing by the left edge; nothing may be
+    # cut flat by the canvas.
+    fade = np.clip(x / 9.0, 0.0, 1.0)
+    energy = np.where(ahead, 1.0, 0.12 + 0.88 * t ** 1.6) * fade
+    halo = _soft(edge, 0.0, 2.5) * 0.66 * np.where(ahead, 1.0, 0.2 + 0.8 * t) * fade
+    _over(c, (16, 12, 20), halo)
+    _over(c, DEEP_GOLD, _soft(edge, -1.2, 0.5) * energy * 0.95)
+    _over(c, GOLD, _soft(edge, -2.4, -0.7) * energy)
+    # Core: warm white, hottest at the head, a thin line down the tail.
+    core_edge = np.where(ahead, r_head - radius * 0.55, dist_y - 1.9 * (0.3 + 0.7 * t))
+    core = _soft(core_edge, -0.6, 0.9) * np.where(ahead, 1.0, 0.3 + 0.7 * t ** 1.3) * fade
+    _over(c, WHITE, core)
     _save("bullet_shared.png", c)
+
 
 
 def barrage_dart() -> None:

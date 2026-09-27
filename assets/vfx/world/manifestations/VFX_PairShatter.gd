@@ -29,8 +29,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4074
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	if _shards.is_empty():
 		_build()
 	set_process(true)
@@ -66,22 +65,21 @@ func _draw() -> void:
 
 	# The ward flare: a ring at the orbit that brightens and thins as it takes
 	# the hit the player did not.
-	draw_arc(Vector2.ZERO, radius * (1.0 + 0.28 * eased), 0.0, TAU, 40,
-		Color(tint.r, tint.g, tint.b, 0.32 * fade), 6.0 * fade + 1.0, true)
+	# Pixel-art kit (Batch D, 2026-09-27): the ring sprite replaces the flare arc.
+	VfxKit.draw_ring(self, Vector2.ZERO, radius * (1.0 + 0.28 * eased),
+		Color(tint.r, tint.g, tint.b, 0.32 * fade), 6.0 * fade + 1.0)
 
+	# Pixel-art kit (Batch D, 2026-09-27): one shard sprite per fragment, at the
+	# same position and spun by the same angle, replaces the white diamond
+	# polygon (and its per-frame point array).
 	for shard in _shards:
 		var angle := float(shard.get("angle", 0.0))
 		var dir := Vector2(cos(angle), sin(angle))
 		var reach: float = radius * (1.0 + 0.85 * float(shard.get("reach", 1.0)) * eased)
 		var at := dir * reach
-		var facing := dir.rotated(float(shard.get("spin", 0.0)) * eased)
-		var side := Vector2(-facing.y, facing.x)
+		var facing: float = angle + float(shard.get("spin", 0.0)) * eased
 		var scale_out := 1.0 - 0.45 * eased
-		draw_colored_polygon(PackedVector2Array([
-			at + facing * 6.5 * scale_out,
-			at + side * 3.0 * scale_out,
-			at - facing * 6.5 * scale_out,
-			at - side * 3.0 * scale_out,
-		]), Color(1.0, 1.0, 1.0, 0.85 * fade))
+		VfxKit.draw_shard(self, at, facing, 13.0 * scale_out, Color(1.0, 1.0, 1.0, 0.85 * fade))
 
-	draw_circle(Vector2.ZERO, lerpf(14.0, 3.0, p), Color(tint.r, tint.g, tint.b, 0.45 * fade))
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the centre circle.
+	VfxKit.draw_disc(self, Vector2.ZERO, lerpf(14.0, 3.0, p), Color(tint.r, tint.g, tint.b, 0.45 * fade))

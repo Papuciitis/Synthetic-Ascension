@@ -79,8 +79,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4075
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	if vfx_plus_scene == null:
 		# default fallback
@@ -151,5 +150,7 @@ func _draw() -> void:
 	# subtle green ring
 	var pulse := 0.85 + 0.15 * sin(_t * TAU * 2.0)
 	var a := ring_alpha * pulse
-	draw_circle(Vector2.ZERO, ring_radius, Color(0.35, 1.0, 0.55, a))
-	draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 48, Color(0.55, 1.0, 0.65, a * 1.25), ring_width, true)
+	# Pixel-art kit (Batch B, 2026-09-27): the disc sprite replaces the filled
+	# circle and a ring sprite replaces the arc.
+	VfxKit.draw_disc(self, Vector2.ZERO, ring_radius, Color(0.35, 1.0, 0.55, a))
+	VfxKit.draw_ring(self, Vector2.ZERO, ring_radius, Color(0.55, 1.0, 0.65, a * 1.25), ring_width)

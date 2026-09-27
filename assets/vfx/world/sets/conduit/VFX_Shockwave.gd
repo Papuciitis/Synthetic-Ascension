@@ -28,4 +28,4 @@ func _process(dt: float) -> void:
 func _draw() -> void:
 	# clean expanding ring
 	var alpha := 1.0 - clampf(_t / max(duration, 0.001), 0.0, 1.0)
-	draw_arc(Vector2.ZERO, _r, 0.0, TAU, 64, Color(1, 1, 1, 0.6 * alpha), 3.0, true)
+	VfxKit.draw_ring(self, Vector2.ZERO, _r, Color(1, 1, 1, 0.6 * alpha), 3.0)

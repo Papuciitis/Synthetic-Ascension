@@ -22,7 +22,6 @@ var duration: float = 6.0
 var _t: float = 0.0
 var _r: float = 32.0
 var _base_radius: float = -1.0
-var _pts: PackedVector2Array = PackedVector2Array()
 
 func setup(hb: Area2D, owner_in: Node, dur: float = 6.0) -> void:
 	hurtbox = hb
@@ -35,8 +34,7 @@ func _ready() -> void:
 	z_index = 4095
 	top_level = true
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -90,26 +88,10 @@ func _draw() -> void:
 	var pulse: float = 0.90 + 0.10 * sin(_t * TAU * pulse_speed)
 	var r: float = _r * (0.98 + 0.02 * pulse)
 
-	# Build a slightly “hex-ish” wavy ring by biasing points toward 6 corners.
-	# The point buffer is reused across frames instead of reallocated.
-	var seg: int = max(24, segments)
-	if _pts.size() != seg + 1:
-		_pts.resize(seg + 1)
-
-	for i in range(seg + 1):
-		var a: float = TAU * float(i) / float(seg)
-
-		# hex bias: 0..1 where 1 = near corner (cos 3a peaks at corners)
-		var hex_bias: float = 0.78 + 0.22 * absf(cos(a * 3.0))
-
-		var w1: float = sin(a * wave_freq + _t * roll_speed) * wave_amp
-		var w2: float = sin(a * (wave_freq * 0.5) - _t * (roll_speed * 1.25)) * (wave_amp * 0.55)
-
-		var rr: float = (r / hex_bias) + (w1 + w2) * pulse
-		_pts[i] = Vector2(cos(a), sin(a)) * rr
-
-	draw_polyline(_pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
-	draw_polyline(_pts, Color(color_core.r, color_core.g, color_core.b, 1.0), core_width, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one hex-shaped wavy ring sprite in the core colour replaces the hex-biased wavy polyline and its glow+core strokes.
+	# The old crests travelled at roll_speed / wave_freq rad/s; the sprite spins at that rate so the ripple still rolls.
+	var spin: float = -(_t * roll_speed) / maxf(wave_freq, 1.0)
+	VfxKit.draw_ring_hex_wavy(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, 1.0), spin, core_width)
 
 	# pips = shots left
 	var shots_left: int = 0
@@ -120,5 +102,5 @@ func _draw() -> void:
 	for k in range(pip_n):
 		var aa: float = (TAU * float(k) / maxf(1.0, float(pip_n))) + (_t * 0.9)
 		var p := Vector2(cos(aa), sin(aa)) * (r * 1.05)
-		draw_circle(p, 2.6, Color(1, 1, 1, 0.55))
-		draw_circle(p, 1.2, Color(color_core.r, color_core.g, color_core.b, 0.95))
+		# Pixel-art kit (Batch C, 2026-09-27): one small disc sprite in the core colour replaces the white pip and its core dot.
+		VfxKit.draw_disc(self, p, 2.6, Color(color_core.r, color_core.g, color_core.b, 0.95))

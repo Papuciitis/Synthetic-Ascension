@@ -23,8 +23,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4074
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	if _spokes.is_empty():
 		_build()
 	set_process(true)
@@ -53,13 +52,15 @@ func _draw() -> void:
 	var eased := 1.0 - pow(1.0 - p, 3.0)
 	var r := lerpf(radius * 0.22, radius, eased)
 
-	draw_circle(Vector2.ZERO, r, Color(color_glow.r, color_glow.g, color_glow.b, 0.14 * fade))
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), 14.0, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), 3.0, true)
+	# Pixel-art kit (Batch B, 2026-09-27): the disc sprite replaces the glow
+	# fill, one ring sprite in the core colour replaces the glow+core arc pair,
+	# the fourteen-spoke sprite replaces the nine glow+core spoke line pairs
+	# (spun by the random offset _build rolled), and a small disc replaces the
+	# white centre flash.
+	VfxKit.draw_disc(self, Vector2.ZERO, r, Color(color_glow.r, color_glow.g, color_glow.b, 0.14 * fade))
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), 3.0)
 
-	for angle in _spokes:
-		var dir := Vector2(cos(angle), sin(angle))
-		draw_line(dir * (r * 0.55), dir * (r * 1.12), Color(color_glow.r, color_glow.g, color_glow.b, 0.35 * fade), 7.0, true)
-		draw_line(dir * (r * 0.55), dir * (r * 1.12), Color(color_core.r, color_core.g, color_core.b, 0.75 * fade), 1.8, true)
+	var spin: float = _spokes[0] if not _spokes.is_empty() else 0.0
+	VfxKit.draw_spokes(self, Vector2.ZERO, r * 1.12, Color(color_core.r, color_core.g, color_core.b, 0.75 * fade), spin)
 
-	draw_circle(Vector2.ZERO, lerpf(34.0, 6.0, p), Color(1.0, 1.0, 1.0, 0.70 * fade))
+	VfxKit.draw_disc(self, Vector2.ZERO, lerpf(34.0, 6.0, p), Color(1.0, 1.0, 1.0, 0.70 * fade))

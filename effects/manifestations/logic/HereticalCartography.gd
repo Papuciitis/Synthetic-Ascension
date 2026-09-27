@@ -33,8 +33,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4064
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	set_process(true)
 
 
@@ -194,14 +193,13 @@ func _draw() -> void:
 		var at: Vector2 = dir * radius
 		# Each stack is a survey chevron; it dims and shrinks as its timer runs
 		# out, so an about-to-expire chart is readable before it costs you.
-		var side: Vector2 = Vector2(-dir.y, dir.x)
+		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite replaces the
+		# three-point polyline (apex 0.75 * reach outward, arms reach to each
+		# side and 0.5 * reach inward): 2 * reach long (the old span), pointing
+		# outward, centred so the apex still lands at at + dir * reach * 0.75.
 		var reach: float = 4.0 + 4.0 * left
 		var alpha: float = 0.25 + 0.6 * left
-		draw_polyline(PackedVector2Array([
-			at + side * reach - dir * reach * 0.5,
-			at + dir * reach * 0.75,
-			at - side * reach - dir * reach * 0.5,
-		]), Color(chart.r, chart.g, chart.b, alpha), 2.0, true)
+		VfxKit.draw_chevron(self, at - dir * reach * 0.25, angle, reach * 2.0, Color(chart.r, chart.g, chart.b, alpha), 2.0)
 
 	var breathe: float = 0.55 + 0.45 * sin(_pulse * 1.8)
 	var sweep: float = TAU * (float(_stacks.size()) / float(MAX_STACKS))

@@ -87,8 +87,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4066
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 
 
@@ -265,12 +264,14 @@ func _draw() -> void:
 	var breathe: float = 0.72 + 0.28 * sin(_pulse * 3.4)
 	var radius: float = 30.0
 
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 44, Color(wound.r, wound.g, wound.b, 0.34 * breathe), 2.0, true)
-	for i in range(8):
-		var angle: float = -PI * 0.5 + TAU * (float(i) / 8.0)
-		var dir: Vector2 = Vector2(cos(angle), sin(angle))
-		draw_line(dir * (radius - 4.0), dir * (radius + 3.0), Color(coin.r, coin.g, coin.b, 0.42 * breathe), 1.6, true)
+	# Pixel-art kit (Batch D, 2026-09-27): one clock-face sprite (ring, eight
+	# ticks and a hand baked pointing up) replaces the ring arc and the eight
+	# tick lines. It takes a single tint, so the face is the ring's ward red at
+	# the ring's alpha; the ticks' gold lives on in the sweeping hand below.
+	VfxKit.draw_clock(self, Vector2.ZERO, radius, Color(wound.r, wound.g, wound.b, 0.34 * breathe), 2.0)
 
 	var hand: float = -PI * 0.5 + fposmod(_pulse * 2.1, TAU)
 	var tip: Vector2 = Vector2(cos(hand), sin(hand)) * (radius - 2.0)
-	draw_line(Vector2.ZERO, tip, Color(coin.r, coin.g, coin.b, 0.55), 2.0, true)
+	# Pixel-art kit (Batch D, 2026-09-27): the streak sprite, bright end at the
+	# tip, replaces the sweeping hand line.
+	VfxKit.draw_streak(self, Vector2.ZERO, tip, 2.0, Color(coin.r, coin.g, coin.b, 0.55))

@@ -27,5 +27,5 @@ func sync(facing: Vector2, up: bool, half_angle: float) -> void:
 func _draw() -> void:
 	if not _up:
 		return
-	draw_arc(Vector2.ZERO, RADIUS, -_half_angle, _half_angle, 24, COLOR, 3.0, true)
-	draw_arc(Vector2.ZERO, RADIUS - 5.0, -_half_angle * 0.9, _half_angle * 0.9, 20, Color(COLOR.r, COLOR.g, COLOR.b, 0.35), 2.0, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one double shield-arc sprite (inner arc baked in) replaces the outer and inner draw_arc pair; the node's rotation carries the facing.
+	VfxKit.draw_shield_arc(self, Vector2.ZERO, 0.0, RADIUS, _half_angle, COLOR, 3.0)

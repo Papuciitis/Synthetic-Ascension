@@ -53,8 +53,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4070
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 
 
@@ -94,11 +93,9 @@ func _draw() -> void:
 	var body := Color(tint.r, tint.g, tint.b, alpha)
 	var halo := Color(tint.r, tint.g, tint.b, alpha * 0.22)
 
-	draw_circle(Vector2.ZERO, radius * 2.6, halo)
-	var points := PackedVector2Array()
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the halo
+	# circle, and one shard sprite (a diamond, long axis along the same spin)
+	# replaces the four-point star polygon and its per-frame point array.
+	VfxKit.draw_disc(self, Vector2.ZERO, radius * 2.6, halo)
 	var angle: float = _t * _spin
-	for i in range(4):
-		var a: float = angle + float(i) * TAU * 0.25
-		var reach: float = radius if i % 2 == 0 else radius * 0.52
-		points.append(Vector2(cos(a), sin(a)) * reach)
-	draw_colored_polygon(points, body)
+	VfxKit.draw_shard(self, Vector2.ZERO, angle, radius * 2.0, body)

@@ -116,8 +116,11 @@ func _draw() -> void:
 	draw_set_transform_matrix(get_global_transform().affine_inverse())
 	var fade := clampf(_decoy_left / HESITATE_SECONDS, 0.0, 1.0)
 	var wave := 1.0 - fade
-	draw_arc(_decoy_at, 10.0 + 26.0 * wave, 0.0, TAU, 32, Color(0.95, 0.9, 0.6, 0.6 * fade), 2.0, true)
-	draw_arc(_decoy_at, 6.0 + 14.0 * wave, 0.0, TAU, 24, Color(0.95, 0.9, 0.6, 0.4 * fade), 1.5, true)
+	# Pixel-art kit (Batch B, 2026-09-27): two ring sprites replace the two
+	# expanding arcs. draw_ring sets no transform of its own (no spin), so the
+	# world-space transform above still places them at the decoy.
+	VfxKit.draw_ring(self, _decoy_at, 10.0 + 26.0 * wave, Color(0.95, 0.9, 0.6, 0.6 * fade), 2.0)
+	VfxKit.draw_ring(self, _decoy_at, 6.0 + 14.0 * wave, Color(0.95, 0.9, 0.6, 0.4 * fade), 1.5)
 
 
 func describe() -> Dictionary:

@@ -20,8 +20,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4093
 	top_level = true
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_rng.randomize()
 
 	_jitter.resize(spokes)
@@ -51,17 +50,7 @@ func _draw() -> void:
 	var r := lerpf(radius * 0.65, radius, k)
 	var sl := lerpf(spoke_len * 0.55, spoke_len, k)
 
-	# glow ring
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 48, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), ring_width * 3.0, true)
-	# core ring
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 48, Color(color_core.r, color_core.g, color_core.b, 0.9 * fade), ring_width, true)
-
-	# spokes
-	for i in range(spokes):
-		var a := TAU * float(i) / float(spokes) + _jitter[i]
-		var v0 := Vector2(cos(a), sin(a)) * (r * 0.55)
-		var v1 := Vector2(cos(a), sin(a)) * (r * 0.55 + sl)
-		draw_line(v0, v1, Color(color_glow.r, color_glow.g, color_glow.b, 0.35 * fade), ring_width * 3.2, true)
-		draw_line(v0, v1, Color(color_core.r, color_core.g, color_core.b, 0.85 * fade), ring_width, true)
-
-	draw_circle(Vector2.ZERO, 3.0, Color(1, 1, 1, 0.25 * fade))
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite replaces the glow+core arc pair; one spokes sprite (it carries its own centre dot) replaces the jittered glow+core spoke lines and the centre circle, the first jitter value giving it a per-instance spin.
+	var spin := _jitter[0] if _jitter.size() > 0 else 0.0
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, 0.9 * fade), ring_width)
+	VfxKit.draw_spokes(self, Vector2.ZERO, r * 0.55 + sl, Color(color_core.r, color_core.g, color_core.b, 0.85 * fade), spin)

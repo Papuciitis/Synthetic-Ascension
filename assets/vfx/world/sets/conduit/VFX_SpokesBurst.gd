@@ -26,7 +26,7 @@ func setup(pos: Vector2) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = PooledVfx.additive_material()
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_rng.randomize()
 	_reset()
 
@@ -67,11 +67,10 @@ func _draw() -> void:
 
 	var out_r := lerpf(inner, outer, 1.0 - pow(1.0 - p, 3.0))
 
-	for i in range(spokes):
-		var a := _angles[i]
-		var dir := Vector2(cos(a), sin(a))
-		var o := out_r * _lens[i]
-		draw_line(dir * inner, dir * o, col, width, true)
-
-	draw_arc(Vector2.ZERO, inner * 1.15, 0.0, TAU, 40, col2, maxf(2.0, width * 0.55), true)
-	draw_circle(Vector2.ZERO, maxf(2.0, width * 0.65), col)
+	# Pixel-art kit (Batch B, 2026-09-27): one fourteen-spoke sprite (with its
+	# own centre ring and dot) replaces the spoke lines, arc and dot; per-spoke
+	# jitter and length variation are baked into the art.
+	VfxKit.draw_spokes(self, Vector2.ZERO, out_r, col, 0.0)
+	if not VfxKit.has("spokes"):
+		draw_arc(Vector2.ZERO, inner * 1.15, 0.0, TAU, 40, col2, maxf(2.0, width * 0.55), true)
+		draw_circle(Vector2.ZERO, maxf(2.0, width * 0.65), col)

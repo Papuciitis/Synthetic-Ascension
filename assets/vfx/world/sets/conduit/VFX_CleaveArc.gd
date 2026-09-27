@@ -26,7 +26,7 @@ func setup(pos: Vector2, dir: Vector2, r: float = -1.0) -> void:
 
 func _ready() -> void:
 	z_index = z
-	material = PooledVfx.additive_material()
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_rng.randomize()
 	_reset()
 
@@ -68,32 +68,18 @@ func _draw() -> void:
 	fade = fade * fade
 
 	var half := deg_to_rad(arc_degrees) * 0.5
-	var a0 := _dir.angle() - half
-	var a1 := _dir.angle() + half
 
 	var outer := radius
 	var inner := maxf(0.0, radius - thickness)
 
-	# filled crescent polygon
-	var seg := 48
-	var pts: PackedVector2Array = []
-	for i in range(seg + 1):
-		var a := lerpf(a0, a1, float(i) / float(seg))
-		pts.append(Vector2(cos(a), sin(a)) * outer)
-	for i in range(seg, -1, -1):
-		var a := lerpf(a0, a1, float(i) / float(seg))
-		pts.append(Vector2(cos(a), sin(a)) * inner)
-
-	draw_colored_polygon(pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade))
-
-	# crisp rims
-	draw_arc(Vector2.ZERO, outer, a0, a1, seg, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), 3.0, true)
-	draw_arc(Vector2.ZERO, inner, a0, a1, seg, Color(color_core.r, color_core.g, color_core.b, color_core.a * 0.55 * fade), 2.0, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one crescent sprite (tips on the +-half chord, convex edge on the outer radius, core colour) replaces the filled band polygon and the outer/inner rims.
+	VfxKit.draw_crescent(self, Vector2.ZERO, _dir.angle(), outer, half, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), 3.0)
 
 	# sparks
+	# Pixel-art kit (Batch B, 2026-09-27): a streak sprite per spark, bright end outward, replaces the spark lines.
 	for s in _sparks:
 		var a := _dir.angle() + float(s["a"])
 		var dir := Vector2(cos(a), sin(a))
 		var start := dir * (inner + thickness * 0.65 + float(s["o"]))
 		var end := start + dir * float(s["l"])
-		draw_line(start, end, Color(1, 1, 1, 0.55 * fade), 2.0, true)
+		VfxKit.draw_streak(self, start, end, 2.0, Color(1, 1, 1, 0.55 * fade))

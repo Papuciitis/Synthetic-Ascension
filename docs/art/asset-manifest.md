@@ -78,8 +78,12 @@ in a folder is not integrated art.
 
 ### ranged-vfx-authored-set — 12 procedural textures (2026-09-26)
 - **Identity:** runtime VFX components in `assets/textures/vfx/ranged/`:
-  `bullet_shared` (batched pool quad, grayscale, tinted per instance),
-  `needle_bullet`/`tracer_bullet` (reserved for per-discipline layering),
+  `bullet_shared` (batched pool body for the native weapon and enemy shots:
+  warm-white bolt, gold sheath, soft dark halo; drawn MIX with a 45%
+  per-instance tint — re-authored 2026-09-27 after a hard-edged block
+  placeholder read as "white blocks" in play),
+  `needle_bullet`/`tracer_bullet` (Precision / Barrage bodies, selected by
+  root tag),
   `diamond_mote` (Barrage fragments), `beam_core`+`beam_cap` (Deadshot /
   Judgement / Firing Squad lines), `impact_burst` (generated impacts),
   `grenade_body`/`mine_body`/`shell_marker` (Ordnance silhouettes),
@@ -213,3 +217,127 @@ replacing the day-one placeholders. THE ART PROGRAM IS COMPLETE: every
 item, curse, set piece, companion, attack VFX and hub prop now carries
 user-supplied art; remaining visual work is rendered-pass composition,
 not assets.
+
+### batch A — pixel-art bullets, beams, burst motes (2026-09-27)
+- **Files (10):** `vfx/ranged/bullet_player.png` (72x16), `bullet_enemy.png`
+  (72x16), `beam_core.png` (64x32, replaces the procedural gradient),
+  `beam_cap.png` (96x96, replaces the procedural starburst);
+  `vfx/motes/mote_hit_spark.png`, `mote_ember.png`, `mote_star.png`,
+  `mote_sparkle.png`, `mote_dust.png` (64x64, white, coloured by each
+  burst's ramp), `sigil_cast.png` (96x96).
+- **Provenance:** user-generated 2026-09-27 from the prompts in
+  `docs/art/2026-09-27-pixel-art-vfx-batches.md` (Batch A); originals kept
+  in `incoming/batch-a/` (a `.gdignore` keeps the editor from importing
+  them). Processed in-repo: bullets cropped to the 4.5:1 quad aspect with
+  the head at the leading edge, everything premultiplied box-downscaled,
+  alpha verified, zero alpha on every canvas edge.
+- **Bound in:** ProjectileSimulationManager (four families: 0 player body,
+  1 needle, 2 tracer, 3 enemy body — enemy shots map to family 3 at
+  upload; the two bodies draw untinted, needle/tracer keep the 45% tint;
+  `bullet_shared.png` stays as the fallback body); the six
+  `assets/vfx/world/bursts/Burst_*.tscn` (texture swap, scale_amount x8
+  for the 64 px motes, 0.85 for the sigil). The Kenney particle PNGs are
+  now unreferenced.
+- **Known follow-up:** spitter (green) and herald (orange) shots used to
+  differ by tint; with the baked enemy body they all fire the same red
+  bolt. Two extra enemy bodies in a later batch restore that read.
+- **Verification:** projectile battery + parse audit green headless
+  (Identity 7, SlotReuse 17, Overflow 17, PooledRecycle 8, HandleCombat 25,
+  EnemyTimeBase 4, ParseAudit 435); in-game look is the user's call.
+
+### batch B — the pixel-art VFX kit (2026-09-27)
+- **Files (10, `assets/textures/vfx/kit/`):** `crescent` (128), `ring` (128),
+  `ring_large` (256), `ring_dashed` (128), `disc` (64), `spokes` (96), `fan`
+  (64), `claw` (128), `bolt` (128x32), `streak` (64x16). White / pale grey
+  sprites, tinted at draw time by each effect's own colour.
+- **Provenance:** user-generated 2026-09-27 from the Batch B prompts in
+  `docs/art/2026-09-27-pixel-art-vfx-batches.md`; originals in
+  `incoming/batch-b/`. Processed in-repo (premultiplied box downscale, alpha
+  verified); the fan, bolt and streak keep their origin or full span on the
+  left edge by design.
+- **Bound through:** `core/systems/vfx/VfxKit.gd` (class VfxKit): static
+  draw helpers (`draw_ring`, `draw_ring_dashed`, `draw_disc`, `draw_spokes`,
+  `draw_fan`, `draw_claw`, `draw_crescent`, `draw_bolt`, `draw_streak`)
+  that place each sprite by the measured content extents and fall back to
+  the primitive they replaced when the PNG is missing. Converted effects
+  (32 scripts; glow+core primitive pairs became one tinted sprite, additive
+  materials became normal blending): MeleeSlash, MagicImpact, SpokesBurst,
+  Shockwave, ShockRing, PulseRing, CleaveArc, ArcLine (Line2D with the bolt
+  texture stretched between two points), TeslaArc2D, TeslaPulseRing,
+  HexBlinkBurst, ReflectPop, PerfectBurst, ParryWindow, SpiritSlash,
+  SpiderExplode, EnemyMuzzleFlash, ChargeWindup, HeraldPulseRing,
+  BomberHazardRing, EliteModifierMark (vampiric ring + fast streaks only),
+  SpeedStreak, GateUnlockBurst, WardstoneAttuneBurst, WardstoneIdleAura,
+  ProvidenceBurst, RetaliationNova, ShardLaunch, RegenerationRing, Bazinga,
+  SevenMileBoots, Dignity.
+- **Known differences:** dashed rings are always ten dashes (Herald had 14,
+  Bomber 18); spoke bursts always fourteen spokes; the Spirit Slash and
+  Tesla arc no longer wobble per frame (the Tesla bolt mirrors on each
+  regeneration instead). `dash_count` / `spokes` / glow exports remain but
+  no longer drive the drawing.
+- **Verification:** parse audit 436 green; SetVfxPool (21, two checks
+  updated for normal blending and the two-point textured bolt),
+  EliteModifier 110, WorldIdleRedraw 24, StyleParity 39, ItemEffectRunner
+  239, ItemBatch3/4, ManifestationSystem 162, EnemyAreaCombat,
+  EnemyHandleTargeting, PerformanceRootCauseFix 29, BalanceRevision 10 all
+  green headless. In-game look is the user's call.
+
+### batch C — telegraphs and auras, kit part 2 (2026-09-27)
+- **Files (10, `assets/textures/vfx/kit/`):** `cone` (128), `hexagon` (128),
+  `plates` (64), `crack` (128x48 strip), `chevron` (32), `shield_arc` (64),
+  `ring_wavy` (128), `ring_hex_wavy` (128), `fangs` (32), `splash` (64).
+- **Provenance:** user-generated 2026-09-27 from the Batch C prompts;
+  originals in `incoming/batch-c/`. Processed as Batch B (the cone and
+  shield arc keep their apex / centre of curvature at the left edge; the
+  crack spans the full strip width).
+- **Bound through:** VfxKit `draw_cone`, `draw_hexagon`, `draw_plates`,
+  `draw_crack`, `draw_chevron`, `draw_shield_arc`, `draw_ring_wavy`,
+  `draw_ring_hex_wavy`, `draw_fangs`, `draw_splash` (constants measured at
+  processing; primitive fallbacks). Converted (17 scripts): EnemyShootCone,
+  EliteModifierMark (shielded hexagon, armoured plates, splitting crack,
+  fast chevrons), FrontShieldVisual, ReflectShieldWindow, StaminaCoreAura,
+  HexMarkAura, SpiderBite, SpiderExplode (droplets -> splash), SunderTear,
+  PilgrimsMomentum, RedLine, AnchorRite, Loom, ReliquaryGuard, PlotArmor
+  (now draws in local space via to_local), OakheartShield,
+  HereticalCartography. Progress arcs, gauge ticks and stakes stay
+  code-drawn on purpose.
+- **Known differences:** chevrons are sized by the old V's span and keep
+  the existing geometry (tip nearest the player, pointing along the
+  heading); the hex mark's corners sit at the ring radius (the old polyline
+  pushed them to 1.28 r); wavy rings roll at the old crest speed; the
+  spider bite's dark puncture dots are gone.
+- **Verification:** parse audit 436; SetVfxPool 21, EliteModifier 110,
+  ManifestationSystem 162, ItemEffectRunner 239, ItemBatch3/4,
+  EnemyAreaCombat, EnemyHandleTargeting, WorldIdleRedraw 24, StyleParity
+  39, PerformanceRootCauseFix 29, BalanceHealthAccounting 34, all green
+  headless.
+
+### batch D — bodies and glyphs, kit part 3 (2026-09-27)
+- **Files (11, `assets/textures/vfx/kit/`):** `missile` (48x24), `shard`
+  (48x24), `spiderling` (48, rotated 45 degrees at processing so the head
+  points +X; carries its own greens), `bracket` (48, corner anchored
+  top-left), `triangle` (96), `plus` (48), `flame` (48, own fire colours),
+  `coin` (48, own gold), `clock` (96, hand baked up), `lattice_mark` (48),
+  `lattice_mirror` (48, delivered separately as d11).
+- **Provenance:** user-generated 2026-09-27 from the Batch D prompts;
+  originals in `incoming/batch-d/`. Sizes raised from the plan's 32 px so
+  thin points survive the downscale.
+- **Bound through:** VfxKit `draw_missile`, `draw_spiderling`,
+  `draw_shard`, `draw_bracket`, `draw_triangle`, `draw_plus`, `draw_flame`,
+  `draw_coin` (squash_x for the spin), `draw_clock` (+ a streak for the
+  sweeping hand), `draw_lattice_mark`, `draw_lattice_mirror`. Converted
+  (17 scripts + 1 scene): MagicMissileProjectile (Sprite2D body + streak-
+  textured Line2D trail), SpiderlingVisual (+ the legacy Sprite2D in
+  PoisonSpiderling.tscn hidden), PoisonSpiderling tail, CartographyMark,
+  SigilMark, FloatingPlus, PairShatter, PairSlipstreamMote, ShardForge,
+  ShardSplinter, TitheEmbers, ManifestationShardProjectile, Firestone,
+  PilgrimsToll, DebtCollector, DeathRattle, LatticeMarkVfx.
+- **Known differences:** Death Rattle's brackets are single corners
+  (no bottom arm); the Debt Collector face takes the ring's ward red at
+  the ring alpha; ember dots became small flames without the hot-to-ash
+  tint; the lattice mark's first tick may sit up to 90 degrees from the
+  old +X tick.
+- **Verification:** parse audit 437; SetVfxPool 21, ManifestationSystem
+  162, ItemEffectRunner 239, ItemBatch3/4, EnemyAreaCombat,
+  EnemyHandleTargeting, WorldIdleRedraw 24, StyleParity 39,
+  EliteModifier 110, all green headless. In-game look is the user's call.

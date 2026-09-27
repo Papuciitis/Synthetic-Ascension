@@ -23,8 +23,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = z
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -42,12 +41,6 @@ func _draw() -> void:
 	fade = fade * fade
 
 	var r := lerpf(radius * 0.65, radius, p)
-	var seg := 72
 
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, seg,
-		Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * alpha * fade),
-		glow_width, true)
-
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, seg,
-		Color(color_core.r, color_core.g, color_core.b, alpha * fade),
-		line_width, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the core colour replaces the glow+core arc pair.
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, alpha * fade), line_width)

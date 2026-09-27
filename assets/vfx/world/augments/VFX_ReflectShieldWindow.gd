@@ -36,8 +36,7 @@ func _ready() -> void:
 	z_index = 4090
 	top_level = true
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -91,17 +90,7 @@ func _draw() -> void:
 	var pulse := 0.85 + 0.15 * sin(_t * TAU * pulse_speed)
 	var r := _r * (0.98 + 0.02 * pulse)
 
+	# Pixel-art kit (Batch C, 2026-09-27): a soft disc sprite replaces the fill circle; one wavy ring sprite in the core colour replaces the per-frame wavy polyline and its glow+core strokes.
 	if fill_alpha > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.98, Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha * fade))
-
-	var pts := PackedVector2Array()
-	var seg: int = maxi(24, int(segments))
-
-	for i in range(seg + 1):
-		var a := TAU * float(i) / float(seg)
-		var w := sin(a * wave_freq + _t * roll_speed) * wave_amp
-		var rr := r + w * pulse
-		pts.append(Vector2(cos(a), sin(a)) * rr)
-
-	draw_polyline(pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
-	draw_polyline(pts, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.98, Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha * fade))
+	VfxKit.draw_ring_wavy(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), 0.0, core_width)

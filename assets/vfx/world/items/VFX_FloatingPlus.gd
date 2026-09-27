@@ -13,8 +13,7 @@ var _t: float = 0.0
 func _ready() -> void:
 	z_as_relative = false
 	z_index = 4095
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -37,7 +36,7 @@ func _draw() -> void:
 	a = a * a
 	var c := Color(color.r, color.g, color.b, color.a * a)
 
-	var L := line_len
-	draw_line(Vector2(-L, 0), Vector2(L, 0), c, line_width, true)
-	draw_line(Vector2(0, -L), Vector2(0, L), c, line_width, true)
-	draw_circle(Vector2.ZERO, L * 0.20, Color(c.r, c.g, c.b, c.a * 0.35))
+	# Pixel-art kit (Batch D, 2026-09-27): one plus sprite replaces the two
+	# crossed lines and the centre dot. The node's own scale (set in _process)
+	# still carries the 0.95 -> 1.20 growth, so the size is the bare cross width.
+	VfxKit.draw_plus(self, Vector2.ZERO, line_len * 2.0, c, line_width)

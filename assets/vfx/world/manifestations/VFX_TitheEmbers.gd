@@ -18,8 +18,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 3997
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	for _i in range(ember_count):
 		_embers.append({
 			"x": randf_range(-16.0, 16.0),
@@ -45,11 +44,15 @@ func _draw() -> void:
 	var p: float = clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
 
 	# The flare: a short, bright gulp as the tithe is taken.
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the flare circle and the ring sprite the ash arc.
 	var flare: float = clampf(1.0 - p * 4.0, 0.0, 1.0)
 	if flare > 0.0:
-		draw_circle(Vector2.ZERO, 30.0 * (0.6 + 0.4 * flare), Color(HOT.r, HOT.g, HOT.b, 0.35 * flare))
-		draw_arc(Vector2.ZERO, 26.0, 0.0, TAU, 40, Color(ASH.r, ASH.g, ASH.b, 0.9 * flare), 2.5, true)
+		VfxKit.draw_disc(self, Vector2.ZERO, 30.0 * (0.6 + 0.4 * flare), Color(HOT.r, HOT.g, HOT.b, 0.35 * flare))
+		VfxKit.draw_ring(self, Vector2.ZERO, 26.0, Color(ASH.r, ASH.g, ASH.b, 0.9 * flare), 2.5)
 
+	# Pixel-art kit (Batch D, 2026-09-27): one flame sprite per ember (it carries
+	# its own fire colours, so the HOT->ASH lerp is gone) replaces each rising
+	# dot; the height follows the dot's old radius progression.
 	for ember in _embers:
 		var local_p: float = clampf((p - float(ember["delay"])) / maxf(0.05, 1.0 - float(ember["delay"])), 0.0, 1.0)
 		if local_p <= 0.0:
@@ -57,5 +60,4 @@ func _draw() -> void:
 		var fade: float = 1.0 - local_p
 		var y: float = -float(ember["rise"]) * local_p
 		var x: float = float(ember["x"]) + float(ember["drift"]) * local_p + sin(float(ember["phase"]) + local_p * 7.0) * 3.5
-		var tint: Color = HOT.lerp(ASH, local_p)
-		draw_circle(Vector2(x, y), float(ember["size"]) * (0.5 + 0.5 * fade), Color(tint.r, tint.g, tint.b, fade * 0.9))
+		VfxKit.draw_flame(self, Vector2(x, y), 6.0 * float(ember["size"]) * (0.5 + 0.5 * fade), Color(1.0, 1.0, 1.0, fade * 0.9))

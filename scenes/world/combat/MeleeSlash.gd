@@ -63,12 +63,9 @@ func _ready() -> void:
 		_legacy_col.disabled = true
 
 	z_index = z
-	var pm := get_node_or_null("/root/PoolManager")
-	if pm != null and is_instance_valid(pm) and pm.has_method("get_additive_material"):
-		material = pm.call("get_additive_material")
-	else:
-		material = CanvasItemMaterial.new()
-		(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	# Pixel-art kit (Batch B, 2026-09-27): the crescent sprite carries its own
+	# light, so it blends normally instead of additively.
+	material = null
 
 	# hide old Line2D if it exists
 	var old_line := get_node_or_null("Line2D") as Line2D
@@ -279,40 +276,12 @@ func _draw() -> void:
 
 	var center := Vector2.ZERO
 
-	# main wedge polygon (cached directions; no per-frame array allocations)
-	var seg := _seg_visual
-
-	# Fill cached poly points (outer arc forward, inner arc backward)
-	for i in range(seg + 1):
-		_poly_pts[i] = center + _arc_dirs[i] * r_outer
-	for i in range(seg + 1):
-		_poly_pts[seg + 1 + i] = center + _arc_dirs[seg - i] * r_inner
-
-	draw_colored_polygon(
-		_poly_pts,
-		Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade * glow_mul)
-	)
-
-	# outer rim (teal edge)
-	draw_arc(
-		center, r_outer, a0, a1, seg,
-		Color(color_edge.r, color_edge.g, color_edge.b, color_edge.a * fade * edge_glow_mul),
-		rim_width + 1.0, true
-	)
-
-	# inner rim (steel core)
-	draw_arc(
-		center, r_outer * 0.98, a0, a1, seg,
-		Color(color_core.r, color_core.g, color_core.b, color_core.a * fade),
-		rim_width, true
-	)
-
-	# inner arc faint (depth)
-	draw_arc(
-		center, r_inner, a0, a1, seg,
-		Color(color_core.r, color_core.g, color_core.b, color_core.a * 0.35 * fade),
-		maxf(2.0, rim_width * 0.65), true
-	)
+	# Pixel-art kit: one crescent sprite, tips on the hitbox's chord, convex
+	# edge on the outer radius. The old wedge polygon and three rims are the
+	# kit's fallback when the sprite is missing.
+	var tint := color_core.lerp(color_edge, 0.35)
+	tint.a = color_core.a * fade
+	VfxKit.draw_crescent(self, center, 0.0, r_outer, half, tint, rim_width)
 
 	# tiny warm sparks (metal scrape)
 	if sparks > 0:
@@ -325,12 +294,7 @@ func _draw() -> void:
 			var base := dir * lerpf(r_inner + 6.0, r_outer - 6.0, 0.65)
 			var end := base + dir * lerpf(spark_len * 0.55, spark_len, u)
 
-			draw_line(
-				center + base,
-				center + end,
-				Color(spark_color.r, spark_color.g, spark_color.b, spark_color.a * fade),
-				spark_width, true
-			)
+			VfxKit.draw_streak(self, center + base, center + end, spark_width, Color(spark_color.r, spark_color.g, spark_color.b, spark_color.a * fade))
 
 
 func _apply_burn_dot(enemy: Node) -> void:

@@ -25,8 +25,7 @@ func _ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -43,23 +42,7 @@ func _draw() -> void:
 	fade = fade * fade
 
 	var a: float = _dir.angle()
-	var a0: float = a - _half_angle
-	var a1: float = a + _half_angle
-
-	var r0: float = 10.0
 	var r1: float = _len * lerpf(0.85, 1.0, 1.0 - p)
 
-	# wedge polygon
-	var pts: PackedVector2Array = PackedVector2Array()
-	var seg: int = 18
-	for i in range(seg + 1):
-		var t: float = float(i) / float(seg)
-		var aa: float = lerpf(a0, a1, t)
-		pts.append(Vector2(cos(aa), sin(aa)) * r1)
-	for i in range(seg, -1, -1):
-		var t2: float = float(i) / float(seg)
-		var aa2: float = lerpf(a0, a1, t2)
-		pts.append(Vector2(cos(aa2), sin(aa2)) * r0)
-
-	draw_colored_polygon(pts, Color(_glow.r, _glow.g, _glow.b, _glow.a * fade))
-	draw_arc(Vector2.ZERO, r1, a0, a1, 32, Color(_core.r, _core.g, _core.b, _core.a * fade), 2.0, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one cone sprite (apex at the origin, outer arc baked in) in the core colour replaces the glow wedge polygon and the core arc.
+	VfxKit.draw_cone(self, Vector2.ZERO, a, r1, Color(_core.r, _core.g, _core.b, _core.a * fade), rad_to_deg(_half_angle))

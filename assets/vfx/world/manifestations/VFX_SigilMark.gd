@@ -31,8 +31,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4090
 	top_level = true
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	set_process(true)
 
 
@@ -94,13 +93,15 @@ func _draw() -> void:
 	var pulse: float = 0.90 + 0.10 * sin(_t * 5.5)
 	var radius: float = 30.0 * pulse
 
-	draw_circle(Vector2.ZERO, radius * 1.25, Color(color_glow.r, color_glow.g, color_glow.b, 0.14 * alpha))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 30, Color(color_glow.r, color_glow.g, color_glow.b, 0.55 * alpha), 2.4, true)
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the glow circle and the ring sprite replaces the glow arc.
+	VfxKit.draw_disc(self, Vector2.ZERO, radius * 1.25, Color(color_glow.r, color_glow.g, color_glow.b, 0.14 * alpha))
+	VfxKit.draw_ring(self, Vector2.ZERO, radius, Color(color_glow.r, color_glow.g, color_glow.b, 0.55 * alpha), 2.4)
 
 	# A slowly counter-rotating triangle over a fixed one: reads as "aimed at",
 	# not as generic enemy decoration.
-	_draw_triangle(radius * 0.86, _t * 0.8, Color(color_core.r, color_core.g, color_core.b, 0.85 * alpha), 2.0)
-	_draw_triangle(radius * 0.86, -_t * 0.55 + PI, Color(color_core.r, color_core.g, color_core.b, 0.45 * alpha), 1.4)
+	# Pixel-art kit (Batch D, 2026-09-27): two triangle sprites, spun by the same phases, replace the two polyline triangles.
+	VfxKit.draw_triangle(self, Vector2.ZERO, radius * 0.86, Color(color_core.r, color_core.g, color_core.b, 0.85 * alpha), _t * 0.8, 2.0)
+	VfxKit.draw_triangle(self, Vector2.ZERO, radius * 0.86, Color(color_core.r, color_core.g, color_core.b, 0.45 * alpha), -_t * 0.55 + PI, 1.4)
 
 	# Countdown ring, so the player can see how long the target is worth chasing.
 	var remaining: float = clampf(time_left / time_total, 0.0, 1.0)
@@ -116,25 +117,18 @@ func _draw() -> void:
 			true
 		)
 
-	draw_circle(Vector2.ZERO, 3.4 * pulse, Color(1.0, 0.96, 0.86, 0.95 * alpha))
+	# Pixel-art kit (Batch D, 2026-09-27): a small disc sprite replaces the centre dot.
+	VfxKit.draw_disc(self, Vector2.ZERO, 3.4 * pulse, Color(1.0, 0.96, 0.86, 0.95 * alpha))
 
 
 func _draw_burst() -> void:
 	var t: float = clampf(_burst / BURST_TIME, 0.0, 1.0)
 	var grow: float = 1.0 - t
 	var radius: float = burst_radius * (0.25 + 0.80 * grow)
-	draw_circle(Vector2.ZERO, radius, Color(color_glow.r, color_glow.g, color_glow.b, 0.22 * t))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 40, Color(color_core.r, color_core.g, color_core.b, 0.85 * t), 4.0 * t + 1.0, true)
-	_draw_triangle(radius * 0.72, grow * 2.4, Color(1.0, 0.92, 0.70, 0.70 * t), 3.0)
-	for i in range(9):
-		var angle: float = TAU * float(i) / 9.0 + grow * 1.2
-		var dir := Vector2(cos(angle), sin(angle))
-		draw_line(dir * radius * 0.55, dir * radius * (1.05 + 0.15 * grow), Color(1.0, 0.80, 0.40, 0.60 * t), 2.0, true)
-
-
-func _draw_triangle(radius: float, phase: float, color: Color, width: float) -> void:
-	var points := PackedVector2Array()
-	for i in range(4):
-		var angle: float = phase + TAU * float(i % 3) / 3.0 - PI * 0.5
-		points.append(Vector2(cos(angle), sin(angle)) * radius)
-	draw_polyline(points, color, width, true)
+	# Pixel-art kit (Batch D, 2026-09-27): disc, ring and triangle sprites replace
+	# the glow circle, the growing arc and the polyline triangle; the spokes
+	# sprite (spun by the same drift) replaces the nine radial lines.
+	VfxKit.draw_disc(self, Vector2.ZERO, radius, Color(color_glow.r, color_glow.g, color_glow.b, 0.22 * t))
+	VfxKit.draw_ring(self, Vector2.ZERO, radius, Color(color_core.r, color_core.g, color_core.b, 0.85 * t), 4.0 * t + 1.0)
+	VfxKit.draw_triangle(self, Vector2.ZERO, radius * 0.72, Color(1.0, 0.92, 0.70, 0.70 * t), grow * 2.4, 3.0)
+	VfxKit.draw_spokes(self, Vector2.ZERO, radius * (1.05 + 0.15 * grow), Color(1.0, 0.80, 0.40, 0.60 * t), grow * 1.2)

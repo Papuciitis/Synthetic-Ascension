@@ -26,8 +26,7 @@ var _player: Node2D = null
 
 func _ready() -> void:
 	z_index = z
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(global_position.x * 100.0) ^ int(global_position.y * 100.0) ^ 0x51A7BEEF
@@ -54,7 +53,7 @@ func set_intensity(v: float) -> void:
 func _process(dt: float) -> void:
 	_t += dt
 	# Off-screen the aura paints nothing anyone can see, and on-screen it is an
-	# ambient breathe: 96- and 64-segment arcs plus ten twinkling sparks look
+	# ambient breathe: two ring sprites plus ten twinkling sparks look
 	# identical at the shared 30 Hz bucket. _t keeps running either way, so
 	# walking back into range resumes the animation in phase.
 	if not _in_draw_range():
@@ -89,18 +88,15 @@ func _draw() -> void:
 	var col1: Color = Color(0.55, 0.85, 1.0, a1 * pulse)
 	var col2: Color = Color(0.25, 0.55, 1.0, a0)
 
-	# Two rings with slight phase offset.
+	# Pixel-art kit (Batch B, 2026-09-27): two ring sprites replace the two counter-rotating arcs (the sprites are round, so that rotation was only visual and is not passed), and one small soft disc sprite per spark replaces its core+halo circle pair.
 	var r1: float = base_radius
 	var r2: float = inner_radius
-	draw_arc(Vector2.ZERO, r1, _t * 0.25, _t * 0.25 + TAU, 96, col1, line_width, true)
-	draw_arc(Vector2.ZERO, r2, -_t * 0.35, -_t * 0.35 + TAU, 64, col2, maxf(2.0, line_width * 0.6), true)
+	VfxKit.draw_ring(self, Vector2.ZERO, r1, col1, line_width)
+	VfxKit.draw_ring(self, Vector2.ZERO, r2, col2, maxf(2.0, line_width * 0.6))
 
-	# Orbiting sparkles.
 	for s in _spark:
 		var a: float = float(s.a) + float(_t) * float(s.s)
 		var p: Vector2 = Vector2(cos(a), sin(a)) * float(s.r)
 		var tw: float = 0.55 + 0.45 * sin(float(s.p) + float(_t) * 3.4)
 		var ca: float = (0.06 + 0.10 * tw) * intensity
-		var c: Color = Color(0.75, 0.93, 1.0, ca)
-		draw_circle(p, 1.6, c)
-		draw_circle(p, 3.8, Color(c.r, c.g, c.b, c.a * 0.35))
+		VfxKit.draw_disc(self, p, 3.0, Color(0.75, 0.93, 1.0, ca))

@@ -16,6 +16,11 @@ var _t: float = 0.0
 
 func _ready() -> void:
 	z_index = z
+	# Pixel-art kit (Batch D, 2026-09-27): the kit sprite is the body now, so a
+	# Sprite2D child carrying Spiderling10x6.png must not double-draw over it.
+	var sprite := get_node_or_null(^"Sprite2D") as Sprite2D
+	if sprite != null:
+		sprite.visible = false
 	set_process(true)
 
 func _process(dt: float) -> void:
@@ -25,47 +30,17 @@ func _process(dt: float) -> void:
 func _draw() -> void:
 	var s: float = body_scale
 
-	# Body segments (compact = NOT sperm)
-	var r_ab: float = 7.5 * s
+	# Thorax anchor: where the old three-segment body sat its glow.
 	var r_th: float = 5.3 * s
-	var r_hd: float = 3.6 * s
-
-	var p_ab: Vector2 = Vector2(-3.6 * s, 0.0)  # abdomen
-	var p_th: Vector2 = Vector2( 2.8 * s, 0.0)  # thorax
-	var p_hd: Vector2 = Vector2( 6.8 * s, 0.0)  # head
+	var p_th: Vector2 = Vector2(2.8 * s, 0.0)
 
 	# Soft poison glow
-	draw_circle(p_th, r_th * 2.25, Color(glow_color.r, glow_color.g, glow_color.b, glow_color.a))
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the glow circle.
+	VfxKit.draw_disc(self, p_th, r_th * 2.25, Color(glow_color.r, glow_color.g, glow_color.b, glow_color.a))
 
-	# Outline + fill (three circles)
-	_draw_blob(p_ab, r_ab, s)
-	_draw_blob(p_th, r_th, s)
-	_draw_blob(p_hd, r_hd, s)
-
-	# Eyes
-	draw_circle(p_hd + Vector2(1.1 * s, -0.9 * s), 0.7 * s, Color(1, 1, 1, 0.85))
-	draw_circle(p_hd + Vector2(1.1 * s,  0.9 * s), 0.7 * s, Color(1, 1, 1, 0.85))
-
-	# Legs: 4 per side (8 total) with wiggle
-	var base: Vector2 = p_th + Vector2(-0.6 * s, 0.0)
-	var leg1: float = 9.0 * s
-	var leg2: float = 6.5 * s
-
-	for i in range(4):
-		for side_sign_i in [-1, 1]:
-			var side_sign: float = float(side_sign_i)
-
-			# spread angles from front to back
-			var ang0: float = deg_to_rad(20.0 + float(i) * 18.0) * side_sign
-			var wig: float = sin(_t * wiggle_speed + float(i) * 1.35 + (0.0 if side_sign < 0.0 else 2.1)) * wiggle_amp
-			var ang: float = ang0 + (wig * 0.20)
-
-			var mid: Vector2 = base + Vector2(cos(ang), sin(ang)) * leg1
-			var tip: Vector2 = mid + Vector2(cos(ang) * 0.75, sin(ang) * 0.75) * leg2
-
-			draw_line(base, mid, leg_color, 1.3 * s, true)
-			draw_line(mid, tip, leg_color, 1.1 * s, true)
-
-func _draw_blob(pos: Vector2, r: float, s: float) -> void:
-	draw_circle(pos, r + 1.0 * s, outline_color)
-	draw_circle(pos, r, body_color)
+	# Pixel-art kit (Batch D, 2026-09-27): one spiderling sprite (it carries its
+	# own greens) replaces the three outlined body circles, the two eyes and the
+	# eight wiggling legs; the leg wiggle survives as a cheap breathing of the
+	# body size on the same phase.
+	var wiggle: float = 1.0 + 0.06 * sin(_t * wiggle_speed)
+	VfxKit.draw_spiderling(self, Vector2.ZERO, 0.0, 22.0 * s * wiggle, Color(1.0, 1.0, 1.0, 1.0))

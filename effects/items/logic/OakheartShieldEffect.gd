@@ -39,9 +39,6 @@ var _t: float = 0.0
 var _r: float = 36.0
 var _hurtbox: Area2D = null
 var _last_pulse_bucket: int = -1
-## The ring's point buffer, kept for the node's lifetime and rewritten in place,
-## as VFX_HexMarkAura and VFX_StaminaCoreAura do.
-var _pts: PackedVector2Array = PackedVector2Array()
 
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
@@ -78,8 +75,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4085
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	# Defer hurtbox lookup until everything is ready.
 	call_deferred("_resolve_hurtbox")
@@ -146,30 +142,17 @@ func _draw() -> void:
 	var r := _r * pulse
 
 	# fill
+	# Pixel-art kit (Batch C, 2026-09-27): the disc sprite replaces the fill
+	# circle.
 	if fill_alpha > 0.0:
-		draw_circle(Vector2.ZERO, r * 0.98, Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha))
+		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.98, Color(color_fill.r, color_fill.g, color_fill.b, color_fill.a * fill_alpha))
 
-	# wavy ring points, written into the node's own buffer instead of a fresh
-	# PackedVector2Array per repaint - the reuse VFX_HexMarkAura does. The lines
-	# below are unchanged: draw_polyline would join the segments differently, and
-	# this is a redraw-frequency fix, not a look change.
-	var seg: int = maxi(24, int(segments))
-	if _pts.size() != seg + 1:
-		_pts.resize(seg + 1)
-
-	for i in range(seg + 1):
-		var a := (float(i) / float(seg)) * TAU
-		var wob := wave_amp * sin(a * wave_freq + _t * TAU * roll_speed)
-		var rr := r + wob
-		_pts[i] = Vector2(cos(a), sin(a)) * rr
-
-	# glow (wide)
-	for i in range(seg):
-		draw_line(_pts[i], _pts[i + 1], Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a), glow_width, true)
-
-	# core (thin)
-	for i in range(seg):
-		draw_line(_pts[i], _pts[i + 1], Color(color_core.r, color_core.g, color_core.b, color_core.a), core_width, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one wavy-ring sprite in the core
+	# colour replaces the segment loop (the wobbled point buffer and its glow
+	# and core line passes). The old wave rolled around the ring at
+	# TAU * roll_speed / wave_freq rad/s, so the sprite spins at that rate to
+	# keep the roll.
+	VfxKit.draw_ring_wavy(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, color_core.a), _t * TAU * roll_speed / maxf(wave_freq, 0.01), core_width)
 
 
 ## Pure: the reduction is derived from the item's roll and rarity alone.

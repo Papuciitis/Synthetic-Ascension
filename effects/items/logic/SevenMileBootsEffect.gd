@@ -111,7 +111,10 @@ func _draw() -> void:
 		var height := 22.0
 		var size := texture.get_size() * (height / maxf(float(texture.get_height()), 1.0))
 		draw_texture_rect(texture, Rect2(_boot_at - size * 0.5, size), false, Color(1, 1, 1, 0.4 + 0.5 * fade))
-	draw_arc(_boot_at, 12.0 + 4.0 * (1.0 - fade), 0.0, TAU, 24, Color(0.85, 0.9, 0.8, 0.5 * fade), 1.5, true)
+	# Pixel-art kit (Batch B, 2026-09-27): a ring sprite replaces the arc around
+	# the boot. draw_ring sets no transform of its own (no spin), so the
+	# world-space transform above still places it at the boot.
+	VfxKit.draw_ring(self, _boot_at, 12.0 + 4.0 * (1.0 - fade), Color(0.85, 0.9, 0.8, 0.5 * fade), 1.5)
 
 
 func describe() -> Dictionary:

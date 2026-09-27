@@ -19,8 +19,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4092
 	top_level = true
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -43,20 +42,8 @@ func _draw() -> void:
 	var k := 1.0 - pow(1.0 - p, 3.0)
 
 	var r_outer := lerpf(radius * 0.85, radius, k)
-	var r_inner := maxf(0.0, r_outer - thickness)
 
 	var half := deg_to_rad(arc_degrees) * 0.5
-	var a0 := -half
-	var a1 := +half
 
-	var seg := 42
-	var pts: PackedVector2Array = []
-	for i in range(seg + 1):
-		var a := lerpf(a0, a1, float(i) / float(seg))
-		pts.append(Vector2(cos(a), sin(a)) * r_outer)
-	for i in range(seg, -1, -1):
-		var a := lerpf(a0, a1, float(i) / float(seg))
-		pts.append(Vector2(cos(a), sin(a)) * r_inner)
-
-	draw_colored_polygon(pts, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade))
-	draw_arc(Vector2.ZERO, r_outer, a0, a1, seg, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), rim_width, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one crescent sprite in the core colour replaces the filled glow band polygon and its core rim arc; the node's rotation supplies the spin.
+	VfxKit.draw_crescent(self, Vector2.ZERO, 0.0, r_outer, half, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), rim_width)

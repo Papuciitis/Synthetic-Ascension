@@ -19,13 +19,13 @@ class_name VFX_PerfectFlash
 var _t := 0.0
 var _rng := RandomNumberGenerator.new()
 var _bolts: Array[PackedVector2Array] = []
+var _flips: Array[bool] = []
 
 func _ready() -> void:
 	z_as_relative = false
 	z_index = 4094
 	top_level = true
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_rng.randomize()
 
 	_build_bolts()
@@ -42,10 +42,13 @@ func _process(dt: float) -> void:
 
 func _build_bolts() -> void:
 	_bolts.clear()
+	_flips.clear()
 	for i in range(max(1, bolts)):
 		var a := _rng.randf() * TAU
 		var dir := Vector2(cos(a), sin(a))
 		_bolts.append(_make_bolt(Vector2.ZERO, dir * bolt_len, max(4, segments), jaggedness))
+		# Pixel-art kit: the bolt sprite is static, so each bolt mirrors at random.
+		_flips.append(_rng.randf() < 0.5)
 
 func _make_bolt(a: Vector2, b: Vector2, segs: int, jag: float) -> PackedVector2Array:
 	var pts := PackedVector2Array()
@@ -74,13 +77,17 @@ func _draw() -> void:
 
 	var r := lerpf(radius * 0.7, radius, k)
 
-	# ring
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 56, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), ring_width * 3.4, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 56, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), ring_width, true)
+	var core := Color(color_core.r, color_core.g, color_core.b, 0.95 * fade)
 
-	# bolts
-	for pts in _bolts:
-		draw_polyline(pts, Color(color_glow.r, color_glow.g, color_glow.b, 0.35 * fade), 9.0, true)
-		draw_polyline(pts, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), 2.4, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite replaces the glow+core arc pair; one bolt sprite per bolt, centre outward to the same random tip, replaces the jagged glow+core polylines (which stay as the fallback without the art); a soft disc sprite replaces the centre circle.
+	VfxKit.draw_ring(self, Vector2.ZERO, r, core, ring_width)
+	if VfxKit.has("bolt"):
+		for i in range(_bolts.size()):
+			var pts := _bolts[i]
+			VfxKit.draw_bolt(self, Vector2.ZERO, pts[pts.size() - 1], 9.0, core, _flips[i])
+	else:
+		for pts in _bolts:
+			draw_polyline(pts, Color(color_glow.r, color_glow.g, color_glow.b, 0.35 * fade), 9.0, true)
+			draw_polyline(pts, core, 2.4, true)
 
-	draw_circle(Vector2.ZERO, 4.0, Color(1, 1, 1, 0.22 * fade))
+	VfxKit.draw_disc(self, Vector2.ZERO, 4.0, Color(1, 1, 1, 0.22 * fade))

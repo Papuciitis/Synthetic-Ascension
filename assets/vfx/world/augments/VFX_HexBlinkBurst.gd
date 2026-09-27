@@ -16,8 +16,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = 4095
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 
 	set_process(true)
 	queue_redraw()
@@ -36,15 +35,6 @@ func _draw() -> void:
 
 	var r: float = ring_radius + ring_expand * x
 
-	# ring glow + core
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), 10.0)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, 64, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), 2.4)
-
-	# spokes
-	var n: int = maxi(6, spokes)
-	for i in range(n):
-		var a: float = (TAU * float(i) / float(n)) + (x * 0.6)
-		var p0 := Vector2(cos(a), sin(a)) * (r * 0.35)
-		var p1 := Vector2(cos(a), sin(a)) * (r * 1.05)
-		draw_line(p0, p1, Color(color_glow.r, color_glow.g, color_glow.b, 0.30 * fade), 7.0, true)
-		draw_line(p0, p1, Color(color_core.r, color_core.g, color_core.b, 0.85 * fade), 2.0, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite replaces the glow+core arc pair; one spokes sprite, spun as the lines were, replaces the ten glow+core spoke lines.
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, 0.95 * fade), 2.4)
+	VfxKit.draw_spokes(self, Vector2.ZERO, r * 1.05, Color(color_core.r, color_core.g, color_core.b, 0.85 * fade), x * 0.6)

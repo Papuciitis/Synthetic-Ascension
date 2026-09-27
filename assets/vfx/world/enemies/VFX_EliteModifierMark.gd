@@ -123,8 +123,7 @@ func _ready() -> void:
 	# As child of the enemy: local position is fine, drawn under the sprite.
 	position = Vector2.ZERO
 	z_index = -1
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	_reduced_motion = (
 		SettingsManager != null
 		and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
@@ -226,23 +225,15 @@ func _draw() -> void:
 
 func _draw_shield_hexagon(radius: float) -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.SHIELDED)
-	var points := PackedVector2Array()
-	for i in range(7):
-		points.append(Vector2.RIGHT.rotated(TAU * float(i % 6) / 6.0 + PI / 6.0) * radius)
-	draw_colored_polygon(points.slice(0, 6), Color(tint.r, tint.g, tint.b, SHIELD_FILL_ALPHA))
-	draw_polyline(points, Color(tint.r, tint.g, tint.b, GLOW_ALPHA), glow_width, true)
-	draw_polyline(points, Color(tint.r, tint.g, tint.b, LINE_ALPHA), line_width, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one hexagon sprite (faint fill baked in) in the line colour replaces the fill polygon and the glow+core polylines.
+	VfxKit.draw_hexagon(self, Vector2.ZERO, radius, Color(tint.r, tint.g, tint.b, LINE_ALPHA), 0.0, line_width)
 
 
 func _draw_plate_ring() -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.ARMOURED)
 	var r := body_radius + plate_ring_offset
-	var plate_len := TAU / float(maxi(plate_count, 1))
-	for i in range(plate_count):
-		var a0 := float(i) * plate_len
-		var a1 := a0 + plate_len * (1.0 - plate_gap)
-		draw_arc(Vector2.ZERO, r, a0, a1, PLATE_ARC_SEGMENTS, Color(tint.r, tint.g, tint.b, SOLID_GLOW_ALPHA), glow_width, true)
-		draw_arc(Vector2.ZERO, r, a0, a1, PLATE_ARC_SEGMENTS, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), line_width * PLATE_LINE_WIDTH_MULT, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one six-plate sprite in the line colour replaces the per-plate glow+core arcs.
+	VfxKit.draw_plates(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), 0.0, line_width * PLATE_LINE_WIDTH_MULT)
 
 
 func _draw_vampiric_ring() -> void:
@@ -250,40 +241,29 @@ func _draw_vampiric_ring() -> void:
 	var k := VAMPIRIC_STILL_PHASE if _reduced_motion else 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
 	var alpha := lerpf(VAMPIRIC_RING_ALPHA_MIN, VAMPIRIC_RING_ALPHA_MAX, k) + _feed_flash
 	var r := body_radius - vampiric_ring_inset + (0.0 if _reduced_motion else vampiric_ring_pulse_px * k)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, RING_SEGMENTS, Color(tint.r, tint.g, tint.b, minf(alpha * VAMPIRIC_GLOW_ALPHA_MULT, 1.0)), glow_width, true)
-	draw_arc(Vector2.ZERO, r, 0.0, TAU, RING_SEGMENTS, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width, true)
+	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the line colour replaces the glow+core full arcs.
+	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width)
 
 
 func _draw_seam() -> void:
 	# A jagged crack across the body: where it will come apart.
 	var tint := EliteModifiers.tint(EliteModifiers.SPLITTING)
 	var r := body_radius
-	var seam := PackedVector2Array([
-		Vector2(-r, -r * 0.35),
-		Vector2(-r * 0.45, r * 0.05),
-		Vector2(-r * 0.1, -r * 0.2),
-		Vector2(r * 0.2, r * 0.3),
-		Vector2(r * 0.55, 0.0),
-		Vector2(r, r * 0.4),
-	])
-	draw_polyline(seam, Color(tint.r, tint.g, tint.b, SOLID_GLOW_ALPHA), glow_width * THIN_GLOW_WIDTH_MULT, true)
-	draw_polyline(seam, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), line_width, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched between the old seam's end points replaces the glow+core zig-zag polylines.
+	# The kink band scales with the width: the thin glow width (~5.4 px) gives
+	# the crack the bite the old 13 px zig-zag had on a 26 px body.
+	VfxKit.draw_crack(self, Vector2(-r, -r * 0.35), Vector2(r, r * 0.4), glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
 
 
 func _draw_fast_chevrons() -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.FAST)
 	var y := body_radius + fast_chevron_offset
-	var half := fast_chevron_size * 0.5
 	var first_x := -fast_chevron_spacing * float(fast_chevron_count - 1) * 0.5
+	var col := Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA)
 	for i in range(fast_chevron_count):
 		var x := first_x + fast_chevron_spacing * float(i)
-		var chevron := PackedVector2Array([
-			Vector2(x - half, y - half),
-			Vector2(x + half, y),
-			Vector2(x - half, y + half),
-		])
-		draw_polyline(chevron, Color(tint.r, tint.g, tint.b, SOLID_GLOW_ALPHA), glow_width * THIN_GLOW_WIDTH_MULT, true)
-		draw_polyline(chevron, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), line_width, true)
+		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite pointing +X, centred where the old glyph was, replaces the glow+core polyline pair.
+		VfxKit.draw_chevron(self, Vector2(x, y), 0.0, fast_chevron_size, col, line_width)
 
 
 func _draw_streak(world_scale: float) -> void:
@@ -301,7 +281,7 @@ func _draw_streak(world_scale: float) -> void:
 		var lines_from_middle := float(i) - middle
 		var offset := side * lines_from_middle * streak_spacing
 		var fade := 1.0 - absf(lines_from_middle) * STREAK_SIDE_FADE
-		var from := offset + back * (body_radius * STREAK_START_FRACTION)
-		var to := from + back * length * fade
-		draw_line(from, to, Color(tint.r, tint.g, tint.b, GLOW_ALPHA * fade), glow_width * THIN_GLOW_WIDTH_MULT, true)
-		draw_line(from, to, Color(tint.r, tint.g, tint.b, LINE_ALPHA * fade), line_width, true)
+		var head := offset + back * (body_radius * STREAK_START_FRACTION)
+		var tail := head + back * length * fade
+		# Pixel-art kit (Batch B, 2026-09-27): one streak sprite per line, bright end at the body, replaces the glow+core line pair.
+		VfxKit.draw_streak(self, tail, head, line_width, Color(tint.r, tint.g, tint.b, LINE_ALPHA * fade))

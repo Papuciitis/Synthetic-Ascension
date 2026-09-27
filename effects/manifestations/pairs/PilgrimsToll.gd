@@ -50,8 +50,7 @@ func _on_manifestation_ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4066
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	if state != null and is_instance_valid(state):
 		# Seed from the running odometer: coming online mid-sprint must not arm
 		# instantly off metres the pair was not live through.
@@ -205,23 +204,21 @@ func _draw() -> void:
 	var pulse: float = 0.84 + 0.16 * sin(_t * 6.5)
 	var turn: float = 0.35 + 0.65 * absf(sin(_t * 2.1))
 	var radius: float = GLYPH_RADIUS * 1.35 * pulse
-	draw_circle(GLYPH_ORIGIN, radius * 1.7, Color(fortune.r, fortune.g, fortune.b, 0.14 * pulse))
-	# The turn is a squash on the draw transform rather than a rebuilt point
-	# array: an armed toll can sit spinning for a long time, and this repaints
-	# every frame it does.
-	draw_set_transform(GLYPH_ORIGIN, 0.0, Vector2(turn, 1.0))
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 16, Color(fortune.r, fortune.g, fortune.b, 0.90), 1.8, true)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	# Pixel-art kit (Batch D, 2026-09-27): the disc sprite replaces the glow
+	# circle and the coin sprite replaces the squashed arc. The coin carries
+	# its own gold; `turn` goes in as its squash_x (draw_coin sets and resets
+	# its own transform for that, so the draw_set_transform pair that squashed
+	# the arc is gone) and the size keeps the pulse: ~13 px at rest.
+	VfxKit.draw_disc(self, GLYPH_ORIGIN, radius * 1.7, Color(fortune.r, fortune.g, fortune.b, 0.14 * pulse))
+	VfxKit.draw_coin(self, GLYPH_ORIGIN, radius * 1.5, Color(fortune.r, fortune.g, fortune.b, 0.90), turn, 1.8)
 
 	if _arm_flash > 0.0:
 		var f: float = _arm_flash / ARM_FLASH
-		draw_arc(
+		# Pixel-art kit (Batch D, 2026-09-27): the ring sprite replaces the arm flash arc.
+		VfxKit.draw_ring(
+			self,
 			GLYPH_ORIGIN,
 			radius + 16.0 * (1.0 - f),
-			0.0,
-			TAU,
-			24,
 			Color(fortune.r, fortune.g, fortune.b, 0.70 * f),
-			2.0,
-			true
+			2.0
 		)

@@ -71,8 +71,7 @@ func _on_manifestation_ready() -> void:
 	top_level = true
 	z_as_relative = false
 	z_index = 4064
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 	if player != null and is_instance_valid(player):
 		global_position = player.global_position
 	if state != null and is_instance_valid(state) and not state.resource_spent.is_connected(_on_resource_spent):
@@ -218,43 +217,31 @@ func _draw() -> void:
 		# the speed IS the Momentum - visibly leaving through your legs instead
 		# of through your weapon.
 		var back: Vector2 = -_heading
-		var side := Vector2(-back.y, back.x)
 		var trail := Color(momentum.r, momentum.g, momentum.b, 0.45 * left)
+		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite per chevron
+		# replaces each two-line "V" (vertex nearest the player, arms 8 px back
+		# and 8 px to each side): 16 px long (the old span), pointing along the
+		# heading, centred half its length behind the old vertex so the tip
+		# lands where it did.
+		var facing: float = _heading.angle()
 		for i in range(3):
 			var step: float = float(i + 1)
 			var tip: Vector2 = back * (18.0 + 12.0 * step)
-			var arm: Vector2 = tip + back * 8.0
-			draw_line(tip, arm + side * 8.0, trail, 2.2, true)
-			draw_line(tip, arm - side * 8.0, trail, 2.2, true)
+			VfxKit.draw_chevron(self, tip + back * 8.0, facing, 16.0, trail, 2.2)
 
 	if _guard_left > 0.0:
 		# The held hit: a WARD hexagon that breathes until something spends it.
-		# Seven points of draw_arc closes a hexagon without building a
-		# PackedVector2Array, and this repaints every frame the guard is up.
+		# This repaints every frame the guard is up.
+		# Pixel-art kit (Batch C, 2026-09-27): the hexagon sprite (pointy top,
+		# like the old seven-point arc that started at -PI/2) replaces the arc.
 		var pulse: float = 0.82 + 0.18 * sin(_t * 7.0)
-		draw_arc(
-			Vector2.ZERO,
-			RING_RADIUS * 1.24 * pulse,
-			-PI * 0.5,
-			-PI * 0.5 + TAU,
-			7,
-			Color(ward.r, ward.g, ward.b, 0.55 + 0.30 * pulse),
-			2.0,
-			true
-		)
+		VfxKit.draw_hexagon(self, Vector2.ZERO, RING_RADIUS * 1.24 * pulse, Color(ward.r, ward.g, ward.b, 0.55 + 0.30 * pulse), 0.0, 2.0)
 
 	if _guard_flash > 0.0:
 		var f: float = _guard_flash / GUARD_FLASH
-		draw_arc(
-			Vector2.ZERO,
-			RING_RADIUS * (1.2 + 1.1 * (1.0 - f)),
-			0.0,
-			TAU,
-			40,
-			Color(1.0, 0.95, 0.90, 0.85 * f),
-			2.6,
-			true
-		)
+		# Pixel-art kit (Batch C, 2026-09-27): a ring sprite replaces the
+		# expanding guard-spent flash arc.
+		VfxKit.draw_ring(self, Vector2.ZERO, RING_RADIUS * (1.2 + 1.1 * (1.0 - f)), Color(1.0, 0.95, 0.90, 0.85 * f), 2.6)
 
 
 ## Pure: the surge and guard getters read timers only.

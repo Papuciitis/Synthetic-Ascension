@@ -13,8 +13,7 @@ var _t: float = 0.0
 func _ready() -> void:
 	z_as_relative = false
 	z_index = 4070
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -32,7 +31,7 @@ func _draw() -> void:
 	a = a * a
 	var c := Color(color.r, color.g, color.b, color.a * a)
 
-	var a0 := Vector2.ZERO
-	var a1 := -dir.normalized() * length
-	draw_line(a0, a1, Color(c.r, c.g, c.b, c.a * 0.35), width * 3.0, true)
-	draw_line(a0, a1, c, width, true)
+	var head := Vector2.ZERO
+	var tail := -dir.normalized() * length
+	# Pixel-art kit (Batch B, 2026-09-27): one streak sprite from the tail to the bright head replaces the glow+core line pair.
+	VfxKit.draw_streak(self, tail, head, width, c)

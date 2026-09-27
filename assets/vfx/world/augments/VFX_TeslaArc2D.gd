@@ -53,8 +53,7 @@ func _ready() -> void:
 	z_as_relative = false
 	z_index = z
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the bolt sprite blends normally
 
 	_rng.randomize()
 	set_process(true)
@@ -81,9 +80,14 @@ func _sync_node_positions() -> void:
 	if end_node != null and is_instance_valid(end_node):
 		end_pos = end_node.global_position
 
+var _flip: bool = false
+
 func _regen() -> void:
 	global_position = start_pos
 	var local_end: Vector2 = end_pos - start_pos
+	# Pixel-art kit: the sprite is static, so each regeneration mirrors it
+	# for the flicker the jittered polyline used to give.
+	_flip = _rng.randf() < 0.5
 
 	_main_pts = _make_bolt(Vector2.ZERO, local_end, segments, jaggedness)
 
@@ -141,6 +145,11 @@ func _draw() -> void:
 	var core := Color(color_core.r, color_core.g, color_core.b, alpha * fade)
 	var glow := Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade)
 
+	# Pixel-art kit: one bolt sprite between the endpoints (its side branch is
+	# baked in). The jittered polylines remain the fallback without the art.
+	if VfxKit.has("bolt"):
+		VfxKit.draw_bolt(self, Vector2.ZERO, end_pos - start_pos, glow_width, core, _flip)
+		return
 	draw_polyline(_main_pts, glow, glow_width, true)
 	draw_polyline(_main_pts, core, core_width, true)
 

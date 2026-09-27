@@ -37,8 +37,7 @@ func _on_manifestation_ready() -> void:
 	z_as_relative = false
 	z_index = 4060
 
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch C): the sprite blends normally
 
 	if state != null:
 		# Seed from the running odometer: equipping mid-sprint must not pay out
@@ -183,25 +182,21 @@ func _draw() -> void:
 	# are real metres banked, so a shuffling player is not permanently on fire.
 	if m > 0.15:
 		var back: Vector2 = -_heading
-		var side := Vector2(-back.y, back.x)
 		var trail := Color(warm.r, warm.g, warm.b, (0.45 if full else 0.28) * m)
+		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite per chevron
+		# replaces each two-line "V". The V's vertex sat nearest the player with
+		# its arms trailing 8 px back and 8 px to each side, so the sprite is
+		# 16 px (the old span) long, points along the heading, and is centred
+		# half its length behind the old vertex so the tip lands where it did.
+		var facing: float = _heading.angle()
 		for i in range(3):
 			var t: float = float(i + 1)
 			var tip: Vector2 = back * (16.0 + 13.0 * t)
-			var arm: Vector2 = tip + back * 8.0
-			draw_line(tip, arm + side * 8.0, trail, 2.4, true)
-			draw_line(tip, arm - side * 8.0, trail, 2.4, true)
+			VfxKit.draw_chevron(self, tip + back * 8.0, facing, 16.0, trail, 2.4)
 
 	if _flare > 0.0:
 		var x: float = 1.0 - (_flare / FLARE_TIME)
 		var fade: float = (1.0 - x) * (1.0 - x)
-		draw_arc(
-			Vector2.ZERO,
-			RING_RADIUS * 0.85 + 48.0 * x,
-			0.0,
-			TAU,
-			44,
-			Color(warm.r, warm.g, warm.b, 0.85 * fade),
-			3.2,
-			true
-		)
+		# Pixel-art kit (Batch C, 2026-09-27): a ring sprite replaces the
+		# expanding release-flare arc.
+		VfxKit.draw_ring(self, Vector2.ZERO, RING_RADIUS * 0.85 + 48.0 * x, Color(warm.r, warm.g, warm.b, 0.85 * fade), 3.2)

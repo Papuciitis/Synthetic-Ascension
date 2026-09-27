@@ -143,10 +143,16 @@ func _draw() -> void:
 	if armed or not (rival is Node2D) or not is_instance_valid(rival):
 		return
 	# The rival mark: a small hostile chevron above them.
-	draw_set_transform_matrix(get_global_transform().affine_inverse())
-	var at := (rival as Node2D).global_position + Vector2(0, -34)
-	draw_line(at + Vector2(-6, -5), at, RIVAL_MARK_COLOR, 2.0, true)
-	draw_line(at + Vector2(6, -5), at, RIVAL_MARK_COLOR, 2.0, true)
+	# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite pointing down
+	# replaces the two-line "V". This node is a child of the (moving, rotating)
+	# player and used to draw under a world-space draw_set_transform_matrix;
+	# draw_chevron sets its own transform to rotate, which would replace that
+	# matrix, so the world point is brought into local space with to_local()
+	# and the facing is counter-rotated by this node's global rotation instead.
+	# The sprite is centred 6 px above the old vertex so its tip sits where the
+	# "V" met, 34 px above the rival.
+	var at := to_local((rival as Node2D).global_position + Vector2(0, -40))
+	VfxKit.draw_chevron(self, at, PI * 0.5 - global_rotation, 12.0, RIVAL_MARK_COLOR, 2.0)
 
 
 func describe() -> Dictionary:

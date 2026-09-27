@@ -53,7 +53,13 @@ func _run() -> void:
 	)
 
 	manager.call("_update_renderer")
-	var multimesh: MultiMesh = manager.get("_multimesh")
+	# Batch A (2026-09-27): bodies are split by team, so enemy shots live in
+	# the ENEMY family's mesh and buffer; the historical _multimesh is the
+	# player family. Without the art (legacy single family) both are index 0.
+	var meshes: Array = manager.get("_identity_meshes")
+	var split: bool = meshes.size() == int(manager.get("FAMILY_COUNT"))
+	var enemy_family: int = int(manager.get("FAMILY_ENEMY")) if split else 0
+	var multimesh: MultiMesh = meshes[enemy_family]
 	_check(multimesh != null and multimesh.visible_instance_count == 9, "renderer shows exactly the active projectiles")
 	var change_counter := {&"count": 0}
 	multimesh.changed.connect(func() -> void: change_counter[&"count"] = int(change_counter[&"count"]) + 1)
@@ -62,7 +68,7 @@ func _run() -> void:
 	# Transform read-back is not supported by the headless dummy renderer (it
 	# also failed against the old per-instance API), so the buffer content is
 	# validated directly instead.
-	var buffer: PackedFloat32Array = manager.get("_buffer_shared")
+	var buffer: PackedFloat32Array = manager.get("_buffer_enemy" if split else "_buffer_shared")
 	var expected: Vector2 = (manager.get("_positions") as PackedVector2Array)[0]
 	_check(
 		buffer.size() >= 12
@@ -116,7 +122,8 @@ func _run() -> void:
 		var profile := HitProfileAdapter.new()
 		manager.call("spawn_player", camera.position, Vector2.RIGHT, profile, null)
 		manager.call("_update_renderer")
-		var far_bounds := multimesh.get_aabb()
+		var player_multimesh: MultiMesh = manager.get("_multimesh")
+		var far_bounds := player_multimesh.get_aabb()
 		_check(far_bounds.has_point(Vector3(camera.position.x, camera.position.y, 0.0)), "raw upload bounds include the far-world projectile")
 		await RenderingServer.frame_post_draw
 		var image := get_viewport().get_texture().get_image()

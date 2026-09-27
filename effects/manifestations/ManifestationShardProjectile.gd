@@ -40,8 +40,7 @@ func launch(direction: Vector2, p_damage: float, p_source: Node) -> void:
 func _ready() -> void:
 	z_as_relative = false
 	z_index = 4072
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch D): the sprite blends normally
 	_chunk_manager = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	set_physics_process(true)
 
@@ -97,12 +96,11 @@ func _draw() -> void:
 	var fade := clampf(1.0 - _life / maxf(max_life, 0.001), 0.0, 1.0)
 	fade = 0.35 + 0.65 * fade
 	var glow := Color(tint.r, tint.g, tint.b, 0.32 * fade)
-	draw_line(Vector2(-36.0, 0.0), Vector2(6.0, 0.0), glow, 7.0, true)
-	draw_circle(Vector2.ZERO, 10.0, glow)
-	var flick := 0.85 + 0.15 * sin(_spin)
-	draw_colored_polygon(PackedVector2Array([
-		Vector2(13.0, 0.0),
-		Vector2(-5.0, -4.4 * flick),
-		Vector2(-11.0, 0.0),
-		Vector2(-5.0, 4.4 * flick),
-	]), Color(1.0, 1.0, 1.0, 0.95 * fade))
+	# Pixel-art kit (Batch D, 2026-09-27): the streak sprite (bright end at the
+	# head) replaces the 42 px glow line, the disc sprite the glow circle, and
+	# the shard sprite the white diamond (24 px long, centred where the diamond
+	# was; the sprite's proportions are fixed, so _spin's width flicker is
+	# gone). Local space: the node itself is rotated to the launch facing.
+	VfxKit.draw_streak(self, Vector2(-36.0, 0.0), Vector2(6.0, 0.0), 7.0, glow)
+	VfxKit.draw_disc(self, Vector2.ZERO, 10.0, glow)
+	VfxKit.draw_shard(self, Vector2(1.0, 0.0), 0.0, 24.0, Color(1.0, 1.0, 1.0, 0.95 * fade))

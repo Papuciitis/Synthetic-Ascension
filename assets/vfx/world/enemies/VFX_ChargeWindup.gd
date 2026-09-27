@@ -19,8 +19,7 @@ func setup(dir: Vector2, dur: float) -> void:
 
 func _ready() -> void:
 	z_index = 1
-	material = CanvasItemMaterial.new()
-	(material as CanvasItemMaterial).blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	material = null  # pixel-art kit (Batch B): the sprite blends normally
 	set_process(true)
 	queue_redraw()
 
@@ -36,17 +35,8 @@ func _draw() -> void:
 	var fade: float = 1.0 - p
 	fade = fade * fade
 
-	var half: float = deg_to_rad(spread_deg) * 0.5
-	var rays := [-half, 0.0, +half]
-
 	var kk: float = 0.65 + 0.35 * sin(_t * 12.0)
 	var L: float = length * lerpf(0.65, 1.05, 1.0 - fade)
 
-	for a in rays:
-		var d := Vector2.RIGHT.rotated(a)
-		var end := d * (L * (0.85 + 0.15 * kk))
-
-		draw_line(Vector2.ZERO, end, Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade), glow_width, true)
-		draw_line(Vector2.ZERO, end, Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), core_width, true)
-
-	draw_circle(Vector2.ZERO, 3.0, Color(1, 1, 1, 0.08 * fade))
+	# Pixel-art kit (Batch B, 2026-09-27): one three-ray fan sprite along local +X (setup rotates the node to the charge direction), squeezed to spread_deg and in the core colour, replaces the three glow+core rays and the faint dot.
+	VfxKit.draw_fan(self, Vector2.ZERO, 0.0, L * (0.85 + 0.15 * kk), Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), spread_deg)
