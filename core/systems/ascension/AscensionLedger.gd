@@ -22,9 +22,9 @@ var db: AscensionTreeDB
 var state: Dictionary
 
 
-static func fresh_state(native_core_id: String, tree_version: String = "v4") -> Dictionary:
+static func fresh_state(native_core_id: String, version: String = "v4") -> Dictionary:
 	return {
-		"tree_version": tree_version,
+		"tree_version": version,
 		"native_core": native_core_id,
 		"cores": [native_core_id],
 		"owned": {"core.%s" % native_core_id: 1},
@@ -359,8 +359,8 @@ func downgrade_preview(id: String) -> Dictionary:
 	if current <= 1:
 		return {"ok": false, "refund": 0, "from_rank": current, "reason": "rank 1 leaves through an ordinary refund"}
 	var receipts := rank_receipts(id)
-	var refund := int(receipts[current - 1]) if receipts.size() >= current else db.rank_cost(id, current)
-	return {"ok": true, "refund": refund, "from_rank": current, "reason": ""}
+	var refund_amount := int(receipts[current - 1]) if receipts.size() >= current else db.rank_cost(id, current)
+	return {"ok": true, "refund": refund_amount, "from_rank": current, "reason": ""}
 
 
 ## Removes the highest rank of `id`, returning its exact recorded payment.
@@ -368,7 +368,7 @@ func downgrade_rank(id: String) -> int:
 	var preview := downgrade_preview(id)
 	if not bool(preview["ok"]):
 		return 0
-	var refund := int(preview["refund"])
+	var refund_amount := int(preview["refund"])
 	var owned_map: Dictionary = state["owned"]
 	owned_map[id] = int(owned_map[id]) - 1
 	var ranks: Dictionary = state.get("paid_ranks", {})
@@ -376,10 +376,10 @@ func downgrade_rank(id: String) -> int:
 	if not receipts.is_empty():
 		receipts.pop_back()
 	var paid: Dictionary = state["paid"]
-	paid[id] = maxi(0, int(paid.get(id, 0)) - refund)
-	state["spent"] = maxi(0, int(state.get("spent", 0)) - refund)
-	state["refunded"] = int(state.get("refunded", 0)) + refund
-	return refund
+	paid[id] = maxi(0, int(paid.get(id, 0)) - refund_amount)
+	state["spent"] = maxi(0, int(state.get("spent", 0)) - refund_amount)
+	state["refunded"] = int(state.get("refunded", 0)) + refund_amount
+	return refund_amount
 
 
 ## After ownership changed, ranks whose gates no longer hold leave, returning
