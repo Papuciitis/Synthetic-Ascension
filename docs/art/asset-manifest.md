@@ -341,3 +341,17 @@ not assets.
   162, ItemEffectRunner 239, ItemBatch3/4, EnemyAreaCombat,
   EnemyHandleTargeting, WorldIdleRedraw 24, StyleParity 39,
   EliteModifier 110, all green headless. In-game look is the user's call.
+
+### World walls — three-quarter kit (2026-09-27)
+
+- **Files:** `assets/world/walls/kit/wall34_00..15.png` (one piece per
+  connection mask, 256 x 368 = 64 x 92 px at 0.25), `wall34_window_h/v.png`,
+  `wall34_fill_ne/se/sw/nw.png` (64 x 64 = 16 px corner fills for solid
+  blocks).
+- **Provenance:** procedural, `tools/design/build_wall_kit.py`, sampled
+  from the brick band of the existing `wall_stone_straight_h/v.png`. Hand-
+  made strips in `assets/world/walls/source/` (W1/W2 of
+  `docs/art/2026-09-27-world-look-art.md`) replace the band when present.
+- **Bound through:** `ChunkBlockVisualCatalog.KIT_TEXTURES` / `KIT_FILLS`
+  (behind `three_quarter_walls`), `ChunkBlockRenderer` (Y-flipped quads,
+  wall shadow offset), `CoverWall.gd`, `Level1Builder._rebuild_wall_visuals`.

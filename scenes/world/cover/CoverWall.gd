@@ -76,14 +76,40 @@ func _apply() -> void:
 	else:
 		tex = _pick_full_texture(connections_mask)
 
-	if use_alpha_collision and spr != null:
+	# Three-quarter pieces draw taller than the cell, so their alpha is not a
+	# footprint: collision stays the authoritative band.
+	if use_alpha_collision and spr != null and not ChunkBlockVisualCatalog.three_quarter_walls:
 		_apply_alpha_collision(spr, tex)
 	else:
 		_apply_collisions()
 
 	if spr == null:
 		return
+	var sh := get_node_or_null("Shadow") as Sprite2D
+	# Authored levels batch their wall visuals (Level1Builder); the body keeps
+	# only collision.
+	if has_meta(&"_visual_external"):
+		spr.texture = null
+		if sh != null:
+			sh.texture = null
+		var stale := get_node_or_null("DepthFace")
+		if stale != null:
+			stale.queue_free()
+		return
 	spr.texture = tex
+
+	if ChunkBlockVisualCatalog.three_quarter_walls:
+		spr.scale = ChunkBlockVisualCatalog.cell_scale(tex)
+		spr.position = ChunkBlockVisualCatalog.wall_offset()
+		spr.z_index = ChunkBlockVisualCatalog.WALL_Z
+		if sh != null:
+			sh.texture = tex
+			sh.texture_filter = spr.texture_filter
+			sh.scale = spr.scale
+			sh.position = spr.position + ChunkBlockRenderer.WALL_SHADOW_OFFSET
+			sh.z_index = ChunkBlockVisualCatalog.WALL_Z - 1
+			sh.modulate = ChunkBlockRenderer.WALL_SHADOW_COLOR
+		return
 
 	# Shallow depth (Phase 3), matching ChunkBlockRenderer: the cap lifts
 	# slightly and an exposed south edge hangs the stone face under it.
@@ -107,7 +133,6 @@ func _apply() -> void:
 			face.queue_free()
 
 	# Quick win readability: cheap drop-shadow sprite (optional)
-	var sh := get_node_or_null("Shadow") as Sprite2D
 	if sh != null:
 		sh.texture = tex
 		sh.texture_filter = spr.texture_filter

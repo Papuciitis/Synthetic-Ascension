@@ -122,6 +122,62 @@ static func release_static_caches() -> void:
 	# server teardown, after rendering cleanup has begun, so RID-backed
 	# resources held here must be released while the servers are still whole.
 	_ground_tex_cache.clear()
+	_ground_array = null
+
+
+## Pixel size of one ground layer in the splat texture array. The sources are
+## 1024 px for a 320-384 px world repeat, so half resolution is still above
+## 1:1 on screen.
+const _GROUND_ARRAY_LAYER_PX: int = 512
+static var _ground_array: Texture2DArray = null
+
+
+## Every ground texture as one Texture2DArray (layer = ground texture index),
+## for the ground splat shader. Built once from the imported textures; about
+## 100 ms the first time, so the chunk manager warms it on the segment build.
+static func ground_material_array() -> Texture2DArray:
+	if _ground_array != null:
+		return _ground_array
+	var images: Array[Image] = []
+	for index in _GROUND_TEX_PATHS.size():
+		var texture := ground_texture(index)
+		var image: Image = texture.get_image() if texture != null else null
+		if image == null or image.is_empty():
+			image = Image.create(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, false, Image.FORMAT_RGB8)
+			image.fill(Color(0.35, 0.35, 0.33))
+		else:
+			image = image.duplicate() as Image
+			if image.is_compressed():
+				image.decompress()
+			image.clear_mipmaps()
+			image.convert(Image.FORMAT_RGB8)
+			while image.get_width() >= _GROUND_ARRAY_LAYER_PX * 2 and image.get_height() >= _GROUND_ARRAY_LAYER_PX * 2:
+				image.shrink_x2()
+			if image.get_width() != _GROUND_ARRAY_LAYER_PX or image.get_height() != _GROUND_ARRAY_LAYER_PX:
+				image.resize(_GROUND_ARRAY_LAYER_PX, _GROUND_ARRAY_LAYER_PX, Image.INTERPOLATE_BILINEAR)
+		image.generate_mipmaps()
+		images.append(image)
+	var array := Texture2DArray.new()
+	if array.create_from_images(images) != OK:
+		return null
+	_ground_array = array
+	return _ground_array
+
+
+## Ground texture index for a texture resource, or -1 (authored stamps pass
+## textures, the splat works in indices).
+static func ground_index_for_texture(texture: Texture2D) -> int:
+	if texture == null:
+		return -1
+	var path := texture.resource_path
+	for index in _GROUND_TEX_PATHS.size():
+		if str(_GROUND_TEX_PATHS[index]) == path:
+			return index
+	return -1
+
+
+static func is_overgrowth_ground(index: int) -> bool:
+	return index in _GRASS_LIKE_INDICES
 
 
 static func ground_texture_is_cached(index: int) -> bool:

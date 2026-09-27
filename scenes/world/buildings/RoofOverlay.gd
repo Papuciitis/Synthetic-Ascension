@@ -1,7 +1,9 @@
 extends Node2D
 class_name RoofOverlay
 
-@export_range(0.0, 1.0, 0.01) var outside_alpha: float = 0.62
+## Three-quarter walls give a building its mass now, so the roof is a shade
+## over the interior rather than a dark slab (was 0.62).
+@export_range(0.0, 1.0, 0.01) var outside_alpha: float = 0.3
 @export_range(0.0, 1.0, 0.01) var inside_alpha: float = 0.0
 @export_range(0.05, 1.0, 0.01) var fade_time: float = 0.18
 @export_range(0.0, 24.0, 1.0) var overhang_px: float = 8.0
@@ -118,6 +120,9 @@ func _apply_visual_variant(building_kind: StringName, visual_seed: int) -> void:
 	base.b = clampf(base.b + variation, 0.04, 0.30)
 	_poly.color = base
 	_edge.default_color = base.darkened(0.32)
+	# The walls' own faces are the façade now; a second dark line above them
+	# read as a smudge.
+	_edge.visible = not ChunkBlockVisualCatalog.three_quarter_walls
 
 
 func _on_volume_body_entered(body: Node) -> void:

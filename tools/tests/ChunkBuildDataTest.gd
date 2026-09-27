@@ -50,12 +50,31 @@ func _test_floor_stamps() -> void:
 
 
 func _test_wall_catalog() -> void:
+	# The legacy top-down set, still selectable behind the kit flag.
+	var kit_was := ChunkBlockVisualCatalog.three_quarter_walls
+	ChunkBlockVisualCatalog.three_quarter_walls = false
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 5)).ends_with("wall_stone_straight_v.png"), "vertical wall mask selects vertical texture")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 10)).ends_with("wall_stone_straight_h.png"), "horizontal wall mask selects horizontal texture")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 3)).ends_with("wall_stone_corner_ne.png"), "north-east wall mask selects matching corner")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 15)).ends_with("wall_stone_cross.png"), "four-way wall mask selects cross texture")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 5)).ends_with("wall_stone_window_v.png"), "vertical window selects window texture")
 	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 3)).ends_with("wall_stone_corner_ne.png"), "unsupported window mask falls back to matching full wall")
+	# 17 wall/window pieces, the Phase 3 face, and 8 half-cover variants.
+	_check(ChunkBlockVisualCatalog.texture_count() == 26, "legacy catalog reports 18 wall and 8 half-cover texture variants")
+	_check(ChunkBlockVisualCatalog.face_texture(WorldBlockerGeometry.Kind.WALL, 10) != null, "legacy walls hang a separate face under an exposed edge")
+	# The three-quarter kit (default): one baked piece per connection mask.
+	ChunkBlockVisualCatalog.three_quarter_walls = true
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 5)).ends_with("kit/wall34_05.png"), "kit: vertical wall mask selects its piece")
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 10)).ends_with("kit/wall34_10.png"), "kit: horizontal wall mask selects its piece")
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 3)).ends_with("kit/wall34_03.png"), "kit: north-east corner selects its piece")
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 15)).ends_with("kit/wall34_15.png"), "kit: four-way mask selects its piece")
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 5)).ends_with("kit/wall34_window_v.png"), "kit: vertical window selects the barred piece")
+	_check(_texture_path(ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WINDOW, 3)).ends_with("kit/wall34_03.png"), "kit: unsupported window mask falls back to the wall piece")
+	_check(ChunkBlockVisualCatalog.face_texture(WorldBlockerGeometry.Kind.WALL, 10) == null, "kit: faces are baked into the pieces, never hung separately")
+	var piece := ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 0)
+	_check(is_equal_approx(ChunkBlockVisualCatalog.cell_scale(piece).x * piece.get_width(), 64.0), "kit: a piece draws exactly one cell wide")
+	_check(is_equal_approx(ChunkBlockVisualCatalog.cell_scale(piece).y * piece.get_height(), 64.0 + ChunkBlockVisualCatalog.KIT_HEIGHT), "kit: a piece draws one cell plus the wall height tall")
+	ChunkBlockVisualCatalog.three_quarter_walls = kit_was
 
 
 func _test_half_cover_catalog() -> void:
@@ -67,7 +86,7 @@ func _test_half_cover_catalog() -> void:
 	_check(negative == 13, "legacy half-cover RNG remains stable for negative world coordinates")
 	_check(_texture_path(ChunkBlockVisualCatalog.half_texture(first)).ends_with("prop_rubble_small_01.png"), "packed half-cover variant selects its legacy texture")
 	_check(is_equal_approx(ChunkBlockVisualCatalog.half_rotation(first), PI * 0.5), "packed half-cover variant selects its legacy rotation")
-	_check(ChunkBlockVisualCatalog.texture_count() == 25, "catalog reports 17 wall/window and 8 half-cover texture variants")
+	_check(ChunkBlockVisualCatalog.texture_count() == 26, "kit catalog reports 16 pieces, 2 windows and 8 half-cover variants")
 
 
 func _texture_path(texture: Texture2D) -> String:

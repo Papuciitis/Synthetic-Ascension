@@ -28,6 +28,12 @@ class_name ChunkManager
 ## A wash over the whole district's ground and floors. Set by the segment theme;
 ## white is "no theme opinion".
 @export var district_tint: Color = Color(1, 1, 1, 1)
+## One shader draws the whole ground (base per chunk + every floor stamp) with
+## organic material edges instead of stacked translucent rectangles; see
+## ground/GroundSplatRenderer.gd. Off = the old per-stamp Sprite2D floors.
+@export var ground_splat_enabled: bool = true
+## Warm grade + vignette over the world layer (atmosphere/WorldAtmosphere.gd).
+@export var world_atmosphere_enabled: bool = true
 
 @export_range(0, 40, 1) var decals_per_chunk_min: int = 5
 @export_range(0, 40, 1) var decals_per_chunk_max: int = 13
@@ -86,17 +92,17 @@ const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkSt
 @export_range(0.0, 1.0, 0.01) var district_road_edge_noise_chance: float = 0.16
 @export_range(0, 8, 1) var district_plaza_islands_max: int = 2
 @export_range(0.0, 1.0, 0.01) var district_plaza_island_chance: float = 0.35
+## Non-block city pass (2026-09-27): roads bend once between their connector
+## sockets and a jittered hub, plazas are authored polygons, generic
+## buildings get notched footprints. Off = the old rectangle generator.
+@export var organic_shapes_enabled: bool = true
+@export_range(0.0, 4.0, 0.5) var organic_road_bend_cells: float = 2.5
 
 @export_group("Donjon Inside District")
 @export var donjon_enabled: bool = true
 @export_range(0.0, 1.0, 0.01) var donjon_strength: float = 0.55
 @export_range(0.30, 0.70, 0.01) var donjon_fill_wall_chance: float = 0.48
 @export_range(1, 8, 1) var donjon_ca_steps: int = 4
-## Non-block city pass (2026-09-27): roads bend once between their connector
-## sockets and a jittered hub, plazas are authored polygons, generic
-## buildings get notched footprints. Off = the old rectangle generator.
-@export var organic_shapes_enabled: bool = true
-@export_range(0.0, 4.0, 0.5) var organic_road_bend_cells: float = 2.5
 @export_range(6, 60, 1) var donjon_room_attempts: int = 24
 @export var donjon_room_min: Vector2i = Vector2i(4, 4)
 @export var donjon_room_max: Vector2i = Vector2i(9, 8)
@@ -149,6 +155,7 @@ var _site_mgr: SiteManager = null
 var _content_gen: ChunkGenImpl = null
 var _tile_renderer: ChunkTileRenderer = null
 var _block_renderer: ChunkBlockRenderer = null
+var _ground_splat: GroundSplatRenderer = null
 var _external_tile_roots: Array[Node2D] = []
 
 
@@ -203,6 +210,8 @@ func _ready() -> void:
 	add_to_group(&"chunk_manager")
 	_ensure_tile_renderer()
 	_ensure_block_renderer()
+	if world_atmosphere_enabled and not DisplayServer.get_name() == "headless":
+		add_child(WorldAtmosphere.new())
 	if generation_enabled:
 		_warm_ground_textures_for_plan()
 
@@ -277,6 +286,8 @@ func _warm_ground_textures_for_plan() -> void:
 	for index in _WORLD_ART.ground_texture_count():
 		indices.append(index)
 	_WORLD_ART.warm_ground_textures(indices)
+	if ground_splat_enabled:
+		_WORLD_ART.ground_material_array()
 
 
 func start_streaming(player_position: Vector2) -> void:
@@ -639,6 +650,8 @@ func reset_world() -> void:
 	_pending_blocker_stages.clear()
 	if _block_renderer != null:
 		_block_renderer.clear()
+	if _ground_splat != null and generation_enabled:
+		_ground_splat.clear()
 	if _site_mgr != null:
 		_site_mgr.reset()
 
@@ -660,6 +673,13 @@ func _add_ground(chunk: Node2D, _rng: RandomNumberGenerator, coord: Vector2i) ->
 
 	var tex_index: int = _ground_index_for_terrain(terrain)
 	tex_index = clampi(tex_index, 0, ground_count - 1)
+	if ground_splat_enabled:
+		var splat := _ensure_ground_splat()
+		var base_shade: float = 1.0
+		if wilderness:
+			base_shade = 1.0 + (float(posmod(_seed_for_chunk(coord), 9)) / 8.0 - 0.5) * 0.09
+		splat.set_chunk_base(coord, tex_index, base_shade)
+		return
 	var ground_tex: Texture2D = _WORLD_ART.ground_texture(tex_index)
 	if ground_tex == null:
 		return
@@ -1112,12 +1132,21 @@ func _activate_blocker_render(data: ChunkBuildData) -> void:
 
 func _record_floor_stamp(rect: Rect2i, texture_index: int, alpha: float, z: int) -> bool:
 	if not batched_chunk_blockers or _active_build_data == null:
+		if ground_splat_enabled and generation_enabled:
+			# Unbatched: no build data to sort later, so paint as recorded.
+			_ensure_ground_splat().paint_rect(
+				Rect2i(_gen_coord * _cells_per_chunk() + rect.position, rect.size), texture_index, alpha
+			)
+			return true
 		return false
 	_active_build_data.add_floor_stamp(rect, texture_index, alpha, z)
 	return true
 
 
 func _activate_floor_stamps(data: ChunkBuildData, chunk: Node2D) -> void:
+	if ground_splat_enabled:
+		_ensure_ground_splat().paint_chunk_stamps(data)
+		return
 	for stamp_index in data.floor_stamp_count():
 		var offset := stamp_index * 6
 		var packed := data.floor_rect_and_style
@@ -1215,6 +1244,19 @@ func get_chunk_render_stats() -> Dictionary:
 		"block_instances": int(block_stats.get("instances", 0)),
 		"procedural_tile_cells": int(tile_stats.get("cells", 0)),
 	}
+
+
+func _ensure_ground_splat() -> GroundSplatRenderer:
+	if _ground_splat == null or not is_instance_valid(_ground_splat):
+		_ground_splat = GroundSplatRenderer.new()
+		_ground_splat.configure(cell_size_px, _cells_per_chunk())
+		add_child(_ground_splat)
+	_ground_splat.set_world_tint(district_tint)
+	return _ground_splat
+
+
+func get_ground_splat() -> GroundSplatRenderer:
+	return _ground_splat
 
 
 func _ensure_tile_renderer() -> void:
@@ -1322,6 +1364,16 @@ func paint_tiled_rect(
 	layer_z_index: int,
 	tile_modulate: Color
 ) -> int:
+	if ground_splat_enabled and layer_kind == &"floor" and chunk != null:
+		var material := _WORLD_ART.ground_index_for_texture(texture)
+		if material >= 0:
+			var coord := chunk.get_meta(&"_chunk_tile_coord", Vector2i.ZERO) as Vector2i
+			var side := int(chunk.get_meta(&"_chunk_cells_per_side", _cells_per_chunk()))
+			_ensure_ground_splat().paint_rect(
+				Rect2i(coord * side + rect.position, rect.size), material, tile_modulate.a, tile_modulate.r,
+				not generation_enabled
+			)
+			return rect.size.x * rect.size.y
 	_ensure_tile_renderer()
 	if _tile_renderer == null:
 		return 0

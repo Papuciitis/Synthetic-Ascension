@@ -178,7 +178,12 @@ func _run() -> void:
 	# and shadow instance counts still agree one-to-one.
 	if manager.has_method("get_block_batch_stats"):
 		var stats := manager.call("get_block_batch_stats") as Dictionary
-		_check(int(stats.get("face_instances", 0)) > 0, "exposed south edges carry wall faces (%d)" % int(stats.get("face_instances", 0)))
+		if ChunkBlockVisualCatalog.three_quarter_walls:
+			# Faces are baked into the kit pieces; solid blocks add corner fills.
+			_check(int(stats.get("face_instances", 0)) == 0, "three-quarter walls hang no separate faces")
+			_check(int(stats.get("instances", 0)) > 0, "walls draw three-quarter pieces (%d)" % int(stats.get("instances", 0)))
+		else:
+			_check(int(stats.get("face_instances", 0)) > 0, "exposed south edges carry wall faces (%d)" % int(stats.get("face_instances", 0)))
 		_check(int(stats.get("instances", 0)) == int(stats.get("shadow_instances", 0)), "caps and their ground shadows stay one-to-one")
 
 	manager.queue_free()

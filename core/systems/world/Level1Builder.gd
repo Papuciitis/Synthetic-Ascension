@@ -45,6 +45,7 @@ signal milestone_reached(id: StringName)
 const _TEX_TILE_PX: int = 1024
 const _TEX_STONE := preload("res://assets/world/ground/ground_stone_tiles_01.png")
 const _TEX_COBBLE := preload("res://assets/world/ground/ground_cobble_01.png")
+const _TEX_FLAGSTONE := preload("res://assets/world/ground/ground_civic_brick_01.png")
 const _TEX_DIRT_PATH := preload("res://assets/world/ground/ground_dirt_path_01.png")
 const _TEX_VEG_BUSH := preload("res://assets/world/vegetation/veg_bush_cluster_01.png")
 const _TEX_VEG_OVER := preload("res://assets/world/vegetation/veg_overgrowth_island_01.png")
@@ -108,6 +109,10 @@ var _wall_kind: Dictionary = {}
 var _fence_cells: Dictionary = {}
 var _half_cells: Dictionary = {}
 var _wall_nodes: Dictionary = {}
+## Wall and window visuals, batched like the procedural districts' (the
+## three-quarter kit draws taller than a cell, which the 64 px tile path
+## cannot). The CoverWall bodies keep collision only.
+var _wall_renderer: ChunkBlockRenderer = null
 var _fence_nodes: Dictionary = {}
 var _barrier_cells: Dictionary = {}
 var _barrier_open: Dictionary = {}
@@ -783,12 +788,15 @@ func _build_ground_stamps() -> void:
 	_stamp_ground(FACILITY_TL + Vector2i(1, 1), FACILITY_SIZE - Vector2i(2, 2), _TEX_STONE, 0.98, 0.48)
 	# Admissions wing: brighter public stone than the research floor.
 	_stamp_ground(ADMISSIONS_RECT.position, ADMISSIONS_RECT.size, _TEX_STONE, 0.97, 0.66)
-	_stamp_ground(COURTYARD_RECT.position, COURTYARD_RECT.size, _TEX_COBBLE, 0.90, 0.64)
+	# The open courtyards take the warm flagstone under the splat ground (the
+	# reference's paving); the old sprite floors keep their cobble.
+	var open_paving := _TEX_FLAGSTONE if _ground_splat() else _TEX_COBBLE
+	_stamp_ground(COURTYARD_RECT.position, COURTYARD_RECT.size, open_paving, 0.90, 0.64)
 	_stamp_ground(Vector2i(19, -23), Vector2i(35, 18), _TEX_DIRT_PATH, 0.72, 0.68)
 	_stamp_ground(Vector2i(20, -35), Vector2i(34, 12), _TEX_COBBLE, 0.78, 0.61)
 	_stamp_ground(Vector2i(46, -59), Vector2i(8, 24), _TEX_DIRT_PATH, 0.76, 0.68)
 	_stamp_ground(Vector2i(27, -59), Vector2i(27, 6), _TEX_DIRT_PATH, 0.76, 0.68)
-	_stamp_ground(Vector2i(13, -57), Vector2i(15, 14), _TEX_STONE, 0.96, 0.58)
+	_stamp_ground(Vector2i(13, -57), Vector2i(15, 14), open_paving, 0.96, 0.58)
 	_stamp_ground(Vector2i(15, -55), Vector2i(11, 10), _TEX_COBBLE, 0.58, 0.63)
 	# City backdrop beyond the north wall: reveal-camera scenery only (the
 	# approach perimeter blocks travel). Coarse block-and-street rhythm,
@@ -801,9 +809,18 @@ func _build_ground_stamps() -> void:
 	_stamp_ground(Vector2i(8, -63), Vector2i(52, 2), _TEX_COBBLE, 0.90, 0.45)
 
 
+func _ground_splat() -> bool:
+	return _cm != null and is_instance_valid(_cm) and _cm.ground_splat_enabled
+
+
 func _stamp_ground(cell_tl: Vector2i, size: Vector2i, tex: Texture2D, alpha: float, brightness: float) -> void:
 	if tex == null or size.x <= 0 or size.y <= 0:
 		return
+	# These brightness values darkened stamps laid at partial alpha over
+	# grass. Splat floors are opaque, so the same numbers would read near
+	# black; keep their ordering, halve their distance from full light.
+	if _ground_splat():
+		brightness = lerpf(brightness, 1.0, 0.5)
 	if _cm != null and is_instance_valid(_cm) and _cm.tiled_world_rendering:
 		_cm.paint_tiled_rect(
 			_geo, &"floor", Rect2i(cell_tl, size), tex, _TEX_TILE_PX, -95,
@@ -846,6 +863,8 @@ func _spawn_planned_geometry() -> void:
 			continue
 		node.global_position = _cell_to_world(cell)
 		node.set_meta(&"_tile_repeat_visual", true)
+		if _batched_walls():
+			node.set_meta(&"_visual_external", true)
 		_geo.add_child(node)
 		_wall_nodes[cell] = node
 
@@ -900,7 +919,40 @@ func _apply_connections() -> void:
 			node.set("connections_mask", mask)
 
 
+func _batched_walls() -> bool:
+	return ChunkBlockVisualCatalog.three_quarter_walls
+
+
+func _rebuild_wall_visuals() -> void:
+	if _geo == null or not _batched_walls():
+		return
+	var chunk_px := _cm.chunk_size_px if _cm != null and is_instance_valid(_cm) else 2048
+	var side := maxi(1, int(chunk_px / cell_size_px))
+	if _wall_renderer == null:
+		_wall_renderer = ChunkBlockRenderer.new()
+		_wall_renderer.configure(_geo, chunk_px, cell_size_px)
+	_wall_renderer.clear()
+	var by_chunk: Dictionary = {}
+	for key in _wall_kind.keys():
+		var cell: Vector2i = key
+		var coord := Vector2i(floori(float(cell.x) / side), floori(float(cell.y) / side))
+		var data := by_chunk.get(coord) as ChunkBuildData
+		if data == null:
+			data = ChunkBuildData.new(coord, side)
+			by_chunk[coord] = data
+		var mask := 0
+		if _wall_kind.has(cell + Vector2i.UP): mask |= 1
+		if _wall_kind.has(cell + Vector2i.RIGHT): mask |= 2
+		if _wall_kind.has(cell + Vector2i.DOWN): mask |= 4
+		if _wall_kind.has(cell + Vector2i.LEFT): mask |= 8
+		var kind := WorldBlockerGeometry.Kind.WINDOW if int(_wall_kind[cell]) == 1 else WorldBlockerGeometry.Kind.WALL
+		data.add_blocker(cell - coord * side, kind, mask)
+	for data_value in by_chunk.values():
+		_wall_renderer.add_chunk(data_value as ChunkBuildData)
+
+
 func _tile_authored_geometry() -> void:
+	_rebuild_wall_visuals()
 	if _cm == null or not is_instance_valid(_cm) or _geo == null:
 		return
 	if not _cm.tiled_world_rendering:
@@ -921,6 +973,7 @@ func _flush_connections_refresh() -> void:
 	if not is_inside_tree():
 		return
 	_apply_connections()
+	_rebuild_wall_visuals()
 	_repaint_authored_connections()
 
 
@@ -928,6 +981,8 @@ func _repaint_authored_connections() -> void:
 	if _cm == null or not is_instance_valid(_cm) or _geo == null or not _cm.tiled_world_rendering:
 		return
 	for key in _wall_nodes.keys():
+		if _batched_walls():
+			break
 		var cell: Vector2i = key
 		var node := _wall_nodes.get(cell) as Node
 		if node != null and is_instance_valid(node):

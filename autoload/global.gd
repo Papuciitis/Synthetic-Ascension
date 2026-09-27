@@ -1588,6 +1588,7 @@ func _exit_tree() -> void:
 	# server teardown — after rendering cleanup has begun — which is the window
 	# the intermittent exit segfault lives in.
 	_WORLD_ART_SCRIPT.release_static_caches()
+	GroundSplatRenderer.release_static_caches()
 	EnemyProjectile.release_static_caches()
 	AugmentActiveBadge.release_static_caches()
 	ManifestationCatalog.release_static_caches()
