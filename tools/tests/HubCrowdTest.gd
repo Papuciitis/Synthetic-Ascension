@@ -161,6 +161,18 @@ func _run() -> void:
 		hub2.crowd.tick(0.1)
 	_check(beka2.position.distance_to(target) < minf(start_gap, 110.0), "she catches up with the player (%.0f -> %.0f px)" % [start_gap, beka2.position.distance_to(target)])
 	_check(get_tree().get_first_node_in_group(&"hub_beka") == beka2, "the combat companion's own cat defers to her in the hub")
+	# Following close, she never takes a station's key.
+	var ring: Vector2 = HubWorld.STATION_CELLS["merchant"] * HubWorld.CELL + Vector2(0.0, 50.0)
+	hub2._player.global_position = ring - Vector2(0.0, HubWorld.FEET)
+	beka2.position = ring + beka2.FOLLOW_OFFSET
+	beka2._enter(beka2.State.SIT)
+	# A teleport needs a few physics frames before the ring's area sees it.
+	for k in range(4):
+		await get_tree().physics_frame
+	hub2.interact()
+	_check(hub2._open_panel != null and beka2.pets == 0, "on the Merchant's ring the key opens the merchant, not a pet (pets %d)" % beka2.pets)
+	if hub2._open_panel != null and hub2._open_panel.has_signal("embedded_closed"):
+		hub2._open_panel.emit_signal("embedded_closed")
 	Global.run_inventory.set_item(Inventory.SLOT_OFFHAND, previous)
 	hub2.queue_free()
 	await get_tree().process_frame

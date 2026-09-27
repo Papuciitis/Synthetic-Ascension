@@ -55,6 +55,10 @@ var _heart: float = 0.0
 var _purr: float = 0.0
 var _bed_linger: float = 0.0
 var _goal_bed: bool = false
+## Where the current path was planned to; she re-plans only when the player
+## has moved (a target inside a prop's clearance is never reached exactly).
+var _aim := Vector2.INF
+var _equip_check: float = 0.0
 
 
 func setup(world: HubWorld, crowd: Node, bed_feet: Vector2, equipped: bool) -> void:
@@ -119,6 +123,7 @@ func pet() -> void:
 # ---------------------------------------------------------------- behaviour
 
 func tick(delta: float) -> void:
+	_sync_following(delta)
 	var feet := _player_feet()
 	if feet != Vector2.INF:
 		_still = _still + delta if _last_player != Vector2.INF and feet.distance_to(_last_player) < 2.0 else 0.0
@@ -195,14 +200,35 @@ func _tick_follow(delta: float, feet: Vector2) -> void:
 			_enter(State.SIT)
 			return
 		_speed = CATCH_UP_SPEED if gap > 180.0 else WALK_SPEED * 1.4
-		if _path.is_empty() or _path_i >= _path.size() or _path[_path.size() - 1].distance_to(target) > 48.0:
+		if _path_i >= _path.size() or _aim.distance_to(target) > 48.0:
 			_set_path(target)
 		if _walk(delta, _speed):
 			_enter(State.SIT)
-	elif gap > 70.0:
+	elif gap > 70.0 and _aim.distance_to(target) > 24.0:
 		_goal_bed = false
 		_set_path(target)
-		_enter(State.WALK)
+		# Unreachable, or already as close as the paving allows: stay put.
+		if not _path.is_empty() and _path[_path.size() - 1].distance_to(position) > 12.0:
+			_enter(State.WALK)
+
+
+## Equipping or unequipping her at the gear corner switches her over at once.
+func _sync_following(delta: float) -> void:
+	_equip_check -= delta
+	if _equip_check > 0.0 or _hub == null:
+		return
+	_equip_check = 0.5
+	var equipped := _hub._beka_equipped()
+	if equipped == following:
+		return
+	following = equipped
+	_goal_bed = false
+	_bed_linger = 0.0
+	_path = PackedVector2Array()
+	_path_i = 0
+	_aim = Vector2.INF
+	if state == State.WALK or state == State.GROOM:
+		_enter(State.SIT)
 
 
 func _decide(feet: Vector2) -> void:
@@ -249,6 +275,7 @@ func _go(target: Vector2, to_bed: bool) -> void:
 func _set_path(target: Vector2) -> void:
 	_path = _crowd.path_between(position, target) if _crowd != null else PackedVector2Array([target])
 	_path_i = 0
+	_aim = target
 
 
 ## Moves along the path; true on arrival.

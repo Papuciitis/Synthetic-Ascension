@@ -836,9 +836,9 @@ func _rest_a_moment() -> void:
 
 # ---------------------------------------------------------------- interaction
 
-## The interactable the key would use: of the stations the player's feet
-## are on and Beka within reach, the nearest one. Only it shows its prompt,
-## so pressing the key beside Beka pets her even on the alcove's ring.
+## The interactable the key would use: the nearest station the player's
+## feet are on, else Beka within reach — and Beka asleep on her bed when
+## she is nearer than the alcove's ring. Only it shows its prompt.
 func _update_focus() -> void:
 	var best: Object = null
 	if _interact_enabled and not _panel_is_open() and _player != null:
@@ -850,9 +850,14 @@ func _update_focus() -> void:
 				if d < best_d:
 					best_d = d
 					best = station
+		# A station the player stands in keeps the key (Beka follows and sits
+		# close, so nearest-wins would let her block every ring); she wins
+		# one only while asleep on her bed by the alcove.
 		var beka: Node2D = crowd.beka if crowd != null else null
-		if beka != null and beka.in_pet_range(feet) and feet.distance_to(beka.interact_point()) < best_d:
-			best = beka
+		if beka != null and beka.in_pet_range(feet):
+			var beka_d := feet.distance_to(beka.interact_point())
+			if best == null or (beka.is_asleep_on_bed() and beka_d < best_d):
+				best = beka
 	if best == _focus:
 		return
 	_focus = best

@@ -30,6 +30,11 @@ const PERSON_RADIUS := 14.0
 const RING_CLEARANCE := 76.0
 ## How close the player can come before a walker waits for them.
 const GIVE_WAY := 38.0
+## How many raw path points the smoother tries to skip at once.
+const SMOOTH_LOOKAHEAD := 16
+## New plans per frame; the rest wait a frame (a whole crowd deciding at
+## once must not stall the frame).
+const PLANS_PER_FRAME := 2
 
 ## Stand-in rigs until the crowd art lands: races cycled, outfits tinted into
 ## muted work clothes so the crowd is not a copy of the player.
@@ -101,6 +106,8 @@ var _speech: Node2D = null
 var _said: Array = []
 var _painted: Array[Texture2D] = []
 var _order: int = 0
+var _solid_bounds: Array = []
+var _plan_budget: int = PLANS_PER_FRAME
 
 
 static func believer_count(followers: int) -> int:
@@ -143,6 +150,15 @@ func setup(world: HubWorld, seed_value: int, arrival_followers: int) -> void:
 # ---------------------------------------------------------------- navigation
 
 func _build_nav() -> void:
+	_solid_bounds.clear()
+	for solid in hub.solids:
+		var s: Dictionary = solid
+		if s.has("circle"):
+			_solid_bounds.append(Rect2(s["circle"], Vector2.ZERO).grow(float(s["r"]) + PERSON_RADIUS))
+		elif s.has("box"):
+			_solid_bounds.append((s["box"] as Rect2).grow(PERSON_RADIUS))
+		else:
+			_solid_bounds.append(Rect2(s["ellipse"] - s["radii"], s["radii"] * 2.0).grow(PERSON_RADIUS))
 	nav.region = Rect2i(0, 0, (hub.WIDTH + 2) * 2, hub.HEIGHT * 2)
 	nav.cell_size = Vector2(NAV_CELL, NAV_CELL)
 	nav.offset = Vector2(NAV_CELL, NAV_CELL) * 0.5
@@ -166,20 +182,7 @@ func is_walkable(p: Vector2, radius: float = PERSON_RADIUS) -> bool:
 	for probe in [p, p + Vector2(radius, 0), p - Vector2(radius, 0), p + Vector2(0, radius), p - Vector2(0, radius)]:
 		if not Geometry2D.is_point_in_polygon(probe, _floor):
 			return false
-	for solid in hub.solids:
-		var s: Dictionary = solid
-		if s.has("circle"):
-			if p.distance_to(s["circle"]) < float(s["r"]) + radius:
-				return false
-		elif s.has("box"):
-			if (s["box"] as Rect2).grow(radius).has_point(p):
-				return false
-		elif s.has("ellipse"):
-			var d: Vector2 = p - s["ellipse"]
-			var r: Vector2 = s["radii"] + Vector2.ONE * radius
-			if (d.x * d.x) / (r.x * r.x) + (d.y * d.y) / (r.y * r.y) < 1.0:
-				return false
-	return true
+	return not _inside_any(p, radius, hub.solids)
 
 
 func _nearest_open(p: Vector2) -> Vector2i:
@@ -214,6 +217,9 @@ func path_between(from: Vector2, to: Vector2) -> PackedVector2Array:
 	var raw := nav.get_point_path(a, b)
 	if raw.is_empty():
 		return raw
+	if raw.size() == 1:
+		# Already in the target's cell: one short step, never an empty path.
+		return PackedVector2Array([to if is_walkable(to) else raw[0]])
 	if is_walkable(to):
 		raw[raw.size() - 1] = to
 	# Smooth from where the walker really stands, not its cell's centre, so
@@ -223,7 +229,8 @@ func path_between(from: Vector2, to: Vector2) -> PackedVector2Array:
 	var out := PackedVector2Array()
 	var i := 0
 	while i < raw.size() - 1:
-		var j := raw.size() - 1
+		# Look a bounded way ahead so one plan stays cheap on long paths.
+		var j := mini(raw.size() - 1, i + SMOOTH_LOOKAHEAD)
 		while j > i + 1 and not _clear_line(raw[i], raw[j]):
 			j -= 1
 		out.append(raw[j])
@@ -232,15 +239,44 @@ func path_between(from: Vector2, to: Vector2) -> PackedVector2Array:
 
 
 ## A straight walk from a to b stays on open cells and clear of every solid
-## (checked on the real outlines, so a shortcut never clips a corner).
+## (checked on the real outlines, so a shortcut never clips a corner). The
+## grid rejects most lines for free; only solids near the line are tested.
 func _clear_line(a: Vector2, b: Vector2) -> bool:
-	var steps := int(a.distance_to(b) / 6.0) + 1
+	var steps := int(a.distance_to(b) / 8.0) + 1
+	var points := PackedVector2Array()
 	for k in range(1, steps):
 		var at := a.lerp(b, float(k) / steps)
 		var id := Vector2i(floori(at.x / NAV_CELL), floori(at.y / NAV_CELL))
-		if not nav.is_in_boundsv(id) or nav.is_point_solid(id) or not is_walkable(at, PERSON_RADIUS * 0.6):
+		if not nav.is_in_boundsv(id) or nav.is_point_solid(id):
+			return false
+		points.append(at)
+	var r := PERSON_RADIUS * 0.6
+	var span := Rect2(a, Vector2.ZERO).expand(b).grow(r + 2.0)
+	var near: Array = []
+	for n in range(_solid_bounds.size()):
+		if (_solid_bounds[n] as Rect2).intersects(span):
+			near.append(hub.solids[n])
+	for at in points:
+		if not Geometry2D.is_point_in_polygon(at, _floor) or _inside_any(at, r, near):
 			return false
 	return true
+
+
+func _inside_any(p: Vector2, radius: float, solids: Array) -> bool:
+	for solid in solids:
+		var s: Dictionary = solid
+		if s.has("circle"):
+			if p.distance_to(s["circle"]) < float(s["r"]) + radius:
+				return true
+		elif s.has("box"):
+			if (s["box"] as Rect2).grow(radius).has_point(p):
+				return true
+		elif s.has("ellipse"):
+			var d: Vector2 = p - s["ellipse"]
+			var rr: Vector2 = s["radii"] + Vector2.ONE * radius
+			if (d.x * d.x) / (rr.x * rr.x) + (d.y * d.y) / (rr.y * rr.y) < 1.0:
+				return true
+	return false
 
 
 # ---------------------------------------------------------------- places
@@ -386,7 +422,7 @@ func _pick_activity(b: Dictionary) -> void:
 				break
 	if act == "chat":
 		target = _start_chat(b)
-		look = Vector2.RIGHT
+		look = b.get("chat_look", Vector2.RIGHT)
 	if target == Vector2.INF:
 		act = "loiter"
 		target = _random_open_spot()
@@ -396,26 +432,46 @@ func _pick_activity(b: Dictionary) -> void:
 	b["look"] = look
 
 
-## Two people meet on open paving and face each other.
+## Two people talk: the initiator walks over to someone nearby who is
+## standing about, and that person waits for them.
 func _start_chat(b: Dictionary) -> Vector2:
-	for attempt in range(12):
-		var p := _random_open_spot()
-		var q := p + Vector2(46.0, 0.0)
-		if not (is_walkable(q) and _idle_ok(q) and _spot_free(p, b) and _spot_free(q, b)):
+	var me: Vector2 = (b["p"] as Node2D).position
+	var partner: Dictionary = {}
+	var best_d := 360.0
+	for other in believers:
+		if other == b or other["state"] != "do" or other["act"] in ["chat", "pray"]:
 			continue
-		for other in believers:
-			if other == b or other["state"] != "do" or other["act"] in ["chat", "pray"]:
-				continue
-			other["act"] = "chat"
-			other["spot"] = q
-			other["look"] = Vector2.LEFT
-			_walk_to(other, q)
-			return p
+		var d := me.distance_to((other["p"] as Node2D).position)
+		if d < best_d:
+			best_d = d
+			partner = other
+	if partner.is_empty():
+		return Vector2.INF
+	var q: Vector2 = (partner["p"] as Node2D).position
+	for side in [-1.0, 1.0]:
+		var p := q + Vector2(46.0 * side, 0.0)
+		if not (is_walkable(p) and _idle_ok(p) and _spot_free(p, b)):
+			continue
+		partner["act"] = "chat"
+		partner["spot"] = q
+		# Each faces the other: the partner toward p, the initiator back.
+		partner["look"] = Vector2.RIGHT * side
+		# Long enough for the walk over and the talk itself.
+		partner["t"] = maxf(float(partner["t"]), best_d / float(b["speed"]) + _rng.randf_range(7.0, 10.0))
+		(partner["p"] as Node2D).set_pose(false, &"right" if side > 0.0 else &"left", partner["speed"])
+		b["chat_look"] = Vector2.RIGHT * -side
+		return p
 	return Vector2.INF
 
 
 func _walk_to(b: Dictionary, target: Vector2) -> void:
 	var person: Node2D = b["p"]
+	if _plan_budget <= 0:
+		# Over this frame's planning budget: stand a frame, then plan.
+		b["state"] = "plan"
+		b["spot"] = target
+		return
+	_plan_budget -= 1
 	var path := path_between(person.position, target)
 	if path.is_empty():
 		b["state"] = "do"
@@ -448,6 +504,7 @@ func _process(delta: float) -> void:
 ## One step for everyone (tests call this directly to fast-forward).
 func tick(delta: float) -> void:
 	_time += delta
+	_plan_budget = PLANS_PER_FRAME
 	var feet := _player_feet()
 	for b in believers:
 		_tick_believer(b, delta, feet)
@@ -474,6 +531,10 @@ func _player_feet() -> Vector2:
 
 func _tick_believer(b: Dictionary, delta: float, feet: Vector2) -> void:
 	var person: Node2D = b["p"]
+	if b["state"] == "plan":
+		if _plan_budget > 0:
+			_walk_to(b, b["spot"])
+		return
 	if b["state"] == "walk":
 		var path: PackedVector2Array = b["path"]
 		var i: int = b["i"]
@@ -565,7 +626,8 @@ func _maybe_bark(feet: Vector2) -> void:
 		pool.append(CROWD_LINE_OVERFLOW)
 		pool.append(CROWD_LINE_OVERFLOW)
 	for line in _recent_lines:
-		pool.erase(line)
+		while pool.has(line):
+			pool.erase(line)
 	var text: String = pool[_rng.randi() % pool.size()]
 	_recent_lines.append(text)
 	if _recent_lines.size() > 3:
