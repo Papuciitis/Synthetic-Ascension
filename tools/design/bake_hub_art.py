@@ -90,6 +90,12 @@ def register_frames(im: Image.Image, frames: int) -> Image.Image:
         if not on and start is not None:
             runs.append((start, x))
             start = None
+    # A staff or a strap can leave a gap inside one figure: merge the pieces
+    # separated by the narrowest gaps until one run per frame is left.
+    while len(runs) > frames:
+        gaps = [runs[k + 1][0] - runs[k][1] for k in range(len(runs) - 1)]
+        k = gaps.index(min(gaps))
+        runs[k:k + 2] = [(runs[k][0], runs[k + 1][1])]
     if len(runs) != frames:
         print(f"  {frames} frames expected, found {len(runs)} column runs; keeping the sheet as drawn")
         return im
