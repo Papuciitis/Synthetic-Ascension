@@ -16,7 +16,7 @@ const PLAYER_SCENE := preload("res://core/actors/player/player.tscn")
 const HUB_SHOP_SCENE := preload("res://ui/screens/HubShop.tscn")
 const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
 const MAJOR_CHOICE_SCENE := preload("res://ui/screens/MajorChoice.tscn")
-const BAG_UI_SCENE := preload("res://ui/components/BagUI.tscn")
+const INVENTORY_STASH_SCENE := preload("res://ui/screens/InventoryStash.tscn")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 const DECOR_SCRIPT := preload("res://scenes/hub/HubDecor.gd")
 const CROWD_SCRIPT := preload("res://scenes/hub/HubCrowd.gd")
@@ -138,7 +138,7 @@ const DUSK := Color(0.58, 0.54, 0.62)
 var _player: Node2D = null
 var _panel_layer: CanvasLayer = null
 var _open_panel: Node = null
-var _gear_bag: Node = null
+var _gear_screen: Node = null
 var _stations: Array[HubStation] = []
 var _exit_station: HubStation = null
 var _ascension_station: HubStation = null
@@ -750,53 +750,33 @@ func _open_merchant() -> void:
 		shop.connect("embedded_closed", _on_panel_closed)
 
 
-## The gear corner: the run's own bag and equipment, without the vendor —
-## the existing BagUI component bound to the run's containers. Nothing new
-## is invented and no cross-run storage appears because a chest is drawn.
+## Gear & Stash: the run's equipment and bag beside the persistent stash —
+## the same inventory screen the merchant's Inventory button opens, without
+## the vendor. Items move between all three and every move is saved as it
+## happens (InventoryStash).
 func _open_gear() -> void:
 	if _panel_is_open():
 		return
-	var bag_wrap := Control.new()
-	bag_wrap.set_anchors_preset(Control.PRESET_FULL_RECT)
-	var bag := BAG_UI_SCENE.instantiate()
-	bag_wrap.add_child(bag)
-	# A visible way out (playtest finding: the wrapper trapped station input
-	# with no discoverable close). Esc and the bag key also close, below.
-	var close_btn := Button.new()
-	close_btn.text = "CLOSE  (Esc)"
-	close_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	close_btn.offset_left = -150.0
-	close_btn.offset_top = 12.0
-	close_btn.offset_right = -16.0
-	close_btn.offset_bottom = 48.0
-	bag_wrap.add_child(close_btn)
-	close_btn.pressed.connect(_close_gear)
-	_panel_layer.add_child(bag_wrap)
-	if bag.has_method("bind_bag"):
-		bag.call("bind_bag", Global.run_bag)
-	if bag.has_method("bind_core_inventory"):
-		bag.call("bind_core_inventory", Global.run_inventory)
-	if bag.has_method("toggle_open") and not bool(bag.call("is_open")):
-		bag.call("toggle_open")
-	_open_panel = bag_wrap
-	_gear_bag = bag
+	var screen := INVENTORY_STASH_SCENE.instantiate()
+	# Its own CanvasLayer (135), above the square and the panel layer.
+	add_child(screen)
+	_open_panel = screen
+	_gear_screen = screen
 	_stations_enabled(false)
-	if bag.has_signal("open_changed"):
-		bag.connect("open_changed", func(now_open: bool) -> void:
-			if not now_open:
-				_gear_bag = null
-				_on_panel_closed())
+	screen.connect("closed", func() -> void:
+		_gear_screen = null
+		_on_panel_closed())
 
 
-## One close path: through the bag's own toggle, so its input lock and the
-## open_changed -> _on_panel_closed chain always run exactly once.
+## One close path: through the screen's own close, so its closed ->
+## _on_panel_closed chain always runs exactly once.
 func _close_gear() -> void:
-	if _gear_bag != null and is_instance_valid(_gear_bag) and bool(_gear_bag.call("is_open")):
-		_gear_bag.call("toggle_open")
+	if _gear_screen != null and is_instance_valid(_gear_screen):
+		_gear_screen.call("_close")
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _gear_bag == null:
+	if _gear_screen == null:
 		if _interact_enabled and not _panel_is_open() and event != null and not event.is_echo() and event.is_action_pressed(&"interact"):
 			if interact():
 				get_viewport().set_input_as_handled()

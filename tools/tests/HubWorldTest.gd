@@ -219,18 +219,18 @@ func _run() -> void:
 	(trade_shop as Node).emit_signal("embedded_closed")
 	await get_tree().process_frame
 
-	# The gear corner opens the run's own bag panel, not the vendor.
+	# Gear & Stash opens the inventory screen: equipment, bag and the
+	# persistent stash together (playtest: the stash was only reachable
+	# through the merchant), never the vendor.
 	_hub._open_gear()
 	await get_tree().process_frame
 	var gear_panel := _hub._open_panel
-	_check(gear_panel != null, "the gear corner opens its own panel")
-	var bag_ui: Node = gear_panel.get_child(0) if gear_panel != null and gear_panel.get_child_count() > 0 else null
-	_check(bag_ui != null and bag_ui.has_method("is_open") and bool(bag_ui.call("is_open")), "the bag view opens bound to the run's containers")
-	var close_button: Button = null
-	for child in gear_panel.get_children():
-		if child is Button:
-			close_button = child
-	_check(close_button != null and close_button.visible, "the gear panel shows a visible close button")
+	_check(gear_panel is InventoryStash, "the gear corner opens the inventory screen")
+	if gear_panel is InventoryStash:
+		var screen := gear_panel as InventoryStash
+		_check(screen.eq_grid.get_child_count() > 0 and screen.bag_grid.get_child_count() > 0, "it shows the run's equipment and bag")
+		_check(Global.meta_stash != null and screen.stash_grid.get_child_count() == Global.meta_stash.slot_count, "and every slot of the persistent stash")
+		_check(screen.btn_close.visible, "the gear panel shows a visible close button")
 	# Real input: Escape closes the panel (playtest finding: the wrapper
 	# trapped station input with no discoverable way out).
 	var escape := InputEventAction.new()
@@ -240,17 +240,13 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_check(_hub._open_panel == null, "Escape closes the gear panel and returns to the courtyard")
-	_check(_hub._gear_bag == null, "the bag reference is released with the panel")
+	_check(_hub._gear_screen == null, "the screen reference is released with the panel")
 
 	# The close button path too: reopen, click, closed again.
 	_hub._open_gear()
 	await get_tree().process_frame
-	close_button = null
-	for child in (_hub._open_panel as Node).get_children():
-		if child is Button:
-			close_button = child
-	if close_button != null:
-		close_button.emit_signal("pressed")
+	if _hub._open_panel is InventoryStash:
+		(_hub._open_panel as InventoryStash).btn_close.emit_signal("pressed")
 	await get_tree().process_frame
 	_check(_hub._open_panel == null, "the close button also returns to the courtyard")
 
