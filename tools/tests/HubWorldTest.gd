@@ -22,6 +22,43 @@ func _ready() -> void:
 	call_deferred(&"_run")
 
 
+## Collision matches the art (playtest 2026-09-27: blockers stopped the
+## torso, so feet walked onto roofs and through props): with the player's
+## real capsule placed so its drawn FEET stand on a point, every station
+## medallion and the arrival are standable, the dais and a prop are solid,
+## and the feet stop short of the south roofs.
+func _check_feet_space_walkability(player: Node2D) -> void:
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var capsule := (player.get_node("CollisionShape2D") as CollisionShape2D).shape
+	var space := player.get_world_2d().direct_space_state
+	var blocked := func(feet: Vector2) -> bool:
+		var query := PhysicsShapeQueryParameters2D.new()
+		query.shape = capsule
+		query.transform = Transform2D(0.0, feet - Vector2(0.0, HubWorld.FEET))
+		query.collision_mask = 1
+		query.exclude = [player.get_rid()]
+		return not space.intersect_shape(query, 1).is_empty()
+	for key in HubWorld.STATION_CELLS.keys():
+		var feet: Vector2 = HubWorld.STATION_CELLS[key] * HubWorld.CELL
+		_check(not blocked.call(feet), "the %s medallion is standable (feet at %s)" % [key, str(feet)])
+	var dais := HubWorld.PLAZA_CENTER * HubWorld.CELL
+	_check(blocked.call(dais), "the dais under the obelisk is solid")
+	_check(blocked.call(dais + Vector2(0.0, 100.0)), "the dais's front steps are solid")
+	_check(blocked.call(Vector2(7.0, 15.8) * HubWorld.CELL), "feet stop before the south roofs")
+	_check(not blocked.call(Vector2(7.0, 15.3) * HubWorld.CELL), "feet reach the square's south edge")
+	_check(not blocked.call(Vector2(7.0, 4.6) * HubWorld.CELL), "feet reach the north house fronts")
+	_check(blocked.call(Vector2(13.7, 2.6) * HubWorld.CELL + Vector2(0.0, -5.0)), "a lamp's base is solid")
+	var station := _station("Merchant")
+	player.global_position = station.global_position - Vector2(0.0, HubWorld.FEET)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_check(station.player_inside(), "standing on the medallion (feet on the ring) is in range")
+	player.global_position = HubWorld.STATION_CELLS.arrival * HubWorld.CELL - Vector2(0.0, HubWorld.FEET)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+
 func _check(condition: bool, message: String) -> void:
 	if condition:
 		_passes += 1
@@ -110,6 +147,7 @@ func _run() -> void:
 	_check(bool(player.get("_cinematic_attack_locked")), "the native weapon is locked in the safe hub")
 	_check(_hub._stations.size() == 5, "merchant, ascension, gear, alcove and exit stand in the courtyard (%d)" % _hub._stations.size())
 	_check(_station("Next Segment") != null and _station("Merchant") != null, "the stations carry their service names")
+	await _check_feet_space_walkability(player)
 
 	# The merchant panel: same stock across open/close, no side effects.
 	_hub._open_merchant()

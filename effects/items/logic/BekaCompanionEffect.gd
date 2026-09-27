@@ -197,7 +197,7 @@ func _fire_pulse() -> void:
 	# A quiet pulse stays quiet; a find gets one restrained meow.
 	if found > 0:
 		_meow_pulse = 0.8
-		if BattleText != null:
+		if BattleText != null and not _hub_beka_present():
 			BattleText.popup(_cat_pos, "meow", Color(0.95, 0.8, 0.85, 0.9), 0.9)
 
 
@@ -251,6 +251,12 @@ func _tick_highlights(delta: float) -> void:
 			canvas.modulate = (entry["original"] as Color).lerp(HIGHLIGHT_COLOR, 0.4 + 0.4 * wave)
 
 
+## In the hub Beka is at home as her own character (HubBeka), who follows
+## the player there when equipped; this companion's cat stays out of sight.
+func _hub_beka_present() -> bool:
+	return is_inside_tree() and get_tree().get_first_node_in_group(&"hub_beka") != null
+
+
 func _tick_cat(delta: float) -> void:
 	var target := player.global_position + CAT_OFFSET
 	var to_target := target - _cat_pos
@@ -267,7 +273,8 @@ func _draw() -> void:
 	# the player, behind the aim point, small enough to hide nothing.
 	var sleeping := is_regenerating()
 	var texture := _sleep_texture if sleeping else _sit_texture
-	if texture != null:
+	var hidden_in_hub := _hub_beka_present()
+	if not hidden_in_hub and texture != null:
 		# Fixed WORLD height regardless of the art's resolution (the
 		# user-supplied sprites are 64 px masters; the cat stays cat-sized).
 		var target_height := 24.0 if sleeping else 34.0
@@ -279,10 +286,10 @@ func _draw() -> void:
 			draw_set_transform_matrix(get_global_transform().affine_inverse())
 		else:
 			draw_texture_rect(texture, Rect2(at, size), false)
-	else:
+	elif not hidden_in_hub:
 		draw_circle(_cat_pos, 6.0, Color(0.15, 0.14, 0.15, 1.0))
 	# Purring while asleep: two soft drifting z-dots.
-	if sleeping:
+	if sleeping and not hidden_in_hub:
 		var t := Time.get_ticks_msec() / 1000.0
 		var rise := fmod(t, 1.6) / 1.6
 		draw_circle(_cat_pos + Vector2(8.0, -10.0 - rise * 8.0), 1.5, Color(0.9, 0.9, 1.0, 0.7 * (1.0 - rise)))
