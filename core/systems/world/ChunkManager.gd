@@ -92,6 +92,11 @@ const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkSt
 @export_range(0.0, 1.0, 0.01) var donjon_strength: float = 0.55
 @export_range(0.30, 0.70, 0.01) var donjon_fill_wall_chance: float = 0.48
 @export_range(1, 8, 1) var donjon_ca_steps: int = 4
+## Non-block city pass (2026-09-27): roads bend once between their connector
+## sockets and a jittered hub, plazas are authored polygons, generic
+## buildings get notched footprints. Off = the old rectangle generator.
+@export var organic_shapes_enabled: bool = true
+@export_range(0.0, 4.0, 0.5) var organic_road_bend_cells: float = 2.5
 @export_range(6, 60, 1) var donjon_room_attempts: int = 24
 @export var donjon_room_min: Vector2i = Vector2i(4, 4)
 @export var donjon_room_max: Vector2i = Vector2i(9, 8)

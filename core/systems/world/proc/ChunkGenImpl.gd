@@ -60,6 +60,8 @@ var district_sidewalk_alpha: float = 0.88
 var district_road_edge_noise_chance: float = 0.35
 var district_plaza_islands_max: int = 4
 var district_plaza_island_chance: float = 0.65
+var organic_shapes_enabled: bool = true
+var organic_road_bend_cells: float = 2.5
 var donjon_enabled: bool = true
 var donjon_strength: float = 0.55
 var donjon_fill_wall_chance: float = 0.48
@@ -137,6 +139,8 @@ func sync_from_chunk_manager() -> void:
 	district_road_edge_noise_chance = cm.district_road_edge_noise_chance
 	district_plaza_islands_max = cm.district_plaza_islands_max
 	district_plaza_island_chance = cm.district_plaza_island_chance
+	organic_shapes_enabled = cm.organic_shapes_enabled
+	organic_road_bend_cells = cm.organic_road_bend_cells
 	donjon_enabled = cm.donjon_enabled
 	donjon_strength = cm.donjon_strength
 	donjon_fill_wall_chance = cm.donjon_fill_wall_chance
@@ -358,6 +362,20 @@ func _stamp_district_road_edge_noise(chunk: Node2D, bounds: Rect2i, lane_rect_h:
 
 func _decorate_plaza_floor(chunk: Node2D, bounds: Rect2i, plaza_rect: Rect2i, rng: RandomNumberGenerator, archetype: StringName) -> void:
 	_STAMP._decorate_plaza_floor(self, chunk, bounds, plaza_rect, rng, archetype)
+
+# Non-block city pass (2026-09-27): mask-based variants of the district
+# floor and ring stamps; see ChunkGenStamp.
+func _stamp_floor_cells(chunk: Node2D, cells: Dictionary, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
+	_STAMP._stamp_floor_cells(self, chunk, cells, tex_index, rng, alpha, z)
+
+func _stamp_road_edge_noise_cells(chunk: Node2D, bounds: Rect2i, road_cells: Dictionary, rng: RandomNumberGenerator) -> void:
+	_STAMP._stamp_road_edge_noise_cells(self, chunk, bounds, road_cells, rng)
+
+func _decorate_plaza_floor_cells(chunk: Node2D, bounds: Rect2i, plaza_cells: Dictionary, rng: RandomNumberGenerator, archetype: StringName) -> void:
+	_STAMP._decorate_plaza_floor_cells(self, chunk, bounds, plaza_cells, rng, archetype)
+
+func _add_plaza_ring_cells(wall_cells: Dictionary, plaza_cells: Dictionary, cells_per_chunk: int, rng: RandomNumberGenerator, archetype: StringName) -> void:
+	_STAMP._add_plaza_ring_cells(self, wall_cells, plaza_cells, cells_per_chunk, rng, archetype)
 
 func _cells_per_chunk() -> int:
 	return int(floor(float(chunk_size_px) / float(cell_size_px)))

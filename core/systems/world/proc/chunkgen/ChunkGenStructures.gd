@@ -32,31 +32,74 @@ static func _spawn_building(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberG
 	else:
 		door_offset = rng.randi_range(2, maxi(2, h - door_span - 2))
 
+	# Non-block city pass (2026-09-27): the footprint is a notched mass, not
+	# the base rectangle; its boundary is the wall ring, its inside the floor.
+	# The RNG draws for the footprint happen after the door roll so the old
+	# layout choices above keep their sequence.
+	var base_rect := Rect2i(Vector2i(x0, y0), Vector2i(w, h))
+	var footprint: Dictionary = ChunkShapeGen.generate_building_footprint(rng, base_rect) if gen.organic_shapes_enabled else ChunkShapeGen.rect_cells(base_rect)
+	var wall_cells: Dictionary = ChunkShapeGen.boundary_from_fill(footprint)
+	var floor_cells: Dictionary = footprint.duplicate()
+	ChunkShapeGen.erase_cells(floor_cells, wall_cells)
+	var interior: Rect2i = ChunkShapeGen.largest_inscribed_rect(floor_cells)
+	if interior.size.x <= 0 or interior.size.y <= 0:
+		return
+
 	# --- readable indoors: floor + threshold ---
-	var interior := Rect2i(Vector2i(x0 + 1, y0 + 1), Vector2i(w - 2, h - 2))
-	if interior.size.x > 0 and interior.size.y > 0:
-		gen._stamp_floor_rect_cells(chunk, interior, 3, rng, 0.96, -94)
+	gen._stamp_floor_cells(chunk, floor_cells, 3, rng, 0.96, -94)
+
+	# The door: a run of `door_span` boundary cells on the chosen side whose
+	# outside is open and whose inside is floor, nearest the rolled offset.
+	var outward: Vector2i = [Vector2i(0, -1), Vector2i(1, 0), Vector2i(0, 1), Vector2i(-1, 0)][side]
+	var along := Vector2i(1, 0) if (side == 0 or side == 2) else Vector2i(0, 1)
+	var door_cells: Array[Vector2i] = []
+	var best_dist := 1 << 30
+	for key in wall_cells.keys():
+		var c: Vector2i = key
+		if footprint.has(c + outward) or not floor_cells.has(c - outward):
+			continue
+		var ok := true
+		for i in range(1, door_span):
+			var d := c + along * i
+			if not wall_cells.has(d) or footprint.has(d + outward) or not floor_cells.has(d - outward):
+				ok = false
+				break
+		if not ok:
+			continue
+		var pos_along: int = (c.x - x0) if along.x != 0 else (c.y - y0)
+		var dist := absi(pos_along - door_offset)
+		if dist < best_dist:
+			best_dist = dist
+			door_cells.clear()
+			for i in range(door_span):
+				door_cells.append(c + along * i)
+	for d in door_cells:
+		wall_cells.erase(d)
 
 	# Door apron (outside) so entrances read from a distance
 	var apron_len := 2
-	var apron: Rect2i
-	match side:
-		0: # N
-			apron = Rect2i(Vector2i(x0 + door_offset - 1, y0 - apron_len), Vector2i(door_span + 2, apron_len))
-		1: # E
-			apron = Rect2i(Vector2i(x0 + w, y0 + door_offset - 1), Vector2i(apron_len, door_span + 2))
-		2: # S
-			apron = Rect2i(Vector2i(x0 + door_offset - 1, y0 + h), Vector2i(door_span + 2, apron_len))
-		3: # W
-			apron = Rect2i(Vector2i(x0 - apron_len, y0 + door_offset - 1), Vector2i(apron_len, door_span + 2))
+	if not door_cells.is_empty():
+		var apron_cells: Dictionary = {}
+		for d in door_cells:
+			for step in range(1, apron_len + 1):
+				apron_cells[d + outward * step] = true
+			apron_cells[d - along + outward] = true
+			apron_cells[d + along * door_span + outward] = true
+		ChunkShapeGen.erase_cells(apron_cells, footprint)
+		var chunk_rect := Rect2i(Vector2i(0, 0), Vector2i(cells_per_chunk, cells_per_chunk))
+		for key in apron_cells.keys():
+			if not chunk_rect.has_point(key):
+				apron_cells.erase(key)
+		gen._stamp_floor_cells(chunk, apron_cells, 4, rng, 0.92, -93)
 
-	var _chunk_rect := Rect2i(Vector2i(0, 0), Vector2i(cells_per_chunk, cells_per_chunk))
-	var apron_clip := apron.intersection(_chunk_rect)
-	if apron_clip.size.x > 0 and apron_clip.size.y > 0:
-		gen._stamp_floor_rect_cells(chunk, apron_clip, 4, rng, 0.92, -93)
-
-	# --- perimeter walls with a door hole ---
-	gen._spawn_wall_rect_cells(chunk, x0, y0, w, h, side, door_offset, door_span, rng)
+	# --- perimeter walls (windows only on straight runs) ---
+	var window_cells: Dictionary = {}
+	for c in wall_cells.keys():
+		var cell := c as Vector2i
+		var mask: int = gen._wall_connections_mask(cell, wall_cells)
+		if (mask == 5 or mask == 10) and rng.randf() < 0.12:
+			window_cells[cell] = true
+	gen._spawn_wall_cells(chunk, wall_cells, window_cells)
 
 	# Indoor volume for generic buildings (enables indoor detection + spawn-on-enter exploration loot).
 	if INDOOR_VOLUME_SCENE != null and gen.cm != null and is_instance_valid(gen.cm):
@@ -75,7 +118,7 @@ static func _spawn_building(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberG
 				vol.call("configure", cell_tl, interior.size, int(gen.cell_size_px), lid)
 
 
-	# Exploration loot (structure buildings): low chance, but makes “random buildings” worth checking.
+	# Exploration loot (structure buildings): low chance, but makes "random buildings" worth checking.
 	if false and LOOT_SPAWNER_SCENE != null and rng.randf() < 0.18:
 		var sp := LOOT_SPAWNER_SCENE.instantiate() as Node2D
 		if sp != null:
@@ -100,29 +143,20 @@ static func _spawn_building(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberG
 			sp.set("pickup_delay", 0.15)
 
 
-	# --- interior structure (Donjon micro-carve) ---
+	# --- interior structure (Donjon micro-carve) inside the largest open
+	# rectangle of the footprint, entered from the door when it opens there.
+	var door_inside: Vector2i = (door_cells[0] - outward) if not door_cells.is_empty() else Vector2i(-1, -1)
+	var carve_rect: Rect2i = interior
 	if interior.size.x >= 10 and interior.size.y >= 10 and rng.randf() < 0.90:
-		var epos := Vector2i.ZERO
-		var edir := Vector2i.ZERO
-		match side:
-			0:
-				epos = Vector2i(x0 + door_offset, y0 + 1)
-				edir = Vector2i(0, 1)
-			1:
-				epos = Vector2i(x0 + w - 2, y0 + door_offset)
-				edir = Vector2i(-1, 0)
-			2:
-				epos = Vector2i(x0 + door_offset, y0 + h - 2)
-				edir = Vector2i(0, -1)
-			3:
-				epos = Vector2i(x0 + 1, y0 + door_offset)
-				edir = Vector2i(1, 0)
+		var entrances: Array[Dictionary] = []
+		if carve_rect.has_point(door_inside):
+			entrances.append({"pos": door_inside, "dir": -outward, "width": door_span})
 
 		var carve_rng := RandomNumberGenerator.new()
 		carve_rng.seed = rng.randi() ^ 0x51A1BEEF
 
 		var carve: DonjonCarver.CarveResult = DonjonCarver.carve_region(
-			interior,
+			carve_rect,
 			carve_rng,
 			0.42,
 			1,
@@ -132,7 +166,7 @@ static func _spawn_building(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberG
 			1,
 			2,
 			0.08,
-			[{"pos": epos, "dir": edir, "width": door_span}],
+			entrances,
 			3,
 			2
 		)
@@ -155,12 +189,13 @@ static func _spawn_building(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumberG
 			gen._spawn_block(chunk, gen.cover_half_scene, p.x, p.y)
 			placed += 1
 	else:
-		# Light interior props (fallback)
+		# Light interior props (fallback), only on open floor
 		var props: int = rng.randi_range(1, 3)
 		for i in range(props):
-			var px: int = rng.randi_range(x0 + 2, x0 + w - 3)
-			var py: int = rng.randi_range(y0 + 2, y0 + h - 3)
-			gen._spawn_block(chunk, gen.cover_half_scene, px, py)
+			var px: int = rng.randi_range(interior.position.x, interior.end.x - 1)
+			var py: int = rng.randi_range(interior.position.y, interior.end.y - 1)
+			if floor_cells.has(Vector2i(px, py)):
+				gen._spawn_block(chunk, gen.cover_half_scene, px, py)
 
 	# Indoor volume for vignette/indoor detection (one per building)
 	var b_id: int = int((gen._seed_for_chunk(gen._gen_coord) ^ (x0 << 16) ^ y0) & 0x7fffffff)

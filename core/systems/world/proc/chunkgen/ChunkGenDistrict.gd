@@ -111,6 +111,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 
 	var has_plaza: bool = false
 	var plaza_rect: Rect2i = Rect2i()
+	var plaza_cells: Dictionary = {}
 
 	# Lane keepout (contract): never allow walls/solid props in the street cores.
 	var lane_rect_h: Rect2i = Rect2i()
@@ -144,19 +145,57 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var hub_y1: int = lane_y0 + lane_w
 
 	# Exact connector arms. N+E is an L-turn, not an accidental four-way road.
+	# Non-block city pass (2026-09-27): in organic mode the straight lane
+	# rects stay the street CONTRACT (keepout, parcel bands, Donjon regions,
+	# sockets) but the visible, walkable road is a bent path from each
+	# connector socket to a jittered hub, rasterised on the same cells.
+	var organic: bool = gen.organic_shapes_enabled
+	var road_cells: Dictionary = {}
+	var walk_cells: Dictionary = {}
 	if has_h:
 		var h_x0: int = 0 if (conn_mask & _DIR_W) != 0 else lane_x0
 		var h_x1: int = cells if (conn_mask & _DIR_E) != 0 else hub_x1
 		lane_rect_h = Rect2i(Vector2i(h_x0, lane_y0), Vector2i(maxi(1, h_x1 - h_x0), lane_w))
 		keepout_rects.append(lane_rect_h)
-		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_h, road_tex_index, rng_roads, road_alpha, -95)
+		if not organic:
+			gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_h, road_tex_index, rng_roads, road_alpha, -95)
 
 	if has_v:
 		var v_y0: int = 0 if (conn_mask & _DIR_N) != 0 else lane_y0
 		var v_y1: int = cells if (conn_mask & _DIR_S) != 0 else hub_y1
 		lane_rect_v = Rect2i(Vector2i(lane_x0, v_y0), Vector2i(lane_w, maxi(1, v_y1 - v_y0)))
 		keepout_rects.append(lane_rect_v)
-		gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_v, road_tex_index, rng_roads, road_alpha, -95)
+		if not organic:
+			gen._stamp_floor_rect_cells_patchy(chunk, lane_rect_v, road_tex_index, rng_roads, road_alpha, -95)
+
+	if organic and (has_h or has_v):
+		var half_lane: float = float(lane_w) * 0.5
+		var walk_w: float = float(maxi(0, gen.district_sidewalk_width_cells))
+		var hub := Vector2(float(lane_x0) + half_lane, float(lane_y0) + half_lane)
+		# Bends are per-chunk (rng_roads) so a route reads differently along its length; endpoints never move.
+		if has_h and has_v:
+			hub += Vector2(rng_roads.randf_range(-1.5, 1.5), rng_roads.randf_range(-1.5, 1.5))
+		var sockets: Array[Vector2] = []
+		if (conn_mask & _DIR_N) != 0:
+			sockets.append(Vector2(float(lane_x0) + half_lane, 0.0))
+		if (conn_mask & _DIR_S) != 0:
+			sockets.append(Vector2(float(lane_x0) + half_lane, float(cells)))
+		if (conn_mask & _DIR_W) != 0:
+			sockets.append(Vector2(0.0, float(lane_y0) + half_lane))
+		if (conn_mask & _DIR_E) != 0:
+			sockets.append(Vector2(float(cells), float(lane_y0) + half_lane))
+		for socket in sockets:
+			var path: PackedVector2Array = ChunkShapeGen.build_road_path(socket, hub, rng_roads, gen.organic_road_bend_cells)
+			ChunkShapeGen.add_cells(road_cells, ChunkShapeGen.rasterize_polyline(path, half_lane, bounds))
+			if walk_w > 0.0:
+				ChunkShapeGen.add_cells(walk_cells, ChunkShapeGen.rasterize_polyline(path, half_lane + walk_w, bounds))
+		if sockets.size() == 1:
+			# A dead-end stub still opens into a small turning circle at the hub.
+			ChunkShapeGen.add_cells(road_cells, ChunkShapeGen.rasterize_polyline(PackedVector2Array([hub, hub]), half_lane + 1.0, bounds))
+		ChunkShapeGen.erase_cells(walk_cells, road_cells)
+		gen._stamp_floor_cells(chunk, road_cells, road_tex_index, rng_roads, road_alpha, -95)
+		for road_rect in ChunkShapeGen.cells_to_rects(road_cells):
+			keepout_rects.append(road_rect)
 
 	# Courtyard-access corridors meet neighbouring urban blocks at the centre of
 	# the shared edge, then bend toward this chunk's road hub. They are kept clear
@@ -184,12 +223,40 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			tex_idx = 3
 		elif role == &"primary_objective":
 			tex_idx = 9
-		gen._stamp_floor_rect_cells_patchy(chunk, Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size)), tex_idx, rng_roads, 0.95, -94)
+		if organic:
+			# Authored polygon families instead of the square slab: chamfered
+			# slabs for gates / arenas / checkpoints, a worn octagon for
+			# landmarks and plazas, a lopsided blob for the rest.
+			var family: int = 2
+			if archetype == &"gate" or archetype == &"arena" or role == &"checkpoint" or role == &"miniboss_arena" or role == &"boss_arena":
+				family = 1
+			elif archetype == &"plaza" or role == &"landmark_plaza" or role == &"entry_court":
+				family = 0
+			var center := Vector2(plaza_rect.position) + Vector2(plaza_rect.size) * 0.5
+			var polygon: PackedVector2Array = ChunkShapeGen.plaza_polygon(rng_roads, center, float(plaza_size) * 0.5, family)
+			plaza_cells = ChunkShapeGen.rasterize_polygon(polygon, bounds.grow(-2))
+			if plaza_cells.size() < 16:
+				plaza_cells = ChunkShapeGen.rect_cells(plaza_rect)
+			plaza_rect = ChunkShapeGen.bounds_of(plaza_cells)
+			gen._stamp_floor_cells(chunk, plaza_cells, tex_idx, rng_roads, 0.95, -94)
+		else:
+			gen._stamp_floor_rect_cells_patchy(chunk, Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size)), tex_idx, rng_roads, 0.95, -94)
 
 	
 	# --- sidewalks + curb pads (visual readability) ---
-	gen._stamp_district_sidewalks(chunk, bounds, lane_rect_h, lane_rect_v, rng_sidewalk)
-	gen._stamp_district_road_edge_noise(chunk, bounds, lane_rect_h, lane_rect_v, rng_edge)
+	if organic and not road_cells.is_empty():
+		# The sidewalk is the wider band around the bent road; the hub gets a
+		# stone pad instead of the four corner pads.
+		gen._stamp_floor_cells(chunk, walk_cells, 2, rng_sidewalk, clampf(gen.district_sidewalk_alpha, 0.0, 1.0), -94)
+		var pad: int = maxi(0, gen.district_sidewalk_corner_pad_cells)
+		if pad > 0 and has_h and has_v:
+			var hub_pad: Dictionary = ChunkShapeGen.rasterize_polyline(PackedVector2Array([Vector2(float(lane_x0) + float(lane_w) * 0.5, float(lane_y0) + float(lane_w) * 0.5)]), float(lane_w) * 0.5 + float(pad), bounds)
+			ChunkShapeGen.erase_cells(hub_pad, road_cells)
+			gen._stamp_floor_cells(chunk, hub_pad, 3, rng_sidewalk, clampf(gen.district_sidewalk_alpha + 0.06, 0.0, 1.0), -93)
+		gen._stamp_road_edge_noise_cells(chunk, bounds, road_cells, rng_edge)
+	else:
+		gen._stamp_district_sidewalks(chunk, bounds, lane_rect_h, lane_rect_v, rng_sidewalk)
+		gen._stamp_district_road_edge_noise(chunk, bounds, lane_rect_h, lane_rect_v, rng_edge)
 	steps["roads"] = Time.get_ticks_usec() - step_started_usec
 	step_started_usec = Time.get_ticks_usec()
 
@@ -259,10 +326,16 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	# Plazas/arenas/gates: break up huge slabs + add a stronger perimeter language.
 	if has_plaza:
 		if role != &"primary_objective":
-			gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
+			if organic and not plaza_cells.is_empty():
+				gen._decorate_plaza_floor_cells(chunk, bounds, plaza_cells, rng_plaza_deco, archetype)
+			else:
+				gen._decorate_plaza_floor(chunk, bounds, plaza_rect, rng_plaza_deco, archetype)
 		var rng_ring := RandomNumberGenerator.new()
 		rng_ring.seed = gen._mix_seed_int(base_seed, 9011)
-		gen._add_plaza_ring(wall_cells, plaza_rect, cells, rng_ring, archetype)
+		if organic and not plaza_cells.is_empty():
+			gen._add_plaza_ring_cells(wall_cells, plaza_cells, cells, rng_ring, archetype)
+		else:
+			gen._add_plaza_ring(wall_cells, plaza_rect, cells, rng_ring, archetype)
 
 	# Donjon-style micro carving in the side regions:
 	# - Keeps the street cores open (your bullet-heaven needs space)

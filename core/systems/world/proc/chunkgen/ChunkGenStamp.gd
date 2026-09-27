@@ -324,3 +324,140 @@ static func _add_plaza_ring(_gen: ChunkGenImpl, wall_cells: Dictionary, plaza_re
 				var gy2: int = rng.randi_range(y0 + 3, y1 - 3)
 				for i8 in range(gap_w):
 					wall_cells.erase(Vector2i(x0, gy2 + i8 - half_gap))
+
+
+# ---- Non-block city pass (2026-09-27): mask-based stamps ---------------------
+
+## Stamps a cell mask as the fewest row-run rectangles (same batched path as
+## the rect stamps, so bent roads cost a handful of sprites, not one per cell).
+static func _stamp_floor_cells(gen: ChunkGenImpl, chunk: Node2D, cells: Dictionary, tex_index: int, rng: RandomNumberGenerator, alpha: float, z: int) -> void:
+	if cells.is_empty():
+		return
+	for r in ChunkShapeGen.cells_to_rects(cells):
+		gen._stamp_floor_rect_cells(chunk, r, tex_index, rng, alpha, z)
+
+
+## Mud chips along the road's outline (the mask version of the rect edge noise).
+static func _stamp_road_edge_noise_cells(gen: ChunkGenImpl, chunk: Node2D, bounds: Rect2i, road_cells: Dictionary, rng: RandomNumberGenerator) -> void:
+	var ch: float = clampf(gen.district_road_edge_noise_chance, 0.0, 1.0)
+	if ch <= 0.0 or road_cells.is_empty():
+		return
+	var edge: Array = ChunkShapeGen.outline_of_fill(road_cells).keys()
+	if edge.is_empty():
+		return
+	var n: int = rng.randi_range(2, 5)
+	for _i in range(n):
+		if rng.randf() > ch:
+			continue
+		var at: Vector2i = edge[rng.randi_range(0, edge.size() - 1)]
+		var rect := Rect2i(at - Vector2i(rng.randi_range(0, 1), rng.randi_range(0, 1)), Vector2i(rng.randi_range(1, 2), rng.randi_range(1, 2))).intersection(bounds)
+		if rect.size.x <= 0 or rect.size.y <= 0:
+			continue
+		gen._stamp_floor_rect_cells(chunk, rect, 5, rng, 0.12, -94)
+
+
+## Plaza dressing on a polygon plaza: a curb lip that follows the outline and
+## grass / dirt islands that stay inside the paving.
+static func _decorate_plaza_floor_cells(gen: ChunkGenImpl, chunk: Node2D, bounds: Rect2i, plaza_cells: Dictionary, rng: RandomNumberGenerator, archetype: StringName) -> void:
+	if plaza_cells.size() < 16:
+		return
+	var lip: Dictionary = ChunkShapeGen.boundary_from_fill(plaza_cells)
+	_stamp_floor_cells(gen, chunk, lip, 3, rng, 0.75, -93)
+	var inner: Dictionary = plaza_cells.duplicate()
+	ChunkShapeGen.erase_cells(inner, lip)
+	ChunkShapeGen.erase_cells(inner, ChunkShapeGen.boundary_from_fill(inner))
+	if inner.size() < 12:
+		return
+	var inner_cells: Array = inner.keys()
+	var pb: Rect2i = ChunkShapeGen.bounds_of(plaza_cells)
+	var center := pb.position + Vector2i(pb.size.x >> 1, pb.size.y >> 1)
+	var islands_max: int = maxi(0, gen.district_plaza_islands_max)
+	var islands: int = rng.randi_range(1, maxi(1, islands_max))
+	for _i in range(islands):
+		if rng.randf() > clampf(gen.district_plaza_island_chance, 0.0, 1.0):
+			continue
+		var iw: int = rng.randi_range(3, 6)
+		var ih: int = rng.randi_range(3, 6)
+		var anchor: Vector2i = inner_cells[rng.randi_range(0, inner_cells.size() - 1)]
+		var island := Rect2i(anchor - Vector2i(iw >> 1, ih >> 1), Vector2i(iw, ih)).intersection(bounds)
+		if island.size.x < 3 or island.size.y < 3 or not ChunkShapeGen.rect_inside(inner, island):
+			continue
+		if archetype == &"gate" and absi(island.position.x + (iw >> 1) - center.x) < 4 and absi(island.position.y + (ih >> 1) - center.y) < 4:
+			continue
+		var tex := (0 if rng.randf() < 0.55 else 1) # grass / dirt
+		gen._stamp_floor_rect_cells_patchy(chunk, island, tex, rng, 0.95, -93)
+		if gen.cover_half_scene != null and rng.randf() < 0.65:
+			var px := clampi(island.position.x + rng.randi_range(0, island.size.x - 1), bounds.position.x + 1, bounds.end.x - 2)
+			var py := clampi(island.position.y + rng.randi_range(0, island.size.y - 1), bounds.position.y + 1, bounds.end.y - 2)
+			gen._spawn_block(chunk, gen.cover_half_scene, px, py)
+
+
+## The plaza perimeter as broken wall segments on the polygon's outline:
+## same segment / gap rhythm and breach rule as the rectangular ring.
+static func _add_plaza_ring_cells(_gen: ChunkGenImpl, wall_cells: Dictionary, plaza_cells: Dictionary, cells_per_chunk: int, rng: RandomNumberGenerator, archetype: StringName) -> void:
+	if plaza_cells.is_empty():
+		return
+	var bounds := Rect2i(Vector2i(1, 1), Vector2i(cells_per_chunk - 2, cells_per_chunk - 2))
+	var pb: Rect2i = ChunkShapeGen.bounds_of(plaza_cells)
+	var center := Vector2(pb.position) + Vector2(pb.size) * 0.5
+	var ring: Array = []
+	for key in ChunkShapeGen.outline_of_fill(plaza_cells).keys():
+		if bounds.has_point(key):
+			ring.append(key)
+	if ring.size() < 8:
+		return
+	ring.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return (Vector2(a) + Vector2(0.5, 0.5) - center).angle() < (Vector2(b) + Vector2(0.5, 0.5) - center).angle())
+	var thickness: int = 1
+	var break_ch: float = 0.22
+	if archetype == &"arena":
+		thickness = 2
+		break_ch = 0.12
+	elif archetype == &"gate":
+		thickness = 2
+		break_ch = 0.06
+	# The angular walk is only 8-connected on diagonal edges; insert an
+	# L-step cell (outside the plaza) between diagonal neighbours so the
+	# ring is 4-connected, which the wall-mask art and the small-component
+	# prune both need. Segments are long enough to survive the prune.
+	var walk: Array[Vector2i] = []
+	for i in range(ring.size()):
+		var a: Vector2i = ring[i]
+		var b: Vector2i = ring[(i + 1) % ring.size()]
+		walk.append(a)
+		var d := b - a
+		if absi(d.x) == 1 and absi(d.y) == 1:
+			var step := Vector2i(a.x + d.x, a.y)
+			if plaza_cells.has(step):
+				step = Vector2i(a.x, a.y + d.y)
+			if not plaza_cells.has(step) and bounds.has_point(step):
+				walk.append(step)
+	var outer: Dictionary = ChunkShapeGen.outline_of_fill(ChunkShapeGen.grow(plaza_cells, 1)) if thickness > 1 else {}
+	var total: int = walk.size()
+	var idx: int = 0
+	var placed: Dictionary = {}
+	while idx < total:
+		var seg_len: int = clampi(rng.randi_range(10, 18), 1, total - idx)
+		if rng.randf() < break_ch and total - idx > 12:
+			idx += rng.randi_range(2, 4)
+			continue
+		for i in range(seg_len):
+			var c: Vector2i = walk[idx + i]
+			wall_cells[c] = true
+			placed[c] = true
+		idx += seg_len + rng.randi_range(1, 2)
+	if thickness > 1:
+		for key in outer.keys():
+			var c2: Vector2i = key
+			if not bounds.has_point(c2):
+				continue
+			for dir in ChunkShapeGen.DIRS_4:
+				if placed.has(c2 + dir):
+					wall_cells[c2] = true
+					break
+	# Optional deliberate breach (plaza / arena only): four consecutive ring cells.
+	if archetype != &"gate" and rng.randf() < 0.45:
+		var start: int = rng.randi_range(0, total - 1)
+		for i in range(4):
+			wall_cells.erase(walk[(start + i) % total])
+
