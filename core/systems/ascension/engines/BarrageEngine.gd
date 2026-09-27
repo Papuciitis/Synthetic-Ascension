@@ -343,8 +343,11 @@ func on_witness_strike(core: String, origin: Vector2, target: Vector2) -> void:
 
 
 ## Kill Feed (MR2): a fragment execution grants one extra fragment (Ranged).
-func extra_fragment(position: Vector2, victim: int) -> void:
-	_spawn_fragment(position, 0.6 * D(), 0.4, 1 if has("BR10") else 0, "MR2", 2, victim)
+## Kill Feed (MR2): the one bonus fragment rides the executing hit's chain
+## identity (cast + generation) like the ordinary BR05 group does, so its
+## own kills continue the chain instead of seeding a fresh one (HYB-01).
+func extra_fragment(position: Vector2, victim: int, generation: int = 2, cast: String = "") -> void:
+	_spawn_fragment(position, 0.6 * D(), 0.4, 1 if has("BR10") else 0, "MR2", generation, victim, false, cast)
 
 
 func decorate_native_profile(profile: HitProfileAdapter) -> void:

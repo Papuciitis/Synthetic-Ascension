@@ -318,9 +318,15 @@ func explode_attached(sigil_id: int) -> void:
 		return
 	_rune_guard = true
 	for mine in mines.duplicate():
-		if int(mine.get("sigil", 0)) == sigil_id:
-			mines.erase(mine)
-			_explode_mine(mine)
+		if int(mine.get("sigil", 0)) != sigil_id:
+			continue
+		# An earlier blast's Chain Reaction (OR06) may already have taken this
+		# sibling out of the armed graph and detonated it; a Mine leaves the
+		# graph exactly once and blasts exactly once (HYB-03).
+		if not mines.has(mine):
+			continue
+		mines.erase(mine)
+		_explode_mine(mine)
 	_rune_guard = false
 
 
@@ -367,6 +373,11 @@ func _tick_mines(delta: float) -> void:
 				ProjectileManager.player_projectiles_in_radius(mine["at"], 14.0, bullets)
 				break
 	for i in range(mines.size() - 1, -1, -1):
+		# A proximity blast inside this loop can Chain Reaction (OR06) other
+		# armed Mines out of the array, so an index taken at loop start may
+		# no longer exist (found by the OR-12 trap-contact case, 2026-09-27).
+		if i >= mines.size():
+			continue
 		var mine: Dictionary = mines[i]
 		mine["life"] = float(mine["life"]) - delta
 		if float(mine["arm"]) > 0.0:

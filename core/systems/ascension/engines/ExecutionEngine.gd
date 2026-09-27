@@ -423,7 +423,10 @@ func _on_execution(hit: Dictionary, handle: int, cast: String, overkill: float) 
 		var barrage := runner.engine_for("BR05") as BarrageEngine
 		if barrage != null:
 			counters["kill_feed"] = int(counters.get("kill_feed", 0)) + 1
-			barrage.extra_fragment(hit["position"], handle)
+			var feed_cast := AscensionTags.value_of(hit["tags"], "cast")
+			if feed_cast.is_empty():
+				feed_cast = "seed:%d" % handle
+			barrage.extra_fragment(hit["position"], handle, int(hit["gen"]) + 1, feed_cast)
 	# Death Debt (MM2): the victim's unpaid Debt explodes as a Magic payload.
 	if has("MM2"):
 		var distortion := runner.engine_for("DT06") as DistortionEngine

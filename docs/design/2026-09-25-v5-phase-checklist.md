@@ -51,13 +51,47 @@ difference. Working tree clean apart from untracked docs/archives.
 - [x] OR12 Shell-only (D-11); grenades never advance the counter
 - [x] `AscensionOrdnanceV5Test` 33/33 (subset of OR-01..13; rest at CP4/5)
 
-### Checkpoint 4 — Optional Heat, attribution, hybrids
-- [ ] Named burn attribution + strongest-rate refresh
-- [ ] BR03 Hot Core tiers, world-space aura, Meltdown, Overclock
-- [ ] Q mutations, forks, keystones, revelations, Axioms, sinks adapted
-- [ ] Foreign Witness adapters (§5.4)
-- [ ] Cross-Core matrix (§5.1–5.2) incl. RM7 Rune Bomb, Mine producers
-- [ ] Remaining spec acceptance cases; deferred items reported separately
+### Checkpoint 4 — Optional Heat, attribution, hybrids  ✅ evidence recorded 2026-09-27
+- [x] Named burn attribution + strongest-rate refresh:
+      `EnemyStatusService.apply_named_burn` (one record per handle+name,
+      strongest rate wins, reapply refreshes); BR-06 tagged in
+      AscensionBarrageV5Test, named Hot Rounds provenance in
+      AscensionV5HybridForeignTest.
+- [x] BR03 Hot Core tiers, world-space aura, Meltdown, Overclock: block 18
+      (2026-09-26); BR-07 / BR-08 / BR-08 (Overclock) tagged.
+- [x] Q mutations, forks, keystones, revelations, Axioms, sinks adapted:
+      every V5 ranged id (PRQ1-6, PRF1/2, PRK1/2, PRE1/2, PRC, PRA, PRS1/2,
+      BRQ1-7, BRF1/2, BRK1/2, BRE1/2, BRC, BRA, BRS1/2, ORQ1-7, ORF1/2,
+      ORK1/2, ORE1/2, ORC, ORA, ORS1/2, *V1-3) is referenced by the
+      engines; BR-11 / BR-12 / BR-14 / OR-11 / OR-12 tagged.
+- [x] Foreign Witness adapters (§5.4): AscensionV5HybridForeignTest
+      (foreign Spin Up stages ride real Witness shots, foreign Reserve Feed
+      through Witness cadence).
+- [x] Cross-Core matrix (§5.1–5.2) incl. RM7 Rune Bomb, Mine producers:
+      HYB-01..05 tagged in AscensionV5HybridForeignTest (49/49).
+- [x] Remaining spec acceptance cases: all 45 ids of spec §7.2 are now
+      tagged `# --- ID:` above the block that proves them (RANK-01..08,
+      PR-01..05, BR-01..14, OR-01..13, HYB-01..05); no case is DEFERRED.
+      Suites 2026-09-27: Precision 45/45, Barrage 121/121, Ordnance 85/85,
+      HybridForeign 49/49, Hybrid 41/41, LedgerV5Rank 63/63.
+
+**Defects the acceptance sweep found and fixed (2026-09-27):**
+- MR2 Kill Feed's bonus fragment was spawned with an empty cast and a
+  fixed generation 2 (`BarrageEngine.extra_fragment`), so its kills seeded
+  a fresh chain instead of continuing the executing fragment's lineage
+  (spec HYB-01 "no ancestry reset"). It now inherits the hit's cast and
+  gen+1 through `ExecutionEngine`.
+- A Sigil detonation double-blasted its attached Mines under OR06:
+  `OrdnanceEngine.explode_attached` walked a copy of `mines` after the
+  first blast's Chain Reaction had already erased and detonated the
+  siblings (three attached Mines -> five blasts). It now skips Mines that
+  already left the armed graph (HYB-03).
+- `OrdnanceEngine._tick_mines` indexed a stale slot when a proximity
+  blast inside the loop chain-erased other Mines (out-of-bounds script
+  error under the OR-12 trap-contact case); guarded.
+- Two of the interrupted tagging agents left duplicate local declarations
+  (`loose_before`, `spent_before`) that made their suites fail to parse;
+  renamed.
 
 ### Checkpoint 5 — Capacity, balance, presentation evidence  ◐ headless done 2026-09-26
 - [x] Overflow policy: bounded retry queue in ProjectileSimulationManager;
@@ -196,7 +230,7 @@ say so — reading the answer via screenshots is not blocked.
 4. Item batch 3 candidates: 7-Mile Boots, Bazinga, Trauma, Dignity.
 
 **Done in the Integration & Abuse Pass (2026-09-26, third sitting —
-work order: chatgpt-synthetic-ascension.md, user: "Don't stop till
+work order: docs/handoffs/2026-09-26-gpt-handoff-consult.md, user: "Don't stop till
 resolved"):**
 1. [x] Item batch 3a: Trauma + Dignity (`ItemBatch3Test` 19/19); items
    gain per-source damage-taken multipliers after the flat item pass.
@@ -292,3 +326,36 @@ recovery anchors; the rendered acceptance passes themselves.
 only, never the collision path), Spin aperture progression presentation,
 hub furnishing pass, §6.2-6.4 exit budgets/overtime/recovery, rendered
 acceptance passes, Beka/icon art (user supplies per the spec list).
+
+**Seventh block (2026-09-27, "do what you think is best" after the gap
+audit):**
+23. [x] Pixel-art VFX conversion, Batches A–D (docs/art/2026-09-27-pixel-
+    art-vfx-batches.md): 42 user-generated sprites processed; four-family
+    bullet renderer (player / needle / tracer / enemy bodies); six burst
+    scenes on pixel motes; `core/systems/vfx/VfxKit.gd` with ~30 tinted
+    helpers and primitive fallbacks; ~70 effect scripts converted to
+    sprites with normal blending. Ranged billboards and beams scaled up
+    (BILLBOARD_SCALE 1.7 / BEAM_SCALE 1.4, true-radius rings exempt).
+    Provenance per batch in asset-manifest.md. Rendered check owed.
+24. [x] Non-block city pass (docs/design/2026-09-27-non-block-city.md):
+    ChunkShapeGen cell-mask module, notched generic buildings, bent
+    socket-to-hub roads, polygon plazas with outline rings, hub courtyard
+    as an authored polygon; `organic_shapes_enabled` restores the old
+    generator; `tools/dev/DistrictShapeProbe.tscn` / `HubShapeProbe.tscn`
+    render PNG cell maps; WorldShapeGenTest 32/32; world battery and the
+    streaming audit green (median 0.4 ms).
+25. [x] Load-time warning pass (shadowed `rotation`, `tree_version`,
+    `refund`, `wrap`; seven integer divisions).
+26. [x] Gap audit against the handoff (this doc's Checkpoint 4, §14.3,
+    §15.6, §16 and the GPT consult): results below and in the item-status
+    refresh (docs/design/2026-09-26-item-ideas-status.md). The GPT consult
+    answer now lives at docs/handoffs/2026-09-26-gpt-handoff-consult.md and
+    the world-gen notes at docs/design/2026-09-27-hub-world-gen-notes.md
+    (both were untracked root files); the root handoff copy is byte-
+    identical to docs/handoffs/2026-09-25-ranged-v5-and-visuals-claude.md.
+
+**Pre-existing failures noticed 2026-09-27, not from this session's work:**
+ChunkBuildDataTest expects 25 catalog textures (26 since the wall-face
+commit); PrimaryObjectiveTest "an unsealed rite accepts the player and
+starts channelling" fails with the organic flag off as well;
+WorldTileIntegrationTest has no .tscn.
