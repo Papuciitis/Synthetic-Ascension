@@ -92,3 +92,27 @@ Gameplay (cells, walkability, keepout, collision, flow field) is untouched.
 - Walls under the player means a player standing just north of a wall draws
   over its face; true occlusion needs per-row sorting.
 - The legacy (flag-off) batch path still draws its textures upside down.
+
+## Building pass (same day, follow-up)
+
+The user: "the big buildings look not right" and "the roof tiles should go
+over the walls, now it looks like a box with tiles in it". Per the design
+notes, buildings are large top-down obstacles with roofs that fade on entry.
+
+- RoofOverlay draws a textured roof (user art R1-R3: slate, clay, lead by
+  building kind) over the WHOLE footprint, walls included, out to a 6 px
+  eave, lifted to wall-top height and drawn above the walls (z -1, below
+  actors); only the south façade's face shows under it, with a soft eave
+  shadow. roof.gdshader shades a gable (lit north slope, shaded south, ridge
+  highlight, dark eaves) on box-shaped roofs; ~35% of slate/clay roofs carry
+  a damage hole (R4). Walking in fades the roof as before.
+- Interior partitions of parcel buildings are tagged at spawn
+  (ChunkManager.spawn_roofed_wall_cells, VARIANT_UNDER_ROOF) and drawn with
+  the props at z -6, so nothing inside shows until the roof fades.
+- Long straight walls: a buttress every 6 cells (staggered per row) and a
+  collapsed half-height section on ~7% of other straight cells
+  (ChunkBlockVisualCatalog.wall_texture_at, pieces baked by
+  build_wall_kit.py). Visual only.
+- Art still requested: docs/art/2026-09-27-building-art.md (chimneys,
+  dormers, door arches, shuttered windows, ivy, wall lanterns, banners,
+  interior floors) on top of the world-look request (W1/W2, D1-D12, P1-P8).

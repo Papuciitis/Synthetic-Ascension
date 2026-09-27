@@ -63,13 +63,18 @@ func add_chunk(data: ChunkBuildData) -> void:
 			texture = ChunkBlockVisualCatalog.half_texture(variant)
 			rotation = ChunkBlockVisualCatalog.half_rotation(variant)
 		else:
-			texture = ChunkBlockVisualCatalog.wall_texture(kind, data.mask_at(cell))
+			var global_cell := data.coord * data.cells_per_side + cell
+			texture = ChunkBlockVisualCatalog.wall_texture_at(kind, data.mask_at(cell), global_cell)
 		if texture == null:
 			continue
 		var key := _texture_key(texture)
 		var wall_like := kind == WorldBlockerGeometry.Kind.WALL or kind == WorldBlockerGeometry.Kind.WINDOW
 		var kit := wall_like and ChunkBlockVisualCatalog.three_quarter_walls
-		var batch := _get_or_create_batch(key, texture, false, kit)
+		var under_roof := kit and (data.variant_at(cell) & ChunkBlockVisualCatalog.VARIANT_UNDER_ROOF) != 0
+		var z := ChunkBlockVisualCatalog.PROP_Z if kind == WorldBlockerGeometry.Kind.HALF_COVER or under_roof else ChunkBlockVisualCatalog.WALL_Z
+		if under_roof:
+			key += "#under_roof"
+		var batch := _get_or_create_batch(key, texture, false, kit, z)
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var world_center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * float(_cell_size)
@@ -82,7 +87,7 @@ func add_chunk(data: ChunkBuildData) -> void:
 			batch.transforms.append(Transform2D(0.0, at).scaled_local(flipped))
 			batch.shadow_transforms.append(Transform2D(0.0, at + WALL_SHADOW_OFFSET).scaled_local(flipped))
 			batch.owners.append(data.coord)
-			_add_corner_fills(data, cell, world_center, touched)
+			_add_corner_fills(data, cell, world_center, touched, under_roof)
 			continue
 		var lift := Vector2.ZERO
 		if depth_faces_enabled and kind != WorldBlockerGeometry.Kind.HALF_COVER:
@@ -108,7 +113,7 @@ func add_chunk(data: ChunkBuildData) -> void:
 
 ## Solid blocks of wall cells: fill the open corner between two arms where
 ## the diagonal neighbour is wall too (within the chunk).
-func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vector2, touched: Dictionary) -> void:
+func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vector2, touched: Dictionary, under_roof: bool = false) -> void:
 	var mask := data.mask_at(cell)
 	for fill in ChunkBlockVisualCatalog.KIT_FILLS:
 		var bits := int(fill[0])
@@ -119,8 +124,9 @@ func _add_corner_fills(data: ChunkBuildData, cell: Vector2i, world_center: Vecto
 		if neighbour != WorldBlockerGeometry.Kind.WALL and neighbour != WorldBlockerGeometry.Kind.WINDOW:
 			continue
 		var texture: Texture2D = fill[2]
-		var key := _texture_key(texture)
-		var batch := _get_or_create_batch(key, texture, true, false, ChunkBlockVisualCatalog.FILL_Z)
+		var key := _texture_key(texture) + ("#under_roof" if under_roof else "")
+		var fill_z := ChunkBlockVisualCatalog.PROP_Z if under_roof else ChunkBlockVisualCatalog.FILL_Z
+		var batch := _get_or_create_batch(key, texture, true, false, fill_z)
 		if not touched.has(key):
 			touched[key] = batch.transforms.size()
 		var at := world_center + ChunkBlockVisualCatalog.fill_offset(diagonal)

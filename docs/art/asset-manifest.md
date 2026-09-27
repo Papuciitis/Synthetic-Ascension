@@ -355,3 +355,20 @@ not assets.
 - **Bound through:** `ChunkBlockVisualCatalog.KIT_TEXTURES` / `KIT_FILLS`
   (behind `three_quarter_walls`), `ChunkBlockRenderer` (Y-flipped quads,
   wall shadow offset), `CoverWall.gd`, `Level1Builder._rebuild_wall_visuals`.
+
+### Roofs — R1-R4 (2026-09-27)
+
+- **Files:** `assets/world/roofs/roof_slate.png` (512x512),
+  `roof_clay.png` (512x617), `roof_lead.png` (512x518) - seamless;
+  `roof_damage_a/b/c.png` (220 px wide, drawn at 0.5).
+- **Provenance:** user-generated 2026-09-27 from
+  `docs/art/2026-09-27-building-art.md` R1-R4; originals in
+  `incoming/world/roof_*.png`. The three textures were cropped to the rows
+  and columns where their pattern repeats best (the originals' top/bottom
+  edges did not meet), then scaled to 512 px wide; the damage sprites were
+  trimmed and scaled.
+- **Bound through:** `RoofOverlay.gd` (ROOF_SLATE/CLAY/LEAD by building
+  kind, ROOF_DAMAGE_* on ~35% of slate/clay roofs), shaded by
+  `scenes/world/buildings/roof.gdshader` (gable, ridge, eaves).
+- **Known differences:** clay keeps a faint vertical seam and the lead
+  grid is slightly irregular where it wraps; clay is toned down in code.

@@ -20,6 +20,7 @@ var _seed := 424242
 var _enemies := 24
 var _splat := 1
 var _max_stops := 99
+var _zoom := 1.0
 var _is_worker := false
 var _gpu_ms: Array[float] = []
 
@@ -41,6 +42,8 @@ func _ready() -> void:
 			_seed = int(arg.trim_prefix("--seed="))
 		elif arg.begins_with("--enemies="):
 			_enemies = int(arg.trim_prefix("--enemies="))
+		elif arg.begins_with("--zoom="):
+			_zoom = float(arg.trim_prefix("--zoom="))
 		elif arg.begins_with("--stops="):
 			_max_stops = int(arg.trim_prefix("--stops="))
 		elif arg.begins_with("--splat="):
@@ -57,6 +60,7 @@ func _ready() -> void:
 	worker.set("_enemies", _enemies)
 	worker.set("_splat", _splat)
 	worker.set("_max_stops", _max_stops)
+	worker.set("_zoom", _zoom)
 	worker.set("_is_worker", true)
 	get_tree().root.add_child.call_deferred(worker)
 
@@ -109,6 +113,7 @@ func _run() -> void:
 		player.global_position = at
 		var camera := player.get_node_or_null("Camera2D") as Camera2D
 		if camera != null:
+			camera.zoom = Vector2.ONE * _zoom
 			camera.reset_smoothing()
 		if cm != null and cm.has_method("process_chunk_generation_queue"):
 			cm.call("process_chunk_generation_queue", 25)
@@ -123,7 +128,8 @@ func _run() -> void:
 			gpu += RenderingServer.viewport_get_measured_render_time_gpu(get_viewport().get_viewport_rid())
 			cpu += RenderingServer.viewport_get_measured_render_time_cpu(get_viewport().get_viewport_rid())
 		_gpu_ms.append(gpu / 30.0)
-		var path := "%s/seg%d_%s.png" % [_dir, _segment, label]
+		var zoom_tag := "" if is_equal_approx(_zoom, 1.0) else "_z%d" % roundi(_zoom * 100.0)
+		var path := "%s/seg%d_%s%s.png" % [_dir, _segment, label, zoom_tag]
 		get_viewport().get_texture().get_image().save_png(path)
 		print("WorldLookProbe -> %s  gpu %.2f ms  cpu %.2f ms" % [path, gpu / 30.0, cpu / 30.0])
 		_clear_enemies()

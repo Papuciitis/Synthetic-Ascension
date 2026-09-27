@@ -432,7 +432,18 @@ func _spawn_building_rect(
 	for window_key in window_cells.keys():
 		if not wall_cells.has(window_key):
 			window_cells.erase(window_key)
-	chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
+	# The carve's room partitions stand inside the roof: they draw under it
+	# and appear when it fades (building pass 2026-09-27). The perimeter's
+	# south faces stay visible below the roof's eave as the façade.
+	var interior_walls: Dictionary = {}
+	var inner := build_rect.grow(-1)
+	for wall_key in wall_cells.keys():
+		if inner.has_point(wall_key as Vector2i):
+			interior_walls[wall_key] = true
+	if chunk_manager.has_method("spawn_roofed_wall_cells"):
+		chunk_manager.spawn_roofed_wall_cells(chunk, wall_cells, window_cells, interior_walls)
+	else:
+		chunk_manager._spawn_wall_cells(chunk, wall_cells, window_cells)
 
 	for entrance in entrances:
 		var entrance_pos: Vector2i = entrance.get("pos", Vector2i.ZERO) as Vector2i

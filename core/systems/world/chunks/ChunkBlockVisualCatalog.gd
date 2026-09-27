@@ -56,6 +56,16 @@ const KIT_TEXTURES: Array[Texture2D] = [
 ]
 const KIT_WIN_H := preload("res://assets/world/walls/kit/wall34_window_h.png")
 const KIT_WIN_V := preload("res://assets/world/walls/kit/wall34_window_v.png")
+## Rhythm for long straight runs (the design notes: "after ~5-8 tiles of
+## uninterrupted wall, add something"): a buttress every PIER_SPACING cells,
+## staggered per row, and the odd collapsed section. Visual only.
+const KIT_PIER_H := preload("res://assets/world/walls/kit/wall34_pier_h.png")
+const KIT_PIER_V := preload("res://assets/world/walls/kit/wall34_pier_v.png")
+const KIT_BROKEN_H := preload("res://assets/world/walls/kit/wall34_broken_h.png")
+const KIT_BROKEN_V := preload("res://assets/world/walls/kit/wall34_broken_v.png")
+const PIER_SPACING := 6
+const BROKEN_PERCENT := 7
+static var wall_rhythm_enabled := true
 ## Corner fills for solid blocks: [neighbour bits, diagonal, texture], by
 ## quadrant. A fill covers the open corner between two arms when the diagonal
 ## cell is wall too.
@@ -70,6 +80,12 @@ const KIT_FILLS: Array = [
 ## which reads worse than a head overlapping one they stand behind.
 const WALL_Z := -3
 const FILL_Z := -2
+## Low props (half cover) sit under textured roofs (RoofOverlay.ROOF_Z -1,
+## above the walls), so a building's contents hide until the roof fades.
+const PROP_Z := -6
+## Blocker variant bit for walls that stand inside a building's roof
+## (interior partitions): drawn at PROP_Z with the props.
+const VARIANT_UNDER_ROOF := 1
 
 
 ## World offset of a quadrant fill's centre from its cell centre.
@@ -106,6 +122,30 @@ static func window_texture(mask: int) -> Texture2D:
 	return null
 
 
+## The piece for a wall cell at a GLOBAL cell: the mask's piece, or on a
+## straight run a buttress or a collapsed section. Deterministic per cell, so
+## streamed chunks and authored levels agree.
+static func wall_texture_at(kind: int, mask: int, global_cell: Vector2i) -> Texture2D:
+	if not three_quarter_walls or not wall_rhythm_enabled or kind != WorldBlockerGeometry.Kind.WALL:
+		return wall_texture(kind, mask)
+	var horizontal := mask == (E | W)
+	if not horizontal and mask != (N | S):
+		return wall_texture(kind, mask)
+	var along := global_cell.x if horizontal else global_cell.y
+	var across := global_cell.y if horizontal else global_cell.x
+	var phase := posmod(across * 7919, PIER_SPACING)
+	var slot := posmod(along + phase, PIER_SPACING)
+	if slot == 0:
+		return KIT_PIER_H if horizontal else KIT_PIER_V
+	if slot != 1 and slot != PIER_SPACING - 1 and _cell_hash(global_cell) % 100 < BROKEN_PERCENT:
+		return KIT_BROKEN_H if horizontal else KIT_BROKEN_V
+	return wall_texture(kind, mask)
+
+
+static func _cell_hash(cell: Vector2i) -> int:
+	return absi((cell.x * 73856093) ^ (cell.y * 19349663) ^ 0x5bd1e995)
+
+
 ## Where a wall-like piece draws relative to its cell centre.
 static func wall_offset() -> Vector2:
 	return KIT_OFFSET if three_quarter_walls else Vector2.ZERO
@@ -138,7 +178,8 @@ static func half_rotation(variant: int) -> float:
 
 static func texture_count() -> int:
 	if three_quarter_walls:
-		return KIT_TEXTURES.size() + 2 + HALF_TEXTURES.size()
+		# 16 mask pieces, 2 windows, 4 rhythm variants, 4 corner fills, props.
+		return KIT_TEXTURES.size() + 2 + 4 + KIT_FILLS.size() + HALF_TEXTURES.size()
 	return 18 + HALF_TEXTURES.size()
 
 

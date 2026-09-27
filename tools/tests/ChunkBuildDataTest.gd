@@ -74,6 +74,17 @@ func _test_wall_catalog() -> void:
 	var piece := ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 0)
 	_check(is_equal_approx(ChunkBlockVisualCatalog.cell_scale(piece).x * piece.get_width(), 64.0), "kit: a piece draws exactly one cell wide")
 	_check(is_equal_approx(ChunkBlockVisualCatalog.cell_scale(piece).y * piece.get_height(), 64.0 + ChunkBlockVisualCatalog.KIT_HEIGHT), "kit: a piece draws one cell plus the wall height tall")
+	# Rhythm: a straight run gets a buttress every PIER_SPACING cells and
+	# the same cell always gets the same piece.
+	var piers := 0
+	for x in range(0, 60):
+		var run_piece := ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(x, 3))
+		if run_piece == ChunkBlockVisualCatalog.KIT_PIER_H:
+			piers += 1
+	_check(piers == 10, "kit: a 60-cell straight run carries a buttress every 6 cells (%d)" % piers)
+	_check(ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(17, -4)) == ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 10, Vector2i(17, -4)), "kit: rhythm is deterministic per cell")
+	_check(ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WALL, 3, Vector2i(0, 0)) == ChunkBlockVisualCatalog.wall_texture(WorldBlockerGeometry.Kind.WALL, 3), "kit: corners never take a rhythm variant")
+	_check(ChunkBlockVisualCatalog.wall_texture_at(WorldBlockerGeometry.Kind.WINDOW, 10, Vector2i(0, 0)) == ChunkBlockVisualCatalog.KIT_WIN_H, "kit: windows never take a rhythm variant")
 	ChunkBlockVisualCatalog.three_quarter_walls = kit_was
 
 
@@ -86,7 +97,7 @@ func _test_half_cover_catalog() -> void:
 	_check(negative == 13, "legacy half-cover RNG remains stable for negative world coordinates")
 	_check(_texture_path(ChunkBlockVisualCatalog.half_texture(first)).ends_with("prop_rubble_small_01.png"), "packed half-cover variant selects its legacy texture")
 	_check(is_equal_approx(ChunkBlockVisualCatalog.half_rotation(first), PI * 0.5), "packed half-cover variant selects its legacy rotation")
-	_check(ChunkBlockVisualCatalog.texture_count() == 26, "kit catalog reports 16 pieces, 2 windows and 8 half-cover variants")
+	_check(ChunkBlockVisualCatalog.texture_count() == 34, "kit catalog reports 16 pieces, 2 windows, 4 rhythm variants, 4 fills and 8 half-cover variants")
 
 
 func _texture_path(texture: Texture2D) -> String:

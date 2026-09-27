@@ -156,6 +156,10 @@ var _content_gen: ChunkGenImpl = null
 var _tile_renderer: ChunkTileRenderer = null
 var _block_renderer: ChunkBlockRenderer = null
 var _ground_splat: GroundSplatRenderer = null
+## Local cells of the building being spawned whose walls stand INSIDE its
+## roof (interior partitions). Recorded with the under-roof variant so they
+## draw below the roof and show only when it fades. Set around one spawn.
+var _roof_interior_cells: Dictionary = {}
 var _external_tile_roots: Array[Node2D] = []
 
 
@@ -1062,6 +1066,8 @@ func _record_blocker(_chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: in
 	var variant := 0
 	if kind == WorldBlockerGeometry.Kind.HALF_COVER:
 		variant = ChunkBlockVisualCatalog.half_variant(cell_to_world_center(global_cell))
+	elif _roof_interior_cells.has(local_cell):
+		variant = ChunkBlockVisualCatalog.VARIANT_UNDER_ROOF
 	if not _active_build_data.add_blocker(local_cell, kind, connections_mask, variant):
 		return false
 	_blocked_cells[global_cell] = true
@@ -1070,6 +1076,14 @@ func _record_blocker(_chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: in
 	_projectile_blockers[global_cell] = WorldBlockerGeometry.pack(kind, connections_mask)
 	_projectile_blocker_owners[global_cell] = get_instance_id()
 	return true
+
+
+## Spawn a building's walls with its interior partitions marked as under
+## its roof (see _roof_interior_cells).
+func spawn_roofed_wall_cells(chunk: Node2D, wall_cells: Dictionary, window_cells: Dictionary, interior_cells: Dictionary) -> void:
+	_roof_interior_cells = interior_cells
+	_spawn_wall_cells(chunk, wall_cells, window_cells)
+	_roof_interior_cells = {}
 
 
 func _blocker_kind_for_scene(scene: PackedScene) -> int:
