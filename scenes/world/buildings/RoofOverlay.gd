@@ -44,10 +44,20 @@ const EAVE_SHADOW_PX := 9.0
 @onready var _edge: Line2D = get_node("FrontEdge") as Line2D
 
 var _inside_count: int = 0
+## Entrances as {pos: chunk-local cell, dir: outward, width: cells}, the same
+## records the facility carver cuts doors from. The roof is notched over each
+## so a doorway reads from the street.
+var _doors: Array = []
+var _cell_px: int = 64
+## The footprint outline this roof was configured with (before insets and
+## door notches), in chunk-local pixels. Tests read the building's shape here.
+var footprint_outline_px := PackedVector2Array()
 var _tween: Tween
 
 
-func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, indoor_volume: Area2D, building_kind: StringName = &"row_house", visual_seed: int = 0) -> void:
+func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, indoor_volume: Area2D, building_kind: StringName = &"row_house", visual_seed: int = 0, doors: Array = []) -> void:
+	_doors = doors
+	_cell_px = cell_size_px
 	_apply_visual_variant(building_kind, visual_seed)
 	# Build a simple roof silhouette that makes parcels read as "buildings" from the street.
 	# This is intentionally cheap: just a dark polygon + a stronger façade edge.
@@ -77,6 +87,7 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 
 	_poly.polygon = PackedVector2Array([p0, p1, p2, p3])
 	_poly.z_index = -92
+	footprint_outline_px = PackedVector2Array([tl, tl + Vector2(sz.x, 0.0), tl + sz, tl + Vector2(0.0, sz.y)])
 	if textured_roofs():
 		var inner := Rect2(tl, sz).grow(-ROOF_INSET_PX)
 		_poly.polygon = PackedVector2Array([
@@ -117,10 +128,13 @@ func configure(build_rect_cells: Rect2i, cell_size_px: int, door_dir: Vector2i, 
 ## authored outline; the façade edge runs along the given street-side span;
 ## fades listen to every sub-volume of the building through one counter, so
 ## crossing between overlapping volumes never flickers.
-func configure_polygon(outline_px: PackedVector2Array, facade_from: Vector2, facade_to: Vector2, volumes: Array, building_kind: StringName = &"row_house", visual_seed: int = 0) -> void:
+func configure_polygon(outline_px: PackedVector2Array, facade_from: Vector2, facade_to: Vector2, volumes: Array, building_kind: StringName = &"row_house", visual_seed: int = 0, doors: Array = [], cell_size_px: int = 64) -> void:
+	_doors = doors
+	_cell_px = cell_size_px
 	_apply_visual_variant(building_kind, visual_seed)
 	_poly.polygon = outline_px
 	_poly.z_index = -92
+	footprint_outline_px = outline_px
 	if textured_roofs():
 		_poly.polygon = _inset_outline(outline_px, ROOF_INSET_PX)
 		_frame_textured_roof()
@@ -183,8 +197,46 @@ func _frame_textured_roof() -> void:
 	var fills_box := box.get_area() > 0.0 and absf(_signed_area(poly)) >= box.get_area() * 0.97
 	material.set_shader_parameter("gable", 1.0 if fills_box else 0.0)
 	_poly.material = material
+	poly = _notch_doors(poly)
+	_poly.polygon = poly
 	_add_eave_shadow(poly)
 	_add_roof_damage(poly, box, fills_box)
+
+
+## Cut the roof back over each doorway (the door cells plus the eave in front
+## of them), so entrances show from outside instead of hiding under tiles.
+func _notch_doors(poly: PackedVector2Array) -> PackedVector2Array:
+	var cell := float(_cell_px)
+	for door_value in _doors:
+		var door := door_value as Dictionary
+		if door == null or not door.has("pos") or not door.has("dir"):
+			continue
+		var pos: Vector2i = door["pos"]
+		var dir: Vector2i = door["dir"]
+		var width: int = int(door.get("width", 2))
+		var perp := Vector2i(-dir.y, dir.x)
+		var first := pos + perp * -(width >> 1)
+		var last := first + perp * (width - 1)
+		var cells := Rect2(Vector2(first) * cell, Vector2.ONE * cell).merge(Rect2(Vector2(last) * cell, Vector2.ONE * cell))
+		# Reach past the eave on the outside; stop at the door cell inside.
+		var outward := Vector2(dir) * (ROOF_INSET_PX + 24.0)
+		var notch := cells.merge(Rect2(cells.position + outward, cells.size))
+		var cut := Geometry2D.clip_polygons(poly, PackedVector2Array([
+			notch.position, Vector2(notch.end.x, notch.position.y), notch.end, Vector2(notch.position.x, notch.end.y),
+		]))
+		var best := PackedVector2Array()
+		var best_area := 0.0
+		for candidate in cut:
+			var piece := candidate as PackedVector2Array
+			if Geometry2D.is_polygon_clockwise(piece) != Geometry2D.is_polygon_clockwise(poly):
+				continue  # a hole, not an outline
+			var area := absf(_signed_area(piece))
+			if area > best_area:
+				best_area = area
+				best = piece
+		if best.size() >= 3:
+			poly = best
+	return poly
 
 
 ## A soft shadow the eave throws onto the façade: a gradient strip under
@@ -257,12 +309,14 @@ func _add_roof_damage(poly: PackedVector2Array, box: Rect2, gabled: bool) -> voi
 		hole.position = at
 		hole.rotation = rng.randf_range(-0.35, 0.35)
 		hole.flip_h = rng.randf() < 0.5
-		# Match the gable's shading (roof.gdshader): north slope lit, south shaded.
+		# Match the gable's shading (roof.gdshader): the slope toward the
+		# top-right light is lit - north of an E-W ridge, east of a N-S one.
 		var shade := 1.0
 		if gabled:
 			var along_x := box.size.x >= box.size.y
 			var t := (at.y - box.position.y) / box.size.y if along_x else (at.x - box.position.x) / box.size.x
-			shade = 1.12 if t < (0.42 if along_x else 0.5) else 0.72
+			var lit := t < 0.42 if along_x else t > 0.5
+			shade = 1.12 if lit else 0.72
 		hole.modulate = Color(shade, shade, shade, 1.0) * _poly.color
 		_poly.add_child(hole)
 		return

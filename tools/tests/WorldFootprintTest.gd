@@ -71,7 +71,9 @@ func _find_l_building(manager: ChunkManager) -> Dictionary:
 		for roof in chunk.find_children("*", "Node2D", true, false):
 			if roof is not RoofOverlay:
 				continue
-			var poly := (roof.get_node("RoofPoly") as Polygon2D).polygon
+			# The footprint, not the drawn polygon: roofs are notched over
+			# their doors, so a rectangle's drawn roof has extra corners too.
+			var poly: PackedVector2Array = (roof as RoofOverlay).footprint_outline_px
 			if poly.size() >= 6:
 				var volumes: Array = []
 				for volume in chunk.find_children("*", "Area2D", true, false):

@@ -294,7 +294,14 @@ func _fill_frontage_band(
 
 		# Phase 3: workshops and row buildings sometimes take an L footprint
 		# with a recessed entrance, so streets stop reading as pure rectangles.
+		# The workshop that carries the district's secondary objective always
+		# takes the rect path: the L path builds its volumes without a
+		# secondary id and never marks it assigned.
+		var carries_secondary: bool = template == &"workshop" \
+			and int(cfg.get("secondary_objective_id", 0)) > 0 \
+			and not bool(cfg.get("_secondary_assigned", false))
 		var irregular: bool = (template == &"workshop" or template == &"row_house") \
+			and not carries_secondary \
 			and lot_len >= 9 and building_depth >= 8 \
 			and rng.randf() < float(cfg.get("parcel_l_chance", 0.35))
 		var spawned: bool = false
@@ -493,7 +500,7 @@ func _spawn_building_rect(
 					var roof := ROOF_OVERLAY_SCENE.instantiate()
 					chunk.add_child(roof)
 					if roof.has_method("configure"):
-						roof.configure(build_rect, int(chunk_manager.cell_size_px), door_dir, volume, template, building_id)
+						roof.configure(build_rect, int(chunk_manager.cell_size_px), door_dir, volume, template, building_id, entrances)
 
 	placed.append(build_rect)
 	return true
@@ -676,7 +683,8 @@ func _spawn_building_footprint(
 			if roof.has_method("configure_polygon"):
 				var outline := _footprint_outline(footprint, cell_px)
 				var facade := _edge_span_px(wing_a, door_dir, cell_px)
-				roof.configure_polygon(outline, facade[0], facade[1], volumes, template, building_id)
+				roof.configure_polygon(outline, facade[0], facade[1], volumes, template, building_id,
+					[{"pos": door_pos, "dir": door_dir, "width": door_w}], cell_px)
 
 	placed.append(build_rect)
 	return true

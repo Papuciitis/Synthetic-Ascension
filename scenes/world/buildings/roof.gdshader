@@ -2,9 +2,8 @@ shader_type canvas_item;
 
 // Textured roof (RoofOverlay.gd, building pass 2026-09-27). The roof art is a
 // flat shingle field; this gives it a gable so the building reads as a mass:
-// the slope facing the light (north, top right) a touch brighter, the other
-// in shade, a lit ridge between them, and darker eaves where the roof meets
-// the parapet. Footprints that are not rectangles (L shapes) skip the gable
+// the slope facing the light (top right) a touch brighter, the other in
+// shade, a lit ridge between them, and darker eaves at the roof's edge. Footprints that are not rectangles (L shapes) skip the gable
 // and keep only the eaves.
 
 uniform vec4 bounds = vec4(0.0, 0.0, 256.0, 256.0);
@@ -33,7 +32,10 @@ void fragment() {
 		// foreshortened, so the ridge sits above the middle.
 		float across = along_x ? t.y : t.x;
 		float ridge = along_x ? 0.42 : 0.5;
-		shade = across < ridge ? lit_slope : shade_slope;
+		// Light from the top right: the north slope of an east-west ridge,
+		// the EAST slope of a north-south one.
+		bool lit = along_x ? across < ridge : across > ridge;
+		shade = lit ? lit_slope : shade_slope;
 		float d = abs(across - ridge) * (along_x ? size.y : size.x);
 		shade += smoothstep(4.0, 0.0, d) * ridge_light;
 	}

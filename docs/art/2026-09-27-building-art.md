@@ -107,3 +107,73 @@ What the player sees when a roof fades. Seamless textures, both directions.
   tiles badly).
 - B-sprites: one object per image, real alpha, no ground, no shadow.
 - Keep the palette muted; the game grades the world and shades roofs itself.
+
+## Priority 3 — street identity and interiors (added after the building review)
+
+What tells a shop from a workshop from a house before you walk in, and what
+the player sees when a roof fades. Same style block; walls in this game show
+a lit top and a short (~28 px) front face, so draw fronts at that squat
+three-quarter angle, and anything that lies on the ground straight from
+above. One object per image, real alpha, no ground, no shadow.
+
+| # | File | On screen | What |
+|---|---|---|---|
+| S1 | `bld_awning_a..c.png` (3 colours) | ~128 x 48 | striped canvas awning over a shop door |
+| S2 | `bld_sign_a..c.png` | ~40 x 40 | hanging shop sign on an iron bracket, pictogram only |
+| S3 | `bld_doorstep.png` | ~128 x 40 | worn stone threshold slab for a 2-cell doorway |
+| S4 | `bld_door_boarded.png` | ~128 x 60 | doorway boarded up with planks, bar and chain |
+| S5 | `bld_planter.png` | ~56 x 32 | window box / stone planter with herbs |
+| S6 | `yard_fence.png` + `yard_gate.png` | strip ~256 x 48 | wooden plank fence (seamless left-right) and a gate |
+| W3/W4 | `wall_plaster_top_strip.png`, `wall_plaster_face_strip.png` | as W1/W2 | a second wall material for houses and shops |
+| I1 | `int_shelf_a..b.png` | ~96 x 48 | storage shelf against a wall (ledgers / jars) |
+| I2 | `int_workbench.png` | ~112 x 56 | workbench with a vice and scattered tools |
+| I3 | `int_cot.png` | ~56 x 112 | narrow cot with a rumpled grey blanket |
+| I4 | `int_rug_a..b.png` | ~128 x 96 | worn woven rug lying flat, faded red and ochre |
+| K1 | `dress_pipe_run.png` + `dress_drain_grate.png` | strip ~256 x 32 / ~64 x 64 | old iron pipe along a wall foot (seamless left-right); a floor drain grate |
+| K2 | `dress_rune_plaque.png` + `dress_floor_rune.png` | ~48 x 48 / ~128 x 128 | carved occult plaque set in a wall face; a faint rune circle inlaid in paving |
+
+**S1 — awning.** A sloped striped canvas awning seen from above at a steep
+angle: the cloth slopes down toward the viewer, scalloped front hem, two thin
+iron poles. Three colourways: faded red/cream, teal/cream, ochre/brown.
+
+**S2 — shop sign.** A small wooden board hanging from a curled iron wall
+bracket, a painted pictogram and no text: a) hammer and anvil (smith),
+b) loaf (baker), c) potion bottle (apothecary).
+
+**S3 — doorstep.** A worn stone threshold seen straight from above: one
+long slab with a dished groove worn in the middle, two squared jamb stones
+at the ends, moss in the joints.
+
+**S4 — boarded door.** The front of a doorway at the squat three-quarter
+angle: weathered planks nailed across it at angles, a rusty iron bar and a
+hanging chain with a padlock, dark gap between the boards.
+
+**S5 — planter.** A small stone planter or wooden window box with herbs and
+trailing green, seen from above at the squat three-quarter angle.
+
+**S6 — fence and gate.** Seamless left-right strip of a weathered wooden
+plank fence with posts, the plank tops lit, seen from above at the squat
+three-quarter angle; plus a matching gate (one image) with iron hinges.
+
+**W3/W4 — plaster walls.** Same format and rules as W1/W2 (seamless
+left-right strips): W3 the flat top of a plastered timber-frame wall seen
+from above (dark oak beam along the middle, cream plaster either side,
+weathered); W4 its front face in shade (cream plaster between dark oak
+posts and a cross brace, a stone plinth course along the bottom).
+
+**I1-I4 — interior furniture.** Seen from above at the squat three-quarter
+angle, each alone: I1 a tall shelf against a wall, top plank lit, variant a
+with ledgers and scrolls, variant b with jars and sacks; I2 a heavy wooden
+workbench with a vice, tools and shavings; I3 a narrow cot with a rumpled
+grey blanket and a flat pillow; I4 a worn woven rug lying flat, frayed
+edges, faded geometric border (two patterns).
+
+**K1 — industrial dressing.** Seamless left-right strip of an old iron pipe
+lying along the foot of a wall with brackets, rust streaks and a valve
+wheel; and a square iron drain grate set in paving seen from straight above.
+
+**K2 — arcane dressing.** A carved stone plaque with a faintly glowing
+occult sigil, set into a wall face (front view, the glow painted as a pale
+teal line, no halo); and a large faint rune circle inlaid in paving seen
+from straight above, worn and partly broken, mostly transparent so the
+ground shows through.
