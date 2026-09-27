@@ -33,6 +33,17 @@ func _ready() -> void:
 	for i in range(20):
 		await get_tree().process_frame
 	await _shot("%s/hub_alcove.png" % out_dir)
+	# Beka on the move and being petted, close up.
+	var beka: Node2D = hub.crowd.beka
+	beka.position = hub._cell(8.5, 12.8)
+	beka._go(hub._cell(12.0, 12.8), false)
+	for i in range(24):
+		await get_tree().process_frame
+	await _shot("%s/hub_beka_walk.png" % out_dir)
+	beka.pet()
+	for i in range(6):
+		await get_tree().process_frame
+	await _shot("%s/hub_beka_pet.png" % out_dir)
 	if camera != null:
 		camera.limit_left = -100000
 		camera.limit_right = 100000

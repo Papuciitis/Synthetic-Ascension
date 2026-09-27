@@ -61,6 +61,9 @@ TARGET = {
     "hub_beka_stretch": ("h", 26),
 }
 TILE_STRIPS = {"hub_roofs_back"}
+## Walk cycles hold the body still and move the legs, so their frames are
+## registered on the torso (mean column of the middle band), not the feet.
+TORSO_ANCHORED = {"hub_beka_walk"}
 FRAME_SHEETS = {
     "hub_brazier_sheet": 3,
     "hub_beka_walk": 6,
@@ -70,7 +73,7 @@ SRC = Path("incoming/hub")
 DST = Path("assets/textures/hub")
 
 
-def register_frames(im: Image.Image, frames: int) -> Image.Image:
+def register_frames(im: Image.Image, frames: int, torso: bool = False) -> Image.Image:
     """Re-pack a hand-drawn frame strip onto equal cells.
 
     The generator does not space frames on exact equal cells (the brazier
@@ -96,12 +99,26 @@ def register_frames(im: Image.Image, frames: int) -> Image.Image:
         gaps = [runs[k + 1][0] - runs[k][1] for k in range(len(runs) - 1)]
         k = gaps.index(min(gaps))
         runs[k:k + 2] = [(runs[k][0], runs[k + 1][1])]
+    # Two figures that touch (a tail over the next one's nose) share a run:
+    # split the widest run at its thinnest column near the middle.
+    while 0 < len(runs) < frames:
+        k = max(range(len(runs)), key=lambda n: runs[n][1] - runs[n][0])
+        x0, x1 = runs[k]
+        lo, hi = x0 + (x1 - x0) * 3 // 10, x0 + (x1 - x0) * 7 // 10
+        cut = min(range(lo, hi), key=lambda x: sum(1 for y in range(0, h, 2) if solid.getpixel((x, y))))
+        runs[k:k + 1] = [(x0, cut), (cut, x1)]
     if len(runs) != frames:
         print(f"  {frames} frames expected, found {len(runs)} column runs; keeping the sheet as drawn")
         return im
     anchors = []
     for x0, x1 in runs:
         box = solid.crop((x0, 0, x1, h)).getbbox()
+        if torso:
+            top = box[1] + int((box[3] - box[1]) * 0.35)
+            bottom = box[1] + int((box[3] - box[1]) * 0.75)
+            xs = [x for x in range(x0, x1) for y in range(top, bottom, 2) if solid.getpixel((x, y))]
+            anchors.append(sum(xs) / max(1, len(xs)))
+            continue
         base_top = box[1] + int((box[3] - box[1]) * 0.6)
         base = solid.crop((x0, base_top, x1, box[3])).getbbox()
         anchors.append(x0 + (base[0] + base[2]) / 2.0)
@@ -119,7 +136,7 @@ def bake(name: str) -> None:
     alpha = im.getchannel("A").point(lambda v: 0 if v < 8 else v)
     im.putalpha(alpha)
     if name in FRAME_SHEETS:
-        im = register_frames(im, FRAME_SHEETS[name])
+        im = register_frames(im, FRAME_SHEETS[name], name in TORSO_ANCHORED)
         alpha = im.getchannel("A")
     box = alpha.getbbox()
     keep_width = name in TILE_STRIPS or name in FRAME_SHEETS

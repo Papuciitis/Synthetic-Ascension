@@ -381,7 +381,7 @@ func _update_sprite(delta: float) -> void:
 	_sprite.position.y = -roundf(bob)
 	_sprite.flip_h = _face_left
 	if frames > 1:
-		_sprite.frame = int(_walk_clock * 5.0) % frames
+		_sprite.frame = int(_walk_clock * 10.0) % frames
 
 
 func _overlay_redraw() -> void:
