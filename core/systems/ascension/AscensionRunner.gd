@@ -1309,8 +1309,19 @@ var _texture_points: Array = []
 var _had_visuals: bool = false
 
 
-func note_texture_point(at: Vector2, half_size: float, color: Color, texture_name: String, rotation: float = 0.0) -> void:
-	_texture_points.append([at, half_size, color, texture_name, rotation])
+## Ranged V5 presentation scale (playtest 2026-09-27: darts, marks, grenades,
+## mines and the spin glow read too small at gameplay zoom). DRAWN size only;
+## hit radii are untouched. Rings that show a real radius (heat, pressure,
+## aura) are exempt, because their edge is the damage edge.
+const BILLBOARD_SCALE := 1.7
+const BILLBOARD_RADIUS_TEXTURES: Array[String] = ["heat_ring_broken", "pressure_ring", "aura_ring"]
+const BEAM_SCALE := 1.4
+const BEAM_MIN_WIDTH := 12.0
+const BURST_MIN_HALF := 12.0
+
+
+func note_texture_point(at: Vector2, half_size: float, color: Color, texture_name: String, facing: float = 0.0) -> void:
+	_texture_points.append([at, half_size, color, texture_name, facing])
 
 
 func _tick_attack_fx(delta: float) -> void:
@@ -1395,7 +1406,7 @@ func _draw() -> void:
 	var burst := vfx_texture("impact_burst")
 	for point in _texture_points:
 		var texture := vfx_texture(String(point[3]))
-		var half := float(point[1])
+		var half := float(point[1]) * (1.0 if String(point[3]) in BILLBOARD_RADIUS_TEXTURES else BILLBOARD_SCALE)
 		if texture == null:
 			draw_circle(point[0], half, point[2])
 			continue
@@ -1419,7 +1430,7 @@ func _draw() -> void:
 				# drawn in the beam's own frame (Ranged V5 presentation).
 				var to: Vector2 = fx["dir"]
 				var length := at.distance_to(to)
-				var width := maxf(8.0, radius * 3.0) * (0.6 + 0.4 * fade)
+				var width := maxf(BEAM_MIN_WIDTH, radius * 3.0) * BEAM_SCALE * (0.6 + 0.4 * fade)
 				draw_set_transform_matrix(base_inverse * Transform2D((to - at).angle(), at))
 				draw_texture_rect(beam_core, Rect2(Vector2(0.0, -width * 0.5), Vector2(length, width)), false, color)
 				var cap := width * 2.6
@@ -1434,7 +1445,7 @@ func _draw() -> void:
 		else:
 			draw_arc(at, radius * (0.6 + 0.4 * (1.0 - fade)), 0.0, TAU, 32, color, 3.0 * fade + 1.0, true)
 			if burst != null:
-				var burst_half := radius * (0.7 + 0.5 * (1.0 - fade))
+				var burst_half := maxf(radius, BURST_MIN_HALF) * (0.7 + 0.5 * (1.0 - fade))
 				var burst_color := color
 				burst_color.a = fade
 				draw_texture_rect(burst, Rect2(at - Vector2.ONE * burst_half, Vector2.ONE * burst_half * 2.0), false, burst_color)
