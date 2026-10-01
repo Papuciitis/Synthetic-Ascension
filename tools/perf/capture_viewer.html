@@ -1,0 +1,2307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capture Viewer</title>
+<!--
+  Offline viewer for the performance flight-recorder captures (see CAPTURE_VIEWER.md).
+  One self-contained file: no network requests, no external scripts or fonts.
+  Layout of this file:
+    style               presentation
+    script "core"       DOM-free logic (also runs under Node: see capture_viewer_test.mjs)
+    script "ui"         the page itself
+-->
+<style>
+:root {
+  color-scheme: light dark;
+  --page: #f9f9f7; --surface: #fcfcfb; --surface-2: #f0efec; --gap: #efeeea;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,.10);
+  --accent: #2a78d6;
+  --c1: #2a78d6; --c2: #eb6834; --c3: #1baf7a; --c4: #eda100; --c5: #e87ba4; --c6: #008300; --c7: #4a3aa7; --c8: #8a5a2b;
+  --c0: #898781; --unknown: #c3c2b7;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0d0d0d; --surface: #1a1a19; --surface-2: #262625; --gap: #242423;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,.10);
+    --accent: #3987e5;
+    --c1: #3987e5; --c2: #d95926; --c3: #199e70; --c4: #c98500; --c5: #d55181; --c6: #008300; --c7: #9085e9; --c8: #c0935f;
+    --c0: #898781; --unknown: #4a4a46;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--page); color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.wrap { max-width: 1320px; margin: 0 auto; padding: 16px 20px 48px; }
+h1 { font-size: 20px; margin: 0; font-weight: 650; }
+h2 { font-size: 15px; margin: 0 0 4px; font-weight: 650; }
+h3 { font-size: 13px; margin: 14px 0 6px; font-weight: 650; }
+p { margin: 4px 0; }
+.sub { color: var(--ink-2); font-size: 13px; }
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 14px 16px; margin-top: 12px; overflow-x: auto;
+}
+header.top { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
+button, select, .filebtn {
+  font: inherit; color: var(--ink); background: var(--surface); border: 1px solid var(--axis);
+  border-radius: 6px; padding: 5px 11px; cursor: pointer;
+}
+button:hover, .filebtn:hover, select:hover { border-color: var(--muted); }
+button:focus-visible, select:focus-visible, canvas:focus-visible, tr:focus-visible, .tagrow:focus-visible, summary:focus-visible, input:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px;
+}
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+button:disabled { opacity: .45; cursor: default; }
+select { padding: 5px 8px; max-width: 100%; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.row.gapy { row-gap: 6px; }
+label.ctl { display: inline-flex; gap: 6px; align-items: center; color: var(--ink-2); font-size: 13px; }
+label.ctl select { color: var(--ink); }
+#drop {
+  border: 1.5px dashed var(--axis); border-radius: 8px; padding: 12px 14px; margin-top: 10px;
+}
+#drop.over { border-color: var(--accent); background: var(--surface-2); }
+#progress { height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; margin-top: 8px; display: none; }
+#progress > div { height: 100%; width: 0; background: var(--accent); }
+.hidden { display: none !important; }
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr)); gap: 8px; margin-top: 10px; }
+.tile { border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; background: var(--surface); }
+.tile .lab { font-size: 12px; color: var(--ink-2); }
+.tile .val { font-size: 22px; font-weight: 600; line-height: 1.25; }
+.tile .val small { font-size: 12px; font-weight: 400; color: var(--ink-2); }
+.tile .ext { font-size: 12px; color: var(--muted); }
+.note {
+  border-left: 3px solid var(--axis); padding: 4px 10px; margin: 8px 0 0; color: var(--ink-2); font-size: 13px;
+}
+.badge {
+  display: inline-block; font-size: 11px; line-height: 1.5; padding: 0 7px; border-radius: 9px;
+  border: 1px solid var(--ink-2); color: var(--ink); white-space: nowrap; vertical-align: 1px;
+}
+.badge.measured { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.badge.correlated { background: transparent; }
+.badge.unknown { border-style: dashed; color: var(--ink-2); }
+.badge.plain { border-color: var(--axis); color: var(--ink-2); }
+.badge.warn { border-color: var(--c2); }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); margin: 6px 0 2px; }
+.legend .k { display: inline-flex; align-items: center; gap: 5px; }
+.sw { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.ln { display: inline-block; width: 16px; height: 2px; border-radius: 1px; flex: none; }
+#tlwrap { position: relative; margin-top: 6px; }
+#tl { display: block; width: 100%; height: 496px; cursor: crosshair; touch-action: none; border-radius: 4px; }
+#tip {
+  position: absolute; pointer-events: none; z-index: 5; min-width: 170px; max-width: 280px;
+  background: var(--surface); border: 1px solid var(--axis); border-radius: 6px; padding: 7px 9px;
+  font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.18); display: none;
+}
+#tip .v { font-weight: 650; font-size: 14px; }
+#tip .r { display: flex; justify-content: space-between; gap: 12px; color: var(--ink-2); }
+#tip .r b { color: var(--ink); font-weight: 600; }
+
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { text-align: left; padding: 4px 8px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+th { font-weight: 600; color: var(--ink-2); font-size: 12px; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tbody tr.click { cursor: pointer; }
+tbody tr.click:hover { background: var(--surface-2); }
+tbody tr.sel { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+.scroll { max-height: 430px; overflow: auto; }
+.cols { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(0, 2.2fr); gap: 12px; align-items: start; }
+@media (max-width: 900px) { .cols { grid-template-columns: 1fr; } }
+.tagrow { display: grid; grid-template-columns: 150px 1fr; gap: 8px; align-items: center; padding: 3px 4px; border-radius: 4px; cursor: pointer; }
+.tagrow:hover, .tagrow.on { background: var(--surface-2); }
+.tagrow .nm { display: flex; align-items: center; gap: 6px; font-size: 12.5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.tagrow .barline { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tagrow .bar { height: 12px; border-radius: 0 4px 4px 0; min-width: 2px; flex: none; }
+
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 6px 18px; margin: 8px 0 2px; }
+.fact .k { font-size: 12px; color: var(--ink-2); }
+.fact .v { font-size: 14px; }
+.fact .v b { font-weight: 650; }
+.stack { display: flex; gap: 2px; height: 22px; margin: 6px 0 4px; }
+.stack > div { height: 100%; min-width: 2px; }
+.stack > div:first-child { border-radius: 4px 0 0 4px; }
+.stack > div:last-child { border-radius: 0 4px 4px 0; }
+.stackaxis { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.minibar { height: 8px; border-radius: 0 4px 4px 0; background: var(--ink-2); min-width: 1px; }
+details { margin-top: 10px; }
+summary { cursor: pointer; color: var(--ink-2); font-size: 13px; }
+pre { font: 12px/1.4 ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 10px; border-radius: 6px; overflow: auto; max-height: 360px; }
+dl.gloss { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 8px 0 0; font-size: 13px; }
+dl.gloss dt { font-weight: 600; white-space: nowrap; }
+dl.gloss dd { margin: 0; color: var(--ink-2); }
+@media (max-width: 700px) { dl.gloss { grid-template-columns: 1fr; } }
+code { font: 12px ui-monospace, Consolas, monospace; background: var(--surface-2); padding: 0 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>Capture Viewer</h1>
+    <span class="sub">Performance flight-recorder captures. Everything stays on this computer: files are read by your browser and never uploaded.</span>
+  </header>
+
+  <section class="card" id="loader">
+    <div class="row gapy">
+      <button class="primary" id="btnFolder" title="Pick a date folder such as performance_results/2026-10-01">Open capture folder…</button>
+      <button id="btnFiles" title="Pick individual .csv / .json capture files">Open files…</button>
+      <button id="btnDemo" title="Generate made-up data in the page, to try the viewer without real captures">Load demo data</button>
+      <button id="btnCancel" class="hidden">Stop loading</button>
+      <input type="file" id="inDir" class="hidden" webkitdirectory multiple>
+      <input type="file" id="inFiles" class="hidden" multiple accept=".csv,.json">
+    </div>
+    <div id="drop" class="sub">…or drag a capture folder (or a selection of capture files) onto this box.</div>
+    <div id="progress"><div></div></div>
+    <div id="status" class="sub" style="margin-top:8px" role="status"></div>
+  </section>
+
+  <main id="main" class="hidden">
+    <section class="card">
+      <div class="row gapy">
+        <label class="ctl">Session <select id="selSession"></select></label>
+        <label class="ctl">Segment (level) <select id="selSegment"></select></label>
+        <label class="ctl" title="The reference numbers in the performance notes use this filter: it leaves out menus, loading and empty moments."><input type="checkbox" id="chkEnemies"> Only count frames with active enemies (enemies &gt; 0)</label>
+      </div>
+      <div id="sessionInfo" class="sub" style="margin-top:8px"></div>
+    </section>
+
+    <section class="card">
+      <h2>Incident-window statistics <span class="badge plain" title="Not a whole-session average">not whole-session</span></h2>
+      <p class="sub" id="summaryNote"></p>
+      <div class="tiles" id="tiles"></div>
+      <div id="summaryFallback"></div>
+    </section>
+
+    <section class="card">
+      <div class="row gapy" style="justify-content:space-between">
+        <h2 id="tlTitle">Timeline</h2>
+        <div class="row">
+          <label class="ctl">Height <select id="selY">
+            <option value="cap">Cut off at 120 ms</option>
+            <option value="fit">Fit the tallest frame</option>
+          </select></label>
+          <button id="btnZoomIn" title="Zoom in (+)">Zoom in</button>
+          <button id="btnZoomOut" title="Zoom out (−)">Zoom out</button>
+          <button id="btnReset" title="Show everything (0 or double-click)">Reset zoom</button>
+        </div>
+      </div>
+      <p class="sub">Scroll to zoom, drag to pan, double-click to reset, click a spot to inspect the slowest frame there (with the chart focused: arrow keys pan, + and − zoom, 0 resets). Shaded stretches are time the recorder did not capture: it only keeps the seconds around a hitch.</p>
+      <div class="legend" id="legendLines"></div>
+      <div class="legend" id="legendTags"></div>
+      <div id="tlwrap">
+        <canvas id="tl" tabindex="0" role="img" aria-label="Timeline of frame time, hitches, enemy count and projectile count. The worst-hitches table below lists the same hitches as text."></canvas>
+        <div id="tip"></div>
+      </div>
+      <div class="sub small" id="tlNote"></div>
+    </section>
+
+    <section class="card" id="detail">
+      <h2>Frame detail</h2>
+      <p class="sub">Click a hitch marker on the timeline, or a row in the “Worst hitches” table, to see what was measured in that frame.</p>
+    </section>
+
+    <div class="cols">
+      <section class="card">
+        <h2>What the hitches were tagged as</h2>
+        <p class="sub">Frames over 28 ms, counted by the tag the game gave them. A tag names the largest <em>measured</em> cost in the frame: a lead, not proof. Click a tag to filter the table.</p>
+        <div id="tags" style="margin-top:8px"></div>
+      </section>
+      <section class="card">
+        <div class="row" style="justify-content:space-between">
+          <h2 id="worstTitle">Worst hitches</h2>
+          <label class="ctl">Tag <select id="selTag"></select></label>
+        </div>
+        <div class="scroll" style="margin-top:6px"><table id="worst"></table></div>
+      </section>
+    </div>
+
+    <section class="card">
+      <h2>What the words mean</h2>
+      <dl class="gloss" id="gloss"></dl>
+    </section>
+  </main>
+</div>
+
+<script id="core">
+/* ==========================================================================
+   CaptureCore: DOM-free logic. Runs in the browser and under Node.
+   File-name parsing, CSV / JSON reading, session grouping, de-duplication,
+   percentiles, threshold counts, hitch attribution (a port of
+   autoload/performance/PerformanceHitchTagger.gd), evidence classification,
+   and the synthetic-capture generator used by the demo and the sample files.
+   ========================================================================== */
+(function (root) {
+  'use strict';
+
+  var HITCH_MS = 28.0;
+  var BASE_MS = 16.7;
+  var MIN_ATTRIBUTED_MS = 2.0;
+  var MIN_ATTRIBUTED_SHARE = 0.25;
+  var PHYSICS_MONITOR_SHARE = 0.5;
+  var THRESHOLDS = [28, 33, 50, 100];
+  var EVENT_WINDOW_USEC = 1500000;
+
+  /* ---------------------------------------------------------------- helpers */
+  function isDict(v) { return v !== null && typeof v === 'object' && !Array.isArray(v); }
+  function dict(v) { return isDict(v) ? v : {}; }
+  function isEmpty(d) { if (!isDict(d)) return true; for (var k in d) { if (Object.prototype.hasOwnProperty.call(d, k)) return false; } return true; }
+  function has(d, k) { return isDict(d) && Object.prototype.hasOwnProperty.call(d, k); }
+  function num(v, fallback) {
+    var x = typeof v === 'number' ? v : (v === true ? 1 : (v === false ? 0 : parseFloat(v)));
+    return x === x ? x : (fallback === undefined ? 0 : fallback);
+  }
+  function int(v) { var x = num(v, 0); return x < 0 ? Math.ceil(x) : Math.floor(x); }
+  function finiteOrNaN(v) { return (typeof v === 'number' && isFinite(v)) ? v : NaN; }
+
+  /* ------------------------------------------------------------- file names */
+  var NAME_RE = /^(\d{4})-(\d{2})-(\d{2})_(\d{2})-(\d{2})-(\d{2})_segment-(\d+)_incident-(\d+)\.(csv|json)$/i;
+
+  function baseName(path) {
+    var s = String(path);
+    var k = Math.max(s.lastIndexOf('/'), s.lastIndexOf('\\'));
+    return k >= 0 ? s.slice(k + 1) : s;
+  }
+
+  /* "2026-10-01_20-04-32_segment-02_incident-001.csv" -> parts, or null for any other file. */
+  function parseCaptureName(name) {
+    var file = baseName(name);
+    var m = NAME_RE.exec(file);
+    if (!m) return null;
+    var h = +m[4], mi = +m[5], s = +m[6];
+    return {
+      file: file,
+      base: file.slice(0, file.lastIndexOf('.')),
+      date: m[1] + '-' + m[2] + '-' + m[3],
+      clockSec: h * 3600 + mi * 60 + s,
+      /* Local clock time carried as if it were UTC, so no time-zone maths is ever applied. */
+      epochSec: Date.UTC(+m[1], +m[2] - 1, +m[3], h, mi, s) / 1000,
+      segment: +m[7],
+      incident: +m[8],
+      ext: m[9].toLowerCase()
+    };
+  }
+
+  /* Pair .csv/.json by base name; anything that is not a capture file is counted, not kept. */
+  function classifyFiles(files) {
+    var byBase = new Map();
+    var ignored = 0;
+    for (var i = 0; i < files.length; i++) {
+      var info = parseCaptureName(files[i].name);
+      if (!info) { ignored++; continue; }
+      var entry = byBase.get(info.base);
+      if (!entry) { entry = { base: info.base, info: info, csv: null, json: null }; byBase.set(info.base, entry); }
+      if (!entry[info.ext]) entry[info.ext] = files[i];
+    }
+    var incidents = Array.from(byBase.values());
+    incidents.sort(function (a, b) { return a.info.epochSec - b.info.epochSec || a.info.incident - b.info.incident; });
+    return { incidents: incidents, ignored: ignored };
+  }
+
+  /* -------------------------------------------------------------------- tags */
+  var tagNames = [''];
+  var tagIndex = new Map([['', 0]]);
+  function tagCode(name) {
+    name = name || '';
+    var c = tagIndex.get(name);
+    if (c === undefined) {
+      if (tagNames.length >= 255) return 0;   /* codes are one byte; real captures use about a dozen tags */
+      c = tagNames.length; tagNames.push(name); tagIndex.set(name, c);
+    }
+    return c;
+  }
+  function tagName(code) { return tagNames[code] || ''; }
+
+  /* ---------------------------------------------------------------- CSV read */
+  /* Columns kept for the overview. Everything is looked up by header NAME. */
+  var NUM_COLS = ['elapsed_sec', 'frame_ms', 'wall_ms', 'fps', 'process_ms', 'physics_ms', 'enemies', 'projectiles',
+    'world_materialized', 'world_data_only', 'ascension_usec', 'fragment_usec', 'projectile_ms', 'chunk_build_ms',
+    'flow_publish_usec', 'hitch_ms', 'physics_ticks', 'physics_frame_ms', 'sampling_usec'];
+  var CSV_ALIASES = {
+    world_materialized: ['world_materialized', 'enemy_world_materialized'],
+    world_data_only: ['world_data_only', 'enemy_world_data_only'],
+    sampling_usec: ['sampling_usec', 'sampling_overhead_usec']
+  };
+  var CSV_HEADER_OLD = 't_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only';
+  var CSV_HEADER_CURRENT = CSV_HEADER_OLD + ',wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms';
+  var CSV_HEADER_NEXT = CSV_HEADER_CURRENT + ',physics_ticks,physics_frame_ms,sampling_usec,process_phase_ms,deferred_ms,render_present_ms,future_metric';
+  var KNOWN_CSV = {};
+  CSV_HEADER_NEXT.split(',').forEach(function (c) { KNOWN_CSV[c] = true; });
+  delete KNOWN_CSV.future_metric;
+
+  function newCol(name, n) {
+    var a = name === 'elapsed_sec' ? new Float64Array(n) : new Float32Array(n);
+    a.fill(NaN);
+    return a;
+  }
+
+  /* One CSV record -> fields. Handles "quoted, fields" and doubled "" quotes. */
+  function splitCsvLine(line) {
+    if (line.indexOf('"') === -1) return line.split(',');
+    var out = [], cur = '', quoted = false;
+    for (var i = 0; i < line.length; i++) {
+      var ch = line[i];
+      if (quoted) {
+        if (ch === '"') {
+          if (line[i + 1] === '"') { cur += '"'; i++; } else quoted = false;
+        } else cur += ch;
+      } else if (ch === '"') quoted = true;
+      else if (ch === ',') { out.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    out.push(cur);
+    return out;
+  }
+  function oddQuotes(s) { var n = 0; for (var i = 0; i < s.length; i++) if (s.charCodeAt(i) === 34) n++; return (n & 1) === 1; }
+  function csvNumber(s) { return (s === undefined || s === '') ? NaN : +s; }
+
+  /* CSV text -> compact table {n, t, cols{name: typed array}, tags, tMin, tMax, header, unknown, badRows, error}.
+     Missing columns are simply absent from `cols`; missing values are NaN. */
+  function parseCsvTable(text) {
+    var out = { n: 0, t: new Float64Array(0), cols: {}, tags: null, tMin: NaN, tMax: NaN, header: [], unknown: [], badRows: 0, error: '' };
+    if (!text) { out.error = 'empty file'; return out; }
+    if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+    var lines = text.split('\n');
+    var li = 0;
+    while (li < lines.length && lines[li].trim() === '') li++;
+    if (li >= lines.length) { out.error = 'empty file'; return out; }
+    var header = splitCsvLine(lines[li].replace(/\r$/, '')).map(function (h) { return h.trim(); });
+    out.header = header;
+    var tIdx = header.indexOf('t_usec');
+    if (tIdx < 0) { out.error = 'no t_usec column'; return out; }
+    var cap = lines.length - li - 1;
+    var t = new Float64Array(cap);
+    var names = [], idxs = [], arrays = [];
+    NUM_COLS.forEach(function (name) {
+      var aliases = CSV_ALIASES[name] || [name];
+      for (var a = 0; a < aliases.length; a++) {
+        var k = header.indexOf(aliases[a]);
+        if (k >= 0) { names.push(name); idxs.push(k); arrays.push(newCol(name, cap)); return; }
+      }
+    });
+    var tagIdx = header.indexOf('hitch_tag');
+    var tags = tagIdx >= 0 ? new Uint8Array(cap) : null;
+    header.forEach(function (h) { if (h && !KNOWN_CSV[h]) out.unknown.push(h); });
+    var n = 0, tMin = Infinity, tMax = -Infinity, nc = names.length;
+    for (var i = li + 1; i < lines.length; i++) {
+      var line = lines[i];
+      if (line.length === 0) continue;
+      if (line.charCodeAt(line.length - 1) === 13) { line = line.slice(0, -1); if (line.length === 0) continue; }
+      var f;
+      if (line.indexOf('"') === -1) f = line.split(',');
+      else {
+        while (oddQuotes(line) && i + 1 < lines.length) line += '\n' + lines[++i].replace(/\r$/, '');
+        f = splitCsvLine(line);
+      }
+      var tv = csvNumber(f[tIdx]);
+      if (!isFinite(tv)) { out.badRows++; continue; }
+      t[n] = tv;
+      if (tv < tMin) tMin = tv;
+      if (tv > tMax) tMax = tv;
+      for (var c = 0; c < nc; c++) arrays[c][n] = csvNumber(f[idxs[c]]);
+      if (tags) { var tg = f[tagIdx]; tags[n] = tg ? tagCode(tg.trim()) : 0; }
+      n++;
+    }
+    out.n = n;
+    out.t = t.subarray(0, n);
+    for (var k2 = 0; k2 < nc; k2++) out.cols[names[k2]] = arrays[k2].subarray(0, n);
+    out.tags = tags ? tags.subarray(0, n) : null;
+    out.tMin = n ? tMin : NaN;
+    out.tMax = n ? tMax : NaN;
+    if (!n && !out.error) out.error = 'no rows';
+    return out;
+  }
+
+  /* --------------------------------------------- hitch tagging (GDScript port) */
+  /* Port of PerformanceHitchTagger.gd. Keep the two in step. */
+  function sampleFrameMs(sample) {
+    return has(sample, 'wall_ms') ? num(sample.wall_ms) : num(sample.frame_ms);
+  }
+
+  function chunkAttribution(stream, previousStream) {
+    var phases = dict(stream.last_phases);
+    if (isEmpty(phases)) return null;
+    var previousPhases = dict(previousStream.last_phases);
+    var coord = String(phases.coord === undefined ? '' : phases.coord);
+    var total = num(phases.total_ms);
+    var sameCoord = !isEmpty(previousPhases) && String(previousPhases.coord === undefined ? '' : previousPhases.coord) === coord;
+    if (sameCoord) {
+      var previousTotal = num(previousPhases.total_ms);
+      if (total <= previousTotal) return null;
+      var physicsChanged = num(phases.blocker_physics_ms) !== num(previousPhases.blocker_physics_ms);
+      return { tag: physicsChanged ? 'chunk_blocker_physics' : 'chunk_blocker_render', ms: total - previousTotal };
+    }
+    var bestKey = 'content_ms', best = -1;
+    var keys = ['setup_ms', 'ground_ms', 'content_ms', 'floor_ms'];
+    if (has(phases, 'blocker_physics_ms') && (num(phases.blocker_physics_ms) > 0 || num(phases.blocker_render_ms) > 0)) {
+      keys.push('blocker_physics_ms'); keys.push('blocker_render_ms');
+    } else keys.push('blocker_ms');
+    for (var i = 0; i < keys.length; i++) {
+      var value = num(phases[keys[i]]);
+      if (value > best) { best = value; bestKey = keys[i]; }
+    }
+    return { tag: 'chunk_' + bestKey.replace(/_ms$/, ''), ms: total };
+  }
+
+  /* Attributable milliseconds per subsystem for one sample; `previous` is the sample before it ({} for the first). */
+  function attribution(sample, previous) {
+    sample = dict(sample); previous = dict(previous);
+    var out = {};
+    var ascension = dict(sample.ascension);
+    if (!isEmpty(ascension)) {
+      var barrage = dict(ascension.BR);
+      var fragmentMs = int(barrage.fragment_usec) / 1000;
+      var treeMs = (int(ascension.tick_usec) + int(ascension.flush_usec) + int(ascension.hit_usec)) / 1000;
+      out.ascension = Math.max(0, treeMs - fragmentMs);
+      out.fragments = fragmentMs;
+    }
+    if (has(sample, 'projectile_ms')) out.projectiles = num(sample.projectile_ms);
+    var stream = dict(sample.chunk_stream);
+    if (!isEmpty(stream)) {
+      var chunk = chunkAttribution(stream, dict(previous.chunk_stream));
+      if (chunk) out[chunk.tag] = chunk.ms;
+    }
+    if (has(sample, 'flow_revision')) {
+      var revisionChanged = int(sample.flow_revision) !== int(previous.flow_revision);
+      var buildStarted = sample.flow_building === true && previous.flow_building !== true;
+      if (revisionChanged) out.flow = (int(sample.flow_publish_usec) + int(sample.flow_snapshot_usec)) / 1000;
+      else if (buildStarted) out.flow = int(sample.flow_snapshot_usec) / 1000;
+    }
+    var lifecycle = dict(sample.enemy_lifecycle), previousLifecycle = dict(previous.enemy_lifecycle);
+    if (!isEmpty(lifecycle) && !isEmpty(previousLifecycle)) {
+      var deltaUsec = 0;
+      ['attach_total_usec', 'detach_total_usec', 'retire_total_usec'].forEach(function (key) {
+        deltaUsec += Math.max(0, int(lifecycle[key]) - int(previousLifecycle[key]));
+      });
+      out.lifecycle = deltaUsec / 1000;
+    }
+    var scheduler = dict(sample.enemy_scheduler);
+    if (has(sample, 'physics_frame_ms')) {
+      if (int(sample.physics_ticks) >= 2) out.physics_catchup = num(sample.physics_frame_ms);
+      else out.enemy_step = num(sample.physics_frame_ms);
+    } else if (has(scheduler, 'physics_step_ms')) {
+      out.enemy_step = num(scheduler.physics_step_ms);
+    }
+    if (has(sample, 'sampling_overhead_usec')) out.sampling = int(sample.sampling_overhead_usec) / 1000;
+    /* The frame spans a scene change (the recorder marks the samples around Global.goto_scene):
+       loading, building the new scene and freeing the old one block it, so the whole frame is the change. */
+    if (typeof sample.scene_change === 'string' && sample.scene_change !== '') out.scene_change = sampleFrameMs(sample);
+    return out;
+  }
+
+  /* {tag, ms, frame_ms}; tag is "" at or below HITCH_MS. */
+  function tagSample(sample, previous) {
+    var ms = sampleFrameMs(sample);
+    if (!(ms > HITCH_MS)) return { tag: '', ms: 0, frame_ms: ms };
+    var costs = attribution(sample, previous);
+    var bestKey = '', best = 0;
+    for (var key in costs) {
+      var value = num(costs[key]);
+      if (value > best) { best = value; bestKey = key; }
+    }
+    var excess = ms - BASE_MS;
+    if (bestKey === '' || best < Math.max(MIN_ATTRIBUTED_MS, MIN_ATTRIBUTED_SHARE * excess)) {
+      var physics = num(sample.physics_ms);
+      if (physics >= PHYSICS_MONITOR_SHARE * ms) return { tag: 'physics_monitor', ms: physics, frame_ms: ms };
+      return { tag: 'unattributed', ms: best, frame_ms: ms };
+    }
+    return { tag: bestKey, ms: best, frame_ms: ms };
+  }
+
+  /* ------------------------------------------------- JSON incident -> table */
+  /* Same table shape as parseCsvTable, built from a parsed incident JSON (used when a capture has no CSV). */
+  function tableFromJson(obj) {
+    var out = { n: 0, t: new Float64Array(0), cols: {}, tags: null, tMin: NaN, tMax: NaN, header: [], unknown: [], badRows: 0, error: '' };
+    var samples = (isDict(obj) && Array.isArray(obj.samples)) ? obj.samples : null;
+    if (!samples) { out.error = 'no samples array'; return out; }
+    var cap = samples.length;
+    var t = new Float64Array(cap), tags = new Uint8Array(cap);
+    var cols = {}, seen = {};
+    NUM_COLS.forEach(function (name) { cols[name] = newCol(name, cap); seen[name] = 0; });
+    function put(name, n, v) { if (typeof v === 'number' && isFinite(v)) { cols[name][n] = v; seen[name]++; } }
+    var n = 0, tMin = Infinity, tMax = -Infinity, previous = {};
+    for (var i = 0; i < cap; i++) {
+      var s = samples[i];
+      if (!isDict(s) || typeof s.t_usec !== 'number' || !isFinite(s.t_usec)) { out.badRows++; continue; }
+      t[n] = s.t_usec;
+      if (s.t_usec < tMin) tMin = s.t_usec;
+      if (s.t_usec > tMax) tMax = s.t_usec;
+      put('elapsed_sec', n, s.elapsed_sec); put('frame_ms', n, s.frame_ms); put('wall_ms', n, s.wall_ms);
+      put('fps', n, s.fps); put('process_ms', n, s.process_ms); put('physics_ms', n, s.physics_ms);
+      put('enemies', n, s.enemies); put('projectiles', n, s.projectiles);
+      put('world_materialized', n, s.enemy_world_materialized); put('world_data_only', n, s.enemy_world_data_only);
+      var asc = dict(s.ascension);
+      if (!isEmpty(asc)) {
+        put('ascension_usec', n, int(asc.tick_usec) + int(asc.flush_usec) + int(asc.hit_usec));
+        put('fragment_usec', n, int(dict(asc.BR).fragment_usec));
+      }
+      put('projectile_ms', n, s.projectile_ms);
+      if (isDict(s.chunk_stream)) put('chunk_build_ms', n, num(dict(s.chunk_stream.last_phases).total_ms));
+      put('flow_publish_usec', n, s.flow_publish_usec);
+      put('physics_ticks', n, s.physics_ticks); put('physics_frame_ms', n, s.physics_frame_ms);
+      put('sampling_usec', n, s.sampling_overhead_usec);
+      var hitch = tagSample(s, previous);
+      previous = s;
+      tags[n] = tagCode(hitch.tag);
+      put('hitch_ms', n, hitch.ms);
+      n++;
+    }
+    out.n = n;
+    out.t = t.subarray(0, n);
+    NUM_COLS.forEach(function (name) { if (seen[name] > 0) out.cols[name] = cols[name].subarray(0, n); });
+    out.tags = tags.subarray(0, n);
+    out.tMin = n ? tMin : NaN;
+    out.tMax = n ? tMax : NaN;
+    if (!n) out.error = 'no samples';
+    return out;
+  }
+
+  /* -------------------------------------------------- sessions and de-dup */
+  function knownCommit(rec) {
+    var c = rec && rec.meta && rec.meta.build ? rec.meta.build.git_commit : '';
+    return (c && c !== 'unknown') ? String(c) : '';
+  }
+
+  /* A new game process started when the incident number resets, when t_usec
+     (microseconds since process start) jumps backwards, or when the build changes. */
+  function startsNewSession(prev, lastWithRows, rec) {
+    if (!prev) return true;
+    if (rec.info.incident <= prev.info.incident) return true;
+    if (lastWithRows && rec.table && rec.table.n > 0 && rec.table.tMin + 1e6 < lastWithRows.table.tMin) return true;
+    var a = knownCommit(prev), b = knownCommit(rec);
+    if (a && b && a !== b) return true;
+    return false;
+  }
+
+  /* records: [{info, table, source: 'csv'|'json', csv, json, meta}] -> sessions (see buildSession). */
+  function buildSessions(records) {
+    var recs = records.filter(function (r) { return r && r.info && r.table; });
+    recs.sort(function (a, b) { return a.info.epochSec - b.info.epochSec || a.info.incident - b.info.incident; });
+    var groups = [], cur = null, prev = null, lastWithRows = null;
+    recs.forEach(function (rec) {
+      if (startsNewSession(prev, lastWithRows, rec)) { cur = []; groups.push(cur); lastWithRows = null; }
+      cur.push(rec);
+      prev = rec;
+      if (rec.table.n > 0) lastWithRows = rec;
+    });
+    return groups.map(function (g, i) { return buildSession(g, i); });
+  }
+
+  /* Merge one session's incident tables into single arrays, one entry per unique t_usec.
+     Overlapping incident windows repeat frames; the earliest file's copy wins, except that a
+     file's FIRST row loses to any other copy (the game tags a first row without its predecessor). */
+  function buildSession(recs, index) {
+    var total = 0, r, i, k;
+    for (r = 0; r < recs.length; r++) total += recs[r].table.n;
+    var T = new Float64Array(total), SRC = new Uint16Array(total), ROW = new Uint32Array(total);
+    var g = 0;
+    for (r = 0; r < recs.length; r++) {
+      var tt = recs[r].table.t;
+      for (i = 0; i < tt.length; i++) { T[g] = tt[i]; SRC[g] = r; ROW[g] = i; g++; }
+    }
+    var ord = new Uint32Array(total);
+    var sorted = true;
+    for (i = 0; i < total; i++) { ord[i] = i; if (i && T[i] <= T[i - 1]) sorted = false; }
+    if (!sorted) {
+      ord.sort(function (a, b) {
+        return (T[a] - T[b]) || ((ROW[a] === 0 ? 1 : 0) - (ROW[b] === 0 ? 1 : 0)) || (a - b);
+      });
+    }
+    var keep = new Uint32Array(total), n = 0, last = NaN;
+    for (k = 0; k < total; k++) {
+      var tv = T[ord[k]];
+      if (tv !== last) { keep[n++] = ord[k]; last = tv; }
+    }
+
+    var s = {
+      index: index, n: n, totalRows: total, duplicates: total - n,
+      t: new Float64Array(n), cols: {}, recorded: {},
+      tag: new Uint8Array(n), seg: new Uint16Array(n), inc: new Uint16Array(n), gapBefore: new Uint8Array(n),
+      eff: new Float32Array(n), wallMissing: 0,
+      incidents: [], windows: [], segRuns: [], hitchIdx: null,
+      clockOffsetSec: NaN, elapsedOffsetSec: NaN, build: null, date: recs.length ? recs[0].info.date : '',
+      sources: { csv: 0, json: 0 }, tagsRecorded: false
+    };
+    NUM_COLS.forEach(function (name) {
+      for (var q = 0; q < recs.length; q++) {
+        if (recs[q].table.cols[name]) { s.cols[name] = newCol(name, n); s.recorded[name] = 0; return; }
+      }
+    });
+    var colNames = Object.keys(s.cols);
+    for (k = 0; k < n; k++) {
+      var gi = keep[k], rec = recs[SRC[gi]], row = ROW[gi], table = rec.table;
+      s.t[k] = T[gi];
+      s.inc[k] = SRC[gi];
+      s.seg[k] = rec.info.segment;
+      if (table.tags) s.tag[k] = table.tags[row];
+      for (var c = 0; c < colNames.length; c++) {
+        var src = table.cols[colNames[c]];
+        if (src) {
+          var v = src[row];
+          if (v === v) { s.cols[colNames[c]][k] = v; s.recorded[colNames[c]]++; }
+        }
+      }
+    }
+    var wall = s.cols.wall_ms, frame = s.cols.frame_ms;
+    for (k = 0; k < n; k++) {
+      var w = wall ? wall[k] : NaN;
+      if (w === w) s.eff[k] = w;
+      else { s.eff[k] = frame ? frame[k] : NaN; s.wallMissing++; }
+    }
+
+    /* Incident index (drives "which JSON holds this frame") and clock offset. */
+    var clockOffset = Infinity;
+    recs.forEach(function (rec2) {
+      var tb = rec2.table;
+      s.incidents.push({
+        base: rec2.info.base, info: rec2.info, rows: tb.n, tMin: tb.tMin, tMax: tb.tMax,
+        source: rec2.source || 'csv', csv: rec2.csv || null, json: rec2.json || null,
+        hasTags: !!tb.tags, error: tb.error || '', unknown: tb.unknown || []
+      });
+      s.sources[rec2.source === 'json' ? 'json' : 'csv']++;
+      if (tb.tags) s.tagsRecorded = true;
+      if (!s.build && rec2.meta && isDict(rec2.meta.build)) s.build = rec2.meta.build;
+      /* The file is stamped when it is written, shortly after its last sample. */
+      if (tb.n > 0) clockOffset = Math.min(clockOffset, rec2.info.epochSec - tb.tMax / 1e6);
+    });
+    s.clockOffsetSec = isFinite(clockOffset) ? clockOffset : NaN;
+    var el = s.cols.elapsed_sec;
+    s.elapsedOffsetSec = n ? -s.t[0] / 1e6 : NaN;
+    if (el) { for (k = 0; k < n; k++) { if (el[k] === el[k]) { s.elapsedOffsetSec = el[k] - s.t[k] / 1e6; break; } } }
+
+    /* Capture windows merged into continuous stretches; anything between two stretches is a gap. */
+    var spans = s.incidents.filter(function (x) { return x.rows > 0; })
+      .map(function (x) { return [x.tMin, x.tMax]; })
+      .sort(function (a, b) { return a[0] - b[0]; });
+    spans.forEach(function (sp) {
+      var lastW = s.windows[s.windows.length - 1];
+      if (lastW && sp[0] <= lastW[1]) { if (sp[1] > lastW[1]) lastW[1] = sp[1]; }
+      else s.windows.push([sp[0], sp[1]]);
+    });
+    var wi = 0;
+    for (k = 0; k < n; k++) {
+      while (wi < s.windows.length && s.windows[wi][0] < s.t[k] && s.windows[wi][1] < s.t[k]) wi++;
+      if (k === 0 || (wi < s.windows.length && s.t[k - 1] < s.windows[wi][0])) s.gapBefore[k] = 1;
+    }
+
+    /* Hitches and segment runs. */
+    var hitches = [];
+    for (k = 0; k < n; k++) if (s.eff[k] > HITCH_MS) hitches.push(k);
+    s.hitchIdx = Uint32Array.from(hitches);
+    var run = null;
+    for (k = 0; k < n; k++) {
+      if (!run || run.seg !== s.seg[k]) {
+        run = { seg: s.seg[k], i0: k, i1: k, t0: s.t[k], t1: s.t[k], hitches: 0 };
+        s.segRuns.push(run);
+      }
+      run.i1 = k + 1; run.t1 = s.t[k];
+      if (s.eff[k] > HITCH_MS) run.hitches++;
+    }
+    recs.forEach(function (rec3) { rec3.table = null; });   /* release the per-file tables */
+    return s;
+  }
+
+  /* ------------------------------------------------------------- statistics */
+  /* Linear-interpolated percentile of an ascending array (same rule as tools/perf/analyze_captures.py). */
+  function percentile(sorted, p) {
+    var n = sorted.length;
+    if (!n) return NaN;
+    var k = (n - 1) * p / 100;
+    var lo = Math.floor(k), hi = Math.min(lo + 1, n - 1);
+    return sorted[lo] + (sorted[hi] - sorted[lo]) * (k - lo);
+  }
+
+  /* filter: {run: segment-run index or null, enemiesOnly: bool} -> indices of frames that have a time. */
+  function frameIndices(session, filter) {
+    filter = filter || {};
+    var i0 = 0, i1 = session.n;
+    if (filter.run !== null && filter.run !== undefined && session.segRuns[filter.run]) {
+      i0 = session.segRuns[filter.run].i0; i1 = session.segRuns[filter.run].i1;
+    }
+    var enemies = session.cols.enemies, only = !!filter.enemiesOnly, eff = session.eff;
+    var out = new Uint32Array(i1 - i0), k = 0;
+    for (var i = i0; i < i1; i++) {
+      if (only && !(enemies && enemies[i] > 0)) continue;
+      if (eff[i] !== eff[i]) continue;
+      out[k++] = i;
+    }
+    return out.subarray(0, k);
+  }
+
+  function summarize(session, filter) {
+    var idx = frameIndices(session, filter);
+    var v = new Float64Array(idx.length), fallback = 0, wall = session.cols.wall_ms;
+    for (var i = 0; i < idx.length; i++) {
+      v[i] = session.eff[idx[i]];
+      if (!wall || wall[idx[i]] !== wall[idx[i]]) fallback++;
+    }
+    v.sort();
+    var over = THRESHOLDS.map(function (th) {
+      var lo = 0, hi = v.length;                    /* first index with v > th */
+      while (lo < hi) { var mid = (lo + hi) >> 1; if (v[mid] > th) hi = mid; else lo = mid + 1; }
+      return v.length - lo;
+    });
+    return {
+      frames: idx.length, median: percentile(v, 50), p95: percentile(v, 95), p99: percentile(v, 99),
+      max: v.length ? v[v.length - 1] : NaN, thresholds: THRESHOLDS.slice(), over: over, fallbackFrames: fallback
+    };
+  }
+
+  /* Indices of the slowest frames over 28 ms, slowest first. tag: exact tag name, or null for all. */
+  function worstHitches(session, filter, limit, tag) {
+    var idx = frameIndices(session, filter), eff = session.eff, out = [];
+    var code = (tag === null || tag === undefined) ? -1 : tagCode(tag);
+    for (var i = 0; i < idx.length; i++) {
+      var k = idx[i];
+      if (eff[k] > HITCH_MS && (code < 0 || session.tag[k] === code)) out.push(k);
+    }
+    out.sort(function (a, b) { return eff[b] - eff[a] || a - b; });
+    return limit ? out.slice(0, limit) : out;
+  }
+
+  /* [{tag, count, worstMs}] for frames over 28 ms, most frequent first. tag '' = no tag recorded. */
+  function tagCounts(session, filter) {
+    var idx = frameIndices(session, filter), eff = session.eff, by = new Map();
+    for (var i = 0; i < idx.length; i++) {
+      var k = idx[i];
+      if (!(eff[k] > HITCH_MS)) continue;
+      var name = tagName(session.tag[k]);
+      var e = by.get(name);
+      if (!e) { e = { tag: name, count: 0, worstMs: 0 }; by.set(name, e); }
+      e.count++;
+      if (eff[k] > e.worstMs) e.worstMs = eff[k];
+    }
+    return Array.from(by.values()).sort(function (a, b) { return b.count - a.count || (a.tag < b.tag ? -1 : 1); });
+  }
+
+  function clockAt(session, tUsec) { return session.clockOffsetSec + tUsec / 1e6; }      /* epoch-like seconds, or NaN */
+  function elapsedAt(session, tUsec) { return session.elapsedOffsetSec + tUsec / 1e6; }
+  function coveredSeconds(session) {
+    var sum = 0;
+    session.windows.forEach(function (w) { sum += (w[1] - w[0]) / 1e6; });
+    return sum;
+  }
+
+  /* ---------------------------------------------- tags, families, evidence */
+  var FAMILIES = [
+    { key: 'physics_catchup', label: 'Physics catch-up' },
+    { key: 'enemy_step', label: 'Physics tick (enemy step)' },
+    { key: 'ascension', label: 'Ascension skill tree, fragments' },
+    { key: 'projectiles', label: 'Projectiles' },
+    { key: 'world', label: 'World streaming (chunks, flow field)' },
+    { key: 'lifecycle', label: 'Enemy lifecycle' },
+    { key: 'sampling', label: 'Recorder overhead' },
+    { key: 'scene_change', label: 'Scene change (loading)' },
+    { key: 'unknown', label: 'No timer explains it' }
+  ];
+  function tagFamily(tag) {
+    if (!tag) return 'none';
+    if (tag === 'physics_catchup' || tag === 'enemy_step' || tag === 'projectiles' || tag === 'lifecycle' || tag === 'sampling' || tag === 'scene_change') return tag;
+    if (tag === 'ascension' || tag === 'fragments') return 'ascension';
+    if (tag === 'flow' || tag.indexOf('chunk') === 0) return 'world';
+    return 'unknown';   /* unattributed, physics_monitor, and any tag this viewer does not know yet */
+  }
+
+  var CATCHUP_TEXT = 'physics_catchup means two or more physics ticks ran in one rendered frame. It is a measured symptom: Godot runs extra ticks to catch up after an earlier frame ran long, so it may not identify what started the delay.';
+  var TAG_TEXT = {
+    physics_catchup: CATCHUP_TEXT,
+    enemy_step: 'One physics tick ran in this frame and its time (enemy movement and everything else inside the tick) was the largest measured cost.',
+    physics_monitor: 'No timer in this frame was large enough to explain it, but Godot\'s physics monitor (a figure updated about once per second) was at least half of the frame time. Weak evidence.',
+    unattributed: 'No measured cost was large enough to explain this frame (it must be at least 2 ms and a quarter of the time above 16.7 ms). Whatever took the time was not covered by any timer.',
+    ascension: 'The Ascension skill tree (engine tick, attack-queue flush and hit handling, with Barrage fragment time taken out) was the largest measured cost.',
+    fragments: 'Barrage fragment updates (they run inside the Ascension tick) were the largest measured cost.',
+    projectiles: 'The projectile simulation step was the largest measured cost.',
+    sampling: 'The flight recorder\'s own sampling work was the largest measured cost: the measuring tool slowed this frame.',
+    scene_change: 'The game changed scene in this frame (into the hub, or into a run). Loading the scene, building it and freeing the old one all block the frame, so the whole frame is charged to the change. A loading card covers it in play; the steps inside it are not timed separately.',
+    lifecycle: 'Enemy attach / detach / retire work (enemies switching between a live scene node and data-only simulation) was the largest measured cost.',
+    flow: 'A flow-field (enemy navigation) snapshot or publish was the largest measured cost.',
+    chunk: 'A world chunk was activated or built in this frame; the rest of the tag names the slowest build step.'
+  };
+  function describeTag(tag) {
+    if (!tag) return { tag: '', family: 'none', evidence: null, text: 'No tag: either the frame is not a hitch (28 ms or less) or this capture format did not record tags.' };
+    var text = TAG_TEXT[tag] || (tag.indexOf('chunk') === 0 ? TAG_TEXT.chunk : 'A tag this viewer does not know. It names the largest measured cost in the frame.');
+    return { tag: tag, family: tagFamily(tag), evidence: tagEvidence(tag), text: text };
+  }
+  /* A tag is never "measured": it is a choice among measured costs. */
+  function tagEvidence(tag) {
+    if (!tag) return null;
+    return tag === 'unattributed' ? 'unknown' : 'correlated';
+  }
+
+  var COST_LABEL = {
+    ascension: 'Ascension skill tree (fragments taken out)',
+    fragments: 'Barrage fragments',
+    projectiles: 'Projectile simulation',
+    flow: 'Flow field (navigation)',
+    lifecycle: 'Enemy attach / detach / retire',
+    physics_catchup: 'Physics ticks (catching up)',
+    enemy_step: 'Physics tick (enemy step)',
+    sampling: 'Flight recorder sampling',
+    scene_change: 'Scene change (the whole frame)'
+  };
+  /* Costs the recorder refreshes about twice a second (its "slow snapshot"), not every frame. */
+  var SNAPSHOT_NOTE = 'Refreshed about twice a second, so this value can be up to 0.5 s older than the frame.';
+  function costItem(key, ms, sample) {
+    var item = { key: key, family: tagFamily(key), label: COST_LABEL[key] || key, ms: ms, evidence: 'measured', scope: 'frame', note: '' };
+    if (key.indexOf('chunk') === 0) { item.label = 'World chunk build (' + key.replace(/^chunk_?/, '') + ')'; item.scope = 'snapshot'; item.note = SNAPSHOT_NOTE; }
+    else if (key === 'projectiles' || key === 'flow') { item.scope = 'snapshot'; item.note = SNAPSHOT_NOTE; }
+    else if (key === 'lifecycle') { item.scope = 'snapshot'; item.note = 'Total since the recorder\'s previous half-second snapshot, not only this frame.'; }
+    else if (key === 'enemy_step' && sample && !has(sample, 'physics_frame_ms')) { item.scope = 'snapshot'; item.note = 'Older capture: one tick\'s time from the half-second snapshot.'; }
+    else if (key === 'physics_catchup' && sample) item.label = 'Physics ticks (' + int(sample.physics_ticks) + ' in this frame)';
+    else if (key === 'scene_change') { item.note = 'The game marked a scene change in this frame' + (sample && sample.scene_change ? ' (to ' + sample.scene_change + ')' : '') + '. It overlaps every other timer in the frame.'; }
+    return item;
+  }
+  function finishBreakdown(wall, fallback, items, source) {
+    var sum = 0;
+    items = items.filter(function (it) { return it.ms === it.ms; });
+    items.forEach(function (it) { if (it.ms > 0) sum += it.ms; });
+    var known = wall === wall;
+    return {
+      wallMs: wall, wallIsFallback: fallback, items: items, source: source,
+      measuredMs: sum,
+      unmeasuredMs: known ? Math.max(0, wall - sum) : NaN,
+      overshootMs: known ? Math.max(0, sum - wall) : 0
+    };
+  }
+  /* Measured costs of one frame against its wall time, from the detailed JSON sample. */
+  function breakdownFromSample(sample, previous) {
+    var fallback = !has(sample, 'wall_ms');
+    var wall = fallback ? finiteOrNaN(sample.frame_ms) : finiteOrNaN(sample.wall_ms);
+    var costs = attribution(sample, previous);
+    var items = [];
+    for (var key in costs) items.push(costItem(key, num(costs[key]), sample));
+    return finishBreakdown(wall, fallback, items, 'json');
+  }
+  /* The same from the CSV overview columns alone (coarser: used until/unless the JSON is available). */
+  function breakdownFromRow(session, i) {
+    var c = session.cols, items = [];
+    function val(name) { return c[name] ? c[name][i] : NaN; }
+    function prev(name) { return (c[name] && i > 0 && !session.gapBefore[i]) ? c[name][i - 1] : NaN; }
+    var asc = val('ascension_usec'), frag = val('fragment_usec');
+    if (asc === asc) {
+      var fragMs = frag === frag ? frag / 1000 : 0;
+      items.push(costItem('ascension', Math.max(0, asc / 1000 - fragMs)));
+      if (frag === frag) items.push(costItem('fragments', fragMs));
+    }
+    if (val('projectile_ms') === val('projectile_ms')) items.push(costItem('projectiles', val('projectile_ms')));
+    var chunk = val('chunk_build_ms'), chunkPrev = prev('chunk_build_ms');
+    if (chunk === chunk && chunkPrev === chunkPrev && chunk !== chunkPrev && chunk > 0) items.push(costItem('chunk_build', chunk));
+    var flow = val('flow_publish_usec'), flowPrev = prev('flow_publish_usec');
+    if (flow === flow && flowPrev === flowPrev && flow !== flowPrev && flow > 0) items.push(costItem('flow', flow / 1000));
+    var pf = val('physics_frame_ms'), ticks = val('physics_ticks');
+    if (pf === pf) {
+      var it = costItem(ticks >= 2 ? 'physics_catchup' : 'enemy_step', pf);
+      if (ticks >= 2) it.label = 'Physics ticks (' + ticks + ' in this frame)';
+      items.push(it);
+    }
+    if (val('sampling_usec') === val('sampling_usec')) items.push(costItem('sampling', val('sampling_usec') / 1000));
+    var wall = val('wall_ms'), fallback = !(wall === wall);
+    return finishBreakdown(fallback ? val('frame_ms') : wall, fallback, items, 'csv');
+  }
+
+  /* Every piece of evidence about one frame, labelled measured / correlated / unknown.
+     measured   = a timer recorded in that frame
+     correlated = nearby in time, or a tag chosen because it was the largest measured cost
+     unknown    = wall time that no timer covers */
+  function classifyEvidence(breakdown, tag, tagMs, eventCount) {
+    var out = [];
+    breakdown.items.forEach(function (it) {
+      out.push({ kind: 'measured', what: it.label, ms: it.ms, key: it.key, note: it.note });
+    });
+    if (tag) out.push({ kind: tagEvidence(tag), what: 'Tag: ' + tag, ms: tagMs, key: 'tag', note: describeTag(tag).text });
+    if (eventCount > 0) out.push({ kind: 'correlated', what: eventCount + ' game event' + (eventCount === 1 ? '' : 's') + ' within 1.5 s', ms: NaN, key: 'events', note: 'Events near in time. Nearness is not cause.' });
+    if (breakdown.unmeasuredMs > 0) out.push({ kind: 'unknown', what: 'Wall time not covered by any timer', ms: breakdown.unmeasuredMs, key: 'unmeasured', note: 'On an ordinary 16.7 ms frame most of this is just waiting for vsync.' });
+    return out;
+  }
+
+  /* Optional cost maps the recorder may add (name -> number): ascension.engine_usec, frame_phases, and
+     any other top-level map whose name ends in _phases, _usec or _ms. Rendered generically. */
+  /* Plain names for the recorder's frame_phases keys; any other key is shown as written. */
+  var PHASE_LABEL = {
+    process: 'Scripts: _process callbacks',
+    deferred: 'End of frame: redraws, deferred calls, timers',
+    render_present: 'Draw + present (includes any wait for vsync)'
+  };
+  function extractCostMaps(sample) {
+    var out = [];
+    function add(title, obj, unit) {
+      var entries = [];
+      Object.keys(obj).forEach(function (k) {
+        if (typeof obj[k] === 'number' && isFinite(obj[k])) entries.push({ name: (title === 'Frame phases' && PHASE_LABEL[k]) || k, ms: unit === 'usec' ? obj[k] / 1000 : obj[k] });
+      });
+      if (!entries.length) return;
+      entries.sort(function (a, b) { return b.ms - a.ms; });
+      out.push({ title: title, unit: unit, entries: entries });
+    }
+    if (!isDict(sample)) return out;
+    if (isDict(sample.frame_phases)) add('Frame phases', sample.frame_phases, 'ms');
+    var asc = sample.ascension;
+    if (isDict(asc) && isDict(asc.engine_usec)) add('Ascension engines', asc.engine_usec, 'usec');
+    Object.keys(sample).forEach(function (k) {
+      if (k !== 'frame_phases' && isDict(sample[k]) && /(_phases|_usec|_ms)$/.test(k)) add(k, sample[k], /_usec$/.test(k) ? 'usec' : 'ms');
+    });
+    return out;
+  }
+
+  /* ------------------------------------------------------ detail (JSON) side */
+  /* Which incident JSON(s) to open for the frame at tUsec: the window that holds it most centrally,
+     plus a second one when the frame sits within 1.5 s of that window's edge. */
+  function pickDetailIncidents(session, tUsec) {
+    var cands = [];
+    session.incidents.forEach(function (inc) {
+      if (inc.json && inc.rows > 0 && inc.tMin <= tUsec && tUsec <= inc.tMax) {
+        cands.push({ inc: inc, before: tUsec - inc.tMin, after: inc.tMax - tUsec });
+      }
+    });
+    if (!cands.length) return [];
+    cands.sort(function (a, b) { return Math.min(b.before, b.after) - Math.min(a.before, a.after); });
+    var best = cands[0], out = [best.inc];
+    for (var i = 1; i < cands.length; i++) {
+      var x = cands[i];
+      if ((best.before < EVENT_WINDOW_USEC && x.before > best.before) || (best.after < EVENT_WINDOW_USEC && x.after > best.after)) {
+        out.push(x.inc);
+        break;
+      }
+    }
+    return out;
+  }
+
+  /* {sample, previous, index} for the sample with exactly this t_usec, or null. */
+  function findSample(json, tUsec) {
+    var samples = (isDict(json) && Array.isArray(json.samples)) ? json.samples : [];
+    var lo = 0, hi = samples.length - 1;
+    while (lo <= hi) {
+      var mid = (lo + hi) >> 1, tv = num(dict(samples[mid]).t_usec, NaN);
+      if (tv === tUsec) return { sample: samples[mid], previous: mid > 0 ? samples[mid - 1] : {}, index: mid };
+      if (tv < tUsec) lo = mid + 1; else hi = mid - 1;
+    }
+    for (var i = 0; i < samples.length; i++) {            /* unsorted or odd file: plain scan */
+      if (isDict(samples[i]) && samples[i].t_usec === tUsec) return { sample: samples[i], previous: i > 0 ? samples[i - 1] : {}, index: i };
+    }
+    return null;
+  }
+
+  /* Events from one or more incident JSONs within +-1.5 s of the frame, oldest first, without repeats.
+     relMs is relative to the END of the frame; `during` marks events inside the frame itself. */
+  function nearbyEvents(jsons, tUsec, wallMs, windowUsec) {
+    var win = windowUsec || EVENT_WINDOW_USEC, seen = new Set(), out = [];
+    var frameStart = tUsec - (wallMs === wallMs ? wallMs * 1000 : 0);
+    jsons.forEach(function (json) {
+      var events = (isDict(json) && Array.isArray(json.events)) ? json.events : [];
+      events.forEach(function (e) {
+        if (!isDict(e) || typeof e.t_usec !== 'number') return;
+        if (Math.abs(e.t_usec - tUsec) > win) return;
+        var details = isDict(e.details) ? e.details : {};
+        var key = e.t_usec + '|' + e.category + '|' + e.name + '|' + JSON.stringify(details);
+        if (seen.has(key)) return;
+        seen.add(key);
+        out.push({
+          t_usec: e.t_usec, relMs: (e.t_usec - tUsec) / 1000, category: String(e.category || ''), name: String(e.name || ''),
+          amount: typeof e.amount === 'number' ? e.amount : null, details: details,
+          during: e.t_usec > frameStart && e.t_usec <= tUsec
+        });
+      });
+    });
+    out.sort(function (a, b) { return a.t_usec - b.t_usec; });
+    return out;
+  }
+
+  /* ------------------------------------------- synthetic captures (demo data) */
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function r3(v) { return Math.round(v * 1000) / 1000; }
+  function pad(v, w) { var s = String(v); while (s.length < w) s = '0' + s; return s; }
+  var DELTA_60 = 16.6666666666667, DELTA_CAP = 66.6666666666667;
+  /* A 1x1 PNG, for the "unrelated file" in the sample folder. */
+  var PNG_1X1 = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==';
+
+  /* Times below are in "units": one unit = a third of a capture window (history + aftermath). */
+  var DEMO_SESSIONS = [
+    { key: 'old', format: 'old', date: '2026-10-01', clock: [9, 12, 40], recorderStartUsec: 61250000, seed: 11, duration: 30,
+      build: { game_version: '0.0.0.24.0', git_branch: 'unknown', git_commit: 'unknown', godot_version: '4.7.1-stable (official)', world_seed: 1111 },
+      segments: [{ seg: 2, until: 16, peak: 50 }, { seg: 3, until: 1e9, peak: 90 }],
+      hitches: [{ at: 5, kind: 'stall', ms: 80 }, { at: 7.6, kind: 'lifecycle', ms: 30 }, { at: 12, kind: 'stall', ms: 50, demoOnly: true },
+        { at: 19, kind: 'stall', ms: 120 }, { at: 23, kind: 'monitor', ms: 30, demoOnly: true }, { at: 26.5, kind: 'lifecycle', ms: 25, demoOnly: true }] },
+    { key: 'current', format: 'current', date: '2026-10-01', clock: [19, 2, 30], recorderStartUsec: 28486000, seed: 22, duration: 60, jsonOnly: [4],
+      build: { game_version: '0.0.0.25.5', git_branch: 'demo/synthetic', git_commit: 'a1b2c3d4e5f6', godot_version: '4.7.1-stable (official)', world_seed: 2222 },
+      segments: [{ seg: 2, until: 18, peak: 110 }, { seg: 3, until: 40, peak: 240 }, { seg: 4, until: 1e9, peak: 400 }],
+      hitches: [{ at: 3, kind: 'stall', ms: 900 }, { at: 7.5, kind: 'chunk', ms: 40 }, { at: 8.1, kind: 'fragments', ms: 26 },
+        { at: 9.8, kind: 'ascension', ms: 34 }, { at: 12.5, kind: 'stall', ms: 300 }, { at: 15, kind: 'flow', ms: 28, demoOnly: true },
+        { at: 21, kind: 'chunk', ms: 55, demoOnly: true }, { at: 26, kind: 'projectiles', ms: 30 }, { at: 30, kind: 'lifecycle', ms: 32, demoOnly: true },
+        { at: 33, kind: 'sampling', ms: 30, demoOnly: true }, { at: 36.5, kind: 'monitor', ms: 30, demoOnly: true }, { at: 44, kind: 'enemy_step', ms: 38 },
+        { at: 46.8, kind: 'stall', ms: 150, demoOnly: true }, { at: 50, kind: 'stall', ms: 500, demoOnly: true }, { at: 53, kind: 'chunk', ms: 45, demoOnly: true },
+        { at: 56, kind: 'ascension', ms: 40, demoOnly: true }] },
+    { key: 'next', format: 'next', date: '2026-10-01', clock: [21, 30, 0], recorderStartUsec: 31900000, seed: 33, duration: 24,
+      build: { game_version: '0.0.0.25.6', git_branch: 'demo/synthetic', git_commit: 'f6e5d4c3b2a1', godot_version: '4.7.1-stable (official)', world_seed: 3333 },
+      segments: [{ seg: 2, until: 12, peak: 150 }, { seg: 3, until: 1e9, peak: 300 }],
+      hitches: [{ at: 5, kind: 'ascension', ms: 36 }, { at: 8, kind: 'chunk', ms: 40, demoOnly: true }, { at: 15, kind: 'stall', ms: 200 },
+        { at: 19, kind: 'enemy_step', ms: 30, demoOnly: true }, { at: 21.5, kind: 'stall', ms: 90, demoOnly: true }] }
+  ];
+
+  function chunkPhases(coord, total) {
+    return { coord: coord, total_ms: r3(total), setup_ms: r3(total * 0.08), ground_ms: r3(total * 0.2), content_ms: r3(total * 0.5), floor_ms: r3(total * 0.12), blocker_ms: r3(total * 0.1) };
+  }
+
+  /* Simulate one game process: every frame, then the recorder's incident windows over it. */
+  function simulateSession(spec, cfg) {
+    var rnd = mulberry32(spec.seed), u = cfg.u, start = spec.recorderStartUsec, end = start + spec.duration * u * 1e6;
+    var hitches = spec.hitches.filter(function (h) { return cfg.full || !h.demoOnly; })
+      .map(function (h) { return { at: start + h.at * u * 1e6, kind: h.kind, ms: h.ms }; })
+      .sort(function (a, b) { return a.at - b.at; });
+    var frames = [], events = [], hi = 0, t = start, prevT = 0, prevWall = DELTA_60;
+    var slow = null, slowAt = -1e12, monAt = start, mon = { fps: 60, process_ms: 9.4, physics_ms: 1.2 }, monFrames = 0, monWall = 0, monPhys = 0;
+    var life = { attach_total_usec: 1200, detach_total_usec: 5400, retire_total_usec: 3100 };
+    var flow = { rev: 3, publish: 380, snapshot: 150 }, flowAt = start;
+    var chunk = chunkPhases('(0, 0)', 5.5), chunks = 9;
+    var logical = 0, segIndex = -1, spawnAt = start, threatAt = start, threat = 12, projBurst = 0, projMsForced = NaN;
+    function ev(category, name, at, details, amount) {
+      var e = { category: category, details: details || {}, name: name, t_usec: Math.round(at) };
+      if (amount !== undefined) e.amount = amount;
+      events.push(e);
+    }
+    while (t < end) {
+      var el = (t - start) / 1e6 / u, si = 0;
+      while (si < spec.segments.length - 1 && el >= spec.segments[si].until) si++;
+      var segSpec = spec.segments[si], segStart = si === 0 ? 0 : spec.segments[si - 1].until;
+      if (si !== segIndex) { segIndex = si; logical = 0; ev('progression', 'segment_started', t, { segment: segSpec.seg }); }
+      var into = el - segStart;
+      var target = into < 1 ? 0 : Math.min(1, (into - 1) / 5) * segSpec.peak;
+      logical += (target - logical) * 0.02 + (rnd() - 0.5) * 0.6;
+      if (logical < 0 || target === 0) logical = 0;
+      var active = Math.min(Math.round(logical), 180);
+      var wall = DELTA_60 + (rnd() - 0.5) * 0.5;
+      var ticks = prevWall > 30 ? Math.max(2, Math.min(4, Math.round(prevWall / DELTA_60))) : 1;
+      var step = 0.45 + active * 0.02 + rnd() * 0.15;
+      var asc = { tick: 250 + active * 2.5 + rnd() * 120, flush: 3 + rnd() * 30, hit: rnd() < 0.3 ? rnd() * 150 : 0, frag: 2 + rnd() * 40, fragLive: Math.round(rnd() * 6) };
+      var sampling = 100 + rnd() * 70, forceSlow = false, monPhysForced = NaN, hot = '';
+      var hk = (hi < hitches.length && t >= hitches[hi].at) ? hitches[hi++] : null;
+      if (!hk && cfg.full && active > 120 && rnd() < 0.0006 * active / 100) hk = { kind: 'stall', ms: 45 + rnd() * 60 };
+      if (hk) {
+        if (hk.kind === 'chunk') {
+          chunk = chunkPhases('(' + (chunks % 7) + ', ' + (chunks % 5) + ')', hk.ms * 0.92); chunks++; forceSlow = true; wall += hk.ms;
+          ev('world', 'chunk_activated', t + 800, { coord: chunk.coord });
+        } else if (hk.kind === 'ascension') {
+          asc.tick = hk.ms * 900; wall += hk.ms; hot = 'DT';
+          ev('ascension', 'catastrophe', t + 600, { longest_chain: 4, node: 'BRC', r0: 0 });
+        } else if (hk.kind === 'fragments') {
+          asc.tick = hk.ms * 900; asc.frag = hk.ms * 780; asc.fragLive = 240; wall += hk.ms; hot = 'BR';
+          ev('ascension', 'barrage_burst', t + 600, { fragments: 240 });
+        } else if (hk.kind === 'projectiles') {
+          projBurst = 900; projMsForced = hk.ms * 0.85; forceSlow = true; wall += hk.ms;
+          ev('projectile', 'volley', t + 700, { count: 900 });
+        } else if (hk.kind === 'enemy_step') { step = hk.ms * 0.9; ticks = 1; wall += hk.ms; }
+        else if (hk.kind === 'lifecycle') {
+          life.detach_total_usec += Math.round(hk.ms * 900); forceSlow = true; wall += hk.ms;
+          ev('enemy', 'spawned', t + 400, { elite: false, enemy_id: 'grunt', kind: '' }, 40);
+        } else if (hk.kind === 'sampling') { sampling = hk.ms * 900; wall += hk.ms; }
+        else if (hk.kind === 'flow') {
+          flow.rev++; flow.publish = Math.round(hk.ms * 900); forceSlow = true; wall += hk.ms;
+          ev('navigation', 'flow_completed', t + 500, { reason: 'player_moved', revision: flow.rev });
+        } else if (hk.kind === 'monitor') { wall += hk.ms; monPhysForced = (DELTA_60 + hk.ms) * 0.7; }
+      }
+      if (ticks > 1) wall += (ticks - 1) * step + 1;
+      if (hk && hk.kind === 'stall') wall = hk.ms;
+      var physFrame = ticks * step;
+      t += wall * 1000;
+      var tu = Math.round(t);
+      if (prevT) wall = (tu - prevT) / 1000;
+      wall = r3(wall);
+      /* periodic game events and the flow field's ordinary republish */
+      if (tu >= spawnAt && target > 0) { spawnAt = tu + (0.5 + rnd() * 0.5) * u * 1e6; ev('enemy', 'spawned', tu - 300, { elite: false, enemy_id: rnd() < 0.7 ? 'grunt' : 'sniper', kind: '' }, 2 + Math.floor(rnd() * 5)); }
+      if (tu >= threatAt) { threatAt = tu + 1.3 * u * 1e6; threat += rnd() * 2; ev('progression', 'threat_changed', tu - 200, { value: r3(threat) }); }
+      if (tu - flowAt >= 2 * u * 1e6 && !(hk && hk.kind === 'flow')) { flowAt = tu; flow.rev++; flow.publish = Math.round(300 + rnd() * 400); flow.snapshot = Math.round(120 + rnd() * 100); }
+      /* Godot's monitors: about once a second */
+      monFrames++; monWall += wall; monPhys += physFrame;
+      if (tu - monAt >= 1e6) {
+        mon = { fps: monFrames, process_ms: r3(monWall / monFrames * 0.55), physics_ms: r3(monPhys / monFrames + 0.4) };
+        monAt = tu; monFrames = 0; monWall = 0; monPhys = 0;
+      }
+      if (monPhysForced === monPhysForced) mon = { fps: mon.fps, process_ms: mon.process_ms, physics_ms: r3(monPhysForced) };
+      /* the recorder's slow snapshot: about twice a second */
+      if (forceSlow || tu - slowAt >= 500000) {
+        slowAt = tu;
+        life = { attach_total_usec: life.attach_total_usec + Math.round(rnd() * 250), detach_total_usec: life.detach_total_usec + Math.round(rnd() * 400), retire_total_usec: life.retire_total_usec + Math.round(rnd() * 300) };
+        var projectiles = Math.round(active * 0.35 + rnd() * 12) + projBurst;
+        slow = {
+          chunk_stream: { last_phases: chunk }, chunks: chunks, enemies: active,
+          enemy_lifecycle: life, enemy_scheduler: { far: 0, full: Math.min(active, 60), mid: Math.max(0, active - 60), physics_enabled: active, physics_step_ms: r3(step), pressure_active: active > 150 ? 1 : 0 },
+          enemy_world_data_only: Math.round(logical) - active, enemy_world_logical: Math.round(logical), enemy_world_materialized: active,
+          flow_building: false, flow_publish_usec: flow.publish, flow_revision: flow.rev, flow_snapshot_usec: flow.snapshot,
+          projectile_ms: r3(projMsForced === projMsForced ? projMsForced : 0.2 + projectiles * 0.012), projectiles: projectiles,
+          segment: segSpec.seg, threat: r3(threat)
+        };
+        projBurst = 0; projMsForced = NaN;
+      }
+      var frameMs = wall < 20 ? DELTA_60 : Math.min(wall, DELTA_CAP);
+      var ascension = {
+        BR: { fragment_usec: Math.round(asc.frag), fragments_live: asc.fragLive, fragments_pending: 0, retargets: 0, retargets_deferred: 0 },
+        engines: 3, flush_usec: Math.round(asc.flush), flushed: 0, hit_usec: Math.round(asc.hit), hits_this_frame: asc.hit > 0 ? 1 : 0, queued_attacks: 0, tick_usec: Math.round(asc.tick)
+      };
+      var rest = Math.max(0, asc.tick - asc.frag);
+      ascension.engine_usec = { BR: Math.round(asc.frag + rest * (hot === 'BR' ? 0.7 : 0.2)), DT: Math.round(rest * (hot === 'DT' ? 0.7 : 0.2)), MO: Math.round(rest * 0.1) };
+      /* The recorder's own split: script _process, the deferred end of the frame, draw + present. */
+      var scripts = (asc.tick + asc.flush + asc.hit) / 1000 + slow.projectile_ms + 2.2 + active * 0.03 + sampling / 1000;
+      var deferred = 0.6 + active * 0.012;
+      var frame = Object.assign({
+        t_usec: tu, elapsed_sec: (tu - start) / 1e6, frame_ms: frameMs, delta_ms: frameMs, wall_ms: wall,
+        fps: mon.fps, process_ms: mon.process_ms, physics_ms: mon.physics_ms,
+        draw_calls: 300 + active * 3, nodes: 2400 + active * 14, physics_objects: active,
+        sampling_overhead_usec: Math.round(sampling), physics_step_ms: r3(step), physics_ticks: ticks, physics_frame_ms: r3(physFrame),
+        ascension: ascension,
+        frame_phases: { process: r3(scripts), deferred: r3(deferred), render_present: r3(Math.max(0, wall - physFrame - scripts - deferred - 0.4)) }
+      }, slow);
+      frames.push(frame);
+      prevT = tu; prevWall = wall;
+    }
+
+    /* The recorder: a slow frame (by Godot's delta) while armed opens a window of
+       `history` seconds before it and `aftermath` seconds after it. */
+    var incidents = [], state = 'watch', armed = true, recovery = 0, trigger = 0, aftEnd = 0, coolEnd = 0, seq = 0;
+    var covered = new Uint8Array(frames.length), totalRows = 0;
+    var clockEpoch = Date.UTC(+spec.date.slice(0, 4), +spec.date.slice(5, 7) - 1, +spec.date.slice(8, 10), spec.clock[0], spec.clock[1], spec.clock[2]) / 1000;
+    for (var j = 0; j < frames.length; j++) {
+      var f = frames[j];
+      if (f.frame_ms < 28 * 0.9) { recovery++; if (recovery >= 30) armed = true; } else recovery = 0;
+      if (state === 'watch' && armed && f.frame_ms >= 28) { state = 'after'; armed = false; recovery = 0; trigger = f.t_usec; aftEnd = trigger + cfg.aftermath * 1e6; }
+      else if (state === 'after' && f.t_usec >= aftEnd) {
+        seq++;
+        var from = trigger - cfg.history * 1e6, i0 = j;
+        while (i0 > 0 && frames[i0 - 1].t_usec >= from) i0--;
+        for (var q = i0; q <= j; q++) covered[q] = 1;
+        totalRows += j - i0 + 1;
+        var stamp = new Date((clockEpoch + (f.t_usec - start) / 1e6 + 0.3) * 1000);
+        incidents.push({
+          sequence: seq, segment: f.segment, i0: i0, i1: j + 1, trigger: trigger, from: from, to: f.t_usec,
+          base: spec.date + '_' + pad(stamp.getUTCHours(), 2) + '-' + pad(stamp.getUTCMinutes(), 2) + '-' + pad(stamp.getUTCSeconds(), 2) +
+            '_segment-' + pad(f.segment, 2) + '_incident-' + pad(seq, 3)
+        });
+        state = 'cool'; coolEnd = f.t_usec + 0.3 * u * 1e6;
+      } else if (state === 'cool' && f.t_usec >= coolEnd) state = 'watch';
+    }
+    var unique = 0, hitchCount = 0, segs = {};
+    for (var c = 0; c < frames.length; c++) {
+      if (!covered[c]) continue;
+      unique++;
+      if ((spec.format === 'old' ? frames[c].frame_ms : frames[c].wall_ms) > HITCH_MS) hitchCount++;
+    }
+    incidents.forEach(function (inc) { segs[inc.segment] = true; });
+    return {
+      frames: frames, events: events, incidents: incidents,
+      expected: {
+        key: spec.key, format: spec.format, incidents: incidents.length, uniqueFrames: unique, totalRows: totalRows, hitches: hitchCount,
+        segments: Object.keys(segs).map(Number).sort(function (a, b) { return a - b; }),
+        jsonOnly: (spec.jsonOnly || []).filter(function (n) { return n <= incidents.length; }),
+        firstBase: incidents.length ? incidents[0].base : '', commit: spec.build.git_commit
+      }
+    };
+  }
+
+  /* What a capture of the given format would have stored for this frame. */
+  function projectSample(frame, format) {
+    var s = Object.assign({}, frame);
+    if (format !== 'next') {
+      delete s.frame_phases;
+      s.ascension = Object.assign({}, s.ascension); delete s.ascension.engine_usec;
+    }
+    if (format === 'old') {
+      ['wall_ms', 'delta_ms', 'physics_step_ms', 'physics_ticks', 'physics_frame_ms', 'ascension', 'projectile_ms', 'chunk_stream', 'flow_publish_usec', 'flow_snapshot_usec'].forEach(function (k) { delete s[k]; });
+      s.enemy_scheduler = Object.assign({}, s.enemy_scheduler); delete s.enemy_scheduler.physics_step_ms;
+    }
+    return s;
+  }
+
+  /* Port of PerformanceIncidentWriter.gd's CSV rows (plus the old, shorter header and the planned extra columns). */
+  function csvForSamples(samples, format) {
+    var lines = [format === 'old' ? CSV_HEADER_OLD : (format === 'next' ? CSV_HEADER_NEXT : CSV_HEADER_CURRENT)];
+    var previous = {};
+    samples.forEach(function (s) {
+      var asc = dict(s.ascension), br = dict(asc.BR), phases = dict(dict(s.chunk_stream).last_phases), sch = dict(s.enemy_scheduler);
+      var row = [s.t_usec, s.elapsed_sec, s.frame_ms, s.fps, s.process_ms, s.physics_ms, s.enemies, s.projectiles, s.physics_objects, s.nodes, s.chunks,
+        String(!!s.flow_building), num(sch.full), num(sch.mid), num(sch.far), 0, num(sch.physics_enabled), num(sch.pressure_active), 0, 0, 0,
+        num(s.enemy_world_materialized), num(s.enemy_world_data_only)];
+      if (format !== 'old') {
+        var hitch = tagSample(s, previous);
+        row.push(has(s, 'wall_ms') ? s.wall_ms : s.frame_ms, int(asc.tick_usec) + int(asc.flush_usec) + int(asc.hit_usec), int(br.fragment_usec),
+          num(s.projectile_ms), num(phases.total_ms), num(s.flow_publish_usec), hitch.tag, r3(hitch.ms));
+      }
+      if (format === 'next') {
+        var fp = dict(s.frame_phases);
+        row.push(s.physics_ticks, s.physics_frame_ms, s.sampling_overhead_usec, num(fp.process), num(fp.deferred), num(fp.render_present), 1);
+      }
+      previous = s;
+      lines.push(row.join(','));
+    });
+    return lines.join('\n') + '\n';
+  }
+
+  /* opts: {history, aftermath (seconds), full (bool: the larger demo set)}.
+     Returns {files: [{name, text() -> Promise<string>} | {name, base64}], expected: [...per session]}.
+     Deterministic: the same options always give the same files. */
+  function generateSyntheticCapture(opts) {
+    opts = opts || {};
+    var cfg = { history: opts.history || 6, aftermath: opts.aftermath || 3, full: opts.full !== false };
+    cfg.u = (cfg.history + cfg.aftermath) / 3;
+    var files = [], expected = [];
+    DEMO_SESSIONS.forEach(function (spec) {
+      var sim = simulateSession(spec, cfg);
+      expected.push(sim.expected);
+      sim.incidents.forEach(function (inc) {
+        function samples() { return sim.frames.slice(inc.i0, inc.i1).map(function (f) { return projectSample(f, spec.format); }); }
+        function jsonText() {
+          var smp = samples(), worst = 0, maxSampling = 0;
+          smp.forEach(function (s) { worst = Math.max(worst, s.frame_ms); maxSampling = Math.max(maxSampling, s.sampling_overhead_usec); });
+          var metadata = { absolute_threshold_ms: 28, aftermath_seconds: cfg.aftermath, build: spec.build, dropped_samples: 0, history_seconds: cfg.history,
+            max_sampling_overhead_usec: maxSampling, relative_multiplier: 1.8, segment: inc.segment, sequence: inc.sequence, trigger_reason: 'automatic', trigger_usec: inc.trigger };
+          return JSON.stringify({
+            events: sim.events.filter(function (e) { return e.t_usec >= inc.from && e.t_usec <= inc.to; }),
+            metadata: metadata, samples: smp, schema_version: 1,
+            summary: { note: 'Synthetic capture made by capture_viewer.html for demos and tests. Not real game data.', worst_frame_ms: worst }
+          });
+        }
+        files.push({ name: inc.base + '.json', text: function () { return Promise.resolve(jsonText()); } });
+        if ((spec.jsonOnly || []).indexOf(inc.sequence) === -1) {
+          files.push({ name: inc.base + '.csv', text: function () { return Promise.resolve(csvForSamples(samples(), spec.format)); } });
+        }
+      });
+    });
+    files.push({ name: 'notes.txt', text: function () { return Promise.resolve('Synthetic sample captures for tools/perf/capture_viewer.html.\nThis file is not a capture: the viewer must ignore it.\n'); } });
+    files.push({ name: 'benchmark-summary.csv', text: function () { return Promise.resolve('name,value\nnot_a_capture,1\n'); } });
+    files.push({ name: 'screenshot.png', base64: PNG_1X1 });
+    return { files: files, expected: expected };
+  }
+
+  var api = {
+    HITCH_MS: HITCH_MS, BASE_MS: BASE_MS, THRESHOLDS: THRESHOLDS, EVENT_WINDOW_USEC: EVENT_WINDOW_USEC,
+    NUM_COLS: NUM_COLS, CSV_HEADER_OLD: CSV_HEADER_OLD, CSV_HEADER_CURRENT: CSV_HEADER_CURRENT, CSV_HEADER_NEXT: CSV_HEADER_NEXT,
+    FAMILIES: FAMILIES, CATCHUP_TEXT: CATCHUP_TEXT, TAG_TEXT: TAG_TEXT,
+    parseCaptureName: parseCaptureName, classifyFiles: classifyFiles, splitCsvLine: splitCsvLine, parseCsvTable: parseCsvTable,
+    tableFromJson: tableFromJson, buildSessions: buildSessions, percentile: percentile, frameIndices: frameIndices,
+    summarize: summarize, worstHitches: worstHitches, tagCounts: tagCounts, tagName: tagName, tagCode: tagCode,
+    clockAt: clockAt, elapsedAt: elapsedAt, coveredSeconds: coveredSeconds,
+    attribution: attribution, tagSample: tagSample, sampleFrameMs: sampleFrameMs,
+    tagFamily: tagFamily, describeTag: describeTag, tagEvidence: tagEvidence,
+    breakdownFromSample: breakdownFromSample, breakdownFromRow: breakdownFromRow, classifyEvidence: classifyEvidence,
+    extractCostMaps: extractCostMaps, pickDetailIncidents: pickDetailIncidents, findSample: findSample, nearbyEvents: nearbyEvents,
+    csvForSamples: csvForSamples, generateSyntheticCapture: generateSyntheticCapture
+  };
+  root.CaptureCore = api;
+  if (typeof module !== 'undefined' && module.exports) module.exports = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+
+<script id="ui">
+/* ==========================================================================
+   The page: loading files, selectors, summary, canvas timeline, tables, detail.
+   ========================================================================== */
+(function () {
+  'use strict';
+  var Core = window.CaptureCore;
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* el('div', {class: 'x', text: 'y', title: '…', onclick: fn}, [children]) ; text always goes in as textContent. */
+  function el(tag, props, kids) {
+    var e = document.createElement(tag);
+    if (props) Object.keys(props).forEach(function (k) {
+      var v = props[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'text') e.textContent = v;
+      else if (k === 'class') e.className = v;
+      else if (k === 'style') e.style.cssText = v;
+      else if (k.slice(0, 2) === 'on') e.addEventListener(k.slice(2), v);
+      else e.setAttribute(k, v === true ? '' : v);
+    });
+    (kids || []).forEach(function (c) { if (c !== null && c !== undefined && c !== false) e.appendChild(typeof c === 'string' ? document.createTextNode(c) : c); });
+    return e;
+  }
+  function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); return node; }
+
+  /* ------------------------------------------------------------ formatting */
+  var NOT_REC = 'not recorded';
+  function ok(v) { return typeof v === 'number' && isFinite(v); }
+  function fmtInt(v) { return ok(v) ? Math.round(v).toLocaleString('en-US') : NOT_REC; }
+  function fmtMs(v) {
+    if (!ok(v)) return NOT_REC;
+    var a = Math.abs(v);
+    return (a >= 1000 ? Math.round(v).toLocaleString('en-US') : a >= 100 ? v.toFixed(0) : a >= 10 ? v.toFixed(1) : v.toFixed(2)) + ' ms';
+  }
+  function fmtNum(v, digits) { return ok(v) ? v.toFixed(digits === undefined ? 1 : digits) : NOT_REC; }
+  function pct(part, whole) { return (ok(part) && whole > 0) ? (part / whole * 100).toFixed(part / whole < 0.1 ? 1 : 0) + '%' : ''; }
+  function pad2(v) { return (v < 10 ? '0' : '') + v; }
+  function fmtClock(epochSec, tenths) {
+    if (!ok(epochSec)) return '';
+    var d = new Date(Math.floor(epochSec * 10) * 100);
+    var s = pad2(d.getUTCHours()) + ':' + pad2(d.getUTCMinutes()) + ':' + pad2(d.getUTCSeconds());
+    return tenths ? s + '.' + Math.floor(d.getUTCMilliseconds() / 100) : s;
+  }
+  function fmtElapsed(sec, tenths) {
+    if (!ok(sec)) return NOT_REC;
+    var neg = sec < 0; sec = Math.abs(sec);
+    var h = Math.floor(sec / 3600), m = Math.floor(sec % 3600 / 60), s = sec % 60;
+    var ss = tenths ? (s < 10 ? '0' : '') + s.toFixed(1) : pad2(Math.floor(s));
+    return (neg ? '-' : '') + (h ? h + ':' + pad2(m) : String(m)) + ':' + ss;
+  }
+  function fmtDuration(sec) {
+    if (!ok(sec)) return '';
+    if (sec < 90) return sec.toFixed(0) + ' s';
+    return (sec / 60).toFixed(sec < 600 ? 1 : 0) + ' min';
+  }
+  function badge(kind) {
+    var names = { measured: 'Measured', correlated: 'Correlated', unknown: 'Unknown' };
+    var tips = {
+      measured: 'Measured: a timer recorded this cost.',
+      correlated: 'Correlated: near in time, or a tag chosen because it was the largest measured cost. A lead, not proof.',
+      unknown: 'Unknown: wall time that no timer covers.'
+    };
+    return el('span', { class: 'badge ' + kind, text: names[kind] || kind, title: tips[kind] || '' });
+  }
+  var FAMILY_VAR = { physics_catchup: '--c1', enemy_step: '--c2', ascension: '--c3', projectiles: '--c4', world: '--c5', lifecycle: '--c6', sampling: '--c7', scene_change: '--c8', unknown: '--c0', none: '--c0' };
+  function familyCss(family) { return 'var(' + (FAMILY_VAR[family] || '--c0') + ')'; }
+  function tagLabel(tag) { return tag || 'no tag recorded'; }
+
+  /* ------------------------------------------------------------------ state */
+  var S = {
+    sessions: [], si: -1, run: null, enemiesOnly: false, tag: null, sel: -1, yMode: 'cap',
+    view: { x0: 0, x1: 1 }, domain: { x0: 0, x1: 1 }, cancel: false, loading: false,
+    jsonCache: new Map(), detailToken: 0
+  };
+  function session() { return S.sessions[S.si] || null; }
+  function filter() { return { run: S.run, enemiesOnly: S.enemiesOnly }; }
+
+  /* ---------------------------------------------------------------- loading */
+  function setStatus(text) { $('status').textContent = text; }
+  function setProgress(done, total) {
+    var bar = $('progress');
+    if (total <= 0) { bar.style.display = 'none'; return; }
+    bar.style.display = 'block';
+    bar.firstElementChild.style.width = Math.round(done / total * 100) + '%';
+  }
+  function pause() { return new Promise(function (r) { setTimeout(r, 0); }); }
+
+  /* files: anything with .name and .text() (File objects, or the demo's virtual files). */
+  async function loadFiles(files, skippedBefore, what) {
+    if (S.loading) return;
+    var cls = Core.classifyFiles(files);
+    var ignored = cls.ignored + (skippedBefore || 0);
+    var ignoredNote = ignored ? ' ' + ignored + ' other file' + (ignored === 1 ? '' : 's') + ' ignored.' : '';
+    if (!cls.incidents.length) {
+      setStatus('No capture files found in ' + what + '. Capture files are named like 2026-10-01_20-04-32_segment-02_incident-001.csv (or .json).' + ignoredNote);
+      return;
+    }
+    S.loading = true; S.cancel = false;
+    $('btnCancel').classList.remove('hidden');
+    var started = performance.now(), records = [], failed = 0, total = cls.incidents.length, nCsv = 0, nJson = 0;
+    for (var k = 0; k < total && !S.cancel; k++) {
+      var inc = cls.incidents[k], table = null, source = 'csv', meta = null;
+      try {
+        if (inc.csv) table = Core.parseCsvTable(await inc.csv.text());
+        if ((!table || table.error) && inc.json) {
+          /* No usable CSV: read the JSON, keep only the overview columns, let the parsed object go. */
+          var obj = JSON.parse(await inc.json.text());
+          table = Core.tableFromJson(obj);
+          meta = obj && obj.metadata ? obj.metadata : null;
+          source = 'json';
+          obj = null;
+        }
+      } catch (err) { table = null; }
+      if (!table || (table.error && !table.n)) failed++;
+      else {
+        records.push({ info: inc.info, table: table, source: source, csv: inc.csv, json: inc.json, meta: meta });
+        if (source === 'csv') nCsv++; else nJson++;
+      }
+      if (k % 12 === 0 || source === 'json') {
+        setProgress(k + 1, total);
+        setStatus('Reading capture ' + (k + 1) + ' of ' + total + (source === 'json' ? ' (no CSV here, reading the larger JSON files: slower)' : '') + '…');
+        await pause();
+      }
+    }
+    setProgress(0, 0);
+    $('btnCancel').classList.add('hidden');
+    S.loading = false;
+    if (!records.length) { setStatus('None of the ' + total + ' capture files could be read.' + ignoredNote); return; }
+    var sessions = Core.buildSessions(records).filter(function (s) { return s.n > 0; });
+    records = null;
+    if (!sessions.length) { setStatus('The capture files hold no frames.' + ignoredNote); return; }
+    S.sessions = sessions;
+    S.jsonCache.clear();
+    var best = 0, frames = 0, dups = 0;
+    sessions.forEach(function (s, i) { frames += s.n; dups += s.duplicates; if (s.n > sessions[best].n) best = i; });
+    var secs = (performance.now() - started) / 1000;
+    setStatus((S.cancel ? 'Stopped early. ' : '') + 'Loaded ' + (nCsv + nJson) + ' captures from ' + what + ' in ' + secs.toFixed(1) + ' s' +
+      (nJson ? ' (' + nJson + ' read from JSON because they have no CSV)' : '') + ': ' +
+      sessions.length + ' session' + (sessions.length === 1 ? '' : 's') + ', ' + frames.toLocaleString('en-US') + ' unique frames (' +
+      dups.toLocaleString('en-US') + ' repeated rows from overlapping windows removed).' +
+      (failed ? ' ' + failed + ' capture' + (failed === 1 ? '' : 's') + ' could not be read.' : '') + ignoredNote);
+    $('main').classList.remove('hidden');
+    selectSession(best);
+    fetchBuildInfo();
+  }
+
+  /* Sessions loaded from CSV do not know their build yet: read it from one JSON each, in the background. */
+  async function fetchBuildInfo() {
+    for (var i = 0; i < S.sessions.length; i++) {
+      var s = S.sessions[i];
+      if (s.build) continue;
+      var inc = s.incidents.find(function (x) { return x.json; });
+      if (!inc) continue;
+      try {
+        var json = await getJson(inc);
+        if (json && json.metadata && json.metadata.build) s.build = json.metadata.build;
+      } catch (err) { /* build stays unknown */ }
+    }
+    renderSelectors();
+    renderSessionInfo();
+  }
+
+  async function getJson(inc) {
+    var cache = S.jsonCache;
+    if (cache.has(inc.base)) { var hit = cache.get(inc.base); cache.delete(inc.base); cache.set(inc.base, hit); return hit; }
+    var obj = JSON.parse(await inc.json.text());
+    cache.set(inc.base, obj);
+    while (cache.size > 3) cache.delete(cache.keys().next().value);   /* keep only a few parsed files */
+    return obj;
+  }
+
+  /* --- ways to choose files --- */
+  async function walkDirHandle(dir, depth, out) {
+    for await (var entry of dir.values()) {
+      if (entry.kind === 'file') {
+        if (Core.parseCaptureName(entry.name)) out.files.push(await entry.getFile()); else out.skipped++;
+      } else if (entry.kind === 'directory' && depth < 3) await walkDirHandle(entry, depth + 1, out);
+    }
+  }
+  async function pickFolder() {
+    if (window.showDirectoryPicker) {
+      try {
+        var dir = await window.showDirectoryPicker({ mode: 'read' });
+        var out = { files: [], skipped: 0 };
+        setStatus('Looking through “' + dir.name + '”…');
+        await walkDirHandle(dir, 0, out);
+        return loadFiles(out.files, out.skipped, 'folder “' + dir.name + '”');
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+        /* picker not allowed here: fall through to the plain folder input */
+      }
+    }
+    $('inDir').click();
+  }
+  function entryFile(entry) { return new Promise(function (res, rej) { entry.file(res, rej); }); }
+  function readEntries(reader) { return new Promise(function (res, rej) { reader.readEntries(res, rej); }); }
+  async function walkEntry(entry, depth, out) {
+    if (entry.isFile) {
+      if (Core.parseCaptureName(entry.name)) out.files.push(await entryFile(entry)); else out.skipped++;
+    } else if (entry.isDirectory && depth < 4) {
+      var reader = entry.createReader();
+      for (;;) {
+        var batch = await readEntries(reader);
+        if (!batch.length) break;
+        for (var i = 0; i < batch.length; i++) await walkEntry(batch[i], depth + 1, out);
+      }
+    }
+  }
+  async function onDrop(ev) {
+    ev.preventDefault();
+    $('drop').classList.remove('over');
+    var dt = ev.dataTransfer;
+    if (!dt) return;
+    var entries = [];
+    if (dt.items) {
+      for (var i = 0; i < dt.items.length; i++) {
+        var e = dt.items[i].webkitGetAsEntry ? dt.items[i].webkitGetAsEntry() : null;
+        if (e) entries.push(e);
+      }
+    }
+    if (!entries.length) return loadFiles(Array.from(dt.files || []), 0, 'the dropped files');
+    var out = { files: [], skipped: 0 };
+    setStatus('Looking through the dropped items…');
+    try { for (var k = 0; k < entries.length; k++) await walkEntry(entries[k], 0, out); }
+    catch (err) { setStatus('Could not read the dropped folder. Try “Open capture folder…” instead.'); return; }
+    return loadFiles(out.files, out.skipped, 'the dropped items');
+  }
+  function loadDemo() {
+    var demo = Core.generateSyntheticCapture({ history: 6, aftermath: 3, full: true });
+    return loadFiles(demo.files, 0, 'the built-in demo (made-up data, not a real play session)');
+  }
+
+  /* -------------------------------------------------------------- selectors */
+  function sessionLabel(s, i) {
+    var c0 = fmtClock(Core.clockAt(s, s.t[0])), c1 = fmtClock(Core.clockAt(s, s.t[s.n - 1]));
+    var build = s.build && s.build.git_commit && s.build.git_commit !== 'unknown' ? ' · build ' + s.build.git_commit : '';
+    return 'Session ' + (i + 1) + ' · ' + s.date + (c0 ? ' ' + c0 + '–' + c1 : '') + ' · ' + s.incidents.length + ' captures · ' + s.n.toLocaleString('en-US') + ' frames' + build;
+  }
+  function runLabel(s, run) {
+    return 'Segment ' + pad2(run.seg) + ' · ' + fmtClock(Core.clockAt(s, run.t0)) + '–' + fmtClock(Core.clockAt(s, run.t1)) +
+      ' · ' + (run.i1 - run.i0).toLocaleString('en-US') + ' frames · ' + run.hitches.toLocaleString('en-US') + ' hitches';
+  }
+  function renderSelectors() {
+    var ss = clear($('selSession'));
+    S.sessions.forEach(function (s, i) { ss.appendChild(el('option', { value: i, text: sessionLabel(s, i) })); });
+    ss.value = String(S.si);
+    var s = session(), sg = clear($('selSegment'));
+    if (!s) return;
+    sg.appendChild(el('option', { value: '', text: 'All segments (' + s.segRuns.length + ')' }));
+    s.segRuns.forEach(function (run, i) { sg.appendChild(el('option', { value: i, text: runLabel(s, run) })); });
+    sg.value = S.run === null ? '' : String(S.run);
+    var chk = $('chkEnemies');
+    chk.disabled = !s.recorded.enemies;
+    chk.checked = S.enemiesOnly && !chk.disabled;
+  }
+  function selectSession(i) {
+    S.si = i; S.run = null; S.sel = -1; S.tag = null; S.detailToken++;
+    if (!session().recorded.enemies) S.enemiesOnly = false;
+    renderSelectors(); renderSessionInfo(); renderLegends(); resetDomain(); renderScoped(); renderDetailEmpty();
+  }
+  function renderScoped() { renderSummary(); renderTags(); renderWorst(); drawTimeline(); }
+
+  function timeBasisText(s) {
+    if (s.wallMissing === 0) return 'Frame time shown is wall time (real time between frames).';
+    if (s.wallMissing === s.n) return 'Wall time was not recorded in this capture format. Showing Godot’s frame delta instead: it is capped (at about 66.7 ms in current builds) and smoothed, so long hitches look shorter than they were.';
+    return 'Wall time is missing for ' + s.wallMissing.toLocaleString('en-US') + ' frames; those show Godot’s frame delta (capped, so long hitches look shorter) instead.';
+  }
+  function renderSessionInfo() {
+    var s = session(), box = clear($('sessionInfo'));
+    if (!s) return;
+    var b = s.build;
+    var parts = [
+      s.incidents.length + ' captures (' + s.sources.csv + ' read from CSV' + (s.sources.json ? ', ' + s.sources.json + ' from JSON' : '') + ')',
+      s.n.toLocaleString('en-US') + ' unique frames after removing ' + s.duplicates.toLocaleString('en-US') + ' repeated rows',
+      b ? 'build ' + (b.git_commit || 'unknown') + (b.git_branch && b.git_branch !== 'unknown' ? ' (' + b.git_branch + ')' : '') + (b.game_version ? ', game ' + b.game_version : '') + (b.godot_version ? ', Godot ' + b.godot_version : '') : 'build not recorded'
+    ];
+    box.appendChild(el('div', { text: parts.join(' · ') }));
+    box.appendChild(el('div', { style: 'margin-top:4px' }, [
+      el('span', { class: 'badge ' + (s.wallMissing ? 'warn' : 'plain'), text: s.wallMissing === 0 ? 'Wall time' : (s.wallMissing === s.n ? 'Godot frame delta (capped)' : 'Mixed') }),
+      ' ', timeBasisText(s),
+      ' Clock times are worked out from the file names, so they are approximate (within a second or two). Segments come from the file names too.'
+    ]));
+  }
+
+  /* ---------------------------------------------------------------- summary */
+  function tile(label, value, unit, extra, tip) {
+    return el('div', { class: 'tile', title: tip }, [
+      el('div', { class: 'lab', text: label }),
+      el('div', { class: 'val' }, [value, unit ? el('small', { text: ' ' + unit }) : null]),
+      el('div', { class: 'ext', text: extra || ' ' })
+    ]);
+  }
+  function renderSummary() {
+    var s = session(); if (!s) return;
+    var sum = Core.summarize(s, filter());
+    var basis = s.wallMissing === 0 ? 'wall time' : (s.wallMissing === s.n ? 'Godot frame delta, capped' : 'wall time / frame delta');
+    var covered = Core.coveredSeconds(s), span = (s.t[s.n - 1] - s.t[0]) / 1e6;
+    $('summaryNote').textContent = 'The recorder only keeps the seconds around each hitch. These ' + s.windows.length +
+      ' stretches cover ' + fmtDuration(covered) + ' of the ' + fmtDuration(span) + ' between the first and last capture, and they lean towards the bad moments. ' +
+      'Read the numbers as “how bad were the bad moments”, not as an average for the whole play session.' +
+      (S.run !== null ? ' Showing segment ' + pad2(s.segRuns[S.run].seg) + ' only.' : '') +
+      (S.enemiesOnly ? ' Counting only frames with enemies > 0.' : '');
+    var t = clear($('tiles'));
+    function v(x) { return ok(x) ? (x >= 100 ? x.toFixed(0) : x.toFixed(1)) : '–'; }
+    t.appendChild(tile('Frames', sum.frames.toLocaleString('en-US'), '', S.enemiesOnly ? 'with enemies > 0' : 'all captured frames', 'Unique frames in the selection (each frame counted once, however many capture files it appears in).'));
+    t.appendChild(tile('Median frame', v(sum.median), 'ms', basis, 'Half of the captured frames were faster than this. 16.7 ms is a steady 60 fps.'));
+    t.appendChild(tile('95th percentile', v(sum.p95), 'ms', basis, '95% of the captured frames were faster than this.'));
+    t.appendChild(tile('99th percentile', v(sum.p99), 'ms', basis, '99% of the captured frames were faster than this.'));
+    sum.thresholds.forEach(function (th, i) {
+      var tip = th === 28 ? 'Frames slower than 28 ms: the recorder’s hitch threshold.' : th === 33 ? 'Frames slower than 33 ms: below 30 fps for that frame.' : th === 50 ? 'Frames slower than 50 ms: a clearly visible stutter.' : 'Frames slower than 100 ms: a freeze.';
+      t.appendChild(tile('Over ' + th + ' ms', sum.over[i].toLocaleString('en-US'), 'frames', pct(sum.over[i], sum.frames) + ' of frames', tip));
+    });
+    var fb = clear($('summaryFallback'));
+    if (!sum.frames) fb.appendChild(el('p', { class: 'note', text: 'No frames match this selection.' }));
+    else if (sum.fallbackFrames) fb.appendChild(el('p', { class: 'note', text: (sum.fallbackFrames === sum.frames ? 'All' : sum.fallbackFrames.toLocaleString('en-US')) + ' of these frames have no wall time, so the figures use Godot’s frame delta. It is capped and smoothed, so long hitches are under-reported: treat the “over 50 ms” and “over 100 ms” counts and the percentiles as too low.' }));
+  }
+
+  /* --------------------------------------------------------------- timeline */
+  var TL = { mL: 58, mR: 14, H: 496, w: 0, dpr: 1, agg: null, hover: -1, drag: null };
+  var PANEL = { seg: [4, 15], frame: [42, 196], hitch: [250, 24], enemies: [302, 78], proj: [406, 56], axis: 466 };
+
+  function css(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function palette() {
+    var c = {};
+    ['--surface', '--surface-2', '--gap', '--ink', '--ink-2', '--muted', '--grid', '--axis', '--accent', '--c0', '--c1', '--c2', '--c3', '--c4', '--c5', '--c6', '--c7', '--c8'].forEach(function (n) { c[n] = css(n); });
+    return c;
+  }
+  function lowerBound(arr, v) { var lo = 0, hi = arr.length; while (lo < hi) { var m = (lo + hi) >> 1; if (arr[m] < v) lo = m + 1; else hi = m; } return lo; }
+  function niceCeil(v) {
+    if (!(v > 0)) return 1;
+    var p = Math.pow(10, Math.floor(Math.log10(v))), m = v / p;
+    return (m <= 1 ? 1 : m <= 1.5 ? 1.5 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 3 ? 3 : m <= 4 ? 4 : m <= 5 ? 5 : m <= 6 ? 6 : m <= 8 ? 8 : 10) * p;
+  }
+  function niceStep(max, target) {
+    var raw = max / target, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+    return (m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * p;
+  }
+
+  function resetDomain() {
+    var s = session(); if (!s) return;
+    var a = s.t[0], b = s.t[s.n - 1];
+    if (S.run !== null) { a = s.segRuns[S.run].t0; b = s.segRuns[S.run].t1; }
+    var padT = Math.max((b - a) * 0.01, 200000);
+    S.domain = { x0: a - padT, x1: b + padT };
+    S.view = { x0: S.domain.x0, x1: S.domain.x1 };
+  }
+  function setView(x0, x1) {
+    var d = S.domain, span = Math.min(Math.max(x1 - x0, 250000), d.x1 - d.x0);
+    if (x0 < d.x0) x0 = d.x0;
+    if (x0 + span > d.x1) x0 = d.x1 - span;
+    S.view = { x0: x0, x1: x0 + span };
+    drawTimeline();
+  }
+  function zoomAt(factor, tCenter) {
+    var v = S.view, span = (v.x1 - v.x0) * factor;
+    if (tCenter === undefined) tCenter = (v.x0 + v.x1) / 2;
+    var k = (tCenter - v.x0) / (v.x1 - v.x0);
+    setView(tCenter - k * span, tCenter - k * span + span);
+  }
+
+  /* One pass over the visible frames: per pixel column, the min / max / first / last of each series. */
+  function aggregate(s, x0, x1, W) {
+    var a = {
+      W: W, cnt: new Uint32Array(W), mn: new Float32Array(W).fill(Infinity), mx: new Float32Array(W).fill(-Infinity),
+      first: new Float32Array(W), last: new Float32Array(W), sum: new Float64Array(W), firstIdx: new Int32Array(W).fill(-1), worst: new Int32Array(W).fill(-1), hitch: new Int32Array(W).fill(-1),
+      eMn: new Float32Array(W).fill(Infinity), eMx: new Float32Array(W).fill(-Infinity), lMx: new Float32Array(W).fill(-Infinity),
+      pMn: new Float32Array(W).fill(Infinity), pMx: new Float32Array(W).fill(-Infinity),
+      maxEff: 0, maxEnemy: 0, maxProj: 0, frames: 0
+    };
+    var t = s.t, eff = s.eff, en = s.cols.enemies, pr = s.cols.projectiles, wm = s.cols.world_materialized, wd = s.cols.world_data_only;
+    var i0 = lowerBound(t, x0), i1 = lowerBound(t, x1), scale = W / (x1 - x0), only = S.enemiesOnly;
+    a.i0 = i0; a.i1 = i1; a.frames = i1 - i0;
+    for (var i = i0; i < i1; i++) {
+      var c = Math.floor((t[i] - x0) * scale);
+      if (c >= W) c = W - 1;
+      var v = eff[i];
+      if (v === v) {
+        if (a.cnt[c] === 0) { a.first[c] = v; a.firstIdx[c] = i; }
+        a.cnt[c]++; a.last[c] = v; a.sum[c] += v;
+        if (v < a.mn[c]) a.mn[c] = v;
+        if (v > a.mx[c]) { a.mx[c] = v; a.worst[c] = i; }
+        if (v > a.maxEff) a.maxEff = v;
+        if (v > Core.HITCH_MS && (!only || (en && en[i] > 0)) && (a.hitch[c] < 0 || v > eff[a.hitch[c]])) a.hitch[c] = i;
+      }
+      if (en) { var e = en[i]; if (e === e) { if (e < a.eMn[c]) a.eMn[c] = e; if (e > a.eMx[c]) a.eMx[c] = e; if (e > a.maxEnemy) a.maxEnemy = e; } }
+      if (wm && wd) { var l = wm[i] + wd[i]; if (l === l) { if (l > a.lMx[c]) a.lMx[c] = l; if (l > a.maxEnemy) a.maxEnemy = l; } }
+      if (pr) { var p = pr[i]; if (p === p) { if (p < a.pMn[c]) a.pMn[c] = p; if (p > a.pMx[c]) a.pMx[c] = p; if (p > a.maxProj) a.maxProj = p; } }
+    }
+    return a;
+  }
+
+  function timeTicks(s, x0, x1, W) {
+    var useClock = ok(s.clockOffsetSec), base = useClock ? s.clockOffsetSec : s.elapsedOffsetSec;
+    var s0 = base + x0 / 1e6, s1 = base + x1 / 1e6, span = s1 - s0;
+    var steps = [0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, 3600, 7200];
+    var target = Math.max(2, Math.floor(W / 120)), step = steps[steps.length - 1];
+    for (var i = 0; i < steps.length; i++) if (span / steps[i] <= target) { step = steps[i]; break; }
+    var out = [];
+    for (var v = Math.ceil(s0 / step) * step; v <= s1 + 1e-9; v += step) {
+      out.push({ t: (v - base) * 1e6, label: useClock ? fmtClock(v + 1e-6, step < 1) : fmtElapsed(v, step < 1) });
+    }
+    return { ticks: out, clock: useClock };
+  }
+
+  function drawTimeline() {
+    var s = session(), cv = $('tl');
+    if (!s || !cv.clientWidth) return;
+    var dpr = window.devicePixelRatio || 1, w = cv.clientWidth;
+    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(TL.H * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(TL.H * dpr); }
+    TL.w = w; TL.dpr = dpr;
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var C = palette();
+    ctx.fillStyle = C['--surface']; ctx.fillRect(0, 0, w, TL.H);
+    var W = Math.max(60, Math.floor(w - TL.mL - TL.mR)), x0 = S.view.x0, x1 = S.view.x1, L = TL.mL;
+    var agg = aggregate(s, x0, x1, W);
+    TL.agg = agg;
+    function X(t) { return L + (t - x0) / (x1 - x0) * W; }
+    var top = PANEL.frame[0], bottom = PANEL.proj[0] + PANEL.proj[1];
+    ctx.font = '11px system-ui, -apple-system, "Segoe UI", sans-serif';
+    ctx.textBaseline = 'middle';
+
+    /* stretches the recorder did not capture */
+    ctx.fillStyle = C['--gap'];
+    var prevEnd = -Infinity;
+    for (var wi = 0; wi <= s.windows.length; wi++) {
+      var gapStart = prevEnd, gapEnd = wi < s.windows.length ? s.windows[wi][0] : Infinity;
+      if (wi < s.windows.length) prevEnd = s.windows[wi][1];
+      var gx0 = Math.max(L, gapStart === -Infinity ? L : X(gapStart)), gx1 = Math.min(L + W, gapEnd === Infinity ? L + W : X(gapEnd));
+      if (gx1 - gx0 >= 0.75) ctx.fillRect(gx0, top, gx1 - gx0, bottom - top);
+    }
+
+    /* segment band */
+    s.segRuns.forEach(function (run, ri) {
+      var a = Math.max(L, X(run.t0)), b = Math.min(L + W, X(run.t1));
+      if (b <= L || a >= L + W) return;
+      ctx.fillStyle = (ri % 2) ? C['--axis'] : C['--grid'];
+      ctx.fillRect(a, PANEL.seg[0], Math.max(1, b - a - 1), PANEL.seg[1]);
+      if (b - a > 44) { ctx.fillStyle = C['--ink-2']; ctx.textAlign = 'center'; ctx.fillText('Seg ' + run.seg, (a + b) / 2, PANEL.seg[0] + PANEL.seg[1] / 2 + 0.5); }
+    });
+
+    /* x grid + labels */
+    var tt = timeTicks(s, x0, x1, W);
+    tt.ticks.forEach(function (tk) {
+      var x = Math.round(X(tk.t)) + 0.5;
+      ctx.strokeStyle = C['--grid']; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, bottom); ctx.stroke();
+      if (x > L + 20 && x < L + W - 26) { ctx.fillStyle = C['--muted']; ctx.textAlign = 'center'; ctx.fillText(tk.label, x, PANEL.axis + 9); }
+    });
+    ctx.fillStyle = C['--muted']; ctx.textAlign = 'right';
+    ctx.fillText(tt.clock ? 'clock time (approx.)' : 'time into recording', L + W, PANEL.axis + 23);
+
+    /* the selected frame: a line under the data (its marker is drawn last, on top) */
+    var selVisible = S.sel >= 0 && s.t[S.sel] >= x0 && s.t[S.sel] <= x1, sx = selVisible ? Math.round(X(s.t[S.sel])) + 0.5 : 0;
+    if (selVisible) { ctx.strokeStyle = C['--accent']; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(sx, top - 2); ctx.lineTo(sx, bottom); ctx.stroke(); }
+
+    /* y scales */
+    var yMaxFrame = S.yMode === 'cap' ? Math.min(120, Math.max(40, niceCeil(agg.maxEff))) : Math.max(40, niceCeil(agg.maxEff));
+    var yMaxEnemy = Math.max(10, niceCeil(agg.maxEnemy)), yMaxProj = Math.max(10, niceCeil(agg.maxProj));
+    function panelAxis(panel, yMax, title, missing) {
+      var y0 = panel[0], h = panel[1];
+      var step = niceStep(yMax, h > 120 ? 5 : 2.5);
+      ctx.textAlign = 'right';
+      for (var v = 0; v <= yMax + 1e-9; v += step) {
+        var y = Math.round(y0 + h - v / yMax * h) + 0.5;
+        ctx.strokeStyle = v === 0 ? C['--axis'] : C['--grid']; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(L, y); ctx.lineTo(L + W, y); ctx.stroke();
+        ctx.fillStyle = C['--muted']; ctx.fillText(String(Math.round(v * 100) / 100), L - 6, y);
+      }
+      ctx.textAlign = 'left'; ctx.fillStyle = C['--ink-2'];
+      ctx.fillText(title + (missing ? ' — ' + NOT_REC : ''), L + 2, y0 - 11);
+    }
+    var basis = s.wallMissing === 0 ? 'wall time' : (s.wallMissing === s.n ? 'Godot frame delta (capped): wall time not recorded' : 'wall time; Godot frame delta where missing');
+    panelAxis(PANEL.frame, yMaxFrame, 'Frame time, ms (' + basis + ')', false);
+    panelAxis(PANEL.enemies, yMaxEnemy, 'Enemies', !s.recorded.enemies);
+    panelAxis(PANEL.proj, yMaxProj, 'Projectiles', !s.recorded.projectiles);
+    ctx.textAlign = 'right'; ctx.fillStyle = C['--ink-2'];
+    ctx.fillText('Hitches', L - 6, PANEL.hitch[0] + PANEL.hitch[1] / 2);
+    ctx.strokeStyle = C['--axis']; ctx.beginPath();
+    ctx.moveTo(L, PANEL.hitch[0] + PANEL.hitch[1] + 0.5); ctx.lineTo(L + W, PANEL.hitch[0] + PANEL.hitch[1] + 0.5); ctx.stroke();
+
+    /* reference lines: 60 fps and the hitch threshold */
+    var fy0 = PANEL.frame[0], fh = PANEL.frame[1];
+    function FY(v) { return fy0 + fh - v / yMaxFrame * fh; }
+    var y28 = Math.round(FY(28)) + 0.5, y16 = Math.round(FY(16.7)) + 0.5;
+    ctx.strokeStyle = C['--ink-2']; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(L, y28); ctx.lineTo(L + W, y28); ctx.stroke(); ctx.setLineDash([]);
+    TL.refLabels = [];
+    if (y28 > fy0 + 14) TL.refLabels.push({ text: '28 ms: hitch threshold', y: y28 - 8, color: C['--ink-2'] });
+    if (y16 - y28 > 6 && y16 + 9 < fy0 + fh) TL.refLabels.push({ text: '16.7 ms: 60 fps', y: y16 + 8, color: C['--muted'] });
+    ctx.strokeStyle = C['--axis']; ctx.beginPath(); ctx.moveTo(L, y16); ctx.lineTo(L + W, y16); ctx.stroke();
+
+    /* series: min/max envelope per column, broken at capture gaps */
+    function envelope(panel, yMax, mn, mx, firstArr, lastArr, color, width) {
+      var y0 = panel[0], h = panel[1];
+      function Y(v) { return y0 + h - Math.min(v, yMax * 4) / yMax * h; }
+      ctx.save(); ctx.beginPath(); ctx.rect(L, y0 - 1, W, h + 2); ctx.clip();
+      ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.beginPath();
+      var open = false;
+      for (var c = 0; c < W; c++) {
+        if (!agg.cnt[c] || mx[c] === -Infinity) continue;
+        var x = L + c + 0.5, a = firstArr ? firstArr[c] : mx[c], b = lastArr ? lastArr[c] : mx[c];
+        if (!open || s.gapBefore[agg.firstIdx[c]]) ctx.moveTo(x, Y(a)); else ctx.lineTo(x, Y(a));
+        if (mn && mn[c] !== mx[c]) { ctx.lineTo(x, Y(mn[c])); ctx.lineTo(x, Y(mx[c])); ctx.lineTo(x, Y(b)); }
+        open = true;
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    var dense = agg.frames > W * 0.6, packed = agg.frames > W * 3;
+    if (s.recorded.world_materialized && s.recorded.world_data_only) envelope(PANEL.enemies, yMaxEnemy, null, agg.lMx, null, null, C['--muted'], 1.5);
+    if (s.recorded.enemies) envelope(PANEL.enemies, yMaxEnemy, agg.eMn, agg.eMx, null, null, C['--ink-2'], dense ? 1 : 1.75);
+    if (s.recorded.projectiles) envelope(PANEL.proj, yMaxProj, agg.pMn, agg.pMx, null, null, C['--ink-2'], dense ? 1 : 1.75);
+    if (packed) {
+      /* many frames per pixel: a pale band from the fastest to the slowest frame, and their average as the line */
+      ctx.globalAlpha = 0.55;
+      envelope(PANEL.frame, yMaxFrame, agg.mn, agg.mx, agg.first, agg.last, C['--muted'], 1);
+      ctx.globalAlpha = 1;
+      var mean = new Float32Array(W).fill(-Infinity);
+      for (var cm = 0; cm < W; cm++) if (agg.cnt[cm]) mean[cm] = agg.sum[cm] / agg.cnt[cm];
+      envelope(PANEL.frame, yMaxFrame, null, mean, null, null, C['--ink-2'], 1.25);
+    } else envelope(PANEL.frame, yMaxFrame, agg.mn, agg.mx, agg.first, agg.last, C['--ink-2'], dense ? 1 : 1.75);
+
+    ctx.textAlign = 'right';
+    TL.refLabels.forEach(function (lab) {
+      var tw = ctx.measureText(lab.text).width;
+      ctx.globalAlpha = 0.85; ctx.fillStyle = C['--surface']; ctx.fillRect(L + W - tw - 8, lab.y - 7, tw + 8, 14); ctx.globalAlpha = 1;
+      ctx.fillStyle = lab.color; ctx.fillText(lab.text, L + W - 4, lab.y);
+    });
+
+    /* frames taller than the scale: a cap mark on the top edge */
+    ctx.fillStyle = C['--ink'];
+    for (var c1 = 0; c1 < W; c1++) if (agg.mx[c1] > yMaxFrame) ctx.fillRect(L + c1, fy0 - 1, 1, 3);
+
+    /* individual frames once there is room for them */
+    var pxPerFrame = agg.frames ? W / agg.frames : W;
+    if (pxPerFrame >= 7) {
+      for (var i = agg.i0; i < agg.i1; i++) {
+        var v = s.eff[i]; if (v !== v) continue;
+        var hot = v > Core.HITCH_MS, px = X(s.t[i]), py = Math.max(fy0, FY(v));
+        if (hot) { ctx.fillStyle = C['--surface']; ctx.beginPath(); ctx.arc(px, py, 6, 0, 6.2832); ctx.fill(); }
+        ctx.fillStyle = hot ? C[FAMILY_VAR[Core.tagFamily(Core.tagName(s.tag[i]))] || '--c0'] : C['--ink-2'];
+        ctx.beginPath(); ctx.arc(px, py, hot ? 4 : 2.2, 0, 6.2832); ctx.fill();
+      }
+    }
+
+    /* hitch strip: one tick per column that holds a hitch; colour = tag family, height = how long */
+    var hy = PANEL.hitch[0] + PANEL.hitch[1], tickW = pxPerFrame >= 5 ? 4 : 2;
+    for (var c2 = 0; c2 < W; c2++) {
+      var hi = agg.hitch[c2]; if (hi < 0) continue;
+      var ms = s.eff[hi], hgt = ms > 100 ? 22 : ms > 50 ? 16 : ms > 33 ? 11 : 6;
+      ctx.fillStyle = C[FAMILY_VAR[Core.tagFamily(Core.tagName(s.tag[hi]))] || '--c0'];
+      ctx.fillRect(L + c2 - (tickW - 2) / 2, hy - hgt, tickW, hgt);
+    }
+
+    /* hover crosshair and the selected frame */
+    if (TL.hover >= 0) {
+      var hx = Math.round(X(s.t[TL.hover])) + 0.5;
+      ctx.strokeStyle = C['--muted']; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(hx, top - 4); ctx.lineTo(hx, bottom); ctx.stroke();
+    }
+    if (selVisible) {
+      ctx.fillStyle = C['--accent']; ctx.beginPath(); ctx.moveTo(sx - 5, top - 8); ctx.lineTo(sx + 5, top - 8); ctx.lineTo(sx, top); ctx.closePath(); ctx.fill();
+    }
+    $('tlNote').textContent = 'Showing ' + fmtDuration((x1 - x0) / 1e6) + ' · ' + agg.frames.toLocaleString('en-US') + ' frames in view' +
+      (agg.maxEff > yMaxFrame ? ' · tallest frame in view ' + fmtMs(agg.maxEff) + ' (cut off at ' + yMaxFrame + ' ms; marked on the top edge)' : '') +
+      (S.enemiesOnly ? ' · hitch marks limited to frames with enemies > 0; the line still shows every frame' : '');
+  }
+
+  /* The frame the pointer is "on": the slowest one within a few pixels (a hitch if there is one). */
+  function frameAtX(px) {
+    var agg = TL.agg; if (!agg) return -1;
+    var c = Math.round(px - TL.mL), best = -1, bestHitch = -1, s = session();
+    for (var d = -3; d <= 3; d++) {
+      var k = c + d; if (k < 0 || k >= agg.W) continue;
+      if (agg.hitch[k] >= 0 && (bestHitch < 0 || s.eff[agg.hitch[k]] > s.eff[bestHitch])) bestHitch = agg.hitch[k];
+      if (agg.worst[k] >= 0 && (best < 0 || s.eff[agg.worst[k]] > s.eff[best])) best = agg.worst[k];
+    }
+    return bestHitch >= 0 ? bestHitch : best;
+  }
+  function tipRow(label, value) { return el('div', { class: 'r' }, [el('span', { text: label }), el('b', { text: value })]); }
+  function showTip(i, px, py) {
+    var s = session(), tip = clear($('tip'));
+    var c = s.cols, tag = Core.tagName(s.tag[i]), hot = s.eff[i] > Core.HITCH_MS;
+    tip.appendChild(el('div', { class: 'v', text: fmtMs(s.eff[i]) + (hot ? ' · hitch' : '') }));
+    tip.appendChild(el('div', { class: 'muted', text: (c.wall_ms && ok(c.wall_ms[i]) ? 'wall time' : 'Godot frame delta (capped)') + ' of the slowest frame here' }));
+    tip.appendChild(tipRow('Clock', '≈ ' + fmtClock(Core.clockAt(s, s.t[i]), true)));
+    tip.appendChild(tipRow('Into recording', fmtElapsed(Core.elapsedAt(s, s.t[i]), true)));
+    tip.appendChild(tipRow('Segment', String(s.seg[i])));
+    tip.appendChild(tipRow('Enemies', c.enemies ? fmtInt(c.enemies[i]) : NOT_REC));
+    tip.appendChild(tipRow('Projectiles', c.projectiles ? fmtInt(c.projectiles[i]) : NOT_REC));
+    if (hot) tip.appendChild(el('div', { class: 'r' }, [el('span', { text: 'Tag' }), el('b', {}, [el('span', { class: 'sw', style: 'background:' + familyCss(Core.tagFamily(tag)) + ';margin-right:5px' }), tagLabel(tag)])]));
+    tip.appendChild(el('div', { class: 'muted', text: 'Click to inspect' }));
+    tip.style.display = 'block';
+    var wrap = $('tlwrap'), tw = tip.offsetWidth, left = px + 14;
+    if (left + tw > wrap.clientWidth - 4) left = px - tw - 14;
+    tip.style.left = Math.max(4, left) + 'px';
+    tip.style.top = Math.max(4, Math.min(py + 12, TL.H - tip.offsetHeight - 4)) + 'px';
+  }
+  function hideTip() { $('tip').style.display = 'none'; if (TL.hover !== -1) { TL.hover = -1; drawTimeline(); } }
+
+  function initTimeline() {
+    var cv = $('tl');
+    function pos(ev) { var r = cv.getBoundingClientRect(); return { x: ev.clientX - r.left, y: ev.clientY - r.top }; }
+    function tAt(px) { return S.view.x0 + (px - TL.mL) / Math.max(1, TL.agg ? TL.agg.W : 1) * (S.view.x1 - S.view.x0); }
+    cv.addEventListener('pointerdown', function (ev) {
+      if (!session()) return;
+      var p = pos(ev);
+      TL.drag = { x: p.x, x0: S.view.x0, x1: S.view.x1, moved: false };
+      cv.setPointerCapture(ev.pointerId);
+    });
+    cv.addEventListener('pointermove', function (ev) {
+      if (!session() || !TL.agg) return;
+      var p = pos(ev);
+      if (TL.drag) {
+        var dx = p.x - TL.drag.x;
+        if (Math.abs(dx) > 3) TL.drag.moved = true;
+        if (TL.drag.moved) {
+          var dt = dx / TL.agg.W * (TL.drag.x1 - TL.drag.x0);
+          $('tip').style.display = 'none'; TL.hover = -1;
+          setView(TL.drag.x0 - dt, TL.drag.x1 - dt);
+        }
+        return;
+      }
+      var i = frameAtX(p.x);
+      if (i < 0) { hideTip(); return; }
+      if (i !== TL.hover) { TL.hover = i; drawTimeline(); }
+      showTip(i, p.x, p.y);
+    });
+    cv.addEventListener('pointerup', function (ev) {
+      var drag = TL.drag; TL.drag = null;
+      if (!drag || drag.moved) return;
+      var i = frameAtX(pos(ev).x);
+      if (i >= 0) openDetail(i, false);
+    });
+    cv.addEventListener('pointercancel', function () { TL.drag = null; });
+    cv.addEventListener('pointerleave', function () { if (!TL.drag) hideTip(); });
+    cv.addEventListener('wheel', function (ev) {
+      if (!session() || !TL.agg) return;
+      ev.preventDefault();
+      zoomAt(ev.deltaY < 0 ? 0.8 : 1.25, tAt(pos(ev).x));
+    }, { passive: false });
+    cv.addEventListener('dblclick', function () { resetDomain(); drawTimeline(); });
+    cv.addEventListener('keydown', function (ev) {
+      var v = S.view, span = v.x1 - v.x0, used = true;
+      if (ev.key === 'ArrowLeft') setView(v.x0 - span * 0.15, v.x1 - span * 0.15);
+      else if (ev.key === 'ArrowRight') setView(v.x0 + span * 0.15, v.x1 + span * 0.15);
+      else if (ev.key === '+' || ev.key === '=') zoomAt(0.6);
+      else if (ev.key === '-' || ev.key === '_') zoomAt(1 / 0.6);
+      else if (ev.key === '0') { resetDomain(); drawTimeline(); }
+      else used = false;
+      if (used) ev.preventDefault();
+    });
+    if (window.ResizeObserver) new ResizeObserver(function () { drawTimeline(); }).observe($('tlwrap'));
+    else window.addEventListener('resize', drawTimeline);
+    if (window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: dark)');
+      if (mq.addEventListener) mq.addEventListener('change', drawTimeline);
+    }
+  }
+
+  function renderLegends() {
+    var s = session(), a = clear($('legendLines')), b = clear($('legendTags'));
+    function line(color, text, tip) { return el('span', { class: 'k', title: tip }, [el('span', { class: 'ln', style: 'background:' + color }), text]); }
+    a.appendChild(line('var(--ink-2)', 'Frame time, enemies with a live scene node, projectiles'));
+    a.appendChild(el('span', { class: 'k', title: 'When many frames share one pixel, the line is their average and the pale band runs from the fastest to the slowest of them.' }, [el('span', { class: 'sw', style: 'background:var(--muted);opacity:.55' }), 'Zoomed out: fastest-to-slowest range (the line is then the average)']));
+    if (s && s.recorded.world_materialized && s.recorded.world_data_only) a.appendChild(line('var(--muted)', 'Logical enemies (live nodes + simulated as data only)', 'world_materialized + world_data_only'));
+    a.appendChild(el('span', { class: 'k' }, [el('span', { class: 'sw', style: 'background:var(--gap);border:1px solid var(--axis)' }), 'Not captured']));
+    b.appendChild(el('span', { class: 'k', text: 'Hitch marks (taller = longer), coloured by tag:' }));
+    Core.FAMILIES.forEach(function (f) {
+      var tip = f.key === 'unknown' ? 'unattributed, physics_monitor' : f.key === 'world' ? 'chunk_…, flow' : f.key === 'ascension' ? 'ascension, fragments' : f.key;
+      b.appendChild(el('span', { class: 'k', title: 'Tags: ' + tip }, [el('span', { class: 'sw', style: 'background:' + familyCss(f.key) }), f.label]));
+    });
+  }
+
+  /* ------------------------------------------------- tags and worst hitches */
+  function renderTags() {
+    var s = session(), box = clear($('tags')); if (!s) return;
+    var counts = Core.tagCounts(s, filter()), total = 0, max = 0;
+    counts.forEach(function (c) { total += c.count; if (c.count > max) max = c.count; });
+    if (!total) { box.appendChild(el('p', { class: 'sub', text: 'No frames over 28 ms in this selection.' })); }
+    counts.forEach(function (c) {
+      var d = Core.describeTag(c.tag);
+      var row = el('div', {
+        class: 'tagrow' + (S.tag === c.tag ? ' on' : ''), tabindex: '0', role: 'button',
+        title: (c.tag ? d.text : 'This capture format did not record a tag for these hitches. Open one to work the tag out from its detail file.') + ' Slowest: ' + fmtMs(c.worstMs) + '.',
+        onclick: function () { S.tag = S.tag === c.tag ? null : c.tag; renderTags(); renderWorst(); },
+        onkeydown: function (ev) { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); row.click(); } }
+      }, [
+        el('div', { class: 'nm' }, [el('span', { class: 'sw', style: 'background:' + familyCss(d.family) }), tagLabel(c.tag)]),
+        el('div', { class: 'barline' }, [
+          el('div', { class: 'bar', style: 'width:' + Math.max(0.5, c.count / max * 62) + '%;background:' + familyCss(d.family) }),
+          c.count.toLocaleString('en-US') + ' · ' + pct(c.count, total)
+        ])
+      ]);
+      box.appendChild(row);
+    });
+    var sel = clear($('selTag'));
+    sel.appendChild(el('option', { value: '*', text: 'All tags' }));
+    counts.forEach(function (c) { sel.appendChild(el('option', { value: 't:' + c.tag, text: tagLabel(c.tag) + ' (' + c.count.toLocaleString('en-US') + ')' })); });
+    if (S.tag !== null && !counts.some(function (c) { return c.tag === S.tag; })) S.tag = null;
+    sel.value = S.tag === null ? '*' : 't:' + S.tag;
+  }
+
+  var WORST_LIMIT = 60;
+  function renderWorst() {
+    var s = session(), table = clear($('worst')); if (!s) return;
+    var all = Core.worstHitches(s, filter(), 0, S.tag), rows = all.slice(0, WORST_LIMIT), c = s.cols;
+    $('worstTitle').textContent = 'Worst hitches' + (all.length ? ' (' + Math.min(WORST_LIMIT, all.length) + ' slowest of ' + all.length.toLocaleString('en-US') + ')' : '');
+    var showTicks = s.recorded.physics_ticks >= s.n / 2;   /* a column only when most frames have it */
+    var head = ['Clock (≈)', 'Into recording', 'Seg', s.wallMissing === s.n ? 'Frame delta, ms' : 'Wall time, ms', 'Enemies', 'Projectiles'];
+    if (showTicks) head.push('Physics ticks');
+    head.push('Tag', 'Tagged cost, ms');
+    var numeric = { 3: 1, 4: 1, 5: 1 }; if (showTicks) numeric[6] = 1; numeric[head.length - 1] = 1;
+    table.appendChild(el('thead', {}, [el('tr', {}, head.map(function (h, i) {
+      return el('th', { class: numeric[i] ? 'num' : '', text: h, title: h === 'Tagged cost, ms' ? 'The measured cost that earned the frame its tag (for physics_monitor: Godot’s once-a-second physics figure).' : null });
+    }))]));
+    var body = el('tbody');
+    rows.forEach(function (i) {
+      var tag = Core.tagName(s.tag[i]);
+      var cells = [
+        el('td', { text: fmtClock(Core.clockAt(s, s.t[i])) || '–' }),
+        el('td', { text: fmtElapsed(Core.elapsedAt(s, s.t[i]), true) }),
+        el('td', { text: String(s.seg[i]) }),
+        el('td', { class: 'num', text: fmtNum(s.eff[i], 1) }),
+        el('td', { class: 'num', text: c.enemies ? fmtInt(c.enemies[i]) : NOT_REC }),
+        el('td', { class: 'num', text: c.projectiles ? fmtInt(c.projectiles[i]) : NOT_REC })
+      ];
+      if (showTicks) cells.push(el('td', { class: 'num', text: fmtInt(c.physics_ticks[i]) }));
+      cells.push(el('td', {}, [el('span', { class: 'sw', style: 'background:' + familyCss(Core.tagFamily(tag)) + ';margin-right:6px' }), tagLabel(tag)]));
+      cells.push(el('td', { class: 'num', text: c.hitch_ms && tag ? fmtNum(c.hitch_ms[i], 1) : '–' }));
+      var tr = el('tr', {
+        class: 'click' + (i === S.sel ? ' sel' : ''), tabindex: '0', 'data-i': i,
+        onclick: function () { openDetail(i, true); },
+        onkeydown: function (ev) { if (ev.key === 'Enter') openDetail(i, true); }
+      }, cells);
+      body.appendChild(tr);
+    });
+    if (!rows.length) body.appendChild(el('tr', {}, [el('td', { colspan: head.length, class: 'muted', text: 'No frames over 28 ms in this selection.' })]));
+    table.appendChild(body);
+  }
+
+  /* ----------------------------------------------------------------- detail */
+  function renderDetailEmpty() {
+    var box = clear($('detail'));
+    box.appendChild(el('h2', { text: 'Frame detail' }));
+    box.appendChild(el('p', { class: 'sub', text: 'Click a hitch mark on the timeline, or a row in the “Worst hitches” table, to see what was measured in that frame.' }));
+  }
+  function fact(label, valueNodes, tip) {
+    return el('div', { class: 'fact', title: tip }, [el('div', { class: 'k', text: label }), el('div', { class: 'v' }, valueNodes)]);
+  }
+  function detailsText(details) {
+    var parts = [];
+    Object.keys(details).forEach(function (k) {
+      var v = details[k];
+      parts.push(k + '=' + (typeof v === 'object' && v !== null ? JSON.stringify(v) : String(v)));
+    });
+    var s = parts.join(', ');
+    return s.length > 160 ? s.slice(0, 157) + '…' : s;
+  }
+
+  async function openDetail(i, zoomTo) {
+    var s = session(); if (!s) return;
+    S.sel = i;
+    var token = ++S.detailToken;
+    if (zoomTo && (s.t[i] < S.view.x0 || s.t[i] > S.view.x1)) {
+      var span = S.view.x1 - S.view.x0;
+      setView(s.t[i] - span / 2, s.t[i] + span / 2);
+    }
+    drawTimeline();
+    Array.prototype.forEach.call(document.querySelectorAll('#worst tr.click'), function (tr) { tr.classList.toggle('sel', +tr.getAttribute('data-i') === i); });
+    var incs = Core.pickDetailIncidents(s, s.t[i]);
+    renderDetail(i, null, incs.length ? 'loading' : 'none');
+    $('detail').scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (!incs.length) return;
+    try {
+      var jsons = [];
+      for (var k = 0; k < incs.length; k++) jsons.push(await getJson(incs[k]));
+      if (token !== S.detailToken) return;
+      var found = null, from = '';
+      for (var j = 0; j < jsons.length; j++) {
+        var f = Core.findSample(jsons[j], s.t[i]);
+        if (f && (!found || (found.index === 0 && f.index > 0))) { found = f; from = incs[j].base + '.json'; }
+      }
+      if (!found) { renderDetail(i, null, 'missing'); return; }
+      var wall = Core.sampleFrameMs(found.sample);
+      renderDetail(i, { sample: found.sample, previous: found.previous, first: found.index === 0, events: Core.nearbyEvents(jsons, s.t[i], wall), file: from }, 'ok');
+    } catch (err) {
+      if (token === S.detailToken) renderDetail(i, null, 'error');
+    }
+  }
+
+  function renderDetail(i, d, state) {
+    var s = session(), box = clear($('detail')), c = s.cols;
+    function col(name) { return c[name] ? c[name][i] : NaN; }
+    var sample = d ? d.sample : null;
+    var wall = sample && ok(sample.wall_ms) ? sample.wall_ms : col('wall_ms');
+    var frameMs = sample && ok(sample.frame_ms) ? sample.frame_ms : col('frame_ms');
+    var eff = ok(wall) ? wall : frameMs, hot = eff > Core.HITCH_MS;
+    var inc = s.incidents[s.inc[i]];
+    var hpos = lowerBound(s.hitchIdx, i);
+    var prevHitch = hpos > 0 ? s.hitchIdx[hpos - 1] : -1;
+    var nextHitch = (hpos < s.hitchIdx.length && s.hitchIdx[hpos] === i) ? (hpos + 1 < s.hitchIdx.length ? s.hitchIdx[hpos + 1] : -1) : (hpos < s.hitchIdx.length ? s.hitchIdx[hpos] : -1);
+
+    box.appendChild(el('div', { class: 'row', style: 'justify-content:space-between' }, [
+      el('h2', { text: (hot ? 'Hitch' : 'Frame') + ' at ≈ ' + fmtClock(Core.clockAt(s, s.t[i]), true) + ' · ' + fmtMs(eff) + (ok(wall) ? ' wall time' : ' (Godot frame delta)') }),
+      el('div', { class: 'row' }, [
+        el('button', { text: '◀ Earlier hitch', disabled: prevHitch < 0, onclick: function () { openDetail(prevHitch, true); } }),
+        el('button', { text: 'Later hitch ▶', disabled: nextHitch < 0, onclick: function () { openDetail(nextHitch, true); } })
+      ])
+    ]));
+    if (!hot) box.appendChild(el('p', { class: 'sub', text: 'This frame is at or under the 28 ms hitch threshold, so the game did not tag it.' }));
+
+    /* --- the facts --- */
+    var seg = sample && ok(sample.segment) ? sample.segment : s.seg[i];
+    var enemies = sample && ok(sample.enemies) ? sample.enemies : col('enemies');
+    var mat = sample && ok(sample.enemy_world_materialized) ? sample.enemy_world_materialized : col('world_materialized');
+    var dat = sample && ok(sample.enemy_world_data_only) ? sample.enemy_world_data_only : col('world_data_only');
+    var proj = sample && ok(sample.projectiles) ? sample.projectiles : col('projectiles');
+    var ticks = sample && ok(sample.physics_ticks) ? sample.physics_ticks : col('physics_ticks');
+    var ticksText = ok(ticks) ? String(ticks) : (state === 'loading' ? 'loading…' : NOT_REC);
+    var facts = el('div', { class: 'facts' });
+    facts.appendChild(fact('When', [el('b', { text: '≈ ' + fmtClock(Core.clockAt(s, s.t[i]), true) }), ' clock · ' + fmtElapsed(Core.elapsedAt(s, s.t[i]), true) + ' into the recording'],
+      'Clock time is worked out from the capture file’s name, so it is approximate. “Into the recording” counts from when the flight recorder was switched on.'));
+    facts.appendChild(fact('Segment (level)', [el('b', { text: String(seg) })]));
+    facts.appendChild(fact('Wall time', ok(wall) ? [el('b', { text: fmtMs(wall) }), ' ', badge('measured')] : [NOT_REC + ' in this capture format'],
+      'Real time between this frame and the one before it. This is the true frame time.'));
+    facts.appendChild(fact('Godot frame delta (capped)', [el('b', { text: fmtMs(frameMs) })],
+      'What Godot told the game the frame took. It is capped (about 66.7 ms in current builds) and smoothed, so it under-reports long hitches.'));
+    facts.appendChild(fact('Enemies', [el('b', { text: fmtInt(enemies) }), ' with a live scene node' + (ok(mat) && ok(dat) ? ' · ' + fmtInt(mat + dat) + ' logical (' + fmtInt(dat) + ' simulated as data only)' : '')]));
+    facts.appendChild(fact('Projectiles', [el('b', { text: fmtInt(proj) })]));
+    facts.appendChild(fact('Physics ticks in this frame', [el('b', { text: ticksText })],
+      'How many physics steps Godot ran inside this one rendered frame. Normally 1; 2 or more means it was catching up.'));
+    var pms = sample && ok(sample.process_ms) ? sample.process_ms : col('process_ms');
+    var phms = sample && ok(sample.physics_ms) ? sample.physics_ms : col('physics_ms');
+    var fps = sample && ok(sample.fps) ? sample.fps : col('fps');
+    facts.appendChild(fact('Godot monitors (updated about once a second)', ['process ' + fmtMs(pms) + ' · physics ' + fmtMs(phms) + ' · ' + (ok(fps) ? Math.round(fps) + ' fps' : 'fps ' + NOT_REC)],
+      'Godot’s own running figures. They refresh about once per second, so they are NOT this frame’s costs.'));
+    box.appendChild(facts);
+
+    /* --- attribution --- */
+    var csvTag = Core.tagName(s.tag[i]), csvTagMs = col('hitch_ms');
+    var re = sample ? Core.tagSample(sample, d.previous) : null;
+    var tag = csvTag || (re ? re.tag : ''), tagMs = csvTag ? csvTagMs : (re ? re.ms : NaN);
+    box.appendChild(el('h3', { text: 'Attribution' }));
+    if (hot) {
+      var info = Core.describeTag(tag);
+      if (tag) {
+        box.appendChild(el('p', {}, [
+          el('span', { class: 'sw', style: 'background:' + familyCss(info.family) + ';margin-right:6px' }),
+          el('b', { text: tag }), ' ', badge(info.evidence), ' ',
+          ok(tagMs) && tag !== 'unattributed' ? (tag === 'physics_monitor' ? 'Godot’s physics monitor read ' + fmtMs(tagMs) + '.' : fmtMs(tagMs) + ' was the largest measured cost in this frame.') : '',
+          !csvTag ? ' (Worked out by this viewer from the detail file: the capture’s CSV has no tag.)' : ''
+        ]));
+        box.appendChild(el('p', { class: 'sub', text: info.text }));
+        if (csvTag && re && re.tag && re.tag !== csvTag && !d.first) {
+          box.appendChild(el('p', { class: 'sub', text: 'Note: recomputing from ' + d.file + ' gives “' + re.tag + '” (' + fmtMs(re.ms) + '). Overlapping capture files can disagree slightly about the same frame.' }));
+        }
+      } else {
+        box.appendChild(el('p', { class: 'sub', text: state === 'loading' ? 'Working out the tag from the detail file…' : 'This capture format did not record a tag, and no detail file is available to work one out.' }));
+      }
+    } else box.appendChild(el('p', { class: 'sub', text: 'Not a hitch, so no tag.' }));
+
+    /* --- cost breakdown --- */
+    var bd = sample ? Core.breakdownFromSample(sample, d.previous) : Core.breakdownFromRow(s, i);
+    box.appendChild(el('h3', {}, ['Where the time went ', badge('measured'), ' vs ', badge('unknown')]));
+    if (!ok(bd.wallMs)) box.appendChild(el('p', { class: 'sub', text: 'No frame time recorded for this frame.' }));
+    else {
+      var scale = Math.max(bd.wallMs, bd.measuredMs), stack = el('div', { class: 'stack', role: 'img', 'aria-label': 'Measured costs against the frame time' });
+      bd.items.forEach(function (it) {
+        if (!(it.ms > 0) || it.ms / scale < 0.002) return;
+        stack.appendChild(el('div', { style: 'flex:' + it.ms + ' 0 0;background:' + familyCss(it.family), title: it.label + ': ' + fmtMs(it.ms) }));
+      });
+      if (bd.unmeasuredMs > 0) stack.appendChild(el('div', { style: 'flex:' + bd.unmeasuredMs + ' 0 0;background:var(--unknown)', title: 'Not covered by any timer: ' + fmtMs(bd.unmeasuredMs) }));
+      box.appendChild(stack);
+      box.appendChild(el('div', { class: 'stackaxis' }, [el('span', { text: '0 ms' }), el('span', { text: fmtMs(scale) + (bd.overshootMs > 0 ? ' (timers add up to more than the frame)' : bd.wallIsFallback ? ' (Godot frame delta: wall time not recorded)' : ' wall time') })]));
+      var tb = el('tbody');
+      bd.items.forEach(function (it) {
+        tb.appendChild(el('tr', {}, [
+          el('td', {}, [el('span', { class: 'sw', style: 'background:' + familyCss(it.family) + ';margin-right:6px' }), it.label]),
+          el('td', { class: 'num', text: fmtMs(it.ms) }),
+          el('td', { class: 'num', text: pct(it.ms, bd.wallMs) }),
+          el('td', {}, [badge('measured')]),
+          el('td', { class: 'sub', text: it.note })
+        ]));
+      });
+      tb.appendChild(el('tr', {}, [
+        el('td', {}, [el('span', { class: 'sw', style: 'background:var(--unknown);margin-right:6px' }), 'Not covered by any timer']),
+        el('td', { class: 'num', text: fmtMs(bd.unmeasuredMs) }),
+        el('td', { class: 'num', text: pct(bd.unmeasuredMs, bd.wallMs) }),
+        el('td', {}, [badge('unknown')]),
+        el('td', { class: 'sub', text: bd.overshootMs > 0 ? 'The timers add up to ' + fmtMs(bd.overshootMs) + ' more than the frame: some overlap, or belong to a neighbouring frame.' : 'The frame time minus every timer above.' })
+      ]));
+      box.appendChild(el('table', {}, [
+        el('thead', {}, [el('tr', {}, [el('th', { text: 'Cost' }), el('th', { class: 'num', text: 'Time' }), el('th', { class: 'num', text: 'Share of frame' }), el('th', { text: 'Evidence' }), el('th', { text: 'Note' })])]),
+        tb
+      ]));
+      if (!bd.items.length) box.appendChild(el('p', { class: 'sub', text: 'No per-frame timers were recorded for this frame (older capture format).' }));
+      box.appendChild(el('p', { class: 'note', text: 'Unmeasured does not have to mean work. On an ordinary 16.7 ms frame most of the unmeasured time is just the game waiting for the next screen refresh (vsync). It is the part above about 16.7 ms that needs explaining. Timers can also overlap, so the remainder is a rough figure.' }));
+      if (bd.source === 'csv') box.appendChild(el('p', { class: 'sub', text: state === 'loading' ? 'Showing the CSV summary while the detail file loads…' : 'From the CSV summary only (fewer timers than the detail file).' }));
+    }
+
+    /* --- optional cost maps, shown as they come --- */
+    if (sample) Core.extractCostMaps(sample).forEach(function (m) {
+      box.appendChild(el('h3', {}, [m.title + ' ', badge('measured')]));
+      var mb = el('tbody'), mmax = Math.max(bd.wallMs || 0, m.entries[0].ms, 0.001);
+      m.entries.forEach(function (en) {
+        mb.appendChild(el('tr', {}, [
+          el('td', { text: en.name, style: 'width:30%' }),
+          el('td', { class: 'num', text: fmtMs(en.ms), style: 'width:90px' }),
+          el('td', {}, [el('div', { class: 'minibar', style: 'width:' + Math.max(0, Math.min(100, en.ms / mmax * 100)) + '%' })])
+        ]));
+      });
+      box.appendChild(el('table', {}, [mb]));
+      box.appendChild(el('p', { class: 'sub', text: 'Bars are drawn against the frame’s wall time.' }));
+    });
+
+    /* --- nearby events --- */
+    box.appendChild(el('h3', {}, ['Game events within 1.5 s ', badge('correlated')]));
+    if (state === 'loading') box.appendChild(el('p', { class: 'sub', text: 'Loading the detail file…' }));
+    else if (!d) box.appendChild(el('p', { class: 'sub', text: state === 'none' ? 'No detail file (.json) covering this frame was loaded, so events and per-frame timers are not available. Load the folder (not only the CSV files) to see them.' : state === 'missing' ? 'The detail file does not contain this frame.' : 'The detail file could not be read.' }));
+    else if (!d.events.length) box.appendChild(el('p', { class: 'sub', text: 'None recorded within 1.5 s of this frame.' }));
+    else {
+      var evs = d.events, shown = evs;
+      if (evs.length > 40) {
+        shown = evs.slice().sort(function (a, b) { return Math.abs(a.relMs) - Math.abs(b.relMs); }).slice(0, 40).sort(function (a, b) { return a.t_usec - b.t_usec; });
+      }
+      var eb = el('tbody');
+      shown.forEach(function (e) {
+        var when = e.during ? 'during this frame' : (Math.abs(e.relMs) < 1000 ? Math.abs(e.relMs).toFixed(0) + ' ms' : (Math.abs(e.relMs) / 1000).toFixed(2) + ' s') + (e.relMs < 0 ? ' before' : ' after');
+        eb.appendChild(el('tr', {}, [
+          el('td', { class: 'num', text: when, style: e.during ? 'font-weight:650' : null }),
+          el('td', { text: e.category + ' · ' + e.name + (e.amount !== null ? ' ×' + e.amount : '') }),
+          el('td', { class: 'sub', text: detailsText(e.details) })
+        ]));
+      });
+      box.appendChild(el('table', {}, [el('thead', {}, [el('tr', {}, [el('th', { class: 'num', text: 'When (relative to the frame’s end)' }), el('th', { text: 'Event' }), el('th', { text: 'Details' })])]), eb]));
+      box.appendChild(el('p', { class: 'sub', text: (evs.length > 40 ? 'Showing the 40 nearest of ' + evs.length + ' events. ' : '') + 'Events near a hitch are leads to follow up. Being close in time does not prove they caused it.' }));
+    }
+
+    /* --- raw + source --- */
+    if (sample) {
+      var raw = el('details', {}, [el('summary', { text: 'Everything recorded for this frame (raw)' })]);
+      raw.addEventListener('toggle', function () { if (raw.open && raw.children.length < 2) raw.appendChild(el('pre', { text: JSON.stringify(sample, null, 1) })); });
+      box.appendChild(raw);
+    }
+    box.appendChild(el('p', { class: 'sub small', text: 'Source: ' + inc.base + (inc.source === 'csv' ? '.csv' : '.json') + (d ? ' · detail from ' + d.file : '') + ' · t_usec ' + s.t[i] }));
+  }
+
+  /* --------------------------------------------------------------- glossary */
+  function renderGlossary() {
+    var g = clear($('gloss'));
+    function row(term, text, kind) { g.appendChild(el('dt', {}, [kind ? badge(kind) : term])); g.appendChild(el('dd', { text: text })); }
+    row('Wall time', 'Real time between one frame and the next. The true frame time. 16.7 ms is 60 fps; 33 ms is 30 fps.');
+    row('Godot frame delta (capped)', 'The frame time Godot hands to the game. It is capped (about 66.7 ms, four physics ticks, in current builds) and smoothed, so it under-reports long hitches. Only used here when a capture has no wall time, and labelled when it is.');
+    row('Hitch', 'A frame slower than 28 ms.');
+    row('Capture / incident window', 'When a hitch happens the recorder saves the 10 seconds before it and the 5 seconds after. Windows often overlap; this viewer counts each frame once.');
+    row('Godot monitors', 'process ms, physics ms and fps are Godot’s running figures. They update about once a second, so they are not the cost of any single frame.');
+    row('physics_catchup', Core.CATCHUP_TEXT);
+    ['enemy_step', 'ascension', 'fragments', 'projectiles', 'lifecycle', 'flow', 'sampling', 'scene_change', 'physics_monitor', 'unattributed'].forEach(function (t) { row(t, Core.TAG_TEXT[t]); });
+    row('chunk_…', Core.TAG_TEXT.chunk);
+    row('', 'A timer recorded this cost. Some timers are refreshed only about twice a second; those say so.', 'measured');
+    row('', 'Near in time, or a tag chosen because it was the largest measured cost in the frame. A lead, not proof.', 'correlated');
+    row('', 'Wall time that no timer covers. On an ordinary 16.7 ms frame most of it is just waiting for vsync, so unmeasured is not necessarily work.', 'unknown');
+  }
+
+  /* ------------------------------------------------------------------ wiring */
+  function init() {
+    if (!window.showDirectoryPicker && !('webkitdirectory' in $('inDir'))) $('btnFolder').classList.add('hidden');
+    $('btnFolder').addEventListener('click', pickFolder);
+    $('btnFiles').addEventListener('click', function () { $('inFiles').click(); });
+    $('btnDemo').addEventListener('click', loadDemo);
+    $('btnCancel').addEventListener('click', function () { S.cancel = true; });
+    $('inDir').addEventListener('change', function () { var f = Array.from(this.files || []); this.value = ''; if (f.length) loadFiles(f, 0, 'the chosen folder'); });
+    $('inFiles').addEventListener('change', function () { var f = Array.from(this.files || []); this.value = ''; if (f.length) loadFiles(f, 0, 'the chosen files'); });
+    var drop = $('drop');
+    document.addEventListener('dragover', function (ev) { ev.preventDefault(); drop.classList.add('over'); });
+    document.addEventListener('dragleave', function (ev) { if (!ev.relatedTarget) drop.classList.remove('over'); });
+    document.addEventListener('drop', onDrop);
+    $('selSession').addEventListener('change', function () { selectSession(+this.value); });
+    $('selSegment').addEventListener('change', function () {
+      S.run = this.value === '' ? null : +this.value;
+      resetDomain(); renderScoped();
+    });
+    $('chkEnemies').addEventListener('change', function () { S.enemiesOnly = this.checked; renderScoped(); });
+    $('selTag').addEventListener('change', function () { S.tag = this.value === '*' ? null : this.value.slice(2); renderTags(); renderWorst(); });
+    $('selY').addEventListener('change', function () { S.yMode = this.value; drawTimeline(); });
+    $('btnZoomIn').addEventListener('click', function () { zoomAt(0.5); });
+    $('btnZoomOut').addEventListener('click', function () { zoomAt(2); });
+    $('btnReset').addEventListener('click', function () { resetDomain(); drawTimeline(); });
+    initTimeline();
+    renderGlossary();
+    setStatus('Nothing loaded yet. Choose the folder for one day of captures (for example performance_results/2026-10-01), or try the demo data.');
+    if (location.hash === '#demo') loadDemo();
+    window.addEventListener('hashchange', function () { if (location.hash === '#demo') loadDemo(); });
+  }
+  /* A small hook for automated checks; not used by the page itself. */
+  window.CaptureViewer = { state: S, loadFiles: loadFiles, openDetail: openDetail, session: session };
+  init();
+})();
+</script>
+</body>
+</html>
