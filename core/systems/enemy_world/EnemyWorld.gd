@@ -592,12 +592,7 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 		set_knockback_decay(handle, float(actor.get("knockback_decay")))
 	if "stun_time" in actor:
 		set_stun_time(handle, float(actor.get("stun_time")))
-	var flags := get_flags(handle)
-	if "is_elite" in actor and bool(actor.get("is_elite")):
-		flags |= Types.Flags.ELITE
-	else:
-		flags &= ~Types.Flags.ELITE
-	set_flags(handle, flags)
+	_sync_elite_flag(handle, "is_elite" in actor and bool(actor.get("is_elite")))
 	# EnemyActor implements this callback and treats the record as authoritative.
 	# Generic legacy nodes keep the old one-way import until they are migrated.
 	if actor.has_method("_apply_enemy_world_health"):
@@ -610,6 +605,17 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 	if not is_dying(handle):
 		set_representation(handle, Types.Representation.MATERIALIZED)
 	return true
+
+
+## Writes the ELITE bit only when it changes. set_flags announces a profile
+## change to listeners (the BalanceRecorder re-reads the enemy on each), and
+## the per-tick sync used to announce an unchanged profile for every enemy on
+## every physics tick.
+func _sync_elite_flag(handle: int, elite: bool) -> void:
+	var flags := get_flags(handle)
+	var next := (flags | Types.Flags.ELITE) if elite else (flags & ~Types.Flags.ELITE)
+	if next != flags:
+		set_flags(handle, next)
 
 
 func release_legacy_actor(actor: Node2D, reason: StringName = &"legacy_unregistered") -> bool:
