@@ -188,6 +188,27 @@ var telemetry: Dictionary = {"hits": 0, "kills": 0, "tree_hits": 0, "tree_kills"
 var frame_cost: Dictionary = {"tick_usec": 0, "flush_usec": 0, "flushed": 0, "queued": 0, "hit_usec": 0, "hits_this_frame": 0}
 var _frame_hit_usec: int = 0
 var _frame_hits: int = 0
+## Which engine a slow tick belongs to: each engine's tick this frame in
+## microseconds (discipline codes parallel to the times) and the Encore
+## repeat that runs after them. One clock read per engine per frame.
+var _engine_tick_codes: PackedStringArray = PackedStringArray()
+var _engine_tick_usec: PackedInt64Array = PackedInt64Array()
+var _engine_tick_source: Array = []
+var _encore_usec: int = 0
+## What the tree asked for this frame, so a slow tick shows its workload:
+## bullets spawned, direct damage calls and enemy queries (reset each frame).
+var _frame_bullets: int = 0
+var _frame_damage_calls: int = 0
+var _frame_queries: int = 0
+## A tick at or above this is recorded as an "ascension/slow_tick" event
+## carrying the per-engine split, so a capture names the engine by itself.
+## At most one per SLOW_TICK_EVENT_GAP_USEC, unless a tick is more than twice
+## the last one recorded: a slow stretch must not flood the event log (every
+## event is copied on the frame an incident closes).
+const SLOW_TICK_USEC := 8000
+const SLOW_TICK_EVENT_GAP_USEC := 250_000
+var _slow_tick_event_usec: int = 0
+var _slow_tick_event_cost: int = 0
 var _chain_counts: Dictionary = {}   # cast root -> distinct victims
 var _draw_points: Array = []   # [position, radius, color] gathered from engines each frame
 var _attack_queue: Array = []  # {kind, at, dir, damage, tags, radius, arc}
@@ -512,22 +533,26 @@ func is_normal(handle: int) -> bool:
 
 
 func enemies_in_radius(center: Vector2, radius: float, exclude: int = 0) -> Array[int]:
+	_frame_queries += 1
 	var out: Array[int] = []
 	EnemyCombat.gather_in_radius(center, radius, out, exclude)
 	return out
 
 
 func nearest_enemy(center: Vector2, radius: float, exclude: int = 0) -> int:
+	_frame_queries += 1
 	return EnemyCombat.nearest_enemy(center, radius, exclude)
 
 
 func lowest_hp_enemy_in_radius(center: Vector2, radius: float, exclude: int = 0) -> int:
+	_frame_queries += 1
 	return EnemyCombat.lowest_health_in_radius(center, radius, exclude)
 
 
 func damage_enemy(handle: int, amount: float, tags: PackedStringArray) -> float:
 	if not enemy_alive(handle) or amount <= 0.0:
 		return 0.0
+	_frame_damage_calls += 1
 	var ledger_payload := HitLedger.new()
 	ledger_payload.target_handle = handle
 	ledger_payload.source = _player
@@ -1335,6 +1360,7 @@ func _tick_attack_fx(delta: float) -> void:
 func spawn_bullet(origin: Vector2, direction: Vector2, damage: float, tags: PackedStringArray, overrides: Dictionary = {}) -> bool:
 	if _player == null or not _player.has_method("spawn_generated_bullet"):
 		return false
+	_frame_bullets += 1
 	telemetry["generated"] = int(telemetry["generated"]) + 1
 	var life := projectile_life_multiplier()
 	if life != 1.0:
@@ -1720,8 +1746,24 @@ func _process(delta: float) -> void:
 	_track_dash()
 	_tick_reaction_triggers(delta)
 	var tick_started := Time.get_ticks_usec()
-	for engine in engines:
-		engine.tick(delta)
+	# A tick may rebuild `engines` (a purchase landing mid-frame): time the
+	# list this frame started with.
+	var ticking := engines
+	if not is_same(_engine_tick_source, ticking) or _engine_tick_usec.size() != ticking.size():
+		_engine_tick_source = ticking
+		_engine_tick_usec.resize(ticking.size())
+		_engine_tick_codes.resize(ticking.size())
+		for i in range(ticking.size()):
+			_engine_tick_codes[i] = ticking[i].discipline()
+	var engine_started := tick_started
+	for i in range(ticking.size()):
+		# An engine may empty the list in place (the runner leaving the tree).
+		if i >= ticking.size():
+			break
+		ticking[i].tick(delta)
+		var engine_ended := Time.get_ticks_usec()
+		_engine_tick_usec[i] = engine_ended - engine_started
+		engine_started = engine_ended
 	# The Encore repeat fires after the engines ticked, so the opening cast's
 	# wind-up has resolved before the repeat is asked for.
 	if _encore_delay >= 0.0:
@@ -1730,6 +1772,7 @@ func _process(delta: float) -> void:
 			_encore_delay = -1.0
 			_cast_encore()
 	var flush_started := Time.get_ticks_usec()
+	_encore_usec = flush_started - engine_started
 	var flushed := flush_attacks(ATTACK_BUDGET_PER_FRAME)
 	var flush_ended := Time.get_ticks_usec()
 	frame_cost["tick_usec"] = flush_started - tick_started
@@ -1738,8 +1781,22 @@ func _process(delta: float) -> void:
 	frame_cost["queued"] = _attack_queue.size()
 	frame_cost["hit_usec"] = _frame_hit_usec
 	frame_cost["hits_this_frame"] = _frame_hits
+	frame_cost["bullets"] = _frame_bullets
+	frame_cost["damage_calls"] = _frame_damage_calls
+	frame_cost["queries"] = _frame_queries
+	var tick_cost := flush_started - tick_started
+	if tick_cost >= SLOW_TICK_USEC and PerformanceFlightRecorder != null and (flush_started - _slow_tick_event_usec >= SLOW_TICK_EVENT_GAP_USEC or tick_cost > 2 * _slow_tick_event_cost):
+		_slow_tick_event_usec = flush_started
+		_slow_tick_event_cost = tick_cost
+		PerformanceFlightRecorder.record_event(&"ascension", &"slow_tick", {
+			"tick_usec": tick_cost, "engine_usec": _engine_usec_map(), "encore_usec": _encore_usec,
+			"bullets": _frame_bullets, "damage_calls": _frame_damage_calls, "queries": _frame_queries,
+		})
 	_frame_hit_usec = 0
 	_frame_hits = 0
+	_frame_bullets = 0
+	_frame_damage_calls = 0
+	_frame_queries = 0
 	_tick_attack_fx(delta)
 	_draw_points.clear()
 	_texture_points.clear()
@@ -1993,7 +2050,8 @@ func slot_state(slot: String) -> Dictionary:
 	return state
 
 
-## Cheap counters for the flight recorder (no allocation beyond the dict).
+## Cheap counters for the flight recorder: one dictionary, the per-engine
+## times and a copy of each engine's own frame cost.
 func get_debug_counters() -> Dictionary:
 	var out := {
 		"queued_attacks": _attack_queue.size(),
@@ -2003,11 +2061,27 @@ func get_debug_counters() -> Dictionary:
 		"hit_usec": int(frame_cost["hit_usec"]),
 		"hits_this_frame": int(frame_cost["hits_this_frame"]),
 		"engines": engines.size(),
+		"engine_usec": _engine_usec_map(),
+		"encore_usec": _encore_usec,
+		"bullets": int(frame_cost.get("bullets", 0)),
+		"damage_calls": int(frame_cost.get("damage_calls", 0)),
+		"queries": int(frame_cost.get("queries", 0)),
 	}
 	for engine in engines:
 		var cost := engine.frame_cost()
 		if not cost.is_empty():
-			out[engine.discipline()] = cost
+			# A copy: the engine rewrites this one dictionary every frame, and
+			# a sample that held the reference showed whatever it contained
+			# when the incident was written, seconds later.
+			out[engine.discipline()] = cost.duplicate()
+	return out
+
+
+## {discipline code: microseconds} for the last frame's engine ticks.
+func _engine_usec_map() -> Dictionary:
+	var out := {}
+	for i in range(mini(_engine_tick_codes.size(), _engine_tick_usec.size())):
+		out[_engine_tick_codes[i]] = _engine_tick_usec[i]
 	return out
 
 

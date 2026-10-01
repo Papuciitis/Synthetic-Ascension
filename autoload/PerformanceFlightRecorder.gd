@@ -16,6 +16,12 @@ const EVENT_BUCKET_USEC := 250_000
 ## that finalizes the next incident or accepts a written report.
 const RETIRE_PER_FRAME := 128
 const PerformanceIncidentWriteQueueScript := preload("res://autoload/performance/PerformanceIncidentWriteQueue.gd")
+const PerformanceIncidentSummaryScript := preload("res://autoload/performance/PerformanceIncidentSummary.gd")
+## Main-thread time per frame for copying a finished incident for the report
+## writer. With the queue's default 1500 and ~200 ms to copy, the 2026-10-01
+## captures carried 1.5-2 ms of recorder work on 23% of their frames; the
+## copy is ~45 ms now, so this still finishes in about 1.5 s.
+const REPORT_COPY_BUDGET_USEC := 500
 
 var enabled := false
 var automatic_capture := true
@@ -46,6 +52,10 @@ var _aftermath_end_usec := 0
 var _cooldown_end_usec := 0
 var _sequence := 0
 var _latest_incident: Dictionary = {}
+## The latest incident's summary lives beside it, never inside: the write
+## queue may still be copying the incident. Pending = nobody has built it.
+var _latest_summary: Dictionary = {}
+var _latest_summary_pending := false
 var _latest_report_path := ""
 var _latest_error := ""
 var _trigger_reason: StringName = &""
@@ -58,17 +68,52 @@ var _max_sampling_overhead_usec := 0
 var _dropped_samples := 0
 var _automatic_armed := true
 var _recovery_frames := 0
-var _report_write_queue: RefCounted = PerformanceIncidentWriteQueueScript.new()
+var _report_write_queue: RefCounted = PerformanceIncidentWriteQueueScript.new(Callable(), REPORT_COPY_BUDGET_USEC)
 ## Sample arrays of retired incidents, emptied RETIRE_PER_FRAME at a time.
 ## Each is this recorder's own shallow copy, so draining it never touches an
 ## array the write queue may still be copying.
 var _retiring: Array[Array] = []
 var _scheduler: Node = null
+var _projectile_manager: Node = null
+## Clock stamps that split the frame behind a sample into phases: the end
+## of the script _process callbacks (FrameTail) and the renderer's draw
+## start and end. Three clock reads a frame; see _frame_phases().
+var _phase_from_usec := 0
+var _phase_process_end_usec := 0
+var _phase_pre_draw_usec := 0
+var _phase_post_draw_usec := 0
+## A scene change in flight (note_scene_change): the destination, and how
+## many more samples carry it. Three cover the frame that loads the scene
+## file, the frame that builds the new scene and frees the old one, and the
+## new scene's first frame.
+const SCENE_CHANGE_SAMPLES := 3
+var _scene_change_label := ""
+var _scene_change_samples_left := 0
+
+
+## Runs after every other _process callback and stamps where the frame's
+## script work ended.
+class FrameTail:
+	extends Node
+	var recorder: Node = null
+
+	func _init() -> void:
+		process_mode = Node.PROCESS_MODE_ALWAYS
+		process_priority = 2147483647
+
+	func _process(_delta: float) -> void:
+		recorder._phase_process_end_usec = Time.get_ticks_usec()
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	set_process(true)
+	var tail := FrameTail.new()
+	tail.name = "FrameTail"
+	tail.recorder = self
+	add_child(tail)
+	RenderingServer.frame_pre_draw.connect(_on_frame_pre_draw)
+	RenderingServer.frame_post_draw.connect(_on_frame_post_draw)
 	if RunEvents != null and RunEvents.has_signal("resonance_changed"):
 		RunEvents.resonance_changed.connect(_on_resonance_changed)
 	var threat_director := get_node_or_null("/root/ThreatDirector")
@@ -100,9 +145,56 @@ func _process(delta: float) -> void:
 	sample["delta_ms"] = delta * 1000.0
 	sample["wall_ms"] = (float(int(sample["t_usec"]) - _last_sample_usec) / 1000.0) if _last_sample_usec > 0 else delta * 1000.0
 	_last_sample_usec = int(sample["t_usec"])
+	var phases := _frame_phases(_last_sample_usec)
+	if not phases.is_empty():
+		sample["frame_phases"] = phases
+	if _scene_change_samples_left > 0:
+		_scene_change_samples_left -= 1
+		sample["scene_change"] = _scene_change_label
 	ingest_sample(sample)
 	_sampling_overhead_usec = Time.get_ticks_usec() - started
 	_max_sampling_overhead_usec = maxi(_max_sampling_overhead_usec, _sampling_overhead_usec)
+
+
+## Global.goto_scene calls this just before the blocking change. The samples
+## that span it carry the destination, so the 0.5-2 s frame is tagged
+## "scene_change" instead of "unattributed" (the 2026-10-01 captures' largest
+## gaps were all scene changes, with a few ms attributed).
+func note_scene_change(label: String) -> void:
+	_scene_change_label = label
+	_scene_change_samples_left = SCENE_CHANGE_SAMPLES
+	record_event(&"scene", &"change", {"to": label})
+
+
+func _on_frame_pre_draw() -> void:
+	_phase_pre_draw_usec = Time.get_ticks_usec()
+
+
+func _on_frame_post_draw() -> void:
+	_phase_post_draw_usec = Time.get_ticks_usec()
+
+
+## Where the wall time between the previous sample and this one went, in ms:
+##   process         the rest of the recorder's own _process and every
+##                   script _process callback after it
+##   deferred        the rest of the frame's script side: tweens, timers,
+##                   deferred calls and queued frees, up to the draw
+##   render_present  the renderer's draw and buffer swap, INCLUDING any wait
+##                   for vsync the driver does inside the swap
+## What wall_ms has left after these and physics_frame_ms is the engine's
+## own between-frame work plus the _process callbacks that run before the
+## recorder. Keys are left out when their stamps did not happen in order
+## (headless never draws; the first sample has no start).
+func _frame_phases(now_usec: int) -> Dictionary:
+	var from := _phase_from_usec
+	_phase_from_usec = now_usec
+	if from <= 0 or _phase_process_end_usec < from or _phase_process_end_usec > now_usec:
+		return {}
+	var out := {"process": float(_phase_process_end_usec - from) / 1000.0}
+	if _phase_pre_draw_usec >= _phase_process_end_usec and _phase_post_draw_usec >= _phase_pre_draw_usec and _phase_post_draw_usec <= now_usec:
+		out["deferred"] = float(_phase_pre_draw_usec - _phase_process_end_usec) / 1000.0
+		out["render_present"] = float(_phase_post_draw_usec - _phase_pre_draw_usec) / 1000.0
+	return out
 
 
 func _exit_tree() -> void:
@@ -119,6 +211,10 @@ func set_enabled(value: bool) -> void:
 	if value == enabled:
 		return
 	enabled = value
+	# Neither a scene change in flight nor the last frame's phase stamps
+	# belong to whatever is sampled after a pause in recording.
+	_scene_change_samples_left = 0
+	_phase_from_usec = 0
 	if enabled:
 		_state = STATE_WATCHING
 		_session_started_usec = Time.get_ticks_usec()
@@ -249,6 +345,13 @@ func collect_runtime_sample() -> Dictionary:
 		sample["physics_step_ms"] = float(scheduler.call("last_step_sample_ms"))
 		sample["physics_ticks"] = int(scheduler.call("frame_physics_ticks"))
 		sample["physics_frame_ms"] = float(scheduler.call("frame_physics_ms"))
+	# This frame's projectile step and count. The slow snapshot carries them
+	# too (kept for callers that read it directly), up to 30 frames old.
+	if _projectile_manager == null or not is_instance_valid(_projectile_manager):
+		_projectile_manager = get_node_or_null("/root/ProjectileManager") if is_inside_tree() else null
+	if _projectile_manager != null and _projectile_manager.has_method("get_debug_counters"):
+		sample["projectiles"] = int(_projectile_manager.call("active_count"))
+		sample["projectile_ms"] = float((_projectile_manager.call("get_debug_counters") as Dictionary).get("physics_ms", 0.0))
 	# Combat subsystem costs per frame: the advancement tree's engine ticks,
 	# attack queue flush and backlog, Barrage fragment updates and
 	# reacquisitions. Cheap: the runner keeps these as plain counters.
@@ -456,7 +559,12 @@ func _finalize_incident(now_usec: int) -> void:
 			var event_copy := event.duplicate(true)
 			event_copy.erase("__bucket_key")
 			incident_events.append(event_copy)
-	var summary := _build_summary(_capture_samples, incident_events)
+	# With reports on, the summary is the report writer's to build, on its
+	# thread, from its own copy (the incident carries an empty one for it to
+	# fill). Without reports there is no writer: build it here as before.
+	var summary := {} if write_reports else _build_summary(_capture_samples, incident_events)
+	_latest_summary = summary
+	_latest_summary_pending = write_reports
 	var segment := int((_capture_samples[-1] as Dictionary).get("segment", 0)) if not _capture_samples.is_empty() else 0
 	_retire_samples(_latest_incident.get("samples", []))
 	_latest_incident = {
@@ -487,87 +595,20 @@ func _finalize_incident(now_usec: int) -> void:
 		incident_finalized.emit(summary, "")
 
 
-func _build_summary(samples: Array[Dictionary], events: Array) -> Dictionary:
-	var frame_times: Array[float] = []
-	var wall_times: Array[float] = []
-	var worst := 0.0
-	var worst_wall := 0.0
-	var below_60 := 0
-	var below_45 := 0
-	var below_30 := 0
-	var process_peak := 0.0
-	var physics_peak := 0.0
-	var ascension_peak_usec := 0
-	var fragment_peak_usec := 0
-	for sample in samples:
-		var frame_ms := float(sample.get("frame_ms", 0.0))
-		frame_times.append(frame_ms)
-		worst = maxf(worst, frame_ms)
-		var wall_ms := float(sample.get("wall_ms", frame_ms))
-		wall_times.append(wall_ms)
-		worst_wall = maxf(worst_wall, wall_ms)
-		var ascension: Dictionary = sample.get("ascension", {})
-		if not ascension.is_empty():
-			ascension_peak_usec = maxi(ascension_peak_usec, int(ascension.get("tick_usec", 0)) + int(ascension.get("flush_usec", 0)) + int(ascension.get("hit_usec", 0)))
-			var barrage: Dictionary = ascension.get("BR", {})
-			fragment_peak_usec = maxi(fragment_peak_usec, int(barrage.get("fragment_usec", 0)))
-		process_peak = maxf(process_peak, float(sample.get("process_ms", 0.0)))
-		physics_peak = maxf(physics_peak, float(sample.get("physics_ms", 0.0)))
-		if frame_ms > 1000.0 / 60.0: below_60 += 1
-		if frame_ms > 1000.0 / 45.0: below_45 += 1
-		if frame_ms > 1000.0 / 30.0: below_30 += 1
-	frame_times.sort()
-	wall_times.sort()
-	var hitches := PerformanceHitchTagger.distribution(samples)
-	return {
-		"worst_frame_ms": worst,
-		"median_frame_ms": _percentile(frame_times, 0.50),
-		"p95_frame_ms": _percentile(frame_times, 0.95),
-		"p99_frame_ms": _percentile(frame_times, 0.99),
-		# Wall-clock spacing between samples: the frame time the player felt.
-		"worst_wall_ms": worst_wall,
-		"median_wall_ms": _percentile(wall_times, 0.50),
-		"p95_wall_ms": _percentile(wall_times, 0.95),
-		"p99_wall_ms": _percentile(wall_times, 0.99),
-		"frames_below_60": below_60,
-		"frames_below_45": below_45,
-		"frames_below_30": below_30,
-		# Windowed engine monitors (about one publish a second, rendering
-		# synchronisation included): which side peaked, not which script.
-		"peak_process_ms": process_peak,
-		"peak_physics_ms": physics_peak,
-		"dominant_thread": "physics" if physics_peak > process_peak else "process",
-		"monitor_note": "process_ms/physics_ms are Godot's windowed monitors and include render sync; frame_ms/delta_ms are the capped process delta; wall_ms is real sample spacing.",
-		"peak_ascension_usec": ascension_peak_usec,
-		"peak_fragment_usec": fragment_peak_usec,
-		"nearby_event_groups": _event_group_summary(events),
-		"note": "Events overlap the incident timeline; correlation does not prove causation.",
-		# War room M3: every sample over 28 ms wall time named by its largest
-		# measured cost (see PerformanceHitchTagger).
-		"hitch_count": int(hitches.get("hitches", 0)),
-		"hitch_tags": hitches.get("tags", []),
-		"worst_hitches": hitches.get("worst", []),
-	}
+## The incident summary (see PerformanceIncidentSummary). With reports on,
+## the report writer builds it on its thread; this is the same builder for
+## the paths that need one at once.
+func _build_summary(samples: Array, events: Array) -> Dictionary:
+	return PerformanceIncidentSummaryScript.build(samples, events)
 
 
-func _percentile(sorted_values: Array[float], fraction: float) -> float:
-	if sorted_values.is_empty():
-		return 0.0
-	var index := clampi(int(ceil(fraction * sorted_values.size())) - 1, 0, sorted_values.size() - 1)
-	return sorted_values[index]
-
-
-func _event_group_summary(events: Array) -> Array:
-	var groups := {}
-	for event_variant in events:
-		var event := event_variant as Dictionary
-		var key := "%s/%s" % [event.get("category", ""), event.get("name", "")]
-		groups[key] = int(groups.get(key, 0)) + int(event.get("amount", 1))
-	var output: Array = []
-	for key in groups:
-		output.append({"event": key, "count": groups[key]})
-	output.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a["count"]) > int(b["count"]))
-	return output.slice(0, mini(12, output.size()))
+## The latest incident's summary, built here only if something asks before
+## the report writer has returned its own.
+func _latest_incident_summary() -> Dictionary:
+	if _latest_summary_pending:
+		_latest_summary_pending = false
+		_latest_summary = _build_summary(_latest_incident.get("samples", []), _latest_incident.get("events", []))
+	return _latest_summary
 
 
 func _poll_completed_reports() -> void:
@@ -579,13 +620,26 @@ func _accept_report_completion(completion: Dictionary) -> void:
 	var incident := completion.get("incident", {}) as Dictionary
 	# The written copy goes away with this completion; release it gradually.
 	_retire_samples(incident.get("samples", []))
+	# The writer built the summary; take it for the incident it belongs to
+	# (a writer that never ran leaves it empty, and the on-demand build).
+	# Sequence numbers restart with clear_session, so the trigger time is
+	# part of the identity.
+	var written_meta := incident.get("metadata", {}) as Dictionary
+	var latest_meta := _latest_incident.get("metadata", {}) as Dictionary
+	var is_latest := not latest_meta.is_empty() and int(written_meta.get("sequence", -1)) == int(latest_meta.get("sequence", -2)) and int(written_meta.get("trigger_usec", -1)) == int(latest_meta.get("trigger_usec", -2))
+	var written_summary := incident.get("summary", {}) as Dictionary
+	if is_latest and written_summary.is_empty():
+		written_summary = _latest_incident_summary()
+	elif is_latest and _latest_summary_pending:
+		_latest_summary = written_summary
+		_latest_summary_pending = false
 	var result := completion.get("result", {}) as Dictionary
 	if bool(result.get("ok", false)):
 		_latest_report_path = String(result.get("json_path", ""))
 		_latest_error = ""
 	else:
 		_latest_error = String(result.get("error", "Unknown report write failure"))
-	incident_finalized.emit(incident.get("summary", {}), _latest_report_path)
+	incident_finalized.emit(written_summary, _latest_report_path)
 
 
 func _retire_samples(samples: Variant) -> void:
@@ -630,7 +684,10 @@ func get_status_snapshot() -> Dictionary:
 		"state": _state,
 		"baseline_ms": _baseline_ms,
 		"incident_count": _sequence,
-		"latest_summary": _latest_incident.get("summary", {}),
+		# Empty until the report writer returns it (or get_latest_incident
+		# builds it): the overlay polls this, and must not put the build
+		# back on the main thread.
+		"latest_summary": _latest_summary,
 		"latest_report_path": _latest_report_path,
 		"latest_error": _latest_error,
 		"history_samples": _history.size(),
@@ -643,7 +700,10 @@ func get_status_snapshot() -> Dictionary:
 
 
 func get_latest_incident() -> Dictionary:
-	return _latest_incident.duplicate(true)
+	var incident := _latest_incident.duplicate(true)
+	if not incident.is_empty():
+		incident["summary"] = _latest_incident_summary().duplicate(true)
+	return incident
 
 
 func clear_session() -> void:
@@ -656,6 +716,8 @@ func clear_session() -> void:
 	# frames (PerformanceIncidentWriteQueue.step). Mutating it here would
 	# rewrite the report mid-copy.
 	_latest_incident = {}
+	_latest_summary = {}
+	_latest_summary_pending = false
 	_latest_report_path = ""
 	_latest_error = ""
 	_sequence = 0

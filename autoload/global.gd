@@ -362,6 +362,8 @@ func goto_scene(path: String) -> void:
 	scrim.show_for(_scene_title(path), get_tree().current_scene)
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("note_scene_change"):
+		PerformanceFlightRecorder.note_scene_change(path.get_file().get_basename())
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
 		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])

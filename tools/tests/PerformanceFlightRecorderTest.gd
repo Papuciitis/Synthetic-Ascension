@@ -185,6 +185,55 @@ func _run() -> void:
 	if completed_report_paths.size() == 1:
 		_check(FileAccess.file_exists(completed_report_paths[0]), "background recorder writes the JSON report")
 	_check(int(recorder.get_status_snapshot().get("pending_reports", -1)) == 0, "completed background report leaves no pending work")
+
+	# Closing an incident leaves its summary to the report writer's thread:
+	# building it on the closing frame was a 5-27 ms recorder spike once per
+	# incident (2026-10-01: 273 such frames, 128 of them hitches). Anything
+	# that asks before the report is back still gets a summary, built then.
+	recorder.clear_session()
+	var finished_summaries: Array[Dictionary] = []
+	recorder.incident_finalized.connect(func(summary: Dictionary, _path: String) -> void:
+		finished_summaries.append(summary)
+	)
+	recorder.mark_incident(&"deferred_summary_test")
+	var deferred_start := Time.get_ticks_usec()
+	for i in range(6):
+		recorder.ingest_sample(_sample(deferred_start + i * 16_667, 47.0 if i == 2 else 18.0))
+	_check(bool(recorder.get("_latest_summary_pending")), "with reports on, closing an incident does not build its summary on that frame")
+	_check((recorder.get_status_snapshot().get("latest_summary", {}) as Dictionary).is_empty() and bool(recorder.get("_latest_summary_pending")), "the status snapshot (polled by the overlay) does not force the build either")
+	# A report that returns for a DIFFERENT incident with the same sequence
+	# number (clear_session restarts the count) is not this one's summary.
+	var latest_meta: Dictionary = (recorder.get("_latest_incident") as Dictionary).get("metadata", {})
+	recorder.call("_accept_report_completion", {"incident": {"metadata": {"sequence": int(latest_meta.get("sequence", 0)), "trigger_usec": int(latest_meta.get("trigger_usec", 0)) - 5}, "summary": {"worst_frame_ms": 1.0}, "samples": []}, "result": {"ok": true, "json_path": "memory://other.json"}})
+	_check(bool(recorder.get("_latest_summary_pending")), "a report from an earlier session's incident with the same number is not adopted")
+	# A writer that never ran hands back an empty summary: listeners still get one.
+	recorder.call("_accept_report_completion", {"incident": {"metadata": latest_meta.duplicate(), "summary": {}, "samples": []}, "result": {"ok": false, "error": "no thread"}})
+	_check(finished_summaries.size() == 2 and float(finished_summaries[1].get("worst_frame_ms", 0.0)) >= 47.0, "a report that came back without a summary is announced with the recorder's own")
+	finished_summaries.clear()
+	recorder.set("_latest_summary_pending", true)
+	_check(float((recorder.get_latest_incident().get("summary", {}) as Dictionary).get("worst_frame_ms", 0.0)) >= 47.0, "asking for the incident still returns its summary, built on demand")
+	_check(not bool(recorder.get("_latest_summary_pending")), "and it is built once")
+	recorder.mark_incident(&"deferred_summary_test_2")
+	deferred_start = Time.get_ticks_usec()
+	for i in range(6):
+		recorder.ingest_sample(_sample(deferred_start + i * 16_667, 52.0 if i == 2 else 18.0))
+	recorder.set_process(true)
+	async_deadline = Time.get_ticks_msec() + 3000
+	while finished_summaries.size() < 2 and Time.get_ticks_msec() < async_deadline:
+		await get_tree().process_frame
+	recorder.set_process(false)
+	_check(finished_summaries.size() == 2 and float(finished_summaries[1].get("worst_frame_ms", 0.0)) >= 52.0, "the finished report carries the summary the writer built")
+	# The copy budget is the recorder's own: the balance recorder shares the
+	# queue class and keeps the class default.
+	_check(int((recorder.get("_report_write_queue") as RefCounted).get("_step_budget_usec")) == int(recorder.get("REPORT_COPY_BUDGET_USEC")) and int(recorder.get("REPORT_COPY_BUDGET_USEC")) < int(PerformanceIncidentWriteQueue.STEP_BUDGET_USEC), "the flight recorder copies under its own, smaller per-frame budget")
+	_check(int(PerformanceIncidentWriteQueue.new().get("_step_budget_usec")) == int(PerformanceIncidentWriteQueue.STEP_BUDGET_USEC), "a queue built without a budget keeps the class default")
+	# Turning the recorder off and on forgets a scene change in flight and
+	# the previous frame's phase stamps.
+	recorder.call("note_scene_change", "MainMenu")
+	recorder.set_enabled(false)
+	recorder.set_enabled(true)
+	_check(int(recorder.get("_scene_change_samples_left")) == 0 and int(recorder.get("_phase_from_usec")) == 0, "re-enabling the recorder drops a pending scene-change mark and the old phase start")
+	_check(not bool(recorder.get("_latest_summary_pending")) and float((recorder.get_status_snapshot().get("latest_summary", {}) as Dictionary).get("worst_frame_ms", 0.0)) >= 52.0, "and the recorder adopts it instead of building its own")
 	# Incident capture must not deep-copy the whole history ring on the spike
 	# frame itself: samples are immutable after ingest, so capture shares them.
 	recorder.clear_session()

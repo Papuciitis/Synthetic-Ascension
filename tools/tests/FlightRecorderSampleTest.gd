@@ -45,6 +45,13 @@ func _run() -> void:
 	_check(absf(float(sample["wall_ms"]) - spacing_ms) < 1.0 and is_equal_approx(float(sample["delta_ms"]), 16.0), "wall spacing (%.2f ms) equals the real sample spacing (%.2f ms), not the 16 ms delta" % [float(sample["wall_ms"]), spacing_ms])
 	_check(sample.has("ascension") and (sample["ascension"] as Dictionary).has("queued_attacks") and (sample["ascension"] as Dictionary).has("tick_usec"), "the tree's queue backlog and tick cost ride the sample")
 	_check(sample.has("projectile_ms") and sample.has("chunk_stream"), "projectile time and chunk stream stats ride the sample")
+	# The projectile step and count are this frame's, read from the manager:
+	# the 0.5 s slow snapshot's copies could be 30 frames old (the 2026-10-01
+	# spike sample's "1.7 ms" was the snapshot's, not that frame's).
+	PerformanceFlightRecorder.set("_cached_slow_snapshot", {"projectile_ms": 99.0, "projectiles": 777, "chunk_stream": {}})
+	var fresh: Dictionary = PerformanceFlightRecorder.collect_runtime_sample()
+	var manager_now: Dictionary = ProjectileManager.get_debug_counters()
+	_check(is_equal_approx(float(fresh.get("projectile_ms", -1.0)), float(manager_now.get("physics_ms", -2.0))) and int(fresh.get("projectiles", -1)) == ProjectileManager.active_count(), "a sample reads the projectile step and count live, not from the half-second snapshot (%.3f ms, %d)" % [float(fresh.get("projectile_ms", -1.0)), int(fresh.get("projectiles", -1))])
 	var summary: Dictionary = PerformanceFlightRecorder._build_summary(history, [])
 	_check(summary.has("p95_wall_ms") and summary.has("monitor_note") and summary.has("peak_ascension_usec"), "the summary reports wall percentiles, the monitor caveat and the tree's peak cost")
 	PerformanceFlightRecorder.enabled = was_enabled

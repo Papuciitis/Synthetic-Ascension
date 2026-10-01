@@ -57,7 +57,7 @@ var _quadrant_anchor: Vector2 = Vector2.ZERO
 var _patches: Array = []            # [position, time_left]
 var fragments: Array = []           # {pos, vel, target, damage, life, pp, bounces, root, gen}
 var _pending_fragments: Array = []
-var _fragment_cost: Dictionary = {"fragment_usec": 0, "retargets": 0, "retargets_deferred": 0, "fragments_live": 0, "fragments_pending": 0}
+var _fragment_cost: Dictionary = {"fragment_usec": 0, "retargets": 0, "retargets_deferred": 0, "fragments_live": 0, "fragments_pending": 0, "retarget_usec": 0, "hit_usec": 0, "hits": 0}
 
 var burst_left: float = 0.0
 var burst_total: float = 0.0
@@ -568,11 +568,20 @@ func _tick_fragments(delta: float) -> void:
 	_fragment_cost["retargets"] = 0
 	_fragment_cost["retargets_deferred"] = 0
 	_fragment_cost["fragments_pending"] = _pending_fragments.size()
+	# The update's two expensive parts, timed on their own (two clock reads
+	# per retarget and per hit): target queries, and the hits fragments land
+	# (the whole damage pipeline, a kill's consequences included).
+	var retarget_usec := 0
+	var hit_usec := 0
+	var hits := 0
 	if not _pending_fragments.is_empty():
 		fragments.append_array(_pending_fragments)
 		_pending_fragments.clear()
 	_fragment_cost["fragments_live"] = fragments.size()
 	if fragments.is_empty():
+		_fragment_cost["retarget_usec"] = 0
+		_fragment_cost["hit_usec"] = 0
+		_fragment_cost["hits"] = 0
 		_fragment_cost["fragment_usec"] = Time.get_ticks_usec() - started
 		return
 	var retargets_left := FRAGMENT_RETARGETS_PER_FRAME
@@ -587,7 +596,9 @@ func _tick_fragments(delta: float) -> void:
 			if retargets_left > 0:
 				retargets_left -= 1
 				_fragment_cost["retargets"] = int(_fragment_cost["retargets"]) + 1
+				var retarget_started := Time.get_ticks_usec()
 				target = runner.lowest_hp_enemy_in_radius(fragment["pos"], FRAGMENT_SEEK_RANGE, int(fragment["last"]))
+				retarget_usec += Time.get_ticks_usec() - retarget_started
 				fragment["target"] = target
 			else:
 				_fragment_cost["retargets_deferred"] = int(_fragment_cost["retargets_deferred"]) + 1
@@ -600,7 +611,10 @@ func _tick_fragments(delta: float) -> void:
 			vel = vel.lerp(desired, clampf(delta * 10.0, 0.0, 1.0))
 			var reach := EnemyWorld.get_collision_radius(target) + FRAGMENT_HIT_PAD
 			if to_target.length() <= maxf(reach, FRAGMENT_SPEED * delta):
+				var hit_started := Time.get_ticks_usec()
 				_fragment_hit(fragment, target)
+				hit_usec += Time.get_ticks_usec() - hit_started
+				hits += 1
 				if int(fragment["bounces"]) <= 0:
 					fragments.remove_at(i)
 					continue
@@ -613,6 +627,9 @@ func _tick_fragments(delta: float) -> void:
 				continue
 		fragment["vel"] = vel
 		fragment["pos"] = pos + vel * delta
+	_fragment_cost["retarget_usec"] = retarget_usec
+	_fragment_cost["hit_usec"] = hit_usec
+	_fragment_cost["hits"] = hits
 	_fragment_cost["fragment_usec"] = Time.get_ticks_usec() - started
 
 

@@ -4,12 +4,17 @@ extends Node
 ## like a real segment-2 capture (tools/tests/fixtures/flight_recorder_sample.json:
 ## 129 values each, as the 2026-09-27 captures carry). 10 s of history and 5 s
 ## of aftermath at 60 Hz with ~200 events, three incidents in a row; report
-## writing goes to a writer that touches no disk.
+## writing goes to a writer that touches no disk. Samples are assembled the
+## way the recorder assembles them: the nested blocks of the 0.5 s slow
+## snapshot are shared BY REFERENCE by the 30 samples of that half second,
+## and only the tree's block is fresh every frame.
 ##
 ## Prints the slowest frame of recorder work (ingest + report servicing on the
-## same frame), its two parts' worst cases, and the direct cost of one
-## sanitizing copy of an incident. Exits 1 when a frame's recorder work
-## exceeds FRAME_BUDGET_MS or a report goes missing.
+## same frame), its two parts' worst cases, how many frames carried a
+## millisecond or more of it and the total per incident (the queue's copy and
+## the release of old samples), and what walking every value of one incident
+## costs (the copy as it was before samples shared their snapshot's copy). Exits 1 when a frame's recorder
+## work exceeds FRAME_BUDGET_MS or a report goes missing.
 ##
 ## Run: <godot> --headless --path . res://tools/tests/PerformanceIncidentFinalizeBenchmark.tscn
 
@@ -20,8 +25,12 @@ const AFTERMATH_SECONDS := 5.0
 const EVENTS_PER_INCIDENT := 200
 const INCIDENTS := 3
 ## Recorder work allowed on any one frame (the hitch threshold is 28 ms).
-## Before the budgeted copy the finalizing frame took 300-500 ms here.
-const FRAME_BUDGET_MS := 20.0
+## Before the budgeted copy the finalizing frame took 300-500 ms here; with
+## the summary still built on the closing frame it took 11-15 ms; since the
+## report writer builds it (2026-10-02) the worst frame is about 2 ms.
+const FRAME_BUDGET_MS := 8.0
+## Frames between slow snapshots (0.5 s at 60 Hz).
+const SLOW_SNAPSHOT_FRAMES := 30
 
 var _written := 0
 
@@ -43,7 +52,7 @@ func _run() -> void:
 		"aftermath_seconds": AFTERMATH_SECONDS,
 		"cooldown_seconds": 0.0,
 	})
-	recorder.set("_report_write_queue", PerformanceIncidentWriteQueue.new(_no_disk_writer))
+	recorder.set("_report_write_queue", PerformanceIncidentWriteQueue.new(_no_disk_writer, int(recorder.get("REPORT_COPY_BUDGET_USEC"))))
 	recorder.set_enabled(true)
 
 	var step_usec := int(1_000_000.0 / HZ)
@@ -53,6 +62,10 @@ func _run() -> void:
 	var worst_frame := 0
 	var frames := 0
 	var frame_total := 0
+	var busy_frames := 0
+	var step_total := 0
+	var drain_total := 0
+	var slow_snapshot: Dictionary = {}
 	var history_frames := int(HISTORY_SECONDS * HZ)
 	# Aftermath, then enough calm frames to re-arm the automatic trigger.
 	var aftermath_frames := int(AFTERMATH_SECONDS * HZ) + 40
@@ -60,7 +73,12 @@ func _run() -> void:
 		for i in range(history_frames + aftermath_frames):
 			if i % maxi(1, (history_frames + aftermath_frames) / EVENTS_PER_INCIDENT) == 0:
 				recorder.record_event(&"benchmark", &"tick", {"i": i, "at": Vector2(i, i)})
-			var sample := template.duplicate(true)
+			if frames % SLOW_SNAPSHOT_FRAMES == 0:
+				slow_snapshot = template.duplicate(true)
+			# Shallow, like collect_runtime_sample's merge of the cached slow
+			# snapshot: nested blocks are the snapshot's own.
+			var sample := slow_snapshot.duplicate()
+			sample["ascension"] = (template.get("ascension", {}) as Dictionary).duplicate(true)
 			sample["t_usec"] = t
 			# One slow frame trips the automatic trigger on the sample's own
 			# clock, so the aftermath runs its full length like in play.
@@ -73,13 +91,18 @@ func _run() -> void:
 			started = Time.get_ticks_usec()
 			# What _process does each frame besides sampling.
 			recorder.call("_poll_completed_reports")
+			var drain_started := Time.get_ticks_usec()
 			if recorder.has_method("_drain_retiring"):
 				recorder.call("_drain_retiring")
 			var step := Time.get_ticks_usec() - started
+			drain_total += Time.get_ticks_usec() - drain_started
 			worst_ingest = maxi(worst_ingest, ingest)
 			worst_step = maxi(worst_step, step)
 			worst_frame = maxi(worst_frame, ingest + step)
 			frame_total += ingest + step
+			step_total += step
+			if ingest + step >= 1000:
+				busy_frames += 1
 			frames += 1
 			t += step_usec
 	recorder.call("flush_reports")
@@ -99,11 +122,14 @@ func _run() -> void:
 	var dup_ms := float(Time.get_ticks_usec() - dup_started) / 1000.0
 	print("  breakdown: build_summary_ms=%.1f shallow_samples_copy_ms=%.2f events=%d" % [summary_ms, dup_ms, (incident.get("events", []) as Array).size()])
 	var worst_frame_ms := float(worst_frame) / 1000.0
-	print("PerformanceIncidentFinalizeBenchmark: incidents=%d written=%d samples/incident=%d worst_frame_ms=%.2f worst_ingest_ms=%.2f worst_queue_step_ms=%.2f mean_frame_ms=%.3f one_sanitizing_copy_ms=%.1f" % [
+	print("PerformanceIncidentFinalizeBenchmark: incidents=%d written=%d samples/incident=%d worst_frame_ms=%.2f worst_ingest_ms=%.2f worst_queue_step_ms=%.2f mean_frame_ms=%.3f full_walk_copy_ms=%.1f" % [
 		INCIDENTS, _written, (incident.get("samples", []) as Array).size(), worst_frame_ms,
 		float(worst_ingest) / 1000.0, float(worst_step) / 1000.0,
 		float(frame_total) / 1000.0 / maxf(1.0, float(frames)), copy_ms,
 	])
+	print("  recorder load: frames_with_1ms_or_more=%.0f per incident (of %d), report_servicing_ms=%.1f per incident (copy %.1f + release %.1f)" % [
+		float(busy_frames) / float(INCIDENTS), frames / INCIDENTS, float(step_total) / 1000.0 / float(INCIDENTS),
+		float(step_total - drain_total) / 1000.0 / float(INCIDENTS), float(drain_total) / 1000.0 / float(INCIDENTS)])
 	var ok := _written == INCIDENTS and worst_frame_ms <= FRAME_BUDGET_MS
 	if not ok:
 		push_error("FAIL: recorder frame work %.2f ms (budget %.1f ms), %d/%d reports written" % [worst_frame_ms, FRAME_BUDGET_MS, _written, INCIDENTS])

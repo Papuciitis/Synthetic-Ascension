@@ -103,6 +103,64 @@ func _run() -> void:
 	var half_done: Array = half_queue.call("shutdown") as Array
 	var half_copy: Dictionary = (half_done[0] as Dictionary).get("incident", {}) if half_done.size() == 1 else {}
 	_check(half_done.size() == 1 and (half_copy.get("samples", []) as Array).size() == 900, "shutdown completes and writes a copy interrupted mid-way")
+
+	# The recorder merges one 0.5 s slow snapshot into ~30 samples BY
+	# REFERENCE, so consecutive samples carry the very same nested values.
+	# Copying them again for every sample was most of the incident copy (the
+	# 2026-10-01 captures: 23% of all frames spent 1.5-2 ms in it). A nested
+	# value that IS the previous sample's is copied once and shared by the
+	# output rows; the report bytes do not change.
+	var shared_node := Node.new()
+	add_child(shared_node)
+	var snapshot_a := {"physics_step_ms": 3.5, "lifecycle": {"tier_changes": 7}, "owner": shared_node}
+	var snapshot_b := {"physics_step_ms": 4.5, "lifecycle": {"tier_changes": 8}}
+	var tiers := [3, 2, 1]
+	var shared_rows: Array = []
+	for i in range(6):
+		var shared_row := {"t_usec": i, "enemy_scheduler": (snapshot_a if i < 3 else snapshot_b), "enemy_tiers": tiers, "ascension": {"tick_usec": i}, "at": Vector2(i, 1)}
+		if i == 4:
+			shared_row.erase("enemy_scheduler")
+		shared_rows.append(shared_row)
+	var shared_incident := {"schema_version": 1, "metadata": {"sequence": 11}, "samples": shared_rows, "events": [{"t_usec": 2, "details": snapshot_b}]}
+	var shared_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
+	shared_queue.call("enqueue", shared_incident, "user://ignored-by-test")
+	var shared_steps := 0
+	while (shared_queue.get("_sanitizing") as Array).size() > 0 and shared_steps < 10_000:
+		# A one-microsecond budget: the copy stops after every sample, so the
+		# sharing has to survive from one step to the next.
+		shared_queue.call("step", 1)
+		shared_steps += 1
+	var shared_done: Array = shared_queue.call("shutdown") as Array
+	var shared_copy: Dictionary = (shared_done[0] as Dictionary).get("incident", {}) if shared_done.size() == 1 else {}
+	var out_rows: Array = shared_copy.get("samples", [])
+	_check(out_rows.size() == 6 and JSON.stringify(shared_copy) == JSON.stringify(PerformanceIncidentWriter._json_safe(shared_incident)), "samples sharing nested values copy to the same report bytes")
+	if out_rows.size() == 6:
+		_check(is_same(out_rows[0]["enemy_scheduler"], out_rows[1]["enemy_scheduler"]) and is_same(out_rows[1]["enemy_scheduler"], out_rows[2]["enemy_scheduler"]), "a nested value shared by consecutive samples is copied once")
+		_check(is_same(out_rows[0]["enemy_tiers"], out_rows[5]["enemy_tiers"]), "a shared array is copied once across the whole run of samples")
+		_check(not is_same(out_rows[0]["enemy_scheduler"], snapshot_a) and String(out_rows[0]["enemy_scheduler"]["owner"]).begins_with("<Node#"), "the shared copy is still a sanitized copy, never the live dictionary")
+		_check(not is_same(out_rows[2]["enemy_scheduler"], out_rows[3]["enemy_scheduler"]) and is_equal_approx(float(out_rows[3]["enemy_scheduler"]["physics_step_ms"]), 4.5), "a new snapshot gets its own copy")
+		_check(not (out_rows[4] as Dictionary).has("enemy_scheduler") and int(out_rows[5]["enemy_scheduler"]["lifecycle"]["tier_changes"]) == 8, "a sample without the key breaks the chain; the next one is copied afresh")
+		_check(not is_same(out_rows[0]["ascension"], out_rows[1]["ascension"]) and int(out_rows[1]["ascension"]["tick_usec"]) == 1, "per-frame values keep their own copies")
+	shared_node.queue_free()
+
+	# The recorder closes an incident with an EMPTY summary: building it (a
+	# pass over ~900 samples plus the hitch tags) was 5-27 ms on the closing
+	# frame in the 2026-10-01 captures. The worker builds it from its own
+	# copy, in place, so the report reads exactly as before.
+	var summary_rows: Array = []
+	for i in range(40):
+		summary_rows.append({"t_usec": 1_000_000 + i * 16_667, "frame_ms": 16.0, "wall_ms": (45.0 if i == 20 else 16.0)})
+	var unsummarized := {"schema_version": 1, "metadata": {"sequence": 12}, "summary": {}, "samples": summary_rows, "events": [{"t_usec": 1_100_000, "category": "enemy", "name": "died", "details": {}}]}
+	var summary_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
+	summary_queue.call("enqueue", unsummarized, "user://ignored-by-test")
+	var summarized_done: Array = summary_queue.call("shutdown") as Array
+	var summarized: Dictionary = (summarized_done[0] as Dictionary).get("incident", {}) if summarized_done.size() == 1 else {}
+	var built: Dictionary = summarized.get("summary", {})
+	_check(int(built.get("hitch_count", -1)) == 1 and is_equal_approx(float(built.get("worst_wall_ms", 0.0)), 45.0), "an incident handed over with an empty summary gets it built by the writer (%d hitch, worst %.1f ms)" % [int(built.get("hitch_count", -1)), float(built.get("worst_wall_ms", 0.0))])
+	_check(summarized.keys() == ["schema_version", "metadata", "summary", "samples", "events"], "the summary keeps its place in the report")
+	_check(JSON.stringify(built) == JSON.stringify(PerformanceFlightRecorder.call("_build_summary", summary_rows, unsummarized["events"])), "and is what the recorder itself would have built")
+	_check((unsummarized["summary"] as Dictionary).is_empty(), "the recorder's own incident is not written to from the worker")
+	_check(is_equal_approx(float((sliced_copy.get("summary", {}) as Dictionary).get("worst_frame_ms", 0.0)), 50.0) and (sliced_copy.get("summary", {}) as Dictionary).size() == 1, "a summary that is already there is left alone")
 	_finish()
 
 

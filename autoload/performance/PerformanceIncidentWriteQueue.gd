@@ -7,11 +7,18 @@ class_name PerformanceIncidentWriteQueue
 ## is 260-340 ms of GDScript on one frame (the 2026-09-27 "sampling" stalls,
 ## PerformanceIncidentFinalizeBenchmark). The copy now advances one sample at
 ## a time under this budget; a report reaches the worker a few seconds later.
+## The default for a queue built without one; the flight recorder passes its
+## own, smaller budget (its samples copy cheaply, see _copy_item).
 const STEP_BUDGET_USEC := 1500
 
+const PerformanceIncidentSummaryScript := preload("res://autoload/performance/PerformanceIncidentSummary.gd")
+
 var _writer: Callable
+## This queue's per-step copy budget (step()'s default).
+var _step_budget_usec := STEP_BUDGET_USEC
 ## Incidents still being copied on the main thread, oldest first:
-## {source, directory, keys, key_index, item_index, partial, output}.
+## {source, directory, keys, key_index, item_index, partial, output,
+##  previous_source, previous_copy}.
 var _sanitizing: Array[Dictionary] = []
 var _jobs: Array[Dictionary] = []
 var _completed: Array[Dictionary] = []
@@ -19,8 +26,9 @@ var _thread: Thread = null
 var _active_job: Dictionary = {}
 
 
-func _init(writer: Callable = Callable()) -> void:
+func _init(writer: Callable = Callable(), step_budget_usec: int = STEP_BUDGET_USEC) -> void:
 	_writer = writer
+	_step_budget_usec = step_budget_usec
 
 
 func enqueue(incident: Dictionary, directory: String) -> void:
@@ -38,14 +46,16 @@ func enqueue(incident: Dictionary, directory: String) -> void:
 		"item_index": 0,
 		"partial": [],
 		"output": {},
+		"previous_source": {},
+		"previous_copy": {},
 	})
 
 
 ## Advances the main-thread copy by up to `budget_usec`; a finished copy goes
 ## to the worker. Called from poll_completed(), so the owner's per-frame poll
 ## drives it.
-func step(budget_usec: int = STEP_BUDGET_USEC) -> void:
-	var deadline := Time.get_ticks_usec() + budget_usec
+func step(budget_usec: int = -1) -> void:
+	var deadline := Time.get_ticks_usec() + (budget_usec if budget_usec >= 0 else _step_budget_usec)
 	while not _sanitizing.is_empty():
 		var job := _sanitizing[0]
 		if not _sanitize_until(job, deadline):
@@ -71,7 +81,7 @@ func _sanitize_until(job: Dictionary, deadline: int) -> bool:
 			var partial := job["partial"] as Array
 			var index := int(job["item_index"])
 			while index < items.size():
-				partial.append(PerformanceIncidentWriter._json_safe(items[index]))
+				partial.append(_copy_item(job, items[index]))
 				index += 1
 				if Time.get_ticks_usec() >= deadline:
 					job["item_index"] = index
@@ -79,12 +89,54 @@ func _sanitize_until(job: Dictionary, deadline: int) -> bool:
 			output[str(key)] = partial
 			job["partial"] = []
 			job["item_index"] = 0
+			job["previous_source"] = {}
+			job["previous_copy"] = {}
 		else:
 			output[str(key)] = PerformanceIncidentWriter._json_safe(value)
 		job["key_index"] = int(job["key_index"]) + 1
 		if Time.get_ticks_usec() >= deadline:
 			return false
 	return true
+
+
+## The sanitized copy of one array entry. Two things make a recorder sample
+## cheap to copy. Most of its values are plain (numbers, text), which a
+## native shallow copy carries as they are; and the recorder merges one 0.5 s
+## slow snapshot into every sample of that half second by reference, so
+## consecutive samples hold the very same nested dictionaries and arrays: a
+## nested value that IS the previous entry's reuses that entry's copy instead
+## of being walked again. (Walking every value of every sample was the
+## 2026-10-01 captures' 1.5-2 ms of recorder work on 23% of all frames.) The
+## copies are shared only inside this incident's output, which the worker
+## alone reads; every value is still checked here, on the main thread.
+func _copy_item(job: Dictionary, item: Variant) -> Variant:
+	if not (item is Dictionary):
+		return PerformanceIncidentWriter._json_safe(item)
+	var source := item as Dictionary
+	var previous_source := job["previous_source"] as Dictionary
+	var previous_copy := job["previous_copy"] as Dictionary
+	var output := source.duplicate()
+	var keys := source.keys()
+	var values := source.values()
+	for index in range(values.size()):
+		var value: Variant = values[index]
+		var type := typeof(value)
+		var key: Variant = keys[index]
+		if typeof(key) != TYPE_STRING:
+			# Not shaped like a sample: the general copy turns keys into text.
+			job["previous_source"] = {}
+			job["previous_copy"] = {}
+			return PerformanceIncidentWriter._json_safe(item)
+		if type <= TYPE_STRING:
+			# nil, bool, int, float, String: already JSON-safe.
+			continue
+		if (type == TYPE_DICTIONARY or type == TYPE_ARRAY) and previous_source.has(key) and is_same(previous_source[key], value):
+			output[key] = previous_copy[key]
+		else:
+			output[key] = PerformanceIncidentWriter._json_safe(value)
+	job["previous_source"] = source
+	job["previous_copy"] = output
+	return output
 
 
 func pending_count() -> int:
@@ -146,6 +198,12 @@ func _start_next() -> void:
 func _run_job(job: Dictionary) -> Dictionary:
 	var incident := job.get("incident", {}) as Dictionary
 	var directory := String(job.get("directory", ""))
+	# The recorder closes an incident with an empty summary and leaves the
+	# building to this thread; the copy is this job's own, so it is filled
+	# in place and keeps its position in the report.
+	var summary: Variant = incident.get("summary")
+	if summary is Dictionary and (summary as Dictionary).is_empty() and incident.get("samples") is Array:
+		incident["summary"] = PerformanceIncidentSummaryScript.build(incident["samples"], incident.get("events", []) as Array)
 	if _writer.is_valid():
 		var custom_result: Variant = _writer.call(incident, directory)
 		return custom_result as Dictionary if custom_result is Dictionary else {}

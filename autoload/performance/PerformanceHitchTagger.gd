@@ -7,10 +7,10 @@ class_name PerformanceHitchTagger
 ## simulation, a chunk activation or one of its staged blocker steps, a flow
 ## field snapshot or publish, enemy lifecycle attach / detach / retire, the
 ## enemy scheduler's step, a frame that ran several physics ticks to catch up
-## ("physics_catchup"), the recorder's own sampling, or Godot's physics
-## monitor as a last resort. Pure and static, so the incident writer can
-## call it from its worker thread. Correlation, not proof: the attribution
-## says which measured cost was largest in that frame.
+## ("physics_catchup"), a scene change, the recorder's own sampling, or
+## Godot's physics monitor as a last resort. Pure and static, so the incident
+## writer can call it from its worker thread. Correlation, not proof: the
+## attribution says which measured cost was largest in that frame.
 
 const HITCH_MS := 28.0
 const BASE_MS := 16.7
@@ -74,6 +74,11 @@ static func attribution(sample: Dictionary, previous: Dictionary) -> Dictionary:
 		out["enemy_step"] = float(scheduler.get("physics_step_ms", 0.0))
 	if sample.has("sampling_overhead_usec"):
 		out["sampling"] = float(int(sample.get("sampling_overhead_usec", 0))) / 1000.0
+	if not String(sample.get("scene_change", "")).is_empty():
+		# The frame spans a scene change (the recorder's note_scene_change):
+		# loading the scene file, building the new scene and freeing the old
+		# one all block it, so the whole frame is the change.
+		out["scene_change"] = frame_ms(sample)
 	return out
 
 

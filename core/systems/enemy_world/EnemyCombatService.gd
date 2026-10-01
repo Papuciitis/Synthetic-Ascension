@@ -67,10 +67,13 @@ func apply_status_damage_tagged(handle: int, raw_damage: float, source: Node, ta
 
 ## Diagnostic split of _apply_damage (microseconds, cumulative) for the
 ## build simulator and the war room: the recorder's enemy_damaged listeners,
-## BattleText, the player_hit_landed listeners, the death path. Off unless
-## a probe turns it on; four clock reads per hit when on.
+## BattleText, the player_hit_landed listeners, the death path (and inside
+## it "death_listeners": opening the death and the enemy_defeated
+## listeners; the rest is the actor's own death: payout, drops, effects,
+## release). Off unless a probe
+## turns it on; four clock reads per hit when on, one more per death.
 static var debug_timing := false
-static var debug_usec: Dictionary = {"damaged_emit": 0, "battletext": 0, "hit_landed": 0, "death": 0, "hits": 0}
+static var debug_usec: Dictionary = {"damaged_emit": 0, "battletext": 0, "hit_landed": 0, "death": 0, "death_listeners": 0, "deaths": 0, "hits": 0}
 
 
 func _apply_damage(
@@ -168,6 +171,9 @@ func _apply_damage(
 	)
 	if RunEvents != null and RunEvents.has_signal("enemy_defeated"):
 		RunEvents.enemy_defeated.emit(context)
+	if debug_timing:
+		debug_usec["death_listeners"] = int(debug_usec.get("death_listeners", 0)) + (Time.get_ticks_usec() - clock)
+		debug_usec["deaths"] = int(debug_usec.get("deaths", 0)) + 1
 	if actor != null and actor.has_method("_apply_enemy_world_death"):
 		actor.call("_apply_enemy_world_death", context)
 	else:

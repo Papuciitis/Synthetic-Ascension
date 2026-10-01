@@ -48,6 +48,8 @@ func _base(t_usec: int, wall_ms: float) -> Dictionary:
 func _run() -> void:
 	_test_tags()
 	_test_chunk_stages()
+	_test_scene_change()
+	_test_frame_phases()
 	_test_summary_and_csv()
 	print("PerformanceHitchTaggerTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -153,6 +155,65 @@ func _test_chunk_stages() -> void:
 	_check(String(PerformanceHitchTagger.tag(physics, content)["tag"]) == "unattributed", "a frame where the sample did not grow is not charged to the chunk")
 
 
+## A scene change blocks one or two frames for 0.5-2 s (the 2026-10-01
+## "1.10 s gap" was a run -> hub change with 2.7 ms attributed). The samples
+## that span it carry the destination, and the whole frame is the change.
+func _test_scene_change() -> void:
+	var change := _base(9_000_000, 1100.0)
+	change["scene_change"] = "HubWorld"
+	change["physics_ticks"] = 4
+	change["physics_frame_ms"] = 2.7
+	var tagged := PerformanceHitchTagger.tag(change, _base(8_900_000, 16.7))
+	_check(String(tagged["tag"]) == "scene_change" and is_equal_approx(float(tagged["ms"]), 1100.0), "a frame that spans a scene change is tagged 'scene_change' with the whole frame as its cost")
+	var quiet := _base(9_100_000, 17.0)
+	quiet["scene_change"] = "HubWorld"
+	_check(String(PerformanceHitchTagger.tag(quiet, change)["tag"]) == "", "a scene-change sample under the hitch threshold is not a hitch")
+	var ordinary := _base(9_200_000, 1100.0)
+	ordinary["physics_ticks"] = 4
+	ordinary["physics_frame_ms"] = 2.7
+	_check(String(PerformanceHitchTagger.tag(ordinary, quiet)["tag"]) == "unattributed", "the same frame without the mark stays unattributed")
+	# The recorder marks the samples around the change and logs the event.
+	var script := load("res://autoload/PerformanceFlightRecorder.gd") as Script
+	var recorder: Node = script.new()
+	add_child(recorder)
+	recorder.set("write_reports", false)
+	recorder.set("automatic_capture", false)
+	recorder.call("set_enabled", true)
+	recorder.call("note_scene_change", "HubWorld")
+	var marked := 0
+	for i in range(5):
+		recorder.call("_process", 0.016)
+		var history: Array = recorder.get("_history")
+		if String((history[-1] as Dictionary).get("scene_change", "")) == "HubWorld":
+			marked += 1
+	_check(marked == 3, "the recorder marks the three samples that follow a scene change (%d marked)" % marked)
+	var events: Array = recorder.get("_events")
+	_check(events.size() == 1 and String(events[0].get("category", "")) == "scene" and String(events[0].get("name", "")) == "change" and String((events[0].get("details", {}) as Dictionary).get("to", "")) == "HubWorld", "the change is logged as a scene/change event naming the destination")
+	recorder.queue_free()
+
+
+## The recorder splits the frame behind a sample from four clock stamps:
+## script _process, the deferred end of the frame, and draw + present.
+func _test_frame_phases() -> void:
+	var script := load("res://autoload/PerformanceFlightRecorder.gd") as Script
+	var recorder: Node = script.new()
+	add_child(recorder)
+	_check(recorder.get_node_or_null("FrameTail") != null and int(recorder.get_node("FrameTail").process_priority) > 1_000_000_000, "the recorder carries a tail node that runs after every other _process")
+	_check((recorder.call("_frame_phases", 1_000) as Dictionary).is_empty(), "the first sample has no previous frame to split")
+	recorder.set("_phase_process_end_usec", 4_000)
+	recorder.set("_phase_pre_draw_usec", 5_000)
+	recorder.set("_phase_post_draw_usec", 14_000)
+	var phases: Dictionary = recorder.call("_frame_phases", 16_000)
+	_check(is_equal_approx(float(phases.get("process", -1.0)), 3.0) and is_equal_approx(float(phases.get("deferred", -1.0)), 1.0) and is_equal_approx(float(phases.get("render_present", -1.0)), 9.0), "a frame splits into process 3 ms, deferred 1 ms, draw + present 9 ms (%s)" % str(phases))
+	# Headless never draws: the draw stamps stay behind the frame.
+	recorder.set("_phase_process_end_usec", 18_000)
+	phases = recorder.call("_frame_phases", 30_000)
+	_check(is_equal_approx(float(phases.get("process", -1.0)), 2.0) and not phases.has("deferred") and not phases.has("render_present"), "without a draw this frame only the process phase is reported")
+	# A stamp from before the previous sample is not this frame's.
+	_check((recorder.call("_frame_phases", 40_000) as Dictionary).is_empty(), "stale stamps report nothing rather than a wrong split")
+	recorder.queue_free()
+
+
 func _test_summary_and_csv() -> void:
 	var samples: Array[Dictionary] = []
 	var quiet := _base(1_000_000, 12.0)
@@ -165,6 +226,10 @@ func _test_summary_and_csv() -> void:
 	samples.append(chunk)
 	var tree2 := _base(4_000_000, 33.0)
 	tree2["ascension"] = {"tick_usec": 12_000, "flush_usec": 1_000, "hit_usec": 500, "BR": {"fragment_usec": 100}}
+	tree2["physics_ticks"] = 2
+	tree2["physics_frame_ms"] = 9.5
+	tree2["sampling_overhead_usec"] = 150
+	tree2["frame_phases"] = {"process": 9.0, "deferred": 1.5, "render_present": 12.0}
 	samples.append(tree2)
 	var summary: Dictionary = PerformanceFlightRecorder.call("_build_summary", samples, [])
 	_check(int(summary.get("hitch_count", -1)) == 3, "the summary counts the three samples over 28 ms")
@@ -184,13 +249,21 @@ func _test_summary_and_csv() -> void:
 	var csv_path := String(result.get("csv_path", ""))
 	var text := FileAccess.get_file_as_string(csv_path) if not csv_path.is_empty() else ""
 	var lines := text.split("\n", false)
-	_check(lines.size() == 5 and lines[0].ends_with(",wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms"), "the CSV carries the wall, tree, fragment, projectile, chunk, flow and hitch tag columns")
+	_check(lines.size() == 5 and lines[0].contains(",wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms"), "the CSV carries the wall, tree, fragment, projectile, chunk, flow and hitch tag columns")
+	_check(lines.size() == 5 and lines[0].ends_with(",hitch_ms,physics_ticks,physics_frame_ms,sampling_usec,process_phase_ms,deferred_ms,render_present_ms"), "the CSV ends with the physics tick, sampling and frame phase columns")
 	if lines.size() == 5:
+		# Columns are read by header name: appended columns must not move them.
+		var header := lines[0].split(",")
 		var quiet_row := lines[1].split(",")
 		var tree_row := lines[2].split(",")
 		var chunk_row := lines[3].split(",")
-		_check(quiet_row[quiet_row.size() - 2] == "" and tree_row[tree_row.size() - 2] == "ascension" and chunk_row[chunk_row.size() - 2] == "chunk_content", "rows carry their tags (none, ascension, chunk_content)")
-		_check(tree_row[tree_row.size() - 8] == "40.0" and tree_row[tree_row.size() - 7] == "21000", "a row carries its wall time and the tree's microseconds")
+		var tree2_row := lines[4].split(",")
+		var tag_at := header.find("hitch_tag")
+		_check(quiet_row[tag_at] == "" and tree_row[tag_at] == "ascension" and chunk_row[tag_at] == "chunk_content", "rows carry their tags (none, ascension, chunk_content)")
+		_check(tree_row[header.find("wall_ms")] == "40.0" and tree_row[header.find("ascension_usec")] == "21000", "a row carries its wall time and the tree's microseconds")
+		_check(tree2_row[header.find("physics_ticks")] == "2" and tree2_row[header.find("physics_frame_ms")] == "9.5" and tree2_row[header.find("sampling_usec")] == "150", "a row carries its physics tick count, summed physics time and sampling cost")
+		_check(tree2_row[header.find("process_phase_ms")] == "9.0" and tree2_row[header.find("deferred_ms")] == "1.5" and tree2_row[header.find("render_present_ms")] == "12.0", "a row carries its frame phases")
+		_check(tree_row[header.find("physics_ticks")] == "" and tree_row[header.find("render_present_ms")] == "", "a sample without the fields writes empty cells, not zeros")
 	# Clean up the report files.
 	var json_path := String(result.get("json_path", ""))
 	for path in [csv_path, json_path]:

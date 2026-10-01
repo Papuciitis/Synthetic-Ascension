@@ -24,13 +24,14 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 	var csv_file := FileAccess.open(csv_path, FileAccess.WRITE)
 	if csv_file == null:
 		return {"ok": false, "json_path": json_path, "csv_path": "", "error": "Cannot open CSV report: %s" % FileAccess.get_open_error()}
-	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only,wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms")
+	csv_file.store_line("t_usec,elapsed_sec,frame_ms,fps,process_ms,physics_ms,enemies,projectiles,physics_objects,nodes,chunks,flow_building,sim_full,sim_mid,sim_far,sim_protected,sim_physics_enabled,sim_pressure,sim_spatial_demotions,tier_changes_total,tier_reversals_total,world_materialized,world_data_only,wall_ms,ascension_usec,fragment_usec,projectile_ms,chunk_build_ms,flow_publish_usec,hitch_tag,hitch_ms,physics_ticks,physics_frame_ms,sampling_usec,process_phase_ms,deferred_ms,render_present_ms")
 	var previous: Dictionary = {}
 	for sample_variant in incident.get("samples", []):
 		var sample := sample_variant as Dictionary
 		var ascension: Dictionary = sample.get("ascension", {})
 		var barrage: Dictionary = ascension.get("BR", {})
 		var phases: Dictionary = (sample.get("chunk_stream", {}) as Dictionary).get("last_phases", {})
+		var frame_phases: Dictionary = sample.get("frame_phases", {})
 		var hitch := PerformanceHitchTagger.tag(sample, previous)
 		previous = sample
 		csv_file.store_csv_line(PackedStringArray([
@@ -65,6 +66,13 @@ static func write_incident(incident: Dictionary, directory: String) -> Dictionar
 			str(sample.get("flow_publish_usec", 0)),
 			String(hitch["tag"]),
 			str(hitch["ms"]),
+			# Empty, not 0, when the sample did not record the field.
+			str(sample.get("physics_ticks", "")),
+			str(sample.get("physics_frame_ms", "")),
+			str(sample.get("sampling_overhead_usec", "")),
+			str(frame_phases.get("process", "")),
+			str(frame_phases.get("deferred", "")),
+			str(frame_phases.get("render_present", "")),
 		]))
 	csv_file.close()
 	return {"ok": true, "json_path": json_path, "csv_path": csv_path, "error": ""}

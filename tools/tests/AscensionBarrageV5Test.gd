@@ -620,6 +620,17 @@ func _run() -> void:
 	_check(is_equal_approx(_engine.heat, heat_before_slash) and _runner._native_inputs == 9 and _engine._volley == 9 + _runner.witness_strikes, "a health payment generates no Heat and no input")
 	EnemyWorld.remove_enemy(blood_target, &"test")
 
+	# The fragment update's cost split is this frame's: a frame with no
+	# fragments reports zeros, not the last busy frame's hits and times.
+	_engine.fragments.clear()
+	_engine._pending_fragments.clear()
+	_engine._fragment_cost["hits"] = 5
+	_engine._fragment_cost["hit_usec"] = 4000
+	_engine._fragment_cost["retarget_usec"] = 900
+	_engine._tick_fragments(1.0 / 60.0)
+	var idle_cost: Dictionary = _engine.frame_cost()
+	_check(int(idle_cost.get("hits", -1)) == 0 and int(idle_cost.get("hit_usec", -1)) == 0 and int(idle_cost.get("retarget_usec", -1)) == 0, "a frame without fragments reports no fragment hits or retarget time")
+
 	_finish()
 
 

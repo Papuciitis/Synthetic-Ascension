@@ -20,6 +20,24 @@ var _damage_taken := 0
 var _paid: Array = []
 
 
+## An engine whose tick takes a known time, to check the per-engine clock.
+class SlowEngine:
+	extends AscensionEngine
+	var busy_usec := 0
+	var cost := {"fragment_usec": 5}
+	var clears_engines := false
+	func discipline() -> String:
+		return "ZZ"
+	func frame_cost() -> Dictionary:
+		return cost
+	func tick(_delta: float) -> void:
+		var until := Time.get_ticks_usec() + busy_usec
+		while Time.get_ticks_usec() < until:
+			pass
+		if clears_engines:
+			runner.engines.clear()
+
+
 func _ready() -> void:
 	call_deferred(&"_run")
 
@@ -136,6 +154,65 @@ func _run() -> void:
 	_check(runner.get_node_or_null("QSlot") == null, "unequipping frees the slot")
 
 	_check(is_equal_approx(Global.debug_enemy_hp_scale, 1.0), "the enemy HP fixture defaults to x1")
+
+	# --- per-engine frame cost: a slow tick names its engine (2026-10-01: a
+	# 299.5 ms tick with three engines active and nothing saying which).
+	PerformanceFlightRecorder.set("write_reports", false)
+	PerformanceFlightRecorder.set("automatic_capture", false)
+	PerformanceFlightRecorder.set_enabled(true)
+	var slow := SlowEngine.new()
+	slow.setup(runner)
+	runner.engines.append(slow)
+	runner._process(0.016)
+	var counters := runner.get_debug_counters()
+	var engine_usec: Dictionary = counters.get("engine_usec", {})
+	_check(engine_usec.has("EX") and engine_usec.has("ZZ") and engine_usec.size() == runner.engines.size(), "the frame cost carries one tick time per engine, by discipline (%s)" % str(engine_usec.keys()))
+	var engine_sum := 0
+	for code in engine_usec:
+		engine_sum += int(engine_usec[code])
+	_check(engine_sum + int(counters.get("encore_usec", 0)) == int(counters.get("tick_usec", -1)), "the engines and the Encore repeat add up to the tick exactly")
+	var slow_events_before := (PerformanceFlightRecorder.get("_events") as Array).filter(func(event: Dictionary) -> bool: return String(event.get("name", "")) == "slow_tick").size()
+	_check(slow_events_before == 0, "an ordinary tick records no slow_tick event")
+	slow.busy_usec = AscensionRunner.SLOW_TICK_USEC + 1000
+	var probe_handle := _spawn_enemy(50.0, Vector2(60, 0))
+	runner.damage_enemy(probe_handle, 1.0, AscensionTags.native("melee", "slash"))
+	runner.nearest_enemy(Vector2.ZERO, 200.0)
+	runner._process(0.016)
+	counters = runner.get_debug_counters()
+	_check(int((counters.get("engine_usec", {}) as Dictionary).get("ZZ", 0)) >= AscensionRunner.SLOW_TICK_USEC and int((counters.get("engine_usec", {}) as Dictionary).get("EX", 0)) < AscensionRunner.SLOW_TICK_USEC, "the slow engine, and only it, carries the time")
+	_check(int(counters.get("damage_calls", 0)) == 1 and int(counters.get("queries", 0)) >= 1, "the frame cost counts what the tree asked for (damage calls %d, queries %d)" % [int(counters.get("damage_calls", 0)), int(counters.get("queries", 0))])
+	var slow_events: Array = (PerformanceFlightRecorder.get("_events") as Array).filter(func(event: Dictionary) -> bool: return String(event.get("name", "")) == "slow_tick")
+	_check(slow_events.size() == 1 and int(((slow_events[0].get("details", {}) as Dictionary).get("engine_usec", {}) as Dictionary).get("ZZ", 0)) >= AscensionRunner.SLOW_TICK_USEC, "a tick over the threshold is recorded as ascension/slow_tick with the per-engine split")
+	runner._process(0.016)
+	_check(int(runner.get_debug_counters().get("damage_calls", -1)) == 0, "the per-frame counts reset every frame")
+	# A slow stretch is one event per quarter second, not one per frame
+	# (hundreds of events would be copied on the frame an incident closes);
+	# a tick twice as slow as the last one recorded still gets its own.
+	var count_slow := func() -> int: return (PerformanceFlightRecorder.get("_events") as Array).filter(func(event: Dictionary) -> bool: return String(event.get("name", "")) == "slow_tick").size()
+	_check(int(count_slow.call()) == 1, "a second slow tick right after the first records no second event (%d)" % int(count_slow.call()))
+	slow.busy_usec = (AscensionRunner.SLOW_TICK_USEC + 1000) * 3
+	runner._process(0.016)
+	_check(int(count_slow.call()) == 2, "a tick more than twice as slow is recorded at once (%d)" % int(count_slow.call()))
+	slow.busy_usec = 0
+	# An engine keeps ONE cost dictionary and rewrites it every frame. A
+	# sample must hold that frame's values, not a reference to the live
+	# dictionary (the 2026-10-01 captures: 62,805 rows whose fragment_usec
+	# depended on when the incident was copied).
+	var kept: Dictionary = runner.get_debug_counters()
+	slow.cost["fragment_usec"] = 999
+	_check(int((kept.get("ZZ", {}) as Dictionary).get("fragment_usec", -1)) == 5, "a sample keeps the engine's frame cost as it was, not the live dictionary")
+	# An engine list emptied in place mid-tick (the runner leaving the tree,
+	# a different ledger) must end the timed loop, as the plain loop did.
+	slow.clears_engines = true
+	runner.engines.erase(slow)
+	runner.engines.insert(0, slow)
+	var engines_before := runner.engines.duplicate()
+	runner._process(0.016)
+	_check(runner.engines.is_empty(), "a tick that empties the engine list in place ends the loop without an error")
+	runner.engines.assign(engines_before)
+	slow.clears_engines = false
+	runner.engines.erase(slow)
+	PerformanceFlightRecorder.set_enabled(false)
 
 	Global.attempt_ascension = {}
 	player.queue_free()
