@@ -1,7 +1,18 @@
 extends RefCounted
 class_name PerformanceIncidentWriteQueue
 
+## Main-thread work allowed per step() while an incident is being copied.
+## The worker may only ever see pure data (see enqueue), but copying a whole
+## incident at once was the recorder's own hitch: ~900 samples x ~130 values
+## is 260-340 ms of GDScript on one frame (the 2026-09-27 "sampling" stalls,
+## PerformanceIncidentFinalizeBenchmark). The copy now advances one sample at
+## a time under this budget; a report reaches the worker a few seconds later.
+const STEP_BUDGET_USEC := 1500
+
 var _writer: Callable
+## Incidents still being copied on the main thread, oldest first:
+## {source, directory, keys, key_index, item_index, partial, output}.
+var _sanitizing: Array[Dictionary] = []
 var _jobs: Array[Dictionary] = []
 var _completed: Array[Dictionary] = []
 var _thread: Thread = null
@@ -17,20 +28,71 @@ func enqueue(incident: Dictionary, directory: String) -> void:
 	# incident over as-is on an immutability promise, but samples can carry
 	# live Object references — stringifying those from the worker thread
 	# tripped the scene-tree thread guard and segfaulted (2026-09-26 crash).
-	# One sanitizing copy on the MAIN thread replaces that promise with a
-	# type-level guarantee; it is also the only copy made.
-	_jobs.append({
-		"incident": PerformanceIncidentWriter._json_safe(incident),
+	# The sanitizing copy is made on the MAIN thread, a type-level guarantee,
+	# and is still the only copy; step() makes it a slice per frame.
+	_sanitizing.append({
+		"source": incident,
 		"directory": directory,
+		"keys": incident.keys(),
+		"key_index": 0,
+		"item_index": 0,
+		"partial": [],
+		"output": {},
 	})
-	_start_next()
+
+
+## Advances the main-thread copy by up to `budget_usec`; a finished copy goes
+## to the worker. Called from poll_completed(), so the owner's per-frame poll
+## drives it.
+func step(budget_usec: int = STEP_BUDGET_USEC) -> void:
+	var deadline := Time.get_ticks_usec() + budget_usec
+	while not _sanitizing.is_empty():
+		var job := _sanitizing[0]
+		if not _sanitize_until(job, deadline):
+			return
+		_sanitizing.pop_front()
+		_jobs.append({"incident": job["output"], "directory": job["directory"]})
+		_start_next()
+		if Time.get_ticks_usec() >= deadline:
+			return
+
+
+## Copies top-level entries, and array entries (samples, events) one element
+## at a time, until done (true) or the deadline passes (false).
+func _sanitize_until(job: Dictionary, deadline: int) -> bool:
+	var source := job["source"] as Dictionary
+	var keys := job["keys"] as Array
+	var output := job["output"] as Dictionary
+	while int(job["key_index"]) < keys.size():
+		var key: Variant = keys[int(job["key_index"])]
+		var value: Variant = source.get(key)
+		if value is Array:
+			var items := value as Array
+			var partial := job["partial"] as Array
+			var index := int(job["item_index"])
+			while index < items.size():
+				partial.append(PerformanceIncidentWriter._json_safe(items[index]))
+				index += 1
+				if Time.get_ticks_usec() >= deadline:
+					job["item_index"] = index
+					return false
+			output[str(key)] = partial
+			job["partial"] = []
+			job["item_index"] = 0
+		else:
+			output[str(key)] = PerformanceIncidentWriter._json_safe(value)
+		job["key_index"] = int(job["key_index"]) + 1
+		if Time.get_ticks_usec() >= deadline:
+			return false
+	return true
 
 
 func pending_count() -> int:
-	return _jobs.size() + (1 if not _active_job.is_empty() else 0)
+	return _sanitizing.size() + _jobs.size() + (1 if not _active_job.is_empty() else 0)
 
 
 func poll_completed() -> Array[Dictionary]:
+	step()
 	var output := _take_completed()
 	if _thread == null or not _thread.is_started() or _thread.is_alive():
 		return output
@@ -46,6 +108,9 @@ func poll_completed() -> Array[Dictionary]:
 
 func shutdown() -> Array[Dictionary]:
 	var output: Array[Dictionary] = []
+	# Nothing may be lost on exit: finish every copy now, however long.
+	while not _sanitizing.is_empty():
+		step(1 << 40)
 	while pending_count() > 0:
 		if _thread != null and _thread.is_started():
 			var writer_result: Variant = _thread.wait_to_finish()

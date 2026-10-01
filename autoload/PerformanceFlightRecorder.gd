@@ -11,6 +11,10 @@ const BuildInfoScript = preload("res://core/systems/telemetry/BuildInfo.gd")
 const MAX_SAMPLE_RATE := 120
 const MAX_EVENTS := 2048
 const EVENT_BUCKET_USEC := 250_000
+## Samples released per frame from retired incidents. Dropping a finished
+## ~900-sample incident in one go frees ~110k values: 7-10 ms on the frame
+## that finalizes the next incident or accepts a written report.
+const RETIRE_PER_FRAME := 128
 const PerformanceIncidentWriteQueueScript := preload("res://autoload/performance/PerformanceIncidentWriteQueue.gd")
 
 var enabled := false
@@ -55,6 +59,10 @@ var _dropped_samples := 0
 var _automatic_armed := true
 var _recovery_frames := 0
 var _report_write_queue: RefCounted = PerformanceIncidentWriteQueueScript.new()
+## Sample arrays of retired incidents, emptied RETIRE_PER_FRAME at a time.
+## Each is this recorder's own shallow copy, so draining it never touches an
+## array the write queue may still be copying.
+var _retiring: Array[Array] = []
 
 
 func _ready() -> void:
@@ -68,10 +76,14 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
+	# Report servicing (including the budgeted incident copy) is recorder
+	# work, so it sits inside the sampling timer: a slow step shows up as
+	# "sampling" in the next sample instead of an unattributed hitch.
+	var started := Time.get_ticks_usec()
 	_poll_completed_reports()
+	_drain_retiring()
 	if not enabled:
 		return
-	var started := Time.get_ticks_usec()
 	_slow_snapshot_left -= delta
 	if _slow_snapshot_left <= 0.0:
 		_slow_snapshot_left = 0.5
@@ -430,6 +442,7 @@ func _finalize_incident(now_usec: int) -> void:
 			incident_events.append(event_copy)
 	var summary := _build_summary(_capture_samples, incident_events)
 	var segment := int((_capture_samples[-1] as Dictionary).get("segment", 0)) if not _capture_samples.is_empty() else 0
+	_retire_samples(_latest_incident.get("samples", []))
 	_latest_incident = {
 		"schema_version": SCHEMA_VERSION,
 		"metadata": {
@@ -548,6 +561,8 @@ func _poll_completed_reports() -> void:
 
 func _accept_report_completion(completion: Dictionary) -> void:
 	var incident := completion.get("incident", {}) as Dictionary
+	# The written copy goes away with this completion; release it gradually.
+	_retire_samples(incident.get("samples", []))
 	var result := completion.get("result", {}) as Dictionary
 	if bool(result.get("ok", false)):
 		_latest_report_path = String(result.get("json_path", ""))
@@ -555,6 +570,29 @@ func _accept_report_completion(completion: Dictionary) -> void:
 	else:
 		_latest_error = String(result.get("error", "Unknown report write failure"))
 	incident_finalized.emit(incident.get("summary", {}), _latest_report_path)
+
+
+func _retire_samples(samples: Variant) -> void:
+	if samples is Array and not (samples as Array).is_empty():
+		_retiring.append((samples as Array).duplicate())
+
+
+func _drain_retiring() -> void:
+	var budget := RETIRE_PER_FRAME
+	while budget > 0 and not _retiring.is_empty():
+		var batch: Array = _retiring[-1]
+		while budget > 0 and not batch.is_empty():
+			batch.pop_back()
+			budget -= 1
+		if batch.is_empty():
+			_retiring.pop_back()
+
+
+func debug_retiring_count() -> int:
+	var total := 0
+	for batch in _retiring:
+		total += batch.size()
+	return total
 
 
 func _trim_history(now_usec: int) -> void:
@@ -597,10 +635,10 @@ func clear_session() -> void:
 	_capture_samples.clear()
 	_events.clear()
 	_counter_buckets.clear()
-	# Rebind, never clear(): a finalized incident is handed to the write
-	# worker BY REFERENCE (PerformanceIncidentWriteQueue.enqueue documents the
-	# copy it deliberately avoids), and the worker may still be serialising it
-	# on its own thread. Mutating it here would rewrite the report mid-write.
+	# Rebind, never clear(): the write queue keeps a reference to a finalized
+	# incident while it copies it on the main thread over the following
+	# frames (PerformanceIncidentWriteQueue.step). Mutating it here would
+	# rewrite the report mid-copy.
 	_latest_incident = {}
 	_latest_report_path = ""
 	_latest_error = ""

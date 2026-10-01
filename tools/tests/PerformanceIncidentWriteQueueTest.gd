@@ -68,6 +68,41 @@ func _run() -> void:
 	_check(String(sample_row.get("at", "")).begins_with("("), "vectors serialize as text")
 	_check(JSON.stringify(handed) != "", "the sanitized incident stringifies without touching the tree")
 	live_node.queue_free()
+
+	# The copy is budgeted (2026-09-30: a 900-sample incident copied in one
+	# go was a 260-340 ms frame, the captures' "sampling" stalls). A big
+	# incident advances a slice per step, never much past the budget, and
+	# the result is exactly what the one-shot copy made: same report bytes.
+	var template := {"t_usec": 1, "enemy_scheduler": {"physics_step_ms": 3.5, "buckets": [1, 2, 3]}, "at": Vector2(1, 2), "tag": &"x"}
+	var rows: Array = []
+	for i in range(900):
+		var row := template.duplicate(true)
+		row["t_usec"] = i
+		rows.append(row)
+	var big := {"schema_version": 1, "metadata": {"sequence": 9}, "summary": {"worst_frame_ms": 50.0}, "samples": rows, "events": [{"t_usec": 3, "at": Vector2(5, 6)}]}
+	var sliced_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
+	sliced_queue.call("enqueue", big, "user://ignored-by-test")
+	var steps := 0
+	var worst_step_usec := 0
+	var budget_usec := int(sliced_queue.get("STEP_BUDGET_USEC"))
+	while int(sliced_queue.call("pending_count")) > 0 and steps < 10_000 and (sliced_queue.get("_sanitizing") as Array).size() > 0:
+		var started := Time.get_ticks_usec()
+		sliced_queue.call("step")
+		worst_step_usec = maxi(worst_step_usec, Time.get_ticks_usec() - started)
+		steps += 1
+	_check(steps > 1, "a big incident is copied over several steps, not one (%d steps)" % steps)
+	_check(worst_step_usec < budget_usec + 5000, "no step runs far past its budget (%d usec, budget %d)" % [worst_step_usec, budget_usec])
+	var sliced_done: Array = sliced_queue.call("shutdown") as Array
+	var sliced_copy: Dictionary = (sliced_done[0] as Dictionary).get("incident", {}) if sliced_done.size() == 1 else {}
+	_check(JSON.stringify(sliced_copy) == JSON.stringify(PerformanceIncidentWriter._json_safe(big)), "the budgeted copy is byte-identical to the one-shot copy")
+
+	# Exit never loses a report: shutdown finishes a copy left half-way.
+	var half_queue: RefCounted = queue_script.new(Callable(self, "_instant_writer"))
+	half_queue.call("enqueue", big, "user://ignored-by-test")
+	half_queue.call("step", 1)
+	var half_done: Array = half_queue.call("shutdown") as Array
+	var half_copy: Dictionary = (half_done[0] as Dictionary).get("incident", {}) if half_done.size() == 1 else {}
+	_check(half_done.size() == 1 and (half_copy.get("samples", []) as Array).size() == 900, "shutdown completes and writes a copy interrupted mid-way")
 	_finish()
 
 
