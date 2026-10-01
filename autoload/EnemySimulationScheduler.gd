@@ -116,6 +116,10 @@ var _step_refresh_usec := 0
 var _last_step_sample_ms := 0.0
 var _smoothed_physics_ms := -1.0
 const MAX_STEP_SAMPLE_MS := 1000.0
+var _frame_ticks := 0
+var _frame_physics_ms := 0.0
+var _published_frame_ticks := 0
+var _published_frame_physics_ms := 0.0
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -160,6 +164,14 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	_close_step_sample(Time.get_ticks_usec())
+	# Publish this frame's physics work. When a frame runs long, Godot runs
+	# several physics ticks in the next one to catch up (up to
+	# max_physics_steps_per_frame); one tick's physics_step_ms then shows
+	# only part of the frame's physics time.
+	_published_frame_ticks = _frame_ticks
+	_published_frame_physics_ms = _frame_physics_ms
+	_frame_ticks = 0
+	_frame_physics_ms = 0.0
 
 
 func _physics_process(delta: float) -> void:
@@ -528,10 +540,22 @@ func _close_step_sample(now_usec: int) -> void:
 func _ingest_step_sample(step_ms: float, refresh_ms: float) -> void:
 	_last_step_sample_ms = maxf(0.0, step_ms - refresh_ms)
 	_debug_counters["physics_step_ms"] = snappedf(_last_step_sample_ms, 0.01)
+	_frame_ticks += 1
+	_frame_physics_ms += _last_step_sample_ms
 
 
 func last_step_sample_ms() -> float:
 	return _last_step_sample_ms
+
+
+## Physics ticks measured in the latest frame (0 when the frame ran none).
+func frame_physics_ticks() -> int:
+	return _published_frame_ticks
+
+
+## Summed step time of those ticks, in ms.
+func frame_physics_ms() -> float:
+	return _published_frame_physics_ms
 
 
 func _pressure_level_for(physics_ms: float) -> int:

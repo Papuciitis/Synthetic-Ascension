@@ -63,6 +63,7 @@ var _report_write_queue: RefCounted = PerformanceIncidentWriteQueueScript.new()
 ## Each is this recorder's own shallow copy, so draining it never touches an
 ## array the write queue may still be copying.
 var _retiring: Array[Array] = []
+var _scheduler: Node = null
 
 
 func _ready() -> void:
@@ -239,6 +240,15 @@ func collect_runtime_sample() -> Dictionary:
 		"sampling_overhead_usec": _sampling_overhead_usec,
 	}
 	sample.merge(_cached_slow_snapshot, true)
+	# Per-frame physics work, at the top level. enemy_scheduler (with its own
+	# physics_step_ms) comes from the 0.5 s slow snapshot, so it can be up to
+	# 30 frames old in any one sample; hitch tagging needs this frame's value
+	# and how many physics ticks the frame ran.
+	var scheduler := _scheduler_node()
+	if scheduler != null and scheduler.has_method("frame_physics_ticks"):
+		sample["physics_step_ms"] = float(scheduler.call("last_step_sample_ms"))
+		sample["physics_ticks"] = int(scheduler.call("frame_physics_ticks"))
+		sample["physics_frame_ms"] = float(scheduler.call("frame_physics_ms"))
 	# Combat subsystem costs per frame: the advancement tree's engine ticks,
 	# attack queue flush and backlog, Barrage fragment updates and
 	# reacquisitions. Cheap: the runner keeps these as plain counters.
@@ -247,6 +257,12 @@ func collect_runtime_sample() -> Dictionary:
 	if runner != null and runner.has_method("get_debug_counters"):
 		sample["ascension"] = runner.call("get_debug_counters")
 	return sample
+
+
+func _scheduler_node() -> Node:
+	if _scheduler == null or not is_instance_valid(_scheduler):
+		_scheduler = get_node_or_null("/root/EnemySimulationScheduler") if is_inside_tree() else null
+	return _scheduler
 
 
 func _collect_slow_snapshot() -> Dictionary:

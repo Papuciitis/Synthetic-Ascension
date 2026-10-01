@@ -97,6 +97,33 @@ func _test_tags() -> void:
 	step["enemy_scheduler"] = {"physics_step_ms": 9.5}
 	_check(String(PerformanceHitchTagger.tag(step, quiet)["tag"]) == "enemy_step", "the enemy scheduler's step tags 'enemy_step'")
 
+	# This frame's own physics (recorder rev 2026-09-30) wins over the slow
+	# snapshot's copy, which can be up to 0.5 s old.
+	var fresh := step.duplicate(true)
+	fresh["physics_step_ms"] = 0.6
+	fresh["physics_ticks"] = 1
+	fresh["physics_frame_ms"] = 0.6
+	_check(String(PerformanceHitchTagger.tag(fresh, quiet)["tag"]) != "enemy_step", "a stale slow-snapshot step no longer tags a frame whose own physics was light")
+	fresh["physics_frame_ms"] = 12.0
+	fresh["physics_step_ms"] = 12.0
+	_check(String(PerformanceHitchTagger.tag(fresh, quiet)["tag"]) == "enemy_step", "one heavy physics tick in the frame tags 'enemy_step'")
+	# Catch-up: after a long frame Godot runs several ticks; one tick alone
+	# (8 ms) sits under the attribution floor of a 60 ms frame and read as
+	# "unattributed", the ticks' sum is the frame's real physics cost.
+	var catchup := step.duplicate(true)
+	catchup["wall_ms"] = 60.0
+	catchup["frame_ms"] = 60.0
+	catchup["physics_step_ms"] = 8.0
+	catchup["physics_ticks"] = 3
+	catchup["physics_frame_ms"] = 24.0
+	var caught := PerformanceHitchTagger.tag(catchup, quiet)
+	_check(String(caught["tag"]) == "physics_catchup" and is_equal_approx(float(caught["ms"]), 24.0), "several physics ticks in one frame tag 'physics_catchup' with their sum (%s)" % str(caught))
+	var legacy := catchup.duplicate(true)
+	for key in ["physics_step_ms", "physics_ticks", "physics_frame_ms"]:
+		legacy.erase(key)
+	legacy["enemy_scheduler"] = {"physics_step_ms": 8.0}
+	_check(String(PerformanceHitchTagger.tag(legacy, quiet)["tag"]) == "unattributed", "older captures without the per-frame fields keep their original tags")
+
 	var nothing := _base(9_000_000, 40.0)
 	_check(String(PerformanceHitchTagger.tag(nothing, quiet)["tag"]) == "unattributed", "a 40 ms frame with only sub-millisecond measured costs is 'unattributed'")
 	var physics := _base(10_000_000, 40.0)

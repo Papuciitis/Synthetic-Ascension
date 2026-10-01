@@ -163,6 +163,15 @@ var _scene_base_knockback_decay: float = 0.0
 var _enemy_world_handle: int = 0
 var _representation_lease_active: bool = false
 
+## Profiling only (PhysicsStepAttributionProbe): when on, every enemy step
+## adds its own time here, full-tier steps from _physics_process and mid/far
+## steps the scheduler runs. Off in play: one static bool test per step.
+static var debug_physics_timing := false
+static var debug_full_step_usec := 0
+static var debug_full_step_calls := 0
+static var debug_scheduled_step_usec := 0
+static var debug_scheduled_step_calls := 0
+
 # A representation lease is taken on every pooled obtain, so a starved or broken
 # EnemyWorld would push one error per spawn. Report at most one line per this
 # window and carry the count of the failures it suppressed into the next one.
@@ -278,11 +287,23 @@ func _exit_tree() -> void:
 func _physics_process(delta: float) -> void:
 	if dead or _lod_tier != 0:
 		return
+	if debug_physics_timing:
+		var started := Time.get_ticks_usec()
+		_run_simulation_step(delta)
+		debug_full_step_usec += Time.get_ticks_usec() - started
+		debug_full_step_calls += 1
+		return
 	_run_simulation_step(delta)
 
 
 func run_scheduled_simulation(delta: float) -> void:
 	if dead or _lod_tier == 0:
+		return
+	if debug_physics_timing:
+		var started := Time.get_ticks_usec()
+		_run_simulation_step(maxf(delta, 0.000001))
+		debug_scheduled_step_usec += Time.get_ticks_usec() - started
+		debug_scheduled_step_calls += 1
 		return
 	_run_simulation_step(maxf(delta, 0.000001))
 

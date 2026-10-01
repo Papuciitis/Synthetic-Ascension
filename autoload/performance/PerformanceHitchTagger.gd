@@ -6,7 +6,8 @@ class_name PerformanceHitchTagger
 ## (tick / flush / hit handling), Barrage fragments, the projectile
 ## simulation, a chunk activation or one of its staged blocker steps, a flow
 ## field snapshot or publish, enemy lifecycle attach / detach / retire, the
-## enemy scheduler's step, the recorder's own sampling, or Godot's physics
+## enemy scheduler's step, a frame that ran several physics ticks to catch up
+## ("physics_catchup"), the recorder's own sampling, or Godot's physics
 ## monitor as a last resort. Pure and static, so the incident writer can
 ## call it from its worker thread. Correlation, not proof: the attribution
 ## says which measured cost was largest in that frame.
@@ -60,7 +61,16 @@ static func attribution(sample: Dictionary, previous: Dictionary) -> Dictionary:
 			delta_usec += maxi(0, int(lifecycle.get(key, 0)) - int(previous_lifecycle.get(key, 0)))
 		out["lifecycle"] = float(delta_usec) / 1000.0
 	var scheduler: Dictionary = sample.get("enemy_scheduler", {})
-	if scheduler.has("physics_step_ms"):
+	if sample.has("physics_frame_ms"):
+		# This frame's own physics (recorder rev 2026-09-30). Two or more
+		# ticks means Godot was catching up after a long frame: their sum is
+		# the cost, and one tick alone read as "unattributed" before.
+		if int(sample.get("physics_ticks", 0)) >= 2:
+			out["physics_catchup"] = float(sample.get("physics_frame_ms", 0.0))
+		else:
+			out["enemy_step"] = float(sample.get("physics_frame_ms", 0.0))
+	elif scheduler.has("physics_step_ms"):
+		# Older captures: the slow snapshot's value, up to 0.5 s old.
 		out["enemy_step"] = float(scheduler.get("physics_step_ms", 0.0))
 	if sample.has("sampling_overhead_usec"):
 		out["sampling"] = float(int(sample.get("sampling_overhead_usec", 0))) / 1000.0
