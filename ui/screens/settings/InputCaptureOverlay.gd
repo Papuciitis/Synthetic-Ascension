@@ -84,6 +84,7 @@ func _build_ui() -> void:
 	var title := Label.new()
 	title.text = "ASSIGN INPUT"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.theme_type_variation = &"ArcaneHeading"
 	title.add_theme_font_size_override("font_size", 24)
 	box.add_child(title)
 	_prompt = Label.new()

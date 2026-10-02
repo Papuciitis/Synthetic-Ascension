@@ -1,96 +1,117 @@
 [gd_scene format=3 uid="uid://bhcjpqu3hn1rv"]
 
 [ext_resource type="Script" uid="uid://cx21og0dwgd73" path="res://ui/screens/base.gd" id="1"]
-[ext_resource type="Shader" uid="uid://c6py8vxnd0t5t" path="res://assets/textures/base.gdshader" id="4_3cng1"]
-[ext_resource type="PackedScene" uid="uid://pbty138ge2ub" path="res://ui/components/RaceCard.tscn" id="4_l3625"]
-[ext_resource type="PackedScene" uid="uid://dc8d7t4q6kqmw" path="res://ui/components/PlaystyleCard.tscn" id="5_rfi20"]
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/widgets/ArcaneBackdrop.gd" id="3_backdrop"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="4_rule"]
+[ext_resource type="Script" path="res://ui/components/ArcaneMenuItem.gd" id="5_item"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="6_frame"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/vigil_backdrop.jpg" id="7_plate"]
+[ext_resource type="Shader" path="res://ui/shaders/card_portrait.gdshader" id="8_portrait"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_tkin3"]
-shader = ExtResource("4_3cng1")
-shader_parameter/vignette_strength = 0.3
-shader_parameter/noise_strength = 0.02
-shader_parameter/noise_scale = 290.0
+[sub_resource type="Gradient" id="ShadeGradient"]
+offsets = PackedFloat32Array(0, 0.3, 0.75, 1)
+colors = PackedColorArray(0, 0, 0, 0.6, 0, 0, 0, 0.3, 0, 0, 0, 0.35, 0, 0, 0, 0.72)
 
-[sub_resource type="StyleBoxFlat" id="StyleBigPanel"]
-bg_color = Color(0, 0, 0, 0.22)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 12
-shadow_offset = Vector2(0, 8)
+[sub_resource type="GradientTexture2D" id="ShadeTexture"]
+gradient = SubResource("ShadeGradient")
+width = 4
+height = 256
+fill_to = Vector2(0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
-bg_color = Color(0, 0, 0, 0.3)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.25)
-shadow_size = 8
-shadow_offset = Vector2(0, 5)
+[sub_resource type="Shader" id="ShaderVignette"]
+code = "shader_type canvas_item;
+// The top/bottom shade, the vignette and film grain in one black pass.
 
-[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
-bg_color = Color(0, 0, 0, 0.24)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.18)
-shadow_size = 6
-shadow_offset = Vector2(0, 4)
+uniform sampler2D shade : filter_linear;
+uniform float vignette_strength = 0.55;
+uniform float grain = 0.022;
 
-[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
-bg_color = Color(0, 0, 0, 0.34)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.28)
-shadow_size = 9
-shadow_offset = Vector2(0, 6)
+float hash(vec2 p){
+	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
+}
 
-[node name="Base" type="Control" unique_id=2024682814]
+void fragment(){
+	vec2 p = SCREEN_UV * 2.0 - 1.0;
+	p.x *= 0.8;
+	float edge = smoothstep(0.45, 1.3, length(p));
+	float n = hash(floor(FRAGCOORD.xy) + fract(TIME * 7.0) * 91.0);
+	float v = clamp(edge * vignette_strength + (n - 0.5) * grain, 0.0, 0.78);
+	float s = texture(shade, vec2(0.5, UV.y)).a;
+	COLOR = vec4(0.0, 0.0, 0.0, 1.0 - (1.0 - s) * (1.0 - v));
+}
+"
+
+[sub_resource type="ShaderMaterial" id="MatVignette"]
+shader = SubResource("ShaderVignette")
+shader_parameter/shade = SubResource("ShadeTexture")
+
+[sub_resource type="ShaderMaterial" id="MatVista"]
+shader = ExtResource("8_portrait")
+shader_parameter/region = Vector4(0.72, 0.0, 0.28, 0.6)
+shader_parameter/arch = 0.24
+shader_parameter/pan_seed = 0.7
+shader_parameter/lit = 0.75
+shader_parameter/tint = Color(1, 1, 1, 1)
+shader_parameter/drift_amount = 1.0
+
+[sub_resource type="Gradient" id="GlowGradient"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 0.7, 0.38, 0.5, 1, 0.55, 0.22, 0.14, 1, 0.5, 0.2, 0)
+
+[sub_resource type="GradientTexture2D" id="GlowTexture"]
+gradient = SubResource("GlowGradient")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="ShadowGradient"]
+offsets = PackedFloat32Array(0, 0.6, 1)
+colors = PackedColorArray(0, 0, 0, 0.8, 0, 0, 0, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="ShadowTexture"]
+gradient = SubResource("ShadowGradient")
+width = 128
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CanvasItemMaterial" id="Additive"]
+blend_mode = 1
+
+[sub_resource type="StyleBoxFlat" id="PreviewBg"]
+bg_color = Color(0.024, 0.021, 0.019, 0.9)
+shadow_color = Color(0, 0, 0, 0.55)
+shadow_size = 22
+shadow_offset = Vector2(0, 10)
+
+[node name="Base" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1")
-race_card_scene = ExtResource("4_l3625")
-style_card_scene = ExtResource("5_rfi20")
 
-[node name="BG" type="ColorRect" parent="." unique_id=799380942]
-layout_mode = 0
+[node name="Backdrop" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-color = Color(0.13, 0.13, 0.13, 1)
+script = ExtResource("3_backdrop")
+profile = &"vigil"
+mood = &"hearth"
 
-[node name="Vignette" type="ColorRect" parent="." unique_id=666096542]
-material = SubResource("ShaderMaterial_tkin3")
+[node name="Vignette" type="ColorRect" parent="."]
+material = SubResource("MatVignette")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -99,157 +120,277 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="." unique_id=1296068672]
-layout_mode = 0
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 30
 
-[node name="Main" type="VBoxContainer" parent="Margin" unique_id=2135286874]
+[node name="Main" type="VBoxContainer" parent="Margin"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 4
 
-[node name="Headers" type="HBoxContainer" parent="Margin/Main" unique_id=1503245293]
+[node name="Title" type="Label" parent="Margin/Main"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 12
-
-[node name="RacesHeader" type="Label" parent="Margin/Main/Headers" unique_id=1416733805]
-modulate = Color(1, 1, 1, 0.92)
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Races"
+theme_type_variation = &"ArcaneTitle"
+theme_override_font_sizes/font_size = 50
+text = "A NEW CHRONICLE"
 horizontal_alignment = 1
 
-[node name="PlaystyleHeader" type="Label" parent="Margin/Main/Headers" unique_id=1910003557]
-modulate = Color(1, 1, 1, 0.92)
+[node name="Subtitle" type="Label" parent="Margin/Main"]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "Playstyle"
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 20
+text = "Choose who walks out of the Archive, and how they fight."
 horizontal_alignment = 1
 
-[node name="Content" type="HBoxContainer" parent="Margin/Main" unique_id=166706245]
+[node name="TitleRule" type="Control" parent="Margin/Main"]
+custom_minimum_size = Vector2(560, 20)
 layout_mode = 2
-size_flags_horizontal = 3
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("4_rule")
+ornament = 2
+
+[node name="Content" type="HBoxContainer" parent="Margin/Main"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 40
+alignment = 1
+
+[node name="Races" type="VBoxContainer" parent="Margin/Main/Content"]
+custom_minimum_size = Vector2(470, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RacesHeader" type="Label" parent="Margin/Main/Content/Races"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 16
+text = "ANCESTRY"
+
+[node name="RacesGrid" type="VBoxContainer" parent="Margin/Main/Content/Races"]
+layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="RacesPanel" type="PanelContainer" parent="Margin/Main/Content" unique_id=1821407930]
+[node name="Preview" type="Panel" parent="Margin/Main/Content"]
+custom_minimum_size = Vector2(500, 0)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.2
-theme_override_styles/panel = SubResource("StyleBigPanel")
+theme_override_styles/panel = SubResource("PreviewBg")
 
-[node name="RacesScroll" type="ScrollContainer" parent="Margin/Main/Content/RacesPanel" unique_id=1537754165]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-horizontal_scroll_mode = 0
+[node name="Window" type="Control" parent="Margin/Main/Content/Preview"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = 566.0
+grow_horizontal = 2
+mouse_filter = 2
 
-[node name="RacesGrid" type="GridContainer" parent="Margin/Main/Content/RacesPanel/RacesScroll" unique_id=893237973]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-columns = 2
+[node name="Vista" type="TextureRect" parent="Margin/Main/Content/Preview/Window"]
+material = SubResource("MatVista")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("7_plate")
+expand_mode = 1
 
-[node name="Sep" type="VSeparator" parent="Margin/Main/Content" unique_id=2057729996]
-modulate = Color(1, 1, 1, 0.08)
-custom_minimum_size = Vector2(2, 0)
-layout_mode = 2
+[node name="Glow" type="TextureRect" parent="Margin/Main/Content/Preview/Window"]
+material = SubResource("Additive")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 90.0
+offset_right = -30.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GlowTexture")
+expand_mode = 1
 
-[node name="StylesPanel" type="PanelContainer" parent="Margin/Main/Content" unique_id=2125588803]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.8
-theme_override_styles/panel = SubResource("StyleBigPanel")
+[node name="Sigil" type="Control" parent="Margin/Main/Content/Preview/Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="StylesMargin" type="MarginContainer" parent="Margin/Main/Content/StylesPanel" unique_id=1877592664]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+[node name="Shadow" type="TextureRect" parent="Margin/Main/Content/Preview/Window"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -46.0
+offset_right = 120.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = SubResource("ShadowTexture")
+expand_mode = 1
 
-[node name="StylesGrid" type="HBoxContainer" parent="Margin/Main/Content/StylesPanel/StylesMargin" unique_id=2069050696]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 10
+[node name="Figure" type="TextureRect" parent="Margin/Main/Content/Preview/Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 90.0
+offset_right = -40.0
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
 
-[node name="NamePanel" type="PanelContainer" parent="Margin/Main"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBigPanel")
+[node name="WindowFrame" type="Control" parent="Margin/Main/Content/Preview/Window"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_frame")
+inset = 0.0
+crown = false
+outer_rule = false
+corners = false
+arch_height = 120.0
 
-[node name="Margin" type="MarginContainer" parent="Margin/Main/NamePanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+[node name="Info" type="VBoxContainer" parent="Margin/Main/Content/Preview"]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -196.0
+offset_right = -30.0
+offset_bottom = -22.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 6
 
-[node name="Row" type="HBoxContainer" parent="Margin/Main/NamePanel/Margin"]
+[node name="Vessel" type="Label" parent="Margin/Main/Content/Preview/Info"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 24
+text = "HUMAN · MAGIC"
+horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="Margin/Main/NamePanel/Margin/Row"]
-custom_minimum_size = Vector2(150, 0)
+[node name="Summary" type="RichTextLabel" parent="Margin/Main/Content/Preview/Info"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Mortal name"
-vertical_alignment = 1
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+horizontal_alignment = 1
 
-[node name="MortalName" type="LineEdit" parent="Margin/Main/NamePanel/Margin/Row"]
+[node name="NameCaption" type="Label" parent="Margin/Main/Content/Preview/Info"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 16
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 13
+text = "MORTAL NAME"
+horizontal_alignment = 1
+
+[node name="MortalName" type="LineEdit" parent="Margin/Main/Content/Preview/Info"]
+custom_minimum_size = Vector2(340, 40)
+layout_mode = 2
+size_flags_horizontal = 4
 placeholder_text = "Name used by the institution"
+alignment = 1
 max_length = 32
 
-[node name="ReplayOpening" type="CheckButton" parent="Margin/Main/NamePanel/Margin/Row"]
+[node name="ReplayOpening" type="CheckBox" parent="Margin/Main/Content/Preview/Info"]
 layout_mode = 2
-focus_mode = 1
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
 text = "Replay full opening"
 tooltip_text = "Replay the complete historical opening on the next new run."
 
-[node name="BottomBar" type="HBoxContainer" parent="Margin/Main" unique_id=1881186996]
+[node name="Frame" type="Control" parent="Margin/Main/Content/Preview"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("6_frame")
+
+[node name="Styles" type="VBoxContainer" parent="Margin/Main/Content"]
+custom_minimum_size = Vector2(470, 0)
 layout_mode = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="StylesHeader" type="Label" parent="Margin/Main/Content/Styles"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 16
+text = "PATH"
+
+[node name="StylesGrid" type="VBoxContainer" parent="Margin/Main/Content/Styles"]
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_constants/separation = 12
 
-[node name="BackToSaves" type="Button" parent="Margin/Main/BottomBar" unique_id=1000895259]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 44)
+[node name="BottomBar" type="HBoxContainer" parent="Margin/Main"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-text = "Back to Saves"
 
-[node name="Spacer" type="Control" parent="Margin/Main/BottomBar" unique_id=387830726]
+[node name="BackToSaves" type="Button" parent="Margin/Main/BottomBar"]
+layout_mode = 2
+theme_type_variation = &"ArcaneMenuButton"
+text = "BACK TO ARCHIVES"
+script = ExtResource("5_item")
+font_size = 22
+row_height = 54.0
+stroke_tail = 80.0
+show_rule = false
+
+[node name="Spacer" type="Control" parent="Margin/Main/BottomBar"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 
-[node name="StartRun" type="Button" parent="Margin/Main/BottomBar" unique_id=1805702437]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(180, 44)
+[node name="StartRun" type="Button" parent="Margin/Main/BottomBar"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-text = "Start Run"
+theme_type_variation = &"ArcaneMenuButton"
+text = "BEGIN THE RUN"
+script = ExtResource("5_item")
+mood = &"arcane"
+font_size = 28
+row_height = 62.0
+stroke_tail = 110.0
+show_rule = false
+
+[node name="Curtain" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

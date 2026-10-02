@@ -1,6 +1,11 @@
 extends HBoxContainer
 class_name SettingsBindingRow
 
+## Shared with SettingsScreen's column header so the titles sit over the cells.
+const LABEL_WIDTH := 170.0
+const CELL_WIDTH := 140.0
+const SEPARATION := 10
+
 signal binding_requested(action: StringName, family: StringName, slot: int, label: String)
 
 var _settings_source: Node
@@ -30,25 +35,30 @@ func refresh() -> void:
 
 func _build_ui() -> void:
 	custom_minimum_size = Vector2(0, 72)
-	add_theme_constant_override("separation", 10)
+	add_theme_constant_override("separation", SEPARATION)
 	var label := Label.new()
 	label.text = String(_entry[&"label"])
-	label.custom_minimum_size = Vector2(190, 0)
+	label.custom_minimum_size = Vector2(LABEL_WIDTH, 0)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.theme_type_variation = &"ArcaneBody"
 	add_child(label)
 	for family in [&"keyboard_mouse", &"controller"]:
 		for slot in range(2):
 			var cell := VBoxContainer.new()
-			cell.custom_minimum_size = Vector2(150, 0)
+			cell.custom_minimum_size = Vector2(CELL_WIDTH, 0)
 			add_child(cell)
 			var button := Button.new()
-			button.custom_minimum_size = Vector2(145, 38)
+			button.theme_type_variation = &"ArcaneKeyButton"
+			button.custom_minimum_size = Vector2(136, 36)
+			button.clip_text = true
+			button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 			button.pressed.connect(_request.bind(family, slot))
 			cell.add_child(button)
 			_buttons["%s_%d" % [family, slot]] = button
 			var clear := Button.new()
 			clear.text = "Clear"
 			clear.flat = true
+			clear.theme_type_variation = &"ArcaneLinkButton"
 			clear.pressed.connect(_clear.bind(family, slot))
 			cell.add_child(clear)
 
@@ -66,4 +76,4 @@ func _event_text(event: InputEvent) -> String:
 	if event is InputEventJoypadMotion:
 		var motion := event as InputEventJoypadMotion
 		return "Axis %d %s" % [motion.axis, "−" if motion.axis_value < 0.0 else "+"]
-	return event.as_text().trim_suffix(" (Physical)")
+	return event.as_text().trim_suffix(" (Physical)").trim_suffix(" - Physical")

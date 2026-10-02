@@ -10,9 +10,13 @@ class_name LoadingScrim
 
 const FADE_SECONDS := 0.35
 const HOLD_FRAMES := 2
+## The front end's title face (docs/design/2026-10-02-front-end-arcane-register.md).
+const TITLE_FONT := preload("res://assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf")
+const GOLD := Color(0.72, 0.55, 0.33, 0.85)
 
 var _scrim: ColorRect = null
 var _title: Label = null
+var _rule: Control = null
 var _armed_scene: Node = null
 var _frames_after_change: int = 0
 var _fading: bool = false
@@ -30,9 +34,18 @@ func _ready() -> void:
 	_title = Label.new()
 	_title.set_anchors_preset(Control.PRESET_CENTER)
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_title.add_theme_font_size_override("font_size", 26)
-	_title.modulate = Color(0.88, 0.8, 0.62, 1.0)
+	_title.add_theme_font_override("font", TITLE_FONT)
+	_title.add_theme_font_size_override("font_size", 40)
+	# The colour itself, not a tint: the project theme's parchment Label
+	# colour would otherwise be multiplied by it and the card would darken.
+	_title.add_theme_color_override("font_color", Color(0.91, 0.85, 0.74, 1.0))
 	_scrim.add_child(_title)
+	# A gold rule with a diamond under the destination, as on the menus.
+	_rule = Control.new()
+	_rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_rule.size = Vector2(360, 14)
+	_rule.draw.connect(_draw_rule)
+	_scrim.add_child(_rule)
 	visible = false
 	set_process(false)
 
@@ -41,7 +54,10 @@ func _ready() -> void:
 func show_for(title: String, current_scene: Node) -> void:
 	_title.text = title
 	_title.reset_size()
-	_title.position = -_title.size * 0.5
+	var centre := _scrim.get_viewport_rect().size * 0.5 if _scrim.is_inside_tree() else Vector2.ZERO
+	_title.position = centre - _title.size * 0.5
+	_rule.visible = title != ""
+	_rule.position = centre + Vector2(-_rule.size.x * 0.5, _title.size.y * 0.5 + 6.0)
 	_scrim.modulate.a = 1.0
 	_armed_scene = current_scene
 	_frames_after_change = 0
@@ -76,3 +92,18 @@ func _process(delta: float) -> void:
 	if _frames_after_change >= HOLD_FRAMES:
 		_fading = true
 		_fade_left = FADE_SECONDS
+
+
+func _draw_rule() -> void:
+	var w := _rule.size.x
+	var y := 7.5
+	for i in range(24):
+		var a := float(i) / 24.0
+		var b := float(i + 1) / 24.0
+		if b > 0.47 and a < 0.53:
+			continue
+		var fade := clampf(minf(a, 1.0 - b) * 5.0, 0.0, 1.0)
+		_rule.draw_line(Vector2(w * a, y), Vector2(w * b, y), Color(GOLD, GOLD.a * fade), 1.0, true)
+	var c := Vector2(w * 0.5, y)
+	var r := 4.0
+	_rule.draw_polyline(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0), c + Vector2(0, -r)]), GOLD, 1.2, true)

@@ -64,6 +64,16 @@ func has_save(slot: int) -> bool:
 		or FileAccess.file_exists(_backup_path(slot))
 	)
 
+## When the slot was last written (unix seconds), 0 when it has no files.
+## The newer of the primary and its backup, so a slot whose primary failed to
+## parse still sorts by its last good write.
+func slot_modified_time(slot: int) -> int:
+	var newest := 0
+	for path in [_slot_path(slot), _backup_path(slot)]:
+		if FileAccess.file_exists(path):
+			newest = maxi(newest, int(FileAccess.get_modified_time(path)))
+	return newest
+
 func load_slot(slot: int) -> SaveData:
 	if not ensure_dir():
 		return null
@@ -84,12 +94,15 @@ func create_slot(slot: int, profile_name: String) -> SaveData:
 	save_slot(s)
 	return s
 
-func save_slot(save: SaveData, validated: bool = true) -> bool:
+## `stamp_time` false keeps updated_unix for a metadata-only write (a rename),
+## so "the chronicle last played" is not taken over by "the one last renamed".
+func save_slot(save: SaveData, validated: bool = true, stamp_time: bool = true) -> bool:
 	if save == null or not ensure_dir():
 		return false
 	debug_save_writes += 1
 	debug_last_save_validated = validated
-	save.updated_unix = int(Time.get_unix_time_from_system())
+	if stamp_time or save.updated_unix <= 0:
+		save.updated_unix = int(Time.get_unix_time_from_system())
 	var slot := save.slot_index
 	var primary_path := _slot_path(slot)
 	var temporary_path := _temporary_path(slot)

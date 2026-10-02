@@ -25,7 +25,7 @@ func _run() -> void:
 		root.add_child(menu)
 		await process_frame
 		_check(
-			menu.get_node_or_null("Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDevSegment") != null,
+			menu.get_node_or_null("DevPanel/Pad/Margin/VBox/StartDevSegment") != null,
 			"developer panel exposes an isolated Dev Segment launch button"
 		)
 		menu.queue_free()

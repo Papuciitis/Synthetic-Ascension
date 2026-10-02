@@ -1,411 +1,418 @@
 [gd_scene format=3 uid="uid://c446qid4khmif"]
 
-[ext_resource type="Script" uid="uid://cn2y6dmghc5yc" path="res://ui/screens/MainMenu.gd" id="1_b00nv"]
-[ext_resource type="Texture2D" uid="uid://1o25sxyxe5k1" path="res://assets/textures/covers/main_menu_backdrop.jpg" id="2_backdrop"]
-[ext_resource type="Script" uid="uid://d20bqkw442jvv" path="res://ui/components/TactileButton.gd" id="3_tactile"]
-[ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="4_theme"]
+[ext_resource type="Script" uid="uid://cn2y6dmghc5yc" path="res://ui/screens/MainMenu.gd" id="1_menu"]
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/widgets/ArcaneBackdrop.gd" id="3_backdrop"]
+[ext_resource type="Script" path="res://ui/components/ArcaneMenuItem.gd" id="4_item"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="5_rule"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="6_frame"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/title_logo.png" id="7_title"]
+[ext_resource type="Shader" path="res://ui/shaders/title_sheen.gdshader" id="8_title_shader"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/title_reveal.png" id="9_title_reveal"]
+
+[sub_resource type="Gradient" id="ShadeLeftGradient"]
+offsets = PackedFloat32Array(0, 0.24, 0.44, 0.62)
+colors = PackedColorArray(0, 0, 0, 0.74, 0, 0, 0, 0.52, 0, 0, 0, 0.16, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="ShadeLeft"]
+gradient = SubResource("ShadeLeftGradient")
+width = 256
+height = 4
+
+[sub_resource type="Gradient" id="ShadeBottomGradient"]
+offsets = PackedFloat32Array(0, 0.72, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.12, 0, 0, 0, 0.5)
+
+[sub_resource type="GradientTexture2D" id="ShadeBottom"]
+gradient = SubResource("ShadeBottomGradient")
+width = 4
+height = 256
+fill_to = Vector2(0, 1)
 
 [sub_resource type="Shader" id="ShaderVignette"]
 code = "shader_type canvas_item;
+// One pass for every black layer over the painting: the left shade the menu
+// reads on, the bottom shade under the menu, the vignette and film grain.
+// Black layers compose as alpha = 1 - (1-a)(1-b)(1-c), so this is exact.
 
-uniform float vignette_strength = 0.35;
-uniform float noise_strength = 0.015;
-uniform float noise_scale = 260.0;
+uniform sampler2D shade_left : filter_linear;
+uniform sampler2D shade_bottom : filter_linear;
+uniform float vignette_strength = 0.42;
+uniform float grain = 0.022;
 
 float hash(vec2 p){
 	return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
 }
 
 void fragment(){
-	vec2 uv = SCREEN_UV;
-	vec2 p = uv * 2.0 - 1.0;
-
-	float d = length(p);
-	float edge = smoothstep(0.40, 1.12, d);
-
-	float n = hash(uv * noise_scale);
-	float a = edge * vignette_strength + (n - 0.5) * noise_strength;
-	a = clamp(a, 0.0, 0.50);
-
-	COLOR = vec4(0.0, 0.0, 0.0, a);
+	vec2 p = SCREEN_UV * 2.0 - 1.0;
+	p.x *= 0.82;
+	float edge = smoothstep(0.55, 1.35, length(p));
+	float n = hash(floor(FRAGCOORD.xy) + fract(TIME * 7.0) * 91.0);
+	float v = clamp(edge * vignette_strength + (n - 0.5) * grain, 0.0, 0.7);
+	float l = texture(shade_left, vec2(UV.x, 0.5)).a;
+	float b = texture(shade_bottom, vec2(0.5, UV.y)).a;
+	COLOR = vec4(0.0, 0.0, 0.0, 1.0 - (1.0 - l) * (1.0 - b) * (1.0 - v));
 }
 "
 
 [sub_resource type="ShaderMaterial" id="MatVignette"]
 shader = SubResource("ShaderVignette")
-shader_parameter/vignette_strength = 0.35
-shader_parameter/noise_strength = 0.015
-shader_parameter/noise_scale = 260.0
+shader_parameter/shade_left = SubResource("ShadeLeft")
+shader_parameter/shade_bottom = SubResource("ShadeBottom")
 
-[sub_resource type="StyleBoxFlat" id="StyleMenuPanel"]
-bg_color = Color(0.035, 0.032, 0.029, 0.92)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.66, 0.37, 0.17, 0.86)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 14
-shadow_offset = Vector2(0, 10)
+[sub_resource type="ShaderMaterial" id="MatTitle"]
+shader = ExtResource("8_title_shader")
+shader_parameter/reveal_map = ExtResource("9_title_reveal")
+shader_parameter/draw = 1.1
+shader_parameter/sweep_period = 7.5
+shader_parameter/sweep_strength = 0.32
+shader_parameter/ember = 0.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBtnNormal"]
-bg_color = Color(0, 0, 0, 0.3)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0, 0, 0, 0.2)
-shadow_size = 8
-shadow_offset = Vector2(0, 6)
-
-[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
-bg_color = Color(0, 0, 0, 0.26)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0, 0, 0, 0.16)
-shadow_size = 6
-shadow_offset = Vector2(0, 4)
-
-[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
-bg_color = Color(0, 0, 0, 0.34)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0, 0, 0, 0.24)
-shadow_size = 10
-shadow_offset = Vector2(0, 7)
-
-[node name="MainMenu" type="Control" unique_id=1922618237]
+[node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_b00nv")
-theme = ExtResource("4_theme")
+theme = ExtResource("2_theme")
+script = ExtResource("1_menu")
 
-[node name="Backdrop" type="TextureRect" parent="." unique_id=1544726732]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-texture = ExtResource("2_backdrop")
-expand_mode = 1
-stretch_mode = 6
-
-[node name="Dim" type="ColorRect" parent="." unique_id=1444048063]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0, 0, 0, 0.55)
-
-[node name="WarmTint" type="ColorRect" parent="." unique_id=1547170075]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-color = Color(0.23, 0.11, 0.05, 0.16)
-
-[node name="Vignette" type="ColorRect" parent="." unique_id=478561464]
-material = SubResource("MatVignette")
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Center" type="CenterContainer" parent="." unique_id=682417582]
+[node name="Backdrop" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 373.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_backdrop")
+profile = &"threshold"
 
-[node name="Panel" type="PanelContainer" parent="Center" unique_id=276883101]
-custom_minimum_size = Vector2(420, 0)
+[node name="Vignette" type="ColorRect" parent="."]
+material = SubResource("MatVignette")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Title" type="TextureRect" parent="."]
+material = SubResource("MatTitle")
+layout_mode = 0
+offset_left = 104.0
+offset_top = 40.0
+offset_right = 784.0
+offset_bottom = 485.0
+mouse_filter = 2
+texture = ExtResource("7_title")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Menu" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 148.0
+offset_top = 522.0
+offset_right = 760.0
+offset_bottom = 1000.0
+theme_override_constants/separation = 2
+
+[node name="Continue" type="Button" parent="Menu"]
+layout_mode = 2
+text = "CONTINUE"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"hearth"
+
+[node name="NewRun" type="Button" parent="Menu"]
+layout_mode = 2
+text = "NEW RUN"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"arcane"
+
+[node name="Archives" type="Button" parent="Menu"]
+layout_mode = 2
+text = "ARCHIVES"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"archive"
+rule_ornament = true
+
+[node name="Settings" type="Button" parent="Menu"]
+layout_mode = 2
+text = "SETTINGS"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"still"
+
+[node name="Quit" type="Button" parent="Menu"]
+layout_mode = 2
+text = "QUIT"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"dusk"
+show_rule = false
+
+[node name="EndRule" type="Control" parent="Menu"]
+custom_minimum_size = Vector2(250, 16)
 layout_mode = 2
 size_flags_horizontal = 0
-size_flags_vertical = 0
-theme_override_styles/panel = SubResource("StyleMenuPanel")
-theme_type_variation = &"InstitutionalPanel"
-
-[node name="Padding" type="MarginContainer" parent="Center/Panel" unique_id=1840145881]
-layout_mode = 2
-theme_override_constants/margin_left = 22
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 22
-theme_override_constants/margin_bottom = 18
-
-[node name="VBox" type="VBoxContainer" parent="Center/Panel/Padding" unique_id=722818052]
-layout_mode = 2
-theme_override_constants/separation = 10
-alignment = 1
-
-[node name="Title" type="Label" parent="Center/Panel/Padding/VBox" unique_id=1172276918]
-layout_mode = 2
-theme_type_variation = &"InstitutionalHeading"
-theme_override_font_sizes/font_size = 28
-text = "MAIN MENU"
-horizontal_alignment = 1
-
-[node name="Rule" type="ColorRect" parent="Center/Panel/Padding/VBox" unique_id=1125335662]
-custom_minimum_size = Vector2(0, 2)
-layout_mode = 2
 mouse_filter = 2
-color = Color(1, 0.55, 0.2, 0.8)
+script = ExtResource("5_rule")
 
-[node name="Continue" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1801875612]
-custom_minimum_size = Vector2(300, 44)
+[node name="DevMode" type="Button" parent="Menu"]
 layout_mode = 2
-focus_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-theme_type_variation = &"InstitutionalButton"
-text = "CONTINUE"
-script = ExtResource("3_tactile")
+toggle_mode = true
+text = "DEVELOPER MODE"
+theme_type_variation = &"ArcaneMenuButton"
+script = ExtResource("4_item")
+mood = &"synthetic"
+font_size = 15
+row_height = 40.0
+stroke_tail = 70.0
+show_rule = false
 
-[node name="Saves" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1172740519]
-custom_minimum_size = Vector2(300, 44)
-layout_mode = 2
-focus_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-theme_type_variation = &"InstitutionalButton"
-text = "SAVES / NEW RUN"
-script = ExtResource("3_tactile")
-
-[node name="Settings" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1988272995]
-custom_minimum_size = Vector2(300, 44)
-layout_mode = 2
-focus_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-theme_type_variation = &"InstitutionalButton"
-text = "SETTINGS"
-script = ExtResource("3_tactile")
-
-[node name="Quit" type="Button" parent="Center/Panel/Padding/VBox" unique_id=1795037295]
-custom_minimum_size = Vector2(300, 44)
-layout_mode = 2
-focus_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-theme_type_variation = &"InstitutionalButton"
-text = "QUIT"
-script = ExtResource("3_tactile")
-
-[node name="DevMode" type="CheckBox" parent="Center/Panel/Padding/VBox" unique_id=1642827774]
-layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "Developer Mode"
-
-[node name="DevPanel" type="PanelContainer" parent="Center/Panel/Padding/VBox" unique_id=1563040330]
+[node name="DevPanel" type="PanelContainer" parent="."]
 visible = false
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBtnNormal")
+layout_mode = 0
+offset_left = 820.0
+offset_top = 96.0
+offset_right = 1330.0
+offset_bottom = 930.0
+theme_type_variation = &"ArcanePanel"
 
-[node name="Pad" type="ScrollContainer" parent="Center/Panel/Padding/VBox/DevPanel" unique_id=322895718]
-custom_minimum_size = Vector2(0, 300)
+[node name="Pad" type="ScrollContainer" parent="DevPanel"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad" unique_id=990001001]
+[node name="Margin" type="MarginContainer" parent="DevPanel/Pad"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 26
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 26
+theme_override_constants/margin_bottom = 24
 
-[node name="VBox" type="VBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin" unique_id=7583593]
-layout_mode = 2
-theme_override_constants/separation = 6
-
-[node name="DevTitle" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1517633824]
-layout_mode = 2
-text = "DEV START"
-horizontal_alignment = 1
-
-[node name="RowSegment" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=387149319]
+[node name="VBox" type="VBoxContainer" parent="DevPanel/Pad/Margin"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSegment" unique_id=1916050125]
-custom_minimum_size = Vector2(90, 0)
+[node name="DevTitle" type="Label" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-text = "Segment"
+theme_type_variation = &"ArcaneHeading"
+text = "DEV START"
+horizontal_alignment = 1
 
-[node name="Segment" type="SpinBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSegment" unique_id=1014279691]
+[node name="DevSubtitle" type="Label" parent="DevPanel/Pad/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 16
+text = "Debug builds only. Jump anywhere, carry anything."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DevRule" type="Control" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("5_rule")
+
+[node name="RowSegment" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowSegment"]
+custom_minimum_size = Vector2(140, 0)
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+text = "SEGMENT"
+
+[node name="Segment" type="SpinBox" parent="DevPanel/Pad/Margin/VBox/RowSegment"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 min_value = 1.0
 max_value = 10.0
 value = 1.0
 
-[node name="RowRace" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=649276689]
+[node name="RowRace" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRace" unique_id=2044081016]
-custom_minimum_size = Vector2(90, 0)
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowRace"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Race"
+theme_type_variation = &"ArcaneCaption"
+text = "RACE"
 
-[node name="Race" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRace" unique_id=1973083386]
+[node name="Race" type="OptionButton" parent="DevPanel/Pad/Margin/VBox/RowRace"]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="RowStyle" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=396636368]
+[node name="RowStyle" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowStyle" unique_id=1021586321]
-custom_minimum_size = Vector2(90, 0)
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowStyle"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Style"
+theme_type_variation = &"ArcaneCaption"
+text = "STYLE"
 
-[node name="Style" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowStyle" unique_id=1485761552]
+[node name="Style" type="OptionButton" parent="DevPanel/Pad/Margin/VBox/RowStyle"]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="RowWeapon" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1303760455]
+[node name="RowWeapon" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowWeapon" unique_id=1301681550]
-custom_minimum_size = Vector2(90, 0)
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowWeapon"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Loadout"
+theme_type_variation = &"ArcaneCaption"
+text = "LOADOUT"
 
-[node name="Weapon" type="OptionButton" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowWeapon" unique_id=1852371406]
+[node name="Weapon" type="OptionButton" parent="DevPanel/Pad/Margin/VBox/RowWeapon"]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="RowRarity" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1688457433]
+[node name="RowRarity" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRarity" unique_id=634518706]
-custom_minimum_size = Vector2(90, 0)
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowRarity"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Loadout Rarity"
+theme_type_variation = &"ArcaneCaption"
+text = "LOADOUT RARITY"
 
-[node name="Rarity" type="SpinBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRarity" unique_id=1721071650]
+[node name="Rarity" type="SpinBox" parent="DevPanel/Pad/Margin/VBox/RowRarity"]
 custom_minimum_size = Vector2(150, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 max_value = 10.0
 value = 4.0
 
-[node name="RowSeed" type="HBoxContainer" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=2123758091]
+[node name="RowSeed" type="HBoxContainer" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="Lbl" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSeed" unique_id=1245017141]
-custom_minimum_size = Vector2(90, 0)
+[node name="Lbl" type="Label" parent="DevPanel/Pad/Margin/VBox/RowSeed"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "Seed"
+theme_type_variation = &"ArcaneCaption"
+text = "SEED"
 
-[node name="Seed" type="LineEdit" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSeed" unique_id=1276304499]
+[node name="Seed" type="LineEdit" parent="DevPanel/Pad/Margin/VBox/RowSeed"]
 custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 placeholder_text = "optional (int)"
 
-[node name="ForceAug" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1487429838]
+[node name="FlagsRule" type="Control" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
 layout_mode = 2
+mouse_filter = 2
+script = ExtResource("5_rule")
+ornament = 0
+
+[node name="ForceAug" type="CheckBox" parent="DevPanel/Pad/Margin/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
 text = "Force Augment Pick Pending"
 
-[node name="ForceMajor" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1134520884]
+[node name="ForceMajor" type="CheckBox" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 17
 text = "Force Major Choice Pending"
 
-[node name="ForceEnemyIntros" type="CheckBox" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+[node name="ForceEnemyIntros" type="CheckBox" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 17
 text = "Force Enemy Introductions This Run"
 
-[node name="RuntimeToolsHint" type="Label" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
+[node name="RuntimeToolsHint" type="Label" parent="DevPanel/Pad/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.35, 0.78, 0.9, 1)
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.55, 0.74, 0.95, 1)
+theme_override_font_sizes/font_size = 16
 text = "Runtime tools: press ` / ~ to open the Developer Console."
 autowrap_mode = 2
 
-[node name="ResetEnemyIntros" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
-custom_minimum_size = Vector2(300, 34)
+[node name="ResetEnemyIntros" type="Button" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-focus_mode = 0
+theme_type_variation = &"ArcaneSmallButton"
 text = "Reset Saved Enemy Introductions"
 
-[node name="GrantAugments" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1697471345]
-custom_minimum_size = Vector2(300, 38)
+[node name="GrantAugments" type="Button" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 14
+theme_type_variation = &"ArcaneSmallButton"
 text = "Grant Test Augments (4)"
 
-[node name="StartDev" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1169493901]
-custom_minimum_size = Vector2(300, 44)
+[node name="StartRule" type="Control" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
+mouse_filter = 2
+script = ExtResource("5_rule")
+ornament = 2
+
+[node name="StartDev" type="Button" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
 text = "Start Dev Run"
-script = ExtResource("3_tactile")
 
-[node name="StartDevSegment" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox"]
-custom_minimum_size = Vector2(300, 44)
+[node name="StartDevSegment" type="Button" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
 text = "Start Dev Segment (Prefab Baseline)"
-script = ExtResource("3_tactile")
 
-[node name="StartDevHub" type="Button" parent="Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox" unique_id=1863550326]
-custom_minimum_size = Vector2(300, 44)
+[node name="StartDevHub" type="Button" parent="DevPanel/Pad/Margin/VBox"]
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-focus_mode = 0
-theme_override_font_sizes/font_size = 16
-theme_override_styles/normal = SubResource("StyleBtnNormal")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_styles/hover = SubResource("StyleBtnHover")
 text = "Start in Hub (Dev)"
-script = ExtResource("3_tactile")
+
+[node name="Frame" type="Control" parent="DevPanel"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("6_frame")
+
+[node name="Version" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -260.0
+offset_top = -58.0
+offset_right = -40.0
+offset_bottom = -32.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(0.78, 0.68, 0.54, 1)
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 2
+
+[node name="Curtain" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)

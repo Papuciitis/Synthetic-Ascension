@@ -26,8 +26,8 @@ func _run() -> void:
 	var menu := menu_scene.instantiate()
 	root.add_child(menu)
 	await process_frame
-	var path := "Center/Panel/Padding/VBox/"
-	for button_name in ["Continue", "Saves", "Settings", "Quit"]:
+	var path := "Menu/"
+	for button_name in ["Continue", "NewRun", "Archives", "Settings", "Quit"]:
 		var button := menu.get_node(path + button_name) as Button
 		_check(button.focus_mode == Control.FOCUS_ALL, "%s accepts keyboard/controller focus" % button_name)
 	var settings_button := menu.get_node(path + "Settings") as Button

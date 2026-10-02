@@ -472,6 +472,7 @@ func _build_enemy_rows(ids: Array[StringName]) -> void:
 		var count := Label.new()
 		count.custom_minimum_size.x = 160.0
 		var only := Button.new()
+		only.theme_type_variation = &"ArcaneSmallButton"
 		only.text = "Only"
 		only.pressed.connect(func() -> void: DebugEnemySpawnFilter.isolate_enemy(enemy_id))
 		var cap := SpinBox.new()
@@ -696,8 +697,8 @@ func _build_tests_tab() -> void:
 
 	_dev_state = Label.new()
 	_dev_state.name = "StateStrip"
-	_dev_state.add_theme_font_size_override("font_size", 15)
-	_dev_state.add_theme_color_override("font_color", Color(0.62, 0.86, 0.98))
+	_dev_state.add_theme_font_size_override("font_size", 16)
+	_dev_state.add_theme_color_override("font_color", Color(0.95, 0.83, 0.62))
 	_dev_state.text = "—"
 	column.add_child(_dev_state)
 
@@ -715,8 +716,8 @@ func _build_tests_tab() -> void:
 
 	_dev_log = Label.new()
 	_dev_log.name = "ActionLog"
-	_dev_log.add_theme_font_size_override("font_size", 13)
-	_dev_log.add_theme_color_override("font_color", Color(0.72, 0.72, 0.66))
+	_dev_log.add_theme_font_size_override("font_size", 15)
+	_dev_log.add_theme_color_override("font_color", Color(0.7, 0.65, 0.56))
 	_dev_log.custom_minimum_size.y = 92.0
 	_dev_log.vertical_alignment = VERTICAL_ALIGNMENT_TOP
 	_dev_log.text = "Ready."
@@ -741,8 +742,9 @@ func _tests_page(tabs: TabContainer, title: String) -> VBoxContainer:
 func _dev_heading(parent: VBoxContainer, text: String) -> void:
 	var label := Label.new()
 	label.text = text
-	label.add_theme_font_size_override("font_size", 16)
-	label.add_theme_color_override("font_color", Color(0.95, 0.80, 0.42))
+	label.theme_type_variation = &"ArcaneCaption"
+	label.add_theme_font_size_override("font_size", 14)
+	label.add_theme_color_override("font_color", Color(0.86, 0.64, 0.36))
 	parent.add_child(label)
 
 
@@ -758,6 +760,7 @@ func _dev_row(parent: VBoxContainer) -> HBoxContainer:
 func _dev_button(parent: Control, text: String, note: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
+	button.theme_type_variation = &"ArcaneSmallButton"
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(func() -> void:
 		action.call()
@@ -1030,8 +1033,8 @@ func _build_rules_tab(page: VBoxContainer, tools: Node) -> void:
 	_dev_heading(page, "PAIR SHORTCUTS")
 	var hint := Label.new()
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hint.add_theme_font_size_override("font_size", 13)
-	hint.add_theme_color_override("font_color", Color(0.66, 0.66, 0.62))
+	hint.add_theme_font_size_override("font_size", 15)
+	hint.add_theme_color_override("font_color", Color(0.66, 0.6, 0.5))
 	hint.text = (
 		"A pair lights at two DISTINCT rules of each of its two nouns. "
 		+ "Each button below grants exactly that, so the payoff can be tested "

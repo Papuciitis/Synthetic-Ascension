@@ -8,8 +8,20 @@ const CaptureScene := preload("res://ui/screens/settings/InputCaptureOverlay.tsc
 const ConflictScene := preload("res://ui/screens/settings/BindingConflictOverlay.tscn")
 const DisplayConfirmScene := preload("res://ui/screens/settings/DisplayConfirmationOverlay.tscn")
 
-const ACCENT := Color(1.0, 0.55, 0.2, 0.95)
+const ARCANE_THEME := preload("res://ui/theme/ArcaneMenuTheme.tres")
+const ArcaneMenuItemScript := preload("res://ui/components/ArcaneMenuItem.gd")
+const ArcaneRuleScript := preload("res://ui/components/ArcaneRule.gd")
+const ArcaneFrameScript := preload("res://ui/components/ArcaneFrame.gd")
+const ArcaneDialogScript := preload("res://ui/components/ArcaneDialog.gd")
+
 const SECTIONS: Array[StringName] = [&"audio", &"video", &"controls", &"accessibility"]
+## What a Reset Tab restores, named in its confirmation.
+const RESET_SUBJECTS := {
+	&"audio": "volume levels",
+	&"video": "display settings",
+	&"controls": "key and button bindings",
+	&"accessibility": "accessibility settings",
+}
 
 var _settings_source: Node
 var _active_section := &"audio"
@@ -19,10 +31,11 @@ var _tabs: Dictionary = {}
 var _capture: Control
 var _conflict: Control
 var _display_confirm: Control
-var _reset_confirm: ConfirmationDialog
+var _reset_confirm: Control
 var _pending_binding: Dictionary = {}
 var _mode_option: OptionButton
 var _resolution_option: OptionButton
+var _panel: PanelContainer
 
 
 func configure(settings_source: Node) -> void:
@@ -36,9 +49,31 @@ func _ready() -> void:
 	_build_ui()
 	_set_section(&"audio")
 	hide()
+	# Focus stays inside Settings while it is open: a d-pad press or Tab that
+	# would reach the menu behind the veil comes back to the active tab.
+	get_viewport().gui_focus_changed.connect(_on_focus_changed)
+	resized.connect(_fit_panel)
+
+
+func _on_focus_changed(control: Control) -> void:
+	if not visible or control == null or is_ancestor_of(control):
+		return
+	var tab := _tabs.get(_active_section) as Control
+	if tab != null:
+		tab.call_deferred("grab_focus")
+
+
+## At a large UI Scale the logical viewport shrinks (1280 x 720 at 150 %);
+## the panel gives way to it and its content scrolls.
+func _fit_panel() -> void:
+	if _panel == null:
+		return
+	var room := get_viewport_rect().size - Vector2(48, 40)
+	_panel.custom_minimum_size = Vector2(minf(1240.0, room.x), minf(780.0, room.y))
 
 
 func open() -> void:
+	_fit_panel()
 	show()
 	refresh_from_manager()
 	var tab := _tabs.get(_active_section) as Button
@@ -67,7 +102,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif _display_confirm.visible:
 		_display_confirm.call("cancel")
 	elif _reset_confirm.visible:
-		_reset_confirm.hide()
+		_reset_confirm.call("cancel")
 	else:
 		close()
 	get_viewport().set_input_as_handled()
@@ -75,9 +110,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _build_ui() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# The front-end register; standalone (tests, a future pause menu) as well as
+	# over the main menu.
+	theme = ARCANE_THEME
+	# A veil, not a wall: the living menu stays visible, dimmed, behind it.
 	var backdrop := ColorRect.new()
 	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.color = Color(0.005, 0.005, 0.008, 0.96)
+	backdrop.color = Color(0.008, 0.006, 0.005, 0.8)
 	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(backdrop)
 
@@ -85,47 +124,61 @@ func _build_ui() -> void:
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(1120, 730)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.035, 0.035, 0.047, 0.99)
-	style.border_color = ACCENT
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(18)
-	panel.add_theme_stylebox_override("panel", style)
+	_panel = panel
+	panel.name = "Panel"
+	panel.theme_type_variation = &"ArcanePanel"
+	panel.custom_minimum_size = Vector2(1240, 780)
 	center.add_child(panel)
 	var margin := MarginContainer.new()
-	for side in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
-		margin.add_theme_constant_override(side, 28)
+	for side in [&"margin_left", &"margin_right"]:
+		margin.add_theme_constant_override(side, 40)
+	margin.add_theme_constant_override(&"margin_top", 30)
+	margin.add_theme_constant_override(&"margin_bottom", 30)
 	panel.add_child(margin)
+	var frame := ArcaneFrameScript.new() as Control
+	frame.name = "Frame"
+	panel.add_child(frame)
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 16)
+	layout.add_theme_constant_override("separation", 14)
 	margin.add_child(layout)
 	var title := Label.new()
+	title.name = "Title"
 	title.text = "SETTINGS"
+	title.theme_type_variation = &"ArcaneTitle"
+	title.add_theme_font_size_override("font_size", 42)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 30)
 	layout.add_child(title)
-	var rule := ColorRect.new()
-	rule.custom_minimum_size = Vector2(0, 2)
-	rule.color = ACCENT
+	var rule := ArcaneRuleScript.new() as Control
+	rule.set("ornament", 2)
+	rule.custom_minimum_size = Vector2(460, 18)
+	rule.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	layout.add_child(rule)
 
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_theme_constant_override("separation", 20)
+	body.add_theme_constant_override("separation", 26)
 	layout.add_child(body)
 	var tabs := VBoxContainer.new()
-	tabs.custom_minimum_size = Vector2(200, 0)
-	tabs.add_theme_constant_override("separation", 8)
+	tabs.custom_minimum_size = Vector2(250, 0)
+	tabs.add_theme_constant_override("separation", 4)
 	body.add_child(tabs)
 	for section in SECTIONS:
-		var tab := Button.new()
+		var tab := ArcaneMenuItemScript.new() as Button
 		tab.name = "%sTab" % String(section).capitalize().replace(" ", "")
 		tab.text = String(section).to_upper()
-		tab.custom_minimum_size = Vector2(190, 48)
+		tab.set("font_size", 19)
+		tab.set("row_height", 50.0)
+		tab.set("stroke_tail", 70.0)
+		tab.set("show_rule", false)
+		tab.set("stroke_on_focus", false)
 		tab.pressed.connect(_set_section.bind(section))
 		tabs.add_child(tab)
 		_tabs[section] = tab
+	var divider := ColorRect.new()
+	divider.custom_minimum_size = Vector2(1, 0)
+	divider.color = Color(0.62, 0.47, 0.3, 0.35)
+	divider.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	body.add_child(divider)
 
 	_scroll = ScrollContainer.new()
 	_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -133,31 +186,31 @@ func _build_ui() -> void:
 	body.add_child(_scroll)
 	_content = VBoxContainer.new()
 	_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_content.add_theme_constant_override("separation", 12)
+	_content.add_theme_constant_override("separation", 10)
 	_scroll.add_child(_content)
 
+	var footer_rule := ArcaneRuleScript.new() as Control
+	footer_rule.set("ornament", 0)
+	footer_rule.custom_minimum_size = Vector2(0, 10)
+	layout.add_child(footer_rule)
 	var footer := HBoxContainer.new()
 	footer.alignment = BoxContainer.ALIGNMENT_END
-	footer.add_theme_constant_override("separation", 10)
+	footer.add_theme_constant_override("separation", 12)
 	layout.add_child(footer)
 	var reset := Button.new()
 	reset.name = "ResetTab"
 	reset.text = "Reset Tab"
-	reset.custom_minimum_size = Vector2(150, 44)
+	reset.theme_type_variation = &"ArcaneSmallButton"
+	reset.custom_minimum_size = Vector2(160, 44)
 	reset.pressed.connect(_request_reset)
 	footer.add_child(reset)
 	var back := Button.new()
 	back.name = "Back"
 	back.text = "Back"
-	back.custom_minimum_size = Vector2(150, 44)
+	back.custom_minimum_size = Vector2(170, 44)
 	back.pressed.connect(close)
 	footer.add_child(back)
 
-	_reset_confirm = ConfirmationDialog.new()
-	_reset_confirm.title = "Reset Settings"
-	_reset_confirm.dialog_text = "Restore defaults for this tab?"
-	_reset_confirm.confirmed.connect(_confirm_reset)
-	add_child(_reset_confirm)
 	_capture = CaptureScene.instantiate() as Control
 	_capture.connect("captured", _on_input_captured)
 	_capture.connect("cancelled", func() -> void: _pending_binding.clear())
@@ -168,6 +221,19 @@ func _build_ui() -> void:
 	_display_confirm = DisplayConfirmScene.instantiate() as Control
 	_display_confirm.connect("finished", _on_display_confirmation)
 	add_child(_display_confirm)
+	# The reset question in the front-end register (not a Godot window), last
+	# so it draws over everything else on the screen.
+	_reset_confirm = ArcaneDialogScript.new() as Control
+	_reset_confirm.name = "ResetDialog"
+	_reset_confirm.connect("confirmed", func(_text: String) -> void: _confirm_reset())
+	# Cancelling hands focus back to the button that asked, as the Godot window
+	# it replaces did; confirming rebuilds the tab, which focuses its tab.
+	_reset_confirm.connect("cancelled", func() -> void:
+		var asked := find_child("ResetTab", true, false) as Control
+		if asked != null and visible:
+			asked.grab_focus()
+	)
+	add_child(_reset_confirm)
 
 
 func _set_section(section: StringName) -> void:
@@ -175,7 +241,7 @@ func _set_section(section: StringName) -> void:
 		return
 	_active_section = section
 	for key in _tabs:
-		(_tabs[key] as Button).button_pressed = key == section
+		(_tabs[key] as Button).set("active", key == section)
 	for child in _content.get_children():
 		child.free()
 	match section:
@@ -183,6 +249,10 @@ func _set_section(section: StringName) -> void:
 		&"video": _build_video()
 		&"controls": _build_controls()
 		&"accessibility": _build_accessibility()
+	# Rebuilding frees the focused control without a focus signal; never leave
+	# a controller player with nothing focused.
+	if visible and is_inside_tree() and get_viewport().gui_get_focus_owner() == null:
+		(_tabs[_active_section] as Control).call_deferred("grab_focus")
 	_scroll.scroll_vertical = 0
 
 
@@ -198,6 +268,7 @@ func _build_audio() -> void:
 		slider.max_value = 100
 		slider.step = 1
 		slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		var volume_key := StringName("%s_volume" % data[1])
 		slider.value = float(_value(&"audio", volume_key, 1.0)) * 100.0
 		slider.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"audio", volume_key, value / 100.0))
@@ -239,12 +310,19 @@ func _build_controls() -> void:
 	deadzone.value = float(_value(&"controls", &"controller_deadzone", 0.2))
 	deadzone.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"controls", &"controller_deadzone", value))
 	_add_control_row("Controller Deadzone", deadzone)
+	# The header shares BindingRow's geometry so each title sits over its cells.
 	var header := HBoxContainer.new()
-	_add_row_label(header, "Action")
-	for text in ["Keyboard / Mouse 1", "Keyboard / Mouse 2", "Controller 1", "Controller 2"]:
+	header.add_theme_constant_override("separation", SettingsBindingRow.SEPARATION)
+	var action := Label.new()
+	action.text = "ACTION"
+	action.theme_type_variation = &"ArcaneCaption"
+	action.custom_minimum_size = Vector2(SettingsBindingRow.LABEL_WIDTH, 0)
+	header.add_child(action)
+	for text in ["KEYS 1", "KEYS 2", "PAD 1", "PAD 2"]:
 		var label := Label.new()
 		label.text = text
-		label.custom_minimum_size = Vector2(150, 0)
+		label.theme_type_variation = &"ArcaneCaption"
+		label.custom_minimum_size = Vector2(SettingsBindingRow.CELL_WIDTH, 0)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		header.add_child(label)
 	_content.add_child(header)
@@ -254,8 +332,8 @@ func _build_controls() -> void:
 		if category != last_category:
 			var category_label := Label.new()
 			category_label.text = category.to_upper()
-			category_label.modulate = ACCENT
-			category_label.add_theme_font_size_override("font_size", 17)
+			category_label.theme_type_variation = &"ArcaneCaption"
+			category_label.add_theme_font_size_override("font_size", 15)
 			_content.add_child(category_label)
 			last_category = category
 		var row := BindingRowScene.instantiate()
@@ -301,14 +379,20 @@ func _build_accessibility() -> void:
 func _add_heading(text: String) -> void:
 	var heading := Label.new()
 	heading.text = text
-	heading.modulate = ACCENT
-	heading.add_theme_font_size_override("font_size", 22)
+	heading.theme_type_variation = &"ArcaneHeading"
+	heading.add_theme_font_size_override("font_size", 24)
 	_content.add_child(heading)
+	var rule := ArcaneRuleScript.new() as Control
+	rule.set("ornament", 1)
+	rule.set("ornament_at", 0.08)
+	rule.custom_minimum_size = Vector2(0, 12)
+	_content.add_child(rule)
 
 
 func _add_row_label(row: HBoxContainer, text: String) -> void:
 	var label := Label.new()
 	label.text = text
+	label.theme_type_variation = &"ArcaneBody"
 	label.custom_minimum_size = Vector2(220, 0)
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	row.add_child(label)
@@ -319,6 +403,8 @@ func _add_control_row(label_text: String, control: Control) -> void:
 	row.custom_minimum_size = Vector2(0, 50)
 	_add_row_label(row, label_text)
 	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	if control is Range:
+		control.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(control)
 	_content.add_child(row)
 
@@ -384,7 +470,10 @@ func _on_display_confirmation(keep: bool) -> void:
 
 
 func _request_reset() -> void:
-	_reset_confirm.popup_centered()
+	var subject := String(RESET_SUBJECTS.get(_active_section, "settings"))
+	_reset_confirm.call("present", "RESET %s" % String(_active_section).to_upper(),
+		"Restore the default %s?\nThe changes made on this tab are undone." % subject,
+		"Reset", "Cancel", true)
 
 
 func _confirm_reset() -> void:

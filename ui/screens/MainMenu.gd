@@ -1,31 +1,56 @@
 extends Control
+## The front door: the painted threshold (the main-menu mock-up), an
+## understated menu on its dark side, and a world that answers the selection.
+## Continue resumes the most recently saved chronicle; New Run and Archives
+## both open the Archives (SaveSelect), New Run on the first free slot.
+## Developer Mode (debug builds only) unfolds the dev-start panel.
 
 const SETTINGS_SCENE := preload("res://ui/screens/settings/SettingsScreen.tscn")
+const SAVE_SELECT := preload("res://ui/screens/SaveSelect.gd")
+const FLARE := preload("res://assets/ui/menu/flare_star.png")
+const ArcaneParticles := preload("res://ui/widgets/ArcaneParticles.gd")
+const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
 
-@onready var btn_continue: Button = $Center/Panel/Padding/VBox/Continue
-@onready var btn_saves: Button = $Center/Panel/Padding/VBox/Saves
-@onready var btn_settings: Button = $Center/Panel/Padding/VBox/Settings
-@onready var btn_quit: Button = $Center/Panel/Padding/VBox/Quit
+## How long the title takes to be drawn on (title_sheen.gdshader).
+const TITLE_DRAW_SECONDS := 3.6
+
+## Title-logo pixels of the stars painted into title_logo.png, which twinkle.
+const TITLE_STARS: Array[Vector2] = [Vector2(290, 33), Vector2(291, 344), Vector2(449, 122)]
+
+@onready var backdrop: ArcaneBackdrop = $Backdrop
+@onready var title: TextureRect = $Title
+@onready var menu: VBoxContainer = $Menu
+@onready var curtain: ColorRect = $Curtain
+@onready var version_label: Label = $Version
+@onready var btn_continue: ArcaneMenuItem = $Menu/Continue
+@onready var btn_new_run: ArcaneMenuItem = $Menu/NewRun
+@onready var btn_archives: ArcaneMenuItem = $Menu/Archives
+@onready var btn_settings: ArcaneMenuItem = $Menu/Settings
+@onready var btn_quit: ArcaneMenuItem = $Menu/Quit
 
 var _settings_screen: Control
+var _twinkles: Array[Dictionary] = []
+var _t := 0.0
+## How far the title's draw-on has got (0..1.1); the star glints wait for it.
+var _title_draw := 1.1
 
 # Developer mode UI
-@onready var chk_dev: CheckBox = $Center/Panel/Padding/VBox/DevMode
-@onready var dev_panel: Control = $Center/Panel/Padding/VBox/DevPanel
-@onready var spin_segment: SpinBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSegment/Segment
-@onready var opt_race: OptionButton = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRace/Race
-@onready var opt_style: OptionButton = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowStyle/Style
-@onready var opt_loadout: OptionButton = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowWeapon/Weapon
-@onready var spin_rarity: SpinBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowRarity/Rarity
-@onready var edit_seed: LineEdit = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/RowSeed/Seed
-@onready var chk_force_aug: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceAug
-@onready var chk_force_major: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceMajor
-@onready var chk_force_enemy_intros: CheckBox = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ForceEnemyIntros
-@onready var btn_reset_enemy_intros: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/ResetEnemyIntros
-@onready var btn_start_dev: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDev
-@onready var btn_grant_augments: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/GrantAugments
-@onready var btn_start_dev_hub: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDevHub
-@onready var btn_start_dev_segment: Button = $Center/Panel/Padding/VBox/DevPanel/Pad/Margin/VBox/StartDevSegment
+@onready var chk_dev: ArcaneMenuItem = $Menu/DevMode
+@onready var dev_panel: Control = $DevPanel
+@onready var spin_segment: SpinBox = $DevPanel/Pad/Margin/VBox/RowSegment/Segment
+@onready var opt_race: OptionButton = $DevPanel/Pad/Margin/VBox/RowRace/Race
+@onready var opt_style: OptionButton = $DevPanel/Pad/Margin/VBox/RowStyle/Style
+@onready var opt_loadout: OptionButton = $DevPanel/Pad/Margin/VBox/RowWeapon/Weapon
+@onready var spin_rarity: SpinBox = $DevPanel/Pad/Margin/VBox/RowRarity/Rarity
+@onready var edit_seed: LineEdit = $DevPanel/Pad/Margin/VBox/RowSeed/Seed
+@onready var chk_force_aug: CheckBox = $DevPanel/Pad/Margin/VBox/ForceAug
+@onready var chk_force_major: CheckBox = $DevPanel/Pad/Margin/VBox/ForceMajor
+@onready var chk_force_enemy_intros: CheckBox = $DevPanel/Pad/Margin/VBox/ForceEnemyIntros
+@onready var btn_reset_enemy_intros: Button = $DevPanel/Pad/Margin/VBox/ResetEnemyIntros
+@onready var btn_start_dev: Button = $DevPanel/Pad/Margin/VBox/StartDev
+@onready var btn_grant_augments: Button = $DevPanel/Pad/Margin/VBox/GrantAugments
+@onready var btn_start_dev_hub: Button = $DevPanel/Pad/Margin/VBox/StartDevHub
+@onready var btn_start_dev_segment: Button = $DevPanel/Pad/Margin/VBox/StartDevSegment
 
 
 func _ready() -> void:
@@ -44,14 +69,20 @@ func _ready() -> void:
 		am.call("to_menu")
 
 	btn_continue.pressed.connect(_on_continue_pressed)
-	btn_saves.pressed.connect(_on_saves_pressed)
+	btn_new_run.pressed.connect(_on_new_run_pressed)
+	btn_archives.pressed.connect(_on_archives_pressed)
 	btn_settings.pressed.connect(_on_settings_pressed)
 	btn_quit.pressed.connect(_on_quit_pressed)
-	btn_continue.call_deferred("grab_focus")
+	for item in _menu_items():
+		item.selected.connect(_on_item_selected)
+
+	var version := String(ProjectSettings.get_setting("application/config/version", ""))
+	version_label.text = ("v" + version) if version != "" else ""
 
 	# Dev mode: the whole entry point (segment jump, free loadouts, follower
 	# grants) disappears in release exports.
 	chk_dev.visible = OS.is_debug_build()
+	chk_dev.focus_mode = Control.FOCUS_ALL if chk_dev.visible else Control.FOCUS_NONE
 	dev_panel.visible = false
 	_set_dev_label(false)
 	chk_dev.toggled.connect(func(on: bool) -> void:
@@ -59,6 +90,7 @@ func _ready() -> void:
 		_set_dev_label(on)
 		if on:
 			_populate_dev_lists()
+			_reveal_dev_panel()
 	)
 	btn_start_dev.pressed.connect(_on_start_dev_pressed)
 	btn_reset_enemy_intros.pressed.connect(_on_reset_enemy_intros_pressed)
@@ -68,28 +100,195 @@ func _ready() -> void:
 	btn_start_dev_hub.pressed.connect(_on_start_dev_hub_pressed)
 	btn_start_dev_segment.pressed.connect(_on_start_dev_segment_pressed)
 
+	_build_twinkles()
+	resized.connect(_fit_layout)
+	_fit_layout()
+	_play_intro()
+
+
+func _menu_items() -> Array[ArcaneMenuItem]:
+	var items: Array[ArcaneMenuItem] = []
+	for child in menu.get_children():
+		if child is ArcaneMenuItem:
+			items.append(child as ArcaneMenuItem)
+	return items
+
+
+func _on_item_selected(item: ArcaneMenuItem) -> void:
+	backdrop.set_mood(item.mood)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed(&"ui_cancel"):
+		return
+	if _settings_screen != null and is_instance_valid(_settings_screen) and _settings_screen.visible:
+		return
+	get_viewport().set_input_as_handled()
+	if dev_panel.visible:
+		chk_dev.button_pressed = false
+		chk_dev.grab_focus()
+		return
+	# Escape walks to Quit first; a second press does not quit by itself.
+	btn_quit.grab_focus()
+
+
+func _process(delta: float) -> void:
+	_t += delta
+	var still := ArcaneMotion.reduced()
+	for twinkle in _twinkles:
+		var node := twinkle["node"] as TextureRect
+		var phase := fmod(_t + float(twinkle["offset"]), float(twinkle["period"])) / float(twinkle["period"])
+		# A short glint once per period, a faint glow otherwise; under reduced
+		# motion only the light changes, never the size or the angle.
+		var glint := pow(maxf(0.0, sin(phase * PI)), 18.0)
+		var lit := clampf((_title_draw - 0.92) / 0.1, 0.0, 1.0)
+		node.modulate.a = (0.18 + glint * 0.82) * lit
+		node.scale = Vector2.ONE * (0.8 if still else 0.55 + glint * 0.6)
+		node.rotation = 0.0 if still else glint * 0.35
+
+
+## The layout authored for 1080 lines; at a large UI Scale (a shorter logical
+## viewport) the menu keeps its place above the bottom edge and the title shrinks
+## to the room left above it, so every entry stays on screen.
+const MENU_TOP := 522.0
+const TITLE_RECT := Rect2(104, 40, 680, 445)
+
+
+func _fit_layout() -> void:
+	var menu_h := menu.get_combined_minimum_size().y
+	var menu_top := minf(MENU_TOP, size.y - 96.0 - menu_h)
+	menu.position = Vector2(menu.position.x, maxf(menu_top, 150.0))
+	var title_h := clampf(menu.position.y - TITLE_RECT.position.y - 24.0, 120.0, TITLE_RECT.size.y)
+	var title_w := title_h * TITLE_RECT.size.x / TITLE_RECT.size.y
+	title.position = TITLE_RECT.position
+	title.size = Vector2(title_w, title_h)
+	dev_panel.size.y = minf(834.0, size.y - dev_panel.position.y - 24.0)
+	dev_panel.position.x = minf(820.0, size.x - dev_panel.size.x - 24.0)
+	_place_twinkles()
+
+
+func _place_twinkles() -> void:
+	if title.texture == null:
+		return
+	var tex_size := title.texture.get_size()
+	var shown := title.size
+	var k := minf(shown.x / tex_size.x, shown.y / tex_size.y)
+	var offset := (shown - tex_size * k) * 0.5
+	for twinkle in _twinkles:
+		var node := twinkle["node"] as TextureRect
+		node.size = Vector2.ONE * float(twinkle["size"]) * (k / (680.0 / 574.0))
+		node.pivot_offset = node.size * 0.5
+		node.position = offset + TITLE_STARS[int(twinkle["star"])] * k - node.size * 0.5
+
+
+## Glints on the stars painted into the title.
+func _build_twinkles() -> void:
+	if title.texture == null:
+		return
+	var periods := [5.3, 6.1, 4.4]
+	for i in range(TITLE_STARS.size()):
+		var flare := TextureRect.new()
+		flare.texture = FLARE
+		flare.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		flare.material = ArcaneParticles.additive()
+		flare.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		flare.self_modulate = Color(1.0, 0.86, 0.6)
+		title.add_child(flare)
+		_twinkles.append({"node": flare, "period": periods[i], "offset": float(i) * 1.7, "star": i, "size": 74.0 if i < 2 else 58.0})
+	_place_twinkles()
+
+
+func _play_intro() -> void:
+	var reduced := backdrop.reduced_motion
+	curtain.visible = true
+	curtain.color.a = 1.0
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(curtain, "color:a", 0.0, 0.6 if reduced else 1.4).set_trans(Tween.TRANS_SINE)
+	tw.chain().tween_callback(func() -> void: curtain.visible = false)
+	var title_mat := title.material as ShaderMaterial
+	if title_mat != null:
+		# Drawn on, line by line; under reduced motion it is simply there as the
+		# curtain lifts.
+		_set_title_draw(title_mat, 1.1 if reduced else 0.0)
+		if not reduced:
+			var drawing := create_tween()
+			drawing.tween_interval(0.3)
+			drawing.tween_method(func(v: float) -> void: _set_title_draw(title_mat, v), 0.0, 1.1, TITLE_DRAW_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		var ember := create_tween().set_loops()
+		ember.tween_method(func(v: float) -> void: title_mat.set_shader_parameter("ember", v), 0.0, 1.0, 3.2).set_trans(Tween.TRANS_SINE)
+		ember.tween_method(func(v: float) -> void: title_mat.set_shader_parameter("ember", v), 1.0, 0.0, 3.2).set_trans(Tween.TRANS_SINE)
+	var delay := 0.75
+	for child in menu.get_children():
+		var item := child as Control
+		if item == null or not item.visible:
+			continue
+		item.modulate.a = 0.0
+		var stagger := create_tween()
+		stagger.tween_interval(delay)
+		stagger.tween_property(item, "modulate:a", 1.0, 0.45)
+		delay += 0.0 if reduced else 0.07
+	# The first selection lands as Continue fades in, so its stroke wipes in
+	# and its star flares as the menu arrives.
+	var first := create_tween()
+	first.tween_interval(0.0 if reduced else 0.8)
+	first.tween_callback(func() -> void:
+		if get_viewport().gui_get_focus_owner() == null:
+			btn_continue.select_quietly()
+	)
+
+
+func _set_title_draw(title_mat: ShaderMaterial, v: float) -> void:
+	_title_draw = v
+	title_mat.set_shader_parameter("draw", v)
+
+
+func _reveal_dev_panel() -> void:
+	dev_panel.modulate.a = 0.0
+	dev_panel.pivot_offset = Vector2(0, dev_panel.size.y * 0.5)
+	var still := ArcaneMotion.reduced()
+	dev_panel.scale = Vector2.ONE if still else Vector2(0.97, 0.97)
+	var tw := create_tween().set_parallel(true)
+	tw.tween_property(dev_panel, "modulate:a", 1.0, 0.22)
+	if not still:
+		tw.tween_property(dev_panel, "scale", Vector2.ONE, 0.28).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+
 func _set_dev_label(on: bool) -> void:
-	# Keeps the dev panel compact + readable as it grows.
-	chk_dev.text = "Developer Mode ▲" if on else "Developer Mode ▼"
+	chk_dev.set_caption("DEVELOPER MODE  ·  OPEN" if on else "DEVELOPER MODE")
+
 
 func _on_continue_pressed() -> void:
-	# If any save exists, go to Base (continue); otherwise go to SaveSelect
-	var has_any_save := false
+	# Resume the most recently written readable save; with none, open the
+	# Archives so a chronicle can begin.
+	var best_slot := -1
+	var best_save: SaveData = null
+	var best_time := -1
 	for slot in range(1, SaveManager.SLOT_COUNT + 1):
 		var s: SaveData = SaveManager.load_slot(slot)
-		if s != null:
-			SaveManager.set_current(slot, s)
-			has_any_save = true
-			break
+		if s == null:
+			continue
+		var written := s.updated_unix if s.updated_unix > 0 else int(SaveManager.slot_modified_time(slot))
+		if written > best_time:
+			best_time = written
+			best_slot = slot
+			best_save = s
 
 	# Defer to avoid changing scenes mid-callback
-	if has_any_save:
+	if best_save != null:
+		SaveManager.set_current(best_slot, best_save)
 		call_deferred("_go_to_base")
 	else:
+		SAVE_SELECT.open_intent = &"new"
 		call_deferred("_go_to_saves")
 
 
-func _on_saves_pressed() -> void:
+func _on_new_run_pressed() -> void:
+	SAVE_SELECT.open_intent = &"new"
+	call_deferred("_go_to_saves")
+
+
+func _on_archives_pressed() -> void:
+	SAVE_SELECT.open_intent = &"browse"
 	call_deferred("_go_to_saves")
 
 
@@ -99,11 +298,26 @@ func _on_settings_pressed() -> void:
 		_settings_screen.call("configure", SettingsManager)
 		_settings_screen.connect("closed", _on_settings_closed)
 		add_child(_settings_screen)
+	_set_menu_dimmed(true)
 	_settings_screen.call("open")
 
 
 func _on_settings_closed() -> void:
+	_set_menu_dimmed(false)
 	btn_settings.call_deferred("grab_focus")
+
+
+## While Settings is up the painting stays, the words step back: no caption is
+## left half-cut beside the panel, and nothing behind it can take focus.
+func _set_menu_dimmed(dimmed: bool) -> void:
+	var to := 0.0 if dimmed else 1.0
+	var tw := create_tween().set_parallel(true)
+	for node: CanvasItem in [title, menu, version_label, dev_panel]:
+		tw.tween_property(node, "modulate:a", to, 0.18)
+	for item in _menu_items():
+		item.focus_mode = Control.FOCUS_NONE if dimmed else Control.FOCUS_ALL
+	if not OS.is_debug_build():
+		chk_dev.focus_mode = Control.FOCUS_NONE
 
 
 func _on_quit_pressed() -> void:
@@ -393,5 +607,5 @@ func _dev_grant_test_augments() -> void:
 	if Global.has_method("dev_grant_test_augments"):
 		Global.dev_grant_test_augments()
 		# feedback in UI
-		if chk_dev != null:
-			chk_dev.text = "Developer Mode ▲ (Augments granted)" if chk_dev.button_pressed else "Developer Mode ▼ (Augments granted)"
+		if btn_grant_augments != null:
+			btn_grant_augments.text = "Test Augments Granted"

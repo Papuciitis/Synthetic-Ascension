@@ -66,29 +66,37 @@ func _run() -> void:
 		"Exchange toggles use the institutional checkbox"
 	)
 
+	# The front end (main menu, Archives, Settings) speaks its own register,
+	# the main-menu mock-up's: one shared theme for all of it.
+	var arcane := load("res://ui/theme/ArcaneMenuTheme.tres") as Theme
+	_check(arcane != null, "front-end theme loads")
+	if arcane != null:
+		_check(arcane.has_stylebox(&"panel", &"ArcanePanel"), "front-end panels share one construction")
+		_check(arcane.has_stylebox(&"panel", &"ArchiveCard"), "Archive cards keep the archive-card construction")
+		_check(arcane.has_font(&"font", &"ArcaneTitle") and arcane.has_font(&"font", &"ArcaneMenuButton"), "front-end titles and menu entries name their fonts")
+
 	var main_menu := _instantiate("res://ui/screens/MainMenu.tscn") as Control
-	_check(main_menu != null and main_menu.theme == theme, "Main Menu inherits the shared interface theme")
+	_check(main_menu != null and main_menu.theme == arcane, "Main Menu inherits the front-end theme")
 	if main_menu != null:
-		_check(
-			(main_menu.get_node("Center/Panel/Padding/VBox/Title") as Label).theme_type_variation == &"InstitutionalHeading",
-			"Main Menu heading uses the institutional register"
-		)
-		_check(
-			(main_menu.get_node("Center/Panel/Padding/VBox/Continue") as Button).theme_type_variation == &"InstitutionalButton",
-			"Main Menu actions use the shared button construction"
-		)
+		var logo := main_menu.get_node("Title") as TextureRect
+		_check(logo != null and logo.texture != null, "Main Menu title is the painted logo")
+		for entry in ["Continue", "NewRun", "Archives", "Settings", "Quit"]:
+			_check(
+				(main_menu.get_node("Menu/" + entry) as Button).theme_type_variation == &"ArcaneMenuButton",
+				"Main Menu %s uses the shared menu-entry construction" % entry
+			)
 
 	var save_select := _instantiate("res://ui/screens/SaveSelect.tscn") as Control
-	_check(save_select != null and save_select.theme == theme, "Save Select inherits the shared interface theme")
+	_check(save_select != null and save_select.theme == arcane, "Archives inherit the front-end theme")
 	if save_select != null:
 		_check(
-			(save_select.get_node("Margin/Main/Title") as Label).theme_type_variation == &"InstitutionalHeading",
-			"Save Select heading uses the institutional register"
+			(save_select.get_node("Margin/Main/Title") as Label).theme_type_variation == &"ArcaneTitle",
+			"Archives heading uses the front-end title register"
 		)
 
 	var save_card := _instantiate("res://ui/components/SaveCard.tscn") as Control
 	if save_card != null:
-		_check(save_card.theme == theme, "Save Cards inherit the shared interface theme")
+		_check(save_card.theme == arcane, "Save Cards inherit the front-end theme")
 		_check(
 			(save_card.get_node("CardPanel") as Panel).theme_type_variation == &"ArchiveCard",
 			"Save Cards use the archive-card construction"
