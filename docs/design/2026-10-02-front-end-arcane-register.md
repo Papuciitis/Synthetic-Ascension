@@ -87,6 +87,23 @@ default. It gives base looks to:
 Its default PanelContainer is padded 30/24, so HUD and slot panels need a
 panel style of their own.
 
+The combat HUD keeps its own theme, `ui/theme/SyntheticHudTheme.tres`, in the
+same language: EB Garamond 16 body, Cinzel captions and figures, square
+near-black panels with gold rules. Its variations are `HudCaption`,
+`HudFigure`, `HudItalic`, `HudPanel` and `HudKeycap`, alongside the older
+`InstitutionalHeading` and `SacredHeading` (now Cinzel faces). The gate and
+first-encounter overlays use `HudItalic` and `HudCaption`, so they depend on
+this theme.
+
+- `ui/widgets/hud/HudStyle.gd` holds the HUD palette, rarity colours and the
+  slot states (`make_slot` / `paint_slot`, rewritten only on a state change).
+  `HudBarDecor` draws the health and boss bar tracks, the damage trail (on a
+  real loss only) and the low-health glow; `HudCooldownSweep` is the ability
+  veil; `HudGlyph` a drawn diamond.
+- `ui/widgets/overlays/OverlayKit.gd` holds the tooltip, notice and card
+  styles and their real-time clock; `OverlayMarkedPanel` is a panel with
+  corner diamonds.
+
 ## Components
 
 - `ui/components/ArcaneMenuItem.gd` (Button). Diamond, caption and rule; when
@@ -143,7 +160,13 @@ simply overwrite those files.
 - `tools/dev/ExchangeShotProbe.tscn`, `tools/dev/AscensionShotProbe.tscn` and
   `tools/dev/ChambersShotProbe.tscn` give deeper fixtures for each of those
   areas.
-- Both need a display (`DISPLAY=:0`), not `--headless`. The window comes out
+- `tools/dev/HudShotProbe.tscn` runs a real segment and shoots the HUD
+  (`--only=combat,hurt,boss,manage`, `perf` times it); `OverlaysShotProbe`
+  shoots the tooltips, overlays, cards and the lifted follower toast.
+- These need a display (`DISPLAY=:0`), not `--headless`. The window comes out
   1784 x 1004.
+- `tools/dev/FirstTooltipMeasureProbe.tscn` runs headless and measures the
+  first show of each tooltip surface; a screen-tall reading is the first-hover
+  bug.
 - `tools/tests/FrontEndFlowTest.gd` (`-s`) covers the intents, card clicks,
   Erase confirmation, tab state and backdrop moods.
