@@ -22,8 +22,8 @@ func _ready() -> void:
 		_cell(image, key - origin, Color.BLACK)
 	var marks: Dictionary = HubWorld.STATION_CELLS
 	var all_on_floor := true
-	for name in marks.keys():
-		var at: Vector2 = marks[name]
+	for station in marks.keys():
+		var at: Vector2 = marks[station]
 		var cell := Vector2i(int(floor(at.x)), int(floor(at.y)))
 		var ok := fill.has(cell) and not walls.has(cell)
 		all_on_floor = all_on_floor and ok

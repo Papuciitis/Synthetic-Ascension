@@ -20,6 +20,8 @@ const INVENTORY_STASH_SCENE := preload("res://ui/screens/InventoryStash.tscn")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 const DECOR_SCRIPT := preload("res://scenes/hub/HubDecor.gd")
 const CROWD_SCRIPT := preload("res://scenes/hub/HubCrowd.gd")
+const NOTICE_SCRIPT := preload("res://scenes/hub/ui/HubNotice.gd")
+const HubText := preload("res://scenes/hub/ui/HubText.gd")
 
 const CELL := 64.0
 ## Courtyard in cells: about 1.7 gameplay screens across the useful space.
@@ -162,6 +164,8 @@ var solids: Array = []
 ## Station names and prompts: world-space text above the player and outside
 ## the dusk tint (a CanvasLayer has its own canvas, so CanvasModulate skips it).
 var _label_layer: CanvasLayer = null
+## Passing lines in the square (HubNotice), on the label layer.
+var _notice: Node2D = null
 ## The square's people (HubCrowd): service NPCs, the Follower crowd, Beka.
 var crowd: Node = null
 ## Tests pin the crowd's choices; -1 picks a fresh seed each visit.
@@ -237,6 +241,10 @@ func _build_courtyard() -> void:
 	_label_layer.layer = 1
 	_label_layer.follow_viewport_enabled = true
 	add_child(_label_layer)
+	_notice = NOTICE_SCRIPT.new()
+	_notice.name = "HubNotices"
+	_notice.z_index = 1
+	_label_layer.add_child(_notice)
 	_generate_floor()
 	_place_buildings()
 	_set_collisions()
@@ -668,11 +676,12 @@ func _spawn_player() -> void:
 
 # ---------------------------------------------------------------- stations
 
-func _make_station(key: String, station_name: String, accent: Color) -> HubStation:
+func _make_station(key: String, station_name: String, accent: Color, verb: String = "") -> HubStation:
 	var station := STATION_SCRIPT.new() as HubStation
 	var at: Vector2 = STATION_CELLS[key] * CELL
 	station.icon = _art("hub_icon_%s" % key)
 	station.station_name = station_name
+	station.verb = verb
 	station.accent = accent
 	station.position = at
 	# The ring lies on the ground: above the paving, under anyone standing.
@@ -688,15 +697,15 @@ func _make_station(key: String, station_name: String, accent: Color) -> HubStati
 
 
 func _build_stations() -> void:
-	var merchant := _make_station("merchant", "Merchant", Color(0.95, 0.8, 0.45))
+	var merchant := _make_station("merchant", "Merchant", Color(0.95, 0.8, 0.45), "Trade")
 	merchant.activated.connect(_open_merchant)
-	_ascension_station = _make_station("ascension", "Ascension", Color(0.7, 0.6, 0.95))
+	_ascension_station = _make_station("ascension", "Ascension", Color(0.7, 0.6, 0.95), "Ascend")
 	_ascension_station.activated.connect(_open_ascension)
-	var gear := _make_station("gear", "Gear & Stash", Color(0.6, 0.85, 0.7))
+	var gear := _make_station("gear", "Gear & Stash", Color(0.6, 0.85, 0.7), "Open")
 	gear.activated.connect(_open_gear)
-	var alcove := _make_station("alcove", "Quiet Alcove", Color(0.75, 0.7, 0.65))
+	var alcove := _make_station("alcove", "Quiet Alcove", Color(0.75, 0.7, 0.65), "Sit")
 	alcove.activated.connect(_rest_a_moment)
-	_exit_station = _make_station("exit", "Next Segment", Color(0.95, 0.55, 0.4))
+	_exit_station = _make_station("exit", "Next Segment", Color(0.95, 0.55, 0.4), "Depart")
 	_exit_station.activated.connect(_try_depart)
 	# The sealed arch over the departure gate (the other service props are
 	# placed with the square in _place_props).
@@ -806,12 +815,14 @@ func _open_ascension() -> void:
 func _rest_a_moment() -> void:
 	# Honest about what it is (playtest finding): a quiet spot — Beka's bed
 	# is here — not a recovery service.
-	if BattleText == null or _player == null:
+	if _notice == null or _player == null:
 		return
 	var line := "a quiet corner"
 	if crowd != null and crowd.beka != null and crowd.beka.is_asleep_on_bed():
 		line = "Beka is comfortable here"
-	BattleText.popup(_beka_home + Vector2(0, -20), line, Color(0.8, 0.8, 0.85, 0.8), 1.6)
+	# Below Beka's Pet prompt (which sits just under her bed): clear of the
+	# player on the ring, the prompt and the stall-keeper's speech above.
+	_notice.show_line(_beka_home + Vector2(0, 64), line, HubText.BODY, 1.8)
 
 
 # ---------------------------------------------------------------- interaction
@@ -910,8 +921,9 @@ func _try_depart() -> void:
 	if _departing:
 		return
 	if Global.pending_big_choice:
-		if BattleText != null:
-			BattleText.popup(_exit_station.global_position + Vector2(0, 30), "A decision waits before the road.", Color(1.0, 0.7, 0.5, 1.0), 1.6)
+		if _notice != null:
+			# Above the gate's sign (its own cue sits under the ring).
+			_notice.show_line(_exit_station.global_position + Vector2(0, HubStation.PROMPT_Y - 40.0), "A decision waits before the road.", HubText.EMBER, 1.8)
 		_open_major_choice()
 		return
 	_departing = true

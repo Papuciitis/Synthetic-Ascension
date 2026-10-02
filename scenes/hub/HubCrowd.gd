@@ -16,6 +16,7 @@ extends Node
 
 const PERSON_SCRIPT := preload("res://scenes/hub/HubPerson.gd")
 const BEKA_SCRIPT := preload("res://scenes/hub/HubBeka.gd")
+const HubText := preload("res://scenes/hub/ui/HubText.gd")
 
 ## Crowd size: CROWD_PER_DOUBLING more people each time Followers double,
 ## near-linear below CROWD_KNEE, capped. 1k -> 10, 4k -> 15, ~41k and up -> 24.
@@ -64,6 +65,15 @@ const CROWD_LINES: Array[String] = [
 ]
 ## Only when the Followers outgrow the square.
 const CROWD_LINE_OVERFLOW := "More of us outside than here."
+## What the staff are called over their lines (the crowd speaks unnamed).
+const SERVICE_TITLES := {
+	"exchanger": "The Exchanger", "quartermaster": "The Quartermaster", "chronicler": "The Chronicler",
+	"acolyte": "The Acolyte", "smith": "The Smith",
+}
+## Speech: how long a bubble takes to come and go, and how far it settles.
+const SPEECH_FADE_IN := 0.22
+const SPEECH_FADE_OUT := 0.4
+const SPEECH_RISE := 6.0
 
 ## Service NPCs: feet in cells, stand-in race and tint, lines. They stand
 ## beside their stalls, not behind them (a 140 px stall hides a person), so
@@ -129,6 +139,8 @@ func setup(world: HubWorld, seed_value: int, arrival_followers: int) -> void:
 			_painted.append(texture)
 	_speech = Node2D.new()
 	_speech.name = "CrowdSpeech"
+	# Under the station signs and prompts: what the key does stays on top.
+	_speech.z_index = -1
 	_speech.draw.connect(_draw_speech)
 	hub._label_layer.add_child(_speech)
 	for entry in SERVICE:
@@ -585,7 +597,7 @@ func _tick_service(s: Dictionary, feet: Vector2) -> void:
 		s["near"] = true
 		if _time >= float(s["next"]):
 			s["next"] = _time + 18.0
-			say(person, _service_line(s), 3.4)
+			say(person, _service_line(s), 3.4, String(SERVICE_TITLES.get(s["key"], "")))
 	elif d > 170.0:
 		s["near"] = false
 
@@ -642,13 +654,16 @@ func _maybe_bark(feet: Vector2) -> void:
 # ---------------------------------------------------------------- speech
 
 ## A short line above someone's head, drawn on the label layer (above the
-## player, outside the dusk tint). One line per speaker at a time.
-func say(speaker: Node2D, text: String, seconds: float) -> void:
+## player, outside the dusk tint) in a small bubble (HubText.draw_bubble),
+## with `title` over it when the speaker is one of the staff. One line per
+## speaker at a time. Each entry: [speaker, text, seconds left, seconds,
+## layout, box offset]; the layout is measured here once, never per frame.
+func say(speaker: Node2D, text: String, seconds: float, title: String = "") -> void:
 	for entry in _said:
 		if entry[0] == speaker:
 			_said.erase(entry)
 			break
-	_said.append([speaker, text, seconds, seconds])
+	_said.append([speaker, text, seconds, seconds, HubText.bubble_layout(text, title), Vector2.INF])
 	_speech.queue_redraw()
 
 
@@ -663,16 +678,42 @@ func _tick_speech(delta: float) -> void:
 
 
 func _draw_speech() -> void:
-	var font := ThemeDB.fallback_font
-	if font == null:
-		return
+	var still := HubText.reduced()
 	for entry in _said:
 		var speaker: Node2D = entry[0]
 		if not is_instance_valid(speaker):
 			continue
 		var left: float = entry[2]
-		var alpha := clampf(left / 0.4, 0.0, 1.0) * clampf((float(entry[3]) - left) / 0.2, 0.0, 1.0)
+		var shown: float = float(entry[3]) - left
+		var alpha := clampf(left / SPEECH_FADE_OUT, 0.0, 1.0) * clampf(shown / SPEECH_FADE_IN, 0.0, 1.0)
 		var height: float = speaker.get("head_height") if speaker.get("head_height") != null else 40.0
-		var at := speaker.global_position + Vector2(-120.0, -height - 12.0)
-		_speech.draw_string_outline(font, at, entry[1], HORIZONTAL_ALIGNMENT_CENTER, 240, 14, 5, Color(0.05, 0.04, 0.03, 0.8 * alpha))
-		_speech.draw_string(font, at, entry[1], HORIZONTAL_ALIGNMENT_CENTER, 240, 14, Color(0.98, 0.93, 0.82, alpha))
+		var tip := speaker.global_position + Vector2(0.0, -height - 6.0)
+		if not still:
+			# The bubble settles into place as it appears.
+			tip.y += SPEECH_RISE * (1.0 - HubText.ease_out(shown / SPEECH_FADE_IN))
+		# Clear of the signs and prompts: eased toward where it must be, so a
+		# prompt coming up beside a line moves the bubble rather than hiding.
+		var aim := _bubble_offset(HubText.bubble_rect(tip, entry[4]))
+		var offset: Vector2 = entry[5]
+		offset = aim if offset == Vector2.INF or still else offset.lerp(aim, 0.25)
+		entry[5] = offset
+		HubText.draw_bubble(_speech, tip, entry[4], alpha, offset)
+
+
+## How far a bubble at `rect` must move to keep off every station's sign and
+## prompt: sideways first, as far as its tail can still reach the speaker,
+## then up over what is left.
+func _bubble_offset(rect: Rect2) -> Vector2:
+	var offset := Vector2.ZERO
+	var slack := maxf(0.0, rect.size.x * 0.5 - HubText.BUBBLE_TAIL - 5.0)
+	for station in hub._stations:
+		var keep: Rect2 = station.text_rect().grow(4.0)
+		var moved := Rect2(rect.position + offset, rect.size)
+		if not moved.intersects(keep):
+			continue
+		var dx := keep.position.x - moved.end.x if moved.get_center().x < keep.get_center().x else keep.end.x - moved.position.x
+		offset.x = clampf(offset.x + dx, -slack, slack)
+		moved = Rect2(rect.position + offset, rect.size)
+		if moved.intersects(keep):
+			offset.y -= moved.end.y - keep.position.y
+	return offset

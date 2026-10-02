@@ -89,7 +89,7 @@ func _draw_building() -> void:
 		draw_rect(Rect2(x - 4, face_top, 8, facade_height - plinth_h), beam)
 	draw_rect(Rect2(face.position.x, face_top + facade_height * 0.42, face.size.x, 6), beam)
 	# Door and windows, one per bay, lit from inside.
-	var door_bay := bays / 2 if door else -1
+	var door_bay := floori(bays / 2.0) if door else -1
 	var lit := Color(1.0, 0.72, 0.32) if not forge else Color(1.0, 0.5, 0.18)
 	var placed_windows := 0
 	for i in range(bays):

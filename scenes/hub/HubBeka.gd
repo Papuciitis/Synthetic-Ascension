@@ -14,6 +14,8 @@ extends Node2D
 
 enum State { SLEEP, STRETCH, WALK, SIT, GROOM, CONTENT }
 
+const HubText := preload("res://scenes/hub/ui/HubText.gd")
+
 const PET_RANGE := 60.0
 const BED_RANGE := 2.5 * 64.0
 const WALK_SPEED := 62.0
@@ -23,6 +25,11 @@ const FOLLOW_OFFSET := Vector2(-40.0, 8.0)
 const SIT_HEIGHT := 34.0
 const SLEEP_HEIGHT := 24.0
 const WALK_HEIGHT := 28.0
+## The pet prompt: below her, so the heart and the purr keep the space above.
+const PROMPT_Y := 30.0
+const PROMPT_SECONDS := 0.18
+const HEART := Color(0.95, 0.5, 0.48)
+const PURR := Color(0.95, 0.85, 0.8)
 
 var state: State = State.SLEEP
 var following: bool = false
@@ -30,6 +37,8 @@ var focused: bool = false:
 	set(value):
 		if focused != value:
 			focused = value
+			if focused:
+				_key = HubText.interact_key()
 			_overlay_redraw()
 ## Counts pets this visit (tests read it).
 var pets: int = 0
@@ -59,6 +68,9 @@ var _goal_bed: bool = false
 ## has moved (a target inside a prop's clearance is never reached exactly).
 var _aim := Vector2.INF
 var _equip_check: float = 0.0
+## 0..1: how shown the pet prompt is; the key it shows.
+var _prompt: float = 0.0
+var _key: String = "E"
 
 
 func setup(world: HubWorld, crowd: Node, bed_feet: Vector2, equipped: bool) -> void:
@@ -135,9 +147,13 @@ func tick(delta: float) -> void:
 	else:
 		_tick_home(delta, feet)
 	_update_sprite(delta)
+	var prompt_target := 1.0 if focused else 0.0
+	var prompt_changed := _prompt != prompt_target
+	if prompt_changed:
+		_prompt = HubText.approach(_prompt, prompt_target, delta, PROMPT_SECONDS)
 	if _overlay != null:
 		_overlay.global_position = global_position
-		if _heart > 0.0 or _purr > 0.0 or state == State.SLEEP:
+		if _heart > 0.0 or _purr > 0.0 or state == State.SLEEP or prompt_changed:
 			_overlay.queue_redraw()
 
 
@@ -342,7 +358,7 @@ func _player_feet() -> Vector2:
 
 # ---------------------------------------------------------------- drawing
 
-func _update_sprite(delta: float) -> void:
+func _update_sprite(_delta: float) -> void:
 	var key := "sit"
 	var height := SIT_HEIGHT
 	var frames := 1
@@ -390,28 +406,38 @@ func _overlay_redraw() -> void:
 
 
 ## Drawn on the label layer: the pet prompt, the heart, the purr, and the
-## sleeping z-dots.
+## sleeping z's. Under Reduced Motion nothing rises: they only fade.
 func _draw_overlay() -> void:
-	var font := ThemeDB.fallback_font
+	var still := HubText.reduced()
 	var top := -(SLEEP_HEIGHT if state == State.SLEEP else SIT_HEIGHT) - 6.0
 	if state == State.SLEEP:
 		var t := Time.get_ticks_msec() / 1000.0
-		var rise := fmod(t, 1.8) / 1.8
-		_overlay.draw_circle(Vector2(10.0, top - rise * 10.0), 1.6, Color(0.9, 0.9, 1.0, 0.7 * (1.0 - rise)))
+		var font := HubText.italic()
+		# The z's give way while she purrs, so the purr and heart read alone.
+		var hush := 1.0 - clampf(_purr, 0.0, 1.0)
+		for k in range(2):
+			var phase := fmod(t / 2.4 + k * 0.5, 1.0)
+			var glow := sin(phase * PI)
+			var at := Vector2(13.0 + phase * 7.0, top - 2.0 - phase * 18.0) if not still else Vector2(13.0 + k * 13.0, top - 4.0 - k * 14.0)
+			HubText.draw_line_text(_overlay, font, at, "z", 26 - k * 6, Color(0.9, 0.88, 0.97, 0.9 * glow * hush), 3)
 	if _heart > 0.0:
-		var k := 1.0 - _heart / 1.4
-		_draw_heart(Vector2(0.0, top - 6.0 - k * 18.0), 5.0, Color(1.0, 0.55, 0.65, clampf(_heart / 0.5, 0.0, 1.0)))
-	if font == null:
-		return
+		var progress := 1.0 - _heart / 1.4
+		var rise := 0.0 if still else progress * 18.0
+		var heart_alpha := clampf(_heart / 0.5, 0.0, 1.0) * clampf(progress / 0.12, 0.0, 1.0)
+		var at := Vector2(0.0, top - 6.0 - rise)
+		_draw_heart(at, 6.5, Color(HubText.SHADE, 0.7 * heart_alpha))
+		_draw_heart(at, 5.0, Color(HEART, heart_alpha))
 	if _purr > 0.0:
-		_overlay.draw_string_outline(font, Vector2(-40.0, top - 22.0), "prrr", HORIZONTAL_ALIGNMENT_CENTER, 80, 12, 4, Color(0, 0, 0, 0.6 * clampf(_purr, 0.0, 1.0)))
-		_overlay.draw_string(font, Vector2(-40.0, top - 22.0), "prrr", HORIZONTAL_ALIGNMENT_CENTER, 80, 12, Color(0.95, 0.85, 0.9, clampf(_purr, 0.0, 1.0)))
-	if focused:
-		_overlay.draw_string_outline(font, Vector2(-50.0, 22.0), "[E] Pet", HORIZONTAL_ALIGNMENT_CENTER, 100, 14, 4, Color(0, 0, 0, 0.8))
-		_overlay.draw_string(font, Vector2(-50.0, 22.0), "[E] Pet", HORIZONTAL_ALIGNMENT_CENTER, 100, 14, Color(1.0, 0.85, 0.9, 1.0))
+		var font := HubText.italic()
+		var w := HubText.text_width(font, "prrr", 15)
+		HubText.draw_line_text(_overlay, font, Vector2(-w * 0.5, top - 22.0), "prrr", 15, Color(PURR, clampf(_purr, 0.0, 1.0)), 3)
+	if _prompt > 0.0:
+		var shown := HubText.ease_out(_prompt)
+		var lift := 0.0 if still else 5.0 * (1.0 - shown)
+		HubText.draw_prompt(_overlay, Vector2(0.0, PROMPT_Y + lift), _key, "Pet", shown)
 
 
-func _draw_heart(at: Vector2, size: float, color: Color) -> void:
-	_overlay.draw_circle(at + Vector2(-size * 0.5, 0.0), size * 0.55, color)
-	_overlay.draw_circle(at + Vector2(size * 0.5, 0.0), size * 0.55, color)
-	_overlay.draw_colored_polygon(PackedVector2Array([at + Vector2(-size * 1.02, size * 0.2), at + Vector2(size * 1.02, size * 0.2), at + Vector2(0.0, size * 1.3)]), color)
+func _draw_heart(at: Vector2, heart_size: float, color: Color) -> void:
+	_overlay.draw_circle(at + Vector2(-heart_size * 0.5, 0.0), heart_size * 0.55, color)
+	_overlay.draw_circle(at + Vector2(heart_size * 0.5, 0.0), heart_size * 0.55, color)
+	_overlay.draw_colored_polygon(PackedVector2Array([at + Vector2(-heart_size * 1.02, heart_size * 0.2), at + Vector2(heart_size * 1.02, heart_size * 0.2), at + Vector2(0.0, heart_size * 1.3)]), color)
