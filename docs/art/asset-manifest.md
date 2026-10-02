@@ -372,3 +372,44 @@ not assets.
   `scenes/world/buildings/roof.gdshader` (gable, ridge, eaves).
 - **Known differences:** clay keeps a faint vertical seam and the lead
   grid is slightly irregular where it wraps; clay is toned down in code.
+
+### Item icons — HD rebuild from the masters (2026-10-02)
+
+- **Files:** all 40 icons under `assets/textures/items/{conduit,curses,
+  gravemarch,lattice,offhand,rings}/*.png`, now 128 x 128 (were 32 x 32).
+  Same file names, paths and import uids, so no `.tres` changed. Not
+  touched: `items/pickups/health_pickup.png` (the 48 px potion, outside
+  the item set, no master) and `textures/item_test.png` (the development
+  item).
+- **Provenance:** the user's 1254 px masters (2026-09-26, see batches 2-6
+  and beka + dignity above), copied unchanged to `incoming/items/<icon
+  file name>`; `incoming/items/sources.json` records which repo-root
+  "ChatGPT Image Sep 26 ..." file (or `beka_face.png` / `banner_icon.png`)
+  each came from. Every icon had a master, including the
+  `Ring_Placeholder_*` and `OffHand_Placeholder_*` files.
+- **Build:** `tools/design/build_item_icons_hd.py`. `--match` found the
+  masters automatically (trimmed, premultiplied 16 x 16 signatures; all 40
+  unique, the runner-up at least 2.8x farther) and the mapping was checked
+  on a contact sheet. The bake clears the generator's invisible alpha haze
+  (< 3/255), trims to the alpha box, pads to a square so the longer side is
+  118 of 128 px, downscales with premultiplied float Lanczos, and zeroes a
+  2 px border. The old 32 px install trimmed against that haze, so its
+  margins varied (art filled 78-100% of the cell); the HD set is uniform
+  (~92%), so a few icons (Firestone, Oakheart, Crusher's Ring, the Conduit
+  set) read slightly larger and the curses slightly smaller in their slots.
+- **Import:** `mipmaps/generate=true` in each `.import` (nothing else
+  changed). The project's canvas filter is Linear Mipmap, so an icon drawn
+  at 30-76 px samples a pre-filtered level instead of skipping texels.
+- **Drawn sizes (IconsShotProbe, 1920 x 1080 logical):** Exchange bag and
+  vendor slots 56/70/76, Exchange worn gear 66, Gear & Stash 60, tooltip
+  42-44, HUD bar 34, ground loot 32 (ItemPickup scales any texture to
+  `max_icon_px`), Dignity / Seven-Mile Boots world sprites by height. 128
+  px covers the largest at 1:1 with headroom for a 1440p window and keeps
+  about the masters' own detail (their pixel grid is about 150 px across).
+- **Known:** `HubItemSlot` (Gear & Stash) forces `TEXTURE_FILTER_LINEAR`,
+  so it samples the 128 px level without mipmaps; it looks sharp at 60 px
+  but aliases if drawn below ~48 px. Switching it to
+  `TEXTURE_FILTER_LINEAR_WITH_MIPMAPS` is the fix (owner: the slot widgets).
+- **Verification:** before/after with one fixture via
+  `tools/dev/IconsShotProbe.tscn -- --out=<dir> [--old=<dir of 32 px PNGs>]`,
+  plus ExchangeShotProbe and ChambersShotProbe. Item suites green.
