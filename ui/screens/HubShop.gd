@@ -101,6 +101,36 @@ var _undo_trade: Dictionary = {}
 var _btn_undo_trade: Button = null
 var _quick_actions_footer: Label = null
 
+# --- presentation (the front-end register; see the end of this file) ---
+const ExchangeStyle := preload("res://ui/widgets/exchange/ExchangeStyle.gd")
+const ArcaneFrameScript := preload("res://ui/components/ArcaneFrame.gd")
+const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
+
+@onready var _bg: Control = get_node_or_null("BG") as Control
+@onready var _layout: Container = get_node_or_null("Root/HBox") as Container
+@onready var _scale: Control = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Scale") as Control
+@onready var _grids_box: Control = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Grids") as Control
+@onready var _divider: Control = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Grids/Divider") as Control
+@onready var _reckon_now: Label = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Reckoning/Figures/Now") as Label
+@onready var _reckon_after: Label = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Reckoning/Figures/After") as Label
+@onready var _reckon_net: Label = get_node_or_null("Root/HBox/CartPanel/Margin/VBox/Reckoning/Net") as Label
+@onready var _purse: Label = get_node_or_null("Purse/PurseValue") as Label
+@onready var _respite: Label = get_node_or_null("Respite") as Label
+@onready var _report: Label = get_node_or_null("Root/HBox/Left/Margin/VBox/Report") as Label
+@onready var _ledger: VBoxContainer = get_node_or_null("Root/HBox/Left/Margin/VBox/Ledger") as VBoxContainer
+@onready var _notices: VBoxContainer = get_node_or_null("Root/HBox/Left/Margin/VBox/Notices") as VBoxContainer
+@onready var _equipped_count_label: Label = get_node_or_null("Root/HBox/Equipped/Margin/VBox/EquippedHeader/EquippedCount") as Label
+@onready var _backpack_count_label: Label = get_node_or_null("Root/HBox/Backpack/Margin/VBox/BackpackHeader/BackpackCount") as Label
+@onready var _bag_worth: Label = get_node_or_null("Root/HBox/Backpack/Margin/VBox/BagWorth") as Label
+@onready var _stock_count: Label = get_node_or_null("Root/HBox/Vendor/Margin/VBox/Identity/Words/StockCount") as Label
+@onready var _portrait: Control = get_node_or_null("Root/HBox/Vendor/Margin/VBox/Identity/Portrait") as Control
+@onready var _flare: Control = get_node_or_null("Flare") as Control
+var _panel_frames: Dictionary = {}  # panel name -> ArcaneFrame
+var _gear_hover: int = -1
+var _gear_styled: Array[int] = []
+var _fit_pending: bool = false
+var _ledger_rows: Dictionary = {}  # caption -> value Label
+
 func _get_refresh_cost() -> int:
 	var n: int = 0
 	if Global != null:
@@ -157,6 +187,8 @@ func _ready() -> void:
 		offer_grid.slot_clicked.connect(_on_offer_slot_clicked)
 	if not demand_grid.slot_clicked.is_connected(_on_demand_slot_clicked):
 		demand_grid.slot_clicked.connect(_on_demand_slot_clicked)
+
+	_apply_exchange_look()
 
 	# Rebuild overlays after first frame to ensure slot controls exist
 	await get_tree().process_frame
@@ -215,8 +247,10 @@ func _ready() -> void:
 	if tooltip != null:
 		tooltip.hide_tooltip()
 
+	_style_code_built_controls()
 	_refresh_info()
 	_refresh_cart()
+	_queue_fit_grids()
 
 func _process(_delta: float) -> void:
 	# Keep tooltip near mouse when visible + refresh live hover (double-click/moves can change item under cursor).
@@ -423,8 +457,10 @@ func _refresh_info() -> void:
 	if btn_refresh_vendor != null:
 		var cost := _get_refresh_cost()
 		btn_refresh_vendor.disabled = (Global == null or Global.followers < cost)
-		btn_refresh_vendor.text = "Refresh (-%d)" % cost
+		btn_refresh_vendor.text = "Restock  −%d" % cost
 		btn_refresh_vendor.tooltip_text = "%d Followers search the city's remaining exchange routes." % cost
+
+	_refresh_ledger_view(report_header, seg, fol, gear_count, bag_count, bag_capacity)
 
 
 func _equipped_count() -> int:
@@ -539,11 +575,19 @@ func _apply_vendor_filters() -> void:
 		if c == null:
 			continue
 		var inst: ItemInstance = _vendor_bag.slots[i]
-		c.visible = _vendor_item_matches(inst)
+		# Unfiltered, the base shelf also shows its empty places (where sold
+		# goods come to rest); a filter shows only the matching lots.
+		c.visible = _vendor_item_matches(inst) or (inst == null and i < BagInventory.SLOT_COUNT and not _vendor_filter_active())
 	vendor_grid.queue_sort()
+	_refresh_stock_count()
+	_queue_fit_grids()
 	# If we hid the slot currently under the mouse, clear hover/tooltip.
 	# Cheap approach: always clear when filters change; the next hover will repopulate.
 	_on_hover_clear()
+
+func _vendor_filter_active() -> bool:
+	return _vendor_category != VendorCategory.ALL or _vendor_affordable_only or _vendor_search_q.strip_edges() != ""
+
 
 func _make_preview_bag() -> BagInventory:
 	var b := BagInventory.new()
@@ -666,6 +710,7 @@ func _build_overlays() -> void:
 		ovo.z_index = 50
 		ovo.z_as_relative = false
 		ovo.set_mode(SellMarkOverlay.Mode.SELL)
+		ovo.set_pan(true)
 		_offer_ov.append(ovo)
 
 		var ent4 := Callable(self, "_on_hover_offer").bind(o)
@@ -687,6 +732,7 @@ func _build_overlays() -> void:
 		ovd.z_index = 50
 		ovd.z_as_relative = false
 		ovd.set_mode(SellMarkOverlay.Mode.BUY)
+		ovd.set_pan(true)
 		_demand_ov.append(ovd)
 
 		var ent5 := Callable(self, "_on_hover_demand").bind(d)
@@ -711,6 +757,7 @@ func _finish_bag_overlay_rebuild() -> void:
 	_bag_overlay_rebuild_pending = false
 	_rebuild_bag_overlays()
 	_refresh_overlays()
+	_queue_fit_grids()
 
 func _rebuild_bag_overlays() -> void:
 	for old_overlay in _bag_ov:
@@ -768,6 +815,7 @@ func _refresh_overlays() -> void:
 			continue
 		var inst: ItemInstance = (Global.run_inventory.get_at(i) if Global.run_inventory != null else null)
 		var selected: bool = _sell_inv.has(i)
+		ov.set_ghost(_icon_of(inst) if selected else null)
 		ov.set_selected(selected)
 		ov.set_price(_sell_value(inst))
 
@@ -778,6 +826,7 @@ func _refresh_overlays() -> void:
 			continue
 		var inst2: ItemInstance = (Global.run_bag.slots[j] if Global.run_bag != null and j < Global.run_bag.slots.size() else null)
 		var selected2: bool = _sell_bag.has(j)
+		ovb.set_ghost(_icon_of(inst2) if selected2 else null)
 		ovb.set_selected(selected2)
 		ovb.set_price(_sell_value(inst2))
 
@@ -788,6 +837,7 @@ func _refresh_overlays() -> void:
 			continue
 		var inst3: ItemInstance = (_vendor_bag.slots[k] if _vendor_bag != null and k < _vendor_bag.slots.size() else null)
 		var selected3: bool = _buy_vendor.has(k)
+		ovv.set_ghost(_icon_of(inst3) if selected3 else null)
 		ovv.set_selected(selected3)
 		ovv.set_price(_buy_value(inst3))
 
@@ -933,7 +983,7 @@ func _on_inv_slot_clicked(slot: int, button: int, double_click: bool, shift: boo
 		return
 	if chk_include_equipped != null and not chk_include_equipped.button_pressed:
 		if shift and trade_status != null:
-			trade_status.text = "Enable Gear before adding equipped items to the offer."
+			trade_status.text = "Enable Worn gear before adding equipped items to the offer."
 		return
 	if _sell_inv.has(slot):
 		_sell_inv.erase(slot)
@@ -978,9 +1028,9 @@ func _on_bag_slot_clicked(slot: int, button: int, double_click: bool, shift: boo
 		if src_ctrl != null:
 			var start := _ctrl_center(src_ctrl)
 			if not was_selected:
-				fly_vfx.fly_to(offer_grid, inst, start, false)
+				_fly(_pan_slot_for(offer_grid, _sell_bag, slot), inst, start, false)
 			else:
-				fly_vfx.fly_to(src_ctrl, inst, _ctrl_center(offer_grid), false)
+				_fly(src_ctrl, inst, _ctrl_center(offer_grid), false)
 
 	_refresh_cart()
 	_refresh_overlays()
@@ -1012,9 +1062,9 @@ func _on_vendor_slot_clicked(slot: int, button: int, _double_click: bool, shift:
 		if src_ctrl != null:
 			var start := _ctrl_center(src_ctrl)
 			if not was_selected:
-				fly_vfx.fly_to(demand_grid, inst, start, false)
+				_fly(_pan_slot_for(demand_grid, _buy_vendor, slot), inst, start, false)
 			else:
-				fly_vfx.fly_to(src_ctrl, inst, _ctrl_center(demand_grid), false)
+				_fly(src_ctrl, inst, _ctrl_center(demand_grid), false)
 
 	_refresh_cart()
 	_refresh_overlays()
@@ -1039,7 +1089,7 @@ func _on_offer_slot_clicked(slot: int, _button: int, _double_click: bool, _shift
 	if fly_vfx != null and inst_fx != null and src_ctrl != null:
 		var sc := offer_grid.get_slot_control(slot)
 		if sc != null:
-			fly_vfx.fly_to(src_ctrl, inst_fx, _ctrl_center(sc), false)
+			_fly(src_ctrl, inst_fx, _ctrl_center(sc), false)
 
 	if src == "bag":
 		_sell_bag.erase(s)
@@ -1058,7 +1108,7 @@ func _on_demand_slot_clicked(slot: int, _button: int, _double_click: bool, _shif
 		var vctrl := vendor_grid.get_slot_control(vs)
 		var sc := demand_grid.get_slot_control(slot)
 		if vctrl != null and sc != null:
-			fly_vfx.fly_to(vctrl, inst_fx, _ctrl_center(sc), false)
+			_fly(vctrl, inst_fx, _ctrl_center(sc), false)
 	_buy_vendor.erase(vs)
 	_refresh_cart()
 	_refresh_overlays()
@@ -1105,6 +1155,7 @@ func _apply_hidden_slots() -> void:
 		if chk_include_equipped != null and chk_include_equipped.button_pressed:
 			m_inv = _sell_inv
 		inv_bar.set_hidden_slots(m_inv)
+		_style_gear_slots()
 	
 	# Backpack + Vendor
 	if bag_grid != null and bag_grid.has_method("set_hidden_slots"):
@@ -1185,10 +1236,10 @@ func _refresh_cart(status_override: String = "") -> void:
 		# in the same frame.
 		if status_override != "":
 			trade_status.text = status_override
-			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95)
+			trade_status.modulate = Color(ExchangeStyle.PARCHMENT, 0.95)
 		else:
 			trade_status.text = String(validation.get("reason", ""))
-			trade_status.modulate = Color(0.42, 0.95, 0.82, 0.95) if can_trade else Color(1.0, 0.58, 0.30, 0.95)
+			trade_status.modulate = _status_colour(can_trade, String(validation.get("reason", "")))
 	if btn_barter_cart != null:
 		btn_barter_cart.disabled = (not can_trade) or overlay_open
 		btn_barter_cart.tooltip_text = "Confirm this exchange." if can_trade else String(validation.get("reason", ""))
@@ -1196,6 +1247,7 @@ func _refresh_cart(status_override: String = "") -> void:
 	_apply_hidden_slots()
 	if _vendor_affordable_only:
 		_apply_vendor_filters()
+	_refresh_balance_view(sell_v, buy_v, followers, after, can_trade)
 
 
 func _rebuild_cart_previews() -> void:
@@ -1341,12 +1393,9 @@ func _perform_trade() -> void:
 			if inst == null:
 				continue
 
-			# Remove from vendor first to avoid duplication exploits.
-			# VFX: vendor -> backpack on buy
-			if fly_vfx != null:
-				var src_ctrl := vendor_grid.get_slot_control(vs)
-				var start := _ctrl_center(src_ctrl) if src_ctrl != null else _ctrl_center(demand_grid)
-				fly_vfx.fly_to(bag_grid, inst, start, false)
+			# VFX: vendor -> backpack on buy, from where the item sat.
+			var src_ctrl := vendor_grid.get_slot_control(vs)
+			var fly_start := _ctrl_center(src_ctrl) if src_ctrl != null else _ctrl_center(demand_grid)
 
 			# Remove from vendor first to avoid duplication exploits.
 			_vendor_bag.remove_at(vs)
@@ -1354,6 +1403,10 @@ func _perform_trade() -> void:
 			# Add to player bag
 			trade_items.append(_report_trade_item(&"purchased", inst, _buy_value(inst), "vendor", vs))
 			Global.run_bag.add_instance(inst)
+			if fly_vfx != null:
+				# ...to the slot it landed in (the bag's centre if it merged).
+				var landed: Control = bag_grid.get_slot_control(Global.run_bag.slots.find(inst))
+				_fly(landed if landed != null else bag_grid, inst, fly_start, false)
 
 	# --- BUYBACK: what you sold sits on the vendor's shelf, rebuyable
 	# exactly as it was until the stock refreshes; the shelf grows to hold it.
@@ -1397,6 +1450,7 @@ func _perform_trade() -> void:
 	elif net < 0:
 		completion_text += " · %d Followers gained" % (-net)
 	_refresh_cart(completion_text)
+	_celebrate_trade()
 
 func _refresh_vendor_pressed() -> void:
 	if Global == null:
@@ -1569,15 +1623,16 @@ func _on_hover_demand(slot: int) -> void:
 
 func _set_hover_from_item(inst: ItemInstance) -> void:
 	if inst == null or inst.data == null:
-		hover.text = ""
+		_show_idle_hover()
 		if tooltip != null:
 			tooltip.hide_tooltip()
 		return
+	hover.modulate.a = 1.0
 
 	var sell_v: int = _sell_value(inst)
 	var buy_v: int = _buy_value(inst)
 	var pol: String = ("NEG" if int(inst.polarity) == int(ItemInstance.Polarity.NEG) else "POS")
-	hover.text = "%s  (R%d %s)\nSell: %d   Buy: %d" % [inst.data.display_name, int(inst.rarity), pol, sell_v, buy_v]
+	hover.text = "%s\nR%d %s  ·  sells for %s  ·  costs %s" % [inst.data.display_name, int(inst.rarity), pol, ExchangeStyle.grouped(sell_v), ExchangeStyle.grouped(buy_v)]
 
 	if tooltip != null:
 		tooltip.show_item(inst)
@@ -1593,7 +1648,7 @@ func _on_hover_clear() -> void:
 	_hover_ctx_kind = ""
 	_hover_ctx_slot = -1
 	_hover_ctx_inst_id = 0
-	hover.text = ""
+	_show_idle_hover()
 	if tooltip != null:
 		tooltip.hide_tooltip()
 
@@ -1834,3 +1889,468 @@ func _start_next_segment() -> void:
 
 	Global.save_current_profile()
 	Global.goto_game()
+
+
+# ============================================================================
+# Presentation: the Exchange in the front-end register
+# (docs/design/2026-10-02-front-end-arcane-register.md). Nothing below reads
+# or writes the economy; it dresses the screen's own nodes and animates them.
+# ============================================================================
+
+const GEAR_CELL := 80.0
+const SAYINGS: Array[String] = [
+	"\"Everything the city lost comes through my hands eventually. Name a fair weight.\"",
+	"\"I weigh a relic twice: once for what it is, once for who will miss it.\"",
+	"\"Lay it on the pan. The scales have never lied to me, which is more than I can say for my customers.\"",
+	"\"Recovered, not stolen. The difference is a matter of paperwork.\"",
+]
+
+
+## Panels, frames, type and buttons; then the open: the veil fades up and
+## the panels settle in. Runs before the first frame is drawn.
+## Items fly into the slot they land in; under reduced motion they are simply
+## there (the move itself is unchanged).
+func _fly(target: Control, inst: ItemInstance, start: Vector2, upgraded: bool) -> void:
+	if fly_vfx == null or ArcaneMotion.reduced():
+		return
+	fly_vfx.fly_to(target, inst, start, upgraded)
+
+
+func _apply_exchange_look() -> void:
+	var still := ArcaneMotion.reduced()
+	if _bg != null:
+		_bg.set("embedded", embedded)
+	var alpha := 0.93 if embedded else 0.9
+	for panel_name: String in ["Left", "Equipped", "Backpack", "CartPanel", "Vendor"]:
+		var panel := get_node_or_null("Root/HBox/" + panel_name) as PanelContainer
+		if panel == null:
+			continue
+		var rite := panel_name == "CartPanel"
+		panel.add_theme_stylebox_override(&"panel", ExchangeStyle.panel(rite, alpha))
+		var frame := ArcaneFrameScript.new() as Control
+		frame.name = "Frame"
+		frame.set("inset", 6.0)
+		frame.set("crown", rite)
+		frame.set("glow", 0.12 if rite else 0.0)
+		frame.set("colour", Color(0.66, 0.5, 0.3, 0.9) if rite else Color(0.55, 0.42, 0.26, 0.7))
+		panel.add_child(frame)
+		_panel_frames[panel_name] = frame
+
+	for b: Button in [btn_augments, btn_inventory, btn_menu]:
+		ExchangeStyle.style_button(b, ExchangeStyle.Btn.NAV, 15)
+	ExchangeStyle.style_button(btn_continue, ExchangeStyle.Btn.NAV_PRIMARY, 15)
+	for b2: Button in [btn_mark_all_bag, btn_mark_neg, btn_clear_cart, btn_refresh_vendor]:
+		ExchangeStyle.style_button(b2, ExchangeStyle.Btn.SMALL, 14)
+	ExchangeStyle.style_button(btn_barter_cart, ExchangeStyle.Btn.PRIMARY, 17)
+	for b3: Button in [btn_cat_all, btn_cat_equip, btn_cat_bag, btn_cat_sets, btn_affordable]:
+		ExchangeStyle.style_button(b3, ExchangeStyle.Btn.TAB, 14)
+	if chk_include_equipped != null:
+		chk_include_equipped.add_theme_font_size_override(&"font_size", 16)
+	if vendor_search != null:
+		vendor_search.add_theme_font_size_override(&"font_size", 16)
+	if _divider != null:
+		_divider.draw.connect(_draw_divider)
+	if _grids_box != null:
+		_grids_box.resized.connect(_sync_scale_arm)
+	var saying := get_node_or_null("Root/HBox/Vendor/Margin/VBox/Identity/Words/Saying") as Label
+	if saying != null:
+		saying.text = SAYINGS[absi(_vendor_seed if _vendor_seed != 0 else int(Global.attempt_segment if Global != null else 1)) % SAYINGS.size()]
+
+	# The worn gear: four across, the Exchange's own socket on each slot.
+	if inv_bar != null:
+		inv_bar.columns = 4
+		_gear_styled.clear()
+		for i in range(Inventory.SLOT_COUNT):
+			var c := inv_bar.get_slot_control(i)
+			_gear_styled.append(-1)
+			if c == null:
+				continue
+			c.custom_minimum_size = Vector2(GEAR_CELL, GEAR_CELL)
+			c.mouse_entered.connect(_on_gear_hover.bind(i, true))
+			c.mouse_exited.connect(_on_gear_hover.bind(i, false))
+		if Global != null and Global.run_inventory != null and not Global.run_inventory.changed.is_connected(_style_gear_slots):
+			Global.run_inventory.changed.connect(_style_gear_slots)
+		_style_gear_slots()
+	if bag_grid != null:
+		bag_grid.cell_size = 80.0
+	if vendor_grid != null:
+		vendor_grid.cell_size = 86.0
+	for p: ShopBagGrid in [offer_grid, demand_grid]:
+		if p != null:
+			p.cell_size = 66.0
+	var spacer := get_node_or_null("Root/HBox/Left/Margin/VBox/Spacer") as Control
+	if spacer != null:
+		spacer.draw.connect(_draw_seal.bind(spacer))
+		spacer.resized.connect(spacer.queue_redraw)
+
+	# The open: the panels settle in (ExchangeLayout) and the header comes up
+	# in step with them.
+	if _layout != null and _layout.has_method("play_intro"):
+		if not still and _layout.has_signal("intro_progress"):
+			_layout.connect("intro_progress", _on_intro_progress)
+			_on_intro_progress(0.0)
+		_layout.call("play_intro", still)
+	_show_idle_hover()
+
+
+const HEADER_NODES: Array[String] = ["BG", "ExchangeBanner", "ExchangeClassification", "HeaderRule", "LedgerAuthority", "Respite", "Purse"]
+
+
+## The veil and the header fade up and the header rule draws out from its
+## star, driven by the layout's intro so they share its real-time clock.
+func _on_intro_progress(t: float) -> void:
+	var bg_t := clampf(t / 0.35, 0.0, 1.0)
+	var head_t := smoothstep(0.12, 0.85, t)
+	for node_name in HEADER_NODES:
+		var n := get_node_or_null(node_name) as CanvasItem
+		if n != null:
+			n.modulate.a = lerpf(0.35, 1.0, bg_t if node_name == "BG" else head_t)
+	var rule := get_node_or_null("HeaderRule") as Control
+	if rule != null:
+		rule.pivot_offset = rule.size * 0.5
+		var e := 1.0 - pow(1.0 - smoothstep(0.1, 1.0, t), 3.0)
+		rule.scale = Vector2(lerpf(0.3, 1.0, e), 1.0)
+
+
+const HOVER_IDLE := "Rest the cursor on a lot and the Exchanger will name its weight."
+
+
+## The inspect line, when nothing is under the cursor.
+func _show_idle_hover() -> void:
+	if hover == null:
+		return
+	hover.text = HOVER_IDLE
+	hover.modulate.a = 0.55
+
+
+## Buttons and labels the controller builds after the first frame.
+func _style_code_built_controls() -> void:
+	for b: Button in [_btn_ascension, _btn_imprints]:
+		if b != null and not b.has_meta(&"exchange_styled"):
+			b.set_meta(&"exchange_styled", true)
+			ExchangeStyle.style_button(b, ExchangeStyle.Btn.NAV, 15)
+	if _btn_undo_trade != null and not _btn_undo_trade.has_meta(&"exchange_styled"):
+		_btn_undo_trade.set_meta(&"exchange_styled", true)
+		_btn_undo_trade.text = "Undo Last Trade"
+		ExchangeStyle.style_button(_btn_undo_trade, ExchangeStyle.Btn.SMALL, 14)
+	if _quick_actions_footer != null and not _quick_actions_footer.has_meta(&"exchange_styled"):
+		_quick_actions_footer.set_meta(&"exchange_styled", true)
+		_quick_actions_footer.theme_type_variation = &"ArcaneCaption"
+		_quick_actions_footer.add_theme_font_size_override(&"font_size", 12)
+		_quick_actions_footer.modulate = Color(1, 1, 1, 0.7)
+		_quick_actions_footer.text = "Right-click  move   ·   Shift-click  trade   ·   Ctrl-click  lock   ·   Double-click  equip"
+
+
+func _status_colour(valid: bool, reason: String) -> Color:
+	if _sell_inv.is_empty() and _sell_bag.is_empty() and _buy_vendor.is_empty():
+		return Color(ExchangeStyle.BODY, 0.62)
+	if reason.begins_with("⚠"):
+		return Color(ExchangeStyle.DANGER.lightened(0.15), 0.95)
+	if valid:
+		return Color(ExchangeStyle.GOLD_BRIGHT, 0.9)
+	return Color(ExchangeStyle.EMBER, 0.92)
+
+
+func _icon_of(inst: ItemInstance) -> Texture2D:
+	return inst.data.icon if inst != null and inst.data != null else null
+
+
+## The pan slot an item is about to land in (the previews are ordered by
+## source slot), so the flying icon arrives where the item will sit.
+func _pan_slot_for(grid: ShopBagGrid, picked: Dictionary, slot: int) -> Control:
+	if grid == null:
+		return null
+	var index := 0
+	for key: Variant in picked.keys():
+		if int(key) < slot:
+			index += 1
+	var c := grid.get_slot_control(index)
+	return c if c != null else grid
+
+
+# ---- the ledger (left), the purse (header) and the shelves' counts ----
+
+func _refresh_ledger_view(report_header: String, seg: int, fol: int, gear_count: int, bag_count: int, bag_capacity: int) -> void:
+	if _report != null:
+		_report.text = report_header.capitalize() if report_header != "" else ""
+	if _respite != null:
+		_respite.text = "A respite before Segment %d." % seg if not embedded else "The courtyard waits beyond the stall."
+	_set_ledger_row("ROUTE", "Area 1 · Segment %d" % seg)
+	_set_ledger_row("FOLLOWERS", ExchangeStyle.grouped(fol))
+	_set_ledger_row("WORN GEAR", "%d / %d" % [gear_count, Inventory.SLOT_COUNT])
+	_set_ledger_row("BACKPACK", "%d / %d" % [bag_count, bag_capacity])
+	if _notices != null:
+		for child in _notices.get_children():
+			child.queue_free()
+		if Global != null and Global.pending_augment_pick:
+			_notices.add_child(_notice("REWARD READY", "An augment pick is waiting."))
+		if Global != null and Global.pending_big_choice:
+			_notices.add_child(_notice("DOCTRINE READY", "An Ascension thesis awaits inscription."))
+	if _purse != null and _purse.has_method("set_value"):
+		_purse.call("set_value", fol, true)
+	_refresh_goods_counts()
+
+
+func _set_ledger_row(caption: String, value: String) -> void:
+	if _ledger == null:
+		return
+	var label := _ledger_rows.get(caption, null) as Label
+	if label == null:
+		var row := HBoxContainer.new()
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var cap := Label.new()
+		cap.theme_type_variation = &"ArcaneCaption"
+		cap.add_theme_font_size_override(&"font_size", 13)
+		cap.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		cap.text = caption
+		row.add_child(cap)
+		label = Label.new()
+		label.theme_type_variation = &"ArcaneBody"
+		label.add_theme_color_override(&"font_color", ExchangeStyle.PARCHMENT)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		row.add_child(label)
+		_ledger.add_child(row)
+		_ledger_rows[caption] = label
+	if label.text != value:
+		label.text = value
+
+
+func _notice(caption: String, body: String) -> Control:
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override(&"separation", 0)
+	var cap := Label.new()
+	cap.theme_type_variation = &"ArcaneCaption"
+	cap.add_theme_color_override(&"font_color", ExchangeStyle.EMBER)
+	cap.add_theme_font_size_override(&"font_size", 13)
+	cap.text = "◆  " + caption
+	box.add_child(cap)
+	var line := Label.new()
+	line.theme_type_variation = &"ArcaneItalic"
+	line.add_theme_font_size_override(&"font_size", 16)
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	line.text = body
+	box.add_child(line)
+	return box
+
+
+func _refresh_goods_counts() -> void:
+	if _equipped_count_label != null:
+		_equipped_count_label.text = "%d / %d" % [_equipped_count(), Inventory.SLOT_COUNT]
+	if _backpack_count_label != null:
+		_backpack_count_label.text = "%d / %d" % [_backpack_count(), _backpack_capacity()]
+	if _bag_worth != null:
+		var worth := 0
+		if Global != null and Global.run_bag != null:
+			for inst: ItemInstance in Global.run_bag.slots:
+				if inst != null and not inst.locked:
+					worth += _sell_value(inst)
+		_bag_worth.text = "The Exchanger would weigh your pack at %s Followers." % ExchangeStyle.grouped(worth) if worth > 0 else "Nothing in the pack to weigh."
+
+
+func _refresh_stock_count() -> void:
+	if _stock_count == null or _vendor_bag == null:
+		return
+	var lots := 0
+	var shown := 0
+	for i in range(_vendor_bag.slots.size()):
+		if _vendor_bag.slots[i] != null:
+			lots += 1
+			var c := vendor_grid.get_slot_control(i) if vendor_grid != null else null
+			if c != null and c.visible:
+				shown += 1
+	var text := "%d LOT%s ON THE SHELF" % [lots, "" if lots == 1 else "S"]
+	if shown != lots:
+		text = "%d OF %d LOTS SHOWN" % [shown, lots]
+	_stock_count.text = text
+
+
+# ---- the Balance ----
+
+func _refresh_balance_view(sell_v: int, buy_v: int, followers: int, after: int, valid: bool) -> void:
+	if _scale != null and _scale.has_method("set_totals"):
+		_scale.call("set_totals", sell_v, buy_v, is_node_ready())
+	if _reckon_now != null:
+		_reckon_now.call("set_value", followers, true)
+	if _reckon_after != null:
+		_reckon_after.call("set_value", after, true)
+		var col := ExchangeStyle.GOLD_BRIGHT
+		if after < 0:
+			col = ExchangeStyle.DANGER.lightened(0.2)
+		elif after < followers:
+			col = ExchangeStyle.EMBER
+		_reckon_after.call("set_colour", col)
+	if _reckon_net != null:
+		var net := buy_v - sell_v
+		var line := "Nothing changes hands yet."
+		if sell_v == 0 and buy_v == 0:
+			line = "The scales stand empty."
+		elif net > 0:
+			line = "%s Followers committed to the exchange." % ExchangeStyle.grouped(net)
+		elif net < 0:
+			line = "A net gain of %s Followers." % ExchangeStyle.grouped(-net)
+		else:
+			line = "An even trade."
+		if not valid and after < 0:
+			line = "The pans do not balance: %s more Followers needed." % ExchangeStyle.grouped(-after)
+		_reckon_net.text = line
+	_refresh_goods_counts()
+
+
+func _draw_divider() -> void:
+	if _divider == null:
+		return
+	var x := _divider.size.x * 0.5
+	var top := 28.0
+	var bottom := _divider.size.y - 6.0
+	var steps := 16
+	for i in range(steps):
+		var a := float(i) / steps
+		var b := float(i + 1) / steps
+		var fade := clampf(minf(a, 1.0 - b) * 5.0, 0.0, 1.0)
+		_divider.draw_line(Vector2(x, lerpf(top, bottom, a)), Vector2(x, lerpf(top, bottom, b)), Color(ExchangeStyle.GOLD_DIM, 0.6 * fade), 1.0, true)
+	var c := Vector2(x, (top + bottom) * 0.5)
+	var pts := ExchangeStyle.diamond(c, 5.0)
+	_divider.draw_colored_polygon(pts, Color(0.04, 0.034, 0.03))
+	pts.append(pts[0])
+	_divider.draw_polyline(pts, ExchangeStyle.GOLD, 1.2, true)
+	_divider.draw_colored_polygon(ExchangeStyle.diamond(c, 1.8), ExchangeStyle.GOLD)
+	for dir: float in [-1.0, 1.0]:
+		var tip := c + Vector2(dir * 18.0, 0)
+		_divider.draw_line(tip, tip + Vector2(-dir * 5.0, -4.0), Color(ExchangeStyle.GOLD_DIM, 0.8), 1.0, true)
+		_divider.draw_line(tip, tip + Vector2(-dir * 5.0, 4.0), Color(ExchangeStyle.GOLD_DIM, 0.8), 1.0, true)
+
+
+## Hangs each pan of the scales over its grid.
+func _sync_scale_arm() -> void:
+	if _scale == null or offer_grid == null or demand_grid == null:
+		return
+	var left := offer_grid.get_global_rect().get_center().x
+	var right := demand_grid.get_global_rect().get_center().x
+	if right - left < 10.0:
+		return
+	_scale.set("arm", (right - left) * 0.5)
+
+
+## The trade is sealed: a star flares over the beam, the Balance's frame
+## warms and fades, the Exchanger's lamp brightens and the purse counts to
+## its new figure (that last through _refresh_info).
+func _celebrate_trade() -> void:
+	if not is_inside_tree():
+		return
+	var at := _ctrl_center(btn_barter_cart)
+	if _scale != null:
+		var r := _scale.get_global_rect()
+		at = Vector2(r.get_center().x, r.position.y + 30.0)
+		if _scale.has_method("flash"):
+			_scale.call("flash")
+	if _flare != null and _flare.has_method("burst"):
+		_flare.call("burst", at, 1.0)
+	if _portrait != null and _portrait.has_method("brighten"):
+		_portrait.call("brighten")
+	var frame := _panel_frames.get("CartPanel", null) as Control
+	if frame != null:
+		var tw := frame.create_tween().set_ignore_time_scale(true)
+		tw.tween_property(frame, "glow", 1.0, 0.12)
+		tw.tween_property(frame, "glow", 0.12, 0.9 if not ArcaneMotion.reduced() else 0.3).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+# ---- slot dressing and fitting ----
+
+func _on_gear_hover(slot: int, on: bool) -> void:
+	if on:
+		_gear_hover = slot
+	elif _gear_hover == slot:
+		_gear_hover = -1
+	_style_gear_slots()
+
+
+## The worn-gear sockets: filled, empty or under the cursor. A style is set
+## only when a slot's state changes.
+func _style_gear_slots() -> void:
+	if inv_bar == null or _gear_styled.is_empty():
+		return
+	var reserved: Dictionary = _sell_inv if (chk_include_equipped != null and chk_include_equipped.button_pressed) else {}
+	for i in range(mini(_gear_styled.size(), Inventory.SLOT_COUNT)):
+		var c := inv_bar.get_slot_control(i)
+		if c == null:
+			continue
+		var inst: ItemInstance = Global.run_inventory.get_at(i) if Global != null and Global.run_inventory != null else null
+		var filled := inst != null and not reserved.has(i)
+		var state: int = ExchangeStyle.Slot.FILLED if filled else ExchangeStyle.Slot.EMPTY
+		if filled and _gear_hover == i:
+			state = ExchangeStyle.Slot.HOVER
+		if _gear_styled[i] == state:
+			continue
+		_gear_styled[i] = state
+		c.add_theme_stylebox_override(&"panel", ExchangeStyle.slot(state))
+
+
+func _queue_fit_grids() -> void:
+	if _fit_pending or not is_inside_tree():
+		return
+	_fit_pending = true
+	call_deferred("_fit_grids")
+
+
+## Sizes the backpack and the stock to the room their panels are given, so
+## a grown satchel or a long shelf shrinks its slots instead of spilling out.
+## The room is worked out from the screen, not from the panels' current
+## size, which an overflowing grid would already have stretched.
+func _fit_grids() -> void:
+	_fit_pending = false
+	var root := get_node_or_null("Root") as MarginContainer
+	if root == null:
+		return
+	var body_h := size.y - float(root.get_theme_constant(&"margin_top")) - float(root.get_theme_constant(&"margin_bottom"))
+	if bag_grid != null:
+		var bag_panel := get_node_or_null("Root/HBox/Backpack") as Control
+		var eq_panel := get_node_or_null("Root/HBox/Equipped") as Control
+		if bag_panel != null:
+			var allotted := body_h - (eq_panel.get_combined_minimum_size().y + 14.0 if eq_panel != null else 0.0)
+			var others := bag_panel.get_combined_minimum_size().y - bag_grid.get_combined_minimum_size().y
+			var room := Vector2((bag_grid.get_parent() as Control).size.x, allotted - others - 4.0)
+			bag_grid.fit_within(room, bag_grid.slot_count, 80.0, 44.0, 4, 6)
+	if vendor_grid != null:
+		var vendor_panel := get_node_or_null("Root/HBox/Vendor") as Control
+		var shown := 0
+		for i in range(vendor_grid.slot_count):
+			var c := vendor_grid.get_slot_control(i)
+			if c != null and c.visible:
+				shown += 1
+		if vendor_panel != null:
+			var vothers := vendor_panel.get_combined_minimum_size().y - vendor_grid.get_combined_minimum_size().y
+			var vroom := Vector2((vendor_grid.get_parent() as Control).size.x, body_h - vothers - 4.0)
+			vendor_grid.fit_within(vroom, maxi(shown, 8), 86.0, 40.0, 4, 7)
+	if offer_grid != null and demand_grid != null and _grids_box != null:
+		var half := (_grids_box.size.x - (_divider.custom_minimum_size.x if _divider != null else 0.0)) * 0.5
+		for p: ShopBagGrid in [offer_grid, demand_grid]:
+			p.fit_within(Vector2(half, 4.0 * 66.0 + 3.0 * p.gap), 16, 66.0, 44.0, 4, 4)
+	_sync_scale_arm.call_deferred()
+
+
+## The Exchange's seal, faint in the ledger's empty middle: two rings, a
+## balance beam across them, a diamond at the heart. Drawn once per resize.
+func _draw_seal(host: Control) -> void:
+	if host.size.y < 110.0:
+		return
+	var c := host.size * 0.5
+	var r := minf(58.0, host.size.y * 0.34)
+	var col := Color(ExchangeStyle.GOLD_DIM, 0.32)
+	host.draw_arc(c, r, 0.0, TAU, 72, col, 1.0, true)
+	host.draw_arc(c, r * 0.8, 0.0, TAU, 72, Color(col, col.a * 0.7), 1.0, true)
+	for i in range(8):
+		var a := TAU * float(i) / 8.0
+		var d := Vector2(cos(a), sin(a))
+		host.draw_line(c + d * r, c + d * (r + (7.0 if i % 2 == 0 else 4.0)), col, 1.0, true)
+	var beam := r * 0.62
+	host.draw_line(c + Vector2(-beam, -r * 0.18), c + Vector2(beam, -r * 0.18), col, 1.2, true)
+	host.draw_line(c + Vector2(0, -r * 0.18), c + Vector2(0, r * 0.5), col, 1.0, true)
+	for side: float in [-1.0, 1.0]:
+		var hook := c + Vector2(side * beam, -r * 0.18)
+		host.draw_line(hook, hook + Vector2(-9, 18), Color(col, col.a * 0.8), 1.0, true)
+		host.draw_line(hook, hook + Vector2(9, 18), Color(col, col.a * 0.8), 1.0, true)
+		host.draw_line(hook + Vector2(-11, 18), hook + Vector2(11, 18), col, 1.0, true)
+	var pts := ExchangeStyle.diamond(c + Vector2(0, -r * 0.18), 4.0)
+	host.draw_colored_polygon(pts, Color(ExchangeStyle.GOLD, 0.45))
+	host.draw_line(c + Vector2(-14, r * 0.5), c + Vector2(14, r * 0.5), col, 1.0, true)

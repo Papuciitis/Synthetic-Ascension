@@ -11,36 +11,13 @@
 [ext_resource type="Script" path="res://ui/screens/HubShopBackdrop.gd" id="9_backdrop"]
 [ext_resource type="PackedScene" path="res://ui/widgets/PerformanceOverlay.tscn" id="10_dev_console"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="11_theme"]
-
-[sub_resource type="StyleBoxFlat" id="sb_panel"]
-bg_color = Color(0.045, 0.032, 0.035, 0.965)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.62, 0.39, 0.22, 0.42)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_left = 6
-corner_radius_bottom_right = 6
-shadow_size = 10
-shadow_offset = Vector2(0, 7)
-shadow_color = Color(0, 0, 0, 0.48)
-
-[sub_resource type="StyleBoxFlat" id="sb_panel_accent"]
-bg_color = Color(0.055, 0.035, 0.031, 0.985)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.96, 0.52, 0.20, 0.72)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_left = 6
-corner_radius_bottom_right = 6
-shadow_size = 13
-shadow_offset = Vector2(0, 9)
-shadow_color = Color(0, 0, 0, 0.56)
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="12_arcane"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="13_rule"]
+[ext_resource type="Script" path="res://ui/widgets/exchange/ExchangeLayout.gd" id="14_layout"]
+[ext_resource type="Script" path="res://ui/widgets/exchange/ExchangeScale.gd" id="15_scale"]
+[ext_resource type="Script" path="res://ui/widgets/exchange/ExchangeCounter.gd" id="16_counter"]
+[ext_resource type="Script" path="res://ui/widgets/exchange/ExchangePortrait.gd" id="17_portrait"]
+[ext_resource type="Script" path="res://ui/widgets/exchange/ExchangeFlare.gd" id="18_flare"]
 
 [node name="HubShop" type="Control"]
 anchors_preset = 15
@@ -60,54 +37,106 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("9_backdrop")
 
-[node name="ExchangeBanner" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 14.0
-offset_bottom = 62.0
-grow_horizontal = 2
-mouse_filter = 2
-theme_override_colors/font_color = Color(0.96, 0.72, 0.45, 0.96)
-theme_override_colors/font_outline_color = Color(0.03, 0.015, 0.02, 0.95)
-theme_override_constants/outline_size = 7
-theme_override_font_sizes/font_size = 26
-theme_type_variation = &"SacredHeading"
-text = "THE EXCHANGE"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="ExchangeClassification" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_top = 4.0
-offset_bottom = 24.0
+offset_top = 20.0
+offset_bottom = 40.0
 grow_horizontal = 2
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.72, 0.51, 0.29, 0.88)
-theme_override_font_sizes/font_size = 10
-theme_type_variation = &"InstitutionalHeading"
+theme = ExtResource("12_arcane")
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(0.62, 0.47, 0.3, 1)
+theme_override_font_sizes/font_size = 12
 text = "RECONSTRUCTION EXCHANGE // AFTERMATH REGISTER"
 horizontal_alignment = 1
 
+[node name="ExchangeBanner" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 34.0
+offset_bottom = 98.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("12_arcane")
+theme_type_variation = &"ArcaneTitle"
+theme_override_font_sizes/font_size = 46
+text = "The Exchange"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeaderRule" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 98.0
+offset_right = 300.0
+offset_bottom = 114.0
+grow_horizontal = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+ornament = 2
+colour = Color(0.7, 0.53, 0.32, 0.8)
+
 [node name="LedgerAuthority" type="Label" parent="."]
+layout_mode = 1
+offset_left = 34.0
+offset_top = 44.0
+offset_right = 420.0
+offset_bottom = 66.0
+mouse_filter = 2
+theme = ExtResource("12_arcane")
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(0.62, 0.47, 0.3, 0.75)
+theme_override_font_sizes/font_size = 12
+text = "LEDGER AUTHORITY 03  ◇"
+
+[node name="Respite" type="Label" parent="."]
+layout_mode = 1
+offset_left = 34.0
+offset_top = 66.0
+offset_right = 520.0
+offset_bottom = 92.0
+mouse_filter = 2
+theme = ExtResource("12_arcane")
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.7, 0.64, 0.55, 0.85)
+theme_override_font_sizes/font_size = 17
+text = "Lamplight, and a ledger left open."
+
+[node name="Purse" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -166.0
-offset_top = 18.0
-offset_right = -18.0
-offset_bottom = 38.0
+offset_left = -420.0
+offset_top = 30.0
+offset_right = -34.0
+offset_bottom = 104.0
 grow_horizontal = 0
 mouse_filter = 2
-theme_override_colors/font_color = Color(0.72, 0.51, 0.29, 0.64)
-theme_override_font_sizes/font_size = 9
-theme_type_variation = &"InstitutionalHeading"
-text = "LEDGER AUTHORITY 03  ◇"
+theme = ExtResource("12_arcane")
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="PurseCaption" type="Label" parent="Purse"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 13
+text = "FOLLOWERS IN YOUR CARE"
 horizontal_alignment = 2
 
+[node name="PurseValue" type="Label" parent="Purse"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 38
+text = "0"
+horizontal_alignment = 2
+script = ExtResource("16_counter")
 
 [node name="FlyVfx" type="Control" parent="."]
 anchors_preset = 15
@@ -117,7 +146,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("5")
-
+fly_time = 0.26
+icon_size = 56.0
+impact_flash = false
 
 [node name="Root" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -125,28 +156,29 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 72
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+mouse_filter = 2
+theme = ExtResource("12_arcane")
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 132
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 26
 
-[node name="HBox" type="HBoxContainer" parent="Root"]
-clip_contents = true
+[node name="HBox" type="Container" parent="Root"]
 layout_mode = 2
-theme_override_constants/separation = 5
+mouse_filter = 2
+script = ExtResource("14_layout")
 
 [node name="Left" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(170, 0)
 size_flags_vertical = 3
 theme_type_variation = &"LedgerPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Left"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Left/Margin"]
 layout_mode = 2
@@ -154,49 +186,97 @@ theme_override_constants/separation = 8
 
 [node name="Title" type="Label" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-theme_type_variation = &"InstitutionalHeading"
-text = "AFTERMATH // ROUTE ACCOUNT"
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 30
+text = "Aftermath"
 
 [node name="Flavor" parent="Root/HBox/Left/Margin/VBox" instance=ExtResource("8_flavor")]
+custom_minimum_size = Vector2(0, 70)
 layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.8, 0.74, 0.64, 1)
+theme_override_font_sizes/font_size = 17
+
+[node name="LedgerRule" type="Control" parent="Root/HBox/Left/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+ornament_at = 0.0
+fade_ends = false
+colour = Color(0.62, 0.47, 0.3, 0.6)
 
 [node name="ReportTitle" type="Label" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.63, 0.3, 1)
-theme_override_font_sizes/font_size = 12
-theme_type_variation = &"InstitutionalHeading"
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(1, 0.62, 0.3, 0.95)
+theme_override_font_sizes/font_size = 13
 text = "SEGMENT REPORT"
 
 [node name="Info" type="Label" parent="Root/HBox/Left/Margin/VBox"]
+visible = false
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.9)
+theme_type_variation = &"ArcaneBody"
 autowrap_mode = 3
-theme_override_font_sizes/font_size = 13
-text = "PREPARING SEGMENT 1\n\nNEXT ROUTE\nArea 1 · Segment 1\n\nCURRENT SUPPORT\nFollowers: 0\nGear: 0 / 8\nBackpack: 0 / 16"
+text = "PREPARING SEGMENT 1
+
+NEXT ROUTE
+Area 1 · Segment 1
+
+CURRENT SUPPORT
+Followers: 0
+Gear: 0 / 8
+Backpack: 0 / 16"
+
+[node name="Report" type="Label" parent="Root/HBox/Left/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_colors/font_color = Color(0.91, 0.86, 0.77, 1)
+theme_override_font_sizes/font_size = 19
+text = "Preparing Segment 1"
+autowrap_mode = 3
+
+[node name="Ledger" type="VBoxContainer" parent="Root/HBox/Left/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Notices" type="VBoxContainer" parent="Root/HBox/Left/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Hover" type="Label" parent="Root/HBox/Left/Margin/VBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.75)
-theme_override_font_sizes/font_size = 12
-text = ""
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.78, 0.71, 0.6, 1)
+theme_override_font_sizes/font_size = 16
 autowrap_mode = 3
-max_lines_visible = 3
 clip_text = true
+max_lines_visible = 3
 
 [node name="Spacer" type="Control" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="NavRule" type="Control" parent="Root/HBox/Left/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.62, 0.47, 0.3, 0.6)
 
 [node name="Augments" type="Button" parent="Root/HBox/Left/Margin/VBox"]
+layout_mode = 2
+focus_mode = 0
+theme_type_variation = &"InstitutionalButton"
 text = "Review Augments"
-focus_mode = 0
-theme_type_variation = &"InstitutionalButton"
+
 [node name="Inventory" type="Button" parent="Root/HBox/Left/Margin/VBox"]
-text = "Manage Inventory"
+layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"InstitutionalButton"
+text = "Manage Inventory"
 
 [node name="Continue" type="Button" parent="Root/HBox/Left/Margin/VBox"]
 layout_mode = 2
@@ -210,121 +290,249 @@ text = "Main Menu"
 
 [node name="Equipped" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(112, 0)
 size_flags_vertical = 3
 theme_type_variation = &"LedgerPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Equipped"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Equipped/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="EquippedTitle" type="Label" parent="Root/HBox/Equipped/Margin/VBox"]
+[node name="EquippedHeader" type="HBoxContainer" parent="Root/HBox/Equipped/Margin/VBox"]
 layout_mode = 2
-theme_type_variation = &"InstitutionalHeading"
-text = "GEAR REGISTER"
+
+[node name="EquippedTitle" type="Label" parent="Root/HBox/Equipped/Margin/VBox/EquippedHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 18
+text = "Worn Gear"
+
+[node name="EquippedCount" type="Label" parent="Root/HBox/Equipped/Margin/VBox/EquippedHeader"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ArcaneCaption"
+text = "0 / 8"
 
 [node name="InventoryBar" parent="Root/HBox/Equipped/Margin/VBox" instance=ExtResource("2")]
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("11_theme")
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
 
 [node name="Backpack" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(176, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_type_variation = &"LedgerPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Backpack"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Backpack/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
-[node name="BackpackTitle" type="Label" parent="Root/HBox/Backpack/Margin/VBox"]
+[node name="BackpackHeader" type="HBoxContainer" parent="Root/HBox/Backpack/Margin/VBox"]
 layout_mode = 2
-theme_type_variation = &"InstitutionalHeading"
-text = "BACKPACK REGISTER"
+
+[node name="BackpackTitle" type="Label" parent="Root/HBox/Backpack/Margin/VBox/BackpackHeader"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 18
+text = "Backpack"
+
+[node name="BackpackCount" type="Label" parent="Root/HBox/Backpack/Margin/VBox/BackpackHeader"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ArcaneCaption"
+text = "0 / 16"
 
 [node name="BagGrid" parent="Root/HBox/Backpack/Margin/VBox" instance=ExtResource("3")]
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("11_theme")
+
+[node name="BagSpacer" type="Control" parent="Root/HBox/Backpack/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="BagRule" type="Control" parent="Root/HBox/Backpack/Margin/VBox"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.62, 0.47, 0.3, 0.5)
+
+[node name="BagWorth" type="Label" parent="Root/HBox/Backpack/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.78, 0.71, 0.6, 1)
+theme_override_font_sizes/font_size = 17
+text = "Nothing carried."
+horizontal_alignment = 1
 
 [node name="CartPanel" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(330, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_type_variation = &"RitualPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/CartPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/CartPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 12
 
 [node name="CartTitle" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-theme_type_variation = &"SacredHeading"
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 26
 text = "Balance the Exchange"
+horizontal_alignment = 1
+
+[node name="CartRule" type="Control" parent="Root/HBox/CartPanel/Margin/VBox"]
+custom_minimum_size = Vector2(340, 14)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.7, 0.53, 0.32, 0.75)
+
+[node name="Scale" type="Control" parent="Root/HBox/CartPanel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("15_scale")
 
 [node name="Grids" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 0
+alignment = 1
 
 [node name="OfferBox" type="VBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox/Grids"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="OfferTitle" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Grids/OfferBox"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.9)
-theme_type_variation = &"InstitutionalHeading"
-text = "Your Offer"
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(1, 0.62, 0.3, 0.95)
+text = "YOUR OFFER"
+horizontal_alignment = 1
 
 [node name="OfferGrid" parent="Root/HBox/CartPanel/Margin/VBox/Grids/OfferBox" instance=ExtResource("3")]
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("11_theme")
+pan = true
+gap = 8
+
+[node name="Divider" type="Control" parent="Root/HBox/CartPanel/Margin/VBox/Grids"]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="DemandBox" type="VBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox/Grids"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
 
 [node name="DemandTitle" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Grids/DemandBox"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.9)
-theme_type_variation = &"InstitutionalHeading"
-text = "Recovered Stock"
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(0.99, 0.84, 0.58, 0.95)
+text = "THE REQUEST"
+horizontal_alignment = 1
 
 [node name="DemandGrid" parent="Root/HBox/CartPanel/Margin/VBox/Grids/DemandBox" instance=ExtResource("3")]
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("11_theme")
+pan = true
+gap = 8
 
 [node name="Totals" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
+visible = false
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.9)
-text = "Offer: 0    Request: 0\nNet: 0\nFollowers after: 0"
+text = "Offer: 0    Request: 0
+Net: 0
+Followers after: 0"
+
+[node name="Reckoning" type="VBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ReckoningRule" type="Control" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.62, 0.47, 0.3, 0.55)
+
+[node name="Caption" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 13
+text = "FOLLOWERS"
+horizontal_alignment = 1
+
+[node name="Figures" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning"]
+layout_mode = 2
+theme_override_constants/separation = 18
+alignment = 1
+
+[node name="Now" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning/Figures"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 32
+text = "0"
+script = ExtResource("16_counter")
+base_colour = Color(0.91, 0.86, 0.77, 1)
+
+[node name="Arrow" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning/Figures"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_colors/font_color = Color(0.62, 0.47, 0.3, 1)
+theme_override_font_sizes/font_size = 26
+text = "→"
+
+[node name="After" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning/Figures"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 32
+text = "0"
+script = ExtResource("16_counter")
+
+[node name="Net" type="Label" parent="Root/HBox/CartPanel/Margin/VBox/Reckoning"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 17
+text = "Nothing changes hands yet."
+horizontal_alignment = 1
 
 [node name="TradeStatus" type="Label" parent="Root/HBox/CartPanel/Margin/VBox"]
-custom_minimum_size = Vector2(0, 34)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
-modulate = Color(1, 0.58, 0.3, 0.95)
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"ArcaneBody"
+theme_override_font_sizes/font_size = 16
 text = "Choose goods from either side."
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -332,29 +540,30 @@ autowrap_mode = 3
 
 [node name="TradeTools" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 10
+alignment = 1
 
 [node name="MarkAllBag" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
-text = "Offer Bag"
+tooltip_text = "Put every unlocked backpack item on your pan."
+text = "Offer Backpack"
 
 [node name="MarkNEG" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
 layout_mode = 2
-size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
+tooltip_text = "Put every unlocked NEG backpack item on your pan."
 text = "Offer NEG"
 
 [node name="IncludeEquipped" type="CheckBox" parent="Root/HBox/CartPanel/Margin/VBox/TradeTools"]
 layout_mode = 2
 theme_type_variation = &"InstitutionalCheckBox"
 tooltip_text = "Allow equipped items to be added to your offer."
-text = "Gear"
+text = "Worn gear"
 
 [node name="Buttons" type="HBoxContainer" parent="Root/HBox/CartPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="BtnClearCart" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/Buttons"]
 layout_mode = 2
@@ -365,26 +574,76 @@ text = "Clear"
 [node name="BtnBarter" type="Button" parent="Root/HBox/CartPanel/Margin/VBox/Buttons"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.6
 theme_type_variation = &"InstitutionalButton"
 text = "Confirm Exchange"
 
 [node name="Vendor" type="PanelContainer" parent="Root/HBox"]
 layout_mode = 2
-custom_minimum_size = Vector2(218, 0)
 size_flags_vertical = 3
 size_flags_horizontal = 3
 theme_type_variation = &"LedgerPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/HBox/Vendor"]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 22
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 22
 
 [node name="VBox" type="VBoxContainer" parent="Root/HBox/Vendor/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
+
+[node name="Identity" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Portrait" type="Control" parent="Root/HBox/Vendor/Margin/VBox/Identity"]
+custom_minimum_size = Vector2(136, 214)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("17_portrait")
+
+[node name="Words" type="VBoxContainer" parent="Root/HBox/Vendor/Margin/VBox/Identity"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Role" type="Label" parent="Root/HBox/Vendor/Margin/VBox/Identity/Words"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = "KEEPER OF THE LEDGER"
+
+[node name="Name" type="Label" parent="Root/HBox/Vendor/Margin/VBox/Identity/Words"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 23
+text = "The Exchanger"
+
+[node name="Saying" type="Label" parent="Root/HBox/Vendor/Margin/VBox/Identity/Words"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.8, 0.74, 0.64, 1)
+theme_override_font_sizes/font_size = 17
+text = "\"Everything the city lost comes through my hands eventually. Name a fair weight.\""
+autowrap_mode = 3
+
+[node name="StockCount" type="Label" parent="Root/HBox/Vendor/Margin/VBox/Identity/Words"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_colors/font_color = Color(0.62, 0.47, 0.3, 1)
+theme_override_font_sizes/font_size = 12
+text = "0 LOTS ON THE SHELF"
+
+[node name="VendorRule" type="Control" parent="Root/HBox/Vendor/Margin/VBox"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.62, 0.47, 0.3, 0.6)
 
 [node name="VendorHeader" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
 layout_mode = 2
@@ -393,8 +652,10 @@ theme_override_constants/separation = 8
 [node name="VendorTitle" type="Label" parent="Root/HBox/Vendor/Margin/VBox/VendorHeader"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"InstitutionalHeading"
-text = "TRADER STOCK // RECOVERED"
+size_flags_vertical = 4
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 18
+text = "Recovered Stock"
 
 [node name="RefreshVendor" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorHeader"]
 layout_mode = 2
@@ -403,56 +664,92 @@ text = "Refresh (-3)"
 
 [node name="VendorFilters" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 2
 
 [node name="CatAll" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
-text = "All"
 toggle_mode = true
 button_pressed = true
+text = "All"
 
 [node name="CatEquip" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
-text = "Gear"
 toggle_mode = true
+text = "Gear"
 
 [node name="CatBag" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
-text = "Bag"
 toggle_mode = true
+text = "Bag"
 
 [node name="CatSets" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorFilters"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalButton"
-text = "Sets"
 toggle_mode = true
+text = "Sets"
 
 [node name="VendorTools" type="HBoxContainer" parent="Root/HBox/Vendor/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="Affordable" type="Button" parent="Root/HBox/Vendor/Margin/VBox/VendorTools"]
 layout_mode = 2
 theme_type_variation = &"InstitutionalButton"
 toggle_mode = true
-text = "Affordable"
 tooltip_text = "Show stock affordable with current Followers plus your offer."
+text = "Affordable"
 
 [node name="Search" type="LineEdit" parent="Root/HBox/Vendor/Margin/VBox/VendorTools"]
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalLineEdit"
-placeholder_text = "Search stock..."
+placeholder_text = "Search the shelf..."
 clear_button_enabled = true
 
 [node name="VendorGrid" parent="Root/HBox/Vendor/Margin/VBox" instance=ExtResource("3")]
 layout_mode = 2
+size_flags_horizontal = 4
+theme = ExtResource("11_theme")
+
+[node name="ShelfSpacer" type="Control" parent="Root/HBox/Vendor/Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ShelfRule" type="Control" parent="Root/HBox/Vendor/Margin/VBox"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("13_rule")
+colour = Color(0.62, 0.47, 0.3, 0.5)
+
+[node name="ShelfNote" type="Label" parent="Root/HBox/Vendor/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_colors/font_color = Color(0.78, 0.71, 0.6, 1)
+theme_override_font_sizes/font_size = 17
+text = "What you sell waits on this shelf until it is restocked."
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="ConfirmSell" parent="." instance=ExtResource("7_trade_confirm")]
+
+[node name="Flare" type="Control" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("18_flare")
 
 [node name="Tooltip" parent="." instance=ExtResource("4")]
 visible = false
