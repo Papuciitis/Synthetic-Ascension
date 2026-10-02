@@ -1,133 +1,292 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://ui/screens/MajorChoiceCard.gd" id="1"]
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="3_frame"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="4_rule"]
+[ext_resource type="Shader" path="res://ui/shaders/card_tilt.gdshader" id="5_tilt"]
+[ext_resource type="Texture2D" path="res://assets/ui/menu/flare_star.png" id="6_flare"]
 
-[sub_resource type="StyleBoxFlat" id="RuleStyle"]
-bg_color = Color(0.55, 0.36, 0.13, 0.9)
+[sub_resource type="StyleBoxEmpty" id="Empty"]
 
-[sub_resource type="StyleBoxFlat" id="SectionStyle"]
-bg_color = Color(0.08, 0.075, 0.055, 0.62)
+[sub_resource type="StyleBoxFlat" id="FaceBg"]
+bg_color = Color(0.032, 0.028, 0.024, 0.98)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.16, 0.12, 1)
+
+[sub_resource type="StyleBoxFlat" id="PlateStyle"]
+bg_color = Color(0.055, 0.045, 0.034, 0.9)
 border_width_left = 2
-border_color = Color(0.68, 0.43, 0.15, 0.85)
-corner_radius_top_left = 1
-corner_radius_top_right = 1
-corner_radius_bottom_right = 1
-corner_radius_bottom_left = 1
+border_color = Color(0.62, 0.47, 0.3, 0.85)
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 12.0
+content_margin_bottom = 10.0
+
+[sub_resource type="Gradient" id="ShadowGradient"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0, 0, 0, 0.72, 0, 0, 0, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="ShadowTexture"]
+gradient = SubResource("ShadowGradient")
+width = 64
+height = 96
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="GlowGradient"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(1, 0.66, 0.36, 0.34, 1, 0.55, 0.25, 0.1, 1, 0.5, 0.2, 0)
+
+[sub_resource type="GradientTexture2D" id="GlowTexture"]
+gradient = SubResource("GlowGradient")
+width = 128
+height = 128
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="CanvasItemMaterial" id="Additive"]
+blend_mode = 1
+
+[sub_resource type="ShaderMaterial" id="MatTilt"]
+resource_local_to_scene = true
+shader = ExtResource("5_tilt")
+shader_parameter/rect_size = Vector2(340, 540)
+shader_parameter/tilt = Vector2(0, 0)
+shader_parameter/focal = 2.6
+shader_parameter/inflate = 0.16
+shader_parameter/glare = 0.0
+shader_parameter/sweep = -1.0
+shader_parameter/sweep_strength = 0.5
+shader_parameter/foil = 0.0
+shader_parameter/shade = 1.0
+shader_parameter/has_back = false
 
 [node name="MajorChoiceCard" type="Button"]
-clip_contents = true
-custom_minimum_size = Vector2(342, 430)
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(340, 540)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme = ExtResource("2_theme")
+theme_override_styles/normal = SubResource("Empty")
+theme_override_styles/hover = SubResource("Empty")
+theme_override_styles/pressed = SubResource("Empty")
+theme_override_styles/hover_pressed = SubResource("Empty")
+theme_override_styles/disabled = SubResource("Empty")
+theme_override_styles/focus = SubResource("Empty")
+flat = true
 script = ExtResource("1")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="Shadow" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -22.0
+offset_top = 8.0
+offset_right = 362.0
+offset_bottom = 584.0
+mouse_filter = 2
+texture = SubResource("ShadowTexture")
+expand_mode = 1
+
+[node name="Surface" type="TextureRect" parent="."]
+material = SubResource("MatTilt")
+layout_mode = 0
+offset_right = 340.0
+offset_bottom = 540.0
+mouse_filter = 2
+expand_mode = 1
+
+[node name="FaceViewport" type="SubViewport" parent="."]
+transparent_bg = true
+size = Vector2i(340, 540)
+render_target_update_mode = 1
+
+[node name="Face" type="Control" parent="FaceViewport"]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+mouse_filter = 2
+theme = ExtResource("2_theme")
+
+[node name="Bg" type="Panel" parent="FaceViewport/Face"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("FaceBg")
+
+[node name="Glow" type="TextureRect" parent="FaceViewport/Face"]
+material = SubResource("Additive")
+layout_mode = 0
+offset_left = 20.0
+offset_top = -70.0
+offset_right = 320.0
+offset_bottom = 170.0
+mouse_filter = 2
+texture = SubResource("GlowTexture")
+expand_mode = 1
+
+[node name="Margin" type="MarginContainer" parent="FaceViewport/Face"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 22
+
+[node name="VBox" type="VBoxContainer" parent="FaceViewport/Face/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 5
+
+[node name="SealLine" type="CenterContainer" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
 mouse_filter = 2
 
-[node name="VBox" type="VBoxContainer" parent="Margin"]
-theme_override_constants/separation = 7
+[node name="Sigil" type="Control" parent="FaceViewport/Face/Margin/VBox/SealLine"]
+custom_minimum_size = Vector2(56, 56)
+layout_mode = 2
 mouse_filter = 2
 
-[node name="SealLine" type="HBoxContainer" parent="Margin/VBox"]
-mouse_filter = 2
-
-[node name="Seal" type="Label" parent="Margin/VBox/SealLine"]
-custom_minimum_size = Vector2(38, 0)
-theme_override_colors/font_color = Color(0.91, 0.62, 0.24, 1)
-theme_override_font_sizes/font_size = 12
-text = "01"
-mouse_filter = 2
-
-[node name="StageRole" type="Label" parent="Margin/VBox/SealLine"]
-size_flags_horizontal = 3
-theme_override_colors/font_color = Color(0.67, 0.62, 0.49, 1)
-theme_override_font_sizes/font_size = 11
-text = "METHOD // AMPLIFY"
-horizontal_alignment = 2
-mouse_filter = 2
-
-[node name="RuleTop" type="PanelContainer" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 1)
-theme_override_styles/panel = SubResource("RuleStyle")
-mouse_filter = 2
-
-[node name="Title" type="Label" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 48)
-theme_override_colors/font_color = Color(0.94, 0.89, 0.76, 1)
-theme_override_font_sizes/font_size = 21
-text = "THESIS TITLE"
-autowrap_mode = 3
+[node name="Seal" type="Label" parent="FaceViewport/Face/Margin/VBox/SealLine/Sigil"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 17
+text = "I"
+horizontal_alignment = 1
 vertical_alignment = 1
-mouse_filter = 2
 
-[node name="Family" type="Label" parent="Margin/VBox"]
-theme_override_colors/font_color = Color(0.60, 0.55, 0.43, 1)
-theme_override_font_sizes/font_size = 10
-text = "THESIS FAMILY · CIRCUIT"
-mouse_filter = 2
+[node name="StageRole" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = "METHOD · AMPLIFY"
+horizontal_alignment = 1
 
-[node name="GiftHeader" type="Label" parent="Margin/VBox"]
-theme_override_colors/font_color = Color(0.83, 0.62, 0.25, 1)
+[node name="Title" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_constants/line_spacing = -4
+theme_override_font_sizes/font_size = 25
+text = "Thesis Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Family" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
 theme_override_font_sizes/font_size = 11
-text = "GIFT"
-mouse_filter = 2
+text = "CIRCUIT THESIS"
+horizontal_alignment = 1
 
-[node name="GiftText" type="Label" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 50)
-theme_override_colors/font_color = Color(0.88, 0.87, 0.80, 1)
-theme_override_font_sizes/font_size = 13
+[node name="RuleTop" type="Control" parent="FaceViewport/Face/Margin/VBox"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_rule")
+
+[node name="GiftHeader" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = "◆  GIFT"
+
+[node name="GiftText" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_type_variation = &"ArcaneBody"
+theme_override_constants/line_spacing = -2
+theme_override_font_sizes/font_size = 17
 text = "The system yields a measurable advantage."
 autowrap_mode = 3
-mouse_filter = 2
 
-[node name="PriceHeader" type="Label" parent="Margin/VBox"]
-theme_override_colors/font_color = Color(0.78, 0.35, 0.27, 1)
-theme_override_font_sizes/font_size = 11
-text = "PRICE"
-mouse_filter = 2
+[node name="PriceHeader" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = "◆  PRICE"
 
-[node name="PriceText" type="Label" parent="Margin/VBox"]
-custom_minimum_size = Vector2(0, 58)
-theme_override_colors/font_color = Color(0.90, 0.76, 0.68, 1)
-theme_override_font_sizes/font_size = 13
+[node name="PriceText" type="Label" parent="FaceViewport/Face/Margin/VBox"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_type_variation = &"ArcaneBody"
+theme_override_constants/line_spacing = -2
+theme_override_font_sizes/font_size = 17
 text = "The apparatus extracts its due."
 autowrap_mode = 3
-mouse_filter = 2
 
-[node name="ConsequencePlate" type="PanelContainer" parent="Margin/VBox"]
+[node name="ConsequencePlate" type="PanelContainer" parent="FaceViewport/Face/Margin/VBox"]
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("SectionStyle")
+mouse_filter = 2
+theme_override_styles/panel = SubResource("PlateStyle")
+
+[node name="Margin" type="MarginContainer" parent="FaceViewport/Face/Margin/VBox/ConsequencePlate"]
+layout_mode = 2
 mouse_filter = 2
 
-[node name="Margin" type="MarginContainer" parent="Margin/VBox/ConsequencePlate"]
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+[node name="VBox" type="VBoxContainer" parent="FaceViewport/Face/Margin/VBox/ConsequencePlate/Margin"]
+layout_mode = 2
 mouse_filter = 2
+theme_override_constants/separation = 4
 
-[node name="VBox" type="VBoxContainer" parent="Margin/VBox/ConsequencePlate/Margin"]
-theme_override_constants/separation = 5
-mouse_filter = 2
-
-[node name="ConsequenceHeader" type="Label" parent="Margin/VBox/ConsequencePlate/Margin/VBox"]
-theme_override_colors/font_color = Color(0.83, 0.62, 0.25, 1)
+[node name="ConsequenceHeader" type="Label" parent="FaceViewport/Face/Margin/VBox/ConsequencePlate/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
 theme_override_font_sizes/font_size = 11
 text = "CONSEQUENCE"
-mouse_filter = 2
 
-[node name="ConsequenceText" type="Label" parent="Margin/VBox/ConsequencePlate/Margin/VBox"]
+[node name="ConsequenceText" type="Label" parent="FaceViewport/Face/Margin/VBox/ConsequencePlate/Margin/VBox"]
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_colors/font_color = Color(0.82, 0.80, 0.72, 0.88)
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"ArcaneItalic"
+theme_override_constants/line_spacing = -2
+theme_override_font_sizes/font_size = 16
 text = "The run records what this choice makes inevitable."
 autowrap_mode = 3
+
+[node name="Frame" type="Control" parent="FaceViewport/Face"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("3_frame")
+inset = 6.0
+
+[node name="Flare" type="TextureRect" parent="FaceViewport/Face"]
+modulate = Color(1, 0.86, 0.62, 0)
+material = SubResource("Additive")
+layout_mode = 0
+offset_left = 110.0
+offset_top = -12.0
+offset_right = 230.0
+offset_bottom = 108.0
+pivot_offset = Vector2(60, 60)
+mouse_filter = 2
+texture = ExtResource("6_flare")
+expand_mode = 1

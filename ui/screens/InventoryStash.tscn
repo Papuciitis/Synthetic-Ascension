@@ -4,79 +4,22 @@
 [ext_resource type="PackedScene" path="res://ui/widgets/ItemTooltip.tscn" id="2"]
 [ext_resource type="Script" path="res://assets/vfx/ui/UiFlyVfx.gd" id="3"]
 [ext_resource type="Script" path="res://ui/controllers/SetBreakpointNotifier.gd" id="4_set_breakpoints"]
-
-[sub_resource type="StyleBoxFlat" id="StylePanel"]
-bg_color = Color(0.06, 0.06, 0.06, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 18
-corner_radius_top_right = 18
-corner_radius_bottom_right = 18
-corner_radius_bottom_left = 18
-shadow_size = 16
-shadow_offset = Vector2(0, 10)
-shadow_color = Color(0, 0, 0, 0.45)
-
-[sub_resource type="StyleBoxFlat" id="StyleBtn"]
-bg_color = Color(0.10, 0.10, 0.10, 0.95)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.55, 0.20, 0.45)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_left = 10
-corner_radius_bottom_right = 10
-content_margin_left = 10
-content_margin_right = 10
-content_margin_top = 6
-content_margin_bottom = 6
-
-[sub_resource type="StyleBoxFlat" id="StyleBtnHover"]
-bg_color = Color(0.13, 0.13, 0.13, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.55, 0.20, 0.75)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_left = 10
-corner_radius_bottom_right = 10
-content_margin_left = 10
-content_margin_right = 10
-content_margin_top = 6
-content_margin_bottom = 6
-
-[sub_resource type="StyleBoxFlat" id="StyleBtnPressed"]
-bg_color = Color(0.16, 0.12, 0.08, 0.98)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(1, 0.55, 0.20, 0.95)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_left = 10
-corner_radius_bottom_right = 10
-content_margin_left = 10
-content_margin_right = 10
-content_margin_top = 6
-content_margin_bottom = 6
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="5_theme"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="6_frame"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="7_rule"]
 
 [node name="InventoryStash" type="CanvasLayer"]
 layer = 135
 script = ExtResource("1")
 
 [node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.45)
+color = Color(0.008, 0.006, 0.005, 0.78)
 
 [node name="FlyVfx" type="Control" parent="."]
 anchors_preset = 15
@@ -88,98 +31,231 @@ mouse_filter = 2
 script = ExtResource("3")
 
 [node name="Center" type="CenterContainer" parent="."]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("5_theme")
 
 [node name="Panel" type="PanelContainer" parent="Center"]
-theme_override_styles/panel = SubResource("StylePanel")
+layout_mode = 2
+theme_type_variation = &"ArcanePanel"
 
 [node name="Margin" type="MarginContainer" parent="Center/Panel"]
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 16
-theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 16
+layout_mode = 2
+theme_override_constants/margin_left = 46
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 46
+theme_override_constants/margin_bottom = 26
 
 [node name="VBox" type="VBoxContainer" parent="Center/Panel/Margin"]
-theme_override_constants/separation = 12
+layout_mode = 2
+theme_override_constants/separation = 16
 
-[node name="Header" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
-theme_override_constants/separation = 10
+[node name="Header" type="Control" parent="Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 124)
+layout_mode = 2
 
-[node name="Title" type="Label" parent="Center/Panel/Margin/VBox/Header"]
-text = "Inventory / Stash"
-theme_override_font_sizes/font_size = 22
+[node name="TitleBox" type="VBoxContainer" parent="Center/Panel/Margin/VBox/Header"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
 
-[node name="Spacer" type="Control" parent="Center/Panel/Margin/VBox/Header"]
-size_flags_horizontal = 3
+[node name="Title" type="Label" parent="Center/Panel/Margin/VBox/Header/TitleBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneTitle"
+theme_override_font_sizes/font_size = 46
+text = "GEAR & STASH"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Panel/Margin/VBox/Header/TitleBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 20
+text = "What you wear, what you carry, and what the vault keeps for you."
+horizontal_alignment = 1
+
+[node name="TitleRule" type="Control" parent="Center/Panel/Margin/VBox/Header/TitleBox"]
+custom_minimum_size = Vector2(560, 22)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("7_rule")
+ornament = 2
 
 [node name="BtnClose" type="Button" parent="Center/Panel/Margin/VBox/Header"]
-text = "Close"
+custom_minimum_size = Vector2(118, 40)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -118.0
+offset_bottom = 40.0
+grow_horizontal = 0
 focus_mode = 0
+theme_type_variation = &"ArcaneSmallButton"
+text = "CLOSE"
 
-theme_override_styles/normal = SubResource("StyleBtn")
-theme_override_styles/hover = SubResource("StyleBtnHover")
-theme_override_styles/pressed = SubResource("StyleBtnPressed")
-theme_override_font_sizes/font_size = 13
 [node name="Body" type="HBoxContainer" parent="Center/Panel/Margin/VBox"]
+layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 18
+theme_override_constants/separation = 34
 
 [node name="Left" type="VBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
-size_flags_horizontal = 0
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="EqHead" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body/Left"]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="LblEq" type="Label" parent="Center/Panel/Margin/VBox/Body/Left"]
-text = "Equipped"
-theme_override_font_sizes/font_size = 14
-modulate = Color(1, 1, 1, 0.85)
+[node name="LblEq" type="Label" parent="Center/Panel/Margin/VBox/Body/Left/EqHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 17
+text = "EQUIPPED"
+
+[node name="Rule" type="Control" parent="Center/Panel/Margin/VBox/Body/Left/EqHead"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("7_rule")
+ornament = 0
+ornament_at = 1.0
+
+[node name="Count" type="Label" parent="Center/Panel/Margin/VBox/Body/Left/EqHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = ""
 
 [node name="EquippedGrid" type="GridContainer" parent="Center/Panel/Margin/VBox/Body/Left"]
-columns = 4
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 2
 
-[node name="LblBag" type="Label" parent="Center/Panel/Margin/VBox/Body/Left"]
-text = "Backpack"
-theme_override_font_sizes/font_size = 14
-modulate = Color(1, 1, 1, 0.85)
+[node name="Divider" type="TextureRect" parent="Center/Panel/Margin/VBox/Body"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
 
-[node name="BagScroll" type="ScrollContainer" parent="Center/Panel/Margin/VBox/Body/Left"]
-size_flags_vertical = 3
-custom_minimum_size = Vector2(0, 210)
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
+[node name="Middle" type="VBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
+layout_mode = 2
+theme_override_constants/separation = 12
 
-[node name="BagGrid" type="GridContainer" parent="Center/Panel/Margin/VBox/Body/Left/BagScroll"]
-columns = 4
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-[node name="Right" type="VBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
-size_flags_horizontal = 0
+[node name="BagHead" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body/Middle"]
+layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="LblStash" type="Label" parent="Center/Panel/Margin/VBox/Body/Right"]
-text = "Stash"
-theme_override_font_sizes/font_size = 14
-modulate = Color(1, 1, 1, 0.85)
+[node name="LblBag" type="Label" parent="Center/Panel/Margin/VBox/Body/Middle/BagHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 17
+text = "BACKPACK"
+
+[node name="Rule" type="Control" parent="Center/Panel/Margin/VBox/Body/Middle/BagHead"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("7_rule")
+ornament = 0
+ornament_at = 1.0
+
+[node name="Count" type="Label" parent="Center/Panel/Margin/VBox/Body/Middle/BagHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="BagScroll" type="ScrollContainer" parent="Center/Panel/Margin/VBox/Body/Middle"]
+custom_minimum_size = Vector2(0, 372)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BagGrid" type="GridContainer" parent="Center/Panel/Margin/VBox/Body/Middle/BagScroll"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="Divider2" type="TextureRect" parent="Center/Panel/Margin/VBox/Body"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="Right" type="VBoxContainer" parent="Center/Panel/Margin/VBox/Body"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StashHead" type="HBoxContainer" parent="Center/Panel/Margin/VBox/Body/Right"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="LblStash" type="Label" parent="Center/Panel/Margin/VBox/Body/Right/StashHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneHeading"
+theme_override_font_sizes/font_size = 17
+text = "STASH"
+
+[node name="Rule" type="Control" parent="Center/Panel/Margin/VBox/Body/Right/StashHead"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+script = ExtResource("7_rule")
+ornament = 0
+ornament_at = 1.0
+
+[node name="Count" type="Label" parent="Center/Panel/Margin/VBox/Body/Right/StashHead"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 12
+text = ""
 
 [node name="StashScroll" type="ScrollContainer" parent="Center/Panel/Margin/VBox/Body/Right"]
-horizontal_scroll_mode = 0
-vertical_scroll_mode = 1
-size_flags_horizontal = 0
+layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
 
 [node name="StashGrid" type="GridContainer" parent="Center/Panel/Margin/VBox/Body/Right/StashScroll"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
 columns = 6
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
+
+[node name="FooterRule" type="Control" parent="Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("7_rule")
 
 [node name="ActionFooter" type="Label" parent="Center/Panel/Margin/VBox"]
 layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 13
 text = "Shift-click Trade   ·   Ctrl-click Lock   ·   Right-click Move   ·   Double-click Equip"
-modulate = Color(1, 1, 1, 0.68)
-theme_override_font_sizes/font_size = 11
 horizontal_alignment = 1
+
+[node name="Frame" type="Control" parent="Center/Panel"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("6_frame")
 
 [node name="Tooltip" parent="." instance=ExtResource("2")]
 visible = false

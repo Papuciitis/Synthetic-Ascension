@@ -7,6 +7,11 @@ var _bag_slots_built: int = 0
 var _bag_check_t: float = 0.0
 
 const SLOT_SCENE: PackedScene = preload("res://ui/widgets/HubItemSlot.tscn")
+const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
+## Slots here are larger than the HUD's; the look is set on these instances
+## only (the shared HubItemSlot scene keeps its own).
+const SLOT_PX: float = 84.0
+const ICON_PX: float = 60.0
 const TOOLTIP_MARGIN: float = 8.0
 const TOOLTIP_OFFSET: Vector2 = Vector2(16.0, 16.0)
 
@@ -15,12 +20,16 @@ const EQUIP_HINTS = ["HP", "ARM", "MOVE", "POW", "HST", "LCK", "OFF", "RING"]
 
 @onready var btn_close: Button = $Center/Panel/Margin/VBox/Header/BtnClose
 @onready var eq_grid: GridContainer = $Center/Panel/Margin/VBox/Body/Left/EquippedGrid
-@onready var bag_scroll: ScrollContainer = $Center/Panel/Margin/VBox/Body/Left/BagScroll
-@onready var bag_grid: GridContainer = $Center/Panel/Margin/VBox/Body/Left/BagScroll/BagGrid
+@onready var bag_scroll: ScrollContainer = $Center/Panel/Margin/VBox/Body/Middle/BagScroll
+@onready var bag_grid: GridContainer = $Center/Panel/Margin/VBox/Body/Middle/BagScroll/BagGrid
 @onready var stash_scroll: ScrollContainer = $Center/Panel/Margin/VBox/Body/Right/StashScroll
 @onready var stash_grid: GridContainer = $Center/Panel/Margin/VBox/Body/Right/StashScroll/StashGrid
 @onready var tooltip: ItemTooltip = $Tooltip
 @onready var action_footer: Label = $Center/Panel/Margin/VBox/ActionFooter
+@onready var _eq_count: Label = get_node_or_null("Center/Panel/Margin/VBox/Body/Left/EqHead/Count") as Label
+@onready var _bag_count: Label = get_node_or_null("Center/Panel/Margin/VBox/Body/Middle/BagHead/Count") as Label
+@onready var _stash_count: Label = get_node_or_null("Center/Panel/Margin/VBox/Body/Right/StashHead/Count") as Label
+var _footer_tw: Tween = null
 
 # Live hover context (refresh tooltip when item changes under cursor).
 var _hover_kind: int = -1
@@ -34,11 +43,187 @@ var _hover_inst_id: int = 0
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	btn_close.pressed.connect(_close)
+	_dress()
 	_build()
 	_apply_fixed_columns()
 	_refresh()
 	_hook_sources()
 	_ensure_fly_vfx()
+	_play_open()
+
+
+# ---------------- Presentation (chamber register; no behaviour) ----------------
+
+func _dress() -> void:
+	var overlay := get_node_or_null("Overlay") as ColorRect
+	var vignette := ChamberKit.vignette_rect()
+	add_child(vignette)
+	move_child(vignette, overlay.get_index() + 1 if overlay != null else 0)
+	var line := Gradient.new()
+	line.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+	line.colors = PackedColorArray([Color(ChamberKit.GOLD_DIM, 0.0), Color(ChamberKit.GOLD_DIM, 0.6), Color(ChamberKit.GOLD_DIM, 0.0)])
+	var tex := GradientTexture2D.new()
+	tex.gradient = line
+	tex.fill_to = Vector2(0, 1)
+	tex.width = 1
+	tex.height = 64
+	for path in ["Center/Panel/Margin/VBox/Body/Divider", "Center/Panel/Margin/VBox/Body/Divider2"]:
+		var divider := get_node_or_null(path) as TextureRect
+		if divider != null:
+			divider.texture = tex
+	for count in [_eq_count, _bag_count, _stash_count]:
+		if count != null:
+			count.add_theme_color_override("font_color", ChamberKit.GOLD_DIM)
+	if action_footer != null:
+		action_footer.add_theme_color_override("font_color", ChamberKit.MUTED)
+	# The shared item tooltip keeps its fonts and copy; only its box takes the
+	# chamber's square gold rule here.
+	if tooltip != null:
+		# Above the slots' set emblems and lock badges (z 8-21).
+		tooltip.z_index = 40
+		tooltip.add_theme_stylebox_override("panel", ChamberKit.box(Color(0.03, 0.026, 0.023, 0.97), Color(ChamberKit.GOLD_DIM, 0.95), 1, 0.0, 16))
+		var tip_icon := tooltip.get_node_or_null("Margin/VBox/Header/IconFrame") as PanelContainer
+		if tip_icon != null:
+			tip_icon.add_theme_stylebox_override("panel", ChamberKit.shared(&"art"))
+
+
+func _play_open() -> void:
+	var center := get_node_or_null("Center") as Control
+	if center == null:
+		return
+	var backdrop: Array = []
+	for n in [get_node_or_null("Overlay"), get_node_or_null("ChamberVignette")]:
+		if n != null:
+			backdrop.append(n)
+	ChamberKit.open_panel(center, backdrop, 16.0)
+	var slots: Array = []
+	for grid in [eq_grid, bag_grid, stash_grid]:
+		if grid != null:
+			slots.append_array(grid.get_children())
+	ChamberKit.stagger_in(self, slots, 0.14, 0.012, 40, 0.9)
+
+
+## The chamber look for one HubItemSlot instance: a square well with a gold
+## rule on hover, a larger icon, the small labels in the chamber type, a
+## rarity edge and a faint diamond while empty.
+func _dress_slot(s: HubItemSlot) -> void:
+	if s == null:
+		return
+	s.custom_minimum_size = Vector2(SLOT_PX, SLOT_PX)
+	s.add_theme_stylebox_override("normal", ChamberKit.shared(&"slot"))
+	s.add_theme_stylebox_override("disabled", ChamberKit.shared(&"slot"))
+	s.add_theme_stylebox_override("hover", ChamberKit.shared(&"slot_hover"))
+	s.add_theme_stylebox_override("pressed", ChamberKit.shared(&"slot_pressed"))
+	s.add_theme_stylebox_override("hover_pressed", ChamberKit.shared(&"slot_pressed"))
+	s.add_theme_stylebox_override("focus", ChamberKit.shared(&"empty"))
+	var frame := s.get_node_or_null("IconFrame") as Control
+	if frame != null:
+		frame.add_theme_stylebox_override("panel", ChamberKit.shared(&"empty"))
+		frame.offset_left = -ICON_PX * 0.5
+		frame.offset_top = -ICON_PX * 0.5
+		frame.offset_right = ICON_PX * 0.5
+		frame.offset_bottom = ICON_PX * 0.5
+	var hint := s.get_node_or_null("Hint") as Label
+	if hint != null:
+		ChamberKit.label(hint, &"ArcaneCaption", 10, Color(ChamberKit.GOLD_DIM, 0.85))
+		hint.modulate = Color.WHITE
+		hint.offset_left = 7.0
+		hint.offset_top = 4.0
+		hint.offset_right = 60.0
+	var sell := s.get_node_or_null("SellBadge") as Label
+	if sell != null:
+		ChamberKit.label(sell, &"ArcaneCaption", 11, ChamberKit.EMBER)
+	var lock_badge := s.get_node_or_null("LockBadge") as Label
+	if lock_badge != null:
+		ChamberKit.label(lock_badge, &"ArcaneCaption", 10, ChamberKit.GOLD_BRIGHT)
+		lock_badge.offset_left = -50.0
+		lock_badge.offset_top = 4.0
+		lock_badge.offset_right = -6.0
+		lock_badge.offset_bottom = 20.0
+	var lock_border := s.get_node_or_null("LockBorder") as Panel
+	if lock_border != null:
+		lock_border.add_theme_stylebox_override("panel", ChamberKit.shared(&"slot_lock"))
+	var glow := TextureRect.new()
+	glow.name = "ChamberGlow"
+	glow.texture = ChamberKit.glow()
+	glow.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	glow.stretch_mode = TextureRect.STRETCH_SCALE
+	glow.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	glow.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	glow.offset_left = 6.0
+	glow.offset_top = 6.0
+	glow.offset_right = -6.0
+	glow.offset_bottom = -6.0
+	glow.visible = false
+	s.add_child(glow)
+	s.move_child(glow, 0)
+	var edge := ColorRect.new()
+	edge.name = "ChamberRarity"
+	edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	edge.anchor_left = 0.0
+	edge.anchor_top = 1.0
+	edge.anchor_right = 1.0
+	edge.anchor_bottom = 1.0
+	edge.offset_left = 1.0
+	edge.offset_top = -3.0
+	edge.offset_right = -1.0
+	edge.offset_bottom = -1.0
+	edge.visible = false
+	s.add_child(edge)
+	var mark := Control.new()
+	mark.name = "ChamberEmpty"
+	mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	mark.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mark.draw.connect(func() -> void:
+		var c := mark.size * 0.5
+		var col := Color(ChamberKit.GOLD_DIM, 0.3)
+		var r := 6.0
+		mark.draw_polyline(PackedVector2Array([c + Vector2(0, -r), c + Vector2(r, 0), c + Vector2(0, r), c + Vector2(-r, 0), c + Vector2(0, -r)]), col, 1.0, true)
+	)
+	s.add_child(mark)
+	s.move_child(mark, 1)
+
+
+## Rarity edge, glow and the empty mark follow the item in the slot.
+func _mark_slot(s: HubItemSlot, inst: ItemInstance) -> void:
+	if s == null:
+		return
+	var has_item := inst != null and inst.data != null
+	var mark := s.get_node_or_null("ChamberEmpty") as Control
+	if mark != null:
+		mark.visible = not has_item
+	var edge := s.get_node_or_null("ChamberRarity") as ColorRect
+	var glow := s.get_node_or_null("ChamberGlow") as TextureRect
+	var tint := ChamberKit.rarity_colour(int(inst.rarity)) if has_item else Color(0, 0, 0, 0)
+	if has_item and inst.polarity == ItemInstance.Polarity.NEG:
+		tint = ChamberKit.DANGER
+	var shown := has_item and tint.a > 0.0
+	if edge != null:
+		edge.visible = shown
+		edge.color = Color(tint, 0.85)
+	if glow != null:
+		glow.visible = shown
+		glow.modulate = Color(tint, 0.16)
+
+
+func _update_counts() -> void:
+	if _eq_count != null:
+		_eq_count.text = "%d / %d" % [_filled(eq_grid, HubItemSlot.Kind.EQUIPPED), eq_grid.get_child_count()]
+	if _bag_count != null:
+		_bag_count.text = "%d / %d" % [_filled(bag_grid, HubItemSlot.Kind.BAG), bag_grid.get_child_count()]
+	if _stash_count != null:
+		_stash_count.text = "%d / %d" % [_filled(stash_grid, HubItemSlot.Kind.STASH), stash_grid.get_child_count()]
+
+
+func _filled(grid: Control, kind: int) -> int:
+	var n := 0
+	if grid == null:
+		return 0
+	for i in range(grid.get_child_count()):
+		var inst := get_item_at(kind, i)
+		if inst != null and inst.data != null:
+			n += 1
+	return n
 
 
 
@@ -145,6 +330,7 @@ func _build() -> void:
 			eq_grid.add_child(s)
 			var hint_txt: String = (String(EQUIP_HINTS[i]) if i >= 0 and i < EQUIP_HINTS.size() else str(i))
 			s.setup(self, HubItemSlot.Kind.EQUIPPED, i, hint_txt)
+			_dress_slot(s)
 
 	# Bag: dynamic slot count (base + extra)
 	if Global.run_bag != null and Global.run_bag.has_method("get_slot_count"):
@@ -156,6 +342,7 @@ func _build() -> void:
 			s2.mouse_exited.connect(_hide_tip)
 			bag_grid.add_child(s2)
 			s2.setup(self, HubItemSlot.Kind.BAG, i)
+			_dress_slot(s2)
 		_bag_slots_built = n
 
 	# Stash: persistent fixed count
@@ -166,6 +353,7 @@ func _build() -> void:
 		s3.mouse_exited.connect(_hide_tip)
 		stash_grid.add_child(s3)
 		s3.setup(self, HubItemSlot.Kind.STASH, i)
+		_dress_slot(s3)
 
 
 func _refresh() -> void:
@@ -177,6 +365,7 @@ func _refresh() -> void:
 		var b := eq_grid.get_child(i) as HubItemSlot
 		var inst := get_item_at(HubItemSlot.Kind.EQUIPPED, i)
 		b.set_item(inst, false)
+		_mark_slot(b, inst)
 
 	# Bag
 	for i in range(bag_grid.get_child_count()):
@@ -184,6 +373,7 @@ func _refresh() -> void:
 		var inst2 := get_item_at(HubItemSlot.Kind.BAG, i)
 		var marked: bool = Global.is_hub_sell_marked(&"bag", i)
 		b2.set_item(inst2, marked)
+		_mark_slot(b2, inst2)
 
 	# Stash
 	for i in range(stash_grid.get_child_count()):
@@ -191,6 +381,9 @@ func _refresh() -> void:
 		var inst3 := get_item_at(HubItemSlot.Kind.STASH, i)
 		var marked3: bool = Global.is_hub_sell_marked(&"stash", i)
 		b3.set_item(inst3, marked3)
+		_mark_slot(b3, inst3)
+
+	_update_counts()
 
 # ---------------- Host API for HubItemSlot ----------------
 
@@ -208,6 +401,14 @@ func get_item_at(kind: int, idx: int) -> ItemInstance:
 func _set_action_status(message: String) -> void:
 	if action_footer != null:
 		action_footer.text = message
+		# The footer answers each action with a brief warm flash.
+		if _footer_tw != null and _footer_tw.is_running():
+			_footer_tw.kill()
+		if ChamberKit.reduced() or not is_inside_tree():
+			return
+		action_footer.modulate = Color(1.35, 1.2, 0.95, 1.0)
+		_footer_tw = ChamberKit.tween(action_footer)
+		_footer_tw.tween_property(action_footer, "modulate", Color.WHITE, 0.6).set_trans(Tween.TRANS_SINE)
 
 func toggle_item_lock(kind: int, idx: int) -> void:
 	var inst: ItemInstance = get_item_at(kind, idx)
@@ -478,6 +679,7 @@ func _rebuild_bag_if_needed() -> void:
 		s2.mouse_exited.connect(_hide_tip)
 		bag_grid.add_child(s2)
 		s2.setup(self, HubItemSlot.Kind.BAG, i)
+		_dress_slot(s2)
 	_bag_slots_built = want
 
 func on_slot_doubleclick(kind: int, idx: int) -> void:

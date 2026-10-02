@@ -1,6 +1,18 @@
 [gd_scene format=3 uid="uid://detamlap16y7m"]
 
 [ext_resource type="Script" uid="uid://dns7g12kxes7x" path="res://ui/screens/GameOverUI.gd" id="1_sdbmt"]
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="2_theme"]
+[ext_resource type="Shader" path="res://ui/shaders/chambers_veil.gdshader" id="3_veil"]
+[ext_resource type="Script" path="res://ui/components/ArcaneMenuItem.gd" id="4_item"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="5_rule"]
+
+[sub_resource type="ShaderMaterial" id="VeilMat"]
+shader = ExtResource("3_veil")
+shader_parameter/amount = 0.0
+shader_parameter/ink = Color(0.018, 0.014, 0.011, 1)
+shader_parameter/ember = Color(0.55, 0.22, 0.07, 1)
+
+[sub_resource type="StyleBoxEmpty" id="Empty"]
 
 [node name="GameOverUI" type="Control" unique_id=1420110973]
 layout_mode = 3
@@ -9,9 +21,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_sdbmt")
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=289298073]
+material = SubResource("VeilMat")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,6 +33,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.06, 0.06, 0.06, 1)
+
+[node name="Embers" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
 [node name="CenterContainer" type="CenterContainer" parent="." unique_id=96239011]
 layout_mode = 1
@@ -29,47 +52,87 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="PanelContainer" parent="CenterContainer" unique_id=44738812]
-custom_minimum_size = Vector2(360, 0)
+custom_minimum_size = Vector2(760, 0)
 layout_mode = 2
+theme_override_styles/panel = SubResource("Empty")
 
 [node name="Margin" type="MarginContainer" parent="CenterContainer/Panel" unique_id=11302012]
 layout_mode = 2
 theme_override_constants/margin_left = 18
 theme_override_constants/margin_top = 18
 theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_bottom = 40
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer/Panel/Margin" unique_id=171601478]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 4
 alignment = 1
 
 [node name="Title" type="Label" parent="CenterContainer/Panel/Margin/VBox" unique_id=1385174930]
 layout_mode = 2
-text = "GAME OVER"
+theme_type_variation = &"ArcaneTitle"
+theme_override_font_sizes/font_size = 78
+text = "THE ATTEMPT ENDS"
 horizontal_alignment = 1
 
 [node name="Hint" type="Label" parent="CenterContainer/Panel/Margin/VBox" unique_id=78382810]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "Choose what to do next"
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 23
+text = "What you bound to the Pattern remains."
 horizontal_alignment = 1
+
+[node name="Rule" type="Control" parent="CenterContainer/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(600, 26)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("5_rule")
+ornament = 2
+
+[node name="Gap" type="Control" parent="CenterContainer/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="Buttons" type="VBoxContainer" parent="CenterContainer/Panel/Margin/VBox" unique_id=51999942]
 layout_mode = 2
-theme_override_constants/separation = 8
+size_flags_horizontal = 4
+theme_override_constants/separation = 2
 
 [node name="Restart" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=415290657]
-custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-text = "Restart"
+text = "RESTART"
+script = ExtResource("4_item")
+font_size = 27
+row_height = 60.0
+stroke_tail = 120.0
 
 [node name="Menu" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=515290658]
-custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-text = "Quit to Menu"
+text = "QUIT TO MENU"
+script = ExtResource("4_item")
+font_size = 27
+row_height = 60.0
+stroke_tail = 120.0
 
 [node name="Quit" type="Button" parent="CenterContainer/Panel/Margin/VBox/Buttons" unique_id=515290659]
-custom_minimum_size = Vector2(0, 38)
 layout_mode = 2
-text = "Quit Game"
+text = "QUIT GAME"
+script = ExtResource("4_item")
+font_size = 27
+row_height = 60.0
+stroke_tail = 120.0
+show_rule = false
+
+[node name="Gap2" type="Control" parent="CenterContainer/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Keys" type="Label" parent="CenterContainer/Panel/Margin/VBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneCaption"
+theme_override_font_sizes/font_size = 13
+text = "ENTER  ·  RESTART          ESC  ·  QUIT TO MENU"
+horizontal_alignment = 1

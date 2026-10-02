@@ -3,6 +3,8 @@ class_name AugmentLibraryScreen
 
 signal closed()
 
+const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
+
 @export var entry_scene: PackedScene
 @export var slot_scene: PackedScene
 
@@ -17,13 +19,15 @@ signal closed()
 
 var _filter_q: String = ""
 var _slot_widgets: Array[AugmentEquipSlot] = []
+var _intro_pending := true
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 160
 	if overlay:
 		overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-		overlay.color = Color(0,0,0,0.55)
+		overlay.color = ChamberKit.VEIL
+	_dress()
 
 	if btn_close:
 		btn_close.pressed.connect(_close)
@@ -47,8 +51,57 @@ func _ready() -> void:
 		if not Global.permanent_augments_changed.is_connected(_on_perm_changed):
 			Global.permanent_augments_changed.connect(_on_perm_changed)
 
+	_play_open()
+
 func _on_perm_changed(_arr: Array) -> void:
 	_refresh_slots()
+	_refresh_bound_marks()
+
+
+# ------------------------------------------------------------
+# Presentation (the chamber register; no behaviour lives here)
+# ------------------------------------------------------------
+
+func _dress() -> void:
+	var vignette := ChamberKit.vignette_rect()
+	add_child(vignette)
+	move_child(vignette, overlay.get_index() + 1 if overlay != null else 0)
+	var divider := get_node_or_null("Center/Panel/Margin/VBox/HBox/Divider") as TextureRect
+	if divider != null:
+		var g := Gradient.new()
+		g.offsets = PackedFloat32Array([0.0, 0.5, 1.0])
+		g.colors = PackedColorArray([Color(ChamberKit.GOLD_DIM, 0.0), Color(ChamberKit.GOLD_DIM, 0.55), Color(ChamberKit.GOLD_DIM, 0.0)])
+		var t := GradientTexture2D.new()
+		t.gradient = g
+		t.fill_to = Vector2(0, 1)
+		t.width = 1
+		t.height = 64
+		divider.texture = t
+	if search != null:
+		search.add_theme_font_size_override("font_size", 18)
+
+
+func _play_open() -> void:
+	var center := get_node_or_null("Center") as Control
+	if center == null:
+		return
+	var backdrop: Array = []
+	for n in [overlay, get_node_or_null("ChamberVignette")]:
+		if n != null:
+			backdrop.append(n)
+	ChamberKit.open_panel(center, backdrop, 16.0)
+	var staged: Array = []
+	for w in _slot_widgets:
+		staged.append(w)
+	ChamberKit.stagger_in(self, staged, 0.16, 0.07, 3, 0.96)
+
+
+func _refresh_bound_marks() -> void:
+	if list_box == null:
+		return
+	for c in list_box.get_children():
+		if c is AugmentLibraryEntry and c.has_method("refresh_state"):
+			c.call("refresh_state")
 
 func open() -> void:
 	visible = true
@@ -161,7 +214,14 @@ func _rebuild_library() -> void:
 		shown += 1
 
 	if owned_label:
-		owned_label.text = "Owned augments: %d  (shown %d)" % [total, shown]
+		if _filter_q == "":
+			owned_label.text = "%d OWNED" % total
+		else:
+			owned_label.text = "%d OWNED  ·  %d SHOWN" % [total, shown]
+
+	if _intro_pending:
+		_intro_pending = false
+		ChamberKit.stagger_in(self, list_box.get_children(), 0.12, 0.035, 10, 0.97)
 
 func _on_entry_reorder(from_i: int, to_i: int) -> void:
 	if Global == null:
@@ -272,6 +332,7 @@ func _on_slot_unequip(slot: int) -> void:
 		return
 	Global.set_permanent_augment(slot, StringName())
 	_refresh_slots()
+	_refresh_bound_marks()
 
 func _on_slot_drop(slot: int, data: Dictionary) -> void:
 	if Global == null:
@@ -334,3 +395,4 @@ func _swap_slots(a: int, b: int) -> void:
 		Global.permanent_augments_changed.emit(Global.permanent_augment_ids)
 	Global.request_autosave()
 	_refresh_slots()
+	_refresh_bound_marks()
