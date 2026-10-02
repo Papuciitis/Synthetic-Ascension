@@ -3,75 +3,67 @@
 [ext_resource type="Texture2D" uid="uid://drhjupnfrk5wy" path="res://assets/ui/arrow_triangle.png" id="1_arrow_tex"]
 [ext_resource type="Shader" uid="uid://bqu8tulqs8d7p" path="res://ui/shaders/arrow_gradient.gdshader" id="2_arrow_shd"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="3_hud_theme"]
+[ext_resource type="Shader" path="res://ui/shaders/overlay_band.gdshader" id="4_band"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="5_rule"]
+[ext_resource type="Script" path="res://ui/widgets/overlays/OverlayMarkedPanel.gd" id="6_marked"]
 
 [sub_resource type="StyleBoxFlat" id="StyleArrow"]
-bg_color = Color(0, 0, 0, 0.26)
+bg_color = Color(0.022, 0.018, 0.015, 0.62)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.28)
+border_color = Color(0.62, 0.47, 0.3, 0.62)
+corner_radius_top_left = 34
+corner_radius_top_right = 34
+corner_radius_bottom_right = 34
+corner_radius_bottom_left = 34
+corner_detail = 16
+shadow_color = Color(0, 0, 0, 0.35)
 shadow_size = 8
-shadow_offset = Vector2(0, 5)
+shadow_offset = Vector2(0, 3)
 
 [sub_resource type="ShaderMaterial" id="MatArrow"]
 shader = ExtResource("2_arrow_shd")
-shader_parameter/top_color = Color(1, 0.78, 0.25, 1)
-shader_parameter/bottom_color = Color(1, 0.38, 0.05, 1)
+shader_parameter/top_color = Color(0.99, 0.86, 0.6, 1)
+shader_parameter/bottom_color = Color(0.82, 0.5, 0.2, 1)
 shader_parameter/outline_threshold = 0.12
 
-[sub_resource type="StyleBoxFlat" id="StylePopup"]
-bg_color = Color(0, 0, 0, 0.38)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-shadow_color = Color(0, 0, 0, 0.32)
-shadow_size = 12
-shadow_offset = Vector2(0, 8)
+[sub_resource type="StyleBoxEmpty" id="StylePopup"]
+
+[sub_resource type="ShaderMaterial" id="MatBand"]
+shader = ExtResource("4_band")
+shader_parameter/seam_at = 0.8
 
 [sub_resource type="StyleBoxFlat" id="StyleTip"]
-bg_color = Color(0, 0, 0, 0.4)
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.024, 0.02, 0.017, 0.84)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 10
-shadow_offset = Vector2(0, 6)
+border_color = Color(0.62, 0.47, 0.3, 0.55)
+shadow_color = Color(0, 0, 0, 0.42)
+shadow_size = 12
+shadow_offset = Vector2(0, 5)
+anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleContext"]
-bg_color = Color(0.035, 0.032, 0.028, 0.88)
-border_width_left = 3
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.31, 0.27, 0.2, 0.95)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-shadow_color = Color(0, 0, 0, 0.36)
-shadow_size = 8
-shadow_offset = Vector2(0, 5)
+bg_color = Color(0.026, 0.022, 0.019, 0.84)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 3
+border_width_bottom = 2
+border_color = Color(0.62, 0.47, 0.3, 0.5)
+shadow_color = Color(0, 0, 0, 0.38)
+shadow_size = 10
+shadow_offset = Vector2(0, 4)
+anti_aliasing = false
 
 [node name="GateOverlay" type="Control" unique_id=700980344]
-theme = ExtResource("3_hud_theme")
 z_index = 2000
 z_as_relative = false
 layout_mode = 3
@@ -81,6 +73,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("3_hud_theme")
 
 [node name="GateArrow" type="PanelContainer" parent="." unique_id=532747008]
 custom_minimum_size = Vector2(68, 68)
@@ -96,7 +89,7 @@ mouse_filter = 2
 
 [node name="ArrowTex" type="TextureRect" parent="GateArrow/Center" unique_id=290675222]
 material = SubResource("MatArrow")
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 texture = ExtResource("1_arrow_tex")
 expand_mode = 1
@@ -118,7 +111,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0, 0, 0, 0.22)
+color = Color(0.012, 0.008, 0.005, 0.2)
 
 [node name="Center" type="Control" parent="GateReadyOverlay" unique_id=2108990667]
 layout_mode = 1
@@ -135,6 +128,15 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Band" type="ColorRect" parent="GateReadyOverlay/Center"]
+material = SubResource("MatBand")
+layout_mode = 0
+offset_left = -260.0
+offset_top = -36.0
+offset_right = 900.0
+offset_bottom = 226.0
+mouse_filter = 2
+
 [node name="Panel" type="PanelContainer" parent="GateReadyOverlay/Center" unique_id=2055747099]
 layout_mode = 0
 anchor_right = 1.0
@@ -148,9 +150,9 @@ theme_override_styles/panel = SubResource("StylePopup")
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 14
+theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="GateReadyOverlay/Center/Panel/Margin" unique_id=1169204636]
 layout_mode = 2
@@ -161,19 +163,34 @@ alignment = 1
 [node name="Title" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=167210424]
 layout_mode = 2
 theme_type_variation = &"SacredHeading"
-theme_override_colors/font_color = Color(0.25, 0.75, 1, 0.98)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 10
-theme_override_font_sizes/font_size = 52
+theme_override_colors/font_color = Color(0.99, 0.88, 0.66, 1)
+theme_override_colors/font_shadow_color = Color(0.85, 0.5, 0.18, 0.35)
+theme_override_colors/font_outline_color = Color(0.03, 0.02, 0.012, 0.85)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 8
+theme_override_constants/shadow_outline_size = 14
+theme_override_font_sizes/font_size = 58
 text = "RITE EXPOSED"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Sub" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=608462753]
-modulate = Color(1, 1, 1, 0.78)
+[node name="Rule" type="Control" parent="GateReadyOverlay/Center/Panel/Margin/VBox"]
+custom_minimum_size = Vector2(380, 16)
 layout_mode = 2
-theme_type_variation = &"BodyStrong"
-theme_override_font_sizes/font_size = 22
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("5_rule")
+ornament = 2
+colour = Color(0.86, 0.66, 0.4, 0.85)
+
+[node name="Sub" type="Label" parent="GateReadyOverlay/Center/Panel/Margin/VBox" unique_id=608462753]
+layout_mode = 2
+theme_type_variation = &"HudItalic"
+theme_override_colors/font_color = Color(0.9, 0.84, 0.74, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.8)
+theme_override_constants/outline_size = 5
+theme_override_font_sizes/font_size = 25
 text = "Rewrite the outer Rite"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -184,28 +201,30 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -280.0
+offset_left = -290.0
 offset_top = 88.0
-offset_right = 280.0
+offset_right = 290.0
 offset_bottom = 140.0
 grow_horizontal = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleTip")
+script = ExtResource("6_marked")
 
 [node name="Margin" type="MarginContainer" parent="TutorialTip" unique_id=707670426]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 16
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 9
+theme_override_constants/margin_right = 22
 theme_override_constants/margin_bottom = 10
 
 [node name="Label" type="Label" parent="TutorialTip/Margin" unique_id=777753680]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.95)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 6
-theme_override_font_sizes/font_size = 20
+theme_type_variation = &"BodyStrong"
+theme_override_colors/font_color = Color(0.93, 0.88, 0.79, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.8)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 21
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
@@ -226,36 +245,37 @@ visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleContext")
+script = ExtResource("6_marked")
 
 [node name="Margin" type="MarginContainer" parent="ContextStack/ObjectivePanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 9
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="ContextStack/ObjectivePanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="Title" type="Label" parent="ContextStack/ObjectivePanel/Margin/VBox"]
 layout_mode = 2
 theme_type_variation = &"InstitutionalHeading"
-theme_override_colors/font_color = Color(1, 0.64, 0.28, 0.98)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.95, 0.76, 0.47, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 15
 text = "OBJECTIVE"
 horizontal_alignment = 2
 
 [node name="Detail" type="Label" parent="ContextStack/ObjectivePanel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.9)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.86, 0.81, 0.72, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
 text = "Objective detail"
 horizontal_alignment = 2
 autowrap_mode = 3
@@ -265,36 +285,37 @@ visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleContext")
+script = ExtResource("6_marked")
 
 [node name="Margin" type="MarginContainer" parent="ContextStack/SecondaryObjectivePanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 9
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="ContextStack/SecondaryObjectivePanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="Title" type="Label" parent="ContextStack/SecondaryObjectivePanel/Margin/VBox"]
 layout_mode = 2
 theme_type_variation = &"InstitutionalHeading"
-theme_override_colors/font_color = Color(0.25, 0.9, 0.82, 0.98)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 5
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.64, 0.79, 0.56, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 15
 text = "SECONDARY OBJECTIVE"
 horizontal_alignment = 2
 
 [node name="Detail" type="Label" parent="ContextStack/SecondaryObjectivePanel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.9)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.86, 0.81, 0.72, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 16
 text = "Optional objective detail"
 horizontal_alignment = 2
 autowrap_mode = 3
@@ -304,26 +325,27 @@ visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleContext")
+script = ExtResource("6_marked")
 
 [node name="Margin" type="MarginContainer" parent="ContextStack/GateChecklistPanel"]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 10
+theme_override_constants/margin_top = 9
 theme_override_constants/margin_right = 16
 theme_override_constants/margin_bottom = 10
 
 [node name="VBox" type="VBoxContainer" parent="ContextStack/GateChecklistPanel/Margin"]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 3
 
 [node name="Header" type="Label" parent="ContextStack/GateChecklistPanel/Margin/VBox"]
 layout_mode = 2
 theme_type_variation = &"SacredHeading"
-theme_override_colors/font_color = Color(0.95, 0.45, 0.4, 0.98)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 5
+theme_override_colors/font_color = Color(0.9, 0.47, 0.38, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 16
 text = "EXIT RITE • LOCKED"
 horizontal_alignment = 2
@@ -335,10 +357,11 @@ theme_override_constants/separation = 2
 
 [node name="Hint" type="Label" parent="ContextStack/GateChecklistPanel/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 0.62)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 0.9)
-theme_override_constants/outline_size = 4
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudItalic"
+theme_override_colors/font_color = Color(0.76, 0.7, 0.6, 1)
+theme_override_colors/font_outline_color = Color(0.02, 0.015, 0.01, 0.85)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 15
 text = "Next step"
 horizontal_alignment = 2
 autowrap_mode = 3

@@ -28,8 +28,8 @@ var _last_primary_detail: String = ""
 var _last_secondary_title: String = ""
 var _last_secondary_detail: String = ""
 
-const SECONDARY_NORMAL_COLOR := Color(0.25, 0.90, 0.82, 0.98)
-const SECONDARY_COMPLETE_COLOR := Color(0.48, 1.00, 0.64, 1.00)
+const SECONDARY_NORMAL_COLOR := Color(0.64, 0.79, 0.56, 0.98)
+const SECONDARY_COMPLETE_COLOR := Color(0.99, 0.84, 0.58, 1.00)
 
 
 func _enter_tree() -> void:

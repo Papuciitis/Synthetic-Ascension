@@ -259,6 +259,7 @@ func _on_resonance_changed(v: float) -> void:
 		if _gate_status != null:
 			_gate_status.modulate = Color(1, 1, 1, 1)
 			var tw: Tween = create_tween()
+			tw.set_ignore_time_scale(true)
 			tw.tween_property(_gate_status, "modulate", Color(1, 1, 1, 0.85), 0.6)
 		_show_gate_ready_popup()
 
@@ -281,6 +282,8 @@ func _show_gate_ready_popup() -> void:
 		center.scale = Vector2.ONE * 0.93
 
 	_popup_tw = create_tween()
+	# Hit-stop must not hold "RITE EXPOSED" on screen for many times its 2.4 s.
+	_popup_tw.set_ignore_time_scale(true)
 	_popup_tw.set_trans(Tween.TRANS_QUAD)
 	_popup_tw.set_ease(Tween.EASE_OUT)
 

@@ -18,6 +18,15 @@ class_name ManifestationPairNotifier
 ## Pairs are Phase G. Everything here reads through `has_method`, so on a build
 ## where the runner has no `get_active_pairs()` this node costs one dictionary
 ## lookup per equip change and shows nothing.
+##
+## Presentation (the front end's register): a dark card in a gold double rule,
+## a Cinzel caption in the pair's accent, the pair's name in the HUD's sacred
+## face, a Garamond line. It fades in with a small settle (only the fade under
+## Reduced Motion) on real time.
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
+const ArcaneFrameScript := preload("res://ui/components/ArcaneFrame.gd")
+const HUD_THEME := preload("res://ui/theme/SyntheticHudTheme.tres")
 
 ## Long enough that a ground-pickup shuffle - drop the ring, pick the new one
 ## up - collapses LOST-then-GAINED into no card at all rather than two.
@@ -33,6 +42,7 @@ var _panel: PanelContainer = null
 var _title: Label = null
 var _name: Label = null
 var _detail: Label = null
+var _frame: Control = null
 
 
 func _ready() -> void:
@@ -165,16 +175,21 @@ func _show_next() -> void:
 	# A pair belongs to both its nouns, so its accent is the midpoint of the two
 	# - it should not look like it is one noun's property.
 	var accent := _accent_for(nouns)
-	_title.modulate = accent if gained else Color(0.78, 0.78, 0.78)
-	_name.modulate = accent if gained else Color(0.72, 0.72, 0.72)
+	_title.modulate = accent if gained else Color(0.7, 0.66, 0.6)
+	# The name stays parchment, warmed by the accent: legible on any noun.
+	_name.modulate = OverlayKit.PARCHMENT.lerp(accent, 0.35) if gained else Color(0.66, 0.62, 0.56)
+	_frame.set("colour", Color(accent.lerp(OverlayKit.GOLD_DIM, 0.55), 0.9) if gained else Color(0.42, 0.36, 0.3, 0.85))
+	_frame.set("glow", 0.25 if gained else 0.0)
 
 	_panel.modulate = Color(1, 1, 1, 0)
-	_panel.scale = Vector2(0.94, 0.94) if gained else Vector2.ONE
+	_panel.pivot_offset = _panel.size * 0.5
+	var pop := gained and not OverlayKit.reduced()
+	_panel.scale = Vector2(0.94, 0.94) if pop else Vector2.ONE
 	_panel.visible = true
-	var tween: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	tween.tween_property(_panel, "modulate:a", 1.0, 0.16)
-	if gained:
-		tween.parallel().tween_property(_panel, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	var tween: Tween = OverlayKit.tween(self)
+	tween.tween_property(_panel, "modulate:a", 1.0, 0.18)
+	if pop:
+		tween.parallel().tween_property(_panel, "scale", Vector2.ONE, 0.26).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_interval(2.4 if gained else 1.6)
 	tween.tween_property(_panel, "modulate:a", 0.0, 0.22)
 	tween.finished.connect(func() -> void:
@@ -212,43 +227,47 @@ func _build_ui() -> void:
 	_panel.visible = false
 	_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.set_anchors_preset(Control.PRESET_CENTER_TOP, true)
-	# Below SetBreakpointNotifier's card (124..194): a run can cross a set
+	# Below SetBreakpointNotifier's card (124..~220): a run can cross a set
 	# breakpoint and light a pair in the same equip, and two cards in one place
 	# is one unreadable card.
 	_panel.offset_left = -240.0
-	_panel.offset_top = 206.0
+	_panel.offset_top = 240.0
 	_panel.offset_right = 240.0
-	_panel.offset_bottom = 292.0
+	_panel.offset_bottom = 326.0
 	_panel.pivot_offset = Vector2(240.0, 43.0)
 	add_child(_panel)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.04, 0.04, 0.05, 0.94)
-	style.border_color = ManifestationNouns.LAYER
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(10)
-	_panel.add_theme_stylebox_override("panel", style)
+	_panel.theme = HUD_THEME
+	_panel.add_theme_stylebox_override("panel", OverlayKit.shared(&"card"))
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 14)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_theme_constant_override("margin_left", 22)
+	margin.add_theme_constant_override("margin_top", 13)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_bottom", 13)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.add_child(margin)
+	# After the margin: the box's labels must stay child 0 of the margin.
+	_frame = ArcaneFrameScript.new() as Control
+	_frame.set("inset", 5.0)
+	_panel.add_child(_frame)
 	var box := VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 3)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_child(box)
 	_title = Label.new()
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_title.theme_type_variation = &"InstitutionalHeading"
-	_title.add_theme_font_size_override("font_size", 12)
+	OverlayKit.style_label(_title, &"caption", 12, Color.WHITE)
 	box.add_child(_title)
 	_name = Label.new()
 	_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name.theme_type_variation = &"SacredHeading"
-	_name.add_theme_font_size_override("font_size", 16)
+	_name.add_theme_font_size_override("font_size", 20)
+	_name.add_theme_color_override("font_color", Color.WHITE)
 	box.add_child(_name)
 	_detail = Label.new()
 	_detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_detail.add_theme_font_size_override("font_size", 12)
 	_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_detail.custom_minimum_size = Vector2(440, 0)
+	_detail.custom_minimum_size = Vector2(436, 0)
+	OverlayKit.style_label(_detail, &"body", 15, OverlayKit.BODY)
 	box.add_child(_detail)

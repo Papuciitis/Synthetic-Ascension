@@ -1,12 +1,21 @@
 extends CanvasLayer
 class_name FirstEncounterOverlay
+## The recognition beat: a compact dossier card tethered to the enemy it names,
+## in the front end's register (a dark card in a double gold rule, Cinzel name,
+## Garamond lines). The card eases in beside its target and fades out on its
+## own; its clock is real time, so hit-stop never stretches it.
 
 signal dismissed
 signal freeze_released
 
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
+
 const FREEZE_SECONDS := 0.8
 const VISIBLE_SECONDS := 5.8
 const FADE_SECONDS := 0.55
+## The card's arrival: a fade and a short slide in from the tether's side.
+const ARRIVE_SECONDS := 0.32
+const ARRIVE_DISTANCE := 14.0
 const SCREEN_MARGIN := 24.0
 const TOP_MARGIN := 64.0
 
@@ -25,12 +34,15 @@ var _last_target_screen := Vector2.ZERO
 var _elapsed := 0.0
 var _pause_owned := false
 var _presented := false
+var _still := false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	layer = 225
 	_root.visible = false
+	# The ornament draws the rules, so the ground has no border or padding.
+	_card.add_theme_stylebox_override(&"panel", OverlayKit.shared(&"card"))
 
 
 func present(
@@ -43,7 +55,8 @@ func present(
 	_elapsed = 0.0
 	_presented = true
 	_pause_owned = false
-	_root.modulate = Color.WHITE
+	_still = OverlayKit.reduced()
+	_root.modulate = Color(1, 1, 1, 0)
 	_eyebrow.text = "FIRST ENCOUNTER  //  ARCHETYPE INDEXED"
 	_title.text = String(entry.get("name", "UNKNOWN ARCHETYPE")).to_upper()
 	_role.text = "ROLE  //  %s" % String(entry.get("role", "Unclassified"))
@@ -63,7 +76,7 @@ func present(
 func _process(delta: float) -> void:
 	if not _presented:
 		return
-	_elapsed += maxf(0.0, delta)
+	_elapsed += maxf(0.0, OverlayKit.real_delta(delta))
 	_update_geometry()
 	if _pause_owned and _elapsed >= FREEZE_SECONDS:
 		_release_pause()
@@ -73,6 +86,19 @@ func _process(delta: float) -> void:
 	var fade_start := VISIBLE_SECONDS - FADE_SECONDS
 	if _elapsed > fade_start:
 		_root.modulate.a = clampf((VISIBLE_SECONDS - _elapsed) / FADE_SECONDS, 0.0, 1.0)
+	elif _elapsed < ARRIVE_SECONDS:
+		_root.modulate.a = clampf(_elapsed / (ARRIVE_SECONDS * 0.7), 0.0, 1.0)
+	elif _root.modulate.a < 1.0:
+		_root.modulate.a = 1.0
+
+
+## How far the card still has to travel in, 1 at its arrival and 0 once it
+## has settled. Nothing travels under Reduced Motion.
+func _arrival_left() -> float:
+	if _still or _elapsed >= ARRIVE_SECONDS:
+		return 0.0
+	var t := clampf(_elapsed / ARRIVE_SECONDS, 0.0, 1.0)
+	return pow(1.0 - t, 3.0)
 
 
 func is_freeze_active() -> bool:
@@ -111,8 +137,10 @@ func _update_geometry() -> void:
 	if card_size.x < 1.0 or card_size.y < 1.0:
 		card_size = _card.custom_minimum_size
 	var rect := _choose_card_rect(viewport_size, _last_target_screen, card_size)
-	_card.position = rect.position
-	var card_point := _nearest_card_edge(rect, _last_target_screen)
+	# It arrives from the enemy's side, along the tether, and settles in place.
+	var toward := (_last_target_screen - rect.get_center()).normalized()
+	_card.position = rect.position + toward * ARRIVE_DISTANCE * _arrival_left()
+	var card_point := _nearest_card_edge(Rect2(_card.position, rect.size), _last_target_screen)
 	_tether.set_points(card_point, _last_target_screen)
 
 

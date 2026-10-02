@@ -1,5 +1,12 @@
 extends PanelContainer
 class_name ItemTooltip
+## The item dossier on hover (HUD bar and bag, the Exchange, Gear & Stash) in
+## the front end's register: a square gold-ruled panel, the icon in a well
+## ruled in its rarity's colour, a Cinzel name and line, Garamond body with
+## Cinzel section heads. Every look is set once in _ready; a show rewrites
+## text, never styles (bar the well, and only when the rarity changes).
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 var icon: TextureRect = null
 var name_label: Label = null
@@ -9,19 +16,24 @@ var icon_frame: PanelContainer = null
 var kicker_label: Label = null
 
 var _dossier_mode: bool = false
+var _well_rarity: int = -99
 
-var _style: StyleBoxFlat
-var _icon_style: StyleBoxFlat
+var _style: StyleBox
+var _icon_style: StyleBox
 
-const BORDER: Color = Color(1.0, 0.55, 0.20)
-const BG: Color = Color(0.08, 0.08, 0.08, 0.96)
+const BORDER: Color = OverlayKit.GOLD_DIM
+const BG: Color = Color(0.028, 0.024, 0.021, 0.97)
 
-const POS: Color = Color(0.25, 1.0, 1.0, 1.0)
-const NEG: Color = Color(1.0, 0.35, 0.55, 1.0)
-const CMP_POS_HEX: String = "#78E08F"
-const CMP_NEG_HEX: String = "#D77A86"
-const CMP_NEUTRAL_HEX: String = "#A8A8A8"
-const LOCK_HEX: String = "#F2C35B"
+const POS: Color = OverlayKit.SAGE
+const NEG: Color = OverlayKit.CURSE
+const CMP_POS_HEX: String = "#A6CB8E"
+const CMP_NEG_HEX: String = "#E2826C"
+const CMP_NEUTRAL_HEX: String = "#9C9282"
+const LOCK_HEX: String = "#E8C27A"
+## Section heads (Cinzel, through the body's bold face) and their quieter
+## follow-on lines.
+const HEAD_HEX: String = "#D3A562"
+const QUIET_HEX: String = "#8C8373"
 ## The layer's own colour, for chrome that is about Manifestations in general.
 ## Anything that names a specific rule uses that rule's NOUN hex instead - see
 ## ManifestationNouns.
@@ -97,30 +109,57 @@ func _resolve_nodes() -> void:
 	kicker_label = get_node_or_null("Margin/VBox/Kicker") as Label
 
 func _build_styles() -> void:
-	_style = StyleBoxFlat.new()
-	_style.bg_color = BG
-	_style.set_border_width_all(2)
-	_style.border_color = BORDER
-	_style.corner_radius_top_left = 14
-	_style.corner_radius_top_right = 14
-	_style.corner_radius_bottom_left = 14
-	_style.corner_radius_bottom_right = 14
-	_style.shadow_size = 10
-	_style.shadow_offset = Vector2(0, 6)
-	_style.shadow_color = Color(0, 0, 0, 0.35)
+	_style = OverlayKit.shared(&"tip")
 	add_theme_stylebox_override("panel", _style)
-
-	_icon_style = StyleBoxFlat.new()
-	_icon_style.bg_color = Color(0.12, 0.12, 0.12, 1.0)
-	_icon_style.set_border_width_all(1)
-	_icon_style.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_icon_style.corner_radius_top_left = 10
-	_icon_style.corner_radius_top_right = 10
-	_icon_style.corner_radius_bottom_left = 10
-	_icon_style.corner_radius_bottom_right = 10
-
+	_icon_style = OverlayKit.shared(&"tip_well")
 	if icon_frame != null:
 		icon_frame.add_theme_stylebox_override("panel", _icon_style)
+	OverlayKit.style_label(name_label, &"heading", 17, OverlayKit.PARCHMENT)
+	# The meta line takes its polarity through modulate, so its own colour is
+	# white and a show never rewrites a theme override.
+	OverlayKit.style_label(meta_label, &"caption", 12, Color.WHITE)
+	OverlayKit.style_label(kicker_label, &"caption", 11, OverlayKit.GOLD_DIM)
+	if body_label != null:
+		body_label.add_theme_font_override(&"normal_font", OverlayKit.font(&"body"))
+		body_label.add_theme_font_override(&"bold_font", OverlayKit.font(&"heading"))
+		body_label.add_theme_font_override(&"italics_font", OverlayKit.font(&"italic"))
+		body_label.add_theme_font_size_override(&"normal_font_size", 16)
+		body_label.add_theme_font_size_override(&"bold_font_size", 12)
+		body_label.add_theme_font_size_override(&"italics_font_size", 16)
+		body_label.add_theme_color_override(&"default_color", OverlayKit.BODY)
+		body_label.add_theme_constant_override(&"line_separation", 1)
+
+
+## Four small diamonds on the panel's corners (redrawn only on resize).
+func _draw() -> void:
+	OverlayKit.draw_corner_marks(self, Rect2(Vector2(1, 1), size - Vector2(2, 2)), Color(OverlayKit.GOLD_DIM, 0.95), 3.0)
+
+
+## The icon well's rule follows the item's rarity.
+func _apply_well(rarity: int) -> void:
+	if icon_frame == null or rarity == _well_rarity:
+		return
+	_well_rarity = rarity
+	icon_frame.add_theme_stylebox_override("panel", OverlayKit.well(rarity))
+
+
+## The body's wrap width, set before its text is measured. A RichTextLabel the
+## container has not sized yet wraps at width 1 and reports a body thousands
+## of pixels tall, which is what the first HUD tooltip of a run used to show.
+func _constrain_body_width() -> void:
+	if body_label == null:
+		return
+	var margin := get_node_or_null("Margin") as MarginContainer
+	# A host may lay the dossier out wider than its minimum (Gear & Stash).
+	var inner := maxf(size.x, custom_minimum_size.x)
+	if margin != null:
+		inner -= float(margin.get_theme_constant(&"margin_left") + margin.get_theme_constant(&"margin_right"))
+	body_label.size = Vector2(maxf(1.0, inner), body_label.size.y)
+
+
+static func _head(text: String) -> String:
+	return "[color=%s][b]%s[/b][/color]" % [HEAD_HEX, text]
+
 
 func hide_tooltip() -> void:
 	visible = false
@@ -161,6 +200,7 @@ func show_item(inst: ItemInstance) -> void:
 
 	if icon != null:
 		icon.texture = inst.data.icon
+	_apply_well(int(inst.rarity))
 
 	# Body lines
 	var lines: Array[String] = []
@@ -172,7 +212,7 @@ func show_item(inst: ItemInstance) -> void:
 	var eff: PackedStringArray = inst.data.get_effects_short(inst)
 	if eff.size() > 0:
 		lines.append("")
-		lines.append("EFFECTS:")
+		lines.append(_head("EFFECTS"))
 		for e in eff:
 			lines.append("• %s" % String(e))
 
@@ -208,7 +248,7 @@ func show_item(inst: ItemInstance) -> void:
 	var rolled_lines: Array[String] = _format_delta(inst.rolled_mods)
 	if rolled_lines.size() > 0:
 		lines.append("")
-		lines.append("ITEM STATS")
+		lines.append(_head("ITEM STATS"))
 		lines.append("  " + "  ·  ".join(rolled_lines))
 		# The next whole rank's change, from the same evaluator that made the
 		# stats above (balance revision 2 curves; legacy items too).
@@ -309,6 +349,7 @@ func show_item(inst: ItemInstance) -> void:
 		else:
 			lines.append("Feeding stabilizes the curse (mildest roll survives)")
 
+	_constrain_body_width()
 	body_label.text = "\n".join(lines)
 	reset_size()
 	visible = true
@@ -325,7 +366,7 @@ func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> v
 		return
 
 	lines.append("")
-	lines.append("INSTANT COMPARISON")
+	lines.append(_head("INSTANT COMPARISON"))
 	lines.append("Compared with: %s" % String(current.data.display_name))
 
 	var rows: Array[String] = build_comparison_rows(
@@ -553,12 +594,12 @@ func _append_set_summary(lines: Array[String], set_id: StringName) -> void:
 	var data: SetData = _set_data(set_id)
 	lines.append("")
 	if data == null:
-		lines.append("SET // %s · %d EQUIPPED" % [String(set_id).to_upper(), have])
-		lines.append("ARCHIVE // RUN SHEET // SETS")
+		lines.append(_head("SET // %s · %d EQUIPPED" % [String(set_id).to_upper(), have]))
+		lines.append("[color=%s]ARCHIVE // RUN SHEET // SETS[/color]" % QUIET_HEX)
 		return
 	var maximum := maxi(1, data.max_pieces())
-	lines.append("SET // %s  %s  %d/%d" % [
-		data.display_name.to_upper(), _progress_pips(have, maximum), have, maximum,
+	lines.append("%s  [color=%s]%s  %d/%d[/color]" % [
+		_head("SET // %s" % data.display_name.to_upper()), HEAD_HEX, _progress_pips(have, maximum), have, maximum,
 	])
 	var active_tier: SetTier = null
 	var next_tier: SetTier = null
@@ -575,7 +616,7 @@ func _append_set_summary(lines: Array[String], set_id: StringName) -> void:
 		lines.append("NEXT // %d PIECES · %s" % [
 			next_tier.required_count, next_tier.display_name.to_upper(),
 		])
-	lines.append("ARCHIVE // RUN SHEET // SETS")
+	lines.append("[color=%s]ARCHIVE // RUN SHEET // SETS[/color]" % QUIET_HEX)
 
 func _append_replacement_preview(lines: Array[String], candidate: ItemInstance) -> void:
 	if Global == null or Global.run_inventory == null or candidate == null or candidate.data == null:
@@ -585,7 +626,7 @@ func _append_replacement_preview(lines: Array[String], candidate: ItemInstance) 
 		return
 	var current: ItemInstance = Global.run_inventory.get_at(target_slot)
 	lines.append("")
-	lines.append("EQUIP PREVIEW · %s" % Inventory.slot_label(target_slot).to_upper())
+	lines.append(_head("EQUIP PREVIEW · %s" % Inventory.slot_label(target_slot).to_upper()))
 	if current == candidate:
 		lines.append("Already equipped; set breakpoints do not change.")
 		return
@@ -632,7 +673,6 @@ func _adjust_count(counts: Dictionary, sid: StringName, amount: int) -> void:
 	else:
 		counts[sid] = value
 
-# (rest of your functions unchanged)
 func _format_delta(delta: Variant) -> Array[String]:
 	var out: Array[String] = []
 	var res: Resource = delta as Resource

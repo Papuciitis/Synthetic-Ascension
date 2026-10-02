@@ -1,5 +1,10 @@
 extends Label
 class_name RotatingFlavorLabel
+## A line of flavour that turns over every few seconds with a slow cross-fade
+## (a plain fade is already the reduced form). Real time, so a paused or
+## slowed tree never freezes it mid-fade.
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 @export_file("*.txt") var lines_path: String = "res://ui/data/respite_flavor_lines.txt"
 @export_range(3.0, 30.0, 0.5) var interval_seconds: float = 8.0
@@ -20,7 +25,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if _lines.size() <= 1 or _transitioning:
 		return
-	_elapsed += delta
+	_elapsed += OverlayKit.real_delta(delta)
 	if _elapsed >= interval_seconds:
 		_elapsed = 0.0
 		_transition_to_next()
@@ -47,11 +52,11 @@ func _show_next() -> void:
 
 func _transition_to_next() -> void:
 	_transitioning = true
-	var fade_out: Tween = create_tween()
-	fade_out.tween_property(self, "modulate:a", 0.0, fade_seconds)
+	var fade_out: Tween = OverlayKit.tween(self)
+	fade_out.tween_property(self, "modulate:a", 0.0, fade_seconds).set_trans(Tween.TRANS_SINE)
 	await fade_out.finished
 	_show_next()
-	var fade_in: Tween = create_tween()
-	fade_in.tween_property(self, "modulate:a", 0.68, fade_seconds)
+	var fade_in: Tween = OverlayKit.tween(self)
+	fade_in.tween_property(self, "modulate:a", 0.68, fade_seconds * 1.4).set_trans(Tween.TRANS_SINE)
 	await fade_in.finished
 	_transitioning = false

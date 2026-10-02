@@ -14,12 +14,12 @@ class_name HudGateChecklistController
 @export_range(0.1, 10.0, 0.1) var expanded_duration: float = 3.0
 
 const STATE_COLORS := {
-	&"locked": Color(0.95, 0.45, 0.40, 0.98),
-	&"located": Color(1.0, 0.64, 0.28, 0.98),
-	&"ready": Color(0.35, 0.85, 0.98, 1.0),
+	&"locked": Color(0.90, 0.47, 0.38, 0.98),
+	&"located": Color(0.99, 0.72, 0.42, 0.98),
+	&"ready": Color(0.62, 0.74, 1.0, 1.0),
 }
-const ROW_DONE_COLOR := Color(0.48, 1.0, 0.64, 0.95)
-const ROW_PENDING_COLOR := Color(1.0, 1.0, 1.0, 0.78)
+const ROW_DONE_COLOR := Color(0.64, 0.79, 0.56, 0.95)
+const ROW_PENDING_COLOR := Color(0.86, 0.81, 0.72, 0.85)
 
 var _panel: PanelContainer = null
 var _header: Label = null
@@ -215,7 +215,7 @@ func _rebuild_rows(items: Array) -> void:
 		row.add_theme_color_override("font_color", ROW_DONE_COLOR if done else ROW_PENDING_COLOR)
 		row.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 		row.add_theme_constant_override("outline_size", 4)
-		row.add_theme_font_size_override("font_size", 13)
+		row.add_theme_font_size_override("font_size", 15)
 		row.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_rows.add_child(row)

@@ -1,18 +1,24 @@
 extends PanelContainer
 class_name AugmentTooltip
+## An augment on hover (the HUD's augment row) in the same register as the
+## item dossier: a square gold-ruled panel, the icon in a well, a Cinzel name,
+## Garamond body. Looks are set once in _ready.
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 var icon: TextureRect = null
 var name_label: Label = null
 var body_label: Label = null
 var icon_frame: PanelContainer = null
 
-var _style: StyleBoxFlat
-var _icon_style: StyleBoxFlat
+var _style: StyleBox
+var _icon_style: StyleBox
 
-const BORDER: Color = Color(1.0, 0.55, 0.20)
-const BG: Color = Color(0.08, 0.08, 0.08, 0.96)
+const BORDER: Color = OverlayKit.GOLD_DIM
+const BG: Color = Color(0.028, 0.024, 0.021, 0.97)
 const TOOLTIP_WIDTH: float = 360.0
-const BODY_WIDTH: float = 340.0
+## TOOLTIP_WIDTH less the Margin container's 15 + 15.
+const BODY_WIDTH: float = 330.0
 
 var _layout_ticket: int = 0
 
@@ -34,30 +40,18 @@ func _resolve_nodes() -> void:
 	icon_frame = get_node_or_null("Margin/VBox/Header/IconFrame") as PanelContainer
 
 func _build_styles() -> void:
-	_style = StyleBoxFlat.new()
-	_style.bg_color = BG
-	_style.set_border_width_all(2)
-	_style.border_color = BORDER
-	_style.corner_radius_top_left = 14
-	_style.corner_radius_top_right = 14
-	_style.corner_radius_bottom_left = 14
-	_style.corner_radius_bottom_right = 14
-	_style.shadow_size = 10
-	_style.shadow_offset = Vector2(0, 6)
-	_style.shadow_color = Color(0, 0, 0, 0.35)
+	_style = OverlayKit.shared(&"tip")
 	add_theme_stylebox_override("panel", _style)
-
-	_icon_style = StyleBoxFlat.new()
-	_icon_style.bg_color = Color(0.12, 0.12, 0.12, 1.0)
-	_icon_style.set_border_width_all(1)
-	_icon_style.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_icon_style.corner_radius_top_left = 10
-	_icon_style.corner_radius_top_right = 10
-	_icon_style.corner_radius_bottom_left = 10
-	_icon_style.corner_radius_bottom_right = 10
-
+	_icon_style = OverlayKit.well(2)
 	if icon_frame != null:
 		icon_frame.add_theme_stylebox_override("panel", _icon_style)
+	OverlayKit.style_label(name_label, &"heading", 17, OverlayKit.PARCHMENT)
+	OverlayKit.style_label(body_label, &"body", 16, OverlayKit.BODY)
+
+
+## Four small diamonds on the panel's corners (redrawn only on resize).
+func _draw() -> void:
+	OverlayKit.draw_corner_marks(self, Rect2(Vector2(1, 1), size - Vector2(2, 2)), Color(OverlayKit.GOLD_DIM, 0.95), 3.0)
 
 func hide_tooltip() -> void:
 	_layout_ticket += 1

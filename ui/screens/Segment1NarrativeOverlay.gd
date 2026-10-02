@@ -1,7 +1,13 @@
 extends CanvasLayer
 class_name Segment1NarrativeOverlay
+## Segment I's chapter cards (its opening and its completion) in the front
+## end's register: a near-black veil, a card in a double gold rule, a Cinzel
+## Decorative title over a starred rule, Garamond body. The card eases up as
+## the veil comes down; Reduced Motion leaves only the fade.
 
 signal dismissed
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 @onready var root: Control = $Root
 @onready var eyebrow: Label = $Root/Center/Panel/Margin/VBox/Eyebrow
@@ -30,6 +36,12 @@ func present_completion(mortal_name: String) -> void:
 
 func _present() -> void:
 	root.visible = true
+	var veil := root.get_node_or_null("Black") as CanvasItem
+	if veil != null:
+		OverlayKit.fade_in(veil, 0.3)
+	var center := root.get_node_or_null("Center") as Control
+	if center != null:
+		OverlayKit.arrive(center, 18.0, 0.5, 0.08)
 	await get_tree().process_frame
 	continue_button.grab_focus()
 

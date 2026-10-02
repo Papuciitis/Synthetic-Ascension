@@ -1,5 +1,12 @@
 extends Control
 class_name SetBreakpointNotifier
+## Announces a set breakpoint gained or lost, one card at a time, in the front
+## end's register: a dark card in a gold double rule, the set's accent on its
+## Cinzel caption, a Garamond line. The card fades in with a small settle
+## (only the fade under Reduced Motion) on real time, through a paused tree.
+
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
+const ArcaneFrameScript := preload("res://ui/components/ArcaneFrame.gd")
 
 var _inventory: Inventory = null
 var _counts: Dictionary = {}
@@ -8,6 +15,7 @@ var _showing: bool = false
 var _panel: PanelContainer = null
 var _title: Label = null
 var _detail: Label = null
+var _frame: Control = null
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -80,14 +88,18 @@ func _show_next() -> void:
 		return
 	_title.text = ("SET BREAKPOINT ACTIVE" if gained else "SET BREAKPOINT LOST")
 	_detail.text = "%s · %dP %s\n%d / %d pieces" % [data.display_name, tier.required_count, tier.display_name, int(message.get("count", 0)), data.max_pieces()]
-	_title.modulate = data.accent_color if gained else Color(0.78, 0.78, 0.78)
+	# The set's own accent, softened toward the gold so it sits in the register.
+	_title.modulate = data.accent_color.lerp(OverlayKit.GOLD_BRIGHT, 0.35) if gained else Color(0.7, 0.66, 0.6)
+	_frame.set("glow", 0.3 if gained else 0.0)
 	_panel.modulate = Color(1, 1, 1, 0)
-	_panel.scale = Vector2(0.94, 0.94) if gained else Vector2.ONE
+	_panel.pivot_offset = _panel.size * 0.5
+	var pop := gained and not OverlayKit.reduced()
+	_panel.scale = Vector2(0.94, 0.94) if pop else Vector2.ONE
 	_panel.visible = true
-	var tween: Tween = create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
-	tween.tween_property(_panel, "modulate:a", 1.0, 0.16)
-	if gained:
-		tween.parallel().tween_property(_panel, "scale", Vector2.ONE, 0.22).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	var tween: Tween = OverlayKit.tween(self)
+	tween.tween_property(_panel, "modulate:a", 1.0, 0.18)
+	if pop:
+		tween.parallel().tween_property(_panel, "scale", Vector2.ONE, 0.26).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tween.tween_interval(1.8 if gained else 1.1)
 	tween.tween_property(_panel, "modulate:a", 0.0, 0.20)
 	tween.finished.connect(func() -> void:
@@ -118,26 +130,27 @@ func _build_ui() -> void:
 	_panel.offset_bottom = 194.0
 	_panel.pivot_offset = Vector2(220.0, 35.0)
 	add_child(_panel)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.04, 0.04, 0.04, 0.94)
-	style.border_color = Color(0.75, 0.75, 0.75, 0.75)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(10)
-	_panel.add_theme_stylebox_override("panel", style)
+	_panel.add_theme_stylebox_override("panel", OverlayKit.shared(&"card"))
 	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 14)
-	margin.add_theme_constant_override("margin_top", 8)
-	margin.add_theme_constant_override("margin_right", 14)
-	margin.add_theme_constant_override("margin_bottom", 8)
+	margin.add_theme_constant_override("margin_left", 22)
+	margin.add_theme_constant_override("margin_top", 13)
+	margin.add_theme_constant_override("margin_right", 22)
+	margin.add_theme_constant_override("margin_bottom", 13)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_panel.add_child(margin)
+	_frame = ArcaneFrameScript.new() as Control
+	_frame.set("inset", 5.0)
+	_panel.add_child(_frame)
 	var box := VBoxContainer.new()
 	box.alignment = BoxContainer.ALIGNMENT_CENTER
+	box.add_theme_constant_override("separation", 3)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_child(box)
 	_title = Label.new()
 	_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_title.add_theme_font_size_override("font_size", 14)
+	OverlayKit.style_label(_title, &"heading", 14, Color.WHITE)
 	box.add_child(_title)
 	_detail = Label.new()
 	_detail.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_detail.add_theme_font_size_override("font_size", 12)
+	OverlayKit.style_label(_detail, &"body", 16, OverlayKit.BODY)
 	box.add_child(_detail)

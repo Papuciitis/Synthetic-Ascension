@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://ui/overlays/FirstEncounterOverlay.gd" id="1_overlay"]
 [ext_resource type="Script" path="res://ui/overlays/FirstEncounterTether.gd" id="2_tether"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="3_theme"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="4_frame"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="5_rule"]
 
 [node name="FirstEncounterOverlay" type="CanvasLayer"]
 script = ExtResource("1_overlay")
@@ -28,37 +30,40 @@ mouse_filter = 2
 script = ExtResource("2_tether")
 
 [node name="Card" type="PanelContainer" parent="Root"]
-custom_minimum_size = Vector2(410, 188)
+custom_minimum_size = Vector2(420, 180)
 layout_mode = 0
-offset_right = 410.0
-offset_bottom = 188.0
+offset_right = 420.0
+offset_bottom = 180.0
 mouse_filter = 2
 theme_type_variation = &"InstitutionalPanel"
 
 [node name="Margin" type="MarginContainer" parent="Root/Card"]
 layout_mode = 2
-theme_override_constants/margin_left = 18
+mouse_filter = 2
+theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 14
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 12
 
 [node name="VBox" type="VBoxContainer" parent="Root/Card/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 7
+mouse_filter = 2
+theme_override_constants/separation = 4
 
 [node name="Eyebrow" type="Label" parent="Root/Card/Margin/VBox"]
 layout_mode = 2
-theme_type_variation = &"InstitutionalHeading"
-theme_override_colors/font_color = Color(0.88, 0.47, 0.19, 1)
+theme_type_variation = &"HudCaption"
+theme_override_colors/font_color = Color(0.93, 0.62, 0.33, 1)
 theme_override_font_sizes/font_size = 11
 text = "FIRST ENCOUNTER  //  ARCHETYPE INDEXED"
 
 [node name="Identity" type="HBoxContainer" parent="Root/Card/Margin/VBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+mouse_filter = 2
+theme_override_constants/separation = 12
 
 [node name="Portrait" type="TextureRect" parent="Root/Card/Margin/VBox/Identity"]
-custom_minimum_size = Vector2(46, 46)
+custom_minimum_size = Vector2(44, 44)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
@@ -68,35 +73,38 @@ stretch_mode = 5
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"InstitutionalHeading"
+theme_override_colors/font_color = Color(0.95, 0.9, 0.81, 1)
 theme_override_font_sizes/font_size = 22
 text = "UNKNOWN ARCHETYPE"
 vertical_alignment = 1
 
-[node name="Rule" type="ColorRect" parent="Root/Card/Margin/VBox"]
-custom_minimum_size = Vector2(0, 1)
+[node name="Rule" type="Control" parent="Root/Card/Margin/VBox"]
+custom_minimum_size = Vector2(0, 10)
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.72, 0.32, 0.11, 0.85)
+script = ExtResource("5_rule")
+colour = Color(0.72, 0.53, 0.32, 0.8)
 
 [node name="Role" type="Label" parent="Root/Card/Margin/VBox"]
 layout_mode = 2
 theme_type_variation = &"BodyStrong"
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.93, 0.88, 0.79, 1)
+theme_override_font_sizes/font_size = 16
 text = "ROLE  //  UNCLASSIFIED"
 
 [node name="Ratings" type="Label" parent="Root/Card/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.76, 0.74, 0.68, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.68, 0.62, 0.53, 1)
+theme_override_font_sizes/font_size = 14
 text = "CLASSIFICATION  //  UNRESOLVED"
 text_overrun_behavior = 3
 
 [node name="Counter" type="Label" parent="Root/Card/Margin/VBox"]
-custom_minimum_size = Vector2(360, 36)
+custom_minimum_size = Vector2(370, 36)
 layout_mode = 2
 theme_type_variation = &"BodyStrong"
-theme_override_colors/font_color = Color(0.94, 0.90, 0.80, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.99, 0.86, 0.6, 1)
+theme_override_font_sizes/font_size = 16
 text = "COUNTER  //  OBSERVE AND ADAPT"
 autowrap_mode = 2
 max_lines_visible = 2
@@ -104,7 +112,15 @@ text_overrun_behavior = 3
 
 [node name="Archive" type="Label" parent="Root/Card/Margin/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.62, 0.59, 0.52, 1)
+theme_type_variation = &"HudCaption"
+theme_override_colors/font_color = Color(0.56, 0.5, 0.42, 1)
 theme_override_font_sizes/font_size = 10
 text = "ARCHIVED  //  RUN SHEET / OBSERVATIONS"
 horizontal_alignment = 2
+
+[node name="Frame" type="Control" parent="Root/Card"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_frame")
+inset = 5.0
+colour = Color(0.66, 0.5, 0.31, 0.9)
