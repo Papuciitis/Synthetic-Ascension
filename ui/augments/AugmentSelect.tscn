@@ -2,36 +2,12 @@
 
 [ext_resource type="Script" uid="uid://bp7tvnwoc257f" path="res://ui/augments/AugmentSelect.gd" id="1_x15fq"]
 [ext_resource type="PackedScene" uid="uid://1x440pejxc0o" path="res://ui/augments/AugmentCard.tscn" id="2_nkmys"]
+[ext_resource type="Theme" path="res://ui/theme/ArcaneMenuTheme.tres" id="3_theme"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="4_rule"]
 
-[sub_resource type="StyleBoxFlat" id="StyleTitlePill"]
-bg_color = Color(0, 0, 0, 0.35)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 10
-shadow_offset = Vector2(0, 6)
+[sub_resource type="StyleBoxEmpty" id="StyleTitlePill"]
 
-[sub_resource type="StyleBoxFlat" id="StyleCardsPanel"]
-bg_color = Color(0, 0, 0, 0.2)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
-shadow_color = Color(0, 0, 0, 0.35)
-shadow_size = 12
-shadow_offset = Vector2(0, 8)
+[sub_resource type="StyleBoxEmpty" id="StyleCardsPanel"]
 
 [node name="AugmentSelect" type="CanvasLayer" unique_id=1801557552]
 layer = 100
@@ -43,18 +19,19 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 1
-color = Color(0, 0, 0, 0.6)
+color = Color(0.008, 0.006, 0.005, 0.8)
 
 [node name="Center" type="CenterContainer" parent="." unique_id=1365553622]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
+theme = ExtResource("3_theme")
 
 [node name="VBox" type="VBoxContainer" parent="Center" unique_id=1594819468]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 6
 
 [node name="TitlePill" type="PanelContainer" parent="Center/VBox" unique_id=910000001]
 layout_mode = 2
@@ -69,12 +46,32 @@ theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 10
 
-[node name="Title" type="Label" parent="Center/VBox/TitlePill/TitleMargin" unique_id=797916369]
-modulate = Color(1, 1, 1, 0.92)
+[node name="TitleBox" type="VBoxContainer" parent="Center/VBox/TitlePill/TitleMargin"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Title" type="Label" parent="Center/VBox/TitlePill/TitleMargin/TitleBox" unique_id=797916369]
+layout_mode = 2
+theme_type_variation = &"ArcaneTitle"
+theme_override_font_sizes/font_size = 42
 text = "CHOOSE AN AUGMENT"
 horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/VBox/TitlePill/TitleMargin/TitleBox"]
+layout_mode = 2
+theme_type_variation = &"ArcaneItalic"
+theme_override_font_sizes/font_size = 20
+text = "Bind one to the Pattern. It stays with you between runs."
+horizontal_alignment = 1
+
+[node name="TitleRule" type="Control" parent="Center/VBox/TitlePill/TitleMargin/TitleBox"]
+custom_minimum_size = Vector2(520, 20)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("4_rule")
+ornament = 2
 
 [node name="CardsPanel" type="PanelContainer" parent="Center/VBox" unique_id=910000010]
 layout_mode = 2
@@ -84,13 +81,13 @@ theme_override_styles/panel = SubResource("StyleCardsPanel")
 [node name="CardsMargin" type="MarginContainer" parent="Center/VBox/CardsPanel" unique_id=910000011]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 18
-theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 18
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 40
 
 [node name="Cards" type="HBoxContainer" parent="Center/VBox/CardsPanel/CardsMargin" unique_id=1561310666]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/separation = 18
+theme_override_constants/separation = 44
 alignment = 1

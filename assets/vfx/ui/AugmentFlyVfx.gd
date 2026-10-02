@@ -46,6 +46,18 @@ func fly_card_to_slot(source_card: Control, slot_index: int) -> void:
 			return
 		start_rect = source_card.get_global_rect()
 
+	# The card on screen hands over to its copy (it would otherwise stay lit
+	# behind the flight).
+	if source_card.has_method("hide_for_flight"):
+		source_card.call("hide_for_flight")
+
+	# The pick screen is its own CanvasLayer (100); the copy flies above it
+	# rather than under its veil on the HUD's layer.
+	var over := CanvasLayer.new()
+	over.name = "FlyLayer"
+	over.layer = 110
+	add_child(over)
+
 	var fly: TextureRect = TextureRect.new()
 	fly.name = "FlyCard"
 	fly.texture = tex
@@ -53,7 +65,7 @@ func fly_card_to_slot(source_card: Control, slot_index: int) -> void:
 	fly.stretch_mode = TextureRect.STRETCH_SCALE
 	fly.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	fly.modulate = Color(1, 1, 1, 1)
-	add_child(fly)
+	over.add_child(fly)
 
 	fly.top_level = true
 	fly.global_position = start_rect.position
@@ -80,8 +92,8 @@ func fly_card_to_slot(source_card: Control, slot_index: int) -> void:
 	# Pop the target
 	_target_pop(target_icon)
 
-	if is_instance_valid(fly):
-		fly.queue_free()
+	if is_instance_valid(over):
+		over.queue_free()
 
 	emit_signal("fly_finished", slot_index)
 
@@ -177,6 +189,13 @@ func _capture_rect_texture(global_rect: Rect2) -> Texture2D:
 	var img_h: int = img.get_height()
 	if img_w <= 0 or img_h <= 0:
 		return null
+
+	# The rect is in logical canvas units (canvas_items stretch); the image is
+	# the render target at the window's real size. Scale before cropping.
+	var logical: Vector2 = vp.get_visible_rect().size
+	if logical.x > 0.0 and logical.y > 0.0:
+		var px := Vector2(img_w, img_h) / logical
+		global_rect = Rect2(global_rect.position * px, global_rect.size * px)
 
 	var x: int = int(floor(global_rect.position.x))
 	var y: int = int(floor(global_rect.position.y))

@@ -2,6 +2,9 @@ extends CanvasLayer
 
 signal augment_chosen(augment: AugmentData)
 
+const ARCANE_THEME := preload("res://ui/theme/ArcaneMenuTheme.tres")
+const ArcaneRuleScript := preload("res://ui/components/ArcaneRule.gd")
+
 @export var card_scene: PackedScene
 
 @onready var overlay: ColorRect = $Overlay
@@ -38,7 +41,6 @@ func _ready() -> void:
 
 	if overlay:
 		overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-		overlay.color = Color(0, 0, 0, 0.45)
 		overlay.modulate = Color(1, 1, 1, 1)
 
 	if center:
@@ -267,17 +269,15 @@ func _ensure_tooltip_ui() -> void:
 	add_child(_tip_panel)
 	_tip_panel.visible = false
 
-	# Give it an explicit style so it's never "invisible" under theme changes.
+	# Give it an explicit style so it's never "invisible" under theme changes:
+	# the front end's gold-ruled register, square-cornered.
+	_tip_panel.theme = ARCANE_THEME
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0, 0, 0, 0.70)
-	sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
-	sb.set_border_width_all(2)
-	sb.corner_radius_top_left = 14
-	sb.corner_radius_top_right = 14
-	sb.corner_radius_bottom_left = 14
-	sb.corner_radius_bottom_right = 14
-	sb.shadow_color = Color(0, 0, 0, 0.35)
-	sb.shadow_size = 12
+	sb.bg_color = Color(0.028, 0.024, 0.021, 0.96)
+	sb.border_color = Color(0.62, 0.47, 0.29, 0.9)
+	sb.set_border_width_all(1)
+	sb.shadow_color = Color(0, 0, 0, 0.5)
+	sb.shadow_size = 16
 	sb.shadow_offset = Vector2(0, 8)
 	_tip_panel.add_theme_stylebox_override("panel", sb)
 
@@ -300,32 +300,26 @@ func _ensure_tooltip_ui() -> void:
 	_tip_title = Label.new()
 	_tip_title.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tip_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_tip_title.theme_type_variation = &"ArcaneHeading"
 	_tip_title.add_theme_font_size_override("font_size", 22)
-	_tip_title.add_theme_color_override("font_color", Color(1, 1, 1, 0.98))
-	_tip_title.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.90))
-	_tip_title.add_theme_constant_override("outline_size", 6)
 	v.add_child(_tip_title)
 
 	_tip_flavor = Label.new()
 	_tip_flavor.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tip_flavor.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_tip_flavor.add_theme_font_size_override("font_size", 16)
-	_tip_flavor.add_theme_color_override("font_color", Color(1, 1, 1, 0.92))
-	_tip_flavor.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.90))
-	_tip_flavor.add_theme_constant_override("outline_size", 5)
+	_tip_flavor.theme_type_variation = &"ArcaneItalic"
+	_tip_flavor.add_theme_font_size_override("font_size", 18)
 	v.add_child(_tip_flavor)
 
-	var sep := HSeparator.new()
-	sep.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sep := ArcaneRuleScript.new() as Control
+	sep.custom_minimum_size = Vector2(0, 14)
 	v.add_child(sep)
 
 	_tip_numbers = Label.new()
 	_tip_numbers.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_tip_numbers.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_tip_numbers.add_theme_font_size_override("font_size", 14)
-	_tip_numbers.add_theme_color_override("font_color", Color(0.92, 0.92, 0.92, 0.95))
-	_tip_numbers.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.88))
-	_tip_numbers.add_theme_constant_override("outline_size", 4)
+	_tip_numbers.theme_type_variation = &"ArcaneBody"
+	_tip_numbers.add_theme_font_size_override("font_size", 16)
 	v.add_child(_tip_numbers)
 
 func _hide_tooltip() -> void:
