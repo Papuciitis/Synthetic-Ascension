@@ -25,7 +25,9 @@ func _draw() -> void:
 		return
 	var center: Vector2 = size * 0.5
 	var radius: float = maxf(3.0, minf(size.x, size.y) * 0.34)
-	draw_circle(center, radius + 2.0, Color(0.03, 0.03, 0.03, 0.88))
+	# A dark seat with a hair of gold, so the mark reads over bright art.
+	draw_circle(center, radius + 2.5, Color(0.025, 0.02, 0.016, 0.9))
+	draw_arc(center, radius + 2.5, 0.0, TAU, 20, Color(0.62, 0.47, 0.30, 0.55), 1.0, true)
 	match shape:
 		&"circuit":
 			draw_arc(center, radius, 0.35, TAU - 0.35, 18, accent, 1.7, true)

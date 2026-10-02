@@ -25,24 +25,39 @@ class_name ActiveAbilityHUD
 @onready var bar: ProgressBar = $Frame/Margin/RootHBox/RightVBox/BarWrap/CooldownBar
 @onready var time_label: Label = $Frame/Margin/RootHBox/RightVBox/BarWrap/TimeLabel
 @onready var state_label: Label = $Frame/Margin/RootHBox/RightVBox/StateLabel
+## The veil that withdraws clockwise over the icon as the ability recharges,
+## and the whole seconds left, large, on the icon itself.
+@onready var sweep: Control = get_node_or_null("Frame/Margin/RootHBox/IconFrame/Sweep") as Control
+@onready var icon_count: Label = get_node_or_null("Frame/Margin/RootHBox/IconFrame/IconCount") as Label
+
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
+const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
 
 ## How often the HUD asks an effect for its state, or scans the runners for one
 ## to bind. A bound effect pushes every change through active_cd_changed, so
 ## this poll is the safety net for state nothing announces (a resource meter, a
 ## failure message timing out) - not the thing driving the readout.
 const POLL_INTERVAL: float = 0.1
+## The ready flare: the plate's rule flashes gold and a soft rim spreads and
+## fades, once, when a cooldown completes. Reduced Motion keeps only the
+## colour change.
+const FLARE_TIME: float = 0.6
 
 var _effect: Node = null
 var _poll_accum: float = 0.0
 ## State polls since this HUD was built. The idle-cost pin reads it.
 var _polls: int = 0
-var _frame_style: StyleBoxFlat
-var _icon_style: StyleBoxFlat
-var _pill_style: StyleBoxFlat
-var _bar_bg: StyleBoxFlat
-var _bar_fill: StyleBoxFlat
 var _failure_text: String = ""
 var _failure_until_ms: int = 0
+## -1 never painted, 0 cooling, 1 ready: the plate's look is written only when
+## this changes, not on every cooldown tick an effect announces.
+var _shown_ready: int = -1
+var _shown_count: int = -1
+var _flare: Control = null
+var _flare_amount: float = 0.0
+var _flare_tween: Tween = null
+
+static var _styles: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -182,6 +197,7 @@ func _refresh_authoritative_state() -> void:
 	var cooldown_max: float = float(state.get("cooldown_max", 0.0))
 	var resource_value: float = float(state.get("resource_value", 0.0))
 	var resource_max: float = float(state.get("resource_max", 0.0))
+	_update_sweep(cooldown_left, cooldown_max)
 	if cooldown_left > 0.05 and cooldown_max > 0.0:
 		bar.max_value = cooldown_max
 		bar.value = clampf(cooldown_max - cooldown_left, 0.0, cooldown_max)
@@ -212,11 +228,13 @@ func _on_cd_changed(time_left: float, max_cd: float) -> void:
 		bar.max_value = 1.0
 		bar.value = 1.0
 		time_label.text = "READY"
+		_update_sweep(0.0, 0.0)
 		_set_ready_visual(true)
 		return
 
 	bar.max_value = max_cd
 	bar.value = clampf(max_cd - time_left, 0.0, max_cd)
+	_update_sweep(time_left, max_cd)
 
 	var is_ready: bool = time_left <= 0.05
 	_set_ready_visual(is_ready)
@@ -250,68 +268,150 @@ func _get_effect_icon(n: Node) -> Texture2D:
 	return v as Texture2D
 
 func _set_ready_visual(is_ready: bool) -> void:
+	var state := 1 if is_ready else 0
+	if state == _shown_ready:
+		return
+	var was_cooling := _shown_ready == 0
+	_shown_ready = state
+	frame.add_theme_stylebox_override("panel", _style(&"plate_ready" if is_ready else &"plate"))
+	key_pill.add_theme_stylebox_override("panel", _style(&"key_ready" if is_ready else &"key"))
+	bar.add_theme_stylebox_override("fill", _style(&"bar_ready" if is_ready else &"bar"))
+	key_label.add_theme_color_override("font_color", HudStyle.GOLD_BRIGHT if is_ready else HudStyle.MUTED)
+	time_label.add_theme_color_override("font_color", HudStyle.GOLD_BRIGHT if is_ready else HudStyle.PARCHMENT)
+	icon.modulate = Color(1, 1, 1, 1) if is_ready else Color(0.78, 0.74, 0.70, 1)
 	if is_ready:
-		_frame_style.border_color = Color(1.0, 0.55, 0.20)
-		_pill_style.bg_color = Color(1.0, 0.55, 0.20, 0.95)
-		_pill_style.border_color = Color(1.0, 0.55, 0.20)
-		_bar_fill.bg_color = Color(1.0, 0.55, 0.20, 0.95)
-		icon.modulate.a = 0.90
-	else:
-		_frame_style.border_color = Color(0.12, 0.12, 0.12)
-		_pill_style.bg_color = Color(0.20, 0.20, 0.20, 0.95)
-		_pill_style.border_color = Color(0.12, 0.12, 0.12)
-		_bar_fill.bg_color = Color(0.45, 0.45, 0.45, 0.95)
-		icon.modulate.a = 0.55
+		_update_sweep(0.0, 0.0)
+	if is_ready and was_cooling and visible:
+		_play_flare()
+
+
+## The icon's veil and its big count, from the same numbers the bar shows.
+func _update_sweep(cooldown_left: float, cooldown_max: float) -> void:
+	var remaining := 0.0
+	if cooldown_left > 0.05 and cooldown_max > 0.0:
+		remaining = clampf(cooldown_left / cooldown_max, 0.0, 1.0)
+	if sweep != null:
+		sweep.set("fraction", remaining)
+	if icon_count == null:
+		return
+	var count := ceili(cooldown_left) if remaining > 0.0 else 0
+	if count == _shown_count:
+		return
+	_shown_count = count
+	icon_count.visible = count > 0
+	if count > 0:
+		icon_count.text = str(count)
+
+
+func _play_flare() -> void:
+	if ArcaneMotion.reduced() or _flare == null:
+		return
+	if _flare_tween != null and _flare_tween.is_valid():
+		_flare_tween.kill()
+	_flare_amount = 1.0
+	_flare.visible = true
+	_flare.queue_redraw()
+	_flare_tween = create_tween().set_ignore_time_scale(true)
+	_flare_tween.tween_method(_set_flare, 1.0, 0.0, FLARE_TIME).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+
+
+func _set_flare(value: float) -> void:
+	_flare_amount = value
+	if _flare == null:
+		return
+	_flare.visible = value > 0.001
+	_flare.queue_redraw()
+
+
+func _draw_flare() -> void:
+	if _flare == null or _flare_amount <= 0.0:
+		return
+	var rect := Rect2(Vector2.ZERO, _flare.size)
+	var spread := (1.0 - _flare_amount) * 7.0
+	for i in range(4):
+		var grow := spread + float(i) * 2.0
+		_flare.draw_rect(rect.grow(grow), Color(HudStyle.GOLD_BRIGHT, 0.22 * _flare_amount * float(4 - i) / 4.0), false, 2.0)
+	_flare.draw_rect(Rect2(Vector2(0.5, 0.5), rect.size - Vector2.ONE), Color(HudStyle.GOLD_BRIGHT, _flare_amount), false, 1.0)
+	var top := Vector2(rect.size.x * 0.5, 0.5)
+	var r := 4.0 + 3.0 * _flare_amount
+	_flare.draw_colored_polygon(HudStyle.diamond(top, r), Color(HudStyle.GOLD_BRIGHT, _flare_amount))
+
+
+## Shared plates for every ability HUD, built once.
+static func _style(key: StringName) -> StyleBox:
+	if _styles.has(key):
+		return _styles[key]
+	var sb: StyleBox = null
+	match key:
+		&"plate", &"plate_ready":
+			var p := StyleBoxFlat.new()
+			p.bg_color = Color(HudStyle.PANEL, 0.9)
+			p.set_border_width_all(1)
+			p.set_corner_radius_all(1)
+			p.shadow_color = Color(0, 0, 0, 0.5)
+			p.shadow_size = 12
+			p.shadow_offset = Vector2(0, 5)
+			if key == &"plate_ready":
+				p.border_color = Color(HudStyle.GOLD, 0.95)
+				p.shadow_color = Color(1.0, 0.62, 0.3, 0.12)
+				p.shadow_size = 10
+				p.shadow_offset = Vector2.ZERO
+			else:
+				p.border_color = Color(0.52, 0.39, 0.24, 0.6)
+			sb = p
+		&"well":
+			var w := StyleBoxFlat.new()
+			w.bg_color = Color(0.012, 0.010, 0.009, 1.0)
+			w.set_border_width_all(1)
+			w.border_color = Color(0.62, 0.47, 0.30, 0.75)
+			w.set_corner_radius_all(1)
+			w.set_content_margin_all(2.0)
+			sb = w
+		&"key", &"key_ready":
+			var k := StyleBoxFlat.new()
+			k.set_border_width_all(1)
+			k.set_corner_radius_all(1)
+			k.content_margin_left = 6.0
+			k.content_margin_right = 6.0
+			k.content_margin_top = 1.0
+			k.content_margin_bottom = 1.0
+			if key == &"key_ready":
+				k.bg_color = Color(0.2, 0.13, 0.062, 0.95)
+				k.border_color = HudStyle.GOLD
+			else:
+				k.bg_color = Color(0.05, 0.04, 0.03, 0.9)
+				k.border_color = Color(HudStyle.GOLD_DIM, 0.6)
+			sb = k
+		&"bar_bg":
+			var b := StyleBoxFlat.new()
+			b.bg_color = Color(0.012, 0.010, 0.009, 0.9)
+			b.set_border_width_all(1)
+			b.border_color = Color(0.52, 0.39, 0.24, 0.5)
+			b.set_corner_radius_all(1)
+			sb = b
+		&"bar", &"bar_ready":
+			var f := StyleBoxFlat.new()
+			f.set_corner_radius_all(1)
+			f.border_width_top = 1
+			f.border_blend = true
+			if key == &"bar_ready":
+				f.bg_color = Color(0.5, 0.33, 0.15, 0.95)
+				f.border_color = Color(HudStyle.GOLD_BRIGHT, 0.7)
+			else:
+				f.bg_color = Color(0.46, 0.34, 0.2, 0.9)
+				f.border_color = Color(HudStyle.GOLD, 0.55)
+			sb = f
+	_styles[key] = sb
+	return sb
+
 
 func _build_styles() -> void:
-	_frame_style = StyleBoxFlat.new()
-	_frame_style.bg_color = Color(0.12, 0.12, 0.12, 0.92)
-	_frame_style.set_border_width_all(2)
-	_frame_style.border_color = Color(0.12, 0.12, 0.12)
-	_frame_style.corner_radius_top_left = 3
-	_frame_style.corner_radius_top_right = 3
-	_frame_style.corner_radius_bottom_left = 3
-	_frame_style.corner_radius_bottom_right = 3
-	_frame_style.shadow_size = 10
-	_frame_style.shadow_offset = Vector2(0, 6)
-	_frame_style.shadow_color = Color(0, 0, 0, 0.40)
-	frame.add_theme_stylebox_override("panel", _frame_style)
-
-	_icon_style = StyleBoxFlat.new()
-	_icon_style.bg_color = Color(0.08, 0.08, 0.08, 1.0)
-	_icon_style.set_border_width_all(1)
-	_icon_style.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_icon_style.corner_radius_top_left = 2
-	_icon_style.corner_radius_top_right = 2
-	_icon_style.corner_radius_bottom_left = 2
-	_icon_style.corner_radius_bottom_right = 2
-	icon_frame.add_theme_stylebox_override("panel", _icon_style)
-
-	_pill_style = StyleBoxFlat.new()
-	_pill_style.bg_color = Color(0.20, 0.20, 0.20, 0.95)
-	_pill_style.set_border_width_all(1)
-	_pill_style.border_color = Color(0.12, 0.12, 0.12)
-	_pill_style.corner_radius_top_left = 2
-	_pill_style.corner_radius_top_right = 2
-	_pill_style.corner_radius_bottom_left = 2
-	_pill_style.corner_radius_bottom_right = 2
-	key_pill.add_theme_stylebox_override("panel", _pill_style)
-
-	_bar_bg = StyleBoxFlat.new()
-	_bar_bg.bg_color = Color(0.06, 0.06, 0.06, 1.0)
-	_bar_bg.set_border_width_all(1)
-	_bar_bg.border_color = Color(0.10, 0.10, 0.10, 1.0)
-	_bar_bg.corner_radius_top_left = 2
-	_bar_bg.corner_radius_top_right = 2
-	_bar_bg.corner_radius_bottom_left = 2
-	_bar_bg.corner_radius_bottom_right = 2
-
-	_bar_fill = StyleBoxFlat.new()
-	_bar_fill.bg_color = Color(0.45, 0.45, 0.45, 0.95)
-	_bar_fill.corner_radius_top_left = 2
-	_bar_fill.corner_radius_top_right = 2
-	_bar_fill.corner_radius_bottom_left = 2
-	_bar_fill.corner_radius_bottom_right = 2
-
-	bar.add_theme_stylebox_override("background", _bar_bg)
-	bar.add_theme_stylebox_override("fill", _bar_fill)
+	icon_frame.add_theme_stylebox_override("panel", _style(&"well"))
+	bar.add_theme_stylebox_override("background", _style(&"bar_bg"))
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_flare = Control.new()
+	_flare.name = "ReadyFlare"
+	_flare.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_flare.visible = false
+	_flare.draw.connect(_draw_flare)
+	frame.add_child(_flare)

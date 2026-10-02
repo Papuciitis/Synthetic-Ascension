@@ -156,9 +156,12 @@ func _run() -> void:
 
 	_check(_overlay.theme != null, "the HUD overlay carries its readable body typography")
 	if _overlay.theme != null:
+		var face: Font = _overlay.theme.default_font
+		if face is FontVariation:
+			face = (face as FontVariation).base_font
 		_check(
-			"IBMPlexSansCondensed" in _overlay.theme.default_font.resource_path,
-			"IBM Plex Sans Condensed is the HUD body face"
+			face != null and "EBGaramond" in face.resource_path,
+			"EB Garamond is the HUD body face"
 		)
 	_check(
 		_objective_title.theme_type_variation == &"InstitutionalHeading",

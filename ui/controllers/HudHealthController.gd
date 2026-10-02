@@ -13,8 +13,8 @@ class_name HudHealthController
 @export var bar_path: NodePath
 ## Fill colour while sealed - the seal is a state of the bar, not a badge
 ## beside it.
-@export var sealed_fill_color: Color = Color(0.62, 0.30, 0.78, 1.0)
-@export var sealed_text_color: Color = Color(0.95, 0.82, 1.0, 1.0)
+@export var sealed_fill_color: Color = Color(0.46, 0.3, 0.68, 1.0)
+@export var sealed_text_color: Color = Color(0.93, 0.86, 1.0, 1.0)
 ## Alpha pulse of the countdown label: period in seconds and the trough.
 ## Held steady at full alpha under the accessibility reduced_motion setting.
 @export var pulse_period: float = 1.2
@@ -77,6 +77,7 @@ func _on_healing_lock_changed(seconds_left: float, _reason: StringName) -> void:
 		# A fresh seal. An extension arrives while already sealed and must
 		# not re-read the tinted fill as the plain one to hand back.
 		_apply_sealed_fill()
+		_set_value_aside(true)
 		_player = get_tree().get_first_node_in_group("player") if is_inside_tree() else null
 		_reduced_motion = _reduced_motion_enabled()
 		_pulse_t = 0.0
@@ -121,7 +122,20 @@ func _clear_seal() -> void:
 	if _label != null:
 		_label.visible = false
 		_label.modulate.a = 1.0
+	_set_value_aside(false)
 	_restore_fill()
+
+
+## While the countdown sits on the right of the bar, the HP figure steps to
+## the left so the two never overlap; it returns to the centre on the lift.
+func _set_value_aside(aside: bool) -> void:
+	if _bar == null:
+		return
+	var value := _bar.get_node_or_null("HPValue") as Label
+	if value == null:
+		return
+	value.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if aside else HORIZONTAL_ALIGNMENT_CENTER
+	value.offset_left = 8.0 if aside else 0.0
 
 
 func _build_label() -> void:
@@ -135,6 +149,7 @@ func _build_label() -> void:
 	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	# Same face as HPValue beside it; an outline so it reads over the fill.
+	_label.theme_type_variation = &"HudFigure"
 	_label.add_theme_font_size_override("font_size", 12)
 	_label.add_theme_color_override("font_color", sealed_text_color)
 	_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
@@ -154,6 +169,7 @@ func _apply_sealed_fill() -> void:
 	else:
 		sealed = StyleBoxFlat.new()
 	sealed.bg_color = sealed_fill_color
+	sealed.border_color = sealed_fill_color.lightened(0.3)
 	_bar.add_theme_stylebox_override("fill", sealed)
 	_bar.add_theme_stylebox_override("fg", sealed)
 

@@ -29,7 +29,7 @@ const FLASH_TIME: float = 0.9
 ## Spending or filling a noun. Taken as a max rather than restarted, so a rule
 ## that spends every attack reads as sustained brightness instead of a strobe.
 const PULSE_TIME: float = 0.35
-const FONT_SIZE: int = 11
+const FONT_SIZE: int = 12
 const DIM_ALPHA: float = 0.55
 
 const INTRO_CARD: StringName = &"intro"
@@ -111,6 +111,7 @@ func _build_entries() -> void:
 	for noun in ManifestationNouns.ORDER:
 		var label := Label.new()
 		label.name = "Noun_%s" % String(noun)
+		label.theme_type_variation = &"HudCaption"
 		label.add_theme_font_size_override("font_size", FONT_SIZE)
 		label.add_theme_color_override("font_color", ManifestationNouns.colour(noun))
 		label.visible = false

@@ -1,10 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://runsheethud"]
+[gd_scene format=3 uid="uid://runsheethud"]
 
 [ext_resource type="Script" uid="uid://5a1g346xexcc" path="res://ui/widgets/RunSheetHUD.gd" id="1_script"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/components/ArcaneRule.gd" id="3_rule"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="4_frame"]
 
 [node name="RunSheetHUD" type="PanelContainer"]
-custom_minimum_size = Vector2(380, 420)
+custom_minimum_size = Vector2(432, 460)
 theme = ExtResource("2_theme")
 theme_type_variation = &"LedgerPanel"
 script = ExtResource("1_script")
@@ -14,17 +16,17 @@ layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="BodyMargin" type="MarginContainer" parent="Archive"]
-custom_minimum_size = Vector2(278, 0)
+custom_minimum_size = Vector2(292, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 16
 
 [node name="Pages" type="Control" parent="Archive/BodyMargin"]
-custom_minimum_size = Vector2(256, 390)
+custom_minimum_size = Vector2(264, 428)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -44,97 +46,144 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 7
 
 [node name="Classification" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_type_variation = &"InstitutionalHeading"
+theme_override_font_sizes/font_size = 13
 text = "RUN SHEET // ACTIVE VESSEL"
+autowrap_mode = 3
 
-[node name="Rule" type="ColorRect" parent="Archive/BodyMargin/Pages/ProfileScroll/Content"]
-custom_minimum_size = Vector2(0, 1)
+[node name="Rule" type="Control" parent="Archive/BodyMargin/Pages/ProfileScroll/Content"]
+custom_minimum_size = Vector2(0, 9)
 layout_mode = 2
-color = Color(0.72, 0.42, 0.19, 0.55)
+mouse_filter = 2
+script = ExtResource("3_rule")
+ornament_at = 0.03
 
 [node name="StatsGrid" type="GridContainer" parent="Archive/BodyMargin/Pages/ProfileScroll/Content"]
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 5
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 3
 columns = 3
 
 [node name="HPK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "HP"
 [node name="HPV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0"
 [node name="HPD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="ARMK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "ARM"
 [node name="ARMV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0"
 [node name="ARMD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="SPDK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "SPD"
 [node name="SPDV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0"
 [node name="SPDD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="POWK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "PWR"
 [node name="POWV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0%"
 [node name="POWD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="HSTK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "HST"
 [node name="HSTV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0%"
 [node name="HSTD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="LCKK" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
+custom_minimum_size = Vector2(38, 0)
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 12
 text = "LCK"
 [node name="LCKV" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
+custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"BodyStrong"
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 3
 text = "0%"
 [node name="LCKD" type="Label" parent="Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid"]
 layout_mode = 2
-modulate = Color(1, 1, 1, 0.55)
+theme_type_variation = &"HudItalic"
+theme_override_font_sizes/font_size = 14
 horizontal_alignment = 2
 
 [node name="SetsScroll" type="ScrollContainer" parent="Archive/BodyMargin/Pages"]
@@ -182,14 +231,25 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 7
 
+[node name="Divider" type="ColorRect" parent="Archive"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.62, 0.47, 0.3, 0.3)
+
 [node name="Index" type="VBoxContainer" parent="Archive"]
-custom_minimum_size = Vector2(102, 0)
+custom_minimum_size = Vector2(118, 0)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 3
+theme_override_constants/separation = 2
+
+[node name="TopPad" type="Control" parent="Archive/Index"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
 
 [node name="Profile" type="Button" parent="Archive/Index"]
-custom_minimum_size = Vector2(102, 42)
+custom_minimum_size = Vector2(118, 40)
 layout_mode = 2
 focus_mode = 2
 theme_type_variation = &"SideIndexButton"
@@ -199,7 +259,7 @@ text = "◆  PROFILE"
 alignment = 0
 
 [node name="Sets" type="Button" parent="Archive/Index"]
-custom_minimum_size = Vector2(102, 42)
+custom_minimum_size = Vector2(118, 40)
 layout_mode = 2
 focus_mode = 2
 theme_type_variation = &"SideIndexButton"
@@ -208,7 +268,7 @@ text = "◇  SETS"
 alignment = 0
 
 [node name="Manifestations" type="Button" parent="Archive/Index"]
-custom_minimum_size = Vector2(102, 54)
+custom_minimum_size = Vector2(118, 40)
 layout_mode = 2
 focus_mode = 2
 theme_type_variation = &"SideIndexButton"
@@ -217,7 +277,7 @@ text = "◇  MANIFEST"
 alignment = 0
 
 [node name="Observations" type="Button" parent="Archive/Index"]
-custom_minimum_size = Vector2(102, 54)
+custom_minimum_size = Vector2(118, 40)
 layout_mode = 2
 focus_mode = 2
 theme_type_variation = &"SideIndexButton"
@@ -231,7 +291,26 @@ size_flags_vertical = 3
 
 [node name="ArchiveMark" type="Label" parent="Archive/Index"]
 layout_mode = 2
-modulate = Color(0.72, 0.42, 0.19, 0.56)
-theme_type_variation = &"SacredHeading"
+theme_type_variation = &"HudCaption"
+theme_override_colors/font_color = Color(0.62, 0.47, 0.3, 0.6)
+theme_override_font_sizes/font_size = 11
 text = "◇  03"
 horizontal_alignment = 1
+
+[node name="BottomPad" type="Control" parent="Archive/Index"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="EdgePad" type="Control" parent="Archive"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Ornament" type="Control" parent="."]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("4_frame")
+inset = 4.0
+colour = Color(0.62, 0.47, 0.3, 0.6)
+crown = false

@@ -23,6 +23,10 @@ func set_slot(slot: int, augment: Variant) -> void:
 		push_warning("AugmentsPanel: Slot node missing Icon or Name label: " + slot_node.name)
 		return
 
+	var empty_note := slot_node.get_node_or_null("Content/EmptyNote") as Control
+	if empty_note != null:
+		empty_note.visible = augment == null
+
 	# Empty
 	if augment == null:
 		icon_rect.texture = null

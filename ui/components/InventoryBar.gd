@@ -25,16 +25,14 @@ func set_hidden_slots(m: Dictionary) -> void:
 	_hidden_slots = (m if m != null else {})
 	_refresh()
 
-# Hover frame styles (we apply them on the slot controls directly)
+# Hover frame styles (we apply them on the slot controls directly). Each slot
+# owns one StyleBoxFlat that is repainted in place when its state changes; a
+# screen that dresses the slots itself (the Exchange) replaces the override,
+# and these copies then simply go unseen.
 var _slot_style: Array[StyleBoxFlat] = []
 var _hovered: Array[bool] = []
 
-const BG := Color(0.08, 0.08, 0.08, 0.88)
-const BG_HOVER := Color(0.10, 0.10, 0.10, 0.92)
-
-const BORDER := Color(0.12, 0.12, 0.12, 1.0)
-const BORDER_HOVER_STRONG := Color(1.0, 0.55, 0.20, 1.0)   # orange
-const BORDER_HOVER_SOFT := Color(1.0, 0.55, 0.20, 0.55)
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
 
 func set_fly_vfx(vfx: UiFlyVfx) -> void:
 	_fly_vfx = vfx
@@ -164,59 +162,36 @@ func _collect_slots() -> void:
 		_hovered.resize(slot_count)
 
 func _make_slot_style() -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = BG
-	sb.border_color = BORDER
-	sb.set_border_width_all(2)
-	sb.corner_radius_top_left = 3
-	sb.corner_radius_top_right = 3
-	sb.corner_radius_bottom_left = 3
-	sb.corner_radius_bottom_right = 3
-	sb.shadow_size = 8
-	sb.shadow_offset = Vector2(0, 4)
-	sb.shadow_color = Color(0, 0, 0, 0.25)
-	return sb
+	return HudStyle.make_slot(HudStyle.Slot.EMPTY)
 
 func _apply_all_slot_styles() -> void:
 	for i in range(_slot_style.size()):
 		_apply_slot_style(i)
 
+## The Exchange's socket states: an empty well, a filled socket, gold under
+## the cursor, and the amber rule of a held (locked) item. Rarity is the slot
+## view's own mark, so the rule stays in the register's gold.
 func _apply_slot_style(i: int) -> void:
 	if i < 0 or i >= _slot_style.size():
 		return
 
-	var sb: StyleBoxFlat = _slot_style[i]
 	var is_hovered: bool = (i < _hovered.size() and _hovered[i])
 	var has_item: bool = false
-	var rarity: int = 0
+	var locked: bool = false
 
-	if _inv != null and i < slot_count:
+	if _inv != null and i < slot_count and not _hidden_slots.has(i):
 		var inst: ItemInstance = _inv.get_at(i) as ItemInstance
 		has_item = (inst != null and inst.data != null)
-		if inst != null:
-			rarity = int(inst.rarity)
+		locked = has_item and inst.locked
 
-	# Orange border only when hovering an item
-	if is_hovered and has_item:
-		sb.border_color = BORDER_HOVER_STRONG
+	var state: int = HudStyle.Slot.EMPTY
+	if has_item:
+		state = HudStyle.Slot.LOCKED if locked else HudStyle.Slot.FILLED
+		if is_hovered:
+			state = HudStyle.Slot.HOVER
 	elif is_hovered:
-		sb.border_color = BORDER_HOVER_SOFT
-	else:
-		if has_item and rarity != 0:
-			sb.border_color = BORDER.lerp(_rarity_border_tint(rarity), 0.35)
-		else:
-			sb.border_color = BORDER
-
-	sb.bg_color = (BG_HOVER if is_hovered else BG)
-
-func _rarity_border_tint(r: int) -> Color:
-	if r <= -2: return Color(0.45, 0.0, 0.0, 1)
-	if r == -1: return Color(0.75, 0.1, 0.1, 1)
-	if r == 0:  return BORDER
-	if r == 1:  return Color(0.2, 0.9, 0.2, 1)
-	if r == 2:  return Color(0.25, 0.45, 1.0, 1)
-	if r == 3:  return Color(0.7, 0.25, 0.95, 1)
-	return Color(1.0, 0.65, 0.15, 1)
+		state = HudStyle.Slot.HOVER_EMPTY
+	HudStyle.paint_slot(_slot_style[i], state)
 
 
 func _on_slot_mouse_entered(slot: int) -> void:
@@ -261,6 +236,10 @@ func _refresh() -> void:
 				s.set_meta("item_instance", inst)
 
 			s.set_item(inst)
+			s.set_empty_mark(not _hidden_slots.has(i))
+			# Godot's own tooltip would pop over the item tooltip's header, so
+			# only an empty slot names itself.
+			s.tooltip_text = "" if inst != null else "%s equipment slot" % Inventory.slot_label(i)
 
 		# IMPORTANT: style depends on inventory contents (rarity tint etc.)
 		_apply_slot_style(i)

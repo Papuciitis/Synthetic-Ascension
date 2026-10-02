@@ -17,7 +17,7 @@ const FONT_SIZE: int = 12
 ## measured from `preset`'s anchor. The three call sites differ only in that
 ## geometry: the inventory and bag slots hang it under the set emblem at the top
 ## right, the hub slot sits it in the bottom-left corner of the tile.
-static func attach(host: Control, preset: int, rect: Rect2, z: int = 25) -> ManifestBadge:
+static func attach(host: Control, preset: int, rect: Rect2, z: int = 25, font_size: int = FONT_SIZE) -> ManifestBadge:
 	if host == null:
 		return null
 	var existing := host.get_node_or_null("ManifestBadge")
@@ -30,7 +30,9 @@ static func attach(host: Control, preset: int, rect: Rect2, z: int = 25) -> Mani
 	var badge := ManifestBadge.new()
 	badge.name = "ManifestBadge"
 	badge.text = GLYPH
-	badge.add_theme_font_size_override("font_size", FONT_SIZE)
+	badge.add_theme_font_size_override("font_size", font_size)
+	badge.add_theme_color_override("font_outline_color", Color(0.02, 0.015, 0.01, 0.85))
+	badge.add_theme_constant_override("outline_size", 3)
 	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE

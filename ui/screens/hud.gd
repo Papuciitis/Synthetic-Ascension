@@ -22,6 +22,11 @@ extends Control
 @onready var hp_bar: ProgressBar = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar") as ProgressBar
 @onready var hp_value: Label = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPValue") as Label
 @onready var hp_percent: Label = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPPercent") as Label
+## The bar's well and damage trail (behind the fill) and its rule, ticks and
+## low warning (over it). See ui/widgets/hud/HudBarDecor.gd.
+@onready var hp_track: Control = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPTrack") as Control
+@onready var hp_frame: Control = get_node_or_null("TopLeft/Margin/VBox/TopRow/HPRow/HPBar/HPFrame") as Control
+@onready var portrait_rect: TextureRect = get_node_or_null("TopLeft/Margin/VBox/TopRow/ProfilePic/Portrait") as TextureRect
 
 # Followers
 @onready var followers_label: Label = get_node_or_null("TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow/FollowersValue") as Label
@@ -51,6 +56,19 @@ var _owns_pause: bool = false
 
 var _rs_tick: float = 0.0
 var _sb_top_left: StyleBoxFlat = null
+var _portrait_race: String = ""
+var _hp_painted: bool = false
+## The last current HP painted: the trail and flash mark a real loss only, not
+## a max-HP change that keeps current HP (an item equipped while hurt).
+var _last_hp: float = -1.0
+var _hp_low_shown: bool = false
+
+## The health bar's warning line (HudBarDecor.low_threshold on HPFrame).
+const LOW_HP_RATIO: float = 0.3
+const PERCENT_COLOUR := Color(0.86, 0.72, 0.52, 1)
+
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
+const PORTRAIT_DIR := "res://assets/textures/characters/portraits"
 
 # Augments fallback: slots in group "augment_slot"
 var _augment_slots: Array[Control] = []
@@ -127,26 +145,15 @@ func _force_fly_vfx_on_top() -> void:
 	fly_vfx.z_as_relative = false
 
 
+## The bar's look lives in HUD.tscn (an empty background, the crimson fill)
+## and in its two HudBarDecor children; this only mirrors the fill onto the
+## legacy "fg" name HudHealthController also writes.
 func _style_hp_bar() -> void:
 	if hp_bar == null:
 		return
-
-	var bg := StyleBoxFlat.new()
-	bg.bg_color = Color(0, 0, 0, 0.30)
-	bg.corner_radius_top_left = 2
-	bg.corner_radius_top_right = 2
-	bg.corner_radius_bottom_left = 2
-	bg.corner_radius_bottom_right = 2
-	hp_bar.add_theme_stylebox_override("background", bg)
-
-	var fill := StyleBoxFlat.new()
-	fill.bg_color = Color(1.0, 0.55, 0.20, 0.95)
-	fill.corner_radius_top_left = 2
-	fill.corner_radius_top_right = 2
-	fill.corner_radius_bottom_left = 2
-	fill.corner_radius_bottom_right = 2
-	hp_bar.add_theme_stylebox_override("fill", fill)
-	hp_bar.add_theme_stylebox_override("fg", fill)
+	var fill := hp_bar.get_theme_stylebox("fill")
+	if fill != null:
+		hp_bar.add_theme_stylebox_override("fg", fill)
 
 
 func _process(delta: float) -> void:
@@ -212,6 +219,7 @@ func bind_player(player: Node) -> void:
 	_bound_player = player
 	if player == null:
 		return
+	_apply_portrait()
 
 	if player.has_signal("hp_changed"):
 		if not player.hp_changed.is_connected(_on_hp_changed):
@@ -527,23 +535,34 @@ func _set_slot_augment(slot: Control, a: AugmentData) -> void:
 # Top-left styling
 # ----------------------------
 
+## The panel, its rule and its corner diamonds are authored in HUD.tscn (the
+## square gold-ruled register); nothing is rebuilt here.
 func _apply_top_left_style() -> void:
 	if top_left == null:
 		return
+	_sb_top_left = top_left.get_theme_stylebox("panel") as StyleBoxFlat
 
-	_sb_top_left = StyleBoxFlat.new()
-	_sb_top_left.bg_color = Color(0, 0, 0, 0.35)
-	_sb_top_left.border_color = Color(0.12, 0.12, 0.12, 1.0)
-	_sb_top_left.set_border_width_all(2)
-	_sb_top_left.corner_radius_top_left = 3
-	_sb_top_left.corner_radius_top_right = 3
-	_sb_top_left.corner_radius_bottom_left = 3
-	_sb_top_left.corner_radius_bottom_right = 3
-	_sb_top_left.shadow_size = 8
-	_sb_top_left.shadow_offset = Vector2(0, 6)
-	_sb_top_left.shadow_color = Color(0, 0, 0, 0.30)
 
-	top_left.add_theme_stylebox_override("panel", _sb_top_left)
+## The vessel's face in the corner well: the head of the race's portrait.
+func _apply_portrait() -> void:
+	if portrait_rect == null or Global == null:
+		return
+	var race := String(Global.selected_race_id)
+	if race == "" or race == _portrait_race:
+		return
+	var path := "%s/%s.png" % [PORTRAIT_DIR, race]
+	if not ResourceLoader.exists(path):
+		return
+	var tex := load(path) as Texture2D
+	if tex == null:
+		return
+	_portrait_race = race
+	var w := float(tex.get_width())
+	var side := w * 0.78
+	var crop := AtlasTexture.new()
+	crop.atlas = tex
+	crop.region = Rect2((w - side) * 0.5, float(tex.get_height()) * 0.025, side, side)
+	portrait_rect.texture = crop
 
 
 # ----------------------------
@@ -564,10 +583,24 @@ func _on_hp_changed(current: float, max_hp: float) -> void:
 			pct = int(round((current / max_hp) * 100.0))
 		hp_percent.text = "%d%%" % pct
 
+	var ratio := clampf(current / max_hp, 0.0, 1.0) if max_hp > 0.0 else 0.0
+	var hurt := _hp_painted and current < _last_hp - 0.001
+	for decor: Control in [hp_track, hp_frame]:
+		if decor != null and decor.has_method("set_ratio"):
+			decor.call("set_ratio", ratio, hurt)
+	_hp_painted = true
+	_last_hp = current
+	# Under the warning line the percentage turns to the danger red as well,
+	# written only when the line is crossed.
+	var low := ratio > 0.0 and ratio <= LOW_HP_RATIO
+	if hp_percent != null and low != _hp_low_shown:
+		_hp_low_shown = low
+		hp_percent.add_theme_color_override("font_color", HudStyle.DANGER.lightened(0.2) if low else PERCENT_COLOUR)
+
 
 func set_followers(value: int) -> void:
 	if followers_label != null:
-		followers_label.text = str(value)
+		followers_label.text = HudStyle.grouped(value)
 	if followers_pill != null and Global != null:
 		followers_pill.tooltip_text = "People committed to preserving the Pattern.\nNext reconstruction cost: %d Followers" % Global.compute_respawn_cost()
 

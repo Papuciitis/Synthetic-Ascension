@@ -43,7 +43,7 @@ func _ready() -> void:
 
 	# Force UI-friendly filtering and prevent atlas-looking pixel blocks.
 	if icon_rect != null:
-		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		# Ensure we scale DOWN to fit the frame (do not request the texture's native size).
 		# This is the key fix for "only a quarter of the image shows".
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
@@ -162,7 +162,7 @@ func _gui_input(event: InputEvent) -> void:
 			tex_rect.custom_minimum_size = Vector2(48, 48)
 			tex_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			tex_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			tex_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+			tex_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 			pv = tex_rect
 
 		force_drag(payload, pv)
@@ -185,7 +185,7 @@ func _get_drag_data(_pos: Vector2) -> Variant:
 		pv.custom_minimum_size = Vector2(48, 48)
 		pv.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		pv.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		pv.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		pv.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 		set_drag_preview(pv)
 
 	return payload

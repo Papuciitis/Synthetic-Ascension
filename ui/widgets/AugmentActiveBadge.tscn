@@ -3,22 +3,19 @@
 [ext_resource type="Script" path="res://ui/widgets/AugmentActiveBadge.gd" id="1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleFrame"]
-bg_color = Color(0, 0, 0, 0.33)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1.0)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.25)
-shadow_size = 6
-shadow_offset = Vector2(0, 4)
+bg_color = Color(0.03, 0.026, 0.022, 0.92)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.36, 0.28, 0.18, 1)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [node name="AugmentActiveBadge" type="Control"]
-custom_minimum_size = Vector2(30, 30)
+custom_minimum_size = Vector2(26, 26)
 mouse_filter = 2
 script = ExtResource("1")
 
@@ -48,7 +45,8 @@ tint_progress = Color(0, 0, 0, 0.82)
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudFigure"
+theme_override_font_sizes/font_size = 13
 text = "1"
 horizontal_alignment = 1
 vertical_alignment = 1

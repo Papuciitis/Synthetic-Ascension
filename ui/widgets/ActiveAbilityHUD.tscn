@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bbgx4pought3d"]
 
 [ext_resource type="Script" uid="uid://dha5tw0ylfg0" path="res://ui/widgets/ActiveAbilityHUD.gd" id="1_m88gr"]
+[ext_resource type="Script" path="res://ui/widgets/hud/HudCooldownSweep.gd" id="2_sweep"]
 
 [node name="ActiveAbilityHUD" type="Control" unique_id=14545574]
 custom_minimum_size = Vector2(220, 82)
@@ -20,10 +21,10 @@ mouse_filter = 2
 [node name="Margin" type="MarginContainer" parent="Frame" unique_id=1002]
 layout_mode = 2
 mouse_filter = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 8
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 7
 theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_bottom = 7
 
 [node name="RootHBox" type="HBoxContainer" parent="Frame/Margin" unique_id=1003]
 layout_mode = 2
@@ -31,22 +32,38 @@ mouse_filter = 2
 theme_override_constants/separation = 10
 
 [node name="IconFrame" type="PanelContainer" parent="Frame/Margin/RootHBox" unique_id=1004]
-custom_minimum_size = Vector2(44, 44)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
 
 [node name="Icon" type="TextureRect" parent="Frame/Margin/RootHBox/IconFrame" unique_id=1005]
-modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
 mouse_filter = 2
 expand_mode = 1
-stretch_mode = 5
+stretch_mode = 6
+
+[node name="Sweep" type="Control" parent="Frame/Margin/RootHBox/IconFrame"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("2_sweep")
+
+[node name="IconCount" type="Label" parent="Frame/Margin/RootHBox/IconFrame"]
+visible = false
+layout_mode = 2
+theme_type_variation = &"HudFigure"
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 22
+text = "5"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="RightVBox" type="VBoxContainer" parent="Frame/Margin/RootHBox" unique_id=1006]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
 mouse_filter = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 5
 
 [node name="TopRow" type="HBoxContainer" parent="Frame/Margin/RootHBox/RightVBox" unique_id=1007]
 layout_mode = 2
@@ -56,15 +73,23 @@ theme_override_constants/separation = 8
 [node name="AbilityLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox/TopRow" unique_id=1008]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_type_variation = &"HudCaption"
+theme_override_colors/font_color = Color(0.93, 0.87, 0.77, 1)
+theme_override_font_sizes/font_size = 13
 text = "Set Ability"
+text_overrun_behavior = 3
 
 [node name="KeyPill" type="PanelContainer" parent="Frame/Margin/RootHBox/RightVBox/TopRow" unique_id=1009]
-custom_minimum_size = Vector2(28, 20)
+custom_minimum_size = Vector2(24, 22)
 layout_mode = 2
+size_flags_vertical = 4
 mouse_filter = 2
+theme_type_variation = &"HudKeycap"
 
 [node name="KeyLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox/TopRow/KeyPill" unique_id=208100194]
 layout_mode = 2
+theme_type_variation = &"HudFigure"
+theme_override_font_sizes/font_size = 13
 text = "R"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -90,12 +115,16 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_type_variation = &"HudFigure"
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="StateLabel" type="Label" parent="Frame/Margin/RootHBox/RightVBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 11
 text = "SET STATE"
 horizontal_alignment = 1
 text_overrun_behavior = 3

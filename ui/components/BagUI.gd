@@ -4,8 +4,10 @@ class_name BagUI
 signal layout_changed
 signal open_changed(is_open: bool)
 
-const SIZE_CLOSED: Vector2 = Vector2(210, 78)
-const SIZE_OPEN: Vector2 = Vector2(210, 260)
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
+
+const SIZE_CLOSED: Vector2 = Vector2(218, 88)
+const SIZE_OPEN: Vector2 = Vector2(218, 302)
 
 @export var slot_scene: PackedScene
 @export var merge_ghost_time: float = 0.20
@@ -30,17 +32,11 @@ var _grid_slots: Array[BagSlot] = []
 var _ghost_stacks: Dictionary = {} # int -> ItemInstance
 var _ghost_ids: Dictionary = {}    # int -> int (instance_id)
 
-# styles for slots (must be stored; we reuse them)
-var _slot_sb_quick: StyleBoxFlat = null
-var _slot_sb_grid: StyleBoxFlat = null
-
-
 func _ready() -> void:
 	_router = get_node_or_null("/root/InvRouter") as InventoryRouter
 	if inv_bar_path != NodePath():
 		_inv_bar = get_node_or_null(inv_bar_path) as InventoryBar
 		
-	_build_slot_styles()
 	_build_slots()
 	_apply_size()
 	_refresh()
@@ -144,30 +140,23 @@ func _get_core_inventory() -> Inventory:
 # build + styles
 # ----------------------------
 
-func _build_slot_styles() -> void:
-	_slot_sb_quick = StyleBoxFlat.new()
-	_slot_sb_quick.bg_color = Color(0, 0, 0, 0.25)
-	_slot_sb_quick.border_color = Color(0.14, 0.14, 0.14, 1.0)
-	_slot_sb_quick.set_border_width_all(2)
-	_slot_sb_quick.corner_radius_top_left = 2
-	_slot_sb_quick.corner_radius_top_right = 2
-	_slot_sb_quick.corner_radius_bottom_left = 2
-	_slot_sb_quick.corner_radius_bottom_right = 2
-
-	_slot_sb_grid = StyleBoxFlat.new()
-	_slot_sb_grid.bg_color = Color(0, 0, 0, 0.20)
-	_slot_sb_grid.border_color = Color(0.14, 0.14, 0.14, 1.0)
-	_slot_sb_grid.set_border_width_all(2)
-	_slot_sb_grid.corner_radius_top_left = 2
-	_slot_sb_grid.corner_radius_top_right = 2
-	_slot_sb_grid.corner_radius_bottom_left = 2
-	_slot_sb_grid.corner_radius_bottom_right = 2
-
-
-func _style_slot(s: BagSlot, is_quick: bool) -> void:
+## Each BagSlot dresses itself as an Exchange socket (empty well, filled
+## socket, gold under the cursor, amber when held); the bag adds nothing.
+func _style_slot(s: BagSlot, _is_quick: bool) -> void:
 	if s == null:
 		return
-	s.add_theme_stylebox_override("panel", (_slot_sb_quick if is_quick else _slot_sb_grid))
+	s.custom_minimum_size = Vector2(44, 44)
+	if not s.draw.is_connected(_draw_empty_socket.bind(s)):
+		s.draw.connect(_draw_empty_socket.bind(s))
+
+
+## An empty socket of the in-run bag carries a small engraved diamond.
+func _draw_empty_socket(s: BagSlot) -> void:
+	if s == null or s.has_meta("item_instance"):
+		return
+	var pts := HudStyle.diamond(s.size * 0.5, 4.0)
+	pts.append(pts[0])
+	s.draw_polyline(pts, Color(HudStyle.GOLD_DIM, 0.36), 1.0, true)
 
 
 func _build_slots(grid_slot_count: int = BagInventory.SLOT_COUNT) -> void:
@@ -271,7 +260,7 @@ func _apply_size() -> void:
 	if full_panel.visible:
 		var row_count: int = ceili(float(maxi(1, _grid_slots.size())) / 4.0)
 		var extra_rows: int = maxi(0, row_count - 4)
-		target = SIZE_OPEN + Vector2(0.0, float(extra_rows * 48))
+		target = SIZE_OPEN + Vector2(0.0, float(extra_rows * 50))
 	custom_minimum_size = target
 	size = target
 	layout_changed.emit()
@@ -433,7 +422,7 @@ func _refresh() -> void:
 		_apply_size()
 
 	if _bag == null:
-		count_label.text = "(0/%d)" % desired_slots
+		count_label.text = "0 / %d" % desired_slots
 		# wipe UI
 		for i in range(_quick_slots.size()):
 			var ui: BagSlot = _quick_slots[i]
@@ -450,7 +439,7 @@ func _refresh() -> void:
 	for s in _bag.slots:
 		if s != null and s.data != null:
 			used += 1
-	count_label.text = "(%d/%d)" % [used, desired_slots]
+	count_label.text = "%d / %d" % [used, desired_slots]
 
 	# quick: 4 best stacks
 	var quick: Array[ItemInstance] = _bag.get_best(4)
@@ -461,6 +450,7 @@ func _refresh() -> void:
 			st = quick[i]
 		if ui != null:
 			ui.set_stack(st, -1, false)
+			ui.queue_redraw()
 
 	# grid: exact slots (with ghost)
 	var can_discard: bool = full_panel.visible
@@ -476,3 +466,4 @@ func _refresh() -> void:
 		if ui2 != null:
 			var is_ghost: bool = _ghost_stacks.has(j)
 			ui2.set_stack(st2, j, can_discard, is_ghost)
+			ui2.queue_redraw()

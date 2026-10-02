@@ -19,9 +19,9 @@ var _pol_tint: ColorRect = null
 var _meter_bg: ColorRect = null
 var _meter_fill: ColorRect = null
 
-var _rarity_tri_bg: Polygon2D = null
-var _rarity_tri: Polygon2D = null
+var _rarity_edge: ColorRect = null
 var _rarity_lbl: Label = null
+var _empty_mark: Control = null
 var _set_emblem: SetEmblem = null
 var _lock_badge: Label = null
 var _lock_border: Panel = null
@@ -29,25 +29,33 @@ var _manifest_badge: ManifestBadge = null
 
 var _shown_rarity: int = 0
 
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
+
 const ICON_PAD := 4
-const BORDER_W := 2
-const BOTTOM_H := 18
+const BORDER_W := 1
+const BOTTOM_H := 15
 
-# Keep these subtle so the slot doesn't get “muddy”
-const POS_TINT := Color(0.25, 1.0, 1.0, 0.12)
-const NEG_TINT := Color(1.0, 0.35, 0.55, 0.14)
+# A curse is shaded faintly toward the danger red; a blessing is left clean,
+# so the HD art reads without a coloured film over it.
+const POS_TINT := Color(0.0, 0.0, 0.0, 0.0)
+const NEG_TINT := Color(0.86, 0.32, 0.24, 0.13)
 
-const METER_BG := Color(0, 0, 0, 0.22)
-const ORANGE := Color(1.0, 0.55, 0.20, 0.90)
-const METER_POS := Color(0.25, 1.0, 1.0, 0.92)
-const METER_NEG := Color(1.0, 0.35, 0.55, 0.92)
+const METER_BG := Color(0, 0, 0, 0.35)
+const ORANGE := Color(0.86, 0.64, 0.36, 0.95)
+const METER_POS := Color(0.99, 0.84, 0.58, 0.98)
+const METER_NEG := Color(0.95, 0.4, 0.3, 0.95)
 
 # The value label while the Inversion Lens is returning this slot's severity
-# as a bonus: the POS colour, because the number is one.
-const VALUE_RETURNED := Color(0.25, 1.0, 1.0, 1.0)
+# as a bonus: the arcane accent, because the number is the Lens's magic.
+const VALUE_RETURNED := Color(0.6, 0.78, 1.0, 1.0)
+const HINT_TINT := Color(0.72, 0.58, 0.40, 0.85)
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	# The art is cut larger than the well (128-256 px) and drawn down to it:
+	# mipmapped filtering keeps the downscale clean.
+	if icon != null:
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 
 	_ensure_optional_ui()
 	_ensure_lock_badge()
@@ -79,20 +87,27 @@ func _force_mouse_passthrough_recursive(n: Node) -> void:
 		_force_mouse_passthrough_recursive(c)
 
 func _apply_text_style() -> void:
-	# Smaller + calmer. (These get drawn over icons; big fonts feel “cluttered”.)
-	if value_label != null:
-		value_label.add_theme_font_size_override("font_size", 11)
-		value_label.modulate = Color(1, 1, 1, 0.86)
-	if count_label != null:
-		count_label.add_theme_font_size_override("font_size", 11)
-		count_label.modulate = Color(1, 1, 1, 0.86)
+	# Small lining figures with a dark rim: they sit over the art.
+	for lbl: Label in [value_label, count_label]:
+		if lbl == null:
+			continue
+		lbl.theme_type_variation = &"HudFigure"
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.add_theme_constant_override("outline_size", 3)
+	if bottom_bg != null:
+		bottom_bg.color = Color(0.02, 0.016, 0.012, 0.66)
+		bottom_bg.offset_top = -float(BOTTOM_H + BORDER_W)
+		bottom_bg.offset_bottom = -float(BORDER_W)
+	if bottom_row != null:
+		bottom_row.offset_top = -float(BOTTOM_H + BORDER_W)
+		bottom_row.offset_bottom = -float(BORDER_W)
 
 func _apply_insets() -> void:
 	var left := BORDER_W + ICON_PAD
 	var top := BORDER_W + ICON_PAD
 	var right := -(BORDER_W + ICON_PAD)
 
-	# Icon stays BIG (goes under bottom strip)
+	# The art keeps the whole well; the figure strip sits translucent over its foot.
 	if icon != null:
 		icon.offset_left = left
 		icon.offset_top = top
@@ -100,27 +115,27 @@ func _apply_insets() -> void:
 		icon.offset_bottom = -(BORDER_W + ICON_PAD)
 
 	# Overlays/tints should NOT affect the bottom strip
-	var overlay_bottom := -(BOTTOM_H + BORDER_W + ICON_PAD)
+	var overlay_bottom := -(BOTTOM_H + BORDER_W)
 
 	if overlay != null:
-		overlay.offset_left = left
-		overlay.offset_top = top
-		overlay.offset_right = right
+		overlay.offset_left = BORDER_W
+		overlay.offset_top = BORDER_W
+		overlay.offset_right = -BORDER_W
 		overlay.offset_bottom = overlay_bottom
 
 	if _pol_tint != null:
-		_pol_tint.offset_left = left
-		_pol_tint.offset_top = top
-		_pol_tint.offset_right = right
+		_pol_tint.offset_left = BORDER_W
+		_pol_tint.offset_top = BORDER_W
+		_pol_tint.offset_right = -BORDER_W
 		_pol_tint.offset_bottom = overlay_bottom
 
 	# Bottom strip insets (keeps it inside the frame)
 	if bottom_bg != null:
-		bottom_bg.offset_left = 2
-		bottom_bg.offset_right = -2
+		bottom_bg.offset_left = BORDER_W
+		bottom_bg.offset_right = -BORDER_W
 	if bottom_row != null:
-		bottom_row.offset_left = 2
-		bottom_row.offset_right = -2
+		bottom_row.offset_left = 4
+		bottom_row.offset_right = -4
 
 func _ensure_optional_ui() -> void:
 	if content == null:
@@ -154,8 +169,8 @@ func _ensure_optional_ui() -> void:
 	_meter_bg.set_anchors_preset(Control.PRESET_TOP_WIDE, true)
 	_meter_bg.offset_left = 3
 	_meter_bg.offset_right = -3
-	_meter_bg.offset_top = 2
-	_meter_bg.offset_bottom = 6
+	_meter_bg.offset_top = 0
+	_meter_bg.offset_bottom = 2
 	_meter_bg.visible = false
 
 	_meter_fill = _meter_bg.get_node_or_null("UpgradeFill") as ColorRect
@@ -172,34 +187,42 @@ func _ensure_optional_ui() -> void:
 	_meter_fill.z_index = 11
 	_meter_fill.anchor_right = 0.0
 
-	# Corner rarity marker (soft “wedge”, inset so it respects rounded corners)
-	_rarity_tri_bg = content.get_node_or_null("RarityTriBG") as Polygon2D
-	if _rarity_tri_bg == null:
-		_rarity_tri_bg = Polygon2D.new()
-		_rarity_tri_bg.name = "RarityTriBG"
-		_rarity_tri_bg.z_index = 20
-		content.add_child(_rarity_tri_bg)
-	_rarity_tri_bg.position = Vector2.ZERO
+	# Rarity: a thin edge in the rarity's colour along the foot of the well
+	# (the Gear & Stash mark) and the small "r2" figure in the top corner.
+	_rarity_edge = content.get_node_or_null("RarityEdge") as ColorRect
+	if _rarity_edge == null:
+		_rarity_edge = ColorRect.new()
+		_rarity_edge.name = "RarityEdge"
+		_rarity_edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(_rarity_edge)
+	_rarity_edge.z_index = 12
+	_rarity_edge.anchor_left = 0.0
+	_rarity_edge.anchor_top = 1.0
+	_rarity_edge.anchor_right = 1.0
+	_rarity_edge.anchor_bottom = 1.0
+	_rarity_edge.offset_left = BORDER_W
+	_rarity_edge.offset_right = -BORDER_W
+	_rarity_edge.offset_top = -(BORDER_W + 2)
+	_rarity_edge.offset_bottom = -BORDER_W
+	_rarity_edge.visible = false
 
-	_rarity_tri = content.get_node_or_null("RarityTri") as Polygon2D
-	if _rarity_tri == null:
-		_rarity_tri = Polygon2D.new()
-		_rarity_tri.name = "RarityTri"
-		_rarity_tri.z_index = 21
-		content.add_child(_rarity_tri)
-	_rarity_tri.position = Vector2.ZERO
-
-	_try_set_node_bool_property(_rarity_tri_bg, &"antialiased", true)
-	_try_set_node_bool_property(_rarity_tri, &"antialiased", true)
-
+	_empty_mark = content.get_node_or_null("EmptyMark") as Control
+	if _empty_mark == null:
+		_empty_mark = Control.new()
+		_empty_mark.name = "EmptyMark"
+		_empty_mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_empty_mark.set_anchors_preset(Control.PRESET_FULL_RECT, true)
+		_empty_mark.draw.connect(_draw_empty_mark)
+		content.add_child(_empty_mark)
 
 	_rarity_lbl = content.get_node_or_null("RarityCornerLbl") as Label
 	if _rarity_lbl == null:
 		_rarity_lbl = Label.new()
 		_rarity_lbl.name = "RarityCornerLbl"
 		_rarity_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_rarity_lbl.theme_type_variation = &"HudFigure"
 		_rarity_lbl.add_theme_font_size_override("font_size", 9)
-		_rarity_lbl.modulate = Color(1, 1, 1, 0.92)
+		_rarity_lbl.add_theme_constant_override("outline_size", 3)
 		content.add_child(_rarity_lbl)
 
 	_rarity_lbl.z_index = 22
@@ -224,51 +247,41 @@ func _ensure_optional_ui() -> void:
 
 func _hide_rarity_corner() -> void:
 	_shown_rarity = 0
-	if _rarity_tri_bg != null:
-		_rarity_tri_bg.visible = false
-	if _rarity_tri != null:
-		_rarity_tri.visible = false
+	if _rarity_edge != null:
+		_rarity_edge.visible = false
 	if _rarity_lbl != null:
 		_rarity_lbl.visible = false
 		_rarity_lbl.text = ""
 
 func _show_rarity_corner(r: int) -> void:
 	_shown_rarity = r
-
-	# Inset so it doesn't fight the rounded corner
-	var inset: float = 7.0
-	var radius: float = 18.0
-	var segments: int = 14  # more = smoother curve
-
-	var cx: float = float(BORDER_W) + inset
-	var cy: float = float(BORDER_W) + inset
-	var center: Vector2 = Vector2(cx, cy)
-
-	# Background wedge (slightly larger) for depth/contrast
-	var bg_pts: PackedVector2Array = _make_corner_wedge_points(center, radius + 2.0, segments)
-	var fg_pts: PackedVector2Array = _make_corner_wedge_points(center, radius, segments)
-
-	var fg: Color = _rarity_corner_color(r)
-
-	# BG wedge: tinted darker version (NOT pure black)
-	var bg: Color = fg.lerp(Color(0, 0, 0, 1), 0.65)
-	bg.a = 0.22
-
-	if _rarity_tri_bg != null:
-		_rarity_tri_bg.polygon = bg_pts
-		_rarity_tri_bg.color = bg
-		_rarity_tri_bg.visible = true
-
-	if _rarity_tri != null:
-		_rarity_tri.polygon = fg_pts
-		_rarity_tri.color = fg
-		_rarity_tri.visible = true
-
+	var colour := HudStyle.rarity_colour(r)
+	if _rarity_edge != null:
+		_rarity_edge.color = Color(colour, 0.9)
+		_rarity_edge.visible = true
 	if _rarity_lbl != null:
 		_rarity_lbl.visible = true
 		_rarity_lbl.text = "r%d" % r
-		_rarity_lbl.position = center + Vector2(4.0, 2.0)
-		_rarity_lbl.modulate = Color(1, 1, 1, 0.75) # softer label
+		_rarity_lbl.position = Vector2(BORDER_W + 3, BORDER_W + 1)
+		_rarity_lbl.add_theme_color_override("font_color", colour.lerp(HudStyle.PARCHMENT, 0.35))
+
+
+## Whether an EMPTY slot shows its engraved diamond. A screen that shows a
+## slot as empty while its item sits elsewhere (the Exchange's cart ghost)
+## turns it off so the mark does not cut through the ghost.
+func set_empty_mark(on: bool) -> void:
+	if _empty_mark != null:
+		_empty_mark.visible = on and not has_meta("item_instance")
+
+
+## An empty well carries a small engraved diamond, as the Exchange's do.
+func _draw_empty_mark() -> void:
+	if _empty_mark == null:
+		return
+	var c := Vector2(_empty_mark.size.x * 0.5, (_empty_mark.size.y - BOTTOM_H) * 0.5 + 1.0)
+	var pts := HudStyle.diamond(c, 4.0)
+	pts.append(pts[0])
+	_empty_mark.draw_polyline(pts, Color(HudStyle.GOLD_DIM, 0.4), 1.0, true)
 
 
 func _empty_hint() -> String:
@@ -285,6 +298,8 @@ func set_item(inst: ItemInstance) -> void:
 		if value_label != null:
 			value_label.text = _empty_hint()
 			value_label.remove_theme_color_override("font_color")
+			value_label.modulate = HINT_TINT
+		if _empty_mark != null: _empty_mark.visible = true
 		if count_label != null: count_label.text = ""
 		if _pol_tint != null: _pol_tint.color = Color(0, 0, 0, 0)
 		if _meter_bg != null: _meter_bg.visible = false
@@ -298,6 +313,10 @@ func set_item(inst: ItemInstance) -> void:
 		return
 
 	set_meta("item_instance", inst)
+	if _empty_mark != null:
+		_empty_mark.visible = false
+	if value_label != null:
+		value_label.modulate = Color.WHITE
 	# Manifestation is identity, so it needs to read at a glance from the bar -
 	# the tooltip explains the rule, this only says "this one is not ordinary",
 	# and its colour says which noun it speaks about.
@@ -365,20 +384,10 @@ func _suppressing_snapshot(inst: ItemInstance) -> BurdenSnapshot:
 	var burden: BurdenSnapshot = BurdenResolver.resolve(Global.run_inventory, Global.permanent_augment_ids)
 	return burden if burden.is_suppressed(slot_index) else null
 
-func _rarity_color(r: int) -> Color:
-	if r <= -2: return Color(0.45, 0.0, 0.0, 1)
-	if r == -1: return Color(0.75, 0.1, 0.1, 1)
-	if r == 0:  return Color(0.12, 0.12, 0.12, 1)
-	if r == 1:  return Color(0.2, 0.9, 0.2, 1)
-	if r == 2:  return Color(0.25, 0.45, 1.0, 1)
-	if r == 3:  return Color(0.7, 0.25, 0.95, 1)
-	return Color(1.0, 0.65, 0.15, 1)
-
 func _rarity_overlay_color(r: int) -> Color:
 	if r == 0:
 		return Color(0, 0, 0, 0)
-	var c := _rarity_color(r)
-	return Color(c.r, c.g, c.b, 0.06)
+	return Color(HudStyle.rarity_colour(r), 0.07)
 
 
 func _ensure_lock_badge() -> void:
@@ -391,8 +400,9 @@ func _ensure_lock_badge() -> void:
 		_lock_badge = Label.new()
 		_lock_badge.name = "LockBadge"
 		_lock_badge.text = "LOCK"
+		_lock_badge.theme_type_variation = &"HudFigure"
 		_lock_badge.add_theme_font_size_override("font_size", 9)
-		_lock_badge.add_theme_color_override("font_color", Color(1.0, 0.78, 0.30, 1.0))
+		_lock_badge.add_theme_color_override("font_color", HudStyle.GOLD_BRIGHT)
 		_lock_badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 		_lock_badge.position = Vector2(-34, 3)
 		_lock_badge.size = Vector2(31, 14)
@@ -406,8 +416,9 @@ func _ensure_manifest_badge() -> void:
 		content = get_node_or_null("Content") as Control
 	if content == null:
 		return
-	# Directly under the set emblem, so the two never overlap.
-	_manifest_badge = ManifestBadge.attach(content, Control.PRESET_TOP_RIGHT, Rect2(-20, 22, 16, 14))
+	# Between the set emblem (y 5..21) and the figure strip (from y 34), a size
+	# smaller than the bag's, so its foot never sits on the count.
+	_manifest_badge = ManifestBadge.attach(content, Control.PRESET_TOP_RIGHT, Rect2(-19, 19, 14, 14), 25, 11)
 
 
 func _ensure_lock_border() -> void:
@@ -422,12 +433,9 @@ func _ensure_lock_border() -> void:
 		_lock_border.z_index = 30
 		var style := StyleBoxFlat.new()
 		style.bg_color = Color(0, 0, 0, 0)
-		style.border_color = Color(1.0, 0.72, 0.22, 0.95)
+		style.border_color = Color(HudStyle.GOLD_BRIGHT, 0.9)
 		style.set_border_width_all(2)
-		style.corner_radius_top_left = 2
-		style.corner_radius_top_right = 2
-		style.corner_radius_bottom_left = 2
-		style.corner_radius_bottom_right = 2
+		style.set_corner_radius_all(1)
 		_lock_border.add_theme_stylebox_override("panel", style)
 		add_child(_lock_border)
 	_lock_border.visible = false
@@ -467,34 +475,3 @@ func _try_set_node_bool_property(obj: Object, prop: StringName, value: bool) -> 
 		if StringName(dd.get("name", "")) == prop:
 			obj.set(prop, value)
 			return
-
-func _make_corner_wedge_points(center: Vector2, radius: float, segments: int) -> PackedVector2Array:
-	var pts: PackedVector2Array = PackedVector2Array()
-	pts.append(center) # fan center
-
-	var segs: int = maxi(4, segments)
-	for i in range(segs + 1):
-		var t: float = float(i) / float(segs)
-		var ang: float = t * (PI * 0.5) # 0..90 degrees
-		var p: Vector2 = center + Vector2(cos(ang), sin(ang)) * radius
-		pts.append(p)
-
-	return pts
-
-const CORNER_BASE := Color(0.12, 0.12, 0.12, 1.0) # matches your slot border vibe
-
-func _rarity_corner_color(r: int) -> Color:
-	var c: Color = _rarity_color(r)
-
-	# mute saturation + slightly reduce brightness
-	var h: float = c.h
-	var s: float = c.s * 0.55
-	var v: float = c.v * 0.85
-	var soft: Color = Color.from_hsv(h, s, v, 1.0)
-
-	# blend toward your dark UI base so it fits the theme
-	soft = soft.lerp(CORNER_BASE, 0.35)
-
-	# final alpha (subtle)
-	soft.a = 0.55
-	return soft

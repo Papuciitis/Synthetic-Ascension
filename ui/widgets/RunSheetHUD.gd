@@ -5,7 +5,8 @@ const BuildIdentityScript := preload("res://core/systems/run_sheet/BuildIdentity
 
 enum ArchivePage { PROFILE, SETS, MANIFESTATIONS, OBSERVATIONS }
 
-const PAGE_LABELS := ["PROFILE", "SETS", "MANIFESTATIONS", "OBSERVATIONS"]
+## The side index's captions. The pages' own headings carry the full names.
+const PAGE_LABELS := ["PROFILE", "SETS", "MANIFEST", "OBSERVE"]
 
 @onready var hpv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/HPV
 @onready var armv: Label = $Archive/BodyMargin/Pages/ProfileScroll/Content/StatsGrid/ARMV
@@ -63,7 +64,13 @@ const LEDGER_STATS: Array[Dictionary] = [
 	{"stat": &"luck", "key": "LCK", "pct": true},
 ]
 
-const ACCENT := Color(1.0, 0.55, 0.20, 1.0)
+## The register's gold: headings, the selected record, the doctrine.
+const ACCENT := Color(0.92, 0.72, 0.44, 1.0)
+const ArcaneRuleScript := preload("res://ui/components/ArcaneRule.gd")
+## Body text is EB Garamond, whose small x-height wants a few more pixels
+## than the condensed sans the sheet was laid out for; every body line goes
+## through _body_size() so the whole archive keeps one scale.
+const BODY_SIZE_STEP: int = 3
 ## The layer's own colour. Anything naming a specific noun or rule uses that
 ## noun's colour from ManifestationNouns instead.
 const MANIFEST := ManifestationNouns.LAYER
@@ -147,7 +154,7 @@ func _refresh_profile(player: Node, inv: Inventory) -> void:
 	hstv.text = _fmt_pct_fraction(hst_total) + _fmt_runtime_multiplier(hst_mul)
 	# The one Luck number no other surface carries: the Lucky Crit roll the
 	# next hit makes, which is 0 at or below zero Luck (two rules never fire).
-	lckv.text = _fmt_pct_fraction(lck_total) + "  ·  LUCKY CRIT %d%%" % int(round(LuckResolver.lucky_crit_chance(lck_total) * 100.0))
+	lckv.text = _fmt_pct_fraction(lck_total) + "  ·\u00a0LUCKY\u00a0CRIT\u00a0%d%%" % int(round(LuckResolver.lucky_crit_chance(lck_total) * 100.0))
 
 	# --- deltas (from items) ---
 	hpd.text = _fmt_int_delta(d.max_hp)      # show max hp delta
@@ -200,7 +207,8 @@ func _refresh_ledger() -> void:
 			continue
 		var pct: bool = bool(entry["pct"])
 		var key := _add_target_line(_ledger_box, String(entry["key"]), Color(1, 1, 1, 0.88), 12)
-		key.theme_type_variation = &"BodyStrong"
+		key.theme_type_variation = &"HudCaption"
+		key.add_theme_font_size_override("font_size", 12)
 		var grid := GridContainer.new()
 		grid.columns = 3
 		grid.add_theme_constant_override("h_separation", 8)
@@ -239,7 +247,7 @@ func _belief_row(rows: Array) -> Dictionary:
 func _add_ledger_cell(grid: GridContainer, text: String, colour: Color, stretch: bool) -> void:
 	var cell := Label.new()
 	cell.text = text
-	cell.add_theme_font_size_override("font_size", 12)
+	cell.add_theme_font_size_override("font_size", _body_size(12))
 	cell.modulate = colour
 	if stretch:
 		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -311,7 +319,7 @@ func _rebuild_sets_page(counts: Dictionary, keys: Array) -> void:
 		record.focus_mode = Control.FOCUS_ALL
 		record.flat = true
 		record.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		record.add_theme_font_size_override("font_size", 12)
+		record.add_theme_font_size_override("font_size", 13)
 		# Display name and real piece count from the set DB, not internal
 		# ids with a hardcoded /6.
 		var set_label := String(sid).to_upper()
@@ -352,7 +360,7 @@ func _append_set_dossier(data: SetData, equipped: int) -> void:
 		var state := "ACTIVE" if equipped >= tier.required_count else ("NEXT" if not next_found else "LATER")
 		if equipped < tier.required_count and not next_found:
 			next_found = true
-		var marker := "✓" if state == "ACTIVE" else ("→" if state == "NEXT" else "○")
+		var marker := "◆" if state == "ACTIVE" else ("→" if state == "NEXT" else "◇")
 		_add_set_body_line("%s %s // %d PIECES // %s" % [
 			marker, state, tier.required_count, tier.display_name,
 		], accent if state == "ACTIVE" else Color(1, 1, 1, 0.62), 12, &"BodyStrong")
@@ -382,12 +390,13 @@ func _add_set_body_line(
 ) -> Label:
 	var line := Label.new()
 	line.text = text
-	line.custom_minimum_size = Vector2(260, 0)
+	line.custom_minimum_size = Vector2(1, 0)
+	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	line.add_theme_font_size_override("font_size", font_size)
 	line.modulate = colour
 	if variation != &"":
 		line.theme_type_variation = variation
+	line.add_theme_font_size_override("font_size", font_size if variation == &"InstitutionalHeading" else _body_size(font_size))
 	sets_vbox.add_child(line)
 	return line
 
@@ -550,26 +559,42 @@ func _clear_children(container: Node) -> void:
 		child.queue_free()
 
 
+## A Cinzel heading in the section's colour over a fading rule with a small
+## diamond at its head, the archive's section mark. The heading wraps rather
+## than widening the fixed body.
 func _add_section_heading(container: VBoxContainer, text: String, colour: Color) -> void:
 	var heading := Label.new()
 	heading.text = text
 	heading.theme_type_variation = &"InstitutionalHeading"
-	heading.add_theme_font_size_override("font_size", 13)
-	heading.modulate = colour
+	heading.add_theme_font_size_override("font_size", 12)
+	heading.add_theme_color_override("font_color", colour)
+	heading.custom_minimum_size = Vector2(1, 0)
+	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	heading.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	container.add_child(heading)
-	var rule := ColorRect.new()
-	rule.custom_minimum_size = Vector2(0, 1)
-	rule.color = Color(colour.r, colour.g, colour.b, 0.42)
+	var rule := ArcaneRuleScript.new() as Control
+	rule.custom_minimum_size = Vector2(0, 9)
+	rule.set("colour", Color(colour.r, colour.g, colour.b, 0.55))
+	rule.set("ornament_at", 0.03)
 	container.add_child(rule)
 
 
+## One body line. It wraps inside the archive body: a readout that is wider
+## than the page must never widen the sheet itself.
 func _add_target_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
 	var line := Label.new()
 	line.text = text
-	line.add_theme_font_size_override("font_size", font_size)
+	line.add_theme_font_size_override("font_size", _body_size(font_size) if text != "" else font_size)
 	line.modulate = colour
+	line.custom_minimum_size = Vector2(1, 0)
+	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	container.add_child(line)
 	return line
+
+
+func _body_size(font_size: int) -> int:
+	return font_size + BODY_SIZE_STEP
 
 
 ## A sentence rather than a readout: wraps inside the fixed archive body.
@@ -577,13 +602,12 @@ func _add_target_line(container: VBoxContainer, text: String, colour: Color, fon
 ## to satisfy the child, which is exactly what wrapping is meant to avoid.
 func _add_wrapped_line(container: VBoxContainer, text: String, colour: Color, font_size: int) -> Label:
 	var line := _add_target_line(container, text, colour, maxi(12, font_size))
-	line.custom_minimum_size = Vector2(1, 0)
 	line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	return line
 
 
-const BURDEN := Color(0.85, 0.42, 0.95, 1.0)
+const BURDEN := Color(0.78, 0.56, 0.9, 1.0)
 
 ## The three NEG archetype augments the ledger explains, in the order their
 ## blocks appear below.
@@ -867,8 +891,9 @@ func _append_manifestations(player: Node) -> void:
 
 		var heading := Label.new()
 		heading.text = "%s  %s" % [slot_hint, entry_name]
-		heading.add_theme_font_size_override("font_size", 12)
-		heading.modulate = entry_colour
+		heading.theme_type_variation = &"BodyStrong"
+		heading.add_theme_font_size_override("font_size", _body_size(12))
+		heading.add_theme_color_override("font_color", entry_colour.lerp(Color.WHITE, 0.12))
 		heading.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(heading)
 
@@ -882,8 +907,8 @@ func _append_manifestations(player: Node) -> void:
 		rule.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		rule.custom_minimum_size = Vector2(1, 0)
 		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		rule.add_theme_font_size_override("font_size", 12)
-		rule.modulate = Color(1, 1, 1, 0.72)
+		rule.add_theme_font_size_override("font_size", _body_size(12))
+		rule.modulate = Color(1, 1, 1, 0.78)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(rule)
 
@@ -917,15 +942,15 @@ func _append_manifestation_pairs(runner: Node) -> void:
 		var heading := Label.new()
 		heading.text = pair_name
 		heading.theme_type_variation = &"SacredHeading"
-		heading.add_theme_font_size_override("font_size", 12)
-		heading.modulate = accent
+		heading.add_theme_font_size_override("font_size", 15)
+		heading.add_theme_color_override("font_color", accent.lerp(Color.WHITE, 0.15))
 		heading.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(heading)
 
 		var nouns_line := Label.new()
 		nouns_line.text = _noun_names(nouns)
-		nouns_line.add_theme_font_size_override("font_size", 12)
-		nouns_line.modulate = Color(1, 1, 1, 0.55)
+		nouns_line.theme_type_variation = &"HudItalic"
+		nouns_line.add_theme_font_size_override("font_size", _body_size(12))
 		nouns_line.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(nouns_line)
 
@@ -934,8 +959,8 @@ func _append_manifestation_pairs(runner: Node) -> void:
 		rule.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		rule.custom_minimum_size = Vector2(1, 0)
 		rule.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		rule.add_theme_font_size_override("font_size", 12)
-		rule.modulate = Color(1, 1, 1, 0.76)
+		rule.add_theme_font_size_override("font_size", _body_size(12))
+		rule.modulate = Color(1, 1, 1, 0.8)
 		rule.mouse_filter = Control.MOUSE_FILTER_PASS
 		box.add_child(rule)
 
@@ -975,9 +1000,9 @@ func _refresh_observations() -> void:
 
 			var name_label := Label.new()
 			name_label.text = "[ %s ]" % archetype_name
-			name_label.theme_type_variation = &"BodyStrong"
-			name_label.add_theme_font_size_override("font_size", 12)
-			name_label.add_theme_color_override("font_color", Color(0.86, 0.62, 0.36, 1))
+			name_label.theme_type_variation = &"HudCaption"
+			name_label.add_theme_font_size_override("font_size", 13)
+			name_label.add_theme_color_override("font_color", ACCENT)
 			name_label.mouse_filter = Control.MOUSE_FILTER_PASS
 			record.add_child(name_label)
 
@@ -988,8 +1013,8 @@ func _refresh_observations() -> void:
 			counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			counter.max_lines_visible = 2
 			counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-			counter.add_theme_font_size_override("font_size", 13)
-			counter.modulate = Color(1, 1, 1, 0.78)
+			counter.add_theme_font_size_override("font_size", _body_size(13))
+			counter.modulate = Color(1, 1, 1, 0.82)
 			counter.mouse_filter = Control.MOUSE_FILTER_PASS
 			record.add_child(counter)
 
@@ -1021,8 +1046,8 @@ func _append_elite_modifier_observations(ids: Array[StringName]) -> void:
 
 		var name_label := Label.new()
 		name_label.text = "[ %s ]" % label
-		name_label.theme_type_variation = &"BodyStrong"
-		name_label.add_theme_font_size_override("font_size", 12)
+		name_label.theme_type_variation = &"HudCaption"
+		name_label.add_theme_font_size_override("font_size", 13)
 		name_label.add_theme_color_override("font_color", colour)
 		name_label.mouse_filter = Control.MOUSE_FILTER_PASS
 		record.add_child(name_label)
@@ -1034,8 +1059,8 @@ func _append_elite_modifier_observations(ids: Array[StringName]) -> void:
 		counter.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		counter.max_lines_visible = 2
 		counter.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		counter.add_theme_font_size_override("font_size", 13)
-		counter.modulate = Color(1, 1, 1, 0.78)
+		counter.add_theme_font_size_override("font_size", _body_size(13))
+		counter.modulate = Color(1, 1, 1, 0.82)
 		counter.mouse_filter = Control.MOUSE_FILTER_PASS
 		record.add_child(counter)
 
@@ -1130,8 +1155,9 @@ func _add_noun_row(parts: Array[Dictionary], font_size: int) -> void:
 	for part in parts:
 		var label := Label.new()
 		label.text = String(part.get("text", ""))
+		label.theme_type_variation = &"HudCaption"
 		label.add_theme_font_size_override("font_size", maxi(12, font_size))
-		label.modulate = ManifestationNouns.colour(StringName(part.get("noun", &"")))
+		label.add_theme_color_override("font_color", ManifestationNouns.colour(StringName(part.get("noun", &""))))
 		row.add_child(label)
 
 

@@ -6,8 +6,11 @@ signal clicked()
 signal equip_requested(slot_index: int)
 signal interaction_requested(slot_index: int, button: int, double_click: bool, shift: bool, ctrl: bool)
 
-const POS_TINT := Color(0.25, 1.0, 1.0, 0.18)
-const NEG_TINT := Color(1.0, 0.25, 0.35, 0.28)
+const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
+
+# A curse is shaded faintly toward the danger red; a blessing is left clean.
+const POS_TINT := Color(0.0, 0.0, 0.0, 0.0)
+const NEG_TINT := Color(0.86, 0.32, 0.24, 0.14)
 
 var slot_index: int = -1
 var allow_discard: bool = false
@@ -31,11 +34,16 @@ var _flash: ColorRect = null
 var _flash_tween: Tween = null
 var _lock_badge: Label = null
 var _manifest_badge: ManifestBadge = null
-const FLASH_COL := Color(1.0, 0.55, 0.20, 0.0) # your orange "accent"
+var _rarity_edge: ColorRect = null
+var _hovered: bool = false
+const FLASH_COL := Color(0.99, 0.84, 0.58, 0.0) # the register's bright gold
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_resolve_nodes()
+	# HD art drawn down into the well: mipmapped filtering keeps it clean.
+	if icon != null:
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	_apply_mouse_passthrough()
 	_ensure_polarity_ui()
 	_ensure_set_emblem()
@@ -69,28 +77,39 @@ func _apply_mouse_passthrough() -> void:
 	if _pol_badge != null: _pol_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	if _set_emblem != null: _set_emblem.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
+## The slot's own socket (the Exchange's look): one StyleBoxFlat per slot,
+## repainted in place when its state changes. A screen that dresses its slots
+## itself (the Exchange's ShopBagGrid) replaces the override; this copy then
+## goes unseen.
 func _apply_frame_style() -> void:
-	_frame_sb = StyleBoxFlat.new()
-	_frame_sb.bg_color = Color(0.08, 0.08, 0.08, 0.88)
-	_frame_sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
-	_frame_sb.set_border_width_all(2)
-	_frame_sb.corner_radius_top_left = 2
-	_frame_sb.corner_radius_top_right = 2
-	_frame_sb.corner_radius_bottom_left = 2
-	_frame_sb.corner_radius_bottom_right = 2
+	_frame_sb = HudStyle.make_slot(HudStyle.Slot.EMPTY)
 	add_theme_stylebox_override("panel", _frame_sb)
+	_apply_text_style()
+
+func _apply_text_style() -> void:
+	for lbl: Label in [meter_label, rarity_label, rolls_label]:
+		if lbl == null:
+			continue
+		lbl.theme_type_variation = &"HudFigure"
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.add_theme_constant_override("outline_size", 3)
+		lbl.modulate = Color.WHITE
 
 func _stack_is_locked() -> bool:
 	return _stack is ItemInstance and (_stack as ItemInstance).locked
 
 func _set_hover(on: bool) -> void:
+	_hovered = on
 	if _frame_sb == null:
 		return
-	if _stack_is_locked():
-		_frame_sb.border_color = Color(1.0, 0.72, 0.22, 0.95)
-		return
-	var strong: bool = on and _stack != null
-	_frame_sb.border_color = (Color(1.0, 0.55, 0.20, 1.0) if strong else Color(0.12, 0.12, 0.12, 1.0))
+	var state: int = HudStyle.Slot.EMPTY
+	if _stack != null:
+		state = HudStyle.Slot.LOCKED if _stack_is_locked() else HudStyle.Slot.FILLED
+		if on and not _stack_is_locked():
+			state = HudStyle.Slot.HOVER
+	elif on:
+		state = HudStyle.Slot.HOVER_EMPTY
+	HudStyle.paint_slot(_frame_sb, state)
 
 func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = false) -> void:
 	# IMPORTANT: if this script is used on some other node tree, don't crash
@@ -137,7 +156,8 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		if _set_emblem != null: _set_emblem.configure(&"")
 		if _lock_badge != null: _lock_badge.visible = false
 		if _manifest_badge != null: _manifest_badge.visible = false
-		if _frame_sb != null: _frame_sb.border_color = Color(0.12, 0.12, 0.12, 1.0)
+		if _rarity_edge != null: _rarity_edge.visible = false
+		_set_hover(_hovered)
 		modulate = Color(1, 1, 1, 1)
 		return
 
@@ -172,6 +192,7 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		_pol_tint.color = (POS_TINT if is_pos else NEG_TINT)
 	if _pol_badge != null:
 		_pol_badge.text = ("+" if is_pos else "−")
+		_pol_badge.add_theme_color_override("font_color", HudStyle.GOLD if is_pos else HudStyle.DANGER.lightened(0.15))
 
 	tooltip_text = "" # HUD handles tooltip
 
@@ -201,6 +222,11 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		rolls_label.text = "x%d" % prog
 	if overlay != null:
 		overlay.color = _rarity_to_color(rar)
+	if rarity_label != null:
+		rarity_label.add_theme_color_override("font_color", HudStyle.rarity_colour(rar).lerp(HudStyle.PARCHMENT, 0.35) if rar != 0 else HudStyle.MUTED)
+	if _rarity_edge != null:
+		_rarity_edge.visible = rar != 0
+		_rarity_edge.color = Color(HudStyle.rarity_colour(rar), 0.9)
 
 	var item_set_id: StringName = &""
 	if data is Object:
@@ -216,7 +242,7 @@ func set_stack(stack: Variant, idx: int, can_discard: bool, is_ghost: bool = fal
 		# one, so the bag has to say which stacks are the special ones - and in
 		# which noun's colour, so two ◆ stacks read as different rules.
 		_manifest_badge.show_for_item(_stack as ItemInstance)
-	_set_hover(false)
+	_set_hover(_hovered)
 
 
 func _ensure_manifest_badge() -> void:
@@ -239,8 +265,9 @@ func _ensure_lock_badge() -> void:
 		_lock_badge.text = "LOCK"
 		_lock_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_lock_badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_lock_badge.theme_type_variation = &"HudFigure"
 		_lock_badge.add_theme_font_size_override("font_size", 9)
-		_lock_badge.add_theme_color_override("font_color", Color(1.0, 0.78, 0.30, 1.0))
+		_lock_badge.add_theme_color_override("font_color", HudStyle.GOLD_BRIGHT)
 		_lock_badge.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 		_lock_badge.position = Vector2(-34, 3)
 		_lock_badge.size = Vector2(31, 14)
@@ -279,14 +306,9 @@ func _gui_input(event: InputEvent) -> void:
 			clicked.emit()
 
 func _rarity_to_color(r: int) -> Color:
-	var a: float = 0.18
-	if r <= -2: return Color(0.45, 0.0, 0.0, a)
-	if r == -1: return Color(0.75, 0.1, 0.1, a)
-	if r == 0:  return Color(0, 0, 0, 0)
-	if r == 1:  return Color(0.2, 0.9, 0.2, a)
-	if r == 2:  return Color(0.25, 0.45, 1.0, a)
-	if r == 3:  return Color(0.7, 0.25, 0.95, a)
-	return Color(1.0, 0.65, 0.15, a)
+	if r == 0:
+		return Color(0, 0, 0, 0)
+	return Color(HudStyle.rarity_colour(r), 0.07)
 
 func _ensure_polarity_ui() -> void:
 	if content == null:
@@ -328,6 +350,30 @@ func _ensure_polarity_ui() -> void:
 		_pol_badge.offset_bottom = _pol_badge.offset_top + 16
 		_pol_badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		_pol_badge.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_pol_badge.theme_type_variation = &"HudFigure"
+		_pol_badge.add_theme_font_size_override("font_size", 12)
+		_pol_badge.add_theme_constant_override("outline_size", 3)
+
+	# The rarity's thin edge along the foot of the well. (An empty socket's
+	# engraved diamond belongs to the grid that shows it: the in-run bag draws
+	# one, the Exchange its own.)
+	_rarity_edge = content.get_node_or_null("RarityEdge") as ColorRect
+	if _rarity_edge == null:
+		_rarity_edge = ColorRect.new()
+		_rarity_edge.name = "RarityEdge"
+		_rarity_edge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_rarity_edge.anchor_left = 0.0
+		_rarity_edge.anchor_top = 1.0
+		_rarity_edge.anchor_right = 1.0
+		_rarity_edge.anchor_bottom = 1.0
+		_rarity_edge.offset_left = 1.0
+		_rarity_edge.offset_right = -1.0
+		_rarity_edge.offset_top = -3.0
+		_rarity_edge.offset_bottom = -1.0
+		_rarity_edge.z_index = 4
+		_rarity_edge.visible = false
+		content.add_child(_rarity_edge)
+
 
 func _ensure_set_emblem() -> void:
 	if content == null:

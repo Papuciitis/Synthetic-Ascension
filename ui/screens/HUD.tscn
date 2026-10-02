@@ -31,6 +31,9 @@
 [ext_resource type="Script" path="res://ui/controllers/ManifestationPairNotifier.gd" id="26_manifest_pair"]
 [ext_resource type="Script" path="res://ui/controllers/HudHealthController.gd" id="28_health_ctl"]
 [ext_resource type="Theme" path="res://ui/theme/SyntheticHudTheme.tres" id="27_hud_theme"]
+[ext_resource type="Script" path="res://ui/widgets/hud/HudBarDecor.gd" id="29_bar_decor"]
+[ext_resource type="Script" path="res://ui/widgets/hud/HudGlyph.gd" id="30_glyph"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="31_frame"]
 
 
 [sub_resource type="Shader" id="ShaderVignette"]
@@ -65,77 +68,91 @@ shader_parameter/vignette_strength = 0.18
 shader_parameter/noise_strength = 0.015
 shader_parameter/noise_scale = 260.0
 
+[sub_resource type="Gradient" id="RuleGradient"]
+offsets = PackedFloat32Array(0, 0.18, 0.82, 1)
+colors = PackedColorArray(0.62, 0.47, 0.3, 0, 0.62, 0.47, 0.3, 0.34, 0.62, 0.47, 0.3, 0.34, 0.62, 0.47, 0.3, 0)
+
+[sub_resource type="GradientTexture1D" id="RuleTexture"]
+gradient = SubResource("RuleGradient")
+width = 64
+
 [sub_resource type="StyleBoxFlat" id="StyleTopLeft"]
-bg_color = Color(0.032, 0.030, 0.027, 0.88)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.42, 0.30, 0.20, 0.9)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-shadow_color = Color(0, 0, 0, 0.3)
-shadow_size = 8
+bg_color = Color(0.032, 0.028, 0.025, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.39, 0.24, 0.8)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 14
 shadow_offset = Vector2(0, 6)
 
 [sub_resource type="StyleBoxFlat" id="StyleSlot"]
-bg_color = Color(0, 0, 0, 0.22)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.012, 0.01, 0.009, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.47, 0.3, 0.85)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleHPBarBG"]
-bg_color = Color(0, 0, 0, 0.35)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+[sub_resource type="StyleBoxEmpty" id="StyleHPBarBG"]
 
 [sub_resource type="StyleBoxFlat" id="StyleHPBarFill"]
-bg_color = Color(1, 0.55, 0.2, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
-[sub_resource type="StyleBoxFlat" id="StylePill"]
-bg_color = Color(0, 0, 0, 0.4)
-border_width_left = 2
+bg_color = Color(0.66, 0.16, 0.12, 1)
 border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.12, 0.12, 0.12, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+border_width_bottom = 1
+border_color = Color(0.93, 0.42, 0.3, 1)
+border_blend = true
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxEmpty" id="StylePill"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBarTrack"]
+bg_color = Color(0.016, 0.013, 0.011, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.52, 0.39, 0.24, 0.55)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleResBarFill"]
-bg_color = Color(0.25, 0.75, 1, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+bg_color = Color(0.32, 0.5, 0.92, 1)
+border_width_top = 1
+border_color = Color(0.62, 0.78, 1, 1)
+border_blend = true
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleThreatBarFill"]
-bg_color = Color(0.75, 0.25, 1, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+bg_color = Color(0.86, 0.45, 0.2, 1)
+border_width_top = 1
+border_color = Color(1, 0.72, 0.42, 1)
+border_blend = true
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 
 [node name="HUD" type="Control" unique_id=1187103140]
@@ -228,49 +245,79 @@ bar_path = NodePath("../TopLeft/Margin/VBox/TopRow/HPRow/HPBar")
 
 [node name="TopLeft" type="PanelContainer" parent="." unique_id=750648705]
 layout_mode = 0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 330.0
-offset_bottom = 306.0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 372.0
+offset_bottom = 412.0
 theme_override_styles/panel = SubResource("StyleTopLeft")
 
 [node name="Margin" type="MarginContainer" parent="TopLeft" unique_id=893068950]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 13
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 13
+theme_override_constants/margin_bottom = 13
 
 [node name="VBox" type="VBoxContainer" parent="TopLeft/Margin" unique_id=791966657]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 7
 
 [node name="TopRow" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=1986432306]
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="ProfilePic" type="PanelContainer" parent="TopLeft/Margin/VBox/TopRow" unique_id=260618222]
-custom_minimum_size = Vector2(34, 34)
+custom_minimum_size = Vector2(42, 42)
 layout_mode = 2
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleSlot")
 
 [node name="PPFill" type="ColorRect" parent="TopLeft/Margin/VBox/TopRow/ProfilePic" unique_id=161447750]
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.2, 0.2, 0.2, 1)
+color = Color(0.05, 0.04, 0.032, 1)
+
+[node name="Portrait" type="TextureRect" parent="TopLeft/Margin/VBox/TopRow/ProfilePic"]
+layout_mode = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
 
 [node name="HPRow" type="HBoxContainer" parent="TopLeft/Margin/VBox/TopRow" unique_id=1086486276]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 9
 
 [node name="HPBar" type="ProgressBar" parent="TopLeft/Margin/VBox/TopRow/HPRow" unique_id=2058284638]
-custom_minimum_size = Vector2(200, 16)
+custom_minimum_size = Vector2(200, 24)
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
 theme_override_styles/background = SubResource("StyleHPBarBG")
 theme_override_styles/fill = SubResource("StyleHPBarFill")
 show_percentage = false
+
+[node name="HPTrack" type="Control" parent="TopLeft/Margin/VBox/TopRow/HPRow/HPBar"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("29_bar_decor")
+
+[node name="HPFrame" type="Control" parent="TopLeft/Margin/VBox/TopRow/HPRow/HPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("29_bar_decor")
+layer = 1
 
 [node name="HPValue" type="Label" parent="TopLeft/Margin/VBox/TopRow/HPRow/HPBar" unique_id=958525739]
 layout_mode = 0
@@ -278,16 +325,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudFigure"
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
 text = "0 / 0"
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="HPPercent" type="Label" parent="TopLeft/Margin/VBox/TopRow/HPRow" unique_id=971748929]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudFigure"
+theme_override_colors/font_color = Color(0.86, 0.72, 0.52, 1)
+theme_override_font_sizes/font_size = 13
 text = "0%"
+horizontal_alignment = 2
 
 [node name="Row2" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=40431301]
 layout_mode = 2
@@ -299,102 +351,122 @@ theme_override_styles/panel = SubResource("StylePill")
 
 [node name="Margin" type="MarginContainer" parent="TopLeft/Margin/VBox/Row2/FollowersPill" unique_id=862523395]
 layout_mode = 2
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 0
 
 [node name="FollowersRow" type="HBoxContainer" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin" unique_id=930395245]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 7
 
 [node name="FollowerPic" type="PanelContainer" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow" unique_id=316196477]
-custom_minimum_size = Vector2(18, 18)
+custom_minimum_size = Vector2(14, 14)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleSlot")
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StylePill")
 
-[node name="FPFill" type="ColorRect" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow/FollowerPic" unique_id=179180575]
+[node name="FPFill" type="Control" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow/FollowerPic" unique_id=179180575]
 layout_mode = 2
 mouse_filter = 2
-color = Color(1, 0.55, 0.2, 1)
+script = ExtResource("30_glyph")
 
 [node name="FollowersValue" type="Label" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow" unique_id=1478767602]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_type_variation = &"HudFigure"
+theme_override_colors/font_color = Color(0.99, 0.84, 0.58, 1)
+theme_override_font_sizes/font_size = 15
 text = "0"
 
 [node name="FollowersTitle" type="Label" parent="TopLeft/Margin/VBox/Row2/FollowersPill/Margin/FollowersRow" unique_id=1479091691]
-modulate = Color(1, 1, 1, 0.85)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 11
 text = "Followers"
 
 [node name="AugmentsTitle" type="Label" parent="TopLeft/Margin/VBox/Row2" unique_id=181930310]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(196, 0)
 layout_mode = 2
-size_flags_horizontal = 6
-theme_override_font_sizes/font_size = 12
-theme_type_variation = &"InstitutionalHeading"
+size_flags_horizontal = 10
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 11
 text = "AUGMENTS"
 horizontal_alignment = 1
 
+[node name="Rule" type="TextureRect" parent="TopLeft/Margin/VBox"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("RuleTexture")
+expand_mode = 1
+stretch_mode = 0
+
 [node name="ResonanceRow" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=2110063344]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 9
 
 [node name="ResonanceTitle" type="Label" parent="TopLeft/Margin/VBox/ResonanceRow" unique_id=2110063345]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
-theme_type_variation = &"InstitutionalHeading"
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 11
 text = "RESONANCE"
 
 [node name="ResonanceBar" type="ProgressBar" parent="TopLeft/Margin/VBox/ResonanceRow" unique_id=2110063346]
-custom_minimum_size = Vector2(160, 12)
+custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/background = SubResource("StyleHPBarBG")
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBarTrack")
 theme_override_styles/fill = SubResource("StyleResBarFill")
 max_value = 1.0
 show_percentage = false
 
 [node name="GateStatus" type="Label" parent="TopLeft/Margin/VBox/ResonanceRow" unique_id=2110063347]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(62, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudFigure"
+theme_override_colors/font_color = Color(0.72, 0.8, 0.96, 1)
+theme_override_font_sizes/font_size = 11
 text = "SEALED"
+horizontal_alignment = 2
 
 [node name="ThreatRow" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=924661235]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 9
 
 [node name="ThreatTitle" type="Label" parent="TopLeft/Margin/VBox/ThreatRow" unique_id=924661236]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
-theme_type_variation = &"InstitutionalHeading"
+theme_type_variation = &"HudCaption"
+theme_override_font_sizes/font_size = 11
 text = "THREAT"
 
 [node name="ThreatBar" type="ProgressBar" parent="TopLeft/Margin/VBox/ThreatRow" unique_id=924661237]
-custom_minimum_size = Vector2(160, 12)
+custom_minimum_size = Vector2(120, 8)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/background = SubResource("StyleHPBarBG")
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBarTrack")
 theme_override_styles/fill = SubResource("StyleThreatBarFill")
 max_value = 1.0
 show_percentage = false
 
 [node name="ThreatValue" type="Label" parent="TopLeft/Margin/VBox/ThreatRow" unique_id=924661238]
-modulate = Color(1, 1, 1, 0.85)
+custom_minimum_size = Vector2(62, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_type_variation = &"HudFigure"
+theme_override_colors/font_color = Color(0.96, 0.78, 0.56, 1)
+theme_override_font_sizes/font_size = 11
 text = "T1  0.0"
+horizontal_alignment = 2
 
 [node name="ManifestationRow" type="HFlowContainer" parent="TopLeft/Margin/VBox"]
+visible = false
 layout_mode = 2
 theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 2
-visible = false
 
 [node name="BodyRow" type="HBoxContainer" parent="TopLeft/Margin/VBox" unique_id=1707728123]
 layout_mode = 2
@@ -405,6 +477,15 @@ layout_mode = 2
 
 [node name="AugmentsPanel" parent="TopLeft/Margin/VBox/BodyRow" unique_id=1492942194 instance=ExtResource("3_3q2by")]
 layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Frame" type="Control" parent="TopLeft"]
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("31_frame")
+inset = 4.0
+colour = Color(0.62, 0.47, 0.3, 0.55)
+crown = false
 
 [node name="BagUI" parent="." unique_id=1654799555 instance=ExtResource("4")]
 layout_mode = 0
@@ -417,10 +498,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -110.0
-offset_right = 120.0
-offset_bottom = -28.0
+offset_left = -140.0
+offset_top = -106.0
+offset_right = 140.0
+offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 runner_node_names = Array[StringName]([&"SetRunner"])
@@ -432,10 +513,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -376.0
-offset_top = -110.0
-offset_right = -136.0
-offset_bottom = -28.0
+offset_left = -432.0
+offset_top = -106.0
+offset_right = -152.0
+offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 runner_node_names = Array[StringName]([&"AscensionRunner"])
@@ -450,10 +531,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 136.0
-offset_top = -110.0
-offset_right = 376.0
-offset_bottom = -28.0
+offset_left = 152.0
+offset_top = -106.0
+offset_right = 432.0
+offset_bottom = -22.0
 grow_horizontal = 2
 grow_vertical = 0
 runner_node_names = Array[StringName]([&"AscensionRunner"])
@@ -467,10 +548,11 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -150.0
-offset_top = -40.0
-offset_right = 150.0
-offset_bottom = -10.0
+offset_left = -200.0
+offset_top = -146.0
+offset_right = 200.0
+offset_bottom = -116.0
+theme_type_variation = &"HudItalic"
 horizontal_alignment = 1
 
 [node name="SetBreakpointNotifier" type="Control" parent="."]

@@ -19,11 +19,11 @@ class_name AugmentActiveBadge
 @onready var frame: PanelContainer = $Frame
 @onready var cd: TextureProgressBar = $Frame/Root/Cooldown
 @onready var label: Label = $Frame/Root/KeyLabel
-@export var border_ready: Color = Color(1.0, 0.55, 0.20, 1.0)
-@export var border_cooldown: Color = Color(0.12, 0.12, 0.12, 1.0)
+@export var border_ready: Color = Color(0.86, 0.64, 0.36, 1.0)
+@export var border_cooldown: Color = Color(0.36, 0.28, 0.18, 1.0)
 
-@export var wedge_full: Color = Color(1.0, 0.55, 0.20, 0.75)  # start of cooldown
-@export var wedge_empty: Color = Color(0.7, 0.7, 0.7, 0.20)   # near ready
+@export var wedge_full: Color = Color(0.62, 0.47, 0.30, 0.7)  # start of cooldown
+@export var wedge_empty: Color = Color(0.99, 0.84, 0.58, 0.28)   # near ready
 
 @export var ui_blend_speed: float = 12.0
 
@@ -324,11 +324,11 @@ func _set_ready_visual(is_ready: bool) -> void:
 	_painted_blend = -1.0
 
 	if is_ready:
-		_frame_style.border_color = Color(1.0, 0.55, 0.20, 1.0)
+		_frame_style.border_color = border_ready
 		cd.visible = false
 		label.modulate = Color(1, 1, 1, 1)
 	else:
-		_frame_style.border_color = Color(0.12, 0.12, 0.12, 1.0)
+		_frame_style.border_color = border_cooldown
 		cd.visible = true
 		label.modulate = Color(1, 1, 1, 0.85)
 

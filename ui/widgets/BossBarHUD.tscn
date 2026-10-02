@@ -1,21 +1,64 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://ui/widgets/BossBarHUD.gd" id="1"]
+[ext_resource type="Script" path="res://ui/widgets/hud/HudBarDecor.gd" id="2_decor"]
+[ext_resource type="Script" path="res://ui/components/ArcaneFrame.gd" id="3_frame"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBossPanel"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 14.0
+bg_color = Color(0.032, 0.028, 0.025, 0.86)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.47, 0.3, 0.75)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 16
+shadow_offset = Vector2(0, 6)
+
+[sub_resource type="StyleBoxFlat" id="StyleBossWell"]
+bg_color = Color(0.012, 0.01, 0.009, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.62, 0.47, 0.3, 0.8)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBossTrack"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBossFill"]
+bg_color = Color(0.6, 0.13, 0.1, 1)
+border_width_top = 2
+border_width_bottom = 1
+border_color = Color(0.9, 0.38, 0.26, 1)
+border_blend = true
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
 
 [node name="BossBarHUD" type="Control"]
 visible = false
 layout_mode = 3
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.0
 anchor_right = 0.5
-anchor_bottom = 0.0
-offset_left = -220.0
-offset_top = 10.0
-offset_right = 220.0
-offset_bottom = 74.0
+offset_left = -290.0
+offset_top = 14.0
+offset_right = 290.0
+offset_bottom = 88.0
 grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1")
 
@@ -26,37 +69,83 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBossPanel")
 
 [node name="HBox" type="HBoxContainer" parent="Panel"]
 layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 14
+
+[node name="Portrait" type="TextureRect" parent="Panel/HBox"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBox" type="VBoxContainer" parent="Panel/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Panel/HBox/VBox"]
+layout_mode = 2
+theme_type_variation = &"SacredHeading"
+theme_override_colors/font_color = Color(0.95, 0.86, 0.68, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 21
+text = "Boss"
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="HpBar" type="ProgressBar" parent="Panel/HBox/VBox"]
+custom_minimum_size = Vector2(0, 14)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/background = SubResource("StyleBossTrack")
+theme_override_styles/fill = SubResource("StyleBossFill")
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="HpTrack" type="Control" parent="Panel/HBox/VBox/HpBar"]
+show_behind_parent = true
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+mouse_filter = 2
+script = ExtResource("2_decor")
+low_threshold = 0.0
 
-[node name="Portrait" type="TextureRect" parent="Panel/HBox"]
-custom_minimum_size = Vector2(52, 52)
-layout_mode = 2
-stretch_mode = 5
-expand_mode = 1
+[node name="HpFrame" type="Control" parent="Panel/HBox/VBox/HpBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_decor")
+layer = 1
+tick_count = 10
+low_threshold = 0.0
 
-[node name="VBox" type="VBoxContainer" parent="Panel/HBox"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 4
-
-[node name="Title" type="Label" parent="Panel/HBox/VBox"]
-layout_mode = 2
-theme_type_variation = &"SacredHeading"
-text = "Boss"
-autowrap_mode = 3
-
-[node name="HpBar" type="ProgressBar" parent="Panel/HBox/VBox"]
-layout_mode = 2
-min_value = 0.0
-max_value = 100.0
-value = 100.0
-show_percentage = false
+[node name="Frame" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_frame")
+inset = 4.0
+colour = Color(0.66, 0.5, 0.3, 0.7)

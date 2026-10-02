@@ -34,13 +34,21 @@ func setup(title: String, nouns: String, body: String, colour: Color) -> void:
 
 
 func _make_custom_tooltip(_for_text: String) -> Object:
+	# The archive's own card: near-black, a rule in the rule's noun colour,
+	# square corners; the name in Cinzel, the nouns in italic, the rule in
+	# Garamond. Built per hover, as Godot asks for it.
 	var panel := PanelContainer.new()
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.07, 0.07, 0.09, 0.97)
-	style.border_color = Color(accent.r, accent.g, accent.b, 0.75)
+	style.bg_color = Color(0.03, 0.026, 0.023, 0.97)
+	style.border_color = Color(accent.r, accent.g, accent.b, 0.7)
 	style.set_border_width_all(1)
-	style.set_corner_radius_all(4)
-	style.set_content_margin_all(10)
+	style.set_corner_radius_all(1)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 10
+	style.content_margin_bottom = 12
+	style.shadow_color = Color(0, 0, 0, 0.5)
+	style.shadow_size = 10
 	panel.add_theme_stylebox_override("panel", style)
 
 	var column := VBoxContainer.new()
@@ -50,23 +58,24 @@ func _make_custom_tooltip(_for_text: String) -> Object:
 
 	var heading := Label.new()
 	heading.text = info_title
-	heading.add_theme_font_size_override("font_size", 14)
-	heading.modulate = accent
+	heading.theme_type_variation = &"InstitutionalHeading"
+	heading.add_theme_font_size_override("font_size", 15)
+	heading.add_theme_color_override("font_color", accent.lerp(Color.WHITE, 0.15))
 	column.add_child(heading)
 
 	if info_nouns.strip_edges() != "":
 		var nouns := Label.new()
 		nouns.text = info_nouns
-		nouns.add_theme_font_size_override("font_size", 11)
-		nouns.modulate = Color(1, 1, 1, 0.55)
+		nouns.theme_type_variation = &"HudItalic"
+		nouns.add_theme_font_size_override("font_size", 15)
 		column.add_child(nouns)
 
 	var body := Label.new()
 	body.text = info_body
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.custom_minimum_size.x = TOOLTIP_MAX_WIDTH
-	body.add_theme_font_size_override("font_size", 12)
-	body.modulate = Color(1, 1, 1, 0.92)
+	body.add_theme_font_size_override("font_size", 16)
+	body.add_theme_color_override("font_color", Color(0.88, 0.83, 0.74, 1))
 	column.add_child(body)
 
 	return panel
