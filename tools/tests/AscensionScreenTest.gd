@@ -136,6 +136,28 @@ func _run() -> void:
 	_check(screen.view._label_visible("core.melee", "core", "owned"), "cores stay named on the overview")
 	_check(not screen.view._label_visible("EX10", "local", "locked"), "a locked far local is silent on the overview")
 	_check(screen.view._label_visible("EX10", "local", "buyable"), "anything buyable NOW is named")
+	# And the renderer draws what that rule promises: after a real draw at the
+	# overview zoom the Cores and every buyable node own a placed name.
+	# The opening unfurls in real time (~1.4 s); names are placed once it lands.
+	for _w in range(40):
+		if screen.view._intro_done:
+			break
+		await get_tree().create_timer(0.1).timeout
+	screen.view._view_dirty = true
+	screen.view._static_dirty = true
+	for _f in range(4):
+		await get_tree().process_frame
+	var spots: Dictionary = screen.view._label_spots
+	_check(spots.has(int(screen.view._index["core.melee"])), "the drawn overview names the Melee Core")
+	var unnamed_buyable := 0
+	for i in range(screen.view._ids.size()):
+		var kind: String = screen.view._kinds[i]
+		# Mutations orbit their Active and are read on hover only, by design.
+		if kind == "mutation" or kind == "revelation_mutation":
+			continue
+		if screen.view._state.size() > i and screen.view._state[i] == screen.view.ST_BUYABLE and screen.view._alpha[i] > 0.05 and not spots.has(i):
+			unnamed_buyable += 1
+	_check(unnamed_buyable == 0, "the drawn overview names everything buyable now (%d unnamed)" % unnamed_buyable)
 	screen.view.hovered = "EX10"
 	_check(screen.view._label_visible("EX10", "local", "locked"), "hover always reads, whatever the state")
 	screen.view.zoom = 1.0
