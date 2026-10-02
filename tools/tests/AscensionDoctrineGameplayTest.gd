@@ -108,6 +108,7 @@ func _test_method_rules() -> void:
 				reward = slot_item
 				break
 		_check(reward != null and reward.polarity == ItemInstance.Polarity.POS, "Black Archive reward is always a Gift, never a curse")
+		@warning_ignore("integer_division")
 		_check(reward != null and reward.rarity == clampi(Global.attempt_segment / 2, 1, 5), "Black Archive reward uses the authored segment rarity")
 		_check(reward != null and is_equal_approx(reward.best_pct, 0.35), "Black Archive reward uses the authored positive roll")
 		Global.run_inventory = saved_inventory

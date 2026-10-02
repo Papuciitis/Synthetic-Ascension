@@ -233,8 +233,8 @@ func _run() -> void:
 	_check(history.contains('"source_id":"manifestation_pair:death_rattle"') and history.contains('"kind":"health_unexplained"') and history.contains('"kind":"life_started"'), "the event history records the toll, the unexplained gap and life boundaries")
 	attacker.free()
 	player.free()
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		DirAccess.remove_absolute(capture_path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		DirAccess.remove_absolute(capture_path.path_join(file_name))
 	DirAccess.remove_absolute(capture_path)
 	_finish()
 

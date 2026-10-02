@@ -112,8 +112,8 @@ func _run() -> void:
 	var saved: Variant = JSON.parse_string(FileAccess.get_file_as_string(capture_path.path_join("summary.json")))
 	_check(saved is Dictionary and int(saved.metadata.balance_revision) == expected_revision and String(saved.metadata.tuning_hash) == hash_now, "the saved capture carries the revision and hash")
 	player.free()
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		DirAccess.remove_absolute(capture_path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		DirAccess.remove_absolute(capture_path.path_join(file_name))
 	DirAccess.remove_absolute(capture_path)
 	_finish()
 

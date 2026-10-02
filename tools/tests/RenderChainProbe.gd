@@ -66,7 +66,7 @@ class Driver:
 				break
 		if sample != null:
 			var spr := sample.get_node_or_null("Sprite2D") as Sprite2D
-			print("PROBE sample_enemy batched=", sample.get("_visual_batched"), " sprite_visible=", spr.visible if spr != null else "none", " tex=", spr.texture.resource_path.get_file() if spr != null and spr.texture != null else "none")
+			print("PROBE sample_enemy batched=", sample.get("_visual_batched"), " sprite_visible=", spr.visible as Variant if spr != null else "none", " tex=", spr.texture.resource_path.get_file() if spr != null and spr.texture != null else "none")
 		var failures := 0
 		var drawn := 0
 		if proxy_root != null:

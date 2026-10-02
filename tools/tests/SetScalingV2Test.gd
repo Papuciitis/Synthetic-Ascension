@@ -250,8 +250,8 @@ func _test_profile() -> void:
 	_check(_near(float(fifteen.stat), 2.5) and _near(float(fifteen.damage), 2.85), "mean R15: stat 2.5, damage 2.85")
 	var zero := SetScaling.profile(0.0)
 	var neutral_ok := true
-	for name in SetScaling.CHANNELS:
-		if not _near(float(zero[name]), 1.0):
+	for channel_name in SetScaling.CHANNELS:
+		if not _near(float(zero[channel_name]), 1.0):
 			neutral_ok = false
 	_check(neutral_ok, "mean R0 is neutral on every channel")
 	var one := SetScaling.profile(1.0)
@@ -276,8 +276,8 @@ func _test_profile() -> void:
 	var previous := SetScaling.profile(0.0)
 	for step in range(1, 120):
 		var current := SetScaling.profile(float(step) * 0.5)
-		for name in SetScaling.CHANNELS:
-			if float(current[name]) < float(previous[name]) - 1e-9:
+		for channel_name in SetScaling.CHANNELS:
+			if float(current[channel_name]) < float(previous[channel_name]) - 1e-9:
 				monotone = false
 		previous = current
 	_check(monotone, "every channel is non-decreasing in mean rank")
@@ -351,8 +351,8 @@ func _test_channel_applied_once() -> void:
 	_check(arrest != null and step != null, "fixture: a full R15 Gravemarch runs both effects")
 	var expected := SetScaling.profile(15.0)
 	var same := true
-	for name in SetScaling.CHANNELS:
-		if not _near(float(arrest.call("channel", name)), float(expected[name])) or not _near(float(step.call("channel", name)), float(expected[name])):
+	for channel_name in SetScaling.CHANNELS:
+		if not _near(float(arrest.call("channel", channel_name)), float(expected[channel_name])) or not _near(float(step.call("channel", channel_name)), float(expected[channel_name])):
 			same = false
 	_check(same, "both effects carry the R15 profile on every channel")
 	_check(_near(float(arrest.call("channel", "unknown")), 1.0), "an unknown channel reads as 1")
@@ -431,7 +431,8 @@ func _lattice_counts_at(rarity: int) -> Dictionary:
 	var magic := host.magic_spawns
 	runner.apply_sets_to_stats(Stats.new(), null)
 	_drop(host)
-	_drop(echo) if is_instance_valid(echo) else null
+	if is_instance_valid(echo):
+		_drop(echo)
 	return {"bullets": bullets, "magic": magic}
 
 

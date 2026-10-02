@@ -50,6 +50,7 @@ func _run() -> void:
 	# A tight wounded crowd: every Corpse Bomb (R) and Cleave (1.5R) reaches neighbours.
 	var bodies: Array[int] = []
 	for i in range(BODIES):
+		@warning_ignore("integer_division")
 		var at := origin + Vector2(120 + float(i % 10) * 22.0, float(i / 10) * 22.0 - 55.0)
 		bodies.append(EnemyWorld.create_enemy(SpawnState.new(&"asc_bench", "res://asc_bench.tscn", at, 12.0, 10.0, 8.0, 0, 0)))
 	var nodes_before := get_tree().get_node_count()

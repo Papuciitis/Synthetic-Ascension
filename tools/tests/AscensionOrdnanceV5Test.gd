@@ -221,7 +221,7 @@ func _run() -> void:
 
 	# --- OR-05 (spec OR-05): a grenade blast kill calls a Secondary Shell.
 	_runner.aim_override = _player.global_position + Vector2(150, 0)
-	var prey := _spawn_enemy(3.0, _runner.aim_target())
+	var _prey := _spawn_enemy(3.0, _runner.aim_target())
 	var secondary_before := int(_engine.counters["secondary"])
 	for _i in range(4):
 		_fire()

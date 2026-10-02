@@ -105,8 +105,8 @@ func _run() -> void:
 		trade.start({}, 100, 2)
 		trade.transaction(100, -20, 80, "trade", {"buy_value": 50, "sell_value": 30})
 		trade.transaction(80, 0, 80, "trade", {"buy_value": 40, "sell_value": 40})
-		var tr: Dictionary = trade.summary().totals
-		_check(tr.followers_earned == 70 and tr.followers_spent == 90 and tr.followers_close == 80, "mixed and even exchanges retain gross sales and purchase values")
+		var trade_totals: Dictionary = trade.summary().totals
+		_check(trade_totals.followers_earned == 70 and trade_totals.followers_spent == 90 and trade_totals.followers_close == 80, "mixed and even exchanges retain gross sales and purchase values")
 		var promoted = load(path).new()
 		promoted.start({}, 0, 2)
 		promoted.enemy_seen(1, "brute", false, 25.0)

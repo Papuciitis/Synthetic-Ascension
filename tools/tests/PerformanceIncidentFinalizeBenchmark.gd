@@ -71,6 +71,7 @@ func _run() -> void:
 	var aftermath_frames := int(AFTERMATH_SECONDS * HZ) + 40
 	for incident in range(INCIDENTS):
 		for i in range(history_frames + aftermath_frames):
+			@warning_ignore("integer_division")
 			if i % maxi(1, (history_frames + aftermath_frames) / EVENTS_PER_INCIDENT) == 0:
 				recorder.record_event(&"benchmark", &"tick", {"i": i, "at": Vector2(i, i)})
 			if frames % SLOW_SNAPSHOT_FRAMES == 0:
@@ -127,6 +128,7 @@ func _run() -> void:
 		float(worst_ingest) / 1000.0, float(worst_step) / 1000.0,
 		float(frame_total) / 1000.0 / maxf(1.0, float(frames)), copy_ms,
 	])
+	@warning_ignore("integer_division")
 	print("  recorder load: frames_with_1ms_or_more=%.0f per incident (of %d), report_servicing_ms=%.1f per incident (copy %.1f + release %.1f)" % [
 		float(busy_frames) / float(INCIDENTS), frames / INCIDENTS, float(step_total) / 1000.0 / float(INCIDENTS),
 		float(step_total - drain_total) / 1000.0 / float(INCIDENTS), float(drain_total) / 1000.0 / float(INCIDENTS)])

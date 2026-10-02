@@ -59,7 +59,6 @@ var _meltdown_lockout_left: float = 0.0
 var _meltdown_volley_done: bool = false
 var _aura_tick_left: float = 0.0
 var _hot_rounds_strikes: int = 0
-var _hot_rounds_armed: bool = false
 var _hot_volley_first_done: int = -1
 var _reserve_credit: float = 0.0
 var _reserve_release_inputs: int = 0

@@ -127,6 +127,7 @@ func _run() -> void:
 		_check(far_bounds.has_point(Vector3(camera.position.x, camera.position.y, 0.0)), "raw upload bounds include the far-world projectile")
 		await RenderingServer.frame_post_draw
 		var image := get_viewport().get_texture().get_image()
+		@warning_ignore("integer_division")
 		var projectile_screen_position := Vector2i(image.get_width() / 2, image.get_height() / 2)
 		var visible_pixel_found := _region_changed(baseline_image, image, projectile_screen_position)
 		_check(visible_pixel_found, "raw MultiMesh upload draws a player projectile under a far-world camera")

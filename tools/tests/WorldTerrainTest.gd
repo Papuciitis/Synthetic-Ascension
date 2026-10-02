@@ -53,8 +53,8 @@ func _run() -> void:
 	var used: Dictionary = {}
 	var valid := true
 	for segment in range(2, 11):
-		for seed in range(6):
-			var theme: SegmentThemeData = SegmentThemePicker.get_theme(segment, 1000 + seed * 7919)
+		for seed_index in range(6):
+			var theme: SegmentThemeData = SegmentThemePicker.get_theme(segment, 1000 + seed_index * 7919)
 			if theme == null:
 				valid = false
 				continue

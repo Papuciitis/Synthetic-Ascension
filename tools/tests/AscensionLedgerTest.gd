@@ -126,9 +126,9 @@ func _test_routes(db: AscensionTreeDB) -> void:
 	for build_variant in db.builds:
 		var build := build_variant as Dictionary
 		var result := _route_purchases(db, build)
-		var name := String(build.get("name", "?"))
-		_check(result["failed"] == "", "route '%s' purchases in order (%s)" % [name, result["failed"]])
-		_check(result["spent"] == int(build.get("cost_followers", -1)), "route '%s' costs %d (authored %d)" % [name, result["spent"], int(build.get("cost_followers", -1))])
+		var build_name := String(build.get("name", "?"))
+		_check(result["failed"] == "", "route '%s' purchases in order (%s)" % [build_name, result["failed"]])
+		_check(result["spent"] == int(build.get("cost_followers", -1)), "route '%s' costs %d (authored %d)" % [build_name, result["spent"], int(build.get("cost_followers", -1))])
 	var avalanche := _route_purchases(db, db.builds[db.builds.size() - 1])
 	var ledger: AscensionLedger = avalanche["ledger"]
 	_check(ledger.owns("ASC") and ledger.cores().size() == 3, "the Three-Core route ends with Ascendant and all three Cores")

@@ -64,6 +64,7 @@ func _run() -> void:
 	var origin := player.global_position
 	var bodies: Array[int] = []
 	for i in range(BODIES):
+		@warning_ignore("integer_division")
 		var at := origin + Vector2(140 + float(i % 15) * 20.0, float(i / 15) * 20.0 - 110.0)
 		bodies.append(_spawn(6.0, at))
 	var seed_tags := AscensionTags.native("ranged", "bullet")
@@ -106,6 +107,7 @@ func _run() -> void:
 	# --- controlled comparison: retained target vs. forced reacquisition
 	var crowd: Array[int] = []
 	for i in range(180):
+		@warning_ignore("integer_division")
 		crowd.append(_spawn(1000.0, origin + Vector2(140 + float(i % 15) * 20.0, float(i / 15) * 20.0 - 110.0)))
 	for count in [120, 360]:
 		for forced in [false, true]:

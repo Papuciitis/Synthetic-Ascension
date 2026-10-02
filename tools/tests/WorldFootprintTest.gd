@@ -159,7 +159,9 @@ func _run() -> void:
 
 		# The hall is reachable from the street through its doorway: flood
 		# fill over walkable cells from a road cell must reach the interior.
+		@warning_ignore("integer_division")
 		var lane_cell := Vector2i(coord.x * cpc + cpc / 2, coord.y * cpc + cpc / 2)
+		@warning_ignore("integer_division")
 		var reached := not walkable_cells.is_empty() and _flood_reaches(manager, lane_cell, walkable_cells[walkable_cells.size() / 2], coord, cpc)
 		_check(reached, "the interior is reachable from the street through the doorway")
 
@@ -170,6 +172,7 @@ func _run() -> void:
 	var blocked_again: Dictionary = (again.get("_blocked_cells") as Dictionary)
 	var repeatable := true
 	for cell in blocked_again:
+		@warning_ignore("integer_division")
 		if (cell as Vector2i).x / int(manager.call("_cells_per_chunk")) == coord.x:
 			if not blocked_first.has(cell):
 				repeatable = false

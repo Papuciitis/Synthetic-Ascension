@@ -118,8 +118,8 @@ func _run() -> void:
 	ritual._process(1.5)
 	_check(_spawner.calls.size() == 1 and ritual.pending() == 0 and ritual.raised() == 1, "exactly one revenant rises after the delay (%d)" % _spawner.calls.size())
 	if _spawner.calls.size() == 1:
-		var call: Dictionary = _spawner.calls[0]
-		_check(String(call["scene"]) == GRUNT and (call["pos"] as Vector2) == Vector2(1100.0, 1000.0) and not bool(call["elite"]), "the revenant is the same archetype at the death position, not elite")
+		var spawn_call: Dictionary = _spawner.calls[0]
+		_check(String(spawn_call["scene"]) == GRUNT and (spawn_call["pos"] as Vector2) == Vector2(1100.0, 1000.0) and not bool(spawn_call["elite"]), "the revenant is the same archetype at the death position, not elite")
 	await get_tree().process_frame
 	if _spawner.members.size() == 1:
 		var member := _spawner.members[0] as FakeEnemy
@@ -155,8 +155,8 @@ func _run() -> void:
 	boss.add_to_group(&"boss_like")
 	_kill(41, Vector2(1050.0, 1000.0), 0, &"boss_arcanist")
 	_check(ritual.pending() == 0, "a boss grouped after its world snapshot does not rise")
-	var mini := _corpse(42, BOSS)
-	mini.add_to_group(&"miniboss")
+	var miniboss := _corpse(42, BOSS)
+	miniboss.add_to_group(&"miniboss")
 	_kill(42, Vector2(1050.0, 1000.0), 0, &"boss_bulldozer")
 	_check(ritual.pending() == 0, "a mini-boss does not rise")
 	# A pylon: boss_like, objective_required, never_cull, no configure_health

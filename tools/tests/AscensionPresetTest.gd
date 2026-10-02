@@ -183,7 +183,7 @@ func _native_tags(core: String) -> PackedStringArray:
 ## A scripted crowd fight: strikes, casts, dashes, kills, respawns.
 func _fight(label: String, frames: int = FIGHT_FRAMES, crowd: int = CROWD) -> Dictionary:
 	var core := String(_runner.native_core)
-	var kills := 0
+	var _kills := 0
 	var strikes := 0
 	var casts := 0
 	var generated_before := int(_runner.telemetry.get("generated", 0))
@@ -210,7 +210,7 @@ func _fight(label: String, frames: int = FIGHT_FRAMES, crowd: int = CROWD) -> Di
 				var hit_before := _runner.enemy_alive(target)
 				_runner.damage_enemy(target, _runner.native_damage() * (1.0 + 0.5 * float(frame % 3)), tags)
 				if hit_before and not _runner.enemy_alive(target):
-					kills += 1
+					_kills += 1
 		if frame % 45 == 20:
 			_runner.q_cooldown_left = 0.0
 			var verdict := _runner.activate_q()
@@ -268,25 +268,25 @@ func _run() -> void:
 	var seen_disciplines: Dictionary = {}
 	for preset_variant in presets:
 		var preset := preset_variant as Dictionary
-		var name := String(preset["name"])
+		var preset_name := String(preset["name"])
 		var result := _replay(db, preset)
-		_check(result["failed"] == "", "preset '%s' purchases in order at real prices (%s; %d Followers)" % [name, result["failed"], int(result["spent"])])
+		_check(result["failed"] == "", "preset '%s' purchases in order at real prices (%s; %d Followers)" % [preset_name, result["failed"], int(result["spent"])])
 		var equip_failed := _equip(result["ledger"], preset)
-		_check(equip_failed == "", "preset '%s' equips its loadout (%s)" % [name, equip_failed])
+		_check(equip_failed == "", "preset '%s' equips its loadout (%s)" % [preset_name, equip_failed])
 		if not String(preset.get("discipline", "")).is_empty():
 			seen_disciplines[String(preset["discipline"])] = true
 		var authored := int(preset.get("authored_cost", -1))
 		if authored > 0:
-			_check(int(result["spent"]) == authored, "preset '%s' costs the authored %d (%d)" % [name, authored, int(result["spent"])])
+			_check(int(result["spent"]) == authored, "preset '%s' costs the authored %d (%d)" % [preset_name, authored, int(result["spent"])])
 	_check(seen_disciplines.size() == 9, "all nine disciplines have presets (%d)" % seen_disciplines.size())
 
 	# ---------------- every preset fights a crowd on the live runner
 	for preset_variant in presets:
 		var preset := preset_variant as Dictionary
-		var name := String(preset["name"])
+		var preset_name := String(preset["name"])
 		var installed := _install(preset)
 		if installed["failed"] != "":
-			_check(false, "preset '%s' installs on the runner (%s)" % [name, installed["failed"]])
+			_check(false, "preset '%s' installs on the runner (%s)" % [preset_name, installed["failed"]])
 			continue
 		var expected_engines := 0
 		var codes: Dictionary = {}
@@ -300,13 +300,13 @@ func _run() -> void:
 			elif not code.is_empty():
 				codes[code] = true
 		expected_engines = codes.size()
-		_check(_runner.engines.size() == expected_engines, "preset '%s' builds %d engine(s)" % [name, expected_engines])
-		var row := await _fight(name)
-		_check(int(row["dead"]) > 0 and int(row["strikes"]) > 0, "preset '%s' fights: %d strikes, %d casts, %d of %d bodies dead" % [name, int(row["strikes"]), int(row["casts"]), int(row["dead"]), int(row["spawned"])])
-		_check(_runner.pending_attacks().is_empty(), "preset '%s' drains its attack queue" % name)
+		_check(_runner.engines.size() == expected_engines, "preset '%s' builds %d engine(s)" % [preset_name, expected_engines])
+		var row := await _fight(preset_name)
+		_check(int(row["dead"]) > 0 and int(row["strikes"]) > 0, "preset '%s' fights: %d strikes, %d casts, %d of %d bodies dead" % [preset_name, int(row["strikes"]), int(row["casts"]), int(row["dead"]), int(row["spawned"])])
+		_check(_runner.pending_attacks().is_empty(), "preset '%s' drains its attack queue" % preset_name)
 		_runner._sweep_statuses()
 		var live := _alive().size()
-		_check(_runner.statuses.size() <= live, "preset '%s' keeps statuses only for live enemies (%d for %d live)" % [name, _runner.statuses.size(), live])
+		_check(_runner.statuses.size() <= live, "preset '%s' keeps statuses only for live enemies (%d for %d live)" % [preset_name, _runner.statuses.size(), live])
 
 	# ---------------- whole-system checks on a rich preset
 	var rich: Dictionary = {}

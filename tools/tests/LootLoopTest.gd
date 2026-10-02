@@ -253,6 +253,7 @@ func _test_ascension_buy_refund_is_neutral() -> void:
 	for cycle in range(25):
 		cycle_cost = int(Global.ascension_buy("EX01").get("cost", 0)) + int(Global.ascension_buy("EX04").get("cost", 0))
 		Global.ascension_refund("EX01")
+	@warning_ignore("integer_division")
 	_check(int(Global.followers) < before_cycles and absi(before_cycles - int(Global.followers) - 25 * cycle_cost / 2) <= 25, "25 buy/refund cycles forfeit half of each cycle's price (%d)" % (before_cycles - int(Global.followers)))
 	# Sworn nodes: a fork never refunds, and a node a fork depends on cannot
 	# be refunded out from under it.

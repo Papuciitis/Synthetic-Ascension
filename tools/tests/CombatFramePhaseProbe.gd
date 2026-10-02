@@ -87,7 +87,6 @@ class Driver:
 	var _topup_left := 0.0
 	var _q_timer := 0.0
 	var _rows: Array[Dictionary] = []
-	var _slow_ticks: Array = []
 	var _bought: Array[String] = []
 	var _refused: Array[String] = []
 	var _last_t_usec := 0
@@ -301,7 +300,7 @@ class Driver:
 			if parent != null and added.has(parent):
 				continue
 			var script: Script = (node as Node).get_script() as Script
-			var label := "%s %s under %s" % [(node as Node).get_class(), (script.resource_path.get_file() if script != null else ((node as Node).scene_file_path.get_file() if not (node as Node).scene_file_path.is_empty() else "-")), (parent.name if parent != null else "?")]
+			var label := "%s %s under %s" % [(node as Node).get_class(), (script.resource_path.get_file() if script != null else ((node as Node).scene_file_path.get_file() if not (node as Node).scene_file_path.is_empty() else "-")), (String(parent.name) if parent != null else "?")]
 			roots[label] = int(roots.get(label, 0)) + 1
 		var parts: Array = roots.keys()
 		parts.sort()
@@ -464,7 +463,7 @@ class Driver:
 			_kill_accum = 0.0
 
 
-	func _sample(runner: Node) -> void:
+	func _sample(_runner: Node) -> void:
 		var recorder := get_node_or_null("/root/PerformanceFlightRecorder")
 		if recorder == null:
 			return

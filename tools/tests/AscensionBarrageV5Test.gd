@@ -233,10 +233,10 @@ func _run() -> void:
 	_engine._pending_fragments.clear()
 	var frag_count_before := int(_engine.counters["fragments"])
 	var frag_hits_before := int(_engine.counters["fragment_hits"])
-	var seed := _spawn_enemy(4.0, _player.global_position + Vector2(100, 0))
+	var seed_enemy := _spawn_enemy(4.0, _player.global_position + Vector2(100, 0))
 	var wall_a := _spawn_enemy(400.0, _player.global_position + Vector2(140, 0))
 	var wall_b := _spawn_enemy(400.0, _player.global_position + Vector2(180, 0))
-	_runner.damage_enemy(seed, 50.0, _native_bullet_tags(901))
+	_runner.damage_enemy(seed_enemy, 50.0, _native_bullet_tags(901))
 	_check(int(_engine.counters["fragments"]) == frag_count_before + 5, "rank 4 with Pinball: the on-kill group is still five (%d)" % (int(_engine.counters["fragments"]) - frag_count_before))
 	_check(_engine._pending_fragments.size() == 5 and _bounces_all(_engine._pending_fragments, 1), "each fragment carries exactly one Pinball bounce")
 	# The bounce is physical: five fragments strike the first wall, bounce
@@ -486,7 +486,6 @@ func _run() -> void:
 	_engine = _runner.engine_for("BR01") as BarrageEngineV5
 	_engine._meltdown_lockout_left = 0.0
 	_engine.heat = 0.0
-	var overclock_loose_before := int(_engine.counters["loose_rounds"])
 	_engine.add_heat(120.0)
 	_check(_engine._sustained_meltdown and _engine.in_meltdown(), "Overclock crossing 100 enters SUSTAINED Meltdown")
 	_check(int(_engine.counters.get("sustained_meltdowns", 0)) == 1, "the episode is counted")

@@ -103,7 +103,7 @@ func _run() -> void:
 	_run_sheet.visible = true
 
 	await _test_ledger_records_every_step()
-	await _test_profile_shows_runtime_multipliers()
+	_test_profile_shows_runtime_multipliers()
 	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
 	await _test_lens_line_prints_luck_kicker()
 	await _test_burden_ledger_names_slots_and_stubs_for_owned_augment()

@@ -82,7 +82,7 @@ func _run() -> void:
 		console.call("_input", escape)
 		_check(not console.visible, "Escape closes the developer console")
 		var backtick := InputEventKey.new()
-		backtick.keycode = 96
+		backtick.keycode = 96 as Key
 		backtick.pressed = true
 		console.call("_input", backtick)
 		_check(console.visible, "backtick opens the developer console")

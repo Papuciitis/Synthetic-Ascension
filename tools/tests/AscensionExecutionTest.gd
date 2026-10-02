@@ -142,6 +142,7 @@ func _run() -> void:
 	# --- Red Mist: twelve deaths from one root
 	var cluster: Array[int] = []
 	for i in range(12):
+		@warning_ignore("integer_division")
 		cluster.append(_spawn_enemy(1.0, target_point + Vector2(float(i % 4) * 12.0 - 18.0, float(i / 4) * 12.0 - 12.0)))
 	var witness := _spawn_enemy(200.0, origin + Vector2(-300, 100))
 	_runner.q_cooldown_left = 0.0

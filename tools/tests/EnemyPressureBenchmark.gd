@@ -102,7 +102,9 @@ func _setup() -> void:
 			_fail("enemy %d did not instantiate" % index)
 			return
 		var ring_index := index % RING_RADII.size()
+		@warning_ignore("integer_division")
 		var slot_index := index / RING_RADII.size()
+		@warning_ignore("integer_division")
 		var slots_per_ring := ENEMY_COUNT / RING_RADII.size()
 		var angle := TAU * float(slot_index) / float(slots_per_ring)
 		enemy.global_position = Vector2.RIGHT.rotated(angle) * RING_RADII[ring_index]
@@ -167,6 +169,7 @@ func _finish() -> void:
 	var source_sha := OS.get_environment("BENCHMARK_SOURCE_SHA")
 	if source_sha.is_empty():
 		source_sha = BuildInfoScript.git_commit()
+	@warning_ignore("integer_division")
 	var report := {
 		"schema": 2,
 		"benchmark": "enemy-pressure",

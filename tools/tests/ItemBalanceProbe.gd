@@ -52,7 +52,7 @@ func _load_json(path: String) -> Dictionary:
 func _stats(resource: Resource) -> Dictionary:
 	var result := {}
 	for field in STAT_FIELDS:
-		result[field] = snappedf(float(resource.get(field)), 0.0001) if resource != null else null
+		result[field] = snappedf(float(resource.get(field)), 0.0001) as Variant if resource != null else null
 	return result
 
 
@@ -261,8 +261,8 @@ func _run() -> void:
 	EnemyWorld.remove_enemy(attacker_handle, &"probe")
 	attacker.free()
 	player.free()
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		DirAccess.remove_absolute(capture_path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		DirAccess.remove_absolute(capture_path.path_join(file_name))
 	DirAccess.remove_absolute(capture_path)
 	print("ItemBalanceProbe: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures else 0)

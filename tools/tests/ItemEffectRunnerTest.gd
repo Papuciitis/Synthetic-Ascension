@@ -296,7 +296,7 @@ func _run() -> void:
 	_test_speed_ring_multiplier()
 	await _test_firestone_burn_reaches_an_enemy()
 	await _test_regeneration_heals_over_ticks()
-	await _test_revision_two_accessory_contracts()
+	_test_revision_two_accessory_contracts()
 	await _test_slow_heart_intercepts_healing()
 	await _test_sour_providence_biases_the_drop_table()
 	await _test_tithe_bones_bills_followers()

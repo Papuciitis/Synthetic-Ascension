@@ -131,8 +131,6 @@ func _run() -> void:
 	Global.on_segment_completed(2)
 	_check(Global.attempt_segment == 3, "completion advanced the segment before the hub (%d)" % Global.attempt_segment)
 	_check(save.attempt_resume_scene == Global.PATH_HUB_WORLD, "completion saves the hub world as the resume target")
-	var vendor_segment_before: int = Global.attempt_vendor_segment
-	var pending_choice: bool = Global.pending_big_choice
 
 	_hub = HUB_WORLD.instantiate()
 	_hub.departure_scene_change_enabled = false

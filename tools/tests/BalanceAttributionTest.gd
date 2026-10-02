@@ -204,8 +204,8 @@ func _run() -> void:
 			EnemyWorld.remove_enemy(handle, &"test")
 	ProjectileManager.clear_for_run_end()
 	player.free()
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		DirAccess.remove_absolute(capture_path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		DirAccess.remove_absolute(capture_path.path_join(file_name))
 	DirAccess.remove_absolute(capture_path)
 	_finish()
 

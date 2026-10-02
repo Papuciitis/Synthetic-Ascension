@@ -141,22 +141,22 @@ func _run() -> void:
 	var mode: StringName = first_beat.get("mode", &"ahead")
 	var farthest := 0.0
 	var nearest := INF
-	for call in spawner.calls:
-		var d := (call["pos"] as Vector2).distance_to(player.position)
+	for spawn_call in spawner.calls:
+		var d := (spawn_call["pos"] as Vector2).distance_to(player.position)
 		farthest = maxf(farthest, d)
 		nearest = minf(nearest, d)
 	var distance := float(first_beat.get("distance", 0.0))
 	_check(nearest >= distance * 0.5 and farthest <= distance * 1.6, "%s (%s) is placed around its distance %.0f (nearest %.0f, farthest %.0f)" % [first_id, mode, distance, nearest, farthest])
 	if mode == &"ahead":
 		var ahead_ok := true
-		for call in spawner.calls:
-			if ((call["pos"] as Vector2) - player.position).dot(player.velocity.normalized()) <= 0.0:
+		for spawn_call in spawner.calls:
+			if ((spawn_call["pos"] as Vector2) - player.position).dot(player.velocity.normalized()) <= 0.0:
 				ahead_ok = false
 		_check(ahead_ok, "an 'ahead' beat is placed along the player's travel")
 	elif mode == &"flank":
 		var flank_ok := true
-		for call in spawner.calls:
-			var rel := (call["pos"] as Vector2) - player.position
+		for spawn_call in spawner.calls:
+			var rel := (spawn_call["pos"] as Vector2) - player.position
 			if absf(rel.normalized().dot(player.velocity.normalized())) > 0.6:
 				flank_ok = false
 		_check(flank_ok, "a 'flank' beat sits to the side of travel")
@@ -237,7 +237,7 @@ func _run() -> void:
 	spawner.calls.clear()
 	director.call("_on_rite_channel_changed", true)
 	_check(_started.size() == 2 and _started.has(&"rite_sniper_crossfire") and _started.has(&"charger_wedge"), "the rite draws a crossfire and a wedge (%s)" % [_started])
-	var rite_snipers := spawner.calls.filter(func(call: Dictionary) -> bool: return String(call["scene"]).contains("Sniper"))
+	var rite_snipers := spawner.calls.filter(func(spawn_call: Dictionary) -> bool: return String(spawn_call["scene"]).contains("Sniper"))
 	_check(rite_snipers.size() >= 3, "the Rite crossfire is more than the ambient two-sniper cap (%d)" % rite_snipers.size())
 	_check(spawner.rite_pressure_active, "the specialist response pauses random ambient pressure")
 	director.call("_on_rite_channel_changed", true)

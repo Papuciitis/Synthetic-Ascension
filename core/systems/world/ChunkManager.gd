@@ -1379,12 +1379,12 @@ func paint_tiled_rect(
 	tile_modulate: Color
 ) -> int:
 	if ground_splat_enabled and layer_kind == &"floor" and chunk != null:
-		var material := _WORLD_ART.ground_index_for_texture(texture)
-		if material >= 0:
+		var ground_index := _WORLD_ART.ground_index_for_texture(texture)
+		if ground_index >= 0:
 			var coord := chunk.get_meta(&"_chunk_tile_coord", Vector2i.ZERO) as Vector2i
 			var side := int(chunk.get_meta(&"_chunk_cells_per_side", _cells_per_chunk()))
 			_ensure_ground_splat().paint_rect(
-				Rect2i(coord * side + rect.position, rect.size), material, tile_modulate.a, tile_modulate.r,
+				Rect2i(coord * side + rect.position, rect.size), ground_index, tile_modulate.a, tile_modulate.r,
 				not generation_enabled
 			)
 			return rect.size.x * rect.size.y

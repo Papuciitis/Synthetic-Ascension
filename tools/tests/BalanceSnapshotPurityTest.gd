@@ -167,8 +167,8 @@ func _run() -> void:
 	attacker.free()
 	player.free()
 	Global.run_inventory.clear()
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		DirAccess.remove_absolute(capture_path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		DirAccess.remove_absolute(capture_path.path_join(file_name))
 	DirAccess.remove_absolute(capture_path)
 	_finish()
 

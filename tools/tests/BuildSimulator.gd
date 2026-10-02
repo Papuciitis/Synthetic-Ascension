@@ -106,7 +106,6 @@ var _crowd := 60
 var _durability := HP_DURABILITY
 var _ablate := false
 var _tiers: Array = []
-var _rng := RandomNumberGenerator.new()
 var _player: Node = null
 var _runner: AscensionRunner = null
 var _recorder: Node = null
@@ -238,8 +237,8 @@ func _load_json(path: String) -> Dictionary:
 	return parsed if parsed is Dictionary else {}
 
 
-func _write_json(name: String, data: Variant) -> void:
-	var file := FileAccess.open(_out_dir.path_join(name), FileAccess.WRITE)
+func _write_json(file_name: String, data: Variant) -> void:
+	var file := FileAccess.open(_out_dir.path_join(file_name), FileAccess.WRITE)
 	if file != null:
 		file.store_string(JSON.stringify(_recorder.Writer.json_safe(data), "\t"))
 		file.close()
@@ -406,14 +405,14 @@ func _gap_ids(ledger: AscensionLedger, rule: Variant, out: Dictionary, priority:
 				if follow:
 					_gap_ids(ledger, _db.node(String(other)).get("requires", {}), out, 1, depth + 1)
 	elif dict.has("milestone"):
-		var name := String(dict["milestone"])
+		var milestone_name := String(dict["milestone"])
 		var ids: Array = []
-		if name == "one_fusion_owned":
+		if milestone_name == "one_fusion_owned":
 			ids = _db.ids_of_kind("fusion")
-		elif name.begins_with("union_diversity_"):
+		elif milestone_name.begins_with("union_diversity_"):
 			# Three Fusions on the border spanning two disciplines on each
 			# side: prefer Fusions that add a discipline the owned ones lack.
-			var prefix := name.substr(name.length() - 2).to_upper()
+			var prefix := milestone_name.substr(milestone_name.length() - 2).to_upper()
 			var left := {}
 			var right := {}
 			for fusion_id in ledger.owned_of_kind("fusion"):
@@ -439,6 +438,7 @@ func _gap_ids(ledger: AscensionLedger, rule: Variant, out: Dictionary, priority:
 func _footprint(id: String) -> int:
 	if not _footprints.has(id):
 		var closure := _closure(id)
+		@warning_ignore("integer_division")
 		_footprints[id] = (closure.mandatory as Dictionary).size() + (closure.optional as Dictionary).size() / 4
 	return int(_footprints[id])
 
@@ -470,7 +470,7 @@ func _distances_from(sources: Array) -> Dictionary:
 	return dist
 
 
-func _guided_walk(target: String, core: String, closure: Dictionary) -> Dictionary:
+func _guided_walk(target: String, core: String, _target_closure: Dictionary) -> Dictionary:
 	var ledger := _fresh_ledger(core, 12)
 	ledger.grant_evolution_claim(4)
 	var spent := 0
@@ -1140,7 +1140,7 @@ func _simulate(job: Dictionary) -> Dictionary:
 		"evaded_hits": int(totals.evaded_hits), "intercepted_hits": int(totals.intercepted_hits), "contact_ticks": contact_ticks, "volleys": volleys,
 		"followers_earned": int(totals.followers_earned), "combat_income": int((totals.followers_by_reason.get("combat_influence", {}) as Dictionary).get("gained", 0)),
 		"followers_per_minute": float((totals.followers_by_reason.get("combat_influence", {}) as Dictionary).get("gained", 0)) / (seconds / 60.0),
-		"strikes": strikes, "q_casts": q_casts, "v_casts": v_casts, "v_first_second": (float(v_first_frame) / 60.0) if v_first_frame >= 0 else null,
+		"strikes": strikes, "q_casts": q_casts, "v_casts": v_casts, "v_first_second": (float(v_first_frame) / 60.0) as Variant if v_first_frame >= 0 else null,
 		"generated": int(_runner.telemetry.get("generated", 0)), "tree_hits": int(_runner.telemetry.get("tree_hits", 0)), "tree_kills": int(_runner.telemetry.get("tree_kills", 0)),
 		"chain_kills": int(_runner.telemetry.get("chain_kills", 0)), "catastrophes": int(_runner.telemetry.get("catastrophes", 0)), "r0": _runner.r0(),
 		"by_node": by_node, "by_origin": by_origin, "engines": engines, "attribution_coverage": summary.attribution_coverage,

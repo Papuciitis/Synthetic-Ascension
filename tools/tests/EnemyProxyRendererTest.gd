@@ -109,6 +109,7 @@ func _run() -> void:
 
 	world.clear_world()
 	for index in range(600):
+		@warning_ignore("integer_division")
 		_spawn(world, StringName("bulk_%d" % index), Vector2(float(index % 30), float(index / 30)), 0, {
 			"proxy_visual_key": &"bulk",
 			"proxy_color": Color(0.5, 0.8, 1.0, 1.0),

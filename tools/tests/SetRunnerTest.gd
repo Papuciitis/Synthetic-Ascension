@@ -229,9 +229,9 @@ func _on_damage_credited(source: Node, amount: float) -> void:
 	_credit_log.append([source, amount])
 
 
-func _credited_to(log: Array, source: Node) -> float:
+func _credited_to(credit_log: Array, source: Node) -> float:
 	var total := 0.0
-	for entry in log:
+	for entry in credit_log:
 		if entry[0] == source:
 			total += float(entry[1])
 	return total

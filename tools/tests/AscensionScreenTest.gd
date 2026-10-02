@@ -44,7 +44,7 @@ func _run() -> void:
 	_check(kill_feed.length() > AscensionTreeLayout.RING_RADIUS[4] and kill_feed.length() < AscensionTreeLayout.RING_RADIUS[5] and absf(rad_to_deg(kill_feed.angle()) - (-30.0)) < 30.0, "Kill Feed sits on the Melee-Ranged border beyond ring 4 (%.0f deg)" % rad_to_deg(kill_feed.angle()))
 	var death_debt := layout.position_of("MM2")
 	_check(absf(fmod(rad_to_deg(death_debt.angle()) + 360.0, 360.0) - 210.0) < 30.0, "Death Debt sits on the Melee-Magic border")
-	var placed := 0
+	var _placed := 0
 	var overlaps := 0
 	var ids := layout.positions.keys()
 	for i in range(ids.size()):
@@ -57,7 +57,7 @@ func _run() -> void:
 			if gap < (layout.radius_of(a) + layout.radius_of(b)) * 0.9:
 				overlaps += 1
 				print("OVERLAP ", a, " ", b, " gap=", gap, " at ", layout.position_of(a), " / ", layout.position_of(b))
-		placed += 1
+		_placed += 1
 	_check(overlaps == 0, "no two nodes overlap (%d overlaps)" % overlaps)
 	_check(layout.hit(layout.position_of("EXQ") + Vector2(3, 0)) == "EXQ", "hit testing finds the node under a point")
 

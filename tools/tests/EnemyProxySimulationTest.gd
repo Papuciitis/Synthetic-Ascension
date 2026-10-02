@@ -142,6 +142,7 @@ func _run() -> void:
 	simulation.call("setup", world)
 	add_child(simulation)
 	for index in range(600):
+		@warning_ignore("integer_division")
 		_spawn(world, StringName("bulk_%d" % index), Vector2(float(index % 30), float(index / 30)), 75.0)
 	var started := Time.get_ticks_usec()
 	for _step in range(200):

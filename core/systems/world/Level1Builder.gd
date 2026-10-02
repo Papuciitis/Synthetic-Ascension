@@ -927,6 +927,7 @@ func _rebuild_wall_visuals() -> void:
 	if _geo == null or not _batched_walls():
 		return
 	var chunk_px := _cm.chunk_size_px if _cm != null and is_instance_valid(_cm) else 2048
+	@warning_ignore("integer_division")
 	var side := maxi(1, int(chunk_px / cell_size_px))
 	if _wall_renderer == null:
 		_wall_renderer = ChunkBlockRenderer.new()

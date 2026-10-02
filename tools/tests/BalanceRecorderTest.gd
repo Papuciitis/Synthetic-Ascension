@@ -139,8 +139,8 @@ func _run() -> void:
 	recorder.flush_reports()
 	player.free()
 	for folder in [capture_path, second_path]:
-		for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-			DirAccess.remove_absolute(folder.path_join(name))
+		for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+			DirAccess.remove_absolute(folder.path_join(file_name))
 		DirAccess.remove_absolute(folder)
 	# Dated parent directories are kept local in user:// and contain no saves.
 	_finish()

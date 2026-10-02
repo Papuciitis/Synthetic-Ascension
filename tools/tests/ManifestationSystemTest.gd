@@ -364,7 +364,7 @@ func _test_engine_density_floor() -> void:
 	for slot in range(Inventory.SLOT_COUNT):
 		slot_data.append(_make_data("density_%d" % slot, slot))
 
-	for _run in range(runs):
+	for _run_index in range(runs):
 		var held: Dictionary = {}
 		for slot in range(Inventory.SLOT_COUNT):
 			var id := ManifestationCatalog.roll_for(
@@ -419,7 +419,7 @@ func _test_median_run_is_legible() -> void:
 	pair_histogram.resize(11)
 	pair_histogram.fill(0)
 
-	for _run in range(runs):
+	for _run_index in range(runs):
 		var held: Dictionary = {}
 		var seen_rules: Dictionary = {}
 		for slot in range(Inventory.SLOT_COUNT):
@@ -451,6 +451,7 @@ func _test_median_run_is_legible() -> void:
 	var seen := 0
 	for i in range(rule_histogram.size()):
 		seen += rule_histogram[i]
+		@warning_ignore("integer_division")
 		if seen >= runs / 2:
 			median_rules = i
 			break

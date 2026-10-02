@@ -188,15 +188,15 @@ func _frame_textured_roof() -> void:
 	var box := Rect2(poly[0], Vector2.ZERO) if poly.size() > 0 else Rect2()
 	for p in poly:
 		box = box.expand(p)
-	var material := ShaderMaterial.new()
-	material.shader = ROOF_SHADER
-	material.set_shader_parameter("bounds", Vector4(box.position.x, box.position.y, box.end.x, box.end.y))
-	material.set_shader_parameter("ridge_along_x", 1.0 if box.size.x >= box.size.y else 0.0)
+	var roof_material := ShaderMaterial.new()
+	roof_material.shader = ROOF_SHADER
+	roof_material.set_shader_parameter("bounds", Vector4(box.position.x, box.position.y, box.end.x, box.end.y))
+	roof_material.set_shader_parameter("ridge_along_x", 1.0 if box.size.x >= box.size.y else 0.0)
 	# Outlines carry collinear points; what matters is whether the roof fills
 	# its box (a rectangle) or not (an L or a notch).
 	var fills_box := box.get_area() > 0.0 and absf(_signed_area(poly)) >= box.get_area() * 0.97
-	material.set_shader_parameter("gable", 1.0 if fills_box else 0.0)
-	_poly.material = material
+	roof_material.set_shader_parameter("gable", 1.0 if fills_box else 0.0)
+	_poly.material = roof_material
 	poly = _notch_doors(poly)
 	_poly.polygon = poly
 	_add_eave_shadow(poly)

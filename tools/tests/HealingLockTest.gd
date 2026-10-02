@@ -45,7 +45,7 @@ func _run() -> void:
 	await _test_seal_on_the_player()
 	await _test_expiry_reopens_healing()
 	_test_exempt_sources_export()
-	await _test_hp_bar_tell()
+	_test_hp_bar_tell()
 
 	RunEvents.healing_lock_changed.disconnect(_on_lock)
 	RunEvents.player_healed.disconnect(_on_healed)

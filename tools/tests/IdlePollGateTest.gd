@@ -28,6 +28,7 @@ class FakeDirector:
 class FakeAbility:
 	extends Node
 	signal active_cd_changed(time_left: float, max_cd: float)
+	@warning_ignore("unused_signal")
 	signal active_failed(message: String)
 
 	var hud_key_text: String = "R"

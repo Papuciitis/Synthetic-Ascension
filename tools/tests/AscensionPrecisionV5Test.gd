@@ -36,7 +36,7 @@ func _spawn_enemy(hp: float, at: Vector2, elite: bool = false) -> int:
 	return EnemyWorld.create_enemy(SpawnState.new(&"asc_pr_v5", "res://asc_pr_v5.tscn", at, hp, 10.0, 8.0, 0, flags))
 
 
-func _bullet_tags(cast: String, pid: int) -> PackedStringArray:
+func _bullet_tags(cast: String, _pid: int) -> PackedStringArray:
 	var tags := AscensionTags.native("ranged", "bullet")
 	tags = AscensionTags.with_flag(tags, "core_strike")
 	tags.append("cast:" + cast)
@@ -264,7 +264,6 @@ func _run() -> void:
 	var boss := _spawn_enemy(4000.0, _player.global_position + Vector2(150, 0), true)
 	var squads_before := int(_engine.counters["squads"])
 	var tags := _bullet_tags("root:boss", 7)
-	var ledger_payload := HitLedger.new()
 	for i in range(3):
 		var payload := HitLedger.new()
 		payload.target_handle = boss

@@ -65,6 +65,7 @@ class Sheet:
 
 	func luminance(x: int, y: int) -> int:
 		var base := (y * width + x) * 4
+		@warning_ignore("integer_division")
 		return (data[base] + data[base + 1] + data[base + 2]) / 3
 
 
@@ -477,6 +478,7 @@ func _isolate(image: Image) -> void:
 			var index := stack[top]
 			size += 1
 			var x := index % width
+			@warning_ignore("integer_division")
 			var y := index / width
 			min_x = mini(min_x, x)
 			max_x = maxi(max_x, x)
@@ -515,6 +517,7 @@ func _isolate(image: Image) -> void:
 	var clear := Color(0.0, 0.0, 0.0, 0.0)
 	for index in range(width * height):
 		if labels[index] != 0 and erase[labels[index]] != 0:
+			@warning_ignore("integer_division")
 			image.set_pixel(index % width, index / width, clear)
 
 
@@ -631,6 +634,7 @@ func _downscale(image: Image, scale: float) -> Image:
 			if not attached:
 				lone.append(y * width + x)
 	for index in lone:
+		@warning_ignore("integer_division")
 		work.set_pixel(index % width, index / width, clear)
 	return work
 

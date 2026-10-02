@@ -87,8 +87,8 @@ func _run() -> void:
 
 # --- 1: the V4 control is byte-identical.
 func _test_v4_control_pinned() -> void:
-	var hash := FileAccess.get_sha256("res://data/ascension/tree_v4.json")
-	_check(hash == TREE_V4_SHA256, "the V4 tree is the pinned control (sha256 %s)" % hash.substr(0, 12))
+	var tree_sha256 := FileAccess.get_sha256("res://data/ascension/tree_v4.json")
+	_check(tree_sha256 == TREE_V4_SHA256, "the V4 tree is the pinned control (sha256 %s)" % tree_sha256.substr(0, 12))
 	# And it still parses into the DB beside V5 (a corrupt pin is two bugs).
 	_check(AscensionTreeDB.shared_for("v4") != null, "the V4 tree loads")
 	_check(AscensionTreeDB.shared_for("v5_ranged") != null, "the V5 tree loads beside it")

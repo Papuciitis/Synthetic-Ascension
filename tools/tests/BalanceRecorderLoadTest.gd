@@ -274,8 +274,8 @@ func _workload(config: String, recorder: Node, player: Node) -> Dictionary:
 	var output_bytes := 0
 	var saved := {}
 	if config != "disabled":
-		for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-			var file_path := capture.path_join(name)
+		for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+			var file_path := capture.path_join(file_name)
 			if FileAccess.file_exists(file_path):
 				output_bytes += FileAccess.get_file_as_bytes(file_path).size()
 		saved = JSON.parse_string(FileAccess.get_file_as_string(capture.path_join("summary.json")))
@@ -299,7 +299,7 @@ func _workload(config: String, recorder: Node, player: Node) -> Dictionary:
 
 
 func _remove_capture(path: String) -> void:
-	for name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
-		if FileAccess.file_exists(path.path_join(name)):
-			DirAccess.remove_absolute(path.path_join(name))
+	for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
+		if FileAccess.file_exists(path.path_join(file_name)):
+			DirAccess.remove_absolute(path.path_join(file_name))
 	DirAccess.remove_absolute(path)

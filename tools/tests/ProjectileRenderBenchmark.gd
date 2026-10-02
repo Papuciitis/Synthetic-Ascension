@@ -127,6 +127,7 @@ func _benchmark_count(count: int, compare_against_setters: bool) -> Dictionary:
 	sizes.resize(count)
 	colors.resize(count)
 	for i in range(count):
+		@warning_ignore("integer_division")
 		positions[i] = Vector2(float(i % 100) * 8.0, float(i / 100) * 8.0)
 		velocities[i] = Vector2.RIGHT.rotated(float(i) * 0.017) * 700.0
 		sizes[i] = Vector2(0.8 + float(i % 5) * 0.1, 0.75)
@@ -153,6 +154,7 @@ func _benchmark_count(count: int, compare_against_setters: bool) -> Dictionary:
 	# write, so this re-runs the setter pass first.
 	var mismatch := ""
 	if not compare_against_setters:
+		@warning_ignore("integer_division")
 		return {
 			"setters": setter_samples[setter_samples.size() / 2],
 			"bulk": bulk_samples[bulk_samples.size() / 2],
@@ -169,10 +171,12 @@ func _benchmark_count(count: int, compare_against_setters: bool) -> Dictionary:
 	else:
 		for i in range(from_setters.size()):
 			if absf(from_setters[i] - packed[i]) > BUFFER_EPSILON:
+				@warning_ignore("integer_division")
 				mismatch = "float %d of instance %d: %f vs %f" % [
 					i % 12, i / 12, from_setters[i], packed[i],
 				]
 				break
+	@warning_ignore("integer_division")
 	return {
 		"setters": setter_samples[setter_samples.size() / 2],
 		"bulk": bulk_samples[bulk_samples.size() / 2],

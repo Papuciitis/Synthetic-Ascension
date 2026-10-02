@@ -68,9 +68,9 @@ func _on_draw() -> void:
 ## directly, so this suite still parses against a tree where the constant does
 ## not exist yet - which is what makes "revert the fix and watch it fail" a
 ## usable check rather than a parse error.
-func _tunable(script: Script, name: StringName, fallback: float) -> float:
+func _tunable(script: Script, constant_name: StringName, fallback: float) -> float:
 	var constants: Dictionary = script.get_script_constant_map()
-	return float(constants.get(String(name), fallback))
+	return float(constants.get(String(constant_name), fallback))
 
 
 func _frames(count: int) -> void:
@@ -95,6 +95,7 @@ func _count_draws(count: int) -> Array:
 ## The most repaints the shared 30 Hz bucket can produce in `elapsed_ms`, plus
 ## one for the partial bucket at each end.
 func _bucket_ceiling(elapsed_ms: int) -> int:
+	@warning_ignore("integer_division")
 	return int(elapsed_ms / PULSE_REDRAW_MS) + 2
 
 

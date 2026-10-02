@@ -95,6 +95,7 @@ func _test_wrap_reclaims_block() -> void:
 	var splat := _splat()
 	splat.set_chunk_base(Vector2i.ZERO, 0)
 	splat.paint_rect(Rect2i(3, 3, 2, 2), 7, 0.9)
+	@warning_ignore("integer_division")
 	var far := Vector2i(GroundSplatRenderer.MAP_SIZE / 32, 0)
 	splat.set_chunk_base(far, 10)
 	_check(splat.material_at(far * 32 + Vector2i(3, 3)) == 10, "a chunk sharing the wrapped block repaints it with its own base")

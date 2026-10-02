@@ -21,6 +21,7 @@ func _ready() -> void:
 
 func _distribution(values: Array[int]) -> Dictionary:
 	values.sort()
+	@warning_ignore("integer_division")
 	return {
 		"count": values.size(),
 		"min": values[0],

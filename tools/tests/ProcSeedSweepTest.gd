@@ -111,9 +111,11 @@ func _run() -> void:
 	# seed-exact reproduction.
 	for entry in fallbacks:
 		print("FALLBACK: ", entry)
+	@warning_ignore("integer_division")
 	_check(fallbacks.size() <= maxi(1, plans / 50), "fallback plans stay rare (%d of %d)" % [fallbacks.size(), plans])
 	for entry in retried:
 		print("RETRIED: ", entry)
+	@warning_ignore("integer_division")
 	_check(retried.size() <= maxi(1, plans / 20), "first-attempt generation is the norm (%d of %d retried)" % [retried.size(), plans])
 	_check(picker_violations.is_empty(), "the theme picker authors arenas on the milestone segments only (%s)" % str(picker_violations.slice(0, 3)))
 	_check(reach_violations.is_empty(), "start -> primary -> exit reachability holds everywhere (%s)" % str(reach_violations.slice(0, 3)))

@@ -182,8 +182,8 @@ func _test_equipped_duplicate_feed() -> void:
 	var equipped := ItemInstance.from_roll(data, 1, ItemInstance.Polarity.POS, 0.5, false)
 	inv.set_item(int(data.equip_slot), equipped, null)
 
-	var duplicate := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.3, false)
-	var fed := inv.add_or_feed(duplicate, null)
+	var duplicate_item := ItemInstance.from_roll(data, 0, ItemInstance.Polarity.POS, 0.3, false)
+	var fed := inv.add_or_feed(duplicate_item, null)
 	_check(fed, "add_or_feed accepts a duplicate of the equipped item")
 	_check(
 		inv.get_at(int(data.equip_slot)) == equipped or int((inv.get_at(int(data.equip_slot)) as ItemInstance).rarity) >= 1,

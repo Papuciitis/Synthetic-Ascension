@@ -238,8 +238,8 @@ func _run() -> void:
 		var vent_rounds := _rounds_at(_runner.player_position(), "BR08")
 		var vent_count := barrage._vent_round_count()
 		var vent_even := vent_rounds.size() == vent_count
-		for round in vent_rounds:
-			vent_even = vent_even and absf(float(round["damage"]) - (0.6 * Dr + 0.06 * Dr * 60.0 / float(vent_count))) < 0.01
+		for vent_round in vent_rounds:
+			vent_even = vent_even and absf(float(vent_round["damage"]) - (0.6 * Dr + 0.06 * Dr * 60.0 / float(vent_count))) < 0.01
 		_check(vent_even, "the %d real release rounds each carry an even share of the whole 60-Force bonus, not 60 Force each (%d spawned)" % [vent_count, vent_rounds.size()])
 		# Overload: four volleys draw on the banked half, not on fresh Force.
 		bastion.force = 30.0
@@ -249,8 +249,8 @@ func _run() -> void:
 		barrage._tick_overload(0.6)
 		var overload_rounds := _rounds_at(_runner.player_position(), "BRC")
 		var overload_even := overload_rounds.size() == 48
-		for round in overload_rounds:
-			overload_even = overload_even and absf(float(round["damage"]) - (0.8 * Dr + snapshot / 48.0)) < 0.01
+		for overload_round in overload_rounds:
+			overload_even = overload_even and absf(float(overload_round["damage"]) - (0.8 * Dr + snapshot / 48.0)) < 0.01
 		_check(int(barrage.counters["overload_rounds"]) == overload_before + 48 and overload_even, "Overload's 48 real rounds each carry 1/48 of the half snapshot (%d spawned)" % overload_rounds.size())
 		_check(is_equal_approx(bastion.force, 30.0) and is_equal_approx(float(barrage.counters.get("heavy_barrel_force", 0.0)), 60.0), "Overload spent no Force: the fresh 30 and the single 60 record survive (%.1f)" % bastion.force)
 		_check(is_zero_approx(barrage._heavy_barrel_bonus) and barrage._overload_volleys_left == 0, "the snapshot clears with the fourth volley; nothing is left to re-use twice")

@@ -135,9 +135,9 @@ func get_shader_material() -> ShaderMaterial:
 ## Lay a chunk's base ground over its whole block, which also forgets any
 ## stamps a chunk 16 chunks away left in the wrapped map. Generated chunks
 ## paint their stamps after this; authored stamps are laid back on top here.
-func set_chunk_base(coord: Vector2i, material: int, brightness: float = 1.0) -> void:
+func set_chunk_base(coord: Vector2i, ground_index: int, brightness: float = 1.0) -> void:
 	var block := Rect2i(coord * cells_per_chunk, Vector2i(cells_per_chunk, cells_per_chunk))
-	_fill(block, material, brightness, false)
+	_fill(block, ground_index, brightness, false)
 	if _authored_mask != null:
 		_for_wrapped_spans(block, func(span: Rect2i) -> void:
 			_cover_a.blit_rect_mask(_authored[0], _authored_mask, span, span.position)
@@ -150,16 +150,16 @@ func set_chunk_base(coord: Vector2i, material: int, brightness: float = 1.0) -> 
 ## Paint one stamp, in global cells. Later paints replace earlier ones, so
 ## callers paint in z order. `authored` stamps survive the chunk bases that
 ## stream in after them.
-func paint_rect(rect: Rect2i, material: int, alpha: float, brightness: float = 1.0, authored: bool = false) -> void:
-	if rect.size.x <= 0 or rect.size.y <= 0 or material < 0:
+func paint_rect(rect: Rect2i, ground_index: int, alpha: float, brightness: float = 1.0, authored: bool = false) -> void:
+	if rect.size.x <= 0 or rect.size.y <= 0 or ground_index < 0:
 		return
 	if authored and _authored_mask == null:
 		_authored = [_blank_map(), _blank_map(), _blank_map()]
 		_authored_mask = _blank_map()
 	if alpha < STAIN_ALPHA:
-		_stain(rect, material, alpha, authored)
+		_stain(rect, ground_index, alpha, authored)
 	else:
-		_fill(rect, material, brightness, authored)
+		_fill(rect, ground_index, brightness, authored)
 	var first := Vector2i(floori(float(rect.position.x) / cells_per_chunk), floori(float(rect.position.y) / cells_per_chunk))
 	var last := Vector2i(floori(float(rect.end.x - 1) / cells_per_chunk), floori(float(rect.end.y - 1) / cells_per_chunk))
 	for cy in range(first.y, last.y + 1):
@@ -236,8 +236,8 @@ func flush() -> void:
 	_light_texture.update(_light)
 
 
-func _fill(rect: Rect2i, material: int, brightness: float, authored: bool) -> void:
-	var slot := _slot_for(material)
+func _fill(rect: Rect2i, ground_index: int, brightness: float, authored: bool) -> void:
+	var slot := _slot_for(ground_index)
 	var a := Color(0, 0, 0, 0)
 	var b := Color(0, 0, 0, 0)
 	if slot < 4:
@@ -258,12 +258,12 @@ func _fill(rect: Rect2i, material: int, brightness: float, authored: bool) -> vo
 	_dirty = true
 
 
-func _stain(rect: Rect2i, material: int, alpha: float, authored: bool) -> void:
+func _stain(rect: Rect2i, ground_index: int, alpha: float, authored: bool) -> void:
 	# One stain material per world (in practice the mud chips); the first wins.
 	if _material.get_shader_parameter("stain_layer") == null or not has_meta(&"_stain_set"):
 		set_meta(&"_stain_set", true)
-		_material.set_shader_parameter("stain_layer", float(material))
-		_material.set_shader_parameter("stain_repeat_px", float(_WORLD_ART.ground_repeat_world_px(material)))
+		_material.set_shader_parameter("stain_layer", float(ground_index))
+		_material.set_shader_parameter("stain_repeat_px", float(_WORLD_ART.ground_repeat_world_px(ground_index)))
 	var amount := clampf(alpha * 5.0, 0.0, 1.0)
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
@@ -277,18 +277,18 @@ func _stain(rect: Rect2i, material: int, alpha: float, authored: bool) -> void:
 	_dirty = true
 
 
-## The slot drawing `material`. Slots are handed out first come; a ninth
+## The slot drawing `ground_index`. Slots are handed out first come; a ninth
 ## material borrows the slot of one like it (overgrowth or paving).
-func _slot_for(material: int) -> int:
+func _slot_for(ground_index: int) -> int:
 	for slot in SLOTS:
-		if _slot_material[slot] == material:
+		if _slot_material[slot] == ground_index:
 			return slot
 	for slot in SLOTS:
 		if _slot_material[slot] < 0:
-			_slot_material[slot] = material
+			_slot_material[slot] = ground_index
 			_push_slot_uniforms()
 			return slot
-	var overgrowth := _WORLD_ART.is_overgrowth_ground(material)
+	var overgrowth := _WORLD_ART.is_overgrowth_ground(ground_index)
 	for slot in SLOTS:
 		if _WORLD_ART.is_overgrowth_ground(_slot_material[slot]) == overgrowth:
 			return slot
@@ -301,12 +301,12 @@ func _push_slot_uniforms() -> void:
 	var tints := PackedColorArray()
 	var og := [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 	for slot in SLOTS:
-		var material := maxi(0, _slot_material[slot])
-		var layer := material_layer(material)
+		var ground_index := maxi(0, _slot_material[slot])
+		var layer := material_layer(ground_index)
 		layers.append(float(layer))
 		repeats.append(float(_WORLD_ART.ground_repeat_world_px(layer)))
-		tints.append(material_tint(material))
-		if _slot_material[slot] >= 0 and _WORLD_ART.is_overgrowth_ground(material):
+		tints.append(material_tint(ground_index))
+		if _slot_material[slot] >= 0 and _WORLD_ART.is_overgrowth_ground(ground_index):
 			og[slot] = 1.0
 	_material.set_shader_parameter("slot_layer", layers)
 	_material.set_shader_parameter("slot_repeat_px", repeats)

@@ -191,7 +191,7 @@ func _run() -> void:
 
 	# ---------------- Return Shot, Overpenetrate, Long Game
 	pr = _load(["PR01", "PR07", "PR12"])
-	var struck := _spawn(200.0, origin + Vector2(30, 0))
+	var _struck := _spawn(200.0, origin + Vector2(30, 0))
 	var behind := _spawn(3.0, origin - Vector2(20, 0))
 	_runner.spawn_bullet(origin, Vector2.RIGHT, 10.0, _core_tags(), {"max_range": 60.0})
 	await _frames(30)
@@ -208,7 +208,7 @@ func _run() -> void:
 
 	# ---------------- Split Line
 	pr = _load(["PR01", "PR03", "PR09"])
-	var crossed := _spawn(200.0, origin + Vector2(40, 0))
+	var _crossed := _spawn(200.0, origin + Vector2(40, 0))
 	var exposed := _spawn(5.0, origin + Vector2(80, 0))
 	_runner.status_of(exposed)["weak_point"] = 999.0
 	_runner.spawn_bullet(origin, Vector2.RIGHT, 10.0, _core_tags(), {"pierce": 2, "max_range": 200.0})

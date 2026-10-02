@@ -42,10 +42,10 @@ func _run() -> void:
 		f.close()
 		result = writer.write_batch({"records": [{"seq": 3}]}, blocker.path_join("child"))
 		_check(not result.get("ok", true) and not str(result.get("error", "")).is_empty(), "I/O failure is reported instead of claiming success")
-		for name in ["events.jsonl", "summary.json", "report.md", "report.md.tmp", "segments.csv", "file-not-directory"]:
-			if not FileAccess.file_exists(dir.path_join(name)):
+		for file_name in ["events.jsonl", "summary.json", "report.md", "report.md.tmp", "segments.csv", "file-not-directory"]:
+			if not FileAccess.file_exists(dir.path_join(file_name)):
 				continue
-			DirAccess.remove_absolute(ProjectSettings.globalize_path(dir.path_join(name)))
+			DirAccess.remove_absolute(ProjectSettings.globalize_path(dir.path_join(file_name)))
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(dir))
 	print("BalanceCaptureWriterTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures else 0)
