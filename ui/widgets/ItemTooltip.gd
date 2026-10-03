@@ -17,6 +17,8 @@ var kicker_label: Label = null
 
 var _dossier_mode: bool = false
 var _well_rarity: int = -99
+## The width the last show laid itself out at, to tell it from a host's.
+var _laid_out_width: float = 0.0
 
 var _style: StyleBox
 var _icon_style: StyleBox
@@ -53,6 +55,13 @@ const PCT_KEYS := {
 	"haste": true,
 	"luck": true,
 }
+
+## The tallest a dossier stands: the screen less this margin above and below.
+const SCREEN_MARGIN := 8.0
+## A dossier taller than that widens in these steps, up to this many times its
+## normal width; past it the host's clamp has the last word.
+const FIT_STEP := 60.0
+const FIT_MAX_SCALE := 2.0
 
 func _ready() -> void:
 	visible = false
@@ -146,15 +155,26 @@ func _apply_well(rarity: int) -> void:
 ## The body's wrap width, set before its text is measured. A RichTextLabel the
 ## container has not sized yet wraps at width 1 and reports a body thousands
 ## of pixels tall, which is what the first HUD tooltip of a run used to show.
-func _constrain_body_width() -> void:
+## Returns the panel width the body was measured for.
+func _constrain_body_width() -> float:
 	if body_label == null:
-		return
+		return size.x
 	var margin := get_node_or_null("Margin") as MarginContainer
-	# A host may lay the dossier out wider than its minimum (Gear & Stash).
-	var inner := maxf(size.x, custom_minimum_size.x)
+	var pad := 0.0
 	if margin != null:
-		inner -= float(margin.get_theme_constant(&"margin_left") + margin.get_theme_constant(&"margin_right"))
-	body_label.size = Vector2(maxf(1.0, inner), body_label.size.y)
+		pad = float(margin.get_theme_constant(&"margin_left") + margin.get_theme_constant(&"margin_right"))
+	# The width the panel will take: its minimum, or more for a long name.
+	var outer := custom_minimum_size.x
+	var vbox := body_label.get_parent()
+	for child in vbox.get_children():
+		if child != body_label and child is Control and (child as Control).visible:
+			outer = maxf(outer, (child as Control).get_combined_minimum_size().x + pad)
+	# A host may lay the dossier out wider than that (Gear & Stash), but a
+	# width the last show left behind (a long name, a fit) is not the host's.
+	if not is_equal_approx(size.x, _laid_out_width):
+		outer = maxf(outer, size.x)
+	body_label.size = Vector2(maxf(1.0, outer - pad), body_label.size.y)
+	return outer
 
 
 static func _head(text: String) -> String:
@@ -349,10 +369,30 @@ func show_item(inst: ItemInstance) -> void:
 		else:
 			lines.append("Feeding stabilizes the curse (mildest roll survives)")
 
-	_constrain_body_width()
+	var measured_width := _constrain_body_width()
 	body_label.text = "\n".join(lines)
 	reset_size()
+	_fit_screen_height(measured_width)
+	_laid_out_width = size.x
 	visible = true
+
+
+## A long dossier (a Manifestation, the comparison, the equip preview) can
+## stand taller than the screen, and the host's clamp then cuts its last
+## sections off the bottom edge. It is laid out wider instead, a step at a
+## time, so its long lines wrap into fewer.
+func _fit_screen_height(width: float) -> void:
+	if not is_inside_tree() or body_label == null:
+		return
+	var limit := get_viewport_rect().size.y - 2.0 * SCREEN_MARGIN
+	var widest := custom_minimum_size.x * FIT_MAX_SCALE
+	while size.y > limit and width < widest:
+		width = minf(width + FIT_STEP, widest)
+		custom_minimum_size.x = width
+		_constrain_body_width()
+		# The body's new width alone leaves the containers' cached minimum.
+		body_label.update_minimum_size()
+		reset_size()
 
 
 func _append_stat_comparison(lines: Array[String], candidate: ItemInstance) -> void:

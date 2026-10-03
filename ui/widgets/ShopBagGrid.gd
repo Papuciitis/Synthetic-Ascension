@@ -11,6 +11,9 @@ class_name ShopBagGrid
 const ExchangeStyle := preload("res://ui/widgets/exchange/ExchangeStyle.gd")
 
 signal slot_clicked(slot: int, button: int, double_click: bool, shift: bool, ctrl: bool)
+## The slots were rebuilt (the bound bag changed size, e.g. the Exchanger's
+## shelf grew): whatever a screen attached to the old slot controls is gone.
+signal slots_rebuilt
 
 @export var slot_scene: PackedScene = preload("res://ui/bag/BagSlot.tscn")
 @export var slot_count: int = 16
@@ -128,6 +131,7 @@ func _build_slots() -> void:
 	_building_slots = false
 	_apply_cell_size()
 	_refresh_slots_only()
+	slots_rebuilt.emit()
 
 func _refresh() -> void:
 	var desired_count: int = slot_count

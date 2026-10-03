@@ -53,7 +53,7 @@ func _item_tooltip(label: String, dossier: bool) -> void:
 	if dossier:
 		tip.set_dossier_mode(true)
 	tip.show_item(_wordy_item())
-	# What a host reads on the hover frame: Exchange's place_beside.
+	# What a host reads on the hover frame: the HUD's place_beside.
 	tip.place_beside(Rect2(Vector2(400, 300), Vector2(64, 64)), Rect2(Vector2.ZERO, Vector2(1920, SCREEN_H)))
 	_report(label, "hover", tip.size)
 	for f in range(3):

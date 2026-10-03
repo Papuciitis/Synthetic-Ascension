@@ -15,7 +15,7 @@ const CRITICAL_PATHS := [
 	"Root/HBox/Vendor/Margin/VBox/VendorTools/Search",
 	"Root/HBox/Vendor/Margin/VBox/VendorGrid",
 	"ConfirmSell",
-	"Tooltip",
+	"TooltipLayer/Tooltip",
 	"FlyVfx",
 ]
 const LOGICAL_SIZE := Vector2(1920.0, 1080.0)

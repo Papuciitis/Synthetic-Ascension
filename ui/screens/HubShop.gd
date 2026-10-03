@@ -81,10 +81,20 @@ var _vendor_ov: Array[SellMarkOverlay] = []
 var _offer_ov: Array[SellMarkOverlay] = []
 var _demand_ov: Array[SellMarkOverlay] = []
 var _bag_overlay_rebuild_pending: bool = false
+var _vendor_overlay_rebuild_pending: bool = false
 
 const REFRESH_BASE_COST: int = 3
 const REFRESH_GROWTH: float = 1.75  # exponential-ish growth per refresh
 const REFRESH_MAX_COST: int = 999
+
+## The item tooltip's own canvas layer: over the Followers notice (180), which
+## a trade or restock raises over the Exchange for 3.6 s, under the tutorial
+## cards (230) and the loading scrim (250).
+const TOOLTIP_LAYER: int = 190
+## The tooltip sits this far right of and below the cursor (left of it past
+## the right edge), and this far inside the screen.
+const TOOLTIP_OFFSET := Vector2(16, 16)
+const TOOLTIP_MARGIN: float = 8.0
 
 enum VendorCategory { ALL, EQUIP, BAG, SETS }
 var _vendor_category: int = VendorCategory.ALL
@@ -245,6 +255,7 @@ func _ready() -> void:
 			_major_choice.open()
 
 	if tooltip != null:
+		_lift_tooltip()
 		tooltip.hide_tooltip()
 
 	_style_code_built_controls()
@@ -255,9 +266,12 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	# Keep tooltip near mouse when visible + refresh live hover (double-click/moves can change item under cursor).
 	if tooltip != null and tooltip.visible:
+		# Its own layer does not hide with the Exchange.
+		if not is_visible_in_tree():
+			tooltip.hide_tooltip()
+			return
 		_refresh_hover_tooltip_live()
-		var p := get_viewport().get_mouse_position() + Vector2(16, 16)
-		tooltip.global_position = _clamp_tooltip_pos(p)
+		tooltip.global_position = _tooltip_pos_for_mouse(get_viewport().get_mouse_position())
 
 func _create_undo_button() -> void:
 	if _btn_undo_trade != null or btn_clear_cart == null:
@@ -677,26 +691,11 @@ func _build_overlays() -> void:
 	# Bag overlays are dynamic because Expanded Satchel can add slots in this scene.
 	_rebuild_bag_overlays()
 
-	# Vendor overlays
-	for k in range(BagInventory.SLOT_COUNT):
-		var cv: Control = vendor_grid.get_slot_control(k)
-		if cv == null:
-			_vendor_ov.append(null)
-			continue
-		var ovv: SellMarkOverlay = mark_overlay_scene.instantiate() as SellMarkOverlay
-		cv.add_child(ovv)
-		ovv.set_anchors_preset(Control.PRESET_FULL_RECT, true)
-		ovv.z_index = 50
-		ovv.z_as_relative = false
-		ovv.set_mode(SellMarkOverlay.Mode.BUY)
-		_vendor_ov.append(ovv)
-
-		var ent3 := Callable(self, "_on_hover_vendor").bind(k)
-		var ext3 := Callable(self, "_on_hover_clear")
-		if not cv.mouse_entered.is_connected(ent3):
-			cv.mouse_entered.connect(ent3)
-		if not cv.mouse_exited.is_connected(ext3):
-			cv.mouse_exited.connect(ext3)
+	# Vendor overlays are dynamic too: a sale past the shelf's empty places
+	# grows it, and the grid rebuilds every slot control.
+	_rebuild_vendor_overlays()
+	if not vendor_grid.slots_rebuilt.is_connected(_on_vendor_slots_rebuilt):
+		vendor_grid.slots_rebuilt.connect(_on_vendor_slots_rebuilt)
 
 	# Offer overlays (always visible for items in the cart)
 	for o in range(BagInventory.SLOT_COUNT):
@@ -788,6 +787,44 @@ func _rebuild_bag_overlays() -> void:
 			cb.mouse_entered.connect(ent2)
 		if not cb.mouse_exited.is_connected(ext2):
 			cb.mouse_exited.connect(ext2)
+
+func _on_vendor_slots_rebuilt() -> void:
+	if _vendor_overlay_rebuild_pending:
+		return
+	_vendor_overlay_rebuild_pending = true
+	call_deferred("_finish_vendor_overlay_rebuild")
+
+func _finish_vendor_overlay_rebuild() -> void:
+	_vendor_overlay_rebuild_pending = false
+	_rebuild_vendor_overlays()
+	_refresh_overlays()
+
+## Price marks and hover on every place of the shelf, however many it has.
+func _rebuild_vendor_overlays() -> void:
+	for old_overlay in _vendor_ov:
+		if old_overlay != null and is_instance_valid(old_overlay):
+			old_overlay.queue_free()
+	_vendor_ov.clear()
+
+	for k in range(vendor_grid.slot_count):
+		var cv: Control = vendor_grid.get_slot_control(k)
+		if cv == null:
+			_vendor_ov.append(null)
+			continue
+		var ovv: SellMarkOverlay = mark_overlay_scene.instantiate() as SellMarkOverlay
+		cv.add_child(ovv)
+		ovv.set_anchors_preset(Control.PRESET_FULL_RECT, true)
+		ovv.z_index = 50
+		ovv.z_as_relative = false
+		ovv.set_mode(SellMarkOverlay.Mode.BUY)
+		_vendor_ov.append(ovv)
+
+		var ent3 := Callable(self, "_on_hover_vendor").bind(k)
+		var ext3 := Callable(self, "_on_hover_clear")
+		if not cv.mouse_entered.is_connected(ent3):
+			cv.mouse_entered.connect(ent3)
+		if not cv.mouse_exited.is_connected(ext3):
+			cv.mouse_exited.connect(ext3)
 
 func _sell_value(inst: ItemInstance) -> int:
 	if Global == null or inst == null:
@@ -1636,13 +1673,8 @@ func _set_hover_from_item(inst: ItemInstance) -> void:
 
 	if tooltip != null:
 		tooltip.show_item(inst)
-		var hovered := get_viewport().gui_get_hovered_control() as Control
-		var source_rect := (
-			hovered.get_global_rect()
-			if hovered != null
-			else Rect2(get_viewport().get_mouse_position(), Vector2.ONE)
-		)
-		tooltip.place_beside(source_rect, get_viewport().get_visible_rect(), 12.0)
+		# Where _process keeps it, so the hover frame does not jump.
+		tooltip.global_position = _tooltip_pos_for_mouse(get_viewport().get_mouse_position())
 
 func _on_hover_clear() -> void:
 	_hover_ctx_kind = ""
@@ -1652,13 +1684,27 @@ func _on_hover_clear() -> void:
 	if tooltip != null:
 		tooltip.hide_tooltip()
 
-func _clamp_tooltip_pos(p: Vector2) -> Vector2:
+## Right of and below the cursor; past the right edge it flips to the cursor's
+## left rather than being clamped back over the lot it describes.
+func _tooltip_pos_for_mouse(mouse: Vector2) -> Vector2:
 	var vp := get_viewport_rect().size
 	var tip_size := (tooltip.size if tooltip != null else Vector2(260, 200))
-	var out := p
-	out.x = clampf(out.x, 8.0, maxf(8.0, vp.x - tip_size.x - 8.0))
-	out.y = clampf(out.y, 8.0, maxf(8.0, vp.y - tip_size.y - 8.0))
+	var out := mouse + TOOLTIP_OFFSET
+	if out.x + tip_size.x > vp.x - TOOLTIP_MARGIN:
+		out.x = mouse.x - TOOLTIP_OFFSET.x - tip_size.x
+	out.x = clampf(out.x, TOOLTIP_MARGIN, maxf(TOOLTIP_MARGIN, vp.x - tip_size.x - TOOLTIP_MARGIN))
+	out.y = clampf(out.y, TOOLTIP_MARGIN, maxf(TOOLTIP_MARGIN, vp.y - tip_size.y - TOOLTIP_MARGIN))
 	return out
+
+## The tooltip on a canvas layer of its own, over everything the hub raises
+## above the Exchange; the Exchange's theme does not cross a layer by itself.
+func _lift_tooltip() -> void:
+	var tooltip_layer := CanvasLayer.new()
+	tooltip_layer.name = "TooltipLayer"
+	tooltip_layer.layer = TOOLTIP_LAYER
+	add_child(tooltip_layer)
+	tooltip.reparent(tooltip_layer, false)
+	tooltip.theme = theme
 
 # ---- Capacity helpers ----
 func _bag_empty_slots() -> int:
