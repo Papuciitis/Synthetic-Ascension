@@ -16,6 +16,42 @@ class_name HudGateOverlayController
 
 @export var ready_threshold: float = 0.999
 
+## HUD panels along the screen edges. While one is shown the arrow stops short
+## of it instead of sitting on it, so neither the arrow nor its distance covers
+## the ability plates, the top-left panel, the backpack, the objective stack,
+## the Run Sheet (bag open), a tutorial tip or the evac warning.
+@export var keep_clear_paths: Array[NodePath] = [
+	NodePath("../TopLeft"),
+	NodePath("../BagUI"),
+	NodePath("../BossBarHUD"),
+	NodePath("../ActiveAbilityHud_Q"),
+	NodePath("../ActiveAbilityHud_R"),
+	NodePath("../ActiveAbilityHud_V"),
+	NodePath("../GateOverlay/ContextStack"),
+	NodePath("../RunSheetHUD"),
+	NodePath("../GateOverlay/TutorialTip"),
+	NodePath("../EvacOverlay/EvacWarning"),
+]
+
+## Space between the arrow plate and a HUD panel it stops against.
+const KEEP_CLEAR_GAP := 8.0
+## Space between the arrow plate and its distance.
+const LABEL_GAP := 3.0
+## Rounding the end of the ability plates or the boss bar moves the arrow's
+## pin in one jump (under 200 px); it glides there at GLIDE_SPEED (px/s).
+## Ordinary edge travel is slower, so the arrow still tracks it exactly. A
+## longer jump is a new target elsewhere, and gliding that would drag the
+## arrow across the middle of the screen, so it snaps. Reduced Motion snaps.
+const GLIDE_SPEED := 2400.0
+const GLIDE_MAX_JUMP := 240.0
+## The pin follows the target's bearing with this much slack (radians, half a
+## degree), so a jitter of the camera or the target right where the ray rounds
+## a panel corner cannot flip the pin between panel and edge every frame. The
+## glyph still turns to the true bearing.
+const PIN_SLACK := 0.0087
+
+const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
+
 var _gate_overlay: Control = null
 var _gate_arrow: Control = null
 var _gate_arrow_tex: Control = null
@@ -24,6 +60,17 @@ var _gate_ready_overlay: Control = null
 
 var _res_bar: ProgressBar = null
 var _gate_status: Label = null
+
+var _keep_clear: Array[Control] = []
+var _keep_clear_rects: Array[Rect2] = []
+var _keep_clear_resolved: bool = false
+## The panels' rects are re-read only after one of them moved, resized, showed
+## or hid, not every frame.
+var _keep_clear_dirty: bool = true
+var _arrow_shown: bool = false
+var _arrow_center: Vector2 = Vector2.ZERO
+var _pin_bearing: float = 0.0
+var _shown_meters: int = -1
 
 var _last_res: float = -1.0
 var _popup_tw: Tween = null
@@ -76,7 +123,7 @@ func _refresh_arrow_processing() -> void:
 		return
 	_resolve_nodes()
 	if _gate_arrow != null:
-		_gate_arrow.visible = false
+		_hide_arrow()
 
 
 func _hook_run_events() -> void:
@@ -101,7 +148,23 @@ func _resolve_nodes() -> void:
 	if _gate_status == null and gate_status_label_path != NodePath():
 		_gate_status = get_node_or_null(gate_status_label_path) as Label
 
+	if not _keep_clear_resolved:
+		_keep_clear_resolved = true
+		for path in keep_clear_paths:
+			var panel := get_node_or_null(path) as Control
+			if panel != null:
+				_keep_clear.append(panel)
+				# Shown or hidden (its own or a parent's), moved or resized, freed.
+				panel.visibility_changed.connect(_on_keep_clear_changed)
+				panel.item_rect_changed.connect(_on_keep_clear_changed)
+				panel.tree_exiting.connect(_on_keep_clear_changed)
+		_keep_clear_rects.resize(_keep_clear.size())
+
 	_ensure_arrow_material()
+
+
+func _on_keep_clear_changed() -> void:
+	_keep_clear_dirty = true
 
 
 func _ensure_arrow_material() -> void:
@@ -163,73 +226,96 @@ func _update_gate_arrow(delta: float) -> void:
 		return
 
 	if Global == null:
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 	var target_world: Vector2 = Global.objective_target_pos
 	if target_world == Vector2.INF:
 		target_world = Global.exit_gate_pos
 	if target_world == Vector2.INF:
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 
 	var gate_screen: Vector2 = _world_to_screen(target_world)
 	if gate_screen == Vector2.INF:
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 
 	var vp_size: Vector2 = _get_viewport_size()
 	if vp_size == Vector2.ZERO:
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 
 	var center: Vector2 = vp_size * 0.5
 	var dir: Vector2 = gate_screen - center
 
 	if dir.length() < 8.0:
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 
 	# If the gate is on screen, hide the edge arrow.
 	var margin: float = 26.0
 	var inner: Rect2 = Rect2(Vector2(margin, margin), vp_size - Vector2(margin * 2.0, margin * 2.0))
 	if inner.has_point(gate_screen):
-		_gate_arrow.visible = false
+		_hide_arrow()
 		return
 
+	var nd: Vector2 = dir.normalized()
+	var half_arrow: Vector2 = _gate_arrow.size * 0.5
+	if _keep_clear_dirty:
+		_keep_clear_dirty = false
+		for i in range(_keep_clear.size()):
+			var panel: Control = _keep_clear[i] if is_instance_valid(_keep_clear[i]) else null
+			_keep_clear_rects[i] = panel.get_global_rect() if panel != null and panel.is_inside_tree() and panel.is_visible_in_tree() else Rect2()
+	var bearing: float = nd.angle()
+	var slack_off: float = angle_difference(bearing, _pin_bearing)
+	if not _arrow_shown:
+		_pin_bearing = bearing
+	elif absf(slack_off) > PIN_SLACK:
+		_pin_bearing = bearing + signf(slack_off) * PIN_SLACK
+	var pin_dir: Vector2 = Vector2.from_angle(_pin_bearing)
+	var pin: Vector2 = edge_pin(center, pin_dir, inner, _keep_clear_rects, maxf(half_arrow.x, half_arrow.y) + KEEP_CLEAR_GAP)
+	var jump: float = _arrow_center.distance_to(pin)
+	if _arrow_shown and jump > GLIDE_SPEED * delta and jump <= GLIDE_MAX_JUMP and not ArcaneMotion.reduced():
+		_arrow_center = _arrow_center.move_toward(pin, GLIDE_SPEED * delta)
+	else:
+		_arrow_center = pin
+	_arrow_shown = true
 	_gate_arrow.visible = true
 
-	var nd: Vector2 = dir.normalized()
-	var half: Vector2 = vp_size * 0.5
-	var t: float = 1.0e9
-
-	if absf(nd.x) > 0.0001:
-		t = minf(t, (half.x - margin) / absf(nd.x))
-	if absf(nd.y) > 0.0001:
-		t = minf(t, (half.y - margin) / absf(nd.y))
-
-	var pos: Vector2 = center + nd * t
-
-	_gate_arrow.position = pos - (_gate_arrow.size * 0.5)
+	_gate_arrow.position = _arrow_center - half_arrow
 
 	# Distance language: direction alone leaves the player guessing how far.
-	var arrow_player := get_tree().get_first_node_in_group("player") as Node2D
+	var arrow_player := get_tree().get_first_node_in_group(&"player") as Node2D
 	if arrow_player != null:
 		if _gate_distance_label == null or not is_instance_valid(_gate_distance_label):
 			_gate_distance_label = Label.new()
-			_gate_distance_label.add_theme_font_size_override("font_size", 12)
-			_gate_distance_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))
-			_gate_distance_label.add_theme_constant_override("outline_size", 3)
+			_gate_distance_label.name = "GateDistance"
+			# Garamond like before, stronger and tabular so the width holds as the
+			# count runs; Cinzel has no lowercase and would read "78M".
+			_gate_distance_label.theme_type_variation = &"BodyStrong"
+			_gate_distance_label.add_theme_font_size_override("font_size", 15)
+			_gate_distance_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+			_gate_distance_label.add_theme_constant_override("outline_size", 4)
 			_gate_distance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			_gate_arrow.add_child(_gate_distance_label)
+			_gate_distance_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			# Beside the arrow, not inside it: the arrow is a PanelContainer that
+			# would lay the label out over the glyph.
+			_gate_arrow.add_sibling(_gate_distance_label)
+			_shown_meters = -1
 		# 64px ≈ one world meter (cell size).
 		var meters := int(arrow_player.global_position.distance_to(target_world) / 64.0)
-		_gate_distance_label.text = "%dm" % meters
-		_gate_distance_label.position = Vector2(
-			(_gate_arrow.size.x - _gate_distance_label.size.x) * 0.5,
-			_gate_arrow.size.y + 2.0
+		if meters != _shown_meters:
+			_shown_meters = meters
+			_gate_distance_label.text = "%dm" % meters
+			_gate_distance_label.reset_size()
+		_gate_distance_label.position = distance_label_position(
+			_arrow_center, pin_dir, half_arrow.x, _gate_distance_label.size, Rect2(Vector2.ZERO, vp_size).grow(-4.0), LABEL_GAP
 		)
+		_gate_distance_label.visible = true
+	elif _gate_distance_label != null and is_instance_valid(_gate_distance_label):
+		_gate_distance_label.visible = false
 
-	var target_rot: float = nd.angle() + (PI * 0.5) # ▲ points up by default
+	var target_rot: float = bearing + (PI * 0.5) # ▲ points up by default
 
 	if _gate_arrow_tex != null and _gate_arrow_tex is Control:
 		var c: Control = _gate_arrow_tex as Control
@@ -237,9 +323,77 @@ func _update_gate_arrow(delta: float) -> void:
 	else:
 		_gate_arrow.rotation = lerp_angle(_gate_arrow.rotation, target_rot, minf(1.0, delta * 16.0))
 
-	# Pulse alpha.
+	# Pulse alpha; the distance pulses with the arrow, as it did as its child.
 	var tt: float = float(Time.get_ticks_msec()) * 0.004
 	_gate_arrow.modulate.a = 0.78 + 0.22 * (0.5 + 0.5 * sin(tt))
+	if _gate_distance_label != null and is_instance_valid(_gate_distance_label):
+		_gate_distance_label.modulate.a = _gate_arrow.modulate.a
+
+
+func _hide_arrow() -> void:
+	_arrow_shown = false
+	_gate_arrow.visible = false
+	if _gate_distance_label != null and is_instance_valid(_gate_distance_label):
+		_gate_distance_label.visible = false
+
+
+## Where the edge arrow's centre pins: where the ray from the screen centre
+## along `dir` (unit) leaves `inner`, or first meets one of the `keep_clear`
+## panels grown by `clearance`, whichever comes first. Empty rects are skipped.
+static func edge_pin(center: Vector2, dir: Vector2, inner: Rect2, keep_clear: Array[Rect2], clearance: float) -> Vector2:
+	var t: float = 1.0e9
+	if absf(dir.x) > 0.0001:
+		t = minf(t, ((inner.end.x if dir.x > 0.0 else inner.position.x) - center.x) / dir.x)
+	if absf(dir.y) > 0.0001:
+		t = minf(t, ((inner.end.y if dir.y > 0.0 else inner.position.y) - center.y) / dir.y)
+	# Only a panel the ray's bounding box reaches can stop it, so most panels
+	# are skipped without a ray test.
+	var reach: Rect2 = Rect2(center, Vector2.ZERO).expand(center + dir * t)
+	for rect in keep_clear:
+		if rect.has_area():
+			var grown: Rect2 = rect.grow(clearance)
+			if reach.intersects(grown, true):
+				t = minf(t, ray_entry(center, dir, grown))
+	return center + dir * t
+
+
+## How far along the ray from `origin` along `dir` it first enters `rect`:
+## INF when it misses, or when it starts inside (nothing to stop short of).
+static func ray_entry(origin: Vector2, dir: Vector2, rect: Rect2) -> float:
+	if rect.has_point(origin):
+		return INF
+	var t_in: float = -INF
+	var t_out: float = INF
+	if absf(dir.x) > 0.0001:
+		var tx1: float = (rect.position.x - origin.x) / dir.x
+		var tx2: float = (rect.end.x - origin.x) / dir.x
+		t_in = maxf(t_in, minf(tx1, tx2))
+		t_out = minf(t_out, maxf(tx1, tx2))
+	elif origin.x < rect.position.x or origin.x > rect.end.x:
+		return INF
+	if absf(dir.y) > 0.0001:
+		var ty1: float = (rect.position.y - origin.y) / dir.y
+		var ty2: float = (rect.end.y - origin.y) / dir.y
+		t_in = maxf(t_in, minf(ty1, ty2))
+		t_out = minf(t_out, maxf(ty1, ty2))
+	elif origin.y < rect.position.y or origin.y > rect.end.y:
+		return INF
+	if t_in > t_out or t_in < 0.0:
+		return INF
+	return t_in
+
+
+## Top-left of the distance label: upright, on the arrow's inward side along
+## its line (above it on the bottom edge, left of it on the right edge,
+## diagonally in at a corner), clear of the round plate of `arrow_radius`
+## by `gap`, and kept inside `view`.
+static func distance_label_position(arrow_center: Vector2, dir: Vector2, arrow_radius: float, label_size: Vector2, view: Rect2, gap: float) -> Vector2:
+	var half: Vector2 = label_size * 0.5
+	# The label box's reach towards the arrow, so it clears the plate at any angle.
+	var reach: float = arrow_radius + gap + absf(dir.x) * half.x + absf(dir.y) * half.y
+	var label_center: Vector2 = arrow_center - dir * reach
+	label_center = label_center.clamp(view.position + half, view.end - half)
+	return label_center - half
 
 
 func _on_resonance_changed(v: float) -> void:
