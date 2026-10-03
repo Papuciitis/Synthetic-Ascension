@@ -1971,3 +1971,31 @@ rerun before it is read as a failure. Owed: a rendered look at the Binding and t
 plates (tools/dev/BindingShotProbe; rendered Godot crashed at start-up on
 this session's display) and the first human run with it — whether three
 Lv.5+ augments flatten segments 6–9 and whether Abstain is ever taken.
+
+## 2026-10-03, later — Duos, Facets and the Reliquary
+
+After the Bindings landed the user asked to build what was worth stealing
+from other games. Design and the review record:
+`docs/design/2026-10-03-duos-facets-and-the-reliquary.md`.
+
+- **Duos** (Hades): six pairs of augments unlock a shared rule through a
+  DUO card (Lightning Rods, Phantom Step, Static Brood, Bulwark Engine,
+  Slipstream Coil, Loaded Dice).
+- **Facets** (the Daedalus Hammer, support gems): each combat augment has
+  two; a FACET card asks which.
+- **Burdened Binding** (Neow, the devil's bargain): every card one grade
+  up, for a cursed relic in the bag and +20 Threat.
+- **The Reliquary** (a Hub screen): Corruption (Vaal), Transfusion
+  (Inscryption's altar), Vouchers (Balatro) and the Grimoire, a
+  profile-wide record of every Transcendence, Duo, Facet, Thesis and Canon
+  reached.
+
+Built as a shared core first (rules tables, Global flow, save fields), then
+four parallel implementers with disjoint files, an adversarial reviewer
+each, and a cross-cutting review with a skeptic per finding. The review
+found a free-levels loop (library spare corrupted at Lv.1 and transfused;
+corrupted donors are now refused), invulnerability chains on Reflect
+Shield and Stamina Core (both floored), and a Burden lost to a Recast,
+among smaller ones; all fixed and pinned. New suites: ReliquaryCore,
+FacetDuoEffectsA/B, BindingRitesUi, ReliquaryScreen. Owed: a rendered look
+and the first human run.
