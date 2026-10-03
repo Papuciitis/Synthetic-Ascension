@@ -1927,3 +1927,47 @@ Owed to the next human run: rendered legibility (faces, VFX, hub) at
 gameplay zoom, rank-purchase noticeability, the free-choice and
 durable-target comparisons, Beka-vs-Offhands with the balance recorder,
 and the §15.6 walkthrough capture. Parse audit finished at 425/425.
+
+## 2026-10-03 — Bindings and Theses: augments and Doctrines above the tree
+
+The user's call: with the Ascension tree in, augments and the choice
+moments felt weak beside it. Read from code, they were: three augment picks
+a run at most, payloads of `12 x k x (1 + Power)` that never grew with gear
+while the tree pays in D, a Lv.5 clamp, and nine Doctrine plates that were
+the same every run. Design, numbers and measurements:
+`docs/design/2026-10-03-bindings-and-theses.md`.
+
+- **The Binding.** An augment pick after every segment; graded cards
+  (Etched / Gilded / Sanctified / Apocryphal, +1 to +4 levels, Luck shifts
+  the grades), NEW / RANK UP / SWAP / TRANSCEND, a paid Recast and a paid
+  Abstain, the offer kept in the save.
+- **Potency.** Combat augments pay in D, +35% per level, levels to 20.
+  Measured (AugmentPowerProbe, 40-dummy crowd): one augment is a fraction
+  of the native weapon at Lv.1, one to three weapons at Lv.5, several at
+  Lv.10.
+- **Transcendence.** Sixteen Transcended forms, each with a catalyst
+  (another augment, a stat, a tree discipline, a Doctrine family, curses,
+  Followers): Storm Crown chains, Choir of Needles splits, Thousand Cuts
+  casts itself, Brood Mother hatches from kills, Heart of Ruin, Twin Lens,
+  Prophet and the rest.
+- **Theses.** Eighteen plates (nine new: Second Hand, Iron Liturgy,
+  Second Revelation, Tithe Ledger, The Engine Prays, ...), a weighted
+  draw, Thesis / Canon bonuses for two / three of a family, Apocrypha
+  stages every three segments after 9. Several plates now multiply the
+  tree (Q recovery, Revelation charge, native hit count, node prices).
+- **Fixed on the way.** An in-session restart kept the last run's
+  Doctrine history, levels and stat delta (the next segment-3 offer could
+  come back empty and hold the Hub); the Doctrine level grant clamped
+  Lv.7 down to 5; Perfected Engine's consequence did nothing.
+
+Six new suites (AugmentBinding 64, AugmentPotency 27,
+AugmentTranscendence 64, DoctrineThesis 87, AttemptReset 18,
+ChoiceCopyFit 182); the full headless battery is green apart from the
+known PrimaryObjectiveTest and AscensionSliceCompletionTest's
+hostile-bullet slow check, which fails about one run in four on a clean
+HEAD worktree too. Godot itself crashed intermittently at start-up that
+day (signal 11 / double free, clean HEAD included), so a crashed suite is
+rerun before it is read as a failure. Owed: a rendered look at the Binding and the
+plates (tools/dev/BindingShotProbe; rendered Godot crashed at start-up on
+this session's display) and the first human run with it — whether three
+Lv.5+ augments flatten segments 6–9 and whether Abstain is ever taken.
