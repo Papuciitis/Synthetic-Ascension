@@ -579,7 +579,7 @@ func consume_composure() -> float:
 	# number was simply smaller. Said here because Composure belongs to the
 	# noun, and no rule that claims ward is the one that could say it.
 	if BattleText != null:
-		BattleText.popup(_origin() + next_popup_offset(), "COMPOSED", ManifestationNouns.colour(&"ward"), 1.15)
+		BattleText.popup(_origin(), "COMPOSED", ManifestationNouns.colour(&"ward"), 1.15)
 	return 1.0 - COMPOSURE_REDUCTION
 
 
@@ -758,31 +758,19 @@ func shard_positions() -> Array[Vector2]:
 
 
 # ---------------------------------------------------------------------------
-# Popup staggering
+# Popup staggering (retired)
 #
-# Every rule's popup spawns at the player, so a single kill that trips four
-# rules renders four lines on top of each other and the player reads none of
-# them. Slots are per-FRAME rather than per-rule: only simultaneous popups
-# collide, and one rule firing repeatedly still gets the same position every
-# time, which is what makes a repeated line readable as a repeat.
+# Every rule's popup spawns at the player, so a kill that trips four rules
+# used to render four lines on top of each other; this staggered same-frame
+# popups 16 px apart. BattleText now stacks every callout raised at the
+# player into one column that follows them, same frame or not (the first
+# caller still ends on top), so there is nothing left to offset.
 # ---------------------------------------------------------------------------
 
-const POPUP_STAGGER: float = 16.0
-
-var _popup_frame: int = -1
-var _popup_slot: int = 0
-
-
-## Vertical offset for the next popup fired this frame. Positive is DOWN, so
-## the first caller of the frame keeps the highest line.
+## Kept so ManifestationEffect.popup's call resolves; always zero. Drop it with
+## that call.
 func next_popup_offset() -> Vector2:
-	var frame := Engine.get_process_frames()
-	if frame != _popup_frame:
-		_popup_frame = frame
-		_popup_slot = 0
-	var offset := Vector2(0.0, POPUP_STAGGER * float(_popup_slot))
-	_popup_slot += 1
-	return offset
+	return Vector2.ZERO
 
 
 # ---------------------------------------------------------------------------
