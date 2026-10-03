@@ -6,7 +6,8 @@ class_name MagicMissileEffect
 @export var burst_count: int = 2
 @export var burst_interval: float = 0.08
 @export var seek_radius: float = 750.0
-@export var damage_mult: float = 0.35
+## Each missile's payload in D, the native hit (AugmentScaling).
+@export var damage_mult: float = 0.45
 @export var scales_with_haste: bool = true
 @export var scales_with_power: bool = true
 @export var debug_prints: bool = false
@@ -131,25 +132,29 @@ func _spawn_one(handle: int) -> void:
 		var actor := EnemyCombat.actor_for_handle(handle)
 		if actor != null:
 			m2.call("setup", actor, dmg, start_dir)
+	# Choir of Needles: this missile splits on its hit.
+	if m2.has_method("set_split"):
+		m2.call("set_split", NEEDLE_SHARDS if transcended else 0, missile_scene, NEEDLE_SHARD_MUL)
 
 func _compute_damage() -> float:
-	var base_dmg: float = 12.0
-	var v: Variant = _player.get("base_weapon_damage")
-	if typeof(v) in [TYPE_INT, TYPE_FLOAT]:
-		base_dmg = float(v)
+	return AugmentScaling.damage(_player, damage_mult, _aug_level)
 
-	var mul: float = damage_mult
-	var st: Stats = _player.get("stats") as Stats
-	if scales_with_power and st != null:
-		mul *= (1.0 + st.power)
 
-	return base_dmg * mul
+## Choir of Needles (the Transcended missile): +1 missile a volley, and every
+## hit splits into shards that seek other enemies.
+const NEEDLE_SHARDS := 2
+const NEEDLE_SHARD_MUL := 0.6
+var transcended: bool = false
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_apply_level_scaling_mm()
 
 func _find_nearest_enemy(center: Vector2, radius: float) -> int:
 	return EnemyCombat.nearest_enemy(center, radius)
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_mm: bool = false
 
@@ -163,7 +168,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_mm()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_mm()
 	_apply_level_scaling_mm()
 
@@ -178,19 +183,13 @@ func _capture_level_bases_mm() -> void:
 	_base_seek_radius_mm = seek_radius
 	_base_damage_mult_mm = damage_mult
 
+## Damage grows through AugmentScaling.potency; cadence, volley size and
+## reach grow with the capped count steps.
 func _apply_level_scaling_mm() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		base_cooldown = _base_cooldown_mm
-		burst_count = _base_burst_count_mm
-		burst_interval = _base_burst_interval_mm
-		seek_radius = _base_seek_radius_mm
-		damage_mult = _base_damage_mult_mm
-		return
-
+	_capture_level_bases_mm()
+	var t: int = AugmentScaling.count_steps(_aug_level)
+	damage_mult = _base_damage_mult_mm
 	base_cooldown = maxf(0.35, _base_cooldown_mm * pow(0.93, float(t)))
-	burst_count = maxi(1, _base_burst_count_mm + int(floor(float(t) / 2.0)))
+	burst_count = maxi(1, _base_burst_count_mm + int(floor(float(t) / 2.0)) + (1 if transcended else 0))
 	burst_interval = maxf(0.04, _base_burst_interval_mm * pow(0.96, float(t)))
-
 	seek_radius = _base_seek_radius_mm * (1.0 + 0.05 * float(t))
-	damage_mult = _base_damage_mult_mm * (1.0 + 0.12 * float(t))

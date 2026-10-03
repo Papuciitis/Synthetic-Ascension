@@ -129,7 +129,9 @@ func _run() -> void:
 	_check(EnemyWorld.get_health(reflected_target) == 13.0, "reflected bolt sweeps through a data-only enemy")
 	_remove([reflected_target])
 
-	var slash_target := _spawn(&"slash_data", Vector2(40.0, 0.0))
+	# Spirit Slash pays 2.4 D now (bindings-and-theses §4): a 20 HP dummy
+	# dies to the cut and a corpse takes no bleed, so this one is sturdier.
+	var slash_target := _spawn(&"slash_data", Vector2(40.0, 0.0), 1000.0)
 	var slash := SpiritSlashEffect.new()
 	slash.range_px = 100.0
 	slash.crit_chance = 0.0
@@ -138,7 +140,7 @@ func _run() -> void:
 	slash.setup(player)
 	add_child(slash)
 	slash.call("_try_cast")
-	_check(EnemyWorld.get_health(slash_target) < 20.0, "Spirit Slash targets a data-only enemy")
+	_check(EnemyWorld.get_health(slash_target) < 1000.0, "Spirit Slash targets a data-only enemy")
 	_check(EnemyStatus.has_status(slash_target, &"bleed"), "Spirit Slash attaches bleed by stable handle")
 	slash.queue_free()
 	_remove([slash_target])

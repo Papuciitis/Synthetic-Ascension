@@ -17,9 +17,9 @@ display_name = "Tesla Aura"
 description = "A crackling aura that periodically chains lightning to nearby enemies."
 mods_scale_per_level = 0.2
 card_blurb = "Periodic lightning aura that chains between nearby enemies."
-details = "Pulse: every 0.55s
-Chain: up to 4 targets within 180px
-Damage: 0.45× Power
+details = "Pulse: every 0.55s (Haste speeds it)
+Chain: up to 4 targets within 180px, +1 per two levels
+Damage: 0.5 D per zap (D = your native hit), +35% per level
 +10% Haste"
 icon = ExtResource("1_4w0gu")
 mods = SubResource("Resource_u8ek0")

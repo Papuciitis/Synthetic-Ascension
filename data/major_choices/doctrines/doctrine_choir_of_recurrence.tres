@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_UpgradeEquippedAugments.gd" id="2"]
 [ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddStatDelta.gd" id="3"]
 [ext_resource type="Script" path="res://data/StatDelta.gd" id="4"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="9"]
 
 [sub_resource type="Resource" id="effect_levels"]
 script = ExtResource("2")
@@ -18,6 +19,11 @@ haste = 0.15
 script = ExtResource("3")
 delta = SubResource("stats")
 
+[sub_resource type="Resource" id="effect_damage"]
+script = ExtResource("9")
+rule_key = &"augment_damage_mul"
+multiply = 1.25
+
 [resource]
 script = ExtResource("1")
 id = &"doctrine_choir_of_recurrence"
@@ -26,8 +32,8 @@ description = "Make every installed intelligence repeat the same impossible theo
 stage = &"doctrine"
 offer_role = &"amplify"
 family_id = &"circuit"
-gift_text = "+2 levels to every equipped augment and +15% Haste."
+gift_text = "+2 levels to every equipped augment, augment damage +25% and +15% Haste."
 price_text = "Weapon Power is reduced by 15%."
 consequence_text = "The choir perfects its own operations while the mortal weapon becomes secondary."
 build_tags = Array[StringName]([&"active_augment"])
-effects = Array[Resource]([SubResource("effect_levels"), SubResource("effect_stats")])
+effects = Array[Resource]([SubResource("effect_levels"), SubResource("effect_stats"), SubResource("effect_damage")])

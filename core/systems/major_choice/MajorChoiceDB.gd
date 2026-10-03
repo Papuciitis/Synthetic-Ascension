@@ -77,35 +77,56 @@ func build_offer(g: Node, count: int, rng: RandomNumberGenerator) -> Array[Major
 	return out
 
 
+## One plate per role, in fixed order. Each role is a weighted draw: a
+## plate's weight is its base score plus one per build tag the context
+## carries, so a build leans its offer without fixing it (the old "highest
+## score always wins" showed the same nine plates every run). An Apocrypha
+## stage draws from every stage's untaken plates. A role with no candidate
+## is left out rather than emptying the whole offer, so a stage can never
+## open a screen with nothing to inscribe while any plate remains.
 func build_stage_offer(context: RefCounted, taken_ids: Array, rng: RandomNumberGenerator) -> Array[MajorChoiceDef]:
 	if context == null:
 		return []
 	var taken: Dictionary = {}
 	for value in taken_ids:
 		taken[StringName(str(value))] = true
+	var stage_id := StringName(str(context.get("stage_id")))
+	var any_stage := String(stage_id).begins_with("apocrypha_")
 	var output: Array[MajorChoiceDef] = []
 	for role in [&"amplify", &"transfigure", &"covenant"]:
 		var candidates: Array[MajorChoiceDef] = []
 		for definition in defs:
 			if definition == null or not definition.is_doctrine_complete():
 				continue
-			if definition.stage != context.get("stage_id") or definition.offer_role != role:
+			if definition.offer_role != role:
+				continue
+			if not any_stage and definition.stage != stage_id:
 				continue
 			if definition.unique_per_attempt and taken.has(definition.id):
 				continue
 			candidates.append(definition)
 		if candidates.is_empty():
-			return []
-		_shuffle_in_place(candidates, rng)
-		var selected := candidates[0]
-		var selected_score := selected.score_for(context)
-		for candidate in candidates:
-			var candidate_score := candidate.score_for(context)
-			if candidate_score > selected_score:
-				selected = candidate
-				selected_score = candidate_score
-		output.append(selected)
+			continue
+		# A stable order first, so the seeded draw deals the same plate for
+		# the same seed whatever order the directory scan produced.
+		candidates.sort_custom(func(a: MajorChoiceDef, b: MajorChoiceDef) -> bool: return String(a.id) < String(b.id))
+		output.append(_weighted_pick(candidates, context, rng))
 	return output
+
+
+func _weighted_pick(candidates: Array[MajorChoiceDef], context: RefCounted, rng: RandomNumberGenerator) -> MajorChoiceDef:
+	var weights: Array[float] = []
+	var total := 0.0
+	for candidate in candidates:
+		var weight := maxf(0.01, candidate.offer_weight_for(context))
+		weights.append(weight)
+		total += weight
+	var roll := rng.randf() * total
+	for i in range(candidates.size()):
+		roll -= weights[i]
+		if roll <= 0.0:
+			return candidates[i]
+	return candidates[candidates.size() - 1]
 
 
 func _build_bucketed_offer(

@@ -114,6 +114,12 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_augment_levels: Dictionary = {}             # String -> int (resets on die-die)
 @export var attempt_mod_mutations: Dictionary = {}              # String -> Variant (run rules)
 @export var attempt_mod_stat_delta: StatDelta = null            # Additive stats for this attempt
+# Bindings (2026-10-03): Transcended augment ids, the pending Binding's cards
+# ({kind, id, grade} dictionaries) and its recast count. New fields, so older
+# saves load them as their defaults.
+@export var attempt_augment_transcended: Dictionary = {}
+@export var attempt_binding_offer: Array = []
+@export var attempt_binding_recasts: int = 0
 # Attempt setup (so Continue keeps your run identity)
 @export var attempt_race_id: String = "human"
 @export var attempt_style_id: String = "ranged"

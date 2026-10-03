@@ -99,6 +99,20 @@ func score_for(context: RefCounted) -> float:
 		score += 25.0
 	return score
 
+## The plate's weight in its role's draw: base score plus one per build tag
+## the context carries. Gentle on purpose (a tagged plate is about twice as
+## likely, never certain), so the same build meets different plates.
+func offer_weight_for(context: RefCounted) -> float:
+	var weight := base_offer_score
+	if context == null:
+		return weight
+	var context_tags: Dictionary = context.get("tags")
+	for tag in build_tags:
+		if context_tags.has(tag):
+			weight += 1.0
+	return weight
+
+
 func preview_lines(g: Node) -> PackedStringArray:
 	var out: PackedStringArray = PackedStringArray()
 	for e in effects:

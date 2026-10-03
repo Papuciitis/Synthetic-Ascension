@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="2"]
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("2")
+rule_key = &"q_recovery_mul"
+multiply = 0.6
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("2")
+rule_key = &"q_revelation_charge"
+add = 6.0
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("2")
+rule_key = &"max_hp_mul"
+multiply = 0.8
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_iron_liturgy"
+title = "Iron Liturgy"
+description = "Bind the ascended technique to the body that fires it."
+stage = &"doctrine"
+offer_role = &"transfigure"
+family_id = &"vessel"
+gift_text = "Your Ascension Q recovers 40% faster. Every Q cast grants 6 Revelation charge."
+price_text = "Maximum health is reduced by 20%."
+consequence_text = "The body is a trigger; the rite is its recoil."
+effects = Array[Resource]([SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])

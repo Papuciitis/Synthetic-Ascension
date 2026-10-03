@@ -13,8 +13,12 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var range_px: float = 180.0
 @export var base_cd: float = 2.5
 
-# 3d6 + power scaling
+# The cut: `hit_d` x D (the native hit, AugmentScaling) x potency, swung by
+# d6_count d6 normalised to their mean - the dice keep their tabletop swing
+# without the old 3d6 + 10 x Power, which added +2 at 20% Power.
+@export var hit_d: float = 2.4
 @export var d6_count: int = 3
+# Kept for scene compatibility; no longer read.
 @export var power_scale: float = 10.0
 @export var flat_bonus: float = 0.0
 
@@ -23,7 +27,7 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var bleed_max_stacks: int = 3
 @export var bleed_duration: float = 3.0
 @export var bleed_tick: float = 0.5
-@export var bleed_tick_mult_of_hit: float = 0.04
+@export var bleed_tick_mult_of_hit: float = 0.06
 
 # Crit -> stun + knockback
 @export var crit_chance: float = 0.12
@@ -56,57 +60,133 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = maxf(_cd - dt, 0.0)
 
-	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
-		_try_cast()
+	var pressed := not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action)
+	if pressed:
+		_try_cast(true)
+	elif transcended and _cd <= 0.0 and not Global.active_augment_input_blocked():
+		# Thousand Cuts casts itself the moment it is ready; the key still
+		# works. A cast nobody pressed is not "an activation" for Open
+		# Circuit's cross-lock. An empty scan waits before scanning again.
+		_auto_retry = maxf(0.0, _auto_retry - dt)
+		if _auto_retry <= 0.0 and not _try_cast(false):
+			_auto_retry = AUTO_RETRY_SEC
 
 	_report_cd(false)
 
-func _try_cast() -> void:
+## Returns whether it cut.
+func _try_cast(manual: bool = true) -> bool:
 	if _cd > 0.0:
-		return
+		return false
 
-	var handle := _find_nearest_enemy(player.global_position, range_px)
-	if handle == EnemyWorldTypes.INVALID_HANDLE:
-		return
-	var target_position := EnemyCombat.position_for_handle(handle)
+	var targets := _pick_targets(player.global_position, range_px, target_count(), {})
+	if targets.is_empty():
+		return false
 
 	_cd_max = Global.doctrine_active_cooldown(base_cd)
 	_cd = _cd_max
-	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
+	if manual:
+		Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
+	var struck: Dictionary = {}
+	var killed := _cut_all(targets, struck)
+	# Thousand Cuts: a kill re-casts at once from where it fell.
+	var chains := 0
+	while transcended and killed > 0 and chains < CUTS_CHAINS:
+		chains += 1
+		var again := _pick_targets(player.global_position, range_px, target_count(), struck)
+		if again.is_empty():
+			break
+		killed = _cut_all(again, struck)
+
+	# The d4 refund rewards a pressed cast. Thousand Cuts' own casts skip it:
+	# with a cast on every ready frame, a 50% reset compounded into twice the
+	# cast rate on top of the chains (AugmentPowerProbe: 113 D/s at Lv.10).
+	if refund_on_3plus and manual:
+		var r: int = randi_range(1, 4)
+		if r >= 3:
+			_cd = 0.0
+	return true
+
+
+## The nearest `count` enemies within `reach`, skipping `struck`.
+func _pick_targets(center: Vector2, reach: float, count: int, struck: Dictionary) -> Array[int]:
+	var nearby: Array[int] = []
+	EnemyCombat.gather_in_radius(center, reach, nearby)
+	var open: Array[int] = []
+	for handle in nearby:
+		if not struck.has(handle):
+			open.append(handle)
+	open.sort_custom(func(a: int, b: int) -> bool:
+		return center.distance_squared_to(EnemyCombat.position_for_handle(a)) < center.distance_squared_to(EnemyCombat.position_for_handle(b)))
+	if open.size() > count:
+		open.resize(count)
+	return open
+
+
+## Cuts each target once; returns how many died.
+func _cut_all(targets: Array[int], struck: Dictionary) -> int:
+	var killed := 0
+	for handle in targets:
+		struck[handle] = true
+		if _cut(handle):
+			killed += 1
+	return killed
+
+
+func _cut(handle: int) -> bool:
+	var target_position := EnemyCombat.position_for_handle(handle)
 	var hit_dmg: float = _roll_hit_damage()
 	var is_crit: bool = (randf() < crit_chance)
 
 	EnemyCombat.apply_damage(handle, hit_dmg, 1, player, BalanceAttribution.provenance("augment:spirit_slash", "augment:spirit_slash:slash", "augment"))
+	var died := not EnemyWorld.is_valid_handle(handle) or EnemyWorld.is_dying(handle) or EnemyWorld.get_health(handle) <= 0.0
 
-	var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
-	_apply_bleed(handle, stacks, hit_dmg)
-
-	if is_crit:
-		EnemyCombat.apply_stun(handle, crit_stun)
-		var direction: Vector2 = (target_position - player.global_position).normalized()
-		if direction == Vector2.ZERO:
-			direction = Vector2.RIGHT
-		EnemyCombat.apply_knockback(handle, direction * crit_knock)
+	if not died:
+		var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
+		_apply_bleed(handle, stacks, hit_dmg)
+		if is_crit:
+			EnemyCombat.apply_stun(handle, crit_stun)
+			var direction: Vector2 = (target_position - player.global_position).normalized()
+			if direction == Vector2.ZERO:
+				direction = Vector2.RIGHT
+			EnemyCombat.apply_knockback(handle, direction * crit_knock)
 
 	_spawn_vfx(target_position, is_crit)
+	return died
 
-	if refund_on_3plus:
-		var r: int = randi_range(1, 4)
-		if r >= 3:
-			_cd = 0.0
+
+## One target, or Thousand Cuts' 3 + 1 per 4 levels.
+func target_count() -> int:
+	return (CUTS_TARGETS + int(floor(float(_aug_level) / 4.0))) if transcended else 1
+
 
 func _roll_hit_damage() -> float:
-	var total: int = 0
-	for i in range(maxi(1, d6_count)):
-		total += randi_range(1, 6)
+	return AugmentScaling.damage(player, hit_d, _aug_level) * AugmentScaling.dice_factor(d6_count, 6)
 
-	var power: float = 0.0
-	var st: Stats = player.get("stats") as Stats
-	if st != null:
-		power = st.power
 
-	return float(total) + flat_bonus + (power * power_scale)
+## Thousand Cuts (the Transcended slash).
+const CUTS_TARGETS := 3
+const CUTS_CHAINS := 3
+const AUTO_RETRY_SEC := 0.1
+var transcended: bool = false
+var _auto_retry: float = 0.0
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_retitle_for_transcendence()
+
+
+## The HUD plate takes the Transcended name; the authored title comes back
+## if the flag ever clears (a new attempt rebuilds the node anyway).
+var _authored_title: String = ""
+
+
+func _retitle_for_transcendence() -> void:
+	if _authored_title == "":
+		_authored_title = hud_title_text
+	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
+	hud_title_text = turned if transcended and turned != "" else _authored_title
 
 func _apply_bleed(handle: int, stacks: int, hit_dmg: float) -> void:
 	if stacks <= 0:
@@ -147,7 +227,6 @@ func _report_cd(force: bool) -> void:
 	active_cd_changed.emit(_cd, _cd_max)
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_ss: bool = false
 
@@ -163,7 +242,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_ss()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_ss()
 	_apply_level_scaling_ss()
 
@@ -180,26 +259,17 @@ func _capture_level_bases_ss() -> void:
 	_base_crit_chance_ss = crit_chance
 	_base_bleed_max_ss = bleed_max_stacks
 
+## Damage grows through AugmentScaling.potency; reach, cadence, dice, crit
+## and bleed stacks grow with the capped count steps.
 func _apply_level_scaling_ss() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		range_px = _base_range_px_ss
-		base_cd = _base_cd_ss
-		d6_count = _base_d6_count_ss
-		power_scale = _base_power_scale_ss
-		flat_bonus = _base_flat_bonus_ss
-		crit_chance = _base_crit_chance_ss
-		bleed_max_stacks = _base_bleed_max_ss
-	else:
-		range_px = _base_range_px_ss * (1.0 + 0.05 * float(t))
-		base_cd = maxf(1.4, _base_cd_ss * pow(0.94, float(t)))
-
-		d6_count = maxi(1, _base_d6_count_ss + int(floor(float(t) / 2.0)))
-		power_scale = _base_power_scale_ss * (1.0 + 0.12 * float(t))
-		flat_bonus = _base_flat_bonus_ss + 0.5 * float(t)
-
-		crit_chance = clampf(_base_crit_chance_ss + 0.02 * float(t), 0.0, 0.25)
-		bleed_max_stacks = maxi(bleed_min_stacks, _base_bleed_max_ss + int(floor(float(t) / 2.0)))
+	var t: int = AugmentScaling.count_steps(_aug_level)
+	range_px = _base_range_px_ss * (1.0 + 0.05 * float(t))
+	base_cd = maxf(1.4, _base_cd_ss * pow(0.94, float(t)))
+	d6_count = maxi(1, _base_d6_count_ss + int(floor(float(t) / 2.0)))
+	power_scale = _base_power_scale_ss
+	flat_bonus = _base_flat_bonus_ss
+	crit_chance = clampf(_base_crit_chance_ss + 0.02 * float(t), 0.0, 0.25)
+	bleed_max_stacks = maxi(bleed_min_stacks, _base_bleed_max_ss + int(floor(float(t) / 2.0)))
 
 	# Keep internal cooldown max in sync (important if level changes while running).
 	_cd_max = base_cd

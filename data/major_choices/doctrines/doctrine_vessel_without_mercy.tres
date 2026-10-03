@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
 [ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="2"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="9"]
 
 [sub_resource type="Resource" id="effect_ritual"]
 script = ExtResource("2")
@@ -18,6 +19,11 @@ script = ExtResource("2")
 rule_key = &"rite_stun_bonus_seconds"
 value = 0.1
 
+[sub_resource type="Resource" id="effect_hp"]
+script = ExtResource("9")
+rule_key = &"max_hp_mul"
+multiply = 1.3
+
 [resource]
 script = ExtResource("1")
 id = &"doctrine_vessel_without_mercy"
@@ -26,7 +32,7 @@ description = "Permit restoration only where the ritual can witness it."
 stage = &"doctrine"
 offer_role = &"transfigure"
 family_id = &"vessel"
-gift_text = "Wardstone and Exit Rite healing is increased by 60%."
+gift_text = "+30% Max HP. Wardstone and Exit Rite healing is increased by 60%."
 price_text = "All other healing is reduced by 50%."
 consequence_text = "Exit Rite milestone pulses stun enemies for an additional 0.10 seconds."
-effects = Array[Resource]([SubResource("effect_ritual"), SubResource("effect_other"), SubResource("effect_stun")])
+effects = Array[Resource]([SubResource("effect_ritual"), SubResource("effect_other"), SubResource("effect_stun"), SubResource("effect_hp")])

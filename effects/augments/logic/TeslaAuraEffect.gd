@@ -4,7 +4,18 @@ class_name TeslaAuraEffect
 @export var radius: float = 180.0
 @export var tick_interval: float = 0.55
 @export var max_targets: int = 4
-@export var damage_mult: float = 0.45
+## Each zap's payload in D, the native hit (AugmentScaling): the tree's unit,
+## so the aura grows with the build instead of staying at 12 x 0.45.
+@export var damage_mult: float = 0.5
+
+## Storm Crown (the Transcended aura): wider, and each zap chains.
+const CROWN_RADIUS_MUL := 1.3
+const CROWN_HOPS := 2
+const CROWN_HOP_FALLOFF := 0.7
+const CROWN_HOP_RANGE := 170.0
+const CROWN_STUN := 0.12
+const CROWN_HEAVY_MUL := 2.0
+var transcended: bool = false
 
 # VFX (assign in inspector)
 @export var vfx_arc_scene: PackedScene          # VFX_TeslaArc2D.tscn
@@ -33,32 +44,84 @@ func _process(dt: float) -> void:
 		return
 
 	_t += dt
-	if _t < tick_interval:
+	# Haste speeds the aura now, as it does every other automatic augment.
+	if _t < current_tick_interval():
 		return
 	_t = 0.0
 
 	var dmg: float = _compute_damage()
 	var origin: Vector2 = _origin_pos()
+	var reach: float = current_radius()
 
 	# optional pulse ring at tick moment
 	_spawn_pulse(origin)
 
 	# gather + sort by distance so it feels intentional
 	var candidates: Array[int] = []
-	EnemyCombat.gather_in_radius(origin, radius, candidates)
+	EnemyCombat.gather_in_radius(origin, reach, candidates)
 
 	_sort_origin = origin
 	candidates.sort_custom(Callable(self, "_sort_by_dist"))
 
 	var hit: int = 0
+	var struck: Dictionary = {}
 	for handle in candidates:
 		var hit_position := EnemyCombat.position_for_handle(handle)
-		EnemyCombat.apply_damage(handle, dmg, 1, player, BalanceAttribution.provenance("augment:tesla_aura", "augment:tesla_aura:zap", "augment"))
+		_zap(handle, dmg)
+		struck[handle] = true
 		_spawn_arc(origin, hit_position)
+		if transcended:
+			_chain_from(handle, hit_position, dmg, struck)
 
 		hit += 1
 		if hit >= max_targets:
 			break
+
+
+func _zap(handle: int, dmg: float) -> void:
+	var amount := dmg
+	if transcended:
+		if AugmentScaling.is_heavy(handle):
+			amount *= CROWN_HEAVY_MUL
+		EnemyCombat.apply_stun(handle, CROWN_STUN)
+	EnemyCombat.apply_damage(handle, amount, 1, player, BalanceAttribution.provenance("augment:tesla_aura", "augment:tesla_aura:zap", "augment"))
+
+
+## Storm Crown: from a struck enemy the arc leaps to the nearest one not yet
+## struck this pulse, CROWN_HOPS times, losing CROWN_HOP_FALLOFF each leap.
+func _chain_from(handle: int, at: Vector2, dmg: float, struck: Dictionary) -> void:
+	var from_handle := handle
+	var from_at := at
+	var amount := dmg
+	for hop in range(CROWN_HOPS):
+		amount *= CROWN_HOP_FALLOFF
+		var nearby: Array[int] = []
+		EnemyCombat.gather_in_radius(from_at, CROWN_HOP_RANGE, nearby, from_handle)
+		var next := EnemyWorldTypes.INVALID_HANDLE
+		var best := INF
+		for candidate in nearby:
+			if struck.has(candidate):
+				continue
+			var d2 := from_at.distance_squared_to(EnemyCombat.position_for_handle(candidate))
+			if d2 < best:
+				best = d2
+				next = candidate
+		if next == EnemyWorldTypes.INVALID_HANDLE:
+			return
+		var next_at := EnemyCombat.position_for_handle(next)
+		_zap(next, amount)
+		struck[next] = true
+		_spawn_arc(from_at, next_at)
+		from_handle = next
+		from_at = next_at
+
+
+func current_radius() -> float:
+	return radius * (CROWN_RADIUS_MUL if transcended else 1.0)
+
+
+func current_tick_interval() -> float:
+	return maxf(0.15, tick_interval / AugmentScaling.haste_multiplier(player))
 
 func _sort_by_dist(a: Variant, b: Variant) -> bool:
 	var a_position := EnemyCombat.position_for_handle(int(a))
@@ -107,23 +170,13 @@ func _spawn_pulse(pos: Vector2) -> void:
 		v.call("setup", pos, radius)
 
 func _compute_damage() -> float:
-	var base_dmg: float = 12.0
-
-	var bwd: Variant = player.get("base_weapon_damage")
-	if typeof(bwd) == TYPE_FLOAT or typeof(bwd) == TYPE_INT:
-		base_dmg = float(bwd)
-
-	var power: float = 0.0
-	var st_var: Variant = player.get("stats")
-	if st_var is Object:
-		var pvar: Variant = (st_var as Object).get("power")
-		if typeof(pvar) == TYPE_FLOAT or typeof(pvar) == TYPE_INT:
-			power = float(pvar)
-
-	return base_dmg * damage_mult * (1.0 + power)
+	return AugmentScaling.damage(player, damage_mult, _aug_level)
 
 
-const _AUG_MAX_LEVEL: int = 5
+func set_transcended(value: bool) -> void:
+	transcended = value
+
+
 var _aug_level: int = 1
 var _bases_captured_ta: bool = false
 
@@ -136,7 +189,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_ta()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_ta()
 	_apply_level_scaling_ta()
 
@@ -150,16 +203,11 @@ func _capture_level_bases_ta() -> void:
 	_base_max_targets_ta = max_targets
 	_base_damage_mult_ta = damage_mult
 
+## Damage grows through AugmentScaling.potency (read at each zap); the
+## radius, tick and target count grow with the capped count steps.
 func _apply_level_scaling_ta() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		radius = _base_radius_ta
-		tick_interval = _base_tick_interval_ta
-		max_targets = _base_max_targets_ta
-		damage_mult = _base_damage_mult_ta
-		return
-
+	var t: int = AugmentScaling.count_steps(_aug_level)
+	damage_mult = _base_damage_mult_ta
 	radius = _base_radius_ta * (1.0 + 0.07 * float(t))
 	tick_interval = maxf(0.25, _base_tick_interval_ta * pow(0.95, float(t)))
 	max_targets = maxi(1, _base_max_targets_ta + int(floor(float(t) / 2.0)))
-	damage_mult = _base_damage_mult_ta * (1.0 + 0.10 * float(t))

@@ -24,6 +24,11 @@ script = ExtResource("5")
 rule_key = &"max_hp_mul"
 multiply = 0.7
 
+[sub_resource type="Resource" id="effect_transcend"]
+script = ExtResource("6")
+rule_key = &"augment_transcend_level"
+value = 4
+
 [sub_resource type="Resource" id="effect_identity"]
 script = ExtResource("6")
 rule_key = &"force_augment_identity"
@@ -39,6 +44,6 @@ offer_role = &"amplify"
 family_id = &"circuit"
 gift_text = "+2 levels to every equipped augment and +35% Power."
 price_text = "Maximum health is reduced by 30%."
-consequence_text = "All three augment seals define your manufactured identity, even when a slot is empty."
+consequence_text = "The engine no longer waits for proof: augments Transcend at Lv.4."
 build_tags = Array[StringName]([&"active_augment"])
-effects = Array[Resource]([SubResource("effect_levels"), SubResource("effect_stats"), SubResource("effect_hp"), SubResource("effect_identity")])
+effects = Array[Resource]([SubResource("effect_levels"), SubResource("effect_stats"), SubResource("effect_hp"), SubResource("effect_identity"), SubResource("effect_transcend")])

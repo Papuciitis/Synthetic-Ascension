@@ -41,7 +41,15 @@ func _test_role_offer(context_script: Script) -> void:
 		_check(offer[0].offer_role == &"amplify", "Amplify is first")
 		_check(offer[1].offer_role == &"transfigure", "Transfigure is second")
 		_check(offer[2].offer_role == &"covenant", "Covenant is third")
-		_check(offer[0].build_tags.has(&"active_augment"), "matching build candidate wins")
+	# The draw is weighted, not "highest score wins": a matching tag doubles
+	# a plate's weight, so over many seeds it leads without being certain.
+	var tagged_wins := 0
+	for seed_value in range(400):
+		rng.seed = seed_value
+		var drawn: Array = db.call("build_stage_offer", context, [], rng)
+		if drawn.size() == 3 and drawn[0].build_tags.has(&"active_augment"):
+			tagged_wins += 1
+	_check(tagged_wins > 220 and tagged_wins < 320, "a matching build candidate is drawn about two times in three (%d of 400)" % tagged_wins)
 
 
 func _definition(id: StringName, role: StringName, tags: Array[StringName], score: float) -> MajorChoiceDef:
@@ -67,11 +75,15 @@ func _test_authored_content() -> void:
 	for definition in db.defs:
 		if definition != null and definition.has_method("is_doctrine_complete") and definition.call("is_doctrine_complete"):
 			staged.append(definition)
-	_check(staged.size() == 9, "version one contains exactly nine complete Doctrines")
+	# Version two (bindings-and-theses §6): two plates per role per stage.
+	_check(staged.size() == 18, "version two contains exactly eighteen complete Doctrines (%d)" % staged.size())
 	var titles: Array[String] = []
 	for definition in staged:
 		titles.append(definition.title)
-	for expected in ["Open Circuit", "Frame of Ash", "Black Archive", "Choir of Recurrence", "Vessel Without Mercy", "Pilgrim Engine", "Perfected Engine", "Law of Admission", "Manufactured Witness"]:
+	for expected in [
+		"Open Circuit", "Frame of Ash", "Black Archive", "Choir of Recurrence", "Vessel Without Mercy", "Pilgrim Engine", "Perfected Engine", "Law of Admission", "Manufactured Witness",
+		"Twin Seal Protocol", "Second Hand", "Census of Souls", "Liturgy of Overclock", "Iron Liturgy", "Tithe Ledger", "The Engine Prays", "Second Revelation", "Mass Conversion",
+	]:
 		_check(titles.has(expected), "authored Doctrine exists: %s" % expected)
 
 

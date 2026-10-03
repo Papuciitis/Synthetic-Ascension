@@ -462,13 +462,21 @@ func _append_doctrine_record() -> void:
 		return
 	_add_line("", Color(1, 1, 1, 0.4), 8)
 	_add_section_heading(manifestations_vbox, "DOCTRINE RECORD // INSCRIBED", ACCENT)
-	for stage_id in [&"method", &"doctrine", &"apotheosis"]:
+	var stage_order: Array = [&"method", &"doctrine", &"apotheosis"]
+	var apocrypha: Array = []
+	for key in stage_ids.keys():
+		if String(key).begins_with("apocrypha_"):
+			apocrypha.append(StringName(str(key)))
+	apocrypha.sort_custom(func(a: StringName, b: StringName) -> bool: return int(String(a).get_slice("_", 1)) < int(String(b).get_slice("_", 1)))
+	stage_order.append_array(apocrypha)
+	for stage_id in stage_order:
 		var choice_id := StringName(str(stage_ids.get(String(stage_id), stage_ids.get(stage_id, ""))))
 		if choice_id == StringName():
 			continue
 		var definition: MajorChoiceDef = Global.major_choice_db.get_def(choice_id)
 		var title := definition.title if definition != null else String(choice_id)
-		_add_target_line(manifestations_vbox, "%s // %s" % [String(stage_id).to_upper(), title.to_upper()], ACCENT, 11)
+		var stage_label := String(stage_id).to_upper().replace("APOCRYPHA_", "APOCRYPHA ")
+		_add_target_line(manifestations_vbox, "%s // %s" % [stage_label, title.to_upper()], ACCENT, 11)
 		# The gift and the price were only ever shown on the choice screen; a
 		# stage title alone does not tell the player what they are still paying.
 		if definition != null:
@@ -478,11 +486,20 @@ func _append_doctrine_record() -> void:
 				_add_wrapped_line(manifestations_vbox, "  PRICE // %s" % definition.price_text.strip_edges(), Color(1, 1, 1, 0.62), 10)
 	# The Max HP price is applied last in the stat pass, after equipment, sets
 	# and Burden, so it silently shrinks the Profile HP total: name it here.
-	var max_hp_mul := float(Global.get_doctrine_rule(&"max_hp_mul", 1.0))
+	var max_hp_mul := Global.doctrine_max_hp_multiplier()
 	if not is_equal_approx(max_hp_mul, 1.0):
-		_add_target_line(manifestations_vbox, "MAX HP ×%.2f" % max_hp_mul, Color(0.86, 0.35, 0.22, 1), 11)
+		_add_target_line(manifestations_vbox, "MAX HP ×%.2f" % max_hp_mul, Color(0.86, 0.35, 0.22, 1) if max_hp_mul < 1.0 else ACCENT, 11)
 	if bool(Global.get_doctrine_rule(&"force_augment_identity", false)):
 		_add_target_line(manifestations_vbox, "PERFECTED ENGINE // AUGMENT SEALS 3/3", ACCENT, 11)
+	# Two plates of a family inscribe its Thesis, three its Canon.
+	var families: Dictionary = Global.doctrine_family_counts()
+	for family in [&"circuit", &"vessel", &"archive"]:
+		var held := int(families.get(family, 0))
+		if held >= 2:
+			_add_target_line(manifestations_vbox, "%s %s // %s" % [String(family).to_upper(), "CANON" if held >= 3 else "THESIS", DoctrineFamilies.bonus_text(family, held)], ACCENT, 11)
+	for augment_id in Global.permanent_augment_ids:
+		if augment_id != StringName() and Global.is_augment_transcended(augment_id):
+			_add_wrapped_line(manifestations_vbox, "TRANSCENDED // %s: %s" % [Global.augment_display_name(augment_id).to_upper(), AugmentScaling.transcend_rule(augment_id)], ACCENT, 10)
 	for event_label in recorded_events:
 		_add_target_line(manifestations_vbox, event_label, Color(0.86, 0.35, 0.22, 1), 11)
 
@@ -536,6 +553,7 @@ func _manifestation_state(player: Node) -> Dictionary:
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
 	# The Engine, Doctrine and Lens lines all read the augment level.
 	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
+	state["augment_transcended"] = Global.attempt_augment_transcended.duplicate(true) if Global != null else {}
 	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
 	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
 	state["max_hp_mul"] = Global.get_doctrine_rule(&"max_hp_mul", 1.0) if Global != null else 1.0

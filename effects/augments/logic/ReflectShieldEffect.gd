@@ -39,6 +39,34 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var perfect_zap_max_targets: int = 3
 @export var perfect_zap_damage_mult: float = 0.35
 @export var perfect_zap_stun: float = 0.12
+## The perfect zap pays at least this many D (the native hit) x potency, so
+## a parry against weak bullets still lands like an augment.
+@export var perfect_zap_d: float = 1.2
+
+## Mirror Aegis (the Transcended shield): a ward opens itself, reflections
+## fan out, and the perfect zap strikes everything in range.
+const AEGIS_WARD_EVERY := 1.6
+const AEGIS_FAN := 2
+const AEGIS_FAN_ANGLE := 0.26
+var transcended: bool = false
+var _ward_t: float = 0.0
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_retitle_for_transcendence()
+
+
+## The HUD plate takes the Transcended name; the authored title comes back
+## if the flag ever clears (a new attempt rebuilds the node anyway).
+var _authored_title: String = ""
+
+
+func _retitle_for_transcendence() -> void:
+	if _authored_title == "":
+		_authored_title = hud_title_text
+	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
+	hud_title_text = turned if transcended and turned != "" else _authored_title
 
 var player: Node2D = null
 
@@ -102,6 +130,13 @@ func _process(dt: float) -> void:
 	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and Input.is_action_just_pressed(active_action):
 		_try_activate()
 
+	# Mirror Aegis: the ward opens itself on a rhythm, between presses.
+	if transcended:
+		_ward_t += dt
+		if _ward_t >= AEGIS_WARD_EVERY and _active_left <= 0.0:
+			_ward_t = 0.0
+			_open_window()
+
 	_report_cd(false)
 
 func _try_activate() -> void:
@@ -111,7 +146,10 @@ func _try_activate() -> void:
 	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
 	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
+	_open_window()
 
+
+func _open_window() -> void:
 	_active_left = parry_window
 	_active_elapsed = 0.0
 	_reflected_this_cast = 0
@@ -220,20 +258,34 @@ func _reflect_simulated(entry: Dictionary, is_perfect: bool) -> void:
 	var spd: float = maxf(200.0, velocity.length()) * reflect_speed_mult
 	var dir: Vector2 = -velocity.normalized() if velocity != Vector2.ZERO else Vector2.RIGHT
 
-	var rp: Node2D = reflected_projectile_scene.instantiate() as Node2D
-	if rp != null:
-		get_tree().current_scene.add_child(rp)
-		rp.global_position = ppos
-		if rp.get("speed") != null:
-			rp.set("speed", spd)
-		if rp.has_method("setup"):
-			rp.call("setup", dir, dmg, player)
+	_spawn_reflections(ppos, dir, dmg, spd)
 
 	_spawn_flash(vfx_reflect_flash_scene, ppos)
 
 	if is_perfect and (not _perfect_used_this_cast):
 		_perfect_used_this_cast = true
 		_on_perfect_reflect(ppos, dmg)
+
+
+## The reflected round, and under Mirror Aegis its fan.
+func _spawn_reflections(at: Vector2, dir: Vector2, dmg: float, spd: float) -> void:
+	_spawn_reflection(at, dir, dmg, spd)
+	if transcended:
+		for i in range(AEGIS_FAN):
+			var side := 1.0 if i % 2 == 0 else -1.0
+			_spawn_reflection(at, dir.rotated(side * AEGIS_FAN_ANGLE * float(floori(i * 0.5) + 1)), dmg, spd)
+
+
+func _spawn_reflection(at: Vector2, dir: Vector2, dmg: float, spd: float) -> void:
+	var rp: Node2D = reflected_projectile_scene.instantiate() as Node2D
+	if rp == null:
+		return
+	get_tree().current_scene.add_child(rp)
+	rp.global_position = at
+	if rp.get("speed") != null:
+		rp.set("speed", spd)
+	if rp.has_method("setup"):
+		rp.call("setup", dir, dmg, player)
 
 func _reflect_one(p: Node2D, is_perfect: bool) -> void:
 	if p == null or not is_instance_valid(p):
@@ -252,17 +304,7 @@ func _reflect_one(p: Node2D, is_perfect: bool) -> void:
 	if dir == Vector2.ZERO:
 		dir = Vector2.RIGHT
 
-	var rp: Node2D = reflected_projectile_scene.instantiate() as Node2D
-	if rp != null:
-		get_tree().current_scene.add_child(rp)
-		rp.global_position = ppos
-
-		# set speed if the node has a speed property
-		if rp.get("speed") != null:
-			rp.set("speed", spd)
-
-		if rp.has_method("setup"):
-			rp.call("setup", dir, dmg, player)
+	_spawn_reflections(ppos, dir, dmg, spd)
 
 	_spawn_flash(vfx_reflect_flash_scene, ppos)
 
@@ -278,13 +320,14 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 	_cd = min(_cd, perfect_cd_after)
 	_spawn_flash(vfx_perfect_flash_scene, pos)
 
-	var zap_dmg: float = maxf(1.0, reflected_dmg * perfect_zap_damage_mult)
+	var zap_dmg: float = perfect_zap_damage(reflected_dmg)
 	var handles: Array[int] = []
 	EnemyCombat.gather_in_radius(pos, perfect_zap_radius, handles)
 	handles.sort_custom(func(a: int, b: int) -> bool:
 		return pos.distance_squared_to(EnemyCombat.position_for_handle(a)) < pos.distance_squared_to(EnemyCombat.position_for_handle(b))
 	)
-	if handles.size() > perfect_zap_max_targets:
+	# Mirror Aegis: the zap strikes everything in range.
+	if not transcended and handles.size() > perfect_zap_max_targets:
 		handles.resize(perfect_zap_max_targets)
 	for handle in handles:
 		EnemyCombat.apply_damage(handle, zap_dmg, 1, player, BalanceAttribution.provenance("augment:reflect_shield", "augment:reflect_shield:perfect_zap", "augment"))
@@ -295,6 +338,13 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 		print("[ReflectShield] PERFECT! cd->", _cd, " zap_dmg=", zap_dmg)
 
 	_report_cd(true)
+
+## The perfect zap: the reflected round's share or the augment's D floor,
+## whichever is larger, both grown by potency.
+func perfect_zap_damage(reflected_dmg: float) -> float:
+	var from_round := reflected_dmg * perfect_zap_damage_mult * AugmentScaling.potency(_aug_level)
+	return maxf(1.0, maxf(from_round, AugmentScaling.damage(player, perfect_zap_d, _aug_level)))
+
 
 func _infer_projectile_dir(p: Node2D, ppos: Vector2) -> Vector2:
 	var shv: Variant = p.get("shooter")
@@ -387,7 +437,6 @@ func _report_cd(force: bool) -> void:
 	active_cd_changed.emit(_cd, _cd_max)
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_rs: bool = false
 
@@ -404,7 +453,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_rs()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_rs()
 	_apply_level_scaling_rs()
 
@@ -422,28 +471,18 @@ func _capture_level_bases_rs() -> void:
 	_base_perfect_zap_max_targets_rs = perfect_zap_max_targets
 	_base_perfect_zap_damage_mult_rs = perfect_zap_damage_mult
 
+## The zap's damage grows through AugmentScaling.potency; windows, speeds
+## and reach grow with the capped count steps, under their old ceilings.
 func _apply_level_scaling_rs() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		active_base_cd = _base_active_base_cd_rs
-		parry_window = _base_parry_window_rs
-		reflect_damage_mult = _base_reflect_damage_mult_rs
-		reflect_speed_mult = _base_reflect_speed_mult_rs
-		perfect_window = _base_perfect_window_rs
-		perfect_zap_radius = _base_perfect_zap_radius_rs
-		perfect_zap_max_targets = _base_perfect_zap_max_targets_rs
-		perfect_zap_damage_mult = _base_perfect_zap_damage_mult_rs
-	else:
-		active_base_cd = maxf(0.18, _base_active_base_cd_rs * pow(0.92, float(t)))
-		parry_window = clampf(_base_parry_window_rs + 0.02 * float(t), 0.05, 0.24)
-
-		reflect_damage_mult = clampf(_base_reflect_damage_mult_rs + 0.06 * float(t), 0.0, 1.25)
-		reflect_speed_mult = clampf(_base_reflect_speed_mult_rs + 0.03 * float(t), 0.0, 1.35)
-
-		perfect_window = clampf(_base_perfect_window_rs + 0.01 * float(t), 0.01, 0.10)
-		perfect_zap_radius = _base_perfect_zap_radius_rs * (1.0 + 0.05 * float(t))
-		perfect_zap_max_targets = clampi(_base_perfect_zap_max_targets_rs + int(floor(float(t) / 2.0)), 1, _base_perfect_zap_max_targets_rs + 2)
-		perfect_zap_damage_mult = _base_perfect_zap_damage_mult_rs * (1.0 + 0.12 * float(t))
+	var t: int = AugmentScaling.count_steps(_aug_level)
+	active_base_cd = maxf(0.18, _base_active_base_cd_rs * pow(0.92, float(t)))
+	parry_window = clampf(_base_parry_window_rs + 0.02 * float(t), 0.05, 0.24)
+	reflect_damage_mult = clampf(_base_reflect_damage_mult_rs + 0.06 * float(t), 0.0, 1.25)
+	reflect_speed_mult = clampf(_base_reflect_speed_mult_rs + 0.03 * float(t), 0.0, 1.35)
+	perfect_window = clampf(_base_perfect_window_rs + 0.01 * float(t), 0.01, 0.10)
+	perfect_zap_radius = _base_perfect_zap_radius_rs * (1.0 + 0.05 * float(t))
+	perfect_zap_max_targets = clampi(_base_perfect_zap_max_targets_rs + int(floor(float(t) / 2.0)), 1, _base_perfect_zap_max_targets_rs + 2)
+	perfect_zap_damage_mult = _base_perfect_zap_damage_mult_rs
 
 	# Keep internal cooldown max in sync (important if level changes while running).
 	_cd_max = active_base_cd

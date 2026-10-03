@@ -13,6 +13,20 @@ var target_handle: int = EnemyWorldTypes.INVALID_HANDLE
 var damage: float = 10.0
 var source: Node = null
 
+## Choir of Needles: on its hit this missile splits into `split_count`
+## shards at `split_mul` of its damage, each seeking a different enemy
+## within SPLIT_SEEK. Shards never split again.
+const SPLIT_SEEK := 420.0
+var split_count: int = 0
+var split_mul: float = 0.6
+var _split_scene: PackedScene = null
+
+
+func set_split(count: int, scene: PackedScene, mul: float) -> void:
+	split_count = maxi(0, count)
+	_split_scene = scene
+	split_mul = mul
+
 var _vel: Vector2 = Vector2.RIGHT
 var _life: float = 0.0
 
@@ -59,6 +73,8 @@ func _on_pool_recycle() -> void:
 	target_handle = EnemyWorldTypes.INVALID_HANDLE
 	damage = 0.0
 	source = null
+	split_count = 0
+	_split_scene = null
 	_vel = Vector2.ZERO
 	_life = 0.0
 	_trail_pts = PackedVector2Array()
@@ -153,6 +169,8 @@ func _physics_process(dt: float) -> void:
 		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
 	):
 		EnemyCombat.apply_damage(hit_handle, damage, 1, source, BalanceAttribution.provenance("augment:magic_missile", "augment:magic_missile:missile", "augment"))
+		if split_count > 0:
+			_split(hit_handle, global_position)
 		_despawn()
 		return
 	if world_hit_t >= 0.0:
@@ -166,6 +184,35 @@ func _physics_process(dt: float) -> void:
 
 	if _trail_line != null:
 		_trail_line.points = _trail_pts
+
+func _split(struck: int, at: Vector2) -> void:
+	if _split_scene == null or not is_inside_tree():
+		return
+	var nearby: Array[int] = []
+	EnemyCombat.gather_in_radius(at, SPLIT_SEEK, nearby, struck)
+	nearby.sort_custom(func(a: int, b: int) -> bool:
+		return at.distance_squared_to(EnemyCombat.position_for_handle(a)) < at.distance_squared_to(EnemyCombat.position_for_handle(b)))
+	var shards := mini(split_count, nearby.size())
+	var parent := get_tree().current_scene
+	var pm := get_node_or_null("/root/PoolManager")
+	for i in range(shards):
+		var shard: Node = null
+		if pm != null and is_instance_valid(pm) and pm.has_method("obtain"):
+			shard = pm.call("obtain", _split_scene, parent) as Node
+		else:
+			shard = _split_scene.instantiate()
+		var shard_2d := shard as Node2D
+		if shard_2d == null:
+			continue
+		if shard_2d.get_parent() == null:
+			parent.add_child(shard_2d)
+		shard_2d.global_position = at
+		var dir := (EnemyCombat.position_for_handle(nearby[i]) - at).normalized().rotated(randf_range(-0.6, 0.6))
+		if shard_2d.has_method("setup_handle"):
+			shard_2d.call("setup_handle", nearby[i], damage * split_mul, dir, source)
+		if shard_2d.has_method("set_split"):
+			shard_2d.call("set_split", 0, null, split_mul)
+
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:
 	return _world_hit_t(from_pos, to_pos) >= 0.0

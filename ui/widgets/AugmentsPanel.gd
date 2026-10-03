@@ -73,6 +73,9 @@ func set_slot(slot: int, augment: Variant) -> void:
 		elif v_n != null and str(v_n) != "":
 			nm = str(v_n)
 
+	# A Transcended augment goes by its new name on every surface.
+	if aid != StringName() and Global != null and Global.has_method("augment_display_name") and Global.augment_db.has(aid):
+		nm = Global.augment_display_name(aid)
 	icon_rect.texture = tex
 	name_label.text = nm
 

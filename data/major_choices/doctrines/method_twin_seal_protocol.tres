@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_UpgradeTopAugment.gd" id="2"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_ModDoctrineRule.gd" id="3"]
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("2")
+amount = 3
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("3")
+rule_key = &"augment_damage_mul"
+multiply = 1.25
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("3")
+rule_key = &"binding_recast_mul"
+multiply = 2.0
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_method_twin_seal_protocol"
+title = "Twin Seal Protocol"
+description = "Let one instrument outgrow the circuit that holds it."
+stage = &"method"
+offer_role = &"amplify"
+family_id = &"circuit"
+gift_text = "Your highest-level augment gains 3 levels. Augment damage +25%."
+price_text = "Recasting a Binding costs twice as much."
+consequence_text = "The circuit learns to favour one instrument above the others."
+build_tags = Array[StringName]([&"active_augment"])
+effects = Array[Resource]([SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])

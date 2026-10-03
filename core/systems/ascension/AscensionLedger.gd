@@ -20,6 +20,11 @@ const AXIOM_SLOTS := 3
 
 var db: AscensionTreeDB
 var state: Dictionary
+## Every Follower price the ledger quotes is scaled by this (Tithe Ledger,
+## the archive Doctrine: x0.75). Global sets it from the Doctrine rules each
+## time it hands the ledger out; receipts record what was actually paid, so
+## refunds stay exact.
+var price_multiplier: float = 1.0
 
 
 static func fresh_state(native_core_id: String, version: String = "v4") -> Dictionary:
@@ -220,12 +225,20 @@ func price(id: String) -> int:
 	if db.is_reward_kind(id):
 		return 0
 	if kind == "sink":
-		return db.sink_price(id, rank(id))
+		return scaled_price(db.sink_price(id, rank(id)))
 	if kind == "local" and owns(id) and rank(id) < db.max_rank(id):
-		return db.rank_cost(id, rank(id) + 1)
+		return scaled_price(db.rank_cost(id, rank(id) + 1))
 	if is_free_starter(id):
 		return 0
-	return db.base_cost(id)
+	return scaled_price(db.base_cost(id))
+
+
+## A listed price after the Doctrine's multiplier; never below 1 when the
+## listed price was above 0, so a discount cannot make a node free.
+func scaled_price(listed: int) -> int:
+	if listed <= 0 or is_equal_approx(price_multiplier, 1.0):
+		return listed
+	return maxi(1, int(round(float(listed) * maxf(0.0, price_multiplier))))
 
 
 # ---------------------------------------------------------------- purchase rules
@@ -326,7 +339,7 @@ func _can_buy_rank(id: String, followers: int) -> Dictionary:
 	if not rank_gate_satisfied(id, next_rank):
 		var needed := int(RANK_GATE_OTHERS.get(next_rank, 0))
 		return _no("rank %d needs %d other owned %s locals (%d owned)" % [next_rank, needed, db.discipline_of(id), other_unique_locals(db.discipline_of(id), id)])
-	var cost := db.rank_cost(id, next_rank)
+	var cost := scaled_price(db.rank_cost(id, next_rank))
 	if cost <= 0:
 		return _no("no authored rank price")
 	if followers < cost:

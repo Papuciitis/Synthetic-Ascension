@@ -44,7 +44,7 @@ func set_data(a: AugmentData) -> void:
 	if key_label != null:
 		key_label.text = "KEY " + key_text
 	if name_label != null:
-		name_label.text = (a.display_name if a != null else "Empty Key")
+		name_label.text = (Global.augment_display_name(a.id) if a != null else "Empty Key")
 		name_label.add_theme_color_override("font_color", ChamberKit.PARCHMENT if a != null else ChamberKit.MUTED)
 	if icon_rect != null:
 		icon_rect.texture = (a.icon if a != null else null)

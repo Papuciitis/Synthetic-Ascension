@@ -21,7 +21,8 @@ details = "Parry Window: 0.14s (Perfect: 0.06s)
 Cooldown: 0.40s (Perfect: 0.10s)
 Reflect: 0.95× damage, 1.05× speed
 Perfect Zap: chains 3 targets in 220px
-Zap Damage: 0.35× Power, Stun: 0.12s"
+Zap Damage: 0.35× the reflected round or 1.2 D (D = your native hit), whichever is larger, +35% per level
+Stun: 0.12s"
 icon = ExtResource("2_oauxa")
 mods = SubResource("Resource_5jej5")
 effect_scenes = Array[PackedScene]([ExtResource("1_8icvy")])

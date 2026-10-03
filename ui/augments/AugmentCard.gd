@@ -14,6 +14,7 @@ signal hovered(augment: AugmentData, card_node: Control)
 signal unhovered(card_node: Control)
 
 const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 ## Degrees the card leans at the very edge of the cursor's reach.
 const MAX_YAW := 17.0
@@ -26,6 +27,9 @@ const HOVER_SCALE := 1.065
 const DEAL_STAGGER := 0.12
 
 var data: AugmentData = null
+## The Binding card this face shows ({kind, id, grade}); empty for a bare
+## augment (the old offer shape, still used by probes).
+var card_entry: Dictionary = {}
 
 var icon_rect: TextureRect = null
 var name_label: Label = null
@@ -112,23 +116,71 @@ func set_data(a: AugmentData) -> void:
 		_apply_data()
 
 
+## A Binding card: the augment and what the card does to it.
+func set_offer(a: AugmentData, entry: Dictionary) -> void:
+	card_entry = entry.duplicate()
+	set_data(a)
+
+
+func is_transcend_card() -> bool:
+	return String(card_entry.get("kind", "")) == AugmentBinding.KIND_TRANSCEND
+
+
 func _apply_data() -> void:
 	if data == null or name_label == null:
 		return
-	name_label.text = data.display_name
+	var transcend := is_transcend_card()
+	if transcend:
+		name_label.text = AugmentScaling.transcended_name(data.id)
+	elif Global != null and Global.has_method("augment_display_name"):
+		name_label.text = Global.augment_display_name(data.id)
+	else:
+		name_label.text = data.display_name
 	var blurb := String(data.card_blurb).strip_edges()
 	if blurb == "":
 		blurb = _card_flavor(data.description)
-	desc_label.text = blurb
+	desc_label.text = _card_flavor(AugmentScaling.transcend_rule(data.id), 120) if transcend else blurb
 	desc_label.visible = true
 	icon_rect.texture = data.icon
-	var owned := false
-	if Global != null and Global.get("permanent_augment_ids") is Array:
-		owned = (Global.permanent_augment_ids as Array).has(data.id)
-	_badge.text = "◆  RANK UP  ◆" if owned else ""
+	_badge.text = badge_text()
+	var tint := grade_colour()
+	_badge.add_theme_color_override("font_color", tint)
+	_frame.set("colour", Color(tint, 0.85))
+	_frame.set("glow_colour", tint.lightened(0.35))
+	_art_frame.set("colour", Color(tint, 0.7))
 	if not _dealt:
 		_dealt = true
 		_start_deal()
+
+
+## The line above the name: what the card does and at what grade.
+func badge_text() -> String:
+	if card_entry.is_empty():
+		var owned := false
+		if Global != null and Global.get("permanent_augment_ids") is Array:
+			owned = (Global.permanent_augment_ids as Array).has(data.id)
+		return "◆  RANK UP  ◆" if owned else ""
+	var current := Global.get_augment_level(data.id) if Global != null else 1
+	var after := AugmentBinding.resulting_level(card_entry, current)
+	var grade := AugmentScaling.grade_name(int(card_entry.get("grade", 0)))
+	match String(card_entry.get("kind", "")):
+		AugmentBinding.KIND_TRANSCEND:
+			return "◆  TRANSCEND  ·  Lv.%d  ◆" % after
+		AugmentBinding.KIND_RANK:
+			return "%s  ·  Lv.%d → %d" % [grade, current, after]
+		AugmentBinding.KIND_SWAP:
+			return "%s  ·  SWAP  ·  Lv.%d" % [grade, after]
+	return "%s  ·  NEW  ·  Lv.%d" % [grade, after]
+
+
+## Gold for a Transcendence, the item rarity colours for the grades
+## (Etched green, Gilded blue, Sanctified violet, Apocryphal ember).
+func grade_colour() -> Color:
+	if card_entry.is_empty():
+		return OverlayKit.GOLD
+	if is_transcend_card():
+		return OverlayKit.GOLD_BRIGHT
+	return OverlayKit.rarity_colour(AugmentScaling.grade_rarity_index(int(card_entry.get("grade", 0))))
 
 
 func _card_flavor(s: String, max_chars: int = 95) -> String:

@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="MajorChoiceDef" format=3]
+
+[ext_resource type="Script" path="res://core/systems/major_choice/MajorChoiceDef.gd" id="1"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_UpgradeEquippedAugments.gd" id="2"]
+[ext_resource type="Script" path="res://core/systems/major_choice/effects/MCE_AddDoctrineTag.gd" id="3"]
+
+[sub_resource type="Resource" id="effect_1"]
+script = ExtResource("2")
+amount = 1
+
+[sub_resource type="Resource" id="effect_2"]
+script = ExtResource("3")
+rule_key = &"augment_transcend_level"
+value = 4
+
+[sub_resource type="Resource" id="effect_3"]
+script = ExtResource("3")
+rule_key = &"augment_catalyst_waived"
+value = true
+
+[sub_resource type="Resource" id="effect_4"]
+script = ExtResource("3")
+rule_key = &"binding_abstain_mul"
+value = 0.0
+
+[resource]
+script = ExtResource("1")
+id = &"doctrine_liturgy_of_overclock"
+title = "Liturgy of Overclock"
+description = "Recite the installed instruments past the limit of their proofs."
+stage = &"doctrine"
+offer_role = &"amplify"
+family_id = &"circuit"
+gift_text = "+1 level to every equipped augment. Augments Transcend at Lv.4 and need no catalyst."
+price_text = "Abstaining from a Binding grants nothing."
+consequence_text = "Proof is replaced by repetition."
+build_tags = Array[StringName]([&"active_augment"])
+effects = Array[Resource]([SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3"), SubResource("effect_4")])

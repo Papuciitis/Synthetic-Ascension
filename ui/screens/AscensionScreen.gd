@@ -716,7 +716,7 @@ func _show(id: String) -> void:
 				lines.append("Now: %s." % now_effect)
 			if current < top:
 				var next_effect := db.rank_effect(id, current + 1)
-				lines.append("Next rank (%d Followers): %s." % [db.rank_cost(id, current + 1), next_effect])
+				lines.append("Next rank (%d Followers): %s." % [ledger.scaled_price(db.rank_cost(id, current + 1)), next_effect])
 		else:
 			lines.append("Owned." + (" Equipped." if ledger.is_equipped(id) else ""))
 	if kind == "gate" and not ledger.owns(id):
@@ -767,7 +767,9 @@ func _show(id: String) -> void:
 					_after_change())
 				_buttons.add_child(toggle)
 		if kind != "core" and kind != "gate" and kind != "choice":
-			if Global != null and Global.ascension_refund_context_hub:
+			if Global != null and Global.ascension_refund_context_hub and Global.ascension_refunds_forfeit():
+				lines.append("Tithe Ledger: every purchase is a vow; nothing refunds.")
+			elif Global != null and Global.ascension_refund_context_hub:
 				if ranked and ledger.rank(id) >= 2:
 					var downgrade_preview := ledger.downgrade_preview(id)
 					if bool(downgrade_preview["ok"]):

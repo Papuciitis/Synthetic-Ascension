@@ -144,28 +144,41 @@ static func resolve(inventory: Inventory, augment_ids: Array) -> BurdenSnapshot:
 ## stat pass can substitute it for the roll without knowing about the Lens.
 ## A3: the Sigil pays only while the wardrobe is exactly balanced and each
 ## side has at least EQUILIBRIUM_MIN_EACH pieces; polarity, never burden.
-static func equilibrium_bonus(level: int, snapshot: BurdenSnapshot) -> float:
+## Perfect Balance (the Transcended Sigil) doubles the rate and lifts the
+## cap to 45%.
+static func equilibrium_bonus(level: int, snapshot: BurdenSnapshot, perfect: bool = false) -> float:
 	if snapshot == null or not snapshot.is_balanced() or snapshot.neg_count < EQUILIBRIUM_MIN_EACH:
 		return 0.0
+	if perfect:
+		return minf(0.45, asymptotic_rate(EQUILIBRIUM_RATE * 2.0, level))
 	return minf(EQUILIBRIUM_CAP, asymptotic_rate(EQUILIBRIUM_RATE, level))
 
 
 ## A5: 0 at or above 60% HP, 1 at or below 20% HP, linear between.
-static func litany_ramp(hp_ratio: float) -> float:
-	return clampf((LITANY_START_HP - hp_ratio) / (LITANY_START_HP - LITANY_FULL_HP), 0.0, 1.0)
+## Requiem (the Transcended Litany) starts at 85% and is full at 35%.
+static func litany_ramp(hp_ratio: float, requiem: bool = false) -> float:
+	var start := 0.85 if requiem else LITANY_START_HP
+	var full := 0.35 if requiem else LITANY_FULL_HP
+	return clampf((start - hp_ratio) / (start - full), 0.0, 1.0)
 
 
 ## A5: the Haste the Litany grants for a total active severity at this HP.
-static func litany_haste(level: int, total_active_severity: float, hp_ratio: float) -> float:
-	var ramp := litany_ramp(hp_ratio)
+## Requiem doubles the cap (35% -> 70%); its Power share is the same number.
+static func litany_haste(level: int, total_active_severity: float, hp_ratio: float, requiem: bool = false) -> float:
+	var ramp := litany_ramp(hp_ratio, requiem)
 	if ramp <= 0.0 or total_active_severity <= 0.0:
 		return 0.0
-	return ramp * minf(LITANY_CAP, asymptotic_rate(LITANY_SHARE, level) * total_active_severity)
+	var cap := LITANY_CAP * 2.0 if requiem else LITANY_CAP
+	return ramp * minf(cap, asymptotic_rate(LITANY_SHARE, level) * total_active_severity)
 
 
-## A7: the chance a newly found curse pays one Follower.
-static func gambler_follower_chance(luck: float) -> float:
-	return clampf(GAMBLER_FOLLOWER_BASE + LuckResolver.extra_follower_chance(luck), 0.0, 0.35)
+## A7: the chance a newly found curse pays one Follower. House Edge (the
+## Transcended Rite) doubles both terms and the cap.
+static func gambler_follower_chance(luck: float, house_edge: bool = false) -> float:
+	var chance := GAMBLER_FOLLOWER_BASE + LuckResolver.extra_follower_chance(luck)
+	if house_edge:
+		return clampf(chance * 2.0, 0.0, 0.70)
+	return clampf(chance, 0.0, 0.35)
 
 
 static func inverted_return(severity: float) -> float:

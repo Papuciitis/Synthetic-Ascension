@@ -528,7 +528,7 @@ func _set_slot_augment(slot: Control, a: AugmentData) -> void:
 	if icon_rect != null:
 		icon_rect.texture = a.icon
 
-	slot.tooltip_text = a.display_name
+	slot.tooltip_text = Global.augment_display_name(a.id)
 
 
 # ----------------------------

@@ -79,10 +79,22 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 
 	icon.texture = a.icon
 	var lvl: int = maxi(1, level)
-	name_label.text = "%s  Lv.%d" % [a.display_name, lvl]
+	var shown_name := Global.augment_display_name(a.id) if Global != null and Global.has_method("augment_display_name") else a.display_name
+	name_label.text = "%s  Lv.%d" % [shown_name, lvl]
 
 	var lines: Array[String] = []
 	lines.append("Level: %d" % lvl)
+	if a.effect_scenes.size() > 0:
+		lines.append("Payload: x%.2f of its Lv.1 (grows with your native hit, D)" % AugmentScaling.potency(lvl))
+	# What it has become, or what it would take to become it.
+	if Global != null and Global.has_method("is_augment_transcended") and AugmentScaling.can_transcend(a.id):
+		if Global.is_augment_transcended(a.id):
+			lines.append("TRANSCENDED (%s): %s" % [a.display_name, AugmentScaling.transcend_rule(a.id)])
+		else:
+			lines.append("Transcends at Lv.%d into %s. Catalyst: %s%s." % [
+				Global.augment_transcend_level(), AugmentScaling.transcended_name(a.id),
+				AugmentScaling.catalyst_text(a.id), " (held)" if Global.augment_catalyst_holds(a.id) else "",
+			])
 	lines.append("")
 	var desc := a.description.strip_edges()
 	if desc == "":

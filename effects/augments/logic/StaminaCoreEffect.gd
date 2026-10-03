@@ -57,14 +57,63 @@ func _process(dt: float) -> void:
 	if _cd > 0.0:
 		_cd = max(_cd - dt, 0.0)
 
+	# Lifesteal lands once a frame: damage_dealt fires per hit, and a horde
+	# frame can carry hundreds of them.
+	if _pending_heal > 0.0 and player != null and player.has_method("heal"):
+		player.call("heal", _pending_heal)
+	_pending_heal = 0.0
+
 	if not Global.active_augment_input_blocked(int(get_meta("hud_slot_index", -1))) and player != null and Input.is_action_just_pressed(active_action):
 		if debug_prints:
 			print("[StaminaCore] pressed cd=", _cd, " active_time=", _active_time)
 		_try_activate()
+	elif transcended and _cd <= 0.0 and _active_time <= 0.0 and _hp_ratio() < UNDYING_TRIGGER_HP and not Global.active_augment_input_blocked():
+		# Undying Engine: it answers a falling health bar by itself.
+		_try_activate(false)
 
 	_report_cd(false)
-	
-func _try_activate() -> void:
+
+
+## Undying Engine (the Transcended core).
+const UNDYING_LIFESTEAL := 0.06
+const UNDYING_TRIGGER_HP := 0.35
+var transcended: bool = false
+var _pending_heal: float = 0.0
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_retitle_for_transcendence()
+
+
+## The HUD plate takes the Transcended name; the authored title comes back
+## if the flag ever clears (a new attempt rebuilds the node anyway).
+var _authored_title: String = ""
+
+
+func _retitle_for_transcendence() -> void:
+	if _authored_title == "":
+		_authored_title = hud_title_text
+	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
+	hud_title_text = turned if transcended and turned != "" else _authored_title
+
+
+func _hp_ratio() -> float:
+	if player == null:
+		return 1.0
+	var max_hp := float(player.get("max_hp"))
+	return clampf(float(player.get("hp")) / max_hp, 0.0, 1.0) if max_hp > 0.0 else 1.0
+
+
+## Lifesteal share right now: the active window's, plus Undying's floor.
+func current_lifesteal() -> float:
+	var share := lifesteal_pct if _active_time > 0.0 else 0.0
+	if transcended:
+		share += UNDYING_LIFESTEAL
+	return share
+
+
+func _try_activate(manual: bool = true) -> void:
 	if _cd > 0.0:
 		if debug_prints:
 			print("[StaminaCore] blocked by cd=", _cd)
@@ -81,7 +130,8 @@ func _try_activate() -> void:
 
 	_cd_max = Global.doctrine_active_cooldown(maxf(3.0, active_base_cd / maxf(haste_mul, 0.05)))
 	_cd = _cd_max
-	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
+	if manual:
+		Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	_active_time = active_duration
 
 	if player.has_method("grant_invulnerability"):
@@ -156,7 +206,10 @@ func _connect_damage_dealt_safely() -> void:
 		RunEvents.damage_dealt.connect(_damage_cb)
 
 func _on_damage_dealt(a, b) -> void:
-	if player == null or _active_time <= 0.0:
+	if player == null:
+		return
+	var share := current_lifesteal()
+	if share <= 0.0:
 		return
 
 	var src: Node = null
@@ -174,8 +227,7 @@ func _on_damage_dealt(a, b) -> void:
 	if src != player:
 		return
 
-	if player.has_method("heal"):
-		player.call("heal", amt * lifesteal_pct)
+	_pending_heal += amt * share
 
 func _report_cd(force: bool) -> void:
 	if not force and absf(_cd - _last_report) < 0.05:
@@ -184,7 +236,6 @@ func _report_cd(force: bool) -> void:
 	active_cd_changed.emit(_cd, _cd_max)
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_sc: bool = false
 
@@ -197,7 +248,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_sc()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_sc()
 	_apply_level_scaling_sc()
 
@@ -212,7 +263,7 @@ func _capture_level_bases_sc() -> void:
 	_base_lifesteal_pct_sc = lifesteal_pct
 
 func _apply_level_scaling_sc() -> void:
-	var t: int = _aug_level - 1
+	var t: int = AugmentScaling.count_steps(_aug_level)
 	if t <= 0:
 		active_base_cd = _base_active_base_cd_sc
 		active_duration = _base_active_duration_sc

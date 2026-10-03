@@ -671,6 +671,9 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 			# is still NEG, it just is not weighing on you any more.
 			if burden.is_suppressed(i):
 				pct = BurdenResolver.inverted_return(burden.suppressed_severity)
+				# Twin Lens (the Transcended Lens) returns the whole curse and more.
+				if Global.is_augment_transcended(&"augment_inversion_lens"):
+					pct *= 2.0
 			if i == 5:
 				pct = clampf(pct, -0.9999, 0.9999)
 			else:
@@ -700,13 +703,16 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 	# reads ACTIVE burden, so a Lens suppressing your worst curse also starves
 	# the Engine: those two augments genuinely fight each other.
 	if Global.permanent_augment_ids.has(&"augment_corruption_engine"):
-		var corruption_total: float = burden.heaviest(2)
+		# Heart of Ruin (Transcended): the three heaviest feed it, cap 75%.
+		var ruin: bool = Global.is_augment_transcended(&"augment_corruption_engine")
+		var corruption_total: float = burden.heaviest(3 if ruin else 2)
 		if corruption_total > 0.0:
 			var engine_rate: float = BurdenResolver.asymptotic_rate(
 				BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
 			)
-			s.power += minf(BurdenResolver.CORRUPTION_ENGINE_CAP, corruption_total * engine_rate)
-			Global.stat_ledger_step("CORRUPTION ENGINE", s)
+			var engine_cap: float = 0.75 if ruin else BurdenResolver.CORRUPTION_ENGINE_CAP
+			s.power += minf(engine_cap, corruption_total * engine_rate)
+			Global.stat_ledger_step(Global.augment_display_name(&"augment_corruption_engine").to_upper(), s)
 
 	# Doctrine of Burden: pays for COUNT, not severity, so it wants many mild
 	# curses and is actively hurt by consolidating them. Ordinary NEG merging
@@ -718,22 +724,37 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		)
 		s.armor += float(doctrine_bonus["armor"])
 		s.max_hp *= 1.0 + float(doctrine_bonus["hp"])
-		Global.stat_ledger_step("DOCTRINE OF BURDEN", s)
+		# Martyr's Frame (Transcended): every curse carried is also Power.
+		if Global.is_augment_transcended(&"augment_doctrine_of_burden"):
+			s.power += minf(0.40, 0.05 * float(burden.qualifying_count))
+		Global.stat_ledger_step(Global.augment_display_name(&"augment_doctrine_of_burden").to_upper(), s)
 
 	# Inversion Lens: the suppression itself happened in the slot loop above.
 	# What is left is the reading you can put on a card - and a small Luck
 	# kicker, because reinterpreting a catastrophe is the same fantasy Luck
 	# sells: the universe quietly rearranging itself around you.
 	if Global.permanent_augment_ids.has(&"augment_equilibrium_sigil"):
-		var equilibrium: float = BurdenResolver.equilibrium_bonus(Global.get_augment_level(&"augment_equilibrium_sigil"), burden)
+		var equilibrium: float = BurdenResolver.equilibrium_bonus(
+			Global.get_augment_level(&"augment_equilibrium_sigil"), burden,
+			Global.is_augment_transcended(&"augment_equilibrium_sigil")
+		)
 		if equilibrium > 0.0:
 			s.power += equilibrium
 			s.haste += equilibrium
-			Global.stat_ledger_step("EQUILIBRIUM SIGIL", s)
+			Global.stat_ledger_step(Global.augment_display_name(&"augment_equilibrium_sigil").to_upper(), s)
 	if Global.permanent_augment_ids.has(&"augment_inversion_lens") and burden.suppressed_slot >= 0:
 		var lens_level: int = Global.get_augment_level(&"augment_inversion_lens")
-		s.luck += BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, lens_level) * burden.suppressed_severity
-		Global.stat_ledger_step("INVERSION LENS", s)
+		var kicker: float = BurdenResolver.asymptotic_rate(BurdenResolver.INVERSION_LUCK_KICKER, lens_level) * burden.suppressed_severity
+		if Global.is_augment_transcended(&"augment_inversion_lens"):
+			kicker *= 2.0
+		s.luck += kicker
+		Global.stat_ledger_step(Global.augment_display_name(&"augment_inversion_lens").to_upper(), s)
+
+	# Velocity Engine (the Transcended Sprint Servos): speed is Power. Read
+	# after every move-speed source above, before the Doctrine's last word.
+	if Global.permanent_augment_ids.has(&"augment_sprint_servos") and Global.is_augment_transcended(&"augment_sprint_servos"):
+		s.power += AugmentScaling.velocity_power(s.move_speed)
+		Global.stat_ledger_step("VELOCITY ENGINE", s)
 
 	# Doctrine prices are applied at the final ownership boundary so equipment,
 	# sets, manifestations and Burden cannot escape the Max-HP sacrifice.
@@ -789,6 +810,10 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	if aur3 != null:
 		haste_mul *= aur3.get_haste_multiplier()
 		power_mul *= aur3.get_power_multiplier()
+	# The Engine Prays (Apotheosis Doctrine): the native weapon pays for the
+	# instruments. The tree's D reads Power, not this, so it is untouched.
+	if Global != null:
+		power_mul *= maxf(0.0, float(Global.get_doctrine_rule(&"native_damage_mul", 1.0)))
 
 	var cd: float = 0.0
 	if style_id == "melee":
@@ -816,8 +841,11 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 
 	# Lucky bonus crit: separate from any future Crit Chance stat — Luck
 	# occasionally blesses a whole attack (all pellets/impacts of it).
-	var lucky_crit: bool = Global._rng.randf() < LuckResolver.lucky_crit_chance(Global.run_luck)
-	var lucky_mul: float = 1.5 if lucky_crit else 1.0
+	# Fortune's Engine (the Transcended Lucky Charm) doubles the chance and
+	# makes a lucky crit x2.5.
+	var fortune: bool = Global.permanent_augment_ids.has(&"augment_lucky_charm") and Global.is_augment_transcended(&"augment_lucky_charm")
+	var lucky_crit: bool = Global._rng.randf() < AugmentScaling.lucky_crit_chance(Global.run_luck, fortune)
+	var lucky_mul: float = AugmentScaling.lucky_crit_multiplier(fortune) if lucky_crit else 1.0
 	_lucky_crit_pending = lucky_crit
 	if lucky_crit and BattleText != null:
 		BattleText.popup(global_position, "LUCKY", Color(1.0, 0.84, 0.25, 1.0), 1.2)
@@ -837,6 +865,16 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	RunEvents.weapon_fired.emit(self, StringName(style_id), global_position, mouse_pos, power_mul, haste_mul)
 
 
+## Second Hand (Method Doctrine, bindings-and-theses §6): the native attack
+## lands as several full hits, each one a hit for every rule the run owns.
+## The mutations predate the Doctrine (the disabled 0.75 / 0.70 / 0.72-0.64
+## Major Choices); the Doctrine pays a little more per part.
+const SECOND_HAND_TWIN_CUT := 0.85
+const SECOND_HAND_SCATTER := 0.75
+const SECOND_HAND_SIGIL_CENTRE := 0.85
+const SECOND_HAND_SIGIL_SIDE := 0.75
+
+
 func _spawn_melee(mouse_pos: Vector2, dmg: float) -> void:
 	dmg = _consume_hex_mark_bonus(dmg)
 	var origin := _attack_origin()
@@ -848,8 +886,8 @@ func _spawn_melee(mouse_pos: Vector2, dmg: float) -> void:
 	var dual: bool = (Global != null and Global.has_method("has_mutation") and Global.has_mutation(&"mut_melee_dual_slash"))
 	if dual:
 		var ang := deg_to_rad(18.0)
-		_spawn_melee_slash(origin, dir.rotated(-ang), dmg * 0.75)
-		_spawn_melee_slash(origin, dir.rotated( ang), dmg * 0.75)
+		_spawn_melee_slash(origin, dir.rotated(-ang), dmg * SECOND_HAND_TWIN_CUT)
+		_spawn_melee_slash(origin, dir.rotated( ang), dmg * SECOND_HAND_TWIN_CUT)
 	else:
 		_spawn_melee_slash(origin, dir, dmg)
 
@@ -933,15 +971,19 @@ func _consume_hex_mark_bonus(dmg: float) -> float:
 		if typeof(fv) == TYPE_FLOAT or typeof(fv) == TYPE_INT:
 			flat = float(fv)
 
-	var extra: int = 0
-	for i in range(max(1, d8_count)):
-		extra += randi_range(1, 8)
+	if has_meta("hex_mark_bonus"):
+		# The mark pays in D (AugmentScaling): its mean, swung by the d8s.
+		dmg += float(get_meta("hex_mark_bonus")) * AugmentScaling.dice_factor(d8_count, 8)
+	else:
+		var extra: int = 0
+		for i in range(max(1, d8_count)):
+			extra += randi_range(1, 8)
 
-	var pwr: float = 0.0
-	if stats != null:
-		pwr = stats.power
+		var pwr: float = 0.0
+		if stats != null:
+			pwr = stats.power
 
-	dmg += float(extra) + flat + (pwr * power_scale)
+		dmg += float(extra) + flat + (pwr * power_scale)
 
 	shots_left -= 1
 	if shots_left <= 0:
@@ -949,6 +991,7 @@ func _consume_hex_mark_bonus(dmg: float) -> float:
 		if has_meta("hex_mark_d8_count"): remove_meta("hex_mark_d8_count")
 		if has_meta("hex_mark_power_scale"): remove_meta("hex_mark_power_scale")
 		if has_meta("hex_mark_flat"): remove_meta("hex_mark_flat")
+		if has_meta("hex_mark_bonus"): remove_meta("hex_mark_bonus")
 	else:
 		set_meta("hex_mark_shots_left", shots_left)
 	return dmg
@@ -967,7 +1010,7 @@ func _spawn_ranged(mouse_pos: Vector2, dmg: float) -> void:
 	if shotgun:
 		var pellet_count := 3
 		var spread_deg := 12.0
-		var pellet_dmg := dmg * 0.70
+		var pellet_dmg := dmg * SECOND_HAND_SCATTER
 		if pellet_count <= 1:
 			_spawn_ranged_bullet(origin, dir, dmg)
 			return
@@ -1042,9 +1085,9 @@ func _spawn_magic(mouse_pos: Vector2, dmg: float) -> void:
 		_vfx_spawn_spokes(origin, 0.10, 44.0)
 		_vfx_spawn_pulse(mouse_pos, 22.0, 0.14, 5.0)
 
-		_spawn_magic_impact(mouse_pos, dmg * 0.72)
-		_spawn_magic_impact(mouse_pos + perp * off, dmg * 0.64)
-		_spawn_magic_impact(mouse_pos - perp * off, dmg * 0.64)
+		_spawn_magic_impact(mouse_pos, dmg * SECOND_HAND_SIGIL_CENTRE)
+		_spawn_magic_impact(mouse_pos + perp * off, dmg * SECOND_HAND_SIGIL_SIDE)
+		_spawn_magic_impact(mouse_pos - perp * off, dmg * SECOND_HAND_SIGIL_SIDE)
 		return
 
 	_vfx_spawn_spokes(origin, 0.10, 44.0)

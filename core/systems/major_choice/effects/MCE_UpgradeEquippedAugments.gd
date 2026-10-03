@@ -3,7 +3,9 @@ class_name MCE_UpgradeEquippedAugments
 
 @export var amount: int = 1
 @export var min_level: int = 1
-@export var max_level: int = 5
+## Was 5, which pulled a Lv.7 augment DOWN to 5; levels now run to
+## AugmentScaling.MAX_LEVEL.
+@export var max_level: int = 20
 
 func can_apply(g: Node) -> bool:
 	if g == null:
@@ -53,7 +55,9 @@ func get_preview_lines(g: Node) -> PackedStringArray:
 		var nxt: int = clampi(cur_lvl + amount, min_level, max_level)
 
 		var nm: String = String(aug_id)
-		if db.has(aug_id):
+		if g.has_method("augment_display_name"):
+			nm = String(g.call("augment_display_name", aug_id))
+		elif db.has(aug_id):
 			var ad: Variant = db[aug_id]
 			if ad != null and ad is AugmentData:
 				nm = (ad as AugmentData).display_name

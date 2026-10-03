@@ -24,6 +24,36 @@ signal active_cd_changed(time_left: float, max_cd: float)
 
 @export var bite_power_scale: float = 6.0
 
+## Bite and detonation in D, the native hit (AugmentScaling); detonations
+## swing on explosion_d4_count d4 normalised to their mean.
+@export var bite_d: float = 0.5
+@export var explosion_d: float = 1.4
+## Living spiderlings this summoner may keep: 6 + levels, at most 14.
+const SPIDER_CAP_BASE := 6
+const SPIDER_CAP_MAX := 14
+
+## Brood Mother (the Transcended summoner).
+const BROOD_CHANCE := 0.3
+const BROOD_RANGE := 600.0
+var transcended: bool = false
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_retitle_for_transcendence()
+
+
+## The HUD plate takes the Transcended name; the authored title comes back
+## if the flag ever clears (a new attempt rebuilds the node anyway).
+var _authored_title: String = ""
+
+
+func _retitle_for_transcendence() -> void:
+	if _authored_title == "":
+		_authored_title = hud_title_text
+	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
+	hud_title_text = turned if transcended and turned != "" else _authored_title
+
 # NEW: world hint (no extra scene needed)
 @export var detonate_hint_text: String = "Detonate: G / MMB"
 @export var detonate_hint_seconds: float = 1.35
@@ -46,9 +76,57 @@ func _ready() -> void:
 	set_process(true)
 	_cd_max = cooldown
 	_report_cd(true)
+	if RunEvents != null and not RunEvents.enemy_defeated.is_connected(_on_enemy_defeated):
+		RunEvents.enemy_defeated.connect(_on_enemy_defeated)
 
 func _exit_tree() -> void:
 	_cleanup_hint()
+	if RunEvents != null and RunEvents.enemy_defeated.is_connected(_on_enemy_defeated):
+		RunEvents.enemy_defeated.disconnect(_on_enemy_defeated)
+
+
+## Brood Mother: a kill near the summoner may hatch a spiderling at the corpse.
+func _on_enemy_defeated(context: RefCounted) -> void:
+	if not transcended or player == null or not is_instance_valid(player) or context == null:
+		return
+	var at: Vector2 = context.get("position")
+	if at.distance_squared_to(player.global_position) > BROOD_RANGE * BROOD_RANGE:
+		return
+	if Global._rng.randf() >= BROOD_CHANCE:
+		return
+	_hatch(at)
+
+
+func spider_cap() -> int:
+	return mini(SPIDER_CAP_MAX, SPIDER_CAP_BASE + _aug_level)
+
+
+func living_spiders() -> int:
+	var owner_id := int(get_instance_id())
+	var count := 0
+	for n in get_tree().get_nodes_in_group("spiderlings"):
+		if is_instance_valid(n) and int(n.get_meta("spider_owner_id", -1)) == owner_id:
+			count += 1
+	return count
+
+
+## One spiderling at `at`, if the cap allows. Returns it or null.
+func _hatch(at: Vector2) -> Node:
+	if spiderling_scene == null or living_spiders() >= spider_cap():
+		return null
+	var s := spiderling_scene.instantiate() as CharacterBody2D
+	if s == null:
+		return null
+	get_tree().current_scene.add_child(s)
+	s.global_position = at
+	s.set_meta("spider_owner_id", int(get_instance_id()))
+	if s.has_method("setup"):
+		s.call("setup", player, spider_lifetime, bite_power_scale, _get_power())
+	if s.has_method("set_bite_damage"):
+		s.call("set_bite_damage", AugmentScaling.damage(player, bite_d, _aug_level))
+	if transcended and s.has_method("set_expiry_blast"):
+		s.call("set_expiry_blast", _roll_explosion_damage(_get_power()), explosion_radius, player)
+	return s
 
 func _process(dt: float) -> void:
 	if player == null or not is_instance_valid(player):
@@ -79,34 +157,15 @@ func _try_spawn() -> void:
 	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 
 	var target_pos: Vector2 = _get_target_point()
-	var power: float = _get_power()
 
 	var count: int = maxi(1, spawn_count)
 	for i in range(count):
-		var inst: Node = spiderling_scene.instantiate()
-		var s: CharacterBody2D = inst as CharacterBody2D
-		if s == null:
-			inst.queue_free()
-			push_warning("[Spiderlings] spiderling_scene root must be CharacterBody2D")
-			continue
-
-		get_tree().current_scene.add_child(s)
-
-		# small scatter so they don't stack perfectly
-		var scatter: Vector2
-		if Engine.has_singleton("Global") and Global.has_variable("_rng"):
-			scatter = Vector2(Global._rng.randf_range(-12.0, 12.0), Global._rng.randf_range(-12.0, 12.0))
-		else:
-			scatter = Vector2(randf_range(-12.0, 12.0), randf_range(-12.0, 12.0))
-
-		s.global_position = target_pos + scatter
-
-		# owner id lets us detonate only our spiderlings
-		s.set_meta("spider_owner_id", int(get_instance_id()))
-
-		# pass tuning into the spiderling
-		if s.has_method("setup"):
-			s.call("setup", player, spider_lifetime, bite_power_scale, power)
+		# small scatter so they don't stack perfectly; the owner id lets us
+		# detonate only our spiderlings, and the cap keeps a long cast
+		# chain from flooding the scene.
+		var scatter := Vector2(Global._rng.randf_range(-12.0, 12.0), Global._rng.randf_range(-12.0, 12.0))
+		if _hatch(target_pos + scatter) == null:
+			break
 
 	_show_detonate_hint()
 	_report_cd(true)
@@ -147,14 +206,8 @@ func _get_power() -> float:
 		power = st.power
 	return power
 
-func _roll_explosion_damage(power: float) -> float:
-	var total: int = 0
-	var dice: int = maxi(1, explosion_d4_count)
-	for i in range(dice):
-		total += randi_range(1, 4)
-
-	var cast_mod: float = power * explosion_power_scale
-	return float(total) + cast_mod
+func _roll_explosion_damage(_power: float) -> float:
+	return AugmentScaling.damage(player, explosion_d, _aug_level) * AugmentScaling.dice_factor(explosion_d4_count, 4)
 
 func _report_cd(force: bool) -> void:
 	if not force and absf(_cd - _last_report) < 0.05:
@@ -215,7 +268,6 @@ func _cleanup_hint() -> void:
 	_hint_time = 0.0
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_sp: bool = false
 
@@ -232,7 +284,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_sp()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_sp()
 	_apply_level_scaling_sp()
 
@@ -250,29 +302,19 @@ func _capture_level_bases_sp() -> void:
 	_base_explosion_power_scale_sp = explosion_power_scale
 	_base_bite_power_scale_sp = bite_power_scale
 
+## Damage grows through AugmentScaling.potency (read when a spider hatches
+## or detonates); reach, cadence, brood size, lifetime and blast grow with
+## the capped count steps.
 func _apply_level_scaling_sp() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		cast_range = _base_cast_range_sp
-		cooldown = _base_cooldown_sp
-		spawn_count = _base_spawn_count_sp
-		spider_lifetime = _base_spider_lifetime_sp
-		explosion_radius = _base_explosion_radius_sp
-		explosion_d4_count = _base_explosion_d4_sp
-		explosion_power_scale = _base_explosion_power_scale_sp
-		bite_power_scale = _base_bite_power_scale_sp
-	else:
-		cast_range = _base_cast_range_sp * (1.0 + 0.05 * float(t))
-		cooldown = maxf(0.6, _base_cooldown_sp * pow(0.94, float(t)))
-
-		spawn_count = maxi(1, _base_spawn_count_sp + int(floor(float(t) / 2.0)))
-		spider_lifetime = _base_spider_lifetime_sp + 1.5 * float(t)
-
-		explosion_radius = _base_explosion_radius_sp + 10.0 * float(t)
-		explosion_d4_count = maxi(1, _base_explosion_d4_sp + int(floor(float(t) / 2.0)))
-		explosion_power_scale = _base_explosion_power_scale_sp * (1.0 + 0.10 * float(t))
-
-		bite_power_scale = _base_bite_power_scale_sp * (1.0 + 0.12 * float(t))
+	var t: int = AugmentScaling.count_steps(_aug_level)
+	cast_range = _base_cast_range_sp * (1.0 + 0.05 * float(t))
+	cooldown = maxf(0.6, _base_cooldown_sp * pow(0.94, float(t)))
+	spawn_count = maxi(1, _base_spawn_count_sp + int(floor(float(t) / 2.0)))
+	spider_lifetime = _base_spider_lifetime_sp + 1.5 * float(t)
+	explosion_radius = _base_explosion_radius_sp + 10.0 * float(t)
+	explosion_d4_count = maxi(1, _base_explosion_d4_sp + int(floor(float(t) / 2.0)))
+	explosion_power_scale = _base_explosion_power_scale_sp
+	bite_power_scale = _base_bite_power_scale_sp
 
 	_cd_max = cooldown
 	_cd = minf(_cd, _cd_max)

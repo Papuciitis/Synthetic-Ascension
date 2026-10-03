@@ -137,7 +137,10 @@ func set_def(definition: MajorChoiceDef, _preview: PackedStringArray, seal_index
 	seal_label.text = ChamberKit.roman(seal_index)
 	stage_role_label.text = "%s  ·  %s" % [String(definition.stage).to_upper(), String(definition.offer_role).to_upper()]
 	title_label.text = definition.title
-	family_label.text = "THESIS FAMILY  ·  %s" % String(definition.family_id).to_upper()
+	# The family count and what this plate would awaken (Thesis at two,
+	# Canon at three: bindings-and-theses §6).
+	var held := int(Global.doctrine_family_count(definition.family_id)) if Global != null and Global.has_method("doctrine_family_count") else 0
+	family_label.text = DoctrineFamilies.plate_line(definition.family_id, held)
 	gift_text.text = definition.gift_text
 	price_text.text = definition.price_text
 	consequence_text.text = definition.consequence_text
@@ -171,12 +174,17 @@ func set_quieted(value: bool) -> void:
 func get_detail_text(_max_bullets: int = 999) -> String:
 	if def_ref == null:
 		return ""
-	return "%s\n\nGIFT\n%s\n\nPRICE\n%s\n\nCONSEQUENCE\n%s" % [
+	var detail := "%s\n\nGIFT\n%s\n\nPRICE\n%s\n\nCONSEQUENCE\n%s" % [
 		def_ref.title,
 		def_ref.gift_text,
 		def_ref.price_text,
 		def_ref.consequence_text,
 	]
+	if Global != null and Global.has_method("doctrine_family_count"):
+		var awakening := DoctrineFamilies.awakening_line(def_ref.family_id, Global.doctrine_family_count(def_ref.family_id))
+		if awakening != "":
+			detail += "\n\n" + awakening
+	return detail
 
 
 func _set_consequence_colour(lit: bool) -> void:

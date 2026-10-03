@@ -36,9 +36,19 @@ func total_active_severity() -> float:
 	return burden.total_active if burden != null else 0.0
 
 
+## Requiem: the Transcended Litany starts sooner, doubles its cap and pays
+## the same number as Power.
+func is_requiem() -> bool:
+	return Global != null and Global.is_augment_transcended(&"augment_litany_of_wounds")
+
+
 func haste_bonus() -> float:
-	return BurdenResolver.litany_haste(level, total_active_severity(), hp_ratio())
+	return BurdenResolver.litany_haste(level, total_active_severity(), hp_ratio(), is_requiem())
 
 
 func get_haste_multiplier() -> float:
 	return 1.0 + haste_bonus()
+
+
+func get_power_multiplier() -> float:
+	return 1.0 + haste_bonus() if is_requiem() else 1.0

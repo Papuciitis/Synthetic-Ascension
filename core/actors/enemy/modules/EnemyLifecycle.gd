@@ -96,12 +96,10 @@ func resolve_death(context: RefCounted) -> void:
 	# proxy-death path in EnemyCombatService).
 	if gain > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
 		gain += 1
-	# Cult of Personality: violence as recruitment seminar.
-	if gain > 0 and Global.permanent_augment_ids.has(&"augment_cult_of_personality"):
-		var cult_level: int = Global.get_augment_level(&"augment_cult_of_personality")
-		var cult_chance: float = 0.10 + 0.05 * float(cult_level - 1) + LuckResolver.extra_follower_chance(Global.run_luck)
-		if Global._rng.randf() < cult_chance:
-			gain += 1
+	# Cult of Personality (Prophet once Transcended) and Census of Souls:
+	# violence as recruitment seminar. One helper for both kill paths.
+	if gain > 0:
+		gain += Global.bonus_kill_followers()
 
 	# Belief earned during Overtime is worth less the longer you refuse to
 	# leave. See ThreatDirector.overtime_reward_multiplier().

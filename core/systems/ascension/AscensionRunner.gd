@@ -750,6 +750,8 @@ func add_action_charge(points: float, v_rooted: bool = false) -> void:
 ## Each equipped Revelation has its own meter (V4); both fill from the
 ## same kills and actions. Overflow banks up to 25 reserve per meter.
 func _gain_charge(gain: float) -> void:
+	# Second Revelation (Apotheosis Doctrine): every source charges x3.
+	gain *= doctrine_rule(&"revelation_charge_mul", 1.0)
 	if v_charge >= V_CHARGE_MAX:
 		if owns("pick.P2"):
 			v_reserve = minf(OVERFLOW_RESERVE, v_reserve + gain)
@@ -1167,12 +1169,22 @@ func _try_reaction(trigger: String) -> Dictionary:
 	return result
 
 
-## Ordinary Q recovery after the Ascendant Recovery sink.
+## Ordinary Q recovery after the Ascendant Recovery sink and the Iron
+## Liturgy Doctrine (x0.6).
 func _recovery(base: float) -> float:
+	var doctrine := doctrine_rule(&"q_recovery_mul", 1.0)
 	if ledger != null and ledger.rank("ASC.S2") > 0:
 		var r := float(ledger.rank("ASC.S2"))
-		return base * (1.0 - 0.20 * r / (r + 100.0))
-	return base
+		return base * (1.0 - 0.20 * r / (r + 100.0)) * doctrine
+	return base * doctrine
+
+
+## A numeric Doctrine rule the tree obeys (bindings-and-theses §6), never
+## below zero; `fallback` outside a run.
+func doctrine_rule(key: StringName, fallback: float) -> float:
+	if Global == null:
+		return fallback
+	return maxf(0.0, float(Global.get_doctrine_rule(key, fallback)))
 
 
 func _on_player_dashed(who: Node, from: Vector2, direction: Vector2) -> void:
@@ -1972,6 +1984,10 @@ func _activate(slot: String, pair: bool = false) -> Dictionary:
 		cooldown = _recovery(cooldown)
 		if encore_cast:
 			cooldown = 0.0
+		# Iron Liturgy: every Q cast feeds the Revelation.
+		var liturgy_charge := doctrine_rule(&"q_revelation_charge", 0.0)
+		if liturgy_charge > 0.0 and not v_id.is_empty():
+			_gain_charge(liturgy_charge)
 		q_cooldown_max = maxf(q_cooldown_max, cooldown) if encore_cast else cooldown
 		q_cooldown_left = maxf(q_cooldown_left, cooldown)
 		_q_idle = 0.0

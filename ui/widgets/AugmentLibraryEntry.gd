@@ -27,7 +27,7 @@ func set_data(a: AugmentData, tags: PackedStringArray = PackedStringArray()) -> 
 	if icon_rect != null:
 		icon_rect.texture = (a.icon if a != null else null)
 	if name_label != null:
-		name_label.text = (a.display_name if a != null else "Unknown")
+		name_label.text = (Global.augment_display_name(a.id) if a != null else "Unknown")
 	if _blurb_label != null:
 		_blurb_label.text = _blurb(a)
 		_blurb_label.visible = _blurb_label.text != ""

@@ -19,9 +19,37 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var mark_duration: float = 6.0
 @export var marked_shots: int = 1
 
+## Each marked attack carries `bonus_d` x D (the native hit) x potency,
+## swung by bonus_d8_count d8 normalised to their mean.
+@export var bonus_d: float = 3.0
 @export var bonus_d8_count: int = 2
+# Kept for scene compatibility; no longer read.
 @export var bonus_power_scale: float = 12.0
 @export var bonus_flat: float = 0.0
+
+## Hexgate (the Transcended blink): rifts at both ends of every blink.
+const RIFT_D := 2.5
+const RIFT_RADIUS := 120.0
+const RIFT_STUN := 0.6
+var transcended: bool = false
+
+
+func set_transcended(value: bool) -> void:
+	transcended = value
+	_apply_level_scaling_hb()
+	_retitle_for_transcendence()
+
+
+## The HUD plate takes the Transcended name; the authored title comes back
+## if the flag ever clears (a new attempt rebuilds the node anyway).
+var _authored_title: String = ""
+
+
+func _retitle_for_transcendence() -> void:
+	if _authored_title == "":
+		_authored_title = hud_title_text
+	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
+	hud_title_text = turned if transcended and turned != "" else _authored_title
 
 # VFX (assign in the effect scene inspector)
 @export var vfx_blink_scene: PackedScene
@@ -96,13 +124,17 @@ func _try_cast() -> void:
 	# VFX burst
 	_spawn_blink_vfx(origin)
 	_spawn_blink_vfx(dest)
+	if transcended:
+		_tear_rift(origin)
+		_tear_rift(dest)
 
-	# Apply mark to next ranged shot(s)
+	# Apply mark to the next attack(s) of any style
 	_mark_left = mark_duration
 	player.set_meta("hex_mark_shots_left", int(max(1, marked_shots)))
 	player.set_meta("hex_mark_d8_count", int(max(1, bonus_d8_count)))
-	player.set_meta("hex_mark_power_scale", float(bonus_power_scale))
-	player.set_meta("hex_mark_flat", float(bonus_flat))
+	player.set_meta("hex_mark_bonus", mark_bonus())
+	player.set_meta("hex_mark_power_scale", 0.0)
+	player.set_meta("hex_mark_flat", 0.0)
 
 	_spawn_mark_vfx()
 
@@ -117,6 +149,20 @@ func _try_cast() -> void:
 		_cd = 0.0
 
 	_report_cd(true)
+
+## The mean payload a marked attack adds, before its d8 swing.
+func mark_bonus() -> float:
+	return AugmentScaling.damage(player, bonus_d, _aug_level)
+
+
+func _tear_rift(at: Vector2) -> void:
+	var damage := AugmentScaling.damage(player, RIFT_D, _aug_level)
+	var caught: Array[int] = []
+	EnemyCombat.gather_in_radius(at, RIFT_RADIUS, caught)
+	for handle in caught:
+		EnemyCombat.apply_damage(handle, damage, 1, player, BalanceAttribution.provenance("augment:blink_hex", "augment:blink_hex:rift", "augment"))
+		EnemyCombat.apply_stun(handle, RIFT_STUN)
+
 
 func _clamped_mouse_point() -> Vector2:
 	# Aim-aware: on controller the mouse cursor is a stale screen point with
@@ -185,6 +231,8 @@ func _clear_mark() -> void:
 		player.remove_meta("hex_mark_power_scale")
 	if player.has_meta("hex_mark_flat"):
 		player.remove_meta("hex_mark_flat")
+	if player.has_meta("hex_mark_bonus"):
+		player.remove_meta("hex_mark_bonus")
 
 	_cleanup_mark_vfx()
 
@@ -214,7 +262,6 @@ func _report_cd(force: bool) -> void:
 	active_cd_changed.emit(_cd, _cd_max)
 
 
-const _AUG_MAX_LEVEL: int = 5
 var _aug_level: int = 1
 var _bases_captured_hb: bool = false
 
@@ -230,7 +277,7 @@ func _enter_tree() -> void:
 	_capture_level_bases_hb()
 
 func set_level(level: int) -> void:
-	_aug_level = clampi(level, 1, _AUG_MAX_LEVEL)
+	_aug_level = AugmentScaling.clamp_level(level)
 	_capture_level_bases_hb()
 	_apply_level_scaling_hb()
 
@@ -247,24 +294,15 @@ func _capture_level_bases_hb() -> void:
 	_base_bonus_power_scale = bonus_power_scale
 	_base_bonus_flat = bonus_flat
 
+## Damage grows through AugmentScaling.potency; reach, cadence, mark
+## window, marked attacks and dice grow with the capped count steps.
 func _apply_level_scaling_hb() -> void:
-	var t: int = _aug_level - 1
-	if t <= 0:
-		blink_range = _base_blink_range
-		active_base_cd = _base_active_base_cd
-		mark_duration = _base_mark_duration
-		marked_shots = _base_marked_shots
-		bonus_d8_count = _base_bonus_d8_count
-		bonus_power_scale = _base_bonus_power_scale
-		bonus_flat = _base_bonus_flat
-		return
-
+	_capture_level_bases_hb()
+	var t: int = AugmentScaling.count_steps(_aug_level)
 	blink_range = _base_blink_range * (1.0 + 0.08 * float(t))
 	active_base_cd = maxf(2.5, _base_active_base_cd * pow(0.92, float(t)))
-
 	mark_duration = _base_mark_duration + 0.75 * float(t)
-	marked_shots = maxi(1, _base_marked_shots + int(floor(float(t) / 2.0)))
-
+	marked_shots = maxi(1, _base_marked_shots + int(floor(float(t) / 2.0)) + (1 if transcended else 0))
 	bonus_d8_count = maxi(1, _base_bonus_d8_count + int(floor(float(t) / 2.0)))
-	bonus_power_scale = _base_bonus_power_scale * (1.0 + 0.10 * float(t))
+	bonus_power_scale = _base_bonus_power_scale
 	bonus_flat = _base_bonus_flat

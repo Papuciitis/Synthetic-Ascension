@@ -433,7 +433,7 @@ func _refresh_info() -> void:
 
 	var extra: String = ""
 	if Global != null and Global.pending_augment_pick:
-		extra += "\n\nREWARD READY\nAugment pick available"
+		extra += "\n\nBINDING READY\nAn augment Binding opens the next segment"
 	if Global != null and Global.pending_big_choice:
 		extra += "\n\nDOCTRINE READY\nAscension thesis awaiting inscription"
 
@@ -2083,7 +2083,7 @@ func _refresh_ledger_view(report_header: String, seg: int, fol: int, gear_count:
 		for child in _notices.get_children():
 			child.queue_free()
 		if Global != null and Global.pending_augment_pick:
-			_notices.add_child(_notice("REWARD READY", "An augment pick is waiting."))
+			_notices.add_child(_notice("BINDING READY", "An augment Binding opens the next segment."))
 		if Global != null and Global.pending_big_choice:
 			_notices.add_child(_notice("DOCTRINE READY", "An Ascension thesis awaits inscription."))
 	if _purse != null and _purse.has_method("set_value"):

@@ -1,9 +1,17 @@
 extends CanvasLayer
+## The Binding (docs/design/2026-10-03-bindings-and-theses.md §3): the
+## augment pick after every segment. The cards are Global's persisted offer -
+## NEW, RANK UP, SWAP or TRANSCEND, each graded Etched to Apocryphal - with a
+## Recast (pay Followers for a new deal) and an Abstain (take Followers
+## instead) from the second Binding on. A SWAP asks which seal to unbind.
+## Opened with nothing pending (screenshot probes, tests) it deals a preview
+## and a pick applies directly.
 
 signal augment_chosen(augment: AugmentData)
 
 const ARCANE_THEME := preload("res://ui/theme/ArcaneMenuTheme.tres")
 const ArcaneRuleScript := preload("res://ui/components/ArcaneRule.gd")
+const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 
 @export var card_scene: PackedScene
 
@@ -25,6 +33,16 @@ var _tip_title: Label = null
 var _tip_flavor: Label = null
 var _tip_numbers: Label = null
 var _tip_tw: Tween = null
+
+# Recast / Abstain and the SWAP slot chooser, built in code under the cards.
+var _subtitle: Label = null
+var _footer: HBoxContainer = null
+var _recast_button: Button = null
+var _abstain_button: Button = null
+var _abstain_armed: bool = false
+var _wallet_label: Label = null
+var _slot_row: VBoxContainer = null
+var _pending_swap: Dictionary = {}
 
 
 func _ready() -> void:
@@ -52,6 +70,7 @@ func _ready() -> void:
 		call_deferred("_do_open_choose_3")
 
 	_ensure_tooltip_ui()
+	_ensure_binding_ui()
 
 func open_choose_3() -> void:
 	# If called before ready, queue it properly
@@ -80,88 +99,50 @@ func _do_open_choose_3() -> void:
 		if overlay: overlay.modulate = Color(1, 1, 1, 1)
 		if center: center.modulate = Color(1, 1, 1, 1)
 
-	var options: Array[AugmentData] = []
-	if Global != null and Global.has_method("get"):
-		# safer than "in" checks for strict projects
-		var db: Variant = Global.get("augment_db")
-		if db is Dictionary:
-			var d: Dictionary = db
-			for v in d.values():
-				if v is AugmentData:
-					options.append(v)
-
-	if OS.is_debug_build():
-		print("Augments loaded:", options.size())
-
-	if options.size() < 3:
+	if Global == null or Global.augment_db.size() < 3:
 		push_warning("Not enough augments in Global.augment_db")
 		return
 
-	options.shuffle()
-	_spawn_cards(_build_offers(options))
-
-func _build_offers(options: Array[AugmentData]) -> Array[AugmentData]:
-	# While a slot is free, prefer augments the player does not own; pad with
-	# owned ones (they level up on pick). With all three slots full, every
-	# offer is an owned augment upgrade — never a silent slot-0 overwrite.
-	Global.init_permanent_augments()
-	var fresh: Array[AugmentData] = []
-	var owned: Array[AugmentData] = []
-	for a in options:
-		if Global.permanent_augment_ids.has(a.id):
-			owned.append(a)
-		else:
-			fresh.append(a)
-	var has_empty_slot: bool = Global.permanent_augment_ids.find(StringName()) != -1
-	var primary: Array[AugmentData] = fresh if has_empty_slot else owned
-	var filler: Array[AugmentData] = owned if has_empty_slot else fresh
-	var offers: Array[AugmentData] = primary.duplicate()
-	for a in filler:
-		if offers.size() >= 3:
-			break
-		offers.append(a)
-	var result: Array[AugmentData] = offers.slice(0, 3)
-	var fresh_profile := true
-	for id in Global.permanent_augment_ids:
-		if id != StringName():
-			fresh_profile = false
-	if fresh_profile:
-		result = ensure_neg_archetype(result, fresh)
-	return result
+	_deal()
 
 
-## The three NEG archetypes the slice promises; a fresh profile's first
-## offer always shows one, so the first curse the run finds has a reader
-## (segment 1 pass S2).
-const NEG_ARCHETYPE_IDS: Array[StringName] = [&"augment_corruption_engine", &"augment_doctrine_of_burden", &"augment_inversion_lens"]
+## The pending Binding's persisted cards, or a preview deal when nothing is
+## pending (a probe or a test opened the screen on its own).
+func current_offer() -> Array:
+	if Global.pending_augment_pick:
+		return Global.binding_offer()
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	return AugmentBinding.build_offer(Global.binding_context(), rng)
 
 
-static func ensure_neg_archetype(offers: Array[AugmentData], pool: Array[AugmentData]) -> Array[AugmentData]:
-	for a in offers:
-		if a != null and NEG_ARCHETYPE_IDS.has(a.id):
-			return offers
-	for a in pool:
-		if a != null and NEG_ARCHETYPE_IDS.has(a.id):
-			if offers.size() >= 3:
-				offers[offers.size() - 1] = a
-			else:
-				offers.append(a)
-			return offers
-	return offers
+func _deal() -> void:
+	_close_slot_chooser()
+	_abstain_armed = false
+	_spawn_cards(current_offer())
+	_refresh_binding_ui()
 
-func _spawn_cards(list: Array[AugmentData]) -> void:
+
+func _spawn_cards(list: Array) -> void:
 	if cards_box == null:
 		push_warning("[AugmentSelect] Cards box path is wrong (cards_box is null).")
 		return
 
 	for c in cards_box.get_children():
+		cards_box.remove_child(c)
 		c.queue_free()
 
-	for a in list:
+	for entry_variant in list:
+		var entry: Dictionary = entry_variant
+		var a := Global.augment_db.get(StringName(str(entry.get("id", ""))), null) as AugmentData
+		if a == null:
+			continue
 		var card := card_scene.instantiate()
 		cards_box.add_child(card)
 
-		if card.has_method("set_data"):
+		if card.has_method("set_offer"):
+			card.call("set_offer", a, entry)
+		elif card.has_method("set_data"):
 			card.call("set_data", a)
 
 		if card.has_signal("picked"):
@@ -179,13 +160,12 @@ func _spawn_cards(list: Array[AugmentData]) -> void:
 
 func _set_cards_locked(lock_it: bool) -> void:
 	_locked = lock_it
-	if cards_box == null:
-		return
-
-	for n in cards_box.get_children():
-		var bb := n as BaseButton
-		if bb != null:
-			bb.disabled = lock_it
+	if cards_box != null:
+		for n in cards_box.get_children():
+			var bb := n as BaseButton
+			if bb != null:
+				bb.disabled = lock_it
+	_refresh_binding_ui()
 
 func _choose_slot_for_pick() -> int:
 	# apply into permanent slots (so Player stats update)
@@ -198,18 +178,34 @@ func _choose_slot_for_pick() -> int:
 
 	return slot
 
+
+static func _entry_of(card_node: Control) -> Dictionary:
+	if card_node == null or not is_instance_valid(card_node):
+		return {}
+	var entry: Variant = card_node.get("card_entry")
+	return (entry as Dictionary) if entry is Dictionary else {}
+
+
 func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 	if _locked:
 		return
+	var entry := _entry_of(card_node)
+	if AugmentBinding.needs_slot_choice(entry):
+		_open_slot_chooser(a, card_node, entry)
+		return
+	await _commit(a, card_node, entry, -1)
 
+
+## Applies the pick: through the Binding when one is pending, directly
+## otherwise (a preview, or a caller handing an augment with no card).
+func _commit(a: AugmentData, card_node: Control, entry: Dictionary, swap_slot: int) -> void:
 	_set_cards_locked(true)
 
 	if OS.is_debug_build():
-		print("AUGMENT PICKED:", a.id)
+		print("AUGMENT PICKED:", a.id, " ", entry)
 
-	# Picking an augment you already own levels it up in place.
 	var owned_slot: int = Global.permanent_augment_ids.find(a.id)
-	var slot: int = owned_slot if owned_slot != -1 else _choose_slot_for_pick()
+	var slot: int = swap_slot if swap_slot >= 0 else (owned_slot if owned_slot != -1 else _choose_slot_for_pick())
 
 	var vfx_node := get_tree().get_first_node_in_group("augment_fly_vfx")
 	var vfx := vfx_node as AugmentFlyVfx
@@ -219,15 +215,35 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 		if is_instance_valid(card_node):
 			card_node.modulate = Color(1, 1, 1, 0)
 
-	if owned_slot != -1:
-		Global.level_up_permanent_augment(a.id)
-	else:
-		Global.set_permanent_augment(slot, a.id)
+	var applied := false
+	if not entry.is_empty() and Global.pending_augment_pick:
+		applied = Global.apply_binding_card(entry, swap_slot)
+	if not applied:
+		_apply_direct(a, entry, swap_slot)
 	augment_chosen.emit(a)
 	_close()
 
+
+## The pick without a pending Binding: a slotted augment rises by the card's
+## grade in place, anything else is slotted at its stored level plus the
+## grade (Etched keeps it).
+func _apply_direct(a: AugmentData, entry: Dictionary, swap_slot: int) -> void:
+	var owned_slot: int = Global.permanent_augment_ids.find(a.id)
+	var grade := int(entry.get("grade", 0))
+	var current := Global.get_augment_level(a.id)
+	if owned_slot != -1:
+		Global.set_augment_level(a.id, AugmentBinding.resulting_level({"kind": AugmentBinding.KIND_RANK, "grade": maxi(0, grade)}, current))
+		Global.permanent_augments_changed.emit(Global.permanent_augment_ids)
+		return
+	var slot := swap_slot if swap_slot >= 0 else _choose_slot_for_pick()
+	Global.set_permanent_augment(slot, a.id)
+	Global.set_augment_level(a.id, AugmentBinding.resulting_level({"kind": AugmentBinding.KIND_NEW, "grade": maxi(0, grade)}, current))
+	Global.permanent_augments_changed.emit(Global.permanent_augment_ids)
+
+
 func _close() -> void:
 	_hide_tooltip()
+	_close_slot_chooser()
 
 	_is_open = false
 	_locked = false
@@ -236,6 +252,164 @@ func _close() -> void:
 	if cards_box:
 		for c in cards_box.get_children():
 			c.queue_free()
+
+
+# ----------------------------
+# Recast, Abstain, the SWAP chooser
+# ----------------------------
+
+func _ensure_binding_ui() -> void:
+	if _footer != null:
+		return
+	_subtitle = get_node_or_null("Center/VBox/TitlePill/TitleMargin/TitleBox/Subtitle") as Label
+	var vbox := get_node_or_null("Center/VBox") as VBoxContainer
+	if vbox == null:
+		return
+
+	_slot_row = VBoxContainer.new()
+	_slot_row.name = "SlotChooser"
+	_slot_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_slot_row.add_theme_constant_override("separation", 10)
+	_slot_row.visible = false
+	vbox.add_child(_slot_row)
+
+	_footer = HBoxContainer.new()
+	_footer.name = "BindingFooter"
+	_footer.alignment = BoxContainer.ALIGNMENT_CENTER
+	_footer.add_theme_constant_override("separation", 22)
+	vbox.add_child(_footer)
+
+	_recast_button = Button.new()
+	_recast_button.name = "Recast"
+	_recast_button.theme = ARCANE_THEME
+	_recast_button.theme_type_variation = &"ArcaneSmallButton"
+	_recast_button.custom_minimum_size = Vector2(250, 42)
+	_recast_button.focus_mode = Control.FOCUS_NONE
+	_recast_button.pressed.connect(_on_recast_pressed)
+	_footer.add_child(_recast_button)
+
+	_wallet_label = Label.new()
+	_wallet_label.theme = ARCANE_THEME
+	_wallet_label.theme_type_variation = &"ArcaneCaption"
+	_wallet_label.add_theme_font_size_override("font_size", 14)
+	_wallet_label.custom_minimum_size = Vector2(180, 0)
+	_wallet_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_wallet_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_footer.add_child(_wallet_label)
+
+	_abstain_button = Button.new()
+	_abstain_button.name = "Abstain"
+	_abstain_button.theme = ARCANE_THEME
+	_abstain_button.theme_type_variation = &"ArcaneDangerButton"
+	_abstain_button.custom_minimum_size = Vector2(250, 42)
+	_abstain_button.focus_mode = Control.FOCUS_NONE
+	_abstain_button.pressed.connect(_on_abstain_pressed)
+	_footer.add_child(_abstain_button)
+	_refresh_binding_ui()
+
+
+func _refresh_binding_ui() -> void:
+	if _subtitle != null and Global != null:
+		if Global.pending_augment_pick and Global.binding_can_trade():
+			_subtitle.text = "The Binding of segment %d. Every card is graded; a seal at Lv.%d with its catalyst can Transcend." % [Global.binding_segment(), Global.augment_transcend_level()]
+		else:
+			_subtitle.text = "Bind one to the Pattern. It stays with you between runs."
+	if _footer == null or Global == null:
+		return
+	var trading := Global.pending_augment_pick and Global.binding_can_trade()
+	_footer.visible = trading
+	if not trading:
+		return
+	var cost := Global.binding_recast_cost()
+	_recast_button.text = "RECAST  ·  FREE" if cost <= 0 else "RECAST  ·  %d FOLLOWERS" % cost
+	_recast_button.disabled = _locked or Global.followers < cost
+	var reward := Global.binding_abstain_reward()
+	if _abstain_armed:
+		_abstain_button.text = "CONFIRM  ·  TAKE %d" % reward
+	else:
+		_abstain_button.text = "ABSTAIN  ·  +%d FOLLOWERS" % reward
+	_abstain_button.disabled = _locked
+	_wallet_label.text = "%d FOLLOWERS" % Global.followers
+
+
+func _on_recast_pressed() -> void:
+	if _locked or not Global.binding_recast():
+		return
+	_hide_tooltip()
+	_deal()
+
+
+## Two presses: the first arms it, so a stray click never throws a pick away.
+func _on_abstain_pressed() -> void:
+	if _locked:
+		return
+	if not _abstain_armed:
+		_abstain_armed = true
+		_refresh_binding_ui()
+		return
+	if Global.binding_abstain() < 0:
+		return
+	_set_cards_locked(true)
+	augment_chosen.emit(null)
+	_close()
+
+
+func _open_slot_chooser(a: AugmentData, card_node: Control, entry: Dictionary) -> void:
+	if _slot_row == null:
+		return
+	_close_slot_chooser()
+	_pending_swap = {"augment": a, "card": card_node, "entry": entry}
+	var heading := Label.new()
+	heading.theme = ARCANE_THEME
+	heading.theme_type_variation = &"ArcaneCaption"
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	heading.text = "UNBIND WHICH SEAL FOR %s?" % a.display_name.to_upper()
+	_slot_row.add_child(heading)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 16)
+	_slot_row.add_child(row)
+	for slot in range(3):
+		var id: StringName = Global.permanent_augment_ids[slot]
+		var button := Button.new()
+		button.theme = ARCANE_THEME
+		button.theme_type_variation = &"ArcaneSmallButton"
+		button.custom_minimum_size = Vector2(230, 42)
+		button.focus_mode = Control.FOCUS_NONE
+		var label := Global.augment_display_name(id) if id != StringName() else "empty"
+		button.text = "%s  ·  %s  Lv.%d" % [["I", "II", "III"][slot], label.to_upper(), Global.get_augment_level(id)]
+		button.disabled = Global.is_augment_slot_locked(slot)
+		if button.disabled:
+			button.tooltip_text = "Locked in the Hub's augment library."
+		button.pressed.connect(_on_swap_slot_chosen.bind(slot))
+		row.add_child(button)
+	var back := Button.new()
+	back.theme = ARCANE_THEME
+	back.theme_type_variation = &"ArcaneSmallButton"
+	back.custom_minimum_size = Vector2(120, 42)
+	back.focus_mode = Control.FOCUS_NONE
+	back.text = "BACK"
+	back.pressed.connect(_close_slot_chooser)
+	row.add_child(back)
+	_slot_row.visible = true
+
+
+func _close_slot_chooser() -> void:
+	_pending_swap = {}
+	if _slot_row == null:
+		return
+	for child in _slot_row.get_children():
+		_slot_row.remove_child(child)
+		child.queue_free()
+	_slot_row.visible = false
+
+
+func _on_swap_slot_chosen(slot: int) -> void:
+	if _pending_swap.is_empty() or _locked:
+		return
+	var swap := _pending_swap
+	_close_slot_chooser()
+	await _commit(swap["augment"], swap["card"], swap["entry"], slot)
 
 func _play_open_fade() -> void:
 	if overlay == null or center == null:
@@ -332,6 +506,7 @@ func _hide_tooltip() -> void:
 func _on_card_hovered(a: AugmentData, card_node: Control) -> void:
 	if _locked:
 		return
+	var entry := _entry_of(card_node)
 	_ensure_tooltip_ui()
 	if _tip_panel == null:
 		return
@@ -341,12 +516,13 @@ func _on_card_hovered(a: AugmentData, card_node: Control) -> void:
 	_tip_panel.custom_minimum_size = Vector2(360, 0)
 	_tip_panel.size = Vector2(360, 0)
 
-	_tip_title.text = a.display_name
+	var transcend := String(entry.get("kind", "")) == AugmentBinding.KIND_TRANSCEND
+	_tip_title.text = AugmentScaling.transcended_name(a.id) if transcend else Global.augment_display_name(a.id)
 	var flavor := a.description.strip_edges()
 	if flavor == "":
 		flavor = a.card_blurb.strip_edges()
 	_tip_flavor.text = flavor
-	_tip_numbers.text = _build_numbers_text(a)
+	_tip_numbers.text = _build_numbers_text(a, entry)
 
 	_tip_panel.visible = true
 	# NOTE: The game pauses AugmentSelect with Engine.time_scale = 0.
@@ -385,8 +561,32 @@ func _on_card_hovered(a: AugmentData, card_node: Control) -> void:
 func _on_card_unhovered(_card_node: Control) -> void:
 	_hide_tooltip()
 
-func _build_numbers_text(a: AugmentData) -> String:
+func _build_numbers_text(a: AugmentData, entry: Dictionary = {}) -> String:
 	var lines: Array[String] = []
+
+	if not entry.is_empty():
+		var current: int = Global.get_augment_level(a.id) if Global != null else 1
+		var after := AugmentBinding.resulting_level(entry, current)
+		var grade := int(entry.get("grade", -1))
+		var head := ""
+		match String(entry.get("kind", "")):
+			AugmentBinding.KIND_TRANSCEND:
+				head = "TRANSCEND  ·  Lv.%d → Lv.%d\n%s" % [current, after, AugmentScaling.transcend_rule(a.id)]
+			AugmentBinding.KIND_RANK:
+				head = "%s  ·  RANK UP  ·  Lv.%d → Lv.%d" % [AugmentScaling.grade_name(grade), current, after]
+			AugmentBinding.KIND_SWAP:
+				head = "%s  ·  SWAP IN AT Lv.%d (replaces a seal you choose)" % [AugmentScaling.grade_name(grade), after]
+			_:
+				head = "%s  ·  BINDS AT Lv.%d" % [AugmentScaling.grade_name(grade), after]
+		lines.append(head)
+		if a.effect_scenes.size() > 0:
+			lines.append("Payload grows with your native hit (D) and +35% per level: x%.2f at Lv.%d." % [AugmentScaling.potency(after), after])
+		if String(entry.get("kind", "")) != AugmentBinding.KIND_TRANSCEND and AugmentScaling.can_transcend(a.id) and not Global.is_augment_transcended(a.id):
+			var held := Global.augment_catalyst_holds(a.id)
+			lines.append("Transcends at Lv.%d into %s. Catalyst: %s%s." % [
+				Global.augment_transcend_level(), AugmentScaling.transcended_name(a.id),
+				AugmentScaling.catalyst_text(a.id), " (held)" if held else "",
+			])
 
 	var det := a.details
 	if det.strip_edges() == "" and a.has_method("get"):
@@ -401,7 +601,7 @@ func _build_numbers_text(a: AugmentData) -> String:
 	# place (_on_card_picked), so its card is an upgrade, and the base `mods`
 	# are stale from Lv.2 on for every augment with mods_scale_per_level.
 	if a.mods != null:
-		var lvl: int = _level_on_pick(a)
+		var lvl: int = _level_on_pick(a) if entry.is_empty() else AugmentBinding.resulting_level(entry, Global.get_augment_level(a.id))
 		var mods := _format_stat_mods(_mods_at_level(a, lvl))
 		if mods.size() > 0:
 			lines.append(("Stats at Lv.%d:\n" % lvl) + "\n".join(mods))

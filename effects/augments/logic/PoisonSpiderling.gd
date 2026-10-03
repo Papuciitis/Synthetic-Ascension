@@ -47,6 +47,27 @@ func setup(p: Node2D, lifetime: float, bite_power_scale: float, power: float) ->
 	_life_left = lifetime
 	_bite_power_scale = bite_power_scale
 	_owner_power = power
+	bite_damage = -1.0
+	_expiry_blast = 0.0
+
+
+## The bite's mean payload in damage (the summoner computes it in D); a
+## negative value keeps the old dice-and-Power bite.
+var bite_damage: float = -1.0
+## Brood Mother: a spider whose life runs out detonates instead of fading.
+var _expiry_blast: float = 0.0
+var _expiry_radius: float = 0.0
+var _expiry_source: Node = null
+
+
+func set_bite_damage(value: float) -> void:
+	bite_damage = value
+
+
+func set_expiry_blast(damage: float, radius: float, source: Node) -> void:
+	_expiry_blast = damage
+	_expiry_radius = radius
+	_expiry_source = source
 
 func _ready() -> void:
 	set_process(true)
@@ -72,7 +93,10 @@ func _ready() -> void:
 func _physics_process(dt: float) -> void:
 	_life_left -= dt
 	if _life_left <= 0.0:
-		_despawn()
+		if _expiry_blast > 0.0:
+			explode(_expiry_blast, _expiry_radius, _expiry_source)
+		else:
+			_despawn()
 		return
 
 	_bite_timer = maxf(_bite_timer - dt, 0.0)
@@ -133,8 +157,12 @@ func _orbit_player() -> void:
 		velocity = Vector2.ZERO
 
 func _deal_bite(handle: int, target_position: Vector2) -> void:
-	var roll: int = randi_range(1, max(1, bite_dice_sides))
-	var dmg: float = float(roll) + bite_base_bonus + (_owner_power * _bite_power_scale)
+	var dmg: float
+	if bite_damage >= 0.0:
+		dmg = bite_damage * AugmentScaling.dice_factor(1, maxi(2, bite_dice_sides))
+	else:
+		var roll: int = randi_range(1, max(1, bite_dice_sides))
+		dmg = float(roll) + bite_base_bonus + (_owner_power * _bite_power_scale)
 
 	# VFX (fangs)
 	if vfx_bite_scene != null:
@@ -153,6 +181,7 @@ func _deal_bite(handle: int, target_position: Vector2) -> void:
 
 
 func explode(dmg: float, radius: float, source: Node = null) -> void:
+	_expiry_blast = 0.0
 	_spawn_explode_vfx(radius)
 
 	var handles: Array[int] = []

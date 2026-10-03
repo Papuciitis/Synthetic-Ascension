@@ -251,6 +251,14 @@ var attempt_mutations: Dictionary = {}
 # Additive attempt stats
 var attempt_stat_delta: StatDelta = null
 
+# Bindings and Transcendence (docs/design/2026-10-03-bindings-and-theses.md):
+# which equipped augments have Transcended this attempt (String id -> true),
+# the pending Binding's dealt cards and how often it was recast. The offer is
+# kept so a reload cannot redeal it for free.
+var attempt_augment_transcended: Dictionary = {}
+var attempt_binding_offer: Array = []
+var attempt_binding_recasts: int = 0
+
 
 # Internal autosave throttle
 var _autosave_timer: SceneTreeTimer = null
@@ -943,7 +951,16 @@ func follower_belief_power() -> float:
 	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
 	# the current congregation. sqrt keeps early followers meaningful and
 	# hoarding from snowballing: 25 -> +5%, 100 -> +10%, cap +15%.
-	return minf(0.15, 0.01 * sqrt(float(maxi(0, followers))))
+	# Census of Souls lifts the cap to +40% and Prophet (the Transcended Cult
+	# of Personality) to +30%: hoarding becomes a weapon the tree competes with.
+	return minf(belief_power_cap(), 0.01 * sqrt(float(maxi(0, followers))))
+
+
+func belief_power_cap() -> float:
+	var cap := 0.15
+	if is_augment_transcended(&"augment_cult_of_personality") and permanent_augment_ids.has(&"augment_cult_of_personality"):
+		cap = 0.30
+	return maxf(cap, float(get_doctrine_rule(&"belief_power_cap", 0.0)))
 
 # ============================================================
 # Run Sheet stat ledger
@@ -1034,7 +1051,360 @@ func apply_permanent_augments_to_stats(s: Stats) -> void:
 			a.apply_to_stats_at_level(s, lvl)
 		else:
 			a.apply_to_stats(s)
-		stat_ledger_step("%s Lv.%d" % [a.display_name.to_upper(), lvl], s)
+		stat_ledger_step("%s Lv.%d" % [augment_display_name(id).to_upper(), lvl], s)
+
+
+# ============================================================
+# Bindings, Transcendence and the Doctrine families
+# (docs/design/2026-10-03-bindings-and-theses.md)
+# ============================================================
+
+## Everything a choice wrote into this attempt, cleared together. An
+## in-session restart used to keep the last run's taken Doctrines, stat
+## delta, augment levels and mutations: the old taken ids then emptied the
+## next seg-3 offer and the Hub's departure stayed blocked.
+func _reset_attempt_choice_state() -> void:
+	attempt_major_choice_offer_ids.clear()
+	attempt_major_choice_taken_ids.clear()
+	attempt_big_choice_source_segment = 0
+	attempt_stat_delta = null
+	attempt_augment_levels = {}
+	attempt_mutations = {}
+	attempt_augment_transcended = {}
+	attempt_binding_offer = []
+	attempt_binding_recasts = 0
+
+
+## The completed segment a pending Binding belongs to: it shows as the next
+## segment starts, so it is one behind attempt_segment (the intro pick in
+## segment 1 counts as 1).
+func binding_segment() -> int:
+	return maxi(1, attempt_segment - 1)
+
+
+## Recast and Abstain exist from the second Binding on: the intro pick is
+## how a fresh profile gets its first augment at all.
+func binding_can_trade() -> bool:
+	return attempt_segment >= 2
+
+
+func binding_card_count() -> int:
+	var count := 3 + int(get_doctrine_rule(&"binding_extra_cards", 0))
+	if doctrine_has_thesis(&"circuit"):
+		count += 1
+	return clampi(count, 3, 5)
+
+
+func binding_grade_multiplier() -> float:
+	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_grade_mul", 1.0)))
+	if doctrine_has_thesis(&"archive"):
+		mul *= 1.5
+	return mul
+
+
+## The Archive Canon deals nothing below Gilded.
+func binding_grade_floor() -> int:
+	return 1 if doctrine_has_canon(&"archive") else 0
+
+
+func binding_free_recasts() -> int:
+	return maxi(0, int(get_doctrine_rule(&"binding_free_recasts", 0))) + (1 if doctrine_has_thesis(&"archive") else 0)
+
+
+## Followers the next Recast of the pending Binding costs (0 while a free
+## one remains).
+func binding_recast_cost() -> int:
+	var free := binding_free_recasts()
+	if attempt_binding_recasts < free:
+		return 0
+	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_recast_mul", 1.0)))
+	return AugmentScaling.recast_cost(binding_segment(), attempt_binding_recasts - free, mul)
+
+
+func binding_abstain_reward() -> int:
+	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_abstain_mul", 1.0)))
+	if doctrine_has_canon(&"archive"):
+		mul *= 2.0
+	return AugmentScaling.abstain_reward(binding_segment(), mul)
+
+
+## What AugmentBinding.build_offer deals from, read from this attempt.
+func binding_context() -> Dictionary:
+	init_permanent_augments()
+	var pool: Array = []
+	for id in augment_db.keys():
+		pool.append(StringName(id))
+	pool.sort_custom(func(a: StringName, b: StringName) -> bool: return String(a) < String(b))
+	var ready_ids: Array = []
+	for id in permanent_augment_ids:
+		if id != StringName() and augment_transcend_ready(id):
+			ready_ids.append(id)
+	ready_ids.sort_custom(func(a: StringName, b: StringName) -> bool: return get_augment_level(a) > get_augment_level(b))
+	var fresh_profile := true
+	for id in permanent_augment_ids:
+		if id != StringName():
+			fresh_profile = false
+	return {
+		"equipped": permanent_augment_ids.duplicate(),
+		"locked": [is_augment_slot_locked(0), is_augment_slot_locked(1), is_augment_slot_locked(2)],
+		"pool": pool,
+		"transcend_ready": ready_ids,
+		"segment": binding_segment(),
+		"luck": run_luck,
+		"grade_mul": binding_grade_multiplier(),
+		"grade_floor": binding_grade_floor(),
+		"card_count": binding_card_count(),
+		"neg_guarantee": fresh_profile,
+	}
+
+
+## The pending Binding's cards, dealt once and kept (a reload shows the same
+## cards; only a paid Recast redeals).
+func binding_offer() -> Array:
+	if not pending_augment_pick:
+		return []
+	if attempt_binding_offer.is_empty():
+		_deal_binding_offer()
+	return attempt_binding_offer.duplicate(true)
+
+
+func _deal_binding_offer() -> void:
+	var rng := RandomNumberGenerator.new()
+	var seed_val: int = attempt_world_seed if attempt_world_seed != 0 else _rng.randi()
+	rng.seed = int(seed_val) ^ (binding_segment() * 0x2545F491) ^ ((attempt_binding_recasts + 1) * 0x9E3779B9) ^ 0xB1D
+	attempt_binding_offer = AugmentBinding.build_offer(binding_context(), rng)
+	request_autosave()
+
+
+## Pays for and deals a new offer. False when it cannot (no Binding, the
+## intro pick, too few Followers).
+func binding_recast() -> bool:
+	if not pending_augment_pick or not binding_can_trade():
+		return false
+	var cost := binding_recast_cost()
+	if cost > 0:
+		if followers < cost:
+			return false
+		var paid := transaction_followers(-cost, &"binding_recast", {"segment": binding_segment()}, true, false)
+		if int(paid.get("change", 0)) != -cost:
+			return false
+	attempt_binding_recasts += 1
+	attempt_binding_offer.clear()
+	_deal_binding_offer()
+	return true
+
+
+## Takes Followers instead of a card. Returns what was paid, or -1 when the
+## Binding cannot be abstained from.
+func binding_abstain() -> int:
+	if not pending_augment_pick or not binding_can_trade():
+		return -1
+	var reward := binding_abstain_reward()
+	if reward > 0:
+		transaction_followers(reward, &"binding_abstain", {"segment": binding_segment()}, true, false)
+	_close_binding()
+	return reward
+
+
+## Resolves one dealt card. A SWAP needs `slot` (an unlocked equipped slot);
+## the augment it replaces keeps its run level in the library.
+func apply_binding_card(card: Dictionary, slot: int = -1) -> bool:
+	if not pending_augment_pick:
+		return false
+	var dealt: Dictionary = {}
+	for offered in attempt_binding_offer:
+		if String(offered.get("kind", "")) == String(card.get("kind", "")) and String(offered.get("id", "")) == String(card.get("id", "")):
+			dealt = offered
+			break
+	if dealt.is_empty():
+		return false
+	var id := StringName(String(dealt["id"]))
+	if not augment_db.has(id):
+		return false
+	init_permanent_augments()
+	var target_level := AugmentBinding.resulting_level(dealt, get_augment_level(id))
+	match String(dealt["kind"]):
+		AugmentBinding.KIND_TRANSCEND:
+			if not permanent_augment_ids.has(id):
+				return false
+			attempt_augment_transcended[String(id)] = true
+		AugmentBinding.KIND_RANK:
+			if not permanent_augment_ids.has(id):
+				return false
+		AugmentBinding.KIND_NEW:
+			var empty := permanent_augment_ids.find(StringName())
+			if empty == -1:
+				return false
+			set_permanent_augment(empty, id)
+		AugmentBinding.KIND_SWAP:
+			if slot < 0 or slot >= 3 or is_augment_slot_locked(slot) or permanent_augment_ids.has(id):
+				return false
+			set_permanent_augment(slot, id)
+		_:
+			return false
+	set_augment_level(id, target_level)
+	_close_binding()
+	permanent_augments_changed.emit(permanent_augment_ids)
+	return true
+
+
+func _close_binding() -> void:
+	pending_augment_pick = false
+	attempt_binding_offer.clear()
+	attempt_binding_recasts = 0
+	request_autosave()
+
+
+func is_augment_transcended(id: StringName) -> bool:
+	return attempt_augment_transcended.has(String(id))
+
+
+## The name every surface shows: the Transcended name once it has turned.
+func augment_display_name(id: StringName) -> String:
+	if is_augment_transcended(id):
+		var turned := AugmentScaling.transcended_name(id)
+		if turned != "":
+			return turned
+	var data := augment_db.get(id, null) as AugmentData
+	return data.display_name if data != null else String(id)
+
+
+## Lv.5, or Lv.4 under Liturgy of Overclock or the Perfected Engine.
+func augment_transcend_level() -> int:
+	return clampi(int(get_doctrine_rule(&"augment_transcend_level", AugmentScaling.TRANSCEND_LEVEL)), 1, AugmentScaling.TRANSCEND_LEVEL)
+
+
+## What the catalysts are judged against (AugmentScaling.catalyst_holds).
+func augment_catalyst_context() -> Dictionary:
+	var stats := {"haste": 0.0, "move_speed": 0.0, "armor": 0.0}
+	var tree := get_tree()
+	var player: Node = tree.get_first_node_in_group(&"player") if tree != null else null
+	if player != null:
+		var s: Variant = player.get("stats")
+		if s is Stats:
+			stats = {"haste": (s as Stats).haste, "move_speed": (s as Stats).move_speed, "armor": (s as Stats).armor}
+	var disciplines := {}
+	if not attempt_ascension.is_empty():
+		var ledger := ascension_ledger()
+		for node_id in ledger.owned_ids():
+			var code := ledger.db.discipline_of(String(node_id))
+			if code != "":
+				disciplines[code] = true
+	var curses := 0
+	if run_inventory != null:
+		curses = BurdenResolver.resolve(run_inventory, permanent_augment_ids).neg_count
+	return {
+		"equipped": permanent_augment_ids.duplicate(),
+		"stats": stats,
+		"disciplines": disciplines,
+		"families": doctrine_family_counts(),
+		"curses": curses,
+		"followers": followers,
+		"waive": doctrine_has_canon(&"circuit") or bool(get_doctrine_rule(&"augment_catalyst_waived", false)),
+	}
+
+
+func augment_catalyst_holds(id: StringName) -> bool:
+	return AugmentScaling.catalyst_holds(id, augment_catalyst_context())
+
+
+## Equipped, not yet turned, at the Transcendence level, catalyst held.
+func augment_transcend_ready(id: StringName) -> bool:
+	if id == StringName() or not AugmentScaling.can_transcend(id) or is_augment_transcended(id):
+		return false
+	if not permanent_augment_ids.has(id) or get_augment_level(id) < augment_transcend_level():
+		return false
+	return augment_catalyst_holds(id)
+
+
+## Transcends every equipped augment that can turn, ignoring level and
+## catalyst (The Engine Prays). Returns how many turned.
+func transcend_equipped_augments() -> int:
+	var turned := 0
+	for id in permanent_augment_ids:
+		if id != StringName() and AugmentScaling.can_transcend(id) and not is_augment_transcended(id):
+			attempt_augment_transcended[String(id)] = true
+			turned += 1
+	if turned > 0:
+		permanent_augments_changed.emit(permanent_augment_ids)
+		request_autosave()
+	return turned
+
+
+## Augment damage from the Doctrine: the augment_damage_mul rule (Choir,
+## Twin Seal, The Engine Prays) times the Circuit Thesis and Canon.
+func augment_damage_multiplier() -> float:
+	var mul := maxf(0.0, float(get_doctrine_rule(&"augment_damage_mul", 1.0)))
+	var circuit := doctrine_family_count(&"circuit")
+	if circuit >= 2:
+		mul *= 1.2
+	if circuit >= 3:
+		mul *= 1.5
+	return mul
+
+
+## How many inscribed Doctrines each family holds this attempt.
+func doctrine_family_counts() -> Dictionary:
+	var counts := {}
+	if major_choice_db == null:
+		return counts
+	for stage in attempt_doctrine_stage_ids:
+		var definition := major_choice_db.get_def(StringName(str(attempt_doctrine_stage_ids[stage])))
+		if definition != null and definition.family_id != StringName():
+			counts[definition.family_id] = int(counts.get(definition.family_id, 0)) + 1
+	return counts
+
+
+func doctrine_family_count(family: StringName) -> int:
+	return int(doctrine_family_counts().get(family, 0))
+
+
+## Two Doctrines of one family: its Thesis.
+func doctrine_has_thesis(family: StringName) -> bool:
+	return doctrine_family_count(family) >= 2
+
+
+## Three: its Canon.
+func doctrine_has_canon(family: StringName) -> bool:
+	return doctrine_family_count(family) >= 3
+
+
+## Whether a Doctrine stage still has an untaken plate to show, so a stage
+## (an Apocrypha late in a long run) never opens an empty screen that would
+## hold the Hub's departure forever.
+func doctrine_stage_has_plates(stage_id: StringName) -> bool:
+	if major_choice_db == null:
+		return false
+	var any_stage := is_apocrypha_stage(stage_id)
+	for definition in major_choice_db.defs:
+		if definition == null or not definition.is_doctrine_complete():
+			continue
+		if not any_stage and definition.stage != stage_id:
+			continue
+		if definition.unique_per_attempt and attempt_major_choice_taken_ids.has(definition.id):
+			continue
+		return true
+	return false
+
+
+## Extra Followers one kill recruits on top of its base reward: Cult of
+## Personality (Prophet doubles the chance and pays two) and Census of
+## Souls. Both kill paths (EnemyLifecycle, EnemyCombatService) call this.
+func bonus_kill_followers() -> int:
+	var extra := 0
+	if permanent_augment_ids.has(&"augment_cult_of_personality"):
+		var level := get_augment_level(&"augment_cult_of_personality")
+		var chance := 0.10 + 0.05 * float(level - 1) + LuckResolver.extra_follower_chance(run_luck)
+		var prophet := is_augment_transcended(&"augment_cult_of_personality")
+		if prophet:
+			# Prophet doubles the chance; its cap keeps one kill in ten plain.
+			chance = minf(0.9, chance * 2.0)
+		if _rng.randf() < chance:
+			extra += 2 if prophet else 1
+	var census := float(get_doctrine_rule(&"kill_follower_chance", 0.0))
+	if census > 0.0 and _rng.randf() < census:
+		extra += 1
+	return extra
 
 func load_augments_from_dir(path: String) -> void:
 	augment_db.clear()
@@ -1221,7 +1591,14 @@ func ascension_ledger() -> AscensionLedger:
 			attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id), new_run_tree_version)
 		var tree := AscensionTreeDB.shared_for(String(attempt_ascension.get("tree_version", "v4")))
 		_ascension_ledger = AscensionLedger.new(tree, attempt_ascension)
+	# Tithe Ledger (archive Doctrine): every node costs less.
+	_ascension_ledger.price_multiplier = maxf(0.0, float(get_doctrine_rule(&"ascension_price_mul", 1.0)))
 	return _ascension_ledger
+
+
+## Tithe Ledger's price: tree refunds return nothing.
+func ascension_refunds_forfeit() -> bool:
+	return float(get_doctrine_rule(&"ascension_refund_mul", 1.0)) <= 0.0
 
 
 ## Buys a tree node with this run's Followers. Returns the ledger verdict with
@@ -1252,7 +1629,7 @@ var ascension_refund_context_hub: bool = false
 ## Refunds `share` of the recorded prices (AscensionLedger.refund_share for
 ## the segment) and only from the Hub; sworn nodes never refund.
 func ascension_refund(id: String) -> int:
-	if not ascension_refund_context_hub:
+	if not ascension_refund_context_hub or ascension_refunds_forfeit():
 		return 0
 	var back := ascension_ledger().refund(id, AscensionLedger.refund_share(attempt_segment))
 	if back > 0:
@@ -1264,7 +1641,7 @@ func ascension_refund(id: String) -> int:
 ## Removes one rank of a V5 ranked local, returning its exact recorded
 ## payment (RANK-06). A Hub decision, like every other refund.
 func ascension_downgrade(id: String) -> int:
-	if not ascension_refund_context_hub:
+	if not ascension_refund_context_hub or ascension_refunds_forfeit():
 		return 0
 	var back := ascension_ledger().downgrade_rank(id)
 	if back > 0:
@@ -1328,13 +1705,29 @@ func apply_attempt_modifiers_to_stats(s: Stats) -> void:
 	if attempt_stat_delta != null:
 		attempt_stat_delta.apply_to(s)
 		stat_ledger_step("DOCTRINE", s)
+	# The vessel family's Thesis and Canon (bindings-and-theses §6).
+	var vessel := doctrine_family_count(&"vessel")
+	if vessel >= 2:
+		s.power += 0.15
+		stat_ledger_step("VESSEL THESIS", s)
+	if vessel >= 3:
+		s.power += 0.25
+		stat_ledger_step("VESSEL CANON", s)
 
 func apply_doctrine_final_stat_multipliers(s: Stats) -> void:
 	if s == null:
 		return
-	var max_hp_mul := float(get_doctrine_rule(&"max_hp_mul", 1.0))
-	s.max_hp = maxf(1.0, s.max_hp * max_hp_mul)
-	stat_ledger_step("MAX HP ×%.2f" % max_hp_mul, s)
+	s.max_hp = maxf(1.0, s.max_hp * doctrine_max_hp_multiplier())
+	stat_ledger_step("MAX HP ×%.2f" % doctrine_max_hp_multiplier(), s)
+
+
+## The Doctrine's Max HP multiplier; under the Vessel Canon every price
+## below 1 moves halfway back to 1 (0.7 -> 0.85), gifts above 1 stay.
+func doctrine_max_hp_multiplier() -> float:
+	var mul := float(get_doctrine_rule(&"max_hp_mul", 1.0))
+	if mul < 1.0 and doctrine_has_canon(&"vessel"):
+		mul = 1.0 - (1.0 - mul) * 0.5
+	return mul
 
 func try_consume_manufactured_witness() -> bool:
 	if not bool(get_doctrine_rule(&"manufactured_witness", false)):
@@ -1421,7 +1814,7 @@ func apply_major_choice(choice_id: StringName) -> bool:
 	var def: MajorChoiceDef = major_choice_db.get_def(choice_id)
 	if def == null or not attempt_major_choice_offer_ids.has(choice_id) or attempt_major_choice_taken_ids.has(choice_id):
 		return false
-	if attempt_pending_doctrine_stage != StringName() and def.stage != attempt_pending_doctrine_stage:
+	if attempt_pending_doctrine_stage != StringName() and def.stage != attempt_pending_doctrine_stage and not is_apocrypha_stage(attempt_pending_doctrine_stage):
 		return false
 	for e in def.effects:
 		if e == null:
@@ -1496,9 +1889,11 @@ func _on_item_operation_for_gambler(kind: StringName, inst: ItemInstance, data: 
 func gambler_note_acquisition(inst: ItemInstance) -> Dictionary:
 	var result := {"follower": false, "resonance": 0.0}
 	var item_id := String(inst.data.id) if inst != null and inst.data != null else ""
-	if _rng.randf() < BurdenResolver.gambler_follower_chance(run_luck):
-		transaction_followers(1, &"gamblers_rite", {"item": item_id}, true, true)
-		attempt_gambler_followers += 1
+	var house_edge := is_augment_transcended(&"augment_gamblers_rite")
+	if _rng.randf() < BurdenResolver.gambler_follower_chance(run_luck, house_edge):
+		var paid := 2 if house_edge else 1
+		transaction_followers(paid, &"gamblers_rite", {"item": item_id}, true, true)
+		attempt_gambler_followers += paid
 		result["follower"] = true
 	if item_id != "" and not attempt_gambler_seen.has(item_id):
 		attempt_gambler_seen[item_id] = true
@@ -1845,6 +2240,9 @@ func apply_save(save: SaveData) -> void:
 		attempt_augment_levels = save.attempt_augment_levels.duplicate(true)
 		attempt_mutations = save.attempt_mod_mutations.duplicate(true)
 		attempt_stat_delta = save.attempt_mod_stat_delta
+		attempt_augment_transcended = save.attempt_augment_transcended.duplicate(true)
+		attempt_binding_offer = save.attempt_binding_offer.duplicate(true)
+		attempt_binding_recasts = maxi(0, int(save.attempt_binding_recasts))
 
 		# Attempt identity (so Continue keeps your run identity)
 		if save.attempt_race_id != "":
@@ -1929,6 +2327,9 @@ func apply_save(save: SaveData) -> void:
 		gambler_reset_segment()
 		attempt_mutations = {}
 		attempt_stat_delta = null
+		attempt_augment_transcended = {}
+		attempt_binding_offer = []
+		attempt_binding_recasts = 0
 
 		run_inventory = null
 		run_bag = null
@@ -2013,6 +2414,9 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_levels = attempt_augment_levels.duplicate(true)
 		save.attempt_mod_mutations = attempt_mutations.duplicate(true)
 		save.attempt_mod_stat_delta = attempt_stat_delta
+		save.attempt_augment_transcended = attempt_augment_transcended.duplicate(true)
+		save.attempt_binding_offer = attempt_binding_offer.duplicate(true)
+		save.attempt_binding_recasts = attempt_binding_recasts
 
 		# Attempt identity
 		save.attempt_race_id = selected_race_id
@@ -2072,6 +2476,9 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_levels = {}
 		save.attempt_mod_mutations = {}
 		save.attempt_mod_stat_delta = null
+		save.attempt_augment_transcended = {}
+		save.attempt_binding_offer = []
+		save.attempt_binding_recasts = 0
 
 		# Attempt identity reset
 		save.attempt_race_id = selected_race_id
@@ -2158,6 +2565,7 @@ func start_new_attempt() -> void:
 	attempt_doctrine_stage_ids.clear()
 	attempt_doctrine_rules.clear()
 	attempt_doctrine_events.clear()
+	_reset_attempt_choice_state()
 	attempt_ascension = {}
 	_ascension_ledger = null
 	attempt_witness_used_segment = 0
@@ -2203,11 +2611,14 @@ func on_segment_completed(completed_segment: int) -> void:
 	attempt_vendor_seed = 0
 	attempt_vendor_bag = null
 
-	# Milestones
-	if completed_segment == 2 or completed_segment == 7:
+	# Milestones. A Binding follows every segment (was 2 and 7 only): the
+	# augment pick is the run's recurring spike (bindings-and-theses §3).
+	if completed_segment >= 1:
 		pending_augment_pick = true
+		attempt_binding_offer.clear()
+		attempt_binding_recasts = 0
 	var next_doctrine_stage := doctrine_stage_for_completed_segment(completed_segment)
-	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage):
+	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage) and doctrine_stage_has_plates(next_doctrine_stage):
 		pending_big_choice = true
 		attempt_pending_doctrine_stage = next_doctrine_stage
 		attempt_big_choice_source_segment = completed_segment
@@ -2230,7 +2641,18 @@ func doctrine_stage_for_completed_segment(completed_segment: int) -> StringName:
 		9:
 			return &"apotheosis"
 		_:
+			# Apocrypha: after the third stage the Doctrine keeps arriving every
+			# three segments, drawn from every untaken plate of any stage.
+			if completed_segment > 9 and (completed_segment - 9) % 3 == 0:
+				return StringName("%s%d" % [APOCRYPHA_PREFIX, completed_segment])
 			return &""
+
+
+const APOCRYPHA_PREFIX := "apocrypha_"
+
+
+func is_apocrypha_stage(stage_id: StringName) -> bool:
+	return String(stage_id).begins_with(APOCRYPHA_PREFIX)
 
 
 
@@ -2272,6 +2694,7 @@ func on_attempt_failed_die_die() -> void:
 	attempt_doctrine_stage_ids.clear()
 	attempt_doctrine_rules.clear()
 	attempt_doctrine_events.clear()
+	_reset_attempt_choice_state()
 	attempt_ascension = {}
 	_ascension_ledger = null
 	attempt_witness_used_segment = 0
@@ -2332,7 +2755,9 @@ func reconstruction_cost_for(balance: int) -> int:
 	var growth: float = 1.7
 	var flat_cost: int = int(ceil(float(base_cost) * pow(growth, float(deaths))))
 	var pct_tax: int = int(ceil(float(maxi(balance, 1)) * 0.20))
-	return maxi(flat_cost, pct_tax)
+	# Census of Souls' price: reconstruction costs half again.
+	var doctrine_mul := maxf(0.0, float(get_doctrine_rule(&"reconstruction_cost_mul", 1.0)))
+	return int(ceil(float(maxi(flat_cost, pct_tax)) * doctrine_mul))
 
 
 ## Whether a death at `balance` reconstructs the player: the cost is paid

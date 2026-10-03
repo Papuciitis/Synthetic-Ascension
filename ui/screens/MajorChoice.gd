@@ -66,6 +66,8 @@ func _update_stage_copy() -> void:
 	match stage_id:
 		&"doctrine": descriptor = "DOCTRINE  ·  THE SYSTEM LEARNS TO WORSHIP"
 		&"apotheosis": descriptor = "APOTHEOSIS  ·  DIVINITY IS MADE REPEATABLE"
+	if Global != null and Global.is_apocrypha_stage(stage_id):
+		descriptor = "APOCRYPHA  ·  WHAT THE FIRST PASS REFUSED"
 	stage_label.text = descriptor
 
 
@@ -96,7 +98,11 @@ func _on_card_focused(card: MajorChoiceCard) -> void:
 			(child as MajorChoiceCard).set_plate_focused(child == card)
 			(child as MajorChoiceCard).set_quieted(child != card)
 	confirm_button.disabled = false
-	_set_warning("SEAL READY  ·  THIS INSCRIPTION CANNOT BE REVISED", true)
+	# What the family would awaken goes here, where a full line fits.
+	var awakening := ""
+	if card.def_ref != null and Global != null:
+		awakening = DoctrineFamilies.awakening_line(card.def_ref.family_id, Global.doctrine_family_count(card.def_ref.family_id))
+	_set_warning("SEAL READY  ·  " + (awakening if awakening != "" else "THIS INSCRIPTION CANNOT BE REVISED"), true)
 	confirm_button.grab_focus()
 
 
