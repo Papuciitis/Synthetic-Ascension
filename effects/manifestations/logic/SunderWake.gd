@@ -59,6 +59,13 @@ func _spawn_tear(center: Vector2, radius: float, spent: float) -> void:
 	spawn_world_node(tear, center)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Ground rip", "value": "up to %d%% weapon damage over %.1f m" % [int(round(DAMAGE_MULT * potency() * 100.0)), (RADIUS_MAX * _radius_potency()) / PIXELS_PER_METRE], "when": "each attack with %d%%+ Momentum, spending it" % int(round(MOMENTUM_FLOOR * 100.0))},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return "Attacking spends all Momentum (needs %d%%) and tears the ground open where it lands: up to a %.1f m rip for %d%% weapon damage, both scaled by the Momentum spent." % [
 		int(round(MOMENTUM_FLOOR * 100.0)),

@@ -103,6 +103,17 @@ func _exit_tree() -> void:
 		state.clear_contributions(contribution_key())
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	var when: String = "every %.0fs you stay once the Exit Rite is ready" % tick_seconds()
+	return [
+		{"stat": "Power", "value": "+%.0f%% for the first stack, escalating to +%.0f%%" % [POWER_PER_TICK * potency() * 100.0, POWER_CAP * 100.0], "when": when},
+		{"stat": "Luck", "value": "+%.0f%% per stack, up to +%.0f%%" % [LUCK_PER_TICK * potency() * 100.0, LUCK_CAP * 100.0], "when": when},
+		{"stat": "Overtime's toll", "value": "up to %.0f%% refused" % (DEFIANCE_CAP * 100.0), "when": "your kills keep paying belief"},
+		{"stat": "The hunt", "value": "%.0fs further into Overtime per sermon" % PRESSURE_SECONDS, "when": "", "good": false},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Once the Exit Rite is ready, every %.0fs you stay grants an escalating Power stack (+%.0f%% for the first, more for every one after, up to +%.0f%%) and +%.0f%% Luck (up to +%.0f%%) - and refuses Overtime's toll on your belief, up to %.0f%% of it, so your kills keep paying when everyone else's have stopped. Each sermon shoves the hunt %.0fs further into Overtime."

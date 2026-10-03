@@ -82,6 +82,13 @@ func on_attack(
 	_charge = 0.0
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Attack damage", "value": "up to x%.2f" % full_multiplier(), "when": "after %.1fs holding fire; a partial charge pays in proportion" % charge_seconds()},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Holding fire stores Violence over %.1fs. Your next attack spends all of it - a full release hits for x%.2f, a partial one pays out in proportion."

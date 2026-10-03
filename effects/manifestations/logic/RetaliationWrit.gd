@@ -68,6 +68,14 @@ func nova_radius() -> float:
 	return NOVA_RADIUS + NOVA_RADIUS_PER_POTENCY * (potency() - 1.0)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Evasion", "value": "+%d%%" % int(round(bonus_evasion() * 100.0)), "when": "always (all evasion from rules caps at %d%%)" % int(round(ManifestationState.EVASION_CLAMP * 100.0))},
+		{"stat": "Nova", "value": "%d%% attack damage, %d px" % [int(round(NOVA_DAMAGE_MULT * potency() * 100.0)), int(round(nova_radius()))], "when": "on every evade; up to %d%% spending banked Momentum" % int(round((NOVA_DAMAGE_MULT + NOVA_MOMENTUM_BONUS) * potency() * 100.0))},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"You evade %d%% more often, and every evade answers with a retaliation nova for %d%% of your attack damage in a %dpx radius - spending any banked Momentum to hit as hard as %d%% over a wider ring."

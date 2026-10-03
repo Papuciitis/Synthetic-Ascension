@@ -104,6 +104,15 @@ func on_kill(context: EnemyDeathContext) -> void:
 	popup(text, Color(1.0, 0.80, 0.30, 1.0), 1.45)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Damage to the Mark", "value": "+%d%%" % int(round(bonus_fraction() * 100.0)), "when": "the first elite you hit, for %.0fs" % mark_duration()},
+		{"stat": "Power", "value": "%+d%%" % int(round((OFF_MARK_POWER - 1.0) * 100.0)), "when": "while a Mark is live", "good": false},
+		{"stat": "Mark detonation", "value": "x%.1f weapon damage, %d px" % [detonate_multiplier(), int(round(detonate_radius()))], "when": "on killing the Mark"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Your first hit on an elite Marks it for %.0fs: +%d%% damage to the Mark, -%d%% to everything else. Killing the Mark detonates it for x%.1f weapon damage in a %dpx radius, spending any orbiting shards."

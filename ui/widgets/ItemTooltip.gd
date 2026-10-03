@@ -16,6 +16,10 @@ var icon_frame: PanelContainer = null
 var kicker_label: Label = null
 
 var _dossier_mode: bool = false
+## Set by show_lines(), which may hide the well and retitle the kicker;
+## show_item() puts both back.
+var _custom_header: bool = false
+var _default_kicker: String = ""
 var _well_rarity: int = -99
 ## The width the last show laid itself out at, to tell it from a host's.
 var _laid_out_width: float = 0.0
@@ -92,6 +96,8 @@ func place_beside(
 		reset_size()
 		tip_size = get_combined_minimum_size()
 		size = tip_size
+	# A host that shrinks an overlong dossier (the imprinter) places what is drawn.
+	tip_size *= scale
 
 	var right_x := source_rect.end.x + gap
 	var left_x := source_rect.position.x - tip_size.x - gap
@@ -210,6 +216,13 @@ func show_item(inst: ItemInstance) -> void:
 	# Establish width before assigning wrapped text. This also prevents the old
 	# first-hover, full-height layout spike.
 	custom_minimum_size = Vector2(380.0 if _dossier_mode else 360.0, 0.0)
+	if _custom_header:
+		_custom_header = false
+		if icon_frame != null:
+			icon_frame.visible = true
+		if kicker_label != null:
+			kicker_label.text = _default_kicker
+			kicker_label.visible = _dossier_mode
 
 	# Header
 	name_label.text = String(inst.data.display_name)
@@ -369,6 +382,51 @@ func show_item(inst: ItemInstance) -> void:
 		else:
 			lines.append("Feeding stabilizes the curse (mildest roll survives)")
 
+	var measured_width := _constrain_body_width()
+	body_label.text = "\n".join(lines)
+	reset_size()
+	_fit_screen_height(measured_width)
+	_laid_out_width = size.x
+	visible = true
+
+
+## A dossier that is not one item's own record (the imprinter's held rule and
+## its before/after, ui/widgets/ImprintDossier.gd): the same panel, header,
+## wrap and fit as show_item(), with the caller's BBCode lines. A null
+## `icon_texture` hides the well, `rarity` rules it otherwise; an empty
+## `kicker` hides the kicker; `width` is the panel's width before any fit.
+func show_lines(
+	title: String,
+	meta: String,
+	meta_colour: Color,
+	kicker: String,
+	lines: Array[String],
+	icon_texture: Texture2D = null,
+	rarity: int = 0,
+	width: float = 380.0
+) -> void:
+	if name_label == null or meta_label == null or body_label == null:
+		_resolve_nodes()
+		if name_label == null or meta_label == null or body_label == null:
+			hide_tooltip()
+			return
+	# The width first, so the body wraps at it when it is measured.
+	custom_minimum_size = Vector2(width, 0.0)
+	_custom_header = true
+	if kicker_label != null:
+		if _default_kicker.is_empty():
+			_default_kicker = kicker_label.text
+		kicker_label.text = kicker
+		kicker_label.visible = not kicker.is_empty()
+	name_label.text = title
+	meta_label.text = meta
+	meta_label.modulate = meta_colour
+	if icon_frame != null:
+		icon_frame.visible = icon_texture != null
+	if icon != null:
+		icon.texture = icon_texture
+	if icon_texture != null:
+		_apply_well(rarity)
 	var measured_width := _constrain_body_width()
 	body_label.text = "\n".join(lines)
 	reset_size()

@@ -119,6 +119,14 @@ func _discharge(stacks: int) -> void:
 	popup("FEVER BREAK x%d" % stacks, noun_colour(&"cadence"), 1.10 + 0.06 * float(stacks))
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Haste", "value": "+%d%% per stack, up to +%d%%" % [int(round(HASTE_PER_STACK * potency() * 100.0)), int(round(max_haste() * 100.0))], "when": "attacks within %.2fs of each other" % chain_window()},
+		{"stat": "Fever break", "value": "%d%% attack damage per stack, up to %d px" % [int(round(BREAK_DAMAGE_PER_STACK * potency() * 100.0)), int(round(break_radius(MAX_STACKS)))], "when": "when the chain lapses"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Attacks fired within %.2fs of the last stack Fever: +%d%% Haste each, up to +%d%%. Let the chain lapse and the whole fever breaks at once - %d%% of your attack damage per stack in a %d px burst."

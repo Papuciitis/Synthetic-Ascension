@@ -127,6 +127,14 @@ func _process(delta: float) -> void:
 		queue_redraw()
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Healing received", "value": "%+d%%" % -int(round(REFUSE_FRACTION * 100.0)), "when": "always", "good": false},
+		{"stat": "Armour", "value": "+%.1f per point refused, up to +%d" % [armour_per_point(), int(ARMOUR_CAP)], "when": "bleeds %.1f a second" % ARMOUR_DECAY_PER_SEC},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"You refuse %d%% of all healing, and every point refused becomes %.1f Armour that slowly bleeds away (up to %d). Staying scarred is tougher than topping up."

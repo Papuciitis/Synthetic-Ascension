@@ -79,6 +79,13 @@ func burst_multiplier(banked: int) -> float:
 	return (BURST_BASE_MULT + BURST_MULT_PER_POINT * float(banked)) * potency()
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Misfortune burst", "value": "%.0f%% weapon damage per point (%.0f%% at %d)" % [BURST_MULT_PER_POINT * potency() * 100.0, burst_multiplier(MISFORTUNE_CAP) * 100.0, MISFORTUNE_CAP], "when": "your next Lucky Crit; needs Luck above 0"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	var per: float = BURST_MULT_PER_POINT * potency() * 100.0
 	var jackpot: float = burst_multiplier(MISFORTUNE_CAP) * 100.0

@@ -202,6 +202,23 @@ func apply_to_magic_impact(impact: Node) -> void:
 		impact.set("radius", float(blast) * (1.0 + FULL_RANGE_BONUS))
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	var planted: String = "after %.2fs standing still; moving spends it" % (FILL_SECONDS * threshold_scale())
+	var out: Array[Dictionary] = [
+		{"stat": "Attack damage", "value": "x%.2f" % (1.0 + FULL_BONUS * potency()), "when": planted},
+	]
+	var style: String = str(Global.selected_style_id) if Global != null else "ranged"
+	match style:
+		"melee":
+			out.append({"stat": "Swing", "value": "x%.2f reach, +%d degrees of arc" % [1.0 + FULL_RANGE_BONUS, int(MELEE_PLANTED_ARC_BONUS_DEG)], "when": "while planted"})
+		"magic":
+			out.append({"stat": "Blast radius", "value": "x%.2f" % (1.0 + FULL_RANGE_BONUS), "when": "while planted"})
+		_:
+			out.append({"stat": "Shot", "value": "pierces %d more, x%.2f range" % [pierce_at_full(), 1.0 + FULL_RANGE_BONUS], "when": "while planted"})
+	return out
+
+
 func describe() -> String:
 	var plant_seconds: float = FILL_SECONDS * threshold_scale()
 	var damage_percent: int = int(round((1.0 + FULL_BONUS * potency()) * 100.0))

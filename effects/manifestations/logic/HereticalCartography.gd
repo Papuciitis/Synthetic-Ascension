@@ -89,6 +89,17 @@ func apply_to_stats(s: Stats) -> void:
 	s.power += power_bonus()
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	var luck: float = LUCK_PER_STACK * potency() * 100.0
+	var power: float = POWER_PER_STACK * potency() * 100.0
+	var when: String = "%.0fs per new building entered, %d stacks" % [stack_seconds(), MAX_STACKS]
+	return [
+		{"stat": "Luck", "value": "+%.0f%% per stack, up to +%.0f%%" % [luck, luck * float(MAX_STACKS)], "when": when},
+		{"stat": "Power", "value": "+%.0f%% per stack, up to +%.0f%%" % [power, power * float(MAX_STACKS)], "when": when},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	var luck: float = LUCK_PER_STACK * potency() * 100.0
 	var power: float = POWER_PER_STACK * potency() * 100.0

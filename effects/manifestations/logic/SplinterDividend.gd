@@ -64,6 +64,13 @@ func _on_splinter_collected(_splinter: ShardSplinter) -> void:
 		popup("+1 SHARD", SHATTER_TINT, 1.15)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Shards", "value": "+%d per elite killed" % shard_yield(), "when": "walk through them within %ds" % int(ShardSplinter.LIFETIME)},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Elites shatter when they die, throwing %d fragments clear of the corpse. Walk through one within %ds and it joins your orbit; leave it and it is gone."

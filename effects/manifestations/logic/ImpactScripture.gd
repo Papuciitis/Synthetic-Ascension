@@ -75,6 +75,13 @@ func _spawn_blast(center: Vector2, radius: float, spent: float) -> void:
 	spawn_world_node(blast, center)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Blast", "value": "up to %d%% weapon damage over %.1f m" % [int(round(DAMAGE_MULT * potency() * 100.0)), (RADIUS_MAX * _radius_potency()) / PIXELS_PER_METRE], "when": "on taking a hit with %d%%+ Momentum; once per %.2fs" % [int(round(MOMENTUM_FLOOR * 100.0)), COOLDOWN]},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return "Taking a hit spends all Momentum (needs %d%%) and detonates it around you: up to a %.1f m blast for %d%% weapon damage, scaled by the Momentum spent. At most once every %.2fs." % [
 		int(round(MOMENTUM_FLOOR * 100.0)),

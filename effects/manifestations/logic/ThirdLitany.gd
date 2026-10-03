@@ -109,6 +109,13 @@ func on_attack(
 		popup("LITANY x%.1f" % payout_multiplier(), Color(1.0, 0.86, 0.35, 1.0), 1.35)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Attack damage", "value": "x%.2f" % payout_multiplier(), "when": "every 3rd attack, if the 2nd resolved for %.2fs" % resolve_window()},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Every 3rd attack hits for x%.2f - but only if you let the 2nd resolve for %.2fs first. Firing sooner forfeits the litany."

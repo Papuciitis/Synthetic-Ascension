@@ -146,6 +146,14 @@ func _follow_player() -> void:
 	global_position = here
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Echo shot", "value": "+1 attack at %d%% damage" % int(round(potency() * 100.0)), "when": "at full Momentum, spending it"},
+		{"stat": "Momentum fill", "value": "%.1f m of travel" % (combined_fill_distance() / PIXELS_PER_METRE), "when": "without stopping"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	var metres: float = combined_fill_distance() / PIXELS_PER_METRE
 	var own_metres: float = fill_distance() / PIXELS_PER_METRE

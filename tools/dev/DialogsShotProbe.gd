@@ -328,33 +328,87 @@ func _console() -> void:
 
 
 ## The Imprinter with two held rules and a worn ring they could go onto.
+## The Imprinter, then its hover dossiers: a held imprint (`imprint_held`),
+## a worn item's before -> after (`imprint_preview`), a bagged item's
+## (`imprint_bag`) and the dossiers keyboard focus brings
+## (`imprint_focus_first`, `imprint_focus`).
 func _imprint() -> void:
 	var bg := _backdrop()
 	Global.attempt_imprints.clear()
-	var ring_pool: Array = ManifestationCatalog.pool_for_slot(ItemData.EquipSlot.RING)
-	for i in range(mini(2, ring_pool.size())):
-		Global.store_imprint(ring_pool[i].id)
+	for rule in [&"retaliation_writ", &"third_litany", &"orbiting_testament"]:
+		Global.store_imprint(rule)
 	Global.set_followers(2400)
-	var data := ItemData.new()
-	data.id = "probe_signet"
-	data.display_name = "Tarnished Signet"
-	data.equip_slot = ItemData.EquipSlot.RING
-	data.mods = StatDelta.new()
-	data.rarity_base = StatDelta.new()
-	var ring := ItemInstance.from_roll(data, 3, ItemInstance.Polarity.POS, 0.5, false)
-	if ring_pool.size() > 2:
-		ring.manifestation_id = ring_pool[2].id
-	var was_worn: ItemInstance = Global.run_inventory.get_at(ItemData.EquipSlot.RING)
-	Global.run_inventory.set_item(ItemData.EquipSlot.RING, ring)
+	var was_worn: Array = []
+	for slot in range(Inventory.SLOT_COUNT):
+		was_worn.append(Global.run_inventory.get_at(slot))
+	Global.run_inventory.set_item(ItemData.EquipSlot.RING, _probe_item(ItemData.EquipSlot.RING, 3, &"stored_violence"))
+	Global.run_inventory.set_item(ItemData.EquipSlot.MOVE, _probe_item(ItemData.EquipSlot.MOVE, 2, &"pilgrims_momentum"))
+	Global.run_inventory.set_item(ItemData.EquipSlot.ARMOR, _probe_item(ItemData.EquipSlot.ARMOR, 1, &"martyr_circuit"))
+	var bag_slot := -1
+	for slot in range(Global.run_bag.get_slot_count()):
+		if Global.run_bag.get_at(slot) == null:
+			bag_slot = slot
+			break
+	if bag_slot >= 0:
+		Global.run_bag.set_item(bag_slot, _probe_item(ItemData.EquipSlot.MOVE, 1, &"", 1))
 	var screen := (load(IMPRINT_SCRIPT) as Script).new() as CanvasLayer
 	add_child(screen)
 	await _wait(0.4)
 	await _shot("imprint")
+	for shot in [
+		["imprint_held", "Imprint_retaliation_writ"],
+		["imprint_preview", "Candidate_worn_%d" % ItemData.EquipSlot.RING],
+		["imprint_bag", "Candidate_bag_%d" % bag_slot],
+	]:
+		var row := screen.find_child(String(shot[1]), true, false) as Control
+		if row == null:
+			continue
+		_move_mouse(row.global_position + Vector2(minf(140.0, row.size.x * 0.5), row.size.y * 0.5))
+		await _wait(0.3)
+		await _shot(String(shot[0]))
+	# The pointer parks on the title. The first key shows the hidden starting
+	# focus on the first imprint (`imprint_focus_first`); the next walks down
+	# to the second (`imprint_focus`); each brings its dossier.
+	_move_mouse(Vector2(960, 150))
+	await _wait(0.2)
+	for shot_name in ["imprint_focus_first", "imprint_focus"]:
+		_action(&"ui_down")
+		await _wait(0.35)
+		await _shot(shot_name)
 	screen.call("close")
-	Global.run_inventory.set_item(ItemData.EquipSlot.RING, was_worn)
+	for slot in range(Inventory.SLOT_COUNT):
+		Global.run_inventory.set_item(slot, was_worn[slot])
+	if bag_slot >= 0:
+		Global.run_bag.set_item(bag_slot, null)
 	Global.attempt_imprints.clear()
 	bg.queue_free()
 	await _wait(0.2)
+
+
+## A real item of the slot (the `skip`-th by id, so two of a slot differ),
+## so the dossiers show real icons and stats.
+func _probe_item(slot: int, rarity: int, rule: StringName, skip: int = 0) -> ItemInstance:
+	var keys: Array = Global.item_db.keys()
+	keys.sort()
+	var data: ItemData = null
+	for key in keys:
+		var candidate: ItemData = Global.get_item_data(String(key))
+		if candidate != null and int(candidate.equip_slot) == slot:
+			data = candidate
+			if skip <= 0:
+				break
+			skip -= 1
+	var inst := ItemInstance.from_roll(data, rarity, ItemInstance.Polarity.POS, 0.5, false)
+	inst.manifestation_id = rule
+	return inst
+
+
+func _action(action: StringName) -> void:
+	for pressed in [true, false]:
+		var event := InputEventAction.new()
+		event.action = action
+		event.pressed = pressed
+		Input.parse_input_event(event)
 
 
 func _cards() -> void:

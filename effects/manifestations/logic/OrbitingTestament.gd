@@ -84,6 +84,14 @@ func _spawn_forge_spark(from: Vector2) -> void:
 	spawn_world_node(vfx, from)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Shards", "value": "+1 into orbit per Lucky Crit", "when": "needs Luck above 0"},
+		{"stat": "Shard damage", "value": "+%d%%, +%.1f%% per Lucky Crit this run (up to +%d%%)" % [int(round(SHARD_DAMAGE_BONUS * potency() * 100.0)), SHARPEN_PER_CRIT * potency() * 100.0, int(round(SHARPEN_CAP * potency() * 100.0))], "when": "each orbiting shard"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	# The Luck ceiling quoted with a pure argument, the way Debt Collector does:
 	# this renders detached and serves the shop and the stash, so this run's

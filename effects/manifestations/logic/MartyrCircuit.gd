@@ -85,6 +85,15 @@ func on_attack(
 	_echo_flash = 0.22
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Haste", "value": "%+d%%" % int(round((HEALTHY_HASTE - 1.0) * 100.0)), "when": "above %d%% HP" % int(round(HEALTHY_AT * 100.0)), "good": false},
+		{"stat": "Haste", "value": "%+d%%" % int(round((wounded_haste() - 1.0) * 100.0)), "when": "below %d%% HP" % int(round(WOUNDED_AT * 100.0))},
+		{"stat": "Echo", "value": "every attack repeats at %d%% damage" % int(round(echo_multiplier() * 100.0)), "when": "below %d%% HP" % int(round(DYING_AT * 100.0))},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Above %d%% HP you attack %d%% slower. Below %d%% you attack %d%% faster. Below %d%% every attack echoes for %d%% damage."

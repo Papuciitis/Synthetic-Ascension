@@ -94,6 +94,14 @@ func _attacks_since_join() -> int:
 	return maxi(0, state.attack_index - _cycle_start)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Attack damage", "value": "x%.2f" % tithe_multiplier(), "when": "every %d attacks" % tithe_interval()},
+		{"stat": "Followers", "value": "-1 per tithe", "when": "never below your reconstruction cost", "good": false},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	return (
 		"Every %d attacks the furnace burns 1 Follower and the next strike hits for %.0f%% damage. It refuses to tithe if spending would drop you below your reconstruction cost."

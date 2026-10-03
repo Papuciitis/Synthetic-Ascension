@@ -223,6 +223,15 @@ func _launch(count: int, origin: Vector2, facing: Vector2) -> void:
 	popup("VECTOR HALO", HALO_TINT, 1.35)
 
 
+## describe()'s numbers one per line, for the imprinter (ManifestationCatalog.stat_effects).
+func stat_effects() -> Array[Dictionary]:
+	return [
+		{"stat": "Shard orbit", "value": "+%d capacity" % cap_bonus(), "when": "always"},
+		{"stat": "Shards", "value": "+1 into orbit every %d attacks" % store_interval()},
+		{"stat": "Dash launch", "value": "%d%% attack damage per shard, piercing %d" % [int(round(LAUNCH_DAMAGE_MULT * potency() * 100.0)), LAUNCH_PIERCE], "when": "on dash"},
+	] as Array[Dictionary]
+
+
 func describe() -> String:
 	var interval := store_interval()
 	return (

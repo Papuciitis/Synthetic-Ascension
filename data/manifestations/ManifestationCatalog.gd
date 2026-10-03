@@ -365,19 +365,70 @@ static func describe(id: StringName, inst: ItemInstance) -> String:
 	var def := get_def(id)
 	if def == null:
 		return ""
-	if def.logic == null:
+	var effect := _detached(def, inst)
+	if effect == null:
 		return def.rule
+	var text: String = effect.describe()
+	effect.free()
+	return text if text.strip_edges() != "" else def.rule
+
+
+## describe()'s numbers for THIS instance, one entry per line, each
+## {stat, value, when, good}: what changes for the player, by how much and
+## when; `good` is false for a cost or a penalty. A rule opts in with a
+## stat_effects() beside its describe(), built from the same helpers under the
+## same detached contract; a rule without one gives []. Read by the
+## imprinter's dossier and its before/after (ui/widgets/ImprintDossier.gd).
+static func stat_effects(id: StringName, inst: ItemInstance) -> Array[Dictionary]:
+	var out: Array[Dictionary] = []
+	var def := get_def(id)
+	var effect := _detached(def, inst) if def != null else null
+	if effect == null:
+		return out
+	if effect.has_method(&"stat_effects"):
+		for entry_value: Variant in effect.call(&"stat_effects"):
+			if not entry_value is Dictionary:
+				continue
+			var entry: Dictionary = entry_value
+			out.append({
+				"stat": String(entry.get("stat", "")),
+				"value": String(entry.get("value", "")),
+				"when": String(entry.get("when", "")),
+				"good": bool(entry.get("good", true)),
+			})
+	effect.free()
+	return out
+
+
+## The two curves a rule reads on this item, {rank, potency, threshold_scale},
+## from a bare effect, so a screen quoting them and a rule running on the item
+## share one formula (ManifestationEffect's scaling section).
+static func scaling_on(inst: ItemInstance) -> Dictionary:
+	var probe := ManifestationEffect.new()
+	probe.item = inst
+	var out := {
+		"rank": probe.effective_rarity(),
+		"potency": probe.potency(),
+		"threshold_scale": probe.threshold_scale(),
+	}
+	probe.free()
+	return out
+
+
+## The rule's logic node, built detached with only `item` and `definition`
+## set (setup_manifestation() never runs), or null when it has none.
+static func _detached(def: ManifestationDef, inst: ItemInstance) -> ManifestationEffect:
+	if def == null or def.logic == null:
+		return null
 	var node: Object = def.logic.new()
 	var effect := node as ManifestationEffect
 	if effect == null:
 		if node is Node:
 			(node as Node).free()
-		return def.rule
+		return null
 	effect.item = inst
 	effect.definition = def
-	var text: String = effect.describe()
-	effect.free()
-	return text if text.strip_edges() != "" else def.rule
+	return effect
 
 
 static func tags_of(id: StringName) -> Array[StringName]:
