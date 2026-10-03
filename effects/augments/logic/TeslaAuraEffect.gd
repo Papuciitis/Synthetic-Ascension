@@ -33,8 +33,15 @@ var player: Node2D = null
 var _t: float = 0.0
 var _sort_origin: Vector2 = Vector2.ZERO
 
+## Slipstream Coil (the Sprint Servos + Tesla Aura Duo) reads whether the
+## player moved since the last frame: a position compare, no query.
+var _last_player_pos: Vector2 = Vector2.ZERO
+var _moving: bool = false
+
 func setup(p: Node) -> void:
 	player = p as Node2D
+	if player != null:
+		_last_player_pos = player.global_position
 
 func _ready() -> void:
 	set_process(true)
@@ -42,6 +49,10 @@ func _ready() -> void:
 func _process(dt: float) -> void:
 	if player == null or not is_instance_valid(player):
 		return
+
+	var at := player.global_position
+	_moving = at != _last_player_pos
+	_last_player_pos = at
 
 	_t += dt
 	# Haste speeds the aura now, as it does every other automatic augment.
@@ -84,6 +95,8 @@ func _zap(handle: int, dmg: float) -> void:
 		if AugmentScaling.is_heavy(handle):
 			amount *= CROWN_HEAVY_MUL
 		EnemyCombat.apply_stun(handle, CROWN_STUN)
+	if zap_stun > 0.0:
+		EnemyCombat.apply_stun(handle, zap_stun)
 	EnemyCombat.apply_damage(handle, amount, 1, player, BalanceAttribution.provenance("augment:tesla_aura", "augment:tesla_aura:zap", "augment"))
 
 
@@ -121,7 +134,10 @@ func current_radius() -> float:
 
 
 func current_tick_interval() -> float:
-	return maxf(0.15, tick_interval / AugmentScaling.haste_multiplier(player))
+	var interval := tick_interval / AugmentScaling.haste_multiplier(player)
+	if _moving and Global.augment_duo_active(AugmentDuos.SLIPSTREAM_COIL):
+		interval *= AugmentDuos.value(AugmentDuos.SLIPSTREAM_COIL, "tick_mul", 1.0)
+	return maxf(0.15, interval)
 
 func _sort_by_dist(a: Variant, b: Variant) -> bool:
 	var a_position := EnemyCombat.position_for_handle(int(a))
@@ -177,6 +193,20 @@ func set_transcended(value: bool) -> void:
 	transcended = value
 
 
+## The chosen Facet (Overcharge or Static Field, AugmentFacets), or &"".
+## Applied from the captured bases in _apply_level_scaling_ta, so it never
+## compounds; it stacks with Storm Crown, which multiplies at use time.
+const AUGMENT_ID := &"augment_tesla_aura"
+var _facet: StringName = &""
+## Static Field's stun on every zap, 0 without it.
+var zap_stun: float = 0.0
+
+
+func set_facet(facet: StringName) -> void:
+	_facet = facet
+	_apply_level_scaling_ta()
+
+
 var _aug_level: int = 1
 var _bases_captured_ta: bool = false
 
@@ -204,10 +234,15 @@ func _capture_level_bases_ta() -> void:
 	_base_damage_mult_ta = damage_mult
 
 ## Damage grows through AugmentScaling.potency (read at each zap); the
-## radius, tick and target count grow with the capped count steps.
+## radius, tick and target count grow with the capped count steps. A Facet
+## trades on top: Overcharge fewer, harder zaps; Static Field a wider,
+## stunning, softer ring.
 func _apply_level_scaling_ta() -> void:
+	_capture_level_bases_ta()
 	var t: int = AugmentScaling.count_steps(_aug_level)
-	damage_mult = _base_damage_mult_ta
-	radius = _base_radius_ta * (1.0 + 0.07 * float(t))
+	damage_mult = _base_damage_mult_ta * AugmentFacets.value(AUGMENT_ID, _facet, "damage_mul", 1.0)
+	radius = _base_radius_ta * (1.0 + 0.07 * float(t)) * AugmentFacets.value(AUGMENT_ID, _facet, "radius_mul", 1.0)
 	tick_interval = maxf(0.25, _base_tick_interval_ta * pow(0.95, float(t)))
-	max_targets = maxi(1, _base_max_targets_ta + int(floor(float(t) / 2.0)))
+	var targets: int = _base_max_targets_ta + int(floor(float(t) / 2.0))
+	max_targets = maxi(1, targets + int(AugmentFacets.value(AUGMENT_ID, _facet, "target_delta", 0.0)))
+	zap_stun = AugmentFacets.value(AUGMENT_ID, _facet, "stun", 0.0)

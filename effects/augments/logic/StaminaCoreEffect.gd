@@ -49,6 +49,7 @@ func _exit_tree() -> void:
 	_cleanup_aura()
 
 func _process(dt: float) -> void:
+	_since_activation += dt
 	if _active_time > 0.0:
 		_active_time = max(_active_time - dt, 0.0)
 		if _active_time <= 0.0:
@@ -81,9 +82,50 @@ var transcended: bool = false
 var _pending_heal: float = 0.0
 
 
+## The augment this core is, for its Facet numbers (AugmentFacets).
+const AUGMENT_ID := &"augment_stamina_core"
+## The chosen Facet (Second Wind or Iron Lung), or &"" for none.
+var facet: StringName = &""
+
+
 func set_transcended(value: bool) -> void:
 	transcended = value
 	_retitle_for_transcendence()
+
+
+## A Facet re-derives cooldown and duration from the captured bases, so it
+## lands once however often the runner repeats its calls.
+func set_facet(value: StringName) -> void:
+	facet = value
+	_capture_level_bases_sc()
+	_apply_level_scaling_sc()
+
+
+func _facet_value(key: String, fallback: float) -> float:
+	return AugmentFacets.value(AUGMENT_ID, facet, key, fallback)
+
+
+## Bulwark Engine: the shield's perfect parry winds the cooldown back by
+## `seconds` (never below ready) and the HUD badge hears it at once.
+func bulwark_refund(seconds: float) -> void:
+	if seconds <= 0.0 or _cd <= 0.0:
+		return
+	# Never back inside the invulnerability the last activation granted
+	# plus its gap: Bulwark's parries would otherwise drain the cooldown
+	# faster than the invulnerability ran out.
+	_cd = maxf(_cd - seconds, refund_floor())
+	_report_cd(true)
+
+
+## The least time left on the cooldown a refund may leave: what remains of
+## the last activation's invulnerability plus INVULN_GAP.
+func refund_floor() -> float:
+	return maxf(0.0, invuln_duration + INVULN_GAP - _since_activation)
+
+
+## The least time a core's cooldown outlasts the invulnerability it grants.
+const INVULN_GAP := 1.5
+var _since_activation: float = 999.0
 
 
 ## The HUD plate takes the Transcended name; the authored title comes back
@@ -96,6 +138,11 @@ func _retitle_for_transcendence() -> void:
 		_authored_title = hud_title_text
 	var turned := AugmentScaling.transcended_name(StringName(str(get_meta("augment_id", ""))))
 	hud_title_text = turned if transcended and turned != "" else _authored_title
+
+
+func _max_hp() -> float:
+	var value: Variant = player.get("max_hp") if player != null else null
+	return float(value) if typeof(value) == TYPE_FLOAT or typeof(value) == TYPE_INT else 0.0
 
 
 func _hp_ratio() -> float:
@@ -128,7 +175,12 @@ func _try_activate(manual: bool = true) -> void:
 
 	var haste_mul: float = 1.0 + maxf(haste, -0.9)
 
-	_cd_max = Global.doctrine_active_cooldown(maxf(3.0, active_base_cd / maxf(haste_mul, 0.05)))
+	# The core grants invulnerability, so its cooldown always outlasts it by
+	# INVULN_GAP: invulnerability reaches 3 s at Lv.6, the old 3 s floor
+	# matched it exactly, and Haste, Iron Lung or Open Circuit then chained
+	# the core into unbroken invulnerability.
+	_cd_max = maxf(Global.doctrine_active_cooldown(maxf(3.0, active_base_cd / maxf(haste_mul, 0.05))), invuln_duration + INVULN_GAP)
+	_since_activation = 0.0
 	_cd = _cd_max
 	if manual:
 		Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
@@ -136,6 +188,11 @@ func _try_activate(manual: bool = true) -> void:
 
 	if player.has_method("grant_invulnerability"):
 		player.call("grant_invulnerability", invuln_duration)
+
+	# Second Wind: every activation mends, the key's and Undying's alike.
+	var mend := _max_hp() * _facet_value("heal_fraction", 0.0)
+	if mend > 0.0 and player.has_method("heal"):
+		player.call("heal", mend, &"augment:second_wind")
 
 	if debug_prints:
 		print("[StaminaCore] activated cd_max=", _cd_max, " duration=", _active_time)
@@ -262,6 +319,8 @@ func _capture_level_bases_sc() -> void:
 	_base_invuln_duration_sc = invuln_duration
 	_base_lifesteal_pct_sc = lifesteal_pct
 
+## Iron Lung multiplies after the level's floor, so its x0.65 holds even
+## where the level alone has reached the 6 s floor.
 func _apply_level_scaling_sc() -> void:
 	var t: int = AugmentScaling.count_steps(_aug_level)
 	if t <= 0:
@@ -274,6 +333,8 @@ func _apply_level_scaling_sc() -> void:
 		active_duration = _base_active_duration_sc + 0.5 * float(t)
 		invuln_duration = clampf(_base_invuln_duration_sc + 0.2 * float(t), 0.0, 3.0)
 		lifesteal_pct = clampf(_base_lifesteal_pct_sc + 0.05 * float(t), 0.0, 0.45)
+	active_base_cd *= _facet_value("cooldown_mul", 1.0)
+	active_duration *= _facet_value("duration_mul", 1.0)
 
 	_cd_max = active_base_cd
 	_cd = minf(_cd, _cd_max)

@@ -151,6 +151,18 @@ func set_transcended(value: bool) -> void:
 	transcended = value
 	_apply_level_scaling_mm()
 
+
+## The chosen Facet (Salvo or Lance, AugmentFacets), or &"". It reshapes the
+## volley from the captured bases in _apply_level_scaling_mm, so taking it
+## again or levelling after it never compounds.
+const AUGMENT_ID := &"augment_magic_missile"
+var _facet: StringName = &""
+
+
+func set_facet(facet: StringName) -> void:
+	_facet = facet
+	_apply_level_scaling_mm()
+
 func _find_nearest_enemy(center: Vector2, radius: float) -> int:
 	return EnemyCombat.nearest_enemy(center, radius)
 
@@ -184,12 +196,16 @@ func _capture_level_bases_mm() -> void:
 	_base_damage_mult_mm = damage_mult
 
 ## Damage grows through AugmentScaling.potency; cadence, volley size and
-## reach grow with the capped count steps.
+## reach grow with the capped count steps. A Facet reshapes the volley on
+## top: Salvo adds missiles and thins each, Lance halves the volley (after
+## Choir's extra missile, never below one) for heavier, farther-seeking ones.
 func _apply_level_scaling_mm() -> void:
 	_capture_level_bases_mm()
 	var t: int = AugmentScaling.count_steps(_aug_level)
-	damage_mult = _base_damage_mult_mm
+	damage_mult = _base_damage_mult_mm * AugmentFacets.value(AUGMENT_ID, _facet, "damage_mul", 1.0)
 	base_cooldown = maxf(0.35, _base_cooldown_mm * pow(0.93, float(t)))
-	burst_count = maxi(1, _base_burst_count_mm + int(floor(float(t) / 2.0)) + (1 if transcended else 0))
+	var volley: int = maxi(1, _base_burst_count_mm + int(floor(float(t) / 2.0)) + (1 if transcended else 0))
+	volley += int(AugmentFacets.value(AUGMENT_ID, _facet, "extra_missiles", 0.0))
+	burst_count = maxi(1, floori(float(volley) * AugmentFacets.value(AUGMENT_ID, _facet, "missile_mul", 1.0)))
 	burst_interval = maxf(0.04, _base_burst_interval_mm * pow(0.96, float(t)))
-	seek_radius = _base_seek_radius_mm * (1.0 + 0.05 * float(t))
+	seek_radius = _base_seek_radius_mm * (1.0 + 0.05 * float(t)) * AugmentFacets.value(AUGMENT_ID, _facet, "seek_mul", 1.0)

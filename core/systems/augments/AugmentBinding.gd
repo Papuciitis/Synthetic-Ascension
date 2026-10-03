@@ -7,13 +7,20 @@ class_name AugmentBinding
 ## Pure and seeded: Global builds the context, this decides the cards, and
 ## the same context and seed always deal the same offer. A card is a plain
 ## Dictionary so the offer can sit in the save as-is:
-##   {"kind": "new" | "rank" | "swap" | "transcend", "id": String, "grade": int}
+##   {"kind": "new" | "rank" | "swap" | "transcend" | "duo" | "facet",
+##    "id": String, "grade": int}
 ## A transcend card has grade -1 (it adds one level and the transformation).
+## A duo card's id is a Duo id (AugmentDuos), a facet card's the augment's;
+## both carry grade -1 and add no level (duos-facets-and-the-reliquary §6).
 
 const KIND_NEW := "new"
 const KIND_RANK := "rank"
 const KIND_SWAP := "swap"
 const KIND_TRANSCEND := "transcend"
+const KIND_DUO := "duo"
+const KIND_FACET := "facet"
+## Cards that carry no grade: they change rules, not levels.
+const SPECIAL_KINDS: PackedStringArray = [KIND_TRANSCEND, KIND_DUO, KIND_FACET]
 
 ## The three NEG archetypes a fresh profile's first offer always shows one
 ## of (segment 1 pass S2), so the first curse the run finds has a reader.
@@ -29,6 +36,10 @@ const NEG_ARCHETYPE_IDS: Array[StringName] = [&"augment_corruption_engine", &"au
 ##   luck, grade_mul, grade_floor: grade roll inputs (AugmentScaling)
 ##   card_count: cards to deal (3, or 4 with the Circuit Thesis)
 ##   neg_guarantee: the fresh-profile intro pick
+##   duo_ready: Duo ids whose pair is ready (AugmentDuos.ready_duos)
+##   facet_ready: equipped augment ids that may take a Facet
+## Special cards (Transcend, then Duo, then Facet, the first ready of each)
+## come first and take at most all but one card.
 static func build_offer(context: Dictionary, rng: RandomNumberGenerator) -> Array:
 	var count := maxi(1, int(context.get("card_count", 3)))
 	var equipped: Array = context.get("equipped", [])
@@ -62,10 +73,17 @@ static func build_offer(context: Dictionary, rng: RandomNumberGenerator) -> Arra
 	_shuffle(ranks, rng)
 
 	var cards: Array = []
-	if not ready.is_empty():
+	var special_room := count - 1
+	if not ready.is_empty() and cards.size() < special_room:
 		var first := StringName(str(ready[0]))
 		cards.append({"kind": KIND_TRANSCEND, "id": String(first), "grade": -1})
 		ranks.erase(first)
+	var duo_ready: Array = context.get("duo_ready", [])
+	if not duo_ready.is_empty() and cards.size() < special_room:
+		cards.append({"kind": KIND_DUO, "id": String(duo_ready[0]), "grade": -1})
+	var facet_ready: Array = context.get("facet_ready", [])
+	if not facet_ready.is_empty() and cards.size() < special_room:
+		cards.append({"kind": KIND_FACET, "id": String(facet_ready[0]), "grade": -1})
 
 	if empty_slots > 0:
 		for id in fresh:
@@ -93,7 +111,7 @@ static func build_offer(context: Dictionary, rng: RandomNumberGenerator) -> Arra
 		cards = _ensure_neg_archetype(cards, fresh)
 
 	for card in cards:
-		if String(card["kind"]) != KIND_TRANSCEND:
+		if not SPECIAL_KINDS.has(String(card["kind"])):
 			card["grade"] = AugmentScaling.roll_grade(rng, segment, luck, grade_mul, grade_floor)
 	return cards
 
@@ -107,6 +125,8 @@ static func resulting_level(card: Dictionary, current: int) -> int:
 	match String(card.get("kind", "")):
 		KIND_TRANSCEND:
 			return AugmentScaling.clamp_level(cur + 1)
+		KIND_DUO, KIND_FACET:
+			return AugmentScaling.clamp_level(cur)
 		KIND_RANK:
 			return AugmentScaling.clamp_level(cur + AugmentScaling.grade_levels(int(card.get("grade", 0))))
 		_:
@@ -115,6 +135,20 @@ static func resulting_level(card: Dictionary, current: int) -> int:
 
 static func needs_slot_choice(card: Dictionary) -> bool:
 	return String(card.get("kind", "")) == KIND_SWAP
+
+
+static func needs_facet_choice(card: Dictionary) -> bool:
+	return String(card.get("kind", "")) == KIND_FACET
+
+
+## The augment whose art and data a card shows: a Duo card shows its first
+## member, every other card its own id.
+static func display_augment_id(card: Dictionary) -> StringName:
+	var id := StringName(str(card.get("id", "")))
+	if String(card.get("kind", "")) == KIND_DUO:
+		var pair := AugmentDuos.members(id)
+		return StringName(pair[0]) if not pair.is_empty() else StringName()
+	return id
 
 
 static func _ensure_neg_archetype(cards: Array, fresh: Array[StringName]) -> Array:

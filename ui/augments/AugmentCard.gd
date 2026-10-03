@@ -126,12 +126,46 @@ func is_transcend_card() -> bool:
 	return String(card_entry.get("kind", "")) == AugmentBinding.KIND_TRANSCEND
 
 
+func is_duo_card() -> bool:
+	return String(card_entry.get("kind", "")) == AugmentBinding.KIND_DUO
+
+
+func is_facet_card() -> bool:
+	return String(card_entry.get("kind", "")) == AugmentBinding.KIND_FACET
+
+
+## The card's own id: a Duo id on a DUO card, the augment's on every other.
+func entry_id() -> StringName:
+	return StringName(str(card_entry.get("id", "")))
+
+
+## A Transcend, Duo or Facet card holding something the profile's Grimoire
+## has never recorded (duos-facets-and-the-reliquary §4). A Facet card counts
+## while either of its two Facets is still unknown: the card is the only way
+## to reach it.
+func is_new_discovery() -> bool:
+	if Global == null or data == null:
+		return false
+	match String(card_entry.get("kind", "")):
+		AugmentBinding.KIND_TRANSCEND:
+			return not Global.grimoire_has(Grimoire.transcend_key(data.id))
+		AugmentBinding.KIND_DUO:
+			return not Global.grimoire_has(Grimoire.duo_key(entry_id()))
+		AugmentBinding.KIND_FACET:
+			for row in AugmentFacets.options(data.id):
+				if not Global.grimoire_has(Grimoire.facet_key(data.id, StringName(row["id"]))):
+					return true
+	return false
+
+
 func _apply_data() -> void:
 	if data == null or name_label == null:
 		return
 	var transcend := is_transcend_card()
 	if transcend:
 		name_label.text = AugmentScaling.transcended_name(data.id)
+	elif is_duo_card():
+		name_label.text = AugmentDuos.display_name(entry_id())
 	elif Global != null and Global.has_method("augment_display_name"):
 		name_label.text = Global.augment_display_name(data.id)
 	else:
@@ -139,7 +173,13 @@ func _apply_data() -> void:
 	var blurb := String(data.card_blurb).strip_edges()
 	if blurb == "":
 		blurb = _card_flavor(data.description)
-	desc_label.text = _card_flavor(AugmentScaling.transcend_rule(data.id), 120) if transcend else blurb
+	if transcend:
+		blurb = _card_flavor(AugmentScaling.transcend_rule(data.id), 120)
+	elif is_duo_card():
+		blurb = _card_flavor(AugmentDuos.rule(entry_id()), 120)
+	elif is_facet_card():
+		blurb = _facet_blurb()
+	desc_label.text = blurb
 	desc_label.visible = true
 	icon_rect.texture = data.icon
 	_badge.text = badge_text()
@@ -160,12 +200,18 @@ func badge_text() -> String:
 		if Global != null and Global.get("permanent_augment_ids") is Array:
 			owned = (Global.permanent_augment_ids as Array).has(data.id)
 		return "◆  RANK UP  ◆" if owned else ""
+	# A discovery the Grimoire lacks says so inside the diamonds.
+	var fresh := "  ·  NEW" if is_new_discovery() else ""
+	if is_duo_card():
+		return "◆  DUO%s  ◆" % fresh
+	if is_facet_card():
+		return "◆  FACET%s  ◆" % fresh
 	var current := Global.get_augment_level(data.id) if Global != null else 1
 	var after := AugmentBinding.resulting_level(card_entry, current)
 	var grade := AugmentScaling.grade_name(int(card_entry.get("grade", 0)))
 	match String(card_entry.get("kind", "")):
 		AugmentBinding.KIND_TRANSCEND:
-			return "◆  TRANSCEND  ·  Lv.%d  ◆" % after
+			return "◆  TRANSCEND  ·  Lv.%d%s  ◆" % [after, fresh]
 		AugmentBinding.KIND_RANK:
 			return "%s  ·  Lv.%d → %d" % [grade, current, after]
 		AugmentBinding.KIND_SWAP:
@@ -173,14 +219,37 @@ func badge_text() -> String:
 	return "%s  ·  NEW  ·  Lv.%d" % [grade, after]
 
 
-## Gold for a Transcendence, the item rarity colours for the grades
-## (Etched green, Gilded blue, Sanctified violet, Apocryphal ember).
+## Quicksilver for a Facet card: the grades already take green, blue,
+## violet and ember, a Transcendence gold and a Duo teal, and the sage
+## first tried here read as Etched green on the most common cards.
+const FACET_COLOUR := Color(0.80, 0.83, 0.92)
+
+
+## Gold for a Transcendence, teal for a Duo, quicksilver for a Facet, the
+## item rarity colours for the grades (Etched green, Gilded blue,
+## Sanctified violet, Apocryphal ember). The rule cards carry no grade, so
+## none of them may borrow a grade's colour.
 func grade_colour() -> Color:
 	if card_entry.is_empty():
 		return OverlayKit.GOLD
 	if is_transcend_card():
 		return OverlayKit.GOLD_BRIGHT
+	if is_duo_card():
+		return OverlayKit.TEAL
+	if is_facet_card():
+		return FACET_COLOUR
 	return OverlayKit.rarity_colour(AugmentScaling.grade_rarity_index(int(card_entry.get("grade", 0))))
+
+
+## "Choose one of two Facets: Salvo or Lance." - the names only; the rules
+## are the chooser's and the hover's.
+func _facet_blurb() -> String:
+	var names := PackedStringArray()
+	for row in AugmentFacets.options(data.id):
+		names.append(String(row["name"]))
+	if names.size() < 2:
+		return "Choose one of two Facets."
+	return "Choose one of two Facets: %s or %s." % [names[0], names[1]]
 
 
 func _card_flavor(s: String, max_chars: int = 95) -> String:
@@ -227,6 +296,13 @@ func _start_deal() -> void:
 ## AugmentFlyVfx has captured this card and flies the copy; stop drawing it.
 func hide_for_flight() -> void:
 	_flown = true
+
+
+## The player backed out of this card's chooser (SWAP's slot, FACET's
+## pick): it stops standing lit and sinks with the rest when another card
+## is taken.
+func release_pick() -> void:
+	_picked = false
 
 
 func _process(_delta: float) -> void:

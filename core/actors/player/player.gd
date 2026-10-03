@@ -756,6 +756,10 @@ func recompute_run_stats(race: RaceData, style: StyleData, emit_hp_signal: bool 
 		s.power += AugmentScaling.velocity_power(s.move_speed)
 		Global.stat_ledger_step("VELOCITY ENGINE", s)
 
+	# A Scarred augment (the Reliquary's Corruption) costs Max HP while worn.
+	if Global.has_method("apply_augment_scars"):
+		Global.call("apply_augment_scars", s)
+
 	# Doctrine prices are applied at the final ownership boundary so equipment,
 	# sets, manifestations and Burden cannot escape the Max-HP sacrifice.
 	if Global.has_method("apply_doctrine_final_stat_multipliers"):
@@ -849,6 +853,8 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	_lucky_crit_pending = lucky_crit
 	if lucky_crit and BattleText != null:
 		BattleText.popup(global_position, "LUCKY", Color(1.0, 0.84, 0.25, 1.0), 1.2)
+	if lucky_crit:
+		Global.on_lucky_crit(global_position)
 	# Reported on success AND failure: a missed Luck roll is buildable
 	# material (Misfortune), not a non-event.
 	if RunEvents != null and RunEvents.player_lucky_crit.has_connections():

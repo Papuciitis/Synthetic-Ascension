@@ -56,6 +56,10 @@ const CURRENT_SAVE_VERSION := 1
 # card kind, so the next card to earn an explainer is a new string and not a
 # new save migration.
 @export var meta_seen_manifestation_cards: Array[String] = []
+# The Grimoire: every Transcendence, Duo, Facet, Thesis and Canon the
+# profile has reached (Grimoire.gd keys). Profile knowledge, like the
+# dossiers; it survives die-die.
+@export var meta_grimoire: Array[String] = []
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.
@@ -120,6 +124,17 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_augment_transcended: Dictionary = {}
 @export var attempt_binding_offer: Array = []
 @export var attempt_binding_recasts: int = 0
+# Duos, Facets, the Reliquary and the Burden (2026-10-03, the duos-facets
+# note): active Duos, chosen Facets, Corruption outcomes, the Burden flag,
+# Vouchers bought and the Hub's Voucher offer. New fields: older saves load
+# them as their defaults.
+@export var attempt_augment_duos: Dictionary = {}
+@export var attempt_augment_facets: Dictionary = {}
+@export var attempt_augment_corruptions: Dictionary = {}
+@export var attempt_binding_burdened: bool = false
+@export var attempt_vouchers: Array = []
+@export var attempt_voucher_offer: Array = []
+@export var attempt_voucher_segment: int = 0
 # Attempt setup (so Continue keeps your run identity)
 @export var attempt_race_id: String = "human"
 @export var attempt_style_id: String = "ranged"

@@ -58,6 +58,8 @@ signal balance_scene_requested(path: String)
 signal balance_transaction(before: int, change: int, after: int, reason: StringName, context: Dictionary)
 signal followers_transaction(old_value: int, change: int, new_value: int, reason: StringName, context: Dictionary, show_feedback: bool, allow_aggregate: bool)
 signal permanent_augments_changed(ids: Array[StringName])
+## The profile reached a Grimoire entry for the first time (Grimoire.gd keys).
+signal grimoire_discovered(key: String)
 
 ## Either of the two world positions the HUD's edge arrow points at has moved,
 ## appeared or gone. They are plain writes from the segment builders, the
@@ -258,6 +260,23 @@ var attempt_stat_delta: StatDelta = null
 var attempt_augment_transcended: Dictionary = {}
 var attempt_binding_offer: Array = []
 var attempt_binding_recasts: int = 0
+
+# Duos, Facets, the Reliquary and the Burden
+# (docs/design/2026-10-03-duos-facets-and-the-reliquary.md): active Duos
+# (String duo id -> true), chosen Facets (String augment id -> String facet
+# id), Corruption outcomes (String augment id -> String outcome), whether the
+# pending Binding was Burdened, Vouchers bought this run and the Hub's
+# current Voucher offer with the attempt_segment it was dealt for.
+var attempt_augment_duos: Dictionary = {}
+var attempt_augment_facets: Dictionary = {}
+var attempt_augment_corruptions: Dictionary = {}
+var attempt_binding_burdened: bool = false
+var attempt_vouchers: Array = []
+var attempt_voucher_offer: Array = []
+var attempt_voucher_segment: int = 0
+## Profile-wide (it survives death): every Grimoire key the profile reached.
+var grimoire_entries: Array[String] = []
+var _loaded_dice_last_ms: int = -1000000
 
 
 # Internal autosave throttle
@@ -1073,6 +1092,13 @@ func _reset_attempt_choice_state() -> void:
 	attempt_augment_transcended = {}
 	attempt_binding_offer = []
 	attempt_binding_recasts = 0
+	attempt_augment_duos = {}
+	attempt_augment_facets = {}
+	attempt_augment_corruptions = {}
+	attempt_binding_burdened = false
+	attempt_vouchers = []
+	attempt_voucher_offer = []
+	attempt_voucher_segment = 0
 
 
 ## The completed segment a pending Binding belongs to: it shows as the next
@@ -1092,6 +1118,8 @@ func binding_card_count() -> int:
 	var count := 3 + int(get_doctrine_rule(&"binding_extra_cards", 0))
 	if doctrine_has_thesis(&"circuit"):
 		count += 1
+	if has_voucher(Vouchers.FOURTH_SEAL):
+		count += 1
 	return clampi(count, 3, 5)
 
 
@@ -1099,6 +1127,8 @@ func binding_grade_multiplier() -> float:
 	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_grade_mul", 1.0)))
 	if doctrine_has_thesis(&"archive"):
 		mul *= 1.5
+	if has_voucher(Vouchers.GILDED_INK):
+		mul *= Vouchers.GILDED_INK_MUL
 	return mul
 
 
@@ -1118,6 +1148,8 @@ func binding_recast_cost() -> int:
 	if attempt_binding_recasts < free:
 		return 0
 	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_recast_mul", 1.0)))
+	if has_voucher(Vouchers.RECAST_INDULGENCE):
+		mul *= Vouchers.RECAST_MUL
 	return AugmentScaling.recast_cost(binding_segment(), attempt_binding_recasts - free, mul)
 
 
@@ -1125,6 +1157,8 @@ func binding_abstain_reward() -> int:
 	var mul := maxf(0.0, float(get_doctrine_rule(&"binding_abstain_mul", 1.0)))
 	if doctrine_has_canon(&"archive"):
 		mul *= 2.0
+	if has_voucher(Vouchers.TITHE_SERMON):
+		mul *= Vouchers.TITHE_MUL
 	return AugmentScaling.abstain_reward(binding_segment(), mul)
 
 
@@ -1155,6 +1189,8 @@ func binding_context() -> Dictionary:
 		"grade_floor": binding_grade_floor(),
 		"card_count": binding_card_count(),
 		"neg_guarantee": fresh_profile,
+		"duo_ready": duos_ready(),
+		"facet_ready": facets_ready(),
 	}
 
 
@@ -1173,6 +1209,10 @@ func _deal_binding_offer() -> void:
 	var seed_val: int = attempt_world_seed if attempt_world_seed != 0 else _rng.randi()
 	rng.seed = int(seed_val) ^ (binding_segment() * 0x2545F491) ^ ((attempt_binding_recasts + 1) * 0x9E3779B9) ^ 0xB1D
 	attempt_binding_offer = AugmentBinding.build_offer(binding_context(), rng)
+	# A Burden covers the whole Binding: its price is already paid, so a
+	# Recast deals the new table raised too instead of throwing the raise away.
+	if attempt_binding_burdened:
+		attempt_binding_offer = AugmentRites.burdened_offer(attempt_binding_offer)
 	request_autosave()
 
 
@@ -1207,8 +1247,9 @@ func binding_abstain() -> int:
 
 
 ## Resolves one dealt card. A SWAP needs `slot` (an unlocked equipped slot);
-## the augment it replaces keeps its run level in the library.
-func apply_binding_card(card: Dictionary, slot: int = -1) -> bool:
+## the augment it replaces keeps its run level in the library. A FACET needs
+## `facet`, one of the augment's two Facet ids.
+func apply_binding_card(card: Dictionary, slot: int = -1, facet: StringName = &"") -> bool:
 	if not pending_augment_pick:
 		return false
 	var dealt: Dictionary = {}
@@ -1219,15 +1260,35 @@ func apply_binding_card(card: Dictionary, slot: int = -1) -> bool:
 	if dealt.is_empty():
 		return false
 	var id := StringName(String(dealt["id"]))
+	init_permanent_augments()
+	if String(dealt["kind"]) == AugmentBinding.KIND_DUO:
+		if not AugmentDuos.is_duo(id):
+			return false
+		for member in AugmentDuos.members(id):
+			if not permanent_augment_ids.has(member):
+				return false
+		attempt_augment_duos[String(id)] = true
+		grimoire_note(Grimoire.duo_key(id))
+		_close_binding()
+		permanent_augments_changed.emit(permanent_augment_ids)
+		return true
 	if not augment_db.has(id):
 		return false
-	init_permanent_augments()
+	if String(dealt["kind"]) == AugmentBinding.KIND_FACET:
+		if not permanent_augment_ids.has(id) or attempt_augment_facets.has(String(id)) or not AugmentFacets.is_option(id, facet):
+			return false
+		attempt_augment_facets[String(id)] = String(facet)
+		grimoire_note(Grimoire.facet_key(id, facet))
+		_close_binding()
+		permanent_augments_changed.emit(permanent_augment_ids)
+		return true
 	var target_level := AugmentBinding.resulting_level(dealt, get_augment_level(id))
 	match String(dealt["kind"]):
 		AugmentBinding.KIND_TRANSCEND:
 			if not permanent_augment_ids.has(id):
 				return false
 			attempt_augment_transcended[String(id)] = true
+			grimoire_note(Grimoire.transcend_key(id))
 		AugmentBinding.KIND_RANK:
 			if not permanent_augment_ids.has(id):
 				return false
@@ -1252,6 +1313,7 @@ func _close_binding() -> void:
 	pending_augment_pick = false
 	attempt_binding_offer.clear()
 	attempt_binding_recasts = 0
+	attempt_binding_burdened = false
 	request_autosave()
 
 
@@ -1269,9 +1331,13 @@ func augment_display_name(id: StringName) -> String:
 	return data.display_name if data != null else String(id)
 
 
-## Lv.5, or Lv.4 under Liturgy of Overclock or the Perfected Engine.
+## Lv.5, or Lv.4 under Liturgy of Overclock or the Perfected Engine; the
+## Catalyst Primer voucher takes one more off, never below Lv.3.
 func augment_transcend_level() -> int:
-	return clampi(int(get_doctrine_rule(&"augment_transcend_level", AugmentScaling.TRANSCEND_LEVEL)), 1, AugmentScaling.TRANSCEND_LEVEL)
+	var level := clampi(int(get_doctrine_rule(&"augment_transcend_level", AugmentScaling.TRANSCEND_LEVEL)), 1, AugmentScaling.TRANSCEND_LEVEL)
+	if has_voucher(Vouchers.CATALYST_PRIMER):
+		level = maxi(3, level - 1)
+	return level
 
 
 ## What the catalysts are judged against (AugmentScaling.catalyst_holds).
@@ -1324,6 +1390,7 @@ func transcend_equipped_augments() -> int:
 	for id in permanent_augment_ids:
 		if id != StringName() and AugmentScaling.can_transcend(id) and not is_augment_transcended(id):
 			attempt_augment_transcended[String(id)] = true
+			grimoire_note(Grimoire.transcend_key(id))
 			turned += 1
 	if turned > 0:
 		permanent_augments_changed.emit(permanent_augment_ids)
@@ -1405,6 +1472,290 @@ func bonus_kill_followers() -> int:
 	if census > 0.0 and _rng.randf() < census:
 		extra += 1
 	return extra
+
+
+# ============================================================
+# Duos, Facets, the Burden, the Reliquary and the Grimoire
+# (docs/design/2026-10-03-duos-facets-and-the-reliquary.md)
+# ============================================================
+
+func has_voucher(id: StringName) -> bool:
+	return attempt_vouchers.has(String(id))
+
+
+func duo_level_required() -> int:
+	return 2 if has_voucher(Vouchers.CONCORDANCE) else AugmentDuos.LEVEL_REQUIRED
+
+
+func facet_level_required() -> int:
+	return 2 if has_voucher(Vouchers.WHETSTONE) else AugmentFacets.LEVEL_REQUIRED
+
+
+func _equipped_levels() -> Dictionary:
+	var out := {}
+	for id in permanent_augment_ids:
+		if id != StringName():
+			out[String(id)] = get_augment_level(id)
+	return out
+
+
+## Duos whose pair is equipped at the required level and not taken yet.
+func duos_ready() -> Array:
+	init_permanent_augments()
+	return AugmentDuos.ready_duos(permanent_augment_ids, _equipped_levels(), attempt_augment_duos, duo_level_required())
+
+
+## A Duo acts only while both its augments are equipped.
+func augment_duo_active(duo_id: StringName) -> bool:
+	if not attempt_augment_duos.has(String(duo_id)):
+		return false
+	for member in AugmentDuos.members(duo_id):
+		if not permanent_augment_ids.has(member):
+			return false
+	return true
+
+
+## The chosen Facet id of an augment this run, or &"".
+func augment_facet(aug_id: StringName) -> StringName:
+	return StringName(str(attempt_augment_facets.get(String(aug_id), "")))
+
+
+## Equipped augments with Facets, at the required level, none chosen yet.
+func facets_ready() -> Array:
+	init_permanent_augments()
+	var out: Array = []
+	for id in permanent_augment_ids:
+		if id == StringName() or not AugmentFacets.has_facets(id) or attempt_augment_facets.has(String(id)):
+			continue
+		if get_augment_level(id) >= facet_level_required():
+			out.append(id)
+	return out
+
+
+## Whether BURDEN can raise the pending Binding's grades: from the second
+## Binding on, once per Binding, while a card can still rise.
+func binding_burden_available() -> bool:
+	if not pending_augment_pick or not binding_can_trade() or attempt_binding_burdened:
+		return false
+	# The relic is bound into the run's bag: with no room it would fall to the
+	# profile stash (and leave the run) or onto the floor (and be left behind).
+	if not binding_burden_has_room():
+		return false
+	for card in binding_offer():
+		var grade := int(card.get("grade", -1))
+		if grade >= 0 and grade < AugmentScaling.GRADE_COUNT - 1:
+			return true
+	return false
+
+
+## Raises every graded card one grade; binds a cursed relic into the bag and
+## adds Threat debt to the segment (the Burden Writ voucher waives that).
+## {ok, relic, threat}.
+func binding_burden() -> Dictionary:
+	if not binding_burden_available():
+		return {"ok": false, "relic": "", "threat": 0.0}
+	attempt_binding_offer = AugmentRites.burdened_offer(attempt_binding_offer)
+	attempt_binding_burdened = true
+	var relic := _bind_burden_relic()
+	var threat := 0.0
+	if not has_voucher(Vouchers.BURDEN_WRIT):
+		threat = AugmentRites.BURDEN_THREAT
+		attempt_doctrine_threat_debt += threat
+	request_autosave()
+	return {"ok": true, "relic": relic, "threat": threat}
+
+
+func binding_burden_has_room() -> bool:
+	return run_bag != null and run_bag.first_empty_slot() != -1
+
+
+func _bind_burden_relic() -> String:
+	var ids := AugmentRites.burden_relic_ids(item_db)
+	if ids.is_empty():
+		return ""
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(attempt_world_seed) ^ (binding_segment() * 0x51ED27) ^ 0xB0D
+	var item_id: String = ids[rng.randi_range(0, ids.size() - 1)]
+	var data := item_db.get(item_id, null) as ItemData
+	if data == null:
+		return ""
+	var rarity := clampi(floori(float(binding_segment()) / 2.0), 1, 5)
+	var inst := ItemInstance.from_roll(data, rarity, ItemInstance.Polarity.NEG, 0.5, false)
+	if run_bag == null or not run_bag.add_instance(inst):
+		return ""
+	return item_id
+
+
+func augment_corruption(aug_id: StringName) -> StringName:
+	return StringName(str(attempt_augment_corruptions.get(String(aug_id), "")))
+
+
+func can_corrupt_augment(aug_id: StringName) -> bool:
+	return aug_id != StringName() and permanent_augment_ids.has(aug_id) and not attempt_augment_corruptions.has(String(aug_id))
+
+
+## Corrupts an equipped augment: free, irreversible, once per augment per
+## run. Seeded by the attempt, the augment and the segment, so a reload
+## deals the same fate. {ok, outcome, before, after}.
+func corrupt_augment(aug_id: StringName) -> Dictionary:
+	if not can_corrupt_augment(aug_id):
+		return {"ok": false}
+	var rng := RandomNumberGenerator.new()
+	rng.seed = int(attempt_world_seed) ^ int(String(aug_id).hash()) ^ (attempt_segment * 0x2F1B) ^ 0xC0EE
+	var outcome := AugmentRites.roll_corruption(rng, run_luck)
+	var before := get_augment_level(aug_id)
+	var after := AugmentRites.corrupted_level(outcome, before)
+	attempt_augment_corruptions[String(aug_id)] = String(outcome)
+	set_augment_level(aug_id, after)
+	permanent_augments_changed.emit(permanent_augment_ids)
+	request_autosave()
+	return {"ok": true, "outcome": outcome, "before": before, "after": after}
+
+
+## The stat pass's Scar step: Max HP x0.9 for each Scarred augment worn.
+func apply_augment_scars(s: Stats) -> void:
+	if s == null:
+		return
+	for id in permanent_augment_ids:
+		if id != StringName() and augment_corruption(id) == AugmentRites.SCARRED:
+			s.max_hp = maxf(1.0, s.max_hp * AugmentRites.SCAR_MAX_HP_MUL)
+			stat_ledger_step("SCARRED %s" % augment_display_name(id).to_upper(), s)
+
+
+## What pouring `donor` into `recipient` would do: {ok, gain, cost, reason}.
+func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary:
+	var out := {"ok": false, "gain": 0, "cost": 0, "reason": ""}
+	if recipient == StringName() or not permanent_augment_ids.has(recipient):
+		out["reason"] = "the recipient must be equipped"
+		return out
+	if donor == StringName() or donor == recipient or permanent_augment_ids.has(donor) or not owned_augment_ids.has(donor):
+		out["reason"] = "the donor must be an owned augment that is not equipped"
+		return out
+	# A Corruption's levels are bound to the augment that took the risk.
+	# Pouring them on let a spare from the meta library be equipped,
+	# corrupted at Lv.1 (where Sundered costs nothing) and drained, over and
+	# over: a main augment reached Lv.18-20 at the first Hub visit.
+	if attempt_augment_corruptions.has(String(donor)):
+		out["reason"] = "a corrupted augment's levels are bound to it"
+		return out
+	var poured := AugmentRites.transfusion_gain(get_augment_level(donor))
+	if poured <= 0:
+		out["reason"] = "the donor needs Lv.%d" % AugmentRites.TRANSFUSION_MIN_DONOR
+		return out
+	# Only the levels the recipient can take are paid for: a recipient near
+	# the cap would otherwise pay full price and burn the donor for nothing.
+	var gain := mini(poured, AugmentScaling.MAX_LEVEL - get_augment_level(recipient))
+	out["gain"] = maxi(0, gain)
+	out["cost"] = AugmentRites.transfusion_cost(maxi(0, gain))
+	if gain <= 0:
+		out["reason"] = "the recipient is at Lv.%d already" % AugmentScaling.MAX_LEVEL
+		return out
+	if followers < int(out["cost"]):
+		out["reason"] = "needs %d Followers" % int(out["cost"])
+		return out
+	out["ok"] = true
+	return out
+
+
+func transfuse_augment(recipient: StringName, donor: StringName) -> Dictionary:
+	var preview := transfusion_preview(recipient, donor)
+	if not bool(preview["ok"]):
+		return preview
+	var cost := int(preview["cost"])
+	if cost > 0:
+		var paid := transaction_followers(-cost, &"transfusion", {"recipient": String(recipient), "donor": String(donor)}, true, false)
+		if int(paid.get("change", 0)) != -cost:
+			preview["ok"] = false
+			preview["reason"] = "the Followers could not be spent"
+			return preview
+	set_augment_level(recipient, AugmentScaling.clamp_level(get_augment_level(recipient) + int(preview["gain"])))
+	set_augment_level(donor, 1)
+	permanent_augments_changed.emit(permanent_augment_ids)
+	request_autosave()
+	return preview
+
+
+## The Hub visit's Vouchers, dealt once per segment and kept.
+func voucher_offer() -> Array:
+	if attempt_voucher_segment != attempt_segment:
+		var rng := RandomNumberGenerator.new()
+		rng.seed = int(attempt_world_seed) ^ (attempt_segment * 0x6A09E667) ^ 0x70C
+		attempt_voucher_offer = Vouchers.deal(rng, attempt_vouchers)
+		attempt_voucher_segment = attempt_segment
+		request_autosave()
+	return attempt_voucher_offer.duplicate()
+
+
+func voucher_price() -> int:
+	return Vouchers.price(binding_segment())
+
+
+func buy_voucher(id: StringName) -> bool:
+	if not voucher_offer().has(String(id)) or has_voucher(id):
+		return false
+	var cost := voucher_price()
+	if followers < cost:
+		return false
+	var paid := transaction_followers(-cost, &"voucher", {"voucher": String(id)}, true, false)
+	if int(paid.get("change", 0)) != -cost:
+		return false
+	attempt_vouchers.append(String(id))
+	request_autosave()
+	return true
+
+
+## Loaded Dice (Lucky Charm + Gambler's Rite): a lucky crit recruits a
+## Follower, at most one a second, and only with an enemy near enough to
+## witness it - the crit is rolled when the attack is fired, so without that
+## a player could recruit by swinging at empty air. player._fire_weapon
+## calls this.
+func on_lucky_crit(at: Vector2 = Vector2.INF) -> void:
+	if not augment_duo_active(AugmentDuos.LOADED_DICE):
+		return
+	if at != Vector2.INF and EnemyCombat.nearest_enemy(at, AugmentDuos.value(AugmentDuos.LOADED_DICE, "witness_range", 600.0)) == EnemyWorldTypes.INVALID_HANDLE:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _loaded_dice_last_ms < int(AugmentDuos.value(AugmentDuos.LOADED_DICE, "crit_gap_ms", 1000.0)):
+		return
+	_loaded_dice_last_ms = now
+	transaction_followers(1, &"loaded_dice", {}, true, true)
+
+
+## A run saved before the Grimoire existed (or by another profile's
+## build) already holds Transcendences, Duos, Facets and Doctrine families;
+## the Grimoire learns them on load, quietly, instead of showing them as
+## undiscovered until the next one is taken.
+func _backfill_grimoire() -> void:
+	var keys: Array[String] = []
+	for id in attempt_augment_transcended:
+		keys.append(Grimoire.transcend_key(StringName(str(id))))
+	for id in attempt_augment_duos:
+		keys.append(Grimoire.duo_key(StringName(str(id))))
+	for id in attempt_augment_facets:
+		keys.append(Grimoire.facet_key(StringName(str(id)), StringName(str(attempt_augment_facets[id]))))
+	var families := doctrine_family_counts()
+	for family in families:
+		if int(families[family]) >= DoctrineFamilies.THESIS_AT:
+			keys.append(Grimoire.thesis_key(family))
+		if int(families[family]) >= DoctrineFamilies.CANON_AT:
+			keys.append(Grimoire.canon_key(family))
+	for key in keys:
+		if not grimoire_entries.has(key):
+			grimoire_entries.append(key)
+
+
+func grimoire_has(key: String) -> bool:
+	return grimoire_entries.has(key)
+
+
+## Records a Grimoire key the first time the profile reaches it.
+func grimoire_note(key: String) -> bool:
+	if key == "" or grimoire_entries.has(key):
+		return false
+	grimoire_entries.append(key)
+	grimoire_discovered.emit(key)
+	request_autosave()
+	return true
 
 func load_augments_from_dir(path: String) -> void:
 	augment_db.clear()
@@ -1826,6 +2177,12 @@ func apply_major_choice(choice_id: StringName) -> bool:
 		attempt_major_choice_taken_ids.append(choice_id)
 	if attempt_pending_doctrine_stage != StringName():
 		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
+	if def.family_id != StringName():
+		var held := doctrine_family_count(def.family_id)
+		if held >= DoctrineFamilies.THESIS_AT:
+			grimoire_note(Grimoire.thesis_key(def.family_id))
+		if held >= DoctrineFamilies.CANON_AT:
+			grimoire_note(Grimoire.canon_key(def.family_id))
 
 	# clear offer + flag so you can't get stuck
 	attempt_major_choice_offer_ids.clear()
@@ -1890,7 +2247,11 @@ func gambler_note_acquisition(inst: ItemInstance) -> Dictionary:
 	var result := {"follower": false, "resonance": 0.0}
 	var item_id := String(inst.data.id) if inst != null and inst.data != null else ""
 	var house_edge := is_augment_transcended(&"augment_gamblers_rite")
-	if _rng.randf() < BurdenResolver.gambler_follower_chance(run_luck, house_edge):
+	var rite_chance := BurdenResolver.gambler_follower_chance(run_luck, house_edge)
+	# Loaded Dice (Lucky Charm + Gambler's Rite) adds its points on top.
+	if augment_duo_active(AugmentDuos.LOADED_DICE):
+		rite_chance = minf(0.85, rite_chance + AugmentDuos.value(AugmentDuos.LOADED_DICE, "rite_bonus", 0.15))
+	if _rng.randf() < rite_chance:
 		var paid := 2 if house_edge else 1
 		transaction_followers(paid, &"gamblers_rite", {"item": item_id}, true, true)
 		attempt_gambler_followers += paid
@@ -2091,6 +2452,11 @@ func apply_save(save: SaveData) -> void:
 		var clean_enemy_id := String(enemy_id).strip_edges()
 		if clean_enemy_id != "" and not discovered_enemy_ids.has(StringName(clean_enemy_id)):
 			discovered_enemy_ids.append(StringName(clean_enemy_id))
+	grimoire_entries.clear()
+	for grimoire_key in save.meta_grimoire:
+		var clean_key := String(grimoire_key).strip_edges()
+		if clean_key != "" and not grimoire_entries.has(clean_key):
+			grimoire_entries.append(clean_key)
 	seen_manifestation_cards.clear()
 	for card_id in save.meta_seen_manifestation_cards:
 		var clean_card_id := String(card_id).strip_edges()
@@ -2243,6 +2609,14 @@ func apply_save(save: SaveData) -> void:
 		attempt_augment_transcended = save.attempt_augment_transcended.duplicate(true)
 		attempt_binding_offer = save.attempt_binding_offer.duplicate(true)
 		attempt_binding_recasts = maxi(0, int(save.attempt_binding_recasts))
+		attempt_augment_duos = save.attempt_augment_duos.duplicate(true)
+		attempt_augment_facets = save.attempt_augment_facets.duplicate(true)
+		attempt_augment_corruptions = save.attempt_augment_corruptions.duplicate(true)
+		attempt_binding_burdened = bool(save.attempt_binding_burdened)
+		attempt_vouchers = save.attempt_vouchers.duplicate()
+		attempt_voucher_offer = save.attempt_voucher_offer.duplicate()
+		attempt_voucher_segment = int(save.attempt_voucher_segment)
+		_backfill_grimoire()
 
 		# Attempt identity (so Continue keeps your run identity)
 		if save.attempt_race_id != "":
@@ -2330,6 +2704,13 @@ func apply_save(save: SaveData) -> void:
 		attempt_augment_transcended = {}
 		attempt_binding_offer = []
 		attempt_binding_recasts = 0
+		attempt_augment_duos = {}
+		attempt_augment_facets = {}
+		attempt_augment_corruptions = {}
+		attempt_binding_burdened = false
+		attempt_vouchers = []
+		attempt_voucher_offer = []
+		attempt_voucher_segment = 0
 
 		run_inventory = null
 		run_bag = null
@@ -2367,6 +2748,7 @@ func write_save(save: SaveData) -> void:
 	save.meta_seen_manifestation_cards = []
 	for card_id in seen_manifestation_cards:
 		save.meta_seen_manifestation_cards.append(String(card_id))
+	save.meta_grimoire = grimoire_entries.duplicate()
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen
 	save.opening_response_id = String(opening_response_id)
@@ -2417,6 +2799,13 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_transcended = attempt_augment_transcended.duplicate(true)
 		save.attempt_binding_offer = attempt_binding_offer.duplicate(true)
 		save.attempt_binding_recasts = attempt_binding_recasts
+		save.attempt_augment_duos = attempt_augment_duos.duplicate(true)
+		save.attempt_augment_facets = attempt_augment_facets.duplicate(true)
+		save.attempt_augment_corruptions = attempt_augment_corruptions.duplicate(true)
+		save.attempt_binding_burdened = attempt_binding_burdened
+		save.attempt_vouchers = attempt_vouchers.duplicate()
+		save.attempt_voucher_offer = attempt_voucher_offer.duplicate()
+		save.attempt_voucher_segment = attempt_voucher_segment
 
 		# Attempt identity
 		save.attempt_race_id = selected_race_id
@@ -2479,6 +2868,13 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_transcended = {}
 		save.attempt_binding_offer = []
 		save.attempt_binding_recasts = 0
+		save.attempt_augment_duos = {}
+		save.attempt_augment_facets = {}
+		save.attempt_augment_corruptions = {}
+		save.attempt_binding_burdened = false
+		save.attempt_vouchers = []
+		save.attempt_voucher_offer = []
+		save.attempt_voucher_segment = 0
 
 		# Attempt identity reset
 		save.attempt_race_id = selected_race_id
@@ -2617,6 +3013,7 @@ func on_segment_completed(completed_segment: int) -> void:
 		pending_augment_pick = true
 		attempt_binding_offer.clear()
 		attempt_binding_recasts = 0
+		attempt_binding_burdened = false
 	var next_doctrine_stage := doctrine_stage_for_completed_segment(completed_segment)
 	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage) and doctrine_stage_has_plates(next_doctrine_stage):
 		pending_big_choice = true

@@ -40,6 +40,18 @@ func set_transcended(value: bool) -> void:
 	_retitle_for_transcendence()
 
 
+## The chosen Facet (Long Step or Deep Mark, AugmentFacets), or &"".
+## Applied from the captured bases in _apply_level_scaling_hb, so it never
+## compounds; Deep Mark's damage is read in mark_bonus().
+const AUGMENT_ID := &"augment_blink_hex"
+var _facet: StringName = &""
+
+
+func set_facet(facet: StringName) -> void:
+	_facet = facet
+	_apply_level_scaling_hb()
+
+
 ## The HUD plate takes the Transcended name; the authored title comes back
 ## if the flag ever clears (a new attempt rebuilds the node anyway).
 var _authored_title: String = ""
@@ -127,6 +139,8 @@ func _try_cast() -> void:
 	if transcended:
 		_tear_rift(origin)
 		_tear_rift(dest)
+	if Global.augment_duo_active(AugmentDuos.PHANTOM_STEP):
+		_phantom_step(dest)
 
 	# Apply mark to the next attack(s) of any style
 	_mark_left = mark_duration
@@ -150,9 +164,23 @@ func _try_cast() -> void:
 
 	_report_cd(true)
 
-## The mean payload a marked attack adds, before its d8 swing.
+## The mean payload a marked attack adds, before its d8 swing; Deep Mark
+## multiplies it.
 func mark_bonus() -> float:
-	return AugmentScaling.damage(player, bonus_d, _aug_level)
+	return AugmentScaling.damage(player, bonus_d, _aug_level) * AugmentFacets.value(AUGMENT_ID, _facet, "damage_mul", 1.0)
+
+
+## Phantom Step (the Blink Hex + Spirit Slash Duo): the equipped Spirit
+## Slash, found through the AugmentRunner, cuts around the landing point
+## for free. Returns how many it cut (0 without a Slash beside it).
+func _phantom_step(at: Vector2) -> int:
+	var runner := get_parent()
+	if runner == null or not runner.has_method("effect_for"):
+		return 0
+	var slash := runner.call("effect_for", &"augment_spirit_slash") as Node
+	if slash == null or not slash.has_method("phantom_cut"):
+		return 0
+	return int(slash.call("phantom_cut", at, int(AugmentDuos.value(AugmentDuos.PHANTOM_STEP, "targets", 3.0))))
 
 
 func _tear_rift(at: Vector2) -> void:
@@ -295,14 +323,16 @@ func _capture_level_bases_hb() -> void:
 	_base_bonus_flat = bonus_flat
 
 ## Damage grows through AugmentScaling.potency; reach, cadence, mark
-## window, marked attacks and dice grow with the capped count steps.
+## window, marked attacks and dice grow with the capped count steps. Long
+## Step's cooldown cut applies after the level floor, so it always pays.
 func _apply_level_scaling_hb() -> void:
 	_capture_level_bases_hb()
 	var t: int = AugmentScaling.count_steps(_aug_level)
-	blink_range = _base_blink_range * (1.0 + 0.08 * float(t))
-	active_base_cd = maxf(2.5, _base_active_base_cd * pow(0.92, float(t)))
+	blink_range = _base_blink_range * (1.0 + 0.08 * float(t)) * AugmentFacets.value(AUGMENT_ID, _facet, "range_mul", 1.0)
+	active_base_cd = maxf(2.5, _base_active_base_cd * pow(0.92, float(t))) * AugmentFacets.value(AUGMENT_ID, _facet, "cooldown_mul", 1.0)
 	mark_duration = _base_mark_duration + 0.75 * float(t)
-	marked_shots = maxi(1, _base_marked_shots + int(floor(float(t) / 2.0)) + (1 if transcended else 0))
+	var shots: int = _base_marked_shots + int(floor(float(t) / 2.0)) + (1 if transcended else 0)
+	marked_shots = maxi(1, shots + int(AugmentFacets.value(AUGMENT_ID, _facet, "extra_marks", 0.0)))
 	bonus_d8_count = maxi(1, _base_bonus_d8_count + int(floor(float(t) / 2.0)))
 	bonus_power_scale = _base_bonus_power_scale
 	bonus_flat = _base_bonus_flat

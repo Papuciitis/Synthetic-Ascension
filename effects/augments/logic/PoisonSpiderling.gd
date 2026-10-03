@@ -178,6 +178,21 @@ func _deal_bite(handle: int, target_position: Vector2) -> void:
 	# Credit the summoner: without a source, bites emit no damage_dealt
 	# (no lifesteal) and kills have no attribution, unlike detonations.
 	EnemyCombat.apply_damage(handle, dmg, 1, player, BalanceAttribution.provenance("augment:poison_spiderling", "augment:poison_spiderling:bite", "augment"))
+	_static_brood_leap(handle, target_position, dmg)
+
+
+## Static Brood (the Spiderlings + Tesla Aura Duo): the bite leaps to the
+## nearest other living enemy for the same damage and a short stun. A
+## spiderling lives in the scene, not under the AugmentRunner, so it asks
+## Global itself; the query runs only while the Duo is active.
+func _static_brood_leap(bitten: int, from: Vector2, dmg: float) -> void:
+	if not Global.augment_duo_active(AugmentDuos.STATIC_BROOD):
+		return
+	var leap := EnemyCombat.nearest_enemy(from, AugmentDuos.value(AugmentDuos.STATIC_BROOD, "range"), bitten)
+	if leap == EnemyWorldTypes.INVALID_HANDLE:
+		return
+	EnemyCombat.apply_damage(leap, dmg, 1, player, BalanceAttribution.provenance("augment:poison_spiderling", "augment:poison_spiderling:static_brood", "augment"))
+	EnemyCombat.apply_stun(leap, AugmentDuos.value(AugmentDuos.STATIC_BROOD, "stun"))
 
 
 func explode(dmg: float, radius: float, source: Node = null) -> void:

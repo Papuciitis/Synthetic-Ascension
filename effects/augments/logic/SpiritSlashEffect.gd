@@ -133,17 +133,20 @@ func _cut_all(targets: Array[int], struck: Dictionary) -> int:
 	return killed
 
 
-func _cut(handle: int) -> bool:
+func _cut(handle: int, part: String = "augment:spirit_slash:slash") -> bool:
 	var target_position := EnemyCombat.position_for_handle(handle)
-	var hit_dmg: float = _roll_hit_damage()
+	# The bleed reads the roll before the Facet's cut multiplier, so
+	# Hemorrhage's thinner cut does not thin its own bleed.
+	var rolled: float = _roll_hit_damage()
+	var hit_dmg: float = rolled * _facet_cut_mul(handle)
 	var is_crit: bool = (randf() < crit_chance)
 
-	EnemyCombat.apply_damage(handle, hit_dmg, 1, player, BalanceAttribution.provenance("augment:spirit_slash", "augment:spirit_slash:slash", "augment"))
+	EnemyCombat.apply_damage(handle, hit_dmg, 1, player, BalanceAttribution.provenance("augment:spirit_slash", part, "augment"))
 	var died := not EnemyWorld.is_valid_handle(handle) or EnemyWorld.is_dying(handle) or EnemyWorld.get_health(handle) <= 0.0
 
 	if not died:
 		var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
-		_apply_bleed(handle, stacks, hit_dmg)
+		_apply_bleed(handle, stacks, rolled)
 		if is_crit:
 			EnemyCombat.apply_stun(handle, crit_stun)
 			var direction: Vector2 = (target_position - player.global_position).normalized()
@@ -153,6 +156,31 @@ func _cut(handle: int) -> bool:
 
 	_spawn_vfx(target_position, is_crit)
 	return died
+
+
+## The Facet's multiplier on one cut: Hemorrhage's always, Executioner's
+## only against an enemy already under its health threshold.
+func _facet_cut_mul(handle: int) -> float:
+	var mul := AugmentFacets.value(AUGMENT_ID, _facet, "damage_mul", 1.0)
+	var threshold := AugmentFacets.value(AUGMENT_ID, _facet, "threshold", 0.0)
+	if threshold <= 0.0:
+		return mul
+	var max_health := EnemyWorld.get_max_health(handle)
+	return mul if max_health > 0.0 and EnemyWorld.get_health(handle) < threshold * max_health else 1.0
+
+
+## Phantom Step (the Blink Hex + Spirit Slash Duo): the Hex calls this where
+## a blink lands. It cuts the `count` enemies nearest `at` within the Duo's
+## range with an ordinary cut each, and touches neither the cooldown nor
+## Open Circuit's cross-lock: the free slash is the Duo's whole point.
+## Returns how many it cut.
+func phantom_cut(at: Vector2, count: int) -> int:
+	if player == null or not is_instance_valid(player) or count <= 0:
+		return 0
+	var targets := _pick_targets(at, AugmentDuos.value(AugmentDuos.PHANTOM_STEP, "range", 220.0), count, {})
+	for handle in targets:
+		_cut(handle, "augment:spirit_slash:phantom_step")
+	return targets.size()
 
 
 ## One target, or Thousand Cuts' 3 + 1 per 4 levels.
@@ -175,6 +203,19 @@ var _auto_retry: float = 0.0
 func set_transcended(value: bool) -> void:
 	transcended = value
 	_retitle_for_transcendence()
+
+
+## The chosen Facet (Hemorrhage or Executioner, AugmentFacets), or &"".
+## Hemorrhage's bleed is applied from the captured bases in
+## _apply_level_scaling_ss, so it never compounds; the cut multiplier is
+## read per cut because Executioner depends on the target.
+const AUGMENT_ID := &"augment_spirit_slash"
+var _facet: StringName = &""
+
+
+func set_facet(facet: StringName) -> void:
+	_facet = facet
+	_apply_level_scaling_ss()
 
 
 ## The HUD plate takes the Transcended name; the authored title comes back
@@ -237,6 +278,8 @@ var _base_power_scale_ss: float
 var _base_flat_bonus_ss: float
 var _base_crit_chance_ss: float
 var _base_bleed_max_ss: int
+var _base_bleed_duration_ss: float
+var _base_bleed_tick_mult_ss: float
 
 func _enter_tree() -> void:
 	_capture_level_bases_ss()
@@ -258,10 +301,14 @@ func _capture_level_bases_ss() -> void:
 	_base_flat_bonus_ss = flat_bonus
 	_base_crit_chance_ss = crit_chance
 	_base_bleed_max_ss = bleed_max_stacks
+	_base_bleed_duration_ss = bleed_duration
+	_base_bleed_tick_mult_ss = bleed_tick_mult_of_hit
 
 ## Damage grows through AugmentScaling.potency; reach, cadence, dice, crit
-## and bleed stacks grow with the capped count steps.
+## and bleed stacks grow with the capped count steps; Hemorrhage deepens
+## and lengthens the bleed.
 func _apply_level_scaling_ss() -> void:
+	_capture_level_bases_ss()
 	var t: int = AugmentScaling.count_steps(_aug_level)
 	range_px = _base_range_px_ss * (1.0 + 0.05 * float(t))
 	base_cd = maxf(1.4, _base_cd_ss * pow(0.94, float(t)))
@@ -270,6 +317,8 @@ func _apply_level_scaling_ss() -> void:
 	flat_bonus = _base_flat_bonus_ss
 	crit_chance = clampf(_base_crit_chance_ss + 0.02 * float(t), 0.0, 0.25)
 	bleed_max_stacks = maxi(bleed_min_stacks, _base_bleed_max_ss + int(floor(float(t) / 2.0)))
+	bleed_duration = _base_bleed_duration_ss * AugmentFacets.value(AUGMENT_ID, _facet, "bleed_duration_mul", 1.0)
+	bleed_tick_mult_of_hit = _base_bleed_tick_mult_ss * AugmentFacets.value(AUGMENT_ID, _facet, "bleed_mul", 1.0)
 
 	# Keep internal cooldown max in sync (important if level changes while running).
 	_cd_max = base_cd

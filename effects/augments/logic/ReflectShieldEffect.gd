@@ -52,9 +52,27 @@ var transcended: bool = false
 var _ward_t: float = 0.0
 
 
+## The augment this shield is, for its Facet numbers (AugmentFacets).
+const AUGMENT_ID := &"augment_reflect_shield"
+## The chosen Facet (Riposte or Long Guard), or &"" for none.
+var facet: StringName = &""
+
+
 func set_transcended(value: bool) -> void:
 	transcended = value
 	_retitle_for_transcendence()
+
+
+## A Facet re-derives the reflection, window and cooldown from the captured
+## bases, so it lands once however often the runner repeats its calls.
+func set_facet(value: StringName) -> void:
+	facet = value
+	_capture_level_bases_rs()
+	_apply_level_scaling_rs()
+
+
+func _facet_value(key: String, fallback: float) -> float:
+	return AugmentFacets.value(AUGMENT_ID, facet, key, fallback)
 
 
 ## The HUD plate takes the Transcended name; the authored title comes back
@@ -143,10 +161,19 @@ func _try_activate() -> void:
 	if _cd > 0.0:
 		return
 
-	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
+	# The window grants invulnerability, so the cooldown never ends inside
+	# it: uncapped levels, Long Guard and Open Circuit each shorten the
+	# cooldown or lengthen the window, and without this floor a pressed
+	# shield chained into unbroken invulnerability (from Lv.6 with Long
+	# Guard, Lv.8 without).
+	_cd_max = maxf(Global.doctrine_active_cooldown(active_base_cd), parry_window + PARRY_GAP)
 	_cd = _cd_max
 	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	_open_window()
+
+
+## The least time a pressed shield's cooldown outlasts its window.
+const PARRY_GAP := 0.1
 
 
 func _open_window() -> void:
@@ -320,7 +347,9 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 	_cd = min(_cd, perfect_cd_after)
 	_spawn_flash(vfx_perfect_flash_scene, pos)
 
-	var zap_dmg: float = perfect_zap_damage(reflected_dmg)
+	# Riposte strengthens the reflected round, not the zap: the zap reads the
+	# round as it would be without the Facet.
+	var zap_dmg: float = perfect_zap_damage(reflected_dmg / maxf(0.001, _facet_value("reflect_mul", 1.0)))
 	var handles: Array[int] = []
 	EnemyCombat.gather_in_radius(pos, perfect_zap_radius, handles)
 	handles.sort_custom(func(a: int, b: int) -> bool:
@@ -334,10 +363,40 @@ func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
 		if perfect_zap_stun > 0.0:
 			EnemyCombat.apply_stun(handle, perfect_zap_stun)
 
+	_bulwark_engine()
+
 	if debug_prints:
 		print("[ReflectShield] PERFECT! cd->", _cd, " zap_dmg=", zap_dmg)
 
 	_report_cd(true)
+
+var _bulwark_last_ms: int = -1000000
+
+
+## Bulwark Engine (the Shield + Stamina Core Duo): a perfect parry mends
+## the player and winds the Core's cooldown back. The Core is reached
+## through the AugmentRunner, so a shield outside one only heals.
+func _bulwark_engine() -> void:
+	if not Global.augment_duo_active(AugmentDuos.BULWARK_ENGINE):
+		return
+	# A perfect parry drops the shield to a 0.1 s cooldown, so a bullet
+	# stream could be parried ten times a second: the mend is rate-limited
+	# like Loaded Dice's recruit.
+	var now := Time.get_ticks_msec()
+	if now - _bulwark_last_ms < int(AugmentDuos.value(AugmentDuos.BULWARK_ENGINE, "gap_ms", 1000.0)):
+		return
+	_bulwark_last_ms = now
+	if player != null and is_instance_valid(player) and player.has_method("heal"):
+		var mend := _read_float(player, "max_hp", 0.0) * AugmentDuos.value(AugmentDuos.BULWARK_ENGINE, "heal_fraction")
+		if mend > 0.0:
+			player.call("heal", mend, &"augment:bulwark_engine")
+	var runner := get_parent()
+	if runner == null or not runner.has_method("effect_for"):
+		return
+	var core := runner.call("effect_for", &"augment_stamina_core") as Node
+	if core != null and is_instance_valid(core) and core.has_method("bulwark_refund"):
+		core.call("bulwark_refund", AugmentDuos.value(AugmentDuos.BULWARK_ENGINE, "cooldown_refund"))
+
 
 ## The perfect zap: the reflected round's share or the augment's D floor,
 ## whichever is larger, both grown by potency.
@@ -473,11 +532,13 @@ func _capture_level_bases_rs() -> void:
 
 ## The zap's damage grows through AugmentScaling.potency; windows, speeds
 ## and reach grow with the capped count steps, under their old ceilings.
+## The Facet multiplies after the ceilings, so Riposte is a true x1.5 and
+## Long Guard a true x1.6 even at a high level.
 func _apply_level_scaling_rs() -> void:
 	var t: int = AugmentScaling.count_steps(_aug_level)
-	active_base_cd = maxf(0.18, _base_active_base_cd_rs * pow(0.92, float(t)))
-	parry_window = clampf(_base_parry_window_rs + 0.02 * float(t), 0.05, 0.24)
-	reflect_damage_mult = clampf(_base_reflect_damage_mult_rs + 0.06 * float(t), 0.0, 1.25)
+	active_base_cd = maxf(0.18, _base_active_base_cd_rs * pow(0.92, float(t))) * _facet_value("cooldown_mul", 1.0)
+	parry_window = clampf(_base_parry_window_rs + 0.02 * float(t), 0.05, 0.24) * _facet_value("window_mul", 1.0)
+	reflect_damage_mult = clampf(_base_reflect_damage_mult_rs + 0.06 * float(t), 0.0, 1.25) * _facet_value("reflect_mul", 1.0)
 	reflect_speed_mult = clampf(_base_reflect_speed_mult_rs + 0.03 * float(t), 0.0, 1.35)
 	perfect_window = clampf(_base_perfect_window_rs + 0.01 * float(t), 0.01, 0.10)
 	perfect_zap_radius = _base_perfect_zap_radius_rs * (1.0 + 0.05 * float(t))

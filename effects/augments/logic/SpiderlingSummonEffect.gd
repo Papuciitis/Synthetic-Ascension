@@ -37,10 +37,33 @@ const BROOD_CHANCE := 0.3
 const BROOD_RANGE := 600.0
 var transcended: bool = false
 
+## The augment this summoner is, for its Facet numbers (AugmentFacets).
+const AUGMENT_ID := &"augment_summon_spiderlings"
+## The chosen Facet (Swarm or Venom Sacs), or &"" for none.
+var facet: StringName = &""
+
 
 func set_transcended(value: bool) -> void:
 	transcended = value
 	_retitle_for_transcendence()
+
+
+## A Facet re-derives the brood size and blast radius from the captured
+## bases, so it lands once however often the runner repeats its calls.
+func set_facet(value: StringName) -> void:
+	facet = value
+	_capture_level_bases_sp()
+	_apply_level_scaling_sp()
+
+
+func _facet_value(key: String, fallback: float) -> float:
+	return AugmentFacets.value(AUGMENT_ID, facet, key, fallback)
+
+
+## One bite's mean damage; Swarm thins it. Every hatch reads it, Brood
+## Mother's included, so a spiderling carries the Facet wherever it was born.
+func bite_damage() -> float:
+	return AugmentScaling.damage(player, bite_d, _aug_level) * _facet_value("bite_mul", 1.0)
 
 
 ## The HUD plate takes the Transcended name; the authored title comes back
@@ -123,7 +146,7 @@ func _hatch(at: Vector2) -> Node:
 	if s.has_method("setup"):
 		s.call("setup", player, spider_lifetime, bite_power_scale, _get_power())
 	if s.has_method("set_bite_damage"):
-		s.call("set_bite_damage", AugmentScaling.damage(player, bite_d, _aug_level))
+		s.call("set_bite_damage", bite_damage())
 	if transcended and s.has_method("set_expiry_blast"):
 		s.call("set_expiry_blast", _roll_explosion_damage(_get_power()), explosion_radius, player)
 	return s
@@ -206,8 +229,9 @@ func _get_power() -> float:
 		power = st.power
 	return power
 
+## Venom Sacs swells every detonation, pressed or Brood Mother's expiry.
 func _roll_explosion_damage(_power: float) -> float:
-	return AugmentScaling.damage(player, explosion_d, _aug_level) * AugmentScaling.dice_factor(explosion_d4_count, 4)
+	return AugmentScaling.damage(player, explosion_d, _aug_level) * AugmentScaling.dice_factor(explosion_d4_count, 4) * _facet_value("blast_mul", 1.0)
 
 func _report_cd(force: bool) -> void:
 	if not force and absf(_cd - _last_report) < 0.05:
@@ -304,14 +328,15 @@ func _capture_level_bases_sp() -> void:
 
 ## Damage grows through AugmentScaling.potency (read when a spider hatches
 ## or detonates); reach, cadence, brood size, lifetime and blast grow with
-## the capped count steps.
+## the capped count steps. The Facet rides on top: Swarm adds spiderlings,
+## Venom Sacs widens the blast.
 func _apply_level_scaling_sp() -> void:
 	var t: int = AugmentScaling.count_steps(_aug_level)
 	cast_range = _base_cast_range_sp * (1.0 + 0.05 * float(t))
 	cooldown = maxf(0.6, _base_cooldown_sp * pow(0.94, float(t)))
-	spawn_count = maxi(1, _base_spawn_count_sp + int(floor(float(t) / 2.0)))
+	spawn_count = maxi(1, _base_spawn_count_sp + int(floor(float(t) / 2.0))) + int(_facet_value("extra_spawn", 0.0))
 	spider_lifetime = _base_spider_lifetime_sp + 1.5 * float(t)
-	explosion_radius = _base_explosion_radius_sp + 10.0 * float(t)
+	explosion_radius = (_base_explosion_radius_sp + 10.0 * float(t)) * _facet_value("radius_mul", 1.0)
 	explosion_d4_count = maxi(1, _base_explosion_d4_sp + int(floor(float(t) / 2.0)))
 	explosion_power_scale = _base_explosion_power_scale_sp
 	bite_power_scale = _base_bite_power_scale_sp

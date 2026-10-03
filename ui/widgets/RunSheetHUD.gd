@@ -458,7 +458,9 @@ func _append_doctrine_record() -> void:
 	for local_event in _doctrine_events:
 		if not recorded_events.has(local_event):
 			recorded_events.append(local_event)
-	if stage_ids.is_empty() and recorded_events.is_empty():
+	# A run with no Doctrine yet can still carry the Binding's and the
+	# Reliquary's marks; those alone open the record.
+	if stage_ids.is_empty() and recorded_events.is_empty() and not _has_augment_rites():
 		return
 	_add_line("", Color(1, 1, 1, 0.4), 8)
 	_add_section_heading(manifestations_vbox, "DOCTRINE RECORD // INSCRIBED", ACCENT)
@@ -500,8 +502,70 @@ func _append_doctrine_record() -> void:
 	for augment_id in Global.permanent_augment_ids:
 		if augment_id != StringName() and Global.is_augment_transcended(augment_id):
 			_add_wrapped_line(manifestations_vbox, "TRANSCENDED // %s: %s" % [Global.augment_display_name(augment_id).to_upper(), AugmentScaling.transcend_rule(augment_id)], ACCENT, 10)
+	_append_augment_rites()
 	for event_label in recorded_events:
 		_add_target_line(manifestations_vbox, event_label, Color(0.86, 0.35, 0.22, 1), 11)
+
+
+## Whether the run holds any Transcendence, Duo, Facet, Corruption or
+## Voucher (duos-facets-and-the-reliquary), each of which the record names.
+func _has_augment_rites() -> bool:
+	if not Global.attempt_augment_duos.is_empty() or not Global.attempt_augment_facets.is_empty():
+		return true
+	if not Global.attempt_augment_corruptions.is_empty() or not Global.attempt_vouchers.is_empty():
+		return true
+	for augment_id in Global.permanent_augment_ids:
+		if augment_id != StringName() and Global.is_augment_transcended(augment_id):
+			return true
+	return false
+
+
+## The Binding's rule cards and the Reliquary's rites, each with its rule:
+## they change how an augment plays without a number on the Profile page to
+## show for it. A Duo taken but missing a member is named as dormant, so its
+## line does not vanish as if the pick were lost.
+func _append_augment_rites() -> void:
+	var muted := Color(1, 1, 1, 0.55)
+	for duo_id in AugmentDuos.ids():
+		if not Global.attempt_augment_duos.has(String(duo_id)):
+			continue
+		var duo_name := AugmentDuos.display_name(duo_id).to_upper()
+		if Global.augment_duo_active(duo_id):
+			_add_wrapped_line(manifestations_vbox, "DUO // %s: %s" % [duo_name, AugmentDuos.rule(duo_id)], ACCENT, 10)
+		else:
+			_add_wrapped_line(manifestations_vbox, "DUO // %s: dormant until both augments are equipped" % duo_name, muted, 10)
+	var faceted: Array = Global.attempt_augment_facets.keys()
+	faceted.sort()
+	for augment_key in faceted:
+		var augment_id := StringName(str(augment_key))
+		var facet_id := Global.augment_facet(augment_id)
+		if not AugmentFacets.is_option(augment_id, facet_id):
+			continue
+		_add_wrapped_line(manifestations_vbox, "FACET // %s: %s. %s" % [
+			Global.augment_display_name(augment_id).to_upper(),
+			AugmentFacets.display_name(augment_id, facet_id).to_upper(),
+			AugmentFacets.rule(augment_id, facet_id),
+		], ACCENT, 10)
+	var corrupted: Array = Global.attempt_augment_corruptions.keys()
+	corrupted.sort()
+	for augment_key in corrupted:
+		var augment_id := StringName(str(augment_key))
+		var outcome := Global.augment_corruption(augment_id)
+		if not AugmentRites.OUTCOME_NAMES.has(outcome):
+			continue
+		# Exalted is a gift; Scarred and Sundered are still being paid for.
+		var colour := ACCENT if outcome == AugmentRites.EXALTED else Color(0.86, 0.35, 0.22, 1)
+		_add_wrapped_line(manifestations_vbox, "CORRUPTED // %s: %s. %s" % [
+			Global.augment_display_name(augment_id).to_upper(),
+			String(AugmentRites.OUTCOME_NAMES[outcome]),
+			String(AugmentRites.OUTCOME_TEXT.get(outcome, "")),
+		], colour, 10)
+	for voucher_id in Global.attempt_vouchers:
+		var voucher := StringName(str(voucher_id))
+		var voucher_name := Vouchers.display_name(voucher)
+		if voucher_name == "":
+			continue
+		_add_wrapped_line(manifestations_vbox, "VOUCHER // %s: %s" % [voucher_name.to_upper(), Vouchers.text(voucher)], ACCENT, 10)
 
 
 ## "What am I?" - one behavioural sentence at the top of the sheet, composed
@@ -554,6 +618,10 @@ func _manifestation_state(player: Node) -> Dictionary:
 	# The Engine, Doctrine and Lens lines all read the augment level.
 	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
 	state["augment_transcended"] = Global.attempt_augment_transcended.duplicate(true) if Global != null else {}
+	state["augment_duos"] = Global.attempt_augment_duos.duplicate(true) if Global != null else {}
+	state["augment_facets"] = Global.attempt_augment_facets.duplicate(true) if Global != null else {}
+	state["augment_corruptions"] = Global.attempt_augment_corruptions.duplicate(true) if Global != null else {}
+	state["vouchers"] = Global.attempt_vouchers.duplicate() if Global != null else []
 	state["doctrine_stage_ids"] = Global.attempt_doctrine_stage_ids.duplicate(true) if Global != null else {}
 	state["doctrine_events"] = Global.attempt_doctrine_events.duplicate() if Global != null else _doctrine_events.duplicate()
 	state["max_hp_mul"] = Global.get_doctrine_rule(&"max_hp_mul", 1.0) if Global != null else 1.0

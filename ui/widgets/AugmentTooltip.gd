@@ -95,6 +95,8 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 				Global.augment_transcend_level(), AugmentScaling.transcended_name(a.id),
 				AugmentScaling.catalyst_text(a.id), " (held)" if Global.augment_catalyst_holds(a.id) else "",
 			])
+	if Global != null:
+		lines.append_array(rite_lines(a.id))
 	lines.append("")
 	var desc := a.description.strip_edges()
 	if desc == "":
@@ -126,6 +128,34 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 	custom_minimum_size = Vector2(TOOLTIP_WIDTH, 0.0)
 	size = Vector2(TOOLTIP_WIDTH, 1.0)
 	call_deferred("_finish_layout", ticket)
+
+## What the Binding and the Reliquary did to this augment
+## (duos-facets-and-the-reliquary): its Facet, its Corruption, and for each
+## Duo it belongs to either the live rule or the partner that would unlock it.
+func rite_lines(aug_id: StringName) -> Array[String]:
+	var out: Array[String] = []
+	var facet := Global.augment_facet(aug_id)
+	if AugmentFacets.is_option(aug_id, facet):
+		out.append("FACET: %s: %s" % [AugmentFacets.display_name(aug_id, facet), AugmentFacets.rule(aug_id, facet)])
+	var outcome := Global.augment_corruption(aug_id)
+	if AugmentRites.OUTCOME_NAMES.has(outcome):
+		out.append("CORRUPTED: %s: %s" % [String(AugmentRites.OUTCOME_NAMES[outcome]), String(AugmentRites.OUTCOME_TEXT.get(outcome, ""))])
+	for duo_id in AugmentDuos.ids():
+		var pair := AugmentDuos.members(duo_id)
+		if not pair.has(aug_id):
+			continue
+		if Global.augment_duo_active(duo_id):
+			out.append("DUO ACTIVE: %s: %s" % [AugmentDuos.display_name(duo_id), AugmentDuos.rule(duo_id)])
+			continue
+		var others := PackedStringArray()
+		for member in pair:
+			if StringName(member) != aug_id:
+				others.append(Global.augment_display_name(member))
+		# The Grimoire hides an undiscovered Duo's name; so does the tooltip.
+		var duo_name := AugmentDuos.display_name(duo_id) if Global.grimoire_has(Grimoire.duo_key(duo_id)) else "an undiscovered Duo"
+		out.append("Pairs with %s for %s." % [" + ".join(others), duo_name])
+	return out
+
 
 func _constrain_body_width() -> void:
 	if body_label == null:

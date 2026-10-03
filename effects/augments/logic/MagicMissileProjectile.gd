@@ -168,9 +168,12 @@ func _physics_process(dt: float) -> void:
 		and enemy_hit_t >= 0.0
 		and (world_hit_t < 0.0 or enemy_hit_t <= world_hit_t)
 	):
+		var struck_at := EnemyCombat.position_for_handle(hit_handle)
 		EnemyCombat.apply_damage(hit_handle, damage, 1, source, BalanceAttribution.provenance("augment:magic_missile", "augment:magic_missile:missile", "augment"))
 		if split_count > 0:
 			_split(hit_handle, global_position)
+		if Global.augment_duo_active(AugmentDuos.LIGHTNING_RODS):
+			_lightning_rods(hit_handle, struck_at)
 		_despawn()
 		return
 	if world_hit_t >= 0.0:
@@ -212,6 +215,39 @@ func _split(struck: int, at: Vector2) -> void:
 			shard_2d.call("setup_handle", nearby[i], damage * split_mul, dir, source)
 		if shard_2d.has_method("set_split"):
 			shard_2d.call("set_split", 0, null, split_mul)
+
+
+## Lightning Rods (the Magic Missile + Tesla Aura Duo): every hit, a Choir
+## shard's too, arcs to the nearest other living enemies around the struck
+## one for a share of this missile's damage. The query runs only on a hit
+## while the Duo is active, so an ordinary missile pays nothing for it.
+const ROD_ARC_SCENE := preload("res://assets/vfx/world/augments/VFX_TeslaArc2D.tscn")
+const ROD_ARC_DURATION := 0.10
+
+
+func _lightning_rods(struck: int, at: Vector2) -> void:
+	var duo := AugmentDuos.LIGHTNING_RODS
+	var arcs := int(AugmentDuos.value(duo, "arcs", 2.0))
+	if arcs <= 0 or not is_inside_tree():
+		return
+	var nearby: Array[int] = []
+	EnemyCombat.gather_in_radius(at, AugmentDuos.value(duo, "range", 170.0), nearby, struck)
+	nearby.sort_custom(func(a: int, b: int) -> bool:
+		return at.distance_squared_to(EnemyCombat.position_for_handle(a)) < at.distance_squared_to(EnemyCombat.position_for_handle(b)))
+	var amount := damage * AugmentDuos.value(duo, "damage_mul", 0.6)
+	for i in range(mini(arcs, nearby.size())):
+		var arc_at := EnemyCombat.position_for_handle(nearby[i])
+		EnemyCombat.apply_damage(nearby[i], amount, 1, source, BalanceAttribution.provenance("augment:magic_missile", "augment:magic_missile:lightning_rod", "augment"))
+		_spawn_rod_arc(at, arc_at)
+
+
+func _spawn_rod_arc(a: Vector2, b: Vector2) -> void:
+	var arc := ROD_ARC_SCENE.instantiate() as Node2D
+	if arc == null:
+		return
+	get_tree().current_scene.add_child(arc)
+	if arc.has_method("setup_positions"):
+		arc.call("setup_positions", a, b, ROD_ARC_DURATION)
 
 
 func _hits_world(from_pos: Vector2, to_pos: Vector2) -> bool:

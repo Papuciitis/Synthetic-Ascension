@@ -218,6 +218,7 @@ func _ready() -> void:
 	btn_inventory.pressed.connect(_open_inventory)
 	_create_ascension_button()
 	_create_imprint_button()
+	_create_reliquary_button()
 
 
 	btn_clear_cart.pressed.connect(_clear_selection)
@@ -1824,6 +1825,48 @@ func _open_imprints() -> void:
 	)
 
 
+var _btn_reliquary: Button = null
+var _reliquary_screen: CanvasLayer = null
+const RELIQUARY_SCREEN := preload("res://ui/screens/ReliquaryScreen.gd")
+
+
+## The Reliquary (docs/design/2026-10-03-duos-facets-and-the-reliquary.md
+## §4): Corruption, Transfusion, Vouchers and the Grimoire, beside Imprints.
+func _create_reliquary_button() -> void:
+	if _btn_reliquary != null or btn_augments == null:
+		return
+	_btn_reliquary = Button.new()
+	_btn_reliquary.name = "Reliquary"
+	_btn_reliquary.text = "Reliquary"
+	_btn_reliquary.tooltip_text = "Corrupt, transfuse, buy Vouchers, read the Grimoire."
+	var anchor: Node = _btn_imprints if _btn_imprints != null else (_btn_ascension if _btn_ascension != null else btn_augments)
+	anchor.get_parent().add_child(_btn_reliquary)
+	anchor.get_parent().move_child(_btn_reliquary, anchor.get_index() + 1)
+	_btn_reliquary.pressed.connect(_open_reliquary)
+
+
+func _open_reliquary() -> void:
+	if _reliquary_screen != null and is_instance_valid(_reliquary_screen):
+		return
+	var screen := RELIQUARY_SCREEN.new() as CanvasLayer
+	add_child(screen)
+	_reliquary_screen = screen
+	if _btn_reliquary != null:
+		_btn_reliquary.disabled = true
+	# Transfusion and Vouchers spend Followers, so the last trade's undo
+	# would restore a wallet that no longer matches; reading the Grimoire or
+	# corrupting (which spends nothing) leaves the undo standing.
+	var wallet_before := int(Global.followers) if Global != null else 0
+	screen.closed.connect(func() -> void:
+		_reliquary_screen = null
+		if _btn_reliquary != null:
+			_btn_reliquary.disabled = false
+		if Global != null and int(Global.followers) != wallet_before:
+			_invalidate_trade_undo("UNDO CLEARED · Followers spent in the Reliquary.")
+		_refresh_info()
+	)
+
+
 func _create_ascension_button() -> void:
 	if _btn_ascension != null or btn_augments == null:
 		return
@@ -2071,7 +2114,7 @@ func _show_idle_hover() -> void:
 
 ## Buttons and labels the controller builds after the first frame.
 func _style_code_built_controls() -> void:
-	for b: Button in [_btn_ascension, _btn_imprints]:
+	for b: Button in [_btn_ascension, _btn_imprints, _btn_reliquary]:
 		if b != null and not b.has_meta(&"exchange_styled"):
 			b.set_meta(&"exchange_styled", true)
 			ExchangeStyle.style_button(b, ExchangeStyle.Btn.NAV, 15)

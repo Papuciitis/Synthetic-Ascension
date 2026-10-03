@@ -1,9 +1,11 @@
 extends CanvasLayer
 ## The Binding (docs/design/2026-10-03-bindings-and-theses.md §3): the
 ## augment pick after every segment. The cards are Global's persisted offer -
-## NEW, RANK UP, SWAP or TRANSCEND, each graded Etched to Apocryphal - with a
-## Recast (pay Followers for a new deal) and an Abstain (take Followers
-## instead) from the second Binding on. A SWAP asks which seal to unbind.
+## NEW, RANK UP, SWAP or TRANSCEND, each graded Etched to Apocryphal, and the
+## ungraded DUO and FACET rule cards (duos-facets-and-the-reliquary §1-2) -
+## with a Recast (pay Followers for a new deal), an Abstain (take Followers
+## instead) and a Burden (every grade up, for a curse) from the second Binding
+## on. A SWAP asks which seal to unbind, a FACET which of its two Facets.
 ## Opened with nothing pending (screenshot probes, tests) it deals a preview
 ## and a pick applies directly.
 
@@ -34,15 +36,21 @@ var _tip_flavor: Label = null
 var _tip_numbers: Label = null
 var _tip_tw: Tween = null
 
-# Recast / Abstain and the SWAP slot chooser, built in code under the cards.
+# Recast / Abstain / Burden and the SWAP and FACET choosers, built in code
+# under the cards.
 var _subtitle: Label = null
 var _footer: HBoxContainer = null
 var _recast_button: Button = null
 var _abstain_button: Button = null
 var _abstain_armed: bool = false
+var _burden_button: Button = null
+var _burden_armed: bool = false
+var _status_label: Label = null
 var _wallet_label: Label = null
 var _slot_row: VBoxContainer = null
 var _pending_swap: Dictionary = {}
+var _facet_row: VBoxContainer = null
+var _pending_facet: Dictionary = {}
 
 
 func _ready() -> void:
@@ -118,7 +126,9 @@ func current_offer() -> Array:
 
 func _deal() -> void:
 	_close_slot_chooser()
+	_close_facet_chooser()
 	_abstain_armed = false
+	_burden_armed = false
 	_spawn_cards(current_offer())
 	_refresh_binding_ui()
 
@@ -134,7 +144,8 @@ func _spawn_cards(list: Array) -> void:
 
 	for entry_variant in list:
 		var entry: Dictionary = entry_variant
-		var a := Global.augment_db.get(StringName(str(entry.get("id", ""))), null) as AugmentData
+		# A Duo card's id is the Duo's; it wears its first member's art.
+		var a := Global.augment_db.get(AugmentBinding.display_augment_id(entry), null) as AugmentData
 		if a == null:
 			continue
 		var card := card_scene.instantiate()
@@ -189,16 +200,28 @@ static func _entry_of(card_node: Control) -> Dictionary:
 func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 	if _locked:
 		return
+	# Taking a card is a new intent: an armed Abstain or Burden stands down,
+	# so a stray footer click after a chooser cannot throw the pick away.
+	if _abstain_armed or _burden_armed:
+		_abstain_armed = false
+		_burden_armed = false
+		_refresh_binding_ui()
+	# A card that opened the other chooser lets go of its picked look.
+	_release_pending_except(card_node)
 	var entry := _entry_of(card_node)
 	if AugmentBinding.needs_slot_choice(entry):
 		_open_slot_chooser(a, card_node, entry)
+		return
+	if AugmentBinding.needs_facet_choice(entry):
+		_open_facet_chooser(a, card_node, entry)
 		return
 	await _commit(a, card_node, entry, -1)
 
 
 ## Applies the pick: through the Binding when one is pending, directly
 ## otherwise (a preview, or a caller handing an augment with no card).
-func _commit(a: AugmentData, card_node: Control, entry: Dictionary, swap_slot: int) -> void:
+## `facet` is the Facet a FACET card chose.
+func _commit(a: AugmentData, card_node: Control, entry: Dictionary, swap_slot: int, facet: StringName = &"") -> void:
 	_set_cards_locked(true)
 
 	if OS.is_debug_build():
@@ -217,17 +240,30 @@ func _commit(a: AugmentData, card_node: Control, entry: Dictionary, swap_slot: i
 
 	var applied := false
 	if not entry.is_empty() and Global.pending_augment_pick:
-		applied = Global.apply_binding_card(entry, swap_slot)
+		applied = Global.apply_binding_card(entry, swap_slot, facet)
 	if not applied:
-		_apply_direct(a, entry, swap_slot)
+		_apply_direct(a, entry, swap_slot, facet)
 	augment_chosen.emit(a)
 	_close()
 
 
 ## The pick without a pending Binding: a slotted augment rises by the card's
 ## grade in place, anything else is slotted at its stored level plus the
-## grade (Etched keeps it).
-func _apply_direct(a: AugmentData, entry: Dictionary, swap_slot: int) -> void:
+## grade (Etched keeps it). A DUO or FACET card adds no level; it only records
+## its rule, and a Facet once per augment, as the Binding would.
+func _apply_direct(a: AugmentData, entry: Dictionary, swap_slot: int, facet: StringName = &"") -> void:
+	match String(entry.get("kind", "")):
+		AugmentBinding.KIND_DUO:
+			var duo_id := StringName(str(entry.get("id", "")))
+			if AugmentDuos.is_duo(duo_id):
+				Global.attempt_augment_duos[String(duo_id)] = true
+				Global.permanent_augments_changed.emit(Global.permanent_augment_ids)
+			return
+		AugmentBinding.KIND_FACET:
+			if AugmentFacets.is_option(a.id, facet) and not Global.attempt_augment_facets.has(String(a.id)):
+				Global.attempt_augment_facets[String(a.id)] = String(facet)
+				Global.permanent_augments_changed.emit(Global.permanent_augment_ids)
+			return
 	var owned_slot: int = Global.permanent_augment_ids.find(a.id)
 	var grade := int(entry.get("grade", 0))
 	var current := Global.get_augment_level(a.id)
@@ -244,6 +280,8 @@ func _apply_direct(a: AugmentData, entry: Dictionary, swap_slot: int) -> void:
 func _close() -> void:
 	_hide_tooltip()
 	_close_slot_chooser()
+	_close_facet_chooser()
+	_show_status("")
 
 	_is_open = false
 	_locked = false
@@ -255,7 +293,7 @@ func _close() -> void:
 
 
 # ----------------------------
-# Recast, Abstain, the SWAP chooser
+# Recast, Abstain, Burden, the SWAP and FACET choosers
 # ----------------------------
 
 func _ensure_binding_ui() -> void:
@@ -272,6 +310,24 @@ func _ensure_binding_ui() -> void:
 	_slot_row.add_theme_constant_override("separation", 10)
 	_slot_row.visible = false
 	vbox.add_child(_slot_row)
+
+	_facet_row = VBoxContainer.new()
+	_facet_row.name = "FacetChooser"
+	_facet_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_facet_row.add_theme_constant_override("separation", 10)
+	_facet_row.visible = false
+	vbox.add_child(_facet_row)
+
+	# What a Burden bound, said once under the cards it raised.
+	_status_label = Label.new()
+	_status_label.name = "BindingStatus"
+	_status_label.theme = ARCANE_THEME
+	_status_label.theme_type_variation = &"ArcaneCaption"
+	_status_label.add_theme_font_size_override("font_size", 14)
+	_status_label.add_theme_color_override("font_color", OverlayKit.CURSE)
+	_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_status_label.visible = false
+	vbox.add_child(_status_label)
 
 	_footer = HBoxContainer.new()
 	_footer.name = "BindingFooter"
@@ -305,6 +361,15 @@ func _ensure_binding_ui() -> void:
 	_abstain_button.focus_mode = Control.FOCUS_NONE
 	_abstain_button.pressed.connect(_on_abstain_pressed)
 	_footer.add_child(_abstain_button)
+
+	_burden_button = Button.new()
+	_burden_button.name = "Burden"
+	_burden_button.theme = ARCANE_THEME
+	_burden_button.theme_type_variation = &"ArcaneDangerButton"
+	_burden_button.custom_minimum_size = Vector2(250, 42)
+	_burden_button.focus_mode = Control.FOCUS_NONE
+	_burden_button.pressed.connect(_on_burden_pressed)
+	_footer.add_child(_burden_button)
 	_refresh_binding_ui()
 
 
@@ -318,6 +383,8 @@ func _refresh_binding_ui() -> void:
 		return
 	var trading := Global.pending_augment_pick and Global.binding_can_trade()
 	_footer.visible = trading
+	if _burden_button != null:
+		_burden_button.visible = trading
 	if not trading:
 		return
 	var cost := Global.binding_recast_cost()
@@ -329,6 +396,16 @@ func _refresh_binding_ui() -> void:
 	else:
 		_abstain_button.text = "ABSTAIN  ·  +%d FOLLOWERS" % reward
 	_abstain_button.disabled = _locked
+	if _burden_armed:
+		var waived := Global.has_voucher(Vouchers.BURDEN_WRIT)
+		_burden_button.text = "CONFIRM  ·  A CURSE" if waived else "CONFIRM  ·  A CURSE AND +%d THREAT" % roundi(AugmentRites.BURDEN_THREAT)
+	else:
+		_burden_button.text = "BURDEN  ·  RAISE EVERY GRADE"
+	_burden_button.disabled = _locked or not Global.binding_burden_available()
+	if _burden_button.disabled:
+		_burden_button.tooltip_text = "Once per Binding, while a card can still rise a grade."
+	else:
+		_burden_button.tooltip_text = "Every graded card rises one grade. A cursed relic is bound into your bag%s." % ("" if Global.has_voucher(Vouchers.BURDEN_WRIT) else " and the district hunts you")
 	_wallet_label.text = "%d FOLLOWERS" % Global.followers
 
 
@@ -345,6 +422,7 @@ func _on_abstain_pressed() -> void:
 		return
 	if not _abstain_armed:
 		_abstain_armed = true
+		_burden_armed = false
 		_refresh_binding_ui()
 		return
 	if Global.binding_abstain() < 0:
@@ -354,10 +432,54 @@ func _on_abstain_pressed() -> void:
 	_close()
 
 
+## Two presses, as Abstain: the second binds the curse. The table is dealt
+## again from the raised offer so every new grade shows on its card.
+func _on_burden_pressed() -> void:
+	if _locked or not Global.binding_burden_available():
+		return
+	if not _burden_armed:
+		_burden_armed = true
+		_abstain_armed = false
+		_refresh_binding_ui()
+		return
+	_burden_armed = false
+	var result: Dictionary = Global.binding_burden()
+	if not bool(result.get("ok", false)):
+		_refresh_binding_ui()
+		return
+	_hide_tooltip()
+	_close_slot_chooser()
+	_close_facet_chooser()
+	_spawn_cards(current_offer())
+	_show_status(burden_status_text(result))
+	_refresh_binding_ui()
+
+
+## "BURDENED · CURSE OF X BOUND INTO YOUR BAG · +20 THREAT THIS SEGMENT".
+func burden_status_text(result: Dictionary) -> String:
+	var parts := PackedStringArray(["BURDENED"])
+	var relic := String(result.get("relic", ""))
+	if relic != "":
+		var item := Global.item_db.get(relic, null) as ItemData
+		parts.append("%s BOUND INTO YOUR BAG" % (item.display_name if item != null else relic).to_upper())
+	var threat := float(result.get("threat", 0.0))
+	if threat > 0.0:
+		parts.append("+%d THREAT THIS SEGMENT" % roundi(threat))
+	return "  ·  ".join(parts)
+
+
+func _show_status(message: String) -> void:
+	if _status_label == null:
+		return
+	_status_label.text = message
+	_status_label.visible = message != ""
+
+
 func _open_slot_chooser(a: AugmentData, card_node: Control, entry: Dictionary) -> void:
 	if _slot_row == null:
 		return
 	_close_slot_chooser()
+	_close_facet_chooser()
 	_pending_swap = {"augment": a, "card": card_node, "entry": entry}
 	var heading := Label.new()
 	heading.theme = ARCANE_THEME
@@ -389,9 +511,29 @@ func _open_slot_chooser(a: AugmentData, card_node: Control, entry: Dictionary) -
 	back.custom_minimum_size = Vector2(120, 42)
 	back.focus_mode = Control.FOCUS_NONE
 	back.text = "BACK"
-	back.pressed.connect(_close_slot_chooser)
+	back.pressed.connect(_back_out_of_chooser)
 	row.add_child(back)
 	_slot_row.visible = true
+
+
+## BACK in either chooser: the card that opened it lets go of its picked
+## look before the chooser closes. Not done inside the close functions,
+## which also run just before a chosen card is committed.
+func _back_out_of_chooser() -> void:
+	_release_pending_except(null)
+	_close_slot_chooser()
+	_close_facet_chooser()
+
+
+## Releases the picked look of whichever card opened a chooser, unless it
+## is `keep` (the card being taken now).
+func _release_pending_except(keep: Control) -> void:
+	for pending in [_pending_swap, _pending_facet]:
+		var card: Variant = (pending as Dictionary).get("card", null)
+		if card == keep:
+			continue
+		if card is Object and is_instance_valid(card) and (card as Object).has_method("release_pick"):
+			(card as Object).call("release_pick")
 
 
 func _close_slot_chooser() -> void:
@@ -410,6 +552,69 @@ func _on_swap_slot_chosen(slot: int) -> void:
 	var swap := _pending_swap
 	_close_slot_chooser()
 	await _commit(swap["augment"], swap["card"], swap["entry"], slot)
+
+
+## The FACET card's question, laid out as the SWAP chooser: one button per
+## Facet (its name over its rule) and BACK. A Facet the Grimoire has never
+## recorded says NEW, as the card did.
+func _open_facet_chooser(a: AugmentData, card_node: Control, entry: Dictionary) -> void:
+	if _facet_row == null:
+		return
+	_close_slot_chooser()
+	_close_facet_chooser()
+	_pending_facet = {"augment": a, "card": card_node, "entry": entry}
+	var heading := Label.new()
+	heading.theme = ARCANE_THEME
+	heading.theme_type_variation = &"ArcaneCaption"
+	heading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	heading.text = "WHICH FACET FOR %s?  ONE PER AUGMENT, FOR THE RUN." % Global.augment_display_name(a.id).to_upper()
+	_facet_row.add_child(heading)
+	var row := HBoxContainer.new()
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.add_theme_constant_override("separation", 16)
+	_facet_row.add_child(row)
+	for option in AugmentFacets.options(a.id):
+		var facet_id := StringName(option["id"])
+		var button := Button.new()
+		button.name = "Facet_%s" % String(facet_id)
+		button.theme = ARCANE_THEME
+		button.theme_type_variation = &"ArcaneSmallButton"
+		button.custom_minimum_size = Vector2(340, 64)
+		button.focus_mode = Control.FOCUS_NONE
+		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var fresh := not Global.grimoire_has(Grimoire.facet_key(a.id, facet_id))
+		button.text = "%s%s\n%s" % [String(option["name"]).to_upper(), "  ·  NEW" if fresh else "", String(option["rule"])]
+		button.set_meta(&"facet_id", facet_id)
+		button.pressed.connect(_on_facet_chosen.bind(facet_id))
+		row.add_child(button)
+	var back := Button.new()
+	back.name = "Back"
+	back.theme = ARCANE_THEME
+	back.theme_type_variation = &"ArcaneSmallButton"
+	back.custom_minimum_size = Vector2(120, 64)
+	back.focus_mode = Control.FOCUS_NONE
+	back.text = "BACK"
+	back.pressed.connect(_back_out_of_chooser)
+	row.add_child(back)
+	_facet_row.visible = true
+
+
+func _close_facet_chooser() -> void:
+	_pending_facet = {}
+	if _facet_row == null:
+		return
+	for child in _facet_row.get_children():
+		_facet_row.remove_child(child)
+		child.queue_free()
+	_facet_row.visible = false
+
+
+func _on_facet_chosen(facet_id: StringName) -> void:
+	if _pending_facet.is_empty() or _locked:
+		return
+	var pick := _pending_facet
+	_close_facet_chooser()
+	await _commit(pick["augment"], pick["card"], pick["entry"], -1, facet_id)
 
 func _play_open_fade() -> void:
 	if overlay == null or center == null:
@@ -516,11 +721,18 @@ func _on_card_hovered(a: AugmentData, card_node: Control) -> void:
 	_tip_panel.custom_minimum_size = Vector2(360, 0)
 	_tip_panel.size = Vector2(360, 0)
 
-	var transcend := String(entry.get("kind", "")) == AugmentBinding.KIND_TRANSCEND
-	_tip_title.text = AugmentScaling.transcended_name(a.id) if transcend else Global.augment_display_name(a.id)
+	var kind := String(entry.get("kind", ""))
 	var flavor := a.description.strip_edges()
 	if flavor == "":
 		flavor = a.card_blurb.strip_edges()
+	if kind == AugmentBinding.KIND_TRANSCEND:
+		_tip_title.text = AugmentScaling.transcended_name(a.id)
+	elif kind == AugmentBinding.KIND_DUO:
+		# The Duo is the subject, not the member whose art the card wears.
+		_tip_title.text = AugmentDuos.display_name(StringName(str(entry.get("id", ""))))
+		flavor = "A Duo of %s." % _duo_pair_text(StringName(str(entry.get("id", ""))))
+	else:
+		_tip_title.text = Global.augment_display_name(a.id)
 	_tip_flavor.text = flavor
 	_tip_numbers.text = _build_numbers_text(a, entry)
 
@@ -563,6 +775,22 @@ func _on_card_unhovered(_card_node: Control) -> void:
 
 func _build_numbers_text(a: AugmentData, entry: Dictionary = {}) -> String:
 	var lines: Array[String] = []
+
+	# The rule cards change rules, not levels: their hover is the rule itself,
+	# with none of the level-scaled numbers below.
+	match String(entry.get("kind", "")):
+		AugmentBinding.KIND_DUO:
+			var duo_id := StringName(str(entry.get("id", "")))
+			lines.append("DUO  ·  %s" % _duo_pair_text(duo_id))
+			lines.append(AugmentDuos.rule(duo_id))
+			lines.append("Acts while both stay equipped. Adds no level.")
+			return "\n\n".join(lines)
+		AugmentBinding.KIND_FACET:
+			lines.append("FACET  ·  Lv.%d  ·  choose one of two; adds no level" % Global.get_augment_level(a.id))
+			for option in AugmentFacets.options(a.id):
+				lines.append("%s: %s" % [String(option["name"]), String(option["rule"])])
+			lines.append("One Facet per augment per run; it stays with %s if you swap it out." % Global.augment_display_name(a.id))
+			return "\n\n".join(lines)
 
 	if not entry.is_empty():
 		var current: int = Global.get_augment_level(a.id) if Global != null else 1
@@ -609,6 +837,14 @@ func _build_numbers_text(a: AugmentData, entry: Dictionary = {}) -> String:
 	if lines.size() == 0:
 		return "(No numeric details yet)"
 	return "\n\n".join(lines)
+
+## "Magic Missile + Tesla Aura", in the names every surface shows.
+func _duo_pair_text(duo_id: StringName) -> String:
+	var names := PackedStringArray()
+	for member in AugmentDuos.members(duo_id):
+		names.append(Global.augment_display_name(member))
+	return " + ".join(names)
+
 
 ## The level this card gives - the one the stat pass applies after the pick,
 ## Global.get_augment_level, which slotting never touches: a slotted augment

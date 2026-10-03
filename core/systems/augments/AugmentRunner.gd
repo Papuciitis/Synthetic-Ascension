@@ -32,6 +32,7 @@ func refresh() -> void:
 				"scn": scn, "slot": i, "aug_id": aug_id,
 				"level": Global.get_augment_level(aug_id) if Global.has_method("get_augment_level") else 1,
 				"transcended": Global.is_augment_transcended(aug_id) if Global.has_method("is_augment_transcended") else false,
+				"facet": Global.augment_facet(aug_id) if Global.has_method("augment_facet") else &"",
 			}
 
 	_sync(wanted)
@@ -86,6 +87,13 @@ func _sync(wanted: Dictionary) -> void:
 			if inst_u.has_method("set_transcended"):
 				inst_u.call("set_transcended", turned_u)
 
+		# A Facet is chosen mid-run (a Binding's FACET card).
+		var facet_u: StringName = StringName(str(entry_u.get("facet", "")))
+		if StringName(str(inst_u.get_meta("augment_facet", ""))) != facet_u:
+			inst_u.set_meta("augment_facet", facet_u)
+			if inst_u.has_method("set_facet"):
+				inst_u.call("set_facet", facet_u)
+
 	# add new
 	for k3 in wanted.keys():
 		if _active.has(k3):
@@ -103,9 +111,11 @@ func _sync(wanted: Dictionary) -> void:
 		var aug_id: StringName = entry.get("aug_id", StringName())
 		var level: int = int(entry.get("level", 1))
 		var turned: bool = bool(entry.get("transcended", false))
+		var facet: StringName = StringName(str(entry.get("facet", "")))
 		inst.set_meta("augment_id", aug_id)
 		inst.set_meta("augment_level", level)
 		inst.set_meta("augment_transcended", turned)
+		inst.set_meta("augment_facet", facet)
 		inst.set_meta("hud_slot_index", slot_idx)
 
 		add_child(inst)
@@ -118,6 +128,8 @@ func _sync(wanted: Dictionary) -> void:
 			inst.call("set_level", level)
 		if inst.has_method("set_transcended"):
 			inst.call("set_transcended", turned)
+		if inst.has_method("set_facet"):
+			inst.call("set_facet", facet)
 
 		# OPTIONAL: auto-map keys/actions if you add these InputMap actions
 		var action := "augment_active_%d" % (slot_idx + 1)
@@ -148,6 +160,15 @@ func get_power_multiplier() -> float:
 
 func get_children_effects() -> Array:
 	return get_children()
+
+
+## The live effect node of an equipped augment, or null: Duos reach their
+## partner through this (Phantom Step's blink asks the Spirit Slash to cut).
+func effect_for(aug_id: StringName) -> Node:
+	for n in get_children():
+		if is_instance_valid(n) and StringName(str(n.get_meta("augment_id", ""))) == aug_id:
+			return n
+	return null
 
 
 # ---------------------------------------------------------------- Mass Conversion
