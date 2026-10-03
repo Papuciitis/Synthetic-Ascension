@@ -87,6 +87,9 @@ func _run() -> void:
 	var slot := grid.get_slot_control(lot)
 	slot.mouse_entered.emit()
 	_check(tip.visible, "hovering a lot shows the tooltip")
+	# The stock is rolled fresh each run, and a lot with a long name or meta
+	# line lays out wider than 360; its own first width is the reference.
+	var lot_width := tip.size.x
 	if not shop.has_method("_tooltip_pos_for_mouse"):
 		_check(false, "the Exchange places its tooltip through _tooltip_pos_for_mouse")
 		shop.queue_free()
@@ -142,7 +145,7 @@ func _run() -> void:
 	_check(tip.size.x > 360.0 and tip.size.y <= limit, "the long dossier widens to fit the screen (%s)" % tip.size)
 	tip.show_item(vendor.slots[lot])
 	await _frames(1)
-	_check(is_equal_approx(tip.size.x, 360.0), "the next dossier is back at the normal width (%.0f)" % tip.size.x)
+	_check(is_equal_approx(tip.size.x, lot_width), "the next dossier is back at its own width (%.0f, %.0f when first shown)" % [tip.size.x, lot_width])
 	_check(tip.size.y <= limit, "and fits the screen (%.0f)" % tip.size.y)
 	# A long name widens the panel; the next dossier is still measured at the
 	# width it is laid out at, not that one, or it grows after the hover frame.
