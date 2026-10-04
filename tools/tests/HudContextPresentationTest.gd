@@ -102,6 +102,32 @@ func _run() -> void:
 	_check(_gate_rows.visible, "changed Exit Rite requirements briefly show the checklist")
 	await _capture_if_requested("hud_context_expanded.png")
 
+	# FPS audit 2026-10-04: rows are updated in place, and their marks are
+	# glyphs the HUD font carries (a missing glyph sends every fresh Label to
+	# a system-font search: 32-34 ms per five-row rebuild).
+	var first_rows := _gate_rows.get_children()
+	_check(first_rows.size() == 2, "one row per requirement")
+	var done_row := first_rows[0] as Label
+	var pending_row := first_rows[1] as Label
+	_check(done_row != null and done_row.text.begins_with("◆ "), "a done requirement reads with a filled mark")
+	_check(pending_row != null and pending_row.text.begins_with("◇ "), "a pending requirement reads with a hollow mark")
+	if done_row != null:
+		var row_font := done_row.get_theme_font("font")
+		_check(row_font != null and row_font.has_char(0x25C6) and row_font.has_char(0x25C7), "the row font carries both marks")
+	var progressed: Array = [
+		{"id": &"primary", "label": "Primary objective", "done": true},
+		{"id": &"resonance", "label": "Reach 80% resonance", "done": true},
+		{"id": &"seal", "label": "Break the seal", "done": false},
+	]
+	_gate_controller.call("_on_gate_checklist_changed", &"located", progressed, "Find the Rite.")
+	var second_rows := _gate_rows.get_children()
+	_check(second_rows.size() == 3 and second_rows[0] == first_rows[0] and second_rows[1] == first_rows[1], "an update reuses the existing row Labels and adds only the new one")
+	_check((second_rows[1] as Label).text.begins_with("◆ "), "a requirement that completes flips its mark in place")
+	_gate_controller.call("_on_gate_checklist_changed", &"locked", checklist_items, "Increase resonance to expose the Rite.")
+	var third_rows := _gate_rows.get_children()
+	_check(third_rows.size() == 3 and not (third_rows[2] as Control).visible, "a shorter checklist hides the spare row instead of freeing it")
+	_check((third_rows[1] as Label).text.begins_with("◇ "), "a row flips back to pending in place")
+
 	# Procedural builders can refresh unchanged HUD data several times per
 	# second. Identical refreshes must not restart the presentation timer.
 	for _repeat in range(8):

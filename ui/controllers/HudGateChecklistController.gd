@@ -20,6 +20,13 @@ const STATE_COLORS := {
 }
 const ROW_DONE_COLOR := Color(0.64, 0.79, 0.56, 0.95)
 const ROW_PENDING_COLOR := Color(0.86, 0.81, 0.72, 0.85)
+# Row marks the HUD's EB Garamond carries (filled = done, hollow = pending).
+# The old check mark and circle (U+2713 / U+25CB) are in none of the theme
+# fonts, and every fresh Label that showed one searched the system fonts:
+# 32-34 ms for the five rows on every 5th segment-1 kill (FPS audit
+# 2026-10-04).
+const ROW_DONE_MARK := "◆"
+const ROW_PENDING_MARK := "◇"
 
 var _panel: PanelContainer = null
 var _header: Label = null
@@ -40,6 +47,8 @@ var _last_prompt: String = ""
 ## of allocating a keycode String and formatting a header every frame.
 var _prompt_keycode: int = -1
 var _prompt_base_text: String = ""
+## The header colour last applied, so an unchanged state skips the override.
+var _header_state: StringName = &""
 
 
 func _enter_tree() -> void:
@@ -136,10 +145,12 @@ func _on_gate_checklist_changed(state: StringName, items: Array, next_hint: Stri
 	_header_base_text = "EXIT RITE  /  %s  /  %d/%d" % [state_label, done_count, items.size()]
 	_last_prompt = ""
 	_refresh_header_prompt()
-	_header.add_theme_color_override(
-		"font_color",
-		STATE_COLORS.get(state, STATE_COLORS[&"locked"]) as Color
-	)
+	if state != _header_state:
+		_header_state = state
+		_header.add_theme_color_override(
+			"font_color",
+			STATE_COLORS.get(state, STATE_COLORS[&"locked"]) as Color
+		)
 	_rebuild_rows(items)
 	if _hint != null:
 		_hint.text = next_hint.strip_edges()
@@ -201,21 +212,46 @@ func _refresh_header_prompt() -> void:
 	_header.text = "%s    [%s] INSPECT" % [_header_base_text, _last_prompt]
 
 
+## Rows are kept and updated in place: text and colour change only when the
+## requirement does, so a resonance tick that changes nothing re-shapes
+## nothing, and a row is created only when the checklist grows.
 func _rebuild_rows(items: Array) -> void:
+	# Anything in the container that is not one of our rows goes, as the
+	# old full rebuild did.
 	for child in _rows.get_children():
-		_rows.remove_child(child)
-		child.queue_free()
+		if not (child is Label):
+			_rows.remove_child(child)
+			child.queue_free()
+	var shown := 0
 	for item_variant in items:
 		var item := item_variant as Dictionary
 		if item == null or item.is_empty():
 			continue
 		var done := bool(item.get("done", false))
-		var row := Label.new()
-		row.text = "%s %s" % ["✓" if done else "○", String(item.get("label", ""))]
-		row.add_theme_color_override("font_color", ROW_DONE_COLOR if done else ROW_PENDING_COLOR)
-		row.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-		row.add_theme_constant_override("outline_size", 4)
-		row.add_theme_font_size_override("font_size", 15)
-		row.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_rows.add_child(row)
+		var text := "%s %s" % [ROW_DONE_MARK if done else ROW_PENDING_MARK, String(item.get("label", ""))]
+		var row: Label = null
+		if shown < _rows.get_child_count():
+			row = _rows.get_child(shown) as Label
+		if row == null:
+			row = _make_row()
+			_rows.add_child(row)
+		if row.text != text:
+			row.text = text
+			row.add_theme_color_override("font_color", ROW_DONE_COLOR if done else ROW_PENDING_COLOR)
+		row.visible = true
+		shown += 1
+	# Fewer requirements than rows: hide the spare ones rather than free them.
+	for index in range(shown, _rows.get_child_count()):
+		var spare := _rows.get_child(index) as Control
+		if spare != null:
+			spare.visible = false
+
+
+func _make_row() -> Label:
+	var row := Label.new()
+	row.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+	row.add_theme_constant_override("outline_size", 4)
+	row.add_theme_font_size_override("font_size", 15)
+	row.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return row
