@@ -143,6 +143,7 @@ func begin_gameplay(player: Node) -> void:
 			"recorder_revision": RECORDER_REVISION, "balance_revision": balance_revision(),
 			"tuning_stages": tuning_stages(), "tuning_hash": tuning_hash(), "features": features()}
 		_ledger = Ledger.new()
+		_ledger.recruit_reasons = _recruit_reasons()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)
 		if "hp" in player and "max_hp" in player:
 			_ledger.begin_life(float(player.get("hp")), float(player.get("max_hp")), "capture_start")
@@ -282,6 +283,9 @@ func _on_scene_requested(path: String) -> void:
 	if path not in [Global.PATH_GAME, Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]:
 		end_capture("suspended")
 		return
+	# Leaving the Hub for a segment: the wallet the visit kept (P10).
+	if path == Global.PATH_GAME and (_mode == "hub" or _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]):
+		_ledger.mark_hub_departure(Global.followers)
 	_ledger.event("scene_transition", {"target": path})
 	_mode = "loading"
 	_destination = path
@@ -297,6 +301,13 @@ func _on_segment_completed(segment: int) -> void:
 	_ledger.change_segment(segment + 1, "completed")
 	_mode = "hub"
 	_submit(true)
+
+## Global's recruitment reasons with String keys, as the ledger sees them.
+static func _recruit_reasons() -> Dictionary:
+	var out := {}
+	for reason in Global.CONGREGATION_REASONS:
+		out[String(reason)] = true
+	return out
 
 func end_capture(outcome: String = "suspended") -> void:
 	if not _active:

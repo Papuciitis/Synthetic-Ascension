@@ -47,6 +47,10 @@ const RANK_UP_TIMES_KEPT := 128
 const NON_ORGANIC_REASONS := ["trade", "trade_undo", "vendor_refresh", "reconstruction"]
 
 var max_pending_records := 8192
+## Wallet reasons that are recruitment (Global.CONGREGATION_REASONS, String
+## keys), handed in by the runtime adapter so this class stays pure. Their
+## gains are the segment's followers_recruited (follower economy audit P10).
+var recruit_reasons: Dictionary = {}
 var _health: Dictionary = {}
 var _health_totals: Dictionary = {}
 var _lives: Array[Dictionary] = []
@@ -94,6 +98,9 @@ func _empty_stats(balance: int) -> Dictionary:
 	var stats := {
 		"followers_open": balance, "followers_close": balance,
 		"followers_earned": 0, "followers_spent": 0, "followers_adjustments": 0, "followers_debug": 0,
+		# Follower economy audit P10: recruited (the Congregation's growth),
+		# the highest wallet, and the wallet the Hub visit left with.
+		"followers_recruited": 0, "followers_peak": balance, "hub_departure_wallet": null,
 		"followers_by_reason": {}, "enemies": {}, "player_damage_by_source": {},
 		"healing_by_source": {},
 		"attribution": {"by_origin": {}, "by_emitter": {}, "overflow": {"by_origin": 0, "by_emitter": 0}, "mixed_raw_breakdown": {}},
@@ -182,6 +189,12 @@ func change_segment(segment: int, previous_status: String) -> void:
 	_enemies.clear()
 	_open_segment(segment, int(_totals.followers_close))
 	event("segment_started", {})
+
+## The wallet a Hub visit left with, on the row of the segment it opens
+## (the Hub belongs to the segment after it; change_segment opened it).
+func mark_hub_departure(wallet: int) -> void:
+	_current["hub_departure_wallet"] = wallet
+	event("hub_departure", {"wallet": wallet})
 
 func finish(outcome: String) -> void:
 	flush_window()
@@ -361,8 +374,11 @@ func transaction(before: int, change: int, after: int, reason: String, context: 
 		if buy_value >= 0 and sell_value >= 0 and sell_value - buy_value == change:
 			gained = sell_value
 			spent = buy_value
+	var recruited := change if change > 0 and recruit_reasons.has(reason) else 0
 	for stats in [_totals, _current]:
 		stats.followers_close = after
+		stats.followers_peak = maxi(int(stats.get("followers_peak", 0)), after)
+		stats.followers_recruited = int(stats.get("followers_recruited", 0)) + recruited
 		if reason in ADJUSTMENTS:
 			stats.followers_adjustments += change
 		elif reason in DEBUG_REASONS:

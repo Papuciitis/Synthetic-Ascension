@@ -8,6 +8,14 @@ minute, enemy HP removed per second, the balance revision and tuning stages
 the capture declares, and whether the recording was healthy. Schema 1 and 2
 captures both read; fields a capture does not carry print as "-".
 
+`--segments` also prints the Follower economy per segment (audit 2026-10-04,
+P10): Followers recruited (the Congregation's growth), the peak wallet, the
+wallet the Hub visit before the segment left with, and spending by sink family
+(vendor buys, restocks, the tree, rites = Recast/Vouchers/Transfusion/imprints/
+Consecrate, death = reconstruction and the Witness, other = drains, tithes,
+wagers). A segment row holds the Hub visit BEFORE it. Vendor and tree spend are
+gross (an undone trade or a refund is an adjustment, not netted here).
+
 Usage:
   python3 tools/telemetry/run_history.py                  # table of every capture
   python3 tools/telemetry/run_history.py --segments       # one row per segment per capture
@@ -98,6 +106,33 @@ def capture_row(d):
     return row
 
 
+# Spending by sink family (wallet reasons from Global.transaction_followers).
+SINK_FAMILIES = {
+    "vendor": ["trade"],
+    "restock": ["vendor_refresh"],
+    "tree": ["ascension_purchase"],
+    "rites": ["binding_recast", "voucher", "transfusion", "imprint", "binding_consecrate"],
+    "death": ["reconstruction", "manufactured_witness"],
+}
+# Adjustments and developer funding are not spending.
+NOT_SPENDING = {"system_sync", "trade_undo", "ascension_refund", "dev_grant", "developer_grant"}
+
+
+def sink_spend(stats):
+    """{family: Followers spent} from a stats row's followers_by_reason."""
+    by_reason = stats.get("followers_by_reason") or {}
+    out = {family: 0 for family in list(SINK_FAMILIES) + ["other"]}
+    for reason, entry in by_reason.items():
+        if reason in NOT_SPENDING or not isinstance(entry, dict):
+            continue
+        spent = int(num(entry.get("spent")))
+        if spent <= 0:
+            continue
+        family = next((f for f, reasons in SINK_FAMILIES.items() if reason in reasons), "other")
+        out[family] += spent
+    return out
+
+
 def segment_rows(d):
     meta = d.get("metadata", {}) or {}
     out = []
@@ -105,6 +140,7 @@ def segment_rows(d):
         if not isinstance(s, dict):
             continue
         gameplay = num(s.get("seconds_gameplay"))
+        sinks = sink_spend(s)
         out.append({
             "capture": meta.get("capture_id") or os.path.basename(d["_path"]),
             "segment": int(s.get("segment", 0)),
@@ -114,6 +150,16 @@ def segment_rows(d):
             "deaths": int(num(s.get("deaths"))),
             "followers_earned": int(num(s.get("followers_earned"))),
             "followers_spent": int(num(s.get("followers_spent"))),
+            # Fields a pre-2026-10-04 capture does not carry print as "-".
+            "recruited": int(num(s["followers_recruited"])) if "followers_recruited" in s else None,
+            "peak_wallet": int(num(s["followers_peak"])) if "followers_peak" in s else None,
+            "hub_departure": int(num(s["hub_departure_wallet"])) if s.get("hub_departure_wallet") is not None else None,
+            "spend_vendor": sinks["vendor"],
+            "spend_restock": sinks["restock"],
+            "spend_tree": sinks["tree"],
+            "spend_rites": sinks["rites"],
+            "spend_death": sinks["death"],
+            "spend_other": sinks["other"],
             "hp_lost": int(num(s.get("player_hp_lost"))),
             "healing": int(num(s.get("healing"))),
             "enemy_hp_per_sec": num(s.get("enemy_hp_removed")) / gameplay if gameplay > 0 else 0.0,
@@ -123,7 +169,7 @@ def segment_rows(d):
 
 
 CAPTURE_COLUMNS = ["capture", "build", "balance_rev", "stages", "start_seg", "last_seg", "outcome", "gameplay_min", "hub_min", "kills", "kills_per_min", "deaths", "followers_earned", "followers_spent", "followers_close", "income_per_min", "hp_lost_per_min", "healing_per_min", "enemy_hp_per_sec", "healthy"]
-SEGMENT_COLUMNS = ["capture", "segment", "status", "gameplay_min", "kills", "deaths", "followers_earned", "followers_spent", "hp_lost", "healing", "enemy_hp_per_sec", "attacks"]
+SEGMENT_COLUMNS = ["capture", "segment", "status", "gameplay_min", "kills", "deaths", "followers_earned", "followers_spent", "recruited", "peak_wallet", "hub_departure", "spend_vendor", "spend_restock", "spend_tree", "spend_rites", "spend_death", "spend_other", "hp_lost", "healing", "enemy_hp_per_sec", "attacks"]
 
 
 def print_table(rows, columns):
