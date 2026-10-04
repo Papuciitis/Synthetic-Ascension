@@ -324,7 +324,9 @@ const CONGREGATION_REASONS := {
 	&"gamblers_rite": true, &"bren_first_follower": true, &"assistant_commitment": true,
 }
 ## Overtime's fraction of a kill reward not yet paid as a whole Follower (P1).
-## In memory only: it is always below one Follower.
+## In memory only: it is always below one Follower. Reset with the segment,
+## the attempt and every loaded save, so one slot's fraction never pays out
+## in another (review 2026-10-04).
 var _kill_reward_carry: float = 0.0
 
 # ============================================================
@@ -2764,6 +2766,9 @@ func apply_save(save: SaveData) -> void:
 		# A run saved before the Congregation existed (-1) starts it from the
 		# Followers it holds: a floor, never a guess above what was earned.
 		attempt_congregation = int(save.attempt_congregation) if int(save.attempt_congregation) >= 0 else maxi(0, int(save.attempt_followers))
+		# The carry is not saved: a Continue into this attempt, possibly from
+		# another slot's run, starts it at zero (review 2026-10-04).
+		_kill_reward_carry = 0.0
 		_backfill_grimoire()
 
 		# Attempt identity (so Continue keeps your run identity)
@@ -2861,6 +2866,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_voucher_offer = []
 		attempt_voucher_segment = 0
 		attempt_congregation = 0
+		_kill_reward_carry = 0.0
 
 		run_inventory = null
 		run_bag = null

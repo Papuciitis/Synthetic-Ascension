@@ -392,9 +392,12 @@ func _test_congregation() -> void:
 	Global.write_save(save)
 	_check(save.attempt_congregation == 12345, "write_save stores the Congregation with the attempt (%d)" % save.attempt_congregation)
 	Global.attempt_congregation = 0
+	# Another slot's run left Overtime's carry at 0.9 (review 2026-10-04).
+	Global._kill_reward_carry = 0.9
 	Global.apply_save(save)
 	SaveManager.current_save = null
 	_check(Global.attempt_congregation == 12345 and Global.followers == 678, "apply_save restores it; the wallet sync recruits nobody (%d)" % Global.attempt_congregation)
+	_check(is_zero_approx(Global._kill_reward_carry), "a loaded attempt starts Overtime's carry at zero, not at another slot's fraction (%.2f)" % Global._kill_reward_carry)
 	var legacy := SaveData.new()
 	Global.write_save(legacy)
 	legacy.attempt_congregation = -1
@@ -409,6 +412,10 @@ func _test_congregation() -> void:
 	var closed := SaveData.new()
 	Global.write_save(closed)
 	_check(closed.attempt_congregation == 0, "and a closed attempt saves 0")
+	Global._kill_reward_carry = 0.9
+	Global.apply_save(closed)
+	SaveManager.current_save = null
+	_check(is_zero_approx(Global._kill_reward_carry) and not Global.attempt_active, "loading a slot with no attempt clears the carry too (%.2f)" % Global._kill_reward_carry)
 	Global.attempt_congregation = 99
 	Global.start_new_attempt()
 	SaveManager.current_save = null
