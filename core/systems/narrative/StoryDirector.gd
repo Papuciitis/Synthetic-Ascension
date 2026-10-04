@@ -19,8 +19,9 @@ class_name StoryDirector
 ##   best_known false on a profile older than the story until its first
 ##              account closes: its old depth was never recorded
 ##   last       the last closed account (close_account)
-##   attempt    this attempt: flags, peak, recon, best_at_start, milestone,
-##              first_hub, death {cause, rite, boss}
+##   attempt    this attempt: flags, peak (of the Congregation: the
+##              witnesses), recon, best_at_start, milestone, first_hub,
+##              death {cause, rite, boss}
 ## StoryLedger keeps it current from the run's signals, so nothing has to be
 ## caught at the moment Global.on_attempt_failed_die_die() wipes the attempt.
 
@@ -205,14 +206,12 @@ static func close_account() -> Dictionary:
 	var a := attempt()
 	var seg := 1
 	var world_seed := 0
-	var followers := 0
 	var race := ""
 	var style := ""
 	var response := ""
 	if Global != null:
 		seg = maxi(1, Global.attempt_segment)
 		world_seed = Global.attempt_world_seed
-		followers = Global.followers
 		race = String(Global.selected_race_id)
 		style = String(Global.selected_style_id)
 		response = String(Global.opening_response_id)
@@ -225,7 +224,8 @@ static func close_account() -> Dictionary:
 		"cause": String(death.get("cause", "")),
 		"rite": bool(death.get("rite", false)),
 		"boss": int(death.get("boss", -1)),
-		"peak": maxi(int(a.get("peak", 0)), followers),
+		# Read before on_attempt_failed_die_die() zeroes the Congregation.
+		"peak": witnesses(),
 		"recon": int(a.get("recon", 0)),
 		"race": race,
 		"style": style,
@@ -283,9 +283,12 @@ static func note_death(cause: String, rite: bool, boss: int) -> void:
 	attempt()["death"] = {"cause": cause, "rite": rite, "boss": boss}
 
 
-static func note_followers(value: int) -> void:
-	var a := attempt()
-	a["peak"] = maxi(int(a.get("peak", 0)), value)
+## The witnesses of this attempt: the Congregation, every Follower it
+## recruited, which spending never lowers (Global.attempt_congregation). The
+## peak noted here keeps a run saved before the Congregation existed whole.
+static func witnesses() -> int:
+	var recruited := Global.attempt_congregation if Global != null else 0
+	return maxi(int(attempt().get("peak", 0)), recruited)
 
 
 ## The player was rebuilt (a death the Followers paid for and survived;
@@ -296,11 +299,13 @@ static func note_reconstruction() -> void:
 	note_record("reconstruction")
 
 
-## A gain moved the Followers from `old` to `now`: the first upward crossing
-## of a milestone in this attempt is a witness line (the highest one, when a
-## gain crosses several at once).
-static func note_follower_gain(old: int, now: int) -> void:
+## Recruits moved the Congregation from `old` to `now` (StoryLedger): the
+## peak of witnesses, and the first upward crossing of a milestone in this
+## attempt is a witness line (the highest one, when a gain crosses several
+## at once).
+static func note_recruits(old: int, now: int) -> void:
 	var a := attempt()
+	a["peak"] = maxi(int(a.get("peak", 0)), now)
 	var reached := int(a.get("milestone", 0))
 	for i in range(StoryLines.MILESTONES.size() - 1, -1, -1):
 		var row: Array = StoryLines.MILESTONES[i]
@@ -438,7 +443,7 @@ static func facts(extra: Dictionary = {}) -> Dictionary:
 	f["district_done"] = district_id(seg - 1, world_seed) if seg > 1 else ""
 	f["followers"] = followers
 	var a := attempt()
-	f["peak"] = maxi(int(a.get("peak", 0)), followers)
+	f["peak"] = witnesses()
 	f["recon"] = int(a.get("recon", 0))
 	f["death_rite"] = bool((a.get("death", {}) as Dictionary).get("rite", false))
 	var accounts := int(state["accounts"])
@@ -901,7 +906,7 @@ static func chapter_close_card(completed: int, mark: bool = true) -> Dictionary:
 	var first := not has_flag("chapter:1")
 	if mark:
 		add_flag("chapter:1")
-	var peak := maxi(int(attempt().get("peak", 0)), Global.followers if Global != null else 0)
+	var peak := witnesses()
 	var witnesses := StoryLines.CHAPTER_WITNESS_ONE if peak <= 1 else (StoryLines.CHAPTER_WITNESSES_FIRST if first else StoryLines.CHAPTER_WITNESSES_REPEAT) % grouped(peak)
 	var family := String(StoryLines.CHAPTER_FAMILY.get(dominant_family(), StoryLines.CHAPTER_FAMILY[""]))
 	var body := (StoryLines.CHAPTER_FIRST if first else StoryLines.CHAPTER_REPEAT).format({"witnesses_line": witnesses, "family_line": family})

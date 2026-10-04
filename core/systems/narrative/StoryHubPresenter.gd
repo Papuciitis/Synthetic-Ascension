@@ -3,8 +3,9 @@ extends Node
 ## panel is open (a pending Doctrine opens first), the district just left
 ## behind is the square's arrival notice; after the segments where the work
 ## changed hands, Bren's dispatch follows as a dialogue card. Witness lines
-## that come due in the square (a sale crossing a milestone) are notices over
-## the player. Pausable; it never opens anything over an open panel.
+## still due when the segment ended (a milestone the last recruits crossed;
+## a sale recruits no one) are notices over the player. Pausable; it never
+## opens anything over an open panel.
 
 const OPENING_PRESENTATION := preload("res://ui/screens/opening/OpeningPresentation.tscn")
 const HubText := preload("res://scenes/hub/ui/HubText.gd")

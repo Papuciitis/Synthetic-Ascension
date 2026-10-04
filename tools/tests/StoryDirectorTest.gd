@@ -399,23 +399,32 @@ func _test_milestones() -> void:
 	_fresh(3)
 	Global.transaction_followers(15, &"combat_influence", {}, false, false)
 	var lines := StoryDirector.take_pending()
-	_check(lines.size() == 1 and String(lines[0]["text"]) == StoryLines.MILESTONE_PREFIX + String(StoryLines.MILESTONES[0][1]), "ten Followers is a witness line")
+	_check(lines.size() == 1 and String(lines[0]["text"]) == StoryLines.MILESTONE_PREFIX + String(StoryLines.MILESTONES[0][1]), "ten recruits is a witness line")
 	Global.transaction_followers(-10, &"trade", {}, false, false)
 	Global.transaction_followers(10, &"combat_influence", {}, false, false)
-	_check(StoryDirector.take_pending().is_empty(), "crossing it again in the same attempt says nothing")
+	_check(StoryDirector.take_pending().is_empty(), "spending and earning it back crosses nothing again")
 	Global.set_followers(5000)
 	_check(StoryDirector.take_pending().is_empty(), "a load or reset is never a milestone")
-	Global.transaction_followers(20000, &"trade", {}, false, false)
+	# The witnesses are the Congregation (the crowd in the square follows it
+	# too): a sale or a developer grant fills the wallet and recruits no one.
+	Global.grimoire_entries.erase("record:tree")
+	for reason in [&"trade", &"developer_grant", &"dev_grant"]:
+		Global.transaction_followers(20000, reason, {}, false, false)
+	_check(StoryDirector.take_pending().is_empty() and int(StoryDirector.attempt()["peak"]) == 25 and not Global.grimoire_has("record:tree"), "a sale or a developer grant is no witness line, no peak and no record (peak %d)" % int(StoryDirector.attempt()["peak"]))
+	Global.transaction_followers(12000, &"combat_influence", {}, false, false)
 	lines = StoryDirector.take_pending()
-	_check(lines.size() == 1 and String(lines[0]["text"]).ends_with(String(StoryLines.MILESTONES[3][1])), "ten thousand is the next (%s)" % str(lines))
-	_check(int(StoryDirector.attempt()["peak"]) == 25000, "the peak follows the Followers")
+	_check(lines.size() == 1 and String(lines[0]["text"]).ends_with(String(StoryLines.MILESTONES[3][1])), "recruits crossing 100, 1,000 and 10,000 at once say the highest (%s)" % str(lines))
+	_check(int(StoryDirector.facts()["peak"]) == 12025 and Global.followers > 12025, "the peak is the Congregation, not the wallet (%d held)" % Global.followers)
+	Global.on_attempt_failed_die_die()
+	_check(int(StoryDirector.last_account().get("peak", 0)) == 12025 and Global.attempt_congregation == 0, "the account keeps its witnesses from before the wipe")
 
 
 func _test_chapter_card() -> void:
 	StoryDirector.load_state({})
 	_fresh(10)
 	_check(StoryDirector.chapter_close_card(9).is_empty() and StoryDirector.chapter_close_card(5).is_empty() and StoryDirector.chapter_close_card(11).is_empty(), "only Segment 10 closes the chapter")
-	Global.set_followers(4321)
+	Global.transaction_followers(4321, &"combat_influence", {}, false, false)
+	Global.transaction_followers(-4000, &"trade", {}, false, false)
 	var card := StoryDirector.chapter_close_card(10, false)
 	var body := String(card.get("body", ""))
 	var lines := body.split("\n")
