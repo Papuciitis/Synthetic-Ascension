@@ -274,7 +274,7 @@ func kills_in_window(now: int) -> int:
 ## Pitch scale for `kills` inside the window: kills 1-4 sound as authored,
 ## each further 5 add a semitone, up to +7.
 static func kill_streak_pitch(kills: int) -> float:
-	var semitones := mini(MAX_KILL_SEMITONES, maxi(0, kills) / KILLS_PER_SEMITONE)
+	var semitones := mini(MAX_KILL_SEMITONES, floori(float(maxi(0, kills)) / float(KILLS_PER_SEMITONE)))
 	return pow(2.0, float(semitones) / 12.0)
 
 func _on_boss_spawned(boss: Node, _tier: int, _portrait: Texture2D, _title: String) -> void:

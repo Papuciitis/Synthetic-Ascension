@@ -111,7 +111,8 @@ func _process(delta: float) -> void:
 # --- signal handlers --------------------------------------------------------
 
 ## Every defeat passes here (proxy and actor alike), so this must stay cheap
-## for fodder: one flag test and a handle compare, then out.
+## for fodder: flag tests, one actor lookup (a boss grouped after it
+## registered carries no boss flag) and a handle compare, then out.
 func _on_enemy_defeated(context: RefCounted) -> void:
 	if context == null:
 		return
