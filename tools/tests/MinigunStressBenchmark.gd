@@ -65,9 +65,13 @@ class Driver:
 	func _process(delta: float) -> void:
 		if _phase < 1:
 			return
-		_dismiss_tutorial_cards()
 		_wall += delta
 		if get_tree().paused:
+			# Tutorial cards are blocking records: they pause the tree, so the
+			# whole-tree walk that finds them runs only while paused. Every
+			# frame it cost 4.6-6.6 ms at 2,300-2,900 nodes and inflated every
+			# stage it measured (FPS audit 2026-10-04).
+			_dismiss_tutorial_cards()
 			if _wall >= 2.0:
 				_dismiss_blocking_ui()
 			return
