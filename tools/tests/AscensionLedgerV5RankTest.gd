@@ -2,10 +2,11 @@ extends Node
 
 # Ranged V5 ordinary local ranks (handoff 2026-09-25, spec RANK-01..RANK-08):
 # the V5 tree loads beside the untouched V4 control, rank purchases record
-# exact per-rank receipts, gates hold, cascades repay exactly while a player's
-# downgrade or refund repays the segment's refund share (follower economy
-# audit P9), and the authored starter set is validated as authored rather
-# than as prose.
+# exact per-rank receipts, gates hold, a player's downgrade or refund repays
+# the segment's refund share (follower economy audit P9) and so do the ranks
+# that refund forces off elsewhere (review 2026-10-04), while a forced
+# removal repays them exactly, and the authored starter set is validated as
+# authored rather than as prose.
 
 var _passes := 0
 var _failures := 0
@@ -182,9 +183,17 @@ func _test_rank06_downgrades_and_cascade() -> void:
 	ledger.record_purchase("BR05", 700)
 	ledger.record_purchase("BR05", 1300)
 	ledger.record_purchase("BR05", 2300)
+	# The player's own refund forced the cascade, so the rank pays that
+	# refund's share (review 2026-10-04): repaid exactly, refunding BR04 and
+	# rebuying it undercut a downgrade of BR05 at the same share by 950.
+	var predicted := ledger.refund_value("BR04", 0.5)
+	var forfeited_before := int(ledger.state.get("forfeited", 0))
 	var refunded := ledger.refund("BR04", 0.5)
 	_check(ledger.rank("BR05") == 3, "cascade: losing a unique local drops BR05 to its legal rank 3 (%d)" % ledger.rank("BR05"))
-	_check(refunded == int(round(400 * 0.5)) + 2300, "cascade refund = share of BR04 + exact rank-4 receipt (%d)" % refunded)
+	_check(refunded == int(round(400 * 0.5)) + int(round(2300 * 0.5)), "cascade refund = share of BR04 + the same share of the rank-4 receipt (%d)" % refunded)
+	_check(predicted == refunded, "refund_value previews the cascade at that share (%d vs %d)" % [predicted, refunded])
+	_check(int(ledger.state.get("forfeited", 0)) - forfeited_before == 200 + 1150, "the unpaid halves of BR04 and of the rank are forfeited (%d)" % (int(ledger.state.get("forfeited", 0)) - forfeited_before))
+	_check(refunded - 400 <= int(round(2300 * 0.5)), "so refunding BR04 and rebuying it (400) never beats downgrading BR05 directly (%d vs %d)" % [refunded - 400, int(round(2300 * 0.5))])
 	_check(ledger.rank_receipts("BR05") == [400, 700, 1300], "cascade pops exactly one receipt")
 	# A player's downgrade pays the segment's refund share like every other
 	# refund (follower economy audit P9); the rank still leaves whole.
@@ -196,6 +205,16 @@ func _test_rank06_downgrades_and_cascade() -> void:
 	_check(ledger.rank("BR05") == 2 and ledger.rank_receipts("BR05") == [400, 700], "the rank and its receipt leave whole")
 	_check(int(ledger.state["spent"]) == spent_mid - 1300 and int(ledger.state.get("forfeited", 0)) == forfeited_mid + 650, "spent drops by the receipt; the unpaid half is forfeited")
 	_check(is_equal_approx(AscensionLedger.refund_share(2), 0.5) and int(round(700 * AscensionLedger.refund_share(7))) == int(round(700 * 0.5 * pow(0.9, 5.0))), "the share is the refund share: half at Hub 1, less each segment after")
+	# A removal the player did not choose (the simulator's forced ablation)
+	# is no respec: the rank it forces off still returns its exact receipt.
+	var forced := _fresh()
+	for id in ["BR01", "BR02", "BR04", "BR05", "BR06"]:
+		_buy(forced, id)
+	forced.record_purchase("BR05", 700)
+	forced.record_purchase("BR05", 1300)
+	forced.record_purchase("BR05", 2300)
+	var forced_back := forced.refund("BR04", 0.5, true)
+	_check(forced.rank("BR05") == 3 and forced_back == int(round(400 * 0.5)) + 2300, "a forced removal repays the rank it forces off exactly (%d)" % forced_back)
 
 
 func _test_rank07_no_duplicate_receipts() -> void:

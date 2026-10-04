@@ -367,7 +367,8 @@ func _push_receipt(id: String, cost: int) -> void:
 ## recorded payment (RANK-06 keeps the receipts exact). A player's downgrade
 ## passes the segment's refund_share like every other refund (follower
 ## economy audit 2026-10-04, P9: at 100% a V5 rank was a free respec at every
-## Hub); a cascade forced by another refund keeps share 1.0.
+## Hub), and so does the cascade a player's refund forces (review
+## 2026-10-04); share 1.0 is left for a removal the player did not choose.
 ## {ok, refund, receipt, from_rank, reason}.
 func downgrade_preview(id: String, share: float = 1.0) -> Dictionary:
 	if not owns(id) or db.kind(id) != "local" or db.max_rank(id) <= 1:
@@ -405,16 +406,22 @@ func downgrade_rank(id: String, share: float = 1.0) -> int:
 
 
 ## After ownership changed, ranks whose gates no longer hold leave, returning
-## their exact receipts (RANK-06 cascade). Returns the total refunded.
-func cascade_illegal_ranks() -> int:
+## `share` of their recorded receipts (RANK-06 cascade). A player's refund
+## passes its own share: at 1.0, refunding a cheap local that held a rank
+## 3/4 gate repaid the rank in full, so refund-and-rebuy undercut the
+## downgrade P9 prices (review 2026-10-04). Returns the total refunded.
+func cascade_illegal_ranks(share: float = 1.0) -> int:
 	var returned := 0
 	for id in owned_ids():
 		if db.kind(id) != "local" or db.max_rank(id) <= 1:
 			continue
 		var legal := max_legal_rank(id)
 		while rank(id) > legal:
-			var got := downgrade_rank(id)
-			if got <= 0 and rank(id) > legal:
+			var before := rank(id)
+			var got := downgrade_rank(id, share)
+			# Judged by the rank, not the refund: a small share can round a
+			# real downgrade to 0.
+			if rank(id) >= before:
 				# A missing receipt must not loop forever; drop the rank dry.
 				(state["owned"] as Dictionary)[id] = legal
 				break
@@ -498,7 +505,8 @@ func refund_preview(id: String) -> Dictionary:
 
 ## The Followers a refund of `id` would actually return at `share`, without
 ## doing it: the share of every leaver's payments (its ranks included), plus
-## the exact receipts of ranks elsewhere whose gates would break.
+## the same share of the receipts of ranks elsewhere whose gates would break
+## (refund() passes its share to the cascade; review 2026-10-04).
 func refund_value(id: String, share: float) -> int:
 	var preview := refund_preview(id)
 	var removed: Array = preview["removed"]
@@ -512,7 +520,8 @@ func refund_value(id: String, share: float) -> int:
 		var gone := String(gone_key)
 		hypothetical.erase(gone)
 		value += int(round(float(int(paid.get(gone, 0))) * safe_share))
-	# Ranks elsewhere that would fall to their legal gate return exactly.
+	# Ranks elsewhere that would fall to their legal gate return the same
+	# share, rounded per rank as downgrade_preview rounds them.
 	for other_key in hypothetical.keys():
 		var other := String(other_key)
 		if db.kind(other) != "local" or db.max_rank(other) <= 1:
@@ -532,14 +541,15 @@ func refund_value(id: String, share: float) -> int:
 		var receipts_other := rank_receipts(other)
 		for lost_rank in range(legal + 1, current + 1):
 			if receipts_other.size() >= lost_rank:
-				value += int(receipts_other[lost_rank - 1])
+				value += int(round(float(int(receipts_other[lost_rank - 1])) * safe_share))
 	return value
 
 
 ## Refund: removes the node and everything that depended on it and returns
-## `share` of each leaver's recorded price (the rest is forfeited). Refused
-## when a sworn node would leave, unless `force` (the simulator's ablation
-## removes nodes to measure them, not to respec). Returns the amount refunded.
+## `share` of each leaver's recorded price (the rest is forfeited), and the
+## same share of any rank elsewhere the removal forces off. Refused when a
+## sworn node would leave, unless `force` (the simulator's ablation removes
+## nodes to measure them, not to respec). Returns the amount refunded.
 func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 	var preview := refund_preview(id)
 	var removed: Array = preview["removed"]
@@ -569,8 +579,10 @@ func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 	state["forfeited"] = int(state.get("forfeited", 0)) + (total - returned)
 	state["spent"] = maxi(0, int(state.get("spent", 0)) - total)
 	# Locals that left can invalidate rank 3/4 gates elsewhere; those ranks
-	# leave too, returning their exact receipts.
-	returned += cascade_illegal_ranks()
+	# leave too, at this refund's share (review 2026-10-04): the player chose
+	# the refund that forced them, so they price like a downgrade. A forced
+	# removal is no respec and still repays them exactly.
+	returned += cascade_illegal_ranks(1.0 if force else safe_share)
 	return returned
 
 

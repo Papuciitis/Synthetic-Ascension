@@ -780,7 +780,7 @@ func _show(id: String) -> void:
 						_buttons.add_child(down)
 				var actual := ledger.refund_value(id, share)
 				var refund := _action_button("Refund %d%% (+%d)" % [int(round(100.0 * share)), actual], &"ArcaneDangerButton")
-				refund.tooltip_text = "Refund this node and everything that depended on it; the shown share of what they cost returns. Ranks this forces off other nodes return exactly. Revelations, forks, Unions, Axioms and Catastrophes never refund."
+				refund.tooltip_text = "Refund this node and everything that depended on it; the shown share of what they cost returns, and of any rank this forces off another node. Revelations, forks, Unions, Axioms and Catastrophes never refund."
 				refund.pressed.connect(func() -> void: _refund(id))
 				_buttons.add_child(refund)
 	_status.text = "\n".join(lines)
