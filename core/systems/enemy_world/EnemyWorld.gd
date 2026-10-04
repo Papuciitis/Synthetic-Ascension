@@ -191,6 +191,34 @@ func gather_representation_view(
 		out_distance_squared.append(origin.distance_squared_to(_positions[slot]))
 
 
+## Bulk read for the proxy renderer (FPS audit 2026-10-04, item 4): every
+## data-only record in active-slot order with its current and previous
+## position, proxy update time and flags, read straight from the slot arrays.
+## The renderer made five validated getter calls per proxy per frame.
+func gather_proxy_view(
+	out_handles: Array[int],
+	out_positions: PackedVector2Array,
+	out_previous: PackedVector2Array,
+	out_update_times: PackedFloat32Array,
+	out_flags: PackedInt64Array,
+) -> void:
+	out_handles.clear()
+	out_positions.clear()
+	out_previous.clear()
+	out_update_times.clear()
+	out_flags.clear()
+	for slot_variant in _active_slots:
+		var slot := int(slot_variant)
+		if _representations[slot] != Types.Representation.DATA_ONLY:
+			continue
+		# Types.make_handle inlined: an active slot always has generation >= 1.
+		out_handles.append((int(_generations[slot]) << 32) | (slot + 1))
+		out_positions.append(_positions[slot])
+		out_previous.append(_previous_positions[slot])
+		out_update_times.append(_proxy_update_times[slot])
+		out_flags.append(int(_flags[slot]))
+
+
 func get_position(handle: int) -> Vector2:
 	var slot := _slot_if_valid(handle)
 	return _positions[slot] if slot >= 0 else Vector2.ZERO

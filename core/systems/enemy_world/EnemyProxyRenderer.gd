@@ -12,9 +12,21 @@ const DIAGNOSTIC_KEY := &"__diagnostic__"
 const DIAGNOSTIC_COLOR := Color(1.0, 0.0, 0.8, 1.0)
 const ELITE_DIAGNOSTIC_COLOR := Color(1.0, 0.35, 0.05, 1.0)
 const MIN_PROXY_SIZE := 4.0
+# Off-screen instances are not published (FPS audit 2026-10-04, item 4):
+# proxies live 480-640+ px from the player and many materialized smart
+# actors further still, while the 1920x1080 view spans 960x540 each way.
+# The margins keep a sprite that straddles the edge drawn, and cover the
+# camera's travel between two half-rate proxy uploads.
+const PROXY_CULL_MARGIN := 128.0
+const ACTOR_CULL_MARGIN := 256.0
+# Hit flash: a damaged instance draws white for this long. The flag rides in
+# the sign of the region height (INSTANCE_CUSTOM.w, always positive
+# otherwise) so the colour and the region keep their full precision;
+# EnemyProxyRegion.gdshader mixes toward white by hit_flash_strength.
+const HIT_FLASH_USEC := 70_000
+const FLASH_STRENGTH_PARAM := &"hit_flash_strength"
 
 var _world: EnemyWorldService = null
-var _handles: Array[int] = []
 var _batches: Dictionary = {}
 # Publishes in a row where a batch used <= a quarter of its capacity. After
 # SHRINK_AFTER_PUBLISHES the multimesh is reallocated to fit, so a single
@@ -31,12 +43,27 @@ var _profile_sweep_counter := 0
 # {actor, sprite, texture, key}. Registration is per node instance; freed
 # or pooled actors are pruned/skipped during publish.
 var _actors: Dictionary = {}
+var _visible_proxy_count := 0
+# handle -> usec the proxy's hit flash ends (EnemyCombatService reports
+# damage on data-only records through proxy_damage_listener).
+var _proxy_flash_until: Dictionary = {}
+# The data-only population, read in bulk once per publish.
+var _view_handles: Array[int] = []
+var _view_positions := PackedVector2Array()
+var _view_previous := PackedVector2Array()
+var _view_update_times := PackedFloat32Array()
+var _view_flags := PackedInt64Array()
+var _view_draw := PackedVector2Array()
 
 
 func setup(world: EnemyWorldService) -> void:
 	_world = world
 	_visible_count = 0
+	_visible_proxy_count = 0
 	_last_upload_usec = 0
+	_ensure_region_material()
+	if SettingsManager != null and not SettingsManager.settings_changed.is_connected(_on_settings_changed):
+		SettingsManager.settings_changed.connect(_on_settings_changed)
 
 
 func register_actor(actor: Node2D, sprite: Sprite2D) -> void:
@@ -44,9 +71,13 @@ func register_actor(actor: Node2D, sprite: Sprite2D) -> void:
 		return
 	_actors[actor.get_instance_id()] = {
 		"actor": actor,
+		# Typed handle for the per-frame "dead" test; null for other nodes.
+		"enemy": actor as EnemyActor,
 		"sprite": sprite,
 		"texture": null,
+		"texture_size": Vector2.ONE,
 		"key": &"",
+		"batch_index": -1,
 	}
 
 
@@ -75,6 +106,21 @@ func registered_actor_count() -> int:
 	return _actors.size()
 
 
+## A damaged data-only enemy flashes white for HIT_FLASH_USEC.
+func flash_handle(handle: int) -> void:
+	_proxy_flash_until[handle] = Time.get_ticks_usec() + HIT_FLASH_USEC
+
+
+## The same flash for a batched materialized actor (its sprite is hidden, so
+## a flash on the sprite's own material never shows).
+func flash_actor(actor: Node2D) -> void:
+	if actor == null:
+		return
+	var entry_variant: Variant = _actors.get(actor.get_instance_id())
+	if entry_variant is Dictionary:
+		(entry_variant as Dictionary)["flash_until"] = Time.get_ticks_usec() + HIT_FLASH_USEC
+
+
 func publish(
 	interpolation_alpha: float = 1.0,
 	include_proxies: bool = true,
@@ -84,35 +130,49 @@ func publish(
 	var started := Time.get_ticks_usec()
 	_visible_count = 0
 	if _world == null or not is_instance_valid(_world):
+		_visible_proxy_count = 0
 		_hide_all_batches()
 		_last_upload_usec = Time.get_ticks_usec() - started
 		return 0
 
+	var view := _view_rect()
+	var culling := view.has_area()
+	var proxy_view := view.grow(PROXY_CULL_MARGIN)
+	var actor_view := view.grow(ACTOR_CULL_MARGIN)
 	var groups: Dictionary = {}
 	var group_metadata: Dictionary = {}
 	if not include_proxies:
 		# Proxy batches keep last frame's buffers this frame (half-rate under
 		# load); count their instances so visible_count stays truthful.
-		for batch_key_variant in _batches:
-			if not String(batch_key_variant).begins_with("actor:"):
-				_visible_count += int((_batches[batch_key_variant] as Dictionary).get("last_count", 0))
-	_world.active_handles(_handles)
-	for handle in _handles:
-		if not include_proxies:
-			break
-		if (
-			not _world.is_valid_handle(handle)
-			or _world.is_dying(handle)
-			or _world.get_representation(handle) != Types.Representation.DATA_ONLY
-		):
-			continue
-		var profile := _profile_for(handle)
-		var visual_key := profile.get("key", DIAGNOSTIC_KEY) as StringName
-		if not groups.has(visual_key):
-			groups[visual_key] = [] as Array[int]
-			group_metadata[visual_key] = profile
-		var group := groups[visual_key] as Array[int]
-		group.append(handle)
+		_visible_count += _visible_proxy_count
+	else:
+		_visible_proxy_count = 0
+		_world.gather_proxy_view(_view_handles, _view_positions, _view_previous, _view_update_times, _view_flags)
+		var count := _view_handles.size()
+		_view_draw.resize(count)
+		var alpha := clampf(interpolation_alpha, 0.0, 1.0)
+		var per_handle_blend := proxy_clock >= 0.0 and proxy_interval > 0.0
+		for index in range(count):
+			# Slices update at different times inside the fixed step; a
+			# per-handle blend from the handle's own update time removes the
+			# swarm micro-jitter a single global phase produces.
+			var blend := alpha
+			if per_handle_blend:
+				blend = clampf((proxy_clock - _view_update_times[index]) / proxy_interval, 0.0, 1.0)
+			var drawn := _view_previous[index].lerp(_view_positions[index], blend)
+			if culling and not proxy_view.has_point(drawn):
+				continue
+			_view_draw[index] = drawn
+			var handle := _view_handles[index]
+			var profile := _profile_for(handle)
+			var visual_key := profile.get("key", DIAGNOSTIC_KEY) as StringName
+			var group_variant: Variant = groups.get(visual_key)
+			if group_variant == null:
+				group_variant = PackedInt32Array()
+				group_metadata[visual_key] = profile
+			var group := group_variant as PackedInt32Array
+			group.append(index)
+			groups[visual_key] = group
 
 	var actor_groups: Dictionary = {}
 	var actor_metadata: Dictionary = {}
@@ -128,25 +188,39 @@ func publish(
 			continue
 		var actor := actor_variant as Node2D
 		var sprite := sprite_variant as Sprite2D
+		var enemy := entry.get("enemy") as EnemyActor
 		if (
 			not actor.is_inside_tree()
 			or not actor.visible
-			or bool(actor.get_meta("__in_pool", false))
-			or ("dead" in actor and bool(actor.get("dead")))
+			or bool(actor.get_meta(&"__in_pool", false))
+			or (enemy.dead if enemy != null else ("dead" in actor and bool(actor.get("dead"))))
 			or sprite.texture == null
 		):
+			entry["batch_index"] = -1
+			continue
+		if culling and not actor_view.has_point(actor.global_position):
+			# Off screen: not drawn, and its interpolation restarts from its
+			# real transform when it comes back instead of sliding in from
+			# where it was last seen.
+			if entry.has("curr_xf"):
+				entry.erase("curr_xf")
+			entry["batch_index"] = -1
 			continue
 		if entry.get("texture") != sprite.texture:
 			entry["texture"] = sprite.texture
+			entry["texture_size"] = _safe_texture_size(sprite.texture)
 			entry["key"] = StringName("actor:" + sprite.texture.resource_path)
 		var actor_key := entry.get("key") as StringName
-		if not actor_groups.has(actor_key):
-			actor_groups[actor_key] = [] as Array[Dictionary]
+		var actor_group_variant: Variant = actor_groups.get(actor_key)
+		if actor_group_variant == null:
+			actor_group_variant = [] as Array[Dictionary]
+			actor_groups[actor_key] = actor_group_variant
 			actor_metadata[actor_key] = {"key": actor_key, "texture": sprite.texture, "z_index": 0}
-		(actor_groups[actor_key] as Array[Dictionary]).append(entry)
+		(actor_group_variant as Array[Dictionary]).append(entry)
 	for dead_id in dead_actor_ids:
 		_actors.erase(dead_id)
 
+	var now_usec := Time.get_ticks_usec()
 	var seen: Dictionary = {}
 	if not include_proxies:
 		for batch_key_variant in _batches:
@@ -156,19 +230,12 @@ func publish(
 		var visual_key := visual_key_variant as StringName
 		seen[visual_key] = true
 		var batch := _batch_for(visual_key, group_metadata[visual_key] as Dictionary)
-		_publish_batch(
-			visual_key,
-			batch,
-			groups[visual_key] as Array[int],
-			clampf(interpolation_alpha, 0.0, 1.0),
-			proxy_clock,
-			proxy_interval,
-		)
+		_publish_batch(visual_key, batch, groups[visual_key] as PackedInt32Array, now_usec)
 	for actor_key_variant in actor_groups:
 		var actor_key := actor_key_variant as StringName
 		seen[actor_key] = true
 		var actor_batch := _batch_for(actor_key, actor_metadata[actor_key] as Dictionary)
-		_publish_actor_batch(actor_key, actor_batch, actor_groups[actor_key] as Array[Dictionary])
+		_publish_actor_batch(actor_key, actor_batch, actor_groups[actor_key] as Array[Dictionary], now_usec)
 	for visual_key_variant in _batches:
 		if not seen.has(visual_key_variant):
 			_hide_batch(_batches[visual_key_variant] as Dictionary)
@@ -183,6 +250,22 @@ func publish(
 
 func visible_count() -> int:
 	return _visible_count
+
+
+## Proxy instances drawn by the last publish that included proxies.
+func visible_proxy_count() -> int:
+	return _visible_proxy_count
+
+
+## The canvas-space rect the viewport shows, or an empty rect when there is
+## nothing sensible to cull against (no viewport yet).
+func _view_rect() -> Rect2:
+	if not is_inside_tree():
+		return Rect2()
+	var viewport_rect := get_viewport_rect()
+	if not viewport_rect.has_area():
+		return Rect2()
+	return get_canvas_transform().affine_inverse() * viewport_rect
 
 
 func batch_count() -> int:
@@ -205,28 +288,46 @@ func debug_instance_transform(handle: int) -> Transform2D:
 	var located := _locate(handle)
 	if located.is_empty():
 		return Transform2D()
-	var batch_variant: Variant = located[0]
-	if not (batch_variant is Dictionary):
-		return Transform2D()
-	var transforms := (batch_variant as Dictionary).get("transforms", []) as Array[Transform2D]
-	var index := int(located[1])
-	if index < 0 or index >= transforms.size():
-		return Transform2D()
-	return transforms[index]
+	return _buffer_transform(located[0] as Dictionary, int(located[1]))
 
 
 func debug_instance_color(handle: int) -> Color:
 	var located := _locate(handle)
 	if located.is_empty():
 		return Color(0.0, 0.0, 0.0, 0.0)
-	var batch_variant: Variant = located[0]
-	if not (batch_variant is Dictionary):
+	return _buffer_color(located[0] as Dictionary, int(located[1]))
+
+
+## Debug/test: whether the proxy's published instance carries the hit flash.
+func debug_instance_flashing(handle: int) -> bool:
+	var located := _locate(handle)
+	if located.is_empty():
+		return false
+	var buffer := (located[0] as Dictionary).get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var base := int(located[1]) * FLOATS_PER_INSTANCE
+	return base >= 0 and base + FLOATS_PER_INSTANCE <= buffer.size() and buffer[base + 15] < 0.0
+
+
+# The debug readers decode the upload buffer itself: the per-frame mirror
+# arrays they used to read cost two writes per instance per frame.
+func _buffer_transform(batch: Dictionary, index: int) -> Transform2D:
+	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var base := index * FLOATS_PER_INSTANCE
+	if index < 0 or index >= int(batch.get("published_count", 0)) or base + FLOATS_PER_INSTANCE > buffer.size():
+		return Transform2D()
+	return Transform2D(
+		Vector2(buffer[base], buffer[base + 4]),
+		Vector2(buffer[base + 1], buffer[base + 5]),
+		Vector2(buffer[base + 3], buffer[base + 7]),
+	)
+
+
+func _buffer_color(batch: Dictionary, index: int) -> Color:
+	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var base := index * FLOATS_PER_INSTANCE
+	if index < 0 or index >= int(batch.get("published_count", 0)) or base + FLOATS_PER_INSTANCE > buffer.size():
 		return Color(0.0, 0.0, 0.0, 0.0)
-	var colors := (batch_variant as Dictionary).get("colors", []) as Array[Color]
-	var index := int(located[1])
-	if index < 0 or index >= colors.size():
-		return Color(0.0, 0.0, 0.0, 0.0)
-	return colors[index]
+	return Color(buffer[base + 8], buffer[base + 9], buffer[base + 10], buffer[base + 11])
 
 
 func debug_all_batches_hidden() -> bool:
@@ -285,18 +386,14 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 	instance.texture = _texture_for(profile)
 	instance.z_index = int(profile.get("z_index", 0))
 	instance.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	if _region_material == null:
-		_region_material = ShaderMaterial.new()
-		_region_material.shader = REGION_SHADER
-	instance.material = _region_material
+	instance.material = _ensure_region_material()
 	add_child(instance)
 	var batch := {
 		"instance": instance,
 		"multimesh": multimesh,
 		"capacity": 0,
 		"handles": [] as Array[int],
-		"transforms": [] as Array[Transform2D],
-		"colors": [] as Array[Color],
+		"published_count": 0,
 		"texture_size": _safe_texture_size(instance.texture),
 	}
 	_batches[visual_key] = batch
@@ -306,61 +403,59 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 func _publish_batch(
 	_batch_key: StringName,
 	batch: Dictionary,
-	handles: Array[int],
-	alpha: float,
-	proxy_clock: float = -1.0,
-	proxy_interval: float = 0.0,
+	indices: PackedInt32Array,
+	now_usec: int,
 ) -> void:
-	var count := handles.size()
+	var count := indices.size()
 	var capacity := _ensure_capacity(batch, count)
-	# The buffer and mirror arrays persist on the batch: at hundreds of
-	# proxies, reallocating them every frame for every batch was measurable
-	# process-time churn (session 5: ~29ms avg process at 200+ enemies).
+	# The buffer persists on the batch: at hundreds of proxies, reallocating
+	# it every frame for every batch was measurable process-time churn
+	# (session 5: ~29ms avg process at 200+ enemies).
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
-	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
-	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
-	transforms.resize(count)
-	colors.resize(count)
-	for index in range(count):
-		var handle := handles[index]
+	var handles: Array[int] = []
+	handles.resize(count)
+	var flashing := not _proxy_flash_until.is_empty()
+	for slot in range(count):
+		var index := indices[slot]
+		var handle := _view_handles[index]
+		handles[slot] = handle
 		var profile := _profile_for(handle)
-		# Slices update at different times inside the fixed step; a per-handle
-		# blend from the handle's own update time removes the swarm
-		# micro-jitter a single global phase produces.
-		var blend := alpha
-		if proxy_clock >= 0.0 and proxy_interval > 0.0:
-			blend = clampf(
-				(proxy_clock - _world.get_proxy_update_time(handle)) / proxy_interval,
-				0.0,
-				1.0
-			)
-		var proxy_position := _world.get_previous_position(handle).lerp(_world.get_position(handle), blend)
+		var position := _view_draw[index]
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
-		# The unit quad renders 1px; instance scale is the target pixel size
-		# directly (dividing by texture size shrank proxies to sub-pixel dots).
-		# Y is negated: the quad mesh UVs assume Y-up while the canvas is
-		# Y-down, so an unflipped basis renders the texture upside down.
-		var proxy_scale := Vector2(size.x, -size.y)
-		var color := _profile_color(handle, profile)
+		var color: Color
+		if bool(profile.get("has_explicit_color", false)):
+			color = profile.get("color", DIAGNOSTIC_COLOR) as Color
+		else:
+			color = ELITE_DIAGNOSTIC_COLOR if (_view_flags[index] & Types.Flags.ELITE) != 0 else DIAGNOSTIC_COLOR
 		var uv := profile.get("region", FULL_UV) as Rect2
-		_write_instance(buffer, index * FLOATS_PER_INSTANCE, proxy_scale, proxy_position, color, uv)
-		transforms[index] = Transform2D(
-			Vector2(proxy_scale.x, 0.0),
-			Vector2(0.0, proxy_scale.y),
-			proxy_position,
-		)
-		colors[index] = color
-	# Only the tail that was occupied last publish needs clearing; slots past
-	# it were zeroed on allocation or by an earlier publish.
-	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
-	for index in range(count, stale_tail):
-		_write_instance(
-			buffer,
-			index * FLOATS_PER_INSTANCE,
-			Vector2.ONE,
-			Vector2.ZERO,
-			Color(0.0, 0.0, 0.0, 0.0),
-		)
+		var uv_height := uv.size.y
+		if flashing and int(_proxy_flash_until.get(handle, 0)) > now_usec:
+			uv_height = -uv_height
+		# Inlined _write_instance. The unit quad renders 1px; instance scale
+		# is the target pixel size directly (dividing by texture size shrank
+		# proxies to sub-pixel dots). Y is negated: the quad mesh UVs assume
+		# Y-up while the canvas is Y-down, so an unflipped basis renders the
+		# texture upside down. RenderingServer stores Transform2D as two
+		# padded rows: the origin sits at offsets 3 and 7, then RGBA, then
+		# the region.
+		var base := slot * FLOATS_PER_INSTANCE
+		buffer[base] = size.x
+		buffer[base + 1] = 0.0
+		buffer[base + 2] = 0.0
+		buffer[base + 3] = position.x
+		buffer[base + 4] = 0.0
+		buffer[base + 5] = -size.y
+		buffer[base + 6] = 0.0
+		buffer[base + 7] = position.y
+		buffer[base + 8] = color.r
+		buffer[base + 9] = color.g
+		buffer[base + 10] = color.b
+		buffer[base + 11] = color.a
+		buffer[base + 12] = uv.position.x
+		buffer[base + 13] = uv.position.y
+		buffer[base + 14] = uv.size.x
+		buffer[base + 15] = uv_height
+	_clear_stale_tail(batch, buffer, count, capacity)
 	var multimesh := batch.get("multimesh") as MultiMesh
 	if multimesh != null and capacity > 0:
 		multimesh.buffer = buffer
@@ -370,29 +465,25 @@ func _publish_batch(
 		# near the world origin. ProjectileSlotReuseTest guards the same
 		# lesson on the bullet renderer.
 		multimesh.emit_changed()
-	# The group arrays are rebuilt from scratch each publish, so storing them
-	# without duplicating is safe.
 	batch["handles"] = handles
 	batch["buffer"] = buffer
-	batch["transforms"] = transforms
-	batch["colors"] = colors
 	batch["last_count"] = count
+	batch["published_count"] = count
 	_visible_count += count
+	_visible_proxy_count += count
+	if flashing:
+		_expire_flashes(now_usec)
 
 
 func _publish_actor_batch(
 	visual_key: StringName,
 	batch: Dictionary,
 	entries: Array[Dictionary],
+	now_usec: int,
 ) -> void:
 	var count := entries.size()
 	var capacity := _ensure_capacity(batch, count)
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
-	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
-	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
-	transforms.resize(count)
-	colors.resize(count)
-	var now_usec := Time.get_ticks_usec()
 	for index in range(count):
 		var entry := entries[index]
 		var actor := entry.get("actor") as Node2D
@@ -406,7 +497,7 @@ func _publish_actor_batch(
 		# render at the sprite's native pixel size under node/sprite scales.
 		# Texture Y is negated: the quad mesh UVs assume Y-up while the
 		# canvas is Y-down, so an unflipped basis renders upside down.
-		var texture_size := _safe_texture_size(sprite.texture)
+		var texture_size := entry.get("texture_size", Vector2.ONE) as Vector2
 		# A sheet-animated sprite shows one region: size the quad to the frame
 		# and hand the shader that frame's UV rectangle.
 		var frame_size := texture_size
@@ -416,17 +507,33 @@ func _publish_actor_batch(
 			uv = Rect2(sprite.region_rect.position / texture_size, frame_size / texture_size)
 		if sprite.flip_h:
 			uv = Rect2(uv.position.x + uv.size.x, uv.position.y, -uv.size.x, uv.size.y)
+		if int(entry.get("flash_until", 0)) > now_usec:
+			uv.size.y = -uv.size.y
 		var instance_transform := (actor_transform * sprite.transform).scaled_local(
 			Vector2(frame_size.x, -frame_size.y)
 		)
 		var color := sprite.modulate * actor.modulate
 		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color, uv)
-		transforms[index] = instance_transform
-		colors[index] = color
 		# Slot bookkeeping lives on the persistent entry dict: a fresh location
 		# dictionary per actor per frame was pure allocation churn at 1000+.
 		entry["batch_key"] = visual_key
 		entry["batch_index"] = index
+	_clear_stale_tail(batch, buffer, count, capacity)
+	var multimesh := batch.get("multimesh") as MultiMesh
+	if multimesh != null and capacity > 0:
+		multimesh.buffer = buffer
+		multimesh.visible_instance_count = count
+		# Same stale-culling-rect guard as the proxy batches above.
+		multimesh.emit_changed()
+	batch["buffer"] = buffer
+	batch["last_count"] = count
+	batch["published_count"] = count
+	_visible_count += count
+
+
+## Only the tail that was occupied last publish needs clearing; slots past it
+## were zeroed on allocation or by an earlier publish.
+func _clear_stale_tail(batch: Dictionary, buffer: PackedFloat32Array, count: int, capacity: int) -> void:
 	var stale_tail: int = mini(int(batch.get("last_count", capacity)), capacity)
 	for index in range(count, stale_tail):
 		_write_instance(
@@ -436,17 +543,12 @@ func _publish_actor_batch(
 			Vector2.ZERO,
 			Color(0.0, 0.0, 0.0, 0.0),
 		)
-	var multimesh := batch.get("multimesh") as MultiMesh
-	if multimesh != null and capacity > 0:
-		multimesh.buffer = buffer
-		multimesh.visible_instance_count = count
-		# Same stale-culling-rect guard as the proxy batches above.
-		multimesh.emit_changed()
-	batch["buffer"] = buffer
-	batch["transforms"] = transforms
-	batch["colors"] = colors
-	batch["last_count"] = count
-	_visible_count += count
+
+
+func _expire_flashes(now_usec: int) -> void:
+	for handle_variant in _proxy_flash_until.keys():
+		if int(_proxy_flash_until[handle_variant]) <= now_usec:
+			_proxy_flash_until.erase(handle_variant)
 
 
 func _interpolated_actor_transform(
@@ -488,11 +590,7 @@ func debug_actor_instance_transform(actor: Node2D) -> Transform2D:
 	if entry.is_empty():
 		return Transform2D()
 	var batch := _batches.get(entry.get("batch_key"), {}) as Dictionary
-	var transforms := batch.get("transforms", [] as Array[Transform2D]) as Array[Transform2D]
-	var index := int(entry.get("batch_index", -1))
-	if index < 0 or index >= transforms.size():
-		return Transform2D()
-	return transforms[index]
+	return _buffer_transform(batch, int(entry.get("batch_index", -1)))
 
 
 ## Debug/test: the atlas UV rectangle written for a registered actor.
@@ -508,7 +606,7 @@ func debug_actor_instance_uv(actor: Node2D) -> Rect2:
 	var base := int(entry.get("batch_index", -1)) * FLOATS_PER_INSTANCE
 	if base < 0 or base + FLOATS_PER_INSTANCE > buffer.size():
 		return Rect2()
-	return Rect2(buffer[base + 12], buffer[base + 13], buffer[base + 14], buffer[base + 15])
+	return Rect2(buffer[base + 12], buffer[base + 13], buffer[base + 14], absf(buffer[base + 15]))
 
 
 func debug_actor_instance_color(actor: Node2D) -> Color:
@@ -516,11 +614,7 @@ func debug_actor_instance_color(actor: Node2D) -> Color:
 	if entry.is_empty():
 		return Color(0.0, 0.0, 0.0, 0.0)
 	var batch := _batches.get(entry.get("batch_key"), {}) as Dictionary
-	var colors := batch.get("colors", [] as Array[Color]) as Array[Color]
-	var index := int(entry.get("batch_index", -1))
-	if index < 0 or index >= colors.size():
-		return Color(0.0, 0.0, 0.0, 0.0)
-	return colors[index]
+	return _buffer_color(batch, int(entry.get("batch_index", -1)))
 
 
 func _write_instance_transform(
@@ -588,8 +682,7 @@ func _hide_batch(batch: Dictionary) -> void:
 	if multimesh != null:
 		multimesh.visible_instance_count = 0
 	batch["handles"] = [] as Array[int]
-	batch["transforms"] = [] as Array[Transform2D]
-	batch["colors"] = [] as Array[Color]
+	batch["published_count"] = 0
 	# Hidden batches restart clean: clear the whole occupied tail next time.
 	batch["last_count"] = int(batch.get("capacity", 0))
 
@@ -639,11 +732,24 @@ func _profile_for(handle: int) -> Dictionary:
 	return profile
 
 
-func _profile_color(handle: int, profile: Dictionary) -> Color:
-	var fallback := ELITE_DIAGNOSTIC_COLOR if (_world.get_flags(handle) & Types.Flags.ELITE) != 0 else DIAGNOSTIC_COLOR
-	if bool(profile.get("has_explicit_color", false)):
-		return profile.get("color", fallback) as Color
-	return fallback
+func _ensure_region_material() -> ShaderMaterial:
+	if _region_material == null:
+		_region_material = ShaderMaterial.new()
+		_region_material.shader = REGION_SHADER
+		_apply_flash_strength()
+	return _region_material
+
+
+## The accessibility setting scales the white mix (off / 40% / full), the
+## same contract as every other combat flash (AccessibilityPresentation).
+func _apply_flash_strength() -> void:
+	if _region_material != null:
+		_region_material.set_shader_parameter(FLASH_STRENGTH_PARAM, AccessibilityPresentation.current_flash_alpha(1.0))
+
+
+func _on_settings_changed(section: StringName, key: StringName, _value: Variant) -> void:
+	if section == &"accessibility" and key == &"combat_flash":
+		_apply_flash_strength()
 
 
 func _color_from_variant(value: Variant, fallback: Color) -> Color:

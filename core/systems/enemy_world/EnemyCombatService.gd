@@ -15,6 +15,10 @@ var status_service_override: Node = null
 ## how keystones such as Only the Weak reduce a hit against a healthy target
 ## exactly, instead of healing a share back after the fact.
 var player_damage_modifier: Callable = Callable()
+## Optional hook the scene's proxy renderer registers: called with the handle
+## when a data-only record (no actor to show it) survives a hit, so the proxy
+## can flash. Unset, a proxy hit pays one is_valid() test.
+var proxy_damage_listener: Callable = Callable()
 # Roadmap §9 elite modifiers that live in the damage path. Both registries are
 # empty until a modifier is live, so a hit on an ordinary horde pays one
 # is_empty() test each; entries clear on the elite's death here and on any
@@ -155,7 +159,11 @@ func _apply_damage(
 		clock = now
 
 	if remaining_health > 0.0:
-		_apply_survivor_feedback(actor, applied_damage, source, payload)
+		if actor == null:
+			if proxy_damage_listener.is_valid():
+				proxy_damage_listener.call(handle)
+		else:
+			_apply_survivor_feedback(actor, applied_damage, source, payload)
 		return applied_damage
 
 	if not _world.try_begin_death(handle):

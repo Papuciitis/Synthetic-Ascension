@@ -50,6 +50,11 @@ func _ready() -> void:
 	manager.setup(_world, pool, index, get_parent())
 	manager.enabled = true
 
+	# A data-only enemy that takes damage flashes white like an actor does.
+	var combat := get_node_or_null("/root/EnemyCombat")
+	if combat != null and "proxy_damage_listener" in combat:
+		combat.set("proxy_damage_listener", renderer.flash_handle)
+
 
 func _physics_process(delta: float) -> void:
 	if simulation == null:
@@ -67,7 +72,12 @@ func _physics_process(delta: float) -> void:
 # Above this many drawn proxies, visual uploads run every other frame:
 # distant swarm sprites at 30Hz are visually indistinguishable, and the
 # per-frame buffer build was the measured process-time cost at 400+.
-const HALF_RATE_PROXY_THRESHOLD := 300
+# Counted over on-screen proxies only since the renderer culls (FPS audit
+# 2026-10-04): 300 drawn instances, actors included, used to mean a 400+
+# horde. Proxies sit 480+ px out, move at chase speed (at most ~5 px per
+# 30 Hz upload) and blend from a 10 Hz (pressure: 6 / 3 Hz) simulation, so
+# the half-rate upload cannot add stepping their own simulation lacks.
+const HALF_RATE_PROXY_THRESHOLD := 120
 var _publish_skip := false
 
 
@@ -77,7 +87,7 @@ func _process(_delta: float) -> void:
 	# Batched actor sprites refresh every frame (near-player fidelity); only
 	# the offscreen proxy buffers drop to half rate under load.
 	var include_proxies := true
-	if renderer.visible_count() > HALF_RATE_PROXY_THRESHOLD:
+	if renderer.visible_proxy_count() > HALF_RATE_PROXY_THRESHOLD:
 		_publish_skip = not _publish_skip
 		include_proxies = not _publish_skip
 	else:
@@ -91,6 +101,11 @@ func _process(_delta: float) -> void:
 
 
 func _exit_tree() -> void:
+	var combat := get_node_or_null("/root/EnemyCombat")
+	if combat != null and renderer != null and "proxy_damage_listener" in combat:
+		var listener: Callable = combat.get("proxy_damage_listener")
+		if listener.is_valid() and listener.get_object() == renderer:
+			combat.set("proxy_damage_listener", Callable())
 	# Data-only records have no Node to unregister them when the run scene is
 	# torn down; release every detached record so menus and the next run start
 	# from a clean population.

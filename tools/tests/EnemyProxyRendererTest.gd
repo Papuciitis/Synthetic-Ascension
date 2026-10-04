@@ -161,9 +161,75 @@ func _run() -> void:
 		actor_transform.origin.distance_to(Vector2(400.0, 100.0)) < 0.5,
 		"actor instances stay fresh even when proxy publishing is skipped (got %s)" % actor_transform.origin
 	)
+	# --- off-screen actors are culled and come back without a slide ---
+	actor.position = Vector2(-5000.0, 100.0)
+	renderer.publish(1.0)
+	_check(renderer.debug_actor_instance_transform(actor) == Transform2D(), "an actor far off screen is not published")
+	actor.position = Vector2(500.0, 300.0)
+	renderer.publish(1.0)
+	actor_transform = renderer.debug_actor_instance_transform(actor)
+	_check(
+		actor_transform.origin.distance_to(Vector2(500.0, 300.0)) < 0.5,
+		"an actor back on screen draws where it is, not interpolating from where it left (got %s)" % actor_transform.origin
+	)
+	# --- the hit flash rides the region height of a materialized actor too ---
+	renderer.flash_actor(actor)
+	renderer.publish(1.0)
+	var actor_batch := (renderer.get("_batches") as Dictionary).values().filter(func(b: Dictionary) -> bool: return int(b.get("published_count", 0)) > 0 and String((b.get("instance") as Node).name).contains("actor"))
+	_check(not actor_batch.is_empty(), "the actor batch is live")
+	if not actor_batch.is_empty():
+		var actor_buffer := (actor_batch[0] as Dictionary).get("buffer") as PackedFloat32Array
+		_check(actor_buffer[15] < 0.0, "a flashed actor's instance carries the flash flag")
 	actor.free()
 	renderer.publish(1.0)
 	_check(renderer.registered_actor_count() == 0, "freed actor is pruned from the batch registry")
+
+	# --- proxies off screen are culled; the half-rate counter sees drawn ones ---
+	world.clear_world()
+	var on_screen := _spawn(world, &"on_screen", Vector2(300.0, 300.0), 0, {"proxy_visual_key": &"cull", "proxy_size": Vector2(10.0, 10.0)})
+	var edge := _spawn(world, &"edge", Vector2(-100.0, 300.0), 0, {"proxy_visual_key": &"cull", "proxy_size": Vector2(10.0, 10.0)})
+	var far := _spawn(world, &"far", Vector2(-4000.0, 300.0), 0, {"proxy_visual_key": &"cull", "proxy_size": Vector2(10.0, 10.0)})
+	renderer.publish(1.0)
+	_check(renderer.has_visible_handle(on_screen), "an on-screen proxy is published")
+	_check(renderer.has_visible_handle(edge), "a proxy inside the cull margin past the edge is still published")
+	_check(not renderer.has_visible_handle(far), "a proxy far off screen is culled")
+	_check(renderer.visible_proxy_count() == 2 and renderer.visible_count() == 2, "visible counts report drawn proxies only")
+	world.set_position(far, Vector2(600.0, 300.0))
+	world.reset_interpolation(far)
+	renderer.publish(1.0)
+	_check(renderer.has_visible_handle(far), "a proxy that comes on screen is published again")
+
+	# --- proxy hit flash: combat reports damage on a data-only record ---
+	var combat := EnemyCombatService.new()
+	combat.setup(world)
+	add_child(combat)
+	combat.proxy_damage_listener = renderer.flash_handle
+	_check(combat.apply_damage(on_screen, 1.0) > 0.0, "a data-only record takes a hit")
+	renderer.publish(1.0)
+	_check(renderer.debug_instance_flashing(on_screen), "the damaged proxy publishes with the hit flash")
+	_check(not renderer.debug_instance_flashing(edge), "an undamaged proxy does not flash")
+	_check(
+		renderer.debug_instance_transform(on_screen).origin.is_equal_approx(Vector2(300.0, 300.0)),
+		"a flashing proxy keeps its transform"
+	)
+	# The flash clock is real time; headless scene timers are not.
+	var flash_set_usec := Time.get_ticks_usec()
+	while Time.get_ticks_usec() - flash_set_usec < 100_000:
+		await get_tree().process_frame
+	renderer.publish(1.0)
+	_check(not renderer.debug_instance_flashing(on_screen), "the flash ends after about 0.07 s")
+	_check((renderer.get("_proxy_flash_until") as Dictionary).is_empty(), "expired flashes are forgotten")
+	combat.apply_damage(on_screen, 100.0)
+	renderer.publish(1.0)
+	_check(not renderer.has_visible_handle(on_screen), "a lethal hit removes the proxy instead of flashing it")
+	combat.queue_free()
+	var material := renderer.get("_region_material") as ShaderMaterial
+	_check(
+		material != null and is_equal_approx(float(material.get_shader_parameter(&"hit_flash_strength")), AccessibilityPresentation.current_flash_alpha(1.0)),
+		"the flash strength follows the combat-flash accessibility setting"
+	)
+	world.clear_world()
+	renderer.publish(1.0)
 
 	# --- buffer capacity follows the live population back down ---
 	var burst: Array[int] = []
