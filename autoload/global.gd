@@ -312,8 +312,10 @@ var vfx_stamina_aura_scene: PackedScene
 ## this attempt RECRUITED, which spending never lowers. Followers are the
 ## run's money, but the movement is its people: the wallet is the stock you
 ## spend, the congregation is the crowd you built, and belief's cap and the
-## Hub's crowd follow the congregation so buying never shrinks either (the
-## research pass's "stock vs flow"). Saved with the run; reset with the attempt.
+## Hub's crowd follow the congregation, so spending what you recruited
+## shrinks neither (the research pass's "stock vs flow"; the crowd's one
+## exception, sale proceeds, is at congregation_crowd_basis). Saved with the
+## run; reset with the attempt.
 var attempt_congregation: int = 0
 ## The wallet reasons that are recruitment. Trades, undo, refunds, Abstain,
 ## syncs, legacy calls and developer grants are not: selling and undoing could
@@ -1036,8 +1038,11 @@ func belief_power_cap() -> float:
 
 
 ## What the Hub's crowd is sized from (HubCrowd): the congregation, or the
-## Followers held when a sale or a pre-Congregation save holds more, so
-## spending never makes people leave between visits either.
+## Followers held when they are more (a sale's proceeds, a pre-Congregation
+## save). Spending what was recruited never shrinks the crowd between
+## visits; the people a sale drew stay only while the wallet holds them, so
+## once the proceeds are spent the next Hub sizes from the congregation and
+## what is left (review 2026-10-04: this used to promise more).
 func congregation_crowd_basis() -> int:
 	return maxi(attempt_congregation, followers)
 

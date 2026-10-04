@@ -421,8 +421,9 @@ func _test_congregation() -> void:
 	SaveManager.current_save = null
 	_check(Global.attempt_congregation == 0, "so does a new attempt")
 
-	# The Hub's crowd: sized from the Congregation, so spending at the last Hub
-	# never shrinks this one.
+	# The Hub's crowd: sized from the Congregation, so spending recruits at the
+	# last Hub never shrinks this one; people a sale drew last only while the
+	# wallet holds them (review 2026-10-04: the comments now say so).
 	_fresh_attempt(3)
 	Global.attempt_congregation = 4000
 	Global.followers = 100
@@ -430,6 +431,8 @@ func _test_congregation() -> void:
 	Global.attempt_congregation = 100
 	Global.followers = 4000
 	_check(Global.congregation_crowd_basis() == 4000, "and the wallet when a sale holds more")
+	Global.followers = 50
+	_check(Global.congregation_crowd_basis() == 100, "spending the proceeds takes the basis back to the Congregation, not below it")
 	Global.attempt_congregation = 4000
 	Global.followers = 100
 	var hub: HubWorld = HUB_WORLD.instantiate()

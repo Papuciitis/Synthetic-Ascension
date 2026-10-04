@@ -125,8 +125,9 @@ func setup(world: HubWorld, seed_value: int, arrival_followers: int) -> void:
 	hub = world
 	_rng.seed = seed_value
 	# Sized from the Congregation (Followers recruited this attempt), never
-	# below what the player arrives holding, so spending at the last Hub never
-	# shrinks this one (follower economy audit P5).
+	# below what the player arrives holding: spending recruits at the last Hub
+	# never shrinks this one, though people a sale drew there are gone once
+	# its proceeds are spent (follower economy audit P5; review 2026-10-04).
 	visit_level = maxi(maxi(0, arrival_followers), Global.congregation_crowd_basis() if Global != null else 0)
 	for key in CROWD_ART:
 		var texture: Texture2D = hub._art(key)
@@ -615,7 +616,8 @@ func _service_line(s: Dictionary) -> String:
 	return StoryDirector.staff_line(String(s["key"]), _rng, aside)
 
 
-## Sales and refunds raise the visit's level; newcomers arrive one by one.
+## Sales and refunds raise this visit's level (the next visit sizes afresh
+## from congregation_crowd_basis); newcomers arrive one by one.
 func _grow_with_followers() -> void:
 	if Global == null:
 		return
