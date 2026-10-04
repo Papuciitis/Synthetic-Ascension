@@ -3,13 +3,19 @@ extends Node
 # The story layer (core/systems/narrative, data/narrative/StoryLines.gd):
 # the picker's priorities, once-scopes, conditions and determinism; an
 # account recorded across a simulated death BEFORE Global wipes the attempt
-# (the reset-order trap), with its epitaph and the Chronicler's relay; the
-# save round trip in memory; the square keyed on the COMPLETED segment;
-# arrivals, bulletins and the Registry's name ladder; Bren's dispatches;
-# reconstruction cards; Follower milestones; the Area I card; the loading
-# card, Game Over and square wiring; and the copy rules (the name only on
-# that card's last line, Beka in no pool, hub lines that fit their bubbles).
-# Never writes a save slot: SaveManager.current_save stays null.
+# (the reset-order trap), with its epitaph and the Chronicler's relay; a
+# fatal death that rebuilds no one; account numerals past XX; the save round
+# trip in memory, and a profile older than the story seeded from its runs;
+# the square keyed on the COMPLETED segment; spent flags marked for saving;
+# depth records from the segment played; arrivals, bulletins and the
+# Registry's name ladder; Bren's dispatches; reconstruction cards and their
+# draws across a Continue; milestones and witnesses from the Congregation;
+# the Area I card; the loading card, Game Over, Exchange and square wiring;
+# cards for a developer run with a display; and the copy rules (the name
+# only on that card's last line, Beka in no pool, hub lines that fit their
+# bubbles, no "this morning" in the first square). Never writes a save
+# slot: SaveManager.current_save stays null, or a throwaway SaveData whose
+# pending write is cancelled at once.
 #
 # Run: <godot> --headless --path . res://tools/tests/StoryDirectorTest.tscn
 

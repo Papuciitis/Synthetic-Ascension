@@ -303,7 +303,8 @@ static func note_death(cause: String, rite: bool, boss: int) -> void:
 
 ## The witnesses of this attempt: the Congregation, every Follower it
 ## recruited, which spending never lowers (Global.attempt_congregation). The
-## peak noted here keeps a run saved before the Congregation existed whole.
+## peak the ledger noted stays a floor, for a run saved before the
+## Congregation existed (Global restarts it from the Followers then held).
 static func witnesses() -> int:
 	var recruited := Global.attempt_congregation if Global != null else 0
 	return maxi(int(attempt().get("peak", 0)), recruited)
