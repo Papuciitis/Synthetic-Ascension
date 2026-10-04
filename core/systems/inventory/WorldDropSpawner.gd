@@ -48,10 +48,13 @@ func _ready() -> void:
 
 
 func _on_router_dropped_to_world(inst: ItemInstance, _world_pos: Vector2) -> void:
-	spawn_protected(inst)
+	spawn_protected(inst, true)
 
 
-func spawn_protected(inst: ItemInstance) -> bool:
+## `player_drop`: the player threw it out of their own containers (the
+## router's drop), so collecting it again is not an acquisition. A reward
+## that spilled here because the bag and stash were full stays a find.
+func spawn_protected(inst: ItemInstance, player_drop: bool = false) -> bool:
 	if inst == null or inst.data == null:
 		return false
 	if pickup_scene == null:
@@ -66,6 +69,7 @@ func spawn_protected(inst: ItemInstance) -> bool:
 	# Set instance before adding so ItemPickup draws correct icon immediately
 	pickup.item_instance = inst
 	pickup.persistent_world_drop = true
+	pickup.player_dropped = player_drop
 
 	# Make dropped items take longer to be pickable
 	pickup.pickup_delay = dropped_pickup_delay

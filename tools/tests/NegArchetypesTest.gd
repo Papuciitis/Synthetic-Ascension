@@ -67,6 +67,7 @@ func _run() -> void:
 	await _test_litany_through_the_augment_runner()
 	_test_gambler_rule()
 	_test_gambler_pays_and_banks()
+	await _test_gambler_ignores_own_drops()
 	_test_gravemarch_census()
 	await _test_cursed_ballast_replaces_armour()
 	await _test_cursed_ballast_drains_and_heals()
@@ -342,6 +343,79 @@ func _test_gambler_pays_and_banks() -> void:
 	Global.permanent_augment_ids = saved_augments
 	Global.followers = saved_followers
 	Global.run_luck = saved_luck
+
+
+## The player's own drop collected again is a move, not a find (review
+## 2026-10-04): dropping and re-picking one curse rolled the Rite every time,
+## and each win grew the Congregation. Driven through the real router-drop
+## spawner and real pickups.
+func _test_gambler_ignores_own_drops() -> void:
+	var saved_inventory: Inventory = Global.run_inventory
+	var saved_bag: BagInventory = Global.run_bag
+	var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
+	var saved_followers := int(Global.followers)
+	var saved_congregation := int(Global.attempt_congregation)
+	var saved_luck: float = Global.run_luck
+	Global.run_inventory = Inventory.new()
+	Global.permanent_augment_ids = [GAMBLER, StringName(), StringName()]
+	Global.run_luck = 0.0
+	Global.followers = 1000
+	Global.gambler_reset_segment()
+	var seen: Array = []
+	var listener := func(kind: StringName, inst: ItemInstance, data: Dictionary) -> void:
+		if kind in [&"equipped", &"bagged", &"merged"]:
+			seen.append({"source": String(data.get("source", "")), "acquisition": GamblersRite.is_new_neg_acquisition(kind, inst, data)})
+	RunEvents.item_operation.connect(listener)
+
+	var spawner := WorldDropSpawner.new()
+	spawner.pickup_scene = PICKUP_SCENE
+	add_child(spawner)
+	spawner.call("_on_router_dropped_to_world", _cursed(5, 0.5, "", "relic_own_drop"), Vector2.ZERO)
+	var thrown: Node = spawner.get_child(spawner.get_child_count() - 1) if spawner.get_child_count() > 0 else null
+	_check(thrown != null and bool(thrown.get("player_dropped")) and bool(thrown.get("persistent_world_drop")), "the router's drop marks its pickup as the player's own")
+	spawner.call("spawn_protected", _cursed(5, 0.5, "", "relic_spilled"))
+	var spilled: Node = spawner.get_child(spawner.get_child_count() - 1)
+	_check(not bool(spilled.get("player_dropped")), "a reward spilled from a full bag is not")
+
+	var congregation_before := int(Global.attempt_congregation)
+	var picks := 40
+	for i in range(picks):
+		Global.run_bag = BagInventory.new()
+		Global.run_bag._ensure_size()
+		var pickup: Variant = PICKUP_SCENE.instantiate()
+		pickup.set("item_instance", _cursed(5, 0.5, "", "relic_own_drop"))
+		pickup.set("persistent_world_drop", true)
+		pickup.set("player_dropped", true)
+		add_child(pickup)
+		pickup.set("_pickup_ready", true)
+		pickup.call("_try_pickup")
+	var all_moves := seen.size() == picks
+	for entry in seen:
+		all_moves = all_moves and String(entry["source"]) == "player" and not bool(entry["acquisition"])
+	_check(all_moves, "%d re-picks of the player's own cursed drop are moves, never acquisitions (%d reports)" % [picks, seen.size()])
+	_check(int(Global.followers) == 1000 and int(Global.attempt_congregation) == congregation_before and Global.attempt_gambler_followers == 0, "so they pay nothing and recruit nobody (%d Followers, %d won)" % [int(Global.followers), Global.attempt_gambler_followers])
+
+	# A curse found in the world still counts.
+	seen.clear()
+	Global.run_bag = BagInventory.new()
+	Global.run_bag._ensure_size()
+	var found: Variant = PICKUP_SCENE.instantiate()
+	found.set("item_instance", _cursed(6, 0.5, "", "relic_found"))
+	add_child(found)
+	found.set("_pickup_ready", true)
+	found.call("_try_pickup")
+	_check(seen.size() == 1 and String(seen[0]["source"]) == "pickup" and bool(seen[0]["acquisition"]), "an enemy's cursed drop is still a new acquisition (%s)" % str(seen))
+
+	RunEvents.item_operation.disconnect(listener)
+	await get_tree().process_frame
+	_drop(spawner)
+	Global.run_inventory = saved_inventory
+	Global.run_bag = saved_bag
+	Global.permanent_augment_ids = saved_augments
+	Global.followers = saved_followers
+	Global.attempt_congregation = saved_congregation
+	Global.run_luck = saved_luck
+	Global.gambler_reset_segment()
 
 
 # ---------------------------------------------------------------------------

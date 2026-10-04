@@ -17,6 +17,12 @@ class_name ItemPickup
 @export var is_exploration_loot: bool = false # set true for exploration cache drops
 @export var secondary_objective_id: int = 0
 @export var persistent_world_drop: bool = false # player-dropped equipment should never be cleaned up behind them
+## The player threw this instance out of their own bag or equipment
+## (WorldDropSpawner sets it for InventoryRouter drops only). Collecting it
+## again is a move, not an acquisition, so it reports as a "player" operation:
+## a re-picked curse rolled Gambler's Rite (and grew the Congregation) once
+## per drop (review 2026-10-04), and the recorder counted it acquired twice.
+var player_dropped: bool = false
 ## Non-zero: this pickup is one of a "take one" group; taking it seals the
 ## others of the same group away (the evidence store's POS / NEG pair).
 @export var choice_group: int = 0
@@ -185,8 +191,9 @@ func _try_pickup() -> void:
 	if _picked or not _pickup_ready:
 		return
 	# Telemetry scope: everything this collection does to the containers is
-	# one operation from one kind of pickup.
-	var op := BalanceItemContext.begin(&"pickup", {"pickup": _pickup_kind(), "ground_serial": ground_serial, "item_id": item_id})
+	# one operation from one kind of pickup. The player's own drop coming back
+	# is theirs already (player_dropped).
+	var op := BalanceItemContext.begin(&"player" if player_dropped else &"pickup", {"pickup": _pickup_kind(), "ground_serial": ground_serial, "item_id": item_id})
 	_collect()
 	BalanceItemContext.end(op)
 

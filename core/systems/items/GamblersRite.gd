@@ -7,6 +7,9 @@ extends RefCounted
 ## the first acquisition of each distinct NEG base item per segment banks
 ## Resonance up to a per-segment cap. Trades, rewards, moves and undo are
 ## not acquisitions; the source on the item operation says which is which.
+## The player's own drop collected again is a move: its pickup reports
+## "player", so dropping and re-picking one curse cannot roll the Rite (and
+## grow the Congregation) again and again (review 2026-10-04).
 
 const ACQUISITION_KINDS: Array[StringName] = [&"equipped", &"bagged", &"merged"]
 const ACQUISITION_SOURCES: Array[String] = ["pickup"]
