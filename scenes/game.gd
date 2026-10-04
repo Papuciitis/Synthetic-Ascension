@@ -7,6 +7,7 @@ const OPENING_SEQUENCE_SCENE := preload("res://core/systems/world/opening/Openin
 const DEV_SEGMENT_SCENE := preload("res://scenes/world/dev_segment/DevSegment.tscn")
 const ENEMY_PROXY_ROOT_SCRIPT := preload("res://core/systems/enemy_world/EnemyProxyRoot.gd")
 const ENCOUNTER_DIRECTOR_SCRIPT := preload("res://core/systems/encounters/EncounterDirector.gd")
+const ESCAPE_RELEASE_SCRIPT := preload("res://core/systems/world/EscapeRelease.gd")
 
 @export var starting_followers: int = 0 # legacy; Bren now becomes the first follower.
 @export var game_over_ui_scene: PackedScene
@@ -358,11 +359,26 @@ func complete_segment(completed_segment: int) -> void:
 	if _segment_completion_running:
 		return
 	_segment_completion_running = true
+	# The escape is an event before it is a loading screen (2026-10-04 audit):
+	# the world exhales around the player for a couple of seconds first.
+	await _play_escape_release()
 	if completed_segment == 1:
 		await _present_segment1_overlay(true)
 	if Global != null:
 		Global.on_segment_completed(completed_segment)
 	Global.goto_hub_shop()
+
+func _play_escape_release() -> void:
+	if player == null or not is_instance_valid(player) or not (player is Node2D):
+		return
+	if bool(player.get("is_dead")):
+		return
+	var release := ESCAPE_RELEASE_SCRIPT.new()
+	release.name = "EscapeRelease"
+	add_child(release)
+	await release.play(player as Node2D)
+	if is_instance_valid(release):
+		release.queue_free()
 
 func _present_segment1_overlay(completion: bool) -> void:
 	if not completion:
