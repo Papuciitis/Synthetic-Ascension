@@ -152,9 +152,9 @@ func paint_transformed_texture(
 	return true
 
 
-## A decal: `texture` in one of the eight orientations (quarter turns, then
-## flips, exactly as paint_transformed_texture bakes them) at the alpha level
-## nearest `alpha`. The decal's source is built once (warm_decal); nothing
+## A decal: `texture` in one of the eight orientations (flips, then quarter
+## turns clockwise, exactly as paint_transformed_texture bakes them) at the
+## alpha level nearest `alpha`. The decal's source is built once (warm_decal); nothing
 ## here reads the texture or touches the TileSet after that.
 func paint_decal(
 	chunk: Node2D,
@@ -243,6 +243,11 @@ func paint_repeating_rect(
 	var chunk_coord := chunk.get_meta(&"_chunk_tile_coord", Vector2i.ZERO) as Vector2i
 	var cells_per_chunk := int(chunk.get_meta(&"_chunk_cells_per_side", 0))
 	var painted := 0
+	# Painted-cell bookkeeping for clear_chunk, hoisted out of the cell loop.
+	var painted_side := cells_per_chunk
+	var painted_key := "%s:%d" % [String(layer_kind), z_index]
+	var painted_coord_cached := Vector2i(2147483647, 2147483647)
+	var painted_cells: Dictionary = {}
 	for y in range(rect.position.y, rect.end.y):
 		for x in range(rect.position.x, rect.end.x):
 			var cell := Vector2i(x, y)
@@ -250,7 +255,12 @@ func paint_repeating_rect(
 			var atlas := Vector2i(posmod(global_cell.x, period_cells), posmod(global_cell.y, period_cells))
 			var was_empty := layer.get_cell_source_id(global_cell) < 0
 			layer.set_cell(global_cell, source_id, atlas, 0)
-			_note_painted(chunk, layer_kind, z_index, global_cell)
+			if painted_side > 0:
+				var painted_coord := Vector2i(floori(float(global_cell.x) / float(painted_side)), floori(float(global_cell.y) / float(painted_side)))
+				if painted_coord != painted_coord_cached:
+					painted_coord_cached = painted_coord
+					painted_cells = _painted_cells(painted_coord, painted_key)
+				painted_cells[global_cell] = true
 			if was_empty:
 				painted += 1
 	if painted > 0:
@@ -437,6 +447,11 @@ func _note_painted(chunk: Node2D, layer_kind: StringName, z_index: int, global_c
 	if side <= 0:
 		return
 	var coord := Vector2i(floori(float(global_cell.x) / float(side)), floori(float(global_cell.y) / float(side)))
+	_painted_cells(coord, "%s:%d" % [String(layer_kind), z_index])[global_cell] = true
+
+
+## The painted-cell set of one layer in one chunk rect, created on first use.
+func _painted_cells(coord: Vector2i, layer_key: String) -> Dictionary:
 	var by_layer_variant: Variant = _painted.get(coord)
 	var by_layer: Dictionary
 	if by_layer_variant == null:
@@ -444,15 +459,12 @@ func _note_painted(chunk: Node2D, layer_kind: StringName, z_index: int, global_c
 		_painted[coord] = by_layer
 	else:
 		by_layer = by_layer_variant
-	var layer_key := "%s:%d" % [String(layer_kind), z_index]
 	var cells_variant: Variant = by_layer.get(layer_key)
-	var cells: Dictionary
 	if cells_variant == null:
-		cells = {}
+		var cells: Dictionary = {}
 		by_layer[layer_key] = cells
-	else:
-		cells = cells_variant
-	cells[global_cell] = true
+		return cells
+	return cells_variant
 
 
 func _forget_painted(chunk: Node2D, layer_key: String, global_cell: Vector2i) -> void:
