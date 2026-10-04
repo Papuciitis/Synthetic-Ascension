@@ -1309,22 +1309,23 @@ func _test_tithe_bones_bills_followers() -> void:
 	remove_child(bystander)
 	bystander.free()
 
-	# It takes your purse, never your last life: the bill stops at the
-	# reconstruction cost however much damage arrives.
+	# It takes your purse, never your last life: the bill stops one above the
+	# reconstruction cost however much damage arrives (exactly the cost left a
+	# death that ended the run; follower economy audit P7).
 	Global.followers = 205
 	var reconstruction: int = Global.compute_respawn_cost()
 	_check(reconstruction == 41, "fixture: reconstruction costs 41 at 205 Followers (%d)" % reconstruction)
 	RunEvents.player_damage_taken.emit(stub, 1000.0, Vector2.ZERO)
 	_check(
-		Global.followers == reconstruction,
-		"ten bars of damage bills down to the reconstruction cost and stops (%d)" % Global.followers
+		Global.followers == reconstruction + 1 and Global.reconstruction_survivable(Global.followers),
+		"ten bars of damage bills down to one above the reconstruction cost and stops (%d)" % Global.followers
 	)
 
 	# The unaffordable remainder is written off, not carried: the next wound
 	# bills its own rate rather than last wound's debt.
 	RunEvents.player_damage_taken.emit(stub, 100.0, Vector2.ZERO)
 	_check(
-		Global.followers == 19,
+		Global.followers == 20,
 		"the next bar bills its own 22, so the unpayable remainder was forgiven (%d)" % Global.followers
 	)
 

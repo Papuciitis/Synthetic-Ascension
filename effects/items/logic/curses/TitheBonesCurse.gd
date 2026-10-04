@@ -14,8 +14,9 @@ extends Node2D
 const FOLLOWERS_PER_HEALTH_BAR: float = 22.0
 ## Never bills you into being unable to reconstruct - the curse takes your
 ## purse, never your last life. That refusal is what keeps it a tax rather than
-## a death sentence.
-const SAFETY_MARGIN: int = 0
+## a death sentence. One above the cost: leaving exactly the flat cost meant a
+## death then ended the run (follower economy audit 2026-10-04, P7).
+const SAFETY_MARGIN: int = 1
 
 var player: Node = null
 var item: ItemInstance = null
@@ -76,7 +77,8 @@ func _on_damage_taken(hurt: Node, amount: float, at: Vector2) -> void:
 	var spendable: int = maxi(0, Global.followers - floor_followers)
 	var taken: int = mini(due, spendable)
 	_owed -= float(due)
-	if taken <= 0:
+	# The shared reserve rule has the last word (Global.spend_survivable).
+	if taken <= 0 or not Global.spend_survivable(taken):
 		return
 
 	Global.transaction_followers(

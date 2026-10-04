@@ -143,8 +143,8 @@ func _try_tithe(style_id: StringName, target: Vector2) -> void:
 	if Global == null:
 		return
 	var cost: int = int(Global.compute_respawn_cost())
-	var have: int = int(Global.followers)
-	if have - 1 < cost:
+	# Tithe Furnace's floor exactly: the shared reserve rule (P7).
+	if not Global.spend_survivable(1):
 		_refuse(cost)
 		return
 

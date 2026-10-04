@@ -115,8 +115,10 @@ func _try_tithe() -> void:
 	if Global == null:
 		return
 	var cost: int = int(Global.compute_respawn_cost())
-	var have: int = int(Global.followers)
-	if have - 1 < cost:
+	# The shared reserve rule (follower economy audit P7): the tithe may not
+	# leave a balance a death cannot reconstruct from. "have - 1 >= cost"
+	# allowed leaving exactly the flat cost, and that death ended the run.
+	if not Global.spend_survivable(1):
 		_refuse(cost)
 		return
 
@@ -153,7 +155,7 @@ func _refresh_affordability() -> void:
 	if Global == null:
 		_can_afford = false
 		return
-	_can_afford = int(Global.followers) - 1 >= int(Global.compute_respawn_cost())
+	_can_afford = Global.spend_survivable(1)
 
 
 func _process(delta: float) -> void:

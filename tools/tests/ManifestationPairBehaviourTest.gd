@@ -1369,10 +1369,13 @@ func _test_tithe_rhythm() -> void:
 	# rhythm. The refused ask is the only way to stand here: every ask the rule
 	# accepts sits on a multiple of BEATS, and an ask that pays fires an echo
 	# that carries the counter off the beat.
-	Global.followers = floor_cost + 1
+	# Two above the floor: the tithe may spend one and still leave a balance a
+	# death reconstructs from (Global.spend_survivable, follower economy audit
+	# P7; one above the floor would leave exactly the cost).
+	Global.followers = floor_cost + 2
 	_check(
-		Global.followers - 1 >= int(Global.compute_respawn_cost()),
-		"fixture: one believer above the floor (%d have, %d cost)" % [Global.followers, int(Global.compute_respawn_cost())]
+		Global.spend_survivable(1),
+		"fixture: two believers above the floor can afford a tithe (%d have, %d cost)" % [Global.followers, int(Global.compute_respawn_cost())]
 	)
 	_check(
 		state.attack_index == refusal_index and state.beat_in_cycle(beats) == 0,
@@ -1380,7 +1383,7 @@ func _test_tithe_rhythm() -> void:
 	)
 	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
 	_check(
-		Global.followers == floor_cost + 1,
+		Global.followers == floor_cost + 2,
 		"an affordable shot on the beat the last ask already marked tithes nothing (%d)" % Global.followers
 	)
 	_check(
@@ -1398,8 +1401,17 @@ func _test_tithe_rhythm() -> void:
 	)
 	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
 	_check(
-		Global.followers == floor_cost,
-		"one believer above the floor is enough to pay once the cycle comes round (%d)" % Global.followers
+		Global.followers == floor_cost + 1,
+		"two believers above the floor pay once the cycle comes round, leaving one above it (%d)" % Global.followers
+	)
+
+	# One above the floor is not enough: that tithe would leave exactly the
+	# reconstruction cost, and the next death would end the run (P7).
+	_seek_tithe_beat(state, beats)
+	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
+	_check(
+		Global.followers == floor_cost + 1 and Global.reconstruction_survivable(Global.followers),
+		"a tithe that would leave exactly the reconstruction cost is refused (%d)" % Global.followers
 	)
 
 	_teardown([pair], state, fake)

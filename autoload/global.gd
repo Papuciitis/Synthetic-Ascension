@@ -3280,6 +3280,15 @@ func reconstruction_cost_for(balance: int) -> int:
 func reconstruction_survivable(balance: int) -> bool:
 	return balance - reconstruction_cost_for(balance) > 0
 
+
+## The one reserve rule for spenders that must never strand the run (follower
+## economy audit 2026-10-04, P7): true when paying `amount` now still leaves
+## a balance a death reconstructs from. The tithes refuse a payment this
+## rejects; they used to stop at "balance - 1 >= cost", which leaves exactly
+## the flat cost and a death then ends the run.
+func spend_survivable(amount: int) -> bool:
+	return amount <= 0 or reconstruction_survivable(followers - amount)
+
 func consume_respawn_cost() -> int:
 	var cost: int = compute_respawn_cost()
 	attempt_deaths_this_segment += 1
