@@ -805,7 +805,7 @@ func _on_body_entered(b: Node) -> void:
 			if narrative_mode:
 				RunEvents.tutorial_tip.emit("Rewrite the Rite • Remain within the sigil", 3.5)
 			else:
-				RunEvents.tutorial_tip.emit("Hold within the Gate to Escape", 3.0)
+				RunEvents.tutorial_tip.emit("Hold within the Rite to escape", 3.0)
 
 func _on_body_exited(b: Node) -> void:
 	if b != null and b.is_in_group("player"):
