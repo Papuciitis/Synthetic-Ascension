@@ -61,6 +61,7 @@ func _run() -> void:
 	_test_conditions()
 	_test_account()
 	_test_fatal_death()
+	_test_numerals()
 	_test_save_round_trip()
 	_test_older_profile()
 	_test_completed_segment_keys()
@@ -250,6 +251,21 @@ func _test_fatal_death() -> void:
 	Global.on_attempt_failed_die_die()
 	var last := StoryDirector.last_account()
 	_check(int(last.get("n", 0)) == 1 and int(last.get("recon", -1)) == 0, "the account closes with no reconstruction (%s)" % str(last.get("recon", -1)))
+
+
+## Accounts never stop at XX, so neither do the numerals.
+func _test_numerals() -> void:
+	var cases := {1: "I", 4: "IV", 9: "IX", 14: "XIV", 20: "XX", 21: "XXI", 38: "XXXVIII", 49: "XLIX", 99: "XCIX", 1994: "MCMXCIV"}
+	var wrong: Array = []
+	for n in cases.keys():
+		if StoryDirector.roman(int(n)) != String(cases[n]):
+			wrong.append("%d=%s" % [n, StoryDirector.roman(int(n))])
+	_check(wrong.is_empty() and StoryDirector.roman(0) == "0", "Roman numerals for any count (%s)" % str(wrong))
+	StoryDirector.load_state({"accounts": 20})
+	_fresh(3, 9)
+	Global.on_attempt_failed_die_die()
+	var caption := String(StoryDirector.closing_epitaph()["caption"])
+	_check(caption.begins_with("ACCOUNT XXI · "), "the 21st account's caption keeps its numerals (%s)" % caption)
 
 
 func _test_save_round_trip() -> void:

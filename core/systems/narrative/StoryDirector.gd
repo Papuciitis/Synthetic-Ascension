@@ -33,8 +33,10 @@ const RECENT := 3
 const LEDGER_PATH := "res://core/systems/narrative/StoryLedger.gd"
 const SEGMENT_PRESENTER_PATH := "res://core/systems/narrative/StorySegmentPresenter.gd"
 const HUB_PRESENTER_PATH := "res://core/systems/narrative/StoryHubPresenter.gd"
-const ROMAN: Array[String] = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
-	"XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"]
+## roman() for any count: a profile's accounts never stop at XX, and the
+## Game Over caption switched to digits at the 21st (story review 2026-10-04).
+const ROMAN_VALUES: Array[int] = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
+const ROMAN_SYMBOLS: Array[String] = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"]
 ## The first-time beats a profile with closed accounts has already lived
 ## (the first epitaph, meeting the Chronicler, the first reconstruction, the
 ## first square), spent when its history seeds the story (_seed_from_history).
@@ -963,7 +965,15 @@ static func attach_hub(hub: Node) -> Node:
 # ---------------------------------------------------------------- words
 
 static func roman(n: int) -> String:
-	return ROMAN[n] if n >= 1 and n < ROMAN.size() else str(n)
+	if n < 1:
+		return str(n)
+	var out := ""
+	var left := n
+	for i in ROMAN_VALUES.size():
+		while left >= ROMAN_VALUES[i]:
+			out += ROMAN_SYMBOLS[i]
+			left -= ROMAN_VALUES[i]
+	return out
 
 
 static func grouped(value: int) -> String:
