@@ -653,6 +653,15 @@ func _test_surfaces() -> void:
 	var plain_hint := plain.get_node("CenterContainer/Panel/Margin/VBox/Hint") as Label
 	_check(plain_hint.text == "What you bound to the Pattern remains." and plain.get_node_or_null("CenterContainer/Panel/Margin/VBox/Account") == null, "with no account just closed the screen reads as before")
 	plain.queue_free()
+	# The Exchange's ledger names the route as the Archives card does.
+	_fresh(12, 7)
+	var shop := (load("res://ui/screens/HubShop.tscn") as PackedScene).instantiate() as Control
+	shop.set("embedded", true)
+	add_child(shop)
+	await get_tree().process_frame
+	var route: Label = (shop.get("_ledger_rows") as Dictionary).get("ROUTE", null)
+	_check(route != null and route.text == "Beyond the Wall · Segment 12", "past the last gate the Exchange's route leaves Area 1 too (%s)" % (route.text if route != null else "missing"))
+	shop.queue_free()
 	# The loading card's district line.
 	Global.attempt_segment = 3
 	var scrim := Global.loading_scrim()

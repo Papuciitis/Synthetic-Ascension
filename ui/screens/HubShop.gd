@@ -457,9 +457,9 @@ func _refresh_info() -> void:
 
 	title.text = "Aftermath"
 	var report_header: String = "SEGMENT %d CLEARED" % completed_segment if completed_segment > 0 else "PREPARING SEGMENT 1"
-	info.text = "%s\n\nNEXT ROUTE\nArea 1 · Segment %d\n\nCURRENT SUPPORT\nFollowers: %d\nGear: %d / %d\nBackpack: %d / %d%s" % [
+	info.text = "%s\n\nNEXT ROUTE\n%s\n\nCURRENT SUPPORT\nFollowers: %d\nGear: %d / %d\nBackpack: %d / %d%s" % [
 		report_header,
-		seg,
+		StoryDirector.route_label(seg),
 		fol,
 		gear_count,
 		Inventory.SLOT_COUNT,
@@ -2165,7 +2165,7 @@ func _refresh_ledger_view(report_header: String, seg: int, fol: int, gear_count:
 		_report.text = report_header.capitalize() if report_header != "" else ""
 	if _respite != null:
 		_respite.text = "A respite before Segment %d." % seg if not embedded else "The courtyard waits beyond the stall."
-	_set_ledger_row("ROUTE", "Area 1 · Segment %d" % seg)
+	_set_ledger_row("ROUTE", StoryDirector.route_label(seg))
 	_set_ledger_row("FOLLOWERS", ExchangeStyle.grouped(fol))
 	_set_ledger_row("WORN GEAR", "%d / %d" % [gear_count, Inventory.SLOT_COUNT])
 	_set_ledger_row("BACKPACK", "%d / %d" % [bag_count, bag_capacity])
