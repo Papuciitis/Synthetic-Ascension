@@ -1483,7 +1483,11 @@ func _refresh_progression_seals() -> void:
 				if Global != null:
 					Global.objective_target_pos = _cell_to_world(_gate_cell)
 		_open_barrier(B_OUTER_APPROACH)
-		_set_spawn_stage(Segment1SpawnProfile.Stage.OUTER_APPROACH)
+		# Never step back from the Rite: this refresh also runs right after
+		# M_FINAL_PLAZA set EXIT_RITE, and used to put the segment's climax
+		# back on the approach stage (2026-10-04 pacing audit, bug b).
+		if not _has_milestone(M_FINAL_PLAZA):
+			_set_spawn_stage(Segment1SpawnProfile.Stage.OUTER_APPROACH)
 
 
 func _open_barrier(id: StringName) -> void:

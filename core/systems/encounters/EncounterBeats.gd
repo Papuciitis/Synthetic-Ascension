@@ -16,7 +16,10 @@ class_name EncounterBeats
 ## Optional keys: "modifiers" names elite modifiers (§9) every member receives
 ## through apply_elite_modifiers; "announce" is the popup line when it should
 ## say more than the label; "kind": RITUAL_KIND marks a beat whose one member
-## is a world node (RitualInterference) rather than an enemy formation.
+## is a world node (RitualInterference) rather than an enemy formation;
+## "kind_tag" names the question the beat asks (charge, crossfire, shield,
+## support, ambush, nest, hunter, area, ritual) so the director can rotate
+## them; "max_segment" keeps a beat out of the random draw after a segment.
 
 const GRUNT := "res://scenes/world/enemies/EnemyGrunt.tscn"
 const RUNNER := "res://scenes/world/enemies/EnemyRunner.tscn"
@@ -42,6 +45,7 @@ const PHASE_ORDER: Array[StringName] = [&"recon", &"disturbance", &"ascension", 
 # crossfire from silently changing ordinary district encounters.
 const RITE_SNIPER_CROSSFIRE: Dictionary = {
 	"id": &"rite_sniper_crossfire",
+	"kind_tag": &"crossfire",
 	"label": "RITE CROSSFIRE",
 	"callout": "Sights settle around the Rite.",
 	"answer": "break line of sight",
@@ -56,11 +60,48 @@ const RITE_SNIPER_CROSSFIRE: Dictionary = {
 	],
 }
 
+# Explicit-only "rematch" (2026-10-04, vision "Power Escalation Should Be
+# Visible"): when the player crosses a power threshold the EncounterDirector
+# rings them with the district's oldest fodder while the Threat Director holds
+# enemy scaling still, so the enemies that used to crowd them simply burst.
+const REMATCH_RING: Dictionary = {
+	"id": &"rematch_ring",
+	"kind_tag": &"rematch",
+	"label": "THE OLD PATROLS",
+	"announce": "THE OLD PATROLS RETURN",
+	"callout": "They come the way they came at the start.",
+	"answer": "let the build answer",
+	"mode": &"around",
+	"distance": 560.0,
+	"min_phase": &"recon",
+	"cooldown": 0.0,
+	"members": [
+		{"scene": GRUNT, "offset": Vector2(560.0, 0.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(517.4, 214.3), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(396.0, 396.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(214.3, 517.4), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(0.0, 560.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(-214.3, 517.4), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(-396.0, 396.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(-517.4, 214.3), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(-560.0, 0.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(-517.4, -214.3), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(-396.0, -396.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(-214.3, -517.4), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(0.0, -560.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(214.3, -517.4), "elite": false},
+		{"scene": GRUNT, "offset": Vector2(396.0, -396.0), "elite": false},
+		{"scene": RUNNER, "offset": Vector2(517.4, -214.3), "elite": false},
+	],
+}
+
 const CATALOG: Array[Dictionary] = [
 	# Segment 1 pass S5: two authored punctuations sized for the tutorial's
 	# service street and approach (three chargers, two snipers close in).
 	{
 		"id": &"charger_wedge_small",
+		"kind_tag": &"charge",
+		"max_segment": 1,
 		"label": "CHARGER WEDGE",
 		"callout": "Three chargers line up on your flank.",
 		"answer": "move laterally",
@@ -76,6 +117,8 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"sniper_pair",
+		"kind_tag": &"crossfire",
+		"max_segment": 1,
 		"label": "CROSSFIRE",
 		"callout": "Two sights settle on you.",
 		"answer": "break line of sight",
@@ -90,6 +133,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"warden_line",
+		"kind_tag": &"shield",
 		"label": "WARDEN LINE",
 		"callout": "Shields lock across the street.",
 		"answer": "flank the shields",
@@ -107,6 +151,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"chanter_choir",
+		"kind_tag": &"support",
 		"label": "CHOIR",
 		"callout": "A chant rises behind the line.",
 		"answer": "silence the chanter",
@@ -125,6 +170,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"lurker_pair",
+		"kind_tag": &"ambush",
 		"label": "LURKERS",
 		"callout": "Something waits for you to stop.",
 		"answer": "keep moving",
@@ -139,6 +185,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"charger_wedge",
+		"kind_tag": &"charge",
 		"label": "CHARGER WEDGE",
 		"callout": "A wedge forms on your flank.",
 		"answer": "move laterally",
@@ -157,6 +204,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"shield_wall",
+		"kind_tag": &"shield",
 		"label": "SHIELD WALL",
 		"callout": "A wall of brutes blocks the way.",
 		"answer": "flank or pierce",
@@ -176,6 +224,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"sniper_crossfire",
+		"kind_tag": &"crossfire",
 		"label": "CROSSFIRE",
 		"callout": "Two sights settle on you.",
 		"answer": "break line of sight",
@@ -190,6 +239,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"summoner_nest",
+		"kind_tag": &"nest",
 		"label": "NEST",
 		"callout": "Something is breeding nearby.",
 		"answer": "commit to a detour",
@@ -205,12 +255,13 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"hunter",
+		"kind_tag": &"hunter",
 		"label": "HUNTER",
 		"callout": "Something fast has your scent.",
 		"answer": "turn and fight",
 		"mode": &"off_route",
 		"distance": 1000.0,
-		"min_phase": &"disturbance",
+		"min_phase": &"recon",
 		"cooldown": 100.0,
 		"modifiers": [&"fast", &"vampiric"],
 		"members": [
@@ -219,6 +270,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"bomber_carpet",
+		"kind_tag": &"area",
 		"label": "BOMBER CARPET",
 		"callout": "The ground ahead starts ticking.",
 		"answer": "reposition",
@@ -237,6 +289,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"leech_ring",
+		"kind_tag": &"ambush",
 		"label": "LEECH RING",
 		"callout": "The ring closes.",
 		"answer": "burst out",
@@ -257,6 +310,7 @@ const CATALOG: Array[Dictionary] = [
 	},
 	{
 		"id": &"ritual_interference",
+		"kind_tag": &"ritual",
 		"label": "RITUAL INTERFERENCE",
 		"announce": "RITUAL INTERFERENCE — THE DEAD RISE HERE",
 		"callout": "The dead rise here.",
@@ -276,6 +330,8 @@ const CATALOG: Array[Dictionary] = [
 static func find(id: StringName) -> Dictionary:
 	if id == &"rite_sniper_crossfire":
 		return RITE_SNIPER_CROSSFIRE
+	if id == &"rematch_ring":
+		return REMATCH_RING
 	for beat in CATALOG:
 		if beat["id"] == id:
 			return beat
@@ -292,11 +348,24 @@ static func phase_rank(phase: StringName) -> int:
 	return index if index >= 0 else 0
 
 
-## Beats whose minimum phase is at or below the current one.
-static func eligible(phase: StringName) -> Array[Dictionary]:
+## Beats whose minimum phase is at or below the current one and whose
+## optional "max_segment" admits `segment` (0 = ungated). The two tutorial-
+## sized formations are segment-1 only: in segment 2 the human capture's two
+## beats were always charger_wedge_small then warden_line.
+static func eligible(phase: StringName, segment: int = 0) -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
 	var rank := phase_rank(phase)
 	for beat in CATALOG:
-		if phase_rank(beat["min_phase"]) <= rank:
-			out.append(beat)
+		if phase_rank(beat["min_phase"]) > rank:
+			continue
+		var max_segment := int(beat.get("max_segment", 0))
+		if segment > 0 and max_segment > 0 and segment > max_segment:
+			continue
+		out.append(beat)
 	return out
+
+
+## The beat's kind ("charge", "crossfire", "shield", ...): the director
+## rotates kinds so consecutive punctuations ask different questions.
+static func kind_of(beat: Dictionary) -> StringName:
+	return StringName(beat.get("kind_tag", beat.get("id", &"")))

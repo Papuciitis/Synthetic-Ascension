@@ -22,7 +22,10 @@ class_name EnemySpawner
 @export var elite_min_time: float = 20.0
 @export_range(0.0, 1.0, 0.001) var elite_base_chance: float = 0.00
 @export_range(0.0, 1.0, 0.001) var elite_chance_per_min: float = 0.012
-@export_range(0.0, 1.0, 0.001) var elite_chance_cap: float = 0.85
+## Was 0.85, and collapse pinned it there: 85% of spawns elite reads as
+## noise, not as events (2026-10-04 audit). With the Threat Director's lower
+## Overtime elite bonus this keeps elites the exception even deep in collapse.
+@export_range(0.0, 1.0, 0.001) var elite_chance_cap: float = 0.45
 
 @export var debug_spawns: bool = false
 @export var spawning_enabled: bool = true
@@ -36,7 +39,9 @@ class_name EnemySpawner
 const POOL_WARM_FRAME_BUDGET_USEC := 2500
 # Hard bound on live elites: promotion chance saturates at high threat and an
 # uncapped elite population defeats pooling and the full-simulation budget.
-@export_range(0, 128, 1) var max_concurrent_elites: int = 24
+## Halved from 24 with the elite cap above: twelve live elites is already a
+## wall of modifiers to read, and every elite stays materialized.
+@export_range(0, 128, 1) var max_concurrent_elites: int = 12
 # Cap on _spawn_one calls per tick; the overflow carries to later ticks so a
 # saturated director cannot construct a whole batch in a single frame.
 @export_range(1, 16, 1) var max_spawn_batch_per_tick: int = 4
@@ -122,6 +127,11 @@ var _pool_warm_queue: Array[PackedScene] = []
 const FORCE_SPAWN_PER_FRAME := 12
 var _force_spawn_queue: int = 0
 var _rite_pressure_active: bool = false
+## A relax window (Left 4 Dead's director: build up, peak, then relax with
+## minimal spawns - research note in docs/audits/2026-10-04-game-design-audit.md).
+## While it lasts the ambient interval is multiplied by _lull_interval_mul.
+var _lull_left: float = 0.0
+var _lull_interval_mul: float = 1.0
 ## Telemetry only: why the last spawn attempt produced nothing, read by the
 ## caller that reports the request (RunEvents.spawn_request_resolved).
 var _last_reject: StringName = &""
@@ -150,6 +160,10 @@ func _process(delta: float) -> void:
 	_drain_pool_warm_queue()
 	_drain_force_spawn_queue()
 	_spawn_pause_left = maxf(_spawn_pause_left - delta, 0.0)
+	if _lull_left > 0.0:
+		_lull_left = maxf(_lull_left - delta, 0.0)
+		if _lull_left <= 0.0:
+			_lull_interval_mul = 1.0
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
 	_cull_refill_left = maxf(_cull_refill_left - delta, 0.0)
@@ -199,6 +213,8 @@ func _on_tick() -> void:
 	var boss_near: bool = _is_boss_near_player()
 	if boss_near:
 		cur_every *= boss_spawn_interval_mul
+	if _lull_left > 0.0 and not tutorial_active:
+		cur_every *= _lull_interval_mul
 
 	_timer.wait_time = cur_every
 
@@ -671,7 +687,8 @@ func spawn_local_encounter(area: Rect2, count: int, encounter_owner: Node = null
 	for _index in range(amount):
 		var entry: EnemySpawnEntry = null
 		if spawn_table != null:
-			entry = spawn_table.pick(_elapsed, Global._rng, _segment_phase(), EnemySpawnTable.unlock_time_scale(int(Global.attempt_segment) if Global != null else 1))
+			var seg := int(Global.attempt_segment) if Global != null else 1
+			entry = spawn_table.pick(_elapsed, Global._rng, _segment_phase(), EnemySpawnTable.unlock_time_scale(seg), seg)
 		var scene_to_spawn: PackedScene = entry.enemy_scene if entry != null else enemy_scene
 		if scene_to_spawn == null:
 			continue
@@ -821,7 +838,16 @@ func set_spawning_enabled(value: bool) -> void:
 	reset_spawn_clock()
 
 func set_segment1_stage(stage: int, grace_override: float = -1.0) -> void:
-	_segment1_stage = clampi(stage, Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS, Segment1SpawnProfile.Stage.EXIT_RITE)
+	var clean := clampi(stage, Segment1SpawnProfile.Stage.BEFORE_SYNTHESIS, Segment1SpawnProfile.Stage.EXIT_RITE)
+	# Re-announcing the current stage is not a new stage. Level1Builder's seal
+	# refresh re-sends OUTER_APPROACH on every kill once the approach is open,
+	# and each call used to restart the timer behind a fresh grace pause: the
+	# human capture got 13
+	# spawn ticks in 55.6 s of the approach against ~65 intended (2026-10-04
+	# pacing audit, bug c). An explicit grace override still applies.
+	if clean == _segment1_stage and grace_override < 0.0:
+		return
+	_segment1_stage = clean
 	var cfg := Segment1SpawnProfile.settings(_segment1_stage)
 	spawning_enabled = int(cfg.get("cap", 0)) > 0
 	_spawn_pause_left = float(cfg.get("grace", 0.0)) if grace_override < 0.0 else maxf(0.0, grace_override)
@@ -838,6 +864,21 @@ func reset_spawn_clock() -> void:
 func suspend_spawning(seconds: float) -> void:
 	_spawn_pause_left = maxf(_spawn_pause_left, maxf(0.0, seconds))
 	reset_spawn_clock()
+
+
+## A relax window after a peak (EncounterDirector calls it when a formation
+## is answered): for `seconds` the ambient interval is multiplied by
+## `interval_mul` (> 1 = sparser). A longer or stronger request extends the
+## window; a weaker one never shortens it.
+func set_ambient_lull(seconds: float, interval_mul: float) -> void:
+	if seconds <= 0.0 or interval_mul <= 1.0:
+		return
+	_lull_left = maxf(_lull_left, seconds)
+	_lull_interval_mul = maxf(_lull_interval_mul, interval_mul)
+
+
+func ambient_lull_left() -> float:
+	return _lull_left
 
 
 func set_rite_pressure_active(active: bool) -> void:
@@ -1107,11 +1148,16 @@ func _report_missing_spawn_scene() -> void:
 func _pick_enabled_entry(time_seconds: float) -> EnemySpawnEntry:
 	if spawn_table == null:
 		return null
+	# Same gate as EnemySpawnTable.pick (phase, per-segment unlock speed-up,
+	# segment introductions), plus the developer spawn filter.
+	var seg := int(Global.attempt_segment) if Global != null else 0
+	var phase := _segment_phase()
+	var unlock_scale := EnemySpawnTable.unlock_time_scale(maxi(1, seg))
 	var candidates: Array[EnemySpawnEntry] = []
 	var total_weight := 0.0
 	for entry_variant: Variant in spawn_table.entries:
 		var entry := entry_variant as EnemySpawnEntry
-		if entry == null or not entry.is_active(time_seconds):
+		if not EnemySpawnTable.entry_allowed(entry, time_seconds, phase, unlock_scale, seg):
 			continue
 		if not _debug_enemy_enabled(_enemy_id_for_scene(entry.enemy_scene), false):
 			continue

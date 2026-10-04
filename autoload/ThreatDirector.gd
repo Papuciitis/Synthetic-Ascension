@@ -71,9 +71,30 @@ signal multipliers_changed(
 @export var REWARD_DECAY_POWER: float = 0.6
 @export var REWARD_DECAY_FLOOR: float = 0.35
 
-@export var overtime_time_rate: float = 0.008    # per second
-@export var overtime_kill_rate: float = 0.035    # per kill AFTER buffer
+## 2026-10-04 design audit (docs/audits/2026-10-04-game-design-audit.md §2):
+## the only human capture unsealed 23,700 px from the gate, burned the
+## 55-kill buffer in 4.6 s of walking and died 1,835 px short at Overtime 13
+## - every recorded death (7/7, 13/13, 1/1) was in collapse. Overtime was
+## punishing travel, not farming. The shape follows the user's plan
+## (docs/superpowers/plans/2026-09-17-item-set-exit-balance.md §6.3): a time
+## term that starts after a travel grace, a much smaller kill term, kills by
+## authored formations and kills inside the exit encounter excluded, and
+## clamped additions while the exit encounter is live. The rates sit between
+## the plan's 0.008/0.004 and the audits' proposals, so camping after the
+## grace still reaches Overtime 5 in about two minutes at 5 kills/s.
+@export var overtime_time_rate: float = 0.012    # per second, after the travel grace
+@export var overtime_kill_rate: float = 0.006    # per kill AFTER buffer
 @export var overtime_kill_buffer: int = 55       # prevents instant spike right at unseal
+## Travel grace: the time term starts once a player could have walked from
+## where they stood at unseal to the rite, at this effective speed (combat
+## included), clamped to [min, max]. No rite in the scene -> the minimum.
+@export var overtime_grace_px_per_sec: float = 180.0
+@export var overtime_grace_min_sec: float = 60.0
+@export var overtime_grace_max_sec: float = 150.0
+## While the exit encounter is live, Overtime's HP/damage ADDITIONS clamp
+## here (plan §6.3); segment and heat terms still apply on top.
+@export var exit_ot_hp_add_cap: float = 2.0
+@export var exit_ot_damage_add_cap: float = 1.5
 
 # staged escalation thresholds (overtime meter)
 @export var ot_elite_start: float = 0.00
@@ -96,7 +117,9 @@ signal multipliers_changed(
 # When pressure reaches 1.0, we display EVAC NOW.
 @export var evac_target_sec: float = 60.0
 @export var evac_time_base_sec: float = 95.0
-@export var evac_kill_weight: float = 0.004
+## Lowered with the kill term (2026-10-04): the countdown follows the travel
+## grace and time, so a strong build is not told to leave by its own kills.
+@export var evac_kill_weight: float = 0.0015
 
 # -----------------------------
 # Mapping (Carry/Heat/OT -> multipliers)
@@ -122,7 +145,10 @@ signal multipliers_changed(
 
 # Elites: spawner adds this on top of its own global + entry chance.
 @export var elite_bonus_from_heat: float = 0.08
-@export var elite_bonus_from_overtime: float = 0.65
+## Was 0.65: with the collapse phase add and the spawner's own ramp, 85% of
+## collapse spawns were elite in the human capture (about 258 elites in one
+## segment), so an elite stopped being an event. 2026-10-04 audit.
+@export var elite_bonus_from_overtime: float = 0.30
 @export var elite_bonus_cap: float = 0.95
 
 # Loot rarity bonus (additive integer, applied in EnemyDrops).
@@ -162,8 +188,13 @@ var kills_since_unseal: int = 0
 # response on the rising edge.
 signal rite_channel_changed(active: bool)
 var rite_channel_active: bool = false
-@export_range(0.2, 1.0, 0.05) var rite_spawn_factor: float = 0.6
-@export_range(0.0, 0.5, 0.01) var rite_elite_add: float = 0.15
+## Neutral since 2026-10-04 (plan 2026-09-17 §6.3: "stop stacking the old
+## channel-only spawn multiplier and elite bonus on top of the new authored
+## formation budgets"): ambient spawning is already suspended for the whole
+## exit encounter and the specialists come from authored formations, so these
+## only made the few spawns that still pass faster and eliter.
+@export_range(0.2, 1.0, 0.05) var rite_spawn_factor: float = 1.0
+@export_range(0.0, 0.5, 0.01) var rite_elite_add: float = 0.0
 
 # Power contrast (roadmap 2.6 / §11): after the player crosses a visible power
 # threshold, enemy HP/damage scaling holds still for a while so enemies that
@@ -185,10 +216,22 @@ var _last_segment: int = 0
 var _kills_ts: Array[float] = []
 var _unseal_time: float = 0.0
 var _kills_since_unseal: int = 0
-## Reporting only: how much of _unseal_time came from add_overtime_pressure
-## (Overtime Gospel). _unseal_time itself is unchanged, so overtime is exactly
-## what it was before the accounting existed.
+## How much of _unseal_time came from add_overtime_pressure (Overtime
+## Gospel). Injected seconds skip the travel grace: they are a price the rule
+## pays for refusing to leave, not travel.
 var _injected_seconds: float = 0.0
+## Travel grace for this unseal, resolved from the player's distance to the
+## rite the first time both exist after the unseal (see _travel_grace_seconds).
+var _grace_sec: float = 0.0
+var _grace_resolved: bool = false
+## Collapse arrives over this many seconds instead of in one step: the human
+## capture went from Overtime 0.9 to 5.7 and from ~14% to 85% elite spawns
+## within 15 s of the unseal.
+@export_range(0.0, 60.0, 1.0) var collapse_ramp_sec: float = 20.0
+var _collapse_ramp_left: float = 0.0
+## A threshold crossed outside combat (the Hub, a menu, the segment's opening
+## seconds) waits for the next disturbance phase, where the hold can be felt.
+var _contrast_pending: Array[Dictionary] = []
 
 func _ready() -> void:
 	set_process(true)
@@ -210,7 +253,11 @@ func _process(delta: float) -> void:
 
 	if gate_unsealed:
 		_unseal_time += step
+		if not _grace_resolved:
+			_resolve_travel_grace()
 		overtime = _compute_overtime()
+	if _collapse_ramp_left > 0.0:
+		_collapse_ramp_left = maxf(0.0, _collapse_ramp_left - step)
 
 	if power_contrast_active:
 		_contrast_left -= step
@@ -235,18 +282,52 @@ func set_rite_channel_active(active: bool) -> void:
 	rite_channel_changed.emit(active)
 
 
-## A threshold arms the contrast window once per run; repeats are ignored.
+## A threshold arms the contrast window once per RUN; repeats are ignored.
+##
+## Until 2026-10-04 the seen-set was cleared at every segment change, so the
+## same "3 Manifestations active" threshold re-fired at each segment's load -
+## in the Hub or the opening seconds, where holding enemy scaling holds
+## nothing (all three human-run firings were inert). Now the set lives for the
+## attempt, and a threshold crossed outside combat waits for the next
+## disturbance phase, where the hold - and the EncounterDirector's rematch
+## formation listening to power_threshold_noted - can actually be seen.
 func note_power_threshold(id: StringName, label: String = "") -> void:
 	if id == StringName() or _thresholds_seen.has(id):
 		return
 	_thresholds_seen[id] = true
 	power_thresholds_crossed += 1
+	if not _in_live_combat():
+		_contrast_pending.append({"id": id, "label": label})
+		return
+	_arm_power_contrast(id, label)
+
+
+func _arm_power_contrast(id: StringName, label: String) -> void:
 	_contrast_hp_mul = enemy_hp_mul
 	_contrast_damage_mul = enemy_damage_mul
 	power_contrast_active = power_contrast_lag_sec > 0.0
 	_contrast_left = power_contrast_lag_sec
 	power_threshold_noted.emit(id, label)
 	_recompute(true)
+
+
+## Live combat = a gameplay scene with a spawner, past the segment's quiet
+## opening, and not inside the exit encounter (the rite owns that time).
+func _in_live_combat() -> bool:
+	if segment_phase == &"recon" or rite_channel_active:
+		return false
+	var tree := get_tree()
+	return tree != null and tree.get_first_node_in_group(&"enemy_spawner") != null
+
+
+func _release_pending_contrast() -> void:
+	if _contrast_pending.is_empty() or not _in_live_combat():
+		return
+	# Several thresholds crossed in one Hub visit open ONE window, named for
+	# the first; the rest were already counted when they were noted.
+	var first: Dictionary = _contrast_pending[0]
+	_contrast_pending.clear()
+	_arm_power_contrast(StringName(first.get("id", &"")), String(first.get("label", "")))
 
 
 ## Seconds the contrast window has left; 0 once it has closed. The HUD reads
@@ -268,11 +349,23 @@ func _hook_signals() -> void:
 		var cb_k := Callable(self, "_on_enemy_defeated")
 		if RunEvents.has_signal("enemy_defeated") and not RunEvents.enemy_defeated.is_connected(cb_k):
 			RunEvents.enemy_defeated.connect(cb_k)
+	# Attempt boundaries (new attempt, failed attempt) end the run-scoped
+	# memory: the power thresholds already seen and any pending contrast.
+	if Global != null and Global.has_signal("balance_attempt_boundary"):
+		var cb_a := Callable(self, "_on_attempt_boundary")
+		if not Global.balance_attempt_boundary.is_connected(cb_a):
+			Global.balance_attempt_boundary.connect(cb_a)
+
+func _on_attempt_boundary(_reason: StringName) -> void:
+	_thresholds_seen.clear()
+	_contrast_pending.clear()
+	power_thresholds_crossed = 0
 
 func reset_run_state() -> void:
 	# Fresh attempt in the SAME segment (death/restart): the segment poll in
 	# _process never fires because attempt_segment did not change, which used
 	# to carry overtime/elites/evac into the new run.
+	_on_attempt_boundary(&"reset_run_state")
 	_on_segment_changed(maxi(1, Global.attempt_segment))
 
 func _on_segment_changed(new_seg: int) -> void:
@@ -283,12 +376,15 @@ func _on_segment_changed(new_seg: int) -> void:
 	overtime = 0.0
 	gate_unsealed = false
 	rite_channel_active = false
+	# The contrast window itself ends with the segment; the thresholds already
+	# seen (and any still pending) belong to the run - see note_power_threshold.
 	power_contrast_active = false
-	power_thresholds_crossed = 0
 	_contrast_left = 0.0
-	_thresholds_seen.clear()
 	_unseal_time = 0.0
 	_injected_seconds = 0.0
+	_grace_sec = 0.0
+	_grace_resolved = false
+	_collapse_ramp_left = 0.0
 	_kills_since_unseal = 0
 	_kills_ts.clear()
 	dominance_kps = 0.0
@@ -304,8 +400,13 @@ func set_segment_phase(next_phase: StringName) -> void:
 		clean_phase = &"recon"
 	if segment_phase == clean_phase:
 		return
+	var previous := segment_phase
 	segment_phase = clean_phase
+	if clean_phase == &"collapse" and previous != &"collapse":
+		_collapse_ramp_left = collapse_ramp_sec
 	_recompute(true)
+	if clean_phase == &"disturbance" or clean_phase == &"ascension":
+		_release_pending_contrast()
 
 func _on_resonance_changed(v: float) -> void:
 	resonance = clampf(v, 0.0, 1.0)
@@ -315,20 +416,65 @@ func _on_resonance_changed(v: float) -> void:
 		_unseal_time = 0.0
 		_injected_seconds = 0.0
 		_kills_since_unseal = 0
+		_grace_sec = overtime_grace_min_sec
+		_grace_resolved = false
+		_resolve_travel_grace()
 		overtime = 0.0
 		_update_evac()
 
 	_recompute()
 
-func _on_enemy_defeated(_context: RefCounted) -> void:
+func _on_enemy_defeated(context: RefCounted) -> void:
 	var now := Time.get_ticks_msec() * 0.001
 	_kills_ts.append(now)
 
-	if gate_unsealed:
+	if gate_unsealed and _kill_counts_toward_overtime(context):
 		_kills_since_unseal += 1
 
 	# recompute soon (don’t wait for the poll)
 	_recompute()
+
+
+## Plan §6.3: kills of authored formations (beats and the rite's specialist
+## responses, both spawned with special_spawn_kind &"beat") and every kill
+## while the exit encounter is live do not advance Overtime - answering the
+## world's response is not farming it.
+func _kill_counts_toward_overtime(context: RefCounted) -> bool:
+	if rite_channel_active:
+		return false
+	if context == null:
+		return true
+	var metadata: Variant = context.get("metadata")
+	if metadata is Dictionary:
+		return StringName((metadata as Dictionary).get("special_spawn_kind", &"")) != &"beat"
+	return true
+
+
+## The travel grace for this unseal: how long walking from here to the rite
+## takes at overtime_grace_px_per_sec, clamped. Resolved once, the first tick
+## both the player and a rite exist (the rite's node position is read
+## directly - Global.exit_gate_pos hides it while the gate is still locked).
+## Without a rite the grace stays at the minimum.
+func _resolve_travel_grace() -> void:
+	if _grace_resolved:
+		return
+	var tree := get_tree()
+	var rite: Node2D = tree.get_first_node_in_group(&"exit_rite") as Node2D if tree != null else null
+	var player: Node2D = tree.get_first_node_in_group(&"player") as Node2D if tree != null else null
+	if rite != null and player != null:
+		var distance := rite.global_position.distance_to(player.global_position)
+		_grace_sec = clampf(distance / maxf(1.0, overtime_grace_px_per_sec), overtime_grace_min_sec, overtime_grace_max_sec)
+		_grace_resolved = true
+	elif _unseal_time >= 2.0:
+		_grace_sec = overtime_grace_min_sec
+		_grace_resolved = true
+
+
+## Seconds of travel grace left (0 once the time term is running).
+func travel_grace_left() -> float:
+	if not gate_unsealed:
+		return 0.0
+	return maxf(0.0, _grace_sec - maxf(0.0, _unseal_time - _injected_seconds))
 
 func _update_dominance() -> void:
 	var win := maxf(0.5, dominance_window_sec)
@@ -371,12 +517,28 @@ func _heat_from_resonance(seg: int, r: float) -> float:
 	return lerpf(heat_at_90, heat_at_100, (r - 0.90) / 0.10)
 
 func _compute_overtime() -> float:
-	# Overtime should punish farming more than running.
-	# Small time component (ambient pressure), large kill component after a buffer.
-	var t_part := _unseal_time * overtime_time_rate
+	# Overtime punishes staying, not travelling: a time term that starts after
+	# the travel grace, plus a small kill term past a buffer (see the export
+	# block for the 2026-10-04 evidence).
+	return overtime_time_part() + overtime_kill_part()
+
+
+## Seconds the time term counts: elapsed unseal time beyond the travel grace,
+## plus every injected second in full.
+func overtime_seconds() -> float:
+	var elapsed := maxf(0.0, _unseal_time - _injected_seconds)
+	return maxf(0.0, elapsed - _grace_sec) + _injected_seconds
+
+
+func overtime_time_part() -> float:
+	return overtime_seconds() * overtime_time_rate if gate_unsealed else 0.0
+
+
+func overtime_kill_part() -> float:
+	if not gate_unsealed:
+		return 0.0
 	var k_excess := maxi(0, _kills_since_unseal - overtime_kill_buffer)
-	var k_part := float(k_excess) * overtime_kill_rate * dominance_mul
-	return t_part + k_part
+	return float(k_excess) * overtime_kill_rate * dominance_mul
 
 ## How much a kill is worth right now, as a fraction of its base reward.
 ##
@@ -441,8 +603,10 @@ func balance_snapshot() -> Dictionary:
 		"power_contrast_left": power_contrast_seconds_left(), "belief_defiance": belief_defiance,
 		"unseal_seconds": _unseal_time, "elapsed_unseal_seconds": _unseal_time - _injected_seconds,
 		"injected_seconds": _injected_seconds, "kills_since_unseal": _kills_since_unseal, "kill_excess": k_excess,
-		"overtime_time_part": (_unseal_time * overtime_time_rate) if gate_unsealed else 0.0,
-		"overtime_kill_part": (float(k_excess) * overtime_kill_rate * dominance_mul) if gate_unsealed else 0.0,
+		"travel_grace_seconds": _grace_sec if gate_unsealed else 0.0, "travel_grace_left": travel_grace_left(),
+		"overtime_seconds": overtime_seconds() if gate_unsealed else 0.0,
+		"overtime_time_part": overtime_time_part(),
+		"overtime_kill_part": overtime_kill_part(),
 		"dominance_kps": dominance_kps, "dominance_mul": dominance_mul,
 		"enemy_hp_mul": enemy_hp_mul, "enemy_damage_mul": enemy_damage_mul, "enemy_speed_mul": enemy_speed_mul,
 		"spawn_interval_mul": spawn_interval_mul, "elite_bonus": elite_bonus,
@@ -462,13 +626,20 @@ func _update_evac() -> void:
 		evac_remaining_sec = 0.0
 		return
 
+	# The countdown is honest since 2026-10-04: EVAC IN N is the real seconds
+	# of travel grace left (the old value ran 60 -> 0 over 95 s and fell
+	# faster with kills, so it measured nothing a player could plan around).
+	# Pressure climbs to 1 across the grace (the HUD vignette deepens as it
+	# runs out), then past 1 with Overtime time and excess kills.
 	var k_excess := maxi(0, _kills_since_unseal - overtime_kill_buffer)
-	var p_time := _unseal_time / maxf(1.0, evac_time_base_sec)
 	var p_kill := float(k_excess) * evac_kill_weight
-	evac_pressure = clampf(p_time + p_kill, 0.0, 2.0)
-
-	var p := minf(evac_pressure, 1.0)
-	evac_remaining_sec = maxf(0.0, (1.0 - p) * evac_target_sec)
+	var grace_left := travel_grace_left()
+	if grace_left > 0.0:
+		var elapsed := maxf(0.0, _unseal_time - _injected_seconds)
+		evac_pressure = clampf(elapsed / maxf(1.0, _grace_sec) + p_kill, 0.0, 2.0)
+	else:
+		evac_pressure = clampf(1.0 + overtime_seconds() / maxf(1.0, evac_time_base_sec) + p_kill, 0.0, 2.0)
+	evac_remaining_sec = grace_left
 
 func _recompute(force_emit: bool = false) -> void:
 	var seg := maxi(1, Global.attempt_segment)
@@ -494,9 +665,14 @@ func _recompute(force_emit: bool = false) -> void:
 			phase_spawn_factor = 0.68
 			phase_elite_add = 0.05
 		&"collapse":
-			heat = maxf(heat, 0.85)
-			phase_spawn_factor = 0.55
-			phase_elite_add = 0.12
+			# Ramp in from the ascension values over collapse_ramp_sec rather
+			# than stepping (2026-10-04 audit: the step plus Overtime made the
+			# unseal a cliff). The elite add now grows with the segment
+			# (0.06 at segment 2, 0.12 from segment 8) instead of a flat 0.12.
+			var ramp := 1.0 - (_collapse_ramp_left / collapse_ramp_sec) if collapse_ramp_sec > 0.0 else 1.0
+			heat = maxf(heat, lerpf(0.48, 0.85, ramp))
+			phase_spawn_factor = lerpf(0.68, 0.55, ramp)
+			phase_elite_add = lerpf(0.05, minf(0.12, 0.04 + 0.01 * float(seg)), ramp)
 	if rite_channel_active:
 		phase_spawn_factor *= rite_spawn_factor
 		phase_elite_add += rite_elite_add
@@ -523,6 +699,13 @@ func _recompute(force_emit: bool = false) -> void:
 	if ot > ot_hp_start:
 		var h := ot - ot_hp_start
 		ot_hp_add = pow(h, ot_hp_pow) * ot_hp_scale
+
+	# Plan §6.3: while the exit encounter is live the ADDITIONS clamp; the
+	# accumulated Overtime is untouched, so leaving the encounter restores the
+	# ordinary evaluation without resetting history.
+	if rite_channel_active:
+		ot_hp_add = minf(ot_hp_add, exit_ot_hp_add_cap)
+		ot_dmg_add = minf(ot_dmg_add, exit_ot_damage_add_cap)
 
 	# Doctrine Threat is authoritative pressure, not merely a HUD surcharge.
 	# Multiplication bends both segment carry and live heat; Witness debt is

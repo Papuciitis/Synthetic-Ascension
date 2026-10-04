@@ -2,18 +2,22 @@ extends Node
 class_name EncounterDirector
 
 ## Schedules authored encounter beats on top of the ThreatDirector's continuous
-## pressure (roadmap §8, Phase 2.4). Pressure is not drama: every 60-90 s from
-## the "disturbance" phase on, one readable problem - a charger wedge, a
+## pressure (roadmap §8, Phase 2.4). Pressure is not drama: every 45-70 s (40-55 s
+## on the walk to an unsealed gate), one readable problem - a charger wedge, a
 ## shield wall, a crossfire - is placed relative to the player's travel and
 ## announced once, so the player stops autopiloting.
 ##
-## Rules: never during a tutorial stage, never once the Exit Rite has unsealed
-## (the rite owns that time), never the same beat twice in a row, at most
-## `max_concurrent` beats alive. Members are spawned through the spawner's
-## beat API, which protects them from culling and counts them as specials, and
-## receive any elite modifiers the beat entry names (§9). The ritual beat
-## (§8.1, 2.7) places a RitualInterference world node the same way and only
-## while the district collapses.
+## Rules: never during a tutorial stage, never while the exit encounter is live
+## (the rite owns that time), never the same beat twice in a row, the kind of
+## question rotated (least recently asked kind first), at most `max_concurrent`
+## beats alive. A beat's arrival holds ambient spawning for a moment so the
+## formation reads; answering it buys a short relax window (Left 4 Dead's
+## build-up / peak / relax, 2026-10-04 audit). Members are spawned through the
+## spawner's beat API, which protects them from culling and counts them as
+## specials, and receive any elite modifiers the beat entry names (§9). The
+## ritual beat (§8.1, 2.7) places a RitualInterference world node the same way
+## and only while the district collapses. A power threshold the Threat
+## Director notes in combat answers with the "rematch" ring of old fodder.
 
 signal beat_started(id: StringName, label: String, members: int)
 signal beat_ended(id: StringName)
@@ -22,10 +26,26 @@ const BeatsScript = preload("res://core/systems/encounters/EncounterBeats.gd")
 const RitualScript = preload("res://core/systems/world/RitualInterference.gd")
 
 @export var enabled := true
-@export_range(5.0, 300.0, 1.0) var first_beat_delay := 45.0
-@export_range(5.0, 600.0, 1.0) var interval_min := 60.0
-@export_range(5.0, 600.0, 1.0) var interval_max := 90.0
+## 2026-10-04 audit: at 60-90 s from the disturbance phase a segment got two
+## beats (recon, 110-160 s, could never have one), always the same two. The
+## Hunter is now recon-eligible and the cadence tighter; research reference:
+## Vampire Survivors / HoloCure place a varied spike every 90-150 s, Left 4
+## Dead relaxes 30-45 s between peaks.
+@export_range(5.0, 300.0, 1.0) var first_beat_delay := 40.0
+@export_range(5.0, 600.0, 1.0) var interval_min := 45.0
+@export_range(5.0, 600.0, 1.0) var interval_max := 70.0
+## Cadence on the walk to an unsealed gate (collapse, exit encounter not yet
+## live): the world resists the route instead of only raising multipliers.
+@export_range(5.0, 600.0, 1.0) var collapse_interval_min := 40.0
+@export_range(5.0, 600.0, 1.0) var collapse_interval_max := 55.0
 @export_range(1, 4, 1) var max_concurrent := 1
+## Ambient spawning holds this long when a beat arrives, so it reads as a shape.
+@export_range(0.0, 10.0, 0.5) var arrival_pause_sec := 3.0
+## Answering a beat buys a relax window: ambient interval × lull_interval_mul.
+@export_range(0.0, 60.0, 1.0) var lull_seconds := 12.0
+@export_range(1.0, 4.0, 0.1) var lull_interval_mul := 2.0
+## Seconds after an in-combat power threshold before the rematch ring arrives.
+@export_range(0.0, 30.0, 0.5) var rematch_delay_sec := 5.0
 ## A beat aborts if fewer than this fraction of its members find valid ground.
 @export_range(0.1, 1.0, 0.05) var min_placed_fraction := 0.5
 
@@ -48,6 +68,11 @@ var _specialists_sent := false
 var _rite_channel_active := false
 var _rite_response_left := 0.0
 var _rite_response_cursor := 0
+## kind_tag -> the beat counter when it was last asked; kinds never asked
+## are absent (they come first).
+var _kind_last_used: Dictionary = {}
+var _beat_counter := 0
+var _rematch_in := 0.0
 var _counters := {
 	"scheduled": 0,
 	"aborted": 0,
@@ -73,6 +98,8 @@ func _ready() -> void:
 	var director := get_node_or_null("/root/ThreatDirector")
 	if director != null and director.has_signal("rite_channel_changed"):
 		director.connect("rite_channel_changed", _on_rite_channel_changed)
+	if director != null and director.has_signal("power_threshold_noted"):
+		director.connect("power_threshold_noted", _on_power_threshold_noted)
 
 
 func _exit_tree() -> void:
@@ -105,8 +132,15 @@ func tick(delta: float) -> void:
 	if _player == null or not is_instance_valid(_player):
 		return
 	if _rite_channel_active:
+		_rematch_in = 0.0
 		_tick_rite_response(delta)
 		return
+	if _rematch_in > 0.0:
+		_rematch_in -= delta
+		if _rematch_in <= 0.0:
+			_rematch_in = 0.0
+			if not _is_tutorial_stage():
+				try_spawn_beat(&"rematch_ring")
 	_check_escalation()
 	_next_beat_in -= delta
 	if _next_beat_in > 0.0:
@@ -116,13 +150,22 @@ func tick(delta: float) -> void:
 		_next_beat_in = 5.0
 		return
 	var result := try_spawn_beat()
-	_next_beat_in = _rng.randf_range(interval_min, interval_max) if not result.is_empty() else 5.0
+	_next_beat_in = _next_interval() if not result.is_empty() else 5.0
 
 
+func _next_interval() -> float:
+	if _is_unsealed() or _phase() == &"collapse":
+		return _rng.randf_range(collapse_interval_min, collapse_interval_max)
+	return _rng.randf_range(interval_min, interval_max)
+
+
+## The exit encounter (rite channel) is handled before this is asked: tick()
+## routes that time to the rite response. An unsealed gate alone no longer
+## blocks beats - the walk to it is where the world should resist (2026-10-04).
 func can_schedule() -> bool:
 	if _active.size() >= max_concurrent:
 		return false
-	if _is_tutorial_stage() or _is_unsealed():
+	if _is_tutorial_stage() or _rite_channel_active:
 		return false
 	return not _candidates().is_empty()
 
@@ -146,21 +189,23 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 			anchor_dir = travel.orthogonal() * (1.0 if _rng.randf() < 0.5 else -1.0)
 		&"off_route":
 			anchor_dir = (-travel).rotated(_rng.randf_range(-0.6, 0.6))
-	var basis_x := anchor_dir
-	var basis_y := anchor_dir.orthogonal()
-	var player_pos := _player.global_position
-	var anchor := player_pos + anchor_dir * float(beat["distance"])
 	var members: Array = beat["members"]
+	var needed := ceili(float(members.size()) * min_placed_fraction)
+	var plan := _plan_positions(beat, anchor_dir)
+	if _count_valid(plan) < needed and mode != &"around":
+		# Placement fallback (2026-10-04 pacing audit, bug d: segment 1's
+		# guaranteed wedge placed 0/3 in a narrow street): try the other flank,
+		# or the route turned a quarter, before giving the beat up.
+		var alt_dir := -anchor_dir if mode == &"flank" else anchor_dir.rotated(PI * 0.5 * (1.0 if _rng.randf() < 0.5 else -1.0))
+		var alt_plan := _plan_positions(beat, alt_dir)
+		if _count_valid(alt_plan) > _count_valid(plan):
+			plan = alt_plan
 	var spawned: Array[Node] = []
 	var skipped := 0
-	for member_variant in members:
-		var member := member_variant as Dictionary
-		var offset := member["offset"] as Vector2
-		var pos := (
-			player_pos + offset if mode == &"around"
-			else anchor + basis_x * offset.x + basis_y * offset.y
-		)
-		if _spawner.has_method("is_beat_position_valid") and not bool(_spawner.call("is_beat_position_valid", pos)):
+	for i in range(members.size()):
+		var member := members[i] as Dictionary
+		var pos: Vector2 = plan[i]
+		if pos == Vector2.INF:
 			skipped += 1
 			continue
 		var node: Node = (
@@ -191,6 +236,12 @@ func try_spawn_beat(beat_id: StringName = &"") -> Dictionary:
 	for node in spawned:
 		node.tree_exited.connect(_on_member_gone.bind(id), CONNECT_ONE_SHOT)
 		_apply_beat_modifiers(node, beat)
+	_kind_last_used[BeatsScript.kind_of(beat)] = _beat_counter
+	_beat_counter += 1
+	# Let the shape read before the horde fills around it (the rite already
+	# suspends ambient spawning, so its specialists skip this).
+	if not _rite_channel_active and arrival_pause_sec > 0.0 and _spawner.has_method("suspend_spawning"):
+		_spawner.call("suspend_spawning", arrival_pause_sec)
 	_announce(beat)
 	_record(&"beat_started", id, spawned.size())
 	beat_started.emit(id, String(beat["label"]), spawned.size())
@@ -216,25 +267,97 @@ func get_debug_counters() -> Dictionary:
 
 func _candidates() -> Array[Dictionary]:
 	var out: Array[Dictionary] = []
-	for beat in BeatsScript.eligible(_phase()):
+	var unsealed := _is_unsealed()
+	for beat in BeatsScript.eligible(_phase(), _segment()):
 		var id: StringName = beat["id"]
 		if id == _last_beat_id or _cooldowns.has(id) or _active.has(id):
+			continue
+		# try_spawn_beat refuses a ritual once the gate is unsealed; do not
+		# spend a pick on it.
+		if unsealed and BeatsScript.is_ritual(beat):
 			continue
 		out.append(beat)
 	return out
 
 
+## A phase escalation promised something new, so a freshly unlocked beat goes
+## first - but in random order, and among candidates the least recently asked
+## KIND wins (ties random). The old pop-in-catalogue-order made every segment
+## 2 open with charger_wedge_small then warden_line (2026-10-04 audit).
 func _pick_random() -> Dictionary:
 	var candidates := _candidates()
 	if candidates.is_empty():
 		return {}
-	# A phase escalation promised something new: prefer a freshly unlocked beat.
-	while not _unlocked_pending.is_empty():
-		var preferred: StringName = _unlocked_pending.pop_front()
-		for beat in candidates:
-			if beat["id"] == preferred:
-				return beat
-	return candidates[_rng.randi_range(0, candidates.size() - 1)]
+	var pending: Array[Dictionary] = []
+	for beat in candidates:
+		if _unlocked_pending.has(beat["id"]):
+			pending.append(beat)
+	var chosen := _least_recent_kind(pending if not pending.is_empty() else candidates)
+	_unlocked_pending.erase(chosen["id"])
+	return chosen
+
+
+func _least_recent_kind(pool: Array[Dictionary]) -> Dictionary:
+	var best: Array[Dictionary] = []
+	var best_stamp := 2147483647
+	for beat in pool:
+		var stamp := int(_kind_last_used.get(BeatsScript.kind_of(beat), -1))
+		if stamp < best_stamp:
+			best_stamp = stamp
+			best = [beat]
+		elif stamp == best_stamp:
+			best.append(beat)
+	return best[_rng.randi_range(0, best.size() - 1)]
+
+
+## Member positions for `beat` anchored along `anchor_dir`: each valid
+## position, nudged to nearby valid ground when the authored spot is blocked,
+## or Vector2.INF when nothing near it is.
+func _plan_positions(beat: Dictionary, anchor_dir: Vector2) -> Array:
+	var mode: StringName = beat["mode"]
+	var basis_x := anchor_dir
+	var basis_y := anchor_dir.orthogonal()
+	var player_pos := _player.global_position
+	var anchor := player_pos + anchor_dir * float(beat["distance"])
+	var out: Array = []
+	for member_variant in beat["members"]:
+		var offset := (member_variant as Dictionary)["offset"] as Vector2
+		var pos := (
+			player_pos + offset if mode == &"around"
+			else anchor + basis_x * offset.x + basis_y * offset.y
+		)
+		out.append(pos if _position_valid(pos) else _nudge_to_valid(pos, player_pos))
+	return out
+
+
+const NUDGE_RADII: Array[float] = [48.0, 96.0, 144.0]
+## A nudged member never lands closer than this to the player.
+const NUDGE_MIN_PLAYER_DISTANCE := 240.0
+
+
+func _nudge_to_valid(pos: Vector2, player_pos: Vector2) -> Vector2:
+	for radius in NUDGE_RADII:
+		for k in range(8):
+			var candidate := pos + Vector2.RIGHT.rotated(TAU * float(k) / 8.0) * radius
+			if candidate.distance_to(player_pos) < NUDGE_MIN_PLAYER_DISTANCE:
+				continue
+			if _position_valid(candidate):
+				return candidate
+	return Vector2.INF
+
+
+func _position_valid(pos: Vector2) -> bool:
+	if _spawner == null or not _spawner.has_method("is_beat_position_valid"):
+		return true
+	return bool(_spawner.call("is_beat_position_valid", pos))
+
+
+static func _count_valid(plan: Array) -> int:
+	var count := 0
+	for pos in plan:
+		if pos != Vector2.INF:
+			count += 1
+	return count
 
 
 ## Phase escalation (roadmap 2.7): say that the district changed, and follow
@@ -248,7 +371,7 @@ func _check_escalation() -> void:
 	if BeatsScript.phase_rank(phase) <= BeatsScript.phase_rank(previous):
 		return
 	_unlocked_pending.clear()
-	for beat in BeatsScript.eligible(phase):
+	for beat in BeatsScript.eligible(phase, _segment()):
 		if BeatsScript.phase_rank(beat["min_phase"]) > BeatsScript.phase_rank(previous):
 			_unlocked_pending.append(beat["id"])
 	_counters["escalations"] = int(_counters["escalations"]) + 1
@@ -363,6 +486,18 @@ func _on_member_gone(id: StringName) -> void:
 		_active.erase(id)
 		_record(&"beat_ended", id, 0)
 		beat_ended.emit(id)
+		# The peak was answered: relax before the next build-up.
+		if not _rite_channel_active and lull_seconds > 0.0 and _spawner != null and is_instance_valid(_spawner) \
+		and _spawner.has_method("set_ambient_lull"):
+			_spawner.call("set_ambient_lull", lull_seconds, lull_interval_mul)
+
+
+## In-combat power thresholds only (the Threat Director defers the rest to
+## the next disturbance phase): answer with the rematch ring shortly after.
+func _on_power_threshold_noted(_id: StringName, _label: String) -> void:
+	if not enabled or _rite_channel_active:
+		return
+	_rematch_in = maxf(0.01, rematch_delay_sec)
 
 
 func _announce(beat: Dictionary) -> void:
@@ -402,6 +537,10 @@ func _is_unsealed() -> bool:
 		return bool(unsealed_provider.call())
 	var director := get_node_or_null("/root/ThreatDirector")
 	return director != null and bool(director.get("gate_unsealed"))
+
+
+func _segment() -> int:
+	return int(Global.attempt_segment) if Global != null else 0
 
 
 func _is_tutorial_stage() -> bool:

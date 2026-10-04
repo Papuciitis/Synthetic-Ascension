@@ -94,6 +94,7 @@ start_time = 210.0
 max_alive = 6
 elite_chance = 0.07
 min_phase = &"collapse"
+min_segment = 5
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_fsfoh"]
@@ -104,6 +105,7 @@ start_time = 180.0
 max_alive = 7
 elite_chance = 0.066
 min_phase = &"collapse"
+min_segment = 4
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_ef17o"]
@@ -114,6 +116,7 @@ start_time = 90.0
 max_alive = 2
 elite_chance = 0.2
 min_phase = &"ascension"
+min_segment = 3
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_splitter"]
@@ -124,6 +127,7 @@ start_time = 210.0
 max_alive = 4
 elite_chance = 0.001
 min_phase = &"collapse"
+min_segment = 5
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_brute"]
@@ -144,6 +148,7 @@ start_time = 150.0
 max_alive = 5
 elite_chance = 0.05
 min_phase = &"ascension"
+min_segment = 4
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_lurker"]
@@ -154,6 +159,7 @@ start_time = 120.0
 max_alive = 4
 elite_chance = 0.04
 min_phase = &"ascension"
+min_segment = 3
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_warden"]
@@ -164,6 +170,7 @@ start_time = 100.0
 max_alive = 4
 elite_chance = 0.04
 min_phase = &"ascension"
+min_segment = 3
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [sub_resource type="Resource" id="Resource_siphon"]
@@ -174,6 +181,7 @@ start_time = 180.0
 max_alive = 4
 elite_chance = 0.05
 min_phase = &"collapse"
+min_segment = 4
 metadata/_custom_type_script = "uid://c72t5o5jqij7r"
 
 [resource]
