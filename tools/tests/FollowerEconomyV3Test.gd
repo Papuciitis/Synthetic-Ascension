@@ -63,6 +63,7 @@ func _run() -> void:
 	_test_recorder()
 	await _test_consecrate()
 	await _test_consecrate_cap()
+	await _test_recast_guards_consecration()
 	print("FollowerEconomyV3Test: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -702,6 +703,52 @@ func _test_consecrate_cap() -> void:
 	var status := select.get_node_or_null("Center/VBox/BindingStatus") as Label
 	_check(Global.followers == 10000 and int(Global.attempt_binding_offer[0]["grade"]) == 0, "clicking the capped card while armed raises nothing and charges nothing")
 	_check(status != null and status.visible and status.text == "THAT CARD ALREADY REACHES LV.20: A HIGHER GRADE ADDS NOTHING", "and the status line says why (%s)" % (status.text if status != null else "missing"))
+	select.queue_free()
+	await get_tree().process_frame
+	Global.pending_augment_pick = false
+
+
+## A Recast deals new cards and throws a Consecrated one away with no
+## refund, so while one is on the table RECAST takes two presses, and the
+## line announcing the raise goes with the table (review 2026-10-04).
+func _test_recast_guards_consecration() -> void:
+	_pending_binding(_offer_fixture())
+	Global.set_followers(5000)
+	_check(not Global.binding_offer_consecrated(), "a fresh table holds no Consecrated card")
+	var select: CanvasLayer = await _open_binding_select()
+	var consecrate := select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	var recast := select.get_node_or_null("Center/VBox/BindingFooter/Recast") as Button
+	var status := select.get_node_or_null("Center/VBox/BindingStatus") as Label
+	if consecrate == null or recast == null or status == null:
+		_check(false, "fixture: the Binding footer and status line exist")
+		select.queue_free()
+		return
+	consecrate.emit_signal("pressed")
+	var tesla := _table_card(select, TESLA)
+	if tesla != null:
+		tesla.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.binding_offer_consecrated() and bool((Global.attempt_binding_offer[0] as Dictionary).get(AugmentRites.CONSECRATED_KEY, false)), "the raised card is marked Consecrated in the offer")
+	var wallet := Global.followers
+	var table := str(Global.attempt_binding_offer)
+	recast.emit_signal("pressed")
+	_check(Global.attempt_binding_recasts == 0 and str(Global.attempt_binding_offer) == table and Global.followers == wallet, "the first RECAST press deals nothing and charges nothing")
+	_check(recast.text == "CONFIRM  ·  LOSE THE CONSECRATION", "it arms and says what the second press costs (%s)" % recast.text)
+	var abstain := select.get_node_or_null("Center/VBox/BindingFooter/Abstain") as Button
+	abstain.emit_signal("pressed")
+	_check(recast.text.begins_with("RECAST") and abstain.text.begins_with("CONFIRM"), "arming ABSTAIN stands an armed Recast down (%s)" % recast.text)
+	recast.emit_signal("pressed")
+	_check(recast.text.begins_with("CONFIRM") and abstain.text.begins_with("ABSTAIN"), "and arming RECAST again stands Abstain down (%s)" % abstain.text)
+	_check(status.visible and status.text.begins_with("CONSECRATED"), "fixture: the status line still announces the raise (%s)" % status.text)
+	recast.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.attempt_binding_recasts == 1 and not Global.binding_offer_consecrated(), "the second press deals a new table, the Consecrated card gone")
+	_check(not status.visible and status.text == "", "and the line announcing the thrown-away raise goes with it (%s)" % status.text)
+	_check(recast.text.begins_with("RECAST") and recast.tooltip_text == "", "with nothing Consecrated on the table RECAST is one press again (%s)" % recast.text)
+	var recasts := Global.attempt_binding_recasts
+	recast.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.attempt_binding_recasts == recasts + 1, "and one press deals")
 	select.queue_free()
 	await get_tree().process_frame
 	Global.pending_augment_pick = false

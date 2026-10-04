@@ -117,6 +117,9 @@ static func burdened_offer(offer: Array) -> Array:
 ## Followers have a rising-price outlet on the run's spike (450 / 900 / 1,350
 ## at Hub 3; 1,500 / 3,000 / 4,500 at Hub 10).
 const CONSECRATE_PER_SEGMENT := 150
+## Marks a card Consecrate raised, so the Binding knows a Recast would throw
+## a paid grade away (review 2026-10-04). Rides the saved offer as-is.
+const CONSECRATED_KEY := "consecrated"
 
 
 static func consecrate_cost(segment: int, done: int) -> int:
@@ -141,12 +144,14 @@ static func consecrate_adds_level(card: Dictionary, current: int) -> bool:
 	return AugmentBinding.resulting_level(raised, current) > AugmentBinding.resulting_level(card, current)
 
 
-## The offer with card `index` one grade higher; every other card as dealt.
+## The offer with card `index` one grade higher and marked Consecrated;
+## every other card as dealt.
 static func consecrated_offer(offer: Array, index: int) -> Array:
 	var out: Array = []
 	for i in range(offer.size()):
 		var copy: Dictionary = (offer[i] as Dictionary).duplicate()
 		if i == index and can_consecrate_card(copy):
 			copy["grade"] = int(copy["grade"]) + 1
+			copy[CONSECRATED_KEY] = true
 		out.append(copy)
 	return out

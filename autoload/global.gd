@@ -1319,10 +1319,21 @@ func binding_can_consecrate(index: int) -> bool:
 	return AugmentRites.consecrate_adds_level(card, get_augment_level(StringName(String(card.get("id", "")))))
 
 
+## Whether the pending Binding's table holds a card Consecrate raised: a
+## Recast deals new cards and throws that paid grade away, so the Binding
+## screen asks twice before one (review 2026-10-04).
+func binding_offer_consecrated() -> bool:
+	for card in attempt_binding_offer:
+		if card is Dictionary and bool((card as Dictionary).get(AugmentRites.CONSECRATED_KEY, false)):
+			return true
+	return false
+
+
 ## Consecrate: pays Followers to raise card `index` one grade, the paid
 ## counterpart of the Burden (follower economy audit 2026-10-04, P6). The
-## raised card is kept with the offer; a Recast deals new cards and does not
-## carry it, but the price step stays. False when it cannot be paid for.
+## raised card is kept with the offer, marked; a Recast deals new cards and
+## does not carry it, but the price step stays. False when it cannot be paid
+## for.
 func binding_consecrate(index: int) -> bool:
 	if not binding_can_consecrate(index):
 		return false

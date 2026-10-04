@@ -42,6 +42,9 @@ var _tip_tw: Tween = null
 var _subtitle: Label = null
 var _footer: HBoxContainer = null
 var _recast_button: Button = null
+# Armed, the next RECAST press deals; it arms first only when a Recast would
+# throw a paid Consecration away (review 2026-10-04).
+var _recast_armed: bool = false
 # Consecrate (follower economy audit P6): armed, the next card clicked rises
 # a grade instead of being taken.
 var _consecrate_button: Button = null
@@ -51,6 +54,8 @@ var _abstain_armed: bool = false
 var _burden_button: Button = null
 var _burden_armed: bool = false
 var _status_label: Label = null
+# The status line is announcing a Consecration: it goes with the table.
+var _status_consecrated: bool = false
 var _wallet_label: Label = null
 var _slot_row: VBoxContainer = null
 var _pending_swap: Dictionary = {}
@@ -134,7 +139,14 @@ func _deal() -> void:
 	_close_facet_chooser()
 	_abstain_armed = false
 	_burden_armed = false
+	_recast_armed = false
 	_disarm_consecrate()
+	# A table dealt again holds no Consecrated card, so the line announcing
+	# one goes too (review 2026-10-04: after a Recast it kept naming a raise
+	# the Recast had thrown away). A Burden's line stays: the new table is
+	# raised as well.
+	if _status_consecrated:
+		_show_status("")
 	_spawn_cards(current_offer())
 	_refresh_binding_ui()
 
@@ -210,11 +222,12 @@ func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 	if _consecrate_armed:
 		_consecrate_card(card_node)
 		return
-	# Taking a card is a new intent: an armed Abstain or Burden stands down,
-	# so a stray footer click after a chooser cannot throw the pick away.
-	if _abstain_armed or _burden_armed:
+	# Taking a card is a new intent: an armed Abstain, Burden or Recast stands
+	# down, so a stray footer click after a chooser cannot throw the pick away.
+	if _abstain_armed or _burden_armed or _recast_armed:
 		_abstain_armed = false
 		_burden_armed = false
+		_recast_armed = false
 		_refresh_binding_ui()
 	# A card that opened the other chooser lets go of its picked look.
 	_release_pending_except(card_node)
@@ -407,9 +420,13 @@ func _refresh_binding_ui() -> void:
 	if not trading:
 		return
 	var cost := Global.binding_recast_cost()
-	_recast_button.text = "RECAST  ·  FREE" if cost <= 0 else "RECAST  ·  %d FOLLOWERS" % cost
+	var consecrated := Global.binding_offer_consecrated()
+	if _recast_armed and consecrated:
+		_recast_button.text = "CONFIRM  ·  LOSE THE CONSECRATION"
+	else:
+		_recast_button.text = "RECAST  ·  FREE" if cost <= 0 else "RECAST  ·  %d FOLLOWERS" % cost
 	_recast_button.disabled = _locked or Global.followers < cost
-	_recast_button.tooltip_text = "Deals new cards; this Binding's Consecrations do not carry over." if Global.attempt_binding_consecrations > 0 else ""
+	_recast_button.tooltip_text = "Deals new cards: the Consecrated card is lost and its Followers do not come back. Press twice." if consecrated else ""
 	var consecrate_cost := Global.binding_consecrate_cost()
 	var can_rise := _consecrate_candidates() > 0
 	# Said on the button, not only in a tooltip: a table of Apocryphal, rule
@@ -444,11 +461,29 @@ func _refresh_binding_ui() -> void:
 	_wallet_label.text = "%d FOLLOWERS" % Global.followers
 
 
+## One press deals new cards, unless the table holds a Consecrated card:
+## then two, as Abstain and Burden, because a stray click next to CONSECRATE
+## threw the paid grade away with no refund (review 2026-10-04).
 func _on_recast_pressed() -> void:
-	if _locked or not Global.binding_recast():
+	if _locked:
+		return
+	if not _recast_armed and _recast_needs_confirm():
+		_recast_armed = true
+		_abstain_armed = false
+		_burden_armed = false
+		_disarm_consecrate()
+		_refresh_binding_ui()
+		return
+	_recast_armed = false
+	if not Global.binding_recast():
+		_refresh_binding_ui()
 		return
 	_hide_tooltip()
 	_deal()
+
+
+func _recast_needs_confirm() -> bool:
+	return Global.binding_offer_consecrated()
 
 
 ## Two presses: the first arms it, so a stray click never throws a pick away.
@@ -458,6 +493,7 @@ func _on_abstain_pressed() -> void:
 	if not _abstain_armed:
 		_abstain_armed = true
 		_burden_armed = false
+		_recast_armed = false
 		_disarm_consecrate()
 		_refresh_binding_ui()
 		return
@@ -476,6 +512,7 @@ func _on_burden_pressed() -> void:
 	if not _burden_armed:
 		_burden_armed = true
 		_abstain_armed = false
+		_recast_armed = false
 		_disarm_consecrate()
 		_refresh_binding_ui()
 		return
@@ -500,6 +537,7 @@ func _on_consecrate_pressed() -> void:
 	_consecrate_armed = not _consecrate_armed
 	_abstain_armed = false
 	_burden_armed = false
+	_recast_armed = false
 	_close_slot_chooser()
 	_close_facet_chooser()
 	_show_status("CHOOSE A GRADED CARD TO RAISE" if _consecrate_armed else "", OverlayKit.GOLD_BRIGHT)
@@ -550,6 +588,7 @@ func _consecrate_card(card_node: Control) -> void:
 	var raised: Dictionary = Global.binding_offer()[index]
 	_spawn_cards(current_offer())
 	_show_status(consecrate_status_text(raised), OverlayKit.GOLD_BRIGHT)
+	_status_consecrated = true
 	_refresh_binding_ui()
 
 
@@ -574,6 +613,7 @@ func burden_status_text(result: Dictionary) -> String:
 
 
 func _show_status(message: String, colour: Color = OverlayKit.CURSE) -> void:
+	_status_consecrated = false
 	if _status_label == null:
 		return
 	_status_label.text = message
