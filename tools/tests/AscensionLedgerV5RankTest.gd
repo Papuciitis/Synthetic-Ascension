@@ -187,6 +187,10 @@ func _test_rank06_downgrades_and_cascade() -> void:
 	# refund's share (review 2026-10-04): repaid exactly, refunding BR04 and
 	# rebuying it undercut a downgrade of BR05 at the same share by 950.
 	var predicted := ledger.refund_value("BR04", 0.5)
+	# The tree screen's refund confirmation reads this quote.
+	var quote := ledger.refund_quote("BR04", 0.5)
+	_check(int(quote["refund"]) == predicted and int(quote["paid"]) == 400 + 2300 and int(quote["forfeit"]) == 2700 - predicted, "the refund quote names the return, everything paid and the forfeit (%s)" % str(quote))
+	_check(quote["removed"] == ["BR04"] and quote["cascaded"] == {"BR05": 3}, "and what leaves and how far BR05 falls (%s)" % str(quote))
 	var forfeited_before := int(ledger.state.get("forfeited", 0))
 	var refunded := ledger.refund("BR04", 0.5)
 	_check(ledger.rank("BR05") == 3, "cascade: losing a unique local drops BR05 to its legal rank 3 (%d)" % ledger.rank("BR05"))

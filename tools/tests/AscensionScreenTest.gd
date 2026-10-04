@@ -128,6 +128,46 @@ func _run() -> void:
 		_check(not ledger.owns("EX06"), "a stale confirmation cannot buy what the wallet no longer affords")
 		_check(not screen._status.text.is_empty(), "the refusal names the ledger's reason")
 		Global.transaction_followers(drained, &"dev_grant", {}, false, false)
+	# --- Refunds ask first (review 2026-10-04): a right-click (or a short
+	# right-drag pan released over a node) and the Refund button open one
+	# confirmation naming the return and the forfeit; nothing leaves before.
+	Global.ascension_refund_context_hub = true
+	var target := "EX04"
+	var share := AscensionLedger.refund_share(Global.attempt_segment)
+	var quote: Dictionary = ledger.refund_quote(target, share)
+	var wallet_before: int = Global.followers
+	screen._on_clicked(target, MOUSE_BUTTON_RIGHT)
+	_check(screen._pending_refund == target and screen._pending_purchase.is_empty() and ledger.owns(target) and Global.followers == wallet_before, "a right-click asks before refunding: nothing leaves yet")
+	_check(screen._confirm.title == "Confirm refund" and screen._confirm_text.text.contains("Returns %d of the %d paid" % [int(quote["refund"]), int(quote["paid"])]) and screen._confirm_text.text.contains("%d is forfeited" % int(quote["forfeit"])), "the confirmation names the return and the forfeit (%s)" % screen._confirm_text.text.replace("\n", " | "))
+	screen._confirm.hide()
+	# A double-click afterwards asks about a purchase again, not the refund
+	# (EX02 was refunded above and is buyable again).
+	screen._on_activated("EX02")
+	_check(screen._pending_refund.is_empty() and screen._pending_purchase == "EX02" and screen._confirm.title == "Confirm purchase", "a purchase question replaces a refund left standing")
+	screen._confirm.hide()
+	screen._pending_purchase = ""
+	screen._show(target)
+	var refund_button: Button = null
+	for child in screen._buttons.get_children():
+		if String(child.text).begins_with("Refund"):
+			refund_button = child as Button
+	_check(refund_button != null, "fixture: the Hub shows a Refund button for %s" % target)
+	if refund_button != null:
+		refund_button.emit_signal("pressed")
+	_check(screen._pending_refund == target and ledger.owns(target), "the Refund button asks the same question")
+	screen._on_confirm_accepted()
+	_check(not ledger.owns(target) and Global.followers == wallet_before + int(quote["refund"]), "accepting refunds exactly the quoted share (%d of %d)" % [Global.followers - wallet_before, int(quote["refund"])])
+	screen._confirm.hide()
+	Global.ascension_refund_context_hub = false
+	screen._on_clicked("EX03", MOUSE_BUTTON_RIGHT)
+	_check(screen._pending_refund.is_empty() and ledger.owns("EX03"), "mid-run a right-click asks nothing and refunds nothing")
+	Global.ascension_refund_context_hub = true
+	var saved_rules: Dictionary = Global.attempt_doctrine_rules.duplicate(true)
+	Global.set_doctrine_rule(&"ascension_refund_mul", 0.0)
+	screen._on_clicked("EX03", MOUSE_BUTTON_RIGHT)
+	_check(screen._pending_refund.is_empty() and ledger.owns("EX03") and screen._status.text.begins_with("Tithe Ledger"), "under the Tithe Ledger no confirmation opens: nothing refunds")
+	Global.attempt_doctrine_rules = saved_rules
+	Global.ascension_refund_context_hub = false
 	# --- Overview declutter: at fit zoom only focus, cores, the equipped
 	# loadout and what is buyable NOW carry labels; hover always reads.
 	screen.view.zoom = 0.3

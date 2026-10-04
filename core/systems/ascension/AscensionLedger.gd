@@ -508,17 +508,33 @@ func refund_preview(id: String) -> Dictionary:
 ## the same share of the receipts of ranks elsewhere whose gates would break
 ## (refund() passes its share to the cascade; review 2026-10-04).
 func refund_value(id: String, share: float) -> int:
+	return int(refund_quote(id, share)["refund"])
+
+
+## What a refund of `id` at `share` would do, without doing it, for the tree
+## screen's confirmation (review 2026-10-04: refunds asked nothing first):
+## {refund, paid, forfeit, removed, cascaded}. `refund` is refund_value;
+## `paid` every payment that would leave (the leavers' prices and the
+## receipts of ranks forced off elsewhere); `forfeit` what of it stays lost;
+## `removed` the leaving nodes; `cascaded` maps each node that would lose
+## ranks to the rank it falls to. Nothing leaves (refund 0) when a sworn node
+## blocks it.
+func refund_quote(id: String, share: float) -> Dictionary:
+	var out := {"refund": 0, "paid": 0, "forfeit": 0, "removed": [], "cascaded": {}}
 	var preview := refund_preview(id)
 	var removed: Array = preview["removed"]
 	if removed.is_empty() or not (preview["blocked"] as Array).is_empty():
-		return 0
+		return out
 	var safe_share := clampf(share, 0.0, 1.0)
 	var paid: Dictionary = state["paid"]
 	var value := 0
+	var total := 0
+	var cascaded := {}
 	var hypothetical: Dictionary = (state["owned"] as Dictionary).duplicate()
 	for gone_key in removed:
 		var gone := String(gone_key)
 		hypothetical.erase(gone)
+		total += int(paid.get(gone, 0))
 		value += int(round(float(int(paid.get(gone, 0))) * safe_share))
 	# Ranks elsewhere that would fall to their legal gate return the same
 	# share, rounded per rank as downgrade_preview rounds them.
@@ -538,11 +554,20 @@ func refund_value(id: String, share: float) -> int:
 				legal = next_rank
 			else:
 				break
+		if current > legal:
+			cascaded[other] = legal
 		var receipts_other := rank_receipts(other)
 		for lost_rank in range(legal + 1, current + 1):
 			if receipts_other.size() >= lost_rank:
-				value += int(round(float(int(receipts_other[lost_rank - 1])) * safe_share))
-	return value
+				var receipt := int(receipts_other[lost_rank - 1])
+				total += receipt
+				value += int(round(float(receipt) * safe_share))
+	out["refund"] = value
+	out["paid"] = total
+	out["forfeit"] = maxi(0, total - value)
+	out["removed"] = removed
+	out["cascaded"] = cascaded
+	return out
 
 
 ## Refund: removes the node and everything that depended on it and returns

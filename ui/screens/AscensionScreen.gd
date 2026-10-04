@@ -305,7 +305,7 @@ func _build() -> void:
 	_confirm_core.custom_minimum_size = Vector2(0, 42)
 	confirm_box.add_child(_confirm_core)
 	_confirm.add_child(confirm_box)
-	_confirm.confirmed.connect(_confirm_pending_purchase)
+	_confirm.confirmed.connect(_on_confirm_accepted)
 	_confirm.visibility_changed.connect(_on_confirm_visibility)
 	root.add_child(_confirm)
 
@@ -582,6 +582,9 @@ var _confirm: ConfirmationDialog = null
 var _confirm_text: Label = null
 var _confirm_core: OptionButton = null
 var _pending_purchase: String = ""
+## The node a standing refund confirmation would refund ("" when the dialog
+## asks about a purchase, or nothing).
+var _pending_refund: String = ""
 
 
 func _on_hovered(id: String) -> void:
@@ -593,7 +596,7 @@ func _on_clicked(id: String, button: int) -> void:
 	_selected = id
 	_show(id)
 	if button == MOUSE_BUTTON_RIGHT:
-		_refund(id)
+		_request_refund(id)
 
 
 ## Double-click is the purchase gesture: name, rank and the EXACT cost in a
@@ -635,6 +638,10 @@ func _request_purchase(id: String) -> void:
 			_status.text = String(verdict["reason"]).capitalize()
 			return
 	_pending_purchase = id
+	# The dialog also asks about refunds; this question is a purchase.
+	_pending_refund = ""
+	_confirm.title = "Confirm purchase"
+	_confirm.ok_button_text = "Buy"
 	var name_text := _name_of(id)
 	if bool(verdict.get("rank_up", false)):
 		_confirm_text.text = "%s — Rank %s -> %s
@@ -648,6 +655,14 @@ Choose which Core this Gate opens." % name_text
 Exact cost: %d Followers (you have %d)." % [name_text, int(verdict["cost"]), Global.followers]
 	_confirm.reset_size()
 	_confirm.popup_centered()
+
+
+## The dialog's OK: the refund it asked about, or the purchase.
+func _on_confirm_accepted() -> void:
+	if not _pending_refund.is_empty():
+		_confirm_pending_refund()
+		return
+	_confirm_pending_purchase()
 
 
 func _confirm_pending_purchase() -> void:
@@ -781,7 +796,7 @@ func _show(id: String) -> void:
 				var actual := ledger.refund_value(id, share)
 				var refund := _action_button("Refund %d%% (+%d)" % [int(round(100.0 * share)), actual], &"ArcaneDangerButton")
 				refund.tooltip_text = "Refund this node and everything that depended on it; the shown share of what they cost returns, and of any rank this forces off another node. Revelations, forks, Unions, Axioms and Catastrophes never refund."
-				refund.pressed.connect(func() -> void: _refund(id))
+				refund.pressed.connect(func() -> void: _request_refund(id))
 				_buttons.add_child(refund)
 	_status.text = "\n".join(lines)
 
@@ -844,6 +859,77 @@ func _downgrade(id: String) -> void:
 		_after_change()
 
 
+## Right-click and the Refund button both ask first, with what returns and
+## what is forfeited (review 2026-10-04): a refund cannot be undone, P9's
+## share now prices every rank of a node, and a right-drag pan released over
+## a node arrives here as a right-click.
+func _request_refund(id: String) -> void:
+	if Global == null:
+		return
+	if not Global.ascension_refund_context_hub:
+		if _status != null:
+			_status.text = "Refunds are a Hub decision."
+		return
+	if Global.ascension_refunds_forfeit():
+		if _status != null:
+			_status.text = "Tithe Ledger: every purchase is a vow; nothing refunds."
+		return
+	var ledger := _ledger()
+	if ledger == null or _confirm == null:
+		return
+	var preview: Dictionary = ledger.refund_preview(id)
+	var blocked: Array = preview.get("blocked", [])
+	if not blocked.is_empty():
+		if _status != null:
+			_status.text = "Sworn: %s never refund." % ", ".join(PackedStringArray(blocked))
+		return
+	if (preview.get("removed", []) as Array).is_empty():
+		return
+	var share := AscensionLedger.refund_share(Global.attempt_segment)
+	_pending_purchase = ""
+	_pending_refund = id
+	_confirm_core.visible = false
+	_confirm_core.clear()
+	_confirm.title = "Confirm refund"
+	_confirm.ok_button_text = "Refund"
+	_confirm_text.text = refund_confirm_text(id, ledger.refund_quote(id, share), share)
+	_confirm.reset_size()
+	_confirm.popup_centered()
+
+
+## "Name — Rank IV / Returns 1388 of the 4700 paid (30%); 3312 is forfeited."
+## then whatever leaves with it, the ranks it forces down, and that it
+## cannot be undone.
+func refund_confirm_text(id: String, quote: Dictionary, share: float) -> String:
+	var ledger := _ledger()
+	var head := _name_of(id)
+	if ledger != null and _db().kind(id) == "local" and _db().max_rank(id) > 1:
+		head += " — Rank %s" % _roman(ledger.rank(id))
+	var lines := PackedStringArray([head])
+	lines.append("Returns %d of the %d paid (%d%%); %d is forfeited." % [int(quote.get("refund", 0)), int(quote.get("paid", 0)), int(round(100.0 * share)), int(quote.get("forfeit", 0))])
+	var others := PackedStringArray()
+	for gone in quote.get("removed", []):
+		if String(gone) != id:
+			others.append(_name_of(String(gone)))
+	if not others.is_empty():
+		lines.append("Also leaves: %s." % ", ".join(others))
+	var cascaded: Dictionary = quote.get("cascaded", {})
+	for other in cascaded:
+		lines.append("%s falls to Rank %s." % [_name_of(String(other)), _roman(int(cascaded[other]))])
+	lines.append("A refund cannot be undone.")
+	return "\n".join(lines)
+
+
+func _confirm_pending_refund() -> void:
+	var id := _pending_refund
+	_pending_refund = ""
+	if id.is_empty():
+		return
+	_refund(id)
+
+
+## Refunds `id` now, with the Hub and sworn checks made again at the moment
+## of confirmation. Reached only through the confirmation.
 func _refund(id: String) -> void:
 	if Global == null:
 		return
