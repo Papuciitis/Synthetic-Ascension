@@ -71,6 +71,30 @@ var _incidents: Dictionary = _empty_incidents()
 var _item_ids: Dictionary = {}
 var _item_serial := 0
 var _pending_upgrade_links: Array[Dictionary] = []
+# Per-hit telemetry, folded once per frame (FPS audit 2026-10-04, item 5):
+# a hit costs one append here instead of a full ledger update (six metrics
+# across three tables, attribution rows, the record). The fold adds the
+# metrics once, attributes once per provenance in first-seen order (so casts
+# and new attribution rows are met in the order they were) and updates each
+# damaged record in hit order. Anything that reads enemy damage or orders
+# against it - a defeat, a removal, a registration, a segment or life
+# boundary, a summary, the per-second sample - folds first; a deferred fold
+# closes every frame that had hits.
+var _hit_count := 0
+var _hit_applied_sum := 0.0
+var _hit_adjusted_sum := 0.0
+var _hit_overkill_sum := 0.0
+var _hit_resolved := 0
+var _hit_crits := 0
+var _hit_credited_sum := 0.0
+var _hit_any_credited := false
+var _hit_groups: Dictionary = {} # provenance -> [applied, overkill, hits], first-seen order
+var _hit_mixed: Array = [] # [provenance, applied, overkill, hits] per mixed hit, in order
+var _hit_handles := PackedInt64Array()
+var _hit_applied := PackedFloat64Array()
+var _hit_lethal := PackedByteArray()
+var _hit_provenance: Array[Dictionary] = []
+var _hit_fold_queued := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -121,6 +145,7 @@ func begin_gameplay(player: Node) -> void:
 		return
 	if not is_instance_valid(player):
 		return
+	_fold_hits()
 	_player_ref = weakref(player)
 	_mode = "gameplay"
 	_destination = ""
@@ -176,6 +201,7 @@ func _process(delta: float) -> void:
 	_accept(_queue.poll_completed())
 	if not _active:
 		return
+	_fold_hits()
 	var began := Time.get_ticks_usec()
 	if not _destination.is_empty():
 		var scene := get_tree().current_scene
@@ -295,6 +321,7 @@ func _on_scene_requested(path: String) -> void:
 func _on_segment_completed(segment: int) -> void:
 	if not _active:
 		return
+	_fold_hits()
 	_capture_build()
 	_capture_sample()
 	_capture_proc_truth()
@@ -312,6 +339,7 @@ static func _recruit_reasons() -> Dictionary:
 func end_capture(outcome: String = "suspended") -> void:
 	if not _active:
 		return
+	_fold_hits()
 	_capture_build()
 	_capture_sample()
 	_capture_proc_truth()
@@ -358,6 +386,7 @@ func _accept(completions: Array) -> void:
 func get_summary() -> Dictionary:
 	if _ledger == null:
 		return {}
+	_fold_hits()
 	var result: Dictionary = _ledger.summary()
 	result["writer_failures"] = _writer_failures
 	result["last_error"] = _last_error
@@ -389,19 +418,83 @@ func _observe_enemy(handle: int, at_entry: bool = false) -> void:
 	_ledger.enemy_seen(handle, String(EnemyWorld.get_spec_id(handle)), Types.has_flag(EnemyWorld.get_flags(handle), Types.Flags.ELITE), EnemyWorld.get_max_health(handle), at_entry)
 
 func _on_enemy_registered(handle: int) -> void:
+	_fold_hits()
 	_observe_enemy(handle)
 
 func _on_enemy_removing(handle: int, reason: StringName) -> void:
+	_fold_hits()
 	_ledger.enemy_removed(handle, String(reason))
 
 func _on_enemy_damaged(handle: int, applied: float, adjusted: float, health_before: float, source: Node, payload: Variant) -> void:
+	if applied <= 0.0:
+		return
 	var hit := payload as HitLedger
 	# Provenance is normalized from the payload only (tags or a telemetry-only
 	# object); a tagless hit is unknown even when the player owns the node.
 	var provenance := BalanceAttribution.from_payload(payload)
-	_ledger.enemy_damage(handle, applied, adjusted, hit.hit_count if hit != null else 1, hit.critical_hits if hit != null else 0, source != null and source == _player(), provenance, applied >= health_before - 0.000001)
+	var hit_count := hit.hit_count if hit != null else 1
+	var overkill := maxf(0.0, adjusted - applied)
+	_hit_count += 1
+	_hit_applied_sum += applied
+	_hit_adjusted_sum += adjusted
+	_hit_overkill_sum += overkill
+	_hit_resolved += hit_count
+	_hit_crits += hit.critical_hits if hit != null else 0
+	if source != null and source == _player():
+		_hit_any_credited = true
+		_hit_credited_sum += applied
+	if not provenance.is_empty():
+		if String(provenance.get("origin_id", "")) == BalanceAttribution.MIXED:
+			# A mixed batch carries its own raw breakdown; it is never merged.
+			_hit_mixed.append([provenance, applied, overkill, hit_count])
+		else:
+			var group: Variant = _hit_groups.get(provenance)
+			if group == null:
+				_hit_groups[provenance] = [applied, overkill, hit_count]
+			else:
+				group[0] = float(group[0]) + applied
+				group[1] = float(group[1]) + overkill
+				group[2] = int(group[2]) + hit_count
+	_hit_handles.append(handle)
+	_hit_applied.append(applied)
+	_hit_lethal.append(1 if applied >= health_before - 0.000001 else 0)
+	_hit_provenance.append(provenance)
+	if not _hit_fold_queued:
+		_hit_fold_queued = true
+		_fold_hits.call_deferred()
+
+## Applies the hits gathered since the last fold to the ledger (see the
+## _hit_* fields). Cheap and idempotent when nothing is pending.
+func _fold_hits() -> void:
+	_hit_fold_queued = false
+	if _hit_count == 0:
+		return
+	if _ledger != null:
+		_ledger.enemy_damage_metrics(_hit_applied_sum, _hit_adjusted_sum, _hit_overkill_sum, _hit_resolved, _hit_crits, _hit_any_credited, _hit_credited_sum)
+		for provenance in _hit_groups:
+			var group: Array = _hit_groups[provenance]
+			_ledger.attribute_damage(provenance, float(group[0]), float(group[1]), int(group[2]))
+		for mixed in _hit_mixed:
+			_ledger.attribute_damage(mixed[0], float(mixed[1]), float(mixed[2]), int(mixed[3]))
+		for index in range(_hit_handles.size()):
+			_ledger.enemy_damage_record(_hit_handles[index], _hit_applied[index], _hit_provenance[index], _hit_lethal[index] != 0)
+	_hit_count = 0
+	_hit_applied_sum = 0.0
+	_hit_adjusted_sum = 0.0
+	_hit_overkill_sum = 0.0
+	_hit_resolved = 0
+	_hit_crits = 0
+	_hit_credited_sum = 0.0
+	_hit_any_credited = false
+	_hit_groups.clear()
+	_hit_mixed.clear()
+	_hit_handles.clear()
+	_hit_applied.clear()
+	_hit_lethal.clear()
+	_hit_provenance.clear()
 
 func _on_enemy_defeated(context: RefCounted) -> void:
+	_fold_hits()
 	_ledger.enemy_defeated(int(context.get("handle")))
 
 func _on_weapon_fired(player: Node, _style: StringName, _origin: Vector2, _target: Vector2, _power: float, _haste: float) -> void:
@@ -470,6 +563,7 @@ func _on_health_changed(player: Node, change: Dictionary) -> void:
 func _on_life_event(player: Node, kind: StringName) -> void:
 	if player != _player():
 		return
+	_fold_hits()
 	var metric: String = {"death": "deaths", "respawn": "respawns", "rescue": "rescues"}.get(String(kind), "")
 	if not metric.is_empty():
 		_ledger.add_metric(metric)
@@ -702,6 +796,7 @@ func _reinforcements() -> Dictionary:
 ## Public: freeze the current context on request (developer overlay, tests).
 ## Persisted only here and on death, never on a normal tick.
 func capture_incident(reason: StringName = &"manual") -> void:
+	_fold_hits()
 	if not _active or not extended:
 		return
 	_persist_incident("incident_context", String(reason), _player())

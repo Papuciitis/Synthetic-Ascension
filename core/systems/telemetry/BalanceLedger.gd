@@ -449,15 +449,35 @@ func _change_live_hp(row: Dictionary, hp: float, direction: int) -> void:
 func enemy_damage(handle: int, applied: float, after_defenses: float, hit_count: int, crit_count: int, credited_to_player: bool, provenance: Dictionary = {}, lethal: bool = false) -> void:
 	if applied <= 0.0:
 		return
-	add_metric("enemy_hp_removed", applied)
-	add_metric("enemy_damage_after_defenses", after_defenses)
-	add_metric("enemy_overkill", maxf(0.0, after_defenses - applied))
-	add_metric("resolved_hits", hit_count)
-	add_metric("critical_hits", crit_count)
-	if credited_to_player:
-		add_metric("player_credited_damage", applied)
+	enemy_damage_metrics(applied, after_defenses, maxf(0.0, after_defenses - applied), hit_count, crit_count, credited_to_player, applied if credited_to_player else 0.0)
 	if not provenance.is_empty():
 		_attribute(provenance, applied, maxf(0.0, after_defenses - applied), hit_count)
+	enemy_damage_record(handle, applied, provenance, lethal)
+
+
+## The parts of enemy_damage, for callers that fold many hits at once
+## (BalanceRecorder folds a frame's hits: FPS audit 2026-10-04). The damage
+## metrics of one hit or of several summed; player_credited_damage is only
+## touched when a credited hit is among them, as enemy_damage does.
+func enemy_damage_metrics(applied: float, after_defenses: float, overkill: float, hit_count: int, crit_count: int, any_credited: bool, credited: float) -> void:
+	add_metric("enemy_hp_removed", applied)
+	add_metric("enemy_damage_after_defenses", after_defenses)
+	add_metric("enemy_overkill", overkill)
+	add_metric("resolved_hits", hit_count)
+	add_metric("critical_hits", crit_count)
+	if any_credited:
+		add_metric("player_credited_damage", credited)
+
+
+## Origin/emitter attribution of one hit or of several with one provenance.
+func attribute_damage(provenance: Dictionary, applied: float, overkill: float, hits: int) -> void:
+	if not provenance.is_empty():
+		_attribute(provenance, applied, overkill, hits)
+
+
+## The damaged record's side of one hit: running damage, first-hit clock,
+## last and lethal provenance.
+func enemy_damage_record(handle: int, applied: float, provenance: Dictionary = {}, lethal: bool = false) -> void:
 	if not _enemies.has(handle):
 		return
 	var enemy: Dictionary = _enemies[handle]
