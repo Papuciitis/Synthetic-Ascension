@@ -68,6 +68,25 @@ var _buffer_shared := PackedFloat32Array()
 var _buffer_needle := PackedFloat32Array()
 var _buffer_tracer := PackedFloat32Array()
 var _buffer_enemy := PackedFloat32Array()
+## Hostile readability (audit 2026-10-04, change 7). Hostile and player bolts
+## were the same 54 x 12 streak differing only in colour, and Batch A's baked
+## red enemy body discarded the per-shooter tint, so Spitter and Herald
+## bolts were identical. Enemy bodies now draw ENEMY_BODY_SCALE larger with a
+## soft shooter tint, over an additive halo in the shooter's colour: one
+## more plain MultiMesh (no shader, no custom data - GL Compatibility safe),
+## uploaded only while hostile bolts fly, at most ENEMY_HALO_BUDGET drawn.
+const ENEMY_BODY_SCALE := 1.3
+const ENEMY_BODY_TINT := 0.35
+const ENEMY_HALO_BUDGET := 1024
+const ENEMY_HALO_LENGTH := 1.15
+const ENEMY_HALO_WIDTH := 2.4
+const ENEMY_HALO_SPITTER := Color(0.42, 1.0, 0.22, 0.5)
+const ENEMY_HALO_HERALD := Color(1.0, 0.56, 0.14, 0.5)
+const ENEMY_HALO_DEFAULT := Color(1.0, 0.26, 0.2, 0.4)
+var _enemy_halo_mesh: MultiMesh = null
+var _enemy_halo_instance: MultiMeshInstance2D = null
+var _buffer_enemy_halo := PackedFloat32Array()
+var _enemy_halo_prev_count: int = 0
 var _sources: Array = []
 var _tags: Array = []  # PackedStringArray per projectile: advancement-tree provenance
 var _ids := PackedInt64Array()  # stable identity per projectile; slots are reused, ids never are
@@ -787,6 +806,50 @@ func _build_renderer() -> void:
 	# The first mesh keeps the historical field names for tests and tooling.
 	_multimesh = _identity_meshes[0]
 	_renderer = _identity_instances[0]
+	if identity_split:
+		_build_enemy_halo(quad)
+
+
+func _build_enemy_halo(quad: QuadMesh) -> void:
+	var mesh := MultiMesh.new()
+	mesh.transform_format = MultiMesh.TRANSFORM_2D
+	mesh.use_colors = true
+	mesh.mesh = quad
+	mesh.instance_count = ENEMY_HALO_BUDGET
+	mesh.visible_instance_count = 0
+	var gradient := Gradient.new()
+	gradient.offsets = PackedFloat32Array([0.0, 0.45, 1.0])
+	gradient.colors = PackedColorArray([Color(1, 1, 1, 1), Color(1, 1, 1, 0.45), Color(1, 1, 1, 0)])
+	var glow := GradientTexture2D.new()
+	glow.gradient = gradient
+	glow.width = 64
+	glow.height = 32
+	glow.fill = GradientTexture2D.FILL_RADIAL
+	glow.fill_from = Vector2(0.5, 0.5)
+	glow.fill_to = Vector2(0.5, 0.0)
+	var instance := MultiMeshInstance2D.new()
+	instance.name = "BatchedBulletHaloRenderer"
+	instance.multimesh = mesh
+	instance.texture = glow
+	# Beneath every body family (z 200), so the halo never paints over a bolt.
+	instance.z_index = 199
+	var additive := CanvasItemMaterial.new()
+	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	instance.material = additive
+	add_child(instance)
+	_enemy_halo_mesh = mesh
+	_enemy_halo_instance = instance
+	_buffer_enemy_halo.resize(ENEMY_HALO_BUDGET * 12)
+
+
+## The halo tint for a hostile bolt's shooter.
+static func enemy_halo_color(visual: int) -> Color:
+	match visual:
+		Visual.ENEMY_GREEN:
+			return ENEMY_HALO_SPITTER
+		Visual.ENEMY_VIOLET:
+			return ENEMY_HALO_HERALD
+	return ENEMY_HALO_DEFAULT
 
 ## A body texture, or null when the file is absent or not importable as a
 ## Texture2D (an un-imported PNG loads as a bare Image in a headless run).
@@ -835,6 +898,7 @@ func _update_renderer() -> void:
 			_buffer_enemy.resize(expected_size)
 	var counts := PackedInt32Array()
 	counts.resize(FAMILY_COUNT)
+	var halos := 0
 	for i in range(drawn):
 		var direction := _velocities[i]
 		var length := direction.length()
@@ -860,8 +924,36 @@ func _update_renderer() -> void:
 					1.0 + (color.g - 1.0) * 0.45,
 					1.0 + (color.b - 1.0) * 0.45,
 					color.a)
+			elif family == FAMILY_ENEMY:
+				# A lighter shooter tint over the baked red body; the halo
+				# below carries the shooter's colour.
+				color = Color(
+					1.0 + (color.r - 1.0) * ENEMY_BODY_TINT,
+					1.0 + (color.g - 1.0) * ENEMY_BODY_TINT,
+					1.0 + (color.b - 1.0) * ENEMY_BODY_TINT,
+					color.a)
+				scale_x *= ENEMY_BODY_SCALE
+				scale_y *= ENEMY_BODY_SCALE
+				if halos < ENEMY_HALO_BUDGET and _enemy_halo_mesh != null:
+					var halo := enemy_halo_color(_visuals[i])
+					var hx := scale_x * ENEMY_HALO_LENGTH
+					var hy := scale_y * ENEMY_HALO_WIDTH
+					var hb := halos * 12
+					_buffer_enemy_halo[hb + 0] = cos_a * hx
+					_buffer_enemy_halo[hb + 1] = -sin_a * hy
+					_buffer_enemy_halo[hb + 2] = 0.0
+					_buffer_enemy_halo[hb + 3] = projectile_position.x
+					_buffer_enemy_halo[hb + 4] = sin_a * hx
+					_buffer_enemy_halo[hb + 5] = cos_a * hy
+					_buffer_enemy_halo[hb + 6] = 0.0
+					_buffer_enemy_halo[hb + 7] = projectile_position.y
+					_buffer_enemy_halo[hb + 8] = halo.r
+					_buffer_enemy_halo[hb + 9] = halo.g
+					_buffer_enemy_halo[hb + 10] = halo.b
+					_buffer_enemy_halo[hb + 11] = halo.a * color.a
+					halos += 1
 			else:
-				# The bodies carry their colours baked in: alpha only.
+				# The player body carries its colours baked in: alpha only.
 				color = Color(1.0, 1.0, 1.0, color.a)
 		var base := counts[family] * 12
 		counts[family] += 1
@@ -888,6 +980,11 @@ func _update_renderer() -> void:
 			mesh.emit_changed()
 		mesh.visible_instance_count = family_count
 		_identity_prev_counts[family] = family_count
+	if _enemy_halo_mesh != null and (halos > 0 or _enemy_halo_prev_count > 0):
+		RenderingServer.multimesh_set_buffer(_enemy_halo_mesh.get_rid(), _buffer_enemy_halo)
+		_enemy_halo_mesh.emit_changed()
+		_enemy_halo_mesh.visible_instance_count = halos
+		_enemy_halo_prev_count = halos
 
 func consume_enemy_projectiles_in_radius(center: Vector2, radius: float, out_consumed: Array) -> int:
 	# Parry/reflect support: simulated enemy bullets are invisible to

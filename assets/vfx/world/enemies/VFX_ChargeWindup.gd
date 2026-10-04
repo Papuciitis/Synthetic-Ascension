@@ -10,6 +10,10 @@ class_name VFX_ChargeWindup
 @export var color_core: Color = Color(1.0, 0.85, 0.35, 1.0)
 @export var color_glow: Color = Color(1.0, 0.20, 0.75, 0.65)
 
+## The release flash: a white fan for this long once the wind-up ends, as
+## the dash starts (it follows the charger as its child).
+@export var release_flash: float = 0.09
+
 var _t: float = 0.0
 
 func setup(dir: Vector2, dur: float) -> void:
@@ -25,18 +29,28 @@ func _ready() -> void:
 
 func _process(dt: float) -> void:
 	_t += dt
-	if _t >= duration:
+	if _t >= duration + release_flash:
 		queue_free()
 		return
 	queue_redraw()
 
+## Opacity across the wind-up. The tell used to fade as (1 - p)^2: brightest
+## when the charge was furthest away and gone just before the dash (audit
+## 2026-10-04, change 7). It now builds from 0.35 to full at the release.
+func windup_alpha(p: float) -> float:
+	return 0.35 + 0.65 * clampf(p, 0.0, 1.0)
+
 func _draw() -> void:
+	if _t >= duration:
+		# Release: a white flash of the full fan, fading over release_flash.
+		var flash: float = 1.0 - clampf((_t - duration) / maxf(release_flash, 0.001), 0.0, 1.0)
+		VfxKit.draw_fan(self, Vector2.ZERO, 0.0, length * 1.15, Color(1.0, 1.0, 1.0, flash), spread_deg)
+		return
 	var p: float = clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
-	var fade: float = 1.0 - p
-	fade = fade * fade
 
 	var kk: float = 0.65 + 0.35 * sin(_t * 12.0)
-	var L: float = length * lerpf(0.65, 1.05, 1.0 - fade)
+	var grow: float = 1.0 - (1.0 - p) * (1.0 - p)
+	var L: float = length * lerpf(0.65, 1.05, grow)
 
 	# Pixel-art kit (Batch B, 2026-09-27): one three-ray fan sprite along local +X (setup rotates the node to the charge direction), squeezed to spread_deg and in the core colour, replaces the three glow+core rays and the faint dot.
-	VfxKit.draw_fan(self, Vector2.ZERO, 0.0, L * (0.85 + 0.15 * kk), Color(color_core.r, color_core.g, color_core.b, color_core.a * fade), spread_deg)
+	VfxKit.draw_fan(self, Vector2.ZERO, 0.0, L * (0.85 + 0.15 * kk), Color(color_core.r, color_core.g, color_core.b, color_core.a * windup_alpha(p)), spread_deg)

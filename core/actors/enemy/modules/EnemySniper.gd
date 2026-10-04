@@ -5,6 +5,11 @@ const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd
 
 enum State { IDLE, RELOCATE, WINDUP }
 
+## A sniper in its wind-up stands in this group, so the HUD can point at one
+## aiming from off-screen without scanning every enemy (audit 2026-10-04,
+## change 7: perches sit 1,510-1,819 px out, beyond the 960 px half-screen).
+const AIMING_GROUP := &"enemy_sniper_aiming"
+
 var _owner: EnemyActor = null
 var _state: int = State.IDLE
 
@@ -168,6 +173,7 @@ func _start_windup(to_player: Vector2) -> void:
 
 	_ensure_telegraph()
 	_update_telegraph()
+	_owner.add_to_group(AIMING_GROUP)
 
 
 func _track_aim(delta: float) -> void:
@@ -592,6 +598,10 @@ func _update_telegraph() -> void:
 
 
 func _free_telegraph() -> void:
+	# Every way out of a wind-up (shot, cancel, cleanup, pool reuse) frees the
+	# telegraph, so this is where the aim stops being announced.
+	if _owner != null and is_instance_valid(_owner) and _owner.is_in_group(AIMING_GROUP):
+		_owner.remove_from_group(AIMING_GROUP)
 	if _tele != null and is_instance_valid(_tele):
 		var gid_v: Variant = _tele.get_meta("_glow_id", 0)
 		if typeof(gid_v) == TYPE_INT:

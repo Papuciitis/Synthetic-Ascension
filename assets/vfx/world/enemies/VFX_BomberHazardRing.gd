@@ -63,6 +63,15 @@ func _draw() -> void:
 	if _enemy == null or _enemy.player == null or not is_instance_valid(_enemy.player):
 		return
 
+	# A lit fuse (EnemyBomber): the ring sits at the true blast radius, hot,
+	# and blinks at 8 Hz between its colour and white until it goes off.
+	var bomber: EnemyBomber = _enemy.get("_bomber") as EnemyBomber
+	if bomber != null and bomber.is_fuse_lit():
+		var white_hot: bool = int(_t * 16.0) % 2 == 0
+		var fuse_colour := Color(1.0, 0.95, 0.85, 0.8) if white_hot else Color(color_core.r, color_core.g, color_core.b, hot_alpha)
+		VfxKit.draw_ring_dashed(self, Vector2.ZERO, _r, fuse_colour, _t * 2.5, line_width)
+		return
+
 	var dist: float = _enemy.global_position.distance_to(_enemy.player.global_position)
 
 	# hotter when player is near trigger distance

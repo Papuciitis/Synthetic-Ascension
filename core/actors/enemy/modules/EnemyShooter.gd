@@ -20,6 +20,17 @@ const SAFE_LANE_FORWARD_CHECK: float = 14.0
 
 const INF_COST: int = 1_000_000_000
 
+## Every shot is held for WINDUP_TIME behind a visible tell (audit 2026-10-04,
+## change 7). Spitters fired the instant cooldown and line of sight allowed,
+## with a same-frame muzzle flash as the only cue, and their bolts were 29-42%
+## of the damage players took. The cooldown starts at release, so a shooter's
+## rate drops by the wind-up (~15% for a Spitter), which the audit accepts.
+## The shot is re-aimed at release; the tell shows it is coming, not where.
+const WINDUP_TIME: float = 0.25
+## Line of sight lost during the wind-up: the shot is dropped and retried.
+const WINDUP_RETRY_CD: float = 0.2
+const TELL_NODE_NAME := &"ShotWindupTell"
+
 var _enemy: EnemyActor = null
 
 # Reused query params (allocating one per clearance probe was a hot-path cost).
@@ -40,6 +51,11 @@ var _post_side: int = 1
 var _phase: float = 0.0
 var _phase_rate: float = 3.2
 
+# wind-up
+var _windup_left: float = 0.0
+var _winding: bool = false
+var _tell: VFX_EnemyShotWindup = null
+
 var _rng := RandomNumberGenerator.new()
 
 
@@ -59,6 +75,9 @@ func setup(enemy: EnemyActor) -> void:
 	_phase = _rng.randf_range(0.0, TAU)
 	_phase_rate = _rng.randf_range(2.6, 4.2)
 
+	# A pooled body must not carry a half-finished wind-up into its next life.
+	_cancel_windup()
+
 
 func tick(delta: float) -> void:
 	if _enemy == null or not is_instance_valid(_enemy):
@@ -71,6 +90,21 @@ func tick(delta: float) -> void:
 	_post_shot_t = maxf(_post_shot_t - delta, 0.0)
 
 	_phase += delta * _phase_rate
+
+	if _winding:
+		_windup_left = maxf(_windup_left - delta, 0.0)
+		if _windup_left <= 0.0:
+			_release_shot()
+		else:
+			_show_tell()
+
+
+func is_winding_up() -> bool:
+	return _winding
+
+
+func windup_progress() -> float:
+	return clampf(1.0 - _windup_left / WINDUP_TIME, 0.0, 1.0) if _winding else 0.0
 
 
 # Use this from EnemyActor.gd for RANGED AI. Shooter owns: move + shoot.
@@ -123,14 +157,9 @@ func brain(
 		if lane != Vector2.ZERO:
 			desired += lane * (move_speed * SAFE_LANE_MUL)
 
-	# Shooting:
-	if _cd <= 0.0:
-		if has_los:
-			_spawn_projectile(to_player)
-			_cd = maxf(_enemy.spec.shoot_every, 0.05)
-			_post_shot_t = POST_SHOT_DODGE_TIME
-			_post_side *= -1
-			_peek_t = 0.0
+	# Shooting: ready and in sight starts the wind-up; tick() releases it.
+	if _cd <= 0.0 and has_los and not _winding:
+		_begin_windup()
 
 	return desired
 
@@ -412,21 +441,68 @@ func _spawn_muzzle_flash(to_n: Vector2) -> void:
 		mf.setup(_enemy.global_position, to_n, _enemy.spec.id)
 		mf.modulate.a = flash_alpha
 
-func shoot_if_ready(to_player: Vector2) -> void:
+func shoot_if_ready(_to_player: Vector2) -> void:
 	if _enemy == null or not is_instance_valid(_enemy):
 		return
 	if _enemy.spec == null:
 		return
 	if _enemy.spec.projectile_scene == null:
 		return
-	if _cd > 0.0:
+	if _cd > 0.0 or _winding:
 		return
+	# Herald and Tactical plinks get the same tell as the Spitter's shot.
+	_begin_windup()
 
-	_spawn_projectile(to_player)
 
+# ------------------------------------------------------------
+# Wind-up
+# ------------------------------------------------------------
+func _begin_windup() -> void:
+	_winding = true
+	_windup_left = WINDUP_TIME
+	_show_tell()
+
+
+func _release_shot() -> void:
+	_winding = false
+	_hide_tell()
+	var target: Node2D = _enemy.player
+	if target == null or not is_instance_valid(target) or _enemy.spec == null or _enemy.spec.projectile_scene == null:
+		return
+	var cover_mask: int = _enemy.cover_mask()
+	if cover_mask != 0 and not _los_cached(cover_mask):
+		_cd = WINDUP_RETRY_CD
+		return
+	_spawn_projectile(target.global_position - _enemy.global_position)
 	_cd = maxf(_enemy.spec.shoot_every, 0.05)
-
-	# keep the same "feel" extras as the brain-shot:
+	# The quick sidestep after a shot keeps a shooter from feeling turret-like.
 	_post_shot_t = POST_SHOT_DODGE_TIME
 	_post_side *= -1
 	_peek_t = 0.0
+
+
+func _cancel_windup() -> void:
+	_winding = false
+	_windup_left = 0.0
+	_hide_tell()
+
+
+func _show_tell() -> void:
+	if _enemy == null or not is_instance_valid(_enemy) or not _enemy.is_inside_tree():
+		return
+	if _tell == null or not is_instance_valid(_tell) or _tell.get_parent() != _enemy:
+		_tell = _enemy.get_node_or_null(NodePath(String(TELL_NODE_NAME))) as VFX_EnemyShotWindup
+		if _tell == null:
+			_tell = VFX_EnemyShotWindup.new()
+			_tell.name = TELL_NODE_NAME
+			_enemy.add_child(_tell)
+	_tell.configure(_enemy.spec.id if _enemy.spec != null else &"")
+	var to_target := Vector2.RIGHT
+	if _enemy.player != null and is_instance_valid(_enemy.player):
+		to_target = _enemy.player.global_position - _enemy.global_position
+	_tell.show_progress(windup_progress(), to_target)
+
+
+func _hide_tell() -> void:
+	if _tell != null and is_instance_valid(_tell):
+		_tell.hide_tell()
