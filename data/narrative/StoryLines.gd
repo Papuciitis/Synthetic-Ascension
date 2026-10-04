@@ -304,7 +304,9 @@ const SMITH: Array[Dictionary] = [
 ## Crowd archetypes come from the painted sheet a believer wears
 ## (HubCrowd.CROWD_ART, "hub_crowd_<kind>"); `kind` is empty for the rig
 ## stand-ins. `tier` is the crowd's size band (StoryDirector.crowd_tier).
-## Lines with `w` 2 are personal and come up more often.
+## Lines with `w` 2 are personal and come up more often. The first square
+## is the night of the synthesis itself (done 1), so "this morning" waits
+## for the square after the morning after (story review 2026-10-04).
 const CROWD: Array[Dictionary] = [
 	{"id": "cr_patron", "text": "No patron answered. You did."},
 	{"id": "cr_held", "text": "The Pattern held. We saw it."},
@@ -329,7 +331,7 @@ const CROWD: Array[Dictionary] = [
 	{"id": "cr_elder_1", "w": 2.0, "when": {"kind": "elder"}, "text": "My grandmother's magic was inherited. Mine was refused."},
 	{"id": "cr_elder_2", "w": 2.0, "when": {"kind": "elder"}, "text": "I remember when the Registry was a single room."},
 	{"id": "cr_elder_3", "w": 2.0, "when": {"kind": "elder"}, "text": "They told us it couldn't be made. They told us a lot."},
-	{"id": "cr_courier_1", "w": 2.0, "when": {"kind": "courier"}, "text": "Eleven routes this morning. Nine still open."},
+	{"id": "cr_courier_1", "w": 2.0, "when": {"kind": "courier", "done_min": 2}, "text": "Eleven routes this morning. Nine still open."},
 	{"id": "cr_courier_2", "w": 2.0, "when": {"kind": "courier", "done_min": 7}, "text": "The canal locks open for the tree sign now."},
 	{"id": "cr_courier_3", "w": 2.0, "when": {"kind": "courier"}, "text": "I don't read the letters. I just carry them."},
 	{"id": "cr_clerk_1", "w": 2.0, "when": {"kind": "clerk"}, "text": "I filed the report. I kept a copy."},
@@ -338,7 +340,7 @@ const CROWD: Array[Dictionary] = [
 	{"id": "cr_baker_1", "w": 2.0, "when": {"kind": "baker"}, "text": "Bread for the square. Ask, if you are hungry."},
 	{"id": "cr_baker_2", "w": 2.0, "when": {"kind": "baker"}, "text": "They count my flour now."},
 	{"id": "cr_baker_3", "w": 2.0, "when": {"kind": "baker"}, "text": "I bake the tree into the crust. They never check."},
-	{"id": "cr_mender_1", "w": 2.0, "when": {"kind": "mender"}, "text": "The wards on my street failed this morning. Good."},
+	{"id": "cr_mender_1", "w": 2.0, "when": {"kind": "mender", "done_min": 2}, "text": "The wards on my street failed this morning. Good."},
 	{"id": "cr_mender_2", "w": 2.0, "when": {"kind": "mender"}, "text": "I mend lamps. Today I mended a ward to look broken."},
 	{"id": "cr_mender_3", "w": 2.0, "when": {"kind": "mender"}, "text": "What the Registry built can be mended. Or not."},
 
@@ -378,7 +380,7 @@ const BREN_DISPATCHES: Dictionary = {
 		"analytical": "Recognition was never a requirement. I keep writing that in the margins.",
 		"decisive": "You wanted it quick. It was. Keep it that way.",
 		"protective": "You told me I could still leave. I haven't. Neither have they.",
-		"withdrawn": "You said nothing, that night. The copies are saying it for you.",
+		"withdrawn": "You said nothing tonight. The copies are saying it for you.",
 		"repeat": "Copies out. Routes open. Keep moving.",
 	},
 	3: {

@@ -526,6 +526,23 @@ func _test_crowd_and_staff() -> void:
 	_fresh(10)
 	var late := StoryDirector.crowd_pool("", 50000)
 	_check(late.has("Soldiers now. Not officers.") and late.has("One gate left.") and late.has("The Garrison counts differently.") and not late.has("Containment is still counting heads."), "after Segment 9 the square has heard of the Garrison and the last gate")
+	# The first square is the night of the synthesis: nobody there remembers
+	# this morning, and Bren's first letter is written that same night.
+	var kinds: Array = [""]
+	for line in StoryLines.CROWD:
+		var kind := String((line.get("when", {}) as Dictionary).get("kind", ""))
+		if kind != "" and not kinds.has(kind):
+			kinds.append(kind)
+	_fresh(2)
+	var morning: Array = []
+	for kind in kinds:
+		for text in StoryDirector.crowd_pool(String(kind), 500):
+			if text.contains("this morning") and not morning.has(text):
+				morning.append(text)
+	_check(morning.is_empty(), "nobody in the first square remembers this morning (%s)" % str(morning))
+	_fresh(3)
+	_check(StoryDirector.crowd_pool("courier", 500).has("Eleven routes this morning. Nine still open."), "the square after the morning after does")
+	_check(not String(StoryLines.BREN_DISPATCHES[1]["withdrawn"]).contains("that night"), "Bren's first letter does not put the night it is written in the past")
 	Global.set_followers(5000)
 	Global.attempt_doctrine_stage_ids = {"method": "doctrine_method_open_circuit"}
 	_check(StoryDirector.staff_line("acolyte", _rng(2)) == "You chose the instrument. They are already polishing it.", "the Acolyte answers the Method plate's family")
