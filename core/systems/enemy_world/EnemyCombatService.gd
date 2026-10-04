@@ -518,9 +518,8 @@ func apply_knockback(handle: int, force: Vector2) -> bool:
 		return false
 	var actor := _world.actor_for_handle(handle)
 	var adjusted_force := force
-	var cold_state := _world.get_cold_state(handle)
-	if cold_state.has("knockback_multiplier"):
-		adjusted_force *= maxf(0.0, float(cold_state["knockback_multiplier"]))
+	if _world.has_cold_value(handle, "knockback_multiplier"):
+		adjusted_force *= maxf(0.0, float(_world.get_cold_value(handle, "knockback_multiplier")))
 	if actor != null and actor.is_in_group(&"boss_like"):
 		adjusted_force *= maxf(0.0, float(actor.get_meta("boss_kb_mul", 0.25)))
 	if adjusted_force == Vector2.ZERO or not _world.add_knockback_velocity(handle, adjusted_force):
@@ -594,9 +593,8 @@ func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: floa
 
 
 func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int, is_hit: bool) -> float:
-	var cold_state := _world.get_cold_state(handle)
-	var damage_multiplier := maxf(0.0, float(cold_state.get("damage_taken_mul", 1.0)))
-	var hit_cap_ratio := maxf(0.0, float(cold_state.get("hit_cap_ratio", 0.0)))
+	var damage_multiplier := maxf(0.0, float(_world.get_cold_value(handle, "damage_taken_mul", 1.0)))
+	var hit_cap_ratio := maxf(0.0, float(_world.get_cold_value(handle, "hit_cap_ratio", 0.0)))
 	if actor != null:
 		if actor.has_meta("damage_taken_mul"):
 			damage_multiplier = maxf(0.0, float(actor.get_meta("damage_taken_mul")))
@@ -643,10 +641,9 @@ func _apply_survivor_feedback(
 
 
 func _death_metadata(handle: int, actor: Node2D) -> Dictionary:
-	var cold_state := _world.get_cold_state(handle)
 	var snapshot := {
-		"opening_scripted": bool(cold_state.get("opening_scripted", false)),
-		"special_spawn_kind": cold_state.get("special_spawn_kind", &""),
+		"opening_scripted": bool(_world.get_cold_value(handle, "opening_scripted", false)),
+		"special_spawn_kind": _world.get_cold_value(handle, "special_spawn_kind", &""),
 	}
 	if actor != null:
 		for key in [&"opening_scripted", &"special_spawn_kind"]:

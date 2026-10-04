@@ -62,6 +62,12 @@ const V_CHARGE_ACTIONS_PER_SECOND := 4
 ## frames instead of dropping forty Area2Ds with eight shapes each into one
 ## physics step (the 22:58 capture: physics 337 ms, 12,000 draw calls).
 const ATTACK_BUDGET_PER_FRAME := 12
+## The frame's flush also stops once this many damage calls landed in the
+## frame (FPS audit 2026-10-04): one queued attack hits everything in its
+## area, so twelve of them could resolve ~200 damage calls in one frame (Q
+## casts: 44-81 ms frames). At least one attack still resolves every frame;
+## the rest wait a frame or two, as over-budget attacks always have.
+const DAMAGE_CALL_BUDGET_PER_FRAME := 64
 const ATTACK_FX_SECONDS := 0.16
 const SLASH_DEFAULT_ARC := 145.0
 const SLASH_DEFAULT_RADIUS := 62.0
@@ -636,6 +642,17 @@ func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: fl
 		return
 	var started := Time.get_ticks_usec()
 	_frame_hits += 1
+	# Nothing reads a survived hit's record when no engine is equipped, no one
+	# listens for hit_resolved, no history is kept and Second Skin is not
+	# owned: count it and stop (FPS audit 2026-10-04 - this cost 24-61 us per
+	# hit with zero engines). A lethal hit still builds its record, which
+	# _on_enemy_defeated reads.
+	if engines.is_empty() and not _history_wanted and not hit_resolved.has_connections() and maxf(0.0, before - applied) > 0.0 and not owns("ASC2"):
+		telemetry["hits"] = int(telemetry["hits"]) + 1
+		if _is_tree_family(payload):
+			telemetry["tree_hits"] = int(telemetry["tree_hits"]) + 1
+		_frame_hit_usec += Time.get_ticks_usec() - started
+		return
 	var hit := _make_hit(handle, applied, unclamped, before, payload)
 	telemetry["hits"] = int(telemetry["hits"]) + 1
 	if _history_wanted:
@@ -650,6 +667,19 @@ func _on_enemy_damaged(handle: int, applied: float, unclamped: float, before: fl
 	for engine in engines:
 		engine.on_hit(hit)
 	_frame_hit_usec += Time.get_ticks_usec() - started
+
+
+## Whether _make_hit would give this payload the tree family: its tags' last
+## "family:" entry (AscensionTags.parse keeps the last one) reads "tree".
+static func _is_tree_family(payload: Variant) -> bool:
+	var ledger_payload := payload as HitLedger
+	if ledger_payload == null:
+		return false
+	var tags := ledger_payload.tags
+	for index in range(tags.size() - 1, -1, -1):
+		if tags[index].begins_with("family:"):
+			return tags[index] == "family:" + AscensionTags.FAMILY_TREE
+	return false
 
 
 func _make_hit(handle: int, applied: float, unclamped: float, before: float, payload: Variant) -> Dictionary:
@@ -1268,11 +1298,15 @@ func pending_attacks() -> Array:
 
 ## Resolves queued attacks, at most `max_count` (all when negative). Attacks
 ## queued by the kills these cause wait for the next call, so a chain never
-## recurses inside one resolution. Returns how many resolved.
-func flush_attacks(max_count: int = -1) -> int:
+## recurses inside one resolution. With a `damage_call_budget`, stops before
+## the next attack once the frame's damage calls reach it (never before the
+## first). Returns how many resolved.
+func flush_attacks(max_count: int = -1, damage_call_budget: int = -1) -> int:
 	var resolved := 0
 	var limit := _attack_queue.size() if max_count < 0 else mini(max_count, _attack_queue.size())
 	while resolved < limit and not _attack_queue.is_empty():
+		if damage_call_budget >= 0 and resolved > 0 and _frame_damage_calls >= damage_call_budget:
+			break
 		var entry: Dictionary = _attack_queue.pop_front()
 		_resolve_attack(entry)
 		resolved += 1
@@ -1785,7 +1819,7 @@ func _process(delta: float) -> void:
 			_cast_encore()
 	var flush_started := Time.get_ticks_usec()
 	_encore_usec = flush_started - engine_started
-	var flushed := flush_attacks(ATTACK_BUDGET_PER_FRAME)
+	var flushed := flush_attacks(ATTACK_BUDGET_PER_FRAME, DAMAGE_CALL_BUDGET_PER_FRAME)
 	var flush_ended := Time.get_ticks_usec()
 	frame_cost["tick_usec"] = flush_started - tick_started
 	frame_cost["flush_usec"] = flush_ended - flush_started

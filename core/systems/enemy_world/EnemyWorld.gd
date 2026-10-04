@@ -509,6 +509,21 @@ func get_cold_state(handle: int) -> Dictionary:
 	return _cold_states[slot].duplicate(true) if slot >= 0 else {}
 
 
+## One cold-state value, read in place (FPS audit 2026-10-04, item 5):
+## get_cold_state deep-copies the whole record for the hit path's one or two
+## keys. Container values come back by reference; callers must not mutate.
+func get_cold_value(handle: int, key: Variant, default: Variant = null) -> Variant:
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return default
+	return _cold_states[slot].get(key, default)
+
+
+func has_cold_value(handle: int, key: Variant) -> bool:
+	var slot := _slot_if_valid(handle)
+	return slot >= 0 and _cold_states[slot].has(key)
+
+
 func replace_cold_state(handle: int, value: Dictionary) -> bool:
 	var slot := _slot_if_valid(handle)
 	if slot < 0:
