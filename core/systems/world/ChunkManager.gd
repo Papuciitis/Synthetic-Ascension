@@ -185,6 +185,14 @@ var _manual_blocked_cells: Dictionary = {} # Vector2i -> true (handcrafted, neve
 var _chunk_blocked: Dictionary = {}      # Vector2i(chunk_coord) -> Array[Vector2i(global_cell)]
 var _projectile_blockers: Dictionary = {} # Vector2i -> packed WorldBlockerGeometry descriptor
 var _projectile_blocker_owners: Dictionary = {} # Vector2i -> instance id
+# The 3x3 dilation of every cell in _projectile_blockers, _blocked_cells and
+# _manual_blocked_cells: cell -> how many (source, blocker cell) entries lie
+# within one cell of it (FPS audit 2026-10-04, item 7). projectile_hit_t
+# runs the 3x3 neighbourhood test only for traversed cells found here (or in
+# an unloaded chunk): anywhere else that test can only answer "no hit", and
+# it cost 23-30 us per bullet per frame. Every write to the three sources
+# goes through _blocker_set / _blocker_erase or a rebuild.
+var _near_blockers: Dictionary = {}
 var _chunk_build_data: Dictionary = {} # Vector2i -> ChunkBuildData
 var _active_build_data: ChunkBuildData = null
 var _gen_coord: Vector2i = Vector2i.ZERO
@@ -649,6 +657,7 @@ func reset_world() -> void:
 	_blocked_cells.clear()
 	_projectile_blockers.clear()
 	_projectile_blocker_owners.clear()
+	_rebuild_near_blockers()
 	_chunk_build_data.clear()
 	_active_build_data = null
 	_pending_blocker_stages.clear()
@@ -1035,7 +1044,7 @@ func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, c
 	b.set_meta(&"_tile_repeat_visual", true)
 
 	# --- register blocked cell in global grid ---
-	_blocked_cells[global_cell] = true
+	_blocker_set(_blocked_cells, global_cell, true)
 	if _chunk_blocked.has(_gen_coord):
 		(_chunk_blocked[_gen_coord] as Array).append(global_cell)
 
@@ -1070,10 +1079,10 @@ func _record_blocker(_chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: in
 		variant = ChunkBlockVisualCatalog.VARIANT_UNDER_ROOF
 	if not _active_build_data.add_blocker(local_cell, kind, connections_mask, variant):
 		return false
-	_blocked_cells[global_cell] = true
+	_blocker_set(_blocked_cells, global_cell, true)
 	if _chunk_blocked.has(_gen_coord):
 		(_chunk_blocked[_gen_coord] as Array).append(global_cell)
-	_projectile_blockers[global_cell] = WorldBlockerGeometry.pack(kind, connections_mask)
+	_blocker_set(_projectile_blockers, global_cell, WorldBlockerGeometry.pack(kind, connections_mask))
 	_projectile_blocker_owners[global_cell] = get_instance_id()
 	return true
 
@@ -1462,7 +1471,7 @@ func build_nav_walkability_snapshot() -> Dictionary:
 
 
 func register_manual_block_cell(cell: Vector2i) -> void:
-	_manual_blocked_cells[cell] = true
+	_blocker_set(_manual_blocked_cells, cell, true)
 	request_nav_revision(&"manual_block_added")
 
 func register_manual_block_world(pos: Vector2) -> void:
@@ -1471,32 +1480,35 @@ func register_manual_block_world(pos: Vector2) -> void:
 func unregister_manual_block_cell(cell: Vector2i) -> void:
 	if not _manual_blocked_cells.has(cell):
 		return
-	_manual_blocked_cells.erase(cell)
+	_blocker_erase(_manual_blocked_cells, cell)
 	request_nav_revision(&"manual_block_removed")
 
 func clear_manual_blocks() -> void:
 	if _manual_blocked_cells.size() == 0:
 		return
 	_manual_blocked_cells.clear()
+	_rebuild_near_blockers()
 	request_nav_revision(&"manual_blocks_cleared")
 
 func register_projectile_blocker_world(world_position: Vector2, descriptor: int, owner_id: int) -> void:
 	var cell: Vector2i = world_to_cell(world_position)
-	_projectile_blockers[cell] = descriptor
+	_blocker_set(_projectile_blockers, cell, descriptor)
 	_projectile_blocker_owners[cell] = owner_id
 
 func unregister_projectile_blocker_world(world_position: Vector2, owner_id: int) -> void:
 	var cell: Vector2i = world_to_cell(world_position)
 	if int(_projectile_blocker_owners.get(cell, -1)) != owner_id:
 		return
-	_projectile_blockers.erase(cell)
+	_blocker_erase(_projectile_blockers, cell)
 	_projectile_blocker_owners.erase(cell)
 
 ## Grid DDA broad phase plus swept primitive narrow phase. No physics nodes,
 ## per-projectile arrays, or per-frame allocation are needed on this hot path.
 func projectile_hit_t(from_pos: Vector2, to_pos: Vector2, projectile_radius: float) -> float:
-	var start_cell: Vector2i = world_to_cell(from_pos)
-	var end_cell: Vector2i = world_to_cell(to_pos)
+	# world_to_cell inlined: this runs per bullet per frame.
+	var cs: float = float(cell_size_px)
+	var start_cell := Vector2i(floori(from_pos.x / cs), floori(from_pos.y / cs))
+	var end_cell := Vector2i(floori(to_pos.x / cs), floori(to_pos.y / cs))
 	var cell: Vector2i = start_cell
 	var delta: Vector2 = to_pos - from_pos
 	var step_x: int = signi(int(signf(delta.x)))
@@ -1509,9 +1521,18 @@ func projectile_hit_t(from_pos: Vector2, to_pos: Vector2, projectile_radius: flo
 	var t_max_y: float = INF if step_y == 0 else (boundary_y - from_pos.y) / delta.y
 	var best: float = 2.0
 	var guard: int = 0
+	# The void rule only needs the trace cell's chunk; a trace crosses few.
+	var cells_per_chunk: float = floorf(float(chunk_size_px) / cs)
+	var last_chunk := Vector2i(2147483647, 2147483647)
+	var last_chunk_loaded := true
 	while guard < 512:
 		guard += 1
-		best = minf(best, _projectile_neighborhood_hit_t(cell, from_pos, to_pos, projectile_radius))
+		var chunk := Vector2i(floori(float(cell.x) / cells_per_chunk), floori(float(cell.y) / cells_per_chunk))
+		if chunk != last_chunk:
+			last_chunk = chunk
+			last_chunk_loaded = _chunks.has(chunk)
+		if not last_chunk_loaded or _near_blockers.has(cell):
+			best = minf(best, _projectile_neighborhood_hit_t(cell, from_pos, to_pos, projectile_radius))
 		if cell == end_cell or minf(t_max_x, t_max_y) > best:
 			break
 		if t_max_x < t_max_y:
@@ -1550,6 +1571,35 @@ func _projectile_neighborhood_hit_t(trace_cell: Vector2i, from_pos: Vector2, to_
 	return best
 
 
+func _blocker_set(source: Dictionary, cell: Vector2i, value: Variant) -> void:
+	if not source.has(cell):
+		_near_blocker_count(cell, 1)
+	source[cell] = value
+
+
+func _blocker_erase(source: Dictionary, cell: Vector2i) -> void:
+	if source.erase(cell):
+		_near_blocker_count(cell, -1)
+
+
+func _near_blocker_count(cell: Vector2i, change: int) -> void:
+	for oy in range(-1, 2):
+		for ox in range(-1, 2):
+			var key := Vector2i(cell.x + ox, cell.y + oy)
+			var count := int(_near_blockers.get(key, 0)) + change
+			if count > 0:
+				_near_blockers[key] = count
+			else:
+				_near_blockers.erase(key)
+
+
+func _rebuild_near_blockers() -> void:
+	_near_blockers.clear()
+	for source in [_projectile_blockers, _blocked_cells, _manual_blocked_cells]:
+		for cell_variant in source:
+			_near_blocker_count(cell_variant as Vector2i, 1)
+
+
 func world_to_cell(p: Vector2) -> Vector2i:
 	var cs: float = float(cell_size_px)
 	return Vector2i(floori(p.x / cs), floori(p.y / cs))
@@ -1578,8 +1628,8 @@ func _unregister_chunk_cells(chunk_coord: Vector2i) -> void:
 	var arr: Array = _chunk_blocked[chunk_coord] as Array
 	for c in arr:
 		var cell: Vector2i = c
-		_blocked_cells.erase(cell)
-		_projectile_blockers.erase(cell)
+		_blocker_erase(_blocked_cells, cell)
+		_blocker_erase(_projectile_blockers, cell)
 		_projectile_blocker_owners.erase(cell)
 
 	_chunk_blocked.erase(chunk_coord)

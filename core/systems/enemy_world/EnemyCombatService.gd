@@ -428,7 +428,9 @@ func first_enemy_on_segment(
 	excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE,
 ) -> int:
 	_last_segment_t = -1.0
-	if _world == null or not is_instance_valid(_world):
+	# An empty world answers before the broad phase (9 us per bullet per
+	# frame with zero enemies, FPS audit 2026-10-04).
+	if _world == null or not is_instance_valid(_world) or _world.active_count() == 0:
 		return EnemyWorldTypes.INVALID_HANDLE
 	var midpoint := (from + to) * 0.5
 	var broad_radius := from.distance_to(to) * 0.5 + maxf(projectile_radius, 0.0) + _world.largest_collision_radius()
@@ -467,7 +469,7 @@ func enemies_on_segment(
 	# contact point re-found enemies whose circle still contained it (t = 0).
 	out_handles.clear()
 	out_ts.clear()
-	if _world == null or not is_instance_valid(_world):
+	if _world == null or not is_instance_valid(_world) or _world.active_count() == 0:
 		return 0
 	var midpoint := (from + to) * 0.5
 	var broad_radius := from.distance_to(to) * 0.5 + maxf(projectile_radius, 0.0) + _world.largest_collision_radius()
