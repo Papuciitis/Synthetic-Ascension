@@ -34,6 +34,14 @@ func present_completion(mortal_name: String) -> void:
 	continue_button.text = "Continue"
 	_present()
 
+## Any chapter card in this frame (the story layer's segment-10 close uses it).
+func present_card(eyebrow_text: String, title_text: String, body_text: String, button_text: String) -> void:
+	eyebrow.text = eyebrow_text
+	title.text = title_text
+	body.text = body_text
+	continue_button.text = button_text
+	_present()
+
 func _present() -> void:
 	root.visible = true
 	var veil := root.get_node_or_null("Black") as CanvasItem

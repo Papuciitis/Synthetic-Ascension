@@ -366,6 +366,8 @@ func complete_segment(completed_segment: int) -> void:
 	await _play_escape_release()
 	if completed_segment == 1:
 		await _present_segment1_overlay(true)
+	else:
+		await _present_chapter_close(completed_segment)
 	if Global != null:
 		Global.on_segment_completed(completed_segment)
 	Global.goto_hub_shop()
@@ -381,6 +383,26 @@ func _play_escape_release() -> void:
 	await release.play(player as Node2D)
 	if is_instance_valid(release):
 		release.queue_free()
+
+## The segment-10 close (story layer F11): a chapter card in Segment 1's
+## frame, not an ending - the run continues beyond the wall. Cards never
+## block a headless or developer run (StoryDirector.cards_allowed), and the
+## first-time flag is only marked when the card is actually shown.
+func _present_chapter_close(completed_segment: int) -> void:
+	if not StoryDirector.cards_allowed():
+		return
+	var card := StoryDirector.chapter_close_card(completed_segment)
+	if card.is_empty():
+		return
+	var overlay := SEGMENT1_NARRATIVE_OVERLAY.instantiate() as Segment1NarrativeOverlay
+	if overlay == null:
+		return
+	add_child(overlay)
+	get_tree().paused = true
+	overlay.present_card(String(card.get("eyebrow", "")), String(card.get("title", "")), String(card.get("body", "")), String(card.get("button", "Continue")))
+	await overlay.dismissed
+	get_tree().paused = false
+	overlay.queue_free()
 
 func _present_segment1_overlay(completion: bool) -> void:
 	if not completion:
