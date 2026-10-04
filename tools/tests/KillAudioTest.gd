@@ -41,6 +41,8 @@ func _kill(handle: int, flags: int, position: Vector2) -> void:
 
 
 func _callout_texts() -> PackedStringArray:
+	# The kill lines are written once per frame; write this frame's now.
+	get_node("/root/WorldFeedbackVfx").flush_kill_lines()
 	var out := PackedStringArray()
 	var texts: PackedStringArray = BattleText.get("_texts")
 	for i in range(int(BattleText.get("_count"))):

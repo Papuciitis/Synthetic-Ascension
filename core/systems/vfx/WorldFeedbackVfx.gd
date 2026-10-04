@@ -59,8 +59,14 @@ var _burst_centre := Vector2.ZERO
 var _last_multi_kill_ms := -100000
 var _elite_down_ms := -100000
 var _elite_down_count := 0
+var _elite_down_at := Vector2.ZERO
 var _multi_kills := 0
 var _elite_downs := 0
+# The two lines are written once per frame, not once per death: a Rite pulse
+# can kill a hundred bodies in one frame, and each line write is a column
+# search in BattleText.
+var _burst_line_dirty := false
+var _elite_line_dirty := false
 
 
 func _ready() -> void:
@@ -86,6 +92,19 @@ func _process(_delta: float) -> void:
 	_sparks_this_frame = 0
 	if not _flash_ids.is_empty():
 		_expire_flashes(Time.get_ticks_msec())
+	if _burst_line_dirty or _elite_line_dirty:
+		flush_kill_lines()
+
+
+## Writes the multi-kill and ELITE DOWN lines raised since the last frame.
+func flush_kill_lines() -> void:
+	if _burst_line_dirty and BattleText != null:
+		BattleText.popup(_burst_centre, "×%d" % _burst_kills, MULTI_KILL_COLOUR, 1.5, MULTI_KILL_KEY)
+	if _elite_line_dirty and BattleText != null:
+		var line := "ELITE DOWN" if _elite_down_count == 1 else "ELITE DOWN ×%d" % _elite_down_count
+		BattleText.popup(_elite_down_at, line, ELITE_DOWN_COLOUR, 1.3, ELITE_DOWN_KEY)
+	_burst_line_dirty = false
+	_elite_line_dirty = false
 
 
 func _on_enemy_defeated(context: RefCounted) -> void:
@@ -126,7 +145,7 @@ func _note_kill(position: Vector2, now: int) -> void:
 		_burst_last_ms = now
 		# The line stays where the burst began: a merged callout raised
 		# elsewhere would jump to the new spot.
-		_say_multi_kill(_burst_centre, false)
+		_burst_line_dirty = true
 		return
 	_burst_kills = 0
 	if now - _last_multi_kill_ms < MULTI_KILL_COOLDOWN_MS:
@@ -144,14 +163,9 @@ func _note_kill(position: Vector2, now: int) -> void:
 	_burst_centre = centre / float(count)
 	_last_multi_kill_ms = now
 	_multi_kills += 1
-	_say_multi_kill(_burst_centre, true)
-
-
-func _say_multi_kill(at: Vector2, first: bool) -> void:
-	if BattleText != null:
-		BattleText.popup(at, "×%d" % _burst_kills, MULTI_KILL_COLOUR, 1.5, MULTI_KILL_KEY)
-	if first and SfxManager != null:
-		SfxManager.play_2d(&"multikill_thump", at)
+	_burst_line_dirty = true
+	if SfxManager != null:
+		SfxManager.play_2d(&"multikill_thump", _burst_centre)
 
 
 func _elite_down(position: Vector2, now: int) -> void:
@@ -159,11 +173,11 @@ func _elite_down(position: Vector2, now: int) -> void:
 	_elite_down_count = 1 if fresh else _elite_down_count + 1
 	_elite_down_ms = now
 	_elite_downs += 1
-	if BattleText != null:
-		var line := "ELITE DOWN" if _elite_down_count == 1 else "ELITE DOWN ×%d" % _elite_down_count
-		BattleText.popup(position, line, ELITE_DOWN_COLOUR, 1.3, ELITE_DOWN_KEY)
-	if fresh and SfxManager != null:
-		SfxManager.play_2d(&"elite_down", position)
+	if fresh:
+		_elite_down_at = position
+		if SfxManager != null:
+			SfxManager.play_2d(&"elite_down", position)
+	_elite_line_dirty = true
 
 
 func _on_player_dashed(_player: Node, from: Vector2, direction: Vector2) -> void:
