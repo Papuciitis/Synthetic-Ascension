@@ -64,6 +64,7 @@ func _run() -> void:
 	_test_save_round_trip()
 	_test_older_profile()
 	_test_completed_segment_keys()
+	_test_flags_saved()
 	_test_arrivals()
 	_test_bren()
 	_test_reconstruction()
@@ -328,6 +329,35 @@ func _test_completed_segment_keys() -> void:
 				_check(false, "every district has lines (%s at segment %d)" % [id, seg])
 				return
 	_check(true, "every district a segment can roll has lines")
+
+
+## Whether `action` marks the profile for saving. A throwaway SaveData stands
+## in for the slot and the pending write is cancelled before anything could
+## flush it, so no save slot is ever written.
+func _marks_dirty(action: Callable) -> bool:
+	SaveManager.current_save = SaveData.new()
+	Global._cancel_autosave_timer()
+	Global._autosave_dirty = false
+	action.call()
+	var dirty: bool = Global._autosave_dirty
+	Global._cancel_autosave_timer()
+	Global._autosave_dirty = false
+	SaveManager.current_save = null
+	return dirty
+
+
+## A once-flag spent in the square is saved with the profile: HubWorld saves
+## before its presenter speaks, and closing the window flushes only a dirty
+## profile, so Continue used to replay the line.
+func _test_flags_saved() -> void:
+	StoryDirector.load_state({"accounts": 1, "last": {"n": 1, "segment": 3, "district": "checkpoint_lanes", "peak": 40}})
+	_fresh(2, 55)
+	_check(_marks_dirty(func() -> void: StoryDirector.departure_line()), "the first square's line marks the profile for saving")
+	_check(not _marks_dirty(func() -> void: StoryDirector.add_flag("departure:institution")), "a flag already spent does not")
+	_check(_marks_dirty(func() -> void: StoryDirector.staff_line("chronicler", _rng(8))), "meeting the Chronicler (a profile flag) does")
+	_check(_marks_dirty(func() -> void: StoryDirector.staff_line("chronicler", _rng(8))) and (StoryDirector.state["acc_flags"] as Array).has("chr_account"), "and so does the relay of the last account (an account flag)")
+	_fresh(10, 55)
+	_check(_marks_dirty(func() -> void: StoryDirector.chapter_close_card(10)) and StoryDirector.has_flag("chapter:1"), "the Area I card's first-time flag is saved once it is shown")
 
 
 func _test_arrivals() -> void:

@@ -164,6 +164,7 @@ static func add_flag(flag: String) -> bool:
 	if (state["flags"] as Array).has(flag):
 		return false
 	(state["flags"] as Array).append(flag)
+	_mark_for_save()
 	return true
 
 
@@ -175,6 +176,17 @@ static func _add_attempt_flag(flag: String) -> void:
 	var flags: Array = attempt()["flags"]
 	if not flags.has(flag):
 		flags.append(flag)
+		_mark_for_save()
+
+
+## A new flag is a line said or a beat spent, often in the square after
+## HubWorld has saved: nothing else need dirty the profile before the window
+## closes, and Continue then replayed the Chronicler's relay or the first
+## square's line (story review 2026-10-04). Only marks the profile dirty;
+## the write waits for a safe point (Global.request_autosave).
+static func _mark_for_save() -> void:
+	if Global != null:
+		Global.request_autosave()
 
 
 ## Lines a presenter shows when it next can (Follower milestones).
@@ -610,6 +622,7 @@ static func spend(line: Dictionary) -> void:
 			_normalise()
 			if not (state["acc_flags"] as Array).has(key):
 				(state["acc_flags"] as Array).append(key)
+				_mark_for_save()
 
 
 ## The line to say from `pool`, or {} when nothing fits. A beat wins by
@@ -717,7 +730,6 @@ static func arrival(segment: int, cards: bool = true) -> Dictionary:
 	if _attempt_flag(mark):
 		return {}
 	_add_attempt_flag(mark)
-	Global.request_autosave()
 	var id := district_id(segment, Global.attempt_world_seed)
 	var district: Dictionary = StoryLines.DISTRICTS.get(id, {})
 	var out := {"tip": "", "bulletin": {}, "bulletin_tip": ""}
@@ -777,8 +789,6 @@ static func bren_dispatch(completed: int) -> Dictionary:
 	if _attempt_flag(mark):
 		return {}
 	_add_attempt_flag(mark)
-	if Global != null:
-		Global.request_autosave()
 	var entry: Dictionary = StoryLines.BREN_DISPATCHES[completed]
 	var text := String(entry.get("repeat", entry["base"]))
 	if add_flag("bren_full:%d" % completed):
