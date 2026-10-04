@@ -363,25 +363,32 @@ func _push_receipt(id: String, cost: int) -> void:
 	ranks[id] = receipts
 
 
-## What one downgrade of `id` would return: the exact recorded payment of the
-## highest rank (RANK-06). {ok, refund, from_rank, reason}.
-func downgrade_preview(id: String) -> Dictionary:
+## What one downgrade of `id` would return: `share` of the highest rank's
+## recorded payment (RANK-06 keeps the receipts exact). A player's downgrade
+## passes the segment's refund_share like every other refund (follower
+## economy audit 2026-10-04, P9: at 100% a V5 rank was a free respec at every
+## Hub); a cascade forced by another refund keeps share 1.0.
+## {ok, refund, receipt, from_rank, reason}.
+func downgrade_preview(id: String, share: float = 1.0) -> Dictionary:
 	if not owns(id) or db.kind(id) != "local" or db.max_rank(id) <= 1:
-		return {"ok": false, "refund": 0, "from_rank": 0, "reason": "not a ranked node"}
+		return {"ok": false, "refund": 0, "receipt": 0, "from_rank": 0, "reason": "not a ranked node"}
 	var current := rank(id)
 	if current <= 1:
-		return {"ok": false, "refund": 0, "from_rank": current, "reason": "rank 1 leaves through an ordinary refund"}
+		return {"ok": false, "refund": 0, "receipt": 0, "from_rank": current, "reason": "rank 1 leaves through an ordinary refund"}
 	var receipts := rank_receipts(id)
-	var refund_amount := int(receipts[current - 1]) if receipts.size() >= current else db.rank_cost(id, current)
-	return {"ok": true, "refund": refund_amount, "from_rank": current, "reason": ""}
+	var receipt := int(receipts[current - 1]) if receipts.size() >= current else db.rank_cost(id, current)
+	var refund_amount := int(round(float(receipt) * clampf(share, 0.0, 1.0)))
+	return {"ok": true, "refund": refund_amount, "receipt": receipt, "from_rank": current, "reason": ""}
 
 
-## Removes the highest rank of `id`, returning its exact recorded payment.
-func downgrade_rank(id: String) -> int:
-	var preview := downgrade_preview(id)
+## Removes the highest rank of `id`, returning `share` of its recorded
+## payment; the rest is forfeited, as in refund().
+func downgrade_rank(id: String, share: float = 1.0) -> int:
+	var preview := downgrade_preview(id, share)
 	if not bool(preview["ok"]):
 		return 0
 	var refund_amount := int(preview["refund"])
+	var receipt := int(preview["receipt"])
 	var owned_map: Dictionary = state["owned"]
 	owned_map[id] = int(owned_map[id]) - 1
 	var ranks: Dictionary = state.get("paid_ranks", {})
@@ -389,9 +396,11 @@ func downgrade_rank(id: String) -> int:
 	if not receipts.is_empty():
 		receipts.pop_back()
 	var paid: Dictionary = state["paid"]
-	paid[id] = maxi(0, int(paid.get(id, 0)) - refund_amount)
-	state["spent"] = maxi(0, int(state.get("spent", 0)) - refund_amount)
+	paid[id] = maxi(0, int(paid.get(id, 0)) - receipt)
+	state["spent"] = maxi(0, int(state.get("spent", 0)) - receipt)
 	state["refunded"] = int(state.get("refunded", 0)) + refund_amount
+	if receipt > refund_amount:
+		state["forfeited"] = int(state.get("forfeited", 0)) + (receipt - refund_amount)
 	return refund_amount
 
 
@@ -488,8 +497,8 @@ func refund_preview(id: String) -> Dictionary:
 
 
 ## The Followers a refund of `id` would actually return at `share`, without
-## doing it: exact rank receipts above rank 1, the share of everything else,
-## plus the exact receipts of ranks elsewhere whose gates would break.
+## doing it: the share of every leaver's payments (its ranks included), plus
+## the exact receipts of ranks elsewhere whose gates would break.
 func refund_value(id: String, share: float) -> int:
 	var preview := refund_preview(id)
 	var removed: Array = preview["removed"]
@@ -502,13 +511,7 @@ func refund_value(id: String, share: float) -> int:
 	for gone_key in removed:
 		var gone := String(gone_key)
 		hypothetical.erase(gone)
-		var receipts := rank_receipts(gone)
-		if receipts.size() > 1:
-			for i in range(1, receipts.size()):
-				value += int(receipts[i])
-			value += int(round(float(int(receipts[0])) * safe_share))
-		else:
-			value += int(round(float(int(paid.get(gone, 0))) * safe_share))
+		value += int(round(float(int(paid.get(gone, 0))) * safe_share))
 	# Ranks elsewhere that would fall to their legal gate return exactly.
 	for other_key in hypothetical.keys():
 		var other := String(other_key)
@@ -554,17 +557,10 @@ func refund(id: String, share: float = 1.0, force: bool = false) -> int:
 		var gone := String(gone_key)
 		var paid_price := int(paid.get(gone, 0))
 		total += paid_price
-		var receipts: Array = paid_ranks.get(gone, [])
-		if receipts.size() > 1:
-			# V5 ranked local: rank receipts above rank 1 return exactly
-			# (RANK-06); the rank-1 payment follows the ordinary share.
-			var exact := 0
-			for i in range(1, receipts.size()):
-				exact += int(receipts[i])
-			var base := int(receipts[0])
-			returned += exact + int(round(float(base) * safe_share))
-		else:
-			returned += int(round(float(paid_price) * safe_share))
+		# A V5 ranked local's rank payments follow the share too (follower
+		# economy audit P9): with the ranks above 1 repaid exactly, refunding
+		# the whole node and rebuying was a cheaper respec than a downgrade.
+		returned += int(round(float(paid_price) * safe_share))
 		owned_map.erase(gone)
 		paid.erase(gone)
 		paid_ranks.erase(gone)

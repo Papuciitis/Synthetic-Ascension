@@ -770,17 +770,17 @@ func _show(id: String) -> void:
 			if Global != null and Global.ascension_refund_context_hub and Global.ascension_refunds_forfeit():
 				lines.append("Tithe Ledger: every purchase is a vow; nothing refunds.")
 			elif Global != null and Global.ascension_refund_context_hub:
+				var share := AscensionLedger.refund_share(Global.attempt_segment)
 				if ranked and ledger.rank(id) >= 2:
-					var downgrade_preview := ledger.downgrade_preview(id)
+					var downgrade_preview := ledger.downgrade_preview(id, share)
 					if bool(downgrade_preview["ok"]):
-						var down := _action_button("Downgrade (+%d)" % int(downgrade_preview["refund"]), &"ArcaneSmallButton")
-						down.tooltip_text = "Remove the highest rank; its exact recorded payment returns."
+						var down := _action_button("Downgrade %d%% (+%d)" % [int(round(100.0 * share)), int(downgrade_preview["refund"])], &"ArcaneSmallButton")
+						down.tooltip_text = "Remove the highest rank; the shown share of its recorded payment returns."
 						down.pressed.connect(func() -> void: _downgrade(id))
 						_buttons.add_child(down)
-				var share := AscensionLedger.refund_share(Global.attempt_segment)
 				var actual := ledger.refund_value(id, share)
 				var refund := _action_button("Refund %d%% (+%d)" % [int(round(100.0 * share)), actual], &"ArcaneDangerButton")
-				refund.tooltip_text = "Refund this node and everything that depended on it. Rank payments above rank one return exactly; the rest returns the shown share. Revelations, forks, Unions, Axioms and Catastrophes never refund."
+				refund.tooltip_text = "Refund this node and everything that depended on it; the shown share of what they cost returns. Ranks this forces off other nodes return exactly. Revelations, forks, Unions, Axioms and Catastrophes never refund."
 				refund.pressed.connect(func() -> void: _refund(id))
 				_buttons.add_child(refund)
 	_status.text = "\n".join(lines)

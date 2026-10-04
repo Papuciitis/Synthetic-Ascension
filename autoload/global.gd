@@ -2079,12 +2079,14 @@ func ascension_refund(id: String) -> int:
 	return back
 
 
-## Removes one rank of a V5 ranked local, returning its exact recorded
-## payment (RANK-06). A Hub decision, like every other refund.
+## Removes one rank of a V5 ranked local, returning the segment's refund
+## share of its recorded payment, like every other refund (follower economy
+## audit 2026-10-04, P9; it returned the exact receipt, so V5 ranks were a
+## free respec at every Hub). A Hub decision, like every other refund.
 func ascension_downgrade(id: String) -> int:
 	if not ascension_refund_context_hub or ascension_refunds_forfeit():
 		return 0
-	var back := ascension_ledger().downgrade_rank(id)
+	var back := ascension_ledger().downgrade_rank(id, AscensionLedger.refund_share(attempt_segment))
 	if back > 0:
 		transaction_followers(back, &"ascension_refund", {"node": id, "downgrade": true}, true, false)
 		request_autosave()

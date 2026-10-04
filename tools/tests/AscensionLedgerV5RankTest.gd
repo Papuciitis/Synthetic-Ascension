@@ -2,8 +2,10 @@ extends Node
 
 # Ranged V5 ordinary local ranks (handoff 2026-09-25, spec RANK-01..RANK-08):
 # the V5 tree loads beside the untouched V4 control, rank purchases record
-# exact per-rank receipts, gates hold, downgrades and cascades repay exactly,
-# and the authored starter set is validated as authored rather than as prose.
+# exact per-rank receipts, gates hold, cascades repay exactly while a player's
+# downgrade or refund repays the segment's refund share (follower economy
+# audit P9), and the authored starter set is validated as authored rather
+# than as prose.
 
 var _passes := 0
 var _failures := 0
@@ -184,6 +186,16 @@ func _test_rank06_downgrades_and_cascade() -> void:
 	_check(ledger.rank("BR05") == 3, "cascade: losing a unique local drops BR05 to its legal rank 3 (%d)" % ledger.rank("BR05"))
 	_check(refunded == int(round(400 * 0.5)) + 2300, "cascade refund = share of BR04 + exact rank-4 receipt (%d)" % refunded)
 	_check(ledger.rank_receipts("BR05") == [400, 700, 1300], "cascade pops exactly one receipt")
+	# A player's downgrade pays the segment's refund share like every other
+	# refund (follower economy audit P9); the rank still leaves whole.
+	var spent_mid := int(ledger.state["spent"])
+	var forfeited_mid := int(ledger.state.get("forfeited", 0))
+	var preview := ledger.downgrade_preview("BR05", 0.5)
+	_check(bool(preview["ok"]) and int(preview["refund"]) == 650 and int(preview["receipt"]) == 1300, "a downgrade at share 0.5 previews half of the 1300 receipt (%s)" % str(preview))
+	_check(ledger.downgrade_rank("BR05", 0.5) == 650, "and pays exactly that")
+	_check(ledger.rank("BR05") == 2 and ledger.rank_receipts("BR05") == [400, 700], "the rank and its receipt leave whole")
+	_check(int(ledger.state["spent"]) == spent_mid - 1300 and int(ledger.state.get("forfeited", 0)) == forfeited_mid + 650, "spent drops by the receipt; the unpaid half is forfeited")
+	_check(is_equal_approx(AscensionLedger.refund_share(2), 0.5) and int(round(700 * AscensionLedger.refund_share(7))) == int(round(700 * 0.5 * pow(0.9, 5.0))), "the share is the refund share: half at Hub 1, less each segment after")
 
 
 func _test_rank07_no_duplicate_receipts() -> void:
@@ -211,7 +223,9 @@ func _test_rank07_no_duplicate_receipts() -> void:
 	full.record_purchase("BR02", 350)
 	var value := full.refund_value("BR02", 0.5)
 	var back := full.refund("BR02", 0.5)
-	_check(back == 350 + int(round(200 * 0.5)), "V5 node refund: exact rank-2 receipt plus half of rank 1 (%d)" % back)
+	# Follower economy audit P9: every rank's payment follows the share, or
+	# refunding the node and rebuying was a cheaper respec than a downgrade.
+	_check(back == int(round((200 + 350) * 0.5)), "V5 node refund: half of every rank's payment, rank 2 included (%d)" % back)
 	_check(value == back, "refund_value predicted the actual refund (%d vs %d)" % [value, back])
 	_check(not full.owns("BR02") and full.rank_receipts("BR02").is_empty(), "the refunded node leaves no receipts behind")
 
