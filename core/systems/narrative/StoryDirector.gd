@@ -232,6 +232,8 @@ static func note_followers(value: int) -> void:
 	a["peak"] = maxi(int(a.get("peak", 0)), value)
 
 
+## The player was rebuilt (a death the Followers paid for and survived;
+## StoryLedger skips the charge that ends the run).
 static func note_reconstruction() -> void:
 	var a := attempt()
 	a["recon"] = int(a.get("recon", 0)) + 1

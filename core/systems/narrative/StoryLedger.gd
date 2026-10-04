@@ -33,7 +33,12 @@ func _on_followers_changed(value: int) -> void:
 
 
 func _on_followers_transaction(old_value: int, _change: int, new_value: int, reason: StringName, _context: Dictionary, _show_feedback: bool, _allow_aggregate: bool) -> void:
-	if reason == &"reconstruction":
+	# player.die() charges the cost on every death, the fatal one too, and
+	# rebuilds the player only when Followers remain after it: a charge that
+	# empties the balance ends the run. Counting every charge put one
+	# reconstruction too many on nearly every account and noted RECONSTRUCTION
+	# on a first death that rebuilt no one (story review 2026-10-04).
+	if reason == &"reconstruction" and new_value > 0:
 		StoryDirector.note_reconstruction()
 	# A load or a reset only restates the balance; it was never a gain.
 	if reason != &"system_sync" and new_value > old_value:

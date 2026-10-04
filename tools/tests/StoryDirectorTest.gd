@@ -60,6 +60,7 @@ func _run() -> void:
 	_test_picker()
 	_test_conditions()
 	_test_account()
+	_test_fatal_death()
 	_test_save_round_trip()
 	_test_completed_segment_keys()
 	_test_arrivals()
@@ -189,8 +190,11 @@ func _test_account() -> void:
 	_check(int(StoryDirector.attempt()["recon"]) == 1 and Global.grimoire_has("record:reconstruction"), "a reconstruction is counted and its record noted")
 	runner.queue_free()
 	bolt.queue_free()
-	# The followers are now 40; the run ends in death.
-	Global.set_followers(0)
+	# The run ends the way player.die() ends it: a trade leaves 10 Followers,
+	# the death charges its cost (16 at Segment 4) and nothing is left.
+	Global.transaction_followers(-30, &"trade", {}, false, false)
+	Global.consume_respawn_cost()
+	_check(Global.followers == 0 and int(StoryDirector.attempt()["recon"]) == 1, "the charge that ends the run is no reconstruction (%d)" % int(StoryDirector.attempt()["recon"]))
 	Global.on_attempt_failed_die_die()
 	var last := StoryDirector.last_account()
 	var theme := SegmentThemePicker.get_theme(4, 424242)
@@ -225,6 +229,23 @@ func _test_account() -> void:
 		if StoryDirector.staff_line("chronicler", rng, "ASIDE") == "ASIDE":
 			aside_seen = true
 	_check(aside_seen, "the square's own aside keeps its share of the everyday talk")
+
+
+## A profile's first death, fatal: player.die() charges the cost before it
+## decides, so a balance below the cost pays a reconstruction that never
+## happens. The account must not count it, nor the Grimoire note it.
+func _test_fatal_death() -> void:
+	StoryDirector.load_state({})
+	Global.grimoire_entries.erase("record:reconstruction")
+	_fresh(2, 31)
+	Global.transaction_followers(8, &"combat_influence", {}, false, false)
+	var cost := Global.compute_respawn_cost()
+	Global.consume_respawn_cost()
+	_check(cost > 8 and Global.followers == 0, "8 Followers cannot pay a Segment 2 reconstruction (%d)" % cost)
+	_check(int(StoryDirector.attempt()["recon"]) == 0 and not Global.grimoire_has("record:reconstruction"), "a death that rebuilds no one is no reconstruction, and RECONSTRUCTION stays unknown")
+	Global.on_attempt_failed_die_die()
+	var last := StoryDirector.last_account()
+	_check(int(last.get("n", 0)) == 1 and int(last.get("recon", -1)) == 0, "the account closes with no reconstruction (%s)" % str(last.get("recon", -1)))
 
 
 func _test_save_round_trip() -> void:
