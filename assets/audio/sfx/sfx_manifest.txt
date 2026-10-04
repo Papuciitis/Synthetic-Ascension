@@ -28,3 +28,9 @@ exit_complete=world/exit_complete.ogg|vol=-7|pitch=0.00|bus=SFX
 # Items
 pickup=items/pickup.wav|vol=-10|pitch=0.05|bus=SFX
 drop=items/drop.ogg|vol=-10|pitch=0.04|bus=SFX
+
+# Procedural combat feel (tools/design/build_sfx_procedural.py, 2026-10-04)
+# heartbeat: the HUD adds 0..+6 dB as health falls from 30% to 15%.
+player_heartbeat=player/heartbeat.wav|vol=-14|pitch=0.00|bus=SFX
+multikill_thump=enemies/multikill_thump.wav|vol=-6|pitch=0.03|bus=SFX
+elite_down=enemies/elite_down.wav|vol=-10|pitch=0.02|bus=SFX
