@@ -72,8 +72,13 @@ static func historical_body(mortal_name: String) -> String:
 	var lines := PackedStringArray(HISTORICAL_LINES)
 	return "%s\n\nOn this night, %s intended to prove otherwise." % ["\n".join(lines), safe_name(mortal_name)]
 
-static func admission_desk_body(mortal_name: String) -> String:
-	return "Researcher %s. Badge accepted.\nAfter-hours presence is recorded.\nThe Registry thanks you for your compliance." % safe_name(mortal_name)
+## The desk files the researcher's ancestry by the opening's own rule
+## (StoryLines.RACE_CLASSIFICATION); the run's race unless one is given.
+static func admission_desk_body(mortal_name: String, race_id: String = "") -> String:
+	if race_id == "" and Global != null:
+		race_id = String(Global.selected_race_id)
+	var classification := String(StoryLines.RACE_CLASSIFICATION.get(race_id, StoryLines.RACE_CLASSIFICATION["human"]))
+	return "Researcher %s. Badge accepted.\n%s\nAfter-hours presence is recorded.\nThe Registry thanks you for your compliance." % [safe_name(mortal_name), classification]
 
 static func officer_arrest(mortal_name: String) -> String:
 	return "Researcher %s. Place the conduit on the floor and step away from the apparatus." % safe_name(mortal_name)
