@@ -1035,7 +1035,8 @@ func _promote_elite(requested: Array[StringName]) -> void:
 		_enemy_index.call("note_elite", self)
 	set_scheduler_tier(0)
 	max_slides = 8
-	configure_health(max_hp * spec.elite_hp_mult, true)
+	var segment := int(Global.attempt_segment) if Global != null else 1
+	configure_health(max_hp * spec.elite_hp_mult * EliteModifiers.segment_hp_factor(segment), true)
 
 	speed *= spec.elite_speed_mult
 	_base_speed = speed

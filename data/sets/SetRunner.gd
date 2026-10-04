@@ -53,6 +53,7 @@ func apply_sets_to_stats(s: Stats, inv: Inventory) -> void:
 				}
 			else:
 				t.apply_scaled(s, SetScaling.profile(avg_r))
+			_note_power_threshold(sid, sd, t)
 
 			# Collect effect scenes
 			for scn: PackedScene in t.effect_scenes:
@@ -76,6 +77,17 @@ func apply_sets_to_stats(s: Stats, inv: Inventory) -> void:
 	if debug_sets:
 		print("[SetRunner] wanted:", wanted.keys())
 		print("[SetRunner] active :", _active_effects.keys())
+
+## A four-piece or larger set tier is a power threshold (vision "Power
+## Escalation Should Be Visible"; 2026-10-04 audit): the Threat Director
+## holds enemy scaling and the encounter director answers with the rematch
+## ring. It dedupes per run by id, so re-applying stats re-emits harmlessly.
+func _note_power_threshold(sid: StringName, sd: SetData, tier: SetTier) -> void:
+	if tier.required_count < 4 or RunEvents == null or not RunEvents.power_threshold_crossed.has_connections():
+		return
+	var label := "%s %d-piece" % [sd.display_name if sd.display_name != "" else String(sid).capitalize(), tier.required_count]
+	RunEvents.power_threshold_crossed.emit(StringName("set:%s:%d" % [sid, tier.required_count]), label)
+
 
 ## True for Gravemarch's two-piece tier while three or more equipped
 ## Gravemarch pieces are NEG (Inventory.get_set_polarity_composition).

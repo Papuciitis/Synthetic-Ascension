@@ -86,6 +86,8 @@ func _sync(wanted: Dictionary) -> void:
 			inst_u.set_meta("augment_transcended", turned_u)
 			if inst_u.has_method("set_transcended"):
 				inst_u.call("set_transcended", turned_u)
+			if turned_u:
+				_note_transcendence(aug_id_u)
 
 		# A Facet is chosen mid-run (a Binding's FACET card).
 		var facet_u: StringName = StringName(str(entry_u.get("facet", "")))
@@ -128,6 +130,8 @@ func _sync(wanted: Dictionary) -> void:
 			inst.call("set_level", level)
 		if inst.has_method("set_transcended"):
 			inst.call("set_transcended", turned)
+		if turned:
+			_note_transcendence(aug_id)
 		if inst.has_method("set_facet"):
 			inst.call("set_facet", facet)
 
@@ -142,6 +146,19 @@ func _sync(wanted: Dictionary) -> void:
 
 ## Runtime multipliers the augment effects expose (Litany of Wounds' Haste),
 ## aggregated the way SetRunner and ItemEffectRunner aggregate theirs.
+## A Transcendence is the augment layer's largest single jump, so it is a
+## power threshold (2026-10-04 audit): the Threat Director dedupes it per run
+## and, if it lands outside combat (a Binding at segment start), holds it for
+## the next disturbance phase, where the rematch ring shows it off.
+func _note_transcendence(aug_id: StringName) -> void:
+	if aug_id == StringName() or RunEvents == null or not RunEvents.power_threshold_crossed.has_connections():
+		return
+	var label := String(aug_id)
+	if Global != null and Global.has_method("augment_display_name"):
+		label = Global.augment_display_name(aug_id)
+	RunEvents.power_threshold_crossed.emit(StringName("transcend:%s" % aug_id), "%s Transcended" % label)
+
+
 func get_haste_multiplier() -> float:
 	var mul := 1.0
 	for n in get_children():

@@ -51,6 +51,18 @@ const SPLIT_CHILD_SCALE := 0.7
 const FAST_SPEED_MULT := 1.5
 const FAST_HP_MULT := 0.7
 
+## Elite health grows with the segment while fodder does not (2026-10-04
+## audit; Vampire Survivors' asymmetry - fodder HP fixed, bosses scaled to the
+## player): before Overtime, enemy HP rose about 3% a segment while a median
+## build's output grew ~5x by segment 6, so elites stopped being events.
+## +15% a segment from segment 2, capped at x2.2 (segment 10).
+const ELITE_HP_PER_SEGMENT := 0.15
+const ELITE_HP_SEGMENT_CAP := 2.2
+
+
+static func segment_hp_factor(segment: int) -> float:
+	return clampf(1.0 + ELITE_HP_PER_SEGMENT * float(maxi(0, segment - 2)), 1.0, ELITE_HP_SEGMENT_CAP)
+
 # How many distinct modifiers a phase-picked elite carries. Recon and
 # disturbance keep today's plain elite so the first one the player meets is
 # still "the big one", not "the armoured one".

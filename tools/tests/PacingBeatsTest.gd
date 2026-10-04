@@ -98,6 +98,7 @@ func _run() -> void:
 	Global.attempt_segment = 4
 	await _director_checks()
 	await _spawner_checks()
+	_elite_scaling_checks()
 	Global.attempt_segment = previous_segment
 	await get_tree().process_frame
 	print("PacingBeatsTest: %d passed, %d failed" % [_passes, _failures])
@@ -257,3 +258,11 @@ func _picked_ids(spawner: EnemySpawner, seconds: float) -> Array[StringName]:
 		if not out.has(id):
 			out.append(id)
 	return out
+
+
+## Fodder stays paper; elites grow with the segment (Vampire Survivors'
+## asymmetry), capped.
+func _elite_scaling_checks() -> void:
+	_check(is_equal_approx(EliteModifiers.segment_hp_factor(1), 1.0) and is_equal_approx(EliteModifiers.segment_hp_factor(2), 1.0), "elites start at their authored health")
+	_check(is_equal_approx(EliteModifiers.segment_hp_factor(5), 1.45), "segment 5 elites carry +45%% health (%.2f)" % EliteModifiers.segment_hp_factor(5))
+	_check(is_equal_approx(EliteModifiers.segment_hp_factor(30), EliteModifiers.ELITE_HP_SEGMENT_CAP), "and the growth is capped (%.2f)" % EliteModifiers.segment_hp_factor(30))
