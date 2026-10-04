@@ -117,7 +117,11 @@ func _run() -> void:
 		ids[beat["id"]] = true
 		_check(not (beat["members"] as Array).is_empty(), "%s has members" % beat["id"])
 	_check(ids.size() == BeatsScript.CATALOG.size(), "beat ids are unique")
-	_check(BeatsScript.eligible(&"recon").is_empty(), "no beat is eligible during recon")
+	var recon_beats := BeatsScript.eligible(&"recon")
+	_check(recon_beats.size() == 1 and recon_beats[0]["id"] == &"hunter", "only the Hunter is eligible during recon (2026-10-04: recon could never have a beat)")
+	_check(BeatsScript.eligible(&"collapse", 2).size() == BeatsScript.CATALOG.size() - 2, "the two tutorial-sized formations leave the draw after segment 1")
+	for beat in BeatsScript.CATALOG:
+		_check(beat.has("kind_tag"), "%s names the kind of question it asks" % beat["id"])
 	_check(BeatsScript.eligible(&"disturbance").size() < BeatsScript.CATALOG.size(), "some beats wait for ascension")
 	_check(BeatsScript.eligible(&"collapse").size() == BeatsScript.CATALOG.size(), "every beat is eligible by collapse")
 	_check((BeatsScript.find(&"sniper_crossfire").get("members", []) as Array).size() == 2, "ordinary crossfire keeps its two-sniper shape")
@@ -187,11 +191,23 @@ func _run() -> void:
 	spawner.tutorial = false
 	director.unsealed_provider = func() -> bool: return true
 	director.tick(500.0)
-	_check(_started.is_empty(), "no beats once the Exit Rite has unsealed")
+	_check(not _started.is_empty(), "an unsealed gate no longer stops beats - the walk to it is resisted (%s)" % [_started])
+	_free_members(spawner)
+	await get_tree().process_frame
+	director.set("_active", {})
+	_started.clear()
+	director.set("_rite_channel_active", true)
+	director.set("_rite_response_left", 100.0)
+	director.set("_next_beat_in", 0.0)
+	director.tick(1.0)
+	_check(_started.is_empty(), "no ordinary beats while the exit encounter is live")
+	director.set("_rite_channel_active", false)
 	director.unsealed_provider = func() -> bool: return false
 	director.phase_provider = func() -> StringName: return &"recon"
+	director.set("_cooldowns", {})
+	director.set("_last_beat_id", &"")
 	director.tick(500.0)
-	_check(_started.is_empty(), "no beats during recon")
+	_check(not _started.is_empty() and _started.all(func(id: StringName) -> bool: return id == &"hunter"), "during recon only the Hunter comes (%s)" % [_started])
 
 	# --- ascension-only beats stay out of disturbance ---
 	director.phase_provider = func() -> StringName: return &"disturbance"

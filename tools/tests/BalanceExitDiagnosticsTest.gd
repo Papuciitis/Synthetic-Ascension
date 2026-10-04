@@ -166,8 +166,13 @@ func _overtime_checks(recorder: Node, player: Node) -> void:
 	director.add_overtime_pressure(25.0, "gospel:B")
 	var snapshot: Dictionary = director.balance_snapshot()
 	var k_excess := maxi(0, int(director._kills_since_unseal) - int(director.overtime_kill_buffer))
-	var expected := float(director._unseal_time) * float(director.overtime_time_rate) + float(k_excess) * float(director.overtime_kill_rate) * float(director.dominance_mul)
-	_check(is_equal_approx(float(director.overtime), expected) and is_equal_approx(float(director._unseal_time), elapsed_before + 45.0), "final overtime equals the pre-instrumentation formula over the injected clock (%.4f)" % float(director.overtime))
+	# 2026-10-04: the time term counts elapsed seconds past the travel grace
+	# plus every injected second in full (injected time is a price, not travel).
+	var elapsed := float(director._unseal_time) - float(director._injected_seconds)
+	var counted := maxf(0.0, elapsed - float(director._grace_sec)) + float(director._injected_seconds)
+	var expected := counted * float(director.overtime_time_rate) + float(k_excess) * float(director.overtime_kill_rate) * float(director.dominance_mul)
+	_check(is_equal_approx(float(director.overtime), expected) and is_equal_approx(float(director._unseal_time), elapsed_before + 45.0), "final overtime is the grace-aware formula over the injected clock (%.4f)" % float(director.overtime))
+	_check(is_equal_approx(float(director.overtime), 45.0 * float(director.overtime_time_rate)), "inside the travel grace only the injected 45 s count (%.4f)" % float(director.overtime))
 	_check(is_equal_approx(float(snapshot.injected_seconds), 45.0) and is_equal_approx(float(snapshot.elapsed_unseal_seconds) + float(snapshot.injected_seconds), float(snapshot.unseal_seconds)), "the director reports elapsed and injected clock separately, summing to the clock it uses")
 	_check(is_equal_approx(float(snapshot.overtime_time_part) + float(snapshot.overtime_kill_part), float(director.overtime)), "the time and kill components sum to the overtime")
 	var recorded: Dictionary = recorder._ledger._current.exit.overtime

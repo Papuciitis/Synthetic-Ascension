@@ -37,6 +37,11 @@ func _run() -> void:
 	var previous_segment: int = Global.attempt_segment
 	var previous_lag: float = float(ThreatDirector.power_contrast_lag_sec)
 	Global.attempt_segment = 2
+	# Power thresholds open their window only in live combat - a spawner in
+	# the scene and the segment past recon (2026-10-04) - so stand one in.
+	var spawner_stub := Node.new()
+	spawner_stub.add_to_group(&"enemy_spawner")
+	add_child(spawner_stub)
 	ThreatDirector.call("reset_run_state")
 	ThreatDirector.call("set_segment_phase", &"disturbance")
 	ThreatDirector.call("_on_resonance_changed", 0.5)
@@ -143,6 +148,7 @@ func _run() -> void:
 	ThreatDirector.call("reset_run_state")
 	Global.attempt_segment = previous_segment
 	hud.queue_free()
+	spawner_stub.queue_free()
 	await get_tree().process_frame
 	print("HudThreatTooltipTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
