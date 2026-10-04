@@ -112,6 +112,8 @@ func _run_game() -> void:
 	# Every archetype already known, so no live recognition card interrupts.
 	for enemy_id in EnemyDossierCatalog.DATA.keys():
 		Global.mark_enemy_discovered(StringName(enemy_id))
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.goto_game()
 	var player: Node2D = null
 	for _frame in range(600):

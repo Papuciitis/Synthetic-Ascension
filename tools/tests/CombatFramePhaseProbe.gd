@@ -189,6 +189,8 @@ class Driver:
 		Global.attempt_opening_phase = 10
 		Global.debug_dev_segment = false
 		Global.debug_dev_mode = true
+		# No story card may stop an unattended run (StoryDirector.cards_allowed).
+		StoryDirector.cards_override = 0
 		Global.debug_player_god_mode = true
 		Global.debug_projectile_stress_test = false
 		# Headless has no display to pace it: hold 60 frames a second so a

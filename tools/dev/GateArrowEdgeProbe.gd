@@ -27,6 +27,8 @@ func _run() -> void:
 	Global.followers = 1240
 	_seed_augments()
 	_seed_items()
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.goto_game()
 	var player: Node2D = null
 	for _i in range(900):

@@ -82,6 +82,8 @@ func _run() -> void:
 	Global.debug_dev_segment = false
 	Global.debug_encounter_beats = false
 	Global.debug_player_god_mode = true
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.goto_game()
 	var player: Node2D = null
 	for _wait in range(600):

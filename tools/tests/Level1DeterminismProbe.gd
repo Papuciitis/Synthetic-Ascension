@@ -32,6 +32,8 @@ func _run() -> void:
 	Global.attempt_opening_completed = true
 	Global.attempt_opening_phase = 10
 	Global.debug_dev_mode = true
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	# Pin the run seed. Cache POSITIONS are authored and must never move; the
 	# loot inside them is rolled against the world seed and is supposed to vary,
 	# so without pinning this the two things are indistinguishable.

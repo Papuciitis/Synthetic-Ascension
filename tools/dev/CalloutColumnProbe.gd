@@ -111,6 +111,8 @@ func _run() -> void:
 	Global.tip_shown_intro_move = true
 	Global.debug_encounter_beats = false
 	Global.debug_player_god_mode = true
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.goto_game()
 	for _i in range(900):
 		await get_tree().process_frame

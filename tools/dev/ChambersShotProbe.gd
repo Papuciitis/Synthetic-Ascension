@@ -271,6 +271,8 @@ func _gameover_live() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	Global.debug_dev_segment = true
 	Global.debug_dev_mode = true
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.start_new_attempt()
 	Global.attempt_segment = 2
 	Global.pending_augment_pick = false

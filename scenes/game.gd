@@ -386,8 +386,8 @@ func _play_escape_release() -> void:
 
 ## The segment-10 close (story layer F11): a chapter card in Segment 1's
 ## frame, not an ending - the run continues beyond the wall. Cards never
-## block a headless or developer run (StoryDirector.cards_allowed), and the
-## first-time flag is only marked when the card is actually shown.
+## block a headless run or a tool that opted out (StoryDirector.cards_allowed),
+## and the first-time flag is only marked when the card is actually shown.
 func _present_chapter_close(completed_segment: int) -> void:
 	if not StoryDirector.cards_allowed():
 		return

@@ -21,6 +21,8 @@ func _ready() -> void:
 			_only = arg.trim_prefix("--only=")
 	DirAccess.make_dir_recursive_absolute(_out)
 	SaveManager.current_save = null
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	if not Global.attempt_active:
 		Global.start_new_attempt()
 	Global.transaction_followers(6000 - Global.followers, &"dev_grant", {}, false, false)

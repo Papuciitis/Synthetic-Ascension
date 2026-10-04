@@ -15,6 +15,8 @@ func _ready() -> void:
 	if not Global.attempt_active:
 		Global.start_new_attempt()
 	SaveManager.current_save = null
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.followers = 6000
 	var hub: HubWorld = HUB_WORLD.instantiate()
 	hub.crowd_seed = 7

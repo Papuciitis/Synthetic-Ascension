@@ -73,6 +73,8 @@ class SoakDriver:
 		Global.attempt_segment = 2
 		Global.debug_dev_segment = false
 		Global.debug_dev_mode = true
+		# No story card may stop an unattended run (StoryDirector.cards_allowed).
+		StoryDirector.cards_override = 0
 		Global.debug_projectile_stress_test = false
 		_phase = 1
 		Global.goto_game()

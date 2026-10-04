@@ -60,6 +60,8 @@ func _run() -> void:
 	Global.attempt_opening_phase = 10
 	Global.debug_dev_segment = false
 	Global.debug_dev_mode = true
+	# No story card may stop an unattended run (StoryDirector.cards_allowed).
+	StoryDirector.cards_override = 0
 	Global.debug_player_god_mode = true
 	Global.goto_game()
 	for _wait in range(240):

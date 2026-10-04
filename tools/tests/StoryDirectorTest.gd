@@ -700,6 +700,15 @@ func _test_square() -> void:
 	# Headless runs (every suite and benchmark that boots a real scene) never
 	# get a blocking story card; the bulletin falls back to its tip.
 	_check(not StoryDirector.cards_allowed(), "no story card may block a headless run")
+	# A developer run with a display gets them: the playtests run in
+	# developer mode. A rendered tool opts out instead.
+	var was_dev: bool = Global.debug_dev_mode
+	Global.debug_dev_mode = true
+	_check(StoryDirector.cards_allowed_on("x11") and StoryDirector.cards_allowed_on("wayland") and not StoryDirector.cards_allowed_on("headless"), "a developer run with a display gets its story cards")
+	StoryDirector.cards_override = 0
+	_check(not StoryDirector.cards_allowed_on("x11"), "and a rendered tool that opted out gets none")
+	StoryDirector.cards_override = -1
+	Global.debug_dev_mode = was_dev
 	StoryDirector.load_state({})
 	_fresh(3, 99)
 	var quiet := StoryDirector.arrival(3, StoryDirector.cards_allowed())

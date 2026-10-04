@@ -54,8 +54,9 @@ static var _just_closed: bool = false
 ## The state has every key (set by _normalise, cleared when it is replaced),
 ## so the hot paths (a kill moves the Followers) skip the check.
 static var _whole: bool = false
-## Tests pin whether story cards may block: -1 decides (cards_allowed), 1
-## forces them on, 0 off.
+## Pins whether story cards may block: -1 decides (cards_allowed), 1 forces
+## them on (tests), 0 off (every tool that boots a real segment or square
+## with a display: benchmarks, screenshot and look probes).
 static var cards_override: int = -1
 
 
@@ -710,15 +711,21 @@ static func _remember(memory: Dictionary, pool_name: String, line: Dictionary) -
 # ---------------------------------------------------------------- surfaces
 
 ## Whether the story may stop the game for a card (a first bulletin, Bren's
-## dispatch). Never headless (no one there to dismiss it: the suites and
-## benchmarks run the real scenes) and never on a developer run; the same
-## words then arrive as tips and notices, or wait for a real session.
+## dispatch, the Area I card). Never headless: no one is there to dismiss it,
+## and the suites run the real scenes. A developer run gets them like any
+## other (story review 2026-10-04: playtests run in developer mode, so the
+## cards were never seen); a tool that boots real scenes with a display opts
+## out with cards_override = 0. Without a card the same words arrive as tips
+## and notices, and a first card waits for a session that can show it.
 static func cards_allowed() -> bool:
+	return cards_allowed_on(DisplayServer.get_name())
+
+
+## cards_allowed() on the display server named `display`.
+static func cards_allowed_on(display: String) -> bool:
 	if cards_override >= 0:
 		return cards_override == 1
-	if DisplayServer.get_name() == "headless":
-		return false
-	return Global == null or not Global.debug_dev_mode
+	return display != "headless"
 
 
 ## The loading card's second line: the district a segment card leads into.
