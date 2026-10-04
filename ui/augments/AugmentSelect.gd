@@ -3,9 +3,10 @@ extends CanvasLayer
 ## augment pick after every segment. The cards are Global's persisted offer -
 ## NEW, RANK UP, SWAP or TRANSCEND, each graded Etched to Apocryphal, and the
 ## ungraded DUO and FACET rule cards (duos-facets-and-the-reliquary §1-2) -
-## with a Recast (pay Followers for a new deal), an Abstain (take Followers
-## instead) and a Burden (every grade up, for a curse) from the second Binding
-## on. A SWAP asks which seal to unbind, a FACET which of its two Facets.
+## with a Recast (pay Followers for a new deal), a Consecrate (pay Followers
+## to raise one card a grade), an Abstain (take Followers instead) and a
+## Burden (every grade up, for a curse) from the second Binding on. A SWAP
+## asks which seal to unbind, a FACET which of its two Facets.
 ## Opened with nothing pending (screenshot probes, tests) it deals a preview
 ## and a pick applies directly.
 
@@ -41,6 +42,10 @@ var _tip_tw: Tween = null
 var _subtitle: Label = null
 var _footer: HBoxContainer = null
 var _recast_button: Button = null
+# Consecrate (follower economy audit P6): armed, the next card clicked rises
+# a grade instead of being taken.
+var _consecrate_button: Button = null
+var _consecrate_armed: bool = false
 var _abstain_button: Button = null
 var _abstain_armed: bool = false
 var _burden_button: Button = null
@@ -129,6 +134,7 @@ func _deal() -> void:
 	_close_facet_chooser()
 	_abstain_armed = false
 	_burden_armed = false
+	_disarm_consecrate()
 	_spawn_cards(current_offer())
 	_refresh_binding_ui()
 
@@ -199,6 +205,10 @@ static func _entry_of(card_node: Control) -> Dictionary:
 
 func _on_card_picked(a: AugmentData, card_node: Control) -> void:
 	if _locked:
+		return
+	# Armed, Consecrate takes the click: the card rises, nothing is picked.
+	if _consecrate_armed:
+		_consecrate_card(card_node)
 		return
 	# Taking a card is a new intent: an armed Abstain or Burden stands down,
 	# so a stray footer click after a chooser cannot throw the pick away.
@@ -344,6 +354,15 @@ func _ensure_binding_ui() -> void:
 	_recast_button.pressed.connect(_on_recast_pressed)
 	_footer.add_child(_recast_button)
 
+	_consecrate_button = Button.new()
+	_consecrate_button.name = "Consecrate"
+	_consecrate_button.theme = ARCANE_THEME
+	_consecrate_button.theme_type_variation = &"ArcaneSmallButton"
+	_consecrate_button.custom_minimum_size = Vector2(250, 42)
+	_consecrate_button.focus_mode = Control.FOCUS_NONE
+	_consecrate_button.pressed.connect(_on_consecrate_pressed)
+	_footer.add_child(_consecrate_button)
+
 	_wallet_label = Label.new()
 	_wallet_label.theme = ARCANE_THEME
 	_wallet_label.theme_type_variation = &"ArcaneCaption"
@@ -390,6 +409,15 @@ func _refresh_binding_ui() -> void:
 	var cost := Global.binding_recast_cost()
 	_recast_button.text = "RECAST  ·  FREE" if cost <= 0 else "RECAST  ·  %d FOLLOWERS" % cost
 	_recast_button.disabled = _locked or Global.followers < cost
+	_recast_button.tooltip_text = "Deals new cards; this Binding's Consecrations do not carry over." if Global.attempt_binding_consecrations > 0 else ""
+	var consecrate_cost := Global.binding_consecrate_cost()
+	var can_rise := _consecrate_candidates() > 0
+	_consecrate_button.text = "CHOOSE A CARD  ·  %d" % consecrate_cost if _consecrate_armed else "CONSECRATE  ·  %d FOLLOWERS" % consecrate_cost
+	_consecrate_button.disabled = _locked or not can_rise or Global.followers < consecrate_cost
+	if not can_rise:
+		_consecrate_button.tooltip_text = "No card can rise a grade."
+	else:
+		_consecrate_button.tooltip_text = "Raise one graded card a grade. Each Consecration this Binding costs %d more." % AugmentRites.consecrate_cost(Global.binding_segment(), 0)
 	var reward := Global.binding_abstain_reward()
 	if _abstain_armed:
 		_abstain_button.text = "CONFIRM  ·  TAKE %d" % reward
@@ -423,6 +451,7 @@ func _on_abstain_pressed() -> void:
 	if not _abstain_armed:
 		_abstain_armed = true
 		_burden_armed = false
+		_disarm_consecrate()
 		_refresh_binding_ui()
 		return
 	if Global.binding_abstain() < 0:
@@ -440,6 +469,7 @@ func _on_burden_pressed() -> void:
 	if not _burden_armed:
 		_burden_armed = true
 		_abstain_armed = false
+		_disarm_consecrate()
 		_refresh_binding_ui()
 		return
 	_burden_armed = false
@@ -455,6 +485,72 @@ func _on_burden_pressed() -> void:
 	_refresh_binding_ui()
 
 
+## The first press arms Consecrate (the next card clicked rises a grade);
+## pressed again while armed, it stands down.
+func _on_consecrate_pressed() -> void:
+	if _locked:
+		return
+	_consecrate_armed = not _consecrate_armed
+	_abstain_armed = false
+	_burden_armed = false
+	_close_slot_chooser()
+	_close_facet_chooser()
+	_show_status("CHOOSE A GRADED CARD TO RAISE" if _consecrate_armed else "", OverlayKit.GOLD_BRIGHT)
+	_refresh_binding_ui()
+
+
+## Stands an armed Consecrate down and takes its hint off the status line.
+func _disarm_consecrate() -> void:
+	if _consecrate_armed:
+		_consecrate_armed = false
+		_show_status("")
+
+
+## How many of the dealt cards a Consecration could raise.
+func _consecrate_candidates() -> int:
+	if not Global.pending_augment_pick:
+		return 0
+	var count := 0
+	for card in Global.binding_offer():
+		if AugmentRites.can_consecrate_card(card):
+			count += 1
+	return count
+
+
+## Pays for and raises the clicked card, then re-deals the table from the
+## raised offer so the new grade shows on its card.
+func _consecrate_card(card_node: Control) -> void:
+	var entry := _entry_of(card_node)
+	var index := -1
+	var offer := Global.binding_offer()
+	for i in range(offer.size()):
+		if String(offer[i].get("kind", "")) == String(entry.get("kind", "")) and String(offer[i].get("id", "")) == String(entry.get("id", "")):
+			index = i
+			break
+	if card_node != null and is_instance_valid(card_node) and card_node.has_method("release_pick"):
+		card_node.call("release_pick")
+	if index < 0 or not Global.binding_can_consecrate(index):
+		_show_status("THAT CARD CANNOT RISE A GRADE", OverlayKit.GOLD_BRIGHT)
+		return
+	if not Global.binding_consecrate(index):
+		_show_status("NOT ENOUGH FOLLOWERS", OverlayKit.GOLD_BRIGHT)
+		_refresh_binding_ui()
+		return
+	_consecrate_armed = false
+	_hide_tooltip()
+	var raised: Dictionary = Global.binding_offer()[index]
+	_spawn_cards(current_offer())
+	_show_status(consecrate_status_text(raised), OverlayKit.GOLD_BRIGHT)
+	_refresh_binding_ui()
+
+
+## "CONSECRATED · TESLA AURA RISES TO GILDED".
+func consecrate_status_text(card: Dictionary) -> String:
+	var aug := Global.augment_db.get(AugmentBinding.display_augment_id(card), null) as AugmentData
+	var aug_name := aug.display_name.to_upper() if aug != null else String(card.get("id", "")).to_upper()
+	return "CONSECRATED  ·  %s RISES TO %s" % [aug_name, AugmentScaling.grade_name(int(card.get("grade", 0)))]
+
+
 ## "BURDENED · CURSE OF X BOUND INTO YOUR BAG · +20 THREAT THIS SEGMENT".
 func burden_status_text(result: Dictionary) -> String:
 	var parts := PackedStringArray(["BURDENED"])
@@ -468,10 +564,11 @@ func burden_status_text(result: Dictionary) -> String:
 	return "  ·  ".join(parts)
 
 
-func _show_status(message: String) -> void:
+func _show_status(message: String, colour: Color = OverlayKit.CURSE) -> void:
 	if _status_label == null:
 		return
 	_status_label.text = message
+	_status_label.add_theme_color_override("font_color", colour)
 	_status_label.visible = message != ""
 
 

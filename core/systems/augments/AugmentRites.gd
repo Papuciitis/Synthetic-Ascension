@@ -107,3 +107,33 @@ static func burdened_offer(offer: Array) -> Array:
 			copy["grade"] = mini(grade + 1, AugmentScaling.GRADE_COUNT - 1)
 		out.append(copy)
 	return out
+
+
+# ---------------------------------------------------------------- Consecrate
+
+## Consecrate (follower economy audit 2026-10-04, P6): the Followers twin of
+## the Burden. One graded card rises one grade for 150 x the Binding's
+## segment x (k + 1), k = Consecrations already paid this Binding, so late
+## Followers have a rising-price outlet on the run's spike (450 / 900 / 1,350
+## at Hub 3; 1,500 / 3,000 / 4,500 at Hub 10).
+const CONSECRATE_PER_SEGMENT := 150
+
+
+static func consecrate_cost(segment: int, done: int) -> int:
+	return CONSECRATE_PER_SEGMENT * maxi(1, segment) * (maxi(0, done) + 1)
+
+
+static func can_consecrate_card(card: Dictionary) -> bool:
+	var grade := int(card.get("grade", -1))
+	return grade >= 0 and grade < AugmentScaling.GRADE_COUNT - 1
+
+
+## The offer with card `index` one grade higher; every other card as dealt.
+static func consecrated_offer(offer: Array, index: int) -> Array:
+	var out: Array = []
+	for i in range(offer.size()):
+		var copy: Dictionary = (offer[i] as Dictionary).duplicate()
+		if i == index and can_consecrate_card(copy):
+			copy["grade"] = int(copy["grade"]) + 1
+		out.append(copy)
+	return out

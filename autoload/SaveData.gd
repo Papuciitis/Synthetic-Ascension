@@ -128,6 +128,8 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_augment_transcended: Dictionary = {}
 @export var attempt_binding_offer: Array = []
 @export var attempt_binding_recasts: int = 0
+# Consecrations paid this Binding (follower economy audit 2026-10-04, P6).
+@export var attempt_binding_consecrations: int = 0
 # Duos, Facets, the Reliquary and the Burden (2026-10-03, the duos-facets
 # note): active Duos, chosen Facets, Corruption outcomes, the Burden flag,
 # Vouchers bought and the Hub's Voucher offer. New fields: older saves load

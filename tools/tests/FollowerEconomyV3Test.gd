@@ -6,7 +6,8 @@ extends Node
 # on vendor buys and restocks (P2/P3) and on the per-visit services (P4); the
 # Congregation behind belief's cap, the Hub crowd and the save (P5); the one
 # reserve rule the tithes obey (P7); V5 rank downgrades at the refund share
-# (P9); and the recorder's per-segment economy (P10).
+# (P9); the recorder's per-segment economy (P10); and Consecrate, the paid
+# single-card raise at the Binding (P6).
 #
 # No save slot is touched: SaveManager.current_save stays null and the round
 # trips use in-memory SaveData.
@@ -20,6 +21,9 @@ const HUB_WORLD := preload("res://scenes/hub/HubWorld.tscn")
 const Ledger := preload("res://core/systems/telemetry/BalanceLedger.gd")
 const RecorderScript := preload("res://autoload/BalanceRecorder.gd")
 const FurnaceScript := preload("res://effects/manifestations/logic/TitheFurnace.gd")
+const SELECT_SCENE := preload("res://ui/augments/AugmentSelect.tscn")
+const TESLA := &"augment_tesla_aura"
+const MISSILE := &"augment_magic_missile"
 const CENSUS_PATH := "res://data/major_choices/doctrines/method_census_of_souls.tres"
 
 var _passes := 0
@@ -57,6 +61,7 @@ func _run() -> void:
 	_test_reserve_floor()
 	_test_rank_downgrades()
 	_test_recorder()
+	await _test_consecrate()
 	print("FollowerEconomyV3Test: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -527,3 +532,101 @@ func _test_recorder() -> void:
 	_check(int(totals["followers_recruited"]) == 45 and int(totals["followers_peak"]) == 315, "the totals row adds them up")
 	var by_reason: Dictionary = first["followers_by_reason"]
 	_check(int((by_reason["ascension_purchase"] as Dictionary)["spent"]) == 80, "spend by sink stays in followers_by_reason")
+
+
+# ---------------------------------------------------------------- P6
+
+## A Binding pending at the Hub before `segment` with Tesla Aura and Magic
+## Missile at Lv.3, holding exactly `offer`.
+func _pending_binding(offer: Array, segment: int = 4) -> void:
+	_fresh_attempt(segment)
+	var augs: Array[StringName] = [MISSILE, TESLA, StringName()]
+	Global.permanent_augment_ids = augs
+	Global.init_owned_augments()
+	Global.augment_slot_locks = [false, false, false]
+	Global.attempt_augment_levels = {String(MISSILE): 3, String(TESLA): 3}
+	Global.pending_augment_pick = true
+	Global.attempt_binding_offer = offer.duplicate(true)
+	Global.attempt_binding_recasts = 0
+	Global.attempt_binding_consecrations = 0
+
+
+func _offer_fixture() -> Array:
+	return [{"kind": "rank", "id": String(TESLA), "grade": 0}, {"kind": "rank", "id": String(MISSILE), "grade": 3}, {"kind": "facet", "id": String(MISSILE), "grade": -1}]
+
+
+func _test_consecrate() -> void:
+	_check(AugmentRites.consecrate_cost(3, 0) == 450 and AugmentRites.consecrate_cost(3, 1) == 900 and AugmentRites.consecrate_cost(3, 2) == 1350, "Consecrate at Hub 3: 450 / 900 / 1,350")
+	_check(AugmentRites.consecrate_cost(10, 0) == 1500 and AugmentRites.consecrate_cost(10, 2) == 4500, "at Hub 10: 1,500 ... 4,500")
+	_pending_binding(_offer_fixture())
+	Global.set_followers(5000)
+	_check(Global.binding_consecrate_cost() == 450, "the Binding of segment 3 prices its first Consecration at 450")
+	_check(Global.binding_can_consecrate(0) and not Global.binding_can_consecrate(1) and not Global.binding_can_consecrate(2) and not Global.binding_can_consecrate(3), "only a graded card below Apocryphal can rise")
+	_check(Global.binding_consecrate(0) and Global.followers == 4550 and int(Global.attempt_binding_offer[0]["grade"]) == 1, "Consecrating Tesla raises it to Gilded for 450")
+	_check(int(Global.attempt_binding_offer[1]["grade"]) == 3 and int(Global.attempt_binding_offer[2]["grade"]) == -1, "the other cards stay as dealt")
+	_check(Global.binding_consecrate_cost() == 900 and Global.binding_consecrate(0) and Global.followers == 3650 and int(Global.attempt_binding_offer[0]["grade"]) == 2, "the next costs one step more (900)")
+	Global.set_followers(100)
+	_check(not Global.binding_consecrate(0) and Global.followers == 100 and int(Global.attempt_binding_offer[0]["grade"]) == 2, "without the Followers nothing rises")
+	Global.set_followers(10000)
+	var save := SaveData.new()
+	Global.write_save(save)
+	_check(save.attempt_binding_consecrations == 2 and int((save.attempt_binding_offer[0] as Dictionary)["grade"]) == 2, "the save keeps the count and the raised card")
+	Global.attempt_binding_consecrations = 0
+	Global.apply_save(save)
+	SaveManager.current_save = null
+	_check(Global.attempt_binding_consecrations == 2 and Global.binding_consecrate_cost() == 1350, "so a reload keeps the price step (1,350)")
+	_check(Global.apply_binding_card(Global.attempt_binding_offer[0]) and Global.get_augment_level(TESLA) == 3 + AugmentScaling.grade_levels(2) and Global.attempt_binding_consecrations == 0, "taking the raised card applies its new grade and closes the count")
+	_pending_binding([{"kind": "new", "id": "augment_sprint_servos", "grade": 0}], 1)
+	Global.set_followers(10000)
+	_check(not Global.binding_can_consecrate(0) and not Global.binding_consecrate(0), "the intro pick cannot be Consecrated (from the second Binding on, like Recast)")
+
+	# The Binding screen: CONSECRATE arms, the next card clicked rises.
+	_pending_binding(_offer_fixture())
+	Global.set_followers(2000)
+	var select := SELECT_SCENE.instantiate() as CanvasLayer
+	add_child(select)
+	select.call("open_choose_3")
+	await get_tree().process_frame
+	var button := select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	_check(button != null and button.visible and not button.disabled and button.text == "CONSECRATE  ·  450 FOLLOWERS", "the Binding offers CONSECRATE with its price (%s)" % (button.text if button != null else "missing"))
+	if button == null:
+		select.queue_free()
+		return
+	button.emit_signal("pressed")
+	_check(button.text.begins_with("CHOOSE A CARD"), "the first press arms it (%s)" % button.text)
+	var abstain := select.get_node_or_null("Center/VBox/BindingFooter/Abstain") as Button
+	var hint := select.get_node_or_null("Center/VBox/BindingStatus") as Label
+	abstain.emit_signal("pressed")
+	_check(button.text.begins_with("CONSECRATE") and abstain.text.begins_with("CONFIRM") and not hint.visible, "arming Abstain stands Consecrate down and clears its hint")
+	button.emit_signal("pressed")
+	_check(button.text.begins_with("CHOOSE A CARD") and abstain.text.begins_with("ABSTAIN") and hint.visible, "and arming Consecrate again stands Abstain down")
+	var tesla_card: Node = null
+	for card in select.get_node("Center/VBox/CardsPanel/CardsMargin/Cards").get_children():
+		if String((card.get("card_entry") as Dictionary).get("id", "")) == String(TESLA):
+			tesla_card = card
+	_check(tesla_card != null, "fixture: the Tesla card is on the table")
+	if tesla_card != null:
+		tesla_card.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.pending_augment_pick and int(Global.attempt_binding_offer[0]["grade"]) == 1 and Global.followers == 1550, "clicking a card while armed raises it instead of taking it")
+	var raised: Node = null
+	for card in select.get_node("Center/VBox/CardsPanel/CardsMargin/Cards").get_children():
+		if String((card.get("card_entry") as Dictionary).get("id", "")) == String(TESLA) and not card.is_queued_for_deletion():
+			raised = card
+	_check(raised != null and int((raised.get("card_entry") as Dictionary)["grade"]) == 1, "the table is dealt again showing the new grade")
+	var status := select.get_node_or_null("Center/VBox/BindingStatus") as Label
+	_check(status != null and status.visible and status.text == "CONSECRATED  ·  TESLA AURA RISES TO GILDED", "and the status line says so (%s)" % (status.text if status != null else "missing"))
+	_check(button.text == "CONSECRATE  ·  900 FOLLOWERS", "the button stands down with the next price (%s)" % button.text)
+	select.queue_free()
+	await get_tree().process_frame
+	_pending_binding([{"kind": "rank", "id": String(TESLA), "grade": 3}, {"kind": "facet", "id": String(MISSILE), "grade": -1}])
+	Global.set_followers(10000)
+	select = SELECT_SCENE.instantiate() as CanvasLayer
+	add_child(select)
+	select.call("open_choose_3")
+	await get_tree().process_frame
+	button = select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	_check(button != null and button.disabled, "CONSECRATE is disabled when no card can rise")
+	select.queue_free()
+	await get_tree().process_frame
+	Global.pending_augment_pick = false

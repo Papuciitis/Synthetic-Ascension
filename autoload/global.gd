@@ -260,6 +260,10 @@ var attempt_stat_delta: StatDelta = null
 var attempt_augment_transcended: Dictionary = {}
 var attempt_binding_offer: Array = []
 var attempt_binding_recasts: int = 0
+## Consecrations paid this Binding (follower economy audit P6): each raises
+## one card a grade and the next costs one step more. Kept like the Recast
+## count, so a reload cannot reset the price.
+var attempt_binding_consecrations: int = 0
 
 # Duos, Facets, the Reliquary and the Burden
 # (docs/design/2026-10-03-duos-facets-and-the-reliquary.md): active Duos
@@ -1146,6 +1150,7 @@ func _reset_attempt_choice_state() -> void:
 	attempt_augment_transcended = {}
 	attempt_binding_offer = []
 	attempt_binding_recasts = 0
+	attempt_binding_consecrations = 0
 	attempt_augment_duos = {}
 	attempt_augment_facets = {}
 	attempt_augment_corruptions = {}
@@ -1288,6 +1293,39 @@ func binding_recast() -> bool:
 	return true
 
 
+## Followers the next Consecration of the pending Binding costs (P6).
+func binding_consecrate_cost() -> int:
+	return AugmentRites.consecrate_cost(binding_segment(), attempt_binding_consecrations)
+
+
+## Whether card `index` of the pending Binding can be Consecrated: from the
+## second Binding on (like Recast), and only a graded card below Apocryphal.
+func binding_can_consecrate(index: int) -> bool:
+	if not pending_augment_pick or not binding_can_trade():
+		return false
+	var offer := binding_offer()
+	return index >= 0 and index < offer.size() and AugmentRites.can_consecrate_card(offer[index])
+
+
+## Consecrate: pays Followers to raise card `index` one grade, the paid
+## counterpart of the Burden (follower economy audit 2026-10-04, P6). The
+## raised card is kept with the offer; a Recast deals new cards and does not
+## carry it, but the price step stays. False when it cannot be paid for.
+func binding_consecrate(index: int) -> bool:
+	if not binding_can_consecrate(index):
+		return false
+	var cost := binding_consecrate_cost()
+	if followers < cost:
+		return false
+	var paid := transaction_followers(-cost, &"binding_consecrate", {"segment": binding_segment(), "card": index}, true, false)
+	if int(paid.get("change", 0)) != -cost:
+		return false
+	attempt_binding_offer = AugmentRites.consecrated_offer(attempt_binding_offer, index)
+	attempt_binding_consecrations += 1
+	request_autosave()
+	return true
+
+
 ## Takes Followers instead of a card. Returns what was paid, or -1 when the
 ## Binding cannot be abstained from.
 func binding_abstain() -> int:
@@ -1367,6 +1405,7 @@ func _close_binding() -> void:
 	pending_augment_pick = false
 	attempt_binding_offer.clear()
 	attempt_binding_recasts = 0
+	attempt_binding_consecrations = 0
 	attempt_binding_burdened = false
 	request_autosave()
 
@@ -2714,6 +2753,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_augment_transcended = save.attempt_augment_transcended.duplicate(true)
 		attempt_binding_offer = save.attempt_binding_offer.duplicate(true)
 		attempt_binding_recasts = maxi(0, int(save.attempt_binding_recasts))
+		attempt_binding_consecrations = maxi(0, int(save.attempt_binding_consecrations))
 		attempt_augment_duos = save.attempt_augment_duos.duplicate(true)
 		attempt_augment_facets = save.attempt_augment_facets.duplicate(true)
 		attempt_augment_corruptions = save.attempt_augment_corruptions.duplicate(true)
@@ -2812,6 +2852,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_augment_transcended = {}
 		attempt_binding_offer = []
 		attempt_binding_recasts = 0
+		attempt_binding_consecrations = 0
 		attempt_augment_duos = {}
 		attempt_augment_facets = {}
 		attempt_augment_corruptions = {}
@@ -2909,6 +2950,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_transcended = attempt_augment_transcended.duplicate(true)
 		save.attempt_binding_offer = attempt_binding_offer.duplicate(true)
 		save.attempt_binding_recasts = attempt_binding_recasts
+		save.attempt_binding_consecrations = attempt_binding_consecrations
 		save.attempt_augment_duos = attempt_augment_duos.duplicate(true)
 		save.attempt_augment_facets = attempt_augment_facets.duplicate(true)
 		save.attempt_augment_corruptions = attempt_augment_corruptions.duplicate(true)
@@ -2979,6 +3021,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_augment_transcended = {}
 		save.attempt_binding_offer = []
 		save.attempt_binding_recasts = 0
+		save.attempt_binding_consecrations = 0
 		save.attempt_augment_duos = {}
 		save.attempt_augment_facets = {}
 		save.attempt_augment_corruptions = {}
@@ -3129,6 +3172,7 @@ func on_segment_completed(completed_segment: int) -> void:
 		pending_augment_pick = true
 		attempt_binding_offer.clear()
 		attempt_binding_recasts = 0
+		attempt_binding_consecrations = 0
 		attempt_binding_burdened = false
 	var next_doctrine_stage := doctrine_stage_for_completed_segment(completed_segment)
 	if next_doctrine_stage != StringName() and not attempt_doctrine_stage_ids.has(next_doctrine_stage) and doctrine_stage_has_plates(next_doctrine_stage):
