@@ -6,8 +6,8 @@
 
 [sub_resource type="Resource" id="effect_1"]
 script = ExtResource("2")
-rule_key = &"belief_power_cap"
-value = 0.4
+rule_key = &"belief_power_cap_bonus"
+value = 0.2
 
 [sub_resource type="Resource" id="effect_2"]
 script = ExtResource("3")
@@ -27,7 +27,7 @@ description = "Count the faithful and let the count become strength."
 stage = &"method"
 offer_role = &"covenant"
 family_id = &"archive"
-gift_text = "Belief's Power cap rises from +15% to +40% (reached at 1,600 Followers held). Kills have an 8% chance to recruit one more Follower."
+gift_text = "Belief's Power cap rises by +20% above your congregation's (+35% to +50%, reached at 1,225 to 2,500 Followers held). Kills have an 8% chance to recruit one more Follower."
 price_text = "Death reconstruction costs 50% more."
 consequence_text = "A hoard is now a weapon; every node you buy is a sermon you did not give."
 effects = Array[Resource]([SubResource("effect_1"), SubResource("effect_2"), SubResource("effect_3")])

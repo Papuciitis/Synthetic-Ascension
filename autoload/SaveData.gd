@@ -139,6 +139,11 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_vouchers: Array = []
 @export var attempt_voucher_offer: Array = []
 @export var attempt_voucher_segment: int = 0
+# The Congregation (follower economy audit 2026-10-04, P5): Followers this
+# attempt recruited. -1 = written before the field existed; Global.apply_save
+# then starts it from attempt_followers. A real count (0 included) differs
+# from the default, so it is always written.
+@export var attempt_congregation: int = -1
 # Attempt setup (so Continue keeps your run identity)
 @export var attempt_race_id: String = "human"
 @export var attempt_style_id: String = "ranged"

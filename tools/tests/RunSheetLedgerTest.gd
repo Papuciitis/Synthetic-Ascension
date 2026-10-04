@@ -219,12 +219,13 @@ func _test_ledger_records_every_step() -> void:
 	# Until the pass records a belief step, the same call it makes supplies
 	# the line - the one term the pass adds with no step of its own.
 	Global.stat_ledger_begin(Stats.new())
+	Global.attempt_congregation = 1200
 	_run_sheet.refresh(_player, Inventory.new())
 	await get_tree().process_frame
 	var belief_text := _collect_label_text(ledger)
 	_check(
-		"BELIEF · 100 FOLLOWERS" in belief_text and "+10%" in belief_text,
-		"with no recorded step the belief line comes from follower_belief_power() (%s)" % _one_line(belief_text)
+		"BELIEF · CONGREGATION 1,200 · CAP +15%" in belief_text and "+10%" in belief_text,
+		"with no recorded step the belief line comes from follower_belief_power(), labelled with the congregation and its cap (%s)" % _one_line(belief_text)
 	)
 	Global.followers = 0
 	_run_sheet.refresh(_player, Inventory.new())

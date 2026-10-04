@@ -276,7 +276,7 @@ const TRANSCENDENCE := {
 	},
 	&"augment_cult_of_personality": {
 		"name": "Prophet",
-		"rule": "Recruit chance x2 and +2 Followers per recruit. Belief Power cap 15% -> 30%.",
+		"rule": "Recruit chance x2 and +2 Followers per recruit. Belief Power cap +15%.",
 		"catalyst_text": "Summon Spiderlings, or Gambler's Rite, or 300 Followers held",
 		"catalysts": [{"augment": &"augment_summon_spiderlings"}, {"augment": &"augment_gamblers_rite"}, {"followers": 300}],
 	},

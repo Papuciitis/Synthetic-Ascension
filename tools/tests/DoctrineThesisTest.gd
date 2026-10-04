@@ -275,7 +275,13 @@ func _test_new_plates() -> void:
 	Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
 	_apply(&"doctrine_method_census_of_souls")
 	Global.set_followers(2500)
-	_check(_near(Global.follower_belief_power(), 0.40), "Census of Souls: belief reaches +40% (at 2,500 Followers)")
+	# Census adds +20% to the Congregation's cap (follower economy audit P5).
+	var saved_congregation := Global.attempt_congregation
+	Global.attempt_congregation = 0
+	_check(_near(Global.follower_belief_power(), 0.35), "Census of Souls: belief reaches +35% on a new congregation (2,500 Followers held)")
+	Global.attempt_congregation = 20000
+	_check(_near(Global.follower_belief_power(), 0.50), "and +50% once 20,000 were recruited")
+	Global.attempt_congregation = saved_congregation
 	Global.attempt_segment = 3
 	Global.attempt_deaths_this_segment = 0
 	Global.set_followers(1000)

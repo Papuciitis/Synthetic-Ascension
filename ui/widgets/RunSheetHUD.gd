@@ -178,7 +178,8 @@ func _refresh_ledger() -> void:
 		return
 	var rows: Array = Global.last_stat_ledger
 	var belief := _belief_row(rows)
-	var signature := var_to_str([rows, belief])
+	var belief_label := _belief_label()
+	var signature := var_to_str([rows, belief, belief_label])
 	if signature == _ledger_signature:
 		return
 	_ledger_signature = signature
@@ -223,7 +224,12 @@ func _refresh_ledger() -> void:
 			var after_text := ""
 			if row.has("after"):
 				after_text = "→ %s" % _fmt_ledger_value(float(row["after"]), pct)
-			_add_ledger_cell(grid, String(row.get("label", "")), Color(1, 1, 1, 0.72), true)
+			var label := String(row.get("label", ""))
+			# The pass records belief as a bare "BELIEF" step; the sheet says
+			# what fills it and what caps it.
+			if label == "BELIEF":
+				label = belief_label
+			_add_ledger_cell(grid, label, Color(1, 1, 1, 0.72), true)
 			_add_ledger_cell(grid, _fmt_ledger_delta(delta, pct), Color(1, 1, 1, 0.88), false)
 			_add_ledger_cell(grid, after_text, Color(1, 1, 1, 0.55), false)
 
@@ -238,10 +244,23 @@ func _belief_row(rows: Array) -> Dictionary:
 	if is_equal_approx(belief, 0.0):
 		return {}
 	return {
-		"label": "BELIEF · %d FOLLOWERS" % int(Global.followers),
+		"label": _belief_label(),
 		"stat": &"power",
 		"delta": belief,
 	}
+
+
+## "BELIEF · CONGREGATION 12,400 · CAP +25%": the Followers this attempt
+## recruited and the cap they have raised (follower economy audit P5); the
+## row's delta is what the Followers held fill of it.
+func _belief_label() -> String:
+	var digits := str(maxi(0, int(Global.attempt_congregation)))
+	var grouped := ""
+	while digits.length() > 3:
+		grouped = "," + digits.substr(digits.length() - 3) + grouped
+		digits = digits.substr(0, digits.length() - 3)
+	# A whole percent: between doublings the cap is fractional (+18.39%).
+	return "BELIEF · CONGREGATION %s · CAP +%d%%" % [digits + grouped, roundi(Global.belief_power_cap() * 100.0)]
 
 
 func _add_ledger_cell(grid: GridContainer, text: String, colour: Color, stretch: bool) -> void:

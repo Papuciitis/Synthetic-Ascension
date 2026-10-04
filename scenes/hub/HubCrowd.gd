@@ -124,7 +124,10 @@ static func believer_count(followers: int) -> int:
 func setup(world: HubWorld, seed_value: int, arrival_followers: int) -> void:
 	hub = world
 	_rng.seed = seed_value
-	visit_level = maxi(0, arrival_followers)
+	# Sized from the Congregation (Followers recruited this attempt), never
+	# below what the player arrives holding, so spending at the last Hub never
+	# shrinks this one (follower economy audit P5).
+	visit_level = maxi(maxi(0, arrival_followers), Global.congregation_crowd_basis() if Global != null else 0)
 	for key in CROWD_ART:
 		var texture: Texture2D = hub._art(key)
 		if texture != null:
@@ -616,7 +619,7 @@ func _service_line(s: Dictionary) -> String:
 func _grow_with_followers() -> void:
 	if Global == null:
 		return
-	visit_level = maxi(visit_level, Global.followers)
+	visit_level = maxi(visit_level, Global.congregation_crowd_basis())
 	if believers.size() < believer_count(visit_level) and _time >= _spawn_gate:
 		_spawn_gate = _time + 0.9
 		_spawn_believer(true)

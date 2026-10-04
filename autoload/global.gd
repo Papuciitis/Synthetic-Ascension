@@ -304,6 +304,21 @@ var _followers: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var vfx_stamina_aura_scene: PackedScene
 
+## The Congregation (follower economy audit 2026-10-04, P5): every Follower
+## this attempt RECRUITED, which spending never lowers. Followers are the
+## run's money, but the movement is its people: the wallet is the stock you
+## spend, the congregation is the crowd you built, and belief's cap and the
+## Hub's crowd follow the congregation so buying never shrinks either (the
+## research pass's "stock vs flow"). Saved with the run; reset with the attempt.
+var attempt_congregation: int = 0
+## The wallet reasons that are recruitment. Trades, undo, refunds, Abstain,
+## syncs, legacy calls and developer grants are not: selling and undoing could
+## otherwise pump the count without a single new believer.
+const CONGREGATION_REASONS := {
+	&"combat_influence": true, &"secondary_objective": true, &"boss_victory": true,
+	&"miniboss_victory": true, &"mass_conversion": true, &"loaded_dice": true,
+	&"gamblers_rite": true, &"bren_first_follower": true, &"assistant_commitment": true,
+}
 ## Overtime's fraction of a kill reward not yet paid as a whole Follower (P1).
 ## In memory only: it is always below one Follower.
 var _kill_reward_carry: float = 0.0
@@ -485,6 +500,8 @@ func transaction_followers(amount: int, reason: StringName, context: Dictionary 
 			balance_transaction.emit(old_value, 0, new_value, reason, context)
 		return {"old": old_value, "change": 0, "new": new_value, "suppressed": false}
 	_followers = new_value
+	if actual_change > 0 and CONGREGATION_REASONS.has(reason):
+		attempt_congregation += actual_change
 	balance_transaction.emit(old_value, actual_change, new_value, reason, context)
 	followers_changed.emit(_followers)
 	followers_transaction.emit(old_value, actual_change, new_value, reason, context, show_feedback, allow_aggregate)
@@ -972,18 +989,51 @@ func active_augment_input_blocked(slot: int = -1) -> bool:
 
 func follower_belief_power() -> float:
 	# Belief literally fuels Syn'Tek: a small, diminishing Power bonus from
-	# the current congregation. sqrt keeps early followers meaningful and
-	# hoarding from snowballing: 25 -> +5%, 100 -> +10%, cap +15%.
-	# Census of Souls lifts the cap to +40% and Prophet (the Transcended Cult
-	# of Personality) to +30%: hoarding becomes a weapon the tree competes with.
+	# the Followers held. sqrt keeps early followers meaningful and hoarding
+	# from snowballing: 25 -> +5%, 100 -> +10%, up to the cap below.
 	return minf(belief_power_cap(), 0.01 * sqrt(float(maxi(0, followers))))
 
 
+## Belief's cap grows with the Congregation, not the wallet (follower economy
+## audit 2026-10-04, P5): +15% until 2,500 recruited, then +5% for every
+## doubling, at most +30% (20,000 recruited; the audit's +35% was trimmed to
+## limit late Power creep). Filling it still takes Followers held, (100 x cap)
+## squared: 900 for +30%. Before this the cap sat at +15% from the first 225
+## Followers held, about half a minute into segment 2, for the rest of the run.
+const BELIEF_CAP_BASE := 0.15
+const BELIEF_CAP_PER_DOUBLING := 0.05
+const BELIEF_CAP_KNEE := 2500.0
+const BELIEF_CAP_CONGREGATION_MAX := 0.30
+## Prophet (the Transcended Cult of Personality) and Census of Souls add to
+## the congregation's cap instead of replacing it with 0.30 / 0.40.
+const BELIEF_CAP_PROPHET := 0.15
+const BELIEF_CAP_CENSUS := 0.20
+const BELIEF_CAP_CEILING := 0.60
+
+
+func belief_congregation_cap(congregation: int = -1) -> float:
+	var recruited := attempt_congregation if congregation < 0 else congregation
+	var doublings := log(maxf(1.0, float(recruited) / BELIEF_CAP_KNEE)) / log(2.0)
+	return clampf(BELIEF_CAP_BASE + BELIEF_CAP_PER_DOUBLING * doublings, BELIEF_CAP_BASE, BELIEF_CAP_CONGREGATION_MAX)
+
+
 func belief_power_cap() -> float:
-	var cap := 0.15
+	var cap := belief_congregation_cap()
 	if is_augment_transcended(&"augment_cult_of_personality") and permanent_augment_ids.has(&"augment_cult_of_personality"):
-		cap = 0.30
-	return maxf(cap, float(get_doctrine_rule(&"belief_power_cap", 0.0)))
+		cap += BELIEF_CAP_PROPHET
+	var census := float(get_doctrine_rule(&"belief_power_cap_bonus", 0.0))
+	# A run saved before the Congregation carries Census of Souls as the old
+	# absolute cap rule (0.40); it keeps the Doctrine's lift, not the number.
+	if census <= 0.0 and float(get_doctrine_rule(&"belief_power_cap", 0.0)) > 0.0:
+		census = BELIEF_CAP_CENSUS
+	return minf(cap + maxf(0.0, census), BELIEF_CAP_CEILING)
+
+
+## What the Hub's crowd is sized from (HubCrowd): the congregation, or the
+## Followers held when a sale or a pre-Congregation save holds more, so
+## spending never makes people leave between visits either.
+func congregation_crowd_basis() -> int:
+	return maxi(attempt_congregation, followers)
 
 # ============================================================
 # Run Sheet stat ledger
@@ -2669,6 +2719,9 @@ func apply_save(save: SaveData) -> void:
 		attempt_vouchers = save.attempt_vouchers.duplicate()
 		attempt_voucher_offer = save.attempt_voucher_offer.duplicate()
 		attempt_voucher_segment = int(save.attempt_voucher_segment)
+		# A run saved before the Congregation existed (-1) starts it from the
+		# Followers it holds: a floor, never a guess above what was earned.
+		attempt_congregation = int(save.attempt_congregation) if int(save.attempt_congregation) >= 0 else maxi(0, int(save.attempt_followers))
 		_backfill_grimoire()
 
 		# Attempt identity (so Continue keeps your run identity)
@@ -2764,6 +2817,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_vouchers = []
 		attempt_voucher_offer = []
 		attempt_voucher_segment = 0
+		attempt_congregation = 0
 
 		run_inventory = null
 		run_bag = null
@@ -2860,6 +2914,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_vouchers = attempt_vouchers.duplicate()
 		save.attempt_voucher_offer = attempt_voucher_offer.duplicate()
 		save.attempt_voucher_segment = attempt_voucher_segment
+		save.attempt_congregation = attempt_congregation
 
 		# Attempt identity
 		save.attempt_race_id = selected_race_id
@@ -2929,6 +2984,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_vouchers = []
 		save.attempt_voucher_offer = []
 		save.attempt_voucher_segment = 0
+		save.attempt_congregation = 0
 
 		# Attempt identity reset
 		save.attempt_race_id = selected_race_id
@@ -2999,6 +3055,7 @@ func start_new_attempt() -> void:
 		attempt_opening_mode = &"short"
 	opening_replay_full_next_run = false
 	# Bren is the first follower. The HUD remains at zero until commitment.
+	attempt_congregation = 0
 	_kill_reward_carry = 0.0
 	set_followers(0)
 
@@ -3158,6 +3215,7 @@ func on_attempt_failed_die_die() -> void:
 	attempt_exit_hold_mul = 1.0
 
 	# A fresh historical attempt begins before Bren commits to the work.
+	attempt_congregation = 0
 	_kill_reward_carry = 0.0
 	set_followers(0)
 
