@@ -363,6 +363,12 @@ func _build_accessibility() -> void:
 	reduced.button_pressed = bool(_value(&"accessibility", &"reduced_motion", false))
 	reduced.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"reduced_motion", on))
 	_add_control_row("Reduced Motion", reduced)
+	var feel := CheckBox.new()
+	feel.text = "Brief hit-stop and camera punch on big moments"
+	feel.tooltip_text = "Elite, boss and critical kills dip time for a few hundredths of a second; taking a hit or an elite falling kicks the camera a few pixels. Ordinary kills never do. Reduced Motion also turns both off."
+	feel.button_pressed = bool(_value(&"accessibility", &"hit_feel", true))
+	feel.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"hit_feel", on))
+	_add_control_row("Hit-stop & Camera Punch", feel)
 	_add_option_setting("Combat Flashes", &"accessibility", &"combat_flash", [["Off", &"off"], ["Reduced", &"reduced"], ["Full", &"full"]])
 	# Two rows, not one. Damage numbers are the per-hit stream; callouts are the
 	# named lines an ability speaks, and for a Manifestation build they are the

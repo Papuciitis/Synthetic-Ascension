@@ -47,6 +47,11 @@ static func defaults() -> Dictionary:
 			# separate channel from the damage stream: one is spam a player may
 			# want gone, the other is the only text the ability layer speaks.
 			&"ability_callouts": true,
+			# Hit-stop and camera punch (HitFeel), fired only by elite, boss
+			# and crit kills and by the player being hurt. Its own row: a
+			# player can want the world to stay steady without asking for
+			# Reduced Motion everywhere else. Reduced Motion turns both off too.
+			&"hit_feel": true,
 		},
 	}
 
@@ -90,6 +95,7 @@ static func normalize(raw: Dictionary) -> Dictionary:
 	result[&"accessibility"][&"reduced_motion"] = bool(result[&"accessibility"][&"reduced_motion"])
 	result[&"accessibility"][&"damage_numbers"] = bool(result[&"accessibility"][&"damage_numbers"])
 	result[&"accessibility"][&"ability_callouts"] = bool(result[&"accessibility"][&"ability_callouts"])
+	result[&"accessibility"][&"hit_feel"] = bool(result[&"accessibility"][&"hit_feel"])
 	var flash := StringName(result[&"accessibility"][&"combat_flash"])
 	result[&"accessibility"][&"combat_flash"] = flash if flash in FLASH_LEVELS else &"full"
 	return result
