@@ -45,6 +45,9 @@ func _run() -> void:
 	Global.run_luck = 0.0
 	Global.set_followers(5000)
 	var player = PLAYER.instantiate()
+	# These fixtures set health with single oversized blows; the per-hit caps
+	# and post-hit grace (big-hit protection) would rewrite them.
+	player.set("big_hit_protection", false)
 	add_child(player)
 	await get_tree().process_frame
 	player.set_process(false)

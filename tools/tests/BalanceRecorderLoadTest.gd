@@ -78,6 +78,9 @@ func _run() -> void:
 	# worker latency changes; its outputs are real files.
 	var recorder := get_node("/root/BalanceRecorder")
 	var player := PLAYER.instantiate()
+	# These fixtures set health with single oversized blows; the per-hit caps
+	# and post-hit grace (big-hit protection) would rewrite them.
+	player.set("big_hit_protection", false)
 	Global.start_new_attempt()
 	Global.attempt_segment = 2
 	add_child(player)

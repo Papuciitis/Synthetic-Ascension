@@ -74,6 +74,23 @@ signal dash_cd_changed(time_left: float, max_cd: float)
 @export var respawn_phase_time: float = 2.0
 @export var respawn_speed_mul: float = 1.35
 
+@export_group("Big-hit Protection")
+## Deaths were burst deaths (audit 2026-10-04, change 2): no post-hit
+## invulnerability and no per-hit cap, so a swarm tick, two bolts and a blast
+## could land in one half second, and at the seg-2 collapse's x11.65 one
+## contact tick was ~90% of a 242-HP player. No single hit now takes more than
+## these fractions of max HP before armour - a contact tick 22%, any other hit
+## 30%, a boss's 45% - and a hit that costs big_hit_ratio of max HP or more
+## buys big_hit_grace seconds of visible invulnerability. pay_health
+## (chip-cost builds, Death Rattle's toll) is untouched: it is not a hit.
+## Off only for suites that set up health with one oversized blow.
+@export var big_hit_protection: bool = true
+@export_range(0.05, 1.0, 0.01) var contact_tick_cap: float = 0.22
+@export_range(0.05, 1.0, 0.01) var hit_cap: float = 0.30
+@export_range(0.05, 1.0, 0.01) var boss_hit_cap: float = 0.45
+@export_range(0.0, 1.0, 0.01) var big_hit_ratio: float = 0.08
+@export_range(0.0, 2.0, 0.05) var big_hit_grace: float = 0.35
+
 @export_group("Healing Lock")
 ## Heal sources a lock does not stop. Empty by default: a lock is a lock -
 ## the Exit Rite's mend and the wardstone restore are sealed with regen,
@@ -1350,6 +1367,9 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		return
 
 	var raw_amount := amount
+	# One hit can only take so much, before armour (big-hit protection). The
+	# recorder still sees the raw blow; adjusted and applied report the cap.
+	amount = minf(amount, max_hp * incoming_hit_cap(source, kind))
 	var ier4: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
 	if ier4 != null:
 		amount *= ier4.get_damage_taken_multiplier()
@@ -1391,6 +1411,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
 		hp = 1.0
 		_flash_hurt()
+		_big_hit_grace(reduced)
 		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
 		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
 		hp_changed.emit(hp, max_hp)
@@ -1402,6 +1423,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		# had its chance; the item marks its own rearm condition.
 		hp = 1.0
 		_flash_hurt()
+		_big_hit_grace(reduced)
 		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
 		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
 		hp_changed.emit(hp, max_hp)
@@ -1410,6 +1432,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		return
 	hp = max(hp - reduced, 0.0)
 	_flash_hurt()
+	_big_hit_grace(reduced)
 	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
 	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
 	if BattleText != null:
@@ -1427,6 +1450,25 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 	if hp <= 0.0:
 		if not _try_doctrine_death_intercept():
 			die()
+
+
+## The largest share of max HP one hit of `kind` from `source` may take
+## (big-hit protection, see the export group); INF with the protection off.
+func incoming_hit_cap(source: Node, kind: StringName) -> float:
+	if not big_hit_protection:
+		return INF
+	if kind == &"contact_swarm":
+		return contact_tick_cap
+	if source != null and is_instance_valid(source) and (
+		source.is_in_group(&"boss_like") or source.is_in_group(&"boss") or source.is_in_group(&"miniboss")
+	):
+		return boss_hit_cap
+	return hit_cap
+
+
+func _big_hit_grace(lost: float) -> void:
+	if big_hit_protection and lost >= max_hp * big_hit_ratio:
+		_grant_visible_invulnerability(big_hit_grace)
 
 
 func _report_balance_damage(raw: float, adjusted: float, applied: float, source: Node, kind: StringName, outcome: StringName) -> void:

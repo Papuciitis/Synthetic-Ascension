@@ -121,6 +121,9 @@ func _hostile_bullet(at: Vector2, direction: Vector2, source: Node = null) -> vo
 
 func _run() -> void:
 	_player = PLAYER_SCENE.instantiate()
+	# These fixtures set health with single oversized blows; the per-hit caps
+	# and post-hit grace (big-hit protection) would rewrite them.
+	_player.set("big_hit_protection", false)
 	add_child(_player)
 	await get_tree().process_frame
 	await get_tree().process_frame

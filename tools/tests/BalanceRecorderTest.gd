@@ -29,6 +29,9 @@ func _run() -> void:
 	Global.permanent_augment_ids = [StringName(), StringName(), StringName()]
 	Global.set_followers(100)
 	var player = PLAYER.instantiate()
+	# These fixtures set health with single oversized blows; the per-hit caps
+	# and post-hit grace (big-hit protection) would rewrite them.
+	player.set("big_hit_protection", false)
 	add_child(player)
 	player.set_process(false)
 	player.set_physics_process(false)
