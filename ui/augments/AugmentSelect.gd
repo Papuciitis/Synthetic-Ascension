@@ -56,6 +56,8 @@ var _burden_armed: bool = false
 var _status_label: Label = null
 # The status line is announcing a Consecration: it goes with the table.
 var _status_consecrated: bool = false
+# The Exchange's reserve line, under the footer (Global.reserve_warning_text).
+var _reserve_label: Label = null
 var _wallet_label: Label = null
 var _slot_row: VBoxContainer = null
 var _pending_swap: Dictionary = {}
@@ -402,6 +404,19 @@ func _ensure_binding_ui() -> void:
 	_burden_button.focus_mode = Control.FOCUS_NONE
 	_burden_button.pressed.connect(_on_burden_pressed)
 	_footer.add_child(_burden_button)
+
+	# The Binding opens as the next segment starts, so a Recast or Consecrate
+	# that leaves no reconstruction strands the run before its first fight;
+	# armed, either says so here, as the Exchange does (review 2026-10-04).
+	_reserve_label = Label.new()
+	_reserve_label.name = "BindingReserve"
+	_reserve_label.theme = ARCANE_THEME
+	_reserve_label.theme_type_variation = &"ArcaneCaption"
+	_reserve_label.add_theme_font_size_override("font_size", 14)
+	_reserve_label.add_theme_color_override("font_color", OverlayKit.DANGER.lightened(0.15))
+	_reserve_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_reserve_label.visible = false
+	vbox.add_child(_reserve_label)
 	_refresh_binding_ui()
 
 
@@ -417,12 +432,16 @@ func _refresh_binding_ui() -> void:
 	_footer.visible = trading
 	if _burden_button != null:
 		_burden_button.visible = trading
+	if _reserve_label != null and not trading:
+		_reserve_label.visible = false
 	if not trading:
 		return
 	var cost := Global.binding_recast_cost()
 	var consecrated := Global.binding_offer_consecrated()
 	if _recast_armed and consecrated:
 		_recast_button.text = "CONFIRM  ·  LOSE THE CONSECRATION"
+	elif _recast_armed:
+		_recast_button.text = "CONFIRM  ·  PAY %d" % cost
 	else:
 		_recast_button.text = "RECAST  ·  FREE" if cost <= 0 else "RECAST  ·  %d FOLLOWERS" % cost
 	_recast_button.disabled = _locked or Global.followers < cost
@@ -459,11 +478,22 @@ func _refresh_binding_ui() -> void:
 	else:
 		_burden_button.tooltip_text = "Every graded card rises one grade. A cursed relic is bound into your bag%s." % ("" if Global.has_voucher(Vouchers.BURDEN_WRIT) else " and the district hunts you")
 	_wallet_label.text = "%d FOLLOWERS" % Global.followers
+	# The reserve line stands only while a spend that would strand the run
+	# is armed (Global.spend_survivable, the tithes' rule).
+	var reserve := ""
+	if _recast_armed and not Global.spend_survivable(cost):
+		reserve = Global.reserve_warning_text(Global.followers - cost)
+	elif _consecrate_armed and not Global.spend_survivable(consecrate_cost):
+		reserve = Global.reserve_warning_text(Global.followers - consecrate_cost)
+	if _reserve_label != null:
+		_reserve_label.text = reserve
+		_reserve_label.visible = reserve != ""
 
 
-## One press deals new cards, unless the table holds a Consecrated card:
-## then two, as Abstain and Burden, because a stray click next to CONSECRATE
-## threw the paid grade away with no refund (review 2026-10-04).
+## One press deals new cards, unless the table holds a Consecrated card or
+## the price would leave no reconstruction: then two, as Abstain and Burden
+## (review 2026-10-04: a stray click next to CONSECRATE threw the paid grade
+## away with no refund, and a Recast could strand the run unannounced).
 func _on_recast_pressed() -> void:
 	if _locked:
 		return
@@ -483,7 +513,7 @@ func _on_recast_pressed() -> void:
 
 
 func _recast_needs_confirm() -> bool:
-	return Global.binding_offer_consecrated()
+	return Global.binding_offer_consecrated() or not Global.spend_survivable(Global.binding_recast_cost())
 
 
 ## Two presses: the first arms it, so a stray click never throws a pick away.
@@ -530,7 +560,9 @@ func _on_burden_pressed() -> void:
 
 
 ## The first press arms Consecrate (the next card clicked rises a grade);
-## pressed again while armed, it stands down.
+## pressed again while armed, it stands down. The arm is the confirming
+## press: armed, a price that would leave no reconstruction shows the
+## reserve line before any card is clicked (review 2026-10-04).
 func _on_consecrate_pressed() -> void:
 	if _locked:
 		return

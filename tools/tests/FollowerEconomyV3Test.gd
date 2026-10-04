@@ -64,6 +64,7 @@ func _run() -> void:
 	await _test_consecrate()
 	await _test_consecrate_cap()
 	await _test_recast_guards_consecration()
+	await _test_binding_reserve()
 	print("FollowerEconomyV3Test: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -749,6 +750,55 @@ func _test_recast_guards_consecration() -> void:
 	recast.emit_signal("pressed")
 	await get_tree().process_frame
 	_check(Global.attempt_binding_recasts == recasts + 1, "and one press deals")
+	select.queue_free()
+	await get_tree().process_frame
+	Global.pending_augment_pick = false
+
+
+## The Binding opens as the next segment starts, so a Consecrate or Recast
+## that leaves no reconstruction strands the run before its first fight:
+## both show the Exchange's reserve line while armed, the Consecrate arm
+## being the confirming press, and such a Recast takes two presses (review
+## 2026-10-04).
+func _test_binding_reserve() -> void:
+	_pending_binding(_offer_fixture(), 2)
+	Global.set_followers(160)
+	var recast_cost := Global.binding_recast_cost()
+	_check(Global.binding_consecrate_cost() == 150 and Global.reconstruction_cost_for(10) == 12 and not Global.spend_survivable(150), "fixture: at the segment 2 Binding a 150 Consecration from 160 leaves 10, under the reconstruction cost of 12")
+	_check(Global.reserve_warning_text(10) == "⚠ 10 Followers left — not above the next reconstruction cost (12). Death would end the Ascension." and Global.reserve_warning_text(13) == "", "the reserve line is the Exchange's, and silent over a balance a death reconstructs from")
+	var select: CanvasLayer = await _open_binding_select()
+	var consecrate := select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	var recast := select.get_node_or_null("Center/VBox/BindingFooter/Recast") as Button
+	var reserve := select.get_node_or_null("Center/VBox/BindingReserve") as Label
+	if consecrate == null or recast == null or reserve == null:
+		_check(false, "fixture: the Binding footer and its reserve line exist")
+		select.queue_free()
+		return
+	_check(not reserve.visible, "with nothing armed there is no reserve line")
+	consecrate.emit_signal("pressed")
+	_check(reserve.visible and reserve.text == Global.reserve_warning_text(10), "arming CONSECRATE shows the reserve line before any card is clicked (%s)" % reserve.text)
+	consecrate.emit_signal("pressed")
+	_check(not reserve.visible, "standing it down hides the line")
+	consecrate.emit_signal("pressed")
+	var tesla := _table_card(select, TESLA)
+	if tesla != null:
+		tesla.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.followers == 10 and int(Global.attempt_binding_offer[0]["grade"]) == 1 and not reserve.visible, "warned, a click on a card still Consecrates: the arm was the confirming press")
+	select.queue_free()
+	await get_tree().process_frame
+
+	_pending_binding(_offer_fixture(), 2)
+	Global.set_followers(recast_cost + 10)
+	select = await _open_binding_select()
+	recast = select.get_node_or_null("Center/VBox/BindingFooter/Recast") as Button
+	reserve = select.get_node_or_null("Center/VBox/BindingReserve") as Label
+	recast.emit_signal("pressed")
+	_check(Global.attempt_binding_recasts == 0 and Global.followers == recast_cost + 10 and recast.text == "CONFIRM  ·  PAY %d" % recast_cost, "a Recast that would leave 10 arms first (%s)" % recast.text)
+	_check(reserve.visible and reserve.text == Global.reserve_warning_text(10), "and shows the reserve line (%s)" % reserve.text)
+	recast.emit_signal("pressed")
+	await get_tree().process_frame
+	_check(Global.attempt_binding_recasts == 1 and Global.followers == 10 and not reserve.visible, "the second press recasts")
 	select.queue_free()
 	await get_tree().process_frame
 	Global.pending_augment_pick = false

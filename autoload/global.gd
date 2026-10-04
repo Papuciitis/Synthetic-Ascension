@@ -3362,6 +3362,17 @@ func reconstruction_survivable(balance: int) -> bool:
 func spend_survivable(amount: int) -> bool:
 	return amount <= 0 or reconstruction_survivable(followers - amount)
 
+
+## The Exchange's reserve warning for the balance a spend would leave, or ""
+## when a death still reconstructs from it. One line for every spender that
+## warns instead of refusing: the Exchange's trade and the Binding's Recast
+## and Consecrate (review 2026-10-04: the Binding, at the start of a
+## segment, could strand the run without a word).
+func reserve_warning_text(after: int) -> String:
+	if reconstruction_survivable(after):
+		return ""
+	return "⚠ %d Followers left — not above the next reconstruction cost (%d). Death would end the Ascension." % [after, reconstruction_cost_for(after)]
+
 func consume_respawn_cost() -> int:
 	var cost: int = compute_respawn_cost()
 	attempt_deaths_this_segment += 1

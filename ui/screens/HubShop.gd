@@ -1238,13 +1238,11 @@ func _trade_validation() -> Dictionary:
 		}
 
 	# Followers are also lives: warn before the player barters away their
-	# next reconstruction.
-	var respawn_cost: int = Global.reconstruction_cost_for(after) if Global != null and Global.has_method("reconstruction_cost_for") else 1
-	if Global != null and Global.has_method("reconstruction_survivable") and not Global.reconstruction_survivable(after):
-		return {
-			"valid": true,
-			"reason": "⚠ %d Followers left — not above the next reconstruction cost (%d). Death would end the Ascension." % [after, respawn_cost],
-		}
+	# next reconstruction (Global's one reserve line, which the Binding's
+	# Recast and Consecrate show too).
+	var reserve_warning: String = Global.reserve_warning_text(after) if Global != null else ""
+	if reserve_warning != "":
+		return {"valid": true, "reason": reserve_warning}
 
 	return {"valid": true, "reason": "Exchange is viable."}
 
