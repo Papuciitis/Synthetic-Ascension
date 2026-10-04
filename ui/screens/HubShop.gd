@@ -85,7 +85,6 @@ var _vendor_overlay_rebuild_pending: bool = false
 
 const REFRESH_BASE_COST: int = 3
 const REFRESH_GROWTH: float = 1.75  # exponential-ish growth per refresh
-const REFRESH_MAX_COST: int = 999
 
 ## The item tooltip's own canvas layer: over the Followers notice (180), which
 ## a trade or restock raises over the Exchange for 3.6 s, under the tutorial
@@ -143,11 +142,15 @@ var _ledger_rows: Dictionary = {}  # caption -> value Label
 
 func _get_refresh_cost() -> int:
 	var n: int = 0
+	var scale: float = 1.0
 	if Global != null:
 		n = maxi(0, int(Global.attempt_vendor_refreshes))
-	var cost_f: float = float(REFRESH_BASE_COST) * pow(REFRESH_GROWTH, float(n))
-	var cost: int = int(round(cost_f))
-	return clampi(cost, REFRESH_BASE_COST, REFRESH_MAX_COST)
+		scale = Global.market_scale()
+	# On the vendor's stage scale and uncapped (follower economy audit P3):
+	# the old 999 cap made search nearly free from Hub 3 on. The ceiling below
+	# only keeps a dev-sized wallet from overflowing the int.
+	var cost_f: float = minf(float(REFRESH_BASE_COST) * pow(REFRESH_GROWTH, float(n)) * scale, 1.0e12)
+	return maxi(REFRESH_BASE_COST, int(round(cost_f)))
 
 
 func _ready() -> void:

@@ -150,17 +150,23 @@ func _test_transfusion(screen: CanvasLayer) -> void:
 	await _press(screen, donor_lucky)
 	await _press(screen, "Recipient_%s" % String(MISSILE))
 	var preview := _label_text(screen, "TransfusionPreview")
-	_check(preview.contains("Lv.3 → Lv.5") and preview.contains("80 Followers"), "the preview shows the gain and the cost (%s)" % preview)
+	# A level costs 20 x the Binding's segment past the second (follower
+	# economy audit P4): 80 a level at this Hub, and the preview says so.
+	var per_level := AugmentRites.transfusion_cost_per_level(Global.binding_segment())
+	var cost := 2 * per_level
+	_check(preview.contains("Lv.3 → Lv.5") and preview.contains("%d Followers (%d a level)" % [cost, per_level]), "the preview shows the gain and the cost (%s)" % preview)
 	var tesla_level := Global.get_augment_level(TESLA)
 	var before := int(Global.followers)
 	await _press(screen, "TransfuseButton")
 	_check(Global.get_augment_level(MISSILE) == 5 and Global.get_augment_level(LUCKY) == 1, "TRANSFUSE pours into the chosen recipient: Missile 3 -> 5, the donor back to Lv.1")
 	_check(Global.get_augment_level(TESLA) == tesla_level, "the other augment is untouched")
-	_check(int(Global.followers) == before - 80, "and it cost 80 Followers")
+	_check(int(Global.followers) == before - cost, "and it cost %d Followers" % cost)
 	_check(_label_text(screen, "Wallet") == "%d Followers" % int(Global.followers), "the wallet follows")
 
 
 func _test_vouchers(screen: CanvasLayer) -> void:
+	# Enough for both offers at this Hub's price (P4 raised it with depth).
+	Global.set_followers(3 * Global.voucher_price())
 	await _press(screen, "Tab_VOUCHERS")
 	var offer := Global.voucher_offer()
 	var price := Global.voucher_price()

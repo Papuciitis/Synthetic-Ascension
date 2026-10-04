@@ -1661,9 +1661,10 @@ func apply_augment_scars(s: Stats) -> void:
 			stat_ledger_step("SCARRED %s" % augment_display_name(id).to_upper(), s)
 
 
-## What pouring `donor` into `recipient` would do: {ok, gain, cost, reason}.
+## What pouring `donor` into `recipient` would do: {ok, gain, cost,
+## per_level, reason}. Priced at this Hub's Binding segment (P4).
 func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary:
-	var out := {"ok": false, "gain": 0, "cost": 0, "reason": ""}
+	var out := {"ok": false, "gain": 0, "cost": 0, "per_level": AugmentRites.transfusion_cost_per_level(binding_segment()), "reason": ""}
 	if recipient == StringName() or not permanent_augment_ids.has(recipient):
 		out["reason"] = "the recipient must be equipped"
 		return out
@@ -1685,7 +1686,7 @@ func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary
 	# the cap would otherwise pay full price and burn the donor for nothing.
 	var gain := mini(poured, AugmentScaling.MAX_LEVEL - get_augment_level(recipient))
 	out["gain"] = maxi(0, gain)
-	out["cost"] = AugmentRites.transfusion_cost(maxi(0, gain))
+	out["cost"] = AugmentRites.transfusion_cost(maxi(0, gain), binding_segment())
 	if gain <= 0:
 		out["reason"] = "the recipient is at Lv.%d already" % AugmentScaling.MAX_LEVEL
 		return out
@@ -2119,19 +2120,31 @@ func doctrine_max_hp_multiplier() -> float:
 		mul = 1.0 - (1.0 - mul) * 0.5
 	return mul
 
+## Manufactured Witness's price: 100, or 8% of the Followers held once that
+## is more (follower economy audit 2026-10-04, P4). A flat 100 was free by the
+## Apotheosis stage; 8% keeps the insurance below the 20% a death would tax.
+const WITNESS_MIN_PRICE := 100
+const WITNESS_WALLET_SHARE := 0.08
+
+
+func manufactured_witness_price() -> int:
+	return maxi(WITNESS_MIN_PRICE, int(ceil(float(maxi(0, followers)) * WITNESS_WALLET_SHARE)))
+
+
 func try_consume_manufactured_witness() -> bool:
 	if not bool(get_doctrine_rule(&"manufactured_witness", false)):
 		return false
-	if attempt_witness_used_segment == attempt_segment or followers < 100:
+	var price := manufactured_witness_price()
+	if attempt_witness_used_segment == attempt_segment or followers < price:
 		return false
 	var transaction := transaction_followers(
-		-100,
+		-price,
 		&"manufactured_witness",
-		{"segment": attempt_segment},
+		{"segment": attempt_segment, "price": price},
 		false,
 		false
 	)
-	if int(transaction.get("change", 0)) != -100:
+	if int(transaction.get("change", 0)) != -price:
 		return false
 	attempt_witness_used_segment = attempt_segment
 	attempt_doctrine_threat_debt += 25.0
@@ -3248,10 +3261,25 @@ func compute_item_value(inst: ItemInstance) -> int:
 	var set_mul: float = 1.15 if not inst.data.set_id.is_empty() else 1.0
 	return int(round((rarity_value * quality_mul + stat_value + scripted_value) * set_mul))
 
+## The stage price scale for everything a Hub or a district sells per visit
+## (follower economy audit 2026-10-04, P2): vendor buys and restocks,
+## imprints and wager stakes. Keyed to the segment the Hub sends you into
+## (attempt_segment): x1.0 through Hub 1, then +25% a segment (Hub 2 x1.25,
+## Hub 4 x1.75, Hub 9 x3.0). Income grows ~7x from Hub 1 to Hub 9 while the
+## whole shelf grew 2.8x; prices that do not follow the income driver are the
+## one combination the research pass says to avoid. Tree prices stay fixed so
+## "save toward X" stays legible; a future Reach would plug in here.
+func market_scale(segment: int = -1) -> float:
+	var seg := attempt_segment if segment < 0 else segment
+	return 1.0 + 0.25 * float(maxi(0, seg - 2))
+
+
 func compute_buy_value(inst: ItemInstance) -> int:
-	# What the vendor charges (followers).
+	# What the vendor charges (followers), on the stage scale (P2). Selling
+	# stays unscaled, so the buyback spread only widens with depth and no
+	# buy -> sell (or buy -> merge -> sell) sequence can net Followers.
 	var v: int = compute_item_value(inst)
-	return maxi(0, int(ceil(float(v) * LuckResolver.buy_multiplier(run_luck))))
+	return maxi(0, int(ceil(float(v) * LuckResolver.buy_multiplier(run_luck) * market_scale())))
 
 func compute_sell_value(inst: ItemInstance) -> int:
 	# What the vendor pays you (followers).

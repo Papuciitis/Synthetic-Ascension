@@ -488,7 +488,7 @@ func _build_transfusion() -> void:
 		summary = "%s Lv.%d → Lv.%d  ·  %s Lv.%d → Lv.1  ·  %d Followers (%d a level)" % [
 			Global.augment_display_name(_recipient), level, AugmentScaling.clamp_level(level + gain),
 			Global.augment_display_name(_donor), Global.get_augment_level(_donor),
-			int(preview["cost"]), AugmentRites.TRANSFUSION_COST_PER_LEVEL,
+			int(preview["cost"]), int(preview.get("per_level", AugmentRites.TRANSFUSION_COST_PER_LEVEL)),
 		]
 	elif _recipient == &"" or _donor == &"":
 		summary = "Choose an equipped recipient and an unequipped donor."

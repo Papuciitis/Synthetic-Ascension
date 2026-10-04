@@ -47,8 +47,11 @@ static func text(id: StringName) -> String:
 	return String(row.get("text", ""))
 
 
+## On the run's stage scale (follower economy audit 2026-10-04, P4): 300 at
+## the first Hub as before, then +100 a segment (Hub 2 400, Hub 5 700, Hub 10
+## 1,200). It was +50 a segment, a flat price against income that grows ~7x.
 static func price(segment: int) -> int:
-	return 250 + 50 * maxi(1, segment)
+	return 200 + 100 * maxi(1, segment)
 
 
 ## OFFER_SIZE vouchers not yet bought, a seeded shuffle of the rest.

@@ -55,7 +55,10 @@ static func corrupted_level(outcome: StringName, level: int) -> int:
 # ---------------------------------------------------------------- Transfusion
 
 const TRANSFUSION_MIN_DONOR := 2
+## The price of a level through the second Binding (40); deeper, a level
+## costs TRANSFUSION_COST_PER_SEGMENT x the Binding's segment.
 const TRANSFUSION_COST_PER_LEVEL := 40
+const TRANSFUSION_COST_PER_SEGMENT := 20
 
 
 ## Levels a donor at `donor_level` pours into the recipient.
@@ -65,8 +68,15 @@ static func transfusion_gain(donor_level: int) -> int:
 	return floori(float(donor_level) / 2.0)
 
 
-static func transfusion_cost(gain: int) -> int:
-	return maxi(0, gain) * TRANSFUSION_COST_PER_LEVEL
+## Followers one level costs at a Binding segment: 40 through segment 2, then
+## 20 x segment (60 at Hub 3, 200 at Hub 10) - the follower economy audit's
+## P4, so a flat 40 does not become free while income grows ~7x.
+static func transfusion_cost_per_level(segment: int = 2) -> int:
+	return TRANSFUSION_COST_PER_SEGMENT * maxi(2, segment)
+
+
+static func transfusion_cost(gain: int, segment: int = 2) -> int:
+	return maxi(0, gain) * transfusion_cost_per_level(segment)
 
 
 # ---------------------------------------------------------------- the Burden

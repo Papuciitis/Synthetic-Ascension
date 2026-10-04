@@ -14,10 +14,12 @@ const PRICE_SHARE := 0.25
 const PRICE_MIN := 20
 
 
+## A quarter of the item's market value on the Hub's stage scale (follower
+## economy audit 2026-10-04, P4: unchanged through Hub 1, x3 by Hub 9).
 static func price(inst: ItemInstance) -> int:
 	if inst == null or Global == null:
 		return PRICE_MIN
-	return maxi(PRICE_MIN, int(round(float(Global.compute_item_value(inst)) * PRICE_SHARE)))
+	return maxi(PRICE_MIN, int(round(float(Global.compute_item_value(inst)) * PRICE_SHARE * Global.market_scale())))
 
 
 static func can_apply(imprint_id: StringName, inst: ItemInstance) -> Dictionary:

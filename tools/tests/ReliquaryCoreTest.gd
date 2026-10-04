@@ -76,7 +76,7 @@ func _test_tables() -> void:
 	_check(lucky[0] > 54.9 and lucky[2] < 10.1, "Luck moves up to 10 points from Sundered to Exalted")
 	_check(AugmentRites.corrupted_level(AugmentRites.EXALTED, 4) == 7 and AugmentRites.corrupted_level(AugmentRites.SCARRED, 4) == 6 and AugmentRites.corrupted_level(AugmentRites.SUNDERED, 2) == 1, "Exalted +3, Scarred +2, Sundered -2 never below 1")
 	_check(AugmentRites.transfusion_gain(1) == 0 and AugmentRites.transfusion_gain(5) == 2 and AugmentRites.transfusion_cost(2) == 80, "a Lv.5 donor pours 2 levels for 80 Followers; Lv.1 pours nothing")
-	_check(Vouchers.ids().size() == 8 and Vouchers.price(4) == 450, "eight Vouchers at 250 + 50 x segment")
+	_check(Vouchers.ids().size() == 8 and Vouchers.price(1) == 300 and Vouchers.price(4) == 600, "eight Vouchers at 200 + 100 x segment, 300 at the first Hub as before (follower economy audit P4)")
 	var catalogue := Grimoire.catalogue(Global.augment_db)
 	_check(catalogue.size() == 16 + 6 + 14 + 3 + 3 + StoryLines.RECORDS.size(), "the Grimoire lists 16 Transcendences, 6 Duos, 14 Facets, 3 Theses, 3 Canons and the story's records (%d)" % catalogue.size())
 
@@ -202,7 +202,9 @@ func _test_corruption() -> void:
 
 
 func _test_transfusion() -> void:
-	_fresh([&"augment_tesla_aura", StringName(), StringName()], {"augment_tesla_aura": 3, "augment_lucky_charm": 5})
+	# The Hub before segment 3 (Binding segment 2): the 40-a-level price the
+	# stage scale keeps through the second Binding (follower economy audit P4).
+	_fresh([&"augment_tesla_aura", StringName(), StringName()], {"augment_tesla_aura": 3, "augment_lucky_charm": 5}, 3)
 	Global.owned_augment_ids.append(&"augment_lucky_charm")
 	Global.set_followers(100)
 	var preview := Global.transfusion_preview(&"augment_tesla_aura", &"augment_lucky_charm")

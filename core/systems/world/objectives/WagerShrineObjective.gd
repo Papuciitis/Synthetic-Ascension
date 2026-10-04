@@ -33,6 +33,16 @@ const TIERS: Array[Dictionary] = [
 ]
 
 
+## Followers a tier costs at the current segment: the authored stake on the
+## run's stage scale (follower economy audit 2026-10-04, P4), so 20 / 35 / 55
+## through segment 2 and x3 by segment 10, where a flat 110 had become free.
+static func tier_stake(tier: int) -> int:
+	if tier < 0 or tier >= TIERS.size():
+		return 0
+	var scale: float = Global.market_scale() if Global != null else 1.0
+	return int(round(float(TIERS[tier]["stake"]) * scale))
+
+
 ## The rarity band a tier pays at the current segment (x = min, y = max).
 static func tier_band(tier: int) -> Vector2i:
 	if tier < 0 or tier >= TIERS.size():
@@ -114,7 +124,7 @@ func _try_raise_stake() -> void:
 		return
 	if _dwell < seconds_per_tier * float(next_tier + 1):
 		return
-	var stake: int = int(TIERS[next_tier]["stake"])
+	var stake: int = tier_stake(next_tier)
 	if not _can_afford(stake):
 		# Held at the last tier they could pay for, and said so - silently
 		# refusing to escalate reads as the shrine being broken.
