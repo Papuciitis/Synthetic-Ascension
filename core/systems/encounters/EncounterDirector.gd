@@ -110,6 +110,11 @@ var _counters := {
 	&"rite_charger_pair", &"rite_sniper_crossfire", &"rite_charger_pair", &"rite_hunter",
 ]
 var _rite_wave_cursor := 0
+## Plan 2026-09-17 §6.4: a reconstruction at the rite blocks new local
+## reinforcements for this long; channel waves asked for meanwhile wait.
+@export_range(0.0, 15.0, 0.5) var respawn_reinforcement_hold_sec := 5.0
+var _reinforcement_hold_left := 0.0
+var _held_wave_requests := 0
 ## A cleared formation can return during the twenty-second channel, one at a
 ## time. Active ids cannot duplicate, which caps the authored ranged and
 ## movement pressure even when a high-damage build clears it instantly.
@@ -125,6 +130,8 @@ func _ready() -> void:
 		director.connect("rite_channel_changed", _on_rite_channel_changed)
 	if director != null and director.has_signal("power_threshold_noted"):
 		director.connect("power_threshold_noted", _on_power_threshold_noted)
+	if RunEvents != null and not RunEvents.player_life_event.is_connected(_on_player_life_event):
+		RunEvents.player_life_event.connect(_on_player_life_event)
 
 
 func _exit_tree() -> void:
@@ -495,7 +502,21 @@ func _on_rite_channel_changed(active: bool) -> void:
 		try_spawn_beat(id)
 
 
+func _on_player_life_event(_player: Node, kind: StringName) -> void:
+	if kind == &"respawn" and _rite_channel_active:
+		_reinforcement_hold_left = respawn_reinforcement_hold_sec
+
+
 func _tick_rite_response(delta: float) -> void:
+	if _reinforcement_hold_left > 0.0:
+		_reinforcement_hold_left -= delta
+		if _reinforcement_hold_left > 0.0:
+			return
+		_reinforcement_hold_left = 0.0
+		# The waves the channel asked for during the hold arrive now, one.
+		if _held_wave_requests > 0:
+			_held_wave_requests = 0
+			request_rite_wave()
 	_rite_response_left -= delta
 	if _rite_response_left > 0.0:
 		return
@@ -509,6 +530,9 @@ func _tick_rite_response(delta: float) -> void:
 func request_rite_wave() -> bool:
 	if not _rite_channel_active or not enabled:
 		return false
+	if _reinforcement_hold_left > 0.0:
+		_held_wave_requests += 1
+		return false
 	var index := mini(_rite_wave_cursor, rite_escalation.size() - 1)
 	_rite_wave_cursor += 1
 	if index >= 0:
@@ -521,7 +545,7 @@ func request_rite_wave() -> bool:
 
 
 func request_rite_reinforcement() -> bool:
-	if not _rite_channel_active or not enabled:
+	if not _rite_channel_active or not enabled or _reinforcement_hold_left > 0.0:
 		return false
 	var spawned := _spawn_next_rite_specialist()
 	if spawned:

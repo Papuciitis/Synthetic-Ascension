@@ -141,6 +141,11 @@ var _distortion_level: float = 0.0
 ## reported as one started/ended pair with the progress it cost.
 var _lapse_draining: bool = false
 var _lapse_drain_from: float = 0.0
+## Plan 2026-09-17 §6.4: after a death in the exit encounter the kept
+## progress does not drain for up to this long while the player returns;
+## re-entering the channel ends the hold, and ordinary lapse rules follow.
+const RECOVERY_DRAIN_HOLD_SECONDS := 10.0
+var _recovery_drain_hold: float = 0.0
 var _last_chance_vault: Node2D = null
 
 # Optional: lets the gate "call" extra spawns near the end of the hold.
@@ -311,6 +316,11 @@ func _process(delta: float) -> void:
 
 	if not _player_inside:
 		# Drain rather than void. See lapse_drain_rate.
+		if _recovery_drain_hold > 0.0:
+			# Returning from a reconstruction: the kept progress waits.
+			_recovery_drain_hold = maxf(0.0, _recovery_drain_hold - delta)
+			_lapse = 0.0
+			return
 		if _hold > 0.0:
 			_lapse += delta
 			if _lapse > lapse_grace:
@@ -748,6 +758,8 @@ func _on_player_life_event(_player: Node, kind: StringName) -> void:
 	# than letting the disengage timer run while the player is rebuilt.
 	if kind == &"death" and _encounter.is_active():
 		_encounter.begin_recovery()
+		if _hold > 0.0 and not _completed:
+			_recovery_drain_hold = RECOVERY_DRAIN_HOLD_SECONDS
 
 
 func _on_body_entered(b: Node) -> void:
@@ -782,6 +794,7 @@ func _on_body_entered(b: Node) -> void:
 		return
 
 	_player_inside = true
+	_recovery_drain_hold = 0.0
 	_encounter.set_channeling(true)
 	_emit_safeguard_state()
 	_report(&"channel_entered", {"safeguards": _safeguards})
