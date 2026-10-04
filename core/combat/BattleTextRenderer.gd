@@ -27,6 +27,9 @@ const MAX_ENTRIES := 96
 const RISE_SPEED := 46.0
 const LIFETIME := 0.7
 const CRIT_LIFETIME := 0.95
+const DAMAGE_COLOR := Color(0.98, 0.96, 0.92, 1.0)
+const CRIT_COLOR := Color(1.0, 0.84, 0.25, 1.0)
+const CRIT_SCALE := 1.35
 const MERGE_WINDOW := 0.35
 ## Font size of an entry at scale 1.0.
 const FONT_SIZE := 15.0
@@ -150,10 +153,18 @@ func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: in
 				_texts[i] = _format_amount(_amounts[i])
 				_positions[i] = world_pos + Vector2(0.0, -20.0)
 				_ages[i] = 0.0
+				# A crit that lands on a number still climbing used to vanish
+				# into it, white and small: the 1% event the player most wants
+				# to see. It promotes the merged number (never the reverse), and
+				# the reset age replays the crit pop.
+				if crit:
+					_colors[i] = CRIT_COLOR
+					_scales[i] = CRIT_SCALE
+					_lifetimes[i] = CRIT_LIFETIME
 				queue_redraw()
 				return
-	var color := Color(1.0, 0.84, 0.25, 1.0) if crit else Color(0.98, 0.96, 0.92, 1.0)
-	var entry_scale := 1.35 if crit else 1.0
+	var color := CRIT_COLOR if crit else DAMAGE_COLOR
+	var entry_scale := CRIT_SCALE if crit else 1.0
 	_spawn(
 		_format_amount(amount),
 		world_pos + Vector2(0.0, -20.0),

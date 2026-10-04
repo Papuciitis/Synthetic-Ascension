@@ -8,6 +8,10 @@ var _splitter: EnemySplitter = null
 
 var _last_hurt_sfx_ms: int = 0
 const HURT_SFX_COOLDOWN_MS: int = 120
+## The white hit flash re-arms per enemy at most this often (audit 2026-10-04,
+## change 5): a minigun on one target reads as a strobe at faster rates.
+var _last_flash_ms: int = -100000
+const HIT_FLASH_COOLDOWN_MS: int = 120
 
 func setup(owner: EnemyActor, drops: EnemyDrops, bomber: EnemyBomber, splitter: EnemySplitter) -> void:
 	_owner = owner
@@ -23,7 +27,7 @@ func apply_hit_ledger(ledger: HitLedger) -> void:
 	if _owner != null and is_instance_valid(_owner):
 		_owner.apply_hit_ledger(ledger)
 
-func apply_damage_feedback(applied_damage: float, _source: Node, _payload: Variant) -> void:
+func apply_damage_feedback(applied_damage: float, source: Node, payload: Variant) -> void:
 	if _owner == null or not is_instance_valid(_owner) or _owner.dead:
 		return
 
@@ -33,6 +37,29 @@ func apply_damage_feedback(applied_damage: float, _source: Node, _payload: Varia
 		_last_hurt_sfx_ms = now
 		if SfxManager != null:
 			SfxManager.play_2d(&"enemy_hurt", _owner.global_position)
+
+	# Hit confirmation: the body flashes white and every crit plus one hit in
+	# three throws a spark. Damage-over-time ticks (a status provenance, not a
+	# hit) confirm through their numbers alone.
+	if applied_damage < 0.5 or payload is BalanceProvenance or not _owner.is_inside_tree() or WorldFeedbackVfx == null:
+		return
+	var ledger := payload as HitLedger
+	if now - _last_flash_ms >= HIT_FLASH_COOLDOWN_MS:
+		_last_flash_ms = now
+		WorldFeedbackVfx.flash_hit(_owner)
+	WorldFeedbackVfx.note_enemy_hit(_owner.global_position, ledger != null and ledger.critical_hits > 0, _hit_direction(source, ledger))
+
+
+## Which way a hit travelled: the projectile's own heading when the ledger
+## has one, else away from whoever dealt it.
+func _hit_direction(source: Node, ledger: HitLedger) -> Vector2:
+	if ledger != null and ledger.direction != Vector2.ZERO:
+		return ledger.direction
+	# Validity before the cast: casting a freed source is itself an error.
+	if source == null or not is_instance_valid(source):
+		return Vector2.ZERO
+	var from := source as Node2D
+	return _owner.global_position - from.global_position if from != null else Vector2.ZERO
 
 
 func resolve_death(context: RefCounted) -> void:
