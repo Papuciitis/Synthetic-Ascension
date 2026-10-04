@@ -66,6 +66,9 @@ func _native(core: String, path: String, execute: bool = false) -> PackedStringA
 
 func _run() -> void:
 	_player = PLAYER_SCENE.instantiate()
+	# The Distortion cases land 20-30% hits back to back with no time passing;
+	# big-hit protection's post-hit grace would refuse the next one.
+	_player.set("big_hit_protection", false)
 	add_child(_player)
 	await get_tree().process_frame
 	await get_tree().process_frame
