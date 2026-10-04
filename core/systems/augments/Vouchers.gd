@@ -47,11 +47,13 @@ static func text(id: StringName) -> String:
 	return String(row.get("text", ""))
 
 
-## On the run's stage scale (follower economy audit 2026-10-04, P4): 300 at
-## the first Hub as before, then +100 a segment (Hub 2 400, Hub 5 700, Hub 10
-## 1,200). It was +50 a segment, a flat price against income that grows ~7x.
+## On the run's stage scale (follower economy audit 2026-10-04, P4): the old
+## 250 + 50/segment through the second Hub (300, 350), then +100 a segment
+## (Hub 5 650, Hub 10 1,150). +50 a segment was a flat price against income
+## that grows ~7x; the max keeps segments 1-2 exactly where they were.
 static func price(segment: int) -> int:
-	return 200 + 100 * maxi(1, segment)
+	var s := maxi(1, segment)
+	return maxi(250 + 50 * s, 150 + 100 * s)
 
 
 ## OFFER_SIZE vouchers not yet bought, a seeded shuffle of the rest.

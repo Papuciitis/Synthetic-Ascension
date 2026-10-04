@@ -292,7 +292,7 @@ func _test_services() -> void:
 	var preview := Global.transfusion_preview(&"augment_tesla_aura", &"augment_lucky_charm")
 	_check(bool(preview["ok"]) and int(preview["gain"]) == 2 and int(preview["cost"]) == 400 and int(preview["per_level"]) == 200, "the Reliquary quotes 2 levels at Hub 10 for 400, 200 a level (%s)" % str(preview))
 
-	_check(Vouchers.price(1) == 300 and Vouchers.price(2) == 400 and Vouchers.price(5) == 700 and Vouchers.price(10) == 1200, "Vouchers: 300 at Hub 1 as before, then +100 a segment")
+	_check(Vouchers.price(1) == 300 and Vouchers.price(2) == 350 and Vouchers.price(5) == 650 and Vouchers.price(10) == 1150, "Vouchers: 300 / 350 at Hubs 1-2 as before, then +100 a segment")
 	Global.attempt_segment = 2
 	_check(Global.voucher_price() == 300, "the first Hub's Voucher price is today's 300")
 
