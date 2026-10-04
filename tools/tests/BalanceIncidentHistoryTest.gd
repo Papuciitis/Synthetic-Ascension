@@ -119,6 +119,9 @@ func _runtime_checks() -> void:
 	player.max_hp = 100.0
 	player.hp = 100.0
 	player.invulnerable_time = 0.0
+	# The player's first stat pass wrote its race's Luck back into run_luck;
+	# zero it again so a Lucky evasion cannot eat the fixture's hits.
+	Global.run_luck = 0.0
 	var dir := "user://balance_incident_test_%s" % Time.get_ticks_usec()
 	recorder.report_directory = dir
 	recorder.record_headless = true

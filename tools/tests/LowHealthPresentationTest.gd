@@ -51,11 +51,13 @@ func _step(player: Node, seconds: float) -> void:
 
 func _test_body_feedback() -> void:
 	var previous_luck: float = Global.run_luck
-	Global.run_luck = 0.0
 	var player: CharacterBody2D = PLAYER_SCENE.instantiate() as CharacterBody2D
 	add_child(player)
 	await get_tree().process_frame
 	player.set_process(false)
+	# After the player's first stat pass, which writes its race's Luck: no
+	# Lucky evasion may eat the fixture's hit.
+	Global.run_luck = 0.0
 	var visual := player.get_node("Visual") as CanvasItem
 	_check(visual.modulate == Color.WHITE, "fixture: the body starts untinted")
 
