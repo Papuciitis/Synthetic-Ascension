@@ -91,9 +91,29 @@ func _dress() -> void:
 	var hint := get_node_or_null("CenterContainer/Panel/Margin/VBox/Hint") as Label
 	if hint != null:
 		hint.add_theme_color_override("font_color", ChamberKit.BODY)
+		_dress_epitaph(hint)
 	var keys := get_node_or_null("CenterContainer/Panel/Margin/VBox/Keys") as Label
 	if keys != null:
 		keys.add_theme_color_override("font_color", Color(ChamberKit.GOLD_DIM, 0.9))
+
+
+## The account that just closed (StoryDirector.closing_epitaph): its epitaph
+## replaces the standing line, and a caption under it says which account,
+## where, and how many carried it. Without one the screen reads as before.
+func _dress_epitaph(hint: Label) -> void:
+	var epitaph := StoryDirector.closing_epitaph()
+	if String(epitaph.get("text", "")) == "":
+		return
+	hint.text = String(epitaph["text"])
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	var caption := Label.new()
+	caption.name = "Account"
+	caption.text = String(epitaph.get("caption", ""))
+	caption.theme_type_variation = &"ArcaneCaption"
+	caption.add_theme_font_size_override("font_size", 15)
+	caption.add_theme_color_override("font_color", Color(ChamberKit.GOLD_DIM, 0.9))
+	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.add_sibling(caption)
 
 
 func _play() -> void:
@@ -101,11 +121,12 @@ func _play() -> void:
 	var vbox := "CenterContainer/Panel/Margin/VBox/"
 	var title := get_node_or_null(vbox + "Title") as Control
 	var hint := get_node_or_null(vbox + "Hint") as Control
+	var account := get_node_or_null(vbox + "Account") as Control
 	var rule := get_node_or_null(vbox + "Rule") as Control
 	var keys := get_node_or_null(vbox + "Keys") as Control
 	var entries: Array[Control] = [btn_restart, btn_menu, btn_quit]
 	var embers := get_node_or_null("Embers") as Control
-	for c in [title, hint, rule, keys, embers]:
+	for c in [title, hint, account, rule, keys, embers]:
 		if c != null:
 			c.modulate.a = 0.0
 	for e in entries:
@@ -126,7 +147,7 @@ func _play() -> void:
 		tw.tween_property(_glow, "modulate:a", 0.13, 0.4 if still else 2.4).set_delay(0.0 if still else 0.4)
 
 	if still:
-		for c in [title, hint, rule, keys]:
+		for c in [title, hint, account, rule, keys]:
 			if c != null:
 				tw.tween_property(c, "modulate:a", 1.0, 0.3)
 		for e in entries:
@@ -142,6 +163,8 @@ func _play() -> void:
 		tw.tween_property(title, "scale", Vector2.ONE, 2.4).set_delay(0.25).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	if hint != null:
 		tw.tween_property(hint, "modulate:a", 1.0, 0.9).set_delay(1.0)
+	if account != null:
+		tw.tween_property(account, "modulate:a", 1.0, 0.8).set_delay(1.25)
 	if rule != null:
 		rule.pivot_offset = rule.size * 0.5
 		rule.scale = Vector2(0.05, 1.0)

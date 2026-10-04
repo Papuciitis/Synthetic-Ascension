@@ -398,11 +398,12 @@ func _present_segment1_overlay(completion: bool) -> void:
 func present_reconstruction(cost: int, remaining: int) -> void:
 	if _tutorial_modals == null:
 		return
-	var mortal: String = Global.mortal_name if Global != null else "The Arcanist"
 	if remaining > 0:
+		# The body varies with the death (StoryLines.RECONSTRUCTION); the
+		# Followers lost / remaining lines are kept as they were.
 		await _tutorial_modals.present_card_and_wait(
 			"THE PATTERN COLLAPSES",
-			"Your followers preserve the sequence.\n\nTheir belief reconstructs %s at the last rewritten Wardstone.\n\nFollowers lost: %d\nFollowers remaining: %d" % [mortal, cost, remaining],
+			StoryDirector.reconstruction_body(cost, remaining),
 			"RECONSTRUCTION"
 		)
 	else:

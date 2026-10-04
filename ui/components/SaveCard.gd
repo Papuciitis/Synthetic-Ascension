@@ -199,7 +199,7 @@ func set_slot_data(slot: int, save: SaveData, unreadable: bool = false) -> void:
 		style_name = st.display_name
 
 	var segment: int = maxi(1, save.attempt_segment)
-	var route: String = "Area 1 · Segment %d — %s" % [segment, _save_status(save)] if save.attempt_active else _save_status(save)
+	var route: String = "%s — %s" % [StoryDirector.route_label(segment), _save_status(save)] if save.attempt_active else _save_status(save)
 	var gear_count: int = _equipped_count(save.attempt_inventory)
 	var bag_count: int = _bag_count(save.attempt_bag)
 	var bag_capacity: int = _bag_capacity(save.attempt_bag)
@@ -229,7 +229,9 @@ func _race_portrait(race_id: String) -> Texture2D:
 
 func _save_status(save: SaveData) -> String:
 	if not save.attempt_active:
-		return "Between attempts"
+		# Where the last account ended, once one has (StoryDirector).
+		var last_account := StoryDirector.save_card_status(save.meta_story)
+		return last_account if last_account != "" else "Between attempts"
 	var resume_path: String = save.attempt_resume_scene.to_lower()
 	if resume_path.contains("hubshop") or resume_path.contains("hubworld"):
 		return "Respite"
