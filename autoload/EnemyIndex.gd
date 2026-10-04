@@ -475,6 +475,34 @@ func update_enemy(enemy: Node) -> void:
 	_bucket_remove(old_cell, enemy)
 	_bucket_add(new_cell, enemy)
 
+## EnemyActor's per-step update (FPS audit 2026-10-04, item 3): the actor
+## passes its typed motion state and cached world handle, so the record
+## mirror (EnemyWorld.sync_actor_motion) skips sync_legacy_actor's
+## reflection and repeated handle validation. Same guards and order as
+## update_enemy; a handle the fast mirror rejects takes the reflective path.
+func update_actor(
+	enemy: Node2D,
+	handle: int,
+	motion_position: Vector2,
+	motion_velocity: Vector2,
+	knockback_velocity: Vector2,
+	knockback_decay: float,
+	stun_time: float,
+	elite: bool,
+) -> void:
+	var id := enemy.get_instance_id()
+	if not _id_to_index.has(id):
+		return
+	if not EnemyWorld.sync_actor_motion(handle, id, motion_position, motion_velocity, knockback_velocity, knockback_decay, stun_time, elite):
+		EnemyWorld.sync_legacy_actor(enemy)
+	var new_cell := _cell_for_pos(motion_position)
+	var old_cell: Vector2i = _enemy_cell.get(id, new_cell)
+	if new_cell == old_cell:
+		return
+	_enemy_cell[id] = new_cell
+	_bucket_remove(old_cell, enemy)
+	_bucket_add(new_cell, enemy)
+
 func alive_count() -> int:
 	return _ambient_count + _special_alive_total
 

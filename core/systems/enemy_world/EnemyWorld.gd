@@ -638,6 +638,55 @@ func sync_legacy_actor(actor: Node2D) -> bool:
 	return true
 
 
+## EnemyActor's per-step mirror (FPS audit 2026-10-04, item 3): the state
+## sync_legacy_actor reads by reflection, passed in as typed values, with the
+## slot validated once instead of in every setter. That path cost 15-38 us of
+## a 49-112 us enemy step. Same writes and dying guards as sync_legacy_actor,
+## minus its health copy back into the actor: EnemyCombatService already
+## mirrors health into the actor on every change it makes (_mirror_health),
+## and it is the only writer of a live actor's record health. Returns false,
+## touching nothing, unless `handle` is the live legacy record bound to the
+## actor with `actor_instance_id`; the caller then takes the reflective path.
+func sync_actor_motion(
+	handle: int,
+	actor_instance_id: int,
+	motion_position: Vector2,
+	motion_velocity: Vector2,
+	knockback_velocity: Vector2,
+	knockback_decay: float,
+	stun_time: float,
+	elite: bool,
+) -> bool:
+	var slot := int(handle & Types.SLOT_MASK) - 1
+	if (
+		handle == Types.INVALID_HANDLE
+		or slot < 0
+		or slot >= _active.size()
+		or _active[slot] == 0
+		or int(_generations[slot]) != (handle >> 32)
+	):
+		return false
+	if int(_bound_instance_ids.get(handle, 0)) != actor_instance_id or not _legacy_handles.has(handle):
+		return false
+	_previous_positions[slot] = _positions[slot]
+	_positions[slot] = motion_position
+	_grid.move(slot, motion_position)
+	_velocities[slot] = motion_velocity
+	var dying := _representations[slot] == Types.Representation.DYING
+	if not dying:
+		_knockback_velocities[slot] = knockback_velocity
+	_knockback_decays[slot] = maxf(knockback_decay, 0.0)
+	if not dying:
+		_stun_times[slot] = maxf(stun_time, 0.0)
+	var flags := int(_flags[slot])
+	var next_flags := (flags | Types.Flags.ELITE) if elite else (flags & ~Types.Flags.ELITE)
+	if next_flags != flags:
+		set_flags(handle, next_flags)
+	if not dying:
+		_representations[slot] = Types.Representation.MATERIALIZED
+	return true
+
+
 ## Writes the ELITE bit only when it changes. set_flags announces a profile
 ## change to listeners (the BalanceRecorder re-reads the enemy on each), and
 ## the per-tick sync used to announce an unchanged profile for every enemy on

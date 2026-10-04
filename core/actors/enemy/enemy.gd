@@ -736,7 +736,14 @@ func _update_enemy_index(force: bool) -> void:
 		return
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
 		_enemy_index = get_node_or_null("/root/EnemyIndex")
-	if _enemy_index != null and is_instance_valid(_enemy_index) and _enemy_index.has_method("update_enemy"):
+	if _enemy_index == null or not is_instance_valid(_enemy_index):
+		return
+	# Every step ends here. The typed state and the cached world handle let
+	# the index mirror the record without reflection (FPS audit 2026-10-04),
+	# and the autoload's own type makes this a direct call.
+	if _enemy_index == EnemyIndex:
+		EnemyIndex.update_actor(self, _enemy_world_handle, global_position, velocity, knockback_vel, knockback_decay, stun_time, is_elite)
+	elif _enemy_index.has_method("update_enemy"):
 		_enemy_index.call("update_enemy", self)
 
 
