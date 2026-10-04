@@ -160,6 +160,37 @@ func active_handles(out: Array[int]) -> void:
 		out.append(Types.make_handle(slot, int(_generations[slot])))
 
 
+## Bulk read for the representation policy (FPS audit 2026-10-04, item 2):
+## every live (not dying) record in active-slot order - the order
+## active_handles() reports - with its representation, AI kind, flags and
+## squared distance to `origin`, read straight from the slot arrays. The
+## policy made eight validated getter calls per handle before.
+func gather_representation_view(
+	origin: Vector2,
+	out_handles: Array[int],
+	out_representations: PackedInt32Array,
+	out_ai_kinds: PackedInt32Array,
+	out_flags: PackedInt64Array,
+	out_distance_squared: PackedFloat64Array,
+) -> void:
+	out_handles.clear()
+	out_representations.clear()
+	out_ai_kinds.clear()
+	out_flags.clear()
+	out_distance_squared.clear()
+	for slot_variant in _active_slots:
+		var slot := int(slot_variant)
+		var representation := int(_representations[slot])
+		if representation == Types.Representation.DYING:
+			continue
+		# Types.make_handle inlined: an active slot always has generation >= 1.
+		out_handles.append((int(_generations[slot]) << 32) | (slot + 1))
+		out_representations.append(representation)
+		out_ai_kinds.append(int(_ai_kinds[slot]))
+		out_flags.append(int(_flags[slot]))
+		out_distance_squared.append(origin.distance_squared_to(_positions[slot]))
+
+
 func get_position(handle: int) -> Vector2:
 	var slot := _slot_if_valid(handle)
 	return _positions[slot] if slot >= 0 else Vector2.ZERO
