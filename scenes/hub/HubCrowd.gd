@@ -51,19 +51,9 @@ const CROWD_ART: Array[String] = [
 	"hub_crowd_courier", "hub_crowd_clerk", "hub_crowd_baker", "hub_crowd_mender",
 ]
 
-## Short lines in the game's voice (restrained, no wallet talk).
-const CROWD_LINES: Array[String] = [
-	"No patron answered. You did.",
-	"The Pattern held. We saw it.",
-	"I read the report. Twice.",
-	"We are following the work.",
-	"The wards don't know us.",
-	"They said it couldn't be made.",
-	"Containment is still counting heads.",
-	"My sister ran supplies tonight.",
-	"Quietly. The Registry still listens.",
-]
-## Only when the Followers outgrow the square.
+## What the crowd and the staff say lives in StoryLines (CROWD and the staff
+## pools), keyed by archetype, crowd size, segment and Doctrine; this line
+## only when the Followers outgrow the square.
 const CROWD_LINE_OVERFLOW := "More of us outside than here."
 ## What the staff are called over their lines (the crowd speaks unnamed).
 const SERVICE_TITLES := {
@@ -75,29 +65,28 @@ const SPEECH_FADE_IN := 0.22
 const SPEECH_FADE_OUT := 0.4
 const SPEECH_RISE := 6.0
 
-## Service NPCs: feet in cells, stand-in race and tint, lines. They stand
+## Service NPCs: feet in cells, stand-in race and tint. They stand
 ## beside their stalls, not behind them (a 140 px stall hides a person), so
 ## each gets a footprint.
 const SERVICE: Array = [
-	{"key": "exchanger", "at": Vector2(8.7, 5.95), "race": &"human", "tint": Color(0.5, 0.56, 0.82), "solid": true,
-		"lines": ["Recovered stock. Every piece cost someone.", "The routes held. Balance the exchange.", "Trade what the work can spare."]},
-	{"key": "quartermaster", "at": Vector2(24.7, 12.3), "race": &"warforged", "tint": Color(0.62, 0.72, 0.52), "solid": true,
-		"lines": ["Your kit. Counted, nothing added.", "Only what you carry leaves here.", "Check the straps. Then the road."]},
-	{"key": "chronicler", "at": Vector2(5.2, 12.45), "race": &"elf", "tint": Color(0.88, 0.84, 0.74), "solid": true,
-		"lines": ["Sit. Nothing is asked here.", "I keep the witness accounts."]},
-	{"key": "acolyte", "at": Vector2(14.75, 13.05), "race": &"human", "tint": Color(0.34, 0.36, 0.62), "solid": true,
-		"lines": ["They believe. Spend it well.", "The Pattern grows outward from you."]},
-	{"key": "smith", "at": Vector2(21.5, 4.62), "race": &"dragonborn", "tint": Color(0.72, 0.6, 0.5), "solid": true,
-		"lines": ["Just the hearth tonight. Walk on.", "The hearth holds. So do we."]},
+	{"key": "exchanger", "at": Vector2(8.7, 5.95), "race": &"human", "tint": Color(0.5, 0.56, 0.82), "solid": true},
+	{"key": "quartermaster", "at": Vector2(24.7, 12.3), "race": &"warforged", "tint": Color(0.62, 0.72, 0.52), "solid": true},
+	{"key": "chronicler", "at": Vector2(5.2, 12.45), "race": &"elf", "tint": Color(0.88, 0.84, 0.74), "solid": true},
+	{"key": "acolyte", "at": Vector2(14.75, 13.05), "race": &"human", "tint": Color(0.34, 0.36, 0.62), "solid": true},
+	{"key": "smith", "at": Vector2(21.5, 4.62), "race": &"dragonborn", "tint": Color(0.72, 0.6, 0.5), "solid": true},
 ]
+## Seconds a staff line stays up: longer lines get longer, never shorter.
+const SERVICE_SPEECH_SECONDS := 3.4
+const SERVICE_SPEECH_PER_CHAR := 0.055
 
 var hub: HubWorld = null
 var nav := AStarGrid2D.new()
 ## Each: {"p": person, "state": "walk"|"do", "path": PackedVector2Array,
 ## "i": int, "act": String, "spot": Vector2, "look": Vector2, "t": float,
-## "wait": float, "spoke": float, "speed": float}.
+## "wait": float, "spoke": float, "speed": float, "kind": String (the
+## painted archetype, "" for a rig stand-in)}.
 var believers: Array = []
-## Each: {"p": person, "key", "lines", "at", "near": bool, "next": float}.
+## Each: {"p": person, "key", "at", "near": bool, "next": float}.
 var service: Array = []
 var beka: Node2D = null
 ## The Followers this visit is sized from (arrival, raised by any gain).
@@ -115,6 +104,9 @@ var _check_gate: float = 0.0
 var _speech: Node2D = null
 var _said: Array = []
 var _painted: Array[Texture2D] = []
+## The archetype each painted sheet shows ("pilgrim" ...), parallel to
+## _painted (only the sheets that loaded are in either).
+var _painted_kinds: Array[String] = []
 var _order: int = 0
 var _solid_bounds: Array = []
 var _plan_budget: int = PLANS_PER_FRAME
@@ -137,6 +129,7 @@ func setup(world: HubWorld, seed_value: int, arrival_followers: int) -> void:
 		var texture: Texture2D = hub._art(key)
 		if texture != null:
 			_painted.append(texture)
+			_painted_kinds.append(key.trim_prefix("hub_crowd_"))
 	_speech = Node2D.new()
 	_speech.name = "CrowdSpeech"
 	# Under the station signs and prompts: what the key does stays on top.
@@ -374,19 +367,23 @@ func _spawn_service(entry: Dictionary) -> void:
 		person.setup_rig(entry["race"], entry["tint"])
 	person.position = hub._cell(entry["at"].x, entry["at"].y)
 	hub.add_child(person)
-	service.append({"p": person, "key": entry["key"], "lines": entry["lines"], "at": person.position, "near": false, "next": 0.0})
+	service.append({"p": person, "key": entry["key"], "at": person.position, "near": false, "next": 0.0})
 
 
 func _spawn_believer(arriving: bool) -> void:
 	var person: Node2D = PERSON_SCRIPT.new()
 	person.name = "Believer_%d" % _order
+	# Who they are is what they wear: the painted sheet's archetype picks
+	# their lines; the rig stand-ins speak only the common ones.
+	var kind := ""
 	if not _painted.is_empty():
 		person.setup_painted(_painted[_order % _painted.size()], 3)
+		kind = _painted_kinds[_order % _painted_kinds.size()]
 	else:
 		person.setup_rig(CROWD_RACES[_order % CROWD_RACES.size()], CROWD_TINTS[_order % CROWD_TINTS.size()])
 	_order += 1
 	var b := {"p": person, "state": "do", "path": PackedVector2Array(), "i": 0, "act": "", "spot": Vector2.ZERO,
-		"look": Vector2.DOWN, "t": 0.0, "wait": 0.0, "spoke": -99.0, "speed": _rng.randf_range(44.0, 60.0)}
+		"look": Vector2.DOWN, "t": 0.0, "wait": 0.0, "spoke": -99.0, "speed": _rng.randf_range(44.0, 60.0), "kind": kind}
 	believers.append(b)
 	if arriving:
 		# Newcomers walk in through the south gate.
@@ -597,18 +594,22 @@ func _tick_service(s: Dictionary, feet: Vector2) -> void:
 		s["near"] = true
 		if _time >= float(s["next"]):
 			s["next"] = _time + 18.0
-			say(person, _service_line(s), 3.4, String(SERVICE_TITLES.get(s["key"], "")))
+			var line := _service_line(s)
+			if line != "":
+				say(person, line, maxf(SERVICE_SPEECH_SECONDS, line.length() * SERVICE_SPEECH_PER_CHAR), String(SERVICE_TITLES.get(s["key"], "")))
 	elif d > 170.0:
 		s["near"] = false
 
 
+## A staff member's line (StoryDirector.staff_line): the Chronicler relays
+## the last account and the Acolyte answers the Doctrine before everyday talk.
 func _service_line(s: Dictionary) -> String:
-	var lines: Array = (s["lines"] as Array).duplicate()
-	if s["key"] == "chronicler" and beka != null and beka.is_asleep_on_bed():
-		lines.append("She found the warm spot again.")
 	if s["key"] == "acolyte" and Global != null and Global.pending_big_choice:
 		return "A decision waits before the road."
-	return lines[_rng.randi() % lines.size()]
+	var aside := ""
+	if s["key"] == "chronicler" and beka != null and beka.is_asleep_on_bed():
+		aside = "She found the warm spot again."
+	return StoryDirector.staff_line(String(s["key"]), _rng, aside)
 
 
 ## Sales and refunds raise the visit's level; newcomers arrive one by one.
@@ -633,7 +634,7 @@ func _maybe_bark(feet: Vector2) -> void:
 			best = b
 	if best.is_empty():
 		return
-	var pool: Array[String] = CROWD_LINES.duplicate()
+	var pool: Array[String] = StoryDirector.crowd_pool(String(best.get("kind", "")), visit_level)
 	if CROWD_PER_DOUBLING * log(1.0 + float(visit_level) / CROWD_KNEE) / log(2.0) > float(CROWD_CAP) + 0.5:
 		pool.append(CROWD_LINE_OVERFLOW)
 		pool.append(CROWD_LINE_OVERFLOW)
