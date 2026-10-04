@@ -30,7 +30,9 @@ extends Node
 #      their slots at their floor), SIM_AUGMENTS (up to three augment ids),
 #      SIM_ABLATE (0; 1 = for every authored "pure" preset, also fight one variant
 #      per owned node with that node refunded through the real refund rule, so a
-#      node's contribution to its own authored build is measured directly)
+#      node's contribution to its own authored build is measured directly),
+#      SIM_CONGREGATION (-1 = the tier's recruited total; a number pins every
+#      job to it, e.g. 0 for the flat +15% belief of reports made before P5)
 
 const PLAYER := preload("res://core/actors/player/player.tscn")
 const SpawnState := preload("res://core/systems/enemy_world/EnemySpawnState.gd")
@@ -43,14 +45,21 @@ const FEATURE_STATUS := "res://tools/design/v4_status.json"
 ## Budget tiers: the segment the build is judged at, the Followers it may
 ## spend on the tree, the gear rank worn, and the crowd density. Budgets are
 ## laboratory choices (roughly the hoards the economy probe reports), not
-## claims about natural progression.
+## claims about natural progression. "congregation" is the Followers a run
+## has recruited on entering the segment, which sets belief's cap (follower
+## economy audit 2026-10-04, P5): the audit model's combat income for every
+## earlier segment with P1's -12% from segment 2 on (sales recruit nobody;
+## segment 11 repeats segment 10's 5,280). Caps: +15%, +20%, +26%, +30%, +30%.
 const TIERS := [
-	{"name": "seg2", "segment": 2, "budget": 3000, "gear_rank": 1},
-	{"name": "seg4", "segment": 4, "budget": 8000, "gear_rank": 3},
-	{"name": "seg6", "segment": 6, "budget": 16000, "gear_rank": 6},
-	{"name": "seg9", "segment": 9, "budget": 32000, "gear_rank": 10},
-	{"name": "seg12", "segment": 12, "budget": 64000, "gear_rank": 15},
+	{"name": "seg2", "segment": 2, "budget": 3000, "gear_rank": 1, "congregation": 150},
+	{"name": "seg4", "segment": 4, "budget": 8000, "gear_rank": 3, "congregation": 4946},
+	{"name": "seg6", "segment": 6, "budget": 16000, "gear_rank": 6, "congregation": 11546},
+	{"name": "seg9", "segment": 9, "budget": 32000, "gear_rank": 10, "congregation": 24570},
+	{"name": "seg12", "segment": 12, "budget": 64000, "gear_rank": 15, "congregation": 40058},
 ]
+## The wallet every fight holds: far above (100 x cap)^2, so belief sits on
+## its cap and the Congregation alone decides it.
+const SIM_WALLET := 100000
 ## The crowd mix by spec id: base HP, follower rewards, contact/ranged role.
 ## Values are the enemy specs' authored numbers (defaults where the spec
 ## does not override them).
@@ -105,6 +114,8 @@ var _structure := true
 var _crowd := 60
 var _durability := HP_DURABILITY
 var _ablate := false
+## SIM_CONGREGATION: -1 uses each tier's "congregation".
+var _congregation := -1
 var _tiers: Array = []
 var _player: Node = null
 var _runner: AscensionRunner = null
@@ -154,6 +165,7 @@ func _run() -> void:
 	_crowd = int(_env("SIM_CROWD", "60"))
 	_durability = float(_env("SIM_HP_MUL", str(HP_DURABILITY)))
 	_ablate = _env("SIM_ABLATE", "0") != "0"
+	_congregation = int(_env("SIM_CONGREGATION", "-1"))
 	for index in _env("SIM_TIERS", "0,1,2,3,4").split(","):
 		if not index.strip_edges().is_empty():
 			_tiers.append(int(index))
@@ -804,6 +816,14 @@ func _install(job: Dictionary) -> Dictionary:
 							break
 	Global.ascension_ledger()
 	Global.attempt_segment = int(tier.segment)
+	# Belief's cap follows the Congregation, which every proxy kill raises and
+	# only a new attempt resets, so each job pins it from its tier and holds
+	# the fight's wallet BEFORE the stat pass: the recorded Power and the fight
+	# then carry the tier's belief whatever ran earlier in the process (review
+	# 2026-10-04: rows drifted from +15% toward +30% by job order, and the
+	# first job recorded its Power on an empty wallet).
+	Global.attempt_congregation = _congregation if _congregation >= 0 else int(tier.congregation)
+	Global.set_followers(SIM_WALLET)
 	_wear_gear(job, tier)
 	var race: RaceData = Global.race_db.get("human", null)
 	var style: StyleData = Global.style_db.get(core, null)
@@ -941,6 +961,7 @@ func _simulate(job: Dictionary) -> Dictionary:
 	var pressure := _pressure(int(tier.segment))
 	var ledger := Global.ascension_ledger()
 	var row := {"name": job.name, "source": job.source, "core": core, "tier": tier.name, "segment": int(tier.segment), "budget": int(tier.budget),
+		"congregation": int(Global.attempt_congregation), "belief": Global.follower_belief_power(),
 		"job_index": int(job.job_index), "failed": installed.failed, "spent": int(installed.spent), "nodes": ledger.owned_ids(), "node_count": ledger.owned_ids().size(),
 		"ablation_of": job.get("ablation_of", ""), "ablate": job.get("ablate", ""), "removed": installed.get("removed", []),
 		"order": installed.order, "equipped": (ledger.state.get("equipped", {}) as Dictionary).duplicate(true), "gear": gear,
@@ -955,7 +976,7 @@ func _simulate(job: Dictionary) -> Dictionary:
 		row["v_casts"] = 0
 		row["frame_p95_ms"] = 0.0
 		return row
-	Global.set_followers(100000)
+	Global.set_followers(SIM_WALLET)
 	Global.attempt_deaths_this_segment = 0
 	var rng := RandomNumberGenerator.new()
 	rng.seed = _seed * 13 + int(job.get("gear_seed", job.job_index)) + int(job.get("fight_seed_offset", 0)) * 7919
