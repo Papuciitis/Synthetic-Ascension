@@ -88,7 +88,18 @@ class Driver:
 			push_warning("HordeBenchmark: spawner has no _elapsed clock; HORDE_MINUTES ignored")
 			return
 		_spawner.set("_elapsed", float(minutes) * 60.0)
-		var line := "HordeBenchmark: spawner clock set to %.1f min" % float(minutes)
+		# Since the 2026-10-04 pacing pass ambient spawns also respect the
+		# Threat Director's phase gate and the per-segment introductions
+		# (EnemySpawnTable.entry_allowed), so the clock alone draws only the
+		# recon roster. A late mix is a collapse-phase draw in a segment that
+		# has met every archetype: HORDE_SEGMENT (default 5) and collapse.
+		var segment_text := OS.get_environment("HORDE_SEGMENT").strip_edges()
+		Global.attempt_segment = int(segment_text) if segment_text.is_valid_int() and int(segment_text) > 0 else 5
+		var director := get_node_or_null("/root/ThreatDirector")
+		if director != null:
+			director.set("_last_segment", Global.attempt_segment)
+			director.call("set_segment_phase", &"collapse")
+		var line := "HordeBenchmark: spawner clock set to %.1f min (segment %d, collapse)" % [float(minutes), Global.attempt_segment]
 		print(line)
 		_report_lines.append(line)
 
