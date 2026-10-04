@@ -60,6 +60,10 @@ const CURRENT_SAVE_VERSION := 1
 # profile has reached (Grimoire.gd keys). Profile knowledge, like the
 # dossiers; it survives die-die.
 @export var meta_grimoire: Array[String] = []
+# The story layer's memory (StoryDirector): profile once-flags, accounts
+# closed, the last account and the best segment, plus this attempt's story
+# facts. One plain Dictionary so new story state never needs a migration.
+@export var meta_story: Dictionary = {}
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.

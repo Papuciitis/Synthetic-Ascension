@@ -2457,6 +2457,7 @@ func apply_save(save: SaveData) -> void:
 		var clean_key := String(grimoire_key).strip_edges()
 		if clean_key != "" and not grimoire_entries.has(clean_key):
 			grimoire_entries.append(clean_key)
+	StoryDirector.load_state(save.meta_story)
 	seen_manifestation_cards.clear()
 	for card_id in save.meta_seen_manifestation_cards:
 		var clean_card_id := String(card_id).strip_edges()
@@ -2749,6 +2750,7 @@ func write_save(save: SaveData) -> void:
 	for card_id in seen_manifestation_cards:
 		save.meta_seen_manifestation_cards.append(String(card_id))
 	save.meta_grimoire = grimoire_entries.duplicate()
+	save.meta_story = StoryDirector.state_for_save()
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen
 	save.opening_response_id = String(opening_response_id)
