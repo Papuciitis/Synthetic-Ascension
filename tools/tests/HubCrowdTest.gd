@@ -3,10 +3,10 @@ extends Node
 # The hub's people (scenes/hub/HubCrowd.gd, HubBeka.gd): the crowd follows
 # the Followers on a capped log curve, is sized on arrival and only grows
 # during a visit; nobody walks through props or idles on a station ring;
-# the service NPCs stand at their posts; Beka lives in the hub whether or
-# not she is equipped, sleeps when she ends up by her bed, follows the player
-# when she rides with the run, and petting her wins the interact key over a
-# station ring in reach.
+# a long bark stays up for its length; the service NPCs stand at their
+# posts; Beka lives in the hub whether or not she is equipped, sleeps when
+# she ends up by her bed, follows the player when she rides with the run,
+# and petting her wins the interact key over a station ring in reach.
 #
 # Run: <godot> --headless --path . res://tools/tests/HubCrowdTest.tscn
 
@@ -82,6 +82,26 @@ func _run() -> void:
 		if b["state"] == "walk" or float(b["t"]) > 0.0:
 			moved += 1
 	_check(moved == crowd.believers.size(), "everyone is walking or doing something")
+
+	# A long bark stays up as long as a staff line of its length: the story's
+	# crowd lines run to two bubble lines, and a flat 3 s faded them unread.
+	# Past Segment 4 the square says the 68-character cr_name line too.
+	var was_segment := Global.attempt_segment
+	Global.attempt_segment = 5
+	var speaker: Dictionary = crowd.believers[0]
+	var at: Vector2 = (speaker["p"] as Node2D).position
+	var long_bark: Array = []
+	for i in range(80):
+		speaker["spoke"] = -1000.0
+		crowd._bark_gate = 0.0
+		crowd._maybe_bark(at)
+		var said: Array = crowd._said[crowd._said.size() - 1]
+		if String(said[1]).length() * CROWD.SERVICE_SPEECH_PER_CHAR > CROWD.CROWD_SPEECH_SECONDS:
+			long_bark = said
+			break
+	Global.attempt_segment = was_segment
+	_check(not long_bark.is_empty() and is_equal_approx(float(long_bark[3]), String(long_bark[1]).length() * CROWD.SERVICE_SPEECH_PER_CHAR), "a long bark stays up for its length (%s: %.2f s)" % [String(long_bark[1]) if not long_bark.is_empty() else "none drawn", float(long_bark[3]) if not long_bark.is_empty() else 0.0])
+	crowd._said.clear()
 
 	# Spending never removes anyone mid-visit; gains bring newcomers, capped.
 	Global.followers = 100

@@ -78,6 +78,10 @@ const SERVICE: Array = [
 ## Seconds a staff line stays up: longer lines get longer, never shorter.
 const SERVICE_SPEECH_SECONDS := 3.4
 const SERVICE_SPEECH_PER_CHAR := 0.055
+## A believer's bark: a shorter floor at the same reading rate. A flat 3 s
+## suited the old short lines; the story's run to two bubble lines and faded
+## before they could be read (story review 2026-10-04).
+const CROWD_SPEECH_SECONDS := 3.0
 
 var hub: HubWorld = null
 var nav := AStarGrid2D.new()
@@ -654,7 +658,7 @@ func _maybe_bark(feet: Vector2) -> void:
 	_bark_gate = _time + 7.0
 	if best["state"] == "do":
 		(best["p"] as Node2D).face_towards(feet)
-	say(best["p"], text, 3.0)
+	say(best["p"], text, maxf(CROWD_SPEECH_SECONDS, text.length() * SERVICE_SPEECH_PER_CHAR))
 
 
 # ---------------------------------------------------------------- speech
