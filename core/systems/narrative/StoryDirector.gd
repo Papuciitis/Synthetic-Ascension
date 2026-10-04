@@ -338,7 +338,11 @@ static func note_hub_arrival() -> void:
 
 
 ## Records that progress reached (polled by the presenters; cheap).
-static func note_progress() -> void:
+## `segment` is the one being played (StorySegmentPresenter): the depth
+## records ("reach Segment VIII") wait for it. The square passes none, since
+## there Global.attempt_segment already names a segment not yet played, and
+## those records unlocked one hub early (story review 2026-10-04).
+static func note_progress(segment: int = 0) -> void:
 	if Global == null:
 		return
 	var milestones := {"admitted": ["registry"], "synthesis": ["synthesis"], "first_confrontation": ["containment"],
@@ -350,12 +354,11 @@ static func note_progress() -> void:
 	for stage in ["method", "doctrine", "apotheosis"]:
 		if Global.attempt_doctrine_stage_ids.has(stage) or Global.attempt_doctrine_stage_ids.has(StringName(stage)):
 			note_record(stage)
-	var seg := Global.attempt_segment
-	if seg >= 8:
+	if segment >= 8:
 		note_record("garrison")
-	if seg >= 9:
+	if segment >= 9:
 		note_record("wall")
-	if seg > _final_segment():
+	if segment > _final_segment():
 		note_record("beyond")
 
 

@@ -34,7 +34,7 @@ func _process(delta: float) -> void:
 	_poll -= delta
 	if _poll <= 0.0:
 		_poll = POLL_SECONDS
-		StoryDirector.note_progress()
+		StoryDirector.note_progress(segment)
 		if not _busy and _run_is_playable():
 			_tip_pending()
 	if not _arrived and not _busy and _played >= ARRIVAL_DELAY and _run_is_playable():

@@ -65,6 +65,7 @@ func _run() -> void:
 	_test_older_profile()
 	_test_completed_segment_keys()
 	_test_flags_saved()
+	_test_depth_records()
 	_test_arrivals()
 	_test_bren()
 	_test_reconstruction()
@@ -358,6 +359,29 @@ func _test_flags_saved() -> void:
 	_check(_marks_dirty(func() -> void: StoryDirector.staff_line("chronicler", _rng(8))) and (StoryDirector.state["acc_flags"] as Array).has("chr_account"), "and so does the relay of the last account (an account flag)")
 	_fresh(10, 55)
 	_check(_marks_dirty(func() -> void: StoryDirector.chapter_close_card(10)) and StoryDirector.has_flag("chapter:1"), "the Area I card's first-time flag is saved once it is shown")
+
+
+## The depth records ("reach Segment VIII / IX / XI") come from the segment
+## being played, never from the square, where the counter already names the
+## next segment.
+func _test_depth_records() -> void:
+	StoryDirector.load_state({})
+	for key in ["record:garrison", "record:wall", "record:beyond"]:
+		Global.grimoire_entries.erase(key)
+	_fresh(8, 5)
+	StoryDirector.note_progress()
+	_check(not Global.grimoire_has("record:garrison"), "the square after Segment VII has not reached Segment VIII")
+	var game := Node.new()
+	add_child(game)
+	var presenter := StoryDirector.attach_segment(game, 8)
+	presenter.call("_process", 0.1)
+	game.free()
+	_check(Global.grimoire_has("record:garrison") and not Global.grimoire_has("record:wall"), "Segment VIII's own presenter notes it")
+	_fresh(11, 5)
+	StoryDirector.note_progress()
+	_check(not Global.grimoire_has("record:wall") and not Global.grimoire_has("record:beyond"), "nor has the square after Segment X gone past the wall")
+	StoryDirector.note_progress(11)
+	_check(Global.grimoire_has("record:wall") and Global.grimoire_has("record:beyond"), "Segment XI has")
 
 
 func _test_arrivals() -> void:
