@@ -358,6 +358,12 @@ static func _blank_map() -> Image:
 static func noise_texture() -> ImageTexture:
 	if _noise_texture != null:
 		return _noise_texture
+	_noise_texture = ImageTexture.create_from_image(noise_image())
+	return _noise_texture
+
+
+## The noise texture's RGBA8 image, built from scratch (noise_texture caches).
+static func noise_image() -> Image:
 	var specs := [
 		[9173, 1.0 / 20.0, 2],
 		[9304, 1.0 / 20.0, 2],
@@ -375,14 +381,28 @@ static func noise_texture() -> ImageTexture:
 		channels.append(noise.get_seamless_image(NOISE_PX, NOISE_PX))
 	var data := PackedByteArray()
 	data.resize(NOISE_PX * NOISE_PX * 4)
-	for y in NOISE_PX:
-		for x in NOISE_PX:
-			var i := (y * NOISE_PX + x) * 4
-			for channel in 4:
-				data[i + channel] = channels[channel].get_pixel(x, y).r8
-	var image := Image.create_from_data(NOISE_PX, NOISE_PX, false, Image.FORMAT_RGBA8, data)
-	_noise_texture = ImageTexture.create_from_image(image)
-	return _noise_texture
+	# get_seamless_image returns L8 planes: interleave their bytes directly.
+	# The old per-pixel get_pixel(x, y).r8 loop (65,536 calls, the same
+	# bytes) was most of a 160 ms first use (FPS audit 2026-10-04).
+	var planes: Array[PackedByteArray] = []
+	for channel_image in channels:
+		if channel_image.get_format() != Image.FORMAT_L8 or channel_image.has_mipmaps() or channel_image.get_width() != NOISE_PX or channel_image.get_height() != NOISE_PX:
+			planes.clear()
+			break
+		planes.append(channel_image.get_data())
+	if planes.size() == 4:
+		var pixel_count := NOISE_PX * NOISE_PX
+		for channel in 4:
+			var plane := planes[channel]
+			for i in pixel_count:
+				data[i * 4 + channel] = plane[i]
+	else:
+		for y in NOISE_PX:
+			for x in NOISE_PX:
+				var i := (y * NOISE_PX + x) * 4
+				for channel in 4:
+					data[i + channel] = channels[channel].get_pixel(x, y).r8
+	return Image.create_from_data(NOISE_PX, NOISE_PX, false, Image.FORMAT_RGBA8, data)
 
 
 static func release_static_caches() -> void:

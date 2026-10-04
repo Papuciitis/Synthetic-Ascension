@@ -154,6 +154,7 @@ var _fallback_terrain: StringName = &"grass"
 var _site_mgr: SiteManager = null
 var _content_gen: ChunkGenImpl = null
 var _tile_renderer: ChunkTileRenderer = null
+var _decal_tiles_warmed := false
 var _block_renderer: ChunkBlockRenderer = null
 var _ground_splat: GroundSplatRenderer = null
 ## Local cells of the building being spawned whose walls stand INSIDE its
@@ -300,6 +301,9 @@ func _warm_ground_textures_for_plan() -> void:
 	_WORLD_ART.warm_ground_textures(indices)
 	if ground_splat_enabled:
 		_WORLD_ART.ground_material_array()
+		# The splat shader's noise (built once per session) cost 160 ms inside
+		# the first segment-2 chunk activation (FPS audit 2026-10-04).
+		GroundSplatRenderer.noise_texture()
 
 
 func start_streaming(player_position: Vector2) -> void:
@@ -778,9 +782,12 @@ func _add_decals(chunk: Node2D, rng: RandomNumberGenerator) -> void:
 		if tiled_world_rendering:
 			_ensure_tile_renderer()
 			if _tile_renderer != null:
-				_tile_renderer.paint_transformed_texture(
+				# One prebuilt source per decal texture: the alpha snaps to a
+				# few levels, the orientation is a cell transform (FPS audit
+				# 2026-10-04; see ChunkTileRenderer.paint_decal).
+				_tile_renderer.paint_decal(
 					chunk, &"decal", Vector2i(cx, cy), texture, -90,
-					quarter_turns, flip_h, flip_v, Color(1, 1, 1, alpha)
+					quarter_turns, flip_h, flip_v, alpha
 				)
 			continue
 		var spr := Sprite2D.new()
@@ -1288,6 +1295,17 @@ func _ensure_tile_renderer() -> void:
 	if _tile_renderer != null:
 		_tile_renderer.enabled = tiled_world_rendering
 		_tile_renderer.configure_host(self, cell_size_px)
+		if tiled_world_rendering and decals_enabled and not _decal_tiles_warmed:
+			_warm_decal_tiles()
+
+
+## Builds every decal's tile source once, when tiled rendering is switched on
+## during the segment build (behind the loading scrim), instead of inside the
+## chunk activation that first paints each one.
+func _warm_decal_tiles() -> void:
+	_decal_tiles_warmed = true
+	for index in range(_WORLD_ART.decal_texture_count()):
+		_tile_renderer.warm_decal(_WORLD_ART.decal_texture(index))
 
 
 func _prepare_chunk_rendering(chunk: Node2D, _coord: Vector2i) -> void:
