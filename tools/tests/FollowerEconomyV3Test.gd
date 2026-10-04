@@ -62,6 +62,7 @@ func _run() -> void:
 	_test_rank_downgrades()
 	_test_recorder()
 	await _test_consecrate()
+	await _test_consecrate_cap()
 	print("FollowerEconomyV3Test: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -646,6 +647,61 @@ func _test_consecrate() -> void:
 	await get_tree().process_frame
 	button = select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
 	_check(button != null and button.disabled, "CONSECRATE is disabled when no card can rise")
+	select.queue_free()
+	await get_tree().process_frame
+	Global.pending_augment_pick = false
+
+
+## The Binding screen with `offer` pending, opened as the player sees it.
+func _open_binding_select() -> CanvasLayer:
+	var select := SELECT_SCENE.instantiate() as CanvasLayer
+	add_child(select)
+	select.call("open_choose_3")
+	await get_tree().process_frame
+	return select
+
+
+func _table_card(select: CanvasLayer, id: StringName) -> Node:
+	for card in select.get_node("Center/VBox/CardsPanel/CardsMargin/Cards").get_children():
+		if String((card.get("card_entry") as Dictionary).get("id", "")) == String(id) and not card.is_queued_for_deletion():
+			return card
+	return null
+
+
+## A grade only adds levels and nothing passes Lv.20, so a card that already
+## reaches the cap cannot be Consecrated (review 2026-10-04: it was charged
+## and announced as raised while the augment stayed where it was).
+func _test_consecrate_cap() -> void:
+	_pending_binding([{"kind": "rank", "id": String(TESLA), "grade": 0}, {"kind": "rank", "id": String(MISSILE), "grade": 1}])
+	Global.attempt_augment_levels = {String(TESLA): 20, String(MISSILE): 17}
+	Global.set_followers(10000)
+	_check(not Global.binding_can_consecrate(0), "a RANK card for an augment at Lv.20 cannot be Consecrated")
+	_check(not Global.binding_consecrate(0) and Global.followers == 10000 and int(Global.attempt_binding_offer[0]["grade"]) == 0, "and asking anyway charges nothing")
+	_check(Global.binding_can_consecrate(1), "a Gilded card at Lv.17 (to 19) can still rise: Sanctified reaches 20")
+	_check(Global.binding_consecrate(1) and int(Global.attempt_binding_offer[1]["grade"]) == 2, "fixture: it rises to Sanctified")
+	_check(not Global.binding_can_consecrate(1), "then Apocryphal would add nothing past Lv.20, so it stops there")
+	var select: CanvasLayer = await _open_binding_select()
+	var button := select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	_check(button != null and button.disabled and button.text == "CONSECRATE  ·  NO CARD CAN RISE", "a table with nothing left to raise says so on the button (%s)" % (button.text if button != null else "missing"))
+	select.queue_free()
+	await get_tree().process_frame
+
+	# Armed, a click on the capped card is refused and explained.
+	_pending_binding([{"kind": "rank", "id": String(TESLA), "grade": 0}, {"kind": "rank", "id": String(MISSILE), "grade": 0}])
+	Global.attempt_augment_levels = {String(TESLA): 20, String(MISSILE): 3}
+	Global.set_followers(10000)
+	select = await _open_binding_select()
+	button = select.get_node_or_null("Center/VBox/BindingFooter/Consecrate") as Button
+	_check(button != null and not button.disabled and button.text == "CONSECRATE  ·  450 FOLLOWERS", "one raisable card keeps CONSECRATE open (%s)" % (button.text if button != null else "missing"))
+	if button != null:
+		button.emit_signal("pressed")
+	var tesla_card := _table_card(select, TESLA)
+	if tesla_card != null:
+		tesla_card.emit_signal("pressed")
+	await get_tree().process_frame
+	var status := select.get_node_or_null("Center/VBox/BindingStatus") as Label
+	_check(Global.followers == 10000 and int(Global.attempt_binding_offer[0]["grade"]) == 0, "clicking the capped card while armed raises nothing and charges nothing")
+	_check(status != null and status.visible and status.text == "THAT CARD ALREADY REACHES LV.20: A HIGHER GRADE ADDS NOTHING", "and the status line says why (%s)" % (status.text if status != null else "missing"))
 	select.queue_free()
 	await get_tree().process_frame
 	Global.pending_augment_pick = false

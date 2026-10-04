@@ -128,6 +128,19 @@ static func can_consecrate_card(card: Dictionary) -> bool:
 	return grade >= 0 and grade < AugmentScaling.GRADE_COUNT - 1
 
 
+## Whether one more grade on `card` changes what it resolves to for an
+## augment whose stored run level is `current`. A grade only adds levels and
+## AugmentBinding.resulting_level clamps them at Lv.20, so a card that
+## already reaches the cap gains nothing (review 2026-10-04: such a card was
+## Consecrated, charged and announced as raised).
+static func consecrate_adds_level(card: Dictionary, current: int) -> bool:
+	if not can_consecrate_card(card):
+		return false
+	var raised := card.duplicate()
+	raised["grade"] = int(card["grade"]) + 1
+	return AugmentBinding.resulting_level(raised, current) > AugmentBinding.resulting_level(card, current)
+
+
 ## The offer with card `index` one grade higher; every other card as dealt.
 static func consecrated_offer(offer: Array, index: int) -> Array:
 	var out: Array = []

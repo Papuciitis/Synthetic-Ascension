@@ -1306,12 +1306,17 @@ func binding_consecrate_cost() -> int:
 
 
 ## Whether card `index` of the pending Binding can be Consecrated: from the
-## second Binding on (like Recast), and only a graded card below Apocryphal.
+## second Binding on (like Recast), and only a graded card below Apocryphal
+## whose next grade still adds a level under the Lv.20 cap (review
+## 2026-10-04: a capped augment's RANK card was charged for nothing).
 func binding_can_consecrate(index: int) -> bool:
 	if not pending_augment_pick or not binding_can_trade():
 		return false
 	var offer := binding_offer()
-	return index >= 0 and index < offer.size() and AugmentRites.can_consecrate_card(offer[index])
+	if index < 0 or index >= offer.size():
+		return false
+	var card: Dictionary = offer[index]
+	return AugmentRites.consecrate_adds_level(card, get_augment_level(StringName(String(card.get("id", "")))))
 
 
 ## Consecrate: pays Followers to raise card `index` one grade, the paid

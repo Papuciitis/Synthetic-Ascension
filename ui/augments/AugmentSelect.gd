@@ -412,10 +412,17 @@ func _refresh_binding_ui() -> void:
 	_recast_button.tooltip_text = "Deals new cards; this Binding's Consecrations do not carry over." if Global.attempt_binding_consecrations > 0 else ""
 	var consecrate_cost := Global.binding_consecrate_cost()
 	var can_rise := _consecrate_candidates() > 0
-	_consecrate_button.text = "CHOOSE A CARD  ·  %d" % consecrate_cost if _consecrate_armed else "CONSECRATE  ·  %d FOLLOWERS" % consecrate_cost
+	# Said on the button, not only in a tooltip: a table of Apocryphal, rule
+	# or capped cards has nothing to sell (review 2026-10-04).
+	if not can_rise:
+		_consecrate_button.text = "CONSECRATE  ·  NO CARD CAN RISE"
+	elif _consecrate_armed:
+		_consecrate_button.text = "CHOOSE A CARD  ·  %d" % consecrate_cost
+	else:
+		_consecrate_button.text = "CONSECRATE  ·  %d FOLLOWERS" % consecrate_cost
 	_consecrate_button.disabled = _locked or not can_rise or Global.followers < consecrate_cost
 	if not can_rise:
-		_consecrate_button.tooltip_text = "No card can rise a grade."
+		_consecrate_button.tooltip_text = "No card here gains a level from a higher grade: Apocryphal and rule cards cannot rise, and nothing passes Lv.%d." % AugmentScaling.MAX_LEVEL
 	else:
 		_consecrate_button.tooltip_text = "Raise one graded card a grade. Each Consecration this Binding costs %d more." % AugmentRites.consecrate_cost(Global.binding_segment(), 0)
 	var reward := Global.binding_abstain_reward()
@@ -506,13 +513,14 @@ func _disarm_consecrate() -> void:
 		_show_status("")
 
 
-## How many of the dealt cards a Consecration could raise.
+## How many of the dealt cards a Consecration could raise, by Global's rule:
+## a card whose next grade the Lv.20 cap would swallow is not one.
 func _consecrate_candidates() -> int:
 	if not Global.pending_augment_pick:
 		return 0
 	var count := 0
-	for card in Global.binding_offer():
-		if AugmentRites.can_consecrate_card(card):
+	for i in range(Global.binding_offer().size()):
+		if Global.binding_can_consecrate(i):
 			count += 1
 	return count
 
@@ -530,7 +538,8 @@ func _consecrate_card(card_node: Control) -> void:
 	if card_node != null and is_instance_valid(card_node) and card_node.has_method("release_pick"):
 		card_node.call("release_pick")
 	if index < 0 or not Global.binding_can_consecrate(index):
-		_show_status("THAT CARD CANNOT RISE A GRADE", OverlayKit.GOLD_BRIGHT)
+		var capped := index >= 0 and AugmentRites.can_consecrate_card(offer[index])
+		_show_status("THAT CARD ALREADY REACHES LV.%d: A HIGHER GRADE ADDS NOTHING" % AugmentScaling.MAX_LEVEL if capped else "THAT CARD CANNOT RISE A GRADE", OverlayKit.GOLD_BRIGHT)
 		return
 	if not Global.binding_consecrate(index):
 		_show_status("NOT ENOUGH FOLLOWERS", OverlayKit.GOLD_BRIGHT)
