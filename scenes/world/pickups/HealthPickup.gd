@@ -74,6 +74,10 @@ func _magnet(delta: float) -> void:
 	var maximum_hp: float = float(_player_ref.get("max_hp"))
 	if maximum_hp <= 0.0 or float(_player_ref.get("hp")) >= maximum_hp - 0.001:
 		return
+	# Sealed healing: stay put rather than trail the player and sit under them.
+	if _healing_blocked(_player_ref):
+		_magnet_cooldown = MAGNET_IDLE_POLL_SEC
+		return
 	var distance: float = global_position.distance_to(_player_ref.global_position)
 	if distance > MAGNET_RADIUS:
 		if distance > MAGNET_IDLE_DISTANCE:
@@ -121,6 +125,11 @@ func _try_pickup(candidate: Node) -> void:
 	var current_hp: float = float(player.get("hp"))
 	if maximum_hp <= 0.0 or current_hp >= maximum_hp - 0.001:
 		return
+	# A healing lock refuses the heal, so the pickup stays in the world for
+	# after the seal instead of being eaten for nothing (audit 2026-10-04).
+	# The magnet's close-range retry picks it up once the lock lifts.
+	if _healing_blocked(player):
+		return
 
 	_picked = true
 	set_deferred("monitoring", false)
@@ -131,6 +140,11 @@ func _try_pickup(candidate: Node) -> void:
 	if sfx != null:
 		sfx.call("play_2d", &"pickup", global_position)
 	queue_free()
+
+
+## The pickup heals through player.heal() with its default source.
+func _healing_blocked(player: Node) -> bool:
+	return player.has_method("is_healing_blocked") and bool(player.call("is_healing_blocked", &"generic"))
 
 
 func _on_area_entered(other: Area2D) -> void:

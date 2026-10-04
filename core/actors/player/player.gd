@@ -2070,6 +2070,13 @@ func healing_locked_seconds() -> float:
 	return _healing_lock_left
 
 
+## Whether a heal from `source` would be refused right now (the lock, minus
+## its exemptions). A health pickup asks before it is consumed: it used to be
+## eaten during a lock and heal nothing.
+func is_healing_blocked(source: StringName = &"generic") -> bool:
+	return _healing_lock_left > 0.0 and not healing_lock_exempt_sources.has(source)
+
+
 func _on_healing_lock_expired() -> void:
 	var reason: StringName = _healing_lock_reason
 	_healing_lock_reason = &""
