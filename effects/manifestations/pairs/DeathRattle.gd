@@ -173,6 +173,14 @@ func _arm_hold() -> void:
 		return
 	if state.wound_tier() < WOUNDED_TIER:
 		return
+	# Hold to Attack (2026-10-04): a held trigger re-fires at the weapon's own
+	# cadence, always inside the resolve window. That is not the panic-firing
+	# this pair sells, and billing it would drain a wounded player 5% of max
+	# HP every third shot for holding the default fire button. A fresh press
+	# still arms, so mashing is priced exactly as before; a beat a held
+	# trigger reaches early is simply forfeited, as it would be without the pair.
+	if _fired_by_held_trigger():
+		return
 	# on_attack runs after the shared counter advanced for this shot, so the next
 	# shot is the empowered beat exactly when the counter now sits on the last
 	# beat of the cycle.
@@ -188,6 +196,14 @@ func _arm_hold() -> void:
 		return
 	state.time_since_attack = HELD_SECONDS
 	_hold_armed = true
+
+
+## The player flags an attack fired by a held button while it resolves
+## (player.native_attack_repeated). Anything else reads false.
+func _fired_by_held_trigger() -> bool:
+	if player == null or not is_instance_valid(player):
+		return false
+	return player.get("native_attack_repeated") == true
 
 
 func _pay_for_the_beat() -> void:

@@ -31,6 +31,11 @@ static func defaults() -> Dictionary:
 		&"controls": {
 			&"controller_deadzone": 0.2,
 			&"bindings": {},
+			# Holding the attack button keeps firing at the weapon's own
+			# cadence. The only human capture averaged 2.4 attacks/s against a
+			# cap of ~8/s: the click rate, not the build, set the damage
+			# (audit 2026-10-04, change 3). Off restores click-per-shot.
+			&"hold_to_attack": true,
 		},
 		&"accessibility": {
 			&"ui_scale": 1.0,
@@ -73,6 +78,7 @@ static func normalize(raw: Dictionary) -> Dictionary:
 	result[&"video"][&"frame_limit"] = frame_limit if frame_limit in FRAME_LIMITS else 0
 
 	result[&"controls"][&"controller_deadzone"] = clampf(float(result[&"controls"][&"controller_deadzone"]), 0.1, 0.9)
+	result[&"controls"][&"hold_to_attack"] = bool(result[&"controls"][&"hold_to_attack"])
 	if not result[&"controls"][&"bindings"] is Dictionary:
 		result[&"controls"][&"bindings"] = {}
 	else:

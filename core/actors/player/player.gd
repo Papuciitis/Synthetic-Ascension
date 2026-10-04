@@ -86,6 +86,13 @@ var hp: float = 100.0
 var spawn_pos: Vector2
 
 var _weapon_cd: float = 0.0
+## True only while a native attack fired by a HELD button (Hold to Attack) is
+## resolving, false for a fresh press and for attacks fired by any other caller.
+## A cadence rule that bills for panic-firing (Death Rattle) reads it: a held
+## trigger re-fires at the weapon's own cadence, which is not the mashing that
+## rule prices.
+var native_attack_repeated: bool = false
+var _alt_hold_retry: float = 0.0
 
 # sustain runtime
 var _melee_regen_block_left: float = 0.0
@@ -246,15 +253,71 @@ func _process(delta: float) -> void:
 		else:
 			print("[SETS] counts = ", Global.run_inventory.get_set_counts())
 
-	if not _cinematic_attack_locked and Input.is_action_just_pressed("attack"):
-		_fire_weapon(_current_aim_target())
+	if not _cinematic_attack_locked:
+		_read_attack_input(delta)
 
-	if not _cinematic_attack_locked and Input.is_action_just_pressed("alt_attack"):
-		if spell_caster != null:
-			spell_caster.cast_all_manual()
-			
 	_update_lifesteal_budget(delta)
 	_update_melee_sustain(delta)
+
+## Hold to Attack (controls.hold_to_attack, on by default): a held button fires
+## again as soon as the weapon is ready instead of once per press. The only
+## human capture averaged 2.4 attacks/s against a haste cap of ~8/s, so the
+## click rate, not the build, was setting the damage (audit 2026-10-04,
+## change 3). The weapon's own cooldown stays the cadence: the held path does
+## not call _fire_weapon until _weapon_cd has run out, so holding never fires
+## per frame and pays nothing between shots. A fresh press goes through
+## _fire_weapon exactly as before (its gate refuses a press on cooldown).
+const ALT_HOLD_RETRY := 0.12
+
+
+func _read_attack_input(delta: float) -> void:
+	_step_attack_input(
+		Input.is_action_just_pressed("attack"),
+		Input.is_action_pressed("attack"),
+		Input.is_action_just_pressed("alt_attack"),
+		Input.is_action_pressed("alt_attack"),
+		delta,
+	)
+
+
+## One frame of attack input, split from the Input reads so a suite can drive
+## a held button frame by frame.
+func _step_attack_input(pressed: bool, held: bool, alt_pressed: bool, alt_held: bool, delta: float) -> void:
+	var hold := hold_to_attack_enabled()
+	# A style with no cooldown (none ships one) would fire every frame while
+	# held, so only a real cooldown gets the held repeat.
+	var repeat := not pressed and hold and held and _weapon_cd <= 0.0 and _native_style_cooldown() > 0.0
+	if pressed or repeat:
+		native_attack_repeated = repeat
+		_fire_weapon(_current_aim_target())
+		native_attack_repeated = false
+	if spell_caster == null:
+		return
+	_alt_hold_retry = maxf(_alt_hold_retry - delta, 0.0)
+	if alt_pressed:
+		_alt_hold_retry = ALT_HOLD_RETRY
+		spell_caster.cast_all_manual()
+	elif hold and alt_held and _alt_hold_retry <= 0.0:
+		# Spells keep their own cooldowns; the retry interval only stops a
+		# spell with no valid target from searching again every frame.
+		_alt_hold_retry = ALT_HOLD_RETRY
+		spell_caster.cast_all_manual()
+
+
+func hold_to_attack_enabled() -> bool:
+	if SettingsManager == null:
+		return true
+	return bool(SettingsManager.get_value(&"controls", &"hold_to_attack", true))
+
+
+func _native_style_cooldown() -> float:
+	match str(Global.selected_style_id):
+		"melee":
+			return melee_cooldown
+		"magic":
+			return magic_cooldown
+	return ranged_cooldown
+
 
 func _unhandled_input(event) -> void:
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F7:
@@ -819,13 +882,7 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 	if Global != null:
 		power_mul *= maxf(0.0, float(Global.get_doctrine_rule(&"native_damage_mul", 1.0)))
 
-	var cd: float = 0.0
-	if style_id == "melee":
-		cd = melee_cooldown
-	elif style_id == "magic":
-		cd = magic_cooldown
-	else:
-		cd = ranged_cooldown
+	var cd: float = _native_style_cooldown()
 
 	if cd > 0.0 and _weapon_cd > 0.0:
 		return

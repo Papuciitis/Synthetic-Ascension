@@ -310,6 +310,12 @@ func _build_controls() -> void:
 	deadzone.value = float(_value(&"controls", &"controller_deadzone", 0.2))
 	deadzone.value_changed.connect(func(value: float) -> void: _settings_source.call("set_value", &"controls", &"controller_deadzone", value))
 	_add_control_row("Controller Deadzone", deadzone)
+	var hold := CheckBox.new()
+	hold.text = "Keep attacking while the attack button is held"
+	hold.tooltip_text = "On: holding Primary or Secondary Attack fires again as soon as the weapon is ready. Off: one attack per press."
+	hold.button_pressed = bool(_value(&"controls", &"hold_to_attack", true))
+	hold.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"controls", &"hold_to_attack", on))
+	_add_control_row("Hold to Attack", hold)
 	# The header shares BindingRow's geometry so each title sits over its cells.
 	var header := HBoxContainer.new()
 	header.add_theme_constant_override("separation", SettingsBindingRow.SEPARATION)
