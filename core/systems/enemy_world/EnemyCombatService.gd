@@ -192,21 +192,20 @@ func _finalize_proxy_death(handle: int) -> void:
 	var cold := _world.get_cold_state(handle)
 	var reward_min := int(cold.get("follower_reward_min", 1))
 	var reward_max := maxi(reward_min, int(cold.get("follower_reward_max", reward_min)))
-	var reward: int = Global._rng.randi_range(reward_min, reward_max)
-	if (_world.get_flags(handle) & EnemyWorldTypes.Flags.ELITE) != 0:
-		reward += int(cold.get("elite_follower_bonus", 0))
-	# Luck: mirrors the node-side kill path in EnemyLifecycle.
-	if reward > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
-		reward += 1
-	# Cult of Personality / Prophet and Census of Souls: mirrors the
-	# node-side kill path through the one shared helper.
-	if reward > 0:
-		reward += Global.bonus_kill_followers()
-	# Overtime devalues belief, exactly as it does on the node-side kill path.
-	if reward > 0:
-		var threat_director := get_node_or_null("/root/ThreatDirector")
-		if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
-			reward = maxi(1, int(round(float(reward) * float(threat_director.call("overtime_reward_multiplier")))))
+	# One settlement for both kill paths (Global.settle_kill_reward, follower
+	# economy audit P1): authored zeros pay 0, and Overtime devalues belief as
+	# a fraction with a carry, exactly as on the node-side path.
+	var overtime_multiplier := 1.0
+	var threat_director := get_node_or_null("/root/ThreatDirector")
+	if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
+		overtime_multiplier = float(threat_director.call("overtime_reward_multiplier"))
+	var reward: int = Global.settle_kill_reward(
+		reward_min,
+		reward_max,
+		int(cold.get("elite_follower_bonus", 0)),
+		(_world.get_flags(handle) & EnemyWorldTypes.Flags.ELITE) != 0,
+		overtime_multiplier,
+	)
 	if reward > 0 and Global != null:
 		Global.transaction_followers(
 			reward,

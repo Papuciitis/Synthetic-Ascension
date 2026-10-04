@@ -86,29 +86,24 @@ func resolve_death(context: RefCounted) -> void:
 
 	RunEvents.enemy_killed.emit(p, _owner, _owner.global_position)
 
-	# followers reward
-	var gain: int = 1
-	if _owner.spec != null:
-		gain = Global._rng.randi_range(_owner.spec.follower_reward_min, _owner.spec.follower_reward_max)
-		if _owner.is_elite:
-			gain += _owner.spec.elite_follower_bonus
-	# Luck: witnesses of a lucky kill are extra impressed (mirrors the
-	# proxy-death path in EnemyCombatService).
-	if gain > 0 and Global._rng.randf() < LuckResolver.extra_follower_chance(Global.run_luck):
-		gain += 1
-	# Cult of Personality (Prophet once Transcended) and Census of Souls:
-	# violence as recruitment seminar. One helper for both kill paths.
-	if gain > 0:
-		gain += Global.bonus_kill_followers()
-
-	# Belief earned during Overtime is worth less the longer you refuse to
-	# leave. See ThreatDirector.overtime_reward_multiplier().
+	# Followers reward: one settlement for both kill paths (mirrors the
+	# proxy-death path in EnemyCombatService). An enemy authored at 0 pays 0,
+	# and belief earned during Overtime is worth less the longer you refuse
+	# to leave, settled as a fraction rather than floored at 1 (follower
+	# economy audit P1; ThreatDirector.overtime_reward_multiplier()).
 	var threat_director: Node = null
 	if _owner != null and is_instance_valid(_owner) and _owner.is_inside_tree():
 		threat_director = _owner.get_node_or_null("/root/ThreatDirector")
+	var overtime_multiplier := 1.0
 	if threat_director != null and threat_director.has_method("overtime_reward_multiplier"):
-		gain = maxi(1, int(round(float(gain) * float(threat_director.call("overtime_reward_multiplier")))))
-	Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
+		overtime_multiplier = float(threat_director.call("overtime_reward_multiplier"))
+	var gain: int = 0
+	if _owner.spec != null:
+		gain = Global.settle_kill_reward(_owner.spec.follower_reward_min, _owner.spec.follower_reward_max, _owner.spec.elite_follower_bonus, _owner.is_elite, overtime_multiplier)
+	else:
+		gain = Global.settle_kill_reward(1, 1, 0, false, overtime_multiplier)
+	if gain > 0:
+		Global.transaction_followers(gain, &"combat_influence", {"enemy_id": String(_owner.spec.id) if _owner.spec != null else ""}, true, true)
 
 	# Health pickups keep their existing per-body behavior. Item loot for a
 	# Splitter family was already resolved above and must not roll again here.

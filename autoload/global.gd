@@ -304,6 +304,10 @@ var _followers: int = 0
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var vfx_stamina_aura_scene: PackedScene
 
+## Overtime's fraction of a kill reward not yet paid as a whole Follower (P1).
+## In memory only: it is always below one Follower.
+var _kill_reward_carry: float = 0.0
+
 # ============================================================
 # Lifecycle
 # ============================================================
@@ -1472,6 +1476,41 @@ func bonus_kill_followers() -> int:
 	if census > 0.0 and _rng.randf() < census:
 		extra += 1
 	return extra
+
+
+## The one kill-reward settlement both death paths use (EnemyLifecycle for
+## actors, EnemyCombatService for data-only proxies), so they cannot drift
+## apart again (follower economy audit 2026-10-04, P1). Returns the whole
+## Followers to pay now; 0 means pay nothing.
+## - An enemy authored at 0 (Summoned Minions, the opening's actors) pays 0:
+##   no Luck, Cult, Census or elite top-up rides on a body worth nothing. The
+##   actor path used to floor every kill at 1 (90 minions paid 90 Followers in
+##   the one organic human capture).
+## - Overtime's multiplier is a fraction with a running carry, not a per-kill
+##   round floored at 1: a 1-Follower body at x0.35 pays 35 over 100 kills
+##   (was 100), so Overtime devalues the commonest kill too and the
+##   stay-or-leave decision it exists to create is not undone by rounding.
+func settle_kill_reward(reward_min: int, reward_max: int, elite_bonus: int, is_elite: bool, overtime_multiplier: float = 1.0) -> int:
+	if reward_max <= 0:
+		return 0
+	var low := maxi(0, reward_min)
+	var gain: int = _rng.randi_range(low, maxi(low, reward_max))
+	if is_elite:
+		gain += maxi(0, elite_bonus)
+	# Luck: witnesses of a lucky kill are extra impressed.
+	if gain > 0 and _rng.randf() < LuckResolver.extra_follower_chance(run_luck):
+		gain += 1
+	# Cult of Personality (Prophet once Transcended) and Census of Souls:
+	# violence as recruitment seminar.
+	if gain > 0:
+		gain += bonus_kill_followers()
+	if gain <= 0:
+		return 0
+	_kill_reward_carry += float(gain) * maxf(0.0, overtime_multiplier)
+	# The epsilon keeps 100 x 0.35 from settling as 34.999... -> 34.
+	var paid := floori(_kill_reward_carry + 0.000001)
+	_kill_reward_carry -= float(paid)
+	return paid
 
 
 # ============================================================
@@ -2947,6 +2986,7 @@ func start_new_attempt() -> void:
 		attempt_opening_mode = &"short"
 	opening_replay_full_next_run = false
 	# Bren is the first follower. The HUD remains at zero until commitment.
+	_kill_reward_carry = 0.0
 	set_followers(0)
 
 	# Start-of-attempt augment event if you have empty slots
@@ -2991,6 +3031,8 @@ func on_segment_completed(completed_segment: int) -> void:
 			request_autosave()
 	attempt_segment = completed_segment + 1
 	attempt_deaths_this_segment = 0
+	# Overtime's unpaid fraction belongs to the segment that earned it.
+	_kill_reward_carry = 0.0
 	gambler_reset_segment()
 	attempt_checkpoint_pos = Vector2.INF
 	if completed_segment == 1:
@@ -3103,6 +3145,7 @@ func on_attempt_failed_die_die() -> void:
 	attempt_exit_hold_mul = 1.0
 
 	# A fresh historical attempt begins before Bren commits to the work.
+	_kill_reward_carry = 0.0
 	set_followers(0)
 
 	save_current_profile()
