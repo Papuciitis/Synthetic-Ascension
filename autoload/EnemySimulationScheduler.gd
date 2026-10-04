@@ -111,6 +111,17 @@ const MAX_PHYSICS_STEPS_PER_FRAME := 2
 @export_range(0.05, 1.0, 0.01) var severe_engage_sec: float = 0.15
 
 var _previous_tiers: Dictionary = {}
+# The last compute_assignment's valid candidates, in input order (see there).
+var _cand_nodes: Array = []
+var _cand_ids := PackedInt64Array()
+var _cand_distance := PackedFloat64Array()
+var _cand_priority := PackedFloat64Array()
+var _cand_previous := PackedInt32Array()
+var _cand_had_previous := PackedByteArray()
+var _cand_max_tier := PackedInt32Array()
+var _cand_tier := PackedInt32Array()
+const UNCHANGED_TIER_REASSERT_EVERY := 5
+var _refresh_serial := 0
 var _enemy_index: Node = null
 var _player: Node2D = null
 var _assignment_left: float = 0.0
@@ -239,22 +250,39 @@ func _physics_process(delta: float) -> void:
 
 func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 	var started_usec := Time.get_ticks_usec()
-	var protected_candidates: Array[Dictionary] = []
-	var ordinary_candidates: Array[Dictionary] = []
-	var live_ids: Dictionary = {}
-
+	# One validated pass into parallel arrays (FPS audit 2026-10-04, item 6):
+	# the refresh used to build a 9-key Dictionary per candidate, reach every
+	# per-enemy rule through has_method + call, sort Dictionaries with a
+	# comparator that re-read and converted their fields, and validate every
+	# enemy a second time to apply the result (3.4 ms at 64 materialized,
+	# 8-12 ms at 166). EnemyActor's rules are now called typed; other nodes
+	# keep the dynamic path.
+	_cand_nodes.clear()
+	_cand_ids.clear()
+	_cand_distance.clear()
+	_cand_priority.clear()
+	_cand_previous.clear()
+	_cand_had_previous.clear()
+	_cand_max_tier.clear()
+	_cand_tier.clear()
+	var protected_indices: Array[int] = []
+	var ordinary_indices: Array[int] = []
 	for enemy_variant in enemies:
 		var enemy := enemy_variant as Node
 		if not _is_valid_candidate(enemy):
 			continue
+		var actor := enemy as EnemyActor
+		var index := _cand_nodes.size()
 		var enemy_id := int(enemy.get_instance_id())
-		live_ids[enemy_id] = true
 		var position := (enemy as Node2D).global_position if enemy is Node2D else Vector2.ZERO
 		var distance_squared := position.distance_squared_to(player_position)
 		var distance := sqrt(distance_squared)
 		var had_previous_tier := _previous_tiers.has(enemy_id)
 		var previous_tier := int(_previous_tiers.get(enemy_id, TIER_FAR))
-		var priority := _priority_for(enemy, player_position, distance_squared)
+		var priority := (
+			actor.simulation_priority(player_position) if actor != null
+			else _priority_for(enemy, player_position, distance_squared)
+		)
 		# Distance priorities are negative squared distances, so multiplying by
 		# bias^2 ranks a full incumbent as if bias times closer. Positive
 		# (boosted/protected) priorities are left untouched.
@@ -263,61 +291,58 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 				priority *= rank_incumbent_bias * rank_incumbent_bias
 			elif previous_tier == TIER_MID:
 				priority *= rank_incumbent_bias
-		var candidate := {
-			"node": enemy,
-			"id": enemy_id,
-			"distance_squared": distance_squared,
-			"distance": distance,
-			"priority": priority,
-
-			"had_previous_tier": had_previous_tier,
-			"previous_tier": previous_tier,
-
-			"max_tier": _max_tier_for(enemy, distance),
-		}
-		if _is_protected(enemy, distance):
-			protected_candidates.append(candidate)
+		_cand_nodes.append(enemy)
+		_cand_ids.append(enemy_id)
+		_cand_distance.append(distance)
+		_cand_priority.append(priority)
+		_cand_previous.append(previous_tier)
+		_cand_had_previous.append(1 if had_previous_tier else 0)
+		_cand_max_tier.append(
+			clampi(actor.max_scheduler_tier(distance), TIER_FULL, TIER_FAR) if actor != null
+			else _max_tier_for(enemy, distance)
+		)
+		_cand_tier.append(TIER_FAR)
+		var is_protected := actor.is_simulation_protected(distance) if actor != null else _is_protected(enemy, distance)
+		if is_protected:
+			protected_indices.append(index)
 		else:
-			ordinary_candidates.append(candidate)
+			ordinary_indices.append(index)
 
-	ordinary_candidates.sort_custom(_candidate_before)
+	# Same comparator, same input order, same introsort: the same ranking the
+	# Dictionary sort produced, ties and near-ties included.
+	ordinary_indices.sort_custom(_candidate_index_before)
 
 	var assignment: Dictionary = {}
-	for candidate in protected_candidates:
-		var enemy_id := int(candidate["id"])
-
-		if bool(candidate.get("had_previous_tier", false)):
-			_record_tier_transition(
-				enemy_id,
-				int(candidate["previous_tier"]),
-				TIER_FULL
-			)
-
+	for index in protected_indices:
+		var enemy_id := _cand_ids[index]
+		if _cand_had_previous[index] != 0:
+			_record_tier_transition(enemy_id, _cand_previous[index], TIER_FULL)
+		_cand_tier[index] = TIER_FULL
 		assignment[enemy_id] = TIER_FULL
 
-	var full_count := mini(maxi(0, _effective_full_budget()), ordinary_candidates.size())
+	var full_count := mini(maxi(0, _effective_full_budget()), ordinary_indices.size())
 	var mid_count := mini(
 		maxi(0, _effective_mid_budget()),
-		maxi(0, ordinary_candidates.size() - full_count)
+		maxi(0, ordinary_indices.size() - full_count)
 	)
 	var full_assigned := 0
 	var mid_assigned := 0
 	var far_assigned := 0
 	var spatial_demotions := 0
-	for index in range(ordinary_candidates.size()):
-		var candidate := ordinary_candidates[index] as Dictionary
+	for rank in range(ordinary_indices.size()):
+		var index := ordinary_indices[rank]
 		var tier := TIER_FAR
-		if index < full_count:
+		if rank < full_count:
 			tier = TIER_FULL
-		elif index < full_count + mid_count:
+		elif rank < full_count + mid_count:
 			tier = TIER_MID
 		# Distance bands only lower fidelity: a budget slot never keeps an actor
 		# beyond its band, and free budget never promotes a distant one.
 		if use_spatial_bands:
 			var spatial_tier := _spatial_tier_for(
-				float(candidate.get("distance", 0.0)),
-				int(candidate["previous_tier"]),
-				bool(candidate.get("had_previous_tier", false))
+				_cand_distance[index],
+				_cand_previous[index],
+				_cand_had_previous[index] != 0
 			)
 			if spatial_tier > tier:
 				tier = spatial_tier
@@ -325,7 +350,7 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 		# Enemies whose archetype must keep world collision clamp to mid rather
 		# than becoming unshootable far proxies. This can exceed mid_budget by
 		# design: collision correctness beats the soft budget.
-		var max_tier := int(candidate.get("max_tier", TIER_FAR))
+		var max_tier := _cand_max_tier[index]
 		if tier > max_tier:
 			tier = max_tier
 		if tier == TIER_FULL:
@@ -334,31 +359,26 @@ func compute_assignment(enemies: Array, player_position: Vector2) -> Dictionary:
 			mid_assigned += 1
 		elif tier == TIER_FAR:
 			far_assigned += 1
-		var enemy_id := int(candidate["id"])
-
-		if bool(candidate.get("had_previous_tier", false)):
-			_record_tier_transition(
-				enemy_id,
-				int(candidate["previous_tier"]),
-				tier
-			)
-
+		var enemy_id := _cand_ids[index]
+		if _cand_had_previous[index] != 0:
+			_record_tier_transition(enemy_id, _cand_previous[index], tier)
+		_cand_tier[index] = tier
 		assignment[enemy_id] = tier
 
-	for tracked_id_variant in _last_tier_transition.keys():
-		var tracked_id := int(tracked_id_variant)
+	if not _last_tier_transition.is_empty():
+		var live_ids: Dictionary = {}
+		for enemy_id in _cand_ids:
+			live_ids[enemy_id] = true
+		for tracked_id_variant in _last_tier_transition.keys():
+			if not live_ids.has(int(tracked_id_variant)):
+				_last_tier_transition.erase(tracked_id_variant)
 
-		if not live_ids.has(tracked_id):
-			_last_tier_transition.erase(tracked_id)
+	_previous_tiers = assignment.duplicate()
 
-	_previous_tiers.clear()
-	for enemy_id in assignment:
-		_previous_tiers[enemy_id] = int(assignment[enemy_id])
-
-	_debug_counters["full"] = full_assigned + protected_candidates.size()
+	_debug_counters["full"] = full_assigned + protected_indices.size()
 	_debug_counters["mid"] = mid_assigned
 	_debug_counters["far"] = far_assigned
-	_debug_counters["protected"] = protected_candidates.size()
+	_debug_counters["protected"] = protected_indices.size()
 	_debug_counters["physics_enabled"] = int(_debug_counters["full"]) + mid_assigned
 	_debug_counters["spatial_demotions"] = spatial_demotions
 	_debug_counters["pressure_active"] = 1 if _pressure_active else 0
@@ -377,20 +397,33 @@ func refresh_assignments() -> void:
 		_player = get_tree().get_first_node_in_group(&"player") as Node2D
 	var player_position := _player.global_position if _player != null else Vector2.ZERO
 	var enemies := _enemy_index.call("get_all") as Array
-	var assignment := compute_assignment(enemies, player_position)
+	compute_assignment(enemies, player_position)
 	_mid_groups = _empty_groups(effective_mid_group_count())
 	_far_groups = _empty_groups(far_group_count)
-	for enemy_variant in enemies:
-		var enemy := enemy_variant as Node
-		if not _is_valid_candidate(enemy):
-			continue
-		var tier := int(assignment.get(enemy.get_instance_id(), TIER_FAR))
-		if enemy.has_method("set_scheduler_tier"):
+	# compute_assignment kept the valid candidates in input order with their
+	# tiers; nothing ran in between, so no second validation pass.
+	_refresh_serial += 1
+	for index in range(_cand_nodes.size()):
+		var enemy := _cand_nodes[index] as Node
+		var tier := _cand_tier[index]
+		var actor := enemy as EnemyActor
+		if actor != null:
+			# An actor already on its tier is re-asserted (callbacks and
+			# collision roles) on a rotating fifth of the refreshes - every
+			# second - instead of every 0.2 s. Pool obtain and lease hydration
+			# assert their own tier, and a tier the actor left is always
+			# re-applied.
+			if actor.simulation_tier() != tier or (_cand_ids[index] + _refresh_serial) % UNCHANGED_TIER_REASSERT_EVERY == 0:
+				actor.set_scheduler_tier(tier)
+		elif enemy.has_method("set_scheduler_tier"):
 			enemy.call("set_scheduler_tier", tier)
 		if tier == TIER_MID:
 			_add_to_group_bucket(_mid_groups, enemy)
 		elif tier == TIER_FAR:
 			_add_to_group_bucket(_far_groups, enemy)
+	# Drop the node references until the next refresh: a pooled or freed enemy
+	# must not be held here.
+	_cand_nodes.clear()
 	_assignment_left = maxf(0.05, assignment_interval)
 
 
@@ -646,8 +679,11 @@ func _is_valid_candidate(enemy: Node) -> bool:
 		return false
 	if enemy.is_queued_for_deletion() or not enemy.is_inside_tree():
 		return false
-	if enemy.process_mode == Node.PROCESS_MODE_DISABLED or bool(enemy.get_meta("__in_pool", false)):
+	if enemy.process_mode == Node.PROCESS_MODE_DISABLED or bool(enemy.get_meta(&"__in_pool", false)):
 		return false
+	var actor := enemy as EnemyActor
+	if actor != null:
+		return not actor.dead
 	return not ("dead" in enemy and bool(enemy.get("dead")))
 
 
@@ -690,16 +726,16 @@ func _is_protected(enemy: Node, player_distance: float) -> bool:
 	return "is_elite" in enemy and bool(enemy.get("is_elite"))
 
 
-func _candidate_before(a: Dictionary, b: Dictionary) -> bool:
-	var priority_a := float(a["priority"])
-	var priority_b := float(b["priority"])
+func _candidate_index_before(a: int, b: int) -> bool:
+	var priority_a := _cand_priority[a]
+	var priority_b := _cand_priority[b]
 	if not is_equal_approx(priority_a, priority_b):
 		return priority_a > priority_b
-	var previous_a := int(a["previous_tier"])
-	var previous_b := int(b["previous_tier"])
+	var previous_a := _cand_previous[a]
+	var previous_b := _cand_previous[b]
 	if previous_a != previous_b:
 		return previous_a < previous_b
-	return int(a["id"]) < int(b["id"])
+	return _cand_ids[a] < _cand_ids[b]
 func _record_tier_transition(
 	enemy_id: int,
 	from_tier: int,
