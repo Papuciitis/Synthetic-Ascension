@@ -132,6 +132,11 @@ var _rite_pressure_active: bool = false
 ## While it lasts the ambient interval is multiplied by _lull_interval_mul.
 var _lull_left: float = 0.0
 var _lull_interval_mul: float = 1.0
+## A surge window (the encounter director's telegraphed swarm): the ambient
+## interval is multiplied by _surge_interval_mul (< 1 = denser). A surge
+## outranks a lull while both run; the alive cap is unchanged.
+var _surge_left: float = 0.0
+var _surge_interval_mul: float = 1.0
 ## Telemetry only: why the last spawn attempt produced nothing, read by the
 ## caller that reports the request (RunEvents.spawn_request_resolved).
 var _last_reject: StringName = &""
@@ -164,6 +169,10 @@ func _process(delta: float) -> void:
 		_lull_left = maxf(_lull_left - delta, 0.0)
 		if _lull_left <= 0.0:
 			_lull_interval_mul = 1.0
+	if _surge_left > 0.0:
+		_surge_left = maxf(_surge_left - delta, 0.0)
+		if _surge_left <= 0.0:
+			_surge_interval_mul = 1.0
 	_wardstone_refresh_t = maxf(_wardstone_refresh_t - delta, 0.0)
 	_cull_cd = maxf(_cull_cd - delta, 0.0)
 	_cull_refill_left = maxf(_cull_refill_left - delta, 0.0)
@@ -213,7 +222,9 @@ func _on_tick() -> void:
 	var boss_near: bool = _is_boss_near_player()
 	if boss_near:
 		cur_every *= boss_spawn_interval_mul
-	if _lull_left > 0.0 and not tutorial_active:
+	if _surge_left > 0.0 and not tutorial_active:
+		cur_every *= _surge_interval_mul
+	elif _lull_left > 0.0 and not tutorial_active:
 		cur_every *= _lull_interval_mul
 
 	_timer.wait_time = cur_every
@@ -879,6 +890,23 @@ func set_ambient_lull(seconds: float, interval_mul: float) -> void:
 
 func ambient_lull_left() -> float:
 	return _lull_left
+
+
+## A surge window (a telegraphed swarm): for `seconds` the ambient interval is
+## multiplied by `interval_mul` (< 1 = denser). Ending early: seconds = 0.
+func set_ambient_surge(seconds: float, interval_mul: float) -> void:
+	if seconds <= 0.0:
+		_surge_left = 0.0
+		_surge_interval_mul = 1.0
+		return
+	_surge_left = seconds
+	_surge_interval_mul = clampf(interval_mul, 0.1, 1.0)
+	# Apply the denser cadence from the next tick, not after the old interval.
+	reset_spawn_clock()
+
+
+func ambient_surge_left() -> float:
+	return _surge_left
 
 
 func set_rite_pressure_active(active: bool) -> void:

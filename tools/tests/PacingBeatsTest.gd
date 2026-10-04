@@ -45,6 +45,11 @@ class FakeSpawner:
 	func set_ambient_lull(seconds: float, interval_mul: float) -> void:
 		lulls.append(Vector2(seconds, interval_mul))
 
+	var surges: Array[Vector2] = []
+
+	func set_ambient_surge(seconds: float, interval_mul: float) -> void:
+		surges.append(Vector2(seconds, interval_mul))
+
 	func spawn_beat_member(_scene_path: String, pos: Vector2, _elite: bool) -> Node:
 		var node := Node2D.new()
 		node.position = pos
@@ -97,6 +102,7 @@ func _run() -> void:
 	var previous_segment: int = Global.attempt_segment
 	Global.attempt_segment = 4
 	await _director_checks()
+	await _swarm_checks()
 	await _spawner_checks()
 	_elite_scaling_checks()
 	Global.attempt_segment = previous_segment
@@ -235,6 +241,10 @@ func _spawner_checks() -> void:
 	_check(is_equal_approx(spawner.ambient_lull_left(), 12.0), "a weaker request never shortens it")
 	spawner._process(13.0)
 	_check(is_zero_approx(spawner.ambient_lull_left()), "and it closes on time")
+	spawner.set_ambient_surge(20.0, 0.5)
+	_check(is_equal_approx(spawner.ambient_surge_left(), 20.0), "a surge opens")
+	spawner.set_ambient_surge(0.0, 1.0)
+	_check(is_zero_approx(spawner.ambient_surge_left()), "and can be ended early")
 
 	# --- segment 1: the same stage again is not a new stage ---
 	spawner.set_segment1_stage(Segment1SpawnProfile.Stage.OUTER_APPROACH)
@@ -266,3 +276,42 @@ func _elite_scaling_checks() -> void:
 	_check(is_equal_approx(EliteModifiers.segment_hp_factor(1), 1.0) and is_equal_approx(EliteModifiers.segment_hp_factor(2), 1.0), "elites start at their authored health")
 	_check(is_equal_approx(EliteModifiers.segment_hp_factor(5), 1.45), "segment 5 elites carry +45%% health (%.2f)" % EliteModifiers.segment_hp_factor(5))
 	_check(is_equal_approx(EliteModifiers.segment_hp_factor(30), EliteModifiers.ELITE_HP_SEGMENT_CAP), "and the growth is capped (%.2f)" % EliteModifiers.segment_hp_factor(30))
+
+
+## A telegraphed swarm: warning, surge, announced break, relax window.
+func _swarm_checks() -> void:
+	var made := _make(&"disturbance")
+	var director: Variant = made[0]
+	var spawner: FakeSpawner = made[1]
+	director.set("_next_beat_in", 10000.0)
+	_check(int(director.swarm_state()) == 0, "no swarm at the start of a segment")
+	director.tick(float(director.get("swarm_first_delay")) + 0.1)
+	_check(int(director.swarm_state()) == 1, "after the first delay a swarm is warned")
+	_check(spawner.surges.is_empty(), "the warning comes before the surge")
+	director.tick(float(director.get("swarm_warning_sec")) + 0.1)
+	_check(int(director.swarm_state()) == 2 and spawner.surges.size() == 1 and spawner.surges[0].y < 1.0, "then the surge densifies ambient spawning (%s)" % [spawner.surges])
+	_check(not bool(director.can_schedule()), "no authored beat lands inside the surge")
+	spawner.lulls.clear()
+	director.tick(float(director.get("swarm_duration_sec")) + 0.1)
+	_check(int(director.swarm_state()) == 0, "the swarm breaks on time")
+	_check(spawner.lulls.size() == 1 and spawner.lulls[0].x > float(director.get("lull_seconds")), "and buys a longer relax window (%s)" % [spawner.lulls])
+	var next_in := float(director.balance_snapshot()["swarm_in"])
+	_check(next_in >= float(director.get("swarm_interval_min")) and next_in <= float(director.get("swarm_interval_max")), "the next swarm is minutes away (%.0fs)" % next_in)
+	# Cancelled quietly by the exit encounter.
+	director.set("_swarm_in", 0.0)
+	director.tick(0.1)
+	_check(int(director.swarm_state()) == 1, "a second swarm is warned")
+	director.set("_rite_channel_active", true)
+	director.set("_rite_response_left", 100.0)
+	director.tick(0.1)
+	_check(int(director.swarm_state()) == 0, "the exit encounter cancels a warned swarm")
+	director.set("_rite_channel_active", false)
+	# Never in recon.
+	director.phase_provider = func() -> StringName: return &"recon"
+	director.set("_swarm_in", 0.0)
+	director.tick(0.1)
+	_check(int(director.swarm_state()) == 0, "never during recon")
+	director.queue_free()
+	spawner.queue_free()
+	(made[2] as Node).queue_free()
+	await get_tree().process_frame

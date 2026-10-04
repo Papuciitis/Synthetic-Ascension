@@ -46,6 +46,21 @@ const RitualScript = preload("res://core/systems/world/RitualInterference.gd")
 @export_range(1.0, 4.0, 0.1) var lull_interval_mul := 2.0
 ## Seconds after an in-combat power threshold before the rematch ring arrives.
 @export_range(0.0, 30.0, 0.5) var rematch_delay_sec := 5.0
+## Telegraphed swarms (Deep Rock Galactic: Survivor's swarms, Left 4 Dead's
+## panic events - a different kind of spike from a formation): a warning,
+## a surge of denser ambient spawning under the same alive cap, an announced
+## end and a longer relax window. Only from the disturbance phase until the
+## gate unseals, never inside the exit encounter.
+@export_range(30.0, 900.0, 5.0) var swarm_first_delay := 150.0
+@export_range(30.0, 900.0, 5.0) var swarm_interval_min := 210.0
+@export_range(30.0, 900.0, 5.0) var swarm_interval_max := 270.0
+@export_range(0.0, 30.0, 0.5) var swarm_warning_sec := 8.0
+@export_range(5.0, 60.0, 1.0) var swarm_duration_sec := 20.0
+@export_range(0.1, 1.0, 0.05) var swarm_interval_mul := 0.5
+enum SwarmState { IDLE, WARNING, SURGING }
+var _swarm_state := SwarmState.IDLE
+var _swarm_in := 0.0
+var _swarm_left := 0.0
 ## A beat aborts if fewer than this fraction of its members find valid ground.
 @export_range(0.1, 1.0, 0.05) var min_placed_fraction := 0.5
 
@@ -126,6 +141,7 @@ func setup(spawner: Node, player: Node2D, seed_value: int = 0) -> void:
 	else:
 		_rng.randomize()
 	_next_beat_in = first_beat_delay
+	_swarm_in = swarm_first_delay
 
 
 func _physics_process(delta: float) -> void:
@@ -143,8 +159,11 @@ func tick(delta: float) -> void:
 		return
 	if _rite_channel_active:
 		_rematch_in = 0.0
+		if _swarm_state != SwarmState.IDLE:
+			_end_swarm(false)
 		_tick_rite_response(delta)
 		return
+	_tick_swarm(delta)
 	if _rematch_in > 0.0:
 		_rematch_in -= delta
 		if _rematch_in <= 0.0:
@@ -175,9 +194,77 @@ func _next_interval() -> float:
 func can_schedule() -> bool:
 	if _active.size() >= max_concurrent:
 		return false
-	if _is_tutorial_stage() or _rite_channel_active:
+	if _is_tutorial_stage() or _rite_channel_active or _swarm_state == SwarmState.SURGING:
 		return false
 	return not _candidates().is_empty()
+
+
+func swarm_state() -> int:
+	return _swarm_state
+
+
+func _swarm_allowed() -> bool:
+	var phase := _phase()
+	return enabled and not _is_tutorial_stage() and not _is_unsealed() \
+		and (phase == &"disturbance" or phase == &"ascension")
+
+
+func _tick_swarm(delta: float) -> void:
+	match _swarm_state:
+		SwarmState.IDLE:
+			_swarm_in -= delta
+			if _swarm_in > 0.0:
+				return
+			if not _swarm_allowed():
+				_swarm_in = 10.0
+				return
+			_swarm_state = SwarmState.WARNING
+			_swarm_left = swarm_warning_sec
+			_record(&"swarm_warned", &"swarm", 0)
+			_popup("SOMETHING ANSWERS FROM EVERY STREET", Color(0.95, 0.62, 0.32, 1.0), 1.25)
+		SwarmState.WARNING:
+			_swarm_left -= delta
+			if _swarm_left > 0.0:
+				return
+			if not _swarm_allowed():
+				_end_swarm(false)
+				return
+			_swarm_state = SwarmState.SURGING
+			_swarm_left = swarm_duration_sec
+			if _spawner.has_method("set_ambient_surge"):
+				_spawner.call("set_ambient_surge", swarm_duration_sec, swarm_interval_mul)
+			_record(&"swarm_started", &"swarm", 0)
+			_popup("THE SWARM", Color(1.0, 0.45, 0.30, 1.0), 1.4)
+		SwarmState.SURGING:
+			_swarm_left -= delta
+			if _swarm_left <= 0.0 or _is_unsealed():
+				_end_swarm(true)
+
+
+## Ends a warned or running swarm. `announced`: it ran its course and the
+## district gets its relax window; otherwise it is cancelled quietly (the
+## exit encounter or the unseal took the time).
+func _end_swarm(announced: bool) -> void:
+	var was_surging := _swarm_state == SwarmState.SURGING
+	_swarm_state = SwarmState.IDLE
+	_swarm_left = 0.0
+	_swarm_in = _rng.randf_range(swarm_interval_min, swarm_interval_max)
+	if was_surging and _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("set_ambient_surge"):
+		_spawner.call("set_ambient_surge", 0.0, 1.0)
+	if not announced:
+		_record(&"swarm_cancelled", &"swarm", 0)
+		return
+	_record(&"swarm_ended", &"swarm", 0)
+	_popup("THE SWARM BREAKS", Color(0.85, 0.80, 0.62, 1.0), 1.15)
+	if _spawner != null and is_instance_valid(_spawner) and _spawner.has_method("set_ambient_lull"):
+		_spawner.call("set_ambient_lull", lull_seconds * 1.5, lull_interval_mul)
+	# The next authored beat waits for the relax window.
+	_next_beat_in = maxf(_next_beat_in, lull_seconds * 1.5)
+
+
+func _popup(text: String, color: Color, entry_scale: float) -> void:
+	if BattleText != null and _player != null and is_instance_valid(_player) and BattleText.has_method("popup"):
+		BattleText.popup(_player.global_position, text, color, entry_scale)
 
 
 ## Spawn a specific beat, or a random eligible one. Returns {} when nothing
@@ -549,7 +636,8 @@ func balance_snapshot() -> Dictionary:
 	for id in _active:
 		beats[String(id)] = int((_active[id] as Dictionary).get("alive", 0))
 	return {"active_beats": beats, "counters": _counters.duplicate(), "rite_channel_active": _rite_channel_active,
-		"rite_response_left": _rite_response_left, "next_beat_in": _next_beat_in}
+		"rite_response_left": _rite_response_left, "next_beat_in": _next_beat_in,
+		"swarm_state": _swarm_state, "swarm_in": _swarm_in, "rite_wave_cursor": _rite_wave_cursor}
 
 
 func _phase() -> StringName:
