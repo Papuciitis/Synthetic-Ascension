@@ -9,11 +9,27 @@ const TIER_REVERSAL_WINDOW_USEC := 2_000_000
 # publish) cannot restart a release window; the severe fast path reads the
 # raw sample so a genuine collapse still engages in 0.15 s.
 const PRESSURE_SMOOTHING_SEC := 0.25
+# Catch-up cap, applied at runtime in _ready (FPS audit 2026-10-04, item 1).
+# project.godot keeps Godot's 4 physics ticks per frame, and past ~100 alive
+# that spiralled: a frame over 16.7 ms makes the next one run 2+ ticks, which
+# makes it longer still (the 10-03 segment-2 session ran 2-4 ticks in 99.7%
+# of its minute-13-15 frames, at 15-17 FPS). With 2, an overloaded frame
+# lets the world clock run a little slower instead (measured about 6% past
+# the cliff) and the frame-level pressure signal below gets a chance to shed
+# load. Set from code because the editor owns project.godot; the projectile
+# manager and EnemyProjectile read the live value for their time banks.
+const MAX_PHYSICS_STEPS_PER_FRAME := 2
 
 @export_range(0, 512, 1) var full_budget: int = 32
 @export_range(0, 1024, 1) var mid_budget: int = 32
 @export_range(0.05, 2.0, 0.01) var assignment_interval: float = 0.20
 @export_range(1, 8, 1) var mid_group_count: int = 3
+# Under pressure the mid tier is stepped in more groups: each mid actor runs
+# every 5th tick with 5x delta instead of every 3rd, which cuts the mid-tier
+# share of a tick by 40% while full-tier actors keep 60 Hz. Mid actors are
+# drawn through the snapshot-interpolating batch renderer, so the coarser
+# step does not read as stutter.
+@export_range(1, 8, 1) var pressure_mid_group_count: int = 5
 @export_range(1, 16, 1) var far_group_count: int = 7
 @export_range(1.0, 33.0, 0.25) var physics_pressure_ms: float = 8.0
 
@@ -78,6 +94,14 @@ const PRESSURE_SMOOTHING_SEC := 0.25
 # EnemyRepresentationPolicy.deactivation_distance (640): an actor may only
 # release its body where the representation policy would demote it anyway.
 @export_range(0.0, 4000.0, 10.0) var noncontact_release_min_distance: float = 640.0
+# Emergency pressure may also release the ordinary contact archetypes
+# (charger, bomber; chase, splitter and leech are far-tier eligible anyway),
+# but only beyond this radius: off screen at 1920x1080 with the 1.0 camera
+# (half-width 960), so nobody watches one walk through a wall, and too far
+# for a dash or a fuse to reach the player before the next refresh gives the
+# body back. Without it the emergency tier bought little at minute 14: the
+# late spawn mix is ~60% non-chase and those actors kept their bodies.
+@export_range(0.0, 4000.0, 10.0) var contact_release_min_distance: float = 1000.0
 
 # A genuinely catastrophic physics step should not spend a full second walking
 # through the ordinary two-stage fallback. It still requires a short sustained
@@ -120,6 +144,11 @@ var _frame_ticks := 0
 var _frame_physics_ms := 0.0
 var _published_frame_ticks := 0
 var _published_frame_physics_ms := 0.0
+# The process frame of the last publish. This node is PAUSABLE: while the
+# tree is paused _process stops and the published values would go stale (a
+# 160.5 ms value outlived a scene change in the 10-02 incidents), so the
+# getters report nothing for a frame that did not publish.
+var _published_process_frame := -1
 var _debug_counters := {
 	"full": 0,
 	"mid": 0,
@@ -160,6 +189,9 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
 	set_physics_process(true)
 	set_process(true)
+	# Only ever lowers the cap: a probe or test that asked for fewer keeps it.
+	if Engine.max_physics_steps_per_frame > MAX_PHYSICS_STEPS_PER_FRAME:
+		Engine.max_physics_steps_per_frame = MAX_PHYSICS_STEPS_PER_FRAME
 
 
 func _process(_delta: float) -> void:
@@ -170,6 +202,7 @@ func _process(_delta: float) -> void:
 	# only part of the frame's physics time.
 	_published_frame_ticks = _frame_ticks
 	_published_frame_physics_ms = _frame_physics_ms
+	_published_process_frame = Engine.get_process_frames()
 	_frame_ticks = 0
 	_frame_physics_ms = 0.0
 
@@ -186,10 +219,12 @@ func _physics_process(delta: float) -> void:
 		var refresh_started := Time.get_ticks_usec()
 		refresh_assignments()
 		_step_refresh_usec = Time.get_ticks_usec() - refresh_started
+	# Each mid actor sits in one of the groups and runs once per groups.size()
+	# ticks, so that is its delta multiplier (the count changes with pressure).
 	_mid_cursor = _run_next_group(
 		_mid_groups,
 		_mid_cursor,
-		maxf(0.0, delta) * maxi(1, mid_group_count),
+		maxf(0.0, delta) * (_mid_groups.size() if not _mid_groups.is_empty() else maxi(1, mid_group_count)),
 		TIER_MID,
 		&"mid_steps"
 	)
@@ -343,7 +378,7 @@ func refresh_assignments() -> void:
 	var player_position := _player.global_position if _player != null else Vector2.ZERO
 	var enemies := _enemy_index.call("get_all") as Array
 	var assignment := compute_assignment(enemies, player_position)
-	_mid_groups = _empty_groups(mid_group_count)
+	_mid_groups = _empty_groups(effective_mid_group_count())
 	_far_groups = _empty_groups(far_group_count)
 	for enemy_variant in enemies:
 		var enemy := enemy_variant as Node
@@ -443,12 +478,20 @@ func smart_physics_boundary(is_far: bool) -> float:
 func should_release_noncontact_smart(ai: int, player_distance: float) -> bool:
 	if _pressure_level < 2:
 		return false
-	if player_distance < noncontact_release_min_distance:
-		return false
 	match ai:
 		EnemySpec.AI.ORBIT, EnemySpec.AI.RANGED, EnemySpec.AI.SUMMONER, EnemySpec.AI.TACTICAL, EnemySpec.AI.HERALD:
-			return true
+			return player_distance >= noncontact_release_min_distance
+		EnemySpec.AI.CHARGE, EnemySpec.AI.BOMBER:
+			return player_distance >= contact_release_min_distance
 	return false
+
+
+## Mid-tier step groups for the next assignment: more groups (each mid
+## actor stepped less often) while physics pressure is engaged.
+func effective_mid_group_count() -> int:
+	if _pressure_level >= 1:
+		return maxi(mid_group_count, pressure_mid_group_count)
+	return mid_group_count
 
 
 func _update_pressure_state(delta: float) -> void:
@@ -510,7 +553,12 @@ func _measured_physics_ms() -> float:
 		if _physics_pressure_override is bool:
 			return budget_pressure_ms + 0.001 if bool(_physics_pressure_override) else 0.0
 		return maxf(0.0, float(_physics_pressure_override))
-	return _last_step_sample_ms
+	# The frame's physics, not one tick (FPS audit 2026-10-04): at 100+ alive
+	# real ticks were p50 7 / p95 10 ms, under every threshold, but frames ran
+	# 2-4 of them and the pressure level read 0 in all 20,124 samples. The
+	# last frame's summed ticks make 3 x 8 ms read as 24 ms; the newest tick
+	# still counts on its own so a single very slow step is never hidden.
+	return maxf(_last_step_sample_ms, _published_frame_physics_ms)
 
 
 func _smooth_physics_ms(physics_ms: float, delta: float) -> float:
@@ -548,14 +596,15 @@ func last_step_sample_ms() -> float:
 	return _last_step_sample_ms
 
 
-## Physics ticks measured in the latest frame (0 when the frame ran none).
+## Physics ticks measured in the latest frame (0 when the frame ran none,
+## and while the tree is paused: nothing published this frame).
 func frame_physics_ticks() -> int:
-	return _published_frame_ticks
+	return _published_frame_ticks if _published_process_frame == Engine.get_process_frames() else 0
 
 
-## Summed step time of those ticks, in ms.
+## Summed step time of those ticks, in ms (0 while paused, as above).
 func frame_physics_ms() -> float:
-	return _published_frame_physics_ms
+	return _published_frame_physics_ms if _published_process_frame == Engine.get_process_frames() else 0.0
 
 
 func _pressure_level_for(physics_ms: float) -> int:

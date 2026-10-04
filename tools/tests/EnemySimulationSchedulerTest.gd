@@ -73,6 +73,9 @@ func _run() -> void:
 	_test_severe_pressure_fast_path(scheduler_script)
 	_test_pressure_release_survives_single_frame_spikes(scheduler_script)
 	await _test_pressure_uses_per_step_samples(scheduler_script)
+	await _test_pressure_reads_frame_physics(scheduler_script)
+	_test_catch_up_cap(scheduler_script)
+	_test_pressure_stretches_mid_groups(scheduler_script)
 	await _test_same_frame_recycle_then_obtain_keeps_collision()
 	await _test_unchanged_tier_preserves_stagger()
 	_test_rotating_reduced_tick_groups(scheduler_script)
@@ -399,16 +402,44 @@ func _test_emergency_noncontact_smart_release(scheduler_script: Script) -> void:
 	)
 	_check(
 		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE, floor_distance + 1.0)),
-		"emergency pressure keeps charger collision exact"
+		"emergency pressure keeps a charger's collision exact inside the contact floor"
 	)
 	_check(
 		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.BOMBER, floor_distance + 1.0)),
-		"emergency pressure keeps bomber collision exact"
+		"emergency pressure keeps a bomber's collision exact inside the contact floor"
 	)
 	_check(
 		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.SNIPER, floor_distance + 1.0)),
 		"emergency pressure keeps sniper collision exact"
 	)
+	# FPS audit 2026-10-04: contact archetypes may release far off screen.
+	var contact_floor := float(scheduler.get("contact_release_min_distance"))
+	_check(contact_floor >= 960.0, "the contact release floor lies off screen at 1920x1080 (%.0f px)" % contact_floor)
+	_check(
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE, contact_floor + 1.0)),
+		"emergency pressure may release an off-screen charger's body physics"
+	)
+	_check(
+		bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.BOMBER, contact_floor + 1.0)),
+		"emergency pressure may release an off-screen bomber's body physics"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE, contact_floor - 1.0)),
+		"a charger inside the contact floor keeps its body under emergency pressure"
+	)
+	_check(
+		not bool(scheduler.call("should_release_noncontact_smart", EnemySpec.AI.SNIPER, contact_floor + 1000.0)),
+		"no distance releases a sniper's body"
+	)
+	var ordinary := scheduler_script.new() as Node
+	ordinary.call("set_physics_pressure_override", true)
+	ordinary.call("_update_pressure_state", 0.6)
+	_check(
+		int(ordinary.call("physics_pressure_level")) == 1
+		and not bool(ordinary.call("should_release_noncontact_smart", EnemySpec.AI.CHARGE, contact_floor + 1000.0)),
+		"ordinary (level 1) pressure never releases contact archetypes"
+	)
+	ordinary.free()
 	var enemy_scene := load("res://core/actors/enemy/enemy.tscn") as PackedScene
 	var ranged := enemy_scene.instantiate() as EnemyActor
 	var ranged_spec := EnemySpec.new()
@@ -528,6 +559,97 @@ func _test_pressure_uses_per_step_samples(scheduler_script: Script) -> void:
 	hog.queue_free()
 	live.queue_free()
 	await get_tree().process_frame
+
+
+func _test_pressure_reads_frame_physics(scheduler_script: Script) -> void:
+	# FPS audit 2026-10-04: at 100+ alive each tick stayed under every
+	# threshold while frames ran 2-4 of them. A catch-up frame must read as
+	# the sum of its ticks.
+	var scheduler := scheduler_script.new() as Node
+	for _tick in range(3):
+		scheduler.call("_ingest_step_sample", 8.0, 0.0)
+	scheduler.call("_process", 0.0)
+	_check(
+		int(scheduler.call("frame_physics_ticks")) == 3
+		and is_equal_approx(float(scheduler.call("frame_physics_ms")), 24.0),
+		"a frame that ran three 8 ms ticks publishes 3 ticks and 24 ms"
+	)
+	_check(
+		is_equal_approx(float(scheduler.call("_measured_physics_ms")), 24.0),
+		"pressure reads the frame's summed physics, not the last tick"
+	)
+	scheduler.call("_update_pressure_state", 0.6)
+	_check(
+		int(scheduler.call("physics_pressure_level")) >= 1,
+		"three 8 ms catch-up ticks per frame engage pressure though each tick is under the 14 ms budget"
+	)
+	var calm := scheduler_script.new() as Node
+	calm.call("_ingest_step_sample", 8.0, 0.0)
+	calm.call("_process", 0.0)
+	calm.call("_update_pressure_state", 0.6)
+	_check(int(calm.call("physics_pressure_level")) == 0, "one 8 ms tick per frame stays unpressured")
+	# Neither scheduler is in the tree, so neither publishes next frame - the
+	# same as the live, PAUSABLE one while the tree is paused.
+	await get_tree().process_frame
+	_check(
+		int(scheduler.call("frame_physics_ticks")) == 0 and float(scheduler.call("frame_physics_ms")) == 0.0,
+		"a frame that published nothing (paused tree) reports no physics instead of a stale value"
+	)
+	scheduler.free()
+	calm.free()
+
+
+func _test_catch_up_cap(scheduler_script: Script) -> void:
+	var cap := int(scheduler_script.get_script_constant_map().get("MAX_PHYSICS_STEPS_PER_FRAME", -1))
+	_check(cap == 2, "the scheduler caps physics catch-up at 2 ticks per frame")
+	_check(
+		Engine.max_physics_steps_per_frame <= cap,
+		"the live scheduler applied the catch-up cap at runtime (%d)" % Engine.max_physics_steps_per_frame
+	)
+	var saved := Engine.max_physics_steps_per_frame
+	Engine.max_physics_steps_per_frame = 4
+	var lowering := scheduler_script.new() as Node
+	add_child(lowering)
+	_check(Engine.max_physics_steps_per_frame == cap, "a scheduler entering the tree lowers a 4-tick cap to %d" % cap)
+	lowering.free()
+	Engine.max_physics_steps_per_frame = 1
+	var keeping := scheduler_script.new() as Node
+	add_child(keeping)
+	_check(Engine.max_physics_steps_per_frame == 1, "a lower cap someone asked for is kept")
+	keeping.free()
+	Engine.max_physics_steps_per_frame = saved
+
+
+func _test_pressure_stretches_mid_groups(scheduler_script: Script) -> void:
+	var index := get_node("/root/EnemyIndex")
+	var scheduler := scheduler_script.new() as Node
+	scheduler.set("full_budget", 0)
+	scheduler.set("mid_budget", 1)
+	# One assignment for the whole run, made under pressure.
+	scheduler.set("assignment_interval", 2.0)
+	add_child(scheduler)
+	var calm_groups := int(scheduler.call("effective_mid_group_count"))
+	_check(calm_groups == int(scheduler.get("mid_group_count")), "unpressured mid tier keeps its group count")
+	scheduler.call("set_physics_pressure_override", true)
+	scheduler.call("_update_pressure_state", 0.6)
+	var groups := int(scheduler.call("effective_mid_group_count"))
+	_check(groups == int(scheduler.get("pressure_mid_group_count")) and groups > calm_groups, "pressure stretches the mid tier over more step groups (%d)" % groups)
+	var mid_probe := ScheduledProbe.new()
+	mid_probe.position = Vector2(10.0, 0.0)
+	add_child(mid_probe)
+	index.call("register", mid_probe)
+	for _frame in range(groups * 4):
+		scheduler.call("_physics_process", 1.0 / 60.0)
+	_check(mid_probe.assigned_tier == 1, "the budgeted probe is mid tier")
+	_check(mid_probe.scheduled_deltas.size() == 4, "under pressure a mid actor runs once every %d physics frames" % groups)
+	if not mid_probe.scheduled_deltas.is_empty():
+		_check(is_equal_approx(mid_probe.scheduled_deltas[0], float(groups) / 60.0), "its step receives the matching accumulated delta")
+	scheduler.call("set_physics_pressure_override", false)
+	scheduler.call("_update_pressure_state", 5.0)
+	_check(int(scheduler.call("effective_mid_group_count")) == calm_groups, "released pressure restores the mid group count")
+	index.call("unregister", mid_probe)
+	mid_probe.queue_free()
+	scheduler.queue_free()
 
 
 func _test_same_frame_recycle_then_obtain_keeps_collision() -> void:
