@@ -151,6 +151,18 @@ const HEALING_LOCK_COLOUR := Color(0.78, 0.36, 0.90, 1.0)
 const HEALING_LOCK_TEACH := "HEALING SEALED: nothing mends you until the seal lifts - not regen, not lifesteal, not the Rite. The HP bar counts it down."
 
 var respawn_phase_left: float = 0.0
+## Reconstruction near the Exit Rite (rite_recovery_point): where the player
+## died, and the seconds of the recovery grace left (plan §6.4).
+const RITE_RECOVERY_GRACE := 5.0
+const RITE_RECOVERY_BREAKABLE_AFTER := 2.0
+const RITE_RECOVERY_RADII: Array[float] = [900.0, 1000.0, 800.0, 1100.0, 1200.0]
+const RITE_RECOVERY_ANGLES: Array[float] = [0.0, 20.0, -20.0, 40.0, -40.0, 65.0, -65.0, 90.0, -90.0, 120.0, -120.0, 150.0, -150.0, 180.0]
+const RITE_RECOVERY_CIRCLE_MARGIN := 300.0
+const RITE_RECOVERY_CROWD_RADIUS := 280.0
+const RITE_RECOVERY_MAX_CANDIDATES := 6
+const RITE_RECOVERY_FOOTPRINT: Array[Vector2] = [Vector2.ZERO, Vector2(20, 0), Vector2(-20, 0), Vector2(0, 20), Vector2(0, -20)]
+var _death_position := Vector2.INF
+var _rite_recovery_left: float = 0.0
 var _base_collision_mask: int = 0
 var _base_collision_layer: int = 0
 const ENEMY_BODY_LAYER_BIT: int = 1 << 1  # physics layer 2
@@ -275,6 +287,8 @@ func _process(delta: float) -> void:
 		respawn_phase_left = max(respawn_phase_left - delta, 0.0)
 		if respawn_phase_left <= 0.0:
 			_apply_body_phasing()
+	if _rite_recovery_left > 0.0:
+		_rite_recovery_left = maxf(_rite_recovery_left - delta, 0.0)
 
 	_tick_dash(delta)
 
@@ -928,6 +942,13 @@ func _fire_weapon(mouse_pos: Vector2) -> void:
 			haste_mul *= ar3.get_post_cap_haste_multiplier()
 		_weapon_cd = cd / max(haste_mul, 0.05)
 
+	# Attacking ends a rite-recovery invulnerability once its first 2 s have
+	# passed; the phasing keeps its full 5 s (plan §6.4).
+	if _rite_recovery_left > 0.0 and RITE_RECOVERY_GRACE - _rite_recovery_left >= RITE_RECOVERY_BREAKABLE_AFTER:
+		invulnerable_time = maxf(0.0, invulnerable_time - _rite_recovery_left)
+		_blink_left = minf(_blink_left, invulnerable_time)
+		_rite_recovery_left = 0.0
+
 	# Charge/rhythm/tithe Manifestations empower exactly one attack. Consumed
 	# AFTER the cooldown gate above, so a blocked click never eats the payload.
 	if mr3 != null:
@@ -1509,6 +1530,7 @@ func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	_death_position = global_position
 	if RunEvents != null and RunEvents.player_life_event.has_connections():
 		RunEvents.player_life_event.emit(self, &"death")
 	cancel_dash()
@@ -1550,7 +1572,11 @@ func respawn() -> void:
 	var hp_before_respawn := hp
 	hp = max_hp
 	_report_health_change(&"respawn", "player:reconstruction", hp_before_respawn, max_hp, max_hp, &"respawn")
-	global_position = spawn_pos
+	# After the unseal a death near the Exit Rite rebuilds the player near it,
+	# not at a checkpoint up to 19,000 px back (see rite_recovery_point).
+	var near_rite := rite_recovery_point(_death_position if _death_position != Vector2.INF else global_position)
+	_death_position = Vector2.INF
+	global_position = near_rite if near_rite != Vector2.INF else spawn_pos
 	_contact_sources.clear()
 	_touching_enemies = 0
 	hp_changed.emit(hp, max_hp)
@@ -1559,8 +1585,128 @@ func respawn() -> void:
 	if RunEvents != null and RunEvents.player_life_event.has_connections():
 		RunEvents.player_life_event.emit(self, &"respawn")
 	_clear_hurt_visual()
-	_grant_visible_invulnerability(respawn_invuln_time)
-	start_respawn_phase(respawn_phase_time)
+	if near_rite != Vector2.INF:
+		# Plan §6.4: up to 5 s of invulnerability and phasing; attacking after
+		# the first 2 s ends the invulnerability (_fire_weapon), the phasing
+		# holds for all 5.
+		_grant_visible_invulnerability(RITE_RECOVERY_GRACE)
+		_rite_recovery_left = RITE_RECOVERY_GRACE
+		start_respawn_phase(RITE_RECOVERY_GRACE)
+		if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
+			PerformanceFlightRecorder.record_counter_event(&"player", &"rite_recovery_respawn", 1, {
+				"x": near_rite.x, "y": near_rite.y, "checkpoint_x": spawn_pos.x, "checkpoint_y": spawn_pos.y,
+			})
+	else:
+		_grant_visible_invulnerability(respawn_invuln_time)
+		start_respawn_phase(respawn_phase_time)
+
+
+## Where a reconstruction lands near the Exit Rite, or Vector2.INF for the
+## checkpoint. The only human capture died 1,835 px from the exit after the
+## unseal and was rebuilt 19,017 px away; the 100 s walk back fed Overtime the
+## whole way (audit 2026-10-04, change 9; plan 2026-09-17 §6.4). Once the gate
+## is unsealed and a revealed, unlocked, unfinished rite exists, this tries
+## points 800-1200 px from it - well outside its channel circle - starting
+## toward where the player died and swinging round, and takes the valid one
+## with the fewest enemies near it. Valid means walkable to the spawner (its
+## own placement rule: loaded, unblocked chunk cells, authored bounds, no
+## wardstone field or excluded interior) under the player's whole footprint,
+## and clear of the world for the player's collision shape. The checkpoint
+## still wins when it is the nearer of the two to the rite, and with nothing
+## to validate against there is no relocation at all.
+func rite_recovery_point(death_position: Vector2) -> Vector2:
+	var director := get_node_or_null(^"/root/ThreatDirector")
+	if director == null or not bool(director.get("gate_unsealed")):
+		return Vector2.INF
+	var rite := _live_exit_rite()
+	if rite == null:
+		return Vector2.INF
+	var tree := get_tree()
+	var spawner: Node = tree.get_first_node_in_group(&"enemy_spawner") if tree != null else null
+	if spawner != null and not spawner.has_method("is_beat_position_valid"):
+		spawner = null
+	var chunks: Node = tree.get_first_node_in_group(&"chunk_manager") if tree != null else null
+	if spawner == null and chunks == null:
+		return Vector2.INF
+	var centre := rite.global_position
+	var circle := float(rite.get("radius")) if rite.get("radius") != null else 168.0
+	var toward := death_position - centre
+	if toward.length_squared() < 1.0:
+		toward = spawn_pos - centre
+	var heading := toward.normalized() if toward.length_squared() > 1.0 else Vector2.RIGHT
+	var best := Vector2.INF
+	var best_crowd := 1 << 30
+	var valid_found := 0
+	for angle_deg in RITE_RECOVERY_ANGLES:
+		for radius in RITE_RECOVERY_RADII:
+			var distance := maxf(radius, circle + RITE_RECOVERY_CIRCLE_MARGIN)
+			var candidate := centre + heading.rotated(deg_to_rad(angle_deg)) * distance
+			if not _is_recovery_point_valid(candidate, spawner, chunks):
+				continue
+			valid_found += 1
+			var crowd := _enemies_near(candidate, RITE_RECOVERY_CROWD_RADIUS)
+			if crowd < best_crowd:
+				best_crowd = crowd
+				best = candidate
+			if best_crowd == 0 or valid_found >= RITE_RECOVERY_MAX_CANDIDATES:
+				break
+		if best != Vector2.INF and (best_crowd == 0 or valid_found >= RITE_RECOVERY_MAX_CANDIDATES):
+			break
+	if best == Vector2.INF:
+		return Vector2.INF
+	if spawn_pos.distance_to(centre) <= best.distance_to(centre):
+		return Vector2.INF
+	return best
+
+
+func _live_exit_rite() -> Node2D:
+	var tree := get_tree()
+	if tree == null:
+		return null
+	for node in tree.get_nodes_in_group(&"exit_rite"):
+		var rite := node as Node2D
+		if rite == null or not rite.is_inside_tree():
+			continue
+		if rite.get("revealed") != true or rite.get("locked") != false or rite.get("_completed") == true:
+			continue
+		return rite
+	return null
+
+
+func _is_recovery_point_valid(point: Vector2, spawner: Node, chunks: Node) -> bool:
+	for offset in RITE_RECOVERY_FOOTPRINT:
+		var probe: Vector2 = point + offset
+		if spawner != null:
+			if not bool(spawner.call("is_beat_position_valid", probe)):
+				return false
+		elif not bool(chunks.call("is_cell_walkable", chunks.call("world_to_cell", probe))):
+			return false
+	return _clear_for_body(point)
+
+
+## True when the player's collision shape at `point` overlaps no world body
+## (enemies excluded: the respawn phases through them).
+func _clear_for_body(point: Vector2) -> bool:
+	var shape_node := get_node_or_null(^"CollisionShape2D") as CollisionShape2D
+	if shape_node == null or shape_node.shape == null or not is_inside_tree():
+		return true
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape = shape_node.shape
+	params.transform = Transform2D(0.0, point + shape_node.position)
+	params.collision_mask = _base_collision_mask & ~ENEMY_BODY_LAYER_BIT
+	params.exclude = [get_rid()]
+	params.collide_with_bodies = true
+	params.collide_with_areas = false
+	return get_world_2d().direct_space_state.intersect_shape(params, 1).is_empty()
+
+
+func _enemies_near(point: Vector2, radius: float) -> int:
+	var index := get_node_or_null(^"/root/EnemyIndex")
+	if index == null or not index.has_method("gather_in_radius"):
+		return 0
+	var found: Array = []
+	index.call("gather_in_radius", point, radius, found)
+	return found.size()
 
 
 func start_respawn_phase(duration: float) -> void:
