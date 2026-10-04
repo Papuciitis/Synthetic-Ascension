@@ -57,15 +57,17 @@ func _run() -> void:
 	)
 	starved.queue_free()
 
-	# Banked time is what gets spent. Three ticks - deliberately under the
-	# catch-up cap, which the next case covers - then one render frame long
+	# Banked time is what gets spent. Up to three ticks - never more than the
+	# catch-up cap (EnemySimulationScheduler lowers it to 2 at runtime since
+	# the FPS audit), which the next case covers - then one render frame long
 	# enough to spend all of it.
 	var banked := _spawn(speed)
-	for _i in range(3):
+	var banked_ticks := mini(3, maxi(Engine.max_physics_steps_per_frame, 1))
+	for _i in range(banked_ticks):
 		banked.call("_physics_process", tick)
 	banked.call("_process", 10.0)
 	var banked_x := banked.global_position.x
-	var expected := speed * (3.0 * tick + tick) # bank + headroom
+	var expected := speed * (float(banked_ticks) * tick + tick) # bank + headroom
 	_check(
 		absf(banked_x - expected) <= speed * tick * 0.5,
 		"a frame spends the banked physics time, not the render delta (%.1f px, expected ~%.1f)" % [banked_x, expected]
