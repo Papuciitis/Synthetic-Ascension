@@ -23,6 +23,22 @@ const FLASH_MS := 70
 const FLASH_BRIGHTNESS := 2.2
 const MAX_FLASHES := 128
 const FLASH_SLOT_META := &"_hit_flash_slot"
+## Kill moments (audit 2026-10-04, change 10). A multi-kill is 15+ kills
+## inside 0.6 s: one "xN" callout at the bodies' centre and one low thump; the
+## line keeps counting while the burst goes on and a new one needs a 2.5 s
+## gap. An elite falling says ELITE DOWN with its own sting, at most once a
+## second (a second elite inside the line's life counts on it instead).
+const MULTI_KILL_COUNT := 15
+const MULTI_KILL_WINDOW_MS := 600
+const MULTI_KILL_COOLDOWN_MS := 2500
+## The burst keeps its line while kills keep landing this close together.
+const MULTI_KILL_HOLD_MS := 900
+const MULTI_KILL_SLOTS := 48
+const MULTI_KILL_KEY := 0x5A_4B11
+const MULTI_KILL_COLOUR := Color(1.0, 0.78, 0.36, 1.0)
+const ELITE_DOWN_KEY := 0x5A_E117
+const ELITE_DOWN_COOLDOWN_MS := 1000
+const ELITE_DOWN_COLOUR := Color(1.0, 0.52, 0.3, 1.0)
 
 var enabled := true
 var _deaths_this_frame := 0
@@ -33,6 +49,18 @@ var _hits_since_spark := 0
 var _flash_ids := PackedInt64Array()
 var _flash_ends := PackedInt64Array()
 var _flash_bases := PackedColorArray()
+# Recent kills (ring buffer) for multi-kill detection.
+var _kill_times := PackedInt64Array()
+var _kill_positions := PackedVector2Array()
+var _kill_cursor := 0
+var _burst_kills := 0
+var _burst_last_ms := -100000
+var _burst_centre := Vector2.ZERO
+var _last_multi_kill_ms := -100000
+var _elite_down_ms := -100000
+var _elite_down_count := 0
+var _multi_kills := 0
+var _elite_downs := 0
 
 
 func _ready() -> void:
@@ -61,13 +89,81 @@ func _process(_delta: float) -> void:
 
 
 func _on_enemy_defeated(context: RefCounted) -> void:
-	if not enabled or context == null or _deaths_this_frame >= DEATHS_PER_FRAME:
+	if not enabled or context == null:
 		return
-	_deaths_this_frame += 1
 	var flags := int(context.get("flags"))
 	var elite := (flags & EnemyWorldTypes.Flags.ELITE) != 0
 	var position: Vector2 = context.get("position")
+	# The kill moments count every death; only the puffs are capped per frame.
+	_note_kill(position, Time.get_ticks_msec())
+	if elite:
+		_elite_down(position, Time.get_ticks_msec())
+	if _deaths_this_frame >= DEATHS_PER_FRAME:
+		return
+	_deaths_this_frame += 1
 	VfxBursts.play(&"elite_death" if elite else &"death", position, 1.15 if elite else 1.0)
+
+
+func multi_kills() -> int:
+	return _multi_kills
+
+
+func elite_downs() -> int:
+	return _elite_downs
+
+
+func _note_kill(position: Vector2, now: int) -> void:
+	if _kill_times.size() < MULTI_KILL_SLOTS:
+		_kill_times.append(now)
+		_kill_positions.append(position)
+	else:
+		_kill_times[_kill_cursor] = now
+		_kill_positions[_kill_cursor] = position
+		_kill_cursor = (_kill_cursor + 1) % MULTI_KILL_SLOTS
+	# A burst already on screen keeps counting on its own line.
+	if _burst_kills > 0 and now - _burst_last_ms <= MULTI_KILL_HOLD_MS:
+		_burst_kills += 1
+		_burst_last_ms = now
+		# The line stays where the burst began: a merged callout raised
+		# elsewhere would jump to the new spot.
+		_say_multi_kill(_burst_centre, false)
+		return
+	_burst_kills = 0
+	if now - _last_multi_kill_ms < MULTI_KILL_COOLDOWN_MS:
+		return
+	var count := 0
+	var centre := Vector2.ZERO
+	for i in range(_kill_times.size()):
+		if now - _kill_times[i] <= MULTI_KILL_WINDOW_MS:
+			count += 1
+			centre += _kill_positions[i]
+	if count < MULTI_KILL_COUNT:
+		return
+	_burst_kills = count
+	_burst_last_ms = now
+	_burst_centre = centre / float(count)
+	_last_multi_kill_ms = now
+	_multi_kills += 1
+	_say_multi_kill(_burst_centre, true)
+
+
+func _say_multi_kill(at: Vector2, first: bool) -> void:
+	if BattleText != null:
+		BattleText.popup(at, "×%d" % _burst_kills, MULTI_KILL_COLOUR, 1.5, MULTI_KILL_KEY)
+	if first and SfxManager != null:
+		SfxManager.play_2d(&"multikill_thump", at)
+
+
+func _elite_down(position: Vector2, now: int) -> void:
+	var fresh := now - _elite_down_ms >= ELITE_DOWN_COOLDOWN_MS
+	_elite_down_count = 1 if fresh else _elite_down_count + 1
+	_elite_down_ms = now
+	_elite_downs += 1
+	if BattleText != null:
+		var line := "ELITE DOWN" if _elite_down_count == 1 else "ELITE DOWN ×%d" % _elite_down_count
+		BattleText.popup(position, line, ELITE_DOWN_COLOUR, 1.3, ELITE_DOWN_KEY)
+	if fresh and SfxManager != null:
+		SfxManager.play_2d(&"elite_down", position)
 
 
 func _on_player_dashed(_player: Node, from: Vector2, direction: Vector2) -> void:

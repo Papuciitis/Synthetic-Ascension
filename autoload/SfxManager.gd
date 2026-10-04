@@ -43,6 +43,17 @@ var debug_record := false
 var debug_requests: Array[Dictionary] = []
 var _last_limited_ms: Dictionary = {} # id -> msec of its last limited play
 
+## Kill streak ladder (audit 2026-10-04, change 10): the death sound climbs a
+## semitone for every 5 kills inside the last 1.5 s, at most +7, and settles
+## back as the rate falls - a pause empties the window. Only the newest
+## KILL_WINDOW_SLOTS kills are kept: the cap needs 35 of them.
+const KILL_WINDOW_MS := 1500
+const KILLS_PER_SEMITONE := 5
+const MAX_KILL_SEMITONES := 7
+const KILL_WINDOW_SLOTS := 40
+var _kill_times := PackedInt64Array()
+var _kill_cursor := 0
+
 func _ready() -> void:
 	# Nothing is audible in headless runs (the real audio driver still mixes
 	# silently), so skipping voice starts is lossless and saves mixer work in
@@ -240,8 +251,31 @@ func _on_weapon_fired(_player: Node, style_id: StringName, origin: Vector2, _tar
 		play_2d(&"player_ranged_shot", origin)
 
 func _on_enemy_defeated(context: RefCounted) -> void:
-	if context != null:
-		play_2d(&"enemy_death", context.get("position") as Vector2)
+	if context == null:
+		return
+	var now := Time.get_ticks_msec()
+	if _kill_times.size() < KILL_WINDOW_SLOTS:
+		_kill_times.append(now)
+	else:
+		_kill_times[_kill_cursor] = now
+		_kill_cursor = (_kill_cursor + 1) % KILL_WINDOW_SLOTS
+	play_2d(&"enemy_death", context.get("position") as Vector2, 0.0, kill_streak_pitch(kills_in_window(now)))
+
+
+## Kills inside the last KILL_WINDOW_MS, this one included.
+func kills_in_window(now: int) -> int:
+	var count := 0
+	for stamp in _kill_times:
+		if now - stamp <= KILL_WINDOW_MS:
+			count += 1
+	return count
+
+
+## Pitch scale for `kills` inside the window: kills 1-4 sound as authored,
+## each further 5 add a semitone, up to +7.
+static func kill_streak_pitch(kills: int) -> float:
+	var semitones := mini(MAX_KILL_SEMITONES, maxi(0, kills) / KILLS_PER_SEMITONE)
+	return pow(2.0, float(semitones) / 12.0)
 
 func _on_boss_spawned(boss: Node, _tier: int, _portrait: Texture2D, _title: String) -> void:
 	if boss is Node2D:

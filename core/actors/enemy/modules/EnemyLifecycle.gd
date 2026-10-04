@@ -12,6 +12,8 @@ const HURT_SFX_COOLDOWN_MS: int = 120
 ## change 5): a minigun on one target reads as a strobe at faster rates.
 var _last_flash_ms: int = -100000
 const HIT_FLASH_COOLDOWN_MS: int = 120
+## One melee connect sound per swing: the arc lands on every body in one frame.
+const MELEE_HIT_SFX_INTERVAL_MS: int = 90
 
 func setup(owner: EnemyActor, drops: EnemyDrops, bomber: EnemyBomber, splitter: EnemySplitter) -> void:
 	_owner = owner
@@ -41,13 +43,26 @@ func apply_damage_feedback(applied_damage: float, source: Node, payload: Variant
 	# Hit confirmation: the body flashes white and every crit plus one hit in
 	# three throws a spark. Damage-over-time ticks (a status provenance, not a
 	# hit) confirm through their numbers alone.
-	if applied_damage < 0.5 or payload is BalanceProvenance or not _owner.is_inside_tree() or WorldFeedbackVfx == null:
+	if applied_damage < 0.5 or payload is BalanceProvenance or not _owner.is_inside_tree():
 		return
 	var ledger := payload as HitLedger
+	# The melee connect sound existed and was never played (audit 2026-10-04,
+	# change 10): once per swing, however many bodies the arc catches. A
+	# projectile ledger carries its projectile id, so shots never count.
+	if SfxManager != null and (ledger == null or ledger.projectile_id == 0) and _is_player_melee(source):
+		SfxManager.play_2d_limited(&"player_melee_hit", _owner.global_position, MELEE_HIT_SFX_INTERVAL_MS)
+	if WorldFeedbackVfx == null:
+		return
 	if now - _last_flash_ms >= HIT_FLASH_COOLDOWN_MS:
 		_last_flash_ms = now
 		WorldFeedbackVfx.flash_hit(_owner)
 	WorldFeedbackVfx.note_enemy_hit(_owner.global_position, ledger != null and ledger.critical_hits > 0, _hit_direction(source, ledger))
+
+
+func _is_player_melee(source: Node) -> bool:
+	if source == null or not is_instance_valid(source) or not source.is_in_group(&"player"):
+		return false
+	return Global != null and str(Global.selected_style_id) == "melee"
 
 
 ## Which way a hit travelled: the projectile's own heading when the ledger

@@ -34,6 +34,13 @@ const MAGNET_SPEED_MAX: float = 420.0
 # distance per frame was measurable process time.
 const MAGNET_IDLE_DISTANCE: float = MAGNET_RADIUS * 3.0
 const MAGNET_IDLE_POLL_SEC: float = 0.25
+## The drop sound existed and was never played (audit 2026-10-04, change
+## 10): an item instance landing near the player - an enemy's loot, the
+## player's own drop - clinks once. Level-built loot (exploration, vaults,
+## the evidence store) and anything off-screen stays quiet, and a shower of
+## drops plays one clink per DROP_SFX_INTERVAL_MS.
+const DROP_SFX_RADIUS: float = 900.0
+const DROP_SFX_INTERVAL_MS: int = 120
 
 var _pickup_ready: bool = false
 var _picked: bool = false
@@ -70,6 +77,7 @@ func _ready() -> void:
 
 	_enable_pickup_later()
 	_expire_later()
+	_play_drop_sound()
 	ground_serial = GroundLootCap.next_serial()
 	add_to_group(GroundLootCap.ITEM_GROUP)
 	if not is_exploration_loot and not persistent_world_drop:
@@ -111,6 +119,27 @@ func _expire_later() -> void:
 	await get_tree().create_timer(lifetime_seconds, false).timeout
 	if is_inside_tree() and not _picked:
 		queue_free()
+
+
+func _play_drop_sound() -> void:
+	if item_instance == null or is_exploration_loot:
+		return
+	var sfx := get_node_or_null("/root/SfxManager")
+	var player := get_tree().get_first_node_in_group("player") as Node2D
+	if sfx == null or player == null:
+		return
+	if player.global_position.distance_squared_to(global_position) > DROP_SFX_RADIUS * DROP_SFX_RADIUS:
+		return
+	sfx.call("play_2d_limited", &"drop", global_position, DROP_SFX_INTERVAL_MS)
+
+
+## Every successful collection sounds, the instance paths included: they
+## returned before the old one-line play at the end of MODE B, so an enemy
+## drop - the commonest pickup - was collected in silence.
+func _play_pickup_sound() -> void:
+	var sm := get_node_or_null("/root/SfxManager")
+	if sm != null:
+		sm.call("play_2d", &"pickup", global_position)
 
 
 # Public API for WorldDropSpawner (keeps spawner clean)
@@ -203,6 +232,7 @@ func _collect() -> void:
 			Global.run_inventory.set_item(slot_a, inst, origin)
 			_dbg(["[PICKUP INST] EQUIPPED", "slot=", slot_a])
 			_complete_secondary_objective()
+			_play_pickup_sound()
 			queue_free()
 			return
 
@@ -221,6 +251,7 @@ func _collect() -> void:
 					_dbg(["[PICKUP INST] FED EQUIPPED", "slot=", slot_a])
 					_show_feed_toast(equipped_a, rank_before_a, pct_before_a)
 					_complete_secondary_objective()
+					_play_pickup_sound()
 					queue_free()
 					return
 
@@ -230,6 +261,7 @@ func _collect() -> void:
 		if ok_inst:
 			_dbg(["[PICKUP INST] BAGGED"])
 			_complete_secondary_objective()
+			_play_pickup_sound()
 			queue_free()
 			return
 
@@ -314,9 +346,7 @@ func _collect() -> void:
 
 	_dbg(["[PICKUP DONE]", item_data.display_name, "x", copies])
 	_complete_secondary_objective()
-	var sm := get_node_or_null("/root/SfxManager")
-	if sm != null:
-		sm.call("play_2d", &"pickup", global_position)
+	_play_pickup_sound()
 	queue_free()
 
 
