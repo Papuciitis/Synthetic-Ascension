@@ -7,8 +7,10 @@ class_name PerformanceHitchTagger
 ## simulation, a chunk activation or one of its staged blocker steps, a flow
 ## field snapshot or publish, enemy lifecycle attach / detach / retire, the
 ## enemy scheduler's step, a frame that ran several physics ticks to catch up
-## ("physics_catchup"), a scene change, the recorder's own sampling, or
-## Godot's physics monitor as a last resort. Pure and static, so the incident
+## ("physics_catchup"), a scene change, the recorder's own sampling, the
+## frame phase that claimed the frame when the named costs do not explain it
+## ("process_phase", "deferred", "render_present"), or Godot's physics
+## monitor as a last resort. Pure and static, so the incident
 ## writer can call it from its worker thread. Correlation, not proof: the
 ## attribution says which measured cost was largest in that frame.
 
@@ -20,6 +22,9 @@ const MIN_ATTRIBUTED_MS := 2.0
 const MIN_ATTRIBUTED_SHARE := 0.25
 const PHYSICS_MONITOR_SHARE := 0.5
 const WORST_LIMIT := 8
+## Named costs measured inside the script process phase; what they leave of
+## that phase is charged to "process_phase" (chunk_* tags count too).
+const PROCESS_PHASE_COSTS := ["ascension", "fragments", "projectiles", "flow", "sampling"]
 
 
 static func frame_ms(sample: Dictionary) -> float:
@@ -74,6 +79,25 @@ static func attribution(sample: Dictionary, previous: Dictionary) -> Dictionary:
 		out["enemy_step"] = float(scheduler.get("physics_step_ms", 0.0))
 	if sample.has("sampling_overhead_usec"):
 		out["sampling"] = float(int(sample.get("sampling_overhead_usec", 0))) / 1000.0
+	var phases: Dictionary = sample.get("frame_phases", {})
+	if not phases.is_empty():
+		# Where the frame's wall time went (the recorder's frame phases),
+		# compared on equal terms (FPS audit 2026-10-04). Draw + present and
+		# the deferred tail are disjoint from every named cost; the script
+		# process phase is charged only what the named process-phase costs
+		# leave of it. Segment-1 chunk activations (process phase) and
+		# GPU-bound frames that missed vsync read "unattributed" or
+		# "enemy_step" before.
+		if phases.has("render_present"):
+			out["render_present"] = float(phases["render_present"])
+		if phases.has("deferred"):
+			out["deferred"] = float(phases["deferred"])
+		if phases.has("process"):
+			var named := 0.0
+			for key in out:
+				if String(key) in PROCESS_PHASE_COSTS or String(key).begins_with("chunk_"):
+					named += float(out[key])
+			out["process_phase"] = maxf(0.0, float(phases["process"]) - named)
 	if not String(sample.get("scene_change", "")).is_empty():
 		# The frame spans a scene change (the recorder's note_scene_change):
 		# loading the scene file, building the new scene and freeing the old

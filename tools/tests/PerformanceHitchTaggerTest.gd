@@ -50,6 +50,7 @@ func _run() -> void:
 	_test_chunk_stages()
 	_test_scene_change()
 	_test_frame_phases()
+	_test_phase_tags()
 	_test_summary_and_csv()
 	print("PerformanceHitchTaggerTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
@@ -212,6 +213,43 @@ func _test_frame_phases() -> void:
 	# A stamp from before the previous sample is not this frame's.
 	_check((recorder.call("_frame_phases", 40_000) as Dictionary).is_empty(), "stale stamps report nothing rather than a wrong split")
 	recorder.queue_free()
+
+
+## FPS audit 2026-10-04: frames the named costs do not explain are charged
+## to the frame phase that claimed them.
+func _test_phase_tags() -> void:
+	var quiet := _base(1_000_000, 12.0)
+	# A segment-1 chunk activation: 100 ms in the script process phase while
+	# the slow snapshot has not caught up with the chunk yet.
+	var activation := _base(2_000_000, 118.0)
+	activation["physics_ticks"] = 1
+	activation["physics_frame_ms"] = 1.5
+	activation["frame_phases"] = {"process": 104.0, "deferred": 0.8, "render_present": 9.0}
+	var activation_tag := PerformanceHitchTagger.tag(activation, quiet)
+	_check(String(activation_tag["tag"]) == "process_phase" and float(activation_tag["ms"]) > 100.0, "an unexplained 104 ms process phase tags 'process_phase' (%s)" % str(activation_tag))
+	# A GPU-bound frame with a light physics tick: the old tag was enemy_step.
+	var gpu := _base(3_000_000, 33.0)
+	gpu["physics_ticks"] = 1
+	gpu["physics_frame_ms"] = 5.0
+	gpu["frame_phases"] = {"process": 3.0, "deferred": 0.5, "render_present": 22.0}
+	_check(String(PerformanceHitchTagger.tag(gpu, quiet)["tag"]) == "render_present", "a 22 ms draw + present outranks a 5 ms physics tick")
+	var stall := _base(4_000_000, 45.0)
+	stall["frame_phases"] = {"process": 2.0, "deferred": 26.0, "render_present": 10.0}
+	_check(String(PerformanceHitchTagger.tag(stall, quiet)["tag"]) == "deferred", "a 26 ms deferred tail tags 'deferred'")
+	# Named process-phase costs keep their name: the phase only gets the rest.
+	var bullets := _base(5_000_000, 35.0)
+	bullets["projectile_ms"] = 14.0
+	bullets["frame_phases"] = {"process": 15.0, "deferred": 0.5, "render_present": 8.0}
+	var bullets_tag := PerformanceHitchTagger.tag(bullets, quiet)
+	_check(String(bullets_tag["tag"]) == "projectiles", "a 14 ms projectile step inside a 15 ms process phase still tags 'projectiles'")
+	var costs := PerformanceHitchTagger.attribution(bullets, quiet)
+	_check(float(costs.get("process_phase", -1.0)) < 1.0, "the process phase is charged only what the named costs leave (%.2f ms)" % float(costs.get("process_phase", -1.0)))
+	# Catch-up physics still wins when it is the larger cost.
+	var catchup := _base(6_000_000, 60.0)
+	catchup["physics_ticks"] = 2
+	catchup["physics_frame_ms"] = 30.0
+	catchup["frame_phases"] = {"process": 6.0, "deferred": 0.5, "render_present": 12.0}
+	_check(String(PerformanceHitchTagger.tag(catchup, quiet)["tag"]) == "physics_catchup", "two 15 ms catch-up ticks outrank a 12 ms present")
 
 
 func _test_summary_and_csv() -> void:
