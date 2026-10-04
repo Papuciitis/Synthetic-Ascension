@@ -72,16 +72,26 @@ func _run() -> void:
 			stock_totals.append(total)
 		markets.append({
 			"hub_next_segment": segment,
+			"market_scale": Global.market_scale(),
 			"buy": _distribution(buys),
 			"sell": _distribution(sells),
 			"whole_stock": _distribution(stock_totals),
 		})
 	_report["markets"] = markets
 	var refreshes: Array[int] = []
+	Global.attempt_segment = 2
 	for index in range(15):
 		Global.attempt_vendor_refreshes = index
 		refreshes.append(int(shop.call("_get_refresh_cost")))
 	_report["refresh_prices"] = refreshes
+	# The stage scale (follower economy audit P3): the Hub before segment 10.
+	var deep_refreshes: Array[int] = []
+	Global.attempt_segment = 10
+	for index in range(15):
+		Global.attempt_vendor_refreshes = index
+		deep_refreshes.append(int(shop.call("_get_refresh_cost")))
+	_report["refresh_prices_hub_9"] = deep_refreshes
+	Global.attempt_vendor_refreshes = 0
 	shop.free()
 
 	Global.attempt_segment = 2
@@ -95,6 +105,11 @@ func _run() -> void:
 			"reconstruction_cost": Global.compute_respawn_cost(),
 		})
 	_report["wallets_segment_2"] = wallets
+	# Belief's cap follows the Congregation (P5); Power still needs Followers held.
+	var congregation_caps: Array[Dictionary] = []
+	for recruited in [0, 2500, 5000, 10000, 20000, 1000000]:
+		congregation_caps.append({"congregation": recruited, "cap": Global.belief_congregation_cap(recruited)})
+	_report["congregation_caps"] = congregation_caps
 
 	var rewards: Array[Dictionary] = []
 	for overtime in [false, true]:
@@ -102,15 +117,29 @@ func _run() -> void:
 		ThreatDirector.overtime = 1000000.0 if overtime else 0.0
 		ThreatDirector.belief_defiance = 0.0
 		for reward in [0, 1, 2, 3, 5]:
+			# One kill from an empty Overtime carry, then a hundred
+			# (Global.settle_kill_reward settles fractions, P1).
 			Global._rng.seed = 99
+			Global._kill_reward_carry = 0.0
 			var materialized := _materialized_reward(reward)
 			Global._rng.seed = 99
+			Global._kill_reward_carry = 0.0
 			var proxy := _proxy_reward(reward)
+			Global._kill_reward_carry = 0.0
+			var materialized_100 := 0
+			for i in range(100):
+				materialized_100 += _materialized_reward(reward)
+			Global._kill_reward_carry = 0.0
+			var proxy_100 := 0
+			for i in range(100):
+				proxy_100 += _proxy_reward(reward)
 			rewards.append({
 				"base_reward": reward,
 				"overtime_multiplier": ThreatDirector.overtime_reward_multiplier(),
 				"materialized_reward": materialized,
 				"proxy_reward": proxy,
+				"materialized_100_kills": materialized_100,
+				"proxy_100_kills": proxy_100,
 			})
 	_report["death_path_rewards"] = rewards
 
