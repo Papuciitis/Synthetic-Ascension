@@ -505,6 +505,15 @@ func _test_surfaces() -> void:
 
 
 func _test_square() -> void:
+	# Headless runs (every suite and benchmark that boots a real scene) never
+	# get a blocking story card; the bulletin falls back to its tip.
+	_check(not StoryDirector.cards_allowed(), "no story card may block a headless run")
+	StoryDirector.load_state({})
+	_fresh(3, 99)
+	var quiet := StoryDirector.arrival(3, StoryDirector.cards_allowed())
+	_check((quiet["bulletin"] as Dictionary).is_empty() and String(quiet["bulletin_tip"]).begins_with(StoryLines.BULLETIN_TIP_PREFIX), "headless, the first bulletin is a tip")
+	_check(not StoryDirector.has_flag("bulletin:seg3"), "and the card is kept for a real session")
+	StoryDirector.cards_override = 1
 	# A new attempt's first square after an account closed in Segment 1.
 	StoryDirector.load_state({"accounts": 1, "flags": ["seen:chr_first"],
 		"last": {"n": 1, "segment": 1, "district": "institution", "peak": 3, "cause": "", "boss": -1}})
@@ -558,3 +567,4 @@ func _test_square() -> void:
 	hub.queue_free()
 	await get_tree().process_frame
 	get_tree().paused = false
+	StoryDirector.cards_override = -1

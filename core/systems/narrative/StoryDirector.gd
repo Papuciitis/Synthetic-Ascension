@@ -44,6 +44,9 @@ static var _just_closed: bool = false
 ## The state has every key (set by _normalise, cleared when it is replaced),
 ## so the hot paths (a kill moves the Followers) skip the check.
 static var _whole: bool = false
+## Tests pin whether story cards may block: -1 decides (cards_allowed), 1
+## forces them on, 0 off.
+static var cards_override: int = -1
 
 
 # ---------------------------------------------------------------- memory
@@ -620,6 +623,18 @@ static func _remember(pool_name: String, line: Dictionary) -> void:
 
 # ---------------------------------------------------------------- surfaces
 
+## Whether the story may stop the game for a card (a first bulletin, Bren's
+## dispatch). Never headless (no one there to dismiss it: the suites and
+## benchmarks run the real scenes) and never on a developer run; the same
+## words then arrive as tips and notices, or wait for a real session.
+static func cards_allowed() -> bool:
+	if cards_override >= 0:
+		return cards_override == 1
+	if DisplayServer.get_name() == "headless":
+		return false
+	return Global == null or not Global.debug_dev_mode
+
+
 ## The loading card's second line: the district a segment card leads into.
 static func loading_subtitle(title: String) -> String:
 	if Global == null or title.is_empty() or title != Global._scene_title(Global.PATH_GAME):
@@ -630,8 +645,9 @@ static func loading_subtitle(title: String) -> String:
 ## What a segment says as the run becomes playable, once per attempt:
 ## {"tip": arrival line, "bulletin": {title, body} the first time on the
 ## profile, "bulletin_tip": the repeat form}. {} for Segment 1 (the opening
-## is its arrival) and when this attempt already arrived here.
-static func arrival(segment: int) -> Dictionary:
+## is its arrival) and when this attempt already arrived here. Without
+## `cards` the bulletin is always the tip, and its first card is kept.
+static func arrival(segment: int, cards: bool = true) -> Dictionary:
 	if segment <= 1 or Global == null:
 		return {}
 	var mark := "arrival:%d" % segment
@@ -663,7 +679,7 @@ static func arrival(segment: int) -> Dictionary:
 	if bulletin.is_empty():
 		return out
 	var words := tokens(facts())
-	if add_flag("bulletin:" + key):
+	if cards and add_flag("bulletin:" + key):
 		out["bulletin"] = {"title": String(bulletin["title"]), "body": format(String(bulletin["body"]), words)}
 	else:
 		out["bulletin_tip"] = StoryLines.BULLETIN_TIP_PREFIX + format(String(bulletin["tip"]), words)

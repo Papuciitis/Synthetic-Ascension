@@ -53,7 +53,7 @@ func _run_is_playable() -> bool:
 
 
 func _present_arrival() -> void:
-	var info := StoryDirector.arrival(segment)
+	var info := StoryDirector.arrival(segment, StoryDirector.cards_allowed())
 	if info.is_empty():
 		return
 	_busy = true

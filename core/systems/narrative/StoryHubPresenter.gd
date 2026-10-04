@@ -75,6 +75,9 @@ func _notice_pending() -> void:
 
 
 func _present_dispatch() -> void:
+	# A letter waits for someone to read it (no developer or headless run).
+	if not StoryDirector.cards_allowed():
+		return
 	var dispatch := StoryDirector.bren_dispatch(StoryDirector.completed_segment())
 	if dispatch.is_empty():
 		return
