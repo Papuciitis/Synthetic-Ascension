@@ -6,17 +6,21 @@ class_name LoadingScrim
 ## 1,100-1,750 nodes; nothing to optimise there, so it reads as a transition
 ## instead of a hitch. Global.goto_scene shows it, lets two frames render,
 ## changes the scene, and the scrim lifts itself two frames after the new
-## scene exists.
+## scene exists. A segment card names its district under the rule
+## (StoryDirector.loading_subtitle), in the menus' Garamond italic.
 
 const FADE_SECONDS := 0.35
 const HOLD_FRAMES := 2
 ## The front end's title face (docs/design/2026-10-02-front-end-arcane-register.md).
 const TITLE_FONT := preload("res://assets/fonts/cinzel_decorative/CinzelDecorative-Regular.ttf")
 const GOLD := Color(0.72, 0.55, 0.33, 0.85)
+const SUBTITLE_THEME := preload("res://ui/theme/ArcaneMenuTheme.tres")
+const SUBTITLE_COLOR := Color(0.82, 0.77, 0.68, 0.92)
 
 var _scrim: ColorRect = null
 var _title: Label = null
 var _rule: Control = null
+var _subtitle: Label = null
 var _armed_scene: Node = null
 var _frames_after_change: int = 0
 var _fading: bool = false
@@ -46,6 +50,15 @@ func _ready() -> void:
 	_rule.size = Vector2(360, 14)
 	_rule.draw.connect(_draw_rule)
 	_scrim.add_child(_rule)
+	_subtitle = Label.new()
+	_subtitle.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var italic := SUBTITLE_THEME.get_font(&"font", &"ArcaneItalic") if SUBTITLE_THEME != null else null
+	if italic != null:
+		_subtitle.add_theme_font_override("font", italic)
+	_subtitle.add_theme_font_size_override("font_size", 24)
+	_subtitle.add_theme_color_override("font_color", SUBTITLE_COLOR)
+	_subtitle.visible = false
+	_scrim.add_child(_subtitle)
 	visible = false
 	set_process(false)
 
@@ -58,6 +71,11 @@ func show_for(title: String, current_scene: Node) -> void:
 	_title.position = centre - _title.size * 0.5
 	_rule.visible = title != ""
 	_rule.position = centre + Vector2(-_rule.size.x * 0.5, _title.size.y * 0.5 + 6.0)
+	var subtitle := StoryDirector.loading_subtitle(title)
+	_subtitle.text = subtitle
+	_subtitle.visible = subtitle != ""
+	_subtitle.reset_size()
+	_subtitle.position = Vector2(centre.x - _subtitle.size.x * 0.5, _rule.position.y + _rule.size.y + 8.0)
 	_scrim.modulate.a = 1.0
 	_armed_scene = current_scene
 	_frames_after_change = 0

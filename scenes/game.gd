@@ -225,6 +225,8 @@ func _begin_entry_sequence() -> void:
 	if Global != null and Global.debug_dev_segment:
 		return
 	var seg: int = (Global.attempt_segment if Global != null else 1)
+	# The district's arrival line and bulletin wait for the run to be playable.
+	StoryDirector.attach_segment(self, seg)
 	if seg == 1 and Global != null and not Global.attempt_opening_completed:
 		_opening_sequence = OPENING_SEQUENCE_SCENE.instantiate() as OpeningSequenceController
 		if _opening_sequence != null:

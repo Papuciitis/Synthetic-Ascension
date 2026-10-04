@@ -204,6 +204,8 @@ func _ready() -> void:
 	crowd.name = "Crowd"
 	add_child(crowd)
 	crowd.setup(self, crowd_seed if crowd_seed >= 0 else randi(), Global.followers)
+	# The district left behind as the arrival notice, then Bren's dispatch.
+	StoryDirector.attach_hub(self)
 	_update_pending_cue()
 	if Global.pending_big_choice:
 		call_deferred(&"_open_major_choice")
