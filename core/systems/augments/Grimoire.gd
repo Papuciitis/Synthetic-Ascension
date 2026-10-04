@@ -3,11 +3,12 @@ class_name Grimoire
 
 ## The Grimoire (docs/design/2026-10-03-duos-facets-and-the-reliquary.md §4):
 ## every Transcendence, Duo, Facet, Thesis and Canon the profile has ever
-## reached, kept in the profile (Global.grimoire_entries). Keys:
+## reached, and the story's records, kept in the profile
+## (Global.grimoire_entries). Keys:
 ##   transcend:<augment id>   duo:<duo id>   facet:<augment id>:<facet id>
-##   thesis:<family>          canon:<family>
+##   thesis:<family>          canon:<family>   record:<id> (StoryLines.RECORDS)
 
-const SECTIONS: PackedStringArray = ["TRANSCENDENCE", "DUO", "FACET", "THESIS", "CANON"]
+const SECTIONS: PackedStringArray = ["TRANSCENDENCE", "DUO", "FACET", "THESIS", "CANON", "RECORDS"]
 
 
 static func transcend_key(aug_id: StringName) -> String:
@@ -78,4 +79,6 @@ static func catalogue(augment_db: Dictionary) -> Array:
 			"name": "%s CANON" % String(family).to_upper(), "rule": String(DoctrineFamilies.CANON.get(family, "")),
 			"hint": "three %s Doctrines" % String(family),
 		})
+	# The story's codex, noted by play (StoryDirector.note_record).
+	out.append_array(StoryDirector.record_catalogue())
 	return out
