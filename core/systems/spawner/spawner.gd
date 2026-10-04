@@ -898,7 +898,13 @@ func _ambient_spawning_allowed() -> bool:
 
 func _request_rite_reinforcement() -> void:
 	var director := get_tree().get_first_node_in_group(&"encounter_director")
-	if director != null and director.has_method("request_rite_reinforcement"):
+	if director == null:
+		return
+	# A burst during the channel is one of the rite's scripted waves: the
+	# director escalates through its wave list when it has one.
+	if director.has_method("request_rite_wave"):
+		director.call("request_rite_wave")
+	elif director.has_method("request_rite_reinforcement"):
 		director.call("request_rite_reinforcement")
 
 ## Encounter beats (EncounterDirector): spawn one member of an authored

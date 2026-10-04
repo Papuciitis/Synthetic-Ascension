@@ -252,7 +252,7 @@ func _run() -> void:
 	_started.clear()
 	spawner.calls.clear()
 	director.call("_on_rite_channel_changed", true)
-	_check(_started.size() == 2 and _started.has(&"rite_sniper_crossfire") and _started.has(&"charger_wedge"), "the rite draws a crossfire and a wedge (%s)" % [_started])
+	_check(_started.size() == 2 and _started.has(&"rite_sniper_crossfire") and _started.has(&"rite_charger_pair"), "the rite draws a crossfire and a flanking pair - the plan's melee budget (%s)" % [_started])
 	var rite_snipers := spawner.calls.filter(func(spawn_call: Dictionary) -> bool: return String(spawn_call["scene"]).contains("Sniper"))
 	_check(rite_snipers.size() >= 3, "the Rite crossfire is more than the ambient two-sniper cap (%d)" % rite_snipers.size())
 	_check(spawner.rite_pressure_active, "the specialist response pauses random ambient pressure")
@@ -272,6 +272,27 @@ func _run() -> void:
 	_check(_started.size() == 4, "live Rite formations bound specialist pressure")
 	director.call("_on_rite_channel_changed", false)
 	_check(not spawner.rite_pressure_active, "ambient spawning resumes when channeling stops")
+
+	# --- 2026-10-04: the channel's seven scripted waves escalate, never past
+	# two authored melee per arrival, and end on one fast hunter ---
+	director.call("_on_rite_channel_changed", true)
+	var waves: Array[StringName] = []
+	var max_melee := 0
+	for wave in range(7):
+		_free_members(spawner)
+		await get_tree().process_frame
+		director.set("_active", {})
+		spawner.calls.clear()
+		_started.clear()
+		director.call("request_rite_wave")
+		if not _started.is_empty():
+			waves.append(_started[0])
+		var melee := spawner.calls.filter(func(spawn_call: Dictionary) -> bool: return String(spawn_call["scene"]).contains("Charger") or String(spawn_call["scene"]).contains("Runner"))
+		max_melee = maxi(max_melee, melee.size())
+	_check(waves.size() == 7, "every scripted wave sends a formation (%s)" % [waves])
+	_check(not waves.is_empty() and waves[waves.size() - 1] == &"rite_hunter", "the last wave is the hunter (%s)" % [waves])
+	_check(max_melee <= 2, "no wave brings more than two authored melee (%d)" % max_melee)
+	director.call("_on_rite_channel_changed", false)
 
 	# --- placement failure: blocked ground skips members, aborts sparse beats ---
 	spawner.calls.clear()

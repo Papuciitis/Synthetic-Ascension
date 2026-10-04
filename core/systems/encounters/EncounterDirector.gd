@@ -82,9 +82,19 @@ var _counters := {
 	"specialist_responses": 0,
 	"announced": 0,
 }
-## Beats sent the moment the Exit Rite is channelled (roadmap 2.8): the world
-## answers departure with a crossfire on the route and a wedge on the flank.
-@export var rite_specialist_beats: Array[StringName] = [&"rite_sniper_crossfire", &"charger_wedge"]
+## Beats sent the moment the exit encounter goes live (roadmap 2.8): the world
+## answers departure with a crossfire on the route and a pair on the flank
+## (the plan's melee budget; it was the six-charger wedge until 2026-10-04).
+@export var rite_specialist_beats: Array[StringName] = [&"rite_sniper_crossfire", &"rite_charger_pair"]
+## The channel's seven scripted waves (ExitRite.BURST_STAGES, 10% .. 94%)
+## escalate through this list instead of each re-sending whatever was cleared:
+## sights and flankers alternate, and the last wave is one fast hunter
+## (Risk of Rain 2's teleporter event - the holdout builds to its end).
+@export var rite_escalation: Array[StringName] = [
+	&"rite_sniper_crossfire", &"rite_charger_pair", &"rite_sniper_crossfire",
+	&"rite_charger_pair", &"rite_sniper_crossfire", &"rite_charger_pair", &"rite_hunter",
+]
+var _rite_wave_cursor := 0
 ## A cleared formation can return during the twenty-second channel, one at a
 ## time. Active ids cannot duplicate, which caps the authored ranged and
 ## movement pressure even when a high-damage build clears it instantly.
@@ -404,6 +414,23 @@ func _tick_rite_response(delta: float) -> void:
 		return
 	_rite_response_left = rite_response_interval
 	request_rite_reinforcement()
+
+
+## One of the channel's scripted waves (the spawner routes the rite's bursts
+## here). Sends the next entry of rite_escalation; if that formation is
+## still standing, falls back to re-sending a cleared one.
+func request_rite_wave() -> bool:
+	if not _rite_channel_active or not enabled:
+		return false
+	var index := mini(_rite_wave_cursor, rite_escalation.size() - 1)
+	_rite_wave_cursor += 1
+	if index >= 0:
+		var id := rite_escalation[index]
+		if not _active.has(id) and not try_spawn_beat(id).is_empty():
+			_counters["specialist_responses"] = int(_counters["specialist_responses"]) + 1
+			_record(&"specialist_response", id, 1, {"wave": index})
+			return true
+	return request_rite_reinforcement()
 
 
 func request_rite_reinforcement() -> bool:

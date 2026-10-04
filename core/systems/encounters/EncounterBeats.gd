@@ -60,6 +60,45 @@ const RITE_SNIPER_CROSSFIRE: Dictionary = {
 	],
 }
 
+# Explicit-only Rite melee (plan 2026-09-17 §6.2: "at most 2 living/pending
+# authored melee ... a charger counts as a full arrival by itself"). The
+# six-charger wedge used to answer the channel; a pair keeps the player
+# moving without turning the sniper encounter back into a horde.
+const RITE_CHARGER_PAIR: Dictionary = {
+	"id": &"rite_charger_pair",
+	"kind_tag": &"charge",
+	"label": "FLANKERS",
+	"callout": "Two break from the line.",
+	"answer": "step aside",
+	"mode": &"flank",
+	"distance": 820.0,
+	"min_phase": &"disturbance",
+	"cooldown": 0.0,
+	"members": [
+		{"scene": CHARGER, "offset": Vector2(0.0, -60.0), "elite": false},
+		{"scene": CHARGER, "offset": Vector2(0.0, 60.0), "elite": false},
+	],
+}
+
+# Explicit-only: the channel's last wave (94%) - one fast, vampiric hunter,
+# the world's final argument for staying.
+const RITE_HUNTER: Dictionary = {
+	"id": &"rite_hunter",
+	"kind_tag": &"hunter",
+	"label": "THE LAST HUNTER",
+	"announce": "SOMETHING FAST WANTS YOU TO STAY",
+	"callout": "Something fast wants you to stay.",
+	"answer": "finish the rite",
+	"mode": &"off_route",
+	"distance": 900.0,
+	"min_phase": &"disturbance",
+	"cooldown": 0.0,
+	"modifiers": [&"fast", &"vampiric"],
+	"members": [
+		{"scene": RUNNER, "offset": Vector2(0.0, 0.0), "elite": true},
+	],
+}
+
 # Explicit-only "rematch" (2026-10-04, vision "Power Escalation Should Be
 # Visible"): when the player crosses a power threshold the EncounterDirector
 # rings them with the district's oldest fodder while the Threat Director holds
@@ -332,6 +371,10 @@ static func find(id: StringName) -> Dictionary:
 		return RITE_SNIPER_CROSSFIRE
 	if id == &"rematch_ring":
 		return REMATCH_RING
+	if id == &"rite_charger_pair":
+		return RITE_CHARGER_PAIR
+	if id == &"rite_hunter":
+		return RITE_HUNTER
 	for beat in CATALOG:
 		if beat["id"] == id:
 			return beat
