@@ -31,6 +31,18 @@ var _loops: Dictionary = {} # String -> AudioStreamPlayer2D (key = "<owner_id>:<
 
 var _rng := RandomNumberGenerator.new()
 
+## Non-positional voices for sounds about the player's own state (the
+## low-health heartbeat): heard at one level wherever the camera is, and
+## never stealing a world voice.
+const GLOBAL_VOICES := 3
+var _global_pool: Array[AudioStreamPlayer] = []
+
+## Suites set this to read what WOULD have played: requests are recorded
+## before the headless guard, so the decisions are testable without audio.
+var debug_record := false
+var debug_requests: Array[Dictionary] = []
+var _last_limited_ms: Dictionary = {} # id -> msec of its last limited play
+
 func _ready() -> void:
 	# Nothing is audible in headless runs (the real audio driver still mixes
 	# silently), so skipping voice starts is lossless and saves mixer work in
@@ -53,6 +65,13 @@ func _ready() -> void:
 		p.process_mode = Node.PROCESS_MODE_PAUSABLE
 		add_child(p)
 		_pool.append(p)
+
+	for i in range(GLOBAL_VOICES):
+		var g := AudioStreamPlayer.new()
+		g.bus = _best_bus(&"SFX")
+		g.process_mode = Node.PROCESS_MODE_PAUSABLE
+		add_child(g)
+		_global_pool.append(g)
 
 	# Hook RunEvents (keeps SFX wiring centralized). Do it deferred so autoload order is safe.
 	call_deferred("_hook_run_events")
@@ -95,7 +114,10 @@ func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
 	_ui_current_id = id
 	_inc(id)
 
-func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0) -> void:
+## `pitch` is the base pitch scale before the sound's own jitter (the kill
+## streak ladder raises it a semitone at a time).
+func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0, pitch: float = 1.0) -> void:
+	_record(id, &"2d", vol_add_db, pitch, world_pos)
 	if _headless:
 		return
 	var def := _defs.get(id) as SoundDef
@@ -113,12 +135,58 @@ func play_2d(id: StringName, world_pos: Vector2, vol_add_db: float = 0.0) -> voi
 	p.stream = def.stream
 	p.bus = _best_bus(def.bus)
 	p.volume_db = def.vol_db + vol_add_db + sfx_gain_db
-	p.pitch_scale = _jittered_pitch(1.0, def.pitch_jitter)
+	p.pitch_scale = _jittered_pitch(pitch, def.pitch_jitter)
 
 	_apply_loop_flag(def.stream, def.loop)
 	p.play()
 	_inc(id)
 	p.set_meta(&"sfx_id", id)
+
+## A world sound at most once per `min_interval_ms` for its id (a melee
+## swing that hits six enemies, a shower of drops). Returns whether it played
+## (or, headless, would have).
+func play_2d_limited(id: StringName, world_pos: Vector2, min_interval_ms: int, vol_add_db: float = 0.0, pitch: float = 1.0) -> bool:
+	var now := Time.get_ticks_msec()
+	if now - int(_last_limited_ms.get(id, -1000000)) < min_interval_ms:
+		return false
+	_last_limited_ms[id] = now
+	play_2d(id, world_pos, vol_add_db, pitch)
+	return true
+
+
+## A non-positional sound on the sound's own bus: the player's own state
+## (heartbeat), heard at one level wherever the camera is.
+func play_global(id: StringName, vol_add_db: float = 0.0, pitch: float = 1.0) -> void:
+	_record(id, &"global", vol_add_db, pitch, Vector2.ZERO)
+	if _headless:
+		return
+	var def := _defs.get(id) as SoundDef
+	if def == null or def.stream == null:
+		return
+	var p: AudioStreamPlayer = null
+	for candidate in _global_pool:
+		if not candidate.playing:
+			p = candidate
+			break
+	if p == null:
+		if _global_pool.is_empty():
+			return
+		p = _global_pool[0]
+	p.stop()
+	p.stream = def.stream
+	p.bus = _best_bus(def.bus)
+	p.volume_db = def.vol_db + vol_add_db + sfx_gain_db
+	p.pitch_scale = _jittered_pitch(pitch, def.pitch_jitter)
+	p.play()
+
+
+func _record(id: StringName, kind: StringName, vol_add_db: float, pitch: float, at: Vector2) -> void:
+	if not debug_record:
+		return
+	debug_requests.append({"id": id, "kind": kind, "vol_add_db": vol_add_db, "pitch": pitch, "position": at, "msec": Time.get_ticks_msec()})
+	if debug_requests.size() > 256:
+		debug_requests.pop_front()
+
 
 # Loop attached to an owner (stops automatically when owner is freed)
 func ensure_loop_2d(owner_node: Node2D, tag: StringName, id: StringName, vol_add_db: float = 0.0) -> void:
@@ -309,6 +377,10 @@ func _exit_tree() -> void:
 		if p != null and is_instance_valid(p):
 			p.stop()
 			p.stream = null
+	for g in _global_pool:
+		if g != null and is_instance_valid(g):
+			g.stop()
+			g.stream = null
 
 
 func _on_pooled_finished(p: AudioStreamPlayer2D) -> void:

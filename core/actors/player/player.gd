@@ -111,6 +111,20 @@ var _dash: PlayerDashState = DashState.new()
 var _dash_trail: Node2D = null
 
 var invulnerable_time: float = 0.0
+## Hurt feedback on the body (audit 2026-10-04, change 6): a hit that costs HP
+## tints the character red for HURT_TINT_SECONDS, and protective
+## invulnerability (respawn, a rescue, the post-hit grace) blinks it so the
+## player can see the window. A dash's own i-frames do not blink: the dash
+## is its own read. Reduced Motion holds the blink at a steady translucency.
+const HURT_TINT := Color(1.6, 0.5, 0.5, 1.0)
+const HURT_TINT_SECONDS := 0.08
+const BLINK_ALPHA := 0.4
+const BLINK_HALF_PERIOD := 0.06
+const BLINK_STEADY_ALPHA := 0.65
+var _hurt_tint_left: float = 0.0
+var _blink_left: float = 0.0
+var _blink_clock: float = 0.0
+var _visual_tinted: bool = false
 ## Seconds of healing lock left - the Cursed Vault's price, a Sacrifice, a
 ## ritual interference. Counted down in _process beside invulnerable_time, so
 ## it pauses with the game and holds while dead.
@@ -232,6 +246,8 @@ func _process(delta: float) -> void:
 
 	if invulnerable_time > 0.0:
 		invulnerable_time = max(invulnerable_time - delta, 0.0)
+	if _visual_tinted or _hurt_tint_left > 0.0 or _blink_left > 0.0:
+		_update_hurt_visual(delta)
 
 	if _healing_lock_left > 0.0:
 		_healing_lock_left = maxf(_healing_lock_left - delta, 0.0)
@@ -1374,6 +1390,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 	if reduced >= hp and ar4 != null and ar4.intercept_lethal_damage(reduced):
 		# A tree rule (Last Hit) took the killing blow: left at 1 HP.
 		hp = 1.0
+		_flash_hurt()
 		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
 		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
 		hp_changed.emit(hp, max_hp)
@@ -1384,6 +1401,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 		# An item rule (Plot Armor) refused the killing blow, after the tree
 		# had its chance; the item marks its own rearm condition.
 		hp = 1.0
+		_flash_hurt()
 		_report_health_change(&"hit", "", health_before, max_hp, reduced, &"intercepted", source)
 		_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"intercepted")
 		hp_changed.emit(hp, max_hp)
@@ -1391,6 +1409,7 @@ func _take_damage(amount: float, source: Node = null, kind: StringName = &"unkno
 			RunEvents.player_damage_taken.emit(self, health_before - hp, global_position)
 		return
 	hp = max(hp - reduced, 0.0)
+	_flash_hurt()
 	_report_health_change(&"hit", "", health_before, max_hp, reduced, kind, source)
 	_report_balance_damage(raw_amount, reduced, health_before - hp, source, kind, &"hit")
 	if BattleText != null:
@@ -1439,7 +1458,7 @@ func _try_doctrine_death_intercept() -> bool:
 	_report_health_change(&"rescue", "doctrine:manufactured_witness", hp_before_rescue, max_hp, hp, &"rescue")
 	if RunEvents != null and RunEvents.player_life_event.has_connections():
 		RunEvents.player_life_event.emit(self, &"rescue")
-	grant_invulnerability(2.0)
+	_grant_visible_invulnerability(2.0)
 	hp_changed.emit(hp, max_hp)
 	return true
 
@@ -1497,7 +1516,8 @@ func respawn() -> void:
 	# Spawn protection: invulnerability + phasing through enemy bodies
 	if RunEvents != null and RunEvents.player_life_event.has_connections():
 		RunEvents.player_life_event.emit(self, &"respawn")
-	grant_invulnerability(respawn_invuln_time)
+	_clear_hurt_visual()
+	_grant_visible_invulnerability(respawn_invuln_time)
 	start_respawn_phase(respawn_phase_time)
 
 
@@ -1525,6 +1545,53 @@ func wardstone_full_restore() -> void:
 
 func grant_invulnerability(duration: float) -> void:
 	invulnerable_time = max(invulnerable_time, duration)
+
+
+## Invulnerability the player should SEE: respawn, a rescue, the post-hit
+## grace. The body blinks while it lasts.
+func _grant_visible_invulnerability(duration: float) -> void:
+	grant_invulnerability(duration)
+	_blink_left = maxf(_blink_left, duration)
+
+
+## Starts the red hurt tint; called for every hit that cost HP.
+func _flash_hurt() -> void:
+	_hurt_tint_left = HURT_TINT_SECONDS
+
+
+func _update_hurt_visual(delta: float) -> void:
+	_hurt_tint_left = maxf(_hurt_tint_left - delta, 0.0)
+	# The blink never outlasts the protection it shows.
+	_blink_left = minf(maxf(_blink_left - delta, 0.0), invulnerable_time)
+	_blink_clock += delta
+	var visual := get_node_or_null(^"Visual") as CanvasItem
+	if visual == null:
+		_visual_tinted = false
+		return
+	var colour := Color.WHITE
+	if _hurt_tint_left > 0.0:
+		# Combat Flashes Reduced / Off scale the tint like every combat flash.
+		colour = Color.WHITE.lerp(HURT_TINT, AccessibilityPresentation.current_flash_alpha(1.0))
+	if _blink_left > 0.0:
+		if SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)):
+			colour.a = BLINK_STEADY_ALPHA
+		elif int(_blink_clock / BLINK_HALF_PERIOD) % 2 == 1:
+			colour.a = BLINK_ALPHA
+	else:
+		_blink_clock = 0.0
+	visual.modulate = colour
+	_visual_tinted = colour != Color.WHITE
+
+
+## Back to the plain sprite (respawn, cinematics).
+func _clear_hurt_visual() -> void:
+	_hurt_tint_left = 0.0
+	_blink_left = 0.0
+	_blink_clock = 0.0
+	var visual := get_node_or_null(^"Visual") as CanvasItem
+	if visual != null:
+		visual.modulate = Color.WHITE
+	_visual_tinted = false
 
 
 ## Health spent on purpose by an advancement-tree rule (Tails, Backfire, Bad
