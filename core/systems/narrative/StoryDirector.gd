@@ -16,6 +16,8 @@ class_name StoryDirector
 ##   acc_flags  once-per-account flags, cleared when an account closes
 ##   accounts   accounts closed (attempts that ended in death)
 ##   best       the most segments any attempt has completed
+##   best_known false on a profile older than the story until its first
+##              account closes: its old depth was never recorded
 ##   last       the last closed account (close_account)
 ##   attempt    this attempt: flags, peak, recon, best_at_start, milestone,
 ##              first_hub, death {cause, rite, boss}
@@ -30,6 +32,10 @@ const SEGMENT_PRESENTER_PATH := "res://core/systems/narrative/StorySegmentPresen
 const HUB_PRESENTER_PATH := "res://core/systems/narrative/StoryHubPresenter.gd"
 const ROMAN: Array[String] = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X",
 	"XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX"]
+## The first-time beats a profile with closed accounts has already lived
+## (the first epitaph, meeting the Chronicler, the first reconstruction, the
+## first square), spent when its history seeds the story (_seed_from_history).
+const HISTORY_SPENT_FLAGS: Array[String] = ["seen:ep_first", "seen:chr_first", "seen:rc_first", "departure:institution"]
 
 static var state: Dictionary = {}
 static var _ledger: RefCounted = null
@@ -61,13 +67,50 @@ static func ensure() -> void:
 			_ledger.call("bind")
 
 
-## Adopts a profile's saved story (Global.apply_save).
-static func load_state(meta: Dictionary) -> void:
+## Adopts a profile's saved story (Global.apply_save). `history` is what the
+## save itself knows ({"runs": total_runs, "active": attempt_active}); a
+## story saved before the layer existed (no "v") is seeded from it.
+static func load_state(meta: Dictionary, history: Dictionary = {}) -> void:
 	state = meta.duplicate(true) if meta != null else {}
+	if not state.has("v"):
+		_seed_from_history(history)
 	_whole = false
 	_just_closed = false
 	_pending.clear()
 	ensure()
+
+
+## A profile older than the story layer loaded with an empty story, so its
+## next death was "ACCOUNT I... The first account ends." whatever its Archives
+## card said (story review 2026-10-04). Every attempt it started ended in
+## death (there is no abandon path), so its closed accounts are its runs,
+## less the one still under way. The beats that would deny that history are
+## spent; the Chronicler relays nothing until an account closes under the
+## ledger, since none of the old ones was written down; and no line claims a
+## new best until then, since the old depth was never recorded either. A
+## first run still under way is left as it is: its death is the first.
+static func _seed_from_history(history: Dictionary) -> void:
+	var closed := int(history.get("runs", 0)) - (1 if bool(history.get("active", false)) else 0)
+	if closed <= 0:
+		return
+	state["accounts"] = closed
+	var flags: Array = state.get("flags") if state.get("flags") is Array else []
+	for flag in HISTORY_SPENT_FLAGS:
+		if not flags.has(flag):
+			flags.append(flag)
+	var acc_flags: Array = []
+	for entry in StoryLines.CHRONICLER:
+		var line: Dictionary = entry
+		var when: Dictionary = line.get("when", {})
+		var once := String(line.get("once", ""))
+		# A count already passed ("Three accounts of the same night").
+		if once == "profile" and when.size() == 1 and when.has("accounts_min") and int(when["accounts_min"]) <= closed and not flags.has("seen:" + once_key(line)):
+			flags.append("seen:" + once_key(line))
+		elif once == "account" and not acc_flags.has(once_key(line)):
+			acc_flags.append(once_key(line))
+	state["flags"] = flags
+	state["acc_flags"] = acc_flags
+	state["best_known"] = false
 
 
 ## What Global.write_save stores in SaveData.meta_story.
@@ -86,6 +129,8 @@ static func _normalise() -> void:
 			state[key] = []
 	for key in ["accounts", "best"]:
 		state[key] = maxi(0, int(state.get(key, 0)))
+	if not (state.get("best_known") is bool):
+		state["best_known"] = true
 	if not (state.get("last") is Dictionary):
 		state["last"] = {}
 	if not (state.get("attempt") is Dictionary):
@@ -186,13 +231,18 @@ static func close_account() -> Dictionary:
 		"style": style,
 		"response": response,
 		"family": dominant_family(),
-		"new_best": accounts > 0 and seg - 1 > int(a.get("best_at_start", 0)),
+		"new_best": _is_new_best(seg, a),
 		"unix": int(Time.get_unix_time_from_system()),
 	}
 	account["seed"] = int(hash([world_seed, accounts, seg]))
 	state["accounts"] = accounts + 1
 	state["acc_flags"] = []
 	state["last"] = account
+	# The account's own depth: on a profile older than the story the segments
+	# its run cleared before the update were never noted, and from here on
+	# the best is known.
+	state["best"] = maxi(int(state["best"]), seg - 1)
+	state["best_known"] = true
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(account["seed"])
 	account["epitaph"] = say(StoryLines.EPITAPHS, facts(), rng)
@@ -206,6 +256,12 @@ static func close_account() -> Dictionary:
 static func last_account() -> Dictionary:
 	_normalise()
 	return state["last"]
+
+
+## Whether an attempt in `seg` has come further than any account before it:
+## never on the first account, nor while the profile's best is unknown.
+static func _is_new_best(seg: int, a: Dictionary) -> bool:
+	return int(state["accounts"]) > 0 and bool(state["best_known"]) and seg - 1 > int(a.get("best_at_start", 0))
 
 
 ## A segment was completed (Global.balance_segment_completed).
@@ -389,7 +445,7 @@ static func facts(extra: Dictionary = {}) -> Dictionary:
 	f["accounts"] = accounts
 	f["area"] = has_flag("area:1")
 	f["first_hub"] = seg > 1 and int(a.get("first_hub", 0)) == seg - 1
-	f["new_best"] = accounts > 0 and seg - 1 > int(a.get("best_at_start", 0))
+	f["new_best"] = _is_new_best(seg, a)
 	var last: Dictionary = state["last"]
 	f["acc_n"] = int(last.get("n", 0))
 	f["acc_new_best"] = bool(last.get("new_best", false))

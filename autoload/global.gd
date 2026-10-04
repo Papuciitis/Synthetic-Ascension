@@ -2623,7 +2623,9 @@ func apply_save(save: SaveData) -> void:
 		var clean_key := String(grimoire_key).strip_edges()
 		if clean_key != "" and not grimoire_entries.has(clean_key):
 			grimoire_entries.append(clean_key)
-	StoryDirector.load_state(save.meta_story)
+	# A story saved before the story layer is seeded from the runs this
+	# profile already has (story review 2026-10-04).
+	StoryDirector.load_state(save.meta_story, {"runs": save.total_runs, "active": save.attempt_active})
 	seen_manifestation_cards.clear()
 	for card_id in save.meta_seen_manifestation_cards:
 		var clean_card_id := String(card_id).strip_edges()

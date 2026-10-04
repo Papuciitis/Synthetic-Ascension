@@ -62,6 +62,7 @@ func _run() -> void:
 	_test_account()
 	_test_fatal_death()
 	_test_save_round_trip()
+	_test_older_profile()
 	_test_completed_segment_keys()
 	_test_arrivals()
 	_test_bren()
@@ -265,6 +266,41 @@ func _test_save_round_trip() -> void:
 	Global.apply_save(old)
 	_check(int(StoryDirector.state["accounts"]) == 0 and (StoryDirector.state["flags"] as Array).is_empty() and StoryDirector.state.has("attempt"), "an empty story loads as a fresh one")
 	_check(StoryDirector.route_label(4) == "Area 1 · Segment 4" and StoryDirector.route_label(12) == "Beyond the Wall · Segment 12", "the route label leaves Area 1 past the last gate")
+
+
+## A profile saved before the story layer (meta_story empty, no "v") with
+## runs behind it: every run it started ended in death, so its accounts are
+## its runs, less one still under way.
+func _test_older_profile() -> void:
+	var veteran := SaveData.new()
+	veteran.total_runs = 37
+	Global.apply_save(veteran)
+	Global.selected_race_id = "human"
+	Global.selected_style_id = "ranged"
+	_check(int(StoryDirector.state["accounts"]) == 37, "37 runs and none under way are 37 closed accounts (%d)" % int(StoryDirector.state["accounts"]))
+	var spent := true
+	for flag in ["seen:ep_first", "seen:chr_first", "seen:rc_first", "departure:institution", "seen:chr_accounts_3", "seen:chr_accounts_10", "seen:chr_accounts_25"]:
+		spent = spent and StoryDirector.has_flag(flag)
+	_check(spent, "its first-time beats and the account counts it already passed are spent")
+	_fresh(2, 31)
+	_check(StoryDirector.departure_line() == "The movement holds this square tonight.", "the square is not new to it")
+	_fresh(5, 31)
+	_check(not bool(StoryDirector.facts()["new_best"]), "no new best is claimed while its old depth is unknown")
+	var talk := StoryDirector.staff_line("chronicler", _rng(4))
+	_check(talk == "No lineage, no patron, no pact. The Registry never had a box for you.", "the Chronicler relays no account that was never written down (%s)" % talk)
+	Global.on_attempt_failed_die_die()
+	var last := StoryDirector.last_account()
+	_check(int(last.get("n", 0)) == 38 and not bool(last.get("new_best", true)), "its next death closes the 38th account, not the first (%d)" % int(last.get("n", 0)))
+	_check(String(last.get("epitaph", "")) != "The first account ends. What you bound to the Pattern remains.", "and is not told as the first (%s)" % String(last.get("epitaph", "")))
+	_check(int(StoryDirector.state["best"]) == 4 and bool(StoryDirector.state["best_known"]), "that account's depth is the best now known")
+	_fresh(6, 31)
+	_check(bool(StoryDirector.facts()["new_best"]), "an account past it is a new best")
+	StoryDirector.load_state({}, {"runs": 5, "active": true})
+	_check(int(StoryDirector.state["accounts"]) == 4, "a run under way is not yet an account")
+	StoryDirector.load_state({}, {"runs": 1, "active": true})
+	_check(int(StoryDirector.state["accounts"]) == 0 and not StoryDirector.has_flag("seen:ep_first") and bool(StoryDirector.state["best_known"]), "a first run still under way keeps every first-time beat")
+	StoryDirector.load_state({"v": 1, "accounts": 2}, {"runs": 37})
+	_check(int(StoryDirector.state["accounts"]) == 2, "a story the layer saved is never reseeded")
 
 
 # ---------------------------------------------------------------- places
