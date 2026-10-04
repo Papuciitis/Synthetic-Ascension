@@ -221,7 +221,7 @@ var _kills_since_unseal: int = 0
 ## pays for refusing to leave, not travel.
 var _injected_seconds: float = 0.0
 ## Travel grace for this unseal, resolved from the player's distance to the
-## rite the first time both exist after the unseal (see _travel_grace_seconds).
+## rite the first time both exist after the unseal (see _resolve_travel_grace).
 var _grace_sec: float = 0.0
 var _grace_resolved: bool = false
 ## Collapse arrives over this many seconds instead of in one step: the human
@@ -230,7 +230,7 @@ var _grace_resolved: bool = false
 @export_range(0.0, 60.0, 1.0) var collapse_ramp_sec: float = 20.0
 var _collapse_ramp_left: float = 0.0
 ## A threshold crossed outside combat (the Hub, a menu, the segment's opening
-## seconds) waits for the next disturbance phase, where the hold can be felt.
+## seconds) waits for the next combat phase, where the hold can be felt.
 var _contrast_pending: Array[Dictionary] = []
 
 func _ready() -> void:
@@ -405,7 +405,9 @@ func set_segment_phase(next_phase: StringName) -> void:
 	if clean_phase == &"collapse" and previous != &"collapse":
 		_collapse_ramp_left = collapse_ramp_sec
 	_recompute(true)
-	if clean_phase == &"disturbance" or clean_phase == &"ascension":
+	# Any combat phase releases a held threshold (a segment can jump from recon
+	# straight to collapse when the primary completes at full resonance).
+	if clean_phase != &"recon":
 		_release_pending_contrast()
 
 func _on_resonance_changed(v: float) -> void:
