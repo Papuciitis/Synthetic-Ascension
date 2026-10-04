@@ -29,7 +29,7 @@ var _damage_cb: Callable = Callable()
 func get_effects_short(inst: ItemInstance) -> PackedStringArray:
 	var out := PackedStringArray()
 	out.append("Taking damage costs Followers: about %d per health bar lost." % int(round(rate(inst))))
-	out.append("Never spends below your reconstruction cost. It takes your purse, not your last life.")
+	out.append("Never leaves you at or below your reconstruction cost. It takes your purse, not your last life.")
 	return out
 
 

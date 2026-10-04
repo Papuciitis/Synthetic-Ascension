@@ -458,9 +458,18 @@ func _test_reserve_floor() -> void:
 
 	var furnace := FurnaceScript.new()
 	add_child(furnace)
+	BattleText.set("_count", 0)
+	BattleText.set("_overwrite_slot", 0)
 	Global.set_followers(13)
 	furnace.call("_try_tithe")
 	_check(Global.followers == 13, "Tithe Furnace refuses a tithe that would leave exactly the cost (%d)" % Global.followers)
+	# What the player reads matches that rule (review 2026-10-04): the popup
+	# names the balance kept, not the 12 it costs, and the text says "at or
+	# below".
+	var texts: PackedStringArray = BattleText.get("_texts")
+	_check(int(BattleText.get("_count")) > 0 and texts[0] == "FURNACE REFUSES (KEEPS 13 TO REBUILD)", "its refusal names the 13 it keeps, not the 12 it costs (%s)" % (texts[0] if int(BattleText.get("_count")) > 0 else "no popup"))
+	var furnace_rows: Array = furnace.call("stat_effects")
+	_check(String(furnace.call("describe")).contains("leave you at or below your reconstruction cost") and String((furnace_rows[1] as Dictionary)["when"]) == "always keeps more than your reconstruction cost", "its description and stat row state the same rule")
 	furnace.call("_refresh_affordability")
 	_check(not bool(furnace.get("_can_afford")), "and its glow says it cannot afford one")
 	Global.set_followers(14)

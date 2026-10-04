@@ -143,9 +143,10 @@ func _try_tithe(style_id: StringName, target: Vector2) -> void:
 	if Global == null:
 		return
 	var cost: int = int(Global.compute_respawn_cost())
-	# Tithe Furnace's floor exactly: the shared reserve rule (P7).
+	# Tithe Furnace's floor exactly: the shared reserve rule (P7), and the
+	# same "keeps" in its refusal.
 	if not Global.spend_survivable(1):
-		_refuse(cost)
+		_refuse(cost + 1)
 		return
 
 	var result: Dictionary = Global.transaction_followers(
@@ -179,15 +180,16 @@ func _try_tithe(style_id: StringName, target: Vector2) -> void:
 	popup("TITHE - SECOND SHOT", noun_colour(&"fortune"), 1.25, int(get_instance_id()))
 
 
-func _refuse(cost: int) -> void:
+## Names the balance it keeps, as Tithe Furnace does (review 2026-10-04).
+func _refuse(keep: int) -> void:
 	if _refusal_cd > 0.0:
 		return
 	_refusal_cd = REFUSAL_POPUP_COOLDOWN
-	popup("TITHE REFUSES (%d TO REBUILD)" % cost, COLD, 1.20)
+	popup("TITHE REFUSES (KEEPS %d TO REBUILD)" % keep, COLD, 1.20)
 
 
 func describe() -> String:
 	return (
-		"Every %d beats - %d attacks once it is running, since the second shot is itself a beat - the beat spends 1 Follower to fire a second time for %d%% of your attack damage. A kill within %.2fs returns them. It refuses to spend if that would drop you below your reconstruction cost."
+		"Every %d beats - %d attacks once it is running, since the second shot is itself a beat - the beat spends 1 Follower to fire a second time for %d%% of your attack damage. A kill within %.2fs returns them. It refuses to spend if that would leave you at or below your reconstruction cost."
 		% [BEATS, BEATS - 1, int(round(echo_multiplier() * 100.0)), RETURN_WINDOW]
 	)

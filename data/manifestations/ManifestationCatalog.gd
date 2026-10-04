@@ -181,7 +181,7 @@ static func _ensure_built() -> void:
 		ManifestationDef.new(
 			&"tithe_furnace",
 			"Tithe Furnace",
-			"Every eighth attack burns a Follower to empower itself. It refuses to spend below your reconstruction cost.",
+			"Every eighth attack burns a Follower to empower itself. It never leaves you at or below your reconstruction cost.",
 			[&"cadence", &"fortune"] as Array[StringName],
 			[SLOT_LUCK, SLOT_OFFHAND, SLOT_RING] as Array[int],
 			preload("res://effects/manifestations/logic/TitheFurnace.gd"),

@@ -1348,15 +1348,16 @@ func _test_tithe_rhythm() -> void:
 	pair.call(&"on_attack", &"ranged", Vector2.ZERO, Vector2.RIGHT, 1.0, 1.0)
 	_check(
 		Global.followers == 10,
-		"the tithe refuses to drop you below your reconstruction cost (%d)" % Global.followers
+		"the tithe refuses to leave you at or below your reconstruction cost (%d)" % Global.followers
 	)
 	_check(
 		state.attack_index == refusal_index,
 		"a refused tithe fires no echo (%d)" % state.attack_index
 	)
+	# It names the balance it keeps, one above the cost (review 2026-10-04).
 	_check(
-		_battle_text_has("TITHE REFUSES (%d TO REBUILD)" % floor_cost),
-		"and says what it would have cost to rebuild"
+		_battle_text_has("TITHE REFUSES (KEEPS %d TO REBUILD)" % (floor_cost + 1)),
+		"and says what it keeps to rebuild"
 	)
 
 	# THE ELAPSED-BEATS GATE, which is a regression guard and needs its own

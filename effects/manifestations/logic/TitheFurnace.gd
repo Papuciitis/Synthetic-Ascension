@@ -1,7 +1,7 @@
 extends ManifestationEffect
 
 ## Tithe Furnace - every eighth attack burns a Follower to empower itself, and
-## refuses to spend below the reconstruction cost.
+## refuses a tithe that would leave you at or below the reconstruction cost.
 ##
 ## Ordering: player.gd _fire_weapon() reads consume_attack_bonus() before it
 ## emits weapon_fired, so a bonus armed from on_attack is picked up by the NEXT
@@ -98,13 +98,16 @@ func _attacks_since_join() -> int:
 func stat_effects() -> Array[Dictionary]:
 	return [
 		{"stat": "Attack damage", "value": "x%.2f" % tithe_multiplier(), "when": "every %d attacks" % tithe_interval()},
-		{"stat": "Followers", "value": "-1 per tithe", "when": "never below your reconstruction cost", "good": false},
+		{"stat": "Followers", "value": "-1 per tithe", "when": "always keeps more than your reconstruction cost", "good": false},
 	] as Array[Dictionary]
 
 
+## The rule as Global.spend_survivable applies it (review 2026-10-04): a
+## tithe that would leave exactly the cost is refused too, so the text says
+## "at or below", not "below".
 func describe() -> String:
 	return (
-		"Every %d attacks the furnace burns 1 Follower and the next strike hits for %.0f%% damage. It refuses to tithe if spending would drop you below your reconstruction cost."
+		"Every %d attacks the furnace burns 1 Follower and the next strike hits for %.0f%% damage. It refuses to tithe if that would leave you at or below your reconstruction cost."
 		% [tithe_interval(), tithe_multiplier() * 100.0]
 	)
 
@@ -119,7 +122,9 @@ func _try_tithe() -> void:
 	# leave a balance a death cannot reconstruct from. "have - 1 >= cost"
 	# allowed leaving exactly the flat cost, and that death ended the run.
 	if not Global.spend_survivable(1):
-		_refuse(cost)
+		# The balance it keeps: refusals happen only where the flat cost
+		# rules, so one above it is the least a death reconstructs from.
+		_refuse(cost + 1)
 		return
 
 	var result: Dictionary = Global.transaction_followers(
@@ -143,12 +148,14 @@ func _try_tithe() -> void:
 		spawn_world_node(embers, player_position())
 
 
-func _refuse(cost: int) -> void:
+## Says what it keeps, not the cost: "12 TO REBUILD" over a 13-Follower
+## wallet read as a refusal the rule did not allow (review 2026-10-04).
+func _refuse(keep: int) -> void:
 	_can_afford = false
 	if _refusal_cd > 0.0:
 		return
 	_refusal_cd = REFUSAL_POPUP_COOLDOWN
-	popup("FURNACE REFUSES (%d TO REBUILD)" % cost, COLD, 1.25)
+	popup("FURNACE REFUSES (KEEPS %d TO REBUILD)" % keep, COLD, 1.25)
 
 
 func _refresh_affordability() -> void:
