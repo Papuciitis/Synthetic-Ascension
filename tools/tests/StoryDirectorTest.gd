@@ -437,13 +437,20 @@ func _test_reconstruction() -> void:
 	_fresh(2)
 	var first := StoryDirector.reconstruction_body(12, 300)
 	_check(first.begins_with("Your followers preserve the sequence.") and first.contains("at the last Wardstone that recognised you, or where the district began"), "the first reconstruction explains itself, and Wardstones that were attuned count (%s)" % first.get_slice("\n", 2))
+	_check(first.contains("Their belief reconstructs you at") and not first.contains(Global.mortal_name), "and speaks to the player in one person, never naming them and then saying you")
+	var named: Array = []
+	for line in StoryLines.RECONSTRUCTION:
+		if String(line["text"]).contains("{name}"):
+			named.append(String(line["id"]))
+	_check(named.is_empty(), "no reconstruction card names the player in the third person (%s)" % str(named))
 	_check(not first.contains("rewritten") and first.ends_with("Followers lost: 12\nFollowers remaining: 300"), "with the numbers kept as they were")
 	var second := StoryDirector.reconstruction_body(12, 300)
 	_check(second != first and second.ends_with("Followers lost: 12\nFollowers remaining: 300"), "later ones vary (%s)" % second.get_slice("\n", 0))
 	var unsafe := StoryDirector.reconstruction_body(12, 1)
 	_check(unsafe.begins_with("This is the last reconstruction the movement can pay for."), "the last one the movement can afford says so")
 	StoryDirector.note_death("", true, -1)
-	_check(StoryDirector.reconstruction_body(10, 500).begins_with("The Rite keeps most of what you wrote into it."), "a death in the Rite is named")
+	var rite := StoryDirector.reconstruction_body(10, 500)
+	_check(rite.begins_with("The Rite keeps most of what you wrote into it.") and rite.contains("reconstructs you at the edge of the Rite."), "a death in the Rite is named, and rebuilt where the run rebuilds it (%s)" % rite.get_slice("\n", 2))
 	_fresh(1)
 	StoryDirector.load_state({})
 	_check(StoryDirector.reconstruction_body(5, 40).contains("or where the night began"), "Segment 1 begins with the night")

@@ -473,14 +473,18 @@ const CAUSES: Dictionary = {
 }
 
 ## The reconstruction card's body above "Followers lost / remaining", which
-## StoryDirector appends unchanged.
+## StoryDirector appends unchanged. It speaks to the player, as the whole
+## pool does: the card used to name them in the third person and then say
+## "you" in the same sentence (story review 2026-10-04).
 const RECONSTRUCTION: Array[Dictionary] = [
 	{"id": "rc_first", "p": 100, "once": "profile",
-		"text": "Your followers preserve the sequence.\n\nTheir belief reconstructs {name} {rebuild_at}."},
+		"text": "Your followers preserve the sequence.\n\nTheir belief reconstructs you {rebuild_at}."},
 	{"id": "rc_unsafe", "p": 95, "when": {"unsafe": true},
 		"text": "This is the last reconstruction the movement can pay for.\n\nThe next collapse will find no one left to answer it."},
+	# A death in the channel is rebuilt beside the Rite, not at a Wardstone
+	# (player.rite_recovery_point, after the unseal the channel needs).
 	{"id": "rc_rite", "p": 90, "when": {"death_rite": true},
-		"text": "The Rite keeps most of what you wrote into it. Not all.\n\nTheir belief reconstructs {name} {rebuild_at}."},
+		"text": "The Rite keeps most of what you wrote into it. Not all.\n\nThe movement's belief reconstructs you at the edge of the Rite."},
 	{"id": "rc_again", "p": 88, "when": {"deaths_min": 3},
 		"text": "The sequence holds. Fewer people are holding it."},
 	{"id": "rc_shape", "p": 10, "text": "They remember the shape of you. It is enough, this time."},
