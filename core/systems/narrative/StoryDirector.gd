@@ -8,7 +8,8 @@ class_name StoryDirector
 ## or above StoryLines.BEAT) wins outright, the highest first; otherwise the
 ## eligible lines are drawn by weight, never one of the pool's recent lines.
 ## Deterministic for a given rng: rng_for() seeds from the attempt's world
-## seed, so a run tells the same story when it is replayed.
+## seed and counts its draws in the attempt, so a run tells the same story
+## when it is replayed, Continue included.
 ##
 ## Memory is one Dictionary, saved whole as SaveData.meta_story (wired beside
 ## meta_grimoire in Global.apply_save / write_save):
@@ -21,7 +22,8 @@ class_name StoryDirector
 ##   last       the last closed account (close_account)
 ##   attempt    this attempt: flags, peak (of the Congregation: the
 ##              witnesses), recon, best_at_start, milestone, first_hub,
-##              death {cause, rite, boss}
+##              death {cause, rite, boss}, draws (rng_for's count per salt)
+##              and recent (the reconstruction card's last lines)
 ## StoryLedger keeps it current from the run's signals, so nothing has to be
 ## caught at the moment Global.on_attempt_failed_die_die() wipes the attempt.
 
@@ -40,10 +42,9 @@ const HISTORY_SPENT_FLAGS: Array[String] = ["seen:ep_first", "seen:chr_first", "
 
 static var state: Dictionary = {}
 static var _ledger: RefCounted = null
-## Pool name -> the ids it said last (in memory only).
+## Staff key -> the ids it said last (in memory only, forgotten with the
+## attempt and the profile). The reconstruction card's live in the attempt.
 static var _recent: Dictionary = {}
-## rng_for() salt -> draws taken, so successive draws differ.
-static var _draws: Dictionary = {}
 ## Lines waiting for a presenter: {"kind", "text"}.
 static var _pending: Array = []
 ## An account closed and no new attempt has begun: the Game Over may read it.
@@ -78,6 +79,7 @@ static func load_state(meta: Dictionary, history: Dictionary = {}) -> void:
 	_whole = false
 	_just_closed = false
 	_pending.clear()
+	_recent.clear()
 	ensure()
 
 
@@ -146,7 +148,7 @@ static func _normalise() -> void:
 
 static func _fresh_attempt() -> Dictionary:
 	return {"flags": [], "peak": 0, "recon": 0, "best_at_start": int(state.get("best", 0)), "milestone": 0,
-		"first_hub": 0, "death": {"cause": "", "rite": false, "boss": -1}}
+		"first_hub": 0, "death": {"cause": "", "rite": false, "boss": -1}, "draws": {}, "recent": {}}
 
 
 static func attempt() -> Dictionary:
@@ -208,6 +210,7 @@ static func begin_attempt() -> void:
 	state["attempt"] = _fresh_attempt()
 	_just_closed = false
 	_pending.clear()
+	_recent.clear()
 
 
 ## The run ended in death (balance_attempt_boundary "failed"), emitted before
@@ -678,26 +681,28 @@ static func say(pool: Array, f: Dictionary, rng: RandomNumberGenerator, recent: 
 
 
 ## A fresh rng for `salt`, seeded from the attempt's world seed and how many
-## draws the salt has taken: the same run tells the same story.
+## draws the salt has taken in this attempt. The count is saved with the
+## attempt, so a Continue draws what the unbroken run would have, and a new
+## attempt or another profile counts afresh (story review 2026-10-04: the
+## count was per process, so it leaked across both and restarted from zero
+## on a relaunch).
 static func rng_for(salt: String) -> RandomNumberGenerator:
-	var n := int(_draws.get(salt, 0))
-	_draws[salt] = n + 1
+	var draws: Dictionary = attempt()["draws"]
+	var n := int(draws.get(salt, 0))
+	draws[salt] = n + 1
 	var rng := RandomNumberGenerator.new()
 	rng.seed = int(hash([Global.attempt_world_seed if Global != null else 0, salt, n]))
 	return rng
 
 
-static func reset_draws() -> void:
-	_draws.clear()
-	_recent.clear()
-
-
-static func _remember(pool_name: String, line: Dictionary) -> void:
-	var recent: Array = _recent.get(pool_name, [])
+## Keeps `line` among the last RECENT ids `pool_name` said, in `memory`
+## (_recent for the staff, the attempt's "recent" for the card).
+static func _remember(memory: Dictionary, pool_name: String, line: Dictionary) -> void:
+	var recent: Array = memory.get(pool_name, [])
 	recent.append(String(line.get("id", "")))
 	while recent.size() > RECENT:
 		recent.pop_front()
-	_recent[pool_name] = recent
+	memory[pool_name] = recent
 
 
 # ---------------------------------------------------------------- surfaces
@@ -817,7 +822,7 @@ static func staff_line(key: String, rng: RandomNumberGenerator, aside: String = 
 	if priority(line) < StoryLines.BEAT and aside != "" and rng.randi() % 3 == 0:
 		return aside
 	spend(line)
-	_remember(key, line)
+	_remember(_recent, key, line)
 	return format(String(line["text"]), tokens(f))
 
 
@@ -872,9 +877,10 @@ static func reconstruction_body(cost: int, remaining: int) -> String:
 		"unsafe": Global != null and not Global.reconstruction_survivable(remaining),
 		"rebuild_at": at,
 	})
-	var line := pick(StoryLines.RECONSTRUCTION, f, rng_for("reconstruction"), _recent.get("reconstruction", []) as Array)
+	var memory: Dictionary = attempt()["recent"]
+	var line := pick(StoryLines.RECONSTRUCTION, f, rng_for("reconstruction"), memory.get("reconstruction", []) as Array)
 	if not line.is_empty():
-		_remember("reconstruction", line)
+		_remember(memory, "reconstruction", line)
 	var text := format(String(line.get("text", "Your followers preserve the sequence.")), tokens(f))
 	return "%s\n\nFollowers lost: %d\nFollowers remaining: %d" % [text, cost, remaining]
 

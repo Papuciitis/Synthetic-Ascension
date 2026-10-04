@@ -69,6 +69,7 @@ func _run() -> void:
 	_test_arrivals()
 	_test_bren()
 	_test_reconstruction()
+	_test_draws()
 	_test_milestones()
 	_test_chapter_card()
 	_test_crowd_and_staff()
@@ -446,6 +447,28 @@ func _test_reconstruction() -> void:
 	_fresh(1)
 	StoryDirector.load_state({})
 	_check(StoryDirector.reconstruction_body(5, 40).contains("or where the night began"), "Segment 1 begins with the night")
+
+
+## The card's draws belong to the attempt: a Continue draws what the unbroken
+## run would have, and a new attempt or another profile starts its own count
+## and talk instead of inheriting the session's.
+func _test_draws() -> void:
+	StoryDirector.load_state({"flags": ["seen:rc_first"]})
+	_fresh(3, 777)
+	var first := StoryDirector.reconstruction_body(10, 500)
+	StoryDirector.reconstruction_body(10, 500)
+	var saved := StoryDirector.state_for_save()
+	var third := StoryDirector.reconstruction_body(10, 500)
+	StoryDirector.load_state(saved)
+	_check(StoryDirector.reconstruction_body(10, 500) == third, "a Continue draws the card the unbroken run would have (%s)" % third.get_slice("\n", 0))
+	_fresh(3, 777)
+	_check(StoryDirector.reconstruction_body(10, 500) == first, "a new attempt on the same seed draws as the first one did")
+	StoryDirector.staff_line("smith", _rng(2))
+	_fresh(3, 777)
+	_check(StoryDirector._recent.is_empty(), "a new attempt forgets what the staff said lately")
+	StoryDirector.staff_line("smith", _rng(2))
+	StoryDirector.load_state({})
+	_check(StoryDirector._recent.is_empty(), "and so does another profile")
 
 
 func _test_milestones() -> void:
