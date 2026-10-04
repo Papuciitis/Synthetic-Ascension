@@ -603,7 +603,7 @@ func _push_objective_ui() -> void:
 
 	var guidance: String
 	if not marker_visible:
-		guidance = "Next: reach %d%% resonance to reveal the gate marker" % marker_percent
+		guidance = "Next: reach %d%% resonance to reveal the Rite marker" % marker_percent
 	elif not resonance_complete:
 		guidance = "Marker revealed • build resonance to 100%"
 	elif _miniboss_required and not _miniboss_defeated:
@@ -611,7 +611,7 @@ func _push_objective_ui() -> void:
 	elif _boss_required and not _boss_defeated:
 		guidance = "Next: defeat the district boss"
 	else:
-		guidance = "All conditions met • follow the orange gate marker"
+		guidance = "All conditions met • follow the marker to the Rite"
 
 	# The checklist owns the complete post-primary gate state. Keeping an
 	# ordinary objective alive here presents the same rite twice with two
