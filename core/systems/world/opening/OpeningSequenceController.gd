@@ -59,7 +59,9 @@ func run_sequence(player_node: Node2D, level_builder: Level1Builder) -> void:
 		return
 
 	_sequence_active = true
-	_original_time_scale = Engine.time_scale
+	# A hit-stop owns the clock for at most 60 ms; the sequence must hand back
+	# real time, not the stop's 0.25, when it ends.
+	_original_time_scale = 1.0 if (HitFeel != null and HitFeel.is_stopped()) else Engine.time_scale
 	_camera = _player.get_node_or_null("Camera2D") as Camera2D
 	if _camera != null:
 		_camera_origin = _camera.position
