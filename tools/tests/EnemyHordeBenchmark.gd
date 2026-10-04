@@ -4,6 +4,14 @@ extends Node
 # holds each stage, printing frame percentiles and simulation counters.
 # Headless runs measure CPU truth (process/physics); desktop runs add real
 # frame times and draw calls. The 500-goal gate: stage 550 p95 <= 33ms.
+#
+# HORDE_MINUTES=14 sets the spawner's clock before the first top-up, so the
+# stages draw the late spawn table (FPS audit 2026-10-04). At the default
+# minute 0 only Grunt and Runner exist - both CHASE, both proxy eligible - so
+# materialized never passes 64 and the benchmark misses what collapsed real
+# play at minute 13-15: a ~60% non-chase mix that keeps its physics bodies.
+# Each stage line also reports the physics ticks per frame and how often the
+# scheduler's pressure levels were engaged.
 
 class Driver:
 	extends Node
@@ -24,6 +32,8 @@ class Driver:
 	var _draws: Array[float] = []
 	var _projectiles: Array[float] = []
 	var _projectile_ms: Array[float] = []
+	var _tick_counts: Dictionary = {}
+	var _pressure_frames: Array[int] = [0, 0, 0]
 	var _stages: Array[int] = STAGES.duplicate()
 	var _spawner: Node = null
 	var _filter: Node = null
@@ -70,6 +80,26 @@ class Driver:
 					child.queue_free()
 		get_tree().paused = false
 
+	func _apply_spawn_clock() -> void:
+		var minutes := OS.get_environment("HORDE_MINUTES").strip_edges()
+		if not minutes.is_valid_float() or float(minutes) <= 0.0:
+			return
+		if not ("_elapsed" in _spawner):
+			push_warning("HordeBenchmark: spawner has no _elapsed clock; HORDE_MINUTES ignored")
+			return
+		_spawner.set("_elapsed", float(minutes) * 60.0)
+		var line := "HordeBenchmark: spawner clock set to %.1f min" % float(minutes)
+		print(line)
+		_report_lines.append(line)
+
+	func _tick_histogram() -> String:
+		var keys := _tick_counts.keys()
+		keys.sort()
+		var parts: PackedStringArray = []
+		for key in keys:
+			parts.append("%d:%d" % [int(key), int(_tick_counts[key])])
+		return " ".join(parts)
+
 	func _begin_stage(index: int) -> void:
 		_stage_index = index
 		_stage_started = _elapsed
@@ -80,6 +110,8 @@ class Driver:
 		_draws.clear()
 		_projectiles.clear()
 		_projectile_ms.clear()
+		_tick_counts.clear()
+		_pressure_frames = [0, 0, 0]
 		var filter := get_node_or_null("/root/DebugEnemySpawnFilter")
 		if filter != null:
 			filter.set("custom_total_cap", _stages[index])
@@ -103,6 +135,7 @@ class Driver:
 				get_tree().quit(1)
 				return
 			_filter.set("cap_mode", 1) # CUSTOM: capped at each stage target
+			_apply_spawn_clock()
 			_begin_stage(0)
 			return
 		if _phase != 2:
@@ -131,6 +164,14 @@ class Driver:
 				var projectile_counters := projectile_manager.call("get_debug_counters") as Dictionary
 				_projectiles.append(float(projectile_counters.get("active", 0)))
 				_projectile_ms.append(float(projectile_counters.get("physics_ms", 0.0)))
+			# The scheduler publishes each frame's physics ticks in its own
+			# _process, which runs before this driver's (autoload order).
+			var scheduler := get_node_or_null("/root/EnemySimulationScheduler")
+			if scheduler != null and scheduler.has_method("frame_physics_ticks"):
+				var ticks := int(scheduler.call("frame_physics_ticks"))
+				_tick_counts[ticks] = int(_tick_counts.get(ticks, 0)) + 1
+				var level := clampi(int(scheduler.call("physics_pressure_level")), 0, 2)
+				_pressure_frames[level] += 1
 		elif _sampling:
 			_report_stage()
 			if _stage_index + 1 < _stages.size():
@@ -189,7 +230,7 @@ class Driver:
 		)
 		var frame_p95 := _pct(_frames, 95.0)
 		var line := (
-			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | projectiles p95 %.0f projectile_ms p95 %.2f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s"
+			"HordeBenchmark: target=%d alive=%d frames=%d | frame avg %.2f p95 %.2f p99 %.2f | process p95 %.2f | physics p95 %.2f | draws p95 %.0f | projectiles p95 %.0f projectile_ms p95 %.2f | full=%s mid=%s far=%s phys_on=%s | materialized=%s data_only=%s | ticks/frame %s | pressure frames L1 %d L2 %d"
 			% [
 				_stages[_stage_index],
 				alive,
@@ -208,6 +249,9 @@ class Driver:
 				counters.get("physics_enabled", "?"),
 				world_counters.get("materialized", "?"),
 				world_counters.get("data_only", "?"),
+				_tick_histogram(),
+				_pressure_frames[1],
+				_pressure_frames[2],
 			]
 		)
 		print(line)

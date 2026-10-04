@@ -7,6 +7,10 @@ extends Node
 # frames: one VFX_SpokesBurst node instantiated per hit). Prints frame
 # percentiles plus live projectile and impact-node counts, and persists
 # the stage lines like EnemyHordeBenchmark.
+#
+# HORDE_MINUTES=14 sets the spawner's clock first so the enemy stages draw
+# the late spawn table instead of minute 0's chase-only mix (see
+# EnemyHordeBenchmark; FPS audit 2026-10-04).
 
 class Driver:
 	extends Node
@@ -77,6 +81,7 @@ class Driver:
 				get_tree().quit(1)
 				return
 			_filter.set("cap_mode", 1)
+			_apply_spawn_clock()
 			RenderingServer.viewport_set_measure_render_time(
 				get_viewport().get_viewport_rid(), true
 			)
@@ -128,6 +133,18 @@ class Driver:
 				_filter.set("cap_mode", 0)
 				Global.goto_main_menu()
 				get_tree().quit(0)
+
+	func _apply_spawn_clock() -> void:
+		var minutes := OS.get_environment("HORDE_MINUTES").strip_edges()
+		if not minutes.is_valid_float() or float(minutes) <= 0.0:
+			return
+		if not ("_elapsed" in _spawner):
+			push_warning("MinigunStressBenchmark: spawner has no _elapsed clock; HORDE_MINUTES ignored")
+			return
+		_spawner.set("_elapsed", float(minutes) * 60.0)
+		var line := "MinigunStress: spawner clock set to %.1f min" % float(minutes)
+		print(line)
+		_report_lines.append(line)
 
 	func _begin_stage(index: int) -> void:
 		_stage_index = index
