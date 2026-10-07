@@ -175,7 +175,9 @@ func tick(delta: float) -> void:
 		_rematch_in -= delta
 		if _rematch_in <= 0.0:
 			_rematch_in = 0.0
-			if not _is_tutorial_stage():
+			# One ring at a time (intensity review): a second explicit spawn
+			# would overwrite the live ring's record and end it early.
+			if not _is_tutorial_stage() and not _active.has(&"rematch_ring"):
 				try_spawn_beat(&"rematch_ring")
 	_check_escalation()
 	_next_beat_in -= delta
@@ -203,7 +205,24 @@ func can_schedule() -> bool:
 		return false
 	if _is_tutorial_stage() or _rite_channel_active or _swarm_state == SwarmState.SURGING:
 		return false
+	# Intensity review (high): a formation drawn near an unsealed gate walks
+	# into the exit encounter and breaks the plan's sniper and melee budget, so
+	# the walk is resisted only while the gate is still well away.
+	if _is_unsealed() and _near_exit_rite(UNSEALED_BEAT_EXIT_CLEARANCE_PX):
+		return false
 	return not _candidates().is_empty()
+
+
+## Beyond the exit encounter's 1200 px entry radius plus a formation's own
+## reach, so no beat placed on the walk can spill into the encounter.
+const UNSEALED_BEAT_EXIT_CLEARANCE_PX := 2800.0
+
+
+func _near_exit_rite(radius_px: float) -> bool:
+	if _player == null or not is_instance_valid(_player):
+		return false
+	var rite := get_tree().get_first_node_in_group(&"exit_rite") as Node2D
+	return rite != null and rite.global_position.distance_to(_player.global_position) < radius_px
 
 
 func swarm_state() -> int:
