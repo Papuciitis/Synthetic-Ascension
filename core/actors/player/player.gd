@@ -315,6 +315,12 @@ func _process(delta: float) -> void:
 ## per frame and pays nothing between shots. A fresh press goes through
 ## _fire_weapon exactly as before (its gate refuses a press on cooldown).
 const ALT_HOLD_RETRY := 0.12
+## Review fix (2026-10-04, feel review, high): Clean Cut (EX12) zeroes
+## _weapon_cd on an execution, so a held button re-fired every physics tick
+## (~60 swings/s) where a click needed a fresh press. A held repeat also waits
+## the fastest legitimate cadence - the cooldown over the haste cap, doubled by
+## Burst's post-cap window - since the last native shot.
+var _since_native_fire: float = INF
 
 
 func _read_attack_input(delta: float) -> void:
@@ -330,14 +336,18 @@ func _read_attack_input(delta: float) -> void:
 ## One frame of attack input, split from the Input reads so a suite can drive
 ## a held button frame by frame.
 func _step_attack_input(pressed: bool, held: bool, alt_pressed: bool, alt_held: bool, delta: float) -> void:
+	_since_native_fire += delta
 	var hold := hold_to_attack_enabled()
 	# A style with no cooldown (none ships one) would fire every frame while
 	# held, so only a real cooldown gets the held repeat.
-	var repeat := not pressed and hold and held and _weapon_cd <= 0.0 and _native_style_cooldown() > 0.0
+	var native_cd := _native_style_cooldown()
+	var repeat := not pressed and hold and held and not _hold_stops_fire() and _weapon_cd <= 0.0 and native_cd > 0.0 \
+		and _since_native_fire >= native_cd / (SHOT_HASTE_CAP * 2.0)
 	if pressed or repeat:
 		native_attack_repeated = repeat
 		_fire_weapon(_current_aim_target())
 		native_attack_repeated = false
+		_since_native_fire = 0.0
 	if spell_caster == null:
 		return
 	_alt_hold_retry = maxf(_alt_hold_retry - delta, 0.0)
@@ -349,6 +359,14 @@ func _step_attack_input(pressed: bool, held: bool, alt_pressed: bool, alt_held: 
 		# spell with no valid target from searching again every frame.
 		_alt_hold_retry = ALT_HOLD_RETRY
 		spell_caster.cast_all_manual()
+
+
+## Bottomless (BRK2, V4 and V5) fires on its own and stops while the primary
+## is held - its safety. A held repeat would turn that hold back into fire
+## (feel review, high), so with BRK2 owned holding only stops the gun.
+func _hold_stops_fire() -> bool:
+	var ar := get_node_or_null("AscensionRunner") as AscensionRunner
+	return ar != null and ar.owns("BRK2")
 
 
 func hold_to_attack_enabled() -> bool:
