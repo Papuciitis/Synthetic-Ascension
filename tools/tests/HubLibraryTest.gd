@@ -145,9 +145,16 @@ func _run() -> void:
 	escape.action = &"ui_cancel"
 	escape.pressed = true
 	Input.parse_input_event(escape)
+	await get_tree().create_timer(0.25, true).timeout
+	_check(hub._open_panel == library and get_tree().paused and not hub._interact_enabled, "Escape closes the book onto its shelf while keeping the courtyard paused")
+	escape.pressed = false
+	Input.parse_input_event(escape)
+	escape = escape.duplicate()
+	escape.pressed = true
+	Input.parse_input_event(escape)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	_check(hub._open_panel == null and not get_tree().paused and hub._interact_enabled, "Escape returns to the active courtyard")
+	_check(hub._open_panel == null and not get_tree().paused and hub._interact_enabled, "Escape from the shelf returns to the active courtyard")
 	_check(hub._zoom_controls.visible, "camera controls return after closing the library")
 	hub._open_library()
 	await get_tree().process_frame

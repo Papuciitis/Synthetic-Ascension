@@ -114,6 +114,8 @@ static func build_entries() -> Array[Dictionary]:
 	entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if a["category"] != b["category"]:
 			return CATEGORIES.find(a["category"]) < CATEGORIES.find(b["category"])
+		if a["category"] == "Buildcraft":
+			return int(a["folio"]) < int(b["folio"])
 		if a["discovered"] != b["discovered"]:
 			return bool(a["discovered"])
 		return String(a["title"]).naturalnocasecmp_to(String(b["title"])) < 0)
@@ -136,6 +138,99 @@ static func filter_entries(entries: Array[Dictionary], category: String, query: 
 	return found
 
 
+## Live planning stays separate from searchable reference text. Counting mirrors
+## ManifestationRunner.get_noun_counts(): one contribution per distinct worn rule.
+## No effect nodes are created, so a completed loadout cannot award discovery.
+static func research_notes(entry: Dictionary) -> String:
+	if String(entry.get("category", "")) != "Pairs":
+		return ""
+	var pair := ManifestationPairCatalog.get_def(StringName(entry.get("id", "")))
+	if pair == null:
+		return ""
+	var counts := _equipped_noun_counts()
+	var lines := PackedStringArray(["[b]Your current equipment[/b]"])
+	for noun: StringName in pair.nouns:
+		lines.append("%s: %d/%d distinct rules" % [ManifestationNouns.label(noun).capitalize(), int(counts.get(noun, 0)), ManifestationPairCatalog.NOUN_THRESHOLD])
+	lines.append("Duplicates, bag items and spare imprints do not add to these counts.")
+	var known_worn := PackedStringArray()
+	var seen := {}
+	if Global.run_inventory != null:
+		for slot: int in range(mini(Inventory.SLOT_COUNT, Global.run_inventory.items.size())):
+			var inst: ItemInstance = Global.run_inventory.items[slot]
+			if inst == null or inst.data == null or seen.has(inst.manifestation_id):
+				continue
+			seen[inst.manifestation_id] = true
+			var rule := ManifestationCatalog.get_def(inst.manifestation_id)
+			if rule != null and rule.logic != null and _shares_noun(rule.tags, pair.nouns) and Global.library_has("manifestation:" + String(rule.id)):
+				known_worn.append(rule.display_name)
+	if not known_worn.is_empty():
+		lines.append("\n[b]Known rules you wear[/b]\n" + " · ".join(known_worn))
+	var missing := _missing_pair_rules(counts, pair.nouns)
+	if missing == 0:
+		lines.append("\nBoth nouns meet the equipment threshold. The pair is recorded when it becomes active in play.")
+		return "\n".join(lines)
+	var suggestions := PackedStringArray()
+	seen.clear()
+	for id: StringName in Global.attempt_imprints:
+		if seen.has(id) or not Global.library_has("manifestation:" + String(id)):
+			continue
+		seen[id] = true
+		var rule := ManifestationCatalog.get_def(id)
+		if rule == null or rule.logic == null or not _shares_noun(rule.tags, pair.nouns) or Global.run_inventory == null:
+			continue
+		var slots := PackedStringArray()
+		for slot: int in rule.slots:
+			if slot < 0 or slot >= mini(Inventory.SLOT_COUNT, Global.run_inventory.items.size()):
+				continue
+			var inst: ItemInstance = Global.run_inventory.items[slot]
+			if inst == null or inst.data == null or inst.locked or int(inst.data.equip_slot) != slot:
+				continue
+			var after := _equipped_noun_counts(slot, id)
+			if _missing_pair_rules(after, pair.nouns) < missing:
+				slots.append(Inventory.slot_label(slot))
+		if not slots.is_empty():
+			suggestions.append("%s → %s" % [rule.display_name, " / ".join(slots)])
+	if not suggestions.is_empty():
+		lines.append("\n[b]Spare imprints to try[/b]\n" + "\n".join(suggestions))
+		lines.append("These replacements advance this pair's counts. Check the price and other build effects at the Imprinter.")
+	return "\n".join(lines)
+
+
+static func _equipped_noun_counts(replaced_slot: int = -1, replacement: StringName = &"") -> Dictionary:
+	var counts := {}
+	var seen := {}
+	if Global.run_inventory == null:
+		return counts
+	for slot: int in range(mini(Inventory.SLOT_COUNT, Global.run_inventory.items.size())):
+		var inst: ItemInstance = Global.run_inventory.items[slot]
+		if inst == null or inst.data == null:
+			continue
+		var id := replacement if slot == replaced_slot else inst.manifestation_id
+		if seen.has(id):
+			continue
+		var rule := ManifestationCatalog.get_def(id)
+		if rule == null or rule.logic == null:
+			continue
+		seen[id] = true
+		for noun: StringName in rule.tags:
+			counts[noun] = int(counts.get(noun, 0)) + 1
+	return counts
+
+
+static func _shares_noun(tags: Array[StringName], nouns: Array[StringName]) -> bool:
+	for noun: StringName in nouns:
+		if tags.has(noun):
+			return true
+	return false
+
+
+static func _missing_pair_rules(counts: Dictionary, nouns: Array[StringName]) -> int:
+	var missing := 0
+	for noun: StringName in nouns:
+		missing += maxi(0, ManifestationPairCatalog.NOUN_THRESHOLD - int(counts.get(noun, 0)))
+	return missing
+
+
 static func _entry(category: String, id: String, title: String, subtitle: String, body: String, icon: Texture2D = null, key: String = "", hint: String = "") -> Dictionary:
 	return {
 		"category": category, "id": id, "title": title, "subtitle": subtitle,
@@ -146,6 +241,7 @@ static func _entry(category: String, id: String, title: String, subtitle: String
 
 
 static func _present(entry: Dictionary, ordinal: int) -> void:
+	entry["folio"] = ordinal
 	var key := String(entry["key"])
 	var discovered: bool = entry["category"] == "Buildcraft" or Global.library_has(key)
 	entry["discovered"] = discovered

@@ -65,6 +65,8 @@ func _ready() -> void:
 	_load_manifest()
 
 	_ui = AudioStreamPlayer.new()
+	# Menus and the Chronicler's books pause the world while still handling input.
+	_ui.process_mode = Node.PROCESS_MODE_ALWAYS
 	_ui.bus = _best_bus(&"UI")
 	_ui.finished.connect(_on_ui_finished)
 	add_child(_ui)
@@ -103,6 +105,7 @@ func _hook_run_events() -> void:
 # ----------------------------
 
 func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
+	_record(id, &"ui", vol_add_db, 1.0, Vector2.ZERO)
 	if _headless:
 		return
 	var def := _defs.get(id) as SoundDef

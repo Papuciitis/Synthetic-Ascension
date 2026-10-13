@@ -75,6 +75,15 @@ func _run() -> void:
 	library.call("select_book", "Chronicles")
 	await _frames(45)
 	await _shot("library_chronicles_1280.png")
+	library.call("select_book", "Pairs")
+	library.call("_toggle_research_target")
+	await _frames(45)
+	await _shot("library_research_1280.png")
+	library.call("show_shelves")
+	await _frames(35)
+	await _shot("library_research_shelves_1280.png")
+	library.call("select_book", "Chronicles")
+	await _frames(45)
 	window.content_scale_factor = 1.5
 	await _frames(35)
 	await _shot("library_chronicles_scale150.png")
@@ -122,6 +131,14 @@ func _check_bounds(library: Node) -> void:
 		if control == library.get("_body") and control.size.y < 100.0:
 			_failures += 1
 			push_error("HubLibraryShotProbe: insufficient reading space")
+	var book: Control = library.get("_open_book")
+	var right_page := Rect2(book.size * Vector2(0.535, 0.13), book.size * Vector2(0.365, 0.71))
+	for control: Control in [library.get("_title"), library.get("_body")]:
+		if control.is_visible_in_tree():
+			var local_rect := Rect2(control.global_position - book.global_position, control.size)
+			if not right_page.grow(2.0).encloses(local_rect):
+				_failures += 1
+				push_error("HubLibraryShotProbe: %s crosses the right page's paper region" % control.name)
 
 
 func _check_control_bounds(control: Control) -> void:

@@ -8,6 +8,7 @@ var volume := 1
 var discovered_pages := 0
 var total_pages := 0
 var unread_pages := 0
+var research_target := false
 var tint := Color.WHITE
 var _spine: Texture2D
 
@@ -40,7 +41,7 @@ func _draw() -> void:
 	var lifted := is_hovered() or has_focus()
 	var lift := -4.0 if lifted else 0.0
 	var rect := Rect2(Vector2(0, lift), size)
-	var material := tint if discovered_pages > 0 else tint.darkened(0.28)
+	var material := tint if discovered_pages > 0 else tint.darkened(0.12)
 	if _spine != null:
 		draw_set_transform(Vector2(3, size.y + lift + 4), -PI / 2.0)
 		draw_texture_rect(_spine, Rect2(Vector2.ZERO, Vector2(size.y, size.x)), false, Color(0, 0, 0, 0.45))
@@ -61,3 +62,6 @@ func _draw() -> void:
 	if unread_pages > 0:
 		var x := size.x - 16.0
 		draw_colored_polygon(PackedVector2Array([Vector2(x, lift), Vector2(x + 8, lift), Vector2(x + 8, lift + 19), Vector2(x + 4, lift + 15), Vector2(x, lift + 19)]), Kit.GOLD)
+	if research_target:
+		var x := 10.0
+		draw_colored_polygon(PackedVector2Array([Vector2(x, lift), Vector2(x + 7, lift), Vector2(x + 7, lift + 24), Vector2(x + 3.5, lift + 20), Vector2(x, lift + 24)]), Color(0.67, 0.25, 0.19))

@@ -29,10 +29,16 @@ func _click(button: Button) -> void:
 		await get_tree().process_frame
 
 
+func _sound_count(id: StringName) -> int:
+	return SfxManager.debug_requests.filter(func(request: Dictionary) -> bool: return request["id"] == id).size()
+
+
 func _run() -> void:
 	SaveManager.save_dir = "user://saves_test_library_presentation/"
 	SaveManager.current_save = null
 	Global.start_new_attempt()
+	SfxManager.debug_record = true
+	SfxManager.debug_requests.clear()
 	var user_motion_setting := bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
 	var inventory_before: Array = Global.run_inventory.items.duplicate()
@@ -55,8 +61,15 @@ func _run() -> void:
 		_check(books.size() == 9, "nine labelled volumes cover builds, discoveries and lore")
 		await _click(books[0])
 		_check(bool(library.find_child("BookReader", true, false).visible), "clicking the actual spine opens its book")
+		_check(_sound_count(&"library_open") == 1, "opening a physical book requests its handling sound")
+		_check(SfxManager.get("_ui").process_mode == Node.PROCESS_MODE_ALWAYS, "book sounds keep playing while reading pauses the world")
 		library.call("select_book", "Buildcraft")
 		_check(int(library.get("result_count")) >= 5, "Buildcraft provides useful starter pages")
+		library.call("_turn_page", 1)
+		var remembered := String(library.get("_selected_key"))
+		library.call("select_book", "Pairs")
+		library.call("select_book", "Buildcraft")
+		_check(String(library.get("_selected_key")) == remembered, "each volume remembers its own reading place")
 		library.call("set_filter", "Items", "nothing matches this phrase")
 		_check(int(library.get("result_count")) == 0, "empty search has no misleading page")
 		library.call("show_shelves")
@@ -66,12 +79,28 @@ func _run() -> void:
 		await get_tree().create_timer(0.4, true).timeout
 		library.call("select_book", "Recipes")
 		_check(int(library.get("result_count")) > 0, "the recipes book has discovery goals")
+		var cancel := InputEventJoypadButton.new()
+		cancel.button_index = JOY_BUTTON_B
+		cancel.pressed = true
+		library.call("_input", cancel)
+		await get_tree().create_timer(0.3, true).timeout
+		if not is_instance_valid(library):
+			_check(false, "controller Back puts the book on the shelf without leaving the Alcove")
+			SettingsManager.set_value(&"accessibility", &"reduced_motion", user_motion_setting, false)
+			print("HubLibraryPresentationTest: %d passed, %d failed" % [_passes, _failures])
+			get_tree().quit(1)
+			return
+		_check(not bool(library.get("_closing")) and bool(library.find_child("LibraryShelves", true, false).visible), "controller Back puts the book on the shelf without leaving the Alcove")
+		_check(books[7].has_focus(), "returning to the shelf focuses the book just read")
+		library.call("select_book", "Recipes")
 		var skin: Control = library.find_child("OpenBook", true, false)
 		_check(skin.find_child("PageTurnLeaf", true, false) != null, "turning paper passes over the page text")
 		library.call("_toggle_research_target")
+		_check(_sound_count(&"library_bookmark") == 1, "bookmarking a clue requests a soft handling sound")
 		var target := Global.library_target_key
 		_check(target != "" and not Global.library_has(target), "bookmarking a locked recipe does not discover it")
 		library.call("_turn_page", 1)
+		_check(_sound_count(&"library_page_1") + _sound_count(&"library_page_2") + _sound_count(&"library_page_3") >= 2, "turns use the recorded paper variants")
 		_check(String(library.get("_selected_key")) != target, "the page turn advances the selected entry")
 		if not library.ChamberKit.reduced():
 			_check(float(skin.get("turn_progress")) < 1.0, "changing pages animates a turning leaf")
@@ -105,10 +134,20 @@ func _run() -> void:
 		page_down.pressed = true
 		library.call("_input", page_down)
 		_check(scroll.value > 0.0, "keyboard Page Down scrolls the selected book page")
+		library.call("select_book", "Chronicles")
+		library.call("_turn_page", -1)
+		var sounds_before := SfxManager.debug_requests.size()
+		library.call("_turn_page", -1)
+		_check(SfxManager.debug_requests.size() == sounds_before, "a page boundary does not play a false paper turn")
+	for id: StringName in [&"library_open", &"library_close", &"library_page_1", &"library_page_2", &"library_page_3", &"library_bookmark"]:
+		var definition: Variant = SfxManager.get("_defs").get(id)
+		_check(definition != null and definition.stream != null and definition.stream.get_length() > 0.05 and definition.bus == &"UI", "library cue %s loads a short stream on the existing UI bus" % id)
 	_check(Global.run_inventory.items == inventory_before and Global.followers == followers_before, "reading does not change possessions or Followers")
 	_check(Global._rng.state == rng_before, "reading consumes no gameplay RNG")
 	_check(Global.library_discoveries == discoveries_before and Global.grimoire_entries == grimoire_before, "reading and bookmarking do not award knowledge")
 	library.call("_close")
+	SfxManager.debug_record = false
+	SfxManager.debug_requests.clear()
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", user_motion_setting, false)
 	await get_tree().process_frame
 	_check(not get_tree().paused, "closing restores the running world")

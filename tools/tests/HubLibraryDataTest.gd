@@ -1,6 +1,7 @@
 extends Node
 
 const LIBRARY := preload("res://ui/screens/HubLibraryData.gd")
+var _reference: RefCounted = LIBRARY.new()
 var _passes := 0
 var _failures := 0
 
@@ -40,6 +41,99 @@ func _test_planning_clues(entries: Array[Dictionary]) -> void:
 	_check(LIBRARY.filter_entries([item], "Items", "offhand").size() == 1 and LIBRARY.filter_entries([item], "Items", "beka").is_empty(), "equipment clue helps plan a slot without revealing the item name")
 
 
+func _test_teaching_order_and_folios(entries: Array[Dictionary]) -> void:
+	var guides := LIBRARY.filter_entries(entries, "Buildcraft", "")
+	var ids: Array[String] = []
+	for guide: Dictionary in guides:
+		ids.append(String(guide["id"]))
+	_check(ids == ["equipment_identity", "nouns_and_pairs", "merges_and_imprints", "augment_growth", "doctrine_families"], "Buildcraft teaches equipment before advanced combinations in authored order")
+	var sealed := _find(entries, "item:beka")
+	_check(int(sealed.get("folio", 0)) > 0, "a sealed page has a stable physical folio")
+	Global.library_discoveries.append("item:beka")
+	var discovered := _find(LIBRARY.build_entries(), "item:beka")
+	Global.library_read_entries.append("item:beka")
+	var read_page := _find(LIBRARY.build_entries(), "item:beka")
+	_check(int(sealed.get("folio", 0)) > 0 and sealed.get("folio") == discovered.get("folio") and discovered.get("folio") == read_page.get("folio"), "discovery and read marks keep the same folio while changing page presentation")
+	Global.library_discoveries.erase("item:beka")
+	Global.library_read_entries.erase("item:beka")
+
+
+func _research_item(slot: int, rule: StringName) -> ItemInstance:
+	var data := ItemData.new()
+	data.id = "research_fixture_%d" % slot
+	data.equip_slot = slot as ItemData.EquipSlot
+	var inst := ItemInstance.new()
+	inst.data = data
+	inst.manifestation_id = rule
+	return inst
+
+
+func _test_pair_research(entries: Array[Dictionary]) -> void:
+	_check(_reference.has_method("research_notes"), "pair clues can report current equipment progress")
+	if not _reference.has_method("research_notes"):
+		return
+	var saved_inventory := Global.run_inventory
+	var saved_bag := Global.run_bag
+	var saved_stash := Global.meta_stash
+	var saved_imprints := Global.attempt_imprints.duplicate()
+	var saved_knowledge := Global.library_discoveries.duplicate()
+	Global.run_inventory = Inventory.new()
+	Global.run_bag = BagInventory.new()
+	Global.meta_stash = StashInventory.new()
+	Global.run_inventory.items[2] = _research_item(2, &"pilgrims_momentum")
+	Global.run_inventory.items[7] = _research_item(7, &"pilgrims_momentum")
+	Global.run_inventory.items[1] = _research_item(1, &"martyr_circuit")
+	Global.run_bag.slots[0] = _research_item(0, &"impact_scripture")
+	Global.meta_stash.slots[0] = _research_item(1, &"retaliation_writ")
+	Global.attempt_imprints.assign([&"anchor_rite", &"scar_tissue", &"third_litany", &"retaliation_writ"])
+	Global.library_discoveries.assign(["manifestation:pilgrims_momentum", "manifestation:martyr_circuit", "manifestation:anchor_rite", "manifestation:scar_tissue", "manifestation:third_litany"])
+	var pair := _find(entries, "pair:red_line")
+	var inventory_before := Global.run_inventory.items.duplicate()
+	var bag_before := Global.run_bag.slots.duplicate()
+	var stash_before := Global.meta_stash.slots.duplicate()
+	var imprints_before := Global.attempt_imprints.duplicate()
+	var knowledge_before := Global.library_discoveries.duplicate()
+	var grimoire_before := Global.grimoire_entries.duplicate()
+	var read_before := Global.library_read_entries.duplicate()
+	var rng_before := Global._rng.state
+	var writes_before := SaveManager.debug_save_writes
+	var followers_before := Global.followers
+	var notes := String(_reference.call("research_notes", pair))
+	_check(notes.contains("Momentum: 1/2") and notes.contains("Ward: 1/2"), "duplicates, bag items, stash items and spare imprints do not inflate worn noun progress")
+	_check(notes.contains("Pilgrim's Momentum") and notes.contains("Martyr Circuit"), "the progress note identifies known worn contributing rules")
+	_check(notes.contains("Anchor Rite") and notes.contains("Scar Tissue") and notes.contains("Ring"), "known spare imprints offer compatible worn slots that improve distinct-rule progress")
+	_check(not notes.contains("Impact Scripture") and not notes.contains("Retaliation Writ") and not notes.contains("Third Litany"), "planning excludes bag and stash names, unknown imprints and unrelated nouns")
+	_check(not notes.contains("Red Line") and not notes.contains("ignored hit"), "research progress does not expose the sealed pair's name or payoff")
+	_check(not String(pair["search"]).contains("pilgrim"), "current equipment notes stay outside the sealed-page search contract")
+	Global.run_inventory.items[7].locked = true
+	Global.run_inventory.items[2].locked = true
+	var locked_notes := String(_reference.call("research_notes", pair))
+	_check(not locked_notes.contains("Anchor Rite") and not locked_notes.contains("Scar Tissue"), "spare suggestions omit locked items and replacements that cannot advance the pair")
+	Global.run_inventory.items[7].locked = false
+	Global.run_inventory.items[2].locked = false
+	Global.run_inventory.items[0] = _research_item(0, &"impact_scripture")
+	Global.library_discoveries.append("manifestation:impact_scripture")
+	var complete := String(_reference.call("research_notes", pair))
+	_check(complete.contains("Momentum: 2/2") and complete.contains("Ward: 2/2"), "one distinct dual-noun rule advances both hinted nouns to the live threshold")
+	_check(not Global.library_has("pair:red_line"), "planning a complete loadout does not record a pair or instantiate its runner")
+	Global.run_inventory.items[0] = null
+	Global.library_discoveries.erase("manifestation:impact_scripture")
+	Global.library_discoveries.erase("manifestation:martyr_circuit")
+	var hidden_contributor := String(_reference.call("research_notes", pair))
+	_check(hidden_contributor.contains("Ward: 1/2") and not hidden_contributor.contains("Martyr Circuit"), "unknown worn rules can count without revealing their identity")
+	Global.library_discoveries.insert(1, "manifestation:martyr_circuit")
+	_check(String(_reference.call("research_notes", _find(entries, "item:beka"))).is_empty(), "ordinary pages do not invent a research checklist")
+	_check(String(_reference.call("research_notes", {"category": "Pairs", "id": "removed_pair"})).is_empty(), "removed pairs have no speculative progress")
+	_check(Global.run_inventory.items == inventory_before and Global.run_bag.slots == bag_before and Global.meta_stash.slots == stash_before and Global.attempt_imprints == imprints_before, "research notes do not change equipment or consume imprints")
+	_check(Global.library_discoveries == knowledge_before and Global.grimoire_entries == grimoire_before and Global.library_read_entries == read_before, "research notes do not discover or mark pages read")
+	_check(Global._rng.state == rng_before and Global.followers == followers_before and SaveManager.debug_save_writes == writes_before, "research notes consume no gameplay RNG, currency or save writes")
+	Global.run_inventory = saved_inventory
+	Global.run_bag = saved_bag
+	Global.meta_stash = saved_stash
+	Global.attempt_imprints.assign(saved_imprints)
+	Global.library_discoveries.assign(saved_knowledge)
+
+
 func _run() -> void:
 	SaveManager.save_dir = "user://saves_test_hub_library_data/"
 	SaveManager.current_save = null
@@ -55,6 +149,8 @@ func _run() -> void:
 	var writes_before := SaveManager.debug_save_writes
 	var entries: Array[Dictionary] = LIBRARY.build_entries()
 	_test_planning_clues(entries)
+	_test_teaching_order_and_folios(entries)
+	_test_pair_research(entries)
 	_check(LIBRARY.CATEGORIES == ["Buildcraft", "Manifestations", "Pairs", "Enemies", "Items", "Augments", "Sets", "Recipes", "Chronicles"], "all nine subject books appear in shelf order")
 	var guides := LIBRARY.filter_entries(entries, "Buildcraft", "")
 	_check(guides.size() == 5, "five teaching pages are always available")

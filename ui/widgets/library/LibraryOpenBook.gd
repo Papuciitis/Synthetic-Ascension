@@ -35,8 +35,8 @@ func _ready() -> void:
 	_turn_print.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_turn_print.scroll_active = false
 	_turn_print.clip_contents = true
-	_turn_print.add_theme_font_size_override("normal_font_size", 20)
-	_turn_print.add_theme_font_size_override("bold_font_size", 20)
+	_turn_print.add_theme_font_size_override("normal_font_size", 22)
+	_turn_print.add_theme_font_size_override("bold_font_size", 22)
 	_turn_print.add_theme_color_override("default_color", Color(0.20, 0.115, 0.065))
 	_turn_leaf.add_child(_turn_print)
 	resized.connect(_update_turn_print)

@@ -7,6 +7,14 @@ ui_click=ui/ui_click.wav|vol=-8|pitch=0.02|bus=UI
 ui_back=ui/ui_back.ogg|vol=-10|pitch=0.02|bus=UI
 ui_error=ui/ui_error.wav|vol=-8|pitch=0.00|bus=UI
 
+# Quiet Alcove: Kenney RPG Audio CC0. See library/CREDITS.md.
+library_open=library/book_open.ogg|vol=-5|pitch=0.00|bus=UI
+library_close=library/book_close.ogg|vol=-19|pitch=0.00|bus=UI
+library_page_1=library/page_turn_1.ogg|vol=-8|pitch=0.00|bus=UI
+library_page_2=library/page_turn_2.ogg|vol=-1|pitch=0.00|bus=UI
+library_page_3=library/page_turn_3.ogg|vol=-6|pitch=0.00|bus=UI
+library_bookmark=library/bookmark.ogg|vol=-4|pitch=0.00|bus=UI
+
 # Player / Combat
 player_melee_swing=player/melee_swing.ogg|vol=-5|pitch=0.05|bus=SFX
 player_melee_hit=player/melee_hit.wav|vol=-4|pitch=0.04|bus=SFX
