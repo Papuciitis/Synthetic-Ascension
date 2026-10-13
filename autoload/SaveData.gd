@@ -60,6 +60,11 @@ const CURRENT_SAVE_VERSION := 1
 # profile has reached (Grimoire.gd keys). Profile knowledge, like the
 # dossiers; it survives die-die.
 @export var meta_grimoire: Array[String] = []
+# Alcove knowledge is profile-wide. Additive empty defaults keep older saves
+# readable without inventing items that are no longer present in the save.
+@export var meta_library_discoveries: Array[String] = []
+@export var meta_library_read_entries: Array[String] = []
+@export var meta_library_target_key: String = ""
 # The story layer's memory (StoryDirector): profile once-flags, accounts
 # closed, the last account and the best segment, plus this attempt's story
 # facts. One plain Dictionary so new story state never needs a migration.

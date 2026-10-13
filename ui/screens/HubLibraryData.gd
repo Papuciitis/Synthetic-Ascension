@@ -2,7 +2,14 @@ extends RefCounted
 ## Read-only reference entries built from the same definitions as the game.
 ## Detached item/effect previews avoid inventory, discovery and RNG changes.
 
-const CATEGORIES: Array[String] = ["Manifestations", "Pairs", "Enemies", "Items", "Augments", "Sets"]
+const GUIDES := preload("res://ui/screens/HubLibraryGuides.gd")
+const CATEGORIES: Array[String] = ["Buildcraft", "Manifestations", "Pairs", "Enemies", "Items", "Augments", "Sets", "Recipes", "Chronicles"]
+const PREFIXES := {"Buildcraft": "guide", "Manifestations": "manifestation", "Pairs": "pair", "Enemies": "enemy", "Items": "item", "Augments": "augment", "Sets": "set"}
+const CLUES := {
+	"Enemies": "Encounter this opponent in the field to record its behaviour.",
+	"Augments": "Acquire this augment to study its base effects and growth.",
+	"Sets": "Acquire a member of this equipment set to study its shared identity.",
+}
 const STAT_LABELS := {
 	"max_hp": "Health", "armor": "Armor", "move_speed": "Move Speed",
 	"power": "Power", "haste": "Haste", "luck": "Luck",
@@ -11,17 +18,21 @@ const STAT_LABELS := {
 
 static func build_entries() -> Array[Dictionary]:
 	var entries: Array[Dictionary] = []
+	for guide: Dictionary in GUIDES.pages():
+		entries.append(_entry("Buildcraft", guide["id"], guide["title"], guide["subtitle"], guide["body"]))
 	for id: StringName in ManifestationCatalog.all_ids():
 		var def := ManifestationCatalog.get_def(id)
 		var slots := PackedStringArray()
 		for slot: int in def.slots:
 			slots.append(Inventory.slot_label(slot))
 		var body := "[b]The rule[/b]\n%s\n\n[b]Goes on[/b]\n%s\n\n[b]Shared nouns[/b]\n%s\n\nNumbers shown at rank 0; item rank strengthens the rule." % [ManifestationCatalog.describe(id, null), ", ".join(slots), _nouns(def.tags)]
-		entries.append(_entry("Manifestations", String(id), def.display_name, _nouns(def.tags), body))
+		var hint := "Find a rule for these slots: %s. Shared nouns: %s. Acquire the equipment or preserve its imprint to record the rule." % [", ".join(slots), _nouns(def.tags)]
+		entries.append(_entry("Manifestations", String(id), def.display_name, _nouns(def.tags), body, null, "", hint))
 	for id: StringName in ManifestationPairCatalog.all_ids():
 		var pair := ManifestationPairCatalog.get_def(id)
-		var body := "[b]The payoff[/b]\n%s\n\n[b]Activation[/b]\nWear two distinct rules of each noun: %s. A rule with both nouns counts toward both.\n\nPairs arise from equipped rules; they are never item drops. Numbers shown at mean rank 0." % [ManifestationPairCatalog.describe(id), _nouns(pair.nouns)]
-		entries.append(_entry("Pairs", String(id), pair.display_name, _nouns(pair.nouns), body))
+		var body := "[b]The payoff[/b]\n%s\n\n[b]Activation[/b]\nWear %d distinct rules of each noun: %s. A rule with both nouns counts toward both.\n\nPairs arise from equipped rules; they are never item drops. Numbers shown at mean rank 0." % [ManifestationPairCatalog.describe(id), ManifestationPairCatalog.NOUN_THRESHOLD, _nouns(pair.nouns)]
+		var hint := "Light both %s with %d distinct rules of each. Duplicate copies do not add to the count." % [_nouns(pair.nouns).replace(" + ", " and "), ManifestationPairCatalog.NOUN_THRESHOLD]
+		entries.append(_entry("Pairs", String(id), pair.display_name, _nouns(pair.nouns), body, null, "", hint))
 	# ResourceLoader preserves original resource names in exported builds too.
 	var enemy_files := ResourceLoader.list_directory("res://core/actors/enemy")
 	enemy_files.sort()
@@ -46,7 +57,11 @@ static func build_entries() -> Array[Dictionary]:
 			var body := data.description
 			if not data.set_id.is_empty():
 				var set_data := Global.set_db.get(StringName(data.set_id), null) as SetData
-				body += "\n\n[b]Set[/b]\n" + (set_data.display_name if set_data != null else data.set_id)
+				var set_known := set_data != null and Global.library_has("set:" + data.set_id)
+				if set_data != null and not set_known:
+					# Authored item descriptions also carry a named set-piece line.
+					body = body.replacen(set_data.display_name, "Undiscovered")
+				body += "\n\n[b]Set[/b]\n" + (set_data.display_name if set_known else "An undiscovered set. Acquire a member to record its identity.")
 			# Never use from_data(): it rolls an imprint and consumes live RNG.
 			var sample := ItemInstance.new()
 			sample.data = data
@@ -60,7 +75,8 @@ static func build_entries() -> Array[Dictionary]:
 				if not effects.is_empty():
 					body += "\n\n[b]%s effects · rank 0[/b]\n%s" % ["Positive" if polarity > 0 else "Negative", "\n".join(effects)]
 			body += "\n\nRolled polarity, rank and Manifestations can change an individual item's effects."
-			entries.append(_entry("Items", data.id, data.display_name, slot, body, data.icon))
+			var hint := "Find equipment for the %s slot; acquire it to record its identity and properties." % slot if int(data.equip_slot) >= 0 else "Acquire this bag item to record its identity and properties."
+			entries.append(_entry("Items", data.id, data.display_name, slot, body, data.icon, "", hint))
 		for data: AugmentData in Global.augment_db.values():
 			if data == null:
 				continue
@@ -81,9 +97,25 @@ static func build_entries() -> Array[Dictionary]:
 					continue
 				body += "\n\n[b]%d pieces · %s[/b]\n%s" % [tier.required_count, tier.display_name, tier.mechanical_description if not tier.mechanical_description.is_empty() else tier.plain_description]
 			entries.append(_entry("Sets", String(data.id), data.display_name, data.identity_sentence, body))
+	for row: Dictionary in Grimoire.catalogue(Global.augment_db):
+		var category := "Chronicles" if row["section"] == "RECORDS" else "Recipes"
+		var key := String(row["key"])
+		var body := String(row["rule"])
+		if category == "Recipes":
+			body = "[b]Base requirements[/b]\n%s\n\n[b]Payoff[/b]\n%s" % [row["hint"], row["rule"]]
+		entries.append(_entry(category, key, row["name"], String(row["section"]).capitalize(), body, null, key, row["hint"]))
+	# Sanitize before sorting, filtering or handing any dictionaries to the UI.
+	# Ordinals follow catalog order, never the unrevealed display names.
+	var ordinals := {}
+	for entry: Dictionary in entries:
+		var category := String(entry["category"])
+		ordinals[category] = int(ordinals.get(category, 0)) + 1
+		_present(entry, int(ordinals[category]))
 	entries.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		if a["category"] != b["category"]:
 			return CATEGORIES.find(a["category"]) < CATEGORIES.find(b["category"])
+		if a["discovered"] != b["discovered"]:
+			return bool(a["discovered"])
 		return String(a["title"]).naturalnocasecmp_to(String(b["title"])) < 0)
 	return entries
 
@@ -104,12 +136,29 @@ static func filter_entries(entries: Array[Dictionary], category: String, query: 
 	return found
 
 
-static func _entry(category: String, id: String, title: String, subtitle: String, body: String, icon: Texture2D = null) -> Dictionary:
+static func _entry(category: String, id: String, title: String, subtitle: String, body: String, icon: Texture2D = null, key: String = "", hint: String = "") -> Dictionary:
 	return {
 		"category": category, "id": id, "title": title, "subtitle": subtitle,
 		"body": body.strip_edges(), "icon": icon,
-		"search": (category + " " + id + " " + title + " " + subtitle + " " + body).to_lower(),
+		"key": key if not key.is_empty() else String(PREFIXES[category]) + ":" + id,
+		"hint": hint if not hint.is_empty() else String(CLUES.get(category, "")),
 	}
+
+
+static func _present(entry: Dictionary, ordinal: int) -> void:
+	var key := String(entry["key"])
+	var discovered: bool = entry["category"] == "Buildcraft" or Global.library_has(key)
+	entry["discovered"] = discovered
+	entry["unread"] = discovered and not Global.library_read_entries.has(key)
+	entry["trackable"] = entry["category"] != "Buildcraft"
+	if not discovered:
+		entry["title"] = "Undiscovered page · %02d" % ordinal
+		entry["subtitle"] = entry["hint"]
+		entry["body"] = entry["hint"]
+		entry["icon"] = null
+		entry["search"] = (String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry["hint"])).to_lower()
+	else:
+		entry["search"] = (String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry["subtitle"]) + " " + String(entry["body"])).to_lower()
 
 
 static func _nouns(nouns: Array[StringName]) -> String:

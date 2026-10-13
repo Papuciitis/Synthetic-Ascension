@@ -280,6 +280,9 @@ var attempt_voucher_offer: Array = []
 var attempt_voucher_segment: int = 0
 ## Profile-wide (it survives death): every Grimoire key the profile reached.
 var grimoire_entries: Array[String] = []
+var library_discoveries: Array[String] = []
+var library_read_entries: Array[String] = []
+var library_target_key: String = ""
 var _loaded_dice_last_ms: int = -1000000
 
 
@@ -339,6 +342,7 @@ func _ready() -> void:
 	# The Gambler's Rite listens to item operations; connected after every
 	# autoload exists.
 	_connect_gambler_listener.call_deferred()
+	_connect_library_listener.call_deferred()
 	_rng.randomize()
 
 	_load_spells()
@@ -541,6 +545,132 @@ func mark_manifestation_card_seen(card_id: StringName) -> void:
 	request_autosave()
 
 
+## Keys are namespaced; facet keys alone have a third component. Validate
+## shape rather than catalogue membership so removed content keeps its memory.
+func _library_valid_key(key: String) -> bool:
+	var parts := key.split(":")
+	if parts.size() < 2:
+		return false
+	var prefix := parts[0]
+	if prefix not in ["item", "manifestation", "pair", "augment", "set", "enemy", "guide", "transcend", "duo", "facet", "thesis", "canon", "record"]:
+		return false
+	if parts.size() != (3 if prefix == "facet" else 2):
+		return false
+	for part in parts:
+		if part.is_empty() or part != part.strip_edges():
+			return false
+	return true
+
+
+func library_has(key: String) -> bool:
+	key = key.strip_edges()
+	if not _library_valid_key(key):
+		return false
+	match key.get_slice(":", 0):
+		"guide":
+			return true
+		"enemy":
+			return is_enemy_discovered(StringName(key.get_slice(":", 1)))
+		"transcend", "duo", "facet", "thesis", "canon", "record":
+			return grimoire_has(key)
+	return library_discoveries.has(key)
+
+
+## Record earned knowledge. Reader actions only use the read/target APIs.
+func library_note(key: String) -> bool:
+	key = key.strip_edges()
+	if not _library_valid_key(key) or library_has(key):
+		return false
+	match key.get_slice(":", 0):
+		"enemy":
+			mark_enemy_discovered(StringName(key.get_slice(":", 1)))
+		"transcend", "duo", "facet", "thesis", "canon", "record":
+			return grimoire_note(key)
+		_:
+			library_discoveries.append(key)
+			request_autosave()
+	return true
+
+
+func library_mark_read(key: String) -> void:
+	key = key.strip_edges()
+	if not library_has(key) or library_read_entries.has(key):
+		return
+	library_read_entries.append(key)
+	request_autosave()
+
+
+func library_set_target(key: String) -> void:
+	key = key.strip_edges()
+	if key == library_target_key or (key != "" and not _library_valid_key(key)):
+		return
+	library_target_key = key
+	request_autosave()
+
+
+## Call only after successful acquisition, or while backfilling owned evidence.
+func library_note_item(inst: ItemInstance) -> void:
+	if inst == null or inst.data == null or not _library_owns_item(inst):
+		return
+	library_note("item:" + String(inst.data.id))
+	if inst.data.set_id != "":
+		library_note("set:" + String(inst.data.set_id))
+	if inst.manifestation_id != &"":
+		library_note("manifestation:" + String(inst.manifestation_id))
+
+
+func _connect_library_listener() -> void:
+	if RunEvents != null and not RunEvents.item_operation.is_connected(_on_item_operation_for_library):
+		RunEvents.item_operation.connect(_on_item_operation_for_library)
+
+
+func _library_owns_item(inst: ItemInstance) -> bool:
+	return inst != null and (
+		(run_inventory != null and run_inventory.items.has(inst))
+		or (run_bag != null and run_bag.slots.has(inst))
+		or (meta_stash != null and meta_stash.slots.has(inst))
+	)
+
+
+func _on_item_operation_for_library(kind: StringName, inst: ItemInstance, data: Dictionary) -> void:
+	# Stock reports use the same container vocabulary. Actual ownership is the
+	# boundary, including for unscoped direct grants; "purchased" precedes bag
+	# acceptance and must not discover a failed purchase.
+	if _suppress_autosave or String(data.get("source", "")) == "vendor_stock":
+		return
+	if kind not in [&"bagged", &"equipped", &"stashed", &"merged", &"imprinted"] or not _library_owns_item(inst):
+		return
+	library_note_item(inst)
+	if kind == &"merged":
+		var incoming: Dictionary = data.get("incoming", {})
+		var rule := String(incoming.get("manifestation", ""))
+		if rule != "":
+			library_note("manifestation:" + rule)
+	elif kind == &"imprinted":
+		var replaced := String(data.get("replaced", ""))
+		if replaced != "":
+			library_note("manifestation:" + replaced)
+
+
+func _backfill_library() -> void:
+	for id in owned_augment_ids:
+		library_note("augment:" + String(id))
+	if run_inventory != null:
+		for inst in run_inventory.items:
+			library_note_item(inst)
+	if run_bag != null:
+		for inst in run_bag.slots:
+			library_note_item(inst)
+	if meta_stash != null:
+		for inst in meta_stash.slots:
+			library_note_item(inst)
+	for id in attempt_imprints:
+		library_note("manifestation:" + String(id))
+	for card in seen_manifestation_cards:
+		if String(card).begins_with("pair:"):
+			library_note(String(card))
+
+
 # ============================================================
 # Run selection sync
 # ============================================================
@@ -680,6 +810,8 @@ func store_imprint(imprint_id: StringName) -> bool:
 	if attempt_imprints.has(imprint_id):
 		return false
 	attempt_imprints.append(imprint_id)
+	# Storage alone has no acquisition provenance: detached merge previews use
+	# this too. Owned merge/imprint events record knowledge at their boundary.
 	while attempt_imprints.size() > IMPRINT_CAP:
 		attempt_imprints.pop_front()
 	if RunEvents != null:
@@ -933,6 +1065,7 @@ func add_owned_augment(id: StringName) -> void:
 	if not owned_augment_ids.has(id):
 		owned_augment_ids.append(id)
 		request_autosave()
+	library_note("augment:" + String(id))
 
 
 func move_owned_augment(from_index: int, to_index: int) -> void:
@@ -2571,6 +2704,13 @@ func apply_save(save: SaveData) -> void:
 	# If anything below aborts, the suppression must not silently disable
 	# every later autosave; the deferred release runs after the normal one.
 	_release_autosave_suppression.call_deferred()
+	library_discoveries.clear()
+	library_read_entries.clear()
+	library_target_key = ""
+	for saved_key in save.meta_library_discoveries:
+		var key := saved_key.strip_edges()
+		if _library_valid_key(key) and key.get_slice(":", 0) in ["item", "manifestation", "pair", "augment", "set"] and not library_discoveries.has(key):
+			library_discoveries.append(key)
 	if save.save_version > SaveData.CURRENT_SAVE_VERSION:
 		push_warning(
 			"Save slot %d was written by a newer build (save_version %d > %d, game %s); loading best-effort."
@@ -2895,6 +3035,10 @@ func apply_save(save: SaveData) -> void:
 		run_bag = null
 		set_followers(0)
 
+	_backfill_library()
+	for saved_key in save.meta_library_read_entries:
+		library_mark_read(saved_key)
+	library_set_target(save.meta_library_target_key)
 	_suppress_autosave = false
 func write_save(save: SaveData) -> void:
 	_suppress_autosave = true
@@ -2928,6 +3072,9 @@ func write_save(save: SaveData) -> void:
 	for card_id in seen_manifestation_cards:
 		save.meta_seen_manifestation_cards.append(String(card_id))
 	save.meta_grimoire = grimoire_entries.duplicate()
+	save.meta_library_discoveries = library_discoveries.duplicate()
+	save.meta_library_read_entries = library_read_entries.duplicate()
+	save.meta_library_target_key = library_target_key
 	save.meta_story = StoryDirector.state_for_save()
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen

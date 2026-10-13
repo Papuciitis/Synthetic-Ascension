@@ -63,6 +63,11 @@ func _run() -> void:
 	Global.start_new_attempt()
 	Global.pending_big_choice = false
 	StoryDirector.cards_override = 0
+	# The catalogue now has sealed pages; seed earned knowledge for the search regression.
+	Global.library_note("item:beka")
+	for entry: Dictionary in LIBRARY_DATA.build_entries():
+		if entry["category"] == "Enemies":
+			Global.library_note(String(entry["key"]))
 	var inventory_before: Array = Global.run_inventory.items.duplicate()
 	var rng_before := Global._rng.state
 	var followers_before := Global.followers
@@ -70,8 +75,8 @@ func _run() -> void:
 	var entries: Array[Dictionary] = LIBRARY_DATA.build_entries()
 	for category: String in LIBRARY_DATA.CATEGORIES:
 		_check(not LIBRARY_DATA.filter_entries(entries, category, "").is_empty(), category + " contains live catalog entries")
-	_check(LIBRARY_DATA.filter_entries(entries, "Manifestations", "").size() == ManifestationCatalog.all_ids().size(), "all authored manifestations are available")
-	_check(LIBRARY_DATA.filter_entries(entries, "Pairs", "").size() == ManifestationPairCatalog.all_ids().size(), "all authored pairs are available")
+	_check(LIBRARY_DATA.filter_entries(entries, "Manifestations", "").size() == ManifestationCatalog.all_ids().size(), "each manifestation has a known or sealed page")
+	_check(LIBRARY_DATA.filter_entries(entries, "Pairs", "").size() == ManifestationPairCatalog.all_ids().size(), "each pair has a known or sealed page")
 	var beka_results: Array[Dictionary] = LIBRARY_DATA.filter_entries(entries, "Items", "  BEKA  ")
 	_check(beka_results.size() == 1 and beka_results[0]["id"] == "beka", "search trims whitespace and ignores case")
 	_check(not LIBRARY_DATA.filter_entries(entries, "Enemies", "wind-up").is_empty(), "search includes enemy advice, not just names")

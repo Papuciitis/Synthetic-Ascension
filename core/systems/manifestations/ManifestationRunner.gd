@@ -112,13 +112,13 @@ func refresh_effects(inv: Inventory) -> void:
 			"inst": inst,
 		}
 
-	_sync(wanted)
+	_sync(wanted, inv)
 
 	if debug_manifestations:
 		print("[Manifestations] active: ", _active.keys())
 
 
-func _sync(wanted: Dictionary) -> void:
+func _sync(wanted: Dictionary, inv: Inventory) -> void:
 	var dirty := false
 	# Nouns are claimed from the DEF, here, rather than by each rule in its own
 	# _on_manifestation_ready(). Declared and claimed then cannot drift: a rule
@@ -182,7 +182,7 @@ func _sync(wanted: Dictionary) -> void:
 	# Pairs are synced INSIDE the same dirty pass so manifestations_changed
 	# fires exactly once - the notifier that listens for it would otherwise
 	# announce twice for a single equip.
-	if _sync_pairs():
+	if _sync_pairs(inv):
 		dirty = true
 
 	if dirty:
@@ -227,7 +227,7 @@ func _clear_all() -> void:
 
 ## Which authored pair payoffs the current loadout lights, instantiating and
 ## freeing them to match. Returns whether anything changed.
-func _sync_pairs() -> bool:
+func _sync_pairs(inv: Inventory) -> bool:
 	var wanted: Dictionary = {}
 	var counts := get_noun_counts()
 	for def in ManifestationPairCatalog.active_for_counts(counts):
@@ -252,6 +252,8 @@ func _sync_pairs() -> bool:
 		var def: ManifestationPairDef = wanted[id]
 		if _pairs.has(id) and is_instance_valid(_pairs[id]):
 			(_pairs[id] as ManifestationPairEffect).set_contributor_rarity(_mean_rarity_for(def))
+			if Global != null and not Global._suppress_autosave and inv == Global.run_inventory:
+				Global.library_note("pair:" + String(id))
 			continue
 		if def.logic == null:
 			continue
@@ -268,6 +270,10 @@ func _sync_pairs() -> bool:
 				state.claim(noun)
 		pair.setup_pair(get_parent(), state, def, _mean_rarity_for(def))
 		_pairs[id] = pair
+		# A profile restore can refresh the old inventory before replacing it.
+		# Only normal gameplay earns knowledge; save backfill has its own evidence.
+		if Global != null and not Global._suppress_autosave and inv == Global.run_inventory:
+			Global.library_note("pair:" + String(id))
 		dirty = true
 
 	return dirty
