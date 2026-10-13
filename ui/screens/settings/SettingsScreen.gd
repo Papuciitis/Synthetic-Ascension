@@ -363,9 +363,16 @@ func _build_accessibility() -> void:
 	reduced.button_pressed = bool(_value(&"accessibility", &"reduced_motion", false))
 	reduced.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"reduced_motion", on))
 	_add_control_row("Reduced Motion", reduced)
+	var shake := CheckBox.new()
+	shake.name = "ScreenShakeToggle"
+	shake.text = "Enable screen shake"
+	shake.tooltip_text = "Camera kicks when you take damage or defeat an elite or boss. Off keeps the camera steady while hit-stop remains available. Reduced Motion also disables shake."
+	shake.button_pressed = bool(_value(&"accessibility", &"screen_shake", true))
+	shake.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"screen_shake", on))
+	_add_control_row("Screen Shake", shake)
 	var feel := CheckBox.new()
 	feel.text = "Brief hit-stop and camera punch on big moments"
-	feel.tooltip_text = "Elite, boss and critical kills dip time for a few hundredths of a second; taking a hit or an elite falling kicks the camera a few pixels. Ordinary kills never do. Reduced Motion also turns both off."
+	feel.tooltip_text = "Elite, boss and critical kills dip time for a few hundredths of a second; taking a hit or an elite falling kicks the camera a few pixels. Ordinary kills never do. Screen Shake controls the camera kick separately. Reduced Motion also turns both off."
 	feel.button_pressed = bool(_value(&"accessibility", &"hit_feel", true))
 	feel.toggled.connect(func(on: bool) -> void: _settings_source.call("set_value", &"accessibility", &"hit_feel", on))
 	_add_control_row("Hit-stop & Camera Punch", feel)

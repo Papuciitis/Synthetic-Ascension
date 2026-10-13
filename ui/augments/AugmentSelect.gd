@@ -986,7 +986,7 @@ func _build_numbers_text(a: AugmentData, entry: Dictionary = {}) -> String:
 				head = "%s  ·  BINDS AT Lv.%d" % [AugmentScaling.grade_name(grade), after]
 		lines.append(head)
 		if a.effect_scenes.size() > 0:
-			lines.append("Payload grows with your native hit (D) and +35% per level: x%.2f at Lv.%d." % [AugmentScaling.potency(after), after])
+			lines.append("Payload grows with your native hit (D) and +35%% per level: x%.2f at Lv.%d." % [AugmentScaling.potency(after), after])
 		if String(entry.get("kind", "")) != AugmentBinding.KIND_TRANSCEND and AugmentScaling.can_transcend(a.id) and not Global.is_augment_transcended(a.id):
 			var held := Global.augment_catalyst_holds(a.id)
 			lines.append("Transcends at Lv.%d into %s. Catalyst: %s%s." % [

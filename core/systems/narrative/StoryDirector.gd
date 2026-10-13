@@ -936,9 +936,9 @@ static func chapter_close_card(completed: int, mark: bool = true) -> Dictionary:
 	if mark:
 		add_flag("chapter:1")
 	var peak := witnesses()
-	var witnesses := StoryLines.CHAPTER_WITNESS_ONE if peak <= 1 else (StoryLines.CHAPTER_WITNESSES_FIRST if first else StoryLines.CHAPTER_WITNESSES_REPEAT) % grouped(peak)
+	var witnesses_line := StoryLines.CHAPTER_WITNESS_ONE if peak <= 1 else (StoryLines.CHAPTER_WITNESSES_FIRST if first else StoryLines.CHAPTER_WITNESSES_REPEAT) % grouped(peak)
 	var family := String(StoryLines.CHAPTER_FAMILY.get(dominant_family(), StoryLines.CHAPTER_FAMILY[""]))
-	var body := (StoryLines.CHAPTER_FIRST if first else StoryLines.CHAPTER_REPEAT).format({"witnesses_line": witnesses, "family_line": family})
+	var body := (StoryLines.CHAPTER_FIRST if first else StoryLines.CHAPTER_REPEAT).format({"witnesses_line": witnesses_line, "family_line": family})
 	return {"eyebrow": StoryLines.CHAPTER_EYEBROW, "title": StoryLines.CHAPTER_TITLE, "body": body, "button": StoryLines.CHAPTER_BUTTON}
 
 

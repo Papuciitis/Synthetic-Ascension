@@ -39,8 +39,8 @@ const TIERS: Array[Dictionary] = [
 static func tier_stake(tier: int) -> int:
 	if tier < 0 or tier >= TIERS.size():
 		return 0
-	var scale: float = Global.market_scale() if Global != null else 1.0
-	return int(round(float(TIERS[tier]["stake"]) * scale))
+	var market_multiplier: float = Global.market_scale() if Global != null else 1.0
+	return int(round(float(TIERS[tier]["stake"]) * market_multiplier))
 
 
 ## The rarity band a tier pays at the current segment (x = min, y = max).

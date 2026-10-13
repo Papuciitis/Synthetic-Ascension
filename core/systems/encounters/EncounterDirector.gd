@@ -521,7 +521,7 @@ func _on_rite_channel_changed(active: bool) -> void:
 		try_spawn_beat(id)
 
 
-func _on_player_life_event(_player: Node, kind: StringName) -> void:
+func _on_player_life_event(_event_player: Node, kind: StringName) -> void:
 	if kind == &"respawn" and _rite_channel_active:
 		_reinforcement_hold_left = respawn_reinforcement_hold_sec
 

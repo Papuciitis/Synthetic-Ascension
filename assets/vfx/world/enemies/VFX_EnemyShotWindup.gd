@@ -45,8 +45,8 @@ func configure(style_id: StringName) -> void:
 
 
 ## `progress` runs 0 -> 1 across the wind-up; `dir` points at the target.
-func show_progress(progress: float, dir: Vector2) -> void:
-	_progress = clampf(progress, 0.0, 1.0)
+func show_progress(fraction: float, dir: Vector2) -> void:
+	_progress = clampf(fraction, 0.0, 1.0)
 	if dir.length_squared() > 0.0001:
 		_dir = dir.normalized()
 	# The parent body may rotate; the tell is placed in world terms.

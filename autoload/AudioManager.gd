@@ -127,10 +127,10 @@ func _process(delta: float) -> void:
 		var target := intensity_target()
 		_target_cutoff_hz = float(target["cutoff_hz"])
 		_target_duck_db = float(target["duck_db"])
-	var ease := 1.0 - exp(-delta / CUTOFF_TAU)
-	var log_cutoff := log(_cutoff_hz) + (log(_target_cutoff_hz) - log(_cutoff_hz)) * ease
+	var blend_weight := 1.0 - exp(-delta / CUTOFF_TAU)
+	var log_cutoff := log(_cutoff_hz) + (log(_target_cutoff_hz) - log(_cutoff_hz)) * blend_weight
 	_cutoff_hz = clampf(exp(log_cutoff), CUTOFF_LOW_HP_HZ * 0.5, CUTOFF_OPEN_HZ)
-	_duck_db = lerpf(_duck_db, _target_duck_db, ease)
+	_duck_db = lerpf(_duck_db, _target_duck_db, blend_weight)
 	if _lowpass != null:
 		_lowpass.cutoff_hz = _cutoff_hz
 	if _duck != null:

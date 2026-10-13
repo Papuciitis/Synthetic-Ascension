@@ -48,17 +48,17 @@ static func held(imprint_id: StringName) -> Dictionary:
 	# The numbers as they would apply: on the highest-ranked worn item it fits,
 	# else the highest-ranked bagged one, else at rank 0. Each item's own
 	# numbers are its before -> after on the right.
-	var reference: Dictionary = {}
+	var reference_item: Dictionary = {}
 	var best := -1.0
 	for candidate in fitting:
 		var worn_bonus := 1000.0 if String(candidate["where"]) == "worn" else 0.0
 		var score: float = worn_bonus + float(ManifestationCatalog.scaling_on(candidate["inst"])["rank"])
 		if score > best:
 			best = score
-			reference = candidate
+			reference_item = candidate
 	var on_item: ItemInstance = null
-	if not reference.is_empty():
-		on_item = _carrying(reference["inst"], imprint_id)
+	if not reference_item.is_empty():
+		on_item = _carrying(reference_item["inst"], imprint_id)
 
 	var lines: Array[String] = []
 	lines.append(_noun_line(def.tags))
@@ -66,7 +66,7 @@ static func held(imprint_id: StringName) -> Dictionary:
 	lines.append(_head("THE RULE"))
 	lines.append("[color=%s]%s[/color]" % [_rule_hex(imprint_id), ManifestationCatalog.describe(imprint_id, on_item)])
 	if on_item != null:
-		lines.append("[color=%s]Numbers as they read on %s.[/color]" % [QUIET_HEX, _item_ref(reference)])
+		lines.append("[color=%s]Numbers as they read on %s.[/color]" % [QUIET_HEX, _item_ref(reference_item)])
 	else:
 		lines.append("[color=%s]Numbers at rank 0: nothing you carry takes this rule.[/color]" % QUIET_HEX)
 	lines.append("")

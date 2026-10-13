@@ -399,7 +399,7 @@ func _process(delta: float) -> void:
 			_column_bases[PLAYER_COLUMN - 1] = player.global_position + CALLOUT_RAISE
 	var player_base := _column_bases[PLAYER_COLUMN - 1]
 	_column_members.fill(0)
-	var ease := 1.0 - exp(-COLUMN_EASE_RATE * delta)
+	var blend_weight := 1.0 - exp(-COLUMN_EASE_RATE * delta)
 	var ease_floor := COLUMN_EASE_MIN_SPEED * delta
 	var i := 0
 	while i < _count:
@@ -414,7 +414,7 @@ func _process(delta: float) -> void:
 			var lift := _lifts[i]
 			var target := _lift_targets[i]
 			if lift < target:
-				lift = minf(target, lift + maxf((target - lift) * ease, ease_floor))
+				lift = minf(target, lift + maxf((target - lift) * blend_weight, ease_floor))
 				_lifts[i] = lift
 			if column == PLAYER_COLUMN:
 				_positions[i] = player_base

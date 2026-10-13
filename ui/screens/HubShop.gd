@@ -142,14 +142,14 @@ var _ledger_rows: Dictionary = {}  # caption -> value Label
 
 func _get_refresh_cost() -> int:
 	var n: int = 0
-	var scale: float = 1.0
+	var market_multiplier: float = 1.0
 	if Global != null:
 		n = maxi(0, int(Global.attempt_vendor_refreshes))
-		scale = Global.market_scale()
+		market_multiplier = Global.market_scale()
 	# On the vendor's stage scale and uncapped (follower economy audit P3):
 	# the old 999 cap made search nearly free from Hub 3 on. The ceiling below
 	# only keeps a dev-sized wallet from overflowing the int.
-	var cost_f: float = minf(float(REFRESH_BASE_COST) * pow(REFRESH_GROWTH, float(n)) * scale, 1.0e12)
+	var cost_f: float = minf(float(REFRESH_BASE_COST) * pow(REFRESH_GROWTH, float(n)) * market_multiplier, 1.0e12)
 	return maxi(REFRESH_BASE_COST, int(round(cost_f)))
 
 

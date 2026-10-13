@@ -92,6 +92,15 @@ func _run() -> void:
 		_check(false, "the augment select scene loads")
 	else:
 		add_child(select)
+		# The actual offer hover includes a percentage followed by formatted
+		# potency. An unescaped percent used to throw once on every hover.
+		var payload := _fixture()
+		payload.effect_scenes = [PackedScene.new()]
+		for kind in [AugmentBinding.KIND_NEW, AugmentBinding.KIND_RANK, AugmentBinding.KIND_SWAP]:
+			var offer := {"kind": kind, "id": payload.id, "grade": 0}
+			var offer_text := str(select.call("_build_numbers_text", payload, offer))
+			var potency_text := "x1.35 at Lv.2" if kind == AugmentBinding.KIND_RANK else "x1.00 at Lv.1"
+			_check(offer_text.contains("+35% per level") and offer_text.contains(potency_text), "%s hover renders the payload growth and potency" % kind)
 		var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
 		var saved_owned: Array[StringName] = Global.owned_augment_ids.duplicate()
 		var saved_levels: Dictionary = Global.attempt_augment_levels.duplicate()

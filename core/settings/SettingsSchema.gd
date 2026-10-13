@@ -41,6 +41,7 @@ static func defaults() -> Dictionary:
 			&"ui_scale": 1.0,
 			&"typewriter_speed": &"normal",
 			&"reduced_motion": false,
+			&"screen_shake": true,
 			&"combat_flash": &"full",
 			&"damage_numbers": true,
 			# Named callouts (LUCKY, EVADED, a Manifestation firing) are a
@@ -93,6 +94,7 @@ static func normalize(raw: Dictionary) -> Dictionary:
 	var typewriter := StringName(result[&"accessibility"][&"typewriter_speed"])
 	result[&"accessibility"][&"typewriter_speed"] = typewriter if typewriter in TYPEWRITER_SPEEDS else &"normal"
 	result[&"accessibility"][&"reduced_motion"] = bool(result[&"accessibility"][&"reduced_motion"])
+	result[&"accessibility"][&"screen_shake"] = bool(result[&"accessibility"][&"screen_shake"])
 	result[&"accessibility"][&"damage_numbers"] = bool(result[&"accessibility"][&"damage_numbers"])
 	result[&"accessibility"][&"ability_callouts"] = bool(result[&"accessibility"][&"ability_callouts"])
 	result[&"accessibility"][&"hit_feel"] = bool(result[&"accessibility"][&"hit_feel"])

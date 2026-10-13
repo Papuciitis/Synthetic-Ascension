@@ -21,6 +21,7 @@ extends Node
 ## accessibility "reduced_motion" setting and the "hit_feel" toggle. Nothing
 ## here touches gameplay state: the stop is real-time bounded and restored on
 ## exit, the punch is an offset.
+## The independent screen_shake setting controls only the camera punch.
 
 @export var hit_stop_enabled := true
 @export var camera_punch_enabled := true
@@ -83,6 +84,7 @@ var _counters := {
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	SettingsManager.settings_changed.connect(_on_settings_changed)
 	if RunEvents != null:
 		RunEvents.enemy_defeated.connect(_on_enemy_defeated)
 		RunEvents.player_damage_taken.connect(_on_player_damage_taken)
@@ -162,7 +164,7 @@ func _on_player_damage_taken(player: Node, amount: float, position: Vector2) -> 
 
 ## A Lucky Crit attack is the only crit source. Its hits are watched for a
 ## short window so the kill it lands can be recognised as a crit kill.
-func _on_player_lucky_crit(_player: Node, _position: Vector2, succeeded: bool) -> void:
+func _on_player_lucky_crit(_source_player: Node, _position: Vector2, succeeded: bool) -> void:
 	if not succeeded or not hit_stop_enabled:
 		return
 	_crit_watch_until_msec = Time.get_ticks_msec() + CRIT_WATCH_MS
@@ -209,7 +211,7 @@ func punch_toward(player: Node2D, target: Vector2, pixels: float) -> bool:
 
 
 func punch_direction(player: Node2D, direction: Vector2, pixels: float) -> bool:
-	if not camera_punch_enabled or pixels <= 0.0 or not _feel_allowed():
+	if not camera_punch_enabled or pixels <= 0.0 or not _camera_punch_allowed():
 		return false
 	var camera := _camera_for(player)
 	if camera == null:
@@ -238,6 +240,21 @@ func get_debug_counters() -> Dictionary:
 
 
 # --- internals --------------------------------------------------------------
+
+func _on_settings_changed(section: StringName, key: StringName, _value: Variant) -> void:
+	if section != &"accessibility" or key not in [&"screen_shake", &"reduced_motion", &"hit_feel"]:
+		return
+	if not _camera_punch_allowed():
+		_punch_offset = Vector2.ZERO
+		_apply_punch()
+	if not _feel_allowed():
+		_release_stop()
+		_stop_crit_watch()
+
+
+func _camera_punch_allowed() -> bool:
+	return _feel_allowed() and bool(SettingsManager.get_value(&"accessibility", &"screen_shake", true))
+
 
 func _release_stop() -> void:
 	if not _stop_active:
