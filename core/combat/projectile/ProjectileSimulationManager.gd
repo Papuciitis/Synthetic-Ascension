@@ -8,6 +8,7 @@ enum Team { PLAYER, ENEMY }
 enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
+const PLAYER_LIGHT_SHADER := preload("res://core/combat/projectile/AttackProjectileLight.gdshader")
 const DEFAULT_CAPACITY: int = 4096
 ## Simulation is authoritative (integration pass, 2026-09-26): gameplay
 ## events are never deleted or delayed by rendering. The simulation arrays
@@ -51,7 +52,8 @@ var _identity_tiles := PackedFloat32Array()
 ## Identity rendering, GL-Compatibility-safe (playtest 2026-09-26: 2D
 ## MultiMesh custom data is unsupported on the Compatibility renderer — the
 ## misaligned 16-float upload drew giant white quads). One plain MultiMesh
-## per silhouette family instead, no shaders, no custom data. Families:
+## per silhouette family instead, no custom data. Player light uses a plain
+## canvas shader; it never changes the 12-float instance buffer. Families:
 ## 0 player body, 1 Precision needle, 2 Barrage tracer, 3 enemy body
 ## (Batch A pixel art, 2026-09-27: the two bodies carry their colours
 ## baked in, so the ENEMY team maps tile 0 onto family 3 at upload time and
@@ -799,6 +801,14 @@ func _build_renderer() -> void:
 			if family_textures[0] != null:
 				instance.texture = family_textures[0]
 		instance.material = bullet_material
+		if identity_split and family != FAMILY_ENEMY:
+			var light_material := ShaderMaterial.new()
+			light_material.shader = PLAYER_LIGHT_SHADER
+			var glow_color := Color(0.96, 0.68, 0.28)
+			if family == FAMILY_NEEDLE: glow_color = Color(0.52, 0.82, 0.97)
+			elif family == FAMILY_TRACER: glow_color = Color(0.98, 0.46, 0.12)
+			light_material.set_shader_parameter(&"glow_color", glow_color)
+			instance.material = light_material
 		add_child(instance)
 		_identity_meshes.append(mesh)
 		_identity_instances.append(instance)
@@ -877,6 +887,11 @@ func _update_renderer() -> void:
 		return
 	_rendered_count = _active_count
 	_renderer_uploads += 1
+	# Update one shared material per player family, never one per projectile.
+	var accent_strength := AccessibilityPresentation.current_flash_alpha(1.0)
+	for instance in _identity_instances:
+		if instance.material is ShaderMaterial:
+			(instance.material as ShaderMaterial).set_shader_parameter(&"accent_strength", accent_strength)
 	# One buffer upload per FAMILY instead of two RenderingServer calls per
 	# projectile per frame. Layout per instance: 8 floats of 2D transform
 	# rows, then 4 floats of color — the plain 12-float layout everywhere,

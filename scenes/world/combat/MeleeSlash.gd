@@ -43,6 +43,10 @@ var source: Node = null
 var _seg_visual: int = 24
 var _arc_dirs: PackedVector2Array = PackedVector2Array()
 var _poly_pts: PackedVector2Array = PackedVector2Array()
+var _poly_colors := PackedColorArray()
+var _rim_pts := PackedVector2Array()
+var _rim_colors := PackedColorArray()
+var _arc_tapers := PackedFloat32Array()
 var _a0: float = 0.0
 var _a1: float = 0.0
 
@@ -63,9 +67,9 @@ func _ready() -> void:
 		_legacy_col.disabled = true
 
 	z_index = z
-	# Pixel-art kit (Batch B, 2026-09-27): the crescent sprite carries its own
-	# light, so it blends normally instead of additively.
+	# The smooth steel band carries its own light and blends normally.
 	material = null
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 
 	# hide old Line2D if it exists
 	var old_line := get_node_or_null("Line2D") as Line2D
@@ -203,20 +207,26 @@ func _fit_hitbox_to_visual() -> void:
 
 func _build_visual_cache() -> void:
 	# Visual cache: precompute unit directions along the arc.
-	_seg_visual = clampi(int(arc_degrees / 6.0), 16, 32)
+	_seg_visual = clampi(int(arc_degrees / 3.0), 32, 64)
 	var half := deg_to_rad(arc_degrees) * 0.5
 	_a0 = -half
 	_a1 = +half
 
 	_arc_dirs = PackedVector2Array()
 	_arc_dirs.resize(_seg_visual + 1)
+	_arc_tapers.resize(_seg_visual + 1)
+	_rim_pts.resize(_seg_visual + 1)
+	_rim_colors.resize(_seg_visual + 1)
 
 	for i in range(_seg_visual + 1):
 		var a := lerpf(_a0, _a1, float(i) / float(_seg_visual))
 		_arc_dirs[i] = Vector2(cos(a), sin(a))
+		_arc_tapers[i] = pow(maxf(0.0, sin(PI * float(i) / float(_seg_visual))), 0.72)
 
 	_poly_pts = PackedVector2Array()
-	_poly_pts.resize((_seg_visual + 1) * 2)
+	# Shared end points appear once, keeping the band triangulation clean.
+	_poly_pts.resize(_seg_visual * 2)
+	_poly_colors.resize(_seg_visual * 2)
 
 func _on_area_entered(area: Area2D) -> void:
 	if area == null or not area.is_in_group("enemy_hitbox"):
@@ -276,25 +286,36 @@ func _draw() -> void:
 
 	var center := Vector2.ZERO
 
-	# Pixel-art kit: one crescent sprite, tips on the hitbox's chord, convex
-	# edge on the outer radius. The old wedge polygon and three rims are the
-	# kit's fallback when the sprite is missing.
-	var tint := color_core.lerp(color_edge, 0.35)
-	tint.a = color_core.a * fade
-	VfxKit.draw_crescent(self, center, 0.0, r_outer, half, tint, rim_width)
+	# A narrow annular band tapers to points instead of enlarging the old
+	# stair-stepped bitmap. Cached geometry keeps a swing at two main draws.
+	var band_width := minf(thickness * 0.6, 12.0)
+	for i in range(_seg_visual + 1):
+		var taper := _arc_tapers[i]
+		_poly_pts[i] = _arc_dirs[i] * r_outer
+		_poly_colors[i] = Color(color_core.r, color_core.g, color_core.b, color_core.a * fade * taper)
+		_rim_pts[i] = _poly_pts[i]
+		_rim_colors[i] = VfxKit.attack_core(color_edge, fade * taper * edge_glow_mul * 0.78)
+		if i > 0 and i < _seg_visual:
+			var inside := _seg_visual * 2 - i
+			_poly_pts[inside] = _arc_dirs[i] * (r_outer - band_width * taper)
+			_poly_colors[inside] = Color(color_edge.r, color_edge.g, color_edge.b, color_edge.a * fade * 0.62 * taper)
+	draw_polygon(_poly_pts, _poly_colors)
+	draw_polyline_colors(_rim_pts, _rim_colors, 1.3, true)
+	VfxKit.draw_attack_glow(self, Vector2(r_outer * 0.86, 0), Vector2(38, 46), Color(spark_color.r, spark_color.g, spark_color.b, 0.17 * fade))
 
 	# tiny warm sparks (metal scrape)
 	if sparks > 0:
 		var j := deg_to_rad(spark_jitter_deg)
 		for i in range(sparks):
 			var u := float(i) / float(max(1, sparks - 1))
-			var a := lerpf(a0, a1, u) + sin(_seed + _t * 60.0 + i * 3.1) * j
+			var a := lerpf(a0, a1, u)
+			if VfxKit.attack_motion_enabled(): a += sin(_seed + _t * 60.0 + i * 3.1) * j
 			var dir := Vector2(cos(a), sin(a))
 
 			var base := dir * lerpf(r_inner + 6.0, r_outer - 6.0, 0.65)
 			var end := base + dir * lerpf(spark_len * 0.55, spark_len, u)
 
-			VfxKit.draw_streak(self, center + base, center + end, spark_width, Color(spark_color.r, spark_color.g, spark_color.b, spark_color.a * fade))
+			VfxKit.draw_attack_trail(self, center + base, center + end, spark_width, Color(spark_color.r, spark_color.g, spark_color.b, spark_color.a * fade))
 
 
 func _apply_burn_dot(enemy: Node) -> void:

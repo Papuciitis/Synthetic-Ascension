@@ -54,7 +54,7 @@ func _process(dt: float) -> void:
 		PooledVfx.release(self)
 		return
 
-	rotation += rotate_speed * dt
+	if VfxKit.attack_motion_enabled(): rotation += rotate_speed * dt
 	queue_redraw()
 
 func _draw() -> void:
@@ -71,6 +71,9 @@ func _draw() -> void:
 	# own centre ring and dot) replaces the spoke lines, arc and dot; per-spoke
 	# jitter and length variation are baked into the art.
 	VfxKit.draw_spokes(self, Vector2.ZERO, out_r, col, 0.0)
+	var core := VfxKit.attack_core(color_glow, alpha * k * 0.68)
+	VfxKit.draw_attack_diamond(self, Vector2.ZERO, maxf(4.0, out_r * 0.23), core)
+	VfxKit.draw_attack_glow(self, Vector2.ZERO, Vector2.ONE * out_r * 0.85, Color(color_glow.r, color_glow.g, color_glow.b, alpha * glow_mul * k))
 	if not VfxKit.has("spokes"):
 		draw_arc(Vector2.ZERO, inner * 1.15, 0.0, TAU, 40, col2, maxf(2.0, width * 0.55), true)
 		draw_circle(Vector2.ZERO, maxf(2.0, width * 0.65), col)

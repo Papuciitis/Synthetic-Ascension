@@ -129,19 +129,20 @@ func _draw() -> void:
 
 	if trail_enabled:
 		if trail_glow_mul > 0.0:
-			draw_line(Vector2.ZERO, back, Color(body_glow.r, body_glow.g, body_glow.b, body_glow.a * a * trail_glow_mul), trail_width * 2.2, true)
-		draw_line(Vector2.ZERO, back, Color(body_core.r, body_core.g, body_core.b, a), trail_width, true)
+			VfxKit.draw_attack_trail(self, back, Vector2.ZERO, trail_width * 2.8, Color(body_glow.r, body_glow.g, body_glow.b, a * trail_glow_mul))
+		VfxKit.draw_attack_trail(self, back, Vector2.ZERO, trail_width, Color(body_core.r, body_core.g, body_core.b, a))
 
 	# draw a small bolt along +X (node rotation points it toward travel)
 	var half := body_len * 0.5
 	var p0 := Vector2(-half * 0.35, 0.0)
 	var p1 := Vector2(+half * 0.65, 0.0)
 
-	draw_line(p0, p1, Color(body_glow.r, body_glow.g, body_glow.b, body_glow.a), body_glow_width, true)
-	draw_line(p0, p1, Color(body_core.r, body_core.g, body_core.b, body_core.a), body_width, true)
+	VfxKit.draw_attack_trail(self, p0 - Vector2(8, 0), p1, body_glow_width, Color(body_glow.r, body_glow.g, body_glow.b, body_glow.a))
+	draw_line(p0, p1, body_core, maxf(1.0, body_width * 0.6), true)
+	VfxKit.draw_attack_diamond(self, p1, maxf(3.0, body_width), VfxKit.attack_core(body_glow, 0.75))
 
 	# tiny head dot
-	draw_circle(p1, maxf(2.0, body_width * 0.55), Color(1, 1, 1, 0.35))
+	VfxKit.draw_attack_glow(self, p1, Vector2(18, 14), Color(body_glow.r, body_glow.g, body_glow.b, 0.3))
 
 func _on_area_entered(area: Area2D) -> void:
 	if _hit:

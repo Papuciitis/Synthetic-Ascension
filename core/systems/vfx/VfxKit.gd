@@ -76,6 +76,67 @@ const LATTICE_MIRROR_HALF := 22.0    # lattice_mirror.png (48): diamond half-dia
 const LATTICE_MIRROR_CENTER := Vector2(23.5, 23.5)
 
 static var _cache: Dictionary = {}
+static var _attack_glow: GradientTexture2D = null
+
+
+## Opt-in player attack light. Telegraphs keep the original kit helpers.
+## A shared gradient avoids texture/node allocations for every spark or hit.
+static func attack_glow_texture() -> GradientTexture2D:
+	if _attack_glow == null:
+		var gradient := Gradient.new()
+		gradient.offsets = PackedFloat32Array([0.0, 0.22, 0.55, 1.0])
+		gradient.colors = PackedColorArray([Color.WHITE, Color(1, 1, 1, 0.58), Color(1, 1, 1, 0.15), Color(1, 1, 1, 0)])
+		_attack_glow = GradientTexture2D.new()
+		_attack_glow.gradient = gradient
+		_attack_glow.width = 64
+		_attack_glow.height = 64
+		_attack_glow.fill = GradientTexture2D.FILL_RADIAL
+		_attack_glow.fill_from = Vector2(0.5, 0.5)
+		_attack_glow.fill_to = Vector2(0.5, 0.0)
+	return _attack_glow
+
+
+static func attack_motion_enabled() -> bool:
+	return SettingsManager == null or not bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+
+
+static func attack_core(family: Color, opacity: float = 1.0) -> Color:
+	var color := Color(1.0, 0.96, 0.83).lerp(family, 0.12)
+	color.a = AccessibilityPresentation.current_flash_alpha(opacity)
+	return color
+
+
+static func draw_attack_glow(ci: CanvasItem, at: Vector2, size: Vector2, color: Color, spin: float = 0.0) -> void:
+	color.a = AccessibilityPresentation.current_flash_alpha(color.a)
+	if color.a <= 0.0:
+		return
+	if is_zero_approx(spin):
+		ci.draw_texture_rect(attack_glow_texture(), Rect2(at - size * 0.5, size), false, color)
+	else:
+		ci.draw_set_transform(at, spin)
+		ci.draw_texture_rect(attack_glow_texture(), Rect2(-size * 0.5, size), false, color)
+		ci.draw_set_transform(Vector2.ZERO, 0.0)
+
+
+## Geometry tapers to a transparent tail; the bright head stays small.
+static func draw_attack_trail(ci: CanvasItem, from: Vector2, to: Vector2, width: float, color: Color) -> void:
+	var delta := to - from
+	if delta.length_squared() < 0.01:
+		return
+	color.a = AccessibilityPresentation.current_flash_alpha(color.a)
+	if color.a <= 0.0:
+		return
+	var normal := delta.orthogonal().normalized() * width * 0.5
+	ci.draw_polygon(PackedVector2Array([from, to - normal, to + normal]), PackedColorArray([Color(color.r, color.g, color.b, 0), color, color]))
+
+
+static func draw_attack_diamond(ci: CanvasItem, at: Vector2, radius: float, color: Color, spin: float = 0.0) -> void:
+	if color.a <= 0.0:
+		return
+	var points := PackedVector2Array()
+	for index in range(5):
+		points.append(at + Vector2.RIGHT.rotated(spin + float(index) * PI * 0.5) * radius)
+	ci.draw_polyline(points, color, 1.3, true)
 
 
 static func texture(sprite: String) -> Texture2D:

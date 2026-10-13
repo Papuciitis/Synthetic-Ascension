@@ -51,7 +51,7 @@ func _ready() -> void:
 	# User-supplied burst art when present; the procedural bake stays the
 	# fallback so a missing file can never cost the impact feedback.
 	var art_path := "res://assets/textures/vfx/ranged/impact_burst.png"
-	_instance.texture = load(art_path) if ResourceLoader.exists(art_path) else _bake_burst_texture()
+	_instance.texture = _bake_burst_texture(load(art_path) as Texture2D if ResourceLoader.exists(art_path) else null)
 	var burst_material := CanvasItemMaterial.new()
 	burst_material.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	_instance.material = burst_material
@@ -90,6 +90,8 @@ func clear() -> void:
 
 
 func _process(delta: float) -> void:
+	var motion := VfxKit.attack_motion_enabled()
+	var flash_alpha := AccessibilityPresentation.current_flash_alpha(ALPHA)
 	var i := 0
 	while i < _count:
 		_ages[i] += delta
@@ -101,7 +103,7 @@ func _process(delta: float) -> void:
 			_spins[i] = _spins[last]
 			_count = last
 			continue
-		_rotations[i] += _spins[i] * delta
+		if motion: _rotations[i] += _spins[i] * delta
 		i += 1
 	for j in range(_count):
 		var progress := clampf(_ages[j] / DURATION, 0.0, 1.0)
@@ -113,17 +115,22 @@ func _process(delta: float) -> void:
 		var burst_scale := radius
 		var xform := Transform2D(_rotations[j], _positions[j]).scaled_local(Vector2(burst_scale, burst_scale))
 		_multimesh.set_instance_transform_2d(j, xform)
-		_multimesh.set_instance_color(j, Color(1.0, 1.0, 1.0, ALPHA * fade))
+		_multimesh.set_instance_color(j, Color(1.0, 1.0, 1.0, flash_alpha * fade))
 	_multimesh.visible_instance_count = _count
 	if _count == 0:
 		set_process(false)
 
 
-func _bake_burst_texture() -> ImageTexture:
+func _bake_burst_texture(source_texture: Texture2D = null) -> ImageTexture:
 	# One-time bake of the spoke-burst pattern (radial spokes + core glow),
 	# jittered like the old per-node version rolled per impact.
 	var half := float(TEXTURE_SIZE) * 0.5
 	var image := Image.create(TEXTURE_SIZE, TEXTURE_SIZE, false, Image.FORMAT_RGBA8)
+	var source_image: Image = source_texture.get_image() if source_texture != null else null
+	if source_image != null and not source_image.is_empty():
+		if source_image.is_compressed(): source_image.decompress()
+		source_image.convert(Image.FORMAT_RGBA8)
+		source_image.resize(TEXTURE_SIZE, TEXTURE_SIZE, Image.INTERPOLATE_LANCZOS)
 	var angles := PackedFloat32Array()
 	var lens := PackedFloat32Array()
 	var jitter := deg_to_rad(10.0)
@@ -152,6 +159,17 @@ func _bake_burst_texture() -> ImageTexture:
 			var core := exp(-pow(r / (inner_n * 0.5), 2.0))
 			var col := COLOR_CORE * maxf(spoke, core) + COLOR_GLOW * glow
 			var alpha := clampf(maxf(spoke, core) + glow, 0.0, 1.0)
+			# Preserve the supplied spark art and bake a clean gold diamond/ring
+			# into the same texture: no per-impact nodes or extra draw batch.
+			if source_image != null and not source_image.is_empty():
+				var original := source_image.get_pixel(x, y)
+				col = original
+				alpha = original.a
+			var diamond := exp(-pow((absf(p.x) + absf(p.y) - 0.24) / 0.012, 2.0))
+			var halo := exp(-pow(r / 0.20, 2.0)) * 0.16
+			var accent := maxf(diamond * 0.84, halo)
+			col = col.lerp(Color(1.0, 0.84, 0.48), accent)
+			alpha = maxf(alpha, accent)
 			if alpha <= 0.003:
 				continue
 			image.set_pixel(x, y, Color(minf(col.r, 1.0), minf(col.g, 1.0), minf(col.b, 1.0), alpha))

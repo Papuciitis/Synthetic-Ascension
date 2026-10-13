@@ -54,6 +54,7 @@ func _ready() -> void:
 	z_index = z
 
 	material = null  # pixel-art kit (Batch B): the bolt sprite blends normally
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 
 	_rng.randomize()
 	set_process(true)
@@ -65,10 +66,11 @@ func _process(dt: float) -> void:
 		return
 
 	_sync_node_positions()
+	global_position = start_pos
 
 	_accum += dt
 	var step: float = 1.0 / maxf(redraw_hz, 1.0)
-	if _accum >= step:
+	if _accum >= step and VfxKit.attack_motion_enabled():
 		_accum = fmod(_accum, step)
 		_regen()
 
@@ -87,7 +89,7 @@ func _regen() -> void:
 	var local_end: Vector2 = end_pos - start_pos
 	# Pixel-art kit: the sprite is static, so each regeneration mirrors it
 	# for the flicker the jittered polyline used to give.
-	_flip = _rng.randf() < 0.5
+	_flip = _rng.randf() < 0.5 if VfxKit.attack_motion_enabled() else false
 
 	_main_pts = _make_bolt(Vector2.ZERO, local_end, segments, jaggedness)
 
@@ -148,7 +150,14 @@ func _draw() -> void:
 	# Pixel-art kit: one bolt sprite between the endpoints (its side branch is
 	# baked in). The jittered polylines remain the fallback without the art.
 	if VfxKit.has("bolt"):
+		var local_end := end_pos - start_pos
+		var accent := VfxKit.attack_core(color_glow, alpha * fade * 0.55)
+		VfxKit.draw_attack_trail(self, Vector2.ZERO, local_end, core_width * 1.4, accent)
+		VfxKit.draw_attack_glow(self, local_end * 0.5, Vector2(local_end.length(), glow_width * 3.0), Color(color_glow.r, color_glow.g, color_glow.b, color_glow.a * fade * 0.22), local_end.angle())
 		VfxKit.draw_bolt(self, Vector2.ZERO, end_pos - start_pos, glow_width, core, _flip)
+		VfxKit.draw_attack_diamond(self, Vector2.ZERO, 5.0, accent)
+		VfxKit.draw_attack_diamond(self, local_end, 8.0, accent)
+		VfxKit.draw_attack_glow(self, local_end, Vector2(28, 28), Color(color_glow.r, color_glow.g, color_glow.b, fade * 0.28))
 		return
 	draw_polyline(_main_pts, glow, glow_width, true)
 	draw_polyline(_main_pts, core, core_width, true)

@@ -42,6 +42,7 @@ func _ready() -> void:
 
 	z_index = z
 	material = null  # pixel-art kit (Batch B): the sprite blends normally
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 
 	# hide old Line2D if it exists
 	var old_line := get_node_or_null("Line2D") as Line2D
@@ -116,7 +117,8 @@ func _draw() -> void:
 	fade = fade * fade
 
 	# flicker (unstable but controlled)
-	var flick := 1.0 + sin((_t * wobble_speed) + _seed) * flicker_strength
+	var motion := VfxKit.attack_motion_enabled()
+	var flick := 1.0 + sin((_t * wobble_speed) + _seed) * flicker_strength if motion else 1.0
 	flick = clampf(flick, 0.65, 1.35)
 
 	# expanding ring
@@ -124,7 +126,7 @@ func _draw() -> void:
 	var r := lerpf(r0, radius, _ease_out(p))
 
 	# subtle wobble in radius (magic instability)
-	var wob := 1.0 + sin((_t * wobble_speed * 0.72) + _seed * 1.7) * wobble_strength
+	var wob := 1.0 + sin((_t * wobble_speed * 0.72) + _seed * 1.7) * wobble_strength if motion else 1.0
 	r *= wob
 
 	var w := lerpf(line_width, line_width * 0.35, p)
@@ -140,7 +142,15 @@ func _draw() -> void:
 
 	# dashed bright ring
 	var phase := sin(_t * wobble_speed * 0.35 + _seed) * 0.18
+	if not motion: phase = 0.0
+	VfxKit.draw_attack_glow(self, Vector2.ZERO, Vector2.ONE * r * 2.4, Color(color_glow.r, color_glow.g, color_glow.b, 0.14 * fade))
 	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, line_alpha * fade), phase, w)
+	var core := VfxKit.attack_core(color_glow, 0.84 * fade)
+	draw_arc(Vector2.ZERO, r * 0.97, 0.0, TAU, 48, core, 1.3, true)
+	VfxKit.draw_attack_diamond(self, Vector2.ZERO, maxf(6.0, r * 0.23), core, PI * 0.5)
+	for index in range(4):
+		var direction := Vector2.RIGHT.rotated(float(index) * PI * 0.5 + PI * 0.25)
+		VfxKit.draw_attack_trail(self, direction * r * 0.80, direction * r * 1.14, 1.8, core)
 
 	# trailing faint ring
 	VfxKit.draw_ring(self, Vector2.ZERO, r * 0.86, Color(color_glow.r, color_glow.g, color_glow.b, 0.18 * fade), maxf(2.0, w * 0.40))
