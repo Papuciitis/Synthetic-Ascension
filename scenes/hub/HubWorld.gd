@@ -17,6 +17,8 @@ const HUB_SHOP_SCENE := preload("res://ui/screens/HubShop.tscn")
 const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
 const MAJOR_CHOICE_SCENE := preload("res://ui/screens/MajorChoice.tscn")
 const INVENTORY_STASH_SCENE := preload("res://ui/screens/InventoryStash.tscn")
+const LIBRARY_SCRIPT := preload("res://ui/screens/HubLibrary.gd")
+const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 const DECOR_SCRIPT := preload("res://scenes/hub/HubDecor.gd")
 const CROWD_SCRIPT := preload("res://scenes/hub/HubCrowd.gd")
@@ -24,6 +26,9 @@ const NOTICE_SCRIPT := preload("res://scenes/hub/ui/HubNotice.gd")
 const HubText := preload("res://scenes/hub/ui/HubText.gd")
 
 const CELL := 64.0
+const HUB_ZOOM_MIN := 1.0
+const HUB_ZOOM_MAX := 3.0
+const HUB_ZOOM_STEP := 0.25
 ## Courtyard in cells: about 1.7 gameplay screens across the useful space.
 const WIDTH := 32
 const HEIGHT := 20
@@ -173,6 +178,14 @@ var crowd_seed: int = -1
 ## The one interactable the interact key would use now (nearest in range).
 var _focus: Object = null
 var _interact_enabled: bool = true
+var hub_zoom: float = 1.0
+var _camera: Camera2D = null
+var _camera_base_zoom := Vector2.ONE
+var _camera_home := Vector2.ZERO
+var _beka_view := false
+var _zoom_controls: Control = null
+var _zoom_label: Label = null
+var _beka_view_button: Button = null
 
 
 func _ready() -> void:
@@ -204,6 +217,7 @@ func _ready() -> void:
 	crowd.name = "Crowd"
 	add_child(crowd)
 	crowd.setup(self, crowd_seed if crowd_seed >= 0 else randi(), Global.followers)
+	_build_zoom_controls()
 	# The district left behind as the arrival notice, then Bren's dispatch.
 	StoryDirector.attach_hub(self)
 	_update_pending_cue()
@@ -664,6 +678,9 @@ func _spawn_player() -> void:
 	_player.set("_cinematic_attack_locked", true)
 	var camera := _player.get_node_or_null("Camera2D") as Camera2D
 	if camera != null:
+		_camera = camera
+		_camera_base_zoom = camera.zoom
+		_camera_home = camera.position
 		camera.limit_left = int(-4 * CELL)
 		camera.limit_right = int((WIDTH + 4) * CELL)
 		# The arch's crown and the forge chimney rise about 2.6 cells above
@@ -705,8 +722,8 @@ func _build_stations() -> void:
 	_ascension_station.activated.connect(_open_ascension)
 	var gear := _make_station("gear", "Gear & Stash", Color(0.6, 0.85, 0.7), "Open")
 	gear.activated.connect(_open_gear)
-	var alcove := _make_station("alcove", "Quiet Alcove", Color(0.75, 0.7, 0.65), "Sit")
-	alcove.activated.connect(_rest_a_moment)
+	var alcove := _make_station("alcove", "Quiet Alcove", Color(0.75, 0.7, 0.65), "Browse")
+	alcove.activated.connect(_open_library)
 	_exit_station = _make_station("exit", "Next Segment", Color(0.95, 0.55, 0.4), "Depart")
 	_exit_station.activated.connect(_try_depart)
 	# The sealed arch over the departure gate (the other service props are
@@ -736,6 +753,8 @@ func _prop(texture_name: String, at: Vector2, world_height: float, z: int = 0) -
 
 func _stations_enabled(enabled: bool) -> void:
 	_interact_enabled = enabled
+	if _zoom_controls != null:
+		_zoom_controls.visible = enabled
 	for station in _stations:
 		station.set_process_unhandled_input(enabled)
 
@@ -787,6 +806,13 @@ func _close_gear() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and not _panel_is_open():
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			if _zoom_controls != null and _zoom_controls.get_global_rect().has_point(event.position):
+				return
+			set_hub_zoom(hub_zoom + HUB_ZOOM_STEP * (1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0))
+			get_viewport().set_input_as_handled()
+			return
 	if _gear_screen == null:
 		if _interact_enabled and not _panel_is_open() and event != null and not event.is_echo() and event.is_action_pressed(&"interact"):
 			if interact():
@@ -814,17 +840,116 @@ func _open_ascension() -> void:
 		_on_panel_closed())
 
 
-func _rest_a_moment() -> void:
-	# Honest about what it is (playtest finding): a quiet spot — Beka's bed
-	# is here — not a recovery service.
-	if _notice == null or _player == null:
+func _open_library() -> void:
+	if _panel_is_open():
 		return
-	var line := "a quiet corner"
-	if crowd != null and crowd.beka != null and crowd.beka.is_asleep_on_bed():
-		line = "Beka is comfortable here"
-	# Below Beka's Pet prompt (which sits just under her bed): clear of the
-	# player on the ring, the prompt and the stall-keeper's speech above.
-	_notice.show_line(_beka_home + Vector2(0, 64), line, HubText.BODY, 1.8)
+	var library := LIBRARY_SCRIPT.new()
+	_open_panel = library
+	_stations_enabled(false)
+	library.closed.connect(_on_panel_closed)
+	add_child(library)
+
+
+## Retain the alcove entry point used by older visual probes.
+func _rest_a_moment() -> void:
+	_open_library()
+
+
+# ------------------------------------------------------------- camera view
+
+## Camera-only magnification. World labels follow the camera; menus and these
+## controls live on their own canvas and keep their screen size.
+func set_hub_zoom(value: float) -> void:
+	hub_zoom = clampf(value, HUB_ZOOM_MIN, HUB_ZOOM_MAX)
+	if _camera != null:
+		_camera.zoom = _camera_base_zoom * hub_zoom
+	if _zoom_label != null:
+		_zoom_label.text = "%d%%" % roundi(hub_zoom * 100.0)
+
+
+func _reset_hub_view() -> void:
+	_beka_view = false
+	if _camera != null:
+		_camera.position = _camera_home
+		_camera.reset_smoothing()
+	if _beka_view_button != null:
+		_beka_view_button.text = "View Beka"
+	set_hub_zoom(1.0)
+
+
+func _toggle_beka_view() -> void:
+	if _camera == null or crowd == null or not is_instance_valid(crowd.beka) or _panel_is_open():
+		return
+	_beka_view = not _beka_view
+	if _beka_view:
+		set_hub_zoom(maxf(hub_zoom, 2.5))
+		_camera.global_position = crowd.beka.global_position
+	else:
+		_camera.position = _camera_home
+	_camera.reset_smoothing()
+	_beka_view_button.text = "Follow Player" if _beka_view else "View Beka"
+
+
+func _build_zoom_controls() -> void:
+	var layer := CanvasLayer.new()
+	layer.name = "HubViewControls"
+	layer.layer = 20
+	add_child(layer)
+	var panel := PanelContainer.new()
+	panel.name = "ZoomControls"
+	panel.mouse_force_pass_scroll_events = false
+	panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
+	panel.offset_left = -620.0
+	panel.offset_top = 18.0
+	panel.offset_right = -18.0
+	panel.offset_bottom = 86.0
+	panel.theme = ChamberKit.THEME
+	panel.add_theme_stylebox_override("panel", ChamberKit.box(ChamberKit.PANEL, ChamberKit.GOLD_DIM, 1, 10.0))
+	layer.add_child(panel)
+	_zoom_controls = panel
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 4)
+	panel.add_child(column)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	column.add_child(row)
+	var minus := Button.new()
+	minus.text = "−"
+	minus.custom_minimum_size.x = 32
+	minus.tooltip_text = "Zoom out (mouse wheel down)"
+	minus.pressed.connect(func() -> void: set_hub_zoom(hub_zoom - HUB_ZOOM_STEP))
+	row.add_child(minus)
+	_zoom_label = Label.new()
+	_zoom_label.text = "100%"
+	_zoom_label.custom_minimum_size.x = 56
+	_zoom_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	row.add_child(_zoom_label)
+	var plus := Button.new()
+	plus.text = "+"
+	plus.custom_minimum_size.x = 32
+	plus.tooltip_text = "Zoom in (mouse wheel up)"
+	plus.pressed.connect(func() -> void: set_hub_zoom(hub_zoom + HUB_ZOOM_STEP))
+	row.add_child(plus)
+	var reset := Button.new()
+	reset.text = "Reset"
+	reset.tooltip_text = "Return to the player at the original zoom"
+	reset.pressed.connect(_reset_hub_view)
+	row.add_child(reset)
+	_beka_view_button = Button.new()
+	_beka_view_button.text = "View Beka"
+	_beka_view_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_beka_view_button.tooltip_text = "Follow Beka up close. Move to return to your character."
+	_beka_view_button.pressed.connect(_toggle_beka_view)
+	row.add_child(_beka_view_button)
+	# Enter/A also interact with stations. Each view adjustment hands input
+	# back to the courtyard; deliberate keyboard/controller focus still works.
+	for button: Button in [minus, plus, reset, _beka_view_button]:
+		button.pressed.connect(button.release_focus)
+	var hint := Label.new()
+	hint.text = "Mouse wheel to zoom · 100–300%"
+	hint.add_theme_font_size_override("font_size", 12)
+	hint.add_theme_color_override("font_color", ChamberKit.MUTED)
+	column.add_child(hint)
 
 
 # ---------------------------------------------------------------- interaction
@@ -942,6 +1067,13 @@ func _try_depart() -> void:
 
 func _process(delta: float) -> void:
 	_clock += delta
+	if _beka_view and _camera != null:
+		if not _panel_is_open() and not Input.get_vector(&"move_left", &"move_right", &"move_up", &"move_down").is_zero_approx():
+			_beka_view = false
+			_camera.position = _camera_home
+			_beka_view_button.text = "View Beka"
+		elif crowd != null and is_instance_valid(crowd.beka):
+			_camera.global_position = crowd.beka.global_position
 	_update_focus()
 	if not _braziers.is_empty():
 		_flicker_clock += delta
@@ -950,5 +1082,3 @@ func _process(delta: float) -> void:
 			for i in range(_braziers.size()):
 				# Each brazier walks the loop from its own phase.
 				_braziers[i].frame = (_braziers[i].frame + 1 + (i % 2)) % 3
-
-
