@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_cqkqk"]
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_xjpae"]
-[ext_resource type="Texture2D" uid="uid://b1xsvbnc1rltk" path="res://assets/textures/Enemy_Summoner44x44.png" id="2_luprw"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_summoner.tres" id="2_luprw"]
 [ext_resource type="PackedScene" uid="uid://bjsfiuedu7adf" path="res://scenes/world/enemies/EnemySummonedMinion.tscn" id="3_cqkqk"]
 
 [resource]
@@ -20,4 +20,5 @@ drop_chance = 0.3
 drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
 drop_rarity_max = 2
 sprite_texture = ExtResource("2_luprw")
+sprite_scale = Vector2(0.238596491, 0.238596491)
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

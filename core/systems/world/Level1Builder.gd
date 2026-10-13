@@ -58,6 +58,8 @@ const _TEX_MARKING := preload("res://assets/world/decals/floor/floor_marking_01.
 const _TEX_SCUFF := preload("res://assets/world/decals/floor/floor_scuff_01.png")
 const _TEX_RUBBLE := preload("res://assets/world/decals/floor/floor_rubble_01.png")
 const _MILESTONE_AREA := preload("res://core/systems/world/Level1MilestoneArea.gd")
+const _TUTORIAL_GUIDANCE := preload("res://core/systems/world/TutorialGuidance.gd")
+const _INPUT_LABELS := preload("res://ui/controllers/TutorialInputLabels.gd")
 
 # The public wing beats before the incident (story pass beats 1-2). All
 # three are record-only: no resonance, no cards from the builder - the
@@ -109,9 +111,9 @@ var _wall_kind: Dictionary = {}
 var _fence_cells: Dictionary = {}
 var _half_cells: Dictionary = {}
 var _wall_nodes: Dictionary = {}
-## Wall and window visuals, batched like the procedural districts' (the
-## three-quarter kit draws taller than a cell, which the 64 px tile path
-## cannot). The CoverWall bodies keep collision only.
+## Walls and upright half-cover share the procedural world batches. The
+## square tile path cannot preserve painted props' height or cast shadows;
+## their authored bodies keep collision only.
 var _wall_renderer: ChunkBlockRenderer = null
 var _fence_nodes: Dictionary = {}
 var _barrier_cells: Dictionary = {}
@@ -132,6 +134,7 @@ var _gate_cell := Vector2i(20, -50)
 var _res_ui_tick: float = 0.0
 var _security_kills: int = 0
 var _opening_sequence_active: bool = false
+var _guidance: Node2D = null
 
 # Tracked secondaries (the three service-district rooms).
 @export var resonance_secondary: float = 0.02
@@ -182,6 +185,10 @@ func _ready() -> void:
 	_place_waypoints()
 	_restore_segment_state()
 	_move_player_to_start()
+	_guidance = _TUTORIAL_GUIDANCE.new()
+	_guidance.name = "TutorialGuidance"
+	add_child(_guidance)
+	_refresh_guidance_map()
 	_connect_run_events()
 	_refresh_progression_seals()
 	_update_objective()
@@ -888,6 +895,7 @@ func _spawn_planned_geometry() -> void:
 				continue
 			node.global_position = _cell_to_world(cell)
 			node.set_meta(&"_tile_repeat_visual", true)
+			node.set_meta(&"_visual_external", true)
 			_geo.add_child(node)
 
 
@@ -924,7 +932,7 @@ func _batched_walls() -> bool:
 
 
 func _rebuild_wall_visuals() -> void:
-	if _geo == null or not _batched_walls():
+	if _geo == null:
 		return
 	var chunk_px := _cm.chunk_size_px if _cm != null and is_instance_valid(_cm) else 2048
 	@warning_ignore("integer_division")
@@ -935,6 +943,8 @@ func _rebuild_wall_visuals() -> void:
 	_wall_renderer.clear()
 	var by_chunk: Dictionary = {}
 	for key in _wall_kind.keys():
+		if not _batched_walls():
+			break
 		var cell: Vector2i = key
 		var coord := Vector2i(floori(float(cell.x) / side), floori(float(cell.y) / side))
 		var data := by_chunk.get(coord) as ChunkBuildData
@@ -948,6 +958,15 @@ func _rebuild_wall_visuals() -> void:
 		if _wall_kind.has(cell + Vector2i.LEFT): mask |= 8
 		var kind := WorldBlockerGeometry.Kind.WINDOW if int(_wall_kind[cell]) == 1 else WorldBlockerGeometry.Kind.WALL
 		data.add_blocker(cell - coord * side, kind, mask)
+	if cover_half_lab_scene != null:
+		for key in _half_cells.keys():
+			var cell: Vector2i = key
+			var coord := Vector2i(floori(float(cell.x) / side), floori(float(cell.y) / side))
+			var data := by_chunk.get(coord) as ChunkBuildData
+			if data == null:
+				data = ChunkBuildData.new(coord, side)
+				by_chunk[coord] = data
+			data.add_blocker(cell - coord * side, WorldBlockerGeometry.Kind.HALF_COVER, 0, CoverHalfLab.half_variant(_cell_to_world(cell)))
 	for data_value in by_chunk.values():
 		_wall_renderer.add_chunk(data_value as ChunkBuildData)
 
@@ -1205,9 +1224,6 @@ func _on_milestone_reached(id: StringName) -> void:
 					_spawner.queue_authored_wave(3, 0.8, 2.25)
 		M_FINAL_PLAZA:
 			if _record_milestone(M_FINAL_PLAZA):
-				# Arrived: the arrow's job is done.
-				if Global != null:
-					Global.objective_target_pos = Vector2.INF
 				# Milestones provide 93%; ordinary play normally supplies the rest.
 				# This arrival top-up is the anti-wait safety net, not a passive timer.
 				if resonance < 1.0:
@@ -1478,10 +1494,6 @@ func _refresh_progression_seals() -> void:
 				# Segment 1 pass S5: two sights on the approach.
 				_request_beat(&"sniper_pair")
 				_tip(Segment1Text.CHECKPOINT_DISABLED, 4.0)
-				# Late-segment guidance: from here the player should know
-				# WHERE they're escaping to, not wander the campus.
-				if Global != null:
-					Global.objective_target_pos = _cell_to_world(_gate_cell)
 		_open_barrier(B_OUTER_APPROACH)
 		# Never step back from the Rite: this refresh also runs right after
 		# M_FINAL_PLAZA set EXIT_RITE, and used to put the segment's climax
@@ -1509,30 +1521,70 @@ func _open_barrier(id: StringName) -> void:
 	# Milestones originate in Area2D.body_entered. Rebuilding live collision
 	# shapes during that callback runs while PhysicsServer2D is flushing queries.
 	_queue_connections_refresh()
+	_refresh_guidance_map()
+
+
+func _refresh_guidance_map() -> void:
+	if _guidance == null:
+		return
+	var regions: Array[Rect2i] = [Rect2i(FACILITY_TL, FACILITY_SIZE), ADMISSIONS_RECT, COURTYARD_RECT, SERVICE_RECT, APPROACH_RECT]
+	var blockers: Array[Dictionary] = [_wall_kind, _fence_cells, _half_cells]
+	_guidance.call("configure", cell_size_px, regions, blockers)
 
 
 func _update_objective() -> void:
+	if _opening_sequence_active:
+		return
 	if not _has_milestone(M_SYNTHESIS):
-		_emit_objective(Segment1Text.OBJECTIVE_SYNTHESIS_TITLE, Segment1Text.OBJECTIVE_SYNTHESIS_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_SYNTHESIS_TITLE, Segment1Text.OBJECTIVE_SYNTHESIS_DETAIL, Vector2i(12, 21), "SYNTHESIS ARRAY")
+	elif not _has_milestone(M_FIRST_CONFRONTATION):
+		_set_guided_objective("DEFEAT A CONTAINMENT OFFICER", "Aim at an officer and %s to attack. Then follow the archive route." % _INPUT_LABELS.action(&"attack"), Vector2i(12, 17), "CONTAINMENT")
 	elif not _has_milestone(M_WARDSTONE_1):
-		_emit_objective(Segment1Text.OBJECTIVE_ESCAPE_TITLE, Segment1Text.OBJECTIVE_ESCAPE_DETAIL)
-	elif not _has_milestone(M_ASSISTANT) or not _has_milestone(M_FIRST_CONFRONTATION):
-		_emit_objective(Segment1Text.OBJECTIVE_COURTYARD_TITLE, Segment1Text.OBJECTIVE_COURTYARD_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_ESCAPE_TITLE, Segment1Text.OBJECTIVE_ESCAPE_DETAIL, _wardstone_1_cell, "FIRST WARDSTONE")
+	elif not _has_milestone(M_ASSISTANT):
+		_set_guided_objective(Segment1Text.OBJECTIVE_COURTYARD_TITLE, Segment1Text.OBJECTIVE_COURTYARD_DETAIL, Vector2i(4, -14), "BREN")
 	elif not _has_milestone(M_SECURITY_STARTED):
-		_emit_objective(Segment1Text.OBJECTIVE_SERVICE_TITLE, Segment1Text.OBJECTIVE_SERVICE_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_SERVICE_TITLE, Segment1Text.OBJECTIVE_SERVICE_DETAIL, Vector2i(34, -20), "SERVICE CHECKPOINT")
 	elif not _has_milestone(M_SECURITY_CLEARED):
-		_emit_objective(
+		_set_guided_objective(
 			Segment1Text.OBJECTIVE_SECURITY_TITLE,
-			"Containment officers remaining: %d" % maxi(0, maxi(1, security_kills_required) - _security_kills)
+			"Defeat the containment squad in the service yard: %d remaining. Aim and %s to attack." % [maxi(0, maxi(1, security_kills_required) - _security_kills), _INPUT_LABELS.action(&"attack")],
+			Vector2i(34, -20), "CONTAINMENT SQUAD"
 		)
 	elif not _has_milestone(M_WARDSTONE_2):
-		_emit_objective(Segment1Text.OBJECTIVE_WARDSTONE_2_TITLE, Segment1Text.OBJECTIVE_WARDSTONE_2_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_WARDSTONE_2_TITLE, Segment1Text.OBJECTIVE_WARDSTONE_2_DETAIL, _wardstone_2_cell, "SECOND WARDSTONE")
 	elif not _has_milestone(M_FINAL_CHECKPOINT):
-		_emit_objective(Segment1Text.OBJECTIVE_CHECKPOINT_TITLE, Segment1Text.OBJECTIVE_CHECKPOINT_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_CHECKPOINT_TITLE, Segment1Text.OBJECTIVE_CHECKPOINT_DETAIL, Vector2i(49, -34), "OUTER CHECKPOINT")
+	elif not _has_milestone(M_CITY_REVEAL):
+		_set_guided_objective(Segment1Text.OBJECTIVE_GATE_TITLE, "Follow the markers through the north service gate to the outer approach.", Vector2i(49, -45), "OUTER APPROACH")
 	elif not _has_milestone(M_FINAL_PLAZA):
-		_emit_objective(Segment1Text.OBJECTIVE_GATE_TITLE, Segment1Text.OBJECTIVE_GATE_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_GATE_TITLE, Segment1Text.OBJECTIVE_GATE_DETAIL, _gate_cell, "OUTER RITE")
 	else:
-		_emit_objective(Segment1Text.OBJECTIVE_RITE_TITLE, Segment1Text.OBJECTIVE_RITE_DETAIL)
+		_set_guided_objective(Segment1Text.OBJECTIVE_RITE_TITLE, Segment1Text.OBJECTIVE_RITE_DETAIL, _gate_cell, "HOLD THE RITE")
+
+
+func _set_guided_objective(title: String, detail: String, cell: Vector2i, caption: String) -> void:
+	_emit_objective(title, detail)
+	if _guidance != null:
+		_guidance.call("set_destination", _cell_to_world(cell), caption)
+
+
+func set_opening_guidance(title: String, detail: String, destination: Vector2, tracked_target: Node2D = null) -> void:
+	if not _opening_sequence_active:
+		return
+	if RunEvents != null:
+		RunEvents.objective_changed.emit(title, detail)
+	if _guidance != null:
+		_guidance.call("set_destination", destination, title, tracked_target)
+
+
+func clear_opening_guidance() -> void:
+	if not _opening_sequence_active:
+		return
+	if RunEvents != null:
+		RunEvents.objective_changed.emit("", "")
+	if _guidance != null:
+		_guidance.call("set_destination", Vector2.INF, "")
 
 
 func _emit_objective(title: String, detail: String) -> void:
@@ -1588,6 +1640,9 @@ func get_opening_anchors() -> Dictionary:
 		"records": _cell_to_world(Vector2i(8, 17)),
 		"entrance": _cell_to_world(_entrance_cell),
 		"desk": _cell_to_world(Vector2i(7, 39)),
+		"admission": _cell_to_world(Vector2i(9, 41)),
+		"gallery": _cell_to_world(Vector2i(15, 34)),
+		"lab_door": _cell_to_world(Vector2i(15, 30)),
 	}
 
 func begin_opening_sequence() -> void:

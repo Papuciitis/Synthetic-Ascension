@@ -2,9 +2,13 @@
 extends StaticBody2D
 class_name CoverHalf
 
+const VISUALS := preload("res://core/systems/world/WorldCoverVisuals.gd")
+
 @export var use_alpha_collision: bool = false
 
 static var _alpha_cache: Dictionary = {} # texture path -> Array[PackedVector2Array]
+var _collision_visual_transform := Transform2D.IDENTITY
+var _collision_visual_captured := false
 
 func _ready() -> void:
 	add_to_group(&"cover_half")
@@ -31,28 +35,18 @@ func _apply() -> void:
 	var spr := get_node_or_null("Sprite2D") as Sprite2D
 	if spr == null:
 		return
+	if not _collision_visual_captured:
+		_collision_visual_transform = spr.transform
+		_collision_visual_captured = true
 
 	var variant := ChunkBlockVisualCatalog.half_variant(global_position)
 	var tex := ChunkBlockVisualCatalog.half_texture(variant)
-	spr.texture = tex
-	spr.rotation = ChunkBlockVisualCatalog.half_rotation(variant)
 	if use_alpha_collision:
-		_apply_alpha_collision(spr, tex)
-
-
-	# Quick win readability: cheap drop-shadow sprite (optional)
-	var sh := get_node_or_null("Shadow") as Sprite2D
-	if sh != null:
-		sh.texture = tex
-		sh.texture_filter = spr.texture_filter
-		sh.texture_repeat = spr.texture_repeat
-		sh.scale = spr.scale
-		sh.flip_h = spr.flip_h
-		sh.flip_v = spr.flip_v
-		sh.rotation = spr.rotation
-		sh.position = spr.position + Vector2(2, 3)
-		sh.z_index = spr.z_index - 1
-		sh.modulate = Color(0, 0, 0, 0.35)
+		# Visual grounding must not reshape the optional legacy collider.
+		spr.transform = _collision_visual_transform
+		spr.rotation = float((variant >> 3) & 3) * PI * 0.5
+		_apply_alpha_collision(spr, ChunkBlockVisualCatalog.HALF_TEXTURES[variant & 7])
+	VISUALS.apply(self, spr, tex, ChunkBlockVisualCatalog.half_rotation(variant))
 
 func _apply_default_collision() -> void:
 	var collision: CollisionShape2D = get_node_or_null("CollisionShape2D") as CollisionShape2D

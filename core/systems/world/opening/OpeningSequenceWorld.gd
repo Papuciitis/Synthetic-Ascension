@@ -29,7 +29,7 @@ func _process(delta: float) -> void:
 	if not _active or _player == null or _stage < 0 or _stage >= _stage_count:
 		return
 	var target := global_position + _nodes[_stage]
-	if _player.global_position.distance_squared_to(target) <= 105.0 * 105.0 and Input.is_action_just_pressed(&"ui_accept"):
+	if _player.global_position.distance_squared_to(target) <= 105.0 * 105.0 and Input.is_action_just_pressed(&"interact"):
 		var completed := _stage
 		_stage += 1
 		_pulse_strength = 1.0
@@ -41,6 +41,9 @@ func _process(delta: float) -> void:
 
 func wait_for_next_stage() -> int:
 	return await stage_activated
+
+func active_node_position() -> Vector2:
+	return global_position + _nodes[_stage] if _active and _stage >= 0 and _stage < _nodes.size() else Vector2.INF
 
 func pulse() -> void:
 	_pulse_strength = 2.0
@@ -66,4 +69,4 @@ func _draw() -> void:
 		var radius := 15.0 + (sin(_spin * 5.0) * 2.0 if current else 0.0)
 		draw_circle(_nodes[index], radius, Color(color, 0.16 if not done else 0.32))
 		draw_arc(_nodes[index], radius, 0.0, TAU, 24, Color(color, 1.0 if current else 0.55), 3.0 if current else 2.0, true)
-		draw_string(ThemeDB.fallback_font, _nodes[index] + Vector2(-4, 5), str(index), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, color)
+		draw_string(ThemeDB.fallback_font, _nodes[index] + Vector2(-4, 5), str(index + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 14, color)

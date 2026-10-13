@@ -286,6 +286,9 @@ func _generate_chunk(coord: Vector2i, chunk: Node2D) -> void:
 			step_started_usec = Time.get_ticks_usec()
 			if decorated:
 				# Skip base content generation; site already placed.
+				if deco_enabled:
+					_add_environment_deco(chunk, rng, archetype, conn_mask)
+				steps["deco"] = Time.get_ticks_usec() - step_started_usec
 				debug_last_content_steps = steps
 				_bump_nav_revision()
 				return

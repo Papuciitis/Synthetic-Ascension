@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_3qcs2"]
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_o76o5"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_runner.tres" id="9_role"]
 
 [resource]
 script = ExtResource("1_o76o5")
@@ -21,4 +22,6 @@ drop_rarity_max = 1
 elite_hp_mult = 1.35
 elite_speed_mult = 1.25
 elite_ai_override = 3
+sprite_texture = ExtResource("9_role")
+sprite_scale = Vector2(0.238596491, 0.238596491)
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

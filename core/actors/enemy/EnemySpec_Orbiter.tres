@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_6uy0w"]
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_iikny"]
-[ext_resource type="Texture2D" uid="uid://bqonrxxtelk3i" path="res://assets/textures/Enemy_Orbiter44x44.png" id="3_q8jy1"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_orbiter.tres" id="3_q8jy1"]
 
 [resource]
 script = ExtResource("1_iikny")
@@ -22,4 +22,5 @@ drop_rarity_max = 1
 elite_hp_mult = 1.5
 elite_speed_mult = 1.12
 sprite_texture = ExtResource("3_q8jy1")
+sprite_scale = Vector2(0.248175182, 0.248175182)
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

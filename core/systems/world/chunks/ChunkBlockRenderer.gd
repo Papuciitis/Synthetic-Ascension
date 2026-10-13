@@ -2,7 +2,9 @@ extends RefCounted
 class_name ChunkBlockRenderer
 
 const VISUAL_SCALE := Vector2(0.0625, 0.0625)
-const SHADOW_OFFSET := Vector2(2.0, 3.0)
+const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
+const MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
+const SHADOW_OFFSET := DEPTH.SHADOW_DIRECTION * 8.0
 const SHADOW_COLOR := Color(0.0, 0.0, 0.0, 0.35)
 ## Three-quarter walls cast a longer shadow away from the light (top right),
 ## like the reference; low props keep the short contact shadow.
@@ -79,6 +81,15 @@ func add_chunk(data: ChunkBuildData) -> void:
 			touched[key] = batch.transforms.size()
 		var world_center := chunk_origin + (Vector2(cell) + Vector2(0.5, 0.5)) * float(_cell_size)
 		var scale := ChunkBlockVisualCatalog.cell_scale(texture, float(_cell_size))
+		if kind == WorldBlockerGeometry.Kind.HALF_COVER and texture is AtlasTexture:
+			# Painted three-quarter props stand on the same blocked cell. Keep
+			# their width, source aspect and baked light direction intact.
+			var at := world_center - Vector2(0, float(texture.get_height()) * scale.y * 0.5)
+			var prop_transform := Transform2D(0.0, at).scaled_local(Vector2(scale.x, -scale.y))
+			batch.transforms.append(prop_transform)
+			batch.shadow_transforms.append(DEPTH.project_transform(prop_transform, world_center))
+			batch.owners.append(data.coord)
+			continue
 		if kit:
 			# QuadMesh is authored Y-up (3D), so in 2D its texture draws upside
 			# down; the kit pieces are not vertically symmetric.
@@ -208,6 +219,9 @@ func _get_or_create_batch(key: String, texture: Texture2D, shadowless: bool = fa
 	batch.visual = _new_instance("BlockVisual_%s" % _safe_name(key), texture, batch.visual_mesh)
 	batch.shadow = _new_instance("BlockShadow_%s" % _safe_name(key), texture, batch.shadow_mesh)
 	batch.shadow.self_modulate = WALL_SHADOW_COLOR if wall_shadow else SHADOW_COLOR
+	if texture is AtlasTexture:
+		batch.shadow.self_modulate = Color.WHITE
+		batch.shadow.material = MATERIALS.shadow_material(texture)
 	batch.visual.z_index = z
 	batch.shadow.z_index = z - 1
 	batch.shadow.visible = not shadowless
@@ -231,7 +245,8 @@ func _new_multimesh(texture: Texture2D) -> MultiMesh:
 func _new_instance(node_name: String, texture: Texture2D, multimesh: MultiMesh) -> MultiMeshInstance2D:
 	var instance := MultiMeshInstance2D.new()
 	instance.name = node_name
-	instance.texture = texture
+	instance.texture = MATERIALS.base_texture(texture)
+	instance.material = MATERIALS.visual_material(texture)
 	instance.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	instance.multimesh = multimesh
 	return instance

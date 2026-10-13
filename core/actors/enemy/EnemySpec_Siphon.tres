@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_pickup"]
 [ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="2_spec"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_leech.tres" id="9_role"]
 
 [resource]
 script = ExtResource("2_spec")
@@ -25,3 +26,5 @@ drop_rarity_max = 3
 elite_speed_mult = 1.1
 elite_ai_override = 7
 sprite_modulate = Color(0.75, 0.6, 1.0, 1)
+sprite_texture = ExtResource("9_role")
+sprite_scale = Vector2(0.233676976, 0.233676976)

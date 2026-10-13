@@ -148,7 +148,9 @@ func _on_secondary_objective_changed(title: String, detail: String) -> void:
 func _collapse_primary_after_delay(revision: int) -> void:
 	await get_tree().create_timer(expanded_duration).timeout
 	if revision == _primary_revision and _detail != null:
-		_detail.visible = false
+		# The first segment teaches actions and destinations. Keep its current
+		# instruction available while the player follows the route.
+		_detail.visible = Global != null and Global.attempt_segment == 1 and _last_primary_detail != ""
 
 
 func _collapse_secondary_after_delay(revision: int) -> void:

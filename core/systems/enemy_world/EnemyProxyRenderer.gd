@@ -2,6 +2,7 @@ class_name EnemyProxyRenderer
 extends Node2D
 
 const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
+const DEPTH_STYLE := preload("res://core/systems/world/WorldDepthStyle.gd")
 
 # Transform2D (8, padded) + colour (4) + custom data (4): the custom vec4 is
 # the atlas region an instance shows, see EnemyProxyRegion.gdshader.
@@ -34,8 +35,10 @@ var _batches: Dictionary = {}
 const SHRINK_AFTER_PUBLISHES := 120
 const MIN_SHRINK_CAPACITY := 16
 var _visual_profiles: Dictionary = {}
+var _texture_cache: Dictionary = {}
 var _diagnostic_texture: ImageTexture = null
 var _region_material: ShaderMaterial = null
+var _shadow_material: ShaderMaterial = null
 var _visible_count := 0
 var _last_upload_usec := 0
 var _profile_sweep_counter := 0
@@ -208,14 +211,17 @@ func publish(
 			continue
 		if entry.get("texture") != sprite.texture:
 			entry["texture"] = sprite.texture
-			entry["texture_size"] = _safe_texture_size(sprite.texture)
-			entry["key"] = StringName("actor:" + sprite.texture.resource_path)
+			var base_texture := _base_texture(sprite.texture)
+			entry["texture_size"] = _safe_texture_size(base_texture)
+			entry["frame_size"] = _safe_texture_size(sprite.texture)
+			entry["base_uv"] = _texture_uv(sprite.texture)
+			entry["key"] = StringName("actor:" + base_texture.resource_path)
 		var actor_key := entry.get("key") as StringName
 		var actor_group_variant: Variant = actor_groups.get(actor_key)
 		if actor_group_variant == null:
 			actor_group_variant = [] as Array[Dictionary]
 			actor_groups[actor_key] = actor_group_variant
-			actor_metadata[actor_key] = {"key": actor_key, "texture": sprite.texture, "z_index": 0}
+			actor_metadata[actor_key] = {"key": actor_key, "texture": _base_texture(sprite.texture), "z_index": 0}
 		(actor_group_variant as Array[Dictionary]).append(entry)
 	for dead_id in dead_actor_ids:
 		_actors.erase(dead_id)
@@ -383,14 +389,37 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 	var instance := MultiMeshInstance2D.new()
 	instance.name = "ProxyBatch_%s" % String(visual_key).validate_node_name()
 	instance.multimesh = multimesh
-	instance.texture = _texture_for(profile)
+	instance.texture = _base_texture(_texture_for(profile))
 	instance.z_index = int(profile.get("z_index", 0))
-	instance.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	instance.texture_filter = texture_filter_for(instance.texture)
 	instance.material = _ensure_region_material()
+	var shadow_multimesh := MultiMesh.new()
+	shadow_multimesh.transform_format = MultiMesh.TRANSFORM_2D
+	shadow_multimesh.use_colors = true
+	shadow_multimesh.use_custom_data = true
+	shadow_multimesh.mesh = quad
+	shadow_multimesh.instance_count = 0
+	shadow_multimesh.visible_instance_count = 0
+	var shadow := MultiMeshInstance2D.new()
+	shadow.name = "CastShadow_%s" % String(visual_key).validate_node_name()
+	shadow.multimesh = shadow_multimesh
+	shadow.texture = instance.texture
+	shadow.texture_filter = instance.texture_filter
+	shadow.z_as_relative = false
+	shadow.z_index = DEPTH_STYLE.SHADOW_Z
+	if _shadow_material == null:
+		_shadow_material = ShaderMaterial.new()
+		_shadow_material.shader = DEPTH_STYLE.SHADOW_SHADER
+		_shadow_material.set_shader_parameter("use_instance_region", true)
+		_shadow_material.set_shader_parameter("shadow_color", DEPTH_STYLE.SHADOW_COLOR)
+	shadow.material = _shadow_material
+	add_child(shadow)
 	add_child(instance)
 	var batch := {
 		"instance": instance,
 		"multimesh": multimesh,
+		"shadow_multimesh": shadow_multimesh,
+		"shadow_buffer": PackedFloat32Array(),
 		"capacity": 0,
 		"handles": [] as Array[int],
 		"published_count": 0,
@@ -420,7 +449,7 @@ func _publish_batch(
 		var handle := _view_handles[index]
 		handles[slot] = handle
 		var profile := _profile_for(handle)
-		var position := _view_draw[index]
+		var draw_position := _view_draw[index]
 		var size := profile.get("size", Vector2(MIN_PROXY_SIZE, MIN_PROXY_SIZE)) as Vector2
 		var color: Color
 		if bool(profile.get("has_explicit_color", false)):
@@ -442,11 +471,11 @@ func _publish_batch(
 		buffer[base] = size.x
 		buffer[base + 1] = 0.0
 		buffer[base + 2] = 0.0
-		buffer[base + 3] = position.x
+		buffer[base + 3] = draw_position.x
 		buffer[base + 4] = 0.0
 		buffer[base + 5] = -size.y
 		buffer[base + 6] = 0.0
-		buffer[base + 7] = position.y
+		buffer[base + 7] = draw_position.y
 		buffer[base + 8] = color.r
 		buffer[base + 9] = color.g
 		buffer[base + 10] = color.b
@@ -469,6 +498,7 @@ func _publish_batch(
 	batch["buffer"] = buffer
 	batch["last_count"] = count
 	batch["published_count"] = count
+	_publish_shadows(batch, buffer, count, capacity)
 	_visible_count += count
 	_visible_proxy_count += count
 	if flashing:
@@ -500,11 +530,12 @@ func _publish_actor_batch(
 		var texture_size := entry.get("texture_size", Vector2.ONE) as Vector2
 		# A sheet-animated sprite shows one region: size the quad to the frame
 		# and hand the shader that frame's UV rectangle.
-		var frame_size := texture_size
-		var uv := FULL_UV
+		var frame_size := entry.get("frame_size", texture_size) as Vector2
+		var base_uv := entry.get("base_uv", FULL_UV) as Rect2
+		var uv := base_uv
 		if sprite.region_enabled:
 			frame_size = sprite.region_rect.size
-			uv = Rect2(sprite.region_rect.position / texture_size, frame_size / texture_size)
+			uv = Rect2(base_uv.position + sprite.region_rect.position / texture_size, frame_size / texture_size)
 		if sprite.flip_h:
 			uv = Rect2(uv.position.x + uv.size.x, uv.position.y, -uv.size.x, uv.size.y)
 		if int(entry.get("flash_until", 0)) > now_usec:
@@ -528,7 +559,40 @@ func _publish_actor_batch(
 	batch["buffer"] = buffer
 	batch["last_count"] = count
 	batch["published_count"] = count
+	_publish_shadows(batch, buffer, count, capacity)
 	_visible_count += count
+
+
+func _publish_shadows(batch: Dictionary, visual_buffer: PackedFloat32Array, count: int, capacity: int) -> void:
+	var buffer := batch.get("shadow_buffer") as PackedFloat32Array
+	var slope: Vector2 = -DEPTH_STYLE.SHADOW_DIRECTION
+	# Project the already-interpolated visual data about its lower centre.
+	# Packed arithmetic avoids another actor scan, frame lookup or allocation.
+	for index in range(count):
+		var base := index * FLOATS_PER_INSTANCE
+		buffer[base] = visual_buffer[base] + slope.x * visual_buffer[base + 4]
+		buffer[base + 1] = visual_buffer[base + 1] + slope.x * visual_buffer[base + 5]
+		buffer[base + 2] = 0.0
+		buffer[base + 3] = visual_buffer[base + 3] + slope.x * visual_buffer[base + 5] * 0.5
+		buffer[base + 4] = slope.y * visual_buffer[base + 4]
+		buffer[base + 5] = slope.y * visual_buffer[base + 5]
+		buffer[base + 6] = 0.0
+		buffer[base + 7] = visual_buffer[base + 7] + (slope.y - 1.0) * visual_buffer[base + 5] * 0.5
+		buffer[base + 8] = 1.0
+		buffer[base + 9] = 1.0
+		buffer[base + 10] = 1.0
+		buffer[base + 11] = visual_buffer[base + 11]
+		buffer[base + 12] = visual_buffer[base + 12]
+		buffer[base + 13] = visual_buffer[base + 13]
+		buffer[base + 14] = visual_buffer[base + 14]
+		buffer[base + 15] = absf(visual_buffer[base + 15])
+	# visible_instance_count makes the old tail undrawable without clearing it.
+	var multimesh := batch.get("shadow_multimesh") as MultiMesh
+	if capacity > 0:
+		multimesh.buffer = buffer
+		multimesh.visible_instance_count = count
+		multimesh.emit_changed()
+	batch["shadow_buffer"] = buffer
 
 
 ## Only the tail that was occupied last publish needs clearing; slots past it
@@ -666,6 +730,7 @@ func _ensure_capacity(batch: Dictionary, required: int) -> int:
 	if multimesh != null:
 		multimesh.instance_count = capacity
 		multimesh.visible_instance_count = 0
+	(batch.get("shadow_multimesh") as MultiMesh).instance_count = capacity
 	batch["capacity"] = capacity
 	# The buffer is the one owner of its size: zero-filled here on every
 	# reallocation, so no stale tail exists for the publish to clear.
@@ -673,6 +738,9 @@ func _ensure_capacity(batch: Dictionary, required: int) -> int:
 	buffer.resize(capacity * FLOATS_PER_INSTANCE)
 	buffer.fill(0.0)
 	batch["buffer"] = buffer
+	var shadow_buffer := batch.get("shadow_buffer") as PackedFloat32Array
+	shadow_buffer.resize(capacity * FLOATS_PER_INSTANCE)
+	batch["shadow_buffer"] = shadow_buffer
 	batch["last_count"] = 0
 	return capacity
 
@@ -681,6 +749,9 @@ func _hide_batch(batch: Dictionary) -> void:
 	var multimesh := batch.get("multimesh") as MultiMesh
 	if multimesh != null:
 		multimesh.visible_instance_count = 0
+	var shadow_multimesh := batch.get("shadow_multimesh") as MultiMesh
+	if shadow_multimesh != null:
+		shadow_multimesh.visible_instance_count = 0
 	batch["handles"] = [] as Array[int]
 	batch["published_count"] = 0
 	# Hidden batches restart clean: clear the whole occupied tail next time.
@@ -728,6 +799,12 @@ func _profile_for(handle: int) -> Dictionary:
 		"z_index": int(cold_state.get("proxy_z_index", 0)),
 		"region": cold_state.get("proxy_region", FULL_UV) if cold_state.get("proxy_region") is Rect2 else FULL_UV,
 	}
+	var texture := _texture_for(profile)
+	if texture is AtlasTexture:
+		var atlas_uv := _texture_uv(texture)
+		var local_uv := profile["region"] as Rect2
+		profile["region"] = Rect2(atlas_uv.position + local_uv.position * atlas_uv.size, local_uv.size * atlas_uv.size)
+		profile["texture"] = _base_texture(texture)
 	_visual_profiles[handle] = profile
 	return profile
 
@@ -765,9 +842,13 @@ func _texture_for(profile: Dictionary) -> Texture2D:
 	if direct != null:
 		return direct
 	var path := String(profile.get("texture_path", ""))
+	var cached := _texture_cache.get(path) as Texture2D
+	if cached != null:
+		return cached
 	if not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
 		var loaded := load(path) as Texture2D
 		if loaded != null:
+			_texture_cache[path] = loaded
 			return loaded
 	if _diagnostic_texture == null:
 		var image := Image.create(1, 1, false, Image.FORMAT_RGBA8)
@@ -792,6 +873,28 @@ func _safe_texture_size(texture: Texture2D) -> Vector2:
 		return Vector2.ONE
 	var size := texture.get_size()
 	return Vector2(maxf(size.x, 1.0), maxf(size.y, 1.0))
+
+
+func _base_texture(texture: Texture2D) -> Texture2D:
+	return (texture as AtlasTexture).atlas if texture is AtlasTexture and (texture as AtlasTexture).atlas != null else texture
+
+
+static func texture_filter_for(texture: Texture2D) -> CanvasItem.TextureFilter:
+	# Painted roles shrink from a large transparent atlas; nearest sampling
+	# drops fine edges. Keep the existing baked/pixel kit's crisp sampling.
+	var source := (texture as AtlasTexture).atlas if texture is AtlasTexture else texture
+	if source != null and source.resource_path.begins_with("res://assets/textures/characters/generated/"):
+		return CanvasItem.TEXTURE_FILTER_LINEAR
+	return CanvasItem.TEXTURE_FILTER_NEAREST
+
+
+func _texture_uv(texture: Texture2D) -> Rect2:
+	if texture is AtlasTexture:
+		var atlas := texture as AtlasTexture
+		if atlas.atlas != null:
+			var size := _safe_texture_size(atlas.atlas)
+			return Rect2(atlas.region.position / size, atlas.region.size / size)
+	return FULL_UV
 
 
 func _write_instance(

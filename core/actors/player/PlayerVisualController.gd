@@ -43,6 +43,7 @@ const FEET_BELOW_ORIGIN := 42.0
 const BREATHE := &"breathe"
 ## Which frames of an eight-frame stride sit on the bounce; two beats per cycle.
 const RUN_BOB_PATTERN: Array[float] = [0.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0]
+const DEPTH_STYLE := preload("res://core/systems/world/WorldDepthStyle.gd")
 
 @onready var body: AnimatedSprite2D = $Body
 @onready var head_anchor: Node2D = $HeadAnchor
@@ -61,9 +62,13 @@ var _horizontal := false
 var _preview := false
 var _preview_state: State = State.IDLE
 var _preview_facing: StringName = FACING_DOWN
+var _shadow_root: Node2D
+var _body_shadow: Sprite2D
+var _head_shadow: Sprite2D
 
 
 func _ready() -> void:
+	_create_cast_shadow()
 	var parent := get_parent() as Node2D
 	if parent != null:
 		_stay_upright(parent)
@@ -188,8 +193,45 @@ func _apply() -> void:
 	body.offset = -frame_set.anchor(body_animation, body.frame)
 	body.position = bob
 	head_anchor.position = frame_set.collar(body_animation, body.frame) + definition.head_offset(facing) + bob
+	_sync_cast_shadow()
 	if changed:
 		visual_changed.emit(body_animation, head_animation, facing)
+
+
+func _create_cast_shadow() -> void:
+	_shadow_root = Node2D.new()
+	_shadow_root.name = "CastShadow"
+	_shadow_root.z_as_relative = false
+	_shadow_root.z_index = DEPTH_STYLE.SHADOW_Z
+	# Visual's origin is the feet, and _stay_upright cancels body rotation.
+	_shadow_root.transform = DEPTH_STYLE.projection_at(Vector2.ZERO)
+	var cast_material := ShaderMaterial.new()
+	cast_material.shader = DEPTH_STYLE.SHADOW_SHADER
+	cast_material.set_shader_parameter("shadow_color", DEPTH_STYLE.SHADOW_COLOR)
+	_shadow_root.material = cast_material
+	_body_shadow = Sprite2D.new()
+	_body_shadow.name = "Body"
+	_head_shadow = Sprite2D.new()
+	_head_shadow.name = "Head"
+	for sprite: Sprite2D in [_body_shadow, _head_shadow]:
+		sprite.centered = false
+		sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		sprite.use_parent_material = true
+		_shadow_root.add_child(sprite)
+	add_child(_shadow_root)
+
+
+func _sync_cast_shadow() -> void:
+	if _shadow_root == null:
+		return
+	_body_shadow.texture = frame_set.frames.get_frame_texture(body.animation, body.frame)
+	_body_shadow.offset = body.offset
+	_body_shadow.transform = body.transform
+	_body_shadow.modulate.a = body.modulate.a
+	_head_shadow.texture = frame_set.frames.get_frame_texture(head.animation, head.frame)
+	_head_shadow.offset = head.offset
+	_head_shadow.transform = head_anchor.transform * head.transform
+	_head_shadow.modulate.a = head.modulate.a
 
 
 func _resolve(layer: StringName, state_name: String) -> StringName:

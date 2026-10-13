@@ -67,6 +67,9 @@ func _run() -> void:
 	manager.tiled_world_rendering = true
 	manager.world_seed = 424242
 	manager.ground_enabled = true
+	# This fixture checks the legacy Sprite2D floor path, independently of
+	# the default splat renderer used by the game.
+	manager.ground_splat_enabled = false
 	manager.decals_enabled = false
 	manager.deco_enabled = false
 	manager.sites_enabled = false

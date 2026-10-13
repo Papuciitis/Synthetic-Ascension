@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_c0s0h"]
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_m4j6x"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_brute.tres" id="9_role"]
 
 [resource]
 script = ExtResource("1_m4j6x")
@@ -15,4 +16,6 @@ item_pickup_scene = ExtResource("1_c0s0h")
 drop_pool_prefixes = PackedStringArray("conduit_", "lattice_", "gravemarch_", "acc_", "ring_")
 drop_instance_roll = true
 drop_rarity_max = 1
+sprite_texture = ExtResource("9_role")
+sprite_scale = Vector2(0.220779221, 0.220779221)
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

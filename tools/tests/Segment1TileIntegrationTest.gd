@@ -46,6 +46,26 @@ func _run() -> void:
 			geometry.find_children("*", "TileMapLayer", true, false).is_empty(),
 			"handcrafted geometry owns no tile layers"
 		)
+		var level := current_scene.get_node("Level1")
+		var half_cells: Dictionary = level.get("_half_cells")
+		var block_renderer: Variant = level.get("_wall_renderer")
+		var expected: Dictionary = {}
+		for key in half_cells:
+			var cell: Vector2i = key
+			var at := (Vector2(cell) + Vector2(0.5, 0.5)) * float(level.get("cell_size_px"))
+			var path := ChunkBlockVisualCatalog.half_texture(CoverHalfLab.half_variant(at)).resource_path
+			expected[path] = int(expected.get(path, 0)) + 1
+		var actual: Dictionary = {}
+		if block_renderer != null:
+			for batch: ChunkBlockRenderer.TextureBatch in block_renderer._batches.values():
+				if expected.has(batch.texture.resource_path):
+					actual[batch.texture.resource_path] = int(actual.get(batch.texture.resource_path, 0)) + batch.transforms.size()
+		_check(not expected.is_empty() and actual == expected, "actual segment 1 batches every authored half-cover with its deterministic matching art")
+		var generated := 0
+		for path: String in actual:
+			if path.begins_with("res://assets/world/dressing/generated/"):
+				generated += int(actual[path])
+		_check(generated > 0, "actual segment 1 displays generated crate, rubble and pillar art")
 	var manager := get_first_node_in_group(&"chunk_manager") as Node
 	_check(manager != null and not (manager.get("_manual_blocked_cells") as Dictionary).is_empty(), "handcrafted BFS blockers remain populated")
 	_check(manager != null and not manager.find_children("WorldTiles_*", "TileMapLayer", false, false).is_empty(), "chunk manager owns handcrafted world tile layers")

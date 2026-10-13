@@ -2,6 +2,7 @@ extends Node
 class_name OpeningSequenceController
 
 const Accessibility := preload("res://core/settings/AccessibilityPresentation.gd")
+const InputLabels := preload("res://ui/controllers/TutorialInputLabels.gd")
 
 signal sequence_finished
 
@@ -126,13 +127,14 @@ func _run_full() -> void:
 		_set_phase(Phase.SYNTHESIS)
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_BEFORE_SYNTHESIS)
 		_world.configure(_anchor, _player, 3)
-		_presentation.show_prompt(OpeningSequenceData.INTERACT_PROMPT)
+		_show_alignment_guidance(0, 3)
 		_set_player_lock(false, true)
 		for stage in range(3):
 			var completed: int = await _world.wait_for_next_stage()
-			_presentation.show_prompt(OpeningSequenceData.ALIGNMENT_STATUS[clampi(completed, 0, 2)])
+			if completed < 2:
+				_show_alignment_guidance(completed + 1, 3)
 		_set_player_lock(true, true)
-		_presentation.hide_prompt()
+		_hide_guidance()
 		if AudioManager != null:
 			AudioManager.stop_all(false)
 		await _world.pulse()
@@ -144,13 +146,13 @@ func _run_full() -> void:
 	if resume_phase <= Phase.CALIBRATION:
 		_set_phase(Phase.CALIBRATION)
 		var target := await _spawn_actor(&"calibration", _anchor + Vector2(210, 10), null, false, 8.0)
-		_presentation.show_prompt(OpeningSequenceData.CALIBRATION_PROMPT)
+		_show_guidance("CALIBRATE YOUR SPELL", OpeningSequenceData.CALIBRATION_PROMPT % InputLabels.action(&"attack"), target.global_position if target != null else _anchor, target)
 		_bind_calibration_target(target)
 		_set_player_lock(false, false)
 		if target != null:
 			await target.defeated
 		_unbind_calibration_target()
-		_presentation.hide_prompt()
+		_hide_guidance()
 		_set_player_lock(true, true)
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_BARRIER_1)
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_BARRIER_2)
@@ -168,11 +170,11 @@ func _run_full() -> void:
 				await get_tree().process_frame
 		if construct != null:
 			construct.set_hostile(true)
-		_presentation.show_prompt(OpeningSequenceData.CONSTRUCT_PROMPT)
+		_show_guidance("DEFEAT THE CONSTRUCT", OpeningSequenceData.CONSTRUCT_PROMPT % InputLabels.action(&"attack"), construct.global_position if construct != null else _anchor, construct)
 		_set_player_lock(false, false)
 		if construct != null:
 			await construct.defeated
-		_presentation.hide_prompt()
+		_hide_guidance()
 		_set_player_lock(true, true)
 
 	if resume_phase <= Phase.OFFICER:
@@ -185,13 +187,13 @@ func _run_full() -> void:
 		await _presentation.present_dialogue("OFFICER", "CONTAINMENT OFFICER", OpeningSequenceData.OFFICER_SECOND)
 		if officer != null:
 			officer.begin_seizure(_anchor)
-		_presentation.show_prompt(OpeningSequenceData.OFFICER_PROMPT)
+		_show_guidance("DEFEND THE RESEARCH", OpeningSequenceData.OFFICER_PROMPT % InputLabels.action(&"attack"), officer.global_position if officer != null else _anchor, officer)
 		_set_player_lock(false, false)
 		if officer != null:
 			await _wait_for_officer_choice(officer)
 			if is_instance_valid(officer) and not officer.dead:
 				await officer.defeated
-		_presentation.hide_prompt()
+		_hide_guidance()
 		_set_player_lock(true, true)
 		_level.opening_complete_officer()
 
@@ -225,7 +227,7 @@ func _run_admission_walk() -> void:
 	)
 	if warden != null:
 		warden.requires_manual_fire = true
-	_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+	_show_admission_guidance()
 	_set_player_lock(false, true)
 	while Global != null and not Global.has_segment1_milestone(&"lab_door"):
 		var reached_id: StringName = await _level.milestone_reached
@@ -237,7 +239,7 @@ func _run_admission_walk() -> void:
 					OpeningSequenceData.admission_desk_body(Global.mortal_name)
 				)
 				_set_player_lock(false, true)
-				_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+				_show_admission_guidance()
 			&"ward_flicker":
 				_set_player_lock(true, true)
 				if SfxManager != null and SfxManager.has_method("play_ui"):
@@ -247,10 +249,10 @@ func _run_admission_walk() -> void:
 					OpeningSequenceData.FLICKER_BODY
 				)
 				_set_player_lock(false, true)
-				_presentation.show_prompt(OpeningSequenceData.ADMISSION_PROMPT)
+				_show_admission_guidance()
 			&"lab_door":
 				break
-	_presentation.hide_prompt()
+	_hide_guidance()
 	_set_player_lock(true, true)
 
 
@@ -260,11 +262,11 @@ func _run_short() -> void:
 	_frame_position(_anchor, true)
 	await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_SHORT)
 	_world.configure(_anchor, _player, 1)
-	_presentation.show_prompt("Space / Enter to repeat the stable alignment")
+	_show_alignment_guidance(0, 1)
 	_set_player_lock(false, true)
 	await _world.wait_for_next_stage()
 	_set_player_lock(true, true)
-	_presentation.hide_prompt()
+	_hide_guidance()
 	if AudioManager != null:
 		AudioManager.stop_all(false)
 	await _world.pulse()
@@ -288,7 +290,34 @@ func _wait_for_officer_choice(officer: OpeningActor) -> void:
 			await _presentation.present_announcement(OpeningSequenceData.ARREST_TITLE, OpeningSequenceData.ESCALATION_BODY, "Resist or surrender the work")
 			await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_WAIT)
 			_set_player_lock(false, false)
-	_presentation.show_prompt("Containment has turned hostile • Defend the work")
+	if is_instance_valid(officer) and not officer.dead:
+		_show_guidance("DEFEAT THE OFFICER", OpeningSequenceData.HOSTILE_OFFICER_PROMPT % InputLabels.action(&"attack"), officer.global_position, officer)
+
+
+func _show_admission_guidance() -> void:
+	var anchors := _level.get_opening_anchors()
+	var destination: Vector2 = anchors["admission"]
+	var title := "ENTER THE RESEARCH WING"
+	if Global.has_segment1_milestone(&"admitted"):
+		destination = anchors["lab_door"] if Global.has_segment1_milestone(&"ward_flicker") else anchors["gallery"]
+		title = "REACH THE LABORATORY"
+	_show_guidance(title, OpeningSequenceData.ADMISSION_PROMPT % InputLabels.movement(), destination)
+
+
+func _show_alignment_guidance(stage: int, count: int) -> void:
+	var title := "ALIGN NODE %d / %d" % [stage + 1, count]
+	var prompt := OpeningSequenceData.INTERACT_PROMPT % [InputLabels.movement(), stage + 1, count, InputLabels.action(&"interact")]
+	_show_guidance(title, prompt, _world.active_node_position())
+
+
+func _show_guidance(title: String, detail: String, destination: Vector2, tracked_target: Node2D = null) -> void:
+	_presentation.show_prompt(detail)
+	_level.set_opening_guidance(title, detail, destination, tracked_target)
+
+
+func _hide_guidance() -> void:
+	_presentation.hide_prompt()
+	_level.clear_opening_guidance()
 
 func _restore_phase_prerequisites(resume_phase: int) -> void:
 	if _level == null:
@@ -418,7 +447,7 @@ func _on_calibration_weapon_fired(
 		# from trapping the opening while the ordinary projectile still plays.
 		_calibration_target.complete_calibration(firing_player)
 	elif _presentation != null and is_instance_valid(_presentation):
-		_presentation.show_prompt("Aim at the gold calibration target, then fire")
+		_presentation.show_prompt(OpeningSequenceData.CALIBRATION_PROMPT % InputLabels.action(&"attack"))
 
 func _cleanup_nodes() -> void:
 	_unbind_calibration_target()

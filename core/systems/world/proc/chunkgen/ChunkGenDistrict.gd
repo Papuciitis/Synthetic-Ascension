@@ -243,6 +243,14 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			gen._stamp_floor_rect_cells_patchy(chunk, Rect2i(Vector2i(px0, py0), Vector2i(plaza_size, plaza_size)), tex_idx, rng_roads, 0.95, -94)
 
 	
+	# Share the actual road/plaza clearance with props and the dressing pass.
+	# Wall erasure alone cannot remove half-cover already registered earlier.
+	var clear_cells: Dictionary = {}
+	for clear_rect in keepout_rects:
+		ChunkShapeGen.add_cells(clear_cells, ChunkShapeGen.rect_cells(clear_rect.intersection(bounds)))
+	chunk.set_meta(&"_proc_clear_cells", clear_cells)
+	chunk.set_meta(&"_proc_deco_clear_cells", plaza_cells if organic else ChunkShapeGen.rect_cells(plaza_rect))
+
 	# --- sidewalks + curb pads (visual readability) ---
 	if organic and not road_cells.is_empty():
 		# The sidewalk is the wider band around the bent road; the hub gets a
@@ -396,25 +404,25 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			var entrances: Array[Dictionary] = []
 			var gap_cells: Array[Vector2i] = []
 			# South-facing (region above a horizontal lane)
-			if has_h and (r.position.y + r.size.y) == donjon_lane_y0:
+			if has_h and r.end.y == donjon_lane_y0 - 2:
 				var y_edge: int = r.position.y + r.size.y - 1
 				var cx: int = clampi(lane_cx, r.position.x + 2, r.position.x + r.size.x - 4)
 				gap_cells = [Vector2i(cx, y_edge), Vector2i(cx + 1, y_edge)]
 				entrances.append({ "pos": Vector2i(cx, y_edge - 1), "dir": Vector2i(0, -1), "width": 2 })
 			# North-facing (region below a horizontal lane)
-			elif has_h and r.position.y == (donjon_lane_y1 + 1):
+			elif has_h and r.position.y == donjon_lane_y1 + 2:
 				var y_edge2: int = r.position.y
 				var cx2: int = clampi(lane_cx, r.position.x + 2, r.position.x + r.size.x - 4)
 				gap_cells = [Vector2i(cx2, y_edge2), Vector2i(cx2 + 1, y_edge2)]
 				entrances.append({ "pos": Vector2i(cx2, y_edge2 + 1), "dir": Vector2i(0, 1), "width": 2 })
 			# East-facing (region left of a vertical lane)
-			elif has_v and (r.position.x + r.size.x) == donjon_lane_x0:
+			elif has_v and r.end.x == donjon_lane_x0 - 2:
 				var x_edge: int = r.position.x + r.size.x - 1
 				var cy3: int = clampi(lane_cy, r.position.y + 2, r.position.y + r.size.y - 4)
 				gap_cells = [Vector2i(x_edge, cy3), Vector2i(x_edge, cy3 + 1)]
 				entrances.append({ "pos": Vector2i(x_edge - 1, cy3), "dir": Vector2i(-1, 0), "width": 2 })
 			# West-facing (region right of a vertical lane)
-			elif has_v and r.position.x == (donjon_lane_x1 + 1):
+			elif has_v and r.position.x == donjon_lane_x1 + 2:
 				var x_edge2: int = r.position.x
 				var cy4: int = clampi(lane_cy, r.position.y + 2, r.position.y + r.size.y - 4)
 				gap_cells = [Vector2i(x_edge2, cy4), Vector2i(x_edge2, cy4 + 1)]
@@ -458,6 +466,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			# Props
 			for hc in result.half_cover_cells:
 				var c2: Vector2i = hc
+				if c2 == best_dungeon_cell:
+					continue
 				gen._spawn_block(chunk, gen.cover_half_scene, c2.x, c2.y)
 
 			# Walls
@@ -612,6 +622,18 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				clampi(int(cells / 2.0) + reward_rng.randi_range(-3, 3), 3, cells - 4),
 				clampi(int(cells / 2.0) + reward_rng.randi_range(-3, 3), 3, cells - 4)
 			)
+			# Narrow alleys may be far from the chunk's centre. Snap the
+			# authored jitter onto protected paving rather than a wall or crate.
+			if not clear_cells.has(reward_cell) and not clear_cells.is_empty():
+				var closest := reward_cell
+				var closest_distance := 1 << 30
+				for candidate in clear_cells:
+					var delta: Vector2i = candidate - reward_cell
+					var distance: int = delta.x * delta.x + delta.y * delta.y
+					if distance < closest_distance:
+						closest_distance = distance
+						closest = candidate
+				reward_cell = closest
 			var reward_id: int = gen._mix_seed_int(base_seed, 0x51DE)
 			reward_spawner.set("loot_id", int(reward_id & 0x7fffffff) + 1)
 			if role == &"secondary_alley_cache":

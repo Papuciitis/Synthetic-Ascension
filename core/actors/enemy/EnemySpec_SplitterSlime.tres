@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1_spec"]
 [ext_resource type="PackedScene" path="res://scenes/world/pickups/ItemPickup.tscn" id="2_pickup"]
-[ext_resource type="Texture2D" path="res://assets/textures/Enemy_SplitterSlime.png" id="3_slime"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_splitter.tres" id="3_slime"]
 
 [resource]
 script = ExtResource("1_spec")
@@ -38,6 +38,6 @@ elite_speed_mult = 1.1
 elite_tint = Color(0.85, 1, 0.35, 1)
 elite_spawn_chance_cap = 0.003
 sprite_texture = ExtResource("3_slime")
-sprite_scale = Vector2(0.42, 0.42)
+sprite_scale = Vector2(0.135232198, 0.120750000)
 sprite_modulate = Color(0.86, 1, 0.86, 1)
 metadata/_custom_type_script = "res://core/actors/enemy/EnemySpec.gd"

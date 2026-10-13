@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "tool": "built-in image_gen.imagegen",
+  "transparent_background": true,
+  "pixel_processing": "Generated PNGs copied unchanged. Godot AtlasTexture resources select regions without editing pixels.",
+  "assets": [
+    {
+      "path": "assets/textures/characters/generated/enemy_roles_v4.png",
+      "size_px": [
+        1447,
+        1087
+      ],
+      "roles": [
+        "Bomber",
+        "Runner",
+        "Charger",
+        "Sniper",
+        "Herald",
+        "Summoner",
+        "Leech",
+        "Orbiter",
+        "Brute",
+        "SummonedMinion",
+        "Splitter",
+        "Warden"
+      ],
+      "reference_notes": [
+        "Synthetic Ascension Art Pipeline conversation: Enforcer specialists and bound arcana.",
+        "Attached human design: institutional coats, scarves, straps and orange official ring sigils.",
+        "User's ruin/combat screenshots: elevated camera and directional shading."
+      ],
+      "animation_stage": "Role-specific static frames for the first visual pass; existing Grunt and Spitter animated frame sets are preserved.",
+      "prompt": "Use case: stylized-concept.\nAsset type: production sprite atlas for Synthetic Ascension, a top-down 2D game aiming for a shaded 2.5D painted look.\nInput images: Image1 is the provisional atlas to replace with corrected identities. Image2 is a supporting Enforcer faction reference (coat, scarf, straps, official orange ring sigil); borrow its institutional fantasy clothing and readable uniform family. Image3 is the supporting game perspective/lighting reference; preserve the elevated three-quarter overhead camera and warm upper-right illumination, not its scene background.\nPrimary request: Replace the provisional atlas with a precise 4-column by 3-row atlas of TWELVE distinct enemy roles. Every sprite isolated on actual transparent alpha, inside its own equal cell with generous transparent margins, no silhouette, weapon or banner crossing cell boundaries. Landscape atlas 2048x1536, each cell512x512. No labels, text, grid lines, scenery, floor, cast shadow, watermark, UI, selection circle. Each sprite has its feet/base near the same cell lower quarter, readable full-body silhouette viewed from above facing slightly toward the viewer. Natural stylized painted game sprites, not photorealism, not cartoon outlines.\nFaction style: restrained institutional fantasy Enforcer Circle. Worn charcoal steel half-plate over olive/brown coats, leather straps, helmet/visor masks, orange official circular seal markings. Distinct roles with restrained scarf accents. Avoid everyone being a generic medieval knight; use believable specialist uniform/equipment. Coherent upper-right painted highlights and lower-left darker surfaces; no cast shadows baked into transparency.\nExact left-to-right role order:\nROW1: BOMBER stocky masked coat-wearing Enforcer with two small amber alchemical flasks; RUNNER lean light pursuit Enforcer, stripped armor, short baton and no shield; CHARGER very broad heavy breacher with huge wedge/tower shield dominating silhouette and reinforced shoulders/legs; SNIPER precision Enforcer with long narrow arc-lance/rifle-like ritual weapon held diagonally, long coat, precision visor, not a crossbow.\nROW2: HERALD tall officer-cantor with compact ceremonial standard and raised command focus, crimson accents; SUMMONER institutional mage officer with robe/coated uniform, focus gauntlet and floating binding seal, no ragged skulls, no futuristic drones; LEECH masked inquisitor in austere pale-brown longcoat, hooked short staff and wrapped sealed forearm, subtle purple binding glow, human follower-draining counter-ascension agent, no vampire or tentacles; ORBITER nimble Enforcer duelist, curved blade and small round shield, narrow lateral flanking stance.\nROW3: BRUTE very heavy Enforcer with two-handed breaching hammer; SUMMONED MINION compact bound elemental, three or four floating gray stone/crystal fragments around luminous teal central binding geometry, suggestion of limbs, no human soldier; SPLITTER larger cohesive interlocked slate-stone/crystal construct with luminous violet seams and several binding cores, no gelatin slime or skulls; WARDEN upright elite armored Enforcer with tall rectangular shield and restrained teal rank sash.\nConstraints: 12 sprites only, exact4x3 order, no overlap between cells, preserve actual transparency. All humanoids same body scale with broad/narrow role variation; constructs fill comparable cells. Crisp enough to remain recognizable at64-80pixels height in the game, focus large forms over tiny details.",
+      "layout_edit_prompt": "Use case: precise-object-edit.\nEdit target: the attached twelve-role enemy atlas. CHANGE ONLY THE LAYOUT. Keep every character's exact design, pose, equipment, official sigils, shading, colors and painted art intact.\nThe canvas is1448x1086: exactly4columns by3rows of362x362cells. Each COMPLETE sprite must be uniformly scaled and recentered so its full visible silhouette, including weapons and banner tips, fits INSIDE its own cell with at least24pixels of fully transparent space to every cell edge. The Herald's banner currently extends up into Bomber's rectangle; shrink and recenter the whole Herald (row2column1), retaining the entire banner. Splitter's top point currently approaches Leech's feet; fit Splitter fully inside row3column3. This is a production rectangular sprite atlas: each of the12cells must contain ONLY its one complete sprite, with no visible pixels belonging to adjacent sprites.\nPreserve role order: row1 Bomber, Runner, shield Charger, long-weapon Sniper; row2 Herald, Summoner, masked Leech, curved-blade-and-buckler Orbiter; row3 hammer Brute, teal bound-stone Minion, violet shard Splitter, shield Warden.\nActual transparent alpha everywhere outside sprites, no backdrop, text, labels, floor, baked cast shadow, grid lines or additional objects. Do not repaint or redesign roles. Fit silhouettes using uniform resizing only; do not chop feet, tips, shields or weapons."
+    },
+    {
+      "path": "assets/world/dressing/generated/dressing_set_v2.png",
+      "size_px": [
+        1536,
+        1024
+      ],
+      "roles": [
+        "Fern and ivy",
+        "Olive shrub",
+        "Mossy masonry rubble",
+        "Iron-bound wooden crate",
+        "Broken pillar",
+        "Hooded statue"
+      ],
+      "prompt": "Use case: stylized-concept. Asset type: production environment sprite atlas for a shaded 2.5D dark-fantasy top-down RPG. Exactly SIX separate objects on one transparent canvas, evenly divided 3 columns by 2 rows with large transparent gutters. Each entire sprite stays isolated within its equal cell, no overlap, no grid lines, no words, no labels, no borders, no background, no ground plane, no cast shadow baked outside object. Steep overhead three-quarter camera (visible top and front faces), same scale and key light from upper right for all six. Detailed muted painterly pre-rendered artwork, realistic dimensional material, readable at 64-100 screen pixels, NOT cartoon, NOT flat geometric masks, NOT pixel art. Row 1 left to right: a low irregular clump of olive-green ferns, creeping ivy and narrow grass leaves; a compact rounded dark olive shrub with subtle pale upper-right leaf highlights; a small asymmetric pile of three broken gray masonry stones with sparse moss and a few grass sprigs. Row 2 left to right: a weathered wooden shipping crate with dark iron corner bands and strongly readable top/right faces; a short broken fluted gray stone pillar stump with an irregular chipped cap and moss at base; a small worn stone statue of a hooded figure on a square plinth, damaged shoulder, dimensional top/right highlights and dark left crevices. Low natural plants should stay earthy olive/forest green with no flowers, no orange autumn canopy. Gray stone and dark brown timber fit an old ruined paved city. Actual transparent alpha in all open space; crisp clean object silhouettes."
+    }
+  ]
+}

@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="EnemySpec" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="EnemySpec" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://core/actors/enemy/EnemySpec.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_warden.tres" id="9_role"]
 
 [resource]
 script = ExtResource("1")
@@ -13,3 +14,5 @@ follower_reward_min = 0
 follower_reward_max = 0
 drop_chance = 0.0
 sprite_modulate = Color(0.709804, 0.270588, 0.247059, 1)
+sprite_texture = ExtResource("9_role")
+sprite_scale = Vector2(0.221498371, 0.221498371)

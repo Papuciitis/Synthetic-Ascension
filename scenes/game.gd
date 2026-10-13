@@ -353,7 +353,8 @@ func _tutorial_intro_sequence() -> void:
 		return
 
 	Global.tip_shown_intro_move = true
-	RunEvents.tutorial_tip.emit("WASD to move • Aim with mouse • Click to attack", 3.0)
+	var labels := preload("res://ui/controllers/TutorialInputLabels.gd")
+	RunEvents.tutorial_tip.emit("%s to move • Aim at a target • %s to attack" % [labels.movement(), labels.action(&"attack")], 3.0)
 	Global.request_autosave()
 
 

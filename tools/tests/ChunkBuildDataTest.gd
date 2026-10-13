@@ -95,8 +95,9 @@ func _test_half_cover_catalog() -> void:
 	_check(first == 11, "legacy half-cover RNG encodes texture 3 and quarter-turn 1 at 32,32")
 	_check(second == 25, "legacy half-cover RNG encodes texture 1 and quarter-turn 3 at 96,160")
 	_check(negative == 13, "legacy half-cover RNG remains stable for negative world coordinates")
-	_check(_texture_path(ChunkBlockVisualCatalog.half_texture(first)).ends_with("prop_rubble_small_01.png"), "packed half-cover variant selects its legacy texture")
-	_check(is_equal_approx(ChunkBlockVisualCatalog.half_rotation(first), PI * 0.5), "packed half-cover variant selects its legacy rotation")
+	_check(_texture_path(ChunkBlockVisualCatalog.half_texture(first)).ends_with("mossy_rubble.tres"), "packed half-cover variant selects the matching painted rubble")
+	_check(is_zero_approx(ChunkBlockVisualCatalog.half_rotation(first)), "painted rubble retains its directional lighting despite packed legacy quarter-turns")
+	_check(is_equal_approx(ChunkBlockVisualCatalog.half_rotation(negative), PI * 0.5), "legacy table variants retain their packed rotation")
 	_check(ChunkBlockVisualCatalog.texture_count() == 34, "kit catalog reports 16 pieces, 2 windows, 4 rhythm variants, 4 fills and 8 half-cover variants")
 
 

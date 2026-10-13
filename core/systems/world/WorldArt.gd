@@ -63,10 +63,13 @@ const _DECAL_TEX := [
 ]
 
 const _VEG_TEX := [
-	preload("res://assets/world/vegetation/veg_bush_cluster_01.png"),
-	preload("res://assets/world/vegetation/veg_overgrowth_island_01.png"),
-	preload("res://assets/world/vegetation/veg_dead_tree_01.png"),
+	"res://assets/world/dressing/generated/fern.tres",
+	"res://assets/world/dressing/generated/olive_shrub.tres",
+	"res://assets/world/vegetation/veg_dead_tree_01.png",
 ]
+const _DRESSING_ROOT := "res://assets/world/dressing/generated/"
+const _DRESSING_NAMES := [&"fern", &"olive_shrub", &"mossy_rubble", &"crate", &"broken_pillar", &"hooded_statue"]
+static var _dressing_cache: Dictionary = {}
 
 const _LANDMARK_TEX := [
 	preload("res://assets/world/landmarks/landmark_obelisk_01.png"),
@@ -123,6 +126,7 @@ static func release_static_caches() -> void:
 	# resources held here must be released while the servers are still whole.
 	_ground_tex_cache.clear()
 	_ground_array = null
+	_dressing_cache.clear()
 
 
 ## Pixel size of one ground layer in the splat texture array. The sources are
@@ -205,7 +209,22 @@ static func vegetation_texture_count() -> int:
 static func vegetation_texture(index: int) -> Texture2D:
 	if index < 0 or index >= _VEG_TEX.size():
 		return null
-	return _VEG_TEX[index] as Texture2D
+	return _cached_dressing_texture(_VEG_TEX[index])
+
+
+static func dressing_texture(id: StringName) -> Texture2D:
+	if not id in _DRESSING_NAMES:
+		return null
+	return _cached_dressing_texture(_DRESSING_ROOT + String(id) + ".tres")
+
+
+static func _cached_dressing_texture(path: String) -> Texture2D:
+	var cached := _dressing_cache.get(path) as Texture2D
+	if cached == null and ResourceLoader.exists(path, "Texture2D"):
+		cached = ResourceLoader.load(path, "Texture2D") as Texture2D
+		if cached != null:
+			_dressing_cache[path] = cached
+	return cached
 
 static func landmark_texture_count() -> int:
 	return _LANDMARK_TEX.size()

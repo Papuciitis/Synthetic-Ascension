@@ -13,7 +13,7 @@ const HISTORICAL_LINES: Array[String] = [
 ]
 
 # Admissions wing (beats 1-2: normal institution, something wrong).
-const ADMISSION_PROMPT := "Evening admission • the experimental laboratory is through the north gallery"
+const ADMISSION_PROMPT := "Move %s • Follow the gold trail to the laboratory"
 const ADMISSION_DESK_TITLE := "NIGHT ADMISSION — RESEARCH FLOOR"
 const FLICKER_TITLE := "NOTICE TO STAFF"
 const FLICKER_BODY := "Scheduled ward-lattice maintenance is in effect.\nDisregard lattice irregularities.\nPersistent irregularities should be reported to Containment."
@@ -46,14 +46,15 @@ const LETHAL_BODY := "LETHAL RESPONSE AUTHORISED"
 const FOLLOWER_TITLE := "FIRST FOLLOWER"
 const FOLLOWER_BODY := "One person has chosen the Pattern over the institution.\n\nFollowers: 1\n\nFollowers are people committed to preserving and spreading the Pattern. Their belief, resources and memory keep the work alive."
 
-const CALIBRATION_PROMPT := "Aim at the calibration target and attack."
-const CONSTRUCT_PROMPT := "Contain the lattice construct."
-const OFFICER_PROMPT := "The officer will seize the research. Attack to resist."
-const INTERACT_PROMPT := "Move to the highlighted node • Space / Enter to align"
+const CALIBRATION_PROMPT := "Aim at the gold target • %s to attack"
+const CONSTRUCT_PROMPT := "Aim at the construct • %s to attack"
+const OFFICER_PROMPT := "The officer will seize the research • %s to resist"
+const HOSTILE_OFFICER_PROMPT := "Containment is hostile • %s to defend the work"
+const INTERACT_PROMPT := "Move %s to gold node %d/%d • %s to align"
 const SHORT_SYNTHESIS_BODY := "KNOWN PATTERN\nSTABILITY: REPRODUCIBLE"
 const ALIGNMENT_STATUS: Array[String] = [
-	"First interval stable • ward correction detected • Space / Enter at next node",
-	"Second interval stable • lattice drift increasing • Space / Enter at next node",
+	"First interval stable • ward correction detected",
+	"Second interval stable • lattice drift increasing",
 	"Third interval stable • complete the sequence",
 ]
 

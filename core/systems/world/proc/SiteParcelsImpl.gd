@@ -117,6 +117,11 @@ func decorate_urban_fill(
 			keepouts.append(passage.grow(1).intersection(chunk_rect))
 			chunk_manager._stamp_floor_rect_cells_patchy(chunk, passage, int(cfg.get("passage_floor_tex", 4)), floor_rng, 0.80, -94)
 
+	var clear_cells: Dictionary = ChunkShapeGen.rect_cells(courtyard.grow(-3))
+	for passage_keepout in keepouts.slice(1):
+		ChunkShapeGen.add_cells(clear_cells, ChunkShapeGen.rect_cells(passage_keepout))
+	chunk.set_meta(&"_proc_clear_cells", clear_cells)
+
 	# Fill the ring between the chunk edge and the courtyard. Keep the bands deep
 	# enough for real interiors even after clipping; pedestrian passages carve the
 	# deliberate gaps through these rows via keepouts.

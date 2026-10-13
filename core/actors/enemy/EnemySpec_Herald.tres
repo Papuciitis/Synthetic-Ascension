@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dbcmb0ayeg2vq" path="res://core/actors/enemy/EnemySpec.gd" id="1_inqsk"]
 [ext_resource type="PackedScene" uid="uid://cmogelvhnd7yp" path="res://scenes/world/pickups/ItemPickup.tscn" id="1_jjv71"]
 [ext_resource type="PackedScene" uid="uid://vs48l4wx2ns3" path="res://core/combat/projectile/EnemyProjectile.tscn" id="2_pkxua"]
-[ext_resource type="Texture2D" uid="uid://cd6ays27ri5e0" path="res://assets/textures/Enemy_Herald44x44.png" id="4_qajri"]
+[ext_resource type="Texture2D" path="res://assets/textures/characters/generated/enemy_herald.tres" id="4_qajri"]
 
 [resource]
 script = ExtResource("1_inqsk")
@@ -32,4 +32,5 @@ elite_hp_mult = 1.7
 elite_speed_mult = 1.1
 elite_ai_override = 7
 sprite_texture = ExtResource("4_qajri")
+sprite_scale = Vector2(0.202985075, 0.202985075)
 metadata/_custom_type_script = "uid://dbcmb0ayeg2vq"

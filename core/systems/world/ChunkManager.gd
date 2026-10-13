@@ -61,6 +61,8 @@ const _CHUNK_BUILD_DATA: Script = preload("res://core/systems/world/chunks/Chunk
 const _BLOCK_PHYSICS: Script = preload("res://core/systems/world/chunks/ChunkBlockPhysics.gd")
 const _BLOCK_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkBlockRenderer.gd")
 const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkStreamPlanner.gd")
+const _DECO_PLANNER: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenDeco.gd")
+const _FOLIAGE_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkFoliageRenderer.gd")
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
@@ -870,72 +872,9 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 ## has an inside and an outside, so it becomes a thing you can stand behind,
 ## walk around, or notice from across a plaza.
 func _scatter_vegetation(chunk: Node2D, rng: RandomNumberGenerator, cells: int, budget: int) -> void:
-	var vegetation_count: int = _WORLD_ART.vegetation_texture_count()
-	if vegetation_count <= 0 or budget <= 0:
-		return
-
-	var placed: int = 0
-	var index: int = 0
-	# Bounded rather than while-true: a chunk that is almost entirely blocked
-	# must not spin looking for room that is not there.
-	for _clump in range(24):
-		if placed >= budget:
-			break
-		var centre := _pick_free_cell_local(rng, cells)
-		if centre.x < 0:
-			return
-		# One species per thicket. Mixing textures inside a clump turns it back
-		# into confetti that happens to be nearby.
-		var texture := _WORLD_ART.vegetation_texture(rng.randi_range(0, vegetation_count - 1))
-		var want: int = mini(rng.randi_range(veg_clump_min, veg_clump_max), budget - placed)
-		for _member in range(want):
-			var c := centre
-			if _member > 0:
-				var r: int = veg_clump_radius_cells
-				c = centre + Vector2i(rng.randi_range(-r, r), rng.randi_range(-r, r))
-				if not _is_free_cell_local(c, cells):
-					continue
-			# Denser at the heart of the clump, thinning at its edge, so the
-			# thicket has a silhouette instead of a hard boundary.
-			var distance: float = Vector2(c - centre).length() / maxf(1.0, float(veg_clump_radius_cells))
-			var alpha: float = rng.randf_range(0.55, 0.85) * lerpf(1.0, 0.62, clampf(distance, 0.0, 1.0))
-			var scale_variation: float = rng.randf_range(0.78, 1.34) * lerpf(1.0, 0.74, clampf(distance, 0.0, 1.0))
-			_paint_vegetation(chunk, c, texture, alpha, scale_variation, rng.randi_range(0, 3), index)
-			index += 1
-			placed += 1
-
-
-func _paint_vegetation(
-	chunk: Node2D,
-	c: Vector2i,
-	texture: Texture2D,
-	alpha: float,
-	scale_variation: float,
-	quarter_turns: int,
-	index: int
-) -> void:
-	if tiled_world_rendering:
-		_ensure_tile_renderer()
-		if _tile_renderer != null:
-			_tile_renderer.paint_transformed_texture(
-				chunk, &"deco", c, texture, -85,
-				quarter_turns, false, false, Color(1, 1, 1, alpha)
-			)
-		return
-	var spr := Sprite2D.new()
-	spr.name = "Veg_%d" % index
-	spr.z_index = -85
-	spr.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
-	spr.texture = texture
-	spr.scale = Vector2(0.0625, 0.0625) * scale_variation
-	spr.rotation = float(quarter_turns) * PI * 0.5
-	spr.modulate.a = alpha
-	spr.position = Vector2(
-		float(c.x * cell_size_px) + float(cell_size_px) * 0.5,
-		float(c.y * cell_size_px) + float(cell_size_px) * 0.5
-	)
-	spr.set_meta(&"_tile_repeat_visual", true)
-	chunk.add_child(spr)
+	var placements: Array[Dictionary] = _DECO_PLANNER.plan_vegetation(self, chunk, rng, cells, budget)
+	chunk.set_meta(&"_foliage_placements", placements)
+	_FOLIAGE_RENDERER.add_to_chunk(chunk, placements, cell_size_px, district_tint)
 
 
 func _is_free_cell_local(c: Vector2i, cells: int) -> bool:
@@ -1021,6 +960,9 @@ func _ensure_debug_tex() -> void:
 	_debug_tex = ImageTexture.create_from_image(img)
 
 func _spawn_block(chunk: Node2D, scene: PackedScene, cell_x: int, cell_y: int, connections_mask: int = 0) -> Node2D:
+	var clear_cells: Dictionary = chunk.get_meta(&"_proc_clear_cells", {})
+	if clear_cells.has(Vector2i(cell_x, cell_y)):
+		return null
 	if batched_chunk_blockers and _record_blocker(chunk, scene, cell_x, cell_y, connections_mask):
 		return null
 
@@ -1325,7 +1267,14 @@ func _tile_repeated_visuals(chunk: Node2D) -> void:
 	var sprites: Array[Node] = chunk.find_children("*", "Sprite2D", true, false)
 	for candidate in sprites:
 		var sprite := candidate as Sprite2D
-		if sprite == null or sprite.texture == null:
+		if sprite == null:
+			continue
+		# Externally batched authored bodies retain collision only. Discard
+		# their empty scene sprites before tile conversion checks textures.
+		if sprite.get_parent() != null and sprite.get_parent().has_meta(&"_visual_external"):
+			sprite.queue_free()
+			continue
+		if sprite.texture == null:
 			continue
 		var owner_marked := sprite.has_meta(&"_tile_repeat_visual")
 		var parent_marked := sprite.get_parent() != null and sprite.get_parent().has_meta(&"_tile_repeat_visual")

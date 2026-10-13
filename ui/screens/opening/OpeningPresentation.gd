@@ -408,6 +408,7 @@ func _build_ui() -> void:
 	_prompt.offset_bottom = -52.0
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_prompt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	OverlayKit.style_label(_prompt, &"semi", 19, OverlayKit.GOLD_BRIGHT, 3)
 	_prompt.add_theme_stylebox_override("normal", OverlayKit.shared(&"plate"))
 	_prompt.visible = false

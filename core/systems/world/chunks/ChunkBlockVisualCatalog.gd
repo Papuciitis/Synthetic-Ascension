@@ -5,6 +5,7 @@ const N := WorldBlockerGeometry.N
 const E := WorldBlockerGeometry.E
 const S := WorldBlockerGeometry.S
 const W := WorldBlockerGeometry.W
+const ART := preload("res://core/systems/world/WorldArt.gd")
 
 const TEX_STRAIGHT_V := preload("res://assets/world/walls/wall_stone_straight_v.png")
 const TEX_STRAIGHT_H := preload("res://assets/world/walls/wall_stone_straight_h.png")
@@ -102,6 +103,10 @@ const HALF_TEXTURES: Array[Texture2D] = [
 	preload("res://assets/world/props/prop_broken_pillar_01.png"),
 	preload("res://assets/world/props/prop_statue_01.png"),
 ]
+const _DRESSED_HALF := {
+	0: &"crate", 1: &"crate", 2: &"mossy_rubble", 3: &"mossy_rubble",
+	6: &"broken_pillar", 7: &"hooded_statue",
+}
 
 
 static func wall_texture(kind: int, mask: int) -> Texture2D:
@@ -169,10 +174,17 @@ static func half_variant(world_position: Vector2) -> int:
 
 
 static func half_texture(variant: int) -> Texture2D:
-	return HALF_TEXTURES[clampi(variant & 7, 0, HALF_TEXTURES.size() - 1)]
+	var index := clampi(variant & 7, 0, HALF_TEXTURES.size() - 1)
+	if _DRESSED_HALF.has(index):
+		var dressed := ART.dressing_texture(_DRESSED_HALF[index])
+		if dressed != null:
+			return dressed
+	return HALF_TEXTURES[index]
 
 
 static func half_rotation(variant: int) -> float:
+	if _DRESSED_HALF.has(variant & 7):
+		return 0.0
 	return float((variant >> 3) & 3) * PI * 0.5
 
 
