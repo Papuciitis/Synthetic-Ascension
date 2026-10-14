@@ -80,6 +80,8 @@ func _run() -> void:
 	skin.set("turn_progress", 1.0)
 	_library.call("_finish_turn")
 	for phase: float in [0.0, 0.25, 0.5, 0.75, 1.0]:
+		if phase == 0.0:
+			skin.call("capture_opening_pages", _library.get("_left_leaf"), _library.get("_right_leaf"))
 		skin.set("open_progress", phase)
 		await _frames(3)
 		await _shot("library_cover_%02d.png" % roundi(phase * 100))
@@ -182,6 +184,8 @@ func _transfer_trip(returning: bool) -> void:
 	_library.set("_transfer", null)
 	if returning:
 		_library.call("_reveal_shelves")
+		await _frames(3)
+		await _shot("library_return_settled.png")
 	else:
 		_library.call("_begin_cover_open")
 		await get_tree().create_timer(0.65, true).timeout
@@ -222,22 +226,33 @@ func _motion_frames() -> void:
 	var skin: Control = _library.get("_open_book")
 	var frame := 0
 	DirAccess.make_dir_recursive_absolute(_out.path_join("motion"))
-	for index: int in range(25):
-		skin.set("open_progress", float(index) / 24.0)
+	skin.call("capture_opening_pages", _library.get("_left_leaf"), _library.get("_right_leaf"))
+	# Sample the actual sine easing and durations at 60fps, including the
+	# brief print-capture interval before a turning leaf starts to bend.
+	for index: int in range(34):
+		var progress := clampf(float(index) / (60.0 * 0.56), 0.0, 1.0)
+		skin.set("open_progress", 0.5 - 0.5 * cos(progress * PI))
 		await _frames(2)
 		await _shot("motion/frame_%03d.png" % frame)
 		frame += 1
 	skin.set("open_progress", 1.0)
+	for hold: int in range(18):
+		await _shot("motion/frame_%03d.png" % frame)
+		frame += 1
 	for direction: int in [1, -1]:
 		_library.call("_turn_page", direction)
 		await _frames(3)
 		_freeze_turn()
-		for index: int in range(25):
-			skin.set("turn_progress", float(index) / 24.0)
+		for index: int in range(24):
+			var progress := clampf((float(index) / 60.0 - 0.03) / 0.36, 0.0, 1.0)
+			skin.set("turn_progress", 0.5 - 0.5 * cos(progress * PI))
 			await _frames(2)
 			await _shot("motion/frame_%03d.png" % frame)
 			frame += 1
 		_library.call("_finish_turn")
+		for hold: int in range(18):
+			await _shot("motion/frame_%03d.png" % frame)
+			frame += 1
 	skin.set("turn_progress", 1.0)
 
 func _frames(count: int) -> void:

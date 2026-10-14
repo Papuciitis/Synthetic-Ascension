@@ -63,9 +63,9 @@ func _run() -> void:
 		pages.name = "BookPages"
 		open.add_child(pages)
 		open.set("open_progress", 0.0)
-		_check(pages.modulate.a == 0.0, "closed cover conceals ordinary page print")
+		_check(not pages.visible and pages.modulate.a == 1.0, "closed cover replaces live print with frozen opaque leaves")
 		open.set("open_progress", 0.5)
-		_check(pages.modulate.a == 0.0, "paper print stays concealed until the cover is mostly open")
+		_check(not pages.visible and pages.modulate.a == 1.0, "hinge geometry carries print without a late opacity fade")
 		open.set("open_progress", 1.0)
 		_check(pages.modulate.a == 1.0 and open.scale.is_equal_approx(Vector2.ONE), "open book reveals its print without changing its geometry")
 	if open.has_method("paper_rect"):
@@ -100,39 +100,42 @@ func _run() -> void:
 		var reverse_uvs: PackedVector2Array = backward.get("uvs", PackedVector2Array())
 		var forward_back: Dictionary = leaf.call("mesh_geometry", 0.75, 1)
 		var backward_back: Dictionary = leaf.call("mesh_geometry", 0.75, -1)
-		var forward_back_uv: PackedVector2Array = forward_back.uvs
-		var backward_back_uv: PackedVector2Array = backward_back.uvs
-		_check(forward_back_uv[0].x == 1.0 and forward_back_uv[16].x == 0.0, "forward back print reads normally when it lands on the left paper")
-		_check(backward_back_uv[0].x == 0.0 and backward_back_uv[16].x == 1.0, "backward back print reads normally when it lands on the right paper")
+		var forward_back_uv: PackedVector2Array = forward_back.back_uvs
+		var backward_back_uv: PackedVector2Array = backward_back.back_uvs
+		_check(forward_back_uv[0].x == 1.0 and forward_back_uv[int(forward_back.column_count) - 1].x == 0.0, "forward back print reads normally when it lands on the left paper")
+		_check(backward_back_uv[0].x == 0.0 and backward_back_uv[int(backward_back.column_count) - 1].x == 1.0, "backward back print reads normally when it lands on the right paper")
 		for toward: int in [1, -1]:
 			for phase: float in [0.0, 0.18, 0.35, 0.49, 0.5, 0.51, 0.65, 0.82, 0.99, 1.0]:
 				var sample: Dictionary = leaf.call("mesh_geometry", phase, toward)
 				var sample_points: PackedVector2Array = sample.vertices
-				var sample_uv: PackedVector2Array = sample.uvs
 				var readable := true
-				for column: int in range(16):
+				for strip: Dictionary in sample.strips:
+					var column: int = strip.column
+					var sample_uv: PackedVector2Array = sample.front_uvs if strip.front else sample.back_uvs
 					var dx := sample_points[column + 1].x - sample_points[column].x
 					var du := sample_uv[column + 1].x - sample_uv[column].x
 					readable = readable and dx * du >= -0.001
 				_check(readable, "every projected strip agrees with its printed face (%d, %.2f)" % [toward, phase])
 				if phase == 0.5:
-					var edge_on := true
+					var minimum := INF
+					var maximum := -INF
 					for point: Vector2 in sample_points:
-						edge_on = edge_on and absf(point.x - 500.0) < 0.1
-					_check(edge_on, "midpoint cannot display reversed front-face strips")
+						minimum = minf(minimum, point.x)
+						maximum = maxf(maximum, point.x)
+					_check(maximum - minimum > 120.0, "local fold retains broad printed paper at midpoint")
 		var resting_forward: Dictionary = leaf.call("mesh_geometry", 0.0, 1)
 		var resting_backward: Dictionary = leaf.call("mesh_geometry", 0.0, -1)
 		var forward_start: PackedVector2Array = resting_forward.vertices
 		var backward_start: PackedVector2Array = resting_backward.vertices
-		_check(forward_start[0].x == 505.0 and forward_start[16].x == 920.0, "forward capture begins exactly at its static right paper edges")
-		_check(backward_start[0].x == 495.0 and backward_start[16].x == 80.0, "backward capture begins exactly at its static left paper edges")
+		_check(is_equal_approx(forward_start[0].x, 505.0) and is_equal_approx(forward_start[int(resting_forward.column_count) - 1].x, 920.0), "forward capture begins exactly at its static right paper edges")
+		_check(is_equal_approx(backward_start[0].x, 495.0) and is_equal_approx(backward_start[int(resting_backward.column_count) - 1].x, 80.0), "backward capture begins exactly at its static left paper edges")
 		_check(vertices.size() > 12 and forward.get("indices", PackedInt32Array()).size() > 6, "paper has enough subdivisions for an actual curve")
 		if vertices.size() > 4 and reverse.size() == vertices.size():
 			var mirrored := true
 			for index: int in vertices.size():
 				mirrored = mirrored and is_equal_approx(vertices[index].x + reverse[index].x, 1000.0)
 			_check(mirrored, "backward paper projection mirrors about the gutter")
-			_check(not is_equal_approx(vertices[1].x - vertices[0].x, vertices[2].x - vertices[1].x), "curl varies across the sheet instead of X-squashing a rectangle")
+			_check(float(forward.flat_fraction) > 0.5 and float(forward.flat_fraction) < 1.0, "most print stays flat while only the fold bends")
 		if uvs.size() > 0 and reverse_uvs.size() == uvs.size():
 			_check(uvs[0].x == 0.0 and reverse_uvs[0].x == 1.0, "backward capture keeps print readable on its starting left page")
 		var paper: Texture2D = leaf.get("source_texture")

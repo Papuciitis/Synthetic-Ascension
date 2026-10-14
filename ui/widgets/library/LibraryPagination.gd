@@ -63,11 +63,16 @@ static func _page_end(plain: String, start: int, boundaries: PackedInt32Array, f
 	if cut == plain.length():
 		return cut
 	var prefix := plain.substr(start, cut - start)
-	# Keep a complete paragraph on the preceding leaf when possible. If a
-	# paragraph itself is too long, prefer a word boundary, then a grapheme.
+	# Prefer a whole paragraph only when the preceding text fills most of
+	# the leaf. Character counts confuse a short heading with a dense passage
+	# and can otherwise leave nearly half the printed page empty.
 	var paragraph := prefix.rfind("\n\n")
-	if paragraph >= 0 and paragraph + 2 >= prefix.length() / 3:
-		return start + paragraph + 2
+	if paragraph >= 0:
+		var preceding := prefix.substr(0, paragraph + 2)
+		var measured := font.get_multiline_string_size(preceding, HORIZONTAL_ALIGNMENT_LEFT, maxf(1.0, width * 0.92 - 4.0), font_size, -1, WRAP_FLAGS)
+		var lines := maxf(1.0, ceilf(measured.y / maxf(1.0, font.get_height(font_size))))
+		if measured.y + maxf(0.0, lines - 1.0) * 4.0 >= height * 0.70:
+			return start + paragraph + 2
 	for index: int in range(prefix.length() - 1, -1, -1):
 		if prefix[index] in [" ", "\n", "\t"]:
 			return _avoid_short_tail(plain, start, start + index + 1)

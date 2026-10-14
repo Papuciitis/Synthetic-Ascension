@@ -14,6 +14,8 @@ var open_progress: float = 1.0:
 		open_progress_changed.emit(open_progress)
 		if is_instance_valid(_cover_plane):
 			_cover_plane.queue_redraw()
+		if is_instance_valid(_opening_plane):
+			_opening_plane.queue_redraw()
 var cover_title := "":
 	set(value):
 		cover_title = value
@@ -42,6 +44,13 @@ var _paper: AtlasTexture
 var _cover: AtlasTexture
 var _turn_leaf: Control
 var _cover_plane: Control
+var _opening_plane: Control
+var _opening_left_viewport: SubViewport
+var _opening_right_viewport: SubViewport
+var _opening_left_page: Control
+var _opening_right_page: Control
+var _opening_left_source: Control
+var _opening_right_source: Control
 var _held_plane: Control
 var _leaf_viewport: SubViewport
 var _leaf_back_viewport: SubViewport
@@ -93,16 +102,29 @@ func _ready() -> void:
 	_held_plane.z_index = 1
 	_held_plane.draw.connect(_draw_held_face)
 	add_child(_held_plane)
+	_opening_plane = Control.new()
+	_opening_plane.name = "HingedPrintedPaper"
+	_opening_plane.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_opening_plane.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_opening_plane.z_index = 1
+	_opening_plane.draw.connect(_draw_opening_print)
+	add_child(_opening_plane)
 	resized.connect(_resize_art)
 	child_entered_tree.connect(func(_child: Node) -> void: _update_open_contents())
 	_update_open_contents()
 	_capture_cover()
 
 func _update_open_contents() -> void:
-	var opacity := clampf((open_progress - 0.72) / 0.28, 0.0, 1.0)
 	for child: Node in get_children():
-		if child is Control and child != _cover_plane and child != _turn_leaf and child != _held_plane:
-			child.modulate.a = opacity
+		if child.name == &"BookPages" and child is Control:
+			# Frozen, fully printed leaves follow their physical projection while
+			# the cover moves. Live controls take over at the identical resting pose.
+			child.modulate.a = 1.0
+			child.visible = open_progress >= 1.0
+		elif child.has_method("set_book_open_progress"):
+			child.call("set_book_open_progress", open_progress, size.x)
+	if is_instance_valid(_opening_plane):
+		_opening_plane.visible = open_progress < 1.0
 	if is_instance_valid(_cover_plane):
 		# Keep the opened inside cover in this book's draw group, before
 		# the static stack, rather than behind unrelated courtyard artwork.
@@ -120,6 +142,46 @@ func _update_turn_layers() -> void:
 func paper_rect(side: int) -> Rect2:
 	var position := Vector2(0.08 if side == 0 else 0.505, 0.08) * size
 	return Rect2(position, size * Vector2(0.415, 0.84))
+
+func opening_paper_rect(side: int, at: float = open_progress) -> Rect2:
+	if side == 1:
+		return paper_rect(1)
+	var reach := maxf(0.0, -cos(clampf(at, 0.0, 1.0) * PI))
+	return Rect2(size * Vector2(0.5 - 0.42 * reach, 0.08), size * Vector2(0.415 * reach, 0.84))
+
+func capture_opening_pages(left: Control, right: Control) -> void:
+	_opening_left_source = left
+	_opening_right_source = right
+	if is_instance_valid(_opening_left_viewport):
+		_opening_left_viewport.queue_free()
+	if is_instance_valid(_opening_right_viewport):
+		_opening_right_viewport.queue_free()
+	_opening_left_viewport = null
+	_opening_right_viewport = null
+	_opening_left_page = null
+	_opening_right_page = null
+	if DisplayServer.get_name() == "headless":
+		return
+	if is_instance_valid(left):
+		var capture := _make_leaf_capture(left, 0, "OpeningLeftCapture")
+		_opening_left_viewport = capture.viewport as SubViewport
+		_opening_left_page = capture.page as Control
+	if is_instance_valid(right):
+		var capture := _make_leaf_capture(right, 1, "OpeningRightCapture")
+		_opening_right_viewport = capture.viewport as SubViewport
+		_opening_right_page = capture.page as Control
+	if is_instance_valid(_opening_plane):
+		_opening_plane.queue_redraw()
+
+func _draw_opening_print() -> void:
+	if open_progress >= 1.0:
+		return
+	if is_instance_valid(_opening_right_viewport):
+		_opening_plane.draw_texture_rect(_opening_right_viewport.get_texture(), opening_paper_rect(1), false)
+	if is_instance_valid(_opening_left_viewport):
+		var left := opening_paper_rect(0)
+		if left.size.x > 0.1:
+			_opening_plane.draw_texture_rect(_opening_left_viewport.get_texture(), left, false)
 
 func cover_geometry(at: float = open_progress) -> PackedVector2Array:
 	var top := size * Vector2(0.5, 0.045)
@@ -253,6 +315,16 @@ func _resize_art() -> void:
 	if is_instance_valid(_cover_plane):
 		_cover_plane.queue_redraw()
 	_capture_cover()
+	_update_open_contents()
+	# Containers settle after the book's resized signal. Coalesce rapid changes
+	# so a moving cover captures the latest laid-out print only once.
+	if open_progress < 1.0 and is_instance_valid(_opening_left_source) and is_instance_valid(_opening_right_source):
+		if not RenderingServer.frame_pre_draw.is_connected(_recapture_opening):
+			RenderingServer.frame_pre_draw.connect(_recapture_opening, CONNECT_ONE_SHOT)
+
+func _recapture_opening() -> void:
+	if open_progress < 1.0 and is_instance_valid(_opening_left_source) and is_instance_valid(_opening_right_source):
+		capture_opening_pages(_opening_left_source, _opening_right_source)
 
 func _capture_cover() -> void:
 	_cover_texture = _cover
@@ -299,17 +371,21 @@ func _capture_cover() -> void:
 func _draw() -> void:
 	if _book == null:
 		return
-	var opacity := smoothstep(0.10, 0.82, open_progress)
-	if opacity <= 0.0:
-		return
-	draw_texture_rect(_book, Rect2(Vector2.ZERO, size), false, Color(1, 1, 1, opacity))
+	# The fixed right stack is opaque from the first frame. The left stack
+	# follows the hinge; neither paper nor ink dissolves into the courtyard.
+	var texture_size := _book.get_size()
+	draw_texture_rect_region(_book, Rect2(size * Vector2(0.5, 0), size * Vector2(0.5, 1)), Rect2(texture_size * Vector2(0.5, 0), texture_size * Vector2(0.5, 1)))
+	var reach := maxf(0.0, -cos(open_progress * PI))
+	if reach > 0.001:
+		draw_texture_rect_region(_book, Rect2(size * Vector2(0.5 - 0.5 * reach, 0), size * Vector2(0.5 * reach, 1)), Rect2(Vector2.ZERO, texture_size * Vector2(0.5, 1)))
 	if _paper != null:
 		var right := paper_rect(1)
-		draw_texture_rect(_paper, right, false, Color(1, 1, 1, opacity))
-		var left := paper_rect(0)
-		draw_set_transform(Vector2(left.end.x, left.position.y), 0.0, Vector2(-1, 1))
-		draw_texture_rect(_paper, Rect2(Vector2.ZERO, left.size), false, Color(1, 1, 1, opacity))
-		draw_set_transform(Vector2.ZERO)
+		draw_texture_rect(_paper, right, false)
+		var left := opening_paper_rect(0)
+		if left.size.x > 0.1:
+			draw_set_transform(Vector2(left.end.x, left.position.y), 0.0, Vector2(-1, 1))
+			draw_texture_rect(_paper, Rect2(Vector2.ZERO, left.size), false)
+			draw_set_transform(Vector2.ZERO)
 
 func _draw_cover() -> void:
 	var texture := cover_face_texture()

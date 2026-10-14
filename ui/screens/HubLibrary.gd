@@ -61,6 +61,7 @@ var _continuation: RichTextLabel
 var _right_caption: Label
 var _icon: TextureRect
 var _seal: Control
+var _noun_study: VBoxContainer
 var _track_button: Button
 var _previous_page: Button
 var _next_page: Button
@@ -116,18 +117,19 @@ func _build_screen() -> void:
 	header.offset_left = 24
 	header.offset_right = -24
 	header.offset_top = 10
-	header.offset_bottom = 58
+	header.offset_bottom = 66
 	header.add_theme_constant_override("separation", 12)
 	_layout.add_child(header)
 	var heading := _label("Quiet Alcove", 28, ChamberKit.PARCHMENT, &"ArcaneHeading")
 	heading.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	header.add_child(heading)
-	_research_button = _button("Research thread", _open_research_target)
+	_research_button = _button("Research", _open_research_target)
 	_research_button.name = "ResearchTarget"
-	_research_button.clip_text = true
-	_research_button.custom_minimum_size.x = 190
+	_research_button.custom_minimum_size.x = 176
 	header.add_child(_research_button)
-	header.add_child(_button("Return to courtyard", _close))
+	var courtyard := _button("Return to courtyard", _close)
+	courtyard.name = "ReturnToCourtyard"
+	header.add_child(courtyard)
 	_build_shelves()
 	_build_reader()
 	_refresh_book_marks()
@@ -180,14 +182,14 @@ func _place_books() -> void:
 func _build_reader() -> void:
 	_reading_veil = ColorRect.new()
 	_reading_veil.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_reading_veil.offset_top = 68
+	_reading_veil.offset_top = 78
 	_reading_veil.color = Color(0.02, 0.018, 0.014, 0.5)
 	_reading_veil.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_layout.add_child(_reading_veil)
 	_reader = Control.new()
 	_reader.name = "BookReader"
 	_reader.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_reader.offset_top = 70
+	_reader.offset_top = 82
 	_reader.offset_bottom = -8
 	_layout.add_child(_reader)
 	_open_book = OpenBook.new()
@@ -216,7 +218,7 @@ func _build_reader() -> void:
 	_left_page.add_child(_subtitle)
 	_icon = TextureRect.new()
 	_icon.name = "AccountIllustration"
-	_icon.custom_minimum_size.y = 150
+	_icon.custom_minimum_size.y = 280
 	_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -225,10 +227,20 @@ func _build_reader() -> void:
 	_seal.name = "SealedPageWax"
 	_seal.custom_minimum_size.y = 140
 	_left_page.add_child(_seal)
+	_noun_study = VBoxContainer.new()
+	_noun_study.name = "NounStudy"
+	_noun_study.add_theme_constant_override("separation", 4)
+	_noun_study.hide()
+	_left_page.add_child(_noun_study)
 	_plate_body = _prose(20)
 	_plate_body.name = "MarginalNote"
 	_plate_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_left_page.add_child(_plate_body)
+	# Wrapped type settles after the hidden reader becomes visible. Rebudget
+	# the actual portrait after those metrics arrive, including window changes.
+	for control: Control in [_left_page, _title, _subtitle, _plate_body]:
+		control.resized.connect(func() -> void: _refresh_identity_layout.call_deferred())
+	_left_page.visibility_changed.connect(func() -> void: _refresh_identity_layout.call_deferred())
 	_track_button = _ink_button("Mark this clue", _toggle_research_target)
 	_track_button.name = "BookmarkPage"
 	_left_page.add_child(_track_button)
@@ -248,8 +260,8 @@ func _build_reader() -> void:
 	_body.meta_clicked.connect(_follow_book_link)
 	_right_page.add_child(_body)
 	_body.resized.connect(func() -> void: _reflow_account.call_deferred())
-	_left_folio = _label("", 17, PAGE_INK, &"ArcaneItalic")
-	_page_number = _label("", 17, PAGE_INK, &"ArcaneItalic")
+	_left_folio = _label("", 21, PAGE_INK, &"ArcaneItalic")
+	_page_number = _label("", 21, PAGE_INK, &"ArcaneItalic")
 	for label: Label in [_left_folio, _page_number]:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -262,10 +274,12 @@ func _build_reader() -> void:
 	_next_page = _ink_button("Turn page →", _turn_page.bind(1))
 	for button: Button in [_previous_page, _next_page]:
 		button.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-		button.anchor_left = 0.11 if button == _previous_page else 0.74
-		button.anchor_right = 0.24 if button == _previous_page else 0.89
-		button.anchor_top = 0.85
+		button.anchor_left = 0.10 if button == _previous_page else 0.71
+		button.anchor_right = 0.29 if button == _previous_page else 0.90
+		button.anchor_top = 0.84
 		button.anchor_bottom = 0.91
+		button.custom_minimum_size.y = 44
+		button.alignment = HORIZONTAL_ALIGNMENT_LEFT if button == _previous_page else HORIZONTAL_ALIGNMENT_RIGHT
 		(_left_leaf if button == _previous_page else _right_leaf).add_child(button)
 	for index: int in range(3):
 		var ribbon: Button = Bookmark.new()
@@ -276,12 +290,14 @@ func _build_reader() -> void:
 		_open_book.add_child(ribbon)
 		_ribbons.append(ribbon)
 	_open_book.resized.connect(_reader_resized)
-	var shelves := _button("Put book back · Esc / B", show_shelves)
+	var shelves := _button("Put back · Esc / B", show_shelves)
+	shelves.name = "PutBookBack"
 	shelves.position = Vector2(18, 0)
 	_reader.add_child(shelves)
 	var find := _button("Find in this volume", _toggle_find)
+	find.name = "FindInVolume"
 	find.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
-	find.offset_left = -220
+	find.offset_left = -250
 	find.offset_right = -18
 	_reader.add_child(find)
 	_search_panel = PanelContainer.new()
@@ -289,17 +305,18 @@ func _build_reader() -> void:
 	_search_panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT)
 	_search_panel.offset_left = -450
 	_search_panel.offset_right = -18
-	_search_panel.offset_top = 46
-	_search_panel.offset_bottom = 126
+	_search_panel.offset_top = 62
+	_search_panel.offset_bottom = 156
 	_search_panel.add_theme_stylebox_override("panel", ChamberKit.box(ChamberKit.PANEL, ChamberKit.GOLD_DIM, 1, 10))
 	_reader.add_child(_search_panel)
 	var search_contents := VBoxContainer.new()
 	_search_panel.add_child(search_contents)
-	_search_caption = _label("Find an account", 18, ChamberKit.PARCHMENT)
+	_search_caption = _label("Find an account", 23, ChamberKit.PARCHMENT)
 	search_contents.add_child(_search_caption)
 	_search = LineEdit.new()
 	_search.name = "Search"
 	_search.placeholder_text = "Names you know, or a clue…"
+	_search.add_theme_font_size_override("font_size", 25)
 	_search.text_changed.connect(func(_text: String) -> void: _refresh_results())
 	search_contents.add_child(_search)
 	_search_panel.hide()
@@ -347,30 +364,60 @@ func _button(caption: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = caption
 	button.theme_type_variation = &"ArcaneSmallButton"
+	button.add_theme_font_override("font", ChamberKit.THEME.get_font(&"font", &"ArcaneKeyButton"))
+	button.add_theme_font_size_override("font_size", 25)
+	button.custom_minimum_size.y = 56
 	button.pressed.connect(action)
 	return button
 
 func _ink_button(caption: String, action: Callable) -> Button:
 	var button := _button(caption, action)
 	button.theme_type_variation = &"ArcaneLinkButton"
-	button.add_theme_font_size_override("font_size", 20)
+	button.add_theme_font_override("font", ChamberKit.THEME.get_font(&"font", &"ArcaneLinkButton"))
+	button.add_theme_font_size_override("font_size", 25)
+	button.custom_minimum_size.y = 44
 	button.add_theme_color_override("font_color", PAGE_INK)
 	button.add_theme_color_override("font_hover_color", Color(0.48, 0.22, 0.09))
 	button.add_theme_color_override("font_focus_color", Color(0.48, 0.22, 0.09))
+	button.add_theme_color_override("font_pressed_color", Color(0.48, 0.22, 0.09))
+	button.add_theme_color_override("font_disabled_color", Color(PAGE_INK, 0.38))
 	for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 		button.add_theme_stylebox_override(state, StyleBoxEmpty.new())
+	var mark := StyleBoxFlat.new()
+	mark.bg_color = Color(PAGE_INK, 0.045)
+	mark.border_color = Color(PAGE_INK, 0.42)
+	mark.border_width_bottom = 1
+	button.add_theme_stylebox_override("hover", mark)
+	button.add_theme_stylebox_override("focus", mark)
+	button.add_theme_stylebox_override("pressed", mark)
 	return button
 
 func _reader_resized() -> void:
 	_open_book.pivot_offset = _open_book.size * 0.5
 	for index: int in range(_ribbons.size()):
 		var ribbon := _ribbons[index]
-		ribbon.position = _open_book.size * Vector2(0.43 + index * 0.063, 0.885)
-		ribbon.size = _open_book.size * Vector2(0.05, 0.105)
+		var width := maxf(114.0, _open_book.size.x * 0.08)
+		var gap := maxf(16.0, _open_book.size.x * 0.012)
+		var left := _open_book.size.x * 0.5 - width - gap * 0.5 if index == 0 else _open_book.size.x * 0.5 + gap * 0.5 + (index - 1) * (width + gap)
+		ribbon.position = Vector2(left, _open_book.size.y * 0.885)
+		ribbon.size = Vector2(width, _open_book.size.y * 0.105)
+		ribbon.set("rest_position", ribbon.position)
 		ribbon.set("root_rect", Rect2(Vector2(0, -_open_book.size.y * 0.815), Vector2(ribbon.size.x, _open_book.size.y * 0.045)))
-	_icon.custom_minimum_size.y = clampf(_open_book.size.y * 0.16, 56, 160)
+		ribbon.call("set_book_open_progress", float(_open_book.get("open_progress")), _open_book.size.x)
+	_refresh_identity_layout.call_deferred()
 	_seal.custom_minimum_size.y = clampf(_open_book.size.y * 0.15, 56, 140)
 	_reflow_account.call_deferred()
+
+func _refresh_identity_layout() -> void:
+	if not is_instance_valid(_icon) or not _icon.is_visible_in_tree() or _left_page.size.x < 40 or _title.size.x < 40:
+		return
+	# Preserve the title and written context at larger text scales, then give
+	# the actual game portrait the remaining illustrated area on this leaf.
+	var fixed := _volume_title.get_combined_minimum_size().y + _title.get_combined_minimum_size().y + _subtitle.get_combined_minimum_size().y + 40.0
+	fixed += _plate_body.get_content_height()
+	if _track_button.visible:
+		fixed += _track_button.get_combined_minimum_size().y + 8.0
+	_icon.custom_minimum_size.y = floorf(minf(_open_book.size.y * 0.25, maxf(80.0, _left_page.size.y - fixed - 4.0)))
 
 func select_book(category: String) -> void:
 	if not LibraryData.CATEGORIES.has(category) or _closing:
@@ -425,13 +472,29 @@ func _begin_cover_open() -> void:
 	_shelves.hide()
 	_reader.show()
 	_reading_veil.show()
+	if not ChamberKit.reduced():
+		# Container wrapping must settle before freezing the ink onto the
+		# moving paper. Keep this preparation invisible under the closed cover.
+		_book_pages.modulate.a = 0.0
+		_book_pages.show()
+		await get_tree().process_frame
+		_refresh_identity_layout()
+		await get_tree().process_frame
+		if _closing or _reading_state != ReadingState.OPENING:
+			_book_pages.modulate.a = 1.0
+			return
+	if _open_book.has_method("capture_opening_pages"):
+		_open_book.call("capture_opening_pages", _left_leaf, _right_leaf)
+	if not ChamberKit.reduced():
+		_book_pages.hide()
+		_book_pages.modulate.a = 1.0
 	SfxManager.play_ui(&"library_open")
 	if ChamberKit.reduced():
 		_open_book.set("open_progress", 1.0)
 		_finish_open()
 	else:
 		_open_tween = ChamberKit.tween(self)
-		_open_tween.tween_property(_open_book, "open_progress", 1.0, 0.48).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_open_tween.tween_property(_open_book, "open_progress", 1.0, 0.56).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		_open_tween.tween_callback(_finish_open)
 
 func _finish_open() -> void:
@@ -489,6 +552,8 @@ func _retire_volume(switching: bool) -> void:
 	_refresh_book_marks()
 	SfxManager.play_ui(&"library_close")
 	if not ChamberKit.reduced():
+		if _open_book.has_method("capture_opening_pages"):
+			_open_book.call("capture_opening_pages", _left_leaf, _right_leaf)
 		_open_tween = ChamberKit.tween(self)
 		_open_tween.tween_property(_open_book, "open_progress", 0.0, 0.34).set_trans(Tween.TRANS_SINE)
 		_open_tween.tween_callback(_return_closed_cover)
@@ -602,7 +667,7 @@ func _refresh_book_marks() -> void:
 		book.call("refresh_marks")
 		book.tooltip_text = LibraryData.CATEGORIES[index] + " · Volume " + ChamberKit.roman(index + 1) + "\n" + book.tooltip_text
 	_research_button.disabled = target.is_empty()
-	_research_button.text = "Research thread" if target.is_empty() else "Recovered account" if target["discovered"] else "Follow research thread"
+	_research_button.text = "Research" if target.is_empty() else "Read account" if target["discovered"] else "Follow thread"
 	_research_button.tooltip_text = "Mark a clue inside a volume to seek it out." if target.is_empty() else String(target["title"]) + "\n" + String(target["hint"])
 
 func _describe_book(index: int) -> void:
@@ -635,6 +700,7 @@ func _refresh_results() -> void:
 		_icon.hide()
 		_icon.texture = null
 		_seal.hide()
+		_noun_study.hide()
 		_plate_body.text = "Try another name you know, or the words of a clue."
 		_right_caption.text = "The search"
 		_account_text = "Only discoveries and written clues on sealed accounts can be found."
@@ -672,8 +738,10 @@ func _show_entry(index: int, animate: bool = true) -> void:
 	if not research.is_empty():
 		_account_text += "\n\n" + research
 	_track_button.visible = bool(entry["trackable"])
+	_update_noun_study(entry)
 	_update_bookmark_button()
 	_reflow_account()
+	_refresh_identity_layout.call_deferred()
 	_update_ribbons()
 	if animate:
 		_finish_leaf_target.call_deferred()
@@ -682,14 +750,22 @@ func _reflow_account() -> void:
 	if not is_instance_valid(_body) or _body.size.x < 40 or _body.size.y < 50:
 		return
 	var font := _body.get_theme_font(&"normal_font")
-	var left_text_height := _left_page.size.y - _title.get_combined_minimum_size().y - _volume_title.get_combined_minimum_size().y - 40.0
-	var leaves := Pagination.paginate(_account_text, font, 24, _body.size.x, minf(_body.size.y - 8, left_text_height))
+	var right_height := _body.size.y - 8.0
+	var left_text_height := _left_page.size.y - _title.get_combined_minimum_size().y - _volume_title.get_combined_minimum_size().y - 16.0
+	var first_leaves := Pagination.paginate(_account_text, font, 24, _body.size.x, right_height)
 	_folios.clear()
 	_left_folios.clear()
-	if not leaves.is_empty():
-		_folios.append(leaves[0])
+	if not first_leaves.is_empty():
+		_folios.append(first_leaves[0])
 		_left_folios.append("")
-		var leaf := 1
+		# The first right leaf has its full height. Following spreads retain the
+		# volume and account title on the left, so budget those leaves separately.
+		# Balanced fragments retain their formatting when measured again.
+		var remaining := "".join(first_leaves.slice(1))
+		var leaves: Array[String] = []
+		if not remaining.is_empty():
+			leaves = Pagination.paginate(remaining, font, 24, _body.size.x, minf(right_height, left_text_height))
+		var leaf := 0
 		while leaf < leaves.size():
 			_left_folios.append(leaves[leaf])
 			_folios.append(leaves[leaf + 1] if leaf + 1 < leaves.size() else "")
@@ -707,10 +783,13 @@ func _display_folio() -> void:
 	var is_continuation := _folio_index > 0
 	_continuation.visible = is_continuation
 	_continuation.text = _left_folios[_folio_index] if is_continuation else ""
-	_subtitle.visible = not is_continuation
+	var noun_study := _noun_study.get_child_count() > 0 and String(entry.get("category", "")) == "Pairs"
+	_noun_study.visible = not is_continuation and noun_study
+	_subtitle.visible = not is_continuation and not noun_study
 	_icon.visible = not is_continuation and _icon.texture != null
 	_seal.visible = not is_continuation and not entry.is_empty() and not bool(entry["discovered"])
-	_plate_body.visible = not is_continuation
+	_plate_body.visible = not is_continuation and not noun_study
+	_seal.custom_minimum_size.y = minf(_open_book.size.y * 0.10, 80.0) if noun_study else clampf(_open_book.size.y * 0.15, 56, 140)
 	_track_button.visible = not is_continuation and bool(entry.get("trackable", false))
 	_right_caption.text = "The search" if entry.is_empty() else "Continued account" if is_continuation and not _body.text.is_empty() else "End of account" if is_continuation else "The account" if bool(entry.get("discovered", false)) else "A clue in the margin"
 	_body.scroll_to_line(0)
@@ -772,8 +851,8 @@ func _start_leaf_turn(direction: int) -> void:
 		_open_book.call("capture_leaf", _right_leaf if direction > 0 else _left_leaf, direction)
 		_open_book.set("turn_progress", 0.0)
 		_page_tween = ChamberKit.tween(self)
-		_page_tween.tween_interval(0.04)
-		_page_tween.tween_property(_open_book, "turn_progress", 1.0, 0.52).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		_page_tween.tween_interval(0.03)
+		_page_tween.tween_property(_open_book, "turn_progress", 1.0, 0.36).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		_page_tween.tween_callback(_finish_turn)
 	else:
 		_reading_state = ReadingState.READING
@@ -852,7 +931,40 @@ func _entry_for_key(key: String) -> Dictionary:
 	return {}
 
 func _update_bookmark_button() -> void:
-	_track_button.text = "Remove the research thread" if Global.library_target_key == _selected_key else "Mark this account" if _entry_for_key(_selected_key).get("discovered", false) else "Mark this clue"
+	_track_button.text = "Remove thread" if Global.library_target_key == _selected_key else "Mark account" if _entry_for_key(_selected_key).get("discovered", false) else "Mark clue"
+	_track_button.tooltip_text = "Remove this account's research thread." if Global.library_target_key == _selected_key else "Keep a research thread at this account."
+
+func _update_noun_study(entry: Dictionary) -> void:
+	for child: Node in _noun_study.get_children():
+		_noun_study.remove_child(child)
+		child.queue_free()
+	if String(entry.get("category", "")) != "Pairs":
+		_noun_study.hide()
+		return
+	var pair := ManifestationPairCatalog.get_def(StringName(entry.get("id", "")))
+	if pair == null:
+		_noun_study.hide()
+		return
+	# These nouns are already written in the public clue. The live counts use
+	# the data helper's distinct worn-rule contract without naming hidden rules.
+	var counts := LibraryData._equipped_noun_counts()
+	_noun_study.add_child(_label("Your current equipment", 22, PAGE_INK, &"ArcaneItalic"))
+	for noun: StringName in pair.nouns:
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 10)
+		_noun_study.add_child(row)
+		var glyph := _label(ManifestationNouns.glyph(noun), 32, ManifestationNouns.colour(noun))
+		glyph.name = "NounGlyph" + String(noun).capitalize()
+		glyph.custom_minimum_size.x = 40
+		glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		glyph.add_theme_color_override("font_outline_color", PAGE_INK)
+		glyph.add_theme_constant_override("outline_size", 4)
+		row.add_child(glyph)
+		var label := _label(ManifestationNouns.label(noun).capitalize(), 24, PAGE_INK)
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		row.add_child(_label("%d / %d" % [int(counts.get(noun, 0)), ManifestationPairCatalog.NOUN_THRESHOLD], 25, PAGE_INK))
+	_noun_study.show()
 
 func _toggle_research_target() -> void:
 	if _selected_key.is_empty() or not _can_read():

@@ -21,6 +21,7 @@ var root_rect := Rect2():
 		root_rect = value
 		queue_redraw()
 var volume := 1
+var rest_position := Vector2.ZERO
 var _cloth: AtlasTexture
 var _root: AtlasTexture
 var _tail: AtlasTexture
@@ -92,10 +93,18 @@ func _animate_pull(target: float, duration: float) -> void:
 func tail_geometry() -> Dictionary:
 	var engaged := not disabled and (has_focus() or is_hovered())
 	var lift := -2.0 if engaged and not Kit.reduced() else 0.0
-	var font_size := clampi(roundi(size.x * 0.15), 10, 18)
-	while FONT.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > size.x * 0.78 and font_size > 8:
+	var font_size := clampi(roundi(size.x * 0.16), 17, 24)
+	while FONT.get_string_size(label, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x > size.x * 0.86 and font_size > 17:
 		font_size -= 1
 	return {"root": root_rect, "tail": Rect2(Vector2(0, lift), Vector2(size.x, size.y + _tail_pull)), "font_size": font_size, "baseline": lift + size.y * 0.35 + FONT.get_ascent(font_size) * 0.4 + _tail_pull}
+
+func set_book_open_progress(progress: float, book_width: float) -> void:
+	var gutter := book_width * 0.5
+	var left_attached := rest_position.x + size.x * 0.5 < gutter
+	var reach := maxf(0.0, -cos(PI * clampf(progress, 0.0, 1.0))) if left_attached else 1.0
+	position = Vector2(gutter + (rest_position.x - gutter) * reach, rest_position.y)
+	scale.x = reach
+	visible = reach > 0.001
 
 func _draw() -> void:
 	if _tail == null:
@@ -110,4 +119,4 @@ func _draw() -> void:
 	if _root != null and geometry.root.has_area():
 		draw_texture_rect(_root, geometry.root, false, material)
 	draw_texture_rect(_tail, geometry.tail, false, material)
-	draw_string(FONT, Vector2(size.x * 0.10, geometry.baseline), label, HORIZONTAL_ALIGNMENT_CENTER, size.x * 0.80, geometry.font_size, Color(1.0, 0.88, 0.64))
+	draw_string(FONT, Vector2(size.x * 0.07, geometry.baseline), label, HORIZONTAL_ALIGNMENT_CENTER, size.x * 0.86, geometry.font_size, Color(1.0, 0.93, 0.76))
