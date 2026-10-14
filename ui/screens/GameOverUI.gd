@@ -27,6 +27,9 @@ var _breath_tw: Tween = null
 func _ready() -> void:
 	# allow UI to work even when game is paused
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	restart_requested.connect(func() -> void: SfxManager.play_ui(&"ui_click"))
+	menu_requested.connect(func() -> void: SfxManager.play_ui(&"ui_back"))
+	quit_requested.connect(func() -> void: SfxManager.play_ui(&"ui_click"))
 
 	btn_restart.pressed.connect(func(): restart_requested.emit())
 	btn_menu.pressed.connect(func(): menu_requested.emit())

@@ -22,9 +22,10 @@ func _ready() -> void:
 
 	mouse_entered.connect(_on_hover)
 	mouse_exited.connect(_on_unhover)
+	focus_entered.connect(_on_hover)
+	focus_exited.connect(_on_unhover)
 	button_down.connect(_on_down)
 	button_up.connect(_on_up)
-	pressed.connect(_on_pressed_sfx)
 
 func _set_pivot_center() -> void:
 	pivot_offset = size * 0.5
@@ -48,12 +49,13 @@ func _on_hover() -> void:
 		return
 	if not is_inside_tree():
 		return
-	if SfxManager != null:
-		SfxManager.play_ui(&"ui_hover")
 	_tween_to(_base_scale * hover_scale, hover_tint, Tween.EASE_OUT)
 
 func _on_unhover() -> void:
 	if disabled:
+		return
+	if has_focus() or is_hovered():
+		_on_hover()
 		return
 	_tween_to(_base_scale, _base_modulate, Tween.EASE_OUT)
 
@@ -65,10 +67,7 @@ func _on_down() -> void:
 func _on_up() -> void:
 	if disabled:
 		return
-	_on_hover()
-
-func _on_pressed_sfx() -> void:
-	if not is_inside_tree():
-		return
-	if SfxManager != null:
-		SfxManager.play_ui(&"ui_click")
+	if has_focus() or is_hovered():
+		_on_hover()
+	else:
+		_tween_to(_base_scale, _base_modulate, Tween.EASE_OUT)

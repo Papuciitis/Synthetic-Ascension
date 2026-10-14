@@ -2,8 +2,10 @@
 # Format: id=relative/path|vol=-10|pitch=0.04|loop=1|bus=UI
 
 # UI
-ui_hover=ui/ui_hover.wav|vol=-10|pitch=0.03|bus=UI
-ui_click=ui/ui_click.wav|vol=-8|pitch=0.02|bus=UI
+# Kenney UI Audio CC0, unchanged short recordings. See interface/CREDITS.md.
+ui_hover=interface/hover.wav|vol=-18|pitch=0.00|bus=UI
+ui_click=interface/click.wav|vol=-14|pitch=0.00|bus=UI
+ui_toggle=interface/toggle.wav|vol=-16|pitch=0.00|bus=UI
 ui_back=ui/ui_back.ogg|vol=-10|pitch=0.02|bus=UI
 ui_error=ui/ui_error.wav|vol=-8|pitch=0.00|bus=UI
 

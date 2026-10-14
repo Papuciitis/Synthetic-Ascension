@@ -73,6 +73,7 @@ func _ready() -> void:
 
 
 func close() -> void:
+	SfxManager.play_ui(&"ui_back")
 	visible = false
 	closed.emit()
 	queue_free()
@@ -404,6 +405,7 @@ func _on_corrupt_pressed(id: StringName) -> void:
 		]
 	else:
 		_status.text = "%s cannot be corrupted." % Global.augment_display_name(id)
+		SfxManager.play_ui(&"ui_error")
 	_refresh()
 	_focus_tab()
 
@@ -523,6 +525,7 @@ func _on_transfuse_pressed() -> void:
 		]
 	else:
 		_status.text = "Cannot transfuse: %s." % String(result.get("reason", ""))
+		SfxManager.play_ui(&"ui_error")
 	_refresh()
 	if not _focus_page_control("TransfuseButton"):
 		_focus_tab()
@@ -589,8 +592,10 @@ func _on_buy_pressed(id: StringName) -> void:
 		_status.text = "%s bought for %d Followers." % [Vouchers.display_name(id), price]
 	elif Global.followers < price:
 		_status.text = "%s needs %d Followers." % [Vouchers.display_name(id), price]
+		SfxManager.play_ui(&"ui_error")
 	else:
 		_status.text = "%s cannot be bought." % Vouchers.display_name(id)
+		SfxManager.play_ui(&"ui_error")
 	_refresh()
 	_focus_tab()
 

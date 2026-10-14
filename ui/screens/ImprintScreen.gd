@@ -48,6 +48,7 @@ func _ready() -> void:
 
 
 func close() -> void:
+	SfxManager.play_ui(&"ui_back")
 	visible = false
 	closed.emit()
 	queue_free()
@@ -324,6 +325,7 @@ func _fill_lists() -> void:
 					_status.text = "%s now carries %s%s." % [inst.data.display_name, selected_def.display_name if selected_def != null else String(_selected), (", %s kept" % replaced_def.display_name) if replaced_def != null else ""]
 				else:
 					_status.text = String(result.get("reason", ""))
+					SfxManager.play_ui(&"ui_error")
 				_refresh()
 			)
 		else:

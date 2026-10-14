@@ -84,6 +84,7 @@ func open() -> void:
 func close() -> void:
 	if not visible:
 		return
+	SfxManager.play_ui(&"ui_back")
 	hide()
 	closed.emit()
 

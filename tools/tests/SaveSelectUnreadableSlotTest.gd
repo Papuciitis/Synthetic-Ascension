@@ -5,9 +5,10 @@ extends Node
 # click created a fresh profile over it. The card must say the slot is
 # unreadable, offer only Delete, and SaveSelect must refuse to create.
 #
-# Uses slot 97 like SaveIntegrityTest; slots 1-3 (real profiles) are only read.
+# Every slot read/write is isolated from the player's profile directory.
 
 const TEST_SLOT := 97
+const TEST_DIR := "user://saves_test_save_select_unreadable/"
 const GARBAGE := "not a Godot resource"
 
 var _passes := 0
@@ -28,7 +29,7 @@ func _check(condition: bool, message: String) -> void:
 
 
 func _primary_path() -> String:
-	return "user://saves/slot_%d.tres" % TEST_SLOT
+	return TEST_DIR + "slot_%d.tres" % TEST_SLOT
 
 
 func _run() -> void:
@@ -37,6 +38,8 @@ func _run() -> void:
 	if sm == null:
 		_finish()
 		return
+	sm.save_dir = TEST_DIR
+	sm.current_save = null
 	sm.delete_slot(TEST_SLOT)
 	sm.ensure_dir()
 	var file := FileAccess.open(_primary_path(), FileAccess.WRITE)

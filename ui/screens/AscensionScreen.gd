@@ -74,6 +74,7 @@ func open(pause_tree: bool = false) -> void:
 
 
 func close() -> void:
+	SfxManager.play_ui(&"ui_back")
 	if _pause_on_close and get_tree() != null:
 		get_tree().paused = _pause_was
 	visible = false
@@ -628,6 +629,7 @@ func _request_purchase(id: String) -> void:
 				any = true
 		if not any:
 			_status.text = String(ledger.can_buy(id, Global.followers, _first_unopened(ledger))["reason"]).capitalize()
+			SfxManager.play_ui(&"ui_error")
 			return
 		_confirm_core.visible = true
 		_confirm_core.select(0)
@@ -636,6 +638,7 @@ func _request_purchase(id: String) -> void:
 		verdict = ledger.can_buy(id, Global.followers)
 		if not bool(verdict["ok"]):
 			_status.text = String(verdict["reason"]).capitalize()
+			SfxManager.play_ui(&"ui_error")
 			return
 	_pending_purchase = id
 	# The dialog also asks about refunds; this question is a purchase.
@@ -682,6 +685,7 @@ func _confirm_pending_purchase() -> void:
 	var verdict := ledger.can_buy(id, Global.followers, chosen_core)
 	if not bool(verdict["ok"]):
 		_status.text = String(verdict["reason"]).capitalize()
+		SfxManager.play_ui(&"ui_error")
 		return
 	_buy(id, chosen_core)
 
@@ -836,6 +840,7 @@ func _buy(id: String, chosen_core: String) -> void:
 	var verdict := Global.ascension_buy(id, chosen_core)
 	if not bool(verdict["ok"]):
 		_status.text = String(verdict["reason"]).capitalize()
+		SfxManager.play_ui(&"ui_error")
 		return
 	_celebrate_panel()
 	_after_change()
@@ -853,6 +858,7 @@ func _downgrade(id: String) -> void:
 		return
 	if not Global.ascension_refund_context_hub:
 		_status.text = "Downgrades are a Hub decision."
+		SfxManager.play_ui(&"ui_error")
 		return
 	var back := Global.ascension_downgrade(id)
 	if back > 0:
@@ -869,10 +875,12 @@ func _request_refund(id: String) -> void:
 	if not Global.ascension_refund_context_hub:
 		if _status != null:
 			_status.text = "Refunds are a Hub decision."
+		SfxManager.play_ui(&"ui_error")
 		return
 	if Global.ascension_refunds_forfeit():
 		if _status != null:
 			_status.text = "Tithe Ledger: every purchase is a vow; nothing refunds."
+		SfxManager.play_ui(&"ui_error")
 		return
 	var ledger := _ledger()
 	if ledger == null or _confirm == null:
@@ -882,6 +890,7 @@ func _request_refund(id: String) -> void:
 	if not blocked.is_empty():
 		if _status != null:
 			_status.text = "Sworn: %s never refund." % ", ".join(PackedStringArray(blocked))
+		SfxManager.play_ui(&"ui_error")
 		return
 	if (preview.get("removed", []) as Array).is_empty():
 		return
@@ -936,12 +945,14 @@ func _refund(id: String) -> void:
 	if not Global.ascension_refund_context_hub:
 		if _status != null:
 			_status.text = "Refunds are a Hub decision."
+		SfxManager.play_ui(&"ui_error")
 		return
 	var preview: Dictionary = _ledger().refund_preview(id)
 	var blocked: Array = preview.get("blocked", [])
 	if not blocked.is_empty():
 		if _status != null:
 			_status.text = "Sworn: %s never refund%s." % [", ".join(PackedStringArray(blocked)), "" if blocked.size() == 1 else ""]
+		SfxManager.play_ui(&"ui_error")
 		return
 	var back := Global.ascension_refund(id)
 	if back > 0 or not _ledger().owns(id):

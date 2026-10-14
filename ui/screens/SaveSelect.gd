@@ -48,6 +48,7 @@ func _ready() -> void:
 	if back != null:
 		back.pressed.connect(func() -> void:
 			if not _dialog_open():
+				SfxManager.play_ui(&"ui_back")
 				Global.goto_main_menu()
 		)
 		# BACK takes focus on hover (every menu entry does); passing over it must
@@ -206,6 +207,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if _dialog_open():
 		return
 	get_viewport().set_input_as_handled()
+	SfxManager.play_ui(&"ui_back")
 	Global.goto_main_menu()
 
 

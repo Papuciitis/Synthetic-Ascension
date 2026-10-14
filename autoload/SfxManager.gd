@@ -4,6 +4,7 @@ extends Node
 
 const MANIFEST_PATH: String = "res://assets/audio/sfx/sfx_manifest.txt"
 const BASE_DIR: String = "res://assets/audio/sfx/"
+const UiSoundRouter := preload("res://autoload/UiSoundRouter.gd")
 
 class SoundDef:
 	var stream: AudioStream
@@ -41,6 +42,8 @@ var _global_pool: Array[AudioStreamPlayer] = []
 ## before the headless guard, so the decisions are testable without audio.
 var debug_record := false
 var debug_requests: Array[Dictionary] = []
+## The menu router gives authored feedback priority over generic clicks.
+var ui_request_serial := 0
 var _last_limited_ms: Dictionary = {} # id -> msec of its last limited play
 
 ## Kill streak ladder (audit 2026-10-04, change 10): the death sound climbs a
@@ -70,6 +73,9 @@ func _ready() -> void:
 	_ui.bus = _best_bus(&"UI")
 	_ui.finished.connect(_on_ui_finished)
 	add_child(_ui)
+	var router := UiSoundRouter.new()
+	router.name = "UiSoundRouter"
+	add_child(router)
 
 	for i in range(pool_size):
 		var p := AudioStreamPlayer2D.new()
@@ -105,6 +111,7 @@ func _hook_run_events() -> void:
 # ----------------------------
 
 func play_ui(id: StringName, vol_add_db: float = 0.0) -> void:
+	ui_request_serial += 1
 	_record(id, &"ui", vol_add_db, 1.0, Vector2.ZERO)
 	if _headless:
 		return

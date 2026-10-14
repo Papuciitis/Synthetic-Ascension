@@ -145,7 +145,7 @@ func _run() -> void:
 	escape.action = &"ui_cancel"
 	escape.pressed = true
 	Input.parse_input_event(escape)
-	await get_tree().create_timer(0.25, true).timeout
+	await get_tree().create_timer(0.75, true).timeout
 	_check(hub._open_panel == library and get_tree().paused and not hub._interact_enabled, "Escape closes the book onto its shelf while keeping the courtyard paused")
 	escape.pressed = false
 	Input.parse_input_event(escape)

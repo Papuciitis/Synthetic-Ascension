@@ -438,6 +438,7 @@ func _has_prop(obj: Object, prop: StringName) -> bool:
 # ============================================================
 
 func _on_back_to_saves_pressed() -> void:
+	SfxManager.play_ui(&"ui_back")
 	Global.goto_save_select()
 
 

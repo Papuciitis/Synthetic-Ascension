@@ -332,6 +332,7 @@ func _toggle_item_lock(inst: ItemInstance) -> void:
 		return
 	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
 	inst.toggle_locked()
+	SfxManager.play_ui(&"ui_toggle")
 	if inst.locked:
 		# A newly locked item is immediately removed from any pending sale cart.
 		for key: Variant in _sell_inv.keys():
@@ -947,10 +948,12 @@ func _quick_move_equipped_to_bag(slot: int) -> void:
 		return
 	if inst.locked:
 		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before moving it."
+		SfxManager.play_ui(&"ui_error")
 		return
 	var dst: int = Global.run_bag.first_empty_slot()
 	if dst < 0:
 		if trade_status != null: trade_status.text = "BACKPACK FULL"
+		SfxManager.play_ui(&"ui_error")
 		return
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_inv.erase(slot)
@@ -967,14 +970,17 @@ func _quick_equip_from_bag(slot: int) -> void:
 		return
 	if inst.locked:
 		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before equipping it."
+		SfxManager.play_ui(&"ui_error")
 		return
 	var equip_slot: int = int(inst.data.equip_slot)
 	if equip_slot < 0 or equip_slot >= Inventory.SLOT_COUNT:
 		if trade_status != null: trade_status.text = "THIS ITEM CANNOT BE EQUIPPED"
+		SfxManager.play_ui(&"ui_error")
 		return
 	var current: ItemInstance = Global.run_inventory.get_at(equip_slot)
 	if current != null and current.locked:
 		if trade_status != null: trade_status.text = "EQUIPPED ITEM LOCKED · Unlock it before replacement."
+		SfxManager.play_ui(&"ui_error")
 		return
 	_invalidate_trade_undo("UNDO CLEARED · Equipment changed.")
 	_sell_bag.erase(slot)
@@ -991,12 +997,14 @@ func _quick_move_bag_to_stash(slot: int) -> void:
 		return
 	if inst.locked:
 		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before moving it."
+		SfxManager.play_ui(&"ui_error")
 		return
 	if Global.meta_stash == null:
 		Global.meta_stash = StashInventory.new()
 	var dst: int = Global.meta_stash.first_empty_slot()
 	if dst < 0:
 		if trade_status != null: trade_status.text = "STASH FULL"
+		SfxManager.play_ui(&"ui_error")
 		return
 	_invalidate_trade_undo("UNDO CLEARED · Inventory state changed.")
 	_sell_bag.erase(slot)
@@ -1021,6 +1029,7 @@ func _on_inv_slot_clicked(slot: int, button: int, double_click: bool, shift: boo
 		return
 	if inst.locked:
 		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock."
+		SfxManager.play_ui(&"ui_error")
 		return
 	if chk_include_equipped != null and not chk_include_equipped.button_pressed:
 		if shift and trade_status != null:
@@ -1052,6 +1061,7 @@ func _on_bag_slot_clicked(slot: int, button: int, double_click: bool, shift: boo
 		return
 	if inst.locked:
 		if trade_status != null: trade_status.text = "ITEM LOCKED · Ctrl-click to unlock before adding it to the offer."
+		SfxManager.play_ui(&"ui_error")
 		return
 
 	# Shift-click is the explicit trade shortcut; ordinary left-click remains
@@ -1082,6 +1092,7 @@ func _on_vendor_slot_clicked(slot: int, button: int, _double_click: bool, shift:
 	if ctrl:
 		if trade_status != null:
 			trade_status.text = "Vendor stock cannot be locked; lock owned items in Gear, Backpack or Stash."
+		SfxManager.play_ui(&"ui_error")
 		return
 	if button != MOUSE_BUTTON_LEFT:
 		return
@@ -1358,6 +1369,7 @@ func _rebuild_cart_previews() -> void:
 func _barter_pressed() -> void:
 	var validation: Dictionary = _trade_validation()
 	if not bool(validation.get("valid", false)):
+		SfxManager.play_ui(&"ui_error")
 		if trade_status != null:
 			trade_status.text = String(validation.get("reason", "Exchange unavailable."))
 		return
@@ -1385,6 +1397,7 @@ func _perform_trade() -> void:
 	# turn a previously valid cart into an impossible transaction.
 	var validation: Dictionary = _trade_validation()
 	if not bool(validation.get("valid", false)):
+		SfxManager.play_ui(&"ui_error")
 		_refresh_cart()
 		return
 
@@ -1498,6 +1511,7 @@ func _refresh_vendor_pressed() -> void:
 
 	var cost: int = _get_refresh_cost()
 	if Global.followers < cost:
+		SfxManager.play_ui(&"ui_error")
 		return
 
 	Global.transaction_followers(-cost, &"vendor_refresh", {"refresh_index": int(Global.attempt_vendor_refreshes) + 1}, true, false)
@@ -1960,6 +1974,7 @@ func _open_augments() -> void:
 
 func _start_next_segment() -> void:
 	if embedded:
+		SfxManager.play_ui(&"ui_back")
 		_invalidate_trade_undo()
 		embedded_closed.emit()
 		return

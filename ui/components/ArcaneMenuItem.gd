@@ -66,7 +66,6 @@ var _stroked := false
 var _reveal := 0.0
 var _ink := 0.0
 var _t := 0.0
-var _quiet_once := false
 
 
 func _ready() -> void:
@@ -81,15 +80,15 @@ func _ready() -> void:
 	focus_entered.connect(_on_focus_entered)
 	focus_exited.connect(_on_focus_exited)
 	button_down.connect(_on_button_down)
-	pressed.connect(_on_pressed)
 	resized.connect(_layout)
 	_refresh()
 
 
 ## Take focus without the hover sound (initial focus on screen entry).
 func select_quietly() -> void:
-	_quiet_once = true
+	set_meta("ui_sound_quiet_focus", true)
 	grab_focus()
+	remove_meta("ui_sound_quiet_focus")
 
 
 func is_selected() -> bool:
@@ -282,9 +281,6 @@ func _on_focus_entered() -> void:
 	if _focused:
 		return
 	_focused = true
-	if not _quiet_once and is_inside_tree() and SfxManager != null:
-		SfxManager.play_ui(&"ui_hover")
-	_quiet_once = false
 	_refresh()
 	selected.emit(self)
 
@@ -315,11 +311,6 @@ func _on_button_down() -> void:
 	tw.tween_method(func(v: float) -> void: _highlight_mat.set_shader_parameter("glow", v), 1.0, 0.0, 0.35)
 	if not ArcaneMotion.reduced():
 		_burst(1.9)
-
-
-func _on_pressed() -> void:
-	if is_inside_tree() and SfxManager != null:
-		SfxManager.play_ui(&"ui_click")
 
 
 func _animate(on: bool) -> void:

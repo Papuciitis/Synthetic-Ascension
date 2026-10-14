@@ -107,6 +107,7 @@ func open() -> void:
 	visible = true
 
 func _close() -> void:
+	SfxManager.play_ui(&"ui_back")
 	visible = false
 	closed.emit()
 	queue_free()
