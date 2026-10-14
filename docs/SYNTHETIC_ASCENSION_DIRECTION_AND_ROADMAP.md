@@ -1999,3 +1999,28 @@ Shield and Stamina Core (both floored), and a Burden lost to a Recast,
 among smaller ones; all fixed and pinned. New suites: ReliquaryCore,
 FacetDuoEffectsA/B, BindingRitesUi, ReliquaryScreen. Owed: a rendered look
 and the first human run.
+
+## 2026-10-14 — Augment strength and painted upgrade cards
+
+Reviewed all sixteen base augments, six Duos, fourteen Facets and sixteen
+Transcendences. Eight bases gained an earlier payoff: Missile, Slash,
+Blink, Spiderlings, Corruption, Litany, Cult and Gambler. Slash, Blink and
+spider damage no longer use tabletop dice; missiles reacquire living
+targets, and Choir shards exclude the parent's victim through collision
+and retargeting. The Run Sheet reports actual transformed curse and
+recruitment formulas, including live HP and acquisition changes.
+
+Replaced the shared portraits with 52 distinct illustrations in the
+user-approved Magic Missile/Spirit Slash painted style: 16 base, 16
+Transcendence, 14 Facet and 6 Duo. Game exports are 512px. Upgrade previews,
+equipped icons, tooltips and reference screens resolve the appropriate
+form; seven real card pages and all seven Facet choosers were rendered.
+The detailed evidence, prompts and gallery are linked from
+`docs/audits/2026-10-14-augment-pass.md`.
+
+Focused verification: 21 suites, 3,488 passing checks, zero failed checks;
+parse audit 507/507. The seeded immortal-crowd power probe completed.
+These are implementation checks; a human encounter playtest remains due.
+`docs/audits/2026-10-14-augment-combinations.md` records capped/weak rank
+progression, inherited Crown/parry overlap concerns and targeted future
+curse combinations. Those proposals have not been shipped as new rules.

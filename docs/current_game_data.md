@@ -2,17 +2,19 @@
 
 Snapshot of the numeric truth of the game as read from code and resources on 2026-08-28 (branch `enemy-world-work`, Godot 4.7.1). Every table names the file(s) it was read from. Nothing here is estimated; if a value is a script default it is labelled as such.
 
+Augment-specific facts in Quick answers, §4 and §5 were refreshed on 2026-10-14; unrelated sections retain the original snapshot.
+
 ## Quick answers
 
 1. **Items:** 32 `ItemData` `.tres` files under `data/items/defs/`; 31 load into `Global.item_db` (`item_test` has `runtime_enabled = false`).
 2. **Curses:** 8 items whose id begins with `curse_` (all `pct_max = 0`, `drop_weight = 0.3`); 3 of them carry a `negative_effect_scenes` behaviour script (Slow Heart, Sour Providence, Tithe Bones).
 3. **Sets:** 3 (`conduit`, `gravemarch`, `lattice`), 6 pieces each, tiers at 2 / 4 / 6 pieces.
-4. **Augments:** 13 `AugmentData` resources in `data/augments/`; levels start at 1 with no upper cap in code.
+4. **Augments:** 16 `AugmentData` resources in `data/augments/`; normal Binding upgrades and combat effect scaling cap at level 20. Raw saved/debug level storage only enforces a minimum of 1 (see §5).
 5. **Manifestations:** 18 rules in `ManifestationCatalog`, over 5 nouns; **pairs:** 10 (complete C(5,2) matrix) in `ManifestationPairCatalog`.
 6. **Enemy archetypes:** 11 `EnemySpec.AI` kinds; 17 `EnemySpec_*.tres` (13 have scenes in `scenes/world/enemies/`, plus 2 bosses and 2 opening-sequence actors).
 7. **Proxy-eligible enemies:** only actors whose *active* AI is `CHASE` (0) and that carry none of ELITE/CRITICAL/OBJECTIVE/TUTORIAL/NEVER_RETIRE/SPECIAL — in practice non-elite ambient **Grunt, Brute, Runner**. Summoned minions (`SPECIAL`), beat/interior spawns (`SPECIAL`), elites, bosses and tutorial actors are never proxied.
-8. **Corruption Engine:** `power += min(0.30, heaviest_two_active_severity × 0.24·L/(L+1))` — cap +30 % Power, rate 12 % at L1 approaching 24 %.
-9. **Doctrine of Burden qualifying rule:** a NEG item in a statistical slot (0–5) whose `|active_pct| / |pct_min| ≥ 0.10` and that is not suppressed by the Lens; pays `armor += min(96, 16·L/(L+1)·count)` and `max_hp ×= 1 + min(0.54, 0.09·L/(L+1)·count)`.
+8. **Corruption Engine:** `power += min(0.45, heaviest_two_active_severity × 0.50·L/(L+1))` — cap +45 % Power, rate 25 % at L1 approaching 50 %.
+9. **Doctrine of Burden qualifying rule:** a NEG item in a statistical slot (0–5) whose `|active_pct| / max(|pct_min|, |active_pct|, 0.0001) ≥ 0.10` and that is not suppressed by the Lens; pays `armor += min(96, 16·L/(L+1)·count)` and `max_hp ×= 1 + min(0.54, 0.09·L/(L+1)·count)`.
 10. **Luck (via `LuckResolver.effective = luck / (|luck| + 0.5)`) affects:** POS/NEG coin (±12 %), roll quality (±0.15), rarity promotion (±0.18), item and health drop chance (0.75–1.35×), lucky crit (≤8 %, ×1.5 damage), lucky evasion (≤6 %), extra Follower per kill (≤20 %), Cult of Personality chance, vendor buy (−≤12 %)/sell (+≤8 %) prices, vendor stock threat (±0.20), Manifestation roll chance (+0.12·eff), Wager Shrine odds (±0.18), indoor loot chance (±0.12).
 
 ---
@@ -137,7 +139,7 @@ Rarity is an unbounded non-negative integer (`ItemInstance.rarity`, promoted by 
 
 ## 4. Polarity / Burden
 
-Sources: `core/systems/items/ItemGenerator.gd:46-79`, `core/systems/items/LuckResolver.gd`, `autoload/global.gd:911-916` (`roll_percent`) and `:221` (`curse_drop_bias`), `core/systems/items/BurdenSnapshot.gd`, `core/systems/items/BurdenResolver.gd`, `core/actors/player/player.gd:527-602`, `data/items/Inventory.gd:5-12`.
+Sources: `core/systems/items/ItemGenerator.gd:46-79`, `core/systems/items/LuckResolver.gd`, `autoload/global.gd` (`roll_percent`, `curse_drop_bias`), `core/systems/items/BurdenSnapshot.gd`, `core/systems/items/BurdenResolver.gd`, `core/actors/player/player.gd` (`recompute_run_stats`), `data/items/Inventory.gd:5-12`.
 
 **POS/NEG roll (`ItemGenerator.roll_signed_range(min_pct, max_pct, luck, rng)`)**
 
@@ -156,7 +158,7 @@ Sources: `core/systems/items/ItemGenerator.gd:46-79`, `core/systems/items/LuckRe
 | constant | value | meaning |
 |---|---|---|
 | `Inventory.STAT_SLOT_COUNT` | 6 | slots 0–5 are statistical (HP, ARMOR, MOVE, POWER, HASTE, LUCK); 6 = OFFHAND, 7 = RING; `SLOT_COUNT = 8` |
-| `BurdenSnapshot.QUALIFYING_BURDEN_RATIO` | 0.10 | `ratio = |active_pct| / max(|pct_min|, |severity|, 0.0001)` must be ≥ 0.10 to count for the Doctrine |
+| `BurdenSnapshot.QUALIFYING_BURDEN_RATIO` | 0.10 | `ratio = abs(active_pct) / max(abs(pct_min), abs(severity), 0.0001)` must be ≥ 0.10 to count for the Doctrine |
 | `BurdenResolver.INVERSION_RETURN` | 0.55 | fraction of a suppressed curse's severity returned as its own stat |
 | `doctrine_armor_per_item` (static) | 16.0 | flat armour per qualifying curse at L→∞ |
 | `doctrine_hp_per_item` (static) | 0.09 | max-HP fraction per qualifying curse at L→∞ |
@@ -167,9 +169,9 @@ Sources: `core/systems/items/ItemGenerator.gd:46-79`, `core/systems/items/LuckRe
 | suppression | with `augment_inversion_lens`: exactly the single most severe statistical-slot NEG item gets `active = 0`, `suppressed_slot`, `suppressed_severity` | runtime only; the stored roll is never rewritten |
 | totals | over ACTIVE burden only: `active_count`, `total_active`, `severities` (descending), `qualifying_count` | a suppressed curse feeds neither Corruption nor the Doctrine |
 
-**Stat pass in `player.gd recompute_run_stats` (lines 527–602)**
+**Stat pass in `core/actors/player/player.gd recompute_run_stats`**
 
-| slot | application of `pct = item.active_pct()` (suppressed → `pct = 0.55 × suppressed_severity`, positive) |
+| slot | application of `pct = item.active_pct()` (suppressed → `pct = 0.55 × suppressed_severity`, positive; Twin Lens doubles this return before the slot clamp) |
 |---|---|
 | 0 HP | `max_hp ×= (1 + pct)`, pct clamped ±0.95 |
 | 1 ARMOR | `armor ×= (1 + pct)`, ±0.95 |
@@ -178,13 +180,13 @@ Sources: `core/systems/items/ItemGenerator.gd:46-79`, `core/systems/items/LuckRe
 | 4 HASTE | `haste += pct`, ±0.95 |
 | 5 LUCK | `luck += pct`, ±0.9999 |
 
-**The three NEG archetype augments (`player.gd:570-595`)**
+**The three NEG archetype augments (`player.gd recompute_run_stats`)**
 
 | augment | formula | reads |
 |---|---|---|
-| Corruption Engine (`augment_corruption_engine`) | `power += min(0.30, burden.heaviest(2) × asymptotic_rate(0.24, L))` — cap **+0.30**, rate **0.24·L/(L+1)** per 100 % severity of the two most severe ACTIVE curses; also flips NEG merge to keep the deeper roll (`ItemInstance.merge_from`) | `BurdenSnapshot.heaviest(2)` |
-| Doctrine of Burden (`augment_doctrine_of_burden`) | `armor += min(96, 16·L/(L+1) × qualifying_count)`; `max_hp ×= 1 + min(0.54, 0.09·L/(L+1) × qualifying_count)` (`BurdenResolver.doctrine_bonus`) | `BurdenSnapshot.qualifying_count` |
-| Inversion Lens (`augment_inversion_lens`) | suppression in the slot loop (penalty replaced by `+0.55 × severity` on the same stat), plus `luck += asymptotic_rate(0.30, L) × suppressed_severity` — luck kicker ceiling **0.30** | `BurdenSnapshot.suppressed_slot / suppressed_severity` |
+| Corruption Engine (`augment_corruption_engine`) | `power += min(0.45, burden.heaviest(2) × asymptotic_rate(0.50, L))` — cap **+0.45**, rate **0.50·L/(L+1)** per 100 % severity of the two most severe ACTIVE curses; Heart of Ruin uses the three heaviest and a **+0.75** cap with the same rate; also flips NEG merge to keep the deeper roll (`ItemInstance.merge_from`) | `BurdenSnapshot.heaviest(2)` (3 for Heart of Ruin) |
+| Doctrine of Burden (`augment_doctrine_of_burden`) | `armor += min(96, 16·L/(L+1) × qualifying_count)`; `max_hp ×= 1 + min(0.54, 0.09·L/(L+1) × qualifying_count)` (`BurdenResolver.doctrine_bonus`); Martyr's Frame also grants `power += min(0.40, 0.05 × qualifying_count)` | `BurdenSnapshot.qualifying_count` |
+| Inversion Lens (`augment_inversion_lens`) | suppression in the slot loop (penalty replaced by `+0.55 × severity` on the same stat, subject to the slot clamp), plus `luck += asymptotic_rate(0.30, L) × suppressed_severity` — luck kicker ceiling **0.30**; Twin Lens doubles both the return and the kicker | `BurdenSnapshot.suppressed_slot / suppressed_severity` |
 
 After these, `Global.apply_doctrine_final_stat_multipliers(s)` applies the major-choice doctrine `max_hp_mul`, and `Global.run_luck = s.luck` is written (the only write site besides run reset / dev overlay).
 
@@ -192,27 +194,41 @@ After these, `Global.apply_doctrine_final_stat_multipliers(s)` applies the major
 
 ## 5. Augments
 
-Source: `data/augments/*.tres` (loaded by `Global.load_augments_from_dir("res://data/augments")`), schema `core/systems/augments/AugmentData.gd`, instantiation `core/systems/augments/AugmentRunner.gd`, stats `Global.apply_permanent_augments_to_stats` (`autoload/global.gd:816-833`), levels `Global.get_augment_level / set_augment_level` (`:1038-1051`).
+Augment facts refreshed on 2026-10-14 from `data/augments/*.tres`, `core/systems/augments/AugmentData.gd`, `AugmentScaling.gd`, `AugmentBinding.gd`, `AugmentRunner.gd`, `AugmentArt.gd`, `core/systems/items/BurdenResolver.gd`, `autoload/global.gd`, `core/actors/player/player.gd`, `effects/augments/logic/*.gd` and `effects/augments/LitanyOfWoundsEffect.gd`.
 
-Level rules: `get_augment_level` returns `max(1, attempt_augment_levels[id])` (default 1); `set_augment_level` stores `max(1, level)`; **no maximum level exists in code**. Stat mods scale by `1 + mods_scale_per_level × (level − 1)` (`AugmentData.apply_to_stats_at_level`). Three permanent slots (`Global.permanent_augment_ids`, size 3).
+There are **16 augments** and **3 equipped slots**. Normal Binding outcomes and combat effect scaling use `AugmentScaling.clamp_level(L)`, capped at **20**; raw `Global.get_augment_level / set_augment_level` only enforce `L >= 1`. Most count growth uses `t = min(clamp(L, 1, 20) - 1, 8)`; ordinary Spirit Slash stays at 2 targets, while Thousand Cuts uses `3 + floor(clamp(L, 1, 20) / 4)`. Transcendence normally starts at level 5, with Doctrine/voucher modifiers able to lower the threshold; Facets and Duos normally require level 3, reduced to 2 by their respective vouchers.
 
-| id | display name | stat mods (L1) | mods_scale_per_level | effect scene | one-line effect (from `details`) | which system reads it |
+Combat damage uses `D = base_weapon_damage × style_damage_multiplier × max(0.05, 1 + Power)`, then `D × coefficient × P(L) × augment_damage_multiplier`, before an ability's Facet or Duo adjustments. `P(L) = 1 + 0.35 × (clamp(L, 1, 20) - 1)`: 1.00 at L1, 2.40 at L5 and 4.15 at L10. Spirit Slash hits, Blink Hex mark bonuses and spiderling detonations use consistent damage rather than normalized dice rolls. Reflect Shield's perfect zap uses the greater of its potency-scaled reflected-round share and its D-based floor, with a minimum of 1 damage.
+
+Stat mods use `1 + mods_scale_per_level × (min(L, 5) - 1 + 0.5 × max(0, L - 5))`: full growth through L5, half-rate growth afterward. This stat helper does not itself clamp raw levels. The rates in the table are additive shares of the L1 stat delta, not repeated multiplication.
+
+Combat and passive values below are implemented. Illustration selection shows the current Facet or Transcendence, and offer cards preview the form they grant; each Duo has its own illustration.
+
+| id | display name | stat mods at L1 | mods_scale_per_level | effect scene | baseline effect and rank behavior | readers |
 |---|---|---|---|---|---|---|
-| augment_corruption_engine | Corruption Engine | — | 0 | — | Two most severe NEG items grant Power per 100 % severity (12 % L1 → 24 %, output cap +30 %); NEG merges keep the deeper roll | `player.gd:570-576`; `ItemInstance.merge_from:191-198`; `BuildIdentity.gd`; `ItemTooltip.gd`; `RunSheetHUD.gd` |
-| augment_cult_of_personality | Cult of Personality | — | 0 | — | On kill: `0.10 + 0.05·(L−1) + extra_follower_chance(luck)` chance of +1 Follower | `core/actors/enemy/modules/EnemyLifecycle.gd:92-96`; `core/systems/enemy_world/EnemyCombatService.gd:111-115` |
-| augment_doctrine_of_burden | Doctrine of Burden | — | 0 | — | Each qualifying NEG item (≥10 % of authored range) grants Armour and Max HP (see §4) | `player.gd:582-587`; `BurdenResolver.doctrine_bonus`; `BuildIdentity.gd`; `RunSheetHUD.gd` |
-| augment_blink_hex | Blink Hex | — | 0 | `effects/augments/scenes/HexBlinkMarkEffect.tscn` | Blink 320 px, 6.0 s CD, mark 6.0 s (1 shot), bonus 2d8 + 12×Power, 10 % refund | `AugmentRunner` (effect scene) |
-| augment_inversion_lens | Inversion Lens | — | 0 | — | Most severe NEG item suppressed; 55 % of its severity returns as the same stat; Luck kicker | `BurdenResolver.resolve:52`; `player.gd:593-595`; `BuildIdentity.gd` |
-| augment_lucky_charm | Lucky Charm | luck +0.5 | 0.2 | — | +0.5 Luck (×1.2 per extra level) | `Global.apply_permanent_augments_to_stats` only |
-| augment_magic_missile | Magic Missile | — | 0 | `MagicMissileEffect.tscn` | Auto-fires 2 missiles every 0.75 s (0.08 s spacing), seek 750 px, 0.35×Power | `AugmentRunner` |
-| augment_reflect_shield | Reflect Shield | armor +8 | 0.2 | `ReflectedShieldEffect.tscn` | Parry window 0.14 s (perfect 0.06 s), CD 0.40 s / 0.10 s, reflect 0.95× dmg 1.05× speed, perfect zap chains 3 in 220 px at 0.35×Power, stun 0.12 s | `AugmentRunner` + stats |
-| augment_spirit_slash | Spirit Slash | — | 0 | `SpiritSlashEffect.tscn` | Active: 2.5 s CD, 180 px, 3d6 + 10×Power, 1–3 Bleed (3 s), 12 % crit stun, d4≥3 refunds CD | `AugmentRunner` |
-| augment_sprint_servos | Sprint Servos | move +100, haste +0.12 | 0.2 | — | +100 move speed, +12 % haste | stats only |
-| augment_stamina_core | Stamina Core | max_hp +80, armor +10 | 0.15 | `StaminaCoreEffect.tscn` | Passive +80 HP/+10 armor; every 12 s (haste-scaled) 4.0 s active, 2.0 s invulnerable, 25 % lifesteal | `AugmentRunner` + stats |
-| augment_summon_spiderlings | Summon Spiderlings | power +0.05 | 0.25 | `SpiderlingSummonEffect.tscn` | Active: 320 px cast, 1.25 s CD, 12 s lifetime, bite 6×Power, detonate 1d4 + 8×Power in 52 px | `AugmentRunner` + stats |
-| augment_tesla_aura | Tesla Aura | haste +0.10 | 0.2 | `TeslaAuraEffect.tscn` | Pulse every 0.55 s, chain up to 4 targets in 180 px, 0.45×Power | `AugmentRunner` + stats |
+| augment_corruption_engine | Corruption Engine | — | 0 | — | Two strongest active stat curses grant `min(0.45, severity_sum × 0.50·L/(L+1))` Power: 25% conversion at L1, approaching 50%; negative merges retain the deeper roll | `BurdenResolver`, player stat pass, `ItemInstance`, Run Sheet |
+| augment_cult_of_personality | Cult of Personality | — | 0 | — | Each kill may recruit +1 Follower: `min(0.75, 0.25 + 0.025·(L-1) + extra_follower_chance(Luck))`; Prophet doubles chance, capped at 90%, and recruits 2 | `Global.bonus_kill_followers`, actor and proxy kill settlement |
+| augment_doctrine_of_burden | Doctrine of Burden | — | 0 | — | Each qualifying active stat curse grants +8 Armor and +4.5% Max HP at L1; rates approach 16 Armor and 9% HP per curse, with total caps 96 Armor / 54% HP | `BurdenResolver.doctrine_bonus`, player stat pass, Run Sheet |
+| augment_blink_hex | Blink Hex | — | 0 | `HexBlinkMarkEffect.tscn` | Active blink 320px, 4s cooldown; 6s mark adds 3D × P(L) to 1 attack of any style, with 10% refund; +1 marked attack per 2 count steps | `HexBlinkMarkEffect.mark_bonus`, `core/actors/player/player.gd _consume_hex_mark_bonus` |
+| augment_inversion_lens | Inversion Lens | — | 0 | — | Suppress the strongest stat curse; return 55% severity as its own stat and `0.30·L/(L+1) × severity` as Luck (15% at L1); remains negative for parity | `BurdenResolver.resolve`, player stat pass, Run Sheet |
+| augment_lucky_charm | Lucky Charm | Luck +0.5 | 0.2 | — | +50% Luck at L1; stat growth follows the full-rate/half-rate formula above | `Global.apply_permanent_augments_to_stats` |
+| augment_magic_missile | Magic Missile | — | 0 | `MagicMissileEffect.tscn` | Auto-fires 2 missiles every 0.75s (Haste-scaled), spaced 0.08s; seeks within 750px; each deals 0.75D × P(L); +1 missile per 2 count steps | `MagicMissileEffect`, `MagicMissileProjectile` |
+| augment_reflect_shield | Reflect Shield | Armor +8 | 0.2 | `ReflectedShieldEffect.tscn` | 0.14s parry / 0.06s perfect window; 0.40s cooldown, 0.10s after perfect; returns 95% damage at 105% speed; perfect zap hits 3 in 220px for `max(1, 0.35 × reflected_damage × P(L), 1.2D × P(L) × augment_damage_multiplier)`, stunning 0.12s | `ReflectShieldEffect`, `ReflectedProjectile`, stat pass |
+| augment_spirit_slash | Spirit Slash | — | 0 | `SpiritSlashEffect.tscn` | Active: exactly 2 nearest enemies at every ordinary rank; L1 reach 180px, cooldown 2.5s, damage 2.4D × P(L) each; 2 Bleed stacks for 3s (6% of payload per stack per 0.5s tick); Bleed gains +1 stack per 4 count steps, capped at 4; L1 control proc 12% (stun/knockback, no extra crit damage); 50% manual cooldown refund | `SpiritSlashEffect.target_count`, `_apply_level_scaling_ss` |
+| augment_sprint_servos | Sprint Servos | Move Speed +100, Haste +0.12 | 0.2 | — | Movement and action speed; stat growth follows the formula above | stat pass |
+| augment_stamina_core | Stamina Core | Max HP +80, Armor +10 | 0.15 | `StaminaCoreEffect.tscn` | Manual active: 12s cooldown (Haste-scaled), 4s duration, first 2s invulnerable, 25% lifesteal; active values improve with capped count steps | `StaminaCoreEffect`, stat pass |
+| augment_summon_spiderlings | Summon Spiderlings | Power +0.05 | 0.25 | `SpiderlingSummonEffect.tscn` | Active: 2 per cast at cursor within 320px, 1.25s cooldown, 12s lifetime; bite 0.5D × P(L), controlled blast 1.4D × P(L) in 70px; +1 spawn per 2 count steps; living cap `min(14, 6+L)` (7 at L1, 11 at L5, 14 at L10) | `SpiderlingSummonEffect`, `PoisonSpiderling`, stat pass |
+| augment_tesla_aura | Tesla Aura | Haste +0.10 | 0.2 | `TeslaAuraEffect.tscn` | Automatic pulse every 0.55s (Haste-scaled), up to 4 targets in 180px, 0.5D × P(L) per zap; +1 target per 2 count steps | `TeslaAuraEffect`, stat pass |
+| augment_equilibrium_sigil | Equilibrium Sigil | — | 0 | — | Equal positive/negative equipment counts, at least 2 each, grant `min(0.20, 0.24·L/(L+1))` Power and Haste: +12% each at L1; Perfect Balance doubles the rate and caps each bonus at 45%; all 8 slots count; while equipped, pickups go to the bag | `BurdenResolver.equilibrium_bonus`, player stat pass, pickup routing, Run Sheet |
+| augment_litany_of_wounds | Litany of Wounds | — | 0 | `LitanyOfWounds.tscn` | Ramp below 80% HP, full at 30%; bonus `ramp × min(0.45, 0.70·L/(L+1) × active_severity)` (35% conversion at L1), applied live as a `1 + bonus` Haste multiplier; Requiem uses 85%/35% HP and a 70% cap, and applies the same bonus as a Power multiplier | `BurdenResolver.litany_haste`, `LitanyOfWoundsEffect`, `AugmentRunner.get_haste_multiplier / get_power_multiplier`, player's burden snapshot, Run Sheet |
+| augment_gamblers_rite | Gambler's Rite | — | 0 | — | New world negative pickups roll `min(0.60, 0.35 + 0.015·(L-1) + extra_follower_chance(Luck))` for +1 Follower; each distinct negative base item per segment grants +2% Resonance, capped at +12% | `BurdenResolver.gambler_follower_chance`, `Global.gambler_acquisition_chance`, world acquisition, Run Sheet |
 
-`Global.follower_belief_power()` (`global.gd:802-806`) adds `min(0.15, 0.01·√followers)` Power on top of augments (25 → +5 %, 100 → +10 %, cap +15 %).
+Gambler's Rite at zero Luck has a 35% / 41% / 48.5% recruitment chance at L1 / L5 / L10, reaching its 60% cap at L18. House Edge doubles the chance with a 70% cap and pays 2 Followers; it already hits that cap at L1 with zero Luck. Loaded Dice adds 15 points after the base/House Edge calculation, capped at 85%. Inventory moves, rewards, trades and undo are not new world pickups.
+
+Belief Power is settled separately by `Global.follower_belief_power()`; Cult recruitment adds Followers rather than replacing the combat damage formula above.
+
+All 16 resources have unique `assets/ui/augments/cards/<slug>.png` illustration paths. The offer window is 222×220 inside a 250×380 card; shared art also appears in HUD slots, tooltips, equip slots, library rows, drag previews and the HubLibrary book. Painted illustrations explicitly use linear filtering; pixel book, backdrop and seal textures retain nearest filtering. The tooltip's damage note is limited to Magic Missile, Tesla Aura, Spirit Slash, Blink Hex, Spiderlings and Reflect Shield.
+
 
 ---
 
@@ -728,6 +744,6 @@ Re-read these files (all paths relative to the project root) and rebuild the tab
 - All curse items carry positive flat `mods` (e.g. Ashen Ballast +34 armour) beside their NEG roll; recorded as authored, intent unknown.
 - Rarity has no named tiers — only UI colours, including negative-rarity colours no generator can reach.
 - Grunt's spec `display_name` is the default "Grunt" while `EnemyDossierCatalog` calls it "Containment Officer"; spawn table `max_alive_total` (180) differs from the spawner fallback `max_alive` (220).
-- `LuckResolver.augment_quality_bonus` has no callers.
+- Augment quality now reads `LuckResolver.augment_quality_bonus` through `AugmentScaling.grade_weights` (refreshed 2026-10-14).
 - The Sniper damage path (`EnemySniper.gd:321-351`) was not checked against the threat damage multiplier.
 
