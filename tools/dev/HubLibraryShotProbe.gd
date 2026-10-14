@@ -6,6 +6,7 @@ var _failures := 0
 var _library: Node
 var _motion := false
 var _sections := false
+var _semantic := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -17,6 +18,7 @@ func _run() -> void:
 			_out = arg.trim_prefix("--out=")
 		_motion = _motion or arg == "--motion"
 		_sections = _sections or arg == "--sections"
+		_semantic = _semantic or arg == "--semantic"
 	DirAccess.make_dir_recursive_absolute(_out)
 	SaveManager.save_dir = "user://saves_test_library_shots/"
 	SaveManager.current_save = null
@@ -26,6 +28,13 @@ func _run() -> void:
 	Global.followers = 6000
 	Global.library_note("item:beka")
 	Global.library_note("record:accounts")
+	if _semantic:
+		# Real definitions in an isolated profile; retain ordinary sealed accounts.
+		for item: ItemData in Global.item_db.values():
+			if item.runtime_enabled and (item.id.begins_with("curse_") or not item.set_id.is_empty() or item.id == "dignity"):
+				Global.library_note("item:" + item.id)
+		for id: Variant in Global.set_db:
+			Global.library_note("set:" + String(id))
 	if _sections:
 		# Illustrate both recovered names and sealed tabs in this isolated profile.
 		for id: StringName in ManifestationCatalog.all_ids().slice(0, 3):
@@ -62,6 +71,9 @@ func _run() -> void:
 	_check_bounds()
 	if _sections:
 		await _section_shots()
+	if _semantic:
+		await _semantic_shots("1280")
+		await _read("Buildcraft")
 	var ribbons: Array = _library.get("_ribbons")
 	var marker: Button = ribbons[0]
 	marker.button_down.emit()
@@ -125,6 +137,8 @@ func _run() -> void:
 			await get_tree().create_timer(0.65, true).timeout
 			await _shot("library_continuation_scale150.png")
 			_check_bounds()
+	if _semantic:
+		await _semantic_shots("scale150")
 	_library.call("set_filter", "Items", "beka")
 	await _frames(5)
 	await _shot("library_beka_scale150.png")
@@ -143,6 +157,8 @@ func _run() -> void:
 	await _read("Buildcraft")
 	await _shot("library_buildcraft_1920.png")
 	_check_bounds()
+	if _semantic:
+		await _semantic_shots("1920")
 	_library.call("_close")
 	await get_tree().create_timer(0.75, true).timeout
 	await _frames(3)
@@ -150,9 +166,16 @@ func _run() -> void:
 	get_tree().quit(1 if _failures > 0 else 0)
 
 func _read(category: String) -> void:
+	var previous_category := String(_library.get("_active_category"))
 	_library.call("select_book", category)
 	await get_tree().create_timer(1.6, true).timeout
 	await _frames(4)
+	if previous_category != category:
+		var rows: Array = _library.get("_section_index").call("visible_entries")
+		var selected_key := String(_library.get("_selected_key"))
+		if not rows.any(func(row: Dictionary) -> bool: return row.key == selected_key):
+			_failures += 1
+			push_error("HubLibraryShotProbe: switching volumes hides the current account's ribbon")
 
 func _freeze_turn() -> void:
 	var tween: Tween = _library.get("_page_tween")
@@ -261,6 +284,25 @@ func _section_shots() -> void:
 	await _read("Buildcraft")
 	_library.call("_jump_to_account", "guide:equipment_identity")
 	await get_tree().create_timer(0.55, true).timeout
+
+func _semantic_shots(suffix: String) -> void:
+	await _read("Items")
+	var set_key := ""
+	for item: ItemData in Global.item_db.values():
+		if item.runtime_enabled and not item.set_id.is_empty():
+			set_key = "item:" + item.id
+			break
+	for key: String in ["item:curse_slow_heart", set_key, "item:dignity"]:
+		if key.is_empty():
+			continue
+		_library.call("_jump_to_account", key)
+		await get_tree().create_timer(0.6, true).timeout
+		await _shot("semantic_%s_%s.png" % [key.get_slice(":", 1), suffix])
+		_check_bounds()
+	for category: String in ["Recipes", "Manifestations", "Sets"]:
+		await _read(category)
+		await _shot("semantic_%s_%s.png" % [category.to_lower(), suffix])
+		_check_bounds()
 
 func _motion_frames() -> void:
 	var skin: Control = _library.get("_open_book")

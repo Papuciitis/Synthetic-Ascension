@@ -3,6 +3,7 @@ extends RefCounted
 ## Detached item/effect previews avoid inventory, discovery and RNG changes.
 
 const GUIDES := preload("res://ui/screens/HubLibraryGuides.gd")
+const SECTIONS := preload("res://ui/widgets/library/LibrarySections.gd")
 const CATEGORIES: Array[String] = ["Buildcraft", "Manifestations", "Pairs", "Enemies", "Items", "Augments", "Sets", "Recipes", "Chronicles"]
 const PREFIXES := {"Buildcraft": "guide", "Manifestations": "manifestation", "Pairs": "pair", "Enemies": "enemy", "Items": "item", "Augments": "augment", "Sets": "set"}
 const CLUES := {
@@ -116,6 +117,14 @@ static func build_entries() -> Array[Dictionary]:
 			return CATEGORIES.find(a["category"]) < CATEGORIES.find(b["category"])
 		if a["category"] == "Buildcraft":
 			return int(a["folio"]) < int(b["folio"])
+		# The book and its edge tabs share the same contiguous chapters.
+		# Folios were assigned before this sort and remain stable on discovery.
+		var a_section: Dictionary = a["ribbon"]
+		var b_section: Dictionary = b["ribbon"]
+		if int(a_section["order"]) != int(b_section["order"]):
+			return int(a_section["order"]) < int(b_section["order"])
+		if a_section["id"] != b_section["id"]:
+			return String(a_section["label"]).naturalnocasecmp_to(String(b_section["label"])) < 0
 		if a["discovered"] != b["discovered"]:
 			return bool(a["discovered"])
 		return String(a["title"]).naturalnocasecmp_to(String(b["title"])) < 0)
@@ -255,6 +264,13 @@ static func _present(entry: Dictionary, ordinal: int) -> void:
 		entry["search"] = (String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry["hint"])).to_lower()
 	else:
 		entry["search"] = (String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry["subtitle"]) + " " + String(entry["body"])).to_lower()
+	# Classify only after discovery sanitization. This helper permits public
+	# slot/noun/recipe clues while withholding hidden set and curse identities.
+	var ribbon := SECTIONS.describe(entry)
+	entry["ribbon"] = ribbon
+	entry["search"] += " " + String(ribbon["label"]).to_lower()
+	for mark: Dictionary in ribbon["marks"]:
+		entry["search"] += " " + String(mark["label"]).to_lower()
 
 
 static func _nouns(nouns: Array[StringName]) -> String:

@@ -1,6 +1,7 @@
 extends Node
 ## Physical current-volume bookmarks: safe ink, bounded fan and direct selection.
 const INDEX_PATH := "res://ui/widgets/library/LibrarySectionIndex.gd"
+const NAVIGATION_HEIGHT := 44.0
 var _passes := 0
 var _failures := 0
 var _requests: Array[String] = []
@@ -163,13 +164,74 @@ func _run() -> void:
 		var tail := index.get_node("Tail%d" % slot) as Button
 		compact_guide_fit = compact_guide_fit and (tail.get_node("Caption") as Label).get_minimum_size().y <= tail.size.y - 12.0
 	_check(compact_guide_fit, "compact guide captions also clear both gold braids")
+	var categorized: Array[Dictionary] = [
+		{"key": "item:ring", "title": "A remarkably long ring name of remembrance", "discovered": true, "ribbon": {"id": "rings", "label": "Rings", "color": Color("4b7473"), "marks": [{"kind": "set", "label": "Oakheart", "color": Color("819664")}, {"kind": "curse", "label": "Cursed", "color": Color("b47796")}]}},
+		{"key": "item:offhand", "title": "A remembered ward", "discovered": true, "ribbon": {"id": "offhand", "label": "Off-hands", "color": Color("836542"), "marks": []}},
+		{"key": "item:hidden", "title": "Hidden ring name", "discovered": false, "hint": "Seek a ring in the wild.", "folio": 3, "ribbon": {"id": "sealed", "label": "Unsorted", "color": Color("625b5b"), "marks": [{"kind": "set", "label": "Secret set", "color": Color.RED}, {"kind": "curse", "label": "Secret curse", "color": Color.RED}, {"kind": "noun", "label": "Health", "color": Color("916653")}]}},
+	]
+	index.size = Vector2(210, 430)
+	index.set_entries(categorized, "item:ring")
+	await get_tree().process_frame
+	var semantic_rows: Array[Dictionary] = index.visible_entries()
+	_check(semantic_rows[0].has("ribbon") and semantic_rows[0].get("ribbon", {}).get("color", Color.WHITE) == Color("4b7473"), "known account carries its semantic cloth color to the visible fan")
+	_check(String(semantic_rows[0].tooltip).contains("Rings") and String(semantic_rows[0].tooltip).contains("Oakheart") and String(semantic_rows[0].tooltip).contains("Cursed") and String(semantic_rows[0].tooltip).contains("remembrance"), "tooltip explains slot color and simultaneous set and curse stitching alongside the full account title")
+	_check(not str(semantic_rows[2]).contains("Secret set") and not str(semantic_rows[2]).contains("Secret curse") and not str(semantic_rows[2]).contains("Hidden ring name"), "defensive ribbon presentation drops undiscovered set and curse traits even when a caller supplies them")
+	_check(semantic_rows[2].get("ribbon", {}).get("marks", []).size() == 1 and String(semantic_rows[2].tooltip).contains("Health"), "a sealed account can retain a public noun clue without disclosing hidden item traits")
+	var group_label := index.get_node_or_null("SectionGroup") as Label
+	_check(group_label != null and String(group_label.text).contains("Rings") and String(group_label.tooltip_text).contains("Off-hands"), "a public section heading names the groups currently present in the ribbon fan")
+	if group_label != null:
+		_check(group_label.position.y + group_label.size.y <= (index.get_node("Tail0") as Button).position.y, "group heading never overlaps the first cloth target")
+	var colored_guides := guides.duplicate(true)
+	for guide: Dictionary in colored_guides:
+		guide["ribbon"] = {"id": "primer", "label": "Primer", "color": Color("4b7473"), "marks": []}
+	index.size = Vector2(210, 300)
+	index.set_entries(colored_guides, "guide:equipment_identity")
+	await get_tree().process_frame
+	_check(index.visible_entries().size() == 5 and not (index.get_node("EarlierSections") as Button).visible and not (index.get_node("LaterSections") as Button).visible and (index.get_node("Tail4") as Button).position.y + (index.get_node("Tail4") as Button).size.y <= index.size.y, "public header leaves all five primer ribbons usable within the compact 300-pixel reader")
+	index.size = Vector2(210, 430)
+	var categorized_many := categorized.duplicate(true)
+	for number: int in 8:
+		var another: Dictionary = categorized[0].duplicate(true)
+		another["key"] = "item:extra%d" % number
+		categorized_many.append(another)
+	index.set_entries(categorized_many, "item:ring")
+	await get_tree().process_frame
+	if group_label != null:
+		_check(group_label.position.y + group_label.size.y <= (index.get_node("EarlierSections") as Button).position.y and (index.get_node("EarlierSections") as Button).position.y + NAVIGATION_HEIGHT <= (index.get_node("Tail0") as Button).position.y, "header and Earlier navigation reserve separate space above the first ribbon")
+	index.size = Vector2(210, 300)
+	await get_tree().process_frame
+	var compact_rows: Array[Dictionary] = index.visible_entries()
+	var last_compact := index.get_node("Tail%d" % (compact_rows.size() - 1)) as Button
+	_check(last_compact.position.y + last_compact.size.y <= (index.get_node("LaterSections") as Button).position.y, "compact long-caption fan reduces its visible count rather than colliding with Later navigation")
+	index.set_reading_enabled(true)
+	index.select_key("item:extra7")
+	var another_volume: Array[Dictionary] = []
+	for number: int in 12:
+		another_volume.append({"key": "recipe:%02d" % number, "title": "Recipe account %02d" % number, "discovered": true})
+	# The reader updates its account before replacing the previous book's fan.
+	index.select_key("recipe:00")
+	index.set_entries(another_volume, "recipe:00")
+	var new_volume_selected := false
+	for row: Dictionary in index.visible_entries():
+		new_volume_selected = new_volume_selected or (row.key == "recipe:00" and bool(row.selected))
+	_check(new_volume_selected, "replacing a late previous-book fan reveals the new book account even when select_key arrived before its rows")
+	another_volume.reverse()
+	index.set_entries(another_volume, "recipe:00")
+	_check(String(index.visible_entries().back().key) == "recipe:00", "reordered account keys reveal the selected account at its new position")
+	index._scroll_window(-1, false, 100)
+	var manual_first := String(index.visible_entries()[0].key)
+	var harmless_empty := another_volume.duplicate(true)
+	harmless_empty.insert(0, {"key": "", "title": "Not an account"})
+	index.set_entries(harmless_empty, "recipe:00")
+	_check(String(index.visible_entries()[0].key) == manual_first, "ignored blank-key rows do not reset a manually browsed fan when valid account order stays unchanged")
 	var no_entries: Array[Dictionary] = []
 	index.set_entries(no_entries, "")
 	_check(index.visible_entries().is_empty() and not (index.get_node("Tail0") as Button).visible, "a search with no accounts clears the cloth without stale requests")
 	if DisplayServer.get_name() != "headless":
+		await _check_rendered_palette(categorized)
 		for argument: String in OS.get_cmdline_user_args():
 			if argument.begins_with("--section-out="):
-				await _render_samples(argument.trim_prefix("--section-out="), guides, entries)
+				await _render_samples(argument.trim_prefix("--section-out="), guides, entries, categorized)
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", original_reduced, false)
 	index.queue_free()
 	await get_tree().process_frame
@@ -185,28 +247,79 @@ func _accept_event(event: InputEventJoypadButton, pressed: bool) -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 
-func _render_samples(output: String, guides: Array[Dictionary], rules: Array[Dictionary]) -> void:
+func _check_rendered_palette(categorized: Array[Dictionary]) -> void:
+	var images: Array[Image] = []
+	for color: Color in [Color("4b7473"), Color("876048")]:
+		var viewport := SubViewport.new()
+		viewport.size = Vector2i(340, 320)
+		viewport.transparent_bg = true
+		viewport.disable_3d = true
+		viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+		add_child(viewport)
+		var sample: Control = load(INDEX_PATH).new()
+		sample.position = Vector2(40, 40)
+		sample.size = Vector2(240, 240)
+		viewport.add_child(sample)
+		var entries := categorized.duplicate(true)
+		for entry: Dictionary in entries:
+			entry["discovered"] = true
+			entry["ribbon"] = {"id": "same", "label": "Same", "color": color, "marks": []}
+		sample.set_entries(entries, "")
+		sample.set_reading_enabled(true)
+		for child: Node in sample.get_children():
+			if child is Label:
+				child.visible = false
+		await get_tree().process_frame
+		await RenderingServer.frame_post_draw
+		images.append(viewport.get_texture().get_image())
+		viewport.queue_free()
+		await get_tree().process_frame
+	var changed := 0
+	var gold_preserved := 0
+	var parchment_preserved := 0
+	var alpha_same := true
+	for y: int in images[0].get_height():
+		for x: int in images[0].get_width():
+			var first := images[0].get_pixel(x, y)
+			var second := images[1].get_pixel(x, y)
+			alpha_same = alpha_same and absf(first.a - second.a) < 0.005
+			if first.a < 0.98:
+				continue
+			var difference := maxf(absf(first.r - second.r), maxf(absf(first.g - second.g), absf(first.b - second.b)))
+			if difference > 0.04:
+				changed += 1
+			if first.r > 0.42 and first.g > 0.32 and first.g > first.r * 0.5 and first.b < first.g * 0.75 and difference < 0.005:
+				gold_preserved += 1
+			if first.r > 0.92 and first.g > 0.82 and first.b > 0.6 and difference < 0.005:
+				parchment_preserved += 1
+	_check(changed > 1000, "rendered teal and ochre cloth differ across their actual fabric pixels, rather than remaining multiplied burgundy")
+	_check(gold_preserved > 500 and alpha_same, "palette replacement retains the authored gold braid and exact transparent cloth silhouette")
+	_check(parchment_preserved > 30, "printed parchment-colored letters retain their own ink across different cloth dyes")
+
+func _render_samples(output: String, guides: Array[Dictionary], rules: Array[Dictionary], categorized: Array[Dictionary]) -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	var viewport := SubViewport.new()
-	viewport.size = Vector2i(900, 600)
+	viewport.size = Vector2i(1280, 600)
 	viewport.disable_3d = true
 	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	add_child(viewport)
 	var background := ColorRect.new()
-	background.size = Vector2(900, 600)
+	background.size = Vector2(1280, 600)
 	background.color = Color(0.075, 0.055, 0.045)
 	viewport.add_child(background)
-	for column: int in 2:
+	for column: int in 3:
 		var sample: Control = load(INDEX_PATH).new()
 		sample.position = Vector2(120 + column * 410, 65)
 		sample.size = Vector2(210, 430)
 		viewport.add_child(sample)
-		sample.set_entries(guides if column == 0 else rules, "guide:equipment_identity" if column == 0 else "rule:02")
+		var column_entries := [guides, rules, categorized]
+		var selected := ["guide:equipment_identity", "rule:02", "item:ring"]
+		sample.set_entries(column_entries[column], selected[column])
 		sample.set_reading_enabled(true)
 		sample.set_book_open_progress(1.0, 1000.0)
 		var binding := ColorRect.new()
 		binding.position = Vector2(75 + column * 410, 50)
-		binding.size = Vector2(58, 470)
+		binding.size = Vector2(53, 470)
 		binding.color = Color(0.23, 0.12, 0.065)
 		viewport.add_child(binding)
 	await get_tree().process_frame

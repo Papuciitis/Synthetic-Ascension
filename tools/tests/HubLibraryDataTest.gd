@@ -166,7 +166,11 @@ func _run() -> void:
 		_check(entry["icon"] == null, "hidden pages have no revealing icon")
 		_check(not String(entry["hint"] if entry.has("hint") else "").is_empty(), "hidden pages have a readable clue")
 		_check(LIBRARY.filter_entries([entry], "All", String(entry["id"])).is_empty(), "hidden ID cannot be searched")
-		_check(String(entry["search"]) == (String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry.get("hint", ""))).to_lower(), "hidden search contains only visible subject, ordinal and clue")
+		var visible_terms := String(entry["category"]) + " " + String(entry["title"]) + " " + String(entry.get("hint", ""))
+		visible_terms += " " + String(entry["ribbon"]["label"])
+		for mark: Dictionary in entry["ribbon"]["marks"]:
+			visible_terms += " " + String(mark["label"])
+		_check(String(entry["search"]) == visible_terms.to_lower(), "hidden search contains only visible subject, ordinal, clue and public ribbon labels")
 	var item := Global.item_db.get("beka", null) as ItemData
 	_check(item != null, "fixture uses a live enabled item")
 	_check(LIBRARY.filter_entries(entries, "Items", "beka").is_empty(), "unknown item name cannot be searched")

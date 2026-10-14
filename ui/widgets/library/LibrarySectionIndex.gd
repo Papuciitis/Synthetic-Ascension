@@ -5,10 +5,12 @@ signal account_requested(key: String)
 const Kit := preload("res://ui/widgets/chambers/ChamberKit.gd")
 const FONT := preload("res://assets/fonts/eb_garamond/EBGaramond-Variable.ttf")
 const CLOTH := preload("res://assets/ui/library/bookmark_cloth_pixel.png")
+const CLOTH_PALETTE := preload("res://ui/widgets/library/LibraryClothPalette.gdshader")
 const MAX_TABS := 7
 const MIN_TAB_HEIGHT := 54.0
 const TWO_LINE_ROW_HEIGHT := 68.0
 const NAV_HEIGHT := 44.0
+const GROUP_HEIGHT := 28.0
 const SHORT_GUIDES := {
 	"guide:equipment_identity": "Equipment",
 	"guide:nouns_and_pairs": "Pairs",
@@ -24,6 +26,7 @@ class SectionTail extends Button:
 	var root_texture: Texture2D
 	var middle_texture: Texture2D
 	var tip_texture: Texture2D
+	var marks: Array[Dictionary] = []
 	var _pull := 0.0:
 		set(value):
 			_pull = value
@@ -39,6 +42,9 @@ class SectionTail extends Button:
 		set_meta("ui_sound_manual", true)
 		for state: String in ["normal", "hover", "pressed", "focus", "disabled"]:
 			add_theme_stylebox_override(state, StyleBoxEmpty.new())
+		var dye := ShaderMaterial.new()
+		dye.shader = CLOTH_PALETTE
+		material = dye
 		caption = Label.new()
 		caption.name = "Caption"
 		caption.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -101,8 +107,40 @@ class SectionTail extends Button:
 		_draw_horizontal(middle_texture, Rect2(0.0, 0.0, tail.size.x - tip_width, size.y), tint)
 		_draw_horizontal(tip_texture, Rect2(tail.end.x - tip_width, 0.0, tip_width, size.y), tint)
 		_draw_horizontal(root_texture, shape.root, tint)
+		_draw_marks(tint)
 		if has_focus() and not disabled:
 			draw_line(Vector2(31.0, size.y - 8.0), Vector2(tail.end.x - tip_width - 5.0, size.y - 8.0), Color(1.0, 0.9, 0.62), 1.0)
+
+	func set_ribbon(ribbon: Dictionary) -> void:
+		var dye := material as ShaderMaterial
+		dye.set_shader_parameter("palette_enabled", not ribbon.is_empty())
+		dye.set_shader_parameter("cloth_color", ribbon.get("color", Color("7b2429")))
+		marks.clear()
+		for mark: Dictionary in ribbon.get("marks", []):
+			marks.append(mark)
+
+	func _draw_marks(tint: Color) -> void:
+		for ordinal: int in marks.size():
+			var mark: Dictionary = marks[ordinal]
+			var center := Vector2(16.0 + _pull, size.y * float(ordinal + 1) / float(marks.size() + 1))
+			var ink: Color = mark.get("color", Kit.GOLD_BRIGHT)
+			ink *= tint
+			if String(mark.kind) == "curse":
+				for offset: float in [-1.0, 1.0]:
+					draw_line(center + Vector2(-5.0, -5.0 + offset), center + Vector2(5.0, 5.0 + offset), Color(0.15, 0.07, 0.08), 2.0)
+					draw_line(center + Vector2(-5.0, 5.0 + offset), center + Vector2(5.0, -5.0 + offset), Color(0.15, 0.07, 0.08), 2.0)
+				draw_line(center + Vector2(-5.0, -5.0), center + Vector2(5.0, 5.0), ink, 2.0)
+				draw_line(center + Vector2(-5.0, 5.0), center + Vector2(5.0, -5.0), ink, 2.0)
+			else:
+				var diamond := PackedVector2Array([
+					center + Vector2(0, -6), center + Vector2(6, 0),
+					center + Vector2(0, 6), center + Vector2(-6, 0),
+				])
+				draw_colored_polygon(diamond, ink)
+				diamond.append(diamond[0])
+				draw_polyline(diamond, Color(0.85, 0.68, 0.37) * tint, 1.0)
+				if String(mark.kind) == "set":
+					draw_line(center + Vector2(0, -3), center + Vector2(0, 3), ink.lightened(0.25), 1.0)
 
 	func _gui_input(event: InputEvent) -> void:
 		if disabled:
@@ -126,6 +164,7 @@ var _open_progress := 1.0
 var _tails: Array[SectionTail] = []
 var _earlier: Button
 var _later: Button
+var _section_group: Label
 var _font: FontVariation
 var _unmapped_accept_held := false
 
@@ -153,6 +192,14 @@ func _ready() -> void:
 		_tails.append(tail)
 	_earlier = _make_navigation("EarlierSections", "↑ Earlier sections", -1)
 	_later = _make_navigation("LaterSections", "Later sections ↓", 1)
+	_section_group = Label.new()
+	_section_group.name = "SectionGroup"
+	_section_group.mouse_filter = Control.MOUSE_FILTER_STOP
+	_section_group.add_theme_font_override("font", _font)
+	_section_group.add_theme_font_size_override("font_size", 20)
+	_section_group.add_theme_color_override("font_color", Kit.PARCHMENT)
+	_section_group.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	add_child(_section_group)
 	resized.connect(_relayout)
 	_relayout()
 
@@ -184,19 +231,60 @@ func _make_navigation(node_name: String, caption: String, direction: int) -> But
 
 func set_entries(entries: Array[Dictionary], selected_key: String) -> void:
 	var changed := selected_key != _selected_key or _entries.is_empty()
+	var previous_keys := PackedStringArray()
+	for row: Dictionary in _entries:
+		previous_keys.append(String(row.key))
+	var next_keys := PackedStringArray()
 	_entries.clear()
 	for entry: Dictionary in entries:
 		var known := bool(entry.get("discovered", false))
 		var key := String(entry.get("key", ""))
 		if key.is_empty():
 			continue
+		next_keys.append(key)
 		var ordinal := int(entry.get("folio", _entries.size() + 1))
 		var title := _clean_text(String(entry.get("title", ""))) if known else "Sealed · %02d" % ordinal
 		var ink := String(SHORT_GUIDES.get(key, title)) if known else title
 		var tooltip := title if known else "Sealed account · %02d\n%s" % [ordinal, _clean_text(String(entry.get("hint", "Seek this account in play.")))]
-		_entries.append({"key": key, "label": ink, "tooltip": tooltip})
+		var ribbon := _safe_ribbon(entry.get("ribbon", {}), known)
+		var meanings := PackedStringArray()
+		if not String(ribbon.get("label", "")).is_empty():
+			meanings.append(String(ribbon.label))
+		for mark: Dictionary in ribbon.get("marks", []):
+			meanings.append(String(mark.label))
+		if not meanings.is_empty():
+			tooltip = " · ".join(meanings) + "\n" + tooltip
+		_entries.append({"key": key, "label": ink, "tooltip": tooltip, "ribbon": ribbon})
 	_selected_key = selected_key
-	_relayout(changed)
+	# select_key may arrive before this volume's rows. Retain manual browsing
+	# only while the same ordered accounts still occupy the fan.
+	_relayout(changed or next_keys != previous_keys)
+
+func _safe_ribbon(value: Variant, known: bool) -> Dictionary:
+	if not value is Dictionary or value.is_empty():
+		return {}
+	var color: Variant = value.get("color", Color("7b2429"))
+	var ribbon := {
+		"label": _clean_text(String(value.get("label", ""))),
+		"color": color if color is Color else Color("7b2429"),
+		"marks": [],
+	}
+	var supplied: Variant = value.get("marks", [])
+	if supplied is Array:
+		for mark: Variant in supplied:
+			if not mark is Dictionary:
+				continue
+			var kind := String(mark.get("kind", ""))
+			if not kind in ["noun", "set", "curse"] or (not known and kind != "noun"):
+				continue
+			var label := _clean_text(String(mark.get("label", "")))
+			var mark_color: Variant = mark.get("color", Kit.GOLD_BRIGHT)
+			if label.is_empty() or not mark_color is Color:
+				continue
+			ribbon.marks.append({"kind": kind, "label": label, "color": mark_color})
+			if ribbon.marks.size() == 2:
+				break
+	return ribbon
 
 func _clean_text(value: String) -> String:
 	return " ".join(value.replace("\n", " ").replace("\r", " ").replace("\t", " ").split(" ", false)).strip_edges()
@@ -229,30 +317,36 @@ func _relayout(reveal: bool = true) -> void:
 	if _earlier == null:
 		return
 	var row_minimum := MIN_TAB_HEIGHT
+	var header_height := 0.0
 	for entry: Dictionary in _entries:
+		if not String(entry.get("ribbon", {}).get("label", "")).is_empty():
+			header_height = GROUP_HEIGHT
 		if not String(entry.key).begins_with("guide:"):
 			row_minimum = TWO_LINE_ROW_HEIGHT
-			break
-	var needs_navigation := _entries.size() > mini(MAX_TABS, maxi(3, floori(size.y / row_minimum)))
+	var available_height := size.y - header_height
+	var needs_navigation := _entries.size() > mini(MAX_TABS, maxi(1, floori(available_height / row_minimum)))
 	var nav_space := NAV_HEIGHT * 2.0 if needs_navigation else 0.0
-	_capacity = clampi(floori((size.y - nav_space) / row_minimum), 3, MAX_TABS)
+	_capacity = clampi(floori((available_height - nav_space) / row_minimum), 1, MAX_TABS)
 	if _entries.size() > _capacity and not needs_navigation:
 		needs_navigation = true
 		nav_space = NAV_HEIGHT * 2.0
-		_capacity = clampi(floori((size.y - nav_space) / row_minimum), 3, MAX_TABS)
+		_capacity = clampi(floori((available_height - nav_space) / row_minimum), 1, MAX_TABS)
 	_window_start = clampi(_window_start, 0, maxi(0, _entries.size() - _capacity))
 	if reveal:
 		_reveal_key(_selected_key)
 	var row_count := mini(_capacity, _entries.size())
-	var height := clampf((size.y - nav_space) / maxf(1.0, row_count), row_minimum, TWO_LINE_ROW_HEIGHT)
-	var top := NAV_HEIGHT if needs_navigation else maxf(0.0, (size.y - height * row_count) * 0.5)
+	var height := clampf((available_height - nav_space) / maxf(1.0, row_count), row_minimum, TWO_LINE_ROW_HEIGHT)
+	var top := header_height + (NAV_HEIGHT if needs_navigation else maxf(0.0, (available_height - height * row_count) * 0.5))
 	for slot: int in _tails.size():
 		var tail := _tails[slot]
 		tail.position = Vector2(0.0, top + slot * height)
 		tail.size = Vector2(size.x, height - 2.0 if height >= 56.0 else height)
 		tail.caption.position = Vector2(31.0 + tail._pull, 6.0)
 		tail.caption.size = Vector2(maxf(1.0, size.x - 31.0 - 14.0 - height * 0.625 - 7.0), tail.size.y - 12.0)
-	_earlier.position = Vector2(31.0, 0.0)
+	_section_group.position = Vector2(31.0, 0.0)
+	_section_group.size = Vector2(maxf(1.0, size.x - 31.0), GROUP_HEIGHT)
+	_section_group.visible = header_height > 0.0
+	_earlier.position = Vector2(31.0, header_height)
 	_earlier.size = Vector2(maxf(1.0, size.x - 31.0), NAV_HEIGHT)
 	_later.position = Vector2(31.0, size.y - NAV_HEIGHT)
 	_later.size = Vector2(maxf(1.0, size.x - 31.0), NAV_HEIGHT)
@@ -273,8 +367,16 @@ func _refresh() -> void:
 		tail.active = entry.key == _selected_key
 		tail.tooltip_text = entry.tooltip
 		tail.set_meta("account_key", entry.key)
+		tail.set_ribbon(entry.ribbon)
 		tail.caption.text = _wrap_caption(entry.label, tail.caption.size.x)
 		tail.queue_redraw()
+	var groups := PackedStringArray()
+	for entry: Dictionary in visible_entries():
+		var label := String(entry.ribbon.get("label", ""))
+		if not label.is_empty() and not groups.has(label):
+			groups.append(label)
+	_section_group.tooltip_text = " · ".join(groups)
+	_section_group.text = " / ".join(groups) if groups.size() <= 2 else "%s / %s" % [groups[0], groups[-1]]
 	_update_enabled()
 
 func _wrap_caption(value: String, width: float) -> String:
