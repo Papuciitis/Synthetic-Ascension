@@ -6,6 +6,7 @@ const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
 const BookSpine := preload("res://ui/widgets/library/LibraryBook.gd")
 const OpenBook := preload("res://ui/widgets/library/LibraryOpenBook.gd")
 const Bookmark := preload("res://ui/widgets/library/LibraryRibbon.gd")
+const SectionIndex := preload("res://ui/widgets/library/LibrarySectionIndex.gd")
 const PageSeal := preload("res://ui/widgets/library/LibrarySeal.gd")
 const Pagination := preload("res://ui/widgets/library/LibraryPagination.gd")
 const CHRONICLER := preload("res://assets/textures/hub/hub_npc_chronicler.png")
@@ -28,6 +29,7 @@ var _reading_state := ReadingState.SHELVES
 var _pending_category := ""
 var _pending_turn := 0
 var _pending_ribbon := ""
+var _pending_account := ""
 var _exit_pending := false
 var _transfer: TextureRect
 var _transfer_tween: Tween
@@ -71,6 +73,7 @@ var _research_button: Button
 var _shelf_note: Label
 var _book_buttons: Array[Button] = []
 var _ribbons: Array[Button] = []
+var _section_index: Control
 var _search: LineEdit
 var _search_panel: PanelContainer
 var _search_caption: Label
@@ -196,7 +199,7 @@ func _build_reader() -> void:
 	_open_book.name = "OpenBook"
 	_open_book.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_open_book.offset_left = 18
-	_open_book.offset_right = -18
+	_open_book.offset_right = -228
 	_open_book.offset_bottom = -22
 	_reader.add_child(_open_book)
 	_book_pages = Control.new()
@@ -204,6 +207,12 @@ func _build_reader() -> void:
 	_book_pages.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_book_pages.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_open_book.add_child(_book_pages)
+	_section_index = SectionIndex.new()
+	_section_index.name = "SectionRibbons"
+	_section_index.show_behind_parent = true
+	_section_index.account_requested.connect(_jump_to_account)
+	_open_book.add_child(_section_index)
+	_open_book.open_progress_changed.connect(func(_progress: float) -> void: _sync_section_interaction())
 	_left_leaf = _leaf_frame("LeftPrintedLeaf")
 	_right_leaf = _leaf_frame("RightPrintedLeaf")
 	_left_page = _paper_column("IdentityPage", 0.12, 0.44)
@@ -394,6 +403,10 @@ func _ink_button(caption: String, action: Callable) -> Button:
 
 func _reader_resized() -> void:
 	_open_book.pivot_offset = _open_book.size * 0.5
+	# The source book has a transparent outer margin. Sew the roots into its
+	# painted fore-edge rather than the enclosing Control's invisible edge.
+	_section_index.position = _open_book.size * Vector2(0.97, 0.15)
+	_section_index.size = Vector2(210, _open_book.size.y * 0.70)
 	for index: int in range(_ribbons.size()):
 		var ribbon := _ribbons[index]
 		var width := maxf(114.0, _open_book.size.x * 0.08)
@@ -422,6 +435,7 @@ func _refresh_identity_layout() -> void:
 func select_book(category: String) -> void:
 	if not LibraryData.CATEGORIES.has(category) or _closing:
 		return
+	_pending_account = ""
 	if _reading_state in [ReadingState.OPENING, ReadingState.TURNING, ReadingState.CLOSING, ReadingState.SWITCHING]:
 		_pending_category = category
 		_pending_turn = 0
@@ -500,6 +514,7 @@ func _begin_cover_open() -> void:
 func _finish_open() -> void:
 	_open_tween = null
 	_reading_state = ReadingState.READING
+	_sync_section_interaction()
 	_mark_visible_account_read()
 	_body.grab_focus()
 	_run_pending_action()
@@ -510,6 +525,7 @@ func set_filter(category: String, query: String) -> void:
 	_pending_category = ""
 	_pending_turn = 0
 	_pending_ribbon = ""
+	_pending_account = ""
 	_reading_state = ReadingState.READING
 	_assign_volume(category, query)
 
@@ -536,6 +552,7 @@ func show_shelves(animate: bool = true) -> void:
 	_pending_category = ""
 	_pending_turn = 0
 	_pending_ribbon = ""
+	_pending_account = ""
 	if not animate or not _reader.visible:
 		_cancel_motion()
 		_reveal_shelves()
@@ -546,6 +563,7 @@ func _retire_volume(switching: bool) -> void:
 	_cancel_motion()
 	_reading_state = ReadingState.SWITCHING if switching else ReadingState.CLOSING
 	_book_open = false
+	_sync_section_interaction()
 	_stick_axis = 0.0
 	set_process(false)
 	_search_panel.hide()
@@ -636,6 +654,10 @@ func _run_pending_action() -> void:
 		var category := _pending_category
 		_pending_category = ""
 		select_book(category)
+	elif _pending_account != "":
+		var key := _pending_account
+		_pending_account = ""
+		_jump_to_account(key)
 	elif _pending_ribbon != "":
 		var ribbon := _pending_ribbon
 		_pending_ribbon = ""
@@ -684,6 +706,7 @@ func _refresh_results() -> void:
 		_reading_state = ReadingState.READING
 	_pending_turn = 0
 	_pending_ribbon = ""
+	_pending_account = ""
 	_open_book.set("turn_progress", 1.0)
 	_results = LibraryData.filter_entries(_entries, _active_category, _search.text)
 	result_count = _results.size()
@@ -709,7 +732,59 @@ func _refresh_results() -> void:
 		_reflow_account()
 	else:
 		_show_entry(index, false)
+	_refresh_section_index()
 	_update_ribbons()
+
+func _refresh_section_index() -> void:
+	if not is_instance_valid(_section_index):
+		return
+	var entries: Array[Dictionary] = []
+	for entry: Dictionary in _entries:
+		if entry["category"] == _active_category:
+			entries.append(entry)
+	_section_index.call("set_entries", entries, _selected_key)
+	_sync_section_interaction()
+
+func _sync_section_interaction() -> void:
+	if is_instance_valid(_section_index):
+		_section_index.call("set_reading_enabled", _can_read() or (_book_open and _reading_state == ReadingState.TURNING))
+
+func _jump_to_account(key: String) -> void:
+	var entry := _entry_for_key(key)
+	if entry.is_empty() or String(entry["category"]) != _active_category:
+		return
+	if _reading_state == ReadingState.TURNING:
+		_pending_account = key
+		_pending_turn = 0
+		_pending_ribbon = ""
+		return
+	if not _can_read():
+		return
+	# Resolve against the whole binding, even when Find currently hides it.
+	# The old printed spread stays intact until _start_leaf_turn captures it.
+	_search.set_block_signals(true)
+	_search.text = ""
+	_search.set_block_signals(false)
+	_results = LibraryData.filter_entries(_entries, _active_category, "")
+	result_count = _results.size()
+	var destination := -1
+	var current := -1
+	for candidate: int in _results.size():
+		if String(_results[candidate]["key"]) == key:
+			destination = candidate
+		if String(_results[candidate]["key"]) == _selected_key:
+			current = candidate
+	if destination < 0:
+		return
+	_selected_index = maxi(0, current)
+	if key == _selected_key and _folio_index == 0:
+		_selected_index = destination
+		_search_panel.hide()
+		_display_folio()
+		return
+	_start_leaf_turn(-1 if destination <= current else 1)
+	_show_entry(destination, false)
+	_finish_leaf_target.call_deferred()
 
 func _show_entry(index: int, animate: bool = true) -> void:
 	if index < 0 or index >= _results.size():
@@ -812,6 +887,7 @@ func _mark_visible_account_read() -> void:
 
 func _turn_page(direction: int) -> void:
 	if _reading_state == ReadingState.TURNING:
+		_pending_account = ""
 		_pending_turn = direction
 		_pending_ribbon = ""
 		return
@@ -863,11 +939,13 @@ func _start_leaf_turn(direction: int) -> void:
 func _finish_turn() -> void:
 	_page_tween = null
 	_reading_state = ReadingState.READING
+	_sync_section_interaction()
 	_mark_visible_account_read()
 	_run_pending_action()
 
 func _pull_ribbon(kind: String) -> void:
 	if _reading_state == ReadingState.TURNING:
+		_pending_account = ""
 		_pending_ribbon = kind
 		_pending_turn = 0
 		return
@@ -908,6 +986,9 @@ func _pull_ribbon(kind: String) -> void:
 		_finish_leaf_target.call_deferred()
 
 func _update_ribbons() -> void:
+	if is_instance_valid(_section_index):
+		_section_index.call("select_key", _selected_key)
+		_sync_section_interaction()
 	if _ribbons.size() < 3:
 		return
 	var has_unread := false
@@ -1046,6 +1127,7 @@ func _close() -> void:
 		_pending_category = ""
 		_pending_turn = 0
 		_pending_ribbon = ""
+		_pending_account = ""
 		show_shelves()
 		return
 	_closing = true

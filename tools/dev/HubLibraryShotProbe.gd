@@ -5,6 +5,7 @@ var _out := "user://hub_library_shots"
 var _failures := 0
 var _library: Node
 var _motion := false
+var _sections := false
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -15,6 +16,7 @@ func _run() -> void:
 		if arg.begins_with("--out="):
 			_out = arg.trim_prefix("--out=")
 		_motion = _motion or arg == "--motion"
+		_sections = _sections or arg == "--sections"
 	DirAccess.make_dir_recursive_absolute(_out)
 	SaveManager.save_dir = "user://saves_test_library_shots/"
 	SaveManager.current_save = null
@@ -24,6 +26,14 @@ func _run() -> void:
 	Global.followers = 6000
 	Global.library_note("item:beka")
 	Global.library_note("record:accounts")
+	if _sections:
+		# Illustrate both recovered names and sealed tabs in this isolated profile.
+		for id: StringName in ManifestationCatalog.all_ids().slice(0, 3):
+			Global.library_note("manifestation:" + String(id))
+		var set_ids := Global.set_db.keys()
+		set_ids.sort()
+		if not set_ids.is_empty():
+			Global.library_note("set:" + String(set_ids[0]))
 	var recipe_seeded := false
 	for entry: Dictionary in Grimoire.catalogue(Global.augment_db):
 		if entry["section"] != "RECORDS" and not recipe_seeded:
@@ -50,6 +60,8 @@ func _run() -> void:
 	await _transfer_trip(false)
 	await _shot("library_buildcraft_1280.png")
 	_check_bounds()
+	if _sections:
+		await _section_shots()
 	var ribbons: Array = _library.get("_ribbons")
 	var marker: Button = ribbons[0]
 	marker.button_down.emit()
@@ -206,6 +218,10 @@ func _check_spines() -> void:
 func _check_bounds() -> void:
 	var visible := get_viewport().get_visible_rect()
 	var book: Control = _library.get("_open_book")
+	var section_index: Control = _library.get("_section_index")
+	if not visible.grow(1).encloses(section_index.get_global_rect()):
+		_failures += 1
+		push_error("HubLibraryShotProbe: section ribbons exceed the viewport")
 	for control: Control in [_library.get("_title"), _library.get("_body"), _library.get("_plate_body"), _library.get("_continuation")]:
 		if not control.is_visible_in_tree():
 			continue
@@ -221,6 +237,30 @@ func _check_bounds() -> void:
 		if control is RichTextLabel and control.get_content_height() > control.size.y + 2:
 			_failures += 1
 			push_error("HubLibraryShotProbe: %s clips its printed account (%s > %s)" % [control.name, control.get_content_height(), control.size.y])
+
+func _section_shots() -> void:
+	var index: Control = _library.get("_section_index")
+	var rows: Array = index.call("visible_entries")
+	index.emit_signal("account_requested", String(rows[-1].key))
+	await get_tree().create_timer(0.55, true).timeout
+	await _shot("library_sections_guide_jump.png")
+	_check_bounds()
+	await _read("Sets")
+	await _shot("library_sections_sets.png")
+	_check_bounds()
+	await _read("Manifestations")
+	await _shot("library_sections_rules.png")
+	index.get_node("LaterSections").emit_signal("pressed")
+	await _frames(3)
+	await _shot("library_sections_rules_later.png")
+	rows = index.call("visible_entries")
+	index.emit_signal("account_requested", String(rows[-1].key))
+	await get_tree().create_timer(0.55, true).timeout
+	await _shot("library_sections_rule_jump.png")
+	_check_bounds()
+	await _read("Buildcraft")
+	_library.call("_jump_to_account", "guide:equipment_identity")
+	await get_tree().create_timer(0.55, true).timeout
 
 func _motion_frames() -> void:
 	var skin: Control = _library.get("_open_book")
