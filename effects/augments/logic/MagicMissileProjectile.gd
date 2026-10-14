@@ -5,11 +5,14 @@ class_name MagicMissileProjectile
 @export var turn_rate: float = 12.0
 @export var max_life: float = 2.0
 @export var hit_radius: float = 16.0
+@export var retarget_radius: float = 750.0
 
 @export var trail_max_points: int = 12
 @export var trail_point_spacing: float = 10.0
 
 var target_handle: int = EnemyWorldTypes.INVALID_HANDLE
+## Choir shards must seek and collide with enemies other than their parent hit.
+var excluded_handle: int = EnemyWorldTypes.INVALID_HANDLE
 var damage: float = 10.0
 var source: Node = null
 
@@ -26,6 +29,14 @@ func set_split(count: int, scene: PackedScene, mul: float) -> void:
 	split_count = maxi(0, count)
 	_split_scene = scene
 	split_mul = mul
+
+
+func set_retarget_radius(radius: float) -> void:
+	retarget_radius = maxf(0.0, radius)
+
+
+func set_excluded_handle(handle: int) -> void:
+	excluded_handle = handle
 
 var _vel: Vector2 = Vector2.RIGHT
 var _life: float = 0.0
@@ -71,8 +82,10 @@ func _on_pool_obtain() -> void:
 
 func _on_pool_recycle() -> void:
 	target_handle = EnemyWorldTypes.INVALID_HANDLE
+	excluded_handle = EnemyWorldTypes.INVALID_HANDLE
 	damage = 0.0
 	source = null
+	retarget_radius = 750.0
 	split_count = 0
 	_split_scene = null
 	_vel = Vector2.ZERO
@@ -149,8 +162,12 @@ func _physics_process(dt: float) -> void:
 		return
 
 	if not EnemyWorld.is_valid_handle(target_handle) or EnemyWorld.is_dying(target_handle):
-		_despawn()
-		return
+		# Preserve motion and elapsed life: a lost target changes direction,
+		# never extends a missile's lifetime or allows it through a wall.
+		target_handle = EnemyCombat.nearest_enemy(global_position, retarget_radius, excluded_handle)
+		if target_handle == EnemyWorldTypes.INVALID_HANDLE:
+			_despawn()
+			return
 	var target_position := EnemyCombat.position_for_handle(target_handle)
 
 	var to_t: Vector2 = (target_position - global_position).normalized()
@@ -161,7 +178,7 @@ func _physics_process(dt: float) -> void:
 	var old_pos: Vector2 = global_position
 	var new_pos: Vector2 = old_pos + _vel * dt
 	var world_hit_t := _world_hit_t(old_pos, new_pos)
-	var hit_handle := EnemyCombat.first_enemy_on_segment(old_pos, new_pos, hit_radius)
+	var hit_handle := EnemyCombat.first_enemy_on_segment(old_pos, new_pos, hit_radius, excluded_handle)
 	var enemy_hit_t := EnemyCombat.last_segment_hit_t()
 	if (
 		hit_handle != EnemyWorldTypes.INVALID_HANDLE
@@ -213,6 +230,10 @@ func _split(struck: int, at: Vector2) -> void:
 		var dir := (EnemyCombat.position_for_handle(nearby[i]) - at).normalized().rotated(randf_range(-0.6, 0.6))
 		if shard_2d.has_method("setup_handle"):
 			shard_2d.call("setup_handle", nearby[i], damage * split_mul, dir, source)
+		if shard_2d.has_method("set_retarget_radius"):
+			shard_2d.call("set_retarget_radius", SPLIT_SEEK)
+		if shard_2d.has_method("set_excluded_handle"):
+			shard_2d.call("set_excluded_handle", struck)
 		if shard_2d.has_method("set_split"):
 			shard_2d.call("set_split", 0, null, split_mul)
 

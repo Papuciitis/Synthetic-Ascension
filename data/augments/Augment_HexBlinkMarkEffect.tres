@@ -1,20 +1,23 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://ccd3420fieh5u"]
 
 [ext_resource type="PackedScene" uid="uid://cvun5woj4efui" path="res://effects/augments/scenes/HexBlinkMarkEffect.tscn" id="1_fndtg"]
-[ext_resource type="Texture2D" uid="uid://b1s7itjctmnnq" path="res://assets/textures/Augment_Placeholder_Blink_Hex.png" id="2_dljwc"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/blink_hex.png" id="2_dljwc"]
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="3_037e4"]
 
 [resource]
 script = ExtResource("3_037e4")
 id = &"augment_blink_hex"
 display_name = "Blink Hex"
-description = "Blink through the crowd, brand a target, and punish it for existing."
-card_blurb = "Blink through enemies, mark a target, then detonate it with your next hit."
-details = "Blink Range: 320px
-Cooldown: 6.0s
-Mark Duration: 6.0s (1 marked attack, +1 per two levels)
-Bonus Damage: 3 D on average, swung by 2d8 (D = your native hit), +35% per level
-Refund Chance: 10%"
+description = "Cross a short distance and empower the attacks that follow."
+card_blurb = "Blink through a crowd and empower your next attack."
+details = "Lv.1 baseline:
+Active: blink up to 320px.
+Cooldown: 4.0s.
+Mark lasts 6.0s and empowers 1 attack.
++1 marked attack per 2 ranks above Lv.1, up to 5.
+Bonus damage: 3× your attack damage.
+Damage gains +35% of its Lv.1 value per rank.
+10% chance to refund the cooldown."
 icon = ExtResource("2_dljwc")
 effect_scenes = Array[PackedScene]([ExtResource("1_fndtg")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

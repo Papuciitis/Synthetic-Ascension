@@ -10,11 +10,6 @@ class_name PoisonSpiderling
 @export var tail_len_max: float = 42.0
 
 
-@export var bite_dice_sides: int = 3
-@export var bite_base_bonus: float = 1.0
-
-@export var unblockable_method: StringName = &"take_damage_unblockable"
-
 # NEW: visuals (no extra scenes required)
 @export var color_core: Color = Color(0.75, 1.00, 0.25, 1.0)
 @export var color_glow: Color = Color(0.10, 0.80, 0.25, 0.65)
@@ -32,9 +27,6 @@ var player: Node2D = null
 var _life_left: float = 12.0
 var _bite_timer: float = 0.0
 
-var _bite_power_scale: float = 6.0
-var _owner_power: float = 0.0
-
 var _last_vel: Vector2 = Vector2.ZERO
 
 var _target_handle: int = EnemyWorldTypes.INVALID_HANDLE
@@ -42,18 +34,15 @@ var _target_refresh: float = 0.0
 var _redraw_t: float = 0.0
 var _pooled: bool = false
 
-func setup(p: Node2D, lifetime: float, bite_power_scale: float, power: float) -> void:
+func setup(p: Node2D, lifetime: float) -> void:
 	player = p
 	_life_left = lifetime
-	_bite_power_scale = bite_power_scale
-	_owner_power = power
-	bite_damage = -1.0
+	bite_damage = 0.0
 	_expiry_blast = 0.0
 
 
-## The bite's mean payload in damage (the summoner computes it in D); a
-## negative value keeps the old dice-and-Power bite.
-var bite_damage: float = -1.0
+## The summoner supplies the reliable bite payload in native-hit units.
+var bite_damage: float = 0.0
 ## Brood Mother: a spider whose life runs out detonates instead of fading.
 var _expiry_blast: float = 0.0
 var _expiry_radius: float = 0.0
@@ -157,12 +146,7 @@ func _orbit_player() -> void:
 		velocity = Vector2.ZERO
 
 func _deal_bite(handle: int, target_position: Vector2) -> void:
-	var dmg: float
-	if bite_damage >= 0.0:
-		dmg = bite_damage * AugmentScaling.dice_factor(1, maxi(2, bite_dice_sides))
-	else:
-		var roll: int = randi_range(1, max(1, bite_dice_sides))
-		dmg = float(roll) + bite_base_bonus + (_owner_power * _bite_power_scale)
+	var dmg: float = bite_damage
 
 	# VFX (fangs)
 	if vfx_bite_scene != null:
@@ -208,16 +192,6 @@ func explode(dmg: float, radius: float, source: Node = null) -> void:
 
 func take_damage(_amount: float, _source: Node = null) -> void:
 	_despawn()
-
-func _apply_damage(target: Node, dmg: float, source: Node) -> void:
-	if target == null:
-		return
-
-	var mname: String = String(unblockable_method)
-	if target.has_method(mname):
-		target.call(mname, dmg, source)
-	elif target.has_method("take_damage"):
-		target.call("take_damage", dmg, source)
 
 func _find_nearest_enemy() -> int:
 	return EnemyCombat.nearest_enemy(global_position, seek_radius)

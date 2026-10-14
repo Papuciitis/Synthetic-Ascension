@@ -76,6 +76,8 @@ func set_slot(slot: int, augment: Variant) -> void:
 	# A Transcended augment goes by its new name on every surface.
 	if aid != StringName() and Global != null and Global.has_method("augment_display_name") and Global.augment_db.has(aid):
 		nm = Global.augment_display_name(aid)
+		var data := Global.augment_db.get(aid, null) as AugmentData
+		tex = AugmentArt.texture_for(data, Global.augment_facet(aid), Global.is_augment_transcended(aid))
 	icon_rect.texture = tex
 	name_label.text = nm
 

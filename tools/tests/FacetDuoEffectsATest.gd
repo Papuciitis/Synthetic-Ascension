@@ -231,7 +231,7 @@ func _test_salvo(player: TestPlayer) -> void:
 	var salvo := _missile_effect(player, &"salvo")
 	var volley := _fire_volley(salvo, target)
 	salvo.queue_free()
-	var each := AugmentScaling.damage(player, 0.45 * _facet_value(MISSILE, &"salvo", "damage_mul"), 1)
+	var each := AugmentScaling.damage(player, 0.75 * _facet_value(MISSILE, &"salvo", "damage_mul"), 1)
 	_check(plain_volley.size() == 2 and volley.size() == plain_volley.size() + 2, "Salvo fires 2 more missiles a volley (%d vs %d)" % [volley.size(), plain_volley.size()])
 	_check(volley.size() > 0 and volley.all(func(m: Dictionary) -> bool: return _near(float(m["damage"]), each)), "each for x0.75 (%.2f)" % each)
 	_cleanup()
@@ -245,7 +245,7 @@ func _test_lance(player: TestPlayer) -> void:
 	var lance := _missile_effect(player, &"lance")
 	var volley := _fire_volley(lance, far)
 	_check(volley.size() == 1, "Lance seeks x1.5 farther and halves the volley of 2 to 1 (%d)" % volley.size())
-	_check(volley.size() == 1 and _near(float(volley[0]["damage"]), AugmentScaling.damage(player, 0.45 * _facet_value(MISSILE, &"lance", "damage_mul"), 1)), "each Lance missile hits x2.2")
+	_check(volley.size() == 1 and _near(float(volley[0]["damage"]), AugmentScaling.damage(player, 0.75 * _facet_value(MISSILE, &"lance", "damage_mul"), 1)), "each Lance missile hits x2.2")
 	lance.set_transcended(true)
 	_check(lance.burst_count == 1, "Choir's extra missile then halves too, never below one (%d)" % lance.burst_count)
 	lance.queue_free()
@@ -430,7 +430,7 @@ func _test_hemorrhage(player: TestPlayer) -> void:
 	var hemorrhage := _slash(player, &"hemorrhage")
 	seed(99)
 	hemorrhage._cut(bled_target)
-	_check(_near(_lost(bled_target), _lost(plain_target) * _facet_value(SLASH, &"hemorrhage", "damage_mul")), "Hemorrhage: the same roll cuts x0.8 (%.2f vs %.2f)" % [_lost(bled_target), _lost(plain_target)])
+	_check(_near(_lost(bled_target), _lost(plain_target) * _facet_value(SLASH, &"hemorrhage", "damage_mul")), "Hemorrhage: the same payload cuts x0.8 (%.2f vs %.2f)" % [_lost(bled_target), _lost(plain_target)])
 	var plain_bleed: Variant = _bleed(plain_target)
 	var bled: Variant = _bleed(bled_target)
 	_check(plain_bleed != null and bled != null, "both cuts open a bleed")
@@ -478,7 +478,7 @@ func _hex(player: TestPlayer, facet: StringName, parent: Node = null) -> HexBlin
 
 
 func _clear_mark_meta(player: TestPlayer) -> void:
-	for key in ["hex_mark_shots_left", "hex_mark_d8_count", "hex_mark_bonus", "hex_mark_power_scale", "hex_mark_flat"]:
+	for key in ["hex_mark_shots_left", "hex_mark_bonus"]:
 		if player.has_meta(key):
 			player.remove_meta(key)
 

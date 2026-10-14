@@ -47,7 +47,9 @@ func set_data(a: AugmentData) -> void:
 		name_label.text = (Global.augment_display_name(a.id) if a != null else "Empty Key")
 		name_label.add_theme_color_override("font_color", ChamberKit.PARCHMENT if a != null else ChamberKit.MUTED)
 	if icon_rect != null:
-		icon_rect.texture = (a.icon if a != null else null)
+		var facet: StringName = Global.augment_facet(a.id) if a != null and Global != null else &""
+		var turned: bool = Global.is_augment_transcended(a.id) if a != null and Global != null else false
+		icon_rect.texture = AugmentArt.texture_for(a, facet, turned)
 	if _empty_mark != null:
 		_empty_mark.visible = a == null
 	if _blurb_label != null:
@@ -236,6 +238,7 @@ func _drag_preview() -> Control:
 	row.add_theme_constant_override("separation", 12)
 	plate.add_child(row)
 	var art := TextureRect.new()
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	art.texture = icon_rect.texture if icon_rect != null else null
 	art.custom_minimum_size = Vector2(48, 48)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

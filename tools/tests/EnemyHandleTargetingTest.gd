@@ -97,6 +97,8 @@ func _run() -> void:
 	stale_missile.speed = 100.0
 	add_child(stale_missile)
 	stale_missile.setup_handle(stale_target, 20.0, Vector2.RIGHT, player)
+	# Disable the intentional fresh-target search to isolate handle safety.
+	stale_missile.set_retarget_radius(0.0)
 	EnemyWorld.remove_enemy(stale_target, &"stale_target")
 	var replacement_target := _spawn(&"missile_replacement", Vector2(50.0, 0.0))
 	stale_missile.call("_physics_process", 1.0)
@@ -135,8 +137,7 @@ func _run() -> void:
 	var slash := SpiritSlashEffect.new()
 	slash.range_px = 100.0
 	slash.crit_chance = 0.0
-	slash.bleed_min_stacks = 1
-	slash.bleed_max_stacks = 1
+	slash.bleed_stacks = 1
 	slash.setup(player)
 	add_child(slash)
 	slash.call("_try_cast")

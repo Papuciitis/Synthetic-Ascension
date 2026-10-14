@@ -1,9 +1,9 @@
 extends Node
 class_name LitanyOfWoundsEffect
 
-## Litany of Wounds (NEG archetype A5): below 60% HP the wardrobe's total
+## Litany of Wounds (NEG archetype A5): below 80% HP the wardrobe's total
 ## active curse severity converts to Haste on a ramp that is complete at
-## 20% HP. No on-hit window and no timer: the health bar is the resource,
+## 30% HP. No on-hit window and no timer: the health bar is the resource,
 ## read live from the player and the burden snapshot the stat pass left.
 ## Delivered through AugmentRunner.get_haste_multiplier, so it multiplies
 ## the shot cadence the way set and item effects do.
@@ -36,8 +36,8 @@ func total_active_severity() -> float:
 	return burden.total_active if burden != null else 0.0
 
 
-## Requiem: the Transcended Litany starts sooner, doubles its cap and pays
-## the same number as Power.
+## Requiem: starts below 85% HP, fills at 35%, raises the cap to 70%, and
+## pays the same number as Power.
 func is_requiem() -> bool:
 	return Global != null and Global.is_augment_transcended(&"augment_litany_of_wounds")
 

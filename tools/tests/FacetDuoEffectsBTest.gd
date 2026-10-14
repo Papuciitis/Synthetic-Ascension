@@ -207,8 +207,7 @@ func _test_swarm(player: TestPlayer) -> void:
 	var spider: Node = brood[0] if not brood.is_empty() else null
 	if spider != null:
 		spider.call("_deal_bite", target, Vector2(900, 0))
-		var factor := _lost(target) / (plain_bite * bite_mul)
-		_check(_near(factor, 0.5) or _near(factor, 1.0) or _near(factor, 1.5), "and a live bite lands the thinned damage (%.2f)" % _lost(target))
+		_check(_near(_lost(target), 4.2), "and a live bite reliably lands the thinned damage (%.2f)" % _lost(target))
 	await _clear_spiders()
 
 	summoner.set_transcended(true)
@@ -226,12 +225,10 @@ func _test_swarm(player: TestPlayer) -> void:
 	_cleanup()
 
 
-## One detonation of one spiderling at `at`; the global RNG is seeded first
-## so a plain and a Venom Sacs blast roll the same d4.
+## One reliable detonation of one spiderling at `at`.
 func _detonate_one(summoner: SpiderlingSummonEffect, at: Vector2) -> void:
 	await _clear_spiders()
 	summoner._hatch(at)
-	seed(77)
 	summoner._detonate_all()
 	await _clear_spiders()
 

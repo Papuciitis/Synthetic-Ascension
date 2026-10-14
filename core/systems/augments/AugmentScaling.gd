@@ -4,18 +4,17 @@ class_name AugmentScaling
 ## Every number the augment layer is paid in, in one place
 ## (docs/design/2026-10-03-bindings-and-theses.md).
 ##
-## Augments used to pay `12 x k x (1 + Power)`: no style multiplier, nothing
-## from gear, dice that added +2 at 20% Power. The tree pays in D, the native
-## hit, so by segment 6 a Lv.5 augment was a rounding error beside one node.
-## Combat augments now pay in D as well, grow linearly with level (damage is
-## not a capped stat) and stop clamping at Lv.5.
+## Combat augments pay in D, the native hit including style and Power, so
+## their reliable damage grows with the same build strength as the tree.
+## Payloads grow linearly with level; damage is not a capped stat and does
+## not stop growing at Lv.5.
 
 const MAX_LEVEL := 20
 ## The level an augment must reach before its Transcendence is offered.
 const TRANSCEND_LEVEL := 5
 ## Damage per level above 1, as a fraction of the Lv.1 payload.
 const POTENCY_PER_LEVEL := 0.35
-## Counts (missiles, targets, spiders, dice) stop growing after this many
+## Counts (missiles, targets, spiders) stop growing after this many
 ## levels; past it only potency and the cooldown floors move.
 const COUNT_STEP_CAP := 8
 
@@ -77,17 +76,6 @@ static func haste_multiplier(player: Node) -> float:
 		if typeof(h) == TYPE_FLOAT or typeof(h) == TYPE_INT:
 			return maxf(0.1, 1.0 + maxf(float(h), -0.9))
 	return 1.0
-
-
-## A dice expression normalised to its mean: 3d6 averages 1.0, so dice keep
-## their swing without changing the expected payload.
-static func dice_factor(count: int, sides: int, rng: RandomNumberGenerator = null) -> float:
-	var n := maxi(1, count)
-	var s := maxi(2, sides)
-	var total := 0
-	for i in range(n):
-		total += rng.randi_range(1, s) if rng != null else randi_range(1, s)
-	return float(total) / (float(n) * (float(s) + 1.0) * 0.5)
 
 
 ## Elites and bosses: what Storm Crown strikes twice.
@@ -246,7 +234,7 @@ const TRANSCENDENCE := {
 	},
 	&"augment_corruption_engine": {
 		"name": "Heart of Ruin",
-		"rule": "The three heaviest curses feed it. Power cap 30% -> 75%.",
+		"rule": "The three heaviest curses feed it. Power cap 45% -> 75%.",
 		"catalyst_text": "Litany of Wounds, or two curses worn, or a vessel Doctrine",
 		"catalysts": [{"augment": &"augment_litany_of_wounds"}, {"curses": 2}, {"family": &"vessel"}],
 	},
@@ -270,7 +258,7 @@ const TRANSCENDENCE := {
 	},
 	&"augment_litany_of_wounds": {
 		"name": "Requiem",
-		"rule": "Starts at 85% HP (full at 35%). Cap 35% -> 70%, and it adds Power as well as Haste.",
+		"rule": "Starts at 85% HP (full at 35%). Cap 45% -> 70%, and it adds Power as well as Haste.",
 		"catalyst_text": "Corruption Engine, or Spirit Slash, or an Execution node",
 		"catalysts": [{"augment": &"augment_corruption_engine"}, {"augment": &"augment_spirit_slash"}, {"discipline": ["EX"]}],
 	},
@@ -282,7 +270,7 @@ const TRANSCENDENCE := {
 	},
 	&"augment_gamblers_rite": {
 		"name": "House Edge",
-		"rule": "Follower chance cap 35% -> 70%, +2 Followers per curse found.",
+		"rule": "Follower chance cap 60% -> 70%, +2 Followers per curse found.",
 		"catalyst_text": "Lucky Charm, or Cult of Personality, or a Distortion node",
 		"catalysts": [{"augment": &"augment_lucky_charm"}, {"augment": &"augment_cult_of_personality"}, {"discipline": ["DT"]}],
 	},

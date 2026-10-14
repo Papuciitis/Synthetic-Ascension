@@ -1710,7 +1710,7 @@ func bonus_kill_followers() -> int:
 	var extra := 0
 	if permanent_augment_ids.has(&"augment_cult_of_personality"):
 		var level := get_augment_level(&"augment_cult_of_personality")
-		var chance := 0.10 + 0.05 * float(level - 1) + LuckResolver.extra_follower_chance(run_luck)
+		var chance := minf(0.75, 0.25 + 0.025 * float(level - 1) + LuckResolver.extra_follower_chance(run_luck))
 		var prophet := is_augment_transcended(&"augment_cult_of_personality")
 		if prophet:
 			# Prophet doubles the chance; its cap keeps one kill in ten plain.
@@ -2546,10 +2546,7 @@ func gambler_note_acquisition(inst: ItemInstance) -> Dictionary:
 	var result := {"follower": false, "resonance": 0.0}
 	var item_id := String(inst.data.id) if inst != null and inst.data != null else ""
 	var house_edge := is_augment_transcended(&"augment_gamblers_rite")
-	var rite_chance := BurdenResolver.gambler_follower_chance(run_luck, house_edge)
-	# Loaded Dice (Lucky Charm + Gambler's Rite) adds its points on top.
-	if augment_duo_active(AugmentDuos.LOADED_DICE):
-		rite_chance = minf(0.85, rite_chance + AugmentDuos.value(AugmentDuos.LOADED_DICE, "rite_bonus", 0.15))
+	var rite_chance := gambler_acquisition_chance()
 	if _rng.randf() < rite_chance:
 		var paid := 2 if house_edge else 1
 		transaction_followers(paid, &"gamblers_rite", {"item": item_id}, true, true)
@@ -2563,6 +2560,18 @@ func gambler_note_acquisition(inst: ItemInstance) -> Dictionary:
 			result["resonance"] = grant
 			_grant_gambler_resonance(grant)
 	return result
+
+
+## The chance the acquisition path actually rolls, shared with the Run Sheet.
+func gambler_acquisition_chance() -> float:
+	var chance := BurdenResolver.gambler_follower_chance(
+		run_luck, is_augment_transcended(&"augment_gamblers_rite"),
+		get_augment_level(&"augment_gamblers_rite")
+	)
+	# Loaded Dice (Lucky Charm + Gambler's Rite) adds its points on top.
+	if augment_duo_active(AugmentDuos.LOADED_DICE):
+		chance = minf(0.85, chance + AugmentDuos.value(AugmentDuos.LOADED_DICE, "rite_bonus", 0.15))
+	return chance
 
 
 func _grant_gambler_resonance(amount: float) -> void:

@@ -5,6 +5,12 @@ class_name AugmentTooltip
 ## Garamond body. Looks are set once in _ready.
 
 const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
+## Effect scenes also carry passive upkeep and defense; only these augments
+## deal damage that follows AugmentScaling.potency.
+const COMBAT_PAYLOAD_IDS: Array[StringName] = [
+	&"augment_magic_missile", &"augment_tesla_aura", &"augment_spirit_slash",
+	&"augment_blink_hex", &"augment_summon_spiderlings", &"augment_reflect_shield",
+]
 
 var icon: TextureRect = null
 var name_label: Label = null
@@ -57,7 +63,7 @@ func hide_tooltip() -> void:
 	_layout_ticket += 1
 	visible = false
 
-func show_augment(a: AugmentData, level: int = 1) -> void:
+func show_augment(a: AugmentData, level: int = 1, art_form: Dictionary = {}) -> void:
 	if a == null:
 		hide_tooltip()
 		return
@@ -77,25 +83,50 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 	visible = false
 	_constrain_body_width()
 
-	icon.texture = a.icon
+	# A library or recipe preview names a specific form, independently of the
+	# live run. Empty-form callers retain the HUD's current-run behavior.
+	var explicit_preview := not art_form.is_empty()
+	var facet: StringName = &""
+	var turned := false
+	if not explicit_preview:
+		facet = Global.augment_facet(a.id) if Global != null else &""
+		turned = Global.is_augment_transcended(a.id) if Global != null else false
+	else:
+		facet = StringName(str(art_form.get("facet", "")))
+		if not AugmentFacets.is_option(a.id, facet):
+			facet = &""
+		turned = bool(art_form.get("transcended", false)) and AugmentScaling.can_transcend(a.id)
+	icon.texture = AugmentArt.texture_for(a, facet, turned)
 	var lvl: int = maxi(1, level)
-	var shown_name := Global.augment_display_name(a.id) if Global != null and Global.has_method("augment_display_name") else a.display_name
+	var shown_name := a.display_name
+	if explicit_preview:
+		if turned:
+			shown_name = AugmentScaling.transcended_name(a.id)
+	elif Global != null and Global.has_method("augment_display_name"):
+		shown_name = Global.augment_display_name(a.id)
 	name_label.text = "%s  Lv.%d" % [shown_name, lvl]
 
 	var lines: Array[String] = []
 	lines.append("Level: %d" % lvl)
-	if a.effect_scenes.size() > 0:
-		lines.append("Payload: x%.2f of its Lv.1 (grows with your native hit, D)" % AugmentScaling.potency(lvl))
+	if a.id in COMBAT_PAYLOAD_IDS:
+		lines.append("Damage scaling: x%.2f Lv.1; also follows your attack damage." % AugmentScaling.potency(lvl))
 	# What it has become, or what it would take to become it.
-	if Global != null and Global.has_method("is_augment_transcended") and AugmentScaling.can_transcend(a.id):
-		if Global.is_augment_transcended(a.id):
+	if AugmentScaling.can_transcend(a.id):
+		if turned:
 			lines.append("TRANSCENDED (%s): %s" % [a.display_name, AugmentScaling.transcend_rule(a.id)])
 		else:
+			var transcend_level := AugmentScaling.TRANSCEND_LEVEL
+			var held := ""
+			if not explicit_preview and Global != null:
+				transcend_level = Global.augment_transcend_level()
+				held = " (held)" if Global.augment_catalyst_holds(a.id) else ""
 			lines.append("Transcends at Lv.%d into %s. Catalyst: %s%s." % [
-				Global.augment_transcend_level(), AugmentScaling.transcended_name(a.id),
-				AugmentScaling.catalyst_text(a.id), " (held)" if Global.augment_catalyst_holds(a.id) else "",
+				transcend_level, AugmentScaling.transcended_name(a.id),
+				AugmentScaling.catalyst_text(a.id), held,
 			])
-	if Global != null:
+	if explicit_preview:
+		lines.append_array(rite_lines(a.id, facet, false))
+	elif Global != null:
 		lines.append_array(rite_lines(a.id))
 	lines.append("")
 	var desc := a.description.strip_edges()
@@ -132,11 +163,18 @@ func show_augment(a: AugmentData, level: int = 1) -> void:
 ## What the Binding and the Reliquary did to this augment
 ## (duos-facets-and-the-reliquary): its Facet, its Corruption, and for each
 ## Duo it belongs to either the live rule or the partner that would unlock it.
-func rite_lines(aug_id: StringName) -> Array[String]:
+## Explicit previews supply their Facet and omit run-only Corruption/Duo state.
+func rite_lines(aug_id: StringName, preview_facet: Variant = null, include_run_context: bool = true) -> Array[String]:
 	var out: Array[String] = []
-	var facet := Global.augment_facet(aug_id)
+	var facet: StringName = &""
+	if preview_facet != null:
+		facet = StringName(str(preview_facet))
+	elif Global != null:
+		facet = Global.augment_facet(aug_id)
 	if AugmentFacets.is_option(aug_id, facet):
 		out.append("FACET: %s: %s" % [AugmentFacets.display_name(aug_id, facet), AugmentFacets.rule(aug_id, facet)])
+	if not include_run_context or Global == null:
+		return out
 	var outcome := Global.augment_corruption(aug_id)
 	if AugmentRites.OUTCOME_NAMES.has(outcome):
 		out.append("CORRUPTED: %s: %s" % [String(AugmentRites.OUTCOME_NAMES[outcome]), String(AugmentRites.OUTCOME_TEXT.get(outcome, ""))])

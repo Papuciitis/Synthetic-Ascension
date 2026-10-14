@@ -94,7 +94,7 @@ func _run() -> void:
 	# Blink Hex adds to the native attacks: its D/s is the marks it can lay.
 	for level in LEVELS:
 		var t := AugmentScaling.count_steps(level)
-		var cooldown := maxf(2.5, 6.0 * pow(0.92, float(t)))
+		var cooldown := maxf(2.5, 4.0 * pow(0.92, float(t)))
 		var marks := 1 + int(floor(float(t) / 2.0))
 		var per_mark := 3.0 * AugmentScaling.potency(level)
 		lines.append("| Blink Hex (marks, analytic) | %d | %.1f | %.1f (+ rifts 2 x 2.5 x %.2f = %.1f D per blink) |" % [
@@ -112,6 +112,10 @@ func _run() -> void:
 ## only presses the active key the moment it is ready. Run with
 ## --fixed-fps 60 so every frame is exactly STEP.
 func _measure(scene: PackedScene, player: ProbePlayer, level: int, transcended: bool) -> float:
+	# Damage is reliable; seed the remaining control/refund chance mechanics
+	# so repeated measurements compare the same activation sequence.
+	seed(12345)
+	Global._rng.seed = 12345
 	_reset_crowd()
 	var effect := scene.instantiate()
 	effect.call("setup", player)

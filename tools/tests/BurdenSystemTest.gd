@@ -127,11 +127,13 @@ func _test_curses_have_shapes_not_just_magnitudes() -> void:
 
 	# Those behaviours only exist if scripted effects can run outside the two
 	# accessory slots - they could not until the runner was widened.
-	var runner_slots: Array = ItemEffectRunner.new().watched_slots
+	var runner := ItemEffectRunner.new()
+	var runner_slots: Array = runner.watched_slots
 	_check(
 		runner_slots.size() >= Inventory.SLOT_COUNT,
 		"scripted item effects run in every equipped slot (%d)" % runner_slots.size()
 	)
+	runner.free()
 
 
 func _test_snapshot_reads_polarity_and_severity() -> void:

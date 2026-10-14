@@ -15,17 +15,12 @@ signal active_cd_changed(time_left: float, max_cd: float)
 
 @export var cast_range: float = 320.0
 @export var cooldown: float = 1.25
-@export var spawn_count: int = 1
+@export var spawn_count: int = 2
 @export var spider_lifetime: float = 12.0
 
-@export var explosion_radius: float = 52.0
-@export var explosion_d4_count: int = 1
-@export var explosion_power_scale: float = 8.0
+@export var explosion_radius: float = 70.0
 
-@export var bite_power_scale: float = 6.0
-
-## Bite and detonation in D, the native hit (AugmentScaling); detonations
-## swing on explosion_d4_count d4 normalised to their mean.
+## Reliable bite and detonation in D, the native hit (AugmentScaling).
 @export var bite_d: float = 0.5
 @export var explosion_d: float = 1.4
 ## Living spiderlings this summoner may keep: 6 + levels, at most 14.
@@ -144,11 +139,11 @@ func _hatch(at: Vector2) -> Node:
 	s.global_position = at
 	s.set_meta("spider_owner_id", int(get_instance_id()))
 	if s.has_method("setup"):
-		s.call("setup", player, spider_lifetime, bite_power_scale, _get_power())
+		s.call("setup", player, spider_lifetime)
 	if s.has_method("set_bite_damage"):
 		s.call("set_bite_damage", bite_damage())
 	if transcended and s.has_method("set_expiry_blast"):
-		s.call("set_expiry_blast", _roll_explosion_damage(_get_power()), explosion_radius, player)
+		s.call("set_expiry_blast", explosion_damage(), explosion_radius, player)
 	return s
 
 func _process(dt: float) -> void:
@@ -194,8 +189,7 @@ func _try_spawn() -> void:
 	_report_cd(true)
 
 func _detonate_all() -> void:
-	var power: float = _get_power()
-	var dmg: float = _roll_explosion_damage(power)
+	var dmg: float = explosion_damage()
 
 	var owner_id: int = int(get_instance_id())
 
@@ -222,16 +216,9 @@ func _get_target_point() -> Vector2:
 		return player.global_position + (dir / d) * cast_range
 	return mouse
 
-func _get_power() -> float:
-	var power: float = 0.0
-	var st: Stats = player.get("stats") as Stats
-	if st != null:
-		power = st.power
-	return power
-
 ## Venom Sacs swells every detonation, pressed or Brood Mother's expiry.
-func _roll_explosion_damage(_power: float) -> float:
-	return AugmentScaling.damage(player, explosion_d, _aug_level) * AugmentScaling.dice_factor(explosion_d4_count, 4) * _facet_value("blast_mul", 1.0)
+func explosion_damage() -> float:
+	return AugmentScaling.damage(player, explosion_d, _aug_level) * _facet_value("blast_mul", 1.0)
 
 func _report_cd(force: bool) -> void:
 	if not force and absf(_cd - _last_report) < 0.05:
@@ -300,9 +287,6 @@ var _base_cooldown_sp: float
 var _base_spawn_count_sp: int
 var _base_spider_lifetime_sp: float
 var _base_explosion_radius_sp: float
-var _base_explosion_d4_sp: int
-var _base_explosion_power_scale_sp: float
-var _base_bite_power_scale_sp: float
 
 func _enter_tree() -> void:
 	_capture_level_bases_sp()
@@ -322,9 +306,6 @@ func _capture_level_bases_sp() -> void:
 	_base_spawn_count_sp = spawn_count
 	_base_spider_lifetime_sp = spider_lifetime
 	_base_explosion_radius_sp = explosion_radius
-	_base_explosion_d4_sp = explosion_d4_count
-	_base_explosion_power_scale_sp = explosion_power_scale
-	_base_bite_power_scale_sp = bite_power_scale
 
 ## Damage grows through AugmentScaling.potency (read when a spider hatches
 ## or detonates); reach, cadence, brood size, lifetime and blast grow with
@@ -337,9 +318,6 @@ func _apply_level_scaling_sp() -> void:
 	spawn_count = maxi(1, _base_spawn_count_sp + int(floor(float(t) / 2.0))) + int(_facet_value("extra_spawn", 0.0))
 	spider_lifetime = _base_spider_lifetime_sp + 1.5 * float(t)
 	explosion_radius = (_base_explosion_radius_sp + 10.0 * float(t)) * _facet_value("radius_mul", 1.0)
-	explosion_d4_count = maxi(1, _base_explosion_d4_sp + int(floor(float(t) / 2.0)))
-	explosion_power_scale = _base_explosion_power_scale_sp
-	bite_power_scale = _base_bite_power_scale_sp
 
 	_cd_max = cooldown
 	_cd = minf(_cd, _cd_max)

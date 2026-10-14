@@ -104,7 +104,7 @@ static func build_entries() -> Array[Dictionary]:
 		var body := String(row["rule"])
 		if category == "Recipes":
 			body = "[b]Base requirements[/b]\n%s\n\n[b]Payoff[/b]\n%s" % [row["hint"], row["rule"]]
-		entries.append(_entry(category, key, row["name"], String(row["section"]).capitalize(), body, null, key, row["hint"]))
+		entries.append(_entry(category, key, row["name"], String(row["section"]).capitalize(), body, AugmentArt.grimoire_texture(key, Global.augment_db), key, row["hint"]))
 	# Sanitize before sorting, filtering or handing any dictionaries to the UI.
 	# Ordinals follow catalog order, never the unrevealed display names.
 	var ordinals := {}

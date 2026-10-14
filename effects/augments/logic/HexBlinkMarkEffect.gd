@@ -14,18 +14,14 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var debug_prints: bool = false
 
 @export var blink_range: float = 320.0
-@export var active_base_cd: float = 6.0
+@export var active_base_cd: float = 4.0
 
 @export var mark_duration: float = 6.0
 @export var marked_shots: int = 1
 
-## Each marked attack carries `bonus_d` x D (the native hit) x potency,
-## swung by bonus_d8_count d8 normalised to their mean.
+## Each marked attack carries `bonus_d` x D (the native hit) x potency.
 @export var bonus_d: float = 3.0
-@export var bonus_d8_count: int = 2
-# Kept for scene compatibility; no longer read.
-@export var bonus_power_scale: float = 12.0
-@export var bonus_flat: float = 0.0
+@export_range(0.0, 1.0) var refund_chance: float = 0.1
 
 ## Hexgate (the Transcended blink): rifts at both ends of every blink.
 const RIFT_D := 2.5
@@ -70,7 +66,7 @@ func _retitle_for_transcendence() -> void:
 var player: Node2D = null
 
 var _cd: float = 0.0
-var _cd_max: float = 6.0
+var _cd_max: float = 4.0
 var _mark_left: float = 0.0
 var _mark_vfx: Node = null
 var _last_report: float = -999.0
@@ -145,26 +141,22 @@ func _try_cast() -> void:
 	# Apply mark to the next attack(s) of any style
 	_mark_left = mark_duration
 	player.set_meta("hex_mark_shots_left", int(max(1, marked_shots)))
-	player.set_meta("hex_mark_d8_count", int(max(1, bonus_d8_count)))
 	player.set_meta("hex_mark_bonus", mark_bonus())
-	player.set_meta("hex_mark_power_scale", 0.0)
-	player.set_meta("hex_mark_flat", 0.0)
 
 	_spawn_mark_vfx()
 
-	# Cooldown with “1d10 > 9” refund => only 10 refunds
+	# A blink has a small chance to be ready again immediately.
 	_cd_max = Global.doctrine_active_cooldown(active_base_cd)
 	_cd = _cd_max
 	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
-	var r: int = randi_range(1, 10)
-	if r >= 10:
+	if randf() < refund_chance:
 		if debug_prints:
-			print("[HexBlink] refund! (1d10=", r, ")")
+			print("[HexBlink] cooldown refunded")
 		_cd = 0.0
 
 	_report_cd(true)
 
-## The mean payload a marked attack adds, before its d8 swing; Deep Mark
+## The reliable payload a marked attack adds; Deep Mark
 ## multiplies it.
 func mark_bonus() -> float:
 	return AugmentScaling.damage(player, bonus_d, _aug_level) * AugmentFacets.value(AUGMENT_ID, _facet, "damage_mul", 1.0)
@@ -253,12 +245,6 @@ func _clear_mark() -> void:
 
 	if player.has_meta("hex_mark_shots_left"):
 		player.remove_meta("hex_mark_shots_left")
-	if player.has_meta("hex_mark_d8_count"):
-		player.remove_meta("hex_mark_d8_count")
-	if player.has_meta("hex_mark_power_scale"):
-		player.remove_meta("hex_mark_power_scale")
-	if player.has_meta("hex_mark_flat"):
-		player.remove_meta("hex_mark_flat")
 	if player.has_meta("hex_mark_bonus"):
 		player.remove_meta("hex_mark_bonus")
 
@@ -297,9 +283,6 @@ var _base_blink_range: float
 var _base_active_base_cd: float
 var _base_mark_duration: float
 var _base_marked_shots: int
-var _base_bonus_d8_count: int
-var _base_bonus_power_scale: float
-var _base_bonus_flat: float
 
 func _enter_tree() -> void:
 	_capture_level_bases_hb()
@@ -318,12 +301,9 @@ func _capture_level_bases_hb() -> void:
 	_base_active_base_cd = active_base_cd
 	_base_mark_duration = mark_duration
 	_base_marked_shots = marked_shots
-	_base_bonus_d8_count = bonus_d8_count
-	_base_bonus_power_scale = bonus_power_scale
-	_base_bonus_flat = bonus_flat
 
 ## Damage grows through AugmentScaling.potency; reach, cadence, mark
-## window, marked attacks and dice grow with the capped count steps. Long
+## window and marked attacks grow with the capped count steps. Long
 ## Step's cooldown cut applies after the level floor, so it always pays.
 func _apply_level_scaling_hb() -> void:
 	_capture_level_bases_hb()
@@ -333,6 +313,3 @@ func _apply_level_scaling_hb() -> void:
 	mark_duration = _base_mark_duration + 0.75 * float(t)
 	var shots: int = _base_marked_shots + int(floor(float(t) / 2.0)) + (1 if transcended else 0)
 	marked_shots = maxi(1, shots + int(AugmentFacets.value(AUGMENT_ID, _facet, "extra_marks", 0.0)))
-	bonus_d8_count = maxi(1, _base_bonus_d8_count + int(floor(float(t) / 2.0)))
-	bonus_power_scale = _base_bonus_power_scale
-	bonus_flat = _base_bonus_flat

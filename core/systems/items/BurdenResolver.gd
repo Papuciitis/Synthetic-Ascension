@@ -24,23 +24,24 @@ const INVERSION_LUCK_KICKER: float = 0.30
 ## Corruption Engine: Power per point of concentrated severity (asymptotic in
 ## level) and the hard cap on what it pays. One home for both numbers; the
 ## player pass and the Run Sheet used to carry their own copies.
-const CORRUPTION_ENGINE_RATE: float = 0.24
-const CORRUPTION_ENGINE_CAP: float = 0.30
+const CORRUPTION_ENGINE_RATE: float = 0.50
+const CORRUPTION_ENGINE_CAP: float = 0.45
 # Equilibrium Sigil (A3): equal POS and NEG counts, at least this many each.
 const EQUILIBRIUM_RATE: float = 0.24
 const EQUILIBRIUM_CAP: float = 0.20
 const EQUILIBRIUM_MIN_EACH: int = 2
-# Litany of Wounds (A5): severity converts to Haste on a ramp from 60% HP,
-# complete at 20% HP; the share grows by level, the Haste has a hard cap.
-const LITANY_START_HP: float = 0.60
-const LITANY_FULL_HP: float = 0.20
-const LITANY_SHARE: float = 0.50
-const LITANY_CAP: float = 0.35
+# Litany of Wounds (A5): severity converts to Haste on a ramp from 80% HP,
+# complete at 30% HP; the share grows by level, the Haste has a hard cap.
+const LITANY_START_HP: float = 0.80
+const LITANY_FULL_HP: float = 0.30
+const LITANY_SHARE: float = 0.70
+const LITANY_CAP: float = 0.45
 # Gambler's Rite (A7): Followers per new curse found, Resonance per distinct
 # curse per segment.
-const GAMBLER_FOLLOWER_BASE: float = 0.15
-const GAMBLER_RESONANCE_PER_ITEM: float = 0.005
-const GAMBLER_RESONANCE_CAP: float = 0.04
+const GAMBLER_FOLLOWER_BASE: float = 0.35
+const GAMBLER_FOLLOWER_PER_LEVEL: float = 0.015
+const GAMBLER_RESONANCE_PER_ITEM: float = 0.02
+const GAMBLER_RESONANCE_CAP: float = 0.12
 # Gravemarch polarity rule (A6): this many NEG pieces curse the set.
 const GRAVEMARCH_CURSE_MIN_PIECES: int = 3
 
@@ -154,7 +155,7 @@ static func equilibrium_bonus(level: int, snapshot: BurdenSnapshot, perfect: boo
 	return minf(EQUILIBRIUM_CAP, asymptotic_rate(EQUILIBRIUM_RATE, level))
 
 
-## A5: 0 at or above 60% HP, 1 at or below 20% HP, linear between.
+## A5: 0 at or above 80% HP, 1 at or below 30% HP, linear between.
 ## Requiem (the Transcended Litany) starts at 85% and is full at 35%.
 static func litany_ramp(hp_ratio: float, requiem: bool = false) -> float:
 	var start := 0.85 if requiem else LITANY_START_HP
@@ -163,22 +164,23 @@ static func litany_ramp(hp_ratio: float, requiem: bool = false) -> float:
 
 
 ## A5: the Haste the Litany grants for a total active severity at this HP.
-## Requiem doubles the cap (35% -> 70%); its Power share is the same number.
+## Requiem retains its 70% cap; its Power share is the same number.
 static func litany_haste(level: int, total_active_severity: float, hp_ratio: float, requiem: bool = false) -> float:
 	var ramp := litany_ramp(hp_ratio, requiem)
 	if ramp <= 0.0 or total_active_severity <= 0.0:
 		return 0.0
-	var cap := LITANY_CAP * 2.0 if requiem else LITANY_CAP
+	var cap := 0.70 if requiem else LITANY_CAP
 	return ramp * minf(cap, asymptotic_rate(LITANY_SHARE, level) * total_active_severity)
 
 
 ## A7: the chance a newly found curse pays one Follower. House Edge (the
-## Transcended Rite) doubles both terms and the cap.
-static func gambler_follower_chance(luck: float, house_edge: bool = false) -> float:
-	var chance := GAMBLER_FOLLOWER_BASE + LuckResolver.extra_follower_chance(luck)
+## Transcended Rite) doubles the chance and retains its 70% cap. Rank is
+## appended to preserve the existing positional House Edge argument.
+static func gambler_follower_chance(luck: float, house_edge: bool = false, level: int = 1) -> float:
+	var chance := GAMBLER_FOLLOWER_BASE + GAMBLER_FOLLOWER_PER_LEVEL * float(maxi(1, level) - 1) + LuckResolver.extra_follower_chance(luck)
 	if house_edge:
 		return clampf(chance * 2.0, 0.0, 0.70)
-	return clampf(chance, 0.0, 0.35)
+	return clampf(chance, 0.0, 0.60)
 
 
 static func inverted_return(severity: float) -> float:

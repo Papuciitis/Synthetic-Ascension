@@ -70,10 +70,15 @@ var _item_runner: ItemEffectRunnerFixture = null
 
 var _saved_augment_ids: Array[StringName] = []
 var _saved_augment_levels: Dictionary = {}
+var _saved_augment_transcended: Dictionary = {}
 var _saved_stat_delta: StatDelta = null
 var _saved_doctrine_rules: Dictionary = {}
 var _saved_stage_ids: Dictionary = {}
 var _saved_followers: int = 0
+var _saved_luck: float = 0.0
+var _saved_gambler_seen: Dictionary = {}
+var _saved_gambler_resonance: float = 0.0
+var _saved_gambler_followers: int = 0
 var _saved_ledger: Array[Dictionary] = []
 
 
@@ -107,6 +112,7 @@ func _run() -> void:
 	await _test_doctrine_record_prints_gift_price_and_hp_multiplier()
 	await _test_lens_line_prints_luck_kicker()
 	await _test_burden_ledger_names_slots_and_stubs_for_owned_augment()
+	await _test_transcended_burden_readout()
 	await _test_manifestation_list_shares_the_hud_vocabulary()
 
 	_restore_global_state()
@@ -384,6 +390,96 @@ func _test_burden_ledger_names_slots_and_stubs_for_owned_augment() -> void:
 # named, and the pair one lit noun away.
 # ---------------------------------------------------------------------------
 
+func _test_transcended_burden_readout() -> void:
+	var inv := Inventory.new()
+	inv.set_item(0, _cursed(0, 0.40))
+	inv.set_item(1, _cursed(1, 0.20))
+	inv.set_item(2, _cursed(2, 0.80))
+	Global.permanent_augment_ids = [&"augment_corruption_engine", &"", &""]
+	Global.attempt_augment_levels = {}
+	Global.attempt_augment_transcended = {}
+	_player.last_burden = BurdenResolver.resolve(inv, Global.permanent_augment_ids)
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("Power +30.0%" in _manifestations_text(), "ordinary rank-1 Engine shows the 30% Power its top two curses pay")
+	Global.attempt_augment_levels = {"augment_corruption_engine": 20}
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("Power +45.0%" in _manifestations_text(), "ordinary Engine readout respects its 45% cap")
+	Global.attempt_augment_transcended = {"augment_corruption_engine": true}
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	var ruin := _manifestations_text()
+	_check("top three active: 140%" in ruin and "Power +66.7%" in ruin, "Heart of Ruin reads three curses and its own cap")
+	_check("burning: MOV −80%  ·  HP −40%  ·  ARM −20%" in ruin, "Heart of Ruin names all three feeding slots")
+
+	Global.permanent_augment_ids = [&"augment_inversion_lens", &"", &""]
+	Global.attempt_augment_levels = {}
+	Global.attempt_augment_transcended = {"augment_inversion_lens": true}
+	_player.last_burden = BurdenResolver.resolve(inv, Global.permanent_augment_ids)
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	var lens := _manifestations_text()
+	_check("+88% returned" in lens and "Luck +24%" in lens, "Twin Lens shows its doubled returned stat and Luck kicker")
+
+	var parity := BurdenSnapshot.new()
+	parity.neg_count = 2
+	parity.pos_count = 2
+	Global.permanent_augment_ids = [&"augment_equilibrium_sigil", &"", &""]
+	Global.attempt_augment_levels = {"augment_equilibrium_sigil": 20}
+	Global.attempt_augment_transcended = {"augment_equilibrium_sigil": true}
+	_player.last_burden = parity
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("Power +45%, Haste +45%" in _manifestations_text(), "Perfect Balance shows its 45% cap")
+
+	Global.permanent_augment_ids = [&"augment_litany_of_wounds", &"", &""]
+	Global.attempt_augment_levels = {"augment_litany_of_wounds": 20}
+	Global.attempt_augment_transcended = {"augment_litany_of_wounds": true}
+	_player.last_burden = BurdenResolver.resolve(inv, Global.permanent_augment_ids)
+	_player.hp = 35.0
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	var requiem := _manifestations_text()
+	_check("ramp 100%" in requiem and "Haste +70%" in requiem and "Power +70%" in requiem, "Requiem readout uses its own health ramp and reports Power as well as Haste")
+	_player.hp = 60.0
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("ramp 50%" in _manifestations_text() and "Haste +35%" in _manifestations_text(), "Litany readout follows health changes with unchanged equipment")
+	_player.max_hp = 200.0
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("HP 30%" in _manifestations_text() and "Haste +70%" in _manifestations_text(), "Litany readout also follows a changed maximum health")
+	_player.max_hp = 100.0
+
+	Global.permanent_augment_ids = [&"augment_gamblers_rite", &"", &""]
+	Global.attempt_augment_levels = {"augment_gamblers_rite": 2}
+	Global.attempt_augment_transcended = {}
+	Global.run_luck = 0.0
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("36.5%" in _manifestations_text() and "per new curse" in _manifestations_text(), "Rite readout explains the rank-aware acquisition chance")
+	Global.attempt_gambler_seen = {"first_curse": true, "second_curse": true}
+	Global.attempt_gambler_resonance = 0.04
+	Global.attempt_gambler_followers = 3
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("3 Followers won, Resonance +4.0%" in _manifestations_text() and "2 distinct curses found" in _manifestations_text(), "Rite ledger refreshes when acquisition totals change without an equipment change")
+	Global.run_luck = 100000.0
+	_run_sheet.refresh(_player, inv)
+	await get_tree().process_frame
+	_check("56.5%" in _manifestations_text(), "Rite chance follows Luck changes with unchanged equipment")
+	Global.run_luck = 0.0
+	_player.last_burden = BurdenSnapshot.new()
+	_run_sheet.refresh(_player, Inventory.new())
+	await get_tree().process_frame
+	_check("36.5%" in _manifestations_text() and "per new curse" in _manifestations_text(), "Rite keeps its acquisition readout with no curses equipped")
+	Global.attempt_augment_transcended = {}
+	Global.attempt_augment_levels = {}
+	_player.hp = 85.0
+	_player.last_burden = null
+
+
 func _test_manifestation_list_shares_the_hud_vocabulary() -> void:
 	Global.permanent_augment_ids = [&"", &"", &""]
 	_runner.summaries = [
@@ -483,18 +579,28 @@ func _collect_label_text(node: Node) -> String:
 func _save_global_state() -> void:
 	_saved_augment_ids = Global.permanent_augment_ids.duplicate()
 	_saved_augment_levels = Global.attempt_augment_levels.duplicate(true)
+	_saved_augment_transcended = Global.attempt_augment_transcended.duplicate(true)
 	_saved_stat_delta = Global.attempt_stat_delta
 	_saved_doctrine_rules = Global.attempt_doctrine_rules.duplicate(true)
 	_saved_stage_ids = Global.attempt_doctrine_stage_ids.duplicate(true)
 	_saved_followers = Global.followers
+	_saved_luck = Global.run_luck
+	_saved_gambler_seen = Global.attempt_gambler_seen.duplicate(true)
+	_saved_gambler_resonance = Global.attempt_gambler_resonance
+	_saved_gambler_followers = Global.attempt_gambler_followers
 	_saved_ledger = Global.last_stat_ledger.duplicate(true)
 
 
 func _restore_global_state() -> void:
 	Global.permanent_augment_ids = _saved_augment_ids
 	Global.attempt_augment_levels = _saved_augment_levels
+	Global.attempt_augment_transcended = _saved_augment_transcended
 	Global.attempt_stat_delta = _saved_stat_delta
 	Global.attempt_doctrine_rules = _saved_doctrine_rules
 	Global.attempt_doctrine_stage_ids = _saved_stage_ids
 	Global.followers = _saved_followers
+	Global.run_luck = _saved_luck
+	Global.attempt_gambler_seen = _saved_gambler_seen
+	Global.attempt_gambler_resonance = _saved_gambler_resonance
+	Global.attempt_gambler_followers = _saved_gambler_followers
 	Global.last_stat_ledger = _saved_ledger

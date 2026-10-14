@@ -230,7 +230,7 @@ func _build_reader() -> void:
 	_icon.custom_minimum_size.y = 280
 	_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_icon.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_left_page.add_child(_icon)
 	_seal = PageSeal.new()
 	_seal.name = "SealedPageWax"

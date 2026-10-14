@@ -1,23 +1,19 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3]
 
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_crpsc"]
-[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_crpic"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/corruption_engine.png" id="2_crpic"]
 
 [resource]
 script = ExtResource("1_crpsc")
 id = &"augment_corruption_engine"
 display_name = "Corruption Engine"
-description = "A conversion chamber that burns concentrated corruption as fuel. It only has two intake valves."
-card_blurb = "Your TWO most severe curses feed you Power — and merging NEG items now deepens their curse."
-details = "Passive: your 2 most severe statistical
-NEG items (Health, Armour, Movement, Power,
-Haste, Luck - never Offhand or Ring) grant
-Power per 100% severity (12% at L1,
-approaching 24% with levels; output cap
-+30%). A curse suppressed by an Inversion
-Lens feeds nothing.
-While equipped: NEG merges keep the
-MORE severe roll (normally merging
-stabilizes a curse toward mild)."
+description = "Your two strongest curses become a measured source of Power."
+card_blurb = "Your 2 strongest curses grant Power. Negative merges deepen curses."
+details = "Passive: your 2 strongest active statistical-slot curses grant Power.
+At Lv.1, 25% of their combined severity becomes Power.
+The share approaches 50% with rank; Power is capped at +45%.
+Stat slots: HP, Armor, Move Speed, Power, Haste and Luck; excludes Offhand and Ring.
+A curse suppressed by Inversion Lens contributes nothing.
+While equipped, negative merges keep the more severe roll instead of easing it."
 icon = ExtResource("2_crpic")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

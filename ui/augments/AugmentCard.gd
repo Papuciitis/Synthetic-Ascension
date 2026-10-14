@@ -181,7 +181,9 @@ func _apply_data() -> void:
 		blurb = _facet_blurb()
 	desc_label.text = blurb
 	desc_label.visible = true
-	icon_rect.texture = data.icon
+	var facet: StringName = Global.augment_facet(data.id) if Global != null else &""
+	var turned: bool = Global.is_augment_transcended(data.id) if Global != null else false
+	icon_rect.texture = AugmentArt.resolve_texture(AugmentArt.offer_paths(data.id, card_entry, facet, turned), data.icon)
 	_badge.text = badge_text()
 	var tint := grade_colour()
 	_badge.add_theme_color_override("font_color", tint)

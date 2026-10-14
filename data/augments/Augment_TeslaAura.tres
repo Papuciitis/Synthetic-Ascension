@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://c4cvh61nx8nhc"]
 
-[ext_resource type="Texture2D" uid="uid://co0f7tqc86w6" path="res://assets/textures/Augment_Placeholder_Tesla_Aura.png" id="1_4w0gu"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/tesla_aura.png" id="1_4w0gu"]
 [ext_resource type="PackedScene" uid="uid://bkhmpr7235wlw" path="res://effects/augments/scenes/TeslaAuraEffect.tscn" id="1_akl0p"]
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_pbls3"]
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="2_akl0p"]
@@ -14,13 +14,16 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("1_pbls3")
 id = &"augment_tesla_aura"
 display_name = "Tesla Aura"
-description = "A crackling aura that periodically chains lightning to nearby enemies."
+description = "A charged field sends short arcs between nearby enemies."
 mods_scale_per_level = 0.2
-card_blurb = "Periodic lightning aura that chains between nearby enemies."
-details = "Pulse: every 0.55s (Haste speeds it)
-Chain: up to 4 targets within 180px, +1 per two levels
-Damage: 0.5 D per zap (D = your native hit), +35% per level
-+10% Haste"
+card_blurb = "Chains lightning between nearby enemies. Grants Haste."
+details = "Lv.1 baseline:
+Pulse: every 0.55s; Haste speeds it.
+Hits up to 4 targets within 180px.
++1 target per 2 ranks above Lv.1, up to 8.
+Each zap: 0.5× your attack damage.
+Damage gains +35% of its Lv.1 value per rank.
+Passive: +10% Haste; improves with rank."
 icon = ExtResource("1_4w0gu")
 mods = SubResource("Resource_u8ek0")
 effect_scenes = Array[PackedScene]([ExtResource("1_akl0p")])

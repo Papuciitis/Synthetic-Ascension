@@ -637,16 +637,33 @@ func _grimoire_entry(entry: Dictionary) -> Control:
 	box.name = "Entry_%s" % key.replace(":", "_")
 	box.add_theme_constant_override("separation", 0)
 	box.set_meta(&"discovered", discovered)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	box.add_child(row)
+	var illustration: Texture2D = AugmentArt.grimoire_texture(key, Global.augment_db) if discovered else null
+	if illustration != null:
+		var art := TextureRect.new()
+		art.name = "Illustration"
+		art.texture = illustration
+		art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		art.custom_minimum_size = Vector2(80, 80)
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(art)
+	var copy := VBoxContainer.new()
+	copy.add_theme_constant_override("separation", 0)
+	row.add_child(copy)
 	var heading := Label.new()
 	heading.theme_type_variation = &"ArcaneHeading"
 	heading.add_theme_font_size_override("font_size", 16)
 	heading.text = String(entry["name"]) if discovered else "???"
-	box.add_child(heading)
-	var line := _body(String(entry["rule"]) if discovered else "Hint: %s." % String(entry["hint"]), WIDE_TEXT, &"ArcaneBody" if discovered else &"ArcaneItalic")
+	copy.add_child(heading)
+	var line := _body(String(entry["rule"]) if discovered else "Hint: %s." % String(entry["hint"]), WIDE_TEXT - 96.0 if illustration != null else WIDE_TEXT, &"ArcaneBody" if discovered else &"ArcaneItalic")
 	line.add_theme_font_size_override("font_size", 16)
 	if discovered:
 		line.add_theme_color_override("font_color", BODY_DIM)
-	box.add_child(line)
+	copy.add_child(line)
 	if not discovered:
 		box.modulate = Color(1, 1, 1, UNDISCOVERED_ALPHA)
 	return box

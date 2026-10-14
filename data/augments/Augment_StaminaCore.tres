@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_7lfam"]
 [ext_resource type="Script" uid="uid://gbut6h2xvcgp" path="res://data/StatDelta.gd" id="1_a28a3"]
 [ext_resource type="PackedScene" uid="uid://28f53wideaum" path="res://effects/augments/scenes/StaminaCoreEffect.tscn" id="1_vvqko"]
-[ext_resource type="Texture2D" uid="uid://yglmu7j60cd1" path="res://assets/textures/Augment_Placeholder_Stamina_Core.png" id="2_8jwqf"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/stamina_core.png" id="2_8jwqf"]
 
 [sub_resource type="Resource" id="Resource_vvqko"]
 script = ExtResource("1_a28a3")
@@ -15,14 +15,16 @@ metadata/_custom_type_script = "uid://gbut6h2xvcgp"
 script = ExtResource("1_7lfam")
 id = &"augment_stamina_core"
 display_name = "Stamina Core"
-description = "A grafted core that hardens your frame and surges when danger peaks."
+description = "A protective surge shields the body and turns your attacks into recovery."
 mods_scale_per_level = 0.15
-card_blurb = "Tank core: big HP/Armor, plus periodic invulnerability and lifesteal burst."
-details = "Passive: +80 Max HP, +10 Armor
-Active (augment key): 12s cooldown (scales with Haste)
-• Duration: 4.0s
-• Invulnerable: 2.0s
-• Lifesteal: 25% during active"
+card_blurb = "Grants HP and Armor. Activate for invulnerability and lifesteal."
+details = "Lv.1 baseline:
+Passive: +80 Max HP and +10 Armor.
+Active cooldown: 12s; Haste speeds it.
+Active duration: 4.0s.
+Invulnerable for the first 2.0s.
+25% lifesteal while active.
+Stats and the active improve with rank."
 icon = ExtResource("2_8jwqf")
 mods = SubResource("Resource_vvqko")
 effect_scenes = Array[PackedScene]([ExtResource("1_vvqko")])

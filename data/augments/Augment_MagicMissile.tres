@@ -1,19 +1,22 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3 uid="uid://cytrdwfuyfyht"]
 
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_2e64r"]
-[ext_resource type="Texture2D" uid="uid://cfjcwcv23d3t5" path="res://assets/textures/Augment_Placeholder_Magic_Missile.png" id="1_a3vd7"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/magic_missile.png" id="1_a3vd7"]
 [ext_resource type="PackedScene" uid="uid://ci7y0xx2qw45" path="res://effects/augments/scenes/MagicMissileEffect.tscn" id="1_n1mum"]
 
 [resource]
 script = ExtResource("1_2e64r")
 id = &"augment_magic_missile"
 display_name = "Magic Missile"
-description = "A disciplined weave that auto-launches missiles at intruders."
-card_blurb = "Auto-fires seeking missiles on cooldown."
-details = "Cooldown: 0.75s (Haste speeds it)
-Burst: 2 missiles (0.08s spacing), +1 per two levels
-Seek Radius: 750px
-Damage: 0.45 D per missile (D = your native hit), +35% per level"
+description = "A focused weave sends seeking missiles toward nearby threats."
+card_blurb = "Auto-fires seeking missiles. Damage grows with your attack."
+details = "Lv.1 baseline:
+Cooldown: 0.75s; Haste speeds it.
+Burst: 2 missiles, spaced 0.08s apart.
++1 missile per 2 ranks above Lv.1, up to 6.
+Seek range: 750px.
+Each missile: 0.75× your attack damage.
+Damage gains +35% of its Lv.1 value per rank."
 icon = ExtResource("1_a3vd7")
 effect_scenes = Array[PackedScene]([ExtResource("1_n1mum")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

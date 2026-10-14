@@ -213,10 +213,10 @@ func _test_thousand_cuts(player: TestPlayer) -> void:
 	slash.setup(player)
 	add_child(slash)
 	slash.set_level(4)
-	slash.refund_on_3plus = false
+	slash.refund_chance = 0.0
 	var weak := [_spawn(Vector2(30, 0), 1.0), _spawn(Vector2(0, 35), 1.0), _spawn(Vector2(-40, 0), 1.0)]
 	var sturdy := [_spawn(Vector2(0, -60)), _spawn(Vector2(70, 10))]
-	_check(slash.target_count() == 1, "an ordinary slash strikes one enemy")
+	_check(slash.target_count() == 2, "an ordinary slash strikes two enemies")
 	slash.set_transcended(true)
 	_check(slash.target_count() == 4, "Thousand Cuts strikes 3 + 1 per 4 levels (4 at Lv.4)")
 	_check(slash._try_cast(false), "it casts without a key")
@@ -326,9 +326,10 @@ func _test_undying_engine(player: TestPlayer) -> void:
 func _test_passive_rules() -> void:
 	_check(_near(AugmentScaling.velocity_power(280.0), 0.54) and _near(AugmentScaling.velocity_power(900.0), 0.6) and AugmentScaling.velocity_power(90.0) == 0.0, "Velocity Engine: +30% Power per 100 move speed above 100, at most +60%")
 	_check(_near(AugmentScaling.lucky_crit_chance(1.0, true), 2.0 * LuckResolver.lucky_crit_chance(1.0)) and _near(AugmentScaling.lucky_crit_multiplier(true), 2.5), "Fortune's Engine doubles the lucky crit and makes it x2.5")
-	_check(_near(BurdenResolver.gambler_follower_chance(100000.0, true), 0.70, 0.01) and _near(BurdenResolver.gambler_follower_chance(100000.0), 0.35, 0.01), "House Edge lifts the Rite's cap from 35% to 70%")
-	_check(_near(BurdenResolver.gambler_follower_chance(0.0, true), 0.30), "and doubles the base chance (15% -> 30%)")
-	_check(BurdenResolver.litany_ramp(0.8) == 0.0 and BurdenResolver.litany_ramp(0.8, true) > 0.0, "Requiem starts at 85% HP, not 60%")
+	_check(_near(BurdenResolver.gambler_follower_chance(100000.0, true), 0.70, 0.01) and _near(BurdenResolver.gambler_follower_chance(100000.0), 0.55, 0.01), "House Edge retains its 70% cap as the ordinary rank-1 Rite reaches 55% with Luck")
+	_check(_near(BurdenResolver.gambler_follower_chance(0.0, true), 0.70), "and doubles the base chance (35% -> 70%)")
+	_check(BurdenResolver.litany_ramp(0.8) == 0.0 and _near(BurdenResolver.litany_ramp(0.8, true), 0.10), "Requiem still starts at 85% HP, above the ordinary 80%")
+	_check(_near(BurdenResolver.litany_ramp(0.35, true), 1.0) and _near(BurdenResolver.litany_ramp(0.35), 0.90), "Requiem is full at 35% HP while the ordinary Litany fills at 30%")
 	_check(_near(BurdenResolver.litany_haste(20, 5.0, 0.0, true), 0.70), "and its cap is 70%")
 	var snapshot := BurdenSnapshot.new()
 	snapshot.neg_count = 2
@@ -394,8 +395,8 @@ func _test_stat_pass() -> void:
 	var none := _stats_with(player, [StringName(), StringName(), StringName()], {})
 	var plain := _stats_with(player, engine, {})
 	var ruin := _stats_with(player, engine, {"augment_corruption_engine": true})
-	_check(_near(plain.power - none.power, 0.30), "Corruption Engine pays its 30%% cap (%.3f)" % (plain.power - none.power))
-	_check(ruin.power - none.power > 0.30 and ruin.power - none.power <= 0.75 + 0.0001, "Heart of Ruin reads three curses past the old cap (%.3f)" % (ruin.power - none.power))
+	_check(_near(plain.power - none.power, 0.45), "Corruption Engine pays its 45%% cap (%.3f)" % (plain.power - none.power))
+	_check(ruin.power - none.power > 0.45 and ruin.power - none.power <= 0.75 + 0.0001, "Heart of Ruin reads three curses past the ordinary cap (%.3f)" % (ruin.power - none.power))
 	Global.attempt_augment_levels = {}
 
 	# Martyr's Frame: +5% Power per qualifying curse.

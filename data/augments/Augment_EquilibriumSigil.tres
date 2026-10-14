@@ -1,24 +1,20 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3]
 
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_aug"]
-[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/equilibrium_sigil.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_aug")
 id = &"augment_equilibrium_sigil"
 display_name = "Equilibrium Sigil"
-description = "The lattice holds when the ledger balances."
-card_blurb = "Equal POS and NEG counts (at least 2 each) grant Power and Haste. While slotted, pickups never auto-equip."
-details = "Passive: while your equipped POS count equals
-your NEG count (at least 2 of each, all eight
-slots, polarity not burden), gain Power and
-Haste (12% at L1, approaching 24% with levels;
-cap +20% each). All or nothing: one extra
-piece of either kind breaks it.
-A curse suppressed by an Inversion Lens still
-counts as NEG here.
-While slotted, pickups never auto-equip into
-an empty slot: they go to the bag, and you
-curate the wardrobe by hand."
+description = "A balanced lattice rewards equal positive and negative equipment."
+card_blurb = "Equal positive and negative counts grant Power and Haste."
+details = "Passive: equip equal positive and negative item counts, with at least 2 of each.
+Counts all 8 slots by polarity; severity does not matter.
+At Lv.1: +12% Power and +12% Haste.
+Bonuses improve with rank, capped at +20% each.
+One extra item of either polarity breaks the balance.
+A curse suppressed by Inversion Lens still counts as negative.
+While slotted, new pickups go to your bag instead of auto-equipping."
 icon = ExtResource("2_icon")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

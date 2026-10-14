@@ -55,6 +55,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleAugWell")
 
 [node name="Icon" type="TextureRect" parent="Aug1/Content" unique_id=1652769328]
+texture_filter = 2
 layout_mode = 0
 anchor_bottom = 1.0
 offset_left = 7.0
@@ -133,6 +134,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleAugWell")
 
 [node name="Icon" type="TextureRect" parent="Aug2/Content" unique_id=148359292]
+texture_filter = 2
 layout_mode = 0
 anchor_bottom = 1.0
 offset_left = 7.0
@@ -212,6 +214,7 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleAugWell")
 
 [node name="Icon" type="TextureRect" parent="Aug3/Content" unique_id=848715812]
+texture_filter = 2
 layout_mode = 0
 anchor_bottom = 1.0
 offset_left = 7.0

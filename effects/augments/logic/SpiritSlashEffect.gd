@@ -13,18 +13,11 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var range_px: float = 180.0
 @export var base_cd: float = 2.5
 
-# The cut: `hit_d` x D (the native hit, AugmentScaling) x potency, swung by
-# d6_count d6 normalised to their mean - the dice keep their tabletop swing
-# without the old 3d6 + 10 x Power, which added +2 at 20% Power.
+# The cut: `hit_d` x D (the native hit, AugmentScaling) x potency.
 @export var hit_d: float = 2.4
-@export var d6_count: int = 3
-# Kept for scene compatibility; no longer read.
-@export var power_scale: float = 10.0
-@export var flat_bonus: float = 0.0
 
 # Bleed
-@export var bleed_min_stacks: int = 1
-@export var bleed_max_stacks: int = 3
+@export var bleed_stacks: int = 2
 @export var bleed_duration: float = 3.0
 @export var bleed_tick: float = 0.5
 @export var bleed_tick_mult_of_hit: float = 0.06
@@ -34,8 +27,8 @@ signal active_cd_changed(time_left: float, max_cd: float)
 @export var crit_stun: float = 0.35
 @export var crit_knock: float = 520.0
 
-# Refund 1d4 >= 3
-@export var refund_on_3plus: bool = true
+# Only a manually activated cut can refund its cooldown.
+@export_range(0.0, 1.0) var refund_chance: float = 0.5
 
 # VFX scene (assign VFX_SpiritSlash.tscn)
 @export var vfx_scene: PackedScene
@@ -98,13 +91,11 @@ func _try_cast(manual: bool = true) -> bool:
 			break
 		killed = _cut_all(again, struck)
 
-	# The d4 refund rewards a pressed cast. Thousand Cuts' own casts skip it:
+	# The refund rewards a pressed cast. Thousand Cuts' own casts skip it:
 	# with a cast on every ready frame, a 50% reset compounded into twice the
 	# cast rate on top of the chains (AugmentPowerProbe: 113 D/s at Lv.10).
-	if refund_on_3plus and manual:
-		var r: int = randi_range(1, 4)
-		if r >= 3:
-			_cd = 0.0
+	if manual and randf() < refund_chance:
+		_cd = 0.0
 	return true
 
 
@@ -135,18 +126,17 @@ func _cut_all(targets: Array[int], struck: Dictionary) -> int:
 
 func _cut(handle: int, part: String = "augment:spirit_slash:slash") -> bool:
 	var target_position := EnemyCombat.position_for_handle(handle)
-	# The bleed reads the roll before the Facet's cut multiplier, so
+	# The bleed reads the payload before the Facet's cut multiplier, so
 	# Hemorrhage's thinner cut does not thin its own bleed.
-	var rolled: float = _roll_hit_damage()
-	var hit_dmg: float = rolled * _facet_cut_mul(handle)
+	var payload: float = _hit_damage()
+	var hit_dmg: float = payload * _facet_cut_mul(handle)
 	var is_crit: bool = (randf() < crit_chance)
 
 	EnemyCombat.apply_damage(handle, hit_dmg, 1, player, BalanceAttribution.provenance("augment:spirit_slash", part, "augment"))
 	var died := not EnemyWorld.is_valid_handle(handle) or EnemyWorld.is_dying(handle) or EnemyWorld.get_health(handle) <= 0.0
 
 	if not died:
-		var stacks: int = randi_range(bleed_min_stacks, bleed_max_stacks)
-		_apply_bleed(handle, stacks, rolled)
+		_apply_bleed(handle, bleed_stacks, payload)
 		if is_crit:
 			EnemyCombat.apply_stun(handle, crit_stun)
 			var direction: Vector2 = (target_position - player.global_position).normalized()
@@ -183,13 +173,13 @@ func phantom_cut(at: Vector2, count: int) -> int:
 	return targets.size()
 
 
-## One target, or Thousand Cuts' 3 + 1 per 4 levels.
+## Two nearest targets, or Thousand Cuts' 3 + 1 per 4 levels.
 func target_count() -> int:
-	return (CUTS_TARGETS + int(floor(float(_aug_level) / 4.0))) if transcended else 1
+	return (CUTS_TARGETS + int(floor(float(_aug_level) / 4.0))) if transcended else 2
 
 
-func _roll_hit_damage() -> float:
-	return AugmentScaling.damage(player, hit_d, _aug_level) * AugmentScaling.dice_factor(d6_count, 6)
+func _hit_damage() -> float:
+	return AugmentScaling.damage(player, hit_d, _aug_level)
 
 
 ## Thousand Cuts (the Transcended slash).
@@ -273,11 +263,8 @@ var _bases_captured_ss: bool = false
 
 var _base_range_px_ss: float
 var _base_cd_ss: float
-var _base_d6_count_ss: int
-var _base_power_scale_ss: float
-var _base_flat_bonus_ss: float
 var _base_crit_chance_ss: float
-var _base_bleed_max_ss: int
+var _base_bleed_stacks_ss: int
 var _base_bleed_duration_ss: float
 var _base_bleed_tick_mult_ss: float
 
@@ -296,15 +283,12 @@ func _capture_level_bases_ss() -> void:
 
 	_base_range_px_ss = range_px
 	_base_cd_ss = base_cd
-	_base_d6_count_ss = d6_count
-	_base_power_scale_ss = power_scale
-	_base_flat_bonus_ss = flat_bonus
 	_base_crit_chance_ss = crit_chance
-	_base_bleed_max_ss = bleed_max_stacks
+	_base_bleed_stacks_ss = bleed_stacks
 	_base_bleed_duration_ss = bleed_duration
 	_base_bleed_tick_mult_ss = bleed_tick_mult_of_hit
 
-## Damage grows through AugmentScaling.potency; reach, cadence, dice, crit
+## Damage grows through AugmentScaling.potency; reach, cadence, control proc
 ## and bleed stacks grow with the capped count steps; Hemorrhage deepens
 ## and lengthens the bleed.
 func _apply_level_scaling_ss() -> void:
@@ -312,11 +296,8 @@ func _apply_level_scaling_ss() -> void:
 	var t: int = AugmentScaling.count_steps(_aug_level)
 	range_px = _base_range_px_ss * (1.0 + 0.05 * float(t))
 	base_cd = maxf(1.4, _base_cd_ss * pow(0.94, float(t)))
-	d6_count = maxi(1, _base_d6_count_ss + int(floor(float(t) / 2.0)))
-	power_scale = _base_power_scale_ss
-	flat_bonus = _base_flat_bonus_ss
 	crit_chance = clampf(_base_crit_chance_ss + 0.02 * float(t), 0.0, 0.25)
-	bleed_max_stacks = maxi(bleed_min_stacks, _base_bleed_max_ss + int(floor(float(t) / 2.0)))
+	bleed_stacks = maxi(1, _base_bleed_stacks_ss + int(floor(float(t) / 4.0)))
 	bleed_duration = _base_bleed_duration_ss * AugmentFacets.value(AUGMENT_ID, _facet, "bleed_duration_mul", 1.0)
 	bleed_tick_mult_of_hit = _base_bleed_tick_mult_ss * AugmentFacets.value(AUGMENT_ID, _facet, "bleed_mul", 1.0)
 

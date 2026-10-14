@@ -634,6 +634,15 @@ func _manifestation_state(player: Node) -> Dictionary:
 			entries.append([slot, burden.severity_at(slot), burden.active_at(slot), burden.qualifies(slot)])
 		state["burden_entries"] = entries
 	state["augment_ids"] = Global.permanent_augment_ids.duplicate() if Global != null else []
+	# Litany reads the live health ratio, even when the wardrobe has not moved.
+	if Global != null and Global.permanent_augment_ids.has(&"augment_litany_of_wounds"):
+		state["litany_health"] = [player.get("hp"), player.get("max_hp")]
+	# Found curses and Luck can change without changing equipped items.
+	if Global != null and Global.permanent_augment_ids.has(&"augment_gamblers_rite"):
+		state["gambler_acquisition"] = [
+			Global.attempt_gambler_followers, Global.attempt_gambler_resonance,
+			Global.attempt_gambler_seen.size(), Global.run_luck,
+		]
 	# The Engine, Doctrine and Lens lines all read the augment level.
 	state["augment_levels"] = Global.attempt_augment_levels.duplicate(true) if Global != null else {}
 	state["augment_transcended"] = Global.attempt_augment_transcended.duplicate(true) if Global != null else {}
@@ -788,8 +797,12 @@ func _append_burden(player: Node) -> void:
 		Color(1, 1, 1, 0.80), 11
 	)
 	if snap.neg_count <= 0:
-		for label in owned:
-			_add_line("%s — no curses equipped" % label, Color(1, 1, 1, 0.55), 11)
+		for archetype in NEG_ARCHETYPES:
+			var id := StringName(archetype["id"])
+			if id != &"augment_gamblers_rite" and ids.has(id):
+				_add_line("%s — no curses equipped" % Global.augment_display_name(id).to_upper(), Color(1, 1, 1, 0.55), 11)
+		# The Rite rewards finding curses; none need be worn.
+		_append_gambler_readout()
 		return
 	# The slots behind the count, from the same entries the count came from.
 	var active_slots := _burden_slots(snap, func(slot: int) -> bool: return snap.active_at(slot) > 0.0)
@@ -797,22 +810,24 @@ func _append_burden(player: Node) -> void:
 		_add_wrapped_line(manifestations_vbox, "   active: %s" % _burden_roster(snap, active_slots), Color(1, 1, 1, 0.62), 10)
 
 	if ids.has(&"augment_corruption_engine"):
-		var top_two := snap.heaviest(2)
+		var ruin: bool = Global.is_augment_transcended(&"augment_corruption_engine")
+		var feeding_count := 3 if ruin else 2
+		var feeding_severity := snap.heaviest(feeding_count)
+		var engine_cap := 0.75 if ruin else BurdenResolver.CORRUPTION_ENGINE_CAP
 		var rate := BurdenResolver.asymptotic_rate(
 			BurdenResolver.CORRUPTION_ENGINE_RATE, Global.get_augment_level(&"augment_corruption_engine")
 		)
-		_add_line("CORRUPTION ENGINE", BURDEN, 11)
+		_add_line(Global.augment_display_name(&"augment_corruption_engine").to_upper(), BURDEN, 11)
 		_add_line(
-			"   top two active: %d%%  ×  %d%%/100%%  →  Power +%.1f%%%s" % [
-				int(round(top_two * 100.0)), int(round(rate * 100.0)),
-				minf(BurdenResolver.CORRUPTION_ENGINE_CAP, top_two * rate) * 100.0,
-				"  (CAPPED)" if top_two * rate > BurdenResolver.CORRUPTION_ENGINE_CAP else "",
+			"   top %s active: %d%%  ×  %d%%/100%%  →  Power +%.1f%%%s" % [
+				"three" if ruin else "two", int(round(feeding_severity * 100.0)), int(round(rate * 100.0)),
+				minf(engine_cap, feeding_severity * rate) * 100.0,
+				"  (CAPPED)" if feeding_severity * rate >= engine_cap else "",
 			],
 			Color(1, 1, 1, 0.72), 10
 		)
-		# Which two: a third curse feeds nothing, and the feed prompt on it
-		# reads as a bug unless the sheet says so.
-		var burning := _heaviest_slots(snap, 2)
+		# Name the same two or three active slots the stat pass sums.
+		var burning := _heaviest_slots(snap, feeding_count)
 		if not burning.is_empty():
 			_add_wrapped_line(manifestations_vbox, "   burning: %s" % _burden_roster(snap, burning), Color(1, 1, 1, 0.62), 10)
 
@@ -840,13 +855,18 @@ func _append_burden(player: Node) -> void:
 			_add_wrapped_line(manifestations_vbox, "   qualifying: %s" % _burden_roster(snap, qualifying), Color(1, 1, 1, 0.62), 10)
 
 	if ids.has(&"augment_inversion_lens"):
-		_add_line("INVERSION LENS", BURDEN, 11)
+		var twin_lens: bool = Global.is_augment_transcended(&"augment_inversion_lens")
+		var lens_multiplier := 2.0 if twin_lens else 1.0
+		_add_line(Global.augment_display_name(&"augment_inversion_lens").to_upper(), BURDEN, 11)
 		if snap.suppressed_slot >= 0:
+			# The slot pass caps a returned statistical roll before applying it.
+			var return_cap := 0.9999 if snap.suppressed_slot == ItemData.EquipSlot.LUCK else 0.95
+			var returned := minf(return_cap, BurdenResolver.inverted_return(snap.suppressed_severity) * lens_multiplier)
 			_add_line(
 				"   %s suppressed: %d%% curse  →  +%d%% returned, 0%% burden" % [
 					Inventory.slot_label(snap.suppressed_slot).to_upper(),
 					int(round(snap.suppressed_severity * 100.0)),
-					int(round(BurdenResolver.inverted_return(snap.suppressed_severity) * 100.0)),
+					int(round(returned * 100.0)),
 				],
 				Color(1, 1, 1, 0.72), 10
 			)
@@ -854,7 +874,7 @@ func _append_burden(player: Node) -> void:
 			# per-level rate times the severity, in the Engine line's shape.
 			var kicker_rate := BurdenResolver.asymptotic_rate(
 				BurdenResolver.INVERSION_LUCK_KICKER, Global.get_augment_level(&"augment_inversion_lens")
-			)
+			) * lens_multiplier
 			_add_line(
 				"   Luck +%d%%  (%d%% severity  ×  %d%%/100%%)" % [
 					int(round(kicker_rate * snap.suppressed_severity * 100.0)),
@@ -866,8 +886,11 @@ func _append_burden(player: Node) -> void:
 		else:
 			_add_line("   nothing cursed to suppress", Color(1, 1, 1, 0.55), 10)
 	if ids.has(&"augment_equilibrium_sigil"):
-		var equilibrium := BurdenResolver.equilibrium_bonus(Global.get_augment_level(&"augment_equilibrium_sigil"), snap)
-		_add_line("EQUILIBRIUM SIGIL", BURDEN, 11)
+		var equilibrium := BurdenResolver.equilibrium_bonus(
+			Global.get_augment_level(&"augment_equilibrium_sigil"), snap,
+			Global.is_augment_transcended(&"augment_equilibrium_sigil")
+		)
+		_add_line(Global.augment_display_name(&"augment_equilibrium_sigil").to_upper(), BURDEN, 11)
 		if equilibrium > 0.0:
 			_add_line("   %d NEG = %d POS  →  Power +%d%%, Haste +%d%%" % [snap.neg_count, snap.pos_count, int(round(equilibrium * 100.0)), int(round(equilibrium * 100.0))], Color(1, 1, 1, 0.72), 10)
 		else:
@@ -877,26 +900,42 @@ func _append_burden(player: Node) -> void:
 		var max_hp := maxf(1.0, float(player.get("max_hp")))
 		var hp_ratio := clampf(float(player.get("hp")) / max_hp, 0.0, 1.0)
 		var litany_level: int = Global.get_augment_level(&"augment_litany_of_wounds")
+		var requiem: bool = Global.is_augment_transcended(&"augment_litany_of_wounds")
 		var litany_share := BurdenResolver.asymptotic_rate(BurdenResolver.LITANY_SHARE, litany_level)
-		var litany := BurdenResolver.litany_haste(litany_level, snap.total_active, hp_ratio)
-		_add_line("LITANY OF WOUNDS", BURDEN, 11)
+		var litany := BurdenResolver.litany_haste(litany_level, snap.total_active, hp_ratio, requiem)
+		var litany_cap := 0.70 if requiem else BurdenResolver.LITANY_CAP
+		_add_line(Global.augment_display_name(&"augment_litany_of_wounds").to_upper(), BURDEN, 11)
 		_add_line(
-			"   HP %d%%  ×  ramp %d%%  ×  %d%% of %d%% severity  →  Haste +%d%%%s" % [
-				int(round(hp_ratio * 100.0)), int(round(BurdenResolver.litany_ramp(hp_ratio) * 100.0)),
+			"   HP %d%%  ×  ramp %d%%  ×  %d%% of %d%% severity  →  Haste +%d%%%s%s" % [
+				int(round(hp_ratio * 100.0)), int(round(BurdenResolver.litany_ramp(hp_ratio, requiem) * 100.0)),
 				int(round(litany_share * 100.0)), int(round(snap.total_active * 100.0)), int(round(litany * 100.0)),
-				"  (CAPPED)" if litany > 0.0 and litany_share * snap.total_active >= BurdenResolver.LITANY_CAP else "",
+				", Power +%d%%" % int(round(litany * 100.0)) if requiem else "",
+				"  (CAPPED)" if litany > 0.0 and litany_share * snap.total_active >= litany_cap else "",
 			],
 			Color(1, 1, 1, 0.72), 10
 		)
 	if ids.has(&"augment_gamblers_rite"):
-		_add_line("GAMBLER'S RITE", BURDEN, 11)
-		_add_line(
-			"   this segment: %d Followers won, Resonance +%.1f%% of +%.0f%% (%d distinct curses found)" % [
-				int(Global.attempt_gambler_followers), Global.attempt_gambler_resonance * 100.0,
-				BurdenResolver.GAMBLER_RESONANCE_CAP * 100.0, Global.attempt_gambler_seen.size(),
-			],
-			Color(1, 1, 1, 0.72), 10
-		)
+		_append_gambler_readout()
+
+
+func _append_gambler_readout() -> void:
+	if Global == null or not Global.permanent_augment_ids.has(&"augment_gamblers_rite"):
+		return
+	var house_edge: bool = Global.is_augment_transcended(&"augment_gamblers_rite")
+	_add_line(Global.augment_display_name(&"augment_gamblers_rite").to_upper(), BURDEN, 11)
+	_add_line(
+		"   Lv.%d: %.1f%% chance of +%d Follower%s per new curse" % [
+			Global.get_augment_level(&"augment_gamblers_rite"), Global.gambler_acquisition_chance() * 100.0,
+			2 if house_edge else 1, "s" if house_edge else "",
+		], Color(1, 1, 1, 0.72), 10
+	)
+	_add_line(
+		"   this segment: %d Followers won, Resonance +%.1f%% of +%.0f%% (%d distinct curses found)" % [
+			int(Global.attempt_gambler_followers), Global.attempt_gambler_resonance * 100.0,
+			BurdenResolver.GAMBLER_RESONANCE_CAP * 100.0, Global.attempt_gambler_seen.size(),
+		],
+		Color(1, 1, 1, 0.72), 10
+	)
 
 
 func _append_manifestations(player: Node) -> void:

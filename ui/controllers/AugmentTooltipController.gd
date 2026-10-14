@@ -7,6 +7,8 @@ class_name AugmentTooltipController
 var _aug_panel: Control = null
 var _tooltip: Control = null
 var _current_augment: AugmentData = null
+var _current_art_form: Dictionary = {}
+var _current_level := 0
 
 func _ready() -> void:
 	_aug_panel = (get_node_or_null(aug_panel_path) as Control) if aug_panel_path != NodePath() else null
@@ -65,7 +67,7 @@ func _process(_delta: float) -> void:
 		_hide_tooltip()
 		return
 
-	_show_tooltip(a)
+	_show_tooltip(a, _find_art_form_in_parents(hovered))
 	_position_tooltip_near_mouse()
 
 
@@ -86,21 +88,42 @@ func _find_augment_in_parents(n: Node) -> AugmentData:
 	return null
 
 
-func _show_tooltip(a: AugmentData) -> void:
+func _find_art_form_in_parents(n: Node) -> Dictionary:
+	var current := n
+	while current != null:
+		if current.has_meta(&"augment_art_form"):
+			var form: Variant = current.get_meta(&"augment_art_form")
+			if form is Dictionary:
+				return (form as Dictionary).duplicate()
+		current = current.get_parent()
+	return {}
+
+
+func _show_tooltip(a: AugmentData, art_form: Dictionary = {}) -> void:
 	if _tooltip == null:
 		return
-	if a == _current_augment:
+	if a == null:
+		_hide_tooltip()
 		return
-	_current_augment = a
 
 	var lvl: int = 1
 	if a != null and Global != null and Global.has_method("get_augment_level"):
 		var aid: StringName = a.id
 		if aid != StringName():
 			lvl = Global.get_augment_level(aid)
+	if art_form.is_empty():
+		art_form = {
+			"facet": Global.augment_facet(a.id) if Global != null else &"",
+			"transcended": Global.is_augment_transcended(a.id) if Global != null else false,
+		}
+	if a == _current_augment and art_form == _current_art_form and lvl == _current_level:
+		return
+	_current_augment = a
+	_current_art_form = art_form.duplicate()
+	_current_level = lvl
 
 	if _tooltip.has_method("show_augment"):
-		_tooltip.call("show_augment", a, lvl)
+		_tooltip.call("show_augment", a, lvl, art_form)
 		# AugmentTooltip performs one deferred layout pass with a constrained text
 		# width. Position it after that pass instead of measuring a zero-width label.
 		call_deferred("_position_tooltip_near_mouse")
@@ -109,6 +132,8 @@ func _hide_tooltip() -> void:
 	if _tooltip == null:
 		return
 	_current_augment = null
+	_current_art_form = {}
+	_current_level = 0
 	if _tooltip.has_method("hide_tooltip"):
 		_tooltip.call("hide_tooltip")
 	_tooltip.visible = false

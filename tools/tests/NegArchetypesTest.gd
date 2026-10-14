@@ -237,12 +237,12 @@ func _test_sigil_sends_pickups_to_the_bag() -> void:
 # ---------------------------------------------------------------------------
 
 func _test_litany_rule() -> void:
-	_check(_near(BurdenResolver.litany_ramp(0.70), 0.0) and _near(BurdenResolver.litany_ramp(0.60), 0.0), "nothing at or above 60% HP")
-	_check(_near(BurdenResolver.litany_ramp(0.40), 0.5) and _near(BurdenResolver.litany_ramp(0.20), 1.0) and _near(BurdenResolver.litany_ramp(0.05), 1.0), "the ramp is half way at 40% HP and complete from 20% down")
-	_check(_near(BurdenResolver.litany_haste(1, 1.0, 0.20), 0.25), "at 20% HP, 100% severity converts to +25% Haste at level 1")
-	_check(_near(BurdenResolver.litany_haste(1, 2.0, 0.20), 0.35), "and the hard cap is +35%")
-	_check(_near(BurdenResolver.litany_haste(2, 1.0, 0.20), 1.0 / 3.0), "level 2 converts a third of the severity")
-	_check(_near(BurdenResolver.litany_haste(1, 1.0, 0.40), 0.125) and _near(BurdenResolver.litany_haste(1, 0.0, 0.20), 0.0) and _near(BurdenResolver.litany_haste(1, 1.0, 0.90), 0.0), "half the ramp halves it, no severity or a full bar gives nothing")
+	_check(_near(BurdenResolver.litany_ramp(0.90), 0.0) and _near(BurdenResolver.litany_ramp(0.80), 0.0), "nothing at or above 80% HP")
+	_check(_near(BurdenResolver.litany_ramp(0.55), 0.5) and _near(BurdenResolver.litany_ramp(0.30), 1.0) and _near(BurdenResolver.litany_ramp(0.05), 1.0), "the ramp is half way at 55% HP and complete from 30% down")
+	_check(_near(BurdenResolver.litany_haste(1, 1.0, 0.30), 0.35), "at 30% HP, 100% severity converts to +35% Haste at level 1")
+	_check(_near(BurdenResolver.litany_haste(1, 2.0, 0.30), 0.45), "and the ordinary hard cap is +45%")
+	_check(_near(BurdenResolver.litany_haste(2, 0.60, 0.30), 0.28), "level 2 converts 60% severity to 28% Haste")
+	_check(_near(BurdenResolver.litany_haste(1, 1.0, 0.55), 0.175) and _near(BurdenResolver.litany_haste(1, 0.0, 0.30), 0.0) and _near(BurdenResolver.litany_haste(1, 1.0, 0.90), 0.0), "half the ramp halves it, no severity or a full bar gives nothing")
 
 
 func _test_litany_effect_reads_the_player() -> void:
@@ -258,12 +258,12 @@ func _test_litany_effect_reads_the_player() -> void:
 	effect.call("set_level", 1)
 	_check(_near(float(effect.call("get_haste_multiplier")), 1.0), "a full health bar is x1.0")
 	stub.hp = 20.0
-	_check(_near(float(effect.call("get_haste_multiplier")), 1.35), "at 20% HP, 150% severity is capped to x1.35")
-	stub.hp = 40.0
-	_check(_near(float(effect.call("get_haste_multiplier")), 1.175), "at 40% HP half of that: x1.175")
+	_check(_near(float(effect.call("get_haste_multiplier")), 1.45), "at 20% HP, 150% severity is capped to x1.45")
+	stub.hp = 55.0
+	_check(_near(float(effect.call("get_haste_multiplier")), 1.225), "at 55% HP half of that: x1.225")
 	stub.last_burden = BurdenResolver.resolve(inv, [LENS])
 	stub.hp = 20.0
-	_check(_near(float(effect.call("get_haste_multiplier")), 1.175), "a Lens-suppressed curse contributes nothing (70% left: x1.175)")
+	_check(_near(float(effect.call("get_haste_multiplier")), 1.245), "a Lens-suppressed curse contributes nothing (70% left: x1.245)")
 	_drop(effect)
 	_drop(stub)
 
@@ -309,7 +309,7 @@ func _test_gambler_rule() -> void:
 	_check(not GamblersRite.is_new_neg_acquisition(&"bagged", pos, {"source": "pickup"}), "nor a blessed pickup")
 	_check(not GamblersRite.is_new_neg_acquisition(&"bagged", neg, {"source": "trade"}) and not GamblersRite.is_new_neg_acquisition(&"bagged", neg, {"source": "undo"}) and not GamblersRite.is_new_neg_acquisition(&"bagged", neg, {}), "nor a trade, an undo or an operation with no source")
 	_check(not GamblersRite.is_new_neg_acquisition(&"unbagged", neg, {"source": "pickup"}), "nor leaving a container")
-	_check(_near(BurdenResolver.gambler_follower_chance(0.0), 0.15) and BurdenResolver.gambler_follower_chance(100000.0) <= 0.35, "the Follower chance is 15% plus at most 20% from Luck")
+	_check(_near(BurdenResolver.gambler_follower_chance(0.0), 0.35) and _near(BurdenResolver.gambler_follower_chance(100000.0), 0.55), "rank 1 pays at 35% plus at most 20% from Luck")
 
 
 func _test_gambler_pays_and_banks() -> void:
@@ -324,11 +324,11 @@ func _test_gambler_pays_and_banks() -> void:
 	for i in range(400):
 		RunEvents.item_operation.emit(&"bagged", relic, {"source": "pickup"})
 	var won := int(Global.followers) - 1000
-	_check(won >= 30 and won <= 90 and won == int(Global.attempt_gambler_followers), "400 cursed pickups at Luck 0 pay about 15%% Followers (%d)" % won)
-	_check(_near(Global.attempt_gambler_resonance, 0.005) and Global.attempt_gambler_seen.size() == 1, "the same relic banks Resonance once per segment (+0.5%)")
+	_check(won >= 100 and won <= 180 and won == int(Global.attempt_gambler_followers), "400 cursed pickups at Luck 0 pay about 35%% Followers (%d)" % won)
+	_check(_near(Global.attempt_gambler_resonance, 0.02) and Global.attempt_gambler_seen.size() == 1, "the same relic banks Resonance once per segment (+2%)")
 	for i in range(1, 12):
 		RunEvents.item_operation.emit(&"bagged", _cursed(0, 0.5, "", "relic_%d" % i), {"source": "pickup"})
-	_check(_near(Global.attempt_gambler_resonance, 0.04) and Global.attempt_gambler_seen.size() == 12, "twelve distinct curses stop at the +4% segment cap")
+	_check(_near(Global.attempt_gambler_resonance, 0.12) and Global.attempt_gambler_seen.size() == 12, "twelve distinct curses stop at the +12% segment cap")
 	var before_trade := int(Global.followers)
 	for i in range(200):
 		RunEvents.item_operation.emit(&"bagged", relic, {"source": "trade"})

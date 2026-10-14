@@ -23,6 +23,7 @@ var _hover_tw: Tween = null
 
 func set_data(a: AugmentData, tags: PackedStringArray = PackedStringArray()) -> void:
 	_data = a
+	set_meta(&"augment_art_form", {"facet": &"", "transcended": false})
 	augment_id = (a.id if a != null else &"")
 	if icon_rect != null:
 		icon_rect.texture = (a.icon if a != null else null)
@@ -172,6 +173,7 @@ func _drag_preview() -> Control:
 	row.add_theme_constant_override("separation", 12)
 	plate.add_child(row)
 	var art := TextureRect.new()
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	art.texture = icon_rect.texture if icon_rect != null else null
 	art.custom_minimum_size = Vector2(48, 48)
 	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE

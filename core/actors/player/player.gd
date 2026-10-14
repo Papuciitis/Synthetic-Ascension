@@ -1087,45 +1087,12 @@ func _consume_hex_mark_bonus(dmg: float) -> float:
 	if shots_left <= 0:
 		return dmg
 
-	var d8_count: int = 2
-	var power_scale: float = 0.0
-	var flat: float = 0.0
-
-	if has_meta("hex_mark_d8_count"):
-		var dv: Variant = get_meta("hex_mark_d8_count")
-		if typeof(dv) == TYPE_INT:
-			d8_count = int(dv)
-
-	if has_meta("hex_mark_power_scale"):
-		var pv: Variant = get_meta("hex_mark_power_scale")
-		if typeof(pv) == TYPE_FLOAT or typeof(pv) == TYPE_INT:
-			power_scale = float(pv)
-
-	if has_meta("hex_mark_flat"):
-		var fv: Variant = get_meta("hex_mark_flat")
-		if typeof(fv) == TYPE_FLOAT or typeof(fv) == TYPE_INT:
-			flat = float(fv)
-
-	if has_meta("hex_mark_bonus"):
-		# The mark pays in D (AugmentScaling): its mean, swung by the d8s.
-		dmg += float(get_meta("hex_mark_bonus")) * AugmentScaling.dice_factor(d8_count, 8)
-	else:
-		var extra: int = 0
-		for i in range(max(1, d8_count)):
-			extra += randi_range(1, 8)
-
-		var pwr: float = 0.0
-		if stats != null:
-			pwr = stats.power
-
-		dmg += float(extra) + flat + (pwr * power_scale)
+	# The active effect supplies a reliable native-hit payload for each charge.
+	dmg += float(get_meta("hex_mark_bonus", 0.0))
 
 	shots_left -= 1
 	if shots_left <= 0:
 		remove_meta("hex_mark_shots_left")
-		if has_meta("hex_mark_d8_count"): remove_meta("hex_mark_d8_count")
-		if has_meta("hex_mark_power_scale"): remove_meta("hex_mark_power_scale")
-		if has_meta("hex_mark_flat"): remove_meta("hex_mark_flat")
 		if has_meta("hex_mark_bonus"): remove_meta("hex_mark_bonus")
 	else:
 		set_meta("hex_mark_shots_left", shots_left)

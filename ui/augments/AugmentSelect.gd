@@ -164,7 +164,8 @@ func _spawn_cards(list: Array) -> void:
 
 	for entry_variant in list:
 		var entry: Dictionary = entry_variant
-		# A Duo card's id is the Duo's; it wears its first member's art.
+		# A Duo uses its first member's data for the existing pick flow; the
+		# card resolves the combined illustration from the offer's Duo id.
 		var a := Global.augment_db.get(AugmentBinding.display_augment_id(entry), null) as AugmentData
 		if a == null:
 			continue
@@ -757,7 +758,7 @@ func _open_facet_chooser(a: AugmentData, card_node: Control, entry: Dictionary) 
 		button.name = "Facet_%s" % String(facet_id)
 		button.theme = ARCANE_THEME
 		button.theme_type_variation = &"ArcaneSmallButton"
-		button.custom_minimum_size = Vector2(340, 64)
+		button.custom_minimum_size = Vector2(340, 120)
 		button.focus_mode = Control.FOCUS_NONE
 		button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		var fresh := not Global.grimoire_has(Grimoire.facet_key(a.id, facet_id))
@@ -765,6 +766,25 @@ func _open_facet_chooser(a: AugmentData, card_node: Control, entry: Dictionary) 
 		button.set_meta(&"facet_id", facet_id)
 		button.pressed.connect(_on_facet_chosen.bind(facet_id))
 		row.add_child(button)
+		# Keep the branch's name and rule on the existing button, with its
+		# illustration beside them. Only the illustration uses linear sampling.
+		for state in [&"normal", &"hover", &"pressed", &"disabled", &"focus"]:
+			var style := button.get_theme_stylebox(state).duplicate() as StyleBox
+			style.content_margin_left = 110.0
+			button.add_theme_stylebox_override(state, style)
+		var art := TextureRect.new()
+		art.name = "FacetArt"
+		art.texture = AugmentArt.texture_for(a, facet_id, false)
+		art.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		button.add_child(art)
+		art.set_anchors_and_offsets_preset(Control.PRESET_CENTER_LEFT)
+		art.offset_left = 12.0
+		art.offset_right = 100.0
+		art.offset_top = -44.0
+		art.offset_bottom = 44.0
 	var back := Button.new()
 	back.name = "Back"
 	back.theme = ARCANE_THEME

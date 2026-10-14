@@ -521,12 +521,12 @@ func _set_slot_augment(slot: Control, a: AugmentData) -> void:
 
 	var texrect: TextureRect = slot as TextureRect
 	if texrect != null:
-		texrect.texture = a.icon
+		texrect.texture = AugmentArt.texture_for(a, Global.augment_facet(a.id), Global.is_augment_transcended(a.id))
 		return
 
 	var icon_rect: TextureRect = slot.find_child("Icon", true, false) as TextureRect
 	if icon_rect != null:
-		icon_rect.texture = a.icon
+		icon_rect.texture = AugmentArt.texture_for(a, Global.augment_facet(a.id), Global.is_augment_transcended(a.id))
 
 	slot.tooltip_text = Global.augment_display_name(a.id)
 

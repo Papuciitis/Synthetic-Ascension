@@ -7,9 +7,8 @@ class_name MagicMissileEffect
 @export var burst_interval: float = 0.08
 @export var seek_radius: float = 750.0
 ## Each missile's payload in D, the native hit (AugmentScaling).
-@export var damage_mult: float = 0.45
+@export var damage_mult: float = 0.75
 @export var scales_with_haste: bool = true
-@export var scales_with_power: bool = true
 @export var debug_prints: bool = false
 
 ## How long a scan that found nothing waits before scanning again. The spatial
@@ -53,6 +52,8 @@ func _process(dt: float) -> void:
 	if _burst_left > 0:
 		_burst_t -= dt
 		if _burst_t <= 0.0:
+			if not EnemyWorld.is_valid_handle(_target_handle) or EnemyWorld.is_dying(_target_handle):
+				_target_handle = _find_nearest_enemy(_player.global_position, seek_radius)
 			if EnemyWorld.is_valid_handle(_target_handle) and not EnemyWorld.is_dying(_target_handle):
 				_spawn_one(_target_handle)
 			_burst_left -= 1
@@ -132,6 +133,9 @@ func _spawn_one(handle: int) -> void:
 		var actor := EnemyCombat.actor_for_handle(handle)
 		if actor != null:
 			m2.call("setup", actor, dmg, start_dir)
+	# The airborne search uses the same level/Facet reach as the volley.
+	if m2.has_method("set_retarget_radius"):
+		m2.call("set_retarget_radius", seek_radius)
 	# Choir of Needles: this missile splits on its hit.
 	if m2.has_method("set_split"):
 		m2.call("set_split", NEEDLE_SHARDS if transcended else 0, missile_scene, NEEDLE_SHARD_MUL)

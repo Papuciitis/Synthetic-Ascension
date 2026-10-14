@@ -1,21 +1,20 @@
 [gd_resource type="Resource" script_class="AugmentData" format=3]
 
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_aug"]
-[ext_resource type="Texture2D" uid="uid://v5cu6pdvbul5" path="res://assets/textures/Augment_Placeholder_Reflect_Shield.png" id="2_icon"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/gamblers_rite.png" id="2_icon"]
 
 [resource]
 script = ExtResource("1_aug")
 id = &"augment_gamblers_rite"
 display_name = "Gambler's Rite"
-description = "The crowd loves watching you court disaster."
-card_blurb = "Every new curse you pick up may pay a Follower; the first of each distinct curse per segment banks Resonance."
-details = "Passive: every legitimately new NEG item you
-pick up from the world (equipped, bagged or
-fed) has a 15% chance (+ up to 20% from Luck)
-of +1 Follower. The first pickup of each
-distinct NEG base item per segment adds +0.5%
-Resonance, capped at +4% per segment.
-Trades, rewards, moves and undo are not
-pickups. You never have to wear the curse."
+description = "Newly found curses bring Followers and strengthen your Resonance."
+card_blurb = "New curse pickups may grant Followers and bank Resonance."
+details = "Each new negative item found in the world has a 35% chance to grant 1 Follower at Lv.1.
++1.5 percentage points per rank above Lv.1; Luck adds up to 20 points.
+Total chance is capped at 60%.
+The first of each distinct negative item per segment grants +2% Resonance, up to +12%.
+Works whether you equip, bag or feed the pickup.
+Trades, rewards, inventory moves and undo do not count.
+House Edge raises the chance cap to 70% and grants 2 Followers."
 icon = ExtResource("2_icon")
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

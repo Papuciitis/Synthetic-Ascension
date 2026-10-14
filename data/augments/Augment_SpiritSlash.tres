@@ -2,21 +2,24 @@
 
 [ext_resource type="PackedScene" uid="uid://bji21xv3cru1f" path="res://effects/augments/scenes/SpiritSlashEffect.tscn" id="1_7ffbt"]
 [ext_resource type="Script" uid="uid://d0m4jhgfdwlyp" path="res://core/systems/augments/AugmentData.gd" id="1_nxmfh"]
-[ext_resource type="Texture2D" uid="uid://1g63t7a1wv4u" path="res://assets/textures/Augment_Placeholder_Spirit_Slash.png" id="2_kfpgv"]
+[ext_resource type="Texture2D" path="res://assets/ui/augments/cards/spirit_slash.png" id="2_kfpgv"]
 
 [resource]
 script = ExtResource("1_nxmfh")
 id = &"augment_spirit_slash"
 display_name = "Spirit Slash"
-description = "A spectral blade you unleash at the nearest enemy, carving wounds that keep bleeding."
-card_blurb = "Active: spectral slash the nearest enemy. Bleeds, can crit-stun, sometimes refunds its cooldown."
-details = "Active (augment key)
-Cooldown: 2.5s
-Range: 180px
-Damage: 2.4 D on average, swung by 3d6 (D = your native hit), +35% per level
-Applies 1–3 Bleed stacks (3s, 6% of the hit per tick)
-12% crit: stun + heavy knockback
-Roll 3+ on a d4: cooldown refunded"
+description = "A spectral edge cuts nearby enemies and leaves lasting wounds."
+card_blurb = "Active: slash nearby enemies. Bleeds; may stun or refund cooldown."
+details = "Lv.1 baseline:
+Active: strike the 2 nearest enemies within 180px.
+Cooldown: 2.5s.
+Each hit: 2.4× your attack damage.
+Applies 2 Bleed stacks for 3s; each ticks every 0.5s for 6% of the hit.
++1 Bleed stack per 4 ranks above Lv.1, up to 4 stacks.
+Ordinary casts always strike at most 2 targets.
+12% chance to stun for 0.35s and knock back; this adds no critical damage.
+50% chance to refund a manual cast's cooldown.
+Damage gains +35% of its Lv.1 value per rank."
 icon = ExtResource("2_kfpgv")
 effect_scenes = Array[PackedScene]([ExtResource("1_7ffbt")])
 metadata/_custom_type_script = "uid://d0m4jhgfdwlyp"

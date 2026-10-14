@@ -100,12 +100,6 @@ func _test_scaling_module() -> void:
 	_check(_near(AugmentScaling.potency(1), 1.0) and _near(AugmentScaling.potency(5), 2.4) and _near(AugmentScaling.potency(10), 4.15), "potency is 1 / 2.4 / 4.15 at Lv.1 / 5 / 10")
 	_check(AugmentScaling.clamp_level(99) == 20 and AugmentScaling.clamp_level(0) == 1, "levels run 1 to 20")
 	_check(AugmentScaling.count_steps(1) == 0 and AugmentScaling.count_steps(5) == 4 and AugmentScaling.count_steps(15) == 8, "count growth stops after eight steps")
-	var rng := RandomNumberGenerator.new()
-	rng.seed = 3
-	var total := 0.0
-	for i in range(20000):
-		total += AugmentScaling.dice_factor(3, 6, rng)
-	_check(absf(total / 20000.0 - 1.0) < 0.01, "a dice expression averages 1.0 (3d6: %.3f)" % (total / 20000.0))
 	_check(_near(AugmentData.stat_level_factor(0.2, 3), 1.4) and _near(AugmentData.stat_level_factor(0.2, 7), 2.0), "stat augments grow at the full rate to Lv.5 and half after (Lv.3 x1.4, Lv.7 x2.0)")
 
 
@@ -152,9 +146,9 @@ func _test_missile(player: Node) -> void:
 	add_child(missile)
 	missile.set_level(1)
 	var d := AugmentScaling.native_d(player)
-	_check(_near(missile._compute_damage(), d * 0.45) and missile.burst_count == 2, "Magic Missile Lv.1: two missiles of 0.45 D")
+	_check(_near(missile._compute_damage(), d * 0.75) and missile.burst_count == 2, "Magic Missile Lv.1: two missiles of 0.75 D")
 	missile.set_level(9)
-	_check(missile.burst_count == 6 and _near(missile._compute_damage(), d * 0.45 * AugmentScaling.potency(9)), "Lv.9: six missiles at potency 3.8")
+	_check(missile.burst_count == 6 and _near(missile._compute_damage(), d * 0.75 * AugmentScaling.potency(9)), "Lv.9: six missiles at potency 3.8")
 	missile.queue_free()
 
 
@@ -164,14 +158,13 @@ func _test_slash(player: Node) -> void:
 	add_child(slash)
 	slash.set_level(5)
 	var d := AugmentScaling.native_d(player)
-	var total := 0.0
-	for i in range(6000):
-		total += slash._roll_hit_damage()
-	var mean := total / 6000.0
-	_check(absf(mean - d * 2.4 * 2.4) / (d * 2.4 * 2.4) < 0.02, "Spirit Slash Lv.5 averages 2.4 D x potency 2.4 (%.1f vs %.1f)" % [mean, d * 2.4 * 2.4])
+	var reliable := true
+	for i in range(12):
+		reliable = reliable and _near(slash._hit_damage(), 129.6)
+	_check(reliable, "Spirit Slash Lv.5 reliably deals 129.6 damage (2.4 D x potency 2.4)")
 	var target := _spawn(Vector2(50, 0))
 	slash._try_cast(true)
-	_check(_lost(target) > 0.0, "a cast cuts the nearest enemy")
+	_check(_near(_lost(target), d * 2.4 * 2.4), "a cast cuts the nearest enemy for its reliable payload")
 	slash.queue_free()
 	_cleanup()
 
@@ -194,11 +187,10 @@ func _test_spiders(player: Node) -> void:
 	_check(summoner.spider_cap() == 7, "Lv.1 keeps at most seven spiderlings")
 	summoner.set_level(20)
 	_check(summoner.spider_cap() == 14, "and never more than fourteen")
-	var total := 0.0
-	for i in range(4000):
-		total += summoner._roll_explosion_damage(0.0)
-	var expected := AugmentScaling.native_d(player) * 1.4 * AugmentScaling.potency(20)
-	_check(absf(total / 4000.0 - expected) / expected < 0.02, "detonations average 1.4 D x potency (%.1f vs %.1f)" % [total / 4000.0, expected])
+	var reliable := true
+	for i in range(12):
+		reliable = reliable and _near(summoner.explosion_damage(), 240.975)
+	_check(reliable, "Lv.20 detonations reliably deal 240.975 damage (1.4 D x potency 7.65)")
 	summoner.queue_free()
 
 
