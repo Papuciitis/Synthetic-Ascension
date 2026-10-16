@@ -267,7 +267,10 @@ func _commit(a: AugmentData, card_node: Control, entry: Dictionary, swap_slot: i
 	var applied := false
 	if not entry.is_empty() and Global.pending_augment_pick:
 		applied = Global.apply_binding_card(entry, swap_slot, facet)
-	if not applied:
+	# A Binding that refuses its card grants nothing: applying it directly
+	# would leave the Binding pending, and the same offer would be dealt again
+	# for another free grant. Only a pick with no Binding applies directly.
+	if not applied and not Global.pending_augment_pick:
 		_apply_direct(a, entry, swap_slot, facet)
 	augment_chosen.emit(a)
 	_close()
