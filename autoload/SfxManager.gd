@@ -45,6 +45,10 @@ var debug_requests: Array[Dictionary] = []
 ## The menu router gives authored feedback priority over generic clicks.
 var ui_request_serial := 0
 var _last_limited_ms: Dictionary = {} # id -> msec of its last limited play
+## Injury is about HP actually lost, not incoming/absorbed damage. A swarm
+## can land several hits together; keep its short personal cue from piling up.
+const PLAYER_HURT_INTERVAL_MS := 220
+var _last_player_hurt_ms := -1000000
 
 ## Kill streak ladder (audit 2026-10-04, change 10): the death sound climbs a
 ## semitone for every 5 kills inside the last 1.5 s, at most +7, and settles
@@ -105,6 +109,10 @@ func _hook_run_events() -> void:
 		re.enemy_defeated.connect(_on_enemy_defeated)
 	if re.has_signal("boss_spawned"):
 		re.boss_spawned.connect(_on_boss_spawned)
+	if re.has_signal("player_dashed"):
+		re.player_dashed.connect(_on_player_dashed)
+	if re.has_signal("player_damage_resolved"):
+		re.player_damage_resolved.connect(_on_player_damage_resolved)
 
 # ----------------------------
 # Public API
@@ -251,6 +259,22 @@ func stop_loop(owner_node: Node, tag: StringName) -> void:
 # ----------------------------
 # RunEvents hooks
 # ----------------------------
+
+func _on_player_dashed(_player: Node, from: Vector2, _direction: Vector2) -> void:
+	play_2d(&"player_dash", from)
+
+
+func _on_player_damage_resolved(_player: Node, _raw: float, _after_defenses: float, applied: float, _source: Node, _kind: StringName, _outcome: StringName) -> void:
+	# The canonical resolved event separates Beka's shield, invulnerability
+	# and evasion from HP loss. Intentional pay_health costs do not emit it.
+	if applied <= 0.0:
+		return
+	var now := Time.get_ticks_msec()
+	if now - _last_player_hurt_ms < PLAYER_HURT_INTERVAL_MS:
+		return
+	_last_player_hurt_ms = now
+	play_global(&"player_hurt")
+
 
 func _on_weapon_fired(_player: Node, style_id: StringName, origin: Vector2, _target: Vector2, _power_mul: float, _haste_mul: float) -> void:
 	if style_id == &"melee":

@@ -15,3 +15,11 @@ CC0 (no attribution required, kept here for reference)
 
 If you decide to use the optional CC-BY packs later (Electric Sound Library, Mechanical Pack),
 keep their attribution text in this file and include required attributions in your release notes.
+
+Player movement and injury cues (2026-10-16)
+------------------------------------------
+
+- `actions/dash.wav` — Kenney RPG Audio, `Audio/cloth2.ogg`, CC0 1.0.
+- `actions/hurt.wav` — Kenney Impact Sounds, `Audio/impactSoft_medium_000.ogg`, CC0 1.0.
+- Exact source URLs, archive/file hashes, original license texts and unchanged
+  PCM conversion details are in `actions/CREDITS.md` and `actions/sources.json`.

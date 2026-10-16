@@ -441,3 +441,30 @@ not assets.
   where the 55-120 Hz fundamentals mostly vanish and the harmonics carry it)
   needs a human listen.
 - **Status:** generated (placeholder until real assets are commissioned).
+
+### Player dash and injury foley (2026-10-16)
+
+- **Need:** the dash already had a wisp/trail but no audio; actual player HP
+  loss had a hurt tint and low-health heartbeat but no immediate injury cue.
+- **Files:** `assets/audio/sfx/actions/dash.wav` (Kenney RPG Audio,
+  `Audio/cloth2.ogg`, 0.436 s cloth movement) and `hurt.wav` (Kenney Impact
+  Sounds, `Audio/impactSoft_medium_000.ogg`, 0.132 s soft impact).
+- **Provenance:** official pack pages and included licenses checked
+  2026-10-16; both CC0 1.0. Exact download URLs, original filenames,
+  archive/source/WAV hashes and conversion details are in
+  `assets/audio/sfx/actions/{CREDITS.md,sources.json}`; both original license
+  texts are preserved there with whitespace normalized.
+- **Processing:** unchanged recordings decoded to 16-bit stereo PCM WAV,
+  preserving source sample rates. No cuts, normalization, filtering or
+  added layers. WAV follows the existing UI-audio workaround for the
+  Godot 4.7.1 Ogg import crash.
+- **Playback:** one positional dash cue at the accepted dash's departure;
+  injury is non-positional, only on positive actual HP loss, no more often
+  than once per 220 ms. Beka absorption, evasion, invulnerability and
+  intentional HP payments stay silent. Both use the existing SFX bus.
+- **Mix:** dash -10 dB / hurt -18 dB, with small pitch variation. Their
+  decoded peak/RMS after those gains are -17.94/-38.93 and -18.96/-32.82
+  dBFS respectively. These measurements are a conservative starting point;
+  no audible preview was played while the user slept.
+- **Verification:** `PlayerActionAudioTest` covers the asset routing,
+  existing event hooks and real player paths; final mix needs a human listen.
