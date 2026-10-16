@@ -2059,10 +2059,12 @@ func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary
 		out["reason"] = "a corrupted augment's levels are bound to it"
 		return out
 	# The free trained starting level is preparation, never a renewable donor.
-	var donor_growth := get_augment_level(donor) - (_city_development_augment_floor(donor) - 1)
+	var donor_floor := _city_development_augment_floor(donor)
+	var donor_growth := get_augment_level(donor) - (donor_floor - 1)
 	var poured := AugmentRites.transfusion_gain(donor_growth)
 	if poured <= 0:
-		out["reason"] = "the donor needs Lv.%d" % AugmentRites.TRANSFUSION_MIN_DONOR
+		# A trained donor's free floor does not count: name the level it needs.
+		out["reason"] = "the donor needs Lv.%d" % (AugmentRites.TRANSFUSION_MIN_DONOR + donor_floor - 1)
 		return out
 	# Only the levels the recipient can take are paid for: a recipient near
 	# the cap would otherwise pay full price and burn the donor for nothing.

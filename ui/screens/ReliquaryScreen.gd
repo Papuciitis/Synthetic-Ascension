@@ -430,7 +430,8 @@ func _build_transfusion() -> void:
 		# The first donor that has something to give, else simply the first.
 		_donor = &""
 		for id in donors:
-			if Global.get_augment_level(id) >= AugmentRites.TRANSFUSION_MIN_DONOR:
+			# A trained augment's free floor is not something it can give.
+			if int(Global.transfusion_preview(_recipient, id).get("gain", 0)) > 0:
 				_donor = id
 				break
 		if _donor == &"" and not donors.is_empty():
