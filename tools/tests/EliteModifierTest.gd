@@ -16,6 +16,7 @@ const Types = preload("res://core/systems/enemy_world/EnemyWorldTypes.gd")
 var _passes := 0
 var _failures := 0
 var _tips: PackedStringArray = PackedStringArray()
+var _tip_icons: Array = []
 
 
 func _ready() -> void:
@@ -31,8 +32,9 @@ func _check(condition: bool, message: String) -> void:
 		push_error("FAIL: " + message)
 
 
-func _on_tip(text: String, _duration: float) -> void:
+func _on_tip(text: String, _duration: float, ids: Array[StringName]) -> void:
 	_tips.append(text)
+	_tip_icons.append(ids.duplicate())
 
 
 func _make_spec(ai: int = EnemySpec.AI.CHASE) -> EnemySpec:
@@ -104,7 +106,7 @@ func _free_all(enemies: Array) -> void:
 func _run() -> void:
 	ThreatDirector.call("reset_run_state")
 	ThreatDirector.call("set_segment_phase", &"recon")
-	RunEvents.tutorial_tip.connect(_on_tip)
+	RunEvents.illustrated_tutorial_tip.connect(_on_tip)
 	EliteModifiers.reset_teaching()
 
 	_test_catalog_and_phase_gating()
@@ -124,7 +126,7 @@ func _run() -> void:
 	await _test_proxy_pinning()
 	await _test_spawner_beat_api()
 
-	RunEvents.tutorial_tip.disconnect(_on_tip)
+	RunEvents.illustrated_tutorial_tip.disconnect(_on_tip)
 	ThreatDirector.call("set_segment_phase", &"recon")
 	EliteModifiers.reset_teaching()
 	print("EliteModifierTest: %d passed, %d failed" % [_passes, _failures])
@@ -599,6 +601,7 @@ func _test_splitting() -> void:
 func _test_explicit_api_teach_and_phase_pick() -> void:
 	EliteModifiers.reset_teaching()
 	_tips.clear()
+	_tip_icons.clear()
 
 	var hidden := _spawn_enemy(Vector2(9000.0, 9000.0))
 	await get_tree().process_frame
@@ -616,6 +619,7 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 		EliteModifiers.was_taught(EliteModifiers.ARMOURED) and _tips.size() == 1 and _tips[0] == EliteModifiers.teach_line(EliteModifiers.ARMOURED),
 		"an elite promoted off-screen introduces itself on first sight (%s)" % [_tips]
 	)
+	_check(_tip_icons.size() == 1 and _tip_icons[0] == [EliteModifiers.ARMOURED], "first-sight guidance carries the exact modifier's authored badge ID")
 	if BattleText.callouts_enabled():
 		_check(int(BattleText.get("_count")) > sight_popups, "and its label pops on the body then")
 	hidden.call("_physics_process", 1.0 / 60.0)
@@ -651,6 +655,11 @@ func _test_explicit_api_teach_and_phase_pick() -> void:
 	)
 	if BattleText.callouts_enabled():
 		_check(int(BattleText.get("_count")) > popups_before, "and the label pops on the body")
+		var tagged_popup := false
+		for slot in range(int(BattleText.get("_count"))):
+			if BattleText.get("_texts")[slot] == "ARMOURED · FAST":
+				tagged_popup = BattleText.get("_icon_ids")[slot] == [EliteModifiers.ARMOURED, EliteModifiers.FAST]
+		_check(tagged_popup, "a combined elite's floating label carries both modifier IDs in order")
 	var again := _spawn_enemy(Vector2(240.0, 200.0))
 	await get_tree().process_frame
 	again.apply_elite_modifiers([EliteModifiers.ARMOURED])

@@ -1,14 +1,17 @@
 # Synthetic Ascension UI fonts
 
-The HUD uses three SIL Open Font License 1.1 families from the
+The HUD and front end use three SIL Open Font License 1.1 families from the
 [Google Fonts repository](https://github.com/google/fonts):
 
-- **IBM Plex Sans Condensed** (`ofl/ibmplexsanscondensed`) for readable body
-  text, counters, and mechanical information.
-- **Alegreya SC** (`ofl/alegreyasc`) for institutional directives, research
-  headings, and ordinary objectives.
-- **Marcellus SC** (`ofl/marcellussc`) for rites, manifestations, bosses, and
-  other moments where the interface enters a sacred register.
+- **EB Garamond** (`ofl/ebgaramond`) for body text and italic prose.
+- **Cinzel** (`ofl/cinzel`) for captions, headings, counters, and floating
+  combat text. Combat numbers use the HUD's strong figure face; named
+  callouts and top-centre guidance use its caption face.
+- **Cinzel Decorative** (`ofl/cinzeldecorative`) for titles and the sacred
+  register used by rites, manifestations, and bosses.
+
+The older IBM Plex Sans Condensed, Alegreya SC, and Marcellus SC files are
+retained for historical assets; they are no longer the shared HUD faces.
 
 Each family directory contains the upstream `OFL.txt`. Keep that file with
 the corresponding font binaries when redistributing the game.

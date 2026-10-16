@@ -122,3 +122,98 @@ func _test_rendered_marks() -> void:
 	_check(_alpha_sum(feeding, Rect2i(220, 220, 72, 72)) > _alpha_sum(vampiric, Rect2i(220, 220, 72, 72)) * 1.3, "a feed visibly brightens the painted VAMPIRIC ring even under reduced motion")
 	var expired_feed := await _capture(EliteModifiers.VAMPIRIC, 1.0, true, Vector2.ZERO, true, 0.45)
 	_check(absf(_alpha_sum(expired_feed, Rect2i(220, 220, 72, 72)) - _alpha_sum(vampiric, Rect2i(220, 220, 72, 72))) < 0.1, "the reduced-motion feed flash returns to baseline on expiry without another redraw trigger")
+	await _test_secondary_tells_in_overlap()
+
+
+## The real painted tells over three overlapping production Brute sprites,
+## rendered at the crowd preview's 1280/1920 screen scale. Keeping simulation
+## out of this fixture lets the trough and still-frame checks be repeatable.
+func _capture_overlap(secondary: StringName, reduced: bool, feed: bool = false) -> Image:
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", reduced, false)
+	var viewport := SubViewport.new()
+	viewport.size = Vector2i(128, 128)
+	viewport.transparent_bg = false
+	viewport.world_2d = World2D.new()
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	add_child(viewport)
+	var background := ColorRect.new()
+	background.color = Color(0.27, 0.25, 0.20, 1.0)
+	background.size = Vector2(128, 128)
+	viewport.add_child(background)
+	var host := Node2D.new()
+	host.position = Vector2(64, 64)
+	host.scale = Vector2.ONE * (2.0 / 3.0)
+	viewport.add_child(host)
+	var spec := load("res://core/actors/enemy/EnemySpec_Brute.tres") as EnemySpec
+	for at in [Vector2(-18, 8), Vector2(18, -8), Vector2.ZERO]:
+		var sprite := Sprite2D.new()
+		sprite.texture = spec.sprite_texture
+		sprite.scale = spec.sprite_scale
+		sprite.position = at
+		sprite.modulate = EliteModifiers.tint(EliteModifiers.ARMOURED) if at == Vector2.ZERO else Color.WHITE
+		host.add_child(sprite)
+	var enemy := ENEMY_SCENE.instantiate() as EnemyActor
+	enemy.player = host
+	var mark := VFX_EliteModifierMark.new()
+	var ids: Array[StringName] = [EliteModifiers.ARMOURED]
+	if secondary != &"":
+		ids.append(secondary)
+	mark.setup(enemy, ids, EliteModifiers.tint(EliteModifiers.ARMOURED))
+	host.add_child(mark)
+	mark.set_process(false)
+	# sin(1.5 * PI) is the blood pulse's trough, where the secondary tell
+	# previously faded into overlapping bodies.
+	mark.set("_t", 0.75 / mark.vampiric_pulse_hz)
+	mark.call("_process", 0.0)
+	if feed:
+		mark.note_feed()
+	mark.call("_queue_marks_redraw")
+	await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	var image := viewport.get_texture().get_image()
+	viewport.queue_free()
+	enemy.free()
+	await get_tree().process_frame
+	return image
+
+
+func _tell_coverage(image: Image, red: bool, baseline: Image) -> Dictionary:
+	var count := 0
+	var first_x := image.get_width()
+	var last_x := -1
+	var energy := 0.0
+	for y in range(37, 91):
+		for x in range(34, 94):
+			var pixel := image.get_pixel(x, y)
+			var body := baseline.get_pixel(x, y)
+			var hue_gain := ((pixel.r - pixel.g) - (body.r - body.g)) if red else ((pixel.g - (pixel.r + pixel.b) * 0.5) - (body.g - (body.r + body.b) * 0.5))
+			var matches := hue_gain > 0.12 and ((pixel.r > 0.35 and pixel.r > pixel.g * 1.65 and pixel.r > pixel.b * 1.4) if red else (pixel.g > 0.45 and pixel.g > pixel.r * 1.06 and pixel.g > pixel.b * 1.2))
+			if matches:
+				count += 1
+				first_x = mini(first_x, x)
+				last_x = maxi(last_x, x)
+				energy += pixel.r if red else pixel.g
+	return {"count": count, "width": last_x - first_x + 1, "energy": energy}
+
+
+func _test_secondary_tells_in_overlap() -> void:
+	var baseline := await _capture_overlap(&"", true)
+	var trough := await _capture_overlap(EliteModifiers.VAMPIRIC, false)
+	var still := await _capture_overlap(EliteModifiers.VAMPIRIC, true)
+	var feeding := await _capture_overlap(EliteModifiers.VAMPIRIC, true, true)
+	var seam := await _capture_overlap(EliteModifiers.SPLITTING, true)
+	var trough_red := _tell_coverage(trough, true, baseline)
+	var still_red := _tell_coverage(still, true, baseline)
+	var feed_red := _tell_coverage(feeding, true, baseline)
+	var seam_green := _tell_coverage(seam, false, baseline)
+	print("Secondary native tell coverage: trough=", trough_red, " still=", still_red, " feed=", feed_red, " seam=", seam_green)
+	_check(int(trough_red["count"]) >= 45, "secondary VAMPIRIC retains a readable red collar at its dimmest pulse over overlapping Brutes")
+	_check(int(still_red["count"]) >= 45, "reduced-motion secondary VAMPIRIC retains the same clear static red collar")
+	_check(float(feed_red["energy"]) > float(still_red["energy"]) * 1.12, "secondary VAMPIRIC feeding still visibly brightens its stronger static collar")
+	_check(int(seam_green["count"]) >= 80 and int(seam_green["width"]) >= 40, "secondary SPLITTING paints clear lime branches across and beyond overlapping Brute shoulders")
+	var output := ProjectSettings.globalize_path("res://.godot/secondary-tell-pixels")
+	DirAccess.make_dir_recursive_absolute(output)
+	trough.save_png(output.path_join("vampiric-trough.png"))
+	still.save_png(output.path_join("vampiric-still.png"))
+	feeding.save_png(output.path_join("vampiric-feed.png"))
+	seam.save_png(output.path_join("splitting-still.png"))

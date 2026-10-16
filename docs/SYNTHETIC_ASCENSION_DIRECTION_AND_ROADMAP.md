@@ -2191,3 +2191,35 @@ twice. Focused regressions failed before each fix. Seven final suites/audits
 passed 752 checks, including real rendered art and the final 514-script
 audit; independent scoped review found no P1/P2 issues. The user approved
 the crowded fight preview and fixes and requested a separate commit and push.
+
+## 2026-10-16 — Secondary elite tells and illustrated combat text
+
+Secondary Vampiric rings now retain a stronger red collar through their dim
+pulse, with a dark separation edge. Splitting seams extend wider across and
+beyond the body with a dark underlay. The first modifier still controls the
+sheen; reduced motion and the blood-feed flash remain supported.
+
+Floating damage figures and named messages use the HUD's Cinzel figure and
+caption faces. Top-centre teaching alerts use the matching caption face too.
+Five dedicated transparent ImageGen badges accompany modifier announcements
+and their first-sight teaching alerts. Explicit modifier IDs select artwork;
+ordinary tips and damage numbers remain clear. The shared badge API supports
+future named effects without adding new status application messages here.
+Each modifier name in a mixed announcement retains its own original tell
+colour, with neutral separators and the existing independently coloured badges.
+A discovered merge-key collision between damage and named text was corrected
+so a numeric hit cannot absorb a named message or inherit its badges.
+
+The native live crowded fight, controlled six-actor before/after screenshots,
+enlarged comparison and verification record are in
+`docs/art/reference/2026-10-16-elite-readability/`. Generated sources and exact
+prompts are in `assets/textures/ui/combat_status/`. The live capture records
+48 initial enemies, ten elites and a forced triple-modifier example, with
+zero save writes, capture failures, runtime errors or warnings. It preserves
+measured wall-clock timing and is a readability review, not a benchmark.
+
+Seven final suites/audits passed 801 checks, including actual rendered pixel,
+font, badge and per-name colour assertions and the final 518-script audit. Regressions failed
+before fixes; independent scoped review found no actionable P1/P2 issues.
+The user approved the preview and requested this pass be committed and pushed,
+including per-name modifier colours without a further visual approval step.

@@ -89,6 +89,11 @@ signal rite_distortion_changed(level: float)
 @warning_ignore("unused_signal")
 signal tutorial_tip(text: String, duration: float)
 
+## Opt-in illustrated guidance. The ordinary two-argument tip channel stays
+## available to every existing caller; authored badge IDs travel separately.
+@warning_ignore("unused_signal")
+signal illustrated_tutorial_tip(text: String, duration: float, icon_ids: Array[StringName])
+
 @warning_ignore("unused_signal")
 signal objective_changed(title: String, detail: String)
 

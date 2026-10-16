@@ -62,6 +62,15 @@ const VAMPIRIC_RING_ALPHA_MIN := 0.25
 const VAMPIRIC_RING_ALPHA_MAX := 0.75
 const VAMPIRIC_GLOW_ALPHA_MULT := 0.5
 const VAMPIRIC_STILL_PHASE := 0.5
+# A secondary blood tell cannot rely on a red body sheen. Keep its collar
+# outside the inner pulse with enough colour left even at the trough.
+const SECONDARY_VAMPIRIC_COLLAR_OFFSET := 5.0
+const SECONDARY_VAMPIRIC_ALPHA_MIN := 0.65
+const SECONDARY_VAMPIRIC_ALPHA_MAX := 0.9
+const TELL_UNDERLAY_COLOR := Color(0.025, 0.015, 0.02, 0.9)
+const TELL_UNDERLAY_PAD := 2.0
+const SEAM_SPAN_MULT := 1.4
+const SEAM_HEIGHT_MULT := 1.1
 # Streak length is streak_length x (speed / streak_full_speed) clamped to
 # these; it starts START_FRACTION of the body radius behind centre and the
 # outer lines fade by SIDE_FADE per line from the middle.
@@ -129,7 +138,7 @@ func _ready() -> void:
 		_body_marks = Node2D.new()
 		_body_marks.name = "BodyMarks"
 		# The rear marks sit one layer below the actual body; its seam and
-		# inner ring sit one layer above, including under the proxy root.
+		# blood collar sit one layer above, including under the proxy root.
 		_body_marks.z_index = 2
 		_body_marks.draw.connect(_draw_body_marks)
 		add_child(_body_marks)
@@ -297,8 +306,15 @@ func _draw_plate_ring() -> void:
 func _draw_vampiric_ring(canvas: CanvasItem) -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.VAMPIRIC)
 	var k := VAMPIRIC_STILL_PHASE if _reduced_motion else 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
-	var alpha := lerpf(VAMPIRIC_RING_ALPHA_MIN, VAMPIRIC_RING_ALPHA_MAX, k) + _feed_flash
+	var secondary := _ids.find(EliteModifiers.VAMPIRIC) > 0
+	var alpha_min := SECONDARY_VAMPIRIC_ALPHA_MIN if secondary else VAMPIRIC_RING_ALPHA_MIN
+	var alpha_max := SECONDARY_VAMPIRIC_ALPHA_MAX if secondary else VAMPIRIC_RING_ALPHA_MAX
+	var alpha := lerpf(alpha_min, alpha_max, k) + _feed_flash
 	var r := body_radius - vampiric_ring_inset + (0.0 if _reduced_motion else vampiric_ring_pulse_px * k)
+	if secondary:
+		r += SECONDARY_VAMPIRIC_COLLAR_OFFSET
+		if not TellArt.draw_radial(canvas, EliteModifiers.VAMPIRIC, r + TELL_UNDERLAY_PAD, TELL_UNDERLAY_COLOR):
+			VfxKit.draw_ring(canvas, Vector2.ZERO, r, TELL_UNDERLAY_COLOR, line_width + TELL_UNDERLAY_PAD * 2.0)
 	if TellArt.draw_radial(canvas, EliteModifiers.VAMPIRIC, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0))):
 		return
 	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the line colour replaces the glow+core full arcs.
@@ -308,15 +324,21 @@ func _draw_vampiric_ring(canvas: CanvasItem) -> void:
 func _draw_seam(canvas: CanvasItem) -> void:
 	# A jagged crack across the body: where it will come apart.
 	var tint := EliteModifiers.tint(EliteModifiers.SPLITTING)
-	var r := body_radius
+	var r := body_radius * SEAM_SPAN_MULT
 	var start := Vector2(-r, -r * 0.35)
 	var end := Vector2(r, r * 0.4)
-	if TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, (start + end) * 0.5, Vector2(start.distance_to(end), r * 0.72), Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), (end - start).angle()):
+	var size := Vector2(start.distance_to(end), body_radius * SEAM_HEIGHT_MULT)
+	var at := (start + end) * 0.5
+	var angle := (end - start).angle()
+	# A dark edge separates the branches from neighbouring armour and flashes.
+	if not TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, at, size + Vector2.ONE * TELL_UNDERLAY_PAD * 2.0, TELL_UNDERLAY_COLOR, angle):
+		VfxKit.draw_crack(canvas, start, end, glow_width * THIN_GLOW_WIDTH_MULT + TELL_UNDERLAY_PAD * 2.0, TELL_UNDERLAY_COLOR)
+	if TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, at, size, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), angle):
 		return
 	# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched between the old seam's end points replaces the glow+core zig-zag polylines.
 	# The kink band scales with the width: the thin glow width (~5.4 px) gives
 	# the crack the bite the old 13 px zig-zag had on a 26 px body.
-	VfxKit.draw_crack(canvas, Vector2(-r, -r * 0.35), Vector2(r, r * 0.4), glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
+	VfxKit.draw_crack(canvas, start, end, glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
 
 
 func _draw_fast_chevrons() -> void:

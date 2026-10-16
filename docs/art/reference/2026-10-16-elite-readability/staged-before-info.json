@@ -1,0 +1,154 @@
+{
+	"actors": [
+		{
+			"drawn_bits": 3,
+			"ids": [
+				"armoured",
+				"vampiric"
+			],
+			"image": "(224.0, 241.3333)",
+			"name": "ARMOURED + VAMPIRIC",
+			"world": "(336.0, 362.0)"
+		},
+		{
+			"drawn_bits": 9,
+			"ids": [
+				"armoured",
+				"splitting"
+			],
+			"image": "(640.0, 241.3333)",
+			"name": "ARMOURED + SPLITTING",
+			"world": "(960.0, 362.0)"
+		},
+		{
+			"drawn_bits": 25,
+			"ids": [
+				"armoured",
+				"splitting",
+				"fast"
+			],
+			"image": "(1056.0, 241.3333)",
+			"name": "ARMOURED + SPLITTING + FAST",
+			"world": "(1584.0, 362.0)"
+		},
+		{
+			"drawn_bits": 10,
+			"ids": [
+				"vampiric",
+				"splitting"
+			],
+			"image": "(224.0, 534.6667)",
+			"name": "VAMPIRIC + SPLITTING",
+			"world": "(336.0, 802.0)"
+		},
+		{
+			"drawn_bits": 6,
+			"ids": [
+				"shielded",
+				"vampiric"
+			],
+			"image": "(640.0, 534.6667)",
+			"name": "SHIELDED + VAMPIRIC",
+			"world": "(960.0, 802.0)"
+		},
+		{
+			"drawn_bits": 12,
+			"ids": [
+				"shielded",
+				"splitting"
+			],
+			"image": "(1056.0, 534.6667)",
+			"name": "SHIELDED + SPLITTING",
+			"world": "(1584.0, 802.0)"
+		}
+	],
+	"failures": 0,
+	"frame_timestamps_seconds": [
+		0.062907,
+		0.10451,
+		0.14454,
+		0.186589,
+		0.227918,
+		0.271537,
+		0.311923,
+		0.35367,
+		0.395191,
+		0.436427,
+		0.477761,
+		0.519907,
+		0.561092,
+		0.603013,
+		0.645229,
+		0.686196,
+		0.728174,
+		0.768727,
+		0.810932,
+		0.853592,
+		0.894637,
+		0.936771,
+		0.97815,
+		1.019724,
+		1.061699,
+		1.103958,
+		1.14543,
+		1.185682,
+		1.228932,
+		1.27035,
+		1.312669,
+		1.352738,
+		1.394813,
+		1.437179,
+		1.477257,
+		1.519938,
+		1.561027,
+		1.603604,
+		1.644888,
+		1.685698,
+		1.72895,
+		1.769687,
+		1.810966,
+		1.854172,
+		1.894898,
+		1.936231,
+		1.977287,
+		2.019535,
+		2.061122,
+		2.102737,
+		2.144851,
+		2.187061,
+		2.227608,
+		2.269154,
+		2.312752,
+		2.353675,
+		2.394399,
+		2.435965,
+		2.478085,
+		2.518815,
+		2.56159,
+		2.602573,
+		2.643637,
+		2.685865,
+		2.727087,
+		2.769076,
+		2.811109,
+		2.854007,
+		2.894529,
+		2.93654,
+		2.977696,
+		3.019603
+	],
+	"frames": 72,
+	"image_size": [
+		1280,
+		720
+	],
+	"presentation": "Actual EnemyActors, real batching at z=10, world-sized wards, real promotion popups, frozen actor simulation only.",
+	"reduced_motion": false,
+	"save_writes": 0,
+	"scene": "res://tools/dev/EliteReadabilityPreview.tscn",
+	"viewport": [
+		1920,
+		1080
+	],
+	"world_px_to_image_px": 0.666666666666667
+}

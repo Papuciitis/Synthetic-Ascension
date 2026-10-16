@@ -218,7 +218,7 @@ gate_status_label_path = NodePath("../TopLeft/Margin/VBox/ResonanceRow/GateStatu
 [node name="TutorialTipController" type="Node" parent="." unique_id=1843153874]
 script = ExtResource("15_tip_ctl")
 tutorial_panel_path = NodePath("../GateOverlay/TutorialTip")
-tutorial_label_path = NodePath("../GateOverlay/TutorialTip/Margin/Label")
+tutorial_label_path = NodePath("../GateOverlay/TutorialTip/Margin/Row/Label")
 
 [node name="ObjectiveController" type="Node" parent="."]
 script = ExtResource("22_objective_ctl")

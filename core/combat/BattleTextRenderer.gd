@@ -24,6 +24,13 @@ extends Node2D
 # stays where it was raised. Damage numbers never join a column.
 
 const MAX_ENTRIES := 96
+const HUD_THEME := preload("res://ui/theme/SyntheticHudTheme.tres")
+const StatusIcons := preload("res://core/combat/CombatStatusIcons.gd")
+## World pixels: at the 1280-wide gameplay canvas, the painted emblem stays
+## about 16 screen pixels high. Damage numbers never reserve badge space.
+const ICON_SIZE := 26.0
+const ICON_SEPARATION := 2.0
+const ICON_TEXT_GAP := 4.0
 const RISE_SPEED := 46.0
 const LIFETIME := 0.7
 const CRIT_LIFETIME := 0.95
@@ -89,9 +96,18 @@ var _lift_targets := PackedFloat32Array()
 var _lines: Array[TextLine] = []
 var _line_texts: PackedStringArray = PackedStringArray()
 var _line_sizes := PackedInt32Array()
+var _line_faces := PackedByteArray()
+var _icon_ids: Array = []
+# Only semantic modifier announcements have coloured text spans. Keep their
+# small shaped segments with each pooled slot; plain messages never infer
+# colours from icon IDs or words.
+var _modifier_ids: Array = []
+var _modifier_lines: Array = []
+var _modifier_sizes := PackedInt32Array()
 var _count := 0
 var _overwrite_slot := 0
 var _font: Font = null
+var _callout_font: Font = null
 
 # Column bases (world) and live line counts by id - 1, recounted every frame.
 # The player's base is re-read from the player each frame its column is in use.
@@ -105,7 +121,9 @@ var _stack_lifts := PackedFloat32Array()
 
 func _ready() -> void:
 	z_index = 1000
-	_font = ThemeDB.fallback_font
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_font = HUD_THEME.get_font(&"font", &"HudFigure")
+	_callout_font = HUD_THEME.get_font(&"font", &"HudCaption")
 	_texts.resize(MAX_ENTRIES)
 	_positions.resize(MAX_ENTRIES)
 	_ages.resize(MAX_ENTRIES)
@@ -120,6 +138,15 @@ func _ready() -> void:
 	_lines.resize(MAX_ENTRIES)
 	_line_texts.resize(MAX_ENTRIES)
 	_line_sizes.resize(MAX_ENTRIES)
+	_line_faces.resize(MAX_ENTRIES)
+	_icon_ids.resize(MAX_ENTRIES)
+	_modifier_ids.resize(MAX_ENTRIES)
+	_modifier_lines.resize(MAX_ENTRIES)
+	_modifier_sizes.resize(MAX_ENTRIES)
+	for i in range(MAX_ENTRIES):
+		_icon_ids[i] = []
+		_modifier_ids[i] = []
+		_modifier_lines[i] = []
 	_column_bases.resize(MAX_COLUMNS)
 	_column_members.resize(MAX_COLUMNS)
 	_stack_slots.resize(MAX_ENTRIES)
@@ -148,7 +175,7 @@ func damage(world_pos: Vector2, amount: float, crit: bool = false, merge_key: in
 		return
 	if merge_key != 0:
 		for i in range(_count):
-			if _keys[i] == merge_key and _ages[i] < MERGE_WINDOW:
+			if _keys[i] == merge_key and _amounts[i] > 0.0 and _ages[i] < MERGE_WINDOW:
 				_amounts[i] += amount
 				_texts[i] = _format_amount(_amounts[i])
 				_positions[i] = world_pos + Vector2(0.0, -20.0)
@@ -183,7 +210,7 @@ func player_damage(world_pos: Vector2, amount: float) -> void:
 	_columns[slot] = FALLING
 
 
-func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = Color(0.82, 0.88, 1.0, 1.0)) -> void:
+func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = Color(0.82, 0.88, 1.0, 1.0), icon_ids: Array[StringName] = []) -> void:
 	# Compact combat feed toast: successive feeds of the same item REPLACE
 	# one floating line instead of stacking (K6 combat/inspection split —
 	# full math lives in the tooltip, this just says what happened).
@@ -191,16 +218,18 @@ func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = C
 		return
 	if merge_key != 0:
 		for i in range(_count):
-			if _keys[i] == merge_key:
+			if _keys[i] == merge_key and _amounts[i] == 0.0:
 				_texts[i] = text
+				_set_icons(i, icon_ids)
 				_refresh_callout(i, world_pos, 1.3)
 				queue_redraw()
 				return
 	var slot := _spawn(text, world_pos + CALLOUT_RAISE, color, 1.0, 1.3, 0.0, merge_key)
+	_set_icons(slot, icon_ids)
 	_stack_callout(slot, world_pos)
 
 
-func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0, merge_key: int = 0) -> void:
+func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 1.0, merge_key: int = 0, icon_ids: Array[StringName] = []) -> void:
 	# `entry_scale` is authored emphasis that scales with the payout - Broken
 	# Providence with the bank, Stored Violence with the charge - so a popup is
 	# NOT a progress() with a different colour and must not be routed through
@@ -211,15 +240,62 @@ func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 
 		return
 	if merge_key != 0:
 		for i in range(_count):
-			if _keys[i] == merge_key:
+			if _keys[i] == merge_key and _amounts[i] == 0.0:
 				_texts[i] = text
 				_colors[i] = color
 				_scales[i] = entry_scale
+				_set_icons(i, icon_ids)
 				_refresh_callout(i, world_pos, 0.9)
 				queue_redraw()
 				return
 	var slot := _spawn(text, world_pos + CALLOUT_RAISE, color, entry_scale, 0.9, 0.0, merge_key)
+	_set_icons(slot, icon_ids)
 	_stack_callout(slot, world_pos)
+
+
+func _set_icons(slot: int, ids: Array[StringName]) -> void:
+	var own_ids: Array = _icon_ids[slot]
+	own_ids.clear()
+	for id in ids:
+		if StatusIcons.IDS.has(id) and not own_ids.has(id):
+			own_ids.append(id)
+
+
+## Each modifier name keeps the same colour as its body tell, even when a
+## single elite carries several. Separators use the neutral combat colour.
+func modifier_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
+	if not callouts_enabled():
+		return
+	var known: Array[StringName] = []
+	var labels: PackedStringArray = []
+	for id in ids:
+		if EliteModifiers.is_known(id) and not known.has(id):
+			known.append(id)
+			labels.append(EliteModifiers.label(id))
+	if known.is_empty():
+		return
+	var slot := _spawn(" · ".join(labels), world_pos + CALLOUT_RAISE, DAMAGE_COLOR, entry_scale, 0.9, 0.0, 0)
+	_set_icons(slot, known)
+	_modifier_ids[slot].assign(known)
+	_stack_callout(slot, world_pos)
+
+
+func _icon_count(slot: int) -> int:
+	var count := 0
+	for id: StringName in _icon_ids[slot]:
+		if StatusIcons.texture(id) != null:
+			count += 1
+	return count
+
+
+func _entry_ascent(slot: int) -> float:
+	var size := FONT_SIZE * _scales[slot]
+	return maxf(size * LINE_ASCENT_EM, size * 0.28 + ICON_SIZE * _scales[slot] * 0.5) if _icon_count(slot) > 0 else size * LINE_ASCENT_EM
+
+
+func _entry_descent(slot: int) -> float:
+	var size := FONT_SIZE * _scales[slot]
+	return maxf(size * LINE_DESCENT_EM, ICON_SIZE * _scales[slot] * 0.5 - size * 0.28) if _icon_count(slot) > 0 else size * LINE_DESCENT_EM
 
 
 func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, lifetime: float, amount: float, merge_key: int) -> int:
@@ -240,6 +316,9 @@ func _spawn(text: String, world_pos: Vector2, color: Color, entry_scale: float, 
 	_scales[slot] = entry_scale
 	_amounts[slot] = amount
 	_keys[slot] = merge_key
+	_icon_ids[slot].clear()
+	_modifier_ids[slot].clear()
+	_modifier_sizes[slot] = 0
 	_columns[slot] = 0
 	_lifts[slot] = 0.0
 	_lift_targets[slot] = 0.0
@@ -360,7 +439,7 @@ func _settle_column(column: int, floor_slot: int) -> void:
 	for k in range(1, n):
 		var slot := _stack_slots[k]
 		var below := _stack_slots[k - 1]
-		var need := _stack_lifts[k - 1] + FONT_SIZE * (_scales[slot] * LINE_DESCENT_EM + _scales[below] * LINE_ASCENT_EM) + LINE_PAD * 2.0
+		var need := _stack_lifts[k - 1] + _entry_descent(slot) + _entry_ascent(below) + LINE_PAD * 2.0
 		if _stack_lifts[k] < need:
 			_lift_targets[slot] += need - _stack_lifts[k]
 			_stack_lifts[k] = need
@@ -440,6 +519,15 @@ func _remove_at(slot: int) -> void:
 	_scales[slot] = _scales[last]
 	_amounts[slot] = _amounts[last]
 	_keys[slot] = _keys[last]
+	var expired_icons: Array = _icon_ids[slot]
+	_icon_ids[slot] = _icon_ids[last]
+	var expired_modifiers: Array = _modifier_ids[slot]
+	_modifier_ids[slot] = _modifier_ids[last]
+	var expired_modifier_lines: Array = _modifier_lines[slot]
+	_modifier_lines[slot] = _modifier_lines[last]
+	_modifier_lines[last] = expired_modifier_lines
+	_modifier_sizes[slot] = _modifier_sizes[last]
+	_modifier_sizes[last] = 0
 	_columns[slot] = _columns[last]
 	_lifts[slot] = _lifts[last]
 	_lift_targets[slot] = _lift_targets[last]
@@ -448,12 +536,19 @@ func _remove_at(slot: int) -> void:
 	var expired_line := _lines[slot]
 	var expired_text := _line_texts[slot]
 	var expired_size := _line_sizes[slot]
+	var expired_face := _line_faces[slot]
 	_lines[slot] = _lines[last]
 	_line_texts[slot] = _line_texts[last]
 	_line_sizes[slot] = _line_sizes[last]
+	_line_faces[slot] = _line_faces[last]
 	_lines[last] = expired_line
 	_line_texts[last] = expired_text
 	_line_sizes[last] = expired_size
+	_line_faces[last] = expired_face
+	_icon_ids[last] = expired_icons
+	_icon_ids[last].clear()
+	_modifier_ids[last] = expired_modifiers
+	_modifier_ids[last].clear()
 	_count = last
 
 
@@ -471,7 +566,9 @@ func _exit_tree() -> void:
 	_count = 0
 	for i in range(_lines.size()):
 		_lines[i] = null
+		_modifier_lines[i].clear()
 	_font = null
+	_callout_font = null
 
 
 func _draw() -> void:
@@ -492,6 +589,7 @@ func _draw() -> void:
 					continue
 		elif column == FALLING:
 			rise = -rise
+		var badge_baseline := _positions[i] + Vector2(0.0, -rise)
 		# Crit pop: brief overshoot at birth.
 		var pop := 1.0 + maxf(0.0, 0.25 - _ages[i] * 2.0) * (_scales[i] - 1.0) * 4.0
 		var font_size := int(round(FONT_SIZE * _scales[i] * pop))
@@ -504,16 +602,40 @@ func _draw() -> void:
 		color.a = alpha
 		var outline := Color(0.05, 0.05, 0.08, alpha * 0.9)
 		var line := _shaped_line(i, font_size)
+		var icon_count := _icon_count(i)
+		if icon_count > 0:
+			var icon_size := ICON_SIZE * _scales[i]
+			var row_width := icon_size * icon_count + ICON_SEPARATION * (icon_count - 1)
+			var badge_x := _positions[i].x - (line.get_line_width() + ICON_TEXT_GAP + row_width) * 0.5
+			var badge_y := badge_baseline.y - FONT_SIZE * _scales[i] * 0.28 - icon_size * 0.5
+			for id: StringName in _icon_ids[i]:
+				var art := StatusIcons.texture(id)
+				if art == null:
+					continue
+				draw_texture_rect(art, Rect2(badge_x, badge_y, icon_size, icon_size), false, Color(1.0, 1.0, 1.0, alpha))
+				badge_x += icon_size + ICON_SEPARATION
+			draw_pos.x += (row_width + ICON_TEXT_GAP) * 0.5
 		# TextLine draws from the top-left of its box; draw_string took the
 		# baseline. Keep the numbers where they were.
 		var line_pos := draw_pos - Vector2(0.0, line.get_line_ascent())
 		line.draw_outline(canvas, line_pos, 4, outline)
-		line.draw(canvas, line_pos, color)
+		if _modifier_ids[i].is_empty():
+			line.draw(canvas, line_pos, color)
+		else:
+			var segment_pos := line_pos + Vector2((LINE_WIDTH - line.get_line_width()) * 0.5, 0.0)
+			var segments := _shaped_modifier_lines(i, font_size)
+			for segment in range(_modifier_ids[i].size() * 2 - 1):
+				var segment_line: TextLine = segments[segment]
+				var segment_color := DAMAGE_COLOR if segment % 2 == 1 else EliteModifiers.tint(_modifier_ids[i][segment >> 1])
+				segment_color.a = alpha
+				segment_line.draw(canvas, segment_pos, segment_color)
+				segment_pos.x += segment_line.get_line_width()
 
 
 func _shaped_line(slot: int, font_size: int) -> TextLine:
 	var line := _lines[slot]
-	if line != null and _line_sizes[slot] == font_size and _line_texts[slot] == _texts[slot]:
+	var face := 0 if _amounts[slot] > 0.0 else 1
+	if line != null and _line_sizes[slot] == font_size and _line_texts[slot] == _texts[slot] and _line_faces[slot] == face:
 		return line
 	if line == null:
 		line = TextLine.new()
@@ -523,10 +645,26 @@ func _shaped_line(slot: int, font_size: int) -> TextLine:
 		_lines[slot] = line
 	else:
 		line.clear()
-	line.add_string(_texts[slot], _font, font_size)
+	line.add_string(_texts[slot], _font if face == 0 else _callout_font, font_size)
 	_line_texts[slot] = _texts[slot]
 	_line_sizes[slot] = font_size
+	_line_faces[slot] = face
 	return line
+
+
+func _shaped_modifier_lines(slot: int, font_size: int) -> Array:
+	var segments: Array = _modifier_lines[slot]
+	if _modifier_sizes[slot] == font_size:
+		return segments
+	var ids: Array = _modifier_ids[slot]
+	for index in range(ids.size() * 2 - 1):
+		if index >= segments.size():
+			segments.append(TextLine.new())
+		var segment: TextLine = segments[index]
+		segment.clear()
+		segment.add_string(" · " if index % 2 == 1 else EliteModifiers.label(ids[index >> 1]), _callout_font, font_size)
+	_modifier_sizes[slot] = font_size
+	return segments
 
 
 # ---------------------------------------------------------------------------
@@ -547,8 +685,7 @@ func drawn_position(slot: int) -> Vector2:
 ## Top and bottom (world y) of entry `slot`'s stacking box as drawn now.
 func drawn_extent(slot: int) -> Vector2:
 	var baseline := drawn_position(slot).y
-	var size := FONT_SIZE * _scales[slot]
-	return Vector2(baseline - size * LINE_ASCENT_EM - LINE_PAD, baseline + size * LINE_DESCENT_EM + LINE_PAD)
+	return Vector2(baseline - _entry_ascent(slot) - LINE_PAD, baseline + _entry_descent(slot) + LINE_PAD)
 
 
 ## Opacity entry `slot` is drawn with right now (0 = not drawn).

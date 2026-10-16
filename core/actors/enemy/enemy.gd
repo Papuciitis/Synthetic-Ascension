@@ -1197,16 +1197,14 @@ func _announce_elite_modifiers(ids: Array[StringName], tint: Color) -> void:
 		_elite_intro_tint = tint
 		return
 	_elite_intro_pending = false
-	var labels: PackedStringArray = []
-	for id in ids:
-		labels.append(EliteModifiers.label(id))
 	if BattleText != null:
-		BattleText.popup(global_position + ELITE_LABEL_OFFSET, " · ".join(labels), tint, ELITE_LABEL_SCALE)
-	if RunEvents == null or not RunEvents.has_signal("tutorial_tip"):
+		BattleText.modifier_popup(global_position + ELITE_LABEL_OFFSET, ids, ELITE_LABEL_SCALE)
+	if RunEvents == null or not RunEvents.has_signal("illustrated_tutorial_tip"):
 		return
 	for id in ids:
 		if EliteModifiers.consume_teach(id):
-			RunEvents.tutorial_tip.emit(EliteModifiers.teach_line(id), EliteModifiers.TEACH_SECONDS)
+			var teach_icons: Array[StringName] = [id]
+			RunEvents.illustrated_tutorial_tip.emit(EliteModifiers.teach_line(id), EliteModifiers.TEACH_SECONDS, teach_icons)
 
 
 func _in_player_view(margin: float = ELITE_IN_VIEW_MARGIN) -> bool:

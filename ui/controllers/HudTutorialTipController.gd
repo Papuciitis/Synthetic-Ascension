@@ -1,6 +1,8 @@
 extends Node
 class_name HudTutorialTipController
 
+const StatusIcons := preload("res://core/combat/CombatStatusIcons.gd")
+
 # Shows tutorial tips in the GateOverlay/TutorialTip panel.
 #
 # - Queues tips so they never overlap.
@@ -15,6 +17,7 @@ class_name HudTutorialTipController
 
 var _panel: PanelContainer = null
 var _label: Label = null
+var _icons: HBoxContainer = null
 
 var _queue: Array[Dictionary] = []
 var _running: bool = false
@@ -44,6 +47,10 @@ func _hook_run_events() -> void:
 		var cb := Callable(self, "_on_tutorial_tip")
 		if not RunEvents.tutorial_tip.is_connected(cb):
 			RunEvents.tutorial_tip.connect(cb)
+	if RunEvents != null and RunEvents.has_signal("illustrated_tutorial_tip"):
+		var cb := Callable(self, "_on_illustrated_tutorial_tip")
+		if not RunEvents.illustrated_tutorial_tip.is_connected(cb):
+			RunEvents.illustrated_tutorial_tip.connect(cb)
 
 
 func _resolve_nodes() -> void:
@@ -51,13 +58,19 @@ func _resolve_nodes() -> void:
 		_panel = get_node_or_null(tutorial_panel_path) as PanelContainer
 	if _label == null and tutorial_label_path != NodePath():
 		_label = get_node_or_null(tutorial_label_path) as Label
+	if _icons == null and _panel != null:
+		_icons = _panel.get_node_or_null("Margin/Row/StatusIcons") as HBoxContainer
 
 
 func _on_tutorial_tip(text: String, duration: float) -> void:
 	enqueue_tip(text, duration)
 
 
-func enqueue_tip(text: String, duration: float = 2.8) -> void:
+func _on_illustrated_tutorial_tip(text: String, duration: float, icon_ids: Array[StringName]) -> void:
+	enqueue_tip(text, duration, icon_ids)
+
+
+func enqueue_tip(text: String, duration: float = 2.8, icon_ids: Array[StringName] = []) -> void:
 	_resolve_nodes()
 	if _panel == null or _label == null:
 		return
@@ -77,7 +90,7 @@ func enqueue_tip(text: String, duration: float = 2.8) -> void:
 		if String(d.get("text", "")) == t:
 			return
 
-	_queue.append({"text": t, "duration": maxf(0.4, duration)})
+	_queue.append({"text": t, "duration": maxf(0.4, duration), "icons": icon_ids.duplicate()})
 	if not _running:
 		_running = true
 		call_deferred("_run_queue")
@@ -100,7 +113,7 @@ func _run_queue() -> void:
 		_last_text = t
 		_last_shown_msec = Time.get_ticks_msec()
 
-		_show_now(t)
+		_show_now(t, tip.get("icons", []))
 		var tree: SceneTree = get_tree()
 		if tree == null:
 			_abort_queue()
@@ -135,7 +148,7 @@ func _abort_queue() -> void:
 	_running = false
 
 
-func _show_now(text: String) -> void:
+func _show_now(text: String, icon_ids: Array[StringName] = []) -> void:
 	_resolve_nodes()
 	if _panel == null or _label == null:
 		return
@@ -144,6 +157,7 @@ func _show_now(text: String) -> void:
 		_tw.kill()
 
 	_label.text = text
+	_show_icons(icon_ids)
 	_panel.visible = true
 	_panel.modulate.a = 1.0
 	_panel.scale = Vector2.ONE
@@ -156,6 +170,32 @@ func _show_now(text: String) -> void:
 		_tw.set_trans(Tween.TRANS_QUAD)
 		_tw.set_ease(Tween.EASE_OUT)
 		_tw.tween_property(_panel, "scale", Vector2.ONE, 0.14)
+
+
+func _show_icons(ids: Array[StringName]) -> void:
+	if _icons == null:
+		return
+	for child in _icons.get_children():
+		_icons.remove_child(child)
+		child.queue_free()
+	var shown: Array[StringName] = []
+	for id in ids:
+		if shown.has(id):
+			continue
+		var art := StatusIcons.texture(id)
+		if art == null:
+			continue
+		var badge := TextureRect.new()
+		badge.custom_minimum_size = Vector2(40.0, 40.0)
+		badge.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		badge.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		badge.texture = art
+		_icons.add_child(badge)
+		shown.append(id)
+	_icons.visible = not shown.is_empty()
 
 
 func _hide_now() -> void:

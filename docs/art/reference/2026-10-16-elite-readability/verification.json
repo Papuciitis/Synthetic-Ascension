@@ -1,0 +1,364 @@
+{
+  "date": "2026-10-16",
+  "engine": "Godot 4.7.1 stable a13da4feb",
+  "base_commit": "6b03a890e7fc03b6124dc129dc9e951f6e855612",
+  "state": "User approved the preview and requested a separate commit/push including per-name modifier colours, without another visual approval step.",
+  "scope": "Clearer secondary Vampiric/Splitting tells; matching fonts and generated modifier badges on BOTH floating combat text and top-centre alerts; each mixed announcement name retains its canonical tell colour. Unrelated concurrent boss/world/item/history edits preserved.",
+  "checks": [
+    {
+      "suite": "EliteTellArtTest",
+      "mode": "OpenGL Compatibility / Intel UHD Graphics",
+      "passes": 24,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/EliteTellArtTest-pass4-final.log",
+      "log_sha256": "3c9ee870074b9f7687e9da2686fc62a576d17e84e0b9e62db84e9bc395196be1"
+    },
+    {
+      "suite": "CombatTextPresentationTest",
+      "mode": "OpenGL Compatibility / Intel UHD Graphics; final 128px imports and per-name modifier colours",
+      "passes": 47,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/CombatTextPresentationTest-pass4-final.log",
+      "log_sha256": "192a87eab4d1123779a191ab8d0287656e80b1eab122d67e6fc445280e417f73"
+    },
+    {
+      "suite": "HudIllustratedTipTest",
+      "mode": "headless",
+      "passes": 7,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/HudIllustratedTipTest-pass4-final.log",
+      "log_sha256": "7b9dc387c7beb22814ddb98bff95325e5e7b7ad0156a759fda6caccc70f7ed67"
+    },
+    {
+      "suite": "BattleTextColumnTest",
+      "mode": "headless",
+      "passes": 41,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/BattleTextColumnTest-pass4-final.log",
+      "log_sha256": "cca67b8e347a7920c726ecb6f4e9dbb862a95b55f6ecac9083cfcc5e76a20c47"
+    },
+    {
+      "suite": "EliteModifierTest",
+      "mode": "headless",
+      "passes": 139,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/EliteModifierTest-pass4-final.log",
+      "log_sha256": "436d6dc129f2609679e5d7e3abf3c4cb81b0c1b1a6536bc83ae624a7ac0e65ce"
+    },
+    {
+      "suite": "HitConfirmationTest",
+      "mode": "headless",
+      "passes": 25,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/HitConfirmationTest-pass4-final.log",
+      "log_sha256": "5197c158db5cfa689c4de659eb3fd4389fcac9f89b7a3a82c1473e91787d3ef7"
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "mode": "headless; final engine verification after code changes",
+      "passes": 518,
+      "failures": 0,
+      "exit_code": 0,
+      "log": ".godot/ScriptParseAuditTest-pass4-final.log",
+      "log_sha256": "7eb75f3f2d3238cd5909d9391a430037754680b9bb8d515a7dba5d026a895113"
+    }
+  ],
+  "reported_passing_checks": 801,
+  "test_first_evidence": {
+    "secondary_rendered_tells": "22 passed / 2 failed -> 24 passed / 0 failed",
+    "combat_text_presentation": "1 passed / 3 failed initially; final real rendering 31 passed / 0 failed",
+    "cross_channel_key_collision": "23 passed / 4 failed -> 27 passed / 0 failed headless; included in final rendered 31/0",
+    "illustrated_tip": "0 passed / 2 failed -> 7 passed / 0 failed",
+    "typed_illustrated_signal": "An intermediate runtime typed-array error was corrected with an explicit Array[StringName]; final lifecycle 139/0 and live capture clean."
+  },
+  "per_name_colour_followup": {
+    "test_first": "Rendered regression: 34 passed / 9 failed before implementation; final rendered suite listed above.",
+    "semantics": "Explicit modifier_popup API composes canonical labels/tints from modifier IDs. Neutral separators; ordinary popup/progress text retains caller-supplied colour. No word parsing.",
+    "coverage": "Actual double/triple glyph colours for all five modifiers, single modifier colour, neutral separators, badge/text centering, pooled compaction, caller array reuse, plain and numeric slot reuse, cache reuse and shared fading.",
+    "separator_antialiasing": "Native 15px dot core is RGB(229,225,216), alpha253, against authored RGB(250,245,235). Tiny separator assertion uses 0.12 tolerance; name glyph tests retain 0.08. Product colour was not changed to satisfy the test.",
+    "rendered_evidence": "modifier-name-colours.png"
+  },
+  "approved_preview": {
+    "reported_passing_checks": 785,
+    "note": "Live MP4 and original before/after images preserve the reviewed preview before the small per-name colour follow-up. The final colour PNG and fresh final suites cover that follow-up.",
+    "source_sha256": {
+      "assets/vfx/world/enemies/VFX_EliteModifierMark.gd": "2453a154818d8e832fd2b55cbc4d444b8ded37e5570a8761839cc879020b12d6",
+      "assets/fonts/README.md": "0b4b1041b0990a80720d82d593aec1230c335c3e5fe059ce9838da447b95681b",
+      "autoload/RunEvents.gd": "5841d1ea74494f764c12a6ec156e93761e9902e282f916de9f986a74c58ba252",
+      "core/actors/enemy/enemy.gd": "4b32d425de76ebfc11994d4621430e033fdf37aa49924406658bb64531f19374",
+      "core/combat/BattleTextRenderer.gd": "ef4c2819cb4b23fcc31a3e75582c1349517ba50586069b9c70b2632ea28af198",
+      "core/combat/CombatStatusIcons.gd": "34263980413355f7784fc17928d5c984dd8d4715be123c4440140253192de342",
+      "ui/controllers/HudTutorialTipController.gd": "156ade74cbff814c3c896c908f0eda2b78d75df80a784d62ebdd98d53cfb0e84",
+      "ui/overlays/GateOverlay.tscn": "d95fc85be394ea5f7e2f7c2c61c13f9553f720c9e2c3328eecb98b5b612a4c18",
+      "ui/screens/HUD.tscn": "fa80cadc594db1b45af5ccd72fdd802018a68326fd6d68ac3ffe162b8a87fc72",
+      "tools/tests/EliteTellArtTest.gd": "5b12b1fdb489d99ec9fdd18ab062caedafea95afbe80c60b429a908a8278c3d6",
+      "tools/tests/EliteModifierTest.gd": "742cbd156e7260a36040dd142f283e2af9d9312f331c7202376ac525a136a7b7",
+      "tools/tests/CombatTextPresentationTest.gd": "30adbc3a2dbd460dafc7f57a1cea203604eec1cb8e52cda8d175cab2b6777e97",
+      "tools/tests/CombatTextPresentationTest.tscn": "6fdd5967125670a40d800bbe5cf18f2f1d08b30e61288f0010173ceb51cbe764",
+      "tools/tests/HudIllustratedTipTest.gd": "5af0f4101cf0fcadaa17454edfa446dd109dc60148f43af25bc2003e36266f7c",
+      "tools/tests/HudIllustratedTipTest.tscn": "9c23d81e6f7f389fbca791745ef440369ec1f7f90c46ef8912fba07ff25d746d",
+      "tools/dev/EliteReadabilityPreview.gd": "5a50ed08a8794224e67e1ed128645c273024258ac51b9cccf73889d0467bf317",
+      "tools/dev/EliteReadabilityPreview.tscn": "e2b89a3fc69e3befc45c9513dc15d9f243c65e983821adad0bdcb0fd54cb6c27",
+      "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+      "tools/dev/EliteCrowdFightPreview.tscn": "c3dd97a9053c20c30f8b5b85a924aafa66ba4b436833eeab4a3422dea722158f",
+      "assets/textures/ui/combat_status/armoured.png": "3ef64eb1650fa36fcee6f89beba2305728d359229aa99fe543308e34194f0a54",
+      "assets/textures/ui/combat_status/armoured.png.import": "f72182734c37c87271f16e8903a24bce5c6de465c96522aa5f6f76ff9b75a97a",
+      "assets/textures/ui/combat_status/fast.png": "ce00ab56a2e71fd30f0592efaa8a5c18a4a181f8bc4d61c4259ba573dc8c2588",
+      "assets/textures/ui/combat_status/fast.png.import": "db28f9943a0bea0fd33c48da779f8678be25cf1f8b48f62d383ee9488894919d",
+      "assets/textures/ui/combat_status/imagegen-prompts.json": "f7204fd2189a59820d04c1372d363ad0409d510318f2833a3bbbf15584e94395",
+      "assets/textures/ui/combat_status/shielded.png": "6941a9098d0625e2e962cdcf6721d3878a314ff952cec48b253f44f1fdfc160f",
+      "assets/textures/ui/combat_status/shielded.png.import": "01dbbd8052c7c80d77108337dd28cd1e6a693a9637021982646ac77f6406833c",
+      "assets/textures/ui/combat_status/splitting.png": "c01960eb7ea3e93962939f4bdb5ff2b1a91acb2c84464ddbc34e4e6dc47cb26e",
+      "assets/textures/ui/combat_status/splitting.png.import": "e0e648de5446083a5fb23806caf5c0a3d69c1baedade6da4885ab2aeb4d0e468",
+      "assets/textures/ui/combat_status/vampiric.png": "2796008b6e7632e74e3057ff68ac04f6185e9156ba40c9868097ea5e40399daa",
+      "assets/textures/ui/combat_status/vampiric.png.import": "a22c12de28e7229b2d257686431d07e870c2a6238071b5b5b444970f180d0a89"
+    }
+  },
+  "rendered_pixel_evidence": {
+    "conditions": "Native 2/3 screen scale, three overlapping Brutes; compare against matching body-only pixels.",
+    "secondary_vampiric_trough_red_pixels_before_after": [
+      18,
+      93
+    ],
+    "secondary_vampiric_reduced_motion_red_pixels": 108,
+    "secondary_vampiric_feed_red_pixels": 133,
+    "secondary_splitting_lime_pixels_before_after": [
+      43,
+      100
+    ],
+    "secondary_splitting_screen_span_before_after": [
+      28,
+      44
+    ]
+  },
+  "source_sha256": {
+    "assets/vfx/world/enemies/VFX_EliteModifierMark.gd": "2453a154818d8e832fd2b55cbc4d444b8ded37e5570a8761839cc879020b12d6",
+    "assets/fonts/README.md": "0b4b1041b0990a80720d82d593aec1230c335c3e5fe059ce9838da447b95681b",
+    "autoload/RunEvents.gd": "5841d1ea74494f764c12a6ec156e93761e9902e282f916de9f986a74c58ba252",
+    "core/actors/enemy/enemy.gd": "d84e2d48c8085d7ccba8e1033daf00c3c5fbffd89cc6bdc80f48e6aaf564a23c",
+    "core/combat/BattleTextRenderer.gd": "f5e68b4e2c0842db44c1f6439f16c57db270ff2faee6d0c0f17c98b79764f586",
+    "core/combat/CombatStatusIcons.gd": "34263980413355f7784fc17928d5c984dd8d4715be123c4440140253192de342",
+    "ui/controllers/HudTutorialTipController.gd": "156ade74cbff814c3c896c908f0eda2b78d75df80a784d62ebdd98d53cfb0e84",
+    "ui/overlays/GateOverlay.tscn": "d95fc85be394ea5f7e2f7c2c61c13f9553f720c9e2c3328eecb98b5b612a4c18",
+    "ui/screens/HUD.tscn": "fa80cadc594db1b45af5ccd72fdd802018a68326fd6d68ac3ffe162b8a87fc72",
+    "tools/tests/EliteTellArtTest.gd": "5b12b1fdb489d99ec9fdd18ab062caedafea95afbe80c60b429a908a8278c3d6",
+    "tools/tests/EliteModifierTest.gd": "742cbd156e7260a36040dd142f283e2af9d9312f331c7202376ac525a136a7b7",
+    "tools/tests/CombatTextPresentationTest.gd": "de699ea7ec1d31bb24d3bcecd5d660d3d20dd65711caa6fc56cdcb5eabf0a6dd",
+    "tools/tests/CombatTextPresentationTest.tscn": "6fdd5967125670a40d800bbe5cf18f2f1d08b30e61288f0010173ceb51cbe764",
+    "tools/tests/HudIllustratedTipTest.gd": "5af0f4101cf0fcadaa17454edfa446dd109dc60148f43af25bc2003e36266f7c",
+    "tools/tests/HudIllustratedTipTest.tscn": "9c23d81e6f7f389fbca791745ef440369ec1f7f90c46ef8912fba07ff25d746d",
+    "tools/dev/EliteReadabilityPreview.gd": "5a50ed08a8794224e67e1ed128645c273024258ac51b9cccf73889d0467bf317",
+    "tools/dev/EliteReadabilityPreview.tscn": "e2b89a3fc69e3befc45c9513dc15d9f243c65e983821adad0bdcb0fd54cb6c27",
+    "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+    "tools/dev/EliteCrowdFightPreview.tscn": "c3dd97a9053c20c30f8b5b85a924aafa66ba4b436833eeab4a3422dea722158f",
+    "assets/textures/ui/combat_status/armoured.png": "3ef64eb1650fa36fcee6f89beba2305728d359229aa99fe543308e34194f0a54",
+    "assets/textures/ui/combat_status/armoured.png.import": "f72182734c37c87271f16e8903a24bce5c6de465c96522aa5f6f76ff9b75a97a",
+    "assets/textures/ui/combat_status/fast.png": "ce00ab56a2e71fd30f0592efaa8a5c18a4a181f8bc4d61c4259ba573dc8c2588",
+    "assets/textures/ui/combat_status/fast.png.import": "db28f9943a0bea0fd33c48da779f8678be25cf1f8b48f62d383ee9488894919d",
+    "assets/textures/ui/combat_status/imagegen-prompts.json": "f7204fd2189a59820d04c1372d363ad0409d510318f2833a3bbbf15584e94395",
+    "assets/textures/ui/combat_status/shielded.png": "6941a9098d0625e2e962cdcf6721d3878a314ff952cec48b253f44f1fdfc160f",
+    "assets/textures/ui/combat_status/shielded.png.import": "01dbbd8052c7c80d77108337dd28cd1e6a693a9637021982646ac77f6406833c",
+    "assets/textures/ui/combat_status/splitting.png": "c01960eb7ea3e93962939f4bdb5ff2b1a91acb2c84464ddbc34e4e6dc47cb26e",
+    "assets/textures/ui/combat_status/splitting.png.import": "e0e648de5446083a5fb23806caf5c0a3d69c1baedade6da4885ab2aeb4d0e468",
+    "assets/textures/ui/combat_status/vampiric.png": "2796008b6e7632e74e3057ff68ac04f6185e9156ba40c9868097ea5e40399daa",
+    "assets/textures/ui/combat_status/vampiric.png.import": "a22c12de28e7229b2d257686431d07e870c2a6238071b5b5b444970f180d0a89"
+  },
+  "image_generation": {
+    "generator": "Built-in image_gen",
+    "prompt_manifest": "assets/textures/ui/combat_status/imagegen-prompts.json",
+    "source_pngs": "Five original 1254x1254 RGBA PNGs, preserved intact; all alpha ranges 0..255.",
+    "runtime_import": "Godot process/size_limit=128 on all five badges; final rendered tests and captures use these imports.",
+    "alpha_checks": [
+      {
+        "id": "armoured",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "alpha_extrema": [
+          0,
+          255
+        ]
+      },
+      {
+        "id": "vampiric",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "alpha_extrema": [
+          0,
+          255
+        ]
+      },
+      {
+        "id": "shielded",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "alpha_extrema": [
+          0,
+          255
+        ]
+      },
+      {
+        "id": "splitting",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "alpha_extrema": [
+          0,
+          255
+        ]
+      },
+      {
+        "id": "fast",
+        "source_size": [
+          1254,
+          1254
+        ],
+        "alpha_extrema": [
+          0,
+          255
+        ]
+      }
+    ]
+  },
+  "capture": {
+    "scene": "res://scenes/game.tscn",
+    "world_seed": 1610202607,
+    "initial_enemies": 48,
+    "initial_elites": [
+      {
+        "index": 0,
+        "modifiers": [
+          "armoured"
+        ],
+        "spec": "Brute",
+        "world": "(2720.0, 864.0)"
+      },
+      {
+        "index": 1,
+        "modifiers": [
+          "vampiric"
+        ],
+        "spec": "Spitter",
+        "world": "(3424.0, 864.0)"
+      },
+      {
+        "index": 2,
+        "modifiers": [
+          "shielded"
+        ],
+        "spec": "Grunt",
+        "world": "(2976.0, 1312.0)"
+      },
+      {
+        "index": 3,
+        "modifiers": [
+          "splitting"
+        ],
+        "spec": "Brute",
+        "world": "(3424.0, 1184.0)"
+      },
+      {
+        "index": 4,
+        "modifiers": [
+          "fast"
+        ],
+        "spec": "Charger",
+        "world": "(2592.0, 1184.0)"
+      },
+      {
+        "index": 5,
+        "modifiers": [
+          "armoured",
+          "vampiric"
+        ],
+        "spec": "Brute",
+        "world": "(2976.0, 736.0)"
+      },
+      {
+        "index": 6,
+        "modifiers": [
+          "shielded",
+          "fast"
+        ],
+        "spec": "Grunt",
+        "world": "(3616.0, 992.0)"
+      },
+      {
+        "index": 7,
+        "modifiers": [
+          "vampiric",
+          "fast"
+        ],
+        "spec": "Orbiter",
+        "world": "(3232.0, 672.0)"
+      },
+      {
+        "index": 8,
+        "modifiers": [
+          "armoured",
+          "splitting",
+          "fast"
+        ],
+        "spec": "Brute",
+        "world": "(3616.0, 1312.0)"
+      },
+      {
+        "index": 9,
+        "modifiers": [],
+        "spec": "Grunt",
+        "world": "(2528.0, 736.0)"
+      }
+    ],
+    "captured_frames": 151,
+    "simulation_seconds": 10.0166666666667,
+    "wall_seconds": 20.423689,
+    "weapon_fires": 46,
+    "player_hits": 56,
+    "elite_hits": 4,
+    "enemy_deaths": 21,
+    "elite_deaths": 0,
+    "max_managed_projectiles": 9,
+    "save_writes": 0,
+    "failures": 0
+  },
+  "capture_runtime_errors": 0,
+  "capture_runtime_warnings": 0,
+  "capture_log_sha256": "ae2de43cb92659baa6df903a77ef80814b8e6e08d3238f2c309a70822f10bd10",
+  "encoding": {
+    "format": "MP4 / H.264 yuv420p CRF18, silent",
+    "source_frames": 151,
+    "duration_seconds": 20.4228945,
+    "resolution": [
+      1280,
+      720
+    ],
+    "bytes": 7328866,
+    "timing": "Measured wall-clock sample intervals, variable frame rate, final frame held for median interval; no speedup to requested fps.",
+    "verification": "Full final MP4 decoded without errors; decoded midfight frame exported for visual QA.",
+    "encoder": "7.1-essentials_build-www.gyan.dev"
+  },
+  "media_sha256": {
+    "elite-readability-after.png": "9a45dc9b614a94e19679bf6f4c28256607ce55baddbf3fb6f57aaef91ecaafa0",
+    "elite-readability-before-after-2x.png": "81a0ffd1bd710b08e685b7b43605146f6db016e768281513fc0ed9264db24fb5",
+    "elite-readability-before.png": "c2cfcc9ccc4b5f63014fceb3c2beb614a623c9208d70749ca748786372fb13f1",
+    "elite-readability-crowd.mp4": "68deb8f32dc0030b2f476ea973812fce8dc368cf9e6c183fa17d4ffcd0dc8a28",
+    "elite-readability-ending.png": "794c3cce8c89c66ac1005f9c7b70550796d6e8111cebb84889e41f4a73c286fc",
+    "elite-readability-midfight.png": "cdc490fac241db6dd2d65c430b6c3094224d750ce0d119ce1fe2ee0dc166ab78",
+    "elite-readability-opening.png": "168ee80cea0748a50e9c62f0e48fe36506cec8c4d9e74c826529fdcde0f1085a",
+    "modifier-name-colours.png": "a29540328c551b9ec07333b17853d2b819f453f47878ddb5d7d23d82dc932154"
+  },
+  "review": "Root inspected product diffs, native staged before/after PNGs, live stills, a decoded MP4 midpoint and final double/triple colour PNG. Fresh independent scoped review included per-name cache reuse/compaction, centering and fading; no actionable code findings.",
+  "limits": "Scripted movement/aim, god mode, ambient spawning/encounter beats disabled; unchanged enemy stats. Forced triple exceeds normal two-modifier roll. Readability review, not a difficulty or performance benchmark. Heavy overlaps can occlude bodies. Silent MP4 preserves measured wall-clock sample intervals."
+}
