@@ -350,6 +350,10 @@ func show_prompt(text_value: String) -> void:
 func hide_prompt() -> void:
 	_prompt.visible = false
 
+
+func is_prompt_visible() -> bool:
+	return _prompt != null and _prompt.visible
+
 func hide_card() -> void:
 	_revealing = false
 	if _panel != null:
@@ -527,6 +531,9 @@ func _build_ui() -> void:
 	column.add_child(_rule)
 	_body = Label.new()
 	_body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	# Shape the whole account before revealing it: the reading area is sized
+	# when a card starts, and words must not jump lines as letters arrive.
+	_body.visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING
 	_body.custom_minimum_size = Vector2(PANEL_WIDTH - 80.0, 0)
 	_body.add_theme_constant_override("line_spacing", 2)
 	column.add_child(_body)

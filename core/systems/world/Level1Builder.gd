@@ -190,6 +190,10 @@ func _ready() -> void:
 	add_child(_guidance)
 	_refresh_guidance_map()
 	_connect_run_events()
+	# Objective details name the player's keys; a rebind mid-segment (Pause ->
+	# Settings) must not leave the persistent detail naming the old key.
+	if SettingsManager != null and not SettingsManager.bindings_changed.is_connected(_on_bindings_changed):
+		SettingsManager.bindings_changed.connect(_on_bindings_changed)
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
@@ -206,6 +210,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if SettingsManager != null and SettingsManager.bindings_changed.is_connected(_on_bindings_changed):
+		SettingsManager.bindings_changed.disconnect(_on_bindings_changed)
 	if RunEvents == null:
 		return
 	var killed_cb := Callable(self, "_on_enemy_defeated")
@@ -1530,6 +1536,10 @@ func _refresh_guidance_map() -> void:
 	var regions: Array[Rect2i] = [Rect2i(FACILITY_TL, FACILITY_SIZE), ADMISSIONS_RECT, COURTYARD_RECT, SERVICE_RECT, APPROACH_RECT]
 	var blockers: Array[Dictionary] = [_wall_kind, _fence_cells, _half_cells]
 	_guidance.call("configure", cell_size_px, regions, blockers)
+
+
+func _on_bindings_changed(_action: StringName) -> void:
+	_update_objective()
 
 
 func _update_objective() -> void:

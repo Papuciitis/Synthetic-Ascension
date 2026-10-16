@@ -149,6 +149,19 @@ func _run() -> void:
 	opening_button.pressed.emit()
 	await process_frame
 	_check(choices.visible and not opening_button.visible, "opening choices appear after the text is fully revealed")
+	# A long account keeps its reading height from the first letter to the
+	# last: the reading area is sized at card start, so the body must already
+	# measure its whole text then.
+	opening.call("present_card", 0, "ARCHIVE RECORD", "A LONG ACCOUNT", "Every line of this account already belongs to the card. ".repeat(14), [], "Continue")
+	await process_frame
+	await process_frame
+	var reading := opening.get("_scroll") as ScrollContainer
+	var revealing_height := reading.custom_minimum_size.y
+	_check(opening_body.visible_characters >= 0 and opening_body.visible_characters < opening_body.get_total_character_count(), "the long account starts its reveal")
+	opening_button.pressed.emit()
+	await process_frame
+	await process_frame
+	_check(opening_body.visible_characters == -1 and revealing_height > opening_body.get_line_height() * 4.0 and is_equal_approx(reading.custom_minimum_size.y, revealing_height), "a long card's reading area has its full height while the text reveals (%.0f then %.0f)" % [revealing_height, reading.custom_minimum_size.y])
 	opening.queue_free()
 	await process_frame
 	settings_manager.set_value(&"accessibility", &"typewriter_speed", previous_typewriter_speed, false)
