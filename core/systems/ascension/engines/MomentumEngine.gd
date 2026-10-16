@@ -288,6 +288,17 @@ func on_dash_ended(from: Vector2, to: Vector2, direction: Vector2) -> void:
 		_extending = false
 
 
+## Prime lasts PRIME_SECONDS (Passing Blade: "Primes victims for 3s"). The
+## status stores its expiry; an expired one is cleared as it is read.
+func _primed(handle: int) -> bool:
+	if not runner.has_status(handle, "prime"):
+		return false
+	if float(runner.status_of(handle)["prime"]) > _clock:
+		return true
+	runner.clear_status(handle, "prime")
+	return false
+
+
 ## Passing Blade along the dash path; primes victims; remembers who was crossed.
 func _dash_strip(from: Vector2, to: Vector2, _direction: Vector2) -> Array[int]:
 	var out: Array[int] = []
@@ -304,7 +315,7 @@ func _dash_strip(from: Vector2, to: Vector2, _direction: Vector2) -> Array[int]:
 	for handle in crossed:
 		runner.damage_enemy(handle, 0.6 * D(), tags)
 		if runner.enemy_alive(handle):
-			var was_primed := runner.has_status(handle, "prime")
+			var was_primed := _primed(handle)
 			runner.status_of(handle)["prime"] = _clock + PRIME_SECONDS
 			if not was_primed:
 				Feedback.notify_handle(handle, &"prime")
@@ -364,7 +375,7 @@ func _slingshot(to: Vector2, direction: Vector2) -> void:
 
 func _ram(crossed: Array[int], endpoint: Vector2, direction: Vector2) -> void:
 	for handle in crossed:
-		if not runner.enemy_alive(handle) or not runner.has_status(handle, "prime"):
+		if not runner.enemy_alive(handle) or not _primed(handle):
 			continue
 		if runner.is_boss(handle):
 			# Bosses take 0.5D stagger instead of being carried.
@@ -486,7 +497,7 @@ func _tick_delayed(delta: float) -> void:
 func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:
 	var handle := int(preview["handle"])
 	var damage := raw
-	if has("MO02") and bool(preview["core_strike"]) and preview["core"] == "melee" and runner.has_status(handle, "prime"):
+	if has("MO02") and bool(preview["core_strike"]) and preview["core"] == "melee" and _primed(handle):
 		damage += 0.5 * D()
 	if _moving_fire_volley == _volley and preview["family"] == AscensionTags.FAMILY_NATIVE and preview["core"] != "melee":
 		damage += 0.5 * D()
@@ -496,7 +507,7 @@ func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:
 
 func on_hit(hit: Dictionary) -> void:
 	var handle := int(hit["handle"])
-	if hit["core"] == "melee" and AscensionTags.has_flag(hit["tags"], "core_strike") and runner.has_status(handle, "prime"):
+	if hit["core"] == "melee" and AscensionTags.has_flag(hit["tags"], "core_strike") and _primed(handle):
 		runner.clear_status(handle, "prime")
 		counters["prime_consumed"] = int(counters["prime_consumed"]) + 1
 	if hit["root"] == "MOQ" and hit["path"] == "lunge" and has("MOQ4") and (bool(hit["is_elite"]) or bool(hit["is_boss"])):
