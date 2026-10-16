@@ -38,6 +38,11 @@ const _COLOURS := {
 static var _textures: Dictionary = {}
 
 
+## Application shutdown (Global._exit_tree), like the other RID-backed statics.
+static func release_static_caches() -> void:
+	_textures.clear()
+
+
 static func known(id: StringName) -> bool:
 	return EliteModifiers.is_known(id) or _LABELS.has(id)
 

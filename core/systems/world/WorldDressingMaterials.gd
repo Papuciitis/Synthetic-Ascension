@@ -18,18 +18,40 @@ static func texture_region(texture: Texture2D) -> Vector4:
 	return Vector4(0, 0, 1, 1)
 
 
+## A material depends only on its region (the batch supplies the texture), so
+## one is shared per region: chunk loads stop allocating a material per
+## species, and equal materials keep batching together.
+static var _visual_by_region: Dictionary = {}
+static var _shadow_by_region: Dictionary = {}
+
+
 static func visual_material(texture: Texture2D) -> ShaderMaterial:
 	if not texture is AtlasTexture:
 		return null
-	var material := ShaderMaterial.new()
-	material.shader = REGION_SHADER
-	material.set_shader_parameter("texture_region", texture_region(texture))
+	var region := texture_region(texture)
+	var material := _visual_by_region.get(region) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
+		material.shader = REGION_SHADER
+		material.set_shader_parameter("texture_region", region)
+		_visual_by_region[region] = material
 	return material
 
 
 static func shadow_material(texture: Texture2D) -> ShaderMaterial:
-	var material := ShaderMaterial.new()
-	material.shader = DEPTH.SHADOW_SHADER
-	material.set_shader_parameter("texture_region", texture_region(texture))
-	material.set_shader_parameter("shadow_color", DEPTH.SHADOW_COLOR)
+	var region := texture_region(texture)
+	var material := _shadow_by_region.get(region) as ShaderMaterial
+	if material == null:
+		material = ShaderMaterial.new()
+		material.shader = DEPTH.SHADOW_SHADER
+		material.set_shader_parameter("texture_region", region)
+		material.set_shader_parameter("shadow_color", DEPTH.SHADOW_COLOR)
+		_shadow_by_region[region] = material
 	return material
+
+
+## Application shutdown (Global._exit_tree): RID-backed statics go while the
+## rendering servers are still whole.
+static func release_static_caches() -> void:
+	_visual_by_region.clear()
+	_shadow_by_region.clear()

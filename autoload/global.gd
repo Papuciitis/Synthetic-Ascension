@@ -143,6 +143,10 @@ var enemy_proxy_rollout: bool = true
 
 # WorldArt is deliberately not a global class; consumers preload it.
 const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
+## Script statics released at shutdown with the others in _exit_tree.
+const _WORLD_COVER_VISUALS := preload("res://core/systems/world/WorldCoverVisuals.gd")
+const _WORLD_DRESSING_MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
+const _COMBAT_STATUS_ICONS := preload("res://core/combat/CombatStatusIcons.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_player_god_mode: bool = false
@@ -2802,6 +2806,11 @@ func _exit_tree() -> void:
 	AugmentActiveBadge.release_static_caches()
 	ManifestationCatalog.release_static_caches()
 	ManifestationPairCatalog.release_static_caches()
+	VfxKit.release_static_caches()
+	EliteTellArt.release_static_caches()
+	_COMBAT_STATUS_ICONS.release_static_caches()
+	_WORLD_COVER_VISUALS.release_static_caches()
+	_WORLD_DRESSING_MATERIALS.release_static_caches()
 
 
 func flush_pending_save() -> void:
