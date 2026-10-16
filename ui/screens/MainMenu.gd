@@ -412,6 +412,9 @@ func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 
 	# Jump into any segment for testing
 	Global.attempt_segment = seg
+	# The skipped segments count as completed, so segment-gated purchases
+	# (Revelations after S8, their mutations after S9) open as they would.
+	Global.ascension_ledger().note_segment_completed(seg - 1)
 
 	# Optional seed override
 	var seed_txt := edit_seed.text.strip_edges()
@@ -473,6 +476,8 @@ func _on_start_dev_hub_pressed() -> void:
 
 	# Start testing from any segment
 	Global.attempt_segment = seg
+	# As above: skipped segments count as completed for purchase gates.
+	Global.ascension_ledger().note_segment_completed(seg - 1)
 
 	# Optional seed override
 	var seed_txt := edit_seed.text.strip_edges()

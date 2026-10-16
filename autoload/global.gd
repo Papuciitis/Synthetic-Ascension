@@ -2613,7 +2613,9 @@ func apply_major_choice(choice_id: StringName) -> bool:
 		attempt_major_choice_taken_ids.append(choice_id)
 	if attempt_pending_doctrine_stage != StringName():
 		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
-		if _is_city_commitment_stage(attempt_pending_doctrine_stage):
+		# Developer launches never write permanent commitments into a profile,
+		# like their Research awards (a later real run would reactivate them).
+		if _is_city_commitment_stage(attempt_pending_doctrine_stage) and not debug_dev_mode and not debug_dev_segment:
 			meta_city_commitments[String(attempt_pending_doctrine_stage)] = String(choice_id)
 	if def.family_id != StringName():
 		var held := doctrine_family_count(def.family_id)
