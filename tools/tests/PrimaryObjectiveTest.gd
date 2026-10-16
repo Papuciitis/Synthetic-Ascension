@@ -1020,6 +1020,10 @@ func _test_rite_gate(id: StringName, deep: bool) -> void:
 		_check(ready_state, "the checklist reports the gate ready once every lock is open")
 
 		var arrival := _spawn_stub_player(rite.global_position)
+		# In play the player approaches before stepping in: the rite's
+		# per-frame feed makes the exit encounter live first (see
+		# ExitEncounterController), and only a live encounter can channel.
+		rite.call("_feed_encounter", 0.1)
 		rite.call("_on_body_entered", arrival)
 		_check(rite.is_in_group(&"exit_rite_channeling"), "an unsealed rite accepts the player and starts channelling")
 		_release(arrival)

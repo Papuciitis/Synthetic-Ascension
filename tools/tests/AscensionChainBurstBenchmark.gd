@@ -53,7 +53,7 @@ func _run() -> void:
 		@warning_ignore("integer_division")
 		var at := origin + Vector2(120 + float(i % 10) * 22.0, float(i / 10) * 22.0 - 55.0)
 		bodies.append(EnemyWorld.create_enemy(SpawnState.new(&"asc_bench", "res://asc_bench.tscn", at, 12.0, 10.0, 8.0, 0, 0)))
-	var nodes_before := get_tree().get_node_count()
+	var nodes_before := _scene_nodes_outside_vfx_pools()
 	var tags := AscensionTags.native("melee", "slash")
 	tags = AscensionTags.with_flag(tags, "core_strike")
 	tags = AscensionTags.with_flag(tags, "execute_enabled")
@@ -69,7 +69,7 @@ func _run() -> void:
 		await get_tree().process_frame
 		var t1 := Time.get_ticks_usec()
 		worst_ms = maxf(worst_ms, float(t1 - t0) / 1000.0)
-		max_nodes = maxi(max_nodes, get_tree().get_node_count())
+		max_nodes = maxi(max_nodes, _scene_nodes_outside_vfx_pools())
 		frames += 1
 	var dead := 0
 	for handle in bodies:
@@ -89,3 +89,27 @@ func _run() -> void:
 	player.queue_free()
 	print("AscensionChainBurstBenchmark: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
+
+
+## Kill feedback (death puffs, sparks) comes from the bounded, recycled VFX
+## pools (PooledVfx: at most 64 live per kind), which fill lazily on first use.
+## The pin is about generated attacks, so pooled bursts are not counted.
+func _scene_nodes_outside_vfx_pools() -> int:
+	return get_tree().get_node_count() - _pooled_vfx_nodes(get_tree().root)
+
+
+func _pooled_vfx_nodes(node: Node) -> int:
+	var count := 0
+	for child in node.get_children():
+		if child.has_meta(&"__pool_key"):
+			count += 1 + _descendant_count(child)
+		else:
+			count += _pooled_vfx_nodes(child)
+	return count
+
+
+func _descendant_count(node: Node) -> int:
+	var count := node.get_child_count()
+	for child in node.get_children():
+		count += _descendant_count(child)
+	return count
