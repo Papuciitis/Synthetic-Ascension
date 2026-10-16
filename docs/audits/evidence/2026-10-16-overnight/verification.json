@@ -1,0 +1,358 @@
+{
+  "date": "2026-10-16",
+  "timezone": "Europe/Riga",
+  "base_commit": "6d794e0",
+  "verified_source_commit": "68bb8c7e6d657bfd3639833a7da5636329d56d57",
+  "source_commits": [
+    "b89aa9a",
+    "339acbb",
+    "68bb8c7"
+  ],
+  "engine": "Godot 4.7.1 stable Windows console",
+  "command_template": "Godot_v4.7.1-stable_win64_console.exe --headless --audio-driver Dummy --path <workspace> res://tools/tests/<Suite>.tscn",
+  "serialized": true,
+  "real_profiles_touched": false,
+  "totals": {
+    "unique_suites": 18,
+    "reported_passing_checks": 1900,
+    "failed_checks": 0,
+    "successful_process_exits": 18,
+    "final_parse_scripts": 510
+  },
+  "runs": [
+    {
+      "suite": "ReflectShieldGapTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 20.33,
+      "summary": "ReflectShieldGapTest: 38 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\ReflectShieldGapTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "PlayerActionAudioTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 16.63,
+      "summary": "PlayerActionAudioTest: 29 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\PlayerActionAudioTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "SegmentCompletionPersistenceTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 26.31,
+      "summary": "SegmentCompletionPersistenceTest: 38 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-final-20261016\\SegmentCompletionPersistenceTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "EscapeReleaseTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 14.68,
+      "summary": "EscapeReleaseTest: 14 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\EscapeReleaseTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "PauseMenuFlowTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 51.83,
+      "summary": "PauseMenuFlowTest: 38 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\PauseMenuFlowTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "CityContinuationTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 23.75,
+      "summary": "CityContinuationTest: 92 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\CityContinuationTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "SaveMigrationMatrixTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 11.8,
+      "summary": "SaveMigrationMatrixTest: 34 passed, 0 failed",
+      "diagnostics": [
+        "WARNING: Save slot 97 was written by a newer build (save_version 6 > 1, game ); loading best-effort."
+      ],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\SaveMigrationMatrixTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "AttemptResetTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 11.05,
+      "summary": "AttemptResetTest: 18 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\AttemptResetTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "StoryDirectorTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 30.24,
+      "summary": "StoryDirectorTest: 166 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\StoryDirectorTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "HubWorldTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 22.38,
+      "summary": "HubWorldTest: 53 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\HubWorldTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "AscensionCityPacingTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 13.76,
+      "summary": "AscensionCityPacingTest: 624 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-integration-20261016\\AscensionCityPacingTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "duration_seconds": 31.43,
+      "summary": "ScriptParseAuditTest: 510 passed, 0 failed (checked 510 scripts across 8 roots)",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-overnight-final-20261016\\ScriptParseAuditTest.log",
+      "execution_origin": "root serial integration"
+    },
+    {
+      "suite": "FacetDuoEffectsBTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "FacetDuoEffectsBTest: 48 passed, 0 failed",
+      "diagnostics": [
+        "WARNING: [StaminaCore] cannot spawn aura: player has no Hurtbox (scene=res://effects/augments/scenes/StaminaCoreEffect.tscn)",
+        "WARNING: [StaminaCore] cannot spawn aura: player has no Hurtbox (scene=res://effects/augments/scenes/StaminaCoreEffect.tscn)"
+      ],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-FacetDuoEffectsBTest-green.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    },
+    {
+      "suite": "AugmentTranscendenceTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "AugmentTranscendenceTest: 65 passed, 0 failed",
+      "diagnostics": [
+        "WARNING: [StaminaCore] cannot spawn aura: player has no Hurtbox (scene=res://effects/augments/scenes/StaminaCoreEffect.tscn)"
+      ],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-AugmentTranscendenceTest-green.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    },
+    {
+      "suite": "AugmentPotencyTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "AugmentPotencyTest: 26 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-AugmentPotencyTest-green.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    },
+    {
+      "suite": "KillAudioTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "KillAudioTest: 29 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-player-action-audio-20261016\\KillAudioTest.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    },
+    {
+      "suite": "LowHealthPresentationTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "LowHealthPresentationTest: 23 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-player-action-audio-20261016\\LowHealthPresentationTest.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    },
+    {
+      "suite": "MenuAudioTest",
+      "exit_code": 0,
+      "timed_out": false,
+      "summary": "MenuAudioTest: 55 passed, 0 failed",
+      "diagnostics": [],
+      "log_path": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-player-action-audio-20261016\\MenuAudioTest.log",
+      "execution_origin": "delegated serial verification; complete log inspected by root"
+    }
+  ],
+  "red_green_evidence": [
+    {
+      "suite": "ReflectShieldGapTest",
+      "red_exit_code": 1,
+      "red_passed": 18,
+      "red_failed": 20,
+      "reason": "Perfect refunds, live refresh and manual/automatic wards bypassed the existing gap.",
+      "red_log": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-reflect-shield-red.log",
+      "final_passed": 38
+    },
+    {
+      "suite": "PlayerActionAudioTest",
+      "red_exit_code": 1,
+      "red_passed": 8,
+      "red_failed": 11,
+      "reason": "Missing cue assets and event subscriptions; asset-dependent assertions expand after definitions exist.",
+      "red_log": "C:\\Users\\NAURIS~1\\AppData\\Local\\Temp\\sa-player-action-audio-20261016\\red.log",
+      "final_passed": 29
+    },
+    {
+      "suite": "SegmentCompletionPersistenceTest",
+      "red_exit_code": 1,
+      "red_passed": 4,
+      "red_failed": 17,
+      "reason": "Missing durable completion and recovery; schema-dependent checks expand after the field exists. Twelve further compatibility/isolation checks were added after review.",
+      "red_log": "C:/Users/NaurisKrišjānis/.codex/visualizations/2026/10/16/01a143cf-14e6-7c93-8fbe-b1d3914bf001/segment-completion-red.log",
+      "red_setup_diagnostics": "Then-unimported new audio WAV loader messages were unrelated to the persistence assertions; resolved before all GREEN runs.",
+      "initial_green_passed": 26,
+      "final_passed": 38
+    }
+  ],
+  "diagnostic_classification": [
+    "SaveMigrationMatrixTest intentionally warns that its future-version fixture is newer than this build.",
+    "FacetDuoEffectsBTest and AugmentTranscendenceTest emit existing StaminaCore VFX warnings because their stub players have no Hurtbox.",
+    "No unexpected errors or script diagnostics occurred in final passing runs."
+  ],
+  "independent_review": {
+    "verdict": "approved",
+    "actionable_p1_p2_findings": 0,
+    "follow_up": "Reviewer also approved the twelve added persistence checks."
+  },
+  "audio": {
+    "official_sources": "assets/audio/sfx/actions/sources.json",
+    "isolated_imported_wavs": 2,
+    "import_exit_code": 0,
+    "delivered_wav_hashes_checked": true,
+    "audible_playback_performed": false,
+    "human_listening_due": true
+  },
+  "scope_notes": [
+    "Existing unrelated dirty item, character, history, README and AscensionBarrage test edits were preserved and excluded from task commits.",
+    "Focused suites use isolated saves; tests are implementation checks, not a human combat or mix verdict.",
+    "An abandoned full-project import is excluded from verification; the two new WAVs were imported in a minimal temporary project at identical resource paths.",
+    "StaminaCore live-refresh cooldown clamping remains an unverified inherited follow-up lead; no Core code changed."
+  ],
+  "source_hashes": [
+    {
+      "path": "assets/audio/sfx/CREDITS.md",
+      "sha256": "8c82caf51c4956803861506b3edce9226da0c68f55ce28dc3c3d714198219504"
+    },
+    {
+      "path": "assets/audio/sfx/actions/CREDITS.md",
+      "sha256": "ae75031c573431d6d28043506438462a4857b9c465bb1b9287cf9ad1b78c4107"
+    },
+    {
+      "path": "assets/audio/sfx/actions/LICENSE-Kenney-impact-sounds.txt",
+      "sha256": "9acd50d2fd8185232e03deb5b413254c6b75ca52ed99f297913148e938e2b6ed"
+    },
+    {
+      "path": "assets/audio/sfx/actions/LICENSE-Kenney-rpg-audio.txt",
+      "sha256": "008b0e125061fbca05a52d3888f44d5306c03bf820916e03e6141f90a7c51f45"
+    },
+    {
+      "path": "assets/audio/sfx/actions/dash.wav",
+      "sha256": "a6feddd3bb99943d7ad61204bb7d912965af2b70e9bec887e7fb6f56d8e6b197"
+    },
+    {
+      "path": "assets/audio/sfx/actions/dash.wav.import",
+      "sha256": "a66367880a3ef0fd64814de5bbe6acd40d3e2622add1a3066e139645c6a31611"
+    },
+    {
+      "path": "assets/audio/sfx/actions/hurt.wav",
+      "sha256": "2f261de7bb3640b4fccf7ad4384a32698fe6a0bea8e67458ff4d3c01edf81571"
+    },
+    {
+      "path": "assets/audio/sfx/actions/hurt.wav.import",
+      "sha256": "af99ca1c7c6aca70a8552e77544cfba2709bfec640502dedf634ead8a6623f2e"
+    },
+    {
+      "path": "assets/audio/sfx/actions/sources.json",
+      "sha256": "aebba36d769804693e60e9a15186f4c7e0c9ff29b6e179fef493a7ed82cfe932"
+    },
+    {
+      "path": "assets/audio/sfx/sfx_manifest.txt",
+      "sha256": "d7bcb494ef88407431c67a00f4f14bb0291a5f2a3de46e6ca0d6b30f66f15c04"
+    },
+    {
+      "path": "autoload/SaveData.gd",
+      "sha256": "8b2c58c108267a8bcc328edc11cf1bab2114b4a90bfa131832b5c288c503b15c"
+    },
+    {
+      "path": "autoload/SfxManager.gd",
+      "sha256": "be72cc083dd8ab0488c5ce40d78f4716baf889307d4fb1aa2ac6eb169f122562"
+    },
+    {
+      "path": "autoload/global.gd",
+      "sha256": "4a5506eb3f4009b41916eaca2742bc85076f13ee57bb45126b7a4f7766155e30"
+    },
+    {
+      "path": "docs/art/asset-manifest.md",
+      "sha256": "32c7bf16ef972c325a7df31793977b34403b7f145d7509efd64b9fa17b11e0fe"
+    },
+    {
+      "path": "effects/augments/logic/ReflectShieldEffect.gd",
+      "sha256": "c8736cd0223d957822c980de9380e7e543629cecf9f673d92aee2dd259aae570"
+    },
+    {
+      "path": "scenes/game.gd",
+      "sha256": "3921341b956e19635242929d0005423a9e386a902b6a6823130d4a3d0b12fe97"
+    },
+    {
+      "path": "tools/tests/PlayerActionAudioTest.gd",
+      "sha256": "dd136c7ad53e1a3a6c0e4d1efb06dcd9b896ae01efdeb33da4347670d64bdf1d"
+    },
+    {
+      "path": "tools/tests/PlayerActionAudioTest.gd.uid",
+      "sha256": "18b0806db86b309b7e245926f01919eb2b4cd1beaabc513fd767d83c86d531bc"
+    },
+    {
+      "path": "tools/tests/PlayerActionAudioTest.tscn",
+      "sha256": "fb63b44b88668fbc6c94493d2b0ee0651c394cdf7a8594c1696f74ec3dc40242"
+    },
+    {
+      "path": "tools/tests/ReflectShieldGapTest.gd",
+      "sha256": "160f6e8ce35e06bd70aacd3c1c2cc26c8660f45b8074f281f1671882098c4434"
+    },
+    {
+      "path": "tools/tests/ReflectShieldGapTest.gd.uid",
+      "sha256": "6b91ee7791472f6d5f85051ebb1bb7223f3edd04ecbd42cb25cc37c3d34b833d"
+    },
+    {
+      "path": "tools/tests/ReflectShieldGapTest.tscn",
+      "sha256": "84692e98b0cef0b3a7ec8ec9ff1ee305b8fab432f3e47fa93c2b37fff6f81803"
+    },
+    {
+      "path": "tools/tests/SegmentCompletionPersistenceTest.gd",
+      "sha256": "a380cbda761a7fcc63c87fbb19431b826b2351798f0a601156358e096160e391"
+    },
+    {
+      "path": "tools/tests/SegmentCompletionPersistenceTest.tscn",
+      "sha256": "4d18d3af1ea5ae8a80b4787417f5737d58feb3e9cfb92f7009447096f8a2522c"
+    }
+  ]
+}

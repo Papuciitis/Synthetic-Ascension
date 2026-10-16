@@ -191,3 +191,18 @@ No engine was launched for this audit, and none of the proposals has been playte
 The next balance comparison should cover ranks 3/5/10 against an isolated durable target, a sparse pair and a dense pack, with and without Circuit modifiers. Count delivered hits, targets, proc opportunities and population alongside total damage. That distinguishes an actual new play pattern from a multiplier that merely increases the same output.
 
 Design background: [Bindings and Theses](../design/2026-10-03-bindings-and-theses.md), [Duos, Facets and the Reliquary](../design/2026-10-03-duos-facets-and-the-reliquary.md), and [NEG buildcraft archetypes](../design/NEG_BUILDCRAFT_ARCHETYPES.md).
+
+## 2026-10-16 follow-up: Shield recovery gap
+
+Inherited concern 2 is resolved. Each opened ward now captures its actual
+protection duration plus the existing 0.1-second recovery gap. Perfect
+refunds, repeated rank/Facet refreshes and Mirror Aegis/manual casts preserve
+the remaining gap; a genuinely longer cooldown can still be refunded.
+`ReflectShieldGapTest` reproduces the old failure with real hostile
+projectiles (18 passing / 20 failing checks before the fix; 38/0 after).
+This restores the October 3 design's existing safeguard rather than adding
+a new balance rule. Storm Crown's overlap concern remains unchanged.
+
+A similar live-cooldown clamp in `StaminaCoreEffect._apply_level_scaling_sc`
+is an unverified follow-up lead. Its behavior across a refresh during active
+protection needs its own reproduction before changing it.

@@ -2086,3 +2086,39 @@ custom bindings and native controller events. Normal and small-window
 captures are in `docs/art/reference/2026-10-16-pause-menu/`. Actual hardware
 controller use and terminating the application through Quit remain manual
 checks; Quit confirmation/cancellation is covered automatically.
+
+## 2026-10-16 — Combat cues and durable Rite completion
+
+Autonomous work while the user was away focused on existing combat feedback
+and run reliability:
+
+- **Reflect Shield:** perfect refunds, live rank/Facet refreshes and Mirror
+  Aegis/manual casts now retain the actual protection window plus the
+  existing 0.1-second recovery gap. Long cooldowns can still be refunded;
+  reflections, perfect zaps and Bulwark retain their effects.
+- **Rite completion:** Game saves completion intent before the release or
+  story card awaits. Loading settles it once after the full build loads,
+  with the next Hub, Binding/Doctrine/Evolution rewards and story state in
+  one snapshot. Terminal continuation takes precedence; stale markers and
+  new attempts cannot replay the completion. Ordinary pause/save/Continue
+  behavior is preserved.
+- **Dash and injury:** two sourced Kenney CC0 recordings supply a quiet
+  positional dash cue and a non-positional cue for actual HP loss, limited
+  to once per 220 ms. Absorption, evasion, invulnerability and intentional
+  HP payments stay silent. Both use the existing SFX settings; exact source
+  files, licenses and hashes are in `assets/audio/sfx/actions/`.
+
+Source commits: `b89aa9a`, `339acbb`, `68bb8c7`. Verification: 18 relevant
+suites, 1,900 reported passing checks, zero failed checks and successful
+process exits throughout; final gameplay parse audit 510/0. New regressions
+were observed failing before fixes. Additional recovery checks cover
+remembered commitments, unselected-slot isolation and zero-marker legacy
+saves. Independent code review found no actionable P1/P2 issues. Exact
+commands, source hashes, run results and expected fixture warnings are in
+`docs/audits/evidence/2026-10-16-overnight/verification.json`.
+
+The audio was prepared and checked silently; its final mix needs a human
+listen. The existing Stamina Core live-refresh cooldown clamp is recorded
+as an unverified follow-up in the augment-combinations audit, not changed
+as part of this Shield repair. Existing unrelated working edits were
+preserved and excluded from these commits.
