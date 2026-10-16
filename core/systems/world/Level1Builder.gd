@@ -1286,11 +1286,7 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 				# Segment 1 pass S5: the street answers the clear with a wedge.
 				_request_beat(&"charger_wedge_small")
 				_tip(Segment1Text.SECURITY_CLEAR, 3.5)
-		else:
-			_emit_objective(
-				Segment1Text.OBJECTIVE_SECURITY_TITLE,
-				"Containment officers remaining: %d" % (maxi(1, security_kills_required) - _security_kills)
-			)
+		# The remaining count arrives through _update_objective() below, once.
 
 	_refresh_progression_seals()
 	_update_objective()
