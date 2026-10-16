@@ -122,6 +122,10 @@ var _stack_lifts := PackedFloat32Array()
 func _ready() -> void:
 	z_index = 1000
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Load the small status badges now, not inside the first _draw that needs
+	# each one, where every first appearance was a load on the frame.
+	for id: StringName in StatusIcons.IDS:
+		StatusIcons.texture(id)
 	_font = HUD_THEME.get_font(&"font", &"HudFigure")
 	_callout_font = HUD_THEME.get_font(&"font", &"HudCaption")
 	_texts.resize(MAX_ENTRIES)

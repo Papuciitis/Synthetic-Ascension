@@ -16,6 +16,9 @@ var _r: float = 96.0
 var _t: float = 0.0
 var _perimeter: Sprite2D
 var _fuse_core: Sprite2D
+# Accessibility, read when it changes rather than twice per bomber per frame.
+var _reduced_motion := false
+var _flash_level: StringName = &"full"
 
 const PERIMETER_PATH := "res://assets/textures/vfx/encounters/bomber_perimeter_v1.png"
 const PERIMETER_CONTENT_RADIUS := 564.820768
@@ -31,6 +34,29 @@ func setup(e: EnemyActor) -> void:
 		_r = maxf(_enemy.spec.explode_radius, 8.0)
 	_t = 0.0
 	_update_sprites()
+
+func _enter_tree() -> void:
+	# Pooled bombers leave and re-enter the tree; _ready runs only once.
+	_read_settings()
+	if SettingsManager != null and not SettingsManager.settings_changed.is_connected(_on_settings_changed):
+		SettingsManager.settings_changed.connect(_on_settings_changed)
+
+
+func _exit_tree() -> void:
+	if SettingsManager != null and SettingsManager.settings_changed.is_connected(_on_settings_changed):
+		SettingsManager.settings_changed.disconnect(_on_settings_changed)
+
+
+func _on_settings_changed(section: StringName, key: StringName, _value: Variant) -> void:
+	if section == &"accessibility" and (key == &"reduced_motion" or key == &"combat_flash"):
+		_read_settings()
+		_update_sprites()
+
+
+func _read_settings() -> void:
+	_reduced_motion = SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	_flash_level = &"full" if SettingsManager == null else StringName(SettingsManager.get_value(&"accessibility", &"combat_flash", &"full"))
+
 
 func _ready() -> void:
 	# As child of enemy: local position is fine
@@ -81,7 +107,7 @@ func _process(dt: float) -> void:
 func _update_sprites() -> void:
 	if _perimeter == null or _enemy == null or not is_instance_valid(_enemy):
 		return
-	var bomber: EnemyBomber = _enemy.get("_bomber") as EnemyBomber
+	var bomber := _enemy._bomber
 	var lit := bomber != null and bomber.is_fuse_lit()
 	var progress := bomber.fuse_progress() if lit else 0.0
 	# The perimeter always marks the damage edge; only brightness changes.
@@ -90,6 +116,5 @@ func _update_sprites() -> void:
 	var alpha := lerpf(maxf(base_alpha, 0.25), hot_alpha, 0.25 + 0.75 * progress) if lit else maxf(base_alpha, 0.25)
 	_perimeter.modulate = Color(1.0, 1.0, 1.0, alpha)
 	_fuse_core.visible = lit
-	var reduced := bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
-	_fuse_core.rotation = 0.0 if reduced else _t * 0.35
-	_fuse_core.modulate = Color(1.0, 1.0, 1.0, AccessibilityPresentation.current_flash_alpha(0.3 + 0.5 * progress))
+	_fuse_core.rotation = 0.0 if _reduced_motion else _t * 0.35
+	_fuse_core.modulate = Color(1.0, 1.0, 1.0, AccessibilityPresentation.flash_alpha(0.3 + 0.5 * progress, _flash_level))

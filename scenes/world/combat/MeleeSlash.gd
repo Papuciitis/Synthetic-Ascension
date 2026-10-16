@@ -289,12 +289,15 @@ func _draw() -> void:
 	# A narrow annular band tapers to points instead of enlarging the old
 	# stair-stepped bitmap. Cached geometry keeps a swing at two main draws.
 	var band_width := minf(thickness * 0.6, 12.0)
+	# One settings read per draw, not per segment: the flash level scales the
+	# core's alpha linearly, so this is the same colour attack_core gives.
+	var rim := VfxKit.attack_core(color_edge, 1.0)
 	for i in range(_seg_visual + 1):
 		var taper := _arc_tapers[i]
 		_poly_pts[i] = _arc_dirs[i] * r_outer
 		_poly_colors[i] = Color(color_core.r, color_core.g, color_core.b, color_core.a * fade * taper)
 		_rim_pts[i] = _poly_pts[i]
-		_rim_colors[i] = VfxKit.attack_core(color_edge, fade * taper * edge_glow_mul * 0.78)
+		_rim_colors[i] = Color(rim.r, rim.g, rim.b, rim.a * (fade * taper * edge_glow_mul * 0.78))
 		if i > 0 and i < _seg_visual:
 			var inside := _seg_visual * 2 - i
 			_poly_pts[inside] = _arc_dirs[i] * (r_outer - band_width * taper)
@@ -306,10 +309,11 @@ func _draw() -> void:
 	# tiny warm sparks (metal scrape)
 	if sparks > 0:
 		var j := deg_to_rad(spark_jitter_deg)
+		var motion := VfxKit.attack_motion_enabled()
 		for i in range(sparks):
 			var u := float(i) / float(max(1, sparks - 1))
 			var a := lerpf(a0, a1, u)
-			if VfxKit.attack_motion_enabled(): a += sin(_seed + _t * 60.0 + i * 3.1) * j
+			if motion: a += sin(_seed + _t * 60.0 + i * 3.1) * j
 			var dir := Vector2(cos(a), sin(a))
 
 			var base := dir * lerpf(r_inner + 6.0, r_outer - 6.0, 0.65)

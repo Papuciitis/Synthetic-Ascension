@@ -9,6 +9,8 @@ enum Visual { PLAYER_BLUE, PLAYER_FIRE, ENEMY_BLUE, ENEMY_GREEN, ENEMY_VIOLET }
 
 const ImpactBurstRendererScript := preload("res://core/combat/projectile/ImpactBurstRenderer.gd")
 const PLAYER_LIGHT_SHADER := preload("res://core/combat/projectile/AttackProjectileLight.gdshader")
+## The accent last written to the player-family light materials (-1: none yet).
+var _accent_strength := -1.0
 const DEFAULT_CAPACITY: int = 4096
 ## Simulation is authoritative (integration pass, 2026-09-26): gameplay
 ## events are never deleted or delayed by rendering. The simulation arrays
@@ -758,6 +760,8 @@ static func _tile_for_tags(tags: PackedStringArray) -> float:
 
 
 func _build_renderer() -> void:
+	# Fresh light materials take the current accent on the next upload.
+	_accent_strength = -1.0
 	var quad := QuadMesh.new()
 	quad.size = Vector2(18.0, 4.0)
 	# The two bodies fall back to the legacy shared bolt when their art is
@@ -887,11 +891,14 @@ func _update_renderer() -> void:
 		return
 	_rendered_count = _active_count
 	_renderer_uploads += 1
-	# Update one shared material per player family, never one per projectile.
+	# Update one shared material per player family, never one per projectile,
+	# and only when the flash setting has actually changed it.
 	var accent_strength := AccessibilityPresentation.current_flash_alpha(1.0)
-	for instance in _identity_instances:
-		if instance.material is ShaderMaterial:
-			(instance.material as ShaderMaterial).set_shader_parameter(&"accent_strength", accent_strength)
+	if accent_strength != _accent_strength:
+		_accent_strength = accent_strength
+		for instance in _identity_instances:
+			if instance.material is ShaderMaterial:
+				(instance.material as ShaderMaterial).set_shader_parameter(&"accent_strength", accent_strength)
 	# One buffer upload per FAMILY instead of two RenderingServer calls per
 	# projectile per frame. Layout per instance: 8 floats of 2D transform
 	# rows, then 4 floats of color — the plain 12-float layout everywhere,
