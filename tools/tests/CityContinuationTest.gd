@@ -58,6 +58,7 @@ func _run() -> void:
 	await _test_real_terminal_death()
 	await _test_routes()
 	await _test_scheduled_route()
+	await _test_pending_developer_launches()
 	_finish()
 
 func _fresh() -> SaveData:
@@ -336,6 +337,98 @@ func _test_scheduled_route() -> void:
 	var expected := "res://ui/screens/PeePContinuation.tscn" if ResourceLoader.exists("res://ui/screens/PeePContinuation.tscn") else Global.PATH_MAIN_MENU
 	_check(current != null and current.scene_file_path == expected and Global.has_pending_peep(), "an already scheduled Hub switch rechecks pending at the actual transition")
 	get_tree().paused = false
+
+func _inventory_facts(inventory: Resource) -> Array:
+	var facts: Array = []
+	var contents: Array = (inventory as Inventory).items if inventory is Inventory else (inventory as BagInventory).slots
+	for item: ItemInstance in contents:
+		facts.append(null if item == null else [String(item.data.id), item.rarity, item.polarity, item.progress, item.best_pct, item.upgrade_meter, String(item.manifestation_id)])
+	return facts
+
+func _debug_launch_facts() -> Dictionary:
+	return {
+		"mode": Global.debug_dev_mode,
+		"segment": Global.debug_dev_segment,
+		"introductions": Global.debug_force_enemy_introductions,
+		"stress": Global.debug_projectile_stress_test,
+		"lab": Global.debug_performance_lab,
+		"collision": Global.debug_set_collision_tools,
+		"recorder": PerformanceFlightRecorder.enabled,
+	}
+
+func _select_developer_option(option: OptionButton, id: String) -> void:
+	for index in range(option.item_count):
+		if String(option.get_item_metadata(index)) == id:
+			option.select(index)
+			return
+	_check(false, "developer fixture option exists: " + id)
+
+func _test_pending_developer_launches() -> void:
+	PerformanceFlightRecorder.report_directory = SaveManager.save_dir + "performance/"
+	for handler: StringName in [&"_on_start_dev_pressed", &"_on_start_dev_hub_pressed", &"_on_start_dev_segment_pressed"]:
+		var menu := (load("res://ui/screens/MainMenu.tscn") as PackedScene).instantiate()
+		add_child(menu)
+		var save := _fresh()
+		Global.mortal_name = "Pending Developer Test"
+		Global.attempt_segment = 7
+		Global.attempt_world_seed = 424242
+		Global.attempt_congregation = 11
+		# Preserve an existing debug preference too; rejecting a launch must
+		# neither introduce dev mode nor globally clear unrelated preferences.
+		Global.debug_set_collision_tools = true
+		Global.pending_augment_pick = false
+		Global.pending_big_choice = false
+		var item := ItemInstance.from_roll(load("res://data/items/defs/accessories/acc_firestone.tres") as ItemData, 17, 1, 0.6, false)
+		Global.run_inventory.items[int(item.data.equip_slot)] = item
+		Global.run_bag.slots[0] = item.snapshot_copy()
+		Global.set_followers(0)
+		Global.begin_peep_continuation()
+		var original_summary := Global.pending_peep_summary()
+		var inventory_before := _inventory_facts(Global.run_inventory)
+		var bag_before := _inventory_facts(Global.run_bag)
+		var debug_before := _debug_launch_facts()
+		var runs := save.total_runs
+		var accounts := int(StoryDirector.state_for_save().get("accounts", 0))
+		menu.call("_populate_dev_lists")
+		_select_developer_option(menu.get("opt_race") as OptionButton, "elf")
+		_select_developer_option(menu.get("opt_style") as OptionButton, "magic")
+		_select_developer_option(menu.get("opt_loadout") as OptionButton, "conduit")
+		(menu.get("spin_segment") as SpinBox).value = 10
+		(menu.get("spin_rarity") as SpinBox).value = 10
+		(menu.get("edit_seed") as LineEdit).text = "987654"
+		(menu.get("chk_force_aug") as CheckBox).button_pressed = true
+		(menu.get("chk_force_major") as CheckBox).button_pressed = true
+		(menu.get("chk_force_enemy_intros") as CheckBox).button_pressed = true
+		var requested: Array[String] = []
+		var capture := func(route: String) -> void: requested.append(route)
+		Global.balance_scene_requested.connect(capture)
+		menu.call(handler)
+		Global.balance_scene_requested.disconnect(capture)
+		_check(requested == ["res://ui/screens/PeePContinuation.tscn"], "%s redirects to PeeP before launching" % handler)
+		_check(Global.selected_race_id == "human" and Global.selected_style_id == "ranged" and Global.selected_weapon_id == "ranged" and Global.mortal_name == "Pending Developer Test" and Global.attempt_segment == 7 and Global.attempt_world_seed == 424242, "%s preserves failed live identity, segment and seed" % handler)
+		_check(_inventory_facts(Global.run_inventory) == inventory_before and _inventory_facts(Global.run_bag) == bag_before and Global.followers == 0 and Global.attempt_congregation == 11 and not Global.pending_big_choice and not Global.pending_augment_pick, "%s preserves failed equipment, wallet and pending rewards" % handler)
+		_check(_debug_launch_facts() == debug_before, "%s leaves debug flags and recording unarmed, including the segment wrapper" % handler)
+		_check(Global.pending_peep_summary() == original_summary and save.total_runs == runs and save.attempt_resume_scene == Global.PATH_GAME, "%s retains the original pending summary and attempt count" % handler)
+		# Simulate a normal transition/quit flush, then inspect a fresh disk read.
+		Global.save_current_profile()
+		var disk := ResourceLoader.load(SaveManager._slot_path(0), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
+		_check(disk != null and disk.attempt_active and disk.attempt_resume_scene == Global.PATH_GAME and disk.mortal_name == "Pending Developer Test" and not disk.attempt_pending_augment_pick and not disk.attempt_pending_big_choice and disk.attempt_race_id == "human" and disk.attempt_style_id == "ranged" and disk.attempt_weapon_id == "ranged" and disk.attempt_segment == 7 and disk.attempt_world_seed == 424242 and disk.attempt_followers == 0 and disk.attempt_congregation == 11 and _inventory_facts(disk.attempt_inventory) == inventory_before and _inventory_facts(disk.attempt_bag) == bag_before and disk.meta_pending_peep == original_summary, "%s preserves the failed snapshot on disk" % handler)
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
+		await get_tree().process_frame
+		_check(get_tree().current_scene != null and get_tree().current_scene.scene_file_path == "res://ui/screens/PeePContinuation.tscn", "%s actually presents the pending decision" % handler)
+		_check(Global.accept_peep_continuation(), "%s still allows the original continuation to accept once" % handler)
+		var account := StoryDirector.last_account()
+		_check(account.get("segment") == 7 and account.get("race") == "human" and account.get("style") == "ranged" and account.get("peak") == 11 and int(StoryDirector.state_for_save().get("accounts", 0)) == accounts + 1, "%s closes the original failed story facts" % handler)
+		var empty_inventory := true
+		for carried: ItemInstance in Global.run_inventory.items:
+			empty_inventory = empty_inventory and carried == null
+		for carried: ItemInstance in Global.run_bag.slots:
+			empty_inventory = empty_inventory and carried == null
+		_check(Global.attempt_segment == 1 and Global.selected_style_id == "ranged" and Global.selected_race_id == "human" and Global.selected_weapon_id == "ranged" and Global.followers == 0 and empty_inventory and _debug_launch_facts() == debug_before and save.total_runs == runs + 1 and not Global.has_pending_peep(), "%s continuation starts one ordinary attempt without developer pollution" % handler)
+		PerformanceFlightRecorder.set_enabled(false)
+		menu.free()
 
 func _finish() -> void:
 	SaveManager.current_save = null

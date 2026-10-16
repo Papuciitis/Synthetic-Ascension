@@ -384,6 +384,9 @@ func arm_developer_flight_recorder() -> void:
 
 
 func _on_start_dev_pressed(performance_capture: bool = false) -> void:
+	if Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	var seg := clampi(int(spin_segment.value), 1, 10)
 
 	var race_id := _get_opt_id(opt_race, Global.selected_race_id)
@@ -433,11 +436,17 @@ func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 
 
 func _on_start_dev_segment_pressed() -> void:
+	if Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	Global.debug_dev_segment = true
 	_on_start_dev_pressed(true)
 
 
 func _on_start_dev_hub_pressed() -> void:
+	if Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	var seg := clampi(int(spin_segment.value), 1, 10)
 
 	var race_id := _get_opt_id(opt_race, Global.selected_race_id)
