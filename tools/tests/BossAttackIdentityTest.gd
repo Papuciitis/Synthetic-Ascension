@@ -209,7 +209,9 @@ func _test_charge_windup() -> void:
 	_check(not lanes.is_empty(), "real Bulldozer charge shows authored raster anticipation")
 	if not lanes.is_empty():
 		var bounds := _painted_world_bounds(lanes[0])
-		_check(bounds.position.x >= 1496.0 and absf(bounds.end.x - 1780.8) <= 4.0, "charge lane depicts the full 280.8px rush instead of a tiny muzzle fan")
+		# The swept body reaches one radius past the centre's 280.8px travel.
+		var radius := ((tank.get_node("CollisionShape2D") as CollisionShape2D).shape as CircleShape2D).radius
+		_check(bounds.position.x >= 1496.0 and absf(bounds.end.x - (1780.8 + radius)) <= 4.0, "charge lane depicts the full rush to the body's leading edge (%.1f px) instead of a tiny muzzle fan" % (280.8 + radius))
 	var cues := _components(tank, WINDUP_SCRIPT)
 	_check(not cues.is_empty(), "charge creates a cancellable windup component attached to the boss")
 	tank.call("_apply_enemy_world_stun", 0.01)

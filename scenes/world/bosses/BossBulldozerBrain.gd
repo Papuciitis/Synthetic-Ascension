@@ -194,8 +194,10 @@ func _begin_teaching_rush() -> bool:
 	SfxManager.play_2d(&"boss_warning", _cast_origin)
 	_windup = WindupSprites.new()
 	var body := _e.get_node("CollisionShape2D") as CollisionShape2D
-	var diameter := (body.shape as CircleShape2D).radius * 2.0
-	_windup.setup(_cast_dir, TEACHING_RUSH_TELL, &"charge", _e.spec.charge_speed * _e.spec.charge_duration, diameter)
+	var radius := (body.shape as CircleShape2D).radius
+	# The hit is the whole body's sweep, so the lane reaches the leading edge:
+	# the centre's travel plus one body radius, at the body's full width.
+	_windup.setup(_cast_dir, TEACHING_RUSH_TELL, &"charge", _e.spec.charge_speed * _e.spec.charge_duration + radius, radius * 2.0)
 	_windup.externally_driven = true
 	AttackScope.bind(_windup, _e)
 	_e.add_child(_windup)
@@ -298,8 +300,11 @@ func _track_charge(_delta: float) -> void:
 			_trail.stop_and_fade()
 		_trail = null
 
-		# impact wave at end of charge
-		_spawn_wave(_e.global_position, slam_radius * 0.85)
+		# The stop is cosmetic: a small skid ripple, never the slam's art at a
+		# damage-sized radius, and its thud sits under real impacts.
+		var body := _e.get_node_or_null("CollisionShape2D") as CollisionShape2D
+		var reach := (body.shape as CircleShape2D).radius * 1.5 if body != null and body.shape is CircleShape2D else 60.0
+		_spawn_wave(_e.global_position, reach, &"skid")
 		return
 
 func _do_slam() -> void:
@@ -623,7 +628,7 @@ func _spawn_wave(pos: Vector2, radius: float, kind: StringName = &"slam") -> voi
 	v.setup(pos, radius, kind, 0.65 if kind == &"slam" else 0.42)
 	AttackScope.bind(v, _e)
 	get_tree().current_scene.add_child(v)
-	SfxManager.play_2d_limited(&"boss_slam_impact", pos, 120)
+	SfxManager.play_2d_limited(&"boss_slam_impact", pos, 120, -6.0 if kind == &"skid" else 0.0)
 
 func _spawn_damage_circle(pos: Vector2, radius: float, dmg: float, life: float, kind: StringName = &"generic") -> void:
 	if damage_circle_scene == null:
