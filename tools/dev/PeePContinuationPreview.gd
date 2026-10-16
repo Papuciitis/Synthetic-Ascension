@@ -2,7 +2,7 @@ extends Node
 ## Reproducible render fixture: all pending facts come from the real backend,
 ## in a new SaveData and unique throwaway save directory. No profile is loaded.
 const SCREEN := preload("res://ui/screens/PeePContinuation.tscn")
-const OUTPUT := "res://docs/art/reference/2026-10-16-peep-continuation/"
+const OUTPUT := "res://docs/art/reference/2026-10-16-peep-encounter/"
 var _failures := 0
 
 func _enter_tree() -> void:
@@ -22,6 +22,17 @@ func _run() -> void:
 	SaveManager.current_save = null
 	SaveManager.save_dir = "user://peep_preview_%d/" % Time.get_ticks_usec()
 	Global.debug_disable_autosave = true
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
+	await _capture(Vector2i(1280, 720), "first-1280x720", false, true)
+	await _capture(Vector2i(640, 480), "first-640x480", false, true)
+	await _capture(Vector2i(1280, 720), "repeat-1280x720", false, false)
+	await _capture(Vector2i(960, 540), "repeat-reduced-960x540", true, false)
+	await _capture(Vector2i(960, 540), "first-replay-960x540", false, false, true)
+	SaveManager.current_save = null
+	print("PeePContinuationPreview: captures complete; only isolated save fixtures used")
+	get_tree().quit(1 if _failures > 0 else 0)
+
+func _fixture(first: bool) -> void:
 	SaveManager.current_save = SaveData.new()
 	Global.apply_save(SaveManager.current_save)
 	Global.start_new_attempt()
@@ -29,15 +40,12 @@ func _run() -> void:
 	Global.attempt_segment = 7
 	Global.set_followers(0)
 	Global.begin_peep_continuation()
-	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUTPUT))
-	await _capture(Vector2i(1280, 720), "normal-1280x720", false)
-	await _capture(Vector2i(640, 480), "small-640x480", false)
-	await _capture(Vector2i(960, 540), "reduced-960x540", true)
-	SaveManager.current_save = null
-	print("PeePContinuationPreview: captures complete; only isolated save fixtures used")
-	get_tree().quit(1 if _failures > 0 else 0)
+	if not first:
+		StoryDirector.add_flag("seen:peep_first_conversation")
+		Global.save_current_profile()
 
-func _capture(dimensions: Vector2i, stem: String, reduced: bool) -> void:
+func _capture(dimensions: Vector2i, stem: String, reduced: bool, first: bool, replay := false) -> void:
+	_fixture(first)
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", reduced, false)
 	var viewport := SubViewport.new()
 	viewport.size = dimensions
@@ -49,6 +57,11 @@ func _capture(dimensions: Vector2i, stem: String, reduced: bool) -> void:
 	for i in range(5):
 		await get_tree().process_frame
 	var scroll := screen.find_child("Scroll", true, false) as ScrollContainer
+	if replay:
+		var disclosure := screen.find_child("ReadFirstConversation", true, false) as Button
+		disclosure.pressed.emit()
+		for i in range(3):
+			await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	_save(viewport, stem + ".png")
 	if scroll.get_v_scroll_bar().max_value > scroll.get_v_scroll_bar().page:
