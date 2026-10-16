@@ -166,6 +166,17 @@ func _run() -> void:
 	check(not get_tree().paused and not bool(menu.get("is_open")), "Escape resumes after first-encounter freeze expires")
 	encounter.queue_free()
 	get_tree().paused = false
+	# A Binding choice can finish closing while the pause menu is open over it
+	# (its fly-out and input-release frames). The menu inherits that pause.
+	game.set("_augment_prior_paused", false)
+	game.set("_augment_pause_owned", true)
+	get_tree().paused = true
+	menu.call("open")
+	game.call("_unpause_after_augment")
+	check(get_tree().paused and bool(menu.get("is_open")), "a Binding closing under the open pause menu keeps the world frozen")
+	menu.call("resume")
+	check(not get_tree().paused and not bool(menu.get("is_open")), "Resume then releases the inherited Binding pause")
+	await frames(2)
 	Engine.time_scale = 0.6
 	menu.call("open")
 	menu.call("resume")
