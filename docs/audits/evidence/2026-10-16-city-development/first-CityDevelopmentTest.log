@@ -1,0 +1,389 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: city research backend exists
+PASS: claimed S5 recovery fixture persists genuine completion intent
+ERROR: FAIL: genuine claimed S5 recovery advances and clears intent instead of stranding the city
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_s5_already_claimed_recovery (res://tools/tests/CityDevelopmentTest.gd:365)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:376)
+PASS: claimed S5 recovery preserves its already queued reward without replenishment or reroll
+PASS: legacy empty defaults grant no research
+PASS: no purchase without earned research
+PASS: Followers do not become research
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: first city Rite grants one point
+PASS: duplicate callback cannot pay research twice
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: restarting and clearing the same Rite cannot farm research
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: developer segment clears grant no research
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: developer mode grants no research
+PASS: Rite 4 starts
+PASS: Rite 4 settles
+PASS: unsaved developer attempts grant no research
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: Rite 4 starts
+PASS: Rite 4 settles
+PASS: Rite 5 starts
+PASS: Rite 5 settles
+PASS: Rite 6 starts
+PASS: Rite 6 settles
+PASS: Rite 7 starts
+PASS: Rite 7 settles
+PASS: Rite 8 starts
+PASS: Rite 8 settles
+PASS: Rite 9 starts
+PASS: Rite 9 settles
+PASS: Rite 10 starts
+PASS: Rite 10 settles
+PASS: Rite 11 starts
+PASS: Rite 11 settles
+PASS: only ten city first clears earn research
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: Rite 4 starts
+PASS: Rite 4 settles
+PASS: Rite 5 starts
+PASS: Rite 5 settles
+PASS: Rite 6 starts
+PASS: Rite 6 settles
+PASS: Rite 7 starts
+PASS: Rite 7 settles
+PASS: Rite 8 starts
+PASS: Rite 8 settles
+PASS: Rite 9 starts
+PASS: Rite 9 settles
+PASS: Rite 10 starts
+PASS: Rite 10 settles
+PASS: unknown upgrades and unowned training target rejected
+PASS: health rank 1 purchased
+PASS: one point chooses only health rather than automatically buying a bundle
+PASS: health rank 2 purchased
+PASS: health rank 3 purchased
+PASS: health cap enforced
+PASS: armor rank 1 purchased
+PASS: a later choice accumulates while preserving earlier improvements
+PASS: armor rank 2 purchased
+PASS: armor rank 3 purchased
+PASS: armor cap enforced
+PASS: bag rank 1 purchased
+PASS: bag rank 2 purchased
+PASS: bag rank 3 purchased
+PASS: bag cap enforced
+PASS: one owned augment can be trained
+PASS: ten cumulative ranks spend exactly ten research
+PASS: buying preparation cannot retrofit current stats bag or augment
+PASS: summary cannot mutate saved ranks
+PASS: trained selection can change for next attempt
+PASS: trained target must remain owned
+PASS: training selection cannot change active attempt
+PASS: new attempt accumulates all bought stat and bag ranks
+PASS: snapshot trains only the chosen augment
+PASS: higher temporary augment levels survive starting floor
+PASS: next target selection preserves active training snapshot
+PASS: save reload preserves active snapshot and higher run levels
+PASS: reloading never adds capacity twice or discards temporary tail items
+PASS: terminal continuation retains purchases without death payout
+PASS: terminal restart uses prepared target and resets run growth and temporary capacity
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: transfusion fixture buys training
+PASS: free trained starting level cannot be donated
+PASS: earned temporary levels can be donated
+PASS: trained donor returns to its starting floor
+PASS: training cannot repeatedly mint transfusion levels
+PASS: interrupted Rite saves completion intent
+PASS: completion recovery saves research and advancement together
+PASS: reloading settled completion cannot repeat research
+PASS: unselected resource recovery cannot award or mutate selected profile research
+PASS: pending terminal defeat cannot award research
+PASS: malformed claims types caps and overspent ranks normalize safely
+PASS: legacy active save with no snapshot retains original gameplay
+PASS: Rite 8 starts
+PASS: Rite 8 settles
+PASS: legacy progress receives only actual new clear without retrospective payout
+PASS: switching profiles never leaks development
+PASS: impossible snapshot cannot invent ranks absent from its profile purchases
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: Rite 4 starts
+PASS: Rite 4 settles
+PASS: flag fixture accumulates preparation
+PASS: comparison flag disables effective stat and augment gains
+PASS: comparison metadata retains profile and snapshot despite disabled bonuses
+PASS: comparison load preserves already carried bag capacity
+PASS: comparison fresh attempt does not seed bonus capacity
+PASS: catalogue exposes usable one-point choice health
+PASS: catalogue exposes usable one-point choice armor
+PASS: catalogue exposes usable one-point choice bag
+PASS: catalogue exposes usable one-point choice augment
+PASS: catalogue exposes usable one-point choice haste
+PASS: catalogue exposes usable one-point choice speed
+PASS: catalogue exposes usable one-point choice luck
+PASS: catalogue exposes usable one-point choice power
+PASS: catalogue exposes usable one-point choice range
+PASS: catalogue exposes usable one-point choice size
+PASS: catalogue exposes usable one-point choice binding_echo
+PASS: catalogue contains one health choice
+PASS: catalogue contains one armor choice
+PASS: catalogue contains one bag choice
+PASS: catalogue contains one augment choice
+PASS: catalogue contains one haste choice
+PASS: catalogue contains one speed choice
+PASS: catalogue contains one luck choice
+PASS: catalogue contains one power choice
+PASS: catalogue contains one range choice
+PASS: catalogue contains one size choice
+PASS: catalogue contains one binding_echo choice
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: haste consumes one research for its own rank
+PASS: haste choice does not bundle health
+PASS: haste choice does not bundle armor
+PASS: haste choice does not bundle bag
+PASS: haste choice does not bundle augment
+PASS: haste choice does not bundle speed
+PASS: haste choice does not bundle luck
+PASS: haste choice does not bundle power
+PASS: haste choice does not bundle range
+PASS: haste choice does not bundle size
+PASS: haste choice does not bundle binding_echo
+PASS: haste needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: speed consumes one research for its own rank
+PASS: speed choice does not bundle health
+PASS: speed choice does not bundle armor
+PASS: speed choice does not bundle bag
+PASS: speed choice does not bundle augment
+PASS: speed choice does not bundle haste
+PASS: speed choice does not bundle luck
+PASS: speed choice does not bundle power
+PASS: speed choice does not bundle range
+PASS: speed choice does not bundle size
+PASS: speed choice does not bundle binding_echo
+PASS: speed needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: luck consumes one research for its own rank
+PASS: luck choice does not bundle health
+PASS: luck choice does not bundle armor
+PASS: luck choice does not bundle bag
+PASS: luck choice does not bundle augment
+PASS: luck choice does not bundle haste
+PASS: luck choice does not bundle speed
+PASS: luck choice does not bundle power
+PASS: luck choice does not bundle range
+PASS: luck choice does not bundle size
+PASS: luck choice does not bundle binding_echo
+PASS: luck needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: power consumes one research for its own rank
+PASS: power choice does not bundle health
+PASS: power choice does not bundle armor
+PASS: power choice does not bundle bag
+PASS: power choice does not bundle augment
+PASS: power choice does not bundle haste
+PASS: power choice does not bundle speed
+PASS: power choice does not bundle luck
+PASS: power choice does not bundle range
+PASS: power choice does not bundle size
+PASS: power choice does not bundle binding_echo
+PASS: power needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: range consumes one research for its own rank
+PASS: range choice does not bundle health
+PASS: range choice does not bundle armor
+PASS: range choice does not bundle bag
+PASS: range choice does not bundle augment
+PASS: range choice does not bundle haste
+PASS: range choice does not bundle speed
+PASS: range choice does not bundle luck
+PASS: range choice does not bundle power
+PASS: range choice does not bundle size
+PASS: range choice does not bundle binding_echo
+PASS: range needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: size consumes one research for its own rank
+PASS: size choice does not bundle health
+PASS: size choice does not bundle armor
+PASS: size choice does not bundle bag
+PASS: size choice does not bundle augment
+PASS: size choice does not bundle haste
+PASS: size choice does not bundle speed
+PASS: size choice does not bundle luck
+PASS: size choice does not bundle power
+PASS: size choice does not bundle range
+PASS: size choice does not bundle binding_echo
+PASS: size needs another earned point for another rank
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: haste funded rank
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: haste funded rank
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: haste funded rank
+PASS: haste cap cannot be exceeded
+PASS: haste does not retrofit active stats
+PASS: haste applies its modest native additive step
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: power funded rank
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: power funded rank
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: power funded rank
+PASS: power cap cannot be exceeded
+PASS: power does not retrofit active stats
+PASS: power applies its modest native additive step
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: luck funded rank
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: luck funded rank
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: luck funded rank
+PASS: luck cap cannot be exceeded
+PASS: luck does not retrofit active stats
+PASS: luck applies its modest native additive step
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: speed funded rank
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: speed funded rank
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: speed funded rank
+PASS: speed cap cannot be exceeded
+PASS: speed does not retrofit active stats
+PASS: speed applies its modest native additive step
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: Rite 3 starts
+PASS: Rite 3 settles
+PASS: Rite 4 starts
+PASS: Rite 4 settles
+PASS: Rite 5 starts
+PASS: Rite 5 settles
+PASS: Rite 6 starts
+PASS: Rite 6 settles
+PASS: reach and size are independent funded choices
+PASS: reach and size are independent funded choices
+PASS: reach and size are independent funded choices
+PASS: real native melee factory scales reach and arc geometry
+PASS: real native magic factory scales burst geometry
+PASS: real managed native projectile carries longer travel and wider collision and visuals
+PASS: reused native projectile profile does not compound size
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: death-farming fixture spends its only Research
+PASS: real ordinary paid reconstruction restores the character and pays Followers
+PASS: reconstruction grants no Research and preserves prepared snapshot
+PASS: terminal decision reload grants no Research
+PASS: repeated terminal continuation accepts once per failed attempt
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: death and same first clear never regenerate Research or erase the chosen improvement
+PASS: terminal decision reload grants no Research
+PASS: repeated terminal continuation accepts once per failed attempt
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: death and same first clear never regenerate Research or erase the chosen improvement
+PASS: terminal decision reload grants no Research
+PASS: repeated terminal continuation accepts once per failed attempt
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: death and same first clear never regenerate Research or erase the chosen improvement
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: Rite 2 starts
+PASS: Rite 2 settles
+PASS: failed-attempt preparation fixture owns training
+PASS: pending defeat permits profile preparation and target choice
+PASS: preparing after failure cannot revive or improve the failed attempt
+PASS: accepting continuation adopts the prepared single choices in its new attempt
+PASS: Rite 1 starts
+PASS: Rite 1 settles
+PASS: conditional rule is one separate funded choice
+PASS: Rite 5 starts
+PASS: Rite 5 settles
+PASS: purchase cannot retrofit S5 bonus into an active attempt
+PASS: forged direct S5 callback before reaching it cannot mint Bindings or consume the conditional reward
+PASS: Echo fixture saves genuine S5 intent
+PASS: genuine recovered S5 completion atomically queues two successive normal Bindings
+ERROR: FAIL: first Echo Binding uses ordinary production card application
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:327)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: first choice consumes only one reward and clears the first table
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:328)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: second normal offer and its queue survive reload without reroll
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:334)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: duplicate S5 callback cannot replace or replenish the second reward
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:336)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: second Echo Binding uses ordinary production card application
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:337)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: two choices exhaust the conditional reward
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:338)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+ERROR: FAIL: duplicate completion after both choices cannot mint more Bindings
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentTest.gd:23)
+       [1] _test_binding_echo (res://tools/tests/CityDevelopmentTest.gd:340)
+       [2] _run (res://tools/tests/CityDevelopmentTest.gd:386)
+PASS: fresh attempt resets the conditional boundary once
+PASS: legacy pending Binding remains exactly one reward
+PASS: stray malformed queue cannot revive a completed Binding
+CityDevelopmentTest: 338 passed, 8 failed

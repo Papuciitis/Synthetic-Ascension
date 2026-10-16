@@ -5,6 +5,7 @@ extends Control
 ## both open the Archives (SaveSelect), New Run on the first free slot.
 ## Developer Mode (debug builds only) unfolds the dev-start panel.
 
+const CITY_DEVELOPMENT := preload("res://ui/screens/CityDevelopmentScreen.tscn")
 const SETTINGS_SCENE := preload("res://ui/screens/settings/SettingsScreen.tscn")
 const SAVE_SELECT := preload("res://ui/screens/SaveSelect.gd")
 const FLARE := preload("res://assets/ui/menu/flare_star.png")
@@ -28,6 +29,8 @@ const TITLE_STARS: Array[Vector2] = [Vector2(290, 33), Vector2(291, 344), Vector
 @onready var btn_settings: ArcaneMenuItem = $Menu/Settings
 @onready var btn_quit: ArcaneMenuItem = $Menu/Quit
 
+var _development_screen: CanvasLayer
+var _development_button: ArcaneMenuItem
 var _settings_screen: Control
 var _twinkles: Array[Dictionary] = []
 var _t := 0.0
@@ -68,6 +71,7 @@ func _ready() -> void:
 	if am != null:
 		am.call("to_menu")
 
+	_create_development_entry()
 	btn_continue.pressed.connect(_on_continue_pressed)
 	btn_new_run.pressed.connect(_on_new_run_pressed)
 	btn_archives.pressed.connect(_on_archives_pressed)
@@ -120,6 +124,8 @@ func _on_item_selected(item: ArcaneMenuItem) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed(&"ui_cancel"):
+		return
+	if _development_screen != null and is_instance_valid(_development_screen):
 		return
 	if _settings_screen != null and is_instance_valid(_settings_screen) and _settings_screen.visible:
 		return
@@ -618,3 +624,27 @@ func _dev_grant_test_augments() -> void:
 		# feedback in UI
 		if btn_grant_augments != null:
 			btn_grant_augments.text = "Test Augments Granted"
+
+
+func _create_development_entry() -> void:
+	_development_button = ArcaneMenuItem.new()
+	_development_button.name = "Development"
+	_development_button.text = "DEVELOPMENT"
+	_development_button.mood = &"archive"
+	menu.add_child(_development_button)
+	menu.move_child(_development_button, btn_archives.get_index() + 1)
+	_development_button.disabled = SaveManager.current_save == null
+	_development_button.tooltip_text = "Select or create a profile in the Archives to view its retained improvements." if _development_button.disabled else "Choose one retained improvement for each Research. Earlier choices remain."
+	_development_button.pressed.connect(_open_development)
+
+func _open_development() -> void:
+	if SaveManager.current_save == null or (_development_screen != null and is_instance_valid(_development_screen)):
+		return
+	var screen := CITY_DEVELOPMENT.instantiate() as CanvasLayer
+	_development_screen = screen
+	add_child(screen)
+	screen.closed.connect(func() -> void:
+		_development_screen = null
+		if _development_button != null and is_instance_valid(_development_button):
+			_development_button.grab_focus()
+	)

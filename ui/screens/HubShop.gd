@@ -222,6 +222,7 @@ func _ready() -> void:
 	_create_ascension_button()
 	_create_imprint_button()
 	_create_reliquary_button()
+	_create_development_button()
 
 
 	btn_clear_cart.pressed.connect(_clear_selection)
@@ -2130,7 +2131,7 @@ func _show_idle_hover() -> void:
 
 ## Buttons and labels the controller builds after the first frame.
 func _style_code_built_controls() -> void:
-	for b: Button in [_btn_ascension, _btn_imprints, _btn_reliquary]:
+	for b: Button in [_btn_ascension, _btn_imprints, _btn_reliquary, _btn_development]:
 		if b != null and not b.has_meta(&"exchange_styled"):
 			b.set_meta(&"exchange_styled", true)
 			ExchangeStyle.style_button(b, ExchangeStyle.Btn.NAV, 15)
@@ -2459,3 +2460,36 @@ func _draw_seal(host: Control) -> void:
 	var pts := ExchangeStyle.diamond(c + Vector2(0, -r * 0.18), 4.0)
 	host.draw_colored_polygon(pts, Color(ExchangeStyle.GOLD, 0.45))
 	host.draw_line(c + Vector2(-14, r * 0.5), c + Vector2(14, r * 0.5), col, 1.0, true)
+
+
+var _btn_development: Button = null
+var _development_screen: CanvasLayer = null
+const CITY_DEVELOPMENT := preload("res://ui/screens/CityDevelopmentScreen.tscn")
+
+func _create_development_button() -> void:
+	if _btn_development != null or btn_augments == null:
+		return
+	_btn_development = Button.new()
+	_btn_development.name = "Development"
+	_btn_development.text = "Development"
+	_btn_development.tooltip_text = "Choose one retained improvement per Research. Each applies from your next attempt."
+	var anchor: Node = _btn_reliquary if _btn_reliquary != null else btn_augments
+	anchor.get_parent().add_child(_btn_development)
+	anchor.get_parent().move_child(_btn_development, anchor.get_index() + 1)
+	_btn_development.disabled = SaveManager.current_save == null
+	_btn_development.pressed.connect(_open_development)
+
+func _open_development() -> void:
+	if SaveManager.current_save == null or (_development_screen != null and is_instance_valid(_development_screen)):
+		return
+	var screen := CITY_DEVELOPMENT.instantiate() as CanvasLayer
+	_development_screen = screen
+	add_child(screen)
+	_btn_development.disabled = true
+	screen.closed.connect(func() -> void:
+		_development_screen = null
+		if _btn_development != null and is_instance_valid(_btn_development):
+			_btn_development.disabled = SaveManager.current_save == null
+			_btn_development.grab_focus()
+		_refresh_info()
+	)

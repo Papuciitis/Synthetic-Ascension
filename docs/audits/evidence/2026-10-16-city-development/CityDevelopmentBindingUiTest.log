@@ -1,0 +1,37 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: one earned Research chooses conditional Binding Echo
+PASS: reaching the fifth Rite with the snapshotted perk earns two choices
+PASS: the first actual Binding opens with the world paused
+PASS: the actual offer has a normal native card to select
+AUGMENT PICKED:augment_litany_of_wounds { "kind": "new", "id": "augment_litany_of_wounds", "grade": 0 }
+[Game] augment received id=augment_litany_of_wounds
+PASS: the first normal selection keeps exactly one earned Echo choice pending
+PASS: Game presents a fresh second normal Binding after the first closes
+PASS: world processing and gameplay input never resume between the two choices
+PASS: a stale first-popup callback cannot consume or close the second reward
+PASS: the between-choices save is readable
+PASS: save/reload preserves exactly the remaining reward
+PASS: Continue presents the remaining actual Binding before world processing
+PASS: the actual offer has a normal native card to select
+AUGMENT PICKED:augment_magic_missile { "grade": 1, "id": "augment_magic_missile", "kind": "rank" }
+[Game] augment received id=augment_magic_missile
+PASS: the second normal choice finishes the earned queue and restores play
+PASS: the final popup is removed
+PASS: without a starting Echo the fifth Rite grants one normal Binding
+PASS: the first S5 clear can buy Echo for a later attempt
+PASS: buying Echo after S5 cannot retroactively double the active reward
+PASS: one earned Research chooses conditional Binding Echo
+PASS: reaching the fifth Rite with the snapshotted perk earns two choices
+PASS: the actual offer has a normal native card to select
+AUGMENT PICKED:augment_reflect_shield { "kind": "new", "id": "augment_reflect_shield", "grade": 1 }
+[Game] augment received id=augment_reflect_shield
+PASS: the actual offer has a normal native card to select
+AUGMENT PICKED:augment_magic_missile { "kind": "rank", "id": "augment_magic_missile", "grade": 0 }
+[Game] augment received id=augment_magic_missile
+PASS: both choices preserve a genuine prior pause after the queue finishes
+PASS: the production Game scene loads for developer-start coverage
+[Game] ready seg=2 race=human style=ranged seed=1792540002855
+PASS: developer-start coverage uses the existing isolated production route
+PASS: a later developer segment stays playable when a fresh library or Force Augment leaves a pending choice
+CityDevelopmentBindingUiTest: 25 passed, 0 failed

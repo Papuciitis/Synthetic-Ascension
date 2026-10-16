@@ -2,7 +2,8 @@ extends Node
 
 # Behavioral fixture: removing a flag check, filtering a whole reward, or
 # sharing a Gospel contribution key breaks an observable assertion here.
-# Run this scene with no user args, each flag separately, and all three.
+# Run this scene with no user args, each flag separately, and all four.
+const EXPERIMENTS := preload("res://core/systems/balance/CityBalanceExperiments.gd")
 const PLAYER := preload("res://core/actors/player/player.tscn")
 const ENEMY := preload("res://core/actors/enemy/enemy.tscn")
 var _passes := 0
@@ -30,6 +31,7 @@ func _run() -> void:
 	SaveManager.current_save = null
 	SaveManager.current_slot = -1
 	Global.debug_disable_autosave = true
+	_test_independent_flag_metadata()
 	Global.start_new_attempt()
 	ThreatDirector.set_process(false)
 	_test_drop_probability()
@@ -42,6 +44,25 @@ func _run() -> void:
 	await _test_metadata()
 	print("CityFarmingExperimentsTest: %d passed, %d failed; args=%s" % [_passes, _failures, str(_args)])
 	get_tree().quit(1 if _failures else 0)
+
+func _test_independent_flag_metadata() -> void:
+	var saved := EXPERIMENTS._arguments.duplicate()
+	var flags := {
+		"no_overtime_drop_bonus": "--city-no-overtime-drop-bonus",
+		"no_overtime_rarity_bonus": "--city-no-overtime-rarity-bonus",
+		"gospel_strongest_rewards": "--city-gospel-strongest-rewards",
+		"no_permanent_development": "--city-no-permanent-development",
+	}
+	EXPERIMENTS._arguments = PackedStringArray()
+	var baseline := EXPERIMENTS.metadata()
+	_check(baseline.size() == flags.size() and baseline.values().all(func(value: Variant) -> bool: return value == false), "baseline explicitly disables all four independent comparisons")
+	for selected in flags:
+		EXPERIMENTS._arguments = PackedStringArray([String(flags[selected])])
+		var expected := {}
+		for key in flags:
+			expected[key] = key == selected
+		_check(EXPERIMENTS.metadata() == expected, "selecting %s preserves every other comparison" % selected)
+	EXPERIMENTS._arguments = saved
 
 func _test_drop_probability() -> void:
 	var enemy := ENEMY.instantiate() as EnemyActor
@@ -238,6 +259,7 @@ func _test_metadata() -> void:
 		"no_overtime_drop_bonus": _args.has("--city-no-overtime-drop-bonus"),
 		"no_overtime_rarity_bonus": _args.has("--city-no-overtime-rarity-bonus"),
 		"gospel_strongest_rewards": _args.has("--city-gospel-strongest-rewards"),
+		"no_permanent_development": _args.has("--city-no-permanent-development"),
 	}
 	_check(selected == expected, "capture metadata declares each selected flag as plain data: %s" % str(selected))
 	BalanceRecorder.end_capture("suspended")

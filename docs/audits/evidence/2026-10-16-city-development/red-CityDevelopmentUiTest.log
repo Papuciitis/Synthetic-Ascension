@@ -1,0 +1,9 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: main menu exposes Development through an actual native button
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentUiTest.gd:26)
+       [1] _run (res://tools/tests/CityDevelopmentUiTest.gd:37)
+       [2] _frames (res://tools/tests/CityDevelopmentUiTest.gd:30)
+CityDevelopmentUiTest: 0 passed, 1 failed

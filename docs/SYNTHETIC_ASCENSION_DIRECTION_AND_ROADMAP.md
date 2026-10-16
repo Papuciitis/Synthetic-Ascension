@@ -2292,3 +2292,12 @@ diagnostics are retained separately. Shared runtime-safety checks pass 21/0
 and the final parse audit passes all 530 gameplay scripts. Nine focused
 suites/audits report 792 passing checks with no failures. The user approved
 the preview and requested a separate commit and push for this pass.
+
+
+## 2026-10-16 — Cumulative city Development and conditional Binding Echo
+
+The first-city prototype awards one Research for each genuinely first profile clear of segments 1–10. One purchase selects one rank from health, armor, carrying space, augment training, Haste, movement speed, Luck, Power, native attack reach, native attack size or Binding Echo. Earlier purchases accumulate. Every rank costs one point; ten city points cannot buy the whole catalogue. Death, reconstruction, Followers and repeated clears award no Research.
+
+Purchases prepare the next attempt through a saved snapshot. Continue and reconstruction retain their original snapshot; training can be retargeted for a later attempt. The trained starting level cannot be donated repeatedly through transfusion. Loaded bags retain their capacity and occupied tail. Binding Echo is the first conditional meta choice: purchase it, then complete S5 in a future attempt to take two sequential ordinary Binding rewards. Its saved queue survives reload and duplicate settlement cannot create another reward. Temporary results still reset at true defeat.
+
+Development is available from the main menu, base and merchant. The current and next-attempt distinction is explicit, with keyboard/controller checks and native normal/small-window captures. The existing completed-S8 Revelation and S9 mutation gates remain. Controlled real-mechanics comparisons and an independent no-development flag support subsequent city tests; they do not establish full-city pacing or eliminate existing Stash/reward farming. See `docs/audits/2026-10-16-city-development.md` for exact values, evidence and the remaining human playtest. This bounded city allocation does not define the eventual godhood ceiling.

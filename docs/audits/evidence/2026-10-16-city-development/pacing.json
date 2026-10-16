@@ -1,0 +1,1995 @@
+{
+	"acquisition_gates": [
+		{
+			"completed_segment": 7,
+			"mutation": false,
+			"revelation": false,
+			"tree": "v4"
+		},
+		{
+			"completed_segment": 8,
+			"mutation": false,
+			"revelation": true,
+			"tree": "v4"
+		},
+		{
+			"completed_segment": 9,
+			"mutation": true,
+			"revelation": true,
+			"tree": "v4"
+		},
+		{
+			"completed_segment": 7,
+			"mutation": false,
+			"revelation": false,
+			"tree": "v5_ranged"
+		},
+		{
+			"completed_segment": 8,
+			"mutation": false,
+			"revelation": true,
+			"tree": "v5_ranged"
+		},
+		{
+			"completed_segment": 9,
+			"mutation": true,
+			"revelation": true,
+			"tree": "v5_ranged"
+		}
+	],
+	"crowd": {
+		"attacks": false,
+		"count": 40,
+		"hp_each": 10000.0,
+		"moves": false,
+		"radius": 260.0
+	},
+	"equipped_augments": [
+		"augment_tesla_aura",
+		"",
+		""
+	],
+	"failures": 0,
+	"fixture_profiles": {
+		"baseline": {
+			"augment_id": "augment_tesla_aura",
+			"claimed_segments": [
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			],
+			"ranks": {
+				"armor": 3,
+				"augment": 1,
+				"bag": 3,
+				"haste": 0,
+				"health": 3,
+				"luck": 0,
+				"power": 0,
+				"range": 0,
+				"size": 0,
+				"speed": 0
+			},
+			"revision": 1
+		},
+		"defensive": {
+			"augment_id": "augment_tesla_aura",
+			"claimed_segments": [
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			],
+			"ranks": {
+				"armor": 3,
+				"augment": 1,
+				"bag": 3,
+				"haste": 0,
+				"health": 3,
+				"luck": 0,
+				"power": 0,
+				"range": 0,
+				"size": 0,
+				"speed": 0
+			},
+			"revision": 1
+		},
+		"offensive": {
+			"augment_id": "augment_tesla_aura",
+			"claimed_segments": [
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10
+			],
+			"ranks": {
+				"armor": 0,
+				"augment": 1,
+				"bag": 0,
+				"haste": 3,
+				"health": 0,
+				"luck": 0,
+				"power": 3,
+				"range": 0,
+				"size": 3,
+				"speed": 0
+			},
+			"revision": 1
+		},
+		"trained": {
+			"augment_id": "augment_tesla_aura",
+			"claimed_segments": [
+				1
+			],
+			"ranks": {
+				"armor": 0,
+				"augment": 1,
+				"bag": 0,
+				"haste": 0,
+				"health": 0,
+				"luck": 0,
+				"power": 0,
+				"range": 0,
+				"size": 0,
+				"speed": 0
+			},
+			"revision": 1
+		}
+	},
+	"kind": "controlled_city_development_mechanics_comparison",
+	"limits": [
+		"Stationary immortal crowd; the production Tesla callback is stepped at 60 Hz with presentation disabled.",
+		"No city traversal, objective timing, enemy attacks, human choices, encounter completion or fun claims.",
+		"Late fixed-level rows isolate equal Lv.12; equal-earned rows compare eleven temporary levels above each starting floor.",
+		"Offensive size is observed on the real emitted native projectile; Tesla's radius is not native attack size.",
+		"Prepared fixture grants are explicit and do not auto-complete Rites or claim organically earned progress."
+	],
+	"matched_human_run": {
+		"argument": "--city-development-human=baseline|trained|defensive|offensive",
+		"equipment_rank": 1,
+		"recorders": [
+			"BalanceRecorder",
+			"PerformanceFlightRecorder"
+		],
+		"save_slots": "none; in-memory fixture only",
+		"scene": "res://tools/tests/CityDevelopmentPacingProbe.tscn",
+		"seed": 81919
+	},
+	"owned_augments": [
+		"augment_tesla_aura",
+		"augment_stamina_core"
+	],
+	"passes": 159,
+	"race": "human",
+	"resets": [
+		{
+			"bag_slots_after_reset": 16,
+			"level_after_reset": 1,
+			"profile_preserved": true,
+			"variant": "baseline"
+		},
+		{
+			"bag_slots_after_reset": 16,
+			"level_after_reset": 2,
+			"profile_preserved": true,
+			"variant": "trained"
+		},
+		{
+			"bag_slots_after_reset": 19,
+			"level_after_reset": 2,
+			"profile_preserved": true,
+			"variant": "defensive"
+		},
+		{
+			"bag_slots_after_reset": 16,
+			"level_after_reset": 2,
+			"profile_preserved": true,
+			"variant": "offensive"
+		}
+	],
+	"rows": [
+		{
+			"augment_level": 1,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.1,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-46_31220_34797726_1",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 0,
+				"id": "early_start",
+				"item_rank": 1
+			},
+			"damage": 574.546875,
+			"damage_per_second": 57.4546875,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": false,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 4,
+				"radius": 180.0,
+				"tick_interval": 0.458333333333333
+			},
+			"effect_level": 1,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 1,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": true
+			},
+			"native_hit": 13.6799999973178,
+			"native_hits_per_second": 4.19990405784101,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 13.6799999973178,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.2,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.139999999776483
+			},
+			"variant": "baseline"
+		},
+		{
+			"augment_level": 2,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.12,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-46_31220_35371829_2",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 0,
+				"id": "early_start",
+				"item_rank": 1
+			},
+			"damage": 849.5625,
+			"damage_per_second": 84.95625,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1
+					],
+					"earned": 1,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 4,
+				"radius": 192.6,
+				"tick_interval": 0.42827868852459
+			},
+			"effect_level": 2,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 1,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 13.6799999973178,
+			"native_hits_per_second": 6.21025219420009,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 13.6799999973178,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.22,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.139999999776483
+			},
+			"variant": "trained"
+		},
+		{
+			"augment_level": 2,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.12,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 19,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-47_31220_35960810_3",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 0,
+				"id": "early_start",
+				"item_rank": 1
+			},
+			"damage": 849.5625,
+			"damage_per_second": 84.95625,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 3,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 3,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 15,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 4,
+				"radius": 192.6,
+				"tick_interval": 0.42827868852459
+			},
+			"effect_level": 2,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 1,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 13.6799999973178,
+			"native_hits_per_second": 6.21025219420009,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 13.6799999973178,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 5.0,
+				"haste": 0.22,
+				"luck": 0.1,
+				"max_hp": 125.0,
+				"move_speed": 115.0,
+				"power": 0.139999999776483
+			},
+			"variant": "defensive"
+		},
+		{
+			"augment_level": 2,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.12,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-48_31220_36720136_4",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 0,
+				"id": "early_start",
+				"item_rank": 1
+			},
+			"damage": 933.09375,
+			"damage_per_second": 93.309375,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.06,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.06,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.15,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 4,
+				"radius": 192.6,
+				"tick_interval": 0.408203125
+			},
+			"effect_level": 2,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 1,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 14.3999999973178,
+			"native_hits_per_second": 6.47981770954029,
+			"native_projectile": {
+				"collision_radius": 6.90000009536743,
+				"damage": 14.3999999973178,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.9,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.28,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.199999999776483
+			},
+			"variant": "offensive"
+		},
+		{
+			"augment_level": 12,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.25,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-48_31220_37413195_5",
+			"build": {
+				"absolute_level": 12,
+				"earned_levels": 0,
+				"id": "late_fixed_level",
+				"item_rank": 12
+			},
+			"damage": 15589.77734375,
+			"damage_per_second": 1558.977734375,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": false,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.270282397932581
+			},
+			"effect_level": 12,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": true
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 67.8997271774327,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.35,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "baseline"
+		},
+		{
+			"augment_level": 12,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.25,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-49_31220_38223749_6",
+			"build": {
+				"absolute_level": 12,
+				"earned_levels": 0,
+				"id": "late_fixed_level",
+				"item_rank": 12
+			},
+			"damage": 15589.77734375,
+			"damage_per_second": 1558.977734375,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1
+					],
+					"earned": 1,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.270282397932581
+			},
+			"effect_level": 12,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 67.8997271774327,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.35,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "trained"
+		},
+		{
+			"augment_level": 12,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.25,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 19,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-50_31220_39028363_7",
+			"build": {
+				"absolute_level": 12,
+				"earned_levels": 0,
+				"id": "late_fixed_level",
+				"item_rank": 12
+			},
+			"damage": 15589.77734375,
+			"damage_per_second": 1558.977734375,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 3,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 3,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 15,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.270282397932581
+			},
+			"effect_level": 12,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 67.8997271774327,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 5.0,
+				"haste": 0.35,
+				"luck": 0.1,
+				"max_hp": 125.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "defensive"
+		},
+		{
+			"augment_level": 12,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.25,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-51_31220_39936908_8",
+			"build": {
+				"absolute_level": 12,
+				"earned_levels": 0,
+				"id": "late_fixed_level",
+				"item_rank": 12
+			},
+			"damage": 16997.453125,
+			"damage_per_second": 1699.7453125,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.06,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.06,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.15,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.258781019297152
+			},
+			"effect_level": 12,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 23.6799999761581,
+			"native_hits_per_second": 71.7797852285204,
+			"native_projectile": {
+				"collision_radius": 6.90000009536743,
+				"damage": 23.6799999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.9,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.41,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.973333331346512
+			},
+			"variant": "offensive"
+		},
+		{
+			"augment_level": 12,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.25,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-52_31220_40634990_9",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 11,
+				"id": "late_equal_earned",
+				"item_rank": 12
+			},
+			"damage": 15589.77734375,
+			"damage_per_second": 1558.977734375,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": false,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.270282397932581
+			},
+			"effect_level": 12,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": true
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 67.8997271774327,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.35,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "baseline"
+		},
+		{
+			"augment_level": 13,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.26,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-52_31220_41497304_10",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 11,
+				"id": "late_equal_earned",
+				"item_rank": 12
+			},
+			"damage": 16714.94140625,
+			"damage_per_second": 1671.494140625,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1
+					],
+					"earned": 1,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 0,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.268295027359547
+			},
+			"effect_level": 13,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 72.8002675244205,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.36,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "trained"
+		},
+		{
+			"augment_level": 13,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.26,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 19,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-53_31220_42095372_11",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 11,
+				"id": "late_equal_earned",
+				"item_rank": 12
+			},
+			"damage": 16714.94140625,
+			"damage_per_second": 1671.494140625,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 3,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 3,
+					"binding_echo": false,
+					"haste": 0.0,
+					"hp": 15,
+					"luck": 0.0,
+					"power": 0.0,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.0,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 3,
+					"next_bag_slots": 3,
+					"next_bonuses": {
+						"armor": 3,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 3,
+						"binding_echo": false,
+						"haste": 0.0,
+						"hp": 15,
+						"luck": 0.0,
+						"power": 0.0,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.0,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 15,
+					"points": 0,
+					"ranks": {
+						"armor": 3,
+						"augment": 1,
+						"bag": 3,
+						"binding_echo": 0,
+						"haste": 0,
+						"health": 3,
+						"luck": 0,
+						"power": 0,
+						"range": 0,
+						"size": 0,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.268295027359547
+			},
+			"effect_level": 13,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 22.9599999761581,
+			"native_hits_per_second": 72.8002675244205,
+			"native_projectile": {
+				"collision_radius": 6.0,
+				"damage": 22.9599999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.0,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 5.0,
+				"haste": 0.36,
+				"luck": 0.1,
+				"max_hp": 125.0,
+				"move_speed": 115.0,
+				"power": 0.913333331346512
+			},
+			"variant": "defensive"
+		},
+		{
+			"augment_level": 13,
+			"augment_passives": {
+				"armor": 0.0,
+				"haste": 0.26,
+				"luck": 0.0,
+				"max_hp": 0.0,
+				"move_speed": 0.0,
+				"power": 0.0
+			},
+			"bag_slots": 16,
+			"balance_capture": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_development_probe_25259484/balance/2026-10-16/2026-10-16_22-19-53_31220_42480462_12",
+			"build": {
+				"absolute_level": 0,
+				"earned_levels": 11,
+				"id": "late_equal_earned",
+				"item_rank": 12
+			},
+			"damage": 18224.203125,
+			"damage_per_second": 1822.4203125,
+			"development": {
+				"attempt": {
+					"augment_id": "augment_tesla_aura",
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					},
+					"revision": 1
+				},
+				"effective_bonuses": {
+					"armor": 0,
+					"augment_id": "augment_tesla_aura",
+					"bag_slots": 0,
+					"binding_echo": false,
+					"haste": 0.06,
+					"hp": 0,
+					"luck": 0.0,
+					"power": 0.06,
+					"range_multiplier": 1.0,
+					"size_multiplier": 1.15,
+					"speed": 0.0
+				},
+				"enabled": true,
+				"profile": {
+					"active_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"augment_id": "augment_tesla_aura",
+					"claimed_segments": [
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7,
+						8,
+						9,
+						10
+					],
+					"earned": 10,
+					"next_armor_bonus": 0,
+					"next_bag_slots": 0,
+					"next_bonuses": {
+						"armor": 0,
+						"augment_id": "augment_tesla_aura",
+						"bag_slots": 0,
+						"binding_echo": false,
+						"haste": 0.06,
+						"hp": 0,
+						"luck": 0.0,
+						"power": 0.06,
+						"range_multiplier": 1.0,
+						"size_multiplier": 1.15,
+						"speed": 0.0
+					},
+					"next_hp_bonus": 0,
+					"points": 0,
+					"ranks": {
+						"armor": 0,
+						"augment": 1,
+						"bag": 0,
+						"binding_echo": 0,
+						"haste": 3,
+						"health": 0,
+						"luck": 0,
+						"power": 3,
+						"range": 0,
+						"size": 3,
+						"speed": 0
+					}
+				}
+			},
+			"effect": {
+				"max_targets": 8,
+				"radius": 280.8,
+				"tick_interval": 0.256958617752806
+			},
+			"effect_level": 13,
+			"equipment": {
+				"id": "conduit_lens",
+				"manifestation": "",
+				"polarity": 1,
+				"rank": 12,
+				"roll": 0.0
+			},
+			"farming_experiments": {
+				"gospel_strongest_rewards": false,
+				"no_overtime_drop_bonus": false,
+				"no_overtime_rarity_bonus": false,
+				"no_permanent_development": false
+			},
+			"native_hit": 23.6799999761581,
+			"native_hits_per_second": 76.9603173283309,
+			"native_projectile": {
+				"collision_radius": 6.90000009536743,
+				"damage": 23.6799999761581,
+				"max_range": 520.0,
+				"profile_collision_radius": 6.9,
+				"profile_max_range": 520.0
+			},
+			"stats": {
+				"armor": 2.0,
+				"haste": 0.42,
+				"luck": 0.1,
+				"max_hp": 110.0,
+				"move_speed": 115.0,
+				"power": 0.973333331346512
+			},
+			"variant": "offensive"
+		}
+	],
+	"save_writes": 0,
+	"schema_version": 1,
+	"seconds_per_row": 10.0,
+	"seed": 81919,
+	"style": "ranged",
+	"variant_scope": {
+		"baseline": "Defensive ten-choice profile with effective bonuses disabled; stored profile and attempt retained.",
+		"defensive": "Defensive ten-choice allocation after ten distinct city Rites: HP3, armor3, bag3, training1; never a single reward.",
+		"offensive": "Offensive ten-choice allocation after ten distinct city Rites: Power3, Haste3, native attack size3, training1; never a largest-output claim.",
+		"trained": "One research point, one chosen owned augment starts at Lv.2."
+	}
+}

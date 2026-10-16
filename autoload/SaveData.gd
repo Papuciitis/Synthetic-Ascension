@@ -73,6 +73,8 @@ const CURRENT_SAVE_VERSION := 1
 # Additive empty defaults preserve old profiles without a migration write.
 @export var meta_pending_peep: Dictionary = {}
 @export var meta_city_commitments: Dictionary = {}
+# First-city Research choices, separate from the reserved old augment levels.
+@export var meta_city_development: Dictionary = {}
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.
@@ -87,6 +89,8 @@ const CURRENT_SAVE_VERSION := 1
 # ============================================================
 
 @export var attempt_active: bool = false
+# Fixed at attempt creation. Missing legacy snapshots apply no preparation.
+@export var attempt_city_development: Dictionary = {}
 @export var attempt_segment: int = 1
 # A completed Rite awaiting its release/card presentation. Zero keeps older
 # saves unchanged; a matching active segment is settled on load before Continue.
@@ -105,6 +109,9 @@ const CURRENT_SAVE_VERSION := 1
 
 # Between-segment rewards / gates
 @export var attempt_pending_augment_pick: bool = false
+@export var attempt_binding_rewards_remaining: int = 0
+@export var attempt_binding_echo_claimed: bool = false
+@export var attempt_binding_sequence: int = 0
 @export var attempt_pending_big_choice: bool = false
 
 # Exploration loot (prevents infinite respawn when chunks stream)

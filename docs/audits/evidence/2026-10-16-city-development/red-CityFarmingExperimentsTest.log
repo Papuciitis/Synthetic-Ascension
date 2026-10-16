@@ -1,0 +1,93 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: baseline explicitly disables all four independent comparisons
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_independent_flag_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:58)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:34)
+ERROR: FAIL: selecting no_overtime_drop_bonus preserves every other comparison
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_independent_flag_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:64)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:34)
+ERROR: FAIL: selecting no_overtime_rarity_bonus preserves every other comparison
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_independent_flag_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:64)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:34)
+ERROR: FAIL: selecting gospel_strongest_rewards preserves every other comparison
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_independent_flag_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:64)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:34)
+ERROR: FAIL: selecting no_permanent_development preserves every other comparison
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_independent_flag_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:64)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:34)
+PASS: only overtime drop probability is omitted: 1520/4096, expected 1520
+PASS: positive Luck still bends probability: 1958/4096, expected 1958
+PASS: Resonance pre-multiplier is preserved: 395/4096, expected 395
+PASS: sealed gate ignores overtime for every variant: 1336/4096, expected 1336
+PASS: base, elite and threat rarity remain uncapped
+PASS: segment 9 heat and OT=3 rarity bonus is 6 (got 6)
+PASS: segment and heat rarity remain when overtime is zero
+PASS: sealed gate keeps segment and heat rarity
+PASS: one Gospel retains its full Power
+PASS: one Gospel retains its full Luck
+PASS: two unequal Gospels use the selected Power policy
+PASS: two unequal Gospels use the selected Luck policy
+PASS: unequal Gospel Power ticks [1, 3, 2]: 1.244322494
+PASS: Gospel Luck plus independent Cartography: 0.420000
+PASS: other duplicate Manifestations keep their falloff: 1.495000
+PASS: all three Gospel copies inject their own pressure: { "manifestation:overtime_gospel@slot0#-9223371639469634493": 20.0, "manifestation:overtime_gospel@slot5#-9223371639066981330": 75.0, "manifestation:overtime_gospel@slot6#-9223371638966318009": 45.0 }
+PASS: Gospel belief defiance remains the existing last publisher value
+PASS: removing strongest preserves next Luck and Cartography
+PASS: all Gospel cleanup leaves the other instance's Luck
+PASS: one Gospel retains its full Power
+PASS: one Gospel retains its full Luck
+PASS: two unequal Gospels use the selected Power policy
+PASS: two unequal Gospels use the selected Luck policy
+PASS: unequal Gospel Power ticks [3, 1, 2]: 1.333298838
+PASS: Gospel Luck plus independent Cartography: 0.420000
+PASS: other duplicate Manifestations keep their falloff: 1.495000
+PASS: all three Gospel copies inject their own pressure: { "manifestation:overtime_gospel@slot0#-9223371636500067209": 75.0, "manifestation:overtime_gospel@slot5#-9223371636399403919": 20.0, "manifestation:overtime_gospel@slot6#-9223371636298740629": 45.0 }
+PASS: Gospel belief defiance remains the existing last publisher value
+PASS: removing strongest preserves next Luck and Cartography
+PASS: all Gospel cleanup leaves the other instance's Luck
+PASS: crossed-strength copies preserve selected Power policy (reverse=false): 1.390626600
+PASS: crossed-strength copies independently preserve best Luck: 0.372000
+PASS: crossed-strength copies both inject their full pressure
+PASS: crossed-strength removal keeps the surviving Power
+PASS: crossed-strength removal keeps the surviving Luck
+PASS: crossed-strength copies preserve selected Power policy (reverse=true): 1.390976600
+PASS: crossed-strength copies independently preserve best Luck: 0.372000
+PASS: crossed-strength copies both inject their full pressure
+PASS: crossed-strength removal keeps the surviving Power
+PASS: crossed-strength removal keeps the surviving Luck
+PASS: fixture creates a real terminal continuation
+PASS: pending continuation freezes root pressure clocks, outputs and tick remainder
+PASS: fixture accepts the pending city once
+PASS: new attempt resumes director processing after continuation
+[BalanceRecorder] Recording to C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_farming_captures_30177868/2026-10-16/2026-10-16_21-24-06_27136_30177922_1
+ERROR: FAIL: capture metadata declares each selected flag as plain data: { "no_overtime_drop_bonus": false, "no_overtime_rarity_bonus": false, "gospel_strongest_rewards": false }
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:264)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:44)
+       [3] _test_crossed_gospel (res://tools/tests/CityFarmingExperimentsTest.gd:225)
+[BalanceRecorder] suspended — C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.godot/city-development-checks/appdata/Godot/app_userdata/Synthetic Ascension/city_farming_captures_30177868/2026-10-16/2026-10-16_21-24-06_27136_30177922_1/report.md
+ERROR: FAIL: persisted capture carries independent selected flags
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityFarmingExperimentsTest.gd:26)
+       [1] _test_metadata (res://tools/tests/CityFarmingExperimentsTest.gd:269)
+       [2] _run (res://tools/tests/CityFarmingExperimentsTest.gd:44)
+       [3] _test_crossed_gospel (res://tools/tests/CityFarmingExperimentsTest.gd:225)
+CityFarmingExperimentsTest: 44 passed, 7 failed; args=[]

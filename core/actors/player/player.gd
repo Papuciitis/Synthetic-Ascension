@@ -1042,6 +1042,10 @@ func _spawn_melee_slash(origin: Vector2, dir: Vector2, dmg: float) -> void:
 	slash.rotation = dir.angle()
 	slash.damage = dmg
 	slash.set("source", self)
+	# Prepared reach and size apply only to the native weapon factory.
+	slash.arc_radius *= Global.city_development_attack_range_multiplier()
+	slash.arc_degrees = minf(360.0, slash.arc_degrees * Global.city_development_attack_size_multiplier())
+	slash.thickness *= Global.city_development_attack_size_multiplier()
 
 	if hurtbox != null:
 		slash.collision_mask = hurtbox.collision_mask
@@ -1140,6 +1144,9 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 		var managed_tree := get_node_or_null("AscensionRunner") as AscensionRunner
 		if managed_tree != null:
 			managed_tree.apply_to_managed_hit_profile(_managed_hit_profile, &"ranged")
+		_managed_hit_profile.max_range *= Global.city_development_attack_range_multiplier()
+		_managed_hit_profile.collision_radius *= Global.city_development_attack_size_multiplier()
+		_managed_hit_profile.body_width *= Global.city_development_attack_size_multiplier()
 		projectile_manager.spawn_player(origin, dir, _managed_hit_profile, self)
 		return
 
@@ -1167,6 +1174,8 @@ func _spawn_ranged_bullet(origin: Vector2, dir: Vector2, dmg: float) -> void:
 	var mr_r: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
 	if mr_r != null:
 		mr_r.apply_to_ranged_bullet(bullet, &"ranged")
+	bullet.max_range *= Global.city_development_attack_range_multiplier()
+	bullet.body_width *= Global.city_development_attack_size_multiplier()
 
 	get_tree().current_scene.add_child(bullet)
 
@@ -1224,6 +1233,7 @@ func _spawn_magic_impact(pos: Vector2, dmg: float) -> void:
 	var ar_g: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
 	if ar_g != null:
 		ar_g.apply_to_magic_impact(impact)
+	impact.radius *= Global.city_development_attack_size_multiplier()
 
 	get_tree().current_scene.add_child(impact)
 

@@ -1,0 +1,29 @@
+{
+  "scene": "res://tools/tests/ScriptParseAuditTest.tscn",
+  "engine": "4.7.1.stable.official.a13da4feb",
+  "arguments": [
+    "--headless",
+    "--audio-driver",
+    "Dummy",
+    "--flush-output",
+    "--path",
+    "<project>",
+    "res://tools/tests/ScriptParseAuditTest.tscn"
+  ],
+  "exit": 0,
+  "passed": 530,
+  "failed": 0,
+  "diagnostics": [],
+  "source_manifest": "gameplay-source-hashes.json",
+  "all530HashesUnchangedAfterAudit": true,
+  "roots": [
+    "core",
+    "ui",
+    "autoload",
+    "scenes",
+    "effects",
+    "data",
+    "assets",
+    "spells"
+  ]
+}

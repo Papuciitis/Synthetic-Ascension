@@ -1,0 +1,72 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: seg 2 deals about 65 / 27 / 8 % ([0.64724916219711, 0.27184465527534, 0.07766990363598, 0.00323624606244])
+PASS: seg 9 deals about 45% Etched and 3% Apocryphal ([0.44742730259895, 0.37583893537521, 0.14765100181103, 0.02908277325332])
+PASS: Luck makes rarer grades more likely
+PASS: bad Luck makes them rarer
+PASS: the Doctrine's grade multiplier shifts the deal
+PASS: Etched adds 1 level, Apocryphal 4
+PASS: rolls follow the weights (Etched 8969 / 20000)
+PASS: a grade floor (the Archive Canon) deals nothing below Gilded
+PASS: a free slot deals three new augments (["new", "new", "new"])
+PASS: a new card is never an augment already equipped
+PASS: full slots deal two rank-ups and one swap (["rank", "rank", "swap"])
+PASS: with every slot locked there is no swap (["rank", "rank", "rank"])
+PASS: a ready augment's Transcendence is the first card
+PASS: the Transcend card carries no grade
+PASS: the transcending augment is not also offered as a rank-up
+PASS: a fourth card when the Doctrine adds one
+PASS: every ordinary card is graded
+PASS: a fresh profile's first offer always carries a NEG archetype (40 seeds)
+PASS: the same context and seed deal the same cards
+PASS: an Etched new augment binds at Lv.1
+PASS: a Gilded new augment binds at Lv.2
+PASS: a Sanctified swap-in keeps its stored Lv.4 and adds two
+PASS: an Apocryphal rank-up adds four
+PASS: a Transcendence adds one
+PASS: levels stop at the cap
+ERROR: FAIL: a Binding follows every segment (1 through 11), not just 2 and 7
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/AugmentBindingTest.gd:24)
+       [1] _test_cadence (res://tools/tests/AugmentBindingTest.gd:184)
+       [2] _run (res://tools/tests/AugmentBindingTest.gd:31)
+PASS: the intro pick cannot be recast or abstained
+PASS: the pick that opens segment 5 belongs to segment 4 and can trade
+PASS: segment 3 queues a Binding
+PASS: the offer is dealt once and kept
+PASS: and it is the persisted offer
+PASS: the first Recast costs 40 x segment (120)
+PASS: a Recast with enough Followers succeeds
+PASS: and spends exactly its price
+PASS: the next Recast costs more (240)
+PASS: the recast is counted
+PASS: a Recast without the Followers is refused
+PASS: a free Recast from the Doctrine costs nothing
+PASS: a card that was not dealt is refused
+PASS: a dealt rank-up applies
+PASS: Sanctified adds three levels: 2 -> 5
+PASS: applying closes the Binding
+PASS: a new card applies (the dealt grade is authoritative)
+PASS: Gilded binds Lucky Charm at Lv.2 in slot II
+PASS: a swap without a slot is refused
+PASS: a swap into a locked slot is refused
+PASS: a swap into an unlocked slot applies
+PASS: the swapped-out augment stays in the library
+PASS: Abstain pays 75 x segment (450)
+PASS: Abstain pays it
+PASS: and closes the Binding
+PASS: nothing to abstain from once closed
+PASS: Tesla Aura at Lv.5 beside Sprint Servos is ready to Transcend
+PASS: the Binding deals its Transcendence first
+PASS: the Transcend card applies
+PASS: Tesla Aura is Storm Crown at Lv.6
+PASS: and every surface names it so
+PASS: a Transcended augment never offers it again
+PASS: Transcendence is written
+PASS: the pending offer and its recast count are written
+PASS: Transcendence survives a reload
+PASS: the same cards come back: a reload is not a free Recast
+PASS: and so does the recast count
+PASS: an older save loads the new fields as empty
+AugmentBindingTest: 63 passed, 1 failed

@@ -22,6 +22,8 @@ const MAJOR_CHOICES_DIR := DATA_DIR + "/major_choices"
 const WEAPONS_DIR := DATA_DIR + "/weapons"
 const DOCTRINE_REWARD_SERVICE := preload("res://core/systems/major_choice/DoctrineRewardService.gd")
 const _BUILD_INFO_SCRIPT := preload("res://core/systems/telemetry/BuildInfo.gd")
+const _CITY_DEVELOPMENT := preload("res://core/systems/progression/CityDevelopment.gd")
+const _CITY_DEVELOPMENT_EXPERIMENTS := preload("res://core/systems/balance/CityBalanceExperiments.gd")
 
 # -- Scenes
 const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
@@ -125,6 +127,9 @@ var permanent_augment_ids: Array[StringName] = [] # exactly 3 slots
 var owned_augment_ids: Array[StringName] = []       # owned augment library (meta, persists forever)
 var augment_slot_locks: Array[bool] = [false, false, false]       # lock equipped slots in hub
 var meta_stash: StashInventory = null
+var city_development: Dictionary = {}
+var attempt_city_development: Dictionary = {}
+var _city_development_awards_enabled := false
 var discovered_enemy_ids: Array[StringName] = []
 ## Manifestation explainer cards already shown, as prefixed ids ("intro",
 ## "noun:momentum", "pair:..."). Profile knowledge, exactly like the enemy
@@ -261,6 +266,9 @@ var attempt_stat_delta: StatDelta = null
 # kept so a reload cannot redeal it for free.
 var attempt_augment_transcended: Dictionary = {}
 var attempt_binding_offer: Array = []
+var attempt_binding_rewards_remaining: int = 0
+var attempt_binding_echo_claimed: bool = false
+var attempt_binding_sequence: int = 0
 var attempt_binding_recasts: int = 0
 ## Consecrations paid this Binding (follower economy audit P6): each raises
 ## one card a grade and the next costs one step more. Kept like the Recast
@@ -767,6 +775,8 @@ func reset_run_inventory() -> void:
 
 func reset_run_bag_inventory() -> void:
 	run_bag = BagInventory.new()
+	run_bag.extra_slots = int(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["bag_slots"])
+	run_bag.get_slot_count()
 
 func reset_run_augments() -> void:
 	# 3 slots, empty
@@ -1277,7 +1287,83 @@ func level_up_permanent_augment(id: StringName) -> void:
 		print("[AUG] level_up_permanent_augment id=", id, " -> L", get_augment_level(id))
 	permanent_augments_changed.emit(permanent_augment_ids)
 
+func _city_development_owned_targets() -> Array:
+	var out: Array = []
+	for id in owned_augment_ids:
+		if augment_db.has(id):
+			out.append(id)
+	return out
+
+
+func _effective_city_development() -> Dictionary:
+	if not attempt_active or _CITY_DEVELOPMENT_EXPERIMENTS.enabled("--city-no-permanent-development"):
+		return {}
+	return attempt_city_development
+
+
+func get_city_development_summary() -> Dictionary:
+	city_development = _CITY_DEVELOPMENT.normalize_profile(city_development, _city_development_owned_targets())
+	var next := _CITY_DEVELOPMENT.bonuses(city_development)
+	return {
+		"points": _CITY_DEVELOPMENT.points(city_development), "earned": city_development["claimed_segments"].size(),
+		"ranks": city_development["ranks"].duplicate(), "augment_id": city_development["augment_id"],
+		"claimed_segments": city_development["claimed_segments"].duplicate(),
+		"next_hp_bonus": next["hp"], "next_armor_bonus": next["armor"], "next_bag_slots": next["bag_slots"],
+		"next_bonuses": next, "active_bonuses": _CITY_DEVELOPMENT.bonuses(_effective_city_development()),
+	}
+
+
+func get_city_development_options() -> Array[Dictionary]:
+	get_city_development_summary()
+	return _CITY_DEVELOPMENT.options(city_development)
+
+
+func purchase_city_development(upgrade_id: StringName, augment_id: StringName = &"") -> bool:
+	if SaveManager == null or SaveManager.current_save == null:
+		return false
+	get_city_development_summary()
+	if not _CITY_DEVELOPMENT.purchase(city_development, upgrade_id, augment_id, _city_development_owned_targets()):
+		return false
+	save_current_profile()
+	return true
+
+
+func select_trained_augment(id: StringName) -> bool:
+	get_city_development_summary()
+	if SaveManager == null or SaveManager.current_save == null or _CITY_DEVELOPMENT.rank(city_development, "augment") == 0 or not _city_development_owned_targets().has(id):
+		return false
+	city_development["augment_id"] = String(id)
+	save_current_profile()
+	return true
+
+
+func _city_development_augment_floor(id: StringName) -> int:
+	var state := _effective_city_development()
+	return 2 if id != &"" and _CITY_DEVELOPMENT.rank(state, "augment") > 0 and String(state.get("augment_id", "")) == String(id) else 1
+
+
+func city_development_attack_range_multiplier() -> float:
+	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["range_multiplier"])
+
+
+func city_development_attack_size_multiplier() -> float:
+	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["size_multiplier"])
+
+
+func city_development_capture_metadata() -> Dictionary:
+	return {"enabled": not _CITY_DEVELOPMENT_EXPERIMENTS.enabled("--city-no-permanent-development"), "profile": get_city_development_summary(), "attempt": attempt_city_development.duplicate(true), "effective_bonuses": _CITY_DEVELOPMENT.bonuses(_effective_city_development())}
+
+
+func _award_city_development(segment: int) -> void:
+	if not attempt_active or has_pending_peep() or debug_dev_mode or debug_dev_segment or not _city_development_awards_enabled or SaveManager == null or SaveManager.current_save == null:
+		return
+	get_city_development_summary()
+	_CITY_DEVELOPMENT.claim(city_development, segment)
+
+
 func apply_permanent_augments_to_stats(s: Stats) -> void:
+	_CITY_DEVELOPMENT.apply_stats(_effective_city_development(), s)
+	stat_ledger_step("CITY DEVELOPMENT", s)
 	init_permanent_augments()
 	for id in permanent_augment_ids:
 		if id == StringName():
@@ -1316,6 +1402,9 @@ func _reset_attempt_choice_state() -> void:
 	attempt_mutations = {}
 	attempt_augment_transcended = {}
 	attempt_binding_offer = []
+	attempt_binding_rewards_remaining = 0
+	attempt_binding_echo_claimed = false
+	attempt_binding_sequence = 0
 	attempt_binding_recasts = 0
 	attempt_binding_consecrations = 0
 	attempt_augment_duos = {}
@@ -1434,6 +1523,7 @@ func _deal_binding_offer() -> void:
 	var rng := RandomNumberGenerator.new()
 	var seed_val: int = attempt_world_seed if attempt_world_seed != 0 else _rng.randi()
 	rng.seed = int(seed_val) ^ (binding_segment() * 0x2545F491) ^ ((attempt_binding_recasts + 1) * 0x9E3779B9) ^ 0xB1D
+	rng.seed = rng.seed ^ (attempt_binding_sequence * 0x51ED270B)
 	attempt_binding_offer = AugmentBinding.build_offer(binding_context(), rng)
 	# A Burden covers the whole Binding: its price is already paid, so a
 	# Recast deals the new table raised too instead of throwing the raise away.
@@ -1585,7 +1675,12 @@ func apply_binding_card(card: Dictionary, slot: int = -1, facet: StringName = &"
 
 
 func _close_binding() -> void:
-	pending_augment_pick = false
+	if not pending_augment_pick:
+		return
+	attempt_binding_rewards_remaining = maxi(0, maxi(1, attempt_binding_rewards_remaining) - 1)
+	pending_augment_pick = attempt_binding_rewards_remaining > 0
+	if pending_augment_pick:
+		attempt_binding_sequence = mini(1, attempt_binding_sequence + 1)
 	attempt_binding_offer.clear()
 	attempt_binding_recasts = 0
 	attempt_binding_consecrations = 0
@@ -1950,7 +2045,9 @@ func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary
 	if attempt_augment_corruptions.has(String(donor)):
 		out["reason"] = "a corrupted augment's levels are bound to it"
 		return out
-	var poured := AugmentRites.transfusion_gain(get_augment_level(donor))
+	# The free trained starting level is preparation, never a renewable donor.
+	var donor_growth := get_augment_level(donor) - (_city_development_augment_floor(donor) - 1)
+	var poured := AugmentRites.transfusion_gain(donor_growth)
 	if poured <= 0:
 		out["reason"] = "the donor needs Lv.%d" % AugmentRites.TRANSFUSION_MIN_DONOR
 		return out
@@ -2357,13 +2454,13 @@ func get_augment_level(aug_id: StringName) -> int:
 	# store as String key for SaveData compatibility
 	var k := String(aug_id)
 	if attempt_augment_levels.has(k):
-		return maxi(1, int(attempt_augment_levels[k]))
-	return 1
+		return maxi(_city_development_augment_floor(aug_id), int(attempt_augment_levels[k]))
+	return _city_development_augment_floor(aug_id)
 
 func set_augment_level(aug_id: StringName, level: int) -> void:
 	if aug_id == StringName():
 		return
-	attempt_augment_levels[String(aug_id)] = maxi(1, level)
+	attempt_augment_levels[String(aug_id)] = maxi(_city_development_augment_floor(aug_id), level)
 	request_autosave()
 
 func apply_attempt_modifiers_to_stats(s: Stats) -> void:
@@ -2738,6 +2835,7 @@ func claim_loot(id: int) -> void:
 
 func apply_save(save: SaveData) -> void:
 	attempt_pending_segment_completion = 0
+	_city_development_awards_enabled = SaveManager != null and SaveManager.current_save == save
 	meta_pending_peep = save.meta_pending_peep.duplicate(true)
 	meta_city_commitments = save.meta_city_commitments.duplicate(true)
 	balance_attempt_boundary.emit(&"save_loaded")
@@ -2792,6 +2890,8 @@ func apply_save(save: SaveData) -> void:
 		if ss != "":
 			owned_augment_ids.append(StringName(ss))
 	init_owned_augments()
+	city_development = _CITY_DEVELOPMENT.normalize_profile(save.meta_city_development, _city_development_owned_targets())
+	attempt_city_development = _CITY_DEVELOPMENT.normalize_snapshot(save.attempt_city_development, _city_development_owned_targets(), city_development) if save.attempt_active else {}
 
 	# Enemy dossiers are profile knowledge, not attempt state.
 	discovered_enemy_ids.clear()
@@ -2958,6 +3058,11 @@ func apply_save(save: SaveData) -> void:
 		attempt_stat_delta = save.attempt_mod_stat_delta
 		attempt_augment_transcended = save.attempt_augment_transcended.duplicate(true)
 		attempt_binding_offer = save.attempt_binding_offer.duplicate(true)
+		attempt_binding_rewards_remaining = clampi(save.attempt_binding_rewards_remaining, 0, 2) if pending_augment_pick else 0
+		if pending_augment_pick and attempt_binding_rewards_remaining == 0:
+			attempt_binding_rewards_remaining = 1
+		attempt_binding_echo_claimed = save.attempt_binding_echo_claimed or attempt_segment > 5
+		attempt_binding_sequence = clampi(save.attempt_binding_sequence, 0, 1)
 		attempt_binding_recasts = maxi(0, int(save.attempt_binding_recasts))
 		attempt_binding_consecrations = maxi(0, int(save.attempt_binding_consecrations))
 		attempt_augment_duos = save.attempt_augment_duos.duplicate(true)
@@ -3060,6 +3165,9 @@ func apply_save(save: SaveData) -> void:
 		attempt_stat_delta = null
 		attempt_augment_transcended = {}
 		attempt_binding_offer = []
+		attempt_binding_rewards_remaining = 0
+		attempt_binding_echo_claimed = false
+		attempt_binding_sequence = 0
 		attempt_binding_recasts = 0
 		attempt_binding_consecrations = 0
 		attempt_augment_duos = {}
@@ -3093,6 +3201,7 @@ func _recover_segment_completion(save: SaveData) -> void:
 		return
 	_suppress_autosave = true
 	if attempt_active and not has_pending_peep() and completed_segment == attempt_segment:
+		attempt_pending_segment_completion = completed_segment
 		_apply_segment_completion(completed_segment)
 		save.attempt_resume_scene = PATH_HUB_WORLD
 	# A stale, invalid, inactive or terminal marker is discarded without rewards.
@@ -3108,6 +3217,12 @@ func write_save(save: SaveData) -> void:
 	save.save_version = SaveData.CURRENT_SAVE_VERSION
 	save.game_version = String(_BUILD_INFO_SCRIPT.version())
 	save.best_followers = maxi(save.best_followers, followers)
+	city_development = _CITY_DEVELOPMENT.normalize_profile(city_development, _city_development_owned_targets())
+	save.meta_city_development = city_development.duplicate(true)
+	save.attempt_city_development = attempt_city_development.duplicate(true) if attempt_active else {}
+	save.attempt_binding_rewards_remaining = attempt_binding_rewards_remaining if attempt_active and pending_augment_pick else 0
+	save.attempt_binding_echo_claimed = attempt_binding_echo_claimed if attempt_active else false
+	save.attempt_binding_sequence = attempt_binding_sequence if attempt_active else 0
 
 	# Last chosen setup
 	save.last_race_id = selected_race_id
@@ -3319,6 +3434,9 @@ func start_new_attempt() -> void:
 	if has_pending_peep() and not _accepting_peep:
 		return
 	balance_attempt_boundary.emit(&"restarted")
+	city_development = _CITY_DEVELOPMENT.normalize_profile(city_development, _city_development_owned_targets())
+	attempt_city_development = _CITY_DEVELOPMENT.snapshot(city_development, _city_development_owned_targets())
+	_city_development_awards_enabled = SaveManager != null and SaveManager.current_save != null
 	# Attempt resets (die-die behavior)
 	attempt_active = true
 	attempt_segment = 1
@@ -3367,6 +3485,7 @@ func start_new_attempt() -> void:
 	attempt_doctrine_events.clear()
 	_reset_attempt_choice_state()
 	# Only a genuinely new attempt adopts city pacing. Lazy initialization
+	attempt_binding_rewards_remaining = 1 if pending_augment_pick else 0
 	# and older saved ledgers retain revision 0 through the ledger defaults.
 	attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id), new_run_tree_version, 1)
 	_ascension_ledger = null
@@ -3412,7 +3531,22 @@ func on_segment_completed(completed_segment: int) -> void:
 
 
 func _apply_segment_completion(completed_segment: int) -> void:
+	var genuine_settlement := completed_segment == attempt_segment and attempt_pending_segment_completion == completed_segment
+	# A current S5 may still settle after its reward was claimed. Only an
+	# out-of-sequence callback is rejected; the marker guards the reward below.
+	if completed_segment == 5 and completed_segment != attempt_segment:
+		return
 	attempt_pending_segment_completion = 0
+	if genuine_settlement:
+		_award_city_development(completed_segment)
+	var binding_rewards := 1
+	if completed_segment == 5:
+		binding_rewards = 0
+		if not attempt_binding_echo_claimed:
+			attempt_binding_echo_claimed = true
+			binding_rewards = 1
+			if genuine_settlement and _CITY_DEVELOPMENT.rank(_effective_city_development(), "binding_echo") > 0 and _city_development_awards_enabled and SaveManager != null and SaveManager.current_save != null and not debug_dev_mode and not debug_dev_segment and not has_pending_peep():
+				binding_rewards = 2
 	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():
 		ascension_ledger().note_segment_completed(completed_segment)
@@ -3446,8 +3580,10 @@ func _apply_segment_completion(completed_segment: int) -> void:
 
 	# Milestones. A Binding follows every segment (was 2 and 7 only): the
 	# augment pick is the run's recurring spike (bindings-and-theses §3).
-	if completed_segment >= 1:
+	if completed_segment >= 1 and binding_rewards > 0:
 		pending_augment_pick = true
+		attempt_binding_rewards_remaining = binding_rewards
+		attempt_binding_sequence = 0
 		attempt_binding_offer.clear()
 		attempt_binding_recasts = 0
 		attempt_binding_consecrations = 0
@@ -3574,6 +3710,7 @@ func on_attempt_failed_die_die() -> void:
 	balance_attempt_boundary.emit(&"failed")
 	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
 	attempt_active = false
+	attempt_city_development = {}
 	attempt_pending_segment_completion = 0
 	attempt_segment = 1
 	attempt_deaths_this_segment = 0

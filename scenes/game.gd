@@ -21,6 +21,10 @@ const ESCAPE_RELEASE_SCRIPT := preload("res://core/systems/world/EscapeRelease.g
 # IMPORTANT: only ONE augment_select var (no duplicate @onready + var)
 var augment_select: CanvasLayer = null
 var _augment_prior_paused: bool = false
+var _augment_pause_owned: bool = false
+var _augment_transition_pending: bool = false
+var _augment_generation: int = 0
+signal augment_choices_finished
 
 var _game_over_ui: Control = null
 var _run_ended: bool = false
@@ -52,6 +56,11 @@ func _ready() -> void:
 	if Global != null and Global.has_pending_peep():
 		Global.goto_resume()
 		return
+	# A saved mandatory Binding must own the pause before deferred entry work.
+	if Global != null and Global.pending_augment_pick and Global.attempt_segment != 1 and not Global.debug_dev_segment:
+		_augment_prior_paused = false
+		_augment_pause_owned = true
+		get_tree().paused = true
 	_pause_menu = preload("res://ui/screens/PauseMenu.tscn").instantiate()
 	_pause_menu.resume_scene = Global.PATH_GAME
 	_pause_menu.can_open = func() -> bool:
@@ -273,80 +282,96 @@ func _on_bag_changed() -> void:
 func present_augment_pick_and_wait() -> void:
 	if Global == null or not Global.pending_augment_pick:
 		return
-	if augment_select != null and is_instance_valid(augment_select):
+	if not is_instance_valid(augment_select) and not _augment_transition_pending:
+		_spawn_augment_select()
+	if not is_instance_valid(augment_select) and not _augment_transition_pending:
 		return
-	_spawn_augment_select()
-	if augment_select == null:
-		return
-	if augment_select.has_signal("augment_chosen"):
-		await augment_select.augment_chosen
+	await augment_choices_finished
 
 
 func _spawn_augment_select() -> void:
+	if is_instance_valid(augment_select) or _augment_transition_pending:
+		return
 	if augment_select_scene == null:
 		push_warning("augment_select_scene is null (missing AugmentSelect.tscn)")
 		return
-
-	augment_select = augment_select_scene.instantiate() as CanvasLayer
-	if augment_select == null:
+	var screen := augment_select_scene.instantiate() as CanvasLayer
+	if screen == null:
 		push_warning("Failed to instantiate augment_select_scene")
 		return
-
-	$UI.add_child(augment_select)
-
-	# make sure UI works while paused
-	augment_select.process_mode = Node.PROCESS_MODE_ALWAYS
-	augment_select.layer = 100
-
-	# Pause the game while choosing; remember what to restore.
-	_augment_prior_paused = get_tree().paused
+	# One pause owner spans every earned choice. A second popup must not
+	# replace the genuine pre-choice pause with the first popup's pause.
+	if not _augment_pause_owned:
+		_augment_prior_paused = get_tree().paused
+		_augment_pause_owned = true
 	get_tree().paused = true
+	_augment_generation += 1
+	augment_select = screen
+	screen.process_mode = Node.PROCESS_MODE_ALWAYS
+	screen.layer = 100
+	$UI.add_child(screen)
+	var chosen := Callable(self, "_on_augment_chosen").bind(screen.get_instance_id(), _augment_generation)
+	if screen.has_signal("augment_chosen"):
+		screen.connect("augment_chosen", chosen)
+	elif screen.has_signal("picked"):
+		screen.connect("picked", chosen)
+	if screen.has_method("open_choose_3"):
+		screen.call_deferred("open_choose_3")
+	elif screen.has_method("open_for_slot"):
+		screen.call_deferred("open_for_slot", 0)
 
-	# connect signal
-	if augment_select.has_signal("augment_chosen"):
-		augment_select.connect("augment_chosen", Callable(self, "_on_augment_chosen"))
-	elif augment_select.has_signal("picked"):
-		augment_select.connect("picked", Callable(self, "_on_augment_chosen"))
 
-	# open deferred so AugmentSelect is READY first
-	if augment_select.has_method("open_choose_3"):
-		augment_select.call_deferred("open_choose_3")
-	elif augment_select.has_method("open_for_slot"):
-		augment_select.call_deferred("open_for_slot", 0)
-
-
-func _on_augment_chosen(a: AugmentData) -> void:
-	# Even if a == null, unpause so the run can proceed.
+func _on_augment_chosen(a: AugmentData, source_id: int = 0, generation: int = -1) -> void:
+	if not is_instance_valid(augment_select) or _augment_transition_pending:
+		return
+	if source_id != 0 and (augment_select.get_instance_id() != source_id or generation != _augment_generation):
+		return
 	if a != null:
 		if OS.is_debug_build():
 			print("[Game] augment received id=%s" % a.id)
-
-		# HUD display (optional; AugmentSelect already writes into Global.permanent_augment_ids)
 		if hud != null and hud.has_method("add_augment_to_next_slot"):
 			hud.call("add_augment_to_next_slot", a)
-
+	# AugmentSelect has already applied the card through Global. Global alone
+	# consumes the reward and decides whether another earned Binding remains.
 	if Global != null:
-		Global.pending_augment_pick = false
 		Global.save_current_profile()
+	var closing := augment_select
+	augment_select = null
+	_augment_transition_pending = true
+	closing.queue_free()
+	_after_augment_screen_closed(closing, _augment_generation)
 
-	_unpause_after_augment()
+
+func _after_augment_screen_closed(closing: CanvasLayer, generation: int) -> void:
+	var tree := get_tree()
+	if is_instance_valid(closing) and closing.is_inside_tree():
+		await closing.tree_exited
+	# The selecting input release must finish before the next popup exists.
+	# World processing stays paused throughout this transition.
+	await tree.process_frame
+	if not is_inside_tree() or generation != _augment_generation:
+		return
+	_augment_transition_pending = false
+	if Global != null and Global.pending_augment_pick:
+		_spawn_augment_select()
+	else:
+		_unpause_after_augment()
 
 
 func _unpause_after_augment() -> void:
-	get_tree().paused = _augment_prior_paused
+	if _augment_pause_owned:
+		get_tree().paused = _augment_prior_paused
 	_augment_prior_paused = false
-
-	# A pause the player spent reading must not release as a banked wave.
+	_augment_pause_owned = false
+	_augment_transition_pending = false
+	# Reading either offer must not release as a banked spawn wave.
 	for spawner_node in get_tree().get_nodes_in_group(&"enemy_spawner"):
 		if spawner_node.has_method("reset_spawn_clock"):
 			spawner_node.call("reset_spawn_clock")
-
-	# Remove overlay so it can't visually cover tutorial tips.
-	if augment_select != null and is_instance_valid(augment_select):
+	if is_instance_valid(augment_select):
 		augment_select.queue_free()
 	augment_select = null
-
-	# Start tutorial intro AFTER the run is actually playable.
+	augment_choices_finished.emit()
 	call_deferred("_tutorial_intro_sequence")
 
 

@@ -1,0 +1,27 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: one earned Research chooses conditional Binding Echo
+PASS: reaching the fifth Rite with the snapshotted perk earns two choices
+PASS: the first actual Binding opens with the world paused
+PASS: the actual offer has a normal native card to select
+AUGMENT PICKED:augment_doctrine_of_burden { "kind": "new", "id": "augment_doctrine_of_burden", "grade": 0 }
+[Game] augment received id=augment_doctrine_of_burden
+ERROR: FAIL: the first normal selection keeps exactly one earned Echo choice pending
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentBindingUiTest.gd:41)
+       [1] _run (res://tools/tests/CityDevelopmentBindingUiTest.gd:68)
+       [2] _frames (res://tools/tests/CityDevelopmentBindingUiTest.gd:45)
+ERROR: FAIL: Game presents a fresh second normal Binding after the first closes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentBindingUiTest.gd:41)
+       [1] _run (res://tools/tests/CityDevelopmentBindingUiTest.gd:69)
+       [2] _frames (res://tools/tests/CityDevelopmentBindingUiTest.gd:45)
+ERROR: FAIL: world processing and gameplay input never resume between the two choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityDevelopmentBindingUiTest.gd:41)
+       [1] _run (res://tools/tests/CityDevelopmentBindingUiTest.gd:70)
+       [2] _frames (res://tools/tests/CityDevelopmentBindingUiTest.gd:45)
+CityDevelopmentBindingUiTest: 4 passed, 3 failed

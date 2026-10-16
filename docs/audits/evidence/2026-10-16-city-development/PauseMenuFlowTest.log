@@ -1,0 +1,43 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[Game] ready seg=2 race=human style=ranged seed=1794247309087
+PASS: real Game loads
+PASS: Escape opens the real Game pause menu
+PASS: shared controller defaults preserve existing UI events without duplicates
+PASS: native controller D-pad navigates pause buttons
+PASS: native controller A opens Settings while paused
+PASS: native controller B closes Settings back to pause
+PASS: native controller B resumes the world
+PASS: native controller B opens pause through shared cancel binding
+PASS: paused live world does not process
+PASS: pause menu owns pause independently of inventory
+PASS: Escape resumes safely
+PASS: world resumes processing
+PASS: Resume preserves active time scale
+PASS: unhandled Escape can open pause over a mandatory paused choice
+PASS: Resume restores prior modal pause and pending offer
+PASS: Settings cancel over focused real choice leaves its pending selection intact
+PASS: confirmation and pause Escape never cancel the underlying focused choice
+PASS: inventory gets first Escape without stacking pause
+PASS: native Tab traverses paused menu without opening inventory
+PASS: native Shift-Tab returns focus to Resume
+PASS: Settings opens while world remains paused
+PASS: Settings owns input without opening underlying Ascension
+PASS: Settings Escape returns to paused menu
+PASS: bag_toggle remapped to Enter still activates native pause button without underlying management
+PASS: ascension_open remapped to controller A still activates native pause button without underlying management
+PASS: Escape overlapping management still resumes active pause safely
+PASS: Quit confirmation can cancel without leaving
+PASS: Main Menu confirmation cancellation keeps pause
+PASS: world remains frozen through navigation loading frames
+PASS: Main Menu arrives without pause leakage
+PASS: Game exit durably saves current attempt and existing Wardstone
+PASS: exit creates no attempt, failure or story account
+[Game] ready seg=2 race=human style=ranged seed=1794247309087
+PASS: Continue follows saved Game checkpoint semantics
+PASS: real HubWorld installs same pause flow
+PASS: hub panel gets Escape before pause
+PASS: Escape pauses hub
+PASS: hub exit saves hub destination, vendor and pending reward unchanged
+PASS: Continue returns to hub without pause leakage
+PauseMenuFlowTest: 38 passed, 0 failed

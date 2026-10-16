@@ -1,0 +1,578 @@
+{
+  "recorded_at": "2026-10-16T19:34:41.432Z",
+  "engine": "4.7.1.stable.official.a13da4feb",
+  "branch": "feat/authoritative-enemy-world",
+  "remote_branch": "origin/enemy-world-work",
+  "execution": "Serial processes; isolated APPDATA/LOCALAPPDATA. Process exits and diagnostics inspected.",
+  "feature_suites": [
+    {
+      "name": "AugmentBindingTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "AugmentBindingTest"
+      },
+      "elapsed_ms": 43196,
+      "summaries": [
+        "AugmentBindingTest: 64 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "AugmentBindingTest.log",
+      "result_record": "green-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/AugmentBindingTest.tscn"
+      ]
+    },
+    {
+      "name": "CityDevelopmentTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "CityDevelopmentTest"
+      },
+      "elapsed_ms": 53009,
+      "summaries": [
+        "CityDevelopmentTest: 351 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "CityDevelopmentTest.log",
+      "result_record": "green-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityDevelopmentTest.tscn"
+      ]
+    },
+    {
+      "name": "CityDevelopmentBindingUiTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "CityDevelopmentBindingUiTest"
+      },
+      "elapsed_ms": 50770,
+      "summaries": [
+        "CityDevelopmentBindingUiTest: 25 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "CityDevelopmentBindingUiTest.log",
+      "result_record": "green-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityDevelopmentBindingUiTest.tscn"
+      ]
+    },
+    {
+      "name": "CityFarmingExperimentsTest",
+      "exit": 0,
+      "signal": null,
+      "elapsed_ms": 37781,
+      "summaries": [
+        "CityFarmingExperimentsTest: 51 passed, 0 failed; args=[]"
+      ],
+      "diagnostics": [],
+      "log": "CityFarmingExperimentsTest.log",
+      "result_record": "first-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityFarmingExperimentsTest.tscn"
+      ]
+    },
+    {
+      "name": "AscensionRuntimeSafetyTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "AscensionRuntimeSafetyTest"
+      },
+      "elapsed_ms": 19256,
+      "summaries": [
+        "AscensionRuntimeSafetyTest: 21 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "AscensionRuntimeSafetyTest.log",
+      "result_record": "finalfeature-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/AscensionRuntimeSafetyTest.tscn"
+      ]
+    },
+    {
+      "name": "CityDevelopmentUiTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "CityDevelopmentUiTest"
+      },
+      "elapsed_ms": 28135,
+      "summaries": [
+        "CityDevelopmentUiTest: 86 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "CityDevelopmentUiTest.log",
+      "result_record": "finalfeature-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityDevelopmentUiTest.tscn"
+      ]
+    },
+    {
+      "name": "CityDevelopmentPacingProbe",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "CityDevelopmentPacingProbe",
+        "env": {
+          "CITY_DEVELOPMENT_PROBE_OUT": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/docs/audits/evidence/2026-10-16-city-development/pacing.json"
+        }
+      },
+      "elapsed_ms": 43847,
+      "summaries": [
+        "CityDevelopmentPacingProbe: 159 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "CityDevelopmentPacingProbe.log",
+      "result_record": "finalfeature-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityDevelopmentPacingProbe.tscn"
+      ]
+    },
+    {
+      "name": "ScriptParseAuditTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "ScriptParseAuditTest"
+      },
+      "elapsed_ms": 40624,
+      "summaries": [
+        "ScriptParseAuditTest: 530 passed, 0 failed (checked 530 scripts across 8 roots)"
+      ],
+      "diagnostics": [],
+      "log": "ScriptParseAuditTest.log",
+      "result_record": "finalfeature-results.json",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/ScriptParseAuditTest.tscn"
+      ]
+    }
+  ],
+  "affected_regressions": [
+    {
+      "name": "CityContinuationTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "CityContinuationTest"
+      },
+      "elapsed_ms": 25552,
+      "summaries": [
+        "CityContinuationTest: 92 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "CityContinuationTest.log",
+      "original_log": "closing-regression-CityContinuationTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/CityContinuationTest.tscn"
+      ]
+    },
+    {
+      "name": "SegmentCompletionPersistenceTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "SegmentCompletionPersistenceTest"
+      },
+      "elapsed_ms": 16973,
+      "summaries": [
+        "SegmentCompletionPersistenceTest: 38 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "SegmentCompletionPersistenceTest.log",
+      "original_log": "closing-regression-SegmentCompletionPersistenceTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/SegmentCompletionPersistenceTest.tscn"
+      ]
+    },
+    {
+      "name": "AttemptResetTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "AttemptResetTest"
+      },
+      "elapsed_ms": 14087,
+      "summaries": [
+        "AttemptResetTest: 18 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "AttemptResetTest.log",
+      "original_log": "closing-regression-AttemptResetTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/AttemptResetTest.tscn"
+      ]
+    },
+    {
+      "name": "SaveMigrationMatrixTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "SaveMigrationMatrixTest"
+      },
+      "elapsed_ms": 18169,
+      "summaries": [
+        "SaveMigrationMatrixTest: 34 passed, 0 failed"
+      ],
+      "diagnostics": [
+        "WARNING: Save slot 97 was written by a newer build (save_version 6 > 1, game ); loading best-effort."
+      ],
+      "log": "SaveMigrationMatrixTest.log",
+      "original_log": "closing-regression-SaveMigrationMatrixTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/SaveMigrationMatrixTest.tscn"
+      ]
+    },
+    {
+      "name": "AscensionCityPacingTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "AscensionCityPacingTest"
+      },
+      "elapsed_ms": 18111,
+      "summaries": [
+        "AscensionCityPacingTest: 624 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "AscensionCityPacingTest.log",
+      "original_log": "closing-tail-AscensionCityPacingTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/AscensionCityPacingTest.tscn"
+      ]
+    },
+    {
+      "name": "PauseMenuFlowTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "PauseMenuFlowTest"
+      },
+      "elapsed_ms": 44443,
+      "summaries": [
+        "PauseMenuFlowTest: 38 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "PauseMenuFlowTest.log",
+      "original_log": "closing-tail-PauseMenuFlowTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/PauseMenuFlowTest.tscn"
+      ]
+    },
+    {
+      "name": "ReliquaryCoreTest",
+      "exit": 0,
+      "signal": null,
+      "job": {
+        "name": "ReliquaryCoreTest"
+      },
+      "elapsed_ms": 19040,
+      "summaries": [
+        "ReliquaryCoreTest: 87 passed, 0 failed"
+      ],
+      "diagnostics": [],
+      "log": "ReliquaryCoreTest.log",
+      "original_log": "closing-reliquary-ReliquaryCoreTest.log",
+      "arguments": [
+        "--headless",
+        "--audio-driver",
+        "Dummy",
+        "--flush-output",
+        "--path",
+        "<project>",
+        "res://tools/tests/ReliquaryCoreTest.tscn"
+      ]
+    }
+  ],
+  "import": {
+    "name": "SharedImport",
+    "exit": 0,
+    "signal": null,
+    "job": {
+      "name": "SharedImport",
+      "import": true,
+      "env": {
+        "APPDATA": "C:/Users/NAURIS~1/AppData/Local/Temp/sa-city-mvbd17v5",
+        "LOCALAPPDATA": "C:/Users/NAURIS~1/AppData/Local/Temp/sa-city-mvbd17v5"
+      }
+    },
+    "elapsed_ms": 89688,
+    "summaries": [],
+    "diagnostics": [],
+    "log": "SharedImport.log",
+    "original_log": "closing-import-SharedImport.log",
+    "arguments": [
+      "--headless",
+      "--import",
+      "--path",
+      "<project>"
+    ]
+  },
+  "render": {
+    "name": "CityDevelopmentPreview",
+    "exit": 0,
+    "signal": null,
+    "job": {
+      "name": "CityDevelopmentPreview",
+      "rendered": true,
+      "scene": "tools/dev/CityDevelopmentPreview.tscn",
+      "args": [
+        "--",
+        "--out=C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/docs/art/reference/2026-10-16-city-development"
+      ],
+      "env": {
+        "APPDATA": "C:/Users/NAURIS~1/AppData/Local/Temp/sa-city-mvbd17v5",
+        "LOCALAPPDATA": "C:/Users/NAURIS~1/AppData/Local/Temp/sa-city-mvbd17v5"
+      }
+    },
+    "elapsed_ms": 35026,
+    "summaries": [],
+    "diagnostics": [],
+    "log": "CityDevelopmentPreview.log",
+    "original_log": "closing-render-CityDevelopmentPreview.log",
+    "arguments": [
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--flush-output",
+      "--path",
+      "<project>",
+      "res://tools/dev/CityDevelopmentPreview.tscn",
+      "--",
+      "--out=C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/docs/art/reference/2026-10-16-city-development"
+    ],
+    "capture_manifest": "../../../art/reference/2026-10-16-city-development/capture-info.json",
+    "captures": 12,
+    "capture_failures": 0
+  },
+  "initial_behavioral_red": [
+    {
+      "name": "CityDevelopmentTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 36118,
+      "summaries": [
+        "CityDevelopmentTest: 0 passed, 1 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: city research backend exists"
+      ],
+      "log": "red-CityDevelopmentTest.log"
+    },
+    {
+      "name": "CityDevelopmentUiTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 44440,
+      "summaries": [
+        "CityDevelopmentUiTest: 0 passed, 1 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: main menu exposes Development through an actual native button"
+      ],
+      "log": "red-CityDevelopmentUiTest.log"
+    },
+    {
+      "name": "CityFarmingExperimentsTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 31573,
+      "summaries": [
+        "CityFarmingExperimentsTest: 44 passed, 7 failed; args=[]"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: baseline explicitly disables all four independent comparisons",
+        "ERROR: FAIL: selecting no_overtime_drop_bonus preserves every other comparison",
+        "ERROR: FAIL: selecting no_overtime_rarity_bonus preserves every other comparison",
+        "ERROR: FAIL: selecting gospel_strongest_rewards preserves every other comparison",
+        "ERROR: FAIL: selecting no_permanent_development preserves every other comparison",
+        "ERROR: FAIL: capture metadata declares each selected flag as plain data: { \"no_overtime_drop_bonus\": false, \"no_overtime_rarity_bonus\": false, \"gospel_strongest_rewards\": false }",
+        "ERROR: FAIL: persisted capture carries independent selected flags"
+      ],
+      "log": "red-CityFarmingExperimentsTest.log"
+    }
+  ],
+  "first_source_diagnostics": [
+    {
+      "name": "AugmentBindingTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 36591,
+      "summaries": [
+        "AugmentBindingTest: 63 passed, 1 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: a Binding follows every segment (1 through 11), not just 2 and 7"
+      ],
+      "log": "first-AugmentBindingTest.log"
+    },
+    {
+      "name": "CityDevelopmentTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 56118,
+      "summaries": [
+        "CityDevelopmentTest: 338 passed, 8 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: genuine claimed S5 recovery advances and clears intent instead of stranding the city",
+        "ERROR: FAIL: first Echo Binding uses ordinary production card application",
+        "ERROR: FAIL: first choice consumes only one reward and clears the first table",
+        "ERROR: FAIL: second normal offer and its queue survive reload without reroll",
+        "ERROR: FAIL: duplicate S5 callback cannot replace or replenish the second reward",
+        "ERROR: FAIL: second Echo Binding uses ordinary production card application",
+        "ERROR: FAIL: two choices exhaust the conditional reward",
+        "ERROR: FAIL: duplicate completion after both choices cannot mint more Bindings"
+      ],
+      "log": "first-CityDevelopmentTest.log"
+    },
+    {
+      "name": "CityDevelopmentUiTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 44263,
+      "summaries": [
+        "CityDevelopmentUiTest: 82 passed, 1 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: native selector activation retargets purchased training for free",
+        "ERROR: Must be an ancestor of the control.",
+        "ERROR: Must be an ancestor of the control."
+      ],
+      "log": "first-CityDevelopmentUiTest.log"
+    },
+    {
+      "name": "CityDevelopmentBindingUiTest",
+      "exit": 1,
+      "signal": null,
+      "elapsed_ms": 39529,
+      "summaries": [
+        "CityDevelopmentBindingUiTest: 4 passed, 3 failed"
+      ],
+      "diagnostics": [
+        "ERROR: FAIL: the first normal selection keeps exactly one earned Echo choice pending",
+        "ERROR: FAIL: Game presents a fresh second normal Binding after the first closes",
+        "ERROR: FAIL: world processing and gameplay input never resume between the two choices"
+      ],
+      "log": "first-CityDevelopmentBindingUiTest.log"
+    }
+  ],
+  "corrections": [
+    {
+      "log": "reliquary-before-lore-fixture-correction.log",
+      "exit": 1,
+      "passed": 86,
+      "failed": 1,
+      "cause": "Fixture omitted8optional lore entries. Actual69correct; lore-owned expected-count correction, final87/0exit0."
+    },
+    {
+      "log": "preview-before-cache-isolation.log",
+      "exit": 0,
+      "diagnostics": 3,
+      "cause": "GLES cache-directory creation error at shader_gles3.cpp:802; OS cause unknown. Fresh short process-local APPDATA/LOCALAPPDATA resolves; final render clean."
+    }
+  ],
+  "excluded_evidence": [
+    "Unrecorded Binding diagnostic exit excluded; clean25/0rerun used.",
+    "Standalone Game --check-only without autoloads invalid diagnostic.",
+    "Earlier native popup fixture did not embed subwindow and scrolled non-descendant; final86/0uses native input.",
+    "Earlier probe expected raw JSON equality and omitted Tesla rank-passive Haste; final159/0corrected actual mechanics.",
+    "First preview3bounds failures fixed; mislabeled superseded captures removed."
+  ],
+  "gameplay_source_manifest": "gameplay-source-hashes.json",
+  "gameplay_scripts_unchanged_since_parse": 530,
+  "owned_source_manifest": "owned-source-hashes.json",
+  "scope_limits": [
+    "Stationary probe is not a full-city playtest or performance benchmark.",
+    "Research rules do not solve all Stash/reward farming.",
+    "Opening/PeeP/lore and combat work owned by other chats."
+  ],
+  "review": "scoped-review.md"
+}

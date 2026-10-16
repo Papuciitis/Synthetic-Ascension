@@ -170,6 +170,8 @@ func begin_gameplay(player: Node) -> void:
 			"city_farming_experiments": CityExperiments.metadata(),
 			"recorder_revision": RECORDER_REVISION, "balance_revision": balance_revision(),
 			"tuning_stages": tuning_stages(), "tuning_hash": tuning_hash(), "features": features()}
+		if Global.has_method("city_development_capture_metadata"):
+			metadata["city_development"] = Writer.json_safe(Global.call("city_development_capture_metadata"))
 		_ledger = Ledger.new()
 		_ledger.recruit_reasons = _recruit_reasons()
 		_ledger.start(metadata, Global.followers, Global.attempt_segment)

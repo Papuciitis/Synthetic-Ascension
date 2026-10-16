@@ -1,0 +1,90 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: six Duos, each of two real augments with a rule
+PASS: seven combat augments with two Facets each
+PASS: a Facet's numbers read from the table, 1.0 without one
+PASS: Corruption deals 45 / 35 / 20
+PASS: Luck moves up to 10 points from Sundered to Exalted
+PASS: Exalted +3, Scarred +2, Sundered -2 never below 1
+PASS: a Lv.5 donor pours 2 levels for 80 Followers; Lv.1 pours nothing
+PASS: eight Vouchers, 300 / 350 at the first two Hubs as before, then +100 a segment (follower economy audit P4)
+PASS: the Grimoire lists 16 Transcendences, 6 Duos, 14 Facets, 3 Theses, 3 Canons and milestone/optional story records (69)
+PASS: a ready Duo is dealt first
+PASS: then a Facet
+PASS: and at least one ordinary card
+PASS: Duo and Facet cards carry no grade
+PASS: Transcend outranks Duo outranks Facet, and two specials is the most of three cards
+PASS: a Duo card shows its first member
+PASS: a Facet adds no level
+PASS: a Duo waits for both augments at Lv.3
+PASS: Magic Missile and Tesla Aura at Lv.3 ready Lightning Rods
+PASS: both may take a Facet at Lv.3
+PASS: the Binding deals the Duo
+PASS: and it applies
+PASS: Lightning Rods is active
+PASS: a Duo adds no levels
+PASS: a taken Duo is not dealt again
+PASS: a Duo sleeps while a member is unequipped
+PASS: a Facet card needs a Facet
+PASS: and one of its own augment's
+PASS: Overcharge applies
+PASS: and is the Tesla's Facet
+PASS: one Facet per augment
+PASS: a Binding with a card that can rise can be Burdened
+PASS: the Burden applies
+PASS: every graded card rises one, Apocryphal stays, a Transcend card is untouched
+PASS: a cursed relic is bound into the bag (curse_leadfoot_vigil)
+PASS: and the district hunts you: +20 Threat debt
+PASS: once per Binding
+PASS: never on the intro pick
+PASS: the Burden Writ waives the Threat
+PASS: only an equipped augment can be corrupted
+PASS: a Corruption deals an outcome (scarred)
+PASS: and moves the level by it
+PASS: once per augment per run
+PASS: a reload deals the same fate
+PASS: rolls follow 45 / 35 / 20 ({ "exalted": 1330, "scarred": 1056, "sundered": 614 })
+PASS: a Scarred augment worn costs 10% Max HP
+PASS: and nothing once it is taken off
+PASS: a Lv.5 donor offers 2 levels for 80
+PASS: an unequipped recipient is refused
+PASS: an augment cannot feed itself
+PASS: Transfusion: Tesla 3 -> 5, the donor back to Lv.1
+PASS: and it cost 80 Followers
+PASS: a spent donor has nothing left to give
+PASS: a Lv.19 recipient takes 1 of the donor's 3 levels and pays for 1 ({ "ok": true, "gain": 1, "cost": 40, "per_level": 40, "reason": "" })
+PASS: a recipient at the cap is refused, so the donor is never burned for nothing
+PASS: without the Followers nothing moves
+PASS: two Vouchers, dealt once per Hub visit
+PASS: a new segment deals a new offer
+PASS: a Voucher needs its price
+PASS: a bought Voucher costs 650
+PASS: once per run
+PASS: only what is offered
+PASS: Fourth Seal Draft deals one more card
+PASS: Gilded Ink: grades x1.4
+PASS: Recast Indulgence halves the Recast
+PASS: Tithe Sermon: Abstain x1.5
+PASS: Catalyst Primer: Transcend a level sooner
+PASS: Concordance and Whetstone: Duos and Facets from Lv.2
+PASS: and never below Lv.3
+PASS: a Transcendence enters the Grimoire
+PASS: and is announced once
+PASS: a known entry is not noted twice
+PASS: the Grimoire survives a new attempt
+PASS: a second circuit plate writes the Circuit Thesis
+PASS: Duos, Facets and Corruptions survive a reload
+PASS: so do the Burden, the Vouchers and their offer
+PASS: and the Grimoire
+PASS: with no attempt the run state is cleared but the Grimoire is kept
+PASS: an older save loads the new fields as empty
+PASS: a corrupted augment cannot be a donor (a corrupted augment's levels are bound to it)
+PASS: a Recast after a Burden deals the new table raised too ([1, 1, 1] from [0, 0, 0]; first deal [0, 0, 0])
+PASS: with a full bag the Burden is not offered, so the relic never leaves the run
+PASS: and nothing reaches the profile stash
+PASS: one free place is enough
+PASS: and the relic lands in it
+PASS: a lucky crit swung at empty air recruits nobody
+PASS: one with an enemy near recruits a Follower
+PASS: a run saved before the Grimoire fills it on load
+ReliquaryCoreTest: 87 passed, 0 failed

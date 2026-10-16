@@ -8,6 +8,7 @@ extends Control
 ## changes, and the name. Back returns to the Archives; Begin starts the run.
 ## Selection, naming and the start itself work exactly as before.
 
+const CITY_DEVELOPMENT := preload("res://ui/screens/CityDevelopmentScreen.tscn")
 const ChoiceTileScript := preload("res://ui/components/ChoiceTile.gd")
 const ArcaneMotion := preload("res://ui/widgets/ArcaneMotion.gd")
 const ArcaneParticles := preload("res://ui/widgets/ArcaneParticles.gd")
@@ -57,6 +58,9 @@ const STYLE_MOODS: Dictionary = {"magic": &"arcane", "melee": &"hearth", "ranged
 @onready var vessel_label: Label = find_child("Vessel", true, false) as Label
 @onready var summary_label: RichTextLabel = find_child("Summary", true, false) as RichTextLabel
 @onready var window: Control = find_child("Window", true, false) as Control
+
+var _development_screen: CanvasLayer
+var _development_button: ArcaneMenuItem
 
 var race_group := ButtonGroup.new()
 var style_group := ButtonGroup.new()
@@ -114,6 +118,7 @@ func _ready() -> void:
 	if start_btn != null and not start_btn.pressed.is_connected(_on_start_run_pressed):
 		start_btn.pressed.connect(_on_start_run_pressed)
 
+	_create_development_entry()
 	_update_start_state()
 	_update_preview(false)
 	_play_intro()
@@ -361,6 +366,8 @@ func _play_intro() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if _development_screen != null and is_instance_valid(_development_screen):
+		return
 	if event.is_action_pressed(&"ui_cancel"):
 		get_viewport().set_input_as_handled()
 		_on_back_to_saves_pressed()
@@ -466,3 +473,32 @@ func _on_replay_opening_toggled(enabled: bool) -> void:
 		return
 	Global.opening_replay_full_next_run = enabled
 	Global.save_current_profile()
+
+
+func _create_development_entry() -> void:
+	if back_btn == null:
+		return
+	_development_button = ArcaneMenuItem.new()
+	_development_button.name = "Development"
+	_development_button.text = "DEVELOPMENT"
+	_development_button.font_size = 18
+	_development_button.row_height = 54.0
+	_development_button.stroke_tail = 30.0
+	_development_button.show_rule = false
+	back_btn.get_parent().add_child(_development_button)
+	back_btn.get_parent().move_child(_development_button, back_btn.get_index() + 1)
+	_development_button.disabled = SaveManager.current_save == null
+	_development_button.tooltip_text = "Select a profile to choose retained improvements." if _development_button.disabled else "Your previous choices remain. Spend Research on one improvement at a time."
+	_development_button.pressed.connect(_open_development)
+
+func _open_development() -> void:
+	if SaveManager.current_save == null or (_development_screen != null and is_instance_valid(_development_screen)):
+		return
+	var screen := CITY_DEVELOPMENT.instantiate() as CanvasLayer
+	_development_screen = screen
+	add_child(screen)
+	screen.closed.connect(func() -> void:
+		_development_screen = null
+		if _development_button != null and is_instance_valid(_development_button):
+			_development_button.grab_focus()
+	)

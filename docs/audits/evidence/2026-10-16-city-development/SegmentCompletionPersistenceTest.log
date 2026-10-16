@@ -1,0 +1,41 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: completion intent is durable before the release awaits
+PASS: release keeps current segment and ungranted rewards
+PASS: release has not emitted completion telemetry or story side effects
+PASS: closing during release resumes at the next Hub
+PASS: recovered segment six grants its Binding and Doctrine
+PASS: recovery grants exactly one Evolution claim to the loaded ledger
+PASS: recovery preserves the loaded wallet and build
+PASS: recovery clears only completed segment checkpoint, loot, death and vendor state
+PASS: the reward snapshot clears intent with one completion event
+PASS: loading the settled save repeats no reward, story or completion event
+PASS: segment 1 completion card retains durable intent and current segment
+PASS: closing segment 1's card recovers once to Hub
+PASS: segment 10 completion card retains durable intent and current segment
+PASS: closing segment 10's card recovers once to Hub
+PASS: invalid or stale marker -1 cannot grant completion
+PASS: invalid or stale marker 5 cannot grant completion
+PASS: invalid or stale marker 7 cannot grant completion
+PASS: inactive attempt cannot recover a completion
+PASS: new attempt clears interrupted completion intent
+PASS: attempt failure clears interrupted completion intent
+PASS: terminal continuation clears pending completion before its save
+PASS: a suspended completion cannot settle after terminal continuation begins
+PASS: terminal continuation wins over a conflicting completion marker
+PASS: accepted continuation starts without the old completion
+PASS: remembered Method grants no effects before the interrupted milestone settles
+PASS: recovered segment three reactivates its loaded remembered Method
+PASS: recovery applies Open Circuit's haste and extra Binding card once
+PASS: reloading recovered commitment repeats neither effects nor completion
+PASS: unselected pending resource receives its settled Hub snapshot
+PASS: unselected recovery applies its own rewards exactly once
+PASS: unselected recovery leaves selected save resource unchanged
+PASS: unselected recovery writes neither selected slot nor an unselected slot
+PASS: zero-marker save version 0 loads without completion or rewards
+PASS: zero-marker save version 0 introduces no recovery write
+PASS: zero-marker save version 1 loads without completion or rewards
+PASS: zero-marker save version 1 introduces no recovery write
+PASS: normal presentation settles and saves Hub with no pending intent
+PASS: duplicate Game callback cannot duplicate completion or its Evolution claim
+SegmentCompletionPersistenceTest: 38 passed, 0 failed
