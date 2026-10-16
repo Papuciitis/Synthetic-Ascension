@@ -78,6 +78,10 @@ func _ready() -> void:
 
 func _run() -> void:
 	await _verify_exit_rite_ownership()
+	# A procedural segment's objective settles to one line; Segment 1 keeps its
+	# teaching detail on screen (checked after the procedural behaviour).
+	var previous_segment := Global.attempt_segment
+	Global.attempt_segment = 2
 
 	var checklist_items: Array = [
 		{"id": &"primary", "label": "Primary objective", "done": true},
@@ -175,6 +179,12 @@ func _run() -> void:
 		_check(_gate_rows.visible and _gate_hint.visible, "holding details expands the full Exit Rite")
 		_gate_controller.call("set_details_requested", false)
 		_check(not _gate_rows.visible and not _gate_hint.visible, "releasing details restores compact status")
+
+	Global.attempt_segment = 1
+	_objective_controller.call("_on_objective_changed", "REACH THE LABORATORY", "Follow the gold trail to the laboratory.")
+	await get_tree().create_timer(SETTLE_SECONDS).timeout
+	_check(_objective_panel.visible and _objective_detail.visible, "Segment 1 keeps its teaching instruction after settling")
+	Global.attempt_segment = previous_segment
 
 	_objective_controller.call("_on_management_mode_changed", true)
 	_gate_controller.call("_on_management_mode_changed", true)
