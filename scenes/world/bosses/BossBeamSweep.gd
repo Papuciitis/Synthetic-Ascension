@@ -22,7 +22,6 @@ var _phase: int = 0 # 0 telegraph, 1 sweep
 var _a0: float = 0.0
 var _a1: float = 0.0
 var _tick: float = 0.0
-var _touching: bool = false
 var _configured := false
 var _world_origin := Vector2.ZERO
 var _warning
@@ -36,7 +35,6 @@ func setup(world_pos: Vector2, a0: float, a1: float, src: Node) -> void:
 	_t = 0.0
 	_phase = 0
 	_tick = 0.0
-	_touching = false
 	if is_node_ready():
 		global_position = world_pos
 		_configure_geometry()
@@ -100,15 +98,6 @@ func _process(delta: float) -> void:
 
 	if _t >= sweep_time:
 		queue_free()
-
-func _on_area_entered(a: Area2D) -> void:
-	if a != null and a.is_in_group("player_hurtbox"):
-		_touching = true
-		_tick = damage_tick # hit quickly
-
-func _on_area_exited(a: Area2D) -> void:
-	if a != null and a.is_in_group("player_hurtbox"):
-		_touching = false
 
 func _damage_player() -> bool:
 	if get_tree().paused or not _attack_is_valid() or is_queued_for_deletion() or shape == null:

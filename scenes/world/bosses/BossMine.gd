@@ -4,6 +4,7 @@ class_name BossMine
 const Scope = preload("res://scenes/world/bosses/BossAttackScope.gd")
 const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
 const ImpactSprites = preload("res://scenes/world/bosses/BossImpactSprites.gd")
+const GROUP := &"boss_mine"
 
 @export var fuse: float = 1.10
 @export var radius: float = 90.0
@@ -36,6 +37,8 @@ func setup(world_pos: Vector2, src: Node, fuse_sec: float, radius_px: float, dmg
 func _ready() -> void:
 	if _configured:
 		global_position = _world_origin
+	# Brains find live mines through this group, never by scanning the world.
+	add_to_group(GROUP)
 	_configure_warning()
 	set_process(true)
 
