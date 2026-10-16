@@ -38,6 +38,7 @@ var _visual_profiles: Dictionary = {}
 var _texture_cache: Dictionary = {}
 var _diagnostic_texture: ImageTexture = null
 var _region_material: ShaderMaterial = null
+var _elite_material: ShaderMaterial = null
 var _shadow_material: ShaderMaterial = null
 var _visible_count := 0
 var _last_upload_usec := 0
@@ -169,6 +170,10 @@ func publish(
 			var handle := _view_handles[index]
 			var profile := _profile_for(handle)
 			var visual_key := profile.get("key", DIAGNOSTIC_KEY) as StringName
+			if (_view_flags[index] & Types.Flags.ELITE) != 0:
+				visual_key = StringName(String(visual_key) + ":elite")
+				profile = profile.duplicate()
+				profile["elite"] = true
 			var group_variant: Variant = groups.get(visual_key)
 			if group_variant == null:
 				group_variant = PackedInt32Array()
@@ -216,12 +221,15 @@ func publish(
 			entry["frame_size"] = _safe_texture_size(sprite.texture)
 			entry["base_uv"] = _texture_uv(sprite.texture)
 			entry["key"] = StringName("actor:" + base_texture.resource_path)
-		var actor_key := entry.get("key") as StringName
+		# Promotion and pooled reuse can change elite state without changing
+		# the texture. Choose the surface every publish, outside that cache.
+		var elite := enemy != null and enemy.is_elite
+		var actor_key := StringName(String(entry.get("key")) + (":elite" if elite else ""))
 		var actor_group_variant: Variant = actor_groups.get(actor_key)
 		if actor_group_variant == null:
 			actor_group_variant = [] as Array[Dictionary]
 			actor_groups[actor_key] = actor_group_variant
-			actor_metadata[actor_key] = {"key": actor_key, "texture": _base_texture(sprite.texture), "z_index": 0}
+			actor_metadata[actor_key] = {"key": actor_key, "texture": _base_texture(sprite.texture), "z_index": 0, "elite": elite}
 		(actor_group_variant as Array[Dictionary]).append(entry)
 	for dead_id in dead_actor_ids:
 		_actors.erase(dead_id)
@@ -392,7 +400,7 @@ func _batch_for(visual_key: StringName, profile: Dictionary) -> Dictionary:
 	instance.texture = _base_texture(_texture_for(profile))
 	instance.z_index = int(profile.get("z_index", 0))
 	instance.texture_filter = texture_filter_for(instance.texture)
-	instance.material = _ensure_region_material()
+	instance.material = _ensure_region_material(bool(profile.get("elite", false)))
 	var shadow_multimesh := MultiMesh.new()
 	shadow_multimesh.transform_format = MultiMesh.TRANSFORM_2D
 	shadow_multimesh.use_colors = true
@@ -809,7 +817,15 @@ func _profile_for(handle: int) -> Dictionary:
 	return profile
 
 
-func _ensure_region_material() -> ShaderMaterial:
+func _ensure_region_material(elite: bool = false) -> ShaderMaterial:
+	if elite:
+		if _elite_material == null:
+			_elite_material = ShaderMaterial.new()
+			_elite_material.shader = REGION_SHADER
+			_elite_material.set_shader_parameter("elite_enabled", true)
+			_elite_material.set_shader_parameter("glint_motion", not bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)))
+			_apply_flash_strength()
+		return _elite_material
 	if _region_material == null:
 		_region_material = ShaderMaterial.new()
 		_region_material.shader = REGION_SHADER
@@ -822,11 +838,15 @@ func _ensure_region_material() -> ShaderMaterial:
 func _apply_flash_strength() -> void:
 	if _region_material != null:
 		_region_material.set_shader_parameter(FLASH_STRENGTH_PARAM, AccessibilityPresentation.current_flash_alpha(1.0))
+	if _elite_material != null:
+		_elite_material.set_shader_parameter(FLASH_STRENGTH_PARAM, AccessibilityPresentation.current_flash_alpha(1.0))
 
 
 func _on_settings_changed(section: StringName, key: StringName, _value: Variant) -> void:
 	if section == &"accessibility" and key == &"combat_flash":
 		_apply_flash_strength()
+	if section == &"accessibility" and key == &"reduced_motion" and _elite_material != null:
+		_elite_material.set_shader_parameter("glint_motion", not bool(_value))
 
 
 func _color_from_variant(value: Variant, fallback: Color) -> Color:

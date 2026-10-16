@@ -110,6 +110,8 @@ func _run() -> void:
 	_test_catalog_and_phase_gating()
 	await _test_fast()
 	await _test_fast_still_tell()
+	await _test_body_marks_in_front()
+	await _test_batched_body_mark_depth()
 	await _test_armoured()
 	await _test_shielded()
 	await _test_vampiric()
@@ -285,6 +287,71 @@ func _test_fast_still_tell() -> void:
 		"a second-modifier FAST draws its chevrons beside the plate ring (drawn bits %d)" % second_drawn,
 	)
 	await _free_all([still, second])
+
+
+# --- body marks stay visible while the shield-radius wash stays behind ---
+func _test_body_marks_in_front() -> void:
+	var previous_reduced: Variant = SettingsManager.get_value(&"accessibility", &"reduced_motion", false)
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	var splitting := _spawn_enemy(Vector2(100.0, 400.0))
+	var vampiric := _spawn_enemy(Vector2(300.0, 400.0))
+	await get_tree().process_frame
+	splitting.apply_elite_modifiers([EliteModifiers.SHIELDED, EliteModifiers.SPLITTING])
+	vampiric.apply_elite_modifiers([EliteModifiers.VAMPIRIC, EliteModifiers.FAST])
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	for enemy in [splitting, vampiric]:
+		var mark := _mark_of(enemy)
+		var sprite := enemy.get_node("Sprite2D") as CanvasItem
+		var front_layer: Node2D = null
+		for child in mark.get_children():
+			var layer := child as Node2D
+			if layer != null and layer.z_as_relative and mark.z_index + layer.z_index > maxi(sprite.z_index, 0):
+				front_layer = layer
+		_check(front_layer != null and front_layer.is_visible_in_tree(), "a body seam or VAMPIRIC ring has a visible layer above both the sprite and the body batch")
+		_check(mark.z_index < mini(sprite.z_index, 0), "the shield, plates and motion marks retain their layer behind the body")
+		_check(not mark.is_animated(), "body marks stay still under reduced_motion")
+	_check((_drawn_bits_of(_mark_of(splitting)) & (EliteModifiers.BIT_SHIELDED | EliteModifiers.BIT_SPLITTING)) == (EliteModifiers.BIT_SHIELDED | EliteModifiers.BIT_SPLITTING), "the shield radius and front-facing seam both draw")
+	_check((_drawn_bits_of(_mark_of(vampiric)) & (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST)) == (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST), "the still VAMPIRIC ring and FAST chevrons both draw")
+	await _free_all([splitting, vampiric])
+
+
+# --- live batches sit under a z=10 proxy root, beside the actor nodes ---
+func _test_batched_body_mark_depth() -> void:
+	var previous_batching := Global.debug_enemy_visual_batching
+	Global.debug_enemy_visual_batching = true
+	var root := EnemyProxyRoot.new()
+	add_child(root)
+	root.set_process(false)
+	root.set_physics_process(false)
+	root.manager.enabled = false
+	var enemy := _spawn_enemy(Vector2(100.0, 400.0))
+	await get_tree().process_frame
+	enemy.apply_elite_modifiers([EliteModifiers.SHIELDED, EliteModifiers.SPLITTING])
+	var mark := _mark_of(enemy)
+	var front := mark.get_node("BodyMarks") as Node2D
+	_check(root.z_index == 10 and root.get_parent() == enemy.get_parent() and root.renderer.registered_actor_count() == 1 and not (enemy.get_node("Sprite2D") as CanvasItem).visible, "fixture: the real z=10 proxy root batches its sibling actor")
+	_check(mark.z_as_relative and mark.z_index == 9, "rear modifier marks sit just below the live batch at effective z=9")
+	_check(front.z_as_relative and mark.z_index + front.z_index == 11, "the seam sits above the live batch at effective z=11")
+	# An actor's own depth and a renderer that breaks inheritance must not
+	# shift a mark away from the body it actually accompanies.
+	enemy.z_index = 4
+	mark.call("_process", 0.0)
+	_check(enemy.z_index + mark.z_index == 9 and enemy.z_index + mark.z_index + front.z_index == 11, "an actor's local depth is removed when aligning marks with its separate batch")
+	root.z_index = 50
+	root.renderer.z_as_relative = false
+	root.renderer.z_index = 10
+	mark.call("_process", 0.0)
+	_check(enemy.z_index + mark.z_index == 9 and enemy.z_index + mark.z_index + front.z_index == 11, "renderer depth stops at z_as_relative=false instead of inheriting its root")
+	# Re-registering with batching off restores the sprite and its relative
+	# marks, even though this actor's own z is nonzero.
+	Global.debug_enemy_visual_batching = false
+	enemy.call("_register_batched_visual")
+	mark.call("_process", 0.0)
+	_check(mark.z_index == -1 and mark.z_index + front.z_index == 1, "fallback sprite marks return to relative -1 and +1")
+	Global.debug_enemy_visual_batching = previous_batching
+	await _free_all([enemy, root])
 
 
 # --- ARMOURED: a flat plate per hit ---

@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-16",
+  "engine": "Godot 4.7.1 stable a13da4feb",
+  "checks": [
+    {
+      "suite": "EnemyProxyRendererTest",
+      "mode": "headless",
+      "passes": 48,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "suite": "EnemyVisualBatchingTest",
+      "mode": "headless",
+      "passes": 9,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "suite": "CharacterAnimationTest",
+      "mode": "headless",
+      "passes": 163,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "mode": "headless",
+      "passes": 510,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "suite": "HitConfirmationTest",
+      "mode": "headless",
+      "passes": 25,
+      "failures": 0,
+      "exit_code": 0
+    },
+    {
+      "suite": "EliteModifierTest",
+      "mode": "headless",
+      "passes": 124,
+      "failures": 0,
+      "exit_code": 0,
+      "coverage": "Real z=10 proxy root, sibling actors, front/rear marks, actor depth, absolute renderer depth, fallback, mechanics, reduced motion and pooling."
+    },
+    {
+      "suite": "EliteSheenTest",
+      "mode": "OpenGL Compatibility / Intel UHD Graphics",
+      "passes": 21,
+      "failures": 0,
+      "exit_code": 0,
+      "coverage": "Cached texture promotion, ordinary peers, pool reset, live reduced-motion and flash settings; rendered persistent edge, dark interior, alpha/frame bounds, AtlasTexture fallback equivalence, full-cycle animated sweep, horizontal flip."
+    }
+  ],
+  "reported_passing_checks": 900,
+  "benchmark": {
+    "records": 600,
+    "publications": 120,
+    "elapsed_ms": 474.22,
+    "last_upload_usec": 4261,
+    "note": "One concurrent verification run failed the 50ms upload pin at 60.127ms. Isolated final rerun passed all 48 checks; no benchmark threshold changed."
+  },
+  "test_first_evidence": {
+    "initial_elite_surface": "7 passed / 5 failed before implementation",
+    "front_mark_layer": "116 passed / 2 failed before front marks",
+    "production_batch_depth": "120 passed / 4 failed before depth correction"
+  },
+  "review": "Independent review and scoped re-review: no remaining P1/P2 findings.",
+  "visuals": {
+    "still": "elite-sheen-preview.png",
+    "animation": "elite-sheen-preview.gif",
+    "capture": "capture-info.json",
+    "description": "Real enemy actors, textures, promotion and shared renderer; ordinary / former flat tint / new elite, native and 2x, plus modifier examples."
+  },
+  "limitation": "A dense human gameplay playtest is still needed to tune brightness and assess crowded combat readability; this pass verifies an isolated rendered comparison and targeted regressions.",
+  "source_sha256": {
+    "core/actors/enemy/enemy.gd": "326e5d75b32ecf7b1c8413bdb40ad5f60ebe7ac456d5cfc5bcdcefcad4e4750c",
+    "core/systems/enemy_world/EnemyProxyRenderer.gd": "95b5ab484377a2e4742e7819943af8d48035e81cff5a3dcd315b7ab370789701",
+    "core/systems/enemy_world/EnemyProxyRegion.gdshader": "370bbdc1632ca4804562f77a96ba6eeea6de610c045daf06dc48ba32be12bdcc",
+    "assets/vfx/world/enemies/VFX_EliteModifierMark.gd": "f47af1e5e40326b767db28b567ca18b623a5d959da1faab0d3a8aa1d636758fa",
+    "tools/tests/EliteModifierTest.gd": "0ab5a0d8afc97cfbd68869caeff80d5284a186def1bef291633fd8eb431ac166",
+    "tools/tests/EliteSheenTest.gd": "52053d864a1c20828b851eebc078585d73e8f0e133f41db62dca9423f8b06144",
+    "tools/tests/EliteSheenTest.tscn": "dcc598332e9eb674a1f4721c398a524d69b59309916bbda83a2d48486d77eff0",
+    "tools/dev/EliteSheenPreview.gd": "df391337f90d95d228b6b5da661bedcc9b68c152d5487b11324a0c83c5492905",
+    "tools/dev/EliteSheenPreview.tscn": "a05000967d80fcae0871f151d8b6c0dd67b2e63b4fd8e217cee92802166eaca4"
+  }
+}

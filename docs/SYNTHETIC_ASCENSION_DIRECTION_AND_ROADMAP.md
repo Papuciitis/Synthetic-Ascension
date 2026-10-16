@@ -2122,3 +2122,27 @@ listen. The existing Stamina Core live-refresh cooldown clamp is recorded
 as an unverified follow-up in the augment-combinations audit, not changed
 as part of this Shield repair. Existing unrelated working edits were
 preserved and excluded from these commits.
+
+## 2026-10-16 — Elite edge highlight and glint
+
+All elites now have a steady gold/ivory inside edge and a slow diagonal sheen,
+with a lighter body-colour wash so the original character art remains visible.
+The shared renderer separates elite surfaces from ordinary texture peers;
+fallback sprites use the same effect, including animated regions and role
+atlases. Reduced motion keeps the steady edge and stops the glint. Existing
+hit feedback and shadow silhouettes are preserved.
+
+Modifier marks follow the actual body renderer's depth: shield fields, plates
+and trails stay behind the body; splitting seams and vampiric inner rings draw
+in front. This includes the live proxy root's z=10 layer and fallback scenes.
+`tools/dev/EliteSheenPreview.tscn` compares ordinary, former tint and new elite
+appearances at native and enlarged sizes, plus modifier examples. The actual
+rendered PNG, animated GIF and verification record are in
+`docs/art/reference/2026-10-16-elite-sheen/`.
+
+Verification: seven focused suites/audits, 900 reported passing checks and no
+failed checks in the final runs, including real rendered-pixel assertions and
+the 510-script audit. One concurrent run missed the existing 50ms upload pin;
+the isolated final renderer run passed, with a 4.261ms final upload. Independent
+review and the depth-correction re-review found no remaining P1/P2 issues.
+Dense human combat playtesting is still needed to tune brightness/readability.

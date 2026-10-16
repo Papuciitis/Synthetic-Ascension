@@ -140,6 +140,8 @@ var _flow: FlowFieldNav = null
 var _enemy_index: Node = null
 var _sim_scheduler: Node = null
 var _visual_batched := false
+var _elite_sprite_material: ShaderMaterial = null
+var _elite_previous_material: Material = null
 # Last requested deferred collision-role values (see _set_body_shape_disabled).
 var _body_shape_disabled_request := -1
 var _hitbox_monitoring_request := -1
@@ -272,6 +274,7 @@ func _emit_archetype_encountered() -> void:
 
 
 func _exit_tree() -> void:
+	_clear_elite_surface()
 	# Before unregister: it zeroes the world handle the combat registries key on.
 	_clear_elite_modifiers()
 	if _enemy_index == null or not is_instance_valid(_enemy_index):
@@ -883,6 +886,7 @@ func _report_lease_failure(phase: String, handle: int) -> void:
 
 
 func _reset_for_pool_obtain(register_new_logical_enemy: bool = true) -> void:
+	_clear_elite_surface()
 	_clear_elite_modifiers()
 	for child in get_children():
 		if child is BurnDot or child is BleedDot or child is VFX_EliteModifierMark:
@@ -1053,6 +1057,7 @@ func _promote_elite(requested: Array[StringName]) -> void:
 	var spr: CanvasItem = get_node_or_null("Sprite2D") as CanvasItem
 	if spr != null:
 		spr.modulate = spec.elite_tint
+	_apply_elite_surface()
 	# The proxy renderer caches a per-handle visual profile from the FIRST
 	# demotion; without invalidation an enemy promoted to elite kept its
 	# old tint/scale whenever it rendered as a data-only proxy.
@@ -1062,6 +1067,41 @@ func _promote_elite(requested: Array[StringName]) -> void:
 		if elite_renderer != null and elite_renderer.has_method("invalidate_visual_profile"):
 			elite_renderer.call("invalidate_visual_profile", _enemy_world_handle)
 	_apply_elite_modifiers(modifiers)
+
+
+func _apply_elite_surface() -> void:
+	# Batched gameplay shares one elite material in EnemyProxyRenderer.
+	# Keep the same effect when a scene falls back to the actor's own sprite.
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite == null or _elite_sprite_material != null:
+		return
+	_elite_previous_material = sprite.material
+	_elite_sprite_material = ShaderMaterial.new()
+	_elite_sprite_material.shader = preload("res://core/systems/enemy_world/EnemyProxyRegion.gdshader")
+	_elite_sprite_material.set_shader_parameter("use_instance_region", false)
+	_elite_sprite_material.set_shader_parameter("elite_enabled", true)
+	_elite_sprite_material.set_shader_parameter("glint_phase", float(get_instance_id() % 997) / 997.0)
+	_elite_sprite_material.set_shader_parameter("glint_motion", not bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false)))
+	sprite.material = _elite_sprite_material
+	if not SettingsManager.settings_changed.is_connected(_on_elite_surface_setting):
+		SettingsManager.settings_changed.connect(_on_elite_surface_setting)
+
+
+func _on_elite_surface_setting(section: StringName, key: StringName, value: Variant) -> void:
+	if section == &"accessibility" and key == &"reduced_motion" and _elite_sprite_material != null:
+		_elite_sprite_material.set_shader_parameter("glint_motion", not bool(value))
+
+
+func _clear_elite_surface() -> void:
+	if _elite_sprite_material == null:
+		return
+	var sprite := get_node_or_null("Sprite2D") as Sprite2D
+	if sprite != null and sprite.material == _elite_sprite_material:
+		sprite.material = _elite_previous_material
+	_elite_sprite_material = null
+	_elite_previous_material = null
+	if SettingsManager != null and SettingsManager.settings_changed.is_connected(_on_elite_surface_setting):
+		SettingsManager.settings_changed.disconnect(_on_elite_surface_setting)
 
 
 func _apply_elite_modifiers(requested: Array[StringName]) -> void:

@@ -83,6 +83,7 @@ var last_drawn_bits: int = 0
 
 var _enemy: EnemyActor = null
 var _sprite: CanvasItem = null
+var _body_marks: Node2D = null
 var _ids: Array[StringName] = []
 var _bits: int = 0
 var _base_tint: Color = Color.WHITE
@@ -108,7 +109,7 @@ func setup(enemy: EnemyActor, ids: Array[StringName], base_tint: Color) -> void:
 func note_feed() -> void:
 	_feed_flash = feed_flash_seconds
 	if not _animated():
-		queue_redraw()
+		_queue_marks_redraw()
 
 
 ## The enemy is dropping the mark. A queued free lands at the end of the
@@ -120,16 +121,56 @@ func release() -> void:
 
 
 func _ready() -> void:
-	# As child of the enemy: local position is fine, drawn under the sprite.
+	# Keep the large shield-radius wash and motion trails behind the body.
 	position = Vector2.ZERO
 	z_index = -1
 	material = null  # pixel-art kit (Batch B): the sprite blends normally
+	_sync_draw_depth()
+	if (_bits & (EliteModifiers.BIT_SPLITTING | EliteModifiers.BIT_VAMPIRIC)) != 0:
+		_body_marks = Node2D.new()
+		_body_marks.name = "BodyMarks"
+		# The rear marks sit one layer below the actual body; its seam and
+		# inner ring sit one layer above, including under the proxy root.
+		_body_marks.z_index = 2
+		_body_marks.draw.connect(_draw_body_marks)
+		add_child(_body_marks)
 	_reduced_motion = (
 		SettingsManager != null
 		and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
 	)
 	set_process(true)
+	_queue_marks_redraw()
+
+
+func _queue_marks_redraw() -> void:
 	queue_redraw()
+	if _body_marks != null:
+		_body_marks.queue_redraw()
+
+
+func _sync_draw_depth() -> void:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return
+	var body := _sprite
+	var renderer_id := int(_enemy.get("_batched_renderer_id"))
+	if renderer_id != 0:
+		var renderer := instance_from_id(renderer_id) as CanvasItem
+		if renderer != null:
+			body = renderer
+	if body != null and is_instance_valid(body):
+		# Batched bodies belong to a separate scene branch. Match their
+		# effective canvas depth rather than the hidden sprite's local z.
+		z_index = _effective_canvas_z(body) - _effective_canvas_z(_enemy) - 1
+
+
+func _effective_canvas_z(item: CanvasItem) -> int:
+	var depth := 0
+	while item != null:
+		depth += item.z_index
+		if not item.z_as_relative:
+			break
+		item = item.get_parent() as CanvasItem
+	return depth
 
 
 func is_animated() -> bool:
@@ -156,6 +197,7 @@ func _process(dt: float) -> void:
 		release()
 		queue_free()
 		return
+	_sync_draw_depth()
 	var player := _enemy.player
 	if player == null or not is_instance_valid(player):
 		return
@@ -175,10 +217,10 @@ func _process(dt: float) -> void:
 		if _redraw_accum >= REDRAW_INTERVAL:
 			_redraw_accum = 0.0
 			_pulse_tint()
-			queue_redraw()
+			_queue_marks_redraw()
 	elif not _drawn_static:
 		_drawn_static = true
-		queue_redraw()
+		_queue_marks_redraw()
 
 
 func _pulse_tint() -> void:
@@ -210,17 +252,22 @@ func _draw() -> void:
 	if (_bits & EliteModifiers.BIT_ARMOURED) != 0:
 		_draw_plate_ring()
 		last_drawn_bits |= EliteModifiers.BIT_ARMOURED
-	if (_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
-		_draw_vampiric_ring()
-		last_drawn_bits |= EliteModifiers.BIT_VAMPIRIC
-	if (_bits & EliteModifiers.BIT_SPLITTING) != 0:
-		_draw_seam()
-		last_drawn_bits |= EliteModifiers.BIT_SPLITTING
 	if _fast_needs_still_tell():
 		_draw_fast_chevrons()
 		last_drawn_bits |= EliteModifiers.BIT_FAST
 	if (_bits & EliteModifiers.BIT_FAST) != 0 and not _reduced_motion:
 		_draw_streak(world_scale)
+
+
+func _draw_body_marks() -> void:
+	if _enemy == null or not is_instance_valid(_enemy):
+		return
+	if (_bits & EliteModifiers.BIT_VAMPIRIC) != 0:
+		_draw_vampiric_ring(_body_marks)
+		last_drawn_bits |= EliteModifiers.BIT_VAMPIRIC
+	if (_bits & EliteModifiers.BIT_SPLITTING) != 0:
+		_draw_seam(_body_marks)
+		last_drawn_bits |= EliteModifiers.BIT_SPLITTING
 
 
 func _draw_shield_hexagon(radius: float) -> void:
@@ -236,23 +283,23 @@ func _draw_plate_ring() -> void:
 	VfxKit.draw_plates(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), 0.0, line_width * PLATE_LINE_WIDTH_MULT)
 
 
-func _draw_vampiric_ring() -> void:
+func _draw_vampiric_ring(canvas: CanvasItem) -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.VAMPIRIC)
 	var k := VAMPIRIC_STILL_PHASE if _reduced_motion else 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
 	var alpha := lerpf(VAMPIRIC_RING_ALPHA_MIN, VAMPIRIC_RING_ALPHA_MAX, k) + _feed_flash
 	var r := body_radius - vampiric_ring_inset + (0.0 if _reduced_motion else vampiric_ring_pulse_px * k)
 	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the line colour replaces the glow+core full arcs.
-	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width)
+	VfxKit.draw_ring(canvas, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width)
 
 
-func _draw_seam() -> void:
+func _draw_seam(canvas: CanvasItem) -> void:
 	# A jagged crack across the body: where it will come apart.
 	var tint := EliteModifiers.tint(EliteModifiers.SPLITTING)
 	var r := body_radius
 	# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched between the old seam's end points replaces the glow+core zig-zag polylines.
 	# The kink band scales with the width: the thin glow width (~5.4 px) gives
 	# the crack the bite the old 13 px zig-zag had on a 26 px body.
-	VfxKit.draw_crack(self, Vector2(-r, -r * 0.35), Vector2(r, r * 0.4), glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
+	VfxKit.draw_crack(canvas, Vector2(-r, -r * 0.35), Vector2(r, r * 0.4), glow_width * THIN_GLOW_WIDTH_MULT, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA))
 
 
 func _draw_fast_chevrons() -> void:
