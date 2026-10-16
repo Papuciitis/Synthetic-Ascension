@@ -2013,6 +2013,9 @@ func corrupt_augment(aug_id: StringName) -> Dictionary:
 	var after := AugmentRites.corrupted_level(outcome, before)
 	attempt_augment_corruptions[String(aug_id)] = String(outcome)
 	set_augment_level(aug_id, after)
+	# A trained augment's starting floor can hold the level above the roll;
+	# report the level it actually has.
+	after = get_augment_level(aug_id)
 	permanent_augments_changed.emit(permanent_augment_ids)
 	request_autosave()
 	return {"ok": true, "outcome": outcome, "before": before, "after": after}
