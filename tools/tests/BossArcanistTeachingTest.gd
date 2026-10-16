@@ -378,6 +378,14 @@ func _test_neutral_budget_and_tier() -> void:
 	for _i in range(12):
 		_brain.call("_tick_teaching", 0.1)
 	_check(_state() == &"idle" and bool(_mage.get_meta(&"boss_cast_locked", false)), "neutral kiting expires after a finite reposition budget instead of evading forever")
+	# Beyond the fan's 520px reach nothing can start: a spent budget must not
+	# freeze the mage while the player shoots it from just outside that reach.
+	_player.global_position = _mage.global_position + Vector2(600, 0)
+	_brain.call("_tick_teaching", 0.1)
+	_check(_state() == &"idle" and not bool(_mage.get_meta(&"boss_cast_locked", false)), "a spent budget still lets the mage close in when the player stands beyond fan range")
+	_player.global_position = _mage.global_position + Vector2(80, 0)
+	_brain.call("_tick_teaching", 0.1)
+	_check(bool(_mage.get_meta(&"boss_cast_locked", false)), "back within reach, the spent budget holds the mage's ground again")
 	_brain.call("_beam_sweep")
 	_brain.call("_spawn_pylons")
 	var forbidden := false

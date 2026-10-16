@@ -6,6 +6,8 @@ const TeachingPlacement = preload("res://scenes/world/bosses/BossTeachingPlaceme
 const ArrivalSprites = preload("res://scenes/world/bosses/BossArrivalSprites.gd")
 const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
 const FAN_RAY = preload("res://scenes/world/bosses/art/vfx/arcane_beam_body.tres")
+## The S5 fan's warned reach: five bolts at 320 px/s for 1.625 s.
+const TEACHING_FAN_RANGE := 520.0
 
 @export_group("Fan Shot")
 @export var fan_every: float = 2.8
@@ -413,16 +415,17 @@ func _register_teaching_pressure(node: Node) -> void:
 
 func _current_mines(owned_only: bool = false) -> Array:
 	var result: Array = []
-	var scene := get_tree().current_scene
-	if scene == null:
-		return result
-	for child in scene.get_children():
-		if child is BossMine and not child.is_queued_for_deletion() and (not owned_only or child.source == _e):
-			result.append(child)
+	for mine in get_tree().get_nodes_in_group(BossMine.GROUP):
+		if mine is BossMine and not mine.is_queued_for_deletion() and (not owned_only or mine.source == _e):
+			result.append(mine)
 	return result
 
 func _has_teaching_pressure() -> bool:
-	_teaching_pressure = _teaching_pressure.filter(func(ref: WeakRef) -> bool: return is_instance_valid(ref.get_ref()) and not ref.get_ref().is_queued_for_deletion())
+	# Runs every idle physics tick: prune in place rather than reallocating.
+	for index in range(_teaching_pressure.size() - 1, -1, -1):
+		var node = _teaching_pressure[index].get_ref()
+		if not is_instance_valid(node) or node.is_queued_for_deletion():
+			_teaching_pressure.remove_at(index)
 	return not _teaching_pressure.is_empty() or not _current_mines(true).is_empty()
 
 func _can_start_teaching() -> bool:
@@ -476,13 +479,17 @@ func _process_teaching(delta: float) -> void:
 
 	# Existing ranged steering gets one bounded reposition, then the mage
 	# stands its ground until the next commitment. Player damage is unaffected.
+	# The budget bounds evasion near the player only: beyond the fan's reach
+	# no pattern can start, so standing still would stall the fight while a
+	# ranged build shoots freely. There steering may always close the distance.
+	var distance := _e.global_position.distance_to(_e.player.global_position)
 	_neutral_left = maxf(0.0, _neutral_left - delta)
 	_neutral_distance += _e.global_position.distance_to(_neutral_last)
 	_neutral_last = _e.global_position
-	_e.set_meta(&"boss_cast_locked", _neutral_left <= 0.0 or _neutral_distance >= 80.0)
+	var budget_spent := _neutral_left <= 0.0 or _neutral_distance >= 80.0
+	_e.set_meta(&"boss_cast_locked", budget_spent and distance <= TEACHING_FAN_RANGE)
 	if _has_teaching_pressure():
 		return
-	var distance := _e.global_position.distance_to(_e.player.global_position)
 	if _blink_cd <= 0.0 and distance <= blink_min_dist:
 		if not _start_teaching_blink():
 			_blink_cd = 1.0
@@ -491,7 +498,7 @@ func _process_teaching(delta: float) -> void:
 		if not _start_teaching_mines():
 			_mines_cd = 1.0
 		return
-	if _fan_cd <= 0.0 and distance <= 520.0:
+	if _fan_cd <= 0.0 and distance <= TEACHING_FAN_RANGE:
 		_start_teaching_fan()
 
 func _start_teaching_fan() -> bool:
