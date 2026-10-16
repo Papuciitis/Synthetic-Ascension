@@ -152,6 +152,20 @@ func _run() -> void:
 	check(not get_tree().paused and not bool(menu.get("is_open")), "Escape resumes safely")
 	await frames(2)
 	check(witness.frames > before, "world resumes processing")
+	# Escape can arrive during the first-enemy recognition's temporary freeze.
+	# Its expiry must transfer ownership instead of leaving Resume with a stale
+	# snapshot of that temporary pause.
+	var encounter := (load("res://ui/overlays/FirstEncounterOverlay.tscn") as PackedScene).instantiate()
+	game.add_child(encounter)
+	encounter.call("present", {"name": "Pause regression", "role": "Test", "counter": "Resume."}, game.get_node("Player"))
+	await cancel()
+	check(bool(menu.get("is_open")), "Escape opens pause during first-encounter freeze")
+	encounter.call("_process", 1.0)
+	check(get_tree().paused, "recognition expiry keeps the open pause menu frozen")
+	await cancel()
+	check(not get_tree().paused and not bool(menu.get("is_open")), "Escape resumes after first-encounter freeze expires")
+	encounter.queue_free()
+	get_tree().paused = false
 	Engine.time_scale = 0.6
 	menu.call("open")
 	menu.call("resume")

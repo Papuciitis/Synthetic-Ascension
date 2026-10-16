@@ -29,6 +29,7 @@ func _ready() -> void:
 	name = "PauseMenu"
 	layer = 240
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	add_to_group(&"pause_handoff_owner")
 	_root = Control.new()
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -125,6 +126,14 @@ func open() -> void:
 	_entry.hide()
 	_surface.show()
 	_resume_button.grab_focus()
+
+## The recognition overlay releases its temporary freeze while this menu is
+## open. Take over that pause and discard the snapshot of its expired freeze.
+func adopt_pause_handoff() -> bool:
+	if not is_open or _leaving:
+		return false
+	_prior_paused = false
+	return true
 
 func resume() -> void:
 	if not is_open or _leaving:
