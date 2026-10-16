@@ -445,6 +445,22 @@ func get_collision_radius(handle: int) -> float:
 	return float(_collision_radii[slot]) if slot >= 0 else 0.0
 
 
+func set_collision_radius(handle: int, value: float) -> bool:
+	var slot := _slot_if_valid(handle)
+	if slot < 0:
+		return false
+	var previous := float(_collision_radii[slot])
+	var next := maxf(value, 0.0)
+	_collision_radii[slot] = next
+	if next > _largest_collision_radius:
+		_largest_collision_radius = next
+	elif next < previous and is_equal_approx(previous, _largest_collision_radius):
+		# The former maximum may now belong to another living enemy. Rebuild
+		# lazily when the broadphase next asks for its padding.
+		_largest_collision_radius_dirty = true
+	return true
+
+
 func largest_collision_radius() -> float:
 	if not _largest_collision_radius_dirty:
 		return _largest_collision_radius

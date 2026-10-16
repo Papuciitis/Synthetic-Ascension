@@ -20,7 +20,6 @@ class_name BossArena
 @export_group("Tuning")
 @export var hp_mult: float = 22.0
 @export var speed_mult: float = 0.95
-@export var scale_mult: float = 1.55
 
 @export var hp_mult_per_segment: float = 4.5
 @export var damage_taken_mul: float = 0.55
@@ -161,7 +160,7 @@ func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
 	en.speed *= speed_mult
-	en.scale *= Vector2(scale_mult, scale_mult)
+	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 1)
 
 	# Strong loot: rely on built-in EnemyDrops pool + roll, but scale rarity by segment.
 	var rmin := clampi(2 + int(floor(float(seg) * 0.55)), 2, 20)

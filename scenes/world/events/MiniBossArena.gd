@@ -21,7 +21,6 @@ class_name MiniBossArena
 @export_group("Tuning")
 @export var hp_mult: float = 8.0
 @export var speed_mult: float = 0.92
-@export var scale_mult: float = 1.35
 
 @export var hp_mult_per_segment: float = 1.8
 @export var damage_taken_mul: float = 0.65
@@ -153,7 +152,7 @@ func _apply_miniboss_rules(en: EnemyActor) -> void:
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
 	en.speed *= speed_mult
-	en.scale *= Vector2(scale_mult, scale_mult)
+	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 0)
 
 	# Strong loot scaling by segment (uses built-in EnemyDrops).
 	var rmin := clampi(1 + int(floor(float(seg) * 0.45)), 1, 20)

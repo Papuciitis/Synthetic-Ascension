@@ -903,7 +903,7 @@ static func texture_filter_for(texture: Texture2D) -> CanvasItem.TextureFilter:
 	# Painted roles shrink from a large transparent atlas; nearest sampling
 	# drops fine edges. Keep the existing baked/pixel kit's crisp sampling.
 	var source := (texture as AtlasTexture).atlas if texture is AtlasTexture else texture
-	if source != null and source.resource_path.begins_with("res://assets/textures/characters/generated/"):
+	if source != null and (source.resource_path.begins_with("res://assets/textures/characters/generated/") or source.resource_path.begins_with("res://scenes/world/bosses/art/forms/")):
 		return CanvasItem.TEXTURE_FILTER_LINEAR
 	return CanvasItem.TEXTURE_FILTER_NEAREST
 

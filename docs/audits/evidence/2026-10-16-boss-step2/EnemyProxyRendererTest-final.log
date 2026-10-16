@@ -1,0 +1,52 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: only data-only records publish proxy instances
+PASS: ordinary data-only handle is visible
+PASS: materialized handle is excluded from proxy batches
+PASS: data-only elite remains visible during a representation shortage
+PASS: visual keys are published as separate shared batches
+PASS: per-record elite color metadata reaches the batch buffer (got (1.0, 0.35, 0.1, 1.0))
+PASS: renderer interpolates authoritative previous and current positions (got (5.0, 0.0))
+PASS: materialization handoff removes the proxy in the same publish
+PASS: materialization handoff leaves no duplicate visual
+PASS: dematerialization handoff restores the proxy
+PASS: slot reuse produces a different generation handle
+PASS: removed generation cannot survive in a proxy batch
+PASS: reused slot publishes only the current generation
+PASS: reused slot does not inherit a ghost transform (got (120.0, 4.0))
+PASS: removed handles clear every visible proxy instance
+PASS: empty cached batches have zero visible instances
+PASS: missing visual metadata uses a visible diagnostic proxy
+PASS: diagnostic proxy is never transparent
+PASS: renderer exposes batch upload timing for the flight recorder
+PASS: one batched renderer publication keeps all 600 proxies visible
+PASS: 120 publications of 600 proxies stay within the headless regression budget
+PASS: one cached 600-proxy upload avoids a long main-thread stall
+EnemyProxyRendererBenchmark records=600 frames=120 elapsed_ms=358.679 last_upload_usec=2247
+PASS: actor registers with the batch renderer
+PASS: actor instance renders at the node position (got (320.0, 240.0))
+PASS: actor instance carries the sprite modulate
+PASS: actor instance scales to the texture pixel size (got 8.00)
+PASS: actor instances stay fresh even when proxy publishing is skipped (got (400.0, 100.0))
+PASS: an actor far off screen is not published
+PASS: an actor back on screen draws where it is, not interpolating from where it left (got (500.0, 300.0))
+PASS: the actor batch is live
+PASS: a flashed actor's instance carries the flash flag
+PASS: freed actor is pruned from the batch registry
+PASS: an on-screen proxy is published
+PASS: a proxy inside the cull margin past the edge is still published
+PASS: a proxy far off screen is culled
+PASS: visible counts report drawn proxies only
+PASS: a proxy that comes on screen is published again
+PASS: a data-only record takes a hit
+PASS: the damaged proxy publishes with the hit flash
+PASS: an undamaged proxy does not flash
+PASS: a flashing proxy keeps its transform
+PASS: the flash ends after about 0.07 s
+PASS: expired flashes are forgotten
+PASS: a lethal hit removes the proxy instead of flashing it
+PASS: the flash strength follows the combat-flash accessibility setting
+PASS: a 200-proxy burst grows the batch to hold it
+PASS: a batch that stays far below its peak shrinks its upload buffer (capacity 16)
+PASS: survivors still render at their positions after the shrink
+EnemyProxyRendererTest passes=48 failures=0

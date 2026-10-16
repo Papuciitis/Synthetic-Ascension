@@ -1,0 +1,199 @@
+{
+	"anatomy_note": "Source annotations exclude equipment; human reference includes hair",
+	"camera_zoom": "(1.0, 1.0)",
+	"captures": [
+		{
+			"file": "boss-proportions-art-1280x720.png",
+			"view": "art",
+			"window": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"file": "boss-proportions-silhouette-1280x720.png",
+			"view": "silhouette",
+			"window": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"file": "boss-proportions-footprint-1280x720.png",
+			"view": "footprint",
+			"window": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"file": "boss-proportions-art-960x540.png",
+			"view": "art",
+			"window": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		},
+		{
+			"file": "boss-proportions-silhouette-960x540.png",
+			"view": "silhouette",
+			"window": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		},
+		{
+			"file": "boss-proportions-footprint-960x540.png",
+			"view": "footprint",
+			"window": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		}
+	],
+	"court_center": "(-9216.0, -35840.0)",
+	"failures": 0,
+	"human_occupied_reference_px": 77,
+	"measurements": [
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-20.0, -35.0), S: (39.0, 77.0)]",
+			"body_radius": 25.0,
+			"boss_appearance": {},
+			"capsule_height": 58.0,
+			"contact_size": "(70.0, 70.0)",
+			"gear": "[P: (-20.0, -35.0), S: (39.0, 77.0)]",
+			"label": "Human"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-18.0, -35.0), S: (36.0, 77.0)]",
+			"body_radius": 25.0,
+			"boss_appearance": {},
+			"capsule_height": 58.0,
+			"contact_size": "(70.0, 70.0)",
+			"gear": "[P: (-18.0, -35.0), S: (36.0, 77.0)]",
+			"label": "Elf"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-21.0, -42.0), S: (48.0, 84.0)]",
+			"body_radius": 25.0,
+			"boss_appearance": {},
+			"capsule_height": 58.0,
+			"contact_size": "(70.0, 70.0)",
+			"gear": "[P: (-21.0, -42.0), S: (48.0, 84.0)]",
+			"label": "Dragonborn"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-23.0, -41.0), S: (45.0, 83.0)]",
+			"body_radius": 25.0,
+			"boss_appearance": {},
+			"capsule_height": 58.0,
+			"contact_size": "(70.0, 70.0)",
+			"gear": "[P: (-23.0, -41.0), S: (45.0, 83.0)]",
+			"label": "Warforged"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-34.44156, -34.0), S: (68.88312, 67.55844)]",
+			"body_radius": 17.0,
+			"boss_appearance": {},
+			"contact_size": "(34.0, 34.0)",
+			"gear": "[P: (-34.44156, -34.0), S: (68.88312, 67.55844)]",
+			"label": "Ordinary Brute"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-28.82388, -34.0), S: (57.44478, 68.0)]",
+			"body_radius": 17.0,
+			"boss_appearance": {},
+			"contact_size": "(34.0, 34.0)",
+			"gear": "[P: (-28.82388, -34.0), S: (57.44478, 68.0)]",
+			"label": "Ordinary Herald"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-26.35607, -46.0), S: (51.61398, 88.0)]",
+			"body_radius": 39.015,
+			"boss_appearance": {
+				"anatomy_bounds_world": "[P: (-26.35607, -46.0), S: (51.61398, 88.0)]",
+				"anatomy_height_world": 88.0,
+				"anatomy_rect": "[P: (250.0, 55.0), S: (705.0, 1202.0)]",
+				"art_status": "rough proportion study; final animation pending",
+				"contact_size": "(78.03, 78.03)",
+				"equipment_bounds_world": "[P: (-41.80366, -46.0), S: (81.41098, 88.0)]",
+				"equipment_rect": "[P: (39.0, 55.0), S: (1112.0, 1202.0)]",
+				"feet_anchor": "(610.0, 1257.0)",
+				"feet_offset_world": "(0.0, 42.0)",
+				"form_id": "bulldozer_s5_v1",
+				"physical_radius": 39.015,
+				"tier": 0
+			},
+			"contact_size": "(78.03, 78.03)",
+			"gear": "[P: (-41.80366, -46.0), S: (81.41098, 88.0)]",
+			"label": "S5 Bulldozer"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-28.23881, -46.0), S: (57.28027, 88.0)]",
+			"body_radius": 44.795,
+			"boss_appearance": {
+				"anatomy_bounds_world": "[P: (-28.23881, -46.0), S: (57.28027, 88.0)]",
+				"anatomy_height_world": 88.0,
+				"anatomy_rect": "[P: (208.0, 111.0), S: (785.0, 1206.0)]",
+				"art_status": "rough proportion study; final animation pending",
+				"contact_size": "(89.59, 89.59)",
+				"equipment_bounds_world": "[P: (-41.08126, -52.34826), S: (79.53565, 94.34826)]",
+				"equipment_rect": "[P: (32.0, 24.0), S: (1090.0, 1293.0)]",
+				"feet_anchor": "(595.0, 1317.0)",
+				"feet_offset_world": "(0.0, 42.0)",
+				"form_id": "bulldozer_s10_v1",
+				"physical_radius": 44.795,
+				"tier": 1
+			},
+			"contact_size": "(89.59, 89.59)",
+			"gear": "[P: (-41.08126, -52.34826), S: (79.53565, 94.34826)]",
+			"label": "S10 Bulldozer"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-19.58855, -40.0), S: (40.78373, 82.0)]",
+			"body_radius": 36.72,
+			"boss_appearance": {
+				"anatomy_bounds_world": "[P: (-19.58855, -40.0), S: (40.78373, 82.0)]",
+				"anatomy_height_world": 82.0,
+				"anatomy_rect": "[P: (168.0, 110.0), S: (660.0, 1327.0)]",
+				"art_status": "rough proportion study; final animation pending",
+				"contact_size": "(73.44, 73.44)",
+				"equipment_bounds_world": "[P: (-19.58855, -42.10098), S: (45.97438, 84.10098)]",
+				"equipment_rect": "[P: (168.0, 76.0), S: (744.0, 1361.0)]",
+				"feet_anchor": "(485.0, 1437.0)",
+				"feet_offset_world": "(0.0, 42.0)",
+				"form_id": "arcanist_s5_v1",
+				"physical_radius": 36.72,
+				"tier": 0
+			},
+			"contact_size": "(73.44, 73.44)",
+			"gear": "[P: (-19.58855, -42.10098), S: (45.97438, 84.10098)]",
+			"label": "S5 Arcanist"
+		},
+		{
+			"actor_root_scale": "(1.0, 1.0)",
+			"anatomy": "[P: (-24.21957, -44.0), S: (50.62848, 86.0)]",
+			"body_radius": 42.16,
+			"boss_appearance": {
+				"anatomy_bounds_world": "[P: (-24.21957, -44.0), S: (50.62848, 86.0)]",
+				"anatomy_height_world": 86.0,
+				"anatomy_rect": "[P: (146.0, 220.0), S: (740.0, 1257.0)]",
+				"art_status": "rough proportion study; final animation pending",
+				"contact_size": "(84.32, 84.32)",
+				"equipment_bounds_world": "[P: (-24.21957, -58.36754), S: (58.22275, 100.3675)]",
+				"equipment_rect": "[P: (146.0, 10.0), S: (851.0, 1467.0)]",
+				"feet_anchor": "(500.0, 1477.0)",
+				"feet_offset_world": "(0.0, 42.0)",
+				"form_id": "arcanist_s10_v1",
+				"physical_radius": 42.16,
+				"tier": 1
+			},
+			"contact_size": "(84.32, 84.32)",
+			"gear": "[P: (-24.21957, -58.36754), S: (58.22275, 100.3675)]",
+			"label": "S10 Arcanist"
+		}
+	],
+	"presentation": "Frozen rough proportion studies; final animation and human approval pending",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 10,
+	"viewport": "(1920, 1080)",
+	"world_seed": 16102026
+}

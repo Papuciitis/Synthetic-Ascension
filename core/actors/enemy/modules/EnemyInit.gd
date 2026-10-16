@@ -129,6 +129,10 @@ func _apply_visuals() -> void:
 	else:
 		_owner.animator = null
 		spr.region_enabled = false
+	# Arena rules may select S10 after readiness; standalone boss scenes use
+	# the S5 study. Ordinary enemies retain their normal spec presentation.
+	if s.id == &"boss_bulldozer" or s.id == &"boss_arcanist":
+		preload("res://scenes/world/bosses/BossAppearance.gd").apply(_owner, int(_owner.get_meta(&"boss_visual_tier", 0)))
 
 
 func _apply_split_generation() -> void:

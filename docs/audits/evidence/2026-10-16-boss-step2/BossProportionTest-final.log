@@ -1,0 +1,75 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: boss proportions have an explicit tier appearance contract
+PASS: bulldozer_s5_v1 scene starts at unit root scale
+PASS: bulldozer_s5_v1 arena leaves anatomy independent of root scale
+PASS: bulldozer_s5_v1 preserves its physical body radius
+PASS: bulldozer_s5_v1 preserves its contact footprint
+PASS: bulldozer_s5_v1 authoritative radius agrees with its physical shape
+PASS: bulldozer_s5_v1 selects dedicated authored art
+PASS: bulldozer_s5_v1 retains its authored material palette
+PASS: bulldozer_s5_v1 records anatomy, equipment and feet independently
+PASS: bulldozer_s5_v1 anatomy stays at its human-relative target
+PASS: bulldozer_s5_v1 equipment envelope contains its anatomy
+PASS: bulldozer_s5_v1 feet preserve the production mid-body origin contract
+PASS: bulldozer_s5_v1 visible upper body remains targetable inside its real body and contact shapes
+PASS: bulldozer_s5_v1 recorded bounds follow the actual sprite translation
+PASS: bulldozer_s5_v1 never mutates its shared EnemySpec
+PASS: bulldozer_s10_v1 scene starts at unit root scale
+PASS: bulldozer_s10_v1 arena leaves anatomy independent of root scale
+PASS: bulldozer_s10_v1 preserves its physical body radius
+PASS: bulldozer_s10_v1 preserves its contact footprint
+PASS: bulldozer_s10_v1 authoritative radius agrees with its physical shape
+PASS: bulldozer_s10_v1 selects dedicated authored art
+PASS: bulldozer_s10_v1 retains its authored material palette
+PASS: bulldozer_s10_v1 records anatomy, equipment and feet independently
+PASS: bulldozer_s10_v1 anatomy stays at its human-relative target
+PASS: bulldozer_s10_v1 equipment envelope contains its anatomy
+PASS: bulldozer_s10_v1 feet preserve the production mid-body origin contract
+PASS: bulldozer_s10_v1 visible upper body remains targetable inside its real body and contact shapes
+PASS: bulldozer_s10_v1 recorded bounds follow the actual sprite translation
+PASS: bulldozer_s10_v1 never mutates its shared EnemySpec
+PASS: arcanist_s5_v1 scene starts at unit root scale
+PASS: arcanist_s5_v1 arena leaves anatomy independent of root scale
+PASS: arcanist_s5_v1 preserves its physical body radius
+PASS: arcanist_s5_v1 preserves its contact footprint
+PASS: arcanist_s5_v1 authoritative radius agrees with its physical shape
+PASS: arcanist_s5_v1 selects dedicated authored art
+PASS: arcanist_s5_v1 retains its authored material palette
+PASS: arcanist_s5_v1 records anatomy, equipment and feet independently
+PASS: arcanist_s5_v1 anatomy stays at its human-relative target
+PASS: arcanist_s5_v1 equipment envelope contains its anatomy
+PASS: arcanist_s5_v1 feet preserve the production mid-body origin contract
+PASS: arcanist_s5_v1 visible upper body remains targetable inside its real body and contact shapes
+PASS: arcanist_s5_v1 recorded bounds follow the actual sprite translation
+PASS: arcanist_s5_v1 never mutates its shared EnemySpec
+PASS: arcanist_s10_v1 scene starts at unit root scale
+PASS: arcanist_s10_v1 arena leaves anatomy independent of root scale
+PASS: arcanist_s10_v1 preserves its physical body radius
+PASS: arcanist_s10_v1 preserves its contact footprint
+PASS: arcanist_s10_v1 authoritative radius agrees with its physical shape
+PASS: arcanist_s10_v1 selects dedicated authored art
+PASS: arcanist_s10_v1 retains its authored material palette
+PASS: arcanist_s10_v1 records anatomy, equipment and feet independently
+PASS: arcanist_s10_v1 anatomy stays at its human-relative target
+PASS: arcanist_s10_v1 equipment envelope contains its anatomy
+PASS: arcanist_s10_v1 feet preserve the production mid-body origin contract
+PASS: arcanist_s10_v1 visible upper body remains targetable inside its real body and contact shapes
+PASS: arcanist_s10_v1 recorded bounds follow the actual sprite translation
+PASS: arcanist_s10_v1 never mutates its shared EnemySpec
+PASS: all four forms remain visually distinct resources
+PASS: each boss owns its collision resources
+PASS: reapplying main-boss presentation cannot multiply its footprint
+PASS: tier reconfiguration updates the authoritative collision radius
+PASS: changing one tier cannot resize a sibling boss
+PASS: returning to S5 restores its authored footprint
+PASS: ordinary Brute presentation keeps its existing spec
+PASS: boss collider normalization cannot mutate ordinary enemy bodies
+PASS: boss appearance hooks leave ordinary enemies alone
+PASS: authoritative footprints can be reconfigured without replacing enemy identity
+PASS: broadphase padding expands when an existing enemy grows
+PASS: shrinking the largest enemy restores the next real footprint
+PASS: negative radius input clamps safely and updates the maximum
+PASS: a retired enemy handle cannot change collision padding
+PASS: temporary radius records leave ordinary broadphase padding intact
+BossProportionTest: 72 passed, 0 failed

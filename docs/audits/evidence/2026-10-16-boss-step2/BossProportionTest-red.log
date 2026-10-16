@@ -1,0 +1,134 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: boss proportions have an explicit tier appearance contract
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:42)
+ERROR: FAIL: bulldozer_s5_v1 scene starts at unit root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:54)
+ERROR: FAIL: bulldozer_s5_v1 arena leaves anatomy independent of root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:56)
+PASS: bulldozer_s5_v1 preserves its physical body radius
+PASS: bulldozer_s5_v1 preserves its contact footprint
+ERROR: FAIL: bulldozer_s5_v1 selects dedicated authored art
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:66)
+ERROR: FAIL: bulldozer_s5_v1 retains its authored material palette
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:67)
+ERROR: FAIL: bulldozer_s5_v1 records anatomy, equipment and feet independently
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:69)
+PASS: bulldozer_s5_v1 never mutates its shared EnemySpec
+ERROR: FAIL: bulldozer_s10_v1 scene starts at unit root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:54)
+ERROR: FAIL: bulldozer_s10_v1 arena leaves anatomy independent of root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:56)
+PASS: bulldozer_s10_v1 preserves its physical body radius
+PASS: bulldozer_s10_v1 preserves its contact footprint
+ERROR: FAIL: bulldozer_s10_v1 selects dedicated authored art
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:66)
+ERROR: FAIL: bulldozer_s10_v1 retains its authored material palette
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:67)
+ERROR: FAIL: bulldozer_s10_v1 records anatomy, equipment and feet independently
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:69)
+PASS: bulldozer_s10_v1 never mutates its shared EnemySpec
+ERROR: FAIL: arcanist_s5_v1 scene starts at unit root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:54)
+ERROR: FAIL: arcanist_s5_v1 arena leaves anatomy independent of root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:56)
+PASS: arcanist_s5_v1 preserves its physical body radius
+PASS: arcanist_s5_v1 preserves its contact footprint
+ERROR: FAIL: arcanist_s5_v1 selects dedicated authored art
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:66)
+ERROR: FAIL: arcanist_s5_v1 retains its authored material palette
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:67)
+ERROR: FAIL: arcanist_s5_v1 records anatomy, equipment and feet independently
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:69)
+PASS: arcanist_s5_v1 never mutates its shared EnemySpec
+ERROR: FAIL: arcanist_s10_v1 scene starts at unit root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:54)
+ERROR: FAIL: arcanist_s10_v1 arena leaves anatomy independent of root scale
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:56)
+PASS: arcanist_s10_v1 preserves its physical body radius
+PASS: arcanist_s10_v1 preserves its contact footprint
+ERROR: FAIL: arcanist_s10_v1 selects dedicated authored art
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:66)
+ERROR: FAIL: arcanist_s10_v1 retains its authored material palette
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:67)
+ERROR: FAIL: arcanist_s10_v1 records anatomy, equipment and feet independently
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:69)
+PASS: arcanist_s10_v1 never mutates its shared EnemySpec
+ERROR: FAIL: all four forms remain visually distinct resources
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:82)
+ERROR: FAIL: each boss owns its collision resources
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _test_unique_shapes_and_tier_reapply (res://tools/tests/BossProportionTest.gd:121)
+       [2] _run (res://tools/tests/BossProportionTest.gd:83)
+PASS: ordinary Brute presentation keeps its existing spec
+PASS: boss collider normalization cannot mutate ordinary enemy bodies
+PASS: boss appearance hooks leave ordinary enemies alone
+BossProportionTest: 15 passed, 23 failed

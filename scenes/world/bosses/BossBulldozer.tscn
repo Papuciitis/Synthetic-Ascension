@@ -6,7 +6,6 @@
 
 [node name="BossBulldozer" instance=ExtResource("1_enemy")]
 spec = ExtResource("2_spec")
-scale = Vector2(1.7, 1.7)
 
 [node name="BossBrain" type="Node" parent="." ]
 script = ExtResource("3_brain")

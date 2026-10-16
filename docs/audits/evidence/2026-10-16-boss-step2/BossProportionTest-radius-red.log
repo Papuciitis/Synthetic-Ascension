@@ -1,0 +1,81 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: boss proportions have an explicit tier appearance contract
+PASS: bulldozer_s5_v1 scene starts at unit root scale
+PASS: bulldozer_s5_v1 arena leaves anatomy independent of root scale
+PASS: bulldozer_s5_v1 preserves its physical body radius
+PASS: bulldozer_s5_v1 preserves its contact footprint
+PASS: bulldozer_s5_v1 authoritative radius agrees with its physical shape
+PASS: bulldozer_s5_v1 selects dedicated authored art
+PASS: bulldozer_s5_v1 retains its authored material palette
+PASS: bulldozer_s5_v1 records anatomy, equipment and feet independently
+PASS: bulldozer_s5_v1 anatomy stays at its human-relative target
+PASS: bulldozer_s5_v1 equipment envelope contains its anatomy
+PASS: bulldozer_s5_v1 feet anchor stays at the actor ground origin
+PASS: bulldozer_s5_v1 never mutates its shared EnemySpec
+PASS: bulldozer_s10_v1 scene starts at unit root scale
+PASS: bulldozer_s10_v1 arena leaves anatomy independent of root scale
+PASS: bulldozer_s10_v1 preserves its physical body radius
+PASS: bulldozer_s10_v1 preserves its contact footprint
+ERROR: FAIL: bulldozer_s10_v1 authoritative radius agrees with its physical shape
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:64)
+PASS: bulldozer_s10_v1 selects dedicated authored art
+PASS: bulldozer_s10_v1 retains its authored material palette
+PASS: bulldozer_s10_v1 records anatomy, equipment and feet independently
+PASS: bulldozer_s10_v1 anatomy stays at its human-relative target
+PASS: bulldozer_s10_v1 equipment envelope contains its anatomy
+PASS: bulldozer_s10_v1 feet anchor stays at the actor ground origin
+PASS: bulldozer_s10_v1 never mutates its shared EnemySpec
+PASS: arcanist_s5_v1 scene starts at unit root scale
+PASS: arcanist_s5_v1 arena leaves anatomy independent of root scale
+PASS: arcanist_s5_v1 preserves its physical body radius
+PASS: arcanist_s5_v1 preserves its contact footprint
+PASS: arcanist_s5_v1 authoritative radius agrees with its physical shape
+PASS: arcanist_s5_v1 selects dedicated authored art
+PASS: arcanist_s5_v1 retains its authored material palette
+PASS: arcanist_s5_v1 records anatomy, equipment and feet independently
+PASS: arcanist_s5_v1 anatomy stays at its human-relative target
+PASS: arcanist_s5_v1 equipment envelope contains its anatomy
+PASS: arcanist_s5_v1 feet anchor stays at the actor ground origin
+PASS: arcanist_s5_v1 never mutates its shared EnemySpec
+PASS: arcanist_s10_v1 scene starts at unit root scale
+PASS: arcanist_s10_v1 arena leaves anatomy independent of root scale
+PASS: arcanist_s10_v1 preserves its physical body radius
+PASS: arcanist_s10_v1 preserves its contact footprint
+ERROR: FAIL: arcanist_s10_v1 authoritative radius agrees with its physical shape
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _run (res://tools/tests/BossProportionTest.gd:64)
+PASS: arcanist_s10_v1 selects dedicated authored art
+PASS: arcanist_s10_v1 retains its authored material palette
+PASS: arcanist_s10_v1 records anatomy, equipment and feet independently
+PASS: arcanist_s10_v1 anatomy stays at its human-relative target
+PASS: arcanist_s10_v1 equipment envelope contains its anatomy
+PASS: arcanist_s10_v1 feet anchor stays at the actor ground origin
+PASS: arcanist_s10_v1 never mutates its shared EnemySpec
+PASS: all four forms remain visually distinct resources
+PASS: each boss owns its collision resources
+PASS: reapplying main-boss presentation cannot multiply its footprint
+ERROR: FAIL: tier reconfiguration updates the authoritative collision radius
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _test_unique_shapes_and_tier_reapply (res://tools/tests/BossProportionTest.gd:130)
+       [2] _run (res://tools/tests/BossProportionTest.gd:85)
+PASS: changing one tier cannot resize a sibling boss
+PASS: returning to S5 restores its authored footprint
+PASS: ordinary Brute presentation keeps its existing spec
+PASS: boss collider normalization cannot mutate ordinary enemy bodies
+PASS: boss appearance hooks leave ordinary enemies alone
+ERROR: FAIL: authoritative footprints can be reconfigured without replacing enemy identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossProportionTest.gd:28)
+       [1] _test_authoritative_radius_limits (res://tools/tests/BossProportionTest.gd:154)
+       [2] _run (res://tools/tests/BossProportionTest.gd:87)
+       [3] _test_ordinary_enemy_unchanged (res://tools/tests/BossProportionTest.gd:148)
+BossProportionTest: 55 passed, 4 failed
