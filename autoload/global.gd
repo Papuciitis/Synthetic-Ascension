@@ -428,6 +428,7 @@ func goto_scene(path: String) -> void:
 		path = PATH_PEEP
 	if path == PATH_PEEP:
 		get_tree().paused = false
+		_continuation_music()
 		# Preserve the pending choice even when its presentation asset is unavailable.
 		if not ResourceLoader.exists(PATH_PEEP):
 			path = PATH_MAIN_MENU
@@ -445,12 +446,21 @@ func goto_scene(path: String) -> void:
 	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
 		path = PATH_PEEP if ResourceLoader.exists(PATH_PEEP) else PATH_MAIN_MENU
 		get_tree().paused = false
+		_continuation_music()
 		balance_scene_requested.emit(path)
 	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("note_scene_change"):
 		PerformanceFlightRecorder.note_scene_change(path.get_file().get_basename())
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
 		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
+
+## The continuation always plays the menu's music, whichever route arrives:
+## a death mid-combat must not carry the combat track into it.
+func _continuation_music() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_menu")
+
 
 func goto_main_menu() -> void:
 	var am := get_node_or_null("/root/AudioManager")
