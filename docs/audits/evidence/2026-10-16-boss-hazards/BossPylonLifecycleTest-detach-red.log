@@ -1,0 +1,54 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: legacy standalone pylons still register
+PASS: legacy registration uses its placed non-origin position
+PASS: a pylon has a visible textured body
+PASS: the pylon ground shadow uses a real PNG sprite
+PASS: pylon art effects contain no line or particle nodes
+PASS: the target reads at gameplay size without becoming a boss-sized landmark
+PASS: standalone teardown unregisters immediately
+PASS: pylons support setup before entering the world
+PASS: setup position reaches EnemyWorld on the registration frame
+PASS: encounter cancellation has an explicit non-reward cleanup path
+PASS: an expired pylon unregisters before deferred deletion
+PASS: a pylon cannot remain indefinitely after its configured life
+PASS: expiry produces neither defeat nor kill rewards
+PASS: pylons support setup before entering the world
+PASS: a visible PNG sprite gives the directional charge before the shot
+PASS: the muzzle charge uses a visible PNG ring rather than a drawn arc
+PASS: firing feedback provides a real reaction window before damage leaves
+PASS: raster charge cues end when the shot releases
+PASS: one completed windup releases one shot
+PASS: pylon shots inherit the encounter scope
+PASS: scope cancellation unregisters its pylon immediately
+PASS: scope cancellation removes its pylon
+PASS: scope cancellation also clears the pylon's in-flight shots
+PASS: encounter cleanup produces no kill or defeat rewards
+PASS: pylons support setup before entering the world
+ERROR: Can't use get_node() with absolute paths from outside the active scene tree.
+   at: get_node_or_null (scene/main/node.cpp:1910)
+   GDScript backtrace (most recent call first):
+       [0] _unregister_enemy_index (res://scenes/world/bosses/BossPylon.gd:131)
+       [1] cancel_attack (res://scenes/world/bosses/BossPylon.gd:120)
+       [2] cancel (res://scenes/world/bosses/BossAttackScope.gd:101)
+       [3] _test_detached_scope_cleanup (res://tools/tests/BossPylonLifecycleTest.gd:217)
+       [4] _run (res://tools/tests/BossPylonLifecycleTest.gd:56)
+       [5] _test_firing_and_scope (res://tools/tests/BossPylonLifecycleTest.gd:203)
+PASS: detaching a pylon releases its combat handle before scope cleanup
+PASS: scope cleanup also disposes of an already-detached pylon
+ERROR: FAIL: detached scope cleanup reports no runtime errors: ["Can\'t use get_node() with absolute paths from outside the active scene tree."]
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossPylonLifecycleTest.gd:38)
+       [1] _test_detached_scope_cleanup (res://tools/tests/BossPylonLifecycleTest.gd:222)
+       [2] _run (res://tools/tests/BossPylonLifecycleTest.gd:56)
+       [3] _test_firing_and_scope (res://tools/tests/BossPylonLifecycleTest.gd:203)
+PASS: detached cleanup and late damage produce no kill or defeat rewards
+PASS: the detached pylon is freed at the next deletion flush
+PASS: destruction feedback uses an actual PNG burst sprite
+PASS: player destruction emits the existing defeat and kill once
+PASS: destroyed pylons leave combat indexing immediately
+PASS: repeated damage cannot duplicate a destroyed pylon's events
+PASS: destruction has a short visible collapse before deletion
+PASS: destruction feedback finishes and frees the target
+BossPylonLifecycleTest: 35 passed, 1 failed

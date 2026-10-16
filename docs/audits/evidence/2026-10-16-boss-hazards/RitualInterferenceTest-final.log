@@ -1,0 +1,38 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the first ritual of a run teaches the rule (["Kills inside the sigil rise once, weakened. Fight outside it, or kill them twice."])
+PASS: a live ritual listens for defeats
+PASS: a kill inside the radius is a pending rise, not an instant spawn
+PASS: nothing rises before revive_delay
+PASS: exactly one revenant rises after the delay (1)
+PASS: the revenant is the same archetype at the death position, not elite
+PASS: the revenant is configured to revenant_hp_fraction of its max, filled ([[35.0, true]])
+PASS: the revenant wears the ritual tint
+PASS: the revenant is flagged so it never rises again
+PASS: a rise happens once per corpse
+PASS: a kill outside the radius does not rise
+PASS: a revenant's own death does not rise
+PASS: a defeat with no actor (data-only proxy) does not rise
+PASS: none of them spawned anything
+PASS: a CRITICAL-flagged defeat (a boss) does not rise
+PASS: a boss grouped after its world snapshot does not rise
+PASS: a mini-boss does not rise
+PASS: a pylon does not rise
+PASS: an objective actor with a silent snapshot does not rise
+PASS: a tutorial actor does not rise
+PASS: an ordinary kill beside the protected dead still rises
+PASS: only the grunt rose; no boss, pylon or objective scene was spawned (["res://scenes/world/enemies/EnemyGrunt.tscn", "res://scenes/world/enemies/EnemyGrunt.tscn"])
+PASS: max_revenants caps pending rises (2)
+PASS: ...and the cap holds through the rises (2)
+PASS: a full ritual raises nothing more
+PASS: a spawner refusal leaves the corpse down without counting a rise
+PASS: later rituals do not teach again (1 tips)
+PASS: the ritual expires after duration and signals it
+PASS: an expired ritual stops listening
+PASS: a kill after expiry does not rise
+PASS: the director's despawn ends a ritual the same way
+PASS: expired rituals leave the tree
+PASS: the live rituals remain (2)
+PASS: a ritual under reduced_motion draws a static ring
+PASS: ...and pulses otherwise
+RitualInterferenceTest: 35 passed, 0 failed

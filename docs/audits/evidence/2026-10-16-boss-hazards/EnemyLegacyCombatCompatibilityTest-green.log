@@ -1,0 +1,20 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: BossPylon registers in the authoritative world
+PASS: BossPylon is permanently critical
+PASS: BossPylon preserves objective responsibility
+PASS: BossPylon cannot be retired into a proxy
+PASS: handle damage delegates to BossPylon's Node-owned lifecycle
+PASS: BossPylon emits each legacy death event exactly once
+PASS: BossPylon death context preserves its stable handle
+PASS: BossPylon unregister removes its authoritative shadow
+PASS: stale BossPylon damage cannot repeat death
+PASS: OpeningActor registers in the authoritative world
+PASS: OpeningActor is permanently critical
+PASS: OpeningActor preserves tutorial responsibility
+PASS: OpeningActor cannot be retired into a proxy
+PASS: handle damage delegates to OpeningActor's scripted lifecycle
+PASS: OpeningActor defeat signal fires exactly once
+PASS: OpeningActor unregister removes its authoritative shadow
+PASS: stale OpeningActor damage cannot repeat defeat
+EnemyLegacyCombatCompatibilityTest passes=17 failures=0

@@ -1,0 +1,24 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: an untouched encounter is inactive
+PASS: distance alone outside the entry radius arms nothing
+PASS: entering 1200 px of an eligible rite begins the encounter
+PASS: real channel membership is the channel state
+PASS: a channel-edge exit drops to approach, never to inactive
+PASS: dodging inside the release radius keeps the encounter live
+PASS: re-entry resets the disengage clock — 7.5 s twice is not 8 s once
+PASS: 8 continuous living seconds beyond 1800 px disengages
+PASS: a dead player cannot run out the disengage clock
+PASS: death at the gate enters recovery
+PASS: recovery holds for its full window wherever reconstruction lands
+PASS: after recovery the encounter resumes where it stood
+PASS: completion ends the encounter
+PASS: a completed rite never re-arms pressure
+PASS: a resealed rite has no encounter to keep alive
+PASS: an approach within 1200 px suppresses ambient pressure
+PASS: the dodge that restarted hordes in playtest no longer releases the group
+PASS: a real 8 s disengage releases the group
+PASS: coming back re-arms the encounter
+PASS: resealing the rite releases the group immediately
+PASS: scene cleanup leaves no channeling members behind
+ExitEncounterTest: 21 passed, 0 failed

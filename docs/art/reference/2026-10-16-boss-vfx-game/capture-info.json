@@ -1,0 +1,104 @@
+{
+	"camera_zoom": "(1.0, 1.0)",
+	"captures": [
+		{
+			"beam_phase": "warning",
+			"file": "actual-game-staged-vfx-warning-1280x720.png",
+			"image_size": "(1280, 720)",
+			"window_size": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"beam_phase": "active",
+			"file": "actual-game-staged-vfx-active-1280x720.png",
+			"image_size": "(1280, 720)",
+			"window_size": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"beam_phase": "warning",
+			"file": "actual-game-staged-vfx-warning-960x540.png",
+			"image_size": "(960, 540)",
+			"window_size": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		},
+		{
+			"beam_phase": "active",
+			"file": "actual-game-staged-vfx-active-960x540.png",
+			"image_size": "(960, 540)",
+			"window_size": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		}
+	],
+	"failures": 0,
+	"kit_sources": {
+		"disc": "64px, content radius30",
+		"ring_large": "256px, content radius121.5",
+		"streak": "64x16px, content height8"
+	},
+	"player_position": "(-1024.0, 1024.0)",
+	"presentation": "STAGED / frozen actual Game, not an encounter or playability test",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"selected_world_positions": {
+		"Beam origin": {
+			"expected_1280x720_center": "(306.6667, 486.6667)",
+			"offset_from_player": "(-500.0, 190.0)",
+			"world": "(-1524.0, 1214.0)"
+		},
+		"Enemy Bomber": {
+			"expected_1280x720_center": "(773.3334, 383.3333)",
+			"offset_from_player": "(200.0, 35.0)",
+			"world": "(-824.0, 1059.0)"
+		},
+		"Enemy Brute": {
+			"expected_1280x720_center": "(540.0, 226.6667)",
+			"offset_from_player": "(-150.0, -200.0)",
+			"world": "(-1174.0, 824.0)"
+		},
+		"Enemy Grunt": {
+			"expected_1280x720_center": "(306.6667, 260.0)",
+			"offset_from_player": "(-500.0, -150.0)",
+			"world": "(-1524.0, 874.0)"
+		},
+		"Enemy Grunt FAST": {
+			"expected_1280x720_center": "(1073.333, 490.0)",
+			"offset_from_player": "(650.0, 195.0)",
+			"world": "(-374.0, 1219.0)"
+		},
+		"Existing pulse ring": {
+			"expected_1280x720_center": "(900.0, 520.0)",
+			"offset_from_player": "(390.0, 240.0)",
+			"world": "(-634.0, 1264.0)"
+		},
+		"Existing spirit slash": {
+			"expected_1280x720_center": "(680.0, 320.0)",
+			"offset_from_player": "(60.0, -60.0)",
+			"world": "(-964.0, 964.0)"
+		},
+		"Mine": {
+			"expected_1280x720_center": "(760.0, 226.6667)",
+			"offset_from_player": "(180.0, -200.0)",
+			"world": "(-844.0, 824.0)"
+		},
+		"Pylon": {
+			"expected_1280x720_center": "(973.3334, 253.3333)",
+			"offset_from_player": "(500.0, -160.0)",
+			"world": "(-524.0, 864.0)"
+		},
+		"Shock": {
+			"expected_1280x720_center": "(540.0, 226.6667)",
+			"offset_from_player": "(-150.0, -200.0)",
+			"world": "(-1174.0, 824.0)"
+		},
+		"Slam": {
+			"expected_1280x720_center": "(306.6667, 260.0)",
+			"offset_from_player": "(-500.0, -150.0)",
+			"world": "(-1524.0, 874.0)"
+		}
+	},
+	"stretch": "canvas_items",
+	"viewport": "(1920, 1080)",
+	"world_seed": 16102026
+}

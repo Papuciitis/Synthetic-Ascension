@@ -2,6 +2,8 @@
 extends Area2D
 class_name EnemyProjectile
 
+const BossAttacks = preload("res://scenes/world/bosses/BossAttackScope.gd")
+
 var shooter: Node = null
 var velocity: Vector2 = Vector2.ZERO
 var damage: float = 5.0
@@ -29,6 +31,7 @@ var _life_left: float = 0.0
 var _physics_time_bank: float = 0.0
 var _pooled: bool = false
 var _chunk_manager: ChunkManager = null
+var _boss_sprite_only := false
 
 func set_style(enemy_id: StringName) -> void:
 	match enemy_id:
@@ -86,6 +89,16 @@ func _ready() -> void:
 
 	set_process(true)
 	set_physics_process(true)
+	if has_meta(BossAttacks.SCOPE_META):
+		var sprite := get_node_or_null("Sprite2D") as Sprite2D
+		if sprite != null:
+			_boss_sprite_only = true
+			material = null
+			sprite.texture = VfxKit.texture("shard")
+			sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+			sprite.position = Vector2(-3.0, 0.0)
+			sprite.scale = Vector2.ONE * 0.4
+			sprite.modulate = Color(0.90, 0.65, 1.0)
 
 func _on_pool_obtain() -> void:
 	_pooled = true
@@ -125,6 +138,9 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(render_delta: float) -> void:
+	if not BossAttacks.is_valid_attack(self):
+		_despawn()
+		return
 	# One physics tick of headroom keeps 144 Hz frames between 60 Hz ticks
 	# full-length, as the manager does.
 	var tick := 1.0 / float(maxi(Engine.physics_ticks_per_second, 1))
@@ -153,6 +169,8 @@ func _hits_world(from_pos: Vector2, to_pos: Vector2, radius: float) -> bool:
 	return _chunk_manager != null and _chunk_manager.projectile_hit_t(from_pos, to_pos, radius) >= 0.0
 
 func _draw() -> void:
+	if _boss_sprite_only:
+		return
 	# local X axis is forward because we rotate above
 	var spd: float = velocity.length()
 	var t: float = clampf(spd / 320.0, 0.0, 1.0)
@@ -171,6 +189,9 @@ func _draw() -> void:
 	draw_circle(Vector2.ZERO, maxf(2.0, trail_width * 0.75), Color(color_core.r, color_core.g, color_core.b, 0.9))
 
 func _on_area_entered(a: Area2D) -> void:
+	if not BossAttacks.is_valid_attack(self):
+		_despawn()
+		return
 	if a != null and a.is_in_group("player_hurtbox"):
 		var p: Node = get_tree().get_first_node_in_group("player")
 		if p != null and p.has_method("take_damage"):

@@ -3,6 +3,7 @@ class_name VFX_EnemyShootCone
 
 @export var duration: float = 0.16
 @export var z: int = 240
+@export var hold_until_release: bool = false
 
 var _t: float = 0.0
 var _len: float = 54.0
@@ -40,9 +41,13 @@ func _draw() -> void:
 	var p: float = clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
 	var fade: float = 1.0 - p
 	fade = fade * fade
+	if hold_until_release:
+		fade = 1.0
 
 	var a: float = _dir.angle()
 	var r1: float = _len * lerpf(0.85, 1.0, 1.0 - p)
+	if hold_until_release:
+		r1 = _len
 
 	# Pixel-art kit (Batch C, 2026-09-27): one cone sprite (apex at the origin, outer arc baked in) in the core colour replaces the glow wedge polygon and the core arc.
 	VfxKit.draw_cone(self, Vector2.ZERO, a, r1, Color(_core.r, _core.g, _core.b, _core.a * fade), rad_to_deg(_half_angle))

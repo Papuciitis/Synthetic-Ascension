@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://scenes/world/bosses/BossBeamSweep.gd" id="1_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+resource_local_to_scene = true
 size = Vector2(680, 34)
 
 [node name="BossBeamSweep" type="Node2D"]

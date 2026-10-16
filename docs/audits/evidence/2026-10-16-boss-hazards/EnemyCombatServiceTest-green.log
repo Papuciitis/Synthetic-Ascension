@@ -1,0 +1,41 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: materialized target binds before combat
+PASS: ordinary damage reports the applied amount
+PASS: ordinary damage mutates world health
+PASS: damage mirrors authoritative health to actor
+PASS: surviving actor receives hit feedback
+PASS: bound actor compatibility modifiers cap batched hits
+PASS: modified damage remains authoritative
+PASS: single-hit cap applies before lethal transition
+PASS: capped nonlethal hit keeps target alive
+PASS: lethal damage reports only remaining health
+PASS: lethal damage atomically marks world record dying
+PASS: lethal hit resolves death once without survivor feedback
+PASS: lethal hit provides a death context
+PASS: death context preserves stable handle
+PASS: death context preserves spec id
+PASS: death context preserves position
+PASS: damage after death is ignored
+PASS: repeated lethal damage cannot repeat actor death callback
+PASS: data-only record resolves cold-state modifiers without actor
+PASS: data-only damage persists in world storage
+PASS: data-only lethal damage clamps to remaining health
+PASS: data-only enemy dies and is released without materialization
+PASS: damage after a released data-only death is ignored
+PASS: stale combat fixture is removed
+PASS: stale handle damage is rejected
+PASS: stale damage cannot affect reused slot
+PASS: invalid handle damage is rejected
+PASS: zero damage is ignored
+PASS: negative damage is ignored
+PASS: stun applies to a data-only enemy
+PASS: data-only stun persists in world storage
+PASS: controlled target materializes
+PASS: materialized stun extends through combat service
+PASS: materialized stun keeps record and actor mirror equal
+PASS: zero-duration stun is ignored
+PASS: legacy target binds for compatibility
+PASS: legacy target damage stays on its Node-owned lifecycle
+PASS: legacy compatibility damage mirrors the Node result back into world storage
+EnemyCombatServiceTest passes=38 failures=0

@@ -1,12 +1,54 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/world/bosses/BossPylon.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://scenes/world/bosses/art/pylon_v1.png" id="2_body"]
+[ext_resource type="Texture2D" path="res://assets/textures/vfx/kit/streak.png" id="3_charge"]
+[ext_resource type="Texture2D" path="res://assets/textures/vfx/kit/ring.png" id="4_ring"]
+[ext_resource type="Texture2D" path="res://assets/textures/vfx/kit/disc.png" id="5_shadow"]
+[ext_resource type="Texture2D" path="res://assets/textures/vfx/kit/spokes.png" id="6_burst"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
 radius = 18.0
 
 [node name="BossPylon" type="Node2D"]
 script = ExtResource("1_script")
+
+[node name="Shadow" type="Sprite2D" parent="."]
+modulate = Color(0, 0, 0, 0.35)
+texture_filter = 1
+position = Vector2(0, 3)
+scale = Vector2(0.5625, 0.16875)
+texture = ExtResource("5_shadow")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -22)
+scale = Vector2(0.048, 0.048)
+texture = ExtResource("2_body")
+
+[node name="ChargeCue" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.9, 0.65, 1, 0.8)
+texture_filter = 1
+position = Vector2(25, -34)
+scale = Vector2(0.78125, 0.5)
+texture = ExtResource("3_charge")
+
+[node name="ChargeRing" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.95, 0.72, 1, 0.5)
+texture_filter = 1
+position = Vector2(0, -34)
+scale = Vector2(0.0625, 0.0625)
+texture = ExtResource("4_ring")
+
+[node name="DestructionBurst" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(0.9, 0.65, 1, 1)
+texture_filter = 1
+position = Vector2(0, -34)
+scale = Vector2(0.1875, 0.1875)
+texture = ExtResource("6_burst")
 
 [node name="Hitbox" type="Area2D" parent="." groups=["enemy_hitbox"]]
 collision_layer = 2

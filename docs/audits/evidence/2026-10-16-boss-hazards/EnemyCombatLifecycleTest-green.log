@@ -1,0 +1,23 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: real enemy lifecycle dependencies load
+PASS: real pooled EnemyActor spawns
+PASS: spawned actor owns a stable world handle
+PASS: actor health starts equal to world health
+PASS: direct damage updates actor mirror
+PASS: direct damage updates authoritative world health
+PASS: batched hit keeps actor and world synchronized
+PASS: actor exposes authoritative healing
+PASS: healing updates actor and world together
+PASS: actor exposes authoritative maximum-health configuration
+PASS: health configuration updates actor mirror
+PASS: health configuration updates world values
+PASS: lethal damage emits one compatibility kill event
+PASS: lethal damage emits one generic defeat event
+PASS: despawn invalidates the dead actor handle
+PASS: late damage on pooled actor cannot repeat either death event
+PASS: dead materialized actor is reused from pool
+PASS: pool obtain assigns a fresh-generation handle
+PASS: reused actor mirror resets alive at full health
+PASS: reused actor and new world record agree
+EnemyCombatLifecycleTest passes=20 failures=0

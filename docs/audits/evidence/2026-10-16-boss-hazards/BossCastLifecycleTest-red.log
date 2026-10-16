@@ -1,0 +1,24 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: fan anticipation cannot release while paused
+PASS: resuming preserves the unspent anticipation instead of firing immediately
+PASS: fan resumes remaining anticipation and releases once
+PASS: returning cancels a pending fan instead of releasing stale bullets
+PASS: a brief expired stun cannot revive the interrupted fan
+ERROR: FAIL: stunning a summoned Runner cannot interrupt its owner's cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossCastLifecycleTest.gd:24)
+       [1] _run (res://tools/tests/BossCastLifecycleTest.gd:115)
+PASS: released fan has nine live projectiles before cleanup
+PASS: boss death clears its released fan while preserving unrelated projectiles
+PASS: slam commitment locks normal movement and charge starts
+PASS: a real actor step cannot move or start a charge during slam anticipation
+PASS: slam releases its unchanged18damage at the warned origin
+PASS: slam cannot relocate from its preview to the boss's new position
+ERROR: FAIL: an interrupted charge cannot resume later without a new warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossCastLifecycleTest.gd:24)
+       [1] _run (res://tools/tests/BossCastLifecycleTest.gd:162)
+BossCastLifecycleTest: 11 passed, 2 failed

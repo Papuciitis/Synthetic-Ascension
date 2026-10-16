@@ -1,0 +1,132 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: boss_warning has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:102)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:233)
+ERROR: FAIL: boss_beam_release has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:102)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:233)
+ERROR: FAIL: boss_pylon_shot has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:102)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:233)
+ERROR: FAIL: boss_mine_burst has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:102)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:233)
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _fixture (res://tools/tests/BossAttackAudioTest.gd:59)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:112)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:234)
+ERROR: FAIL: accepted slam warns once at the committed origin; rejected overlap is silent
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:118)
+       [3] _run (res://tools/tests/BossAttackAudioTest.gd:234)
+ERROR: FAIL: dead boss cannot replay a slam warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:121)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:234)
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _fixture (res://tools/tests/BossAttackAudioTest.gd:59)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:124)
+       [2] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+ERROR: FAIL: accepted fan warns once at the committed origin; rejected overlap is silent
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:130)
+       [3] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+ERROR: FAIL: dead boss cannot replay a fan warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:133)
+       [2] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _fixture (res://tools/tests/BossAttackAudioTest.gd:59)
+       [1] _test_mine_boundaries (res://tools/tests/BossAttackAudioTest.gd:147)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:235)
+       [3] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:134)
+       [4] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+ERROR: FAIL: mine detonation requests one burst at the impact, never one per duplicate call
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_mine_boundaries (res://tools/tests/BossAttackAudioTest.gd:153)
+       [3] _run (res://tools/tests/BossAttackAudioTest.gd:235)
+       [4] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:134)
+       [5] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: paused mine detonation guard requests no release audio
+ERROR: FAIL: mine requests its burst once when an accepted detonation resumes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_mine_boundaries (res://tools/tests/BossAttackAudioTest.gd:162)
+       [3] _run (res://tools/tests/BossAttackAudioTest.gd:235)
+       [4] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:134)
+       [5] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: canceled boss mine cannot request stale detonation audio
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _fixture (res://tools/tests/BossAttackAudioTest.gd:59)
+       [1] _test_beam_boundaries (res://tools/tests/BossAttackAudioTest.gd:185)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:236)
+       [3] _test_mine_boundaries (res://tools/tests/BossAttackAudioTest.gd:169)
+       [4] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: beam creation and incomplete anticipation are silent at the release boundary
+PASS: paused beam anticipation cannot request release audio
+ERROR: FAIL: beam transition requests one positional release, not one per sweep frame
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_beam_boundaries (res://tools/tests/BossAttackAudioTest.gd:197)
+       [3] _run (res://tools/tests/BossAttackAudioTest.gd:236)
+       [4] _test_mine_boundaries (res://tools/tests/BossAttackAudioTest.gd:169)
+       [5] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: canceled beam cannot request stale transition audio
+ERROR: Condition "p_scene && p_scene->get_parent() != root" is true.
+   at: set_current_scene (scene/main/scene_tree.cpp:1665)
+   GDScript backtrace (most recent call first):
+       [0] _fixture (res://tools/tests/BossAttackAudioTest.gd:59)
+       [1] _test_pylon_boundaries (res://tools/tests/BossAttackAudioTest.gd:208)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:237)
+       [3] _test_beam_boundaries (res://tools/tests/BossAttackAudioTest.gd:204)
+       [4] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: pylon aim and windup do not play projectile release early
+ERROR: FAIL: pylon projectile release requests one cue at its muzzle
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:51)
+       [2] _test_pylon_boundaries (res://tools/tests/BossAttackAudioTest.gd:220)
+       [3] _run (res://tools/tests/BossAttackAudioTest.gd:237)
+       [4] _test_beam_boundaries (res://tools/tests/BossAttackAudioTest.gd:204)
+       [5] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:89)
+PASS: canceled pylon cannot request stale projectile release audio
+BossAttackAudioTest: 7 passed, 12 failed

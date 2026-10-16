@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://core/combat/hazards/DamageCircle.gd" id="1_script"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+resource_local_to_scene = true
 radius = 64.0
 
 [node name="DamageCircle" type="Area2D"]

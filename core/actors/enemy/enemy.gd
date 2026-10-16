@@ -357,6 +357,11 @@ func _run_simulation_step(delta: float) -> void:
 		return
 
 	# Charge override (windup/dash) is only relevant to the charge brain.
+	if bool(get_meta(&"boss_cast_locked", false)):
+		velocity = knockback_vel
+		_move_and_slide_scaled()
+		_update_enemy_index(true)
+		return
 	if ai == EnemySpec.AI.CHARGE and _charge.step_override(delta):
 		velocity = _charge.override_velocity() + knockback_vel
 		_move_and_slide_scaled()
@@ -1275,6 +1280,13 @@ func apply_stun(seconds: float) -> void:
 
 func _apply_enemy_world_stun(seconds: float) -> void:
 	stun_time = maxf(stun_time, seconds)
+	# Record interruption at application, even if a short stun expires before
+	# the next boss-brain frame. Released hazards retain their own lifetimes.
+	if seconds > 0.0 and has_meta(&"boss_attack_scope"):
+		var scope_ref := get_meta(&"boss_attack_scope") as WeakRef
+		var scope = scope_ref.get_ref() if scope_ref != null else null
+		if is_instance_valid(scope) and scope.owns_actor(self):
+			scope.interrupt_cast()
 
 ## A Herald's ward: damage taken is multiplied by (1 - fraction) for the
 ## duration, composed on top of whatever damage_taken_mul the actor already

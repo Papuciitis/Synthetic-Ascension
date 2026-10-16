@@ -1,5 +1,9 @@
 extends Node
 
+const AttackScope = preload("res://scenes/world/bosses/BossAttackScope.gd")
+const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
+const SpriteTrail = preload("res://scenes/world/bosses/BossSpriteTrail.gd")
+
 @export_group("Slam")
 @export var slam_every: float = 3.6
 @export var slam_windup: float = 0.65
@@ -12,6 +16,7 @@ extends Node
 @export var shockwave_spacing: float = 140.0
 @export var shockwave_radius: float = 85.0
 @export var shockwave_damage: float = 10.0
+@export var shockwave_windup: float = 0.55
 
 @export_group("Blockers")
 @export var summon_every: float = 9.0
@@ -30,9 +35,16 @@ var _summon_cd: float = 5.0
 
 var _phase: int = 0
 var _was_charging: bool = false
-var _trail: VFX_TrailFollow2D = null
+var _trail: Node2D = null
 var _trail_step_accum: float = 0.0
 var _last_pos: Vector2 = Vector2.ZERO
+var _scope: Node
+var _cast: StringName = &""
+var _cast_elapsed := 0.0
+var _cast_origin := Vector2.ZERO
+var _cast_dir := Vector2.RIGHT
+var _shock_index := 0
+var _warnings: Array[Node] = []
 
 func _ready() -> void:
 	_e = get_parent() as EnemyActor
@@ -40,16 +52,24 @@ func _ready() -> void:
 		set_process(false)
 		return
 	_e.set_meta("boss_archetype", "tank")
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	_scope = AttackScope.new()
+	add_child(_scope)
+	_scope.setup(_e)
+	_scope.cast_interrupted.connect(_cancel_cast)
 	_last_pos = _e.global_position
 	set_process(true)
 
 func _process(delta: float) -> void:
-	if _e == null or not is_instance_valid(_e) or _e.dead:
+	if _scope == null or not _scope.is_active():
+		_cancel_cast()
+		_stop_trail()
 		return
 	if _e.player == null or not is_instance_valid(_e.player):
 		return
 
-	if _e.has_meta("boss_returning") and bool(_e.get_meta("boss_returning")):
+	if _cast != &"":
+		_tick_cast(delta)
 		return
 
 	# Phase logic (simple)
@@ -89,11 +109,13 @@ func _process(delta: float) -> void:
 		_do_shockwave()
 		return
 
-	if _summon_cd <= 0.0 and _phase >= 1:
+	if _summon_cd <= 0.0 and _phase >= 1 and not _is_busy():
 		_summon_cd = summon_every * lerpf(1.0, 0.75, float(_phase) / 2.0)
 		_summon_blockers()
 
 func _is_busy() -> bool:
+	if _cast != &"":
+		return true
 	# Don't start new casts while EnemyCharge is overriding movement.
 	if _e != null and _e._charge != null:
 		return (_e._charge._windup_left > 0.0 or _e._charge._time_left > 0.0)
@@ -111,8 +133,9 @@ func _track_charge(_delta: float) -> void:
 		_trail_step_accum = 0.0
 		_last_pos = _e.global_position
 
-		_trail = VFX_TrailFollow2D.new()
+		_trail = SpriteTrail.new()
 		if _trail != null:
+			AttackScope.bind(_trail, _e)
 			get_tree().current_scene.add_child(_trail)
 			_trail.follow = _e
 			_trail.width = 7.5
@@ -141,41 +164,81 @@ func _track_charge(_delta: float) -> void:
 			_spawn_damage_circle(_e.global_position, 26.0, 5.0, 0.18)
 
 func _do_slam() -> void:
-	# Telegraph ring
-	if vfx_ring_scene != null:
-		var r := vfx_ring_scene.instantiate()
-		get_tree().current_scene.add_child(r)
-		if r.has_method("setup"):
-			r.call("setup", _e.global_position, slam_radius)
-
-	# Delayed hit
-	_async_slam()
-
-func _async_slam() -> void:
-	# fire-and-forget coroutine
-	_call_slam()
-
-@warning_ignore("redundant_await")
-func _call_slam() -> void:
-	await get_tree().create_timer(maxf(0.05, slam_windup)).timeout
-	if _e == null or not is_instance_valid(_e) or _e.dead:
+	if not _begin_cast(&"slam"):
 		return
-	_spawn_wave(_e.global_position, slam_radius)
-	_spawn_damage_circle(_e.global_position, slam_radius, slam_damage, 0.18)
+	SfxManager.play_2d(&"boss_warning", _cast_origin)
+	_add_warning(_cast_origin, slam_radius, maxf(0.05, slam_windup))
 
 func _do_shockwave() -> void:
-	var dir := (_e.player.global_position - _e.global_position).normalized()
-	_call_shock(dir)
-
-@warning_ignore("redundant_await")
-func _call_shock(dir: Vector2) -> void:
+	if not _begin_cast(&"shock"):
+		return
+	SfxManager.play_2d(&"boss_warning", _cast_origin)
+	_cast_dir = (_e.player.global_position - _cast_origin).normalized()
+	if _cast_dir == Vector2.ZERO:
+		_cast_dir = Vector2.RIGHT
+	_shock_index = 0
 	for i in range(maxi(1, shockwave_waves)):
-		await get_tree().create_timer(0.12 * float(i)).timeout
-		if _e == null or not is_instance_valid(_e) or _e.dead:
-			return
-		var p := _e.global_position + dir * shockwave_spacing * float(i + 1)
-		_spawn_wave(p, shockwave_radius)
-		_spawn_damage_circle(p, shockwave_radius, shockwave_damage, 0.16)
+		_add_warning(_cast_origin + _cast_dir * shockwave_spacing * float(i + 1), shockwave_radius, _shock_time(i))
+
+func _begin_cast(kind: StringName) -> bool:
+	if _scope == null or not _scope.is_active() or _is_busy():
+		return false
+	_cast = kind
+	_cast_elapsed = 0.0
+	_cast_origin = _e.global_position
+	_e.set_meta(&"boss_cast_locked", true)
+	return true
+
+func _shock_time(index: int) -> float:
+	return maxf(0.05, shockwave_windup) + 0.06 * float(index * (index + 1))
+
+func _tick_cast(delta: float) -> void:
+	_cast_elapsed += delta
+	if _cast == &"slam" and _cast_elapsed >= maxf(0.05, slam_windup):
+		_spawn_wave(_cast_origin, slam_radius)
+		_spawn_damage_circle(_cast_origin, slam_radius, slam_damage, 0.18)
+		_cancel_cast()
+	elif _cast == &"shock":
+		while _shock_index < maxi(1, shockwave_waves) and _cast_elapsed >= _shock_time(_shock_index):
+			var pos := _cast_origin + _cast_dir * shockwave_spacing * float(_shock_index + 1)
+			_spawn_wave(pos, shockwave_radius)
+			_spawn_damage_circle(pos, shockwave_radius, shockwave_damage, 0.16)
+			if _shock_index < _warnings.size() and is_instance_valid(_warnings[_shock_index]):
+				_warnings[_shock_index].queue_free()
+			_shock_index += 1
+		if _shock_index >= maxi(1, shockwave_waves):
+			_cancel_cast()
+
+func _add_warning(pos: Vector2, radius: float, duration: float) -> void:
+	# Persistent ground markers use the same low-resolution ring kit as mines.
+	var warning: Node2D = GroundWarning.new()
+	warning.call("setup", pos, radius, duration)
+	AttackScope.bind(warning, _e)
+	get_tree().current_scene.add_child(warning)
+	_warnings.append(warning)
+
+func _cancel_cast() -> void:
+	_cast = &""
+	for warning in _warnings:
+		if is_instance_valid(warning):
+			warning.queue_free()
+	_warnings.clear()
+	if is_instance_valid(_e):
+		_e.set_meta(&"boss_cast_locked", false)
+		if _e._charge != null:
+			_e._charge._windup_left = 0.0
+			_e._charge._time_left = 0.0
+			_e._charge._override_vel = Vector2.ZERO
+		for child in _e.get_children():
+			if child is VFX_ChargeWindup:
+				child.queue_free()
+	_stop_trail()
+
+func _stop_trail() -> void:
+	if is_instance_valid(_trail):
+		_trail.queue_free()
+	_trail = null
+	_was_charging = false
 
 func _summon_blockers() -> void:
 	if blocker_scene == null:
@@ -196,11 +259,13 @@ func _summon_blockers() -> void:
 			_release_boss_add_reservation(enemy_index)
 			continue
 		(blocker as Node2D).global_position = pos
+		AttackScope.bind(blocker, _e)
 		var current_scene: Node = get_tree().current_scene
 		if current_scene == null:
 			blocker.free()
 			_release_boss_add_reservation(enemy_index)
 			continue
+		(blocker as Node2D).position = current_scene.to_local(pos) if current_scene is Node2D else pos
 		if enemy_index != null and enemy_index.has_method("commit_special"):
 			enemy_index.call("commit_special", blocker, &"boss_add")
 		current_scene.add_child(blocker)
@@ -214,13 +279,18 @@ func _spawn_wave(pos: Vector2, radius: float) -> void:
 	if vfx_wave_scene == null:
 		return
 	var v := vfx_wave_scene.instantiate()
-	get_tree().current_scene.add_child(v)
+	if v is Node2D:
+		v.top_level = true
 	if v.has_method("setup"):
 		v.call("setup", pos, radius)
+	AttackScope.bind(v, _e)
+	get_tree().current_scene.add_child(v)
+	SfxManager.play_2d_limited(&"multikill_thump", pos, 120, -4.0)
 
 func _spawn_damage_circle(pos: Vector2, radius: float, dmg: float, life: float) -> void:
 	if damage_circle_scene == null:
 		return
 	var d := damage_circle_scene.instantiate() as DamageCircle
-	get_tree().current_scene.add_child(d)
 	d.setup(pos, radius, dmg, life, _e)
+	AttackScope.bind(d, _e)
+	get_tree().current_scene.add_child(d)

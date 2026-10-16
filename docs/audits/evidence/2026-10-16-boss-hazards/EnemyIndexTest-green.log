@@ -1,0 +1,26 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: enemy index autoload exists
+PASS: enemy world autoload exists
+PASS: index registration mirrors logical records
+PASS: registered enemy receives a stable handle
+PASS: index movement synchronizes logical position
+PASS: huge-radius gather_in_radius returns every live enemy
+PASS: huge-radius gather_in_radius completes without scanning the full cell window (took 38 usec)
+PASS: huge-radius count_allies counts the other live enemies
+PASS: huge-radius count_allies completes without scanning the full cell window (took 45 usec)
+PASS: dead enemies are filtered from huge-radius gathers
+PASS: bucket removal keeps remaining same-cell enemies queryable
+PASS: index exposes live elite count
+PASS: registering an elite increments the live elite count
+PASS: promoting a registered enemy increments the live elite count
+PASS: elite promotion synchronizes the logical record
+PASS: double promotion does not double count
+PASS: elite death decrements the live elite count
+PASS: unregistering an elite decrements the live elite count
+PASS: re-registering a live elite recounts it
+PASS: index maintenance prunes queued and externally freed actors
+PASS: index rebuild preserves native logical records
+PASS: world mirrors valid index actors without duplicating them
+PASS: index cleanup returns world count to baseline
+EnemyIndexTest passes=23 failures=0

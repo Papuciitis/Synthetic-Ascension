@@ -1,5 +1,7 @@
 extends Node
 
+const AttackScope = preload("res://scenes/world/bosses/BossAttackScope.gd")
+
 @export_group("Fan Shot")
 @export var fan_every: float = 2.8
 @export var fan_telegraph: float = 0.22
@@ -47,6 +49,15 @@ var _blink_cd: float = 0.8
 var _phase: int = 0
 var _tier_is_boss: bool = false
 var _tier_checked: bool = false
+var _scope: Node
+var _cast_left := 0.0
+var _cast_kind: StringName = &""
+var _fan_origin := Vector2.ZERO
+var _fan_dir := Vector2.RIGHT
+var _fan_phase := 0
+var _fan_warning: Node
+var _channel: Node
+var _pylons: Array[WeakRef] = []
 
 func _ready() -> void:
 	_e = get_parent() as EnemyActor
@@ -54,15 +65,26 @@ func _ready() -> void:
 		set_process(false)
 		return
 	_e.set_meta("boss_archetype", "mage")
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	_scope = AttackScope.new()
+	add_child(_scope)
+	_scope.setup(_e)
+	_scope.cast_interrupted.connect(_cancel_cast)
 	set_process(true)
 
 func _process(delta: float) -> void:
-	if _e == null or not is_instance_valid(_e) or _e.dead:
+	if _scope == null or not _scope.is_active():
+		_cancel_cast()
 		return
 	if _e.player == null or not is_instance_valid(_e.player):
 		return
 
-	if _e.has_meta("boss_returning") and bool(_e.get_meta("boss_returning")):
+	if _cast_kind != &"":
+		_cast_left -= delta
+		if _cast_left <= 0.0:
+			if _cast_kind == &"fan":
+				_release_fan()
+			_cancel_cast()
 		return
 
 	# Tier check (groups are applied by the Arena right after spawn)
@@ -124,28 +146,31 @@ func _process(delta: float) -> void:
 			_spawn_pylons()
 
 func _fan_shot() -> void:
-	if projectile_scene == null:
+	if projectile_scene == null or not _begin_cast(&"fan", maxf(0.05, fan_telegraph)):
 		return
-	var dir := (_e.player.global_position - _e.global_position).normalized()
+	_fan_origin = _e.global_position
+	_fan_dir = (_e.player.global_position - _fan_origin).normalized()
+	_fan_phase = _phase
+	SfxManager.play_2d(&"boss_warning", _fan_origin)
 
 	# Telegraph cone
 	if cone_vfx_scene != null:
 		var v := cone_vfx_scene.instantiate()
-		get_tree().current_scene.add_child(v)
+		if v is VFX_EnemyShootCone:
+			v.hold_until_release = true
+		if v is Node2D:
+			v.top_level = true
 		if v.has_method("setup"):
-			v.call("setup", _e.global_position, dir, 280.0, deg_to_rad(fan_spread_deg * 0.5), fan_telegraph,
+			v.call("setup", _fan_origin, _fan_dir, 280.0, deg_to_rad(fan_spread_deg * 0.5), fan_telegraph,
 				Color(1, 1, 1, 0.35), Color(0.78, 0.22, 1.0, 0.22))
+		AttackScope.bind(v, _e)
+		get_tree().current_scene.add_child(v)
+		_fan_warning = v
 
-	_call_fan(dir)
-
-@warning_ignore("redundant_await")
-func _call_fan(dir: Vector2) -> void:
-	await get_tree().create_timer(maxf(0.05, fan_telegraph)).timeout
-	if _e == null or not is_instance_valid(_e) or _e.dead:
-		return
+func _release_fan() -> void:
 	var n := maxi(3, fan_projectiles)
 	var half := deg_to_rad(fan_spread_deg * 0.5)
-	var base := dir.angle()
+	var base := _fan_dir.angle()
 
 	for i in range(n):
 		var t := 0.0 if n == 1 else float(i) / float(n - 1)
@@ -153,9 +178,31 @@ func _call_fan(dir: Vector2) -> void:
 		var d := Vector2(cos(a), sin(a))
 
 		var proj := projectile_scene.instantiate() as EnemyProjectile
+		var world := get_tree().current_scene
+		proj.position = world.to_local(_fan_origin) if world is Node2D else _fan_origin
+		proj.setup(d, fan_projectile_speed, fan_projectile_damage * (1.0 + 0.25 * float(_fan_phase)), 2.6, _e)
+		AttackScope.bind(proj, _e)
 		get_tree().current_scene.add_child(proj)
-		proj.global_position = _e.global_position
-		proj.setup(d, fan_projectile_speed, fan_projectile_damage * (1.0 + 0.25 * float(_phase)), 2.6, _e)
+
+func _begin_cast(kind: StringName, duration: float) -> bool:
+	if _scope == null or not _scope.is_active() or _cast_kind != &"":
+		return false
+	_cast_kind = kind
+	_cast_left = duration
+	_e.set_meta(&"boss_cast_locked", true)
+	return true
+
+func _cancel_cast() -> void:
+	_cast_kind = &""
+	_cast_left = 0.0
+	if is_instance_valid(_fan_warning):
+		_fan_warning.queue_free()
+	_fan_warning = null
+	if is_instance_valid(_channel):
+		_channel.queue_free()
+	_channel = null
+	if is_instance_valid(_e):
+		_e.set_meta(&"boss_cast_locked", false)
 
 func _drop_mines() -> void:
 	if mine_scene == null:
@@ -173,11 +220,12 @@ func _drop_mines() -> void:
 		var pos := p + Vector2(cos(ang), sin(ang)) * r
 
 		var mine := mine_scene.instantiate() as BossMine
-		get_tree().current_scene.add_child(mine)
 		mine.setup(pos, _e, mine_fuse, mine_radius, mine_damage * (1.0 + 0.20 * float(_phase)))
+		AttackScope.bind(mine, _e)
+		get_tree().current_scene.add_child(mine)
 
 func _beam_sweep() -> void:
-	if beam_scene == null:
+	if beam_scene == null or _cast_kind != &"":
 		return
 	var dir := (_e.player.global_position - _e.global_position).normalized()
 	var base := dir.angle()
@@ -187,20 +235,29 @@ func _beam_sweep() -> void:
 	var a1 := base + deg_to_rad(55.0)
 
 	var beam := beam_scene.instantiate() as BossBeamSweep
-	get_tree().current_scene.add_child(beam)
 	beam.setup(_e.global_position, a0, a1, _e)
 	beam.damage *= (1.0 + 0.25 * float(_phase))
+	if not _begin_cast(&"beam", beam.telegraph_time + beam.sweep_time):
+		beam.free()
+		return
+	AttackScope.bind(beam, _e)
+	get_tree().current_scene.add_child(beam)
+	_channel = beam
 
 func _spawn_pylons() -> void:
 	if pylon_scene == null:
 		return
+	_pylons = _pylons.filter(func(ref: WeakRef) -> bool: return is_instance_valid(ref.get_ref()) and not ref.get_ref().is_queued_for_deletion())
 	var center := _e.player.global_position
-	for i in range(maxi(1, pylons_count)):
+	var count := mini(maxi(1, pylons_count), 2 - _pylons.size())
+	for i in range(maxi(0, count)):
 		var ang := TAU * float(i) / float(maxi(1, pylons_count))
 		var pos := center + Vector2(cos(ang), sin(ang)) * 240.0
 		var pyl := pylon_scene.instantiate() as BossPylon
+		pyl.call("setup", pos, _e, 12.0)
+		AttackScope.bind(pyl, _e)
 		get_tree().current_scene.add_child(pyl)
-		pyl.global_position = pos
+		_pylons.append(weakref(pyl))
 
 func _blink() -> void:
 	var old := _e.global_position
@@ -239,5 +296,8 @@ func _spawn_blink_vfx(pos: Vector2) -> void:
 	if blink_vfx_scene == null:
 		return
 	var v := blink_vfx_scene.instantiate()
-	get_tree().current_scene.add_child(v)
+	if v is Node2D:
+		v.top_level = true
 	(v as Node2D).global_position = pos
+	AttackScope.bind(v, _e)
+	get_tree().current_scene.add_child(v)
