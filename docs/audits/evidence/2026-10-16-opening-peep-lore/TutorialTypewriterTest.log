@@ -1,0 +1,20 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: tutorial card scene loads
+PASS: tutorial card begins with partially revealed body text
+PASS: tutorial card reveals additional characters as paused time advances
+PASS: first Continue press reveals the full tutorial text
+PASS: first Continue press does not dismiss a revealing tutorial card
+PASS: second Continue press dismisses the completed tutorial card
+PASS: enemy dossiers can limit typewriter animation to their lore
+PASS: enemy dossier begins by typing only its lore
+PASS: enemy dossier reveals all tactical details instantly when its lore finishes
+PASS: Instant accessibility setting skips timed tutorial reveal
+PASS: opening narrative begins with partially revealed body text
+PASS: opening narrative reveals additional characters as paused time advances
+PASS: first opening Continue press reveals the full narrative
+PASS: first opening Continue press does not advance the narrative
+PASS: second opening Continue press advances the narrative
+PASS: opening choices stay hidden while their text reveals
+PASS: opening choices appear after the text is fully revealed
+TutorialTypewriterTest: 17 passed, 0 failed

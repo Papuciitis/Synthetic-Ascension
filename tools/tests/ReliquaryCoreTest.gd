@@ -1,5 +1,7 @@
 extends Node
 
+const CITY_LORE_DOCUMENTS := preload("res://data/narrative/CityLoreDocuments.gd")
+
 # The core of Duos, Facets, the Burden, the Reliquary and the Grimoire
 # (docs/design/2026-10-03-duos-facets-and-the-reliquary.md): the rules
 # tables, the deal's DUO and FACET cards, Global's flow for each piece, the
@@ -78,7 +80,7 @@ func _test_tables() -> void:
 	_check(AugmentRites.transfusion_gain(1) == 0 and AugmentRites.transfusion_gain(5) == 2 and AugmentRites.transfusion_cost(2) == 80, "a Lv.5 donor pours 2 levels for 80 Followers; Lv.1 pours nothing")
 	_check(Vouchers.ids().size() == 8 and Vouchers.price(1) == 300 and Vouchers.price(2) == 350 and Vouchers.price(4) == 550, "eight Vouchers, 300 / 350 at the first two Hubs as before, then +100 a segment (follower economy audit P4)")
 	var catalogue := Grimoire.catalogue(Global.augment_db)
-	_check(catalogue.size() == 16 + 6 + 14 + 3 + 3 + StoryLines.RECORDS.size(), "the Grimoire lists 16 Transcendences, 6 Duos, 14 Facets, 3 Theses, 3 Canons and the story's records (%d)" % catalogue.size())
+	_check(catalogue.size() == 16 + 6 + 14 + 3 + 3 + StoryLines.RECORDS.size() + CITY_LORE_DOCUMENTS.DOCUMENTS.size(), "the Grimoire lists 16 Transcendences, 6 Duos, 14 Facets, 3 Theses, 3 Canons and milestone/optional story records (%d)" % catalogue.size())
 
 
 func _context(extra: Dictionary) -> Dictionary:

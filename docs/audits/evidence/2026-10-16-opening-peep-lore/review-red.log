@@ -1,0 +1,40 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: story cards can select and release optional illustrations
+PASS: city illustration is usable
+PASS: admission illustration is usable
+PASS: synthesis illustration is usable
+PASS: records illustration is usable
+PASS: city image can be shown again after cleanup
+ERROR: FAIL: blocking story card hides the world guidance prompt
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/OpeningIllustrationTest.gd:18)
+       [1] _run (res://tools/tests/OpeningIllustrationTest.gd:50)
+       [2] _settle (res://tools/tests/OpeningIllustrationTest.gd:22)
+PASS: historical card fits a 640 by 480 viewport without shrinking text
+PASS: consecutive cards retain their illustration without reloading
+PASS: showing the same still supersedes a pending clear
+PASS: an old clear cannot remove a different newly selected still
+PASS: clearing a story group releases art before world play resumes
+PASS: unknown art quietly falls back to text
+PASS: missing image preserves usable dialogue
+PASS: long choice card scrolls inside the small viewport
+ERROR: FAIL: Down reads the next part of a long card without jumping to its choices
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/OpeningIllustrationTest.gd:18)
+       [1] _run (res://tools/tests/OpeningIllustrationTest.gd:82)
+       [2] _settle (res://tools/tests/OpeningIllustrationTest.gd:22)
+ERROR: FAIL: Up returns to the beginning while keeping reading focus
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/OpeningIllustrationTest.gd:18)
+       [1] _run (res://tools/tests/OpeningIllustrationTest.gd:90)
+       [2] _settle (res://tools/tests/OpeningIllustrationTest.gd:22)
+PASS: focusing the fourth response brings it fully into view
+PASS: first confirmation reveals without advancing
+PASS: opening reveal consumes its confirmation input
+PASS: an open shared pause menu prevents underlying story advancement
+PASS: intentionally paused hub dialogue still advances without a pause menu
+OpeningIllustrationTest: 19 passed, 3 failed

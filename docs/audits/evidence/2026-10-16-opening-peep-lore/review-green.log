@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: story cards can select and release optional illustrations
+PASS: city illustration is usable
+PASS: admission illustration is usable
+PASS: synthesis illustration is usable
+PASS: records illustration is usable
+PASS: city image can be shown again after cleanup
+PASS: blocking story card hides the world guidance prompt
+PASS: historical card fits a 640 by 480 viewport without shrinking text
+PASS: consecutive cards retain their illustration without reloading
+PASS: showing the same still supersedes a pending clear
+PASS: an old clear cannot remove a different newly selected still
+PASS: clearing a story group releases art before world play resumes
+PASS: unknown art quietly falls back to text
+PASS: missing image preserves usable dialogue
+PASS: long choice card scrolls inside the small viewport
+PASS: Down reads the next part of a long card without jumping to its choices
+PASS: Up returns to the beginning while keeping reading focus
+PASS: focusing the fourth response brings it fully into view
+PASS: first confirmation reveals without advancing
+PASS: opening reveal consumes its confirmation input
+PASS: an open shared pause menu prevents underlying story advancement
+PASS: intentionally paused hub dialogue still advances without a pause menu
+OpeningIllustrationTest: 22 passed, 0 failed

@@ -33,6 +33,7 @@ const RECENT := 3
 const LEDGER_PATH := "res://core/systems/narrative/StoryLedger.gd"
 const SEGMENT_PRESENTER_PATH := "res://core/systems/narrative/StorySegmentPresenter.gd"
 const HUB_PRESENTER_PATH := "res://core/systems/narrative/StoryHubPresenter.gd"
+const CITY_LORE_DOCUMENTS := preload("res://data/narrative/CityLoreDocuments.gd")
 ## roman() for any count: a profile's accounts never stop at XX, and the
 ## Game Over caption switched to digits at the 21st (story review 2026-10-04).
 const ROMAN_VALUES: Array[int] = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1]
@@ -352,10 +353,15 @@ static func note_hub_arrival() -> void:
 static func note_progress(segment: int = 0) -> void:
 	if Global == null:
 		return
+	# Availability is durable evidence, separate from optional collection.
+	# The hub passes zero; its next-segment counter is not an arrival.
+	if segment > 0:
+		add_flag("city_lore:reached:%d" % segment)
 	var milestones := {"admitted": ["registry"], "synthesis": ["synthesis"], "first_confrontation": ["containment"],
 		"assistant_commitment": ["bren", "pattern"], "wardstone_1": ["wardstones"]}
 	for milestone in milestones.keys():
 		if Global.has_segment1_milestone(StringName(milestone)):
+			add_flag("city_lore:milestone:" + String(milestone))
 			for id in milestones[milestone]:
 				note_record(id)
 	for stage in ["method", "doctrine", "apotheosis"]:
@@ -380,6 +386,9 @@ static func record_catalogue() -> Array:
 	for record in StoryLines.RECORDS:
 		out.append({"key": "record:%s" % String(record["id"]), "section": "RECORDS",
 			"name": String(record["name"]), "rule": String(record["rule"]), "hint": String(record["hint"])})
+	for document: Dictionary in CITY_LORE_DOCUMENTS.DOCUMENTS:
+		out.append({"key": "record:%s" % String(document["id"]), "section": "RECORDS",
+			"name": String(document["name"]), "rule": String(document["body"]), "hint": String(document["hint"])})
 	return out
 
 

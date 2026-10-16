@@ -1,0 +1,87 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: CityLoreDiscoveryTest: Chronicles adds eight source documents to the existing nineteen records
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:62)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_service_lamp
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_interval_margin
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_order_times
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_laundry_window
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_bren_copy
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_tree_door
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_reconstruction_stores
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+ERROR: CityLoreDiscoveryTest: the Library can address optional Chronicle city_blank_destination
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_catalogue (res://tools/tests/CityLoreDiscoveryTest.gd:65)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:224)
+PASS: existing Chronicle adaptation remains intact: accounts
+PASS: existing Chronicle adaptation remains intact: registry
+PASS: existing Chronicle adaptation remains intact: synthesis
+PASS: existing Chronicle adaptation remains intact: containment
+PASS: existing Chronicle adaptation remains intact: bren
+PASS: existing Chronicle adaptation remains intact: pattern
+PASS: existing Chronicle adaptation remains intact: reconstruction
+PASS: existing Chronicle adaptation remains intact: wardstones
+PASS: existing Chronicle adaptation remains intact: report
+PASS: existing Chronicle adaptation remains intact: rite
+PASS: existing Chronicle adaptation remains intact: tree
+PASS: existing Chronicle adaptation remains intact: method
+PASS: existing Chronicle adaptation remains intact: doctrine
+PASS: existing Chronicle adaptation remains intact: apotheosis
+PASS: existing Chronicle adaptation remains intact: inner_ward
+PASS: existing Chronicle adaptation remains intact: garrison
+PASS: existing Chronicle adaptation remains intact: wall
+PASS: existing Chronicle adaptation remains intact: last_gate
+PASS: existing Chronicle adaptation remains intact: beyond
+PASS: building the catalogue discovers no optional page
+ERROR: CityLoreDiscoveryTest: source availability and explicit collection must be implemented separately from story progress
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _run (res://tools/tests/CityLoreDiscoveryTest.gd:234)
+ERROR: CityLoreDiscoveryTest: Quiet Alcove has an optional Papers entry alongside Browse
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_hub_papers_entry (res://tools/tests/CityLoreDiscoveryTest.gd:202)
+CityLoreDiscoveryTest: 20 passed, 11 failed

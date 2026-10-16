@@ -1,0 +1,50 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: terminal continuation has a usable screen
+PASS: opening without pending does not show PeeP
+PASS: an absent terminal decision does not spend the first conversation
+PASS: absent pending does not capture input for an invisible screen
+PASS: absent pending safely routes to menu
+PASS: small-window arrival introduces PeeP at the top without focusing a hidden action
+PASS: the first encounter offers the full conversation immediately without requiring a spoken reply
+PASS: the first conversation never delays the continuation action
+PASS: presenting the first conversation records profile memory without accepting continuation
+PASS: first conversation memory and the untouched pending outcome are durable before acceptance
+PASS: Down scrolls the first conversation without skipping to its hidden actions
+PASS: Page Down advances the reading stack while retaining reading focus
+PASS: Tab from the small-window reading position brings the continuation action fully into view
+PASS: small repeat encounter exposes the first conversation to keyboard and controller
+PASS: Down incrementally reads expanded first conversation instead of jumping to actions
+PASS: Page Down reads the expanded first conversation with reading focus
+PASS: controller Down incrementally reads expanded first conversation
+PASS: Tab leaves replay reading for the visible continuation action
+PASS: plain Label renders only the frozen name and failed segment
+PASS: visible retention summary covers stash, ownership and commitments
+PASS: visible reset summary explains the new attempt cost
+PASS: retention explains records and owned access separately from an attempt build
+PASS: retention includes chosen lasting development and unspent Research
+PASS: reset disclosure names the developed attempt systems and fresh world
+PASS: the decision distinguishes terminal loss from ordinary reconstruction
+PASS: committed choice disclosure identifies when their effects return
+PASS: returning to the same saved decision uses the compact conversation
+PASS: repeat encounter offers a collapsed first conversation disclosure
+PASS: the disclosure reopens the whole first conversation
+PASS: reading the first conversation neither changes nor navigates the terminal decision
+PASS: the first conversation can be closed without a reply
+PASS: PeeP offers preparation even with no unspent Research
+PASS: preparation inspection fixture has no unspent Research
+PASS: Prepare opens the shared development overlay for inspection
+PASS: opening preparation preserves the failed attempt and navigation
+PASS: closing preparation with Escape restores the invoking action
+PASS: closing preparation defers PeeP without accepting or leaving
+PASS: paused-tree screen has usable actions without a timed conversation lock
+PASS: controller navigation can focus taking a break
+PASS: keyboard navigation can focus taking a break
+PASS: Enter respects focused menu and retains pending
+PASS: Escape returns to menu without resolving pending
+PASS: actual mouse hit accepts the visible continuation button
+PASS: mouse continuation and repeated input create exactly one fresh attempt
+PASS: acceptance disables repeat input and requests gameplay once
+PASS: continuing from a paused tree releases gameplay
+PASS: starting another attempt keeps the profile's first conversation memory
+PeePContinuationUiTest: 47 passed, 0 failed

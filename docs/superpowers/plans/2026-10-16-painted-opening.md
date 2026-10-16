@@ -50,9 +50,11 @@
 - [x] Independently review scoped changes against the approved writing, five review conditions and existing save/input contracts. Correct material findings with targeted regression coverage.
 - [x] Run affected suites after material fixes, then ScriptParseAuditTest last. Record assertion counts, process exits, diagnostics and visual evidence.
 - [x] Update documentation with actual behaviour and remaining human pacing checks.
-- [ ] Stage only this task's exact files, commit and push to the existing branch as previously requested.
+- [x] Stage only this task's exact files, commit and push to the existing branch as previously requested.
 
 ## Progress ledger
 
 - Planning: approved writing and unfinished style are the authority. Existing linked worktree verified; unrelated changes preserved.
 - Preflight: presentation/controller share the two explicit illustration methods; no save interface changes. Hub story also uses this presentation and can intentionally pause the tree.
+
+- Delivery: opening committed first, PeeP next, with the final lore/evidence/status commit and branch push completing the agreed sequence. Final shared import and530-script audit passed; narrative production sources unchanged.

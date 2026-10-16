@@ -1,0 +1,220 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Chronicles adds eight source documents to the existing nineteen records
+PASS: the Library can address optional Chronicle city_service_lamp
+PASS: the Library can address optional Chronicle city_interval_margin
+PASS: the Library can address optional Chronicle city_order_times
+PASS: the Library can address optional Chronicle city_laundry_window
+PASS: the Library can address optional Chronicle city_bren_copy
+PASS: the Library can address optional Chronicle city_tree_door
+PASS: the Library can address optional Chronicle city_reconstruction_stores
+PASS: the Library can address optional Chronicle city_blank_destination
+PASS: existing Chronicle adaptation remains intact: accounts
+PASS: existing Chronicle adaptation remains intact: registry
+PASS: existing Chronicle adaptation remains intact: synthesis
+PASS: existing Chronicle adaptation remains intact: containment
+PASS: existing Chronicle adaptation remains intact: bren
+PASS: existing Chronicle adaptation remains intact: pattern
+PASS: existing Chronicle adaptation remains intact: reconstruction
+PASS: existing Chronicle adaptation remains intact: wardstones
+PASS: existing Chronicle adaptation remains intact: report
+PASS: existing Chronicle adaptation remains intact: rite
+PASS: existing Chronicle adaptation remains intact: tree
+PASS: existing Chronicle adaptation remains intact: method
+PASS: existing Chronicle adaptation remains intact: doctrine
+PASS: existing Chronicle adaptation remains intact: apotheosis
+PASS: existing Chronicle adaptation remains intact: inner_ward
+PASS: existing Chronicle adaptation remains intact: garrison
+PASS: existing Chronicle adaptation remains intact: wall
+PASS: existing Chronicle adaptation remains intact: last_gate
+PASS: existing Chronicle adaptation remains intact: beyond
+PASS: building the catalogue discovers no optional page
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_service_lamp
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_service_lamp
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance does not direct players to a deferred physical pickup: city_service_lamp
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:90)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_interval_margin
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_interval_margin
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_order_times
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_order_times
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance does not direct players to a deferred physical pickup: city_order_times
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:90)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_laundry_window
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_laundry_window
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance does not direct players to a deferred physical pickup: city_laundry_window
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:90)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_bren_copy
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_bren_copy
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_tree_door
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_tree_door
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance does not direct players to a deferred physical pickup: city_tree_door
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:90)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_reconstruction_stores
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_reconstruction_stores
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance points to the implemented Papers tray beside Quiet Alcove: city_blank_destination
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:87)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance describes its actual reached/completed availability stage: city_blank_destination
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:88)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+ERROR: CityLoreDiscoveryTest: sealed Chronicle guidance does not direct players to a deferred physical pickup: city_blank_destination
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_sealed_guidance_matches_collectible_route (res://tools/tests/CityLoreDiscoveryTest.gd:90)
+       [2] _run (res://tools/tests/CityLoreDiscoveryTest.gd:320)
+PASS: reading recovery clues never collects or reads the optional sources
+PASS: completed S3 offers the earlier hub copies
+PASS: the hub's next-segment counter is not evidence of arrival in S4
+PASS: actual played S4 makes its optional copy available
+PASS: arrival availability never auto-discovers the laundry note
+PASS: actual arrival evidence survives a fresh attempt and story reload
+PASS: S4 evidence does not reveal the sixth district's source
+PASS: observed admission is latched in the existing durable story flags
+PASS: the lamp's recovery copy waits for completed S1 even after admission
+PASS: admission does not collect its slip
+PASS: completed S1 makes both first-hub working copies available
+PASS: completed S1 alone does not prove entry into S2
+PASS: the S2 source appears on actual arrival without requiring a defeat
+PASS: Bren's cover sheet waits for completed S3
+PASS: completed S3 makes Bren's packet available
+PASS: legacy evidence proves its own completed stage only: { "best": 3, "want": "city_bren_copy", "absent": "city_laundry_window" }
+PASS: legacy progress does not silently discover or read pages
+PASS: legacy evidence proves its own completed stage only: { "stage": "method", "want": "city_bren_copy", "absent": "city_laundry_window" }
+PASS: legacy progress does not silently discover or read pages
+PASS: legacy evidence proves its own completed stage only: { "stage": "doctrine", "want": "city_tree_door", "absent": "city_reconstruction_stores" }
+PASS: legacy progress does not silently discover or read pages
+PASS: legacy evidence proves its own completed stage only: { "stage": "apotheosis", "want": "city_reconstruction_stores", "absent": "city_blank_destination" }
+PASS: legacy progress does not silently discover or read pages
+PASS: Area I completion offers all eight copies after a successful escape
+PASS: successful escape availability remains optional
+PASS: Followers and reconstruction alone unlock no city source document
+PASS: an unavailable source cannot be copied
+PASS: unknown source IDs cannot create arbitrary Chronicle discoveries
+PASS: available sources remain sealed in the existing Library before collection
+PASS: explicit copying records a previously uncollected source
+PASS: copying saves the existing Grimoire key before returning control
+PASS: a successful explicit copy writes one coherent profile snapshot
+PASS: copying leaves the full Chronicle unread
+PASS: the collected page enters the existing unread Chronicles view
+PASS: the collected full text participates in existing Library search
+PASS: duplicate collection neither rewards nor writes a second pickup
+PASS: source copying spends no Followers and rolls no gameplay RNG
+PASS: existing profile reload retains copied, read and bookmark states independently
+PASS: available sources have an optional inspection panel
+PASS: a title can be inspected without collecting its page
+PASS: inspection shows the field excerpt while the full document waits in Chronicles
+PASS: showing an excerpt does not discover the full document
+PASS: Leave keeps an uncollected source available
+PASS: Keep a copy explicitly discovers the inspected source
+PASS: closing the optional papers panel restores its previous pause state
+City lore 640 reading fixture: overflow=0 excerpt=[P: (36.0, 292.0), S: (568.0, 108.0)] clip=[P: (36.0, 160.0), S: (568.0, 2789.0)]
+PASS: a non-overflowing 640 excerpt is visible in full without scrolling
+ERROR: CityLoreDiscoveryTest: 640 reading keeps its action inside the viewport: Keep a copy
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_small_excerpt_reading (res://tools/tests/CityLoreDiscoveryTest.gd:272)
+ERROR: CityLoreDiscoveryTest: 640 reading keeps its action inside the viewport: Leave
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/CityLoreDiscoveryTest.gd:30)
+       [1] _test_small_excerpt_reading (res://tools/tests/CityLoreDiscoveryTest.gd:272)
+PASS: reading with keyboard and controller never silently copies the source
+PASS: Quiet Alcove has an optional Papers entry alongside Browse
+PASS: the papers tray stands beside the Quiet Alcove
+PASS: the managed Papers station opens the actual optional inspection panel
+PASS: closing papers returns to the courtyard without progression or currency changes
+CityLoreDiscoveryTest: 80 passed, 23 failed

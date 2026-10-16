@@ -1,7 +1,7 @@
 extends Node
 
 # The walkable between-segment hub (handoff 2026-09-25 §15): arriving after a
-# completed segment puts a controllable player in a courtyard with the five
+# completed segment puts a controllable player in a courtyard with the six
 # stations; the segment counter never advances a second time; the merchant
 # panel reuses the same vendor stock across open/close; combat inputs are
 # disabled; departure is gated by a pending mandatory choice, happens once
@@ -143,7 +143,7 @@ func _run() -> void:
 	var runner := player.get_node_or_null("AscensionRunner")
 	_check(runner != null and not bool(runner.get("combat_inputs_enabled")), "ability inputs are disabled in the safe hub")
 	_check(bool(player.get("_cinematic_attack_locked")), "the native weapon is locked in the safe hub")
-	_check(_hub._stations.size() == 5, "merchant, ascension, gear, alcove and exit stand in the courtyard (%d)" % _hub._stations.size())
+	_check(_hub._stations.size() == 6, "merchant, ascension, gear, alcove, papers and exit stand in the courtyard (%d)" % _hub._stations.size())
 	_check(_station("Next Segment") != null and _station("Merchant") != null, "the stations carry their service names")
 	await _check_feet_space_walkability(player)
 

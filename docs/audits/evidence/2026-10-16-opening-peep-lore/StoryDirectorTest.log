@@ -1,0 +1,171 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the highest eligible beat wins first (85 over 80; 90 and 99 fail their conditions)
+PASS: a spent beat steps aside for the next
+PASS: with the beats spent, the flavour lines are drawn (flavour_b)
+PASS: a condition coming true makes its beat eligible
+PASS: an attempt-once beat stays spent within the attempt
+PASS: a new attempt resets the attempt-once flags
+PASS: the profile and account beats stay spent across attempts (flavour_b)
+PASS: closing an account frees the once-per-account line
+PASS: a recent flavour line is skipped while another is left
+PASS: the same seed draws the same lines
+PASS: flavour is drawn by weight (365 of 400 heavy at 9:1)
+PASS: an empty pool says nothing
+PASS: _min bounds from below
+PASS: _max bounds from above
+PASS: a string must match
+PASS: an Array condition means one of
+PASS: an Array fact must contain the condition
+PASS: a bool must match, absent reads false
+PASS: a number must match exactly
+PASS: flags read the profile
+PASS: a set flag satisfies flag and fails not_flag
+PASS: an attempt remembers the profile's best at its start
+PASS: a gain across 10 and 100 says only the higher milestone ([{ "kind": "milestone", "text": "WITNESS ACCOUNT • The tree sign appears on a wall in the service district. No one admits to painting it." }])
+PASS: a projectile's damage is put down to its shooter
+PASS: health spent on purpose is the player's own work
+PASS: the death is put down to the last hit ({ "cause": "enemy_runner", "rite": false, "boss": -1 })
+PASS: a reconstruction is counted and its record noted
+PASS: the charge that ends the run is no reconstruction (1)
+PASS: Global wiped the attempt afterwards
+PASS: the account kept the segment from before the wipe (4)
+PASS: its district is the segment's theme (civilian_cutthrough)
+PASS: cause, peak and reconstructions are kept ({ "n": 3, "segment": 4, "district": "civilian_cutthrough", "cause": "enemy_runner", "rite": false, "boss": -1, "peak": 250, "recon": 1, "race": "human", "style": "ranged", "response": "", "family": "", "new_best": false, "unix": 1792174686, "seed": 2515835929, "epitaph": "‘You cannot outrun containment.’ This time, it was true." })
+PASS: it is the third account
+PASS: its epitaph was written before the wipe, from the facts (‘You cannot outrun containment.’ This time, it was true.)
+PASS: the ACCOUNTS record is noted
+PASS: the Game Over reads the closed account's epitaph
+PASS: and a caption: which account, where, how many (ACCOUNT III · CIVILIAN CUT-THROUGH · 250 WITNESSES)
+PASS: a new attempt retires the epitaph
+PASS: the Chronicler relays how the last account ended (The last account ends where a runner cut you off. The witnesses agree on that much.)
+PASS: then the count of accounts (Three accounts of the same night. They agree on the synthesis. Little else.)
+PASS: then the race line, once (No lineage, no patron, no pact. The Registry never had a box for you.)
+PASS: and everyday talk after that (Sit. Nothing is asked here.)
+PASS: the square's own aside keeps its share of the everyday talk
+PASS: 8 Followers cannot pay a Segment 2 reconstruction (12)
+PASS: a death that rebuilds no one is no reconstruction, and RECONSTRUCTION stays unknown
+PASS: the account closes with no reconstruction (0)
+PASS: Roman numerals for any count ([])
+PASS: the 21st account's caption keeps its numerals (ACCOUNT XXI · CHECKPOINT LANES · NO WITNESSES)
+PASS: write_save stores the story in meta_story
+PASS: with its profile flags
+PASS: (memory cleared)
+PASS: apply_save brings it back
+PASS: the Archives card reads the last account (Last account ended on the Canal Service Routes)
+PASS: an older save has no story and the card keeps its own line
+PASS: an empty story loads as a fresh one
+PASS: the route label leaves Area 1 past the last gate
+PASS: 37 runs and none under way are 37 closed accounts (37)
+PASS: its first-time beats and the account counts it already passed are spent
+PASS: the square is not new to it
+PASS: no new best is claimed while its old depth is unknown
+PASS: the Chronicler relays no account that was never written down (No lineage, no patron, no pact. The Registry never had a box for you.)
+PASS: its next death closes the 38th account, not the first (38)
+PASS: and is not told as the first (The account ends at the Inner District Gate, before many could carry it.)
+PASS: that account's depth is the best now known
+PASS: an account past it is a new best
+PASS: a run under way is not yet an account
+PASS: a first run still under way keeps every first-time beat
+PASS: a story the layer saved is never reseeded
+PASS: in the square the completed segment is attempt_segment - 1
+PASS: facts key the square on the completed segment (checkpoint_lanes)
+PASS: the arrival notice is the Checkpoint Lanes' departure
+PASS: the first square ever says so once (They cleared a square for you. Nobody asked them to.)
+PASS: and after that it holds the square
+PASS: nothing was left behind before Segment 1 is done
+PASS: Segment 1 is the institution, 10 the Gate District, past it beyond the wall
+PASS: every district a segment can roll has lines
+PASS: the first square's line marks the profile for saving
+PASS: a flag already spent does not
+PASS: meeting the Chronicler (a profile flag) does
+PASS: and so does the relay of the last account (an account flag)
+PASS: the Area I card's first-time flag is saved once it is shown
+PASS: the square after Segment VII has not reached Segment VIII
+PASS: Segment VIII's own presenter notes it
+PASS: nor has the square after Segment X gone past the wall
+PASS: Segment XI has
+PASS: the first arrival in a district reads its first line
+PASS: the first bulletin is a card with the name ladder (Subject: Researcher Vey, unregistered.)
+PASS: an attempt arrives in a segment once (Continue does not replay it)
+PASS: Segment 1's arrival is the opening
+PASS: a later account reads a repeat line
+PASS: and the bulletin as a tip (REGISTRY BULLETIN • All lanes are closed to unregistered practice.)
+PASS: Segment 4's notice follows its district, and the name is gone
+PASS: past the wall: its own arrival, and no bulletin reaches it
+PASS: that is said once
+PASS: the Registry names the researcher, then marks them unregistered
+PASS: then stops printing the name
+PASS: the loading card names a segment's district only (Checkpoint Lanes)
+PASS: Bren writes by courier
+PASS: the first letter answers the opening's response (The sequences are out. Eleven copies by dawn, and the Registry has none of them.
+
+You told me I could still leave. I haven't. Neither have they.)
+PASS: once per attempt, and only after 1, 3, 5, 9 and 10
+PASS: later accounts read the short letter
+PASS: the third answers every response alike
+PASS: an opening skipped leaves no answer to quote (The inner gate fell where half the district could see it. I could not have planned that. I did not plan it at all.)
+PASS: the first reconstruction explains itself, and Wardstones that were attuned count (Their belief reconstructs you at the last Wardstone that recognised you, or where the district began.)
+PASS: and speaks to the player in one person, never naming them and then saying you
+PASS: no reconstruction card names the player in the third person ([])
+PASS: with the numbers kept as they were
+PASS: later ones vary (The movement pays for you again. It does not ask why.)
+PASS: the last one the movement can afford says so
+PASS: a death in the Rite is named, and rebuilt where the run rebuilds it (The movement's belief reconstructs you at the edge of the Rite.)
+PASS: Segment 1 begins with the night
+PASS: a Continue draws the card the unbroken run would have (They remember the shape of you. It is enough, this time.)
+PASS: a new attempt on the same seed draws as the first one did
+PASS: a new attempt forgets what the staff said lately
+PASS: and so does another profile
+PASS: ten recruits is a witness line
+PASS: spending and earning it back crosses nothing again
+PASS: a load or reset is never a milestone
+PASS: a sale or a developer grant is no witness line, no peak and no record (peak 25)
+PASS: recruits crossing 100, 1,000 and 10,000 at once say the highest ([{ "kind": "milestone", "text": "WITNESS ACCOUNT • Whole streets keep their lamps lit until you have passed." }])
+PASS: the peak is the Congregation, not the wallet (77000 held)
+PASS: the account keeps its witnesses from before the wipe
+PASS: only Segment 10 closes the chapter
+PASS: the card's shape: {eyebrow, title, body, button}
+PASS: its last line, and only it, names Syn'Tek
+PASS: witnesses and a family line (none taken)
+PASS: the dominant Doctrine family picks the line
+PASS: later closes are shorter and end on the name
+PASS: a clerk in a square of hundreds: their own lines, the crowd's size, the common ones
+PASS: early on, no soldiers yet
+PASS: nobody speaks another archetype's lines
+PASS: after Segment 9 the square has heard of the Garrison and the last gate
+PASS: nobody in the first square remembers this morning ([])
+PASS: the square after the morning after does
+PASS: Bren's first letter does not put the night it is written in the past
+PASS: the Acolyte answers the Method plate's family
+PASS: crowd tiers
+PASS: Syn'Tek is said only by the Area I card (["CHAPTER_FIRST", "CHAPTER_REPEAT"])
+PASS: CHAPTER_FIRST ends on the name
+PASS: CHAPTER_REPEAT ends on the name
+PASS: Beka is in no story pool ([])
+PASS: no exclamation marks ([])
+PASS: nobody calls the protagonist he or him ([])
+PASS: line ids are unique across pools ([])
+PASS: every square line fits two bubble lines ([])
+PASS: every arrival notice fits one line over the square ([])
+PASS: the Game Over hint is the epitaph (The first account ends. What you bound to the Pattern remains.)
+PASS: with the account's caption under it (ACCOUNT I · INNER DISTRICT GATE · NO WITNESSES)
+PASS: the profile's first account is called the first
+PASS: with no account just closed the screen reads as before
+PASS: past the last gate the Exchange's route leaves Area 1 too (Beyond the Wall · Segment 12)
+PASS: the loading card names the district (Checkpoint Lanes)
+PASS: and nothing under the hub
+PASS: no story card may block a headless run
+PASS: a developer run with a display gets its story cards
+PASS: and a rendered tool that opted out gets none
+PASS: headless, the first bulletin is a tip
+PASS: and the card is kept for a real session
+PASS: every believer carries the archetype of the sheet they wear
+PASS: the Chronicler relays the last account in the first square (The last account never left the institution. I kept it anyway.)
+PASS: the square has its story presenter
+PASS: the first square of the attempt is noted
+PASS: the arrival notice is the first square's line (["They cleared a square for you. Nobody asked them to."])
+PASS: Bren's dispatch opens as a card over a paused square
+PASS: it is Bren's first letter, answering the opening (The sequences are out. Eleven copies by dawn, and the Registry has none of them.)
+PASS: dismissed, the square runs again with its stations
+StoryDirectorTest: 166 passed, 0 failed

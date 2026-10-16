@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: tutorial action and destination remain visible after the HUD timer
+PASS: later district objective details still collapse
+PASS: the configured Interact action completes the current alignment
+PASS: standing at a later node cannot bypass the active alignment
+PASS: segment 1 scene starts for guidance checks
+[Game] ready seg=1 race=human style=ranged seed=0
+PASS: authored tutorial exists
+PASS: the first tutorial task has a destination marker
+PASS: leaving the opening immediately guides toward the first Wardstone
+PASS: publishing guidance never grants a destination milestone
+PASS: tutorial has visible route guidance
+PASS: archive route reaches the first Wardstone
+PASS: archive route uses open doors and never crosses authored cover
+PASS: attuning the first Wardstone reaches the checkpoint trigger even when cover occupies its centre
+PASS: the route uses the newly opened courtyard gate
+PASS: updated route respects remaining security seals
+PASS: the outer approach route includes the city reveal before the Rite
+PASS: after the reveal the route reaches the actual Rite
+PASS: the Rite route goes around the sealed warehouse
+PASS: route guidance preserves the plaza arrival gate
+PASS: alignment prompt displays the rebound Interact key
+PASS: alignment prompt identifies the current node and total
+TutorialGuidanceTest: 21 passed, 0 failed

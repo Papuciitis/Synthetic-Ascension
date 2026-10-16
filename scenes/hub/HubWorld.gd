@@ -18,6 +18,7 @@ const ASCENSION_SCREEN := preload("res://ui/screens/AscensionScreen.tscn")
 const MAJOR_CHOICE_SCENE := preload("res://ui/screens/MajorChoice.tscn")
 const INVENTORY_STASH_SCENE := preload("res://ui/screens/InventoryStash.tscn")
 const LIBRARY_SCRIPT := preload("res://ui/screens/HubLibrary.gd")
+const PAPERS_SCRIPT := preload("res://ui/screens/CityLorePapers.gd")
 const ChamberKit := preload("res://ui/widgets/chambers/ChamberKit.gd")
 const STATION_SCRIPT := preload("res://scenes/hub/HubStation.gd")
 const DECOR_SCRIPT := preload("res://scenes/hub/HubDecor.gd")
@@ -73,6 +74,7 @@ const STATION_CELLS := {
 	"merchant": Vector2(7.5, 7.0),
 	"gear": Vector2(25.5, 13.0),
 	"alcove": Vector2(5.5, 13.6),
+	"papers": Vector2(8.8, 13.6),
 }
 ## Houses around the square, in cells: [rect, roof, wall, extras]. The
 ## facade runs along each rect's bottom edge.
@@ -730,6 +732,15 @@ func _build_stations() -> void:
 	gear.activated.connect(_open_gear)
 	var alcove := _make_station("alcove", "Quiet Alcove", Color(0.75, 0.7, 0.65), "Browse")
 	alcove.activated.connect(_open_library)
+	var papers := _make_station("papers", "Papers", Color(0.83, 0.76, 0.59), "Inspect")
+	papers.activated.connect(_open_papers)
+	var paper_mark := Node2D.new()
+	papers.add_child(paper_mark)
+	paper_mark.draw.connect(func() -> void:
+		paper_mark.draw_rect(Rect2(-15, -20, 30, 40), Color(0.83, 0.76, 0.59, 0.9))
+		for line: int in range(4):
+			var y := -11.0 + line * 7.0
+			paper_mark.draw_line(Vector2(-9, y), Vector2(9, y), Color(0.23, 0.18, 0.12), 2.0))
 	_exit_station = _make_station("exit", "Next Segment", Color(0.95, 0.55, 0.4), "Depart")
 	_exit_station.activated.connect(_try_depart)
 	# The sealed arch over the departure gate (the other service props are
@@ -858,6 +869,16 @@ func _open_library() -> void:
 	_stations_enabled(false)
 	library.closed.connect(_on_panel_closed)
 	add_child(library)
+
+
+func _open_papers() -> void:
+	if _panel_is_open():
+		return
+	var papers := PAPERS_SCRIPT.new()
+	_open_panel = papers
+	_stations_enabled(false)
+	papers.closed.connect(_on_panel_closed)
+	add_child(papers)
 
 
 ## Retain the alcove entry point used by older visual probes.

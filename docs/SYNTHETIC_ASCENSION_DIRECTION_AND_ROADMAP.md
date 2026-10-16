@@ -2301,3 +2301,39 @@ The first-city prototype awards one Research for each genuinely first profile cl
 Purchases prepare the next attempt through a saved snapshot. Continue and reconstruction retain their original snapshot; training can be retargeted for a later attempt. The trained starting level cannot be donated repeatedly through transfusion. Loaded bags retain their capacity and occupied tail. Binding Echo is the first conditional meta choice: purchase it, then complete S5 in a future attempt to take two sequential ordinary Binding rewards. Its saved queue survives reload and duplicate settlement cannot create another reward. Temporary results still reset at true defeat.
 
 Development is available from the main menu, base and merchant. The current and next-attempt distinction is explicit, with keyboard/controller checks and native normal/small-window captures. The existing completed-S8 Revelation and S9 mutation gates remain. Controlled real-mechanics comparisons and an independent no-development flag support subsequent city tests; they do not establish full-city pacing or eliminate existing Stash/reward farming. See `docs/audits/2026-10-16-city-development.md` for exact values, evidence and the remaining human playtest. This bounded city allocation does not define the eventual godhood ceiling.
+
+## 2026-10-16 — Painted opening, PeeP and optional city papers
+
+The approved opening now uses four stills in the selected unfinished painted
+style: the working city, admission, stable synthesis and the records-conduit
+departure. The existing playable actions, phase numbers and full/short/skip
+modes remain. Three approved short additions connect the ordinary shift,
+Bren's preservation of the intervals and the original pages leaving the lab.
+Cards support small-window scrolling and defer input to the shared pause menu.
+
+PeeP presents the full first conversation once, a compact return encounter and
+an optional replay. Its seen memory is saved independently of accepting a new
+attempt. Menu and quit retain the pending decision; acceptance starts exactly
+one fresh attempt. Prepare next attempt opens the shared lasting-development
+screen before acceptance. The summary names retained development and unspent
+Research, and distinguishes temporary growth from the prepared foundation.
+The scene adds a static rough page-corner mark without settling PeeP's form,
+creator or mechanism.
+
+Eight approved source documents supplement the existing nineteen Chronicles.
+The Papers tray beside the Quiet Alcove offers copies as city progress makes
+them available. Inspecting does not collect; Keep a copy saves one unread
+Library entry. Existing full-text search, reading and bookmarks remain in use.
+No paper requires death, Followers, random dialogue or repeated boss kills.
+
+All eight texts use the safe hub recovery route in this pass. Five proposed
+physical placements remain deferred: admission desk, S2 service notice board,
+S4 washhouse/basket, S6 shelter door and S10 gatehouse shelf. Their sealed
+Library clues point to the implemented tray and correct progress gates.
+
+Focused input/save/hub/Library checks, the corrected Reliquary catalogue check
+and the shared 530-script audit passed. All thirty actual UI captures were
+inspected across normal/small windows and Reduced Motion. Audits are in
+`docs/audits/2026-10-16-painted-opening.md`, `2026-10-16-peep-encounter.md` and
+`2026-10-16-city-lore.md`. Human pacing and final sound remain review work;
+the opening still uses existing audio cues.

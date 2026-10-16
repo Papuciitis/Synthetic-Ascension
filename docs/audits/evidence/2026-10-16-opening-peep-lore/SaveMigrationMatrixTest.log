@@ -1,0 +1,42 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: v0 past synthesis: the opening is marked completed
+PASS: v0 past synthesis: version is current (2)
+PASS: v0 past synthesis: officer/assistant facts recovered from milestones
+PASS: v0 past synthesis: marked as a legacy opening
+PASS: v0 beyond segment 1: the opening is completed
+PASS: v0 beyond segment 1: unwitnessed facts stay false
+PASS: v0 fresh run: the opening still plays
+PASS: v0 fresh run: version is still bumped
+PASS: v1 phase 2 resumes at 3 after the ADMISSION insert (3)
+PASS: v1 phase 1 is untouched by the insert
+PASS: layout v2: the stale checkpoint is unsafe and resets
+PASS: layout v2: spatial resonance resets
+PASS: layout v2: spatial milestones reset
+PASS: layout v2: narrative facts are rebuilt, not lost
+PASS: layout v2: version is current
+PASS: later segments keep their checkpoint through a layout bump
+PASS: a pre-Doctrine save retires its obsolete ascension state
+PASS: a pre-Doctrine pending offer is retired, never an empty modal
+PASS: an old ascension state defaults to the untouched v4 control
+PASS: old ownership and payments survive the repair
+PASS: missing V5-era keys are filled in
+PASS: newer equip slots exist on an old state
+PASS: the reaction trigger gets its default
+PASS: a negative opening phase clamps to 0
+PASS: overfilled resonance clamps to 1
+PASS: milestone ids are trimmed and empties dropped ([&"synthesis"])
+PASS: attempt modifiers respect their floors (0.25)
+PASS: attempt modifiers respect their ceilings (2.00)
+PASS: a blank mortal name falls back to the default
+PASS: the duplicate-augment-slot corruption heals, first slot wins
+PASS: migrate -> save -> reload is a fixed point ({ "phase": 3, "opening_version": 2, "layout_version": 3, "milestones": [&"synthesis"], "resonance": 0.0, "checkpoint": (inf, inf) } vs { "phase": 3, "opening_version": 2, "layout_version": 3, "milestones": [&"synthesis"], "resonance": 0.0, "checkpoint": (inf, inf) })
+PASS: the rewritten save carries current versions, so migrations never re-fire
+WARNING: Save slot 97 was written by a newer build (save_version 6 > 1, game ); loading best-effort.
+   at: push_warning (core/variant/variant_utility.cpp:1033)
+   GDScript backtrace (most recent call first):
+PASS: a newer-build save still loads best-effort
+       [0] apply_save (res://autoload/global.gd:2756)
+       [1] _run (res://tools/tests/SaveMigrationMatrixTest.gd:197)
+PASS: no case registered a current save; disk was never in play
+SaveMigrationMatrixTest: 34 passed, 0 failed

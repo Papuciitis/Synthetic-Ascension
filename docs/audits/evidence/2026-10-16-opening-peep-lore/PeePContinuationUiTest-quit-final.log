@@ -1,0 +1,10 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: terminal continuation has a usable screen
+PASS: opening without pending does not show PeeP
+PASS: an absent terminal decision does not spend the first conversation
+PASS: absent pending does not capture input for an invisible screen
+PASS: absent pending safely routes to menu
+PASS: Quit retains the unresolved decision and failed attempt
+PASS: Quit leaves durable pending facts on isolated disk
+PeePContinuationUiTest quit action: 7 passed, 0 failed
