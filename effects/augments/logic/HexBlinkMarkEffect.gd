@@ -89,6 +89,12 @@ func _ready() -> void:
 	_report_cd(true)
 
 func _exit_tree() -> void:
+	# Swapped out mid-mark: nothing would expire the marked shots any more,
+	# so they would keep paying until spent. A player leaving with the scene
+	# is gone already and needs no cleanup.
+	if _mark_left > 0.0 and is_instance_valid(player) and not player.is_queued_for_deletion():
+		_mark_left = 0.0
+		_clear_mark()
 	_cleanup_mark_vfx()
 
 func _process(dt: float) -> void:
