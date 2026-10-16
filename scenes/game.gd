@@ -417,8 +417,15 @@ func complete_segment(completed_segment: int) -> void:
 		await _present_segment1_overlay(true)
 	else:
 		await _present_chapter_close(completed_segment)
-	if not _run_ended and Global.finish_segment_completion(completed_segment):
+	if _run_ended or Global.has_pending_peep():
+		return
+	if Global.finish_segment_completion(completed_segment):
 		Global.goto_hub_shop()
+	else:
+		# An out-of-sequence completion (developer tools today) must not strand
+		# the player in a finished segment with the pause menu blocked.
+		_segment_completion_running = false
+		Global.goto_resume()
 
 func _play_escape_release() -> void:
 	if player == null or not is_instance_valid(player) or not (player is Node2D):
