@@ -831,7 +831,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if _zoom_controls != null and _zoom_controls.get_global_rect().has_point(event.position):
 				return
-			set_hub_zoom(hub_zoom + HUB_ZOOM_STEP * (1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0))
+			# A wheel notch reports factor 1 (or 0 where unsupported); a trackpad
+			# sends many fractional deltas, which would each jump a whole step.
+			var amount: float = clampf(event.factor, 0.0, 1.0) if event.factor > 0.0 else 1.0
+			set_hub_zoom(hub_zoom + HUB_ZOOM_STEP * amount * (1.0 if event.button_index == MOUSE_BUTTON_WHEEL_UP else -1.0))
 			get_viewport().set_input_as_handled()
 			return
 	if _gear_screen == null:

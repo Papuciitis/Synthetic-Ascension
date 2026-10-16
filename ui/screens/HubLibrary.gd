@@ -327,9 +327,16 @@ func _build_reader() -> void:
 	_search.placeholder_text = "Names you know, or a clue…"
 	_search.add_theme_font_size_override("font_size", 25)
 	_search.text_changed.connect(func(_text: String) -> void: _refresh_results())
+	_search.text_submitted.connect(_on_search_submitted)
 	search_contents.add_child(_search)
 	_search_panel.hide()
 	_reader_resized.call_deferred()
+
+## Enter puts the find away and returns to the account it found, as Escape
+## does, so the keyboard can read on without reaching for the mouse.
+func _on_search_submitted(_text: String) -> void:
+	_search_panel.hide()
+	_body.grab_focus()
 
 func _paper_column(caption: String, left: float, right: float) -> VBoxContainer:
 	var column := VBoxContainer.new()
@@ -1094,6 +1101,9 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 	if _book_open and event is InputEventJoypadMotion and event.axis == JOY_AXIS_RIGHT_Y:
 		_stick_axis = event.axis_value if absf(event.axis_value) > 0.6 else 0.0
+		# Back at neutral the repeat delay ends: the next push turns at once.
+		if is_zero_approx(_stick_axis):
+			_stick_wait = 0.0
 		set_process(not is_zero_approx(_stick_axis))
 		get_viewport().set_input_as_handled()
 	if _book_open and event is InputEventKey and event.pressed and not _search.has_focus():
