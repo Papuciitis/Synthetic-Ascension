@@ -27,6 +27,7 @@ var _run_ended: bool = false
 var _segment_completion_running: bool = false
 var _tutorial_modals: TutorialModalController = null
 var _opening_sequence: OpeningSequenceController = null
+var _pause_menu: CanvasLayer = null
 
 
 func _enter_tree() -> void:
@@ -51,6 +52,12 @@ func _ready() -> void:
 	if Global != null and Global.has_pending_peep():
 		Global.goto_resume()
 		return
+	_pause_menu = preload("res://ui/screens/PauseMenu.tscn").instantiate()
+	_pause_menu.resume_scene = Global.PATH_GAME
+	_pause_menu.can_open = func() -> bool:
+		return not _run_ended and not _segment_completion_running and process_mode != Node.PROCESS_MODE_DISABLED and (hud == null or ((hud.bag_ctl == null or not hud.bag_ctl.is_management_mode()) and not is_instance_valid(hud.get("_ascension_screen"))))
+	add_child(_pause_menu)
+	move_child(_pause_menu, 0)
 	_tutorial_modals = TUTORIAL_MODAL_CONTROLLER.new() as TutorialModalController
 	add_child(_tutorial_modals)
 

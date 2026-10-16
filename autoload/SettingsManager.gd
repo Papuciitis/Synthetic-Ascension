@@ -20,6 +20,7 @@ var _binding_service: RefCounted
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_ensure_ui_controller_defaults()
 	_store = Store.new(storage_path)
 	_values = _store.load_settings()
 	_binding_service = BindingService.new()
@@ -33,6 +34,27 @@ func _ready() -> void:
 		runtime_applier = RuntimeApplier.new()
 	runtime_applier.apply_all(_values)
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
+
+
+## Built-in UI actions can contain only keys on this engine build. Keep
+## controller navigation shared by every native menu, outside game bindings.
+func _ensure_ui_controller_defaults() -> void:
+	var buttons := {
+		&"ui_accept": JOY_BUTTON_A,
+		&"ui_cancel": JOY_BUTTON_B,
+		&"ui_up": JOY_BUTTON_DPAD_UP,
+		&"ui_down": JOY_BUTTON_DPAD_DOWN,
+		&"ui_left": JOY_BUTTON_DPAD_LEFT,
+		&"ui_right": JOY_BUTTON_DPAD_RIGHT,
+	}
+	for action: StringName in buttons:
+		if not InputMap.has_action(action):
+			continue
+		var event := InputEventJoypadButton.new()
+		event.device = -1
+		event.button_index = buttons[action]
+		if not InputMap.action_has_event(action, event):
+			InputMap.action_add_event(action, event)
 
 
 func get_value(section: StringName, key: StringName, fallback: Variant = null) -> Variant:

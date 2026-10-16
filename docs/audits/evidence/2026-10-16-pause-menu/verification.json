@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "date": "2026-10-16",
+  "base_commit": "680c917580d103d396afa90a4ba95278bee19a49",
+  "engine": "Godot 4.7.1 stable Windows",
+  "checks": [
+    {
+      "name": "HubWorldTest",
+      "exit": 0,
+      "summaries": [
+        "HubWorldTest: 53 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "ManagementPauseProbe",
+      "exit": 0,
+      "summaries": [
+        "ManagementPauseProbe: 15 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "CityContinuationTest",
+      "exit": 0,
+      "summaries": [
+        "CityContinuationTest: 92 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "EnemyRunTransitionSoakTest",
+      "exit": 0,
+      "summaries": [
+        "EnemyRunTransitionSoakTest: 10 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "PauseMenuFlowTest",
+      "exit": 0,
+      "mode": "real OpenGL renderer, final PauseMenuPreview including unobstructed gameplay HUD entry",
+      "summaries": [
+        "PauseMenuFlowTest: 38 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "InputBindingServiceTest",
+      "exit": 0,
+      "mode": "headless --script",
+      "summaries": [
+        "InputBindingServiceTest: 18 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "MainMenuSettingsIntegrationTest",
+      "exit": 0,
+      "mode": "headless --script",
+      "summaries": [
+        "MainMenuSettingsIntegrationTest: 11 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "name": "ScriptParseAuditTest",
+      "exit": 0,
+      "mode": "headless test scene",
+      "summaries": [
+        "ScriptParseAuditTest: 510 passed, 0 failed (checked 510 scripts across 8 roots)"
+      ],
+      "diagnostics": []
+    }
+  ],
+  "fixture_correction": "EnemyRunTransitionSoakTest now keeps its unattended player invulnerable. Its initial failure came from terminal defeat creating pending PeeP, which correctly prevented the fixture from starting its second run. The test and production continuation path were already present at base_commit.",
+  "limits": [
+    "Quit confirmation and cancellation are covered; actual OS termination is not exercised.",
+    "Controller checks inject native input events; physical hardware has not been playtested."
+  ],
+  "review": "Independent scoped review approved input ownership, remap conflict corrections, shared UI controller defaults and lifecycle fixture correction; no remaining actionable findings.",
+  "environment_note": "Earlier render attempts emitted a shader-cache folder startup ERROR because APPDATA was missing in the test wrapper. Final four checks used explicit isolated APPDATA and exited cleanly with no diagnostics.",
+  "visuals": [
+    "docs/art/reference/2026-10-16-pause-menu/pause-game-1280x720.png",
+    "docs/art/reference/2026-10-16-pause-menu/save-exit-small-window.png",
+    "docs/art/reference/2026-10-16-pause-menu/game-pause-entry-1280x720.png"
+  ],
+  "visual_review": "All three final captures inspected: gameplay HUD with lower-right Pause control at 1280x720, paused menu at 1280x720, confirmation in an 800x500 window (800x450 game viewport)."
+}

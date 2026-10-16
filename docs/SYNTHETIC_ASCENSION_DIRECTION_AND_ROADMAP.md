@@ -2063,3 +2063,26 @@ limitation, not a clean pass. Five actual UI captures were inspected;
 independent reviews and the final scoped correction review are approved.
 Human playtesting is still owed for emotional continuity, late-city
 purchase satisfaction and matched fresh-versus-stocked farming comparisons.
+
+## 2026-10-16 — Pause, save and return to the main menu
+
+Gameplay and the hub now share a pause menu: Resume, Settings, Main Menu
+and Quit. Escape, controller B or the lower-right Pause button opens it; D-pad
+navigation and A confirmation use shared UI defaults. Existing gameplay
+bindings and remapped keys retain their own actions.
+
+Leaving asks for confirmation and saves the current attempt. Continue
+returns to the existing Wardstone or segment start, or to the hub when
+leaving there. Gear, wallet, pending choices and the vendor snapshot use
+the existing save; leaving creates no death, new attempt or checkpoint.
+The world stays paused through the menu transition. Closing Settings or
+a confirmation returns to pause, and Resume restores any prior mandatory
+choice and its pause ownership.
+
+Verification and limits are recorded in
+`docs/audits/evidence/2026-10-16-pause-menu/verification.json`. The real
+rendered pause/save/Continue regression passed 38/0, including conflicting
+custom bindings and native controller events. Normal and small-window
+captures are in `docs/art/reference/2026-10-16-pause-menu/`. Actual hardware
+controller use and terminating the application through Quit remain manual
+checks; Quit confirmation/cancellation is covered automatically.

@@ -186,6 +186,7 @@ var _beka_view := false
 var _zoom_controls: Control = null
 var _zoom_label: Label = null
 var _beka_view_button: Button = null
+var _pause_menu: CanvasLayer = null
 
 
 func _ready() -> void:
@@ -198,6 +199,11 @@ func _ready() -> void:
 		SaveManager.current_save.attempt_resume_scene = Global.PATH_HUB_WORLD
 		Global.save_current_profile(false)
 	get_tree().paused = false
+	_pause_menu = preload("res://ui/screens/PauseMenu.tscn").instantiate()
+	_pause_menu.resume_scene = Global.PATH_HUB_WORLD
+	_pause_menu.can_open = func() -> bool: return not _departing and not is_instance_valid(_open_panel)
+	add_child(_pause_menu)
+	move_child(_pause_menu, 0)
 	_panel_layer = CanvasLayer.new()
 	_panel_layer.layer = 120
 	add_child(_panel_layer)
@@ -806,6 +812,10 @@ func _close_gear() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel") and is_instance_valid(_open_panel) and _open_panel.has_signal("embedded_closed"):
+		_open_panel.call("_start_next_segment")
+		get_viewport().set_input_as_handled()
+		return
 	if event is InputEventMouseButton and event.pressed and not _panel_is_open():
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP or event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			if _zoom_controls != null and _zoom_controls.get_global_rect().has_point(event.position):

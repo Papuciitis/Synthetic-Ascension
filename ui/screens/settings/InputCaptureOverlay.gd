@@ -91,7 +91,7 @@ func _build_ui() -> void:
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(_prompt)
 	var hint := Label.new()
-	hint.text = "Esc / Controller Back — Cancel"
+	hint.text = "Esc / Controller B — Cancel"
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	hint.modulate = Color(1, 1, 1, 0.65)
 	box.add_child(hint)
