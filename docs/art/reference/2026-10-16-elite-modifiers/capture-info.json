@@ -1,0 +1,202 @@
+{
+	"actors": 6,
+	"actual_sample_fps": 13.9165041114449,
+	"actual_sample_span_seconds": 5.101856,
+	"batch_count": 3,
+	"capture_elapsed_seconds": 5.434703,
+	"comparison": "Actual promoted EnemyActors with production modifier art and palette shader, drawn by EnemyProxyRenderer at production z=10.",
+	"examples": [
+		{
+			"dominant_palette": "STEEL",
+			"last_drawn_bits": 1,
+			"modifier_ids": [
+				"armoured"
+			],
+			"name": "ARMOURED",
+			"position": [
+				272.0,
+				378.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Brute"
+		},
+		{
+			"dominant_palette": "RED",
+			"last_drawn_bits": 2,
+			"modifier_ids": [
+				"vampiric"
+			],
+			"name": "VAMPIRIC",
+			"position": [
+				768.0,
+				378.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Spitter"
+		},
+		{
+			"dominant_palette": "CYAN",
+			"last_drawn_bits": 4,
+			"modifier_ids": [
+				"shielded"
+			],
+			"name": "SHIELDED",
+			"position": [
+				1264.0,
+				378.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Grunt"
+		},
+		{
+			"dominant_palette": "GREEN",
+			"last_drawn_bits": 8,
+			"modifier_ids": [
+				"splitting"
+			],
+			"name": "SPLITTING",
+			"position": [
+				272.0,
+				864.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Brute"
+		},
+		{
+			"dominant_palette": "YELLOW",
+			"last_drawn_bits": 272,
+			"modifier_ids": [
+				"fast"
+			],
+			"name": "FAST",
+			"position": [
+				768.0,
+				864.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Grunt"
+		},
+		{
+			"dominant_palette": "STEEL",
+			"last_drawn_bits": 3,
+			"modifier_ids": [
+				"armoured",
+				"vampiric"
+			],
+			"name": "ARMOURED + VAMPIRIC",
+			"position": [
+				1264.0,
+				864.0
+			],
+			"scale": [
+				1.79999995231628,
+				1.79999995231628
+			],
+			"spec": "Brute"
+		}
+	],
+	"failures": 0,
+	"frame_timestamps_seconds": [
+		0.093845,
+		0.169468,
+		0.2189,
+		0.265964,
+		0.311433,
+		0.372408,
+		0.433558,
+		0.494819,
+		0.55679,
+		0.619878,
+		0.680176,
+		0.742905,
+		0.805776,
+		0.868939,
+		0.931132,
+		0.978181,
+		1.038744,
+		1.101263,
+		1.163134,
+		1.225263,
+		1.287335,
+		1.349521,
+		1.412007,
+		1.474728,
+		1.537283,
+		1.599575,
+		1.661211,
+		1.75611,
+		1.805849,
+		1.865265,
+		1.9281,
+		1.989403,
+		2.052752,
+		2.114947,
+		2.16273,
+		2.225104,
+		2.288789,
+		2.350094,
+		2.412997,
+		2.474921,
+		2.553589,
+		2.616721,
+		2.678991,
+		2.741545,
+		2.788796,
+		2.851579,
+		2.914201,
+		2.977629,
+		3.040804,
+		3.102302,
+		3.320884,
+		3.382646,
+		3.430327,
+		3.492889,
+		3.539553,
+		3.618999,
+		3.743073,
+		3.80577,
+		3.867624,
+		3.930116,
+		3.993298,
+		4.149046,
+		4.24179,
+		4.335563,
+		4.398595,
+		4.45999,
+		4.664378,
+		4.757823,
+		4.820118,
+		5.023277,
+		5.085908,
+		5.195701
+	],
+	"frames": 72,
+	"png_export_elapsed_seconds": 15.765822,
+	"registered_actors": 6,
+	"resolution": [
+		1536,
+		1152
+	],
+	"save_writes": 0,
+	"scene": "res://tools/dev/EliteModifierPreview.tscn",
+	"still_frame": 36,
+	"still_timestamp_seconds": 2.288789,
+	"target_capture_fps": 24,
+	"target_frame_interval_seconds": 0.0416666666666667,
+	"visible_instances": 6
+}

@@ -51,6 +51,12 @@ void fragment() {
 		vec2 hi = max(region.xy, region.xy + region.zw);
 		vec2 local_uv = (UV - lo) / max(hi - lo, vec2(0.00001));
 		vec4 tex = texture(TEXTURE, UV);
+		// The first modifier already owns this per-instance tint. Derive its
+		// family before clamping so brightness pulses cannot turn it another
+		// colour, and unlike a material uniform, different families can share
+		// the same texture batch. Plain elites keep their authored gold tint.
+		float peak = max(max(vertex_modulate.r, vertex_modulate.g), vertex_modulate.b);
+		vec3 family = vertex_modulate.rgb / max(peak, 0.001);
 		// Retain the painting and a hint of the modifier colour. Preserve
 		// overbright hit feedback, and all actor/texture alpha, independently.
 		vec3 tint = min(vertex_modulate.rgb, vec3(1.0));
@@ -68,13 +74,13 @@ void fragment() {
 			min(texture(TEXTURE, yp.xy).a * yp.z, texture(TEXTURE, ym.xy).a * ym.z)
 		);
 		float edge = clamp(tex.a - neighbour, 0.0, 1.0);
-		vec3 gold = mix(vec3(1.0, 0.72, 0.25), vec3(1.0, 0.94, 0.72), 1.0 - local_uv.y);
-		COLOR.rgb = mix(COLOR.rgb, gold * brightness, edge * 0.82);
+		vec3 rim = mix(family, mix(family, vec3(1.0), 0.22), 1.0 - local_uv.y);
+		COLOR.rgb = mix(COLOR.rgb, rim * brightness, edge * 0.82);
 		if (glint_motion) {
 			float sweep = fract(TIME / glint_period + phase) * 2.3 - 0.45;
 			float distance_to_band = abs(local_uv.x + local_uv.y * 0.45 - sweep);
 			float band = 1.0 - smoothstep(0.025, 0.18, distance_to_band);
-			COLOR.rgb = mix(COLOR.rgb, vec3(1.0, 0.94, 0.76) * brightness, band * 0.48);
+			COLOR.rgb = mix(COLOR.rgb, mix(family, vec3(1.0), 0.42) * brightness, band * 0.48);
 		}
 	}
 	// Damage feedback wins over the decorative sheen.

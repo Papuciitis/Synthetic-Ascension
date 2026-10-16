@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-16",
+  "engine": "Godot 4.7.1 stable a13da4feb",
+  "base_commit": "a17a46aa5206010cac065147062911ef3d88cc84",
+  "state": "Second pass visually approved by the user for a separate commit and push on 2026-10-16.",
+  "checks": [
+    {"suite": "EliteModifierTest", "mode": "headless", "passes": 128, "failures": 0, "exit_code": 0},
+    {"suite": "EliteTellArtTest", "mode": "OpenGL Compatibility / Intel UHD Graphics", "passes": 20, "failures": 0, "exit_code": 0},
+    {"suite": "ElitePaletteVisualTest", "mode": "OpenGL Compatibility / Intel UHD Graphics", "passes": 19, "failures": 0, "exit_code": 0},
+    {"suite": "EliteSheenTest", "mode": "OpenGL Compatibility / Intel UHD Graphics", "passes": 21, "failures": 0, "exit_code": 0},
+    {"suite": "HitConfirmationTest", "mode": "headless", "passes": 25, "failures": 0, "exit_code": 0},
+    {"suite": "ScriptParseAuditTest", "mode": "headless", "passes": 513, "failures": 0, "exit_code": 0}
+  ],
+  "reported_passing_checks": 726,
+  "coverage": [
+    "Rendered persistent edge and full-cycle glint hues for five modifier families, plain gold and cyan fallback; different families share a texture batch without leaking colours.",
+    "Rendered dedicated art at scaled import resolutions, alpha and normalized bounds, world-size shield radius, FAST static ribbon/trail and reduced-motion feed flash expiry.",
+    "Dominant hue and alpha survive VAMPIRIC brightness pulses; static FAST remains visible when stationary; existing modifier mechanics, depth, pooling and accessibility checks.",
+    "Existing sheen alpha/frame bounds, ordinary peers, fallback, horizontal flip, reduced motion and hit feedback remain passing."
+  ],
+  "test_first_evidence": {
+    "palette": "11 passed / 8 failed before the palette shader; 19 / 0 after.",
+    "mixed_vampiric_hue": "125 passed / 2 failed before hue-preserving pulse; 127 / 0 after.",
+    "stationary_fast": "127 passed / 1 failed before persistent ribbon; 128 / 0 after.",
+    "reduced_motion_feed_expiry": "19 passed / 1 failed before redraw expiry fix; 20 / 0 after."
+  },
+  "art": {
+    "generator": "Built-in image_gen",
+    "prompts": "assets/textures/vfx/elites/imagegen-prompts.json",
+    "source": "Five original 1254x1254 RGBA PNGs, source pixels and alpha preserved.",
+    "runtime_size_limits": {"armoured": 128, "vampiric": 128, "shielded": 512, "splitting": 256, "fast": 256}
+  },
+  "captures": {
+    "resolution": [1536, 1152],
+    "renderer": "Actual promoted EnemyActors / EnemyProxyRenderer, production z=10",
+    "enlarged_scale": 1.8,
+    "native_scale": 1.0,
+    "gif_frames": 72,
+    "gif_duration_ms": 5160,
+    "requested_fps": 24,
+    "actual_sample_fps": 13.9165041114449,
+    "gif_timing": "Preserves measured capture intervals rounded cumulatively to GIF 10ms units.",
+    "actors": 6,
+    "batches": 3,
+    "failures": 0,
+    "save_writes": 0
+  },
+  "review": "Independent scoped code/assets review: no actionable P1/P2 findings. Root inspected enlarged and native rendered captures.",
+  "limits": "Frozen-position comparison, not a dense-combat playtest. Native splitting seam and mixed red ring are subtler than the shield and FAST marks."
+}

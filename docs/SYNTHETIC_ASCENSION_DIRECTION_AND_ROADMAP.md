@@ -2146,3 +2146,24 @@ the 510-script audit. One concurrent run missed the existing 50ms upload pin;
 the isolated final renderer run passed, with a 4.261ms final upload. Independent
 review and the depth-correction re-review found no remaining P1/P2 issues.
 Dense human combat playtesting is still needed to tune brightness/readability.
+
+## 2026-10-16 — Elite modifier art and palette follow-up (visual review)
+
+The second pass replaces the five modifier tells with dedicated transparent
+ImageGen art: steel plates, a red fang ring, a cyan ward, a lime fissure and
+a pale-yellow wind ribbon. The first modifier now controls the edge/glint
+colour; other marks retain their own colours. Vampiric brightness preserves
+the dominant hue, and FAST keeps a static ribbon between movements. Reduced
+motion retains static tells, including correct expiry of the blood-feed flash.
+
+Actual rendered 1.8× animation and native-scale stills are recorded in
+`docs/art/reference/2026-10-16-elite-modifiers/`, alongside verification and
+capture diagnostics. Source art and exact prompts are in
+`assets/textures/vfx/elites/`. The shield retains its real 180px world radius.
+
+Six focused suites/audits passed 726 checks, including rendered-pixel colour
+and art tests and the final 513-script audit. Scoped independent review found
+no actionable P1/P2 issues. The native fissure and mixed red ring remain finer
+than the shield and wind ribbon; dense combat still needs human review.
+The user approved the preview and requested a separate commit and push for
+this pass. The first gold/ivory pass was committed and pushed separately.

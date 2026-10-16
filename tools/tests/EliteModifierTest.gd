@@ -116,6 +116,7 @@ func _run() -> void:
 	await _test_shielded()
 	await _test_vampiric()
 	await _test_body_colour_after_pulse()
+	await _test_secondary_vampiric_keeps_dominant_tint()
 	await _test_splitting()
 	await _test_explicit_api_teach_and_phase_pick()
 	await _test_pool_reset()
@@ -256,6 +257,15 @@ func _test_fast() -> void:
 # --- FAST keeps a still tell: chevrons under reduced_motion and behind another tint ---
 func _test_fast_still_tell() -> void:
 	var previous_reduced: Variant = SettingsManager.get_value(&"accessibility", &"reduced_motion", false)
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	var primary := _spawn_enemy(Vector2(500.0, 100.0))
+	primary.set_physics_process(false)
+	primary.velocity = Vector2.ZERO
+	primary.apply_elite_modifiers([EliteModifiers.FAST])
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var primary_drawn := _drawn_bits_of(_mark_of(primary))
+	_check((primary_drawn & EliteModifiers.BIT_FAST) != 0 and (primary_drawn & VFX_EliteModifierMark.DRAWN_STREAK) == 0, "stationary primary FAST retains a static ribbon between movements")
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
 	var still := _spawn_enemy(Vector2(4000.0, 2000.0))
 	await get_tree().process_frame
@@ -286,7 +296,7 @@ func _test_fast_still_tell() -> void:
 		(second_drawn & EliteModifiers.BIT_ARMOURED) != 0 and (second_drawn & EliteModifiers.BIT_FAST) != 0,
 		"a second-modifier FAST draws its chevrons beside the plate ring (drawn bits %d)" % second_drawn,
 	)
-	await _free_all([still, second])
+	await _free_all([primary, still, second])
 
 
 # --- body marks stay visible while the shield-radius wash stays behind ---
@@ -467,6 +477,33 @@ func _test_body_colour_after_pulse() -> void:
 	enemy.call("_clear_elite_modifiers")
 	_check(sprite.modulate == enemy.spec.elite_tint, "a clear restores the colour the apply found - the plain elite tint (%s)" % sprite.modulate)
 	await _free_all([enemy, eyes])
+
+
+# --- a secondary VAMPIRIC pulse must not steal the first modifier's sheen ---
+func _test_secondary_vampiric_keeps_dominant_tint() -> void:
+	var enemy := _spawn_enemy(Vector2(2600.0, 2200.0))
+	await get_tree().process_frame
+	enemy.apply_elite_modifiers([EliteModifiers.VAMPIRIC])
+	var red_mark := _mark_of(enemy)
+	red_mark.call("_pulse_tint")
+	enemy.apply_elite_modifiers([EliteModifiers.SPLITTING, EliteModifiers.VAMPIRIC])
+	var green_mark := _mark_of(enemy)
+	var sprite := enemy.get_node("Sprite2D") as CanvasItem
+	# Use a partially transparent body too: pulsing brightness must not
+	# restore opaque alpha or change the hue the sheen derives from it.
+	var green := Color(0.75, 1.0, 0.45, 0.37)
+	green_mark.setup(enemy, [EliteModifiers.SPLITTING, EliteModifiers.VAMPIRIC], green)
+	sprite.modulate = green
+	green_mark.call("_pulse_tint")
+	var pulsed := sprite.modulate
+	_check(
+		is_equal_approx(pulsed.r / pulsed.g, 0.75) and is_equal_approx(pulsed.b / pulsed.g, 0.45),
+		"secondary VAMPIRIC preserves the first modifier's green hue after a red modifier was replaced (%s)" % pulsed,
+	)
+	_check(pulsed.g > green.g and is_equal_approx(pulsed.a, 0.37), "VAMPIRIC pulses body brightness while preserving body alpha")
+	red_mark.call("_process", 0.1)
+	_check(sprite.modulate == pulsed, "a released red mark cannot reclaim the replacement's green body")
+	await _free_all([enemy])
 
 
 # --- SPLITTING: copies through the Splitter's machinery, shrunk, loot-less ---

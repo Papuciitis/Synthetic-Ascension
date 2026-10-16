@@ -1,14 +1,10 @@
 extends Node2D
 class_name VFX_EliteModifierMark
 
-## The tell for roadmap §9 elite modifiers, drawn on the body as a child of the
-## elite (the Bomber's hazard ring is the pattern): a plate ring for ARMOURED,
-## a hexagon at the shield radius for SHIELDED, a seam across the body for
-## SPLITTING, a streak behind a moving FAST, and the VAMPIRIC pulse on the
-## sprite's own tint. Under accessibility reduced_motion the pulse and the
-## streak stop and the static marks stay, so the modifier is still readable,
-## just still: FAST then draws its chevrons, as it does whenever another
-## modifier owns the body tint.
+## Dedicated painted tells keep every modifier identifiable beside its body
+## sheen: plates, a blood ring, a ward, a fissure and a wind ribbon. Reduced
+## motion retains all static tells while stopping body pulses and trails.
+const TellArt = preload("res://core/systems/vfx/EliteTellArt.gd")
 
 @export var line_width: float = 3.0
 @export var glow_width: float = 9.0
@@ -55,8 +51,8 @@ const PLATE_LINE_WIDTH_MULT := 2.0
 # Arc tessellation: per plate, and for the full VAMPIRIC ring.
 const PLATE_ARC_SEGMENTS := 6
 const RING_SEGMENTS := 24
-# VAMPIRIC pulse on the sprite: the hot red scaled by PULSE_BRIGHTNESS, mixed
-# in between TINT_MIX_MIN and TINT_MIX_MIN + TINT_MIX_RANGE.
+# VAMPIRIC scales the first modifier's body brightness without changing its
+# hue or alpha; its own ring carries red when it is a secondary modifier.
 const VAMPIRIC_PULSE_BRIGHTNESS := 1.4
 const VAMPIRIC_TINT_MIX_MIN := 0.25
 const VAMPIRIC_TINT_MIX_RANGE := 0.75
@@ -124,7 +120,8 @@ func _ready() -> void:
 	# Keep the large shield-radius wash and motion trails behind the body.
 	position = Vector2.ZERO
 	z_index = -1
-	material = null  # pixel-art kit (Batch B): the sprite blends normally
+	material = null  # Painted tells use normal alpha blending.
+	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_sync_draw_depth()
 	if (_bits & (EliteModifiers.BIT_SPLITTING | EliteModifiers.BIT_VAMPIRIC)) != 0:
 		_body_marks = Node2D.new()
@@ -184,10 +181,8 @@ func _animated() -> bool:
 
 
 func _fast_needs_still_tell() -> bool:
-	# FAST as the first modifier owns the body tint and, moving, the streak.
-	# Under reduced_motion the streak never draws, and behind another
-	# modifier's tint FAST has no colour of its own: the chevrons are the tell.
-	return (_bits & EliteModifiers.BIT_FAST) != 0 and (_reduced_motion or _ids[0] != EliteModifiers.FAST)
+	# Retain FAST's ribbon between movements, including when it owns the hue.
+	return (_bits & EliteModifiers.BIT_FAST) != 0
 
 
 func _process(dt: float) -> void:
@@ -210,7 +205,8 @@ func _process(dt: float) -> void:
 		visible = true
 		_drawn_static = false
 	_t += dt
-	if _feed_flash > 0.0:
+	var feed_was_active := _feed_flash > 0.0
+	if feed_was_active:
 		_feed_flash = maxf(_feed_flash - dt, 0.0)
 	if _animated():
 		_redraw_accum += dt
@@ -218,25 +214,19 @@ func _process(dt: float) -> void:
 			_redraw_accum = 0.0
 			_pulse_tint()
 			_queue_marks_redraw()
-	elif not _drawn_static:
+	elif not _drawn_static or feed_was_active:
 		_drawn_static = true
+		# Static tells still need the feed's fading alpha and its final
+		# unlit frame; this never steps the reduced-motion body pulse.
 		_queue_marks_redraw()
 
 
 func _pulse_tint() -> void:
 	if _sprite == null or not is_instance_valid(_sprite) or (_bits & EliteModifiers.BIT_VAMPIRIC) == 0:
 		return
-	# From the body's tint toward a hot red and back; brightness pulses even
-	# when the body is already red.
-	var hot := EliteModifiers.tint(EliteModifiers.VAMPIRIC)
-	var bright := Color(
-		hot.r * VAMPIRIC_PULSE_BRIGHTNESS,
-		hot.g * VAMPIRIC_PULSE_BRIGHTNESS,
-		hot.b * VAMPIRIC_PULSE_BRIGHTNESS,
-		1.0,
-	)
 	var k := 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
-	_sprite.modulate = _base_tint.lerp(bright, VAMPIRIC_TINT_MIX_MIN + VAMPIRIC_TINT_MIX_RANGE * k)
+	var brightness := lerpf(1.0, VAMPIRIC_PULSE_BRIGHTNESS, VAMPIRIC_TINT_MIX_MIN + VAMPIRIC_TINT_MIX_RANGE * k)
+	_sprite.modulate = Color(_base_tint.r * brightness, _base_tint.g * brightness, _base_tint.b * brightness, _base_tint.a)
 
 
 func _draw() -> void:
@@ -272,6 +262,8 @@ func _draw_body_marks() -> void:
 
 func _draw_shield_hexagon(radius: float) -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.SHIELDED)
+	if TellArt.draw_radial(self, EliteModifiers.SHIELDED, radius, Color(tint.r, tint.g, tint.b, LINE_ALPHA)):
+		return
 	# Pixel-art kit (Batch C, 2026-09-27): one hexagon sprite (faint fill baked in) in the line colour replaces the fill polygon and the glow+core polylines.
 	VfxKit.draw_hexagon(self, Vector2.ZERO, radius, Color(tint.r, tint.g, tint.b, LINE_ALPHA), 0.0, line_width)
 
@@ -279,6 +271,8 @@ func _draw_shield_hexagon(radius: float) -> void:
 func _draw_plate_ring() -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.ARMOURED)
 	var r := body_radius + plate_ring_offset
+	if TellArt.draw_radial(self, EliteModifiers.ARMOURED, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA)):
+		return
 	# Pixel-art kit (Batch C, 2026-09-27): one six-plate sprite in the line colour replaces the per-plate glow+core arcs.
 	VfxKit.draw_plates(self, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), 0.0, line_width * PLATE_LINE_WIDTH_MULT)
 
@@ -288,6 +282,8 @@ func _draw_vampiric_ring(canvas: CanvasItem) -> void:
 	var k := VAMPIRIC_STILL_PHASE if _reduced_motion else 0.5 + 0.5 * sin(_t * vampiric_pulse_hz * TAU)
 	var alpha := lerpf(VAMPIRIC_RING_ALPHA_MIN, VAMPIRIC_RING_ALPHA_MAX, k) + _feed_flash
 	var r := body_radius - vampiric_ring_inset + (0.0 if _reduced_motion else vampiric_ring_pulse_px * k)
+	if TellArt.draw_radial(canvas, EliteModifiers.VAMPIRIC, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0))):
+		return
 	# Pixel-art kit (Batch B, 2026-09-27): one ring sprite in the line colour replaces the glow+core full arcs.
 	VfxKit.draw_ring(canvas, Vector2.ZERO, r, Color(tint.r, tint.g, tint.b, minf(alpha, 1.0)), line_width)
 
@@ -296,6 +292,10 @@ func _draw_seam(canvas: CanvasItem) -> void:
 	# A jagged crack across the body: where it will come apart.
 	var tint := EliteModifiers.tint(EliteModifiers.SPLITTING)
 	var r := body_radius
+	var start := Vector2(-r, -r * 0.35)
+	var end := Vector2(r, r * 0.4)
+	if TellArt.draw_strip(canvas, EliteModifiers.SPLITTING, (start + end) * 0.5, Vector2(start.distance_to(end), r * 0.72), Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA), (end - start).angle()):
+		return
 	# Pixel-art kit (Batch C, 2026-09-27): one crack sprite stretched between the old seam's end points replaces the glow+core zig-zag polylines.
 	# The kink band scales with the width: the thin glow width (~5.4 px) gives
 	# the crack the bite the old 13 px zig-zag had on a 26 px body.
@@ -307,6 +307,9 @@ func _draw_fast_chevrons() -> void:
 	var y := body_radius + fast_chevron_offset
 	var first_x := -fast_chevron_spacing * float(fast_chevron_count - 1) * 0.5
 	var col := Color(tint.r, tint.g, tint.b, SOLID_LINE_ALPHA)
+	var ribbon_size := Vector2(fast_chevron_spacing * float(fast_chevron_count - 1) + fast_chevron_size * 2.0, fast_chevron_size * 1.4)
+	if TellArt.draw_strip(self, EliteModifiers.FAST, Vector2(0.0, y), ribbon_size, col):
+		return
 	for i in range(fast_chevron_count):
 		var x := first_x + fast_chevron_spacing * float(i)
 		# Pixel-art kit (Batch C, 2026-09-27): one chevron sprite pointing +X, centred where the old glyph was, replaces the glow+core polyline pair.
@@ -322,6 +325,10 @@ func _draw_streak(world_scale: float) -> void:
 	var tint := EliteModifiers.tint(EliteModifiers.FAST)
 	var back := -(velocity / speed)
 	var length := streak_length * clampf(speed / streak_full_speed, STREAK_LENGTH_MIN_MULT, STREAK_LENGTH_MAX_MULT) / world_scale
+	var ribbon_head := back * (body_radius * STREAK_START_FRACTION)
+	var ribbon_size := Vector2(length, line_width + streak_spacing * 1.2)
+	if TellArt.draw_strip(self, EliteModifiers.FAST, ribbon_head + back * length * 0.5, ribbon_size, Color(tint.r, tint.g, tint.b, LINE_ALPHA), velocity.angle()):
+		return
 	var side := back.orthogonal()
 	var middle := float(streak_lines - 1) * 0.5
 	for i in range(streak_lines):

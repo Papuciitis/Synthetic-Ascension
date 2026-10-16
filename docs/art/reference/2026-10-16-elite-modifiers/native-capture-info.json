@@ -1,0 +1,133 @@
+{
+	"actors": 6,
+	"actual_sample_fps": 0.0,
+	"actual_sample_span_seconds": 0.0,
+	"batch_count": 3,
+	"capture_elapsed_seconds": 0.096877,
+	"comparison": "Actual promoted EnemyActors with production modifier art and palette shader, drawn by EnemyProxyRenderer at production z=10.",
+	"examples": [
+		{
+			"dominant_palette": "STEEL",
+			"last_drawn_bits": 1,
+			"modifier_ids": [
+				"armoured"
+			],
+			"name": "ARMOURED",
+			"position": [
+				272.0,
+				378.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Brute"
+		},
+		{
+			"dominant_palette": "RED",
+			"last_drawn_bits": 2,
+			"modifier_ids": [
+				"vampiric"
+			],
+			"name": "VAMPIRIC",
+			"position": [
+				768.0,
+				378.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Spitter"
+		},
+		{
+			"dominant_palette": "CYAN",
+			"last_drawn_bits": 4,
+			"modifier_ids": [
+				"shielded"
+			],
+			"name": "SHIELDED",
+			"position": [
+				1264.0,
+				378.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Grunt"
+		},
+		{
+			"dominant_palette": "GREEN",
+			"last_drawn_bits": 8,
+			"modifier_ids": [
+				"splitting"
+			],
+			"name": "SPLITTING",
+			"position": [
+				272.0,
+				864.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Brute"
+		},
+		{
+			"dominant_palette": "YELLOW",
+			"last_drawn_bits": 272,
+			"modifier_ids": [
+				"fast"
+			],
+			"name": "FAST",
+			"position": [
+				768.0,
+				864.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Grunt"
+		},
+		{
+			"dominant_palette": "STEEL",
+			"last_drawn_bits": 3,
+			"modifier_ids": [
+				"armoured",
+				"vampiric"
+			],
+			"name": "ARMOURED + VAMPIRIC",
+			"position": [
+				1264.0,
+				864.0
+			],
+			"scale": [
+				1.0,
+				1.0
+			],
+			"spec": "Brute"
+		}
+	],
+	"failures": 0,
+	"frame_timestamps_seconds": [
+		0.07623
+	],
+	"frames": 1,
+	"png_export_elapsed_seconds": 0.176405,
+	"preview_scale": 1.0,
+	"registered_actors": 6,
+	"resolution": [
+		1536,
+		1152
+	],
+	"save_writes": 0,
+	"scene": "res://tools/dev/EliteModifierPreview.tscn",
+	"still_frame": 0,
+	"still_only": true,
+	"still_timestamp_seconds": 0.07623,
+	"target_capture_fps": 24,
+	"target_frame_interval_seconds": 0.0416666666666667,
+	"visible_instances": 6
+}
