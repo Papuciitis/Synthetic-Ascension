@@ -1,8 +1,8 @@
 extends Node2D
 class_name VFX_BomberHazardRing
 
-@export var base_alpha: float = 0.18
-@export var hot_alpha: float = 0.55
+@export var base_alpha: float = 0.38
+@export var hot_alpha: float = 0.95
 @export var line_width: float = 3.0
 @export var glow_width: float = 10.0
 @export var dash_count: int = 18
@@ -13,39 +13,60 @@ class_name VFX_BomberHazardRing
 
 var _enemy: EnemyActor = null
 var _r: float = 96.0
-var _trigger_d: float = 80.0
 var _t: float = 0.0
-var _redraw_accum: float = 0.0
+var _perimeter: Sprite2D
+var _fuse_core: Sprite2D
 
-# Beyond this distance the telegraph cannot matter to the player; skip drawing
-# entirely instead of tessellating dashed arcs every frame for the bomber's
-# whole lifetime.
+const PERIMETER_PATH := "res://assets/textures/vfx/encounters/bomber_perimeter_v1.png"
+const PERIMETER_CONTENT_RADIUS := 564.820768
+const BLAST_PATH := "res://assets/textures/vfx/encounters/bomber_blast_v1.png"
+const BLAST_CONTENT_RADIUS := 534.266319
+
+# Distant warnings are hidden; the actual danger boundary never shrinks.
 const DRAW_MAX_PLAYER_DIST := 1200.0
-const REDRAW_INTERVAL := 1.0 / 30.0
 
 func setup(e: EnemyActor) -> void:
 	_enemy = e
 	if _enemy != null and _enemy.spec != null:
 		_r = maxf(_enemy.spec.explode_radius, 8.0)
-		_trigger_d = maxf(_enemy.spec.explode_trigger_distance, 8.0)
+	_t = 0.0
+	_update_sprites()
 
 func _ready() -> void:
 	# As child of enemy: local position is fine
 	position = Vector2.ZERO
 	z_index = -1
-
-	material = null  # pixel-art kit (Batch B): the sprite blends normally
-
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	material = null
+	_perimeter = Sprite2D.new()
+	_perimeter.name = "BlastPerimeter"
+	_perimeter.texture = load(PERIMETER_PATH) as Texture2D if ResourceLoader.exists(PERIMETER_PATH) else null
+	_perimeter.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	add_child(_perimeter)
+	_fuse_core = Sprite2D.new()
+	_fuse_core.name = "FuseEmbers"
+	_fuse_core.texture = load(BLAST_PATH) as Texture2D if ResourceLoader.exists(BLAST_PATH) else null
+	_fuse_core.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	# Live enemies render through the z=10 proxy. Keep the lit fuse above
+	# that body while the blast perimeter remains on the ground behind it.
+	_fuse_core.z_as_relative = false
+	_fuse_core.z_index = 11
+	_fuse_core.position = Vector2(0.0, -20.0)
+	_fuse_core.scale = Vector2.ONE * minf(18.0, _r * 0.2) / BLAST_CONTENT_RADIUS
+	add_child(_fuse_core)
 	set_process(true)
-	queue_redraw()
+	_update_sprites()
 
 func _process(dt: float) -> void:
+	if is_inside_tree() and get_tree().paused:
+		return
 	_t += dt
 	if _enemy == null or not is_instance_valid(_enemy) or _enemy.dead:
 		queue_free()
 		return
 	var player := _enemy.player
 	if player == null or not is_instance_valid(player):
+		visible = false
 		return
 	var dist_sq := _enemy.global_position.distance_squared_to(player.global_position)
 	if dist_sq > DRAW_MAX_PLAYER_DIST * DRAW_MAX_PLAYER_DIST:
@@ -54,34 +75,21 @@ func _process(dt: float) -> void:
 		return
 	if not visible:
 		visible = true
-	_redraw_accum += dt
-	if _redraw_accum >= REDRAW_INTERVAL:
-		_redraw_accum = 0.0
-		queue_redraw()
+	_update_sprites()
 
-func _draw() -> void:
-	if _enemy == null or _enemy.player == null or not is_instance_valid(_enemy.player):
+
+func _update_sprites() -> void:
+	if _perimeter == null or _enemy == null or not is_instance_valid(_enemy):
 		return
-
-	# A lit fuse (EnemyBomber): the ring sits at the true blast radius, hot,
-	# and blinks at 8 Hz between its colour and white until it goes off.
 	var bomber: EnemyBomber = _enemy.get("_bomber") as EnemyBomber
-	if bomber != null and bomber.is_fuse_lit():
-		var white_hot: bool = int(_t * 16.0) % 2 == 0
-		var fuse_colour := Color(1.0, 0.95, 0.85, 0.8) if white_hot else Color(color_core.r, color_core.g, color_core.b, hot_alpha)
-		VfxKit.draw_ring_dashed(self, Vector2.ZERO, _r, fuse_colour, _t * 2.5, line_width)
-		return
-
-	var dist: float = _enemy.global_position.distance_to(_enemy.player.global_position)
-
-	# hotter when player is near trigger distance
-	var hot: float = 1.0 - clampf(dist / maxf(_trigger_d, 0.001), 0.0, 1.0)
-	hot = hot * hot
-
-	var fade: float = lerpf(base_alpha, hot_alpha, hot)
-	var pulse: float = 0.85 + 0.15 * sin(_t * lerpf(2.0, 7.0, hot) * TAU)
-	var r: float = _r * pulse
-
-	# Pixel-art kit (Batch B, 2026-09-27): one dashed-ring sprite in the core colour, spun by the phase, replaces the dash_count glow+core arc pairs.
-	var phase: float = _t * lerpf(0.35, 1.35, hot)
-	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, Color(color_core.r, color_core.g, color_core.b, fade), phase, line_width)
+	var lit := bomber != null and bomber.is_fuse_lit()
+	var progress := bomber.fuse_progress() if lit else 0.0
+	# The perimeter always marks the damage edge; only brightness changes.
+	_perimeter.scale = Vector2.ONE * _r / PERIMETER_CONTENT_RADIUS
+	_perimeter.rotation = 0.0
+	var alpha := lerpf(maxf(base_alpha, 0.25), hot_alpha, 0.25 + 0.75 * progress) if lit else maxf(base_alpha, 0.25)
+	_perimeter.modulate = Color(1.0, 1.0, 1.0, alpha)
+	_fuse_core.visible = lit
+	var reduced := bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	_fuse_core.rotation = 0.0 if reduced else _t * 0.35
+	_fuse_core.modulate = Color(1.0, 1.0, 1.0, AccessibilityPresentation.current_flash_alpha(0.3 + 0.5 * progress))

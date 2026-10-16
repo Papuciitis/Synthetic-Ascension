@@ -1,0 +1,21 @@
+PASS: export presets are discovered
+FAIL: discoverable root notice exists
+FAIL: preset 0 ships THIRD_PARTY_NOTICES.txt
+FAIL: preset 0 ships assets/audio/sfx/CREDITS.md
+FAIL: preset 0 ships assets/audio/sfx/bosses/CREDITS.md
+FAIL: preset 0 ships assets/audio/sfx/bosses/candidates_v2/CREDITS.md
+FAIL: preset 0 ships assets/audio/sfx/bosses/candidates_v3/CREDITS.md
+FAIL: preset 0 ships assets/audio/sfx/bosses/candidates_v2/LICENSE-qubodup-ice-electricity.txt
+FAIL: preset 0 ships assets/audio/sfx/bosses/candidates_v2/LICENSE-Kenney-impact-sounds.txt
+FAIL: preset 0 ships assets/audio/sfx/bosses/candidates_v3/LICENSE-Kenney-impact-sounds.txt
+PASS: preset 0 ships assets/fonts/alegreya_sc/OFL.txt
+PASS: preset 0 ships assets/fonts/cinzel/OFL.txt
+PASS: preset 0 ships assets/fonts/cinzel_decorative/OFL.txt
+PASS: preset 0 ships assets/fonts/eb_garamond/OFL.txt
+PASS: preset 0 ships assets/fonts/ibm_plex_sans_condensed/OFL.txt
+PASS: preset 0 ships assets/fonts/marcellus_sc/OFL.txt
+PASS: preset 0 ships assets/fonts/README.md
+Release created: C:\Users\NaurisKrišjānis\AppData\Local\Temp\sa-attribution-test-47fcf9505a3b47d9bd3ac2277b15e6dd\releases\synthetic-ascension-0.0.0.25.5-windows
+PASS: actual packager creates one versioned release around the inert export
+FAIL: release contains a directly readable notice beside EXE and PCK
+ExportAttributionTest: 9 passed, 10 failed

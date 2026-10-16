@@ -1,2 +1,6 @@
 # Normalize EOL for all files that Git considers text files.
 * text=auto eol=lf
+
+# Preserve the supplied vendor license bytes, including original line endings.
+assets/audio/sfx/bosses/candidates_v2/LICENSE-Kenney-impact-sounds.txt binary
+assets/audio/sfx/bosses/candidates_v3/LICENSE-Kenney-impact-sounds.txt binary

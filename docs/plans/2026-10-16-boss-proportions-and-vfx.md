@@ -27,11 +27,11 @@
 
 Files: new `core/systems/world/proc/BossArenaSpace.gd`; narrow updates to `ChunkGenDistrict.gd`, `ChunkManager.gd`, `SegmentProcBuilder.gd`; new `BossArenaSpaceTest.gd/.tscn`.
 
-- [ ] Write real-generator regressions for S5/S10 across 40 spread seeds, deterministic event anchors, all court cells, body-safe lanes/perimeter, sockets and dressing.
-- [ ] Root observes valid failing tests, separating fixture errors from production defects.
-- [ ] Implement fixed center anchors and the 20/28-cell clear court before blockers, props, walls, foliage and center landmarks are placed.
-- [ ] Verify focused and existing procedural reachability suites; capture both roles in actual Game at 960×540.
-- [ ] Review, commit and push a coherent checkpoint.
+- [x] Write real-generator regressions for S5/S10 across 40 spread seeds, deterministic event anchors, all court cells, body-safe lanes/perimeter, sockets and dressing.
+- [x] Root observes valid failing tests, separating fixture errors from production defects.
+- [x] Implement fixed center anchors and the 20/28-cell clear court before blockers, props, walls, foliage and center landmarks are placed.
+- [x] Verify focused and existing procedural reachability suites; capture both roles in actual Game at 960×540.
+- [x] Review, commit and push a coherent checkpoint.
 
 ## Task 2 — Boss anatomy and tier presentation
 
@@ -39,35 +39,37 @@ Files: new `scenes/world/bosses/BossAppearance.gd`, four PNGs and provenance in 
 
 Interface: `BossAppearance.apply(actor: EnemyActor, tier: int)` sets tier art, unit root, sprite feet42px below combat center and independent physical shapes. Standalone boss scenes use S5; arenas explicitly apply S5/S10 after readiness. A narrow `EnemyWorld.set_collision_radius(handle, value)` keeps authoritative padding synchronized when the tier changes, with largest-radius cache invalidation on shrink.
 
-- [ ] Write regressions for four distinct tier textures, unit roots, anatomy target ranges, unchanged world collision, foot anchors, reconfiguration and no shared-resource mutation; root observes RED.
-- [ ] Generate four human-proportioned rough forms using built-in ImageGen. Inspect original alpha and anatomy; retain source pixels and exact prompts/hashes.
-- [ ] Implement presentation after normal EnemyInit visuals, plus explicit arena tier application.
-- [ ] Render four races, Brute/Herald and four bosses on one baseline at actual gameplay zoom in normal/small windows, with art, silhouette and footprint views. Include rough bracing/casting poses without authoring final animation sheets.
-- [ ] Review, commit and push the proportion studies and implementation.
+- [x] Write regressions for four distinct tier textures, unit roots, anatomy target ranges, unchanged world collision, foot anchors, reconfiguration and no shared-resource mutation; root observes RED.
+- [x] Generate four human-proportioned rough forms using built-in ImageGen. Inspect original alpha and anatomy; retain source pixels and exact prompts/hashes.
+- [x] Implement presentation after normal EnemyInit visuals, plus explicit arena tier application.
+- [x] Render four races, Brute/Herald and four bosses on one baseline at actual gameplay zoom in normal/small windows, with art, silhouette and footprint views. Include rough bracing/casting poses without authoring final animation sheets.
+- [x] Review, commit and push the proportion studies and implementation.
 
 ## Task 3 — Boss warning and impact identity
 
 Files: `BossGroundWarning.gd`, boss brains/Mine, narrow `DamageCircle.gd` style propagation; new `BossImpactSprites.gd` and `BossWindupSprites.gd` as needed; new PNGs in boss art/VFX; focused identity/windup regressions and actual Game capture extension.
 
-- [ ] Reproduce absent/insufficient windup and missing style propagation with real casts; root observes RED before behavioral implementation.
-- [ ] Edit beam art to remove the opaque dark strip and create distinct slam fracture, shock crackle, mine and windup sprite art; measure painted content before fitting to geometry.
-- [ ] Propagate attack style through warnings and active footprints. Keep anticipation bounds fixed; release terrain fractures/energy bursts and finite cosmetic dissipation only.
-- [ ] Show real charge/cast windups, release and recovery samples at normal scale; verify cancellation, pause, source cleanup and accessibility.
-- [ ] Review, commit and push the visual-cue checkpoint.
+- [x] Reproduce absent/insufficient windup and missing style propagation with real casts; root observes RED before behavioral implementation.
+- [x] Edit beam art to remove the opaque dark strip and create distinct slam fracture, shock crackle, mine and windup sprite art; measure painted content before fitting to geometry.
+- [x] Propagate attack style through warnings and active footprints. Keep anticipation bounds fixed; release terrain fractures/energy bursts and finite cosmetic dissipation only.
+- [x] Show actual charge/cast windup and release samples at normal scale; verify finite impact dissipation, cancellation, pause, source cleanup and accessibility. Final character recovery animation remains pending art approval.
+- [x] Review, commit and push the visual-cue checkpoint.
 
 ## Task 4 — Pulse, Bomber and sound audition
 
 Files: `VFX_PulseRing.gd/.tscn`, `VFX_BomberHazardRing.gd`, narrow `EnemyBomber.gd` if adding a finite blast; new PNGs in `assets/textures/vfx/encounters/`; new `WorldPulseBomberSpriteTest.gd/.tscn`; audition recordings/credits if suitable candidates are found.
 
-- [ ] Write raster-presence, actual-radius, pool reset/expiry, fuse build, pause and live accessibility regressions; root observes RED.
-- [ ] Supply a detailed force ripple, explosive perimeter and finite ember/smoke burst; preserve gameplay APIs and numerical payloads.
-- [ ] Verify SetVfxPoolTest, HostileReadabilityTest and focused rendered examples.
-- [ ] Source licensed non-chiptune replacement sound candidates, provide effect-to-clip audition mapping, record provenance and technical validation, and incorporate user listening feedback without claiming unauditioned fit.
-- [ ] Review, commit and push.
+- [x] Write raster-presence, actual-radius, pool reset/expiry, fuse build, pause and live accessibility regressions; root observes RED.
+- [x] Supply a detailed force ripple, explosive perimeter and finite ember/smoke burst; preserve gameplay APIs and numerical payloads.
+- [x] Verify SetVfxPoolTest, HostileReadabilityTest and focused rendered examples.
+- [x] Source licensed non-chiptune replacement sound candidates, provide effect-to-clip audition mapping, record provenance and technical validation, and incorporate user listening feedback without claiming unauditioned fit.
+- [x] Review, commit and push.
 
 ## Final verification
 
-- [ ] Independent scoped review of production code, measured art fit and procedural reachability.
-- [ ] Focused regressions plus affected compatibility suites; final ScriptParseAuditTest last.
-- [ ] Actual Game captures at1280×720/960×540, zero profile writes, clean shutdown. Distinguish frozen visual evidence from live fight playtesting.
-- [ ] Update design/audit/status with evidence, remaining human art approval, animation, balance and audio-listening limits. Verify remote branch contains each checkpoint.
+- [x] Independent scoped review of production code, measured art fit and procedural reachability.
+- [x] Focused regressions plus affected compatibility suites; final ScriptParseAuditTest last.
+- [x] Actual Game captures at1280×720/960×540, zero profile writes, clean shutdown. Distinguish frozen visual evidence from live fight playtesting.
+- [x] Update design/audit/status with evidence, remaining human art approval, animation, balance and audio-listening limits. Verify remote branch contains each checkpoint.
+
+Verified checkpoints: `3c72f7a` (courts), `201a27e` (proportions); raster VFX/audio checkpoint follows in this delivery. Human final-art approval, character animation and full fight/mix playtesting remain as recorded in the audit.

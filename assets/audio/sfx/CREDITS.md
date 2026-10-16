@@ -23,3 +23,28 @@ Player movement and injury cues (2026-10-16)
 - `actions/hurt.wav` — Kenney Impact Sounds, `Audio/impactSoft_medium_000.ogg`, CC0 1.0.
 - Exact source URLs, archive/file hashes, original license texts and unchanged
   PCM conversion details are in `actions/CREDITS.md` and `actions/sources.json`.
+
+Boss attack cues (2026-10-16)
+---------------------------
+
+- **Ice and Electricity Magic by Iwan 'qubodup' Gabovitch** supplies the
+  boss beam-release recording, `bosses/candidates_v2/beam_electric_crackle.wav`.
+  [Author's source page](https://opengameart.org/content/ice-electricity-magic),
+  [creator](https://opengameart.org/users/qubodup),
+  **[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/)**.
+  The original `qubodupElectricityDamage01.flac` was converted to PCM16 WAV;
+  duration, level, pitch and channels are unchanged. Preserve this attribution
+  and license link in distributions containing the recording. Original source
+  notes are in `bosses/candidates_v2/LICENSE-qubodup-ice-electricity.txt`.
+- The release packager automatically ships root `THIRD_PARTY_NOTICES.txt`
+  beside the executable/PCK and covers it in `SHA256SUMS.txt`. Export
+  presets also include the root notice and individual audio credits/license
+  files in packed data. Manually assembled releases must retain the same
+  readable notice beside the game.
+- The warning, physical impact and mine are edited CC0 recordings from
+  Kenney's Impact Sounds, qubodup's Earth Element Magic Spell and Joth's
+  Chunky Explosion. The caster and pylon use artisticdude's CC0 Swishes pack.
+- [Current effect-to-recording mapping](bosses/CREDITS.md), exact sources,
+  processing recipes, hashes and individual license records are under
+  `bosses/`. The previous Sci-fi Sounds selection is retained for provenance
+  and is no longer registered as these attack cues.

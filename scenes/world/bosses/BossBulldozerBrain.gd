@@ -3,6 +3,8 @@ extends Node
 const AttackScope = preload("res://scenes/world/bosses/BossAttackScope.gd")
 const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
 const SpriteTrail = preload("res://scenes/world/bosses/BossSpriteTrail.gd")
+const ImpactSprites = preload("res://scenes/world/bosses/BossImpactSprites.gd")
+const WindupSprites = preload("res://scenes/world/bosses/BossWindupSprites.gd")
 
 @export_group("Slam")
 @export var slam_every: float = 3.6
@@ -45,6 +47,7 @@ var _cast_origin := Vector2.ZERO
 var _cast_dir := Vector2.RIGHT
 var _shock_index := 0
 var _warnings: Array[Node] = []
+var _windup: Node2D
 
 func _ready() -> void:
 	_e = get_parent() as EnemyActor
@@ -151,7 +154,7 @@ func _track_charge(_delta: float) -> void:
 
 		# impact wave at end of charge
 		_spawn_wave(_e.global_position, slam_radius * 0.85)
-		_spawn_damage_circle(_e.global_position, slam_radius * 0.55, slam_damage * 0.65, 0.12)
+		_spawn_damage_circle(_e.global_position, slam_radius * 0.55, slam_damage * 0.65, 0.12, &"slam")
 		return
 
 	# While charging: lay small “crumb” hazards to sell the rush.
@@ -167,7 +170,8 @@ func _do_slam() -> void:
 	if not _begin_cast(&"slam"):
 		return
 	SfxManager.play_2d(&"boss_warning", _cast_origin)
-	_add_warning(_cast_origin, slam_radius, maxf(0.05, slam_windup))
+	_add_warning(_cast_origin, slam_radius, maxf(0.05, slam_windup), &"slam")
+	_show_windup(&"slam", slam_windup)
 
 func _do_shockwave() -> void:
 	if not _begin_cast(&"shock"):
@@ -177,8 +181,9 @@ func _do_shockwave() -> void:
 	if _cast_dir == Vector2.ZERO:
 		_cast_dir = Vector2.RIGHT
 	_shock_index = 0
+	_show_windup(&"shock", shockwave_windup)
 	for i in range(maxi(1, shockwave_waves)):
-		_add_warning(_cast_origin + _cast_dir * shockwave_spacing * float(i + 1), shockwave_radius, _shock_time(i))
+		_add_warning(_cast_origin + _cast_dir * shockwave_spacing * float(i + 1), shockwave_radius, _shock_time(i), &"shock")
 
 func _begin_cast(kind: StringName) -> bool:
 	if _scope == null or not _scope.is_active() or _is_busy():
@@ -195,27 +200,35 @@ func _shock_time(index: int) -> float:
 func _tick_cast(delta: float) -> void:
 	_cast_elapsed += delta
 	if _cast == &"slam" and _cast_elapsed >= maxf(0.05, slam_windup):
-		_spawn_wave(_cast_origin, slam_radius)
-		_spawn_damage_circle(_cast_origin, slam_radius, slam_damage, 0.18)
+		_spawn_wave(_cast_origin, slam_radius, &"slam")
+		_spawn_damage_circle(_cast_origin, slam_radius, slam_damage, 0.18, &"slam")
 		_cancel_cast()
 	elif _cast == &"shock":
 		while _shock_index < maxi(1, shockwave_waves) and _cast_elapsed >= _shock_time(_shock_index):
 			var pos := _cast_origin + _cast_dir * shockwave_spacing * float(_shock_index + 1)
-			_spawn_wave(pos, shockwave_radius)
-			_spawn_damage_circle(pos, shockwave_radius, shockwave_damage, 0.16)
+			_spawn_wave(pos, shockwave_radius, &"shock")
+			_spawn_damage_circle(pos, shockwave_radius, shockwave_damage, 0.16, &"shock")
 			if _shock_index < _warnings.size() and is_instance_valid(_warnings[_shock_index]):
 				_warnings[_shock_index].queue_free()
 			_shock_index += 1
 		if _shock_index >= maxi(1, shockwave_waves):
 			_cancel_cast()
 
-func _add_warning(pos: Vector2, radius: float, duration: float) -> void:
-	# Persistent ground markers use the same low-resolution ring kit as mines.
+func _add_warning(pos: Vector2, radius: float, duration: float, kind: StringName = &"generic") -> void:
 	var warning: Node2D = GroundWarning.new()
+	warning.call("set_attack_style", kind)
 	warning.call("setup", pos, radius, duration)
 	AttackScope.bind(warning, _e)
 	get_tree().current_scene.add_child(warning)
 	_warnings.append(warning)
+
+func _show_windup(kind: StringName, duration: float) -> void:
+	if is_instance_valid(_windup):
+		_windup.queue_free()
+	_windup = WindupSprites.new()
+	_windup.setup(_e.player.global_position - _e.global_position, duration, kind)
+	AttackScope.bind(_windup, _e)
+	_e.add_child(_windup)
 
 func _cancel_cast() -> void:
 	_cast = &""
@@ -223,6 +236,9 @@ func _cancel_cast() -> void:
 		if is_instance_valid(warning):
 			warning.queue_free()
 	_warnings.clear()
+	if is_instance_valid(_windup):
+		_windup.cancel_attack()
+	_windup = null
 	if is_instance_valid(_e):
 		_e.set_meta(&"boss_cast_locked", false)
 		if _e._charge != null:
@@ -230,7 +246,7 @@ func _cancel_cast() -> void:
 			_e._charge._time_left = 0.0
 			_e._charge._override_vel = Vector2.ZERO
 		for child in _e.get_children():
-			if child is VFX_ChargeWindup:
+			if child is VFX_ChargeWindup or child.get_script() == WindupSprites:
 				child.queue_free()
 	_stop_trail()
 
@@ -275,22 +291,19 @@ func _release_boss_add_reservation(enemy_index: Node) -> void:
 	if enemy_index != null and enemy_index.has_method("release_special"):
 		enemy_index.call("release_special", &"boss_add", 1)
 
-func _spawn_wave(pos: Vector2, radius: float) -> void:
-	if vfx_wave_scene == null:
-		return
-	var v := vfx_wave_scene.instantiate()
-	if v is Node2D:
-		v.top_level = true
-	if v.has_method("setup"):
-		v.call("setup", pos, radius)
+func _spawn_wave(pos: Vector2, radius: float, kind: StringName = &"slam") -> void:
+	var v := ImpactSprites.new()
+	v.top_level = true
+	v.setup(pos, radius, kind, 0.65 if kind == &"slam" else 0.42)
 	AttackScope.bind(v, _e)
 	get_tree().current_scene.add_child(v)
-	SfxManager.play_2d_limited(&"multikill_thump", pos, 120, -4.0)
+	SfxManager.play_2d_limited(&"boss_slam_impact", pos, 120)
 
-func _spawn_damage_circle(pos: Vector2, radius: float, dmg: float, life: float) -> void:
+func _spawn_damage_circle(pos: Vector2, radius: float, dmg: float, life: float, kind: StringName = &"generic") -> void:
 	if damage_circle_scene == null:
 		return
 	var d := damage_circle_scene.instantiate() as DamageCircle
+	d.attack_style = kind
 	d.setup(pos, radius, dmg, life, _e)
 	AttackScope.bind(d, _e)
 	get_tree().current_scene.add_child(d)

@@ -1,0 +1,38 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a ready Spitter in sight starts a wind-up
+PASS: instead of firing at once
+PASS: and shows its tell
+PASS: 0.2 s in it is still holding the shot
+PASS: with the tell nearly closed (0.80)
+PASS: after 0.25 s the wind-up is over
+PASS: and the bolt flies
+PASS: the tell hides at release
+PASS: the cooldown starts at release
+PASS: a Spitter bolt carries the Spitter visual
+PASS: a Spitter on cooldown does not wind up
+PASS: shoot_if_ready winds up too
+PASS: setup clears a wind-up and its tell
+PASS: a hostile bolt draws 1.3x a player bolt (3.90 vs 3.00)
+PASS: every hostile bolt gets a halo, and only those (2)
+PASS: the Spitter's halo is green ((0.42, 1.0, 0.22, 1.0))
+PASS: the Herald's is orange ((1.0, 0.56, 0.14, 1.0))
+PASS: so the two shooters' bolts no longer look alike
+PASS: clearing the bolts clears the halos
+PASS: the Charger tell builds from 0.35 to full
+PASS: and is brightest just before the dash, not gone
+PASS: past the wind-up it stays for the release flash
+PASS: then frees itself
+PASS: inside the trigger distance the fuse lights instead of an instant blast
+PASS: the bomber keeps closing, slowed (40.0)
+PASS: the fuse goes off
+PASS: after about 0.35 s (0.367 s)
+PASS: no pip while no sniper aims
+PASS: a sniper in its wind-up joins the aiming group
+PASS: only the off-screen one gets a pip (1)
+PASS: on the screen edge toward it ((1894.0, 539.9456))
+PASS: shot, cancelled or freed, it leaves the group
+PASS: and its pip goes
+PASS: at most 4 pips at once (4)
+PASS: freed snipers leave no pip behind
+HostileReadabilityTest: 35 passed, 0 failed

@@ -1,0 +1,138 @@
+{
+	"asset_sources": {
+		"beam": "res://scenes/world/bosses/art/vfx/arcane_beam_body.tres",
+		"beam_atlas": "res://scenes/world/bosses/art/vfx/arcane_beam_v2.png",
+		"bomber_fuse": "res://assets/textures/vfx/encounters/bomber_blast_v1.png",
+		"bomber_perimeter": "res://assets/textures/vfx/encounters/bomber_perimeter_v1.png",
+		"charge": "res://scenes/world/bosses/art/vfx/charge_windup_v1.png",
+		"mine": "res://scenes/world/bosses/art/vfx/mine_sigil_v1.png",
+		"pulse": "res://assets/textures/vfx/encounters/pulse_ripple_v1.png",
+		"shock": "res://scenes/world/bosses/art/vfx/shock_crackle_v1.png",
+		"slam": "res://scenes/world/bosses/art/vfx/slam_fracture_v1.png"
+	},
+	"boss_forms": {
+		"mage": {
+			"anatomy_bounds_world": "[P: (-24.21957, -44.0), S: (50.62848, 86.0)]",
+			"anatomy_height_world": 86.0,
+			"anatomy_rect": "[P: (146.0, 220.0), S: (740.0, 1257.0)]",
+			"art_status": "rough proportion study; final animation pending",
+			"contact_size": "(84.32, 84.32)",
+			"equipment_bounds_world": "[P: (-24.21957, -58.36754), S: (58.22275, 100.3675)]",
+			"equipment_rect": "[P: (146.0, 10.0), S: (851.0, 1467.0)]",
+			"feet_anchor": "(500.0, 1477.0)",
+			"feet_offset_world": "(0.0, 42.0)",
+			"form_id": "arcanist_s10_v1",
+			"physical_radius": 42.16,
+			"tier": 1
+		},
+		"tank": {
+			"anatomy_bounds_world": "[P: (-28.23881, -46.0), S: (57.28027, 88.0)]",
+			"anatomy_height_world": 88.0,
+			"anatomy_rect": "[P: (208.0, 111.0), S: (785.0, 1206.0)]",
+			"art_status": "rough proportion study; final animation pending",
+			"contact_size": "(89.59, 89.59)",
+			"equipment_bounds_world": "[P: (-41.08126, -52.34826), S: (79.53565, 94.34826)]",
+			"equipment_rect": "[P: (32.0, 24.0), S: (1090.0, 1293.0)]",
+			"feet_anchor": "(595.0, 1317.0)",
+			"feet_offset_world": "(0.0, 42.0)",
+			"form_id": "bulldozer_s10_v1",
+			"physical_radius": 44.795,
+			"tier": 1
+		}
+	},
+	"camera_zoom": "(1.0, 1.0)",
+	"captures": [
+		{
+			"beam_phase": "warning",
+			"boss_pose": "production charge and fan anticipation sampled at half windup; actors stationary",
+			"file": "actual-game-staged-vfx-warning-1280x720.png",
+			"image_size": "(1280, 720)",
+			"radial_phase": "60 percent windup / mine half fuse",
+			"window_size": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"beam_phase": "active",
+			"boss_pose": "production charge and fan anticipation sampled at half windup; actors stationary",
+			"file": "actual-game-staged-vfx-active-1280x720.png",
+			"image_size": "(1280, 720)",
+			"radial_phase": "impact at 0.035 seconds",
+			"window_size": "(1280, 720)",
+			"world_px_to_image_px": 0.666666666666667
+		},
+		{
+			"beam_phase": "warning",
+			"boss_pose": "production charge and fan anticipation sampled at half windup; actors stationary",
+			"file": "actual-game-staged-vfx-warning-960x540.png",
+			"image_size": "(960, 540)",
+			"radial_phase": "60 percent windup / mine half fuse",
+			"window_size": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		},
+		{
+			"beam_phase": "active",
+			"boss_pose": "production charge and fan anticipation sampled at half windup; actors stationary",
+			"file": "actual-game-staged-vfx-active-960x540.png",
+			"image_size": "(960, 540)",
+			"radial_phase": "impact at 0.035 seconds",
+			"window_size": "(960, 540)",
+			"world_px_to_image_px": 0.5
+		}
+	],
+	"failures": 0,
+	"player_position": "(-1024.0, 1024.0)",
+	"presentation": "STAGED / frozen actual Game production VFX, not an encounter or playability test",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 2,
+	"selected_world_positions": {
+		"Arcanist fan": {
+			"expected_1280x720_center": "(966.6667, 426.6667)",
+			"offset_from_player": "(490.0, 100.0)",
+			"world": "(-534.0, 1124.0)"
+		},
+		"Beam origin": {
+			"expected_1280x720_center": "(293.3333, 560.0)",
+			"offset_from_player": "(-520.0, 300.0)",
+			"world": "(-1544.0, 1324.0)"
+		},
+		"Bulldozer charge": {
+			"expected_1280x720_center": "(440.0, 400.0)",
+			"offset_from_player": "(-300.0, 60.0)",
+			"world": "(-1324.0, 1084.0)"
+		},
+		"Current pulse ripple": {
+			"expected_1280x720_center": "(1000.0, 560.0)",
+			"offset_from_player": "(540.0, 300.0)",
+			"world": "(-484.0, 1324.0)"
+		},
+		"Enemy Bomber": {
+			"expected_1280x720_center": "(840.0, 533.3334)",
+			"offset_from_player": "(300.0, 260.0)",
+			"world": "(-724.0, 1284.0)"
+		},
+		"Mine": {
+			"expected_1280x720_center": "(753.3334, 240.0)",
+			"offset_from_player": "(170.0, -180.0)",
+			"world": "(-854.0, 844.0)"
+		},
+		"Pylon": {
+			"expected_1280x720_center": "(973.3334, 253.3333)",
+			"offset_from_player": "(500.0, -160.0)",
+			"world": "(-524.0, 864.0)"
+		},
+		"Shock": {
+			"expected_1280x720_center": "(526.6667, 240.0)",
+			"offset_from_player": "(-170.0, -180.0)",
+			"world": "(-1194.0, 844.0)"
+		},
+		"Slam": {
+			"expected_1280x720_center": "(340.0, 240.0)",
+			"offset_from_player": "(-450.0, -180.0)",
+			"world": "(-1474.0, 844.0)"
+		}
+	},
+	"stretch": "canvas_items",
+	"viewport": "(1920, 1080)",
+	"world_seed": 16102026
+}

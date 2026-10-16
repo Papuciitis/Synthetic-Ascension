@@ -1,6 +1,8 @@
 extends RefCounted
 class_name EnemyBomber
 
+const BLAST := preload("res://assets/vfx/world/enemies/VFX_BomberBlast.gd")
+
 var _owner: EnemyActor = null
 var _exploded: bool = false
 
@@ -79,6 +81,13 @@ func explode_now() -> void:
 
 	var r: float = _owner.spec.explode_radius
 	var dmg: float = _owner.spec.explode_damage
+	var world := _owner.get_tree().current_scene
+	if world != null:
+		var blast := BLAST.new()
+		blast.name = "BomberBlast"
+		blast.top_level = true
+		blast.setup(_owner.global_position, r)
+		world.add_child(blast)
 
 	var ps: Array = _owner.get_tree().get_nodes_in_group("player")
 	for p in ps:

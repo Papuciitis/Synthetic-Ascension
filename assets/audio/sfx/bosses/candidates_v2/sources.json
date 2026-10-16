@@ -1,0 +1,299 @@
+{
+  "retrieved": "2026-10-16",
+  "status": "Selected files integrated on 2026-10-16: cast_air_swish for Arcanist fan warning and pylon release; beam_electric_crackle for beam release. Other V2 files remain unregistered. Heavy-metal/mining pings were rejected; the long mine is superseded by V3 compact blast. Assistant has not auditioned these recordings. Starting gains and exact triggers are in ../CREDITS.md; final human mix approval remains needed. Attack timings are unchanged.",
+  "decoder": "PySoundFile 0.13.1 / libsndfile 1.2.2",
+  "clipping_check": "Counts decoded/delivered samples at or beyond signed16 full scale (abs >=32767/32768); this is a numerical screen, not proof that source recordings have no distortion. All six delivered files have zero counted full-scale samples.",
+  "discarded_candidates": [
+    {
+      "source_page": "https://opengameart.org/content/tesla-coil-powered-death-ray-sound",
+      "reason": "Decoded source contains full-scale samples; not copied into candidate set."
+    },
+    {
+      "source_page": "https://opengameart.org/content/big-low-frequency-explosion-boom",
+      "reason": "Decoded source contains full-scale samples and 5s tail; not copied into candidate set."
+    },
+    {
+      "source_page": "https://opengameart.org/content/magic-smite",
+      "reason": "Source reaches -40dBFS only after0.583s, unsuitable as an immediate release without a separate editorial choice; not copied."
+    }
+  ],
+  "archive_hashes": [
+    {
+      "temp_download": "kenney_impact-sounds.zip",
+      "bytes": 800850,
+      "sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8"
+    },
+    {
+      "temp_download": "swishes.zip",
+      "bytes": 385150,
+      "sha256": "7980215241b739a787dcf26f660ce510bb237900968789395a86911619795693"
+    },
+    {
+      "temp_download": "ice_electricity.7z",
+      "bytes": 1401585,
+      "sha256": "e38bf3046f1503d7bad52894ff6d3d4d2e18d595746ab68151667c84a1b12a8d"
+    }
+  ],
+  "files": [
+    {
+      "local_file": "warning_heavy_metal.wav",
+      "candidate_role": "Bulldozer accepted-cast warning / physical commitment",
+      "creator": "Kenney",
+      "source_page": "https://kenney.nl/assets/impact-sounds",
+      "download_url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "original_file": "Audio/impactMetal_heavy_001.ogg",
+      "archive_member": "Audio/impactMetal_heavy_001.ogg",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_file_sha256": "83554049f81f4db9209379e103c30bfa63f65c42189a03f300b045c2c82e23ae",
+      "delivered_sha256": "7e6020b03aaa24fc7576777036318529faf8ad5f61d3c942657d1cf1b2373ffd",
+      "delivered_bytes": 63420,
+      "conversion": "Full recording decoded to PCM16 WAV; sample rate, channel count and frame count preserved; no gain, trim, resampling, filtering, synthesis or layering.",
+      "source_metrics": {
+        "frames": 15844,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.359274,
+        "peak_dbfs": -1.0931,
+        "rms_dbfs": -23.6232,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.0,
+        "peak_time_seconds": 0.00229
+      },
+      "delivered_metrics": {
+        "frames": 15844,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.359274,
+        "peak_dbfs": -1.0931,
+        "rms_dbfs": -23.6232,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.0,
+        "peak_time_seconds": 0.00229
+      },
+      "auditioned": false,
+      "integrated": false,
+      "auditioned_by_assistant": false,
+      "selection_status": "Rejected by user as a ping; not integrated."
+    },
+    {
+      "local_file": "slam_mining_impact.wav",
+      "candidate_role": "Bulldozer slam impact; contrast with ground-shock texture",
+      "creator": "Kenney",
+      "source_page": "https://kenney.nl/assets/impact-sounds",
+      "download_url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "original_file": "Audio/impactMining_004.ogg",
+      "archive_member": "Audio/impactMining_004.ogg",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_file_sha256": "8ca3a99d85d845751ad8ce7b40509da58263a62e48cde70e5a30b5ccef4c9a3b",
+      "delivered_sha256": "8e08d52e65282c509fc8d6c0e4a835eb148014fd0b0673355a7c054210ecdf94",
+      "delivered_bytes": 146508,
+      "conversion": "Full recording decoded to PCM16 WAV; sample rate, channel count and frame count preserved; no gain, trim, resampling, filtering, synthesis or layering.",
+      "source_metrics": {
+        "frames": 36616,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.830295,
+        "peak_dbfs": -0.9097,
+        "rms_dbfs": -19.7571,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.0,
+        "peak_time_seconds": 0.010998
+      },
+      "delivered_metrics": {
+        "frames": 36616,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.830295,
+        "peak_dbfs": -0.9096,
+        "rms_dbfs": -19.7571,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.0,
+        "peak_time_seconds": 0.010998
+      },
+      "auditioned": false,
+      "integrated": false,
+      "auditioned_by_assistant": false,
+      "selection_status": "Rejected by user as a ping; not integrated."
+    },
+    {
+      "local_file": "shock_ground_crumble.wav",
+      "candidate_role": "Fault-line ground crackle / crumbling material tail; not a substitute for the impact transient",
+      "creator": "Iwan 'qubodup' Gabovitch",
+      "source_page": "https://opengameart.org/content/earth-element-magic-spell",
+      "download_url": "https://opengameart.org/sites/default/files/Earth%20Element%20Magic%20Spell_0.flac",
+      "original_file": "Earth Element Magic Spell_0.flac",
+      "archive_member": null,
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_file_sha256": "1248f39e7850dc3645e3e2185a38e7a499177649bcec9c793f58aba838281e1e",
+      "delivered_sha256": "71da041d84a13ec197c7b46230f0521509fdbb1b70789ec05953d48b1a0ea0da",
+      "delivered_bytes": 724176,
+      "conversion": "Full recording decoded to PCM16 WAV; sample rate, channel count and frame count preserved; no gain, trim, resampling, filtering, synthesis or layering.",
+      "source_metrics": {
+        "frames": 181033,
+        "sample_rate": 96000,
+        "channels": 2,
+        "duration_seconds": 1.88576,
+        "peak_dbfs": -0.01,
+        "rms_dbfs": -14.6339,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.018573,
+        "peak_time_seconds": 0.774625
+      },
+      "delivered_metrics": {
+        "frames": 181033,
+        "sample_rate": 96000,
+        "channels": 2,
+        "duration_seconds": 1.88576,
+        "peak_dbfs": -0.0098,
+        "rms_dbfs": -14.6339,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.018573,
+        "peak_time_seconds": 0.794135
+      },
+      "auditioned": false,
+      "integrated": false,
+      "auditioned_by_assistant": false,
+      "selection_status": "Unregistered audition candidate."
+    },
+    {
+      "local_file": "cast_air_swish.wav",
+      "candidate_role": "Short caster release or pylon shot; also compare as a physical weapon-swing accent",
+      "creator": "artisticdude",
+      "source_page": "https://opengameart.org/content/swishes-sound-pack",
+      "download_url": "https://opengameart.org/sites/default/files/swishes.zip",
+      "original_file": "swishes/swish-9.wav",
+      "archive_member": "swishes/swish-9.wav",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_file_sha256": "123883f006ce55feecbff11eea5f87c4493df4399989983037144570a23723c1",
+      "delivered_sha256": "90796d8d7565ae49bdacdb8f004ac5312c48765bd809ec9c1ef9cb248ff3308b",
+      "delivered_bytes": 34772,
+      "conversion": "Full recording decoded to PCM16 WAV; sample rate, channel count and frame count preserved; no gain, trim, resampling, filtering, synthesis or layering.",
+      "source_metrics": {
+        "frames": 8682,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.196871,
+        "peak_dbfs": -0.1005,
+        "rms_dbfs": -15.2848,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.031905,
+        "peak_time_seconds": 0.078163
+      },
+      "delivered_metrics": {
+        "frames": 8682,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 0.196871,
+        "peak_dbfs": -0.1002,
+        "rms_dbfs": -15.2848,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.031905,
+        "peak_time_seconds": 0.078163
+      },
+      "auditioned": false,
+      "integrated": true,
+      "auditioned_by_assistant": false,
+      "manifest_ids": [
+        "boss_cast_warning",
+        "boss_pylon_shot"
+      ],
+      "manifest_gains_db": {
+        "boss_cast_warning": -15,
+        "boss_pylon_shot": -18
+      },
+      "selection_status": "Selected unchanged recording; final in-game mix remains for human review."
+    },
+    {
+      "local_file": "beam_electric_crackle.wav",
+      "candidate_role": "Beam release or pylon bolt energy crackle; one-shot, not a seamless sustained channel",
+      "creator": "Iwan 'qubodup' Gabovitch",
+      "source_page": "https://opengameart.org/content/ice-electricity-magic",
+      "download_url": "https://opengameart.org/sites/default/files/qubodupIceAndElectricitySpells.7z",
+      "original_file": "qubodupElectricityDamage01.flac",
+      "archive_member": "qubodupIceAndElectricitySpells/qubodupElectricityDamage01.flac",
+      "license": "CC-BY-3.0",
+      "license_url": "https://creativecommons.org/licenses/by/3.0/",
+      "source_file_sha256": "b61131bbed47caec321f5b3ee43ebe47d91c9f5d18084348ce2af73544ca4ecc",
+      "delivered_sha256": "ec106750f23f9c9f9f858d5aaabf9a2a0689d72d4111f97cfc3df8ab4edd5b7b",
+      "delivered_bytes": 127976,
+      "conversion": "Full recording decoded to PCM16 WAV; sample rate, channel count and frame count preserved; no gain, trim, resampling, filtering, synthesis or layering.",
+      "source_metrics": {
+        "frames": 31983,
+        "sample_rate": 48000,
+        "channels": 2,
+        "duration_seconds": 0.666312,
+        "peak_dbfs": -0.0111,
+        "rms_dbfs": -18.0091,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.000333,
+        "peak_time_seconds": 0.453083
+      },
+      "delivered_metrics": {
+        "frames": 31983,
+        "sample_rate": 48000,
+        "channels": 2,
+        "duration_seconds": 0.666312,
+        "peak_dbfs": -0.0111,
+        "rms_dbfs": -18.0091,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.000333,
+        "peak_time_seconds": 0.453083
+      },
+      "auditioned": false,
+      "integrated": true,
+      "auditioned_by_assistant": false,
+      "manifest_ids": [
+        "boss_beam_release"
+      ],
+      "manifest_gains_db": {
+        "boss_beam_release": -14
+      },
+      "selection_status": "Selected unchanged recording; preserve CC-BY-3.0 attribution and source/license links in distributions."
+    },
+    {
+      "local_file": "mine_chunky_blast.wav",
+      "candidate_role": "Mine detonation or heavy boss-impact blast; first 2 seconds with a 200ms fade, human mix audition required",
+      "creator": "Joth",
+      "source_page": "https://opengameart.org/content/chunky-explosion",
+      "download_url": "https://opengameart.org/sites/default/files/Chunky%20Explosion.mp3",
+      "original_file": "Chunky Explosion.mp3",
+      "archive_member": null,
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "source_file_sha256": "4de53bffac187e59d3f5b43096df2f8fcb4160076b65b71a67074947950e025f",
+      "delivered_sha256": "8a4472002932594f809d3d2fdb0aa000f0afa457d46bc8a4c16fb5cf339bde79",
+      "delivered_bytes": 352844,
+      "conversion": "Keep source 0.000-2.000s and apply a linear fade to zero over the final 0.200s; PCM16 WAV; source sample rate/channels preserved; no gain, resampling, filters, synthesis or added layers.",
+      "source_metrics": {
+        "frames": 247680,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 5.616327,
+        "peak_dbfs": -1.8678,
+        "rms_dbfs": -20.8764,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.025079,
+        "peak_time_seconds": 0.339955
+      },
+      "delivered_metrics": {
+        "frames": 88200,
+        "sample_rate": 44100,
+        "channels": 2,
+        "duration_seconds": 2.0,
+        "peak_dbfs": -1.8677,
+        "rms_dbfs": -16.5909,
+        "clipped_samples": 0,
+        "first_sample_above_minus40_dbfs_seconds": 0.025079,
+        "peak_time_seconds": 0.339955
+      },
+      "auditioned": false,
+      "integrated": false,
+      "auditioned_by_assistant": false,
+      "selection_status": "Body informed V3 compact blast; this long V2 tail is not integrated."
+    }
+  ]
+}

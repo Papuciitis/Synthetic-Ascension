@@ -1,0 +1,109 @@
+{
+  "prepared": "2026-10-16",
+  "status": "Three edited recordings integrated on 2026-10-16 as the physical boss warning, physical impact and compact mine blast, following user-directed replacement. Original delivered audio and hashes remain unchanged. Assistant listening remains false; final in-game mix approval is still for the user. V2 files are preserved and no attack timing changed. Current mapping is in ../CREDITS.md.",
+  "feedback_addressed": [
+    "Remove metal/mining ping from warning and slam",
+    "Keep accepted mine body with substantially shorter and more controlled tail"
+  ],
+  "decoder": "PySoundFile 0.13.1 / libsndfile 1.2.2",
+  "processing": "Recorded/source effects only; no oscillator synthesis, bitcrushing, retro bleeps, clipping, compression or pitch shift. Mono arithmetic downmix, linear resampling, FIR filtering, source excerpts, layer peak balancing, authored fades/envelopes and final peak normalization.",
+  "sources": [
+    {
+      "id": "soft_heavy_003",
+      "creator": "Kenney",
+      "title": "Impact Sounds 1.0",
+      "source_page": "https://kenney.nl/assets/impact-sounds",
+      "download_url": "https://kenney.nl/media/pages/assets/impact-sounds/87b4ddecda-1677589768/kenney_impact-sounds.zip",
+      "archive_member": "Audio/impactSoft_heavy_003.ogg",
+      "source_member_sha256": "d00286a2dc62ee5cb4d42bf56120e7050a855f69e655fc1294410aadd337eba3",
+      "archive_sha256": "029d734af1582474edf3a694d1b0cebc97c1c152f2f39fa34d4c2bafc5de77f8",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "earth_spell",
+      "creator": "Iwan 'qubodup' Gabovitch",
+      "title": "Earth Element Magic Spell",
+      "source_page": "https://opengameart.org/content/earth-element-magic-spell",
+      "download_url": "https://opengameart.org/sites/default/files/Earth%20Element%20Magic%20Spell_0.flac",
+      "source_sha256": "1248f39e7850dc3645e3e2185a38e7a499177649bcec9c793f58aba838281e1e",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    },
+    {
+      "id": "chunky_explosion",
+      "creator": "Joth",
+      "title": "Chunky Explosion",
+      "source_page": "https://opengameart.org/content/chunky-explosion",
+      "download_url": "https://opengameart.org/sites/default/files/Chunky%20Explosion.mp3",
+      "source_sha256": "4de53bffac187e59d3f5b43096df2f8fcb4160076b65b71a67074947950e025f",
+      "license": "CC0-1.0",
+      "license_url": "https://creativecommons.org/publicdomain/zero/1.0/"
+    }
+  ],
+  "files": [
+    {
+      "local_file": "warning_weighted_brace.wav",
+      "sha256": "74ced95cb1300e08e2e46b1f9a1c7330e227e36d1d203b7ea8980426066d961f",
+      "bytes": 42380,
+      "duration_seconds": 0.48,
+      "sample_rate": 44100,
+      "channels": 1,
+      "subtype": "PCM_16",
+      "peak_dbfs": -4.99990598233068,
+      "rms_dbfs": -20.03823583546089,
+      "clipped_samples": 0,
+      "onset_above_minus40_dbfs_seconds": 0.00031746031746031746,
+      "peak_time_seconds": 0.013469387755102041,
+      "energy_below500hz_fraction": 0.9889344052149696,
+      "energy_above3000hz_fraction": 2.0266837963681805E-08,
+      "auditioned": false,
+      "integrated": true,
+      "auditioned_by_assistant": false,
+      "manifest_id": "boss_warning",
+      "manifest_gain_db": -8
+    },
+    {
+      "local_file": "slam_weighted_thud.wav",
+      "sha256": "c16de113afb068c61865546e46ea2ec5b696209fc7fc78d89c934b5c598a225a",
+      "bytes": 63548,
+      "duration_seconds": 0.72,
+      "sample_rate": 44100,
+      "channels": 1,
+      "subtype": "PCM_16",
+      "peak_dbfs": -2.9999878172428636,
+      "rms_dbfs": -20.127940736235853,
+      "clipped_samples": 0,
+      "onset_above_minus40_dbfs_seconds": 0.00011337868480725624,
+      "peak_time_seconds": 0.012448979591836735,
+      "energy_below500hz_fraction": 0.9843351163841407,
+      "energy_above3000hz_fraction": 5.3664691514320704E-08,
+      "auditioned": false,
+      "integrated": true,
+      "auditioned_by_assistant": false,
+      "manifest_id": "boss_slam_impact",
+      "manifest_gain_db": -8
+    },
+    {
+      "local_file": "mine_compact_blast.wav",
+      "sha256": "21d857785911e47114a1fd2ac96b87af277fe1f2ead227b5ee96fe7669982f98",
+      "bytes": 58256,
+      "duration_seconds": 0.66,
+      "sample_rate": 44100,
+      "channels": 1,
+      "subtype": "PCM_16",
+      "peak_dbfs": -3.7999169780692528,
+      "rms_dbfs": -20.56238631373934,
+      "clipped_samples": 0,
+      "onset_above_minus40_dbfs_seconds": 0.00036281179138321996,
+      "peak_time_seconds": 0.040612244897959185,
+      "energy_below500hz_fraction": 0.8940979236389416,
+      "energy_above3000hz_fraction": 0.00196529006515838,
+      "auditioned": false,
+      "integrated": true,
+      "auditioned_by_assistant": false,
+      "manifest_id": "boss_mine_burst",
+      "manifest_gain_db": -10
+    }
+  ]
+}

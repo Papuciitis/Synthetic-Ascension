@@ -1,0 +1,33 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Pulse displays its dedicated raster ripple artwork
+PASS: Pulse has no native line or particle effects
+PASS: Pulse art uses normal blending
+PASS: normal Pulse visibly expands during its existing lifetime
+PASS: pausing preserves Pulse time and visible radius
+ERROR: FAIL: live Reduced Motion retains a static full-radius ripple
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldPulseBomberSpriteTest.gd:28)
+       [1] _test_pulse (res://tools/tests/WorldPulseBomberSpriteTest.gd:111)
+       [2] _run (res://tools/tests/WorldPulseBomberSpriteTest.gd:80)
+PASS: Reduced Motion keeps the ripple radius still
+PASS: combat flash Off suppresses the decorative Pulse flash
+PASS: Pulse returns to its pool after the existing finite lifetime
+PASS: pooled Pulse resets its age and world origin
+PASS: pooled Pulse forgets the previous opacity and radius
+PASS: production Bomber constructs its persistent warning
+PASS: Bomber displays a dedicated explosive perimeter sprite
+PASS: Bomber warning has no native line or particle effects
+PASS: idle Bomber warning depicts its actual 105px blast radius
+PASS: idle breathing does not shrink the blast boundary
+PASS: visible Bomber fuse builds toward detonation instead of alternating white flashes
+PASS: flash Off keeps the necessary Bomber danger boundary readable
+PASS: live Reduced Motion keeps Bomber's boundary still
+PASS: pause preserves Bomber warning time
+PASS: Bomber detonation creates a real raster blast
+PASS: blast stays at the actual detonation world origin
+PASS: blast survives deletion of its Bomber owner
+PASS: pause preserves the finite blast's remaining lifetime
+PASS: blast cleans itself up after its finite lifetime
+WorldPulseBomberSpriteTest: 24 passed, 1 failed

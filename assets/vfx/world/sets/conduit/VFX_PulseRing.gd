@@ -16,14 +16,23 @@ class_name PulseRing
 
 var _radius: float = 64.0
 var _t: float = 0.0
+var _ripple: Sprite2D
+var _echo: Sprite2D
+
+const RIPPLE_PATH := "res://assets/textures/vfx/encounters/pulse_ripple_v1.png"
+# Calibrated to the source PNG's alpha coverage, not its square canvas.
+const RIPPLE_CONTENT_RADIUS := 562.741948
 
 func setup(pos: Vector2, radius: float) -> void:
 	global_position = pos
 	_radius = maxf(radius, 1.0)
+	_update_sprites()
 
 func _ready() -> void:
 	z_index = z
-	material = null  # pixel-art kit (Batch B): the sprite blends normally
+	process_mode = Node.PROCESS_MODE_PAUSABLE
+	material = null
+	_ensure_sprites()
 	_reset()
 
 ## Pooled reuse (PooledVfx): back to the first frame of the burst.
@@ -32,44 +41,48 @@ func _on_pool_obtain() -> void:
 
 func _reset() -> void:
 	_t = 0.0
+	rotation = 0.0
+	scale = Vector2.ONE
+	modulate = Color.WHITE
 	set_process(true)
-	queue_redraw()
+	_update_sprites()
 
 func _process(dt: float) -> void:
+	if is_inside_tree() and get_tree().paused:
+		return
 	_t += dt
 	if _t >= duration:
 		PooledVfx.release(self)
 		return
-	queue_redraw()
+	_update_sprites()
 
 func _ease_out(x: float) -> float:
 	return 1.0 - pow(1.0 - x, 3.0)
 
-func _draw() -> void:
-	var p: float = clampf(_t / duration, 0.0, 1.0)
-	var k: float = 1.0 - p
-	k = k * k
+func _ensure_sprites() -> void:
+	if _ripple != null:
+		return
+	var texture := load(RIPPLE_PATH) as Texture2D if ResourceLoader.exists(RIPPLE_PATH) else null
+	_echo = Sprite2D.new()
+	_echo.name = "RippleEcho"
+	_echo.texture = texture
+	_echo.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	add_child(_echo)
+	_ripple = Sprite2D.new()
+	_ripple.name = "Ripple"
+	_ripple.texture = texture
+	_ripple.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	add_child(_ripple)
 
-	# expanding shockwave radius
-	var r0: float = _radius * start_radius_mul
-	var r: float = lerpf(r0, _radius, _ease_out(p))
 
-	# thickness shrinks a bit as it expands
-	var w: float = lerpf(line_width, line_width * 0.35, p)
-
-	# brief inner fill flash (only early)
-	var fill_k: float = clampf(1.0 - (p / 0.55), 0.0, 1.0)
-	if fill_k > 0.0 and fill_alpha > 0.0:
-		# Pixel-art kit (Batch B, 2026-09-27): the soft disc sprite replaces the filled fill-flash circle.
-		VfxKit.draw_disc(self, Vector2.ZERO, r * 0.96, Color(0.25, 0.60, 1.0, fill_alpha * fill_k * k))
-
-	# dashed main ring (reads as “force”, less like a UI circle)
-	# Pixel-art kit (Batch B, 2026-09-27): one ten-dash ring sprite replaces the dash_count drawn arcs; the dashes start at angle 0 as the arcs did, so no spin.
-	var base_col := Color(0.92, 0.97, 1.0, line_alpha * k)
-	VfxKit.draw_ring_dashed(self, Vector2.ZERO, r, base_col, 0.0, w)
-
-	# trailing ring (gives depth)
-	# Pixel-art kit (Batch B, 2026-09-27): the ring sprite replaces the full trailing arc; the centre dot is dropped.
-	var r2: float = r * trailing_ring_mul
-	var col2 := Color(0.70, 0.90, 1.0, line_alpha * trailing_alpha_mul * k)
-	VfxKit.draw_ring(self, Vector2.ZERO, r2, col2, maxf(2.0, w * 0.35))
+func _update_sprites() -> void:
+	if _ripple == null:
+		return
+	var p := clampf(_t / maxf(duration, 0.001), 0.0, 1.0)
+	var fade := (1.0 - p) * (1.0 - p)
+	var reduced := bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	var radius := _radius if reduced else lerpf(_radius * start_radius_mul, _radius, _ease_out(p))
+	_ripple.scale = Vector2.ONE * radius / RIPPLE_CONTENT_RADIUS
+	_ripple.modulate = Color(1.0, 1.0, 1.0, AccessibilityPresentation.current_flash_alpha(line_alpha * fade))
+	_echo.scale = _ripple.scale * trailing_ring_mul
+	_echo.modulate = Color(0.70, 0.90, 1.0, AccessibilityPresentation.current_flash_alpha(line_alpha * trailing_alpha_mul * fade))

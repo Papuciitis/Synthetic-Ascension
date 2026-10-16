@@ -9,6 +9,7 @@ const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
 @export var lifetime: float = 0.20
 @export var hit_once: bool = true
 @export var show_footprint: bool = false
+@export var attack_style: StringName = &"generic"
 
 var source: Node = null
 var _hit: bool = false
@@ -60,6 +61,7 @@ func _configure_geometry() -> void:
 		if not is_instance_valid(_footprint):
 			_footprint = GroundWarning.new()
 			add_child(_footprint)
+		_footprint.set_attack_style(attack_style)
 		_footprint.configure_circle(radius)
 		_footprint.set_progress(1.0, true)
 	elif is_instance_valid(_footprint):

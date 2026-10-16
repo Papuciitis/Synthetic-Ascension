@@ -1,0 +1,50 @@
+{
+	"arena_chunk": "(-5, -18)",
+	"arena_role": "boss_arena",
+	"arena_world_position": "(-9216.0, -35840.0)",
+	"boss_appearance": {
+		"anatomy_bounds_world": "[P: (-24.21957, -44.0), S: (50.62848, 86.0)]",
+		"anatomy_height_world": 86.0,
+		"anatomy_rect": "[P: (146.0, 220.0), S: (740.0, 1257.0)]",
+		"art_status": "rough proportion study; final animation pending",
+		"contact_size": "(84.32, 84.32)",
+		"equipment_bounds_world": "[P: (-24.21957, -58.36754), S: (58.22275, 100.3675)]",
+		"equipment_rect": "[P: (146.0, 10.0), S: (851.0, 1467.0)]",
+		"feet_anchor": "(500.0, 1477.0)",
+		"feet_offset_world": "(0.0, 42.0)",
+		"form_id": "arcanist_s10_v1",
+		"physical_radius": 42.16,
+		"tier": 1
+	},
+	"boss_world_position": "(-9216.0, -35930.0)",
+	"camera_zoom": "(1.0, 1.0)",
+	"capture": "actual-game-boss-court-s10-960x540.png",
+	"connected_street_sockets": [
+		{
+			"direction": "east",
+			"local_cell": "(31, 19)",
+			"world_position": "(-8224.0, -35616.0)"
+		}
+	],
+	"connector_mask": 2,
+	"court_local_cells": "[P: (2, 2), S: (28, 28)]",
+	"court_reservations_match": true,
+	"court_world_rect": "[P: (-10112.0, -36736.0), S: (1792.0, 1792.0)]",
+	"current_slot": -1,
+	"failures": 0,
+	"note": "Normal camera shows part of the court; full-court clearance and lanes are verified separately across procedural seeds.",
+	"plan_generation_attempt": 1,
+	"plan_seed": 881070633,
+	"player_offset_from_court": "(0.0, 320.0)",
+	"player_world_position": "(-9216.0, -35520.0)",
+	"presentation": "Frozen production arena, fixed archetype sample; final art/animation and human playtest remain pending",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 10,
+	"theme_id": "gate_district",
+	"viewport": "(1920, 1080)",
+	"visible_world_rect": "[P: (-10176.0, -36060.0), S: (1920.0, 1080.0)]",
+	"window": "(960, 540)",
+	"world_px_to_image_px": 0.5,
+	"world_seed": 16102026
+}

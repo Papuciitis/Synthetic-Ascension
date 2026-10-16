@@ -1,6 +1,7 @@
 extends Node
 
 const AttackScope = preload("res://scenes/world/bosses/BossAttackScope.gd")
+const WindupSprites = preload("res://scenes/world/bosses/BossWindupSprites.gd")
 
 @export_group("Fan Shot")
 @export var fan_every: float = 2.8
@@ -58,6 +59,7 @@ var _fan_phase := 0
 var _fan_warning: Node
 var _channel: Node
 var _pylons: Array[WeakRef] = []
+var _windup: Node2D
 
 func _ready() -> void:
 	_e = get_parent() as EnemyActor
@@ -151,7 +153,8 @@ func _fan_shot() -> void:
 	_fan_origin = _e.global_position
 	_fan_dir = (_e.player.global_position - _fan_origin).normalized()
 	_fan_phase = _phase
-	SfxManager.play_2d(&"boss_warning", _fan_origin)
+	SfxManager.play_2d(&"boss_cast_warning", _fan_origin)
+	_show_windup(&"fan", maxf(0.05, fan_telegraph), _fan_dir)
 
 	# Telegraph cone
 	if cone_vfx_scene != null:
@@ -201,12 +204,16 @@ func _cancel_cast() -> void:
 	if is_instance_valid(_channel):
 		_channel.queue_free()
 	_channel = null
+	if is_instance_valid(_windup):
+		_windup.cancel_attack()
+	_windup = null
 	if is_instance_valid(_e):
 		_e.set_meta(&"boss_cast_locked", false)
 
 func _drop_mines() -> void:
 	if mine_scene == null:
 		return
+	_show_windup(&"mine", 0.35, _e.player.global_position - _e.global_position)
 	var p := _e.player.global_position
 	var count := mines_count + (_phase)  # more mines in later phases
 	count = clampi(count, 2, 6)
@@ -243,6 +250,15 @@ func _beam_sweep() -> void:
 	AttackScope.bind(beam, _e)
 	get_tree().current_scene.add_child(beam)
 	_channel = beam
+	_show_windup(&"beam", beam.telegraph_time, dir)
+
+func _show_windup(kind: StringName, duration: float, direction: Vector2) -> void:
+	if is_instance_valid(_windup):
+		_windup.cancel_attack()
+	_windup = WindupSprites.new()
+	_windup.setup(direction, duration, kind)
+	AttackScope.bind(_windup, _e)
+	_e.add_child(_windup)
 
 func _spawn_pylons() -> void:
 	if pylon_scene == null:

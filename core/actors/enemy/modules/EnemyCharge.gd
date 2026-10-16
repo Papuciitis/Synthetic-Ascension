@@ -1,6 +1,9 @@
 extends RefCounted
 class_name EnemyCharge
 
+const BossWindupSprites = preload("res://scenes/world/bosses/BossWindupSprites.gd")
+const BossAttackScope = preload("res://scenes/world/bosses/BossAttackScope.gd")
+
 var _enemy: EnemyActor = null
 
 var _cd: float = 0.0
@@ -95,9 +98,15 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 		_cd = maxf(_enemy.spec.charge_cooldown, 0.1)
 
 		# Windup VFX (child so it follows)
-		var v: VFX_ChargeWindup = VFX_ChargeWindup.new()
-		_enemy.add_child(v)
-		v.setup(_dir, _windup_left)
+		if _enemy.get_meta(&"boss_archetype", "") == "tank":
+			var cue := BossWindupSprites.new()
+			cue.setup(_dir, _windup_left, &"charge", spec.charge_speed * spec.charge_duration)
+			BossAttackScope.bind(cue, _enemy)
+			_enemy.add_child(cue)
+		else:
+			var v: VFX_ChargeWindup = VFX_ChargeWindup.new()
+			_enemy.add_child(v)
+			v.setup(_dir, _windup_left)
 
 		return Vector2.ZERO
 

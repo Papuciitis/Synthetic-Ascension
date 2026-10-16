@@ -1,0 +1,38 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a real Bulldozer shockwave previews all three impacts before releasing damage
+PASS: all shockwave previews use the captured origin, direction and authored spacing
+PASS: each preview uses the shockwave's authored damage radius
+PASS: pausing longer than the whole shock sequence releases no impacts
+PASS: pause preserves all three previews at their original positions
+PASS: resuming retains the shockwave's unspent anticipation
+PASS: moving boss and player cannot drag committed shockwave previews
+PASS: the resumed shockwave releases exactly three impacts
+PASS: shockwave impact 1 matches its fixed preview despite intervening movement
+PASS: shockwave impact 2 matches its fixed preview despite intervening movement
+PASS: shockwave impact 3 matches its fixed preview despite intervening movement
+PASS: the completed sequence releases its movement lock
+PASS: completed shockwave previews leave no lingering warnings
+PASS: death cleanup fixture creates three real scope-bound Runners
+PASS: all death Runners belong to the encounter and use the boss-add budget
+PASS: death summons consume exactly three live boss-add slots
+PASS: death summons leave no outstanding population reservations
+PASS: owner death removes every summoned Runner
+PASS: owner death removes Runner handles from EnemyWorld
+PASS: owner death releases every occupied boss-add slot
+PASS: owner death leaves no leaked population reservations
+PASS: owner death cleanup emits no Runner kill or defeat rewards
+PASS: owner death cleanup grants no Followers
+PASS: owner death preserves the unrelated Grunt and its combat registration
+PASS: return cleanup fixture creates three real scope-bound Runners
+PASS: all return Runners belong to the encounter and use the boss-add budget
+PASS: return summons consume exactly three live boss-add slots
+PASS: return summons leave no outstanding population reservations
+PASS: owner return removes every summoned Runner
+PASS: owner return removes Runner handles from EnemyWorld
+PASS: owner return releases every occupied boss-add slot
+PASS: owner return leaves no leaked population reservations
+PASS: owner return cleanup emits no Runner kill or defeat rewards
+PASS: owner return cleanup grants no Followers
+PASS: owner return preserves the unrelated Grunt and its combat registration
+BossEncounterOwnershipTest: 35 passed, 0 failed

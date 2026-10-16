@@ -2223,3 +2223,38 @@ font, badge and per-name colour assertions and the final 518-script audit. Regre
 before fixes; independent scoped review found no actionable P1/P2 issues.
 The user approved the preview and requested this pass be committed and pushed,
 including per-name modifier colours without a further visual approval step.
+
+## 2026-10-16 — Boss proportions, clear courts and raster effects
+
+The approved second boss delivery step now has four distinct S5/S10 rough
+forms beside all player races at gameplay zoom. Anatomy is fitted separately
+from equipment: Bulldozer 88 world px in both tiers, Arcanist 82/86, compared
+with the human's 77 px occupied height. Unit actor roots replace enlarged
+generic bodies, while private walking/contact shapes preserve existing world
+sizes and the authoritative enemy record stays synchronized. These are
+single-pose studies for review; finished animation and human art approval
+remain pending.
+
+Procedural S5/S10 courts reserve 20/28-cell squares before blockers and
+dressing, with one shared fixed encounter center and open street access.
+The arena regression passes 728 checks across 88 chunks and 40 seeds; the
+existing reachability suite checks 3840 chunks with no failures. This does
+not guarantee space beyond the court or full visibility of long attacks
+from every player-camera position.
+
+Dedicated transparent raster sprites distinguish slam fractures, branching
+shock crackles, planted mines, charge arrows and casting accents. The beam
+loses its dark rectangular backing. Pulse and Bomber receive finer sprites
+while retaining their existing clocks, pooling and damage geometry. Current
+boss sound mappings replace the rejected initial electronic/ping selection
+with recorded thuds, air and electrical material, including a shorter mine
+blast. Exact clips, triggers and credits are in
+`assets/audio/sfx/bosses/CREDITS.md`; final mix weight needs human listening.
+
+Actual Game scale, court and effect captures, tests, source hashes and review
+limits are linked from `docs/audits/2026-10-16-boss-step2.md` and
+`docs/art/2026-10-16-boss-step2-assets.md`. Captures use isolated profiles and
+record zero save writes. Frozen samples establish art presence and fit;
+they do not establish motion quality, dense-fight readability or balance.
+The random S10 boss choice remains. S5 teaching kits, new S10 phase kits,
+entrance/music/HUD and durable reward settlement remain later steps.

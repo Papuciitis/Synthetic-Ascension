@@ -10,7 +10,7 @@ const MINE = preload("res://scenes/world/bosses/BossMine.tscn")
 const BEAM = preload("res://scenes/world/bosses/BossBeamSweep.tscn")
 const PYLON = preload("res://scenes/world/bosses/BossPylon.tscn")
 const SCOPE = preload("res://scenes/world/bosses/BossAttackScope.gd")
-const AUDIO_IDS: Array[StringName] = [&"boss_warning", &"boss_beam_release", &"boss_pylon_shot", &"boss_mine_burst"]
+const AUDIO_IDS: Array[StringName] = [&"boss_warning", &"boss_cast_warning", &"boss_slam_impact", &"boss_beam_release", &"boss_pylon_shot", &"boss_mine_burst"]
 
 class Target:
 	extends Node2D
@@ -44,6 +44,7 @@ func _clear_requests() -> void:
 	SfxManager.debug_requests.clear()
 	for id in AUDIO_IDS:
 		SfxManager._last_limited_ms.erase(id)
+	SfxManager._last_limited_ms.erase(&"multikill_thump")
 
 
 func _check_one_at(id: StringName, pos: Vector2, label: String) -> void:
@@ -91,10 +92,12 @@ func _end_fixture() -> void:
 
 func _test_definitions() -> void:
 	var definitions := [
-		[&"boss_warning", -13.0, 0.634898],
-		[&"boss_beam_release", -13.0, 0.676644],
-		[&"boss_pylon_shot", -13.0, 0.239206],
-		[&"boss_mine_burst", -17.0, 0.777460],
+		[&"boss_warning", -8.0, 0.480000, "res://assets/audio/sfx/bosses/candidates_v3/warning_weighted_brace.wav"],
+		[&"boss_cast_warning", -15.0, 0.196871, "res://assets/audio/sfx/bosses/candidates_v2/cast_air_swish.wav"],
+		[&"boss_slam_impact", -8.0, 0.720000, "res://assets/audio/sfx/bosses/candidates_v3/slam_weighted_thud.wav"],
+		[&"boss_beam_release", -14.0, 0.666312, "res://assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav"],
+		[&"boss_pylon_shot", -18.0, 0.196871, "res://assets/audio/sfx/bosses/candidates_v2/cast_air_swish.wav"],
+		[&"boss_mine_burst", -10.0, 0.660000, "res://assets/audio/sfx/bosses/candidates_v3/mine_compact_blast.wav"],
 	]
 	for row in definitions:
 		var id: StringName = row[0]
@@ -103,7 +106,7 @@ func _test_definitions() -> void:
 		if definition == null:
 			continue
 		var stream := definition.stream as AudioStreamWAV
-		_check(stream != null and absf(stream.get_length() - float(row[2])) < 0.002, "%s resolves the delivered WAV recording and duration" % id)
+		_check(stream != null and stream.resource_path == row[3] and absf(stream.get_length() - float(row[2])) < 0.002, "%s resolves the chosen replacement WAV and its delivered duration" % id)
 		_check(definition.bus == &"SFX" and is_equal_approx(definition.vol_db, float(row[1])) and is_zero_approx(definition.pitch_jitter), "%s uses the intended SFX bus, gain and stable pitch" % id)
 		_check(not definition.loop and stream != null and stream.loop_mode == AudioStreamWAV.LOOP_DISABLED, "%s is a one-shot in both definition and stream" % id)
 
@@ -127,10 +130,56 @@ func _test_brain_warnings() -> void:
 	_clear_requests()
 	brain.call("_fan_shot")
 	brain.call("_fan_shot")
-	_check_one_at(&"boss_warning", mage.global_position, "accepted fan warns once at the committed origin; rejected overlap is silent")
+	_check_one_at(&"boss_cast_warning", mage.global_position, "accepted fan uses its caster warning once at the committed origin; rejected overlap is silent")
+	_check(_requests(&"boss_warning").is_empty(), "Arcanist fan cannot borrow the physical bracing warning")
 	_invalidate(mage)
 	brain.call("_fan_shot")
-	_check(_requests(&"boss_warning").size() == 1, "dead boss cannot replay a fan warning")
+	_check(_requests(&"boss_cast_warning").size() == 1, "dead boss cannot replay a fan warning")
+	await _end_fixture()
+
+
+func _test_physical_impact_boundaries() -> void:
+	_fixture()
+	var tank := _actor(TANK)
+	var brain := tank.get_node("BossBrain")
+	brain.set("slam_windup", 0.20)
+	var origin := tank.global_position
+	_clear_requests()
+	brain.call("_do_slam")
+	brain.set_process(true)
+	await get_tree().create_timer(0.05, true).timeout
+	get_tree().paused = true
+	await get_tree().create_timer(0.25, true).timeout
+	_check(_requests(&"boss_slam_impact").is_empty() and _requests(&"multikill_thump").is_empty(), "pausing slam anticipation releases neither the new impact recording nor the old procedural thump")
+	tank.global_position += Vector2(100, 0)
+	get_tree().paused = false
+	await get_tree().create_timer(0.25, true).timeout
+	brain.set_process(false)
+	_check_one_at(&"boss_slam_impact", origin, "real slam release requests one dedicated impact at the committed origin after resuming")
+	_check(_requests(&"multikill_thump").is_empty(), "boss slam no longer requests the rejected procedural multikill recording")
+	brain.call("_tick_cast", 1.0)
+	_check(_requests(&"boss_slam_impact").size() == 1, "completed slam callbacks cannot duplicate the dedicated impact cue")
+	_clear_requests()
+	brain.call("_do_slam")
+	tank.call("_apply_enemy_world_stun", 0.01)
+	tank.stun_time = 0.0
+	brain.call("_tick_cast", 1.0)
+	_check(_requests(&"boss_slam_impact").is_empty(), "brief stun cancels pending slam audio with its damage and visual cast")
+	_invalidate(tank)
+	brain.call("_do_slam")
+	brain.call("_tick_cast", 1.0)
+	_check(_requests(&"boss_slam_impact").is_empty(), "dead source cannot revive a canceled physical impact cue")
+	await _end_fixture()
+
+	_fixture()
+	tank = _actor(TANK)
+	brain = tank.get_node("BossBrain")
+	origin = tank.global_position
+	_clear_requests()
+	brain.call("_do_shockwave")
+	brain.call("_tick_cast", 0.56)
+	_check_one_at(&"boss_slam_impact", origin + Vector2(140, 0), "first real ground shock requests the physical impact recording at its own committed position")
+	_check(_requests(&"multikill_thump").is_empty(), "ground shock also avoids the old procedural multikill sound")
 	await _end_fixture()
 
 
@@ -263,6 +312,7 @@ func _run() -> void:
 	SfxManager.debug_record = true
 	_test_definitions()
 	await _test_brain_warnings()
+	await _test_physical_impact_boundaries()
 	await _test_mine_boundaries()
 	await _test_beam_boundaries()
 	await _test_stunned_beam_cannot_finish_anticipation()

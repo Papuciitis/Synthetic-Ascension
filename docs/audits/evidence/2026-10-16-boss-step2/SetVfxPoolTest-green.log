@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the PoolManager autoload is present
+PASS: a pulse ring is obtained under the requested parent
+PASS: the ring blends normally (no additive material) since the pixel-art kit
+PASS: one pulse ring is live
+PASS: after its 0.26 s the ring went back to the pool (parked under the PoolManager) instead of being freed
+PASS: the pool retains it and nothing is live
+PASS: the next obtain reuses the same node
+PASS: a reused ring restarts at its first frame, visible and processing
+PASS: reused spokes reset their rotation and reroll their angles
+PASS: a reused cleave arc is back at unit scale with fresh sparks
+PASS: a reused shockwave restarts
+PASS: the live cap admits 64 spokes bursts and refuses the six beyond it
+PASS: every burst released after its 0.14 s
+PASS: the pool retains 48 and discards the rest
+PASS: an arc line draws the bolt sprite between two points, or its jittered segments without the art (2)
+PASS: the arc line went back to the pool after its fade
+PASS: a reused arc line is opaque again with its points cleared
+PASS: and fades back into the pool a second time
+PASS: a ring instantiated outside the pool still frees itself
+churn: 30 rings per frame for 150 frames: raw p50 15.88 p95 28.41 ms, pooled p50 6.89 p95 9.14 ms (live cap 64)
+PASS: pooled bursts cost no more per frame than raw churn (headless: node work only)
+PASS: the pool is bounded after the storm
+SetVfxPoolTest: 21 passed, 0 failed

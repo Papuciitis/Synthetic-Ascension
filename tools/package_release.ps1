@@ -19,12 +19,17 @@ $outputRootPath = [System.IO.Path]::GetFullPath($OutputRoot)
 $versionDirectory = Join-Path $outputRootPath "synthetic-ascension-$version-windows"
 $executablePath = Join-Path $versionDirectory "SyntheticAscension-$version.exe"
 $presetPath = Join-Path $projectRoot 'export_presets.cfg'
+$noticeSourcePath = Join-Path $projectRoot 'THIRD_PARTY_NOTICES.txt'
+$noticeOutputPath = Join-Path $versionDirectory 'THIRD_PARTY_NOTICES.txt'
 
 if (-not (Test-Path -LiteralPath $godotPath -PathType Leaf)) {
     throw "Godot console executable not found: $godotPath"
 }
 if (-not (Test-Path -LiteralPath $presetPath -PathType Leaf)) {
     throw "Export preset not found: $presetPath"
+}
+if (-not (Test-Path -LiteralPath $noticeSourcePath -PathType Leaf) -or (Get-Item -LiteralPath $noticeSourcePath).Length -eq 0) {
+    throw "Required third-party notice is missing or empty: $noticeSourcePath"
 }
 if ((Get-Content -Raw -LiteralPath $presetPath) -notmatch 'name="Windows Desktop"') {
     throw "Export preset '$presetName' is missing from $presetPath"
@@ -35,6 +40,7 @@ if (Test-Path -LiteralPath $versionDirectory) {
 
 if ($DryRun) {
     Write-Output "Dry run valid: $presetName -> $executablePath"
+    Write-Output "Readable third-party notice -> $noticeOutputPath"
     exit 0
 }
 
@@ -57,6 +63,10 @@ try {
 if (-not (Test-Path -LiteralPath $executablePath -PathType Leaf)) {
     throw "Godot reported success but did not create $executablePath"
 }
+
+# PCK contents are not directly readable through the operating system. Ship
+# the attribution beside the game as well, before calculating release hashes.
+Copy-Item -LiteralPath $noticeSourcePath -Destination $noticeOutputPath
 
 $manifestPath = Join-Path $versionDirectory 'SHA256SUMS.txt'
 $manifestLines = Get-ChildItem -LiteralPath $versionDirectory -File -Recurse |

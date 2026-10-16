@@ -3,6 +3,7 @@ class_name BossMine
 
 const Scope = preload("res://scenes/world/bosses/BossAttackScope.gd")
 const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
+const ImpactSprites = preload("res://scenes/world/bosses/BossImpactSprites.gd")
 
 @export var fuse: float = 1.10
 @export var radius: float = 90.0
@@ -18,7 +19,6 @@ var _exploded := false
 var _configured := false
 var _world_origin := Vector2.ZERO
 var _warning
-var _intro_started := false
 
 func setup(world_pos: Vector2, src: Node, fuse_sec: float, radius_px: float, dmg: float) -> void:
 	_world_origin = world_pos
@@ -29,7 +29,6 @@ func setup(world_pos: Vector2, src: Node, fuse_sec: float, radius_px: float, dmg
 	damage = dmg
 	_elapsed = 0.0
 	_exploded = false
-	_intro_started = false
 	if is_node_ready():
 		global_position = world_pos
 		_configure_warning()
@@ -46,6 +45,7 @@ func _configure_warning() -> void:
 		_warning = GroundWarning.new()
 		_warning.name = "BlastWarning"
 		add_child(_warning)
+	_warning.set_attack_style(&"mine")
 	_warning.configure_circle(radius)
 	_warning.set_progress(0.0)
 
@@ -56,15 +56,6 @@ func _process(delta: float) -> void:
 		return
 	if get_tree().paused or _exploded:
 		return
-	if not _intro_started:
-		_intro_started = true
-		# Keep the authored arrival accent; the fixed boundary remains until
-		# detonation instead of relying on this brief decorative ring.
-		if telegraph_scene != null:
-			var accent := telegraph_scene.instantiate()
-			if accent.has_method("setup"):
-				accent.call("setup", Vector2.ZERO, radius)
-			add_child(accent)
 	_elapsed += delta
 	_warning.set_progress(_elapsed / maxf(0.05, fuse))
 	if _elapsed >= maxf(0.05, fuse):
@@ -85,20 +76,19 @@ func _explode() -> void:
 		return
 	SfxManager.play_2d_limited(&"boss_mine_burst", global_position, 120)
 
-	# Impact VFX
-	if impact_scene != null:
-		var v := impact_scene.instantiate()
-		if v is Node2D:
-			v.top_level = true
-		if v.has_method("setup"):
-			v.call("setup", global_position, radius)
-		Scope.bind(v, source)
-		scene.add_child(v)
+	# The planted occult glyph bursts in place; it never borrows the physical
+	# slam or electrical shock artwork. It is cosmetic and owns no damage.
+	var impact := ImpactSprites.new()
+	impact.top_level = true
+	impact.setup(global_position, radius, &"mine", 0.42)
+	Scope.bind(impact, source)
+	scene.add_child(impact)
 
 	# Damage (instant / short)
 	if damage_circle_scene != null:
 		var d := damage_circle_scene.instantiate() as DamageCircle
 		if d != null:
+			d.attack_style = &"mine"
 			d.setup(global_position, radius, damage, 0.15, source)
 			d.show_footprint = true
 			Scope.bind(d, source)

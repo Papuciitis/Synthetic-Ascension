@@ -1,0 +1,55 @@
+{
+	"arena_chunk": "(-11, 2)",
+	"arena_role": "miniboss_arena",
+	"arena_world_position": "(-21504.0, 5120.0)",
+	"boss_appearance": {
+		"anatomy_bounds_world": "[P: (-26.35607, -46.0), S: (51.61398, 88.0)]",
+		"anatomy_height_world": 88.0,
+		"anatomy_rect": "[P: (250.0, 55.0), S: (705.0, 1202.0)]",
+		"art_status": "rough proportion study; final animation pending",
+		"contact_size": "(78.03, 78.03)",
+		"equipment_bounds_world": "[P: (-41.80366, -46.0), S: (81.41098, 88.0)]",
+		"equipment_rect": "[P: (39.0, 55.0), S: (1112.0, 1202.0)]",
+		"feet_anchor": "(610.0, 1257.0)",
+		"feet_offset_world": "(0.0, 42.0)",
+		"form_id": "bulldozer_s5_v1",
+		"physical_radius": 39.015,
+		"tier": 0
+	},
+	"boss_world_position": "(-21504.0, 5040.0)",
+	"camera_zoom": "(1.0, 1.0)",
+	"capture": "actual-game-boss-court-s5-960x540.png",
+	"connected_street_sockets": [
+		{
+			"direction": "east",
+			"local_cell": "(31, 19)",
+			"world_position": "(-20512.0, 5344.0)"
+		},
+		{
+			"direction": "west",
+			"local_cell": "(0, 19)",
+			"world_position": "(-22496.0, 5344.0)"
+		}
+	],
+	"connector_mask": 10,
+	"court_local_cells": "[P: (6, 6), S: (20, 20)]",
+	"court_reservations_match": true,
+	"court_world_rect": "[P: (-22144.0, 4480.0), S: (1280.0, 1280.0)]",
+	"current_slot": -1,
+	"failures": 0,
+	"note": "Normal camera shows part of the court; full-court clearance and lanes are verified separately across procedural seeds.",
+	"plan_generation_attempt": 1,
+	"plan_seed": 2139530756,
+	"player_offset_from_court": "(0.0, 320.0)",
+	"player_world_position": "(-21504.0, 5440.0)",
+	"presentation": "Frozen production arena, fixed archetype sample; final art/animation and human playtest remain pending",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 5,
+	"theme_id": "inner_district_gate",
+	"viewport": "(1920, 1080)",
+	"visible_world_rect": "[P: (-22464.0, 4900.0), S: (1920.0, 1080.0)]",
+	"window": "(960, 540)",
+	"world_px_to_image_px": 0.5,
+	"world_seed": 16102026
+}

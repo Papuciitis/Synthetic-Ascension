@@ -1,0 +1,34 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: Pulse displays its dedicated raster ripple artwork
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldPulseBomberSpriteTest.gd:28)
+       [1] _test_pulse (res://tools/tests/WorldPulseBomberSpriteTest.gd:96)
+       [2] _run (res://tools/tests/WorldPulseBomberSpriteTest.gd:80)
+PASS: Pulse has no native line or particle effects
+PASS: Pulse returns to its pool after the existing finite lifetime
+PASS: pooled Pulse resets its age and world origin
+ERROR: FAIL: pooled Pulse forgets the previous opacity and radius
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldPulseBomberSpriteTest.gd:28)
+       [1] _test_pulse (res://tools/tests/WorldPulseBomberSpriteTest.gd:127)
+       [2] _run (res://tools/tests/WorldPulseBomberSpriteTest.gd:80)
+PASS: production Bomber constructs its persistent warning
+ERROR: FAIL: Bomber displays a dedicated explosive perimeter sprite
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldPulseBomberSpriteTest.gd:28)
+       [1] _test_bomber (res://tools/tests/WorldPulseBomberSpriteTest.gd:149)
+       [2] _run (res://tools/tests/WorldPulseBomberSpriteTest.gd:81)
+       [3] _test_pulse (res://tools/tests/WorldPulseBomberSpriteTest.gd:129)
+PASS: Bomber warning has no native line or particle effects
+ERROR: FAIL: Bomber detonation creates a real raster blast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/WorldPulseBomberSpriteTest.gd:28)
+       [1] _test_bomber (res://tools/tests/WorldPulseBomberSpriteTest.gd:180)
+       [2] _run (res://tools/tests/WorldPulseBomberSpriteTest.gd:81)
+       [3] _test_pulse (res://tools/tests/WorldPulseBomberSpriteTest.gd:129)
+WorldPulseBomberSpriteTest: 5 passed, 4 failed

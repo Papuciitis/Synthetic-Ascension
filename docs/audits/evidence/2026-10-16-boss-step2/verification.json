@@ -1,0 +1,238 @@
+{
+  "verified_at_utc": "2026-10-16T15:59:14.110219+00:00",
+  "engine": "Godot 4.7.1 stable a13da4feb; Windows; Compatibility captures; Dummy audio",
+  "execution": "Root serialized engine runs; no human game process at preflight; editor untouched",
+  "headless_command": "Godot --headless --path . --audio-driver Dummy --flush-output res://tools/tests/<Suite>.tscn --quit-after 4000",
+  "tests": [
+    {
+      "log": "BossArenaSpaceTest-green.log",
+      "summary": "BossArenaSpaceTest: 728 passed, 0 failed; 88 generated arena chunks across 40 seeds; elapsed 3244ms",
+      "exit_code": 0,
+      "sha256": "8f6a801cfff8c7896c802fea37440e2c5750c73b3d7e40e04875efa985fe7328"
+    },
+    {
+      "log": "BossProportionTest-final.log",
+      "summary": "BossProportionTest: 72 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "4c097931cc62e3ec48ab044a9768a77fdae4a7c5ff43a7059810417791263124"
+    },
+    {
+      "log": "BossAttackIdentityTest-final.log",
+      "summary": "BossAttackIdentityTest: 25 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "2eb6d45a57d696a2218494c68ecc4144770f1c376c905ad6e80e4da46a883848"
+    },
+    {
+      "log": "WorldPulseBomberSpriteTest-final.log",
+      "summary": "WorldPulseBomberSpriteTest: 25 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "bd41a2982004a5f34e366f1283099d4f56e7a10fe86419154a0fa03bb8f76a45"
+    },
+    {
+      "log": "BossHazardGeometryTest-final.log",
+      "summary": "BossHazardGeometryTest: 31 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "7fb505e79f58b70eab609c94610ddf49db28166fc8419e001a0b020682c61592"
+    },
+    {
+      "log": "BossCastLifecycleTest-final.log",
+      "summary": "BossCastLifecycleTest: 16 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "bff5cebc9eba5cd7ed3562dfd001499a578d6ae285558177864dadca3c4c346a"
+    },
+    {
+      "log": "BossEncounterOwnershipTest-final.log",
+      "summary": "BossEncounterOwnershipTest: 35 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "867843ecf9eb45505f5af75153db6471f2abb75fac66dc31d3e8001d142f290c"
+    },
+    {
+      "log": "BossAttackAudioTest-final.log",
+      "summary": "BossAttackAudioTest: 52 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "a010fc374ebcb8488d6c1d17c03147af5c9ead6d8053c4e2d1206367a7ff0c7d"
+    },
+    {
+      "log": "EnemyProxyRendererTest-final.log",
+      "summary": "EnemyProxyRendererTest passes=48 failures=0",
+      "exit_code": 0,
+      "sha256": "c9d4331bdf9aee954dbfe509cb9114bedcbea7333d5832002a1d0b42407ba6a8"
+    },
+    {
+      "log": "SetVfxPoolTest-green.log",
+      "summary": "SetVfxPoolTest: 21 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "a779779eddf8eb5422c471e6cbbe79a673962cb8541f41466633dfa560165d6e"
+    },
+    {
+      "log": "HostileReadabilityTest-green.log",
+      "summary": "HostileReadabilityTest: 35 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "b7047694c203c5b2a796454109a155933a63caceab8fa51b871de007d1414e14"
+    },
+    {
+      "log": "ProcChunkReachabilityTest-final.log",
+      "summary": "ProcChunkReachabilityTest: 3840 chunks, 2538 doors, 1728 rewards, 0 failures",
+      "exit_code": 0,
+      "sha256": "678faa3d8d10606249f8b4755deb55c36639707405626a677b30cad49378d954"
+    },
+    {
+      "log": "ScriptParseAuditTest-final.log",
+      "summary": "ScriptParseAuditTest: 520 passed, 0 failed (checked 520 scripts across 8 roots)",
+      "exit_code": 0,
+      "sha256": "fea8b31d87ee5ce86eb5243fe5db0ae4618fc17c64f7d41fad404b2edc3de945"
+    },
+    {
+      "log": "ExportAttributionTest-final.log",
+      "summary": "ExportAttributionTest: 21 passed, 0 failed",
+      "exit_code": 0,
+      "sha256": "d164351dd8aee751aa632103a1097f7473fb228392e565133d0ef93dc43b6b32",
+      "command": "PowerShell tools/tests/ExportAttributionTest.ps1",
+      "boundary": "Real release packager with inert EXE/PCK fixture; no whole-release engine export"
+    }
+  ],
+  "captures": [
+    {
+      "metadata": "docs/art/reference/2026-10-16-boss-proportions/capture-info.json",
+      "failures": 0,
+      "save_writes": 0,
+      "capture_count": 6,
+      "kind": "frozen production Game sample"
+    },
+    {
+      "metadata": "docs/art/reference/2026-10-16-boss-step2-vfx/capture-info.json",
+      "failures": 0,
+      "save_writes": 0,
+      "capture_count": 4,
+      "kind": "frozen production Game sample"
+    },
+    {
+      "metadata": "docs/art/reference/2026-10-16-boss-arena-courts/court-s5-capture-info.json",
+      "failures": 0,
+      "save_writes": 0,
+      "capture_count": 1,
+      "kind": "frozen production Game sample"
+    },
+    {
+      "metadata": "docs/art/reference/2026-10-16-boss-arena-courts/court-s10-capture-info.json",
+      "failures": 0,
+      "save_writes": 0,
+      "capture_count": 1,
+      "kind": "frozen production Game sample"
+    }
+  ],
+  "art_sources": [
+    {
+      "file": "scenes/world/bosses/art/forms/bulldozer_s5_v1.png",
+      "sha256": "9b17cdbf5b7c71c9cb196fa2ab93a9203edf1695314da09de036d5888c2f2e8d",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/forms/bulldozer_s10_v1.png",
+      "sha256": "9df126fa7d5237090e5467fcad34827fb1f0cf903ba51888b6d75f05bfd6b10e",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/forms/arcanist_s5_v1.png",
+      "sha256": "0cea9affcc5810386ad5dce9c4b3805c570dcb9d4305bcd4445390389f7b1cb6",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/forms/arcanist_s10_v1.png",
+      "sha256": "fae4d2e6e24a4b49d0146d92b98b044b45bcafbb484a9d3091234ba8ce5ee26e",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/vfx/arcane_beam_v2.png",
+      "sha256": "83d4083c93e52dca07e1908c9a35daefe7aa4d5208ea8867f4629adafc00c117",
+      "source_matches": true
+    },
+    {
+      "file": "assets/textures/vfx/encounters/pulse_ripple_v1.png",
+      "sha256": "f664cc55023b2db6c8356d1c540332541dca91da09dff42be7e2f44032e82f0d",
+      "source_matches": true
+    },
+    {
+      "file": "assets/textures/vfx/encounters/bomber_perimeter_v1.png",
+      "sha256": "3b779ed7d4574f2a8b548e793064bcd299b544f618e25280204104d94334555d",
+      "source_matches": true
+    },
+    {
+      "file": "assets/textures/vfx/encounters/bomber_blast_v1.png",
+      "sha256": "3811897eaab1f25b091930b1cb1f008c06180645a7f11876c169e24178f9bdd8",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/vfx/slam_fracture_v1.png",
+      "sha256": "89e5d4996d6275849749ea0c6dcabd24866ec88de3f6084432f748be2fa14c88",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/vfx/shock_crackle_v1.png",
+      "sha256": "3b7b2833707bb27a7217ae0f87d185150f1494f859d3216ea1dc3a01d4ad3ff2",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/vfx/mine_sigil_v1.png",
+      "sha256": "a12bedaf0177090b967d0401bd6cb9a3ff449e01036a6133e2a8d664ef557903",
+      "source_matches": true
+    },
+    {
+      "file": "scenes/world/bosses/art/vfx/charge_windup_v1.png",
+      "sha256": "3d373d0d03d853e8991645527ab92b5919ec797f31382f096ed63b17986a288f",
+      "source_matches": true
+    }
+  ],
+  "import_exit_code": 0,
+  "reviews": [
+    "Independent arena/radius/presentation review; feet-origin finding corrected and verified",
+    "Independent attack identity/lifecycle/audio review; export attribution finding corrected and independently re-reviewed; 21/0 packaging regression",
+    "Independent normal/small-window visual review; chunky ring corrected and rendered; gallery samples separated"
+  ],
+  "expected_red": {
+    "arena": [
+      257,
+      471
+    ],
+    "proportions": [
+      15,
+      23
+    ],
+    "radius_sync": [
+      55,
+      4
+    ],
+    "feet_convention": [
+      64,
+      8
+    ],
+    "attack_identity": [
+      2,
+      17
+    ],
+    "pulse_bomber": [
+      5,
+      4
+    ],
+    "replacement_audio": [
+      28,
+      18
+    ],
+    "export_attribution": [
+      9,
+      10
+    ]
+  },
+  "limits": [
+    "Rough single-pose forms; final art approval/animation pending",
+    "Frozen captures cannot establish motion, touch feel, dense combat readability, balance or final audio mix",
+    "Mage contact bounds remain wider than robe, preserving geometry",
+    "Courts exclude surrounding district; player camera can crop long attacks",
+    "S5 teaching kits and S10 phase movesets are later work"
+  ],
+  "diagnostics": [
+    "Initial import crashed at editor-layout shutdown; clean retries exited0",
+    "Mistaken nonexistent EnemyWorldTest invocation excluded; no such suite exists"
+  ],
+  "export_attribution_status": "verified: notice included in all presets and byte-identical readable sidecar copied by real packager before SHA256SUMS"
+}

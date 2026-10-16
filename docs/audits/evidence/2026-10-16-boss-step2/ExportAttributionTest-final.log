@@ -1,0 +1,23 @@
+PASS: export presets are discovered
+PASS: discoverable root notice exists
+PASS: preset 0 ships THIRD_PARTY_NOTICES.txt
+PASS: preset 0 ships assets/audio/sfx/CREDITS.md
+PASS: preset 0 ships assets/audio/sfx/bosses/CREDITS.md
+PASS: preset 0 ships assets/audio/sfx/bosses/candidates_v2/CREDITS.md
+PASS: preset 0 ships assets/audio/sfx/bosses/candidates_v3/CREDITS.md
+PASS: preset 0 ships assets/audio/sfx/bosses/candidates_v2/LICENSE-qubodup-ice-electricity.txt
+PASS: preset 0 ships assets/audio/sfx/bosses/candidates_v2/LICENSE-Kenney-impact-sounds.txt
+PASS: preset 0 ships assets/audio/sfx/bosses/candidates_v3/LICENSE-Kenney-impact-sounds.txt
+PASS: preset 0 ships assets/fonts/alegreya_sc/OFL.txt
+PASS: preset 0 ships assets/fonts/cinzel/OFL.txt
+PASS: preset 0 ships assets/fonts/cinzel_decorative/OFL.txt
+PASS: preset 0 ships assets/fonts/eb_garamond/OFL.txt
+PASS: preset 0 ships assets/fonts/ibm_plex_sans_condensed/OFL.txt
+PASS: preset 0 ships assets/fonts/marcellus_sc/OFL.txt
+PASS: preset 0 ships assets/fonts/README.md
+Release created: C:\Users\NaurisKrišjānis\AppData\Local\Temp\sa-attribution-test-dfbfe8809d394bdcbc003b2f07acd488\releases\synthetic-ascension-0.0.0.25.5-windows
+PASS: actual packager creates one versioned release around the inert export
+PASS: release contains a directly readable notice beside EXE and PCK
+PASS: shipped notice exactly matches the reviewed source notice
+PASS: release integrity manifest covers the readable notice
+ExportAttributionTest: 21 passed, 0 failed

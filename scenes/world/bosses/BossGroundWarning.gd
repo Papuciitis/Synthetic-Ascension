@@ -8,6 +8,12 @@ const SEAL_TEXTURE = preload("res://scenes/world/bosses/art/vfx/hazard_seal_v1.p
 const BEAM_TEXTURE = preload("res://scenes/world/bosses/art/vfx/arcane_beam_body.tres")
 # Measured alpha >= 128 extent; source pixels remain unchanged.
 const SEAL_CONTENT_RADIUS := 570.1
+const STYLE_ART := {
+	&"slam": preload("res://scenes/world/bosses/art/vfx/slam_fracture_v1.png"),
+	&"shock": preload("res://scenes/world/bosses/art/vfx/shock_crackle_v1.png"),
+	&"mine": preload("res://scenes/world/bosses/art/vfx/mine_sigil_v1.png"),
+}
+const STYLE_RADIUS := {&"slam": 594.427876, &"shock": 542.347214, &"mine": 575.500217}
 
 var _radius := 90.0
 var _length := 680.0
@@ -21,6 +27,8 @@ var _has_world_origin := false
 var _ring: Sprite2D
 var _fill: Sprite2D
 var _core: Sprite2D
+var _identity: Sprite2D
+var _style: StringName = &"generic"
 var _edges: Array[Sprite2D] = []
 
 
@@ -43,18 +51,30 @@ func _ready() -> void:
 	set_progress(0.0)
 
 
+func set_attack_style(kind: StringName) -> void:
+	_style = kind if STYLE_ART.has(kind) else &"generic"
+	if not _beam:
+		configure_circle(_radius)
+
+
 func configure_circle(radius: float) -> void:
 	_beam = false
 	_radius = maxf(0.0, radius)
 	_ensure_sprites()
 	# Fine engraving needs room to read; tiny charge crumbs keep a simple ring.
 	var detailed := _radius >= 60.0
-	_ring.texture = SEAL_TEXTURE if detailed else VfxKit.texture("ring")
+	var large := _radius > VfxKit.RING_LARGE_FROM
+	_ring.texture = SEAL_TEXTURE if detailed else VfxKit.texture("ring_large" if large else "ring")
 	_ring.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR if detailed else CanvasItem.TEXTURE_FILTER_NEAREST
-	_ring.scale = Vector2.ONE * _radius / (SEAL_CONTENT_RADIUS if detailed else VfxKit.RING_HALF)
+	_ring.scale = Vector2.ONE * _radius / (SEAL_CONTENT_RADIUS if detailed else (VfxKit.RING_LARGE_HALF if large else VfxKit.RING_HALF))
 	_ring.visible = true
 	_core.visible = false
+	_identity.visible = STYLE_ART.has(_style)
+	if _identity.visible:
+		_identity.texture = STYLE_ART[_style]
+		_identity.scale = Vector2.ONE * _radius / float(STYLE_RADIUS[_style])
 	_fill.texture = VfxKit.texture("disc")
+	_fill.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_fill.position = Vector2.ZERO
 	_fill.scale = Vector2.ONE * _radius / VfxKit.DISC_HALF
 	for edge in _edges:
@@ -68,6 +88,7 @@ func configure_beam(length: float, width: float) -> void:
 	_width = maxf(0.0, width)
 	_ensure_sprites()
 	_ring.visible = false
+	_identity.visible = false
 	_fill.texture = BEAM_TEXTURE
 	_fill.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
 	_fit_segment(_fill, Vector2.ZERO, Vector2(_length, 0.0), _width, BEAM_TEXTURE.get_height())
@@ -87,15 +108,22 @@ func set_progress(value: float, active: bool = false) -> void:
 		return
 	var progress := clampf(value, 0.0, 1.0)
 	var edge_color := _color
-	edge_color.a = AccessibilityPresentation.current_flash_alpha(lerpf(0.65, 0.95, progress))
-	if active:
-		edge_color = Color(1.0, 0.70, 0.35, AccessibilityPresentation.current_flash_alpha(0.95))
+	if _style == &"shock" and not _beam:
+		edge_color = Color(1.0, 0.82, 0.38)
+	elif _style == &"mine" and not _beam:
+		edge_color = Color(0.78, 0.43, 1.0)
+	# Essential danger bounds stay visible when decorative flashes are disabled.
+	edge_color.a = lerpf(0.65, 0.95, progress)
+	if active and _beam:
+		edge_color = Color(0.82, 0.62, 1.0, 0.95)
 	_ring.modulate = edge_color
 	for edge in _edges:
 		edge.modulate = edge_color
 	var fill_color := Color(0.78, 0.22, 1.0, 0.70) if active and _beam else _color
 	fill_color.a = AccessibilityPresentation.current_flash_alpha((0.85 if active else lerpf(0.30, 0.50, progress)) if _beam else (0.18 if active else lerpf(0.08, 0.16, progress)))
 	_fill.modulate = fill_color
+	var identity_alpha := (0.82 if active else lerpf(0.32, 0.70, progress))
+	_identity.modulate = Color(1, 1, 1, maxf(0.32, AccessibilityPresentation.current_flash_alpha(identity_alpha)))
 	_core.visible = _beam and active
 	_core.modulate = Color(0.96, 0.85, 1.0, AccessibilityPresentation.current_flash_alpha(0.85))
 
@@ -121,6 +149,9 @@ func _ensure_sprites() -> void:
 	if _fill != null:
 		return
 	_fill = _sprite("Fill", "disc")
+	_identity = _sprite("AttackIdentity", "disc")
+	_identity.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_identity.visible = false
 	_ring = _sprite("Boundary", "ring_large")
 	_core = _sprite("Core", "streak")
 	_core.visible = false

@@ -1,0 +1,139 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: boss_warning has a real loaded sound definition
+ERROR: FAIL: boss_warning resolves the chosen replacement WAV and its delivered duration
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:109)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+ERROR: FAIL: boss_warning uses the intended SFX bus, gain and stable pitch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:110)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+PASS: boss_warning is a one-shot in both definition and stream
+ERROR: FAIL: boss_cast_warning has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:105)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+ERROR: FAIL: boss_slam_impact has a real loaded sound definition
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:105)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+PASS: boss_beam_release has a real loaded sound definition
+ERROR: FAIL: boss_beam_release resolves the chosen replacement WAV and its delivered duration
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:109)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+ERROR: FAIL: boss_beam_release uses the intended SFX bus, gain and stable pitch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:110)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+PASS: boss_beam_release is a one-shot in both definition and stream
+PASS: boss_pylon_shot has a real loaded sound definition
+ERROR: FAIL: boss_pylon_shot resolves the chosen replacement WAV and its delivered duration
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:109)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+ERROR: FAIL: boss_pylon_shot uses the intended SFX bus, gain and stable pitch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:110)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+PASS: boss_pylon_shot is a one-shot in both definition and stream
+PASS: boss_mine_burst has a real loaded sound definition
+ERROR: FAIL: boss_mine_burst resolves the chosen replacement WAV and its delivered duration
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:109)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+ERROR: FAIL: boss_mine_burst uses the intended SFX bus, gain and stable pitch
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_definitions (res://tools/tests/BossAttackAudioTest.gd:110)
+       [2] _run (res://tools/tests/BossAttackAudioTest.gd:313)
+PASS: boss_mine_burst is a one-shot in both definition and stream
+PASS: accepted slam warns once at the committed origin; rejected overlap is silent
+PASS: dead boss cannot replay a slam warning
+ERROR: FAIL: accepted fan uses its caster warning once at the committed origin; rejected overlap is silent
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:52)
+       [2] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:133)
+       [3] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:90)
+ERROR: FAIL: Arcanist fan cannot borrow the physical bracing warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:134)
+       [2] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:90)
+ERROR: FAIL: dead boss cannot replay a fan warning
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_brain_warnings (res://tools/tests/BossAttackAudioTest.gd:137)
+       [2] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:90)
+PASS: pausing slam anticipation releases neither the new impact recording nor the old procedural thump
+ERROR: FAIL: real slam release requests one dedicated impact at the committed origin after resuming
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:52)
+       [2] _test_physical_impact_boundaries (res://tools/tests/BossAttackAudioTest.gd:158)
+ERROR: FAIL: boss slam no longer requests the rejected procedural multikill recording
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_physical_impact_boundaries (res://tools/tests/BossAttackAudioTest.gd:159)
+ERROR: FAIL: completed slam callbacks cannot duplicate the dedicated impact cue
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_physical_impact_boundaries (res://tools/tests/BossAttackAudioTest.gd:161)
+PASS: brief stun cancels pending slam audio with its damage and visual cast
+PASS: dead source cannot revive a canceled physical impact cue
+ERROR: FAIL: first real ground shock requests the physical impact recording at its own committed position
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _check_one_at (res://tools/tests/BossAttackAudioTest.gd:52)
+       [2] _test_physical_impact_boundaries (res://tools/tests/BossAttackAudioTest.gd:181)
+       [3] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:90)
+ERROR: FAIL: ground shock also avoids the old procedural multikill sound
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackAudioTest.gd:36)
+       [1] _test_physical_impact_boundaries (res://tools/tests/BossAttackAudioTest.gd:182)
+       [2] _end_fixture (res://tools/tests/BossAttackAudioTest.gd:90)
+PASS: mine detonation requests one burst at the impact, never one per duplicate call
+PASS: paused mine detonation guard requests no release audio
+PASS: mine requests its burst once when an accepted detonation resumes
+PASS: canceled boss mine cannot request stale detonation audio
+PASS: beam creation and incomplete anticipation are silent at the release boundary
+PASS: paused beam anticipation cannot request release audio
+PASS: beam transition requests one positional release, not one per sweep frame
+PASS: canceled beam cannot request stale transition audio
+PASS: stun cancellation fixture creates the arcanist's actual beam channel
+PASS: brief stun queues the sustained channel for cancellation
+PASS: a stunned beam awaiting deletion cannot request stale release audio
+PASS: a stunned beam awaiting deletion cannot display the active sweep
+PASS: pylon aim and windup do not play projectile release early
+PASS: pylon projectile release requests one cue at its muzzle
+PASS: canceled pylon cannot request stale projectile release audio
+BossAttackAudioTest: 28 passed, 18 failed

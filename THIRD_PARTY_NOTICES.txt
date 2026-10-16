@@ -1,0 +1,80 @@
+Synthetic Ascension - Third-party notices
+=========================================
+
+Keep this readable notice with distributions containing the assets below.
+The release packager places this file beside the game executable and data
+package and includes it in SHA256SUMS.txt. The same notice and the individual
+audio/font credits and licenses are included in the exported project data.
+For a manually assembled release, include this file beside the executable
+and PCK or other game-data package.
+
+Boss beam sound - CC BY 3.0
+--------------------------
+
+Credit: Ice and Electricity Magic by Iwan 'qubodup' Gabovitch.
+
+Work: Ice & Electricity Magic
+Creator: Iwan 'qubodup' Gabovitch
+Creator page: https://opengameart.org/users/qubodup
+Original source: https://opengameart.org/content/ice-electricity-magic
+License: Creative Commons Attribution 3.0 Unported (CC BY 3.0)
+License terms: https://creativecommons.org/licenses/by/3.0/
+
+Original recording: qubodupElectricityDamage01.flac
+Game recording: assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav
+Use: one-shot boss beam release, registered as boss_beam_release.
+
+Changes: the full original recording was converted from FLAC to PCM16 WAV.
+Sample rate, channels, duration, pitch and recording level were preserved;
+no trimming, filtering, synthesis or added layers were applied. The game
+applies its normal playback volume controls and a -14 dB starting cue gain.
+The recording is not a seamless loop. Preserve the credit, source and
+license link above in distributions using this recording.
+
+The creator's original attribution and source notes are preserved in
+assets/audio/sfx/bosses/candidates_v2/LICENSE-qubodup-ice-electricity.txt.
+
+Other current boss sound sources - CC0 1.0
+----------------------------------------
+
+CC0 dedication: https://creativecommons.org/publicdomain/zero/1.0/
+These credits are retained for provenance.
+
+Kenney - Impact Sounds 1.0
+Source: https://kenney.nl/assets/impact-sounds
+Recording used: Audio/impactSoft_heavy_003.ogg
+Use: edited physical bracing warning and weighted boss impact.
+
+Iwan 'qubodup' Gabovitch - Earth Element Magic Spell
+Source: https://opengameart.org/content/earth-element-magic-spell
+Recording used: Earth Element Magic Spell_0.flac
+Use: quiet edited material layer in the bracing warning and weighted impact.
+
+Joth - Chunky Explosion
+Source: https://opengameart.org/content/chunky-explosion
+Recording used: Chunky Explosion.mp3
+Use: edited weighted-impact layer and compact mine detonation.
+
+artisticdude - Swishes Sound Pack
+Source: https://opengameart.org/content/swishes-sound-pack
+Recording used: swishes/swish-9.wav
+Use: Arcanist fan warning and pylon projectile release. Converted to PCM16
+WAV with source duration, pitch, level and channels preserved.
+
+The edited warning, impact and mine use documented source excerpts, mono
+downmix, resampling, filtering, layer balancing and fades. Exact processing
+and hashes are retained in the source project under
+assets/audio/sfx/bosses/candidates_v3/recipe.json and the adjacent
+sources.json. No oscillator synthesis, bitcrushing, retro tone,
+pitch shift, compression or clipping effect was added.
+
+Further project notices
+-----------------------
+
+Audio provenance and licenses: assets/audio/sfx/CREDITS.md and the nested
+CREDITS.md, LICENSE*.txt and License.txt files. The original rejected boss
+sound candidates remain in the source project for comparison and provenance;
+they are not the active attack definitions.
+
+Font notices: assets/fonts/README.md and assets/fonts/*/OFL.txt. These
+existing font license files remain included in exported project data.

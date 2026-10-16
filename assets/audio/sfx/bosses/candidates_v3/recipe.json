@@ -1,0 +1,84 @@
+{
+  "sample_rate": 44100,
+  "format": "mono PCM16 WAV",
+  "filter": "1025-tap Hann-windowed sinc FIR low-pass, normalized to unity DC; high-pass = signal minus FIR low-pass at stated cutoff. Bandpass = low-pass then high-pass. np.convolve(mode=same).",
+  "resampling": "Earth source first anti-alias low-pass3000Hz at96000Hz. Excerpts sampled on44100Hz delivery grid by linear interpolation. Out-of-source samples zero-filled. No playback-rate/pitch change.",
+  "mix": "Each layer unit-peak normalized after filtering and multiplied by its listed weight. Apply additional exponential envelope where listed, sum layers, apply linear onset/end fades, and unit-peak normalize final mix to listed dBFS.",
+  "recipes": {
+    "warning_weighted_brace.wav": {
+      "duration_seconds": 0.48,
+      "peak_target_dbfs": -5.0,
+      "layers": [
+        {
+          "source": "soft_heavy_003",
+          "start_seconds": 0.0,
+          "duration_seconds": 0.48,
+          "highpass_hz": 40,
+          "lowpass_hz": 650,
+          "unit_peak_weight": 1.0
+        },
+        {
+          "source": "earth_spell",
+          "start_seconds": 0.6,
+          "duration_seconds": 0.48,
+          "highpass_hz": 400,
+          "lowpass_hz": 1500,
+          "unit_peak_weight": 0.11
+        }
+      ],
+      "fade_in_seconds": 0.008,
+      "fade_out_seconds": 0.16
+    },
+    "slam_weighted_thud.wav": {
+      "duration_seconds": 0.72,
+      "peak_target_dbfs": -3.0,
+      "layers": [
+        {
+          "source": "soft_heavy_003",
+          "start_seconds": 0.0,
+          "duration_seconds": 0.72,
+          "highpass_hz": 40,
+          "lowpass_hz": 650,
+          "unit_peak_weight": 1.0
+        },
+        {
+          "source": "chunky_explosion",
+          "start_seconds": 0.2,
+          "duration_seconds": 0.72,
+          "highpass_hz": 70,
+          "lowpass_hz": 2200,
+          "unit_peak_weight": 0.6,
+          "additional_envelope": "exp(-4*t/0.72)"
+        },
+        {
+          "source": "earth_spell",
+          "start_seconds": 0.63,
+          "duration_seconds": 0.72,
+          "highpass_hz": 400,
+          "lowpass_hz": 1800,
+          "unit_peak_weight": 0.16,
+          "additional_envelope": "exp(-3*t/0.72)"
+        }
+      ],
+      "fade_in_seconds": 0.004,
+      "fade_out_seconds": 0.2
+    },
+    "mine_compact_blast.wav": {
+      "duration_seconds": 0.66,
+      "peak_target_dbfs": -3.8,
+      "layers": [
+        {
+          "source": "chunky_explosion",
+          "start_seconds": 0.16,
+          "duration_seconds": 0.66,
+          "highpass_hz": 65,
+          "lowpass_hz": 3800,
+          "unit_peak_weight": 1.0,
+          "additional_envelope": "exp(-1.5*t/0.66)"
+        }
+      ],
+      "fade_in_seconds": 0.005,
+      "fade_out_seconds": 0.17
+    }
+  }
+}

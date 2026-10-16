@@ -211,7 +211,7 @@ func _test_mine_impact_under_translated_scene() -> void:
 	var impact: Node2D = null
 	var damage_circle: DamageCircle = null
 	for child in translated_scene.get_children():
-		if child is VFX_Shockwave:
+		if child.get_script() != null and child.get_script().resource_path == "res://scenes/world/bosses/BossImpactSprites.gd":
 			impact = child
 		elif child is DamageCircle:
 			damage_circle = child

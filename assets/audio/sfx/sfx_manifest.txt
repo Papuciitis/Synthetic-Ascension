@@ -30,11 +30,14 @@ player_hurt=actions/hurt.wav|vol=-18|pitch=0.02|bus=SFX
 enemy_hurt=enemies/enemy_hurt.wav|vol=-7|pitch=0.06|bus=SFX
 enemy_death=enemies/enemy_death.ogg|vol=-5|pitch=0.05|bus=SFX
 boss_intro=boss/boss_intro.ogg|vol=-6|pitch=0.00|bus=SFX
-# Kenney Sci-fi Sounds CC0, unchanged recordings. See bosses/CREDITS.md.
-boss_warning=bosses/warning_metal.wav|vol=-13|pitch=0.00|bus=SFX
-boss_beam_release=bosses/beam_release.wav|vol=-13|pitch=0.00|bus=SFX
-boss_pylon_shot=bosses/pylon_shot.wav|vol=-13|pitch=0.00|bus=SFX
-boss_mine_burst=bosses/mine_burst.wav|vol=-17|pitch=0.00|bus=SFX
+# Recorded/edited boss cues selected after listening feedback. See bosses/CREDITS.md.
+# Beam: Ice and Electricity Magic by Iwan 'qubodup' Gabovitch, CC BY 3.0.
+boss_warning=bosses/candidates_v3/warning_weighted_brace.wav|vol=-8|pitch=0.00|bus=SFX
+boss_cast_warning=bosses/candidates_v2/cast_air_swish.wav|vol=-15|pitch=0.00|bus=SFX
+boss_slam_impact=bosses/candidates_v3/slam_weighted_thud.wav|vol=-8|pitch=0.00|bus=SFX
+boss_beam_release=bosses/candidates_v2/beam_electric_crackle.wav|vol=-14|pitch=0.00|bus=SFX
+boss_pylon_shot=bosses/candidates_v2/cast_air_swish.wav|vol=-18|pitch=0.00|bus=SFX
+boss_mine_burst=bosses/candidates_v3/mine_compact_blast.wav|vol=-10|pitch=0.00|bus=SFX
 
 # World objectives
 wardstone_loop=world/wardstone_loop.ogg|vol=-18|pitch=0.00|loop=1|bus=SFX
