@@ -2337,3 +2337,12 @@ inspected across normal/small windows and Reduced Motion. Audits are in
 `docs/audits/2026-10-16-painted-opening.md`, `2026-10-16-peep-encounter.md` and
 `2026-10-16-city-lore.md`. Human pacing and final sound remain review work;
 the opening still uses existing audio cues.
+
+
+## 2026-10-16 — Segment 5 teaching boss fights
+
+The third boss delivery gives Bulldozer a committed physical rush, planted impact, fully previewed three-node Fault Line and one warned finite Runner call below half health. Arcanist uses a locked five-bolt fan, announced validated blink and deterministic three-mine pattern with a checked full-Hurtbox escape corridor. Commitments/recovery use gameplay physics time, retreat is bounded, and seeded random choice, production maximum health and rewards remain.
+
+Dedicated raster sprites distinguish blink destinations and Runner arrivals. Actual paired Game controls cover walking, separate native dashes, recovery melee, court-edge escape and genuine kill-trigger access. The original matrix remains RED for two corrected Runner attribution checks; focused follow-ups, 99 continuation checks and five compatibility suites pass. A native lethal-hazard cleanup error found by the controls now pauses immediately and defers collision disabling safely. The audit retains exact source/log identities and limitations.
+
+Four normal/small-window clips show the sprite cues in the actual court/HUD using clearly labelled immortal playback; actual-damage controls are separate. Ordinary body contact remains active outside the Tank's committed states and remains a separate cost for Mage. Dense human readability, slowed builds, pacing, finished character animation and final mix still need playtesting. S10 phase kits and later entrance/music/HUD/reward presentation remain later deliveries. See `docs/audits/2026-10-16-s5-teaching-fights.md`.

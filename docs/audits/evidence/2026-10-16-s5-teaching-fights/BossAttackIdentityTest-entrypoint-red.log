@@ -1,0 +1,48 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: committed slam previews fractured ground instead of the common seal
+PASS: slam preview cannot borrow shock or mine artwork
+PASS: real slam damage retains the matching fractured-ground footprint
+PASS: released slam impact stays at the warned world origin under a translated scene
+PASS: cosmetic terrain fractures remain visible after slam damage has ended
+PASS: a brief stun preserves the already released terrain impact
+PASS: pause preserves the terrain impact's remaining lifetime
+PASS: terrain fractures still have a finite cosmetic lifetime
+PASS: all three committed shockwave positions show dedicated crackling sprites
+PASS: all three real shock damage circles carry their crackling footprint identity
+PASS: shock releases three distinct raster impact components
+PASS: returning cancels released shock cosmetics together with encounter pressure
+PASS: planted mine has its own readable occult glyph throughout the fuse
+PASS: mine glyph remains distinct from physical slam and crackling shock
+PASS: detonated mine damage keeps its planted-glyph identity
+PASS: mine glyph burst matches its warned origin under a translated scene
+ERROR: FAIL: real Bulldozer charge shows authored raster anticipation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackIdentityTest.gd:34)
+       [1] _test_charge_windup (res://tools/tests/BossAttackIdentityTest.gd:207)
+       [2] _run (res://tools/tests/BossAttackIdentityTest.gd:106)
+       [3] _test_mine (res://tools/tests/BossAttackIdentityTest.gd:185)
+       [4] _clear (res://tools/tests/BossAttackIdentityTest.gd:80)
+ERROR: FAIL: charge creates a cancellable windup component attached to the boss
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackIdentityTest.gd:34)
+       [1] _test_charge_windup (res://tools/tests/BossAttackIdentityTest.gd:212)
+       [2] _run (res://tools/tests/BossAttackIdentityTest.gd:106)
+       [3] _test_mine (res://tools/tests/BossAttackIdentityTest.gd:185)
+       [4] _clear (res://tools/tests/BossAttackIdentityTest.gd:80)
+ERROR: FAIL: interrupting charge removes its full lane and braced accent immediately
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossAttackIdentityTest.gd:34)
+       [1] _test_charge_windup (res://tools/tests/BossAttackIdentityTest.gd:217)
+       [2] _run (res://tools/tests/BossAttackIdentityTest.gd:106)
+       [3] _test_mine (res://tools/tests/BossAttackIdentityTest.gd:185)
+       [4] _clear (res://tools/tests/BossAttackIdentityTest.gd:80)
+PASS: fan anticipation visibly charges the Arcanist's hand or staff with detailed sprite art
+PASS: caster windup draws above the actual z10 enemy body renderer
+PASS: a brief stun immediately removes the cancelled fan's visible casting cue
+PASS: beam anticipation visibly charges the Arcanist before release
+PASS: mine planting has a visible casting accent around the hand or staff
+BossAttackIdentityTest: 21 passed, 3 failed

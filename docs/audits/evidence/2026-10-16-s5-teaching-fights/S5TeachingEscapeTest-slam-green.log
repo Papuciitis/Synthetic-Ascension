@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[Game] ready seg=5 race=human style=melee seed=16102026
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(-21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[{"adjusted":16.9811320754717,"applied":16.9811320754717,"boss_owned":true,"boss_state":"slam","kind":"unknown","outcome":"hit","player_position":"(-21439.88, 5040.0)","raw":18.0,"time":1.3}],"danger_attempts":1,"danger_hp_loss":16.9811320754717,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.31666666666667,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(-21439.88, 5040.0)","response":"stay","role":"tank","seed":16102026}
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(-21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[],"danger_attempts":0,"danger_hp_loss":0.0,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.31666666666667,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(-21241.63, 5040.0)","response":"walk","role":"tank","seed":16102026}
+PASS: slam seed16102026 stationary control reaches the actual full Hurtbox
+PASS: slam seed16102026 baseline walking after150ms escapes without dash or a damage-resolution attempt
+PASS: slam walking case never invokes dash
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(-21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[],"danger_attempts":0,"danger_hp_loss":0.0,"dashes":1,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"direction":"(1.0, 0.0)","event":"native_dash","time":0.15},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.31666666666667,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(-21089.95, 5040.0)","response":"dash","role":"tank","seed":16102026}
+PASS: slam separate dash case fires exactly one native dash
+PASS: slam separate dash case avoids boss hazard HP loss
+PASS: all 3 requested case results completed; no setup/helper abort or omitted case
+S5TeachingEscapeTest: 15 passed, 0 failed
+PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone
+PASS: isolated fixture made zero profile writes or slot selections
+S5TeachingFightPreview: passes=17 failures=0

@@ -1,0 +1,23 @@
+{
+  "scene": "res://tools/dev/S5TeachingFightPreview.tscn",
+  "role": "tank",
+  "width": 1280,
+  "seed": 16102026,
+  "seconds": 14,
+  "target_fps": 8,
+  "starting_hp_ratio": "0.49",
+  "appdata": "C:/Temp/sa-s5-0fc428e5",
+  "exit": -1,
+  "started_utc": "2026-10-16T20:01:50.3112076Z",
+  "ended_utc": "2026-10-16T20:03:42.1227765Z",
+  "diagnostics": [],
+  "summaries": [
+    "Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org",
+    "OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics",
+    "PASS: actual S5 court finished streaming",
+    "PASS: unmodified production human melee speed is100 world px/s",
+    "PASS: production capsule and complete70x70 Hurtbox are retained",
+    "S5TeachingProbe: CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected / HP 1739.18408203125/3549.35522460938"
+  ],
+  "log": "live-tank-1280.log"
+}

@@ -1,0 +1,19 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: fan anticipation cannot release while paused
+PASS: resuming preserves the unspent anticipation instead of firing immediately
+PASS: fan resumes remaining anticipation and releases once
+PASS: returning cancels a pending fan instead of releasing stale bullets
+PASS: a brief expired stun cannot revive the interrupted fan
+PASS: stunning a summoned Runner cannot interrupt its owner's cast
+PASS: released fan has nine live projectiles before cleanup
+PASS: a brief owner stun preserves autonomous projectiles already released
+PASS: boss death clears its released fan while preserving unrelated projectiles
+PASS: beam channel fixture starts a real sweep
+PASS: stun interrupts the actively sustained beam channel
+PASS: slam commitment locks normal movement and charge starts
+PASS: a real actor step cannot move or start a charge during slam anticipation
+PASS: slam releases its unchanged18damage at the warned origin
+PASS: slam cannot relocate from its preview to the boss's new position
+PASS: an interrupted charge cannot resume later without a new warning
+BossCastLifecycleTest: 16 passed, 0 failed

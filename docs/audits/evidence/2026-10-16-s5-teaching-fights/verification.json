@@ -1,0 +1,715 @@
+{
+  "recorded_utc": "2026-10-16T20:18:05.381489+00:00",
+  "engine": "4.7.1.stable.official.a13da4feb",
+  "implementation_revision": "e848fb3e123128443a5783f8dae51639172cdf8e",
+  "hash_mode": "text normalized to LF; binary assets unchanged",
+  "sources": [
+    {
+      "path": "scenes/game.gd",
+      "sha256_lf": "afc8364e7ec3cbaa43e0245b23f1a4fe3106a9c9405f948d86f5b14e3fd7384a"
+    },
+    {
+      "path": "core/actors/enemy/modules/EnemyCharge.gd",
+      "sha256_lf": "12ac70f097f18bb91d871cbcc8a36c7ff5ce57cb42cfc1e61a219b7fe2f251c5"
+    },
+    {
+      "path": "core/actors/player/player.gd",
+      "sha256_lf": "5d132d5ab16e09f8da99ae95ad97a7ea5ba1c560d51c947ad5ac70771f732d97"
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "sha256_lf": "b6e04d5187342b9c1c4f2583c444017655280e9c96a2afe184a312153667b066"
+    },
+    {
+      "path": "scenes/world/bosses/BossArcanistBrain.gd",
+      "sha256_lf": "ac301f5bcd327ea3f0162582a56cf20b03ff35ad6a2f0e61a2b3a0a3aa76688f"
+    },
+    {
+      "path": "scenes/world/bosses/BossMine.gd",
+      "sha256_lf": "a15cf66e4570f2eb6cab5a6c4dac97e740e30ed926bcaa1d628ea8ed2f1ca9c1"
+    },
+    {
+      "path": "scenes/world/bosses/BossTeachingPlacement.gd",
+      "sha256_lf": "285b3ab43c428756f0292656bac5048da3345c7e72f89b3c55470292ef4ce488"
+    },
+    {
+      "path": "scenes/world/bosses/BossArrivalSprites.gd",
+      "sha256_lf": "b4f74a5bdb7f64cf9ab829c40797e55be8287d45ae35c0d209938eb85ce1bd6c"
+    },
+    {
+      "path": "scenes/world/bosses/BossWindupSprites.gd",
+      "sha256_lf": "6704894004768af55ffa30320726d4d0a587af162bc6c858b55058e5c740e41f"
+    },
+    {
+      "path": "scenes/world/bosses/BossAttackScope.gd",
+      "sha256_lf": "d3baff33e16604a858c154cf1dfb599ad9c55d493aa48b7e6a503e8570eae61c"
+    },
+    {
+      "path": "core/combat/hazards/DamageCircle.gd",
+      "sha256_lf": "7218d0239558278e15a2d02505ebb97281762c075b6838793817e79f43029cca"
+    },
+    {
+      "path": "tools/dev/S5TeachingFightPreview.gd",
+      "sha256_lf": "ed320fa735d0bef2996914f23b99af7230825cf54ea1ca82e539f07de913b246"
+    },
+    {
+      "path": "tools/tests/S5TeachingEscapeTest.gd",
+      "sha256_lf": "fa9498197270bb99798fd879ee83439a7a1b22a0c0c7a637653679a84d11a70d"
+    },
+    {
+      "path": "tools/tests/CityContinuationTest.gd",
+      "sha256_lf": "aabc70e95da752ccf74b10fffeb841a156d5d1b395a7b09039e89681eed36dc4"
+    },
+    {
+      "path": "tools/tests/BossAttackIdentityTest.gd",
+      "sha256_lf": "b6faf65f872c0f9f679090424807401d1617e0092d844b4ac8f9409ad3a845a0"
+    }
+  ],
+  "logs": [
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/arrival-import.log",
+      "sha256_lf": "08824d4edee45dcb6146a7e8128bd74f07dabae40c0cd58bd5fe5484aaa02e57",
+      "summaries": [],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArcanistTeachingTest-clock-red.log",
+      "sha256_lf": "2d85e7e28a1c91c113704a0cddb9a47effc25f28430f6f52c1af19042e4e7f16",
+      "summaries": [
+        "BossArcanistTeachingTest: 32 passed, 4 failed"
+      ],
+      "diagnostic_lines": 4
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArcanistTeachingTest-green.log",
+      "sha256_lf": "28b222a506953ae5144b1921da99503250ce917edb7b9dce7a5bbcb258497af3",
+      "summaries": [
+        "BossArcanistTeachingTest: 41 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArcanistTeachingTest-recovery-red.log",
+      "sha256_lf": "0685f7ecab0fd781fe62f01a7f6b45fa05e3c9d7671c680c3404719941552d16",
+      "summaries": [
+        "BossArcanistTeachingTest: 39 passed, 1 failed"
+      ],
+      "diagnostic_lines": 1
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArcanistTeachingTest-red.log",
+      "sha256_lf": "c7efd3490a01cbd7801b32d5cf5e4403ef250bb32d4d7f836cca4c867d170ff3",
+      "summaries": [
+        "BossArcanistTeachingTest: 3 passed, 27 failed"
+      ],
+      "diagnostic_lines": 27
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArrivalSpritesTest-clock-red.log",
+      "sha256_lf": "370d02eac0c91a8467a2811982f0c0ae2a1d8a94ddfe58508b30dbe779359d62",
+      "summaries": [
+        "BossArrivalSpritesTest: 19 passed, 1 failed"
+      ],
+      "diagnostic_lines": 1
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArrivalSpritesTest-green.log",
+      "sha256_lf": "1cf4adb9005c7f6fb7165547ebd3c82e03992d18ddf8c880cfc8f8b7e78b8b14",
+      "summaries": [
+        "BossArrivalSpritesTest: 20 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossArrivalSpritesTest-red.log",
+      "sha256_lf": "b2890572f569146e5d77b8091ad88f723bee532d9ae97e2a528aa1afd390a610",
+      "summaries": [
+        "BossArrivalSpritesTest: 0 passed, 1 failed"
+      ],
+      "diagnostic_lines": 1
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossAttackAudioTest-integration.log",
+      "sha256_lf": "2cbd38810aad92a05f6f68502cacfc2007ed7addd5ca4f61d10a5e836b786a0f",
+      "summaries": [
+        "BossAttackAudioTest: 52 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossAttackIdentityTest-entrypoint-red.log",
+      "sha256_lf": "eaffa01655648aa8ab01e77c7adc2b295b3d7133d8b24770087816d8728124d6",
+      "summaries": [
+        "BossAttackIdentityTest: 21 passed, 3 failed"
+      ],
+      "diagnostic_lines": 3
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossAttackIdentityTest-integration.log",
+      "sha256_lf": "9df115c4a9e06663f60b9ca4e96403bd4abf9096d6bcbcdd01fd42ee7c03c816",
+      "summaries": [
+        "BossAttackIdentityTest: 25 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossBulldozerTeachingTest-clock-red.log",
+      "sha256_lf": "a167e4ec5280a8bc5f7c9f41de49ed328c21b9fe1cc37e0495bfff4ec5453146",
+      "summaries": [
+        "BossBulldozerTeachingTest: 44 passed, 5 failed"
+      ],
+      "diagnostic_lines": 5
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossBulldozerTeachingTest-first-green.log",
+      "sha256_lf": "40d3d8ed55c2e8f2270e7ae7a8677157dd4271688bca4ea2f2e41b115016a9e0",
+      "summaries": [
+        "BossBulldozerTeachingTest: 44 passed, 1 failed"
+      ],
+      "diagnostic_lines": 1
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossBulldozerTeachingTest-green.log",
+      "sha256_lf": "5f7112c32706fc86b8e4e7446a0e26a5f7378ca8e4139f4918afff432dae7679",
+      "summaries": [
+        "BossBulldozerTeachingTest: 54 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossBulldozerTeachingTest-guards-red.log",
+      "sha256_lf": "d59b73273a4bc346845c4c9c82cdd97693ce69604e87043ebb49c2ed7e7acfef",
+      "summaries": [
+        "BossBulldozerTeachingTest: 50 passed, 4 failed"
+      ],
+      "diagnostic_lines": 4
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossBulldozerTeachingTest-red.log",
+      "sha256_lf": "d1093469d9169f2dc092269113d783378eead8fe0dad115a9900e9ac3f4c0897",
+      "summaries": [
+        "BossBulldozerTeachingTest: 9 passed, 28 failed"
+      ],
+      "diagnostic_lines": 28
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossCastLifecycleTest-integration.log",
+      "sha256_lf": "3597e7d752ae07dee41989284b30a43c443e6bf2343bb0f6e7d87782b7fc12f0",
+      "summaries": [
+        "BossCastLifecycleTest: 16 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/BossEncounterOwnershipTest-integration.log",
+      "sha256_lf": "e24128ac53898df3548cd8e1327607a9a027fc59960171242c365c9ea57c13a7",
+      "summaries": [
+        "BossEncounterOwnershipTest: 35 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/capture-encoder-green.log",
+      "sha256_lf": "ccb22ad8646c91d39c3e65ec9075d8dcdbdcf756993d95addb9d247f2e324819",
+      "summaries": [
+        "Ran 8 tests in 1.516s",
+        "OK"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/CityContinuationTest-current-baseline92.log",
+      "sha256_lf": "7b18306b4685d03b7f868c9105b9348a6f794dcedfbd908a8a90f78cc0be774e",
+      "summaries": [
+        "CityContinuationTest: 92 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/CityContinuationTest-native-area-green.log",
+      "sha256_lf": "d46c6e450ed53a1999d17636364c86ea2921127df36d76913e60318359874d14",
+      "summaries": [
+        "CityContinuationTest: 99 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/CityContinuationTest-native-area-type-dependency-red.log",
+      "sha256_lf": "132553e7f7090c47fdfd16e0a7560888d955c4ea1451b51acbc0ec875082d4cf",
+      "summaries": [
+        "CityContinuationTest: 99 passed, 0 failed"
+      ],
+      "diagnostic_lines": 10
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/CityContinuationTest-native-area-unclean.log",
+      "sha256_lf": "f1fd5560031ab945e1ff985c4f45da1b9e58f2e1ead5e066377303ccecbbea61",
+      "summaries": [
+        "CityContinuationTest: 99 passed, 0 failed"
+      ],
+      "diagnostic_lines": 10
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/CityContinuationTest-skip-native-diagnostic.log",
+      "sha256_lf": "4fa356439d914fdc57f99e70a371b7e202715c2f925d55e4052777a1d213d7a5",
+      "summaries": [
+        "CityContinuationTest: 92 passed, 0 failed"
+      ],
+      "diagnostic_lines": 10
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/live-mage-1280.log",
+      "sha256_lf": "a09798525ca5a1eff3ca14b4dcd144c5cd31edc0f0b7354a760e39edfd47246f",
+      "summaries": [
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/live-mage-960.log",
+      "sha256_lf": "4fccc076b75c4b050f3b8897fafed309afbc48ff9d23867c8ecbafd05154d7de",
+      "summaries": [
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/live-tank-1280-damage-enabled-aborted.log",
+      "sha256_lf": "0a9d6631b41d417eea251c2a47e4afead707e73dad350bc8d6f456e14a372902",
+      "summaries": [],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/live-tank-1280.log",
+      "sha256_lf": "16280f7315975c39130de8f3614940bf3b3137e8dc74230f58e339c819dd648a",
+      "summaries": [
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/live-tank-960.log",
+      "sha256_lf": "e52c89b256b47099434f49a4cb7251c1bca32e5e992e691ece0ba7e4446fb2b1",
+      "summaries": [
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/PlayerContactSourceTest-integration.log",
+      "sha256_lf": "ee95be55d7b8e0ab27f78ae9552aed6d2b8d371efc71323c3ad17f92d482b455",
+      "summaries": [
+        "PlayerContactSourceTest: 11 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingEscapeTest-adds-green.log",
+      "sha256_lf": "121feda55b8795b173b7ac05e1fe4ab8e00519ac147abf42fa45e3cd07ae9b34",
+      "summaries": [
+        "S5TeachingEscapeTest: 17 passed, 0 failed",
+        "S5TeachingFightPreview: passes=19 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingEscapeTest-matrix.log",
+      "sha256_lf": "ce097a062d272b4d5c79e49e2a93999a677c0d3a9ddf50c577f402c37d4375f1",
+      "summaries": [
+        "S5TeachingEscapeTest: 154 passed, 2 failed",
+        "S5TeachingFightPreview: passes=156 failures=2"
+      ],
+      "diagnostic_lines": 3
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingEscapeTest-runtime-red.log",
+      "sha256_lf": "e0fe90a92a44c4a70b7f20a0c6b4b61c1ab26574139ea549286205e795063a1d",
+      "summaries": [
+        "S5TeachingFightPreview: passes=1 failures=0"
+      ],
+      "diagnostic_lines": 1
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingEscapeTest-slam-green.log",
+      "sha256_lf": "fb60d29373aba7ed7a38168be17c53e874aadfef76f55f8427f073b558a637ea",
+      "summaries": [
+        "S5TeachingEscapeTest: 15 passed, 0 failed",
+        "S5TeachingFightPreview: passes=17 failures=0"
+      ],
+      "diagnostic_lines": 0
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingEscapeTest-slam-smoke.log",
+      "sha256_lf": "7d90dca078211bd69a0cad76f412bbc96c67f5befa494b44a27fa19d49fff9af",
+      "summaries": [],
+      "diagnostic_lines": 2
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingProbeLoadTest-diagnostic.log",
+      "sha256_lf": "a3053ce47d97b0c27955a2e0a2fb597796336463ea03613e4d00d636fcb75cd9",
+      "summaries": [],
+      "diagnostic_lines": 4
+    },
+    {
+      "log": "docs/audits/evidence/2026-10-16-s5-teaching-fights/S5TeachingProbeLoadTest-green.log",
+      "sha256_lf": "ee60d1ae17e8d9ca13e1a1af81e47dfc44eac3b235092c31624550e1a7668b6d",
+      "summaries": [
+        "S5TeachingProbeLoadTest: 2 passed, 0 failed"
+      ],
+      "diagnostic_lines": 0
+    }
+  ],
+  "compatibility": [
+    {
+      "scene": "res://tools/tests/BossCastLifecycleTest.tscn",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:12:54.6077968Z",
+      "ended_utc": "2026-10-16T20:13:26.8934504Z",
+      "diagnostics": [],
+      "summaries": [
+        "BossCastLifecycleTest: 16 passed, 0 failed"
+      ],
+      "log": "BossCastLifecycleTest-integration.log"
+    },
+    {
+      "scene": "res://tools/tests/BossEncounterOwnershipTest.tscn",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:13:27.049475Z",
+      "ended_utc": "2026-10-16T20:13:49.9499663Z",
+      "diagnostics": [],
+      "summaries": [
+        "BossEncounterOwnershipTest: 35 passed, 0 failed"
+      ],
+      "log": "BossEncounterOwnershipTest-integration.log"
+    },
+    {
+      "scene": "res://tools/tests/BossAttackAudioTest.tscn",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:13:49.9627921Z",
+      "ended_utc": "2026-10-16T20:14:06.4495864Z",
+      "diagnostics": [],
+      "summaries": [
+        "BossAttackAudioTest: 52 passed, 0 failed"
+      ],
+      "log": "BossAttackAudioTest-integration.log"
+    },
+    {
+      "scene": "res://tools/tests/BossAttackIdentityTest.tscn",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:15:18.7156431Z",
+      "ended_utc": "2026-10-16T20:15:38.6643812Z",
+      "diagnostics": [],
+      "summaries": [
+        "BossAttackIdentityTest: 25 passed, 0 failed"
+      ],
+      "log": "BossAttackIdentityTest-integration.log"
+    },
+    {
+      "scene": "res://tools/tests/PlayerContactSourceTest.tscn",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:15:38.8020908Z",
+      "ended_utc": "2026-10-16T20:16:07.5616728Z",
+      "diagnostics": [],
+      "summaries": [
+        "PlayerContactSourceTest: 11 passed, 0 failed"
+      ],
+      "log": "PlayerContactSourceTest-integration.log"
+    }
+  ],
+  "captures": [
+    {
+      "scene": "res://tools/dev/S5TeachingFightPreview.tscn",
+      "role": "tank",
+      "width": 1280,
+      "seed": 16102026,
+      "seconds": 14,
+      "target_fps": 8,
+      "starting_hp_ratio": "0.49",
+      "capture_only_immortal": true,
+      "appdata": "C:/Temp/sa-s5-4ad6dc82",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:04:11.1368348Z",
+      "ended_utc": "2026-10-16T20:06:57.1301567Z",
+      "diagnostics": [],
+      "summaries": [
+        "Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org",
+        "OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics",
+        "PASS: actual S5 court finished streaming",
+        "PASS: unmodified production human melee speed is100 world px/s",
+        "PASS: production capsule and complete70x70 Hurtbox are retained",
+        "S5TeachingProbe: CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected / HP 1739.18408203125/3549.35522460938",
+        "PASS: live native attack input fired",
+        "PASS: live native melee reached the actual boss",
+        "S5TeachingFightPreview -> C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/s5-teaching-fights/live-tank-1280",
+        "PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone",
+        "PASS: isolated fixture made zero profile writes or slot selections",
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "log": "live-tank-1280.log"
+    },
+    {
+      "scene": "res://tools/dev/S5TeachingFightPreview.tscn",
+      "role": "tank",
+      "width": 960,
+      "seed": 16102026,
+      "seconds": 14,
+      "target_fps": 8,
+      "starting_hp_ratio": "0.49",
+      "capture_only_immortal": true,
+      "appdata": "C:/Temp/sa-s5-c16ddfa3",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:06:57.2558400Z",
+      "ended_utc": "2026-10-16T20:08:04.6560561Z",
+      "diagnostics": [],
+      "summaries": [
+        "Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org",
+        "OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics",
+        "PASS: actual S5 court finished streaming",
+        "PASS: unmodified production human melee speed is100 world px/s",
+        "PASS: production capsule and complete70x70 Hurtbox are retained",
+        "S5TeachingProbe: CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected / HP 1739.18408203125/3549.35522460938",
+        "PASS: live native attack input fired",
+        "PASS: live native melee reached the actual boss",
+        "S5TeachingFightPreview -> C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/s5-teaching-fights/live-tank-960",
+        "PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone",
+        "PASS: isolated fixture made zero profile writes or slot selections",
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "log": "live-tank-960.log"
+    },
+    {
+      "scene": "res://tools/dev/S5TeachingFightPreview.tscn",
+      "role": "mage",
+      "width": 1280,
+      "seed": 16102026,
+      "seconds": 14,
+      "target_fps": 8,
+      "starting_hp_ratio": "1.0",
+      "capture_only_immortal": true,
+      "appdata": "C:/Temp/sa-s5-83b96264",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:08:04.7195629Z",
+      "ended_utc": "2026-10-16T20:10:39.4419062Z",
+      "diagnostics": [],
+      "summaries": [
+        "Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org",
+        "OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics",
+        "PASS: actual S5 court finished streaming",
+        "PASS: unmodified production human melee speed is100 world px/s",
+        "PASS: production capsule and complete70x70 Hurtbox are retained",
+        "PASS: live native attack input fired",
+        "PASS: live native melee reached the actual boss",
+        "S5TeachingFightPreview -> C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/s5-teaching-fights/live-mage-1280",
+        "PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone",
+        "PASS: isolated fixture made zero profile writes or slot selections",
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "log": "live-mage-1280.log"
+    },
+    {
+      "scene": "res://tools/dev/S5TeachingFightPreview.tscn",
+      "role": "mage",
+      "width": 960,
+      "seed": 16102026,
+      "seconds": 14,
+      "target_fps": 8,
+      "starting_hp_ratio": "1.0",
+      "capture_only_immortal": true,
+      "appdata": "C:/Temp/sa-s5-3e3c5226",
+      "exit": 0,
+      "started_utc": "2026-10-16T20:10:39.4918493Z",
+      "ended_utc": "2026-10-16T20:12:27.3025709Z",
+      "diagnostics": [],
+      "summaries": [
+        "Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org",
+        "OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics",
+        "PASS: actual S5 court finished streaming",
+        "PASS: unmodified production human melee speed is100 world px/s",
+        "PASS: production capsule and complete70x70 Hurtbox are retained",
+        "PASS: live native attack input fired",
+        "PASS: live native melee reached the actual boss",
+        "S5TeachingFightPreview -> C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world/.superpowers/sdd/s5-teaching-fights/live-mage-960",
+        "PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone",
+        "PASS: isolated fixture made zero profile writes or slot selections",
+        "S5TeachingFightPreview: passes=7 failures=0"
+      ],
+      "log": "live-mage-960.log"
+    }
+  ],
+  "shared_audit_reuse": {
+    "reused_parse_record": "docs\\audits\\evidence\\2026-10-16-city-development\\shared-script-parse.json",
+    "reused_runtime_record": "docs\\audits\\evidence\\2026-10-16-city-development\\shared-runtime-safety.json",
+    "shared_parse": {
+      "passed": 530,
+      "failed": 0,
+      "exit": 0,
+      "roots_exclude_tools": true
+    },
+    "shared_runtime_safety": {
+      "passed": 21,
+      "failed": 0,
+      "exit": 0
+    },
+    "boss_relevant_sources": [
+      {
+        "path": "core/actors/enemy/modules/EnemyCharge.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "12ac70f097f18bb91d871cbcc8a36c7ff5ce57cb42cfc1e61a219b7fe2f251c5",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "core/actors/player/player.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "5d132d5ab16e09f8da99ae95ad97a7ea5ba1c560d51c947ad5ac70771f732d97",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "b6e04d5187342b9c1c4f2583c444017655280e9c96a2afe184a312153667b066",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossArcanistBrain.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "ac301f5bcd327ea3f0162582a56cf20b03ff35ad6a2f0e61a2b3a0a3aa76688f",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossMine.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "a15cf66e4570f2eb6cab5a6c4dac97e740e30ed926bcaa1d628ea8ed2f1ca9c1",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossTeachingPlacement.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "285b3ab43c428756f0292656bac5048da3345c7e72f89b3c55470292ef4ce488",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossArrivalSprites.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "b4f74a5bdb7f64cf9ab829c40797e55be8287d45ae35c0d209938eb85ce1bd6c",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossWindupSprites.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "6704894004768af55ffa30320726d4d0a587af162bc6c858b55058e5c740e41f",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "scenes/world/bosses/BossAttackScope.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "d3baff33e16604a858c154cf1dfb599ad9c55d493aa48b7e6a503e8570eae61c",
+        "final_lf_hash_match": true
+      },
+      {
+        "path": "core/combat/hazards/DamageCircle.gd",
+        "shared_hash_match": true,
+        "shared_hash_mode": "raw",
+        "sha256_lf": "7218d0239558278e15a2d02505ebb97281762c075b6838793817e79f43029cca",
+        "final_lf_hash_match": true
+      }
+    ],
+    "note": "Current boss-relevant production sources match the shared manifest. LF hashes are separately retained for Git-normalized reproducibility. Tools require their own runtime evidence.",
+    "later_game_change": "Game terminal-death fix postdates frozen shared parse; compiled and exercised separately by clean99-check CityContinuationTest."
+  },
+  "actual_game_controls": {
+    "matrix": "escape-matrix-red.json",
+    "matrix_status": "156 passed / 2 failed, exit1; retained RED, not relabelled. All35 rows completed. Runner attribution counter corrected and two cases rerun separately. Native terminal-death error fixed by Game pause bridge and real area regression.",
+    "focused_slam": "17 passed / 0 failed, exit0, three rows",
+    "focused_runner_access": "19 passed / 0 failed, exit0, two seeds, two rows",
+    "save_writes": 0,
+    "limits": "Zero boss-payload attempts is distinct from ordinary body-contact HP loss. Mage contact remains active; Tank idle contact resumes. No slow/immobilized-build guarantee, crowd/human difficulty verdict, or final mix approval."
+  },
+  "native_death_isolation": {
+    "original92_current_sources": "clean92/0exit0",
+    "99_node_closure_and_named_observer": "both99/0 but728objects/464resources on exit; excluded",
+    "99_declarations_skip_native_call": "92/0 but712objects/464resources; identifies declaration retention",
+    "final99_native_types": "clean99/0exit0; real native DamageCircle/player/Game route unchanged",
+    "production_fix": "Immediate pause bridge for physics terminal death; synchronous durable snapshot; deferred subtree disable before unpause/route. Saved entry/nonphysics paths unchanged."
+  },
+  "revision_scope": "Implementation revision is the pushed Game/boss checkpoint. The later BossAttackIdentityTest entry-point correction is identified by its exact source hash and the final evidence commit. The working tree retains unrelated pending changes; this record is not a pristine whole-project snapshot.",
+  "engine_commands": {
+    "native_final": [
+      "--headless",
+      "--path",
+      ".",
+      "--audio-driver",
+      "Dummy",
+      "--flush-output",
+      "res://tools/tests/CityContinuationTest.tscn",
+      "--quit-after",
+      "5000"
+    ],
+    "native_final_environment": {
+      "APPDATA": "C:/Temp/sa-s5-native-final",
+      "LOCALAPPDATA": "C:/Temp/sa-s5-native-final"
+    },
+    "runner_access": [
+      "--headless",
+      "--path",
+      ".",
+      "--audio-driver",
+      "Dummy",
+      "--flush-output",
+      "res://tools/tests/S5TeachingEscapeTest.tscn",
+      "--quit-after",
+      "6000",
+      "--",
+      "--case=adds",
+      "--role=tank",
+      "--out=res://.superpowers/sdd/s5-teaching-fights/escape-adds-green"
+    ],
+    "compatibility_template": [
+      "--headless",
+      "--path",
+      ".",
+      "--audio-driver",
+      "Dummy",
+      "--flush-output",
+      "<record.scene>",
+      "--quit-after",
+      "5000"
+    ],
+    "capture_template": [
+      "--path",
+      ".",
+      "--rendering-driver",
+      "opengl3",
+      "--audio-driver",
+      "Dummy",
+      "--flush-output",
+      "res://tools/dev/S5TeachingFightPreview.tscn",
+      "--quit-after",
+      "5000",
+      "--",
+      "--role=<record.role>",
+      "--width=<record.width>",
+      "--seed=16102026",
+      "--seconds=14",
+      "--fps=8",
+      "--capture-only-immortal",
+      "--boss-hp-ratio=<record.starting_hp_ratio>",
+      "--out=res://.superpowers/sdd/s5-teaching-fights/live-<record.role>-<record.width>"
+    ]
+  },
+  "identity_fixture_followup": {
+    "red": "BossAttackIdentityTest-entrypoint-red.log",
+    "red_result": "21 passed / 3 failed, exit1",
+    "cause": "Old fixture used independent legacy charge selection, now intentionally blocked for S5 controller-owned rush.",
+    "change": "Call real BossBrain._begin_teaching_rush; retain actual raster, full lane and cancellation assertions. No production change.",
+    "green": "25 passed / 0 failed, exit0, no diagnostics."
+  }
+}

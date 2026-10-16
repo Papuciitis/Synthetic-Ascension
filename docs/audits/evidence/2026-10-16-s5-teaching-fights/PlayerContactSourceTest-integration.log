@@ -1,0 +1,14 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: one overlapping enemy is one contact source (1)
+PASS: a second enemy is a second source (2)
+PASS: the same enemy twice is still one source (2)
+PASS: and needs as many exits as entries (2)
+PASS: the balanced exit drops it (1)
+PASS: and the last exit clears the swarm (0)
+PASS: fixture: the enemy is touching
+PASS: an enemy parked while touching is still unregistered on exit (0)
+PASS: fixture: the doomed enemy is touching
+PASS: pruning drops a freed enemy without casting it (0)
+PASS: and drops one that left the tree (0)
+PlayerContactSourceTest: 11 passed, 0 failed

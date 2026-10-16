@@ -40,7 +40,7 @@ Owner: tank implementer. Files: `BossBulldozerBrain.gd`, `EnemyCharge.gd`, narro
 - [x] Write actual cast/physics/contact regressions for fixed rush direction, harmless crumbs/end, exactly one physical rush hit, ambient contact compatibility, planted slam/recovery, full three-node previews/order, one warned finite Runner wave and cleanup.
 - [x] Root observes valid RED before production edits.
 - [x] Implement S5 explicit clocks and movement locks, finite reinforcement consumption, body-validated arrivals and shared cosmetic rush endpoint. Preserve ordinary Charger behavior.
-- [ ] Verify focused suite plus contact, charge, boss lifecycle/identity/audio/ownership suites. Independently review; commit and push coherent checkpoint.
+- [x] Verify focused suite plus contact and boss lifecycle/identity/audio/ownership suites. The focused suite covers the changed committed-charge path; no separate legacy-charge rerun was added to the bounded final batch. Independently review; commit and push coherent checkpoint.
 
 ## Task 2 — Arcanist teaching kit
 
@@ -48,7 +48,7 @@ Owner: mage implementer. Files: `BossArcanistBrain.gd`, narrowly `BossMine.gd` i
 
 - [x] Write real fan/blink/mine regressions with captured origins/directions, actual range, recovery locks, deterministic corridor, mine cap, full-body wall rejection and pause/interruption cleanup; root observes RED.
 - [x] Implement tier-specific timing/pressure gating, announced validated blink and deterministic three-mine arc. S5 cannot select beam/pylons. Preserve S10's current selection for later work.
-- [ ] Verify focused suite plus old cast/geometry/audio/ownership regressions. Independently review; commit and push checkpoint.
+- [x] Verify focused suite plus cast/audio/ownership regressions and actual Game full-Hurtbox escape controls. Shared unchanged geometry remains covered by the preceding foundation/step-2 evidence; no duplicate broad geometry batch. Independently review; commit and push checkpoint.
 
 ## Task 3 — Shared sprite arrival cues
 
@@ -57,14 +57,14 @@ Owner: root. New `scenes/world/bosses/BossArrivalSprites.gd` exposes `setup(worl
 - [x] Write expiry, world-origin, pause, source cancellation and accessibility regressions in `BossArrivalSpritesTest.gd/.tscn`; observe RED before helper production code.
 - [x] Generate, inspect, measure and copy unchanged dedicated blink/Runner arrival sprites; preserve prompts, source hashes and import settings.
 - [x] Implement fixed-radius, persistent essential ground cue with finite non-flashing progress, then wire both brains through the agreed interface.
-- [ ] Verify focused test and rendered normal/small-window samples with no procedural combat effect primitives.
+- [x] Verify focused test and rendered normal/small-window samples with no procedural combat effect primitives.
 
 ## Task 4 — Actual fight/escape evidence and integration
 
 Owner: visual/probe implementer after brain interfaces settle. New actual Game S5 probe and focused escape/build-access tests under tools/dev and tools/tests.
 
 - [x] Author isolated actual Game live and paired escape/native-melee/controlled kill-trigger fixtures, with real body/Hurtbox geometry, native input, source-state telemetry and measured media timestamps. Both probe scripts load in the normal autoload context; gameplay execution remains separate below.
-- [ ] Run representative seeds for both roles and evaluate reachable escape trajectories with the real player's capsule/effective movement and actual surrounding geometry near the court edge. Include baseline walking with dash unavailable, melee pursuit, finite Runner and ambient kill-trigger targets. Record the coverage limit for slowed/immobilized builds rather than claiming those builds share baseline escape guarantees.
-- [ ] Capture real timed anticipation/release/recovery for both choices at1280×720 and960×540 with normal camera, player, terrain and HUD. Use isolated profile; record actual damage outcomes and save-write counts. God mode cannot establish avoidability.
-- [ ] Separate automated geometry/correctness from human satisfaction, visual timing and final mix approval. Keep damage-observing fixtures separate from optional immortal capture-only playback.
-- [ ] Final scoped independent review, appropriate compatibility tests and ScriptParseAudit last. Update audit/roadmap/evidence/plan; commit/push all owned work and verify remote HEAD, preserving unrelated dirty edits.
+- [x] Run representative seeds for both roles and evaluate reachable escape trajectories with the real player's capsule/effective movement and actual surrounding geometry near the court edge. Include baseline walking with dash unavailable, melee pursuit, finite Runner and ambient kill-trigger targets. Record the coverage limit for slowed/immobilized builds rather than claiming those builds share baseline escape guarantees.
+- [x] Capture real timed anticipation/release/recovery for both choices at1280×720 and960×540 with normal camera, player, terrain and HUD. Use isolated profiles and record save-write counts. Complete rendered samples use labelled immortal playback after a real-damage capture died; separate paired actual-damage controls establish hazard outcomes. God mode cannot establish avoidability.
+- [x] Separate automated geometry/correctness from human satisfaction, visual timing and final mix approval. Keep damage-observing fixtures separate from optional immortal capture-only playback.
+- [x] Final scoped independent review and five appropriate compatibility tests; reuse the frozen shared ScriptParseAudit only for the ten hash-matched boss files. Compile/exercise the later narrow Game correction in the clean native continuation regression; no broad repeat. Update audit/roadmap/evidence/plan; commit/push all owned work and verify remote HEAD, preserving unrelated dirty edits.

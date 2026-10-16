@@ -202,7 +202,9 @@ func _painted_world_bounds(sprite: Sprite2D) -> Rect2:
 
 func _test_charge_windup() -> void:
 	var tank := _spawn(TANK, Vector2(1500, 1100))
-	tank._charge.brain(Vector2.RIGHT, 200.0)
+	# S5 owns charge selection in its teaching controller; the legacy module
+	# deliberately cannot start a second independent rush for this actor.
+	tank.get_node("BossBrain").call("_begin_teaching_rush")
 	var lanes := _sprites(tank, CHARGE_ART)
 	_check(not lanes.is_empty(), "real Bulldozer charge shows authored raster anticipation")
 	if not lanes.is_empty():

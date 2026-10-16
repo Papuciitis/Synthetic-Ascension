@@ -1,0 +1,9 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+SCRIPT ERROR: Trying to assign an array of type "Array" to a variable of type "Array[int]".
+   at: _execute (res://tools/tests/S5TeachingEscapeTest.gd:24)
+   GDScript backtrace (most recent call first):
+       [0] _execute (res://tools/tests/S5TeachingEscapeTest.gd:24)
+       [1] _run (res://tools/dev/S5TeachingFightPreview.gd:139)
+PASS: isolated fixture made zero profile writes or slot selections
+S5TeachingFightPreview: passes=1 failures=0

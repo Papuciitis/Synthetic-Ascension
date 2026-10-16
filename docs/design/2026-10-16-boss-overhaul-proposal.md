@@ -1,6 +1,6 @@
 # Segment 5 and Segment 10 boss overhaul proposal
 
-Date: 2026-10-16. Status: overall design proposal. The user subsequently authorized execution step 1 (hazard geometry, persistent warnings, pause, stale casts, pylons and cleanup); its implementation and verification are recorded in [the foundation audit](../audits/2026-10-16-boss-hazard-foundation.md). Later moveset, body and phase redesign remains proposed.
+Date: 2026-10-16. Status: approved execution has delivered step 1 [hazard foundations](../audits/2026-10-16-boss-hazard-foundation.md), step 2 body/arena/sprite presentation, and step 3 [Segment 5 teaching fights](../audits/2026-10-16-s5-teaching-fights.md). The current-behavior inventory below is the original pre-overhaul baseline. New Segment 10 phase/controller work and the later encounter presentation remain proposed.
 
 Keep the seeded random choice between **Bulldozer and Arcanist**. Give both a substantially upgraded Segment 10 form. Segment 5 should introduce a compact, readable version of each role; Segment 10 should test that understanding through new attacks, controlled combinations and distinct phase changes.
 

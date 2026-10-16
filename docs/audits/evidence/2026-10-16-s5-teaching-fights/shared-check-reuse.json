@@ -1,0 +1,89 @@
+{
+  "reused_parse_record": "docs\\audits\\evidence\\2026-10-16-city-development\\shared-script-parse.json",
+  "reused_runtime_record": "docs\\audits\\evidence\\2026-10-16-city-development\\shared-runtime-safety.json",
+  "shared_parse": {
+    "passed": 530,
+    "failed": 0,
+    "exit": 0,
+    "roots_exclude_tools": true
+  },
+  "shared_runtime_safety": {
+    "passed": 21,
+    "failed": 0,
+    "exit": 0
+  },
+  "boss_relevant_sources": [
+    {
+      "path": "core/actors/enemy/modules/EnemyCharge.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "12ac70f097f18bb91d871cbcc8a36c7ff5ce57cb42cfc1e61a219b7fe2f251c5",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "core/actors/player/player.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "5d132d5ab16e09f8da99ae95ad97a7ea5ba1c560d51c947ad5ac70771f732d97",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "b6e04d5187342b9c1c4f2583c444017655280e9c96a2afe184a312153667b066",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossArcanistBrain.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "ac301f5bcd327ea3f0162582a56cf20b03ff35ad6a2f0e61a2b3a0a3aa76688f",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossMine.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "a15cf66e4570f2eb6cab5a6c4dac97e740e30ed926bcaa1d628ea8ed2f1ca9c1",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossTeachingPlacement.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "285b3ab43c428756f0292656bac5048da3345c7e72f89b3c55470292ef4ce488",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossArrivalSprites.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "b4f74a5bdb7f64cf9ab829c40797e55be8287d45ae35c0d209938eb85ce1bd6c",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossWindupSprites.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "6704894004768af55ffa30320726d4d0a587af162bc6c858b55058e5c740e41f",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "scenes/world/bosses/BossAttackScope.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "d3baff33e16604a858c154cf1dfb599ad9c55d493aa48b7e6a503e8570eae61c",
+      "final_lf_hash_match": true
+    },
+    {
+      "path": "core/combat/hazards/DamageCircle.gd",
+      "shared_hash_match": true,
+      "shared_hash_mode": "raw",
+      "sha256_lf": "7218d0239558278e15a2d02505ebb97281762c075b6838793817e79f43029cca",
+      "final_lf_hash_match": true
+    }
+  ],
+  "note": "Current boss-relevant production sources match the shared manifest. LF hashes are separately retained for Git-normalized reproducibility. Tools require their own runtime evidence.",
+  "later_game_change": "Game terminal-death fix postdates frozen shared parse; compiled and exercised separately by clean99-check CityContinuationTest."
+}

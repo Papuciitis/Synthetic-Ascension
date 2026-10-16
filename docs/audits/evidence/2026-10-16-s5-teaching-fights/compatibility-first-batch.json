@@ -1,0 +1,50 @@
+[
+  {
+    "scene": "res://tools/tests/BossCastLifecycleTest.tscn",
+    "exit": 0,
+    "started_utc": "2026-10-16T20:12:54.6077968Z",
+    "ended_utc": "2026-10-16T20:13:26.8934504Z",
+    "diagnostics": [],
+    "summaries": [
+      "BossCastLifecycleTest: 16 passed, 0 failed"
+    ],
+    "log": "BossCastLifecycleTest-integration.log"
+  },
+  {
+    "scene": "res://tools/tests/BossEncounterOwnershipTest.tscn",
+    "exit": 0,
+    "started_utc": "2026-10-16T20:13:27.0494750Z",
+    "ended_utc": "2026-10-16T20:13:49.9499663Z",
+    "diagnostics": [],
+    "summaries": [
+      "BossEncounterOwnershipTest: 35 passed, 0 failed"
+    ],
+    "log": "BossEncounterOwnershipTest-integration.log"
+  },
+  {
+    "scene": "res://tools/tests/BossAttackAudioTest.tscn",
+    "exit": 0,
+    "started_utc": "2026-10-16T20:13:49.9627921Z",
+    "ended_utc": "2026-10-16T20:14:06.4495864Z",
+    "diagnostics": [],
+    "summaries": [
+      "BossAttackAudioTest: 52 passed, 0 failed"
+    ],
+    "log": "BossAttackAudioTest-integration.log"
+  },
+  {
+    "scene": "res://tools/tests/BossAttackIdentityTest.tscn",
+    "exit": 1,
+    "started_utc": "2026-10-16T20:14:06.4612364Z",
+    "ended_utc": "2026-10-16T20:14:20.3961365Z",
+    "diagnostics": [
+      "ERROR: FAIL: real Bulldozer charge shows authored raster anticipation",
+      "ERROR: FAIL: charge creates a cancellable windup component attached to the boss",
+      "ERROR: FAIL: interrupting charge removes its full lane and braced accent immediately"
+    ],
+    "summaries": [
+      "BossAttackIdentityTest: 21 passed, 3 failed"
+    ],
+    "log": "BossAttackIdentityTest-integration.log"
+  }
+]
