@@ -6,6 +6,8 @@ const FRAME := preload("res://ui/components/ArcaneFrame.gd")
 const RULE := preload("res://ui/components/ArcaneRule.gd")
 const SETTINGS := preload("res://ui/screens/settings/SettingsScreen.tscn")
 const DIALOG := preload("res://ui/components/ArcaneDialog.gd")
+## Screens that defer to an open pause find it here, not by a tree search.
+const GROUP := &"pause_menu"
 
 var resume_scene: String = ""
 var can_open: Callable
@@ -30,6 +32,7 @@ func _ready() -> void:
 	layer = 240
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group(&"pause_handoff_owner")
+	add_to_group(GROUP)
 	_root = Control.new()
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -191,6 +194,13 @@ func _leave(_text: String) -> void:
 		# Keep PAUSABLE root services frozen through goto_scene's awaited frames.
 		# MainMenu._ready owns the unpause at the actual destination.
 		Global.goto_main_menu()
+
+func _process(_delta: float) -> void:
+	# The corner entry shows only while a press could open the menu: over a
+	# hub panel, a pending continuation or a run's end it would be a dead
+	# button lying over that screen's own controls.
+	if not is_open and not _leaving:
+		_entry.visible = not Global.has_pending_peep() and (not can_open.is_valid() or bool(can_open.call()))
 
 func _on_focus_changed(control: Control) -> void:
 	if not is_open or _leaving or _settings.visible or _confirm.visible or control == null:

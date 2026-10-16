@@ -158,7 +158,9 @@ func _update_shade() -> void:
 
 
 func _pause_owns_input() -> bool:
-	var pause := get_viewport().find_child("PauseMenu", true, false)
+	# Asked every frame of a reveal and on every input: a group lookup, never
+	# a recursive search of the whole scene.
+	var pause := get_tree().get_first_node_in_group(&"pause_menu")
 	return pause != null and (bool(pause.get("is_open")) or bool(pause.get("_leaving")))
 
 func present_historical(mortal_name: String) -> void:
