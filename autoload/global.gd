@@ -1357,11 +1357,11 @@ func _city_development_augment_floor(id: StringName) -> int:
 
 
 func city_development_attack_range_multiplier() -> float:
-	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["range_multiplier"])
+	return _CITY_DEVELOPMENT.range_multiplier(_effective_city_development())
 
 
 func city_development_attack_size_multiplier() -> float:
-	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["size_multiplier"])
+	return _CITY_DEVELOPMENT.size_multiplier(_effective_city_development())
 
 
 func city_development_capture_metadata() -> Dictionary:
