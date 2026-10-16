@@ -97,8 +97,15 @@ func _run() -> void:
 						if volume.secondary_objective_id > 0: secondary_interiors += 1
 						var local := volume.cell_tl - coord * CPC
 						var has_reachable_floor := false
-						for y in range(local.y, local.y + volume.size_cells.y):
-							for x in range(local.x, local.x + volume.size_cells.x):
+						# A carved district region's volume (exploration loot off)
+						# spans its whole region, whose outer ring is open paving;
+						# only floor inside that ring proves a usable street door.
+						# Parcel volumes already cover just the walled interior.
+						var inner := Rect2i(local, volume.size_cells)
+						if not volume.exploration_loot_enabled:
+							inner = inner.grow(-2)
+						for y in range(inner.position.y, inner.end.y):
+							for x in range(inner.position.x, inner.end.x):
 								if reachable.has(Vector2i(x, y)): has_reachable_floor = true
 						if not has_reachable_floor: failures.append(tag + " sealed interior " + str(local))
 					if child is Node2D and child.get_script() != null and child.get_script().resource_path.ends_with("ExplorationLootSpawner.gd"):
