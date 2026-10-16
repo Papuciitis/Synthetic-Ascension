@@ -32,6 +32,7 @@ func _spawn(scene: PackedScene, pos: Vector2) -> EnemyActor:
 	actor.set_process(false)
 	var brain := actor.get_node("BossBrain")
 	brain.set_process(false)
+	brain.set_physics_process(false)
 	return actor
 
 func _count_projectiles() -> int:
@@ -166,6 +167,7 @@ func _run() -> void:
 	wrong_target.add_child(wrong_hurtbox)
 	add_child(wrong_target)
 	brain.set_process(true)
+	brain.set_physics_process(true)
 	await get_tree().create_timer(0.18, true).timeout
 	_check(target.hits.size() == 1 and target.hits[0] == 18.0, "slam releases its unchanged18damage at the warned origin")
 	_check(wrong_target.hits.is_empty(), "slam cannot relocate from its preview to the boss's new position")

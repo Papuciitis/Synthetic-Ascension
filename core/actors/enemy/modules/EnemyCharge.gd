@@ -11,6 +11,7 @@ var _windup_left: float = 0.0
 var _time_left: float = 0.0
 var _dir: Vector2 = Vector2.ZERO
 var _override_vel: Vector2 = Vector2.ZERO
+var _committed_speed: float = -1.0
 ## Lurker state: seconds left dormant after spawning, and how long the
 ## player has been still (a small velocity counts as still).
 var _dormant_left: float = 0.0
@@ -24,6 +25,7 @@ func setup(enemy: EnemyActor) -> void:
 	_time_left = 0.0
 	_dir = Vector2.ZERO
 	_override_vel = Vector2.ZERO
+	_committed_speed = -1.0
 	_dormant_left = maxf(enemy.spec.charge_dormant_seconds, 0.0) if enemy != null and enemy.spec != null else 0.0
 	_player_still_for = 0.0
 
@@ -45,6 +47,23 @@ func player_still_for() -> float:
 func is_dormant() -> bool:
 	return _dormant_left > 0.0
 
+
+## The S5 boss controller chooses the action; ordinary Chargers still choose
+## through brain(). Movement continues on the actor's existing physics clock.
+func begin_committed(direction: Vector2, duration: float, speed: float) -> void:
+	_dir = direction.normalized() if not direction.is_zero_approx() else Vector2.RIGHT
+	_windup_left = 0.0
+	_time_left = maxf(duration, 0.01)
+	_committed_speed = maxf(speed, 0.0)
+	_override_vel = Vector2.ZERO
+
+
+func cancel() -> void:
+	_windup_left = 0.0
+	_time_left = 0.0
+	_committed_speed = -1.0
+	_override_vel = Vector2.ZERO
+
 func step_override(delta: float) -> bool:
 	# returns true if charge logic is currently overriding movement
 	if _enemy == null or not is_instance_valid(_enemy):
@@ -57,8 +76,13 @@ func step_override(delta: float) -> bool:
 		return true
 
 	if _time_left > 0.0:
+		var remaining := _time_left
 		_time_left = maxf(_time_left - delta, 0.0)
-		var spd: float = (_enemy.spec.charge_speed if _enemy.spec != null else 520.0)
+		var spd: float = _committed_speed if _committed_speed >= 0.0 else (_enemy.spec.charge_speed if _enemy.spec != null else 520.0)
+		# The controller previews speed * duration. A coarse final step must
+		# spend only its remaining commitment, not an extra whole physics tick.
+		if _committed_speed >= 0.0:
+			spd *= minf(maxf(delta, 0.0), remaining) / maxf(delta, 0.000001)
 		_override_vel = _dir * spd
 		return true
 
@@ -79,6 +103,8 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 		return Vector2.ZERO
 
 	var spec: EnemySpec = _enemy.spec
+	if bool(_enemy.get_meta(&"boss_controller_owns_charge", false)) and not _enemy.is_in_group(&"boss"):
+		return to_player * _enemy._spd()
 	if _dormant_left > 0.0:
 		return Vector2.ZERO
 	if spec.charge_only_when_player_still and _player_still_for < spec.charge_player_still_seconds:
@@ -92,6 +118,7 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 			return -to_player.normalized() * _enemy._spd() * 0.8
 		return Vector2.ZERO
 	if _cd <= 0.0 and dist <= _enemy.spec.charge_trigger_range:
+		_committed_speed = -1.0
 		_dir = (to_player.normalized() if to_player != Vector2.ZERO else Vector2.RIGHT)
 		_windup_left = maxf(_enemy.spec.charge_windup, 0.0)
 		_time_left = maxf(_enemy.spec.charge_duration, 0.01)

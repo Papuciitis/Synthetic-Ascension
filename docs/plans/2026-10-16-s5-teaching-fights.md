@@ -37,26 +37,26 @@
 
 Owner: tank implementer. Files: `BossBulldozerBrain.gd`, `EnemyCharge.gd`, narrow player contact ledger hooks in `core/actors/player/player.gd`; new `tools/tests/BossBulldozerTeachingTest.gd/.tscn`.
 
-- [ ] Write actual cast/physics/contact regressions for fixed rush direction, harmless crumbs/end, exactly one physical rush hit, ambient contact compatibility, planted slam/recovery, full three-node previews/order, one warned finite Runner wave and cleanup.
-- [ ] Root observes valid RED before production edits.
-- [ ] Implement S5 explicit clocks and movement locks, finite reinforcement consumption, body-validated arrivals and shared cosmetic rush endpoint. Preserve ordinary Charger behavior.
+- [x] Write actual cast/physics/contact regressions for fixed rush direction, harmless crumbs/end, exactly one physical rush hit, ambient contact compatibility, planted slam/recovery, full three-node previews/order, one warned finite Runner wave and cleanup.
+- [x] Root observes valid RED before production edits.
+- [x] Implement S5 explicit clocks and movement locks, finite reinforcement consumption, body-validated arrivals and shared cosmetic rush endpoint. Preserve ordinary Charger behavior.
 - [ ] Verify focused suite plus contact, charge, boss lifecycle/identity/audio/ownership suites. Independently review; commit and push coherent checkpoint.
 
 ## Task 2 — Arcanist teaching kit
 
 Owner: mage implementer. Files: `BossArcanistBrain.gd`, narrowly `BossMine.gd` if unresolved bookkeeping requires it; focused placement helper if useful; new `tools/tests/BossArcanistTeachingTest.gd/.tscn`.
 
-- [ ] Write real fan/blink/mine regressions with captured origins/directions, actual range, recovery locks, deterministic corridor, mine cap, full-body wall rejection and pause/interruption cleanup; root observes RED.
-- [ ] Implement tier-specific timing/pressure gating, announced validated blink and deterministic three-mine arc. S5 cannot select beam/pylons. Preserve S10's current selection for later work.
+- [x] Write real fan/blink/mine regressions with captured origins/directions, actual range, recovery locks, deterministic corridor, mine cap, full-body wall rejection and pause/interruption cleanup; root observes RED.
+- [x] Implement tier-specific timing/pressure gating, announced validated blink and deterministic three-mine arc. S5 cannot select beam/pylons. Preserve S10's current selection for later work.
 - [ ] Verify focused suite plus old cast/geometry/audio/ownership regressions. Independently review; commit and push checkpoint.
 
 ## Task 3 — Shared sprite arrival cues
 
 Owner: root. New `scenes/world/bosses/BossArrivalSprites.gd` exposes `setup(world_pos:Vector2,radius:float,duration:float,kind:StringName)` with `blink`/`summon` kinds, `set_progress(value:float)` and `cancel_attack()`. It uses actual transparent PNGs in boss art/VFX, world-anchored and bound through AttackScope. Caller gameplay clocks own release; no damage in this helper.
 
-- [ ] Write expiry, world-origin, pause, source cancellation and accessibility regressions in `BossArrivalSpritesTest.gd/.tscn`; observe RED before helper production code.
-- [ ] Generate, inspect, measure and copy unchanged dedicated blink/Runner arrival sprites; preserve prompts, source hashes and import settings.
-- [ ] Implement fixed-radius, persistent essential ground cue with finite non-flashing progress, then wire both brains through the agreed interface.
+- [x] Write expiry, world-origin, pause, source cancellation and accessibility regressions in `BossArrivalSpritesTest.gd/.tscn`; observe RED before helper production code.
+- [x] Generate, inspect, measure and copy unchanged dedicated blink/Runner arrival sprites; preserve prompts, source hashes and import settings.
+- [x] Implement fixed-radius, persistent essential ground cue with finite non-flashing progress, then wire both brains through the agreed interface.
 - [ ] Verify focused test and rendered normal/small-window samples with no procedural combat effect primitives.
 
 ## Task 4 — Actual fight/escape evidence and integration

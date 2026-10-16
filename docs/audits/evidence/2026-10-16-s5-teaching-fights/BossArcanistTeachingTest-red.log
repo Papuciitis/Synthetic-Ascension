@@ -1,0 +1,195 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: S5 fan visibly commits and holds movement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:136)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: five real raster ray cues preview the five fan bolts
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:138)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: pause spends no S5 fan anticipation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:142)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: S5 fan holds all five bolts for the full 0.95-second tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:147)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: S5 releases one compact five-bolt fan
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:150)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: released fan matches captured origin, locked 46-degree geometry and warned 520px travel
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:158)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: fan release opens a planted recovery instead of moving immediately
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:159)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+PASS: the recovering Arcanist still accepts incoming melee damage
+ERROR: FAIL: fan recovery cannot hide an overlapping mine pattern or blink
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:165)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: fan retains its full 0.9-second movement opening
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:167)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: released fan pressure resolves before a new major pattern
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:170)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:123)
+ERROR: FAIL: S5 plants nothing before its visible 0.6-second constellation tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:185)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:124)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:171)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: mine planting keeps the full introductory tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+PASS: S5 plants exactly three announced mine nodes
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:187)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:124)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:171)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: mine nodes keep the captured center and the full 1.4-second fuse
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:195)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:124)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:171)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: constellation preserves a corridor wider than the 70px hurtbox with safety margin
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:203)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:124)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:171)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: live mines prevent carpet repetition and fan overlap, staying under five unresolved
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:207)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:124)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:171)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: the same encounter seed and pattern counter reproduce the constellation across actor instances
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:212)
+       [2] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: brief stun cancels a pending mine plant instead of leaving stale delayed nodes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:219)
+       [2] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: S5 blink announces before moving
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:228)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: blink shows separate raster departure and landing markers
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:234)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: announced landing remains within a finite melee approach
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:235)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: blink spends its full 0.8-second landing tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:237)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: blink arrives only at its advertised location and enters recovery
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:239)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: arrival holds the full 1.2-second melee opening
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:241)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: blink cooldown prevents immediate repeated melee evasion
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_blink (res://tools/tests/BossArcanistTeachingTest.gd:247)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:125)
+       [3] _test_mines (res://tools/tests/BossArcanistTeachingTest.gd:220)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: blink skips a point-clear destination when the actual body cannot fit
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_body_blocked_blink (res://tools/tests/BossArcanistTeachingTest.gd:273)
+ERROR: FAIL: neutral kiting expires after a finite reposition budget instead of evading forever
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_neutral_budget_and_tier (res://tools/tests/BossArcanistTeachingTest.gd:281)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:127)
+       [3] _test_body_blocked_blink (res://tools/tests/BossArcanistTeachingTest.gd:274)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+ERROR: FAIL: S5 cannot start S10 beam or pylon pressure
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_neutral_budget_and_tier (res://tools/tests/BossArcanistTeachingTest.gd:287)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:127)
+       [3] _test_body_blocked_blink (res://tools/tests/BossArcanistTeachingTest.gd:274)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:80)
+PASS: explicit S10 keeps its current nine-bolt fast fan for later upgrade work
+BossArcanistTeachingTest: 3 passed, 27 failed

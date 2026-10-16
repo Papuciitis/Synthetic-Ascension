@@ -11,8 +11,8 @@ with the user.
 
 | Effect and exact trigger | SFX ID | Recording | Duration | Gain |
 | --- | --- | --- | ---: | ---: |
-| Bulldozer accepts a slam or shockwave cast | `boss_warning` | [Weighted brace](candidates_v3/warning_weighted_brace.wav) | 0.480 s | -8 dB |
-| Arcanist accepts its fan cast | `boss_cast_warning` | [Air swish](candidates_v2/cast_air_swish.wav) | 0.197 s | -15 dB |
+| Bulldozer accepts a slam/shockwave, or its S5 committed rush | `boss_warning` | [Weighted brace](candidates_v3/warning_weighted_brace.wav) | 0.480 s | -8 dB |
+| Arcanist fan; S5 blink or mine planting anticipation | `boss_cast_warning` | [Air swish](candidates_v2/cast_air_swish.wav) | 0.197 s | -15 dB |
 | Bulldozer slam, ground-shock release or charge-end impact | `boss_slam_impact` | [Weighted thud](candidates_v3/slam_weighted_thud.wav) | 0.720 s | -8 dB |
 | Beam moves from anticipation into its active sweep | `boss_beam_release` | [Electric crackle](candidates_v2/beam_electric_crackle.wav) | 0.666 s | -14 dB |
 | Pylon releases a projectile at its muzzle | `boss_pylon_shot` | [Air swish](candidates_v2/cast_air_swish.wav) | 0.197 s | -18 dB |

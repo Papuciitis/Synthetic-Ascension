@@ -51,6 +51,17 @@ func _configure_warning() -> void:
 
 
 func _process(delta: float) -> void:
+	if not _uses_teaching_clock():
+		_tick_fuse(delta)
+
+func _physics_process(delta: float) -> void:
+	if _uses_teaching_clock():
+		_tick_fuse(delta)
+
+func _uses_teaching_clock() -> bool:
+	return is_instance_valid(source) and source.is_in_group(&"miniboss") and not source.is_in_group(&"boss")
+
+func _tick_fuse(delta: float) -> void:
 	if not _attack_is_valid():
 		cancel_attack()
 		return
@@ -92,6 +103,12 @@ func _explode() -> void:
 			d.setup(global_position, radius, damage, 0.15, source)
 			d.show_footprint = true
 			Scope.bind(d, source)
+			# The mine node expires before its damage payload. Keep that brief
+			# active pressure inside the S5 controller's pattern budget as well.
+			if is_instance_valid(source):
+				var brain := source.get_node_or_null("BossBrain")
+				if brain != null and brain.has_method("_register_teaching_pressure"):
+					brain.call("_register_teaching_pressure", d)
 			scene.add_child(d)
 
 	queue_free()

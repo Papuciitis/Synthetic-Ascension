@@ -16,16 +16,19 @@ var _elapsed := 0.0
 var _kind: StringName = &"charge"
 var _direction := Vector2.RIGHT
 var _length := 280.8
+var _lane_width := 64.0
+var externally_driven := false
 var _lane: Sprite2D
 var _accent: Sprite2D
 var _brace: Sprite2D
 
 
-func setup(direction: Vector2, seconds: float, kind: StringName, length: float = 280.8) -> void:
+func setup(direction: Vector2, seconds: float, kind: StringName, length: float = 280.8, lane_width: float = 64.0) -> void:
 	_direction = direction.normalized() if not direction.is_zero_approx() else Vector2.RIGHT
 	_duration = maxf(seconds, 0.05)
 	_kind = kind
 	_length = maxf(length, 1.0)
+	_lane_width = maxf(lane_width, 1.0)
 	_elapsed = 0.0
 	if is_node_ready():
 		_update_art()
@@ -56,11 +59,19 @@ func _process(delta: float) -> void:
 		return
 	if get_tree().paused:
 		return
+	if externally_driven:
+		return
 	_elapsed += delta
 	if _elapsed >= _duration:
 		cancel_attack()
 		return
 	_update_art()
+
+
+func set_progress(value: float) -> void:
+	_elapsed = clampf(value, 0.0, 1.0) * _duration
+	if is_node_ready():
+		_update_art()
 
 
 func _update_art() -> void:
@@ -74,7 +85,7 @@ func _update_art() -> void:
 	var physical := _kind == &"charge" or _kind == &"slam" or _kind == &"shock"
 	_lane.visible = _kind == &"charge"
 	var sx := _length / (CHARGE_RIGHT - CHARGE_LEFT)
-	var sy := 64.0 / (CHARGE_BOTTOM - CHARGE_TOP)
+	var sy := _lane_width / (CHARGE_BOTTOM - CHARGE_TOP)
 	_lane.scale = Vector2(sx, sy)
 	_lane.rotation = _direction.angle()
 	var center := Vector2(CHARGE.get_size()) * 0.5

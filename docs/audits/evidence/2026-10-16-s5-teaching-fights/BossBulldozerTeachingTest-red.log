@@ -1,0 +1,208 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: S5 exposes its accepted planted-impact state
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:104)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+ERROR: FAIL: S5 planted impact grants at least1.3s of anticipation at baseline walking speed
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:106)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+ERROR: FAIL: released slam enters a real locked recovery opening
+PASS: planted impact releases once at the captured non-origin world point
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:110)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+ERROR: FAIL: recovery prevents normal movement, a charge start and another major cast
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:114)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+PASS: recovery leaves the boss damageable to the player's opening
+ERROR: FAIL: slam recovery lasts its full0.9s
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:119)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+ERROR: FAIL: completed recovery releases movement without another attack
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:121)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:330)
+PASS: Fault Line previews all three committed nodes before its first release
+ERROR: FAIL: Fault Line holds its full1.25s introductory tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:138)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:331)
+       [3] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:122)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: Fault Line first release preserves its captured direction
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:140)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:331)
+       [3] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:122)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: Fault Line gives0.32s between the first and second release
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:142)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:331)
+       [3] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:122)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: Fault Line advances to its second marked node
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:144)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:331)
+       [3] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:122)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: third Fault Line release starts the advertised recovery
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:146)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:331)
+       [3] _test_planted_slam (res://tools/tests/BossBulldozerTeachingTest.gd:122)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: S5 rush trail is cosmetic and leaves no damaging crumbs
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_rush_cosmetic_pressure (res://tools/tests/BossBulldozerTeachingTest.gd:159)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:332)
+       [3] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:147)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: S5 rush endpoint wave cannot add an unannounced damage circle
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_rush_cosmetic_pressure (res://tools/tests/BossBulldozerTeachingTest.gd:162)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:332)
+       [3] _test_fault_line (res://tools/tests/BossBulldozerTeachingTest.gd:147)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: S10 rush trail is cosmetic and leaves no damaging crumbs
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_rush_cosmetic_pressure (res://tools/tests/BossBulldozerTeachingTest.gd:159)
+       [2] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: S10 rush endpoint wave cannot add an unannounced damage circle
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_rush_cosmetic_pressure (res://tools/tests/BossBulldozerTeachingTest.gd:162)
+       [2] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: S5 controller exposes the same committed rush acceptance used by actual AI
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_rush_commitment_and_contact (res://tools/tests/BossBulldozerTeachingTest.gd:172)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:333)
+       [3] _test_rush_cosmetic_pressure (res://tools/tests/BossBulldozerTeachingTest.gd:163)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: suppressed boss contributes no extra swarm weight while the ambient enemy still deals contact
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:214)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:334)
+       [3] _test_rush_commitment_and_contact (res://tools/tests/BossBulldozerTeachingTest.gd:175)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+PASS: rush suppression preserves balanced Body/Area ledger entries
+PASS: ordinary exits still balance every suppressed and ambient contact
+ERROR: FAIL: Runner reinforcements are warned rather than arriving instantly
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:233)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:335)
+       [3] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:221)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: one call advertises its three finite arrival positions with raster cues
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:235)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:335)
+       [3] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:221)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: Runner call preserves its entire one-second arrival tell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:237)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:335)
+       [3] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:221)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+PASS: one completed below-half-health call releases exactly three Runners
+ERROR: FAIL: repeated low-health call callbacks cannot replenish the finite wave
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:246)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:335)
+       [3] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:221)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: unclaimed Runners expire after15 gameplay seconds without kill rewards
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:249)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:335)
+       [3] _test_contact_ledger_keeps_ambient (res://tools/tests/BossBulldozerTeachingTest.gd:221)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+PASS: finite arrival and expiry leave no population reservations
+ERROR: FAIL: stunning a pending reinforcement call releases no stale Runners
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_call_interruption_and_blocked_arrival (res://tools/tests/BossBulldozerTeachingTest.gd:268)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:336)
+       [3] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:251)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+ERROR: FAIL: the one consumed call cannot be replenished after an interruption
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_call_interruption_and_blocked_arrival (res://tools/tests/BossBulldozerTeachingTest.gd:271)
+       [2] _run (res://tools/tests/BossBulldozerTeachingTest.gd:336)
+       [3] _test_finite_warned_call (res://tools/tests/BossBulldozerTeachingTest.gd:251)
+       [4] _clear (res://tools/tests/BossBulldozerTeachingTest.gd:72)
+PASS: interrupted arrival warnings leak no population reservations
+ERROR: FAIL: full-body blocked arrival locations are skipped instead of spawning Runners inside a wall
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_call_interruption_and_blocked_arrival (res://tools/tests/BossBulldozerTeachingTest.gd:291)
+PASS: failed body validation leaves no population reservations
+ERROR: FAIL: actual scene pause cannot consume the post-slam melee opening
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_pause_keeps_recovery (res://tools/tests/BossBulldozerTeachingTest.gd:306)
+ERROR: FAIL: resuming retains the unspent recovery duration
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_pause_keeps_recovery (res://tools/tests/BossBulldozerTeachingTest.gd:309)
+ERROR: FAIL: remaining recovery completes once after resuming
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossBulldozerTeachingTest.gd:30)
+       [1] _test_pause_keeps_recovery (res://tools/tests/BossBulldozerTeachingTest.gd:311)
+BossBulldozerTeachingTest: 9 passed, 28 failed

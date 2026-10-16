@@ -28,7 +28,7 @@ Two dedicated built-in ImageGen PNGs distinguish cyan/ivory blink destinations f
 
 ## Verification status
 
-Valid pre-implementation regressions: Bulldozer9passed/28failed, Arcanist3/27 and arrival component0/1. These expose missing teaching behavior rather than being counted as successful final checks. Final green runs, actual Game controls and rendered motion evidence are pending.
+Valid pre-implementation regressions: Bulldozer9passed/28failed, Arcanist3/27 and arrival component0/1. These expose missing teaching behavior rather than being counted as successful final checks. The corrected teaching suites now pass Bulldozer54/0 and Arcanist41/0, both with engine exit0. Compatibility suites, actual Game controls and rendered motion evidence are pending.
 
 The standalone arrival component now passes20/0, including world anchoring, distinct raster sources, pause, cancellation, essential accessibility visibility and gameplay-clock expiry. Its render-only callback regression failed19/1 before moving autonomous lifetime onto physics. A natural low-FPS control also passes; that control alone did not reproduce the callback discrepancy because of engine frame-delta clamping. Brains can disable autonomous callbacks and drive these cues from their own committed clocks.
 

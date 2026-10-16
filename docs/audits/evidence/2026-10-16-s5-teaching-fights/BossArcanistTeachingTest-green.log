@@ -1,0 +1,44 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: S5 fan visibly commits and holds movement
+PASS: five real raster ray cues preview the five fan bolts
+PASS: pause spends no S5 fan anticipation
+PASS: S5 fan holds all five bolts for the full 0.95-second tell
+PASS: S5 releases one compact five-bolt fan
+PASS: released fan matches captured origin, locked 46-degree geometry and warned 520px travel
+PASS: fan release opens a planted recovery instead of moving immediately
+PASS: the recovering Arcanist still accepts incoming melee damage
+PASS: fan recovery cannot hide an overlapping mine pattern or blink
+PASS: fan retains its full 0.9-second movement opening
+PASS: released fan pressure resolves before a new major pattern
+PASS: brief stun cannot shorten an already promised Arcanist recovery
+PASS: full source cancellation still clears recovery movement locks during a stun
+PASS: render time cannot release S5 pressure before physics movement catches up
+PASS: S5 commitments advance on the same physics clock as baseline walking
+PASS: mine clock fixture plants a real three-node constellation
+PASS: render time cannot shorten the S5 mine walking escape fuse
+PASS: pause cannot spend the mine's physics fuse
+PASS: S5 mine fuse follows the baseline movement physics clock
+PASS: S5 plants nothing before its visible 0.6-second constellation tell
+PASS: mine planting keeps the full introductory tell
+PASS: S5 plants exactly three announced mine nodes
+PASS: mine nodes keep the captured center and the full 1.4-second fuse
+PASS: constellation preserves a corridor wider than the 70px hurtbox with safety margin
+PASS: live mines prevent carpet repetition and fan overlap, staying under five unresolved
+PASS: mine detonation payloads finish before another fan can begin
+PASS: the same encounter seed and pattern counter reproduce the constellation across actor instances
+PASS: brief stun cancels a pending mine plant instead of leaving stale delayed nodes
+PASS: mine constellation skips terrain that blocks every full-hurtbox escape corridor
+PASS: S5 blink announces before moving
+PASS: blink shows separate raster departure and landing markers
+PASS: announced landing remains within a finite melee approach
+PASS: blink spends its full 0.8-second landing tell
+PASS: blink arrives only at its advertised location and enters recovery
+PASS: arrival holds the full 1.2-second melee opening
+PASS: blink cooldown prevents immediate repeated melee evasion
+PASS: blink skips a point-clear destination when the actual body cannot fit
+PASS: new obstruction cancels the announced landing without retargeting or leaving stale cues
+PASS: neutral kiting expires after a finite reposition budget instead of evading forever
+PASS: S5 cannot start S10 beam or pylon pressure
+PASS: explicit S10 keeps its current nine-bolt fast fan for later upgrade work
+BossArcanistTeachingTest: 41 passed, 0 failed

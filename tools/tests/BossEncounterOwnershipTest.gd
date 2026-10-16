@@ -71,6 +71,7 @@ func _spawn_actor(scene: PackedScene, at: Vector2) -> EnemyActor:
 	var brain := actor.get_node_or_null("BossBrain")
 	if brain != null:
 		brain.set_process(false)
+		brain.set_physics_process(false)
 	return actor
 
 
@@ -124,6 +125,7 @@ func _test_shockwave_commitment() -> void:
 		matching_radii = matching_radii and is_equal_approx(float(marker.get("_radius")), radius)
 	_check(matching_radii, "each preview uses the shockwave's authored damage radius")
 	brain.set_process(true)
+	brain.set_physics_process(true)
 	await get_tree().create_timer(0.05, true).timeout
 	get_tree().paused = true
 	await get_tree().create_timer(1.05, true).timeout
@@ -137,7 +139,7 @@ func _test_shockwave_commitment() -> void:
 	await get_tree().create_timer(0.10, true).timeout
 	_check(_release_positions.is_empty(), "resuming retains the shockwave's unspent anticipation")
 	_check(_warnings_match(markers, expected), "moving boss and player cannot drag committed shockwave previews")
-	await get_tree().create_timer(1.20, true).timeout
+	await get_tree().create_timer(float(brain.call("_shock_time", 2)) + 0.95, true).timeout
 	_check(_release_positions.size() == 3, "the resumed shockwave releases exactly three impacts")
 	for i in range(3):
 		var matching_position := i < _release_positions.size() and _release_positions[i].is_equal_approx(expected[i])
@@ -195,7 +197,10 @@ func _test_runner_cleanup(reason: StringName) -> void:
 	var scope := _scope_of(boss)
 	var before_adds := _boss_add_count()
 	var before_reserved := int(EnemyIndex.get_debug_counters().get("reserved", 0))
-	boss.get_node("BossBrain").call("_summon_blockers")
+	boss.hp = boss.max_hp * 0.49
+	var brain := boss.get_node("BossBrain")
+	brain.call("_summon_blockers")
+	brain.call("_tick_cast", 1.01)
 	var runners := _runners_for(scope)
 	_check(runners.size() == 3, "%s cleanup fixture creates three real scope-bound Runners" % reason)
 	var runner_refs: Array[WeakRef] = []

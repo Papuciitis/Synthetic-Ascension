@@ -1,0 +1,57 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: S5 exposes its accepted planted-impact state
+PASS: S5 planted impact grants at least1.3s of anticipation at baseline walking speed
+PASS: planted impact releases once at the captured non-origin world point
+PASS: released slam enters a real locked recovery opening
+PASS: recovery prevents normal movement, a charge start and another major cast
+PASS: recovery leaves the boss damageable to the player's opening
+PASS: slam recovery lasts its full0.9s
+PASS: completed recovery releases movement without another attack
+PASS: Fault Line previews all three committed nodes before its first release
+PASS: Fault Line holds its full1.35s introductory tell
+PASS: Fault Line first release preserves its captured direction
+PASS: Fault Line gives0.32s between the first and second release
+PASS: Fault Line advances to its second marked node
+PASS: third Fault Line release starts the advertised recovery
+PASS: S5 rush trail is cosmetic and leaves no damaging crumbs
+PASS: S5 rush endpoint wave cannot add an unannounced damage circle
+PASS: S10 rush trail is cosmetic and leaves no damaging crumbs
+PASS: S10 rush endpoint wave cannot add an unannounced damage circle
+PASS: S5 controller exposes the same committed rush acceptance used by actual AI
+PASS: accepted rush visibly holds its teaching anticipation
+PASS: rush cannot move before its full0.85s tell
+PASS: rush direction stays locked when the player moves during anticipation
+PASS: actual physical rush intersection resolves one explicit hit per commitment
+PASS: rush overlap does not stack the boss's ordinary contact tick
+PASS: completed physical rush enters endpoint recovery
+PASS: actual S5 rush still creates no damaging trail or endpoint
+PASS: committed rush at 0.017s physics steps travels exactly its 280.8px warned lane (actual 280.80px)
+PASS: committed rush at 0.100s physics steps travels exactly its 280.8px warned lane (actual 280.80px)
+PASS: suppressed boss contributes no extra swarm weight while the ambient enemy still deals contact
+PASS: rush suppression preserves balanced Body/Area ledger entries
+PASS: ordinary exits still balance every suppressed and ambient contact
+PASS: cleanup fixture reaches real queued-deletion contact window after source cancellation
+PASS: queued boss cleanup contributes no stale swarm weight while ambient contact remains active
+PASS: Runner reinforcements are warned rather than arriving instantly
+PASS: one call advertises its three finite arrival positions with raster cues
+PASS: Runner call preserves its entire one-second arrival tell
+PASS: one completed below-half-health call releases exactly three Runners
+PASS: repeated low-health call callbacks cannot replenish the finite wave
+PASS: unclaimed Runners expire after15 gameplay seconds without kill rewards
+PASS: finite arrival and expiry leave no population reservations
+PASS: stunning a pending reinforcement call releases no stale Runners
+PASS: the one consumed call cannot be replenished after an interruption
+PASS: interrupted arrival warnings leak no population reservations
+PASS: full-body blocked arrival locations are skipped instead of spawning Runners inside a wall
+PASS: failed body validation leaves no population reservations
+PASS: actual scene pause cannot consume the post-slam melee opening
+PASS: resuming retains the unspent recovery duration
+PASS: remaining recovery completes once after resuming
+PASS: a brief stun cannot remove an already earned post-impact melee opening
+PASS: full source cancellation still clears recovery while its owner remains alive
+PASS: render time alone cannot consume the physics-clock slam anticipation
+PASS: the persistent S5 footprint cannot expire ahead of its controller's physics clock
+PASS: the casting sprite cannot disappear while accepted physics time still owes its tell
+PASS: render time alone cannot expire the finite Runner wave ahead of gameplay time
+BossBulldozerTeachingTest: 54 passed, 0 failed

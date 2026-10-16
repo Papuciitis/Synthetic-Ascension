@@ -1320,6 +1320,22 @@ func _threat_enemy_damage_mul() -> float:
 	var td := get_node_or_null("/root/ThreatDirector") as ThreatDirectorSingleton
 	return (td.enemy_damage_mul if td != null else 1.0)
 
+
+func _damaging_contact_count() -> int:
+	var count := 0
+	for record: Dictionary in _contact_sources.values():
+		var enemy = record.get("node")
+		if not is_instance_valid(enemy):
+			continue
+		if enemy.is_queued_for_deletion() or ("dead" in enemy and bool(enemy.get("dead"))):
+			continue
+		# Keep Body/Area overlap records balanced while a committed boss move
+		# owns its contact. Other enemies still contribute ordinary pressure.
+		if bool(enemy.get_meta(&"boss_contact_suppressed", false)):
+			continue
+		count += 1
+	return count
+
 func _start_contact_loop() -> void:
 	if _damage_loop_running:
 		return
@@ -1331,8 +1347,10 @@ func _start_contact_loop() -> void:
 			break
 		# One deterministic tick per interval. A single enemy's Area and Body are
 		# one source; extra unique enemies increase pressure with a capped curve.
-		var swarm_mul := minf(2.25, 1.0 + float(_touching_enemies - 1) * 0.35)
-		_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul(), null, &"contact_swarm")
+		var damaging_contacts := _damaging_contact_count()
+		if damaging_contacts > 0:
+			var swarm_mul := minf(2.25, 1.0 + float(damaging_contacts - 1) * 0.35)
+			_take_damage(contact_damage * swarm_mul * _threat_enemy_damage_mul(), null, &"contact_swarm")
 		await get_tree().create_timer(maxf(contact_tick, 0.05), false).timeout
 		# The player can be freed mid-wait (scene change, run end); the loop
 		# would otherwise resume on a freed node.

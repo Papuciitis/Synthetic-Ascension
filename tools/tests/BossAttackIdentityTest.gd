@@ -68,6 +68,7 @@ func _spawn(scene: PackedScene, pos: Vector2) -> EnemyActor:
 	actor.set_physics_process(false)
 	actor.player = _player
 	actor.get_node("BossBrain").set_process(false)
+	actor.get_node("BossBrain").set_physics_process(false)
 	return actor
 
 
@@ -121,7 +122,7 @@ func _test_physical_attacks() -> void:
 	brain.call("_do_slam")
 	_check(not _sprites(_world, SLAM_ART).is_empty(), "committed slam previews fractured ground instead of the common seal")
 	_check(_sprites(_world, SHOCK_ART).is_empty() and _sprites(_world, MINE_ART).is_empty(), "slam preview cannot borrow shock or mine artwork")
-	brain.call("_tick_cast", 0.66)
+	brain.call("_tick_cast", float(brain.get("slam_windup")) + 0.01)
 	var slams := _circles(&"slam")
 	_check(slams.size() == 1 and not _sprites(slams[0], SLAM_ART).is_empty(), "real slam damage retains the matching fractured-ground footprint")
 	var impacts := _components(_world, IMPACT_SCRIPT)
@@ -149,7 +150,7 @@ func _test_physical_attacks() -> void:
 	for warning: Node in warnings:
 		distinct = distinct and not _sprites(warning, SHOCK_ART).is_empty() and _sprites(warning, SLAM_ART).is_empty()
 	_check(distinct, "all three committed shockwave positions show dedicated crackling sprites")
-	brain.call("_tick_cast", 1.0)
+	brain.call("_tick_cast", float(brain.call("_shock_time", 2)) + 0.01)
 	var shocks := _circles(&"shock")
 	var matching := shocks.size() == 3
 	for circle in shocks:

@@ -72,6 +72,7 @@ func _actor(scene: PackedScene) -> EnemyActor:
 	actor.set_process(false)
 	actor.set_physics_process(false)
 	actor.get_node("BossBrain").set_process(false)
+	actor.get_node("BossBrain").set_physics_process(false)
 	return actor
 
 
@@ -147,6 +148,7 @@ func _test_physical_impact_boundaries() -> void:
 	_clear_requests()
 	brain.call("_do_slam")
 	brain.set_process(true)
+	brain.set_physics_process(true)
 	await get_tree().create_timer(0.05, true).timeout
 	get_tree().paused = true
 	await get_tree().create_timer(0.25, true).timeout
@@ -155,6 +157,7 @@ func _test_physical_impact_boundaries() -> void:
 	get_tree().paused = false
 	await get_tree().create_timer(0.25, true).timeout
 	brain.set_process(false)
+	brain.set_physics_process(false)
 	_check_one_at(&"boss_slam_impact", origin, "real slam release requests one dedicated impact at the committed origin after resuming")
 	_check(_requests(&"multikill_thump").is_empty(), "boss slam no longer requests the rejected procedural multikill recording")
 	brain.call("_tick_cast", 1.0)
@@ -177,7 +180,7 @@ func _test_physical_impact_boundaries() -> void:
 	origin = tank.global_position
 	_clear_requests()
 	brain.call("_do_shockwave")
-	brain.call("_tick_cast", 0.56)
+	brain.call("_tick_cast", float(brain.call("_shock_time", 0)) + 0.01)
 	_check_one_at(&"boss_slam_impact", origin + Vector2(140, 0), "first real ground shock requests the physical impact recording at its own committed position")
 	_check(_requests(&"multikill_thump").is_empty(), "ground shock also avoids the old procedural multikill sound")
 	await _end_fixture()

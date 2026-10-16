@@ -1,0 +1,67 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: S5 fan visibly commits and holds movement
+PASS: five real raster ray cues preview the five fan bolts
+PASS: pause spends no S5 fan anticipation
+PASS: S5 fan holds all five bolts for the full 0.95-second tell
+PASS: S5 releases one compact five-bolt fan
+PASS: released fan matches captured origin, locked 46-degree geometry and warned 520px travel
+PASS: fan release opens a planted recovery instead of moving immediately
+PASS: the recovering Arcanist still accepts incoming melee damage
+PASS: fan recovery cannot hide an overlapping mine pattern or blink
+PASS: fan retains its full 0.9-second movement opening
+PASS: released fan pressure resolves before a new major pattern
+ERROR: FAIL: render time cannot release S5 pressure before physics movement catches up
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:140)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:126)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:202)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:82)
+ERROR: FAIL: S5 commitments advance on the same physics clock as baseline walking
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:144)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:126)
+       [3] _test_fan_and_recovery (res://tools/tests/BossArcanistTeachingTest.gd:202)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:82)
+PASS: mine clock fixture plants a real three-node constellation
+ERROR: FAIL: render time cannot shorten the S5 mine walking escape fuse
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mine_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:156)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:127)
+       [3] _test_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:145)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:82)
+ERROR: FAIL: S5 mine fuse follows the baseline movement physics clock
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArcanistTeachingTest.gd:29)
+       [1] _test_mine_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:160)
+       [2] _run (res://tools/tests/BossArcanistTeachingTest.gd:127)
+       [3] _test_gameplay_clock (res://tools/tests/BossArcanistTeachingTest.gd:145)
+       [4] _finish_fixture (res://tools/tests/BossArcanistTeachingTest.gd:82)
+PASS: S5 plants nothing before its visible 0.6-second constellation tell
+PASS: mine planting keeps the full introductory tell
+PASS: S5 plants exactly three announced mine nodes
+PASS: mine nodes keep the captured center and the full 1.4-second fuse
+PASS: constellation preserves a corridor wider than the 70px hurtbox with safety margin
+PASS: live mines prevent carpet repetition and fan overlap, staying under five unresolved
+PASS: mine detonation payloads finish before another fan can begin
+PASS: the same encounter seed and pattern counter reproduce the constellation across actor instances
+PASS: brief stun cancels a pending mine plant instead of leaving stale delayed nodes
+PASS: S5 blink announces before moving
+PASS: blink shows separate raster departure and landing markers
+PASS: announced landing remains within a finite melee approach
+PASS: blink spends its full 0.8-second landing tell
+PASS: blink arrives only at its advertised location and enters recovery
+PASS: arrival holds the full 1.2-second melee opening
+PASS: blink cooldown prevents immediate repeated melee evasion
+PASS: blink skips a point-clear destination when the actual body cannot fit
+PASS: neutral kiting expires after a finite reposition budget instead of evading forever
+PASS: S5 cannot start S10 beam or pylon pressure
+PASS: explicit S10 keeps its current nine-bolt fast fan for later upgrade work
+BossArcanistTeachingTest: 32 passed, 4 failed
