@@ -72,4 +72,4 @@ Files: `VFX_PulseRing.gd/.tscn`, `VFX_BomberHazardRing.gd`, narrow `EnemyBomber.
 - [x] Actual Game captures at1280×720/960×540, zero profile writes, clean shutdown. Distinguish frozen visual evidence from live fight playtesting.
 - [x] Update design/audit/status with evidence, remaining human art approval, animation, balance and audio-listening limits. Verify remote branch contains each checkpoint.
 
-Verified checkpoints: `3c72f7a` (courts), `201a27e` (proportions); raster VFX/audio checkpoint follows in this delivery. Human final-art approval, character animation and full fight/mix playtesting remain as recorded in the audit.
+Verified checkpoints: `3c72f7a` (courts), `201a27e` (proportions), `060ca6e` (raster VFX/audio and attribution). Human final-art approval, character animation and full fight/mix playtesting remain as recorded in the audit.
