@@ -484,6 +484,22 @@ func _disable_failed_world() -> void:
 		node.process_mode = Node.PROCESS_MODE_DISABLED
 
 
+func _pause_failed_world_until_physics_flush() -> void:
+	# Native area/body signals may still be flushing collision queries. Keep
+	# this subtree paused without disabling CollisionObjects in that callback.
+	if process_mode != Node.PROCESS_MODE_DISABLED:
+		process_mode = Node.PROCESS_MODE_PAUSABLE
+	for node in find_children("*", "", true, false):
+		if node.process_mode in [Node.PROCESS_MODE_ALWAYS, Node.PROCESS_MODE_WHEN_PAUSED]:
+			node.process_mode = Node.PROCESS_MODE_PAUSABLE
+
+
+func _finish_physics_failed_world() -> void:
+	_disable_failed_world()
+	get_tree().paused = false
+	Global.goto_resume()
+
+
 func end_run() -> void:
 	if _run_ended:
 		return
@@ -496,6 +512,7 @@ func end_run() -> void:
 	Engine.time_scale = 1.0
 
 	var is_die_die: bool = (Global != null and Global.followers <= 0)
+	var defer_failed_world: bool = is_die_die and Engine.is_in_physics_frame()
 	# Read before on_attempt_failed_die_die() resets the attempt snapshot.
 	if OS.is_debug_build():
 		print("[Game] run ended seg=%d followers=%d wipe=%s" % [
@@ -504,7 +521,10 @@ func end_run() -> void:
 			is_die_die,
 		])
 	if is_die_die and Global != null:
-		_disable_failed_world()
+		if defer_failed_world:
+			_pause_failed_world_until_physics_flush()
+		else:
+			_disable_failed_world()
 		Global.begin_peep_continuation()
 
 	var projectile_manager: ProjectileSimulationManager = get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
@@ -517,6 +537,9 @@ func end_run() -> void:
 		var enemy_status := get_node_or_null("/root/EnemyStatus") as EnemyStatusService
 		if enemy_status != null:
 			enemy_status.clear_all()
+		if defer_failed_world:
+			call_deferred(&"_finish_physics_failed_world")
+			return
 		get_tree().paused = false
 		Global.goto_resume()
 		return

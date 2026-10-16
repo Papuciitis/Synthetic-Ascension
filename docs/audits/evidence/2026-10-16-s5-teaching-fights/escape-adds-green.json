@@ -1,0 +1,284 @@
+{
+	"body": "real radius25 height58 capsule",
+	"cases": [
+		{
+			"boss_hp": 1739.18408203125,
+			"boss_initial_hp": 1739.18408203125,
+			"boss_max_hp": 3549.35522460938,
+			"boss_starting_hp_conditions": "CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected",
+			"boss_starting_hp_ratio_control": 0.49,
+			"camera_zoom": "(1.0, 1.0)",
+			"case": "CONTROLLED TANK RUNNER ACCESS; starting HP49%; existing Execution fixture loadout; ordinary spawner disabled",
+			"cleaves_delta": 1,
+			"damage": [],
+			"events": [
+				{
+					"committed_direction": "(0.0, 1.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(1.0, 0.0)",
+					"time": 0.0166666666666667,
+					"value": "idle"
+				},
+				{
+					"committed_direction": "(0.0, 1.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(1.0, 0.0)",
+					"time": 0.0333333333333333,
+					"value": "summon"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.0333333333333333
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.35
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.65
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.950000000000001
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 701975503389,
+					"time": 1.01666666666667
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 702613037634,
+					"time": 1.01666666666667
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 703250571877,
+					"time": 1.01666666666667
+				},
+				{
+					"enemy_id": "runner",
+					"event": "native_kill",
+					"special_spawn_kind": "boss_add",
+					"time": 1.01666666666667
+				},
+				{
+					"event": "native_runner_kill",
+					"handle": 4294967299,
+					"instance_id": 702613037634,
+					"time": 1.01666666666667
+				}
+			],
+			"failures": 0,
+			"final_hp": 125.0,
+			"initial_hp": 125.0,
+			"loadout": [
+				"EX01",
+				"EX03",
+				"EX06"
+			],
+			"max_active_enemies": 1,
+			"native_boss_hits": 0,
+			"native_dashes": 0,
+			"native_fires": 4,
+			"native_kills": 1,
+			"observed_runners": {
+				"701975503389": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(-21384.0, 5040.207)",
+					"handle": 4294967298,
+					"instance_id": 701975503389,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				},
+				"702613037634": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(-21564.0, 5144.13)",
+					"handle": 4294967299,
+					"instance_id": 702613037634,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				},
+				"703250571877": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(-21564.0, 4936.284)",
+					"handle": 4294967300,
+					"instance_id": 703250571877,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				}
+			},
+			"player_body": "production CapsuleShape2D radius25 height58",
+			"player_hurtbox": "production RectangleShape2D70x70",
+			"player_speed": 100.0,
+			"reaction_seconds": 0.15,
+			"recovery_hits": 0,
+			"role": "tank",
+			"runner_kills": {
+				"4294967299": {
+					"handle": 4294967299,
+					"instance_id": 702613037634,
+					"source": "native player",
+					"spawn_kind": "boss_add",
+					"time": 1.01666666666667
+				}
+			},
+			"save_writes": 0,
+			"scene": "res://scenes/game.tscn",
+			"seed": 16102026,
+			"segment": 5,
+			"simulation_seconds": 1.01666666666667,
+			"viewport": "(1920, 1080)",
+			"window": "(1280, 720)"
+		},
+		{
+			"boss_hp": 1739.18408203125,
+			"boss_initial_hp": 1739.18408203125,
+			"boss_max_hp": 3549.35522460938,
+			"boss_starting_hp_conditions": "CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected",
+			"boss_starting_hp_ratio_control": 0.49,
+			"camera_zoom": "(1.0, 1.0)",
+			"case": "CONTROLLED TANK RUNNER ACCESS; starting HP49%; existing Execution fixture loadout; ordinary spawner disabled",
+			"cleaves_delta": 1,
+			"damage": [],
+			"events": [
+				{
+					"committed_direction": "(0.0, 1.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(1.0, 0.0)",
+					"time": 0.0166666666666667,
+					"value": "idle"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.0166666666666667
+				},
+				{
+					"committed_direction": "(0.0, 1.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(1.0, 0.0)",
+					"time": 0.0333333333333333,
+					"value": "summon"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.316666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.616666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.916666666666668
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 812067594017,
+					"time": 1.01666666666667
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 812705126665,
+					"time": 1.01666666666667
+				},
+				{
+					"event": "real_runner_arrival",
+					"instance_id": 813342663287,
+					"time": 1.01666666666667
+				},
+				{
+					"enemy_id": "runner",
+					"event": "native_kill",
+					"special_spawn_kind": "boss_add",
+					"time": 1.01666666666667
+				},
+				{
+					"event": "native_runner_kill",
+					"handle": 8589934596,
+					"instance_id": 812705126665,
+					"time": 1.01666666666667
+				}
+			],
+			"failures": 0,
+			"final_hp": 125.0,
+			"initial_hp": 125.0,
+			"loadout": [
+				"EX01",
+				"EX03",
+				"EX06"
+			],
+			"max_active_enemies": 1,
+			"native_boss_hits": 0,
+			"native_dashes": 0,
+			"native_fires": 4,
+			"native_kills": 1,
+			"observed_runners": {
+				"812067594017": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(21624.0, 5040.207)",
+					"handle": 8589934594,
+					"instance_id": 812067594017,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				},
+				"812705126665": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(21444.0, 5144.13)",
+					"handle": 8589934596,
+					"instance_id": 812705126665,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				},
+				"813342663287": {
+					"arrival_time": 1.01666666666667,
+					"arrival_world": "(21444.0, 4936.284)",
+					"handle": 8589934595,
+					"instance_id": 813342663287,
+					"scene": "res://scenes/world/enemies/EnemyRunner.tscn",
+					"spawn_kind": "boss_add"
+				}
+			},
+			"player_body": "production CapsuleShape2D radius25 height58",
+			"player_hurtbox": "production RectangleShape2D70x70",
+			"player_speed": 100.0,
+			"reaction_seconds": 0.15,
+			"recovery_hits": 0,
+			"role": "tank",
+			"runner_kills": {
+				"8589934596": {
+					"handle": 8589934596,
+					"instance_id": 812705126665,
+					"source": "native player",
+					"spawn_kind": "boss_add",
+					"time": 1.01666666666667
+				}
+			},
+			"save_writes": 0,
+			"scene": "res://scenes/game.tscn",
+			"seed": 16102027,
+			"segment": 5,
+			"simulation_seconds": 1.01666666666667,
+			"viewport": "(1920, 1080)",
+			"window": "(1280, 720)"
+		}
+	],
+	"completed_case_results": 2,
+	"expected_case_results": 2,
+	"failures": 0,
+	"hurtbox": "real70x70 rectangle",
+	"passes": 17,
+	"presentation": "Automated paired real Game/court controls, not human satisfaction or finished animation",
+	"reaction": 0.15,
+	"save_writes": 0,
+	"speed": 100.0
+}

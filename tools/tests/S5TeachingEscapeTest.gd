@@ -12,6 +12,7 @@ var _observed_mine_payloads: Dictionary = {}
 var _runner_access_active := false
 var _observed_runners: Dictionary = {}
 var _runner_kills: Dictionary = {}
+var _expected_results := 0
 
 
 func _requires_rendering() -> bool:
@@ -21,15 +22,27 @@ func _requires_rendering() -> bool:
 func _execute() -> void:
 	_immortal = false
 	_ambient = false
-	var seeds: Array[int] = [_seed_value] if _seed_explicit else [16102026, 16102027]
-	var roles: Array[String] = [_role] if _role_explicit else ["tank", "mage"]
+	_expected_results = 0
+	var seeds: Array[int] = []
+	seeds.assign([_seed_value] if _seed_explicit else [16102026, 16102027])
+	var roles: Array[String] = []
+	roles.assign([_role] if _role_explicit else ["tank", "mage"])
 	for chosen_seed in seeds:
 		for role_value in roles:
-			var cases: Array[String] = ["rush", "slam", "shock"] if role_value == "tank" else ["fan", "mines"]
+			var cases: Array[String] = []
+			cases.assign(["rush", "slam", "shock"] if role_value == "tank" else ["fan", "mines"])
 			if not _only_case.is_empty():
-				cases = [_only_case] if cases.has(_only_case) else []
+				cases.assign([_only_case] if cases.has(_only_case) else [])
 			if cases.is_empty() and _only_case != "melee":
 				continue
+			# Account for requested work before any awaited setup/helper. Godot
+			# can resume the caller after a helper aborts with a runtime error.
+			_expected_results += cases.size() * 2
+			for attack in cases:
+				if attack in ["rush", "slam", "fan"]:
+					_expected_results += 1
+			if _only_case.is_empty() or _only_case == "melee":
+				_expected_results += 1
 			if not await _setup_world(role_value, chosen_seed):
 				continue
 			for attack in cases:
@@ -50,17 +63,22 @@ func _execute() -> void:
 		# One additional real court-edge case per seed validates movement
 		# against surrounding production geometry, not an empty fixture plane.
 		if (_only_case.is_empty() or _only_case == "boundary") and roles.has("tank"):
+			_expected_results += 1
 			if await _setup_world("tank", chosen_seed):
 				var boundary := await _escape_attempt("slam", "walk", true)
 				_check(int(boundary.get("danger_attempts", 1)) == 0, "court-edge slam seed%d has a full-body walking escape into the actual court" % chosen_seed)
 		if (_only_case.is_empty() or _only_case == "adds") and roles.has("tank"):
+			_expected_results += 1
 			await _runner_access_attempt(chosen_seed)
 	if (_only_case.is_empty() or _only_case == "ambient") and roles.has("mage"):
+		_expected_results += 1
 		await _ambient_access_attempt()
+	_execution_completed = _expected_results > 0 and _results.size() == _expected_results
+	_check(_execution_completed, "all %d requested case results completed; no setup/helper abort or omitted case" % _expected_results)
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
 		var absolute_out := ProjectSettings.globalize_path(_out)
 		DirAccess.make_dir_recursive_absolute(absolute_out)
-		_write_json(absolute_out.path_join("escape-results.json"), {"presentation": "Automated paired real Game/court controls, not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
+		_write_json(absolute_out.path_join("escape-results.json"), {"presentation": "Automated paired real Game/court controls, not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "expected_case_results": _expected_results, "completed_case_results": _results.size(), "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
 	print("S5TeachingEscapeTest: ", _passes, " passed, ", _failures, " failed")
 
 
@@ -288,6 +306,11 @@ func _observe_runner_arrival(node: Node) -> void:
 	if not _observed_runners.has(id):
 		_observed_runners[id] = {"instance_id": id, "handle": handle, "arrival_time": _time, "arrival_world": str((node as Node2D).global_position), "spawn_kind": "boss_add", "scene": node.scene_file_path}
 		_events.append({"time": _time, "event": "real_runner_arrival", "instance_id": id})
+		if handle == 0 and not node.is_node_ready():
+			# child_entered_tree precedes the actor's authoritative registration.
+			# Capture its handle at ready, before an already-active melee slash
+			# can kill an arriving Runner in that same physics step.
+			node.ready.connect(_observe_runner_arrival.bind(node), CONNECT_ONE_SHOT)
 	elif handle != 0:
 		_observed_runners[id]["handle"] = handle
 
@@ -311,17 +334,22 @@ func _attack_target() -> Vector2:
 
 func _on_death(context: RefCounted) -> void:
 	super._on_death(context)
-	if not _runner_access_active or not _running or context.get("source") != _player or context.get("spec_id") != &"enemy_runner":
+	if not _runner_access_active or not _running or context.get("source") != _player:
 		return
 	var metadata: Dictionary = context.get("metadata")
 	if metadata.get("special_spawn_kind", &"") != &"boss_add":
 		return
 	var handle := int(context.get("handle"))
-	var runner := EnemyWorld.actor_for_handle(handle)
-	if not _is_owned_runner(runner) or not _observed_runners.has(runner.get_instance_id()):
+	var id := 0
+	for record: Dictionary in _observed_runners.values():
+		if handle != 0 and int(record["handle"]) == handle:
+			id = int(record["instance_id"])
+			break
+	if id == 0:
 		return
-	var id := runner.get_instance_id()
-	_observed_runners[id]["handle"] = handle
+	# The immutable death handle matches an observed source-owned Runner.
+	# Catalog IDs use "runner", while its authored resource says
+	# "enemy_runner"; neither alias is the ownership/death identity contract.
 	_runner_kills[handle] = {"instance_id": id, "handle": handle, "time": _time, "source": "native player", "spawn_kind": "boss_add"}
 	_events.append({"time": _time, "event": "native_runner_kill", "instance_id": id, "handle": handle})
 

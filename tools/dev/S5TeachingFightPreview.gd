@@ -67,6 +67,7 @@ var _starting_health := 0.0
 var _ambient_result: Dictionary = {}
 var _cleaves_before := 0
 var _max_enemies := 0
+var _execution_completed := false
 
 
 func _enter_tree() -> void:
@@ -137,6 +138,7 @@ func _run() -> void:
 		return
 	_connect_events()
 	await _execute()
+	_check(_execution_completed, "requested scenario reached its normal completion; script aborts cannot pass on isolation alone")
 	await _shutdown_world()
 	_check(SaveManager.debug_save_writes == _save_writes_before and SaveManager.current_save == null and SaveManager.current_slot == -1, "isolated fixture made zero profile writes or slot selections")
 	_release_inputs()
@@ -213,6 +215,7 @@ func _execute() -> void:
 	info["cleaves_delta"] = _cleaves() - _cleaves_before
 	_write_json(absolute_out.path_join("capture-info.json"), info)
 	print("S5TeachingFightPreview -> ", absolute_out)
+	_execution_completed = true
 
 
 func _setup_world(role_value: String, seed_value: int) -> bool:

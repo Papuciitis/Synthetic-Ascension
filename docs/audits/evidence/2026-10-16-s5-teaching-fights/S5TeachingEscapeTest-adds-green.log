@@ -1,0 +1,27 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[Game] ready seg=5 race=human style=melee seed=16102026
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+S5TeachingProbe: CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected / HP 1739.18408203125/3549.35522460938
+PASS: controlled49% tank naturally calls exactly three real source-owned boss_add Runners
+PASS: native player melee earns a real player-attributed boss_add Runner kill
+PASS: real Runner kill activates the connected Execution/Cleave consumer
+PASS: Runner access population remains bounded to the boss plus its three finite adds
+PASS: controlled Runner access writes no profile data
+[Game] ready seg=5 race=human style=melee seed=16102027
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+S5TeachingProbe: CONTROLLED starting boss HP 49.0% / production max HP retained / threshold condition only; no damage or kill injected / HP 1739.18408203125/3549.35522460938
+PASS: controlled49% tank naturally calls exactly three real source-owned boss_add Runners
+PASS: native player melee earns a real player-attributed boss_add Runner kill
+PASS: real Runner kill activates the connected Execution/Cleave consumer
+PASS: Runner access population remains bounded to the boss plus its three finite adds
+PASS: controlled Runner access writes no profile data
+PASS: all 2 requested case results completed; no setup/helper abort or omitted case
+S5TeachingEscapeTest: 17 passed, 0 failed
+PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone
+PASS: isolated fixture made zero profile writes or slot selections
+S5TeachingFightPreview: passes=19 failures=0

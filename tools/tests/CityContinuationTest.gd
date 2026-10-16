@@ -28,6 +28,7 @@ var _passes := 0
 var _failures := 0
 var _boundaries: Array[StringName] = []
 var _routes: Array[String] = []
+var _native_area_fixture: Dictionary = {}
 
 func _ready() -> void:
 	call_deferred(&"_run")
@@ -56,6 +57,7 @@ func _run() -> void:
 	_test_legacy()
 	await _test_real_reconstruction()
 	await _test_real_terminal_death()
+	await _test_native_area_terminal_death()
 	await _test_routes()
 	await _test_scheduled_route()
 	await _test_pending_developer_launches()
@@ -268,6 +270,97 @@ func _test_real_terminal_death() -> void:
 	game.queue_free()
 	get_tree().paused = false
 	await get_tree().process_frame
+
+func _test_native_area_terminal_death() -> void:
+	var prior_mode := process_mode
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	var prior_god_mode := Global.debug_player_god_mode
+	var prior_luck := Global.run_luck
+	Global.debug_player_god_mode = false
+	Global.run_luck = 0.0
+	var save := _fresh()
+	Global.mortal_name = "Native Area Failure"
+	Global.attempt_segment = 7
+	Global.attempt_world_seed = 735197
+	Global.set_followers(1)
+	var runs := save.total_runs
+	var game := _death_game()
+	game.process_mode = Node.PROCESS_MODE_PAUSABLE
+	var player := game.get_node("Player") as CharacterBody2D
+	player.global_position = Vector2(9000, 9000)
+	player.set_process(false)
+	player.set_physics_process(false)
+	player.set("hp", 1.0)
+	player.set("invulnerable_time", 0.0)
+	var hurtbox := player.get_node("Hurtbox") as Area2D
+	var witness := WorldStepWitness.new()
+	game.add_child(witness)
+	var always_witness := WorldStepWitness.new()
+	always_witness.process_mode = Node.PROCESS_MODE_ALWAYS
+	game.add_child(always_witness)
+	var bucket: Array = [[witness.get_instance_id(), always_witness.get_instance_id()]]
+	EnemySimulationScheduler.call("_run_next_group", bucket, 0, 0.016, 1, &"mid_steps")
+	_check(witness.scheduled_steps == 1 and always_witness.scheduled_steps == 1, "native lethal-area fixture starts with real scheduler-dispatched witnesses")
+	# Keep this nested Game fixture free of a second static script-class
+	# dependency graph; the loaded scene still owns its production script.
+	var circle := (load("res://core/combat/hazards/DamageCircle.tscn") as PackedScene).instantiate() as Area2D
+	circle.call("setup", player.global_position + Vector2(500, 0), 48.0, 1000.0, 2.0)
+	game.add_child(circle)
+	var observed: Dictionary = {}
+	# DamageCircle connected its production handler in _ready first. Observe
+	# the resulting death synchronously without a closure retaining its emitter
+	# and the other fixture nodes. The one-shot observer owns only instance IDs.
+	_native_area_fixture = {"circle": circle.get_instance_id(), "hurtbox": hurtbox.get_instance_id(), "player": player.get_instance_id(), "witness": witness.get_instance_id(), "always": always_witness.get_instance_id(), "observed": observed}
+	circle.area_entered.connect(_observe_native_terminal_area, CONNECT_ONE_SHOT)
+	# Start outside the Hurtbox so the one-shot overlap query cannot cause the
+	# death. Only a later real area_entered transition may take the lethal hit.
+	for _step in range(8):
+		await get_tree().physics_frame
+		if bool(circle.get("_checked_initial_overlap")):
+			break
+	_check(bool(circle.get("_checked_initial_overlap")) and observed.is_empty() and not bool(player.get("is_dead")), "lethal circle completes its initial clear-space query before native contact")
+	Global.run_luck = 0.0
+	circle.global_position = player.global_position
+	for _step in range(12):
+		await get_tree().physics_frame
+		if not observed.is_empty():
+			break
+	_check(bool(observed.get("native_physics", false)) and bool(observed.get("initial_query_done", false)) and bool(observed.get("dead", false)), "real DamageCircle area_entered reaches real player death during physics flush")
+	_check(bool(observed.get("paused", false)) and bool(observed.get("pending", false)), "physics-flush terminal death pauses immediately and captures pending before deferred cleanup")
+	var summary: Dictionary = observed.get("summary", {})
+	_check(summary.get("name") == "Native Area Failure" and summary.get("segment") == 7 and summary.get("attempt_seed") == 735197 and Global.attempt_segment == 7 and Global.attempt_world_seed == 735197 and save.total_runs == runs, "native lethal area preserves the failed snapshot without a fresh-attempt reset")
+	for _frame in range(3):
+		await get_tree().process_frame
+	for _step in range(2):
+		await get_tree().physics_frame
+	EnemySimulationScheduler.call("_run_next_group", bucket, 0, 0.016, 1, &"mid_steps")
+	_check(observed.get("world_steps", []) == [witness.frames, witness.physics_frames, always_witness.frames, always_witness.physics_frames] and witness.scheduled_steps == 1 and always_witness.scheduled_steps == 1, "no world, ALWAYS descendant or root-scheduled step follows native terminal death")
+	_check(game.process_mode == Node.PROCESS_MODE_DISABLED and player.process_mode == Node.PROCESS_MODE_DISABLED and hurtbox.process_mode == Node.PROCESS_MODE_DISABLED and witness.process_mode == Node.PROCESS_MODE_DISABLED and always_witness.process_mode == Node.PROCESS_MODE_DISABLED, "safe deferred flush eventually disables the failed world and collision descendants")
+	if is_instance_valid(circle) and circle.area_entered.is_connected(_observe_native_terminal_area):
+		circle.area_entered.disconnect(_observe_native_terminal_area)
+	_native_area_fixture.clear()
+	game.queue_free()
+	get_tree().paused = false
+	Global.debug_player_god_mode = prior_god_mode
+	Global.run_luck = prior_luck
+	process_mode = prior_mode
+	await get_tree().process_frame
+
+func _observe_native_terminal_area(area: Area2D) -> void:
+	if area.get_instance_id() != int(_native_area_fixture.get("hurtbox", 0)):
+		return
+	var circle := instance_from_id(int(_native_area_fixture["circle"])) as Area2D
+	var player := instance_from_id(int(_native_area_fixture["player"])) as CharacterBody2D
+	var witness := instance_from_id(int(_native_area_fixture["witness"])) as Node
+	var always_witness := instance_from_id(int(_native_area_fixture["always"])) as Node
+	var observed: Dictionary = _native_area_fixture["observed"]
+	observed["native_physics"] = Engine.is_in_physics_frame()
+	observed["initial_query_done"] = bool(circle.get("_checked_initial_overlap"))
+	observed["paused"] = get_tree().paused
+	observed["dead"] = bool(player.get("is_dead"))
+	observed["pending"] = Global.has_pending_peep()
+	observed["summary"] = Global.pending_peep_summary()
+	observed["world_steps"] = [witness.get("frames"), witness.get("physics_frames"), always_witness.get("frames"), always_witness.get("physics_frames")]
 
 func _test_routes() -> void:
 	var save := _fresh()
