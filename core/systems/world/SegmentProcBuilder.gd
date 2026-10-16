@@ -35,6 +35,7 @@ const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.
 const MINIBOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/MiniBossArena.tscn")
 const BOSS_ARENA_SCENE: PackedScene = preload("res://scenes/world/events/BossArena.tscn")
 const CURSED_VAULT_SCRIPT: Script = preload("res://core/systems/world/CursedVault.gd")
+const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
 
 var _res_tick: float = 0.0
 var _time_in_segment: float = 0.0
@@ -398,7 +399,7 @@ func _spawn_segment_events() -> void:
 		if a != null:
 			# Segment 5 now has a dedicated pre-gate arena chunk. Do not stack the
 			# miniboss on top of the Exit Rite; the plan already placed it one chunk earlier.
-			var pos := _jitter_in_chunk(mb_world, 2)
+			var pos: Vector2 = _BOSS_ARENA_SPACE.anchor_world(mb_world, _cm.chunk_size_px)
 			(a as Node2D).global_position = pos
 			add_child(a)
 
@@ -411,7 +412,7 @@ func _spawn_segment_events() -> void:
 	if _segment == Global.FINAL_SEGMENT and b_world != Vector2.ZERO:
 		var b := BOSS_ARENA_SCENE.instantiate()
 		if b != null:
-			(b as Node2D).global_position = _jitter_in_chunk(b_world, 2)
+			(b as Node2D).global_position = _BOSS_ARENA_SPACE.anchor_world(b_world, _cm.chunk_size_px)
 			add_child(b)
 
 func _spawn_cursed_vault() -> void:

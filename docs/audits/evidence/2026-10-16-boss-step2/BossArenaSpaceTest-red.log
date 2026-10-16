@@ -1,0 +1,2829 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: seed=1 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2654484033 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2654484033 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2654484033 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=10617839587 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=10617839587 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=10617839587 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=23890066663 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=23890066663 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=23890066663 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=42471165261 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=42471165261 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=42471165261 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=66361135381 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=66361135381 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=66361135381 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=95559977023 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=95559977023 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=95559977023 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=130067690187 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=130067690187 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=130067690187 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=169884274873 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=169884274873 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=169884274873 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=215009731081 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=215009731081 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=215009731081 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=265444058811 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=265444058811 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=265444058811 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=321187258063 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=321187258063 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=321187258063 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=382239328837 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=382239328837 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=382239328837 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=448600271133 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=448600271133 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=448600271133 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=520270084951 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=520270084951 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=520270084951 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=597248770291 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=597248770291 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=597248770291 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=679536327153 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=679536327153 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=679536327153 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=767132755537 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=767132755537 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=767132755537 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=860038055443 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=860038055443 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=860038055443 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=958252226871 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=958252226871 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=958252226871 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1061775269821 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1061775269821 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1061775269821 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1170607184293 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1170607184293 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1170607184293 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1284747970287 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1284747970287 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1284747970287 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1404197627803 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1404197627803 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1404197627803 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1528956156841 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1528956156841 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1528956156841 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1659023557401 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1659023557401 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1659023557401 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1794399829483 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1794399829483 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1794399829483 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1935084973087 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=1935084973087 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=1935084973087 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2081078988213 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2081078988213 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2081078988213 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2232381874861 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2232381874861 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2232381874861 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2388993633031 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2388993633031 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2388993633031 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2550914262723 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2550914262723 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2550914262723 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2718143763937 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 every connected street socket remains reachable from the court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:129)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2718143763937 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2718143763937 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2890682136673 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=2890682136673 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=2890682136673 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3068529380931 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3068529380931 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3068529380931 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3251685496711 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3251685496711 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3251685496711 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3440150484013 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3440150484013 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3440150484013 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3633924342837 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3633924342837 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3633924342837 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3833007073183 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=3833007073183 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=3833007073183 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=4037398675051 segment=5 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=5 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=5 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=5 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=5 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=5 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+ERROR: FAIL: seed=4037398675051 segment=10 full fighting court contains no walls, windows or half-cover
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:103)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=10 full court is reserved before blocker and dressing placement
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:110)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=10 a continuous perimeter accommodates player25px and boss45px bodies
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:137)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=10 rush, fault-line and applicable beam lanes remain usable in16 directions
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:149)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=10 foliage and center landmarks do not cover the reserved court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_arena (res://tools/tests/BossArenaSpaceTest.gd:155)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:190)
+ERROR: FAIL: seed=4037398675051 segment=10 encounter anchor matches the center of its protected court
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossArenaSpaceTest.gd:26)
+       [1] _check_spawn_anchor (res://tools/tests/BossArenaSpaceTest.gd:174)
+       [2] _run (res://tools/tests/BossArenaSpaceTest.gd:191)
+BossArenaSpaceTest: 257 passed, 471 failed; 88 generated arena chunks across40 seeds; elapsed8127ms

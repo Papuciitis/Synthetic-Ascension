@@ -1,6 +1,7 @@
 extends Object
 const LOOT_SPAWNER_SCENE: PackedScene = preload("res://scenes/world/pickups/ExplorationLootSpawner.tscn")
 const INDOOR_VOLUME_SCENE: PackedScene = preload("res://scenes/world/volumes/IndoorVolume.tscn")
+const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
 
 # Direction bits used by `conn_mask` (must match the producer of conn_mask).
 const _DIR_N: int = 1
@@ -98,6 +99,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	lane_w = clampi(lane_w, 2, cells - 6)
 
 	var plaza_size := clampi(gen.district_plaza_size_cells, 10, cells - 4)
+	var boss_court: Rect2i = _BOSS_ARENA_SPACE.clear_rect(role, cells)
+	if boss_court.has_area():
+		plaza_size = boss_court.size.x
 	if role == &"landmark_plaza":
 		plaza_size = mini(cells - 4, plaza_size + 4)
 	elif role == &"entry_court" or role == &"wardstone_court" or role == &"checkpoint":
@@ -117,6 +121,11 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	var lane_rect_h: Rect2i = Rect2i()
 	var lane_rect_v: Rect2i = Rect2i()
 	var keepout_rects: Array[Rect2i] = []
+	if boss_court.has_area():
+		# Reserve before any props or walls are spawned. The same cells also
+		# keep foliage away during the final dressing pass.
+		keepout_rects.append(boss_court)
+		chunk.set_meta(&"_boss_arena_clear_rect", boss_court)
 
 	# --- floors ---
 	# Main streets use restrained masonry; side/service routes use dirt paths so the
@@ -211,6 +220,9 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 	if archetype == &"plaza" or archetype == &"arena" or archetype == &"gate" or semantic_plaza:
 		var pcx := (lane_cx if has_v else int(cells / 2.0))
 		var pcy := (lane_cy if has_h else int(cells / 2.0))
+		if boss_court.has_area():
+			pcx = int(cells / 2.0)
+			pcy = int(cells / 2.0)
 
 		var px0 := clampi(pcx - int(plaza_size / 2.0), 2, cells - plaza_size - 2)
 		var py0 := clampi(pcy - int(plaza_size / 2.0), 2, cells - plaza_size - 2)
@@ -237,6 +249,8 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			plaza_cells = ChunkShapeGen.rasterize_polygon(polygon, bounds.grow(-2))
 			if plaza_cells.size() < 16:
 				plaza_cells = ChunkShapeGen.rect_cells(plaza_rect)
+			if boss_court.has_area():
+				ChunkShapeGen.add_rect(plaza_cells, boss_court)
 			plaza_rect = ChunkShapeGen.bounds_of(plaza_cells)
 			gen._stamp_floor_cells(chunk, plaza_cells, tex_idx, rng_roads, 0.95, -94)
 		else:

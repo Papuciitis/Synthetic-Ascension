@@ -63,6 +63,7 @@ const _BLOCK_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkBl
 const _STREAM_PLANNER: Script = preload("res://core/systems/world/chunks/ChunkStreamPlanner.gd")
 const _DECO_PLANNER: Script = preload("res://core/systems/world/proc/chunkgen/ChunkGenDeco.gd")
 const _FOLIAGE_RENDERER: Script = preload("res://core/systems/world/chunks/ChunkFoliageRenderer.gd")
+const _BOSS_ARENA_SPACE := preload("res://core/systems/world/proc/BossArenaSpace.gd")
 
 @export var generation_enabled: bool = true
 @export_group("Rendering")
@@ -828,6 +829,10 @@ func _add_environment_deco(chunk: Node2D, rng: RandomNumberGenerator, archetype:
 		n = maxi(0, n - 1)
 
 	_scatter_vegetation(chunk, rng, cells, n)
+	# Generic center landmarks ignore lane reservations and would cover
+	# the reserved boss fighting space.
+	if _BOSS_ARENA_SPACE.is_boss_role(role):
+		return
 
 	# Landmark plazas always receive a memorable object; other special chunks keep a rare chance.
 	var force_landmark: bool = (role == &"landmark_plaza")
