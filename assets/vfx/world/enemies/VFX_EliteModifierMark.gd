@@ -114,6 +114,8 @@ func note_feed() -> void:
 func release() -> void:
 	_released = true
 	set_process(false)
+	if SettingsManager != null and SettingsManager.settings_changed.is_connected(_on_settings_changed):
+		SettingsManager.settings_changed.disconnect(_on_settings_changed)
 
 
 func _ready() -> void:
@@ -135,7 +137,22 @@ func _ready() -> void:
 		SettingsManager != null
 		and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
 	)
+	if SettingsManager != null:
+		SettingsManager.settings_changed.connect(_on_settings_changed)
 	set_process(true)
+	_queue_marks_redraw()
+
+
+func _on_settings_changed(section: StringName, key: StringName, value: Variant) -> void:
+	if _released or section != &"accessibility" or key != &"reduced_motion":
+		return
+	_reduced_motion = bool(value)
+	_drawn_static = false
+	_redraw_accum = REDRAW_INTERVAL
+	# Stop on the authored tint, rather than freezing at a bright point in
+	# the blood pulse. Every modifier keeps its static tell after the redraw.
+	if _reduced_motion and (_bits & EliteModifiers.BIT_VAMPIRIC) != 0 and is_instance_valid(_sprite):
+		_sprite.modulate = _base_tint
 	_queue_marks_redraw()
 
 

@@ -2167,3 +2167,27 @@ no actionable P1/P2 issues. The native fissure and mixed red ring remain finer
 than the shield and wind ribbon; dense combat still needs human review.
 The user approved the preview and requested a separate commit and push for
 this pass. The first gold/ivory pass was committed and pushed separately.
+
+## 2026-10-16 — Crowded elite fight and feedback corrections
+
+The elite tells were checked in a live seeded Game scene with 48 enemies,
+including ten elites and double/triple modifier stress cases. Production
+terrain, HUD, native camera, player attacks, AI, projectiles and deaths stay
+active; controlled spawning and player god mode make the test repeatable.
+The triple is forced beyond normal collapse's two-modifier roll. The clean
+run recorded 46 attacks, 55 hits and 17 deaths, including two elites, with
+zero save writes or runtime errors. Native PNGs, a silent MP4 and telemetry
+are in `docs/art/reference/2026-10-16-elite-crowd-fight/`.
+
+Wards, wind ribbons and coloured edges remain clear. The secondary red ring
+and body seams are subtler during tight overlaps/impact flashes; this is a
+readability check, not a difficulty or performance benchmark.
+
+Three verified corrections accompany the review: existing elite marks now
+honour live Reduced Motion changes; elite death bursts retain a small
+independent per-frame allowance when fodder dies in the same attack; and
+objective hums emit at the owner's origin instead of applying its transform
+twice. Focused regressions failed before each fix. Seven final suites/audits
+passed 752 checks, including real rendered art and the final 514-script
+audit; independent scoped review found no P1/P2 issues. The user approved
+the crowded fight preview and fixes and requested a separate commit and push.

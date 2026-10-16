@@ -238,7 +238,9 @@ func ensure_loop_2d(owner_node: Node2D, tag: StringName, id: StringName, vol_add
 	p.stream = def.stream
 	p.volume_db = def.vol_db + vol_add_db + sfx_gain_db
 	p.pitch_scale = 1.0
-	p.global_position = owner_node.global_position
+	# The emitter becomes an owner child: local zero follows its origin even
+	# when the world is translated, rotated or scaled.
+	p.position = Vector2.ZERO
 	_apply_loop_flag(def.stream, true) # force loop for loop players
 
 	owner_node.add_child(p)

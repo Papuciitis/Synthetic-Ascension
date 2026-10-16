@@ -12,6 +12,9 @@ extends Node
 ## their own renderer.
 
 const DEATHS_PER_FRAME := 10
+## Elite deaths retain a small independent allowance so fodder killed by
+## the same area hit cannot spend the elite's distinctive feedback first.
+const ELITE_DEATHS_PER_FRAME := 2
 ## Hit sparks: every crit and one ordinary hit in HIT_SPARK_EVERY, at most
 ## HIT_SPARKS_PER_FRAME per frame (the burst pool caps live sparks at 64).
 const HIT_SPARK_EVERY := 3
@@ -42,6 +45,7 @@ const ELITE_DOWN_COLOUR := Color(1.0, 0.52, 0.3, 1.0)
 
 var enabled := true
 var _deaths_this_frame := 0
+var _elite_deaths_this_frame := 0
 var _sparks_this_frame := 0
 var _hits_since_spark := 0
 # Live flashes as parallel arrays keyed by instance id, so a node freed
@@ -89,6 +93,7 @@ func _exit_tree() -> void:
 
 func _process(_delta: float) -> void:
 	_deaths_this_frame = 0
+	_elite_deaths_this_frame = 0
 	_sparks_this_frame = 0
 	if not _flash_ids.is_empty():
 		_expire_flashes(Time.get_ticks_msec())
@@ -117,9 +122,14 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 	_note_kill(position, Time.get_ticks_msec())
 	if elite:
 		_elite_down(position, Time.get_ticks_msec())
-	if _deaths_this_frame >= DEATHS_PER_FRAME:
-		return
-	_deaths_this_frame += 1
+	if elite:
+		if _elite_deaths_this_frame >= ELITE_DEATHS_PER_FRAME:
+			return
+		_elite_deaths_this_frame += 1
+	else:
+		if _deaths_this_frame >= DEATHS_PER_FRAME:
+			return
+		_deaths_this_frame += 1
 	VfxBursts.play(&"elite_death" if elite else &"death", position, 1.15 if elite else 1.0)
 
 

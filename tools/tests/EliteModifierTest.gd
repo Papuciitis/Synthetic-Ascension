@@ -110,6 +110,7 @@ func _run() -> void:
 	_test_catalog_and_phase_gating()
 	await _test_fast()
 	await _test_fast_still_tell()
+	await _test_live_reduced_motion_toggle()
 	await _test_body_marks_in_front()
 	await _test_batched_body_mark_depth()
 	await _test_armoured()
@@ -273,7 +274,6 @@ func _test_fast_still_tell() -> void:
 	var still_mark := _mark_of(still)
 	await get_tree().process_frame
 	await get_tree().process_frame
-	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 	_check(still_mark != null and not still_mark.is_animated(), "fixture: under reduced_motion a FAST mark is still")
 	var still_drawn := _drawn_bits_of(still_mark)
 	_check((still_drawn & EliteModifiers.BIT_FAST) != 0, "and its draw pass still puts a FAST-specific mark on the body - the chevrons (drawn bits %d)" % still_drawn)
@@ -297,6 +297,57 @@ func _test_fast_still_tell() -> void:
 		"a second-modifier FAST draws its chevrons beside the plate ring (drawn bits %d)" % second_drawn,
 	)
 	await _free_all([primary, still, second])
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
+
+
+# --- changing accessibility mid-fight updates elites already on screen ---
+func _test_live_reduced_motion_toggle() -> void:
+	var previous_reduced: Variant = SettingsManager.get_value(&"accessibility", &"reduced_motion", false)
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	var enemy := _spawn_enemy(Vector2(600.0, 300.0))
+	var eyes := Node2D.new()
+	eyes.position = Vector2(650.0, 300.0)
+	add_child(eyes)
+	enemy.player = eyes
+	enemy.apply_elite_modifiers([EliteModifiers.ARMOURED, EliteModifiers.VAMPIRIC, EliteModifiers.FAST])
+	enemy.set_physics_process(false)
+	enemy.set_process(false)
+	enemy.velocity = Vector2(300.0, 0.0)
+	var mark := _mark_of(enemy)
+	mark.set_process(false)
+	var sprite := enemy.get_node("Sprite2D") as CanvasItem
+	var steel := Color(0.72, 0.78, 0.86, 1.0)
+	var static_bits := EliteModifiers.BIT_ARMOURED | EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST
+	mark.call("_process", 0.1)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(mark.is_animated() and sprite.modulate.b > steel.b, "fixture: an existing multi-modifier elite has an active body pulse")
+	_check((_drawn_bits_of(mark) & (static_bits | VFX_EliteModifierMark.DRAWN_STREAK)) == (static_bits | VFX_EliteModifierMark.DRAWN_STREAK), "fixture: its three static tells and moving trail have drawn")
+
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	mark.call("_process", 0.1)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(not mark.is_animated(), "turning reduced motion on stops an existing elite's animation")
+	_check(sprite.modulate.is_equal_approx(steel), "turning reduced motion on restores the dominant steel tint instead of freezing a bright pulse")
+	_check((_drawn_bits_of(mark) & static_bits) == static_bits and (_drawn_bits_of(mark) & VFX_EliteModifierMark.DRAWN_STREAK) == 0, "turning reduced motion on removes the existing moving trail and retains every static tell")
+	mark.call("_process", 0.25)
+	_check(sprite.modulate.is_equal_approx(steel), "subsequent reduced-motion frames leave the body tint still")
+
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	mark.call("_process", 0.1)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(mark.is_animated() and sprite.modulate.b > steel.b, "turning reduced motion off resumes the existing elite's body pulse")
+	_check((_drawn_bits_of(mark) & (static_bits | VFX_EliteModifierMark.DRAWN_STREAK)) == (static_bits | VFX_EliteModifierMark.DRAWN_STREAK), "turning reduced motion off restores its moving trail beside the static tells")
+
+	# Replacing a modifier queues the old mark for deletion. Settings can
+	# change in that same frame; the released mark must not recolour it.
+	enemy.apply_elite_modifiers([EliteModifiers.SPLITTING])
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	_check(sprite.modulate == Color(0.75, 1.0, 0.45, 1.0), "a released old mark cannot restore its steel tint over a replacement when settings change")
+	await _free_all([enemy, eyes])
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 
 
 # --- body marks stay visible while the shield-radius wash stays behind ---
@@ -308,7 +359,6 @@ func _test_body_marks_in_front() -> void:
 	await get_tree().process_frame
 	splitting.apply_elite_modifiers([EliteModifiers.SHIELDED, EliteModifiers.SPLITTING])
 	vampiric.apply_elite_modifiers([EliteModifiers.VAMPIRIC, EliteModifiers.FAST])
-	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 	await get_tree().process_frame
 	await get_tree().process_frame
 	for enemy in [splitting, vampiric]:
@@ -325,6 +375,7 @@ func _test_body_marks_in_front() -> void:
 	_check((_drawn_bits_of(_mark_of(splitting)) & (EliteModifiers.BIT_SHIELDED | EliteModifiers.BIT_SPLITTING)) == (EliteModifiers.BIT_SHIELDED | EliteModifiers.BIT_SPLITTING), "the shield radius and front-facing seam both draw")
 	_check((_drawn_bits_of(_mark_of(vampiric)) & (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST)) == (EliteModifiers.BIT_VAMPIRIC | EliteModifiers.BIT_FAST), "the still VAMPIRIC ring and FAST chevrons both draw")
 	await _free_all([splitting, vampiric])
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", previous_reduced, false)
 
 
 # --- live batches sit under a z=10 proxy root, beside the actor nodes ---

@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-16",
+  "engine": "Godot 4.7.1 stable a13da4feb",
+  "base_commit": "3801643a2ecf5aaf9b2b896da48ea10b9f0f2dc4",
+  "state": "Crowded combat preview and three feedback fixes visually approved by the user for a separate commit and push on 2026-10-16.",
+  "integration_parent": "76241071df18d0bd04ced4ab2099e0decdb7ec72",
+  "checks": [
+    {
+      "suite": "EliteModifierTest",
+      "mode": "headless",
+      "passes": 137,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "ec97a223197e09f984d4dd15acc375130acbfc78fab745736b57749775a700c2"
+    },
+    {
+      "suite": "WorldFeedbackVfxTest",
+      "mode": "headless",
+      "passes": 12,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "59db6a8727d3f2afdf1fa209e1004f2e3e59d26427243ad27e6c36caecbc9b4c"
+    },
+    {
+      "suite": "PositionalLoopAudioTest",
+      "mode": "headless / Dummy audio",
+      "passes": 11,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "059d22aad459f54ac99afc38a1547d204cf42c63dfc5e331e12b8b98316bd7d2"
+    },
+    {
+      "suite": "PlayerActionAudioTest",
+      "mode": "headless / Dummy audio",
+      "passes": 29,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "97a4e7186b44bad16047addeff59473f4e0aed6a575c5e7a7d45281bc101cc3c"
+    },
+    {
+      "suite": "KillAudioTest",
+      "mode": "headless / Dummy audio",
+      "passes": 29,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "f65066bd18103955f5f7e3925c6a089638a789d039089741dc7f5abc51c4bcbd"
+    },
+    {
+      "suite": "EliteTellArtTest",
+      "mode": "OpenGL Compatibility / Intel UHD Graphics",
+      "passes": 20,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "5f3a01496e9f494da30b9e5ee92987d40d85f16454b91a2ff607db6ea8d739f6"
+    },
+    {
+      "suite": "ScriptParseAuditTest",
+      "mode": "headless",
+      "passes": 514,
+      "failures": 0,
+      "exit_code": 0,
+      "log_sha256": "3d59568973b8b619d2eb84346b2b8a07f11f69e86b0c7ef0c0925f4fe7985466"
+    }
+  ],
+  "reported_passing_checks": 752,
+  "test_first_evidence": {
+    "live_reduced_motion": "133 passed / 4 failed -> 137 passed / 0 failed",
+    "elite_death_budget": "9 passed / 3 failed -> 12 passed / 0 failed",
+    "positional_loops": "7 passed / 4 failed -> 11 passed / 0 failed"
+  },
+  "source_sha256": {
+    "assets/vfx/world/enemies/VFX_EliteModifierMark.gd": "baca4017b271b4e990ebe728ebda15992dd01f81924cd05349f84f77bd6200ce",
+    "autoload/SfxManager.gd": "73092a7da9d8e4215ba0b7849d71b4a2e9c90758eb74177a65e1fbfb34ce81d4",
+    "core/systems/vfx/WorldFeedbackVfx.gd": "4edb69d9553407301a5a47b537b89804bc2e4a8427135fc634067c730f5dfd91",
+    "tools/tests/EliteModifierTest.gd": "6c249b26cc4441b0bcb542c1249305e0cf216f8821778224f5275c9458ad08a2",
+    "tools/tests/WorldFeedbackVfxTest.gd": "645fbac118dcf621d1aef26e1b8943b8d13cbe114e3e641c3602b0ade1a57c95",
+    "tools/tests/PositionalLoopAudioTest.gd": "edfb8daf928385ba9230f110ed5f21f544b6b1127bd9a0573b246131906acad1",
+    "tools/tests/PositionalLoopAudioTest.tscn": "7fecd9d438486a87903f3a0cf5803b23f0f952eda11de73de3ac82a3aaa84ca0",
+    "tools/dev/EliteCrowdFightPreview.gd": "ec4a392f9f7f6daff62c4e9b2231c314797f5b1a9e62de6d4c1e856d254a4aec",
+    "tools/dev/EliteCrowdFightPreview.tscn": "c3dd97a9053c20c30f8b5b85a924aafa66ba4b436833eeab4a3422dea722158f"
+  },
+  "capture": {
+    "scene": "res://scenes/game.tscn",
+    "initial_enemies": 48,
+    "initial_elites": 10,
+    "frames": 150,
+    "simulation_seconds": 10.0000000000001,
+    "wall_seconds": 15.603452,
+    "weapon_fires": 46,
+    "player_hits": 55,
+    "elite_hits": 11,
+    "deaths": 17,
+    "elite_deaths": 2,
+    "max_managed_projectiles": 10,
+    "save_writes": 0,
+    "failures": 0,
+    "runtime_errors": 0
+  },
+  "review": "Root reviewed the mark/settings lifecycle and all product diffs; independent read-only review found no P1/P2 defects in death-budget, loop-position and live combat harness changes. Root inspected raw midfight/ending PNGs and a decoded final video frame.",
+  "controlled_conditions": "Ambient spawner and encounter beats disabled; scripted controller movement/aim with held native attack; player god mode; no enemy stat changes. One triple-modifier example deliberately tests a combination beyond the normal two-modifier collapse roll.",
+  "limits": "Scripted input and god mode, not a natural difficulty/playability test or performance benchmark. Audio geometry tested silently; MP4 has no audio. Fine secondary tells are subtler in dense overlaps. Only clean rerun included; first bootstrap current_scene error corrected in the new harness.",
+  "scope": "Unrelated existing boss, projectile, asset, item and history changes preserved and excluded from this follow-up."
+}
