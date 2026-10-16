@@ -393,13 +393,13 @@ func _on_start_dev_pressed(performance_capture: bool = false) -> void:
 	# Weapon is currently the same as Style in your project; keep it aligned.
 	var weapon_id := style_id
 
-	# Start a fresh attempt (doesn't require an active save slot)
-	Global.start_new_attempt()
-
-	# Override player setup
+	# Apply the selected setup before the new ledger chooses its native Core.
 	Global.selected_race_id = race_id
 	Global.selected_style_id = style_id
 	Global.selected_weapon_id = weapon_id
+
+	# Start a fresh attempt (doesn't require an active save slot)
+	Global.start_new_attempt()
 
 	# Jump into any segment for testing
 	Global.attempt_segment = seg
@@ -448,13 +448,13 @@ func _on_start_dev_hub_pressed() -> void:
 	# Weapon is currently the same as Style in your project; keep it aligned.
 	var weapon_id := style_id
 
-	# Start a fresh attempt
-	Global.start_new_attempt()
-
-	# Override player setup
+	# Apply the selected setup before the new ledger chooses its native Core.
 	Global.selected_race_id = race_id
 	Global.selected_style_id = style_id
 	Global.selected_weapon_id = weapon_id
+
+	# Start a fresh attempt
+	Global.start_new_attempt()
 
 	# Start testing from any segment
 	Global.attempt_segment = seg

@@ -43,6 +43,7 @@ func _run() -> void:
 	_test_legacy_and_owned()
 	_test_production_start()
 	await _test_details()
+	_test_developer_launches()
 	print("AscensionCityPacingTest: %d passed, %d failed" % [_passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
@@ -140,3 +141,33 @@ func _test_details() -> void:
 	screen.close()
 	screen.queue_free()
 	await get_tree().process_frame
+
+
+func _test_developer_launches() -> void:
+	var menu_scene := load("res://ui/screens/MainMenu.tscn") as PackedScene
+	var menu := menu_scene.instantiate()
+	add_child(menu)
+	menu.call("_populate_dev_lists")
+	var routes: Array[String] = []
+	var capture_route := func(route: String) -> void: routes.append(route)
+	Global.balance_scene_requested.connect(capture_route)
+	# Invoke the real launch handlers without advancing their deferred scene
+	# transitions. The suite quits synchronously after these assertions.
+	for launch in [
+		{"previous": "melee", "chosen": "ranged", "starter": "BR01", "handler": "_on_start_dev_pressed"},
+		{"previous": "ranged", "chosen": "magic", "starter": "DT01", "handler": "_on_start_dev_hub_pressed"},
+	]:
+		Global.selected_style_id = String(launch["previous"])
+		var style_options := menu.get("opt_style") as OptionButton
+		for index in range(style_options.item_count):
+			if String(style_options.get_item_metadata(index)) == String(launch["chosen"]):
+				style_options.select(index)
+		menu.call(StringName(launch["handler"]))
+		var ledger := Global.ascension_ledger()
+		_check(Global.selected_style_id == String(launch["chosen"]) and Global.selected_weapon_id == String(launch["chosen"]), "%s applies the requested character and weapon style" % launch["handler"])
+		_check(ledger.native_core() == String(launch["chosen"]) and ledger.has_core(String(launch["chosen"])) and ledger.price(String(launch["starter"])) == 0, "%s starts its ledger with the newly selected Core and free native starter" % launch["handler"])
+		_check(int(ledger.state.get("city_pacing_revision", 0)) == 1, "%s retains new-attempt pacing" % launch["handler"])
+	_check(routes == [Global.PATH_GAME, Global.PATH_HUB_WORLD], "developer game and Hub launches still request their intended destinations")
+	Global.balance_scene_requested.disconnect(capture_route)
+	PerformanceFlightRecorder.set_enabled(false)
+	menu.free()
