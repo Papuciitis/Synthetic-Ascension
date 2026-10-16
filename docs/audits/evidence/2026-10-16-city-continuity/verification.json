@@ -1,0 +1,616 @@
+{
+  "engine": "Godot 4.7.1 stable console",
+  "focused": [
+    {
+      "label": "focused pacing final",
+      "log": "AscensionCityPacingTest-1792123738198.log",
+      "scene": "res://tools/tests/AscensionCityPacingTest.tscn",
+      "user_arguments": [],
+      "exit": 0,
+      "summaries": [
+        "AscensionCityPacingTest: 624 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "focused terminal boundary final",
+      "log": "CityContinuationTest-1792124778897.log",
+      "scene": "res://tools/tests/CityContinuationTest.tscn",
+      "user_arguments": [],
+      "exit": 0,
+      "summaries": [
+        "CityContinuationTest: 62 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "focused UI final",
+      "log": "PeePContinuationUiTest-1792125171509.log",
+      "scene": "res://tools/tests/PeePContinuationUiTest.tscn",
+      "user_arguments": [],
+      "exit": 0,
+      "summaries": [
+        "PeePContinuationUiTest: 18 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "real quit",
+      "log": "PeePContinuationUiTest-1792124338669.log",
+      "scene": "res://tools/tests/PeePContinuationUiTest.tscn",
+      "user_arguments": [
+        "--peep-quit-check"
+      ],
+      "exit": 0,
+      "summaries": [
+        "PeePContinuationUiTest quit action: 5 passed, 0 failed"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "farming baseline",
+      "log": "CityFarmingExperimentsTest-1792123849154.log",
+      "scene": "res://tools/tests/CityFarmingExperimentsTest.tscn",
+      "user_arguments": [],
+      "exit": 0,
+      "summaries": [
+        "CityFarmingExperimentsTest: 42 passed, 0 failed; args=[]"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "drop only",
+      "log": "CityFarmingExperimentsTest-1792123897418.log",
+      "scene": "res://tools/tests/CityFarmingExperimentsTest.tscn",
+      "user_arguments": [
+        "--city-no-overtime-drop-bonus"
+      ],
+      "exit": 0,
+      "summaries": [
+        "CityFarmingExperimentsTest: 42 passed, 0 failed; args=[\"--city-no-overtime-drop-bonus\"]"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "rarity only",
+      "log": "CityFarmingExperimentsTest-1792123948542.log",
+      "scene": "res://tools/tests/CityFarmingExperimentsTest.tscn",
+      "user_arguments": [
+        "--city-no-overtime-rarity-bonus"
+      ],
+      "exit": 0,
+      "summaries": [
+        "CityFarmingExperimentsTest: 42 passed, 0 failed; args=[\"--city-no-overtime-rarity-bonus\"]"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "Gospel only",
+      "log": "CityFarmingExperimentsTest-1792124030019.log",
+      "scene": "res://tools/tests/CityFarmingExperimentsTest.tscn",
+      "user_arguments": [
+        "--city-gospel-strongest-rewards"
+      ],
+      "exit": 0,
+      "summaries": [
+        "CityFarmingExperimentsTest: 44 passed, 0 failed; args=[\"--city-gospel-strongest-rewards\"]"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "all flags + pending freeze",
+      "log": "CityFarmingExperimentsTest-1792124584894.log",
+      "scene": "res://tools/tests/CityFarmingExperimentsTest.tscn",
+      "user_arguments": [
+        "--city-no-overtime-drop-bonus",
+        "--city-no-overtime-rarity-bonus",
+        "--city-gospel-strongest-rewards"
+      ],
+      "exit": 0,
+      "summaries": [
+        "CityFarmingExperimentsTest: 48 passed, 0 failed; args=[\"--city-no-overtime-drop-bonus\", \"--city-no-overtime-rarity-bonus\", \"--city-gospel-strongest-rewards\"]"
+      ],
+      "diagnostics": []
+    },
+    {
+      "label": "real OpenGL preview",
+      "log": "PeePContinuationPreview-1792125211800.log",
+      "scene": "res://tools/dev/PeePContinuationPreview.tscn",
+      "user_arguments": [],
+      "exit": 0,
+      "summaries": [],
+      "diagnostics": []
+    }
+  ],
+  "source_range": "629f941..a8edc65",
+  "engine_executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+  "headless_arguments": [
+    "--headless",
+    "--path",
+    ".",
+    "<scene>",
+    "[-- <user_arguments>]"
+  ],
+  "render_arguments": [
+    "--path",
+    ".",
+    "res://tools/dev/PeePContinuationPreview.tscn",
+    "--windowed",
+    "--position",
+    "-10000,-10000",
+    "--resolution",
+    "1280x720",
+    "--rendering-method",
+    "gl_compatibility",
+    "--rendering-driver",
+    "opengl3"
+  ],
+  "working_tree_context": "Tests ran in the existing shared worktree with pre-existing unrelated item, character, README/history and test edits present; those edits were preserved and excluded from task commits.",
+  "combined": {
+    "started": "2026-10-16T04:34:32.098Z",
+    "source_head": "a8edc65",
+    "processes": [
+      {
+        "name": "AscensionCityPacingTest",
+        "exit": 0,
+        "elapsed_ms": 39171,
+        "log": "AscensionCityPacingTest-1792125272556.log",
+        "summaries": [
+          "AscensionCityPacingTest: 624 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 624,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "CityContinuationTest",
+        "exit": 0,
+        "elapsed_ms": 41534,
+        "log": "CityContinuationTest-1792125311612.log",
+        "summaries": [
+          "CityContinuationTest: 62 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 62,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "PeePContinuationUiTest",
+        "exit": 0,
+        "elapsed_ms": 31701,
+        "log": "PeePContinuationUiTest-1792125353314.log",
+        "summaries": [
+          "PeePContinuationUiTest: 18 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 18,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "CityFarmingExperimentsTest",
+        "exit": 0,
+        "elapsed_ms": 35301,
+        "log": "CityFarmingExperimentsTest-1792125385080.log",
+        "summaries": [
+          "CityFarmingExperimentsTest: 46 passed, 0 failed; args=[]"
+        ],
+        "diagnostics": [],
+        "passed": 46,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionLedgerTest",
+        "exit": 0,
+        "elapsed_ms": 25997,
+        "log": "AscensionLedgerTest-1792125420269.log",
+        "summaries": [
+          "71 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 71,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionLedgerV5RankTest",
+        "exit": 0,
+        "elapsed_ms": 28227,
+        "log": "AscensionLedgerV5RankTest-1792125446261.log",
+        "summaries": [
+          "74 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 74,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionScreenTest",
+        "exit": 0,
+        "elapsed_ms": 33670,
+        "log": "AscensionScreenTest-1792125474426.log",
+        "summaries": [
+          "AscensionScreenTest: 39 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 39,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionPresetTest",
+        "exit": 0,
+        "elapsed_ms": 127285,
+        "log": "AscensionPresetTest-1792125508181.log",
+        "summaries": [
+          "AscensionPresetTest: 246 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 246,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionRuntimeSafetyTest",
+        "exit": 0,
+        "elapsed_ms": 28616,
+        "log": "AscensionRuntimeSafetyTest-1792125635559.log",
+        "summaries": [
+          "AscensionRuntimeSafetyTest: 21 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 21,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "StoryDirectorTest",
+        "exit": 0,
+        "elapsed_ms": 51262,
+        "log": "StoryDirectorTest-1792125664091.log",
+        "summaries": [
+          "StoryDirectorTest: 166 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 166,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AttemptResetTest",
+        "exit": 0,
+        "elapsed_ms": 22107,
+        "log": "AttemptResetTest-1792125715291.log",
+        "summaries": [
+          "AttemptResetTest: 18 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 18,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "SaveMigrationMatrixTest",
+        "exit": 0,
+        "elapsed_ms": 24580,
+        "log": "SaveMigrationMatrixTest-1792125737384.log",
+        "summaries": [
+          "SaveMigrationMatrixTest: 34 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: Save slot 97 was written by a newer build (save_version 6 > 1, game ); loading best-effort."
+        ],
+        "passed": 34,
+        "failed": 0,
+        "diagnostic_classification": [
+          {
+            "line": "WARNING: Save slot 97 was written by a newer build (save_version 6 > 1, game ); loading best-effort.",
+            "expected_fixture": true
+          }
+        ]
+      },
+      {
+        "name": "DoctrineThesisTest",
+        "exit": 0,
+        "elapsed_ms": 20947,
+        "log": "DoctrineThesisTest-1792125761949.log",
+        "summaries": [
+          "DoctrineThesisTest: 89 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 89,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "AscensionDoctrineTest",
+        "exit": 0,
+        "elapsed_ms": 21968,
+        "log": "AscensionDoctrineTest-1792125782935.log",
+        "summaries": [
+          "AscensionDoctrineTest: 36 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 36,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "GameOverFallbackTest",
+        "exit": 0,
+        "elapsed_ms": 53019,
+        "log": "GameOverFallbackTest-1792125804960.log",
+        "summaries": [
+          "GameOverFallbackTest: 3 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "ERROR: end_run: game_over_ui_scene is null; returning to the main menu"
+        ],
+        "passed": 3,
+        "failed": 0,
+        "diagnostic_classification": [
+          {
+            "line": "ERROR: end_run: game_over_ui_scene is null; returning to the main menu",
+            "expected_fixture": true
+          }
+        ]
+      },
+      {
+        "name": "AuditClosureTest",
+        "exit": 3221225477,
+        "elapsed_ms": 22764,
+        "log": "AuditClosureTest-1792125858010.log",
+        "summaries": [
+          "AuditClosureTest: 93 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+          "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)"
+        ],
+        "passed": 93,
+        "failed": 0,
+        "diagnostic_classification": [
+          {
+            "line": "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+            "expected_fixture": true
+          },
+          {
+            "line": "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)",
+            "expected_fixture": true
+          }
+        ]
+      },
+      {
+        "name": "BalanceExitDiagnosticsTest",
+        "exit": 0,
+        "elapsed_ms": 21850,
+        "log": "BalanceExitDiagnosticsTest-1792125880612.log",
+        "summaries": [
+          "BalanceExitDiagnosticsTest: 35 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 35,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "ManifestationSystemTest",
+        "exit": 0,
+        "elapsed_ms": 25566,
+        "log": "ManifestationSystemTest-1792125902487.log",
+        "summaries": [
+          "ManifestationSystemTest: 162 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 162,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "ManifestationPairBehaviourTest",
+        "exit": 0,
+        "elapsed_ms": 24798,
+        "log": "ManifestationPairBehaviourTest-1792125928282.log",
+        "summaries": [
+          "ManifestationPairBehaviourTest: 237 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 237,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "FollowerEconomyV3Test",
+        "exit": 0,
+        "elapsed_ms": 42223,
+        "log": "FollowerEconomyV3Test-1792125952865.log",
+        "summaries": [
+          "FollowerEconomyV3Test: 134 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 134,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "ItemEconomyV2Test",
+        "exit": 0,
+        "elapsed_ms": 21977,
+        "log": "ItemEconomyV2Test-1792125995163.log",
+        "summaries": [
+          "ItemEconomyV2Test: 32 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 32,
+        "failed": 0,
+        "diagnostic_classification": []
+      },
+      {
+        "name": "ScriptParseAuditTest",
+        "exit": 0,
+        "elapsed_ms": 48983,
+        "log": "ScriptParseAuditTest-1792126017087.log",
+        "summaries": [
+          "ScriptParseAuditTest: 509 passed, 0 failed (checked 509 scripts across 8 roots)"
+        ],
+        "diagnostics": [],
+        "passed": 509,
+        "failed": 0,
+        "diagnostic_classification": []
+      }
+    ],
+    "status": "21 clean process exits; AuditClosureTest crashed after its passing assertion summary and requires a retry"
+  },
+  "post_review": {
+    "source_head": "d69ae19",
+    "processes": [
+      {
+        "name": "AuditClosureTest",
+        "exit": 0,
+        "elapsed_ms": 41458,
+        "log": "AuditClosureTest-1792126372387.log",
+        "summaries": [
+          "AuditClosureTest: 93 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+          "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)",
+          "ERROR: 5 RID allocations of type 'P12GodotShape2D' were leaked at exit.",
+          "ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.",
+          "ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.",
+          "ERROR: 92 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.",
+          "ERROR: 10 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.",
+          "WARNING: 626 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+          "ERROR: 450 resources still in use at exit (run with --verbose for details).",
+          "ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE"
+        ],
+        "passed": 93,
+        "failed": 0
+      },
+      {
+        "name": "AuditClosureTest",
+        "exit": 3221225477,
+        "elapsed_ms": 32220,
+        "log": "AuditClosureTest-1792126413801.log",
+        "summaries": [
+          "AuditClosureTest: 93 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+          "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)"
+        ],
+        "passed": 93,
+        "failed": 0
+      },
+      {
+        "name": "AscensionCityPacingTest",
+        "exit": 0,
+        "elapsed_ms": 38836,
+        "log": "AscensionCityPacingTest-1792126445795.log",
+        "summaries": [
+          "AscensionCityPacingTest: 624 passed, 0 failed"
+        ],
+        "diagnostics": [],
+        "passed": 624,
+        "failed": 0
+      },
+      {
+        "name": "ScriptParseAuditTest",
+        "exit": 0,
+        "elapsed_ms": 79627,
+        "log": "ScriptParseAuditTest-1792126487112.log",
+        "summaries": [
+          "ScriptParseAuditTest: 509 passed, 0 failed (checked 509 scripts across 8 roots)"
+        ],
+        "diagnostics": [],
+        "passed": 509,
+        "failed": 0
+      }
+    ]
+  },
+  "baseline_comparison": {
+    "source_head": "629f941",
+    "clean_source_status": true,
+    "setup": "Detached isolated checkout; ignored texture/audio imports and class/UID cache copied to avoid a full editor import. Source scripts/resources loaded from the baseline checkout.",
+    "processes": [
+      {
+        "name": "AuditClosureTest",
+        "exit": 3221225477,
+        "elapsed_ms": 34949,
+        "log": "AuditClosureBaseline-1792126816796.log",
+        "summaries": [
+          "AuditClosureTest: 93 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+          "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)"
+        ],
+        "passed": 93,
+        "failed": 0
+      },
+      {
+        "name": "AuditClosureTest",
+        "exit": 0,
+        "elapsed_ms": 29501,
+        "log": "AuditClosureBaseline-1792126851772.log",
+        "summaries": [
+          "AuditClosureTest: 93 passed, 0 failed"
+        ],
+        "diagnostics": [
+          "WARNING: [EnemyDrops] no drop: spec=audit_closure_fixture item_pickup_scene unassigned scene=res://core/actors/enemy/enemy.tscn",
+          "WARNING: [WorldDropSpawner] inventory router missing: /root/InvRouter not found; world drops and bag routing are disabled (first consumer=AuditClosureTest)",
+          "ERROR: 5 RID allocations of type 'P12GodotShape2D' were leaked at exit.",
+          "ERROR: 1 RID allocations of type 'N13RendererDummy15MaterialStorage11DummyShaderE' were leaked at exit.",
+          "ERROR: 1 RID allocations of type 'N13RendererDummy9DummyMeshE' were leaked at exit.",
+          "ERROR: 92 RID allocations of type 'PN13RendererDummy14TextureStorage12DummyTextureE' were leaked at exit.",
+          "ERROR: 10 RID allocations of type 'PN18TextServerAdvanced12FontAdvancedE' were leaked at exit.",
+          "WARNING: 625 ObjectDB instances were leaked at exit (run with `--verbose` for details).",
+          "ERROR: 449 resources still in use at exit (run with --verbose for details).",
+          "ERROR: Pages in use exist at exit in PagedAllocator: N12VariantPools11BucketSmallE"
+        ],
+        "passed": 93,
+        "failed": 0
+      }
+    ]
+  },
+  "final_continuation": {
+    "source_head": "d69ae19",
+    "scene": "res://tools/tests/CityContinuationTest.tscn",
+    "log": "CityContinuationTest-1792126278960.log",
+    "exit": 0,
+    "passed": 92,
+    "failed": 0,
+    "diagnostics": []
+  },
+  "final_review": {
+    "whole_change": "one P2 developer launch mutation found",
+    "correction": "d69ae19",
+    "scoped_review": "addressed; zero unaddressed or new material findings"
+  },
+  "summary": {
+    "relevant_suites_run": 22,
+    "clean_exit_suites": 21,
+    "assertion_failures": 0,
+    "known_limitation": "AuditClosureTest reports 93/0 but intermittently crashes at shutdown; its exit0 retries report resource leaks. Both outcomes reproduced at pre-change629f941. It is not counted as a clean pass.",
+    "human_playtest": "Still due for city pacing, emotional continuity, stocked-profile farming and late-city performance."
+  },
+  "excluded_runs": [
+    {
+      "log": "CityContinuationTest-1792126129745.log",
+      "reason": "Invalid final-fix fixture used Inventory.slots instead of Inventory.items: 62/0 and exit0 were accompanied by a SCRIPT ERROR. Excluded from RED/GREEN evidence; corrected fixture then valid RED73/19 and GREEN92/0."
+    },
+    {
+      "kind": "editor import",
+      "reason": "A full editor import timed out; not counted as successful. Actual runtime parse509/0 and rendered scene checks provide the recorded evidence."
+    },
+    {
+      "kind": "initial StoryDirector baseline",
+      "reason": "Process session lost before result; excluded. Later confirmed166/0 runs are recorded."
+    }
+  ],
+  "audit_exit_assessment": "The same post-summary native crash and exit0 resource leaks reproduced in the clean pre-change629f941 checkout. Bounded static inspection found no new missing Node.free; broad world/UI resource teardown occurs after one frame. No introduced root cause demonstrated; no unrelated speculative patch made."
+}

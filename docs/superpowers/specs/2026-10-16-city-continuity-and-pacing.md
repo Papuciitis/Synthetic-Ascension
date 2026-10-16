@@ -36,7 +36,7 @@ Proposed brief voice: "Ah. There you are." / "That doesn't have to be the end." 
 
 ## Farming experiments
 
-Keep three independent opt-in developer variants, default off: omit only overtime's extra item-drop probability; omit only overtime's rarity bonus; aggregate Gospel Power/Luck using only the strongest instance while preserving every copy's pressure and cleanup. Preserve ordinary drop chance, Luck, Resonance, segment/heat quality, other Manifestations, defiance and duplicate guards. Select via documented launch arguments and record selected variants in capture metadata. No player-facing technical settings.
+Keep three independent opt-in developer variants, default off: omit only overtime's extra item-drop probability; omit only overtime's rarity bonus; aggregate Gospel rewards using the strongest Power contribution and strongest Luck contribution independently while preserving every copy's pressure and cleanup. Different copies may supply those two maxima; no single winner is ranked by an invented cross-stat score. Preserve ordinary drop chance, Luck, Resonance, segment/heat quality, other Manifestations, defiance and duplicate guards. Select via documented launch arguments and record selected variants in capture metadata. No player-facing technical settings.
 
 Compare deterministic fixed fixtures, fresh and wealthy profiles, and one/two/three unequal Gospel instances. Do not describe these mechanical probes as a human encounter playtest. Aggregate sustain and late encounter changes remain follow-up experiments, since the evidence does not isolate a healing source or justify more population.
 

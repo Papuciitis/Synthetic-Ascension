@@ -2024,3 +2024,42 @@ These are implementation checks; a human encounter playtest remains due.
 `docs/audits/2026-10-14-augment-combinations.md` records capped/weak rank
 progression, inherited Crown/parry overlap concerns and targeted future
 curse combinations. Those proposals have not been shipped as new rules.
+
+## 2026-10-16 — First-city continuity and pacing prototype
+
+The user's October 11 normal run reached its desired engine early and cleared
+seven Rites without interruption. This pass makes a reversible city test,
+with evidence and lore provenance in
+`docs/audits/2026-10-16-city-continuity-and-pacing.md`.
+
+- Fresh attempts save pacing revision 1: Revelations require completed S8,
+  their mutations completed S9. Older ledgers keep their existing access.
+  These thresholds are a design bet, not established optimums.
+- Ordinary reconstruction keeps the attempt. Terminal defeat now leaves a
+  durable PeeP decision, including through menu/quit/reload; acceptance
+  closes the failed story once and begins one fresh city attempt.
+- Discoveries, owned augment identities/preferences and exact Stash items
+  endure. Carried gear, Followers, tree purchases and temporary augment
+  development reset. Method/Doctrine/Apotheosis commitments endure as IDs
+  and reactivate through their normal effects only after S3/S6/S9.
+- PeeP's presentation uses short dialogue and the existing dark/gold theme,
+  with an explicit retained/reset summary and small-window navigation.
+  PeeP prevents death becoming final; creator and mechanism remain unchosen.
+- Three independent developer launch flags test overtime drop probability,
+  overtime rarity and strongest Gospel reward contributions. Defaults are
+  off and captures record each selection. Gospel pressure and defiance stay
+  intact; this is not a claim that unbounded farming is solved.
+
+Segment 10 remains escape from Area I. Godhood and opposition outside the
+city remain the longer direction; this pass adds no outside-city content.
+A successful strong build should be allowed to leave. No forced death,
+automatic enemy catch-up or increased population is introduced.
+
+Verification: 21 relevant suites exited successfully; the final continuation
+regression passed 92/0 and gameplay parse audit 509/0. AuditClosureTest
+completed 93/0 but has a native teardown crash/resource-leak failure also
+reproduced at pre-change commit629f941. It is recorded as an existing
+limitation, not a clean pass. Five actual UI captures were inspected;
+independent reviews and the final scoped correction review are approved.
+Human playtesting is still owed for emotional continuity, late-city
+purchase satisfaction and matched fresh-versus-stocked farming comparisons.
