@@ -431,6 +431,12 @@ func goto_scene(path: String) -> void:
 	scrim.show_for(_scene_title(path), get_tree().current_scene)
 	await get_tree().process_frame
 	await get_tree().process_frame
+	# Terminal defeat may arrive while the loading frames render. Resolve
+	# again at the actual switch so an older Hub/Game request cannot bypass it.
+	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+		path = PATH_PEEP if ResourceLoader.exists(PATH_PEEP) else PATH_MAIN_MENU
+		get_tree().paused = false
+		balance_scene_requested.emit(path)
 	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("note_scene_change"):
 		PerformanceFlightRecorder.note_scene_change(path.get_file().get_basename())
 	var err := get_tree().change_scene_to_file(path)

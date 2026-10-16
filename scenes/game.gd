@@ -32,7 +32,7 @@ var _opening_sequence: OpeningSequenceController = null
 func _enter_tree() -> void:
 	if Global != null and Global.has_pending_peep():
 		# Child world processing cannot revive the saved terminal snapshot.
-		process_mode = Node.PROCESS_MODE_DISABLED
+		_disable_failed_world()
 		return
 	if Global == null or not Global.debug_dev_segment:
 		return
@@ -426,22 +426,27 @@ func _present_segment1_overlay(completion: bool) -> void:
 	overlay.queue_free()
 
 func present_reconstruction(cost: int, remaining: int) -> void:
+	# Terminal intent must be durable before any card can suspend the death
+	# sequence. PeeP is the terminal presentation; ordinary rebuilding keeps
+	# its existing card and Follower cost.
+	if remaining <= 0:
+		end_run()
+		return
 	if _tutorial_modals == null:
 		return
-	if remaining > 0:
-		# The body varies with the death (StoryLines.RECONSTRUCTION); the
-		# Followers lost / remaining lines are kept as they were.
-		await _tutorial_modals.present_card_and_wait(
-			"THE PATTERN COLLAPSES",
-			StoryDirector.reconstruction_body(cost, remaining),
-			"RECONSTRUCTION"
-		)
-	else:
-		await _tutorial_modals.present_card_and_wait(
-			"THE PATTERN CANNOT BE RESTORED",
-			"No one remains who can complete the sequence.\n\nThis Ascension ends here.",
-			"ASCENSION FAILED"
-		)
+	await _tutorial_modals.present_card_and_wait(
+		"THE PATTERN COLLAPSES",
+		StoryDirector.reconstruction_body(cost, remaining),
+		"RECONSTRUCTION"
+	)
+
+
+func _disable_failed_world() -> void:
+	process_mode = Node.PROCESS_MODE_DISABLED
+	# Explicitly disable descendants too: ALWAYS nodes ignore their parent's
+	# mode, and the root scheduler checks an actor's own mode before dispatch.
+	for node in find_children("*", "", true, false):
+		node.process_mode = Node.PROCESS_MODE_DISABLED
 
 
 func end_run() -> void:
@@ -454,9 +459,6 @@ func end_run() -> void:
 	# Nothing that slowed the clock (a Revelation, a hit-stop) can expire it
 	# once the tree is paused; the run's end always hands back real time.
 	Engine.time_scale = 1.0
-	var projectile_manager: ProjectileSimulationManager = get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
-	if projectile_manager != null:
-		projectile_manager.clear_for_run_end()
 
 	var is_die_die: bool = (Global != null and Global.followers <= 0)
 	# Read before on_attempt_failed_die_die() resets the attempt snapshot.
@@ -467,7 +469,19 @@ func end_run() -> void:
 			is_die_die,
 		])
 	if is_die_die and Global != null:
+		_disable_failed_world()
 		Global.begin_peep_continuation()
+
+	var projectile_manager: ProjectileSimulationManager = get_node_or_null("/root/ProjectileManager") as ProjectileSimulationManager
+	if projectile_manager != null:
+		projectile_manager.clear_for_run_end()
+
+	if is_die_die and Global != null:
+		# Root-owned DOT ticks must not finish kills after the world is frozen.
+		# This is ephemeral combat cleanup after the durable outcome snapshot.
+		var enemy_status := get_node_or_null("/root/EnemyStatus") as EnemyStatusService
+		if enemy_status != null:
+			enemy_status.clear_all()
 		get_tree().paused = false
 		Global.goto_resume()
 		return

@@ -2,6 +2,28 @@ extends Node
 
 # Behavioral contract: removing pending persistence revives a dead city; replaying
 # a saved commitment twice duplicates its benefits. All saves are throwaway.
+# Keep boot unrelated to the boundary out of the fixture. These inherited
+# methods remain the production Game presentation/end_run implementation.
+class DeathGame:
+	extends "res://scenes/game.gd"
+	func _ready() -> void:
+		_tutorial_modals = TUTORIAL_MODAL_CONTROLLER.new()
+		add_child(_tutorial_modals)
+
+class WorldStepWitness:
+	extends Node2D
+	var frames := 0
+	var physics_frames := 0
+	var scheduled_steps := 0
+	func _process(_delta: float) -> void:
+		frames += 1
+	func _physics_process(_delta: float) -> void:
+		physics_frames += 1
+	func simulation_tier() -> int:
+		return 1
+	func run_scheduled_simulation(_delta: float) -> void:
+		scheduled_steps += 1
+
 var _passes := 0
 var _failures := 0
 var _boundaries: Array[StringName] = []
@@ -32,7 +54,10 @@ func _run() -> void:
 	_test_pending()
 	_test_commitments()
 	_test_legacy()
+	await _test_real_reconstruction()
+	await _test_real_terminal_death()
 	await _test_routes()
+	await _test_scheduled_route()
 	_finish()
 
 func _fresh() -> SaveData:
@@ -155,6 +180,94 @@ func _test_legacy() -> void:
 	Global.apply_save(legacy)
 	_check(Global.attempt_doctrine_stage_ids.get(&"method") == &"doctrine_method_open_circuit" and is_equal_approx(Global.attempt_stat_delta.haste, 0.2), "existing profile commitment never overwrites an ongoing active choice")
 
+func _death_game() -> DeathGame:
+	var game := DeathGame.new()
+	var player := (load("res://core/actors/player/player.tscn") as PackedScene).instantiate()
+	player.name = "Player"
+	game.add_child(player)
+	var ui := Node.new()
+	ui.name = "UI"
+	game.add_child(ui)
+	var hud := Control.new()
+	hud.name = "HUD"
+	ui.add_child(hud)
+	add_child(game)
+	return game
+
+func _dismiss_reconstruction_card(game: Node) -> void:
+	for child in game.get_children():
+		if child is TutorialCardOverlay:
+			child.call("_dismiss")
+
+func _test_real_reconstruction() -> void:
+	_fresh()
+	Global.attempt_segment = 2
+	Global.set_followers(100)
+	var seed := Global.attempt_world_seed
+	var game := _death_game()
+	var player := game.get_node("Player")
+	player.call("die")
+	_check(not bool(Global.call("has_pending_peep")) and Global.followers == 80 and get_tree().paused, "real paid reconstruction keeps its ordinary modal without PeeP")
+	_dismiss_reconstruction_card(game)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_check(not bool(player.get("is_dead")) and Global.attempt_world_seed == seed and not get_tree().paused, "real paid reconstruction restores the same attempt after its card")
+	game.queue_free()
+	await get_tree().process_frame
+
+func _test_real_terminal_death() -> void:
+	_fresh()
+	Global.attempt_segment = 2
+	Global.set_followers(1)
+	var game := _death_game()
+	var witness := WorldStepWitness.new()
+	game.add_child(witness)
+	var always_witness := WorldStepWitness.new()
+	always_witness.process_mode = Node.PROCESS_MODE_ALWAYS
+	game.add_child(always_witness)
+	var bucket: Array = [[witness.get_instance_id()]]
+	EnemySimulationScheduler.call("_run_next_group", bucket, 0, 0.016, 1, &"mid_steps")
+	_check(witness.scheduled_steps == 1, "the real scheduler dispatches the live scene witness before defeat")
+	var spawn := EnemySpawnState.new(&"continuity_burn_fixture", "", Vector2.ZERO, 100.0, 0.0, 8.0, 0)
+	var handle: int = EnemyWorld.create_enemy(spawn)
+	_check(EnemyStatus.apply_burn(handle, 1, 10.0, 0.05, 1.0), "the real status service holds an active burn before defeat")
+	var player := game.get_node("Player")
+	player.call("die")
+	_check(bool(Global.call("has_pending_peep")) and Global.followers == 0, "real terminal death saves pending before any presentation can await input")
+	Global.save_current_profile()
+	var disk := ResourceLoader.load(SaveManager._slot_path(0), "", ResourceLoader.CACHE_MODE_IGNORE) as SaveData
+	_check(disk != null and Global.resume_scene_for(disk) == "res://ui/screens/PeePContinuation.tscn", "quit during the real death boundary saves continuation instead of resumable gameplay")
+	if disk != null:
+		Global.apply_save(disk)
+		SaveManager.current_save = disk
+	_check(bool(Global.call("has_pending_peep")) and Global.attempt_segment == 2, "reload before dismissing any old terminal card cannot revive the dead city")
+	EnemySimulationScheduler.call("_run_next_group", bucket, 0, 0.016, 1, &"mid_steps")
+	_check(witness.scheduled_steps == 1, "root enemy scheduler cannot manually step the disabled failed world")
+	EnemyStatus.advance(0.5)
+	_check(is_equal_approx(EnemyWorld.get_health(handle), 100.0), "root status service cannot damage enemies or award a post-defeat kill")
+	var old_terminal_cards := 0
+	for child in game.get_children():
+		if child is TutorialCardOverlay:
+			old_terminal_cards += 1
+	_check(old_terminal_cards == 0, "terminal defeat routes directly to PeeP without a second failure modal")
+	# Cleanup the pre-fix modal after observing persistence, so RED can finish.
+	_dismiss_reconstruction_card(game)
+	var before := witness.frames
+	var always_before := always_witness.frames
+	var physics_before := witness.physics_frames
+	var always_physics_before := always_witness.physics_frames
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_check(game.process_mode == Node.PROCESS_MODE_DISABLED and witness.frames == before and always_witness.frames == always_before and witness.physics_frames == physics_before and always_witness.physics_frames == always_physics_before, "failed world including ALWAYS descendants stops during asynchronous scene routing")
+	EnemyWorld.remove_enemy(handle, &"test_cleanup")
+	EnemyStatus.clear_all()
+	game.queue_free()
+	get_tree().paused = false
+	await get_tree().process_frame
+
 func _test_routes() -> void:
 	var save := _fresh()
 	Global.attempt_segment = 5
@@ -206,6 +319,23 @@ func _test_routes() -> void:
 	await get_tree().process_frame
 	game.queue_free()
 	_check(bool(Global.call("has_pending_peep")) and save.total_runs == runs, "menu and scene changes retain the unresolved pending decision")
+
+func _test_scheduled_route() -> void:
+	_fresh()
+	Global.pending_augment_pick = false
+	Global.goto_hub_shop()
+	# The Hub target has been chosen, but its scene switch is still awaiting
+	# the loading frames. A lethal boundary must supersede that old target.
+	Global.set_followers(0)
+	Global.begin_peep_continuation()
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var current := get_tree().current_scene
+	var expected := "res://ui/screens/PeePContinuation.tscn" if ResourceLoader.exists("res://ui/screens/PeePContinuation.tscn") else Global.PATH_MAIN_MENU
+	_check(current != null and current.scene_file_path == expected and Global.has_pending_peep(), "an already scheduled Hub switch rechecks pending at the actual transition")
+	get_tree().paused = false
 
 func _finish() -> void:
 	SaveManager.current_save = null
