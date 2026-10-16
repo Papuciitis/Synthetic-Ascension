@@ -74,6 +74,9 @@ var _embers: CPUParticles2D
 
 
 func _ready() -> void:
+	if Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	if races_grid == null or styles_box == null:
 		push_error("Base: RacesGrid / StylesGrid not found. Check base.tscn node names.")
 		return
@@ -443,6 +446,9 @@ func _on_back_to_saves_pressed() -> void:
 
 
 func _on_start_run_pressed() -> void:
+	if Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	_commit_selection()
 	if mortal_name_edit == null or mortal_name_edit.text.strip_edges() == "":
 		return

@@ -30,6 +30,10 @@ var _opening_sequence: OpeningSequenceController = null
 
 
 func _enter_tree() -> void:
+	if Global != null and Global.has_pending_peep():
+		# Child world processing cannot revive the saved terminal snapshot.
+		process_mode = Node.PROCESS_MODE_DISABLED
+		return
 	if Global == null or not Global.debug_dev_segment:
 		return
 	# Strip normal-world children before their _ready callbacks can allocate
@@ -44,6 +48,9 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	get_tree().paused = false
+	if Global != null and Global.has_pending_peep():
+		Global.goto_resume()
+		return
 	_tutorial_modals = TUTORIAL_MODAL_CONTROLLER.new() as TutorialModalController
 	add_child(_tutorial_modals)
 
@@ -460,8 +467,10 @@ func end_run() -> void:
 			is_die_die,
 		])
 	if is_die_die and Global != null:
-		# Wipe attempt snapshot; keep meta augments/upgrades.
-		Global.on_attempt_failed_die_die()
+		Global.begin_peep_continuation()
+		get_tree().paused = false
+		Global.goto_resume()
+		return
 
 	# The tree is already paused above; without a game-over UI there would be
 	# no input path to unpause it, so fall back to the menu instead.

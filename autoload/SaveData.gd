@@ -69,6 +69,10 @@ const CURRENT_SAVE_VERSION := 1
 # closed, the last account and the best segment, plus this attempt's story
 # facts. One plain Dictionary so new story state never needs a migration.
 @export var meta_story: Dictionary = {}
+# An unresolved terminal defeat and committed city interludes are profile data.
+# Additive empty defaults preserve old profiles without a migration write.
+@export var meta_pending_peep: Dictionary = {}
+@export var meta_city_commitments: Dictionary = {}
 
 # Opening Chronicle state (profile-wide). Missing fields on older .tres saves
 # receive these defaults when Godot loads the updated SaveData script.

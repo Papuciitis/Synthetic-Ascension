@@ -55,6 +55,8 @@ func _clean(boundary: String) -> void:
 
 
 func _run() -> void:
+	SaveManager.current_save = null
+	Global.set("meta_city_commitments", {})
 	_dirty()
 	_check(not Global.attempt_major_choice_taken_ids.is_empty(), "the first attempt inscribed a Method plate")
 	Global.start_new_attempt()
@@ -64,14 +66,13 @@ func _run() -> void:
 	Global.on_attempt_failed_die_die()
 	_clean("a failed attempt")
 
-	# The softlock itself: the next run's segment 3 must still deal plates.
+	# The next run reactivates its committed Method at the milestone.
 	_dirty()
 	Global.on_attempt_failed_die_die()
 	Global.start_new_attempt()
 	Global.on_segment_completed(3)
-	var plates: Array = Global.get_major_choice_offer(3)
-	_check(plates.size() == 3, "the next run's Method stage deals three plates again (%d)" % plates.size())
-	_check(plates.size() > 0 and Global.apply_major_choice((plates[0] as MajorChoiceDef).id), "and one can be inscribed, so the Hub's departure opens")
+	_check(Global.attempt_doctrine_stage_ids.has(&"method"), "the next run reactivates its committed Method after segment 3")
+	_check(Global.attempt_major_choice_taken_ids.size() == 1, "only one Method is inscribed, so the Hub departure opens")
 	_check(not Global.pending_big_choice, "nothing is left pending")
 
 	print("AttemptResetTest: %d passed, %d failed" % [_passes, _failures])

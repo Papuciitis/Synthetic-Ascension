@@ -24,6 +24,9 @@ class Driver:
 		StoryDirector.cards_override = 0
 		Global.start_new_attempt()
 		Global.attempt_segment = 2
+		# This fixture exercises the ordinary UI fallback; terminal failure now
+		# has its own durable PeeP route.
+		Global.set_followers(100)
 		Global.pending_augment_pick = false
 		_phase = 1
 		Global.goto_game()

@@ -28,6 +28,7 @@ const PATH_MAIN_MENU := UI_DIR + "/screens/MainMenu.tscn"
 const PATH_SAVE_SELECT := UI_DIR + "/screens/SaveSelect.tscn"
 const PATH_BASE := UI_DIR + "/screens/base.tscn"
 const PATH_GAME := SCENES_DIR + "/game.tscn"
+const PATH_PEEP := UI_DIR + "/screens/PeePContinuation.tscn"
 const PATH_HUB_SHOP := UI_DIR + "/screens/HubShop.tscn"
 ## The walkable between-segment hub (2026-09-25 handoff, Phase 5); the old
 ## HubShop screen remains as its embedded trade panel.
@@ -283,6 +284,9 @@ var grimoire_entries: Array[String] = []
 var library_discoveries: Array[String] = []
 var library_read_entries: Array[String] = []
 var library_target_key: String = ""
+var meta_pending_peep: Dictionary = {}
+var meta_city_commitments: Dictionary = {}
+var _accepting_peep: bool = false
 var _loaded_dice_last_ms: int = -1000000
 
 
@@ -411,6 +415,13 @@ func _scene_title(path: String) -> String:
 
 
 func goto_scene(path: String) -> void:
+	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
+		path = PATH_PEEP
+	if path == PATH_PEEP:
+		get_tree().paused = false
+		# Preserve the pending choice even when its presentation asset is unavailable.
+		if not ResourceLoader.exists(PATH_PEEP):
+			path = PATH_MAIN_MENU
 	balance_scene_requested.emit(path)
 	# Scene changes are the natural safe point for any deferred combat autosave.
 	flush_pending_save()
@@ -445,6 +456,9 @@ func goto_base() -> void:
 	goto_scene(PATH_BASE)
 
 func goto_game() -> void:
+	if has_pending_peep():
+		goto_scene(PATH_PEEP)
+		return
 	var am := get_node_or_null("/root/AudioManager")
 	if am != null:
 		am.call("to_game")
@@ -457,6 +471,9 @@ func goto_hub_shop() -> void:
 	goto_scene(PATH_HUB_WORLD)
 
 func goto_resume() -> void:
+	if has_pending_peep():
+		goto_scene(PATH_PEEP)
+		return
 	var am := get_node_or_null("/root/AudioManager")
 	if am != null:
 		am.call("to_game")
@@ -474,6 +491,8 @@ func goto_resume() -> void:
 ## mapping: empty and legacy full-screen-shop targets resolve to the walkable
 ## hub, its compatible successor, preserving the same pending state.
 func resume_scene_for(save: SaveData) -> String:
+	if not save.meta_pending_peep.is_empty():
+		return PATH_PEEP
 	var path: String = save.attempt_resume_scene
 	if path == "" or path == PATH_HUB_SHOP:
 		return PATH_HUB_WORLD
@@ -2476,6 +2495,8 @@ func apply_major_choice(choice_id: StringName) -> bool:
 		attempt_major_choice_taken_ids.append(choice_id)
 	if attempt_pending_doctrine_stage != StringName():
 		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
+		if _is_city_commitment_stage(attempt_pending_doctrine_stage):
+			meta_city_commitments[String(attempt_pending_doctrine_stage)] = String(choice_id)
 	if def.family_id != StringName():
 		var held := doctrine_family_count(def.family_id)
 		if held >= DoctrineFamilies.THESIS_AT:
@@ -2708,6 +2729,8 @@ func claim_loot(id: int) -> void:
 	request_autosave()
 
 func apply_save(save: SaveData) -> void:
+	meta_pending_peep = save.meta_pending_peep.duplicate(true)
+	meta_city_commitments = save.meta_city_commitments.duplicate(true)
 	balance_attempt_boundary.emit(&"save_loaded")
 	_suppress_autosave = true
 	# If anything below aborts, the suppression must not silently disable
@@ -3044,6 +3067,7 @@ func apply_save(save: SaveData) -> void:
 		run_bag = null
 		set_followers(0)
 
+	_import_city_commitments()
 	_backfill_library()
 	for saved_key in save.meta_library_read_entries:
 		library_mark_read(saved_key)
@@ -3085,6 +3109,8 @@ func write_save(save: SaveData) -> void:
 	save.meta_library_read_entries = library_read_entries.duplicate()
 	save.meta_library_target_key = library_target_key
 	save.meta_story = StoryDirector.state_for_save()
+	save.meta_pending_peep = meta_pending_peep.duplicate(true)
+	save.meta_city_commitments = meta_city_commitments.duplicate(true)
 	save.meta_stash = meta_stash
 	save.opening_full_intro_seen = opening_full_intro_seen
 	save.opening_response_id = String(opening_response_id)
@@ -3244,6 +3270,9 @@ func write_save(save: SaveData) -> void:
 
 	_suppress_autosave = false
 func save_current_profile(validated: bool = true) -> void:
+	# Acceptance writes one coherent final snapshot, never a half-reset account.
+	if _accepting_peep:
+		return
 	if SaveManager == null or SaveManager.current_save == null:
 		return
 	_cancel_autosave_timer()
@@ -3256,6 +3285,8 @@ func record_new_attempt(save: SaveData) -> void:
 		save.total_runs = maxi(0, save.total_runs) + 1
 
 func start_new_attempt() -> void:
+	if has_pending_peep() and not _accepting_peep:
+		return
 	balance_attempt_boundary.emit(&"restarted")
 	# Attempt resets (die-die behavior)
 	attempt_active = true
@@ -3367,6 +3398,7 @@ func on_segment_completed(completed_segment: int) -> void:
 		attempt_pending_doctrine_stage = next_doctrine_stage
 		attempt_big_choice_source_segment = completed_segment
 		attempt_major_choice_offer_ids.clear()
+		_reactivate_city_commitment(next_doctrine_stage)
 	attempt_witness_used_segment = 0
 	attempt_doctrine_threat_debt = 0.0
 
@@ -3414,7 +3446,75 @@ func get_major_choice_context_segment() -> int:
 		return attempt_big_choice_source_segment
 	return attempt_segment
 
+## A terminal defeat is kept intact until the player explicitly continues.
+## Store facts from this attempt; a previous account's epitaph is never used.
+func has_pending_peep() -> bool:
+	return not meta_pending_peep.is_empty()
+
+
+func pending_peep_summary() -> Dictionary:
+	return meta_pending_peep.duplicate(true)
+
+
+func begin_peep_continuation() -> void:
+	if has_pending_peep() or not attempt_active or followers > 0:
+		return
+	var story_attempt := StoryDirector.attempt()
+	meta_pending_peep = {
+		"name": mortal_name,
+		"segment": maxi(1, attempt_segment),
+		"attempt_seed": attempt_world_seed,
+		"attempt_id": str(attempt_world_seed),
+		"facts": {
+			"congregation": attempt_congregation,
+			"reconstructions": int(story_attempt.get("recon", 0)),
+			"death": (story_attempt.get("death", {}) as Dictionary).duplicate(true),
+		},
+	}
+	save_current_profile()
+
+
+func accept_peep_continuation() -> bool:
+	if not has_pending_peep() or _accepting_peep:
+		return false
+	_accepting_peep = true
+	# The failed boundary closes the story while all failed-attempt facts exist.
+	on_attempt_failed_die_die()
+	meta_pending_peep.clear()
+	start_new_attempt()
+	_accepting_peep = false
+	save_current_profile()
+	return true
+
+
+func _is_city_commitment_stage(stage: StringName) -> bool:
+	return stage in [&"method", &"doctrine", &"apotheosis"]
+
+
+func _import_city_commitments() -> void:
+	if not meta_city_commitments.is_empty() or not attempt_active:
+		return
+	for stage in [&"method", &"doctrine", &"apotheosis"]:
+		var choice := str(attempt_doctrine_stage_ids.get(stage, ""))
+		if not choice.is_empty():
+			meta_city_commitments[String(stage)] = choice
+
+
+func _reactivate_city_commitment(stage: StringName) -> void:
+	if not _is_city_commitment_stage(stage):
+		return
+	var choice := StringName(str(meta_city_commitments.get(String(stage), "")))
+	var definition := major_choice_db.get_def(choice)
+	if definition == null or definition.stage != stage or not definition.is_doctrine_complete():
+		return
+	# Reuse the ordinary effect, history, family and autosave path exactly once.
+	attempt_major_choice_offer_ids = [choice]
+	apply_major_choice(choice)
+
+
 func on_attempt_failed_die_die() -> void:
+	if has_pending_peep() and not _accepting_peep:
+		return
 	balance_attempt_boundary.emit(&"failed")
 	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
 	attempt_active = false
