@@ -1,0 +1,23 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: announced arrivals have a production raster cue component
+PASS: blink cue preserves committed world position in translated scene
+PASS: blink arrival is an actual visible raster sprite
+PASS: blink has its own arrival artwork
+PASS: blink lifetime cannot expire while paused
+PASS: blink essential arrival survives flash Off
+PASS: blink progress cannot shrink or move the committed footprint
+PASS: blink cue has finite pause-aware lifetime
+PASS: summon cue preserves committed world position in translated scene
+PASS: summon arrival is an actual visible raster sprite
+PASS: summon has its own arrival artwork
+PASS: summon lifetime cannot expire while paused
+PASS: summon essential arrival survives flash Off
+PASS: summon progress cannot shrink or move the committed footprint
+PASS: summon cue has finite pause-aware lifetime
+PASS: blink and Runner arrival do not borrow the same icon
+PASS: source cancellation immediately hides and removes pending arrival
+PASS: low FPS cannot expire arrival before its gameplay physics duration
+PASS: render-only callback cannot spend an arrival's gameplay fuse
+PASS: accepted gameplay physics duration releases the finite arrival cue
+BossArrivalSpritesTest: 20 passed, 0 failed
