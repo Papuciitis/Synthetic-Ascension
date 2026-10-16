@@ -140,8 +140,21 @@ func _run() -> void:
 	_check(not recorder.is_recording(), "loading a save closes the observed session")
 	recorder.end_capture("suspended")
 	recorder.flush_reports()
+	# A terminal defeat routes to PeeP first; its failed boundary waits for the
+	# player's decision, so the PeeP request itself must close as a failure.
+	Global.attempt_active = true
+	Global.set_followers(0)
+	recorder.begin_gameplay(player)
+	var third_path: String = recorder.capture_directory
+	Global.begin_peep_continuation()
+	Global.balance_scene_requested.emit(Global.PATH_PEEP)
+	_check(not recorder.is_recording(), "the PeeP route closes the dead run's capture")
+	recorder.flush_reports()
+	var terminal: Variant = JSON.parse_string(FileAccess.get_file_as_string(third_path.path_join("summary.json")))
+	_check(terminal is Dictionary and terminal.outcome == "failed", "a terminal defeat records outcome failed, not suspended")
+	Global.meta_pending_peep.clear()
 	player.free()
-	for folder in [capture_path, second_path]:
+	for folder in [capture_path, second_path, third_path]:
 		for file_name in ["events.jsonl", "summary.json", "report.md", "segments.csv"]:
 			DirAccess.remove_absolute(folder.path_join(file_name))
 		DirAccess.remove_absolute(folder)
