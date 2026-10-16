@@ -102,6 +102,11 @@ static func _avoid_short_tail(plain: String, start: int, cut: int) -> int:
 		var word_start := cursor + 1
 		if word_start <= start:
 			return cut
+		# A cut between the two newlines of a paragraph break starts the scan
+		# after its own paragraph, where no earlier word exists. Without this
+		# the candidate never moves and the reader freezes.
+		if word_start >= candidate:
+			return cut
 		candidate = word_start
 		if candidate == paragraph_start:
 			return candidate

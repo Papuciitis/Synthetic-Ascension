@@ -81,7 +81,18 @@ func _run() -> void:
 	await _test_pages(paragraphs, 22, 350.0, 255.0, "paragraphs and adjacent tag boundaries")
 	await _test_pages(("[lb]a[rb] é é 👩‍🔬 \n").repeat(35), 33, 160.0, 170.0, "literal brackets and Unicode")
 	await _test_primer_paragraph_endings()
+	_test_cut_inside_paragraph_break()
 	_finish()
+
+
+## A paragraph that exactly fills its leaf can leave the cut between the two
+## newlines of its break; a short next paragraph ("— Bren", "Conduit") then
+## used to spin the short-tail scan forever.
+func _test_cut_inside_paragraph_break() -> void:
+	for text: String in ["The archive keeps it, still an error.\n\n— Bren", "[b]Set[/b] pieces.\n\nConduit"]:
+		var between := text.find("\n\n") + 1
+		var cut: int = _helper._avoid_short_tail(text, 0, between)
+		_check(cut == between, "a cut inside a paragraph break returns instead of hanging (%d)" % cut)
 
 
 func _test_primer_paragraph_endings() -> void:
