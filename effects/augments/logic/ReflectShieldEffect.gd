@@ -93,6 +93,9 @@ var _cd_max: float = 0.40
 
 var _active_left: float = 0.0
 var _active_elapsed: float = 0.0
+# Captured when a ward actually grants protection, so a rank/Facet change
+# cannot shorten that protection's recovery gap or invent a longer window.
+var _recast_lock_left: float = 0.0
 var _reflected_this_cast: int = 0
 var _perfect_used_this_cast: bool = false
 
@@ -107,7 +110,7 @@ func setup(p: Node) -> void:
 
 func _ready() -> void:
 	set_process(true)
-	_cd_max = active_base_cd
+	_cd_max = _cooldown_duration()
 	_resolve_action_from_slot()
 	_report_cd(true)
 
@@ -132,6 +135,7 @@ func _process(dt: float) -> void:
 
 	if _cd > 0.0:
 		_cd = max(_cd - dt, 0.0)
+	_recast_lock_left = maxf(_recast_lock_left - dt, 0.0)
 
 	# parry window update
 	if _active_left > 0.0:
@@ -151,14 +155,14 @@ func _process(dt: float) -> void:
 	# Mirror Aegis: the ward opens itself on a rhythm, between presses.
 	if transcended:
 		_ward_t += dt
-		if _ward_t >= AEGIS_WARD_EVERY and _active_left <= 0.0:
+		if _ward_t >= AEGIS_WARD_EVERY and _active_left <= 0.0 and _recast_lock_left <= 0.0:
 			_ward_t = 0.0
 			_open_window()
 
 	_report_cd(false)
 
 func _try_activate() -> void:
-	if _cd > 0.0:
+	if _cd > 0.0 or _recast_lock_left > 0.0:
 		return
 
 	# The window grants invulnerability, so the cooldown never ends inside
@@ -166,7 +170,7 @@ func _try_activate() -> void:
 	# cooldown or lengthen the window, and without this floor a pressed
 	# shield chained into unbroken invulnerability (from Lv.6 with Long
 	# Guard, Lv.8 without).
-	_cd_max = maxf(Global.doctrine_active_cooldown(active_base_cd), parry_window + PARRY_GAP)
+	_cd_max = _cooldown_duration()
 	_cd = _cd_max
 	Global.notify_active_augment_used(int(get_meta("hud_slot_index", -1)))
 	_open_window()
@@ -176,9 +180,16 @@ func _try_activate() -> void:
 const PARRY_GAP := 0.1
 
 
+func _cooldown_duration() -> float:
+	return maxf(Global.doctrine_active_cooldown(active_base_cd), parry_window + PARRY_GAP)
+
+
 func _open_window() -> void:
 	_active_left = parry_window
 	_active_elapsed = 0.0
+	_recast_lock_left = parry_window + PARRY_GAP
+	# Mirror's automatic ward protects too: a manual press waits for its gap.
+	_cd = maxf(_cd, _recast_lock_left)
 	_reflected_this_cast = 0
 	_perfect_used_this_cast = false
 	_was_active = true
@@ -344,7 +355,7 @@ func _reflect_one(p: Node2D, is_perfect: bool) -> void:
 		p.queue_free()
 
 func _on_perfect_reflect(pos: Vector2, reflected_dmg: float) -> void:
-	_cd = min(_cd, perfect_cd_after)
+	_cd = maxf(minf(_cd, perfect_cd_after), _recast_lock_left)
 	_spawn_flash(vfx_perfect_flash_scene, pos)
 
 	# Riposte strengthens the reflected round, not the zap: the zap reads the
@@ -379,9 +390,8 @@ var _bulwark_last_ms: int = -1000000
 func _bulwark_engine() -> void:
 	if not Global.augment_duo_active(AugmentDuos.BULWARK_ENGINE):
 		return
-	# A perfect parry drops the shield to a 0.1 s cooldown, so a bullet
-	# stream could be parried ten times a second: the mend is rate-limited
-	# like Loaded Dice's recruit.
+	# The shield can still perfect-parry several times a second; the mend
+	# is rate-limited like Loaded Dice's recruit.
 	var now := Time.get_ticks_msec()
 	if now - _bulwark_last_ms < int(AugmentDuos.value(AugmentDuos.BULWARK_ENGINE, "gap_ms", 1000.0)):
 		return
@@ -546,5 +556,5 @@ func _apply_level_scaling_rs() -> void:
 	perfect_zap_damage_mult = _base_perfect_zap_damage_mult_rs
 
 	# Keep internal cooldown max in sync (important if level changes while running).
-	_cd_max = active_base_cd
-	_cd = minf(_cd, _cd_max)
+	_cd_max = maxf(_cooldown_duration(), _recast_lock_left)
+	_cd = maxf(minf(_cd, _cd_max), _recast_lock_left)
