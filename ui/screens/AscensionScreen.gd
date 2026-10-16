@@ -714,6 +714,9 @@ func _show(id: String) -> void:
 	parts.append(id)
 	_meta.text = "   ·   ".join(parts)
 	_rules.text = String(node.get("rules", node.get("tooltip", "")))
+	var purchase_segment := ledger.city_purchase_segment(id)
+	if purchase_segment > 0:
+		_rules.text += "\n\nPurchase requirement: complete segment %d." % purchase_segment
 	for child in _buttons.get_children():
 		child.queue_free()
 	for child in _gate_row.get_children():

@@ -3304,7 +3304,9 @@ func start_new_attempt() -> void:
 	attempt_doctrine_rules.clear()
 	attempt_doctrine_events.clear()
 	_reset_attempt_choice_state()
-	attempt_ascension = {}
+	# Only a genuinely new attempt adopts city pacing. Lazy initialization
+	# and older saved ledgers retain revision 0 through the ledger defaults.
+	attempt_ascension = AscensionLedger.fresh_state(String(selected_style_id), new_run_tree_version, 1)
 	_ascension_ledger = null
 	attempt_witness_used_segment = 0
 	attempt_doctrine_threat_debt = 0.0

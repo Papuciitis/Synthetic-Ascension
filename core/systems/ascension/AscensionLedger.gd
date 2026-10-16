@@ -27,9 +27,10 @@ var state: Dictionary
 var price_multiplier: float = 1.0
 
 
-static func fresh_state(native_core_id: String, version: String = "v4") -> Dictionary:
+static func fresh_state(native_core_id: String, version: String = "v4", pacing_revision: int = 0) -> Dictionary:
 	return {
 		"tree_version": version,
+		"city_pacing_revision": pacing_revision,
 		"native_core": native_core_id,
 		"cores": [native_core_id],
 		"owned": {"core.%s" % native_core_id: 1},
@@ -243,6 +244,19 @@ func scaled_price(listed: int) -> int:
 
 # ---------------------------------------------------------------- purchase rules
 
+## Saved opt-in acquisition pacing; never consulted by equipment or effects.
+## Missing markers default to revision 0, preserving ongoing legacy attempts.
+func city_purchase_segment(id: String) -> int:
+	if int(state.get("city_pacing_revision", 0)) < 1:
+		return 0
+	match db.kind(id):
+		"revelation":
+			return 8
+		"revelation_mutation":
+			return 9
+	return 0
+
+
 func adjacent_owned(id: String) -> bool:
 	for other in db.neighbours(id):
 		if owns(other):
@@ -265,6 +279,9 @@ func can_buy(id: String, followers: int, chosen_core: String = "") -> Dictionary
 		if kind == "local" and rank(id) < db.max_rank(id):
 			return _can_buy_rank(id, followers)
 		return _no("already owned")
+	var required_segment := city_purchase_segment(id)
+	if int(state.get("segments_completed", 0)) < required_segment:
+		return _no("complete segment %d before purchasing this %s" % [required_segment, kind.replace("_", " ")])
 	var core := db.core_of(id)
 	if not core.is_empty() and not has_core(core):
 		return _no("no access to the %s Core" % core)
