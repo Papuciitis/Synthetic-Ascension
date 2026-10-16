@@ -111,15 +111,19 @@ func _show_tooltip(a: AugmentData, art_form: Dictionary = {}) -> void:
 		var aid: StringName = a.id
 		if aid != StringName():
 			lvl = Global.get_augment_level(aid)
-	if art_form.is_empty():
-		art_form = {
+	# The live form only keys the refresh. An empty form must reach the tooltip
+	# as empty: that is what keeps its run context (Corruption, Duos, the held
+	# Catalyst and the run's Transcend level) on the HUD.
+	var shown_form := art_form
+	if shown_form.is_empty():
+		shown_form = {
 			"facet": Global.augment_facet(a.id) if Global != null else &"",
 			"transcended": Global.is_augment_transcended(a.id) if Global != null else false,
 		}
-	if a == _current_augment and art_form == _current_art_form and lvl == _current_level:
+	if a == _current_augment and shown_form == _current_art_form and lvl == _current_level:
 		return
 	_current_augment = a
-	_current_art_form = art_form.duplicate()
+	_current_art_form = shown_form.duplicate()
 	_current_level = lvl
 
 	if _tooltip.has_method("show_augment"):
