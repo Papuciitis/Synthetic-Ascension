@@ -1,0 +1,34 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: simultaneous hazards own independent collision shapes
+PASS: a configured charge crumb keeps its actual 26 px collision radius
+PASS: setup after add updates a slam's actual 135 px collision radius
+PASS: a small Hurtbox outside the true circle is not hit by an invented 32 px allowance
+PASS: an already-overlapping wide Hurtbox receives the configured damage exactly once
+PASS: adding before setup never causes a default-origin hit
+PASS: a late-configured short hazard expires at its authored lifetime
+PASS: a paused hazard does not spend its lifetime behind the pause menu
+PASS: hazard lifetime resumes when gameplay resumes
+PASS: a mine still shows its real blast footprint well after the old quarter-second pop
+PASS: the persistent mine warning is at the configured world position
+PASS: a mine's fuse pauses with its warning
+PASS: a late-configured mine uses its 0.65 s fuse instead of the default 1.10 s timer
+PASS: a translated current scene keeps the mine warning at its configured world origin
+PASS: mine explosion impact matches the warned world origin under a translated current scene (expected (1200.0, 900.0), actual (1200.0, 900.0))
+PASS: the real mine explosion damage circle matches its warning under a translated current scene
+PASS: a late-configured beam telegraphs at its actual starting angle
+PASS: the beam cannot hurt during anticipation
+PASS: pausing does not advance the beam into its damaging phase
+PASS: the active beam remains visibly drawn after the old telegraph effect would have vanished
+PASS: a player inside the configured beam receives its unchanged 16 damage
+PASS: a simultaneous wide beam does not widen another beam or hit outside its rotated rectangle
+PASS: simultaneous beams own independent rectangle resources
+PASS: a mine cannot explode into damage after its caster dies
+PASS: a beam cancels instead of keeping its dead caster's damage active
+PASS: a damage circle cancels when its caster dies before contact
+PASS: the shared encounter attack scope is available
+PASS: a bound damaging footprint remains visible for the entire active hazard
+PASS: scope cancellation also removes a visible active footprint
+PASS: a live returning caster invalidates its bound mine before damage
+PASS: scope cancellation removes active hazards without damage
+BossHazardGeometryTest: 31 passed, 0 failed

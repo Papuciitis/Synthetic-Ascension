@@ -1,9 +1,13 @@
 extends Node2D
-## Persistent ground bounds from the existing pixel VFX kit. A standalone
+## Persistent ground bounds assembled from authored raster sprites. A standalone
 ## warning owns its duration; a mine/beam child is driven by that attack's clock.
 
 const Scope = preload("res://scenes/world/bosses/BossAttackScope.gd")
 const WARNING_COLOR := Color(1.0, 0.40, 0.20, 0.78)
+const SEAL_TEXTURE = preload("res://scenes/world/bosses/art/vfx/hazard_seal_v1.png")
+const BEAM_TEXTURE = preload("res://scenes/world/bosses/art/vfx/arcane_beam_body.tres")
+# Measured alpha >= 128 extent; source pixels remain unchanged.
+const SEAL_CONTENT_RADIUS := 570.1
 
 var _radius := 90.0
 var _length := 680.0
@@ -16,6 +20,7 @@ var _world_origin := Vector2.ZERO
 var _has_world_origin := false
 var _ring: Sprite2D
 var _fill: Sprite2D
+var _core: Sprite2D
 var _edges: Array[Sprite2D] = []
 
 
@@ -42,10 +47,13 @@ func configure_circle(radius: float) -> void:
 	_beam = false
 	_radius = maxf(0.0, radius)
 	_ensure_sprites()
-	var large := _radius > VfxKit.RING_LARGE_FROM
-	_ring.texture = VfxKit.texture("ring_large" if large else "ring")
-	_ring.scale = Vector2.ONE * _radius / (VfxKit.RING_LARGE_HALF if large else VfxKit.RING_HALF)
+	# Fine engraving needs room to read; tiny charge crumbs keep a simple ring.
+	var detailed := _radius >= 60.0
+	_ring.texture = SEAL_TEXTURE if detailed else VfxKit.texture("ring")
+	_ring.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR if detailed else CanvasItem.TEXTURE_FILTER_NEAREST
+	_ring.scale = Vector2.ONE * _radius / (SEAL_CONTENT_RADIUS if detailed else VfxKit.RING_HALF)
 	_ring.visible = true
+	_core.visible = false
 	_fill.texture = VfxKit.texture("disc")
 	_fill.position = Vector2.ZERO
 	_fill.scale = Vector2.ONE * _radius / VfxKit.DISC_HALF
@@ -60,13 +68,17 @@ func configure_beam(length: float, width: float) -> void:
 	_width = maxf(0.0, width)
 	_ensure_sprites()
 	_ring.visible = false
-	_fill.texture = VfxKit.texture("streak")
-	_fit_segment(_fill, Vector2.ZERO, Vector2(_length, 0.0), _width)
+	_fill.texture = BEAM_TEXTURE
+	_fill.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_fit_segment(_fill, Vector2.ZERO, Vector2(_length, 0.0), _width, BEAM_TEXTURE.get_height())
+	_core.texture = BEAM_TEXTURE
+	_core.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR
+	_fit_segment(_core, Vector2.ZERO, Vector2(_length, 0.0), _width * 0.40, BEAM_TEXTURE.get_height())
 	var half := _width * 0.5
 	var corners := [Vector2(0.0, -half), Vector2(_length, -half), Vector2(_length, half), Vector2(0.0, half)]
 	for i in range(4):
 		_edges[i].visible = true
-		_fit_segment(_edges[i], corners[i], corners[(i + 1) % 4], 2.0)
+		_fit_segment(_edges[i], corners[i], corners[(i + 1) % 4], 3.0)
 	set_progress(0.0)
 
 
@@ -82,8 +94,10 @@ func set_progress(value: float, active: bool = false) -> void:
 	for edge in _edges:
 		edge.modulate = edge_color
 	var fill_color := Color(0.78, 0.22, 1.0, 0.70) if active and _beam else _color
-	fill_color.a = AccessibilityPresentation.current_flash_alpha((0.70 if active else lerpf(0.16, 0.32, progress)) if _beam else (0.18 if active else lerpf(0.08, 0.16, progress)))
+	fill_color.a = AccessibilityPresentation.current_flash_alpha((0.85 if active else lerpf(0.30, 0.50, progress)) if _beam else (0.18 if active else lerpf(0.08, 0.16, progress)))
 	_fill.modulate = fill_color
+	_core.visible = _beam and active
+	_core.modulate = Color(0.96, 0.85, 1.0, AccessibilityPresentation.current_flash_alpha(0.85))
 
 
 func _process(delta: float) -> void:
@@ -108,6 +122,8 @@ func _ensure_sprites() -> void:
 		return
 	_fill = _sprite("Fill", "disc")
 	_ring = _sprite("Boundary", "ring_large")
+	_core = _sprite("Core", "streak")
+	_core.visible = false
 	for i in range(4):
 		_edges.append(_sprite("Edge%d" % i, "streak"))
 
@@ -121,9 +137,9 @@ func _sprite(label: String, texture_name: String) -> Sprite2D:
 	return sprite
 
 
-func _fit_segment(sprite: Sprite2D, from: Vector2, to: Vector2, width: float) -> void:
+func _fit_segment(sprite: Sprite2D, from: Vector2, to: Vector2, width: float, content_height: float = VfxKit.STREAK_CONTENT_H) -> void:
 	var direction := to - from
 	sprite.position = (from + to) * 0.5
 	sprite.rotation = direction.angle()
 	if sprite.texture != null:
-		sprite.scale = Vector2(direction.length() / float(sprite.texture.get_width()), width / VfxKit.STREAK_CONTENT_H)
+		sprite.scale = Vector2(direction.length() / float(sprite.texture.get_width()), width / content_height)
