@@ -107,7 +107,9 @@ func _run_full() -> void:
 	var resume_phase: int = int(Global.attempt_opening_phase)
 	if resume_phase <= Phase.HISTORICAL:
 		_set_phase(Phase.HISTORICAL)
+		_presentation.show_illustration(&"city")
 		await _presentation.present_historical(Global.mortal_name)
+		await _presentation.clear_illustration()
 		await get_tree().create_timer(0.35, true, false, true).timeout
 
 	if resume_phase <= Phase.ADMISSION:
@@ -139,8 +141,11 @@ func _run_full() -> void:
 			AudioManager.stop_all(false)
 		await _world.pulse()
 		await get_tree().create_timer(0.45, true, false, true).timeout
+		_presentation.show_illustration(&"synthesis")
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_AFTER_SYNTHESIS)
 		await _presentation.present_synthetic(OpeningSequenceData.SYNTHESIS_TITLE, OpeningSequenceData.SYNTHESIS_BODY)
+		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_PRESERVE_INTERVALS)
+		await _presentation.clear_illustration()
 		_level.opening_complete_synthesis()
 
 	if resume_phase <= Phase.CALIBRATION:
@@ -210,11 +215,14 @@ func _run_full() -> void:
 		_set_phase(Phase.BREN_SEPARATION)
 		var records_anchor := _level.get_opening_anchors().get("records", _anchor) as Vector2
 		_frame_position(records_anchor, true)
+		_presentation.show_illustration(&"records")
+		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_RECORDS_READY)
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, "%s\n\n%s" % [OpeningSequenceData.BREN_SEPARATION_1, OpeningSequenceData.BREN_SEPARATION_2])
 		await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.bren_final(Global.mortal_name))
 		_level.opening_complete_bren()
 		await _presentation.present_follower(OpeningSequenceData.FOLLOWER_BODY)
 		Global.opening_follower_explanation_seen = true
+		await _presentation.clear_illustration()
 
 func _run_admission_walk() -> void:
 	# Beats 1-2: the institution while it is still normal, then the first
@@ -234,20 +242,24 @@ func _run_admission_walk() -> void:
 		match reached_id:
 			&"admitted":
 				_set_player_lock(true, true)
+				_presentation.show_illustration(&"admission")
 				await _presentation.present_announcement(
 					OpeningSequenceData.ADMISSION_DESK_TITLE,
 					OpeningSequenceData.admission_desk_body(Global.mortal_name)
 				)
+				await _presentation.clear_illustration()
 				_set_player_lock(false, true)
 				_show_admission_guidance()
 			&"ward_flicker":
 				_set_player_lock(true, true)
+				_presentation.show_illustration(&"admission", Rect2(0.0, 0.2, 0.85, 0.65))
 				if SfxManager != null and SfxManager.has_method("play_ui"):
 					SfxManager.play_ui(&"ui_error")
 				await _presentation.present_announcement(
 					OpeningSequenceData.FLICKER_TITLE,
 					OpeningSequenceData.FLICKER_BODY
 				)
+				await _presentation.clear_illustration()
 				_set_player_lock(false, true)
 				_show_admission_guidance()
 			&"lab_door":
@@ -271,7 +283,9 @@ func _run_short() -> void:
 		AudioManager.stop_all(false)
 	await _world.pulse()
 	_level.opening_complete_short_or_skip()
+	_presentation.show_illustration(&"synthesis", Rect2(0.12, 0.25, 0.76, 0.65))
 	await _presentation.present_synthetic(OpeningSequenceData.SYNTHESIS_TITLE, OpeningSequenceData.SHORT_SYNTHESIS_BODY)
+	await _presentation.clear_illustration()
 
 func _run_skip() -> void:
 	_set_phase(Phase.BREN_SEPARATION)

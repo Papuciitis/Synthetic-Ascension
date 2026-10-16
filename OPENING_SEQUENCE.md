@@ -8,7 +8,7 @@ Area 1, Segment 1 now begins inside the existing handcrafted laboratory. The seq
 
 | Phase | Player action / presentation | Durable result |
 |---|---|---|
-| Historical | Two minimal dark-screen beats; mortal name substituted | Current phase saved |
+| Historical | Two illustrated historical cards; mortal name substituted | Current phase saved |
 | Admission | Walk the public admissions wing: desk registration, ward flicker, laboratory door; movement free, attack locked | Record-only admission milestones; phase saved |
 | Bren | One four-option response; a short reaction | `opening_response_id` saved |
 | Synthesis | Move to and activate nodes 0, 1 and 2 | Synthesis milestone and Resonance |
@@ -67,6 +67,14 @@ Attempt-scoped:
 The opening developer controls live in the developer console (`ui/widgets/PerformanceOverlay.gd`, OPENING MODE section), which calls into `DevSetCollisionTools`; `Global.debug_set_collision_tools` is a dead flag — only ever assigned `false`, never read (corrected 2026-08-30). They support full/short/skip, replay-next-run, fresh opening-state reset, a serialized legacy-save migration simulation, synthesis/target/construct/officer/death/Bren phase starts, all four response dispositions, and direct Segment 2/5/10 launches.
 
 ## Placeholders and extension points
+
+### Illustrated presentation added 16 October 2026
+
+Four unfinished painted stills now accompany the existing phases: the city before the alarm, admission, completed synthesis and Bren's records-conduit departure. The player still performs alignments, calibration, construct combat and deliberate resistance. Arrest still precedes lethal escalation. The three approved additional lines live in OpeningSequenceData; no save phases or rewards changed.
+
+OpeningPresentation loads one optional image at a time, retains it across a card group and releases it before world play. Admission's ward notice and the short synthesis reuse crops. Missing art leaves the text treatment usable. Cards bound their width and scroll vertically at small sizes, preserve readable fonts, and respect the shared PauseMenu without disabling intentionally paused hub dialogue.
+
+Style and source prompts: `assets/textures/story/opening/README.md`. The existing sound cues remain stand-ins; the proposed shift bell and conduit knock have not been added as final audio assets. Production UI captures and verification are recorded in `docs/audits/2026-10-16-painted-opening.md`.
 
 - Existing UI click, wardstone-complete, error and enemy-death sounds are restrained stand-ins for apparatus, pulse, alert and death emphasis. No new licensed audio was added.
 - Geometric targets and lattice drawing are temporary authored visuals suitable for low-end hardware; final apparatus/insignia art can replace presentation without changing sequence state.

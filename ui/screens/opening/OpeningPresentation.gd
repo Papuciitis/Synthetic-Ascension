@@ -32,8 +32,15 @@ const BOTTOM_MARGIN := 30.0
 static var _looks: Dictionary = {}
 
 var _shade: ColorRect
+var _illustration: TextureRect
+var _illustration_id: StringName = &""
+var _illustration_crop := Rect2()
+var _illustration_version := 0
+var _illustration_tween: Tween
 var _stage: Control
 var _panel: PanelContainer
+var _scroll: ScrollContainer
+var _column: VBoxContainer
 var _frame: Control
 var _eyebrow: Label
 var _title: Label
@@ -57,7 +64,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if not _revealing:
+	if not _revealing or _pause_owns_input():
 		return
 	var characters_per_second := Accessibility.current_typewriter_characters_per_second()
 	if is_inf(characters_per_second):
@@ -71,18 +78,95 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not _waiting or not _panel.visible:
+	if not _waiting or not _panel.visible or event.is_echo() or _pause_owns_input():
 		return
 	if event.is_action_pressed(&"ui_accept") or event.is_action_pressed(&"ui_cancel"):
 		if _revealing or not _has_choices:
 			advance()
+			get_viewport().set_input_as_handled()
+
+
+## Optional art belongs to a card group, not a saved phase or a gameplay lock.
+## Crop is a normalised source region; AtlasTexture avoids copying pixels.
+func show_illustration(id: StringName, crop: Rect2 = Rect2()) -> bool:
+	_illustration_version += 1
+	if _illustration_tween != null:
+		_illustration_tween.kill()
+	if id == _illustration_id and crop == _illustration_crop and _illustration.texture != null:
+		_illustration.visible = true
+		_illustration.modulate.a = 1.0
+		return true
+	var path := String(OpeningSequenceData.ILLUSTRATIONS.get(id, ""))
+	var texture: Texture2D = null
+	if not path.is_empty() and ResourceLoader.exists(path, "Texture2D"):
+		texture = load(path) as Texture2D
+	elif not path.is_empty() and FileAccess.file_exists(path):
+		# Source fallback also supports a fresh checkout before PNG import.
+		var source := Image.load_from_file(path)
+		if source != null and not source.is_empty():
+			texture = ImageTexture.create_from_image(source)
+	if texture == null:
+		_release_illustration()
+		return false
+	if crop.has_area():
+		var atlas := AtlasTexture.new()
+		atlas.atlas = texture
+		atlas.region = Rect2(crop.position * texture.get_size(), crop.size * texture.get_size())
+		texture = atlas
+	_illustration_id = id
+	_illustration_crop = crop
+	_illustration.texture = texture
+	_illustration.visible = true
+	_illustration.modulate.a = 0.0
+	_illustration_tween = create_tween()
+	_illustration_tween.tween_property(_illustration, "modulate:a", 1.0, Accessibility.current_motion_duration(0.2))
+	_update_shade()
+	return true
+
+
+func clear_illustration(duration: float = 0.2) -> void:
+	_illustration_version += 1
+	var version := _illustration_version
+	if _illustration_tween != null:
+		_illustration_tween.kill()
+	if _illustration.texture != null and duration > 0.0:
+		var hold := Accessibility.current_motion_duration(duration)
+		_illustration_tween = create_tween()
+		_illustration_tween.tween_property(_illustration, "modulate:a", 0.0, hold)
+		# A cancelled tween never emits finished. A bounded timer lets an old
+		# clear return harmlessly even if a new illustration supersedes it.
+		await get_tree().create_timer(hold, true, false, true).timeout
+	if version == _illustration_version:
+		_release_illustration()
+
+
+func _release_illustration() -> void:
+	_illustration.texture = null
+	_illustration.visible = false
+	_illustration_id = &""
+	_illustration_crop = Rect2()
+	_update_shade()
+
+
+func _update_shade() -> void:
+	if _style < 0:
+		return
+	var colour: Color = _look(_style)["shade"]
+	if _illustration.visible:
+		colour.a = minf(colour.a, 0.24)
+	_shade.color = colour
+
+
+func _pause_owns_input() -> bool:
+	var pause := get_viewport().find_child("PauseMenu", true, false)
+	return pause != null and (bool(pause.get("is_open")) or bool(pause.get("_leaving")))
 
 func present_historical(mortal_name: String) -> void:
 	await present_card(
 		Style.HISTORICAL,
 		"",
 		"",
-		"This is the earliest surviving account.",
+		OpeningSequenceData.HISTORICAL_PREFACE,
 		[],
 		"Continue"
 	)
@@ -110,6 +194,7 @@ func present_follower(body_value: String) -> void:
 	await present_card(Style.FOLLOWER, "HUMAN COMMITMENT", OpeningSequenceData.FOLLOWER_TITLE, body_value, [], "Continue")
 
 func present_card(style: int, eyebrow_value: String, title_value: String, body_value: String, choices: Array = [], button_text: String = "Continue") -> int:
+	hide_prompt()
 	_clear_choices()
 	_apply_style(style)
 	_eyebrow.text = eyebrow_value
@@ -128,6 +213,7 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 	_shade.visible = true
 	_waiting = true
 	_continue_button.text = button_text
+	_scroll.scroll_vertical = 0
 	_choices.visible = false
 	_continue_button.visible = _revealing or not _has_choices
 	if _has_choices:
@@ -140,8 +226,7 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 			OverlayKit.style_choice(button)
 			button.pressed.connect(_select_choice.bind(index))
 			_choices.add_child(button)
-	_panel.reset_size()
-	_place_panel()
+	_refit_panel()
 	# Once the new words are laid out, fit the card to them (a shorter card
 	# after a long one would otherwise keep the long one's height).
 	_refit_panel.call_deferred()
@@ -149,7 +234,7 @@ func present_card(style: int, eyebrow_value: String, title_value: String, body_v
 	if _revealing and is_inf(Accessibility.current_typewriter_characters_per_second()):
 		_complete_reveal()
 	elif _revealing or not _has_choices:
-		_continue_button.grab_focus()
+		_focus_card.call_deferred()
 	else:
 		_complete_reveal()
 	var result := -1
@@ -171,8 +256,17 @@ func _play_arrival(was_showing: bool) -> void:
 
 
 func _refit_panel() -> void:
-	if _panel == null or not _panel.visible:
+	if _panel == null or _column == null or not _panel.visible:
 		return
+	var view_size := get_viewport().get_visible_rect().size
+	var width := minf(PANEL_WIDTH, maxf(1.0, view_size.x - 32.0))
+	var content_width := maxf(1.0, width - 98.0)
+	_title.custom_minimum_size.x = content_width
+	_body.custom_minimum_size.x = content_width
+	_rule.custom_minimum_size.x = minf(380.0, content_width)
+	_panel.custom_minimum_size.x = width
+	_panel.size.x = width
+	_scroll.custom_minimum_size.y = minf(_column.get_combined_minimum_size().y, maxf(1.0, view_size.y - 86.0))
 	_panel.reset_size()
 	_place_panel()
 
@@ -182,14 +276,14 @@ func _refit_panel() -> void:
 func _place_panel() -> void:
 	if _panel == null:
 		return
-	var view_height := _stage.size.y if _stage.size.y > 0.0 else 1080.0
+	var view_size := get_viewport().get_visible_rect().size
 	var top := HISTORICAL_TOP if _style == Style.HISTORICAL else PANEL_TOP
-	var fitted := minf(top, view_height - BOTTOM_MARGIN - _panel.size.y)
-	if not is_equal_approx(_panel.position.y, fitted):
-		_panel.position.y = fitted
+	if _illustration.visible:
+		top = view_size.y * 0.62
+	_panel.position = Vector2((view_size.x - _panel.size.x) * 0.5, maxf(16.0, minf(top, view_size.y - 16.0 - _panel.size.y)))
 
 func advance() -> void:
-	if not _waiting:
+	if not _waiting or _pause_owns_input():
 		return
 	if _revealing:
 		_complete_reveal()
@@ -205,10 +299,45 @@ func _complete_reveal() -> void:
 	_reveal_progress = float(_body.get_total_character_count())
 	_choices.visible = _has_choices
 	_continue_button.visible = not _has_choices
-	if _has_choices and not _choices.get_children().is_empty():
-		(_choices.get_child(0) as Button).call_deferred("grab_focus")
-	elif not _has_choices:
-		_continue_button.call_deferred("grab_focus")
+	_refit_panel.call_deferred()
+	_focus_card.call_deferred()
+
+
+func _focus_card() -> void:
+	if not _waiting or not _panel.visible or _pause_owns_input():
+		return
+	if _scroll.get_v_scroll_bar().max_value > _scroll.get_v_scroll_bar().page:
+		_scroll.grab_focus()
+	elif _has_choices and not _revealing and _choices.get_child_count() > 0:
+		(_choices.get_child(0) as Button).grab_focus()
+	else:
+		_continue_button.grab_focus()
+
+
+func _reading_input(event: InputEvent) -> void:
+	if not _scroll.has_focus() or _revealing or _pause_owns_input():
+		return
+	if event.is_action_pressed(&"ui_up"):
+		_scroll.scroll_vertical = maxi(0, _scroll.scroll_vertical - 40)
+		_scroll.accept_event()
+		return
+	if event is InputEventKey and event.pressed and event.keycode in [KEY_PAGEUP, KEY_PAGEDOWN]:
+		var direction := -1 if event.keycode == KEY_PAGEUP else 1
+		_scroll.scroll_vertical += direction * int(_scroll.size.y * 0.8)
+		_scroll.accept_event()
+		return
+	if event.is_action_pressed(&"ui_down"):
+		var end := _scroll.get_v_scroll_bar().max_value - _scroll.get_v_scroll_bar().page
+		if _scroll.scroll_vertical < end:
+			_scroll.scroll_vertical += 40
+			_scroll.accept_event()
+			return
+	if event.is_action_pressed(&"ui_down") or event.is_action_pressed(&"ui_focus_next"):
+		if _has_choices and _choices.get_child_count() > 0:
+			(_choices.get_child(0) as Button).grab_focus()
+		else:
+			_continue_button.grab_focus()
+		_scroll.accept_event()
 
 func show_prompt(text_value: String) -> void:
 	var was_visible := _prompt.visible
@@ -240,7 +369,7 @@ func _hide_shade_after_frame() -> void:
 		_shade.visible = false
 
 func _select_choice(index: int) -> void:
-	if _waiting:
+	if _waiting and not _pause_owns_input():
 		choice_selected.emit(index)
 
 func _clear_choices() -> void:
@@ -323,7 +452,7 @@ func _apply_style(style: int) -> void:
 	_frame.visible = bool(look["frame"])
 	_frame.set("colour", look["frame_colour"])
 	_frame.set("glow", float(look["glow"]))
-	_shade.color = look["shade"] as Color
+	_update_shade()
 	var align: HorizontalAlignment = int(look["align"]) as HorizontalAlignment
 	OverlayKit.style_label(_eyebrow, &"caption", 14, look["eyebrow"] as Color)
 	OverlayKit.style_label(_title, StringName(look["title_font"]), int(look["title_size"]), look["title"] as Color)
@@ -341,6 +470,14 @@ func _build_ui() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = CARD_THEME
 	add_child(root)
+	_illustration = TextureRect.new()
+	_illustration.name = "Illustration"
+	_illustration.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_illustration.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_illustration.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_illustration.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_illustration.visible = false
+	root.add_child(_illustration)
 	_shade = ColorRect.new()
 	_shade.color = Color(0.008, 0.006, 0.005, 0.66)
 	_shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -352,12 +489,7 @@ func _build_ui() -> void:
 	_stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_stage)
 	_panel = PanelContainer.new()
-	_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	_panel.offset_left = -PANEL_WIDTH * 0.5
-	_panel.offset_right = PANEL_WIDTH * 0.5
-	_panel.offset_top = PANEL_TOP
-	_panel.offset_bottom = PANEL_TOP
-	_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
 	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
 	_stage.add_child(_panel)
 	_panel.resized.connect(_place_panel)
@@ -370,9 +502,18 @@ func _build_ui() -> void:
 	_frame = ArcaneFrameScript.new() as Control
 	_frame.set("inset", 6.0)
 	_panel.add_child(_frame)
-	var column := VBoxContainer.new()
+	_scroll = ScrollContainer.new()
+	_scroll.name = "Reading"
+	_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_scroll.follow_focus = true
+	_scroll.focus_mode = Control.FOCUS_ALL
+	_scroll.gui_input.connect(_reading_input)
+	margin.add_child(_scroll)
+	_column = VBoxContainer.new()
+	var column := _column
+	column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	column.add_theme_constant_override("separation", 9)
-	margin.add_child(column)
+	_scroll.add_child(column)
 	_eyebrow = Label.new()
 	column.add_child(_eyebrow)
 	_title = Label.new()
@@ -413,3 +554,4 @@ func _build_ui() -> void:
 	_prompt.add_theme_stylebox_override("normal", OverlayKit.shared(&"plate"))
 	_prompt.visible = false
 	root.add_child(_prompt)
+	_stage.resized.connect(_refit_panel)

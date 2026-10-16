@@ -1,0 +1,7 @@
+# Unfinished painted opening — production UI captures
+
+Captured with Godot 4.7.1 Compatibility on 16 October 2026 using `res://tools/dev/OpeningIllustrationPreview.tscn`. The fixture places real `OpeningPresentation` instances inside fixed-size SubViewports in an offscreen window. It calls the production historical, dialogue, institutional, synthetic and Follower presentation methods, with instant text for deterministic captures. No human profile or gameplay is opened.
+
+The four full-size images (`city`, `admission`, `synthesis`, `records`) are 1280×720. The historical reading/action pair, Follower and four-response views are 640×480. `short-reduced` is 960×540 with Reduced Motion enabled and the production short-mode crop. All nine PNGs were refreshed after review and visually inspected; text, action labels and the hidden admission guidance prompt match the production presenter.
+
+The capture process exited 0 and reported `OpeningIllustrationPreview: 0 failures`. Its bounds checks cover the card; the regression suite separately verifies incremental keyboard reading, focused response visibility, pause ownership and illustration lifetime. Captures establish static composition and layout, not live motion, final sound or human pacing. Art prompts and provenance are in `assets/textures/story/opening/README.md`; verification is recorded in `docs/audits/2026-10-16-painted-opening.md`.

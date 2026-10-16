@@ -5,6 +5,13 @@ class_name OpeningSequenceData
 ## scripts receive copy from here and never embed story dialogue.
 
 const HISTORICAL_EYEBROW := "ARCHIVAL RECORD — FIRST STABLE SYNTHESIS"
+const HISTORICAL_PREFACE := "This is the earliest surviving account.\n\nBefore the alarms, the city was finishing another shift."
+const ILLUSTRATIONS := {
+	&"city": "res://assets/textures/story/opening/city.png",
+	&"admission": "res://assets/textures/story/opening/admission.png",
+	&"synthesis": "res://assets/textures/story/opening/synthesis.png",
+	&"records": "res://assets/textures/story/opening/records.png",
+}
 const HISTORICAL_LINES: Array[String] = [
 	"Magic may be inherited.",
 	"Magic may be granted.",
@@ -22,6 +29,7 @@ const BREN_ROLE := "LATTICE SPECIALIST"
 const BREN_OPENING := "The ward lattice changed when you connected the third sequence."
 const BREN_BEFORE_SYNTHESIS := "Three alignments. Keep the intervals clean. Do not improvise until the array answers."
 const BREN_AFTER_SYNTHESIS := "It worked."
+const BREN_PRESERVE_INTERVALS := "Write down every interval. Someone else must be able to follow it."
 const BREN_BARRIER_1 := "That barrier recognises every registered discipline."
 const BREN_BARRIER_2 := "Or it did."
 const BREN_PROPAGATION := "It propagated into the ward network."
@@ -30,6 +38,7 @@ const BREN_OFFICER := "If they take it, they will erase everything."
 const BREN_WAIT := "They are closing the array. Decide before they decide for us."
 const BREN_AFTER_DEATH := "We cannot undo that."
 const BREN_SEPARATION_1 := "I'll take the original sequences through the records conduit."
+const BREN_RECORDS_READY := "The intervals are on these pages. I can still get them out."
 const BREN_SEPARATION_2 := "You draw containment toward the outer wing."
 const BREN_SHORT := "Same interval. Less ceremony. I kept the array ready."
 
