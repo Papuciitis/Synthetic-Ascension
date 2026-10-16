@@ -80,7 +80,7 @@ func _process(delta: float) -> void:
 	# Hysteresis on the callout only: a one-frame twitch really does cost the
 	# bonus, but it must not re-announce the rite twenty times a second.
 	if full and not _was_full:
-		popup("ANCHORED", Color(0.62, 0.84, 1.0, 1.0), 1.2)
+		popup("ANCHORED", Color(0.62, 0.84, 1.0, 1.0), 1.2, 0, [&"anchored"])
 		_was_full = true
 	elif s < RE_ANNOUNCE_BELOW:
 		_was_full = false

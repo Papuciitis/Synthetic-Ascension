@@ -1,0 +1,84 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a live burn application succeeds
+ERROR: FAIL: a new burn announces its canonical badge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_dots (res://tools/tests/StatusApplicationPresentationTest.gd:54)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:183)
+ERROR: FAIL: refresh, a coexisting named burn, and damage ticks never repeat BURN
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_dots (res://tools/tests/StatusApplicationPresentationTest.gd:58)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:183)
+ERROR: FAIL: bleed has its own announcement and silent refresh/ticks
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_dots (res://tools/tests/StatusApplicationPresentationTest.gd:62)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:183)
+ERROR: FAIL: named-first and generic-second burn share one semantic introduction
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_dots (res://tools/tests/StatusApplicationPresentationTest.gd:67)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:183)
+ERROR: FAIL: data-only and materialized enemies get the same semantic status feedback
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_representation_and_rejection (res://tools/tests/StatusApplicationPresentationTest.gd:79)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:184)
+PASS: invalid, stale, dying and rejected applications produce no status line
+ERROR: FAIL: stun announces once when control is first lost
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_stun_and_enemy_buffs (res://tools/tests/StatusApplicationPresentationTest.gd:100)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:185)
+ERROR: FAIL: Herald ward/haste and stability slow announce accepted transitions only
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_stun_and_enemy_buffs (res://tools/tests/StatusApplicationPresentationTest.gd:113)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:185)
+ERROR: FAIL: a real Weak Point exposure announces once across refreshes
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_tree_applications (res://tools/tests/StatusApplicationPresentationTest.gd:125)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:186)
+ERROR: FAIL: real Distortion DoT/slow applications carry distinct badges
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_tree_applications (res://tools/tests/StatusApplicationPresentationTest.gd:132)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:186)
+ERROR: FAIL: joining a real Dominion link announces LINKED
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_tree_applications (res://tools/tests/StatusApplicationPresentationTest.gd:136)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:186)
+ERROR: FAIL: healing seal retains exact wording/scale with its canonical badge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_player_debuff (res://tools/tests/StatusApplicationPresentationTest.gd:156)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:187)
+ERROR: FAIL: a shorter healing lock is silent
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_player_debuff (res://tools/tests/StatusApplicationPresentationTest.gd:158)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:187)
+ERROR: FAIL: the first healing seal teaches with its own illustrated badge
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_player_debuff (res://tools/tests/StatusApplicationPresentationTest.gd:159)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:187)
+PASS: disabling ability callouts silences actual status applications
+StatusApplicationPresentationTest: 3 passed, 13 failed

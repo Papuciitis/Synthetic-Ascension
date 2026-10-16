@@ -1,5 +1,9 @@
 extends Node2D
 class_name AscensionRunner
+
+const StatusIcons := preload("res://core/combat/CombatStatusIcons.gd")
+const STATUS_HUD_THEME := preload("res://ui/theme/SyntheticHudTheme.tres")
+
 ## The advancement tree's presence on the player.
 ##
 ## Owns the shared combat contract every discipline engine builds on:
@@ -1532,7 +1536,21 @@ func _draw() -> void:
 		draw_circle(point[0], float(point[1]), point[2])
 		if point.size() > 3 and font != null:
 			var text := String(point[3])
-			draw_string(font, (point[0] as Vector2) + Vector2(-18.0, -float(point[1]) - 6.0), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, point[2])
+			var label_at := (point[0] as Vector2) + Vector2(-18.0, -float(point[1]) - 6.0)
+			if point.size() > 4 and point[4] is StringName and StatusIcons.known(point[4]):
+				var caption := STATUS_HUD_THEME.get_font(&"font", &"HudCaption")
+				var point_colour: Color = point[2]
+				var badge := StatusIcons.texture(point[4])
+				var badge_width := 30.0 if badge != null else 0.0
+				var text_width := caption.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x
+				label_at.x = (point[0] as Vector2).x - (text_width + badge_width) * 0.5
+				if badge != null:
+					draw_texture_rect(badge, Rect2(label_at + Vector2(0.0, -17.2), Vector2.ONE * 26.0), false, Color(1.0, 1.0, 1.0, point_colour.a))
+					label_at.x += badge_width
+				draw_string_outline(caption, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, 4, Color(0.05, 0.05, 0.08, point_colour.a * 0.9))
+				draw_string(caption, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 15, point_colour)
+			else:
+				draw_string(font, label_at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, point[2])
 
 
 ## The shared Misfortune pool lives on the Manifestation layer; the tree only

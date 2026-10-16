@@ -1,0 +1,192 @@
+{
+	"failures": 0,
+	"held_callout_age_seconds": 0.28,
+	"image_size": [
+		1280,
+		720
+	],
+	"pages": [
+		{
+			"file": "status-catalog-1.png",
+			"pooled_callout_entries": 8,
+			"statuses": [
+				{
+					"art": "res://assets/textures/ui/combat_status/burn.png",
+					"colour": "ff7a2eff",
+					"id": "burn",
+					"label": "BURNING",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/bleed.png",
+					"colour": "f53d4dff",
+					"id": "bleed",
+					"label": "BLEEDING",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/stun.png",
+					"colour": "ffdb4dff",
+					"id": "stun",
+					"label": "STUNNED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/slow.png",
+					"colour": "80c7ffff",
+					"id": "slow",
+					"label": "SLOWED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/warded.png",
+					"colour": "4de6f5ff",
+					"id": "warded",
+					"label": "WARDED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/haste.png",
+					"colour": "70f09eff",
+					"id": "haste",
+					"label": "HASTE",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/fading.png",
+					"colour": "99a1c7ff",
+					"id": "fading",
+					"label": "FADING",
+					"presentation_path": "BattleText.status_popup"
+				}
+			]
+		},
+		{
+			"file": "status-catalog-2.png",
+			"pooled_callout_entries": 8,
+			"statuses": [
+				{
+					"art": "res://assets/textures/ui/combat_status/execution_mark.png",
+					"colour": "ff575cff",
+					"id": "execution_mark",
+					"label": "MARKED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/wound.png",
+					"colour": "e6574dff",
+					"id": "wound",
+					"label": "WOUNDED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/cracked.png",
+					"colour": "ffb361ff",
+					"id": "cracked",
+					"label": "ARMOUR CRACKED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/prime.png",
+					"colour": "facc57ff",
+					"id": "prime",
+					"label": "PRIMED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/weak_point.png",
+					"colour": "fffae6ff",
+					"id": "weak_point",
+					"label": "EXPOSED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/fracture.png",
+					"colour": "ff9940ff",
+					"id": "fracture",
+					"label": "FRACTURED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/link.png",
+					"colour": "bf80ffff",
+					"id": "link",
+					"label": "LINKED",
+					"presentation_path": "BattleText.status_popup"
+				}
+			]
+		},
+		{
+			"file": "status-catalog-3.png",
+			"pooled_callout_entries": 7,
+			"statuses": [
+				{
+					"art": "res://assets/textures/ui/combat_status/blood_rite.png",
+					"colour": "d13366ff",
+					"id": "blood_rite",
+					"label": "BLOOD RITE",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/healing_sealed.png",
+					"colour": "c75ce6ff",
+					"id": "healing_sealed",
+					"label": "HEALING SEALED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/jam.png",
+					"colour": "ff4d33ff",
+					"id": "jam",
+					"label": "JAMMED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/debt.png",
+					"colour": "cc99ffff",
+					"id": "debt",
+					"label": "DEBT",
+					"presentation_path": "AscensionRunner._draw tagged persistent world label"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/anchored.png",
+					"colour": "9ed6ffff",
+					"id": "anchored",
+					"label": "ANCHORED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/marked.png",
+					"colour": "db85ffff",
+					"id": "marked",
+					"label": "MARKED",
+					"presentation_path": "BattleText.status_popup"
+				},
+				{
+					"art": "res://assets/textures/ui/combat_status/scarred.png",
+					"colour": "db574dff",
+					"id": "scarred",
+					"label": "SCAR",
+					"presentation_path": "BattleText.status_popup"
+				}
+			]
+		}
+	],
+	"persistent_debt_sample": {
+		"badge_size_world_px": 26,
+		"font_size_world_px": 15,
+		"sample_scale": 1.0,
+		"text": "DEBT 24  1.5s",
+		"timer": "Static staged value; no live Debt collection claim"
+	},
+	"presentation": "STAGED PRESENTATION. All 21 existing-effect badges and canonical names through production BattleText, with Debt through the actual AscensionRunner persistent-world-label draw path. Gameplay states and Debt timers are not applied or advanced by this catalogue.",
+	"reduced_motion": false,
+	"sample_entry_scale": 1.35,
+	"save_writes": 0,
+	"scene": "res://tools/dev/StatusEffectsPreview.tscn",
+	"viewport": [
+		1920,
+		1080
+	],
+	"world_px_to_image_px": 0.666666666666667
+}

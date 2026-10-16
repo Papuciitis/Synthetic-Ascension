@@ -478,6 +478,7 @@ func join_link(link: Dictionary, handle: int) -> bool:
 		return false
 	members.append(handle)
 	runner.status_of(handle)["link"] = int(link["id"])
+	Feedback.notify_handle(handle, &"link")
 	counters["linked"] = int(counters["linked"]) + 1
 	runner.add_action_charge(1.0)
 	return true

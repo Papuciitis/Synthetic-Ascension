@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name EnemyActor
 
+const StatusFeedback := preload("res://core/combat/CombatStatusFeedback.gd")
+
 @export var spec: EnemySpec
 
 # fallback if spec is null (and also used by EnemyDrops module)
@@ -1295,6 +1297,7 @@ var _ward_token: int = 0
 func apply_ward_buff(fraction: float, duration: float) -> void:
 	if fraction <= 0.0 or duration <= 0.0:
 		return
+	var was_warded := is_warded()
 	_ward_token += 1
 	var token := _ward_token
 	var current := float(get_meta("damage_taken_mul", 1.0))
@@ -1308,6 +1311,8 @@ func apply_ward_buff(fraction: float, duration: float) -> void:
 	set_meta("damage_taken_mul_warded", warded)
 	set_meta("damage_taken_mul", warded)
 	set_meta("warded", true)
+	if not was_warded:
+		StatusFeedback.notify_actor(self, &"warded")
 	var tree := get_tree()
 	if tree == null:
 		return
@@ -1391,11 +1396,17 @@ func _drop_front_shield() -> void:
 func apply_speed_buff(mult: float, duration: float) -> void:
 	if mult <= 1.0 or duration <= 0.0:
 		return
+	var was_hastened := _speed_mul_time > 0.0
 	_speed_mul = maxf(_speed_mul, mult)
 	_speed_mul_time = maxf(_speed_mul_time, duration)
+	if not was_hastened:
+		StatusFeedback.notify_actor(self, &"haste")
 
 func set_stability_mul(mult: float) -> void:
+	var was_slowed := _stability_mul < 1.0
 	_stability_mul = clampf(mult, 0.1, 1.0)
+	if not was_slowed and _stability_mul < 1.0:
+		StatusFeedback.notify_actor(self, &"slow")
 
 func clear_stability_mul() -> void:
 	_stability_mul = 1.0

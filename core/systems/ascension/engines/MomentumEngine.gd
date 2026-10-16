@@ -304,7 +304,10 @@ func _dash_strip(from: Vector2, to: Vector2, _direction: Vector2) -> Array[int]:
 	for handle in crossed:
 		runner.damage_enemy(handle, 0.6 * D(), tags)
 		if runner.enemy_alive(handle):
+			var was_primed := runner.has_status(handle, "prime")
 			runner.status_of(handle)["prime"] = _clock + PRIME_SECONDS
+			if not was_primed:
+				Feedback.notify_handle(handle, &"prime")
 			counters["primes"] = int(counters["primes"]) + 1
 	_last_crossed = crossed.duplicate()
 	while _last_crossed.size() > 3:

@@ -1,0 +1,28 @@
+{
+  "date": "2026-10-16",
+  "status": "approved_and_verified_for_separate_commit",
+  "user_approved_preview": true,
+  "user_authorized_commit_and_push": true,
+  "tests": {
+    "distinct_suites": 9,
+    "focused_passing_checks": 241,
+    "runtime_safety_checks": 21,
+    "parsed_gameplay_scripts": 530,
+    "reported_passing_checks": 792,
+    "failed": 0
+  },
+  "test_evidence": "test-results.json",
+  "source_snapshot": "verified-source-manifest.json",
+  "shared_gameplay_snapshot": "logs/gameplay-source-hashes.json",
+  "source_files_rechecked": 97,
+  "shared_gameplay_scripts_rechecked": 530,
+  "generated_assets": 21,
+  "asset_evidence": "asset-verification.json",
+  "preview_artifacts_rechecked": 18,
+  "capture_evidence": "preview-capture-verification.json",
+  "review": "Independent scoped review and refresh-guard re-review found no remaining P1/P2 issues. Final source/art and captured artifact hashes match.",
+  "limits": "All-21 catalogue is staged; the crowded fight uses scripted real API applications and god mode. Narrative tips overlap the first status burst and delay the healing teaching alert; representative native frames preserve this. No all-build, balance or performance claim.",
+  "candidate_source_manifest": "candidate-source-manifest.json",
+  "shared_file_scope": "The tested shared worktree includes concurrent changes; the candidate source manifest records the exact scoped index bytes and the four excluded player factory hunks.",
+  "evidence_byte_preservation": "Folder Git attributes preserve raw JSON/log newline bytes. All18captured artifact hashes match staged bytes. Source whitespace is checked strictly; immutable evidence allows CRLF and terminal blank lines."
+}

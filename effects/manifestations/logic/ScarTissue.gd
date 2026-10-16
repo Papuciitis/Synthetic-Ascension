@@ -77,7 +77,7 @@ func on_healed(amount: float) -> void:
 func _announce(gained: float) -> void:
 	if gained < 0.5 or BattleText == null:
 		return
-	BattleText.progress(player_position(), "SCAR +%d ARMOUR" % int(round(gained)), int(get_instance_id()), SCAR_TINT)
+	BattleText.progress(player_position(), "SCAR +%d ARMOUR" % int(round(gained)), int(get_instance_id()), SCAR_TINT, [&"scarred"])
 
 
 ## Seconds between stat recomputes. Armour only reaches the player through

@@ -1,5 +1,8 @@
 extends Node2D
 class_name BazingaEffect
+
+const Feedback := preload("res://core/combat/CombatStatusFeedback.gd")
+
 ## Bazinga (handoff §14.3 idea table, approved 2026-09-26): a dodge worth
 ## laughing at leaves a sound decoy where you WERE. V1 scope, per the
 ## review's warning against inventing systems: the engine has no aggro
@@ -85,6 +88,7 @@ func _drop_decoy() -> void:
 			continue
 		_slowed[handle] = speed
 		EnemyWorld.set_speed(handle, speed * 0.5)
+		Feedback.notify_handle(handle, &"slow")
 		victims += 1
 	telemetry["hesitations"] = int(telemetry["hesitations"]) + victims
 	if BattleText != null:

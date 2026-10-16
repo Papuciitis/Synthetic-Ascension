@@ -1,0 +1,89 @@
+{
+  "profile_isolation": "Separate unique APPDATA, LOCALAPPDATA and XDG DATA/CONFIG/CACHE/STATE directories per native scene. Launcher environment restored immediately after each child starts.",
+  "capture_root": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593",
+  "slot_policy": "Both native scenes ran serially only after explicit root-coordinator grant; existing human editor was not stopped.",
+  "runs": [
+    {
+      "name": "catalog",
+      "scene": "res://tools/dev/StatusEffectsPreview.tscn",
+      "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+      "arguments": [
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--windowed",
+        "--resolution",
+        "1280x720",
+        "--position",
+        "-32000,-32000",
+        "res://tools/dev/StatusEffectsPreview.tscn",
+        "--",
+        "--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\catalog"
+      ],
+      "command_line": "\"C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe\" \"--path\" \"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\" \"--rendering-method\" \"gl_compatibility\" \"--audio-driver\" \"Dummy\" \"--windowed\" \"--resolution\" \"1280x720\" \"--position\" \"-32000,-32000\" \"res://tools/dev/StatusEffectsPreview.tscn\" \"--\" \"--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\catalog\"",
+      "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_root": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog",
+      "environment_overrides": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\AppData\\Local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\config",
+        "XDG_CACHE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\cache",
+        "XDG_STATE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\state"
+      },
+      "launcher_environment_restored_immediately_after_start": true,
+      "pid": 33452,
+      "launcher_pid": 20776,
+      "started_utc": "2026-10-16T18:56:00.7995136Z",
+      "stdout": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\catalog.stdout.log",
+      "stderr": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\catalog.stderr.log",
+      "exit_code": 0,
+      "elapsed_wall_seconds": 36.1375857
+    },
+    {
+      "name": "fight",
+      "scene": "res://tools/dev/StatusEffectsFightPreview.tscn",
+      "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+      "arguments": [
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--windowed",
+        "--resolution",
+        "1280x720",
+        "--position",
+        "-32000,-32000",
+        "res://tools/dev/StatusEffectsFightPreview.tscn",
+        "--",
+        "--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\fight",
+        "--seconds=10",
+        "--fps=15"
+      ],
+      "command_line": "\"C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe\" \"--path\" \"C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\" \"--rendering-method\" \"gl_compatibility\" \"--audio-driver\" \"Dummy\" \"--windowed\" \"--resolution\" \"1280x720\" \"--position\" \"-32000,-32000\" \"res://tools/dev/StatusEffectsFightPreview.tscn\" \"--\" \"--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\fight\" \"--seconds=10\" \"--fps=15\"",
+      "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_root": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight",
+      "environment_overrides": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\AppData\\Roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\AppData\\Local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\config",
+        "XDG_CACHE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\cache",
+        "XDG_STATE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\state"
+      },
+      "launcher_environment_restored_immediately_after_start": true,
+      "pid": 12468,
+      "launcher_pid": 20776,
+      "started_utc": "2026-10-16T18:56:37.6871308Z",
+      "stdout": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\fight.stdout.log",
+      "stderr": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\fight.stderr.log",
+      "exit_code": 0,
+      "elapsed_wall_seconds": 189.096338
+    }
+  ]
+}

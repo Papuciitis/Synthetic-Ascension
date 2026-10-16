@@ -237,7 +237,7 @@ func spawn_world_node(node: Node2D, world_position: Vector2) -> Node2D:
 ## second: passing `int(get_instance_id())` makes it replace its own line rather
 ## than stack. Leave it at 0 when a rule's lines say different things, or the
 ## payout would swallow the callout that announced it.
-func popup(text: String, color: Color, scale_in: float = 1.15, merge_key: int = 0) -> void:
+func popup(text: String, color: Color, scale_in: float = 1.15, merge_key: int = 0, icon_ids: Array[StringName] = []) -> void:
 	if BattleText == null:
 		return
 	# Staggered, so a kill that trips four rules at once reads as four lines
@@ -246,7 +246,7 @@ func popup(text: String, color: Color, scale_in: float = 1.15, merge_key: int = 
 	var at := player_position()
 	if state != null and is_instance_valid(state):
 		at += state.next_popup_offset()
-	BattleText.popup(at, text, color, scale_in, merge_key)
+	BattleText.popup(at, text, color, scale_in, merge_key, icon_ids)
 
 
 ## Observational report for the balance recorder. A sample is not a hit: this

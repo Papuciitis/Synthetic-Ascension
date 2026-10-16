@@ -1,0 +1,118 @@
+[
+  {
+    "path": "core/systems/enemy_world/EnemyStatusService.gd",
+    "sha256": "d2c844b6b3b0b22e7c4245864b6782a5f861a028fc00ac1ccb61f64c46c43fd3"
+  },
+  {
+    "path": "core/systems/enemy_world/EnemyCombatService.gd",
+    "sha256": "dbc489a9204c77301eaffee5a160a3ae51a6a68f93c2a87453d81b67e9648874"
+  },
+  {
+    "path": "core/actors/enemy/enemy.gd",
+    "sha256": "757c2cc5fbf01e89009804743e9f1399af63f4949e76af5980c4686ed43221b9"
+  },
+  {
+    "path": "core/actors/player/player.gd",
+    "sha256": "03441ce272cbe7740beee5d25558010ccd2dd4fa8eaa55ae028a8cf29db8035b"
+  },
+  {
+    "path": "core/systems/ascension/AscensionEngine.gd",
+    "sha256": "63c4252685cdf92edeeeb9ac0db5615159ff90c7a64d967627d9242c89a0c7b4"
+  },
+  {
+    "path": "core/systems/ascension/AscensionRunner.gd",
+    "sha256": "571668f5dfcedc44ef06c8e30b23384ed88a64538760a5f61dfe14499410fb03"
+  },
+  {
+    "path": "core/systems/ascension/engines/DistortionEngine.gd",
+    "sha256": "50f6ff82c155df850de2e28b9eee7ae286dab782b93bee6013447ca0555a4c96"
+  },
+  {
+    "path": "core/systems/ascension/engines/ExecutionEngine.gd",
+    "sha256": "8e540aa2e65144206fc75d5de4f3617ce582aedfc234705b730ad6ecefd312a0"
+  },
+  {
+    "path": "core/systems/ascension/engines/PrecisionEngine.gd",
+    "sha256": "0ee02964537bcd271491e136ad74c7e1661a1b8a480cd8c61795ef85d7ada2d2"
+  },
+  {
+    "path": "core/systems/ascension/engines/MomentumEngine.gd",
+    "sha256": "81728644e68c447baa3d8194d1954c2cba1bd7f29a1305673301f4670a3ea663"
+  },
+  {
+    "path": "core/systems/ascension/engines/DominionEngine.gd",
+    "sha256": "617f56613f23acdb6efd380c1595ce02e110c9a510faa65bc98442c74b309bc1"
+  },
+  {
+    "path": "core/systems/ascension/engines/InvocationEngine.gd",
+    "sha256": "3505f8f47d014e6be6b962eed5be75c8b9b89df8efd42e09721fd61ce4fa11ed"
+  },
+  {
+    "path": "core/systems/ascension/engines/OrdnanceEngine.gd",
+    "sha256": "8ff3965bb52d6abbee6887fba72ce1583caaa1e34ad7baa04e2d591def77be10"
+  },
+  {
+    "path": "core/systems/ascension/engines/BastionEngine.gd",
+    "sha256": "44bbf4d065837fbfda9c9beb2adc55a35316356a799a458c5d56449ee278c1e6"
+  },
+  {
+    "path": "core/systems/ascension/engines/BarrageEngine.gd",
+    "sha256": "d414d489b9899e83d4ab5d0158eabe6ded5cfc3d0c7f32dbe31f05ffacc782ad"
+  },
+  {
+    "path": "core/systems/ascension/engines/v5/BarrageEngineV5.gd",
+    "sha256": "16c2afdf3336d7740514835de183004a3dbe587e123f0cb183918ada462b12ca"
+  },
+  {
+    "path": "effects/items/logic/BazingaEffect.gd",
+    "sha256": "4d9df16a906172ebba3e4c3f9e00088b3268c3d4247feb11ec92f4d154adbed3"
+  },
+  {
+    "path": "core/actors/enemy/modules/BurnDot.gd",
+    "sha256": "5f537c91e532bb23069178063238407c7b9e0ba10ad56199ba8f01a3b67b22d8"
+  },
+  {
+    "path": "core/actors/enemy/modules/BleedDot.gd",
+    "sha256": "36b6b9c76f6f073143d8505a687dfa475a7780d175e2c3e49dcaf28e2287ff7f"
+  },
+  {
+    "path": "core/systems/manifestations/ManifestationState.gd",
+    "sha256": "a209b22ce7806792a57534b1e347c819647a7922a92b840ce4c486479bd61b3d"
+  },
+  {
+    "path": "core/systems/manifestations/ManifestationEffect.gd",
+    "sha256": "afbedefbdca2bfc0918ce826183b262d6682371282b705eca8fd8240c1b92635"
+  },
+  {
+    "path": "effects/manifestations/logic/AnchorRite.gd",
+    "sha256": "e0ec35d7be8c92f4064f6270541e61f43eaaf570acef528e9657fa0dde4f5d4c"
+  },
+  {
+    "path": "effects/manifestations/logic/PredestinationSigil.gd",
+    "sha256": "0aec3c6ffaff5d5e801ddc9e278a7e34a5cf6da73b2ad2ccc5f7de2433eafdfa"
+  },
+  {
+    "path": "effects/manifestations/logic/ScarTissue.gd",
+    "sha256": "510a0792c04c47c7ffa34993cfa0a43e56d1a52f91b262c3810ea429eb723a91"
+  },
+  {
+    "path": "effects/manifestations/pairs/RedLine.gd",
+    "sha256": "a8d59df4e157cd5f13f8c619f974db8416dee989cdab6ca30e1272e769f8bf66"
+  },
+  {
+    "path": "tools/tests/HealingLockTest.gd",
+    "sha256": "c49540aa74f9dbea512d33fa48d5a4d58e1cecf003caed8f3c4d8515e5044b8a"
+  },
+  {
+    "path": "tools/tests/StatusApplicationPresentationTest.gd",
+    "sha256": "11036eba0cc904e1e5409a119752aa261f823115aeda2d3b7974eb0bc99e6dc5"
+  },
+  {
+    "path": "tools/tests/StatusApplicationPresentationTest.gd.uid",
+    "sha256": "55eb065020b1324ca8e2e6a1c31f759cdf5f537a0a84ea0a902b171e221082d5"
+  },
+  {
+    "path": "tools/tests/StatusApplicationPresentationTest.tscn",
+    "sha256": "e0e44274497630737be19888ef27c1d2be77a4808c44a9f79b2b15e30eb04e14"
+  }
+]

@@ -40,7 +40,7 @@ func _run() -> void:
 	var saved_augments: Array[StringName] = Global.permanent_augment_ids.duplicate()
 	RunEvents.healing_lock_changed.connect(_on_lock)
 	RunEvents.player_healed.connect(_on_healed)
-	RunEvents.tutorial_tip.connect(_on_tip)
+	RunEvents.illustrated_tutorial_tip.connect(_on_tip)
 
 	await _test_seal_on_the_player()
 	await _test_expiry_reopens_healing()
@@ -49,7 +49,7 @@ func _run() -> void:
 
 	RunEvents.healing_lock_changed.disconnect(_on_lock)
 	RunEvents.player_healed.disconnect(_on_healed)
-	RunEvents.tutorial_tip.disconnect(_on_tip)
+	RunEvents.illustrated_tutorial_tip.disconnect(_on_tip)
 	Global.run_inventory = saved_inventory
 	Global.permanent_augment_ids = saved_augments
 	print("HealingLockTest: %d passed, %d failed" % [_passes, _failures])
@@ -64,7 +64,7 @@ func _on_healed(_player: Node, amount: float) -> void:
 	_heals.append(amount)
 
 
-func _on_tip(text: String, _duration: float) -> void:
+func _on_tip(text: String, _duration: float, _icons: Array[StringName]) -> void:
 	_tips.append(text)
 
 

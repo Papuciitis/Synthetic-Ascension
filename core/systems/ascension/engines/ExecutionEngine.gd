@@ -277,6 +277,7 @@ func _core_strike_hit(hit: Dictionary, handle: int) -> void:
 		_mark(handle, hit)
 	if has("EX08") and is_equal_approx(float(hit["before"]), float(hit["max_hp"])) and float(hit["max_hp"]) > 0.0:
 		runner.status_of(handle)["wound"] = _clock + 2.0
+		Feedback.notify_handle(handle, &"wound")
 		counters["first_cuts"] = int(counters["first_cuts"]) + 1
 	if has("EX07") and _reservoir > 0.0:
 		var stored := _reservoir
@@ -309,6 +310,7 @@ func _mark(handle: int, hit: Dictionary) -> void:
 	var record := runner.status_of(handle)
 	record["mark"] = _clock + MARK_DURATION
 	record["mark_fresh"] = true
+	Feedback.notify_handle(handle, &"execution_mark")
 	_mark_dirs[handle] = ((hit["position"] as Vector2) - runner.player_position()).normalized()
 	counters["marks"] = int(counters["marks"]) + 1
 
@@ -694,7 +696,10 @@ func _strike(point: Vector2, damage: float, radius: float, cast: String, path: S
 	runner.spawn_impact(point, damage, tags, radius)
 	for handle in runner.enemies_in_radius(point, radius):
 		if runner.is_boss(handle):
+			var was_cracked := runner.has_status(handle, "cracked")
 			runner.status_of(handle)["cracked"] = CRACKED_HITS
+			if not was_cracked:
+				Feedback.notify_handle(handle, &"cracked")
 			counters["cracks"] = int(counters["cracks"]) + 1
 
 

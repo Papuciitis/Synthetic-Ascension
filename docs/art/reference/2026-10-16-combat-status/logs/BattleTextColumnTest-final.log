@@ -1,0 +1,44 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: four callouts a few frames apart at one spot share one column
+PASS: the push is eased, not snapped (0.0 of 18.9 px)
+PASS: all four are still alive after the ease settles
+PASS: and no two overlap (888.5, 909.7, 931.0, 952.2)
+PASS: the oldest sits on top, the newest at the base (888.5, 909.7, 931.0, 952.2)
+PASS: every line of the column is centred on the spot it was raised at
+PASS: four callouts in one frame stack without overlapping (888.5, 909.7, 931.0, 952.2)
+PASS: and the first caller of the frame ends on top, as the old stagger had it (888.5, 909.7, 931.0, 952.2)
+PASS: a burst of mixed emphasis sizes stays alive
+PASS: each size gets its own line height, so none overlaps (855.1, 883.2, 902.8, 928.0, 950.8)
+PASS: in order (855.1, 883.2, 902.8, 928.0, 950.8)
+PASS: a merge key replaces its own line instead of adding one
+PASS: the merged line updates in place and pushes nothing (largest move 0.00 px)
+PASS: and its life starts over
+PASS: the column still reads in order after the merge (1300.1, 1321.8, 1343.0)
+PASS: ten callouts in 0.2 s show at most six lines (6)
+PASS: and the column never grows past its ceiling (118 of 120 px)
+PASS: lines pushed out of the top are retired early (6 of 10 left)
+PASS: while the newest four are fully readable
+PASS: and what is left still reads in order (-, -, -, -, 1248.3, 1269.5, 1290.8, 1312.0, 1333.3, 1354.5)
+PASS: fixture: the burst formed a column
+PASS: callouts at another spot do not push this column
+PASS: they form their own column
+PASS: a callout raised a few pixels off joins the live column and pushes it
+PASS: aligned to the column, not to where it was raised
+PASS: callouts at the player join the player's column
+PASS: a callout across the room does not
+PASS: the player's column moves with the player ((120.0, 39.23328) for (120.0, 40.0))
+PASS: and stays centred on them
+PASS: while the world column stays where it was raised
+PASS: the player's column reads in order while moving (513.6, 534.2)
+PASS: with the player gone the column simply stays put
+PASS: under Reduced Motion the push lands at once
+PASS: with it off the same push eases
+PASS: and arrives
+PASS: damage numbers never join a column
+PASS: and never push one
+PASS: damage taken falls from where it lands instead of rising
+PASS: so it never crosses a line of the player's column
+PASS: a feed toast stacks with the callouts at its spot
+PASS: and a successive feed replaces it in place
+BattleTextColumnTest: 41 passed, 0 failed

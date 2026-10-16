@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a live burn application succeeds
+PASS: a new burn announces its canonical badge
+PASS: refresh, a coexisting named burn, and damage ticks never repeat BURN
+PASS: bleed has its own announcement and silent refresh/ticks
+PASS: named-first and generic-second burn share one semantic introduction
+PASS: data-only and materialized enemies get the same semantic status feedback
+PASS: invalid, stale, dying and rejected applications produce no status line
+PASS: stun announces once when control is first lost
+PASS: Herald ward/haste and stability slow announce accepted transitions only
+PASS: a real Weak Point exposure announces once across refreshes
+PASS: real Distortion DoT/slow applications carry distinct badges
+PASS: joining a real Dominion link announces LINKED
+PASS: Passing Blade refreshes an active Prime without a new caption after feedback cooldown clears
+PASS: Passing Blade announces Prime again after the previous status was consumed
+PASS: Armour Break refreshes remaining Cracked charges without a new caption after feedback cooldown clears
+PASS: Armour Break announces Cracked again after the previous charges were consumed
+PASS: Gavel refreshes a boss's remaining Cracked charges without a new caption after feedback cooldown clears
+PASS: Gavel announces Cracked again after the boss's previous charges were consumed
+PASS: healing seal retains exact wording/scale with its canonical badge
+PASS: a shorter healing lock is silent
+PASS: the first healing seal teaches with its own illustrated badge
+PASS: disabling ability callouts silences actual status applications
+StatusApplicationPresentationTest: 22 passed, 0 failed

@@ -1,0 +1,100 @@
+{
+  "started_at": "2026-10-16T21:52:24.264779+03:00",
+  "launcher": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\run_presentation_checks.py",
+  "suites": [
+    {
+      "suite": "CombatTextPresentationTest",
+      "native_rendering": true,
+      "command": [
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "--audio-driver",
+        "Dummy",
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--display-driver",
+        "windows",
+        "--rendering-method",
+        "gl_compatibility",
+        "--rendering-driver",
+        "opengl3",
+        "--windowed",
+        "--resolution",
+        "1280x720",
+        "--position",
+        "-32000,-32000",
+        "res://tools/tests/CombatTextPresentationTest.tscn",
+        "--quit-after",
+        "3000"
+      ],
+      "command_windows": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe --audio-driver Dummy --path C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world --display-driver windows --rendering-method gl_compatibility --rendering-driver opengl3 --windowed --resolution 1280x720 --position -32000,-32000 res://tools/tests/CombatTextPresentationTest.tscn --quit-after 3000",
+      "cwd": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_environment": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-089211ff27\\roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-089211ff27\\local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-089211ff27\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-089211ff27\\config"
+      },
+      "started_at": "2026-10-16T21:52:24.271812+03:00",
+      "log": "docs/art/reference/2026-10-16-combat-status/logs/CombatTextPresentationTest-initial-fixture-error.log",
+      "window": "offscreen Windows GL; startup requests no activation",
+      "pid": 34052,
+      "exit_code": 0,
+      "completed_at": "2026-10-16T21:52:51.876958+03:00",
+      "elapsed_seconds": 27.594,
+      "log_sha256": "39b66fcc586d65bd27de80ecaf12290ccbb1eee254e311e597347c5bd3dec8d4",
+      "passed": 83,
+      "failed": 0,
+      "error_lines": [
+        "SCRIPT ERROR: Invalid type in function 'modifier_popup (via call)' in base 'Node2D (BattleTextRenderer.gd)'. The array of argument 3 (Array) does not have the same element type as the expected typed array argument."
+      ],
+      "clean_pass": false,
+      "original_log": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\CombatTextPresentationTest-final.log"
+    },
+    {
+      "suite": "BattleTextColumnTest",
+      "native_rendering": false,
+      "command": [
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "--audio-driver",
+        "Dummy",
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--headless",
+        "res://tools/tests/BattleTextColumnTest.tscn",
+        "--quit-after",
+        "3000"
+      ],
+      "command_windows": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe --audio-driver Dummy --path C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world --headless res://tools/tests/BattleTextColumnTest.tscn --quit-after 3000",
+      "cwd": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_environment": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\config"
+      },
+      "started_at": "2026-10-16T21:52:51.909213+03:00",
+      "log": "docs/art/reference/2026-10-16-combat-status/logs/BattleTextColumnTest-final.log",
+      "window": "headless",
+      "pid": 14144,
+      "exit_code": 0,
+      "completed_at": "2026-10-16T21:53:22.212541+03:00",
+      "elapsed_seconds": 30.312,
+      "log_sha256": "19d48845b4c38953692ae591463d2604b696dd0f61478de9b86f5492042b750c",
+      "passed": 41,
+      "failed": 0,
+      "error_lines": [],
+      "clean_pass": true,
+      "original_log": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\BattleTextColumnTest-final.log"
+    }
+  ],
+  "slot_snapshot_before": {
+    "coordinator_thread": "01a1406d-3c91-7791-b36e-5a898686cfe5",
+    "updated_at": "2026-10-16T18:51:14.583Z",
+    "state": "granted",
+    "owner": "status/01a143f1-20af-7203-a7d5-57607b12201f",
+    "batch": "4 serial text/capture jobs",
+    "next_request": "root GREEN4 (includes clean-exit rerun Game flow), then opening2 review regressions",
+    "instruction": "Only designated owner launches; release after4. Production Game loads and executes; boss Preview unresolvedclass is separate diagnostic. Preserve human editor."
+  },
+  "completed_at": "2026-10-16T21:53:22.224066+03:00"
+}

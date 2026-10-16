@@ -98,7 +98,7 @@ var _line_texts: PackedStringArray = PackedStringArray()
 var _line_sizes := PackedInt32Array()
 var _line_faces := PackedByteArray()
 var _icon_ids: Array = []
-# Only semantic modifier announcements have coloured text spans. Keep their
+# Semantic status announcements may have coloured text spans. Keep their
 # small shaped segments with each pooled slot; plain messages never infer
 # colours from icon IDs or words.
 var _modifier_ids: Array = []
@@ -220,6 +220,9 @@ func progress(world_pos: Vector2, text: String, merge_key: int, color: Color = C
 		for i in range(_count):
 			if _keys[i] == merge_key and _amounts[i] == 0.0:
 				_texts[i] = text
+				_colors[i] = color
+				_modifier_ids[i].clear()
+				_modifier_sizes[i] = 0
 				_set_icons(i, icon_ids)
 				_refresh_callout(i, world_pos, 1.3)
 				queue_redraw()
@@ -244,6 +247,8 @@ func popup(world_pos: Vector2, text: String, color: Color, entry_scale: float = 
 				_texts[i] = text
 				_colors[i] = color
 				_scales[i] = entry_scale
+				_modifier_ids[i].clear()
+				_modifier_sizes[i] = 0
 				_set_icons(i, icon_ids)
 				_refresh_callout(i, world_pos, 0.9)
 				queue_redraw()
@@ -257,27 +262,43 @@ func _set_icons(slot: int, ids: Array[StringName]) -> void:
 	var own_ids: Array = _icon_ids[slot]
 	own_ids.clear()
 	for id in ids:
-		if StatusIcons.IDS.has(id) and not own_ids.has(id):
+		if StatusIcons.known(id) and not own_ids.has(id):
 			own_ids.append(id)
 
 
-## Each modifier name keeps the same colour as its body tell, even when a
-## single elite carries several. Separators use the neutral combat colour.
-func modifier_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
+func status_popup(world_pos: Vector2, id: StringName, text_override: String = "", entry_scale: float = 1.0, merge_key: int = 0) -> void:
+	if not StatusIcons.known(id):
+		return
+	var ids: Array[StringName] = [id]
+	popup(world_pos, StatusIcons.label(id) if text_override.is_empty() else text_override, StatusIcons.colour(id), entry_scale, merge_key, ids)
+
+
+## Each semantic name keeps its own colour, including a mixed announcement
+## of elite and applied statuses. Separators use the neutral combat colour.
+func statuses_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
 	if not callouts_enabled():
 		return
 	var known: Array[StringName] = []
 	var labels: PackedStringArray = []
 	for id in ids:
-		if EliteModifiers.is_known(id) and not known.has(id):
+		if StatusIcons.known(id) and not known.has(id):
 			known.append(id)
-			labels.append(EliteModifiers.label(id))
+			labels.append(StatusIcons.label(id))
 	if known.is_empty():
 		return
 	var slot := _spawn(" · ".join(labels), world_pos + CALLOUT_RAISE, DAMAGE_COLOR, entry_scale, 0.9, 0.0, 0)
 	_set_icons(slot, known)
 	_modifier_ids[slot].assign(known)
 	_stack_callout(slot, world_pos)
+
+
+## Elite callers keep their original five-modifier scope and colour source.
+func modifier_popup(world_pos: Vector2, ids: Array[StringName], entry_scale: float = 1.0) -> void:
+	var known: Array[StringName] = []
+	for id in ids:
+		if EliteModifiers.is_known(id):
+			known.append(id)
+	statuses_popup(world_pos, known, entry_scale)
 
 
 func _icon_count(slot: int) -> int:
@@ -626,7 +647,7 @@ func _draw() -> void:
 			var segments := _shaped_modifier_lines(i, font_size)
 			for segment in range(_modifier_ids[i].size() * 2 - 1):
 				var segment_line: TextLine = segments[segment]
-				var segment_color := DAMAGE_COLOR if segment % 2 == 1 else EliteModifiers.tint(_modifier_ids[i][segment >> 1])
+				var segment_color := DAMAGE_COLOR if segment % 2 == 1 else StatusIcons.colour(_modifier_ids[i][segment >> 1])
 				segment_color.a = alpha
 				segment_line.draw(canvas, segment_pos, segment_color)
 				segment_pos.x += segment_line.get_line_width()
@@ -662,7 +683,7 @@ func _shaped_modifier_lines(slot: int, font_size: int) -> Array:
 			segments.append(TextLine.new())
 		var segment: TextLine = segments[index]
 		segment.clear()
-		segment.add_string(" · " if index % 2 == 1 else EliteModifiers.label(ids[index >> 1]), _callout_font, font_size)
+		segment.add_string(" · " if index % 2 == 1 else StatusIcons.label(ids[index >> 1]), _callout_font, font_size)
 	_modifier_sizes[slot] = font_size
 	return segments
 

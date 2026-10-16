@@ -365,9 +365,12 @@ func on_hit(hit: Dictionary) -> void:
 
 
 func _apply_fading(handle: int) -> void:
+	var was_fading := _fading.has(handle)
 	var rate := 0.15 * D()
 	_fading[handle] = {"rate": rate, "left": 2.0, "tick": 0.0}
 	runner.status_of(handle)["fading"] = true
+	if not was_fading:
+		Feedback.notify_handle(handle, &"fading")
 
 
 func _apply_slow(handle: int) -> void:
@@ -375,6 +378,7 @@ func _apply_slow(handle: int) -> void:
 		var base := EnemyWorld.get_speed(handle)
 		_slows[handle] = {"left": 2.0, "base": base}
 		EnemyWorld.set_speed(handle, base * 0.85)
+		Feedback.notify_handle(handle, &"slow")
 	else:
 		(_slows[handle] as Dictionary)["left"] = 2.0
 	runner.status_of(handle)["slow"] = true
@@ -1040,7 +1044,7 @@ func collect_draw_points(out: Array) -> void:
 			var label := "DEBT %d" % int(round(unpaid_debt(int(handle))))
 			if soonest != INF:
 				label += " %.1fs" % maxf(0.0, soonest)
-			out.append([runner.enemy_position(int(handle)), 2.0, Color(0.8, 0.6, 1.0, 0.9), label])
+			out.append([runner.enemy_position(int(handle)), 2.0, Color(0.8, 0.6, 1.0, 0.9), label, &"debt"])
 
 
 func describe() -> Dictionary:

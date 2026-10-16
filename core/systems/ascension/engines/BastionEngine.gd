@@ -436,7 +436,10 @@ func on_hit(hit: Dictionary) -> void:
 	var handle := int(hit["handle"])
 	var core_strike := AscensionTags.has_flag(hit["tags"], "core_strike")
 	if _armor_break_pending and core_strike and hit["family"] == AscensionTags.FAMILY_NATIVE:
+		var was_cracked := runner.has_status(handle, "cracked")
 		runner.status_of(handle)["cracked"] = 5
+		if not was_cracked:
+			Feedback.notify_handle(handle, &"cracked")
 		counters["armor_breaks"] = int(counters["armor_breaks"]) + 1
 		if bool(hit["is_boss"]):
 			EnemyCombat.apply_stun(handle, 0.25)

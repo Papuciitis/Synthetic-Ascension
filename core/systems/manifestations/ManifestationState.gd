@@ -2,6 +2,7 @@ extends Node2D
 class_name ManifestationState
 
 const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+const StatusFeedback := preload("res://core/combat/CombatStatusFeedback.gd")
 
 ## Shared blackboard for every equipped Manifestation.
 ##
@@ -657,6 +658,7 @@ func set_mark(handle: int, duration: float) -> void:
 	if not has_source(&"shard"):
 		return
 	var retarget := handle != marked_handle
+	var was_live := mark_time_left > 0.0
 	marked_handle = handle
 	mark_time_left = maxf(mark_time_left, duration)
 	note_channel_touched(&"mark")
@@ -666,6 +668,8 @@ func set_mark(handle: int, duration: float) -> void:
 		_mark_vfx = spawn_world_node(MarkVfx.new() as Node2D, mark_position())
 	if _mark_vfx != null:
 		_mark_vfx.call(&"setup", marked_handle, mark_time_left)
+	if mark_time_left > 0.0 and (retarget or not was_live):
+		StatusFeedback.notify_handle(handle, &"marked")
 
 
 func clear_mark() -> void:

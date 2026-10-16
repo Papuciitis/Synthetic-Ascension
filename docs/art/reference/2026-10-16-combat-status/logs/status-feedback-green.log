@@ -1,0 +1,25 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: implemented status applications have one bounded feedback gate
+PASS: first application produces a canonical status caption
+PASS: reapplying the same target and status during cooldown produces no duplicate caption
+PASS: different statuses and different targets retain independent feedback opportunities
+PASS: a status may be announced again after the 1.5 second cooldown
+PASS: clearing run feedback removes old target cooldowns
+PASS: disabled callouts remain silent
+PASS: an application while disabled cannot poison the cooldown after re-enabling
+PASS: unknown status IDs cannot consume a caption
+PASS: invalid handles produce no status feedback
+PASS: a live data-only enemy can announce a status
+PASS: reused slots announce the new generation while stale handles stay silent
+PASS: a dying record never produces a new status caption
+PASS: an actor outside EnemyWorld can announce a status
+PASS: legacy actor feedback uses the negative instance ID target namespace
+PASS: dead actors stay silent
+PASS: actor and handle paths share the authoritative target cooldown when bound
+PASS: an actor queued for deletion cannot produce feedback
+PASS: a burst is capped at eight new status captions in one process frame
+PASS: the next process frame restores the budget without consuming deferred target cooldowns
+PASS: sustained target churn keeps cooldown storage bounded at 512 targets
+PASS: expired target cooldowns are pruned on new applications
+StatusFeedbackTest: 22 passed, 0 failed

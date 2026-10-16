@@ -2258,3 +2258,37 @@ record zero save writes. Frozen samples establish art presence and fit;
 they do not establish motion quality, dense-fight readability or balance.
 The random S10 boss choice remains. S5 teaching kits, new S10 phase kits,
 entrance/music/HUD and durable reward settlement remain later steps.
+
+## 2026-10-16 — Existing combat statuses: badges and coloured captions
+
+The illustrated combat-text treatment now covers 21 existing status identities
+across enemy conditions, ascension disciplines and Manifestations. Dedicated
+transparent ImageGen badges share the established brass/charcoal style. Each
+name keeps its semantic colour, including mixed rows; the two Mark systems
+have distinct red and violet artwork. Debt keeps its amount/countdown world
+marker, now with the HUD caption font and its own badge. The existing healing
+seal lesson uses the matching illustrated alert.
+
+New application captions share a bounded gate: eight per process frame,
+1.5 seconds per target/effect and at most 512 cached targets. Refreshes and
+damage ticks stay quiet. Prime and Cracked regressions distinguish an active
+refresh from consumption/reapplication. Existing magnitudes, durations,
+charges and expiry behaviour are preserved.
+
+Three native catalogue pages show all 21 identities through production text
+renderers, including the persistent Debt path. Floating catalogue samples
+use 1.35× emphasis; the live fight uses the actual gameplay paths and scales.
+The 48-enemy capture retains ten elites and double/triple modifier stress
+cases, with scripted real status applications, native attacks, AI and deaths.
+Its 10 simulation seconds recorded 47 attacks, 90 hits and 21 deaths, with
+zero save writes or capture failures. The silent MP4 retains measured sample
+timing. This is a visual review, not all-build or performance verification.
+
+Artwork, prompts, native media and test logs are linked from
+`docs/art/2026-10-16-combat-status-assets.md` and
+`docs/art/reference/2026-10-16-combat-status/`. Native text checks pass 87/0,
+column checks 41/0 and final application/refresh checks 22/0; initial fixture
+diagnostics are retained separately. Shared runtime-safety checks pass 21/0
+and the final parse audit passes all 530 gameplay scripts. Nine focused
+suites/audits report 792 passing checks with no failures. The user approved
+the preview and requested a separate commit and push for this pass.

@@ -530,6 +530,7 @@ func _on_blast_hit(blast_id: int, hit: Dictionary) -> void:
 				_shrapnel(handle, at, seen)
 			elif seen.size() % _fracture_arm_interval() == 0:
 				runner.status_of(handle)["fracture"] = 30
+				Feedback.notify_handle(handle, &"fracture")
 				counters["fractures"] = int(counters["fractures"]) + 1
 		if has("ORK1") and (bool(hit["is_elite"]) or bool(hit["is_boss"])) and runner.enemy_alive(handle) and String(blast["root"]) != "ORK1":
 			if _beacons.has(handle):

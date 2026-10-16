@@ -138,10 +138,13 @@ func is_exposed(handle: int) -> bool:
 func expose(handle: int, origin: String = "") -> void:
 	if not runner.enemy_alive(handle):
 		return
+	var was_exposed := is_exposed(handle)
 	runner.status_of(handle)["weak_point"] = _clock + WEAK_POINT_SECONDS
 	_exposed_until[handle] = _clock + WEAK_POINT_SECONDS
 	_exposed_origin[handle] = origin
 	counters["exposed"] = int(counters["exposed"]) + 1
+	if not was_exposed:
+		Feedback.notify_handle(handle, &"weak_point")
 
 
 func _consume(handle: int, hit: Dictionary) -> void:

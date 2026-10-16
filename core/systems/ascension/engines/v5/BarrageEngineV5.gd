@@ -948,6 +948,7 @@ func _complete_burst() -> void:
 		# Bullet Hell's authored ending stays an Evolution-specific shutdown.
 		jam_left = 1.5
 		runner.block_native_fire(jam_left)
+		Feedback.notify_at(origin, &"jam", -runner.get_instance_id())
 		heat = minf(heat, MELTDOWN_REST)
 	else:
 		# Base fan: 12 Q-generated Core-strike rounds at Proc Power 0.7; the

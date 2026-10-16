@@ -1,0 +1,156 @@
+{
+  "success": true,
+  "catalogue_ids": [
+    "burn",
+    "bleed",
+    "stun",
+    "slow",
+    "warded",
+    "haste",
+    "fading",
+    "execution_mark",
+    "wound",
+    "cracked",
+    "prime",
+    "weak_point",
+    "fracture",
+    "link",
+    "blood_rite",
+    "healing_sealed",
+    "jam",
+    "debt",
+    "anchored",
+    "marked",
+    "scarred"
+  ],
+  "catalogue_pages": 3,
+  "persistent_debt_path": "AscensionRunner._draw tagged persistent world label",
+  "native_image_size": [
+    1280,
+    720
+  ],
+  "live_simulation_seconds": 10.0000000000001,
+  "measured_wall_seconds": 11.495871,
+  "captured_frames": 145,
+  "save_writes": 0,
+  "runtime_errors_or_warnings": 0,
+  "separate_process_application_data_profiles": true,
+  "selected_native_frames": [
+    {
+      "file": "status-fight-common-statuses.png",
+      "source_frame": "frame-0048.png",
+      "source_frame_index": 48,
+      "simulation_time": 3.38333333333333,
+      "wall_time": 4.538335,
+      "image_size": [
+        1280,
+        720
+      ],
+      "selection": "BURNING and BLEEDING on a live target, plus STUNNED on the ARMOURED + VAMPIRIC elite.",
+      "transformation": "None: exact native PNG bytes copied from the recorded source frame.",
+      "sha256": "fe537382d295ee3e2bb9f0776c4cd59427bf5360aef9709333fdc32a62dfe520"
+    },
+    {
+      "file": "status-fight-healing-teach.png",
+      "source_frame": "frame-0092.png",
+      "source_frame_index": 92,
+      "simulation_time": 6.46666666666665,
+      "wall_time": 7.869898,
+      "image_size": [
+        1280,
+        720
+      ],
+      "selection": "Actual queued healing-lock teaching alert with its purple badge, sealed HP bar and STUNNED mixed elite.",
+      "transformation": "None: exact native PNG bytes copied from the recorded source frame.",
+      "sha256": "d179909a7292ae4bc841e4c2c3b9154f68aced5fde75830ae02a02ee90e93960"
+    }
+  ],
+  "video": {
+    "format": "MP4 / H.264 yuv420p CRF18, silent",
+    "source_frames": 145,
+    "duration_seconds": 11.362081,
+    "resolution": [
+      1280,
+      720
+    ],
+    "bytes": 5819014,
+    "timing": "Measured wall-clock sample intervals, variable frame rate, final frame held for median interval; no speedup to requested fps.",
+    "verification": "Full final MP4 decoded without errors; decoded midfight frame exported for visual QA.",
+    "encoder": "7.1-essentials_build-www.gyan.dev"
+  },
+  "limits": "All-21 catalogue is staged; live common-status applications use real APIs at scripted times, with player god mode and controlled input. No all-build gameplay or performance claim.",
+  "artifacts": {
+    "status-catalog-1.png": {
+      "bytes": 93937,
+      "sha256": "e2413629f2785dcf71fc54cda98dd8e82fe253a1329158c73e34f67a00e69896"
+    },
+    "status-catalog-2.png": {
+      "bytes": 104267,
+      "sha256": "c8f1cdbc02d7e5b23b556acc482ed7fef6980751763380db31bcc316fb283dfe"
+    },
+    "status-catalog-3.png": {
+      "bytes": 106544,
+      "sha256": "73b66c43e79d292771b2afd5c1f02f8241b7267d214a30497e516b5a9b2f8f4b"
+    },
+    "status-fight-opening.png": {
+      "bytes": 1394333,
+      "sha256": "2a993dcde126543fc802b6cca01a1958c45d25e6f4a503b5dae26306ee8fdc79"
+    },
+    "status-fight-midfight.png": {
+      "bytes": 1305439,
+      "sha256": "363f3ccfb6703df74429c7ec81383132cd56dc596a85867c31a0e2f579f47fcf"
+    },
+    "status-fight-ending.png": {
+      "bytes": 1289338,
+      "sha256": "4da41cead4f68a6216175aaa2f1f05d588ad86d30cd927d7df8d00dfbc2dcac4"
+    },
+    "status-fight-decoded-midfight.png": {
+      "bytes": 1455365,
+      "sha256": "6fdf1a0eae20f0f3ec1215a7b58a382dfc747bf1c1fa49f85bf5f4fa3745b1a3"
+    },
+    "status-fight-common-statuses.png": {
+      "bytes": 1311685,
+      "sha256": "fe537382d295ee3e2bb9f0776c4cd59427bf5360aef9709333fdc32a62dfe520"
+    },
+    "status-fight-healing-teach.png": {
+      "bytes": 1260525,
+      "sha256": "d179909a7292ae4bc841e4c2c3b9154f68aced5fde75830ae02a02ee90e93960"
+    },
+    "combat-status-fight.mp4": {
+      "bytes": 5819014,
+      "sha256": "2dcaaa62e248da58856efa32cf17caa285f6fd9d643d2b8d15d4d4f2b35f6b73"
+    },
+    "catalog-capture-info.json": {
+      "bytes": 5408,
+      "sha256": "0b5fbb156b0b73bc5a2e2b170a8a91a12afd4f57a14e501da84752610791dff8"
+    },
+    "fight-capture-info.json": {
+      "bytes": 400221,
+      "sha256": "aa6cdeb769a688043184fc325df3e338b8782e5deb80941270135c0e071715c4"
+    },
+    "status-application-info.json": {
+      "bytes": 3654,
+      "sha256": "ed6e9a9dcc63cfa87414f6588b37dd4983619baee29acbb2a4514c7734216853"
+    },
+    "encoding-info.json": {
+      "bytes": 481,
+      "sha256": "8ef34d70b6b1b06ca2549d25b5daa0954c695280b503b491f0ad83d4a01f4856"
+    },
+    "preview-run-info.json": {
+      "bytes": 7842,
+      "sha256": "e91eeb80de70388b1fe487e683587b37bef20a8c5d61ef078604aa6dde1a4184"
+    },
+    "catalog-capture.log": {
+      "bytes": 392,
+      "sha256": "6427b18b7b4435dfb62f239880dc07acdedc59e47dfd714f98aff75395699fb2"
+    },
+    "fight-capture.log": {
+      "bytes": 625,
+      "sha256": "1affe68404bfbaf6997b470d5152264e454d41f12cef36d12226aa2cb7202b36"
+    },
+    "selected-native-frames.json": {
+      "bytes": 1618,
+      "sha256": "9caa28d7f439340a62ccc1d4e2b3f7285484434f88418a536932b28b1efce2eb"
+    }
+  }
+}

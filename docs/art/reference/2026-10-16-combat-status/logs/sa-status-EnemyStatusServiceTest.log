@@ -1,0 +1,22 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: burn schedule accepts data-only handle
+PASS: new burn ticks responsively on data-only target
+PASS: bleed schedule coexists on same handle
+PASS: central step ticks simultaneous burn and bleed
+PASS: burn refresh succeeds
+PASS: burn refresh keeps maximum stacks and updates tick damage
+PASS: one handle owns one schedule per status kind
+PASS: materialized and data-only status damage use identical authority
+PASS: lethal central status tick finalizes exact-once world death
+PASS: combat exposes a status service seam for reentrancy coverage
+PASS: reentrant lethal tick releases only the doomed record
+PASS: reentrant removal never releases neighbouring records
+PASS: neighbouring schedules still tick exactly once
+PASS: reentrant cleanup removes exactly the doomed schedules
+PASS: lethal tick removes remaining status schedule
+PASS: stale status cannot damage reused slot generation
+PASS: stale schedule is pruned safely
+PASS: status expiring at the boundary does not tick late
+PASS: invalid handle cannot receive status
+EnemyStatusServiceTest passes=19 failures=0

@@ -1,6 +1,8 @@
 class_name EnemyCombatService
 extends Node
 
+const Feedback := preload("res://core/combat/CombatStatusFeedback.gd")
+
 const DeathContextScript = preload("res://core/systems/enemy_world/EnemyDeathContext.gd")
 
 var _world: EnemyWorldService = null
@@ -537,6 +539,7 @@ func apply_knockback(handle: int, force: Vector2) -> bool:
 func apply_stun(handle: int, seconds: float) -> bool:
 	if seconds <= 0.0 or not _is_live_handle(handle):
 		return false
+	var was_stunned := _world.get_stun_time(handle) > 0.0
 	if not _world.extend_stun_time(handle, seconds):
 		return false
 	var actor := _world.actor_for_handle(handle)
@@ -545,6 +548,8 @@ func apply_stun(handle: int, seconds: float) -> bool:
 			actor.call("_apply_enemy_world_stun", _world.get_stun_time(handle))
 		elif actor.has_method("apply_stun"):
 			actor.call("apply_stun", seconds)
+	if not was_stunned:
+		Feedback.notify_handle(handle, &"stun")
 	return true
 
 

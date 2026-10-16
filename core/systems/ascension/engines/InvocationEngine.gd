@@ -284,6 +284,8 @@ func pulse(sigil: Dictionary, chain: int = 0, v_rooted: bool = false) -> int:
 				continue
 			var rite: Dictionary = runner.status_of(handle).get("blood_rite", {"bonus": 0.0})
 			runner.status_of(handle)["blood_rite"] = {"bonus": minf(0.09, float(rite.get("bonus", 0.0)) + 0.03), "until": _clock + 2.0}
+			if float(rite.get("until", 0.0)) <= _clock:
+				Feedback.notify_handle(handle, &"blood_rite")
 		counters["blood_rites"] = int(counters.get("blood_rites", 0)) + 1
 	if has("IN10") and hits >= 6:
 		_chain_pulse(sigil, chain)

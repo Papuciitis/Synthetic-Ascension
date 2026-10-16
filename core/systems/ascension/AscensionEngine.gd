@@ -1,5 +1,8 @@
 extends RefCounted
 class_name AscensionEngine
+
+const Feedback := preload("res://core/combat/CombatStatusFeedback.gd")
+
 ## One discipline's combat rules (Execution, Barrage, Distortion, ...).
 ##
 ## The runner owns the shared contract: it parses hits, pairs lethal hits with

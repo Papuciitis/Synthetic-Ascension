@@ -1,6 +1,8 @@
 extends Node
 class_name BleedDot
 
+const Feedback := preload("res://core/combat/CombatStatusFeedback.gd")
+
 var _target: Node = null
 var _source: Node = null
 
@@ -11,6 +13,7 @@ var _tick_left: float = 0.0
 var _dmg_per_tick_per_stack: float = 0.1
 
 func setup(target: Node, source: Node, stacks: int, duration: float, tick_interval: float, dmg_per_tick_per_stack: float) -> void:
+	var was_active := _time_left > 0.0
 	_target = target
 	_source = source
 	_stacks = maxi(_stacks, stacks) # refresh can increase stacks
@@ -18,6 +21,8 @@ func setup(target: Node, source: Node, stacks: int, duration: float, tick_interv
 	_tick = maxf(tick_interval, 0.05)
 	_dmg_per_tick_per_stack = maxf(dmg_per_tick_per_stack, 0.01)
 	_tick_left = minf(_tick_left, _tick) # make it feel responsive
+	if not was_active and _time_left > 0.0 and _stacks > 0 and target is Node2D:
+		Feedback.notify_actor(target as Node2D, &"bleed")
 
 	# When attached to an enemy that drives its own dots, the enemy's simulation
 	# step ticks us at its scheduler cadence — no 60 Hz idle callback per dot.

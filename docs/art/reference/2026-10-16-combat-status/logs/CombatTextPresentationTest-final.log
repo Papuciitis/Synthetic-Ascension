@@ -1,0 +1,91 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+OpenGL API 3.3.0 - Build 32.0.101.7088 - Compatibility - Using Device: Intel - Intel(R) UHD Graphics
+
+PASS: damage shapes its actual glyphs with the HUD's strong figure face
+PASS: named combat text uses the HUD caption face (84.0 vs 84.0)
+PASS: callouts accept explicit status IDs without inferring their words
+PASS: generated combat icons have a dedicated semantic registry
+PASS: armoured loads its authored badge
+PASS: armoured reuses the loaded badge
+PASS: vampiric loads its authored badge
+PASS: vampiric reuses the loaded badge
+PASS: shielded loads its authored badge
+PASS: shielded reuses the loaded badge
+PASS: splitting loads its authored badge
+PASS: splitting reuses the loaded badge
+PASS: fast loads its authored badge
+PASS: fast reuses the loaded badge
+PASS: unknown status IDs omit safely
+PASS: burn loads its implemented-status badge
+PASS: bleed loads its implemented-status badge
+PASS: stun loads its implemented-status badge
+PASS: slow loads its implemented-status badge
+PASS: warded loads its implemented-status badge
+PASS: haste loads its implemented-status badge
+PASS: fading loads its implemented-status badge
+PASS: execution_mark loads its implemented-status badge
+PASS: wound loads its implemented-status badge
+PASS: cracked loads its implemented-status badge
+PASS: prime loads its implemented-status badge
+PASS: weak_point loads its implemented-status badge
+PASS: fracture loads its implemented-status badge
+PASS: link loads its implemented-status badge
+PASS: blood_rite loads its implemented-status badge
+PASS: healing_sealed loads its implemented-status badge
+PASS: jam loads its implemented-status badge
+PASS: debt loads its implemented-status badge
+PASS: anchored loads its implemented-status badge
+PASS: marked loads its implemented-status badge
+PASS: scarred loads its implemented-status badge
+PASS: a callout keeps its own modifier IDs when the caller reuses the array
+PASS: merging an untagged message removes its previous badges
+PASS: progress merges replace their badge metadata with the message
+PASS: pool compaction keeps each surviving line with its own badge
+PASS: damage reusing a callout slot never inherits an icon
+PASS: reused text cache changes from caption to figure face
+PASS: identical text and size still rebuild the cache when a figure slot becomes a caption
+PASS: stacked badge callouts reserve enough vertical space to clear each other
+PASS: a damage key cannot overwrite a named callout sharing the same integer
+PASS: that damage stays iconless and outside the callout column
+PASS: a popup key cannot convert an existing damage number into a caption
+PASS: a progress key likewise stays in the named callout channel
+PASS: modifier announcements accept semantic IDs and retain each name's own colour
+PASS: modifier names keep copied IDs when a caller or another slot is cleared
+PASS: compaction cannot transfer modifier colours into a surviving plain callout
+PASS: a damage number reusing a modifier slot has no coloured spans
+PASS: compaction retains a moved modifier's own coloured spans
+PASS: implemented statuses share canonical names, colours and authored badges
+PASS: a single burn callout resolves the canonical name, orange text and burn badge
+PASS: status feedback preserves authored text and emphasis
+PASS: mixed statuses filter duplicates and unknown IDs while copying the caller's order
+PASS: generic status names are shaped with the same pooled coloured-span renderer as elite names
+PASS: the elite wrapper retains its five-modifier filtering
+PASS: unknown semantic status does not create an empty callout
+PASS: a plain popup replacing a status line clears its coloured spans
+PASS: progress replacing a status line clears coloured spans and adopts its requested colour
+PASS: one and two generated badges actually paint alongside the label
+PASS: badge and text rows stay centred over their actor
+PASS: unknown badges neither paint nor leave a blank gap
+PASS: a status badge keeps its authored colours when its text colour changes
+PASS: ARMOURED glyphs retain their own modifier colour in a 2-effect announcement (140 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: VAMPIRIC glyphs retain their own modifier colour in a 2-effect announcement (117 pixels)
+PASS: SHIELDED glyphs retain their own modifier colour in a 3-effect announcement (127 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: SPLITTING glyphs retain their own modifier colour in a 3-effect announcement (121 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: FAST glyphs retain their own modifier colour in a 3-effect announcement (50 pixels)
+PASS: BURNING glyphs retain their own modifier colour in a 3-effect announcement (115 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: SLOWED glyphs retain their own modifier colour in a 3-effect announcement (90 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: VAMPIRIC glyphs retain their own modifier colour in a 3-effect announcement (118 pixels)
+PASS: FRACTURED glyphs retain their own modifier colour in a 3-effect announcement (135 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: LINKED glyphs retain their own modifier colour in a 3-effect announcement (101 pixels)
+PASS: mixed modifier names have a neutral, readable separator
+PASS: PRIMED glyphs retain their own modifier colour in a 3-effect announcement (104 pixels)
+PASS: a single modifier's glyphs also use its canonical colour, excluding its painted badge
+PASS: a reused plain callout renders uniformly without stale modifier colours
+PASS: a reused damage slot draws normal figure glyphs without stale modifier colours
+CombatTextPresentationTest: 87 passed, 0 failed

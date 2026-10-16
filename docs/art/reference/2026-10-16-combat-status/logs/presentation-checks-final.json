@@ -1,0 +1,90 @@
+{
+  "started_at": "2026-10-16T21:52:51.909213+03:00",
+  "completed_at": "2026-10-16T21:55:07.124218+03:00",
+  "initial_diagnostic": "docs/art/reference/2026-10-16-combat-status/logs/presentation-checks-initial-fixture-error.json",
+  "suites": [
+    {
+      "suite": "CombatTextPresentationTest",
+      "native_rendering": true,
+      "command": [
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "--audio-driver",
+        "Dummy",
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--display-driver",
+        "windows",
+        "--rendering-method",
+        "gl_compatibility",
+        "--rendering-driver",
+        "opengl3",
+        "--windowed",
+        "--resolution",
+        "1280x720",
+        "--position",
+        "-32000,-32000",
+        "res://tools/tests/CombatTextPresentationTest.tscn",
+        "--quit-after",
+        "3000"
+      ],
+      "command_windows": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe --audio-driver Dummy --path C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world --display-driver windows --rendering-method gl_compatibility --rendering-driver opengl3 --windowed --resolution 1280x720 --position -32000,-32000 res://tools/tests/CombatTextPresentationTest.tscn --quit-after 3000",
+      "cwd": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_environment": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\config"
+      },
+      "started_at": "2026-10-16T21:54:39.686627+03:00",
+      "log": "docs/art/reference/2026-10-16-combat-status/logs/CombatTextPresentationTest-final.log",
+      "window": "offscreen Windows GL; startup requests no activation",
+      "pid": 3300,
+      "exit_code": 0,
+      "completed_at": "2026-10-16T21:55:07.124218+03:00",
+      "elapsed_seconds": 27.438,
+      "log_sha256": "420ea84efb5b809ed73cb2fc2154da25c182415eef96ff12393aeb3e25cec03d",
+      "passed": 87,
+      "failed": 0,
+      "error_lines": [],
+      "clean_pass": true,
+      "corrective_rerun": true,
+      "original_log": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\CombatTextPresentationTest-final.log"
+    },
+    {
+      "suite": "BattleTextColumnTest",
+      "native_rendering": false,
+      "command": [
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "--audio-driver",
+        "Dummy",
+        "--path",
+        "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "--headless",
+        "res://tools/tests/BattleTextColumnTest.tscn",
+        "--quit-after",
+        "3000"
+      ],
+      "command_windows": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe --audio-driver Dummy --path C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world --headless res://tools/tests/BattleTextColumnTest.tscn --quit-after 3000",
+      "cwd": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+      "profile_environment": {
+        "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\roaming",
+        "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\local",
+        "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\data",
+        "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\config"
+      },
+      "started_at": "2026-10-16T21:52:51.909213+03:00",
+      "log": "docs/art/reference/2026-10-16-combat-status/logs/BattleTextColumnTest-final.log",
+      "window": "headless",
+      "pid": 14144,
+      "exit_code": 0,
+      "completed_at": "2026-10-16T21:53:22.212541+03:00",
+      "elapsed_seconds": 30.312,
+      "log_sha256": "19d48845b4c38953692ae591463d2604b696dd0f61478de9b86f5492042b750c",
+      "passed": 41,
+      "failed": 0,
+      "error_lines": [],
+      "clean_pass": true,
+      "original_log": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\BattleTextColumnTest-final.log"
+    }
+  ]
+}

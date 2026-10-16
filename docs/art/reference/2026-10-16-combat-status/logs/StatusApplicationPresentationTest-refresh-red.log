@@ -1,0 +1,40 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a live burn application succeeds
+PASS: a new burn announces its canonical badge
+PASS: refresh, a coexisting named burn, and damage ticks never repeat BURN
+PASS: bleed has its own announcement and silent refresh/ticks
+PASS: named-first and generic-second burn share one semantic introduction
+PASS: data-only and materialized enemies get the same semantic status feedback
+PASS: invalid, stale, dying and rejected applications produce no status line
+PASS: stun announces once when control is first lost
+PASS: Herald ward/haste and stability slow announce accepted transitions only
+PASS: a real Weak Point exposure announces once across refreshes
+PASS: real Distortion DoT/slow applications carry distinct badges
+PASS: joining a real Dominion link announces LINKED
+ERROR: FAIL: Passing Blade refreshes an active Prime without a new caption after feedback cooldown clears
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_prime_refresh_and_reapplication (res://tools/tests/StatusApplicationPresentationTest.gd:158)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:254)
+PASS: Passing Blade announces Prime again after the previous status was consumed
+ERROR: FAIL: Armour Break refreshes remaining Cracked charges without a new caption after feedback cooldown clears
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_bastion_cracked_refresh_and_reapplication (res://tools/tests/StatusApplicationPresentationTest.gd:178)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:255)
+PASS: Armour Break announces Cracked again after the previous charges were consumed
+ERROR: FAIL: Gavel refreshes a boss's remaining Cracked charges without a new caption after feedback cooldown clears
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/StatusApplicationPresentationTest.gd:27)
+       [1] _test_gavel_cracked_refresh_and_reapplication (res://tools/tests/StatusApplicationPresentationTest.gd:202)
+       [2] _run (res://tools/tests/StatusApplicationPresentationTest.gd:256)
+PASS: Gavel announces Cracked again after the boss's previous charges were consumed
+PASS: healing seal retains exact wording/scale with its canonical badge
+PASS: a shorter healing lock is silent
+PASS: the first healing seal teaches with its own illustrated badge
+PASS: disabling ability callouts silences actual status applications
+StatusApplicationPresentationTest: 19 passed, 3 failed

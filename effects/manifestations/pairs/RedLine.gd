@@ -113,9 +113,9 @@ func _on_resource_spent(noun: StringName, amount: float) -> void:
 	if _rearm_cd <= 0.0:
 		_guard_left = GUARD_TIME
 		_rearm_cd = REARM_COOLDOWN
-		popup("RED LINE", noun_colour(&"ward"), 1.30)
+		popup("RED LINE", noun_colour(&"ward"), 1.30, 0, [&"haste"])
 	else:
-		popup("RED LINE", noun_colour(&"momentum"), 1.10)
+		popup("RED LINE", noun_colour(&"momentum"), 1.10, 0, [&"haste"])
 
 
 func _process(delta: float) -> void:

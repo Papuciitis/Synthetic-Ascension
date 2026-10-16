@@ -39,13 +39,14 @@ func _run() -> void:
 	var supports_icons := _has_icon_argument(text)
 	_check(supports_icons, "callouts accept explicit status IDs without inferring their words")
 	var has_loader := ResourceLoader.exists(ICON_SCRIPT_PATH)
-	_check(has_loader, "generated combat icons have a dedicated five-modifier loader")
+	_check(has_loader, "generated combat icons have a dedicated semantic registry")
 	if has_loader:
 		_test_icon_resources()
 	if supports_icons and has_loader:
 		_test_icon_lifecycle(text)
 		_test_merge_keys_stay_in_channel(text)
 		_test_modifier_lifecycle(text)
+		_test_status_lifecycle(text)
 		if DisplayServer.get_name() != "headless":
 			await _test_rendered_badges()
 			await _test_rendered_modifier_colours()
@@ -87,6 +88,45 @@ func _test_icon_resources() -> void:
 		if texture != null:
 			_check(icons.call("texture", id) == texture, "%s reuses the loaded badge" % id)
 	_check(icons.call("texture", &"not_a_status") == null, "unknown status IDs omit safely")
+	for id in [&"burn", &"bleed", &"stun", &"slow", &"warded", &"haste", &"fading", &"execution_mark", &"wound", &"cracked", &"prime", &"weak_point", &"fracture", &"link", &"blood_rite", &"healing_sealed", &"jam", &"debt", &"anchored", &"marked", &"scarred"]:
+		var texture := icons.call("texture", id) as Texture2D
+		_check(texture != null and texture.resource_path == "res://assets/textures/ui/combat_status/%s.png" % id, "%s loads its implemented-status badge" % id)
+
+
+func _test_status_lifecycle(text: Node) -> void:
+	var supported := text.has_method("status_popup") and text.has_method("statuses_popup")
+	_check(supported, "implemented statuses share canonical names, colours and authored badges")
+	if not supported:
+		return
+	text.clear()
+	text.call("status_popup", Vector2(320.0, 180.0), &"burn")
+	_check(text.get("_texts")[0] == "BURNING" and text.get("_colors")[0].is_equal_approx(Color(1.0, 0.48, 0.18)) and text.get("_icon_ids")[0] == [&"burn"], "a single burn callout resolves the canonical name, orange text and burn badge")
+	text.call("status_popup", Vector2(320.0, 180.0), &"jam", "JAMMED 2", 1.4, 733)
+	_check(text.get("_texts")[1] == "JAMMED 2" and is_equal_approx(text.get("_scales")[1], 1.4) and text.get("_icon_ids")[1] == [&"jam"], "status feedback preserves authored text and emphasis")
+	var ids: Array[StringName] = [&"burn", &"slow", &"vampiric", &"burn", &"not_a_status"]
+	text.call("statuses_popup", Vector2(320.0, 180.0), ids)
+	ids.clear()
+	_check(text.get("_texts")[2] == "BURNING · SLOWED · VAMPIRIC" and text.get("_modifier_ids")[2] == [&"burn", &"slow", &"vampiric"], "mixed statuses filter duplicates and unknown IDs while copying the caller's order")
+	var segments: Array = text.call("_shaped_modifier_lines", 2, 15)
+	_check(segments.size() >= 5 and segments[0].get_line_width() > 0.0 and segments[4].get_line_width() > 0.0, "generic status names are shaped with the same pooled coloured-span renderer as elite names")
+	var elite_ids: Array[StringName] = [&"burn", &"armoured"]
+	text.call("modifier_popup", Vector2(320.0, 180.0), elite_ids)
+	_check(text.get("_texts")[3] == "ARMOURED", "the elite wrapper retains its five-modifier filtering")
+	text.call("status_popup", Vector2.ZERO, &"not_a_status")
+	_check(text.get("_count") == 4, "unknown semantic status does not create an empty callout")
+	# Simulate a shared merge key after the real span cache was shaped. A
+	# generic replacement must drop both the colour IDs and the cached spans.
+	text.get("_keys")[2] = 744
+	text.popup(Vector2.ZERO, "PLAIN", Color.WHITE, 1.0, 744)
+	_check(text.get("_modifier_ids")[2].is_empty(), "a plain popup replacing a status line clears its coloured spans")
+	text.clear()
+	var replacement_ids: Array[StringName] = [&"bleed", &"stun"]
+	text.call("statuses_popup", Vector2.ZERO, replacement_ids)
+	text.call("_shaped_modifier_lines", 0, 15)
+	text.get("_keys")[0] = 755
+	text.progress(Vector2.ZERO, "PROGRESS", 755, Color(0.4, 0.7, 0.9))
+	_check(text.get("_modifier_ids")[0].is_empty() and text.get("_colors")[0].is_equal_approx(Color(0.4, 0.7, 0.9)), "progress replacing a status line clears coloured spans and adopts its requested colour")
+	text.clear()
 
 
 func _test_icon_lifecycle(text: Node) -> void:
@@ -193,7 +233,7 @@ func _test_modifier_lifecycle(text: Node) -> void:
 	text.clear()
 
 
-func _capture_modifier_text(ids: Array[StringName], words: String, reuse: String = "") -> Image:
+func _capture_modifier_text(ids: Array[StringName], words: String, reuse: String = "", generic: bool = false) -> Image:
 	var viewport := SubViewport.new()
 	viewport.size = Vector2i(640, 240)
 	viewport.transparent_bg = true
@@ -203,7 +243,9 @@ func _capture_modifier_text(ids: Array[StringName], words: String, reuse: String
 	var text := TEXT_SCRIPT.new()
 	viewport.add_child(text)
 	var at := Vector2(320.0, 150.0)
-	if text.has_method("modifier_popup"):
+	if generic and text.has_method("statuses_popup"):
+		text.call("statuses_popup", at, ids, 1.0)
+	elif text.has_method("modifier_popup") and not generic:
 		text.call("modifier_popup", at, ids, 1.0)
 	else:
 		# Exercise today's actual single-tint path for the red regression.
@@ -243,15 +285,17 @@ func _test_rendered_modifier_colours() -> void:
 	var fixtures := [
 		{"ids": [&"armoured", &"vampiric"], "labels": ["ARMOURED", "VAMPIRIC"], "colours": [Color(0.72, 0.78, 0.86), Color(1.0, 0.22, 0.28)]},
 		{"ids": [&"shielded", &"splitting", &"fast"], "labels": ["SHIELDED", "SPLITTING", "FAST"], "colours": [Color(0.45, 0.85, 1.0), Color(0.75, 1.0, 0.45), Color(1.0, 0.95, 0.55)]},
+		{"ids": [&"burn", &"slow", &"vampiric"], "labels": ["BURNING", "SLOWED", "VAMPIRIC"], "colours": [Color(1.0, 0.48, 0.18), Color(0.50, 0.78, 1.0), Color(1.0, 0.22, 0.28)], "generic": true},
+		{"ids": [&"fracture", &"link", &"prime"], "labels": ["FRACTURED", "LINKED", "PRIMED"], "colours": [Color(1.0, 0.60, 0.25), Color(0.75, 0.50, 1.0), Color(0.98, 0.80, 0.34)], "generic": true},
 	]
 	var font := HUD_THEME.get_font(&"font", &"HudCaption")
-	var evidence := Image.create(640, 480, false, Image.FORMAT_RGBA8)
+	var evidence := Image.create(640, 240 * fixtures.size(), false, Image.FORMAT_RGBA8)
 	for index in range(fixtures.size()):
 		var fixture: Dictionary = fixtures[index]
 		var ids: Array[StringName] = []
 		ids.assign(fixture.ids)
 		var words := " · ".join(fixture.labels)
-		var image := await _capture_modifier_text(ids, words)
+		var image := await _capture_modifier_text(ids, words, "", bool(fixture.get("generic", false)))
 		evidence.blit_rect(image, Rect2i(0, 0, 640, 240), Vector2i(0, 240 * index))
 		var width := font.get_string_size(words, HORIZONTAL_ALIGNMENT_LEFT, -1, 15).x
 		var badges := 26.0 * ids.size() + 2.0 * (ids.size() - 1)

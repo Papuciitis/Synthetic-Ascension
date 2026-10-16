@@ -1,0 +1,12 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the ally is registered
+PASS: a Herald pulse wards the ally: damage taken x0.8
+PASS: an ally outside the pulse radius is not warded
+PASS: a 5 damage hit lands as 4 on the warded ally (4.00)
+PASS: a second ward composes on the unwarded value, not on the ward
+PASS: after its duration the ward lifts and the multiplier is back to one
+PASS: a Chanter pulse mends the wounded ally 8% of max HP (0.95 of 11.84)
+PASS: and wards it 15%
+PASS: the Chanter has no attack and drains no Followers
+HeraldWardTest: 9 passed, 0 failed

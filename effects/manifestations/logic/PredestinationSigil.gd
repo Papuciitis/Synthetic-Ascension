@@ -129,11 +129,8 @@ func describe() -> String:
 func _place_mark(handle: int, _at: Vector2) -> void:
 	var duration: float = mark_duration()
 	# set_mark() is a no-op if nothing claims the resource, and it owns the
-	# marker visual, so there is nothing for this rule to draw or adopt.
+	# marker visual and status introduction, so this rule never duplicates them.
 	state.set_mark(handle, duration)
-	if state.marked_handle != handle:
-		return
-	popup("MARKED", Color(0.86, 0.52, 1.0, 1.0), 1.25)
 
 
 ## Deliberate cross-family hook: an orbit built by an unrelated shard rule is

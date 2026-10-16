@@ -1,0 +1,685 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-16",
+  "status": "complete",
+  "engine": "Godot 4.7.1.stable.official.a13da4feb",
+  "scope": "Combat status icons, semantic text colours, bounded feedback and actual status application hooks. No engine was launched to prepare this evidence index.",
+  "source_manifests": {
+    "final": "logs/gameplay-source-manifest.json",
+    "initial": "logs/gameplay-source-manifest-initial.json",
+    "files_in_each": 29,
+    "scope": "25 gameplay files and 4 test files. These manifests do not cover foundation files or artwork.",
+    "final_snapshot_verified_unchanged_when_copied": true
+  },
+  "runs": [
+    {
+      "id": "applications_initial_red",
+      "suite": "StatusApplicationPresentationTest",
+      "stage": "initial application hooks missing",
+      "result": "expected_red",
+      "passed": 3,
+      "failed": 13,
+      "exit_code": 1,
+      "raw_log": "logs/sa-status-application-red.log",
+      "expected_failures": [
+        "a new burn announces its canonical badge",
+        "refresh, a coexisting named burn, and damage ticks never repeat BURN",
+        "bleed has its own announcement and silent refresh/ticks",
+        "named-first and generic-second burn share one semantic introduction",
+        "data-only and materialized enemies get the same semantic status feedback",
+        "stun announces once when control is first lost",
+        "Herald ward/haste and stability slow announce accepted transitions only",
+        "a real Weak Point exposure announces once across refreshes",
+        "real Distortion DoT/slow applications carry distinct badges",
+        "joining a real Dominion link announces LINKED",
+        "healing seal retains exact wording/scale with its canonical badge",
+        "a shorter healing lock is silent",
+        "the first healing seal teaches with its own illustrated badge"
+      ],
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/StatusApplicationPresentationTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-application-red"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": true
+    },
+    {
+      "id": "applications_initial_green",
+      "suite": "StatusApplicationPresentationTest",
+      "stage": "initial 16-check implementation, before refresh regression extension and Debt caption refinement",
+      "result": "passed",
+      "passed": 16,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/sa-status-application-green.log",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/StatusApplicationPresentationTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-application-green"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": true
+    },
+    {
+      "id": "applications_refresh_red",
+      "suite": "StatusApplicationPresentationTest",
+      "stage": "six refresh/reapplication checks added before three active-state guards",
+      "result": "expected_red",
+      "passed": 19,
+      "failed": 3,
+      "exit_code": 1,
+      "raw_log": "logs/StatusApplicationPresentationTest-refresh-red.log",
+      "expected_failures": [
+        "Passing Blade refreshes an active Prime without a new caption after feedback cooldown clears",
+        "Armour Break refreshes remaining Cracked charges without a new caption after feedback cooldown clears",
+        "Gavel refreshes a boss's remaining Cracked charges without a new caption after feedback cooldown clears"
+      ],
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/StatusApplicationPresentationTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-refresh-red"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": true,
+      "notes": "All three consumed-then-reapplied cases already passed. Only active-status refresh announcements failed."
+    },
+    {
+      "id": "applications_final_green",
+      "suite": "StatusApplicationPresentationTest",
+      "stage": "after three active-state guards and tagged persistent Debt caption refinement",
+      "result": "passed",
+      "passed": 22,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/StatusApplicationPresentationTest-refresh-green.log",
+      "source_manifest": "logs/gameplay-source-manifest.json",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/StatusApplicationPresentationTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-refresh-green"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": true,
+      "notes": "The six new assertions cover actual Passing Blade, Bastion Armour Break and Execution Gavel applications. Clearing only presentation cooldowns exposes active-refresh spam without waiting in real time; clearing the consumed status permits a fresh announcement. Existing Prime timestamp and Cracked charge refresh values are asserted."
+    },
+    {
+      "id": "feedback_red_report",
+      "suite": "StatusFeedbackTest",
+      "stage": "before feedback helper existed",
+      "result": "expected_red_reported_without_raw_log",
+      "passed": 0,
+      "failed": 1,
+      "exit_code": 1,
+      "raw_log": null,
+      "expected_failures": [
+        "implemented status applications have one bounded feedback gate"
+      ],
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--audio-driver",
+          "Dummy",
+          "--path",
+          ".",
+          "res://tools/tests/StatusFeedbackTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": false,
+          "environment_overrides": {},
+          "scope": "Ambient profile. The suite disabled Global autosave and used save=false for its setting changes; this does not establish zero total startup writes."
+        }
+      },
+      "autosave_disabled_by_suite": true,
+      "provenance": "Implementation worker reported its tool transcript: exit 1, 0 passed / 1 failed, expected missing-gate assertion, no parse errors. No raw RED file was retained; this entry is a report, not a reconstructed engine log."
+    },
+    {
+      "id": "feedback_green",
+      "suite": "StatusFeedbackTest",
+      "stage": "frozen feedback helper",
+      "result": "passed",
+      "passed": 22,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/status-feedback-green.log",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--audio-driver",
+          "Dummy",
+          "--path",
+          ".",
+          "res://tools/tests/StatusFeedbackTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": false,
+          "environment_overrides": {},
+          "scope": "Ambient profile. The suite disabled Global autosave and used save=false for its setting changes; this does not establish zero total startup writes."
+        }
+      },
+      "autosave_disabled_by_suite": true
+    },
+    {
+      "id": "healing_lock_baseline",
+      "suite": "HealingLockTest",
+      "stage": "supporting baseline before final refresh guards and Debt caption refinement",
+      "result": "passed",
+      "passed": 41,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/sa-status-HealingLockTest.log",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/HealingLockTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-HealingLockTest"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": false
+    },
+    {
+      "id": "enemy_status_baseline",
+      "suite": "EnemyStatusServiceTest",
+      "stage": "supporting baseline before final refresh guards and Debt caption refinement",
+      "result": "passed",
+      "passed": 19,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/sa-status-EnemyStatusServiceTest.log",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/EnemyStatusServiceTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-EnemyStatusServiceTest"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": false
+    },
+    {
+      "id": "herald_ward_baseline",
+      "suite": "HeraldWardTest",
+      "stage": "supporting baseline before final refresh guards and Debt caption refinement",
+      "result": "passed",
+      "passed": 9,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/sa-status-HeraldWardTest.log",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+        "arguments": [
+          "--headless",
+          "--path",
+          "C:/Users/NaurisKrišjānis/Desktop/code_project/SA_proj/.worktrees/enemy-world",
+          "res://tools/tests/HeraldWardTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "%TEMP%/sa-status-HeraldWardTest"
+          },
+          "scope": "APPDATA only; LOCALAPPDATA and XDG variables were not overridden."
+        }
+      },
+      "autosave_disabled_by_suite": false
+    },
+    {
+      "id": "presentation_native_final",
+      "suite": "CombatTextPresentationTest",
+      "stage": "corrective native rerun after two typed fixture-local corrections; production source unchanged",
+      "result": "passed",
+      "clean_pass": true,
+      "passed": 87,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/CombatTextPresentationTest-final.log",
+      "raw_log_sha256": "420ea84efb5b809ed73cb2fc2154da25c182415eef96ff12393aeb3e25cec03d",
+      "metadata": "logs/presentation-checks-final.json",
+      "launch": {
+        "executable": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "arguments": [
+          "--audio-driver",
+          "Dummy",
+          "--path",
+          "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+          "--display-driver",
+          "windows",
+          "--rendering-method",
+          "gl_compatibility",
+          "--rendering-driver",
+          "opengl3",
+          "--windowed",
+          "--resolution",
+          "1280x720",
+          "--position",
+          "-32000,-32000",
+          "res://tools/tests/CombatTextPresentationTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\roaming",
+            "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\local",
+            "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\data",
+            "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\CombatTextPresentationTest-9ef754124b\\config"
+          },
+          "scope": "Fresh per-suite APPDATA, LOCALAPPDATA, XDG_DATA_HOME and XDG_CONFIG_HOME directories."
+        },
+        "window": "offscreen Windows GL; startup requests no activation"
+      },
+      "native_rendering": true,
+      "started_at": "2026-10-16T21:54:39.686627+03:00",
+      "completed_at": "2026-10-16T21:55:07.124218+03:00",
+      "elapsed_seconds": 27.438,
+      "error_lines": [],
+      "notes": "Actual Intel UHD OpenGL 3.3 compatibility rendering. This clean 87/0 rerun supersedes the initial 83/0 summary that contained a runtime fixture error. Test source SHA-256: e9c9d81de627c9984e9da32c247e5ab76c20f12853aa32689ba73a77a41a8111"
+    },
+    {
+      "id": "battle_text_column_final",
+      "suite": "BattleTextColumnTest",
+      "stage": "final headless column regression",
+      "result": "passed",
+      "clean_pass": true,
+      "passed": 41,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/BattleTextColumnTest-final.log",
+      "raw_log_sha256": "19d48845b4c38953692ae591463d2604b696dd0f61478de9b86f5492042b750c",
+      "metadata": "logs/presentation-checks-final.json",
+      "launch": {
+        "executable": "C:\\Users\\NaurisKrišjānis\\Desktop\\Godot_v4.7.1-stable_win64.exe\\Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "arguments": [
+          "--audio-driver",
+          "Dummy",
+          "--path",
+          "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+          "--headless",
+          "res://tools/tests/BattleTextColumnTest.tscn",
+          "--quit-after",
+          "3000"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\roaming",
+            "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\local",
+            "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\data",
+            "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-pass-evidence\\profiles\\BattleTextColumnTest-0c278586a2\\config"
+          },
+          "scope": "Fresh per-suite APPDATA, LOCALAPPDATA, XDG_DATA_HOME and XDG_CONFIG_HOME directories."
+        },
+        "window": "headless"
+      },
+      "native_rendering": false,
+      "started_at": "2026-10-16T21:52:51.909213+03:00",
+      "completed_at": "2026-10-16T21:53:22.212541+03:00",
+      "elapsed_seconds": 30.312,
+      "error_lines": [],
+      "notes": "Headless run completed cleanly with 41 assertions and no runtime diagnostics."
+    },
+    {
+      "id": "capture_catalog_final",
+      "kind": "native_capture",
+      "suite": "StatusEffectsPreview",
+      "scene": "res://tools/dev/StatusEffectsPreview.tscn",
+      "result": "completed_cleanly",
+      "clean_pass": true,
+      "exit_code": 0,
+      "raw_log": "catalog-capture.log",
+      "raw_log_sha256": "6427b18b7b4435dfb62f239880dc07acdedc59e47dfd714f98aff75395699fb2",
+      "metadata": "preview-run-info.json",
+      "capture_metadata": "catalog-capture-info.json",
+      "verification_metadata": "preview-capture-verification.json",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "arguments": [
+          "--path",
+          "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+          "--rendering-method",
+          "gl_compatibility",
+          "--audio-driver",
+          "Dummy",
+          "--windowed",
+          "--resolution",
+          "1280x720",
+          "--position",
+          "-32000,-32000",
+          "res://tools/dev/StatusEffectsPreview.tscn",
+          "--",
+          "--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\catalog"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\AppData\\Roaming",
+            "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\AppData\\Local",
+            "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\data",
+            "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\config",
+            "XDG_CACHE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\cache",
+            "XDG_STATE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\catalog\\xdg\\state"
+          },
+          "scope": "Separate unique APPDATA, LOCALAPPDATA and XDG DATA/CONFIG/CACHE/STATE directories per native scene. Launcher environment restored immediately after each child starts."
+        },
+        "window": "offscreen native Windows GL compatibility at 1280x720"
+      },
+      "native_rendering": true,
+      "runtime_errors_or_warnings": 0,
+      "started_utc": "2026-10-16T18:56:00.7995136Z",
+      "job_elapsed_wall_seconds": 36.1375857,
+      "capture": {
+        "pages": 3,
+        "semantic_status_ids": 21,
+        "image_size": [
+          1280,
+          720
+        ],
+        "capture_failures": 0,
+        "save_writes": 0,
+        "staged": true,
+        "persistent_debt_path": "AscensionRunner._draw tagged persistent world label"
+      },
+      "notes": "Three staged pages cover all 21 added semantic IDs using production renderer paths; the Debt sample uses the actual inherited persistent-label draw path. This does not exercise every underlying build behaviour."
+    },
+    {
+      "id": "capture_fight_final",
+      "kind": "native_capture",
+      "suite": "StatusEffectsFightPreview",
+      "scene": "res://tools/dev/StatusEffectsFightPreview.tscn",
+      "result": "completed_cleanly",
+      "clean_pass": true,
+      "exit_code": 0,
+      "raw_log": "fight-capture.log",
+      "raw_log_sha256": "1affe68404bfbaf6997b470d5152264e454d41f12cef36d12226aa2cb7202b36",
+      "metadata": "preview-run-info.json",
+      "capture_metadata": "fight-capture-info.json",
+      "verification_metadata": "preview-capture-verification.json",
+      "launch": {
+        "executable": "C:/Users/NaurisKrišjānis/Desktop/Godot_v4.7.1-stable_win64.exe/Godot_v4.7.1-stable_win64_console.exe",
+        "working_directory": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+        "arguments": [
+          "--path",
+          "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world",
+          "--rendering-method",
+          "gl_compatibility",
+          "--audio-driver",
+          "Dummy",
+          "--windowed",
+          "--resolution",
+          "1280x720",
+          "--position",
+          "-32000,-32000",
+          "res://tools/dev/StatusEffectsFightPreview.tscn",
+          "--",
+          "--out=C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\fight",
+          "--seconds=10",
+          "--fps=15"
+        ],
+        "isolation": {
+          "isolated_profile": true,
+          "environment_overrides": {
+            "APPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\AppData\\Roaming",
+            "LOCALAPPDATA": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\AppData\\Local",
+            "XDG_DATA_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\data",
+            "XDG_CONFIG_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\config",
+            "XDG_CACHE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\cache",
+            "XDG_STATE_HOME": "C:\\Users\\NaurisKrišjānis\\Desktop\\code_project\\SA_proj\\.worktrees\\enemy-world\\.godot\\status-effects-capture-20261016T185600Z-aafc1593\\profiles\\fight\\xdg\\state"
+          },
+          "scope": "Separate unique APPDATA, LOCALAPPDATA and XDG DATA/CONFIG/CACHE/STATE directories per native scene. Launcher environment restored immediately after each child starts."
+        },
+        "window": "offscreen native Windows GL compatibility at 1280x720"
+      },
+      "native_rendering": true,
+      "runtime_errors_or_warnings": 0,
+      "started_utc": "2026-10-16T18:56:37.6871308Z",
+      "job_elapsed_wall_seconds": 189.096338,
+      "capture": {
+        "captured_frames": 145,
+        "requested_capture_fps": 15,
+        "requested_simulation_seconds": 10.0,
+        "simulation_seconds": 10.0000000000001,
+        "measured_capture_wall_seconds": 11.495871,
+        "image_size": [
+          1280,
+          720
+        ],
+        "capture_failures": 0,
+        "save_writes": 0,
+        "initial_enemies": 48,
+        "weapon_fires": 47,
+        "player_hits": 90,
+        "enemy_deaths": 21,
+        "controlled_conditions": "Ambient spawner and encounter beats disabled; scripted controller movement/aim with held native attack; player god mode; no enemy stat changes. One triple-modifier example deliberately tests a combination beyond the normal two-modifier collapse roll."
+      },
+      "notes": "Production Game capture with real APIs applied at scripted times, scripted input, god mode and bounded encounter conditions. Video QA is indexed separately below; this is a readability sample, not a performance or balance benchmark."
+    },
+    {
+      "id": "shared_final_AscensionRuntimeSafetyTest",
+      "suite": "AscensionRuntimeSafetyTest",
+      "result": "passed",
+      "passed": 21,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/AscensionRuntimeSafetyTest.log",
+      "raw_log_sha256": "939e8737ecab1ebc41274405a7869e6238329e4403924418645be2b29864063f",
+      "shared_launch_metadata": "logs/shared-runtime-safety.json",
+      "source_manifest": "logs/gameplay-source-hashes.json",
+      "source_identity_verified_unchanged": true,
+      "launch": {
+        "arguments": [
+          "--headless",
+          "--audio-driver",
+          "Dummy",
+          "--flush-output",
+          "--path",
+          "<project>",
+          "res://tools/tests/AscensionRuntimeSafetyTest.tscn"
+        ],
+        "engine": "Godot4.7.1a13da4feb",
+        "isolation": "Coordinator batch overrides APPDATA and LOCALAPPDATA to its separate .godot/city-development-checks/appdata directory; reused within the batch, not a fresh profile per suite."
+      }
+    },
+    {
+      "id": "shared_final_ScriptParseAuditTest",
+      "suite": "ScriptParseAuditTest",
+      "result": "passed",
+      "passed": 530,
+      "failed": 0,
+      "exit_code": 0,
+      "raw_log": "logs/ScriptParseAuditTest.log",
+      "raw_log_sha256": "b9abad0037d74088b8f7f462859fcc2bec2a9203c10c3027119786ff78a050a2",
+      "shared_launch_metadata": "logs/shared-script-parse.json",
+      "source_manifest": "logs/gameplay-source-hashes.json",
+      "source_identity_verified_unchanged": true,
+      "launch": {
+        "arguments": [
+          "--headless",
+          "--audio-driver",
+          "Dummy",
+          "--flush-output",
+          "--path",
+          "<project>",
+          "res://tools/tests/ScriptParseAuditTest.tscn"
+        ],
+        "engine": "4.7.1.stable.official.a13da4feb",
+        "isolation": "Coordinator batch overrides APPDATA and LOCALAPPDATA to its separate .godot/city-development-checks/appdata directory; reused within the batch, not a fresh profile per suite."
+      }
+    }
+  ],
+  "asset_imports": [
+    {
+      "id": "original_status_art_import",
+      "result": "completed",
+      "exit_code": 0,
+      "exit_code_provenance": "Root reported completed process exit 0.",
+      "raw_log": "logs/status-icons-import.log",
+      "command": null,
+      "isolation": null,
+      "notes": "Raw log includes completed reimport and editor layout. This project import reports 34 import steps, including files beyond the 21 newly added status icons. Exact launch command and environment were not retained in this worker's evidence."
+    },
+    {
+      "id": "scaled_status_art_import",
+      "result": "completed",
+      "exit_code": 0,
+      "exit_code_provenance": "Root reported completed process exit 0.",
+      "raw_log": "logs/status-icons-scaled-import.log",
+      "command": null,
+      "isolation": null,
+      "notes": "Raw log reports 21 reimport steps and completed editor layout after the root's 128-pixel derivative preparation. This is import evidence, not rendered-pixel verification."
+    }
+  ],
+  "excluded_diagnostics": [
+    {
+      "suite": "StatusFeedbackTest",
+      "reported_counts": {
+        "passed": 21,
+        "failed": 1
+      },
+      "raw_log": null,
+      "result": "not_clean_verification",
+      "notes": "Intermediate tool-transcript-only runs exposed a test assumption that the first process_frame signal had already incremented Engine.get_process_frames(). The test was corrected to wait for the actual counter advance. One concurrent-edit run also reported a transient RedLine inherited-signature compile error. These intermediate runs are not used as clean passing evidence."
+    },
+    {
+      "suite": "CombatTextPresentationTest",
+      "reported_counts": {
+        "passed": 83,
+        "failed": 0
+      },
+      "exit_code": 0,
+      "clean_pass": false,
+      "raw_log": "logs/CombatTextPresentationTest-initial-fixture-error.log",
+      "raw_log_sha256": "39b66fcc586d65bd27de80ecaf12290ccbb1eee254e311e597347c5bd3dec8d4",
+      "metadata": "logs/presentation-checks-initial-fixture-error.json",
+      "result": "not_clean_verification",
+      "error_lines": [
+        "SCRIPT ERROR: Invalid type in function 'modifier_popup (via call)' in base 'Node2D (BattleTextRenderer.gd)'. The array of argument 3 (Array) does not have the same element type as the expected typed array argument."
+      ],
+      "notes": "The initial native process printed 83 passed / 0 failed and exited 0 but reported an untyped-array dynamic-call runtime error in the test fixture at line 112. It is not a passing verification result. Two fixture locals were explicitly typed, then the native suite alone was rerun cleanly with 87/0; no production changes were made for this correction."
+    }
+  ],
+  "pending": [],
+  "limitations": [
+    "All listed verification is complete. Shared checks ran against the frozen concurrent worktree; the source manifest records that exact snapshot and does not claim ownership of other chats' changes.",
+    "Supporting baseline suites were run before the final three refresh guards and Debt caption style change. They were not rerun during the two-job refresh regression window.",
+    "Functional test results do not establish dense-fight readability, natural build trigger coverage, balance or performance.",
+    "The feedback helper's RED raw log was not retained. The reported RED result is explicitly separated from file-backed evidence.",
+    "No zero-save-write claim is made for these test launches. My integration/baseline runs used separate APPDATA directories; the foundation feedback run used the ambient profile."
+  ],
+  "video_verification": {
+    "artifact": "combat-status-fight.mp4",
+    "sha256": "2dcaaa62e248da58856efa32cf17caa285f6fd9d643d2b8d15d4d4f2b35f6b73",
+    "metadata": "encoding-info.json",
+    "verification_metadata": "preview-capture-verification.json",
+    "result": "full_decode_verified",
+    "source_frames": 145,
+    "duration_seconds": 11.362081,
+    "resolution": [
+      1280,
+      720
+    ],
+    "bytes": 5819014,
+    "format": "MP4 / H.264 yuv420p CRF18, silent",
+    "timing": "Measured wall-clock sample intervals, variable frame rate, final frame held for median interval; no speedup to requested fps.",
+    "verification": "Full final MP4 decoded without errors; decoded midfight frame exported for visual QA.",
+    "decoded_inspection_frame": "status-fight-decoded-midfight.png",
+    "verification_scope": "The capture worker fully decoded the final MP4 and exported a decoded frame for visual QA. No decoder or engine was launched for this documentation merge."
+  },
+  "final_summary": {
+    "distinct_suites": 9,
+    "focused_passing_checks": 241,
+    "runtime_safety_checks": 21,
+    "parsed_gameplay_scripts": 530,
+    "reported_passing_checks": 792,
+    "failed": 0
+  }
+}

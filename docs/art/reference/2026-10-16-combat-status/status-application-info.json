@@ -1,0 +1,130 @@
+{
+	"base_fixture": "res://tools/dev/EliteCrowdFightPreview.tscn",
+	"bleed_applications_accepted": 4,
+	"burn_applications_accepted": 4,
+	"events": [
+		{
+			"bleed_accepted": true,
+			"bleed_present": true,
+			"burn_accepted": true,
+			"burn_present": true,
+			"handle": 4294967302,
+			"simulation_time": 0.216666666666667,
+			"source": "EnemyStatus.apply_burn + apply_bleed",
+			"status": "burn_bleed"
+		},
+		{
+			"accepted": true,
+			"handle": 4294967302,
+			"modifiers": [
+				"armoured",
+				"vampiric"
+			],
+			"seconds": 0.850000023841858,
+			"simulation_time": 0.483333333333333,
+			"source": "EnemyCombat.apply_stun",
+			"status": "stun"
+		},
+		{
+			"handle": 4294967326,
+			"haste_multiplier": 1.35,
+			"haste_seconds": 1.8,
+			"simulation_time": 1.05,
+			"source": "EnemyActor.apply_ward_buff + apply_speed_buff using authored Chanter/Herald values",
+			"status": "ward_haste",
+			"ward_fraction": 0.15,
+			"ward_present": true
+		},
+		{
+			"handle": 0,
+			"seconds": 12.0,
+			"simulation_time": 1.61666666666667,
+			"source": "Player.lock_healing",
+			"status": "healing_sealed"
+		},
+		{
+			"bleed_accepted": true,
+			"bleed_present": true,
+			"burn_accepted": true,
+			"burn_present": true,
+			"handle": 4294967319,
+			"simulation_time": 3.01666666666666,
+			"source": "EnemyStatus.apply_burn + apply_bleed",
+			"status": "burn_bleed"
+		},
+		{
+			"accepted": true,
+			"handle": 4294967302,
+			"modifiers": [
+				"armoured",
+				"vampiric"
+			],
+			"seconds": 0.850000023841858,
+			"simulation_time": 3.36666666666666,
+			"source": "EnemyCombat.apply_stun",
+			"status": "stun"
+		},
+		{
+			"handle": 4294967319,
+			"haste_multiplier": 1.35,
+			"haste_seconds": 1.8,
+			"simulation_time": 4.06666666666666,
+			"source": "EnemyActor.apply_ward_buff + apply_speed_buff using authored Chanter/Herald values",
+			"status": "ward_haste",
+			"ward_fraction": 0.15,
+			"ward_present": true
+		},
+		{
+			"bleed_accepted": true,
+			"bleed_present": true,
+			"burn_accepted": true,
+			"burn_present": true,
+			"handle": 4294967340,
+			"simulation_time": 5.76666666666665,
+			"source": "EnemyStatus.apply_burn + apply_bleed",
+			"status": "burn_bleed"
+		},
+		{
+			"accepted": true,
+			"handle": 4294967302,
+			"modifiers": [
+				"armoured",
+				"vampiric"
+			],
+			"seconds": 0.850000023841858,
+			"simulation_time": 6.06666666666665,
+			"source": "EnemyCombat.apply_stun",
+			"status": "stun"
+		},
+		{
+			"bleed_accepted": true,
+			"bleed_present": true,
+			"burn_accepted": true,
+			"burn_present": true,
+			"handle": 4294967343,
+			"simulation_time": 7.26666666666665,
+			"source": "EnemyStatus.apply_burn + apply_bleed",
+			"status": "burn_bleed"
+		},
+		{
+			"handle": 4294967297,
+			"haste_multiplier": 1.35,
+			"haste_seconds": 1.8,
+			"simulation_time": 8.5,
+			"source": "EnemyActor.apply_ward_buff + apply_speed_buff using authored Chanter/Herald values",
+			"status": "ward_haste",
+			"ward_fraction": 0.15,
+			"ward_present": true
+		}
+	],
+	"failures": 0,
+	"healing_illustrated_teach_seen": true,
+	"healing_lock_applied": true,
+	"initial_enemies": 48,
+	"limits": "Player god mode; scripted controller input; ambient spawning and encounter beats disabled. Direct status API applications are not natural item/build triggers. Only common statuses are exercised here; the separate all-21 catalogue is staged presentation.",
+	"mixed_elite_stunned": true,
+	"presentation": "LIVE production combat with SCRIPTED real API status applications. Native player attacks, enemy AI, terrain, camera, projectiles and deaths remain live.",
+	"scene": "res://tools/dev/StatusEffectsFightPreview.tscn",
+	"stun_applications_accepted": 3,
+	"ward_haste_applications": 3
+}

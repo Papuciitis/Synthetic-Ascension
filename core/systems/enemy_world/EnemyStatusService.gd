@@ -1,6 +1,7 @@
 class_name EnemyStatusService
 extends Node
 
+const Feedback := preload("res://core/combat/CombatStatusFeedback.gd")
 const BURN: StringName = &"burn"
 const BLEED: StringName = &"bleed"
 
@@ -124,6 +125,7 @@ func apply_named_burn(
 			if source != null and is_instance_valid(source):
 				existing.source_ref = weakref(source)
 		return true
+	var announce_burn := not is_burning(handle)
 	var record := StatusRecord.new()
 	record.handle = handle
 	record.kind = kind
@@ -136,6 +138,8 @@ func apply_named_burn(
 	record.tags = tags
 	by_kind[kind] = record
 	_active.append(record)
+	if announce_burn:
+		Feedback.notify_handle(handle, BURN)
 	return true
 
 
@@ -257,6 +261,7 @@ func _apply_status(
 		if source != null and is_instance_valid(source):
 			existing.source_ref = weakref(source)
 		return true
+	var announce := kind != BURN or not is_burning(handle)
 	var record := StatusRecord.new()
 	record.handle = handle
 	record.kind = kind
@@ -268,6 +273,8 @@ func _apply_status(
 	record.source_ref = weakref(source) if source != null and is_instance_valid(source) else null
 	by_kind[kind] = record
 	_active.append(record)
+	if announce:
+		Feedback.notify_handle(handle, kind)
 	return true
 
 

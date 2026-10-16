@@ -1,0 +1,44 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: open: a heal lands (65.0)
+PASS: and player_healed reports what landed
+PASS: no lock to begin with
+PASS: lock_healing seals for 45 s (45.0)
+PASS: healing_lock_changed on the start, with the reason ([[45.0, &"cursed_vault"]])
+PASS: one combat line per lock (1)
+PASS: and it is the seal line with the seconds (HEALING SEALED - 45s)
+PASS: the first seal of the run teaches once (1)
+PASS: sealed: nothing lands - generic, pickup, the Rite's mend, the wardstone (65.0)
+PASS: no player_healed for a heal that did not happen (1)
+PASS: and no line per refused heal
+PASS: a shorter lock never shortens the seal (45.0)
+PASS: and is not announced
+PASS: a longer lock extends it to 60 s - max, not sum (60.0)
+PASS: healing_lock_changed on the extension ([[45.0, &"cursed_vault"], [60.0, &"sacrifice"]])
+PASS: one line for the extension too (HEALING SEALED - 60s)
+PASS: the teach does not repeat within the run
+PASS: the seal counts down in the player's _process (59.950)
+PASS: and counting down is not an announcement
+PASS: fixture: a hair of a seal
+PASS: fixture: sealed while it lasts
+PASS: the seal lifts (0.0000)
+PASS: healing_lock_changed on expiry carries 0.0 and the reason ([[0.001, &"ritual"], [0.0, &"ritual"]])
+PASS: healing is open again (65.0)
+PASS: and reports again
+PASS: a generic heal stays sealed
+PASS: an exempted source lands while sealed (65.0)
+PASS: open: the controller does not process
+PASS: and adds nothing to the bar
+PASS: a seal puts the countdown on the bar (SEALED 45s)
+PASS: and the fill takes the seal colour
+PASS: and counts down while sealed
+PASS: an extension updates the count (SEALED 60s)
+PASS: and keeps the seal colour
+PASS: the count moves with time (SEALED 59s)
+PASS: full motion: the label pulses (0.77)
+PASS: the lift takes the label off the bar
+PASS: and hands the plain fill back
+PASS: and the controller sleeps again
+PASS: reduced motion: the label holds steady (1.00)
+PASS: but still counts (SEALED 5s)
+HealingLockTest: 41 passed, 0 failed

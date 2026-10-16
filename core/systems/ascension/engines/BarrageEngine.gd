@@ -251,7 +251,7 @@ func _jam() -> void:
 	runner.block_native_fire(jam_left)
 	_jams_recent.append(_clock)
 	if BattleText != null:
-		BattleText.popup(runner.player_position(), "JAM", Color(1.0, 0.3, 0.2, 1.0), 1.4)
+		BattleText.status_popup(runner.player_position(), &"jam", "JAM", 1.4)
 	var rounds := 12 if (has("BR08") or has("BRF2")) else 0
 	var backfire := has("BRF2")
 	if backfire:
@@ -803,6 +803,7 @@ func _complete_burst() -> void:
 		_burst_points = 0
 		jam_left = 1.5
 		runner.block_native_fire(jam_left)
+		Feedback.notify_at(origin, &"jam", -runner.get_instance_id())
 		heat = HEAT_AFTER_JAM
 	else:
 		_fan_volley(origin, aim, 12, 0.6 * D() * _burst_scale, 0.7 * _burst_pp, "BRQ", "bullet", 50.0)

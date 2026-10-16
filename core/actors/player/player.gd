@@ -2056,13 +2056,14 @@ func lock_healing(seconds: float, reason: StringName) -> void:
 	_healing_lock_left = seconds
 	_healing_lock_reason = reason
 	if BattleText != null:
-		BattleText.popup(global_position, "HEALING SEALED - %ds" % ceili(seconds), HEALING_LOCK_COLOUR, 1.2)
+		BattleText.status_popup(global_position, &"healing_sealed", "HEALING SEALED - %ds" % ceili(seconds), 1.2)
 	if RunEvents != null:
 		if RunEvents.has_signal("healing_lock_changed"):
 			RunEvents.healing_lock_changed.emit(_healing_lock_left, reason)
 		# The first seal of the RUN teaches (the player node is per segment).
-		if RunEvents.has_signal("tutorial_tip") and Global.teach_once(&"healing_lock"):
-			RunEvents.tutorial_tip.emit(HEALING_LOCK_TEACH, 4.0)
+		if RunEvents.has_signal("illustrated_tutorial_tip") and Global.teach_once(&"healing_lock"):
+			var seal_icons: Array[StringName] = [&"healing_sealed"]
+			RunEvents.illustrated_tutorial_tip.emit(HEALING_LOCK_TEACH, 4.0, seal_icons)
 	if PerformanceFlightRecorder != null and bool(PerformanceFlightRecorder.get("enabled")):
 		PerformanceFlightRecorder.record_counter_event(&"player", &"healing_locked", 1, {
 			"reason": String(reason), "extended": extended,
