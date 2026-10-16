@@ -63,7 +63,8 @@ Owner: root. New `scenes/world/bosses/BossArrivalSprites.gd` exposes `setup(worl
 
 Owner: visual/probe implementer after brain interfaces settle. New actual Game S5 probe and focused escape/build-access tests under tools/dev and tools/tests.
 
-- [ ] Run representative seeds for both roles, evaluate reachable escape trajectories with the real player's capsule/effective movement and dense ordinary geometry near boundaries. Include slow/baseline walking, dash unavailable, melee pursuit and ambient kill-trigger targets.
+- [x] Author isolated actual Game live and paired escape/native-melee/controlled kill-trigger fixtures, with real body/Hurtbox geometry, native input, source-state telemetry and measured media timestamps. Both probe scripts load in the normal autoload context; gameplay execution remains separate below.
+- [ ] Run representative seeds for both roles and evaluate reachable escape trajectories with the real player's capsule/effective movement and actual surrounding geometry near the court edge. Include baseline walking with dash unavailable, melee pursuit, finite Runner and ambient kill-trigger targets. Record the coverage limit for slowed/immobilized builds rather than claiming those builds share baseline escape guarantees.
 - [ ] Capture real timed anticipation/release/recovery for both choices at1280×720 and960×540 with normal camera, player, terrain and HUD. Use isolated profile; record actual damage outcomes and save-write counts. God mode cannot establish avoidability.
 - [ ] Separate automated geometry/correctness from human satisfaction, visual timing and final mix approval. Keep damage-observing fixtures separate from optional immortal capture-only playback.
 - [ ] Final scoped independent review, appropriate compatibility tests and ScriptParseAudit last. Update audit/roadmap/evidence/plan; commit/push all owned work and verify remote HEAD, preserving unrelated dirty edits.

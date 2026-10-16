@@ -19,7 +19,8 @@ with the user.
 | Mine detonates at its planted position | `boss_mine_burst` | [Compact blast](candidates_v3/mine_compact_blast.wav) | 0.660 s | -10 dB |
 
 All six definitions use the SFX bus, zero pitch jitter and one-shot playback.
-Existing attack durations and trigger frames are preserved. Physical impacts
+Recordings retain their delivered durations; the S5 teaching kit requests them
+at its accepted anticipation and actual release boundaries. Physical impacts
 and mine detonations retain the existing 120 ms per-ID limit; pylon releases
 retain 150 ms. The physical impact recording is shared by slam, shock and the
 charge endpoint. The longer V2 ground-crumble candidate is not registered.
