@@ -88,6 +88,9 @@ const CURRENT_SAVE_VERSION := 1
 
 @export var attempt_active: bool = false
 @export var attempt_segment: int = 1
+# A completed Rite awaiting its release/card presentation. Zero keeps older
+# saves unchanged; a matching active segment is settled on load before Continue.
+@export var attempt_pending_segment_completion: int = 0
 @export var attempt_followers: int = 0
 
 # Seed used to generate procedural segments consistently for this attempt (Continue-safe).

@@ -373,19 +373,22 @@ func _tutorial_intro_sequence() -> void:
 
 
 func complete_segment(completed_segment: int) -> void:
-	if _segment_completion_running:
+	if _segment_completion_running or _run_ended:
+		return
+	if Global == null or not Global.begin_segment_completion(completed_segment):
 		return
 	_segment_completion_running = true
 	# The escape is an event before it is a loading screen (2026-10-04 audit):
 	# the world exhales around the player for a couple of seconds first.
 	await _play_escape_release()
+	if _run_ended or Global.has_pending_peep():
+		return
 	if completed_segment == 1:
 		await _present_segment1_overlay(true)
 	else:
 		await _present_chapter_close(completed_segment)
-	if Global != null:
-		Global.on_segment_completed(completed_segment)
-	Global.goto_hub_shop()
+	if not _run_ended and Global.finish_segment_completion(completed_segment):
+		Global.goto_hub_shop()
 
 func _play_escape_release() -> void:
 	if player == null or not is_instance_valid(player) or not (player is Node2D):

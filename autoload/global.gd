@@ -181,6 +181,7 @@ var run_bag: BagInventory = null
 
 var attempt_active: bool = false
 var attempt_segment: int = 1
+var attempt_pending_segment_completion: int = 0
 var attempt_deaths_this_segment: int = 0
 var attempt_checkpoint_pos: Vector2 = Vector2.INF
 var attempt_world_seed: int = 0
@@ -728,6 +729,7 @@ func set_run_selection(race_id: String, style_id: String) -> void:
 # ============================================================
 
 func reset_run_systems() -> void:
+	attempt_pending_segment_completion = 0
 	# tutorial one-shots
 	_run_taught.clear()
 	tip_shown_wardstone_attune = false
@@ -2735,6 +2737,7 @@ func claim_loot(id: int) -> void:
 	request_autosave()
 
 func apply_save(save: SaveData) -> void:
+	attempt_pending_segment_completion = 0
 	meta_pending_peep = save.meta_pending_peep.duplicate(true)
 	meta_city_commitments = save.meta_city_commitments.duplicate(true)
 	balance_attempt_boundary.emit(&"save_loaded")
@@ -3079,6 +3082,27 @@ func apply_save(save: SaveData) -> void:
 		library_mark_read(saved_key)
 	library_set_target(save.meta_library_target_key)
 	_suppress_autosave = false
+	_recover_segment_completion(save)
+
+
+## Load every attempt field before settling: completion consumes the loaded
+## ledger/commitments and emits story/telemetry against the loaded build.
+func _recover_segment_completion(save: SaveData) -> void:
+	var completed_segment := save.attempt_pending_segment_completion
+	if completed_segment == 0:
+		return
+	_suppress_autosave = true
+	if attempt_active and not has_pending_peep() and completed_segment == attempt_segment:
+		_apply_segment_completion(completed_segment)
+		save.attempt_resume_scene = PATH_HUB_WORLD
+	# A stale, invalid, inactive or terminal marker is discarded without rewards.
+	# Applying an unselected resource must never overwrite another save slot.
+	if SaveManager != null and SaveManager.current_save == save:
+		save_current_profile()
+	else:
+		write_save(save)
+
+
 func write_save(save: SaveData) -> void:
 	_suppress_autosave = true
 	save.save_version = SaveData.CURRENT_SAVE_VERSION
@@ -3130,6 +3154,7 @@ func write_save(save: SaveData) -> void:
 
 	# Attempt snapshot
 	save.attempt_active = attempt_active
+	save.attempt_pending_segment_completion = attempt_pending_segment_completion if attempt_active else 0
 	if attempt_active:
 		save.attempt_segment = attempt_segment
 		save.attempt_followers = followers
@@ -3358,7 +3383,36 @@ func start_new_attempt() -> void:
 
 	save_current_profile()
 
+
+## The Rite has succeeded, but its presentation still belongs to the current
+## segment. Save the intent synchronously before any release/card can await.
+func begin_segment_completion(completed_segment: int) -> bool:
+	if not attempt_active or has_pending_peep() or completed_segment != attempt_segment:
+		return false
+	if attempt_pending_segment_completion != completed_segment:
+		attempt_pending_segment_completion = completed_segment
+		save_current_profile()
+	return true
+
+
+## Only the still-pending segment can settle. A duplicate callback, a reload
+## that already recovered it, or terminal defeat cannot pay the rewards twice.
+func finish_segment_completion(completed_segment: int) -> bool:
+	if not attempt_active or has_pending_peep() or attempt_pending_segment_completion != completed_segment or attempt_segment != completed_segment:
+		return false
+	on_segment_completed(completed_segment)
+	return true
+
+
 func on_segment_completed(completed_segment: int) -> void:
+	_apply_segment_completion(completed_segment)
+	if SaveManager != null and SaveManager.current_save != null:
+		SaveManager.current_save.attempt_resume_scene = PATH_HUB_WORLD
+	save_current_profile()
+
+
+func _apply_segment_completion(completed_segment: int) -> void:
+	attempt_pending_segment_completion = 0
 	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():
 		ascension_ledger().note_segment_completed(completed_segment)
@@ -3407,11 +3461,6 @@ func on_segment_completed(completed_segment: int) -> void:
 		_reactivate_city_commitment(next_doctrine_stage)
 	attempt_witness_used_segment = 0
 	attempt_doctrine_threat_debt = 0.0
-
-	if SaveManager != null and SaveManager.current_save != null:
-		SaveManager.current_save.attempt_resume_scene = PATH_HUB_WORLD
-
-	save_current_profile()
 
 
 func doctrine_stage_for_completed_segment(completed_segment: int) -> StringName:
@@ -3465,6 +3514,7 @@ func pending_peep_summary() -> Dictionary:
 func begin_peep_continuation() -> void:
 	if has_pending_peep() or not attempt_active or followers > 0:
 		return
+	attempt_pending_segment_completion = 0
 	var story_attempt := StoryDirector.attempt()
 	meta_pending_peep = {
 		"name": mortal_name,
@@ -3524,6 +3574,7 @@ func on_attempt_failed_die_die() -> void:
 	balance_attempt_boundary.emit(&"failed")
 	# Keep meta augments; wipe attempt snapshot so Continue returns to Base.
 	attempt_active = false
+	attempt_pending_segment_completion = 0
 	attempt_segment = 1
 	attempt_deaths_this_segment = 0
 	attempt_checkpoint_pos = Vector2.INF
