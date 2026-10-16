@@ -1,6 +1,8 @@
 extends Node2D
 class_name ManifestationRunner
 
+const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+
 ## Runs the Manifestations carried by the eight equipped items.
 ##
 ## Mirrors ItemEffectRunner's lifecycle (watch the inventory, sync a keyed set
@@ -640,11 +642,16 @@ func _shared_multiplier(value: float, share: float) -> float:
 
 func _multiplier(method: StringName) -> float:
 	var total := 1.0
+	var strongest_gospel := 1.0
+	var gospel_only_strongest := method == &"get_power_multiplier" and CityExperiments.enabled(CityExperiments.GOSPEL_STRONGEST_REWARDS)
 	var seen: Dictionary = {}
 	for node in _all_effects():
 		if is_instance_valid(node) and node.has_method(method):
+			if gospel_only_strongest and node is ManifestationEffect and node.manifestation_id() == &"overtime_gospel":
+				strongest_gospel = maxf(strongest_gospel, float(node.call(method)))
+				continue
 			total *= _shared_multiplier(float(node.call(method)), _duplicate_share(seen, node))
-	return total
+	return total * strongest_gospel
 
 
 func get_power_multiplier() -> float:

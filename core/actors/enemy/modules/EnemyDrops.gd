@@ -2,6 +2,8 @@
 extends RefCounted
 class_name EnemyDrops
 
+const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+
 const HEALTH_PICKUP_SCENE: PackedScene = preload("res://scenes/world/pickups/HealthPickup.tscn")
 
 var _enemy: EnemyActor = null
@@ -186,7 +188,7 @@ func _roll_item_drop() -> bool:
 		var ot: float = float(td_drop.get("overtime")) if gate else 0.0
 		var ramp: float = smoothstep(0.25, 0.85, r)
 		var pre_mul: float = lerpf(0.20, 1.00, ramp)
-		var ot_mul: float = (1.0 + minf(1.5, log(1.0 + ot) * 0.35)) if gate else 1.0
+		var ot_mul: float = (1.0 + minf(1.5, log(1.0 + ot) * 0.35)) if gate and not CityExperiments.enabled(CityExperiments.NO_OVERTIME_DROP_BONUS) else 1.0
 		eff_chance = _enemy.drop_chance * pre_mul * ot_mul
 		eff_chance = clampf(eff_chance, 0.0, _enemy.drop_chance * 2.0)
 

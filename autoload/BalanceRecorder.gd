@@ -1,5 +1,7 @@
 extends Node
 
+const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+
 const Ledger := preload("res://core/systems/telemetry/BalanceLedger.gd")
 const Writer := preload("res://core/systems/telemetry/BalanceCaptureWriter.gd")
 const WriteQueue := preload("res://autoload/performance/PerformanceIncidentWriteQueue.gd")
@@ -165,6 +167,7 @@ func begin_gameplay(player: Node) -> void:
 		var metadata := {"capture_id": capture_id, "run_key": "%d:%s" % [slot, str(Global.attempt_world_seed)],
 			"save_slot": slot, "build": Build.describe(Global.attempt_world_seed), "start_segment": Global.attempt_segment,
 			"coverage": "observed_session", "starting_debug": _debug_snapshot(),
+			"city_farming_experiments": CityExperiments.metadata(),
 			"recorder_revision": RECORDER_REVISION, "balance_revision": balance_revision(),
 			"tuning_stages": tuning_stages(), "tuning_hash": tuning_hash(), "features": features()}
 		_ledger = Ledger.new()

@@ -1,6 +1,8 @@
 extends Node2D
 class_name ManifestationState
 
+const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+
 ## Shared blackboard for every equipped Manifestation.
 ##
 ## Manifestations are independent rules, but several of them deliberately talk
@@ -355,9 +357,17 @@ func contribution_total(channel: StringName) -> float:
 	if not (by_owner is Dictionary):
 		return 0.0
 	var total := 0.0
-	for amount in (by_owner as Dictionary).values():
-		total += float(amount)
-	return total
+	var strongest_gospel := 0.0
+	var gospel_only_strongest := channel == CHANNEL_LUCK and CityExperiments.enabled(CityExperiments.GOSPEL_STRONGEST_REWARDS)
+	for owner_key in (by_owner as Dictionary):
+		var amount := float((by_owner as Dictionary)[owner_key])
+		# Retain every per-slot entry: removing one copy must reveal the next,
+		# and its normal cleanup must never erase another copy's Luck.
+		if gospel_only_strongest and String(owner_key).begins_with("overtime_gospel#"):
+			strongest_gospel = maxf(strongest_gospel, amount)
+		else:
+			total += amount
+	return total + strongest_gospel
 
 
 func shard_cap() -> int:

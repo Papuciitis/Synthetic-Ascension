@@ -1,6 +1,8 @@
 extends Node
 class_name ThreatDirectorSingleton
 
+const CityExperiments := preload("res://core/systems/balance/CityBalanceExperiments.gd")
+
 signal threat_changed(threat: float)
 signal multipliers_changed(
 	enemy_hp_mul: float,
@@ -240,6 +242,10 @@ func _ready() -> void:
 	_recompute(true)
 
 func _process(delta: float) -> void:
+	# Terminal presentation may unpause the tree before its scene transition.
+	# Keep the failed city frozen until continuation creates the next attempt.
+	if Global.has_pending_peep():
+		return
 	_tick += delta
 	if _tick < 0.20:
 		return
@@ -741,7 +747,9 @@ func _recompute(force_emit: bool = false) -> void:
 	new_elite = clampf(new_elite, 0.0, elite_bonus_cap)
 
 	# Loot rarity bonus: segment + heat + overtime (log so it stays readable)
-	var loot_f := float(seg - 1) * loot_bonus_from_segment + pressure_heat * loot_bonus_from_heat + log(1.0 + ot) * loot_bonus_from_overtime
+	var loot_f := float(seg - 1) * loot_bonus_from_segment + pressure_heat * loot_bonus_from_heat
+	if not CityExperiments.enabled(CityExperiments.NO_OVERTIME_RARITY_BONUS):
+		loot_f += log(1.0 + ot) * loot_bonus_from_overtime
 	loot_f = clampf(loot_f, 0.0, loot_bonus_cap)
 	loot_rarity_bonus = int(floor(loot_f))
 
