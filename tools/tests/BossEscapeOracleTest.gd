@@ -47,6 +47,17 @@ func _run() -> void:
 	var left_route: Variant = ORACLE.escape_route(left, _slam(1.3), shape, body)
 	_check(left_route is Vector2 and (left_route as Vector2).x < -0.5, "a contact on the other side escapes the other way, never through the body")
 	_check(ORACLE.escape_route(Vector2(600, 0), _slam(1.3), shape, body) == Vector2.ZERO, "a player already outside stands still")
+	# Bodies bar walks. A late, small blast just beyond the player leaves
+	# walks toward the body as the only way out: from contact (into it) and
+	# from a step away (across it). Without the body each escapes; with it,
+	# neither does.
+	var beyond := func(start: Vector2, away: Vector2) -> Array:
+		return [{"kind": &"circle", "center": start + away * 40.0, "radius": 30.0, "from": 0.6, "to": 0.7}]
+	var into: Array = beyond.call(contact, Vector2.RIGHT)
+	_check(ORACLE.has_escape(contact, into, shape) and not ORACLE.has_escape(contact, into, shape, body), "from contact, a walk out into the body is refused")
+	var near := Vector2(-80.0, 0.0)
+	var across: Array = beyond.call(near, Vector2.LEFT)
+	_check(ORACLE.has_escape(near, across, shape) and not ORACLE.has_escape(near, across, shape, body), "a step away, a walk out across the body is refused")
 
 	# Rush: the S10 body sweeps its lane; physical contact uses the capsule.
 	var rush := [{"kind": &"sweep", "a": Vector2.ZERO, "b": Vector2(280.8, 0.0), "radius": S10_TANK_RADIUS, "from": 0.85, "to": 1.21, "body": true}]

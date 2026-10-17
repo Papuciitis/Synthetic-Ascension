@@ -356,10 +356,13 @@ func _test_sweep_interruptions() -> void:
 	_player.global_position = mage.global_position + Vector2(300, 0)
 	brain.call("_try_main_pattern", &"sweep")
 	beam = _beams()[0] as BossBeamSweep
-	beam.call("_advance", MAGE_BRAIN.SWEEP_TELL + 0.2)
+	# The caster dies just before the beam reaches the player (about 0.55 s
+	# into the sweep), so a channel that outlived it would strike in the
+	# observed window: by 0.7 s the beam lies across the player.
+	beam.call("_advance", MAGE_BRAIN.SWEEP_TELL + 0.45)
 	_check(int(beam.get("_phase")) == 1, "fixture: the beam is sweeping")
-	mage.dead = true
 	var hits_before := _boss_hits(mage)
+	mage.dead = true
 	beam.call("_advance", 0.25)
 	await _frames()
 	_check(not is_instance_valid(beam) or beam.is_queued_for_deletion(), "the caster's death ends an active sweep at once")
@@ -396,9 +399,18 @@ func _test_pylons_leave_with_their_boss() -> void:
 	brain.call("_spawn_main_pylons")
 	var pylons := _pylons()
 	_check(pylons.size() == 2, "fixture: a pair stands")
+	# Kill procs, rewards and objective credit all key on these two events.
+	var credits: Array = []
+	var on_killed := func(_killer: Node, enemy: Node, _at: Vector2) -> void: credits.append(enemy)
+	var on_defeated := func(context: RefCounted) -> void: credits.append(context)
+	RunEvents.enemy_killed.connect(on_killed)
+	RunEvents.enemy_defeated.connect(on_defeated)
 	mage.dead = true
 	await _frames(3)
-	_check(_pylons().is_empty(), "the pair leaves with its boss, without a kill credit")
+	RunEvents.enemy_killed.disconnect(on_killed)
+	RunEvents.enemy_defeated.disconnect(on_defeated)
+	_check(_pylons().is_empty(), "the pair leaves with its boss")
+	_check(credits.is_empty(), "without a kill credit or a defeat event")
 	await _clear()
 
 

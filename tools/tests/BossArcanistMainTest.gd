@@ -229,7 +229,10 @@ func _test_split_fan() -> void:
 	_fixture()
 	_brain.set("_boss_phase", 1)
 	var origin := _mage.global_position
-	_player.global_position = origin + Vector2(300, 0)
+	# Aimed off the axis, so a lane drawn without the aim, or mirrored, cannot
+	# line up with the bolts by construction.
+	var bearing := deg_to_rad(-57.0)
+	_player.global_position = origin + Vector2(300, 0).rotated(bearing)
 	_check(bool(_brain.call("_try_main_pattern", &"split")), "phase 2 commits a Split Fan with a walk out")
 	var side: float = _brain.get("_split_side")
 	var angles: Array[float] = _brain.call("_split_angles", side)
@@ -245,14 +248,28 @@ func _test_split_fan() -> void:
 	_check(lanes_ok and is_equal_approx(widest, deg_to_rad(32.0)), "ten lanes, symmetric about the aim, leave one 32-degree gap")
 	var lanes := _children(func(child: Node) -> bool: return child.name == "SplitFanRayWarnings")
 	_check(lanes.size() == 1 and (lanes[0] as Node).get_child_count() == angles.size(), "every bolt's lane is drawn before the release")
+	# The lanes as drawn: each sprite's direction from the boss.
+	var drawn: Array[float] = []
+	var drawn_ok := lanes.size() == 1
+	for index in range(angles.size()):
+		var lane: Sprite2D = null
+		if lanes.size() == 1:
+			lane = (lanes[0] as Node).get_node_or_null("BoltLane%d" % index) as Sprite2D
+		if lane == null:
+			drawn_ok = false
+			drawn.append(INF)
+			continue
+		drawn.append(lane.rotation)
+		drawn_ok = drawn_ok and absf(angle_difference(lane.position.angle(), lane.rotation)) < 0.001 and absf(angle_difference(lane.rotation, bearing + angles[index])) < 0.001
+	_check(drawn_ok, "the lanes are drawn about the aim at the player, the gap on the committed side")
 	_brain.call("_tick_teaching", BRAIN.SPLIT_TELL - 0.01)
 	_check(_shots().is_empty(), "the Split Fan holds its 1.1 s tell")
 	_brain.call("_tick_teaching", 0.02)
 	var shots := _shots()
-	var directions_ok := shots.size() == angles.size()
-	for index in range(mini(shots.size(), angles.size())):
-		directions_ok = directions_ok and absf(angle_difference((shots[index] as EnemyProjectile).velocity.angle(), angles[index])) < 0.001 and absf((shots[index] as EnemyProjectile).velocity.length() - BRAIN.SPLIT_SPEED) < 0.01
-	_check(directions_ok, "the released bolts follow exactly their warned lanes")
+	var directions_ok := shots.size() == drawn.size()
+	for index in range(mini(shots.size(), drawn.size())):
+		directions_ok = directions_ok and absf(angle_difference((shots[index] as EnemyProjectile).velocity.angle(), drawn[index])) < 0.001 and absf((shots[index] as EnemyProjectile).velocity.length() - BRAIN.SPLIT_SPEED) < 0.01
+	_check(directions_ok, "the released bolts follow exactly their drawn lanes")
 	_check(_state() == &"recovery", "the Split Fan ends in recovery")
 	await _finish_fixture()
 

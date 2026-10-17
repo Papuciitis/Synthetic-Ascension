@@ -230,6 +230,35 @@ func _test_cleave() -> void:
 	_check(_events.is_empty(), "behind the cleave's facing nothing is struck")
 	await _clear()
 
+	# Off the axis the warning, the strike and the blow all turn with the
+	# captured facing: at 0 rad a dropped or negated facing looks the same.
+	_fixture()
+	tank = _tank()
+	brain = tank.get_node("BossBrain")
+	brain.set("_boss_phase", 1)
+	origin = tank.global_position
+	var facing := deg_to_rad(-110.0)
+	_player.global_position = origin + Vector2(120, 0).rotated(facing)
+	_check(bool(brain.call("_try_main_attack", &"cleave")), "fixture: an off-axis cleave commits")
+	sectors = _with_script(SECTOR_WARNING)
+	_check(sectors.size() == 1 and absf(angle_difference((sectors[0] as Node2D).rotation, facing)) < 0.001, "the cleave's warning turns to its captured facing")
+	brain.call("_tick_cast", BRAIN.CLEAVE_TELL + 0.01)
+	strikes = _strikes()
+	var turned_ok := strikes.size() == 1
+	if turned_ok:
+		var turned := ((strikes[0] as BossSectorStrike).get_child(0) as CollisionShape2D).shape as ConvexPolygonShape2D
+		var turned_expected := ORACLE.sector_polygon(Vector2.ZERO, facing, BRAIN.CLEAVE_RADIUS, BRAIN.CLEAVE_HALF_ANGLE)
+		turned_ok = turned != null and turned.points.size() == turned_expected.size()
+		for index in range(turned_expected.size() if turned_ok else 0):
+			# The facing comes from float32 world positions: within 0.01 px.
+			turned_ok = turned_ok and turned.points[index].distance_to(turned_expected[index]) < 0.01
+	_check(turned_ok, "the strike's sector turns with it")
+	_events.clear()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_check(_events.filter(func(event: Dictionary) -> bool: return event.source == tank).size() == 1, "and strikes the player standing in it")
+	await _clear()
+
 
 func _run_charge(tank: EnemyActor, brain: Node, steps: int) -> void:
 	for _step in range(steps):
@@ -366,9 +395,11 @@ func _test_oracle_guard() -> void:
 	var tank := _tank()
 	var brain := tank.get_node("BossBrain")
 	var origin := tank.global_position
-	# Standing on the first Fault Line node, no walk at 100 px/s leaves it in
-	# 1.35 s, and the boss's own body bars the way back.
+	# Standing on the first Fault Line node, a Warforged Melee's 90 px/s walk
+	# is still 12 px inside its reach at the 1.35 s release, whichever way it
+	# goes (at 100 px/s a sidestep would end exactly on the edge).
 	_player.global_position = origin + Vector2(140, 0)
+	_player.set("speed", 90.0)
 	_check(not bool(brain.call("_try_main_attack", &"shock")), "a Fault Line the player could not walk out of is never committed")
 	_check(_state(tank) == &"idle" and _with_script(WARNING).is_empty(), "the refused attack leaves no warning or lock")
 	for property in ["_rush_cd", "_slam_cd", "_cleave_cd", "_breach_cd"]:
