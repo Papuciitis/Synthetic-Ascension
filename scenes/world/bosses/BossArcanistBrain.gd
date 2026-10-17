@@ -737,7 +737,7 @@ func _escapable(plan: Array) -> bool:
 	var player := _e.player
 	var shape: Dictionary = Oracle.player_shape(player)
 	var blockers := [{"center": _e.global_position, "radius": TeachingPlacement.body_radius(_e)}]
-	var clearance := Oracle.walking_clearance(shape)
+	var clearance := Oracle.corridor_radius(shape)
 	var path_clear := func(from: Vector2, to: Vector2) -> bool:
 		return TeachingPlacement.corridor_clear(_e, from, to, clearance)
 	return Oracle.has_escape(player.global_position, _with_bolts_in_flight(plan), shape, blockers, path_clear, Oracle.walking_speed(player))

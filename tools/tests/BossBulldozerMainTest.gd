@@ -393,6 +393,32 @@ func _test_rush_spares_the_back() -> void:
 		await _clear()
 
 
+## A player resting against a wall can still walk along it or away, so the
+## boss still attacks it: a corridor test wider than the player's own radius
+## would refuse every walk while it hugs a wall, and the boss would wait.
+func _test_wall_hugging_player() -> void:
+	_fixture()
+	var tank := _tank()
+	var brain := tank.get_node("BossBrain")
+	brain.set("_boss_phase", 1)
+	var origin := tank.global_position
+	var wall := StaticBody2D.new()
+	var collider := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(900, 20)
+	collider.shape = box
+	wall.add_child(collider)
+	_world.add_child(wall)
+	wall.global_position = origin + Vector2(250, 80)
+	# The wall's face is 70 px below the boss's line; a player resting on it
+	# sits its capsule radius plus the body's safe margin away.
+	_player.global_position = origin + Vector2(250, 70.0 - 25.08)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_check(bool(brain.call("_try_main_attack", &"shock")), "a player resting against a wall still has a walk out, so the Fault Line commits")
+	await _clear()
+
+
 func _test_fault_followup() -> void:
 	_fixture()
 	var tank := _tank()
@@ -481,6 +507,7 @@ func _run() -> void:
 	await _test_breach()
 	await _test_rush_keeps_its_lane()
 	await _test_rush_spares_the_back()
+	await _test_wall_hugging_player()
 	await _test_fault_followup()
 	await _test_oracle_guard()
 	await _test_arena_speed()

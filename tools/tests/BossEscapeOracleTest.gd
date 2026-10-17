@@ -51,12 +51,14 @@ func _run() -> void:
 	# walks toward the body as the only way out: from contact (into it) and
 	# from a step away (across it). Without the body each escapes; with it,
 	# neither does.
-	var beyond := func(start: Vector2, away: Vector2) -> Array:
-		return [{"kind": &"circle", "center": start + away * 40.0, "radius": 30.0, "from": 0.6, "to": 0.7}]
-	var into: Array = beyond.call(contact, Vector2.RIGHT)
+	var beyond := func(start: Vector2, away: Vector2, until: float) -> Array:
+		return [{"kind": &"circle", "center": start + away * 40.0, "radius": 30.0, "from": 0.6, "to": until}]
+	var into: Array = beyond.call(contact, Vector2.RIGHT, 0.7)
 	_check(ORACLE.has_escape(contact, into, shape) and not ORACLE.has_escape(contact, into, shape, body), "from contact, a walk out into the body is refused")
+	# The blast lasts long enough that the walk toward the body passes right
+	# through it and out the far side: only the whole route can refuse it.
 	var near := Vector2(-80.0, 0.0)
-	var across: Array = beyond.call(near, Vector2.LEFT)
+	var across: Array = beyond.call(near, Vector2.LEFT, 3.0)
 	_check(ORACLE.has_escape(near, across, shape) and not ORACLE.has_escape(near, across, shape, body), "a step away, a walk out across the body is refused")
 
 	# Rush: the S10 body sweeps its lane; physical contact uses the capsule.
@@ -97,8 +99,8 @@ func _run() -> void:
 	_check(not ORACLE.has_escape(contact, _slam(1.3), shape, body, boxed_in), "walls across every walk veto the attack")
 
 	# The player as it really moves: it turns to face its motion, keeps that
-	# motion while reacting, walks one of eight keyboard directions, and at its
-	# own permanent speed.
+	# motion while reacting, walks one of eight keyboard directions, and at the
+	# speed it can keep up.
 	var instant := [{"kind": &"circle", "center": Vector2(50, 0), "radius": 10.0, "from": 0.0, "to": 0.1}]
 	var square_on := shape.duplicate()
 	square_on["rotation"] = 0.0
@@ -119,21 +121,65 @@ func _run() -> void:
 		var step := fposmod((keyboard_route as Vector2).angle(), PI * 0.25)
 		on_grid = is_zero_approx(step) or is_equal_approx(step, PI * 0.25)
 	_check(on_grid, "routes are keyboard directions, multiples of 45 degrees")
+	# Gaps only an analog stick could hold are not routes: rays of small blasts
+	# along all eight keyboard directions, and a late blast where the player
+	# stands, leave walks only between the rays.
+	var rays := [{"kind": &"circle", "center": Vector2.ZERO, "radius": 30.0, "from": 1.0, "to": 3.0}]
+	for index in range(8):
+		for distance in [120.0, 160.0, 200.0, 240.0, 280.0]:
+			rays.append({"kind": &"circle", "center": Vector2.from_angle(TAU * float(index) / 8.0) * distance, "radius": 8.0, "from": 0.0, "to": 3.0})
+	var turned_rays: Array = []
+	for hazard: Dictionary in rays:
+		var turned_hazard := hazard.duplicate()
+		turned_hazard["center"] = (hazard["center"] as Vector2).rotated(PI / 8.0)
+		turned_rays.append(turned_hazard)
+	_check(not ORACLE.has_escape(Vector2.ZERO, rays, still) and ORACLE.has_escape(Vector2.ZERO, turned_rays, still), "a walk out only between the eight keyboard directions is not certified; turned 22.5 degrees, the same rays leave keyboard walks")
 	_check(not ORACLE.has_escape(contact, _slam(1.3), shape, body, Callable(), 80.0), "the 1.3 s slam from contact traps an 80 px/s player")
 	var slow := WalkSpeed.new()
 	slow.speed = 80.0
 	var quick := WalkSpeed.new()
 	quick.speed = 300.0
 	_check(is_equal_approx(ORACLE.walking_speed(slow), 80.0) and is_equal_approx(ORACLE.walking_speed(quick), ORACLE.BASE_SPEED) and is_equal_approx(ORACLE.walking_speed(null), ORACLE.BASE_SPEED), "each player walks at its own speed, never above the 100 px/s baseline")
+	var ringed := RingedWalker.new()
+	var boosted := RingedWalker.new()
+	boosted.speed = 80.0
+	boosted.effective = 96.0
+	_check(is_equal_approx(ORACLE.walking_speed(ringed), 92.0) and is_equal_approx(ORACLE.walking_speed(boosted), 80.0), "a cursed ring's slow counts and a passing boost does not: the walk is the lower of stat and effective speed")
 	slow.free()
 	quick.free()
-	_check(is_equal_approx(ORACLE.walking_clearance(shape), 29.0), "corridors clear the capsule's crosswise half length")
+	ringed.free()
+	boosted.free()
+	# A dash is not a walk: nothing is certified until it ends. Pushed into a
+	# body it touches, the player slides along it rather than into it.
+	var dashing := shape.duplicate()
+	dashing["velocity"] = Vector2(-800, 0)
+	var pressing := shape.duplicate()
+	pressing["velocity"] = Vector2(-100, 0)
+	_check(ORACLE.escape_route(contact, _slam(1.3), dashing, body) == null, "while the player dashes, nothing is certified")
+	_check(ORACLE.escape_route(contact, _slam(1.3), pressing, body) == ORACLE.escape_route(contact, _slam(1.3), still, body), "pushing into a touched body is not motion into it")
+	# The route bends where the reaction ends: its drift is a leg of its own.
+	var legs: Array = []
+	var record := func(from: Vector2, to: Vector2) -> bool:
+		legs.append([from, to])
+		return true
+	ORACLE.escape_route(Vector2.ZERO, [], closing, [], record)
+	_check(legs.size() == 1 and (legs[0][0] as Vector2).is_zero_approx() and (legs[0][1] as Vector2).is_equal_approx(Vector2(15, 0)), "standing still after a drift checks the drift's leg against the world")
+	_check(is_equal_approx(ORACLE.walking_clearance(shape), 29.0) and is_equal_approx(ORACLE.corridor_radius(shape), 23.0), "bodies are cleared by the capsule's crosswise half length; wall corridors by its radius less 2 px")
 	_finish()
 
 
 class WalkSpeed:
 	extends Node
 	var speed := 100.0
+
+
+class RingedWalker:
+	extends Node
+	var speed := 115.0
+	var effective := 92.0
+
+	func get_effective_move_speed() -> float:
+		return effective
 
 
 func _finish() -> void:
