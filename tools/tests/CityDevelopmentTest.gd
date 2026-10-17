@@ -351,6 +351,16 @@ func _test_binding_echo() -> void:
 	_check(not Global.pending_augment_pick and Global.attempt_binding_rewards_remaining == 0, "duplicate completion after both choices cannot mint more Bindings")
 	Global.start_new_attempt()
 	_check(not Global.attempt_binding_echo_claimed and Global.attempt_binding_sequence == 0, "fresh attempt resets the conditional boundary once")
+	# A developer attempt resumed by Continue (its debug flags cleared, its
+	# launch saved with it) earns no second Binding from the Echo.
+	Global.attempt_developer_launch = true
+	Global.attempt_segment = 5
+	_check(Global.begin_segment_completion(5), "developer Echo fixture saves genuine S5 intent")
+	var developer_saved := SaveManager.load_slot(0)
+	SaveManager.current_save = developer_saved
+	Global.apply_save(developer_saved)
+	_check(Global.attempt_developer_launch and Global.attempt_segment == 6 and Global.attempt_binding_rewards_remaining == 1, "a developer attempt resumed by Continue earns one Binding at S5, not the Echo's two")
+	Global.attempt_developer_launch = false
 	var legacy := SaveData.new()
 	legacy.attempt_active = true
 	legacy.attempt_pending_augment_pick = true
