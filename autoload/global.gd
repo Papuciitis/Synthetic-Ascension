@@ -1376,8 +1376,15 @@ func city_development_capture_metadata() -> Dictionary:
 	return {"enabled": not _CITY_DEVELOPMENT_EXPERIMENTS.enabled("--city-no-permanent-development"), "profile": get_city_development_summary(), "attempt": attempt_city_development.duplicate(true), "effective_bonuses": _CITY_DEVELOPMENT.bonuses(_effective_city_development())}
 
 
+## Developer tools launched this attempt, this session or when it was saved
+## (the main menu clears the debug flags before Continue): it writes nothing
+## permanent into the profile.
+func is_developer_attempt() -> bool:
+	return debug_dev_mode or debug_dev_segment or attempt_developer_launch
+
+
 func _award_city_development(segment: int) -> void:
-	if not attempt_active or has_pending_peep() or debug_dev_mode or debug_dev_segment or not _city_development_awards_enabled or SaveManager == null or SaveManager.current_save == null:
+	if not attempt_active or has_pending_peep() or is_developer_attempt() or not _city_development_awards_enabled or SaveManager == null or SaveManager.current_save == null:
 		return
 	get_city_development_summary()
 	_CITY_DEVELOPMENT.claim(city_development, segment)
@@ -2631,7 +2638,7 @@ func apply_major_choice(choice_id: StringName) -> bool:
 		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
 		# Developer launches never write permanent commitments into a profile,
 		# like their Research awards (a later real run would reactivate them).
-		if _is_city_commitment_stage(attempt_pending_doctrine_stage) and not debug_dev_mode and not debug_dev_segment:
+		if _is_city_commitment_stage(attempt_pending_doctrine_stage) and not is_developer_attempt():
 			meta_city_commitments[String(attempt_pending_doctrine_stage)] = String(choice_id)
 	if def.family_id != StringName():
 		var held := doctrine_family_count(def.family_id)
@@ -3401,7 +3408,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_cleared_arenas = attempt_cleared_arenas.duplicate()
 		# The debug flags are still set while a developer run saves; the main
 		# menu clears them before Continue loads it.
-		attempt_developer_launch = attempt_developer_launch or debug_dev_mode or debug_dev_segment
+		attempt_developer_launch = is_developer_attempt()
 		save.attempt_developer_launch = attempt_developer_launch
 		var imprints := PackedStringArray()
 		for imprint_id in attempt_imprints:
@@ -3611,7 +3618,7 @@ func _apply_segment_completion(completed_segment: int) -> void:
 		if not attempt_binding_echo_claimed:
 			attempt_binding_echo_claimed = true
 			binding_rewards = 1
-			if genuine_settlement and _CITY_DEVELOPMENT.rank(_effective_city_development(), "binding_echo") > 0 and _city_development_awards_enabled and SaveManager != null and SaveManager.current_save != null and not debug_dev_mode and not debug_dev_segment and not has_pending_peep():
+			if genuine_settlement and _CITY_DEVELOPMENT.rank(_effective_city_development(), "binding_echo") > 0 and _city_development_awards_enabled and SaveManager != null and SaveManager.current_save != null and not is_developer_attempt() and not has_pending_peep():
 				binding_rewards = 2
 	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():

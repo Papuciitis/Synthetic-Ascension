@@ -68,6 +68,12 @@ func _test_earning() -> void:
 	_clear(3)
 	_check(_summary()["points"] == 1, "developer mode grants no research")
 	Global.debug_dev_mode = false
+	# Resumed by Continue, the debug flags are clear but the attempt still
+	# carries its developer launch.
+	Global.attempt_developer_launch = true
+	_clear(5)
+	_check(_summary()["points"] == 1, "a developer attempt resumed by Continue grants no research")
+	Global.attempt_developer_launch = false
 	SaveManager.current_save = null
 	_clear(4)
 	_check(_summary()["points"] == 1, "unsaved developer attempts grant no research")

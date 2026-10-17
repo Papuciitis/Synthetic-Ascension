@@ -194,11 +194,17 @@ func _test_developer_choice_never_imported() -> void:
 	_check((Global.get("meta_city_commitments") as Dictionary).is_empty(), "a developer run's pick writes no commitment")
 	var save := SaveData.new()
 	Global.write_save(save)
+	# A relaunch: the main menu cleared the debug flags, and nothing in memory
+	# remembers the launch until the save is loaded.
 	Global.debug_dev_mode = false
+	Global.attempt_developer_launch = false
 	save.set("meta_city_commitments", {})
 	Global.apply_save(save)
+	_check(Global.attempt_developer_launch, "loading that run's save restores its developer launch")
 	_check((Global.get("meta_city_commitments") as Dictionary).is_empty(), "loading that run's save never imports its pick as a commitment")
 	_check(Global.attempt_doctrine_stage_ids.get(&"method") == &"doctrine_method_open_circuit", "while the attempt keeps its own choice")
+	_choose(6, &"doctrine_tithe_ledger")
+	_check((Global.get("meta_city_commitments") as Dictionary).is_empty(), "its next city choice, resumed by Continue, writes no commitment either")
 	Global.start_new_attempt()
 	_check(not Global.attempt_developer_launch, "a new attempt is no developer launch")
 
