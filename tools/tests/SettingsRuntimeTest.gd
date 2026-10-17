@@ -129,21 +129,25 @@ func _run() -> void:
 	await process_frame
 	_check(applier.displayed.size() == 2 and applier.kept_maximized[1], "and then applies once, keeping a maximized window already at the saved size")
 	# A window the player minimized during the splash: the state waits until
-	# it is brought back.
+	# it is brought back. A desktop window reads as it was requested when the
+	# start begins (its events are not processed yet), and minimized from the
+	# first frame, for four frames.
 	var minimized_script := GDScript.new()
-	minimized_script.source_code = "extends \"res://autoload/SettingsManager.gd\"\nvar minimized_checks := 0\nfunc _window_minimized() -> bool:\n\tminimized_checks -= 1\n\treturn minimized_checks >= 0\n"
-	_check(minimized_script.reload() == OK, "fixture: a manager whose window reports minimized")
+	minimized_script.source_code = "extends \"res://autoload/SettingsManager.gd\"\nvar minimized_from := -1\nvar minimized_until := -1\nfunc _display_name() -> String:\n\treturn \"windows\"\nfunc _window_mode() -> DisplayServer.WindowMode:\n\tvar frame := Engine.get_process_frames()\n\treturn DisplayServer.WINDOW_MODE_MINIMIZED if frame >= minimized_from and frame < minimized_until else DisplayServer.WINDOW_MODE_WINDOWED\n"
+	_check(minimized_script.reload() == OK, "fixture: a manager whose desktop window the player minimizes")
 	var minimized_manager := minimized_script.new() as Node
 	minimized_manager.set("storage_path", "user://settings_runtime_test_%d/settings.cfg" % Time.get_ticks_usec())
 	var minimized_applier := FakeRuntimeApplier.new()
 	minimized_manager.set("runtime_applier", minimized_applier)
 	root.add_child(minimized_manager)
-	minimized_manager.set("minimized_checks", 3)
+	var frame := Engine.get_process_frames()
+	minimized_manager.set("minimized_from", frame + 1)
+	minimized_manager.set("minimized_until", frame + 5)
 	minimized_manager.call("_apply_persisted_display_once_drawn")
 	for _frame in range(4):
 		await process_frame
 	_check(minimized_applier.displayed.size() == 1, "a window minimized during the splash is not restored over what the player switched to")
-	for _frame in range(2):
+	for _frame in range(3):
 		await process_frame
 	_check(minimized_applier.displayed.size() == 2, "the saved state applies once it is brought back")
 	minimized_manager.queue_free()

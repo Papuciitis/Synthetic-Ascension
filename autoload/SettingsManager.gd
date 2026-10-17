@@ -61,7 +61,15 @@ func _apply_persisted_display_once_drawn() -> void:
 
 
 func _window_minimized() -> bool:
-	return window_minimized(DisplayServer.get_name(), DisplayServer.window_get_mode())
+	return window_minimized(_display_name(), _window_mode())
+
+
+func _display_name() -> String:
+	return DisplayServer.get_name()
+
+
+func _window_mode() -> DisplayServer.WindowMode:
+	return DisplayServer.window_get_mode()
 
 
 ## Whether a window in this mode is minimized by the player. A headless run
