@@ -25,10 +25,14 @@ var projectile_crossed: int = 0
 # Every projectile that contributed, with its own tags and raw damage, so a
 # batch of unlike shots is reported as mixed rather than as the first one.
 var contributions: Array = []
+# Each resolved hit's own raw damage, so per-hit rules (a boss's damage cap,
+# an elite's plate) treat the batch exactly as the same hits one by one.
+var hit_damages := PackedFloat64Array()
 
 func add_resolved_hit(damage: float, source_node: Node, knockback_force: Vector2, was_critical: bool, burn_stack_count: int, burn_time: float, burn_interval: float, burn_damage: float) -> void:
 	total_raw_damage += maxf(0.0, damage)
 	hit_count += 1
+	hit_damages.append(maxf(0.0, damage))
 	if was_critical:
 		critical_hits += 1
 	if source == null and source_node != null and is_instance_valid(source_node):

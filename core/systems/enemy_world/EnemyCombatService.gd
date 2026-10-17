@@ -117,7 +117,11 @@ func _apply_damage(
 		raw_damage = maxf(0.0, float(player_damage_modifier.call(handle, raw_damage, payload)))
 		if raw_damage <= 0.0:
 			return 0.0
-	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count, is_hit)
+	var hit_damages := PackedFloat64Array()
+	var kept_hits := payload as HitLedger
+	if kept_hits != null and hit_count > 1 and kept_hits.hit_damages.size() == hit_count:
+		hit_damages = kept_hits.hit_damages
+	var adjusted_damage := _adjust_damage(handle, actor, raw_damage, hit_count, is_hit, hit_damages)
 	var applied_damage := minf(adjusted_damage, current_health)
 	if applied_damage <= 0.0:
 		return 0.0
@@ -599,7 +603,7 @@ func _segment_circle_t(from: Vector2, to: Vector2, center: Vector2, radius: floa
 	return second if second >= 0.0 and second <= 1.0 else -1.0
 
 
-func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int, is_hit: bool) -> float:
+func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: int, is_hit: bool, hit_damages: PackedFloat64Array = PackedFloat64Array()) -> float:
 	var damage_multiplier := maxf(0.0, float(_world.get_cold_value(handle, "damage_taken_mul", 1.0)))
 	var hit_cap_ratio := maxf(0.0, float(_world.get_cold_value(handle, "hit_cap_ratio", 0.0)))
 	if actor != null:
@@ -607,17 +611,14 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 			damage_multiplier = maxf(0.0, float(actor.get_meta("damage_taken_mul")))
 		if actor.has_meta("hit_cap_ratio"):
 			hit_cap_ratio = maxf(0.0, float(actor.get_meta("hit_cap_ratio")))
-	var adjusted := maxf(0.0, raw_damage) * damage_multiplier
+	var count := float(maxi(1, hit_count))
+	var plate := 0.0
 	if is_hit and not _elite_armour.is_empty():
-		var armour_fraction := float(_elite_armour.get(handle, 0.0))
-		if armour_fraction > 0.0:
-			# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
-			# bounces, a heavy blow gets through. A batched ledger pays per
-			# pellet; a status tick is not a hit and pays nothing.
-			adjusted = maxf(
-				0.0,
-				adjusted - _world.get_max_health(handle) * armour_fraction * float(maxi(1, hit_count)),
-			)
+		# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
+		# bounces, a heavy blow gets through. A batched ledger pays per
+		# pellet; a status tick is not a hit and pays nothing.
+		plate = _world.get_max_health(handle) * float(_elite_armour.get(handle, 0.0))
+	var shield := 1.0
 	if (
 		not _elite_shields.is_empty()
 		and not EnemyWorldTypes.has_flag(_world.get_flags(handle), EnemyWorldTypes.Flags.ELITE)
@@ -625,10 +626,29 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 	):
 		# SHIELDED (roadmap §9): the bearer's non-elite neighbours take less;
 		# the bearer itself and other elites are never covered.
-		adjusted *= 1.0 - EliteModifiers.SHIELD_ALLY_DAMAGE_REDUCTION
-	if hit_cap_ratio > 0.0:
-		var hit_cap := _world.get_max_health(handle) * hit_cap_ratio * float(maxi(1, hit_count))
-		adjusted = minf(adjusted, hit_cap)
+		shield = 1.0 - EliteModifiers.SHIELD_ALLY_DAMAGE_REDUCTION
+	var hit_cap := _world.get_max_health(handle) * hit_cap_ratio
+	if not hit_damages.is_empty() and (plate > 0.0 or hit_cap > 0.0):
+		# A batch that kept its hits pays the per-hit rules hit by hit, exactly
+		# as the same hits delivered one by one: pooling the cap would let one
+		# huge hit spend the budget of the pellets beside it. Batch-level
+		# changes to the total (outgoing modifiers) scale every hit alike.
+		var listed := 0.0
+		for amount in hit_damages:
+			listed += amount
+		if listed > 0.0:
+			var scale := maxf(0.0, raw_damage) / listed
+			var total := 0.0
+			for amount in hit_damages:
+				var one := maxf(0.0, amount * scale * damage_multiplier - plate) * shield
+				total += minf(one, hit_cap) if hit_cap > 0.0 else one
+			return total
+	var adjusted := maxf(0.0, raw_damage) * damage_multiplier
+	if plate > 0.0:
+		adjusted = maxf(0.0, adjusted - plate * count)
+	adjusted *= shield
+	if hit_cap > 0.0:
+		adjusted = minf(adjusted, hit_cap * count)
 	return adjusted
 
 
