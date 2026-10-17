@@ -17,6 +17,10 @@ var _failures := 0
 var _world: Node2D
 var _player: CharacterBody2D
 var _events: Array[Dictionary] = []
+## Cases that ran to their end: a runtime error ends a case without a
+## failed check, so the suite counts them.
+var _completed := 0
+const CASES := 9
 ## What the world gains, tagged on entry, so a release that cancels and
 ## frees itself at once is still caught.
 var _spawned: Array[StringName] = []
@@ -169,6 +173,7 @@ func _test_cleave_death() -> void:
 	_check(_released_since(mark, &"strike") == 0 and _boss_hits(tank) == 0, "death during the cleave's anticipation releases no strike")
 	_check(_with_script(SECTOR_WARNING).is_empty(), "and its sector warning leaves with it")
 	await _clear()
+	_completed += 1
 
 
 func _test_cleave_stun_and_pause() -> void:
@@ -205,6 +210,7 @@ func _test_cleave_stun_and_pause() -> void:
 	await _stun(tank, 0.05)
 	_check(_state(tank) == &"recovery", "a brief stun cannot erase the earned recovery")
 	await _clear()
+	_completed += 1
 
 
 func _test_breach() -> void:
@@ -248,6 +254,7 @@ func _test_breach() -> void:
 	await _frames()
 	_check(_released_since(mark, &"circle") == 0 and _with_script(WARNING).is_empty(), "death during the beat releases no impact and clears its warning")
 	await _clear()
+	_completed += 1
 
 
 func _test_fault_followup_stun() -> void:
@@ -269,6 +276,7 @@ func _test_fault_followup_stun() -> void:
 	await _frames()
 	_check(_released_since(mark, &"circle") == 0 and _with_script(WARNING).is_empty(), "the follow-up line's three nodes never release and their warnings are cleared")
 	await _clear()
+	_completed += 1
 
 
 func _test_phase_beat_holds() -> void:
@@ -295,6 +303,7 @@ func _test_phase_beat_holds() -> void:
 	brain.call("_tick_teaching", 1.0 / 60.0)
 	_check(_pylons().size() == 2, "the pair still arrives once the boss is free")
 	await _clear()
+	_completed += 1
 
 
 func _test_split_death_and_disengage() -> void:
@@ -327,6 +336,7 @@ func _test_split_death_and_disengage() -> void:
 	await _frames()
 	_check(_released_since(mark, &"bolt") == 0 and _state(mage) == &"idle", "disengaging during the tell releases no bolt")
 	await _clear()
+	_completed += 1
 
 
 func _test_sweep_interruptions() -> void:
@@ -336,10 +346,16 @@ func _test_sweep_interruptions() -> void:
 	brain.set("_boss_phase", 1)
 	_player.global_position = mage.global_position + Vector2(300, 0)
 	brain.call("_spawn_main_pylons")
-	var pylon := _pylons()[0] as BossPylon
 	_check(bool(brain.call("_try_main_pattern", &"sweep")), "sweep fixture commits")
+	var pylons := _pylons()
+	var beams := _beams()
+	_check(pylons.size() == 2 and beams.size() == 1, "fixture: a pair stands and the sweep's beam is in the world")
+	if pylons.size() != 2 or beams.size() != 1:
+		await _clear()
+		return
+	var pylon := pylons[0] as BossPylon
 	_check(bool(pylon.call("_holds_fire")), "fixture: the sweep holds the pair's fire")
-	var beam := _beams()[0] as BossBeamSweep
+	var beam := beams[0] as BossBeamSweep
 	beam.call("_advance", 0.5)
 	brain.call("_tick_teaching", 0.5)
 	await _stun(mage, 0.3)
@@ -355,7 +371,12 @@ func _test_sweep_interruptions() -> void:
 	brain.set("_boss_phase", 1)
 	_player.global_position = mage.global_position + Vector2(300, 0)
 	brain.call("_try_main_pattern", &"sweep")
-	beam = _beams()[0] as BossBeamSweep
+	beams = _beams()
+	_check(beams.size() == 1, "fixture: the second sweep's beam is in the world")
+	if beams.size() != 1:
+		await _clear()
+		return
+	beam = beams[0] as BossBeamSweep
 	# The caster dies just before the beam reaches the player (about 0.55 s
 	# into the sweep), so a channel that outlived it would strike in the
 	# observed window: by 0.7 s the beam lies across the player.
@@ -368,6 +389,7 @@ func _test_sweep_interruptions() -> void:
 	_check(not is_instance_valid(beam) or beam.is_queued_for_deletion(), "the caster's death ends an active sweep at once")
 	_check(_boss_hits(mage) == hits_before, "and the dying channel deals nothing more")
 	await _clear()
+	_completed += 1
 
 
 func _test_convergence_stun_after_fan() -> void:
@@ -388,6 +410,7 @@ func _test_convergence_stun_after_fan() -> void:
 	_check(_bolts(mage).size() == released, "while the bolts already released fly on (a brief stun is not death)")
 	_check(_state(mage) == &"idle", "the sequence does not resume after the stun")
 	await _clear()
+	_completed += 1
 
 
 func _test_pylons_leave_with_their_boss() -> void:
@@ -412,6 +435,7 @@ func _test_pylons_leave_with_their_boss() -> void:
 	_check(_pylons().is_empty(), "the pair leaves with its boss")
 	_check(credits.is_empty(), "without a kill credit or a defeat event")
 	await _clear()
+	_completed += 1
 
 
 func _run() -> void:
@@ -433,6 +457,7 @@ func _run() -> void:
 	await _test_sweep_interruptions()
 	await _test_convergence_stun_after_fan()
 	await _test_pylons_leave_with_their_boss()
+	_check(_completed == CASES, "all %d cases ran to their end" % CASES)
 	RunEvents.player_damage_resolved.disconnect(_on_damage)
 	Global.attempt_world_seed = previous_seed
 	print("BossMainInterruptionTest: %d passed, %d failed" % [_passes, _failures])

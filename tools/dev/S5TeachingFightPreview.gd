@@ -142,7 +142,9 @@ func _run() -> void:
 	await _shutdown_world()
 	_check(SaveManager.debug_save_writes == _save_writes_before and SaveManager.current_save == null and SaveManager.current_slot == -1, "isolated fixture made zero profile writes or slot selections")
 	_release_inputs()
-	print("S5TeachingFightPreview: passes=", _passes, " failures=", _failures)
+	# One final tally, after the completion and isolation checks, under the
+	# running suite's own name (the escape suites extend this preview).
+	print("%s: %d passed, %d failed" % [(get_script() as Script).resource_path.get_file().get_basename(), _passes, _failures])
 	get_tree().quit(1 if _failures > 0 else 0)
 
 

@@ -67,10 +67,14 @@ func _execute() -> void:
 			for attack in cases:
 				var stationary := await _escape_attempt(attack, "stay")
 				var walking := await _escape_attempt(attack, "walk")
+				# Mine patterns are not oracle-gated: the player's spot is safe by
+				# construction and the walk follows the committed corridor.
+				var walked := "the committed corridor" if attack == "mines" else "the oracle's route"
 				if attack != "mines":
-					# The constellation's centre and corridor are deliberately safe.
 					_check(int(stationary.get("danger_attempts", 0)) > 0, "%s seed%d stationary control is reached by the actual attack" % [attack, chosen_seed])
-				_check(bool(walking.get("committed", false)) and int(walking.get("danger_attempts", 1)) == 0, "%s seed%d walking the oracle's route after150ms escapes without dash or a damage-resolution attempt" % [attack, chosen_seed])
+				_check(bool(walking.get("committed", false)) and int(walking.get("danger_attempts", 1)) == 0, "%s seed%d walking %s after150ms escapes without dash or a damage-resolution attempt" % [attack, chosen_seed, walked])
+				if attack == "mines":
+					_check(is_zero_approx(float(walking.get("ordinary_contact_hp_loss", -1.0))), "mines seed%d: the corridor never leads into the boss's body" % chosen_seed)
 				_check(int(walking.get("dashes", -1)) == 0, "%s seed%d walking case never invokes dash" % [attack, chosen_seed])
 			if _s10_case.is_empty():
 				# At body contact the main Arcanist commits its focused fan; the
@@ -81,8 +85,7 @@ func _execute() -> void:
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
 		var absolute_out := ProjectSettings.globalize_path(_out)
 		DirAccess.make_dir_recursive_absolute(absolute_out)
-		_write_json(absolute_out.path_join("s10-escape-results.json"), {"presentation": "Automated paired real Game/S10 court controls along the oracle's own routes; not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "expected_case_results": _expected_results, "completed_case_results": _results.size(), "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
-	print("S10MainBossEscapeTest: ", _passes, " passed, ", _failures, " failed")
+		_write_json(absolute_out.path_join("s10-escape-results.json"), {"presentation": "Automated paired real Game/S10 court controls along the oracle's own routes (the mine arc: its committed corridor); not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "expected_case_results": _expected_results, "completed_case_results": _results.size(), "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
 
 
 func _setup_world(role_value: String, seed_value: int) -> bool:
@@ -245,7 +248,7 @@ func _escape_attempt(attack: String, response: String) -> Dictionary:
 		committed = bool(_brain.call("_try_main_attack", _tank_kind(attack)))
 	else:
 		committed = bool(_brain.call("_try_main_pattern", attack))
-	_check(committed, "%s %s: the real entry point committed, so the oracle found a route" % [attack, response])
+	_check(committed, "%s %s: the real entry point committed%s" % [attack, response, "" if attack == "mines" else ", so the oracle found a route"])
 	var route: Variant = _route_for(attack) if committed else null
 	# Recovery clears the commitment; keep what was committed for the record.
 	var committed_direction: Vector2 = _brain.get("_cast_dir") if _role == "tank" else _brain.get("_split_dir")

@@ -79,7 +79,6 @@ func _execute() -> void:
 		var absolute_out := ProjectSettings.globalize_path(_out)
 		DirAccess.make_dir_recursive_absolute(absolute_out)
 		_write_json(absolute_out.path_join("escape-results.json"), {"presentation": "Automated paired real Game/court controls, not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "expected_case_results": _expected_results, "completed_case_results": _results.size(), "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
-	print("S5TeachingEscapeTest: ", _passes, " passed, ", _failures, " failed")
 
 
 func _escape_attempt(attack: String, response: String, boundary: bool = false) -> Dictionary:

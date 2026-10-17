@@ -16,7 +16,6 @@ func _execute() -> void:
 	await _continue_case("mage", 16102027)
 	Global.followers_transaction.disconnect(_on_followers)
 	_execution_completed = _failures == 0
-	print("S10BossContinueTest: ", _passes, " passed, ", _failures, " failed")
 
 
 func _on_followers(_old_value: int, change: int, _new_value: int, reason: StringName, _context: Dictionary, _feedback: bool, _aggregate: bool) -> void:

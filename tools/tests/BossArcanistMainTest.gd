@@ -312,13 +312,21 @@ func _test_sweep() -> void:
 		var beam := beams[0] as BossBeamSweep
 		_check(beam.physics_clock and not beam.is_processing() and beam.is_physics_processing(), "the sweep advances on the physics clock")
 		_check(is_equal_approx(beam.telegraph_time, BRAIN.SWEEP_TELL) and is_equal_approx(beam.sweep_time, BRAIN.SWEEP_TIME) and is_equal_approx(beam.length, BRAIN.SWEEP_LENGTH), "its tell, sweep and reach are the walk-checked ones")
-		_check(beam.get_node_or_null("SweepEndWarning") != null, "the end of the sweep is announced with its start")
+		# The end lane is drawn where the beam will stop: across the aim
+		# from where it starts.
+		var end_lane := beam.get_node_or_null("SweepEndWarning") as Node2D
+		var stop := float(beam.get("_a1"))
+		_check(end_lane != null and absf(angle_difference(end_lane.global_rotation, stop)) < 0.001 and absf(angle_difference(stop, -beam.rotation)) < 0.001, "the end of the sweep is announced with its start, across the aim")
 		_check(is_equal_approx(absf(angle_difference(beam.rotation, 0.0)), BRAIN.SWEEP_HALF_ARC), "the sweep starts one half-arc to one side of the player")
 	_check(_state() == &"sweep" and bool(_mage.get_meta(&"boss_cast_locked", false)), "the channel roots the Arcanist")
 	_brain.call("_tick_teaching", BRAIN.SWEEP_TELL + BRAIN.SWEEP_TIME - 0.02)
 	_check(_state() == &"sweep", "the channel lasts through the whole sweep")
 	_brain.call("_tick_teaching", 0.03)
 	_check(_state() == &"recovery", "a recovery follows the sweep")
+	_brain.call("_tick_teaching", BRAIN.SWEEP_RECOVERY - 0.05)
+	_check(_state() == &"recovery", "the sweep's opening lasts its 1.0 s")
+	_brain.call("_tick_teaching", 0.1)
+	_check(_state() != &"recovery", "and no longer")
 	await _finish_fixture()
 
 
@@ -336,7 +344,11 @@ func _test_convergence() -> void:
 	var windup = _brain.get("_windup")
 	_check(is_instance_valid(windup) and not windup.is_queued_for_deletion(), "the staff channels the sweep's beat")
 	_brain.call("_tick_teaching", BRAIN.CONVERGENCE_BEAM_DELAY + BRAIN.SWEEP_TIME)
-	_check(_state() == &"recovery", "a longer recovery closes the sequence")
+	_check(_state() == &"recovery", "a recovery closes the sequence")
+	_brain.call("_tick_teaching", BRAIN.CONVERGENCE_RECOVERY - 0.05)
+	_check(_state() == &"recovery", "the sequence's longer opening lasts its 1.2 s")
+	_brain.call("_tick_teaching", 0.1)
+	_check(_state() != &"recovery", "and no longer")
 	await _finish_fixture()
 
 

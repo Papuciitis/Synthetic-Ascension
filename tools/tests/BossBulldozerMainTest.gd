@@ -156,7 +156,9 @@ func _test_phases() -> void:
 	_check(_state(tank) == &"idle", "the beat returns to neutral without an attack")
 	brain.call("_tick_main_selection", 1.0 / 60.0)
 	_check(_state(tank) == &"summon" and _with_script(ARRIVAL).size() == 3, "phase 2's one Runner call follows the beat with its warned arrivals")
-	brain.call("_tick_cast", 1.01)
+	brain.call("_tick_cast", 0.99)
+	_check(_runners().is_empty(), "the call releases nothing during its 1.0 s tell")
+	brain.call("_tick_cast", 0.02)
 	_check(_runners().size() == 3, "the call releases three Runners after its full tell")
 	for runner in _runners():
 		runner.set_physics_process(false)
@@ -212,6 +214,8 @@ func _test_cleave() -> void:
 	_check(_state(tank) == &"recovery" and bool(tank.get_meta(&"boss_cast_locked", false)), "the cleave opens a planted recovery")
 	brain.call("_tick_cast", BRAIN.CLEAVE_RECOVERY - 0.02)
 	_check(_state(tank) == &"recovery", "the cleave's opening lasts 1.0 s")
+	brain.call("_tick_cast", 0.04)
+	_check(_state(tank) != &"recovery", "and no longer")
 	await _clear()
 
 	_fixture()
@@ -299,6 +303,8 @@ func _test_breach() -> void:
 	_check(_state(tank) == &"recovery", "the breach ends in its longest recovery")
 	brain.call("_tick_cast", BRAIN.BREACH_RECOVERY - 0.02)
 	_check(_state(tank) == &"recovery", "that recovery lasts 1.2 s")
+	brain.call("_tick_cast", 0.04)
+	_check(_state(tank) != &"recovery", "and no longer")
 	await _clear()
 
 	_fixture()
