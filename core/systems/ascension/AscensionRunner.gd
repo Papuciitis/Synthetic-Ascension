@@ -1625,6 +1625,12 @@ func get_move_speed_multiplier() -> float:
 	return total
 
 
+## Whether the player is holding down a held Q (Bastion's guard) right now:
+## letting go of the key ends it.
+func is_q_held() -> bool:
+	return _q_holding
+
+
 func get_sustained_move_speed_multiplier() -> float:
 	var total := 1.0
 	for engine in engines:

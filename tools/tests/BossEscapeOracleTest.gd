@@ -160,22 +160,58 @@ func _run() -> void:
 	walker.set("respawn_phase_left", 2.0)
 	walker.set("respawn_speed_mul", 1.35)
 	_check(float(walker.call("get_effective_move_speed")) > 100.0 and is_equal_approx(ORACLE.walking_speed(walker), 80.0), "boosts that may lapse neither count nor hide the ring's slow (walks %.1f px/s, kept %.1f)" % [float(walker.call("get_effective_move_speed")), ORACLE.walking_speed(walker)])
-	items._active_effects.erase(&"oracle_ring")
 	sets._active_effects.erase(&"oracle_overclock")
 	walker.set("respawn_phase_left", 0.0)
+	var manifestations := walker.get_node("ManifestationRunner") as ManifestationRunner
+	var surge := SpeedSource.new()
+	surge.multiplier = 1.3
+	manifestations._all_cache.append(surge)
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 80.0), "nor does a manifestation's surge")
+	manifestations._all_cache.erase(surge)
 	var ascension := walker.get_node("AscensionRunner") as AscensionRunner
+	var lane := LaneBoost.new()
+	ascension.engines.append(lane)
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 80.0), "nor an engine's boost that may lapse")
+	ascension.engines.erase(lane)
+	items._active_effects.erase(&"oracle_ring")
 	var bastion := BastionEngine.new()
 	bastion.setup(ascension)
 	bastion.refresh({"BAQ": true, "BAQ1": true})
 	ascension.engines.append(bastion)
 	bastion.guarding = true
-	_check(is_equal_approx(float(walker.call("get_effective_move_speed")), 50.0) and is_equal_approx(ORACLE.walking_speed(walker), 100.0), "a guard held at will halves the walk, but the player can let it go: it does not count")
+	ascension.set("_q_holding", true)
+	_check(is_equal_approx(float(walker.call("get_effective_move_speed")), 50.0) and is_equal_approx(ORACLE.walking_speed(walker), 100.0), "a guard the player holds Q for halves the walk, but letting go ends it: it does not count")
+	ascension.set("_q_holding", false)
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 50.0), "a guard up with the key released (an Encore's repeat) cannot be let go: it counts")
+	ascension.set("_q_holding", true)
 	bastion._auto_release = 0.75
-	_check(is_equal_approx(ORACLE.walking_speed(walker), 50.0), "an automatic guard runs out its 0.75 s: its slow counts")
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 50.0), "nor can an automatic guard before its 0.75 s: it counts")
+	ascension.set("_q_holding", false)
 	ascension.engines.erase(bastion)
+	# A running Burst ends at a second Q press, except while the gun is jammed
+	# or venting.
+	var barrage := BarrageEngine.new()
+	barrage.setup(ascension)
+	barrage.refresh({"BRQ": true, "BRQ1": true})
+	ascension.engines.append(barrage)
+	barrage.burst_left = 2.0
+	_check(is_equal_approx(float(walker.call("get_effective_move_speed")), 75.0) and is_equal_approx(ORACLE.walking_speed(walker), 100.0), "a Burst the player can cancel slows the walk but does not count")
+	barrage.jam_left = 1.0
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 75.0), "a jammed gun's Burst cannot be cancelled: it counts")
+	ascension.engines.erase(barrage)
+	var barrage_v5 := BarrageEngineV5.new()
+	barrage_v5.setup(ascension)
+	barrage_v5.refresh({"BRQ": true, "BRQ1": true})
+	ascension.engines.append(barrage_v5)
+	barrage_v5.burst_left = 2.0
+	_check(is_equal_approx(float(walker.call("get_effective_move_speed")), 90.0) and is_equal_approx(ORACLE.walking_speed(walker), 100.0), "nor does the reworked Barrage's Burst")
+	barrage_v5.set("_emergency_vent_left", 0.6)
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 90.0), "until its gun vents")
+	ascension.engines.erase(barrage_v5)
 	walker.queue_free()
 	ring.free()
 	overclock.free()
+	surge.free()
 	# A dash is not a walk: nothing is certified until it ends. Pushed into a
 	# body it touches, the player slides along it rather than into it.
 	var dashing := shape.duplicate()
@@ -222,6 +258,15 @@ class SpeedSource:
 
 	func get_move_speed_multiplier() -> float:
 		return multiplier
+
+
+## An engine with only a passing boost (Momentum's lane, say): the default
+## sustained multiplier must leave it out.
+class LaneBoost:
+	extends AscensionEngine
+
+	func move_speed_multiplier() -> float:
+		return 1.2
 
 
 func _finish() -> void:
