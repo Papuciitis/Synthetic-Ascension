@@ -116,8 +116,11 @@ static func blink_valid(actor: CharacterBody2D, player: Node2D, point: Vector2, 
 ## body: it may start beside it, never close on it. Checked when the pattern
 ## is chosen; the boss may move during the tell like any body.
 static func corridor_avoids_body(actor: Node2D, player: Node2D, center: Vector2, escape: Vector2) -> bool:
+	var to_boss := actor.global_position - center
 	var boss := actor.global_position
-	if escape.dot(boss - center) <= 0.0:
+	# Away from the body or alongside it (a sideways corridor's dot may come
+	# out a hair either side of zero from the rotation that built it).
+	if escape.dot(to_boss) <= 0.001 * to_boss.length():
 		return true
 	var nearest := Geometry2D.get_closest_point_to_segment(boss, center, center + escape * MINE_CORRIDOR)
 	return nearest.distance_to(boss) > body_radius(actor) + player_clearance(player) + 8.0

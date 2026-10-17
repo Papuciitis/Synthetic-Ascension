@@ -223,6 +223,20 @@ func _test_pylon_bolts_join_the_walk_out() -> void:
 	await get_tree().process_frame
 	_check((_brain.call("_with_bolts_in_flight", plan) as Array).size() == 2, "and still counts once its pylon has gone")
 	await _finish_fixture()
+	# Bolts closing in from every side leave no walk out: the check refuses a
+	# pattern that is harmless by itself.
+	_fixture()
+	var center := _player.global_position
+	for index in range(16):
+		var direction := Vector2.from_angle(TAU * float(index) / 16.0)
+		var ring_bolt := (load("res://core/combat/projectile/EnemyProjectile.tscn") as PackedScene).instantiate() as EnemyProjectile
+		ring_bolt.setup(-direction, 320.0, 7.0, 2.0, _mage)
+		preload("res://scenes/world/bosses/BossAttackScope.gd").bind(ring_bolt, _mage)
+		ring_bolt.position = _world.to_local(center + direction * 300.0)
+		_world.add_child(ring_bolt)
+	var open_ground := ORACLE.has_escape(center, [], ORACLE.player_shape(_player))
+	_check(open_ground and not bool(_brain.call("_escapable", [])), "bolts already closing in leave no walk out, so even a harmless pattern is refused")
+	await _finish_fixture()
 
 
 func _test_neutral_beat() -> void:
@@ -304,7 +318,10 @@ func _test_sweep() -> void:
 	_fixture()
 	_brain.set("_boss_phase", 1)
 	var origin := _mage.global_position
-	_player.global_position = origin + Vector2(300, 0)
+	# Aimed off the axis, so a sweep that ignored the player's bearing could
+	# not pass as aimed.
+	var bearing := deg_to_rad(-57.0)
+	_player.global_position = origin + Vector2(300, 0).rotated(bearing)
 	_check(bool(_brain.call("_try_main_pattern", &"sweep")), "phase 2 commits the rebuilt Arc Sweep")
 	var beams := _beams()
 	_check(beams.size() == 1, "one beam channels")
@@ -316,8 +333,8 @@ func _test_sweep() -> void:
 		# from where it starts.
 		var end_lane := beam.get_node_or_null("SweepEndWarning") as Node2D
 		var stop := float(beam.get("_a1"))
-		_check(end_lane != null and absf(angle_difference(end_lane.global_rotation, stop)) < 0.001 and absf(angle_difference(stop, -beam.rotation)) < 0.001, "the end of the sweep is announced with its start, across the aim")
-		_check(is_equal_approx(absf(angle_difference(beam.rotation, 0.0)), BRAIN.SWEEP_HALF_ARC), "the sweep starts one half-arc to one side of the player")
+		_check(end_lane != null and absf(angle_difference(end_lane.global_rotation, stop)) < 0.001 and absf(angle_difference(stop - bearing, bearing - beam.rotation)) < 0.001, "the end of the sweep is announced with its start, across the aim")
+		_check(absf(absf(angle_difference(beam.rotation, bearing)) - BRAIN.SWEEP_HALF_ARC) < 0.001, "the sweep starts one half-arc to one side of the player")
 	_check(_state() == &"sweep" and bool(_mage.get_meta(&"boss_cast_locked", false)), "the channel roots the Arcanist")
 	_brain.call("_tick_teaching", BRAIN.SWEEP_TELL + BRAIN.SWEEP_TIME - 0.02)
 	_check(_state() == &"sweep", "the channel lasts through the whole sweep")
@@ -374,7 +391,30 @@ func _test_mine_arc() -> void:
 			points.append(center + direction.rotated(deg_to_rad(degrees)) * 210.0)
 		return PLACEMENT.mine_pattern_valid(_mage, _player, center, points, direction, float(_brain.get("mine_radius")), []) and PLACEMENT.corridor_avoids_body(_mage, _player, center, direction)
 	_check(not bool(placement.call(toward)) and bool(placement.call(-toward)) and bool(placement.call(toward.orthogonal())), "a corridor into the boss is refused; away or beside it is kept")
+	# From body contact on the boss's own line, both sideways corridors are
+	# kept, built as the brain builds them (by rotating the away axis).
+	_player.global_position = _mage.global_position + Vector2(PLACEMENT.body_radius(_mage) + 25.0, 0)
+	var away := (_player.global_position - _mage.global_position).normalized()
+	_check(PLACEMENT.corridor_avoids_body(_mage, _player, _player.global_position, away.rotated(PI * 0.5)) and PLACEMENT.corridor_avoids_body(_mage, _player, _player.global_position, away.rotated(PI * 1.5)), "from body contact, both sideways corridors are kept")
 	await _finish_fixture()
+
+
+## Choosing a constellation, the brain never takes a corridor that closes on
+## the boss, whichever way the seeded draw starts.
+func _test_corridor_choice_avoids_the_boss() -> void:
+	var draws := 0
+	var toward := 0
+	for counter in range(16):
+		_fixture()
+		_brain.set("_teaching_counter", counter)
+		_player.global_position = _mage.global_position + Vector2(150, 0)
+		if bool(_brain.call("_start_teaching_mines", 3)):
+			draws += 1
+			var escape: Vector2 = _brain.get("_teaching_escape")
+			if escape.dot(_mage.global_position - _player.global_position) > 0.001:
+				toward += 1
+		await _finish_fixture()
+	_check(draws == 16 and toward == 0, "across sixteen seeded draws the chosen corridor never leads toward the boss (%d of %d did)" % [toward, draws])
 
 
 func _test_sweep_geometry_is_fair() -> void:
@@ -407,6 +447,7 @@ func _run() -> void:
 	await _test_tier_and_phases()
 	await _test_pylons_hold_fire()
 	await _test_pylon_bolts_join_the_walk_out()
+	await _test_corridor_choice_avoids_the_boss()
 	await _test_split_fan()
 	await _test_neutral_beat()
 	await _test_sweep()
