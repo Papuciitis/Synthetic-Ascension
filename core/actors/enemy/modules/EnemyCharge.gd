@@ -103,7 +103,8 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 		return Vector2.ZERO
 
 	var spec: EnemySpec = _enemy.spec
-	if bool(_enemy.get_meta(&"boss_controller_owns_charge", false)) and not _enemy.is_in_group(&"boss"):
+	# Boss brains choose their own committed rushes at both tiers.
+	if bool(_enemy.get_meta(&"boss_controller_owns_charge", false)):
 		return to_player * _enemy._spd()
 	if _dormant_left > 0.0:
 		return Vector2.ZERO

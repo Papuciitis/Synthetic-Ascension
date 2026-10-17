@@ -380,8 +380,9 @@ func _test_render_time_cannot_spend_physics_tells() -> void:
 	var warnings := _markers(WARNING)
 	var windup = brain.get("_windup")
 	# A slow render frame can contain much less accepted physics time. Only
-	# actual simulation ticks may spend the player's walking reaction window.
-	brain.call("_process", 5.0)
+	# actual simulation ticks may spend the player's walking reaction window:
+	# the brain has no render-time clock at all.
+	_check(not brain.has_method("_process") and not brain.is_processing(), "the brain keeps no render-time clock")
 	_check(_circles().is_empty() and tank.get_meta(&"boss_teaching_state", &"") == &"slam", "render time alone cannot consume the physics-clock slam anticipation")
 	if not warnings.is_empty():
 		warnings[0].call("_process", 5.0)
@@ -396,7 +397,7 @@ func _test_render_time_cannot_spend_physics_tells() -> void:
 	brain = tank.get_node("BossBrain")
 	brain.call("_summon_blockers")
 	brain.call("_tick_cast", 1.01)
-	brain.call("_process", 20.0)
+	await get_tree().create_timer(0.3).timeout
 	_check(_runners().size() == 3, "render time alone cannot expire the finite Runner wave ahead of gameplay time")
 	await _clear()
 

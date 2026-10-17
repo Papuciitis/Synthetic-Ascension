@@ -27,6 +27,10 @@ signal boss_spawned(boss: Node, tier: int, portrait: Texture2D, title: String)
 @warning_ignore("unused_signal")
 signal boss_cleared(boss: Node, tier: int)
 
+## A main boss entered phase `phase` (1 at 65% health, 2 at 30%; BossPhases).
+@warning_ignore("unused_signal")
+signal boss_phase_changed(boss: Node, phase: int)
+
 
 @warning_ignore("unused_signal")
 signal damage_dealt(player: Node, amount: float)
