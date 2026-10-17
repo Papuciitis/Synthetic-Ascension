@@ -115,6 +115,13 @@ func _test_record() -> void:
 	Global.note_arena_cleared(&"boss")
 	DevSetCollisionTools.prepare_segment_jump(5)
 	_check(Global.attempt_segment == 5 and Global.attempt_cleared_arenas == PackedStringArray(["3:miniboss"]), "a jump back to Segment 5 forgets the clears from there on, so Segment 10's boss rises again too")
+	var followers_before := Global.followers
+	DevSetCollisionTools.prepare_opening_restart("short")
+	_check(Global.attempt_segment == 1 and Global.attempt_cleared_arenas.is_empty(), "the console's opening restart replays the whole attempt: every clear is forgotten")
+	Global.debug_opening_mode_override = ""
+	Global.debug_opening_force_phase = -1
+	Global.debug_opening_response_override = ""
+	Global.set_followers(followers_before)
 
 
 func _test_cleared_arenas_restore() -> void:

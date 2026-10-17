@@ -170,6 +170,13 @@ func _call_effect(method: StringName, args: Array = []) -> void:
 func restart_opening(mode: String, phase: int = 0, response: String = "") -> void:
 	if Global == null:
 		return
+	prepare_opening_restart(mode, phase, response)
+	Global.save_current_profile()
+	Global.call_deferred("goto_game")
+
+## The attempt an opening restart continues: back at the opening, replayed
+## from there, so every fight it already won rises again.
+func prepare_opening_restart(mode: String, phase: int = 0, response: String = "") -> void:
 	Global.attempt_active = true
 	Global.attempt_segment = 1
 	Global.attempt_deaths_this_segment = 0
@@ -185,9 +192,8 @@ func restart_opening(mode: String, phase: int = 0, response: String = "") -> voi
 	Global.debug_opening_mode_override = mode
 	Global.debug_opening_force_phase = phase
 	Global.debug_opening_response_override = response
+	Global.forget_arena_clears_from(1)
 	Global.set_followers(0)
-	Global.save_current_profile()
-	Global.call_deferred("goto_game")
 
 func reset_opening_history() -> void:
 	if Global == null:
@@ -216,7 +222,6 @@ func jump_to_segment(segment: int) -> void:
 	prepare_segment_jump(segment)
 	Global.save_current_profile()
 	Global.call_deferred("goto_game")
-
 
 ## The attempt a segment jump continues: at `segment`, replayed from there.
 ## Its bosses and minibosses rise again even if this attempt already beat
