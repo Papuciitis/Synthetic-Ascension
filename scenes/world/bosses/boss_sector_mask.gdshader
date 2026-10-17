@@ -10,5 +10,5 @@ void fragment() {
 	if (abs(atan(p.y, p.x)) > half_angle) {
 		discard;
 	}
-	COLOR = texture(TEXTURE, UV) * COLOR;
+	// COLOR already carries the texture and the sprite's modulate.
 }
