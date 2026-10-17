@@ -86,7 +86,7 @@ func _escape_attempt(attack: String, response: String, boundary: bool = false) -
 	if not await _spawn_boss():
 		return {}
 	# Keep unrelated automatic patterns outside this short isolated attempt.
-	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_beam_cd", "_pylons_cd", "_blink_cd"]:
+	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_blink_cd"]:
 		if property in _brain:
 			_brain.set(property, 100.0)
 	_boss._charge._cd = 100.0
@@ -171,7 +171,7 @@ func _escape_attempt(attack: String, response: String, boundary: bool = false) -
 func _melee_recovery_attempt() -> void:
 	if not await _spawn_boss():
 		return
-	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_beam_cd", "_pylons_cd", "_blink_cd"]:
+	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_blink_cd"]:
 		if property in _brain:
 			_brain.set(property, 100.0)
 	_boss._charge._cd = 100.0

@@ -65,12 +65,10 @@ const MAJOR_STATES: Array[StringName] = [&"fan", &"mines", &"split", &"sweep", &
 @export var mine_damage: float = 15.0
 @export var mine_scene: PackedScene = preload("res://scenes/world/bosses/BossMine.tscn")
 
-@export_group("Beam Sweep (Boss tier)")
-@export var beam_every: float = 7.2
+@export_group("Beam Sweep")
 @export var beam_scene: PackedScene = preload("res://scenes/world/bosses/BossBeamSweep.tscn")
 
-@export_group("Pylons (Boss tier)")
-@export var pylons_every: float = 9.0
+@export_group("Pylons")
 @export var pylons_count: int = 2
 @export var pylon_scene: PackedScene = preload("res://scenes/world/bosses/BossPylon.tscn")
 
@@ -89,13 +87,9 @@ var _e: EnemyActor
 
 var _fan_cd: float = 1.2
 var _mines_cd: float = 2.0
-var _beam_cd: float = 4.5
-var _pylons_cd: float = 5.0
 var _blink_cd: float = 0.8
 
 var _phase: int = 0
-var _tier_is_boss: bool = false
-var _tier_checked: bool = false
 var _scope: Node
 var _cast_left := 0.0
 var _cast_kind: StringName = &""
@@ -150,7 +144,9 @@ func _ready() -> void:
 	set_process(true)
 
 ## The legacy timer kit only drives an Arcanist outside both arenas (test
-## and developer spawns); both arena tiers run the committed controller.
+## and developer spawns): it blinks, drops mines and fires the nine-bolt fan.
+## Both arena tiers run the committed controller, which owns the sweep and
+## the pylons.
 func _process(delta: float) -> void:
 	if _is_teaching() or _is_main():
 		return
@@ -169,11 +165,6 @@ func _process(delta: float) -> void:
 				_release_fan()
 			_cancel_cast()
 		return
-
-	# Tier check (groups are applied by the Arena right after spawn)
-	if not _tier_checked:
-		_tier_is_boss = _e.is_in_group("boss")
-		_tier_checked = true
 
 	# Phase logic
 	var hp_ratio := 1.0
@@ -194,8 +185,6 @@ func _process(delta: float) -> void:
 
 	_fan_cd = maxf(_fan_cd - delta, 0.0)
 	_mines_cd = maxf(_mines_cd - delta, 0.0)
-	_beam_cd = maxf(_beam_cd - delta, 0.0)
-	_pylons_cd = maxf(_pylons_cd - delta, 0.0)
 	_blink_cd = maxf(_blink_cd - delta, 0.0)
 
 	var dist := _e.global_position.distance_to(_e.player.global_position)
@@ -217,16 +206,6 @@ func _process(delta: float) -> void:
 		_fan_cd = fan_every * cd_mul
 		_fan_shot()
 		return
-
-	# Boss-only: beam + pylons as arena pressure
-	if _tier_is_boss:
-		if _beam_cd <= 0.0:
-			_beam_cd = beam_every * cd_mul
-			_beam_sweep()
-			return
-		if _pylons_cd <= 0.0 and _phase >= 1:
-			_pylons_cd = pylons_every * cd_mul
-			_spawn_pylons()
 
 func _physics_process(delta: float) -> void:
 	if _is_teaching() or _is_main():

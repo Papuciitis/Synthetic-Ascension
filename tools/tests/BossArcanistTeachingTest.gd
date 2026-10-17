@@ -72,7 +72,7 @@ func _fixture(main_boss: bool = false) -> void:
 	_brain = _mage.get_node("BossBrain")
 	_brain.set_process(false)
 	_brain.set_physics_process(false)
-	for key in [&"_fan_cd", &"_mines_cd", &"_beam_cd", &"_pylons_cd", &"_blink_cd"]:
+	for key in [&"_fan_cd", &"_mines_cd", &"_blink_cd"]:
 		_brain.set(key, 99.0)
 
 func _finish_fixture() -> void:
