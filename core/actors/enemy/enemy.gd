@@ -1393,6 +1393,14 @@ func _drop_front_shield() -> void:
 		_shield_visual.call("sync", _shield_facing, false, deg_to_rad(spec.front_shield_half_angle_deg))
 
 
+## A permanent change to the authored walking speed (an arena's tuning). The
+## movement baseline is cached at setup, so `speed` alone never reached it;
+## temporary buffs and slows keep composing on top of the new baseline.
+func scale_move_speed(mult: float) -> void:
+	speed *= maxf(mult, 0.0)
+	_base_speed = speed
+
+
 func apply_speed_buff(mult: float, duration: float) -> void:
 	if mult <= 1.0 or duration <= 0.0:
 		return

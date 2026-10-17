@@ -151,7 +151,7 @@ func _apply_miniboss_rules(en: EnemyActor) -> void:
 	en.knockback_decay *= kb_decay_mult
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
-	en.speed *= speed_mult
+	en.scale_move_speed(speed_mult)
 	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 0)
 
 	# Strong loot scaling by segment (uses built-in EnemyDrops).
