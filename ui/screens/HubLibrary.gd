@@ -84,6 +84,11 @@ var _page_sound_index := 0
 var _was_paused := false
 var _closing := false
 var _book_open := false
+## The right stick turns leaves past STICK_ENGAGE and lets go only below
+## STICK_RELEASE: analog noise around a light push can neither release it
+## nor turn a leaf per wobble.
+const STICK_ENGAGE := 0.6
+const STICK_RELEASE := 0.3
 var _stick_axis := 0.0
 var _stick_wait := 0.0
 
@@ -1100,9 +1105,15 @@ func _input(event: InputEvent) -> void:
 			_turn_page(-1 if event.button_index == JOY_BUTTON_LEFT_SHOULDER else 1)
 			get_viewport().set_input_as_handled()
 	if _book_open and event is InputEventJoypadMotion and event.axis == JOY_AXIS_RIGHT_Y:
-		_stick_axis = event.axis_value if absf(event.axis_value) > 0.6 else 0.0
-		# Back at neutral the repeat delay ends: the next push turns at once.
-		if is_zero_approx(_stick_axis):
+		var value: float = event.axis_value
+		if absf(value) > STICK_ENGAGE:
+			# A push the other way turns at once, as a fresh push does.
+			if signf(value) != signf(_stick_axis):
+				_stick_wait = 0.0
+			_stick_axis = value
+		elif absf(value) < STICK_RELEASE:
+			# Back at neutral the repeat delay ends: the next push turns at once.
+			_stick_axis = 0.0
 			_stick_wait = 0.0
 		set_process(not is_zero_approx(_stick_axis))
 		get_viewport().set_input_as_handled()
