@@ -1377,8 +1377,11 @@ func city_development_capture_metadata() -> Dictionary:
 
 
 ## Developer tools launched this attempt, this session or when it was saved
-## (the main menu clears the debug flags before Continue): it writes nothing
-## permanent into the profile.
+## (the main menu clears the debug flags before Continue; debug builds only).
+## Such an attempt claims no Research, writes no city commitment and pays no
+## Binding echo bonus. Everything else it keeps as any attempt does: its
+## Bindings in the profile's slots and owned library, its stash, its Grimoire
+## entries, story records, best Followers and run count.
 func is_developer_attempt() -> bool:
 	return debug_dev_mode or debug_dev_segment or attempt_developer_launch
 
