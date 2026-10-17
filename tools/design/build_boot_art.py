@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Build the boot splash and the app icon from the title logo.
+"""Build the boot splash and the app icon.
 
 - assets/ui/boot/splash.png    1920x1080: the title logo over a faint candle
                                glow. Shown by the engine while the game loads
                                (application/boot_splash/image), in place of
                                Godot's logo.
-- assets/ui/boot/app_icon.png  512x512: the logo's ringed four-point star.
-                               The window, taskbar and exported .exe icon
+- assets/ui/boot/app_icon.png  512x512: the logo's ringed four-point star,
+                               redrawn here with shapes (it does not read the
+                               logo, so a new logo needs a matching star). The
+                               window, taskbar and exported .exe icon
                                (application/config/icon and the Windows
                                preset's application/icon).
 
@@ -14,7 +16,7 @@ The splash's border is pure black, the same as boot_splash/bg_color, the
 letterbox bars and the main menu's opening curtain, so the splash fills any
 window shape seamlessly and hands over to the menu without a step in tone.
 
-Source: assets/ui/menu/title_logo.png (the main menu's title).
+Source of the splash: assets/ui/menu/title_logo.png (the main menu's title).
 
 Run: python3 tools/design/build_boot_art.py
 """

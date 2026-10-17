@@ -16,8 +16,10 @@ const FAN_BOLT_RADIUS := 5.0 # EnemyProjectile's collision circle
 ## vocabulary (focused fan, announced blink, mine constellation) on shorter
 ## neutral gaps. Phase 2 (65%) adds the Split Fan, the rebuilt Arc Sweep and
 ## one Pylon Pair; phase 3 (30%) the Convergence Sequence, a four-node mine
-## arc and a fresh Pylon Pair. Pylons hold fire through major patterns, and
-## every pattern must keep a walk out at baseline speed (BossEscapeOracle).
+## arc and a fresh Pylon Pair. Pylons hold fire through major patterns. Fans,
+## sweeps and the Convergence commit only with a walk out the player can keep
+## up (BossEscapeOracle); mine patterns keep a corridor that never leads into
+## the boss, and the blink carries no hazard.
 const MAIN_FAN_EVERY := 2.6
 const MAIN_MINES_EVERY := 4.6
 const MAIN_BLINK_EVERY := 5.5

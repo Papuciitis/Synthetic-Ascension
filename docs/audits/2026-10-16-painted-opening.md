@@ -40,18 +40,18 @@ The player still aligns all three nodes in full mode, calibrates, confronts the 
 
 ## Painted transitions (17 October 2026)
 
-The stills were said to crossfade, but a new still replaced the texture at once and faded in from transparent. A change of still dipped through the world, and a clear was a 0.2 s fade. The stills now move the way they were painted:
+The stills were said to crossfade, but a new still replaced the texture at once and faded in from transparent, and a clear was a 0.2 s fade. The opening never shows two stills in a row: between any two, it clears the first and plays world beats. So what the player sees is each still painting in over the world and washing back out to it. The stills now move the way they were painted:
 
-- **Paint-in.** A still arrives in broad slanted strokes washing in from the left, each with a warm wet rim while it lands (0.75 s). The stroke pattern is seamless smooth noise made once per opening screen. The rect's own pixels place it, so an AtlasTexture crop washes in the same way.
-- **Crossfade.** A still already showing stays beneath, exactly as it was, while the next paints over it (0.95 s). The world never shows between two stills, and the one beneath is released once covered.
-- **Wash-out.** Clearing runs the paint-in backwards (0.55 s) and awaits it as before. A crossfade still in progress washes out with it.
+- **Paint-in.** A still arrives in broad slanted strokes washing in from the left, each with a warm wet rim while it lands (0.75 s). The stroke pattern is seamless smooth noise, made once per run the first time a still is shown. The rect's own pixels place it, so an AtlasTexture crop washes in the same way.
+- **Wash-out.** Clearing runs the paint-in backwards (0.55 s) and awaits it as before.
+- **Crossfade, for a direct change of still.** If a still is shown while another is up, the one showing stays beneath, exactly as it was, while the next paints over it (0.95 s), and is released once covered; a third still arriving mid-crossfade keeps the more painted one beneath. The current opening never takes this path; it is there for any sequence that shows stills back to back.
 - **Drift.** While read, each still pushes in slowly (to 104% over 20 s, easing out) toward its painting's focal point: the worker's meal tin, the badge and stamp, the central node, the packet and bracing hand.
-- **Reduced Motion.** Every transition is immediate and there is no push-in.
+- **Reduced Motion.** Every transition is immediate and there is no push-in; turned on while a still is read, the push-in stops where it is.
 - **Real time.** Transitions run on real time, so the cards' slowed `Engine.time_scale` cannot stretch them.
 
 The existing contracts hold: a still kept across consecutive cards, the version guard against an old clear, release before world play, and quiet fallback for unknown art. `OpeningIllustrationTest` grew from 22 to 34 checks: paint-in, crossfade with both stills present and the lower one released, wash-out awaited by the caller, push-in, and Reduced Motion. `TutorialTypewriterTest` 19/0, `TutorialGuidanceTest` 21/0, `Segment1ProgressionTest` 40/0, `OpeningSequencePhysicsSafetyTest`, `StoryDirectorTest`, `PauseMenuFlowTest` and `SaveMigrationMatrixTest` all pass.
 
-`tools/dev/OpeningTransitionPreview.tscn` renders real UI pixels at 1280×720 with each transition frozen at set points: paint-in, crossfades from city to admission and from synthesis to records, and the wash-out state. The frames are in [2026-10-17-opening-transitions](../art/reference/2026-10-17-opening-transitions/). The first pattern used many small dashes and read as rain; the stroke scale was broadened until the transitions read as the paintings' own broad brushwork. These are still frames: the motion's timing and feel need a human look in the running opening.
+`tools/dev/OpeningTransitionPreview.tscn` renders real UI pixels at 1280×720 with each transition frozen at set points: paint-in, the wash-out state, and the direct crossfades from city to admission and from synthesis to records (a path the current opening does not take). The frames are in [2026-10-17-opening-transitions](../art/reference/2026-10-17-opening-transitions/). The first pattern used many small dashes and read as rain; the stroke scale was broadened until the transitions read as the paintings' own broad brushwork. These are still frames: the motion's timing and feel need a human look in the running opening.
 
 ## Review decisions
 

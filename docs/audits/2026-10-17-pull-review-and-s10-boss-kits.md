@@ -32,14 +32,15 @@ Tests that described superseded behaviour now measure the game as it is: EnemyPr
 - **Phases.** One health bar. Phase 2 begins at 65% and phase 3 at 30% (`BossPhases`). Phases only advance, so return healing never re-opens one or its once-only arrival. A threshold crossed during an attack waits until it settles, and several thresholds crossed at once make one transition. Each transition is a 0.8 s beat: the boss braces in place, stays damageable and starts nothing, while a phase accent, the intro sound 6 dB down and the boss bar's mark announce it.
 - **Tempo.** Cooldown resets scale by 1.0 / 0.9 / 0.8 across the phases. Tells and footprints never shorten. Shared moves keep their S5 tells and footprints, with two Arcanist differences: the Announced Blink's opening is 0.9 s (S5: 1.2 s), and its bolts, sweep and mines scale with the phase (below).
 - **Selection.** A seeded weighted order (attempt seed, segment, boss home, pattern counter); the last attack is down-weighted while another is available.
-- **Walk-out guard.** `BossEscapeOracle` checks each main-boss attack from where the player stands, before it commits: every Bulldozer attack and the Arcanist's fans, sweeps and Convergence. The Announced Blink carries no hazard, and the mine patterns keep their corridor rule instead (Arcanist, below). The model, as reworked after the review:
+- **Walk-out guard.** `BossEscapeOracle` checks each main-boss attack from where the player stands, before it commits: every Bulldozer attack and the Arcanist's fans, sweeps and Convergence. The Announced Blink carries no hazard, and the mine patterns keep their corridor rule instead (Arcanist, below). The model, as reworked after the reviews:
   - the player keeps its current motion through a 0.15 s reaction, then walks straight in one of the eight directions a keyboard gives, or stands still;
-  - at its own permanent speed (race, style, equipment) capped at the 100 px/s the tells were tuned for, so a Dragonborn Melee (80 px/s) is never offered a slam it cannot walk out of; temporary slows do not count, so a debuff cannot pacify a boss;
+  - at the speed it can keep up: the lower of its stat speed (race, style, flat equipment) and its effective speed (equipment and build multipliers, such as a cursed ring), capped at the 100 px/s the tells were tuned for. So a Dragonborn Melee (80 px/s) is never offered a slam it cannot walk out of; a passing boost does not count, and a slow makes the boss wait;
+  - while a dash or a shove carries the player much faster than it walks, nothing is certified; pushed into a body it touches, the player slides along it;
   - the exact 70 × 70 Hurtbox, or the r25/h58 capsule for body contact, turned the way the player turns: facing its motion while reacting, then its walk;
-  - the boss's body as an obstacle and the world corridor for each walk, both cleared by the capsule's crosswise reach (29 px);
+  - the boss's body as an obstacle, cleared by the capsule's crosswise reach (29 px), and the world corridor for both legs of the route (the drift, then the walk), checked with the capsule's radius less 2 px so a player resting against a wall can still walk along it or away;
   - for the Arcanist, every bolt it or its pylons still have in the air.
 
-  Circles, rushing bodies and bolts are solved exactly. Sectors and beams are sampled at 1/60 s with a margin for the motion between samples, so a safe verdict is never optimistic. The oracle reproduces the S5 audit's slam threshold: a 1.3 s tell escapes from body contact and 1.15 s does not. An attack with no route is not committed, and if nothing qualifies the controller retries 0.2 s later. It models baseline movement only: slowed or immobilised builds are not guaranteed an escape.
+  Circles, rushing bodies and bolts are solved exactly. Sectors and beams are sampled at 1/60 s with a margin for the motion between samples, so a safe verdict is never optimistic. The oracle reproduces the S5 audit's slam threshold: a 1.3 s tell escapes from body contact and 1.15 s does not. An attack with no route is not committed, and if nothing qualifies the controller retries 0.2 s later. It models a straight walk the player can keep up, not analog angles, dashes or swerves.
 - **Arena movement.** Both arenas' `speed_mult` (0.95 main, 0.92 S5) never reached movement, because the movement baseline is cached at setup. `EnemyActor.scale_move_speed` now applies it, and temporary buffs and slows still compose on top.
 - **Damage caps in batches (proposal P1).** A projectile batch pooled a boss's per-hit cap as `cap × hit count`, so one huge hit could spend the budget of the pellets beside it. Example: with an 800 cap, hits of 5,500 and 55 landed 1,600 together but 855 one by one. `HitLedger` now keeps each hit's raw damage, and `EnemyCombatService` applies the per-hit rules hit by hit: the cap and an ARMOURED elite's plate, which pooled the same way and let a bounced pellet eat into the heavy hit beside it. A batch now lands exactly what its hits land one by one. Batch-level outgoing modifiers scale every hit alike. A bare total with no kept hits keeps the pooled form. The regression failed before the fix (1,600 vs 855; plate 70 vs 80). Whether percentage caps should stay at all is still the proposal's open balance question.
 
@@ -101,7 +102,7 @@ The oracle sampled 15 positions (120–500 px, 0–30° off the aim). The legacy
 
 ## Review follow-up
 
-A second review covered everything above, from the pull to the S10 kits: eight areas (oracle, Bulldozer, Arcanist, HUD and arena, combat caps, tests, docs, and the pull-review fixes themselves). Each finding went to three independent verifiers; 49 were confirmed and 4 refuted. Every confirmed finding is fixed, and each code or test fix was checked against the fault it names: with that fault put back, its suite fails.
+A second review covered everything above, from the pull to the S10 kits: eight areas (oracle, Bulldozer, Arcanist, HUD and arena, combat caps, tests, docs, and the pull-review fixes themselves). Each finding went to three independent verifiers; 49 were confirmed and 4 refuted. Every confirmed finding is fixed. Each behavioural fix and each test made able to fail was checked against the fault it names: with that fault put back, its suite fails. The third review (below) found three where that was not yet so, the dying channel, the rush's slide and the bolts in flight, and they are fixed there. Four fixes have no suite that can see them: the sector seal's shader, the lookup performance change, the removed dead branch and a corrected comment.
 
 | Area | Confirmed | Now |
 |---|---|---|
@@ -110,7 +111,7 @@ A second review covered everything above, from the pull to the S10 kits: eight a
 | Arcanist | Pylons fired through a sweep's recovery and from a windup begun before a commitment; a stun left them silenced; their bolts in the air were not in the next pattern's check; a mine corridor could lead into the boss; the boss-tier timer branch could never run | Held through the recovery after a major pattern; a charging shot withheld; a cancelled pattern releases them at once; their bolts join the walk-out check; a corridor into the boss is refused when chosen; the branch is removed |
 | Continue | A cleared arena raised its boss again on Continue and paid out again | Clears are saved with the attempt; S10BossContinueTest walks a real kill, save and reload |
 | Combat caps | Every hit looked up max health that only capped or plated targets need; the hit-ledger doc still gave the pooled cap | Looked up only when needed; the doc gives the per-hit rule |
-| Tests | Sixteen checks could not fail as written: the Bulldozer's render-time checks, the Split Fan's lanes, the cleave's facing, the oracle's body rule, a dying channel, the pylons' kill credit, the legacy kit, one-sided durations and recoveries, the sweep's end lane, unguarded lookups, a pylon windup, the phase bar's Reduced Motion, the mine walk's label, the escape suites' early tally, captures staged in Segment 2 | Each now fails under the fault it names |
+| Tests | Twelve checks could not fail as written, one of them in an S5 suite: the Bulldozer's render-time checks, the Split Fan's lanes, the cleave's facing, the oracle's body rule, a dying channel, the pylons' kill credit, the legacy kit, one-sided durations and recoveries, the sweep's end lane, a pylon windup, the phase bar's Reduced Motion. Lookups could abort a case silently, and three items were not checks at all: the mine walk's label, a tally printed early, captures staged in Segment 2 | Each check now fails under the fault it names; the rest are corrected |
 | Pull-review fixes | A developer run's Doctrine pick became a commitment on load; noise at a light stick push flipped library leaves; the Transfusion preview ignored the trained floor; the rite test passed on the approach feed alone; the chain benchmark ignored every pooled node; the data reference kept the old shield recast | Each fixed, with a test that fails without it where it is code |
 | Docs | Nine overstatements in this audit, the roadmap and the proposal | Corrected here and there |
 
@@ -144,7 +145,7 @@ Afterwards the player's save slot and settings were byte-identical to a pre-sess
 `tools/tests/S10MainBossEscapeTest.tscn` builds on the S5 harness. It uses the actual Game at segment 10, the generated S10 court with its real `BossArena`, and the production player with native movement input.
 
 Each case runs in a fresh boss. It arranges the attack's phase and parks the boss's other clocks. It then commits the attack through the same entry point that runs the oracle: `_try_main_attack` or `_try_main_pattern`. The harness rebuilds the oracle's route from the committed plan, with the same hazards, player shapes, body blocker and world corridor. Each case runs twice, with real damage and dash unavailable:
-- **Stationary:** the player stands still and must be reached by the attack.
+- **Stationary:** the player stands still and must be reached by the attack (except in the mine arc, whose centre is safe by design).
 - **Walking:** the player walks the oracle's route (the mine arc: its committed corridor, which is not oracle-gated) after 150 ms at 100 px/s and must draw no boss damage-resolution attempt; the mine walk must also never meet the boss's body.
 
 Seeds 16102026 and 16102027 cover both roles: 7 attacks × 2 seeds, each a stationary control and a walk, 28 results in 14 pairs:
@@ -152,16 +153,16 @@ Seeds 16102026 and 16102027 cover both roles: 7 attacks × 2 seeds, each a stati
 | Attack | Arranged position | Stationary | Route walked |
 |---|---|---|---|
 | Sweeping Cleave | 15 px beyond body contact | struck once | straight away |
-| Breach Sequence | 200 px in the lane | struck by the rush, which stopped short, so its impact was withdrawn | 67.5° off the lane; the boss arrives and the impact lands clear |
+| Breach Sequence | 200 px in the lane | struck by the rush, which stopped short, so its impact was withdrawn | 90° off the lane, a sidestep; the boss arrives and the impact lands clear |
 | Fault Line with follow-up | 200 px on the line; the follow-up line was committed | 3 nodes | perpendicular, away from the follow-up side |
 | Split Fan | 300 px | 3 bolts | straight away: the 525 px reach expires short of the player |
-| Arc Sweep | 300 px | 3 ticks | 112.5° (toward the boss and to the side) |
+| Arc Sweep | 300 px | 3 ticks | 135° (toward the boss and to the side) |
 | Convergence Sequence | 300 px | 6 hits | straight away, past both reaches |
 | Four-node mine arc | 260 px; all four mines and payloads observed | untouched (the centre is safe by design) | the committed corridor |
 
 Native melee recovery cases run once per role and seed. From body contact, the main boss commits a cleave (Bulldozer) or its focused fan (Arcanist). The oracle rightly refuses a Split Fan at contact range, where the Arcanist blinks first in play. Native melee then lands three hits inside each earned recovery.
 
-Both seeds produced the same routes, except that the mine corridor differed. With seed 16102027 the corridor first pointed at the Arcanist, and walking it cost 10.9 HP of ordinary body contact. A corridor that closes on the boss's body is now refused when chosen, for S5 and S10 alike, and both seeds' mine walks draw no contact. These are baseline-movement controls, not exhaustive angles, walls, crowds or slowed builds.
+Both seeds produced the same routes, except that the mine corridor differed. With seed 16102027 the corridor first pointed at the Arcanist, and walking it cost 10.9 HP of ordinary body contact. A corridor that closes on the boss's body is now refused when chosen, for S5 and S10 alike, and both seeds' mine walks draw no contact. These are controls at the 100 px/s walk, not exhaustive angles, walls, crowds or slowed builds.
 
 ## Owed
 

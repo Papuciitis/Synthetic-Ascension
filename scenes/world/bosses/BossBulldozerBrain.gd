@@ -23,7 +23,8 @@ const RUNNER_RADIUS := 17.0
 ## phase instead of shortening them. Phase 1: rush, planted slam and Fault
 ## Line on shorter neutral gaps. Phase 2 (65%): Sweeping Cleave and one warned
 ## Runner call. Phase 3 (30%): the Breach Sequence and a Fault Line follow-up.
-## Every commitment must keep a walk out at baseline speed (BossEscapeOracle).
+## Every attack commits only with a walk out the player can keep up
+## (BossEscapeOracle).
 const MAIN_RUSH_EVERY := 3.0
 const MAIN_SLAM_EVERY := 3.2
 const MAIN_SHOCK_EVERY := 4.6
