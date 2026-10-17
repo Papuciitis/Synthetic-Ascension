@@ -370,6 +370,10 @@ func _test_sweep_interruptions() -> void:
 	brain = mage.get_node("BossBrain")
 	brain.set("_boss_phase", 1)
 	_player.global_position = mage.global_position + Vector2(300, 0)
+	# The beam's damage query reads the physics space, which learns the
+	# player's new place at its next step.
+	await get_tree().physics_frame
+	await get_tree().physics_frame
 	brain.call("_try_main_pattern", &"sweep")
 	beams = _beams()
 	_check(beams.size() == 1, "fixture: the second sweep's beam is in the world")
