@@ -215,6 +215,9 @@ var attempt_vendor_seed: int = 0
 var attempt_vendor_bag: BagInventory = null
 
 var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
+## Arena encounters this attempt has settled ("segment:kind"): a defeated
+## boss stays defeated on Continue and is never paid out twice.
+var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
 ## Manifestation imprints: rules dissolved by merges this attempt, kept for
 ## the Hub's imprinter (design note 2026-09-19-manifestation-imprints).
 const IMPRINT_CAP := 8
@@ -769,6 +772,7 @@ func reset_run_systems() -> void:
 
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
+	attempt_cleared_arenas = PackedStringArray()
 	attempt_imprints.clear()
 	_claimed_loot_set.clear()
 	_visited_building_set.clear()
@@ -2859,6 +2863,26 @@ func claim_loot(id: int) -> void:
 	attempt_claimed_loot_ids.append(id)
 	request_autosave()
 
+
+# ------------------------------------------------------------
+# Arena encounters settle once (boss overhaul: on Continue a live fight
+# restarts at its spawn state; a defeated boss stays defeated)
+# ------------------------------------------------------------
+func _arena_clear_key(kind: StringName) -> String:
+	return "%d:%s" % [attempt_segment, String(kind)]
+
+func is_arena_cleared(kind: StringName) -> bool:
+	return attempt_cleared_arenas.has(_arena_clear_key(kind))
+
+## Recorded with the encounter's rewards, before their deferred save, so a
+## Continue cannot fight the same boss again for them.
+func note_arena_cleared(kind: StringName) -> void:
+	var key := _arena_clear_key(kind)
+	if attempt_cleared_arenas.has(key):
+		return
+	attempt_cleared_arenas.append(key)
+	request_autosave()
+
 func apply_save(save: SaveData) -> void:
 	attempt_pending_segment_completion = 0
 	_city_development_awards_enabled = SaveManager != null and SaveManager.current_save == save
@@ -3024,6 +3048,8 @@ func apply_save(save: SaveData) -> void:
 				if attempt_opening_bren_committed:
 					attempt_segment1_milestones.append(&"assistant_commitment")
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
+		var cleared_arenas = save.get("attempt_cleared_arenas")
+		attempt_cleared_arenas = PackedStringArray(cleared_arenas) if cleared_arenas != null else PackedStringArray()
 		attempt_imprints.clear()
 		for imprint_id in save.get("attempt_imprints"):
 			attempt_imprints.append(StringName(imprint_id))
@@ -3159,6 +3185,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_opening_officer_completed = false
 		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
+		attempt_cleared_arenas = PackedStringArray()
 		attempt_imprints.clear()
 		_claimed_loot_set.clear()
 		attempt_vendor_segment = 0
@@ -3363,6 +3390,7 @@ func write_save(save: SaveData) -> void:
 		save.attempt_opening_officer_completed = attempt_opening_officer_completed
 		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
+		save.attempt_cleared_arenas = attempt_cleared_arenas.duplicate()
 		var imprints := PackedStringArray()
 		for imprint_id in attempt_imprints:
 			imprints.append(String(imprint_id))

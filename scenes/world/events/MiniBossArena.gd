@@ -65,8 +65,25 @@ func _ready() -> void:
 		if not RunEvents.enemy_killed.is_connected(cb):
 			RunEvents.enemy_killed.connect(cb)
 
+	if Global != null and Global.is_arena_cleared(&"miniboss"):
+		# Defeated earlier this attempt (Continue rebuilt the segment): no
+		# second fight or payout. Its earned state returns once the builder is.
+		_cleared = true
+		_disable_trigger_deferred()
+		set_process(false)
+		_restore_cleared.call_deferred()
+		return
+
 	set_process(true)
 	queue_redraw()
+
+
+func _restore_cleared() -> void:
+	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
+	if builder != null:
+		builder.set_miniboss_defeated()
+		builder.grant_resonance(grant_resonance_on_clear, true)
+	queue_free()
 
 
 func _process(_delta: float) -> void:
@@ -230,6 +247,9 @@ func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
 		return
 
 	_cleared = true
+	# Recorded before the payout's deferred save: Continue cannot repeat it.
+	if Global != null:
+		Global.note_arena_cleared(&"miniboss")
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_event(&"encounter", &"miniboss_cleared", {"position": str(global_position)})
 
