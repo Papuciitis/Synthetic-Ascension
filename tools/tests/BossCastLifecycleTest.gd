@@ -168,7 +168,15 @@ func _run() -> void:
 	add_child(wrong_target)
 	brain.set_process(true)
 	brain.set_physics_process(true)
-	await get_tree().create_timer(0.18, true).timeout
+	# Waits on game steps, not wall time: a loaded machine can lag physics
+	# behind a real-time timer and fail the check without any game fault.
+	for _step in range(90):
+		if not target.hits.is_empty():
+			break
+		await get_tree().physics_frame
+	# Outlasts the 0.18 s damage window, so a second landing would show.
+	for _step in range(20):
+		await get_tree().physics_frame
 	_check(target.hits.size() == 1 and target.hits[0] == 18.0, "slam releases its unchanged18damage at the warned origin")
 	_check(wrong_target.hits.is_empty(), "slam cannot relocate from its preview to the boss's new position")
 	_clear_members()
