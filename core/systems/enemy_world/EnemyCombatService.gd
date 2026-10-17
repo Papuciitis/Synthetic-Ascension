@@ -614,10 +614,12 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 	var count := float(maxi(1, hit_count))
 	var plate := 0.0
 	if is_hit and not _elite_armour.is_empty():
-		# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
-		# bounces, a heavy blow gets through. A batched ledger pays per
-		# pellet; a status tick is not a hit and pays nothing.
-		plate = _world.get_max_health(handle) * float(_elite_armour.get(handle, 0.0))
+		var armour_fraction := float(_elite_armour.get(handle, 0.0))
+		if armour_fraction > 0.0:
+			# ARMOURED (roadmap §9): a flat plate per hit - a pellet under it
+			# bounces, a heavy blow gets through. A batched ledger pays per
+			# pellet; a status tick is not a hit and pays nothing.
+			plate = _world.get_max_health(handle) * armour_fraction
 	var shield := 1.0
 	if (
 		not _elite_shields.is_empty()
@@ -627,7 +629,9 @@ func _adjust_damage(handle: int, actor: Node2D, raw_damage: float, hit_count: in
 		# SHIELDED (roadmap §9): the bearer's non-elite neighbours take less;
 		# the bearer itself and other elites are never covered.
 		shield = 1.0 - EliteModifiers.SHIELD_ALLY_DAMAGE_REDUCTION
-	var hit_cap := _world.get_max_health(handle) * hit_cap_ratio
+	var hit_cap := 0.0
+	if hit_cap_ratio > 0.0:
+		hit_cap = _world.get_max_health(handle) * hit_cap_ratio
 	if not hit_damages.is_empty() and (plate > 0.0 or hit_cap > 0.0):
 		# A batch that kept its hits pays the per-hit rules hit by hit, exactly
 		# as the same hits delivered one by one: pooling the cap would let one
