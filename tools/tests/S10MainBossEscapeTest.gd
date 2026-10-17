@@ -17,7 +17,16 @@ const MAGE_BRAIN := preload("res://scenes/world/bosses/BossArcanistBrain.gd")
 const TANK_CASES: Array[String] = ["cleave", "breach", "fault"]
 const MAGE_CASES: Array[String] = ["split", "sweep", "convergence", "mines"]
 ## Long enough for each attack's last payload to have resolved.
-const DURATIONS := {"cleave": 1.6, "breach": 2.4, "fault": 3.6, "split": 3.0, "sweep": 2.9, "convergence": 4.0, "mines": 2.8}
+const DURATIONS := {"cleave": 1.6, "breach": 2.4, "fault": 3.6, "split": 3.0, "sweep": 2.9, "convergence": 4.0, "mines": 2.8, "slam": 1.8}
+## Bulldozer placements beside a wall where reviews found certified walks the
+## turned body could not keep: the attack, the boss's distance, degrees off
+## the wall's normal (both sides are walked) and the phase.
+const WALL_WALKS := [
+	{"attack": "fault", "distance": 300.0, "degrees": 40.0, "phase": 1},
+	{"attack": "fault", "distance": 280.0, "degrees": 31.0, "phase": 2},
+	{"attack": "slam", "distance": 130.0, "degrees": 8.0, "phase": 1},
+	{"attack": "cleave", "distance": 130.0, "degrees": 11.0, "phase": 1},
+]
 const PARKED_CLOCKS: Array[String] = ["_slam_cd", "_shock_cd", "_rush_cd", "_cleave_cd", "_breach_cd", "_fan_cd", "_mines_cd", "_blink_cd", "_split_cd", "_sweep_cd", "_convergence_cd"]
 
 var _main_arena: BossArena
@@ -63,7 +72,7 @@ func _execute() -> void:
 			if _s10_case.is_empty():
 				# The native-melee recovery, the wall rest, the wall end, and the
 				# tank's walks beside a wall, the boss to either side.
-				_expected_results += 3 + (2 if role_value == "tank" else 0)
+				_expected_results += 3 + (2 * WALL_WALKS.size() if role_value == "tank" else 0)
 			if not await _setup_world(role_value, chosen_seed):
 				continue
 			for attack in cases:
@@ -85,8 +94,12 @@ func _execute() -> void:
 				await _wall_hug_attempt()
 				await _wall_end_attempt()
 				if role_value == "tank":
-					var sides := [await _wall_walk_attempt(1.0), await _wall_walk_attempt(-1.0)]
-					_check(sides.has(true), "fixture: tank seed%d: beside the wall, the Fault Line commits with the boss to one side or the other" % chosen_seed)
+					var committed_any := false
+					for placement: Dictionary in WALL_WALKS:
+						for side in [1.0, -1.0]:
+							var committed := await _wall_walk_attempt(String(placement["attack"]), float(placement["distance"]), float(placement["degrees"]) * side, int(placement["phase"]))
+							committed_any = committed_any or committed
+					_check(committed_any, "fixture: tank seed%d: beside the wall, some placement commits, so the walk is exercised" % chosen_seed)
 	_execution_completed = _expected_results > 0 and _results.size() == _expected_results
 	_check(_execution_completed, "all %d requested S10 case results completed; no setup/helper abort or omitted case" % _expected_results)
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
@@ -452,19 +465,20 @@ func _wall_end_attempt() -> void:
 
 ## The walk certified beside a wall is the one the production player makes:
 ## turned to walk along it, its capsule lies crosswise and the wall pushes it
-## about 4 px off. The Bulldozer stands 300 px out, 40 degrees to `side` of
-## the wall's normal, where its Fault Line's way out ran along the wall on a
-## line the body cannot keep. The player walks the certified route with
-## native input and must draw no boss hit.
-func _wall_walk_attempt(side: float) -> bool:
+## about 4 px off. The Bulldozer stands `distance` out, `degrees` off the
+## wall's normal, and commits `attack` only if a walk the body can keep
+## escapes it: refusing is fair, and a committed attack is walked along its
+## certified route with native input and must draw no boss hit.
+func _wall_walk_attempt(attack: String, distance: float, degrees: float, phase: int) -> bool:
 	if not await _spawn_boss():
 		return false
 	_prepare_main_attack()
+	_brain.set("_boss_phase", phase)
 	var rest := await _rest_against_wall()
 	if rest.is_empty():
 		return false
 	var toward: Vector2 = rest["toward"]
-	_boss.global_position = _player.global_position + (-toward).rotated(deg_to_rad(40.0) * side) * 300.0
+	_boss.global_position = _player.global_position + (-toward).rotated(deg_to_rad(degrees)) * distance
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	_player.set("hp", _player.get("max_hp"))
@@ -477,12 +491,12 @@ func _wall_walk_attempt(side: float) -> bool:
 	_attack_enabled = false
 	_activate_combat()
 	_running = true
-	var committed := bool(_brain.call("_try_main_attack", &"shock"))
-	var route: Variant = _route_for("fault") if committed else null
+	var committed := bool(_brain.call("_try_main_attack", _tank_kind(attack)))
+	var route: Variant = _route_for(attack) if committed else null
 	_escape_direction = route if route is Vector2 else Vector2.ZERO
-	# Refusing is fair; a commitment must leave a walk the body can make.
-	_check(not committed or (route is Vector2 and not (route as Vector2).is_zero_approx()), "fixture: tank seed%d, boss %+.0f deg: a committed Fault Line's way out needs a step (%s)" % [_seed_value, 40.0 * side, route])
-	while _time < float(DURATIONS["fault"]) and not bool(_player.get("is_dead")):
+	var label := "tank seed%d, %s phase %d at %.0f px, %+.0f deg" % [_seed_value, attack, phase, distance, degrees]
+	_check(not committed or route is Vector2, "fixture: %s: a committed attack's certified route is rebuilt (%s)" % [label, route])
+	while _time < float(DURATIONS[attack]) and not bool(_player.get("is_dead")):
 		await get_tree().physics_frame
 	_running = false
 	_release_inputs()
@@ -494,8 +508,8 @@ func _wall_walk_attempt(side: float) -> bool:
 	for hit in _damage:
 		if String(hit["kind"]) != "contact_swarm" and bool(hit["boss_owned"]):
 			danger_attempts += 1
-	_check(danger_attempts == 0, "tank seed%d, boss %+.0f deg: walking the certified route beside the wall, pushed off it as it turns, draws no boss hit" % [_seed_value, 40.0 * side])
-	_results.append({"seed": _seed_value, "role": _role, "case": "wall_walk", "side": side, "route": str(_escape_direction), "committed": committed, "danger_attempts": danger_attempts, "player_final": str(_player.global_position), "damage": _damage.duplicate(true)})
+	_check(danger_attempts == 0, "%s: %s draws no boss hit" % [label, "walking the certified route beside the wall" if committed else "refused, the attack"])
+	_results.append({"seed": _seed_value, "role": _role, "case": "wall_walk", "attack": attack, "distance": distance, "degrees": degrees, "phase": phase, "route": str(_escape_direction), "committed": committed, "danger_attempts": danger_attempts, "player_final": str(_player.global_position), "damage": _damage.duplicate(true)})
 	return committed
 
 
