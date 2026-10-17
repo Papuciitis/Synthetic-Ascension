@@ -364,6 +364,35 @@ func _test_rush_keeps_its_lane() -> void:
 	await _clear()
 
 
+## The drawn lane starts at the body's centre and runs forward: a player
+## touching the boss's back at release is outside it and is never struck by
+## a body charging away; one touching its front is struck once.
+func _test_rush_spares_the_back() -> void:
+	for side in [-1.0, 1.0]:
+		_fixture()
+		var tank := _tank()
+		var brain := tank.get_node("BossBrain")
+		var origin := tank.global_position
+		_player.global_position = origin + Vector2(200, 0)
+		_check(bool(brain.call("_begin_teaching_rush")), "fixture: a rush commits along +x")
+		# Body to body: the boss's circle and the player's capsule radius. The
+		# physics space learns a moved body's place at its next step; in play
+		# the player has stood there for many.
+		_player.global_position = origin + Vector2(side * (float(brain.call("_body_radius")) + 25.0), 0)
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+		brain.call("_tick_cast", BRAIN.TEACHING_RUSH_TELL + 0.01)
+		_events.clear()
+		await get_tree().physics_frame
+		await _run_charge(tank, brain, 6)
+		var struck := _events.filter(func(event: Dictionary) -> bool: return event.source == tank).size()
+		if side < 0.0:
+			_check(struck == 0, "a player touching the boss's back is outside the lane and never struck")
+		else:
+			_check(struck == 1, "a player touching its front is struck once (%d)" % struck)
+		await _clear()
+
+
 func _test_fault_followup() -> void:
 	_fixture()
 	var tank := _tank()
@@ -451,6 +480,7 @@ func _run() -> void:
 	await _test_cleave()
 	await _test_breach()
 	await _test_rush_keeps_its_lane()
+	await _test_rush_spares_the_back()
 	await _test_fault_followup()
 	await _test_oracle_guard()
 	await _test_arena_speed()

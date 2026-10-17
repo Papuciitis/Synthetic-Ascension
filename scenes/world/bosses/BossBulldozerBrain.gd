@@ -470,6 +470,11 @@ func _tick_teaching(delta: float) -> void:
 func _resolve_rush_contact(from: Vector2, to: Vector2) -> void:
 	if _rush_hit or not is_instance_valid(_e.player):
 		return
+	# The drawn lane starts at the body's centre and runs forward along the
+	# committed direction: a player behind that line (touching the boss's
+	# back) is outside it, and a body charging away never strikes them.
+	if (_e.player.global_position - from).dot(_cast_dir) < 0.0:
+		return
 	var collider := _e.get_node("CollisionShape2D") as CollisionShape2D
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = collider.shape
