@@ -79,6 +79,12 @@ func _run() -> void:
 	_check(dead >= 30, "the chain kills at least half the crowd (%d of %d)" % [dead, BODIES])
 	_check(int(runner.telemetry["generated"]) >= 60, "the chain generated dozens of attacks (%d)" % int(runner.telemetry["generated"]))
 	_check(max_nodes - nodes_before <= 4, "generated attacks add no scene nodes (%d)" % (max_nodes - nodes_before))
+	# The filter sets aside the VFX pools only: a pooled attack node counts.
+	var counted_before := _scene_nodes_outside_vfx_pools()
+	var pooled_attack := PoolManager.obtain(load("res://core/combat/projectile/EnemyProjectile.tscn") as PackedScene, self)
+	_check(pooled_attack != null and _scene_nodes_outside_vfx_pools() > counted_before, "a pooled attack node still counts as scene growth")
+	if pooled_attack != null:
+		pooled_attack.queue_free()
 	_check(float(seed_us) / 1000.0 < FRAME_BUDGET_MS, "the seed kill resolves inside the budget (%.2f ms)" % (float(seed_us) / 1000.0))
 	_check(worst_ms < 40.0, "no frame of the chain took more than 40 ms headless (%.2f)" % worst_ms)
 	_check(int(execution.counters["corpse_bombs"]) >= 20 and int(execution.counters["cleaves"]) >= 20, "Corpse Bombs and Cleaves fired through the queue (%d / %d)" % [int(execution.counters["corpse_bombs"]), int(execution.counters["cleaves"])])
@@ -93,7 +99,8 @@ func _run() -> void:
 
 ## Kill feedback (death puffs, sparks) comes from the bounded, recycled VFX
 ## pools (PooledVfx: at most 64 live per kind), which fill lazily on first use.
-## The pin is about generated attacks, so pooled bursts are not counted.
+## The pin is about generated attacks, so those bursts are not counted; every
+## other pooled node (actors, projectiles) is.
 func _scene_nodes_outside_vfx_pools() -> int:
 	return get_tree().get_node_count() - _pooled_vfx_nodes(get_tree().root)
 
@@ -101,7 +108,7 @@ func _scene_nodes_outside_vfx_pools() -> int:
 func _pooled_vfx_nodes(node: Node) -> int:
 	var count := 0
 	for child in node.get_children():
-		if child.has_meta(&"__pool_key"):
+		if PooledVfx.owns(child):
 			count += 1 + _descendant_count(child)
 		else:
 			count += _pooled_vfx_nodes(child)

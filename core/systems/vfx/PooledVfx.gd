@@ -64,6 +64,13 @@ static func release(node: Node) -> void:
 	pool.call("recycle", node)
 
 
+## True for a node this class hands out, live or retained in its pool:
+## suites that count scene nodes can tell these bounded bursts apart from the
+## other nodes PoolManager pools (actors, projectiles).
+static func owns(node: Node) -> bool:
+	return node.has_meta("__pool_key") and _configured.has(str(node.get_meta("__pool_key")))
+
+
 static func live_count(scene: PackedScene) -> int:
 	return _live_nodes(scene.resource_path).size() if scene != null else 0
 
