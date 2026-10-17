@@ -199,6 +199,31 @@ func _test_pylons_hold_fire() -> void:
 	await _finish_fixture()
 
 
+## A pattern's own bolts are gone before the next commits, but its pylons'
+## may still be flying: the walk-out check must clear them too.
+func _test_pylon_bolts_join_the_walk_out() -> void:
+	_fixture()
+	_brain.set("_boss_phase", 1)
+	_brain.call("_spawn_main_pylons")
+	var pylon := _pylons()[0] as BossPylon
+	_player.global_position = _mage.global_position + Vector2(300, 0)
+	pylon.set("_shot_dir", (_player.global_position - pylon.global_position).normalized())
+	pylon.call("_fire_shot")
+	var bolts := _children(func(child: Node) -> bool: return child is EnemyProjectile and child.shooter == pylon)
+	_check(bolts.size() == 1, "fixture: a pylon bolt is in the air")
+	var plan := [{"kind": &"circle", "center": Vector2.ZERO, "radius": 1.0, "from": 0.0, "to": 0.1}]
+	var demand: Array = _brain.call("_with_bolts_in_flight", plan)
+	var joined: bool = bolts.size() == 1 and demand.size() == 2 and demand[0] == plan[0]
+	if joined:
+		var bolt := bolts[0] as EnemyProjectile
+		joined = demand[1]["kind"] == &"bolt" and (demand[1]["origin"] as Vector2).is_equal_approx(bolt.global_position) and (demand[1]["velocity"] as Vector2).is_equal_approx(bolt.velocity) and is_equal_approx(float(demand[1]["to"]), bolt.life_left())
+	_check(joined, "a pylon's bolt in the air joins the next pattern's walk-out plan")
+	pylon.cancel_attack()
+	await get_tree().process_frame
+	_check((_brain.call("_with_bolts_in_flight", plan) as Array).size() == 2, "and still counts once its pylon has gone")
+	await _finish_fixture()
+
+
 func _test_neutral_beat() -> void:
 	_fixture()
 	_brain.set("_boss_phase", 1)
@@ -356,6 +381,7 @@ func _run() -> void:
 	RunEvents.boss_phase_changed.connect(_on_phase)
 	await _test_tier_and_phases()
 	await _test_pylons_hold_fire()
+	await _test_pylon_bolts_join_the_walk_out()
 	await _test_split_fan()
 	await _test_neutral_beat()
 	await _test_sweep()

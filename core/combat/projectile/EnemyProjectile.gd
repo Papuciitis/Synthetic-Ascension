@@ -67,6 +67,10 @@ func setup(dir: Vector2, speed: float, dmg: float, life: float, shooter_in: Node
 		rotation = velocity.angle()
 	queue_redraw()
 
+## Seconds of flight left before it expires (walls may end it sooner).
+func life_left() -> float:
+	return _life_left
+
 func _ready() -> void:
 	add_to_group("enemy_projectile")
 	_pooled = has_meta("__pool_key")
