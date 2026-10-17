@@ -123,8 +123,16 @@ func _on_phase(boss: Node, phase: int) -> void:
 
 func _test_tier_and_phases() -> void:
 	_fixture()
+	# Arm every legacy clock with the player in range: the timer kit would
+	# cast at once if it still drove a grouped boss.
+	for key in [&"_fan_cd", &"_mines_cd", &"_blink_cd", &"_beam_cd", &"_pylons_cd"]:
+		_brain.set(key, 0.0)
+	_player.global_position = _mage.global_position + Vector2(140, 0)
 	_brain.call("_process", 1.0)
-	_check(_state() == &"idle" and StringName(_brain.get("_cast_kind")) == &"", "the legacy timer kit never drives the main boss")
+	_check(_state() == &"idle" and StringName(_brain.get("_cast_kind")) == &"" and _mines().is_empty() and _beams().is_empty() and _pylons().is_empty(), "the legacy timer kit never drives the main boss")
+	for key in [&"_fan_cd", &"_mines_cd", &"_blink_cd", &"_beam_cd", &"_pylons_cd"]:
+		_brain.set(key, 99.0)
+	_player.global_position = Vector2(1800, 1100)
 	_mage.hp = _mage.max_hp * 0.64
 	_brain.call("_tick_teaching", 1.0 / 60.0)
 	_check(_state() == &"phase_shift" and int(_brain.call("main_phase")) == 1, "crossing 65% begins one phase beat")

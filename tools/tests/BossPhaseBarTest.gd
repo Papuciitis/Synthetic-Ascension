@@ -38,6 +38,8 @@ func _run() -> void:
 	PerformanceFlightRecorder.report_directory = SaveManager.save_dir + "performance/"
 	BalanceRecorder.report_directory = SaveManager.save_dir + "balance/"
 	Global.debug_disable_autosave = true
+	# The pass flash is checked: pin Reduced Motion off for this run only.
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
 	_test_phase_rule()
 
 	var hud := Control.new()

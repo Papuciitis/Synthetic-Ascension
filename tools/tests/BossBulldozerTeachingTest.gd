@@ -381,9 +381,12 @@ func _test_render_time_cannot_spend_physics_tells() -> void:
 	var windup = brain.get("_windup")
 	# A slow render frame can contain much less accepted physics time. Only
 	# actual simulation ticks may spend the player's walking reaction window:
-	# the brain has no render-time clock at all.
-	_check(not brain.has_method("_process") and not brain.is_processing(), "the brain keeps no render-time clock")
-	_check(_circles().is_empty() and tank.get_meta(&"boss_teaching_state", &"") == &"slam", "render time alone cannot consume the physics-clock slam anticipation")
+	# with its render callback allowed and physics held, a whole tell's worth
+	# of real frames must spend nothing.
+	brain.set_process(true)
+	await get_tree().create_timer(brain.slam_windup + 0.2).timeout
+	brain.set_process(false)
+	_check(_circles().is_empty() and tank.get_meta(&"boss_teaching_state", &"") == &"slam" and is_zero_approx(float(brain.get("_cast_elapsed"))), "render time alone cannot consume the physics-clock slam anticipation")
 	if not warnings.is_empty():
 		warnings[0].call("_process", 5.0)
 		_check(not warnings[0].is_queued_for_deletion(), "the persistent S5 footprint cannot expire ahead of its controller's physics clock")
@@ -397,8 +400,12 @@ func _test_render_time_cannot_spend_physics_tells() -> void:
 	brain = tank.get_node("BossBrain")
 	brain.call("_summon_blockers")
 	brain.call("_tick_cast", 1.01)
+	var lives_before: Array = (brain.get("_runner_lives") as Array).map(func(entry: Dictionary) -> float: return float(entry["remaining"]))
+	brain.set_process(true)
 	await get_tree().create_timer(0.3).timeout
-	_check(_runners().size() == 3, "render time alone cannot expire the finite Runner wave ahead of gameplay time")
+	brain.set_process(false)
+	var lives_after: Array = (brain.get("_runner_lives") as Array).map(func(entry: Dictionary) -> float: return float(entry["remaining"]))
+	_check(_runners().size() == 3 and lives_before.size() == 3 and lives_after == lives_before, "render time alone cannot age the finite Runner wave ahead of gameplay time")
 	await _clear()
 
 
