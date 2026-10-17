@@ -61,8 +61,9 @@ func _execute() -> void:
 			# helper cannot pass by omission.
 			_expected_results += cases.size() * 2
 			if _s10_case.is_empty():
-				# The native-melee recovery and the wall rest.
-				_expected_results += 2
+				# The native-melee recovery, the wall rest, the wall end, and the
+				# tank's walks beside a wall, the boss to either side.
+				_expected_results += 3 + (2 if role_value == "tank" else 0)
 			if not await _setup_world(role_value, chosen_seed):
 				continue
 			for attack in cases:
@@ -82,6 +83,10 @@ func _execute() -> void:
 				# oracle rightly refuses a Split Fan there.
 				await _melee_recovery_attempt("cleave" if role_value == "tank" else "fan")
 				await _wall_hug_attempt()
+				await _wall_end_attempt()
+				if role_value == "tank":
+					var sides := [await _wall_walk_attempt(1.0), await _wall_walk_attempt(-1.0)]
+					_check(sides.has(true), "fixture: tank seed%d: beside the wall, the Fault Line commits with the boss to one side or the other" % chosen_seed)
 	_execution_completed = _expected_results > 0 and _results.size() == _expected_results
 	_check(_execution_completed, "all %d requested S10 case results completed; no setup/helper abort or omitted case" % _expected_results)
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
@@ -297,19 +302,45 @@ func _escape_attempt(attack: String, response: String) -> Dictionary:
 func _wall_hug_attempt() -> void:
 	if not await _spawn_boss():
 		return
-	if _brain.has_method("_sync_tier"):
-		_brain.call("_sync_tier")
-	if _brain.has_method("_ensure_teaching"):
-		_brain.call("_ensure_teaching")
-	for property in PARKED_CLOCKS:
-		if property in _brain:
-			_brain.set(property, 100.0)
-	_boss._charge._cd = 100.0
-	_brain.set("_boss_phase", 1)
-	# The wall cell nearest the court's centre in the middle of a straight run
-	# of nine wall cells with open ground before them, so a walk along the
-	# wall is open both ways rather than into a corner, and open ground out to
-	# where the boss stands.
+	_prepare_main_attack()
+	var rest := await _rest_against_wall()
+	if rest.is_empty():
+		return
+	var toward: Vector2 = rest["toward"]
+	var wall: Vector2i = rest["wall"]
+	var resting: bool = rest["resting"]
+	# The boss attacks from 300 px straight out, so the attack's line meets
+	# the wall square on and a walk along the wall leaves it. The court keeps
+	# its own home, leash and disengage radius: this wall lies inside the
+	# fight.
+	var out := -toward
+	_boss.global_position = _player.global_position + out * 300.0
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var home: Vector2 = _boss.get_meta(&"boss_home_pos", Vector2.INF)
+	var player_from_home := _player.global_position.distance_to(home)
+	var boss_from_home := _boss.global_position.distance_to(home)
+	_check(player_from_home < float(_boss.get_meta(&"boss_disengage_radius", 0.0)) and boss_from_home < float(_boss.get_meta(&"boss_leash_radius", 0.0)), "fixture: %s seed%d: the wall lies inside the fight (player %.0f px from home, boss %.0f px)" % [_role, _seed_value, player_from_home, boss_from_home])
+	var plan: Array = []
+	var blockers: Array = []
+	if _role == "tank":
+		plan = _brain.call("_plan_for", &"shock", _boss.global_position, toward)
+		blockers = [{"center": _boss.global_position, "radius": float(_brain.call("_body_radius"))}]
+	else:
+		plan = _brain.call("_fan_plan", _boss.global_position, toward, _brain.call("_focused_angles"), 0.95, 320.0, 1.625)
+		blockers = [{"center": _boss.global_position, "radius": Placement.body_radius(_boss)}]
+	_check(Oracle.has_escape(_player.global_position, plan, Oracle.player_shape(_player), blockers, Callable(), Oracle.walking_speed(_player)), "fixture: %s seed%d: in open ground the same attack leaves a walk out" % [_role, _seed_value])
+	var committed := bool(_brain.call("_try_main_attack", &"shock")) if _role == "tank" else bool(_brain.call("_try_main_pattern", &"fan"))
+	_check(committed, "%s seed%d: a player resting against a real court wall still draws the boss's aimed attack" % [_role, _seed_value])
+	_results.append({"seed": _seed_value, "role": _role, "case": "wall_rest", "wall_cell": wall, "player_from_home": player_from_home, "boss_from_home": boss_from_home, "resting": resting, "committed": committed})
+
+
+## Rests the production player against the wall cell nearest the court's
+## centre in the middle of a straight run of nine wall cells with open ground
+## before them, so a walk along the wall is open both ways rather than into a
+## corner, and open ground out to where the boss stands: {wall, toward,
+## resting}, or {} with no such wall.
+func _rest_against_wall() -> Dictionary:
 	var home_cell := _chunks.world_to_cell(_origin)
 	var found := false
 	var wall := home_cell
@@ -336,12 +367,20 @@ func _wall_hug_attempt() -> void:
 			break
 	_check(found, "%s seed%d: the court has a wall to rest against" % [_role, _seed_value])
 	if not found:
-		return
+		return {}
 	var toward := Vector2(wall - open).normalized()
+	var resting := await _rest_player(_chunks.cell_to_world_center(open), toward)
+	_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
+	return {"wall": wall, "toward": toward, "resting": resting}
+
+
+## Walks the production player from `from` toward `toward` until it touches,
+## facing it, then stops it there.
+func _rest_player(from: Vector2, toward: Vector2) -> bool:
 	_player.process_mode = Node.PROCESS_MODE_INHERIT
 	_player.rotation = toward.angle()
 	_player.velocity = Vector2.ZERO
-	_player.global_position = _chunks.cell_to_world_center(open)
+	_player.global_position = from
 	await get_tree().physics_frame
 	var resting := false
 	for _step in range(48):
@@ -349,31 +388,129 @@ func _wall_hug_attempt() -> void:
 			resting = true
 			break
 	_player.process_mode = Node.PROCESS_MODE_DISABLED
-	_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
-	# The boss attacks from 300 px straight out, so the attack's line meets
-	# the wall square on and a walk along the wall leaves it. The court keeps
-	# its own home, leash and disengage radius: this wall lies inside the
-	# fight.
-	var out := -toward
-	_boss.global_position = _player.global_position + out * 300.0
+	return resting
+
+
+## A player standing beside a wall run's end, inside its blocked cell (the
+## wall's bar stops at the cell's centre), still draws the boss's aimed
+## attack: every walk used to start on a blocked cell and was refused.
+func _wall_end_attempt() -> void:
+	if not await _spawn_boss():
+		return
+	_prepare_main_attack()
+	# The wall cell ending a straight run (one wall neighbour along the run,
+	# open cells beyond it and on both sides) nearest the boss's home, where a
+	# player beside it is inside the fight.
+	var home: Vector2 = _boss.get_meta(&"boss_home_pos", _origin)
+	var reach := float(_boss.get_meta(&"boss_disengage_radius", 0.0)) - 20.0
+	var home_cell := _chunks.world_to_cell(home)
+	var best := INF
+	var end_cell := home_cell
+	var run := Vector2i.ZERO
+	for dx in range(-20, 21):
+		for dy in range(-20, 21):
+			var cell := home_cell + Vector2i(dx, dy)
+			if _chunks.is_cell_walkable(cell):
+				continue
+			for d: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
+				var side := Vector2i(d.y, d.x)
+				var shape_ok := not _chunks.is_cell_walkable(cell + d) and not _chunks.is_cell_walkable(cell + d * 2)
+				for k in range(1, 3):
+					shape_ok = shape_ok and _chunks.is_cell_walkable(cell - d * k)
+				for along in [cell, cell - d]:
+					shape_ok = shape_ok and _chunks.is_cell_walkable(along + side) and _chunks.is_cell_walkable(along - side)
+				var distance := (_chunks.cell_to_world_center(cell) - Vector2(d) * 27.0).distance_to(home)
+				if shape_ok and distance < reach and distance < best:
+					best = distance
+					end_cell = cell
+					run = d
+	_check(best < INF, "%s seed%d: the court has a wall run's end inside the fight to stand beside" % [_role, _seed_value])
+	if best == INF:
+		return
+	# Walk into the bar's end along the run, and stop where the body touches.
+	var resting := await _rest_player(_chunks.cell_to_world_center(end_cell) + Vector2(-run) * 60.0, Vector2(run))
+	var inside := not _chunks.is_cell_walkable(_chunks.world_to_cell(_player.global_position))
+	_check(resting and inside, "fixture: %s seed%d: the player rests against the run's end inside its blocked cell" % [_role, _seed_value])
+	# The boss 300 px from the player toward its home, inside its leash.
+	var aim := (_player.global_position - home).normalized()
+	_boss.global_position = _player.global_position - aim * 300.0
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	var home: Vector2 = _boss.get_meta(&"boss_home_pos", Vector2.INF)
-	var player_from_home := _player.global_position.distance_to(home)
-	var boss_from_home := _boss.global_position.distance_to(home)
-	_check(player_from_home < float(_boss.get_meta(&"boss_disengage_radius", 0.0)) and boss_from_home < float(_boss.get_meta(&"boss_leash_radius", 0.0)), "fixture: %s seed%d: the wall lies inside the fight (player %.0f px from home, boss %.0f px)" % [_role, _seed_value, player_from_home, boss_from_home])
 	var plan: Array = []
 	var blockers: Array = []
 	if _role == "tank":
-		plan = _brain.call("_plan_for", &"shock", _boss.global_position, toward)
+		plan = _brain.call("_plan_for", &"shock", _boss.global_position, aim)
 		blockers = [{"center": _boss.global_position, "radius": float(_brain.call("_body_radius"))}]
 	else:
-		plan = _brain.call("_fan_plan", _boss.global_position, toward, _brain.call("_focused_angles"), 0.95, 320.0, 1.625)
+		plan = _brain.call("_fan_plan", _boss.global_position, aim, _brain.call("_focused_angles"), 0.95, 320.0, 1.625)
 		blockers = [{"center": _boss.global_position, "radius": Placement.body_radius(_boss)}]
-	_check(Oracle.has_escape(_player.global_position, plan, Oracle.player_shape(_player), blockers, Callable(), Oracle.walking_speed(_player)), "fixture: %s seed%d: in open ground the same attack leaves a walk out" % [_role, _seed_value])
+	_check(Oracle.has_escape(_player.global_position, plan, Oracle.player_shape(_player), blockers, Callable(), Oracle.walking_speed(_player)), "fixture: %s seed%d: in open ground the same attack leaves a walk out (player %.0f px from home)" % [_role, _seed_value, best])
 	var committed := bool(_brain.call("_try_main_attack", &"shock")) if _role == "tank" else bool(_brain.call("_try_main_pattern", &"fan"))
-	_check(committed, "%s seed%d: a player resting against a real court wall still draws the boss's aimed attack" % [_role, _seed_value])
-	_results.append({"seed": _seed_value, "role": _role, "case": "wall_rest", "wall_cell": wall, "player_from_home": player_from_home, "boss_from_home": boss_from_home, "resting": resting, "committed": committed})
+	_check(committed, "%s seed%d: a player beside a wall run's end, inside its blocked cell, still draws the boss's aimed attack" % [_role, _seed_value])
+	_results.append({"seed": _seed_value, "role": _role, "case": "wall_end", "end_cell": end_cell, "from_home": best, "inside_blocked_cell": inside, "resting": resting, "committed": committed})
+
+
+## The walk certified beside a wall is the one the production player makes:
+## turned to walk along it, its capsule lies crosswise and the wall pushes it
+## about 4 px off. The Bulldozer stands 300 px out, 40 degrees to `side` of
+## the wall's normal, where its Fault Line's way out ran along the wall on a
+## line the body cannot keep. The player walks the certified route with
+## native input and must draw no boss hit.
+func _wall_walk_attempt(side: float) -> bool:
+	if not await _spawn_boss():
+		return false
+	_prepare_main_attack()
+	var rest := await _rest_against_wall()
+	if rest.is_empty():
+		return false
+	var toward: Vector2 = rest["toward"]
+	_boss.global_position = _player.global_position + (-toward).rotated(deg_to_rad(40.0) * side) * 300.0
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	_player.set("hp", _player.get("max_hp"))
+	_player.set("invulnerable_time", 0.0)
+	var dash := _player.get("_dash") as PlayerDashState
+	dash.reset()
+	dash.cooldown_left = 100.0
+	_reset_evidence()
+	_control = "walk"
+	_attack_enabled = false
+	_activate_combat()
+	_running = true
+	var committed := bool(_brain.call("_try_main_attack", &"shock"))
+	var route: Variant = _route_for("fault") if committed else null
+	_escape_direction = route if route is Vector2 else Vector2.ZERO
+	# Refusing is fair; a commitment must leave a walk the body can make.
+	_check(not committed or (route is Vector2 and not (route as Vector2).is_zero_approx()), "fixture: tank seed%d, boss %+.0f deg: a committed Fault Line's way out needs a step (%s)" % [_seed_value, 40.0 * side, route])
+	while _time < float(DURATIONS["fault"]) and not bool(_player.get("is_dead")):
+		await get_tree().physics_frame
+	_running = false
+	_release_inputs()
+	_player.process_mode = Node.PROCESS_MODE_DISABLED
+	_boss.set_physics_process(false)
+	_brain.set_process(false)
+	_brain.set_physics_process(false)
+	var danger_attempts := 0
+	for hit in _damage:
+		if String(hit["kind"]) != "contact_swarm" and bool(hit["boss_owned"]):
+			danger_attempts += 1
+	_check(danger_attempts == 0, "tank seed%d, boss %+.0f deg: walking the certified route beside the wall, pushed off it as it turns, draws no boss hit" % [_seed_value, 40.0 * side])
+	_results.append({"seed": _seed_value, "role": _role, "case": "wall_walk", "side": side, "route": str(_escape_direction), "committed": committed, "danger_attempts": danger_attempts, "player_final": str(_player.global_position), "damage": _damage.duplicate(true)})
+	return committed
+
+
+## The S10 brain as an attack finds it: its tier named, every other clock
+## parked, phase 1.
+func _prepare_main_attack() -> void:
+	if _brain.has_method("_sync_tier"):
+		_brain.call("_sync_tier")
+	if _brain.has_method("_ensure_teaching"):
+		_brain.call("_ensure_teaching")
+	for property in PARKED_CLOCKS:
+		if property in _brain:
+			_brain.set(property, 100.0)
+	_boss._charge._cd = 100.0
+	_brain.set("_boss_phase", 1)
 
 
 ## The opening after an S10 commitment: native melee from body contact must
@@ -454,7 +591,9 @@ func _route_for(attack: String) -> Variant:
 	var clearance := Oracle.corridor_radius(shape)
 	var path_clear := func(from: Vector2, to: Vector2) -> bool:
 		return Placement.walk_clear(_boss, from, to, clearance)
-	return Oracle.escape_route(_player.global_position, plan, shape, blockers, path_clear, Oracle.walking_speed(_player))
+	var settle := func(point: Vector2, facing: float) -> Vector2:
+		return Placement.settled_position(_player, point, facing)
+	return Oracle.escape_route(_player.global_position, plan, shape, blockers, path_clear, Oracle.walking_speed(_player), settle)
 
 
 func _reset_evidence() -> void:

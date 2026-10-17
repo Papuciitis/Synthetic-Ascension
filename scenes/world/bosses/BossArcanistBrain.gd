@@ -742,7 +742,9 @@ func _escapable(plan: Array) -> bool:
 	var clearance := Oracle.corridor_radius(shape)
 	var path_clear := func(from: Vector2, to: Vector2) -> bool:
 		return TeachingPlacement.walk_clear(_e, from, to, clearance)
-	return Oracle.has_escape(player.global_position, _with_bolts_in_flight(plan), shape, blockers, path_clear, Oracle.walking_speed(player))
+	var settle := func(point: Vector2, facing: float) -> Vector2:
+		return TeachingPlacement.settled_position(player, point, facing)
+	return Oracle.has_escape(player.global_position, _with_bolts_in_flight(plan), shape, blockers, path_clear, Oracle.walking_speed(player), settle)
 
 
 ## A pattern's own bolts are gone before the next commits, but its pylons'

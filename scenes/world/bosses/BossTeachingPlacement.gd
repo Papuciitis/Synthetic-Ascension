@@ -62,22 +62,52 @@ static func disc_clear(actor: Node2D, point: Vector2, radius: float) -> bool:
 ## A corridor whose whole width stays on loaded, walkable ground and meets no
 ## wall: where a mine pattern's escape or a blink may lead.
 static func corridor_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
-	return _swept_clear(actor, start, end, radius, radius)
-
-
-## A route a player can walk: its centre line stays on loaded, walkable ground
-## and its body (radius) meets no wall. A wall's blocked grid cells reach past
-## its face, so judging the whole width on the grid would refuse every walk of
-## a player already resting against a wall; the physics sweep judges the body.
-static func walk_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
-	return _swept_clear(actor, start, end, radius, 0.0)
-
-
-static func _swept_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float, grid_radius: float) -> bool:
 	var steps := maxi(1, ceili(start.distance_to(end) / 32.0))
 	for i in range(steps + 1):
-		if not _loaded_space(actor, start.lerp(end, float(i) / float(steps)), grid_radius):
+		if not _loaded_space(actor, start.lerp(end, float(i) / float(steps)), radius):
 			return false
+	return _sweep_clear(actor, start, end, radius)
+
+
+## A route a player can walk: it stays on loaded ground whose colliders are
+## built, and its body (radius) meets no wall in physics. A wall's blocked
+## grid cell reaches past the wall itself (beyond its face, past a run's end),
+## so the grid would refuse walks the player can make, from where it stands
+## beside a wall; the physics sweep judges the walls.
+static func walk_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
+	var manager := actor.get_tree().get_first_node_in_group(&"chunk_manager")
+	if manager != null:
+		var steps := maxi(1, ceili(start.distance_to(end) / 32.0))
+		for i in range(steps + 1):
+			if not manager.has_built_cell(manager.world_to_cell(start.lerp(end, float(i) / float(steps)))):
+				return false
+	return _sweep_clear(actor, start, end, radius)
+
+
+## Where `body` comes to rest at `point` turned to `facing`: a capsule turned
+## crosswise beside a wall or a body is pushed off it, as the next physics
+## steps push the real one.
+static func settled_position(body: Node, point: Vector2, facing: float) -> Vector2:
+	if not body is PhysicsBody2D:
+		return point
+	var physics_body := body as PhysicsBody2D
+	var params := PhysicsTestMotionParameters2D.new()
+	params.motion = Vector2.ZERO
+	if physics_body is CharacterBody2D:
+		params.margin = (physics_body as CharacterBody2D).safe_margin
+	var result := PhysicsTestMotionResult2D.new()
+	var at := point
+	for _step in range(6):
+		params.from = Transform2D(facing, physics_body.global_scale, physics_body.global_skew, at)
+		PhysicsServer2D.body_test_motion(physics_body.get_rid(), params, result)
+		var travel := result.get_travel()
+		at += travel
+		if travel.length() < 0.05:
+			break
+	return at
+
+
+static func _sweep_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
 	var shape := CircleShape2D.new()
 	shape.radius = maxf(1.0, radius)
 	var query := PhysicsShapeQueryParameters2D.new()

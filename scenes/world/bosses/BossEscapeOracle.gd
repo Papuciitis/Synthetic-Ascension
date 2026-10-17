@@ -11,8 +11,8 @@ extends RefCounted
 ## the BASE_SPEED the tells were tuned for (walking_speed). While a dash or a
 ## shove carries the player faster than it walks, nothing is certified. The
 ## player is its real collision geometry, turned the way the player turns:
-## facing its current motion (or its last facing) while reacting, then its
-## walk. The Hurtbox square answers area hazards; the body capsule, physical
+## facing its input (its rotation) while reacting, then its walk, which
+## starts where the body settles as it turns. The Hurtbox square answers area hazards; the body capsule, physical
 ## rush contact. Linear motion is solved exactly in the player's own frame;
 ## sectors and beams are sampled with their polygon and a margin covering the
 ## motion between samples, so a "safe" verdict is never optimistic.
@@ -28,6 +28,8 @@ const SAMPLE := 1.0 / 60.0
 const DEFAULT_HURTBOX_HALF := Vector2(35.0, 35.0)
 const DEFAULT_BODY_RADIUS := 25.0
 const DEFAULT_BODY_HALF_SEGMENT := 4.0
+## A player within this of a body's surface touches it.
+const CONTACT_TOLERANCE := 0.5
 
 ## Hazards (times are seconds after commitment):
 ##   {kind: &"circle", center, radius, from, to}
@@ -102,27 +104,50 @@ static func corridor_radius(shape: Dictionary) -> float:
 ## The first straight walk (Vector2.ZERO: standing still) that avoids every
 ## hazard, or null. `blockers` are planted bodies the player cannot cross:
 ## {center, radius}. `path_clear` (optional) validates a walk against the
-## world: (from: Vector2, to: Vector2) -> bool.
-static func escape_route(start: Vector2, plan: Array, shape: Dictionary = {}, blockers: Array = [], path_clear: Callable = Callable(), speed: float = BASE_SPEED) -> Variant:
-	var hurtbox_half: Vector2 = shape.get("hurtbox_half", DEFAULT_HURTBOX_HALF)
+## world: (from: Vector2, to: Vector2) -> bool. `settle` (optional) gives
+## where the player's body comes to rest at a point, turned to a facing:
+## (point: Vector2, facing: float) -> Vector2; a walk starts there.
+static func escape_route(start: Vector2, plan: Array, shape: Dictionary = {}, blockers: Array = [], path_clear: Callable = Callable(), speed: float = BASE_SPEED, settle: Callable = Callable()) -> Variant:
+	var reactions: Variant = _reactions(start, shape, blockers, speed)
+	if reactions == null:
+		return null
+	var candidates: Array[Vector2] = [Vector2.ZERO]
+	for index in range(DIRECTIONS):
+		candidates.append(Vector2.RIGHT.rotated(TAU * float(index) / float(DIRECTIONS)))
+	for direction in candidates:
+		if _walk_escapes(reactions, plan, shape, blockers, direction, path_clear, speed, settle):
+			return direction
+	return null
+
+
+## Whether walking `direction` (Vector2.ZERO: standing still) after the
+## reaction avoids every hazard, as escape_route judges each walk.
+static func route_safe(start: Vector2, plan: Array, shape: Dictionary, blockers: Array, direction: Vector2, path_clear: Callable = Callable(), speed: float = BASE_SPEED, settle: Callable = Callable()) -> bool:
+	var reactions: Variant = _reactions(start, shape, blockers, speed)
+	return reactions != null and _walk_escapes(reactions, plan, shape, blockers, direction, path_clear, speed, settle)
+
+
+## How the player may move through the reaction, each a {start, drift}; null
+## while a dash or a shove carries it faster than it walks: that is not a walk
+## it keeps up, and where it ends is not known here, so nothing is certified
+## until it is over (the controller tries again shortly). The player keeps its
+## current motion, facing its input. A body it pushes into, touching it or
+## reaching it before the reaction ends, stops the part of that motion pushing
+## into it; whether the rest then slides along the body or stops there depends
+## on how the grounded body meets it, so a walk must escape from both. Its
+## capsule touches at its radius, plus its half-segment as far as that lies
+## toward the body (facing the body, none; side-on, all of it).
+static func _reactions(start: Vector2, shape: Dictionary, blockers: Array, speed: float) -> Variant:
+	var drift: Vector2 = shape.get("velocity", Vector2.ZERO)
+	if drift.length() > maxf(float(shape.get("move_speed", speed)), speed) * 1.25:
+		return null
+	if drift.is_zero_approx():
+		return [{"start": start, "drift": drift}]
 	var body_radius := float(shape.get("body_radius", DEFAULT_BODY_RADIUS))
 	var body_half_segment := float(shape.get("body_half_segment", DEFAULT_BODY_HALF_SEGMENT))
 	var facing := float(shape.get("rotation", 0.0))
-	var drift: Vector2 = shape.get("velocity", Vector2.ZERO)
-	# A dash or a shove is not a walk the player keeps up through the
-	# reaction, and where it ends is not known here: nothing is certified
-	# until it is over (the controller tries again shortly).
-	if drift.length() > maxf(float(shape.get("move_speed", speed)), speed) * 1.25:
-		return null
-	# Through the reaction the player faces its input, which a slide does not
-	# turn.
-	var reacting_facing := drift.angle() if not drift.is_zero_approx() else facing
-	# A body the player touches, or reaches during the reaction, stops the
-	# part of its motion that pushes into it: it closes to contact, then
-	# slides along it. Its capsule touches at its radius, plus its
-	# half-segment as far as that lies toward the body (facing the body,
-	# none; side-on, all of it).
-	var axis := Vector2.DOWN.rotated(reacting_facing)
+	var axis := Vector2.DOWN.rotated(facing)
+	var input := Vector2.from_angle(facing)
 	for blocker: Dictionary in blockers:
 		var outward: Vector2 = start - (blocker["center"] as Vector2)
 		if outward.is_zero_approx():
@@ -130,34 +155,56 @@ static func escape_route(start: Vector2, plan: Array, shape: Dictionary = {}, bl
 		var normal := outward.normalized()
 		var inward := -drift.dot(normal)
 		var room := outward.length() - (float(blocker["radius"]) + body_radius + body_half_segment * absf(axis.dot(normal)))
-		if inward > 0.0 and room < inward * REACTION:
-			start -= normal * maxf(room, 0.0)
-			drift += normal * inward
+		# Into the body by more than float noise on a walk along it (0.6 deg).
+		var reaching := inward > 0.01 * drift.length() and room < inward * REACTION
+		var pushing := room <= CONTACT_TOLERANCE and input.dot(normal) < -0.01
+		if reaching or pushing:
+			var at := start - normal * maxf(room, 0.0)
+			return [{"start": at, "drift": drift + normal * maxf(inward, 0.0)}, {"start": at, "drift": Vector2.ZERO}]
+	return [{"start": start, "drift": drift}]
+
+
+static func _walk_escapes(reactions: Array, plan: Array, shape: Dictionary, blockers: Array, direction: Vector2, path_clear: Callable, speed: float, settle: Callable) -> bool:
+	var hurtbox_half: Vector2 = shape.get("hurtbox_half", DEFAULT_HURTBOX_HALF)
+	var body_radius := float(shape.get("body_radius", DEFAULT_BODY_RADIUS))
+	var body_half_segment := float(shape.get("body_half_segment", DEFAULT_BODY_HALF_SEGMENT))
+	var facing := float(shape.get("rotation", 0.0))
 	var horizon := 0.0
 	for hazard: Dictionary in plan:
 		horizon = maxf(horizon, float(hazard["to"]))
-	var candidates: Array[Vector2] = [Vector2.ZERO]
-	for index in range(DIRECTIONS):
-		candidates.append(Vector2.RIGHT.rotated(TAU * float(index) / float(DIRECTIONS)))
-	for direction in candidates:
-		var walk := direction * speed
-		var motion := {"start": start, "drift": drift, "walk": walk, "reacting_facing": reacting_facing, "walking_facing": direction.angle() if not direction.is_zero_approx() else reacting_facing}
-		if not _walk_allowed(motion, horizon, blockers, body_radius + body_half_segment):
-			continue
-		var safe := true
-		for hazard: Dictionary in plan:
-			if _hits(motion, hazard, hurtbox_half, body_radius, body_half_segment):
-				safe = false
-				break
-		# World queries are the expensive part: only for walks that already
-		# avoid every hazard.
-		if safe and _route_clear(motion, horizon, path_clear):
-			return direction
-	return null
+	var motions: Array[Dictionary] = []
+	for reaction: Dictionary in reactions:
+		var motion := {"start": reaction["start"], "drift": reaction["drift"], "push": Vector2.ZERO, "walk": direction * speed, "reacting_facing": facing, "walking_facing": direction.angle() if not direction.is_zero_approx() else facing}
+		if not _avoids(motion, plan, horizon, blockers, hurtbox_half, body_radius, body_half_segment):
+			return false
+		# A body turning crosswise beside a wall or a body is pushed off it:
+		# the walk starts where it settles. Physics queries are the expensive
+		# part: only for walks that already avoid every hazard, judged again
+		# from there.
+		if settle.is_valid() and not direction.is_zero_approx():
+			var turn := position_at(motion, REACTION)
+			motion["push"] = (settle.call(turn, direction.angle()) as Vector2) - turn
+			if not (motion["push"] as Vector2).is_zero_approx() and not _avoids(motion, plan, horizon, blockers, hurtbox_half, body_radius, body_half_segment):
+				return false
+		motions.append(motion)
+	for motion in motions:
+		if not _route_clear(motion, horizon, path_clear):
+			return false
+	return true
+
+
+static func _avoids(motion: Dictionary, plan: Array, horizon: float, blockers: Array, hurtbox_half: Vector2, body_radius: float, body_half_segment: float) -> bool:
+	if not _walk_allowed(motion, horizon, blockers, body_radius + body_half_segment):
+		return false
+	for hazard: Dictionary in plan:
+		if _hits(motion, hazard, hurtbox_half, body_radius, body_half_segment):
+			return false
+	return true
 
 
 ## The world corridors of the route as it bends: the reaction's drift, then
-## the walk. A route that stays where it stands needs none.
+## the walk from where the body settles. A route that stays where it stands
+## needs none.
 static func _route_clear(motion: Dictionary, horizon: float, path_clear: Callable) -> bool:
 	if not path_clear.is_valid():
 		return true
@@ -165,23 +212,27 @@ static func _route_clear(motion: Dictionary, horizon: float, path_clear: Callabl
 	var turn := position_at(motion, REACTION)
 	if not turn.is_equal_approx(start) and not bool(path_clear.call(start, turn)):
 		return false
-	var end := position_at(motion, maxf(horizon, REACTION))
-	return end.is_equal_approx(turn) or bool(path_clear.call(turn, end))
+	var walk_from := _walk_position(motion, REACTION)
+	var end := _walk_position(motion, maxf(horizon, REACTION))
+	return end.is_equal_approx(walk_from) or bool(path_clear.call(walk_from, end))
 
 
-static func has_escape(start: Vector2, plan: Array, shape: Dictionary = {}, blockers: Array = [], path_clear: Callable = Callable(), speed: float = BASE_SPEED) -> bool:
-	return escape_route(start, plan, shape, blockers, path_clear, speed) != null
+static func has_escape(start: Vector2, plan: Array, shape: Dictionary = {}, blockers: Array = [], path_clear: Callable = Callable(), speed: float = BASE_SPEED, settle: Callable = Callable()) -> bool:
+	return escape_route(start, plan, shape, blockers, path_clear, speed, settle) != null
 
 
 ## Where the walk stands `t` seconds after commitment: carried by its current
 ## motion until REACTION, then walking.
 static func position_at(motion: Dictionary, t: float) -> Vector2:
-	var start: Vector2 = motion["start"]
-	var drift: Vector2 = motion["drift"]
 	if t <= REACTION:
-		return start + drift * maxf(t, 0.0)
-	var walk: Vector2 = motion["walk"]
-	return start + drift * REACTION + walk * (t - REACTION)
+		return (motion["start"] as Vector2) + (motion["drift"] as Vector2) * maxf(t, 0.0)
+	return _walk_position(motion, t)
+
+
+## The walk's position at `t` (REACTION on): it starts where the body settles
+## as it turns to walk.
+static func _walk_position(motion: Dictionary, t: float) -> Vector2:
+	return (motion["start"] as Vector2) + (motion["drift"] as Vector2) * REACTION + (motion.get("push", Vector2.ZERO) as Vector2) + (motion["walk"] as Vector2) * (t - REACTION)
 
 
 static func _facing_at(motion: Dictionary, t: float) -> float:
@@ -192,7 +243,8 @@ static func _walk_allowed(motion: Dictionary, horizon: float, blockers: Array, c
 	var start: Vector2 = motion["start"]
 	var walk: Vector2 = motion["walk"]
 	var turn := position_at(motion, REACTION)
-	var end := position_at(motion, maxf(horizon, REACTION))
+	var walk_from := _walk_position(motion, REACTION)
+	var end := _walk_position(motion, maxf(horizon, REACTION))
 	for blocker: Dictionary in blockers:
 		var center: Vector2 = blocker["center"]
 		var reach := float(blocker["radius"]) + clearance
@@ -202,7 +254,7 @@ static func _walk_allowed(motion: Dictionary, horizon: float, blockers: Array, c
 			if walk.dot(center - start) > 0.0:
 				return false
 			continue
-		if _segment_point_distance(start, turn, center) < reach - 0.5 or _segment_point_distance(turn, end, center) < reach - 0.5:
+		if _segment_point_distance(start, turn, center) < reach - 0.5 or _segment_point_distance(walk_from, end, center) < reach - 0.5:
 			return false
 	return true
 
@@ -272,8 +324,11 @@ static func _linear_contact(motion: Dictionary, from: float, to: float, origin: 
 		pieces.append(Vector2(maxf(from, REACTION), to))
 	for piece in pieces:
 		var turn := -_facing_at(motion, piece.x)
-		var a := ((origin + mover_velocity * (piece.x - from)) - position_at(motion, piece.x)).rotated(turn)
-		var b := ((origin + mover_velocity * (piece.y - from)) - position_at(motion, piece.y)).rotated(turn)
+		var walking := piece.x >= REACTION
+		var at_from := _walk_position(motion, piece.x) if walking else position_at(motion, piece.x)
+		var at_to := _walk_position(motion, piece.y) if walking else position_at(motion, piece.y)
+		var a := ((origin + mover_velocity * (piece.x - from)) - at_from).rotated(turn)
+		var b := ((origin + mover_velocity * (piece.y - from)) - at_to).rotated(turn)
 		if body:
 			# The capsule's half-segment runs along the player's local y.
 			var top := Vector2(0.0, -body_half_segment)
@@ -286,19 +341,26 @@ static func _linear_contact(motion: Dictionary, from: float, to: float, origin: 
 
 
 static func _sampled_overlap(motion: Dictionary, from: float, to: float, polygon_at: Callable, half: Vector2) -> bool:
+	# Where the body settles as it turns is a step, not motion the margin
+	# covers: the walk's first position is sampled too.
+	if from <= REACTION and to >= REACTION and not (motion.get("push", Vector2.ZERO) as Vector2).is_zero_approx():
+		if _box_overlaps(_walk_position(motion, REACTION), float(motion["walking_facing"]), half, polygon_at.call(REACTION) as PackedVector2Array):
+			return true
 	var t := from
 	while true:
-		var center := position_at(motion, t)
-		var facing := _facing_at(motion, t)
-		var box := PackedVector2Array()
-		for corner in [Vector2(-half.x, -half.y), Vector2(half.x, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y)]:
-			box.append(center + (corner as Vector2).rotated(facing))
-		if not Geometry2D.intersect_polygons(polygon_at.call(t) as PackedVector2Array, box).is_empty():
+		if _box_overlaps(position_at(motion, t), _facing_at(motion, t), half, polygon_at.call(t) as PackedVector2Array):
 			return true
 		if t >= to:
 			break
 		t = minf(t + SAMPLE, to)
 	return false
+
+
+static func _box_overlaps(center: Vector2, facing: float, half: Vector2, polygon: PackedVector2Array) -> bool:
+	var box := PackedVector2Array()
+	for corner in [Vector2(-half.x, -half.y), Vector2(half.x, -half.y), Vector2(half.x, half.y), Vector2(-half.x, half.y)]:
+		box.append(center + (corner as Vector2).rotated(facing))
+	return not Geometry2D.intersect_polygons(polygon, box).is_empty()
 
 
 static func _segment_point_distance(a: Vector2, b: Vector2, point: Vector2) -> float:

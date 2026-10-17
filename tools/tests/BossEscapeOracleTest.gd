@@ -108,6 +108,11 @@ func _run() -> void:
 	corner_on["rotation"] = PI * 0.25
 	_check(ORACLE.has_escape(Vector2.ZERO, instant, square_on), "a hazard 15 px clear of the square's side misses it")
 	_check(not ORACLE.has_escape(Vector2.ZERO, instant, corner_on), "the same hazard meets the square turned 45 degrees: the player's facing is part of its shape")
+	# The grounded body can slide its velocity off its input (on a "floor"):
+	# through the reaction the square keeps the player's rotation.
+	var slid_off_input := square_on.duplicate()
+	slid_off_input["velocity"] = Vector2(10, 10)
+	_check(ORACLE.has_escape(Vector2.ZERO, instant, slid_off_input), "reacting, the square keeps the player's rotation, not its velocity's heading")
 	var ahead := [{"kind": &"circle", "center": Vector2(60, 0), "radius": 10.0, "from": 0.0, "to": 0.2}]
 	var still := shape.duplicate()
 	still["velocity"] = Vector2.ZERO
@@ -236,6 +241,31 @@ func _run() -> void:
 	# reaction and is judged from there, not refused for walking through it.
 	var running_in := contact + Vector2(10.0, 0.0)
 	_check(ORACLE.escape_route(running_in, _slam(1.3), facing_in, body) == ORACLE.escape_route(contact, _slam(1.3), facing_still, body) and ORACLE.escape_route(contact, _slam(1.3), facing_still, body) is Vector2, "running at the body, the player is judged from the contact it reaches within the reaction")
+	# Pushing into the body at an angle, the grounded body may slide along it
+	# or stop where it meets it: a walk must escape both. A blast centred on
+	# the contact point is escaped by sliding on (fixture: the same motion
+	# with no body there), not from where the player would stop.
+	var touching := Vector2(S10_TANK_RADIUS + 25.0 + 4.0 * absf(Vector2.DOWN.rotated(deg_to_rad(120.0)).x), 0.0)
+	var pushing_in := shape.duplicate()
+	pushing_in["rotation"] = deg_to_rad(120.0)
+	pushing_in["velocity"] = Vector2.from_angle(deg_to_rad(120.0)) * 100.0
+	var blast := [{"kind": &"circle", "center": touching, "radius": 50.0, "from": 0.93, "to": 1.11}]
+	_check(ORACLE.has_escape(touching, blast, pushing_in), "fixture: sliding on past the spot escapes the blast")
+	_check(not ORACLE.has_escape(touching, blast, pushing_in, s10_body), "pushing into the body, the player may stop there: the walk must escape from both")
+	# Moving along a body it touches, without pushing into it, nothing stops it.
+	var along := shape.duplicate()
+	along["rotation"] = PI * 0.5
+	along["velocity"] = Vector2(0, 100)
+	var side_on := Vector2(S10_TANK_RADIUS + 29.0, 0.0)
+	_check(ORACLE.has_escape(side_on, [{"kind": &"circle", "center": side_on, "radius": 50.0, "from": 0.93, "to": 1.11}], along, s10_body), "walking along a touched body is free motion")
+	# A body turning crosswise beside a wall is pushed off it: the walk is
+	# judged from where it settles. A blob 2 px clear of the straight walk's
+	# Hurtbox is met 4 px further out.
+	var blob := [{"kind": &"circle", "center": Vector2(150, 50), "radius": 13.0, "from": 0.0, "to": 3.0}]
+	var pushed := func(point: Vector2, facing: float) -> Vector2:
+		return point + (Vector2(0, 4) if is_zero_approx(fposmod(facing, PI)) else Vector2.ZERO)
+	_check(ORACLE.route_safe(Vector2.ZERO, blob, still, [], Vector2.RIGHT) and not ORACLE.route_safe(Vector2.ZERO, blob, still, [], Vector2.RIGHT, Callable(), ORACLE.BASE_SPEED, pushed), "a walk starts where the body settles as it turns")
+	_check(ORACLE.route_safe(Vector2(0, 200), [{"kind": &"circle", "center": Vector2(0, 245), "radius": 6.0, "from": 0.0, "to": 3.0}], still, [], Vector2.ZERO, Callable(), ORACLE.BASE_SPEED, func(point: Vector2, _facing: float) -> Vector2: return point + Vector2(0, 8)), "standing still, it does not turn")
 	# The route bends where the reaction ends: its drift is a leg of its own.
 	var legs: Array = []
 	var record := func(from: Vector2, to: Vector2) -> bool:
