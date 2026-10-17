@@ -42,11 +42,25 @@ func _ready() -> void:
 ## over the boot splash until the slow first frame draws; afterwards the next
 ## frame redraws it at once, and a window already as saved is left alone.
 ## Process steps, not draws, so a minimized or headless start applies too.
+## Only a normal start (the project's main scene) applies it: a tool, probe
+## or test runs its own scene and sets the window it needs.
 func _apply_persisted_display_once_drawn() -> void:
 	# The first frame is drawn and shown between these two steps.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	if not _runs_main_scene():
+		return
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
+
+
+func _runs_main_scene() -> bool:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return true
+	var main := str(ProjectSettings.get_setting("application/run/main_scene", ""))
+	if main.begins_with("uid://"):
+		main = ResourceUID.get_id_path(ResourceUID.text_to_id(main))
+	return scene.scene_file_path == main
 
 
 ## Built-in UI actions can contain only keys on this engine build. Keep

@@ -114,6 +114,19 @@ func _run() -> void:
 	await process_frame
 	await process_frame
 	_check(applier.displayed.size() == 1, "saved window state applies once, right after the first frame")
+	# Only a normal start applies it: a tool, probe or test running its own
+	# scene keeps the window that scene sets.
+	var stand_in := Node.new()
+	root.add_child(stand_in)
+	current_scene = stand_in
+	stand_in.scene_file_path = "res://tools/dev/S10BossTelegraphPreview.tscn"
+	var as_tool := bool(manager.call("_runs_main_scene"))
+	var main := str(ProjectSettings.get_setting("application/run/main_scene"))
+	stand_in.scene_file_path = ResourceUID.get_id_path(ResourceUID.text_to_id(main)) if main.begins_with("uid://") else main
+	var as_game := bool(manager.call("_runs_main_scene"))
+	current_scene = null
+	stand_in.queue_free()
+	_check(not as_tool and as_game and stand_in.scene_file_path == "res://ui/screens/MainMenu.tscn", "only the main menu's start applies the saved window; a tool's own scene keeps its window")
 	manager.queue_free()
 	_finish()
 
