@@ -99,15 +99,22 @@ func _test_record() -> void:
 	older.attempt_cleared_arenas = PackedStringArray()
 	Global.apply_save(older)
 	_check(Global.attempt_cleared_arenas.is_empty(), "a save from before the record loads with nothing settled")
-	# The developer console's segment jump arms that segment's arenas again,
-	# and only that segment's.
+	# The developer console's segment jump (the attempt state it leaves before
+	# the Game loads) replays the attempt from that segment: its arenas and
+	# every later segment's rise again, earlier ones stay settled.
+	_check(SaveManager.current_save == null, "fixture: no profile is open for the jump to save")
+	Global.attempt_segment = 3
+	Global.note_arena_cleared(&"miniboss")
 	Global.attempt_segment = 5
 	Global.note_arena_cleared(&"miniboss")
 	Global.attempt_segment = 10
 	Global.note_arena_cleared(&"boss")
 	Global.note_arena_cleared(&"miniboss")
-	Global.forget_arena_clears(10)
-	_check(Global.attempt_cleared_arenas == PackedStringArray(["5:miniboss"]), "a developer jump to a segment forgets only that segment's clears")
+	DevSetCollisionTools.prepare_segment_jump(10)
+	_check(Global.attempt_segment == 10 and Global.attempt_cleared_arenas == PackedStringArray(["3:miniboss", "5:miniboss"]), "a developer jump to Segment 10 forgets that segment's clears and keeps the earlier ones")
+	Global.note_arena_cleared(&"boss")
+	DevSetCollisionTools.prepare_segment_jump(5)
+	_check(Global.attempt_segment == 5 and Global.attempt_cleared_arenas == PackedStringArray(["3:miniboss"]), "a jump back to Segment 5 forgets the clears from there on, so Segment 10's boss rises again too")
 
 
 func _test_cleared_arenas_restore() -> void:

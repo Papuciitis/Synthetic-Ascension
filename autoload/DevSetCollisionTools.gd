@@ -213,16 +213,21 @@ func set_next_run_full_replay() -> void:
 func jump_to_segment(segment: int) -> void:
 	if Global == null:
 		return
+	prepare_segment_jump(segment)
+	Global.save_current_profile()
+	Global.call_deferred("goto_game")
+
+
+## The attempt a segment jump continues: at `segment`, replayed from there.
+## Its bosses and minibosses rise again even if this attempt already beat
+## them, and so do those of every later segment, which the jump plays again.
+func prepare_segment_jump(segment: int) -> void:
 	Global.attempt_active = true
 	Global.attempt_segment = maxi(1, segment)
-	# A jump replays the segment: its boss and miniboss rise again even if this
-	# attempt already beat them.
-	Global.forget_arena_clears(Global.attempt_segment)
+	Global.forget_arena_clears_from(Global.attempt_segment)
 	if segment > 1:
 		Global.attempt_opening_completed = true
 		Global.attempt_opening_phase = 10
-	Global.save_current_profile()
-	Global.call_deferred("goto_game")
 
 # ============================================================
 # Ascension tree (V4 prototype)

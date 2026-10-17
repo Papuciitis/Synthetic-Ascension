@@ -2896,12 +2896,12 @@ func note_arena_cleared(kind: StringName) -> void:
 	attempt_cleared_arenas.append(key)
 	request_autosave()
 
-## Arms a segment's arenas again (the developer console's segment jump, which
-## rebuilds a segment inside the same attempt to replay its fights).
-func forget_arena_clears(segment: int) -> void:
-	var prefix := "%d:" % segment
+## Arms the arenas of `segment` and of every later segment again: the
+## developer console's segment jump replays the attempt from there, inside the
+## same attempt, so a fight this attempt already won from there on rises again.
+func forget_arena_clears_from(segment: int) -> void:
 	for index in range(attempt_cleared_arenas.size() - 1, -1, -1):
-		if attempt_cleared_arenas[index].begins_with(prefix):
+		if int(attempt_cleared_arenas[index].get_slice(":", 0)) >= segment:
 			attempt_cleared_arenas.remove_at(index)
 
 func apply_save(save: SaveData) -> void:
