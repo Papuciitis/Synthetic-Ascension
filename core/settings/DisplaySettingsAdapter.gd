@@ -11,7 +11,10 @@ func capture_state() -> Dictionary:
 	}
 
 
-func apply_state(values: Dictionary) -> Dictionary:
+## `keep_maximized_window`: a maximized window already at the requested
+## windowed size may stay maximized. A tool that sizes its own window passes
+## false: a maximized window ignores a resize on Windows.
+func apply_state(values: Dictionary, keep_maximized_window: bool = true) -> Dictionary:
 	var wanted_mode := StringName(values.get(&"window_mode", _mode_name()))
 	var keep_maximized := false
 	match wanted_mode:
@@ -27,7 +30,7 @@ func apply_state(values: Dictionary) -> Dictionary:
 			# A maximized window is already windowed (capture_state records it
 			# so). Un-maximizing it only to size it back would flash undrawn
 			# window over the boot splash at every start.
-			keep_maximized = _is_maximized_at(requested)
+			keep_maximized = keep_maximized_window and _is_maximized_at(requested)
 			if not keep_maximized:
 				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 				DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)

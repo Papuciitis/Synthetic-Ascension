@@ -38,8 +38,9 @@ func _ready() -> void:
 	else:
 		# A tool, probe or test runs its own scene or script: the saved state
 		# applies at once, before it loads, so the window it then sets (size,
-		# mode) is the one it keeps.
-		runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
+		# mode) is the one it keeps. A saved windowed state un-maximizes the
+		# window (on Windows it opens maximized, and then ignores a resize).
+		runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary, false)
 
 
 ## The saved window state is applied once the first frame is shown. While the
@@ -54,10 +55,19 @@ func _apply_persisted_display_once_drawn() -> void:
 	# The first frame is drawn and shown between these two steps.
 	await get_tree().process_frame
 	await get_tree().process_frame
-	# (A headless run reports its absent window as minimized.)
-	while DisplayServer.get_name() != "headless" and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MINIMIZED:
+	while _window_minimized():
 		await get_tree().process_frame
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
+
+
+func _window_minimized() -> bool:
+	return window_minimized(DisplayServer.get_name(), DisplayServer.window_get_mode())
+
+
+## Whether a window in this mode is minimized by the player. A headless run
+## reports its absent window as minimized; that one counts as shown.
+static func window_minimized(display_name: String, mode: DisplayServer.WindowMode) -> bool:
+	return display_name != "headless" and mode == DisplayServer.WINDOW_MODE_MINIMIZED
 
 
 ## Whether these command-line arguments start the project's main scene: the

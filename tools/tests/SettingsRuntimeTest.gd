@@ -4,13 +4,15 @@ class FakeDisplayAdapter:
 	extends RefCounted
 	var state := {&"window_mode": &"windowed", &"resolution": Vector2i(1280, 720), &"position": Vector2i(20, 30), &"vsync": &"on"}
 	var last_applied: Dictionary = {}
+	var last_keep_maximized := true
 	var restored: Dictionary = {}
 
 	func capture_state() -> Dictionary:
 		return state.duplicate(true)
 
-	func apply_state(values: Dictionary) -> Dictionary:
+	func apply_state(values: Dictionary, keep_maximized_window: bool = true) -> Dictionary:
 		last_applied = values.duplicate(true)
+		last_keep_maximized = keep_maximized_window
 		state.merge(values, true)
 		return state.duplicate(true)
 
@@ -27,12 +29,14 @@ class FakeRuntimeApplier:
 	extends RefCounted
 	var applied_all := 0
 	var displayed: Array[Dictionary] = []
+	var kept_maximized: Array[bool] = []
 
 	func apply_all(_values: Dictionary) -> void:
 		applied_all += 1
 
-	func apply_persisted_display(video: Dictionary) -> Dictionary:
+	func apply_persisted_display(video: Dictionary, keep_maximized: bool = true) -> Dictionary:
 		displayed.append(video.duplicate(true))
+		kept_maximized.append(keep_maximized)
 		return video
 
 
@@ -93,6 +97,10 @@ func _run() -> void:
 	_check(fake.last_applied[&"window_mode"] == &"borderless" and fake.last_applied[&"resolution"] == Vector2i(1920, 1080), "display preview applies requested mode and size")
 	runtime.revert_display_preview()
 	_check(fake.restored[&"window_mode"] == &"windowed" and fake.restored[&"resolution"] == Vector2i(1280, 720), "display rejection restores exact snapshot")
+	runtime.apply_persisted_display({&"window_mode": &"windowed"}, false)
+	_check(not fake.last_keep_maximized, "the saved window state can be told not to keep a maximized window")
+	runtime.apply_persisted_display({&"window_mode": &"windowed"})
+	_check(fake.last_keep_maximized, "and keeps one by default")
 
 	for saved in old_bus_values:
 		AudioServer.set_bus_volume_db(saved[&"index"], saved[&"volume"])
@@ -108,6 +116,9 @@ func _run() -> void:
 	manager.set("runtime_applier", applier)
 	root.add_child(manager)
 	_check(applier.applied_all == 1 and applier.displayed.size() == 1, "a tool's run gets the saved window state at once")
+	# On Windows the window opens maximized, and a maximized window ignores a
+	# resize: a tool's saved windowed state must un-maximize it.
+	_check(applier.kept_maximized == [false], "and a maximized window does not stay maximized for it")
 	# A normal start waits for the first drawn frame: while the game loads,
 	# the window's cached size is stale and a change flashes undrawn window
 	# over the boot splash.
@@ -116,7 +127,30 @@ func _run() -> void:
 	_check(applier.displayed.size() == 1, "on a normal start the saved window state waits for the first frame to be shown")
 	await process_frame
 	await process_frame
-	_check(applier.displayed.size() == 2, "and then applies once")
+	_check(applier.displayed.size() == 2 and applier.kept_maximized[1], "and then applies once, keeping a maximized window already at the saved size")
+	# A window the player minimized during the splash: the state waits until
+	# it is brought back.
+	var minimized_script := GDScript.new()
+	minimized_script.source_code = "extends \"res://autoload/SettingsManager.gd\"\nvar minimized_checks := 0\nfunc _window_minimized() -> bool:\n\tminimized_checks -= 1\n\treturn minimized_checks >= 0\n"
+	_check(minimized_script.reload() == OK, "fixture: a manager whose window reports minimized")
+	var minimized_manager := minimized_script.new() as Node
+	minimized_manager.set("storage_path", "user://settings_runtime_test_%d/settings.cfg" % Time.get_ticks_usec())
+	var minimized_applier := FakeRuntimeApplier.new()
+	minimized_manager.set("runtime_applier", minimized_applier)
+	root.add_child(minimized_manager)
+	minimized_manager.set("minimized_checks", 3)
+	minimized_manager.call("_apply_persisted_display_once_drawn")
+	for _frame in range(4):
+		await process_frame
+	_check(minimized_applier.displayed.size() == 1, "a window minimized during the splash is not restored over what the player switched to")
+	for _frame in range(2):
+		await process_frame
+	_check(minimized_applier.displayed.size() == 2, "the saved state applies once it is brought back")
+	minimized_manager.queue_free()
+	var manager_class := manager.get_script() as Script
+	_check(manager_class.call("window_minimized", "windows", DisplayServer.WINDOW_MODE_MINIMIZED) and manager_class.call("window_minimized", "x11", DisplayServer.WINDOW_MODE_MINIMIZED), "a minimized window counts as minimized")
+	_check(not manager_class.call("window_minimized", "windows", DisplayServer.WINDOW_MODE_MAXIMIZED) and not manager_class.call("window_minimized", "x11", DisplayServer.WINDOW_MODE_WINDOWED) and not manager_class.call("window_minimized", "windows", DisplayServer.WINDOW_MODE_FULLSCREEN), "a shown window does not")
+	_check(not manager_class.call("window_minimized", "headless", DisplayServer.WINDOW_MODE_MINIMIZED), "nor does a headless run's absent window, which reports minimized")
 	# Which runs are normal starts: the main scene, named or not, and nothing
 	# else; a script run is a tool's.
 	var manager_script := manager.get_script() as Script

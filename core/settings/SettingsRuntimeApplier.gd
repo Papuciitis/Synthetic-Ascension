@@ -27,8 +27,10 @@ func apply_all(values: Dictionary) -> void:
 		tree.root.content_scale_factor = float(accessibility.get(&"ui_scale", 1.0))
 
 
-func apply_persisted_display(video: Dictionary) -> Dictionary:
-	return _display_adapter.call("apply_state", video) as Dictionary
+## `keep_maximized`: a maximized window already at the saved windowed size
+## stays maximized (DisplaySettingsAdapter.apply_state).
+func apply_persisted_display(video: Dictionary, keep_maximized: bool = true) -> Dictionary:
+	return _display_adapter.call("apply_state", video, keep_maximized) as Dictionary
 
 
 func begin_display_preview(changes: Dictionary) -> bool:
