@@ -12,8 +12,8 @@ func _execute() -> void:
 	_immortal = false
 	_ambient = false
 	Global.followers_transaction.connect(_on_followers)
-	await _continue_case("tank", 16102026)
-	await _continue_case("mage", 16102027)
+	await _continue_case("tank", 16102026, true)
+	await _continue_case("mage", 16102027, false)
 	Global.followers_transaction.disconnect(_on_followers)
 	_execution_completed = _failures == 0
 
@@ -23,7 +23,9 @@ func _on_followers(_old_value: int, change: int, _new_value: int, reason: String
 		_victories.append(change)
 
 
-func _continue_case(role_value: String, seed_value: int) -> void:
+## `relaunched`: Continue from a fresh process; otherwise in the same session,
+## after quitting to the menu.
+func _continue_case(role_value: String, seed_value: int, relaunched: bool) -> void:
 	if not await _setup_world(role_value, seed_value):
 		return
 	if not await _spawn_boss():
@@ -47,8 +49,17 @@ func _continue_case(role_value: String, seed_value: int) -> void:
 	Global.apply_save(save)
 	_victories.clear()
 	_check(Global.attempt_segment == Global.FINAL_SEGMENT and Global.is_arena_cleared(&"boss") and Global.followers == paid, "%s: the save restores the segment, the clear and the paid wallet" % role_value)
-	# A relaunched process: the threat director still holds boot's segment.
-	ThreatDirector.set("_last_segment", 1)
+	if relaunched:
+		# The threat director still holds boot's segment.
+		ThreatDirector.set("_last_segment", 1)
+	else:
+		# The director still holds this segment, with the earlier pass's gate
+		# unsealed and its Overtime and evac running.
+		ThreatDirector.set("_last_segment", Global.FINAL_SEGMENT)
+		ThreatDirector.gate_unsealed = true
+		ThreatDirector.set("_unseal_time", 180.0)
+		ThreatDirector.overtime = 0.8
+		ThreatDirector.evac_pressure = 1.75
 	_game = GAME.instantiate() as Node2D
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -69,6 +80,8 @@ func _continue_case(role_value: String, seed_value: int) -> void:
 	# Resonance reaches the director held just under the unseal threshold
 	# (0.998) while the gate still waits on the primary objective.
 	_check(ThreatDirector.segment_phase == &"collapse" and ThreatDirector.resonance >= 0.998, "%s: the threat director runs the restored segment's collapse, not recon (%s, %.3f)" % [role_value, ThreatDirector.segment_phase, ThreatDirector.resonance])
+	if not relaunched:
+		_check(not ThreatDirector.gate_unsealed and is_zero_approx(ThreatDirector.overtime) and is_zero_approx(ThreatDirector.evac_pressure), "%s: continued in the same session, the rebuilt segment's pressure starts fresh: no earlier pass's unsealed gate, Overtime or evac (%s, %.2f, %.2f)" % [role_value, ThreatDirector.gate_unsealed, ThreatDirector.overtime, ThreatDirector.evac_pressure])
 	# find_children's type filter only knows engine classes: test the script class.
 	var arenas := _game.find_children("*", "", true, false).filter(func(node: Node) -> bool: return node is BossArena and not node.is_queued_for_deletion())
 	_check(arenas.is_empty(), "%s: the cleared court leaves instead of waiting to fight" % role_value)

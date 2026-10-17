@@ -199,6 +199,19 @@ func _run() -> void:
 	global.set("attempt_opening_phase", 0)
 	_check(not bool(level1.call("_opening_wants_entrance_start")), "short mode keeps the corridor start")
 	global.set("attempt_opening_completed", true)
+
+	# Opened after another profile's later segment in the same session: the
+	# director still holds that segment while Segment 1 is rebuilt from its
+	# milestones, and the restored stage's phase must outlive its next poll.
+	director.set("_last_segment", 7)
+	_check(change_scene_to_file("res://scenes/game.tscn") == OK, "segment 1 rebuilds from its milestones")
+	for _frame in range(12):
+		await process_frame
+	await create_timer(0.6).timeout
+	_check(
+		StringName(director.get("segment_phase")) == &"collapse",
+		"rebuilt past the final plaza with the director on another segment, the restored collapse holds (%s)" % director.get("segment_phase")
+	)
 	_finish()
 
 

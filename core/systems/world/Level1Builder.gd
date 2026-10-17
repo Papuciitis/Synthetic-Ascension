@@ -158,6 +158,11 @@ func _ready() -> void:
 	_opening_sequence_active = Global != null and not Global.attempt_opening_completed
 	add_to_group(&"segment_spawn_filter")
 	set_process(true)
+	# The segment's pressure starts fresh before anything is built or restored
+	# (a restored stage's phase then holds).
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("begin_segment"):
+		director.call("begin_segment")
 
 	_cm = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
