@@ -34,6 +34,7 @@ var _collapse_left: float = 0.0
 var _configured := false
 var _spawn_position := Vector2.ZERO
 var _body_scale := Vector2.ONE
+var _source: WeakRef
 
 
 ## Configure before add_child so the first world/index snapshot is already
@@ -42,6 +43,7 @@ func setup(world_pos: Vector2, source: Node, life: float = 12.0) -> void:
 	_spawn_position = world_pos
 	_configured = true
 	lifetime = clampf(life, 0.05, 30.0)
+	_source = weakref(source) if source != null else null
 	Scope.bind(self, source)
 
 func _ready() -> void:
@@ -165,7 +167,7 @@ func _process(delta: float) -> void:
 			_fire_shot()
 		return
 	_cd = maxf(_cd - delta, 0.0)
-	if _cd > 0.0:
+	if _cd > 0.0 or _holds_fire():
 		return
 	_cd = maxf(shoot_every, 0.10)
 
@@ -185,6 +187,13 @@ func _process(delta: float) -> void:
 	charge_ring.visible = true
 	_update_charge_sprites()
 	queue_redraw()
+
+
+## A main boss's major pattern (its tell, its release, its bolts and mines
+## in the air) is one spatial demand at a time: pylons wait for it to end.
+func _holds_fire() -> bool:
+	var owner_boss = _source.get_ref() if _source != null else null
+	return is_instance_valid(owner_boss) and bool(owner_boss.get_meta(&"boss_major_pattern", false))
 
 
 func _update_charge_sprites() -> void:

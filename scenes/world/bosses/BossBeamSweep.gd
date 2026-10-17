@@ -12,6 +12,11 @@ const GroundWarning = preload("res://scenes/world/bosses/BossGroundWarning.gd")
 
 @export var telegraph_scene: PackedScene = preload("res://assets/vfx/world/sets/conduit/VFX_ExplosiveT.tscn")
 @export var damage_tick: float = 0.20
+## Main-boss sweeps advance on the physics clock with their controller, so a
+## slow render frame cannot spend the player's walking time.
+@export var physics_clock := false
+## Also announce where the sweep ends, for the whole telegraph.
+@export var preview_end_lane := false
 
 @onready var area: Area2D = $Area
 @onready var shape: CollisionShape2D = $Area/CollisionShape2D
@@ -25,6 +30,7 @@ var _tick: float = 0.0
 var _configured := false
 var _world_origin := Vector2.ZERO
 var _warning
+var _end_warning
 
 func setup(world_pos: Vector2, a0: float, a1: float, src: Node) -> void:
 	_world_origin = world_pos
@@ -44,7 +50,8 @@ func _ready() -> void:
 	if _configured:
 		global_position = _world_origin
 	_configure_geometry()
-	set_process(true)
+	set_process(not physics_clock)
+	set_physics_process(physics_clock)
 
 
 func _configure_geometry() -> void:
@@ -61,8 +68,24 @@ func _configure_geometry() -> void:
 		add_child(_warning)
 	_warning.configure_beam(length, width)
 	_warning.set_progress(0.0)
+	if preview_end_lane and not is_instance_valid(_end_warning):
+		_end_warning = GroundWarning.new()
+		_end_warning.name = "SweepEndWarning"
+		add_child(_end_warning)
+	if is_instance_valid(_end_warning):
+		_end_warning.configure_beam(length, width)
+		# The node turns with the sweep; during the telegraph it rests at a0.
+		_end_warning.rotation = _a1 - _a0
+		_end_warning.modulate.a = 0.55
+		_end_warning.set_progress(0.0)
 
 func _process(delta: float) -> void:
+	_advance(delta)
+
+func _physics_process(delta: float) -> void:
+	_advance(delta)
+
+func _advance(delta: float) -> void:
 	# A cast interruption queues this channel for deletion before the frame's
 	# remaining callbacks. Do not release sound or active art in that interval.
 	if is_queued_for_deletion():
@@ -77,8 +100,13 @@ func _process(delta: float) -> void:
 	if _phase == 0:
 		if _t < maxf(0.0, telegraph_time):
 			_warning.set_progress(_t / maxf(0.001, telegraph_time))
+			if is_instance_valid(_end_warning):
+				_end_warning.set_progress(_t / maxf(0.001, telegraph_time))
 			return
 		_phase = 1
+		if is_instance_valid(_end_warning):
+			_end_warning.queue_free()
+		_end_warning = null
 		SfxManager.play_2d(&"boss_beam_release", global_position)
 		_t = maxf(0.0, _t - maxf(0.0, telegraph_time))
 		_tick = _t
@@ -130,5 +158,6 @@ func _attack_is_valid() -> bool:
 
 func cancel_attack() -> void:
 	set_process(false)
+	set_physics_process(false)
 	visible = false
 	queue_free()

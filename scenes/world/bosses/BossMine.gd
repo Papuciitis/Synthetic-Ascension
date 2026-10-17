@@ -61,8 +61,10 @@ func _physics_process(delta: float) -> void:
 	if _uses_teaching_clock():
 		_tick_fuse(delta)
 
+## Both arena tiers fuse on the physics clock their controller uses; only a
+## mine from an Arcanist outside the arenas keeps the legacy render clock.
 func _uses_teaching_clock() -> bool:
-	return is_instance_valid(source) and source.is_in_group(&"miniboss") and not source.is_in_group(&"boss")
+	return is_instance_valid(source) and (source.is_in_group(&"miniboss") or source.is_in_group(&"boss"))
 
 func _tick_fuse(delta: float) -> void:
 	if not _attack_is_valid():
