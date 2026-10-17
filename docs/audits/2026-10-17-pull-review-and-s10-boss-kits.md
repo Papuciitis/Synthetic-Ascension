@@ -106,7 +106,7 @@ The oracle sampled 15 positions (120–500 px, 0–30° off the aim). The legacy
 | S5 teaching suites: Bulldozer, Arcanist, actual-Game escape matrix | 55 / 0, 44 / 0, 156 / 0 |
 | Boss hazard geometry, pylon lifecycle, cast lifecycle, encounter ownership, attack audio, attack identity | 31, 36, 16, 35, 52, 25 / 0 |
 | ElitePaletteVisualTest, on a real display | 19 / 0 |
-| S10MainBossEscapeTest (new): actual Game, S10 court, production player, two seeds | 173 / 0; 28 of 28 paired cases, 96 s |
+| S10MainBossEscapeTest (new): actual Game, S10 court, production player, two seeds | 185 / 0; 28 paired escape cases and 4 native-melee recovery cases, 107 s |
 
 The full run after `--import` covered 301 scene suites and 26 script suites. All exit 0 with no failure, except five items that behave identically at the pre-pull baseline:
 - BuildSimulator and ManifestationPlaytestProbe are long probes that reach the runner's 300 s limit;
@@ -135,13 +135,14 @@ Seeds 16102026 and 16102027 cover both roles, 28 paired results in all:
 | Convergence Sequence | 300 px | 6 hits | straight away, past both reaches |
 | Four-node mine arc | 260 px; all four mines and payloads observed | untouched (the centre is safe by design) | the committed corridor |
 
+Native melee recovery cases run once per role and seed. From body contact, the main boss commits a cleave (Bulldozer) or its focused fan (Arcanist). The oracle rightly refuses a Split Fan at contact range, where the Arcanist blinks first in play. Native melee then lands three hits inside each earned recovery.
+
 Both seeds produced the same routes, except that the mine corridor differed. With seed 16102027 the corridor pointed at the Arcanist: walking it to the end cost 10.9 HP of ordinary body contact. This is the S5 placement rule, and ordinary contact is a separate cost here as in the S5 audit. These are baseline-movement controls, not exhaustive angles, walls, crowds or slowed builds.
 
 ## Owed
 
 - **Human playtest.** Readability in crowds, the 75–150 s pacing band for ordinary builds, the neutral beat's length, pylon pressure and the cleave's 160 px trigger all need a human run, with mixed S5-to-S10 roles.
 - **Not built.** The Split Fan's "later, explicitly indicated rotated follow-up" was not built, because the Convergence Sequence carries phase 3's composition. A damaging debris lane was not built either.
-- **Recovery hits.** S10 melee during recovery is covered by the S5 recovery controls, which use the same recovery rules, but has no S10-specific native-hit control.
 - **Rest of step 6.** Still to do:
   - phase-intensifying music and the defeat/release cue;
   - distinct S10 portraits;

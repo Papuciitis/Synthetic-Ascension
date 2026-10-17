@@ -60,6 +60,8 @@ func _execute() -> void:
 			# Count requested work before any awaited setup, so an aborted
 			# helper cannot pass by omission.
 			_expected_results += cases.size() * 2
+			if _s10_case.is_empty():
+				_expected_results += 1
 			if not await _setup_world(role_value, chosen_seed):
 				continue
 			for attack in cases:
@@ -70,6 +72,10 @@ func _execute() -> void:
 					_check(int(stationary.get("danger_attempts", 0)) > 0, "%s seed%d stationary control is reached by the actual attack" % [attack, chosen_seed])
 				_check(bool(walking.get("committed", false)) and int(walking.get("danger_attempts", 1)) == 0, "%s seed%d walking the oracle's route after150ms escapes without dash or a damage-resolution attempt" % [attack, chosen_seed])
 				_check(int(walking.get("dashes", -1)) == 0, "%s seed%d walking case never invokes dash" % [attack, chosen_seed])
+			if _s10_case.is_empty():
+				# At body contact the main Arcanist commits its focused fan; the
+				# oracle rightly refuses a Split Fan there.
+				await _melee_recovery_attempt("cleave" if role_value == "tank" else "fan")
 	_execution_completed = _expected_results > 0 and _results.size() == _expected_results
 	_check(_execution_completed, "all %d requested S10 case results completed; no setup/helper abort or omitted case" % _expected_results)
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
@@ -277,6 +283,42 @@ func _escape_attempt(attack: String, response: String) -> Dictionary:
 	_results.append(result)
 	print("S10 escape case: ", JSON.stringify(result))
 	return result
+
+
+## The opening after an S10 commitment: native melee from body contact must
+## land during the recovery the attack earns.
+func _melee_recovery_attempt(attack: String) -> void:
+	if not await _spawn_boss():
+		return
+	if _brain.has_method("_sync_tier"):
+		_brain.call("_sync_tier")
+	if _brain.has_method("_ensure_teaching"):
+		_brain.call("_ensure_teaching")
+	for property in PARKED_CLOCKS:
+		if property in _brain:
+			_brain.set(property, 100.0)
+	_boss._charge._cd = 100.0
+	_brain.set("_boss_phase", 1)
+	_player.rotation = 0.0
+	_player.global_position = _boss.global_position + Vector2(_contact_distance() + 1.0, 0)
+	_player.velocity = Vector2.ZERO
+	_player.set("hp", _player.get("max_hp"))
+	_player.set("invulnerable_time", 0.0)
+	_reset_evidence()
+	_control = "natural"
+	_attack_enabled = true
+	_activate_combat()
+	_running = true
+	var committed := bool(_brain.call("_try_main_attack" if _role == "tank" else "_try_main_pattern", _tank_kind(attack) if _role == "tank" else StringName(attack)))
+	_check(committed, "%s melee case: the S10 %s committed through its real entry point" % [_role, attack])
+	var hp_before := _boss.hp
+	while _time < 3.0 and not bool(_player.get("is_dead")):
+		await get_tree().physics_frame
+	_running = false
+	_release_inputs()
+	_check(_boss_hits > 0 and _boss.hp < hp_before, "%s S10 native melee reaches the production main-boss body" % _role)
+	_check(_recovery_hits > 0, "%s S10 %s recovery allows at least one genuine native melee hit" % [_role, attack])
+	_results.append({"seed": _seed_value, "role": _role, "case": "native_melee_recovery", "attack": attack, "committed": committed, "hits": _boss_hits, "recovery_hits": _recovery_hits, "boss_hp_before": hp_before, "boss_hp_after": _boss.hp, "events": _events.duplicate(true), "damage": _damage.duplicate(true)})
 
 
 ## Where each case stands the player, on the boss's +x side: inside the
