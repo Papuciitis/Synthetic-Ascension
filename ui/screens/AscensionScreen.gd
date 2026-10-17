@@ -715,8 +715,10 @@ func _show(id: String) -> void:
 	_meta.text = "   ·   ".join(parts)
 	_rules.text = String(node.get("rules", node.get("tooltip", "")))
 	var purchase_segment := ledger.city_purchase_segment(id)
-	if purchase_segment > 0 and int(ledger.state.get("segments_completed", 0)) < purchase_segment:
-		_rules.text += "\n\nPurchase requirement: complete segment %d." % purchase_segment
+	if purchase_segment > 0:
+		# The milestone stays on record once met; it only stops reading as owed.
+		var met := int(ledger.state.get("segments_completed", 0)) >= purchase_segment
+		_rules.text += "\n\nPurchase requirement: complete segment %d%s." % [purchase_segment, " (met)" if met else ""]
 	for child in _buttons.get_children():
 		child.queue_free()
 	for child in _gate_row.get_children():
