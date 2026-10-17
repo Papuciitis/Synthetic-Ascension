@@ -1625,6 +1625,13 @@ func get_move_speed_multiplier() -> float:
 	return total
 
 
+func get_sustained_move_speed_multiplier() -> float:
+	var total := 1.0
+	for engine in engines:
+		total *= engine.sustained_move_speed_multiplier()
+	return total
+
+
 func get_damage_taken_multiplier() -> float:
 	var total := 1.0
 	for engine in engines:

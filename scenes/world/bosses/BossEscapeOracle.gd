@@ -70,17 +70,18 @@ static func player_shape(player: Node) -> Dictionary:
 	return shape
 
 
-## The walk the check grants this player: the lower of its stat speed (race,
-## style, flat equipment) and its effective speed (equipment and build
-## multipliers, such as a cursed ring or a weapon's burst), never above
-## BASE_SPEED. A boost that may end mid-pattern does not count; a slow does,
-## so the boss waits rather than certify a walk the player cannot make.
+## The walk the check grants this player: the speed it keeps up (its stat
+## speed under every slow it cannot shed at will, such as a cursed ring or a
+## weapon's burst; player.get_sustained_move_speed), never above BASE_SPEED.
+## A boost that may end mid-pattern does not count, nor hide a slow, so the
+## boss waits rather than certify a walk the player cannot make; a guard the
+## player holds at will does not count, or holding it would pacify the boss.
 static func walking_speed(player: Node) -> float:
 	if player == null or not "speed" in player:
 		return BASE_SPEED
 	var sustained := float(player.get("speed"))
-	if player.has_method("get_effective_move_speed"):
-		sustained = minf(sustained, float(player.call("get_effective_move_speed")))
+	if player.has_method("get_sustained_move_speed"):
+		sustained = minf(sustained, float(player.call("get_sustained_move_speed")))
 	return clampf(sustained, 1.0, BASE_SPEED)
 
 

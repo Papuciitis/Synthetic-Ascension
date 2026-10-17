@@ -756,6 +756,15 @@ func move_speed_multiplier() -> float:
 	return mul
 
 
+## A held guard is let go at will, so its slow is not kept; an automatic guard
+## runs out its 0.75 s.
+func sustained_move_speed_multiplier() -> float:
+	var mul := 0.5 if guarding and has("BAQ1") and _auto_release >= 0.0 else 1.0
+	if has("MM9") and force > 100.0:
+		mul *= 0.8
+	return mul
+
+
 func hud_state(slot: String) -> Dictionary:
 	var state := {}
 	if slot == "q":

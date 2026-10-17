@@ -140,15 +140,42 @@ func _run() -> void:
 	var quick := WalkSpeed.new()
 	quick.speed = 300.0
 	_check(is_equal_approx(ORACLE.walking_speed(slow), 80.0) and is_equal_approx(ORACLE.walking_speed(quick), ORACLE.BASE_SPEED) and is_equal_approx(ORACLE.walking_speed(null), ORACLE.BASE_SPEED), "each player walks at its own speed, never above the 100 px/s baseline")
-	var ringed := RingedWalker.new()
-	var boosted := RingedWalker.new()
-	boosted.speed = 80.0
-	boosted.effective = 96.0
-	_check(is_equal_approx(ORACLE.walking_speed(ringed), 92.0) and is_equal_approx(ORACLE.walking_speed(boosted), 80.0), "a cursed ring's slow counts and a passing boost does not: the walk is the lower of stat and effective speed")
 	slow.free()
 	quick.free()
-	ringed.free()
-	boosted.free()
+	# The production player's own speed sources: a cursed ring's slow counts;
+	# a kill bonus and the respawn boost may lapse, so they neither count nor
+	# hide the slow; a guard held at will does not count, an automatic one does.
+	var walker := PLAYER.instantiate()
+	add_child(walker)
+	walker.set("speed", 100.0)
+	var items := walker.get_node("ItemEffectRunner") as ItemEffectRunner
+	var sets := walker.get_node("SetRunner") as SetRunner
+	var ring := SpeedSource.new()
+	ring.multiplier = 0.8
+	var overclock := SpeedSource.new()
+	overclock.multiplier = 1.18
+	items._active_effects[&"oracle_ring"] = ring
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 80.0), "a cursed ring's slow counts")
+	sets._active_effects[&"oracle_overclock"] = overclock
+	walker.set("respawn_phase_left", 2.0)
+	walker.set("respawn_speed_mul", 1.35)
+	_check(float(walker.call("get_effective_move_speed")) > 100.0 and is_equal_approx(ORACLE.walking_speed(walker), 80.0), "boosts that may lapse neither count nor hide the ring's slow (walks %.1f px/s, kept %.1f)" % [float(walker.call("get_effective_move_speed")), ORACLE.walking_speed(walker)])
+	items._active_effects.erase(&"oracle_ring")
+	sets._active_effects.erase(&"oracle_overclock")
+	walker.set("respawn_phase_left", 0.0)
+	var ascension := walker.get_node("AscensionRunner") as AscensionRunner
+	var bastion := BastionEngine.new()
+	bastion.setup(ascension)
+	bastion.refresh({"BAQ": true, "BAQ1": true})
+	ascension.engines.append(bastion)
+	bastion.guarding = true
+	_check(is_equal_approx(float(walker.call("get_effective_move_speed")), 50.0) and is_equal_approx(ORACLE.walking_speed(walker), 100.0), "a guard held at will halves the walk, but the player can let it go: it does not count")
+	bastion._auto_release = 0.75
+	_check(is_equal_approx(ORACLE.walking_speed(walker), 50.0), "an automatic guard runs out its 0.75 s: its slow counts")
+	ascension.engines.erase(bastion)
+	walker.queue_free()
+	ring.free()
+	overclock.free()
 	# A dash is not a walk: nothing is certified until it ends. Pushed into a
 	# body it touches, the player slides along it rather than into it.
 	var dashing := shape.duplicate()
@@ -173,13 +200,12 @@ class WalkSpeed:
 	var speed := 100.0
 
 
-class RingedWalker:
+class SpeedSource:
 	extends Node
-	var speed := 115.0
-	var effective := 92.0
+	var multiplier := 1.0
 
-	func get_effective_move_speed() -> float:
-		return effective
+	func get_move_speed_multiplier() -> float:
+		return multiplier
 
 
 func _finish() -> void:
