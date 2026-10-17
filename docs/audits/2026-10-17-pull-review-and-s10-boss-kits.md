@@ -106,6 +106,7 @@ The oracle sampled 15 positions (120–500 px, 0–30° off the aim). The legacy
 | S5 teaching suites: Bulldozer, Arcanist, actual-Game escape matrix | 55 / 0, 44 / 0, 156 / 0 |
 | Boss hazard geometry, pylon lifecycle, cast lifecycle, encounter ownership, attack audio, attack identity | 31, 36, 16, 35, 52, 25 / 0 |
 | ElitePaletteVisualTest, on a real display | 19 / 0 |
+| S10MainBossEscapeTest (new): actual Game, S10 court, production player, two seeds | 173 / 0; 28 of 28 paired cases, 96 s |
 
 The full run after `--import` covered 301 scene suites and 26 script suites. All exit 0 with no failure, except five items that behave identically at the pre-pull baseline:
 - BuildSimulator and ManifestationPlaytestProbe are long probes that reach the runner's 300 s limit;
@@ -114,11 +115,33 @@ The full run after `--import` covered 301 scene suites and 26 script suites. All
 
 Afterwards the player's save slot and settings were byte-identical to a pre-session backup. The suite rewrites four probe reports in the user data root, including the item balance baseline; those were restored from the backup.
 
+### Actual-Game walking controls
+
+`tools/tests/S10MainBossEscapeTest.tscn` builds on the S5 harness. It uses the actual Game at segment 10, the generated S10 court with its real `BossArena`, and the production player with native movement input.
+
+Each case runs in a fresh boss. It arranges the attack's phase and parks the boss's other clocks. It then commits the attack through the same entry point that runs the oracle: `_try_main_attack` or `_try_main_pattern`. The harness rebuilds the oracle's route from the committed plan, with the same hazards, player shapes, body blocker and world corridor. Each case runs twice, with real damage and dash unavailable:
+- **Stationary:** the player stands still and must be reached by the attack.
+- **Walking:** the player walks the oracle's route after 150 ms at 100 px/s and must draw no boss damage-resolution attempt.
+
+Seeds 16102026 and 16102027 cover both roles, 28 paired results in all:
+
+| Attack | Arranged position | Stationary | Route walked |
+|---|---|---|---|
+| Sweeping Cleave | 15 px beyond body contact | struck once | straight away |
+| Breach Sequence | 200 px in the lane | struck by the rush, which stopped short, so its impact was withdrawn | 67.5° off the lane; the boss arrives and the impact lands clear |
+| Fault Line with follow-up | 200 px on the line; the follow-up line was committed | 3 nodes | perpendicular, away from the follow-up side |
+| Split Fan | 300 px | 3 bolts | straight away: the 525 px reach expires short of the player |
+| Arc Sweep | 300 px | 3 ticks | 112.5° (toward the boss and to the side) |
+| Convergence Sequence | 300 px | 6 hits | straight away, past both reaches |
+| Four-node mine arc | 260 px; all four mines and payloads observed | untouched (the centre is safe by design) | the committed corridor |
+
+Both seeds produced the same routes, except that the mine corridor differed. With seed 16102027 the corridor pointed at the Arcanist: walking it to the end cost 10.9 HP of ordinary body contact. This is the S5 placement rule, and ordinary contact is a separate cost here as in the S5 audit. These are baseline-movement controls, not exhaustive angles, walls, crowds or slowed builds.
+
 ## Owed
 
-- **Real-Game S10 controls.** The S5 harness is specific to S5. The oracle reproduces the S5 audit's slam threshold, but the S10 patterns have no native-physics walking matrix yet.
 - **Human playtest.** Readability in crowds, the 75–150 s pacing band for ordinary builds, the neutral beat's length, pylon pressure and the cleave's 160 px trigger all need a human run, with mixed S5-to-S10 roles.
 - **Not built.** The Split Fan's "later, explicitly indicated rotated follow-up" was not built, because the Convergence Sequence carries phase 3's composition. A damaging debris lane was not built either.
+- **Recovery hits.** S10 melee during recovery is covered by the S5 recovery controls, which use the same recovery rules, but has no S10-specific native-hit control.
 - **Rest of step 6.** Still to do:
   - phase-intensifying music and the defeat/release cue;
   - distinct S10 portraits;

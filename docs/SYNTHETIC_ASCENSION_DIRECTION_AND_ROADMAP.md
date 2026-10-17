@@ -2365,4 +2365,4 @@ Both S10 bosses now run three phases at 65% / 30%. Phases only advance, with a s
 
 A walk-out oracle commits a main-boss attack only when a 100 px/s walk with the real Hurtbox still escapes. The arenas' movement tuning now reaches movement. Projectile batches now pay a boss's damage cap and an elite's plate hit by hit, exactly as separate hits. The S10 boss bar shows phase marks, and each role has its own entrance line.
 
-Staged actual-Game captures show every new telegraph. A real-Game S10 walking matrix, a human playtest, music, portraits and the boss reward floor/settlement remain. See `docs/audits/2026-10-17-pull-review-and-s10-boss-kits.md`.
+Staged actual-Game captures show every new telegraph. Actual-Game controls walk each new S10 attack's oracle route with the production player on two seeds (28 paired cases, no boss damage attempt). A human playtest, music, portraits and the boss reward floor/settlement remain. See `docs/audits/2026-10-17-pull-review-and-s10-boss-kits.md`.
