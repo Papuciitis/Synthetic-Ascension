@@ -35,8 +35,9 @@ func _run() -> void:
 	var screen := SCREEN.instantiate()
 	view.add_child(screen)
 	# Each suite runs in a fresh process, with no stroke pattern yet; building
-	# a presentation makes none (each hub dispatch letter is one, and never
-	# shows a still).
+	# a presentation makes none, then or in the frames after (each hub
+	# dispatch letter is one, and never shows a still).
+	await _settle()
 	_check(OpeningPresentation._shared_strokes == null, "building a presentation makes no stroke pattern")
 	_check(screen.has_method("show_illustration") and screen.has_method("clear_illustration"), "story cards can select and release optional illustrations")
 	if not screen.has_method("show_illustration"):

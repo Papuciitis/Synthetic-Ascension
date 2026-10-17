@@ -61,7 +61,8 @@ func _execute() -> void:
 			# helper cannot pass by omission.
 			_expected_results += cases.size() * 2
 			if _s10_case.is_empty():
-				_expected_results += 1
+				# The native-melee recovery and the wall rest.
+				_expected_results += 2
 			if not await _setup_world(role_value, chosen_seed):
 				continue
 			for attack in cases:
@@ -349,17 +350,18 @@ func _wall_hug_attempt() -> void:
 			break
 	_player.process_mode = Node.PROCESS_MODE_DISABLED
 	_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
-	# These courts' walls stand at the edge of the boss's disengage radius,
-	# where it rightly leaves the fight. The home moves 600 px straight out
-	# from the wall, as in a court whose wall lies inside the fight; the wall's
-	# grid cells and colliders stay the real ones. The boss attacks from
-	# 300 px straight out, so the attack's line meets the wall square on and
-	# a walk along the wall leaves it.
+	# The boss attacks from 300 px straight out, so the attack's line meets
+	# the wall square on and a walk along the wall leaves it. The court keeps
+	# its own home, leash and disengage radius: this wall lies inside the
+	# fight.
 	var out := -toward
-	_boss.set_meta(&"boss_home_pos", _player.global_position + out * 600.0)
 	_boss.global_position = _player.global_position + out * 300.0
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	var home: Vector2 = _boss.get_meta(&"boss_home_pos", Vector2.INF)
+	var player_from_home := _player.global_position.distance_to(home)
+	var boss_from_home := _boss.global_position.distance_to(home)
+	_check(player_from_home < float(_boss.get_meta(&"boss_disengage_radius", 0.0)) and boss_from_home < float(_boss.get_meta(&"boss_leash_radius", 0.0)), "fixture: %s seed%d: the wall lies inside the fight (player %.0f px from home, boss %.0f px)" % [_role, _seed_value, player_from_home, boss_from_home])
 	var plan: Array = []
 	var blockers: Array = []
 	if _role == "tank":
@@ -371,6 +373,7 @@ func _wall_hug_attempt() -> void:
 	_check(Oracle.has_escape(_player.global_position, plan, Oracle.player_shape(_player), blockers, Callable(), Oracle.walking_speed(_player)), "fixture: %s seed%d: in open ground the same attack leaves a walk out" % [_role, _seed_value])
 	var committed := bool(_brain.call("_try_main_attack", &"shock")) if _role == "tank" else bool(_brain.call("_try_main_pattern", &"fan"))
 	_check(committed, "%s seed%d: a player resting against a real court wall still draws the boss's aimed attack" % [_role, _seed_value])
+	_results.append({"seed": _seed_value, "role": _role, "case": "wall_rest", "wall_cell": wall, "player_from_home": player_from_home, "boss_from_home": boss_from_home, "resting": resting, "committed": committed})
 
 
 ## The opening after an S10 commitment: native melee from body contact must
