@@ -215,6 +215,9 @@ func jump_to_segment(segment: int) -> void:
 		return
 	Global.attempt_active = true
 	Global.attempt_segment = maxi(1, segment)
+	# A jump replays the segment: its boss and miniboss rise again even if this
+	# attempt already beat them.
+	Global.forget_arena_clears(Global.attempt_segment)
 	if segment > 1:
 		Global.attempt_opening_completed = true
 		Global.attempt_opening_phase = 10

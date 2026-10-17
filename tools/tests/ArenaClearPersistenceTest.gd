@@ -99,6 +99,15 @@ func _test_record() -> void:
 	older.attempt_cleared_arenas = PackedStringArray()
 	Global.apply_save(older)
 	_check(Global.attempt_cleared_arenas.is_empty(), "a save from before the record loads with nothing settled")
+	# The developer console's segment jump arms that segment's arenas again,
+	# and only that segment's.
+	Global.attempt_segment = 5
+	Global.note_arena_cleared(&"miniboss")
+	Global.attempt_segment = 10
+	Global.note_arena_cleared(&"boss")
+	Global.note_arena_cleared(&"miniboss")
+	Global.forget_arena_clears(10)
+	_check(Global.attempt_cleared_arenas == PackedStringArray(["5:miniboss"]), "a developer jump to a segment forgets only that segment's clears")
 
 
 func _test_cleared_arenas_restore() -> void:
