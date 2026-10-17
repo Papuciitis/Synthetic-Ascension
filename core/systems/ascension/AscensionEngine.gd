@@ -235,7 +235,7 @@ func move_speed_multiplier() -> float:
 ## The part of move_speed_multiplier() the player keeps through a boss
 ## pattern's window (BossEscapeOracle): the slows it cannot shed at will. A
 ## boost that may lapse does not count. Override where a slow is the player's
-## to drop, such as a held guard.
+## to drop now, such as a guard it holds Q for or a Burst it can cancel.
 func sustained_move_speed_multiplier() -> float:
 	return minf(1.0, move_speed_multiplier())
 

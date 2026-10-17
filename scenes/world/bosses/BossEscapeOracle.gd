@@ -73,11 +73,12 @@ static func player_shape(player: Node) -> Dictionary:
 
 
 ## The walk the check grants this player: the speed it keeps up (its stat
-## speed under every slow it cannot shed at will, such as a cursed ring or a
-## weapon's burst; player.get_sustained_move_speed), never above BASE_SPEED.
+## speed under every slow it cannot shed at will, such as a cursed ring or an
+## automatic guard; player.get_sustained_move_speed), never above BASE_SPEED.
 ## A boost that may end mid-pattern does not count, nor hide a slow, so the
-## boss waits rather than certify a walk the player cannot make; a guard the
-## player holds at will does not count, or holding it would pacify the boss.
+## boss waits rather than certify a walk the player cannot make; a slow the
+## player can drop now (a guard it holds Q for, a Burst a second press
+## cancels) does not count, or keeping it up would pacify the boss.
 static func walking_speed(player: Node) -> float:
 	if player == null or not "speed" in player:
 		return BASE_SPEED

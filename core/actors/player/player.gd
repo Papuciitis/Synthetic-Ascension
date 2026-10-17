@@ -605,8 +605,9 @@ func get_effective_move_speed() -> float:
 ## The walk the player keeps up through a boss pattern's window, which
 ## BossEscapeOracle certifies walk-outs at: the stored speed under every slow
 ## it cannot shed at will. Boosts that may lapse (the respawn boost, kill and
-## surge bonuses) do not count and cannot hide a slow, and a guard held at
-## will does not count either.
+## surge bonuses) do not count and cannot hide a slow, and a slow the player
+## can drop now (a guard it holds Q for, a Burst it can cancel) does not count
+## either.
 func get_sustained_move_speed() -> float:
 	var kept: float = speed
 
