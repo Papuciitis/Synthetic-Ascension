@@ -961,7 +961,7 @@ func _start_teaching_mines(count: int = 3) -> bool:
 		# along `escape` stays open either way.
 		for degrees in ([60.0, 180.0, -60.0] if count <= 3 else [50.0, 130.0, -130.0, -50.0]):
 			points.append(center + escape.rotated(deg_to_rad(degrees)) * 210.0)
-		if TeachingPlacement.mine_pattern_valid(_e, _e.player, center, points, escape, mine_radius, _current_mines()):
+		if TeachingPlacement.mine_pattern_valid(_e, _e.player, center, points, escape, mine_radius, _current_mines()) and TeachingPlacement.corridor_avoids_body(_e, _e.player, center, escape):
 			_teaching_mine_points = points
 			_teaching_escape = escape
 			found = true

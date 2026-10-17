@@ -8,6 +8,7 @@ extends Node
 const MAGE := preload("res://scenes/world/bosses/BossArcanist.tscn")
 const BRAIN := preload("res://scenes/world/bosses/BossArcanistBrain.gd")
 const ORACLE := preload("res://scenes/world/bosses/BossEscapeOracle.gd")
+const PLACEMENT := preload("res://scenes/world/bosses/BossTeachingPlacement.gd")
 var _passes := 0
 var _failures := 0
 var _world: Node2D
@@ -349,6 +350,18 @@ func _test_mine_arc() -> void:
 	_check(mines.size() == 4, "the arc has four nodes")
 	_check(mines.size() > 0 and is_equal_approx((mines[0] as BossMine).damage, 15.0 * 1.4), "phase 3 mines hit harder")
 	_check(mines.size() > 0 and bool((mines[0] as BossMine).call("_uses_teaching_clock")), "main-boss mines fuse on the physics clock")
+	var escape: Vector2 = _brain.get("_teaching_escape")
+	_check(escape.dot(_mage.global_position - _player.global_position) <= 0.0, "the escape corridor does not lead toward the boss")
+	# The corridor never closes on the boss's body, wherever the gap would
+	# fall; beside the body, or away from it, it may.
+	var center := _player.global_position
+	var toward := (_mage.global_position - center).normalized()
+	var placement := func(direction: Vector2) -> bool:
+		var points := PackedVector2Array()
+		for degrees in [50.0, 130.0, -130.0, -50.0]:
+			points.append(center + direction.rotated(deg_to_rad(degrees)) * 210.0)
+		return PLACEMENT.mine_pattern_valid(_mage, _player, center, points, direction, float(_brain.get("mine_radius")), []) and PLACEMENT.corridor_avoids_body(_mage, _player, center, direction)
+	_check(not bool(placement.call(toward)) and bool(placement.call(-toward)) and bool(placement.call(toward.orthogonal())), "a corridor into the boss is refused; away or beside it is kept")
 	await _finish_fixture()
 
 

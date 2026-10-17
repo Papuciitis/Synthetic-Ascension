@@ -2,6 +2,8 @@ extends RefCounted
 ## Conservative placement against live physics and loaded procedural space.
 ## Actor origins, collision shapes and hurtboxes supply the real clearances.
 const WORLD_MASK := 1793 # World + full/window/half cover; excludes actors.
+## How far a mine pattern's escape corridor must stay open.
+const MINE_CORRIDOR := 240.0
 
 static func body_radius(actor: Node2D) -> float:
 	var body := actor.get_node_or_null("CollisionShape2D") as CollisionShape2D
@@ -110,9 +112,19 @@ static func blink_valid(actor: CharacterBody2D, player: Node2D, point: Vector2, 
 			return false
 	return true
 
+## Choosing a mine pattern, its corridor must not lead into the boss's own
+## body: it may start beside it, never close on it. Checked when the pattern
+## is chosen; the boss may move during the tell like any body.
+static func corridor_avoids_body(actor: Node2D, player: Node2D, center: Vector2, escape: Vector2) -> bool:
+	var boss := actor.global_position
+	if escape.dot(boss - center) <= 0.0:
+		return true
+	var nearest := Geometry2D.get_closest_point_to_segment(boss, center, center + escape * MINE_CORRIDOR)
+	return nearest.distance_to(boss) > body_radius(actor) + player_clearance(player) + 8.0
+
 static func mine_pattern_valid(actor: Node2D, player: Node2D, center: Vector2, points: PackedVector2Array, escape: Vector2, radius: float, mines: Array) -> bool:
 	var clearance := player_clearance(player) + 8.0
-	var end := center + escape * 240.0
+	var end := center + escape * MINE_CORRIDOR
 	if not corridor_clear(actor, center, end, clearance):
 		return false
 	for point in points:
