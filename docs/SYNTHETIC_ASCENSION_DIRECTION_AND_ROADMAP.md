@@ -2346,3 +2346,23 @@ The third boss delivery gives Bulldozer a committed physical rush, planted impac
 Dedicated raster sprites distinguish blink destinations and Runner arrivals. Actual paired Game controls cover walking, separate native dashes, recovery melee, court-edge escape and genuine kill-trigger access. The original matrix remains RED for two corrected Runner attribution checks; focused follow-ups, 99 continuation checks and five compatibility suites pass. A native lethal-hazard cleanup error found by the controls now pauses immediately and defers collision disabling safely. The audit retains exact source/log identities and limitations.
 
 Four normal/small-window clips show the sprite cues in the actual court/HUD using clearly labelled immortal playback; actual-damage controls are separate. Ordinary body contact remains active outside the Tank's committed states and remains a separate cost for Mage. Dense human readability, slowed builds, pacing, finished character animation and final mix still need playtesting. S10 phase kits and later entrance/music/HUD/reward presentation remain later deliveries. See `docs/audits/2026-10-16-s5-teaching-fights.md`.
+
+
+## 2026-10-17 — Pull review and Segment 10 main-boss kits
+
+The 48 pulled commits were reviewed by area. Twenty-nine follow-ups fix what the review confirmed:
+
+- a library pagination freeze, and a pause that could stay frozen under a closing Binding;
+- a completion that stranded the player, deaths recorded as quits, and an erased chronicle that could be rewritten;
+- a repeatable free Binding grant, Reliquary level reports, and doorless carved buildings;
+- input and HUD details in the opening, hub and pause menu, and two S5 boss edges;
+- six performance passes (the shadow and page-turn ones verified bit- and pixel-identical), and five suites aligned with deliberate changes.
+
+Both S10 bosses now run three phases at 65% / 30%. Phases only advance, with a short damageable phase beat; tells never shorten and cooldowns tighten by tempo.
+
+- **Bulldozer:** Sweeping Cleave and one warned Runner call in phase 2, then a Breach Sequence and a fully previewed Fault Line follow-up in phase 3.
+- **Arcanist:** a Split Fan with a drawn gap, a rebuilt Arc Sweep showing its start and end lanes, and one Pylon Pair in phase 2. Phase 3 adds a Convergence Sequence, a four-node mine arc and a fresh pair. Pylons hold fire through major patterns and fire in a neutral beat between them.
+
+A walk-out oracle commits a main-boss attack only when a 100 px/s walk with the real Hurtbox still escapes. The arenas' movement tuning now reaches movement. Projectile batches now pay a boss's damage cap and an elite's plate hit by hit, exactly as separate hits. The S10 boss bar shows phase marks, and each role has its own entrance line.
+
+Staged actual-Game captures show every new telegraph. A real-Game S10 walking matrix, a human playtest, music, portraits and the boss reward floor/settlement remain. See `docs/audits/2026-10-17-pull-review-and-s10-boss-kits.md`.
