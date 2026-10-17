@@ -34,6 +34,15 @@ func update_hp(hp: float, max_hp: float) -> void:
 func hide_boss() -> void:
 	visible = false
 
+## The main boss's phase marks (BossPhases) on the bar's front ornament.
+func set_phase_marks(marks: Array[float]) -> void:
+	if _frame != null:
+		_frame.call("set_phase_marks", marks)
+
+func set_phase(phase: int) -> void:
+	if _frame != null:
+		_frame.call("set_phase_reached", phase)
+
 func _set_hp(hp: float, max_hp: float, animate: bool = true) -> void:
 	if hp_bar == null:
 		return
