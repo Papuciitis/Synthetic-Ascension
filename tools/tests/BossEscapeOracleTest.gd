@@ -184,6 +184,22 @@ func _run() -> void:
 	pressing["velocity"] = Vector2(-100, 0)
 	_check(ORACLE.escape_route(contact, _slam(1.3), dashing, body) == null, "while the player dashes, nothing is certified")
 	_check(ORACLE.escape_route(contact, _slam(1.3), pressing, body) == ORACLE.escape_route(contact, _slam(1.3), still, body), "pushing into a touched body is not motion into it")
+	# Walking straight at the body, the capsule touches at its radius (25 px),
+	# not its side-on reach (29 px): a player 2 px short of contact closes to
+	# it during the reaction. From contact a 1.2 s slam is not escaped (the
+	# walk needs 1.21 s); from 2 px farther out it would be.
+	var facing_in := shape.duplicate()
+	facing_in["rotation"] = PI
+	facing_in["velocity"] = Vector2(-100, 0)
+	var facing_still := shape.duplicate()
+	facing_still["rotation"] = PI
+	var short_of := contact + Vector2(2.0, 0.0)
+	_check(ORACLE.has_escape(short_of, _slam(1.2), facing_still, body) and not ORACLE.has_escape(contact, _slam(1.2), facing_still, body), "fixture: a 1.2 s slam is escaped from 2 px beyond contact, not from contact")
+	_check(not ORACLE.has_escape(short_of, _slam(1.2), facing_in, body), "walking in 2 px short of contact, the player is judged from the contact it reaches")
+	# Running at the body from farther out, it reaches contact within the
+	# reaction and is judged from there, not refused for walking through it.
+	var running_in := contact + Vector2(10.0, 0.0)
+	_check(ORACLE.escape_route(running_in, _slam(1.3), facing_in, body) == ORACLE.escape_route(contact, _slam(1.3), facing_still, body) and ORACLE.escape_route(contact, _slam(1.3), facing_still, body) is Vector2, "running at the body, the player is judged from the contact it reaches within the reaction")
 	# The route bends where the reaction ends: its drift is a leg of its own.
 	var legs: Array = []
 	var record := func(from: Vector2, to: Vector2) -> bool:

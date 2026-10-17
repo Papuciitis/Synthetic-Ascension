@@ -114,14 +114,25 @@ static func escape_route(start: Vector2, plan: Array, shape: Dictionary = {}, bl
 	# until it is over (the controller tries again shortly).
 	if drift.length() > maxf(float(shape.get("move_speed", speed)), speed) * 1.25:
 		return null
-	# A body the player already touches stops the part of its motion that
-	# pushes into it: the player slides along it.
+	# Through the reaction the player faces its input, which a slide does not
+	# turn.
+	var reacting_facing := drift.angle() if not drift.is_zero_approx() else facing
+	# A body the player touches, or reaches during the reaction, stops the
+	# part of its motion that pushes into it: it closes to contact, then
+	# slides along it. Its capsule touches at its radius, plus its
+	# half-segment as far as that lies toward the body (facing the body,
+	# none; side-on, all of it).
+	var axis := Vector2.DOWN.rotated(reacting_facing)
 	for blocker: Dictionary in blockers:
 		var outward: Vector2 = start - (blocker["center"] as Vector2)
-		if outward.length() < float(blocker["radius"]) + body_radius + body_half_segment - 0.5 and not outward.is_zero_approx():
-			var normal := outward.normalized()
-			if drift.dot(normal) < 0.0:
-				drift -= normal * drift.dot(normal)
+		if outward.is_zero_approx():
+			continue
+		var normal := outward.normalized()
+		var inward := -drift.dot(normal)
+		var room := outward.length() - (float(blocker["radius"]) + body_radius + body_half_segment * absf(axis.dot(normal)))
+		if inward > 0.0 and room < inward * REACTION:
+			start -= normal * maxf(room, 0.0)
+			drift += normal * inward
 	var horizon := 0.0
 	for hazard: Dictionary in plan:
 		horizon = maxf(horizon, float(hazard["to"]))
@@ -130,7 +141,6 @@ static func escape_route(start: Vector2, plan: Array, shape: Dictionary = {}, bl
 		candidates.append(Vector2.RIGHT.rotated(TAU * float(index) / float(DIRECTIONS)))
 	for direction in candidates:
 		var walk := direction * speed
-		var reacting_facing := drift.angle() if not drift.is_zero_approx() else facing
 		var motion := {"start": start, "drift": drift, "walk": walk, "reacting_facing": reacting_facing, "walking_facing": direction.angle() if not direction.is_zero_approx() else reacting_facing}
 		if not _walk_allowed(motion, horizon, blockers, body_radius + body_half_segment):
 			continue
