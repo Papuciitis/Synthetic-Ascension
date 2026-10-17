@@ -30,7 +30,7 @@ const TAB_GRIMOIRE := &"GRIMOIRE"
 const TABS: Array[StringName] = [TAB_CORRUPTION, TAB_TRANSFUSION, TAB_VOUCHERS, TAB_GRIMOIRE]
 const TAB_BLURBS := {
 	TAB_CORRUPTION: "Corrupt an equipped augment: free, irreversible, once per augment per run. Luck tilts the odds toward Exalted.",
-	TAB_TRANSFUSION: "Pour an unequipped augment's run levels into an equipped one: it gains half the donor's level, rounded down, and the donor returns to Lv.1.",
+	TAB_TRANSFUSION: "Pour an unequipped augment's run levels into an equipped one: it gains half the donor's level, rounded down (a trained donor's free starting level does not count), and the donor returns to its starting level.",
 	TAB_VOUCHERS: "Two Vouchers each Hub visit. Each is bought once per run and holds until the run ends.",
 	TAB_GRIMOIRE: "Everything this profile has ever reached. It survives death; what is still unknown shows only where to look.",
 }
@@ -488,9 +488,9 @@ func _build_transfusion() -> void:
 	if ok:
 		var gain := int(preview["gain"])
 		var level := Global.get_augment_level(_recipient)
-		summary = "%s Lv.%d → Lv.%d  ·  %s Lv.%d → Lv.1  ·  %d Followers (%d a level)" % [
+		summary = "%s Lv.%d → Lv.%d  ·  %s Lv.%d → Lv.%d  ·  %d Followers (%d a level)" % [
 			Global.augment_display_name(_recipient), level, AugmentScaling.clamp_level(level + gain),
-			Global.augment_display_name(_donor), Global.get_augment_level(_donor),
+			Global.augment_display_name(_donor), Global.get_augment_level(_donor), int(preview.get("donor_after", 1)),
 			int(preview["cost"]), int(preview.get("per_level", AugmentRites.TRANSFUSION_COST_PER_LEVEL)),
 		]
 	elif _recipient == &"" or _donor == &"":

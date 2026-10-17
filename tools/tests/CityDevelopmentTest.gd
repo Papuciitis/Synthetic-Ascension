@@ -134,6 +134,8 @@ func _test_transfusion() -> void:
 	Global.set_followers(100000)
 	_check(not bool(Global.transfusion_preview(OTHER, TRAINED)["ok"]), "free trained starting level cannot be donated")
 	Global.set_augment_level(TRAINED, 4)
+	var preview := Global.transfusion_preview(OTHER, TRAINED)
+	_check(int(preview["gain"]) == 1 and int(preview["donor_after"]) == 2, "the preview pours half of the earned levels and lands a trained donor on its floor, not Lv.1")
 	_check(bool(Global.transfuse_augment(OTHER, TRAINED)["ok"]), "earned temporary levels can be donated")
 	_check(Global.get_augment_level(TRAINED) == 2, "trained donor returns to its starting floor")
 	_check(not bool(Global.transfusion_preview(OTHER, TRAINED)["ok"]), "training cannot repeatedly mint transfusion levels")

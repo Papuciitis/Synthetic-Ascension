@@ -2056,7 +2056,7 @@ func apply_augment_scars(s: Stats) -> void:
 ## What pouring `donor` into `recipient` would do: {ok, gain, cost,
 ## per_level, reason}. Priced at this Hub's Binding segment (P4).
 func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary:
-	var out := {"ok": false, "gain": 0, "cost": 0, "per_level": AugmentRites.transfusion_cost_per_level(binding_segment()), "reason": ""}
+	var out := {"ok": false, "gain": 0, "cost": 0, "per_level": AugmentRites.transfusion_cost_per_level(binding_segment()), "donor_after": 1, "reason": ""}
 	if recipient == StringName() or not permanent_augment_ids.has(recipient):
 		out["reason"] = "the recipient must be equipped"
 		return out
@@ -2072,6 +2072,8 @@ func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary
 		return out
 	# The free trained starting level is preparation, never a renewable donor.
 	var donor_floor := _city_development_augment_floor(donor)
+	# Where the donor lands: its starting level (a trained one keeps its floor).
+	out["donor_after"] = maxi(1, donor_floor)
 	var donor_growth := get_augment_level(donor) - (donor_floor - 1)
 	var poured := AugmentRites.transfusion_gain(donor_growth)
 	if poured <= 0:
