@@ -133,6 +133,8 @@ var _last_pattern: StringName = &""
 var _split_dir := Vector2.RIGHT
 var _split_side := 1.0
 var _sweep_from := 0.0
+## The current recovery follows a major pattern (not a blink): pylons wait.
+var _recovery_after_major := false
 
 func _ready() -> void:
 	_e = get_parent() as EnemyActor
@@ -508,9 +510,19 @@ func _clear_teaching_markers() -> void:
 		_windup.cancel_attack()
 	_windup = null
 
-func _teaching_recovery(seconds: float) -> void:
+func _teaching_recovery(seconds: float, after_major: bool = true) -> void:
 	_clear_teaching_markers()
+	_recovery_after_major = after_major
 	_set_teaching_state(&"recovery", seconds)
+
+
+## Main boss: pylons hold fire through a major pattern, the recovery after it
+## and while its bolts and mines are in play - one spatial demand at a time.
+## Asked live by each pylon, so a cancelled pattern releases them at once.
+func pylons_hold_fire() -> bool:
+	if not _is_main() or not _teaching_initialized:
+		return false
+	return _teaching_state in MAJOR_STATES or (_teaching_state == &"recovery" and _recovery_after_major) or _has_teaching_pressure()
 
 func _process_teaching(delta: float) -> void:
 	_fan_cd = maxf(0.0, _fan_cd - delta)
@@ -519,10 +531,6 @@ func _process_teaching(delta: float) -> void:
 	_split_cd = maxf(0.0, _split_cd - delta)
 	_sweep_cd = maxf(0.0, _sweep_cd - delta)
 	_convergence_cd = maxf(0.0, _convergence_cd - delta)
-	if _is_main():
-		# Pylons hold fire through a major pattern and while it is in the air,
-		# recovery included.
-		_e.set_meta(&"boss_major_pattern", _teaching_state in MAJOR_STATES or _has_teaching_pressure())
 	if _teaching_state != &"idle":
 		_teaching_left = maxf(0.0, _teaching_left - delta)
 		for marker in _teaching_markers:
@@ -541,7 +549,7 @@ func _process_teaching(delta: float) -> void:
 				if TeachingPlacement.blink_valid(_e, _e.player, _teaching_destination, _current_mines()):
 					_e.global_position = _teaching_destination
 					_e.call("_update_enemy_index", true)
-				_teaching_recovery(1.2 if not _is_main() else 0.9)
+				_teaching_recovery(1.2 if not _is_main() else 0.9, false)
 			&"split":
 				_release_split()
 				_teaching_recovery(0.9)

@@ -335,7 +335,10 @@ func _test_sweep_interruptions() -> void:
 	var brain := mage.get_node("BossBrain")
 	brain.set("_boss_phase", 1)
 	_player.global_position = mage.global_position + Vector2(300, 0)
+	brain.call("_spawn_main_pylons")
+	var pylon := _pylons()[0] as BossPylon
 	_check(bool(brain.call("_try_main_pattern", &"sweep")), "sweep fixture commits")
+	_check(bool(pylon.call("_holds_fire")), "fixture: the sweep holds the pair's fire")
 	var beam := _beams()[0] as BossBeamSweep
 	beam.call("_advance", 0.5)
 	brain.call("_tick_teaching", 0.5)
@@ -343,6 +346,7 @@ func _test_sweep_interruptions() -> void:
 	await _frames()
 	_check(not is_instance_valid(beam) or beam.is_queued_for_deletion(), "a stun during the telegraph cancels the channel")
 	_check(_beams().is_empty() and _state(mage) == &"idle", "no beam survives the interrupted sweep")
+	_check(not bool(pylon.call("_holds_fire")), "and the cancelled pattern releases the pair at once")
 	await _clear()
 
 	_fixture()

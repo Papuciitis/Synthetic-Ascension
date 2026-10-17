@@ -172,6 +172,22 @@ func _test_pylons_hold_fire() -> void:
 	_brain.call("_tick_teaching", 0.95)
 	_brain.call("_tick_teaching", 1.0 / 60.0)
 	_check(_state() == &"idle" and not bool(pylons[0].call("_holds_fire")), "they fire again once the pattern has resolved")
+
+	# A windup already charging when a major pattern commits waits instead
+	# of joining it.
+	var pylon := pylons[0] as BossPylon
+	pylon._cd = 0.0
+	pylon._process(0.0)
+	_check(pylon._windup_left > 0.0, "fixture: a pylon is charging a shot in the gap")
+	_check(bool(_brain.call("_try_main_pattern", &"sweep")), "an Arc Sweep commits during that windup")
+	var pylon_shots := func() -> Array: return _children(func(child: Node) -> bool: return child is EnemyProjectile and child.shooter == pylon)
+	pylon._process(pylon.shot_windup + 0.01)
+	_check(is_zero_approx(pylon._windup_left) and pylon_shots.call().is_empty(), "the charging shot is withheld, not fired into the sweep")
+	# The sweep's recovery has no bolts in the air, and still holds them.
+	_brain.call("_tick_teaching", BRAIN.SWEEP_TELL + BRAIN.SWEEP_TIME + 0.01)
+	_check(_state() == &"recovery" and _shots().is_empty() and bool(pylon.call("_holds_fire")), "the recovery after a major pattern holds them too")
+	_brain.call("_tick_teaching", BRAIN.SWEEP_RECOVERY)
+	_check(_state() == &"idle" and not bool(pylon.call("_holds_fire")), "neutral releases them")
 	await _finish_fixture()
 
 
