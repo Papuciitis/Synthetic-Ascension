@@ -33,6 +33,19 @@ func _ready() -> void:
 	if runtime_applier == null:
 		runtime_applier = RuntimeApplier.new()
 	runtime_applier.apply_all(_values)
+	_apply_persisted_display_once_drawn()
+
+
+## The saved window state is applied once the first frame is shown. While the
+## game loads, the window's cached size and mode are still the requested ones
+## (its events are not processed yet), and a change then leaves undrawn window
+## over the boot splash until the slow first frame draws; afterwards the next
+## frame redraws it at once, and a window already as saved is left alone.
+## Process steps, not draws, so a minimized or headless start applies too.
+func _apply_persisted_display_once_drawn() -> void:
+	# The first frame is drawn and shown between these two steps.
+	await get_tree().process_frame
+	await get_tree().process_frame
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
 

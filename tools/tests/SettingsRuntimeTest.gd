@@ -23,6 +23,19 @@ class FakeDisplayAdapter:
 		return value
 
 
+class FakeRuntimeApplier:
+	extends RefCounted
+	var applied_all := 0
+	var displayed: Array[Dictionary] = []
+
+	func apply_all(_values: Dictionary) -> void:
+		applied_all += 1
+
+	func apply_persisted_display(video: Dictionary) -> Dictionary:
+		displayed.append(video.duplicate(true))
+		return video
+
+
 var _passes := 0
 var _failures := 0
 
@@ -86,6 +99,22 @@ func _run() -> void:
 		AudioServer.set_bus_mute(saved[&"index"], saved[&"muted"])
 	Engine.max_fps = old_max_fps
 	root.content_scale_factor = old_scale
+
+	# The saved window state waits for the first drawn frame: while the game
+	# loads, the window's cached size is stale and a change flashes undrawn
+	# window over the boot splash.
+	var manager := (load("res://autoload/SettingsManager.gd") as Script).new() as Node
+	manager.set("storage_path", "user://settings_runtime_test_%d/settings.cfg" % Time.get_ticks_usec())
+	var applier := FakeRuntimeApplier.new()
+	manager.set("runtime_applier", applier)
+	root.add_child(manager)
+	_check(applier.applied_all == 1 and applier.displayed.is_empty(), "saved window state waits while the game loads")
+	await process_frame
+	_check(applier.displayed.is_empty(), "saved window state waits for the first frame to be shown")
+	await process_frame
+	await process_frame
+	_check(applier.displayed.size() == 1, "saved window state applies once, right after the first frame")
+	manager.queue_free()
 	_finish()
 
 

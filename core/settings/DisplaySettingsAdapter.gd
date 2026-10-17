@@ -13,6 +13,7 @@ func capture_state() -> Dictionary:
 
 func apply_state(values: Dictionary) -> Dictionary:
 	var wanted_mode := StringName(values.get(&"window_mode", _mode_name()))
+	var keep_maximized := false
 	match wanted_mode:
 		&"fullscreen":
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
@@ -22,10 +23,16 @@ func apply_state(values: Dictionary) -> Dictionary:
 			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, true)
 			_apply_resolution(values.get(&"resolution", DisplayServer.window_get_size()) as Vector2i)
 		_:
-			DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-			DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
-			_apply_resolution(values.get(&"resolution", DisplayServer.window_get_size()) as Vector2i)
-	if values.has(&"position") and wanted_mode == &"windowed":
+			var requested := _clamped_resolution(values.get(&"resolution", DisplayServer.window_get_size()) as Vector2i)
+			# A maximized window is already windowed (capture_state records it
+			# so). Un-maximizing it only to size it back would flash undrawn
+			# window over the boot splash at every start.
+			keep_maximized = _is_maximized_at(requested)
+			if not keep_maximized:
+				DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+				DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_BORDERLESS, false)
+				DisplayServer.window_set_size(requested)
+	if values.has(&"position") and wanted_mode == &"windowed" and not keep_maximized:
 		DisplayServer.window_set_position(values[&"position"] as Vector2i)
 	if values.has(&"vsync"):
 		apply_vsync(StringName(values[&"vsync"]))
@@ -62,12 +69,21 @@ func available_resolutions() -> Array[Vector2i]:
 
 
 func _apply_resolution(requested: Vector2i) -> void:
+	DisplayServer.window_set_size(_clamped_resolution(requested))
+
+
+func _clamped_resolution(requested: Vector2i) -> Vector2i:
 	var usable := DisplayServer.screen_get_usable_rect()
-	var clamped := Vector2i(
+	return Vector2i(
 		clampi(requested.x, 640, maxi(640, usable.size.x)),
 		clampi(requested.y, 360, maxi(360, usable.size.y))
 	)
-	DisplayServer.window_set_size(clamped)
+
+
+func _is_maximized_at(size: Vector2i) -> bool:
+	return DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MAXIMIZED \
+		and not DisplayServer.window_get_flag(DisplayServer.WINDOW_FLAG_BORDERLESS) \
+		and DisplayServer.window_get_size() == size
 
 
 func _mode_name() -> StringName:
