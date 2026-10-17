@@ -140,7 +140,9 @@ func _test_transitions() -> void:
 	var back := screen.get("_illustration_back") as TextureRect
 	var reveal := func(layer: TextureRect) -> float: return float((layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
 	_check(front.material is ShaderMaterial and back.material is ShaderMaterial, "both still layers paint through the stroke shader")
+	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") == null, "the stroke pattern is not made until a still is shown")
 	screen.call("show_illustration", &"city")
+	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") != null and (front.material as ShaderMaterial).get_shader_parameter(&"strokes") == (back.material as ShaderMaterial).get_shader_parameter(&"strokes"), "then both layers paint with it")
 	_check(is_zero_approx(reveal.call(front)), "a new still starts unpainted")
 	await _wait(OpeningPresentation.STILL_REVEAL * 0.5)
 	var midway: float = reveal.call(front)
@@ -156,6 +158,21 @@ func _test_transitions() -> void:
 	await _wait(OpeningPresentation.STILL_CROSSFADE * 0.6 + 0.05)
 	_check(not back.visible and back.texture == null and is_equal_approx(reveal.call(front), 1.0), "once covered, the previous still is released")
 	_check(front.scale.x > 1.0 and front.scale.x < OpeningPresentation.STILL_DRIFT_SCALE, "the still drifts in slowly while it is read (scale %.4f)" % front.scale.x)
+	# Reduced Motion turned on while a still is read stops its push-in there.
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	var held := front.scale.x
+	await _wait(0.3)
+	_check(is_equal_approx(front.scale.x, held), "turning Reduced Motion on stops the push-in where it is")
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	# A third still mid-crossfade: the fully painted still stays underneath,
+	# never the half-painted one, so the world cannot show through.
+	var admission_texture := front.texture
+	screen.call("show_illustration", &"synthesis")
+	await _wait(0.2)
+	screen.call("show_illustration", &"records")
+	_check(back.visible and back.texture == admission_texture and is_equal_approx(reveal.call(back), 1.0) and is_zero_approx(reveal.call(front)), "a third still mid-crossfade keeps the painted still beneath, not the half-painted one")
+	await _wait(OpeningPresentation.STILL_CROSSFADE + 0.1)
+	_check(not back.visible and is_equal_approx(reveal.call(front), 1.0), "and the third still paints over it as usual")
 	var clear_done := [false]
 	var clearing := func() -> void:
 		await screen.call("clear_illustration")

@@ -52,7 +52,9 @@ var _illustration: TextureRect
 ## The previous still, held exactly as it was while the next paints over it.
 var _illustration_back: TextureRect
 var _illustration_drift: Tween
-var _strokes: Texture2D
+## The stroke pattern, shared by every presentation and made the first time a
+## still is shown (a hub letter card, which shows none, never pays for it).
+static var _shared_strokes: Texture2D
 var _illustration_id: StringName = &""
 var _illustration_crop := Rect2()
 var _illustration_version := 0
@@ -81,6 +83,15 @@ func _ready() -> void:
 	_build_ui()
 	hide_card()
 	_shade.visible = false
+	if SettingsManager != null:
+		SettingsManager.settings_changed.connect(_on_settings_changed)
+
+
+## Reduced Motion turned on while a still is read: its push-in stops where
+## it is.
+func _on_settings_changed(section: StringName, key: StringName, value: Variant) -> void:
+	if section == &"accessibility" and key == &"reduced_motion" and bool(value):
+		_stop_drift()
 
 
 func _process(delta: float) -> void:
@@ -136,17 +147,22 @@ func show_illustration(id: StringName, crop: Rect2 = Rect2()) -> bool:
 		atlas.atlas = texture
 		atlas.region = Rect2(crop.position * texture.get_size(), crop.size * texture.get_size())
 		texture = atlas
+	_ensure_strokes()
 	# A still already showing stays underneath, exactly as it was, while the
 	# new one paints over it: a true crossfade, never a dip back to the world.
-	var over_still := _illustration.visible and _illustration.texture != null and _reveal_of(_illustration) > 0.0
-	_drop_back_layer()
-	if over_still:
-		_illustration_back.texture = _illustration.texture
-		_illustration_back.scale = _illustration.scale
-		_illustration_back.set_meta(&"focus", _illustration.get_meta(&"focus", Vector2(0.5, 0.5)))
-		_fit_still_layer(_illustration_back)
-		_set_reveal(_reveal_of(_illustration), _illustration_back)
-		_illustration_back.visible = true
+	# Mid-crossfade, the more painted of the two is the one kept underneath.
+	var front_shown := _reveal_of(_illustration) if _illustration.visible and _illustration.texture != null else 0.0
+	var back_shown := _reveal_of(_illustration_back) if _illustration_back.visible and _illustration_back.texture != null else 0.0
+	var over_still := front_shown > 0.0 or back_shown > 0.0
+	if front_shown >= back_shown:
+		_drop_back_layer()
+		if front_shown > 0.0:
+			_illustration_back.texture = _illustration.texture
+			_illustration_back.scale = _illustration.scale
+			_illustration_back.set_meta(&"focus", _illustration.get_meta(&"focus", Vector2(0.5, 0.5)))
+			_fit_still_layer(_illustration_back)
+			_set_reveal(front_shown, _illustration_back)
+			_illustration_back.visible = true
 	_illustration_id = id
 	_illustration_crop = crop
 	_illustration.texture = texture
@@ -255,24 +271,30 @@ func _make_still_layer(label: String) -> TextureRect:
 	layer.visible = false
 	var material := ShaderMaterial.new()
 	material.shader = STILL_SHADER
-	material.set_shader_parameter(&"strokes", _stroke_texture())
 	material.set_shader_parameter(&"reveal", 1.0)
 	layer.material = material
 	layer.resized.connect(_fit_still_layer.bind(layer))
 	return layer
 
 
-## The stroke pattern the stills paint in with: seamless smooth noise, made
-## once per opening screen (no art asset, nothing held past the screen).
-func _stroke_texture() -> Texture2D:
-	if _strokes == null:
+## The stroke pattern the stills paint in with: seamless smooth noise (no
+## art asset), made once per run.
+static func _stroke_texture() -> Texture2D:
+	if _shared_strokes == null:
 		var noise := FastNoiseLite.new()
 		noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 		noise.seed = 1016
 		noise.frequency = 0.014
 		noise.fractal_octaves = 3
-		_strokes = ImageTexture.create_from_image(noise.get_seamless_image(256, 256))
-	return _strokes
+		_shared_strokes = ImageTexture.create_from_image(noise.get_seamless_image(256, 256))
+	return _shared_strokes
+
+
+func _ensure_strokes() -> void:
+	for still in [_illustration, _illustration_back]:
+		var material := (still as TextureRect).material as ShaderMaterial
+		if material.get_shader_parameter(&"strokes") == null:
+			material.set_shader_parameter(&"strokes", _stroke_texture())
 
 
 func _update_shade() -> void:
