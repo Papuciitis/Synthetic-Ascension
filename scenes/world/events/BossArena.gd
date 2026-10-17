@@ -14,6 +14,9 @@ class_name BossArena
 
 @export var tank_title: String = "Boss: The Bulldozer"
 @export var mage_title: String = "Boss: The Arcanist"
+## A brief role-specific entrance line beside the name, no cinematic.
+@export var tank_entrance: String = "The ground shudders. The Bulldozer braces to charge."
+@export var mage_entrance: String = "The air fractures. The Arcanist raises its array."
 
 @export var boss_portrait: Texture2D = preload("res://ui/boss/portraits/boss_portrait.png")
 
@@ -228,7 +231,7 @@ func _spawn() -> void:
 			RunEvents.boss_spawned.emit(en, 1, boss_portrait, _title)
 
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		RunEvents.tutorial_tip.emit("The air fractures. A capstone guardian awakens.", 3.0)
+		RunEvents.tutorial_tip.emit(tank_entrance if _is_tank else mage_entrance, 3.0)
 
 
 func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
