@@ -333,34 +333,75 @@ func _test_breach() -> void:
 
 
 func _test_rush_keeps_its_lane() -> void:
+	# A diagonal lane meeting a level wall: the old move_and_slide carried the
+	# body along the wall, off its drawn lane.
 	_fixture()
 	var tank := _tank()
 	var brain := tank.get_node("BossBrain")
 	var origin := tank.global_position
-	_player.global_position = origin + Vector2(200, 0)
-	_check(bool(brain.call("_begin_teaching_rush")), "fixture: a rush commits along +x")
-	_player.global_position = origin + Vector2(150, 320)
-	# A wall at 30 degrees across the lane: sliding along it would carry the
-	# body off the drawn lane, toward a player who stood clear of it.
+	var lane := Vector2(0.6, 0.8)
+	_player.global_position = origin + lane * 200.0
+	_check(bool(brain.call("_begin_teaching_rush")), "fixture: a rush commits along a diagonal lane")
+	_player.global_position = origin + Vector2(-300, 0)
 	var wall := StaticBody2D.new()
 	var collider := CollisionShape2D.new()
 	var box := RectangleShape2D.new()
-	box.size = Vector2(30, 600)
+	box.size = Vector2(1200, 30)
 	collider.shape = box
 	wall.add_child(collider)
 	_world.add_child(wall)
-	wall.global_position = origin + Vector2(190, 0)
-	wall.rotation = deg_to_rad(30.0)
+	wall.global_position = origin + Vector2(0, 165)
+	await get_tree().physics_frame
 	brain.call("_tick_cast", BRAIN.TEACHING_RUSH_TELL + 0.01)
 	_check(_state(tank) == &"rush", "fixture: the rush released")
+	await get_tree().physics_frame
+	await _run_charge(tank, brain, 30)
+	var travel := tank.global_position - origin
+	var off_lane := absf(travel.dot(lane.orthogonal()))
+	_check(off_lane < 0.5, "a diagonal rush that meets a wall stops on its drawn lane (off by %.2f px)" % off_lane)
+	_check(travel.dot(lane) < tank.spec.charge_speed * tank.spec.charge_duration - 10.0, "the wall stops it short where it stands")
+	_check(_state(tank) == &"recovery", "and the stopped rush still ends in recovery")
+	await _clear()
+
 	# A shove mid-rush must not drift it either.
+	_fixture()
+	tank = _tank()
+	brain = tank.get_node("BossBrain")
+	origin = tank.global_position
+	_player.global_position = origin + Vector2(200, 0)
+	brain.call("_begin_teaching_rush")
+	_player.global_position = origin + Vector2(150, 320)
+	brain.call("_tick_cast", BRAIN.TEACHING_RUSH_TELL + 0.01)
 	tank.knockback_vel = Vector2(0, 400)
 	await get_tree().physics_frame
 	await _run_charge(tank, brain, 30)
-	var offset := tank.global_position - origin
-	_check(absf(offset.y) < 0.5, "the rush stays on its drawn lane against an oblique wall and a shove (off by %.2f px)" % offset.y)
-	_check(offset.x < tank.spec.charge_speed * tank.spec.charge_duration - 10.0, "the wall stops it short where it stands")
-	_check(_state(tank) == &"recovery", "and the stopped rush still ends in recovery")
+	_check(absf(tank.global_position.y - origin.y) < 0.5, "a shove mid-rush does not drift it off its lane (off by %.2f px)" % absf(tank.global_position.y - origin.y))
+	await _clear()
+
+	# Its first contact ends it: a struck player who steps out of the lane
+	# does not let the rush run on.
+	_fixture()
+	tank = _tank()
+	brain = tank.get_node("BossBrain")
+	origin = tank.global_position
+	_player.global_position = origin + Vector2(150, 0)
+	brain.call("_begin_teaching_rush")
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	brain.call("_tick_cast", BRAIN.TEACHING_RUSH_TELL + 0.01)
+	_events.clear()
+	await get_tree().physics_frame
+	var struck_at := Vector2.INF
+	for _step in range(20):
+		await _run_charge(tank, brain, 1)
+		if not _events.filter(func(event: Dictionary) -> bool: return event.source == tank).is_empty():
+			struck_at = tank.global_position
+			break
+	_check(struck_at != Vector2.INF, "fixture: the rush strikes the player standing in its lane")
+	_player.global_position = origin + Vector2(150, 260)
+	await get_tree().physics_frame
+	await _run_charge(tank, brain, 20)
+	_check(struck_at != Vector2.INF and tank.global_position.distance_to(struck_at) < 1.0, "after its first contact the rush stays where it struck (moved %.2f px)" % (tank.global_position.distance_to(struck_at) if struck_at != Vector2.INF else -1.0))
 	await _clear()
 
 
