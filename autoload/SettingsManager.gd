@@ -36,8 +36,8 @@ func _ready() -> void:
 	if _opens_main_scene(OS.get_cmdline_args()):
 		_apply_persisted_display_once_drawn()
 	else:
-		# A tool, probe or test runs its own scene: the saved state applies at
-		# once, before that scene loads, so the window it then sets (size,
+		# A tool, probe or test runs its own scene or script: the saved state
+		# applies at once, before it loads, so the window it then sets (size,
 		# mode) is the one it keeps.
 		runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
@@ -47,18 +47,26 @@ func _ready() -> void:
 ## (its events are not processed yet), and a change then leaves undrawn window
 ## over the boot splash until the slow first frame draws; afterwards the next
 ## frame redraws it at once, and a window already as saved is left alone.
-## Process steps, not draws, so a minimized or headless start applies too.
+## Process steps, not draws, so a headless start applies too. A window the
+## player minimized during the splash stays minimized: the state waits until
+## it is brought back, rather than restoring it over what they switched to.
 func _apply_persisted_display_once_drawn() -> void:
 	# The first frame is drawn and shown between these two steps.
 	await get_tree().process_frame
 	await get_tree().process_frame
+	# (A headless run reports its absent window as minimized.)
+	while DisplayServer.get_name() != "headless" and DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_MINIMIZED:
+		await get_tree().process_frame
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
 
 ## Whether these command-line arguments start the project's main scene: the
 ## game itself, as an export or the editor's Run Project starts it. Any other
-## scene named to run is a tool, probe or test.
+## scene named to run, or a script run (-s, --script), is a tool, probe or
+## test.
 static func _opens_main_scene(args: PackedStringArray) -> bool:
+	if args.has("-s") or args.has("--script"):
+		return false
 	var main := str(ProjectSettings.get_setting("application/run/main_scene", ""))
 	if main.begins_with("uid://"):
 		main = ResourceUID.get_id_path(ResourceUID.text_to_id(main))

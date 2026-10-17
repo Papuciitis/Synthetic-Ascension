@@ -100,28 +100,32 @@ func _run() -> void:
 	Engine.max_fps = old_max_fps
 	root.content_scale_factor = old_scale
 
-	# The saved window state waits for the first drawn frame: while the game
-	# loads, the window's cached size is stale and a change flashes undrawn
-	# window over the boot splash.
+	# This suite is a script run, so its manager is a tool's: the saved window
+	# state lands at once, before the tool sets the window it needs.
 	var manager := (load("res://autoload/SettingsManager.gd") as Script).new() as Node
 	manager.set("storage_path", "user://settings_runtime_test_%d/settings.cfg" % Time.get_ticks_usec())
 	var applier := FakeRuntimeApplier.new()
 	manager.set("runtime_applier", applier)
 	root.add_child(manager)
-	_check(applier.applied_all == 1 and applier.displayed.is_empty(), "saved window state waits while the game loads")
+	_check(applier.applied_all == 1 and applier.displayed.size() == 1, "a tool's run gets the saved window state at once")
+	# A normal start waits for the first drawn frame: while the game loads,
+	# the window's cached size is stale and a change flashes undrawn window
+	# over the boot splash.
+	manager.call("_apply_persisted_display_once_drawn")
 	await process_frame
-	_check(applier.displayed.is_empty(), "saved window state waits for the first frame to be shown")
+	_check(applier.displayed.size() == 1, "on a normal start the saved window state waits for the first frame to be shown")
 	await process_frame
 	await process_frame
-	_check(applier.displayed.size() == 1, "saved window state applies once, right after the first frame")
-	# Only a normal start waits for the first frame. A tool, probe or test
-	# names its own scene to run and gets the saved state at once, before
-	# that scene sets the window it needs.
+	_check(applier.displayed.size() == 2, "and then applies once")
+	# Which runs are normal starts: the main scene, named or not, and nothing
+	# else; a script run is a tool's.
 	var manager_script := manager.get_script() as Script
 	var as_game: bool = manager_script.call("_opens_main_scene", PackedStringArray(["--path", "/project"]))
 	var as_main: bool = manager_script.call("_opens_main_scene", PackedStringArray(["--path", "/project", "res://ui/screens/MainMenu.tscn"]))
 	var as_tool: bool = manager_script.call("_opens_main_scene", PackedStringArray(["--path", "/project", "res://tools/tests/ElitePaletteVisualTest.tscn"]))
-	_check(as_game and as_main and not as_tool, "a normal start waits for the first frame; a tool's own scene gets the saved window at once")
+	var as_script: bool = manager_script.call("_opens_main_scene", PackedStringArray(["--path", "/project", "--script", "res://tools/dev/EnemyRosterShotProbe.gd"]))
+	var as_short_script: bool = manager_script.call("_opens_main_scene", PackedStringArray(["-s", "res://tools/tests/SettingsRuntimeTest.gd"]))
+	_check(as_game and as_main and not as_tool and not as_script and not as_short_script, "only the main scene's start waits; a tool's scene or script gets the saved window at once")
 	manager.queue_free()
 	_finish()
 
