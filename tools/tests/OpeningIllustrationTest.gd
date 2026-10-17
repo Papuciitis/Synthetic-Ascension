@@ -58,7 +58,7 @@ func _run() -> void:
 	screen.call("clear_illustration", 0.1)
 	screen.call("show_illustration", &"city")
 	await get_tree().create_timer(0.15, true, false, true).timeout
-	_check(image.visible and image.texture != null and image.modulate.a > 0.9, "showing the same still supersedes a pending clear")
+	_check(image.visible and image.texture != null and image.modulate.a > 0.9 and is_equal_approx(float((image.material as ShaderMaterial).get_shader_parameter(&"reveal")), 1.0), "showing the same still supersedes a pending clear")
 	screen.call("clear_illustration", 0.1)
 	screen.call("show_illustration", &"admission")
 	await get_tree().create_timer(0.15, true, false, true).timeout
@@ -117,7 +117,62 @@ func _run() -> void:
 	_check(advanced[0] == 1, "intentionally paused hub dialogue still advances without a pause menu")
 	get_tree().paused = false
 	view.free()
+	await _test_transitions()
 	_finish(previous_speed, previous_motion)
+
+
+func _wait(seconds: float) -> void:
+	await get_tree().create_timer(seconds, true, false, true).timeout
+
+
+## The painted transitions, with motion on: a still paints in over the world,
+## the next paints over it (the first stays beneath until covered), clearing
+## washes out the way it came, and a slow push-in runs only with motion.
+func _test_transitions() -> void:
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	var view := SubViewport.new()
+	view.size = Vector2i(960, 540)
+	add_child(view)
+	var screen := SCREEN.instantiate()
+	view.add_child(screen)
+	await _settle()
+	var front := screen.get("_illustration") as TextureRect
+	var back := screen.get("_illustration_back") as TextureRect
+	var reveal := func(layer: TextureRect) -> float: return float((layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
+	_check(front.material is ShaderMaterial and back.material is ShaderMaterial, "both still layers paint through the stroke shader")
+	screen.call("show_illustration", &"city")
+	_check(is_zero_approx(reveal.call(front)), "a new still starts unpainted")
+	await _wait(OpeningPresentation.STILL_REVEAL * 0.5)
+	var midway: float = reveal.call(front)
+	_check(midway > 0.1 and midway < 0.9, "and paints in over time (%.2f halfway)" % midway)
+	await _wait(OpeningPresentation.STILL_REVEAL * 0.6 + 0.05)
+	_check(is_equal_approx(reveal.call(front), 1.0) and not back.visible, "until the plain painting shows")
+	var city_texture := front.texture
+	screen.call("show_illustration", &"admission")
+	_check(back.visible and back.texture == city_texture and is_equal_approx(reveal.call(back), 1.0) and is_zero_approx(reveal.call(front)), "the next still paints over the previous one, which stays beneath as it was")
+	await _wait(OpeningPresentation.STILL_CROSSFADE * 0.5)
+	var crossing: float = reveal.call(front)
+	_check(back.visible and crossing > 0.1 and crossing < 0.9, "both show mid-crossfade, never a dip to the world (%.2f)" % crossing)
+	await _wait(OpeningPresentation.STILL_CROSSFADE * 0.6 + 0.05)
+	_check(not back.visible and back.texture == null and is_equal_approx(reveal.call(front), 1.0), "once covered, the previous still is released")
+	_check(front.scale.x > 1.0 and front.scale.x < OpeningPresentation.STILL_DRIFT_SCALE, "the still drifts in slowly while it is read (scale %.4f)" % front.scale.x)
+	var clear_done := [false]
+	var clearing := func() -> void:
+		await screen.call("clear_illustration")
+		clear_done[0] = true
+	clearing.call()
+	await _wait(OpeningPresentation.STILL_CLEAR * 0.5)
+	var washing: float = reveal.call(front)
+	_check(not clear_done[0] and washing > 0.05 and washing < 0.95, "clearing washes the painting out over time while the caller waits (%.2f)" % washing)
+	await _wait(OpeningPresentation.STILL_CLEAR * 0.6 + 0.05)
+	_check(clear_done[0] and not front.visible and front.texture == null and is_equal_approx(front.scale.x, 1.0), "then releases it, unscaled, before world play resumes")
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	screen.call("show_illustration", &"synthesis")
+	await _settle()
+	_check(is_equal_approx(reveal.call(front), 1.0) and is_equal_approx(front.scale.x, 1.0), "Reduced Motion: the still is simply there, with no push-in")
+	await screen.call("clear_illustration")
+	_check(not front.visible and front.texture == null, "and leaves at once")
+	view.free()
 
 func _finish(previous_speed: Variant, previous_motion: Variant) -> void:
 	SettingsManager.set_value(&"accessibility", &"typewriter_speed", previous_speed, false)

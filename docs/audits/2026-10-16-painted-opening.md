@@ -10,7 +10,7 @@ OpeningPresentation loads a single image on demand, keeps it across successive c
 
 Cards now constrain width and use vertical scrolling at small sizes. Reading focus supports incremental arrows and page keys before moving to choices. Shared PauseMenu owns input/focus while open; intentionally paused hub story cards remain usable. Blocking cards hide the world guidance prompt, and existing controller guidance restores it when walking resumes.
 
-The illustrated layer uses crossfades and static painted compositions. Existing sound cues remain stand-ins; this change does not claim that the proposed shift bell, contact recording or conduit knock are final audio assets.
+The illustrated layer uses static painted compositions. Its transitions are described under "Painted transitions" below. Existing sound cues remain stand-ins; this change does not claim that the proposed shift bell, contact recording or conduit knock are final audio assets.
 
 ## Art and scope
 
@@ -37,6 +37,21 @@ The player still aligns all three nodes in full mode, calibrates, confronts the 
 | StoryDirectorTest | 166 / 0 | 0 | None |
 | SaveMigrationMatrixTest | 34 / 0 | 0 | One intentional newer-save-version warning; best-effort loading assertion passed |
 | PauseMenuFlowTest | 38 / 0 | 0 | None |
+
+## Painted transitions (17 October 2026)
+
+The stills were said to crossfade, but a new still replaced the texture at once and faded in from transparent. A change of still dipped through the world, and a clear was a 0.2 s fade. The stills now move the way they were painted:
+
+- **Paint-in.** A still arrives in broad slanted strokes washing in from the left, each with a warm wet rim while it lands (0.75 s). The stroke pattern is seamless smooth noise made once per opening screen. The rect's own pixels place it, so an AtlasTexture crop washes in the same way.
+- **Crossfade.** A still already showing stays beneath, exactly as it was, while the next paints over it (0.95 s). The world never shows between two stills, and the one beneath is released once covered.
+- **Wash-out.** Clearing runs the paint-in backwards (0.55 s) and awaits it as before. A crossfade still in progress washes out with it.
+- **Drift.** While read, each still pushes in slowly (to 104% over 20 s, easing out) toward its painting's focal point: the worker's meal tin, the badge and stamp, the central node, the packet and bracing hand.
+- **Reduced Motion.** Every transition is immediate and there is no push-in.
+- **Real time.** Transitions run on real time, so the cards' slowed `Engine.time_scale` cannot stretch them.
+
+The existing contracts hold: a still kept across consecutive cards, the version guard against an old clear, release before world play, and quiet fallback for unknown art. `OpeningIllustrationTest` grew from 22 to 34 checks: paint-in, crossfade with both stills present and the lower one released, wash-out awaited by the caller, push-in, and Reduced Motion. `TutorialTypewriterTest` 19/0, `TutorialGuidanceTest` 21/0, `Segment1ProgressionTest` 40/0, `OpeningSequencePhysicsSafetyTest`, `StoryDirectorTest`, `PauseMenuFlowTest` and `SaveMigrationMatrixTest` all pass.
+
+`tools/dev/OpeningTransitionPreview.tscn` renders real UI pixels at 1280×720 with each transition frozen at set points: paint-in, crossfades from city to admission and from synthesis to records, and the wash-out state. The frames are in [2026-10-17-opening-transitions](../art/reference/2026-10-17-opening-transitions/). The first pattern used many small dashes and read as rain; the stroke scale was broadened until the transitions read as the paintings' own broad brushwork. These are still frames: the motion's timing and feel need a human look in the running opening.
 
 ## Review decisions
 

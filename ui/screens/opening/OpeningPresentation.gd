@@ -20,6 +20,22 @@ const CARD_THEME := preload("res://ui/theme/ArcaneMenuTheme.tres")
 const OverlayKit := preload("res://ui/widgets/overlays/OverlayKit.gd")
 const ArcaneFrameScript := preload("res://ui/components/ArcaneFrame.gd")
 const ArcaneRuleScript := preload("res://ui/components/ArcaneRule.gd")
+const STILL_SHADER := preload("res://ui/screens/opening/opening_still.gdshader")
+## Seconds a still takes to paint in over the world, to paint over the still
+## before it, and to wash away again. Reduced Motion makes each immediate.
+const STILL_REVEAL := 0.75
+const STILL_CROSSFADE := 0.95
+const STILL_CLEAR := 0.55
+## While it is read, each still drifts slowly in toward its focal point.
+const STILL_DRIFT_SECONDS := 20.0
+const STILL_DRIFT_SCALE := 1.04
+## Where each painting's eye goes (normalised); unknown stills use the centre.
+const STILL_FOCUS := {
+	&"city": Vector2(0.42, 0.42),
+	&"admission": Vector2(0.36, 0.33),
+	&"synthesis": Vector2(0.52, 0.56),
+	&"records": Vector2(0.45, 0.42),
+}
 
 const PANEL_WIDTH := 800.0
 ## The card's top edge, below the centre so the scene above stays readable;
@@ -33,6 +49,10 @@ static var _looks: Dictionary = {}
 
 var _shade: ColorRect
 var _illustration: TextureRect
+## The previous still, held exactly as it was while the next paints over it.
+var _illustration_back: TextureRect
+var _illustration_drift: Tween
+var _strokes: Texture2D
 var _illustration_id: StringName = &""
 var _illustration_crop := Rect2()
 var _illustration_version := 0
@@ -93,8 +113,11 @@ func show_illustration(id: StringName, crop: Rect2 = Rect2()) -> bool:
 	if _illustration_tween != null:
 		_illustration_tween.kill()
 	if id == _illustration_id and crop == _illustration_crop and _illustration.texture != null:
+		# The same still again (a pending clear superseded): finish painting it.
 		_illustration.visible = true
 		_illustration.modulate.a = 1.0
+		var shown := _reveal_of(_illustration)
+		_paint_front(shown, STILL_REVEAL * (1.0 - shown))
 		return true
 	var path := String(OpeningSequenceData.ILLUSTRATIONS.get(id, ""))
 	var texture: Texture2D = null
@@ -113,26 +136,42 @@ func show_illustration(id: StringName, crop: Rect2 = Rect2()) -> bool:
 		atlas.atlas = texture
 		atlas.region = Rect2(crop.position * texture.get_size(), crop.size * texture.get_size())
 		texture = atlas
+	# A still already showing stays underneath, exactly as it was, while the
+	# new one paints over it: a true crossfade, never a dip back to the world.
+	var over_still := _illustration.visible and _illustration.texture != null and _reveal_of(_illustration) > 0.0
+	_drop_back_layer()
+	if over_still:
+		_illustration_back.texture = _illustration.texture
+		_illustration_back.scale = _illustration.scale
+		_illustration_back.set_meta(&"focus", _illustration.get_meta(&"focus", Vector2(0.5, 0.5)))
+		_fit_still_layer(_illustration_back)
+		_set_reveal(_reveal_of(_illustration), _illustration_back)
+		_illustration_back.visible = true
 	_illustration_id = id
 	_illustration_crop = crop
 	_illustration.texture = texture
 	_illustration.visible = true
-	_illustration.modulate.a = 0.0
-	_illustration_tween = create_tween()
-	_illustration_tween.tween_property(_illustration, "modulate:a", 1.0, Accessibility.current_motion_duration(0.2))
+	_illustration.modulate.a = 1.0
+	_set_reveal(0.0, _illustration)
+	_start_drift(id)
+	_paint_front(0.0, STILL_CROSSFADE if over_still else STILL_REVEAL)
 	_update_shade()
 	return true
 
 
-func clear_illustration(duration: float = 0.2) -> void:
+func clear_illustration(duration: float = STILL_CLEAR) -> void:
 	_illustration_version += 1
 	var version := _illustration_version
 	if _illustration_tween != null:
 		_illustration_tween.kill()
 	if _illustration.texture != null and duration > 0.0:
 		var hold := Accessibility.current_motion_duration(duration)
-		_illustration_tween = create_tween()
-		_illustration_tween.tween_property(_illustration, "modulate:a", 0.0, hold)
+		# The painting washes back out the way it came, from where it stands;
+		# a still still under a crossfade leaves with it.
+		_illustration_tween = create_tween().set_ignore_time_scale(true).set_parallel(true)
+		_illustration_tween.tween_method(_set_reveal.bind(_illustration), _reveal_of(_illustration), 0.0, hold).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+		if _illustration_back.visible:
+			_illustration_tween.tween_method(_set_reveal.bind(_illustration_back), _reveal_of(_illustration_back), 0.0, hold).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 		# A cancelled tween never emits finished. A bounded timer lets an old
 		# clear return harmlessly even if a new illustration supersedes it.
 		await get_tree().create_timer(hold, true, false, true).timeout
@@ -141,11 +180,99 @@ func clear_illustration(duration: float = 0.2) -> void:
 
 
 func _release_illustration() -> void:
+	_stop_drift()
+	_drop_back_layer()
 	_illustration.texture = null
 	_illustration.visible = false
+	_illustration.scale = Vector2.ONE
+	_set_reveal(1.0, _illustration)
 	_illustration_id = &""
 	_illustration_crop = Rect2()
 	_update_shade()
+
+
+## How much of a still layer is painted in: 0 none, 1 the plain painting.
+func _reveal_of(layer: TextureRect) -> float:
+	return float((layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
+
+
+func _set_reveal(value: float, layer: TextureRect = null) -> void:
+	var target := layer if layer != null else _illustration
+	(target.material as ShaderMaterial).set_shader_parameter(&"reveal", clampf(value, 0.0, 1.0))
+
+
+func _paint_front(from: float, seconds: float) -> void:
+	_illustration_tween = create_tween().set_ignore_time_scale(true)
+	_illustration_tween.tween_method(_set_reveal, from, 1.0, Accessibility.current_motion_duration(maxf(seconds, 0.0))).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	# Once the new still covers it, the one beneath is let go.
+	_illustration_tween.tween_callback(_drop_back_layer)
+
+
+func _drop_back_layer() -> void:
+	_illustration_back.texture = null
+	_illustration_back.visible = false
+	_illustration_back.scale = Vector2.ONE
+	_set_reveal(1.0, _illustration_back)
+
+
+## A slow push-in toward the still's focal point while it is read; none
+## under Reduced Motion.
+func _start_drift(id: StringName) -> void:
+	_stop_drift()
+	_illustration.scale = Vector2.ONE
+	_illustration.set_meta(&"focus", STILL_FOCUS.get(id, Vector2(0.5, 0.5)))
+	_fit_still_layer(_illustration)
+	if _reduced_motion():
+		return
+	_illustration_drift = create_tween().set_ignore_time_scale(true)
+	_illustration_drift.tween_property(_illustration, "scale", Vector2.ONE * STILL_DRIFT_SCALE, STILL_DRIFT_SECONDS).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+func _stop_drift() -> void:
+	if _illustration_drift != null:
+		_illustration_drift.kill()
+	_illustration_drift = null
+
+
+func _reduced_motion() -> bool:
+	return SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+
+
+## Keeps the reveal pattern in the rect's own pixels and the push-in centred
+## on the still's focal point as the window resizes.
+func _fit_still_layer(layer: TextureRect) -> void:
+	(layer.material as ShaderMaterial).set_shader_parameter(&"rect_size", layer.size)
+	layer.pivot_offset = layer.size * (layer.get_meta(&"focus", Vector2(0.5, 0.5)) as Vector2)
+
+
+func _make_still_layer(label: String) -> TextureRect:
+	var layer := TextureRect.new()
+	layer.name = label
+	layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	layer.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	layer.visible = false
+	var material := ShaderMaterial.new()
+	material.shader = STILL_SHADER
+	material.set_shader_parameter(&"strokes", _stroke_texture())
+	material.set_shader_parameter(&"reveal", 1.0)
+	layer.material = material
+	layer.resized.connect(_fit_still_layer.bind(layer))
+	return layer
+
+
+## The stroke pattern the stills paint in with: seamless smooth noise, made
+## once per opening screen (no art asset, nothing held past the screen).
+func _stroke_texture() -> Texture2D:
+	if _strokes == null:
+		var noise := FastNoiseLite.new()
+		noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+		noise.seed = 1016
+		noise.frequency = 0.014
+		noise.fractal_octaves = 3
+		_strokes = ImageTexture.create_from_image(noise.get_seamless_image(256, 256))
+	return _strokes
 
 
 func _update_shade() -> void:
@@ -476,13 +603,10 @@ func _build_ui() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.theme = CARD_THEME
 	add_child(root)
-	_illustration = TextureRect.new()
-	_illustration.name = "Illustration"
-	_illustration.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_illustration.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_illustration.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_illustration.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_illustration.visible = false
+	# The previous still sits beneath the current one while it paints over.
+	_illustration_back = _make_still_layer("IllustrationBehind")
+	root.add_child(_illustration_back)
+	_illustration = _make_still_layer("Illustration")
 	root.add_child(_illustration)
 	_shade = ColorRect.new()
 	_shade.color = Color(0.008, 0.006, 0.005, 0.66)
