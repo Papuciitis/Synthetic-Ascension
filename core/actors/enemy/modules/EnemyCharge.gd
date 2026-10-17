@@ -58,6 +58,18 @@ func begin_committed(direction: Vector2, duration: float, speed: float) -> void:
 	_override_vel = Vector2.ZERO
 
 
+## A rush its controller previewed (begin_committed), not one this module
+## chose on its own.
+func is_committed() -> bool:
+	return _committed_speed >= 0.0
+
+
+## Something stopped a committed rush short: it ends where it stands.
+func stop_committed() -> void:
+	_time_left = 0.0
+	_override_vel = Vector2.ZERO
+
+
 func cancel() -> void:
 	_windup_left = 0.0
 	_time_left = 0.0

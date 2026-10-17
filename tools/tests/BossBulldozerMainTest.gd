@@ -297,6 +297,38 @@ func _test_breach() -> void:
 	await _clear()
 
 
+func _test_rush_keeps_its_lane() -> void:
+	_fixture()
+	var tank := _tank()
+	var brain := tank.get_node("BossBrain")
+	var origin := tank.global_position
+	_player.global_position = origin + Vector2(200, 0)
+	_check(bool(brain.call("_begin_teaching_rush")), "fixture: a rush commits along +x")
+	_player.global_position = origin + Vector2(150, 320)
+	# A wall at 30 degrees across the lane: sliding along it would carry the
+	# body off the drawn lane, toward a player who stood clear of it.
+	var wall := StaticBody2D.new()
+	var collider := CollisionShape2D.new()
+	var box := RectangleShape2D.new()
+	box.size = Vector2(30, 600)
+	collider.shape = box
+	wall.add_child(collider)
+	_world.add_child(wall)
+	wall.global_position = origin + Vector2(190, 0)
+	wall.rotation = deg_to_rad(30.0)
+	brain.call("_tick_cast", BRAIN.TEACHING_RUSH_TELL + 0.01)
+	_check(_state(tank) == &"rush", "fixture: the rush released")
+	# A shove mid-rush must not drift it either.
+	tank.knockback_vel = Vector2(0, 400)
+	await get_tree().physics_frame
+	await _run_charge(tank, brain, 30)
+	var offset := tank.global_position - origin
+	_check(absf(offset.y) < 0.5, "the rush stays on its drawn lane against an oblique wall and a shove (off by %.2f px)" % offset.y)
+	_check(offset.x < tank.spec.charge_speed * tank.spec.charge_duration - 10.0, "the wall stops it short where it stands")
+	_check(_state(tank) == &"recovery", "and the stopped rush still ends in recovery")
+	await _clear()
+
+
 func _test_fault_followup() -> void:
 	_fixture()
 	var tank := _tank()
@@ -381,6 +413,7 @@ func _run() -> void:
 	await _test_phases()
 	await _test_cleave()
 	await _test_breach()
+	await _test_rush_keeps_its_lane()
 	await _test_fault_followup()
 	await _test_oracle_guard()
 	await _test_arena_speed()

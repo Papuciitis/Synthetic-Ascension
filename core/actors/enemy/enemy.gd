@@ -365,8 +365,16 @@ func _run_simulation_step(delta: float) -> void:
 		_update_enemy_index(true)
 		return
 	if ai == EnemySpec.AI.CHARGE and _charge.step_override(delta):
-		velocity = _charge.override_velocity() + knockback_vel
-		_move_and_slide_scaled()
+		if _charge.is_committed():
+			# A committed (previewed) rush keeps to its drawn lane: knockback
+			# cannot drift it and a wall cannot deflect it; the first contact
+			# ends the rush where it stands.
+			velocity = _charge.override_velocity()
+			if _move_committed():
+				_charge.stop_committed()
+		else:
+			velocity = _charge.override_velocity() + knockback_vel
+			_move_and_slide_scaled()
 		_update_enemy_index(true)
 		return
 
@@ -595,6 +603,16 @@ func simulation_priority(player_position: Vector2) -> float:
 	):
 		priority += 1000000000.0
 	return priority
+
+
+## One committed-rush step along `velocity`, without sliding. True when a
+## body stopped it short. Covers the same distance as _move_and_slide_scaled.
+func _move_committed() -> bool:
+	if _lod_tier == 2:
+		global_position += velocity * maxf(_scheduled_step_delta, 0.0)
+		return false
+	var motion := velocity * maxf(_simulation_motion_scale, 1.0) * get_physics_process_delta_time()
+	return move_and_collide(motion) != null
 
 
 func _move_and_slide_scaled() -> void:

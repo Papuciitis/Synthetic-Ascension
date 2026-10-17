@@ -203,7 +203,7 @@ func _tick_main_selection(delta: float) -> void:
 
 
 ## A seeded weighted order: signature moves are likelier, and the last
-## attack is not repeated while another is available.
+## attack weighs a quarter while another is available (rarer, not barred).
 func _ordered_options(options: Array[StringName]) -> Array[StringName]:
 	var weights := {&"slam": 3.0, &"cleave": 3.0, &"breach": 3.5, &"rush": 2.0, &"shock": 2.0}
 	var rng := _pattern_rng()

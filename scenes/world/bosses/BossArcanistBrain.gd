@@ -644,7 +644,7 @@ func _process_main_selection(delta: float, distance: float) -> void:
 
 
 ## A seeded weighted order: signature patterns are likelier, and the last
-## one is not repeated while another is available.
+## one weighs a quarter while another is available (rarer, not barred).
 func _ordered_patterns(options: Array[StringName]) -> Array[StringName]:
 	var weights := {&"mines": 2.0, &"fan": 2.0, &"split": 3.0, &"sweep": 3.0, &"convergence": 3.5}
 	var rng := _pattern_rng()
