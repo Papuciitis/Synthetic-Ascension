@@ -33,7 +33,13 @@ func _ready() -> void:
 	if runtime_applier == null:
 		runtime_applier = RuntimeApplier.new()
 	runtime_applier.apply_all(_values)
-	_apply_persisted_display_once_drawn()
+	if _opens_main_scene(OS.get_cmdline_args()):
+		_apply_persisted_display_once_drawn()
+	else:
+		# A tool, probe or test runs its own scene: the saved state applies at
+		# once, before that scene loads, so the window it then sets (size,
+		# mode) is the one it keeps.
+		runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
 
 ## The saved window state is applied once the first frame is shown. While the
@@ -42,25 +48,24 @@ func _ready() -> void:
 ## over the boot splash until the slow first frame draws; afterwards the next
 ## frame redraws it at once, and a window already as saved is left alone.
 ## Process steps, not draws, so a minimized or headless start applies too.
-## Only a normal start (the project's main scene) applies it: a tool, probe
-## or test runs its own scene and sets the window it needs.
 func _apply_persisted_display_once_drawn() -> void:
 	# The first frame is drawn and shown between these two steps.
 	await get_tree().process_frame
 	await get_tree().process_frame
-	if not _runs_main_scene():
-		return
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
 
 
-func _runs_main_scene() -> bool:
-	var scene := get_tree().current_scene
-	if scene == null:
-		return true
+## Whether these command-line arguments start the project's main scene: the
+## game itself, as an export or the editor's Run Project starts it. Any other
+## scene named to run is a tool, probe or test.
+static func _opens_main_scene(args: PackedStringArray) -> bool:
 	var main := str(ProjectSettings.get_setting("application/run/main_scene", ""))
 	if main.begins_with("uid://"):
 		main = ResourceUID.get_id_path(ResourceUID.text_to_id(main))
-	return scene.scene_file_path == main
+	for arg in args:
+		if arg.ends_with(".tscn") or arg.ends_with(".scn"):
+			return ProjectSettings.localize_path(arg) == main
+	return true
 
 
 ## Built-in UI actions can contain only keys on this engine build. Keep
