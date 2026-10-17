@@ -59,10 +59,24 @@ static func disc_clear(actor: Node2D, point: Vector2, radius: float) -> bool:
 	query.margin = 1.0
 	return actor.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
 
+## A corridor whose whole width stays on loaded, walkable ground and meets no
+## wall: where a mine pattern's escape or a blink may lead.
 static func corridor_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
+	return _swept_clear(actor, start, end, radius, radius)
+
+
+## A route a player can walk: its centre line stays on loaded, walkable ground
+## and its body (radius) meets no wall. A wall's blocked grid cells reach past
+## its face, so judging the whole width on the grid would refuse every walk of
+## a player already resting against a wall; the physics sweep judges the body.
+static func walk_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
+	return _swept_clear(actor, start, end, radius, 0.0)
+
+
+static func _swept_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float, grid_radius: float) -> bool:
 	var steps := maxi(1, ceili(start.distance_to(end) / 32.0))
 	for i in range(steps + 1):
-		if not _loaded_space(actor, start.lerp(end, float(i) / float(steps)), radius):
+		if not _loaded_space(actor, start.lerp(end, float(i) / float(steps)), grid_radius):
 			return false
 	var shape := CircleShape2D.new()
 	shape.radius = maxf(1.0, radius)

@@ -92,7 +92,8 @@ static func walking_clearance(shape: Dictionary) -> float:
 
 ## The radius a walk's world corridor is checked with: the capsule's radius
 ## less 2 px, so a player already touching a wall (it rests about 25 px from
-## it) can still walk along it or away; corridor_clear adds its 1 px margin.
+## it) can still walk along it or away; walk_clear's sweep adds its 1 px
+## margin.
 static func corridor_radius(shape: Dictionary) -> float:
 	return maxf(1.0, float(shape.get("body_radius", DEFAULT_BODY_RADIUS)) - 2.0)
 

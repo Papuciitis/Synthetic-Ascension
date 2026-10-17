@@ -80,6 +80,7 @@ func _execute() -> void:
 				# At body contact the main Arcanist commits its focused fan; the
 				# oracle rightly refuses a Split Fan there.
 				await _melee_recovery_attempt("cleave" if role_value == "tank" else "fan")
+				await _wall_hug_attempt()
 	_execution_completed = _expected_results > 0 and _results.size() == _expected_results
 	_check(_execution_completed, "all %d requested S10 case results completed; no setup/helper abort or omitted case" % _expected_results)
 	if _out != "res://.superpowers/sdd/s5-teaching-fights/live":
@@ -288,6 +289,90 @@ func _escape_attempt(attack: String, response: String) -> Dictionary:
 	return result
 
 
+## A player resting against a real court wall still draws the boss's aimed
+## attack. The wall's blocked grid cells reach past its face, and judging a
+## walk's whole width on that grid refused every walk along or away from it,
+## so the boss never attacked a player hugging a wall.
+func _wall_hug_attempt() -> void:
+	if not await _spawn_boss():
+		return
+	if _brain.has_method("_sync_tier"):
+		_brain.call("_sync_tier")
+	if _brain.has_method("_ensure_teaching"):
+		_brain.call("_ensure_teaching")
+	for property in PARKED_CLOCKS:
+		if property in _brain:
+			_brain.set(property, 100.0)
+	_boss._charge._cd = 100.0
+	_brain.set("_boss_phase", 1)
+	# The wall cell nearest the court's centre in the middle of a straight run
+	# of nine wall cells with open ground before them, so a walk along the
+	# wall is open both ways rather than into a corner, and open ground out to
+	# where the boss stands.
+	var home_cell := _chunks.world_to_cell(_origin)
+	var found := false
+	var wall := home_cell
+	var open := home_cell
+	for ring in range(1, 21):
+		for dx in range(-ring, ring + 1):
+			for dy in range(-ring, ring + 1):
+				if found or maxi(absi(dx), absi(dy)) != ring:
+					continue
+				var cell := home_cell + Vector2i(dx, dy)
+				var inward := Vector2i(-signi(dx), 0) if absi(dx) >= absi(dy) else Vector2i(0, -signi(dy))
+				var side := Vector2i(inward.y, inward.x)
+				var straight := true
+				for k in range(-4, 5):
+					var along := cell + side * k
+					for depth in range(1, 4 if absi(k) > 1 else 7):
+						straight = straight and _chunks.is_cell_walkable(along + inward * depth)
+					straight = straight and not _chunks.is_cell_walkable(along)
+				if straight:
+					found = true
+					wall = cell
+					open = cell + inward
+		if found:
+			break
+	_check(found, "%s seed%d: the court has a wall to rest against" % [_role, _seed_value])
+	if not found:
+		return
+	var toward := Vector2(wall - open).normalized()
+	_player.process_mode = Node.PROCESS_MODE_INHERIT
+	_player.rotation = toward.angle()
+	_player.velocity = Vector2.ZERO
+	_player.global_position = _chunks.cell_to_world_center(open)
+	await get_tree().physics_frame
+	var resting := false
+	for _step in range(48):
+		if _player.move_and_collide(toward * 4.0) != null:
+			resting = true
+			break
+	_player.process_mode = Node.PROCESS_MODE_DISABLED
+	_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
+	# These courts' walls stand at the edge of the boss's disengage radius,
+	# where it rightly leaves the fight. The home moves 600 px straight out
+	# from the wall, as in a court whose wall lies inside the fight; the wall's
+	# grid cells and colliders stay the real ones. The boss attacks from
+	# 300 px straight out, so the attack's line meets the wall square on and
+	# a walk along the wall leaves it.
+	var out := -toward
+	_boss.set_meta(&"boss_home_pos", _player.global_position + out * 600.0)
+	_boss.global_position = _player.global_position + out * 300.0
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	var plan: Array = []
+	var blockers: Array = []
+	if _role == "tank":
+		plan = _brain.call("_plan_for", &"shock", _boss.global_position, toward)
+		blockers = [{"center": _boss.global_position, "radius": float(_brain.call("_body_radius"))}]
+	else:
+		plan = _brain.call("_fan_plan", _boss.global_position, toward, _brain.call("_focused_angles"), 0.95, 320.0, 1.625)
+		blockers = [{"center": _boss.global_position, "radius": Placement.body_radius(_boss)}]
+	_check(Oracle.has_escape(_player.global_position, plan, Oracle.player_shape(_player), blockers, Callable(), Oracle.walking_speed(_player)), "fixture: %s seed%d: in open ground the same attack leaves a walk out" % [_role, _seed_value])
+	var committed := bool(_brain.call("_try_main_attack", &"shock")) if _role == "tank" else bool(_brain.call("_try_main_pattern", &"fan"))
+	_check(committed, "%s seed%d: a player resting against a real court wall still draws the boss's aimed attack" % [_role, _seed_value])
+
+
 ## The opening after an S10 commitment: native melee from body contact must
 ## land during the recovery the attack earns.
 func _melee_recovery_attempt(attack: String) -> void:
@@ -365,7 +450,7 @@ func _route_for(attack: String) -> Variant:
 		blockers = [{"center": origin, "radius": Placement.body_radius(_boss)}]
 	var clearance := Oracle.corridor_radius(shape)
 	var path_clear := func(from: Vector2, to: Vector2) -> bool:
-		return Placement.corridor_clear(_boss, from, to, clearance)
+		return Placement.walk_clear(_boss, from, to, clearance)
 	return Oracle.escape_route(_player.global_position, plan, shape, blockers, path_clear, Oracle.walking_speed(_player))
 
 
