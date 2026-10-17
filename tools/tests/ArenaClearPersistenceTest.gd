@@ -110,14 +110,27 @@ func _test_record() -> void:
 	Global.attempt_segment = 10
 	Global.note_arena_cleared(&"boss")
 	Global.note_arena_cleared(&"miniboss")
+	# The pass the attempt was in: a wardstone taken, deaths, a Witness's debt,
+	# claimed loot.
+	Global.attempt_segment = 5
+	Global.attempt_checkpoint_pos = Vector2(-15360, 5120)
+	Global.attempt_deaths_this_segment = 3
+	Global.attempt_witness_used_segment = 5
+	Global.attempt_doctrine_threat_debt = 25.0
+	Global.claim_loot(7)
 	DevSetCollisionTools.prepare_segment_jump(10)
 	_check(Global.attempt_segment == 10 and Global.attempt_cleared_arenas == PackedStringArray(["3:miniboss", "5:miniboss"]), "a developer jump to Segment 10 forgets that segment's clears and keeps the earlier ones")
+	_check(Global.attempt_checkpoint_pos == Vector2.INF and Global.attempt_deaths_this_segment == 0 and Global.attempt_witness_used_segment == 0 and is_zero_approx(Global.attempt_doctrine_threat_debt) and not Global.has_claimed_loot(7), "and starts it as a fresh pass from its start: no checkpoint, deaths, Witness debt or claimed loot from the segment it left")
 	Global.note_arena_cleared(&"boss")
 	DevSetCollisionTools.prepare_segment_jump(5)
 	_check(Global.attempt_segment == 5 and Global.attempt_cleared_arenas == PackedStringArray(["3:miniboss"]), "a jump back to Segment 5 forgets the clears from there on, so Segment 10's boss rises again too")
 	var followers_before := Global.followers
 	DevSetCollisionTools.prepare_opening_restart("short")
 	_check(Global.attempt_segment == 1 and Global.attempt_cleared_arenas.is_empty(), "the console's opening restart replays the whole attempt: every clear is forgotten")
+	Global.attempt_segment = 10
+	Global.note_arena_cleared(&"boss")
+	DevSetCollisionTools.prepare_legacy_opening_save()
+	_check(Global.attempt_segment == 2 and Global.attempt_cleared_arenas.is_empty(), "the console's legacy save, back at Segment 2, has nothing settled, like the saves it imitates")
 	Global.debug_opening_mode_override = ""
 	Global.debug_opening_force_phase = -1
 	Global.debug_opening_response_override = ""

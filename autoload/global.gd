@@ -2907,6 +2907,22 @@ func forget_arena_clears_from(segment: int) -> void:
 		if int(attempt_cleared_arenas[index].get_slice(":", 0)) >= segment:
 			attempt_cleared_arenas.remove_at(index)
 
+## Starts the segment the attempt is in as a fresh pass from its start, as the
+## developer console's jump and opening restart replay it: nothing of the pass
+## the attempt was in carries over (its deaths, its checkpoint, which the
+## builder would take as the new segment's start, the unpaid Overtime fraction,
+## the gambler's tally, claimed exploration loot, Witness use and threat debt).
+## Segment completion clears the same for the next segment, among its rewards.
+func reset_segment_pass() -> void:
+	attempt_deaths_this_segment = 0
+	attempt_checkpoint_pos = Vector2.INF
+	_kill_reward_carry = 0.0
+	gambler_reset_segment()
+	attempt_claimed_loot_ids = PackedInt32Array()
+	_claimed_loot_set.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
+
 func apply_save(save: SaveData) -> void:
 	attempt_pending_segment_completion = 0
 	_city_development_awards_enabled = SaveManager != null and SaveManager.current_save == save
