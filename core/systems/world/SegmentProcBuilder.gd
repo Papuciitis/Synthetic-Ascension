@@ -528,6 +528,10 @@ func _set_pressure_phase(next_phase: StringName) -> void:
 	var label: String = _phase_label(next_phase)
 	var director := get_node_or_null("/root/ThreatDirector")
 	if director != null and director.has_method("set_segment_phase"):
+		# A director still on the previous segment would reset this phase at
+		# its next poll.
+		if director.has_method("sync_segment"):
+			director.call("sync_segment")
 		director.call("set_segment_phase", next_phase)
 	if RunEvents != null and RunEvents.has_signal("segment_phase_changed"):
 		RunEvents.segment_phase_changed.emit(next_phase, label)

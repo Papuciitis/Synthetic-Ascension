@@ -47,6 +47,8 @@ func _continue_case(role_value: String, seed_value: int) -> void:
 	Global.apply_save(save)
 	_victories.clear()
 	_check(Global.attempt_segment == Global.FINAL_SEGMENT and Global.is_arena_cleared(&"boss") and Global.followers == paid, "%s: the save restores the segment, the clear and the paid wallet" % role_value)
+	# A relaunched process: the threat director still holds boot's segment.
+	ThreatDirector.set("_last_segment", 1)
 	_game = GAME.instantiate() as Node2D
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -62,6 +64,11 @@ func _continue_case(role_value: String, seed_value: int) -> void:
 	var rebuilt := get_tree().get_first_node_in_group(&"segment_proc_builder") as SegmentProcBuilder
 	_check(rebuilt != null and rebuilt.is_boss_defeated(), "%s: the rebuilt segment keeps its boss defeated" % role_value)
 	_check(rebuilt != null and float(rebuilt.get("resonance")) >= 0.999, "%s: and its Resonance earned" % role_value)
+	for _step in range(30):
+		await get_tree().physics_frame
+	# Resonance reaches the director held just under the unseal threshold
+	# (0.998) while the gate still waits on the primary objective.
+	_check(ThreatDirector.segment_phase == &"collapse" and ThreatDirector.resonance >= 0.998, "%s: the threat director runs the restored segment's collapse, not recon (%s, %.3f)" % [role_value, ThreatDirector.segment_phase, ThreatDirector.resonance])
 	# find_children's type filter only knows engine classes: test the script class.
 	var arenas := _game.find_children("*", "", true, false).filter(func(node: Node) -> bool: return node is BossArena and not node.is_queued_for_deletion())
 	_check(arenas.is_empty(), "%s: the cleared court leaves instead of waiting to fight" % role_value)

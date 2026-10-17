@@ -253,9 +253,7 @@ func _process(delta: float) -> void:
 	_tick = 0.0
 
 	# Segment changes don’t have a signal, so we poll lightly.
-	var seg := maxi(1, Global.attempt_segment)
-	if seg != _last_segment:
-		_on_segment_changed(seg)
+	sync_segment()
 
 	if gate_unsealed:
 		_unseal_time += step
@@ -373,6 +371,16 @@ func reset_run_state() -> void:
 	# to carry overtime/elites/evac into the new run.
 	_on_attempt_boundary(&"reset_run_state")
 	_on_segment_changed(maxi(1, Global.attempt_segment))
+
+## Catches up with a segment change at once rather than at the next 0.2 s
+## poll. The segment builder calls it before it sets a phase, so a phase set
+## while a segment is built (a clear restored on Continue sets collapse) is
+## never reset by that poll afterwards.
+func sync_segment() -> void:
+	var seg := maxi(1, Global.attempt_segment)
+	if seg != _last_segment:
+		_on_segment_changed(seg)
+
 
 func _on_segment_changed(new_seg: int) -> void:
 	_last_segment = new_seg
