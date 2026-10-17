@@ -101,6 +101,7 @@ The oracle sampled 15 positions (120–500 px, 0–30° off the aim). The legacy
 | BossBulldozerMainTest (new): ownership, phases, cleave, breach incl. a wall-stopped rush, follow-up timings, oracle guard, arena speed | 49 / 0 |
 | BossArcanistMainTest (new): phases and pylon pairs, hold fire, Split Fan lanes, neutral beat, sweep, Convergence, mine arc, sweep fairness | 46 / 0 |
 | BossPhaseBarTest (new) | 15 / 0 |
+| BossMainInterruptionTest (new): death, stun, disengage and pause against the S10 cleave, breach tell and beat, Fault Line follow-up, Split Fan, sweep (telegraph and active), Convergence between beats, phase beats and pylons | 38 / 0; 24 / 14 with both cancellation layers removed (scope signal and controller check) |
 | EnemyCombatServiceTest (+3 batched-cap and plate checks) | 42 / 0; 40 / 2 before the fix |
 | AscensionCityPacingTest (+2 milestone checks) | 626 / 0; 623 / 1 while 26b2bfd hid the line |
 | S5 teaching suites: Bulldozer, Arcanist, actual-Game escape matrix | 55 / 0, 44 / 0, 156 / 0 |
