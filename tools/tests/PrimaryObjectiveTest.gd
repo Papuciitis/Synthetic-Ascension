@@ -1024,8 +1024,12 @@ func _test_rite_gate(id: StringName, deep: bool) -> void:
 		# per-frame feed makes the exit encounter live first (see
 		# ExitEncounterController), and only a live encounter can channel.
 		rite.call("_feed_encounter", 0.1)
+		var encounter: Object = rite.get("_encounter")
+		_check(encounter.call("state") == &"approach", "fixture: the approach feed makes the exit encounter live")
 		rite.call("_on_body_entered", arrival)
-		_check(rite.is_in_group(&"exit_rite_channeling"), "an unsealed rite accepts the player and starts channelling")
+		# The feed alone already lists the rite as channelling (a live
+		# encounter), so the entry is judged by the rite and its encounter.
+		_check(bool(rite.get("_player_inside")) and encounter.call("state") == &"channel" and rite.is_in_group(&"exit_rite_channeling"), "an unsealed rite accepts the player and starts channelling")
 		_release(arrival)
 
 	_release(rite)
