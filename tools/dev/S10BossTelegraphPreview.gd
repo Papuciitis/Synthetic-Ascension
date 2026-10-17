@@ -1,9 +1,10 @@
 extends Node
-## Staged Segment 10 main-boss telegraphs in the ACTUAL Game scene, not a
-## fight: the Bulldozer's Sweeping Cleave, Breach Sequence and Fault Line
-## follow-up; the Arcanist's Split Fan, rebuilt Arc Sweep (start and end
-## lanes), Pylon Pair and phase cast; the boss bar's phase marks. Every cue
-## is made by the production brain entry points, then frozen mid-tell.
+## Staged Segment 10 main-boss telegraphs in the ACTUAL Game scene at
+## segment 10 (its terrain and HUD), not a fight: the Bulldozer's Sweeping
+## Cleave, Breach Sequence, Fault Line follow-up and phase beat; the
+## Arcanist's Split Fan, rebuilt Arc Sweep (start and end lanes), Pylon Pair,
+## phase cast and phase 3 mine arc; the boss bar's phase marks. Every cue is
+## made by the production brain entry points, then frozen mid-tell.
 ## Rendered run: <godot> --path . res://tools/dev/S10BossTelegraphPreview.tscn
 ## User args: -- --out=/absolute/folder [--visible]
 ## Never run beside a human playtest. No profile or settings writes are allowed.
@@ -81,7 +82,7 @@ func _run() -> void:
 	Global.debug_player_god_mode = true
 	Global.debug_encounter_beats = false
 	Global.start_new_attempt()
-	Global.attempt_segment = 2
+	Global.attempt_segment = 10
 	Global.attempt_world_seed = WORLD_SEED
 	Global.attempt_opening_completed = true
 	Global.attempt_opening_phase = 10
@@ -122,7 +123,7 @@ func _run() -> void:
 	_origin = _player.global_position
 	for dimensions: Vector2i in [Vector2i(1280, 720), Vector2i(960, 540)]:
 		get_window().size = dimensions
-		for panel: String in ["bulldozer", "arcanist"]:
+		for panel: String in ["bulldozer", "arcanist", "arcanist-arc"]:
 			if is_instance_valid(_stage):
 				# The next panel's boss_spawned replaces the bar's boss; no
 				# boss_cleared, which would also reach the story ledger.
@@ -130,8 +131,10 @@ func _run() -> void:
 				await _frames(2)
 			if panel == "bulldozer":
 				_build_bulldozer()
-			else:
+			elif panel == "arcanist":
 				_build_arcanist()
+			else:
+				_build_arcanist_arc()
 			var proxy := _game.get_node_or_null("EnemyProxyRoot")
 			if proxy != null and proxy.get("renderer") != null:
 				proxy.get("renderer").call("publish")
@@ -183,12 +186,19 @@ func _build_bulldozer() -> void:
 	brain.set("_followup_dir", Vector2.RIGHT.rotated(TANK_BRAIN.FOLLOWUP_TURN))
 	brain.call("_do_shockwave")
 	_hold(brain, float(brain.get("shockwave_windup")))
+	# The phase beat into phase 3: the boss braces in place, damageable.
+	var brace := _add_boss(TANK, Vector2(470, 230), Vector2.ZERO)
+	brain = brace.get_node("BossBrain")
+	brain.set("_boss_phase", 1)
+	brain.call("_begin_phase_shift", 2)
+	_hold(brain, TANK_BRAIN.PHASE_SHIFT_SECONDS)
 	_adopt(before)
 	_show_bar(fault, "Boss: The Bulldozer", 2)
 	_label(Vector2(-665, -438), Vector2(1360, 40), "S10 BULLDOZER / STAGED IN ACTUAL GAME / tells frozen at 60%", 26)
 	_label(Vector2(-760, -60), Vector2(420, 34), "SWEEPING CLEAVE / 150 deg x R125", 20)
 	_label(Vector2(-560, 310), Vector2(520, 34), "BREACH / lane, then the impact at its end", 20)
 	_label(Vector2(160, -230), Vector2(560, 34), "FAULT LINE + FOLLOW-UP / six nodes previewed", 20)
+	_label(Vector2(290, 320), Vector2(360, 34), "PHASE BEAT / braced, damageable", 20)
 	_label(Vector2(-55, 60), Vector2(160, 34), "REAL PLAYER", 20)
 	_freeze(_stage)
 
@@ -231,7 +241,7 @@ func _build_arcanist() -> void:
 			pylons += 1
 			child._cd = 0.0
 			child._process(0.0)
-			child._process(child.shot_windup * 0.5)
+			child._process(child.shot_windup * TELL_PROGRESS)
 	if pylons != 2:
 		_fail("the phase raised %d pylons, not a pair" % pylons)
 	_show_bar(pair, "Boss: The Arcanist", 1)
@@ -239,6 +249,29 @@ func _build_arcanist() -> void:
 	_label(Vector2(-800, 300), Vector2(560, 34), "SPLIT FAN / ten lanes, one 32 deg gap", 20)
 	_label(Vector2(80, -230), Vector2(560, 34), "ARC SWEEP / start lane + announced end lane", 20)
 	_label(Vector2(330, 280), Vector2(420, 34), "PHASE CAST + PYLON PAIR", 20)
+	_label(Vector2(-55, 60), Vector2(160, 34), "REAL PLAYER", 20)
+	_freeze(_stage)
+
+
+func _build_arcanist_arc() -> void:
+	var before := _game.get_children()
+	_stage = _new_stage()
+	# Mine arc (phase 3): four nodes around the real player; the escape
+	# corridor kept clear of walls, other mines and the boss's body.
+	var arc := _add_boss(MAGE, Vector2(-300, 60), Vector2.ZERO)
+	var brain := arc.get_node("BossBrain")
+	brain.set("_boss_phase", 2)
+	brain.call("_ensure_teaching")
+	if not bool(brain.call("_start_teaching_mines", 4)):
+		_fail("the mine arc found no clear placement")
+	else:
+		for marker in brain.get("_teaching_markers"):
+			marker.call("set_progress", TELL_PROGRESS)
+		_advance_windups(arc, 0.6 * TELL_PROGRESS)
+	_adopt(before)
+	_show_bar(arc, "Boss: The Arcanist", 2)
+	_label(Vector2(-665, -438), Vector2(1360, 40), "S10 ARCANIST PHASE 3 / STAGED IN ACTUAL GAME / tell frozen at 60%", 26)
+	_label(Vector2(-200, 290), Vector2(400, 34), "MINE ARC / four nodes, corridor kept", 20)
 	_label(Vector2(-55, 60), Vector2(160, 34), "REAL PLAYER", 20)
 	_freeze(_stage)
 
