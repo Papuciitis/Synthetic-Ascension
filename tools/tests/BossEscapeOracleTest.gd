@@ -84,7 +84,45 @@ func _run() -> void:
 	var boxed_in := func(_from: Vector2, _to: Vector2) -> bool: return false
 	_check(ORACLE.has_escape(contact, _slam(1.3), shape, body, open_court), "an open court keeps the slam's escape")
 	_check(not ORACLE.has_escape(contact, _slam(1.3), shape, body, boxed_in), "walls across every walk veto the attack")
+
+	# The player as it really moves: it turns to face its motion, keeps that
+	# motion while reacting, walks one of eight keyboard directions, and at its
+	# own permanent speed.
+	var instant := [{"kind": &"circle", "center": Vector2(50, 0), "radius": 10.0, "from": 0.0, "to": 0.1}]
+	var square_on := shape.duplicate()
+	square_on["rotation"] = 0.0
+	var corner_on := shape.duplicate()
+	corner_on["rotation"] = PI * 0.25
+	_check(ORACLE.has_escape(Vector2.ZERO, instant, square_on), "a hazard 15 px clear of the square's side misses it")
+	_check(not ORACLE.has_escape(Vector2.ZERO, instant, corner_on), "the same hazard meets the square turned 45 degrees: the player's facing is part of its shape")
+	var ahead := [{"kind": &"circle", "center": Vector2(60, 0), "radius": 10.0, "from": 0.0, "to": 0.2}]
+	var still := shape.duplicate()
+	still["velocity"] = Vector2.ZERO
+	var closing := shape.duplicate()
+	closing["velocity"] = Vector2(100, 0)
+	_check(ORACLE.has_escape(Vector2.ZERO, ahead, still), "standing 25 px clear, the player has time")
+	_check(not ORACLE.has_escape(Vector2.ZERO, ahead, closing), "walking into it at commitment, the reaction carries the player on into it")
+	var keyboard_route = ORACLE.escape_route(contact, _slam(1.3), shape, body)
+	var on_grid := false
+	if keyboard_route is Vector2 and not (keyboard_route as Vector2).is_zero_approx():
+		var step := fposmod((keyboard_route as Vector2).angle(), PI * 0.25)
+		on_grid = is_zero_approx(step) or is_equal_approx(step, PI * 0.25)
+	_check(on_grid, "routes are keyboard directions, multiples of 45 degrees")
+	_check(not ORACLE.has_escape(contact, _slam(1.3), shape, body, Callable(), 80.0), "the 1.3 s slam from contact traps an 80 px/s player")
+	var slow := WalkSpeed.new()
+	slow.speed = 80.0
+	var quick := WalkSpeed.new()
+	quick.speed = 300.0
+	_check(is_equal_approx(ORACLE.walking_speed(slow), 80.0) and is_equal_approx(ORACLE.walking_speed(quick), ORACLE.BASE_SPEED) and is_equal_approx(ORACLE.walking_speed(null), ORACLE.BASE_SPEED), "each player walks at its own speed, never above the 100 px/s baseline")
+	slow.free()
+	quick.free()
+	_check(is_equal_approx(ORACLE.walking_clearance(shape), 29.0), "corridors clear the capsule's crosswise half length")
 	_finish()
+
+
+class WalkSpeed:
+	extends Node
+	var speed := 100.0
 
 
 func _finish() -> void:

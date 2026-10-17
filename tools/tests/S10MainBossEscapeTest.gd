@@ -360,9 +360,10 @@ func _route_for(attack: String) -> Variant:
 			var tell: float = MAGE_BRAIN.SWEEP_TELL if attack == "sweep" else MAGE_BRAIN.SPLIT_TELL + MAGE_BRAIN.CONVERGENCE_BEAM_DELAY
 			plan.append(_brain.call("_sweep_hazard", origin, float(beam.get("_a0")), float(beam.get("_a1")), tell))
 		blockers = [{"center": origin, "radius": Placement.body_radius(_boss)}]
+	var clearance := Oracle.walking_clearance(shape)
 	var path_clear := func(from: Vector2, to: Vector2) -> bool:
-		return Placement.corridor_clear(_boss, from, to, float(shape["body_radius"]))
-	return Oracle.escape_route(_player.global_position, plan, shape, blockers, path_clear)
+		return Placement.corridor_clear(_boss, from, to, clearance)
+	return Oracle.escape_route(_player.global_position, plan, shape, blockers, path_clear, Oracle.walking_speed(_player))
 
 
 func _reset_evidence() -> void:
