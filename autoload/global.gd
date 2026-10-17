@@ -218,6 +218,9 @@ var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
 ## Arena encounters this attempt has settled ("segment:kind"): a defeated
 ## boss stays defeated on Continue and is never paid out twice.
 var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
+## Developer tools launched this attempt (saved with it): loading it never
+## imports its city choices as the profile's permanent commitments.
+var attempt_developer_launch := false
 ## Manifestation imprints: rules dissolved by merges this attempt, kept for
 ## the Hub's imprinter (design note 2026-09-19-manifestation-imprints).
 const IMPRINT_CAP := 8
@@ -773,6 +776,7 @@ func reset_run_systems() -> void:
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
 	attempt_cleared_arenas = PackedStringArray()
+	attempt_developer_launch = false
 	attempt_imprints.clear()
 	_claimed_loot_set.clear()
 	_visited_building_set.clear()
@@ -3050,6 +3054,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
 		var cleared_arenas = save.get("attempt_cleared_arenas")
 		attempt_cleared_arenas = PackedStringArray(cleared_arenas) if cleared_arenas != null else PackedStringArray()
+		attempt_developer_launch = save.get("attempt_developer_launch") == true
 		attempt_imprints.clear()
 		for imprint_id in save.get("attempt_imprints"):
 			attempt_imprints.append(StringName(imprint_id))
@@ -3186,6 +3191,7 @@ func apply_save(save: SaveData) -> void:
 		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
 		attempt_cleared_arenas = PackedStringArray()
+		attempt_developer_launch = false
 		attempt_imprints.clear()
 		_claimed_loot_set.clear()
 		attempt_vendor_segment = 0
@@ -3391,6 +3397,10 @@ func write_save(save: SaveData) -> void:
 		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
 		save.attempt_cleared_arenas = attempt_cleared_arenas.duplicate()
+		# The debug flags are still set while a developer run saves; the main
+		# menu clears them before Continue loads it.
+		attempt_developer_launch = attempt_developer_launch or debug_dev_mode or debug_dev_segment
+		save.attempt_developer_launch = attempt_developer_launch
 		var imprints := PackedStringArray()
 		for imprint_id in attempt_imprints:
 			imprints.append(String(imprint_id))
@@ -3738,7 +3748,7 @@ func _is_city_commitment_stage(stage: StringName) -> bool:
 
 
 func _import_city_commitments() -> void:
-	if not meta_city_commitments.is_empty() or not attempt_active:
+	if not meta_city_commitments.is_empty() or not attempt_active or attempt_developer_launch:
 		return
 	for stage in [&"method", &"doctrine", &"apotheosis"]:
 		var choice := str(attempt_doctrine_stage_ids.get(stage, ""))
