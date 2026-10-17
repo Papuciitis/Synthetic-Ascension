@@ -4,6 +4,7 @@ extends Node
 const SCREEN := preload("res://ui/screens/opening/OpeningPresentation.tscn")
 var _passes := 0
 var _failures := 0
+var _first_strokes: Texture2D
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -33,6 +34,10 @@ func _run() -> void:
 	add_child(view)
 	var screen := SCREEN.instantiate()
 	view.add_child(screen)
+	# Each suite runs in a fresh process, with no stroke pattern yet; building
+	# a presentation makes none (each hub dispatch letter is one, and never
+	# shows a still).
+	_check(OpeningPresentation._shared_strokes == null, "building a presentation makes no stroke pattern")
 	_check(screen.has_method("show_illustration") and screen.has_method("clear_illustration"), "story cards can select and release optional illustrations")
 	if not screen.has_method("show_illustration"):
 		view.free()
@@ -40,6 +45,7 @@ func _run() -> void:
 		return
 	for id: StringName in [&"city", &"admission", &"synthesis", &"records"]:
 		_check(bool(screen.call("show_illustration", id)), "%s illustration is usable" % id)
+	_first_strokes = ((screen.get("_illustration") as TextureRect).material as ShaderMaterial).get_shader_parameter(&"strokes") as Texture2D
 	await screen.call("clear_illustration", 0.0)
 	_check(bool(screen.call("show_illustration", &"city")), "city image can be shown again after cleanup")
 	var image := screen.get("_illustration") as TextureRect
@@ -143,6 +149,7 @@ func _test_transitions() -> void:
 	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") == null, "the stroke pattern is not made until a still is shown")
 	screen.call("show_illustration", &"city")
 	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") != null and (front.material as ShaderMaterial).get_shader_parameter(&"strokes") == (back.material as ShaderMaterial).get_shader_parameter(&"strokes"), "then both layers paint with it")
+	_check(_first_strokes != null and (front.material as ShaderMaterial).get_shader_parameter(&"strokes") == _first_strokes, "the same pattern as every other presentation: it is made once per run")
 	_check(is_zero_approx(reveal.call(front)), "a new still starts unpainted")
 	await _wait(OpeningPresentation.STILL_REVEAL * 0.5)
 	var midway: float = reveal.call(front)
