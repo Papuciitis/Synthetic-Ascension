@@ -37,3 +37,9 @@
 - [Riot on clarity](https://www.leagueoflegends.com/en-us/news/dev/clarity-in-league/): visual hierarchy, recognizable sources and effects consistent with gameplay. Reserve strongest contrast for major actions and the cursor; preserve empty space and accurate boundaries.
 
 These are design principles, not imported artwork or a claim that this game should become either reference game.
+
+## Delivery record
+
+Validated milestones were committed and pushed during the pass: boss mix/weight (`c9ac1592`), hub/cursors (`4fb8547c`), boss entrance initialization (`8096d6a0`) and painted abilities/objectives (`b2235484`). Final integration adds the loading/recorder fixes, exact ground cache and evidence. Frontend took ownership of the Game/HUD/builders during diagnosis; root supplied the ground preparation/cache and report integration, and the ability agent supplied the named visual pass.
+
+The final [delivery audit](../../audits/2026-10-18-playtest-feedback-delivery.md) records functional success, exact pixel/audio controls and the native timing failures that remain unresolved. The strict timing assertions were retained; no broad FPS or cross-build balance conclusion is claimed. Human playtesting was deliberately deferred as authorized.
