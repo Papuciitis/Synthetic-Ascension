@@ -501,6 +501,9 @@ func _spawn_building_rect(
 				}
 				volume.configure(global_tl, interior.size, int(chunk_manager.cell_size_px), building_id, loot_cfg)
 				chunk.add_child(volume)
+				var entry_perp := Vector2(-door_dir.y, door_dir.x)
+				var entry_center := Vector2(door_pos) + Vector2(0.5, 0.5) + entry_perp * (float(door_w - 1) * 0.5 - float(door_w >> 1))
+				volume.configure_presentation_entry(chunk.to_global(entry_center * float(chunk_manager.cell_size_px)), Vector2(door_dir), float(door_w * chunk_manager.cell_size_px))
 				if ROOF_OVERLAY_SCENE != null:
 					var roof := ROOF_OVERLAY_SCENE.instantiate()
 					chunk.add_child(roof)
@@ -681,6 +684,9 @@ func _spawn_building_footprint(
 				continue
 			volume.configure(coord * cpc + rect.position, rect.size, cell_px, building_id, pair[1] as Dictionary)
 			chunk.add_child(volume)
+			if volumes.is_empty():
+				var entry_center := Vector2(door_pos) + Vector2(0.5, 0.5) + Vector2(across) * (0.5 if door_w % 2 == 0 else 0.0)
+				volume.configure_presentation_entry(chunk.to_global(entry_center * float(cell_px)), Vector2(door_dir), float(door_w * cell_px))
 			volumes.append(volume)
 		if ROOF_OVERLAY_SCENE != null and not volumes.is_empty():
 			var roof := ROOF_OVERLAY_SCENE.instantiate()

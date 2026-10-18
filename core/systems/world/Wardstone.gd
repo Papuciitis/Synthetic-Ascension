@@ -46,6 +46,9 @@ var _stability_ring_near: bool = false
 var _stability_poll_t: float = 0.0
 var _enemy_index: Node = null
 var _pulse_targets: Array[int] = []
+var _ground_details: Node2D
+var _presentation_state := ""
+var _presentation_bucket := -1
 
 var _sfx_capture_tag: StringName = &"capture"
 
@@ -76,6 +79,12 @@ func _ready() -> void:
 	if obelisk != null:
 		obelisk.set_script(WorldArt)
 		obelisk.call("configure", "wardstone", 142.0)
+	_ground_details = Node2D.new()
+	_ground_details.name = "GroundDetails"
+	_ground_details.z_index = -12
+	add_child(_ground_details)
+	_ground_details.draw.connect(_draw_ground_details)
+	_refresh_world_art()
 
 	_set_idle_intensity(0.28)
 
@@ -92,14 +101,13 @@ func _process(delta: float) -> void:
 		if not WorldArt.reduced_motion():
 			sigil.rotation += 0.04 * delta
 		var breathe := WorldArt.pulse(_spin_t, 1.1)
-		var a := 0.14 if not _active else 0.26
+		var a := 0.10 if not _active else 0.035
 		# While capturing, let it ramp up so it feels "busy"
 		if (not _active) and _player_inside and capture_time > 0.0:
 			var t := clampf(_capture / capture_time, 0.0, 1.0)
 			a = lerpf(0.16, 0.30, t)
 		sigil.modulate.a = a * (0.85 + 0.15 * breathe)
-	if obelisk != null:
-		obelisk.call("set_state", "complete" if _active else ("working" if _player_inside else "dormant"), _capture / maxf(capture_time, 0.001))
+	_refresh_world_art()
 
 	if _active:
 		_set_idle_intensity(0.65)
@@ -112,11 +120,13 @@ func _process(delta: float) -> void:
 			# The frame that clears the capture arc still paints: one last wipe,
 			# then the wardstone is a still image until something moves.
 			_capture = 0.0
+			_refresh_world_art()
 			queue_redraw()
 		_set_idle_intensity(0.28)
 		return
 
 	_capture = minf(_capture + delta, capture_time)
+	_refresh_world_art()
 	# ramp idle aura while capturing
 	if capture_time > 0.0:
 		_set_idle_intensity(lerpf(0.35, 0.60, clampf(_capture / capture_time, 0.0, 1.0)))
@@ -149,8 +159,7 @@ func _activate() -> void:
 		return
 	_active = true
 	add_to_group(&"wardstones_active")
-	if obelisk != null:
-		obelisk.call("set_state", "complete", 1.0)
+	_refresh_world_art()
 
 	var sm := get_node_or_null("/root/SfxManager")
 	if sm != null:
@@ -202,9 +211,8 @@ func restore_active() -> void:
 	add_to_group(&"wardstones_active")
 	_set_idle_intensity(0.65)
 	if sigil != null:
-		sigil.modulate.a = 0.26
-	if obelisk != null:
-		obelisk.call("set_state", "complete", 1.0)
+		sigil.modulate.a = 0.035
+	_refresh_world_art()
 	queue_redraw()
 
 
@@ -278,26 +286,69 @@ func _set_idle_intensity(v: float) -> void:
 		idle_aura.call("set_intensity", v)
 
 
+## This state describes the existing capture only; reading it never banks or
+## advances attunement. The physical base and painted obelisk share the answer.
+func presentation_state() -> String:
+	return "complete" if _active else ("working" if _player_inside else "dormant")
+
+
+func _refresh_world_art() -> void:
+	var state := presentation_state()
+	var progress := 1.0 if _active else clampf(_capture / maxf(capture_time, 0.001), 0.0, 1.0)
+	if obelisk != null:
+		obelisk.call("set_state", state, progress)
+	var bucket := int(progress * 32.0)
+	if state == _presentation_state and bucket == _presentation_bucket:
+		return
+	_presentation_state = state
+	_presentation_bucket = bucket
+	if _ground_details != null:
+		_ground_details.queue_redraw()
+
+
+func _draw_ground_details() -> void:
+	if _ground_details == null:
+		return
+	var state := presentation_state()
+	var engaged := state == "complete"
+	var working := state == "working"
+	# A shallow civic plinth, centered on the real foot rather than the PNG's
+	# transparent bounds. Broad clamps close into the foot when it anchors.
+	var plinth := PackedVector2Array([Vector2(-35, -12), Vector2(29, -12), Vector2(39, 6), Vector2(25, 20), Vector2(-29, 20), Vector2(-40, 5)])
+	_ground_details.draw_colored_polygon(plinth, Color(0.12, 0.15, 0.14, 0.72))
+	_ground_details.draw_polyline(PackedVector2Array([plinth[0], plinth[1], plinth[2], plinth[3], plinth[4], plinth[5], plinth[0]]), Color(0.56, 0.59, 0.51, 0.53), 1.5, true)
+	var closure := 1.0 if engaged else (clampf(_capture / maxf(capture_time, 0.001), 0.0, 1.0) * 0.65 if working else 0.0)
+	var gap := lerpf(27.0, 15.0, closure)
+	var metal := Color(0.69, 0.72, 0.60, 0.9) if engaged else Color(0.43, 0.44, 0.38, 0.8)
+	for side in [-1.0, 1.0]:
+		var center := Vector2(gap * side, 6.0)
+		_ground_details.draw_rect(Rect2(center - Vector2(8.0, 5.0), Vector2(16.0, 10.0)), Color(0.08, 0.10, 0.09, 0.94))
+		_ground_details.draw_line(center - Vector2(7.0, 0.0), center + Vector2(7.0, 0.0), metal, 4.0, true)
+		if engaged:
+			_ground_details.draw_line(center + Vector2(-side * 5.0, -5.0), center + Vector2(-side * 5.0, 5.0), metal, 3.0, true)
+	if engaged:
+		_ground_details.draw_line(Vector2(-17.0, 18.0), Vector2(17.0, 18.0), Color(0.64, 0.77, 0.66, 0.85), 3.0, true)
+
+
 func _draw() -> void:
-	# In-world readability (capture ring + progress) + stability ring when relevant.
+	# Once anchored, the actual slowing field takes priority over the obsolete
+	# capture ornament. Its exact edge remains stable when motion is disabled.
 	var show_stability: bool = _active or _stability_ring_near
-
 	if show_stability:
-		var c := Color(0.25, 0.55, 0.70, 0.10) if not _active else Color(0.35, 0.88, 0.80, 0.16)
-		draw_arc(Vector2.ZERO, get_stability_radius(), 0.0, TAU, 96, c, 3.0, true)
-
-	# Capture ring
-	WorldArt.draw_boundary(self, Vector2.ZERO, capture_zone_radius, Color(0.48, 0.8, 0.79, 0.85))
-	if _active:
-		WorldArt.draw_complete(self, Vector2(0, 27), 12.0)
+		if _active:
+			WorldArt.draw_boundary(self, Vector2.ZERO, get_stability_radius(), Color(0.54, 0.79, 0.68, 0.62))
+		else:
+			draw_arc(Vector2.ZERO, get_stability_radius(), 0.0, TAU, 96, Color(0.42, 0.56, 0.52, 0.13), 1.25, true)
+	if not _active:
+		WorldArt.draw_boundary(self, Vector2.ZERO, capture_zone_radius, Color(0.55, 0.68, 0.62, 0.48))
 	if _active or _stability_ring_near:
-		var label := "ANCHORED" if _active else ("ATTUNING" if _player_inside else "WARDSTONE")
-		var at := Vector2(-110.0, -132.0)
-		draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 220.0, 18, 4, Color(0.025, 0.02, 0.03, 0.95))
-		draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 220.0, 18, Color(0.7, 0.9, 0.84, 0.95))
+		var label := "ANCHORED • SANCTUARY" if _active else ("ATTUNING" if _player_inside else "WARDSTONE")
+		var at := Vector2(-140.0, -132.0)
+		draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 18, 4, Color(0.025, 0.02, 0.03, 0.95))
+		draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 18, Color(0.7, 0.9, 0.84, 0.95))
 
-	# Capture progress (kept as requested)
+	# Temporary capture progress resets on exit; it has no durable seal marks.
 	if (not _active) and capture_time > 0.0 and _capture > 0.0:
 		var t := clampf(_capture / capture_time, 0.0, 1.0)
-		var prog_col := Color(0.95, 0.80, 0.35, 0.78)
-		draw_arc(Vector2.ZERO, capture_zone_radius + 6.0, -PI/2, -PI/2 + TAU * t, 64, prog_col, 4.0, true)
+		var prog_col := Color(0.83, 0.77, 0.52, 0.72)
+		draw_arc(Vector2.ZERO, capture_zone_radius + 5.0, -PI/2, -PI/2 + TAU * t, 64, prog_col, 2.5, true)

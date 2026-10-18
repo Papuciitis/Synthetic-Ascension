@@ -54,6 +54,15 @@ var _encounter_started: bool = false
 var _encounter_completed: bool = false
 var _encounter_remaining: int = 0
 var _encounter_enemy_ids: Array[int] = []
+var _presentation_entry := Vector2.ZERO
+var _presentation_outward := Vector2.DOWN
+var _presentation_width := 0.0
+var _presentation_enabled := false
+var _player_inside := false
+var _entry_sign: Label
+var _room_sign: Label
+var _room_floor: Polygon2D
+var _reward_refs: Array[WeakRef] = []
 
 
 func _ready() -> void:
@@ -67,6 +76,7 @@ func _ready() -> void:
 		body_entered.connect(_on_body_entered)
 	if not body_exited.is_connected(_on_body_exited):
 		body_exited.connect(_on_body_exited)
+	_sync_exploration_presentation()
 
 
 func _exit_tree() -> void:
@@ -122,6 +132,9 @@ func _update_shape() -> void:
 
 
 func _on_body_entered(b: Node) -> void:
+	if b != null and b.is_in_group(&"player"):
+		_player_inside = true
+		_sync_exploration_presentation.call_deferred()
 	if b != null and b.is_in_group("player") and RunEvents != null:
 		# Exploration hook. first_visit is keyed on the stable seeded
 		# building_id, not on this node: chunks are streamed, so a volume the
@@ -150,6 +163,8 @@ func _on_body_entered(b: Node) -> void:
 
 func _on_body_exited(b: Node) -> void:
 	if b != null and b.is_in_group("player"):
+		_player_inside = false
+		_sync_exploration_presentation()
 		_set_encounter_active(false)
 
 func contains_world_point(world_point: Vector2) -> bool:
@@ -158,6 +173,7 @@ func contains_world_point(world_point: Vector2) -> bool:
 
 func _activate_local_encounter() -> void:
 	_encounter_started = true
+	_sync_exploration_presentation()
 	if local_encounter_delay > 0.0:
 		await get_tree().create_timer(local_encounter_delay, false).timeout
 	if not is_inside_tree():
@@ -182,6 +198,7 @@ func _activate_local_encounter() -> void:
 			continue
 		_encounter_enemy_ids.append(enemy.get_instance_id())
 		enemy.tree_exited.connect(_on_local_enemy_left.bind(enemy), CONNECT_ONE_SHOT)
+	_sync_exploration_presentation()
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
 
@@ -199,6 +216,7 @@ func _on_local_enemy_left(enemy: Node) -> void:
 		_abort_local_encounter()
 		return
 	_encounter_remaining = maxi(0, _encounter_remaining - 1)
+	_sync_exploration_presentation()
 	if _encounter_remaining <= 0:
 		_finish_local_encounter()
 
@@ -209,6 +227,7 @@ func _abort_local_encounter() -> void:
 	_encounter_started = false
 	_encounter_remaining = 0
 	_encounter_enemy_ids.clear()
+	_sync_exploration_presentation()
 
 func _finish_local_encounter() -> void:
 	if _encounter_completed:
@@ -217,6 +236,7 @@ func _finish_local_encounter() -> void:
 	_set_encounter_active(false)
 	_notify_secondary_completed()
 	_try_spawn_loot()
+	_sync_exploration_presentation()
 
 
 func _set_encounter_active(active: bool) -> void:
@@ -343,6 +363,9 @@ func _spawn_loot(rng: RandomNumberGenerator, n_min: int, n_max: int, r_min: int,
 			p.free()
 			continue
 		p.global_position = spawn_pos
+		_reward_refs.append(weakref(p))
+		p.tree_entered.connect(_sync_exploration_presentation)
+		p.tree_exited.connect(_sync_exploration_presentation)
 
 		get_tree().current_scene.call_deferred("add_child", p)
 		made = true
@@ -397,3 +420,98 @@ func _mix_seed(a: int, b: int) -> int:
 	var h: int = int((a ^ (b * 0x9E3779B9)) & 0x7FFFFFFF)
 	h = int((h * 1103515245 + 12345) & 0x7FFFFFFF)
 	return h
+
+
+## The parcel supplies its real carved doorway. No detection, collision, or
+## encounter rule depends on this visual pose.
+func configure_presentation_entry(world_point: Vector2, outward: Vector2, width_px: float) -> void:
+	_presentation_enabled = exploration_loot_enabled and (local_encounter_enabled or secondary_objective_id > 0)
+	_presentation_entry = to_local(world_point)
+	_presentation_outward = outward.normalized()
+	_presentation_width = width_px
+	if not _presentation_enabled:
+		return
+	_entry_sign = _make_exploration_label("BuildingEntrySign")
+	_entry_sign.position = _presentation_entry + _presentation_outward * (float(cell_size_px) * 0.8 + 16.0) - Vector2(190, 12)
+	_room_sign = _make_exploration_label("BuildingSecurityStatus")
+	_room_sign.position = Vector2(-190, -float(size_cells.y * cell_size_px) * 0.32)
+	_room_floor = Polygon2D.new()
+	_room_floor.name = "ServiceRoomFloorTone"
+	var half := Vector2(size_cells) * float(cell_size_px) * 0.5
+	_room_floor.polygon = PackedVector2Array([-half, Vector2(half.x, -half.y), half, Vector2(-half.x, half.y)])
+	_room_floor.color = Color(0.075, 0.065, 0.05, 0.16)
+	_room_floor.z_index = -80
+	add_child(_room_floor)
+	_sync_exploration_presentation()
+	queue_redraw()
+
+
+func presentation_status() -> String:
+	if _encounter_completed:
+		return "Security cleared · loot on floor" if _has_floor_reward() else "Security cleared"
+	if local_encounter_enabled:
+		if _encounter_started:
+			return "%d security remaining" % _encounter_remaining if _encounter_remaining > 0 else "Security arriving"
+		return "Enter and clear security"
+	return "Loot on floor" if _has_floor_reward() else ("Room searched" if _loot_attempted else "Enter and search")
+
+
+func _has_floor_reward() -> bool:
+	for reference in _reward_refs:
+		var pickup := reference.get_ref() as Node
+		if pickup != null and is_instance_valid(pickup) and pickup.is_inside_tree() and not pickup.is_queued_for_deletion():
+			return true
+	return false
+
+
+func _make_exploration_label(node_name: String) -> Label:
+	var label := Label.new()
+	label.name = node_name
+	label.size = Vector2(380, 58)
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_color_override("font_color", Color(0.86, 0.82, 0.69))
+	label.add_theme_color_override("font_outline_color", Color(0.055, 0.05, 0.04, 0.95))
+	label.add_theme_constant_override("outline_size", 5)
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.z_index = 3
+	add_child(label)
+	return label
+
+
+func _sync_exploration_presentation() -> void:
+	if not _presentation_enabled or _entry_sign == null:
+		return
+	var status := presentation_status()
+	_entry_sign.text = status
+	_entry_sign.visible = not _player_inside
+	_room_sign.text = status
+	_room_sign.visible = _player_inside
+	queue_redraw()
+
+
+func _draw() -> void:
+	if not _presentation_enabled:
+		return
+	var side := _presentation_outward.orthogonal()
+	var half_span := _presentation_width * 0.5
+	var dark := Color(0.08, 0.075, 0.055, 0.9)
+	var stone := Color(0.56, 0.55, 0.45, 0.85)
+	var at := _presentation_entry
+	# Broad modest threshold follows the existing hole; nothing blocks the door.
+	draw_line(at - side * half_span, at + side * half_span, dark, 12.0, true)
+	draw_line(at - side * half_span, at + side * half_span, stone, 5.0, true)
+	for direction in [-1.0, 1.0]:
+		var jamb: Vector2 = at + side * (half_span + 7.0) * float(direction)
+		draw_line(jamb - _presentation_outward * 14.0, jamb + _presentation_outward * 14.0, dark, 10.0, true)
+		draw_line(jamb - _presentation_outward * 14.0, jamb + _presentation_outward * 14.0, stone, 4.0, true)
+	# A plain supply/search plaque becomes an open (cleared) bracket.
+	var plaque := at + _presentation_outward * 34.0
+	draw_circle(plaque, 13, dark)
+	var ink := Color(0.86, 0.8, 0.59)
+	if _encounter_completed or _loot_attempted:
+		draw_polyline(PackedVector2Array([plaque + Vector2(-7, -4), plaque + Vector2(-7, 5), plaque + Vector2(7, 5), plaque + Vector2(7, -4)]), ink, 2.0, true)
+	else:
+		draw_rect(Rect2(plaque - Vector2(6, 7), Vector2(12, 14)), ink, false, 2.0)
+		draw_line(plaque + Vector2(-3, 0), plaque + Vector2(3, 0), ink, 2.0, true)

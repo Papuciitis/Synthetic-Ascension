@@ -16,7 +16,6 @@ class_name PickupVfx
 
 var icon: Sprite2D = null
 var _lock_ring: Sprite2D = null
-var _explore_ring: Sprite2D = null
 
 var _locked: bool = false
 var _exploration: bool = false
@@ -42,13 +41,11 @@ func set_locked(v: bool) -> void:
 
 func set_exploration(v: bool) -> void:
 	_exploration = v
-	if _exploration and show_exploration_indicator:
-		_ensure_explore_ring()
 	_apply_exploration_visuals()
 	_refresh_process()
 
 func _refresh_process() -> void:
-	var want := (_locked and _lock_ring != null and show_lock_indicator) or (_exploration and _explore_ring != null and show_exploration_indicator)
+	var want := _locked and _lock_ring != null and show_lock_indicator
 	set_process(want)
 
 func play_throw(start_pos: Vector2, end_pos: Vector2, throw_time: float, arc_height: float, land_scale: float, land_time: float) -> void:
@@ -101,18 +98,13 @@ func _process(delta: float) -> void:
 	_t += delta
 
 	if _locked and _lock_ring != null and show_lock_indicator:
-		_lock_ring.rotation += lock_ring_rotation_speed * delta
-		var a := 0.30 + 0.25 * (0.5 + 0.5 * sin(_t * 6.0))
+		var reduced := SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+		if not reduced:
+			_lock_ring.rotation += lock_ring_rotation_speed * delta
+		var a := 0.45 if reduced else 0.30 + 0.25 * (0.5 + 0.5 * sin(_t * 6.0))
 		var c := _lock_ring.modulate
 		c.a = a
 		_lock_ring.modulate = c
-
-	if _exploration and _explore_ring != null and show_exploration_indicator:
-		_explore_ring.rotation += exploration_ring_rotation_speed * delta
-		var a2 := exploration_alpha * (0.70 + 0.30 * (0.5 + 0.5 * sin(_t * 3.5)))
-		var c2 := _explore_ring.modulate
-		c2.a = a2
-		_explore_ring.modulate = c2
 
 func _apply_lock_visuals() -> void:
 	if icon != null:
@@ -123,8 +115,7 @@ func _apply_lock_visuals() -> void:
 		_lock_ring.visible = (_locked and show_lock_indicator)
 
 func _apply_exploration_visuals() -> void:
-	if _explore_ring != null:
-		_explore_ring.visible = (_exploration and show_exploration_indicator)
+	queue_redraw()
 
 func _ensure_lock_ring() -> void:
 	if _lock_ring != null:
@@ -136,17 +127,20 @@ func _ensure_lock_ring() -> void:
 	_lock_ring.modulate = Color(1.0, 0.55, 0.20, 0.45)
 	add_child(_lock_ring)
 
-func _ensure_explore_ring() -> void:
-	if _explore_ring != null:
+func _draw() -> void:
+	if not _exploration or not show_exploration_indicator:
 		return
-	_explore_ring = Sprite2D.new()
-	_explore_ring.name = "ExploreRing"
-	_explore_ring.centered = true
-	_explore_ring.texture = _make_ring_texture(exploration_ring_px, exploration_ring_thickness)
-	# Cyan-ish to stand out from orange lock ring and enemy drops.
-	_explore_ring.modulate = Color(0.25, 0.95, 1.0, exploration_alpha)
-	_explore_ring.z_index = -1
-	add_child(_explore_ring)
+	# Ground contact and four quiet brackets frame the genuine item silhouette.
+	# A loose cache stays loose loot: no chest and no beneficial spell circle.
+	var half := float(exploration_ring_px) * 0.42
+	var ink := Color(0.9, 0.84, 0.65, exploration_alpha)
+	for x in [-1.0, 1.0]:
+		for y in [-1.0, 1.0]:
+			var at := Vector2(x, y) * half
+			var points := PackedVector2Array([at - Vector2(x * 7.0, 0), at, at - Vector2(0, y * 7.0)])
+			draw_polyline(points, Color(0.07, 0.06, 0.045, 0.85), 5.0, true)
+			draw_polyline(points, ink, 2.0, true)
+	draw_line(Vector2(-9, 13), Vector2(9, 13), Color(0.045, 0.04, 0.03, 0.55), 4.0, true)
 
 func _make_ring_texture(size_px: int, thickness_px: int) -> Texture2D:
 	var s := maxi(8, size_px)

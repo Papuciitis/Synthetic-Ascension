@@ -57,7 +57,11 @@ func _ready() -> void:
 		return
 
 	# Use timers (not _process) so this still works even if parent chunks don't process.
-	_try_spawn()
+	# ChunkManager registers a new chunk only after its content generation returns.
+	# A synchronous placement check here rejects that still-unregistered floor,
+	# consumes this spawner, and leaves a real tagged cache empty. Let the current
+	# generation finish before validating the same seeded reward positions.
+	_try_spawn.call_deferred()
 
 func _try_spawn() -> void:
 	if _done:

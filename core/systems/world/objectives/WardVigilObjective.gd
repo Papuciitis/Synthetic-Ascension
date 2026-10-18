@@ -37,16 +37,67 @@ var _wave: int = 0
 var _reported_tenth: int = -1
 var _inside: bool = false
 var _sigil_phase: float = 0.0
+var _braces: VigilBraces
+
+
+## Ground machinery changes shape without an animation clock: closed inward
+## jaws while held, separated jaws in grace and dropped/disconnected on drain.
+class VigilBraces extends Node2D:
+	var phase := ""
+
+	func set_phase(next_phase: String) -> void:
+		if phase == next_phase:
+			return
+		phase = next_phase
+		queue_redraw()
+
+	func _draw() -> void:
+		var engaged := phase == "holding" or phase == "complete"
+		var draining := phase == "draining"
+		var reach := 27.0 if engaged else 39.0
+		var dropped := 10.0 if draining else 0.0
+		var metal := Color(0.55, 0.56, 0.48, 0.95)
+		for side in [-1.0, 1.0]:
+			var at := Vector2(side * reach, 7.0 + dropped)
+			draw_rect(Rect2(at - Vector2(7.0, 17.0), Vector2(14.0, 34.0)), Color(0.17, 0.19, 0.18, 0.95))
+			for end in [-1.0, 1.0]:
+				var jaw := at + Vector2(-side * 7.0, end * 13.0)
+				draw_line(jaw + Vector2(side * 12.0, 0), jaw + Vector2(-side * 6.0, 0), metal, 5.0, true)
+			if draining:
+				# A separated downward tab supplements the receding boundary cue.
+				draw_colored_polygon(PackedVector2Array([at + Vector2(-5, 24), at + Vector2(5, 24), at + Vector2(0, 31)]), metal)
+		if phase == "complete":
+			draw_rect(Rect2(-22.0, 3.0, 44.0, 10.0), metal)
+			draw_line(Vector2(-14.0, 8.0), Vector2(14.0, 8.0), Color(0.23, 0.26, 0.23), 3.0, true)
+		elif phase == "grace":
+			# The held charge is paused, not yet bleeding: two horizontal stops.
+			draw_line(Vector2(-10.0, 19.0), Vector2(-2.0, 19.0), metal, 3.0, true)
+			draw_line(Vector2(2.0, 19.0), Vector2(10.0, 19.0), metal, 3.0, true)
 
 
 func build_presentation() -> void:
 	objective_art = WorldArt.install(self, "vigil", 105.0)
+	_braces = VigilBraces.new()
+	_braces.name = "VigilBraces"
+	_braces.z_as_relative = false
+	_braces.z_index = -1
+	add_child(_braces)
 	update_presentation()
 
 
 func update_presentation() -> void:
+	var draining := _presentation_draining()
 	if objective_art != null:
-		objective_art.call("set_state", "complete" if is_finished() else ("draining" if is_draining() else ("working" if _inside else "dormant")), progress_fraction())
+		objective_art.call("set_state", "complete" if is_finished() else ("draining" if draining else ("working" if _inside else "dormant")), progress_fraction())
+	if _braces != null:
+		_braces.set_phase("complete" if is_finished() else ("draining" if draining else ("holding" if _inside else ("grace" if _held > 0.0 else "dormant"))))
+
+
+func _presentation_draining() -> bool:
+	# Corpse decay bypasses the living exit-grace clock. Observe that existing
+	# rule rather than displaying a grace countdown while hold is being lost.
+	var dead := player != null and is_instance_valid(player) and bool(player.get("is_dead"))
+	return not is_finished() and _held > 0.0 and (is_draining() or dead)
 
 
 func build_layout(rng_source: RandomNumberGenerator) -> void:
@@ -152,20 +203,38 @@ func checklist_id() -> StringName:
 
 func _draw() -> void:
 	var done := is_finished()
-	var core := Color(0.35, 0.9, 0.8, 0.9) if done else Color(0.49, 0.72, 0.96, 0.9)
-	if is_draining():
-		core = Color(0.99, 0.44, 0.30, 0.95)
-	draw_circle(Vector2.ZERO, vigil_radius_px, Color(core.r, core.g, core.b, 0.025))
+	var draining := _presentation_draining()
+	var core := Color(0.5, 0.65, 0.57, 0.5) if done else Color(0.59, 0.68, 0.7, 0.76)
+	if draining:
+		core = Color(0.8, 0.54, 0.4, 0.78)
 	WorldArt.draw_boundary(self, Vector2.ZERO, vigil_radius_px, core)
-	var fraction := 1.0 if done else progress_fraction()
-	var progress_color := Color(0.99, 0.44, 0.3, 0.95) if is_draining() else Color(0.98, 0.9, 0.6, 0.95)
-	draw_arc(Vector2.ZERO, vigil_radius_px + 13.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, Color(0.025, 0.02, 0.025, 0.85), 10.0, true)
-	draw_arc(Vector2.ZERO, vigil_radius_px + 13.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, progress_color, 6.0, true)
+	var fraction := progress_fraction()
+	if not done and fraction > 0.0:
+		var progress_color := Color(0.83, 0.56, 0.4, 0.82) if draining else Color(0.79, 0.74, 0.54, 0.82 if _inside else 0.53)
+		var end_angle := -PI * 0.5 + TAU * fraction
+		draw_arc(Vector2.ZERO, vigil_radius_px - 9.0, -PI * 0.5, end_angle, 96, Color(0.025, 0.03, 0.025, 0.65), 5.0, true)
+		draw_arc(Vector2.ZERO, vigil_radius_px - 9.0, -PI * 0.5, end_angle, 96, progress_color, 2.5, true)
+		if draining:
+			var tip := Vector2.from_angle(end_angle) * (vigil_radius_px - 9.0)
+			var tangent := Vector2.from_angle(end_angle - PI * 0.5)
+			var normal := tangent.orthogonal()
+			draw_colored_polygon(PackedVector2Array([tip + tangent * 6.0, tip - tangent * 4.0 + normal * 4.0, tip - tangent * 4.0 - normal * 4.0]), progress_color)
 	for index in range(6):
 		var direction := Vector2.from_angle(_sigil_phase + TAU * float(index) / 6.0)
-		draw_line(direction * (vigil_radius_px - 22.0), direction * (vigil_radius_px - 10.0), core, 3.0, true)
-	draw_completion(Vector2(0, 25), vigil_radius_px)
-	var label := "VIGIL HELD" if done else ("VIGIL DRAINING" if is_draining() else "HOLD THE WARD VIGIL")
-	var at := Vector2(-190.0, -vigil_radius_px - 34.0)
-	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
-	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 22, core)
+		var tip := direction * (vigil_radius_px - 22.0 if not draining else vigil_radius_px - 9.0)
+		var back := direction * (vigil_radius_px - 10.0 if not draining else vigil_radius_px - 24.0)
+		draw_polyline(PackedVector2Array([back + direction.orthogonal() * 5.0, tip, back - direction.orthogonal() * 5.0]), core, 2.0, true)
+	if done:
+		WorldArt.draw_complete(self, Vector2(0, 34), 10.0)
+	var label := "HOLD THE WARD VIGIL"
+	if done:
+		label = "VIGIL HELD"
+	elif draining:
+		label = "VIGIL DRAINING • RETURN"
+	elif _inside:
+		label = "HOLD • %ds" % int(ceil(vigil_seconds - _held))
+	elif _held > 0.0:
+		label = "RETURN • %.1fs GRACE" % maxf(0.0, lapse_grace - _lapse)
+	var at := Vector2(-190.0, -vigil_radius_px - 19.0)
+	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 18, 4, Color(0.025, 0.02, 0.03, 0.9))
+	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 18, Color(core.r, core.g, core.b, 0.92))

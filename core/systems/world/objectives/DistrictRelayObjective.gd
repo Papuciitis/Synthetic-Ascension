@@ -17,21 +17,61 @@ var _component_positions: Array[Vector2] = []
 var _component_progress: PackedFloat32Array = PackedFloat32Array()
 var _component_silenced: PackedByteArray = PackedByteArray()
 var _site_art: Array[Sprite2D] = []
+var _site_shutters: Array[RelayShutter] = []
 
+
+## A broad ground latch reads open/closed in a frozen, desaturated view. It
+## observes the real site's banked hold; it has no timer or interaction area.
+class RelayShutter extends Node2D:
+	var closed := false
+	var _progress_bucket := -1
+
+	func set_status(next_closed: bool, progress: float) -> void:
+		var bucket := int(clampf(progress, 0.0, 1.0) * 48.0)
+		if closed == next_closed and _progress_bucket == bucket:
+			return
+		closed = next_closed
+		_progress_bucket = bucket
+		queue_redraw()
+
+	func _draw() -> void:
+		var metal := Color(0.43, 0.42, 0.35, 0.95)
+		draw_rect(Rect2(-25.0, 1.0, 50.0, 16.0), Color(0.12, 0.13, 0.12, 0.95))
+		var separation := 10.0 if closed else 23.0
+		for side in [-1.0, 1.0]:
+			var center := Vector2(side * separation, 8.0)
+			draw_rect(Rect2(center - Vector2(10.0, 6.0), Vector2(20.0, 12.0)), metal)
+			draw_line(center + Vector2(-7.0, -3.0), center + Vector2(7.0, -3.0), Color(0.66, 0.63, 0.51, 0.85), 2.0, true)
+		if closed:
+			draw_line(Vector2(-9.0, 8.0), Vector2(9.0, 8.0), Color(0.16, 0.17, 0.16), 3.0, true)
+		elif _progress_bucket > 0:
+			# Stored progress stays solid and still after the player leaves.
+			draw_line(Vector2(-24.0, 23.0), Vector2(24.0, 23.0), Color(0.05, 0.05, 0.045, 0.85), 5.0, true)
+			draw_line(Vector2(-24.0, 23.0), Vector2(-24.0 + float(_progress_bucket), 23.0), Color(0.74, 0.68, 0.47, 0.9), 3.0, true)
 
 func build_presentation() -> void:
-	objective_art = WorldArt.install(self, "relay", 122.0)
 	for index in range(_component_positions.size()):
 		_site_art.append(WorldArt.install(self, "relay", 83.0, _component_positions[index], "RelaySite%d" % index))
+		var shutter := RelayShutter.new()
+		shutter.name = "RelayShutter%d" % index
+		shutter.position = _component_positions[index]
+		shutter.z_as_relative = false
+		shutter.z_index = -1
+		add_child(shutter)
+		_site_shutters.append(shutter)
 	update_presentation()
 
 
 func update_presentation() -> void:
-	if objective_art != null:
-		objective_art.call("set_state", "complete" if is_finished() else "dormant")
 	for index in range(_site_art.size()):
 		var fraction := clampf(_component_progress[index] / maxf(0.001, attune_time_sec), 0.0, 1.0)
-		_site_art[index].call("set_state", "complete" if _component_silenced[index] != 0 else ("working" if fraction > 0.0 else "dormant"), fraction)
+		var silenced := is_finished() or _component_silenced[index] != 0
+		_site_art[index].call("set_state", "complete" if silenced else ("working" if _site_occupied(index) else "dormant"), 1.0 if silenced else fraction)
+		_site_shutters[index].set_status(silenced, 1.0 if silenced else fraction)
+
+
+func _site_occupied(index: int) -> bool:
+	return player != null and is_instance_valid(player) and not bool(player.get("is_dead")) and player.global_position.distance_squared_to(global_position + _component_positions[index]) <= attune_radius_px * attune_radius_px
 
 
 func is_layout_built() -> bool:
@@ -101,18 +141,17 @@ func checklist_id() -> StringName:
 
 func _draw() -> void:
 	var done := is_finished()
-	var color := Color(0.48, 0.94, 0.81, 0.95) if done else Color(0.84, 0.72, 0.96, 0.94)
+	var color := Color(0.57, 0.68, 0.59, 0.82) if done else Color(0.72, 0.68, 0.54, 0.88)
+	# A tiny inert junction replaces the misleading fourth receiver. There is
+	# no central hold edge; only the three outlying receivers accept a dwell.
+	draw_colored_polygon(PackedVector2Array([Vector2(-9, 0), Vector2(0, -5), Vector2(9, 0), Vector2(0, 5)]), Color(0.22, 0.24, 0.21, 0.7))
 	for index in range(_component_positions.size()):
 		var at := _component_positions[index]
-		var silenced := _component_silenced[index] != 0
-		var site_color := Color(0.38, 0.9, 0.73, 0.85) if silenced else Color(0.9, 0.72, 0.4, 0.85)
-		draw_line(Vector2.ZERO, at, Color(0.07, 0.05, 0.035, 0.7), 4.0, true)
-		draw_dashed_line(Vector2.ZERO, at, Color(site_color.r, site_color.g, site_color.b, 0.24), 1.5, 10.0, true, true)
-		var progress := clampf(_component_progress[index] / maxf(0.001, attune_time_sec), 0.0, 1.0)
-		WorldArt.draw_boundary(self, at, attune_radius_px, site_color, progress if not silenced else -1.0)
+		var silenced := done or _component_silenced[index] != 0
+		var site_color := Color(0.45, 0.57, 0.48, 0.42) if silenced else Color(0.76, 0.67, 0.44, 0.7)
+		WorldArt.draw_boundary(self, at, attune_radius_px, site_color)
 		if silenced:
-			WorldArt.draw_complete(self, at + Vector2(0, 23), 12.0)
-	draw_completion(Vector2(0, 25), 82.0)
-	var label := "DISTRICT RELAY SILENCED" if done else "SILENCE DISTRICT RELAY"
-	draw_string_outline(ThemeDB.fallback_font, Vector2(-220.0, -118.0), label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
-	draw_string(ThemeDB.fallback_font, Vector2(-220.0, -118.0), label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, color)
+			WorldArt.draw_complete(self, at + Vector2(0, 29), 9.0)
+	var label := "RELAY SILENCED" if done else "RELAY • %d/%d" % [steps_done(), steps_total()]
+	draw_string_outline(ThemeDB.fallback_font, Vector2(-140.0, -22.0), label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 18, 4, Color(0.025, 0.02, 0.03, 0.9))
+	draw_string(ThemeDB.fallback_font, Vector2(-140.0, -22.0), label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 18, color)

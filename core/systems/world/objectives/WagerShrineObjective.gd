@@ -72,6 +72,28 @@ var _finished: bool = false
 var _announced: bool = false
 var _pulse: float = 0.0
 var _refused_tier: Dictionary = {}
+var _collection_lock: WagerLock
+
+
+## The collection tray is physically shut after settlement, even in a frozen
+## grayscale frame. This low fixture never covers an actor's body or feet.
+class WagerLock extends Node2D:
+	var closed := false
+
+	func set_closed(next_closed: bool) -> void:
+		if closed == next_closed:
+			return
+		closed = next_closed
+		queue_redraw()
+
+	func _draw() -> void:
+		if not closed:
+			return
+		draw_rect(Rect2(-30.0, 5.0, 60.0, 17.0), Color(0.16, 0.17, 0.16, 0.96))
+		draw_rect(Rect2(-27.0, 7.0, 54.0, 10.0), Color(0.47, 0.45, 0.36, 0.98))
+		draw_line(Vector2(-22, 12), Vector2(22, 12), Color(0.23, 0.24, 0.21), 3.0, true)
+		for side in [-1.0, 1.0]:
+			draw_line(Vector2(side * 20.0, 3.0), Vector2(side * 20.0, 21.0), Color(0.66, 0.61, 0.46), 4.0, true)
 
 
 func configure(objective_id: int) -> void:
@@ -81,14 +103,19 @@ func configure(objective_id: int) -> void:
 func _ready() -> void:
 	add_to_group(&"secondary_objective")
 	objective_art = WorldArt.install(self, "wager", 120.0)
+	_collection_lock = WagerLock.new()
+	_collection_lock.name = "WagerLock"
+	_collection_lock.z_as_relative = false
+	_collection_lock.z_index = -1
+	add_child(_collection_lock)
+	update_presentation()
 	z_index = 34
 	set_process(true)
 
 
 func _process(delta: float) -> void:
 	_pulse += delta
-	if objective_art != null:
-		objective_art.call("set_state", "spent" if _finished else ("working" if _dwell > 0.0 else "dormant"), float(_tier + 1) / float(TIERS.size()))
+	update_presentation()
 	if _finished:
 		queue_redraw()
 		return
@@ -111,6 +138,7 @@ func _process(delta: float) -> void:
 	if distance_sq <= radius_px * radius_px:
 		_dwell += delta
 		_try_raise_stake()
+		update_presentation()
 		queue_redraw()
 		return
 
@@ -121,7 +149,53 @@ func _process(delta: float) -> void:
 		_settle()
 	elif _dwell > 0.0:
 		_dwell = 0.0
+		update_presentation()
 		queue_redraw()
+
+
+## These observers may be called repeatedly by rendering or a paused preview.
+## Only _try_raise_stake() spends Followers; display never advances the dwell.
+func purchase_fraction() -> float:
+	if _finished or _tier + 1 >= TIERS.size():
+		return 0.0
+	return clampf((_dwell - seconds_per_tier * float(_tier + 1)) / maxf(0.001, seconds_per_tier), 0.0, 1.0)
+
+
+func update_presentation() -> void:
+	var next_tier := _tier + 1
+	var occupied := _player != null and is_instance_valid(_player) and not bool(_player.get("is_dead")) and _player.global_position.distance_squared_to(global_position) <= radius_px * radius_px
+	var purchasing := occupied and next_tier < TIERS.size() and _dwell > 0.0 and _can_afford(tier_stake(next_tier)) and not _refused_tier.has(next_tier)
+	if objective_art != null:
+		objective_art.call("set_state", "spent" if _finished else ("working" if purchasing else "dormant"), purchase_fraction())
+	if _collection_lock != null:
+		_collection_lock.set_closed(_finished)
+
+
+func presentation_lines() -> PackedStringArray:
+	if _finished:
+		return PackedStringArray(["WAGER SETTLED", "%d Followers paid • resolved" % _spent])
+	var lines := PackedStringArray()
+	if _tier >= 0:
+		lines.append("%s %d/%d • %d%%" % [String(TIERS[_tier]["label"]), _tier + 1, TIERS.size(), int(round(odds_for(_tier) * 100.0))])
+	else:
+		lines.append("WAGER • NO STAKE")
+	var next_tier := _tier + 1
+	if next_tier < TIERS.size():
+		var cost := tier_stake(next_tier)
+		if not _can_afford(cost):
+			lines.append("Next %d refused • reconstruction reserve" % cost if _refused_tier.has(next_tier) else "Next %d unavailable • reconstruction reserve" % cost)
+		else:
+			var remaining := maxf(0.0, seconds_per_tier * float(next_tier + 1) - _dwell)
+			lines.append("Next %d Followers • hold %.1fs" % [cost, remaining])
+	else:
+		lines.append("Maximum stake reached")
+	if _tier >= 0:
+		lines.append("Step out to settle • %d Followers paid" % _spent)
+	elif not _can_afford(tier_stake(0)):
+		lines.append("More Followers needed before staking")
+	else:
+		lines.append("Stand to pay • step out to cancel")
+	return lines
 
 
 func _try_raise_stake() -> void:
@@ -182,6 +256,7 @@ func odds_for(tier: int) -> float:
 
 func _settle() -> void:
 	_finished = true
+	update_presentation()
 	var tier: int = _tier
 	var won: bool = false
 	if tier >= 0:
@@ -226,19 +301,29 @@ func _pay_out(tier: int) -> void:
 
 
 func _draw() -> void:
-	var gold := Color(0.94, 0.78, 0.4, 0.92)
-	if _finished:
-		WorldArt.draw_boundary(self, Vector2.ZERO, radius_px, Color(0.46, 0.43, 0.4, 0.65))
-		return
-	WorldArt.draw_boundary(self, Vector2.ZERO, radius_px, gold)
-	for index in range(TIERS.size()):
-		var angle := -PI * 0.5 + TAU * float(index) / float(TIERS.size())
-		var at := Vector2.from_angle(angle) * (radius_px + 13.0)
-		draw_circle(at, 8.0, Color(0.06, 0.045, 0.025, 0.95))
-		draw_arc(at, 7.0, 0.0, TAU, 20, gold, 2.0, true)
-		if index <= _tier:
-			draw_circle(at, 4.5, gold)
-	var label := "%s  •  %d%%" % [String(TIERS[_tier]["label"]), int(round(odds_for(_tier) * 100.0))] if _tier >= 0 else "WAGER SHRINE"
-	var at := Vector2(-180.0, -radius_px - 30.0)
-	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 360.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
-	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 360.0, 22, gold)
+	var gold := Color(0.78, 0.7, 0.48, 0.84)
+	if not _finished:
+		WorldArt.draw_boundary(self, Vector2.ZERO, radius_px, gold)
+		for index in range(TIERS.size()):
+			var angle := -PI * 0.5 + TAU * float(index) / float(TIERS.size())
+			var at := Vector2.from_angle(angle) * (radius_px + 10.0)
+			draw_circle(at, 7.0, Color(0.06, 0.055, 0.04, 0.9))
+			draw_arc(at, 6.0, 0.0, TAU, 20, gold, 1.5, true)
+			if index <= _tier:
+				draw_rect(Rect2(at - Vector2(3.5, 3.5), Vector2(7.0, 7.0)), gold)
+			elif index == _tier + 1:
+				var fraction := purchase_fraction()
+				if not _can_afford(tier_stake(index)):
+					draw_line(at + Vector2(-6, 6), at + Vector2(6, -6), gold, 2.5, true)
+				elif fraction > 0.0:
+					draw_arc(at, 10.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 24, gold, 2.5, true)
+	var lines := presentation_lines()
+	# Keep all three lines above the far-side purchase pip, including the
+	# crucial settlement instruction when that pip is partly filled.
+	var first_y := -radius_px - 76.0 if not _finished else -radius_px - 17.0
+	for index in range(lines.size()):
+		var at := Vector2(-220.0, first_y + float(index) * 20.0)
+		var font_size := 18 if index == 0 else 15
+		var color := Color(0.58, 0.58, 0.51, 0.75) if _finished else gold
+		draw_string_outline(ThemeDB.fallback_font, at, lines[index], HORIZONTAL_ALIGNMENT_CENTER, 440.0, font_size, 4, Color(0.025, 0.02, 0.03, 0.9))
+		draw_string(ThemeDB.fallback_font, at, lines[index], HORIZONTAL_ALIGNMENT_CENTER, 440.0, font_size, color)

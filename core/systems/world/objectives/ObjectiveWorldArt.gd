@@ -8,12 +8,37 @@ const TEXTURES := {
 	"exit_rite": preload("res://assets/world/objectives/painted/exit_rite_v1.png"),
 	"relay": preload("res://assets/world/objectives/painted/relay_v1.png"),
 	"vigil": preload("res://assets/world/objectives/painted/vigil_v1.png"),
-	"breach": preload("res://assets/world/objectives/painted/breach_v1.png"),
+	"breach": preload("res://assets/world/objectives/painted/breach_open_v2.png"),
 	"wager": preload("res://assets/world/objectives/painted/wager_v1.png"),
+}
+const STATE_TEXTURES := {
+	"breach": {"complete": preload("res://assets/world/objectives/painted/breach_sealed_v2.png")},
+}
+## Source-normalized anchors are deliberate contact/footprint points, not
+## alpha-bound centers. Extents only normalize occupied size across canvases.
+const PLACEMENT := {
+	"wardstone": {"anchor": Vector2(0.5, 0.925), "extent": Vector2(0.512, 0.935)},
+	"exit_rite": {"anchor": Vector2(0.5, 0.945), "extent": Vector2(0.97, 0.993), "ground": true},
+	"relay": {"anchor": Vector2(0.5, 0.935), "extent": Vector2(0.60, 0.962)},
+	"vigil": {"anchor": Vector2(0.5, 0.52), "extent": Vector2(0.673, 0.886), "width": 1.7, "ground": true},
+	"breach": {"anchor": Vector2(0.5, 0.5), "extent": Vector2(0.975, 0.736), "width": 1.65, "ground": true},
+	"wager": {"anchor": Vector2(0.5, 0.88), "extent": Vector2(0.775, 0.983)},
 }
 var _state_material: ShaderMaterial
 var _state := ""
 var _progress_bucket := -1
+var _art_name := ""
+var _nominal_height := 0.0
+var _ground := false
+var _depth_elapsed := 0.0
+var _viewer: Node2D
+var _shadow: Node2D
+
+class ContactShadow extends Node2D:
+	var extent := Vector2(20.0, 7.0)
+	func _draw() -> void:
+		draw_set_transform(Vector2.ZERO, 0.0, extent)
+		draw_circle(Vector2.ZERO, 1.0, Color(0.07, 0.065, 0.055, 0.22))
 
 static func install(parent: Node, art_name: String, height: float, at: Vector2 = Vector2.ZERO, node_name: String = "ObjectiveArt") -> Sprite2D:
 	var sprite: Sprite2D = (load("res://core/systems/world/objectives/ObjectiveWorldArt.gd") as Script).new()
@@ -24,19 +49,58 @@ static func install(parent: Node, art_name: String, height: float, at: Vector2 =
 	return sprite
 
 func configure(art_name: String, height: float) -> void:
+	_art_name = art_name
+	_nominal_height = height
 	texture = TEXTURES.get(art_name)
 	if texture == null:
 		return
 	texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
-	var size := texture.get_size()
-	scale = Vector2.ONE * height / maxf(1.0, size.y)
-	# The contact foot stays close to the site origin. The visual never moves it.
-	offset = Vector2(0.0, -size.y * 0.35)
-	z_index = 4
+	_ground = bool(PLACEMENT.get(art_name, {}).get("ground", false))
+	z_as_relative = false
+	z_index = -11 if _ground else -2
+	_apply_placement()
+	set_process(not _ground)
 	_state_material = ShaderMaterial.new()
 	_state_material.shader = STATE_SHADER
 	material = _state_material
+	_state = ""
+	_progress_bucket = -1
 	set_state("dormant")
+	if not _ground and _shadow == null:
+		_shadow = ContactShadow.new()
+		_shadow.name = "ContactShadow"
+		_shadow.z_as_relative = false
+		_shadow.z_index = -12
+		add_child(_shadow)
+		_shadow.scale = Vector2.ONE / scale
+		_shadow.set("extent", Vector2(height * 0.22, height * 0.055))
+		_shadow.queue_redraw()
+
+func _apply_placement() -> void:
+	if texture == null:
+		return
+	var data: Dictionary = PLACEMENT.get(_art_name, {})
+	var size := texture.get_size()
+	var anchor: Vector2 = data.get("anchor", Vector2(0.5, 0.5))
+	var extent: Vector2 = data.get("extent", Vector2.ONE)
+	var width_factor := float(data.get("width", 0.0))
+	var occupied := size.x * extent.x if width_factor > 0.0 else size.y * extent.y
+	scale = Vector2.ONE * _nominal_height * (width_factor if width_factor > 0.0 else 1.0) / maxf(1.0, occupied)
+	offset = size * (Vector2(0.5, 0.5) - anchor)
+	if is_instance_valid(_shadow):
+		_shadow.scale = Vector2.ONE / scale
+
+func _process(delta: float) -> void:
+	# Visual depth only; no actor or objective state is modified. Ground forms
+	# never run this and always stay below feet, shadows and combat warnings.
+	_depth_elapsed += delta
+	if _depth_elapsed < 0.05:
+		return
+	_depth_elapsed = 0.0
+	if not is_instance_valid(_viewer):
+		_viewer = get_tree().get_first_node_in_group(&"player") as Node2D
+	if is_instance_valid(_viewer):
+		z_index = 1 if _viewer.global_position.y < global_position.y - 8.0 else -2
 
 func set_state(state: String, progress: float = 0.0) -> void:
 	var bucket := int(clampf(progress, 0.0, 1.0) * 32.0)
@@ -44,9 +108,14 @@ func set_state(state: String, progress: float = 0.0) -> void:
 		return
 	_state = state
 	_progress_bucket = bucket
+	var variants: Dictionary = STATE_TEXTURES.get(_art_name, {})
+	var next_texture: Texture2D = variants.get(state, TEXTURES.get(_art_name))
+	if next_texture != texture:
+		texture = next_texture
+		_apply_placement()
 	if _state_material == null:
 		return
-	_state_material.set_shader_parameter("energy", 0.25 if state == "dormant" else (0.7 + 0.3 * float(bucket) / 32.0))
+	_state_material.set_shader_parameter("energy", 0.35 if state in ["dormant", "locked"] else (0.75 + 0.25 * float(bucket) / 32.0))
 	_state_material.set_shader_parameter("completed", state == "complete")
 	_state_material.set_shader_parameter("draining", state == "draining")
 	_state_material.set_shader_parameter("spent", state == "spent")
@@ -59,15 +128,15 @@ static func pulse(clock: float, speed: float = 2.4) -> float:
 	return 0.5 if reduced_motion() else 0.5 + 0.5 * sin(clock * speed)
 
 static func draw_boundary(item: CanvasItem, at: Vector2, radius: float, color: Color, progress: float = -1.0) -> void:
-	# Dark under-stroke keeps the exact interaction edge legible on pale stone.
-	item.draw_arc(at, radius, 0.0, TAU, 80, Color(0.035, 0.03, 0.035, 0.8), 6.0, true)
-	item.draw_arc(at, radius, 0.0, TAU, 80, Color(color.r, color.g, color.b, 0.64), 2.0, true)
-	for index in range(8):
-		var direction := Vector2.from_angle(TAU * float(index) / 8.0)
-		item.draw_line(at + direction * (radius - 5.0), at + direction * (radius + 5.0), color, 2.0, true)
+	# Keep the exact boundary, with quiet support rather than a heavy diagram.
+	item.draw_arc(at, radius, 0.0, TAU, 80, Color(0.035, 0.03, 0.035, 0.38), 3.0, true)
+	item.draw_arc(at, radius, 0.0, TAU, 80, Color(color.r, color.g, color.b, color.a * 0.48), 1.1, true)
+	for index in range(4):
+		var direction := Vector2.from_angle(TAU * float(index) / 4.0)
+		item.draw_line(at + direction * (radius - 3.0), at + direction * (radius + 3.0), Color(color.r, color.g, color.b, 0.65), 1.5, true)
 	if progress > 0.0:
-		item.draw_arc(at, radius + 9.0, -PI * 0.5, -PI * 0.5 + TAU * clampf(progress, 0.0, 1.0), 80, Color(0.04, 0.03, 0.02, 0.85), 9.0, true)
-		item.draw_arc(at, radius + 9.0, -PI * 0.5, -PI * 0.5 + TAU * clampf(progress, 0.0, 1.0), 80, Color(0.98, 0.89, 0.59, 0.96), 5.0, true)
+		item.draw_arc(at, radius - 6.0, -PI * 0.5, -PI * 0.5 + TAU * clampf(progress, 0.0, 1.0), 80, Color(0.04, 0.03, 0.02, 0.65), 4.0, true)
+		item.draw_arc(at, radius - 6.0, -PI * 0.5, -PI * 0.5 + TAU * clampf(progress, 0.0, 1.0), 80, Color(0.84, 0.76, 0.5, 0.85), 2.0, true)
 
 static func draw_complete(item: CanvasItem, at: Vector2, size: float = 15.0) -> void:
 	var points := PackedVector2Array([at + Vector2(-size * 0.65, 0.0), at + Vector2(-size * 0.12, size * 0.5), at + Vector2(size * 0.8, -size * 0.65)])

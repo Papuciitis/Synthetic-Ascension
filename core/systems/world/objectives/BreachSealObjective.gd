@@ -43,21 +43,71 @@ var _sealed: PackedByteArray = PackedByteArray()
 var _spawn_cd: PackedFloat32Array = PackedFloat32Array()
 var _spawned: Array = [] # per breach: the enemy nodes it poured that may still be alive
 var _site_art: Array[Sprite2D] = []
+var _site_hardware: Array[Node2D] = []
+
+class BreachHardware extends Node2D:
+	var state := ""
+	var bucket := -1
+	func sync(next_state: String, progress: float) -> void:
+		var next_bucket := int(clampf(progress, 0.0, 1.0) * 32.0)
+		if state != next_state or bucket != next_bucket:
+			state = next_state
+			bucket = next_bucket
+			queue_redraw()
+	func _draw() -> void:
+		if state == "complete":
+			return
+		# Sparse inner embers and a displaced restraint survive minification.
+		# They stay inside the opening and below feet, without a glow field.
+		draw_polyline(PackedVector2Array([Vector2(-31, 4), Vector2(-17, 0), Vector2(-4, 6), Vector2(10, 2), Vector2(29, 7)]), Color(0.53, 0.18, 0.075, 0.87), 3.5, true)
+		var metal := Color(0.36, 0.31, 0.22, 1.0)
+		var reach := lerpf(48.0, 13.0, float(bucket) / 32.0)
+		for side in [-1.0, 1.0]:
+			var start := Vector2(side * 61.0, -9.0)
+			var end := Vector2(side * reach, 4.0)
+			draw_line(start, end, Color(0.065, 0.055, 0.04, 0.95), 8.0, true)
+			if state == "draining":
+				draw_line(start, start.lerp(end, 0.48), metal, 5.0, true)
+				draw_line(start.lerp(end, 0.7) + Vector2(0, 3), end + Vector2(0, 3), metal, 5.0, true)
+			else:
+				draw_line(start, end, metal, 5.0, true)
+			draw_line(start + Vector2(0, -2), start.lerp(end, 0.4) + Vector2(0, -2), Color(0.51, 0.47, 0.35, 0.8), 1.3, true)
 
 
 func build_presentation() -> void:
-	objective_art = WorldArt.install(self, "breach", 92.0)
+	# Only real enemy sources have a breach form. The district center is not
+	# another interaction site and must not masquerade as a fourth rupture.
 	for index in range(_positions.size()):
 		_site_art.append(WorldArt.install(self, "breach", 100.0, _positions[index], "BreachSite%d" % index))
+		var hardware := BreachHardware.new()
+		hardware.name = "BreachHardware%d" % index
+		hardware.position = _positions[index]
+		hardware.z_as_relative = false
+		hardware.z_index = -10
+		add_child(hardware)
+		_site_hardware.append(hardware)
 	update_presentation()
 
 
 func update_presentation() -> void:
-	if objective_art != null:
-		objective_art.call("set_state", "complete" if is_finished() else "dormant")
 	for index in range(_site_art.size()):
 		var fraction := clampf(_progress[index] / maxf(0.001, seal_seconds), 0.0, 1.0)
-		_site_art[index].call("set_state", "complete" if _sealed[index] != 0 else ("working" if fraction > 0.0 else "dormant"), fraction)
+		var state := site_presentation_state(index)
+		_site_art[index].call("set_state", state, fraction)
+		_site_hardware[index].call("sync", state, fraction)
+
+
+func site_presentation_state(index: int) -> String:
+	if _sealed[index] != 0:
+		return "complete"
+	if _progress[index] <= 0.0:
+		return "dormant"
+	if is_instance_valid(player):
+		if bool(player.get("is_dead")):
+			return "grace" # Sealing pauses during death; it does not decay.
+		if player.global_position.distance_squared_to(global_position + _positions[index]) > seal_radius_px * seal_radius_px:
+			return "draining"
+	return "working"
 
 
 func is_layout_built() -> bool:
@@ -216,14 +266,32 @@ func _draw() -> void:
 		var at := _positions[index]
 		var sealed := _sealed[index] != 0
 		var color := Color(0.38, 0.9, 0.73, 0.85) if sealed else Color(0.98, 0.5, 0.28, 0.9)
-		draw_dashed_line(Vector2.ZERO, at, Color(core.r, core.g, core.b, 0.15), 1.0, 12.0, true, true)
 		var fraction := clampf(_progress[index] / maxf(0.001, seal_seconds), 0.0, 1.0)
-		WorldArt.draw_boundary(self, at, seal_radius_px, color, fraction if not sealed else -1.0)
+		var state := site_presentation_state(index)
+		WorldArt.draw_boundary(self, at, seal_radius_px, color if not sealed else Color(0.49, 0.56, 0.48, 0.38), fraction if not sealed and state != "draining" else -1.0)
+		if state == "draining":
+			# Broken stored progress differs from an advancing solid seal even
+			# with hue removed and all animation disabled.
+			for segment in range(16):
+				var begin := float(segment) / 16.0
+				if begin >= fraction:
+					break
+				var end := minf(fraction, begin + 0.039)
+				draw_arc(at, seal_radius_px - 6.0, -PI * 0.5 + TAU * begin, -PI * 0.5 + TAU * end, 8, Color(0.81, 0.57, 0.36, 0.9), 3.0, true)
 		if sealed:
-			WorldArt.draw_complete(self, at + Vector2(0, 25), 14.0)
+			WorldArt.draw_complete(self, at + Vector2(0, 42), 8.0)
 		else:
-			var alpha := 0.35 + 0.15 * WorldArt.pulse(pulse_time + float(index), 3.4)
-			draw_line(at + Vector2(-7, 15), at + Vector2(7, -9), Color(0.98, 0.47, 0.24, alpha), 3.0, true)
+			if state in ["working", "draining", "grace"]:
+				var direction := -1.0 if state == "working" else 1.0
+				var cue := at + Vector2(0, seal_radius_px - 22.0)
+				draw_polyline(PackedVector2Array([cue + Vector2(-6, -direction * 4), cue + Vector2(0, direction * 4), cue + Vector2(6, -direction * 4)]), color, 2.0, true)
+				if state == "grace":
+					draw_line(cue + Vector2(-3, -5), cue + Vector2(-3, 5), color, 2.0, true)
+					draw_line(cue + Vector2(3, -5), cue + Vector2(3, 5), color, 2.0, true)
+				var caption := "SEALING" if state == "working" else ("LOSING SEAL" if state == "draining" else "SEAL PAUSED")
+				var text_at := at + Vector2(-86.0, seal_radius_px + 26.0)
+				draw_string_outline(ThemeDB.fallback_font, text_at, caption, HORIZONTAL_ALIGNMENT_CENTER, 172.0, 20, 3, Color(0.035, 0.03, 0.025, 0.95))
+				draw_string(ThemeDB.fallback_font, text_at, caption, HORIZONTAL_ALIGNMENT_CENTER, 172.0, 20, color)
 	draw_completion(Vector2(0, 25), 80.0)
 	var label := "BREACHES SEALED" if done else "SEAL THE BREACHES (%d OPEN)" % open_count()
 	var at := Vector2(-220.0, -106.0)

@@ -22,15 +22,16 @@ void fragment() {
 	float red_core = smoothstep(0.025, 0.12, source.r - source.g * 1.5) * smoothstep(0.06, 0.25, source.r);
 	float cool_core = smoothstep(0.06, 0.3, max(source.g, source.b) - source.r);
 	float mask = max(red_core, cool_core * core);
-	vec3 painted = source.rgb * mix(0.69, 1.0, energy);
+	vec3 painted = source.rgb * mix(0.88, 1.0, energy);
 	if (completed) {
-		painted = mix(painted, vec3(0.35, 0.8, 0.68) * max(0.5, luminance), mask);
+		// Completion is physical artwork/hardware, not a recolored open core.
+		painted = mix(painted, source.rgb * 0.9, mask * 0.35);
 	} else if (draining) {
 		painted = mix(painted, vec3(0.95, 0.36, 0.19) * max(0.6, luminance), mask);
 	} else {
-		painted = mix(painted, source.rgb * energy, mask);
+		painted = mix(painted, source.rgb * mix(0.78, 1.0, energy), mask);
 	}
-	if (working) { painted += vec3(0.06, 0.045, 0.015) * energy * luminance; }
-	if (spent) { painted = mix(painted, vec3(luminance * 0.5), 0.78); }
+	if (working) { painted += vec3(0.015, 0.01, 0.0) * energy * luminance; }
+	if (spent) { painted = mix(painted, vec3(luminance * 0.8), 0.35); }
 	COLOR = vec4(painted, source.a) * object_modulate;
 }

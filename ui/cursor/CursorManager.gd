@@ -19,6 +19,14 @@ func _ready() -> void:
 		SettingsManager.settings_changed.connect(_on_settings_changed)
 
 
+func _exit_tree() -> void:
+	# Input retains each custom ImageTexture beyond the autoload's lifetime.
+	# Release those native cursor references while RenderingServer still exists.
+	for shape: int in CURSORS:
+		Input.set_custom_mouse_cursor(null, shape)
+	_textures.clear()
+
+
 func _on_settings_changed(section: StringName, key: StringName, _value: Variant) -> void:
 	if section == &"accessibility" and key == &"ui_scale":
 		_apply_scale()

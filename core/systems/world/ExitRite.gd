@@ -156,6 +156,9 @@ var _spawner: EnemySpawner = null
 var _burst_stage: int = 0
 
 var _sfx_channel_tag: StringName = &"channel"
+var _ground_details: Node2D
+var _presentation_state := ""
+var _presentation_bucket := -1
 
 ## The exit encounter's lifecycle (plan 2026-09-17 §6.1): pressure follows
 ## THIS, not raw circle occupancy — a dodge across the channel edge no
@@ -167,6 +170,14 @@ func _ready() -> void:
 	if gate_art != null:
 		gate_art.set_script(WorldArt)
 		gate_art.call("configure", "exit_rite", 184.0)
+		# The replacement is an overhead threshold and low pad. Keep combat
+		# silhouettes above it on both sides of the full channel zone.
+		gate_art.z_index = -2
+	_ground_details = Node2D.new()
+	_ground_details.name = "GroundDetails"
+	_ground_details.z_index = -12
+	add_child(_ground_details)
+	_ground_details.draw.connect(_draw_ground_details)
 	_encounter.state_changed.connect(_on_encounter_state_changed)
 	if RunEvents != null and not RunEvents.player_life_event.is_connected(_on_player_life_event):
 		RunEvents.player_life_event.connect(_on_player_life_event)
@@ -199,6 +210,7 @@ func _ready() -> void:
 	# Share gate location with HUD (for direction arrow, etc.)
 	_share_location_with_hud()
 	_emit_safeguard_state()
+	_refresh_world_art()
 
 func _exit_tree() -> void:
 	# Scene cleanup releases all encounter state exactly once (plan §6.1).
@@ -255,6 +267,7 @@ func set_locked(v: bool) -> void:
 
 	# Share gate location with HUD (for direction arrow, etc.)
 	_share_location_with_hud()
+	_refresh_world_art()
 
 func set_revealed(value: bool) -> void:
 	if revealed == value:
@@ -286,18 +299,47 @@ func _apply_reveal_state() -> void:
 		_encounter.update_state(false, INF, true, 0.0)
 	_share_location_with_hud()
 	_emit_safeguard_state()
+	_refresh_world_art()
 
 func _sigil_refresh() -> void:
 	_refresh_world_art()
 	if sigil == null:
 		return
-	# Locked -> dim, unlocked -> brighter
-	sigil.modulate.a = 0.10 if locked else 0.22
+	# The broad ground pad carries the area. Keep the old central ornament
+	# subordinate so it cannot imply a second, smaller channel target.
+	sigil.modulate.a = 0.025 if locked else 0.045
+
+
+## A static reading of the existing channel, used by the threshold hardware,
+## boundary and text. In particular, a protected durable floor cannot drain.
+func presentation_state() -> String:
+	if _completed:
+		return "complete"
+	if locked:
+		return "locked"
+	if _player_inside:
+		return "grace" if _death_taken else "working"
+	if _hold > 0.0:
+		if _recovery_drain_hold > 0.0:
+			return "grace"
+		var floor_hold := float(_progress_ledger.call("floor_fraction")) * hold_time
+		if _hold > floor_hold + 0.0001:
+			return "grace" if _lapse <= lapse_grace else "draining"
+	return "ready"
 
 func _refresh_world_art() -> void:
+	var state := presentation_state()
+	var progress := clampf(_hold / maxf(0.001, hold_time), 0.0, 1.0)
 	if gate_art != null:
-		var draining := not _player_inside and _hold > 0.0 and _lapse > lapse_grace
-		gate_art.call("set_state", "complete" if _completed else ("dormant" if locked else ("draining" if draining else "working")), _hold / maxf(0.001, hold_time))
+		gate_art.call("set_state", state, progress)
+	var bucket := int(progress * 32.0)
+	if state == _presentation_state and bucket == _presentation_bucket:
+		return
+	_presentation_state = state
+	_presentation_bucket = bucket
+	if _ground_details != null:
+		_ground_details.queue_redraw()
+	queue_redraw()
 
 func _process(delta: float) -> void:
 	_refresh_world_art()
@@ -317,7 +359,7 @@ func _process(delta: float) -> void:
 		if not WorldArt.reduced_motion():
 			sigil.rotation += (0.025 if locked else 0.045) * delta
 		var breathe := 0.9 + 0.1 * (WorldArt.pulse(_sigil_t, 1.15) * 2.0 - 1.0)
-		sigil.modulate.a = (0.10 if locked else 0.22) * breathe
+		sigil.modulate.a = (0.025 if locked else 0.045) * breathe
 
 	if locked:
 		# Nothing _draw paints while locked has a time term: the ring colour is
@@ -334,6 +376,7 @@ func _process(delta: float) -> void:
 			# Returning from a reconstruction: the kept progress waits.
 			_recovery_drain_hold = maxf(0.0, _recovery_drain_hold - delta)
 			_lapse = 0.0
+			_refresh_world_art()
 			return
 		if _hold > 0.0:
 			_lapse += delta
@@ -347,6 +390,7 @@ func _process(delta: float) -> void:
 				# not - the same moment the ring turns red, so a short dodge
 				# does not blink the screen.
 				_set_distortion(0.0)
+			_refresh_world_art()
 			queue_redraw()
 		return
 	_lapse = 0.0
@@ -364,6 +408,7 @@ func _process(delta: float) -> void:
 			_apply_progress_loss(_hold * clampf(death_progress_kept, 0.0, 1.0), &"death")
 			_lapse = 0.0
 		_set_distortion(0.0)
+		_refresh_world_art()
 		queue_redraw()
 		return
 	_death_taken = false
@@ -371,6 +416,7 @@ func _process(delta: float) -> void:
 	_hold = minf(_hold + delta, hold_time)
 	_mend(channeling_player, delta)
 	_update_rite_progress()
+	_refresh_world_art()
 	queue_redraw()
 
 	var t: float = 0.0
@@ -661,6 +707,7 @@ func grant_safeguard(source_key: StringName, amount: int = 1) -> int:
 	_safeguards = mini(_safeguard_capacity, _safeguards + amount * _safeguard_source_multiplier)
 	_emit_safeguard_state()
 	queue_redraw()
+	_refresh_world_art()
 	_report(&"safeguard_granted", {"source": String(source_key), "granted": _safeguards - before, "total": _safeguards})
 	return _safeguards - before
 
@@ -743,6 +790,7 @@ func configure_doctrine_rules() -> void:
 			_progress_ledger.call("mark_wave_spent", _burst_stage)
 			_burst_stage += 1
 	_emit_safeguard_state()
+	_refresh_world_art()
 	queue_redraw()
 
 ## The controller sees eligibility, player distance and vitality every
@@ -775,6 +823,7 @@ func _on_player_life_event(_player: Node, kind: StringName) -> void:
 		_encounter.begin_recovery()
 		if _hold > 0.0 and not _completed:
 			_recovery_drain_hold = RECOVERY_DRAIN_HOLD_SECONDS
+		_refresh_world_art()
 
 
 func _on_body_entered(b: Node) -> void:
@@ -813,6 +862,7 @@ func _on_body_entered(b: Node) -> void:
 	_encounter.set_channeling(true)
 	_emit_safeguard_state()
 	_report(&"channel_entered", {"safeguards": _safeguards})
+	_refresh_world_art()
 	# Say what the player has just committed to, once. Twenty seconds of
 	# escalating waves with no warning reads as the game breaking, not as a
 	# siege - and the decision to start it is only a decision if they know.
@@ -843,6 +893,7 @@ func _on_body_exited(b: Node) -> void:
 		_encounter.set_channeling(false)
 		_emit_safeguard_state()
 		_report(&"channel_left", {})
+		_refresh_world_art()
 		var sm := get_node_or_null("/root/SfxManager")
 		if sm != null:
 			sm.call("stop_loop", self, _sfx_channel_tag)
@@ -853,50 +904,108 @@ func _share_location_with_hud() -> void:
 	Global.exit_gate_pos = Vector2.INF if (not revealed) or (hide_location_while_locked and locked) else global_position
 
 func _draw() -> void:
-	# Readability pass: thicker ring + higher contrast progress so players
-	# instantly understand "stand here and channel".
-	var c_locked := Color(0.55, 0.25, 0.25, 0.48)
-	var c_ready := Color(0.35, 0.85, 0.98, 0.62)
-	var c := c_locked if locked else c_ready
-	WorldArt.draw_boundary(self, Vector2.ZERO, radius, c)
+	var state := presentation_state()
+	var boundary := Color(0.65, 0.37, 0.30, 0.38) if locked else Color(0.62, 0.71, 0.65, 0.54)
+	if state == "draining":
+		boundary = Color(0.76, 0.52, 0.37, 0.56)
+	WorldArt.draw_boundary(self, Vector2.ZERO, radius, boundary)
 	var rite_label := "RITE SEALED" if locked else ("RITE COMPLETE" if _completed else "EXIT RITE")
-	var label_at := Vector2(-140.0, -radius - 42.0)
-	draw_string_outline(ThemeDB.fallback_font, label_at, rite_label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
-	draw_string(ThemeDB.fallback_font, label_at, rite_label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 22, Color(0.91, 0.82, 0.63, 0.95))
+	_draw_label(Vector2(-160.0, -radius - 61.0), rite_label, 320.0, 20, Color(0.85, 0.82, 0.69, 0.95))
+	var fraction := clampf(_hold / maxf(0.001, hold_time), 0.0, 1.0)
+	var caption := "Not ready"
+	match state:
+		"ready": caption = "Hold anywhere inside"
+		"working": caption = "CHANNELING • %d%%" % int(roundf(fraction * 100.0))
+		"grace": caption = "GRACE • return to continue"
+		"draining": caption = "DRAINING • secured thirds remain"
+		"complete": caption = "Passage secured"
+	_draw_label(Vector2(-160.0, -radius - 41.0), caption, 320.0, 15, Color(0.77, 0.78, 0.68, 0.94))
 
-	if not locked and hold_time > 0.0:
-		var t := clampf(_hold / hold_time, 0.0, 1.0)
-		# Losing the channel has to be as loud as gaining it, or a player who
-		# stepped out to dodge cannot tell what it cost them.
-		var draining: bool = not _player_inside and _hold > 0.0 and _lapse > lapse_grace
-		var prog := Color(0.99, 0.44, 0.30, 0.98) if draining else Color(0.98, 0.92, 0.55, 0.98)
-		# main stroke
-		draw_arc(Vector2.ZERO, radius + 11.0, -PI/2, -PI/2 + TAU * t, 96, prog, 10.0, true)
-		# soft glow fill
-		draw_arc(Vector2.ZERO, radius + 4.0, -PI/2, -PI/2 + TAU * t, 96, Color(prog.r, prog.g, prog.b, 0.32), 18.0, true)
+	# Temporary progress is a fine arc, separate from the exact channel edge.
+	# No additive halo: the player and incoming hostile tells keep priority.
+	if not locked and hold_time > 0.0 and fraction > 0.0:
+		var prog := Color(0.83, 0.56, 0.38, 0.82) if state == "draining" else Color(0.83, 0.79, 0.56, 0.82)
+		draw_arc(Vector2.ZERO, radius + 6.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, Color(0.05, 0.05, 0.04, 0.66), 4.5, true)
+		draw_arc(Vector2.ZERO, radius + 6.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, prog, 2.25, true)
 
-	# Three physical archive seals: channel thirds are durable.
+	# Durable thirds are broad inset archive plaques on the far side. A filled
+	# plaque with an engaged bar survives grayscale and small frozen views.
 	for seal_index in range(3):
-		var angle := deg_to_rad(-150.0 + 60.0 * float(seal_index))
+		var angle := deg_to_rad(-135.0 + 45.0 * float(seal_index))
 		var center := Vector2.from_angle(angle) * (radius + 22.0)
 		var sealed: bool = seal_index < int(_progress_ledger.call("sealed_count"))
-		var seal_color := Color(0.98, 0.83, 0.48, 0.95) if sealed else Color(0.42, 0.32, 0.22, 0.62)
+		var seal_color := Color(0.83, 0.77, 0.51, 0.95) if sealed else Color(0.42, 0.43, 0.36, 0.72)
 		var points := PackedVector2Array([
-			center + Vector2(0.0, -7.0), center + Vector2(7.0, 0.0),
-			center + Vector2(0.0, 7.0), center + Vector2(-7.0, 0.0),
+			center + Vector2(-9.0, -11.0), center + Vector2(6.0, -11.0),
+			center + Vector2(10.0, -7.0), center + Vector2(10.0, 11.0), center + Vector2(-9.0, 11.0),
 		])
-		draw_colored_polygon(points, Color(seal_color.r, seal_color.g, seal_color.b, 0.18))
-		draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[0]]), seal_color, 2.0, true)
+		draw_colored_polygon(points, seal_color if sealed else Color(0.10, 0.12, 0.10, 0.9))
+		draw_polyline(PackedVector2Array([points[0], points[1], points[2], points[3], points[4], points[0]]), seal_color, 1.5, true)
+		if sealed:
+			draw_line(center + Vector2(-5, 1), center + Vector2(6, 1), Color(0.14, 0.16, 0.13, 0.94), 4.0, true)
 
-	# Safeguards are a separate physical ledger. Pilgrim Engine raises this to
-	# five, so coupling them to the three archive seals hid the last two charges.
-	var pip_positions := safeguard_pip_positions()
-	for pip_index in range(pip_positions.size()):
-		var pip_center := pip_positions[pip_index]
-		draw_circle(pip_center, 4.5, Color(0.12, 0.10, 0.07, 0.90))
-		draw_arc(pip_center, 5.0, 0.0, TAU, 20, Color(0.70, 0.49, 0.22, 0.85), 1.5, true)
-		if pip_index < _safeguards:
-			draw_circle(pip_center, 2.7, Color(1.0, 0.91, 0.62, 1.0))
+	# Safeguards are near-side pointed shields, never little replicas of the
+	# archive plaques. Empty sockets stay visible, including zero of five.
+	var positions := safeguard_pip_positions()
+	for index in range(positions.size()):
+		var center := positions[index]
+		var charged := index < _safeguards
+		var shield := PackedVector2Array([center + Vector2(-8, -9), center + Vector2(8, -9), center + Vector2(7, 1), center + Vector2(0, 10), center + Vector2(-7, 1)])
+		draw_colored_polygon(shield, Color(0.64, 0.75, 0.67, 0.94) if charged else Color(0.09, 0.12, 0.10, 0.9))
+		draw_polyline(PackedVector2Array([shield[0], shield[1], shield[2], shield[3], shield[4], shield[0]]), Color(0.49, 0.61, 0.53, 0.80), 1.5, true)
+		if charged:
+			draw_line(center + Vector2(0, -5), center + Vector2(0, 3), Color(0.16, 0.23, 0.19, 0.94), 2.0, true)
+	if not locked and not _completed:
+		_draw_label(Vector2(-135.0, radius + 57.0), "Safeguards %d/%d" % [_safeguards, _safeguard_capacity], 270.0, 15, Color(0.69, 0.78, 0.69, 0.90))
+
+
+func _draw_label(at: Vector2, text: String, width: float, font_size: int, color: Color) -> void:
+	draw_string_outline(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_CENTER, width, font_size, 4, Color(0.025, 0.03, 0.025, 0.94))
+	draw_string(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_CENTER, width, font_size, color)
+
+
+func _draw_ground_details() -> void:
+	if _ground_details == null:
+		return
+	var state := presentation_state()
+	# This shallow, sparse paving uses the real channel radius, so the whole
+	# circular hold area belongs to the threshold rather than a false doorway.
+	var pad_color := Color(0.21, 0.23, 0.20, 0.11 if locked else 0.18)
+	_ground_details.draw_circle(Vector2.ZERO, radius, pad_color)
+	for index in range(8):
+		var angle := TAU * float(index) / 8.0
+		var left := Vector2.from_angle(angle - 0.12)
+		var right := Vector2.from_angle(angle + 0.12)
+		var slab := PackedVector2Array([left * radius * 0.85, left * radius * 0.98, right * radius * 0.98, right * radius * 0.85])
+		_ground_details.draw_colored_polygon(slab, Color(0.49, 0.50, 0.41, 0.16 if locked else 0.28))
+		_ground_details.draw_line(Vector2.from_angle(angle) * radius * 0.46, Vector2.from_angle(angle) * radius * 0.80, Color(0.42, 0.45, 0.38, 0.16), 1.5, true)
+	var metal := Color(0.72, 0.72, 0.59, 0.9)
+	var foot := Vector2(0.0, 15.0)
+	match state:
+		"locked":
+			# A closed crossbar and brace, not a welcoming lit aperture.
+			_ground_details.draw_line(foot + Vector2(-37, -9), foot + Vector2(37, -9), Color(0.12, 0.14, 0.12, 0.96), 12.0, true)
+			_ground_details.draw_line(foot + Vector2(-27, -16), foot + Vector2(27, 5), metal, 4.0, true)
+			_ground_details.draw_line(foot + Vector2(27, -16), foot + Vector2(-27, 5), metal, 4.0, true)
+		"working":
+			for side in [-1.0, 1.0]:
+				var bracket := PackedVector2Array([foot + Vector2(side * 10, -15), foot + Vector2(side * 27, -15), foot + Vector2(side * 27, 10), foot + Vector2(side * 10, 10)])
+				_ground_details.draw_polyline(bracket, metal, 4.0, true)
+		"grace":
+			# Two held stops are static; grace is not a moving drain animation.
+			_ground_details.draw_rect(Rect2(foot + Vector2(-10, -12), Vector2(6, 20)), metal)
+			_ground_details.draw_rect(Rect2(foot + Vector2(4, -12), Vector2(6, 20)), metal)
+		"draining":
+			for side in [-1.0, 1.0]:
+				var arrow := PackedVector2Array([foot + Vector2(side * 24, -15), foot + Vector2(side * 36, -3), foot + Vector2(side * 24, 9)])
+				_ground_details.draw_polyline(arrow, metal, 3.5, true)
+		"complete":
+			_ground_details.draw_line(foot + Vector2(-22, -20), foot + Vector2(-22, 19), metal, 4.0, true)
+			_ground_details.draw_line(foot + Vector2(22, -20), foot + Vector2(22, 19), metal, 4.0, true)
+			WorldArt.draw_complete(_ground_details, foot, 11.0)
+		_: # Ready: disengaged stops leave the hollow threshold clearly open.
+			_ground_details.draw_line(foot + Vector2(-42, -13), foot + Vector2(-42, 9), metal, 4.0, true)
+			_ground_details.draw_line(foot + Vector2(42, -13), foot + Vector2(42, 9), metal, 4.0, true)
 
 
 func safeguard_pip_positions() -> PackedVector2Array:

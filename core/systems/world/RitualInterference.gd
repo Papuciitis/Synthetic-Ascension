@@ -22,7 +22,7 @@ class_name RitualInterference
 
 signal expired(ritual: RitualInterference)
 
-const COLOUR := Color(0.55, 0.92, 0.62, 1.0)
+const COLOUR := Color(0.85, 0.51, 0.36, 1.0)
 const REVENANT_META := &"ritual_revenant"
 const TEACH := "Kills inside the sigil rise once, weakened. Fight outside it, or kill them twice."
 ## Steady-state ring redraw cadence (the ManifestationEffect idiom), and the
@@ -86,7 +86,8 @@ func _process(delta: float) -> void:
 		expire(&"duration")
 		return
 	if _reduced_motion:
-		_bucket_redraw(STATIC_REDRAW_MS)
+		# A functional corpse countdown remains current without a breathing field.
+		_bucket_redraw(100 if not _pending.is_empty() else STATIC_REDRAW_MS)
 	else:
 		pulse_redraw()
 
@@ -178,6 +179,7 @@ func _tick_pending(delta: float) -> void:
 			i += 1
 			continue
 		_pending.remove_at(i)
+		queue_redraw()
 		_raise(entry)
 
 
@@ -259,6 +261,11 @@ func _read_reduced_motion() -> bool:
 
 # --- the tell ---------------------------------------------------------------
 
+func corpse_return_fraction(index: int) -> float:
+	if index < 0 or index >= _pending.size():
+		return 0.0
+	return clampf(1.0 - float(_pending[index]["t"]) / maxf(revive_delay, 0.001), 0.0, 1.0)
+
 func pulse_redraw() -> void:
 	_bucket_redraw(PULSE_REDRAW_MS)
 
@@ -276,20 +283,41 @@ func _bucket_redraw(bucket_ms: int) -> void:
 func _draw() -> void:
 	if _expired:
 		return
-	var breathe := 1.0
-	if not _reduced_motion:
-		breathe = 0.82 + 0.18 * sin(float(Time.get_ticks_msec()) * 0.004)
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 64, Color(COLOUR.r, COLOUR.g, COLOUR.b, 0.45 * breathe), 2.0, true)
-	draw_circle(Vector2.ZERO, radius, Color(COLOUR.r, COLOUR.g, COLOUR.b, 0.05 * breathe))
-	# Sigil ticks at the cardinals, so the ring reads as a rite and not a zone.
-	var glyph := Color(COLOUR.r, COLOUR.g, COLOUR.b, 0.85 * breathe)
-	for k in range(4):
-		var dir := Vector2.RIGHT.rotated(float(k) * TAU * 0.25)
-		draw_line(dir * (radius - 16.0), dir * (radius + 16.0), glyph, 2.0, true)
-	# The time left drains around the ring, like the vault's hold arc.
-	var frac := clampf(_time_left / maxf(duration, 0.001), 0.0, 1.0)
-	if frac > 0.0:
-		draw_arc(Vector2.ZERO, radius + 8.0, -PI * 0.5, -PI * 0.5 + TAU * frac, 64, Color(COLOUR.r, COLOUR.g, COLOUR.b, 0.6), 3.0, true)
-	# Corpses about to stand: a small mark where each will rise.
-	for entry in _pending:
-		draw_arc(to_local(entry["pos"] as Vector2), 10.0, 0.0, TAU, 12, glyph, 2.0, true)
+	# Broken, outward-toothed warning contour: every arc follows the true radius.
+	# It is intentionally static and legible without hue, motion or flashes.
+	var edge := Color(COLOUR.r, COLOUR.g, COLOUR.b, 0.65)
+	for index in range(32):
+		var angle := TAU * float(index) / 32.0
+		draw_arc(Vector2.ZERO, radius, angle + 0.025, angle + TAU / 32.0 - 0.045, 5, Color(0.07, 0.045, 0.035, 0.7), 4.5, true)
+		draw_arc(Vector2.ZERO, radius, angle + 0.025, angle + TAU / 32.0 - 0.045, 5, edge, 1.5, true)
+		if index % 2 == 0:
+			var dir := Vector2.from_angle(angle)
+			var side := dir.orthogonal()
+			var at := dir * radius
+			draw_colored_polygon(PackedVector2Array([at - side * 5.0, at + dir * 11.0, at + side * 5.0]), edge)
+	_draw_return_mark(Vector2.ZERO, 18.0, edge)
+	_draw_warning_text(Vector2(-154, 45), "Killed enemies rise once", 22)
+	_draw_warning_text(Vector2(-79, 68), "Expires in %d s" % ceili(maxf(0.0, _time_left)), 16)
+	for index in range(_pending.size()):
+		var entry: Dictionary = _pending[index]
+		var at := to_local(entry["pos"] as Vector2)
+		_draw_return_mark(at, 13.0, Color(0.95, 0.74, 0.53, 0.95))
+		var fraction := corpse_return_fraction(index)
+		draw_arc(at, 21.0, -PI * 0.5, -PI * 0.5 + maxf(0.001, TAU * fraction), 24, Color(0.96, 0.8, 0.62), 2.0, true)
+		_draw_warning_text(at + Vector2(-20, -26), "%.1f s" % maxf(0.0, float(entry["t"])), 18)
+
+
+func _draw_return_mark(at: Vector2, size: float, color: Color) -> void:
+	# Head and crossed fallen body with an upward return arrow.
+	draw_circle(at + Vector2(0, -size * 0.45), size * 0.2, Color(0.06, 0.045, 0.035, 0.95))
+	draw_arc(at + Vector2(0, -size * 0.45), size * 0.2, 0, TAU, 12, color, 2.0, true)
+	draw_line(at + Vector2(-size * 0.45, size * 0.55), at + Vector2(size * 0.45, -size * 0.1), color, 2.0, true)
+	draw_line(at + Vector2(-size * 0.45, -size * 0.1), at + Vector2(size * 0.45, size * 0.55), color, 2.0, true)
+	var arrow := at + Vector2(size * 0.8, 0)
+	draw_line(arrow + Vector2(0, size * 0.55), arrow + Vector2(0, -size * 0.65), color, 2.0, true)
+	draw_polyline(PackedVector2Array([arrow + Vector2(-4, -size * 0.35), arrow + Vector2(0, -size * 0.65), arrow + Vector2(4, -size * 0.35)]), color, 2.0, true)
+
+
+func _draw_warning_text(at: Vector2, text: String, size: int) -> void:
+	draw_string_outline(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, 5, Color(0.055, 0.04, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, at, text, HORIZONTAL_ALIGNMENT_LEFT, -1, size, Color(0.91, 0.8, 0.65))
