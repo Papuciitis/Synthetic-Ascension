@@ -767,7 +767,7 @@ func _begin_phase_shift(phase: int) -> void:
 	_clear_teaching_markers()
 	_set_teaching_state(&"phase_shift", PHASE_SHIFT_SECONDS)
 	_show_windup(&"phase_cast", PHASE_SHIFT_SECONDS, _e.player.global_position - _e.global_position)
-	SfxManager.play_2d(&"boss_intro", _e.global_position, -6.0)
+	SfxManager.play_2d(&"boss_phase_shift", _e.global_position)
 	if RunEvents != null and RunEvents.has_signal(&"boss_phase_changed"):
 		RunEvents.boss_phase_changed.emit(_e, phase)
 

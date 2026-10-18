@@ -30,6 +30,8 @@ player_hurt=actions/hurt.wav|vol=-18|pitch=0.02|bus=SFX
 enemy_hurt=enemies/enemy_hurt.wav|vol=-7|pitch=0.06|bus=SFX
 enemy_death=enemies/enemy_death.ogg|vol=-5|pitch=0.05|bus=SFX
 boss_intro=boss/boss_intro.ogg|vol=-6|pitch=0.00|bus=SFX
+# Original synthesized phase latch; provenance/recipe beside the S10 score.
+boss_phase_shift=res://assets/audio/music/s10/phase_shift.wav|vol=-14|pitch=0.00|bus=SFX
 # Recorded/edited boss cues selected after listening feedback. See bosses/CREDITS.md.
 # Beam: Ice and Electricity Magic by Iwan 'qubodup' Gabovitch, CC BY 3.0.
 boss_warning=bosses/candidates_v3/warning_weighted_brace.wav|vol=-8|pitch=0.00|bus=SFX

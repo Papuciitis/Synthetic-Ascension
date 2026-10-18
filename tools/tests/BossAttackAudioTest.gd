@@ -99,6 +99,7 @@ func _test_definitions() -> void:
 		[&"boss_beam_release", -14.0, 0.666312, "res://assets/audio/sfx/bosses/candidates_v2/beam_electric_crackle.wav"],
 		[&"boss_pylon_shot", -18.0, 0.196871, "res://assets/audio/sfx/bosses/candidates_v2/cast_air_swish.wav"],
 		[&"boss_mine_burst", -10.0, 0.660000, "res://assets/audio/sfx/bosses/candidates_v3/mine_compact_blast.wav"],
+		[&"boss_phase_shift", -14.0, 0.720000, "res://assets/audio/music/s10/phase_shift.wav"],
 	]
 	for row in definitions:
 		var id: StringName = row[0]
@@ -137,6 +138,17 @@ func _test_brain_warnings() -> void:
 	brain.call("_fan_shot")
 	_check(_requests(&"boss_cast_warning").size() == 1, "dead boss cannot replay a fan warning")
 	await _end_fixture()
+
+
+func _test_phase_boundaries() -> void:
+	for scene in [TANK, MAGE]:
+		_fixture()
+		var actor := _actor(scene)
+		_clear_requests()
+		actor.get_node("BossBrain").call("_begin_phase_shift", 1)
+		_check_one_at(&"boss_phase_shift", actor.global_position, "%s phase transition requests its distinct original chime once" % actor.name)
+		_check(_requests(&"boss_intro").is_empty(), "%s phase transition leaves the entrance recording for entrances" % actor.name)
+		await _end_fixture()
 
 
 func _test_physical_impact_boundaries() -> void:
@@ -314,6 +326,7 @@ func _run() -> void:
 	Global.debug_disable_autosave = true
 	SfxManager.debug_record = true
 	_test_definitions()
+	await _test_phase_boundaries()
 	await _test_brain_warnings()
 	await _test_physical_impact_boundaries()
 	await _test_mine_boundaries()

@@ -1,4 +1,6 @@
 extends Node
+## Mix observers can give major warnings room without borrowing SFX voices.
+signal sound_requested(id: StringName)
 # SfxManager: lightweight ID-based SFX playback (UI + 2D spatial + simple loops)
 # Reads: res://assets/audio/sfx/sfx_manifest.txt
 
@@ -210,6 +212,7 @@ func play_global(id: StringName, vol_add_db: float = 0.0, pitch: float = 1.0) ->
 
 
 func _record(id: StringName, kind: StringName, vol_add_db: float, pitch: float, at: Vector2) -> void:
+	sound_requested.emit(id)
 	if not debug_record:
 		return
 	debug_requests.append({"id": id, "kind": kind, "vol_add_db": vol_add_db, "pitch": pitch, "position": at, "msec": Time.get_ticks_msec()})
