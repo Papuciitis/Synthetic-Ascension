@@ -79,6 +79,12 @@ static var _cache: Dictionary = {}
 static var _attack_glow: GradientTexture2D = null
 
 
+## Application shutdown (Global._exit_tree), like the other RID-backed statics.
+static func release_static_caches() -> void:
+	_cache.clear()
+	_attack_glow = null
+
+
 ## Opt-in player attack light. Telegraphs keep the original kit helpers.
 ## A shared gradient avoids texture/node allocations for every spark or hit.
 static func attack_glow_texture() -> GradientTexture2D:

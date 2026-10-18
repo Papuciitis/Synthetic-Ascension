@@ -34,6 +34,7 @@ var _collapse_left: float = 0.0
 var _configured := false
 var _spawn_position := Vector2.ZERO
 var _body_scale := Vector2.ONE
+var _source: WeakRef
 
 
 ## Configure before add_child so the first world/index snapshot is already
@@ -42,6 +43,7 @@ func setup(world_pos: Vector2, source: Node, life: float = 12.0) -> void:
 	_spawn_position = world_pos
 	_configured = true
 	lifetime = clampf(life, 0.05, 30.0)
+	_source = weakref(source) if source != null else null
 	Scope.bind(self, source)
 
 func _ready() -> void:
@@ -157,6 +159,13 @@ func _process(delta: float) -> void:
 	_flash_left = maxf(0.0, _flash_left - delta)
 	body.modulate = Color(1.65, 1.3, 1.8) if _flash_left > 0.0 else Color.WHITE
 	if _windup_left > 0.0:
+		if _holds_fire():
+			# A major pattern began during the windup: this shot waits for the
+			# next gap instead of joining the pattern.
+			_windup_left = 0.0
+			_hide_charge_sprites()
+			queue_redraw()
+			return
 		_windup_left = maxf(0.0, _windup_left - delta)
 		_update_charge_sprites()
 		queue_redraw()
@@ -165,7 +174,7 @@ func _process(delta: float) -> void:
 			_fire_shot()
 		return
 	_cd = maxf(_cd - delta, 0.0)
-	if _cd > 0.0:
+	if _cd > 0.0 or _holds_fire():
 		return
 	_cd = maxf(shoot_every, 0.10)
 
@@ -185,6 +194,16 @@ func _process(delta: float) -> void:
 	charge_ring.visible = true
 	_update_charge_sprites()
 	queue_redraw()
+
+
+## A main boss's major pattern (its tell, its release, its recovery, its
+## bolts and mines in play) is one spatial demand at a time: pylons wait.
+func _holds_fire() -> bool:
+	var owner_boss = _source.get_ref() if _source != null else null
+	if not is_instance_valid(owner_boss):
+		return false
+	var brain: Node = owner_boss.get_node_or_null("BossBrain")
+	return brain != null and brain.has_method("pylons_hold_fire") and bool(brain.call("pylons_hold_fire"))
 
 
 func _update_charge_sprites() -> void:

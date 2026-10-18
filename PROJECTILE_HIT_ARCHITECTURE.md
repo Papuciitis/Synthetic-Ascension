@@ -33,7 +33,7 @@ One `HitLedger` is created per struck target per physics frame, not per projecti
 | Mechanic | Aggregation rule |
 |---|---|
 | Damage | Sum raw resolved damage; target damage-taken multiplier applies once to the sum |
-| Boss hit cap | Per-hit cap multiplied by ledger `hit_count`, preserving the result of separate capped hits |
+| Boss hit cap, ARMOURED plate | Per hit. A ledger filled through `add_resolved_hit` keeps each hit's damage (`hit_damages`, from the second hit on), and `EnemyCombatService` caps and plates them one by one, exactly as the same hits delivered separately; batch-level outgoing modifiers scale every kept hit alike. Pooling the cap as `cap × hit_count` let one huge hit spend the pellets' budget (800 cap: 5,500 + 55 landed 1,600, not 855) and is gone (2026-10-17). A producer that sets `total_raw_damage` and `hit_count` directly, with no kept hits, still gets the pooled form, so a new multi-hit producer must record its hits |
 | Critical hits | Critical outcome is resolved before insertion; total damage and `critical_hits` preserve the resolved results |
 | Chance on-hit | Must be rolled before insertion and recorded as a resolved outcome; the ledger never rerolls |
 | Lifesteal | `RunEvents.damage_dealt` emits once with final batch damage, preserving total healing while removing repeated signal chains |

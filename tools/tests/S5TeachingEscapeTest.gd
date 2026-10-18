@@ -79,14 +79,13 @@ func _execute() -> void:
 		var absolute_out := ProjectSettings.globalize_path(_out)
 		DirAccess.make_dir_recursive_absolute(absolute_out)
 		_write_json(absolute_out.path_join("escape-results.json"), {"presentation": "Automated paired real Game/court controls, not human satisfaction or finished animation", "reaction": REACTION, "speed": 100.0, "hurtbox": "real70x70 rectangle", "body": "real radius25 height58 capsule", "expected_case_results": _expected_results, "completed_case_results": _results.size(), "cases": _results, "passes": _passes, "failures": _failures, "save_writes": SaveManager.debug_save_writes - _save_writes_before})
-	print("S5TeachingEscapeTest: ", _passes, " passed, ", _failures, " failed")
 
 
 func _escape_attempt(attack: String, response: String, boundary: bool = false) -> Dictionary:
 	if not await _spawn_boss():
 		return {}
 	# Keep unrelated automatic patterns outside this short isolated attempt.
-	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_beam_cd", "_pylons_cd", "_blink_cd"]:
+	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_blink_cd"]:
 		if property in _brain:
 			_brain.set(property, 100.0)
 	_boss._charge._cd = 100.0
@@ -171,7 +170,7 @@ func _escape_attempt(attack: String, response: String, boundary: bool = false) -
 func _melee_recovery_attempt() -> void:
 	if not await _spawn_boss():
 		return
-	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_beam_cd", "_pylons_cd", "_blink_cd"]:
+	for property in ["_slam_cd", "_shock_cd", "_rush_cd", "_summon_cd", "_fan_cd", "_mines_cd", "_blink_cd"]:
 		if property in _brain:
 			_brain.set(property, 100.0)
 	_boss._charge._cd = 100.0

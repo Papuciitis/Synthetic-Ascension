@@ -58,6 +58,18 @@ func begin_committed(direction: Vector2, duration: float, speed: float) -> void:
 	_override_vel = Vector2.ZERO
 
 
+## A rush its controller previewed (begin_committed), not one this module
+## chose on its own.
+func is_committed() -> bool:
+	return _committed_speed >= 0.0
+
+
+## Something stopped a committed rush short: it ends where it stands.
+func stop_committed() -> void:
+	_time_left = 0.0
+	_override_vel = Vector2.ZERO
+
+
 func cancel() -> void:
 	_windup_left = 0.0
 	_time_left = 0.0
@@ -103,7 +115,8 @@ func brain(to_player: Vector2, dist: float) -> Vector2:
 		return Vector2.ZERO
 
 	var spec: EnemySpec = _enemy.spec
-	if bool(_enemy.get_meta(&"boss_controller_owns_charge", false)) and not _enemy.is_in_group(&"boss"):
+	# Boss brains choose their own committed rushes at both tiers.
+	if bool(_enemy.get_meta(&"boss_controller_owns_charge", false)):
 		return to_player * _enemy._spd()
 	if _dormant_left > 0.0:
 		return Vector2.ZERO

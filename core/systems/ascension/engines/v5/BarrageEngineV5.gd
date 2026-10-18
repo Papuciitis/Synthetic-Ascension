@@ -1014,6 +1014,20 @@ func move_speed_multiplier() -> float:
 	return mul
 
 
+## A running Burst is the player's to end (a second Q press cancels it), except
+## while the gun vents or is jammed; heat and spin slows outlast the trigger.
+func sustained_move_speed_multiplier() -> float:
+	var mul := 1.0
+	if burst_left > 0.0 and has("BRQ1") and (_emergency_vent_left > 0.0 or jam_left > 0.0):
+		mul *= 0.9
+	if has("BRK2"):
+		if claims_heat() and heat >= 100.0:
+			mul *= 0.8
+		elif spin_stage() >= 3:
+			mul *= 0.9
+	return mul
+
+
 func collect_draw_points(out: Array) -> void:
 	collect_beam_points(out)
 	for fragment in fragments:

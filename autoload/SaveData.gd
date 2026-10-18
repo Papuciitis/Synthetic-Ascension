@@ -118,6 +118,12 @@ const CURRENT_SAVE_VERSION := 1
 @export var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
 ## Manifestation imprints held for the Hub's imprinter.
 @export var attempt_imprints: PackedStringArray = PackedStringArray()
+## Arena encounters this attempt has settled, as "segment:kind": a defeated
+## boss stays defeated on Continue and is never paid out twice.
+@export var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
+## Developer tools launched this attempt: loading it never seeds the
+## profile's permanent state.
+@export var attempt_developer_launch: bool = false
 @export var attempt_big_choice_source_segment: int = 0 # Segment index that granted the pending big choice (usually 5)
 
 # Attempt modifiers (run-shaping choices; persists for this attempt only)

@@ -253,9 +253,7 @@ func _process(delta: float) -> void:
 	_tick = 0.0
 
 	# Segment changes don’t have a signal, so we poll lightly.
-	var seg := maxi(1, Global.attempt_segment)
-	if seg != _last_segment:
-		_on_segment_changed(seg)
+	sync_segment()
 
 	if gate_unsealed:
 		_unseal_time += step
@@ -373,6 +371,24 @@ func reset_run_state() -> void:
 	# to carry overtime/elites/evac into the new run.
 	_on_attempt_boundary(&"reset_run_state")
 	_on_segment_changed(maxi(1, Global.attempt_segment))
+
+## Catches up with a segment change (polled every 0.2 s).
+func sync_segment() -> void:
+	var seg := maxi(1, Global.attempt_segment)
+	if seg != _last_segment:
+		_on_segment_changed(seg)
+
+
+## A segment built from its spawn state starts its pressure fresh. The segment
+## builders call this before they build and restore, whatever segment the
+## director held: the same number can be rebuilt in one session (Continue after
+## quitting to the menu, the console replaying the segment it stands in), and
+## the earlier pass's unsealed gate, Overtime and evac are not the new pass's.
+## A phase or Resonance the build then restores holds, because the director is
+## already on this segment when its poll next runs.
+func begin_segment() -> void:
+	_on_segment_changed(maxi(1, Global.attempt_segment))
+
 
 func _on_segment_changed(new_seg: int) -> void:
 	_last_segment = new_seg

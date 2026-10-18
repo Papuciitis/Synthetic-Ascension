@@ -92,6 +92,12 @@ func _ready() -> void:
 		queue_free()
 		return
 
+	# The segment's pressure starts fresh before anything is built or restored
+	# (a restored clear's Resonance and collapse then hold).
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("begin_segment"):
+		director.call("begin_segment")
+
 	# Ensure we have a seed for this attempt (Continue-safe).
 	if Global != null and Global.attempt_world_seed == 0:
 		Global.attempt_world_seed = int(Time.get_unix_time_from_system() * 1000.0) ^ randi()

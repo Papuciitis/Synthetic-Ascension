@@ -26,6 +26,9 @@ class RolloutDriver:
 		Global.attempt_segment = 2
 		Global.debug_dev_segment = false
 		Global.debug_dev_mode = true
+		# This fixture tests the proxy rollout, not unattended survival: a
+		# terminal death now leaves the Game scene for PeeP.
+		Global.debug_player_god_mode = true
 		# No story card may stop an unattended run (StoryDirector.cards_allowed).
 		StoryDirector.cards_override = 0
 		# Entry overlays pause the tree waiting for input a headless run never

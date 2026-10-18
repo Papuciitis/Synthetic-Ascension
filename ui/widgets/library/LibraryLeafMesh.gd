@@ -143,22 +143,43 @@ func _draw() -> void:
 		if direction < 0:
 			for index: int in shadow_uvs.size():
 				shadow_uvs[index].x = 1.0 - shadow_uvs[index].x
-		_draw_surface(shadow_vertices, shadow_uvs, shadow_colors, geometry.indices, shadow_texture)
+		_draw_surface(_to_3d(shadow_vertices), shadow_uvs, shadow_colors, geometry.indices, shadow_texture)
+	var back_uvs: PackedVector2Array = geometry.back_uvs
+	if back_texture == null and direction > 0:
+		# Blank fallback is the native right leaf, not a captured left page.
+		back_uvs = back_uvs.duplicate()
+		for index: int in back_uvs.size():
+			back_uvs[index].x = 1.0 - back_uvs[index].x
+	# Strips keep their painter order. Consecutive strips showing the same face
+	# share one mesh (the same triangles in the same order), so a turn draws a
+	# few meshes a frame instead of one per strip, each with every vertex.
+	var vertices_3d := _to_3d(vertices)
+	var run_front := true
+	var run_indices := PackedInt32Array()
 	for strip: Dictionary in geometry.strips:
-		var texture := source_texture if strip.front else (back_texture if back_texture != null else paper_texture)
-		if texture == null:
-			continue
-		var face_uvs: PackedVector2Array = (geometry.front_uvs if strip.front else geometry.back_uvs).duplicate()
-		if not strip.front and back_texture == null and direction > 0:
-			# Blank fallback is the native right leaf, not a captured left page.
-			for index: int in face_uvs.size():
-				face_uvs[index].x = 1.0 - face_uvs[index].x
-		_draw_surface(vertices, face_uvs, geometry.colors, strip.indices, texture)
+		var front: bool = strip.front
+		if not run_indices.is_empty() and front != run_front:
+			_draw_face(vertices_3d, run_front, geometry.front_uvs, back_uvs, geometry.colors, run_indices)
+			run_indices = PackedInt32Array()
+		run_front = front
+		run_indices.append_array(strip.indices)
+	if not run_indices.is_empty():
+		_draw_face(vertices_3d, run_front, geometry.front_uvs, back_uvs, geometry.colors, run_indices)
 
-func _draw_surface(vertices: PackedVector2Array, face_uvs: PackedVector2Array, colors: PackedColorArray, indices: PackedInt32Array, face: Texture2D) -> void:
+func _draw_face(vertices_3d: PackedVector3Array, front: bool, front_uvs: PackedVector2Array, back_uvs: PackedVector2Array, colors: PackedColorArray, indices: PackedInt32Array) -> void:
+	var texture := source_texture if front else (back_texture if back_texture != null else paper_texture)
+	if texture == null:
+		return
+	_draw_surface(vertices_3d, front_uvs if front else back_uvs, colors, indices, texture)
+
+static func _to_3d(vertices: PackedVector2Array) -> PackedVector3Array:
 	var vertices_3d := PackedVector3Array()
-	for vertex: Vector2 in vertices:
-		vertices_3d.append(Vector3(vertex.x, vertex.y, 0.0))
+	vertices_3d.resize(vertices.size())
+	for index: int in vertices.size():
+		vertices_3d[index] = Vector3(vertices[index].x, vertices[index].y, 0.0)
+	return vertices_3d
+
+func _draw_surface(vertices_3d: PackedVector3Array, face_uvs: PackedVector2Array, colors: PackedColorArray, indices: PackedInt32Array, face: Texture2D) -> void:
 	var texture := face
 	var uvs := face_uvs.duplicate()
 	# Canvas mesh UVs need AtlasTexture's native region applied explicitly.

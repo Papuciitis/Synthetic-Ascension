@@ -147,6 +147,10 @@ func _run() -> void:
 	ProjectileManager.spawn_enemy(origin + Vector2(300, 0), Vector2.RIGHT, 100.0, 1.0, 5.0, null)
 	var near_id: int = ProjectileManager._ids[ProjectileManager.active_count() - 2]
 	var far_id: int = ProjectileManager._ids[ProjectileManager.active_count() - 1]
+	# Misfire (also DT04) rolls 15% to remove each bullet entering R; this case
+	# measures the slow alone, so the rolls count as made.
+	distortion._seen_projectiles[near_id] = true
+	distortion._seen_projectiles[far_id] = true
 	var found_before: Array = []
 	ProjectileManager.enemy_projectiles_in_radius(origin, 2000.0, found_before)
 	# Wait by travelled distance, not frames: headless frame pacing varies.

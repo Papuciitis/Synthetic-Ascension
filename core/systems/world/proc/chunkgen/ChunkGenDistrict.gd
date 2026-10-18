@@ -417,8 +417,10 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 			# Find which side faces a lane; place a 2-cell "door" gap there.
 			var entrances: Array[Dictionary] = []
 			var gap_cells: Array[Vector2i] = []
-			# South-facing (region above a horizontal lane)
-			if has_h and r.end.y == donjon_lane_y0 - 2:
+			# South-facing (region above a horizontal lane). The upper and left
+			# regions end exactly at the lane; the lower and right ones start two
+			# cells past its last row/column (see the region rects above).
+			if has_h and r.end.y == donjon_lane_y0:
 				var y_edge: int = r.position.y + r.size.y - 1
 				var cx: int = clampi(lane_cx, r.position.x + 2, r.position.x + r.size.x - 4)
 				gap_cells = [Vector2i(cx, y_edge), Vector2i(cx + 1, y_edge)]
@@ -430,7 +432,7 @@ static func _generate_district(gen: ChunkGenImpl, chunk: Node2D, rng: RandomNumb
 				gap_cells = [Vector2i(cx2, y_edge2), Vector2i(cx2 + 1, y_edge2)]
 				entrances.append({ "pos": Vector2i(cx2, y_edge2 + 1), "dir": Vector2i(0, 1), "width": 2 })
 			# East-facing (region left of a vertical lane)
-			elif has_v and r.end.x == donjon_lane_x0 - 2:
+			elif has_v and r.end.x == donjon_lane_x0:
 				var x_edge: int = r.position.x + r.size.x - 1
 				var cy3: int = clampi(lane_cy, r.position.y + 2, r.position.y + r.size.y - 4)
 				gap_cells = [Vector2i(x_edge, cy3), Vector2i(x_edge, cy3 + 1)]

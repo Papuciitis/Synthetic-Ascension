@@ -170,14 +170,21 @@ func publish(
 			var handle := _view_handles[index]
 			var profile := _profile_for(handle)
 			var visual_key := profile.get("key", DIAGNOSTIC_KEY) as StringName
-			if (_view_flags[index] & Types.Flags.ELITE) != 0:
-				visual_key = StringName(String(visual_key) + ":elite")
-				profile = profile.duplicate()
-				profile["elite"] = true
+			var elite_proxy := (_view_flags[index] & Types.Flags.ELITE) != 0
+			if elite_proxy:
+				# Interned once per profile, not built per elite per frame.
+				if not profile.has("elite_key"):
+					profile["elite_key"] = StringName(String(visual_key) + ":elite")
+				visual_key = profile["elite_key"]
 			var group_variant: Variant = groups.get(visual_key)
 			if group_variant == null:
 				group_variant = PackedInt32Array()
-				group_metadata[visual_key] = profile
+				if elite_proxy:
+					var elite_profile := profile.duplicate()
+					elite_profile["elite"] = true
+					group_metadata[visual_key] = elite_profile
+				else:
+					group_metadata[visual_key] = profile
 			var group := group_variant as PackedInt32Array
 			group.append(index)
 			groups[visual_key] = group
@@ -221,10 +228,11 @@ func publish(
 			entry["frame_size"] = _safe_texture_size(sprite.texture)
 			entry["base_uv"] = _texture_uv(sprite.texture)
 			entry["key"] = StringName("actor:" + base_texture.resource_path)
+			entry["elite_key"] = StringName("actor:" + base_texture.resource_path + ":elite")
 		# Promotion and pooled reuse can change elite state without changing
 		# the texture. Choose the surface every publish, outside that cache.
 		var elite := enemy != null and enemy.is_elite
-		var actor_key := StringName(String(entry.get("key")) + (":elite" if elite else ""))
+		var actor_key: StringName = entry["elite_key"] if elite else entry["key"]
 		var actor_group_variant: Variant = actor_groups.get(actor_key)
 		if actor_group_variant == null:
 			actor_group_variant = [] as Array[Dictionary]
@@ -449,6 +457,8 @@ func _publish_batch(
 	# it every frame for every batch was measurable process-time churn
 	# (session 5: ~29ms avg process at 200+ enemies).
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var shadow_buffer := batch.get("shadow_buffer") as PackedFloat32Array
+	var slope: Vector2 = -DEPTH_STYLE.SHADOW_DIRECTION
 	var handles: Array[int] = []
 	handles.resize(count)
 	var flashing := not _proxy_flash_until.is_empty()
@@ -492,6 +502,24 @@ func _publish_batch(
 		buffer[base + 13] = uv.position.y
 		buffer[base + 14] = uv.size.x
 		buffer[base + 15] = uv_height
+		# Its cast shadow: the same quad sheared about its lower centre, from
+		# the same locals, so the publish needs no second pass over instances.
+		shadow_buffer[base] = size.x
+		shadow_buffer[base + 1] = -slope.x * size.y
+		shadow_buffer[base + 2] = 0.0
+		shadow_buffer[base + 3] = draw_position.x - slope.x * size.y * 0.5
+		shadow_buffer[base + 4] = 0.0
+		shadow_buffer[base + 5] = -slope.y * size.y
+		shadow_buffer[base + 6] = 0.0
+		shadow_buffer[base + 7] = draw_position.y - (slope.y - 1.0) * size.y * 0.5
+		shadow_buffer[base + 8] = 1.0
+		shadow_buffer[base + 9] = 1.0
+		shadow_buffer[base + 10] = 1.0
+		shadow_buffer[base + 11] = color.a
+		shadow_buffer[base + 12] = uv.position.x
+		shadow_buffer[base + 13] = uv.position.y
+		shadow_buffer[base + 14] = uv.size.x
+		shadow_buffer[base + 15] = absf(uv_height)
 	_clear_stale_tail(batch, buffer, count, capacity)
 	var multimesh := batch.get("multimesh") as MultiMesh
 	if multimesh != null and capacity > 0:
@@ -506,7 +534,7 @@ func _publish_batch(
 	batch["buffer"] = buffer
 	batch["last_count"] = count
 	batch["published_count"] = count
-	_publish_shadows(batch, buffer, count, capacity)
+	_upload_shadows(batch, shadow_buffer, count, capacity)
 	_visible_count += count
 	_visible_proxy_count += count
 	if flashing:
@@ -522,6 +550,8 @@ func _publish_actor_batch(
 	var count := entries.size()
 	var capacity := _ensure_capacity(batch, count)
 	var buffer := batch.get("buffer", PackedFloat32Array()) as PackedFloat32Array
+	var shadow_buffer := batch.get("shadow_buffer") as PackedFloat32Array
+	var slope: Vector2 = -DEPTH_STYLE.SHADOW_DIRECTION
 	for index in range(count):
 		var entry := entries[index]
 		var actor := entry.get("actor") as Node2D
@@ -552,7 +582,28 @@ func _publish_actor_batch(
 			Vector2(frame_size.x, -frame_size.y)
 		)
 		var color := sprite.modulate * actor.modulate
-		_write_instance_transform(buffer, index * FLOATS_PER_INSTANCE, instance_transform, color, uv)
+		var base := index * FLOATS_PER_INSTANCE
+		_write_instance_transform(buffer, base, instance_transform, color, uv)
+		# Its cast shadow, sheared about the frame's lower centre (see above).
+		var basis_x := instance_transform.x
+		var basis_y := instance_transform.y
+		var origin := instance_transform.origin
+		shadow_buffer[base] = basis_x.x + slope.x * basis_x.y
+		shadow_buffer[base + 1] = basis_y.x + slope.x * basis_y.y
+		shadow_buffer[base + 2] = 0.0
+		shadow_buffer[base + 3] = origin.x + slope.x * basis_y.y * 0.5
+		shadow_buffer[base + 4] = slope.y * basis_x.y
+		shadow_buffer[base + 5] = slope.y * basis_y.y
+		shadow_buffer[base + 6] = 0.0
+		shadow_buffer[base + 7] = origin.y + (slope.y - 1.0) * basis_y.y * 0.5
+		shadow_buffer[base + 8] = 1.0
+		shadow_buffer[base + 9] = 1.0
+		shadow_buffer[base + 10] = 1.0
+		shadow_buffer[base + 11] = color.a
+		shadow_buffer[base + 12] = uv.position.x
+		shadow_buffer[base + 13] = uv.position.y
+		shadow_buffer[base + 14] = uv.size.x
+		shadow_buffer[base + 15] = absf(uv.size.y)
 		# Slot bookkeeping lives on the persistent entry dict: a fresh location
 		# dictionary per actor per frame was pure allocation churn at 1000+.
 		entry["batch_key"] = visual_key
@@ -567,40 +618,20 @@ func _publish_actor_batch(
 	batch["buffer"] = buffer
 	batch["last_count"] = count
 	batch["published_count"] = count
-	_publish_shadows(batch, buffer, count, capacity)
+	_upload_shadows(batch, shadow_buffer, count, capacity)
 	_visible_count += count
 
 
-func _publish_shadows(batch: Dictionary, visual_buffer: PackedFloat32Array, count: int, capacity: int) -> void:
-	var buffer := batch.get("shadow_buffer") as PackedFloat32Array
-	var slope: Vector2 = -DEPTH_STYLE.SHADOW_DIRECTION
-	# Project the already-interpolated visual data about its lower centre.
-	# Packed arithmetic avoids another actor scan, frame lookup or allocation.
-	for index in range(count):
-		var base := index * FLOATS_PER_INSTANCE
-		buffer[base] = visual_buffer[base] + slope.x * visual_buffer[base + 4]
-		buffer[base + 1] = visual_buffer[base + 1] + slope.x * visual_buffer[base + 5]
-		buffer[base + 2] = 0.0
-		buffer[base + 3] = visual_buffer[base + 3] + slope.x * visual_buffer[base + 5] * 0.5
-		buffer[base + 4] = slope.y * visual_buffer[base + 4]
-		buffer[base + 5] = slope.y * visual_buffer[base + 5]
-		buffer[base + 6] = 0.0
-		buffer[base + 7] = visual_buffer[base + 7] + (slope.y - 1.0) * visual_buffer[base + 5] * 0.5
-		buffer[base + 8] = 1.0
-		buffer[base + 9] = 1.0
-		buffer[base + 10] = 1.0
-		buffer[base + 11] = visual_buffer[base + 11]
-		buffer[base + 12] = visual_buffer[base + 12]
-		buffer[base + 13] = visual_buffer[base + 13]
-		buffer[base + 14] = visual_buffer[base + 14]
-		buffer[base + 15] = absf(visual_buffer[base + 15])
-	# visible_instance_count makes the old tail undrawable without clearing it.
+## The publish loops write each cast shadow beside its visual instance; this
+## uploads that buffer. visible_instance_count makes the old tail undrawable
+## without clearing it.
+func _upload_shadows(batch: Dictionary, shadow_buffer: PackedFloat32Array, count: int, capacity: int) -> void:
 	var multimesh := batch.get("shadow_multimesh") as MultiMesh
 	if capacity > 0:
-		multimesh.buffer = buffer
+		multimesh.buffer = shadow_buffer
 		multimesh.visible_instance_count = count
 		multimesh.emit_changed()
-	batch["shadow_buffer"] = buffer
+	batch["shadow_buffer"] = shadow_buffer
 
 
 ## Only the tail that was occupied last publish needs clearing; slots past it

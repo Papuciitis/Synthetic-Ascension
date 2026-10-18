@@ -4,6 +4,7 @@ extends Node
 const SCREEN := preload("res://ui/screens/opening/OpeningPresentation.tscn")
 var _passes := 0
 var _failures := 0
+var _first_strokes: Texture2D
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -33,6 +34,11 @@ func _run() -> void:
 	add_child(view)
 	var screen := SCREEN.instantiate()
 	view.add_child(screen)
+	# Each suite runs in a fresh process, with no stroke pattern yet; building
+	# a presentation makes none, then or in the frames after (each hub
+	# dispatch letter is one, and never shows a still).
+	await _settle()
+	_check(OpeningPresentation._shared_strokes == null, "building a presentation makes no stroke pattern")
 	_check(screen.has_method("show_illustration") and screen.has_method("clear_illustration"), "story cards can select and release optional illustrations")
 	if not screen.has_method("show_illustration"):
 		view.free()
@@ -40,6 +46,7 @@ func _run() -> void:
 		return
 	for id: StringName in [&"city", &"admission", &"synthesis", &"records"]:
 		_check(bool(screen.call("show_illustration", id)), "%s illustration is usable" % id)
+	_first_strokes = ((screen.get("_illustration") as TextureRect).material as ShaderMaterial).get_shader_parameter(&"strokes") as Texture2D
 	await screen.call("clear_illustration", 0.0)
 	_check(bool(screen.call("show_illustration", &"city")), "city image can be shown again after cleanup")
 	var image := screen.get("_illustration") as TextureRect
@@ -58,7 +65,7 @@ func _run() -> void:
 	screen.call("clear_illustration", 0.1)
 	screen.call("show_illustration", &"city")
 	await get_tree().create_timer(0.15, true, false, true).timeout
-	_check(image.visible and image.texture != null and image.modulate.a > 0.9, "showing the same still supersedes a pending clear")
+	_check(image.visible and image.texture != null and image.modulate.a > 0.9 and is_equal_approx(float((image.material as ShaderMaterial).get_shader_parameter(&"reveal")), 1.0), "showing the same still supersedes a pending clear")
 	screen.call("clear_illustration", 0.1)
 	screen.call("show_illustration", &"admission")
 	await get_tree().create_timer(0.15, true, false, true).timeout
@@ -117,7 +124,80 @@ func _run() -> void:
 	_check(advanced[0] == 1, "intentionally paused hub dialogue still advances without a pause menu")
 	get_tree().paused = false
 	view.free()
+	await _test_transitions()
 	_finish(previous_speed, previous_motion)
+
+
+func _wait(seconds: float) -> void:
+	await get_tree().create_timer(seconds, true, false, true).timeout
+
+
+## The painted transitions, with motion on: a still paints in over the world,
+## the next paints over it (the first stays beneath until covered), clearing
+## washes out the way it came, and a slow push-in runs only with motion.
+func _test_transitions() -> void:
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	var view := SubViewport.new()
+	view.size = Vector2i(960, 540)
+	add_child(view)
+	var screen := SCREEN.instantiate()
+	view.add_child(screen)
+	await _settle()
+	var front := screen.get("_illustration") as TextureRect
+	var back := screen.get("_illustration_back") as TextureRect
+	var reveal := func(layer: TextureRect) -> float: return float((layer.material as ShaderMaterial).get_shader_parameter(&"reveal"))
+	_check(front.material is ShaderMaterial and back.material is ShaderMaterial, "both still layers paint through the stroke shader")
+	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") == null, "the stroke pattern is not made until a still is shown")
+	screen.call("show_illustration", &"city")
+	_check((front.material as ShaderMaterial).get_shader_parameter(&"strokes") != null and (front.material as ShaderMaterial).get_shader_parameter(&"strokes") == (back.material as ShaderMaterial).get_shader_parameter(&"strokes"), "then both layers paint with it")
+	_check(_first_strokes != null and (front.material as ShaderMaterial).get_shader_parameter(&"strokes") == _first_strokes, "the same pattern as every other presentation: it is made once per run")
+	_check(is_zero_approx(reveal.call(front)), "a new still starts unpainted")
+	await _wait(OpeningPresentation.STILL_REVEAL * 0.5)
+	var midway: float = reveal.call(front)
+	_check(midway > 0.1 and midway < 0.9, "and paints in over time (%.2f halfway)" % midway)
+	await _wait(OpeningPresentation.STILL_REVEAL * 0.6 + 0.05)
+	_check(is_equal_approx(reveal.call(front), 1.0) and not back.visible, "until the plain painting shows")
+	var city_texture := front.texture
+	screen.call("show_illustration", &"admission")
+	_check(back.visible and back.texture == city_texture and is_equal_approx(reveal.call(back), 1.0) and is_zero_approx(reveal.call(front)), "the next still paints over the previous one, which stays beneath as it was")
+	await _wait(OpeningPresentation.STILL_CROSSFADE * 0.5)
+	var crossing: float = reveal.call(front)
+	_check(back.visible and crossing > 0.1 and crossing < 0.9, "both show mid-crossfade, never a dip to the world (%.2f)" % crossing)
+	await _wait(OpeningPresentation.STILL_CROSSFADE * 0.6 + 0.05)
+	_check(not back.visible and back.texture == null and is_equal_approx(reveal.call(front), 1.0), "once covered, the previous still is released")
+	_check(front.scale.x > 1.0 and front.scale.x < OpeningPresentation.STILL_DRIFT_SCALE, "the still drifts in slowly while it is read (scale %.4f)" % front.scale.x)
+	# Reduced Motion turned on while a still is read stops its push-in there.
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	var held := front.scale.x
+	await _wait(0.3)
+	_check(is_equal_approx(front.scale.x, held), "turning Reduced Motion on stops the push-in where it is")
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", false, false)
+	# A third still mid-crossfade: the fully painted still stays underneath,
+	# never the half-painted one, so the world cannot show through.
+	var admission_texture := front.texture
+	screen.call("show_illustration", &"synthesis")
+	await _wait(0.2)
+	screen.call("show_illustration", &"records")
+	_check(back.visible and back.texture == admission_texture and is_equal_approx(reveal.call(back), 1.0) and is_zero_approx(reveal.call(front)), "a third still mid-crossfade keeps the painted still beneath, not the half-painted one")
+	await _wait(OpeningPresentation.STILL_CROSSFADE + 0.1)
+	_check(not back.visible and is_equal_approx(reveal.call(front), 1.0), "and the third still paints over it as usual")
+	var clear_done := [false]
+	var clearing := func() -> void:
+		await screen.call("clear_illustration")
+		clear_done[0] = true
+	clearing.call()
+	await _wait(OpeningPresentation.STILL_CLEAR * 0.5)
+	var washing: float = reveal.call(front)
+	_check(not clear_done[0] and washing > 0.05 and washing < 0.95, "clearing washes the painting out over time while the caller waits (%.2f)" % washing)
+	await _wait(OpeningPresentation.STILL_CLEAR * 0.6 + 0.05)
+	_check(clear_done[0] and not front.visible and front.texture == null and is_equal_approx(front.scale.x, 1.0), "then releases it, unscaled, before world play resumes")
+	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
+	screen.call("show_illustration", &"synthesis")
+	await _settle()
+	_check(is_equal_approx(reveal.call(front), 1.0) and is_equal_approx(front.scale.x, 1.0), "Reduced Motion: the still is simply there, with no push-in")
+	await screen.call("clear_illustration")
+	_check(not front.visible and front.texture == null, "and leaves at once")
+	view.free()
 
 func _finish(previous_speed: Variant, previous_motion: Variant) -> void:
 	SettingsManager.set_value(&"accessibility", &"typewriter_speed", previous_speed, false)

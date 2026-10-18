@@ -312,7 +312,9 @@ func _on_scene_requested(path: String) -> void:
 	# The run's own scenes: segments, the walkable hub, and the legacy
 	# full-screen shop old saves may still name. Anything else leaves the run.
 	if path not in [Global.PATH_GAME, Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]:
-		end_capture("suspended")
+		# A terminal defeat routes to PeeP before its failed boundary, which
+		# waits for the player's decision. That route is the run's failure.
+		end_capture("failed" if path == Global.PATH_PEEP and Global.has_pending_peep() else "suspended")
 		return
 	# Leaving the Hub for a segment: the wallet the visit kept (P10).
 	if path == Global.PATH_GAME and (_mode == "hub" or _destination in [Global.PATH_HUB_WORLD, Global.PATH_HUB_SHOP]):

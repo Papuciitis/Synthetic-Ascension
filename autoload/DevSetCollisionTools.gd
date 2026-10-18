@@ -170,10 +170,16 @@ func _call_effect(method: StringName, args: Array = []) -> void:
 func restart_opening(mode: String, phase: int = 0, response: String = "") -> void:
 	if Global == null:
 		return
+	prepare_opening_restart(mode, phase, response)
+	Global.save_current_profile()
+	Global.call_deferred("goto_game")
+
+## The attempt an opening restart continues: back at the opening, replayed
+## from there, so every fight it already won rises again.
+func prepare_opening_restart(mode: String, phase: int = 0, response: String = "") -> void:
 	Global.attempt_active = true
 	Global.attempt_segment = 1
-	Global.attempt_deaths_this_segment = 0
-	Global.attempt_checkpoint_pos = Vector2.INF
+	Global.reset_segment_pass()
 	Global.attempt_segment1_resonance = 0.0
 	Global.attempt_segment1_milestones.clear()
 	Global.attempt_opening_version = Global.OPENING_SEQUENCE_VERSION
@@ -185,9 +191,8 @@ func restart_opening(mode: String, phase: int = 0, response: String = "") -> voi
 	Global.debug_opening_mode_override = mode
 	Global.debug_opening_force_phase = phase
 	Global.debug_opening_response_override = response
+	Global.forget_arena_clears_from(1)
 	Global.set_followers(0)
-	Global.save_current_profile()
-	Global.call_deferred("goto_game")
 
 func reset_opening_history() -> void:
 	if Global == null:
@@ -213,13 +218,22 @@ func set_next_run_full_replay() -> void:
 func jump_to_segment(segment: int) -> void:
 	if Global == null:
 		return
+	prepare_segment_jump(segment)
+	Global.save_current_profile()
+	Global.call_deferred("goto_game")
+
+## The attempt a segment jump continues: at `segment`, replayed from its start
+## as a fresh pass (Global.reset_segment_pass). Its bosses and minibosses rise
+## again even if this attempt already beat them, and so do those of every
+## later segment, which the jump plays again.
+func prepare_segment_jump(segment: int) -> void:
 	Global.attempt_active = true
 	Global.attempt_segment = maxi(1, segment)
+	Global.reset_segment_pass()
+	Global.forget_arena_clears_from(Global.attempt_segment)
 	if segment > 1:
 		Global.attempt_opening_completed = true
 		Global.attempt_opening_phase = 10
-	Global.save_current_profile()
-	Global.call_deferred("goto_game")
 
 # ============================================================
 # Ascension tree (V4 prototype)
@@ -318,6 +332,17 @@ func clear_ascension_tree() -> void:
 func simulate_legacy_opening_save() -> void:
 	if Global == null or SaveManager == null or SaveManager.current_save == null:
 		return
+	prepare_legacy_opening_save()
+	Global.save_current_profile()
+	# Reapply the serialized resource so the same migration path used at boot is
+	# exercised without requiring a developer to edit a .tres by hand.
+	Global.apply_save(SaveManager.current_save)
+	Global.call_deferred("goto_game")
+
+## The attempt a save from before the versioned opening holds: Segment 2, three
+## Segment 1 milestones, and no arena settled, since such a save also predates
+## the record of cleared arenas.
+func prepare_legacy_opening_save() -> void:
 	Global.attempt_active = true
 	Global.attempt_segment = 2
 	Global.attempt_segment1_milestones = [&"synthesis", &"first_confrontation", &"assistant_commitment"]
@@ -327,11 +352,7 @@ func simulate_legacy_opening_save() -> void:
 	Global.attempt_opening_completed = false
 	Global.attempt_opening_officer_completed = false
 	Global.attempt_opening_bren_committed = false
-	Global.save_current_profile()
-	# Reapply the serialized resource so the same migration path used at boot is
-	# exercised without requiring a developer to edit a .tres by hand.
-	Global.apply_save(SaveManager.current_save)
-	Global.call_deferred("goto_game")
+	Global.forget_arena_clears_from(1)
 
 # ============================================================
 # Manifestations

@@ -143,6 +143,10 @@ var enemy_proxy_rollout: bool = true
 
 # WorldArt is deliberately not a global class; consumers preload it.
 const _WORLD_ART_SCRIPT := preload("res://core/systems/world/WorldArt.gd")
+## Script statics released at shutdown with the others in _exit_tree.
+const _WORLD_COVER_VISUALS := preload("res://core/systems/world/WorldCoverVisuals.gd")
+const _WORLD_DRESSING_MATERIALS := preload("res://core/systems/world/WorldDressingMaterials.gd")
+const _COMBAT_STATUS_ICONS := preload("res://core/combat/CombatStatusIcons.gd")
 var debug_force_enemy_introductions: bool = false
 var debug_projectile_stress_test: bool = false
 var debug_player_god_mode: bool = false
@@ -211,6 +215,12 @@ var attempt_vendor_seed: int = 0
 var attempt_vendor_bag: BagInventory = null
 
 var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
+## Arena encounters this attempt has settled ("segment:kind"): a defeated
+## boss stays defeated on Continue and is never paid out twice.
+var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
+## Developer tools launched this attempt (saved with it): loading it never
+## imports its city choices as the profile's permanent commitments.
+var attempt_developer_launch := false
 ## Manifestation imprints: rules dissolved by merges this attempt, kept for
 ## the Hub's imprinter (design note 2026-09-19-manifestation-imprints).
 const IMPRINT_CAP := 8
@@ -428,6 +438,7 @@ func goto_scene(path: String) -> void:
 		path = PATH_PEEP
 	if path == PATH_PEEP:
 		get_tree().paused = false
+		_continuation_music()
 		# Preserve the pending choice even when its presentation asset is unavailable.
 		if not ResourceLoader.exists(PATH_PEEP):
 			path = PATH_MAIN_MENU
@@ -445,12 +456,21 @@ func goto_scene(path: String) -> void:
 	if has_pending_peep() and path in [PATH_GAME, PATH_HUB_SHOP, PATH_HUB_WORLD, PATH_BASE]:
 		path = PATH_PEEP if ResourceLoader.exists(PATH_PEEP) else PATH_MAIN_MENU
 		get_tree().paused = false
+		_continuation_music()
 		balance_scene_requested.emit(path)
 	if PerformanceFlightRecorder != null and PerformanceFlightRecorder.has_method("note_scene_change"):
 		PerformanceFlightRecorder.note_scene_change(path.get_file().get_basename())
 	var err := get_tree().change_scene_to_file(path)
 	if err != OK:
 		push_error("[Global] scene change failed: path=%s err=%s" % [path, error_string(err)])
+
+## The continuation always plays the menu's music, whichever route arrives:
+## a death mid-combat must not carry the combat track into it.
+func _continuation_music() -> void:
+	var am := get_node_or_null("/root/AudioManager")
+	if am != null:
+		am.call("to_menu")
+
 
 func goto_main_menu() -> void:
 	var am := get_node_or_null("/root/AudioManager")
@@ -755,6 +775,8 @@ func reset_run_systems() -> void:
 
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
+	attempt_cleared_arenas = PackedStringArray()
+	attempt_developer_launch = false
 	attempt_imprints.clear()
 	_claimed_loot_set.clear()
 	_visited_building_set.clear()
@@ -1343,19 +1365,29 @@ func _city_development_augment_floor(id: StringName) -> int:
 
 
 func city_development_attack_range_multiplier() -> float:
-	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["range_multiplier"])
+	return _CITY_DEVELOPMENT.range_multiplier(_effective_city_development())
 
 
 func city_development_attack_size_multiplier() -> float:
-	return float(_CITY_DEVELOPMENT.bonuses(_effective_city_development())["size_multiplier"])
+	return _CITY_DEVELOPMENT.size_multiplier(_effective_city_development())
 
 
 func city_development_capture_metadata() -> Dictionary:
 	return {"enabled": not _CITY_DEVELOPMENT_EXPERIMENTS.enabled("--city-no-permanent-development"), "profile": get_city_development_summary(), "attempt": attempt_city_development.duplicate(true), "effective_bonuses": _CITY_DEVELOPMENT.bonuses(_effective_city_development())}
 
 
+## Developer tools launched this attempt, this session or when it was saved
+## (the main menu clears the debug flags before Continue; debug builds only).
+## Such an attempt claims no Research, writes no city commitment and pays no
+## Binding echo bonus. Everything else it keeps as any attempt does: its
+## Bindings in the profile's slots and owned library, its stash, its Grimoire
+## entries, story records, best Followers and run count.
+func is_developer_attempt() -> bool:
+	return debug_dev_mode or debug_dev_segment or attempt_developer_launch
+
+
 func _award_city_development(segment: int) -> void:
-	if not attempt_active or has_pending_peep() or debug_dev_mode or debug_dev_segment or not _city_development_awards_enabled or SaveManager == null or SaveManager.current_save == null:
+	if not attempt_active or has_pending_peep() or is_developer_attempt() or not _city_development_awards_enabled or SaveManager == null or SaveManager.current_save == null:
 		return
 	get_city_development_summary()
 	_CITY_DEVELOPMENT.claim(city_development, segment)
@@ -2013,6 +2045,9 @@ func corrupt_augment(aug_id: StringName) -> Dictionary:
 	var after := AugmentRites.corrupted_level(outcome, before)
 	attempt_augment_corruptions[String(aug_id)] = String(outcome)
 	set_augment_level(aug_id, after)
+	# A trained augment's starting floor can hold the level above the roll;
+	# report the level it actually has.
+	after = get_augment_level(aug_id)
 	permanent_augments_changed.emit(permanent_augment_ids)
 	request_autosave()
 	return {"ok": true, "outcome": outcome, "before": before, "after": after}
@@ -2031,7 +2066,7 @@ func apply_augment_scars(s: Stats) -> void:
 ## What pouring `donor` into `recipient` would do: {ok, gain, cost,
 ## per_level, reason}. Priced at this Hub's Binding segment (P4).
 func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary:
-	var out := {"ok": false, "gain": 0, "cost": 0, "per_level": AugmentRites.transfusion_cost_per_level(binding_segment()), "reason": ""}
+	var out := {"ok": false, "gain": 0, "cost": 0, "per_level": AugmentRites.transfusion_cost_per_level(binding_segment()), "donor_after": 1, "reason": ""}
 	if recipient == StringName() or not permanent_augment_ids.has(recipient):
 		out["reason"] = "the recipient must be equipped"
 		return out
@@ -2046,10 +2081,14 @@ func transfusion_preview(recipient: StringName, donor: StringName) -> Dictionary
 		out["reason"] = "a corrupted augment's levels are bound to it"
 		return out
 	# The free trained starting level is preparation, never a renewable donor.
-	var donor_growth := get_augment_level(donor) - (_city_development_augment_floor(donor) - 1)
+	var donor_floor := _city_development_augment_floor(donor)
+	# Where the donor lands: its starting level (a trained one keeps its floor).
+	out["donor_after"] = maxi(1, donor_floor)
+	var donor_growth := get_augment_level(donor) - (donor_floor - 1)
 	var poured := AugmentRites.transfusion_gain(donor_growth)
 	if poured <= 0:
-		out["reason"] = "the donor needs Lv.%d" % AugmentRites.TRANSFUSION_MIN_DONOR
+		# A trained donor's free floor does not count: name the level it needs.
+		out["reason"] = "the donor needs Lv.%d" % (AugmentRites.TRANSFUSION_MIN_DONOR + donor_floor - 1)
 		return out
 	# Only the levels the recipient can take are paid for: a recipient near
 	# the cap would otherwise pay full price and burn the donor for nothing.
@@ -2600,7 +2639,9 @@ func apply_major_choice(choice_id: StringName) -> bool:
 		attempt_major_choice_taken_ids.append(choice_id)
 	if attempt_pending_doctrine_stage != StringName():
 		attempt_doctrine_stage_ids[attempt_pending_doctrine_stage] = choice_id
-		if _is_city_commitment_stage(attempt_pending_doctrine_stage):
+		# Developer launches never write permanent commitments into a profile,
+		# like their Research awards (a later real run would reactivate them).
+		if _is_city_commitment_stage(attempt_pending_doctrine_stage) and not is_developer_attempt():
 			meta_city_commitments[String(attempt_pending_doctrine_stage)] = String(choice_id)
 	if def.family_id != StringName():
 		var held := doctrine_family_count(def.family_id)
@@ -2785,6 +2826,11 @@ func _exit_tree() -> void:
 	AugmentActiveBadge.release_static_caches()
 	ManifestationCatalog.release_static_caches()
 	ManifestationPairCatalog.release_static_caches()
+	VfxKit.release_static_caches()
+	EliteTellArt.release_static_caches()
+	_COMBAT_STATUS_ICONS.release_static_caches()
+	_WORLD_COVER_VISUALS.release_static_caches()
+	_WORLD_DRESSING_MATERIALS.release_static_caches()
 
 
 func flush_pending_save() -> void:
@@ -2832,6 +2878,50 @@ func claim_loot(id: int) -> void:
 	_claimed_loot_set[id] = true
 	attempt_claimed_loot_ids.append(id)
 	request_autosave()
+
+
+# ------------------------------------------------------------
+# Arena encounters settle once (boss overhaul: on Continue a live fight
+# restarts at its spawn state; a defeated boss stays defeated)
+# ------------------------------------------------------------
+func _arena_clear_key(kind: StringName) -> String:
+	return "%d:%s" % [attempt_segment, String(kind)]
+
+func is_arena_cleared(kind: StringName) -> bool:
+	return attempt_cleared_arenas.has(_arena_clear_key(kind))
+
+## Recorded with the encounter's rewards, before their deferred save, so a
+## Continue cannot fight the same boss again for them.
+func note_arena_cleared(kind: StringName) -> void:
+	var key := _arena_clear_key(kind)
+	if attempt_cleared_arenas.has(key):
+		return
+	attempt_cleared_arenas.append(key)
+	request_autosave()
+
+## Arms the arenas of `segment` and of every later segment again: the
+## developer console's segment jump replays the attempt from there, inside the
+## same attempt, so a fight this attempt already won from there on rises again.
+func forget_arena_clears_from(segment: int) -> void:
+	for index in range(attempt_cleared_arenas.size() - 1, -1, -1):
+		if int(attempt_cleared_arenas[index].get_slice(":", 0)) >= segment:
+			attempt_cleared_arenas.remove_at(index)
+
+## Starts the segment the attempt is in as a fresh pass from its start, as the
+## developer console's jump and opening restart replay it: nothing of the pass
+## the attempt was in carries over (its deaths, its checkpoint, which the
+## builder would take as the new segment's start, the unpaid Overtime fraction,
+## the gambler's tally, claimed exploration loot, Witness use and threat debt).
+## Segment completion clears the same for the next segment, among its rewards.
+func reset_segment_pass() -> void:
+	attempt_deaths_this_segment = 0
+	attempt_checkpoint_pos = Vector2.INF
+	_kill_reward_carry = 0.0
+	gambler_reset_segment()
+	attempt_claimed_loot_ids = PackedInt32Array()
+	_claimed_loot_set.clear()
+	attempt_witness_used_segment = 0
+	attempt_doctrine_threat_debt = 0.0
 
 func apply_save(save: SaveData) -> void:
 	attempt_pending_segment_completion = 0
@@ -2998,6 +3088,9 @@ func apply_save(save: SaveData) -> void:
 				if attempt_opening_bren_committed:
 					attempt_segment1_milestones.append(&"assistant_commitment")
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
+		var cleared_arenas = save.get("attempt_cleared_arenas")
+		attempt_cleared_arenas = PackedStringArray(cleared_arenas) if cleared_arenas != null else PackedStringArray()
+		attempt_developer_launch = save.get("attempt_developer_launch") == true
 		attempt_imprints.clear()
 		for imprint_id in save.get("attempt_imprints"):
 			attempt_imprints.append(StringName(imprint_id))
@@ -3133,6 +3226,8 @@ func apply_save(save: SaveData) -> void:
 		attempt_opening_officer_completed = false
 		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
+		attempt_cleared_arenas = PackedStringArray()
+		attempt_developer_launch = false
 		attempt_imprints.clear()
 		_claimed_loot_set.clear()
 		attempt_vendor_segment = 0
@@ -3337,6 +3432,11 @@ func write_save(save: SaveData) -> void:
 		save.attempt_opening_officer_completed = attempt_opening_officer_completed
 		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
+		save.attempt_cleared_arenas = attempt_cleared_arenas.duplicate()
+		# The debug flags are still set while a developer run saves; the main
+		# menu clears them before Continue loads it.
+		attempt_developer_launch = is_developer_attempt()
+		save.attempt_developer_launch = attempt_developer_launch
 		var imprints := PackedStringArray()
 		for imprint_id in attempt_imprints:
 			imprints.append(String(imprint_id))
@@ -3545,7 +3645,7 @@ func _apply_segment_completion(completed_segment: int) -> void:
 		if not attempt_binding_echo_claimed:
 			attempt_binding_echo_claimed = true
 			binding_rewards = 1
-			if genuine_settlement and _CITY_DEVELOPMENT.rank(_effective_city_development(), "binding_echo") > 0 and _city_development_awards_enabled and SaveManager != null and SaveManager.current_save != null and not debug_dev_mode and not debug_dev_segment and not has_pending_peep():
+			if genuine_settlement and _CITY_DEVELOPMENT.rank(_effective_city_development(), "binding_echo") > 0 and _city_development_awards_enabled and SaveManager != null and SaveManager.current_save != null and not is_developer_attempt() and not has_pending_peep():
 				binding_rewards = 2
 	balance_segment_completed.emit(completed_segment)
 	if not attempt_ascension.is_empty():
@@ -3684,7 +3784,7 @@ func _is_city_commitment_stage(stage: StringName) -> bool:
 
 
 func _import_city_commitments() -> void:
-	if not meta_city_commitments.is_empty() or not attempt_active:
+	if not meta_city_commitments.is_empty() or not attempt_active or attempt_developer_launch:
 		return
 	for stage in [&"method", &"doctrine", &"apotheosis"]:
 		var choice := str(attempt_doctrine_stage_ids.get(stage, ""))

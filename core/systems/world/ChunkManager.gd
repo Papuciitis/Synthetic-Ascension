@@ -1427,6 +1427,19 @@ func is_cell_walkable(cell: Vector2i) -> bool:
 	return (not _blocked_cells.has(cell)) and (not _manual_blocked_cells.has(cell))
 
 
+## Whether the chunk holding `cell` is loaded with its blockers' colliders
+## built (staged chunks build them a step later): physics then meets every
+## wall there.
+func has_built_cell(cell: Vector2i) -> bool:
+	var cc: Vector2i = _cell_to_chunk(cell)
+	if not _chunks.has(cc):
+		return false
+	for entry: Dictionary in _pending_blocker_stages:
+		if entry.get("coord") == cc and int(entry.get("stage", 0)) == 0:
+			return false
+	return true
+
+
 func build_nav_walkability_snapshot() -> Dictionary:
 	# Immutable copies of the walkability inputs so a worker-thread flow build
 	# can query them without racing chunk streaming on the main thread. Chunk

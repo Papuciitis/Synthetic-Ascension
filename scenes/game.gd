@@ -360,7 +360,12 @@ func _after_augment_screen_closed(closing: CanvasLayer, generation: int) -> void
 
 func _unpause_after_augment() -> void:
 	if _augment_pause_owned:
-		get_tree().paused = _augment_prior_paused
+		# The pause menu can open over a closing choice (its fly-out and the
+		# input-release frame). Hand it the pause rather than running the world
+		# under it, where its Resume would restore a pause nothing owns.
+		var handed_off := not _augment_prior_paused and is_instance_valid(_pause_menu) and bool(_pause_menu.call("adopt_pause_handoff"))
+		if not handed_off:
+			get_tree().paused = _augment_prior_paused
 	_augment_prior_paused = false
 	_augment_pause_owned = false
 	_augment_transition_pending = false
@@ -412,8 +417,15 @@ func complete_segment(completed_segment: int) -> void:
 		await _present_segment1_overlay(true)
 	else:
 		await _present_chapter_close(completed_segment)
-	if not _run_ended and Global.finish_segment_completion(completed_segment):
+	if _run_ended or Global.has_pending_peep():
+		return
+	if Global.finish_segment_completion(completed_segment):
 		Global.goto_hub_shop()
+	else:
+		# An out-of-sequence completion (developer tools today) must not strand
+		# the player in a finished segment with the pause menu blocked.
+		_segment_completion_running = false
+		Global.goto_resume()
 
 func _play_escape_release() -> void:
 	if player == null or not is_instance_valid(player) or not (player is Node2D):

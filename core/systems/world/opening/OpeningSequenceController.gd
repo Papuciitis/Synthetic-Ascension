@@ -42,10 +42,14 @@ var _original_time_scale: float = 1.0
 var _sequence_active: bool = false
 var _anchor := Vector2.ZERO
 var _debug_response_override := ""
+## The showing guidance: title, detail builder, destination and target.
+var _guidance: Dictionary = {}
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group(&"opening_sequence_controller")
+	if SettingsManager != null and not SettingsManager.bindings_changed.is_connected(_on_bindings_changed):
+		SettingsManager.bindings_changed.connect(_on_bindings_changed)
 
 func run_sequence(player_node: Node2D, level_builder: Level1Builder) -> void:
 	if Global == null or int(Global.attempt_segment) != 1 or Global.attempt_opening_completed:
@@ -151,7 +155,7 @@ func _run_full() -> void:
 	if resume_phase <= Phase.CALIBRATION:
 		_set_phase(Phase.CALIBRATION)
 		var target := await _spawn_actor(&"calibration", _anchor + Vector2(210, 10), null, false, 8.0)
-		_show_guidance("CALIBRATE YOUR SPELL", OpeningSequenceData.CALIBRATION_PROMPT % InputLabels.action(&"attack"), target.global_position if target != null else _anchor, target)
+		_show_guidance("CALIBRATE YOUR SPELL", _attack_prompt(OpeningSequenceData.CALIBRATION_PROMPT), target.global_position if target != null else _anchor, target)
 		_bind_calibration_target(target)
 		_set_player_lock(false, false)
 		if target != null:
@@ -175,7 +179,7 @@ func _run_full() -> void:
 				await get_tree().process_frame
 		if construct != null:
 			construct.set_hostile(true)
-		_show_guidance("DEFEAT THE CONSTRUCT", OpeningSequenceData.CONSTRUCT_PROMPT % InputLabels.action(&"attack"), construct.global_position if construct != null else _anchor, construct)
+		_show_guidance("DEFEAT THE CONSTRUCT", _attack_prompt(OpeningSequenceData.CONSTRUCT_PROMPT), construct.global_position if construct != null else _anchor, construct)
 		_set_player_lock(false, false)
 		if construct != null:
 			await construct.defeated
@@ -192,7 +196,7 @@ func _run_full() -> void:
 		await _presentation.present_dialogue("OFFICER", "CONTAINMENT OFFICER", OpeningSequenceData.OFFICER_SECOND)
 		if officer != null:
 			officer.begin_seizure(_anchor)
-		_show_guidance("DEFEND THE RESEARCH", OpeningSequenceData.OFFICER_PROMPT % InputLabels.action(&"attack"), officer.global_position if officer != null else _anchor, officer)
+		_show_guidance("DEFEND THE RESEARCH", _attack_prompt(OpeningSequenceData.OFFICER_PROMPT), officer.global_position if officer != null else _anchor, officer)
 		_set_player_lock(false, false)
 		if officer != null:
 			await _wait_for_officer_choice(officer)
@@ -304,8 +308,11 @@ func _wait_for_officer_choice(officer: OpeningActor) -> void:
 			await _presentation.present_announcement(OpeningSequenceData.ARREST_TITLE, OpeningSequenceData.ESCALATION_BODY, "Resist or surrender the work")
 			await _presentation.present_dialogue("BREN", OpeningSequenceData.BREN_ROLE, OpeningSequenceData.BREN_WAIT)
 			_set_player_lock(false, false)
+			# The cards hid the prompt; the player still owes this choice.
+			if is_instance_valid(officer) and not officer.dead and not officer.has_engaged():
+				_show_guidance("DEFEND THE RESEARCH", _attack_prompt(OpeningSequenceData.OFFICER_PROMPT), officer.global_position, officer)
 	if is_instance_valid(officer) and not officer.dead:
-		_show_guidance("DEFEAT THE OFFICER", OpeningSequenceData.HOSTILE_OFFICER_PROMPT % InputLabels.action(&"attack"), officer.global_position, officer)
+		_show_guidance("DEFEAT THE OFFICER", _attack_prompt(OpeningSequenceData.HOSTILE_OFFICER_PROMPT), officer.global_position, officer)
 
 
 func _show_admission_guidance() -> void:
@@ -315,23 +322,43 @@ func _show_admission_guidance() -> void:
 	if Global.has_segment1_milestone(&"admitted"):
 		destination = anchors["lab_door"] if Global.has_segment1_milestone(&"ward_flicker") else anchors["gallery"]
 		title = "REACH THE LABORATORY"
-	_show_guidance(title, OpeningSequenceData.ADMISSION_PROMPT % InputLabels.movement(), destination)
+	_show_guidance(title, func() -> String: return OpeningSequenceData.ADMISSION_PROMPT % InputLabels.movement(), destination)
 
 
 func _show_alignment_guidance(stage: int, count: int) -> void:
 	var title := "ALIGN NODE %d / %d" % [stage + 1, count]
-	var prompt := OpeningSequenceData.INTERACT_PROMPT % [InputLabels.movement(), stage + 1, count, InputLabels.action(&"interact")]
+	var prompt := func() -> String: return OpeningSequenceData.INTERACT_PROMPT % [InputLabels.movement(), stage + 1, count, InputLabels.action(&"interact")]
 	_show_guidance(title, prompt, _world.active_node_position())
 
 
-func _show_guidance(title: String, detail: String, destination: Vector2, tracked_target: Node2D = null) -> void:
-	_presentation.show_prompt(detail)
-	_level.set_opening_guidance(title, detail, destination, tracked_target)
+## A prompt's text is rebuilt from its builder, so a rebind (Pause ->
+## Settings) while the prompt shows names the new key.
+func _show_guidance(title: String, detail: Callable, destination: Vector2, tracked_target: Node2D = null) -> void:
+	_guidance = {"title": title, "detail": detail, "destination": destination, "target": weakref(tracked_target) if tracked_target != null else null}
+	var text := String(detail.call())
+	_presentation.show_prompt(text)
+	_level.set_opening_guidance(title, text, destination, tracked_target)
+
+
+func _attack_prompt(template: String) -> Callable:
+	return func() -> String: return template % InputLabels.action(&"attack")
 
 
 func _hide_guidance() -> void:
+	_guidance = {}
 	_presentation.hide_prompt()
 	_level.clear_opening_guidance()
+
+
+func _on_bindings_changed(_action: StringName) -> void:
+	# Only a prompt that is showing now; a card in front keeps it hidden.
+	if _guidance.is_empty() or _presentation == null or not is_instance_valid(_presentation) or not _presentation.is_prompt_visible():
+		return
+	var target_ref: WeakRef = _guidance["target"]
+	var target: Node2D = target_ref.get_ref() as Node2D if target_ref != null else null
+	if target_ref != null and not is_instance_valid(target):
+		return
+	_show_guidance(String(_guidance["title"]), _guidance["detail"] as Callable, _guidance["destination"] as Vector2, target)
 
 func _restore_phase_prerequisites(resume_phase: int) -> void:
 	if _level == null:

@@ -124,6 +124,13 @@ func _run() -> void:
 	_player.get("_dash").cooldown_left = 1.0
 	_runner.damage_enemy(crossed, 500.0, _native())
 	_check(not _runner.enemy_alive(crossed) and is_equal_approx(_player.get("_dash").cooldown_left, 0.85), "Kill Reset returns 0.15 s of dash recovery on a Melee kill (%.2f)" % _player.get("_dash").cooldown_left)
+	# Prime lasts three seconds ("Primes victims for 3s"), then lapses unspent.
+	var lapsed := _spawn(100.0, origin + Vector2(80, 0))
+	mo.on_dash_ended(origin, origin + Vector2(160, 0), Vector2.RIGHT)
+	mo.tick(3.05)
+	_runner.damage_enemy(lapsed, 10.0, _native())
+	_check(is_equal_approx(_runner.enemy_hp(lapsed), 100.0 - 0.6 * _D() - 10.0) and not _runner.has_status(lapsed, "prime"), "an unspent Prime lapses after 3 s and adds nothing (%.1f)" % _runner.enemy_hp(lapsed))
+	_runner.damage_enemy(lapsed, 500.0, _native())
 
 	# ---------------- Afterimage
 	mo = _load(["MO01", "MO04"])

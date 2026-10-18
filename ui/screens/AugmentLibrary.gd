@@ -106,6 +106,13 @@ func _refresh_bound_marks() -> void:
 func open() -> void:
 	visible = true
 
+## Escape returns to whatever opened this screen (the merchant or the
+## courtyard) through the normal close, so its closed callbacks still run.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel") and not event.is_echo():
+		get_viewport().set_input_as_handled()
+		_close()
+
 func _close() -> void:
 	SfxManager.play_ui(&"ui_back")
 	visible = false

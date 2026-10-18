@@ -306,6 +306,13 @@ func _close() -> void:
 	closed.emit()
 	queue_free()
 
+## Escape returns to whatever opened this screen (the merchant or the
+## courtyard) through the normal close, so its closed callbacks still run.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel") and not event.is_echo():
+		get_viewport().set_input_as_handled()
+		_close()
+
 func _clear_grid(g: Control) -> void:
 	for c in g.get_children():
 		c.queue_free()

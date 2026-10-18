@@ -6,6 +6,11 @@ const DEPTH := preload("res://core/systems/world/WorldDepthStyle.gd")
 static var _cast_material: ShaderMaterial
 
 
+## Application shutdown (Global._exit_tree), like the other RID-backed statics.
+static func release_static_caches() -> void:
+	_cast_material = null
+
+
 static func apply(body: Node2D, sprite: Sprite2D, texture: Texture2D, rotation: float) -> void:
 	var shadow := body.get_node_or_null("Shadow") as Sprite2D
 	if body.has_meta(&"_visual_external"):

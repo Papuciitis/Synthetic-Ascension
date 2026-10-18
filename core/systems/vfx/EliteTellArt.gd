@@ -16,6 +16,11 @@ const CONTENT := {
 static var _cache: Dictionary = {}
 
 
+## Application shutdown (Global._exit_tree), like the other RID-backed statics.
+static func release_static_caches() -> void:
+	_cache.clear()
+
+
 static func texture(id: StringName) -> Texture2D:
 	if not CONTENT.has(id):
 		return null

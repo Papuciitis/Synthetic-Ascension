@@ -9,6 +9,8 @@ const MAX_PER_FRAME := 8
 const MAX_TARGETS := 512
 const PRUNE_INTERVAL_MS := 500
 const VIEW_MARGIN := 80.0
+## Read-only stand-in for a target with no statuses yet (no allocation).
+const _NO_STATUSES := {}
 
 # Positive keys are generation-bearing EnemyWorld handles. Negative keys
 # identify actors that have no authoritative world record.
@@ -39,12 +41,8 @@ static func notify_actor(actor: Node2D, id: StringName) -> bool:
 static func notify_at(pos: Vector2, id: StringName, target_key: int) -> bool:
 	if BattleText == null or not BattleText.callouts_enabled() or not StatusIcons.known(id):
 		return false
-	# A headless suite or a world without an active camera still receives
-	# feedback. A real camera culls positions beyond the visible fight.
-	var viewport := BattleText.get_viewport()
-	if viewport != null and viewport.get_camera_2d() != null:
-		if not viewport.get_visible_rect().grow(VIEW_MARGIN).has_point(viewport.get_canvas_transform() * pos):
-			return false
+	# Cheap refusals first: an area stun on hundreds of enemies must not pay
+	# the camera transform for each one past the frame's budget.
 	var now := Time.get_ticks_msec()
 	var frame := Engine.get_process_frames()
 	if frame != _budget_frame:
@@ -52,9 +50,15 @@ static func notify_at(pos: Vector2, id: StringName, target_key: int) -> bool:
 		_frame_count = 0
 	if _frame_count >= MAX_PER_FRAME:
 		return false
-	var statuses: Dictionary = _targets.get(target_key, {})
+	var statuses: Dictionary = _targets.get(target_key, _NO_STATUSES)
 	if statuses.has(id) and now - int(statuses[id]) < COOLDOWN_MS:
 		return false
+	# A headless suite or a world without an active camera still receives
+	# feedback. A real camera culls positions beyond the visible fight.
+	var viewport := BattleText.get_viewport()
+	if viewport != null and viewport.get_camera_2d() != null:
+		if not viewport.get_visible_rect().grow(VIEW_MARGIN).has_point(viewport.get_canvas_transform() * pos):
+			return false
 	if now >= _next_prune_at or (not _targets.has(target_key) and _targets.size() >= MAX_TARGETS):
 		_prune_expired(now)
 		_next_prune_at = now + PRUNE_INTERVAL_MS

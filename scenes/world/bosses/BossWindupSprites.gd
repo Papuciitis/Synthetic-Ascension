@@ -82,7 +82,7 @@ func _update_art() -> void:
 	global_transform = Transform2D(0.0, actor.global_position)
 	var progress := clampf(_elapsed / _duration, 0.0, 1.0)
 	var reduced := bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
-	var physical := _kind == &"charge" or _kind == &"slam" or _kind == &"shock"
+	var physical := _kind in [&"charge", &"slam", &"shock", &"cleave", &"phase"]
 	_lane.visible = _kind == &"charge"
 	var sx := _length / (CHARGE_RIGHT - CHARGE_LEFT)
 	var sy := _lane_width / (CHARGE_BOTTOM - CHARGE_TOP)

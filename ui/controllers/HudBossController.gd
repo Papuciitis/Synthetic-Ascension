@@ -1,6 +1,8 @@
 extends Node
 class_name HudBossController
 
+const BossPhases = preload("res://scenes/world/bosses/BossPhases.gd")
+
 @export var boss_bar_path: NodePath
 
 var _boss_bar: BossBarHUD
@@ -29,6 +31,11 @@ func _ready() -> void:
 			if not RunEvents.enemy_killed.is_connected(cb3):
 				RunEvents.enemy_killed.connect(cb3)
 
+		if RunEvents.has_signal("boss_phase_changed"):
+			var cb4 := Callable(self, "_on_boss_phase_changed")
+			if not RunEvents.boss_phase_changed.is_connected(cb4):
+				RunEvents.boss_phase_changed.connect(cb4)
+
 	set_process(false)
 
 func _process(_delta: float) -> void:
@@ -48,8 +55,14 @@ func _on_boss_spawned(boss: Node, tier: int, portrait: Texture2D, title: String)
 
 	if _boss_bar != null:
 		_boss_bar.show_boss(title, portrait, _boss.hp, _boss.max_hp)
+		_boss_bar.set_phase_marks(BossPhases.marks_for_tier(tier))
 
 	set_process(true)
+
+func _on_boss_phase_changed(boss: Node, phase: int) -> void:
+	if boss == null or boss != _boss or _boss_bar == null:
+		return
+	_boss_bar.set_phase(phase)
 
 func _on_boss_cleared(boss: Node, tier: int) -> void:
 	if boss == null:

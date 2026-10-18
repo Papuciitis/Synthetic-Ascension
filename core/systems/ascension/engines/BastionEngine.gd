@@ -756,6 +756,17 @@ func move_speed_multiplier() -> float:
 	return mul
 
 
+## A guard the player holds Q for is let go at will, so its slow is not kept.
+## One it cannot drop now still counts: an automatic guard's 0.75 s, or an
+## Encore's repeat, which arrives with the key already up.
+func sustained_move_speed_multiplier() -> float:
+	var held_at_will := _auto_release < 0.0 and runner != null and runner.is_q_held()
+	var mul := 0.5 if guarding and has("BAQ1") and not held_at_will else 1.0
+	if has("MM9") and force > 100.0:
+		mul *= 0.8
+	return mul
+
+
 func hud_state(slot: String) -> Dictionary:
 	var state := {}
 	if slot == "q":

@@ -602,6 +602,34 @@ func get_effective_move_speed() -> float:
 	return maxf(0.0, eff_speed)
 
 
+## The walk the player keeps up through a boss pattern's window, which
+## BossEscapeOracle certifies walk-outs at: the stored speed under every slow
+## it cannot shed at will. Boosts that may lapse (the respawn boost, kill and
+## surge bonuses) do not count and cannot hide a slow, and a slow the player
+## can drop now (a guard it holds Q for, a Burst it can cancel) does not count
+## either.
+func get_sustained_move_speed() -> float:
+	var kept: float = speed
+
+	var sr: SetRunner = get_node_or_null("SetRunner") as SetRunner
+	if sr != null:
+		kept *= minf(1.0, sr.get_move_speed_multiplier())
+
+	var ier: ItemEffectRunner = get_node_or_null("ItemEffectRunner") as ItemEffectRunner
+	if ier != null:
+		kept *= minf(1.0, ier.get_move_speed_multiplier())
+
+	var mr: ManifestationRunner = get_node_or_null("ManifestationRunner") as ManifestationRunner
+	if mr != null:
+		kept *= minf(1.0, mr.get_move_speed_multiplier())
+
+	var ar: AscensionRunner = get_node_or_null("AscensionRunner") as AscensionRunner
+	if ar != null:
+		kept *= ar.get_sustained_move_speed_multiplier()
+
+	return maxf(0.0, kept)
+
+
 func set_cinematic_input(move_locked: bool, attack_locked: bool) -> void:
 	_cinematic_move_locked = move_locked
 	_cinematic_attack_locked = attack_locked

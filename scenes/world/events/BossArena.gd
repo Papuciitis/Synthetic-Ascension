@@ -14,6 +14,9 @@ class_name BossArena
 
 @export var tank_title: String = "Boss: The Bulldozer"
 @export var mage_title: String = "Boss: The Arcanist"
+## A brief role-specific entrance line beside the name, no cinematic.
+@export var tank_entrance: String = "The ground shudders. The Bulldozer braces to charge."
+@export var mage_entrance: String = "The air fractures. The Arcanist raises its array."
 
 @export var boss_portrait: Texture2D = preload("res://ui/boss/portraits/boss_portrait.png")
 
@@ -70,8 +73,28 @@ func _ready() -> void:
 		if not RunEvents.enemy_killed.is_connected(cb):
 			RunEvents.enemy_killed.connect(cb)
 
+	if Global != null and Global.is_arena_cleared(&"boss"):
+		# Defeated earlier this attempt (Continue rebuilt the segment): no
+		# second fight or payout. Its earned state returns once the builder is.
+		_cleared = true
+		_disable_trigger_deferred()
+		set_process(false)
+		_restore_cleared.call_deferred()
+		return
+
 	set_process(true)
 	queue_redraw()
+
+
+func _restore_cleared() -> void:
+	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
+	if builder != null:
+		builder.set_boss_defeated()
+		if fill_resonance_on_clear:
+			builder.grant_resonance(1.0, true)
+	if _gate != null and is_instance_valid(_gate) and _gate.has_method("set_boss_defeated"):
+		_gate.call("set_boss_defeated", true)
+	queue_free()
 
 
 func _process(_delta: float) -> void:
@@ -159,7 +182,7 @@ func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
 	en.knockback_decay *= kb_decay_mult
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
-	en.speed *= speed_mult
+	en.scale_move_speed(speed_mult)
 	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 1)
 
 	# Strong loot: rely on built-in EnemyDrops pool + roll, but scale rarity by segment.
@@ -228,7 +251,7 @@ func _spawn() -> void:
 			RunEvents.boss_spawned.emit(en, 1, boss_portrait, _title)
 
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
-		RunEvents.tutorial_tip.emit("The air fractures. A capstone guardian awakens.", 3.0)
+		RunEvents.tutorial_tip.emit(tank_entrance if _is_tank else mage_entrance, 3.0)
 
 
 func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
@@ -238,6 +261,9 @@ func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
 		return
 
 	_cleared = true
+	# Recorded before the payout's deferred save: Continue cannot repeat it.
+	if Global != null:
+		Global.note_arena_cleared(&"boss")
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_event(&"encounter", &"boss_cleared", {"position": str(global_position)})
 

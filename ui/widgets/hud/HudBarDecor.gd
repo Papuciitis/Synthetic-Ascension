@@ -10,10 +10,12 @@ extends Control
 ## FRONT draws over the fill and under the bar's labels: the gold rule, the
 ## quarter ticks, a brief flash of the rule on a hit, and the low warning (a
 ## warm inner glow that breathes slowly while the bar is under the threshold).
+## A main boss's bar also carries its phase marks: gold notches that dim once
+## their phase has begun, with a short glow as each is passed.
 ##
 ## Both only process while something is moving (a trail, a flash, the low
 ## breath), on real time so a hit-stop or a pause cannot freeze a trail half
-## way. Reduced Motion drops the trail, the flash and the breath; the low
+## way. Reduced Motion drops the trail, the flashes and the breath; the low
 ## state then shows steadily.
 
 const HudStyle := preload("res://ui/widgets/hud/HudStyle.gd")
@@ -43,6 +45,11 @@ var _fall_t: float = 0.0
 var _flash: float = 0.0
 var _breath_t: float = 0.0
 var _last_us: int = 0
+## FRONT: health fractions where the boss changes phase (BossPhases), and
+## how many of them its phases have passed.
+var _phase_marks: Array[float] = []
+var _phase_reached: int = 0
+var _mark_flash: float = 0.0
 
 
 func _ready() -> void:
@@ -59,6 +66,35 @@ func ratio() -> float:
 
 func is_low() -> bool:
 	return low_threshold > 0.0 and _ratio <= low_threshold and _ratio > 0.0
+
+
+func phase_marks() -> Array[float]:
+	return _phase_marks.duplicate()
+
+
+func phase_reached() -> int:
+	return _phase_reached
+
+
+## A new boss's marks, none passed yet; an empty list draws none.
+func set_phase_marks(marks: Array[float]) -> void:
+	_phase_marks.assign(marks)
+	_phase_reached = 0
+	_mark_flash = 0.0
+	_wake()
+	queue_redraw()
+
+
+## Phases only advance: a lower count (return healing) changes nothing.
+func set_phase_reached(count: int) -> void:
+	var next := clampi(count, 0, _phase_marks.size())
+	if next <= _phase_reached:
+		return
+	_phase_reached = next
+	if not ArcaneMotion.reduced():
+		_mark_flash = 1.0
+	_wake()
+	queue_redraw()
 
 
 ## The bar's new value as a fraction. `animate` false snaps (a respawn, the
@@ -97,7 +133,7 @@ func _wake() -> void:
 	if layer == Layer.BEHIND:
 		needs = _trail > _ratio + 0.0005
 	else:
-		needs = _flash > 0.0 or (is_low() and not ArcaneMotion.reduced())
+		needs = _flash > 0.0 or _mark_flash > 0.0 or (is_low() and not ArcaneMotion.reduced())
 	if needs and not is_processing():
 		_last_us = Time.get_ticks_usec()
 		set_process(true)
@@ -121,6 +157,7 @@ func _process(_delta: float) -> void:
 				_fall_t = 0.0
 	else:
 		_flash = maxf(0.0, _flash - dt / 0.28)
+		_mark_flash = maxf(0.0, _mark_flash - dt / 0.6)
 		_breath_t += dt
 	queue_redraw()
 	_wake()
@@ -161,6 +198,7 @@ func _draw() -> void:
 			var x := roundf(w * float(i) / float(tick_count)) + 0.5
 			draw_line(Vector2(x, 2.0), Vector2(x, h - 2.0), Color(0.0, 0.0, 0.0, 0.3), 1.0)
 			draw_line(Vector2(x + 1.0, 2.0), Vector2(x + 1.0, h - 2.0), Color(1.0, 0.86, 0.66, 0.07), 1.0)
+	_draw_phase_marks(w, h)
 	var rule := rule_colour
 	if low:
 		rule = rule.lerp(low_colour, 0.55)
@@ -169,3 +207,18 @@ func _draw() -> void:
 	draw_rect(Rect2(Vector2(0.5, 0.5), size - Vector2.ONE), rule, false, 1.0)
 	if _flash > 0.0:
 		draw_rect(Rect2(Vector2(-1.5, -1.5), size + Vector2(3, 3)), Color(HudStyle.GOLD_BRIGHT, 0.35 * _flash), false, 2.0)
+
+
+## A notch through the bar with small points above and below it, so a mark
+## reads apart from the plain ticks; a spent one stays, dimmed.
+func _draw_phase_marks(w: float, h: float) -> void:
+	for index in range(_phase_marks.size()):
+		var x := roundf(w * _phase_marks[index]) + 0.5
+		var spent := index < _phase_reached
+		var colour := Color(HudStyle.GOLD_BRIGHT, 0.38) if spent else HudStyle.GOLD_BRIGHT
+		if index == _phase_reached - 1 and _mark_flash > 0.0:
+			draw_rect(Rect2(Vector2(x - 6.0, -5.0), Vector2(12.0, h + 10.0)), Color(HudStyle.GOLD_BRIGHT, 0.45 * _mark_flash))
+		draw_line(Vector2(x + 1.5, 1.0), Vector2(x + 1.5, h - 1.0), Color(0.0, 0.0, 0.0, 0.5), 1.0)
+		draw_line(Vector2(x, -2.0), Vector2(x, h + 2.0), colour, 2.0)
+		draw_colored_polygon(PackedVector2Array([Vector2(x - 4.0, -6.0), Vector2(x + 4.0, -6.0), Vector2(x, -1.5)]), colour)
+		draw_colored_polygon(PackedVector2Array([Vector2(x - 4.0, h + 6.0), Vector2(x + 4.0, h + 6.0), Vector2(x, h + 1.5)]), colour)

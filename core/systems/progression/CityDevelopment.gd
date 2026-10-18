@@ -73,12 +73,19 @@ static func points(profile: Dictionary) -> int:
 		spent += value
 	return maxi(0, profile["claimed_segments"].size() - spent)
 
+## Read on every attack spawn: one rank each, without building bonuses().
+static func range_multiplier(state: Dictionary) -> float:
+	return 1.0 + 0.05 * rank(state, "range")
+
+static func size_multiplier(state: Dictionary) -> float:
+	return 1.0 + 0.05 * rank(state, "size")
+
 static func bonuses(state: Dictionary) -> Dictionary:
 	return {
 		"hp": 5 * rank(state, "health"), "armor": rank(state, "armor"), "bag_slots": rank(state, "bag"),
 		"haste": 0.02 * rank(state, "haste"), "speed": 2.0 * rank(state, "speed"),
 		"luck": 0.02 * rank(state, "luck"), "power": 0.02 * rank(state, "power"),
-		"range_multiplier": 1.0 + 0.05 * rank(state, "range"), "size_multiplier": 1.0 + 0.05 * rank(state, "size"),
+		"range_multiplier": range_multiplier(state), "size_multiplier": size_multiplier(state),
 		"augment_id": String(state.get("augment_id", "")) if rank(state, "augment") > 0 else "",
 		"binding_echo": rank(state, "binding_echo") > 0,
 	}

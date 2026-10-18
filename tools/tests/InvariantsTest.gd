@@ -26,7 +26,8 @@ const EXIT_RITE_SCENE: PackedScene = preload("res://scenes/world/gates/ExitRite.
 ## The V4 control, byte-identical since the 2026-09-25 handoff began. If this
 ## fails, the V4 tree was edited — that is a design decision, not a tweak:
 ## re-pin only after confirming V4 baselines and saves were re-validated.
-const TREE_V4_SHA256 := "370942ff1c172735b14b9507ef7af23c845e5e9c8e11d375d4319370291f0a5f"
+## The committed text (LF); a CRLF working copy normalizes to the same hash.
+const TREE_V4_SHA256 := "73926e2fe72321ef8d951e4f25e60d10d3e4b5323e914f402ab96f854b574c43"
 
 var _passes := 0
 var _failures := 0
@@ -85,9 +86,13 @@ func _run() -> void:
 	get_tree().quit(1 if _failures > 0 else 0)
 
 
-# --- 1: the V4 control is byte-identical.
+# --- 1: the V4 control is unchanged. Hash the text, not the working copy's
+# bytes: git checks this file out with LF (.gitattributes), but an older
+# working copy can still hold CRLF, and both must pass (the JSON holds no
+# other carriage return).
 func _test_v4_control_pinned() -> void:
-	var tree_sha256 := FileAccess.get_sha256("res://data/ascension/tree_v4.json")
+	var tree_text := FileAccess.get_file_as_string("res://data/ascension/tree_v4.json").replace("\r", "")
+	var tree_sha256 := tree_text.sha256_text()
 	_check(tree_sha256 == TREE_V4_SHA256, "the V4 tree is the pinned control (sha256 %s)" % tree_sha256.substr(0, 12))
 	# And it still parses into the DB beside V5 (a corrupt pin is two bugs).
 	_check(AscensionTreeDB.shared_for("v4") != null, "the V4 tree loads")

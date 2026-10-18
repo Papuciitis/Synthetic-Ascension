@@ -4,6 +4,9 @@ const Scope = preload("res://scenes/world/bosses/BossAttackScope.gd")
 const SLAM = preload("res://scenes/world/bosses/art/vfx/slam_fracture_v1.png")
 const SHOCK = preload("res://scenes/world/bosses/art/vfx/shock_crackle_v1.png")
 const MINE = preload("res://scenes/world/bosses/art/vfx/mine_sigil_v1.png")
+## A rush's cosmetic stop: the braced-footing ripple, unlike any damage art.
+const SKID = preload("res://assets/textures/vfx/encounters/pulse_ripple_v1.png")
+const SKID_CONTENT_RADIUS := 562.741948
 
 var duration := 0.42
 var _origin := Vector2.ZERO
@@ -43,6 +46,9 @@ func _configure() -> void:
 	elif _kind == &"mine":
 		_sprite.texture = MINE
 		content_radius = 575.500217
+	elif _kind == &"skid":
+		_sprite.texture = SKID
+		content_radius = SKID_CONTENT_RADIUS
 	_sprite.scale = Vector2.ONE * _radius / content_radius
 	_update_art()
 

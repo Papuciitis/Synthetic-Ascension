@@ -41,6 +41,15 @@ static func is_valid_attack(node: Node) -> bool:
 	var scope = ref.get_ref() if ref != null else null
 	return is_instance_valid(scope) and int(node.get_meta(GENERATION_META, -1)) == scope.generation and scope.owner_available()
 
+## The boss's projectiles still in the air: its own and its pylons'.
+func projectiles_in_flight() -> Array[EnemyProjectile]:
+	var live: Array[EnemyProjectile] = []
+	for ref: WeakRef in _members.values():
+		var node := ref.get_ref() as EnemyProjectile
+		if node != null and node.is_inside_tree() and not node.is_queued_for_deletion() and is_valid_attack(node):
+			live.append(node)
+	return live
+
 func owner_available() -> bool:
 	var actor = _actor.get_ref() if _actor != null else null
 	if not is_instance_valid(actor) or not actor.is_inside_tree() or actor.is_queued_for_deletion():

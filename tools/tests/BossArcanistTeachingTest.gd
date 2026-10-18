@@ -72,7 +72,7 @@ func _fixture(main_boss: bool = false) -> void:
 	_brain = _mage.get_node("BossBrain")
 	_brain.set_process(false)
 	_brain.set_physics_process(false)
-	for key in [&"_fan_cd", &"_mines_cd", &"_beam_cd", &"_pylons_cd", &"_blink_cd"]:
+	for key in [&"_fan_cd", &"_mines_cd", &"_blink_cd"]:
 		_brain.set(key, 99.0)
 
 func _finish_fixture() -> void:
@@ -378,6 +378,14 @@ func _test_neutral_budget_and_tier() -> void:
 	for _i in range(12):
 		_brain.call("_tick_teaching", 0.1)
 	_check(_state() == &"idle" and bool(_mage.get_meta(&"boss_cast_locked", false)), "neutral kiting expires after a finite reposition budget instead of evading forever")
+	# Beyond the fan's 520px reach nothing can start: a spent budget must not
+	# freeze the mage while the player shoots it from just outside that reach.
+	_player.global_position = _mage.global_position + Vector2(600, 0)
+	_brain.call("_tick_teaching", 0.1)
+	_check(_state() == &"idle" and not bool(_mage.get_meta(&"boss_cast_locked", false)), "a spent budget still lets the mage close in when the player stands beyond fan range")
+	_player.global_position = _mage.global_position + Vector2(80, 0)
+	_brain.call("_tick_teaching", 0.1)
+	_check(bool(_mage.get_meta(&"boss_cast_locked", false)), "back within reach, the spent budget holds the mage's ground again")
 	_brain.call("_beam_sweep")
 	_brain.call("_spawn_pylons")
 	var forbidden := false
@@ -387,7 +395,9 @@ func _test_neutral_budget_and_tier() -> void:
 	await _finish_fixture()
 	_fixture(true)
 	_brain.call("_fan_shot")
-	_brain.call("_process", 0.23)
+	_brain.call("_tick_teaching", 0.94)
+	_check(_shots().is_empty(), "S10 holds the same warned 0.95 s fan tell")
+	_brain.call("_tick_teaching", 0.02)
 	var shots := _shots()
-	_check(shots.size() == 9 and (shots.is_empty() or absf(shots[0].velocity.length() - 420.0) < 0.01), "explicit S10 keeps its current nine-bolt fast fan for later upgrade work")
+	_check(shots.size() == 5 and (shots.is_empty() or absf(shots[0].velocity.length() - 320.0) < 0.01), "S10 fires the compact five-bolt fan instead of the legacy nine-bolt burst")
 	await _finish_fixture()

@@ -158,6 +158,11 @@ func _ready() -> void:
 	_opening_sequence_active = Global != null and not Global.attempt_opening_completed
 	add_to_group(&"segment_spawn_filter")
 	set_process(true)
+	# The segment's pressure starts fresh before anything is built or restored
+	# (a restored stage's phase then holds).
+	var director := get_node_or_null("/root/ThreatDirector")
+	if director != null and director.has_method("begin_segment"):
+		director.call("begin_segment")
 
 	_cm = get_tree().get_first_node_in_group(&"chunk_manager") as ChunkManager
 	_spawner = get_tree().get_first_node_in_group(&"enemy_spawner") as EnemySpawner
@@ -190,6 +195,10 @@ func _ready() -> void:
 	add_child(_guidance)
 	_refresh_guidance_map()
 	_connect_run_events()
+	# Objective details name the player's keys; a rebind mid-segment (Pause ->
+	# Settings) must not leave the persistent detail naming the old key.
+	if SettingsManager != null and not SettingsManager.bindings_changed.is_connected(_on_bindings_changed):
+		SettingsManager.bindings_changed.connect(_on_bindings_changed)
 	_refresh_progression_seals()
 	_update_objective()
 	_update_gate_lock()
@@ -206,6 +215,8 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
+	if SettingsManager != null and SettingsManager.bindings_changed.is_connected(_on_bindings_changed):
+		SettingsManager.bindings_changed.disconnect(_on_bindings_changed)
 	if RunEvents == null:
 		return
 	var killed_cb := Callable(self, "_on_enemy_defeated")
@@ -1280,11 +1291,7 @@ func _on_enemy_defeated(context: RefCounted) -> void:
 				# Segment 1 pass S5: the street answers the clear with a wedge.
 				_request_beat(&"charger_wedge_small")
 				_tip(Segment1Text.SECURITY_CLEAR, 3.5)
-		else:
-			_emit_objective(
-				Segment1Text.OBJECTIVE_SECURITY_TITLE,
-				"Containment officers remaining: %d" % (maxi(1, security_kills_required) - _security_kills)
-			)
+		# The remaining count arrives through _update_objective() below, once.
 
 	_refresh_progression_seals()
 	_update_objective()
@@ -1530,6 +1537,10 @@ func _refresh_guidance_map() -> void:
 	var regions: Array[Rect2i] = [Rect2i(FACILITY_TL, FACILITY_SIZE), ADMISSIONS_RECT, COURTYARD_RECT, SERVICE_RECT, APPROACH_RECT]
 	var blockers: Array[Dictionary] = [_wall_kind, _fence_cells, _half_cells]
 	_guidance.call("configure", cell_size_px, regions, blockers)
+
+
+func _on_bindings_changed(_action: StringName) -> void:
+	_update_objective()
 
 
 func _update_objective() -> void:

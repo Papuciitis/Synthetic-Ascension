@@ -926,6 +926,17 @@ func move_speed_multiplier() -> float:
 	return mul
 
 
+## A running Burst is the player's to end (a second Q press cancels it), except
+## while the gun is jammed; the heat slow outlasts the trigger.
+func sustained_move_speed_multiplier() -> float:
+	var mul := 1.0
+	if burst_left > 0.0 and has("BRQ1") and jammed():
+		mul *= 0.75
+	if has("BRK2") and heat > 75.0 and _idle < HEAT_IDLE_BEFORE_COOL:
+		mul *= 0.8
+	return mul
+
+
 func damage_taken_multiplier() -> float:
 	return 1.25 if has("BRK1") and heat > 100.0 else 1.0
 

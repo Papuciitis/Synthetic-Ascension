@@ -68,6 +68,12 @@ func _test_earning() -> void:
 	_clear(3)
 	_check(_summary()["points"] == 1, "developer mode grants no research")
 	Global.debug_dev_mode = false
+	# Resumed by Continue, the debug flags are clear but the attempt still
+	# carries its developer launch.
+	Global.attempt_developer_launch = true
+	_clear(5)
+	_check(_summary()["points"] == 1, "a developer attempt resumed by Continue grants no research")
+	Global.attempt_developer_launch = false
 	SaveManager.current_save = null
 	_clear(4)
 	_check(_summary()["points"] == 1, "unsaved developer attempts grant no research")
@@ -134,6 +140,8 @@ func _test_transfusion() -> void:
 	Global.set_followers(100000)
 	_check(not bool(Global.transfusion_preview(OTHER, TRAINED)["ok"]), "free trained starting level cannot be donated")
 	Global.set_augment_level(TRAINED, 4)
+	var preview := Global.transfusion_preview(OTHER, TRAINED)
+	_check(int(preview["gain"]) == 1 and int(preview["donor_after"]) == 2, "the preview pours half of the earned levels and lands a trained donor on its floor, not Lv.1")
 	_check(bool(Global.transfuse_augment(OTHER, TRAINED)["ok"]), "earned temporary levels can be donated")
 	_check(Global.get_augment_level(TRAINED) == 2, "trained donor returns to its starting floor")
 	_check(not bool(Global.transfusion_preview(OTHER, TRAINED)["ok"]), "training cannot repeatedly mint transfusion levels")
@@ -343,6 +351,16 @@ func _test_binding_echo() -> void:
 	_check(not Global.pending_augment_pick and Global.attempt_binding_rewards_remaining == 0, "duplicate completion after both choices cannot mint more Bindings")
 	Global.start_new_attempt()
 	_check(not Global.attempt_binding_echo_claimed and Global.attempt_binding_sequence == 0, "fresh attempt resets the conditional boundary once")
+	# A developer attempt resumed by Continue (its debug flags cleared, its
+	# launch saved with it) earns no second Binding from the Echo.
+	Global.attempt_developer_launch = true
+	Global.attempt_segment = 5
+	_check(Global.begin_segment_completion(5), "developer Echo fixture saves genuine S5 intent")
+	var developer_saved := SaveManager.load_slot(0)
+	SaveManager.current_save = developer_saved
+	Global.apply_save(developer_saved)
+	_check(Global.attempt_developer_launch and Global.attempt_segment == 6 and Global.attempt_binding_rewards_remaining == 1, "a developer attempt resumed by Continue earns one Binding at S5, not the Echo's two")
+	Global.attempt_developer_launch = false
 	var legacy := SaveData.new()
 	legacy.attempt_active = true
 	legacy.attempt_pending_augment_pick = true

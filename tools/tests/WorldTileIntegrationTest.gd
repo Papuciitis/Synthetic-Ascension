@@ -39,8 +39,19 @@ func _run() -> void:
 		var stats := manager.call("get_chunk_render_stats") as Dictionary
 		print("Runtime chunk render stats: ", stats)
 		_check(int(stats.get("procedural_tile_cells", -1)) == 0, "runtime procedural segment paints zero tile cells")
-		_check(int(stats.get("ground_sprites", 0)) == int(manager.call("loaded_chunk_count")), "each streamed chunk owns one region ground sprite")
-		_check(int(stats.get("floor_sprites", 0)) > 0, "runtime procedural floor stamps remain compact")
+		if bool(manager.get("ground_splat_enabled")):
+			# The world-look pass (2026-09-27) paints chunk ground and floor
+			# stamps into one splat map: a quad per streamed chunk, no sprites.
+			var splat: Variant = manager.get("_ground_splat")
+			var quads: Dictionary = splat.get("_quads") if splat != null else {}
+			var covered := not (manager.get("_chunks") as Dictionary).is_empty()
+			for coord in (manager.get("_chunks") as Dictionary).keys():
+				covered = covered and quads.has(coord)
+			_check(covered, "each streamed chunk's ground is a splat quad")
+			_check(int(stats.get("ground_sprites", 0)) == 0 and int(stats.get("floor_sprites", 0)) == 0, "the splat replaces per-chunk ground and floor-stamp sprites")
+		else:
+			_check(int(stats.get("ground_sprites", 0)) == int(manager.call("loaded_chunk_count")), "each streamed chunk owns one region ground sprite")
+			_check(int(stats.get("floor_sprites", 0)) > 0, "runtime procedural floor stamps remain compact")
 		_check(int(stats.get("block_instances", 0)) > 0, "runtime procedural blockers use visual batches")
 		_check(int(manager.call("loaded_chunk_count")) > 0, "runtime chunk streaming remains active")
 		var blocked := manager.get("_blocked_cells") as Dictionary

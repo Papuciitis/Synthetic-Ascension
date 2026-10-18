@@ -33,7 +33,65 @@ func _ready() -> void:
 	if runtime_applier == null:
 		runtime_applier = RuntimeApplier.new()
 	runtime_applier.apply_all(_values)
+	if _opens_main_scene(OS.get_cmdline_args()):
+		_apply_persisted_display_once_drawn()
+	else:
+		# A tool, probe or test runs its own scene or script: the saved state
+		# applies at once, before it loads, so the window it then sets (size,
+		# mode) is the one it keeps. A saved windowed state un-maximizes the
+		# window (on Windows it opens maximized, and then ignores a resize).
+		runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary, false)
+
+
+## The saved window state is applied once the first frame is shown. While the
+## game loads, the window's cached size and mode are still the requested ones
+## (its events are not processed yet), and a change then leaves undrawn window
+## over the boot splash until the slow first frame draws; afterwards the next
+## frame redraws it at once, and a window already as saved is left alone.
+## Process steps, not draws, so a headless start applies too. A window the
+## player minimized during the splash stays minimized: the state waits until
+## it is brought back, rather than restoring it over what they switched to.
+func _apply_persisted_display_once_drawn() -> void:
+	# The first frame is drawn and shown between these two steps.
+	await get_tree().process_frame
+	await get_tree().process_frame
+	while _window_minimized():
+		await get_tree().process_frame
 	runtime_applier.apply_persisted_display(_values[&"video"] as Dictionary)
+
+
+func _window_minimized() -> bool:
+	return window_minimized(_display_name(), _window_mode())
+
+
+func _display_name() -> String:
+	return DisplayServer.get_name()
+
+
+func _window_mode() -> DisplayServer.WindowMode:
+	return DisplayServer.window_get_mode()
+
+
+## Whether a window in this mode is minimized by the player. A headless run
+## reports its absent window as minimized; that one counts as shown.
+static func window_minimized(display_name: String, mode: DisplayServer.WindowMode) -> bool:
+	return display_name != "headless" and mode == DisplayServer.WINDOW_MODE_MINIMIZED
+
+
+## Whether these command-line arguments start the project's main scene: the
+## game itself, as an export or the editor's Run Project starts it. Any other
+## scene named to run, or a script run (-s, --script), is a tool, probe or
+## test.
+static func _opens_main_scene(args: PackedStringArray) -> bool:
+	if args.has("-s") or args.has("--script"):
+		return false
+	var main := str(ProjectSettings.get_setting("application/run/main_scene", ""))
+	if main.begins_with("uid://"):
+		main = ResourceUID.get_id_path(ResourceUID.text_to_id(main))
+	for arg in args:
+		if arg.ends_with(".tscn") or arg.ends_with(".scn"):
+			return ProjectSettings.localize_path(arg) == main
+	return true
 
 
 ## Built-in UI actions can contain only keys on this engine build. Keep

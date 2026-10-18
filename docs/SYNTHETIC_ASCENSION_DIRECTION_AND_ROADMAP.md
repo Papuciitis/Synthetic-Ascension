@@ -2346,3 +2346,27 @@ The third boss delivery gives Bulldozer a committed physical rush, planted impac
 Dedicated raster sprites distinguish blink destinations and Runner arrivals. Actual paired Game controls cover walking, separate native dashes, recovery melee, court-edge escape and genuine kill-trigger access. The original matrix remains RED for two corrected Runner attribution checks; focused follow-ups, 99 continuation checks and five compatibility suites pass. A native lethal-hazard cleanup error found by the controls now pauses immediately and defers collision disabling safely. The audit retains exact source/log identities and limitations.
 
 Four normal/small-window clips show the sprite cues in the actual court/HUD using clearly labelled immortal playback; actual-damage controls are separate. Ordinary body contact remains active outside the Tank's committed states and remains a separate cost for Mage. Dense human readability, slowed builds, pacing, finished character animation and final mix still need playtesting. S10 phase kits and later entrance/music/HUD/reward presentation remain later deliveries. See `docs/audits/2026-10-16-s5-teaching-fights.md`.
+
+
+## 2026-10-17 — Pull review and Segment 10 main-boss kits
+
+The 48 pulled commits were reviewed by area. Twenty-nine follow-ups fix what the review confirmed:
+
+- a library pagination freeze, and a pause that could stay frozen under a closing Binding;
+- a completion that stranded the player, deaths recorded as quits, and an erased chronicle that could be rewritten;
+- a repeatable free Binding grant, Reliquary level reports, and doorless carved buildings;
+- input and HUD details in the opening, hub and pause menu, and two S5 boss edges;
+- six performance passes (the shadow and page-turn ones verified bit- and pixel-identical), and five suites aligned with deliberate changes.
+
+Both S10 bosses now run three phases at 65% / 30%. Phases only advance, with a short damageable phase beat; tells never shorten and cooldowns tighten by tempo.
+
+- **Bulldozer:** Sweeping Cleave and one warned Runner call in phase 2, then a Breach Sequence and a fully previewed Fault Line follow-up in phase 3.
+- **Arcanist:** a Split Fan with a drawn gap, a rebuilt Arc Sweep showing its start and end lanes, and one Pylon Pair in phase 2. Phase 3 adds a Convergence Sequence, a four-node mine arc and a fresh pair. Pylons hold fire through each major pattern and the recovery after it and fire in a neutral beat between them; bolts they still have in the air join the next pattern's walk-out check.
+
+A walk-out oracle commits a main-boss attack only when a walk the player can keep up still escapes it: its stat speed under the slows it cannot shed at will, capped at 100 px/s, the eight keyboard directions, and the real Hurtbox and body turned as the player turns; nothing is certified while the player dashes. Mine patterns keep a checked corridor that never leads into the boss. The arenas' movement tuning now reaches movement. Projectile batches now pay a boss's damage cap and an elite's plate hit by hit, exactly as separate hits. The S10 boss bar shows phase marks, and each role has its own entrance line.
+
+Staged captures in the actual Game at segment 10 show every new telegraph. Actual-Game controls on two seeds pair a stationary control with a walk for each new S10 attack: 14 pairs. Every walk draws no boss damage attempt, along the oracle's route (the mine arc: its committed corridor), and every stationary control is struck except the mine arc's, whose centre is safe by design.
+
+A second review, three verifiers per finding, confirmed 49 findings across this work and the pull-review fixes, and all are fixed: the oracle reworked as above, a committed rush that keeps its lane and spares a player behind it, pylons held through recoveries, arena clears kept through Continue, a developer run's Doctrine never imported as a commitment, and a dozen boss checks that now fail under the faults they name. A third review of those fixes found more, and a fourth review of the third round more again, all fixed. The oracle refused every walk for a player against a real wall (the first fix reached only its physics half), carried a dash through the boss, let a held guard pacify the Bulldozer and a passing boost hide a slow. A resumed developer attempt claimed Research and wrote commitments, a restored clear and any segment rebuilt at the same number kept the wrong threat pressure, console jumps left fights settled, and several checks still could not fail. A fifth review of those fixes found more, all fixed: the walk-out check now judges a player meeting the boss both stopped and sliding (the body is Godot's grounded kind), starts walks where the turned body settles beside a wall, lets a player beside a wall run's end walk, and leaves out a Burst the player can cancel; console jumps start their segment afresh. The game now opens on its own logo and icon instead of Godot's, the saved window state no longer flashes undrawn window over that splash, and the opening's stills paint in over the world and wash out to it in brush strokes.
+
+A human playtest, music, portraits and the boss reward floor/settlement remain. See `docs/audits/2026-10-17-pull-review-and-s10-boss-kits.md`.

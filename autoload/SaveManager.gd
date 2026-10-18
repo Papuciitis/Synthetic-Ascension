@@ -201,6 +201,11 @@ func delete_slot(slot: int) -> void:
 	if not ensure_dir():
 		return
 	_unreadable_primary.erase(slot)
+	# An erased profile must not live on in memory: the next save_current()
+	# (Development, an autosave) would rewrite the slot the player erased.
+	if slot == current_slot or (current_save != null and current_save.slot_index == slot):
+		current_save = null
+		current_slot = -1
 	for path in [_slot_path(slot), _temporary_path(slot), _backup_path(slot), _broken_path(slot)]:
 		if FileAccess.file_exists(path):
 			var error := DirAccess.remove_absolute(ProjectSettings.globalize_path(path))

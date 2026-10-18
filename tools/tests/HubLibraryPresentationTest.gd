@@ -155,6 +155,24 @@ func _run() -> void:
 	var stopped_folio := int(_library.get("_folio_index"))
 	await get_tree().create_timer(0.8, true).timeout
 	_check(int(_library.get("_folio_index")) == stopped_folio, "releasing the stick stops leaf navigation")
+	# A light push held near the threshold: analog noise around 0.6 neither
+	# releases the stick nor turns a leaf per wobble.
+	_library.call("_pull_ribbon", "beginning")
+	await get_tree().create_timer(0.65, true).timeout
+	stick.axis_value = 0.7
+	_library.call("_input", stick)
+	await get_tree().process_frame
+	await get_tree().process_frame
+	var pushed_folio := int(_library.get("_folio_index"))
+	for wobble in range(6):
+		stick.axis_value = 0.59 if wobble % 2 == 0 else 0.61
+		_library.call("_input", stick)
+		await get_tree().process_frame
+		await get_tree().process_frame
+	stick.axis_value = 0.0
+	_library.call("_input", stick)
+	await get_tree().create_timer(0.65, true).timeout
+	_check(pushed_folio == 1 and int(_library.get("_folio_index")) == pushed_folio, "analog noise around a light push turns no extra leaf")
 	SettingsManager.set_value(&"accessibility", &"reduced_motion", true, false)
 	_library.call("select_book", "Chronicles")
 	_library.call("_turn_page", 1)

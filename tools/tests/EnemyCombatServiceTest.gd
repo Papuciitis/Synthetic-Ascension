@@ -158,5 +158,31 @@ func _run() -> void:
 		"legacy compatibility damage mirrors the Node result back into world storage",
 	)
 
+	# Boss overhaul P1: a batch that kept its hits pays the per-hit rules hit
+	# by hit, so it lands exactly what the same hits land one by one.
+	var batched_target := _spawn(world, &"batched", 10000.0, {"hit_cap_ratio": 0.08})
+	var separate_target := _spawn(world, &"separate", 10000.0, {"hit_cap_ratio": 0.08})
+	var ledger := HitLedger.new()
+	ledger.add_resolved_hit(5500.0, null, Vector2.ZERO, false, 0, 0.0, 0.5, 0.0)
+	ledger.add_resolved_hit(55.0, null, Vector2.ZERO, false, 0, 0.0, 0.5, 0.0)
+	var batched := combat.apply_hit_ledger(batched_target, ledger)
+	var separate := combat.apply_damage(separate_target, 5500.0) + combat.apply_damage(separate_target, 55.0)
+	_check(is_equal_approx(batched, 855.0) and is_equal_approx(separate, 855.0), "a capped batch lands what its hits land one by one (%.1f / %.1f; a pooled cap gave 1600)" % [batched, separate])
+	_check(is_equal_approx(combat.apply_damage(batched_target, 5555.0, 2), 1600.0), "a bare total without its hits keeps the pooled cap")
+	var plated := _spawn(world, &"plated", 1000.0)
+	var plated_separate := _spawn(world, &"plated_separate", 1000.0)
+	combat.set_elite_armour(plated, 0.02)
+	combat.set_elite_armour(plated_separate, 0.02)
+	var mixed := HitLedger.new()
+	mixed.add_resolved_hit(100.0, null, Vector2.ZERO, false, 0, 0.0, 0.5, 0.0)
+	mixed.add_resolved_hit(10.0, null, Vector2.ZERO, false, 0, 0.0, 0.5, 0.0)
+	var plated_batch := combat.apply_hit_ledger(plated, mixed)
+	var plated_one_by_one := combat.apply_damage(plated_separate, 100.0) + combat.apply_damage(plated_separate, 10.0)
+	_check(is_equal_approx(plated_batch, 80.0) and is_equal_approx(plated_one_by_one, 80.0), "a pellet under the plate bounces inside a batch too, without eating into the heavy hit (%.1f / %.1f)" % [plated_batch, plated_one_by_one])
+	var even := HitLedger.new()
+	for _pellet in range(4):
+		even.add_resolved_hit(30.0, null, Vector2.ZERO, false, 0, 0.0, 0.5, 0.0)
+	_check(is_equal_approx(combat.apply_hit_ledger(plated, even), combat.apply_damage(plated_separate, 120.0, 4)), "an even batch lands the same either way")
+
 	print("EnemyCombatServiceTest passes=", _passes, " failures=", _failures)
 	get_tree().quit(1 if _failures > 0 else 0)
