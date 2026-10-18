@@ -7,6 +7,7 @@ const RELAY := preload("res://core/systems/world/objectives/DistrictRelayObjecti
 const VIGIL := preload("res://core/systems/world/objectives/WardVigilObjective.gd")
 const BREACH := preload("res://core/systems/world/objectives/BreachSealObjective.gd")
 const WAGER := preload("res://core/systems/world/objectives/WagerShrineObjective.gd")
+const VAULT := preload("res://core/systems/world/CursedVault.gd")
 var _passes := 0
 var _failures := 0
 
@@ -27,7 +28,7 @@ func _run() -> void:
 	var ward := WARD.instantiate()
 	add_child(ward)
 	ward.set_process(false)
-	_check("painted/wardstone_v1" in ward.get_node("Obelisk").texture.resource_path, "Wardstone uses its painted world form")
+	_check("painted/wardstone_v2" in ward.get_node("Obelisk").texture.resource_path, "Wardstone uses its grounded world form")
 	_check(is_equal_approx(ward.get_node("CaptureZone/CollisionShape2D").shape.radius, ward.capture_zone_radius), "Wardstone capture geometry remains exact")
 	ward.restore_active()
 	_check(ward.get_node("Obelisk").get("_state") == "complete", "restored Wardstone immediately shows its anchored identity")
@@ -35,7 +36,7 @@ func _run() -> void:
 	var rite := RITE.instantiate()
 	add_child(rite)
 	rite.set_process(false)
-	_check("painted/exit_rite_v1" in rite.get_node("GateFrame").texture.resource_path, "Rite uses its open painted threshold")
+	_check("painted/exit_rite_v2" in rite.get_node("GateFrame").texture.resource_path, "Rite uses its overhead world threshold")
 	_check(is_equal_approx(rite.get_node("Zone/CollisionShape2D").shape.radius, rite.radius), "Rite siege geometry remains exact")
 	rite.set_locked(false)
 	_check(rite.get_node("GateFrame").get("_state") == "ready", "unlock immediately shows ready rather than falsely channeling")
@@ -64,6 +65,19 @@ func _run() -> void:
 					_check(sprite.get("_state") == "complete" or sprite.get("_state") == "spent", "objective completion immediately changes its world form")
 		objective.queue_free()
 	_check(identities.size() == 4, "all four objective variants have distinct forms")
+	var vault := VAULT.new()
+	add_child(vault)
+	vault.set_process(false)
+	var vault_art := vault.get("_art") as Sprite2D
+	_check(vault_art != null and vault_art.texture != null, "vault has a physical painted body rather than only a spell circle")
+	if vault_art != null and vault_art.texture != null:
+		var closed := vault_art.texture
+		vault.set("_opened", true)
+		vault.call("_sync_presentation")
+		_check(vault_art.texture != closed and "vault_open_v2" in vault_art.texture.resource_path, "spent vault immediately shows the physically opened chamber")
+		_check(not vault_art.z_as_relative and vault_art.z_index < 0, "vault body remains below actor feet")
+		_check(absf(vault_art.offset.y) < vault_art.texture.get_height() * 0.15, "vault uses a ground footprint rather than an upright foot anchor")
+	vault.queue_free()
 	ward.queue_free()
 	rite.queue_free()
 	await get_tree().process_frame

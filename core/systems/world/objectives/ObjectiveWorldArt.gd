@@ -4,25 +4,28 @@ extends Sprite2D
 const STATE_SHADER := preload("res://core/systems/world/objectives/objective_world_art.gdshader")
 const ART_DIRECTORY := "res://assets/world/objectives/painted/"
 const TEXTURES := {
-	"wardstone": preload("res://assets/world/objectives/painted/wardstone_v1.png"),
-	"exit_rite": preload("res://assets/world/objectives/painted/exit_rite_v1.png"),
-	"relay": preload("res://assets/world/objectives/painted/relay_v1.png"),
-	"vigil": preload("res://assets/world/objectives/painted/vigil_v1.png"),
+	"wardstone": preload("res://assets/world/objectives/painted/wardstone_v2.png"),
+	"exit_rite": preload("res://assets/world/objectives/painted/exit_rite_v2.png"),
+	"relay": preload("res://assets/world/objectives/painted/relay_v2.png"),
+	"vigil": preload("res://assets/world/objectives/painted/vigil_v2.png"),
 	"breach": preload("res://assets/world/objectives/painted/breach_open_v2.png"),
-	"wager": preload("res://assets/world/objectives/painted/wager_v1.png"),
+	"wager": preload("res://assets/world/objectives/painted/wager_v2.png"),
+	"vault": preload("res://assets/world/objectives/painted/vault_closed_v2.png"),
 }
 const STATE_TEXTURES := {
 	"breach": {"complete": preload("res://assets/world/objectives/painted/breach_sealed_v2.png")},
+	"vault": {"spent": preload("res://assets/world/objectives/painted/vault_open_v2.png")},
 }
 ## Source-normalized anchors are deliberate contact/footprint points, not
 ## alpha-bound centers. Extents only normalize occupied size across canvases.
 const PLACEMENT := {
-	"wardstone": {"anchor": Vector2(0.5, 0.925), "extent": Vector2(0.512, 0.935)},
-	"exit_rite": {"anchor": Vector2(0.5, 0.945), "extent": Vector2(0.97, 0.993), "ground": true},
-	"relay": {"anchor": Vector2(0.5, 0.935), "extent": Vector2(0.60, 0.962)},
-	"vigil": {"anchor": Vector2(0.5, 0.52), "extent": Vector2(0.673, 0.886), "width": 1.7, "ground": true},
+	"wardstone": {"anchor": Vector2(0.5, 0.899740), "extent": Vector2(0.669922, 0.822917)},
+	"exit_rite": {"anchor": Vector2(0.5, 0.488281), "extent": Vector2(0.820964, 0.642578), "width": 1.0, "ground": true},
+	"relay": {"anchor": Vector2(0.5, 0.746094), "extent": Vector2(0.593099, 0.615234), "features": {"lens": Vector2(0.5, 0.462)}},
+	"vigil": {"anchor": Vector2(0.5, 0.5), "extent": Vector2(0.654948, 0.792969), "width": 1.45, "ground": true},
 	"breach": {"anchor": Vector2(0.5, 0.5), "extent": Vector2(0.975, 0.736), "width": 1.65, "ground": true},
-	"wager": {"anchor": Vector2(0.5, 0.88), "extent": Vector2(0.775, 0.983)},
+	"wager": {"anchor": Vector2(0.5, 0.891266), "extent": Vector2(0.875892, 0.844920), "features": {"tray": Vector2(0.5, 0.825)}},
+	"vault": {"anchor": Vector2(0.517, 0.53), "extent": Vector2(0.821615, 0.948242), "width": 1.3, "ground": true},
 }
 var _state_material: ShaderMaterial
 var _state := ""
@@ -73,7 +76,8 @@ func configure(art_name: String, height: float) -> void:
 		_shadow.z_index = -12
 		add_child(_shadow)
 		_shadow.scale = Vector2.ONE / scale
-		_shadow.set("extent", Vector2(height * 0.22, height * 0.055))
+		var occupied_width := texture.get_width() * scale.x * float((PLACEMENT.get(art_name, {}).get("extent", Vector2.ONE) as Vector2).x)
+		_shadow.set("extent", Vector2(occupied_width * 0.32, height * 0.055))
 		_shadow.queue_redraw()
 
 func _apply_placement() -> void:
@@ -89,6 +93,15 @@ func _apply_placement() -> void:
 	offset = size * (Vector2(0.5, 0.5) - anchor)
 	if is_instance_valid(_shadow):
 		_shadow.scale = Vector2.ONE / scale
+
+func feature_offset(feature: String) -> Vector2:
+	if texture == null:
+		return Vector2.ZERO
+	var data: Dictionary = PLACEMENT.get(_art_name, {})
+	var anchor: Vector2 = data.get("anchor", Vector2(0.5, 0.5))
+	var features: Dictionary = data.get("features", {})
+	var point: Vector2 = features.get(feature, anchor)
+	return (point - anchor) * texture.get_size() * scale
 
 func _process(delta: float) -> void:
 	# Visual depth only; no actor or objective state is modified. Ground forms

@@ -2390,3 +2390,23 @@ Development now opens from a fresh restart, choosing a readable profile or prese
 Deadshot/Judgment and the Wardstone, Exit Rite, Relay, Vigil, Breach and Wager presentation now use coherent painted forms, real boundaries and bounded effects. Hub camera buttons are removed; interaction focus, wheel zoom and outlined native cursors remain. S5 gains its missing score, both boss tiers gain stronger accepted-action/recovery acting and defeat treatment, and major audio cues have protected voices and corrected gain staging.
 
 The latest reports led to a duplicate boss-form initialization fix, an exact derived ground array, corrected segment/loading clocks and retained incoming projectile ancestry. Recorder revision is now 3; combat numbers were not retuned from the single prepared-build session. Functional checks and all 539 gameplay script parses pass. Some native frame-time diagnostics still fail at occasional 440–500 ms stalls; their cause remains unresolved. Human mix/readability and full-run balance remain playtest work. See [the feedback delivery audit](audits/2026-10-18-playtest-feedback-delivery.md) for evidence and exact limits.
+
+## 2026-10-18 — Objective visual review implemented
+
+The first objective art pass was rejected for poor centering and terrain fit.
+The approved replacement now uses explicit footprint/base anchors, muted city
+stone and iron, quiet exact boundaries and physical state changes. Breaches are
+three real ruptures that become filled caps; Relay shutters cover actual lenses;
+Vigil is an embedded plate; Wardstones engage their bases; Rites use an overhead
+threshold with separate durable thirds and safeguard shields; Wager closes its
+collection tray. Closed/open vaults, Last Chance costs, real building/cache
+rewards and corpse-return hazard cues complete the reviewed objective scope.
+
+Exact production checks also fixed tagged-cache placement running before chunk
+registration and released hardware cursor textures at shutdown. Hold times,
+costs, combat numbers, spawning and rewards were preserved. Final native sessions
+produced 69 controlled images with zero failures/save writes and clean shutdown;
+independent reviewers inspected all 69 and found no blocking visual issue.
+Focused checks and all 539 gameplay script parses pass. Human moving-fight
+readability and discovery remain playtest work. See the [rework audit and previews](audits/2026-10-18-objective-visual-rework.md)
+for state provenance, review limits and the previously unresolved loading stalls.

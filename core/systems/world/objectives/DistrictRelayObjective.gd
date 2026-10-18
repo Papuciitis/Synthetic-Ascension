@@ -67,6 +67,8 @@ func update_presentation() -> void:
 		var fraction := clampf(_component_progress[index] / maxf(0.001, attune_time_sec), 0.0, 1.0)
 		var silenced := is_finished() or _component_silenced[index] != 0
 		_site_art[index].call("set_state", "complete" if silenced else ("working" if _site_occupied(index) else "dormant"), 1.0 if silenced else fraction)
+		_site_shutters[index].position = _component_positions[index] + (_site_art[index].call("feature_offset", "lens") as Vector2) - Vector2(0, 8)
+		_site_shutters[index].z_index = _site_art[index].z_index + 1
 		_site_shutters[index].set_status(silenced, 1.0 if silenced else fraction)
 
 

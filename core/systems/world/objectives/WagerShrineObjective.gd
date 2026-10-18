@@ -168,6 +168,8 @@ func update_presentation() -> void:
 	if objective_art != null:
 		objective_art.call("set_state", "spent" if _finished else ("working" if purchasing else "dormant"), purchase_fraction())
 	if _collection_lock != null:
+		_collection_lock.position = (objective_art.call("feature_offset", "tray") as Vector2) - Vector2(0, 12)
+		_collection_lock.z_index = objective_art.z_index + 1
 		_collection_lock.set_closed(_finished)
 
 

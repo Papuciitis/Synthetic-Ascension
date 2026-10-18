@@ -35,12 +35,12 @@
 
 **Interfaces:** retain `install(parent, art_name, height, at, node_name) -> Sprite2D`, `configure(art_name, height)`, `set_state(state, progress=0)`, `draw_boundary(item, at, radius, color, progress=-1)` and `draw_complete(item, at, size)`. Add per-art variant/anchor/occupied-size metadata internally. Callers continue passing real progress and states. Expose a clearly named optional helper for physical state details only if needed; no gameplay callbacks.
 
-- [ ] Add meaningful checks for per-asset anchoring, physically distinct complete textures, exactly three actionable breach forms and unchanged radii/layout.
-- [ ] Generate/inspect a low embedded open rupture, then a matching physically closed/capped state through the built-in image tool. Record source paths/prompts.
-- [ ] Remove the decorative fourth breach and decorative radial links; retain actual site geometry/count and source spawning.
-- [ ] Implement anchors, subdued contact shadows and boundary hierarchy. Show the breach half sealing and decaying with static direction/shape cues.
-- [ ] Capture the prototype at normal/small sizes, moss/paving and actor overlaps, with motion/flash settings. Get independent visual feedback in the existing visual-designer chat and correct it before bulk asset generation.
-- [ ] Verify focused tests and existing PrimaryObjective suite; commit/push a concrete checkpoint.
+- [x] Add meaningful checks for per-asset anchoring, physically distinct complete textures, exactly three actionable breach forms and unchanged radii/layout.
+- [x] Generate/inspect a low embedded open rupture, then a matching physically closed/capped state through the built-in image tool. Record source paths/prompts.
+- [x] Remove the decorative fourth breach and decorative radial links; retain actual site geometry/count and source spawning.
+- [x] Implement anchors, subdued contact shadows and boundary hierarchy. Show the breach half sealing and decaying with static direction/shape cues.
+- [x] Capture the prototype at normal/small sizes, moss/paving and actor overlaps, with motion/flash settings. Get independent visual feedback in the existing visual-designer chat and correct it before bulk asset generation.
+- [x] Verify focused tests and existing PrimaryObjective suite; commit/push a concrete checkpoint.
 
 ### Task 2 — Relay, Vigil and Wager (agent)
 
@@ -48,46 +48,46 @@
 
 **Interfaces:** existing shared art APIs above. Use `dormant`, `working`, `draining`, `complete`, `spent` states. New textures are keyed by existing art names so scene callers do not need paths.
 
-- [ ] Remove misleading actionable Relay center form; use a clearly passive low junction or sparse network cue. Three components remain the only sites.
-- [ ] Give Relay silencing a shutter/disconnect shape and a steady banked partial indicator.
-- [ ] Give Vigil a low embedded construction and distinct held/grace/draining/completed static shapes; keep actual 190 px area and wave thresholds.
-- [ ] Retain Wager scales identity but simplify material detail; display paid tier, real current odds, next scaled cost, purchase dwell, reserve refusal, “Step out to settle”, and structurally spent state. Display proposals never spend currency.
-- [ ] Add focused state/geometry/transaction invariants, run the native suites when scheduled, self-review and report exact files/results to coordinator.
+- [x] Remove misleading actionable Relay center form; use a clearly passive low junction or sparse network cue. Three components remain the only sites.
+- [x] Give Relay silencing a shutter/disconnect shape and a steady banked partial indicator.
+- [x] Give Vigil a low embedded construction and distinct held/grace/draining/completed static shapes; keep actual 190 px area and wave thresholds.
+- [x] Retain Wager scales identity but simplify material detail; display paid tier, real current odds, next scaled cost, purchase dwell, reserve refusal, “Step out to settle”, and structurally spent state. Display proposals never spend currency.
+- [x] Add focused state/geometry/transaction invariants, run the native suites when scheduled, self-review and report exact files/results to coordinator.
 
 ### Task 3 — Wardstone and Exit Rite (agent)
 
 **Files:** `Wardstone.gd`, `ExitRite.gd`, their scene resources if required, focused presentation tests; owned v2 PNGs after prototype style established.
 
-- [ ] Retain Wardstone obelisk identity, simplify and ground it, visibly engage its base on anchoring; prioritize active sanctuary field over obsolete capture ornament.
-- [ ] Replace frontal gate with an overhead threshold/ground pad connected to the full real channel zone.
-- [ ] Implement visually distinct locked/ready/channeling/grace/draining/completed states. Quiet progress arc and use different shapes for durable thirds and safeguards.
-- [ ] Preserve exactly the existing Rite channel/cost/healing/wave/Last Chance spawning behavior, including restored progress and zero/max safeguards.
-- [ ] Add focused presentation/geometry/restoration checks, run compatibility suites when scheduled and report results.
+- [x] Retain Wardstone obelisk identity, simplify and ground it, visibly engage its base on anchoring; prioritize active sanctuary field over obsolete capture ornament.
+- [x] Replace frontal gate with an overhead threshold/ground pad connected to the full real channel zone.
+- [x] Implement visually distinct locked/ready/channeling/grace/draining/completed states. Quiet progress arc and use different shapes for durable thirds and safeguards.
+- [x] Preserve exactly the existing Rite channel/cost/healing/wave/Last Chance spawning behavior, including restored progress and zero/max safeguards.
+- [x] Add focused presentation/geometry/restoration checks, run compatibility suites when scheduled and report results.
 
 ### Task 4 — Vaults, exploration and adjacent hazard (agent)
 
 **Files:** `CursedVault.gd`, `RitualInterference.gd`, `IndoorVolume.gd`, relevant `ChunkGenDistrict.gd`/pickup presentation code only as justified; focused tests and owned v2 vault PNGs.
 
-- [ ] Add a distinct compact locked vault body and physically open/spent variant, 64 px hold edge, honest progress/decay, explicit guaranteed Manifestation and pre-commitment costs.
-- [ ] Last Chance uses the same vault family but visibly sacrifices the real safeguard count; distinguish its no-extra-encounter price from ordinary vaults.
-- [ ] Improve actual building entry/guarded/cleared/reward affordances using existing architecture and production state. Do not add a click interaction or fake chest.
-- [ ] Investigate missing tagged cache pickups with actual production generation/streaming. Correct a confirmed defect if found; otherwise preserve an honest evidence limit. Improve real loose-pickup/endpoint identity only.
-- [ ] Give Ritual Interference an unmistakable dangerous broken/spiked boundary and affected-corpse cue, distinct from sanctuary. Preserve resurrection lifecycle/caps.
-- [ ] Verify genuine vault opening/reward/cost and building clearing, zero save writes, cleanup and accessibility; report results.
+- [x] Add a distinct compact locked vault body and physically open/spent variant, 64 px hold edge, honest progress/decay, explicit guaranteed Manifestation and pre-commitment costs.
+- [x] Last Chance uses the same vault family but visibly sacrifices the real safeguard count; distinguish its no-extra-encounter price from ordinary vaults.
+- [x] Improve actual building entry/guarded/cleared/reward affordances using existing architecture and production state. Do not add a click interaction or fake chest.
+- [x] Investigate missing tagged cache pickups with actual production generation/streaming. Correct a confirmed defect if found; otherwise preserve an honest evidence limit. Improve real loose-pickup/endpoint identity only.
+- [x] Give Ritual Interference an unmistakable dangerous broken/spiked boundary and affected-corpse cue, distinct from sanctuary. Preserve resurrection lifecycle/caps.
+- [x] Verify genuine vault opening/reward/cost and building clearing, zero save writes, cleanup and accessibility; report results.
 
 ### Task 5 — Integration, independent review and delivery (coordinator)
 
-- [ ] Review all task diffs for untouched gameplay math and allocation/lifecycle hazards. Resolve and recheck any findings.
-- [ ] Generate final actual Game images covering all world objective forms and unreviewed locked/draining/spent/cost states, normal/small/settings-off, plus actor overlap and real spawn/payout samples.
-- [ ] Feed new images to the visual designer and address concrete visual issues. Do not substitute a test count for visual acceptance.
-- [ ] Run relevant gameplay compatibility suites, import and script audit using native exit codes. No broad numeric rebalance.
-- [ ] Commit/push only this task's changes; verify remote HEAD and preservation of pre-existing edits. Update roadmap/audits with exact evidence and remaining human-playtest limits.
+- [x] Review all task diffs for untouched gameplay math and allocation/lifecycle hazards. Resolve and recheck any findings.
+- [x] Generate final actual Game images covering all world objective forms and unreviewed locked/draining/spent/cost states, normal/small/settings-off, plus actor overlap and real spawn/payout samples.
+- [x] Feed new images to the visual designer and address concrete visual issues. Do not substitute a test count for visual acceptance.
+- [x] Run relevant gameplay compatibility suites, import and script audit using native exit codes. No broad numeric rebalance.
+- [x] Commit/push only this task's changes; verify remote HEAD and preservation of pre-existing edits. Update roadmap/audits with exact evidence and remaining human-playtest limits.
 
 ## Execution ledger
 
 - Plan created from the completed independent visual review. The user approved implementation and already authorized autonomous execution; keep progressing without repeated permission prompts.
 - Baseline `c099436c`, branch `feat/authoritative-enemy-world`; push explicitly to that branch. Existing unrelated dirty edits remain outside this task.
-- Task status: 1–5 pending. Coordinator owns shared art, asset integration, native graphical scheduling and commits; independent agents own the disjoint presentation scripts.
+- Tasks 1–5 implementation, integration, scoped visual review and checks are complete. Coordinator owns shared art, asset integration, native graphical scheduling and commits; independent agents own the disjoint presentation scripts.
 
 ### First implementation checkpoint
 
@@ -111,3 +111,36 @@
   A separate Game-free baseline reproduced the exact sizes, an explicit cleanup
   control removed them, and the production CursorManager teardown fix passed a
   clean native graphical probe. The final full Game rerun remains required.
+
+### Integration checkpoint
+
+- Implementation checkpoint `d494f359` is pushed to the existing branch. The
+  original unrelated dirty files remain excluded.
+- All nine v2 PNGs are now integrated. Source-normalized lens/tray coordinates
+  put Relay shutters and Wager settlement locks on the painted mechanisms.
+- Native import completed cleanly. The updated shared ObjectivePresentationTest
+  passed all 25 checks, including physically distinct closed/open vault art,
+  with actual exit 0 and clean full output.
+- Independent final code review found no substantive P1/P2 in the 15 scoped
+  production files versus `c099436c`. It did not claim engine or pixel approval.
+- Final 27 world-state and 24 risk/exploration images are being captured in
+  isolated actual Game sessions. Final breach shutdown and visual review remain
+  required; no human combat-readability claim follows from these staged stills.
+
+### Final verification and review
+
+- Final native world27, risk24 and Breach18 captures each exited 0, explicitly
+  completed, wrote zero saves and produced clean full output through shutdown.
+  Prior first-pass/formatting-error evidence is retained separately.
+- Capture-only feedback cleanup prevents payment cards crossing into unrelated
+  panels. Actual current-panel transaction notices remain.
+- Three independent pixel reviewers reopened all 69 final images individually;
+  all give scoped visual go, with moving-fight/discovery limits retained.
+- Final focused reruns passed: Breach9, Wardstone/Rite30, Relay/Vigil/Wager39,
+  vault/exploration32; the final gameplay script audit passed539. Shared v2
+  presentation25 and earlier compatibility suites remain passing evidence.
+- Published 31 unchanged representative final PNGs, all69hashes/manifests and
+  clean final logs. Seven historical reviewed prototype PNGs retain their
+  original identities. Nine generated source PNGs and full provenance are saved.
+- The original 23 tracked edits still satisfy their original patch in reverse
+  check. No live saves/settings or original playtest reports were changed.

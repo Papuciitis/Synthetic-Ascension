@@ -1,0 +1,693 @@
+{
+	"captures": [
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "sanctuary-normal.png",
+			"notes": {
+				"left": "58 percent temporary capture; player inside; resets on exit",
+				"right": "restore_active; anchored base and real sanctuary; no reward replay"
+			},
+			"panel": "sanctuary",
+			"player_position": "(2802.0, 1044.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-states-normal.png",
+			"notes": {
+				"completed": "controlled completed flag and full durable ledger; no climax or segment transition",
+				"layout": "locked upper left / complete upper right / ready lower center"
+			},
+			"panel": "rite-states",
+			"player_position": "(3072.0, 954.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-channel-normal.png",
+			"notes": {
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-channel",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-grace-drain-normal.png",
+			"notes": {
+				"left": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						2802.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				},
+				"player": "outside both circles; grace and lapse clocks deliberately set to distinct production branches",
+				"right": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 1.8,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3342.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-grace-drain",
+			"player_position": "(3072.0, 1324.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-pressure-normal.png",
+			"notes": {
+				"produced": 15,
+				"producer": "EnemySpawner.spawn_burst_at; real ordinary S3 source roster, not fabricated sprites or a claimed scripted Rite wave",
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-pressure",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 15,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "relay-normal.png",
+			"notes": {
+				"layout": "[(228.3353, -71.89258), (-54.32083, 244.5584), (-191.0807, -175.2351)]",
+				"real_sites": 3,
+				"states": "one silenced / 55 percent banked while player outside / untouched"
+			},
+			"panel": "relay",
+			"player_position": "(3572.0, 1324.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "vigil-normal.png",
+			"notes": {
+				"left": "holding at 62 percent with real player inside radius190",
+				"right": "45 percent and outside beyond grace; physical draining braces"
+			},
+			"panel": "vigil",
+			"player_position": "(2802.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "wager-normal.png",
+			"notes": {
+				"left": "real first tier purchased; halfway toward next dwell; real current odds/cost",
+				"paid_followers": 25,
+				"right": "real first-tier purchase then real step-out settlement; actual payout may appear",
+				"settled_followers": 25
+			},
+			"panel": "wager",
+			"player_position": "(2802.0, 1079.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "wager-refusal-normal.png",
+			"notes": {
+				"actual_reserve_cost": 14,
+				"balance": 39,
+				"charge": 0,
+				"next_cost": 25,
+				"source": "real _process -> _try_raise_stake -> reconstruction_survivable refusal",
+				"would_remain": 14
+			},
+			"panel": "wager-refusal",
+			"player_position": "(3072.0, 1079.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "sanctuary-small.png",
+			"notes": {
+				"left": "58 percent temporary capture; player inside; resets on exit",
+				"right": "restore_active; anchored base and real sanctuary; no reward replay"
+			},
+			"panel": "sanctuary",
+			"player_position": "(2802.0, 1044.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-states-small.png",
+			"notes": {
+				"completed": "controlled completed flag and full durable ledger; no climax or segment transition",
+				"layout": "locked upper left / complete upper right / ready lower center"
+			},
+			"panel": "rite-states",
+			"player_position": "(3072.0, 954.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-channel-small.png",
+			"notes": {
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-channel",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-grace-drain-small.png",
+			"notes": {
+				"left": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						2802.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				},
+				"player": "outside both circles; grace and lapse clocks deliberately set to distinct production branches",
+				"right": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 1.8,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3342.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-grace-drain",
+			"player_position": "(3072.0, 1324.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "rite-pressure-small.png",
+			"notes": {
+				"produced": 15,
+				"producer": "EnemySpawner.spawn_burst_at; real ordinary S3 source roster, not fabricated sprites or a claimed scripted Rite wave",
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-pressure",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 15,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "relay-small.png",
+			"notes": {
+				"layout": "[(228.3353, -71.89258), (-54.32083, 244.5584), (-191.0807, -175.2351)]",
+				"real_sites": 3,
+				"states": "one silenced / 55 percent banked while player outside / untouched"
+			},
+			"panel": "relay",
+			"player_position": "(3572.0, 1324.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "vigil-small.png",
+			"notes": {
+				"left": "holding at 62 percent with real player inside radius190",
+				"right": "45 percent and outside beyond grace; physical draining braces"
+			},
+			"panel": "vigil",
+			"player_position": "(2802.0, 1089.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "wager-small.png",
+			"notes": {
+				"left": "real first tier purchased; halfway toward next dwell; real current odds/cost",
+				"paid_followers": 25,
+				"right": "real first-tier purchase then real step-out settlement; actual payout may appear",
+				"settled_followers": 25
+			},
+			"panel": "wager",
+			"player_position": "(2802.0, 1079.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "full",
+			"file": "wager-refusal-small.png",
+			"notes": {
+				"actual_reserve_cost": 14,
+				"balance": 39,
+				"charge": 0,
+				"next_cost": 25,
+				"source": "real _process -> _try_raise_stake -> reconstruction_survivable refusal",
+				"would_remain": 14
+			},
+			"panel": "wager-refusal",
+			"player_position": "(3072.0, 1079.0)",
+			"reduced_motion": false,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "sanctuary-reduced.png",
+			"notes": {
+				"left": "58 percent temporary capture; player inside; resets on exit",
+				"right": "restore_active; anchored base and real sanctuary; no reward replay"
+			},
+			"panel": "sanctuary",
+			"player_position": "(2802.0, 1044.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "rite-states-reduced.png",
+			"notes": {
+				"completed": "controlled completed flag and full durable ledger; no climax or segment transition",
+				"layout": "locked upper left / complete upper right / ready lower center"
+			},
+			"panel": "rite-states",
+			"player_position": "(3072.0, 954.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "rite-channel-reduced.png",
+			"notes": {
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-channel",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "rite-grace-drain-reduced.png",
+			"notes": {
+				"left": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						2802.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				},
+				"player": "outside both circles; grace and lapse clocks deliberately set to distinct production branches",
+				"right": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.333333333333333,
+					"hold": 10.0,
+					"hold_time": 20.0,
+					"inside": false,
+					"lapse": 1.8,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3342.0,
+						1024.0
+					],
+					"progress": 0.5,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 1,
+					"seals": 1,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-grace-drain",
+			"player_position": "(3072.0, 1324.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "rite-pressure-reduced.png",
+			"notes": {
+				"produced": 15,
+				"producer": "EnemySpawner.spawn_burst_at; real ordinary S3 source roster, not fabricated sprites or a claimed scripted Rite wave",
+				"rite": {
+					"burst_stage": 0,
+					"completed": false,
+					"distortion": 0.0,
+					"floor": 0.666666666666667,
+					"hold": 14.8,
+					"hold_time": 20.0,
+					"inside": true,
+					"lapse": 0.75,
+					"lapse_draining": false,
+					"locked": false,
+					"position": [
+						3072.0,
+						1024.0
+					],
+					"progress": 0.74,
+					"revealed": true,
+					"safeguard_capacity": 5,
+					"safeguards": 5,
+					"seals": 2,
+					"waves_spent": 0
+				}
+			},
+			"panel": "rite-pressure",
+			"player_position": "(3072.0, 1089.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 15,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "relay-reduced.png",
+			"notes": {
+				"layout": "[(228.3353, -71.89258), (-54.32083, 244.5584), (-191.0807, -175.2351)]",
+				"real_sites": 3,
+				"states": "one silenced / 55 percent banked while player outside / untouched"
+			},
+			"panel": "relay",
+			"player_position": "(3572.0, 1324.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "vigil-reduced.png",
+			"notes": {
+				"left": "holding at 62 percent with real player inside radius190",
+				"right": "45 percent and outside beyond grace; physical draining braces"
+			},
+			"panel": "vigil",
+			"player_position": "(2802.0, 1089.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "wager-reduced.png",
+			"notes": {
+				"left": "real first tier purchased; halfway toward next dwell; real current odds/cost",
+				"paid_followers": 25,
+				"right": "real first-tier purchase then real step-out settlement; actual payout may appear",
+				"settled_followers": 25
+			},
+			"panel": "wager",
+			"player_position": "(2802.0, 1079.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(3072.0, 1024.0)",
+			"combat_flash": "off",
+			"file": "wager-refusal-reduced.png",
+			"notes": {
+				"actual_reserve_cost": 14,
+				"balance": 39,
+				"charge": 0,
+				"next_cost": 25,
+				"source": "real _process -> _try_raise_stake -> reconstruction_survivable refusal",
+				"would_remain": 14
+			},
+			"panel": "wager-refusal",
+			"player_position": "(3072.0, 1079.0)",
+			"reduced_motion": true,
+			"renderer_bodies": 0,
+			"saved": true,
+			"window": "(960, 540)"
+		}
+	],
+	"complete": true,
+	"failures": 0,
+	"presentation": "CONTROLLED frozen actual Game/HUD; immortal ranged player; staged production states, not a human-played fight, pacing or final acceptance",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"segment": 3,
+	"viewport": "(1920, 1080)",
+	"world_seed": 16102026
+}

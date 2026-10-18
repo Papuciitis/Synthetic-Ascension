@@ -1,0 +1,33 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: Wardstone keeps the real capture edge
+PASS: Wardstone sanctuary reflects the attempt radius modifier
+PASS: Wardstone base hardware sits below actor shadows and feet
+PASS: Wardstone exposes the same static identity used by its physical base
+PASS: uncaptured Wardstone base is disengaged
+PASS: partial Wardstone capture engages the base
+PASS: stepping out still resets Wardstone capture
+PASS: reset capture leaves no banked base state
+PASS: restore immediately engages the completed obelisk
+PASS: restored Wardstone prioritizes the sanctuary identity
+PASS: restore never repeats the activation or defensive pulse
+PASS: restore never repeats reward callouts
+PASS: Rite channel remains the full circular siege zone
+PASS: Rite pad and low threshold cannot cover combat silhouettes
+PASS: Rite has static locked, ready, channel, grace, drain and completed identities
+PASS: locked Rite cannot resemble a ready hold area
+PASS: unlock immediately opens the ready threshold
+PASS: standing inside engages the threshold
+PASS: the exact grace boundary still retains the channel
+PASS: outside beyond grace visibly releases the channel
+PASS: a frozen draining channel updates its painted hardware immediately
+PASS: reconstruction protection never looks like an active drain
+PASS: a past death flag cannot conceal an actual outside drain after recovery ends
+PASS: a durable floor does not claim to be losing secured progress
+PASS: restored durable thirds do not invent a grace countdown
+PASS: frozen presentation observes without changing the hold, waves, seals or safeguards
+PASS: all five empty safeguard sockets remain visible
+PASS: safeguard shields occupy their separate near-side ledger
+PASS: full safeguards keep the empty ledger geometry
+PASS: restored completion appears without advancing the channel
+WardstoneRitePresentationTest: 30 passed, 0 failed
