@@ -1,0 +1,41 @@
+{
+  "checks": "PCM stereo format, exact durations, unclipped non-silent audio, increasing phase RMS, distinct arrangements, hashes",
+  "passed": true,
+  "assets": [
+    {
+      "file": "main_phase_1.wav",
+      "seconds": 16.0,
+      "peak_dbfs": -7.0,
+      "rms_dbfs": -23.903,
+      "sha256": "155e68b4fcb44d61195c434097d1e3bb348250cfae3adf3ac3f2713c66c9b619"
+    },
+    {
+      "file": "main_phase_2.wav",
+      "seconds": 16.0,
+      "peak_dbfs": -6.0,
+      "rms_dbfs": -21.088,
+      "sha256": "58c0365bbac6706aa88b889f51e6754970600133bff078e6a4aad07c5d5c383a"
+    },
+    {
+      "file": "main_phase_3.wav",
+      "seconds": 16.0,
+      "peak_dbfs": -5.0,
+      "rms_dbfs": -18.947,
+      "sha256": "ae4fcd98300bfa106ab485d4b2c7aeb5f671cfba0275804dbb099562638f318a"
+    },
+    {
+      "file": "defeat_release.wav",
+      "seconds": 3.2,
+      "peak_dbfs": -6.0,
+      "rms_dbfs": -18.535,
+      "sha256": "ce2aa6d30f2e3df657f67cf405973e547bd830c8482a45932c730d955d8b0b8c"
+    },
+    {
+      "file": "phase_shift.wav",
+      "seconds": 0.72,
+      "peak_dbfs": -7.0,
+      "rms_dbfs": -18.926,
+      "sha256": "efc1e042e8ee403e6ae3a6c8f84976f16b3bf946af1d56623f84433c3cf14dcb"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a menu entry keeps its caption in Button.text
+PASS: a menu entry sizes itself to its caption and stroke
+PASS: focus selects a menu entry
+PASS: an active tab keeps its stroke while focus is elsewhere
+PASS: leaving an entry wipes its stroke away
+PASS: under reduced motion the stroke appears at once
+PASS: and leaves at once
+PASS: Archives open on the most recently saved chronicle
+PASS: browsing is titled Archives
+PASS: New Run opens on the first free slot
+PASS: New Run is titled New Run
+PASS: the intent is read once and reset
+PASS: the first click selects the card
+PASS: the first click does not open the chronicle
+PASS: a second click on the selected card opens it
+[Base] commit selection race=human style=ranged weapon=ranged
+[Base] commit selection race=human style=ranged weapon=ranged
+PASS: Erase opens a confirmation first
+PASS: nothing is erased before the player confirms
+PASS: focus that escapes an open dialog is brought back
+PASS: a card behind an open dialog cannot take the selection
+PASS: Keep leaves the chronicle where it was
+PASS: confirming Erase deletes the slot
+PASS: Rename asks for the new name
+PASS: a confirmed rename is saved
+PASS: a rename does not make the chronicle the one Continue resumes
+PASS: threshold backdrop loads its painting
+PASS: threshold backdrop takes a mood
+PASS: an unknown mood falls back to calm
+PASS: vigil backdrop loads its painting
+PASS: vigil backdrop takes a mood
+PASS: an unknown mood falls back to calm
+[Base] commit selection race=human style=ranged weapon=ranged
+[Base] commit selection race=human style=ranged weapon=ranged
+PASS: New Chronicle offers every race
+PASS: and every path
+[Base] commit selection race=elf style=ranged weapon=ranged
+PASS: choosing a race tile commits it
+PASS: the run cannot begin without a mortal name
+PASS: a named vessel may begin
+FrontEndFlowTest: 35 passed, 0 failed

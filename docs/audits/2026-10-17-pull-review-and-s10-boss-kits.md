@@ -214,6 +214,8 @@ Both seeds produced the same routes, except that the mine corridor differed. Wit
 
 ## Owed
 
+Historical status at this audit's cutoff. The implementation follow-up, subsequent user portrait/loading requests and current verification are recorded in [18 October boss delivery completion](2026-10-18-boss-delivery-completion.md). The list below is retained as the original handoff, not the current backlog.
+
 - **Human playtest.** Readability in crowds, the 75–150 s pacing band for ordinary builds, the neutral beat's length, pylon pressure and the cleave's 160 px trigger all need a human run, with mixed S5-to-S10 roles.
 - **Not built.** The Split Fan's "later, explicitly indicated rotated follow-up" was not built, because the Convergence Sequence carries phase 3's composition. A damaging debris lane was not built either.
 - **Rest of step 6.** Still to do:

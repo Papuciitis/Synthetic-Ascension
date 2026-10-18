@@ -1,0 +1,58 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a 50% roll reads 55% at +100 Luck, 45% at -100, 50% at zero (0.550 / 0.450)
+PASS: the shot haste multiplier caps at x2.5 (T4)
+PASS: Gavel starts its 7 s recovery
+PASS: swapping to Burst keeps Gavel's remaining recovery (7.0)
+PASS: swapping back restores Gavel's own saved recovery (7.0)
+PASS: six normal kills in one frame all charge (no rate ceiling on kills): 3.0
+PASS: action charge sums to at most four a second (4.0)
+PASS: the action window resets each second
+PASS: crossing 50 Heat grants one action charge
+PASS: Overflow banks charge past a full meter as reserve
+PASS: casting moves the reserve into the meter
+PASS: a second Revelation within 1.5 s is refused
+PASS: after the gap it casts
+PASS: two Revelations are equipped at Ascendant (EXV, BRV)
+PASS: a pair needs both meters full; the first is not spent
+PASS: the meter is untouched by a refused pair
+PASS: kills charge both equipped meters
+PASS: the pair casts the selected Revelation at once
+PASS: and the second 0.25 s later
+PASS: claims arrive after segments 6, 9 and 12 ([0, 1, 1, 2, 2, 3])
+PASS: Hands On: a manual Gavel deals +20% (59.94 of 49.95)
+PASS: Patient: after two idle seconds the Gavel gains +30%% damage and area
+PASS: Automatic: the ready Gavel casts itself at 70% (1 casts, 34.965)
+PASS: the automatic Gavel targets the nearest wounded normal
+PASS: Momentum pick: the third native input after L of travel refunds 0.5 s
+PASS: Commitment: a lone Keystone's +12 points become +15 (0.25)
+PASS: the opening Gavel after DECIMATION casts
+PASS: Encore repeats it once after 0.4 s at 50% (2 casts)
+PASS: Encore waits for the player's original held Guard to finish
+PASS: Encore starts a fresh finite Guard after the manual release
+PASS: the repeated Guard releases without a second key press
+PASS: the delayed Encore guard wave retains its 50 percent payload
+PASS: Encore's delayed release never restarts the original Guard recovery
+PASS: Bomb Bunker Encore repeats Guard without prematurely detonating its original bunker
+PASS: Bomb Bunker's repeated Guard releases and leaves its own finite bunker
+PASS: the Encore bunker expires with half of the normal 2D wave
+PASS: the evolved repeated Guard preserves recovery
+PASS: remote Detonate Encore preserves a later bunker and never starts Guard
+PASS: remote Detonate Encore retains stored pressure at half of its original 4D damage
+PASS: BAQ3 delayed returned projectile retains Encore half damage
+PASS: BAE1 delayed returned projectile retains Encore half damage
+PASS: Encore's Compel repeat resolves instead of waiting for an absent key release
+PASS: Compel Encore halves both its 1D hit and direct 0.5D well placement (HP 984.516, D 20.646)
+PASS: the Compel repeat preserves the original recovery
+PASS: DOQ4 keeps the original Aftershock when Encore schedules its own
+PASS: original and Encore Aftershocks deal 0.6D plus 0.3D after transient cast flags clear
+PASS: Encore halves Compel Crush's 1.25D secondary hit as well as primary and placement
+PASS: DOE1 delayed Q evolution retains Encore half damage
+PASS: DOE2 delayed Q evolution retains Encore half damage
+PASS: an intervening Reaction pull cannot replace Encore's original held push action
+PASS: Encore halves the separate Compel Throw collision payload
+PASS: the Reaction slot defaults to the catastrophe trigger
+PASS: a catastrophe does not fire a Reaction set to the elite trigger
+PASS: the first elite inside 2R fires the Reaction Gavel
+PASS: the same elite does not fire it again
+AscensionSharedRulesTest: 55 passed, 0 failed

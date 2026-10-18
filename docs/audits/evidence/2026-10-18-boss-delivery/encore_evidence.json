@@ -1,0 +1,40 @@
+{
+  "behavior": [
+    "Encore remembers Guard versus remote Detonate; an original Guard release cannot turn its repeat into a detonation.",
+    "A pending Detonate repeat snapshots stored pressure and never consumes a subsequently placed bunker.",
+    "Guard retains cast damage/proc/area through release, Mirror/Gun Shield shots and bunker creation/expiry.",
+    "Compel remembers manual push through an intervening Reaction; direct well placement, Throw, Crush, Grave and Pinball damage retain cast scale.",
+    "Each Compel retains its own Aftershock payload; original 0.6D and Encore 0.3D can both resolve."
+  ],
+  "design_ruling": "Half strength applies to direct Q-created damage. Encore retains existing shared proc power and area rules. Independent resource/pressure procs (Full Tank, Meltdown, catches/Thorns) and subsequent passive well behavior keep ordinary rules.",
+  "verification": [
+    "AscensionSharedRulesTest-final: 55 passed, 0 failed; native ExitCode=0",
+    "AscensionBastionTest-final: 62 passed, 0 failed; native ExitCode=0",
+    "AscensionDominionTest-final: 50 passed, 0 failed; native ExitCode=0"
+  ],
+  "red_evidence": [
+    "AscensionSharedRulesTest-red: 40 passed, 8 failed; native ExitCode=1",
+    "AscensionSharedRulesTest-red2: 45 passed, 5 failed; native ExitCode=1",
+    "AscensionSharedRulesTest-red3-retry: 45 passed, 8 failed; native ExitCode=1",
+    "AscensionSharedRulesTest-red4: 53 passed, 2 failed; native ExitCode=1"
+  ],
+  "diagnostics": [
+    "Initial shared-red.log was a test-fixture spawn_enemy arity error, corrected before behavioral RED.",
+    "red3.log startup exceeded initial 30-second timeout; retry completed with a 120-second process limit.",
+    "Compel previous assertion assumed primary only: measured loss1D was .5D Encore primary plus unscaled .5D placement. Fixed placement scaling and asserted total.75D."
+  ],
+  "source_hashes": [
+    {
+      "sha256": "4D4E79C95E3B5D0CCEA7B39E283C6B46A8F30ED4649882CBBF718D3DCCEE732D",
+      "path": "core/systems/ascension/engines/BastionEngine.gd"
+    },
+    {
+      "sha256": "CD2301B0E142B0EA94E8A1962AC9F83BBF74516F05EECF420A4D12DF41E760C7",
+      "path": "core/systems/ascension/engines/DominionEngine.gd"
+    },
+    {
+      "sha256": "02729EBC44F556CA2860BB24778056CFA7DED677DCC48A8FBF6D1340C90BFF9E",
+      "path": "tools/tests/AscensionSharedRulesTest.gd"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: generated attacks were triggered by a real Area2D collision
+PASS: the generated slash still hits for 10 damage
+PASS: the generated impact still hits for 13 damage
+PASS: collision-generated attacks reports no runtime errors: []
+PASS: an enemy cancelled before insertion is freed
+PASS: cancelled encounter members leave no population behind
+PASS: encounter rollback before insertion reports no runtime errors: []
+PASS: Debt can trigger a kill that removes another debtor
+PASS: Debt processing continues after a later debtor is removed
+PASS: Debt keys removed by a kill chain reports no runtime errors: []
+PASS: a killed debtor cannot mature its remaining detached buckets
+PASS: Back Pay transfers only 75 percent of the unpaid 20
+PASS: the heir pays the transferred Debt once
+PASS: lethal Debt payment reports no runtime errors: []
+PASS: cleanup cannot erase a replacement Debt ledger
+PASS: replacement Debt pays on the next tick
+PASS: Debt replaced during a damage callback reports no runtime errors: []
+PASS: fixture: a Revelation-style slow is running
+PASS: a runner leaving the tree mid-slow hands back real time
+PASS: time slow released on exit reports no runtime errors: []
+PASS: test cleanup reports no runtime errors: []
+AscensionRuntimeSafetyTest: 21 passed, 0 failed

@@ -1,0 +1,45 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[Game] ready seg=5 race=human style=melee seed=16102026
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: actual player keeps an 80 px/s walk with no temporary boost
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(-21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[{"adjusted":16.9811320754717,"applied":16.9811320754717,"boss_owned":true,"boss_state":"slam","kind":"unknown","outcome":"hit","player_position":"(-21439.88, 5040.0)","raw":18.0,"time":1.63333333333333}],"danger_attempts":1,"danger_hp_loss":16.9811320754717,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(-21439.88, 5040.0)","response":"stay","role":"tank","seed":16102026}
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(-21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[],"danger_attempts":0,"danger_hp_loss":0.0,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(-21281.14, 5040.0)","response":"walk","role":"tank","seed":16102026}
+PASS: slow-walk seed16102026 stationary control is reached by the real slam
+PASS: slow-walk seed16102026 native walking after150ms escapes the full Hurtbox without dash
+[Game] ready seg=5 race=human style=melee seed=16102027
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: actual player keeps an 80 px/s walk with no temporary boost
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[{"adjusted":16.9811320754717,"applied":16.9811320754717,"boss_owned":true,"boss_state":"slam","kind":"unknown","outcome":"hit","player_position":"(21568.12, 5040.0)","raw":18.0,"time":1.63333333333333}],"danger_attempts":1,"danger_hp_loss":16.9811320754717,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(21568.12, 5040.0)","response":"stay","role":"tank","seed":16102027}
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(21504.0, 5040.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[],"danger_attempts":0,"danger_hp_loss":0.0,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(21726.86, 5040.0)","response":"walk","role":"tank","seed":16102027}
+PASS: slow-walk seed16102027 stationary control is reached by the real slam
+PASS: slow-walk seed16102027 native walking after150ms escapes the full Hurtbox without dash
+[Game] ready seg=5 race=human style=melee seed=18102026
+PASS: actual S5 court finished streaming
+PASS: unmodified production human melee speed is100 world px/s
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: actual player keeps an 80 px/s walk with no temporary boost
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(5120.0, 23472.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[{"adjusted":16.9811320754717,"applied":16.9811320754717,"boss_owned":true,"boss_state":"slam","kind":"unknown","outcome":"hit","player_position":"(5184.115, 23472.0)","raw":18.0,"time":1.63333333333333}],"danger_attempts":1,"danger_hp_loss":16.9811320754717,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(5184.115, 23472.0)","response":"stay","role":"tank","seed":18102026}
+PASS: slam starts at a legal capsule/body contact position in the real world
+PASS: slam controlled arrangement started its real teaching cast
+S5 escape case: {"attack":"slam","boss_final":"(5120.0, 23472.0)","boundary":false,"contact_distance":64.1149993896484,"damage":[],"danger_attempts":0,"danger_hp_loss":0.0,"dashes":0,"escape_direction":"(1.0, 0.0)","events":[{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":0.0166666666666667,"value":"slam"},{"committed_direction":"(1.0, 0.0)","event":"boss_state","sidestep_direction":"(0.0, 1.0)","time":1.65,"value":"recovery"}],"observed_mine_payloads":0,"observed_mines":0,"ordinary_contact_hp_loss":0.0,"player_final":"(5342.801, 23472.0)","response":"walk","role":"tank","seed":18102026}
+PASS: slow-walk seed18102026 stationary control is reached by the real slam
+PASS: slow-walk seed18102026 native walking after150ms escapes the full Hurtbox without dash
+PASS: all six paired actual-Game slow-walk cases completed
+PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone
+PASS: isolated fixture made zero profile writes or slot selections
+S5SlowWalkEscapeTest: 33 passed, 0 failed

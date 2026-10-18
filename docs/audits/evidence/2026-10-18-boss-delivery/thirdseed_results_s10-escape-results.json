@@ -1,0 +1,1429 @@
+{
+	"body": "real radius25 height58 capsule",
+	"cases": [
+		{
+			"arranged_distance": 84.8949981689453,
+			"attack": "cleave",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 15.0943396226415,
+					"applied": 15.0943396226415,
+					"boss_owned": true,
+					"boss_state": "cleave",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35755.11, 5030.0)",
+					"raw": 16.0,
+					"time": 1.1
+				}
+			],
+			"danger_attempts": 1,
+			"danger_hp_loss": 15.0943396226415,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "cleave"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35755.11, 5030.0)",
+			"response": "stay",
+			"role": "tank",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 84.8949981689453,
+			"attack": "cleave",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "cleave"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35606.66, 5030.0)",
+			"response": "walk",
+			"role": "tank",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 200.0,
+			"attack": "breach",
+			"boss_final": "(-35709.83, 5027.957)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": true,
+					"boss_state": "breach_rush",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35640.0, 5030.0)",
+					"raw": 11.5465599894524,
+					"time": 1.13333333333333
+				}
+			],
+			"danger_attempts": 1,
+			"danger_hp_loss": 10.8929811221249,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "breach_tell"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.966666666666668,
+					"value": "breach_rush"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.15,
+					"value": "recovery"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 2.35,
+					"value": "idle"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35640.0, 5030.0)",
+			"response": "stay",
+			"role": "tank",
+			"route": "(-0.0, 1.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 200.0,
+			"attack": "breach",
+			"boss_final": "(-35559.2, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "breach_tell"
+				},
+				{
+					"committed_direction": "(0.925805, 0.378)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.378, 0.925805)",
+					"time": 0.966666666666668,
+					"value": "breach_rush"
+				},
+				{
+					"committed_direction": "(-0.563941, 0.825815)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.825815, -0.563941)",
+					"time": 1.33333333333333,
+					"value": "breach_beat"
+				},
+				{
+					"committed_direction": "(-0.429311, 0.903157)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.903157, -0.429311)",
+					"time": 1.85,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35640.0, 5258.311)",
+			"response": "walk",
+			"role": "tank",
+			"route": "(-0.0, 1.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 200.0,
+			"attack": "fault",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 9.43396226415094,
+					"applied": 9.43396226415095,
+					"boss_owned": true,
+					"boss_state": "shock",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35640.0, 5030.0)",
+					"raw": 10.0,
+					"time": 1.35
+				},
+				{
+					"adjusted": 9.43396226415094,
+					"applied": 9.43396226415095,
+					"boss_owned": true,
+					"boss_state": "shock",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35640.0, 5030.0)",
+					"raw": 10.0,
+					"time": 1.68333333333333
+				},
+				{
+					"adjusted": 9.43396226415094,
+					"applied": 9.43396226415095,
+					"boss_owned": true,
+					"boss_state": "shock",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35640.0, 5030.0)",
+					"raw": 10.0,
+					"time": 2.6
+				}
+			],
+			"danger_attempts": 3,
+			"danger_hp_loss": 28.3018867924528,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "shock"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 3.24999999999999,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.819152, 0.573576)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35640.0, 5030.0)",
+			"response": "stay",
+			"role": "tank",
+			"route": "(0.0, -1.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 200.0,
+			"attack": "fault",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "shock"
+				},
+				{
+					"committed_direction": "(0.542164, -0.840272)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.840272, 0.542164)",
+					"time": 3.24999999999999,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.819152, 0.573576)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35640.0, 4681.701)",
+			"response": "walk",
+			"role": "tank",
+			"route": "(0.0, -1.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "cleave",
+			"boss_hp_after": 15754.3024609375,
+			"boss_hp_before": 15845.875,
+			"case": "native_melee_recovery",
+			"committed": true,
+			"damage": [
+				{
+					"adjusted": 15.0943396226415,
+					"applied": 15.0943396226415,
+					"boss_owned": true,
+					"boss_state": "cleave",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35769.11, 5030.0)",
+					"raw": 16.0,
+					"time": 1.1
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35769.11, 5030.0)",
+					"raw": 11.5465599894524,
+					"time": 2.55
+				}
+			],
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "cleave"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.0333333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "cleave",
+					"time": 0.05
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.333333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "cleave",
+					"time": 0.35
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.65
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "cleave",
+					"time": 0.666666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.950000000000001
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "cleave",
+					"time": 0.966666666666668
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "recovery"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.25
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 1.26666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.55
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 1.56666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.83333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 1.85
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 2.11666666666666,
+					"value": "idle"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.13333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.15
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.43333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.45
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.73333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.75
+				}
+			],
+			"hits": 10,
+			"recovery_hits": 3,
+			"role": "tank",
+			"seed": 18102026
+		},
+		{
+			"boss_from_home": 745.237182617188,
+			"case": "wall_rest",
+			"committed": true,
+			"player_from_home": 999.984619140625,
+			"resting": true,
+			"role": "tank",
+			"seed": 18102026,
+			"wall_cell": "(-575, 71)"
+		},
+		{
+			"case": "wall_end",
+			"committed": true,
+			"end_cell": "(-575, 75)",
+			"from_home": 943.623352050781,
+			"inside_blocked_cell": true,
+			"resting": true,
+			"role": "tank",
+			"seed": 18102026
+		},
+		{
+			"attack": "fault",
+			"case": "wall_walk",
+			"committed": true,
+			"damage": [],
+			"danger_attempts": 0,
+			"degrees": 40.0,
+			"distance": 300.0,
+			"phase": 1,
+			"player_final": "(-36726.99, 4229.009)",
+			"role": "tank",
+			"route": "(0.0, -1.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "fault",
+			"case": "wall_walk",
+			"committed": false,
+			"damage": [],
+			"danger_attempts": 0,
+			"degrees": -40.0,
+			"distance": 300.0,
+			"phase": 1,
+			"player_final": "(-36730.98, 4576.0)",
+			"role": "tank",
+			"route": "(0.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "fault",
+			"case": "wall_walk",
+			"committed": true,
+			"damage": [],
+			"danger_attempts": 0,
+			"degrees": 31.0,
+			"distance": 280.0,
+			"phase": 2,
+			"player_final": "(-36726.99, 4229.009)",
+			"role": "tank",
+			"route": "(0.0, -1.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "fault",
+			"case": "wall_walk",
+			"committed": true,
+			"damage": [],
+			"danger_attempts": 0,
+			"degrees": -31.0,
+			"distance": 280.0,
+			"phase": 2,
+			"player_final": "(-36483.92, 4822.392)",
+			"role": "tank",
+			"route": "(0.707107, 0.707107)",
+			"seed": 18102026
+		},
+		{
+			"attack": "slam",
+			"case": "wall_walk",
+			"committed": false,
+			"damage": [],
+			"danger_attempts": 0,
+			"degrees": 8.0,
+			"distance": 130.0,
+			"phase": 1,
+			"player_final": "(-36730.98, 4576.0)",
+			"role": "tank",
+			"route": "(0.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "slam",
+			"case": "wall_walk",
+			"committed": false,
+			"damage": [
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 0.783333333333334
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 1.28333333333333
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 1.8
+				}
+			],
+			"danger_attempts": 0,
+			"degrees": -8.0,
+			"distance": 130.0,
+			"phase": 1,
+			"player_final": "(-36730.98, 4576.0)",
+			"role": "tank",
+			"route": "(0.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "cleave",
+			"case": "wall_walk",
+			"committed": false,
+			"damage": [
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 0.733333333333334
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 1.25
+				}
+			],
+			"danger_attempts": 0,
+			"degrees": 11.0,
+			"distance": 130.0,
+			"phase": 1,
+			"player_final": "(-36730.96, 4575.922)",
+			"role": "tank",
+			"route": "(0.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "cleave",
+			"case": "wall_walk",
+			"committed": false,
+			"damage": [
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 0.783333333333334
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-36730.98, 4576.0)",
+					"raw": 11.5465599894524,
+					"time": 1.3
+				}
+			],
+			"danger_attempts": 0,
+			"degrees": -11.0,
+			"distance": 130.0,
+			"phase": 1,
+			"player_final": "(-36730.98, 4576.0)",
+			"role": "tank",
+			"route": "(0.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "split",
+			"boss_final": "(-35838.26, 5062.516)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 8.25471698113208,
+					"applied": 8.25471698113208,
+					"boss_owned": true,
+					"boss_state": "recovery",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 8.75,
+					"time": 1.96666666666666
+				},
+				{
+					"adjusted": 8.25471698113208,
+					"applied": 8.25471698113208,
+					"boss_owned": true,
+					"boss_state": "recovery",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 8.75,
+					"time": 1.98333333333333
+				},
+				{
+					"adjusted": 8.25471698113208,
+					"applied": 8.25471698113208,
+					"boss_owned": true,
+					"boss_state": "recovery",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 8.75,
+					"time": 1.98333333333333
+				}
+			],
+			"danger_attempts": 3,
+			"danger_hp_loss": 24.7641509433962,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "split"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "recovery"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 2.01666666666666,
+					"value": "idle"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35540.0, 5030.0)",
+			"response": "stay",
+			"role": "mage",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "split",
+			"boss_final": "(-35768.52, 5066.24)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "split"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "recovery"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 2.01666666666666,
+					"value": "idle"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35251.44, 5030.0)",
+			"response": "walk",
+			"role": "mage",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "sweep",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 18.8679245283019,
+					"applied": 18.8679245283019,
+					"boss_owned": true,
+					"boss_state": "sweep",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 20.0,
+					"time": 1.65
+				},
+				{
+					"adjusted": 0.0,
+					"applied": 0.0,
+					"boss_owned": true,
+					"boss_state": "sweep",
+					"kind": "unknown",
+					"outcome": "invulnerable",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 20.0,
+					"time": 1.86666666666666
+				},
+				{
+					"adjusted": 18.8679245283019,
+					"applied": 18.8679245283019,
+					"boss_owned": true,
+					"boss_state": "sweep",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 20.0,
+					"time": 2.08333333333333
+				}
+			],
+			"danger_attempts": 3,
+			"danger_hp_loss": 37.7358490566038,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "sweep"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 2.73333333333333,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35540.0, 5030.0)",
+			"response": "stay",
+			"role": "mage",
+			"route": "(-0.707107, 0.707107)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "sweep",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "sweep"
+				},
+				{
+					"committed_direction": "(0.539774, 0.84181)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.84181, 0.539774)",
+					"time": 2.73333333333333,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 1,
+			"player_final": "(-35737.01, 5226.845)",
+			"response": "walk",
+			"role": "mage",
+			"route": "(-0.707107, 0.707107)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "convergence",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [
+				{
+					"adjusted": 9.90566037735849,
+					"applied": 9.90566037735849,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 10.5,
+					"time": 1.96666666666666
+				},
+				{
+					"adjusted": 9.90566037735849,
+					"applied": 9.90566037735849,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 10.5,
+					"time": 1.98333333333333
+				},
+				{
+					"adjusted": 9.90566037735849,
+					"applied": 9.90566037735849,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 10.5,
+					"time": 1.98333333333333
+				},
+				{
+					"adjusted": 22.6415094339623,
+					"applied": 22.6415094339623,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 24.0,
+					"time": 2.65
+				},
+				{
+					"adjusted": 0.0,
+					"applied": 0.0,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "invulnerable",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 24.0,
+					"time": 2.86666666666666
+				},
+				{
+					"adjusted": 22.6415094339623,
+					"applied": 22.6415094339623,
+					"boss_owned": true,
+					"boss_state": "convergence_beam",
+					"kind": "unknown",
+					"outcome": "hit",
+					"player_position": "(-35540.0, 5030.0)",
+					"raw": 24.0,
+					"time": 3.08333333333333
+				}
+			],
+			"danger_attempts": 6,
+			"danger_hp_loss": 75.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "convergence_fan"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "convergence_beam"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 3.73333333333333,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35540.0, 5030.0)",
+			"response": "stay",
+			"role": "mage",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 300.0,
+			"attack": "convergence",
+			"boss_final": "(-35840.0, 5030.0)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "convergence_fan"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.11666666666667,
+					"value": "convergence_beam"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 3.73333333333333,
+					"value": "recovery"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 0,
+			"observed_mines": 0,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35151.36, 5030.0)",
+			"response": "walk",
+			"role": "mage",
+			"route": "(1.0, 0.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 260.0,
+			"attack": "mines",
+			"boss_final": "(-35835.77, 5077.295)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "mines"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.616666666666667,
+					"value": "recovery"
+				},
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 1.51666666666667,
+					"value": "idle"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 4,
+			"observed_mines": 4,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35580.0, 5030.0)",
+			"response": "stay",
+			"role": "mage",
+			"route": "(-0.0, 1.0)",
+			"seed": 18102026
+		},
+		{
+			"arranged_distance": 260.0,
+			"attack": "mines",
+			"boss_final": "(-35868.14, 5076.848)",
+			"committed": true,
+			"committed_direction": "(1.0, 0.0)",
+			"damage": [],
+			"danger_attempts": 0,
+			"danger_hp_loss": 0.0,
+			"dashes": 0,
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "mines"
+				},
+				{
+					"committed_direction": "(0.984274, 0.176647)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.176647, 0.984274)",
+					"time": 0.616666666666667,
+					"value": "recovery"
+				},
+				{
+					"committed_direction": "(0.885183, 0.465243)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.465243, 0.885183)",
+					"time": 1.51666666666667,
+					"value": "idle"
+				}
+			],
+			"followup_direction": "(0.0, 0.0)",
+			"observed_mine_payloads": 4,
+			"observed_mines": 4,
+			"ordinary_contact_hp_loss": 0.0,
+			"phase": 2,
+			"player_final": "(-35580.0, 5298.307)",
+			"response": "walk",
+			"role": "mage",
+			"route": "(-0.0, 1.0)",
+			"seed": 18102026
+		},
+		{
+			"attack": "fan",
+			"boss_hp_after": 13113.32296875,
+			"boss_hp_before": 13204.8955078125,
+			"case": "native_melee_recovery",
+			"committed": true,
+			"damage": [
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "fan",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35771.74, 5030.0)",
+					"raw": 11.5465599894524,
+					"time": 0.0166666666666667
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "fan",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35768.96, 5068.049)",
+					"raw": 11.5465599894524,
+					"time": 0.533333333333333
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "recovery",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35779.13, 5098.677)",
+					"raw": 11.5465599894524,
+					"time": 1.1
+				},
+				{
+					"adjusted": 0.0,
+					"applied": 0.0,
+					"boss_owned": true,
+					"boss_state": "recovery",
+					"kind": "unknown",
+					"outcome": "invulnerable",
+					"player_position": "(-35781.38, 5096.225)",
+					"raw": 8.75,
+					"time": 1.13333333333333
+				},
+				{
+					"adjusted": 0.0,
+					"applied": 0.0,
+					"boss_owned": true,
+					"boss_state": "recovery",
+					"kind": "unknown",
+					"outcome": "invulnerable",
+					"player_position": "(-35782.51, 5094.999)",
+					"raw": 8.75,
+					"time": 1.15
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "recovery",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35796.06, 5080.286)",
+					"raw": 11.5465599894524,
+					"time": 1.6
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35806.61, 5069.636)",
+					"raw": 11.5465599894524,
+					"time": 2.1
+				},
+				{
+					"adjusted": 10.8929811221249,
+					"applied": 10.8929811221249,
+					"boss_owned": false,
+					"boss_state": "idle",
+					"kind": "contact_swarm",
+					"outcome": "hit",
+					"player_position": "(-35842.5, 5045.795)",
+					"raw": 11.5465599894524,
+					"time": 2.61666666666666
+				}
+			],
+			"events": [
+				{
+					"committed_direction": "(1.0, 0.0)",
+					"event": "boss_state",
+					"sidestep_direction": "(0.0, 1.0)",
+					"time": 0.0166666666666667,
+					"value": "fan"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.0333333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "fan",
+					"time": 0.0333333333333333
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.333333333333333
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "fan",
+					"time": 0.35
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.65
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "fan",
+					"time": 0.666666666666667
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 0.950000000000001
+				},
+				{
+					"committed_direction": "(0.677334, 0.735676)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.735676, 0.677334)",
+					"time": 0.966666666666668,
+					"value": "recovery"
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 0.966666666666668
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.26666666666667
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 1.28333333333333
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.55
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "recovery",
+					"time": 1.55
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 1.85
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 1.85
+				},
+				{
+					"committed_direction": "(0.677322, 0.735687)",
+					"event": "boss_state",
+					"sidestep_direction": "(-0.735687, 0.677322)",
+					"time": 1.86666666666666,
+					"value": "idle"
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.15
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.16666666666666
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.45
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.46666666666666
+				},
+				{
+					"event": "native_fire",
+					"style": "melee",
+					"time": 2.75
+				},
+				{
+					"amount": 9.1575,
+					"event": "native_boss_hit",
+					"state": "idle",
+					"time": 2.76666666666666
+				}
+			],
+			"hits": 10,
+			"recovery_hits": 3,
+			"role": "mage",
+			"seed": 18102026
+		},
+		{
+			"boss_from_home": 745.237182617188,
+			"case": "wall_rest",
+			"committed": true,
+			"player_from_home": 999.984619140625,
+			"resting": true,
+			"role": "mage",
+			"seed": 18102026,
+			"wall_cell": "(-575, 71)"
+		},
+		{
+			"case": "wall_end",
+			"committed": true,
+			"end_cell": "(-575, 75)",
+			"from_home": 943.623352050781,
+			"inside_blocked_cell": true,
+			"resting": true,
+			"role": "mage",
+			"seed": 18102026
+		}
+	],
+	"completed_case_results": 28,
+	"expected_case_results": 28,
+	"failures": 0,
+	"hurtbox": "real70x70 rectangle",
+	"passes": 145,
+	"presentation": "Automated paired real Game/S10 court controls along the oracle's own routes (the mine arc: its committed corridor); not human satisfaction or finished animation",
+	"reaction": 0.15,
+	"save_writes": 0,
+	"speed": 100.0
+}

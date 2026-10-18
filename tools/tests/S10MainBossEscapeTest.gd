@@ -138,6 +138,7 @@ func _setup_world(role_value: String, seed_value: int) -> bool:
 	Engine.time_scale = 1.0
 	_game = GAME.instantiate() as Node2D
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
+	_game.get_node("Player").disable_mode = CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
 	_game.get_node("Player").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	get_tree().root.add_child(_game)
@@ -348,22 +349,23 @@ func _wall_hug_attempt() -> void:
 	_results.append({"seed": _seed_value, "role": _role, "case": "wall_rest", "wall_cell": wall, "player_from_home": player_from_home, "boss_from_home": boss_from_home, "resting": resting, "committed": committed})
 
 
-## Rests the production player against the wall cell nearest the court's
-## centre in the middle of a straight run of nine wall cells with open ground
+## Rests the production player against a wall nearest the boss's actual home
+## in the middle of a straight run of nine wall cells with open ground
 ## before them, so a walk along the wall is open both ways rather than into a
 ## corner, and open ground out to where the boss stands: {wall, toward,
 ## resting}, or {} with no such wall.
 func _rest_against_wall() -> Dictionary:
-	var home_cell := _chunks.world_to_cell(_origin)
-	var found := false
-	var wall := home_cell
-	var open := home_cell
+	var home: Vector2 = _boss.get_meta(&"boss_home_pos", _origin)
+	var home_cell := _chunks.world_to_cell(home)
+	var candidates: Array[Dictionary] = []
 	for ring in range(1, 21):
 		for dx in range(-ring, ring + 1):
 			for dy in range(-ring, ring + 1):
-				if found or maxi(absi(dx), absi(dy)) != ring:
+				if maxi(absi(dx), absi(dy)) != ring:
 					continue
 				var cell := home_cell + Vector2i(dx, dy)
+				if _chunks.is_cell_walkable(cell):
+					continue
 				var inward := Vector2i(-signi(dx), 0) if absi(dx) >= absi(dy) else Vector2i(0, -signi(dy))
 				var side := Vector2i(inward.y, inward.x)
 				var straight := true
@@ -373,18 +375,24 @@ func _rest_against_wall() -> Dictionary:
 						straight = straight and _chunks.is_cell_walkable(along + inward * depth)
 					straight = straight and not _chunks.is_cell_walkable(along)
 				if straight:
-					found = true
-					wall = cell
-					open = cell + inward
-		if found:
-			break
-	_check(found, "%s seed%d: the court has a wall to rest against" % [_role, _seed_value])
-	if not found:
-		return {}
-	var toward := Vector2(wall - open).normalized()
-	var resting := await _rest_player(_chunks.cell_to_world_center(open), toward)
-	_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
-	return {"wall": wall, "toward": toward, "resting": resting}
+					candidates.append({"wall": cell, "open": cell + inward, "distance": _chunks.cell_to_world_center(cell).distance_squared_to(home)})
+	candidates.sort_custom(func(a: Dictionary, b: Dictionary): return float(a["distance"]) < float(b["distance"]))
+	# Square-ring order can select a distant corner before a closer wall on
+	# the next ring. Judge the actual rested capsule and 300 px boss position,
+	# not the candidate cell or an expanded fight radius.
+	for candidate in candidates:
+		var wall: Vector2i = candidate["wall"]
+		var open: Vector2i = candidate["open"]
+		var toward := Vector2(wall - open).normalized()
+		var resting := await _rest_player(_chunks.cell_to_world_center(open), toward)
+		var boss_position := _player.global_position - toward * 300.0
+		if not resting or _player.global_position.distance_to(home) >= float(_boss.get_meta(&"boss_disengage_radius", 0.0)) or boss_position.distance_to(home) >= float(_boss.get_meta(&"boss_leash_radius", 0.0)):
+			continue
+		_check(true, "%s seed%d: the court has a wall to rest against inside the fight" % [_role, _seed_value])
+		_check(resting, "fixture: %s seed%d: the player rests against the wall" % [_role, _seed_value])
+		return {"wall": wall, "toward": toward, "resting": resting}
+	_check(false, "%s seed%d: the court has a wall to rest against inside the fight" % [_role, _seed_value])
+	return {}
 
 
 ## Walks the production player from `from` toward `toward` until it touches,

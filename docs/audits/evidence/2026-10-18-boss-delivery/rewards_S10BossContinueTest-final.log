@@ -1,0 +1,34 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+[Game] ready seg=10 race=human style=melee seed=16102026
+PASS: actual S10 court finished streaming (seed16102026)
+PASS: unmodified production human melee speed is100 world px/s at S10
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: tank seed16102026: the real kill records the S10 clear
+PASS: tank: the kill pays the boss reward once and opens the boss gate condition
+PASS: tank: the save restores the segment, the clear and the paid wallet
+[Game] ready seg=10 race=human style=melee seed=16102026
+PASS: tank: the rebuilt segment keeps its boss defeated
+PASS: tank: and its Resonance earned
+PASS: tank: the threat director runs the restored segment's collapse, not recon (collapse, 0.998)
+PASS: tank: the cleared court leaves instead of waiting to fight
+PASS: tank: no second boss rises in the court
+PASS: tank: nothing is paid twice
+[Game] ready seg=10 race=human style=melee seed=16102027
+PASS: actual S10 court finished streaming (seed16102027)
+PASS: unmodified production human melee speed is100 world px/s at S10
+PASS: production capsule and complete70x70 Hurtbox are retained
+PASS: mage seed16102027: the real kill records the S10 clear
+PASS: mage: the kill pays the boss reward once and opens the boss gate condition
+PASS: mage: the save restores the segment, the clear and the paid wallet
+[Game] ready seg=10 race=human style=melee seed=16102027
+PASS: mage: the rebuilt segment keeps its boss defeated
+PASS: mage: and its Resonance earned
+PASS: mage: the threat director runs the restored segment's collapse, not recon (collapse, 0.998)
+PASS: mage: continued in the same session, the rebuilt segment's pressure starts fresh: no earlier pass's unsealed gate, Overtime or evac (false, 0.00, 0.00)
+PASS: mage: the cleared court leaves instead of waiting to fight
+PASS: mage: no second boss rises in the court
+PASS: mage: nothing is paid twice
+PASS: requested scenario reached its normal completion; script aborts cannot pass on isolation alone
+PASS: isolated fixture made zero profile writes or slot selections
+S10BossContinueTest: 27 passed, 0 failed

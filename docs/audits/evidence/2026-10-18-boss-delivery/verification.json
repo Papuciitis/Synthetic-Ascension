@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-18",
+  "production_head": "985d347d3a8475a62c3f43c454574b358916f6ad",
+  "engine": "Godot 4.7.1 stable Windows",
+  "isolation": "Process-local APPDATA and LOCALAPPDATA under the task evidence userdata directory; no live player profile selected",
+  "final_parse": {
+    "passed": 535,
+    "failed": 0,
+    "native_exit": 0,
+    "roots": 8,
+    "ran_after_all_source_edits": true
+  },
+  "s10_controls": {
+    "seeds": [
+      16102026,
+      16102027,
+      18102026
+    ],
+    "roles": [
+      "tank",
+      "mage"
+    ],
+    "passing_checks": 438,
+    "failed": 0,
+    "requested_case_results": 84,
+    "completed_case_results": 84,
+    "native_exits": [
+      0,
+      0
+    ],
+    "save_writes": 0
+  },
+  "other_results": {
+    "rewards_eleven_suites": "387/0",
+    "audio_seven_suites": "236/0",
+    "encore_shared_bastion_dominion": "55/0,62/0,50/0",
+    "placement_and_boss_controllers": "29/0,44/0,64/0,57/0,69/0,57/0",
+    "s5_game_controls": "158/0",
+    "s5_three_seed_slow_walk": "33/0",
+    "loading_and_front_end": "14/0,35/0,32/0",
+    "presentation_and_compatibility": "37/0,72/0,15/0,44/0",
+    "runner_runtime_identity_hazard": "40/0,21/0,25/0,31/0"
+  },
+  "renders": {
+    "actual_game_staged": "6 captures,0 failures,0 save writes,native exit0",
+    "representative_boss_boards": "8 captures,0 failures,0 save writes,native exit0",
+    "loading_cards": "4 captures,0 failures,0 save writes,native exit0"
+  },
+  "independent_review": "Reward, audio/presentation, Encore, physical placement, loading, fixture and final portrait scopes approved after corrections",
+  "limits": [
+    "Focused suites; not a full historical suite rerun",
+    "Staged renders are not moving encounters",
+    "Human listening, readability, build balance and full-city/Rite pacing remain",
+    "Whole-form raster acting rather than new frame sheets",
+    "Synchronous scene construction can pause loading-spinner motion"
+  ],
+  "source_hashes": [
+    {
+      "path": "autoload/AudioManager.gd",
+      "sha256": "054af3cb2ea55d8d4b29e061c1c419de0c4b7293c1ecfd87185af86dcb6dd883"
+    },
+    {
+      "path": "autoload/global.gd",
+      "sha256": "89bb6dd0e91b0e5a28fc3081152c9c843b2ae75057fbdb3864935b87faacf2bb"
+    },
+    {
+      "path": "autoload/SaveData.gd",
+      "sha256": "42eaed6e5b9ba1c619bc61428b591597db3cf245d51ed945ea4d901578569b78"
+    },
+    {
+      "path": "autoload/SfxManager.gd",
+      "sha256": "bb83d77d5433d26d8b470e40b1c35d0abb1aa4639277da5c64e3a13bb582a488"
+    },
+    {
+      "path": "core/actors/enemy/modules/EnemyDrops.gd",
+      "sha256": "85c3b128aa7c7d39fda658c33cdf86affe6b7d30c430e75ae5ee23097ad46f6c"
+    },
+    {
+      "path": "core/actors/enemy/modules/EnemyLifecycle.gd",
+      "sha256": "92b2d2989eb47e419ae1a0fad7d49505e2497c4d78cced23f68774fbac5306d8"
+    },
+    {
+      "path": "core/systems/ascension/AscensionRunner.gd",
+      "sha256": "533f74ee86ca3cba63ed5e5770f897aa1e2475d6e4e7f8cafda9cfcc82407d65"
+    },
+    {
+      "path": "core/systems/ascension/engines/BastionEngine.gd",
+      "sha256": "4d4e79c95e3b5d0ccea7b39e283c6b46a8f30ed4649882cbbf718d3dccee732d"
+    },
+    {
+      "path": "core/systems/ascension/engines/DominionEngine.gd",
+      "sha256": "cd2301b0e142b0ea94e8a1962ac9f83bbf74516f05eecf420a4d12df41e760c7"
+    },
+    {
+      "path": "core/systems/world/SegmentProcBuilder.gd",
+      "sha256": "a7710fdee056069d6fddb729a050b1de24d7e32fd02aeb4357678ffb807a0cd7"
+    },
+    {
+      "path": "scenes/world/bosses/BossActing.gd",
+      "sha256": "ebc392a27f0acdcc98c9fdf446b9302e165dece4d2cc7e9426ceee478922c80e"
+    },
+    {
+      "path": "scenes/world/bosses/BossAppearance.gd",
+      "sha256": "6fd2391b22dc3113a7325ea92e9f1b19ee85a174236aa730dd65e4df8a57439b"
+    },
+    {
+      "path": "scenes/world/bosses/BossArcanistBrain.gd",
+      "sha256": "7cdcbc4008d8f0021e44e47c8377c57635937f6c8b1bb422c324ca4290bd7b39"
+    },
+    {
+      "path": "scenes/world/bosses/BossBulldozerBrain.gd",
+      "sha256": "d1c5d2d78bda35ec6dab2bab9c561a7931b2dfd8352653602c2f9215591c22f5"
+    },
+    {
+      "path": "scenes/world/bosses/BossTeachingPlacement.gd",
+      "sha256": "f85672128e1d092021cba3fa9fa184da04c9eed4dc4b6f6626e44796b1d2ee2b"
+    },
+    {
+      "path": "scenes/world/events/BossArena.gd",
+      "sha256": "e62931199767ef0c365f5dd674005da1928cc12df33b9aa34fc0434fa98ede05"
+    },
+    {
+      "path": "scenes/world/events/MiniBossArena.gd",
+      "sha256": "b39b1260e2d1c66582b4bf764589de73465dcd3e9ec2e093f621cc38e33354af"
+    },
+    {
+      "path": "scenes/world/pickups/GroundLootCap.gd",
+      "sha256": "e151779f6095485fdd74ecaa841af571af9a5baccc5e546971d862aa858fa29e"
+    },
+    {
+      "path": "scenes/world/pickups/ItemPickup.gd",
+      "sha256": "79ed6355f5e2e980265f353c1eed7525635b79dea1aafbdd5e8f6bd976db5b38"
+    },
+    {
+      "path": "tools/dev/BossDeliveryGamePreview.gd",
+      "sha256": "0e21caa3e41e5eb0899d222cfbcf5557e9dc60eb66b28e6c671ea2ea740a17a9"
+    },
+    {
+      "path": "tools/dev/BossPresentationPreview.gd",
+      "sha256": "fd6bb19207a74a318070159fa9171f74881da11c783680dd6425f101b1f083f9"
+    },
+    {
+      "path": "tools/dev/LoadingScrimPreview.gd",
+      "sha256": "21f2ddc972f50dda3636260f848bdaa3db79256ddf8eeef953d1dbd12b02f627"
+    },
+    {
+      "path": "tools/dev/S10BossTelegraphPreview.gd",
+      "sha256": "34123639c0d91bd1eab148b363fe5d0b90a215a3b1bdc0dd2a60c20c0a63e65c"
+    },
+    {
+      "path": "tools/dev/S5TeachingFightPreview.gd",
+      "sha256": "4ba5f149e0b5229b6c72224ed12d352adf4a144f8dd9c4d6135eceb24a963b38"
+    },
+    {
+      "path": "tools/tests/ArenaRewardSettlementTest.gd",
+      "sha256": "62a8467ac5be18071677459caaa2c426700b874bea1fb5dfdc526505b797d7d8"
+    },
+    {
+      "path": "tools/tests/AscensionSharedRulesTest.gd",
+      "sha256": "02729ebc44f556ca2860bb24778056cfa7ded677dcc48a8fbf6d1340c90bff9e"
+    },
+    {
+      "path": "tools/tests/BossAttackAudioTest.gd",
+      "sha256": "d7b13169988f6e249a6365014dda7aa01656dc0b3a3ef4e6b3a6f88645509ab9"
+    },
+    {
+      "path": "tools/tests/BossBulldozerTeachingTest.gd",
+      "sha256": "b291a71aaae893df154e1b97a4bd969d7eaaf92b04ff9eebd75344dfc3ad52bd"
+    },
+    {
+      "path": "tools/tests/BossMusicLifecycleTest.gd",
+      "sha256": "8cff894c768a90cec4f3d775e2151b3bfc26fc9b0761a8a7c3242406a26971dc"
+    },
+    {
+      "path": "tools/tests/BossPresentationTest.gd",
+      "sha256": "9fac5671e5f26dbd4547a4315b9994a7c207fa42a4e9a510652d546817cf475d"
+    },
+    {
+      "path": "tools/tests/BossWallPlacementTest.gd",
+      "sha256": "4177b54db0f3a41d293a8a60a964e7bb3eed1e9438a7f2d131cff72345a6d174"
+    },
+    {
+      "path": "tools/tests/LoadingScrimTest.gd",
+      "sha256": "108737099b3bc550143a7963f40baa0c5a4d6d4db3e6da1a7a3fac039a9d6a6b"
+    },
+    {
+      "path": "tools/tests/RiteSafeguardIntegrationTest.gd",
+      "sha256": "4554a5fea02526db7fa7d5228013eeae078f1557171205df8fd4469745998d10"
+    },
+    {
+      "path": "tools/tests/S10MainBossEscapeTest.gd",
+      "sha256": "82b6f4a0e36597538cbb10154d9ab043f0e9e6646e627b777eaf0aebd95d166a"
+    },
+    {
+      "path": "tools/tests/S5SlowWalkEscapeTest.gd",
+      "sha256": "d6f9fbf408f91995b96482293bc8b6bff13d301d30694685d8135dc95bdc5e36"
+    },
+    {
+      "path": "ui/controllers/HudBossController.gd",
+      "sha256": "06e23d83214594564db41c761e8434298b0045c047afbf2bc1122022d3662735"
+    },
+    {
+      "path": "ui/widgets/LoadingScrim.gd",
+      "sha256": "1d16caaa5e9d02a65afcaa67de0c52a66822db356dd8eb7b1d7ac550bca8dfcb"
+    }
+  ]
+}

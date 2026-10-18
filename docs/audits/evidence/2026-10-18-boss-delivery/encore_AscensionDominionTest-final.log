@@ -1,0 +1,53 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: two weighted Magic Core hits leave nothing
+PASS: the third leaves a Well at the impact; placement deals 0.5D in 1.5R (490.7)
+PASS: normals are pulled R over 0.5 s ((360.0, 0.0))
+PASS: elites move R/3 ((300.0, 73.33334))
+PASS: a normal stops after R; an elite resisting the rest stores Weight (80.0)
+PASS: a Well lives 1.5 s
+PASS: Dead Weight: the next pull spends stored Weight for travel beyond R ((300.0, 0.0))
+PASS: an expired Well leaves a stain
+PASS: a new Well within 2R consumes it and pulls once along the line for 0.5D (481.4)
+PASS: Collision: a pulled normal crossing another deals 0.6D to both once
+PASS: Crowded Well: the impact after a dash creates a Well; each enemy inside adds 5% radius (132.0)
+PASS: one victim binds nothing
+PASS: a Magic Core impact hitting two enemies links them for 3 s
+PASS: Collective Burden copies 20% of a member's damage to the others (488.0)
+PASS: later victims of the same activation join
+PASS: Collapse: the first death pulls survivors R toward the corpse for 0.8D and breaks the Link ((200.0, 0.0))
+PASS: Dragnet: a pulled enemy crossing a Linked one joins the group
+PASS: Crushing: four enemies shrink the Well 20%% and its centre is hit 0.5D every 0.3 s
+PASS: up to four hits
+PASS: expiry releases 0.5D per completed hit in 2R
+PASS: Anchor: the highest-max-HP enemy anchors the Well; everyone is pulled toward it
+PASS: Compel pulls the cone toward the cursor up to R for 1D and leaves a Well (0.5D placement) at convergence ((200.0, 0.0))
+PASS: Ring: a 2.5R circle at the cursor pulls from every side
+PASS: Chain links the affected enemies in distance order
+PASS: Crush: bodies reaching the centre take 1D + 0.25D per body moved (430.3)
+PASS: Repulse: holding 0.3 s shoves outward instead; Throw sends bodies another 1.5R ((360.0, 0.0))
+PASS: Repeat: after 1 s Compel repeats at 60%% in the opposite direction
+PASS: Singularity: six normals collapse to the centre for 1.5D and the Well expires
+PASS: Forced Orbit: Wells move normals around the centre instead of inward
+PASS: Sovereign Ground: standing still 0.75 s leaves a territory; inside it pull speed gains 50%%
+PASS: outside all territory Dominion damage is 25% lower (492.5)
+PASS: Event Horizon: the acquisition radius is the visible camera ((668.0, 0.0))
+PASS: the strongest Well pulls the player at 0.5L/s ((24.0, 0.0))
+PASS: at expiry it collapses for 2D in 2R
+PASS: Common Ground: a wide melee swing binds its victims
+PASS: twenty normals in a Well make a Black Hole
+PASS: its collapse deals 2D + 0.3D per enemy caught, capped at 8D, in 3R (297.3)
+PASS: Mass Grave: Compel leaves a 3R grave; a death in it pulls survivors and pulses 1D
+PASS: survivors are pulled R toward the corpse ((220.0, 0.0))
+PASS: Crowd Pinball places two bumpers
+PASS: bodies travel two legs and are launched tangentially for 1D (453.5)
+PASS: sinks: Pull 80%% x rank/(rank+100), Link Life 2 s x rank/(rank+70)
+PASS: V pulls every visible normal to the cursor and forms temporary Links
+PASS: normals arrive at 900 px/s and the pile is held ((200.0, 0.0))
+PASS: elites move at most R ((343.4315, 143.4315))
+PASS: after the 0.5 s hold the pile is slammed
+PASS: for 4D + 0.2D per normal caught (4907.0)
+PASS: elites receive the slam (49907.0)
+PASS: Again: survivors are thrown 3R outward
+PASS: and pulled back for a second slam at 60% (4851.2)
+AscensionDominionTest: 50 passed, 0 failed

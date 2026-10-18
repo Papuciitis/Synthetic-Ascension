@@ -1,0 +1,17 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a segment transition displays its wait indicator
+PASS: the card explicitly explains that the game is loading
+PASS: the wait indicator advances while the loading card is waiting
+PASS: Reduced Motion retains a visible static wait indicator
+PASS: the loading message fits inside a small viewport
+PASS: the compact segment card retains its destination and district
+PASS: a visible loading card reflows when its viewport shrinks
+PASS: unnamed menu transitions retain the loading message
+PASS: the card names the destination
+PASS: the card shows at once for a scene change
+PASS: the card gets a frame on screen before the scene changes
+PASS: the scene changed after the card rendered
+PASS: the card starts lifting once the new scene has rendered
+PASS: the card is gone after the fade
+LoadingScrimTest: 14 passed, 0 failed

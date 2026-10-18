@@ -1,0 +1,65 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: an enemy hit for 5% max HP grants 10 Force (10.0)
+PASS: a hit is capped at 25 Force (35.0)
+PASS: health payments grant nothing
+PASS: capacity is 100
+PASS: at 20+ Force the arc gains R/2 radius (102.0)
+PASS: a Melee Core strike spends up to 20 Force (15.0)
+PASS: and adds 0.05D per point to that strike (175.0)
+PASS: payloads of the same volley gain nothing
+PASS: a Melee Core strike catches up to three hostile projectiles for 10 Force each (30.0)
+PASS: copies fly back and three catches within 1 s ring six blades (9)
+PASS: two seconds without a hit forms a plate
+PASS: the plate halves the next hit and grants 15 Force (hp 90.0 force 40.0)
+PASS: no plate reforms above 50 Force
+PASS: Force beyond capacity becomes plates of 20 (2)
+PASS: at 100 Force the next Melee Core strike discharges a 3D nova in 2R (455.0)
+PASS: the discharge fires unbroken plates as blades
+PASS: Armor Break: a 20+ spend Cracks the strike's victims
+PASS: Q is a held Guard
+PASS: with Force the guard prevents 75% (hp 90.2, Melee lifesteal from Thorns aside)
+PASS: Thorns returns 35% of the prevented damage, bounded by 0.2D and 2D (189.5)
+PASS: holding spends 12 Force per second (59.0)
+PASS: release throws a 1D 2R wave with a 4 s cooldown (485.0)
+PASS: at zero Force the guard prevents 30% (hp 72.1)
+PASS: Bulwark halves movement while holding
+PASS: a 360-degree guard catches from behind too and Mirror stores them (force 20.0)
+PASS: Counterweight spends half the Force for +0.06D per point (462.5)
+PASS: Mirror fires the stored projectiles back
+PASS: Bunker leaves a 3 s guard with 30 Force
+PASS: an expired Bunker emits a 2D wave (432.5)
+PASS: Martyr pays 2% max HP per second to keep 75% prevention at zero Force (hp 98.0)
+PASS: the guard then prevents 75%%
+PASS: it stops paying at 25%% HP
+PASS: Living Rampart: no upkeep while standing still
+PASS: moving resumes upkeep (18.0)
+PASS: four enemies within R close the arc into a circle
+PASS: the rear half grants 5 Force per victim (5.0)
+PASS: in combat, two seconds after the last hit Force decays 10 per second (40.0)
+PASS: every 20 Force lost drops a scrap
+PASS: outside combat Force keeps
+PASS: Last Hit: at 50+ Force a lethal hit leaves 1 HP and empties Force
+PASS: Pressure Vessel detonates at 100 automatically and pauses refill
+PASS: nothing fills during the pause
+PASS: Overpressure: capacity 150, 20%% more damage taken above 100
+PASS: discharges gain 0.03D per point above 100 (941.5)
+PASS: Anvil: stationary for 0.5 s prevents another 20%%
+PASS: and doubles Force gain
+PASS: Glass Armor: 60%% reduction at 100 Force
+PASS: and armor contribution is halved
+PASS: Heavy Hands: a Ranged strike spends at half the coefficient and adds a 0.5R blast (175.0)
+PASS: a 100-Force discharge starts Meltdown's three rings
+PASS: the rings deal 2D each and the third fires Thorns' virtual block (858.0)
+PASS: and Razor Guard's ring
+PASS: Gun Shield fires a stored projectile every 0.15 s while guarding
+PASS: Bomb Bunker lasts 8 s
+PASS: a tap while not guarding detonates it for 2D + 0.04D per stored Force (925.0)
+PASS: Force Capacity rank 4 adds 3 x sqrt(4)
+PASS: Armor rank 2 multiplies armor rating by 1 + 35%% x 2/72
+PASS: V spends Force and starts the 0.5 s tell
+PASS: RUPTURE hits every visible enemy for 5D + 0.04D per Force, doubled by Zero Armor, plus Fallout blades (4775.0 / 4790.0)
+PASS: erased projectiles fall as blades and armor is zero for 3 s
+PASS: Zero Armor removes the armor contribution
+PASS: Aftershock repeats after 1 s at half damage (4670.0)
+AscensionBastionTest: 62 passed, 0 failed

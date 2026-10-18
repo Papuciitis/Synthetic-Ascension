@@ -97,6 +97,7 @@ func _run() -> void:
 	Engine.max_fps = 60
 	_game = GAME.instantiate() as Node2D
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
+	_game.get_node("Player").disable_mode = CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
 	_game.get_node("Player").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	get_tree().root.add_child(_game)

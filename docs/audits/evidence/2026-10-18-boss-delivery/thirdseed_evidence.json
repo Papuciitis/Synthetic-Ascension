@@ -1,0 +1,83 @@
+{
+  "cause": "Fixture chose first square-ring straight wall, not the closest in-fight wall. Seed 18102026 rested 1154.1206 px from actual boss home, violating the unchanged 1100 px disengage precondition for both roles; the other two failures asserted attack commitment from this invalid fixture.",
+  "correction": "Enumerate straight walls around actual boss home; sort by actual distance; physically rest the original capsule and require actual rested player and 300 px boss placement within unchanged disengage/leash bounds. Keep existing precondition and commitment assertions, KEEP_ACTIVE, full Hurtbox/body.",
+  "scope": "Only tools/tests/S10MainBossEscapeTest.gd; no production changes.",
+  "passes": 145,
+  "failures": 0,
+  "cases": 28,
+  "save_writes": 0,
+  "wall_rest": [
+    {
+      "boss_from_home": 745.237182617188,
+      "case": "wall_rest",
+      "committed": true,
+      "player_from_home": 999.984619140625,
+      "resting": true,
+      "role": "tank",
+      "seed": 18102026,
+      "wall_cell": "(-575, 71)"
+    },
+    {
+      "boss_from_home": 745.237182617188,
+      "case": "wall_rest",
+      "committed": true,
+      "player_from_home": 999.984619140625,
+      "resting": true,
+      "role": "mage",
+      "seed": 18102026,
+      "wall_cell": "(-575, 71)"
+    }
+  ],
+  "source_sha256": "82B6F4A0E36597538CBB10154D9AB043F0E9E6646E627B777EAF0AEBD95D166A",
+  "final_console_passes": 147,
+  "native_exit": 0,
+  "default_seed_compatibility": {
+    "final_console_passes": 291,
+    "save_writes": 0,
+    "failures": 0,
+    "completed_case_results": 56,
+    "native_exit": 0,
+    "wall_rest": [
+      {
+        "boss_from_home": 708.069580078125,
+        "case": "wall_rest",
+        "committed": true,
+        "player_from_home": 972.601257324219,
+        "resting": true,
+        "role": "tank",
+        "seed": 16102026,
+        "wall_cell": "(-130, -568)"
+      },
+      {
+        "boss_from_home": 708.069580078125,
+        "case": "wall_rest",
+        "committed": true,
+        "player_from_home": 972.601257324219,
+        "resting": true,
+        "role": "mage",
+        "seed": 16102026,
+        "wall_cell": "(-130, -568)"
+      },
+      {
+        "boss_from_home": 739.541320800781,
+        "case": "wall_rest",
+        "committed": true,
+        "player_from_home": 968.252014160156,
+        "resting": true,
+        "role": "tank",
+        "seed": 16102027,
+        "wall_cell": "(-25, -575)"
+      },
+      {
+        "boss_from_home": 739.541320800781,
+        "case": "wall_rest",
+        "committed": true,
+        "player_from_home": 968.252014160156,
+        "resting": true,
+        "role": "mage",
+        "seed": 16102027,
+        "wall_cell": "(-25, -575)"
+      }
+    ]
+  }
+}

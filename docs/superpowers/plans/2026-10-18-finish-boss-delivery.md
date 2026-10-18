@@ -11,7 +11,7 @@ User authorization: finish Claude's remaining implementation, excluding human pl
 - Keep current HP, damage, warnings and seeded role selection, except corrections needed for slow-player escape.
 - Guaranteed item floor is the existing minimum request: 2 S5 items and 5 S10 items; existing rarity bands remain. Luck may improve rewards without removing the floor.
 - Persist rolled item instances and claim state with the attempt. A repeated clear or Continue must never reroll or duplicate payouts. Full inventory leaves rewards recoverable.
-- Final art must retain existing humorous portraits and recognizable role silhouettes; presentation never changes damage geometry.
+- Keep recognizable role silhouettes; presentation never changes damage geometry. The user's later correction replaces the meme portrait blends with coherent portraits derived from each S5/S10 world form.
 - Developer runs may keep the currently documented profile gains; unrelated attempt-scoped inventory work is outside this encounter delivery.
 - No damaging debris or extra Split Fan follow-up: the existing design deliberately uses the Breach/Convergence compositions.
 - All engine checks use isolated user data. No tests during a human playtest. Human assessment of pacing, mix and readability remains excluded.
@@ -59,3 +59,8 @@ Owner: root. Own boss brains, player/ascension engine fixes and their regression
 2. Fix review findings, inspect actual-game captures and run relevant compatibility suites plus ScriptParseAuditTest last.
 3. Update the audit/roadmap with results, any genuine remaining limitation and the explicit human-playtest exclusion.
 4. Commit and push only this delivery's files as validated milestones; report the final result and evidence.
+
+## Added user requests during delivery
+
+- Add a loading spinner wherever the game waits. Use the existing shared transition scrim, with a readable loading label, small-window layout and a static Reduced Motion treatment; preserve the existing transition lifecycle.
+- Replace boss icons that mix old memes with the new equipment. Cover both roles and tiers, matching the established world forms and preserving their gameplay geometry.

@@ -1,0 +1,47 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: cleave fixture commits
+PASS: death during the cleave's anticipation releases no strike
+PASS: and its sector warning leaves with it
+PASS: a stun interrupts the cleave and clears its warning
+PASS: an expired stun cannot revive the interrupted cleave
+PASS: a paused tree spends none of the cleave's tell
+PASS: resuming keeps the whole remaining tell
+PASS: then the strike releases once, into recovery
+PASS: a brief stun cannot erase the earned recovery
+PASS: breach fixture commits
+PASS: disengaging during the breach tell releases neither rush nor impact
+PASS: and the announced impact is withdrawn
+PASS: fixture: the rush arrived and the beat began
+PASS: death during the beat releases no impact and clears its warning
+PASS: fixture: the first line has released
+PASS: the stun interrupts the sequence between its lines
+PASS: the follow-up line's three nodes never release and their warnings are cleared
+PASS: fixture: the Bulldozer's phase beat began
+PASS: an interrupted phase beat keeps its phase and its owed Runner call
+PASS: fixture: the Arcanist's phase beat began
+PASS: an interrupted phase beat keeps its phase and its owed Pylon Pair
+PASS: the pair still arrives once the boss is free
+PASS: split fixture commits
+PASS: death during the Split Fan's tell releases no bolt and clears its lanes
+PASS: disengaging during the tell releases no bolt
+PASS: sweep fixture commits
+PASS: fixture: a pair stands and the sweep's beam is in the world
+PASS: fixture: the sweep holds the pair's fire
+PASS: a stun during the telegraph cancels the channel
+PASS: no beam survives the interrupted sweep
+PASS: and the cancelled pattern releases the pair at once
+PASS: fixture: the second sweep's beam is in the world
+PASS: fixture: the beam is sweeping
+PASS: the caster's death ends an active sweep at once
+PASS: and the dying channel deals nothing more
+PASS: convergence fixture commits
+PASS: fixture: the split resolved and the sweep is pending
+PASS: a stun between the two beats cancels the pending sweep
+PASS: while the bolts already released fly on (a brief stun is not death)
+PASS: the sequence does not resume after the stun
+PASS: fixture: a pair stands
+PASS: the pair leaves with its boss
+PASS: without a kill credit or a defeat event
+PASS: all 9 cases ran to their end
+BossMainInterruptionTest: 44 passed, 0 failed

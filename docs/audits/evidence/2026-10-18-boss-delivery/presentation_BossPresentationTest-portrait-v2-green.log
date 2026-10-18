@@ -1,0 +1,40 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: boss_bulldozer has attack acting independent of its physics root
+PASS: boss_bulldozer visibly anticipates a real committed attack
+PASS: boss_bulldozer attack acting stays anchored to the original feet
+PASS: boss_bulldozer pause freezes its attack acting
+PASS: boss_bulldozer real release changes its stance
+PASS: boss_bulldozer release settles into an exposed recovery stance
+PASS: boss_bulldozer phase three visibly energizes its own equipment
+PASS: boss_bulldozer healing cannot roll equipment back to phase one
+PASS: boss_bulldozer Reduced Motion restores the exact authored body pose
+PASS: boss_bulldozer acting and phase changes preserve damage-receiving body/contact geometry
+PASS: boss_bulldozer defeat stops acting and restores the authored pose
+PASS: boss_bulldozer changing to teaching tier removes main-boss equipment acting
+PASS: boss_arcanist has attack acting independent of its physics root
+PASS: boss_arcanist visibly anticipates a real committed attack
+PASS: boss_arcanist attack acting stays anchored to the original feet
+PASS: boss_arcanist pause freezes its attack acting
+PASS: boss_arcanist real release changes its stance
+PASS: boss_arcanist release settles into an exposed recovery stance
+PASS: boss_arcanist phase three visibly energizes its own equipment
+PASS: boss_arcanist healing cannot roll equipment back to phase one
+PASS: boss_arcanist Reduced Motion restores the exact authored body pose
+PASS: boss_arcanist acting and phase changes preserve damage-receiving body/contact geometry
+PASS: boss_arcanist defeat stops acting and restores the authored pose
+PASS: boss_arcanist changing to teaching tier removes main-boss equipment acting
+PASS: boss_bulldozer tier 0 HUD selects its matching world-form portrait
+PASS: unsupported boss tier preserves the caller's fallback
+PASS: unknown boss identity preserves the caller's fallback
+PASS: boss_arcanist tier 0 HUD selects its matching world-form portrait
+PASS: unsupported boss tier preserves the caller's fallback
+PASS: unknown boss identity preserves the caller's fallback
+PASS: boss_bulldozer tier 1 HUD selects its matching world-form portrait
+PASS: unsupported boss tier preserves the caller's fallback
+PASS: unknown boss identity preserves the caller's fallback
+PASS: boss_arcanist tier 1 HUD selects its matching world-form portrait
+PASS: unsupported boss tier preserves the caller's fallback
+PASS: unknown boss identity preserves the caller's fallback
+PASS: both boss choices in both tiers have distinct portraits
+BossPresentationTest: 37 passed, 0 failed

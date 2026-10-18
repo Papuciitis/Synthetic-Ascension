@@ -1,0 +1,57 @@
+{
+  "isolation": "Source project with per-process APPDATA and LOCALAPPDATA under .superpowers/sdd/2026-10-18-finish-boss-delivery/userdata/audio",
+  "original_assets": 5,
+  "engine": "Godot 4.7.1 Windows, --headless --audio-driver Dummy --quit-after 3000",
+  "suites": [
+    {
+      "passed": 38,
+      "failed": 0,
+      "log": "BossMusicLifecycleTest-final.log",
+      "suite": "BossMusicLifecycleTest"
+    },
+    {
+      "passed": 60,
+      "failed": 0,
+      "log": "BossAttackAudioTest-final.log",
+      "suite": "BossAttackAudioTest"
+    },
+    {
+      "passed": 14,
+      "failed": 0,
+      "log": "AdaptiveMusicTest-final.log",
+      "suite": "AdaptiveMusicTest"
+    },
+    {
+      "passed": 29,
+      "failed": 0,
+      "log": "KillAudioTest-final.log",
+      "suite": "KillAudioTest"
+    },
+    {
+      "passed": 55,
+      "failed": 0,
+      "log": "MenuAudioTest-final.log",
+      "suite": "MenuAudioTest"
+    },
+    {
+      "passed": 29,
+      "failed": 0,
+      "log": "PlayerActionAudioTest-final.log",
+      "suite": "PlayerActionAudioTest"
+    },
+    {
+      "passed": 11,
+      "failed": 0,
+      "log": "PositionalLoopAudioTest-final.log",
+      "suite": "PositionalLoopAudioTest"
+    }
+  ],
+  "status": "passed",
+  "limitations": [
+    "No human listening/mix or dense-build warning intelligibility approval; these are explicitly excluded human playtest work.",
+    "Playback state/routing exercised with actual AudioStreamPlayers and Music effects under Dummy output; no audible hardware capture claimed.",
+    "Console wrapper exit can be zero despite child test failure; completion established from per-suite summaries plus absence of script/error/leak logs."
+  ],
+  "asset_verification": "asset-verification.json",
+  "provenance": "assets/audio/music/s10/PROVENANCE.md"
+}

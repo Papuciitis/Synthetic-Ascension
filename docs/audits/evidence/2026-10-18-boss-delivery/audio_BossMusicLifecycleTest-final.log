@@ -1,0 +1,41 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: phase 1 has its own sample-aligned sixteen-second recording
+PASS: phase 2 has its own sample-aligned sixteen-second recording
+PASS: phase 3 has its own sample-aligned sixteen-second recording
+PASS: defeat has its own finite release recording
+PASS: AudioManager exposes main-boss lifecycle decisions in headless runs
+PASS: S5 leaves ordinary adaptive music in charge
+PASS: S10 entrance starts the original first-phase arrangement
+PASS: duplicate spawn does not restart; phase two changes arrangement once
+PASS: healing and repeated phase events never retrigger or reduce music
+PASS: phase three selects the final arrangement
+PASS: unrelated actors cannot change or clear the owned music encounter
+PASS: disengage restores normal music while retaining reached phase
+PASS: re-engagement resumes the reached arrangement without farming phases
+PASS: player death releases combat music without a boss victory sting
+PASS: reconstruction resumes the existing fight at its reached phase
+PASS: boss music suspends on pause
+PASS: boss music resumes after pause
+PASS: major warnings immediately duck Music independently of the SFX voices
+PASS: warning duck recovers without an accumulating attenuation
+PASS: defeat enters a distinct finite release cue exactly once
+PASS: duplicate clear cannot replay the release
+PASS: pause cannot consume the release and jump to normal music
+PASS: release ends in ordinary game music
+PASS: menu/context change clears encounter ownership and restores menu music
+PASS: scene/actor removal restores the ordinary route without a defeat cue
+PASS: explicit stop cannot be undone by a lingering boss
+PASS: warning duck is installed only on Music and leaves the SFX bus intact
+PASS: real boss playback uses Music at unchanged pitch/speed
+PASS: boss score stays five dB below the ordinary music gain
+PASS: phase loop is sample-exact with no frame-delayed finished restart
+PASS: real phase crossfade switches musical parts at the existing beat
+PASS: pause suspends the actual audio voice and its crossfade
+PASS: a phase event received while paused cannot start a new voice or fade
+PASS: warning duck reaches the actual Music bus effect immediately
+PASS: real release uses the separate non-looping recording
+PASS: finished callback cannot loop the release recording
+PASS: release restores the actual ordinary game stream
+PASS: stop during an interrupted crossfade silences both actual voices
+BossMusicLifecycleTest: 38 passed, 0 failed
