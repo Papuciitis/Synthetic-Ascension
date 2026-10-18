@@ -147,6 +147,25 @@ func _test_fault_line() -> void:
 	await _clear()
 
 
+func _test_slow_player_slam() -> void:
+	_fixture()
+	var tank := _tank()
+	tank.player = _player
+	_player.speed = 80.0
+	_player.global_position = tank.global_position + Vector2(100, 0)
+	var brain := tank.get_node("BossBrain")
+	brain.call("_do_slam")
+	brain.call("_tick_cast", 1.31)
+	_check(_circles().is_empty() and tank.get_meta(&"boss_teaching_state", &"") == &"slam", "the S5 slam extends its warning for an 80 px/s walk instead of trapping a slow race")
+	# A speed change after commitment cannot silently shorten the warning.
+	_player.speed = 160.0
+	brain.call("_tick_cast", 0.30)
+	_check(_circles().is_empty(), "the committed slow-player warning keeps its captured duration after a speed change")
+	brain.call("_tick_cast", 0.03)
+	_check(_circles().size() == 1, "the extended S5 slam still releases once after its full warning")
+	await _clear()
+
+
 func _test_rush_cosmetic_pressure() -> void:
 	for main_boss in [false, true]:
 		_fixture()
@@ -426,6 +445,7 @@ func _run() -> void:
 	RunEvents.enemy_killed.connect(_on_kill)
 	await _test_planted_slam()
 	await _test_fault_line()
+	await _test_slow_player_slam()
 	await _test_rush_cosmetic_pressure()
 	await _test_rush_commitment_and_contact()
 	await _test_coarse_rush_respects_committed_length()

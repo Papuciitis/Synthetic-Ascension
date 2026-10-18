@@ -74,14 +74,52 @@ static func corridor_clear(actor: Node2D, start: Vector2, end: Vector2, radius: 
 ## grid cell reaches past the wall itself (beyond its face, past a run's end),
 ## so the grid would refuse walks the player can make, from where it stands
 ## beside a wall; the physics sweep judges the walls.
-static func walk_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
+static func _route_loaded(actor: Node2D, start: Vector2, end: Vector2) -> bool:
 	var manager := actor.get_tree().get_first_node_in_group(&"chunk_manager")
 	if manager != null:
 		var steps := maxi(1, ceili(start.distance_to(end) / 32.0))
 		for i in range(steps + 1):
 			if not manager.has_built_cell(manager.world_to_cell(start.lerp(end, float(i) / float(steps)))):
 				return false
-	return _sweep_clear(actor, start, end, radius)
+	return true
+
+
+static func walk_clear(actor: Node2D, start: Vector2, end: Vector2, radius: float) -> bool:
+	return _route_loaded(actor, start, end) and _sweep_clear(actor, start, end, radius)
+
+
+## Navigation is judged by the physical body; hazard separation separately
+## keeps the full Hurtbox clear. A wall's grid cell may cover legal ground.
+static func player_route_clear(actor: Node2D, player: Node2D, start: Vector2, end: Vector2) -> bool:
+	if not player is PhysicsBody2D or not PhysicsServer2D.body_get_space((player as PhysicsBody2D).get_rid()).is_valid():
+		return false
+	var collider := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collider == null or collider.disabled or collider.shape == null:
+		return false
+	var direction := end - start
+	var facing := direction.angle() if not direction.is_zero_approx() else player.global_rotation
+	var settled := settled_position(player, start, facing)
+	if not _route_loaded(actor, settled, settled + direction):
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = collider.shape
+	query.transform = Transform2D(facing, player.global_scale, player.global_skew, settled) * collider.transform
+	query.motion = direction
+	query.collision_mask = WORLD_MASK
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	# The real body's safe-margin recovery already put it just off a touched
+	# wall. Extra query inflation would refuse that legal rest line again.
+	query.margin = 0.0
+	var space := actor.get_world_2d().direct_space_state
+	if not space.intersect_shape(query, 1).is_empty():
+		return false
+	var motion := space.cast_motion(query)
+	if motion.size() < 2 or motion[0] < 0.9999:
+		return false
+	query.transform.origin += direction
+	query.motion = Vector2.ZERO
+	return space.intersect_shape(query, 1).is_empty()
 
 
 ## Where `body` comes to rest at `point` turned to `facing`: a capsule turned
@@ -91,6 +129,8 @@ static func settled_position(body: Node, point: Vector2, facing: float) -> Vecto
 	if not body is PhysicsBody2D:
 		return point
 	var physics_body := body as PhysicsBody2D
+	if not PhysicsServer2D.body_get_space(physics_body.get_rid()).is_valid():
+		return point
 	var params := PhysicsTestMotionParameters2D.new()
 	params.motion = Vector2.ZERO
 	if physics_body is CharacterBody2D:
@@ -149,7 +189,7 @@ static func blink_valid(actor: CharacterBody2D, player: Node2D, point: Vector2, 
 	query.margin = 2.0
 	if not actor.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty():
 		return false
-	if not corridor_clear(actor, player.global_position, point, clearance + 8.0):
+	if not player_route_clear(actor, player, player.global_position, point):
 		return false
 	for mine in mines:
 		if Geometry2D.get_closest_point_to_segment(mine.global_position, player.global_position, point).distance_to(mine.global_position) <= mine.radius + maxf(radius, clearance) + 8.0:
@@ -172,7 +212,7 @@ static func corridor_avoids_body(actor: Node2D, player: Node2D, center: Vector2,
 static func mine_pattern_valid(actor: Node2D, player: Node2D, center: Vector2, points: PackedVector2Array, escape: Vector2, radius: float, mines: Array) -> bool:
 	var clearance := player_clearance(player) + 8.0
 	var end := center + escape * MINE_CORRIDOR
-	if not corridor_clear(actor, center, end, clearance):
+	if not player_route_clear(actor, player, center, end):
 		return false
 	for point in points:
 		if not disc_clear(actor, point, radius):

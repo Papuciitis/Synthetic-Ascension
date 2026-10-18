@@ -109,6 +109,7 @@ var _selection_hold := 0.0
 var _last_attack: StringName = &""
 var _pattern_counter := 0
 var _rush_tell := TEACHING_RUSH_TELL
+var _slam_tell := 1.3
 var _breach_target := Vector2.ZERO
 var _breach_warning: Node2D
 var _followup_dir := Vector2.ZERO
@@ -551,8 +552,13 @@ func _do_slam() -> void:
 	if not _begin_cast(&"slam"):
 		return
 	SfxManager.play_2d(&"boss_warning", _cast_origin)
-	_add_warning(_cast_origin, slam_radius, maxf(0.05, slam_windup), &"slam")
-	_show_windup(&"slam", slam_windup)
+	_slam_tell = maxf(0.05, slam_windup)
+	if not _e.is_in_group(&"boss"):
+		# S5 teaches a walk-out even to a slow race/build. Capture the longer
+		# tell once; later speed changes cannot silently move its release.
+		_slam_tell *= Oracle.BASE_SPEED / Oracle.walking_speed(_e.player)
+	_add_warning(_cast_origin, slam_radius, _slam_tell, &"slam")
+	_show_windup(&"slam", _slam_tell)
 
 func _do_shockwave() -> void:
 	if not _begin_cast(&"shock"):
@@ -662,10 +668,10 @@ func _tick_cast(delta: float) -> void:
 		if _cast_elapsed >= TEACHING_CALL_TELL:
 			_release_teaching_runners()
 			_enter_recovery(maxf(0.0, _cast_elapsed - TEACHING_CALL_TELL))
-	elif _cast == &"slam" and _cast_elapsed >= maxf(0.05, slam_windup):
+	elif _cast == &"slam" and _cast_elapsed >= _slam_tell:
 		_spawn_wave(_cast_origin, slam_radius, &"slam")
 		_spawn_damage_circle(_cast_origin, slam_radius, slam_damage, 0.18, &"slam")
-		_enter_recovery(maxf(0.0, _cast_elapsed - maxf(0.05, slam_windup)))
+		_enter_recovery(maxf(0.0, _cast_elapsed - _slam_tell))
 	elif _cast == &"shock":
 		var nodes := _fault_node_count()
 		while _shock_index < nodes and _cast_elapsed >= _fault_node_time(_shock_index):
@@ -682,7 +688,7 @@ func _tick_cast(delta: float) -> void:
 func _update_teaching_anticipation() -> void:
 	var tell := _rush_tell
 	if _cast == &"slam":
-		tell = maxf(0.05, slam_windup)
+		tell = _slam_tell
 	elif _cast == &"shock":
 		tell = maxf(0.05, shockwave_windup)
 	elif _cast == &"summon":

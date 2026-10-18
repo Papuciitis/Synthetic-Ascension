@@ -261,6 +261,9 @@ func _setup_world(role_value: String, seed_value: int) -> bool:
 	Engine.time_scale = 1.0
 	_game = GAME.instantiate() as Node2D
 	_game.get_node("Spawner").process_mode = Node.PROCESS_MODE_DISABLED
+	# Fixtures stop movement while arranging casts; the production capsule
+	# must remain registered for the same physics queries used during play.
+	_game.get_node("Player").disable_mode = CollisionObject2D.DISABLE_MODE_KEEP_ACTIVE
 	_game.get_node("Player").process_mode = Node.PROCESS_MODE_DISABLED
 	_game.process_mode = Node.PROCESS_MODE_PAUSABLE
 	get_tree().root.add_child(_game)

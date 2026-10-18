@@ -970,6 +970,25 @@ func _start_teaching_mines(count: int = 3) -> bool:
 			_teaching_escape = escape
 			found = true
 			break
+	# Beside a wall no full constellation can fit around the player. A finite
+	# inward arc leaves the walk along the wall open, with the same warnings,
+	# fuse and full-Hurtbox separation. It never clips a node through a wall.
+	if not found:
+		for i in range(4):
+			var escape := away.rotated(float((first + i) % 4) * PI * 0.5)
+			for side in [-1.0, 1.0]:
+				var inward := escape.rotated(side * PI * 0.5)
+				var points := PackedVector2Array()
+				for node_index in range(count):
+					var degrees := lerpf(-40.0, 40.0, float(node_index) / float(maxi(1, count - 1)))
+					points.append(center + inward.rotated(deg_to_rad(degrees)) * 210.0)
+				if TeachingPlacement.mine_pattern_valid(_e, _e.player, center, points, escape, mine_radius, _current_mines()) and TeachingPlacement.corridor_avoids_body(_e, _e.player, center, escape):
+					_teaching_mine_points = points
+					_teaching_escape = escape
+					found = true
+					break
+			if found:
+				break
 	if not found:
 		return false
 	_teaching_mine_center = center
