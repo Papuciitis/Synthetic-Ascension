@@ -53,6 +53,12 @@ var _discharged_bank: float = 0.0
 var _no_armor_left: float = 0.0
 # Guard
 var guarding: bool = false
+var _guard_damage_scale := 1.0
+var _guard_proc_scale := 1.0
+var _guard_area_scale := 1.0
+var _guard_encore := false
+var _manual_q_action := "guard"
+var _manual_detonation: Dictionary = {}
 var _guard_pool_stored: Array = []      # Mirror: caught projectiles {source}
 var _gun_shield_tick: float = 0.0
 var _bunker: Dictionary = {}            # {pos, life, force, dir, arc}
@@ -560,11 +566,29 @@ func q_is_hold(id: String) -> bool:
 func activate_q(id: String) -> Dictionary:
 	if id != "BAQ":
 		return {"ok": false, "message": "NOT BASTION", "cooldown": 0.0}
-	if not _bunker.is_empty() and has("BAE2") and not guarding:
+	if runner.encore_cast and _manual_q_action == "detonate":
+		# The original tap consumed its bunker. Replay that payload, without
+		# selecting a different action or consuming a subsequently placed one.
+		_emit_bunker(_manual_detonation, true, AscensionRunner.ENCORE_SCALE)
+		return {"ok": true, "message": "DETONATE", "cooldown": 0.0}
+	# Lock the action selected by the armed Encore; later zero-recovery taps
+	# must not overwrite a detonation whose repeat is already scheduled.
+	var manual := not runner.encore_cast and not runner.automatic_cast and not runner.reaction_cast and runner._encore_left > 0.0
+	if not runner.encore_cast and not _bunker.is_empty() and has("BAE2") and not guarding:
 		# Bomb Bunker: a tap while not guarding detonates it remotely.
+		if manual:
+			_manual_q_action = "detonate"
+			_manual_detonation = _bunker.duplicate(true)
 		_resolve_bunker(true)
 		return {"ok": true, "message": "DETONATE", "cooldown": 0.0}
-	if runner.automatic_cast or runner.reaction_cast:
+	if manual:
+		_manual_q_action = "guard"
+		_manual_detonation = {}
+	_guard_damage_scale = runner.q_scale()
+	_guard_proc_scale = runner.q_proc_scale()
+	_guard_area_scale = runner.q_area_scale()
+	_guard_encore = runner.encore_cast
+	if runner.automatic_cast or runner.reaction_cast or runner.encore_cast:
 		# Automatic Guard holds toward the greatest threat for 0.75 s, then releases.
 		guarding = true
 		_auto_release = 0.75
@@ -617,8 +641,10 @@ func _tick_guard(delta: float) -> void:
 		if _auto_release <= 0.0:
 			_auto_release = -1.0
 			var released := release_q("BAQ")
-			runner.q_cooldown_left = float(released.get("cooldown", 4.0))
-			runner.q_cooldown_max = runner.q_cooldown_left
+			# Encore repeats the payload; the original cast owns its recovery.
+			if not _guard_encore:
+				runner.q_cooldown_left = float(released.get("cooldown", 4.0))
+				runner.q_cooldown_max = runner.q_cooldown_left
 
 
 func release_q(id: String) -> Dictionary:
@@ -630,18 +656,20 @@ func release_q(id: String) -> Dictionary:
 	var facing := _facing()
 	if has("BA04") and force >= 100.0:
 		_discharge("guard_release", origin, facing)
-	var damage := D() * runner.q_scale()
+	var damage := D()
 	if has("BAQ2"):
 		var spent := spend_force(force * 0.5)
 		damage += 0.06 * D() * spent
-	runner.spawn_impact(origin, damage, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "BAQ", "impact", 1, 1.0 * runner.q_proc_scale(), PackedStringArray(["core_strike"])), 2.0 * AscensionRunner.R * runner.q_area_scale())
+	# Cast flags are transient on the runner; release can occur much later.
+	damage *= _guard_damage_scale
+	runner.spawn_impact(origin, damage, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "BAQ", "impact", 1, _guard_proc_scale, PackedStringArray(["core_strike"])), 2.0 * AscensionRunner.R * _guard_area_scale)
 	counters["guard_waves"] = int(counters["guard_waves"]) + 1
 	if has("BAQ3"):
 		_fire_mirror()
 	if has("BAQ4") or has("BAE2"):
 		if not _bunker.is_empty():
 			_resolve_bunker(has("BAE2"))
-		_bunker = {"pos": origin, "life": 8.0 if has("BAE2") else 3.0, "force": 30.0, "dir": facing, "half": PI if has("BAQ1") else deg_to_rad(80.0), "stored": 0.0}
+		_bunker = {"pos": origin, "life": 8.0 if has("BAE2") else 3.0, "force": 30.0, "dir": facing, "half": PI if has("BAQ1") else deg_to_rad(80.0), "stored": 0.0, "damage_scale": _guard_damage_scale, "proc_scale": _guard_proc_scale, "area_scale": _guard_area_scale}
 		counters["bunkers"] = int(counters["bunkers"]) + 1
 	return {"ok": true, "message": "RELEASE", "cooldown": 4.0}
 
@@ -662,7 +690,7 @@ func _shoot_stored(stored: Dictionary, damage: float, root: String) -> void:
 	if toward == Vector2.ZERO:
 		var nearest := runner.nearest_enemy(origin, 3.0 * AscensionRunner.L)
 		toward = (runner.enemy_position(nearest) - origin).normalized() if nearest != 0 else Vector2.RIGHT
-	runner.spawn_bullet(origin, toward, damage, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, root, "return", 1, 0.4))
+	runner.spawn_bullet(origin, toward, damage * _guard_damage_scale, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, root, "return", 1, 0.4 * _guard_proc_scale))
 
 
 func _tick_bunker(delta: float) -> void:
@@ -683,13 +711,21 @@ func _tick_bunker(delta: float) -> void:
 func _resolve_bunker(detonate: bool) -> void:
 	if _bunker.is_empty():
 		return
-	var at: Vector2 = _bunker["pos"]
+	var payload := _bunker
+	_bunker = {}
+	_emit_bunker(payload, detonate)
+
+
+func _emit_bunker(payload: Dictionary, detonate: bool, repeat_scale: float = 1.0) -> void:
+	if payload.is_empty():
+		return
+	var at: Vector2 = payload["pos"]
 	var damage := 2.0 * D()
 	if detonate and has("BAE2"):
-		damage += 0.04 * D() * float(_bunker["stored"])
-	runner.spawn_impact(at, damage, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "BAQ4", "impact", 1, 0.5), 2.0 * AscensionRunner.R)
+		damage += 0.04 * D() * float(payload["stored"])
+	damage *= float(payload.get("damage_scale", 1.0)) * repeat_scale
+	runner.spawn_impact(at, damage, AscensionTags.make("melee", AscensionTags.FAMILY_TREE, "BAQ4", "impact", 1, 0.5 * float(payload.get("proc_scale", 1.0))), 2.0 * AscensionRunner.R * float(payload.get("area_scale", 1.0)))
 	counters["bunker_waves"] = int(counters["bunker_waves"]) + 1
-	_bunker = {}
 
 
 # ---------------------------------------------------------------- RUPTURE (V)

@@ -48,9 +48,10 @@ var _boss_resisted: Array = []          # [clock, distance]
 var _throws: Dictionary = {}            # handle -> {dir}
 var _collided: Dictionary = {}          # instruction key -> true
 var _instruction: int = 0
-var _repeat: Dictionary = {}            # {delay, at, dir, radius, cone}
+var _repeats: Array[Dictionary] = []    # each cast retains its own Aftershock and scales
 var _q_hold: float = 0.0
 var _q_pending: Dictionary = {}
+var _q_last_push := false
 var _graves: Array = []                 # {at, life, pulsed: {}}
 var _pinballs: Array = []               # {a, b, life, bodies: {handle: legs}}
 var _kneel: Dictionary = {}
@@ -107,7 +108,7 @@ func modify_outgoing_damage(preview: Dictionary, raw: float) -> float:
 
 # ---------------------------------------------------------------- wells
 
-func place_well(at: Vector2, kind: String = "well", placement_damage: bool = true, acquire_bonus: float = 0.0, life: float = WELL_LIFE) -> Dictionary:
+func place_well(at: Vector2, kind: String = "well", placement_damage: bool = true, acquire_bonus: float = 0.0, life: float = WELL_LIFE, placement_scale: float = 1.0, proc_scale: float = 1.0) -> Dictionary:
 	if wells.size() >= WELL_CAP:
 		_expire_well(wells[0])
 	_serial += 1
@@ -115,10 +116,10 @@ func place_well(at: Vector2, kind: String = "well", placement_damage: bool = tru
 	wells.append(well)
 	counters["wells"] = int(counters["wells"]) + 1
 	if placement_damage and has("DO01"):
-		var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DO01", "well", 1, 0.4)
+		var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DO01", "well", 1, 0.4 * proc_scale)
 		tags.append("cast:well:%d" % int(well["id"]))
 		for handle in runner.enemies_in_radius(at, float(well["radius"])):
-			runner.damage_enemy(handle, 0.5 * D(), tags)
+			runner.damage_enemy(handle, 0.5 * D() * placement_scale, tags)
 			counters["placement_hits"] = int(counters["placement_hits"]) + 1
 	if has("DO03"):
 		_consume_stain(well)
@@ -720,7 +721,7 @@ func _tick_throw_releases() -> void:
 # ---------------------------------------------------------------- Compel (Q)
 
 func q_is_hold(id: String) -> bool:
-	return id == "DOQ" and has("DOQ3") and not runner.automatic_cast and not runner.reaction_cast
+	return id == "DOQ" and has("DOQ3") and not runner.automatic_cast and not runner.reaction_cast and not runner.encore_cast
 
 
 func activate_q(id: String) -> Dictionary:
@@ -728,11 +729,13 @@ func activate_q(id: String) -> Dictionary:
 		return {"ok": false, "message": "NOT DOMINION", "cooldown": 0.0}
 	var origin := runner.player_position()
 	var aim := runner.auto_aim_for("DOQ") if runner.automatic_cast else runner.aim_target()
-	if has("DOQ3") and not runner.automatic_cast and not runner.reaction_cast:
+	if has("DOQ3") and not runner.automatic_cast and not runner.reaction_cast and not runner.encore_cast:
 		_q_hold = 0.0
 		_q_pending = {"origin": origin, "aim": aim}
 		return {"ok": true, "message": "COMPEL", "cooldown": 0.0}
-	var push := runner.automatic_cast and has("DOQ3") and String(runner.ledger.state.get("compel_default", "pull")) == "push"
+	var push := _q_last_push if runner.encore_cast else (runner.automatic_cast and has("DOQ3") and String(runner.ledger.state.get("compel_default", "pull")) == "push")
+	if not runner.encore_cast and not runner.automatic_cast and not runner.reaction_cast:
+		_q_last_push = push
 	_compel(origin, aim, push, 1.0)
 	return {"ok": true, "message": "COMPEL", "cooldown": 6.0}
 
@@ -746,7 +749,8 @@ func release_q(id: String) -> Dictionary:
 		return {"ok": false, "message": "", "cooldown": 0.0}
 	var pending := _q_pending
 	_q_pending = {}
-	_compel(pending["origin"], pending["aim"], _q_hold >= 0.3, 1.0)
+	_q_last_push = _q_hold >= 0.3
+	_compel(pending["origin"], pending["aim"], _q_last_push, 1.0)
 	return {"ok": true, "message": "COMPEL", "cooldown": 6.0}
 
 
@@ -765,7 +769,12 @@ func auto_target(_id: String) -> Vector2:
 
 ## The pull (or shove): a 90-degree 3R cone toward the cursor, or Ring's
 ## 2.5R circle at the cursor; up to R of movement, 1D, interrupt.
-func _compel(origin: Vector2, aim: Vector2, push: bool, scale: float, repeat: bool = false) -> void:
+func _compel(origin: Vector2, aim: Vector2, push: bool, scale: float, repeat: bool = false, cast_damage_scale: float = -1.0, cast_proc_scale: float = -1.0) -> void:
+	# Delayed mutations retain their originating cast after runner flags end.
+	if cast_damage_scale < 0.0:
+		cast_damage_scale = runner.q_scale()
+	if cast_proc_scale < 0.0:
+		cast_proc_scale = runner.q_proc_scale()
 	counters["compels"] = int(counters["compels"]) + 1
 	var centre := aim
 	if has("DOQ1"):
@@ -784,17 +793,17 @@ func _compel(origin: Vector2, aim: Vector2, push: bool, scale: float, repeat: bo
 				affected.append(handle)
 	if not repeat:
 		if has("DOE1"):
-			_graves.append({"at": centre, "life": 3.0, "pulsed": {}})
+			_graves.append({"at": centre, "life": 3.0, "pulsed": {}, "damage_scale": cast_damage_scale, "proc_scale": cast_proc_scale})
 			counters["graves"] = int(counters["graves"]) + 1
 		if has("DOE2"):
 			var perp := Vector2(-dir.y, dir.x)
-			var table := {"a": centre - perp * AscensionRunner.R, "b": centre + perp * AscensionRunner.R, "life": 3.0, "bodies": {}, "tick": 0.0}
+			var table := {"a": centre - perp * AscensionRunner.R, "b": centre + perp * AscensionRunner.R, "life": 3.0, "bodies": {}, "tick": 0.0, "damage_scale": cast_damage_scale, "proc_scale": cast_proc_scale}
 			for handle in affected:
 				(table["bodies"] as Dictionary)[handle] = 0
 			_pinballs.append(table)
 			counters["pinballs"] = int(counters["pinballs"]) + 1
-	var damage := D() * runner.q_scale() * scale
-	var pp := 1.0 * runner.q_proc_scale()
+	var damage := D() * cast_damage_scale * scale
+	var pp := cast_proc_scale
 	var tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOQ", "pull", 1, pp, PackedStringArray(["core_strike"]))
 	tags.append("cast:compel:%d" % int(counters["compels"]))
 	_instruction += 1
@@ -829,13 +838,13 @@ func _compel(origin: Vector2, aim: Vector2, push: bool, scale: float, repeat: bo
 			var out: Array[int] = []
 			var ts := PackedFloat32Array()
 			var count := EnemyCombat.enemies_on_segment(from, to, 10.0, handle, out, ts)
-			var throw_tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOQ5", "line", 2, 0.3)
+			var throw_tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOQ5", "line", 2, 0.3 * cast_proc_scale)
 			for i in range(count):
-				runner.damage_enemy(out[i], 0.8 * D(), throw_tags)
+				runner.damage_enemy(out[i], 0.8 * D() * cast_damage_scale, throw_tags)
 			runner.move_enemy_to(handle, to)
 	if has("DOQ6") and not reached.is_empty():
-		var crush := minf(6.0 * D(), D() + 0.25 * D() * float(moved))
-		var crush_tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOQ6", "impact", 2, 0.5)
+		var crush := minf(6.0 * D(), D() + 0.25 * D() * float(moved)) * cast_damage_scale
+		var crush_tags := AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOQ6", "impact", 2, 0.5 * cast_proc_scale)
 		for handle in reached:
 			if runner.enemy_alive(handle):
 				runner.damage_enemy(handle, crush, crush_tags)
@@ -854,21 +863,20 @@ func _compel(origin: Vector2, aim: Vector2, push: bool, scale: float, repeat: bo
 		if group.size() >= 2:
 			make_link(group)
 	if not repeat:
-		place_well(centre, "compel", has("DO01"))
+		place_well(centre, "compel", has("DO01"), 0.0, WELL_LIFE, cast_damage_scale, cast_proc_scale)
 		if has("DOQ4"):
-			_repeat = {"delay": 1.0, "origin": origin, "aim": aim, "push": not push}
+			_repeats.append({"delay": 1.0, "origin": origin, "aim": aim, "push": not push, "damage_scale": cast_damage_scale, "proc_scale": cast_proc_scale})
 	runner.note_impact_fx(centre, 2.5 * AscensionRunner.R if has("DOQ1") else AscensionRunner.R)
 
 
 func _tick_repeat(delta: float) -> void:
-	if _repeat.is_empty():
-		return
-	_repeat["delay"] = float(_repeat["delay"]) - delta
-	if float(_repeat["delay"]) <= 0.0:
-		var entry := _repeat
-		_repeat = {}
+	for entry in _repeats.duplicate():
+		entry["delay"] = float(entry["delay"]) - delta
+		if float(entry["delay"]) > 0.0:
+			continue
+		_repeats.erase(entry)
 		counters["repeats"] = int(counters["repeats"]) + 1
-		_compel(entry["origin"], entry["aim"], bool(entry["push"]), 0.6, true)
+		_compel(entry["origin"], entry["aim"], bool(entry["push"]), 0.6, true, float(entry["damage_scale"]), float(entry["proc_scale"]))
 
 
 func _grave_pulse(grave: Dictionary, corpse: Vector2) -> void:
@@ -878,7 +886,7 @@ func _grave_pulse(grave: Dictionary, corpse: Vector2) -> void:
 	for handle in runner.enemies_in_radius(at, 3.0 * AscensionRunner.R):
 		if runner.enemy_alive(handle) and not runner.is_boss(handle):
 			_forced_step(handle, corpse, AscensionRunner.R, _instruction)
-	runner.spawn_impact(at, D(), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE1", "impact", 2, 0.4), AscensionRunner.R)
+	runner.spawn_impact(at, D() * float(grave.get("damage_scale", 1.0)), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE1", "impact", 2, 0.4 * float(grave.get("proc_scale", 1.0))), AscensionRunner.R)
 
 
 func _tick_pinballs(delta: float) -> void:
@@ -899,14 +907,14 @@ func _tick_pinballs(delta: float) -> void:
 				var max_legs := 1 if runner.is_elite(int(handle)) else 2
 				if runner.is_boss(int(handle)):
 					if legs < 2:
-						runner.damage_enemy(int(handle), D(), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE2", "impact", 2, 0.3))
+						runner.damage_enemy(int(handle), D() * float(table.get("damage_scale", 1.0)), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE2", "impact", 2, 0.3 * float(table.get("proc_scale", 1.0))))
 						bodies[handle] = legs + 1
 					continue
 				if legs >= max_legs:
 					var tangent := ((table["b"] as Vector2) - (table["a"] as Vector2)).normalized().rotated(PI / 2.0)
 					_instruction += 1
 					_forced_step(int(handle), runner.enemy_position(int(handle)) + tangent * AscensionRunner.R, AscensionRunner.R, _instruction)
-					runner.damage_enemy(int(handle), D(), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE2", "impact", 2, 0.3))
+					runner.damage_enemy(int(handle), D() * float(table.get("damage_scale", 1.0)), AscensionTags.make("magic", AscensionTags.FAMILY_TREE, "DOE2", "impact", 2, 0.3 * float(table.get("proc_scale", 1.0))))
 					bodies.erase(handle)
 					continue
 				var target: Vector2 = table["a"] if legs % 2 == 0 else table["b"]

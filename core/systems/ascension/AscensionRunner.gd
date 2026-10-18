@@ -1017,6 +1017,11 @@ func _cast_encore() -> void:
 	var engine := engine_for(_encore_id)
 	if engine == null:
 		return
+	# A held cast has not delivered its release yet. Repeating it now would
+	# replace the original guard/Compel and wait on a key already released.
+	if _q_holding:
+		_encore_delay = 0.05
+		return
 	encore_cast = true
 	engine.activate_q(_encore_id)
 	encore_cast = false

@@ -221,7 +221,186 @@ func _run() -> void:
 	D = _runner.native_damage()
 	_check(int(execution.counters["gavels"]) == 2 and is_equal_approx(execution._gavel_damage(), 3.0 * D * 0.5), "Encore repeats it once after 0.4 s at 50%% (%d casts)" % int(execution.counters["gavels"]))
 
+	# A held Q must finish before its repeat starts. The repeated guard has
+	# no held input, so it must end itself, keep its half-strength wave and
+	# leave the original recovery running rather than restarting it.
+	_load("melee", ["BA01", "BAQ", "pick.P1"])
+	var bastion := _runner.engine_for("BAQ") as BastionEngine
+	_runner.note_revelation_ended("BAV")
+	_runner.activate_q()
+	_runner._q_holding = true
+	_runner._cast_encore()
+	_check(int(bastion.counters["guards"]) == 1 and bastion.guarding, "Encore waits for the player's original held Guard to finish")
+	bastion.release_q("BAQ")
+	_runner._q_holding = false
+	_runner.flush_attacks()
+	_runner.q_cooldown_left = 2.25
+	_runner.q_cooldown_max = 4.0
+	var guard_target := _spawn(1000.0, origin + Vector2(60, 0))
+	_runner._cast_encore()
+	_check(bastion.guarding, "Encore starts a fresh finite Guard after the manual release")
+	bastion.tick(0.76)
+	_runner.flush_attacks()
+	_check(not bastion.guarding and int(bastion.counters["guard_waves"]) == 2, "the repeated Guard releases without a second key press")
+	_check(is_equal_approx(_runner.enemy_hp(guard_target), 1000.0 - 0.5 * _runner.native_damage()), "the delayed Encore guard wave retains its 50 percent payload")
+	_check(is_equal_approx(_runner.q_cooldown_left, 2.25), "Encore's delayed release never restarts the original Guard recovery")
+	EnemyWorld.remove_enemy(guard_target, &"test")
+	_runner._encore_delay = -1.0
+
+	# Bomb Bunker must replay the accepted action, not choose a new action
+	# from the bunker left by the original Guard's release.
+	_load("melee", ["BA01", "BAQ", "BAQ4", "BAQ2", "BAE2", "pick.P1"])
+	bastion = _runner.engine_for("BAQ") as BastionEngine
+	_runner.note_revelation_ended("BAV")
+	_runner.activate_q()
+	bastion.release_q("BAQ")
+	_runner.flush_attacks()
+	_runner.q_cooldown_left = 2.0
+	_runner._cast_encore()
+	_check(bastion.guarding and int(bastion.counters["bunker_waves"]) == 0, "Bomb Bunker Encore repeats Guard without prematurely detonating its original bunker")
+	bastion.tick(0.76)
+	_runner.flush_attacks()
+	_check(not bastion.guarding and int(bastion.counters["guards"]) == 2 and int(bastion.counters["bunkers"]) == 2, "Bomb Bunker's repeated Guard releases and leaves its own finite bunker")
+	guard_target = _spawn(1000.0, origin + Vector2(60, 0))
+	bastion._tick_bunker(8.1)
+	_runner.flush_attacks()
+	_check(is_equal_approx(_runner.enemy_hp(guard_target), 1000.0 - _runner.native_damage()), "the Encore bunker expires with half of the normal 2D wave")
+	_check(is_equal_approx(_runner.q_cooldown_left, 2.0), "the evolved repeated Guard preserves recovery")
+	EnemyWorld.remove_enemy(guard_target, &"test")
+	_runner._encore_delay = -1.0
+
+	# Conversely, a deliberately accepted remote detonation repeats that
+	# consumed payload rather than unexpectedly starting a held Guard.
+	bastion.activate_q("BAQ")
+	bastion.release_q("BAQ")
+	bastion._bunker["stored"] = 50.0
+	_runner.flush_attacks()
+	_runner.q_cooldown_left = 0.0
+	_runner.note_revelation_ended("BAV")
+	_runner.activate_q()
+	_runner.flush_attacks()
+	# Another ordinary Guard can create a later bunker before the repeat.
+	bastion.activate_q("BAQ")
+	bastion.release_q("BAQ")
+	_runner.flush_attacks()
+	guard_target = _spawn(1000.0, origin + Vector2(60, 0))
+	_runner._cast_encore()
+	_runner.flush_attacks()
+	_check(not bastion.guarding and not bastion._bunker.is_empty(), "remote Detonate Encore preserves a later bunker and never starts Guard")
+	_check(is_equal_approx(_runner.enemy_hp(guard_target), 1000.0 - 2.0 * _runner.native_damage()), "remote Detonate Encore retains stored pressure at half of its original 4D damage")
+	EnemyWorld.remove_enemy(guard_target, &"test")
+	_runner._encore_delay = -1.0
+
+	# Mirror and Gun Shield fire after the runner's transient cast flag ends.
+	for mirror_id in ["BAQ3", "BAE1"]:
+		_load("melee", ["BA01", "BAQ", "BAQ3", "BAF1", "BR06", mirror_id, "pick.P1"])
+		bastion = _runner.engine_for("BAQ") as BastionEngine
+		ProjectileManager.clear_for_run_end()
+		_runner.note_revelation_ended("BAV")
+		_runner.activate_q()
+		bastion.release_q("BAQ")
+		_runner.flush_attacks()
+		_runner._cast_encore()
+		ProjectileManager.spawn_enemy(origin + Vector2(40, 0), Vector2.LEFT, 100.0, 5.0, 5.0, null)
+		bastion.hold_q("BAQ", 0.16)
+		bastion.release_q("BAQ")
+		var mirror_damage := 0.0
+		for bullet_index in range(ProjectileManager.active_count()):
+			if AscensionTags.value_of(ProjectileManager._tags[bullet_index], "root") == mirror_id:
+				mirror_damage += ProjectileManager._damage[bullet_index]
+		var expected_mirror := 0.375 if mirror_id == "BAQ3" else 0.5
+		_check(is_equal_approx(mirror_damage, expected_mirror * _runner.native_damage()), "%s delayed returned projectile retains Encore half damage" % mirror_id)
+		_runner.flush_attacks()
+		_runner._encore_delay = -1.0
+	ProjectileManager.clear_for_run_end()
+
+	_load("magic", ["DO01", "DO05", "DOQ", "DOQ3", "pick.P1"])
+	var dominion := _runner.engine_for("DOQ") as DominionEngine
+	_runner.aim_override = origin + Vector2(100, 0)
+	_runner.note_revelation_ended("DOV")
+	_runner.activate_q()
+	dominion.release_q("DOQ")
+	_runner._q_holding = false
+	_runner.q_cooldown_left = 3.25
+	var compel_target := _spawn(1000.0, origin + Vector2(80, 0))
+	_runner._cast_encore()
+	_check(int(dominion.counters["compels"]) == 2 and dominion._q_pending.is_empty(), "Encore's Compel repeat resolves instead of waiting for an absent key release")
+	_check(is_equal_approx(_runner.enemy_hp(compel_target), 1000.0 - 0.75 * _runner.native_damage_for("magic")), "Compel Encore halves both its 1D hit and direct 0.5D well placement (HP %.3f, D %.3f)" % [_runner.enemy_hp(compel_target), _runner.native_damage_for("magic")])
+	_check(is_equal_approx(_runner.q_cooldown_left, 3.25), "the Compel repeat preserves the original recovery")
+	EnemyWorld.remove_enemy(compel_target, &"test")
+	_runner._encore_delay = -1.0
+
+	_load("magic", ["DO01", "DO05", "DOQ", "DOQ3", "DOQ4", "pick.P1"])
+	dominion = _runner.engine_for("DOQ") as DominionEngine
+	_runner.note_revelation_ended("DOV")
+	_runner.activate_q()
+	dominion.release_q("DOQ")
+	_runner._cast_encore()
+	compel_target = _spawn(1000.0, origin + Vector2(80, 0))
+	dominion._tick_repeat(1.01)
+	_check(int(dominion.counters["repeats"]) == 2, "DOQ4 keeps the original Aftershock when Encore schedules its own")
+	_check(is_equal_approx(_runner.enemy_hp(compel_target), 1000.0 - 0.9 * _runner.native_damage_for("magic")), "original and Encore Aftershocks deal 0.6D plus 0.3D after transient cast flags clear")
+	EnemyWorld.remove_enemy(compel_target, &"test")
+	_runner._encore_delay = -1.0
+
+	for secondary_id in ["DOQ6", "DOE1", "DOE2"]:
+		_load("magic", ["DO01", "DO05", "DOQ", "DOQ3", secondary_id, "pick.P1"])
+		dominion = _runner.engine_for("DOQ") as DominionEngine
+		_runner.note_revelation_ended("DOV")
+		_runner.activate_q()
+		dominion.release_q("DOQ")
+		compel_target = _spawn(1000.0, origin + Vector2(80, 0))
+		_runner._cast_encore()
+		if secondary_id == "DOQ6":
+			_check(is_equal_approx(_runner.enemy_hp(compel_target), 1000.0 - 1.375 * _runner.native_damage_for("magic")), "Encore halves Compel Crush's 1.25D secondary hit as well as primary and placement")
+		else:
+			var hp_before_secondary := _runner.enemy_hp(compel_target)
+			if secondary_id == "DOE1":
+				dominion._grave_pulse(dominion._graves.back(), origin + Vector2(100, 0))
+				_runner.flush_attacks()
+			else:
+				dominion._tick_pinballs(0.26)
+				dominion._tick_pinballs(0.26)
+				dominion._tick_pinballs(0.26)
+			_check(is_equal_approx(_runner.enemy_hp(compel_target), hp_before_secondary - 0.5 * _runner.native_damage_for("magic")), "%s delayed Q evolution retains Encore half damage" % secondary_id)
+		EnemyWorld.remove_enemy(compel_target, &"test")
+		_runner._encore_delay = -1.0
+
 	# --- Reaction trigger choice and the elite trigger
+	_load("magic", ["DO01", "DO05", "DOQ", "DOQ3", "pick.P1"])
+	dominion = _runner.engine_for("DOQ") as DominionEngine
+	_runner.note_revelation_ended("DOV")
+	_runner.activate_q()
+	dominion.hold_q("DOQ", 0.31)
+	dominion.release_q("DOQ")
+	_runner.reaction_cast = true
+	dominion.activate_q("DOQ")
+	_runner.reaction_cast = false
+	compel_target = _spawn(1000.0, origin + Vector2(80, 0))
+	_runner._cast_encore()
+	_check(_runner.enemy_position(compel_target).x > origin.x + 120.0, "an intervening Reaction pull cannot replace Encore's original held push action")
+	EnemyWorld.remove_enemy(compel_target, &"test")
+	_runner._encore_delay = -1.0
+
+	_load("magic", ["DO01", "DO05", "DOQ", "DOQ3", "DOQ5", "pick.P1"])
+	dominion = _runner.engine_for("DOQ") as DominionEngine
+	_runner.note_revelation_ended("DOV")
+	_runner.activate_q()
+	dominion.release_q("DOQ")
+	compel_target = _spawn(1000.0, origin + Vector2(80, 0))
+	var thrown_into := _spawn(1000.0, origin + Vector2(140, 0))
+	var throw_hits: Array[float] = []
+	var observe_throw := func(hit: Dictionary):
+		if int(hit["handle"]) == thrown_into and AscensionTags.value_of(hit["tags"], "root") == "DOQ5":
+			throw_hits.append(float(hit["applied"]))
+	_runner.hit_resolved.connect(observe_throw)
+	_runner._cast_encore()
+	_runner.hit_resolved.disconnect(observe_throw)
+	_check(throw_hits.size() == 1 and is_equal_approx(throw_hits[0], 0.4 * _runner.native_damage_for("magic")), "Encore halves the separate Compel Throw collision payload")
+	EnemyWorld.remove_enemy(compel_target, &"test")
+	EnemyWorld.remove_enemy(thrown_into, &"test")
+	_runner._encore_delay = -1.0
+
 	_load("ranged", ["BR01", "BR02", "BRQ", ["G1", "melee"], "EX01", "EX02", "EXQ"])
 	execution = _runner.engine_for("EX01") as ExecutionEngine
 	_check(_runner.reaction_id == "EXQ" and _ledger.reaction_trigger() == "catastrophe", "the Reaction slot defaults to the catastrophe trigger")
