@@ -2,6 +2,16 @@
 
 The requested menu, loading, hub, cursor, boss-impact and ability/objective changes are implemented. Performance and balance reports were read and their confirmed source defects corrected. Functional verification and the final script audit pass. Native frame-time diagnostics still expose occasional 440–500 ms stalls; their exact backend cause remains unresolved and the failing results are preserved.
 
+**Objective art needs rework.** After viewing the Breach capture, the user
+identified poor centering and a mismatch with the terrain. A separate visual
+designer inspected 29 current screenshots and six source images and confirmed
+problems with anchors, perspective, material detail, state shapes and dominant
+progress rings. The six painted forms are implemented, but none is visually
+approved. Vaults and exploration objectives also lack the earlier claimed
+coverage. See the [independent review and prioritized changes](../art/reviews/2026-10-18-objective-visual-design-review.md).
+This review changes no game code or artwork; the proposed breach prototype
+and subsequent visual rework remain pending.
+
 ## What changed
 
 - Development now selects the latest readable profile after restart, or offers profile selection/creation. Opening it does not resume an attempt. The button previously depended on a profile that had not yet been selected.

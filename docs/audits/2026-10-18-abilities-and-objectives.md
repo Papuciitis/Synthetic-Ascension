@@ -1,5 +1,12 @@
 # Ability and objective presentation — 18 October 2026
 
+**Visual review correction:** the user rejected the objective props' centering
+and fit with the game world. The [independent visual-design review](../art/reviews/2026-10-18-objective-visual-design-review.md)
+confirms that the objective artwork needs rework and inventories the previously
+omitted vault and exploration forms. The implementation and functional checks
+below describe the first pass; they do not establish visual approval or
+complete objective-art coverage.
+
 Implemented and verified for human playtesting. Deadshot and Judgment now
 have distinct preparation, accepted lanes, release and aftermath presentation.
 Wardstones, Exit Rites, District Relay, Ward Vigil, Breach Seal and Wager Shrine

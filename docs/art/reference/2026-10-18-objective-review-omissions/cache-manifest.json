@@ -1,0 +1,37 @@
+{
+	"captures": [
+		{
+			"camera_center": "(3072.0, 19456.0)",
+			"file": "dangerous-alley-cache-endpoint-1280x720.png",
+			"note": "Actual planned S2 cache chunk (1, 9), role=secondary_alley_cache; no tagged item pickups were present after streaming and extra settle; absence retained, no fabricated chest",
+			"objective": "dangerous-alley-cache-endpoint",
+			"player_position": "(3072.0, 20156.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(3072.0, 19456.0)",
+			"file": "dangerous-alley-cache-endpoint-960x540.png",
+			"note": "Actual planned S2 cache chunk (1, 9), role=secondary_alley_cache; no tagged item pickups were present after streaming and extra settle; absence retained, no fabricated chest",
+			"objective": "dangerous-alley-cache-endpoint",
+			"player_position": "(3072.0, 20156.0)",
+			"window": "(960, 540)"
+		}
+	],
+	"failures": 1,
+	"notes": [
+		{
+			"id": 1736497563,
+			"missing": true,
+			"note": "Actual planned S2 cache chunk (1, 9), role=secondary_alley_cache; no tagged item pickups were present after streaming and extra settle; absence retained, no fabricated chest",
+			"objective": "cache",
+			"pickups": 0,
+			"position": "(3072.0, 19456.0)"
+		}
+	],
+	"presentation": "Current production visuals in actual Game; frozen controlled states, not human-played encounters",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scope": "World objective forms. Segment 1 guided milestone text, opening illustrations and NPC conversations excluded; Segment 1 secondary rooms reuse building/IndoorVolume forms. RitualInterference is included as adjacent hazard, not objective.",
+	"segment": 2,
+	"world_seed": 16102026
+}

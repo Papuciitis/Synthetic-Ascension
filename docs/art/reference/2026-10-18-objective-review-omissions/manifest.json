@@ -1,0 +1,117 @@
+{
+	"captures": [
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-exterior-1280x720.png",
+			"note": "Actual generated parcel and tagged IndoorVolume; exterior approach",
+			"objective": "searchable-building-exterior",
+			"player_position": "(544.0, 19266.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-exterior-960x540.png",
+			"note": "Actual generated parcel and tagged IndoorVolume; exterior approach",
+			"objective": "searchable-building-exterior",
+			"player_position": "(544.0, 19266.0)",
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-interior-1280x720.png",
+			"note": "Production entry method; 5 live local enemies frozen, player immortal",
+			"objective": "searchable-building-interior",
+			"player_position": "(544.0, 18944.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-interior-960x540.png",
+			"note": "Production entry method; 5 live local enemies frozen, player immortal",
+			"objective": "searchable-building-interior",
+			"player_position": "(544.0, 18944.0)",
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-reward-1280x720.png",
+			"note": "Production damage used to stage clearance; completed=true; production payout",
+			"objective": "searchable-building-reward",
+			"player_position": "(544.0, 18944.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(544.0, 18944.0)",
+			"file": "searchable-building-reward-960x540.png",
+			"note": "Production damage used to stage clearance; completed=true; production payout",
+			"objective": "searchable-building-reward",
+			"player_position": "(544.0, 18944.0)",
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "cursed-vault-states-1280x720.png",
+			"note": "Three frozen production CursedVault instances: closed, 53% channel, opened/spent. No reward invented",
+			"objective": "cursed-vault-states",
+			"player_position": "(-1224.0, 1224.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "cursed-vault-states-960x540.png",
+			"note": "Three frozen production CursedVault instances: closed, 53% channel, opened/spent. No reward invented",
+			"objective": "cursed-vault-states",
+			"player_position": "(-1224.0, 1224.0)",
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "exit-rite-last-chance-1280x720.png",
+			"note": "Production ExitRite._spawn_last_chance_vault at 85%; three safeguards; actual radius+32 placement",
+			"objective": "exit-rite-last-chance",
+			"player_position": "(-1119.0, 1114.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "exit-rite-last-chance-960x540.png",
+			"note": "Production ExitRite._spawn_last_chance_vault at 85%; three safeguards; actual radius+32 placement",
+			"objective": "exit-rite-last-chance",
+			"player_position": "(-1119.0, 1114.0)",
+			"window": "(960, 540)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "ritual-interference-hazard-1280x720.png",
+			"note": "Production RitualInterference at default radius420; adjacent hazard explicitly not an objective",
+			"objective": "ritual-interference-hazard",
+			"player_position": "(-1119.0, 1114.0)",
+			"window": "(1280, 720)"
+		},
+		{
+			"camera_center": "(-1024.0, 1024.0)",
+			"file": "ritual-interference-hazard-960x540.png",
+			"note": "Production RitualInterference at default radius420; adjacent hazard explicitly not an objective",
+			"objective": "ritual-interference-hazard",
+			"player_position": "(-1119.0, 1114.0)",
+			"window": "(960, 540)"
+		}
+	],
+	"failures": 1,
+	"notes": [
+		{
+			"clear_completed": true,
+			"id": 445533616,
+			"objective": "building",
+			"position": "(544.0, 18944.0)",
+			"size_cells": "(9, 6)",
+			"spawned_enemies": 5
+		}
+	],
+	"presentation": "Current production visuals in actual Game; frozen controlled states, not human-played encounters",
+	"save_writes": 0,
+	"scene": "res://scenes/game.tscn",
+	"scope": "World objective forms. Segment 1 guided milestone text, opening illustrations and NPC conversations excluded; Segment 1 secondary rooms reuse building/IndoorVolume forms. RitualInterference is included as adjacent hazard, not objective.",
+	"segment": 2,
+	"world_seed": 16102026
+}
