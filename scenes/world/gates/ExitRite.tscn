@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://exitrite1"]
 
 [ext_resource type="Script" path="res://core/systems/world/ExitRite.gd" id="1_exit_script"]
-[ext_resource type="Texture2D" path="res://assets/world/landmarks/landmark_gate_frame_01.png" id="2_gate"]
-[ext_resource type="Texture2D" path="res://assets/world/decals/decal_sigil_01.png" id="3_sigil"]
+[ext_resource type="Texture2D" path="res://assets/world/objectives/painted/exit_rite_v1.png" id="2_gate"]
+[ext_resource type="Texture2D" path="res://assets/world/objectives/painted/precision_sight_v1.png" id="3_sigil"]
 
 [sub_resource type="CanvasItemMaterial" id="mat_add"]
 blend_mode = 1
@@ -17,7 +17,7 @@ script = ExtResource("1_exit_script")
 texture = ExtResource("3_sigil")
 texture_filter = 2
 material = SubResource("mat_add")
-scale = Vector2(0.14, 0.14)
+scale = Vector2(0.22, 0.22)
 modulate = Color(1, 1, 1, 0.10)
 z_index = -25
 

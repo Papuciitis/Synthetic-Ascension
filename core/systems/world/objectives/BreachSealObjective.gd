@@ -42,6 +42,22 @@ var _progress: PackedFloat32Array = PackedFloat32Array()
 var _sealed: PackedByteArray = PackedByteArray()
 var _spawn_cd: PackedFloat32Array = PackedFloat32Array()
 var _spawned: Array = [] # per breach: the enemy nodes it poured that may still be alive
+var _site_art: Array[Sprite2D] = []
+
+
+func build_presentation() -> void:
+	objective_art = WorldArt.install(self, "breach", 92.0)
+	for index in range(_positions.size()):
+		_site_art.append(WorldArt.install(self, "breach", 100.0, _positions[index], "BreachSite%d" % index))
+	update_presentation()
+
+
+func update_presentation() -> void:
+	if objective_art != null:
+		objective_art.call("set_state", "complete" if is_finished() else "dormant")
+	for index in range(_site_art.size()):
+		var fraction := clampf(_progress[index] / maxf(0.001, seal_seconds), 0.0, 1.0)
+		_site_art[index].call("set_state", "complete" if _sealed[index] != 0 else ("working" if fraction > 0.0 else "dormant"), fraction)
 
 
 func is_layout_built() -> bool:
@@ -194,34 +210,22 @@ func checklist_id() -> StringName:
 
 
 func _draw() -> void:
-	var pulse := 0.5 + 0.5 * sin(pulse_time * 3.4)
 	var done := is_finished()
-	var core := Color(0.30, 0.95, 0.82, 0.90) if done else Color(0.98, 0.34, 0.26, 0.92)
-	draw_circle(Vector2.ZERO, 40.0, Color(core.r, core.g, core.b, 0.16))
-	draw_arc(Vector2.ZERO, 62.0 + pulse * 4.0, 0.0, TAU, 64, core, 5.0, true)
-	draw_arc(Vector2.ZERO, activation_radius_px, 0.0, TAU, 96, Color(core.r, core.g, core.b, 0.05), 3.0, true)
-
+	var core := Color(0.4, 0.95, 0.8, 0.95) if done else Color(0.98, 0.55, 0.35, 0.92)
 	for index in range(_positions.size()):
-		var local_pos := _positions[index]
-		var sealed: bool = _sealed[index] != 0
-		var colour := Color(0.30, 0.95, 0.82, 0.96) if sealed else Color(0.99, 0.42, 0.22, 0.96)
-		draw_line(Vector2.ZERO, local_pos, Color(core.r, core.g, core.b, 0.18), 3.0, true)
-
+		var at := _positions[index]
+		var sealed := _sealed[index] != 0
+		var color := Color(0.38, 0.9, 0.73, 0.85) if sealed else Color(0.98, 0.5, 0.28, 0.9)
+		draw_dashed_line(Vector2.ZERO, at, Color(core.r, core.g, core.b, 0.15), 1.0, 12.0, true, true)
+		var fraction := clampf(_progress[index] / maxf(0.001, seal_seconds), 0.0, 1.0)
+		WorldArt.draw_boundary(self, at, seal_radius_px, color, fraction if not sealed else -1.0)
 		if sealed:
-			draw_circle(local_pos, 30.0, Color(colour.r, colour.g, colour.b, 0.22))
-			draw_arc(local_pos, 46.0, 0.0, TAU, 48, colour, 5.0, true)
-			continue
-
-		# An open breach breathes: it has to read as a live thing across a room,
-		# because deciding which one to go to first is the objective.
-		var breath := 1.0 + 0.10 * sin(pulse_time * 4.6 + float(index) * 1.7)
-		draw_circle(local_pos, seal_radius_px, Color(colour.r, colour.g, colour.b, 0.045))
-		draw_arc(local_pos, seal_radius_px, 0.0, TAU, 64, Color(colour.r, colour.g, colour.b, 0.30), 3.0, true)
-		draw_circle(local_pos, 34.0 * breath, Color(colour.r, colour.g, colour.b, 0.26))
-		draw_arc(local_pos, 50.0 * breath, 0.0, TAU, 48, colour, 6.0, true)
-		if seal_seconds > 0.0 and _progress[index] > 0.0:
-			var fraction := clampf(_progress[index] / seal_seconds, 0.0, 1.0)
-			draw_arc(local_pos, 62.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 48, Color(1.0, 0.95, 0.65, 1.0), 8.0, true)
-
+			WorldArt.draw_complete(self, at + Vector2(0, 25), 14.0)
+		else:
+			var alpha := 0.35 + 0.15 * WorldArt.pulse(pulse_time + float(index), 3.4)
+			draw_line(at + Vector2(-7, 15), at + Vector2(7, -9), Color(0.98, 0.47, 0.24, alpha), 3.0, true)
+	draw_completion(Vector2(0, 25), 80.0)
 	var label := "BREACHES SEALED" if done else "SEAL THE BREACHES (%d OPEN)" % open_count()
-	draw_string(ThemeDB.fallback_font, Vector2(-210.0, -100.0), label, HORIZONTAL_ALIGNMENT_CENTER, 420.0, 24, core)
+	var at := Vector2(-220.0, -106.0)
+	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, core)

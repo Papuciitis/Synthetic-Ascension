@@ -1,0 +1,50 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: three weighted Ranged Core hits expose a Weak Point without consuming it (170.0)
+PASS: the next Ranged Core hit consumes it for +1D (148.0)
+PASS: a payload without core_strike builds no Read
+PASS: the first Core hit beyond 2R exposes at once
+PASS: and the next hit consumes for +1D (168.0)
+PASS: Far Shot exposes each enemy once
+PASS: Penetrator adds two pierce and a 0.2D ramp to native shots
+PASS: each crossed target adds 0.2D to later hits on the trajectory (190.0 / 187.6 / 185.2)
+PASS: consuming a Weak Point exposes the next enemy struck by the same projectile
+PASS: 0.8 s without a native input stores Aim: +1D and Proc Power 1.25
+PASS: taking damage removes Aim
+PASS: Bank Shot: one terrain bounce at 75%% with Proc Power 0.7
+PASS: Cross-Eyed alternates 20 degrees and multiplies bounces by 1.5 up to three times
+PASS: a Core projectile that exhausts pierce returns along its path for 60%% and can kill
+PASS: Long Game stores a spare round from a returning kill
+PASS: the next native input fires the spare round from the return endpoint
+PASS: Overpenetrate without Return Shot: unused pierce bursts 1D in R/2 at the endpoint (188.0)
+PASS: killing an exposed enemy after crossing another emits two split shots
+PASS: a shot aimed through a Weak Point's centre refunds 0.25 s of Q recovery
+PASS: Deadeye: a manually centred Weak Point shot gains +1D and one pierce
+PASS: two trajectories within 0.5 s add 1D once (168.0)
+PASS: Smart Rounds curve toward an exposed target at 80%% damage
+PASS: a miss returns once from the far screen edge
+PASS: One Bullet: interval doubled, main projectile 3D at Proc Power 1.25
+PASS: a missed Melee strike returns as a 0.8D crossing wave (190.4)
+PASS: a strike that hit returns nothing
+PASS: six Weak Points consumed under one root call six edge guns (5 lines)
+PASS: Q slows the world to 35%% while aiming
+PASS: release fires a 4D beam across the screen with an 8 s cooldown (452.0)
+PASS: Quick Draw fires at once for 3D with a 5 s cooldown; Twin Shot lines deal 65% (476.6)
+PASS: the second line follows after 0.15 s from R to the right (476.6)
+PASS: Last Round executes a normal left below 25%%
+PASS: and adds +1D against an elite below 25% (164.6)
+PASS: Fan: five parallel lines at 35% each (483.2)
+PASS: Recalculate: a kill by the opening beam fires a 1.5D line from the victim toward aim
+PASS: Kill Line redraws a 2D line from each fresh victim toward aim (1)
+PASS: Smart Grid places four edge guns
+PASS: each gun fires a 1.5D line every 0.5 s
+PASS: Shot Speed rank 2 raises speed and range by 80%% x 2/82
+PASS: Q Damage rank 4 adds 1%% x sqrt(4) to every Q
+PASS: V slows the world to 20%% for up to 1.5 s of plotting
+PASS: three placed lines fire for 5D each; a target crossed by all three takes every hit (4820.0)
+PASS: Back and Forth fires each line again after 0.5 s at 60% (4712.0)
+PASS: Auto-Plot picks lines itself without a pause
+PASS: and fires after a 0.4 s tell
+PASS: One Line sweeps for 3D every 0.3 s, at most five hits per target (4820.0)
+PASS: Back and Forth adds a 0.75 s reverse sweep at half damage (4766.0)
+AscensionPrecisionTest: 47 passed, 0 failed

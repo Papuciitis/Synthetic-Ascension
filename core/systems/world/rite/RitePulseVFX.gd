@@ -24,8 +24,9 @@ func _process(delta: float) -> void:
 func _draw() -> void:
 	var t := clampf(_age / _duration, 0.0, 1.0)
 	var eased := 1.0 - pow(1.0 - t, 3.0)
-	var ring_radius := lerpf(18.0, _target_radius, eased)
-	var alpha := pow(1.0 - t, 1.6)
+	var reduced := SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	var ring_radius := _target_radius if reduced else lerpf(18.0, _target_radius, eased)
+	var alpha := AccessibilityPresentation.current_flash_alpha(pow(1.0 - t, 1.6))
 	var colour := Color(_accent.r, _accent.g, _accent.b, alpha)
 	# A short translucent front makes the displacement read as an authored
 	# repulsion, not enemies coincidentally sliding. It never shakes the camera.

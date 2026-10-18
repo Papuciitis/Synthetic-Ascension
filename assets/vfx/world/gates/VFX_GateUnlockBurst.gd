@@ -27,7 +27,9 @@ func _draw() -> void:
 	var p := clampf(_t / duration, 0.0, 1.0)
 	var k := 1.0 - p
 	k = k * k
-	var r := lerpf(radius * 0.25, radius, 1.0 - pow(1.0 - p, 3.0))
+	k *= AccessibilityPresentation.current_flash_alpha(1.0)
+	var reduced := SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	var r := radius if reduced else lerpf(radius * 0.25, radius, 1.0 - pow(1.0 - p, 3.0))
 
 	# Pixel-art kit (Batch B, 2026-09-27): two ring sprites replace the double arc, and a soft disc sprite replaces the early flash circle.
 	VfxKit.draw_ring(self, Vector2.ZERO, r, Color(0.65, 0.90, 1.0, 0.55 * k), 6.0)

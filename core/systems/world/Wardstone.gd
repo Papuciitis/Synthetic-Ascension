@@ -1,6 +1,8 @@
 extends Node2D
 class_name Wardstone
 
+const WorldArt := preload("res://core/systems/world/objectives/ObjectiveWorldArt.gd")
+
 signal activated(stone: Wardstone)
 
 @export var capture_time: float = 2.0
@@ -72,7 +74,8 @@ func _ready() -> void:
 		sigil.rotation = randf() * TAU
 		sigil.modulate.a = 0.14
 	if obelisk != null:
-		obelisk.modulate = Color(0.92, 0.92, 0.92, 1.0)
+		obelisk.set_script(WorldArt)
+		obelisk.call("configure", "wardstone", 142.0)
 
 	_set_idle_intensity(0.28)
 
@@ -86,15 +89,17 @@ func _process(delta: float) -> void:
 
 	_spin_t += delta
 	if sigil != null:
-		# Very slow rotation + soft breathe
-		sigil.rotation += 0.08 * delta
-		var breathe := 0.5 + 0.5 * sin(_spin_t * 1.1)
+		if not WorldArt.reduced_motion():
+			sigil.rotation += 0.04 * delta
+		var breathe := WorldArt.pulse(_spin_t, 1.1)
 		var a := 0.14 if not _active else 0.26
 		# While capturing, let it ramp up so it feels "busy"
 		if (not _active) and _player_inside and capture_time > 0.0:
 			var t := clampf(_capture / capture_time, 0.0, 1.0)
 			a = lerpf(0.16, 0.30, t)
 		sigil.modulate.a = a * (0.85 + 0.15 * breathe)
+	if obelisk != null:
+		obelisk.call("set_state", "complete" if _active else ("working" if _player_inside else "dormant"), _capture / maxf(capture_time, 0.001))
 
 	if _active:
 		_set_idle_intensity(0.65)
@@ -144,6 +149,8 @@ func _activate() -> void:
 		return
 	_active = true
 	add_to_group(&"wardstones_active")
+	if obelisk != null:
+		obelisk.call("set_state", "complete", 1.0)
 
 	var sm := get_node_or_null("/root/SfxManager")
 	if sm != null:
@@ -176,7 +183,7 @@ func _activate() -> void:
 			burst.call("setup", global_position, capture_zone_radius + 18.0)
 
 	# Tiny visual pop
-	if sigil != null:
+	if sigil != null and not WorldArt.reduced_motion():
 		var tw := create_tween()
 		tw.tween_property(sigil, "scale", sigil.scale * 1.10, 0.12).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		tw.tween_property(sigil, "scale", sigil.scale, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -196,6 +203,8 @@ func restore_active() -> void:
 	_set_idle_intensity(0.65)
 	if sigil != null:
 		sigil.modulate.a = 0.26
+	if obelisk != null:
+		obelisk.call("set_state", "complete", 1.0)
 	queue_redraw()
 
 
@@ -275,10 +284,17 @@ func _draw() -> void:
 
 	if show_stability:
 		var c := Color(0.25, 0.55, 0.70, 0.10) if not _active else Color(0.35, 0.88, 0.80, 0.16)
-		draw_arc(Vector2.ZERO, stability_radius, 0.0, TAU, 96, c, 3.0, true)
+		draw_arc(Vector2.ZERO, get_stability_radius(), 0.0, TAU, 96, c, 3.0, true)
 
 	# Capture ring
-	draw_arc(Vector2.ZERO, capture_zone_radius, 0.0, TAU, 64, Color(1, 1, 1, 0.22), 2.0, true)
+	WorldArt.draw_boundary(self, Vector2.ZERO, capture_zone_radius, Color(0.48, 0.8, 0.79, 0.85))
+	if _active:
+		WorldArt.draw_complete(self, Vector2(0, 27), 12.0)
+	if _active or _stability_ring_near:
+		var label := "ANCHORED" if _active else ("ATTUNING" if _player_inside else "WARDSTONE")
+		var at := Vector2(-110.0, -132.0)
+		draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 220.0, 18, 4, Color(0.025, 0.02, 0.03, 0.95))
+		draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 220.0, 18, Color(0.7, 0.9, 0.84, 0.95))
 
 	# Capture progress (kept as requested)
 	if (not _active) and capture_time > 0.0 and _capture > 0.0:

@@ -1,0 +1,17 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: real Precision engine builds
+PASS: Twin Fan preview shows every accepted beam
+PASS: Wallbang preview uses its actual narrower hit radius
+PASS: one painter is attached to the real runner
+PASS: release preserves the existing hold and slow lifecycle
+PASS: burst and proc releases have fixed capacity
+PASS: presentation does not move or charge health from the player
+PASS: presentation pauses with the encounter
+PASS: the last released lane expires
+PASS: Judgment plots match the real wide line radius
+PASS: Reduced Motion and flashes off retain essential aiming geometry
+PASS: death clears presentation even when the tree already paused
+PASS: death wipes held and released visual state
+PASS: a replaced engine cannot leave a stale painter
+PrecisionPresentationTest: 14 passed, 0 failed

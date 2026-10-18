@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://wardstone1"]
 
 [ext_resource type="Script" path="res://core/systems/world/Wardstone.gd" id="1_wardstone_script"]
-[ext_resource type="Texture2D" path="res://assets/world/landmarks/landmark_obelisk_01.png" id="2_obelisk"]
-[ext_resource type="Texture2D" path="res://assets/world/decals/decal_sigil_01.png" id="3_sigil"]
+[ext_resource type="Texture2D" path="res://assets/world/objectives/painted/wardstone_v1.png" id="2_obelisk"]
+[ext_resource type="Texture2D" path="res://assets/world/objectives/painted/precision_sight_v1.png" id="3_sigil"]
 [ext_resource type="PackedScene" path="res://assets/vfx/world/wardstones/VFX_WardstoneIdleAura.tscn" id="4_idle"]
 
 [sub_resource type="CanvasItemMaterial" id="mat_add"]
@@ -21,7 +21,7 @@ script = ExtResource("1_wardstone_script")
 texture = ExtResource("3_sigil")
 texture_filter = 2
 material = SubResource("mat_add")
-scale = Vector2(0.18, 0.18)
+scale = Vector2(0.085, 0.085)
 modulate = Color(1, 1, 1, 0.14)
 z_index = -30
 

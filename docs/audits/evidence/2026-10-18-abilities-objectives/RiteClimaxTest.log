@@ -1,0 +1,68 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the cue starts before the last chance (0.50 < 0.85)
+PASS: the last chance comes before the clear
+PASS: two safeguards to lose
+PASS: no distortion at 30% (level 0.00, 0 signals)
+PASS: none at exactly 50% (level 0.00)
+PASS: the world warps past 50% (level 0.19, reported 0.19)
+PASS: the cue is taught (["The Rite is half drawn — the district warps. Hold the circle."])
+PASS: for the named tip length (3.5)
+PASS: and climbs with the hold (0.19 -> 0.38)
+PASS: no vault before 85%
+PASS: a short dodge keeps the cue (0.38)
+PASS: past the grace the cue is gone (level 0.00, reported 0.00)
+PASS: stepping back in restores it from the kept progress (0.34)
+PASS: a dead body in the circle does not warp the world
+PASS: crossing 85% spawns exactly one vault (1)
+PASS: and only one per channel
+PASS: the rite knows its vault
+PASS: the vault's opening disc overlaps the rite's edge (200 for radius 168)
+PASS: on the far side from the player ((-200.0, 0.0))
+PASS: configured to take the safeguards, send no beat, and guarantee a Manifestation
+PASS: one popup through the vault's first frame (["LAST CHANCE"])
+PASS: and it says LAST CHANCE (LAST CHANCE)
+PASS: at the vault ((-200.0, -34.0) for (-200.0, 0.0))
+PASS: one line: LAST CHANCE, naming the safeguard cost (["LAST CHANCE — a vault at the rite\'s edge: a guaranteed Manifestation. It takes every safeguard. No healing for 45s."])
+PASS: the vault's own sign names the safeguard cost
+PASS: and the approach does not say it again (["LAST CHANCE — a vault at the rite\'s edge: a guaranteed Manifestation. It takes every safeguard. No healing for 45s."])
+PASS: standing in it opens it
+PASS: and the rite's safeguards are gone (0)
+PASS: nothing left to invoke
+PASS: the per-charge ring shrink is a named constant
+PASS: two charges leave as two rings (2)
+PASS: the second smaller by that fraction (420.0, 344.4)
+PASS: a channel reset reports level 0
+PASS: and despawns the vault
+PASS: the vault is gone next frame
+PASS: the next channel spawns its own vault
+PASS: and warps again (0.78)
+PASS: the rite clears
+PASS: the clear reports level 0
+PASS: and takes the vault with it
+PASS: the rig has its vignette rect
+PASS: with the vignette shader
+PASS: nothing shows outdoors at level 0
+PASS: the shader's tint defaults render the plain vignette (<null>, <null>)
+PASS: level 0.5 shows the vignette
+PASS: with strength, a tighter centre and a colour (0.28, 0.52, (0.18, 0.04, 0.24, 1.0))
+PASS: level 1 goes further than 0.5
+PASS: full distortion is the exported ceiling
+PASS: a drain lowers it without letting go
+PASS: the release fades rather than cuts (0.70)
+PASS: and ends hidden (0.00)
+PASS: with the shader back to its defaults
+PASS: the instant-cut threshold is a named constant
+PASS: the inner_radius fallback is named and is the scene's (0.7)
+PASS: a release under the threshold cuts at once with motion allowed (0.00)
+PASS: reduced motion still shows the static ramp
+PASS: and lets go at once under reduced motion
+PASS: the scene carries the vignette material
+PASS: the first run's rig is warped (0.42 < 0.70)
+PASS: and its release is under way (0.80)
+PASS: the next run's rig starts from the scene's inner_radius (0.70, scene 0.70)
+PASS: with no tint and no wash left behind (<null>, <null>)
+PASS: and the scene's strength (0.38)
+PASS: its release returns to the scene's inner_radius, not the ratchet (0.70)
+PASS: a warped rig never writes the scene's own material (0.70, <null>)
+RiteClimaxTest: 65 passed, 0 failed

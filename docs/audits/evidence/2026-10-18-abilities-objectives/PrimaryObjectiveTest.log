@@ -1,0 +1,239 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: the catalog offers more than one objective (3)
+PASS: 'district_relay' resolves to a script
+PASS: 'district_relay' is a PrimaryObjective
+PASS: 'district_relay' has a title
+PASS: 'district_relay' has a detail line
+PASS: 'district_relay' has a checklist row
+PASS: 'district_relay' has a checklist id
+PASS: 'district_relay' has at least one step
+PASS: 'district_relay' starts at zero progress
+PASS: 'district_relay' does not start finished
+PASS: 'district_relay' does not start activated
+PASS: 'district_relay' emits completed exactly once (1)
+PASS: 'district_relay' latches finished
+PASS: 'ward_vigil' resolves to a script
+PASS: 'ward_vigil' is a PrimaryObjective
+PASS: 'ward_vigil' has a title
+PASS: 'ward_vigil' has a detail line
+PASS: 'ward_vigil' has a checklist row
+PASS: 'ward_vigil' has a checklist id
+PASS: 'ward_vigil' has at least one step
+PASS: 'ward_vigil' starts at zero progress
+PASS: 'ward_vigil' does not start finished
+PASS: 'ward_vigil' does not start activated
+PASS: 'ward_vigil' emits completed exactly once (1)
+PASS: 'ward_vigil' latches finished
+PASS: 'breach_seal' resolves to a script
+PASS: 'breach_seal' is a PrimaryObjective
+PASS: 'breach_seal' has a title
+PASS: 'breach_seal' has a detail line
+PASS: 'breach_seal' has a checklist row
+PASS: 'breach_seal' has a checklist id
+PASS: 'breach_seal' has at least one step
+PASS: 'breach_seal' starts at zero progress
+PASS: 'breach_seal' does not start finished
+PASS: 'breach_seal' does not start activated
+PASS: 'breach_seal' emits completed exactly once (1)
+PASS: 'breach_seal' latches finished
+PASS: checklist id 'relay' is unique
+PASS: checklist id 'vigil' is unique
+PASS: checklist id 'breaches' is unique
+PASS: segment 2 always teaches with the relay
+PASS: later segments reach every objective type (3 of 3)
+PASS: the pick is deterministic
+PASS: a segment-2 seed exists that rolls 'district_relay'
+PASS: create_for(2, 11) builds an objective
+PASS: create_for(2, 11) yields the 'district_relay' type
+PASS: create_for returns 'district_relay' with its layout already placed
+PASS: create_for returns 'district_relay' with real steps (3)
+PASS: a segment-6 seed exists that rolls 'ward_vigil'
+PASS: create_for(6, 6) builds an objective
+PASS: create_for(6, 6) yields the 'ward_vigil' type
+PASS: create_for returns 'ward_vigil' with its layout already placed
+PASS: create_for returns 'ward_vigil' with real steps (10)
+PASS: a segment-6 seed exists that rolls 'breach_seal'
+PASS: create_for(6, 3) builds an objective
+PASS: create_for(6, 3) yields the 'breach_seal' type
+PASS: create_for returns 'breach_seal' with its layout already placed
+PASS: create_for returns 'breach_seal' with real steps (3)
+PASS: the teaching segment's objective is the District Relay
+PASS: the relay has one step per node it placed (3)
+PASS: the objective rings itself with 8 enemy spawn sockets
+PASS: every socket sits on the objective's socket ring and is registered for spawning
+PASS: a relay four thousand pixels away stays asleep
+PASS: ...and announces nothing
+PASS: ...and makes no progress
+PASS: crossing the activation ring wakes the relay
+PASS: activation announces itself exactly once
+PASS: ...and never re-announces while the player stays close
+PASS: every relay step has a site on the ground
+PASS: standing on the relay core attunes nothing - the sites are the objective
+PASS: standing on a relay node for its dwell attunes it
+PASS: the dwell is actually waited out (1.10s of 1.10s)
+PASS: attuning a node reports 1/3 to the HUD
+PASS: one node of three does not finish the relay
+PASS: half a dwell is not a step
+PASS: walking away from a half-attuned node never finishes it
+PASS: returning to a half-attuned node finishes it
+PASS: the relay keeps banked dwell across a bail-out (0.55s to resume, 1.10s from scratch)
+PASS: attuning every node finishes the relay
+PASS: the relay emits completed exactly once
+PASS: a finished relay reads full
+PASS: one progress report per node, no more (3)
+PASS: the detail line reads the relay out in full
+PASS: ticking a finished relay never fires completed again
+PASS: ...and never moves its count
+PASS: the relay asks the spawner for nothing - it is a route, not a siege
+PASS: a segment-6 seed rolls the Ward Vigil
+PASS: the catalog builds a Ward Vigil for that seed
+PASS: a vigil across the district stays asleep
+PASS: ...and calls no waves at a player who has not reached it
+PASS: approaching the vigil wakes it
+PASS: waking the vigil tells the player the verb and the price
+PASS: standing next to the circle holds nothing
+PASS: ...and a vigil nobody is holding calls no waves
+PASS: standing in the circle holds it (0.25)
+PASS: a held vigil is not bleeding
+PASS: the vigil reports progress while it is held
+PASS: ...and the detail line says it is holding
+PASS: holding the vigil is what calls its waves (2 so far)
+PASS: a moment out of the circle costs nothing
+PASS: ...and does not read as bleeding
+PASS: past the grace the vigil bleeds (0.250 -> 0.112)
+PASS: stepping out drains the vigil, it never voids it
+PASS: ...and the vigil says it is bleeding
+PASS: a bleeding vigil crosses no new stage, so no wave arrives (2, still)
+PASS: returning to the circle stops the bleed at once
+PASS: holding gains faster than stepping out loses (0.300 gained vs 0.138 lost)
+PASS: a dead player standing in the circle still bleeds the vigil (0.425 -> 0.300)
+PASS: ...and death drains the vigil rather than voiding it
+PASS: a corpse never finishes the vigil
+PASS: holding the circle for the full vigil finishes it
+PASS: the vigil emits completed exactly once
+PASS: a finished vigil reads full
+PASS: ...and the detail line says so
+PASS: the vigil calls one wave per stage across the whole hold (6 of 6)
+PASS: each wave is the size its stage authored, in order - a siege, not a jump scare
+PASS: no wave stage re-fires after the vigil bleeds back past it (6 calls, 6 stages)
+PASS: a finished vigil stops calling waves
+PASS: ...and never fires completed again
+PASS: every progress report the vigil emits is a real fraction of its scale
+PASS: a segment-6 seed still rolls the Ward Vigil
+PASS: the catalog builds a second Ward Vigil for the siege gate
+PASS: standing in the circle wakes the vigil
+PASS: a long frame carries the hold past two stages at once (0.282, past 0.22)
+PASS: ...and one frame calls one wave, never the whole siege at once ([3])
+PASS: a moment out of the circle is still free
+PASS: ...and the wave the hold has already earned is still owed (0.282, past 0.22)
+PASS: a vigil the player has stepped out of calls no wave even with one owed (1)
+PASS: the vigil past its grace is bleeding (20 ticks)
+PASS: ...with the owed wave still behind the hold (0.276, past 0.22)
+PASS: a bleeding vigil calls no wave either (1)
+PASS: holding the circle again collects the owed wave at its authored size ([3, 4])
+PASS: a segment-6 seed rolls the Breach Seal
+PASS: the catalog builds a Breach Seal for that seed
+PASS: the objective opens one breach per step (3)
+PASS: every breach starts open
+PASS: an unreached Breach Seal stays asleep
+PASS: ...and an unreached breach pours nothing
+PASS: a dead player never activates a distant Breach Seal
+PASS: ...and a distant breach never pours at a corpse
+PASS: reaching the breaches wakes them
+PASS: waking the Breach Seal names the pressure it just started
+PASS: the detail line counts the open breaches
+PASS: every breach step has a site on the ground
+PASS: an open breach keeps pouring while the player is near
+PASS: every pour is the authored breach burst size (2)
+PASS: and every pour is AT a breach, never around the player
+PASS: a breach beyond its pour radius is dormant - it neither follows the player nor banks a wave
+PASS: returning within reach of a breach wakes it
+PASS: and only THAT breach pours - the two out of reach stay dormant
+PASS: a camped breach keeps at most breach_max_alive of its own alive (6)
+PASS: and pours nothing more while they live
+PASS: killing them reopens the breach
+PASS: standing at the centre seals nothing - the breaches are the objective
+PASS: standing on a breach for the seal time shuts it
+PASS: the seal is actually held (1.55s of 1.50s)
+PASS: sealing one breach closes one source
+PASS: sealing a breach reports 1/3 to the HUD
+PASS: sealing a breach says so where the player is looking
+PASS: half a seal is not a step
+PASS: bailing out of a seal never completes it
+PASS: returning to a bailed breach seals it
+PASS: bailing out of a seal costs progress (21 ticks to resume, 15 banked)
+PASS: ...but never all of it (21 ticks to resume vs 31 from scratch)
+PASS: a corpse lying on a breach seals nothing
+PASS: ...and the breach it is lying on keeps pouring - at the breach
+PASS: a corpse never finishes the Breach Seal
+PASS: sealing every breach finishes the objective
+PASS: the Breach Seal emits completed exactly once
+PASS: a finished Breach Seal has no open breach left
+PASS: ...and the detail line says so
+PASS: one progress report per breach, no more (3)
+PASS: a sealed district stops pouring
+PASS: ...and never fires completed again
+PASS: 'district_relay' unfinished keeps the Exit Rite sealed at full resonance
+PASS: ...and keeps the rite itself unrevealed
+PASS: ...and keeps the exit's location off the HUD
+PASS: ...and that same resonance unseals the rite the moment the primary is done
+PASS: ...and the seal follows the primary straight back down
+PASS: the HUD headline is the 'district_relay' objective's own title
+PASS: ...and the detail line is the objective's own wording
+PASS: the gate checklist stays locked and empty while the primary is open
+PASS: a sealed rite refuses to start channelling
+PASS: ...and tells the player why instead of silently doing nothing
+PASS: completing 'district_relay' reveals the Exit Rite
+PASS: ...but completing it alone does not unseal the rite
+PASS: ...and pays the primary's resonance
+PASS: completing the primary moves the district into ASCENSION
+PASS: completing the primary rebuilds the gate checklist
+PASS: the checklist carries the 'district_relay' row id 'relay'
+PASS: ...with the objective's own wording, not a generic one
+PASS: ...marked done
+PASS: the gate is still locked while resonance is unpaid
+PASS: ...and the checklist names the lock that is still shut
+PASS: full resonance does not unseal the rite while a miniboss is owed
+PASS: primary, resonance and miniboss together unseal the Exit Rite
+PASS: an unsealed rite finally tells the HUD where it is
+PASS: the checklist reports the gate ready once every lock is open
+PASS: fixture: the approach feed makes the exit encounter live
+PASS: an unsealed rite accepts the player and starts channelling
+PASS: 'ward_vigil' unfinished keeps the Exit Rite sealed at full resonance
+PASS: ...and keeps the rite itself unrevealed
+PASS: ...and keeps the exit's location off the HUD
+PASS: ...and that same resonance unseals the rite the moment the primary is done
+PASS: ...and the seal follows the primary straight back down
+PASS: the HUD headline is the 'ward_vigil' objective's own title
+PASS: ...and the detail line is the objective's own wording
+PASS: the gate checklist stays locked and empty while the primary is open
+PASS: completing 'ward_vigil' reveals the Exit Rite
+PASS: ...but completing it alone does not unseal the rite
+PASS: ...and pays the primary's resonance
+PASS: completing the primary moves the district into ASCENSION
+PASS: completing the primary rebuilds the gate checklist
+PASS: the checklist carries the 'ward_vigil' row id 'vigil'
+PASS: ...with the objective's own wording, not a generic one
+PASS: ...marked done
+PASS: the gate is still locked while resonance is unpaid
+PASS: ...and the checklist names the lock that is still shut
+PASS: 'breach_seal' unfinished keeps the Exit Rite sealed at full resonance
+PASS: ...and keeps the rite itself unrevealed
+PASS: ...and keeps the exit's location off the HUD
+PASS: ...and that same resonance unseals the rite the moment the primary is done
+PASS: ...and the seal follows the primary straight back down
+PASS: the HUD headline is the 'breach_seal' objective's own title
+PASS: ...and the detail line is the objective's own wording
+PASS: the gate checklist stays locked and empty while the primary is open
+PASS: completing 'breach_seal' reveals the Exit Rite
+PASS: ...but completing it alone does not unseal the rite
+PASS: ...and pays the primary's resonance
+PASS: completing the primary moves the district into ASCENSION
+PASS: completing the primary rebuilds the gate checklist
+PASS: the checklist carries the 'breach_seal' row id 'breaches'
+PASS: ...with the objective's own wording, not a generic one
+PASS: ...marked done
+PASS: the gate is still locked while resonance is unpaid
+PASS: ...and the checklist names the lock that is still shut
+PrimaryObjectiveTest: 236 passed, 0 failed

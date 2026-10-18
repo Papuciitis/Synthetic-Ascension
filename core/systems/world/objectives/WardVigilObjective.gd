@@ -39,6 +39,16 @@ var _inside: bool = false
 var _sigil_phase: float = 0.0
 
 
+func build_presentation() -> void:
+	objective_art = WorldArt.install(self, "vigil", 105.0)
+	update_presentation()
+
+
+func update_presentation() -> void:
+	if objective_art != null:
+		objective_art.call("set_state", "complete" if is_finished() else ("draining" if is_draining() else ("working" if _inside else "dormant")), progress_fraction())
+
+
 func build_layout(rng_source: RandomNumberGenerator) -> void:
 	# Nothing to place - the objective IS this spot. The seed only shifts the
 	# sigil so two vigils do not look identical.
@@ -141,35 +151,21 @@ func checklist_id() -> StringName:
 
 
 func _draw() -> void:
-	var pulse := 0.5 + 0.5 * sin(pulse_time * 2.4)
 	var done := is_finished()
-	var core := Color(0.20, 0.92, 0.94, 0.90) if done else Color(0.42, 0.72, 1.00, 0.92)
+	var core := Color(0.35, 0.9, 0.8, 0.9) if done else Color(0.49, 0.72, 0.96, 0.9)
 	if is_draining():
 		core = Color(0.99, 0.44, 0.30, 0.95)
-
-	draw_circle(Vector2.ZERO, vigil_radius_px, Color(core.r, core.g, core.b, 0.055))
-	draw_arc(Vector2.ZERO, vigil_radius_px, 0.0, TAU, 96, Color(core.r, core.g, core.b, 0.55), 5.0, true)
-	draw_arc(Vector2.ZERO, activation_radius_px, 0.0, TAU, 96, Color(core.r, core.g, core.b, 0.05), 3.0, true)
-
-	# The progress ring sits outside the circle so the player can read it
-	# without looking away from what is walking at them.
+	draw_circle(Vector2.ZERO, vigil_radius_px, Color(core.r, core.g, core.b, 0.025))
+	WorldArt.draw_boundary(self, Vector2.ZERO, vigil_radius_px, core)
 	var fraction := 1.0 if done else progress_fraction()
-	draw_arc(
-		Vector2.ZERO, vigil_radius_px + 13.0,
-		-PI * 0.5, -PI * 0.5 + TAU * fraction,
-		96, Color(0.98, 0.92, 0.55, 0.98), 10.0, true
-	)
-
-	# Spokes: a plain circle on a busy floor reads as one more decal.
-	for i in range(6):
-		var angle := _sigil_phase + pulse_time * 0.25 + TAU * float(i) / 6.0
-		var direction := Vector2.RIGHT.rotated(angle)
-		draw_line(
-			direction * (vigil_radius_px * 0.42),
-			direction * (vigil_radius_px * (0.86 + pulse * 0.05)),
-			Color(core.r, core.g, core.b, 0.42), 3.0, true
-		)
-	draw_circle(Vector2.ZERO, 34.0 + pulse * 4.0, Color(core.r, core.g, core.b, 0.20))
-
-	var label := "VIGIL HELD" if done else "HOLD THE WARD VIGIL"
-	draw_string(ThemeDB.fallback_font, Vector2(-190.0, -vigil_radius_px - 34.0), label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 24, core)
+	var progress_color := Color(0.99, 0.44, 0.3, 0.95) if is_draining() else Color(0.98, 0.9, 0.6, 0.95)
+	draw_arc(Vector2.ZERO, vigil_radius_px + 13.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, Color(0.025, 0.02, 0.025, 0.85), 10.0, true)
+	draw_arc(Vector2.ZERO, vigil_radius_px + 13.0, -PI * 0.5, -PI * 0.5 + TAU * fraction, 96, progress_color, 6.0, true)
+	for index in range(6):
+		var direction := Vector2.from_angle(_sigil_phase + TAU * float(index) / 6.0)
+		draw_line(direction * (vigil_radius_px - 22.0), direction * (vigil_radius_px - 10.0), core, 3.0, true)
+	draw_completion(Vector2(0, 25), vigil_radius_px)
+	var label := "VIGIL HELD" if done else ("VIGIL DRAINING" if is_draining() else "HOLD THE WARD VIGIL")
+	var at := Vector2(-190.0, -vigil_radius_px - 34.0)
+	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 22, core)

@@ -1,0 +1,483 @@
+{
+  "date": "2026-10-18",
+  "engine": "Godot 4.7.1.stable.official.a13da4feb",
+  "scope": "Cosmetic ability/objective presentation only",
+  "tests": [
+    {
+      "passed": 19,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "ObjectivePresentationTest",
+      "log": "ObjectivePresentationTest-final.log"
+    },
+    {
+      "passed": 14,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "PrecisionPresentationTest",
+      "log": "PrecisionPresentationTest-final.log"
+    },
+    {
+      "passed": 47,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "AscensionPrecisionTest",
+      "log": "AscensionPrecisionTest.log"
+    },
+    {
+      "passed": 45,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "AscensionPrecisionV5Test",
+      "log": "AscensionPrecisionV5Test.log"
+    },
+    {
+      "passed": 236,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "PrimaryObjectiveTest",
+      "log": "PrimaryObjectiveTest.log"
+    },
+    {
+      "passed": 58,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "ExitRiteTest",
+      "log": "ExitRiteTest.log"
+    },
+    {
+      "passed": 7,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "RiteSafeguardPresentationTest",
+      "log": "RiteSafeguardPresentationTest.log"
+    },
+    {
+      "passed": 65,
+      "exit_code": 0,
+      "failed": 0,
+      "name": "RiteClimaxTest",
+      "log": "RiteClimaxTest.log"
+    }
+  ],
+  "passed_total": 491,
+  "failed_total": 0,
+  "expected_warnings": [
+    "RiteSafeguardPresentationTest deliberately parks ThreatDirector; existing missing-director warning"
+  ],
+  "red_control": {
+    "failed": 7,
+    "passed": 2,
+    "exit_code": 1,
+    "suite": "ObjectivePresentationTest",
+    "log": "presentation-red.log"
+  },
+  "native": {
+    "save_writes": 0,
+    "staged": true,
+    "segment": 3,
+    "failures": 0,
+    "exit_code": 0,
+    "human_playtest": false,
+    "world_seed": 16102026,
+    "count": 36,
+    "immortal": true,
+    "captures": [
+      {
+        "combat_flash": "full",
+        "file": "sanctuary-normal.png",
+        "panel": "sanctuary",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "relay-normal.png",
+        "panel": "relay",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "vigil-normal.png",
+        "panel": "vigil",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "breach-normal.png",
+        "panel": "breach",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "wager-normal.png",
+        "panel": "wager",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-aim-normal.png",
+        "panel": "deadshot-aim",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-release-normal.png",
+        "panel": "deadshot-release",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-aftermath-normal.png",
+        "panel": "deadshot-aftermath",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-twin-fan-normal.png",
+        "panel": "deadshot-twin-fan",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-plots-normal.png",
+        "panel": "judgment-plots",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-release-normal.png",
+        "panel": "judgment-release",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-aftermath-normal.png",
+        "panel": "judgment-aftermath",
+        "reduced_motion": false,
+        "window": "(1280, 720)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "sanctuary-small.png",
+        "panel": "sanctuary",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "relay-small.png",
+        "panel": "relay",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "vigil-small.png",
+        "panel": "vigil",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "breach-small.png",
+        "panel": "breach",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "wager-small.png",
+        "panel": "wager",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-aim-small.png",
+        "panel": "deadshot-aim",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-release-small.png",
+        "panel": "deadshot-release",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-aftermath-small.png",
+        "panel": "deadshot-aftermath",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "deadshot-twin-fan-small.png",
+        "panel": "deadshot-twin-fan",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-plots-small.png",
+        "panel": "judgment-plots",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-release-small.png",
+        "panel": "judgment-release",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "full",
+        "file": "judgment-aftermath-small.png",
+        "panel": "judgment-aftermath",
+        "reduced_motion": false,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "sanctuary-reduced.png",
+        "panel": "sanctuary",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "relay-reduced.png",
+        "panel": "relay",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "vigil-reduced.png",
+        "panel": "vigil",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "breach-reduced.png",
+        "panel": "breach",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "wager-reduced.png",
+        "panel": "wager",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "deadshot-aim-reduced.png",
+        "panel": "deadshot-aim",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "deadshot-release-reduced.png",
+        "panel": "deadshot-release",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "deadshot-aftermath-reduced.png",
+        "panel": "deadshot-aftermath",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "deadshot-twin-fan-reduced.png",
+        "panel": "deadshot-twin-fan",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "judgment-plots-reduced.png",
+        "panel": "judgment-plots",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "judgment-release-reduced.png",
+        "panel": "judgment-release",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      },
+      {
+        "combat_flash": "off",
+        "file": "judgment-aftermath-reduced.png",
+        "panel": "judgment-aftermath",
+        "reduced_motion": true,
+        "window": "(960, 540)"
+      }
+    ],
+    "renderer": "OpenGL 3.3 Intel UHD Compatibility",
+    "log": "native-final.log"
+  },
+  "isolated_userdata": ".superpowers/sdd/2026-10-18-playtest-feedback/userdata/",
+  "source_hashes": [
+    {
+      "sha256": "335f4b6d0a6363448d1e8241a72b55db0362d53b7d52f1fff4c0d0957cc8e453",
+      "path": "core/systems/ascension/engines/PrecisionEngine.gd"
+    },
+    {
+      "sha256": "268d0fbe47160a63e9625cc9599589ce1e38dfe3eab3192d8c219b2eec4ace04",
+      "path": "core/systems/ascension/engines/PrecisionPresentation.gd"
+    },
+    {
+      "sha256": "041a127b99ad0cf62c9dc59997becae63c00eccfb45826db9cc6ae028b8a2827",
+      "path": "core/systems/world/Wardstone.gd"
+    },
+    {
+      "sha256": "d5bd4e88b622b0b3f493eef37f53f53ac70238393b2df6c207c7756bb98be00c",
+      "path": "core/systems/world/ExitRite.gd"
+    },
+    {
+      "sha256": "90ab6cf2b00d2e8aef878752dcd5027c19d2fdd3c17efe1b81c48044c7e179bf",
+      "path": "core/systems/world/objectives/PrimaryObjective.gd"
+    },
+    {
+      "sha256": "53da54959e9ed5f9f0299cc519d879ed980cde49e193d087dd365ba6aa5ef3ff",
+      "path": "core/systems/world/objectives/ObjectiveWorldArt.gd"
+    },
+    {
+      "sha256": "4c6acdaa50c279f6471ce143f9445dda6a56251a0b3b99537e3732f5e6c01eb9",
+      "path": "core/systems/world/objectives/objective_world_art.gdshader"
+    },
+    {
+      "sha256": "8fc4937c2f1af2ebd3c386d349a3667d5081f7acee37edf9008c52f067a34cea",
+      "path": "core/systems/world/objectives/DistrictRelayObjective.gd"
+    },
+    {
+      "sha256": "e155e302e2f89bc0574e03d28150d3dc24cc5b986c9c394425f52d3ca2f4ec0e",
+      "path": "core/systems/world/objectives/WardVigilObjective.gd"
+    },
+    {
+      "sha256": "dc471ff0463c5611a8569ea263f887f85d902ea32fbcde813a6c115f5ed6a0c6",
+      "path": "core/systems/world/objectives/BreachSealObjective.gd"
+    },
+    {
+      "sha256": "f6578527decd5b7e0c9427bf9355294617643a5597183405f207b526bfd00879",
+      "path": "core/systems/world/objectives/WagerShrineObjective.gd"
+    },
+    {
+      "sha256": "b7d8127e0ee63068bbb9ce7eddaa95d926455e44168b7a1faa222c96bb28eebc",
+      "path": "core/systems/world/rite/RitePulseVFX.gd"
+    },
+    {
+      "sha256": "8ec0652de9b9a7be7f56ebb7fef9ffc9be7484e1c09acd38d74d90856a765de6",
+      "path": "assets/vfx/world/wardstones/VFX_WardstoneIdleAura.gd"
+    },
+    {
+      "sha256": "328fdd4848b5561637749147b4c5ea6ac63fea25bd7156c4d3a12a6133bb8749",
+      "path": "assets/vfx/world/wardstones/VFX_WardstoneAttuneBurst.gd"
+    },
+    {
+      "sha256": "68a6ca811188557aa45d4c11eb408b32bc84bebf95f2b497918bca9dca968dde",
+      "path": "assets/vfx/world/gates/VFX_GateUnlockBurst.gd"
+    },
+    {
+      "sha256": "dbcbd50f0726dfbe885d16d57800c133343d2cd7b0e46a62a22395ba1dff8cba",
+      "path": "scenes/world/wardstones/Wardstone.tscn"
+    },
+    {
+      "sha256": "4d7952528ce11ccd8863eb85044b50a3b892f262c98334c585b2372241be17f3",
+      "path": "scenes/world/gates/ExitRite.tscn"
+    }
+  ],
+  "published_captures": [
+    {
+      "sha256": "ed2d3653c8cb3a8cd7b757f06172e576645e01855d90493db708a52040dcc7b6",
+      "bytes": 1359634,
+      "file": "breach-normal.png"
+    },
+    {
+      "sha256": "d5a8bcb1333979d4e74bae5a18b51f82ca5c66271ae6eb84845d3709b8844bd4",
+      "bytes": 734404,
+      "file": "deadshot-aftermath-small.png"
+    },
+    {
+      "sha256": "0dccef42a78fbc127c884994951a996d54b403598297840a427a08287029f7e5",
+      "bytes": 1330559,
+      "file": "deadshot-aim-normal.png"
+    },
+    {
+      "sha256": "7172fbd0f6aedcc3e9c9d295047639eabf67b54d7b4432b645f19d81dd0092e0",
+      "bytes": 1341851,
+      "file": "deadshot-release-normal.png"
+    },
+    {
+      "sha256": "e0dde634a763a7d33eb2feb6d616418292ceb7650b24652018293f1024c0767d",
+      "bytes": 798099,
+      "file": "deadshot-twin-fan-reduced.png"
+    },
+    {
+      "sha256": "44c2cd41e115b1f845f2174f3dade1b6475619f2d7e84ddebe780847177518db",
+      "bytes": 746199,
+      "file": "judgment-aftermath-reduced.png"
+    },
+    {
+      "sha256": "0fd3712842dd2f8cdff867db2b0091907eb241332759948c469311b9216b2969",
+      "bytes": 1360844,
+      "file": "judgment-plots-normal.png"
+    },
+    {
+      "sha256": "4000bcdb415151186f945e11e705f7233a87cd888976c9133eb7e44beac0f7bd",
+      "bytes": 1375298,
+      "file": "judgment-release-normal.png"
+    },
+    {
+      "sha256": "f8c0b413c4591878e2ce2caf4607cc61884f560735011f2d7cad7266dadb1367",
+      "bytes": 746494,
+      "file": "relay-small.png"
+    },
+    {
+      "sha256": "8ec4c130973ea02cc50ea12c26a77188a26f57682eddcb248208ae9598ae5d80",
+      "bytes": 1366667,
+      "file": "sanctuary-normal.png"
+    },
+    {
+      "sha256": "01a3973aaf2805f706799d24decae486446c51fb89c1c06f9b8ecfeff474519b",
+      "bytes": 759934,
+      "file": "vigil-reduced.png"
+    },
+    {
+      "sha256": "a1c4580b5cb7b3a95a5ee6fbee5e09a7466de25732607d6da142bb8ad12558fe",
+      "bytes": 744389,
+      "file": "wager-small.png"
+    }
+  ],
+  "full_local_evidence": ".superpowers/sdd/2026-10-18-playtest-feedback/abilities-objectives",
+  "limits": [
+    "Frozen staged samples in actual Game terrain and HUD, not a played fight",
+    "No whole-game performance improvement or human readability approval claimed",
+    "Shared final script audit belongs to parent integration delivery"
+  ],
+  "published_logs_directory": "docs/audits/evidence/2026-10-18-abilities-objectives",
+  "source_hash_notes": "Source SHA-256 values identify measured working-file bytes; Git normalizes text line endings."
+}

@@ -1,5 +1,8 @@
 extends AscensionEngine
 class_name PrecisionEngine
+
+const PRECISION_PRESENTATION := preload("res://core/systems/ascension/engines/PrecisionPresentation.gd")
+var _presentation: Node2D
 ## Precision: Read and Weak Points, piercing, bounces and returns, Deadshot
 ## and JUDGEMENT.
 ##
@@ -556,7 +559,7 @@ func _line(from: Vector2, to: Vector2, damage: float, tags: PackedStringArray, r
 		runner.damage_enemy(handle, damage, tags)
 		hits += 1
 	counters["lines"] = int(counters["lines"]) + 1
-	runner.note_line_fx(from, to, radius)
+	_present_line(from, to, radius, AscensionTags.value_of(tags, "root").begins_with("PRV"))
 	return hits
 
 
@@ -602,6 +605,7 @@ func activate_q(id: String) -> Dictionary:
 		return {"ok": true, "message": "DEADSHOT", "cooldown": 5.0 if has("PRQ2") else 8.0}
 	_aiming = true
 	_aim_real = 0.0
+	_ensure_presentation()
 	runner.set_time_slow(DEADSHOT_SLOW, DEADSHOT_AIM_SECONDS)
 	return {"ok": true, "message": "AIMING", "cooldown": 0.0}
 
@@ -835,6 +839,7 @@ func _tick_squad_sweep(delta: float) -> void:
 func activate_v(id: String) -> Dictionary:
 	if id != "PRV":
 		return {"ok": false, "message": "NOT PRECISION", "cooldown": 0.0}
+	_ensure_presentation()
 	_judgement_cast += 1
 	_judgement_lines.clear()
 	counters["judgements"] = int(counters["judgements"]) + 1
@@ -949,7 +954,7 @@ func _tick_sweep(delta: float) -> void:
 			_sweep_hits[handle] = hits + 1
 			runner.damage_enemy(handle, _sweep_damage * (0.5 if reverse else 1.0), _judgement_tags(0.3, "PRV2" if reverse else "PRV3"))
 		counters["sweep_ticks"] = int(counters["sweep_ticks"]) + 1
-		runner.note_line_fx(origin, _far_edge(origin, dir), AscensionRunner.R * 0.5)
+		_present_line(origin, _far_edge(origin, dir), AscensionRunner.R * 0.5, true)
 	if not reverse and _sweep_left <= 0.0:
 		if has("PRV2"):
 			_sweep_reverse = 0.75
@@ -977,10 +982,69 @@ func hud_state(slot: String) -> Dictionary:
 
 
 func collect_draw_points(out: Array) -> void:
-	for line in _judgement_lines:
-		out.append([line[0], AscensionRunner.R, Color(1.0, 0.9, 0.5, 0.25), line[1]])
 	for gun in _guns:
 		out.append([gun["at"], 8.0, Color(1.0, 0.8, 0.4, 0.8)])
+	if _aiming or not _judgement_lines.is_empty() or _sweep_left > 0.0 or _sweep_reverse > 0.0:
+		_ensure_presentation()
+
+
+func _ensure_presentation() -> Node2D:
+	if is_instance_valid(_presentation) and not _presentation.is_queued_for_deletion():
+		return _presentation
+	if runner == null or not runner.is_inside_tree():
+		return null
+	_presentation = PRECISION_PRESENTATION.new()
+	_presentation.name = "PrecisionPresentation"
+	runner.add_child(_presentation)
+	_presentation.call("setup", self)
+	return _presentation
+
+
+func _present_line(from: Vector2, to: Vector2, radius: float, judgment: bool) -> void:
+	var painter := _ensure_presentation()
+	if painter != null:
+		painter.call("release", from, to, radius, judgment, runner.player_position() if judgment else from)
+
+
+## The presentation reads these accepted clocks and geometry. It never owns
+## the slow, aim selection, damage, release, cooldown or revelation lifetime.
+func presentation_state() -> Dictionary:
+	var state := {}
+	var aim_lines: Array = []
+	var plots: Array = []
+	var origin := runner.player_position()
+	if _aiming:
+		var direction := (runner.aim_target() - origin).normalized()
+		if direction == Vector2.ZERO:
+			direction = Vector2.RIGHT
+		var radius := AscensionRunner.R / 6.0 * (0.5 if has("PRQ3") else 1.0)
+		var normal := direction.orthogonal()
+		var origins: Array[Vector2] = [origin]
+		if has("PRQ1") and not has("PRQ2"):
+			origins.append(origin + normal * AscensionRunner.R)
+		for start: Vector2 in origins:
+			if has("PRQ4"):
+				for index in range(-2, 3):
+					var at := start + normal * (AscensionRunner.R / 3.0) * float(index)
+					aim_lines.append([at, _far_edge(at, direction), radius])
+			else:
+				aim_lines.append([start, _far_edge(start, direction), radius])
+		state = {"origin": origin, "progress": clampf(_aim_real / DEADSHOT_AIM_SECONDS, 0.0, 1.0)}
+	for line in _judgement_lines:
+		plots.append([line[0], line[1], AscensionRunner.R * 0.5])
+	if judgement_left > 0.0 or _judgement_tell >= 0.0:
+		state = {"origin": origin, "plotting": true, "progress": clampf(1.0 - judgement_left / JUDGEMENT_SECONDS, 0.0, 1.0) if judgement_left > 0.0 else clampf(1.0 - _judgement_tell / 0.4, 0.0, 1.0)}
+	if _sweep_left > 0.0 or _sweep_reverse > 0.0:
+		var direction := (runner.aim_target() - origin).normalized()
+		if direction == Vector2.ZERO:
+			direction = Vector2.RIGHT
+		plots.append([origin, _far_edge(origin, direction), AscensionRunner.R * 0.5])
+		state = {"origin": origin, "progress": clampf(1.0 - _sweep_left / JUDGEMENT_SECONDS, 0.0, 1.0)}
+	if not aim_lines.is_empty():
+		state["aim"] = aim_lines
+	if not plots.is_empty():
+		state["plots"] = plots
+	return state
 
 
 func describe() -> Dictionary:

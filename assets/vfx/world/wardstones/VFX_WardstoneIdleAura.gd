@@ -81,7 +81,9 @@ func _draw() -> void:
 	if intensity <= 0.001:
 		return
 
-	var pulse: float = 0.55 + 0.45 * sin(_t * 1.25)
+	var reduced := SettingsManager != null and bool(SettingsManager.get_value(&"accessibility", &"reduced_motion", false))
+	var clock := 0.0 if reduced else _t
+	var pulse: float = 0.55 + 0.45 * sin(clock * 1.25)
 	var a0: float = 0.06 * intensity
 	var a1: float = 0.18 * intensity
 
@@ -95,8 +97,8 @@ func _draw() -> void:
 	VfxKit.draw_ring(self, Vector2.ZERO, r2, col2, maxf(2.0, line_width * 0.6))
 
 	for s in _spark:
-		var a: float = float(s.a) + float(_t) * float(s.s)
+		var a: float = float(s.a) + clock * float(s.s)
 		var p: Vector2 = Vector2(cos(a), sin(a)) * float(s.r)
-		var tw: float = 0.55 + 0.45 * sin(float(s.p) + float(_t) * 3.4)
+		var tw: float = 0.55 + 0.45 * sin(float(s.p) + clock * 3.4)
 		var ca: float = (0.06 + 0.10 * tw) * intensity
 		VfxKit.draw_disc(self, p, 3.0, Color(0.75, 0.93, 1.0, ca))

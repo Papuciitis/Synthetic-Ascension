@@ -1,6 +1,9 @@
 extends Node2D
 class_name ExitRite
 
+const WorldArt := preload("res://core/systems/world/objectives/ObjectiveWorldArt.gd")
+@onready var gate_art: Sprite2D = $GateFrame
+
 signal cleared(rite: ExitRite)
 signal safeguard_state_changed(current: int, capacity: int, can_invoke: bool)
 
@@ -161,6 +164,9 @@ var _encounter := ExitEncounterController.new()
 
 func _ready() -> void:
 	add_to_group(&"exit_rite")
+	if gate_art != null:
+		gate_art.set_script(WorldArt)
+		gate_art.call("configure", "exit_rite", 184.0)
 	_encounter.state_changed.connect(_on_encounter_state_changed)
 	if RunEvents != null and not RunEvents.player_life_event.is_connected(_on_player_life_event):
 		RunEvents.player_life_event.connect(_on_player_life_event)
@@ -282,12 +288,19 @@ func _apply_reveal_state() -> void:
 	_emit_safeguard_state()
 
 func _sigil_refresh() -> void:
+	_refresh_world_art()
 	if sigil == null:
 		return
 	# Locked -> dim, unlocked -> brighter
 	sigil.modulate.a = 0.10 if locked else 0.22
 
+func _refresh_world_art() -> void:
+	if gate_art != null:
+		var draining := not _player_inside and _hold > 0.0 and _lapse > lapse_grace
+		gate_art.call("set_state", "complete" if _completed else ("dormant" if locked else ("draining" if draining else "working")), _hold / maxf(0.001, hold_time))
+
 func _process(delta: float) -> void:
+	_refresh_world_art()
 	# Share gate location with HUD every frame (the HUD arrow reads this).
 	_share_location_with_hud()
 	_feed_encounter(delta)
@@ -301,8 +314,9 @@ func _process(delta: float) -> void:
 
 	_sigil_t += delta
 	if sigil != null:
-		sigil.rotation += (0.06 if locked else 0.14) * delta
-		var breathe := 0.9 + 0.1 * sin(_sigil_t * 1.15)
+		if not WorldArt.reduced_motion():
+			sigil.rotation += (0.025 if locked else 0.045) * delta
+		var breathe := 0.9 + 0.1 * (WorldArt.pulse(_sigil_t, 1.15) * 2.0 - 1.0)
 		sigil.modulate.a = (0.10 if locked else 0.22) * breathe
 
 	if locked:
@@ -367,6 +381,7 @@ func _process(delta: float) -> void:
 
 	if _hold >= hold_time:
 		_completed = true
+		_refresh_world_art()
 		_report(&"completed", {"hold_time": hold_time})
 		_emit_safeguard_state()
 		# The world stops warping and the last chance is gone: you are leaving.
@@ -843,7 +858,11 @@ func _draw() -> void:
 	var c_locked := Color(0.55, 0.25, 0.25, 0.48)
 	var c_ready := Color(0.35, 0.85, 0.98, 0.62)
 	var c := c_locked if locked else c_ready
-	draw_arc(Vector2.ZERO, radius, 0.0, TAU, 96, c, 4.0, true)
+	WorldArt.draw_boundary(self, Vector2.ZERO, radius, c)
+	var rite_label := "RITE SEALED" if locked else ("RITE COMPLETE" if _completed else "EXIT RITE")
+	var label_at := Vector2(-140.0, -radius - 42.0)
+	draw_string_outline(ThemeDB.fallback_font, label_at, rite_label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, label_at, rite_label, HORIZONTAL_ALIGNMENT_CENTER, 280.0, 22, Color(0.91, 0.82, 0.63, 0.95))
 
 	if not locked and hold_time > 0.0:
 		var t := clampf(_hold / hold_time, 0.0, 1.0)

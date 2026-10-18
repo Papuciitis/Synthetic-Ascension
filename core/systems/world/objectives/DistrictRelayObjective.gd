@@ -16,6 +16,22 @@ class_name DistrictRelayObjective
 var _component_positions: Array[Vector2] = []
 var _component_progress: PackedFloat32Array = PackedFloat32Array()
 var _component_silenced: PackedByteArray = PackedByteArray()
+var _site_art: Array[Sprite2D] = []
+
+
+func build_presentation() -> void:
+	objective_art = WorldArt.install(self, "relay", 122.0)
+	for index in range(_component_positions.size()):
+		_site_art.append(WorldArt.install(self, "relay", 83.0, _component_positions[index], "RelaySite%d" % index))
+	update_presentation()
+
+
+func update_presentation() -> void:
+	if objective_art != null:
+		objective_art.call("set_state", "complete" if is_finished() else "dormant")
+	for index in range(_site_art.size()):
+		var fraction := clampf(_component_progress[index] / maxf(0.001, attune_time_sec), 0.0, 1.0)
+		_site_art[index].call("set_state", "complete" if _component_silenced[index] != 0 else ("working" if fraction > 0.0 else "dormant"), fraction)
 
 
 func is_layout_built() -> bool:
@@ -84,22 +100,19 @@ func checklist_id() -> StringName:
 
 
 func _draw() -> void:
-	var pulse := 0.5 + 0.5 * sin(pulse_time * 3.0)
-	var core_color := Color(0.20, 0.92, 0.94, 0.90) if is_finished() else Color(0.86, 0.28, 0.88, 0.92)
-	draw_circle(Vector2.ZERO, 48.0, Color(core_color.r, core_color.g, core_color.b, 0.20))
-	draw_arc(Vector2.ZERO, 72.0 + pulse * 5.0, 0.0, TAU, 72, core_color, 6.0, true)
-	draw_arc(Vector2.ZERO, activation_radius_px, 0.0, TAU, 96, Color(core_color.r, core_color.g, core_color.b, 0.055), 3.0, true)
-
+	var done := is_finished()
+	var color := Color(0.48, 0.94, 0.81, 0.95) if done else Color(0.84, 0.72, 0.96, 0.94)
 	for index in range(_component_positions.size()):
-		var local_pos := _component_positions[index]
-		var silenced: bool = _component_silenced[index] != 0
-		var node_color := Color(0.20, 0.95, 0.72, 0.96) if silenced else Color(0.98, 0.62, 0.18, 0.96)
-		draw_line(Vector2.ZERO, local_pos, Color(core_color.r, core_color.g, core_color.b, 0.24), 4.0, true)
-		draw_circle(local_pos, 28.0, Color(node_color.r, node_color.g, node_color.b, 0.20))
-		draw_arc(local_pos, 42.0, 0.0, TAU, 48, node_color, 5.0, true)
-		if not silenced and attune_time_sec > 0.0:
-			var progress := clampf(_component_progress[index] / attune_time_sec, 0.0, 1.0)
-			draw_arc(local_pos, 53.0, -PI * 0.5, -PI * 0.5 + TAU * progress, 48, Color(1.0, 0.95, 0.65, 1.0), 8.0, true)
-
-	var label := "DISTRICT RELAY SILENCED" if is_finished() else "SILENCE DISTRICT RELAY"
-	draw_string(ThemeDB.fallback_font, Vector2(-190.0, -105.0), label, HORIZONTAL_ALIGNMENT_CENTER, 380.0, 24, core_color)
+		var at := _component_positions[index]
+		var silenced := _component_silenced[index] != 0
+		var site_color := Color(0.38, 0.9, 0.73, 0.85) if silenced else Color(0.9, 0.72, 0.4, 0.85)
+		draw_line(Vector2.ZERO, at, Color(0.07, 0.05, 0.035, 0.7), 4.0, true)
+		draw_dashed_line(Vector2.ZERO, at, Color(site_color.r, site_color.g, site_color.b, 0.24), 1.5, 10.0, true, true)
+		var progress := clampf(_component_progress[index] / maxf(0.001, attune_time_sec), 0.0, 1.0)
+		WorldArt.draw_boundary(self, at, attune_radius_px, site_color, progress if not silenced else -1.0)
+		if silenced:
+			WorldArt.draw_complete(self, at + Vector2(0, 23), 12.0)
+	draw_completion(Vector2(0, 25), 82.0)
+	var label := "DISTRICT RELAY SILENCED" if done else "SILENCE DISTRICT RELAY"
+	draw_string_outline(ThemeDB.fallback_font, Vector2(-220.0, -118.0), label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, Vector2(-220.0, -118.0), label, HORIZONTAL_ALIGNMENT_CENTER, 440.0, 22, color)

@@ -1,0 +1,40 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+ERROR: FAIL: Wardstone uses its painted world form
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:30)
+PASS: Wardstone capture geometry remains exact
+ERROR: FAIL: Rite uses its open painted threshold
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:35)
+PASS: Rite siege geometry remains exact
+ERROR: FAIL: DistrictRelayObjective.gd has a painted identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:43)
+ERROR: FAIL: WardVigilObjective.gd has a painted identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:43)
+ERROR: FAIL: BreachSealObjective.gd has a painted identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:43)
+ERROR: FAIL: WagerShrineObjective.gd has a painted identity
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:43)
+ERROR: FAIL: all four objective variants have distinct forms
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/ObjectivePresentationTest.gd:22)
+       [1] _run (res://tools/tests/ObjectivePresentationTest.gd:50)
+ObjectivePresentationTest: 2 passed, 7 failed

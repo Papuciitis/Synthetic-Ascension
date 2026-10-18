@@ -1,0 +1,48 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: a V5 run loads PrecisionEngineV5
+PASS: PR01 rank 1 exposes at 3.0
+PASS: PR01 rank 3 exposes at 2.0
+PASS: PR03 rank 1 pierces 2 extra
+PASS: PR03 rank 4 pierces 5 extra
+PASS: PR05 rank 1 aims in 0.80 s
+PASS: PR05 rank 3 aims in 0.50 s
+PASS: PR06 rank 1 bounces once
+PASS: PR06 rank 2 bounces twice
+PASS: PR07 rank 1 returns at 60%
+PASS: PR07 rank 3 returns at 90%
+PASS: PR09 rank 1 splits into 2
+PASS: PR09 rank 3 splits into 4 at the authored angles
+PASS: PR11 rank 1 window 0.50 s
+PASS: PR11 rank 2 window 0.65 s
+PASS: PR12 rank 1 stores 3 spares
+PASS: PR12 rank 3 stores 6
+PASS: Smart Rounds costs -15% in the V5 test change
+PASS: PR03 rank 1 decorates the native shot with 2 additional pierces (2)
+PASS: a rank 1 native shot physically crosses 3 targets and stops there (3 hit, target 4 at 500)
+PASS: PR03 rank 2 decorates the native shot with 3 additional pierces (3)
+PASS: a rank 2 native shot physically crosses 4 targets and stops there (4 hit, target 5 at 500)
+PASS: PR03 rank 3 decorates the native shot with 4 additional pierces (4)
+PASS: a rank 3 native shot physically crosses 5 targets and stops there (5 hit, target 6 at 500)
+PASS: PR03 rank 4 decorates the native shot with 5 additional pierces (5)
+PASS: a rank 4 native shot physically crosses 6 targets and stops there (6 hit, target 7 at 500)
+PASS: unranked PR03 still qualifies its original Fusion parent MR1 in the V5 tree (ok)
+PASS: unranked PR03 still qualifies its original Fusion parent RM1 in the V5 tree (ok)
+PASS: PR03 parented exactly the two original Fusions, MR1 and RM1 (2 checked)
+PASS: a Far Shot Weak Point consumes for +1.4D at rank 3 (26.8)
+PASS: an ordinary Weak Point stays +1D
+PASS: the rank 3 return deals 90% of the captured 12.4 once: 11.16 (victim lost 11.16)
+PASS: one outbound made exactly one physical return and the return made none (1 returns, 1 return ids, 1 return hits on the victim)
+PASS: PR09 rank 1: the exposed kill after a pierce emits 2 distinct split rounds at 0.7D (2 live, 2 ids, 3 active)
+PASS: PR09 rank 2: the exposed kill after a pierce emits 3 distinct split rounds at 0.7D (3 live, 3 ids, 4 active)
+PASS: PR09 rank 3: the exposed kill after a pierce emits 4 distinct split rounds at 0.7D (4 live, 4 ids, 5 active)
+PASS: a consuming hit after a pierce that does not kill emits no split round (lost 22.0, 0 rounds, 0 splits)
+PASS: three physical hits worth 12D+ on one elite fire the Firing Squad fallback
+PASS: the fallback is attributed to the boss route
+PASS: the fallback respects the recovery period
+PASS: three REAL projectile hits on one elite fire the Firing Squad (2, hp 3779, roots {  }, shots [[0, true, 1, 3940.0], [1, true, 2, 3863.19995117188], [2, true, 2, 3779.19995117188]], active 2)
+PASS: one real round crossing 12 distinct enemies fires the Firing Squad once by the dense route, not the boss route (1 squads, recovery 7.98)
+PASS: the dense route pays the same six edge guns (6 lines)
+PASS: the elite's first event carries the root's three physical hits worth 12D+ (3 hits, 180.0)
+PASS: with the 12th distinct enemy and the boss threshold met by that one event, the Firing Squad fires once and enters one 8 s recovery (1 squads, recovery 7.97, boss route +0)
+AscensionPrecisionV5Test: 45 passed, 0 failed

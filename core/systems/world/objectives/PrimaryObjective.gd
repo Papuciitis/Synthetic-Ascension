@@ -1,6 +1,10 @@
 extends Node2D
 class_name PrimaryObjective
 
+const WorldArt := preload("res://core/systems/world/objectives/ObjectiveWorldArt.gd")
+var objective_art: Sprite2D
+var _completion_age := -1.0
+
 ## Base class for a segment's primary objective.
 ##
 ## There was exactly one procedural objective - the District Relay - and its
@@ -78,6 +82,7 @@ func _ready() -> void:
 	if not is_layout_built():
 		build_layout(_rng())
 	_build_spawn_sockets()
+	build_presentation()
 	set_process(true)
 	queue_redraw()
 
@@ -108,6 +113,11 @@ func is_finished() -> bool:
 
 func _process(delta: float) -> void:
 	pulse_time += delta
+	if _completion_age >= 0.0:
+		_completion_age += delta
+		if _completion_age < 0.8:
+			queue_redraw()
+	update_presentation()
 	if _finished:
 		tick_finished(delta)
 		return
@@ -146,6 +156,8 @@ func finish() -> void:
 	if _finished:
 		return
 	_finished = true
+	_completion_age = 0.0
+	update_presentation()
 	completed.emit()
 	queue_redraw()
 
@@ -205,6 +217,26 @@ func on_player_dead(_delta: float) -> void:
 
 func on_activated() -> void:
 	pass
+
+
+## Concrete objective art observes state; the objective still owns its clocks.
+func build_presentation() -> void:
+	pass
+
+
+func update_presentation() -> void:
+	pass
+
+
+func draw_completion(at: Vector2 = Vector2.ZERO, radius: float = 80.0) -> void:
+	if not _finished:
+		return
+	WorldArt.draw_complete(self, at)
+	if _completion_age >= 0.0 and _completion_age < 0.8:
+		var fraction := _completion_age / 0.8
+		var alpha := AccessibilityPresentation.current_flash_alpha((1.0 - fraction) * 0.7)
+		var extent := radius if WorldArt.reduced_motion() else lerpf(radius * 0.7, radius * 1.2, fraction)
+		draw_arc(at, extent, 0.0, TAU, 64, Color(0.66, 0.93, 0.8, alpha), 3.0, true)
 
 
 func steps_done() -> int:

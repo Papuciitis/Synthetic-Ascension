@@ -1,6 +1,9 @@
 extends Node2D
 class_name WagerShrineObjective
 
+const WorldArt := preload("res://core/systems/world/objectives/ObjectiveWorldArt.gd")
+var objective_art: Sprite2D
+
 ## A secondary that is a DECISION rather than a detour.
 ##
 ## The two secondaries the districts had were both "go to a place and then do
@@ -77,12 +80,15 @@ func configure(objective_id: int) -> void:
 
 func _ready() -> void:
 	add_to_group(&"secondary_objective")
+	objective_art = WorldArt.install(self, "wager", 120.0)
 	z_index = 34
 	set_process(true)
 
 
 func _process(delta: float) -> void:
 	_pulse += delta
+	if objective_art != null:
+		objective_art.call("set_state", "spent" if _finished else ("working" if _dwell > 0.0 else "dormant"), float(_tier + 1) / float(TIERS.size()))
 	if _finished:
 		queue_redraw()
 		return
@@ -220,30 +226,19 @@ func _pay_out(tier: int) -> void:
 
 
 func _draw() -> void:
-	var pulse := 0.5 + 0.5 * sin(_pulse * 2.6)
+	var gold := Color(0.94, 0.78, 0.4, 0.92)
 	if _finished:
-		var spent_colour := Color(0.42, 0.42, 0.46, 0.75)
-		draw_arc(Vector2.ZERO, radius_px, 0.0, TAU, 64, spent_colour, 3.0, true)
-		draw_circle(Vector2.ZERO, 20.0, Color(spent_colour.r, spent_colour.g, spent_colour.b, 0.25))
+		WorldArt.draw_boundary(self, Vector2.ZERO, radius_px, Color(0.46, 0.43, 0.4, 0.65))
 		return
-
-	var gold := Color(0.98, 0.82, 0.36, 0.95)
-	draw_circle(Vector2.ZERO, radius_px, Color(gold.r, gold.g, gold.b, 0.05))
-	draw_arc(Vector2.ZERO, radius_px, 0.0, TAU, 64, Color(gold.r, gold.g, gold.b, 0.45), 4.0, true)
-	draw_circle(Vector2.ZERO, 26.0 + pulse * 3.0, Color(gold.r, gold.g, gold.b, 0.22))
-
-	# One filled pip per tier bought, one hollow per tier still on offer, so the
-	# stake is readable at a glance without a panel.
+	WorldArt.draw_boundary(self, Vector2.ZERO, radius_px, gold)
 	for index in range(TIERS.size()):
 		var angle := -PI * 0.5 + TAU * float(index) / float(TIERS.size())
-		var at := Vector2.RIGHT.rotated(angle) * (radius_px * 0.62)
+		var at := Vector2.from_angle(angle) * (radius_px + 13.0)
+		draw_circle(at, 8.0, Color(0.06, 0.045, 0.025, 0.95))
+		draw_arc(at, 7.0, 0.0, TAU, 20, gold, 2.0, true)
 		if index <= _tier:
-			draw_circle(at, 13.0, gold)
-		else:
-			draw_arc(at, 13.0, 0.0, TAU, 24, Color(gold.r, gold.g, gold.b, 0.55), 3.0, true)
-
-	if _tier >= 0:
-		var text := "%s  •  %d%%" % [String(TIERS[_tier]["label"]), int(round(odds_for(_tier) * 100.0))]
-		draw_string(ThemeDB.fallback_font, Vector2(-150.0, -radius_px - 26.0), text, HORIZONTAL_ALIGNMENT_CENTER, 300.0, 22, gold)
-	else:
-		draw_string(ThemeDB.fallback_font, Vector2(-150.0, -radius_px - 26.0), "WAGER SHRINE", HORIZONTAL_ALIGNMENT_CENTER, 300.0, 22, Color(gold.r, gold.g, gold.b, 0.8))
+			draw_circle(at, 4.5, gold)
+	var label := "%s  •  %d%%" % [String(TIERS[_tier]["label"]), int(round(odds_for(_tier) * 100.0))] if _tier >= 0 else "WAGER SHRINE"
+	var at := Vector2(-180.0, -radius_px - 30.0)
+	draw_string_outline(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 360.0, 22, 5, Color(0.025, 0.02, 0.03, 0.95))
+	draw_string(ThemeDB.fallback_font, at, label, HORIZONTAL_ALIGNMENT_CENTER, 360.0, 22, gold)
