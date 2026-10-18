@@ -1,0 +1,1054 @@
+{
+  "date": "2026-10-18",
+  "report_count": 126,
+  "report_provenance": "User playtest incident JSON files in the existing local performance_results/2026-10-18 directory. Reports were read, not rewritten. Names are local capture timestamps. Build metadata is recorded by the original reports and is not a claim that the tested working tree was clean.",
+  "capture_build_metadata": [
+    {
+      "game_version": "0.0.0.25.5",
+      "git_branch": "feat/authoritative-enemy-world",
+      "git_commit": "c9d5a31772f3",
+      "godot_version": "4.7.1-stable (official)",
+      "world_seed": 1794675549650
+    }
+  ],
+  "reports": [
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-24-32_segment-05_incident-001.json",
+      "bytes": 847609,
+      "sha256": "90fd459eb3884f29752f03f456fda38c2d1827dd157a299a9b73c7e94b86b62a",
+      "sequence": 1,
+      "trigger_usec": 74981305,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-24-56_segment-05_incident-002.json",
+      "bytes": 2254112,
+      "sha256": "cebc397080e2db99fa81719dfe298fc9a6f1bd3ddfcaa687ed3e613774bf0b8c",
+      "sequence": 2,
+      "trigger_usec": 96787369,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-25-05_segment-05_incident-003.json",
+      "bytes": 2223977,
+      "sha256": "4b2c1df68e91a654881bd0a8aba134ebf09a2c43ff4d442617097b08403a9f4b",
+      "sequence": 3,
+      "trigger_usec": 104836595,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-25-15_segment-05_incident-004.json",
+      "bytes": 2371547,
+      "sha256": "28fd1cdccee5ac0cb202960ddd8dda6132b694b19b2b0b46b2ba480ddbe52e79",
+      "sequence": 4,
+      "trigger_usec": 116601504,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-25-23_segment-05_incident-005.json",
+      "bytes": 2489617,
+      "sha256": "edd9ced34cf3210ff65fa04ecca8b08365addb3b02e6f551030ff2dda38cf8c4",
+      "sequence": 5,
+      "trigger_usec": 123911031,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-25-32_segment-05_incident-006.json",
+      "bytes": 2483831,
+      "sha256": "539b797cf903c7ee8513217d132fd9392e577bfa9d6dc638b7604b94255320c0",
+      "sequence": 6,
+      "trigger_usec": 132640488,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-25-54_segment-05_incident-007.json",
+      "bytes": 2482227,
+      "sha256": "c81988d2704e541e97fe76d1b14ce8a78de1601a8843ce589ff369b8efdac9ed",
+      "sequence": 7,
+      "trigger_usec": 154749042,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-11_segment-05_incident-008.json",
+      "bytes": 2358456,
+      "sha256": "e8dd2667a5d416acb5b2f120b3e81855624c1021189d7fbfbdb6b66a5f3324dd",
+      "sequence": 8,
+      "trigger_usec": 171246406,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-17_segment-05_incident-009.json",
+      "bytes": 2178936,
+      "sha256": "b26a3a50420592a7cca6d344e99269d0dac70f3c857d2593f1c3a6c4d8023a68",
+      "sequence": 9,
+      "trigger_usec": 178314158,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-25_segment-05_incident-010.json",
+      "bytes": 2299374,
+      "sha256": "de0b4dbf7e815638e423cb68ebd9e7677446ebd3b46f8a00eb71adfbc22ef53a",
+      "sequence": 10,
+      "trigger_usec": 186195991,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-32_segment-05_incident-011.json",
+      "bytes": 2458806,
+      "sha256": "3801461901114eb6fe21c7a2a24d580da376142f0990017b8b4ef63cfdb0cea6",
+      "sequence": 11,
+      "trigger_usec": 193292341,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-41_segment-05_incident-012.json",
+      "bytes": 2420168,
+      "sha256": "9b5cba306f9a8ce9a7dcf31c11e9756da18170a8771d9110485ff246276b9530",
+      "sequence": 12,
+      "trigger_usec": 201891428,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-26-48_segment-05_incident-013.json",
+      "bytes": 2359814,
+      "sha256": "05a54d295c697f09e7a83c9a0fb131185a47d48cae1ab0d22778b3d72771d4f3",
+      "sequence": 13,
+      "trigger_usec": 209178619,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-04_segment-05_incident-014.json",
+      "bytes": 2484454,
+      "sha256": "64c5af004d4558d71b2252b9b774f49181d898cf3aa33c05bf25eb26e2e05efc",
+      "sequence": 14,
+      "trigger_usec": 224536598,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-19_segment-05_incident-015.json",
+      "bytes": 2480938,
+      "sha256": "da4166ab3dc57ce8c93907e45de374bfb0a8781ea8fb09e7a91fb81ef2dd6c04",
+      "sequence": 15,
+      "trigger_usec": 239640073,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-26_segment-05_incident-016.json",
+      "bytes": 2382131,
+      "sha256": "1acc4b18abec6039e4a72da678cd3fb5c654c0868f0792e866fc311bc71b2df5",
+      "sequence": 16,
+      "trigger_usec": 246987201,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-37_segment-05_incident-017.json",
+      "bytes": 2450754,
+      "sha256": "f333517ccf4a94834d7ba58fb778d9f6ce176d2180738385a5f377321b8d3d2b",
+      "sequence": 17,
+      "trigger_usec": 258706478,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-45_segment-05_incident-018.json",
+      "bytes": 2462955,
+      "sha256": "479cbc0b00701b517e1def85d8551372fb5e0d1be97aa9602c6c54df5667de81",
+      "sequence": 18,
+      "trigger_usec": 266924859,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-27-56_segment-05_incident-019.json",
+      "bytes": 2495428,
+      "sha256": "b61738285c95c625674638bffd97b28d3b3e858a3c45e3071d00119568e8eb3e",
+      "sequence": 19,
+      "trigger_usec": 277859123,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-05_segment-05_incident-020.json",
+      "bytes": 2424749,
+      "sha256": "3bbf430997f8602e34eb64fdaeb3bea14f3ba280d97d72fad8690bb90580f8a4",
+      "sequence": 20,
+      "trigger_usec": 286922391,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-14_segment-05_incident-021.json",
+      "bytes": 2529297,
+      "sha256": "2bca789db9c712fb20516e4dc17ba630bd0e96d62e2cf9a53e47ba82ce436154",
+      "sequence": 21,
+      "trigger_usec": 295313205,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-23_segment-05_incident-022.json",
+      "bytes": 2693214,
+      "sha256": "b5a992ffc3a3b3487f20ffeb652a3c29f840174b7999a72bc5bfa23885750ae2",
+      "sequence": 22,
+      "trigger_usec": 303747999,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-32_segment-05_incident-023.json",
+      "bytes": 2674418,
+      "sha256": "0ee50c8287e72edd7d24a643466510d8a536ca4f4ab4df15f00a7d01361c5d5e",
+      "sequence": 23,
+      "trigger_usec": 312940117,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-40_segment-05_incident-024.json",
+      "bytes": 2695392,
+      "sha256": "76b40cf57d7bbe88148f91b426c2c15bc84452b4c52eebc65a1bf3038aea0044",
+      "sequence": 24,
+      "trigger_usec": 320796369,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-49_segment-05_incident-025.json",
+      "bytes": 2688187,
+      "sha256": "99af960b1e9210347e2b330dd56d43646628ab23ffd8e8158677149739989067",
+      "sequence": 25,
+      "trigger_usec": 329962124,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-28-58_segment-05_incident-026.json",
+      "bytes": 2665902,
+      "sha256": "e7c432b5bec6f8f5f927e4f97e1c416f46b75b6bf57631c812aad4bad7cba19d",
+      "sequence": 26,
+      "trigger_usec": 337740998,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-29-12_segment-05_incident-027.json",
+      "bytes": 2016169,
+      "sha256": "2e1ee0458bf14eb2f8af2345ff2bde9277559c35457e2d54e1b539c43ebd2304",
+      "sequence": 27,
+      "trigger_usec": 346298142,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-29-16_segment-05_incident-028.json",
+      "bytes": 1161885,
+      "sha256": "52f4b11b503d1441006db2ea69cc7c17c893c1c35756ecfceaa77de94d4c362f",
+      "sequence": 28,
+      "trigger_usec": 358594645,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-30-01_segment-05_incident-029.json",
+      "bytes": 3470162,
+      "sha256": "9ec78377788be43abe378a5eef3d7bfc0db8cb33ada34e52210d3c924d14c167",
+      "sequence": 29,
+      "trigger_usec": 401698679,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-03_segment-05_incident-030.json",
+      "bytes": 3488158,
+      "sha256": "1bb9f237de4f412e9116ddef57eb7c54edc810653ecdd875d394290d52f6ee69",
+      "sequence": 30,
+      "trigger_usec": 523508265,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-12_segment-05_incident-031.json",
+      "bytes": 3354519,
+      "sha256": "0f7c11e5ba225bed9f900c095ccb6c99bf9e8ce49e6f221d45403a55e14ee23b",
+      "sequence": 31,
+      "trigger_usec": 531859987,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-29_segment-05_incident-032.json",
+      "bytes": 3329905,
+      "sha256": "aed3779b6d3b1b2825f5af790349fbb35fa7da7fc8bbc665f94de914300724fa",
+      "sequence": 32,
+      "trigger_usec": 548987730,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-35_segment-05_incident-033.json",
+      "bytes": 3174052,
+      "sha256": "2d7ca2e23f15ee5950803afa3c03b87a6019bed18f9d47a904bef7824c4d400e",
+      "sequence": 33,
+      "trigger_usec": 556100006,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-42_segment-05_incident-034.json",
+      "bytes": 3241911,
+      "sha256": "3c6314a1c0839a81831c8ad99acd7024dd34e3e0ade975f7e1e874cb7b1684a7",
+      "sequence": 34,
+      "trigger_usec": 563661220,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-32-51_segment-05_incident-035.json",
+      "bytes": 3407071,
+      "sha256": "6f996da7e1cf65b665e3a58aad74cc683b7919c0b0c8d662527055360bacdc97",
+      "sequence": 35,
+      "trigger_usec": 572258496,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-00_segment-05_incident-036.json",
+      "bytes": 3467665,
+      "sha256": "0e5c31fa9ec43d0d71af3b5a6bdb858739645f9e479f1619f2be36dd38d407e7",
+      "sequence": 36,
+      "trigger_usec": 580964197,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-07_segment-05_incident-037.json",
+      "bytes": 3454666,
+      "sha256": "686ca3d6df02fded5fc2340467b2034fa7d2a48c7b72dc84cdd7bca54c61c60e",
+      "sequence": 37,
+      "trigger_usec": 588692888,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-15_segment-05_incident-038.json",
+      "bytes": 3454776,
+      "sha256": "8d1c76269b59696aab9e3f07f3ecf924fa74675f20849c4280e238bdebc2e987",
+      "sequence": 38,
+      "trigger_usec": 596398182,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-23_segment-05_incident-039.json",
+      "bytes": 3462985,
+      "sha256": "e15a537cfcac579b497dcf021a5dafbaa1e4f97aa47bd8eb70b0431ab35f61df",
+      "sequence": 39,
+      "trigger_usec": 604084599,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-30_segment-05_incident-040.json",
+      "bytes": 3414153,
+      "sha256": "e802bdb65ef4c7ea5d8594a7f3f0f363069dad7945f29b081e0a106a077af056",
+      "sequence": 40,
+      "trigger_usec": 611529863,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-37_segment-05_incident-041.json",
+      "bytes": 3281436,
+      "sha256": "4b5719396fcd97de6e33bb213c121711d37861c338017e32983fc1da2c8efc77",
+      "sequence": 41,
+      "trigger_usec": 618608086,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-45_segment-05_incident-042.json",
+      "bytes": 3143454,
+      "sha256": "6a8933789b5dfed5ed4686c3f0709910bc2f7d9daa088da25d7a40ff1efa7a13",
+      "sequence": 42,
+      "trigger_usec": 625944664,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-33-53_segment-05_incident-043.json",
+      "bytes": 3176257,
+      "sha256": "86fb4ae832de46c1afcd98159b30c975a6346e8bf99daf294eeeef7fec63d2a6",
+      "sequence": 43,
+      "trigger_usec": 634630231,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-12_segment-05_incident-044.json",
+      "bytes": 3143643,
+      "sha256": "95b93b3059607fb64382ab6a684e20e8346268d98bf2b5a2d1799ef231d8bb90",
+      "sequence": 44,
+      "trigger_usec": 651735737,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-22_segment-05_incident-045.json",
+      "bytes": 2931946,
+      "sha256": "f2a3b390893fd3f8fbfcbd0bce895b2f763b229b0be71dcfc8f574ba27b7d4cc",
+      "sequence": 45,
+      "trigger_usec": 662200805,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-29_segment-05_incident-046.json",
+      "bytes": 3008844,
+      "sha256": "09d76442e70f0fb0570440cd164e5c6d49ef7281fd13a1648d85df359da39205",
+      "sequence": 46,
+      "trigger_usec": 669445681,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-38_segment-05_incident-047.json",
+      "bytes": 2894529,
+      "sha256": "eb10ef6a9073727d5956102535740a913d75e649bce6ae4a1b5bda64f5cda292",
+      "sequence": 47,
+      "trigger_usec": 678209689,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-45_segment-05_incident-048.json",
+      "bytes": 3009905,
+      "sha256": "8e209818d7509def602846ffff170b2c10a94763ce2d2a7faec0b74f97064608",
+      "sequence": 48,
+      "trigger_usec": 685249384,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-52_segment-05_incident-049.json",
+      "bytes": 3027938,
+      "sha256": "fcb6d25dcd5897f4fff0a37ee19f217811af58567a3f4ebe775ca8050c0a909f",
+      "sequence": 49,
+      "trigger_usec": 692484039,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-34-59_segment-05_incident-050.json",
+      "bytes": 2867329,
+      "sha256": "f35e1c0c1409823537e5950e4eaf6718efb313d7b96b9ae69173cc231c121c8f",
+      "sequence": 50,
+      "trigger_usec": 699869573,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-07_segment-05_incident-051.json",
+      "bytes": 2689399,
+      "sha256": "cd2666c791d486e55076fae75c04f48e0c39858b61c4662e52c0e863233c8f9f",
+      "sequence": 51,
+      "trigger_usec": 707759496,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-13_segment-05_incident-052.json",
+      "bytes": 2793915,
+      "sha256": "9d4838f19c1dc781e6665b741d4d5e69ef335a2115d81cf922f448fdd813f0c3",
+      "sequence": 52,
+      "trigger_usec": 715013905,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-22_segment-05_incident-053.json",
+      "bytes": 3213574,
+      "sha256": "ef3bb4be30e35659a5fb043bb34ffb21be2b5c8d5afef98c56a47e737821655e",
+      "sequence": 53,
+      "trigger_usec": 722815387,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-30_segment-05_incident-054.json",
+      "bytes": 3243015,
+      "sha256": "c92a74373bc1e3f436b913fc8d15c3930a2ff80f0beedc4d46edf2486cf0d962",
+      "sequence": 54,
+      "trigger_usec": 729896275,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-37_segment-05_incident-055.json",
+      "bytes": 2853267,
+      "sha256": "6de3258ca27c44bf6e9066f2d40265ea809ced0f3356d0d6bce513f3a21792a8",
+      "sequence": 55,
+      "trigger_usec": 737864504,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-44_segment-05_incident-056.json",
+      "bytes": 3055351,
+      "sha256": "f3521e12228201d44e8e63aea2eca29bd6f9db6416fba258832cb8bc495d2710",
+      "sequence": 56,
+      "trigger_usec": 745851374,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-53_segment-05_incident-057.json",
+      "bytes": 3421930,
+      "sha256": "f49701327affae44288e1c9239f4cc31b796f32d90db866dbaf5310d3473daa4",
+      "sequence": 57,
+      "trigger_usec": 753484237,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-35-59_segment-05_incident-058.json",
+      "bytes": 3076019,
+      "sha256": "15a1b340b1e6ff8012dbc6be7da30620aa360840bb64b46f76b5ea8342d543f7",
+      "sequence": 58,
+      "trigger_usec": 760527859,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-36-12_segment-05_incident-059.json",
+      "bytes": 3456114,
+      "sha256": "264e6c9b7404fd7d2f17fdb121ba601e009eeae491c86df9a667fbaed77438e7",
+      "sequence": 59,
+      "trigger_usec": 773092794,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-36-22_segment-05_incident-060.json",
+      "bytes": 3488343,
+      "sha256": "8662a0aa25fced217eed6f9d1cfc9c4565e4bd59c626ce0325e86576311cfaac",
+      "sequence": 60,
+      "trigger_usec": 782792855,
+      "segment": 5
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-37-00_segment-06_incident-061.json",
+      "bytes": 3109218,
+      "sha256": "e447f7ad8973f61ec4d0148a8591e66cc9b84c4f0438d0978979f3caf80db2b5",
+      "sequence": 61,
+      "trigger_usec": 820957221,
+      "segment": 6
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-37-33_segment-10_incident-062.json",
+      "bytes": 2859373,
+      "sha256": "3e1b45f0a685ab747bd103eabea30452d1162694528d5c603d8d8008013ec739",
+      "sequence": 62,
+      "trigger_usec": 853866830,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-37-46_segment-10_incident-063.json",
+      "bytes": 3436175,
+      "sha256": "c8563a7c62d5aee21e66ca71df300c2b3055f2ee58a40899400aa6c4a39a0ae3",
+      "sequence": 63,
+      "trigger_usec": 866851291,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-11_segment-10_incident-064.json",
+      "bytes": 3511277,
+      "sha256": "ab5480a571f5e8362ff2758bb32ddb9af12b07f9800e1b8bda8f7329b80b2807",
+      "sequence": 64,
+      "trigger_usec": 1011620196,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-19_segment-10_incident-065.json",
+      "bytes": 3464211,
+      "sha256": "5cc628d7c44dce8149250b9897938bc6c20ecf1369eae2d04390b5ae4c8e23d6",
+      "sequence": 65,
+      "trigger_usec": 1020417082,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-27_segment-10_incident-066.json",
+      "bytes": 3396624,
+      "sha256": "b7dbe7deeb93f9c0309266410e705f64d9929f8aa6f018c0be590171b465fa22",
+      "sequence": 66,
+      "trigger_usec": 1028094805,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-35_segment-10_incident-067.json",
+      "bytes": 3341233,
+      "sha256": "6659af3c61d7e83e1db1420b12d7a4b65c3ab667f614d506ec128a68b0546ecb",
+      "sequence": 67,
+      "trigger_usec": 1035611044,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-42_segment-10_incident-068.json",
+      "bytes": 3038398,
+      "sha256": "aa37004f7f230a3711be367283ccf4c163f599772ea3310f39a17671ff9359b9",
+      "sequence": 68,
+      "trigger_usec": 1043112243,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-49_segment-10_incident-069.json",
+      "bytes": 3107586,
+      "sha256": "e36cc7b210bf39a8405cb42a14d1f8fab427844de21848f9cd315ee9931e0642",
+      "sequence": 69,
+      "trigger_usec": 1050757967,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-40-57_segment-10_incident-070.json",
+      "bytes": 3476819,
+      "sha256": "49bce3d7c9c1f835b8949f6febd95c85f4100b67b1a5649c62a5da265abf3a85",
+      "sequence": 70,
+      "trigger_usec": 1058699041,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-07_segment-10_incident-071.json",
+      "bytes": 3477778,
+      "sha256": "74e61a147492713397823e95c3d40a42b03f4ef1c4a73b3f48bd957b46e7765f",
+      "sequence": 71,
+      "trigger_usec": 1067649029,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-15_segment-10_incident-072.json",
+      "bytes": 3408179,
+      "sha256": "7bc6681a4cd3bca4759b76364d104d73a906c0f1e9b16ac4ac940a461a0a64ba",
+      "sequence": 72,
+      "trigger_usec": 1075945628,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-22_segment-10_incident-073.json",
+      "bytes": 3313069,
+      "sha256": "ef33afbf57a4ef3f0cccb2d6ca51cbd7bd6dbbf69c072f0a20c31af4e1ffef51",
+      "sequence": 73,
+      "trigger_usec": 1083013163,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-29_segment-10_incident-074.json",
+      "bytes": 3159865,
+      "sha256": "7c065c45c13aacc140d322187c815084e8a23ff55ff98b273ff13a30fa1e837a",
+      "sequence": 74,
+      "trigger_usec": 1090619960,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-38_segment-10_incident-075.json",
+      "bytes": 3099478,
+      "sha256": "e4ec5980198a955335b340ccfca168deed99caf9aeb8088740756a3fb6344e1f",
+      "sequence": 75,
+      "trigger_usec": 1098357193,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-45_segment-10_incident-076.json",
+      "bytes": 3041686,
+      "sha256": "a32cc560205d50c70f9a3f50a0b8922cb23f3129ebd7e9409798c9cbbac606e5",
+      "sequence": 76,
+      "trigger_usec": 1105870097,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-41-52_segment-10_incident-077.json",
+      "bytes": 3140542,
+      "sha256": "e60117576ac9eb63ea43f22b919668e1813bc9ddd84e1f582c378919a7eee875",
+      "sequence": 77,
+      "trigger_usec": 1113443994,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-00_segment-10_incident-078.json",
+      "bytes": 3332503,
+      "sha256": "c294378bc45efaede2403e6554e98782329e062b73973f7909d22b46d302d2d3",
+      "sequence": 78,
+      "trigger_usec": 1121029395,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-07_segment-10_incident-079.json",
+      "bytes": 3197288,
+      "sha256": "5adaa94f36dc17fe15187ca90a53b7435f8881adbec978bbea12a37dbdccb9a9",
+      "sequence": 79,
+      "trigger_usec": 1128157211,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-14_segment-10_incident-080.json",
+      "bytes": 3055714,
+      "sha256": "0a0cba9a7e0046ec8a7ca5373459bd5061c1c4f41aa03e17c97645acf8a6de0a",
+      "sequence": 80,
+      "trigger_usec": 1135273889,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-21_segment-10_incident-081.json",
+      "bytes": 2956526,
+      "sha256": "f3911a2d032bd0d27904ff5883ff63669d54160ba4a2013e3bfe0685ceb2c52a",
+      "sequence": 81,
+      "trigger_usec": 1142588013,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-32_segment-10_incident-082.json",
+      "bytes": 3236801,
+      "sha256": "25951e6cf0a291257a3001d656c1c7517457c729816146a64b6021dd2aef593e",
+      "sequence": 82,
+      "trigger_usec": 1152626612,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-50_segment-10_incident-083.json",
+      "bytes": 3153814,
+      "sha256": "32063d087107b8ec934c46815ca2a27b2ff0c94422cebe1fd21c76401d6fa1fe",
+      "sequence": 83,
+      "trigger_usec": 1170683523,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-42-57_segment-10_incident-084.json",
+      "bytes": 3017200,
+      "sha256": "bc796c154c4279a50eda8718912713f0f3c85384ddc33928c1fe1dceb98b7c04",
+      "sequence": 84,
+      "trigger_usec": 1178201859,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-05_segment-10_incident-085.json",
+      "bytes": 3144926,
+      "sha256": "21e0c934f1a98e86886f2131680d83f379bf3e4afc87b4554ad7cc85bcf98975",
+      "sequence": 85,
+      "trigger_usec": 1185786840,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-14_segment-10_incident-086.json",
+      "bytes": 3120045,
+      "sha256": "cffa5faefde1863a0cc5de87d10a60a2e59039c73f71d21a4d84fb14ae7b0693",
+      "sequence": 86,
+      "trigger_usec": 1195219876,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-22_segment-10_incident-087.json",
+      "bytes": 3224660,
+      "sha256": "795768662932f5d00de81f5d03c4b821a7f3db82cdf7f9497a04870804fc8cc7",
+      "sequence": 87,
+      "trigger_usec": 1202698678,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-30_segment-10_incident-088.json",
+      "bytes": 2909327,
+      "sha256": "7ddfdfe97654fe7c205255f488680dd5dda9adc78c956eca2b684a8f278a187e",
+      "sequence": 88,
+      "trigger_usec": 1210519312,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-37_segment-10_incident-089.json",
+      "bytes": 2613002,
+      "sha256": "f5477470fd6f9857b066c00b73bbb3f6aac1b1d1a848ab74d4b786beec578134",
+      "sequence": 89,
+      "trigger_usec": 1217907872,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-44_segment-10_incident-090.json",
+      "bytes": 2560195,
+      "sha256": "2809066e2bd3e8f1e842ff60ba9d22a2e611d5ed8ecfac1a3798a52f0b5d5090",
+      "sequence": 90,
+      "trigger_usec": 1225048682,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-51_segment-10_incident-091.json",
+      "bytes": 2555980,
+      "sha256": "154462600bb014304b224a0e06d266d5f809c00b2bbfd014e8ad813e505ae4b9",
+      "sequence": 91,
+      "trigger_usec": 1232097651,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-43-58_segment-10_incident-092.json",
+      "bytes": 2828696,
+      "sha256": "b58a5747e67595754506064212865b749ec2d98d6886b403de270f13c877f1b9",
+      "sequence": 92,
+      "trigger_usec": 1239230454,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-06_segment-10_incident-093.json",
+      "bytes": 2956058,
+      "sha256": "1bb4b80df26ff80adfde9f123b27e1291f2b4f2d760d4d6313e61298417c582b",
+      "sequence": 93,
+      "trigger_usec": 1247152330,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-14_segment-10_incident-094.json",
+      "bytes": 2677622,
+      "sha256": "6eed577e70306bd83f62b8d51b646082d9e19502ac730255fe7a79bf5e7231f6",
+      "sequence": 94,
+      "trigger_usec": 1254989847,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-21_segment-10_incident-095.json",
+      "bytes": 2829466,
+      "sha256": "44594314dc2827f74952d13769e28a723c415e54b467295434f75b35e99824d6",
+      "sequence": 95,
+      "trigger_usec": 1262899244,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-29_segment-10_incident-096.json",
+      "bytes": 2934593,
+      "sha256": "1b0c607526d6f889c5a433d8922201aac1ca0dd159fac07f782cbf4b1d2bf094",
+      "sequence": 96,
+      "trigger_usec": 1269981513,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-37_segment-10_incident-097.json",
+      "bytes": 2970508,
+      "sha256": "7c58affcfb1432e80b63aeb133d7220b34a5d492b9033cb4773bec4de616e542",
+      "sequence": 97,
+      "trigger_usec": 1277673983,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-44_segment-10_incident-098.json",
+      "bytes": 2964523,
+      "sha256": "64da3ff6651cd671c760a30ea37db6e5cab6f408d4f19e7f5533b31a31ada86d",
+      "sequence": 98,
+      "trigger_usec": 1285115857,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-44-52_segment-10_incident-099.json",
+      "bytes": 2941011,
+      "sha256": "0bcf00f21294470774fe1a574bf8e1b9a3327e1dc074b09ecdea1e0656788833",
+      "sequence": 99,
+      "trigger_usec": 1292937101,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-01_segment-10_incident-100.json",
+      "bytes": 3214803,
+      "sha256": "023d76d13a9c39bd20edb7e52ee6b9d2069e13c36a214c1387350fe3e51b3f8d",
+      "sequence": 100,
+      "trigger_usec": 1301733488,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-10_segment-10_incident-101.json",
+      "bytes": 3158426,
+      "sha256": "bf00663c65cfdfdfeb87a713fe459f98fbcbdf21d3cf18e4a5b735f97f01596d",
+      "sequence": 101,
+      "trigger_usec": 1309313166,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-16_segment-10_incident-102.json",
+      "bytes": 2619009,
+      "sha256": "c4ad2cf19c25b92639e3dec04d633a9ca13ba9517110dacc8b9a4c58c98321a6",
+      "sequence": 102,
+      "trigger_usec": 1316360868,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-23_segment-10_incident-103.json",
+      "bytes": 2311853,
+      "sha256": "fb1f8c136646047deb2bacb7578933f1f791663ec225c7d5fbf579bd2ee42574",
+      "sequence": 103,
+      "trigger_usec": 1324172802,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-30_segment-10_incident-104.json",
+      "bytes": 2640513,
+      "sha256": "8b1187ba72c43a843986587ca0e1fcf8121dca89e3082fe9eb630f4f0d61b87b",
+      "sequence": 104,
+      "trigger_usec": 1331388166,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-38_segment-10_incident-105.json",
+      "bytes": 2796742,
+      "sha256": "99b5c83d708806a6add8fb79a34cb864d5a0cf5585843290c5bc5378c2abc8cd",
+      "sequence": 105,
+      "trigger_usec": 1339311799,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-47_segment-10_incident-106.json",
+      "bytes": 3003202,
+      "sha256": "2719877ed394a71b96baa990e443f9b2a14a8bd2a86cb3587aa1cd1cc05dfc79",
+      "sequence": 106,
+      "trigger_usec": 1347821057,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-45-56_segment-10_incident-107.json",
+      "bytes": 3099478,
+      "sha256": "54da65a44632729a64affa6a8041258b58226d8b17d5f02eae548dc35e5f6f56",
+      "sequence": 107,
+      "trigger_usec": 1355810717,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-02_segment-10_incident-108.json",
+      "bytes": 2832876,
+      "sha256": "b0b5845fe3aceb1e64548f2310d77185922896d5b88d451c75a962c7cd967b1e",
+      "sequence": 108,
+      "trigger_usec": 1362992308,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-10_segment-10_incident-109.json",
+      "bytes": 2987392,
+      "sha256": "915c31e7a9c1f4fe1769231c50617edb5a892c2e02c86568519919c1f2c66f8b",
+      "sequence": 109,
+      "trigger_usec": 1371774528,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-18_segment-10_incident-110.json",
+      "bytes": 3343171,
+      "sha256": "d53d502a1f52765c2c24236420922c276cc1c1321442c98127f78be71894b7b1",
+      "sequence": 110,
+      "trigger_usec": 1379550289,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-26_segment-10_incident-111.json",
+      "bytes": 3332889,
+      "sha256": "141e471f3405bde2d6273e051e5b593a28cf0a58927bb712054f9ad899c42e72",
+      "sequence": 111,
+      "trigger_usec": 1386735002,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-34_segment-10_incident-112.json",
+      "bytes": 3299180,
+      "sha256": "fbca4c8e570fc154c42ac23c3f38c46d1b91d82bf1ce768d8e47e2c5df15ff0a",
+      "sequence": 112,
+      "trigger_usec": 1395304167,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-42_segment-10_incident-113.json",
+      "bytes": 3301387,
+      "sha256": "e856c704c79938fb2f1bd011f0346c7c431cc485e0882a7600ea4c588d01fe8a",
+      "sequence": 113,
+      "trigger_usec": 1403302195,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-50_segment-10_incident-114.json",
+      "bytes": 3325628,
+      "sha256": "82b8407e91008104477619d7100a2d58771730cbccaa45eeab0ed711e7221fbf",
+      "sequence": 114,
+      "trigger_usec": 1411522183,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-46-59_segment-10_incident-115.json",
+      "bytes": 3295424,
+      "sha256": "01cd3e6dff1f8e7108833c814b1a205685e88f5bd7c8b6fedd5d9b8ec22c2fc2",
+      "sequence": 115,
+      "trigger_usec": 1419419167,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-06_segment-10_incident-116.json",
+      "bytes": 2945556,
+      "sha256": "954dd2a2c7950b6a90bf2f5a3ad30ab7ab17163a4ed503deed60efbd2cff4a55",
+      "sequence": 116,
+      "trigger_usec": 1426748838,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-14_segment-10_incident-117.json",
+      "bytes": 3012407,
+      "sha256": "f15d280532d605c3d5e514aa7ee67b976e850cfbc410137c3c4902dcba4a365a",
+      "sequence": 117,
+      "trigger_usec": 1435347478,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-21_segment-10_incident-118.json",
+      "bytes": 3293760,
+      "sha256": "f49efbe4bb64220b2fad0a616d881462526728992f6ee9546de570f89a980bd1",
+      "sequence": 118,
+      "trigger_usec": 1442816793,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-31_segment-10_incident-119.json",
+      "bytes": 3354669,
+      "sha256": "0d23efacce984568956a784d9d2db8a27d4a17eed1b086b38f52be2a82e86af5",
+      "sequence": 119,
+      "trigger_usec": 1450419645,
+      "segment": 10
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-39_segment-11_incident-120.json",
+      "bytes": 3064889,
+      "sha256": "e859c78879e85bbf638b92b174b3eefe1dad0c18ddf700fdf45067cb2491b546",
+      "sequence": 120,
+      "trigger_usec": 1459205267,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-47-53_segment-11_incident-121.json",
+      "bytes": 2790307,
+      "sha256": "f6abd109e81b6de07600bf6153c45216d732a49e995b76200722d419f367289d",
+      "sequence": 121,
+      "trigger_usec": 1474400320,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-48-14_segment-11_incident-122.json",
+      "bytes": 2794165,
+      "sha256": "fa4cafcde4c94d0b7f0718e34e0ca446845934bd67c19a64dbc937e88ea17845",
+      "sequence": 122,
+      "trigger_usec": 1494624987,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-50-39_segment-11_incident-123.json",
+      "bytes": 5888822,
+      "sha256": "bdd58aa513a768b60c8946b149f8ebe202e26d123ab1b9530663b47ed8842f23",
+      "sequence": 123,
+      "trigger_usec": 1640405432,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-51-11_segment-11_incident-124.json",
+      "bytes": 5889114,
+      "sha256": "be7058692dceb8bca61621f7b19580fda7a0571d0f6c5e1f3d3bc5ea68fdf163",
+      "sequence": 124,
+      "trigger_usec": 1672905049,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-51-37_segment-11_incident-125.json",
+      "bytes": 5888298,
+      "sha256": "892f75a38b5202cde17697064359858dada8f13bcd662bd627838964d59a789d",
+      "sequence": 125,
+      "trigger_usec": 1699239814,
+      "segment": 11
+    },
+    {
+      "path": "performance_results/2026-10-18/2026-10-18_14-52-03_segment-11_incident-126.json",
+      "bytes": 5625292,
+      "sha256": "f680838f894a5449da0a788ad348a0d3a16b4d9363faefee417ba32468244018",
+      "sequence": 126,
+      "trigger_usec": 1725578121,
+      "segment": 11
+    }
+  ],
+  "tested_source_sha256": {
+    "scenes/world/events/BossArena.gd": "457269e3f1467726b7812ad0b58ef766dfe23b3a45801c6bdbb79f3067830942",
+    "scenes/world/events/MiniBossArena.gd": "2376a697f6bbd3390f22cc2d99b3d0c44eb600a6bb7910c28465f3ca09105255",
+    "tools/tests/BossSpawnPresentationTest.gd": "8f756bfd30f647f9282e6f615c1aeba8cebe0f2779e0798746291f032eeda50f",
+    "tools/tests/BossSpawnPresentationTest.tscn": "d0670d5355e7564a822a376d6878874a6b97629cc3387b379808ed1b13d732e2",
+    "core/actors/enemy/modules/EnemyInit.gd": "12ff0519620a4e29efd5c58d2f178a7ff046c3606eefc27d3e9ff4b98645e3e3",
+    "scenes/world/bosses/BossAppearance.gd": "fa90e347bf6517afee707eec412f6b80099dcffcc6ad5c45651c17a839ee4541",
+    "autoload/EnemySimulationScheduler.gd": "3128fb4f41f2676fab0d04a792009d2ca2cfe7557fc2cf55b042de77d1d5e877",
+    "autoload/PerformanceFlightRecorder.gd": "141d09b5fc9fa995aa3e0fb3d46e7680884afb4f4d6576b15ecb681a8cdf036d",
+    "autoload/performance/PerformanceHitchTagger.gd": "3b2235a7d6852b49951e3078c55b25cdc20f84d7cb7803911473713a7609fb4d"
+  },
+  "evidence_sha256": {
+    "analyze_captures.py": "cdd5027279a7825f3e785ba4014dcc07bdc86e9f1f91a1bcf01e6953690ae79b",
+    "ArenaRewardSettlementTest.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "ArenaRewardSettlementTest.log": "8a92fccf604cacecb74d29e1a11814be69925fd37dbc28c977a8d53404d81e79",
+    "boss-spawn-after-1.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "boss-spawn-after-1.log": "d0f29a0bea2705ebe0934338b2d65f12e3b0d026d30cf1d985fa2a9b900e9ed1",
+    "boss-spawn-before-1.err.log": "962a4090cbc2c2c72aaf728916b1f31a6eebd1bda8333d87145c4f1b90c2ead7",
+    "boss-spawn-before-1.log": "54f58710cdc42de813c1251528de215f0d1947b7d2ad5325dcc3da43d94be1cb",
+    "boss-spawn-before-2.log": "3edcea0463e8473e0d323cb94b723bd9f4b44fe186e043a8fdb66ee4aa9e8fb8",
+    "boss-spawn-before-3.log": "2d5e7d5f86af32c9f4ac56c394e607f1448df10932043ac0afc28d630c530e4b",
+    "boss-spawn-comparison.json": "2f79cb53cb4652d4b8a2cc7edb33b4c6399c94a0c8881dbbfc7423c89b414325",
+    "BossProportionTest.err.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "BossProportionTest.log": "503b8c367f0f6cf169b6bf37bd201a788b3025ec5d44d3fa51d4f0990fae3e56",
+    "capture-excerpts.json": "1a885075e851cd699a8d35cad1d8045a19cf1836d2134ae3e97d745064997346",
+    "deduplicated-captures.json": "4e3b22bda442c5ee95d7546eddb10fd28abed11f2777662155715e9992383c2e",
+    "summarize_boss_spawn.py": "d4bde81c324066fcbe30d34bd9c1118b7ef1c6c0fd2967875b566fd30cd869e1",
+    "verification.json": "687f54cdf09f017d98ee9478cbc8afccf1f9ba064c33da4ef8ff4c3964abaed8"
+  },
+  "hash_notes": "reports and source_sha256 identify original local bytes at measurement; evidence_sha256 identifies normalized Git blobs, portable across Windows checkout line endings."
+}

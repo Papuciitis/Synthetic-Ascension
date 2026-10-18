@@ -1,0 +1,20 @@
+ERROR: FAIL: boss_arcanist tier 1 initializes only its final form (["res://scenes/world/bosses/art/forms/arcanist_s5_v1.png", "res://scenes/world/bosses/art/forms/arcanist_s10_v1.png"])
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossSpawnPresentationTest.gd:26)
+       [1] _run (res://tools/tests/BossSpawnPresentationTest.gd:66)
+ERROR: FAIL: boss_bulldozer tier 1 initializes only its final form (["res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png", "res://scenes/world/bosses/art/forms/bulldozer_s10_v1.png"])
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossSpawnPresentationTest.gd:26)
+       [1] _run (res://tools/tests/BossSpawnPresentationTest.gd:66)
+ERROR: FAIL: boss_arcanist tier 0 initializes only its final form (["res://scenes/world/bosses/art/forms/arcanist_s5_v1.png", "res://scenes/world/bosses/art/forms/arcanist_s5_v1.png"])
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossSpawnPresentationTest.gd:26)
+       [1] _run (res://tools/tests/BossSpawnPresentationTest.gd:66)
+ERROR: FAIL: boss_bulldozer tier 0 initializes only its final form (["res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png", "res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png"])
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _check (res://tools/tests/BossSpawnPresentationTest.gd:26)
+       [1] _run (res://tools/tests/BossSpawnPresentationTest.gd:66)

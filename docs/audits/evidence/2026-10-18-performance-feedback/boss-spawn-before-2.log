@@ -1,0 +1,19 @@
+Godot Engine v4.7.1.stable.official.a13da4feb - https://godotengine.org
+
+PASS: tier 1 arena spawns its configured boss
+PASS: boss_arcanist retains the arena's visual tier
+PASS: boss_arcanist tier 1 body and world handle share the final footprint
+SPAWN_PRESENTATION {"boss":"boss_arcanist","initialized_forms":["res://scenes/world/bosses/art/forms/arcanist_s5_v1.png","res://scenes/world/bosses/art/forms/arcanist_s10_v1.png"],"spawn_usec":185126,"tier":1}
+PASS: tier 1 arena spawns its configured boss
+PASS: boss_bulldozer retains the arena's visual tier
+PASS: boss_bulldozer tier 1 body and world handle share the final footprint
+SPAWN_PRESENTATION {"boss":"boss_bulldozer","initialized_forms":["res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png","res://scenes/world/bosses/art/forms/bulldozer_s10_v1.png"],"spawn_usec":84417,"tier":1}
+PASS: tier 0 arena spawns its configured boss
+PASS: boss_arcanist retains the arena's visual tier
+PASS: boss_arcanist tier 0 body and world handle share the final footprint
+SPAWN_PRESENTATION {"boss":"boss_arcanist","initialized_forms":["res://scenes/world/bosses/art/forms/arcanist_s5_v1.png","res://scenes/world/bosses/art/forms/arcanist_s5_v1.png"],"spawn_usec":58815,"tier":0}
+PASS: tier 0 arena spawns its configured boss
+PASS: boss_bulldozer retains the arena's visual tier
+PASS: boss_bulldozer tier 0 body and world handle share the final footprint
+SPAWN_PRESENTATION {"boss":"boss_bulldozer","initialized_forms":["res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png","res://scenes/world/bosses/art/forms/bulldozer_s5_v1.png"],"spawn_usec":52975,"tier":0}
+BossSpawnPresentationTest: 12 passed, 4 failed

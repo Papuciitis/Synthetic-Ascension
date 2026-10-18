@@ -185,7 +185,10 @@ func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
 	en.scale_move_speed(speed_mult)
-	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 1)
+	# Normal spawns already initialized the final form in EnemyInit. Keep
+	# reconfiguration available for callers applying arena rules to a ready actor.
+	if int(en.get_meta(&"boss_visual_tier", -1)) != 1:
+		preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 1)
 
 	# Settlement uses the existing drop pool and quality roll, with a guaranteed
 	# count instead of the ordinary enemy probability gate.
@@ -238,6 +241,9 @@ func _spawn() -> void:
 	_spawn_in_progress = false
 	_disable_trigger_deferred()
 	_boss = e
+	# EnemyInit reads this during readiness: avoid loading and constructing
+	# the S5 form just to replace it with S10 on the same entrance frame.
+	e.set_meta(&"boss_visual_tier", 1)
 	add_child(e)
 	if spawn_filter != null and spawn_filter.has_method("record_spawn"):
 		spawn_filter.call("record_spawn", StringName((e as EnemyActor).spec.id))

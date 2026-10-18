@@ -1,0 +1,106 @@
+{
+  "method": "Native Godot 4.7.1 Windows, headless, audio Dummy. Fresh process per run; three baseline runs and one fixed run; fixed S10 Mage/Tank then S5 Mage/Tank order. Actual arena _spawn measured, with real signal listeners/autoloads but no Game/HUD. OS file cache not cleared. No FPS claim or elimination of remaining cold texture load.",
+  "results": [
+    {
+      "boss": "boss_arcanist",
+      "tier": 1,
+      "before_usec": [
+        222297,
+        185126,
+        238174
+      ],
+      "after_usec": [
+        70408
+      ],
+      "before_forms": [
+        2,
+        2,
+        2
+      ],
+      "after_forms": [
+        1
+      ],
+      "before_median_ms": 222.297,
+      "after_observed_ms": [
+        70.408
+      ]
+    },
+    {
+      "boss": "boss_bulldozer",
+      "tier": 1,
+      "before_usec": [
+        108011,
+        84417,
+        111721
+      ],
+      "after_usec": [
+        20016
+      ],
+      "before_forms": [
+        2,
+        2,
+        2
+      ],
+      "after_forms": [
+        1
+      ],
+      "before_median_ms": 108.011,
+      "after_observed_ms": [
+        20.016
+      ]
+    },
+    {
+      "boss": "boss_arcanist",
+      "tier": 0,
+      "before_usec": [
+        65659,
+        58815,
+        67984
+      ],
+      "after_usec": [
+        27136
+      ],
+      "before_forms": [
+        2,
+        2,
+        2
+      ],
+      "after_forms": [
+        1
+      ],
+      "before_median_ms": 65.659,
+      "after_observed_ms": [
+        27.136
+      ]
+    },
+    {
+      "boss": "boss_bulldozer",
+      "tier": 0,
+      "before_usec": [
+        42606,
+        52975,
+        46454
+      ],
+      "after_usec": [
+        20207
+      ],
+      "before_forms": [
+        2,
+        2,
+        2
+      ],
+      "after_forms": [
+        1
+      ],
+      "before_median_ms": 46.454,
+      "after_observed_ms": [
+        20.207
+      ]
+    }
+  ],
+  "source_sha256": {
+    "scenes/world/events/BossArena.gd": "457269e3f1467726b7812ad0b58ef766dfe23b3a45801c6bdbb79f3067830942",
+    "scenes/world/events/MiniBossArena.gd": "2376a697f6bbd3390f22cc2d99b3d0c44eb600a6bb7910c28465f3ca09105255",
+    "tools/tests/BossSpawnPresentationTest.gd": "8f756bfd30f647f9282e6f615c1aeba8cebe0f2779e0798746291f032eeda50f"
+  }
+}

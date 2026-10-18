@@ -172,7 +172,10 @@ func _apply_miniboss_rules(en: EnemyActor) -> void:
 
 	en.configure_health(en.max_hp * eff_hp_mult, true)
 	en.scale_move_speed(speed_mult)
-	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 0)
+	# EnemyInit already applied this tier on a normal spawn. A ready actor
+	# configured from another tier still needs its footprint and form changed.
+	if int(en.get_meta(&"boss_visual_tier", -1)) != 0:
+		preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 0)
 
 	# Settlement keeps the existing pool/quality bands and guarantees this count.
 	var rmin := clampi(1 + int(floor(float(seg) * 0.45)), 1, 20)
@@ -224,6 +227,7 @@ func _spawn() -> void:
 	_spawn_in_progress = false
 	_disable_trigger_deferred()
 	_enemy = e
+	e.set_meta(&"boss_visual_tier", 0)
 	add_child(e)
 	if spawn_filter != null and spawn_filter.has_method("record_spawn"):
 		spawn_filter.call("record_spawn", StringName((e as EnemyActor).spec.id))

@@ -1,0 +1,39 @@
+{
+  "method": "Results recorded from completed native Windows process tool output; no engine executions during this evidence-copy step.",
+  "baseline": {
+    "runs": 3,
+    "native_exit_codes": [
+      1,
+      1,
+      1
+    ],
+    "passes_per_run": 12,
+    "expected_failures_per_run": 4,
+    "reason": "Two observed form/acting constructions instead of one in all four tier/role cases."
+  },
+  "green": [
+    {
+      "suite": "BossSpawnPresentationTest",
+      "native_exit_code": 0,
+      "passes": 16,
+      "failures": 0,
+      "stderr_bytes": 0
+    },
+    {
+      "suite": "BossProportionTest",
+      "native_exit_code": 0,
+      "passes": 72,
+      "failures": 0,
+      "stderr_bytes": 0
+    },
+    {
+      "suite": "ArenaRewardSettlementTest",
+      "native_exit_code": 0,
+      "passes": 83,
+      "failures": 0,
+      "stderr_bytes": 0
+    }
+  ],
+  "command": "Godot_v4.7.1-stable_win64.exe --headless --audio-driver Dummy --path . res://tools/tests/<Suite>.tscn --quit-after <1200 or 3000>",
+  "profile_isolation": ".superpowers/sdd/2026-10-18-playtest-feedback/userdata/perf (process-local APPDATA and LOCALAPPDATA)"
+}

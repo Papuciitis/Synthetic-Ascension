@@ -1,0 +1,1710 @@
+{
+  "files": 126,
+  "dedup_key": "sample t_usec; event (t_usec, category, name)",
+  "unique_events": 14585,
+  "all_captured": {
+    "samples": 66568,
+    "p50_wall_ms": 16.694,
+    "p95_wall_ms": 26.067,
+    "p99_wall_ms": 37.664,
+    "max_wall_ms": 8753.863,
+    "over_28_ms": 2424
+  },
+  "combat_without_scene_change": {
+    "samples": 39818,
+    "p50_wall_ms": 16.967,
+    "p95_wall_ms": 28.571,
+    "p99_wall_ms": 41.421,
+    "max_wall_ms": 168.161,
+    "over_28_ms": 2186
+  },
+  "no_enemies_without_scene_change": {
+    "samples": 26735,
+    "p50_wall_ms": 16.418,
+    "p95_wall_ms": 19.218,
+    "p99_wall_ms": 26.488,
+    "max_wall_ms": 1370.072,
+    "over_28_ms": 224
+  },
+  "boss_entrances": [
+    {
+      "event": {
+        "category": "encounter",
+        "details": {
+          "position": "(-1024.0, -23552.0)"
+        },
+        "name": "miniboss_started",
+        "t_usec": 732327138
+      },
+      "containing_samples": [
+        {
+          "file": "2026-10-18_14-35-30_segment-05_incident-054.json",
+          "t_usec": 732382153,
+          "wall_ms": 83.732,
+          "physics_frame_ms": 59.121,
+          "frame_phases": {
+            "deferred": 6.306,
+            "process": 12.592,
+            "render_present": 4.624
+          }
+        }
+      ]
+    },
+    {
+      "event": {
+        "category": "encounter",
+        "details": {
+          "position": "(37888.0, -1024.0)"
+        },
+        "name": "boss_started",
+        "t_usec": 1351498236
+      },
+      "containing_samples": [
+        {
+          "file": "2026-10-18_14-45-47_segment-10_incident-106.json",
+          "t_usec": 1351646642,
+          "wall_ms": 168.161,
+          "physics_frame_ms": 155.083,
+          "frame_phases": {
+            "deferred": 1.357,
+            "process": 2.987,
+            "render_present": 8.263
+          }
+        }
+      ]
+    }
+  ],
+  "worst": [
+    {
+      "file": "2026-10-18_14-29-12_segment-05_incident-027.json",
+      "t_usec": 356520695,
+      "wall_ms": 8753.863,
+      "physics_frame_ms": 0.388,
+      "physics_ticks": 1,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.92,
+        "process": 1.604,
+        "render_present": 3.826
+      },
+      "scene_change": "game",
+      "events_in_interval": [
+        {
+          "category": "scene",
+          "details": {
+            "to": "game"
+          },
+          "name": "change",
+          "t_usec": 347774088
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-24-32_segment-05_incident-001.json",
+      "t_usec": 73767946,
+      "wall_ms": 8442.112,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.414,
+        "process": 0.634,
+        "render_present": 1.423
+      },
+      "scene_change": "HubWorld",
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-29-16_segment-05_incident-028.json",
+      "t_usec": 358104016,
+      "wall_ms": 1583.321,
+      "physics_frame_ms": 1.924,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1536.079,
+        "process": 0.711,
+        "render_present": 28.692
+      },
+      "scene_change": "game",
+      "events_in_interval": [
+        {
+          "category": "progression",
+          "details": {
+            "value": 14.696
+          },
+          "name": "threat_changed",
+          "t_usec": 357004383
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated"
+          },
+          "name": "nav_revision_requested",
+          "t_usec": 357801388
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "coord": "(0, 0)",
+            "generation_usec": 116125
+          },
+          "name": "chunk_created",
+          "t_usec": 357808601
+        },
+        {
+          "category": "progression",
+          "details": {
+            "value": 0.0
+          },
+          "name": "resonance_changed",
+          "t_usec": 357865548
+        },
+        {
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated",
+            "revision": 1
+          },
+          "name": "nav_revision_committed",
+          "t_usec": 357996248
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-24-56_segment-05_incident-002.json",
+      "t_usec": 96787369,
+      "wall_ms": 1370.072,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.427,
+        "process": 1.342,
+        "render_present": 15.0
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-24-32_segment-05_incident-001.json",
+      "t_usec": 74981305,
+      "wall_ms": 1213.359,
+      "physics_frame_ms": 3.507,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1173.849,
+        "process": 0.473,
+        "render_present": 23.027
+      },
+      "scene_change": "HubWorld",
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-47-39_segment-11_incident-120.json",
+      "t_usec": 1459164595,
+      "wall_ms": 742.747,
+      "physics_frame_ms": 1.016,
+      "physics_ticks": 2,
+      "enemies": 16,
+      "frame_phases": {
+        "deferred": 716.243,
+        "process": 11.068,
+        "render_present": 13.09
+      },
+      "scene_change": "HubWorld",
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-25-15_segment-05_incident-004.json",
+      "t_usec": 111962678,
+      "wall_ms": 715.864,
+      "physics_frame_ms": 286.247,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1.672,
+        "process": 1.617,
+        "render_present": 11.026
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-37-00_segment-06_incident-061.json",
+      "t_usec": 820957221,
+      "wall_ms": 675.857,
+      "physics_frame_ms": 1.841,
+      "physics_ticks": 2,
+      "enemies": 5,
+      "frame_phases": {
+        "deferred": 659.376,
+        "process": 3.625,
+        "render_present": 10.045
+      },
+      "scene_change": "HubWorld",
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-37-33_segment-10_incident-062.json",
+      "t_usec": 853866830,
+      "wall_ms": 590.502,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 574.888,
+        "process": 0.576,
+        "render_present": 14.135
+      },
+      "scene_change": "game",
+      "events_in_interval": [
+        {
+          "category": "progression",
+          "details": {
+            "value": 30.096
+          },
+          "name": "threat_changed",
+          "t_usec": 853609306
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated"
+          },
+          "name": "nav_revision_requested",
+          "t_usec": 853619953
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "coord": "(0, 1)",
+            "generation_usec": 9273
+          },
+          "name": "chunk_created",
+          "t_usec": 853622747
+        },
+        {
+          "category": "progression",
+          "details": {
+            "value": 0.0
+          },
+          "name": "resonance_changed",
+          "t_usec": 853627031
+        },
+        {
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated",
+            "revision": 1
+          },
+          "name": "nav_revision_committed",
+          "t_usec": 853647597
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-28-05_segment-05_incident-020.json",
+      "t_usec": 288203077,
+      "wall_ms": 534.82,
+      "physics_frame_ms": 2.803,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.963,
+        "process": 0.944,
+        "render_present": 14.705
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "category": "ascension",
+          "details": {
+            "core": "",
+            "cost": 400,
+            "node": "BR06",
+            "spent": 12200
+          },
+          "name": "purchase",
+          "t_usec": 287703007
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-26-11_segment-05_incident-008.json",
+      "t_usec": 171609352,
+      "wall_ms": 362.946,
+      "physics_frame_ms": 0.642,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1.186,
+        "process": 1.564,
+        "render_present": 358.03
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-26-17_segment-05_incident-009.json",
+      "t_usec": 182907863,
+      "wall_ms": 353.929,
+      "physics_frame_ms": 5.521,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.735,
+        "process": 0.867,
+        "render_present": 14.138
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "category": "ascension",
+          "details": {
+            "core": "",
+            "cost": 0,
+            "node": "PR02",
+            "spent": 0
+          },
+          "name": "purchase",
+          "t_usec": 182578000
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-26-11_segment-05_incident-008.json",
+      "t_usec": 171246406,
+      "wall_ms": 204.819,
+      "physics_frame_ms": 49.591,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.238,
+        "process": 1.497,
+        "render_present": 13.975
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-24-56_segment-05_incident-002.json",
+      "t_usec": 101186225,
+      "wall_ms": 204.763,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.029,
+        "process": 0.433,
+        "render_present": 17.475
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-26-11_segment-05_incident-008.json",
+      "t_usec": 173144762,
+      "wall_ms": 187.279,
+      "physics_frame_ms": 0.456,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 178.972,
+        "process": 1.898,
+        "render_present": 5.796
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-37-33_segment-10_incident-062.json",
+      "t_usec": 853276328,
+      "wall_ms": 174.15,
+      "physics_frame_ms": 166.441,
+      "physics_ticks": 1,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.391,
+        "process": 3.575,
+        "render_present": 3.387
+      },
+      "scene_change": "game",
+      "events_in_interval": [
+        {
+          "category": "scene",
+          "details": {
+            "to": "game"
+          },
+          "name": "change",
+          "t_usec": 853110315
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-45-47_segment-10_incident-106.json",
+      "t_usec": 1351646642,
+      "wall_ms": 168.161,
+      "physics_frame_ms": 155.083,
+      "physics_ticks": 1,
+      "enemies": 39,
+      "frame_phases": {
+        "deferred": 1.357,
+        "process": 2.987,
+        "render_present": 8.263
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "category": "encounter",
+          "details": {
+            "position": "(37888.0, -1024.0)"
+          },
+          "name": "boss_started",
+          "t_usec": 1351498236
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "boss_arcanist",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1351540489
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-47-53_segment-11_incident-121.json",
+      "t_usec": 1474400320,
+      "wall_ms": 166.848,
+      "physics_frame_ms": 26.795,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.381,
+        "process": 1.042,
+        "render_present": 15.041
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-48-14_segment-11_incident-122.json",
+      "t_usec": 1494624987,
+      "wall_ms": 162.633,
+      "physics_frame_ms": 9.191,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1.347,
+        "process": 4.0,
+        "render_present": 9.244
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-28-58_segment-05_incident-026.json",
+      "t_usec": 336922264,
+      "wall_ms": 153.152,
+      "physics_frame_ms": 1.867,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1.106,
+        "process": 1.033,
+        "render_present": 13.395
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "category": "ascension",
+          "details": {
+            "core": "",
+            "cost": 200,
+            "node": "OR02",
+            "spent": 14250
+          },
+          "name": "purchase",
+          "t_usec": 336803960
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-25-05_segment-05_incident-003.json",
+      "t_usec": 104976837,
+      "wall_ms": 140.242,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 0.026,
+        "process": 0.159,
+        "render_present": 25.782
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-42-21_segment-10_incident-081.json",
+      "t_usec": 1145516253,
+      "wall_ms": 138.086,
+      "physics_frame_ms": 0.0,
+      "physics_ticks": 0,
+      "enemies": 20,
+      "frame_phases": {
+        "deferred": 40.125,
+        "process": 89.429,
+        "render_present": 7.666
+      },
+      "scene_change": null,
+      "events_in_interval": []
+    },
+    {
+      "file": "2026-10-18_14-42-50_segment-10_incident-083.json",
+      "t_usec": 1174040404,
+      "wall_ms": 120.521,
+      "physics_frame_ms": 16.68,
+      "physics_ticks": 2,
+      "enemies": 24,
+      "frame_phases": {
+        "deferred": 3.923,
+        "process": 91.009,
+        "render_present": 7.748
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "lurker",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1173923169
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1173924358
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "charger",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1173925315
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1174008834
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyLurker",
+            "modifiers": "armoured,fast"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1174012939
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyCharger",
+            "modifiers": "vampiric,splitting"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1174013459
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-29-16_segment-05_incident-028.json",
+      "t_usec": 358214658,
+      "wall_ms": 110.642,
+      "physics_frame_ms": 7.699,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 6.029,
+        "process": 37.999,
+        "render_present": 58.173
+      },
+      "scene_change": "game",
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated"
+          },
+          "name": "nav_revision_requested",
+          "t_usec": 358137978
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "coord": "(-1, -1)",
+            "generation_usec": 20705
+          },
+          "name": "chunk_created",
+          "t_usec": 358138125
+        },
+        {
+          "amount": 1,
+          "category": "navigation",
+          "details": {
+            "reason": "initial",
+            "revision": 1
+          },
+          "name": "flow_requested",
+          "t_usec": 358140875
+        },
+        {
+          "category": "navigation",
+          "details": {
+            "reason": "initial",
+            "revision": 1
+          },
+          "name": "flow_started",
+          "t_usec": 358140959
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-34-22_segment-05_incident-045.json",
+      "t_usec": 664057587,
+      "wall_ms": 107.565,
+      "physics_frame_ms": 11.573,
+      "physics_ticks": 2,
+      "enemies": 20,
+      "frame_phases": {
+        "deferred": 3.069,
+        "process": 82.311,
+        "render_present": 8.13
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 663954645
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 664028467
+        },
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 664029591
+        },
+        {
+          "category": "navigation",
+          "details": {
+            "cells": 4337,
+            "cpu_usec": 249061,
+            "reason": "player_moved",
+            "revision": 30
+          },
+          "name": "flow_completed",
+          "t_usec": 664031046
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-44-14_segment-10_incident-094.json",
+      "t_usec": 1255132545,
+      "wall_ms": 107.414,
+      "physics_frame_ms": 15.728,
+      "physics_ticks": 2,
+      "enemies": 47,
+      "frame_phases": {
+        "deferred": 7.345,
+        "process": 69.992,
+        "render_present": 7.537
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 6,
+          "category": "enemy",
+          "details": {},
+          "name": "died",
+          "t_usec": 1255028438
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "grunt",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1255034810
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "chanter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1255035845
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "herald",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1255036700
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1255092834
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyChanter",
+            "modifiers": "vampiric,shielded"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1255097839
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-45-16_segment-10_incident-102.json",
+      "t_usec": 1320489586,
+      "wall_ms": 106.231,
+      "physics_frame_ms": 21.907,
+      "physics_ticks": 2,
+      "enemies": 69,
+      "frame_phases": {
+        "deferred": 4.142,
+        "process": 74.711,
+        "render_present": 4.785
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "brute",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1320389682
+        },
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1320390872
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1320453485
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {},
+          "name": "died",
+          "t_usec": 1320481447
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-44-44_segment-10_incident-098.json",
+      "t_usec": 1284415287,
+      "wall_ms": 103.485,
+      "physics_frame_ms": 16.609,
+      "physics_ticks": 2,
+      "enemies": 37,
+      "frame_phases": {
+        "deferred": 2.614,
+        "process": 75.845,
+        "render_present": 5.055
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "charger",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1284316989
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1284377903
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1284378953
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "coord": "(17, -2)",
+            "generation_usec": 7090
+          },
+          "name": "chunk_created",
+          "t_usec": 1284386379
+        },
+        {
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated",
+            "revision": 38
+          },
+          "name": "nav_revision_committed",
+          "t_usec": 1284389814
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-43-14_segment-10_incident-086.json",
+      "t_usec": 1195219876,
+      "wall_ms": 102.299,
+      "physics_frame_ms": 17.699,
+      "physics_ticks": 2,
+      "enemies": 5,
+      "frame_phases": {
+        "deferred": 3.694,
+        "process": 73.552,
+        "render_present": 7.189
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1195185681
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "orbiter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1195187370
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "grunt",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1195188570
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "summoner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1195189640
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyBomber",
+            "modifiers": "shielded,fast"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1195192530
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-34-22_segment-05_incident-045.json",
+      "t_usec": 663121381,
+      "wall_ms": 100.853,
+      "physics_frame_ms": 11.432,
+      "physics_ticks": 2,
+      "enemies": 20,
+      "frame_phases": {
+        "deferred": 2.825,
+        "process": 77.951,
+        "render_present": 6.341
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 3,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "grunt",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 663023221
+        },
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 663094353
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyBomber",
+            "modifiers": "splitting,fast"
+          },
+          "name": "elite_promoted",
+          "t_usec": 663100140
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-45-56_segment-10_incident-107.json",
+      "t_usec": 1355810717,
+      "wall_ms": 100.678,
+      "physics_frame_ms": 6.793,
+      "physics_ticks": 2,
+      "enemies": 46,
+      "frame_phases": {
+        "deferred": 1.598,
+        "process": 87.673,
+        "render_present": 4.438
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "charger",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1355711918
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "chanter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1355713060
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1355794810
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "chanter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1355796073
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-34-38_segment-05_incident-047.json",
+      "t_usec": 679576686,
+      "wall_ms": 100.064,
+      "physics_frame_ms": 10.476,
+      "physics_ticks": 2,
+      "enemies": 24,
+      "frame_phases": {
+        "deferred": 3.686,
+        "process": 78.522,
+        "render_present": 5.021
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "charger",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 679480693
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "herald",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 679481878
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "orbiter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 679482926
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 679553508
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyCharger",
+            "modifiers": "fast,shielded"
+          },
+          "name": "elite_promoted",
+          "t_usec": 679556733
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyOrbiter",
+            "modifiers": "fast,vampiric"
+          },
+          "name": "elite_promoted",
+          "t_usec": 679557244
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {},
+          "name": "died",
+          "t_usec": 679569261
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-45-16_segment-10_incident-102.json",
+      "t_usec": 1316007284,
+      "wall_ms": 99.593,
+      "physics_frame_ms": 14.788,
+      "physics_ticks": 2,
+      "enemies": 48,
+      "frame_phases": {
+        "deferred": 2.534,
+        "process": 74.117,
+        "render_present": 5.331
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1315977832
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "grunt",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1315978819
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1315979545
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1315980287
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-29-16_segment-05_incident-028.json",
+      "t_usec": 358519934,
+      "wall_ms": 99.349,
+      "physics_frame_ms": 0.672,
+      "physics_ticks": 2,
+      "enemies": 0,
+      "frame_phases": {
+        "deferred": 1.474,
+        "process": 92.309,
+        "render_present": 4.216
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 4,
+          "category": "world",
+          "details": {
+            "reason": "chunk_generated"
+          },
+          "name": "nav_revision_requested",
+          "t_usec": 358512062
+        },
+        {
+          "amount": 1,
+          "category": "world",
+          "details": {
+            "coord": "(1, 0)",
+            "generation_usec": 15608
+          },
+          "name": "chunk_created",
+          "t_usec": 358512256
+        },
+        {
+          "category": "progression",
+          "details": {
+            "value": 0.0
+          },
+          "name": "resonance_changed",
+          "t_usec": 358512691
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-35-53_segment-05_incident-057.json",
+      "t_usec": 756361548,
+      "wall_ms": 97.348,
+      "physics_frame_ms": 76.916,
+      "physics_ticks": 1,
+      "enemies": 15,
+      "frame_phases": {
+        "deferred": 1.904,
+        "process": 2.631,
+        "render_present": 7.084
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "category": "navigation",
+          "details": {
+            "cells": 4592,
+            "cpu_usec": 146074,
+            "reason": "player_moved",
+            "revision": 43
+          },
+          "name": "flow_completed",
+          "t_usec": 756266071
+        },
+        {
+          "amount": 5,
+          "category": "enemy",
+          "details": {},
+          "name": "died",
+          "t_usec": 756278000
+        },
+        {
+          "category": "progression",
+          "details": {
+            "value": 1.0
+          },
+          "name": "resonance_changed",
+          "t_usec": 756282070
+        },
+        {
+          "category": "progression",
+          "details": {
+            "value": 1.0
+          },
+          "name": "resonance_changed",
+          "t_usec": 756282339
+        },
+        {
+          "category": "encounter",
+          "details": {
+            "position": "(-1024.0, -23552.0)"
+          },
+          "name": "miniboss_cleared",
+          "t_usec": 756283887
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-42-21_segment-10_incident-081.json",
+      "t_usec": 1145008389,
+      "wall_ms": 95.41,
+      "physics_frame_ms": 12.925,
+      "physics_ticks": 2,
+      "enemies": 25,
+      "frame_phases": {
+        "deferred": 4.968,
+        "process": 68.791,
+        "render_present": 5.901
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1144976548
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1144977766
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "summoner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1144978738
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "herald",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1144979670
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyHerald",
+            "modifiers": "armoured,vampiric"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1144983805
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-43-14_segment-10_incident-086.json",
+      "t_usec": 1196592196,
+      "wall_ms": 94.371,
+      "physics_frame_ms": 13.021,
+      "physics_ticks": 2,
+      "enemies": 6,
+      "frame_phases": {
+        "deferred": 3.714,
+        "process": 70.768,
+        "render_present": 6.682
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1196500782
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "leech",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1196503719
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1196566911
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyLeech",
+            "modifiers": "armoured,vampiric"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1196569998
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "enemy_id": "EnemyBomber",
+            "modifiers": "armoured,fast"
+          },
+          "name": "elite_promoted",
+          "t_usec": 1196570462
+        },
+        {
+          "amount": 4,
+          "category": "enemy",
+          "details": {},
+          "name": "died",
+          "t_usec": 1196581340
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-44-29_segment-10_incident-096.json",
+      "t_usec": 1273027050,
+      "wall_ms": 94.298,
+      "physics_frame_ms": 11.958,
+      "physics_ticks": 2,
+      "enemies": 43,
+      "frame_phases": {
+        "deferred": 2.926,
+        "process": 73.531,
+        "render_present": 5.138
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1272937733
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1273003828
+        },
+        {
+          "amount": 2,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1273004796
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-45-16_segment-10_incident-102.json",
+      "t_usec": 1317045058,
+      "wall_ms": 94.174,
+      "physics_frame_ms": 16.947,
+      "physics_ticks": 2,
+      "enemies": 44,
+      "frame_phases": {
+        "deferred": 2.215,
+        "process": 68.886,
+        "render_present": 5.462
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "chanter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1316955564
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "summoner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1316957052
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "spitter",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1316958402
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1317017852
+        },
+        {
+          "category": "navigation",
+          "details": {
+            "cells": 4883,
+            "cpu_usec": 199169,
+            "reason": "player_moved",
+            "revision": 42
+          },
+          "name": "flow_completed",
+          "t_usec": 1317018356
+        }
+      ]
+    },
+    {
+      "file": "2026-10-18_14-44-52_segment-10_incident-099.json",
+      "t_usec": 1293731153,
+      "wall_ms": 93.907,
+      "physics_frame_ms": 15.58,
+      "physics_ticks": 2,
+      "enemies": 44,
+      "frame_phases": {
+        "deferred": 2.486,
+        "process": 69.031,
+        "render_present": 5.775
+      },
+      "scene_change": null,
+      "events_in_interval": [
+        {
+          "amount": 3,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "grunt",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1293640332
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "bomber",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1293703542
+        },
+        {
+          "amount": 1,
+          "category": "enemy",
+          "details": {
+            "elite": false,
+            "enemy_id": "runner",
+            "kind": ""
+          },
+          "name": "spawned",
+          "t_usec": 1293704338
+        }
+      ]
+    }
+  ],
+  "limits": "Rolling incident windows, not a complete session timeline. Entity counts and nested scheduler/chunk/flow data are cached up to 0.5 seconds. Physics is the whole scene interval, not enemy self time. Correlation does not prove causation."
+}
