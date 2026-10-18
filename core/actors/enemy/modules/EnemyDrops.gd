@@ -159,6 +159,29 @@ func finalize_rarity(rolled_base: int, elite_bonus: int, threat_bonus: int) -> i
 	return maxi(0, rolled_base + elite_bonus + threat_bonus)
 
 
+## Arena rewards bypass the ordinary probability gate. Keep the same pool,
+## count range and quality context; only the minimum entitlement is guaranteed.
+func roll_arena_rewards() -> Array[ItemInstance]:
+	var items: Array[ItemInstance] = []
+	if _enemy == null:
+		return items
+	var count := Global._rng.randi_range(maxi(1, _enemy.drop_amount_min), maxi(_enemy.drop_amount_min, _enemy.drop_amount_max))
+	var director := _enemy.get_node_or_null("/root/ThreatDirector")
+	var bonus := int(director.get("loot_rarity_bonus")) if director != null else 0
+	if _enemy.is_elite and _enemy.spec != null:
+		bonus += _enemy.spec.elite_rarity_bonus
+	var context := Global.build_item_drop_context(_enemy.drop_rarity_min + bonus, _enemy.drop_rarity_max + bonus, &"boss", 1 if _enemy.is_elite else 0, _enemy.is_elite)
+	for _index in range(count):
+		var id := _pick_drop_id()
+		if id.is_empty():
+			# A misconfigured optional prefix cannot remove the boss entitlement.
+			id = Global.pick_weighted_item_id(Global._rng, Global.item_db.keys())
+		var item := ItemGenerator.create_instance(Global.get_item_data(id), context, Global._rng)
+		if item != null:
+			items.append(item)
+	return items
+
+
 func _can_drop_item() -> bool:
 	if _enemy == null or not is_instance_valid(_enemy):
 		return false

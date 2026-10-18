@@ -1,6 +1,12 @@
 extends RefCounted
-## Four rough proportion studies, with anatomical height independent of gear
-## and independent collision shapes. These are not finished animation sheets.
+## Authored forms keep anatomy independent of equipment and collision shapes.
+## Main-tier equipment and feet-anchored acting follow the committed brain.
+
+const Acting := preload("res://scenes/world/bosses/BossActing.gd")
+const PORTRAITS := {
+	&"boss_bulldozer": "res://ui/boss/portraits/bulldozer_s10_portrait.tres",
+	&"boss_arcanist": "res://ui/boss/portraits/arcanist_s10_portrait.tres",
+}
 
 const ART_ROOT := "res://scenes/world/bosses/art/forms/"
 ## The game places actor combat origins near mid-body. Follow the player's
@@ -26,6 +32,10 @@ static func apply(actor: EnemyActor, tier: int) -> void:
 	if actor == null or actor.spec == null or not PROFILES.has(actor.spec.id):
 		return
 	var normalized_tier := clampi(tier, 0, 1)
+	var old_acting := actor.get_node_or_null("BossActing")
+	if old_acting != null:
+		actor.remove_child(old_acting)
+		old_acting.free()
 	var profile: Dictionary = PROFILES[actor.spec.id][normalized_tier]
 	actor.scale = Vector2.ONE
 	actor.set_meta(&"boss_visual_tier", normalized_tier)
@@ -68,8 +78,20 @@ static func apply(actor: EnemyActor, tier: int) -> void:
 		"equipment_bounds_world": Rect2(FEET_OFFSET + (gear.position - foot) * factor, gear.size * factor),
 		"anatomy_bounds_world": Rect2(FEET_OFFSET + (anatomy.position - foot) * factor, anatomy.size * factor),
 		"physical_radius": float(profile["radius"]), "contact_size": Vector2.ONE * float(profile["hitbox"]),
-		"art_status": "rough proportion study; final animation pending",
+		"art_status": "equipped form with phase treatment and feet-anchored attack acting" if normalized_tier == 1 else "teaching proportion study",
 	})
+	if normalized_tier == 1:
+		var acting := Acting.new()
+		acting.name = "BossActing"
+		actor.add_child(acting)
+		acting.setup(actor, sprite)
+
+
+static func portrait_for(actor: EnemyActor, tier: int, fallback: Texture2D = null) -> Texture2D:
+	if tier != 1 or actor == null or actor.spec == null:
+		return fallback
+	var path: String = PORTRAITS.get(actor.spec.id, "")
+	return load(path) as Texture2D if not path.is_empty() and ResourceLoader.exists(path) else fallback
 
 
 static func _set_footprint(actor: EnemyActor, body_radius: float, contact_width: float) -> void:

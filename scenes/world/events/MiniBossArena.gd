@@ -81,8 +81,8 @@ func _ready() -> void:
 func _restore_cleared() -> void:
 	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
 	if builder != null:
-		builder.set_miniboss_defeated()
-		builder.grant_resonance(grant_resonance_on_clear, true)
+		builder.restore_arena_clear(&"miniboss", grant_resonance_on_clear)
+	Global.restore_pending_arena_rewards()
 	queue_free()
 
 
@@ -152,6 +152,9 @@ func _pick_archetype() -> PackedScene:
 
 
 func _apply_miniboss_rules(en: EnemyActor) -> void:
+	en.set_meta("arena_reward_kind", &"miniboss")
+	en.set_meta("arena_reward_segment", Global.attempt_segment)
+	en.set_meta("arena_reward_seed", Global.attempt_world_seed)
 	en.add_to_group(&"miniboss")
 	en.add_to_group(&"boss_like")
 	en.set_meta("boss_archetype", ("tank" if _is_tank else "mage"))
@@ -171,7 +174,7 @@ func _apply_miniboss_rules(en: EnemyActor) -> void:
 	en.scale_move_speed(speed_mult)
 	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 0)
 
-	# Strong loot scaling by segment (uses built-in EnemyDrops).
+	# Settlement keeps the existing pool/quality bands and guarantees this count.
 	var rmin := clampi(1 + int(floor(float(seg) * 0.45)), 1, 20)
 	var rmax := clampi(rmin + 1, rmin, 20)
 
@@ -246,24 +249,14 @@ func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
 	if enemy == null or enemy != _enemy:
 		return
 
+	if not Global.settle_arena_rewards(enemy as EnemyActor, &"miniboss", bonus_followers_on_clear, grant_resonance_on_clear):
+		return
 	_cleared = true
-	# Recorded before the payout's deferred save: Continue cannot repeat it.
-	if Global != null:
-		Global.note_arena_cleared(&"miniboss")
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_event(&"encounter", &"miniboss_cleared", {"position": str(global_position)})
 
 	if RunEvents != null and RunEvents.has_signal("boss_cleared"):
 		RunEvents.boss_cleared.emit(enemy, 0)
-
-	# Rewards: small resonance bump + followers.
-	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
-	if builder != null:
-		builder.set_miniboss_defeated()
-		builder.grant_resonance(grant_resonance_on_clear, true)
-
-	if Global != null and bonus_followers_on_clear > 0:
-		Global.transaction_followers(bonus_followers_on_clear, &"miniboss_victory", {}, true, false)
 
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
 		RunEvents.tutorial_tip.emit("Mini-boss defeated. Resonance surges.", 3.0)

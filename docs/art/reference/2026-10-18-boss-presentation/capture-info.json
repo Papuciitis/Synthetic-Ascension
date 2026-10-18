@@ -1,0 +1,38 @@
+{
+  "captures": [
+    {
+      "equipment_phase_changed_pixels": 297,
+      "file": "bulldozer-normal-1280x720.png",
+      "reduced_motion": false,
+      "role": "bulldozer",
+      "window": "(1280, 720)"
+    },
+    {
+      "equipment_phase_changed_pixels": 136,
+      "file": "arcanist-normal-1280x720.png",
+      "reduced_motion": false,
+      "role": "arcanist",
+      "window": "(1280, 720)"
+    },
+    {
+      "equipment_phase_changed_pixels": 173,
+      "file": "bulldozer-reduced-960x540.png",
+      "reduced_motion": true,
+      "role": "bulldozer",
+      "window": "(960, 540)"
+    },
+    {
+      "equipment_phase_changed_pixels": 82,
+      "file": "arcanist-reduced-960x540.png",
+      "reduced_motion": true,
+      "role": "arcanist",
+      "window": "(960, 540)"
+    }
+  ],
+  "failures": 0,
+  "presentation": "Representative production actors/player/boss HUD at the project viewport and zoom1. Top row phase 1/2/3; bottom row real attack windup/release/recovery. Plain background; not the actual Game world, fight, timing test or human art approval.",
+  "save_writes": 0,
+  "scene": "res://tools/dev/BossPresentationPreview.tscn",
+  "full_capture_count": 8,
+  "selection": "Four repository samples from the eight-image final run: each role at normal 1280x720 and Reduced Motion 960x540. Re-run BossPresentationPreview for all eight."
+}

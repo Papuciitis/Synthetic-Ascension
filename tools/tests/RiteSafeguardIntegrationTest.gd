@@ -28,6 +28,11 @@ func _ready() -> void:
 	_check(later_rite.safeguard_count() == 1, "pending source replays once into later Rite")
 	pending_builder.call("_replay_rite_safeguard_sources")
 	_check(later_rite.safeguard_count() == 1, "replay stays deduplicated")
+	builder.free()
+	pending_builder.free()
+	rite.queue_free()
+	later_rite.queue_free()
+	await get_tree().process_frame
 	_finish()
 
 

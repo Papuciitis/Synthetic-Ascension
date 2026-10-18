@@ -2,6 +2,7 @@ extends Node
 class_name HudBossController
 
 const BossPhases = preload("res://scenes/world/bosses/BossPhases.gd")
+const Appearance = preload("res://scenes/world/bosses/BossAppearance.gd")
 
 @export var boss_bar_path: NodePath
 
@@ -54,7 +55,7 @@ func _on_boss_spawned(boss: Node, tier: int, portrait: Texture2D, title: String)
 	_tier = tier
 
 	if _boss_bar != null:
-		_boss_bar.show_boss(title, portrait, _boss.hp, _boss.max_hp)
+		_boss_bar.show_boss(title, Appearance.portrait_for(_boss, tier, portrait), _boss.hp, _boss.max_hp)
 		_boss_bar.set_phase_marks(BossPhases.marks_for_tier(tier))
 
 	set_process(true)

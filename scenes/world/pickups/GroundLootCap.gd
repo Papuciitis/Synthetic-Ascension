@@ -37,6 +37,8 @@ static func enforce(tree: SceneTree, group: StringName, cap: int, newcomer: Node
 		live += 1
 		if member == newcomer:
 			continue
+		if member is ItemPickup and not member.arena_reward_key.is_empty():
+			continue
 		if _flag(member, "is_exploration_loot") or _flag(member, "persistent_world_drop") or _flag(member, "_picked"):
 			continue
 		candidates.append(member)

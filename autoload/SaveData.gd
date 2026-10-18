@@ -121,6 +121,10 @@ const CURRENT_SAVE_VERSION := 1
 ## Arena encounters this attempt has settled, as "segment:kind": a defeated
 ## boss stays defeated on Continue and is never paid out twice.
 @export var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
+## One immutable roll per encounter, plus claimed item indexes and paid wallets.
+@export var attempt_arena_rewards: Dictionary = {}
+## Current procedural segment only; completed Rite intent is a separate event.
+@export var attempt_segment_progress: Dictionary = {}
 ## Developer tools launched this attempt: loading it never seeds the
 ## profile's permanent state.
 @export var attempt_developer_launch: bool = false

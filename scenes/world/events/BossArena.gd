@@ -89,11 +89,10 @@ func _ready() -> void:
 func _restore_cleared() -> void:
 	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
 	if builder != null:
-		builder.set_boss_defeated()
-		if fill_resonance_on_clear:
-			builder.grant_resonance(1.0, true)
+		builder.restore_arena_clear(&"boss", 1.0 if fill_resonance_on_clear else 0.0)
 	if _gate != null and is_instance_valid(_gate) and _gate.has_method("set_boss_defeated"):
 		_gate.call("set_boss_defeated", true)
+	Global.restore_pending_arena_rewards()
 	queue_free()
 
 
@@ -164,6 +163,9 @@ func _pick_archetype() -> PackedScene:
 
 
 func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
+	en.set_meta("arena_reward_kind", &"boss")
+	en.set_meta("arena_reward_segment", Global.attempt_segment)
+	en.set_meta("arena_reward_seed", Global.attempt_world_seed)
 	# Boss identity + leash metadata (used by EnemyActor.gd).
 	en.add_to_group(&"boss")
 	en.add_to_group(&"boss_like")
@@ -185,7 +187,8 @@ func _apply_boss_rewards_and_rules(en: EnemyActor) -> void:
 	en.scale_move_speed(speed_mult)
 	preload("res://scenes/world/bosses/BossAppearance.gd").apply(en, 1)
 
-	# Strong loot: rely on built-in EnemyDrops pool + roll, but scale rarity by segment.
+	# Settlement uses the existing drop pool and quality roll, with a guaranteed
+	# count instead of the ordinary enemy probability gate.
 	var rmin := clampi(2 + int(floor(float(seg) * 0.55)), 2, 20)
 	var rmax := clampi(rmin + 2, rmin, 20)
 
@@ -248,7 +251,7 @@ func _spawn() -> void:
 
 		if RunEvents != null and RunEvents.has_signal("boss_spawned"):
 			# tier 1 = boss
-			RunEvents.boss_spawned.emit(en, 1, boss_portrait, _title)
+			RunEvents.boss_spawned.emit(en, 1, preload("res://scenes/world/bosses/BossAppearance.gd").portrait_for(en, 1, boss_portrait), _title)
 
 	if RunEvents != null and RunEvents.has_signal("tutorial_tip"):
 		RunEvents.tutorial_tip.emit(tank_entrance if _is_tank else mage_entrance, 3.0)
@@ -260,28 +263,15 @@ func _on_enemy_killed(_who: Node, enemy: Node, _pos: Vector2) -> void:
 	if enemy == null or enemy != _boss:
 		return
 
+	if not Global.settle_arena_rewards(enemy as EnemyActor, &"boss", bonus_followers_on_clear, 1.0 if fill_resonance_on_clear else 0.0):
+		return
 	_cleared = true
-	# Recorded before the payout's deferred save: Continue cannot repeat it.
-	if Global != null:
-		Global.note_arena_cleared(&"boss")
 	if PerformanceFlightRecorder != null:
 		PerformanceFlightRecorder.record_event(&"encounter", &"boss_cleared", {"position": str(global_position)})
 
 	# Signal UI
 	if RunEvents != null and RunEvents.has_signal("boss_cleared"):
 		RunEvents.boss_cleared.emit(enemy, 1)
-
-	# Unlock SegmentProcBuilder gate lock.
-	var builder := get_tree().get_first_node_in_group("segment_proc_builder") as SegmentProcBuilder
-	if builder != null:
-		builder.set_boss_defeated()
-
-	# Rewards
-	if fill_resonance_on_clear and builder != null:
-		builder.grant_resonance(1.0, true)
-
-	if Global != null and bonus_followers_on_clear > 0:
-		Global.transaction_followers(bonus_followers_on_clear, &"boss_victory", {"tier": 1}, true, false)
 
 	# Optional explicit gate node.
 	if _gate != null and is_instance_valid(_gate):

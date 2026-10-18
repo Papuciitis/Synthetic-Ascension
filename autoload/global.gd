@@ -218,6 +218,12 @@ var attempt_claimed_loot_ids: PackedInt32Array = PackedInt32Array()
 ## Arena encounters this attempt has settled ("segment:kind"): a defeated
 ## boss stays defeated on Continue and is never paid out twice.
 var attempt_cleared_arenas: PackedStringArray = PackedStringArray()
+var attempt_arena_rewards: Dictionary = {}
+var attempt_segment_progress: Dictionary = {}
+## Invalidates builders left alive while Continue/a developer jump resets state.
+var segment_progress_epoch: int = 0
+var _arena_reward_transaction_depth: int = 0
+var _arena_reward_claiming: Dictionary = {}
 ## Developer tools launched this attempt (saved with it): loading it never
 ## imports its city choices as the profile's permanent commitments.
 var attempt_developer_launch := false
@@ -362,6 +368,7 @@ var _kill_reward_carry: float = 0.0
 # ============================================================
 
 func _ready() -> void:
+	get_tree().scene_changed.connect(restore_pending_arena_rewards, CONNECT_DEFERRED)
 	# The Gambler's Rite listens to item operations; connected after every
 	# autoload exists.
 	_connect_gambler_listener.call_deferred()
@@ -776,6 +783,9 @@ func reset_run_systems() -> void:
 	# exploration loot claim state (per-segment)
 	attempt_claimed_loot_ids = PackedInt32Array()
 	attempt_cleared_arenas = PackedStringArray()
+	attempt_arena_rewards.clear()
+	attempt_segment_progress.clear()
+	segment_progress_epoch += 1
 	attempt_developer_launch = false
 	attempt_imprints.clear()
 	_claimed_loot_set.clear()
@@ -2899,10 +2909,129 @@ func note_arena_cleared(kind: StringName) -> void:
 	attempt_cleared_arenas.append(key)
 	request_autosave()
 
+
+func _copy_arena_rewards(source: Dictionary) -> Dictionary:
+	var result := source.duplicate(true)
+	for key in result:
+		var items: Array[ItemInstance] = []
+		for item in source[key].get("items", []):
+			items.append(item.snapshot_copy())
+		result[key]["items"] = items
+	return result
+
+
+## The arena calls this before its defeat/release signal. Wallet, clear and
+## immutable rolls are one synchronous snapshot, including the ordinary kill.
+func settle_arena_rewards(enemy: EnemyActor, kind: StringName, bonus_followers: int, resonance_grant: float) -> bool:
+	if enemy == null or not attempt_active or has_pending_peep():
+		return false
+	if int(enemy.get_meta("arena_reward_segment", -1)) != attempt_segment or int(enemy.get_meta("arena_reward_seed", -1)) != attempt_world_seed:
+		return false
+	var key := "%d:%s" % [attempt_world_seed, _arena_clear_key(kind)]
+	if is_arena_cleared(kind) or attempt_arena_rewards.has(key):
+		return false
+	_arena_reward_transaction_depth += 1
+	# Reserve the clear before any synchronous listener can re-enter. Preserve
+	# the old defeat order: the arena fills Resonance, its bonus pays, the normal
+	# kill pays, then loot samples the resulting Luck/ThreatDirector quality.
+	note_arena_cleared(kind)
+	var builder := get_tree().get_first_node_in_group(&"segment_proc_builder")
+	if builder != null:
+		builder.call("set_boss_defeated" if kind == &"boss" else "set_miniboss_defeated")
+		builder.call("grant_resonance", resonance_grant, true)
+	transaction_followers(maxi(0, bonus_followers), &"boss_victory" if kind == &"boss" else &"miniboss_victory", {"tier": 1 if kind == &"boss" else 0}, true, false)
+	var director := get_node_or_null("/root/ThreatDirector")
+	var overtime := float(director.call("overtime_reward_multiplier")) if director != null else 1.0
+	var kill_gain := settle_kill_reward(enemy.spec.follower_reward_min, enemy.spec.follower_reward_max, enemy.spec.elite_follower_bonus, enemy.is_elite, overtime) if enemy.spec != null else settle_kill_reward(1, 1, 0, false, overtime)
+	transaction_followers(kill_gain, &"combat_influence", {"enemy_id": String(enemy.spec.id) if enemy.spec != null else ""}, true, true)
+	var drops := EnemyDrops.new()
+	drops.setup(enemy)
+	var items := drops.roll_arena_rewards()
+	attempt_arena_rewards[key] = {
+		"seed": attempt_world_seed, "segment": attempt_segment, "kind": String(kind),
+		"position": enemy.global_position, "items": items, "claimed": PackedInt32Array(),
+		"bonus_followers": maxi(0, bonus_followers), "kill_followers": kill_gain,
+	}
+	_arena_reward_transaction_depth -= 1
+	save_current_profile()
+	_spawn_arena_reward_items.call_deferred(key, enemy.global_position)
+	return true
+
+
+func arena_reward_pending(key: String, index: int) -> bool:
+	if not attempt_active or has_pending_peep() or not attempt_arena_rewards.has(key):
+		return false
+	var record: Dictionary = attempt_arena_rewards[key]
+	return int(record.get("seed", -1)) == attempt_world_seed and index >= 0 and index < record.get("items", []).size() and not record.get("claimed", PackedInt32Array()).has(index)
+
+
+func begin_arena_reward_claim(key: String, index: int) -> bool:
+	var token := "%s/%d" % [key, index]
+	if not arena_reward_pending(key, index) or _arena_reward_claiming.has(token):
+		return false
+	_arena_reward_claiming[token] = true
+	_arena_reward_transaction_depth += 1
+	return true
+
+
+func finish_arena_reward_claim(key: String, index: int, accepted: bool) -> void:
+	var token := "%s/%d" % [key, index]
+	if not _arena_reward_claiming.erase(token):
+		return
+	if accepted and attempt_arena_rewards.has(key):
+		var claimed: PackedInt32Array = attempt_arena_rewards[key]["claimed"]
+		if not claimed.has(index):
+			claimed.append(index)
+		attempt_arena_rewards[key]["claimed"] = claimed
+	_arena_reward_transaction_depth -= 1
+	if accepted:
+		save_current_profile()
+
+
+## Scene entry recovers loot at the player, even when the old ground scene
+## has gone (Continue, Hub after a Rite, or the next district). Full bags keep
+## these rolls pending; a later scene never rolls a replacement.
+func restore_pending_arena_rewards() -> void:
+	if not attempt_active or has_pending_peep():
+		return
+	var player := get_tree().get_first_node_in_group(&"player") as Node2D
+	if player == null:
+		return
+	for key in attempt_arena_rewards:
+		_spawn_arena_reward_items(key, player.global_position + Vector2(0, 72))
+
+
+func _spawn_arena_reward_items(key: String, position: Vector2) -> void:
+	var scene := get_tree().current_scene
+	if scene == null or not attempt_arena_rewards.has(key):
+		return
+	var record: Dictionary = attempt_arena_rewards[key]
+	for index in range(record["items"].size()):
+		if not arena_reward_pending(key, index):
+			continue
+		var exists := false
+		for node in get_tree().get_nodes_in_group(GroundLootCap.ITEM_GROUP):
+			if node is ItemPickup and not node.is_queued_for_deletion() and scene.is_ancestor_of(node) and node.arena_reward_key == key and node.arena_reward_index == index:
+				exists = true
+				break
+		if exists:
+			continue
+		var pickup := load("res://scenes/world/pickups/ItemPickup.tscn").instantiate() as ItemPickup
+		pickup.item_instance = (record["items"][index] as ItemInstance).snapshot_copy()
+		pickup.item_id = String(pickup.item_instance.data.id)
+		pickup.arena_reward_key = key
+		pickup.arena_reward_index = index
+		pickup.lifetime_seconds = 0.0
+		scene.add_child(pickup)
+		pickup.global_position = position + Vector2.RIGHT.rotated(TAU * float(index) / maxf(1.0, record["items"].size())) * 36.0
+
 ## Arms the arenas of `segment` and of every later segment again: the
 ## developer console's segment jump replays the attempt from there, inside the
 ## same attempt, so a fight this attempt already won from there on rises again.
 func forget_arena_clears_from(segment: int) -> void:
+	for key in attempt_arena_rewards.keys():
+		if int(attempt_arena_rewards[key].get("segment", 0)) >= segment:
+			attempt_arena_rewards.erase(key)
 	for index in range(attempt_cleared_arenas.size() - 1, -1, -1):
 		if int(attempt_cleared_arenas[index].get_slice(":", 0)) >= segment:
 			attempt_cleared_arenas.remove_at(index)
@@ -2914,6 +3043,8 @@ func forget_arena_clears_from(segment: int) -> void:
 ## the gambler's tally, claimed exploration loot, Witness use and threat debt).
 ## Segment completion clears the same for the next segment, among its rewards.
 func reset_segment_pass() -> void:
+	attempt_segment_progress.clear()
+	segment_progress_epoch += 1
 	attempt_deaths_this_segment = 0
 	attempt_checkpoint_pos = Vector2.INF
 	_kill_reward_carry = 0.0
@@ -2924,6 +3055,7 @@ func reset_segment_pass() -> void:
 	attempt_doctrine_threat_debt = 0.0
 
 func apply_save(save: SaveData) -> void:
+	segment_progress_epoch += 1
 	attempt_pending_segment_completion = 0
 	_city_development_awards_enabled = SaveManager != null and SaveManager.current_save == save
 	meta_pending_peep = save.meta_pending_peep.duplicate(true)
@@ -3090,6 +3222,8 @@ func apply_save(save: SaveData) -> void:
 		attempt_claimed_loot_ids = save.attempt_claimed_loot_ids
 		var cleared_arenas = save.get("attempt_cleared_arenas")
 		attempt_cleared_arenas = PackedStringArray(cleared_arenas) if cleared_arenas != null else PackedStringArray()
+		attempt_arena_rewards = _copy_arena_rewards(save.attempt_arena_rewards)
+		attempt_segment_progress = save.attempt_segment_progress.duplicate(true)
 		attempt_developer_launch = save.get("attempt_developer_launch") == true
 		attempt_imprints.clear()
 		for imprint_id in save.get("attempt_imprints"):
@@ -3227,6 +3361,9 @@ func apply_save(save: SaveData) -> void:
 		attempt_opening_bren_committed = false
 		attempt_claimed_loot_ids = PackedInt32Array()
 		attempt_cleared_arenas = PackedStringArray()
+		attempt_arena_rewards.clear()
+		attempt_segment_progress.clear()
+		segment_progress_epoch += 1
 		attempt_developer_launch = false
 		attempt_imprints.clear()
 		_claimed_loot_set.clear()
@@ -3308,6 +3445,11 @@ func _recover_segment_completion(save: SaveData) -> void:
 
 
 func write_save(save: SaveData) -> void:
+	var builder := get_tree().get_first_node_in_group(&"segment_proc_builder")
+	if builder != null and builder.has_method("snapshot_attempt_progress"):
+		var progress: Dictionary = builder.call("snapshot_attempt_progress")
+		if not progress.is_empty():
+			attempt_segment_progress = progress
 	_suppress_autosave = true
 	save.save_version = SaveData.CURRENT_SAVE_VERSION
 	save.game_version = String(_BUILD_INFO_SCRIPT.version())
@@ -3433,6 +3575,8 @@ func write_save(save: SaveData) -> void:
 		save.attempt_opening_bren_committed = attempt_opening_bren_committed
 		save.attempt_claimed_loot_ids = attempt_claimed_loot_ids
 		save.attempt_cleared_arenas = attempt_cleared_arenas.duplicate()
+		save.attempt_arena_rewards = _copy_arena_rewards(attempt_arena_rewards)
+		save.attempt_segment_progress = attempt_segment_progress.duplicate(true)
 		# The debug flags are still set while a developer run saves; the main
 		# menu clears them before Continue loads it.
 		attempt_developer_launch = is_developer_attempt()
@@ -3449,6 +3593,9 @@ func write_save(save: SaveData) -> void:
 		save.attempt_vendor_bag = attempt_vendor_bag
 	else:
 		# Clear heavy attempt resources from disk
+		save.attempt_cleared_arenas = PackedStringArray()
+		save.attempt_arena_rewards = {}
+		save.attempt_segment_progress = {}
 		save.attempt_segment = 1
 		save.attempt_followers = 0
 		save.attempt_deaths_this_segment = 0
@@ -3517,7 +3664,7 @@ func write_save(save: SaveData) -> void:
 	_suppress_autosave = false
 func save_current_profile(validated: bool = true) -> void:
 	# Acceptance writes one coherent final snapshot, never a half-reset account.
-	if _accepting_peep:
+	if _accepting_peep or _arena_reward_transaction_depth > 0:
 		return
 	if SaveManager == null or SaveManager.current_save == null:
 		return
@@ -3637,6 +3784,8 @@ func _apply_segment_completion(completed_segment: int) -> void:
 	if completed_segment == 5 and completed_segment != attempt_segment:
 		return
 	attempt_pending_segment_completion = 0
+	attempt_segment_progress.clear()
+	segment_progress_epoch += 1
 	if genuine_settlement:
 		_award_city_development(completed_segment)
 	var binding_rewards := 1

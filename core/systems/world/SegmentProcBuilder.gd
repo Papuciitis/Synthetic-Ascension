@@ -46,6 +46,8 @@ var _player: Node2D = null
 var _exit_rite: ExitRite = null
 var _primary_objective: PrimaryObjective = null
 var _segment: int = 1
+var _progress_epoch: int = -1
+var _restored_attempt_progress: bool = false
 var _plan: Dictionary = {}
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
 
@@ -70,6 +72,7 @@ var _rite_safeguard_sources: Dictionary = {}
 func _ready() -> void:
 	add_to_group(&"segment_proc_builder")
 	_segment = (Global.attempt_segment if Global != null else 1)
+	_progress_epoch = Global.segment_progress_epoch
 	if _segment <= 1:
 		queue_free()
 		return
@@ -135,11 +138,12 @@ func _ready() -> void:
 	_rng.seed = int(_plan.get("seed", 1337)) ^ 0xA53C9E1
 
 	_apply_segment_rules()
+	restore_attempt_progress()
 	_build_world_from_plan()
 	_hook_resonance()
 	_hook_secondary_objectives()
 	set_process(true)
-	_set_pressure_phase(&"recon")
+	_set_pressure_phase(&"collapse" if resonance >= 0.999 else (&"ascension" if _primary_completed else &"recon"))
 	_push_objective_ui()
 
 	# Initial gate lock state
@@ -205,6 +209,8 @@ func _process(delta: float) -> void:
 
 	resonance += ambient + bonus
 	resonance = clampf(resonance, 0.0, 1.0)
+	if ambient + bonus > 0.0:
+		Global.request_autosave()
 	if resonance >= 0.999 and _pressure_phase != &"collapse":
 		_set_pressure_phase(&"collapse")
 
@@ -317,6 +323,10 @@ func _build_world_from_plan() -> void:
 	_spawn_secondary_nodes()
 
 func _spawn_primary_objective() -> void:
+	# Completed objectives stay completed. Partial objectives restart, without
+	# paying a second completion reward or resetting already earned Resonance.
+	if _primary_completed:
+		return
 	var objective_world: Vector2 = _plan.get("primary_world", Vector2.ZERO) as Vector2
 	# The type is chosen from the seed rather than hardcoded here. That choice
 	# used to live in this function AND its wording lived in _push_objective_ui,
@@ -354,11 +364,16 @@ func _spawn_wardstones() -> void:
 		add_child(s)
 		# Attuning a wardstone is a meaningful act: it feeds the bar.
 		s.activated.connect(_on_wardstone_activated.bind(ward_index))
+		if _rite_safeguard_sources.has(StringName("wardstone:%d" % ward_index)):
+			s.restore_active()
 
 
 func _on_wardstone_activated(_stone: Wardstone, ward_index: int) -> void:
+	var source := StringName("wardstone:%d" % ward_index)
+	if _rite_safeguard_sources.has(source):
+		return
+	register_rite_safeguard_source(source)
 	grant_resonance(0.06, true)
-	register_rite_safeguard_source(StringName("wardstone:%d" % ward_index))
 
 func _spawn_exit_gate() -> void:
 	var p: Vector2 = _plan.get("exit_world", Vector2.ZERO)
@@ -454,6 +469,7 @@ func _spawn_cursed_vault() -> void:
 func grant_resonance(amount: float, immediate: bool = true) -> void:
 	if amount <= 0.0:
 		return
+	Global.request_autosave()
 	if immediate:
 		resonance = clampf(resonance + amount, 0.0, 1.0)
 		_update_gate_lock()
@@ -480,6 +496,19 @@ func set_miniboss_defeated() -> void:
 
 func is_boss_defeated() -> bool:
 	return _boss_defeated
+
+
+## Legacy clear-only saves still earn their arena's Resonance. A successfully
+## applied progress snapshot already contains that reward; rejected snapshots
+## and repeated restore callbacks must neither erase nor multiply it.
+func restore_arena_clear(kind: StringName, reward: float) -> void:
+	var already_cleared := _boss_defeated if kind == &"boss" else _miniboss_defeated
+	if kind == &"boss":
+		set_boss_defeated()
+	else:
+		set_miniboss_defeated()
+	if not already_cleared and not _restored_attempt_progress:
+		grant_resonance(reward, true)
 
 # ------------------------------------------------------------
 # Gate completion
@@ -526,6 +555,37 @@ func _on_primary_completed() -> void:
 		spawner.spawn_burst(7)
 	_update_gate_lock()
 	_push_objective_ui()
+	Global.request_autosave()
+
+
+func snapshot_attempt_progress() -> Dictionary:
+	if Global == null or not Global.attempt_active or Global.has_pending_peep() or _segment != Global.attempt_segment or _progress_epoch != Global.segment_progress_epoch:
+		return {}
+	return {
+		"seed": Global.attempt_world_seed, "segment": _segment,
+		"primary_completed": _primary_completed, "resonance": resonance,
+		"pending_bonus": _pending_bonus_res, "elapsed": _time_in_segment,
+		"primary_total": _primary_total_count,
+		"secondaries": _secondary_completed.duplicate(true),
+		"safeguards": _rite_safeguard_sources.duplicate(true),
+	}
+
+
+func restore_attempt_progress() -> void:
+	_restored_attempt_progress = false
+	_progress_epoch = Global.segment_progress_epoch
+	var progress: Dictionary = Global.attempt_segment_progress
+	if not Global.attempt_active or Global.has_pending_peep() or int(progress.get("segment", 0)) != _segment or int(progress.get("seed", -1)) != Global.attempt_world_seed:
+		return
+	_restored_attempt_progress = true
+	_primary_completed = bool(progress.get("primary_completed", false))
+	_primary_total_count = maxi(1, int(progress.get("primary_total", 3)))
+	_primary_done_count = _primary_total_count if _primary_completed else 0
+	resonance = clampf(float(progress.get("resonance", 0.0)), 0.0, 1.0)
+	_pending_bonus_res = clampf(float(progress.get("pending_bonus", 0.0)), 0.0, 1.0)
+	_time_in_segment = maxf(0.0, float(progress.get("elapsed", 0.0)))
+	_secondary_completed = progress.get("secondaries", {}).duplicate(true)
+	_rite_safeguard_sources = progress.get("safeguards", {}).duplicate(true)
 
 func _set_pressure_phase(next_phase: StringName) -> void:
 	if _pressure_phase == next_phase and next_phase != &"recon":

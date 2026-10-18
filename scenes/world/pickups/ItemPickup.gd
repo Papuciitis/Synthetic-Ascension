@@ -31,6 +31,9 @@ var player_dropped: bool = false
 
 # If set, pickup uses this full instance (dropped from bag/equip) instead of item_id/amount
 var item_instance: ItemInstance = null
+## Stable claim identity; the immutable rolled instance lives in the attempt.
+var arena_reward_key: String = ""
+var arena_reward_index: int = -1
 
 const MAGNET_RADIUS: float = 110.0
 const MAGNET_SPEED_MAX: float = 420.0
@@ -86,7 +89,7 @@ func _ready() -> void:
 	_play_drop_sound()
 	ground_serial = GroundLootCap.next_serial()
 	add_to_group(GroundLootCap.ITEM_GROUP)
-	if not is_exploration_loot and not persistent_world_drop:
+	if not is_exploration_loot and not persistent_world_drop and arena_reward_key.is_empty():
 		GroundLootCap.enforce(get_tree(), GroundLootCap.ITEM_GROUP, GroundLootCap.ITEM_CAP, self)
 
 
@@ -207,6 +210,21 @@ func _pickup_kind() -> String:
 
 
 func _collect() -> void:
+	if _picked or is_queued_for_deletion():
+		return
+	if arena_reward_key.is_empty():
+		_collect_contents()
+		return
+	if not Global.begin_arena_reward_claim(arena_reward_key, arena_reward_index):
+		queue_free()
+		return
+	_collect_contents()
+	# Container signals may request a save while inserting/merging. The claim
+	# guard keeps those writes behind this coherent inventory + claim snapshot.
+	Global.finish_arena_reward_claim(arena_reward_key, arena_reward_index, _picked and is_queued_for_deletion())
+
+
+func _collect_contents() -> void:
 
 	# UI fly origin (screen/canvas space)
 	var start_screen: Vector2 = _get_screen_pos_of_pickup()
