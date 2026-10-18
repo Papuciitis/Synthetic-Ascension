@@ -86,3 +86,13 @@ f4209c6d35e8807b32f584aab27348ec55eadaef3692f1906769c75bd0d64141  rite-channel-r
 923cc9dcdf026ab588d7c801a122e2d18f050ee88e5e0ad9b499fc5956479359  wager-reduced.png
 a8c5cbbc2005dc2ec8a7403ae2f44748479a24235f513a8536a978a19fa790ae  wager-refusal-reduced.png
 ```
+
+## Independent final cross-review — 18 October 2026
+
+**GO for the 27 final world PNGs individually inspected in this cross-review. No blocking visual findings.**
+
+**Authorship disclosure:** the earlier reviewer also implemented the Relay, Vigil and Wager production presentation. This addendum's reviewer authored none of the production code, artwork or capture tools for this rework. I previously performed a read-only code review of the changes, so this is an independent, source-aware pixel review rather than a blind review.
+
+I opened every PNG in `world-captures/` individually at its original resolution: sanctuary, Rite states, Rite channel, Rite grace/drain, Rite pressure, Relay, Vigil, Wager and Wager refusal, each at 1280×720 normal, 960×540 normal and 960×540 Reduced Motion plus Combat Flashes Off. All 27 files match the existing SHA-256 register above; that register and the earlier findings are unchanged.
+
+In these frames, centering, ground contact and muted materials fit the terrain; Relay shutters cover the painted lenses, Vigil braces remain centered on the plate, and Wager locks meet the painted collection trays. Physical states remain distinguishable at the small size and with motion/flashes disabled. The supplied actor overlaps do not expose a blocking layering or clipping issue. The existing nonblocking Relay/Wager readability observations and still-image evidence limits remain applicable. This verdict covers only this 27-image world packet, not the separately captured Breach, vaults, exploration or hazard families, live transitions, full traversal or unfamiliar-player recognition. No engine was launched and no production file was edited for this cross-review.

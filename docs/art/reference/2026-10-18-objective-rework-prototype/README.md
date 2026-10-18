@@ -3,7 +3,8 @@
 Seven unchanged PNGs from the scoped independent re-review are published here,
 along with the original 18-capture manifest. Their SHA-256 identities match the
 prototype review. The other eleven local prototype views were inspected during
-the initial pass but are not included in this published subset.
+the initial pass but are not included in this published subset. They are retained
+under `.superpowers/sdd/2026-10-18-objective-visual-rework/historical-prototype-unpublished/`.
 
 These images precede the hardware-cursor shutdown fix. Their native session
 exited 0 and captured successfully but logged three teardown texture warnings;

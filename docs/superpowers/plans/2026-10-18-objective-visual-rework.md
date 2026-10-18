@@ -129,18 +129,22 @@
 
 ### Final verification and review
 
-- Final native world27, risk24 and Breach18 captures each exited 0, explicitly
+- Final native world (27), risk (24) and Breach (18) captures each exited 0, explicitly
   completed, wrote zero saves and produced clean full output through shutdown.
   Prior first-pass/formatting-error evidence is retained separately.
 - Capture-only feedback cleanup prevents payment cards crossing into unrelated
   panels. Actual current-panel transaction notices remain.
-- Three independent pixel reviewers reopened all 69 final images individually;
+- Pixel reviewers reopened all 69 final images individually;
   all give scoped visual go, with moving-fight/discovery limits retained.
-- Final focused reruns passed: Breach9, Wardstone/Rite30, Relay/Vigil/Wager39,
-  vault/exploration32; the final gameplay script audit passed539. Shared v2
-  presentation25 and earlier compatibility suites remain passing evidence.
-- Published 31 unchanged representative final PNGs, all69hashes/manifests and
+- Final focused reruns passed: Breach (9), Wardstone/Rite (30), Relay/Vigil/Wager (39),
+  vault/exploration (32); the final gameplay script audit passed 539. Shared v2
+  presentation (25) and earlier compatibility suites remain passing evidence.
+- Published 31 unchanged representative final PNGs, all 69 hashes/manifests and
   clean final logs. Seven historical reviewed prototype PNGs retain their
   original identities. Nine generated source PNGs and full provenance are saved.
 - The original 23 tracked edits still satisfy their original patch in reverse
   check. No live saves/settings or original playtest reports were changed.
+- Main implementation and evidence are pushed as `0558fbb5`, after `d494f359`.
+  A fourth pixel reviewer who authored no production/assets independently opened
+  all 27 world views, confirmed go and documented the first reviewer's prior
+  Relay/Vigil/Wager authorship. This closes the world review's independence gap.

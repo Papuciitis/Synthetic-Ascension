@@ -135,6 +135,13 @@ checks. In the reduced Breach spawn frame enemies overlap one another; the
 production count is three but three isolated silhouettes are not established
 by those pixels.
 
+The first world-packet reviewer had authored Relay/Vigil/Wager earlier in the
+task. A fourth reviewer, who authored no production code or art, independently
+reopened all 27 final world images and confirmed the scoped visual go; that
+cross-review and the authorship disclosure are appended to the world report.
+The risk reviewer separately discloses prior contribution to the Rite component.
+Neither review is presented as a blinded unfamiliar-player evaluation.
+
 [31 representative unchanged screenshots](../art/reference/2026-10-18-objective-visual-rework/README.md)
 cover every staged panel, with original manifests, all 69 image hashes, final
 native logs and final focused/script results. Full 69-image sets remain in the
